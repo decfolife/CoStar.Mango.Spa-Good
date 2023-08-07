@@ -1,0 +1,54 @@
+@use '../../../../../mango/src/assets/styles/colors.scss' as colors;
+
+:host{
+
+  .loading-screen {
+    z-index: 1000;
+    display: flex;
+    -webkit-transition: opacity 0.3s;
+    transition: all 0.3s;
+    flex-direction: column;
+    justify-content: center;
+
+    &.light{
+      background-color: colors.$white;
+      color: colors.$black;
+      .logo {
+        background-image: url('../../../assets/images/logos/logo-color.svg');
+      }
+    }
+    &.dark{
+      background-color: colors.$color-dark-blue;
+      color: colors.$white;
+      .logo {
+        background-image: url('../../../assets/images/logos/logo-white.svg');
+      }
+    }
+
+    // Logos
+    .logo {
+      height: 120px;
+      width: 300px;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    .tagline {
+      font-size: 1.5rem;
+    }
+
+    // Loading Screen Styles
+    &.fullscreen {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      position: fixed;
+      justify-content: center;
+      align-items: center;
+    }
+
+  }
+
+}

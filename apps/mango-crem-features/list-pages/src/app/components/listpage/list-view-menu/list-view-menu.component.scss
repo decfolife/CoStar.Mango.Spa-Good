@@ -1,0 +1,165 @@
+@use 'src/assets/styles/colors';
+
+$menuWidth: 275px;
+
+/**
+ * :host :ng-deep: It will work from that component down (Into the children, grand children etc).
+ */
+:host ::ng-deep {
+
+  .list-view-button {
+    width: $menuWidth;
+
+    &[aria-expanded="true"] {
+      fa-icon {
+        background-color: colors.$color-neutral-medium;
+      }
+    }
+
+    &[aria-expanded="true"] {
+      fa-icon {
+        background-color: colors.$color-neutral-medium;
+      }
+    }
+
+    .mat-button-wrapper {
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-align: left;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .limit-width {
+    width: $menuWidth;
+  }
+
+  .gray {
+    color: colors.$gray;
+    padding-left: 1rem;
+  }
+
+  .info-menu {
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 8px 0;
+
+      li {
+        padding: 4px 16px;
+        cursor: default;
+        line-height: 16px;
+        color: colors.$color-neutral-medium;
+
+        &:hover {
+          background-color: unset;
+        }
+      }
+    }
+  }
+
+  .sharing-check {
+    float: right;
+    color: colors.$costarBlue;
+  }
+
+}
+
+/**
+ * ng-deep: Global style, 'cdk-overlay-container' is render without an ecapsulation selector
+ */
+::ng-deep {
+  .cdk-overlay-container {
+    .cdk-overlay-pane {
+      .cdk-focused.cdk-mouse-focused {
+        outline: none;
+      }
+      .mat-menu-panel {
+        max-width: unset;
+        overflow: hidden;
+        min-height: unset;
+
+        .mat-menu-content {
+          &:not(:empty) {
+            padding: 0;
+          }
+          .mat-list {
+            padding-top: 0;
+            width: $menuWidth;
+
+            .mat-expansion-panel-header {
+              font-size: 14px;
+              height: 32px;
+            }
+            .mat-expansion-panel {
+              border-bottom: 1px solid rgba(51, 51, 51, .15);
+              border-radius: 0;
+              .mat-expansion-panel-body {
+                padding: 0 0 16px 24px;
+
+                .mat-list-item {
+                  font-size: 14px;
+                  height: 32px;
+                  .mat-list-item-content {
+                    padding: 0 0 0 16px;
+                  }
+                }
+              }
+              &:last-of-type {
+                border-bottom: none;
+              }
+            }
+          }
+          .view-list-item-flex {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+
+            span:not(.dbl-left-margin) {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              width: 100%;
+            }
+            .view-list-item {
+              .mat-menu-trigger {
+                background-color: transparent;
+                border: none;
+                color: colors.$costarBlue;
+                outline: none;
+                padding-left: 1rem;
+              }
+
+              &.dbl-left-margin {
+                button {
+                  background-color: transparent;
+                  border: none;
+                  color: colors.$costarBlue;
+                }
+              }
+            }
+          }
+        }
+
+        &.portfolio-menu {
+          max-height: 450px;
+          overflow-y: auto;
+          width: 200px;
+        }
+
+      }
+
+    }
+  }
+}
+
+// TODO: In use?
+.scroll-view-content {
+  max-height: 345px !important;
+}

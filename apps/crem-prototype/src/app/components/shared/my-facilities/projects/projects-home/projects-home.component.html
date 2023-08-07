@@ -1,0 +1,34 @@
+<div class="module-wrapper">
+	<mat-drawer-container>
+		<mat-drawer mode="side" opened [style.visibility]="'visible'" class="left-nav">
+			<mat-nav-list>
+				<mat-list [style.width]="drawerWidth">
+					<div *ngIf="isLeftNavOpened">
+						<mat-list-item [routerLink]="['dashboard']" routerLinkActive="active"><span class="costar-left-nav-link">Dashboard</span></mat-list-item>
+						<mat-list-item [routerLink]="['board']" routerLinkActive="active"><span class="costar-left-nav-link">Board</span></mat-list-item>
+						<mat-list-item [routerLink]="['list']" routerLinkActive="active"><span class="costar-left-nav-link">Projects</span></mat-list-item>
+						<!-- <mat-list-item [routerLink]="['tasks']" routerLinkActive="active"><span class="costar-left-nav-link">Tasks</span></mat-list-item> -->
+						<mat-list-item [routerLink]="['documentstore']" routerLinkActive="active"><span class="costar-left-nav-link">Document Store</span></mat-list-item>
+						<!-- <mat-list-item [routerLink]="['offline']" routerLinkActive="active"><span class="costar-left-nav-link">Offline Editing</span></mat-list-item>						 -->
+						<mat-expansion-panel #AdminPanel class="mat-elevation-z0" [expanded]="true" [class.open]="AdminPanel.expanded">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Configuration
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+							<mat-list-item [routerLink]="['settings']" routerLinkActive="active"><span class="costar-left-nav-link">Settings</span></mat-list-item>
+							<mat-list-item [routerLink]="['teams']" routerLinkActive="active"><span class="costar-left-nav-link">Teams</span></mat-list-item>
+							<mat-list-item [routerLink]="['templates']" routerLinkActive="active"><span class="costar-left-nav-link">Templates</span></mat-list-item>
+
+							<!-- <mat-list-item [routerLink]="['requesttypes']" routerLinkActive="active"><span class="costar-left-nav-link">Request Types</span></mat-list-item>
+							<mat-list-item [routerLink]="['requesttemplates']" routerLinkActive="active"><span class="costar-left-nav-link">Request Templates</span></mat-list-item> -->
+						</mat-expansion-panel>
+					</div> 
+				</mat-list>				
+			</mat-nav-list>
+		</mat-drawer>
+		<mat-drawer-content class="oflow-x-hidden" [style.marginLeft]="drawerWidth">
+			<router-outlet></router-outlet>
+		</mat-drawer-content>
+	</mat-drawer-container>
+</div>

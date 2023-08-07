@@ -1,0 +1,44 @@
+.filterAndUsercontrols {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 16px 8px;
+	box-sizing: border-box;
+	background: #F5F5F5;
+}
+
+.filterWrapper {
+	display: flex;
+	flex-wrap: wrap;
+
+	crem-button-shadow {
+		margin-left: 0 !important;
+	}
+}
+
+ngx-skeleton-loader.crem-button-shadow {
+	margin-top: 8px;
+}
+
+.actionButtons {
+	display: Flex;
+	align-items: flex-start;
+	margin-left: 8px;
+	ngx-skeleton-loader.crem-button-shadow {
+		margin-left: 8px;
+	}
+}
+
+.filterElement {
+	display: flex;
+	justify-content: flex-start;
+	margin: 0;
+	flex-basis: 0;
+	margin-top: 8px;
+}
+
+ngx-skeleton-loader.crem-dropdown-shadow {
+	margin-right: 8px; 
+	height: 32px;
+}

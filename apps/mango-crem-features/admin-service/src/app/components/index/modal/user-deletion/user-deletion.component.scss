@@ -1,0 +1,14 @@
+div {
+    display: flex;
+}
+
+.user-name {
+    font-weight: 600;
+}
+
+.user-deletion-modal {
+    &__content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}

@@ -1,0 +1,136 @@
+<div class="dashboard">	
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div class="filters-wrapper">
+				<!-- <ng-container *ngFor="let filter of filters">
+					<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible"></costar-dropdown>			
+				</ng-container>	 -->
+				<segment-chooser userId="1" segmentType="project" (changed)="segementChanged($event)"></segment-chooser>
+			</div>	
+			<button class="btn btn-default">Apply</button>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" (click)="add()">Add</button>
+			<button class="btn btn-default" (click)="launchSettingsModal()"><fa-icon icon="cog"></fa-icon></button>
+		</div>
+	</div>
+	<div class="dashboard-content-wrapper">
+		<div class="dashboard-hero-wrapper">
+			<div *ngFor="let hero of heros">
+				<dashboard-hero-card *ngIf="hero.visible"
+					[title]="hero.title"
+					[heroMetric]="hero.hero"
+					[sidekickMetricA]="hero.sidekick"					
+					[subtitle]="hero.subtitle"
+					[tooltip]="hero.helpText"
+				></dashboard-hero-card>
+			</div>			
+		</div>
+		<div class="dashboard-cards-wrapper">
+			<div class="row" cdkDropList (cdkDropListDropped)="drop($event)">
+				<div class="dashboard-card-drag" cdkDrag *ngFor="let card of cards; let i = index;" [class.col-md-6]="card.colSpan == 1" [class.col-md-12]="card.colSpan == 2" [class.hide]="!card.visible">					
+					<mat-icon cdkDragHandle class="card-drag-handle">drag_handle</mat-icon>
+					<tasks-due-soon-card *ngIf="card.componentName == 'TasksDueSoonCardComponent'"></tasks-due-soon-card>
+					<new-projects-card *ngIf="card.componentName == 'NewProjectsCardComponent'"></new-projects-card>
+					<my-reports-card *ngIf="card.componentName == 'MyReportsCardComponent'"></my-reports-card>
+					<new-tasks-card *ngIf="card.componentName == 'NewTasksAssignedToMeCardComponent'"></new-tasks-card>
+					<tasks-due-this-week-card *ngIf="card.componentName == 'TasksDueThisWeekCardComponent'"></tasks-due-this-week-card>
+					<activity-feed-card *ngIf="card.componentName == 'ActivityFeedCardComponent'"></activity-feed-card>
+					<overdue-projects-card *ngIf="card.componentName == 'OverdueProjectsCardComponent'"></overdue-projects-card>
+					<overdue-tasks-card *ngIf="card.componentName == 'OverdueTasksCardComponent'"></overdue-tasks-card>
+					<project-milestones-card *ngIf="card.componentName == 'ProjectMilestonesCardComponent'"></project-milestones-card>
+					<project-timelines-card *ngIf="card.componentName == 'ProjectTimelinesCardComponent'"></project-timelines-card>	
+					<projects-by-type-card *ngIf="card.componentName == 'ProjectsByTypeCardComponent'"></projects-by-type-card>	
+				</div>						
+			</div>					
+		</div>
+	</div>
+</div>
+
+<dx-popup
+	#ProjectDashboardSettingsPopup
+	[width]="600"
+	[height]="570"
+	[showTitle]="true"
+	title="Projects Summary Settings"
+	[dragEnabled]="true"
+	[closeOnOutsideClick]="false"
+	[(visible)]="settingsModalVisible">
+	<div *dxTemplate="let data of 'content'" class="popup-no-padding">
+		<costar-popup>
+			<popup-content>
+				<dx-tab-panel
+					#settingsTabPanel	
+					[selectedIndex]="0"
+					[loop]="false"
+					[animationEnabled]="true"
+					[swipeEnabled]="true"
+					>
+					<dxi-item title="Filters" class="oflow-y-auto">
+						<dx-scroll-view width="100%" height="100%" class="popup-tab-panel-item">
+							<dx-form 
+								[(formData)]="filters"
+								[colCount]="1"
+								labelLocation="left">
+								<dxi-item *ngFor="let item of filters" 
+									dataField="visible"
+									[label]="{ text : item.placeholder }"
+									[editorOptions]="{ name : item.placeholder }"
+									template="switchTemplate"
+									>				
+								</dxi-item>									
+								<div *dxTemplate="let data of 'switchTemplate'">
+									<mat-slide-toggle [(checked)]="data.dataField" [name]="data.editorOptions.name" (change)="handleToggleChange($event, 'filters')"></mat-slide-toggle>
+								</div>
+							</dx-form>
+						</dx-scroll-view>
+					</dxi-item>						
+					<dxi-item title="Hero Metrics" class="oflow-y-auto">
+						<dx-scroll-view width="100%" height="100%" class="popup-tab-panel-item">
+							<dx-form 
+								[(formData)]="heros"
+								[colCount]="1"
+								labelLocation="left">
+								<dxi-item *ngFor="let item of heros" 
+									dataField="visible"
+									[label]="{ text : item.title }"
+									[editorOptions]="{ name : item.title }"
+									template="switchTemplate"
+									>				
+								</dxi-item>									
+								<div *dxTemplate="let data of 'switchTemplate'">
+									<mat-slide-toggle [(checked)]="data.dataField" [name]="data.editorOptions.name" (change)="handleToggleChange($event, 'heros')"></mat-slide-toggle>
+								</div>
+							</dx-form>
+						</dx-scroll-view>
+					</dxi-item>						
+					<dxi-item title="Cards" class="oflow-y-auto">
+						<dx-scroll-view width="100%" height="100%" class="popup-tab-panel-item">
+							<dx-form 
+								[(formData)]="cards"
+								[colCount]="1"
+								labelLocation="left">
+								<dxi-item *ngFor="let item of cards" 
+									dataField="visible"
+									[label]="{ text : item.title }"
+									[editorOptions]="{ name : item.title }"
+									template="switchTemplate"
+									>				
+								</dxi-item>									
+								<div *dxTemplate="let data of 'switchTemplate'">
+									<mat-slide-toggle [(checked)]="data.dataField" [name]="data.editorOptions.name" (change)="handleToggleChange($event, 'cards')"></mat-slide-toggle>
+								</div>
+							</dx-form>
+						</dx-scroll-view>
+					</dxi-item>						
+				</dx-tab-panel>
+			</popup-content>
+			<popup-footer>		
+				<popup-footer-right>
+					<button class="btn btn-default" (click)="settingsModalCancel()">Cancel</button> 
+	        		<button class="btn btn-primary" (click)="settingsModalCancel()">Save</button> 
+				</popup-footer-right>
+			</popup-footer>
+		</costar-popup>	    
+	</div>
+</dx-popup>	

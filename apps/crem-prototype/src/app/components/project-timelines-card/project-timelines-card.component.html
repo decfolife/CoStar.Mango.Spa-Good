@@ -1,0 +1,33 @@
+<mat-card class="dashboard-card">
+	<mat-card-header>				
+		<mat-card-title>Project Timelines</mat-card-title>
+		<mat-card-subtitle></mat-card-subtitle>						
+	</mat-card-header>
+	<mat-card-content class="no-padding gantt-chart">
+		<dx-gantt
+		    taskListWidth="500"
+		    scaleType="months"
+		    height="600">
+
+		    <dxo-tasks [dataSource]="ganttTasks"></dxo-tasks>
+		    <dxo-dependencies [dataSource]="dependencies"></dxo-dependencies>
+		    <dxo-resources [dataSource]="resources"></dxo-resources>
+		    <dxo-resource-assignments [dataSource]="resourceAssignments"></dxo-resource-assignments>
+
+		    <dxi-column dataField="title" caption="Subject" [width]="300"></dxi-column>
+		    <dxi-column dataField="start" caption="Start Date" dataType="date"></dxi-column>
+		    <dxi-column dataField="end" caption="End Date" dataType="date"></dxi-column>
+
+		    <dxo-toolbar>
+		        <dxi-item name="collapseAll"></dxi-item>
+		        <dxi-item name="expandAll"></dxi-item>
+		        <dxi-item name="separator"></dxi-item>
+		        <dxi-item name="zoomIn"></dxi-item>
+		        <dxi-item name="zoomOut"></dxi-item>
+		    </dxo-toolbar>
+
+		    <dxo-validation [autoUpdateParentTasks]="true"></dxo-validation>
+		    <dxo-editing [enabled]="false"></dxo-editing>
+		</dx-gantt>
+	</mat-card-content>
+</mat-card>		

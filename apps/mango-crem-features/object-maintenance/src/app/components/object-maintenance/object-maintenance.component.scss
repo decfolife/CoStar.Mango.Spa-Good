@@ -1,0 +1,20 @@
+.object-maintenance-page {
+    &__pageTitle {
+        font-size: 20px;
+        font-weight: 500;
+        font-family: Helvetica, sans-serif;
+    }
+
+    &__dropdown {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+:host ::ng-deep .not-clickable {  
+    cursor: default !important;  
+}
+
+:host ::ng-deep .not-clickable > .dx-template-wrapper > a{  
+    cursor: pointer !important;  
+}

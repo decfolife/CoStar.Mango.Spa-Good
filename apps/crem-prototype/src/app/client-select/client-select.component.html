@@ -1,0 +1,27 @@
+<login-masthead></login-masthead>
+<div class="login-wrapper">
+	<mat-card>		
+		<mat-card-content>
+			<div class="costar-login-logo"></div>
+			<h5>Client Portal</h5>
+			<p>Select a client site</p>
+			<div class="client-select-wrapper">
+				<dx-select-box
+					#ClientList
+					[dataSource]="clientOptions"
+					searchMode="startswith"
+					[searchEnabled]="true"
+					width="300"
+					(onValueChanged)="goToClientsite()"
+				></dx-select-box>
+				<h6 class="dbl-top-margin">Recently Visited</h6>				
+				<div class="recent-clients-tile-wrapper" (click)="goToClientsite()">
+					<div class="client-tile" *ngFor="let client of recentClients">
+						<span>{{client}}</span>
+					</div>					
+				</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+</div>
+

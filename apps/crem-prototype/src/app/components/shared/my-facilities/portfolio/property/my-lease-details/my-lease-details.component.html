@@ -1,0 +1,13 @@
+<dx-data-grid
+	id="leaseContainer"
+	[dataSource]="leases"
+	[showColumnLines]="false"
+	[columnAutoWidth]="true"
+	[showRowLines]="true"
+	[showBorders]="true"
+	[rowAlternationEnabled]="true" 
+	(onRowClick)="navigateToLease($event)"
+>
+    <dxo-scrolling mode="virtual"></dxo-scrolling>
+</dx-data-grid>				
+

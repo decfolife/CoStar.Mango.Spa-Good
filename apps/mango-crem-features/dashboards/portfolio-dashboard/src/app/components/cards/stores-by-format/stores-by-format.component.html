@@ -1,0 +1,45 @@
+<crem-card
+[id]="card.gridData.id"
+[title]="card.title"
+[subtitle]="card.subtitle"
+[filterData]="null"
+[filterInitialValue]="null"
+[showFilterClearButton]="false"
+[moreOptions]="card.moreOptions"
+[showCustomHeader]="true"
+(exportDataGrid)="exportAllChartData($event)"
+fxFlexFill
+
+>
+	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
+		<dx-pie-chart
+			#StoresByFormatChart			
+			palette="Soft Pastel"
+			[dataSource]="card.gridData.dataSource"
+			sizeGroup="piesGroup"
+			resolveLabelOverlapping="shift"
+		>
+			<dxo-margin
+				[top]="25"
+				[bottom]="25"
+			>
+			</dxo-margin>
+			<dxo-legend
+				orientation="horizontal"
+				itemTextPosition="right"
+				horizontalAlignment="center"
+				verticalAlignment="middle"
+				[columnCount]="4">		        	
+			</dxo-legend>
+			<dxi-series
+				argumentField="buildingType"
+				valueField="buildingTypeCount">
+				<dxo-label [visible]="true">
+					<dxo-connector
+						[visible]="true"
+						[width]="1"></dxo-connector>
+				</dxo-label>
+			</dxi-series>
+		</dx-pie-chart>
+	</div>
+</crem-card>

@@ -1,0 +1,8 @@
+<mat-slide-toggle #ToggleSlider
+    [(checked)]="value"
+    [disabled]="disabled"
+    (change)="onValueChanged($event)"
+    (keydown.enter)="onEnter()"
+    >
+    {{dataField}}
+</mat-slide-toggle>

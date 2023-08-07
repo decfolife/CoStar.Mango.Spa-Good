@@ -1,0 +1,36 @@
+<mat-card class="dashboard-card">
+	<mat-card-header>				
+		<mat-card-title>Stores by Format</mat-card-title>
+		<div class="mat-card-header-toolbar">
+			<button class="btn btn-default btn-sm" [matMenuTriggerFor]="cardMenu"><mat-icon>more_horiz</mat-icon></button>
+			<mat-menu #cardMenu="matMenu">								
+				<button mat-menu-item (click)="exportChart()">Export</button>				
+			</mat-menu>
+		</div>	
+	</mat-card-header>
+	<mat-card-content>
+		<dx-pie-chart
+			#StoreByFormatChart			
+			palette="Soft Pastel"
+			[dataSource]="buildingTypeSummary"
+			sizeGroup="piesGroup"
+			>
+			<dxo-legend
+		        orientation="horizontal"
+		        itemTextPosition="right"
+		        horizontalAlignment="center"
+		        verticalAlignment="bottom"
+		        [columnCount]="4">		        	
+	        </dxo-legend>
+			<dxi-series
+			    argumentField="buildingType"
+			    valueField="count">
+			    <dxo-label [visible]="true">
+			        <dxo-connector
+			            [visible]="true"
+			            [width]="1"></dxo-connector>
+			    </dxo-label>
+			</dxi-series>
+		</dx-pie-chart>
+	</mat-card-content>
+</mat-card>	

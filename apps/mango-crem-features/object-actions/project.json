@@ -1,0 +1,171 @@
+{
+  "name": "mango-crem-features-object-actions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/mango-crem-features/object-actions/src",
+  "prefix": "mango",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "dependsOn": [],
+      "options": {
+        "outputPath": "dist/apps/mango-crem-features/object-actions",
+        "index": "apps/mango-crem-features/object-actions/src/index.html",
+        "main": "apps/mango-crem-features/object-actions/src/main.ts",
+        "polyfills": "apps/mango-crem-features/object-actions/src/polyfills.ts",
+        "tsConfig": "apps/mango-crem-features/object-actions/tsconfig.app.json",
+        "stylePreprocessorOptions": {
+          "includePaths": [
+            "libs/ui-shared",
+            "apps/mango",
+            "libs/ui-shared/common/src"
+          ]
+        },
+        "assets": [
+          "apps/mango-crem-features/object-actions/src/favicon.ico",
+          "apps/mango-crem-features/object-actions/src/assets"
+        ],
+        "styles": [
+          "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+          "node_modules/devextreme/dist/css/dx.light.css",
+          "node_modules/@angular/material/_theming.scss",
+          "apps/mango/src/assets/styles/costar-dev-extreme.scss",
+          "apps/mango-crem-features/object-actions/src/styles.scss",
+          "libs/ui-shared/common/src/styles/_index.scss"
+        ],
+        "scripts": [],
+        "vendorChunk": true,
+        "extractLicenses": false,
+        "buildOptimizer": false,
+        "sourceMap": true,
+        "optimization": false,
+        "namedChunks": true,
+        "aot": true
+      },
+      "configurations": {
+        "dev": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/object-actions/src/environments/environment.dev.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "test": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/object-actions/src/environments/environment.test.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "ops": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/object-actions/src/environments/environment.ops.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "stage": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/object-actions/src/environments/environment.stage.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "prod": {
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/object-actions/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "mango-crem-features-object-actions:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "mango-crem-features-object-actions:build:production"
+        }
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "mango-crem-features-object-actions:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/mango-crem-features/object-actions/src/**/*.ts",
+          "apps/mango-crem-features/object-actions/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/mango-crem-features/object-actions"
+      ],
+      "options": {
+        "jestConfig": "apps/mango-crem-features/object-actions/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

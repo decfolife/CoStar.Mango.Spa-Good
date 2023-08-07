@@ -1,0 +1,108 @@
+<dx-drop-down-box class="list-view-chooser"
+    #DropdownBox
+    [(value)]="selectedItems"
+    valueExpr="id"
+    displayExpr="name"
+    placeholder="Select a list view"
+    [(opened)]="isOpened"  
+    (onValueChanged)="dropdownChange($event)"
+    [dataSource]="listViews"
+    >
+    <div *dxTemplate="let data of 'content'" class="list-view-chooser">
+        <!-- Need a search box -->
+        <costar-search (changed)="searchListViews($event)"></costar-search>        
+        <!-- List Views from the DB -->
+        <dx-data-grid
+            #ListViewDataGrid
+			[dataSource]="listViews"
+			[hoverStateEnabled]="true"
+			[scrolling]="{ mode: 'virtual' }"
+			[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+			keyExpr="id"
+			[(selectedRowKeys)]="selectedItems"
+			(onSelectionChanged)="selectionChanged()"
+			[showColumnHeaders]="false"
+			[showColumnLines]="false"
+			>
+			<dxo-selection mode="single"></dxo-selection>
+            <dxo-grouping #expand [autoExpandAll]="false" [contextMenuEnabled]="true"></dxo-grouping>
+	        <dxi-column
+	        	id="theColumn"
+			    dataField="name"
+				sortIndex="0"
+				sortOrder="asc"
+                cellTemplate="listViewNameTemplate"
+            >
+			</dxi-column>
+            <dxi-column
+			    dataField="category"
+                [groupIndex]="0"            
+                groupCellTemplate="categoryGroupTemplate"
+            >
+			</dxi-column>
+            <div *dxTemplate="let data of 'listViewNameTemplate'">
+				<span>{{data.value}}</span>
+                <span *ngIf="data.data.isDefault" class="std-left-margin">(Default)</span>
+			</div>
+            <div *dxTemplate="let cat of 'categoryGroupTemplate'">
+				<b>{{cat.value}}</b>                
+			</div>
+            <dxi-column type="buttons" width="48">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let listView of 'moreMenuTemplate'">
+		    			<button class="btn btn-link" (click)="$event.stopPropagation()" [matMenuTriggerFor]="listViewMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #listViewMenu="matMenu">
+				    		<ul>
+                                <li mat-menu-item (click)="makeDefault(listView.data)">Make Default</li>
+                                <li mat-menu-item *ngIf="listView.data.category == 'My List Views'" (click)="launchSharePopup(listView.data)">Sharing <fa-icon icon="check"></fa-icon></li>
+                                <li mat-menu-item>Hide</li>
+                                <li mat-menu-item [matMenuTriggerFor]="queryInfoMenu" (click)="$event.stopPropagation()">Info</li>
+                                <li mat-menu-item *ngIf="listView.data.category == 'My List Views'" (click)="launchDeletePopup(listView.data)">Delete</li>
+                            </ul>                                            
+                        </mat-menu>
+                        <mat-menu #queryInfoMenu="matMenu" class="info-menu">
+                            <ul>
+                                <li>{{listView.data.name}}</li>
+                                <li>Dataset:  Building and Lease Summary</li>
+                                <li>Created:  Alexander Hamilton - 2020-12-31</li>
+                                <li>Modified:  Kent Carpenter - 2021-01-28</li>
+                            </ul>
+                        </mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>            
+	    </dx-data-grid>
+    </div>
+</dx-drop-down-box>
+
+
+<dx-popup
+    #sharePopup
+    [width]="800"
+    [height]="480"
+    [showTitle]="true"
+    [title]="sharePopupTitle"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="sharePopupVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">  
+        <list-view-sharing-dialog [query]="shareListView" (closed)="sharePopupClose($event)"></list-view-sharing-dialog>
+    </div>
+</dx-popup> 
+
+
+<dx-popup
+    #deletePopup
+    [width]="800"
+    [height]="480"
+    [showTitle]="true"
+    [title]="deletePopupTitle"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="deletePopupVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">  
+        <list-view-delete-dialog [query]="deleteListView" (closed)="deletePopupClose($event)"></list-view-delete-dialog>
+    </div>
+</dx-popup> 

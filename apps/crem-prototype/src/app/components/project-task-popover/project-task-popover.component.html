@@ -1,0 +1,57 @@
+<div class="project-info-wrapper">
+    <div class="project-name">
+        {{task.projectName}} ({{task.projectId}})
+    </div>
+    <div class="project-details-wrapper">
+        {{task.projectType}} | {{task.projectManager}} | {{task.projectDueDate}} | {{task.projectStatus}} | 38%
+    </div>
+    <div class="project-note-wrapper"></div>
+</div>
+<div class="project-task-wrapper">
+    <div class="task-name">
+        {{task.step}}) {{task.taskName}}
+    </div>
+    <div class="task-details-wrapper">
+        Due:  {{task.dueDate}} | -46 days to complete | Required | Milestone
+    </div>
+    <div class="task-approvals">
+        <h6>Assignees</h6>
+        <dx-data-grid 			
+			[dataSource]="assignees"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="true"
+			[rowAlternationEnabled]="false" 							
+			[allowColumnResizing]="false"
+			[allowColumnReordering]="false"
+			[columnAutoWidth]="false"
+		>
+			<dxi-column dataField="name"></dxi-column>						
+			<dxi-column dataField="status"></dxi-column>
+			<dxi-column dataField="approvedDate" dataType="date" alignment="center"></dxi-column>			
+			<!-- <dxi-column dataField="note"></dxi-column> -->
+		</dx-data-grid>
+    </div>
+    <div class="task-dependencies">
+        <h6>Dependencies/Predecessors</h6>
+        <dx-data-grid 			
+			[dataSource]="dependencies"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="true"
+			[rowAlternationEnabled]="false" 							
+			[allowColumnResizing]="false"
+			[allowColumnReordering]="false"
+			[columnAutoWidth]="false"
+		>	
+            <dxi-column dataField="color" cellTemplate="taskStatusTemplate" caption="" width="24"></dxi-column>		
+			<dxi-column dataField="step" width="60"></dxi-column>						
+			<dxi-column dataField="taskName"></dxi-column>
+			<dxi-column dataField="dueDate" dataType="date" alignment="center" width="100"></dxi-column>			
+			<dxi-column dataField="approvals" width="64"></dxi-column>
+            <div *dxTemplate="let a of 'taskStatusTemplate'">
+				<app-badge text=" " [type]="a.data.color"></app-badge>		
+			</div>	
+		</dx-data-grid>
+    </div>
+</div>        

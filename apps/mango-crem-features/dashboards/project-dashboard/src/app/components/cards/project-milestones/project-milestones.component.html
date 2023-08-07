@@ -1,0 +1,78 @@
+<crem-card 
+[id]="card.gridData.id" 
+[title]="card.title"
+[subtitle]="card.subtitle" 
+
+fxFlex="100"
+height="640px"
+[showCustomHeader]="true"
+>
+
+<div customHeader fxFlexFill>
+	<cs-chip [id]="'completeChip'" [chipStatus]="'completeStatus'" >
+		<div chipContent>Complete</div>
+	</cs-chip>
+	<cs-chip [chipStatus]="'overdueStatus'" [id]="'overdueChip'" >
+		<div chipContent>Overdue</div>
+	</cs-chip>
+	<cs-chip [chipStatus]="'daysStatus'" id="daysChip" >
+		<div chipContent>Due Within 7 Days</div>
+	</cs-chip>
+	<cs-chip [chipStatus]="'activeStatus'" id="activeChip" >
+		<div chipContent>Active</div>
+	</cs-chip>
+	<cs-chip [id]="'upcomingChip'"  [chipStatus]="'upcomingStatus'" >
+		<div chipContent>Upcoming</div>
+	</cs-chip>
+	<mat-slide-toggle id="dateToggle" (change)="toggle()">Show Dates</mat-slide-toggle>
+	<cs-search [placeholder]="'Search...'" (changed)="searchFilter($event)"></cs-search>
+</div>
+
+	<div class="cardContent" cardContent *ngIf="card.dispCard">
+		<dx-data-grid 
+			#projectMilestones 
+			[showColumnLines]="false" 
+			[showRowLines]="false" 
+			[remoteOperations]="true"
+			[showBorders]="false" 
+			[rowAlternationEnabled]="true" 
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="false"  
+			[columnAutoWidth]="true"
+			[dataSource]="card.gridData.dataSource"
+			keyExpr="gridIndex"
+			(onRowClick)="rowClick($event)"
+			[wordWrapEnabled]="true"
+			(onContentReady)="adaAttr($event)">
+
+			<dxo-paging [pageSize]="50"></dxo-paging>
+			<dxo-pager [showPageSizeSelector]="true" 
+				[visible]="true" 
+				[allowedPageSizes]="[25, 50, 100]" 
+				[showInfo]="true">
+			</dxo-pager>
+			<dxo-header-filter [visible]="true"></dxo-header-filter>
+
+			<dxi-column [allowSorting]="true" dataField="projectName" [caption]="getProjectName()" [fixed]="true" [width]="300" alignment="left">
+			</dxi-column>
+			<dxi-column [allowSorting]="true" dataField="projectType" caption="Type" [fixed]="true" [width]="125" alignment="left">
+			</dxi-column>
+			<dxi-column [allowSorting]="true" dataField="projectStatus" caption="Status" [fixed]="true" [width]="85" alignment="left">
+			</dxi-column>
+
+			<dxi-column [allowSorting]="true" dataField="projectManager" caption="Manager" [fixed]="true" [width]="125" alignment="left">
+			</dxi-column>
+			<dxi-column [allowExporting]="false" [allowSorting]="false" [allowFiltering]="false" id="lastColumn" [fixed]="false" dataField="chips" caption="Milestones" [cellTemplate]="'milestoneTemplate'"
+				alignment="left"></dxi-column>
+
+			<div *dxTemplate="let cell of 'milestoneTemplate'">
+				<div class='chips' *ngFor="let chip of cell.data.chips">
+					<cs-chip [id]="chip.id" [chipStatus]="chip.chipStatus" [matTooltipContent]="chip.matTooltipContent">
+						<div chipContent class="chipContent">{{chip.chipContent}}<div *ngIf="checked">{{chip.due | date:cardsService.dateFormat}}</div>
+						</div>
+					</cs-chip>
+				</div>
+			</div>
+		</dx-data-grid>
+	</div>
+</crem-card>

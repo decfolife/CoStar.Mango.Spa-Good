@@ -1,0 +1,292 @@
+/* The Fonts to be Used in the Document */
+$font: "Helvetica";
+
+/* Basic Numerical Values for the Document */
+$headerBarHeight: 50px;
+$mainNavWidth : 3.5rem;
+$toolbarHeight: 4.2em;
+$nav2Height: $headerBarHeight / 1.5;
+$catalogAddHeight: 48px;
+$catalogWidth: 300px;
+$catalogWidthXL : 380px;
+$iconWidth: 56px;
+
+/* Default add-on styles */
+/* Text Colors */
+.blue, .primary {
+	color: $primary !important;
+}
+.green, .success {
+	color: $success !important;
+}
+.yellow {
+	color: $yellow !important;
+}
+.orange, .warning {
+	color: $warning !important;
+}
+.red, .danger {
+	color: $danger !important;
+}
+.gray {
+	color: $costarRichLightGray !important;
+}
+
+.text-gray {
+	color: $stdTextGray !important;	
+}
+
+
+/* Background colors */
+.bg-green {
+	background: $success !important;
+	color: white !important;
+}
+.bg-yellow {
+	background: $yellow !important;
+}
+.bg-orange {
+	background: $warning !important;
+	color: white !important;
+}
+.bg-red {
+	background: $danger !important;
+	color: white !important;
+}
+.bg-white {
+	background: white !important;
+}
+
+.bg-gray {
+	background: $backgroundGray !important;
+}
+
+.bg-costar-blue {
+	background: $costarBlue !important;
+}
+
+/* Borders */
+$stdBorder: 1px solid $stdBorderColor;
+$thickBorder: 2px solid $stdBorderColor;
+$darkBorder: 1px solid $darkBorderColor;
+$darkThickBorder: 2px solid $darkBorderColor;
+
+.border {
+	border:$stdBorder !important;
+}
+
+.border-top, .top-border {
+	border-top: $stdBorder !important;
+}
+.border-right {
+	border-right: $stdBorder !important;
+}
+.border-bottom, .btm-border, .border-btm {
+	border-bottom: $stdBorder !important;
+}
+.border-left {
+	border-left: $stdBorder !important;
+}
+.no-border {
+	border: 0px !important;
+}
+
+
+/* Padding & Margins */
+$stdPadding: 8px;
+$dblPadding: 2 * $stdPadding;
+
+.std-top-margin {
+	margin-top: $stdPadding !important;
+}
+.std-bottom-margin {
+	margin-bottom: $stdPadding !important;
+}
+.std-left-margin {
+	margin-left: $stdPadding !important;
+}
+.std-right-margin {
+	margin-right: $stdPadding !important;
+}
+.std-side-margin {
+	margin-left: $stdPadding !important;
+	margin-right: $stdPadding !important;
+}
+.dbl-top-margin {
+	margin-top: $dblPadding !important;
+}
+.dbl-bottom-margin {
+	margin-bottom: $dblPadding !important;
+}
+.dbl-left-margin {
+	margin-left: $dblPadding !important;
+}
+.dbl-right-margin {
+	margin-right: $dblPadding !important;
+}
+.auto-margin {
+	margin: 0px auto !important;
+}
+.std-margin {
+	margin: $stdPadding !important;
+}
+.dbl-margin {
+	margin: $dblPadding !important;
+}
+.no-margins {
+	margin: 0px !important;
+}
+
+.no-top-margin {
+	margin-top: 0px !important;
+}
+
+.std-padding {
+	padding: $stdPadding !important;
+}
+.dbl-padding {
+	padding: $dblPadding !important;
+}
+.std-left-padding {
+	padding-left: $stdPadding !important;
+}
+.std-right-padding {
+	padding-right: $stdPadding !important;
+}
+.std-top-padding {
+	padding-top: $stdPadding !important;
+}
+.std-bottom-padding {
+	padding-bottom: $stdPadding !important;
+}
+.dbl-left-padding {
+	padding-left: $dblPadding !important;
+}
+.dbl-right-padding {
+	padding-right: $dblPadding !important;
+}
+.dbl-top-padding {
+	padding-top: $dblPadding !important;
+}
+.dbl-bottom-padding {
+	padding-bottom: $dblPadding !important;
+}
+.no-padding {
+	padding: 0px !important;
+}
+
+.no-left-padding {
+	padding-left: 0px !important;
+}
+
+.no-right-padding {
+	padding-right: 0px !important;
+}
+
+/* Alignment & Positioning */
+.inline {
+	display: inline-block !important;
+}
+.block {
+	display: block !important;
+}
+.left {
+	text-align: left !important;
+}
+.center {
+	text-align: center !important;
+}
+.right {
+	text-align: right !important;
+}
+.float-right {
+	float: right !important;
+}
+.float-left {
+	float: left !important;
+}
+.float-none {
+	float: none !important;
+}
+
+.align-top {
+	vertical-align: top !important;
+}
+
+.align-middle {
+	vertical-align: middle !important;
+}
+
+
+/* Text Styling */
+.italic {
+	font-style: italic;
+}
+.underline {
+	text-decoration: underline;
+}
+.clickable {
+	cursor: pointer !important;
+}
+.grab {
+	cursor: -webkit-grab;
+}
+
+b {
+	font-weight: 800;
+}
+
+/* Display */
+.show {
+	display: block;
+}
+.hide {
+	display: none !important;
+}
+
+
+/* Fixed Widths */
+.w400 {
+	width: 400px !important;
+}
+
+.w600 {
+	width: 600px !important;
+}
+
+.w200 {
+	width: 200px;
+}
+
+.h100 {
+	height: 100%;
+}
+
+.w50 {
+	width: 50% !important;
+}
+
+.w100 {
+	width: 100% !important;
+}
+
+.no-min-height {
+	min-height: 0px !important;
+}
+
+/* overflows */
+.oflow-y-auto {
+	overflow-y: auto !important;
+}
+
+.oflow-y-hidden {
+	overflow-y: hidden !important;
+}
+
+.oflow-x-hidden {
+	overflow-x: hidden !important;
+}
+
+.flex {
+	display: flex !important;
+}

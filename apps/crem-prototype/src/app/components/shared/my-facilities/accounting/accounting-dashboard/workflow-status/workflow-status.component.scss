@@ -1,0 +1,30 @@
+@import '../../../../../../../assets/styles/colors.scss';
+
+.locked {
+  font-size: 18px;
+  margin-right: 3rem;
+}
+
+.dim {
+  color: $neutral-dark;
+}
+
+.stats-container {
+  color: $neutral-dark;
+  display: flex;
+  font-size: 16px;
+  padding: 16px;
+
+  sup {
+    top: 0;
+  }
+
+  div {
+    margin-right: 3rem;
+
+    div {
+      padding-left: 12px;
+      padding-top: 4px;
+    }
+  }
+}

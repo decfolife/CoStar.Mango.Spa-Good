@@ -1,0 +1,25 @@
+<div class="emulate-user">
+	<cs-search #SearchBox class="user-maintenance-search"
+		(changed)="searchDataGrid($event)"
+		>
+	</cs-search>
+	<crem-simple-grid #SimpleGrid
+		[dataSource]="dataSource"
+		keyExpr="contactID"
+		[columns]="columns"
+		[paging]="false"
+		(onSelectionChanged)="onSelectionChange($event)"
+	>
+	</crem-simple-grid>
+	<div *ngIf = "isCA!=='True'" class="emulate-user__password-field">
+		Password:
+		<cs-text-field
+			type="password"
+			formControlName="password"
+			[placeholder]="'Password'"
+			[required]="true"
+			(onChange)="passwordChange($event)"
+			required>
+		</cs-text-field>
+	</div>
+</div>

@@ -1,0 +1,254 @@
+<div class="list-page">
+  <div class="list-page-controls-wrapper">
+    <div id="ba-search" class="controls-left">
+      <h5 class="dbl-right-margin"
+      >{{ title }}
+        <i class="dx-icon-info"
+          *ngIf="isSuperUser"
+          [mat-menu-trigger-for]="heartbeat"
+        ></i>
+
+        <mat-menu #heartbeat="matMenu">
+          <div *ngIf="heartbeatDataLoading"
+            class="mt-1 mb-1 ml-2 mr-2"
+          >Loading...</div>
+
+          <div *ngIf="!heartbeatDataLoading && heartbeatData.length === 0"
+            class="mt-1 mb-1 ml-2 mr-2"
+          >Error loading heartbeat data.</div>
+
+          <div *ngFor="let server of heartbeatData; let i = index"
+            class="mt-1 mb-1 ml-2 mr-2"
+          >Server {{ i + 1 }}:<br>
+            &nbsp; Started: {{ server.startedAt | date:baseService.dateFormatWithTime }}<br>
+            &nbsp; Heartbeat: {{ server.lastHeartbeat | date:baseService.dateFormatWithTime }}
+          </div>
+        </mat-menu>
+      </h5>
+
+      <dx-text-box class="batch-log__search"
+        [(value)]="searchText"
+        mode="search"
+        placeholder="Search..."
+        [showClearButton]="true"
+        valueChangeEvent="keyup"
+        (onValueChanged)="searchDataGrid($event)"
+      ></dx-text-box>
+    </div>
+
+    <div class="controls-right">
+      <button id="ba-filters" class="btn btn-default"
+        (click)="showFilterBuilder()"
+      >Filters
+        <div *ngIf="appliedFilterCount > 0 && !showClearFilters"
+          class="badge primary costar std-left-margin"
+          (mouseover)="toggleClearFilters()"
+        >{{ appliedFilterCount }}</div>
+
+        <div *ngIf="appliedFilterCount > 0 && showClearFilters"
+          class="badge primary costar std-left-margin underline"
+          (mouseout)="toggleClearFilters()"
+          (click)="clearGridFilters($event)"
+        >Clear {{ appliedFilterCount }} Filters</div>
+      </button>
+
+      <button id="ba-columns"
+        class="btn btn-default"
+        (click)="showColumnChooser()"
+      >Columns</button>
+
+      <button *ngIf="service.userRights === 2"
+        id="ba-add"
+        class="btn btn-primary"
+        (click)="addNewBatch()"
+      >
+        <fa-icon [icon]="faPlus"></fa-icon> Add
+      </button>
+    </div>
+  </div>
+
+  <div class="list-page-data-grid-wrapper">
+    <dx-data-grid class="list-page-data-grid"
+      #DataGrid
+      [dataSource]="batchLogs"
+      keyExpr="id"
+      [elementAttr]="{ id: 'ba-log-grid' }"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="true"
+      [filterSyncEnabled]="true"
+      (onContentReady)="calculateAppliedFilterCount()"
+      (onCellPrepared)="onCellPrepared($event)"
+      (onCellHoverChanged)="cellHoverChanged($event)"
+      [columnMinWidth]="10"
+      [wordWrapEnabled]="true"
+    >
+      <dxo-header-filter [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+
+      <dxo-sorting mode="multiple"></dxo-sorting>
+
+      <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+
+      <dxo-column-chooser [allowSearch]="true"
+        mode="select"
+      ></dxo-column-chooser>
+
+      <dxo-paging [pageSize]="100"></dxo-paging>
+
+      <dxo-pager [showPageSizeSelector]="true"
+        [allowedPageSizes]="[25, 50, 100, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+      ></dxo-pager>
+
+      <dxo-filter-builder-popup [width]="600"
+        [height]="600"
+        [(visible)]="filterBuilderVisible"
+      ></dxo-filter-builder-popup>
+
+      <dxo-filter-builder></dxo-filter-builder>
+
+      <ng-container *ngFor="let col of columns">
+        <dxi-column
+          [dataField]="col.dataField"
+          [alignment]="col.alignment"
+          [visible]="col.visible"
+          [dataType]="col.dataType"
+          [caption]="col.caption"
+          [fixed]="col.fixed"
+          [sortOrder]="col.sortOrder"
+          [format]="col.format"
+          [cellTemplate]="col.dataField === 'batchStatus' ? 'batchStatusTemplate' : ''"
+        >
+          <dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0"
+            type="fixedPoint"
+            [precision]="col.precision"
+          ></dxo-format>
+        </dxi-column>
+      </ng-container>
+
+      <div *dxTemplate="let cell of 'batchStatusTemplate'">
+        <dx-drop-down-button *ngIf="canShowButton(cell.data); else showText"
+          [text]="cell.text"
+          [items]="getBatchActionItems(cell.data)"
+          [disabled]="actionDisabledCache[cell.data.id]"
+          class="{{ cell.text.toLowerCase().replaceAll(' ', '_') }}"
+          (onItemClick)="actionMenuCallback($event.itemData.toLowerCase(), cell.data)"
+        ></dx-drop-down-button>
+
+        <ng-template #showText>
+          {{ cell.text }}
+        </ng-template>
+      </div>
+
+      <dxi-column type="buttons"
+        width="60"
+        [showInColumnChooser]="false"
+      >
+        <dxi-button template="moreMenuTemplate">
+          <div *dxTemplate="let data of 'moreMenuTemplate'">
+            <div class="batch-log__fa-icon"
+              *ngIf="menuButtonVisible('download', data.data)"
+              (click)="actionMenuCallback('download', data.data)"
+            >
+              <fa-icon [icon]="faDownload" title="Download Results"></fa-icon>
+            </div>
+          </div>
+        </dxi-button>
+      </dxi-column>
+
+      <dxo-master-detail [enabled]="true"
+        template="masterDetail"
+      ></dxo-master-detail>
+
+      <div *dxTemplate="let batchLog of 'masterDetail'">
+        <div>
+          <div class="d-flex mb-2 font-size-small">
+            Measure Event: {{ batchLog.data.measureEvent }} |
+            Original Workflow Step: {{ batchLog.data.originalWorkflowStep }} |
+            Next Workflow Step: {{ batchLog.data.finalWorkflowStep }}
+          </div>
+        </div>
+
+        <dx-data-grid (onContentReady)="onDetailContentReady(batchLog)"
+          [showBorders]="true"
+          keyExpr="parameterID"
+          [columnAutoWidth]="true"
+          [dataSource]="batchLog.data.classificationParameters"
+        >
+          <dxi-column dataField="accountingTermBeginDate"
+            dataType="string"
+          ></dxi-column>
+
+          <dxi-column dataField="accountingTermEndDate"
+            dataType="string"
+          ></dxi-column>
+
+          <dxi-column dataField="classificationType"
+            dataType="string"
+          ></dxi-column>
+
+          <dxi-column dataField="manualAssetAdjustment"
+            dataType="string"
+          ></dxi-column>
+
+          <dxi-column dataField="discountRateProfile"
+            dataType="string"
+          ></dxi-column>
+
+          <dxi-column dataField="journalEntryProfile"
+            dataType="string"
+          ></dxi-column>
+
+          <dxi-column dataField="comments"
+            dataType="string"
+          ></dxi-column>
+        </dx-data-grid>
+      </div>
+
+      <div *dxTemplate="let data of 'downloadTemplate'">
+        <fa-icon [icon]="faDownload"></fa-icon>
+      </div>
+    </dx-data-grid>
+  </div>
+</div>
+
+<dx-popup [width]="400"
+  [height]="180"
+  [showTitle]="true"
+  title="Confirm Batch Cancellation"
+  [dragEnabled]="true"
+  [closeOnOutsideClick]="false"
+  [(visible)]="cancelModalVisible"
+>
+  <div *dxTemplate="let data of 'content'"
+    class="popup-no-padding"
+  >
+    <div class="dbl-padding">
+      Canceling the batch will remove it from the queue and
+      unlock all related leases and schedules.
+    </div>
+  </div>
+
+  <dxi-toolbar-item toolbar="bottom"
+    location="after"
+  >
+    <button class="btn btn-default"
+      (click)="cancelModalToggle()"
+    >Cancel</button>
+  </dxi-toolbar-item>
+
+  <dxi-toolbar-item toolbar="bottom"
+    location="after"
+  >
+    <button class="btn btn-primary"
+      (click)="cancelBatch()"
+    >Confirm</button>
+  </dxi-toolbar-item>
+</dx-popup>

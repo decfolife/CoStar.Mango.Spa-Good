@@ -1,0 +1,8 @@
+<mat-button-toggle-group class="button-group">
+  <mat-button-toggle
+    *ngFor="let b of buttons"
+    [label]="b"
+    (click)="clicked.emit(b)"
+    >{{ b }}</mat-button-toggle
+  >
+</mat-button-toggle-group>

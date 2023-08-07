@@ -1,0 +1,152 @@
+// CoStar Colors v2
+$costarDarkBlue: #033871;
+$costarBlue: #0559b3;
+$costarMediumBlue: #88b5e5;
+$costarLightBlue: #cae3fe;
+$costarLightOrange: #F68338;
+$costarDarkOrange: #EC4A08;
+$costarGreen: #77B800;
+$costarRed: #D30515;
+$bodyBackgroundGray: #F5F5F5;
+
+$white: #ffffff;
+$offWhite: #f8f8f8;
+$ultraLightGray: #f2f2f2;
+$lightGray: #e6e6e6;
+$gray: #c2c2c2;
+$mediumGray: #797979;
+$darkGray: #3c3c3c;
+$black: #000000;
+$costarError: #ffbfbe;
+$costarAlert: #ec4a08;
+
+$success: $costarGreen;
+$primary : $costarBlue;
+$secondary: $costarLightBlue;
+$warning : $costarLightOrange;
+$danger : $costarRed;
+
+$hoverBlue : $costarLightBlue;
+$borderColor: $lightGray;
+
+
+dx-data-grid {
+	height: 100%;
+
+	div.dx-datagrid-headers {		
+		background-color: $lightGray;
+		div.dx-datagrid-content {
+			table {
+				tbody {
+					background-color: $lightGray;
+					color: $costarBlue;
+					font-family: Helvetica;
+					font-size: 14px;
+					font-weight: bold;
+					tr.dx-header-row {
+						td {
+							div.dx-column-indicators {
+								span.dx-header-filter {
+									color: $costarMediumBlue;
+									&.dx-header-filter-empty {
+										color: rgba(149, 149, 149, 0.5);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	table.dx-datagrid-table {
+		tbody {
+			tr.dx-row.dx-data-row {
+				&:hover {
+					background: $hoverBlue !important;
+					cursor: pointer;
+				}
+
+				&.dx-row-alt {
+					&:hover {
+						background: $hoverBlue !important;
+						cursor: pointer;
+						td {
+							background: $hoverBlue !important;
+							cursor: pointer;
+						}
+					}	
+
+					td {
+						background: $offWhite;
+					}			
+				}
+
+				&.dx-selection {
+
+					&:hover {
+						background: $costarLightBlue;
+						color: white;
+					}
+					&.dx-row-alt {
+						&:hover {
+							td {
+								background: $costarLightBlue !important;
+								color: white;
+							}
+						}
+					}
+
+					td {
+						background: $costarLightBlue;
+						color: black;
+					}
+				}
+			}
+
+			tr.dx-row.dx-group-row {
+				td.dx-group-cell {
+					color: black;
+				}
+			}
+		}
+	}
+
+	.dx-header-row > td > .dx-datagrid-text-content {
+		text-align: center;
+	}
+
+	.dx-datagrid .dx-row-alt > td, .dx-datagrid .dx-row-alt > tr > td {
+		background-color: $offWhite;
+	}
+
+	div.dx-datagrid-pager.dx-pager {
+		div.dx-page-sizes {
+			div.dx-page-size {
+				&.dx-selection {
+					color: white;
+					background-color: $primary;
+				}
+			}
+		}
+
+		div.dx-pages {
+			div.dx-page {
+				&.dx-selection {
+					color: white;
+					background-color: $primary;
+				}
+			}
+
+			div.dx-navigate-button {
+				color: $primary;
+			}
+		}
+	}
+
+	.dx-datagrid-search-text {
+		color: black;
+		background-color: rgb(255,255,55);
+	}
+}

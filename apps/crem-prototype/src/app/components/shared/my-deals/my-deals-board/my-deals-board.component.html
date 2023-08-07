@@ -1,0 +1,47 @@
+<div class="board-page">
+	<div class="board-controls-wrapper">
+		<div class="controls-left">
+			<div *ngFor="let filter of filters">
+				<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible && filter.controlType == 'dropdown'"></costar-dropdown>			
+				<portfolio-menu *ngIf="filter.visible && filter.controlType == 'portfolio'" [showSearchRow]="filter.showSearchRow"></portfolio-menu>			
+				<hierarchy-dropdown portfolioId="1" *ngIf="filter.visible && filter.controlType == 'hierarchy'"></hierarchy-dropdown>			
+			</div>		
+			<button class="btn btn-default btn-sm">Apply</button>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" (click)="launchAddDealModal()">Add Deal</button>
+		</div>
+	</div>
+	<div class="board-wrapper">
+		<div cdkDropListGroup class="board-columns-wrapper">
+			<div class="board-column" *ngFor="let stage of dealStages">
+				<div class="column-title">
+					<h5>{{stage.stageName}}</h5>
+				</div>
+				<div 
+					cdkDropList					
+					[cdkDropListData]="stage.deals"					
+					class="column-cards-wrapper"
+					(cdkDropListDropped)="drop($event)">
+					<div class="board-card" *ngFor="let deal of stage.deals" cdkDrag>
+						<a [routerLink]="['../deal/1']">{{deal.dealName}}</a>
+					</div>					
+				</div>
+			</div>			
+		</div>
+	</div>
+</div>
+
+<dx-popup
+	#AddDealPopup
+    width="800"
+    height="95%"
+    [showTitle]="true"
+    title="Create Deal"
+    [dragEnabled]="false"
+    [closeOnOutsideClick]="false"
+    [(visible)]="addDealPopupVisible">   
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">  
+    	<add-deal-dialog (saved)="saveDeal($event)" (cancelled)="cancelAddDeal($event)"></add-deal-dialog>
+    </div>
+</dx-popup>	

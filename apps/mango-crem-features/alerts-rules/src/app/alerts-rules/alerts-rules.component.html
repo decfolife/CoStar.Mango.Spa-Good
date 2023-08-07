@@ -1,0 +1,63 @@
+<div class="list-page">
+  <div class="list-page-controls-wrapper">
+    <div id="ar-search" class="controls-left">
+      <h5 class="dbl-right-margin">{{ title }}</h5>
+
+      <dx-text-box class="alert-rules__search"
+        [(value)]="searchText"
+        mode="search"
+        placeholder="Search..."
+        [showClearButton]="true"
+        valueChangeEvent="keyup"
+        (onValueChanged)="searchDataGrid()"
+      ></dx-text-box>
+    </div>
+
+    <div class="controls-right">
+      <mat-slide-toggle [checked]="dismissReasonRequired"
+        [disabled]="!userHasAddRights || isLoadingData"
+        (change)="updateDismissReasonSetting()"
+        id="requireDismissReasonToggle"
+      >Require Dismiss Reason</mat-slide-toggle>
+
+      <button class="btn btn-default"
+        (click)="showFilterBuilder()"
+        id="filterBuilderButton"
+      >Filters
+        <div *ngIf="appliedFilterCount > 0 && !showClearFilters"
+          class="badge primary costar std-left-margin"
+          (mouseover)="toggleClearFilters()"
+        >{{ appliedFilterCount }}</div>
+
+        <div *ngIf="appliedFilterCount > 0 && showClearFilters"
+          class="badge primary costar std-left-margin underline"
+          (mouseout)="toggleClearFilters()"
+          (click)="clearGridFilters($event)"
+        >Clear {{ appliedFilterCount }} Filter{{ appliedFilterCount === 1 ? '' : 's' }}</div>
+      </button>
+
+      <button class="btn btn-default"
+        (click)="exportDataGrid()"
+        [disabled]="isExporting"
+        id="exportButton"
+      >Export</button>
+
+      <button class="btn btn-primary"
+        *ngIf="userHasAddRights"
+        (click)="save()"
+        [disabled]="disableSave || isLoadingData"
+        id="saveButton"
+      >Save</button>
+    </div>
+  </div>
+
+  <div class="list-page-data-grid-wrapper">
+    <mango-alerts-rules-grid #rulesGrid
+      [editable]="userHasAddRights"
+      (filterCountChanged)="updateFilterCount($event)"
+      (dirtyStateChanged)="updateSaveButton($event)"
+      (isLoading)="isLoadingData = $event"
+      id="alertRulesDataGrid"
+    ></mango-alerts-rules-grid>
+  </div>
+</div>

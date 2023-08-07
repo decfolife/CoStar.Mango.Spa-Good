@@ -1,0 +1,9 @@
+:host ::ng-deep .mat-form-field-infix {
+	display: flex !important;
+}
+
+.button {
+    &__apply {
+        padding-right: 8px;
+    }
+}

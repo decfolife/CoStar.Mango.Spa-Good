@@ -1,0 +1,18 @@
+<div class="cremModal" [id]="modalId">
+	<div class="modalHeader" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+		<h2 [id]="modalTitleId"class="modal-title"> {{ modalTitle }}</h2>
+		<crem-button type="secondary" *ngIf="closeIconVisible" (click)="closeDialog()" ariaLabel="Close">
+      		<crem-icon icon="brand-close" fill="#000" library="local"></crem-icon>
+    	</crem-button>
+	</div>
+	<div class="modalContent">
+   	 <ng-content select="'[modalContent]'"></ng-content>
+	</div>
+	<div class="modalFooter" *ngIf="primaryFooterButtonText || closeOrCancelButtonText || customFooter">
+		<ng-content *ngIf="customFooter" select="'[modalFooter]'"></ng-content>
+		<div *ngIf="!customFooter" id="'buttonTemplate'" class="footerRightControls">
+			<crem-button *ngIf="closeOrCancelButtonText" type="secondary" id="close-btn" (click)="closeDialog()">{{closeOrCancelButtonText}}</crem-button>
+			<crem-button *ngIf="primaryFooterButtonText" [disabled]="primaryFooterButtonEnabledDisabled" type="primary" (click)="primaryEvent($event)"> {{primaryFooterButtonText}} </crem-button>
+		</div>
+	</div>
+</div>

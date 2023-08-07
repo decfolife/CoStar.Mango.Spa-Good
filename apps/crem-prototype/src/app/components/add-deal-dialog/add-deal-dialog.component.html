@@ -1,0 +1,138 @@
+<costar-popup>
+	<popup-content>
+		<div class="dynamic-form">
+			<div class="dynamic-form-content">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Deal Details</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>
+						<dx-form 
+							[(formData)]="deal"
+							[colCount]="2"
+							labelLocation="top"
+							[showColonAfterLabel]="false">
+							<dxi-item 
+								dataField="dealType"
+								[label]="{ text : 'Deal Type' }"
+								[editorOptions]="{ items : dealTypes }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="dealStage"
+								[label]="{ text : 'Deal Stage' }"
+								[editorOptions]="{ items : dealStages }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="tenant"
+								[label]="{ text : 'Tenant' }"
+								[editorOptions]="{ items : tenants }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="tenantContact"
+								[label]="{ text : 'Tenant Contact' }"
+								[editorOptions]="{ items : tenantContacts }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="tenantBroker"
+								[label]="{ text : 'Tenant Broker' }"
+								[editorOptions]="{ items : tenantBrokers }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="industry"
+								[label]="{ text : 'Industry' }"
+								[editorOptions]="{ items : industries }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="notes"
+								[label]="{ text : 'Notes' }"
+								colSpan="2"
+								template="textBoxTemplate">
+							</dxi-item>																				
+							<div *dxTemplate="let data of 'textBoxTemplate'">
+							    <dx-text-box [(value)]="deal[data.dataField]"></dx-text-box>
+							</div>							
+							<div *dxTemplate="let data of 'selectBoxTemplate'">
+							    <dx-select-box [dataSource]="data.editorOptions.items" [(value)]="deal[data.dataField]" valueExpr="value" displayExpr="display"></dx-select-box>
+							</div>							
+						</dx-form>
+					</mat-card-content>
+				</mat-card>
+				<mat-card class="no-margins">
+					<mat-card-header>
+						<mat-card-title>Tenant Requirements</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>
+						<dx-form 
+							[(formData)]="deal"
+							[colCount]="2"
+							labelLocation="top"
+							[showColonAfterLabel]="false">
+							<dxi-item 
+								dataField="targetMinSF"
+								[label]="{ text : 'SF Required' }"
+								template="sfTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="targetSpaceType"
+								[label]="{ text : 'Space Type' }"
+								[editorOptions]="{ items : industries }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="numberOfPeople"
+								[label]="{ text : '# of People' }"
+								template="textBoxTemplate">
+							</dxi-item>	
+							<dxi-item 
+								dataField="targetMinLeaseTerm"
+								[label]="{ text : 'Term in Years' }"
+								template="termTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="targetCommencementDate"
+								[label]="{ text : 'Target Commencement Date' }"
+								template="dateBoxTemplate">
+							</dxi-item>	
+							<dxi-item 
+								dataField="targetSubmarket"
+								[label]="{ text : 'Target Submarket' }"
+								[editorOptions]="{ items : industries }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<div *dxTemplate="let data of 'sfTemplate'">
+								<dx-text-box [(value)]="deal.targetMinSF" placeholder="Min SF" class="std-right-margin"></dx-text-box>
+								<dx-text-box [(value)]="deal.targetMaxSF" placeholder="Max SF"></dx-text-box>
+							</div>
+							<div *dxTemplate="let data of 'termTemplate'">
+								<dx-text-box [(value)]="deal.targetMinLeaseTerm" placeholder="Min" class="std-right-margin"></dx-text-box>
+								<dx-text-box [(value)]="deal.targetMaxLeaseTerm" placeholder="Max"></dx-text-box>
+							</div>
+							<div *dxTemplate="let data of 'selectBoxTemplate'">
+							    <dx-select-box [dataSource]="data.editorOptions.items" [(value)]="deal[data.dataField]" valueExpr="value" displayExpr="display"></dx-select-box>
+							</div>
+							<div *dxTemplate="let data of 'dateBoxTemplate'">
+							    <dx-date-box [(value)]="deal[data.dataField]"></dx-date-box>
+							</div>
+							<div *dxTemplate="let data of 'textBoxTemplate'">
+							    <dx-text-box [(value)]="deal[data.dataField]"></dx-text-box>
+							</div>	
+						</dx-form>		
+										
+					</mat-card-content>
+				</mat-card>				
+			</div>
+		</div>
+	</popup-content>
+	<popup-footer>
+		<popup-footer-right>			
+			<button class="btn btn-default" (click)="cancel()">Cancel</button> 
+			<button class="btn btn-primary" (click)="save()">Save</button> 
+		</popup-footer-right>
+	</popup-footer>
+</costar-popup>

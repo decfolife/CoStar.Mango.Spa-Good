@@ -1,0 +1,30 @@
+<mat-card>
+	<mat-card-header>
+		<mat-card-title>GL Accounts</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<dx-data-grid
+			id="glAccountContainer"
+			[dataSource]="accounts"
+			[showColumnLines]="false"
+			[showRowLines]="true"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 					
+		>
+			<dxo-header-filter 
+		        [visible]="true">
+			</dxo-header-filter>	
+		    <dxo-scrolling mode="virtual"></dxo-scrolling>
+		    <dxi-column dataField="accountName"></dxi-column>
+		    <dxi-column dataField="description"></dxi-column>
+		    <dxi-column dataField="accountCode"></dxi-column>
+		    <dxi-column dataField="accountSubCode"></dxi-column>
+		    <dxi-column dataField="debitCredit"></dxi-column>
+		    <dxi-column dataField="monthEnd"></dxi-column>
+		    <dxi-column dataField="openingBalance"></dxi-column>
+		    <dxi-column dataField="adjustment"></dxi-column>
+		    <dxi-column dataField="retroAdjustment"></dxi-column>
+		    <dxi-column dataField="accounttype"></dxi-column>		    
+		</dx-data-grid>
+	</mat-card-content>
+</mat-card>	

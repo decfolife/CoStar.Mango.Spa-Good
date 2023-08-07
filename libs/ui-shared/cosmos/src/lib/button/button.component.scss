@@ -1,0 +1,276 @@
+@import '../assets/styles/cosmos.scss';
+cs-button {
+  mat-button {
+    // @include lhCrop($font-line-height-body);
+    font-family: $font-family-brand;
+    padding: $space-2-x-small;
+    font-size: $font-size-med;
+    border-radius: $border-radius-buttons;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    box-shadow: none;
+    height: $space-x-large;
+    cursor: pointer;
+
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      cs-icon#iconContent {
+        padding: $space-2-x-small;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: $space-2-x-small;
+        position: relative;
+        top: -1px;
+      }
+      #content {
+        margin: $space-2-x-small;
+      }
+    }
+
+    &.button-primary {
+      background: $color-brand-primary;
+      color: $color-neutral-white;
+      border: none;
+      padding: 0px $space-x-small;
+      margin-right: $space-x-small;
+
+      &:hover {
+        @extend .button-primary;
+        background: $color-brand-primary-medium;
+      }
+      &.button-size-small {
+        @extend .button-primary;
+        padding: 2px $space-2-x-small;
+        height: $space-large;
+        background: $color-brand-primary;
+        font-size: $font-size-sm;
+        color: $color-neutral-white;
+        border: none;
+        &:hover {
+          @extend .button-size-small;
+          background: $color-brand-primary-medium;
+        }
+      }
+
+      &.button-icon-position-left {
+        display: flex;
+        flex-direction: row;
+
+        cs-icon {
+          svg {
+            margin-right: 8px;
+            use {
+              fill: $color-neutral-white;
+            }
+          }
+        }
+      }
+      &.button-icon-position-right {
+        @extend .button-icon-position-left;
+        flex-direction: row-reverse;
+        cs-icon {
+          position: relative;
+          top: -2px;
+          svg {
+            margin-left: $space-x-small;
+            use {
+              fill: $color-neutral-white;
+            }
+          }
+        }
+      }
+
+      &.button-disabled {
+        background: $color-neutral-light;
+        border: $border-width-brand solid $color-neutral-medium;
+        color: $color-dark-gray;
+        cursor: not-allowed;
+        &:hover {
+          background: $color-neutral-light;
+          border: $border-width-brand solid $color-neutral-medium;
+          color: $color-dark-gray;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    &.button-secondary {
+      @extend .button-primary;
+      background: $color-neutral-white;
+      border: $border-width-brand solid $color-neutral-medium;
+      color: $color-neutral-black;
+
+      &.button-size-small {
+        @extend .button-secondary;
+
+        font-size: $font-size-sm;
+        padding: 2px $space-2-x-small;
+        height: $space-large;
+        &:hover {
+          background: $color-neutral-white;
+          color: $color-neutral-dark;
+          border-color: $color-neutral-medium;
+          cs-icon {
+            use {
+              fill: $color-neutral-dark;
+            }
+          }
+        }
+      }
+
+      &.button-icon-position-left {
+        cs-icon {
+          use {
+            fill: $color-neutral-black;
+          }
+        }
+        &:hover {
+          background: $color-neutral-white;
+          color: $color-neutral-dark;
+          border-color: $color-neutral-medium;
+          cs-icon {
+            use {
+              fill: $color-neutral-dark !important;
+            }
+          }
+        }
+      }
+
+      &.button-icon-position-right {
+        @extend .button-icon-position-left;
+        flex-direction: row-reverse;
+        cs-icon {
+          use {
+            fill: $color-brand-primary;
+          }
+        }
+        &:hover {
+          use {
+            fill: $color-brand-primary-medium;
+          }
+        }
+      }
+      &.button-disabled {
+        @extend .button-secondary;
+        border: $border-width-brand solid $color-neutral-light;
+        color: $color-dark-gray;
+        cursor: not-allowed;
+      }
+    }
+
+    // &.button-icon-position-left{
+    //   cs-icon {
+    //     use{
+    //     fill: $color-neutral-black;
+    //     }
+    //   }
+    // }
+    // .button-icon-position-right{
+    //   cs-icon{
+    //     use{
+    //       fill: $color-brand-primary;
+    //     }
+    //   }
+
+    &.button-text {
+      @extend .button-secondary;
+      background-color: transparent !important;
+      color: $color-neutral-black;
+      border: none;
+
+      &.button-icon-position-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        &:hover {
+          color: $color-brand-primary-medium;
+          cs-icon {
+            use {
+              fill: $color-brand-primary-medium;
+            }
+          }
+        }
+      }
+      &.button-icon-position-right {
+        cs-icon {
+          width: $space-base;
+          height: $space-base;
+          margin-left: $space-2-x-small;
+          margin-right: 0px;
+
+          use {
+            position: relative;
+            top: -2px;
+            fill: $color-brand-primary;
+          }
+        }
+        &:hover {
+          use {
+            fill: $color-brand-primary-medium;
+          }
+        }
+
+        &:hover {
+          border: none;
+          background: transparent;
+          color: $color-neutral-dark;
+        }
+      }
+      &:disabled {
+        background-color: transparent !important;
+        color: $color-dark-gray;
+        border: none !important;
+      }
+
+      &.button-size-small {
+        @extend .button-secondary;
+        font-size: $font-size-sm;
+        padding: 2px $space-2-x-small;
+        height: $space-large;
+        border: none;
+      }
+    }
+    // &.button-icon-position-left {
+    //   cs-icon {
+    //     margin-left: 0px;
+    //     margin-right: $space-2-x-small;
+    //   }
+    // }
+
+    // &.button-icon-position-right {
+    //   flex-direction: row-reverse;
+
+    //   cs-icon {
+    //     margin-left: $space-2-x-small;
+    //     margin-right: 0px;
+    //   }
+    // }
+  }
+  button.button-size-medium.button-secondary.button-icon-position-left
+    cs-icon
+    i
+    svg
+    use {
+    fill: #000;
+  }
+  button.button-icon-position-right.button-secondary cs-icon svg use,
+  button.button-icon-position-right.button-text cs-icon svg use {
+    fill: $color-brand-primary !important;
+    position: relative;
+  }
+
+  button.button-icon-position-right.button-text cs-icon svg use {
+    transform: translate(-4px, -3px);
+  }
+  button.button-icon-position-right.button-secondary cs-icon svg,
+  button.button-icon-position-right.button-text cs-icon svg {
+    margin-right: 0px;
+  }
+}

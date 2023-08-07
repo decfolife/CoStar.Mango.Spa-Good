@@ -1,0 +1,580 @@
+/// -----------------------------------------------------------------------------
+/// DEPRECATION NOTICE
+///
+/// This stylesheet contains deprecated code that should not be used anymore.
+/// Please use the common library following the related documentation for the
+/// frontend SCSS architecture
+/// -----------------------------------------------------------------------------
+
+@use 'colors';
+$font-family-brand: Helvetica, system-ui, sans-serif;
+$card-dropDown-height: 24px;
+
+#portfolio-dashboard,
+#projects-dashboard {
+  background-color: colors.$bodyBackgroundGray;
+}
+
+#projects-dashboard div.project-filters,
+#portfolio-dashboard #portfolio-filters,
+.user-settings-dialog #currencyUOMSettings {
+
+	width: 100% !important;
+	position: sticky !important;
+	position: -webkit-sticky !important;
+	top: 0;
+	z-index: 5000;
+
+	crem-dropdown, crem-hierarchy-dropdown {
+		div.dx-texteditor-container{
+			height: 32px !important;
+			border: 1px solid #808080 !important;
+			width: 200px;
+			box-sizing: border-box;
+		}
+
+		div.dx-placeholder {
+			font-size: 16px !important;
+			font-weight: 400 !important;
+			font-stretch: normal;
+			font-style: normal;
+			line-height: normal;
+			letter-spacing: normal;
+			top: 0px !important;
+			font-family: $font-family-brand !important;
+			color: colors.$color-neutral-dark !important;
+		}
+
+		crem-button {
+			button.button-primary, button.button-secondary {
+			margin-left: 0px !important;
+			}
+	  }
+	}	
+}
+
+#projects-dashboard crem-card,
+#portfolio-dashboard crem-card,
+.dashboards-dragCardItems crem-card {
+  .mat-card {
+    border: 1px solid colors.$gray;
+    box-shadow: none !important;
+		padding: 0px;
+
+		mat-card-header.mat-card-header {
+			padding: 16px 44px 16px 16px;
+			border-bottom: 1px solid colors.$gray;
+			box-sizing: border-box;
+			color: colors.$darkGray;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+      height: 58px;
+
+			div.mat-card-header-text {
+				margin: 0px;
+			}
+
+			.cardHeader {
+				height: 26px;
+				display: flex;
+				width: 100%;
+				align-items: center;
+				justify-content: space-between;
+
+				.mat-card-header-text {
+					height: 26px;
+					display: flex;
+					align-items: center;
+				}
+			}
+ 	 	}
+	}	
+
+  .mat-card#project_milestones_card mat-card-header.mat-card-header {
+    overflow: hidden;
+  }
+
+	.cardHeader {
+		.counter {
+			height: 24px;
+			margin-right: 8px;
+			padding: 0px 8px;
+			background: colors.$mediumDarkGray;
+			border-radius: 4px;
+			color: colors.$white;
+			font-weight: 400px;
+			font-size: 20px;
+			vertical-align: middle !important;
+		}	
+
+		.mat-card-title {
+			margin: 0px;
+			font-weight: 400;
+			font-size: 22px;
+			line-height: 24px;
+			display: inline-block;
+			margin-right: 8px;
+			//Solves ADA: Text is clipped when resized, for title
+			overflow: auto;
+			&::-webkit-scrollbar{
+				display: none;
+			}
+			// End of ADA style fix
+  
+      .subtitle {
+        margin: 0px;
+        font-weight: 200;
+        font-size: 14px;
+        color: colors.$textGray;
+        display: inline-block;
+        margin-right: 8px;
+      }
+    }
+
+    .customHeader {
+      display: flex;
+      justify-content: space-around;
+    }
+	}
+
+	mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
+		// height: 400px;
+		display: flex;
+		align-items: stretch;
+		font-family: Helvetica, sans-serif;
+		padding: 0px !important;
+		justify-content: flex-start !important;
+		background: colors.$white;
+	
+	}
+
+}
+
+#projects-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>td,
+#projects-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td:not(.dx-datagrid-headers),
+#portfolio-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>td,
+#portfolio-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td:not(.dx-datagrid-headers),
+.dashboards-dragCardItems crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>td,
+.dashboards-dragCardItems crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td:not(.dx-datagrid-headers) {
+  font-size: 14px !important
+}
+
+#projects-dashboard mat-card-content.mat-card-content.cremCardContent,
+#portfolio-dashboard mat-card-content.mat-card-content.cremCardContent,
+.dashboards-dragCardItems mat-card-content.mat-card-content.cremCardContent {
+	overflow: auto;
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	align-items: center;
+}
+
+#projects-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row > td,
+#portfolio-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row > td,
+.dashboards-dragCardItems crem-card .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > tr
+  > td:not(.dx-datagrid-headers) {
+  vertical-align: top;
+  font-family: $font-family-brand !important;
+  }
+} 
+
+#projects-dashboard button.moreOptionsBtn,
+#portfolio-dashboard button.moreOptionsBtn,
+.dashboards-dragCardItems button.moreOptionsBtn {	
+	height: 24px;
+  margin: 0px !important;
+
+	mat-icon {
+		transform: translateY(-5.5px);
+	}
+}
+
+div.mat-menu-panel.dashboardsMoreOptions div.mat-menu-content .mat-menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  line-height: 18px!important;
+  height: auto;
+}
+#projects-dashboard div.mat-menu-panel.dashboardsMoreOptions,
+#portfolio-dashboard div.mat-menu-panel.dashboardsMoreOptions,  div.mat-menu-panel.dashboardsAddMenu,
+.dashboards-dragCardItems div.mat-menu-panel.dashboardsMoreOptions {
+	overflow-x: hidden;
+
+	& div.mat-menu-content .mat-menu-item {
+		padding: 8px 16px;
+		cursor: pointer;
+		line-height: 18px !important;
+		height: auto;
+	}
+}  
+
+#projects-dashboard cards div.dx-datagrid-headers div.dx-datagrid-content table tbody,
+#portfolio-dashboard cards div.dx-datagrid-headers div.dx-datagrid-content table tbody,
+.dashboards-dragCardItems  div.dx-datagrid-headers div.dx-datagrid-content table tbody {
+	background-color: colors.$lightGray;
+	color: colors.$costarBlue;
+	font-weight: 700;
+}
+
+#projects-dashboard cards
+#portfolio-dashboard cards,
+.dashboards-dragCardItems {
+	table.dx-datagrid-table {
+    tbody {
+      tr.dx-row.dx-data-row {
+        &:hover {
+          background: colors.$color-brand-primary-light !important;
+          cursor: pointer;
+        }
+
+        &.dx-row-alt {
+          &:hover {
+            background: colors.$color-brand-primary-light !important;
+            cursor: pointer;
+            td {
+              background: colors.$color-brand-primary-light !important;
+              cursor: pointer;
+            }
+          }
+
+          td {
+            background: colors.$offWhite;
+          }
+        }
+
+        &.dx-selection {
+          &:hover {
+            background: colors.$color-brand-primary-light !important;
+            color: colors.$white;
+          }
+          &.dx-row-alt {
+            &:hover {
+              td {
+                background: colors.$color-brand-primary-light !important;
+                color: colors.$white;
+              }
+            }
+          }
+
+          td {
+            background: colors.$color-brand-primary-light !important;
+            color: colors.$black;
+          }
+        }
+      }
+
+      tr.dx-row.dx-group-row {
+        td.dx-group-cell {
+          color: colors.$black;
+        }
+      }
+    }
+  }
+}
+
+#projects-dashboard dx-data-grid .dx-header-row > td > .dx-datagrid-text-content,
+#portfolio-dashboard dx-data-grid .dx-header-row > td > .dx-datagrid-text-content,
+.dashboards-dragCardItems dx-data-grid .dx-header-row > td > .dx-datagrid-text-content {
+	text-align: center;
+}
+
+@media only screen and (max-width: 964px) {
+  .categories-item {
+    min-width: 100%;
+  }
+}
+
+#projects-dashboard crem-card, 
+#portfolio-dashboard crem-card,
+.dashboards-dragCardItems crem-card {
+  crem-dropdown {
+    div.dx-fieldset {
+      height: $card-dropDown-height;
+      display: flex;
+      box-sizing: border-box;
+      div.dx-field {
+        height: $card-dropDown-height;
+        min-height: $card-dropDown-height;
+      }
+    }
+    .dx-texteditor.dx-editor-outlined {
+      border: none !important;
+    }
+    div.dx-dropdowneditor-icon {
+      height: 22px !important;
+    }
+    div.dx-texteditor-container {
+      height: $card-dropDown-height !important;  //this is the one
+      box-sizing: border-box;
+      border: 1px solid colors.$black;
+      border-radius: 2px;
+      max-width: 200px;
+      display: flex !important;
+      margin-right: 8px;
+
+      input.dx-texteditor-input {
+        height: $card-dropDown-height;
+        min-height: $card-dropDown-height;
+        color: colors.$black; 
+        padding: 0 0 0 8px !important;
+        font-size: 14px !important;
+        border: none;
+        width: 100%;
+      }
+    }
+  }
+}
+
+#portfolio-dashboard crem-card, .dashboards-dragCardItems crem-card {
+  .mat-card#building_type_card .cardContent, .mat-card#lease_expirations_card .cardContent,
+  .mat-card#stores_by_format_card .cardContent, .mat-card#ownership_type_card .cardContent,
+  .mat-card#annual_expiration_rent_value_card .cardContent,
+  .mat-card#buildings_by_state_card .cardContent,
+  .mat-card#financials_accounting_links_card .cardContent
+  {
+    padding: 16px;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100% !important;
+    overflow: hidden;
+    align-items: center;
+  }
+}
+
+#projects-dashboard crem-loader, .user-settings-dialog crem-loader,
+#portfolio-dashboard crem-loader, .user-settings-dialog crem-loader {
+  position: relative;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translateX(-25px);
+}
+
+#projects-dashboard #leaseOptions .dx-datagrid-borders > .dx-datagrid-headers,
+#portfolio-dashboard #leaseOptions .dx-datagrid-borders > .dx-datagrid-headers,
+.dashboards-dragCardItems #leaseOptions .dx-datagrid-borders > .dx-datagrid-headers {
+  border: 0 !important
+}
+
+#projects-dashboard .filterWrapper input.dx-texteditor-input,
+#portfolio-dashboard .filterWrapper input.dx-texteditor-input {
+  height: 32px !important;
+	min-height: 32px !important;
+  padding: 8px 0 9px 3px !important;
+  box-sizing: border-box !important;
+}
+
+#projects-dashboard ngx-skeleton-loader,
+#portfolio-dashboard ngx-skeleton-loader {
+  span.loader.progress {
+    background: colors.$color-neutral-light !important;
+    margin: 0 !important;
+  }
+
+  .loader.progress:before {
+		animation-duration: 3s !important;
+	}
+}
+
+
+.user-settings-dialog .modalContent {
+	.mat-tab-header {
+		border-top: 1px solid colors.$color-neutral-dark;
+		border-bottom: 1px solid colors.$color-neutral-dark;
+		position: sticky;
+		position: -webkit-sticky;
+		top: 0;
+		z-index: 10;
+ 	}
+
+ .mat-tab-label-container {
+		background-color: colors.$bodyBackgroundDarkGray;
+ 	}
+
+ 	div.mat-tab-body-wrapper {
+		padding: 6px 0px 0px 16px;
+	}
+
+ 	.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+		background-color: colors.$costarDarkOrange;
+		height: 3px;
+ 	}
+ 	.mat-tab-label {
+		height: 36px;
+		width: auto !important;
+		min-width: auto !important;
+		padding: 0 16px;
+		color: colors.$black;
+
+		.mat-tab-label-content {
+			line-height: 17px;
+		}
+  }  
+
+ .mat-tab-label.mat-focus-indicator.mat-tab-label-active {
+		opacity: 1 !important;
+  }
+
+
+}
+
+.user-settings-dialog, div.taskApprovalModal {
+  .notes {
+    height: 90px;
+    box-sizing: border-box;
+  }
+  div#\'buttonTemplate\' {
+    display: flex;
+  }
+}
+#projects-dashboard, .user-settings-dialog,
+#portfolio-dashboard, .user-settings-dialog {
+	crem-dropdown, crem-hierarchy-dropdown {
+		.dx-texteditor.dx-editor-outlined {
+			background: #fff;
+			border: none !important;
+			border-radius: 2px !important;
+		}
+
+		dx-drop-down-box .dx-dropdowneditor-input-wrapper {
+			-webkit-tap-highlight-color: transparent;
+			overflow: hidden;
+			height: 100%;
+			display: flex;
+		}
+
+		div.dx-texteditor-container {
+			padding-left: 0px !important;
+		}
+
+		.dx-texteditor-container {
+			border-radius: 2px;
+			box-shadow: none;
+			background: #ffffff;
+			display: flex;
+			position: relative;
+			overflow: hidden;
+			width: 100%;
+			height: 100%;
+		}	
+
+		input.dx-texteditor-input {
+		
+			font: 400 16px Helvetica,system-ui,sans-serif;
+			border: none;
+			display: flex;
+			align-items: center;
+			position: relative;
+		}
+
+		.dx-dropdowneditor-icon, .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+			color: colors.$color-brand-primary;
+			font: 24px/20px DXIcons;
+		}
+
+		div.dx-texteditor-input-container {
+			height: 100% !important;
+		}
+
+		.dx-texteditor-buttons-container {
+			display: flex;
+			width: auto;
+			flex-grow: 0;
+			flex-basis: content;
+			align-items: center;
+		}
+
+		.dx-dropdowneditor-button {
+			position: relative;
+			float: right;
+			height: 100%;
+			cursor: pointer;
+			width: 34px;
+			min-width: 34px;
+			padding: 1px;
+			border-radius: 4px;
+		}
+
+		.dx-dropdowneditor-icon, .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+			color: colors.$color-brand-primary;
+			font: 24px/20px DXIcons;
+		}
+
+		.dx-fieldset {
+			margin: 0 !important;
+			padding: 0;
+		} 
+		
+		.dx-field-value-static, .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+			width: -webkit-fit-content;
+			width: -moz-fit-content;
+			width: fit-content;
+			max-width: 320px !important;
+		}
+	}
+	
+		crem-dropdown .dx-dropdowneditor-button.dx-state-active .dx-dropdowneditor-icon,
+		crem-dropdown .dx-button-mode-contained,
+		crem-dropdown .dx-button-mode-contained:hover,
+		crem-dropdown .dx-button-mode-contained:active,
+		crem-dropdown .dx-button-mode-contained:focus,
+		crem-dropdown .dx-button-mode-contained:focus-within,
+		crem-dropdown .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+			background-color: transparent !important;
+			border-color: transparent;
+			color: colors.$textGray;
+			opacity: 1;
+		}
+
+	.dx-dropdowneditor-icon::before {
+		left: 41%;
+	}
+
+	crem-tooltip-basic{
+		div.dx-field {
+			font-family: $font-family-brand;
+			font-weight: 400;
+			width: 16px;
+			min-height: 16px;
+			max-height: 16px !important;
+		}
+	}
+
+		.dx-datagrid-filter-row .dx-editor-cell .dx-editor-with-menu .dx-placeholder:before,
+		.dx-datagrid-filter-row .dx-editor-cell .dx-editor-with-menu .dx-texteditor-input {
+			padding-left: 32px !important;
+		}
+
+	dx-data-grid {
+		height: 100%;
+	}
+
+  .dx-overlay-wrapper.dx-popup-wrapper.dashboardsFiltersDropDown .dx-overlay-content {
+	min-width: 320px !important;
+
+	.dx-datagrid-content .dx-datagrid-table .dx-row.dx-datagrid-filter-row .dx-command-select {
+		display: none;
+	}
+
+		
+	.dx-datagrid-content .dx-datagrid-table .dx-row .dx-command-select {
+		padding: 0;
+		width: 40px!important;
+		min-width: 40px!important;
+		max-width: 40px!important;
+	}
+
+	
+	dx-data-grid {
+		height: 100%;
+		.dx-datagrid-action.dx-cell-focus-disabled {
+			width: 100% !important;
+		}
+	}
+}
+}

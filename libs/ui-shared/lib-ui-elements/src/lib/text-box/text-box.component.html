@@ -1,0 +1,18 @@
+<dx-text-box [ngClass]="{red_border: showRedBorder}"
+    [(value)]="value"
+    [inputAttr]="{ id: inputId }"
+    (onValueChanged)="onValueChanged($event)"
+    (onInitialized)="onInitialized($event)"
+    [disabled]="disabled"
+>
+    <dx-validator #TextBoxValidator>
+        <dxi-validation-rule *ngIf="isRequired && !customRequireValidation"
+            type="required"
+        ></dxi-validation-rule>
+        <dxi-validation-rule *ngIf="maxLength"
+            type="stringLength"
+            [max]="maxLength"
+            [message]="maxLengthMessage"
+        ></dxi-validation-rule>
+    </dx-validator>
+</dx-text-box>

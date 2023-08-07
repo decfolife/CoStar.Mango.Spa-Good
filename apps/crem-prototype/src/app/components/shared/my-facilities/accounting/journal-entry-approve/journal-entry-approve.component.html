@@ -1,0 +1,84 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">		
+			<h5>Journal Entry Approve</h5>
+		</div>
+		<div class="controls-right">	
+			<app-chip [text]="selectedString" type="secondary" class="dbl-right-margin" *ngIf="approvalPeriods.length"></app-chip>
+			<portfolio-menu></portfolio-menu>
+			<button class="btn btn-primary-outline" (click)="filterDrawer.toggle()">Filters</button>				
+			<button class="btn btn-primary-outline" [disabled]="!approvalPeriods.length" (click)="exportDataGrid()">Download</button>
+			<button class="btn btn-primary-outline" [disabled]="selectedPeriods.length == 0" (click)="preview()">Preview</button>			
+			<button class="btn btn-primary" [disabled]="selectedPeriods.length == 0" (click)="approve()">Approve</button>			
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<mat-drawer-container class="h100">
+			<mat-drawer #filterDrawer mode="over" position="end">
+				<div *ngFor="let filter of filters" class="integration-filters-wrapper">
+					<costar-dropdown [dropdownData]="filter"></costar-dropdown>					
+				</div>
+				<div class="integration-filters-wrapper">
+					<button class="btn btn-primary" (click)="applyFilters()">Apply</button>
+				</div>
+			</mat-drawer>
+			<mat-drawer-content>
+				<dx-data-grid 	
+					#periodsGrid					
+					[dataSource]="approvalPeriods"
+					[showColumnLines]="false"
+					[showRowLines]="false"
+					[showBorders]="false"
+					[rowAlternationEnabled]="true" 
+					[allowColumnResizing]="true"
+					[columnAutoWidth]="true"							
+					[columnMinWidth]="10"
+					(onSelectionChanged)="selectedPeriodsChanged($event)">
+					<dxo-header-filter [visible]="true"></dxo-header-filter>    							
+					<dxo-sorting mode="multiple"></dxo-sorting>
+					<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+					<dxo-paging [pageSize]="100"></dxo-paging>
+				    <dxo-pager 
+				        [showPageSizeSelector]="true"
+				        [allowedPageSizes]="[50, 100, 200, 500]"
+				        [showInfo]="true"
+				        [showNavigationButtons]="true">
+				    </dxo-pager>
+				    <dxo-selection
+			            selectAllMode="allPages"
+			            showCheckBoxesMode="onClick"
+			            mode="multiple"
+			        ></dxo-selection>
+				    <dxi-column dataField="location" alignment="left"></dxi-column>
+				    <dxi-column dataField="systemLeaseId" caption="System Lease ID" alignment="right" dataType="number"></dxi-column>
+				    <dxi-column dataField="accountType" alignment="center" ></dxi-column>
+				    <dxi-column dataField="workflowStatus" alignment="left"></dxi-column>
+				    <dxi-column dataField="profileName" alignment="left"></dxi-column>
+				    <dxi-column dataField="jeProfileName" caption="JE Profile Name" alignment="left"></dxi-column>
+				    <dxi-column dataField="currency" caption="Local/Func" alignment="left"></dxi-column>
+				    <dxi-column dataField="periodEvent" alignment="left"></dxi-column>
+				    <dxi-column dataField="periodIndex" caption="PI" alignment="right" dataType="number"></dxi-column>
+				    <dxi-column dataField="period" alignment="center" dataType="number"></dxi-column>
+				    <dxi-column dataField="assetAmortization" alignment="right" dataType="number">
+				    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+				    </dxi-column>
+				    <dxi-column dataField="liabilityReduction" alignment="right" dataType="number">
+				    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+				    </dxi-column>
+				    <dxi-column dataField="interestExpense" alignment="right" dataType="number">
+				    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+				    </dxi-column>
+				    <dxi-column dataField="scheduledPayment" alignment="right" dataType="number">
+				    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+				    </dxi-column>
+				    <dxi-column dataField="liabilityAdjustment" alignment="right" dataType="number">
+				    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+				    </dxi-column>
+				     <dxi-column dataField="assetAdjustment" alignment="right" dataType="number">
+				    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+				    </dxi-column>
+				</dx-data-grid>
+			</mat-drawer-content>
+		</mat-drawer-container>
+	</div>
+</div>

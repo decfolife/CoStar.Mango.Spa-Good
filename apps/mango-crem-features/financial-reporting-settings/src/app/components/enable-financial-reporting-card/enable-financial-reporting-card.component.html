@@ -1,0 +1,53 @@
+<mat-card class="enable-financial-reporting-card">
+  <mat-card-title>
+    Enable Financial Reporting
+  </mat-card-title>
+
+  <mat-card-content>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12 center">
+          This Financial Reporting feature enables a library of lease financial
+          calulations to be available in ad hoc reporting.
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 center">
+          <dx-button (onClick)="showConfirm = true"
+            id="enableFinancialReportingButton"
+            [disabled]="isViewOnly"
+          >Enable Financial Reporting</dx-button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <dx-popup [(visible)]="showConfirm"
+    [closeOnOutsideClick]="true"
+    title="Confirm Enable Financial Reporting"
+    width="500px"
+    height="200px"
+  >
+    <div class="p-4">
+      <div class="center">
+        <strong>This is a one-time action that cannot be undone.</strong>
+      </div>
+
+      Please see the Financial Reporting Impact guide available in the resource
+      center to ensure you are aware of the impact to your site.
+    </div>
+
+    <dxi-toolbar-item widget="dxButton"
+      toolbar="bottom"
+      [options]="{
+        elementAttr: { id: 'confirmFinancialReportingButton' },
+        stylingMode: 'outlined',
+        text: 'Confirm: Enable Financial Reporting',
+        type: 'danger',
+        onClick: onConfirmClick,
+        disabled: buttonDisabled
+      }"
+    ></dxi-toolbar-item>
+  </dx-popup>
+</mat-card>

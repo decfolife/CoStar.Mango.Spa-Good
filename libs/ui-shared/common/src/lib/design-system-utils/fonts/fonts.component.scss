@@ -1,0 +1,7 @@
+@use "../../../../../common/src/styles" as *;
+
+:host{
+  display: flex;
+  flex-direction: column;
+  @include costar(gap, 4);
+}

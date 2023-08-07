@@ -1,0 +1,49 @@
+<div class="dashboard">
+
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div class="filters-wrapper">
+				<!-- <ng-container *ngFor="let filter of filters">
+					<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible"></costar-dropdown>
+				</ng-container>	 -->
+				<segment-chooser userId="1" segmentType="project"></segment-chooser>
+			</div>
+			<button class="btn btn-default">Apply</button>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary">Add</button>
+			<button class="btn btn-default" (click)="launchSettingsModal()">
+        <fa-icon icon="cog"></fa-icon>
+      </button>
+		</div>
+	</div>
+
+	<div class="dashboard-content-wrapper">
+
+		<div class="dashboard-hero-wrapper">
+			<div *ngFor="let hero of heros">
+				<dashboard-hero-card *ngIf="hero.visible"
+					[title]="hero.title"
+					[heroMetric]="hero.hero"
+					[sidekickMetricA]="hero.sidekick"
+					[subtitle]="hero.subtitle"
+					[tooltip]="hero.helpText"
+				></dashboard-hero-card>
+			</div>
+		</div>
+
+		<div class="dashboard-cards-wrapper">
+			<div class="row" cdkDropList (cdkDropListDropped)="drop($event)">
+				<div class="dashboard-card-drag" cdkDrag *ngFor="let card of cards; let i = index;" [class.col-md-6]="card.colSpan == 1" [class.col-md-12]="card.colSpan == 2" [class.hide]="!card.visible">
+					<mat-icon cdkDragHandle class="card-drag-handle">drag_handle</mat-icon>
+					<strategy-global-card *ngIf="card.componentName == 'StrategyGlobalCardComponent'"></strategy-global-card>
+					<strategy-upcoming-card *ngIf="card.componentName == 'StrategyUpcomingCardComponent'"></strategy-upcoming-card>
+					<strategy-market-variance-card *ngIf="card.componentName == 'StrategyMarketVarianceCardComponent'"></strategy-market-variance-card>
+					<strategy-older-than-card *ngIf="card.componentName == 'StrategyOlderThanCardComponent'"></strategy-older-than-card>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>

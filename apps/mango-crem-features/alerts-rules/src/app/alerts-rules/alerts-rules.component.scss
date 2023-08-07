@@ -1,0 +1,147 @@
+@import '../../../../../mango/src/assets/styles/colors.scss';
+@import '../../../../../mango/src/assets/styles/var.scss';
+
+:host {
+  div.list-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    h5.dbl-right-margin {
+      font-family: Helvetica, sans-serif;
+      font-size: 16px !important;
+    }
+
+    div.list-page-controls-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: $stdPadding;
+      font-size: 14px;
+      border-bottom: $stdBorder;
+
+      .controls-left {
+        display: flex;
+        align-items: center;
+        z-index: 500;
+
+        mat-form-field.mat-form-field,
+        button.btn,
+        dx-text-box,
+        dx-drop-down-box {
+          margin-right: $dblPadding;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 0px;
+        }
+      }
+
+      .controls-right {
+        display: flex;
+        align-items: center;
+        z-index: 500;
+
+        mat-form-field.mat-form-field,
+        button.btn,
+        mat-button-toggle-group {
+          margin-left: $dblPadding;
+        }
+
+        .badge.primary.costar {
+          align-items: center;
+          background: #0559b3;
+          border-color: #0559b3;
+          border-radius: 8px;
+          box-sizing: border-box;
+          color: #fff !important;
+          display: inline-flex;
+          font-size: 12px;
+          height: 16px;
+          justify-content: center;
+          min-width: 16px;
+          padding: 2px;
+          text-align: center;
+        }
+      }
+
+      button.btn {
+        font-size: 14px;
+      }
+
+      mat-form-field {
+        &.mat-form-field {
+          height: $stdPadding * 4;
+
+          &.mat-form-field-appearance-outline {
+            div.mat-form-field-wrapper {
+              padding: 0px;
+              margin: 0px;
+            }
+          }
+        }
+      }
+    }
+
+    div.list-page-data-grid-wrapper {
+      display: flex;
+      flex-grow: 1;
+      overflow-y: auto;
+      flex-direction: column;
+    }
+  }
+}
+:host::ng-deep {
+  div.dx-button-content {
+    border: 1px solid $navGray;
+    border-radius: 2px;
+    font-size: 12px;
+    height: 30px;
+
+    span.dx-button-text {
+      padding-left: 8px !important;
+    }
+  }
+
+  .batch-log__fa-icon > .ng-fa-icon {
+    color: $costarBlue !important;
+    font-size: 14px;
+  }
+
+  .alert-rules__search {
+    input {
+      /* This should not be necessary, but our CSS is terrible. */
+      box-sizing: border-box !important;
+      min-height: 32px !important;
+      height: 32px !important;
+      padding-left: 34px !important;
+    }
+  }
+
+  td {
+    &.dx-command-edit {
+      padding: 0;
+
+      .btn-link {
+        height: 34px;
+        width: 100%;
+      }
+    }
+  }
+
+  .dx-popup-wrapper {
+    .dx-overlay-content {
+      div.dx-popup-content {
+        padding: 0 !important;
+      }
+    }
+  }
+}

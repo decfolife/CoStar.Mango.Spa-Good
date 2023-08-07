@@ -1,0 +1,288 @@
+<div class="row">
+	<div class="col-md-12 accounting-dashboard-controls-wrapper">
+		<div class="controls">
+			<h5>{{portfolio}}  |  {{accountingStandard}}  |  {{period.quarterName}}  |  {{period.periodName}}</h5>
+			<span class="italic gray">(Last refreshed: 6 hours ago)</span>
+			<app-chip [text]="status" type="primary" class="dbl-left-margin"></app-chip>	
+		</div>
+		<div class="controls">
+			<h6>{{period.periodStart | date:"longDate"}} - {{period.periodEnd | date:"longDate"}}</h6>
+			<button class="btn btn-primary-outline btn-sm" [matMenuTriggerFor]="accountingPeriodMenu"><fa-icon icon="ellipsis-h"></fa-icon></button>
+			<mat-menu #accountingPeriodMenu="matMenu">
+				<button mat-menu-item>Lock Period</button>
+				<button mat-menu-item>Close Period</button>
+				<button mat-menu-item>Download Reports</button>
+			</mat-menu>
+		</div>
+	</div>
+</div>
+<div class="row std-top-margin">
+	<div class="col-md-12">		
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>				
+				<mat-card-title>Period Metrics</mat-card-title>	
+				<mat-card-subtitle>(USD)</mat-card-subtitle>			
+			</mat-card-header>
+			<mat-card-content>					
+				<mat-list class="metric-list period-metrics">
+					<mat-list-item>
+						<div class="column"></div>
+						<div class="column">Finance</div>
+						<div class="column">Operating</div>
+						<div class="column last-column-header">Total</div>
+					</mat-list-item>
+					<mat-expansion-panel #AssetPanel class="mat-elevation-z0" [class.open]="AssetPanel.expanded" [expanded]="false">
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<div class="column">Closing Asset Balance</div>
+								<div class="column">$0</div>
+								<div class="column">$112,078,332</div>
+								<div class="column">$112,078,332</div>
+							</mat-panel-title>							
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item class="metric-expansion-row">
+	                    	<div class="expansion-column">Beginning Asset Balance</div>
+							<div class="expansion-column finance">$0</div>
+							<div class="expansion-column operating">$114,116,312</div>
+							<div class="expansion-column total">$114,116,312</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Asset Amortization</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$2,037,980</div>
+	                    	<div class="expansion-column total">$2,037,980</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Asset Adjustments</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$0</div>
+	                    	<div class="expansion-column total">$0</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Closing Asset Balance</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$112,078,332</div>
+	                    	<div class="expansion-column total">$112,078,332</div>                    	
+	                    </mat-list-item>
+	                </mat-expansion-panel>					
+					<mat-expansion-panel #AssetPanel class="mat-elevation-z0" [class.open]="AssetPanel.expanded" [expanded]="false">
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<div class="column">Closing Liability Balance</div>
+								<div class="column">$0</div>
+								<div class="column">$143,542,012</div>
+								<div class="column">$143,542,012</div>
+							</mat-panel-title>							
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Beginning Liability Balance</div>
+							<div class="expansion-column finance">$0</div>
+							<div class="expansion-column operating">$146,131,248</div>
+							<div class="expansion-column total">$146,131,248</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Liability Reduction</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$2,589,236</div>
+	                    	<div class="expansion-column total">$2,589,236</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Liability Adjustments</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$0</div>
+	                    	<div class="expansion-column total">$0</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Closing Liability Balance</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$143,542,012</div>
+	                    	<div class="expansion-column total">$143,542,012</div>                    	
+	                    </mat-list-item>
+	                </mat-expansion-panel>	
+	                <mat-expansion-panel #AssetPanel class="mat-elevation-z0" [class.open]="AssetPanel.expanded" [expanded]="false">
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<div class="column">Closing S/T Liability Balance</div>
+								<div class="column">$0</div>
+								<div class="column">$28,213,999</div>
+								<div class="column">$28,213,999</div>
+							</mat-panel-title>							
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Beginning S/T Liability Balance</div>
+							<div class="expansion-column finance">$0</div>
+							<div class="expansion-column operating">$48,385,239</div>
+							<div class="expansion-column total">$48,385,239</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">S/T Liability Reduction</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$238,233</div>
+	                    	<div class="expansion-column total">$238,233</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">S/T Liability Adjustments</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$0</div>
+	                    	<div class="expansion-column total">$0</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Closing S/T Liability Balance</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$28,213,999</div>
+	                    	<div class="expansion-column total">$28,213,999</div>                    	
+	                    </mat-list-item>
+	                </mat-expansion-panel>	
+	                <mat-expansion-panel #AssetPanel class="mat-elevation-z0" [class.open]="AssetPanel.expanded" [expanded]="false">
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<div class="column">Closing L/T Liability Balance</div>
+								<div class="column">$0</div>
+								<div class="column">$115,328,013</div>
+								<div class="column">$115,328,013</div>
+							</mat-panel-title>							
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Beginning L/T Liability Balance</div>
+							<div class="expansion-column finance">$0</div>
+							<div class="expansion-column operating">$48,385,239</div>
+							<div class="expansion-column total">$48,385,239</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">L/T Liability Reduction</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$238,233</div>
+	                    	<div class="expansion-column total">$238,233</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">L/T Liability Adjustments</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$0</div>
+	                    	<div class="expansion-column total">$0</div>
+	                    </mat-list-item>
+	                    <mat-list-item>
+	                    	<div class="expansion-column">Closing L/T Liability Balance</div>
+	                    	<div class="expansion-column finance">$0</div>
+	                    	<div class="expansion-column operating">$115,328,013</div>
+	                    	<div class="expansion-column total">$115,328,013</div>                    	
+	                    </mat-list-item>
+	                </mat-expansion-panel>	
+					<mat-list-item>
+						<div>Weighted Avg. Discount Rate</div>
+						<div>3.94%</div>
+					</mat-list-item>
+					<mat-list-item>
+						<div>Weighted Avg. Remaining Term (years)</div>
+						<div>4.79</div>
+					</mat-list-item>
+					<mat-list-item>
+						<div>Lease Count</div>
+						<div>68</div>
+					</mat-list-item>
+				</mat-list>				
+			</mat-card-content>
+		</mat-card>	
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>				
+				<mat-card-title>Accounting Workflow Status</mat-card-title>				
+			</mat-card-header>
+			<mat-card-content>	
+				<mat-accordion class="accordion-headers-align">
+					<mat-expansion-panel>
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Needs Review
+	                        </mat-panel-title>
+	                        <mat-panel-description>
+	                        	0
+	                        </mat-panel-description>
+	                    </mat-expansion-panel-header>
+	                    <span> show assignments </span>
+	                </mat-expansion-panel>
+	                <mat-expansion-panel>
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Pending Approval
+	                        </mat-panel-title>
+	                        <mat-panel-description>
+	                        	0
+	                        </mat-panel-description>
+	                    </mat-expansion-panel-header>
+	                    <span> show assignments </span>
+	                </mat-expansion-panel>	
+	                <mat-expansion-panel>
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Approved
+	                        </mat-panel-title>
+	                        <mat-panel-description>
+	                        	68
+	                        </mat-panel-description>
+	                    </mat-expansion-panel-header>
+	                    <span> show assignments </span>
+	                </mat-expansion-panel>	
+	                <mat-expansion-panel>
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Not Applicable
+	                        </mat-panel-title>
+	                        <mat-panel-description>
+	                        	0
+	                        </mat-panel-description>
+	                    </mat-expansion-panel-header>
+	                    <span> show assignments </span>
+	                </mat-expansion-panel>			
+	            </mat-accordion>
+			</mat-card-content>
+		</mat-card>
+	</div>
+	<div class="col-md-6">
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>				
+				<mat-card-title>Journal Entry Processing</mat-card-title>				
+			</mat-card-header>
+			<mat-card-content>
+				<mat-list class="metric-list">
+					<mat-list-item>
+						<span>Draft</span>
+						<span>0</span>
+					</mat-list-item>
+					<mat-list-item>
+						<span>Approved</span>
+						<span>0</span>
+					</mat-list-item>
+					<mat-list-item>
+						<span>Posted</span>
+						<span>68</span>
+					</mat-list-item>
+				</mat-list>	
+			</mat-card-content>
+		</mat-card>	
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>				
+				<mat-card-title>Health Check</mat-card-title>				
+			</mat-card-header>
+			<mat-card-content>	
+				<mat-list class="metric-list">
+					<mat-list-item>
+						<span>Warnings</span>
+						<span>12</span>
+					</mat-list-item>
+					<mat-list-item>
+						<span>Errors</span>
+						<span>0</span>
+					</mat-list-item>
+					<mat-list-item>
+						<span>Total Affected Schedules</span>
+						<span>12</span>
+					</mat-list-item>
+				</mat-list>				
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>
+

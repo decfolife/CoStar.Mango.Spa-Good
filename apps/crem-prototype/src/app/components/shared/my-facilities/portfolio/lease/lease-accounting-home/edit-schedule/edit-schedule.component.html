@@ -1,0 +1,281 @@
+<div class="dynamic-form">
+	<div class="dynamic-form-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Add New Schedule</h5>	
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-default" (click)="onCancel()">Cancel</button>
+			<button class="btn btn-default" (click)="onCalculateValues()">Calculate Values</button>
+			<button class="btn btn-default" (click)="onApply()">Apply</button>
+			<button class="btn btn-primary" (click)="onSaveAndClose()">Save & Close</button>				
+		</div>
+	</div>
+	<div class="dynamic-form-content">		
+		<div class="row">
+			<div class="col-md-12" *ngIf="isPopup">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Lease</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>
+						<dx-form 							
+							[colCount]="2"
+							labelLocation="left">
+							<dxi-item 
+								[label]="{ text : 'Portfolio' }"
+								template="portfolioTemplate"								
+								>								
+							</dxi-item>
+							<div *dxTemplate="let data of 'portfolioTemplate'">
+							    <portfolio-menu [showColumnHeader]="false" placeholder="Select..." (portfolioChanged)="onPortfolioChanged($event)"></portfolio-menu>
+							</div>
+							<dxi-item 
+								[label]="{ text : 'Lease' }"
+								template="leaseTemplate"								
+								>								
+							</dxi-item>
+							<div *dxTemplate="let data of 'leaseTemplate'">
+								<!-- should have client lease id, building name, address, country, expiration date -->
+								<dx-drop-down-box
+								    [(value)]="leaseString"
+								    valueExpr="SystemLeaseID"
+								    displayExpr="ClientLeaseID"								    
+								    [showClearButton]="true"
+								    [dataSource]="leases"
+								    >
+								    <div *dxTemplate="let data of 'content'">
+									    <dx-data-grid
+											[dataSource]="leases"
+											[hoverStateEnabled]="true"
+											[filterRow]="{ visible: true }"
+											[scrolling]="{ mode: 'virtual' }"
+											[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+											keyExpr="SystemLeaseID"
+											[(selectedRowKeys)]="selectedLease"
+											(onSelectionChanged)="onLeaseChanged($event)"
+											[columnAutoWidth]="true"
+											[allowColumnResizing]="true"
+											>
+											<dxo-selection
+									            showCheckBoxesMode="none"
+									            mode="single"
+									        ></dxo-selection>
+									        <dxi-column
+											    dataField="ClientLeaseID">
+											</dxi-column>
+											<dxi-column
+											    dataField="PropertyName">
+											</dxi-column>
+											<dxi-column
+											    dataField="Address1">
+											</dxi-column>
+											<dxi-column
+											    dataField="City">
+											</dxi-column>
+											<dxi-column
+											    dataField="Country">
+											</dxi-column>
+											<dxi-column
+											    dataField="LeaseExpiration">
+											</dxi-column>											
+									    </dx-data-grid>
+									</div>	
+								</dx-drop-down-box>
+							</div>
+						</dx-form>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div *ngFor="let section of formFields" class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>{{section.sectionName}}</mat-card-title>
+						<!-- <a class="classification-test-link" (click)="openClassificationTest($event)">Test</a> -->
+					</mat-card-header>
+					<mat-card-content>
+						<dx-form 
+							[(formData)]="accountingMeasurement"
+							[colCount]="2"
+							labelLocation="left">
+							<dxi-item *ngFor="let field of section.fields" 
+								[dataField]="field.value"
+								[label]="{ text : field.label }"
+								[editorType]="field.controlType"
+								[editorOptions]="{ items: field.dropdownValues, searchEnabled: true, disabled : field.readOnly }"
+								[template]="field.dxTemplate"
+								[helpText]="field.helpText"
+								>								
+							</dxi-item>
+							<div *dxTemplate="let data of 'textBoxTemplate'">
+							    <dx-text-box [(value)]="accountingMeasurement[data.dataField]" [disabled]="data.editorOptions.disabled"></dx-text-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'dateBoxTemplate'">
+							    <dx-date-box [(value)]="accountingMeasurement[data.dataField]" [disabled]="data.editorOptions.disabled"></dx-date-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'selectBoxTemplate'">
+							    <dx-select-box [dataSource]="data.editorOptions.items" [(value)]="accountingMeasurement[data.dataField]" [searchEnabled]="data.editorOptions.searchEnabled" valueExpr="value" displayExpr="display" [disabled]="data.editorOptions.disabled"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'switchTemplate'">
+								<mat-slide-toggle [(checked)]="accountingMeasurement[data.dataField]"></mat-slide-toggle>
+								<form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'classificationTypeTemplate'">
+								<dx-select-box [dataSource]="data.editorOptions.items" [(value)]="accountingMeasurement[data.dataField]" [searchEnabled]="data.editorOptions.searchEnabled" valueExpr="value" displayExpr="display" [disabled]="data.editorOptions.disabled"></dx-select-box>
+								<a class="classification-test-link" (click)="openClassificationTest()">Test</a>
+								<form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'accountingBeginDateTemplate'">
+								<dx-select-box [dataSource]="data.editorOptions.items" [(value)]="accountingMeasurement[data.dataField]" [searchEnabled]="data.editorOptions.searchEnabled" valueExpr="value" displayExpr="display" [disabled]="data.editorOptions.disabled"></dx-select-box>
+							    <dx-date-box  class="accounting-measurement-date" [disabled]="data.editorOptions.disabled"></dx-date-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'accountingEndDateTemplate'">
+								<dx-select-box [dataSource]="data.editorOptions.items" [(value)]="accountingMeasurement[data.dataField]" [searchEnabled]="data.editorOptions.searchEnabled" valueExpr="value" displayExpr="display" [disabled]="data.editorOptions.disabled" helpText="Enter the phone number in USA phone format"></dx-select-box>
+							    <dx-date-box  class="accounting-measurement-date" [disabled]="data.editorOptions.disabled"></dx-date-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'annualRateTemplate'">
+								<dx-drop-down-box>
+									<div *dxTemplate="let data of 'content'" class="dbl-padding">
+										<dx-form 
+											[(formData)]="accountingMeasurement"
+											[colCount]="1"
+											labelLocation="left">
+											<dxi-item
+												[label]="{ text : 'Annual Rate' }"
+												editorType="dxTextBox"
+												>								
+											</dxi-item>
+											<dxi-item
+												[label]="{ text : 'Annual Rate Type' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['APR', 'APY'], searchEnabled: true }"
+												>								
+											</dxi-item>
+											<dxi-item
+												[label]="{ text : 'Compound Frequency' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['Monthly', 'Daily'], searchEnabled: true }"
+												>								
+											</dxi-item>
+											<dxi-item
+												[label]="{ text : 'Payment Timing' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['Beginning of Period', 'End of Period'], searchEnabled: true }"
+												>								
+											</dxi-item>
+											<dxi-item
+												[label]="{ text : 'Modification Impacts Scope' }"
+												editorType="dxCheckBox"
+												>								
+											</dxi-item>
+										</dx-form>
+									</div>
+								</dx-drop-down-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'currencyTemplate'">
+								<dx-drop-down-box>
+									<div *dxTemplate="let data of 'content'" class="dbl-padding">
+										<dx-form 
+											[(formData)]="accountingMeasurement"
+											[colCount]="1"
+											labelLocation="left">											
+											<dxi-item
+												[label]="{ text : 'Local Currency' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['EUR', 'USD'], searchEnabled: true }"
+												>								
+											</dxi-item>											
+											<dxi-item
+												[label]="{ text : 'Functional Currency' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['EUR', 'USD'], searchEnabled: true }"
+												>								
+											</dxi-item>
+											<dxi-item
+												[label]="{ text : 'Functional Currency Translation' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['Average', 'Spot', 'Manual'], searchEnabled: true }"
+												>								
+											</dxi-item>
+											<dxi-item
+												[label]="{ text : 'Rate' }"
+												editorType="dxNumberBox"
+												>								
+											</dxi-item>
+										</dx-form>
+									</div>
+								</dx-drop-down-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'reportingExceptionTemplate'">
+								<dx-check-box [value]="false" class="std-right-margin"></dx-check-box>
+								<dx-select-box [dataSource]="data.editorOptions.items" [(value)]="accountingMeasurement[data.dataField]" [searchEnabled]="data.editorOptions.searchEnabled" valueExpr="value" displayExpr="display" [disabled]="data.editorOptions.disabled"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'rouAssetsTemplate'">
+								<dx-drop-down-box>
+									<div *dxTemplate="let data of 'content'" class="dbl-padding">
+										<dx-form 
+											[(formData)]="accountingMeasurement"
+											[colCount]="1"
+											labelLocation="left">											
+											<dxi-item
+												[label]="{ text : 'Method' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['Opening Asset Balance* + System Asset Adjustments + Manual Asset Adjustments', 'Opening Asset Balance* + System Asset Adjustments', 'Opening Asset Balance* + Manual Asset Adjustments', 'Opening Asset Balance*', 'System Asset Adjustments + Manual Asset Adjustments', 'System Asset Adjustments', 'Manual Asset Adjustments'], searchEnabled: true }"
+												>								
+											</dxi-item>											
+											<dxi-item
+												[label]="{ text : 'Action Date' }"
+												editorType="dxSelectBox"
+												[editorOptions]="{ items: ['Earliest Date (12/1/2017)', 'Accounting Term Begin Date (1/1/2019)', 'Acquisition Date (5/1/2020)', 'Direct Entry'], searchEnabled: true }"
+												>								
+											</dxi-item>	
+											<dxi-item
+												[label]="{ text : 'Date' }"
+												editorType="dxDateBox"
+												>								
+											</dxi-item>										
+										</dx-form>
+									</div>
+								</dx-drop-down-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+						</dx-form>
+					</mat-card-content>
+				</mat-card>
+			</div>		
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Charge Selection</mat-card-title>
+						<mat-slide-toggle [checked]="true">Override Amortization Profile</mat-slide-toggle>
+					</mat-card-header>
+					<mat-card-content>
+						<div class="row">										
+						</div>
+					</mat-card-content>
+				</mat-card>	
+			</div>
+		</div>
+	</div>	
+</div>	
+
+<dx-popup
+	#ClassificationTestPopup
+    width="50%"
+    height="80%"
+    [showTitle]="true"
+    title="Classification Test"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="classificationTestPopupVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    	<classification-test-dialog (saved)="classTestSaved($event)" (cancelled)="classTestCancelled($event)"></classification-test-dialog>    
+    </div>
+</dx-popup>	

@@ -1,0 +1,16 @@
+<div
+  class="color"
+  style.background-color="{{ 'var(--costar-color-' + color + ')' }}"
+>
+  <span *ngIf="wcagContrast" style.color="{{ 'var(--costar-color-' + wcagColor + ')' }}">
+    {{wcagContrast}}
+  </span>
+  <span *ngIf="wcagDescription" style.color="{{ 'var(--costar-color-' + wcagColor + ')' }}">
+    Text color: {{wcagDescription}}
+  </span>
+</div>
+<div class="description">
+  <span *ngIf="name" class='name' title='Color Name'>{{name}}</span>
+  <span *ngIf="description" class='text' title="Color Usage">{{description}}</span>
+  <code *ngIf="examples" class='example'>{{examples}}</code>
+</div>

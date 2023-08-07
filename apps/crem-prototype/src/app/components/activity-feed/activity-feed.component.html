@@ -1,0 +1,49 @@
+<dx-data-grid 
+	*ngIf="mode == 'projects'"
+	class="list-page-data-grid"
+	#ActivityDataGrid
+	[dataSource]="data"
+	[showColumnLines]="false"
+	[showRowLines]="false"
+	[showBorders]="false"
+	[rowAlternationEnabled]="true" 							
+	[allowColumnResizing]="true"
+	[allowColumnReordering]="true"
+	[columnAutoWidth]="true"
+>
+	<dxo-scrolling mode="virtual"></dxo-scrolling>	
+	<dxo-header-filter [visible]="true"></dxo-header-filter>  
+	<dxi-column dataField="description" caption="Description" cellTemplate="descriptionTemplate" [allowFiltering]="false"></dxi-column>  						
+	<dxi-column dataField="activityType" caption="Activity"></dxi-column>
+	<dxi-column dataField="projectName" caption="Project Name"></dxi-column>
+	<dxi-column dataField="projectType" caption="Project Type"></dxi-column>
+	<dxi-column dataField="performedBy" caption="User"></dxi-column>
+	<dxi-column dataField="performedDate" caption="When"></dxi-column>	
+	<div *dxTemplate="let a of 'descriptionTemplate'">
+		<b>{{a.data.performedBy}}</b> {{a.data.description}}		
+	</div>	
+</dx-data-grid>		
+
+<dx-data-grid 
+	*ngIf="mode == 'portfolio'"
+	class="list-page-data-grid"
+	#ActivityDataGrid
+	[dataSource]="data"
+	[showColumnLines]="false"
+	[showRowLines]="false"
+	[showBorders]="false"
+	[rowAlternationEnabled]="true" 							
+	[allowColumnResizing]="true"
+	[allowColumnReordering]="true"
+	[columnAutoWidth]="true"
+>
+	<dxo-scrolling mode="virtual"></dxo-scrolling>	
+	<dxo-header-filter [visible]="true"></dxo-header-filter>  
+	<dxi-column dataField="objectType" caption="Type"></dxi-column>
+	<dxi-column dataField="subType" caption="Template"></dxi-column>  						
+	<dxi-column dataField="objectName" caption="Type"></dxi-column>  						
+	<dxi-column dataField="activityType" caption="Activity"></dxi-column>
+	<dxi-column dataField="description" ></dxi-column>  							
+	<dxi-column dataField="performedBy" caption="User"></dxi-column>
+	<dxi-column dataField="performedDate" caption="When"></dxi-column>		
+</dx-data-grid>	

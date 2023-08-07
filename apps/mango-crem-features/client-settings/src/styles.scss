@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'src/assets/styles/colors';
+@use 'src/assets/styles/costar-dev-extreme' as devExtreme;
+@use 'lib-ui-elements/src/lib/tooltip-basic/tooltip-basic.component';
+
+body {
+    &.client-settings, #admin-page-wrapper {
+        background-color: colors.$bodyBackgroundGray;
+        font-family: devExtreme.$font-family;
+    }
+}

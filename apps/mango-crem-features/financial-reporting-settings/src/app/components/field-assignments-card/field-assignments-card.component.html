@@ -1,0 +1,256 @@
+<mat-card class="field-assignments-card">
+  <mat-card-title>
+    Financial Reporting Field Assignments
+  </mat-card-title>
+
+  <mat-card-content>
+    <div class="container-fluid" *ngIf="settingsData">
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="expenseLabel" class="col-5">
+              Expense
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignExpense"
+                id="expenseToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignExpense"
+                fieldHistoryName="AssignExpense"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="row">
+            <div id="relativeRangesLabel" class="col-5">
+              Relative Ranges
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignRelativeRanges"
+                id="relativeRangesToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignRelativeRanges"
+                fieldHistoryName="AssignRelativeRanges"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="incomeLabel" class="col-5">
+              Income
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignIncome"
+                id="incomeToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignIncome"
+                fieldHistoryName="AssignIncome"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="row">
+            <div id="yearlyRangesLabel" class="col-5">
+              Yearly Ranges
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignYearlyRanges"
+                id="yearlyRangesToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignYearlyRanges"
+                fieldHistoryName="AssignYearlyRanges"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="reportingCurrencyLabel" class="col-5">
+              Reporting Currency
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignReportingCurrency"
+                id="reportingCurrencyToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignReportingCurrency"
+                fieldHistoryName="AssignReportingCurrency"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="row">
+            <div id="monthlyRangesLabel" class="col-5">
+              Monthly Ranges
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignMonthlyRanges"
+                id="monthlyRangesToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignMonthlyRanges"
+                fieldHistoryName="AssignMonthlyRanges"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="leaseCurrencyLabel" class="col-5">
+              Lease Currency
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignLeaseCurrency"
+                id="leaseCurrencyToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignLeaseCurrency"
+                fieldHistoryName="AssignLeaseCurrency"
+              ></crem-tooltip>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="row">
+            <div id="totalAmountsLabel" class="col-5">
+              Total Amounts
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignAbsoluteRanges"
+                id="totalAmountsToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignAbsoluteRanges"
+                fieldHistoryName="AssignAbsoluteRanges"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="groupByLeaseLabel" class="col-5">
+              Group By Lease
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignGroupByLease"
+                id="groupByLeaseToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignGroupByLease"
+                fieldHistoryName="AssignGroupByLease"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="groupByGLCategoryLabel" class="col-5">
+              Group By GL Category
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignGroupByGLCategory"
+                id="groupByGLCategoryToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignGroupByGLCategory"
+                fieldHistoryName="AssignGroupByGLCategory"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="groupByAccountLabel" class="col-5">
+              Group By Account
+            </div>
+
+            <div class="col-7">
+              <mat-slide-toggle [(ngModel)]="settingsData.assignGroupByAccount"
+                id="groupByAccountToggle"
+                [disabled]="isViewOnly"
+                (change)="changed.emit()"
+              ></mat-slide-toggle>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="AssignGroupByAccount"
+                fieldHistoryName="AssignGroupByAccount"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,11 @@
+<ng-container *ngFor="let color of palette">
+  <mango-color-token
+    [color]="color.color"
+    [wcagColor]="color.wcagColor"
+    [wcagContrast]="color.wcagContrast"
+    [wcagDescription]="color.wcagDescription"
+    [name]="color.name"
+    [description]="color.description"
+    [examples]="color.examples"
+  ></mango-color-token>
+</ng-container>

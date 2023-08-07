@@ -1,0 +1,73 @@
+//------------------------------------------------
+//--- Color Utilities
+//------------------------------------------------
+// Generate hue, saturation and lightness values automatically in CSS
+@mixin defineColorHSL($color, $hue, $saturation, $lightness){
+  #{$color}: unquote("hsl(#{$hue}, #{$saturation}, #{$lightness})");
+  #{$color}-h: #{$hue};
+  #{$color}-s: #{$saturation};
+  #{$color}-l: #{$lightness};
+}
+
+// Build root var mixin
+@mixin defineColor($cssVar, $colorName, $map : $colors){
+  @if(map-has-key($map, $colorName)){
+    $value: map-get($map, unquote($colorName));
+    @if type-of($value) == color {
+      #{$cssVar}: $value;
+    }
+    @if type-of($value) == string {
+      #{$cssVar}: $value;
+    }
+  }
+}
+
+// Pass any HEX or RGB value to create color opacity
+// E.g.
+// .container {
+//    @include background-opacity(map-get($color, color, light), 0.3);
+//    @include background-opacity(--costar-color-light, 0.3, true);
+// }
+@mixin background-opacity($color, $opacity: 0.3, $is-variable: false) {
+  @if $is-variable {
+    background-color: rgba(var(#{$color}), $opacity);
+  } @else {
+    background-color: $color; /* The Fallback */
+    background-color: rgba($color, $opacity);
+  }
+}
+
+//------------------------------------------------
+//--- CSS4 Variables
+//------------------------------------------------
+// Generate SCSS vars for :root mostly
+// Min two level maps, max three level
+@mixin get-css4-vars($map){
+  @each $var-map-name, $var-map in $map {
+    @each $var, $val in $var-map {
+      @if type-of($val) == map {
+        @each $var-n, $val-n in $val {
+          --costar-#{$var-map-name}-#{$var}-#{$var-n}: #{$val-n};
+        }
+      }
+      @else {
+        --costar-#{$var-map-name}-#{$var}: #{$val};
+      }
+    }
+  }
+}
+
+// Create custom :root with css4 vars
+// E.g.
+// @include create-custom-root((
+//   --blue: unset,
+//   --indigo: unset,
+//   --purple: unset,
+// ))
+@mixin create-custom-root($css4) {
+  :root {
+    @each $name, $value in $css4 {
+      #{$name}: #{$value};
+    }
+  }
+}

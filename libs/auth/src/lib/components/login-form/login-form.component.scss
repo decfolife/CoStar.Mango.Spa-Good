@@ -1,0 +1,160 @@
+@media (min-width: 768px) {
+    .login-container {
+      width: 600px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .login-container {
+      width: 600px;
+    }
+  }
+  
+  .branding {
+    background-image: url("/assets/images/logos/CoStarLogo161x48.png");
+    background-repeat: no-repeat;
+    height: 46px;
+    width: 170px;
+  }
+  
+  costar-toolbar-logo {
+    display: inline-block;
+    width: 134px;
+    height: 134px;
+    margin-right: 1rem;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 134px 34px;
+    background-image: url("/assets/images/logos/CoStarLogo161x48.png");
+    cursor: pointer;
+  }
+  
+  .costar-app-name {
+    display: inline-block;
+    padding-left: 1rem;
+    border-left: 2px solid #c2c2c2;
+    color: #033871;
+    font-size: 24px;
+    font-weight: 100;
+    margin-bottom: -8px;
+  }
+  
+  div.costar-site-toolbar-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    padding: 8px;
+  
+    div.costar-toolbar-logo {
+      display: inline-block;
+      width: 134px;
+      height: 34px;
+      margin-right: 1rem;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 134px 34px;
+      background-image: url("/assets/images/logos/CoStarLogo161x48.png");
+      cursor: pointer;
+    }
+  
+    div.costar-app-name {
+      display: inline-block;
+      padding-left: 1rem;
+      border-left: 2px solid #c2c2c2;
+      color: #033871;
+      font-size: 24px;
+      font-weight: 100;
+      margin-bottom: -8px;
+    }
+  }
+  .text-input-normal-1 {
+    height: 32px;
+    width: 252px;
+  }
+  .login-to-co-star-real {
+    height: 44px;
+    width: 357px;
+    color: rgba(0, 0, 0, 0.85);
+    font-family: Helvetica;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 22px;
+    text-align: center;
+  }
+  .rectangle {
+    height: 116px;
+    width: 1440px;
+    background-color: #ffffff;
+    box-shadow: 0 5px 8px 0 rgba(151, 151, 151, 0.5);
+  }
+  .rectangle-1 {
+    box-sizing: border-box;
+    height: 400px;
+    width: 560px;
+    border: 2px solid #dcdcdc;
+    background-color: #ffffff;
+    box-shadow: 2px 2px 0 0 rgba(192, 192, 192, 0.5);
+  }
+  .container-textbox {
+    box-sizing: border-box;
+    height: 32px;
+    width: 252px;
+    border: 1px solid #c2c2c2;
+    border-radius: 2px;
+    background-color: #ffffff;
+  }
+  .button-primary-normal {
+    height: 32px;
+    width: 255px;
+    box-sizing: border-box;
+    height: 32px;
+    width: 255px;
+    border: 1px solid #0559b3;
+    border-radius: 2px;
+    background-color: #0559b3;
+  
+    color: #ffffff;
+    font-family: Helvetica;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 12px;
+    text-align: center;
+  }
+  #cover {
+    background-image: url("/assets/images/locks.jpg");
+    background-size: cover;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  #cover-caption {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* only used for background overlay not needed for centering */
+  form:before {
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    // background-color: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+    border-radius: 0px;
+    border: 2px solid #dcdcdc;
+    background-color: #ffffff;
+    box-shadow: 2px 2px 0 0 rgba(192, 192, 192, 0.5);
+  }
+  
+  .login-form-square {
+    width: 100px;
+    height: 100px;
+  }

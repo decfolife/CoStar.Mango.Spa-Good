@@ -1,0 +1,21 @@
+<nav class="navbar navbar-expand navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+            <ul class="navbar-nav">
+                <div class="topbar-divider d-none d-sm-block"></div>
+
+                <a class="nav-link text-dark" role="button" [matMenuTriggerFor]="menu">
+                    <span class="me-2 d-none d-lg-inline text-light">
+                        {{ userEmail }}
+                    </span>
+                    <fa-icon [icon]="faUserCircle" size="lg" [fixedWidth]="true" class="text-light"></fa-icon>
+                </a>
+                <mat-menu #menu="matMenu" xPosition="before">   
+                    <button mat-menu-item (click)="logout()">
+                        <fa-icon [icon]="faArrowRightFromBracket" size="lg" [fixedWidth]="true"></fa-icon>
+                        Logout</button>
+                </mat-menu>
+            </ul>
+        </div>
+    </div>
+</nav>

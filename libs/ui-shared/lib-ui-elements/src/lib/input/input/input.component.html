@@ -1,0 +1,28 @@
+<crem-input-label
+  *ngIf="showLabel"
+  [label]="label"
+  [name]="name"
+  [required]="required"
+  [showInfo]="showInfo"
+></crem-input-label>
+
+<div class="input-container">
+  <crem-input-text
+    [id]="id"
+    [state]="state"
+    [name]="name"
+    [value]="value"
+    [placeholder]="placeholder"
+    [required]="required"
+    [disabled]="disabled"
+    [readOnly]="readOnly"
+    [minLengthField]="minLengthField"
+    [maxLengthField]="maxLengthField"
+  ></crem-input-text>
+
+  <crem-input-hint
+    *ngIf="showHint"
+    [type]="state"
+    [text]="hintText"
+  ></crem-input-hint>
+</div>

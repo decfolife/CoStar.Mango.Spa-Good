@@ -1,0 +1,115 @@
+import { Canvas, Meta, Story } from '@storybook/addon-docs';
+
+[comment]: # (This needs to be auto-generated using something like http://sassdoc.com)
+
+<Meta title="Styling/Multiple Properties"/>
+
+# Multiple Properties
+---
+
+The mixin for **multiple properties is `costar-alias()`** and builds on top of the `costar()` mixin. 
+It facilitates quickly building of multiple CSS properties for your custom components.
+
+The mixin parameter comes from the SCSS maps available at 
+ `./common/src/styles/abstract/_aliases.scss`.
+
+# Parameters
+---
+
+### Header
+<details>
+  <summary>header</summary>
+  <table width="100%">
+    <tr>
+      <th>Alias name</th>
+      <th>Parameter</th>
+      <th>Mixin</th>
+    </tr>
+    {/* lead */}
+    <tr>
+      <td rowspan="20">header</td>
+      <td>lead</td>
+      <td>@include costar-alias(header, lead);</td>
+    </tr>
+    {/* body */}
+    <tr>
+      <td>body</td>
+      <td>@include costar-alias(header, body);</td>
+    </tr>
+    {/* small */}
+    <tr>
+      <td>small</td>
+      <td>@include costar-alias(header, small);</td>
+    </tr>
+    {/* h1 */}
+    <tr>
+      <td>h1</td>
+      <td>@include costar-alias(header, h1);</td>
+    </tr>
+    {/* h2 */}
+    <tr>
+      <td>h2</td>
+      <td>@include costar-alias(header, h2);</td>
+    </tr>
+    {/* h3 */}
+    <tr>
+      <td>h3</td>
+      <td>@include costar-alias(header, h3);</td>
+    </tr>
+    {/* h4 */}
+    <tr>
+      <td>h4</td>
+      <td>@include costar-alias(header, h4);</td>
+    </tr>
+    {/* display-1 */}
+    <tr>
+      <td>display-1</td>
+      <td>@include costar-alias(header, display-1);</td>
+    </tr>
+    {/* display-2 */}
+    <tr>
+      <td>display-2</td>
+      <td>@include costar-alias(header, display-2);</td>
+    </tr>
+    {/* display-3 */}
+    <tr>
+      <td>display-3</td>
+      <td>@include costar-alias(header, display-3);</td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+### Button
+<details>
+  <summary>button</summary>
+  <table width="100%">
+    <tr>
+      <th>Alias name</th>
+      <th>Parameter</th>
+      <th>Mixin</th>
+    </tr>
+    {/* primary */}
+    <tr>
+      <td rowspan="20">button</td>
+      <td>primary</td>
+      <td>@include costar-alias(button, primary);</td>
+    </tr>
+    {/* secondary */}
+    <tr>
+      <td>secondary</td>
+      <td>@include costar-alias(button, secondary);</td>
+    </tr>
+    {/* warning */}
+    <tr>
+      <td>warning</td>
+      <td>@include costar-alias(button, warning);</td>
+    </tr>
+    {/* danger */}
+    <tr>
+      <td>danger</td>
+      <td>@include costar-alias(button, danger);</td>
+    </tr>
+  </table>
+</details>
+<br/>

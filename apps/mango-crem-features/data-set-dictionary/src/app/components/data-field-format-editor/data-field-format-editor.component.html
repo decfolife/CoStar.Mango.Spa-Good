@@ -1,0 +1,5 @@
+<dx-select-box *ngIf="showEditor"
+  [dataSource]="dropDownOptions"
+  [(value)]="value"
+  (onValueChanged)="valueChanged($event)"
+></dx-select-box>

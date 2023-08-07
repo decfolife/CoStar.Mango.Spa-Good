@@ -1,0 +1,10 @@
+@use 'colors';
+
+:host{
+  .secondary {
+    color: colors.$costarYellow;
+  }
+  .disabled {
+    color: colors.$gray;
+  }
+}

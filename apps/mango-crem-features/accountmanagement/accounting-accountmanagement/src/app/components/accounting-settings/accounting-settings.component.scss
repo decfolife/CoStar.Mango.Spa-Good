@@ -1,0 +1,112 @@
+$white: #ffffff;
+$stdPadding: 8px;
+
+div.custom-data-grid-toolbar {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: $stdPadding;	
+
+	div.grid-controls-left {
+		mat-form-field.mat-form-field, button.btn {
+			margin-right: 1rem;
+			font-size: 14px;
+		}
+	}
+
+	div.grid-controls-right {
+		mat-form-field.mat-form-field, button.btn {
+			margin-left: 1rem;
+			font-size: 14px;
+		}
+	}
+
+	mat-slide-toggle.mat-slide-toggle {
+		margin-bottom: 0px !important;
+	}
+}
+
+.widget-container {
+	background-color: $white !important;
+    padding: 20px;
+    max-width: 100%;
+    min-width: 300px;
+}
+
+:host ::ng-deep app-portfolio-dropdown .mat-form-field-wrapper {
+	padding-bottom: 0;
+	margin: 0 !important;
+}
+
+.dynamic-form-controls-wrapper {
+	padding: 0 0 0 16px;
+	position: relative;
+	z-index: 2;
+	background-color: #fafafa;
+	width: 100%;
+}
+
+.dynamic-form-controls-wrapper--legacy {
+	top: 0px;
+}
+
+div.dynamic-form-content {
+	padding: 64px 16px 16px 16px !important;
+	z-index: 1;
+}
+
+:host ::ng-deep .dx-tabs-nav-button {
+	display: flex;
+	height: 100%;
+	background-color: transparent !important;
+}
+
+:host ::ng-deep .dx-tab.dx-tab-selected {
+	padding: 8px 9px;
+	box-shadow: inset 0 1px #ddd, inset -1px 0 #ddd, inset 1px 0 #ddd,  inset 1px 0 #ddd !important;
+	-webkit-box-shadow: inset 0 1px #ddd, inset -1px 0 #ddd, inset 1px 0 #ddd !important;
+
+}
+
+:host ::ng-deep crem-tooltip .dx-field-value-static {
+	padding: 0;
+}
+
+:host ::ng-deep crem-tooltip .dx-field {
+	display:flex;
+	align-items:center;
+}
+
+div.dynamic-form {
+	padding: 0;
+}
+
+.controls-right {
+	margin-right: 0px !important;
+}
+
+.toggle {
+	display: flex;
+	align-items: center;
+}
+
+.hidden {
+	display: none !important;
+}
+
+:host ::ng-deep .no-toggle .mat-slide-toggle-bar {
+    transition: none !important;
+}
+
+:host ::ng-deep .no-toggle .mat-slide-toggle-thumb-container {
+    transition: none !important;
+}
+
+.crem-tooltip {
+	margin-left: 6px;
+}
+
+.tempARClass {
+	display: none;
+}

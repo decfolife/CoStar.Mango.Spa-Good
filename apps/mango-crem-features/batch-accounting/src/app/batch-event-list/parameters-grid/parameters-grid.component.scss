@@ -1,0 +1,38 @@
+:host ::ng-deep .readOnly tr.dx-row.dx-data-row:hover {
+    background-color: transparent;
+    cursor: default;
+}
+
+:host ::ng-deep .readOnly tr.dx-row.dx-data-row.dx-row-alt:hover {
+    background-color: transparent;
+    cursor: default;
+}
+
+:host ::ng-deep .readOnly tr.dx-row.dx-data-row.dx-row-alt > td:hover {
+    cursor: default;
+}
+
+.error {
+  color: darkred;
+}
+
+.dropdown-box {
+    display:flex;
+    width: 50%;
+    padding-top: 10px;
+
+    &__label {
+        min-width: 196px;
+        margin: 0px;
+        padding: 6px 10px 0 0;
+        flex-wrap: nowrap;
+    }
+
+    &__content {
+        width:100%
+    }
+}
+
+:host ::ng-deep .dx-field-item-label.dx-field-item-label-location-left {
+        min-width: 196px;
+}

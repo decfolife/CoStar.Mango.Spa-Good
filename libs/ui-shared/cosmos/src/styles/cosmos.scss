@@ -1,0 +1,167 @@
+// @deprecated please use ui-shared/common/src/styles instead
+
+// // Generated on Wed, 24 Feb 2021 04:23:39 GMT
+
+// /*
+//  * tokens Colors
+//  * presenter Color
+//  */
+ $color-brand-accent: #ec4a08;
+ $color-brand-green: #017B30;
+ $color-brand-primary: #0559b3;
+ $color-brand-primary-light: #e3f3fc;
+ $color-brand-primary-medium: #669bd1;
+ $color-brand-red: #CF0201;
+ $color-brand-yellow: #FFB400;
+ $color-neutral-black: #000000;
+ $color-neutral-dark: #808080;
+ $color-neutral-darker: #404040;
+ $color-neutral-light: #EAEAEA;
+ $color-neutral-lighter: #F5f5f5;
+ $color-neutral-medium: #BFBFBF;
+ $color-neutral-white: #FFFFFF;
+ $color-opaque-black-1: rgba(0,0,0,.5);
+ $color-opaque-black-2: rgba(0,0,0,.2);
+ $color-opaque-black-3: rgba(0,0,0,.3);
+ $color-opaque-black-4: rgba(0,0,0,.4);
+ $color-opaque-black-5: rgba(0,0,0,.5);
+ $color-opaque-black-6: rgba(0,0,0,.6);
+ $color-opaque-black-7: rgba(0,0,0,.7);
+ $color-opaque-black-8: rgba(0,0,0,.8);
+ $color-opaque-black-9: rgba(0,0,0,.9);
+ $color-opaque-white-1: rgba(255,255,255,.1);
+ $color-opaque-white-2: rgba(255,255,255,.2);
+ $color-opaque-white-3: rgba(255,255,255,.3);
+ $color-opaque-white-4: rgba(255,255,255,.4);
+ $color-opaque-white-5: rgba(255,255,255,.5);
+ $color-opaque-white-6: rgba(255,255,255,.6);
+ $color-opaque-white-7: rgba(255,255,255,.7);
+ $color-opaque-white-8: rgba(255,255,255,.8);
+ $color-opaque-white-9: rgba(255,255,255,.9);
+
+//  /*
+//    * tokens Font-family
+//    * presenter font-family
+//   */
+ $font-family-brand: Helvetica, system-ui, sans-serif;
+
+//  /*
+//    * tokens Font-size
+//    * presenter font-size
+//   */
+ $font-size-x-lg: 22px;
+ $font-size-2-x-lg: 24px;
+ $font-size-2-x-sm: 10px;
+ $font-size-3-x-lg: 28px;
+ $font-size-3-x-sm: 8px;
+ $font-size-lg: 18px;
+ $font-size-med: 16px;
+ $font-size-sm: 14px;
+ $font-size-x-sm: 12px;
+
+//  /*
+//    * tokens Font-weight
+//    * presenter font-weight
+//   */
+ $font-weight-bold: 700;
+ $font-weight-light: 200;
+ $font-weight-regular: 400;
+
+ $font-primary-capital-letter: 1;
+ $text-base-size: 1em;
+ $text-size-sm-lhc: 1rem;
+ $text-unit: 1em;
+
+ $text-scale-ratio: 1.25; // multiplier used to generate the type scale values
+ $text-size-md-lhc: calc($text-size-sm-lhc * $text-scale-ratio * $text-scale-ratio);
+ $text-size-lg-lhc: calc($text-size-md-lhc * $text-scale-ratio);
+ $text-size-xs-lhc: calc(($text-unit / $text-scale-ratio) / $text-scale-ratio);
+ $text-size-s-lhc: calc($text-size-xs-lhc * $text-scale-ratio);
+ $text-size-xl-lhc: calc($text-size-lg-lhc*$text-scale-ratio);
+ $text-size-xxl-lhc: calc($text-size-xl-lhc*$text-scale-ratio);
+ $text-size-xxxl-lhc: calc($text-size-xxl-lhc*$text-scale-ratio);
+
+ $font-line-height-body: 1.5;
+ $font-line-height-heading: 1.25;
+
+
+//  /*
+//    * tokens Layout
+//    * presenter layout
+//   */
+ $layout-container-fluid-offset: 0px;
+ $layout-container-inset: 4px;
+ $layout-container-offset: 4px;
+
+ $column-span-1: 6.25%;
+ $column-span-10: 62.5%;
+ $column-span-11: 68.75%;
+ $column-span-12: 75%;
+ $column-span-13: 81.25%;
+ $column-span-14: 87.5%;
+ $column-span-15: 93.75%;
+ $column-span-16: 100%;
+ $column-span-2: 12.5%;
+ $column-span-3: 18.75%;
+ $column-span-4: 25%;
+ $column-span-5: 31.25%;
+ $column-span-6: 37.5%;
+ $column-span-7: 43.75%;
+ $column-span-8: 50%;
+ $column-span-9: 56.25%;
+
+ $layout-page-inset: 8px;
+ $layout-page-width: 100%;
+
+
+//  /*
+//   * tokens Spacing
+//    * presenter Spacing
+//  */
+ $space-em-0-25: .25em;
+ $space-em-0-5: .5em;
+ $space-em-0-75: .75em;
+ $space-em-1: 1em;
+ $space-em-1-5: 1.5em;
+ $space-em-2: 2em;
+ $space-em-2-5: 2.5em;
+ $space-em-3: 3em;
+ $space-em-3-5: 3.5em;
+ $space-em-4: 4em;
+ $space-2-x-large: 40px; // rem-3-5
+ $space-2-x-small: 4px; // rem-0-25
+ $space-3-x-large: 48px; // rem-3
+ $space-4-x-large: 56px; // rem-3-5
+ $space-5-x-large: 64px; // rem-4
+ $space-base: 16px; // rem-1
+ $space-large: 24px; // rem-1-5
+ $space-small: 12px; // rem-0.75
+ $space-x-large: 32px; // rem-2
+ $space-x-small: 8px; // rem-0-5
+ $space-2-x-small: 4px; // rem-0-25
+ $space-rem-0-25: .25rem;
+ $space-rem-0-5: .5rem;
+ $space-rem-0-75: .75rem;
+ $space-rem-1: 1rem;
+ $space-rem-1-5: 1.5rem;
+ $space-rem-2: 2rem;
+ $space-rem-2-5: 2.5rem;
+ $space-rem-3: 3rem;
+ $space-rem-3-5: 3.5rem;
+ $space-rem-4: 4rem;
+
+//  /*
+//   * tokens Borders
+//   * presenter borders
+//   */
+  $border-color-brand: #BFBFBF;
+  $border-color-state-active: #0559b3;
+  $border-radius-buttons: 2px;
+  $border-width-brand: 1px;
+  $box-shadow-active: 0px 0px 4px 0px #0559B3;
+
+
+
+// @import '../../button-group/button-group.component.scss';
+// @import '../../view-button/view-button.component.scss';
+// @import '../../view-button-group/view-button-group.component.scss';

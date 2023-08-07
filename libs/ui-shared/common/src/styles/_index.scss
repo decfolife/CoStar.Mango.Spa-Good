@@ -1,0 +1,79 @@
+// ==========================================================================
+// HOW TO USE OR COLLABORATE?
+// ==========================================================================
+// Please refer to the Storybook documentation for more information.
+
+// ==========================================================================
+// UPDATING THIS LIBRARY?
+// Please make sure to keep update the documentation:
+// - Storybook
+// - CoStar Wiki
+// ==========================================================================
+
+// ==========================================================================
+// ABSTRACTS - SASS utilities, mixins, functions, variables, etc.
+// ==========================================================================
+// It includes SCSS/CSS variables (Eg. colors), mixins, functions and placeholders.
+// The abstract folder and files should not contain actual styles and each one of
+// the above should have its own file (Eg. _variables.scss, _mixins.css, _functions.scss, etc).
+@forward './abstracts/variables_legacy'; // Legacy variables, dispose after full migration to this library conventions
+@forward './abstracts/variables'; // Variable maps & main mixin
+@forward './abstracts/mixins'; // Mixin utilities
+@forward './abstracts/functions'; // Function utilities
+@forward './abstracts/aliases'; // Mixin utilities
+@forward './abstracts/root'; // SCSS4 variable definitions
+
+// ==========================================================================
+// BASE - Global styles and classes
+// ==========================================================================
+// @Description: Contains site-wide boilerplate. It should contain typography, resets and some common and globally
+// use code for HTML elements (Eg. _base.scss). Animation can be added here as well (Eg. _animations.scss).
+// The code in this folder should not be overwritten later.
+// @forward './base/reset'; // Reset/normalize
+@forward './base/typography'; // Typography rules
+@forward './base/utilities'; // Utility classes
+
+// ==========================================================================
+// COMPONENTS - Component specific styles
+// ==========================================================================
+// Define global micro-elements (Eg. buttons, forms, icons, loaders, etc.) that for different
+// reasons are not part of a particular Angular component.
+@forward './components/buttons';
+
+// ==========================================================================
+// LAYOUT - General configuration of the page layout
+// ==========================================================================
+// Components SCSS for global macro elements like navbar, footer, sidebar or header.
+// This page defines positioning and sizing.
+@forward './layout/main';
+
+// ==========================================================================
+// PAGES - Specific page styles
+// ==========================================================================
+// In some cases, you may want to use this folder for targeting styles for a specific
+// global page (Eg. _dashboard.scss). Use this folder only if it's required.
+@forward './pages/dashboard';
+
+// ==========================================================================
+// THEMES - Global theme styles
+// ==========================================================================
+// Use when a different theme is necessary.
+@forward './themes/theme';
+
+// ==========================================================================
+// VENDORS - Vendors overwrites
+// ==========================================================================
+// Vendor overwrites for your global components (Eg. vendors-extensions/_bootstrap.scss).
+@forward './vendors/include-media'; // Responsive library
+@forward './vendors/my-bootstrap';
+@forward './vendors/my-devextreme';
+@forward './vendors/my-material';
+
+// ==========================================================================
+// SHAME - Hacky styles to be fixed later
+// ==========================================================================
+// NOTE: Keep this file last to allow overwrites
+// When adding new lines to the _shame.scss file, add comments to the new portion.
+// This will help to keep track and let other developers why this was introduced
+// and potential solutions. Adding a line to the commit's body is recommended as well.
+@forward 'shame';

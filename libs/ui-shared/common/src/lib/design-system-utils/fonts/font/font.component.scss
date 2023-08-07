@@ -1,0 +1,45 @@
+@use "../../../../../../common/src/styles" as *;
+
+:host {
+  display: flex;
+  min-height: 6rem;
+  flex-direction: row;
+  @include costar(border-radius, medium);
+  @include costar(background-color, light);
+  @include costar(border-color, gray05);
+  .specs,
+  .details {
+    @include costar(margin, 5);
+    .title {
+      margin: 0px;
+      margin-block-start: 0;
+      margin-block-end: 0;
+    }
+  }
+  .specs {
+    display: flex;
+    flex-direction: column;
+    @include costar(gap, 1);
+    small {
+      gap: 1rem;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  .details {
+    display: flex;
+    @include costar(gap, 5);
+    .description{
+      max-width: 220px;
+    }
+    .examples {
+      display: grid;
+      grid-template-rows: 1fr;
+      @include costar(gap, 3);
+      overflow-wrap: break-word;
+      grid-template-columns: repeat( auto-fit, minmax(120px, 1fr) );
+    }
+  }
+  @include costar-class-generator(header);
+}

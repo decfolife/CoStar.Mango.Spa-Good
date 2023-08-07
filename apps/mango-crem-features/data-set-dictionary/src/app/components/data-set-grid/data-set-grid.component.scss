@@ -1,0 +1,45 @@
+@import '../../../../../../mango/src/assets/styles/colors.scss';
+
+::ng-deep {
+  dx-data-grid {
+    .dx-header-row > td > .dx-datagrid-text-content {
+      display: inline-block;
+      text-align: left;
+      vertical-align: top;
+      white-space: normal;
+    }
+
+    .dx-link {
+      color: $costarBlue !important;
+    }
+
+    div.dx-button-content {
+      border: none !important;
+    }
+
+    input {
+      box-sizing: border-box !important;
+      font-size: 14px !important;
+    }
+
+    .dx-datagrid-rowsview {
+      table {
+        &.dx-datagrid-table {
+          tbody {
+            &.dx-row:hover {
+              > tr {
+                border-color: #e3f3fc;
+                cursor: default;
+
+                td {
+                  background: #e3f3fc;
+                  border-color: #e3f3fc;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

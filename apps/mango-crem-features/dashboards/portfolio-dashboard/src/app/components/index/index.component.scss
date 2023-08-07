@@ -1,0 +1,22 @@
+
+div#portfolio-filters {
+	width: 100% !important;
+	position: -webkit-sticky !important;
+	position: sticky !important;
+	top: 0;
+	z-index: 999;
+  
+	crem-button button {
+		margin-left: 0 !important;
+	}
+}
+
+.message {
+	padding: 16px;
+	color: maroon;
+	font-weight: bold;
+}  
+
+div#portfolio-metrics {
+	height: 112px;;
+}

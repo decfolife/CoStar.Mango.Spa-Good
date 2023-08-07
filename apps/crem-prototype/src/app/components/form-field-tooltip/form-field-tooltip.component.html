@@ -1,0 +1,53 @@
+<fa-icon icon="info-circle" [id]="id" (click)="toggleDefault()"></fa-icon>
+<dx-popover
+    [target]="target" 
+    [maxWidth]="600"
+    width="auto"
+    height="auto"
+    [(visible)]="defaultVisible"
+    position="bottom"
+    >
+    <div *dxTemplate="let data = model of 'content'" class="form-field-tooltip">
+        <div class="form-field-tooltip-title">
+        	<h6>{{title}}</h6>
+        </div>
+        <dx-tabs
+			#tabPanel
+			[width]="600"
+			[selectedIndex]="0"	
+			(onItemClick)="selectTab($event)"		
+			>
+			<dxi-item text="Help Text">
+				<span>Help Text</span>
+			</dxi-item>	
+			<dxi-item text="History">
+				<span>History</span>			
+			</dxi-item>				
+		</dx-tabs>
+		<div class="form-field-tooltip-content">
+			<div *ngIf="showHelpText" class="help-text">		
+				{{helpText}}			
+			</div>
+			<div *ngIf="!showHelpText" class="history">
+				<dx-data-grid					
+					[dataSource]="changeHistory"
+					[showColumnLines]="false"
+					[showRowLines]="false"
+					[showBorders]="false"
+					[rowAlternationEnabled]="true" 							
+					[allowColumnResizing]="true"
+					[allowColumnReordering]="false"
+					[columnAutoWidth]="true"
+					[wordWrapEnabled]="true"
+				>
+					<dxo-sorting mode="none"></dxo-sorting>
+					<dxo-header-filter [visible]="true"></dxo-header-filter> 
+					<dxo-scrolling mode="virtual"></dxo-scrolling>							
+					<dxi-column dataField="value"></dxi-column>
+					<dxi-column dataField="changedBy" caption="User" [width]="140"></dxi-column>
+					<dxi-column dataField="changeDate" caption="Date" [width]="100"></dxi-column>
+				</dx-data-grid>	
+			</div>	
+		</div>
+    </div>
+</dx-popover>

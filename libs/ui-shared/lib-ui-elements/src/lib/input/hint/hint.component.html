@@ -1,0 +1,8 @@
+<small [ngClass]="getCssClasses()">
+  <ng-container [ngSwitch]="type">
+    <crem-icon *ngSwitchCase="'warning'" class="icon" icon="faTriangleExclamation"></crem-icon>
+    <crem-icon *ngSwitchCase="'error'" class="icon" icon="faExclamationCircle"></crem-icon>
+    <crem-icon *ngSwitchCase="'success'" class="icon" icon="faCircleCheck" pack="regular"></crem-icon>
+  </ng-container>
+  {{text}}
+</small>

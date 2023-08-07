@@ -1,0 +1,128 @@
+<div class="dynamic-form">
+  <div class="dynamic-form-content">
+    <div class="row">
+      <div *ngFor="let section of formFields" [ngClass]="section.class">
+        <form-schedule
+          *ngIf="section.isTableData"
+          [section]="section"
+          [hasHistory]="false"
+        ></form-schedule>
+        <mat-card *ngIf="!section.isTableData">
+          <mat-card-header>
+            <mat-card-title>{{ section.sectionName }}</mat-card-title>
+            <div *ngIf="section.sectionName == 'Property Strategy'">
+              <button class="btn btn-primary-outline" type="button">Search CoStar</button>
+              <button
+                class="btn btn-primary std-left-margin"
+                (click)="launchAddDealModal()"
+                type="button"
+              >
+                Create Deal
+              </button>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngIf="section.imagePath">
+              <img [src]="section.imagePath" alt=""/>
+            </div>
+            <dx-form
+              *ngIf="!section.imagePath"
+              [(formData)]="buildingStrategy"
+              [colCount]="section.colCount ? section.colCount : 2"
+              labelLocation="left"
+              [showColonAfterLabel]="false"
+            >
+              <dxi-item
+                *ngFor="let field of section.fields"
+                [dataField]="field.value"
+                [label]="{ text: field.label }"
+                [editorType]="field.controlType"
+                [editorOptions]="{
+                  items: field.dropdownValues,
+                  searchEnabled: true,
+                  disabled: field.readOnly
+                }"
+                [template]="field.dxTemplate"
+                [colSpan]="field.colSpan"
+              >
+              </dxi-item>
+              <div *dxTemplate="let data of 'textBoxTemplate'">
+                <dx-text-box
+                  [(value)]="buildingStrategy[data.dataField]"
+                  [disabled]="data.editorOptions.disabled"
+                ></dx-text-box>
+                <form-field-tooltip
+                  [fieldId]="data.dataField"
+                ></form-field-tooltip>
+              </div>
+              <div *dxTemplate="let data of 'dateBoxTemplate'">
+                <dx-date-box
+                  [(value)]="buildingStrategy[data.dataField]"
+                  [disabled]="data.editorOptions.disabled"
+                ></dx-date-box>
+                <form-field-tooltip
+                  [fieldId]="data.dataField"
+                ></form-field-tooltip>
+              </div>
+              <div *dxTemplate="let data of 'selectBoxTemplate'">
+                <dx-select-box
+                  [dataSource]="data.editorOptions.items"
+                  [(value)]="buildingStrategy[data.dataField]"
+                  [searchEnabled]="data.editorOptions.searchEnabled"
+                  valueExpr="value"
+                  displayExpr="display"
+                  [disabled]="data.editorOptions.disabled"
+                ></dx-select-box>
+                <form-field-tooltip
+                  [fieldId]="data.dataField"
+                ></form-field-tooltip>
+              </div>
+              <div *dxTemplate="let data of 'clauseTemplate'">
+                <dx-text-area
+                  [(value)]="buildingStrategy[data.dataField]"
+                  [height]="112"
+                  [disabled]="data.editorOptions.disabled"
+                ></dx-text-area>
+                <doc-sec-page></doc-sec-page>
+                <form-field-tooltip
+                  [fieldId]="data.dataField"
+                ></form-field-tooltip>
+              </div>
+              <div *dxTemplate="let data of 'rangeSliderTemplate'" style="padding-bottom: 48px">
+                <dx-range-slider
+                  min="100"
+                  max="300"
+                  [start]="buildingStrategy.minSfPerSeat"
+                  [end]="buildingStrategy.maxSfPerSeat"
+                  [tooltip]="tooltip"
+                  width="100%"
+                ></dx-range-slider>
+                <form-field-tooltip
+                  [fieldId]="data.dataField"
+                ></form-field-tooltip>
+              </div>
+            </dx-form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<dx-popup
+  #AddDealPopup
+  width="800"
+  height="95%"
+  [showTitle]="true"
+  title="Create Deal"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="false"
+  [(visible)]="addDealPopupVisible"
+>
+  <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    <add-deal-dialog
+      (saved)="saveDeal($event)"
+      (cancelled)="cancelAddDeal($event)"
+    ></add-deal-dialog>
+  </div>
+</dx-popup>

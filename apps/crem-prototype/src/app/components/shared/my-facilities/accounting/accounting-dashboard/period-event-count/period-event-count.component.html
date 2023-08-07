@@ -1,0 +1,31 @@
+<mat-card class="dashboard-card">
+  <mat-card-header>
+    <mat-card-title>Period Event Count this Quarter</mat-card-title>
+
+    <div class="mat-card-header-toolbar">
+      <button class="btn btn-default btn-sm"
+        [matMenuTriggerFor]="cardMenu"
+      ><mat-icon>more_horiz</mat-icon></button>
+
+      <mat-menu #cardMenu="matMenu">
+        <button mat-menu-item
+          (click)="showFieldChooser()"
+        >Show Field Chooser</button>
+        <button mat-menu-item
+          (click)="resizeCard()"
+        >Toggle Full Width</button>
+      </mat-menu>
+    </div>
+    </mat-card-header>
+
+  <mat-card-content class="no-padding">
+    <dx-pivot-grid #countGrid
+      [dataSource]="gridDataSource"
+      [showColumnGrandTotals]="false"
+      [showRowGrandTotals]="true"
+      [showColumnTotals]="false"
+      [showRowTotals]="false"
+      [fieldChooser]="{ enabled: false }"
+    ></dx-pivot-grid>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,7 @@
+<div *ngIf="(oauthUserFullyAuthenticated$ | async) === false" id="login-page">
+  <div id="company-logo">
+      <img src="costar-logo.png">
+  </div>
+
+  <mango-login (loggedInUser)="userLoginSuccess($event)" class="mt-5 ml-5 mr-5"></mango-login>
+</div>

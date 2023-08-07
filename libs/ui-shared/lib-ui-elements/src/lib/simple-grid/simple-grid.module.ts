@@ -1,0 +1,25 @@
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxBulletModule } from 'devextreme-angular/ui/bullet';
+import {
+  CustomTemplateDirective,
+  SimpleGridComponent,
+} from './simple-grid.component';
+import { DxLoadPanelModule, DxTemplateModule } from 'devextreme-angular';
+import { ButtonModule } from '../button';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    DxDataGridModule,
+    DxBulletModule,
+    ButtonModule,
+    DxTemplateModule,
+    DxLoadPanelModule
+  ],
+  declarations: [SimpleGridComponent, CustomTemplateDirective],
+  //schemas: [NO_ERRORS_SCHEMA],
+  exports: [SimpleGridComponent, CustomTemplateDirective],
+})
+export class SimpleGridModule {}

@@ -1,0 +1,9 @@
+<label [for]="name">
+  <span>
+    {{label}}
+    <ng-container *ngIf="required">
+      <sup>*</sup>
+    </ng-container>
+  </span>
+  <crem-input-info *ngIf="showInfo"></crem-input-info>
+</label>

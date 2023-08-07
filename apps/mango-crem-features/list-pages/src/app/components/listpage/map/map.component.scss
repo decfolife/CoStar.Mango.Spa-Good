@@ -1,0 +1,70 @@
+@use 'src/assets/styles/colors';
+
+:host ::ng-deep {
+  .grid-map-container {
+    .mat-sidenav-content {
+      display: block !important;
+    }
+  }
+
+  .map-container {
+    padding-bottom: 113px;
+
+    &.mat-drawer-container {
+      height: 100%;
+    }
+
+    .map-sidenav {
+      font-weight: 300;
+      width: 300px;
+      padding-bottom: 113px;
+
+      .mat-card {
+        border-radius: 2px;
+        margin: 4px 0;
+        padding: 0;
+
+        .mat-card-header {
+          padding: 8px 16px;
+
+          .mat-card-subtitle {
+            margin: 0;
+
+            .title-name {
+              color: colors.$costarBlue;
+              overflow: hidden;
+              text-overflow: ellipses;
+            }
+
+            a {
+              color: colors.$costarBlue;
+
+              &:visited {
+                color: colors.$costarBlue;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    map-info-window {
+      div {
+        font-weight: 300;
+
+        b {
+          color: colors.$costarBlue;
+          font-weight: normal;
+        }
+
+        a {
+          color: colors.$costarBlue;
+
+          &:visited {
+            color: colors.$costarBlue;
+          }
+        }
+      }
+    }
+  }
+}

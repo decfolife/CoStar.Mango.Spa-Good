@@ -1,0 +1,40 @@
+{
+  "name": "ui-shared-cosmos",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/ui-shared/cosmos/src",
+  "prefix": "cosmos",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:ng-packagr-lite",
+      "options": {
+        "project": "libs/ui-shared/cosmos/ng-package.json",
+        "tsConfig": "libs/ui-shared/cosmos/tsconfig.lib.json",
+        "watch": false,
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/ui-shared/cosmos/src/**/*.ts",
+          "libs/ui-shared/cosmos/src/**/*.html"
+        ]
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/ui-shared/cosmos"
+      ],
+      "options": {
+        "jestConfig": "libs/ui-shared/cosmos/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

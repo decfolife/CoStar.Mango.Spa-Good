@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo set IMAGE_TAG as buildID
+      - IMAGE_TAG=`cat BuildID.txt`
+      - echo set Repository_URI
+      - Repository_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...     
+      - docker build --force-rm -t $Repository_URI:latest -t $Repository_URI:$IMAGE_TAG --build-arg COSTAR_ENVIRONMENT=$Environment -f Web/MangoSPA/Client/apps/mango-crem-features/central-auth/Dockerfile ./Web/MangoSPA/Client/
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $Repository_URI --all-tags
+      - printf '[{"name":"client-container","imageUri":"%s"}]' $Repository_URI:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json

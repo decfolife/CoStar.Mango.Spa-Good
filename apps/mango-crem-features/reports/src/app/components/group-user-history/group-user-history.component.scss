@@ -1,0 +1,21 @@
+.button {
+    &__apply {
+        padding-right: 8px;
+    }
+}
+
+dx-tab-panel.dx-multiview.dx-swipeable.dx-tabpanel.dx-widget.dx-visibility-change-handler.dx-collection {
+    height: calc(100% - 56px);
+}
+  
+.report-page-data-grid-wrapper {
+    height: 100%;
+}
+
+:host ::ng-deep .mat-form-field-infix {
+	display: flex !important
+}
+
+:host ::ng-deep .dx-dropdowneditor-icon::before {
+    content: "" !important;
+}

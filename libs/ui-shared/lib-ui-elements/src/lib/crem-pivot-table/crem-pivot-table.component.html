@@ -1,0 +1,68 @@
+
+<dx-chart #PivotChart *ngIf="chartVisible"
+  resolveLabelOverlapping="none"
+>
+  <dxo-common-series-settings type="bar"></dxo-common-series-settings>
+  <dxo-size [height]="200"></dxo-size>
+  <dxo-adaptive-layout [width]="450"></dxo-adaptive-layout>
+  <dxo-tooltip
+    [enabled]="true"
+  ></dxo-tooltip>
+</dx-chart>
+
+<dx-pivot-grid #PivotGrid
+    [ngClass]="{
+      'allow_drilldown': allowDrillDown
+    }"
+    [allowSortingBySummary]="true"
+    [allowFiltering]="true"
+    [showBorders]="true"
+    [allowSortingBySummary]="true"
+    [showColumnGrandTotals]="false"
+    [showRowGrandTotals]="showRowGrandTotals"
+    [showColumnGrandTotals]="showColumnGrandTotals"
+    [showRowTotals]="false"
+    [showColumnTotals]="false"
+    [dataSource]="pivotGridDataSource"
+    (onExporting)="onExporting($event)"
+    (onCellClick)="onPivotCellClick($event)"
+    (onContextMenuPreparing)="contextMenuPreparing($event)"
+    (onContentReady)="adaAttributes($event)"
+    >
+    <dxo-field-chooser
+      [applyChangesMode]="applyChangesMode"
+      [allowSearch]="true"
+      [enabled]="showColumnChooser"
+      [height]="600"
+      >
+    </dxo-field-chooser>
+    <dxo-field-panel
+      [showFilterFields]="false"
+      [showColumnFields]="summationTypeConfig.showColumnFields"
+      [showRowFields]="summationTypeConfig.showRowFields"
+      [showDataFields]="summationTypeConfig.showDataFields"
+      [showFilterFields]="summationTypeConfig.showFilterFields"
+      [allowFieldDragging]="false"
+      [visible]="summationTypeConfig.showSummationTypeConfig"
+    ></dxo-field-panel>
+
+    <dxo-scrolling mode="virtual"></dxo-scrolling>
+</dx-pivot-grid>
+
+<dx-popup
+  [(visible)]="popupVisible"
+  [width]="600"
+  [height]="400"
+  (onShown)="onPopupShown()"
+>
+  <div *dxTemplate="let data of 'content'">
+    <dx-data-grid class="drilldown-datagrid"
+      #drillDownDataGrid
+      [width]="560"
+      [height]="300"
+      [dataSource]="drillDownDataSource"
+      [columns]="drilldownColumns"
+    >
+    </dx-data-grid>
+  </div>
+</dx-popup>

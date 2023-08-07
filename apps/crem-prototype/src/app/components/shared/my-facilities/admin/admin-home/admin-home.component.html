@@ -1,0 +1,220 @@
+<div class="module-wrapper">
+	<mat-drawer-container >
+		<mat-drawer mode="side" opened [style.visibility]="'visible'" class="left-nav">
+			<mat-nav-list>
+				<mat-list [style.width]="drawerWidth">
+					<div *ngIf="isLeftNavOpened">
+						<mat-list-item [routerLink]="['portfolios']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Portfolios</span></mat-list-item>
+						<mat-list-item [routerLink]="['dynamicforms']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Dynamic Forms</span></mat-list-item>								
+		                <mat-expansion-panel #ETLPanel class="mat-elevation-z0" [class.open]="ETLPanel.expanded"  [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            ETL
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['etl/imports']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Imports</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['etl/templates']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Templates</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['etl/log']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Import Log</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['etl/queue']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Queue Status</span>
+							</mat-list-item>							
+							<mat-list-item [routerLink]="['etl/formitemlist']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Form Item List Admin</span>
+							</mat-list-item>
+		                </mat-expansion-panel>			                
+		                <mat-expansion-panel #IntegrationPanel class="mat-elevation-z0" [class.open]="IntegrationPanel.expanded"  [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Integrations
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['integrations/dataconnector']" routerLinkActive="active">
+								<span class="costar-left-nav-link">DataConnector Integrations</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['integrations/log']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Processing Log</span>
+							</mat-list-item>							
+							<mat-list-item [routerLink]="['integrations/dataextracts']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Data Extracts</span>
+							</mat-list-item>			                    
+		                </mat-expansion-panel>	                
+		                <mat-expansion-panel #DataSetsPanel class="mat-elevation-z0" [class.open]="DataSetsPanel.expanded"  [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Data Sets
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['datasets/datagroups']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Data Groups</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['datasets/datafields']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Data Fields</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['datasets/columngroups']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Column Groups</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['datasets/columnfields']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Column Fields</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['datasets/datasets']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Data Sets</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['datasets/datafieldassociations']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Data Field Associations</span>
+							</mat-list-item>
+		                </mat-expansion-panel>
+		                <mat-expansion-panel #ClientSetupPanel class="mat-elevation-z0" [class.open]="ClientSetupPanel.expanded"  [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Client Setup
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <!-- <mat-list-item [routerLink]="['clientsetup/addportfolio']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Add New Portfolio</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/portfoliohierarchy']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Portfolio Hierarchy Maintenance</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/moveportfolioobjects']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Move Portfolio Objects</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/reactivateobjects']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Reactivate Objects</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/objectmaintenance']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Object Maintenance</span>
+							</mat-list-item> -->
+							<mat-list-item [routerLink]="['clientsetup/leftnavadmin']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Left Nav Admin</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/leftnavlist']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Left Nav List</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/navpages']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Nav Pages</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/quicksearch']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Quicksearch</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/costarlookup']" routerLinkActive="active">
+								<span class="costar-left-nav-link">CoStar Property Lookup</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/clientsitesetup']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Client Site Setup</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/listpages']" routerLinkActive="active">
+								<span class="costar-left-nav-link">List Pages</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/menuheadings']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Menu Headings</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['clientsetup/budgetcategories']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Budget Categories</span>
+							</mat-list-item>
+		                </mat-expansion-panel>
+		                <mat-expansion-panel #SecurityPanel class="mat-elevation-z0" [class.open]="SecurityPanel.expanded"  [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Security
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['security/users']" routerLinkActive="active">
+								<span class="costar-left-nav-link">User Maintenance</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['security/groups']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Security Group Maintenance</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['security/hierarchies']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Hierarchy Maintenance</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['security/profiles']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Security Profiles</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['security/password-settings']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Password Settings</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['security/rights']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Additional Object Rights</span>
+							</mat-list-item>    
+							<mat-list-item [routerLink]="['security/objectmaintenance']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Object Maintenance</span>
+							</mat-list-item>        
+		                </mat-expansion-panel>
+		                <mat-expansion-panel #ReportsPanel class="mat-elevation-z0" [class.open]="ReportsPanel.expanded"  [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Reports
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['reports/cannedreports']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Canned Reports</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['reports/criteria']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Criteria</span>
+							</mat-list-item>										                    
+		                </mat-expansion-panel>
+		                <mat-expansion-panel #CoStarPanel class="mat-elevation-z0" [class.open]="CoStarPanel.expanded"  [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            CoStar Admin
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['costaradmin/objecttypetypes']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Object Type Types</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/objectrelationships']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Object Relationships</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/relationshiptypes']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Relationship Types</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/generatexml']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Generate XML</span>
+							</mat-list-item>							
+							<mat-list-item [routerLink]="['costaradmin/uploadxml']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Upload XML</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/merchandisecategories']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Merchandise Categories</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/merchandisedepartments']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Merchandise Departments</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/filemanager']" routerLinkActive="active">
+								<span class="costar-left-nav-link">File Manager</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/filecleanup']" routerLinkActive="active">
+								<span class="costar-left-nav-link">File Clean Up</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/documenttemplates']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Document Templates</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/documenttemplatetypes']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Document Template Types</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/tablemaintenance']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Table Maintenance</span>
+							</mat-list-item>
+							<mat-list-item [routerLink]="['costaradmin/mapconfiguration']" routerLinkActive="active">
+								<span class="costar-left-nav-link">Map Configuration</span>
+							</mat-list-item>	                    
+		                </mat-expansion-panel>
+		                <mat-list-item [routerLink]="['insights']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Insights</span></mat-list-item>
+		            </div>
+				</mat-list>
+				<!-- <div class="add-button-wrapper">	                
+					<button class="btn btn-link dbl-top-margin float-right" (click)="toggleDrawer()"><fa-icon icon="chevron-left" *ngIf="isLeftNavOpened"></fa-icon><fa-icon icon="chevron-left" *ngIf="isLeftNavOpened"></fa-icon><fa-icon icon="chevron-right" *ngIf="!isLeftNavOpened"></fa-icon><fa-icon icon="chevron-right" *ngIf="!isLeftNavOpened"></fa-icon></button>						
+	            </div> -->
+			</mat-nav-list>
+		</mat-drawer>
+		<mat-drawer-content class="oflow-x-hidden" [style.marginLeft]="drawerWidth">
+			<router-outlet></router-outlet>
+		</mat-drawer-content>
+	</mat-drawer-container>
+</div>

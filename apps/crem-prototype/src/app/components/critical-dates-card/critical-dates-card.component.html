@@ -1,0 +1,48 @@
+<mat-card class="dashboard-card">
+	<mat-card-header>
+		<mat-card-title>
+			<div class="card-title-hero">{{criticalDates.length}}</div>
+			<span>Critical Dates</span>
+		</mat-card-title>
+		<div class="mat-card-header-toolbar">
+			<costar-dropdown [dropdownData]="durations" class="dropdown-small std-right-margin"></costar-dropdown>			
+			<button class="btn btn-default btn-sm" [matMenuTriggerFor]="cardMenu"><mat-icon>more_horiz</mat-icon></button>
+			<mat-menu #cardMenu="matMenu">								
+				<button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>      
+				<button mat-menu-item (click)="exportDataGrid()">Export</button>				
+			</mat-menu>
+		</div>
+	</mat-card-header>
+	<mat-card-content class="no-padding" style="height: 400px;">							
+		<dx-data-grid class="list-page-data-grid"
+			#CriticalDatesExpirationsGrid
+			[dataSource]="criticalDates"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 							
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			(onRowClick)="navigateToObject($event)"
+		>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+			<dxo-header-filter [visible]="true"></dxo-header-filter> 
+			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			<dxi-column dataField="clientLeaseId"></dxi-column>
+			<dxi-column dataField="propertyName"></dxi-column>
+			<dxi-column dataField="address"></dxi-column>
+			<dxi-column dataField="city"></dxi-column>
+			<dxi-column dataField="state"></dxi-column>
+			<dxi-column dataField="country"></dxi-column>
+			<dxi-column dataField="leaseStatus"></dxi-column>
+			<dxi-column dataField="accountType"></dxi-column>
+			<dxi-column dataField="spaceType"></dxi-column>
+			<dxi-column dataField="rentableArea" dataType="number">
+				<dxo-format type="fixedPoint" [precision]="0"></dxo-format>
+			</dxi-column>
+			<dxi-column dataField="type"></dxi-column>
+			<dxi-column dataField="criticalDate" dataType="date" alignment="right"></dxi-column>			
+		</dx-data-grid>
+	</mat-card-content>
+</mat-card>

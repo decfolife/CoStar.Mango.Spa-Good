@@ -1,0 +1,92 @@
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+
+
+.body-content {
+    padding: 0 24px;
+    font-size: 14px !important;
+}
+
+.modalContent {
+    overflow-y: auto !important;
+}
+
+.footerRightControls {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    crem-button {
+        padding: 8px 0px 8px 8px;
+    }
+}
+
+.form {
+    &__section-item {
+        display: flex;
+        flex-direction: column;
+    }
+}   
+.criteria-selection-wrapper {
+    width: 100%;
+}
+
+dynamic-form {
+    width: 100%;
+}
+
+mango-criteria-form {
+    width: 100%;
+}
+
+crem-text-box {
+    width: 100%;
+}
+
+crem-vertical-stepper {
+    display: flex;
+}
+
+.textbox_subtext {
+    min-height: 16px;
+    font-size: 12px;
+    color: #757575;
+
+    &--warning {
+        font-size: 12px;
+        min-height: 16px;
+        color: colors.$costarADAAlert;
+    }
+
+    &--success {
+        font-size: 12px;
+        min-height: 16px;
+        color: colors.$color-brand-green;
+    }
+}
+
+.disabled {
+    color: lightGray;
+}
+::ng-deep {
+    mango-create-segment {
+        .footer-content {
+            crem-button {
+                button {
+                    margin: 0px !important;
+                }
+                
+                button:focus, button:focus-within {
+                    outline-color: #000000 !important;
+                    outline-style: solid !important;
+                    outline-width: thin !important;
+                }
+
+                button:focus-visible {
+                    outline-color: #000000 !important;
+                    outline-style: solid !important;
+                    outline-width: thin !important;
+                }
+            }
+        }
+    }
+}
+

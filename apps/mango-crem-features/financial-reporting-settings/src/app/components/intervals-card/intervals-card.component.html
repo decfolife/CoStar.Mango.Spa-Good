@@ -1,0 +1,201 @@
+<mat-card class="intervals-card">
+  <mat-card-title>
+    Financial Reporting Interval Settings
+
+    <span class="updated-text"
+      *ngIf="intervalsData?.lastSuccessfulIntervalUpdate"
+    >Intervals Last Updated: {{ formattedIntervalsUpdate }}</span>
+  </mat-card-title>
+
+  <mat-card-content>
+    <ngx-skeleton-loader *ngIf="!intervalsData"
+      class="crem-button-shadow"
+      [theme]="{height: '125px', width: '100%'}"
+    ></ngx-skeleton-loader>
+
+    <div class="container-fluid" *ngIf="intervalsData">
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-5">
+              Monthly Fields Years Back
+            </div>
+
+            <div class="col-3">
+              <dx-text-box
+                [value]="intervalsData.monthlyFieldsYearsBack"
+                [disabled]="true"
+              ></dx-text-box>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="row">
+            <div class="col-5">
+              Annual Fields Years Back
+            </div>
+
+            <div class="col-3">
+              <dx-text-box
+                [value]="intervalsData.annualFieldsYearsBack"
+                [disabled]="true"
+              ></dx-text-box>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-5">
+              Monthly Fields Years Forward
+            </div>
+
+            <div class="col-3">
+              <dx-text-box
+                [value]="intervalsData.monthlyFieldsYearsForward"
+                [disabled]="true"
+              ></dx-text-box>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="row">
+            <div class="col-5">
+              Annual Fields Years Forward
+            </div>
+
+            <div class="col-3">
+              <dx-text-box
+                [value]="intervalsData.annualFieldsYearsForward"
+                [disabled]="true"
+              ></dx-text-box>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6 italic">
+          Monthly Field Range: {{ monthlyFieldInterval }}
+        </div>
+
+        <div class="col-6 italic">
+          Calendar Year Range: {{ annualFieldInterval }}
+        </div>
+      </div>
+
+      <div class="row"
+        *ngIf="settingsData.fiscalYearEndMonth !== 12"
+      >
+        <div class="col-6 italic"></div>
+
+        <div class="col-6 italic">
+          Fiscal Year Range: {{ fiscalAnnualFieldInterval }}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div id="reportingCurrencyIsoLabel" class="col-5">
+              Reporting Currency ISO
+            </div>
+
+            <div class="col-7">
+              <dx-select-box [dataSource]="currencies"
+                id="reportingCurrencyIsoDropdown"
+                [disabled]="isViewOnly"
+                [(value)]="settingsData.reportingCurrencyID"
+                (onValueChanged)="changed.emit()"
+                valueExpr="currencyID"
+                displayExpr="currencyISO"
+                width="80px"
+              ></dx-select-box>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="ReportingCurrencyID"
+                fieldHistoryName="ReportingCurrencyID"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="row">
+            <div id="fiscalYearEndMonthLabel" class="col-5">
+              Fiscal Year End Month
+            </div>
+
+            <div class="col-7">
+              <dx-select-box [dataSource]="endMonthOptions"
+                id="fiscalYearEndMonthDropdown"
+                [disabled]="isViewOnly"
+                [(value)]="settingsData.fiscalYearEndMonth"
+                (onValueChanged)="updateFYText(); changed.emit()"
+                valueExpr="value"
+                displayExpr="key"
+                width="200px"
+              ></dx-select-box>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="FiscalYearEndMonth"
+                fieldHistoryName="FiscalYearEndMonth"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6"></div>
+
+        <div class="col-6">
+          <div class="row">
+            <div id="fiscalYearDefinitionLabel" class="col-5">
+              Fiscal Year Definition
+            </div>
+
+            <div class="col-7">
+              <dx-select-box [dataSource]="fiscalYearDefinitionOptions"
+                id="fiscalYearDefinitionDropdown"
+                [disabled]="isViewOnly || settingsData.fiscalYearEndMonth === 12"
+                [(value)]="settingsData.fiscalYearAsEndMonth"
+                (onValueChanged)="updateFYText(); changed.emit()"
+                valueExpr="value"
+                displayExpr="key"
+                width="200px"
+              ></dx-select-box>
+              <crem-tooltip OTID="189"
+                portfolioID="-1"
+                helptextName="FiscalYearAsEndMonth"
+                fieldHistoryName="FiscalYearAsEndMonth"
+              ></crem-tooltip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6"></div>
+
+        <div class="col-6">
+          <div class="row">
+            <div class="col-5">
+            </div>
+
+            <div class="col-7 italic"
+              *ngIf="settingsData.fiscalYearEndMonth !== 12">
+              FY {{ currentFiscalYear }}:
+              {{ fiscalYearText }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </mat-card-content>
+</mat-card>

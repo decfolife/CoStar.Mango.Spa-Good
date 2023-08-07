@@ -1,0 +1,173 @@
+{
+  "name": "mango-crem-features-accounting-module",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/mango-crem-features/accounting-module/src",
+  "prefix": "mango",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "dependsOn": [],
+      "options": {
+        "outputPath": "dist/apps/mango-crem-features/accounting-module",
+        "index": "apps/mango-crem-features/accounting-module/src/index.html",
+        "main": "apps/mango-crem-features/accounting-module/src/main.ts",
+        "polyfills": "apps/mango-crem-features/accounting-module/src/polyfills.ts",
+        "tsConfig": "apps/mango-crem-features/accounting-module/tsconfig.app.json",
+        "stylePreprocessorOptions": {
+          "includePaths": [
+            "libs/ui-shared/lib-ui-elements/src/styles",
+            "apps/mango",
+            "apps/mango/src/assets/styles"
+          ]
+        },
+        "assets": [
+          "apps/mango-crem-features/accounting-module/src/favicon.ico",
+          "apps/mango-crem-features/accounting-module/src/assets"
+        ],
+        "styles": [
+          "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+          "node_modules/devextreme/dist/css/dx.light.css",
+          "node_modules/devexpress-gantt/dist/dx-gantt.css",
+          "node_modules/@angular/material/_theming.scss",
+          "apps/mango/src/assets/styles/costar.scss",
+          "apps/mango/src/assets/styles/costar-dev-extreme.scss",
+          "apps/mango-crem-features/accounting-module/src/assets/dx.generic.overlay-theme.scss",
+          "apps/mango-crem-features/accounting-module/src/styles.scss"
+        ],
+        "scripts": [],
+        "vendorChunk": true,
+        "extractLicenses": false,
+        "buildOptimizer": false,
+        "sourceMap": true,
+        "optimization": false,
+        "namedChunks": true,
+        "aot": true
+      },
+      "configurations": {
+        "dev": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/accounting-module/src/environments/environment.dev.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "test": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/accounting-module/src/environments/environment.test.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "ops": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/accounting-module/src/environments/environment.ops.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "stage": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/accounting-module/src/environments/environment.stage.ts"
+            }
+          ],
+          "budgets": []
+        },
+        "prod": {
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/accounting-module/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "mango-crem-features-accounting-module:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "mango-crem-features-accounting-module:build:production"
+        }
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "mango-crem-features-accounting-module:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/mango-crem-features/accounting-module/src/**/*.ts",
+          "apps/mango-crem-features/accounting-module/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/mango-crem-features/accounting-module"
+      ],
+      "options": {
+        "jestConfig": "apps/mango-crem-features/accounting-module/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

@@ -1,0 +1,108 @@
+<div class="object-maintenance-page">
+	<div class="object-maintenance-page-controls-wrapper">
+		<div class="controls-left">
+			<div class="object-maintenance-page__pageTitle dbl-right-margin">{{ pageTitle }}</div>
+            <cs-search #SearchBox class="object-maintenance-search"
+                (changed)="searchDataGrid($event)"
+                >
+			</cs-search>
+			<div class="object-maintenance-page__dropdown">
+				<crem-dropdown *ngIf="objectTypeList?.length"
+					[isDisabled]='isLoading'
+					[dataSource]='objectTypeList'
+					[allowSearch]='true'
+					placeholder='Object Type'
+					[showClearButton]='false'
+					[showColumnHeader]='false'
+					[initialSelectedValue]="currentObjectTypeId"
+					displayExpr='displayString'
+					keyExpr="intValue"
+					valueExpr='intValue'
+					(selectedItems)="onObjectTypeChange($event)"
+				></crem-dropdown>
+
+				<crem-dropdown *ngIf="!isLoading"
+					[isDisabled]='isLoading'
+					[dataSource]='filterDropdownField'
+					[allowSearch]='false'
+					placeholder='Status Filter'
+					[initialSelectedValue]='currentFilterType'
+					keyExpr="intValue"
+					[showClearButton]='false'
+					[showColumnHeader]='false'
+					displayExpr='displayString'
+					valueExpr='intValue'
+					(selectedItems)="onFilterChange($event)"
+				></crem-dropdown>
+			</div>
+		</div>
+		<div class="controls-right">
+			<crem-button type="secondary" [disabled]="!(filteredGridData)" (click)="exportGrids()">Export</crem-button>
+		</div>
+    </div>
+
+    <div class="object-maintenance-page-data-grid-wrapper">
+		<dx-data-grid *ngIf="!isLoading"
+			class="object-maintenance-page-data-grid"
+			#DataGrid
+			[dataSource]="filteredGridData"
+			keyExpr='objectId'
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="true"
+			[filterSyncEnabled]="true"
+			[columnMinWidth]="10"
+			(onCellPrepared)="onCellPrepared($event)"
+            (onRowClick)="onRowClicked($event)"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxo-column-chooser [allowSearch]="true" mode="select">
+			</dxo-column-chooser>
+			<dxo-paging [pageSize]="50"></dxo-paging>
+		    <dxo-pager 
+		        [showPageSizeSelector]="true"
+		        [allowedPageSizes]="[50, 100, 200, 500]"
+		        [showInfo]="true"
+                [showNavigationButtons]="true"
+                [visible]="true"
+			>
+			</dxo-pager>
+			<dxi-column *ngFor="let col of columns" 
+				[dataField]="col.dataField" 
+				[alignment]="col.alignment"
+                [visible]="col.visible"
+				[dataType]="col.dataType"
+				[format]="col.format"
+				[caption]="col.caption"
+				[fixed]="col.fixed"
+				[allowEditing]="col.allowEditing"
+				[cellTemplate]="col.cellTemplate"
+				>
+				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+			</dxi-column>
+			<dxi-column dataField="canEdit" caption="Actions" type="buttons" width="65">
+		    	<dxi-button	template="moreMenuTemplate">
+		    		<div *dxTemplate="let group of 'moreMenuTemplate'">
+						<a *ngIf="group.data.canEdit"
+							href = "/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/assignRights/{{this.currentObjectTypeId}}/{{group.data.objectId}}/ObjectMaintenance.aspx">
+							Edit
+						</a>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>
+		</dx-data-grid>
+		<dx-load-panel shadingColor="rgba(255,255,255,0.2)"
+			[visible]="isLoading"
+			[showIndicator]="true"
+			[showPane]="true"
+			[shading]="true"
+			[closeOnOutsideClick]="false"
+		></dx-load-panel>
+	</div>
+</div>

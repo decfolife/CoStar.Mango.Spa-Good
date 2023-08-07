@@ -1,0 +1,52 @@
+<table mat-table [dataSource]="templates" multiTemplateDataRows class="no-borders expanded-table">
+	<ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
+		<!-- <th mat-header-cell *matHeaderCellDef> {{column}} </th> -->
+		<td mat-cell *matCellDef="let element"> 
+			<fa-icon icon="caret-right" [fixedWidth]="true" *ngIf="expandedElement != element"></fa-icon>
+			<fa-icon icon="caret-down" [fixedWidth]="true" *ngIf="expandedElement === element"></fa-icon>
+			<span class="column-text">{{element[column]}}</span>
+			<fa-icon icon="ellipsis-h" [matMenuTriggerFor]="TemplateActionsMenu" class="clickable" (click)="$event.stopPropagation()"></fa-icon>
+			<mat-menu #TemplateActionsMenu="matMenu">
+				<button mat-menu-item> Add Left Nav Item</button>
+				<button mat-menu-item (click)="openTemplateEditor(element)"> Edit Template</button>
+			</mat-menu>
+		</td>
+	</ng-container>
+	<!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+	<ng-container matColumnDef="expandedDetail">
+		<td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" class="">
+			<div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+				<p>{{element.name}} Left Navigation</p>
+				<p *ngIf="navs.length == 0">There are no nav pages assigned to this template.</p>
+				<table mat-table [dataSource]="navs" *ngIf="navs.length > 0">
+					<ng-container matColumnDef="name">
+						<th mat-header-cell *matHeaderCellDef> Name </th>
+						<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+					</ng-container>
+					<ng-container matColumnDef="form">
+						<th mat-header-cell *matHeaderCellDef> Form </th>
+						<td mat-cell *matCellDef="let element"> {{element.form}} </td>
+					</ng-container>
+					<ng-container matColumnDef="isLanding">
+						<th mat-header-cell *matHeaderCellDef> Is Landing </th>
+						<td mat-cell *matCellDef="let element"> {{element.isLanding}} </td>
+					</ng-container>
+					<ng-container matColumnDef="action">
+						<th mat-header-cell *matHeaderCellDef> </th>
+						<td mat-cell *matCellDef="let element" class="right"> 
+							<fa-icon icon="edit" class="clickable" (click)="openLeftNavEditor(element)"></fa-icon> 							
+						</td>
+					</ng-container>
+					<tr mat-header-row *matHeaderRowDef="navColumns"></tr>
+					<tr mat-row *matRowDef="let row; columns: navColumns;"></tr>
+				</table>
+			</div>
+		</td>
+	</ng-container>
+	<tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
+		class="element-row"
+		[class.expanded-row]="expandedElement === element"
+		(click)="toggleTableRow(element)">
+	</tr>
+	<tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+</table>

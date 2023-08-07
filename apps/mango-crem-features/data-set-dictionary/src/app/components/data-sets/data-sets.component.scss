@@ -1,0 +1,65 @@
+@use '../../../../../../mango/src/assets/styles/colors.scss';
+
+:host {
+  background-color: colors.$bodyBackgroundGray;
+}
+
+::ng-deep {
+  div.dx-overlay-content {
+    input {
+      font-size: 14px !important;
+    }
+  }
+}
+
+.data-set-dictionary-controls-wrapper {
+  background-color: colors.$bodyBackgroundGray;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  font-size: 14px;
+  border-bottom: 1px solid #c5c5c5;
+
+  .controls-left {
+    display: flex;
+    align-items: center;
+    z-index: 500;
+  }
+
+  h5 {
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+
+    &.dbl-right-margin {
+      font-family: Helvetica, sans-serif;
+      font-size: 16px;
+      margin-right: 16px;
+    }
+  }
+
+  button {
+    margin-left: 16px;
+    font-size: 14px;
+  }
+}
+
+.data-set-dictionary-grid-wrapper {
+  height: 95%;
+  overflow: auto;
+
+  .row {
+    min-height: 40px;
+  }
+
+  .dx-texteditor-input-container {
+    .dx-texteditor-input {
+      border: inherit;
+      font-size: inherit;
+      margin-top: -2px;
+    }
+  }
+}
+

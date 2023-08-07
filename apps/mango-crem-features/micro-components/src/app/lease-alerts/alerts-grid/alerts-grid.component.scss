@@ -1,0 +1,79 @@
+::ng-deep {
+  .add-hint {
+    pointer-events: auto !important;
+  }
+
+  .btn-primary {
+    background-color: #0559b3 !important;
+    box-sizing: border-box !important;
+    color: #fff !important;
+    padding: 6px 8px 8px 8px !important;
+
+    & * {
+      color: #fff !important;
+    }
+
+    &.lease-alerts-dismiss-button {
+      .dx-button-mode-outlined {
+        border: 0;
+      }
+    }
+  }
+
+  .dx-button {
+    .dx-button-content {
+      padding: 0 !important;
+
+      .dx-button-text {
+        font-size: 14px !important;
+      }
+    }
+  }
+
+  .dx-popup-wrapper.dx-dropdowneditor-overlay {
+    .dx-overlay-content {
+      min-width: 320px !important;
+    }
+  }
+
+  .dx-overlay-wrapper.dx-popup-wrapper {
+    .dx-overlay-content.dx-popup-normal {
+      div.dx-popup-content {
+        padding: 16px !important;
+      }
+    }
+  }
+
+  .dx-overlay-wrapper.dx-popup-wrapper {
+    .dx-overlay-content.dx-popup-normal.dx-popup-flex-height {
+      div.dx-popup-content {
+        padding: 0px !important;
+      }
+    }
+  }
+
+  .dx-treeview-select-all-item {
+    .dx-checkbox-text {
+      padding-left: 9px !important;
+      margin: 0px !important;
+    }
+  }
+
+  .dx-datagrid-checkbox-size {
+    margin-top: 8px;
+  }
+
+  tr {
+    .dx-widget.dx-checkbox.dx-checkbox-indeterminate {
+      display: none;
+    }
+  }
+
+  tr.dx-row.dx-data-row {
+    font-size: 14px;
+  }
+
+  .custom-dx-text-area{
+    height: calc(100% - 40px);
+  }
+}

@@ -1,0 +1,32 @@
+<div class="project-card-files-popover">
+    <div class="project-card-files-toolbar">
+        <div class="controls-left">
+            <costar-search (changed)="searchFiles($event)"></costar-search>
+        </div>
+        <div class="controls-right">
+            <button class="btn btn-primary" (click)="launchUploadFile()">Upload</button>
+        </div>
+    </div>
+    <div class="project-card-files-grid">
+        <dx-data-grid 
+            #ProjectFilesDataGrid
+            [dataSource]="files"
+            [showColumnLines]="false"
+            [showRowLines]="false"
+            [showBorders]="false"
+            [rowAlternationEnabled]="true" 							
+            [allowColumnResizing]="true"
+            [allowColumnReordering]="false"
+            [columnAutoWidth]="false"                
+            [wordWrapEnabled]="true"	
+        >
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>  
+            <dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>	
+            <dxi-column dataField="fileName"></dxi-column>
+            <dxi-column dataField="folderName"></dxi-column>
+            <dxi-column dataField="uploadBy" caption="Uploaded By"></dxi-column>
+            <dxi-column dataField="uploadDate" dataType="date" alignment="center" sortIndex="0" sortOrder="desc"></dxi-column>                                
+        </dx-data-grid>
+    </div>
+</div>

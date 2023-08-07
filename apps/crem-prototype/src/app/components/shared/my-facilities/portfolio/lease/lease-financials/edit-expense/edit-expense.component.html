@@ -1,0 +1,584 @@
+<div class="dynamic-form">
+	<div class="dynamic-form-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Add New Expense</h5>	
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-default" (click)="onCancel()">Cancel</button>
+			<button class="btn btn-primary" (click)="onSaveAndClose()">Save & Close</button>			
+		</div>
+	</div>
+	<div class="dynamic-form-content">
+		<div class="row">
+			<div class="col-md-12" *ngIf="isPopup">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Lease</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>
+						<dx-form 							
+							[colCount]="2"
+							labelLocation="left">
+							<dxi-item 
+								[label]="{ text : 'Portfolio' }"
+								template="portfolioTemplate"								
+								>								
+							</dxi-item>
+							<div *dxTemplate="let data of 'portfolioTemplate'">
+							    <portfolio-menu [showColumnHeader]="false" placeholder="Select..." (portfolioChanged)="onPortfolioChanged($event)"></portfolio-menu>
+							</div>
+							<dxi-item 
+								[label]="{ text : 'Lease' }"
+								template="leaseTemplate"								
+								>								
+							</dxi-item>
+							<div *dxTemplate="let data of 'leaseTemplate'">
+								<!-- should have client lease id, building name, address, country, expiration date -->
+								<dx-drop-down-box
+								    [(value)]="leaseString"
+								    valueExpr="SystemLeaseID"
+								    displayExpr="ClientLeaseID"								    
+								    [showClearButton]="true"
+								    [dataSource]="leases"
+								    >
+								    <div *dxTemplate="let data of 'content'">
+									    <dx-data-grid
+											[dataSource]="leases"
+											[hoverStateEnabled]="true"
+											[filterRow]="{ visible: true }"
+											[scrolling]="{ mode: 'virtual' }"
+											[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+											keyExpr="SystemLeaseID"
+											[(selectedRowKeys)]="selectedLease"
+											(onSelectionChanged)="onLeaseChanged($event)"
+											[columnAutoWidth]="true"
+											[allowColumnResizing]="true"
+											>
+											<dxo-selection
+									            showCheckBoxesMode="none"
+									            mode="single"
+									        ></dxo-selection>
+									        <dxi-column
+											    dataField="ClientLeaseID">
+											</dxi-column>
+											<dxi-column
+											    dataField="PropertyName">
+											</dxi-column>
+											<dxi-column
+											    dataField="Address1">
+											</dxi-column>
+											<dxi-column
+											    dataField="City">
+											</dxi-column>
+											<dxi-column
+											    dataField="Country">
+											</dxi-column>
+											<dxi-column
+											    dataField="LeaseExpiration">
+											</dxi-column>											
+									    </dx-data-grid>
+									</div>	
+								</dx-drop-down-box>
+							</div>
+						</dx-form>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Account & Vendor Details</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>
+						<dx-form 
+							[(formData)]="charge"
+							[colCount]="2"
+							labelLocation="left">
+							<dxi-item 
+								dataField="account"
+								[label]="{ text : 'Account' }"
+								template="accountTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="invoiceNumber"
+								[label]="{ text : 'Invoice Number' }"
+								template="invoiceNumberTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="vendor"
+								[label]="{ text : 'Vendor' }"
+								template="vendorTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="invoiceDate"
+								[label]="{ text : 'Invoice Date' }"
+								template="invoiceDateTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="chargeName"
+								[label]="{ text : 'Charge Name' }"
+								template="textBoxTemplate">
+							</dxi-item>
+							<div *dxTemplate="let data of 'accountTemplate'">
+								<dx-drop-down-box
+								    [(value)]="glAccountString"
+								    valueExpr="id"
+								    displayExpr="accountName"								    
+								    [showClearButton]="true"
+								    [dataSource]="glAccounts"
+								    >
+								    <div *dxTemplate="let data of 'content'">
+									    <dx-data-grid
+											[dataSource]="glAccounts"
+											[hoverStateEnabled]="true"
+											[filterRow]="{ visible: true }"
+											[scrolling]="{ mode: 'virtual' }"
+											[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+											keyExpr="id"
+											[(selectedRowKeys)]="selectedAccount"
+											(onSelectionChanged)="accountChanged($event)"
+											[columnAutoWidth]="true"
+											[allowColumnResizing]="true"
+											>
+											<dxo-selection
+									            showCheckBoxesMode="none"
+									            mode="single"
+									        ></dxo-selection>
+									        <dxi-column
+											    dataField="accountCategory">
+											</dxi-column>
+											<dxi-column
+											    dataField="accountName">
+											</dxi-column>
+											<dxi-column
+											    dataField="accountCode">
+											</dxi-column>
+											<dxi-column
+											    dataField="accountNumber"
+											    caption="External ID">
+											</dxi-column>
+											<dxi-column
+											    dataField="recognitionCategoryGaap">
+											</dxi-column>
+											<dxi-column
+											    dataField="recognitionCategoryIfrs">
+											</dxi-column>
+									    </dx-data-grid>
+									</div>	
+								</dx-drop-down-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'invoiceNumberTemplate'">
+							    <dx-text-box [(value)]="charge[data.dataField]"></dx-text-box>
+							    <a class="classification-test-link" (click)="checkDuplicates()">Check Duplicates</a>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'vendorTemplate'">
+								<dx-drop-down-box
+								    [(value)]="vendorString"
+								    valueExpr="id"
+								    displayExpr="name"								    
+								    [showClearButton]="true"
+								    [dataSource]="vendors"
+								    >
+								    <div *dxTemplate="let data of 'content'">
+									    <dx-data-grid
+											[dataSource]="vendors"
+											[hoverStateEnabled]="true"
+											[filterRow]="{ visible: true }"
+											[scrolling]="{ mode: 'virtual' }"
+											[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"										
+											keyExpr="id"
+											[(selectedRowKeys)]="selectedVendor"
+											(onSelectionChanged)="vendorChanged($event)"
+											[columnAutoWidth]="true"
+											[allowColumnResizing]="true"
+											>
+											<dxo-selection
+									            showCheckBoxesMode="none"
+									            mode="single"
+									        ></dxo-selection>
+									        <dxi-column
+											    dataField="name"
+											    caption="Vendor Name">
+											</dxi-column>
+											<dxi-column
+											    dataField="code"
+											    caption="Vendor Code">
+											</dxi-column>
+											<dxi-column
+											    dataField="address1"
+											    caption="Address">
+											</dxi-column>
+									    </dx-data-grid>
+									</div>	
+								</dx-drop-down-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'invoiceDateTemplate'">
+							    <dx-date-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-date-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'textBoxTemplate'">
+							    <dx-text-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-text-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+						</dx-form>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Expense Details</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>
+						<dx-form 
+							[(formData)]="charge"
+							[colCount]="2"
+							labelLocation="left">
+							<dxi-item 
+								dataField="entryMethod"
+								[label]="{ text : 'Entry Method' }"
+								colSpan="2"
+								template="entryMethodTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="startDate"
+								[label]="{ text : 'Start Date' }"
+								template="startDateTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="increaseBy"
+								[label]="{ text : 'Increase By' }"
+								template="increaseByTemplate"
+								[visible]="charge.entryMethod == 'Starting Amount w/ Periodic Increases'">
+							</dxi-item>
+							<dxi-item 
+								dataField="endDate"
+								[label]="{ text : 'End Date' }"
+								template="dateBoxTemplate"
+								[visible]="charge.entryMethod == 'Single Amount (Quick Add)'">
+							</dxi-item>
+							<dxi-item 
+								dataField="nCharges"
+								[label]="{ text : 'Create N Charges' }"
+								template="textBoxTemplate"
+								[visible]="charge.entryMethod == 'Starting Amount w/ Periodic Increases'">
+							</dxi-item>
+							<dxi-item 
+								dataField="increaseEvery"
+								[label]="{ text : 'Every N' }"
+								template="increaseEveryTemplate"
+								[visible]="charge.entryMethod == 'Starting Amount w/ Periodic Increases'">
+							</dxi-item>
+							<dxi-item 
+								dataField="amount"
+								[label]="{ text : 'Amount' }"
+								template="amountTemplate"
+								[helpText]="amountHint">
+							</dxi-item>
+							<dxi-item 
+								dataField="indexAdjRule"
+								[label]="{ text : 'Index Adjustment Rule' }"
+								[editorOptions]="{ items : indexAdjRules }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="frequency"
+								[label]="{ text : 'Frequency' }"
+								[editorOptions]="{ items : frequencies }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="chargeGroupName"
+								[label]="{ text : 'Charge Group Name' }"
+								template="textBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="units"
+								[label]="{ text : 'Units / Area' }"
+								template="unitsTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="notes"
+								[label]="{ text : 'Notes' }"
+								template="textBoxTemplate">
+							</dxi-item>							
+							<dxi-item 
+								dataField="currency"
+								[label]="{ text : 'Currency' }"
+								[editorOptions]="{ items : currencies }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 							
+								[label]="{ text : 'Options' }"
+								template="optionsTemplate">
+							</dxi-item>
+							
+
+							<div *dxTemplate="let data of 'entryMethodTemplate'">
+								<dx-radio-group
+				                    [items]="entryMethods"
+				                    [(value)]="charge[data.dataField]"
+				                    layout="horizontal">
+				                </dx-radio-group>
+								<form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'startDateTemplate'">
+							    <dx-date-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-date-box>
+							    <a class="classification-test-link" (click)="checkDuplicates()">View Lease Calendar</a>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'dateBoxTemplate'">
+							    <dx-date-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-date-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'increaseByTemplate'">
+								<dx-text-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-text-box>
+								<dx-select-box [dataSource]="increaseByTypes" [(value)]="charge.increaseByType" width="0" (onValueChanged)="generateExpenses()"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'textBoxTemplate'">
+							    <dx-text-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-text-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'increaseEveryTemplate'">
+								<dx-text-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-text-box>
+								<dx-select-box [dataSource]="increaseEveryTypes" [(value)]="charge.increaseEveryType" width="0" (onValueChanged)="generateExpenses()"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'amountTemplate'">
+								<dx-text-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()" ></dx-text-box>
+								<dx-select-box [dataSource]="amountTypes" [(value)]="charge.amountType" width="0" (onValueChanged)="generateExpenses()"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'selectBoxTemplate'">
+							    <dx-select-box [dataSource]="data.editorOptions.items" [(value)]="charge[data.dataField]" valueExpr="value" displayExpr="display" (onValueChanged)="generateExpenses()"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'unitsTemplate'">
+								<dx-text-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-text-box>
+								<dx-select-box [dataSource]="unitsOfMeasure" [(value)]="charge.unitOfMeasure" width="0" (onValueChanged)="generateExpenses()"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>	
+							<div *dxTemplate="let data of 'optionsTemplate'">
+							    <dx-check-box [(value)]="charge.isEstimated" [width]="120" text="Estimated"></dx-check-box>
+							    <dx-check-box [(value)]="charge.isTaxable" [width]="120" text="Taxable"></dx-check-box>
+							    <dx-check-box [(value)]="charge.isProrated" [width]="120" text="Prorated"></dx-check-box>					
+							</div>	
+						</dx-form>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Proration</mat-card-title>
+					</mat-card-header>
+					<mat-card-content *ngIf="charge.isProrated">
+						<dx-form 
+							[(formData)]="charge"
+							[colCount]="2"
+							labelLocation="left">
+							<dxi-item 
+								dataField="prorationType"
+								[label]="{ text : 'Proration Type' }"
+								[editorOptions]="{ items : prorationTypes }"
+								template="selectBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="firstRecurringPaymentDate"
+								[label]="{ text : 'First Recurring Payment Date' }"							
+								template="dateBoxTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="firstPayment"
+								[label]="{ text : 'First Payment Amount' }"							
+								template="amountTemplate">
+							</dxi-item>
+							<dxi-item 
+								dataField="finalPayment"
+								[label]="{ text : 'Final Payment Amount' }"							
+								template="amountTemplate">
+							</dxi-item>
+
+							<div *dxTemplate="let data of 'selectBoxTemplate'">
+							    <dx-select-box [dataSource]="data.editorOptions.items" [(value)]="charge[data.dataField]" valueExpr="value" displayExpr="display" (onValueChanged)="generateExpenses()"></dx-select-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'dateBoxTemplate'">
+							    <dx-date-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()"></dx-date-box>
+							    <form-field-tooltip></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'amountTemplate'">
+								<dx-text-box [(value)]="charge[data.dataField]" (onValueChanged)="generateExpenses()" ></dx-text-box>
+								<form-field-tooltip></form-field-tooltip>
+							</div>
+						</dx-form>
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Generated Charges</mat-card-title>
+						<div>
+							<button class="btn btn-default" (click)="revertSettings()">Revert</button>	
+							<button class="btn btn-default" (click)="saveSettings()">Apply</button>	
+							<button class="btn btn-default" (click)="addRow()" *ngIf="generatedExpenses.length">Add Row</button>
+						</div>
+					</mat-card-header>
+					<mat-card-content class="no-padding">
+						<dx-data-grid
+							#DataGrid
+							[dataSource]="generatedExpenses"
+							[showColumnLines]="false"
+							[showRowLines]="true"
+							[showBorders]="true"
+							[rowAlternationEnabled]="true"
+							[allowColumnResizing]="true"
+							(onToolbarPreparing)="onToolbarPreparing($event)" 
+						>	
+							<dxo-editing mode="batch"
+								[allowUpdating]="true"
+								[selectTextOnEditStart]="true"
+								[startEditAction]="startEditAction"
+								[allowDeleting]="true"              
+								[useIcons]="true">
+							</dxo-editing>				
+						    <dxo-scrolling mode="virtual"></dxo-scrolling>
+						    <dxi-column dataField="startDate" dataType="date" [width]="100"></dxi-column>
+						    <dxi-column dataField="endDate" dataType="date" [width]="100"></dxi-column>
+						    <dxi-column dataField="frequency" [width]="200">
+						    	<dxo-lookup [dataSource]="frequencies"
+									displayExpr="display"
+									valueExpr="value">
+								</dxo-lookup>
+						    </dxi-column>
+						    <dxi-column dataField="amount" dataType="number">
+						    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+						    </dxi-column>
+						    <dxi-column dataField="currency" alignment="center" [width]="80">
+						    	<dxo-lookup [dataSource]="currencies"
+									displayExpr="display"
+									valueExpr="value">
+								</dxo-lookup>
+						    </dxi-column>
+						    <dxi-column dataField="vendor" editCellTemplate="vendorTemplate" [width]="400"></dxi-column>
+						    <dxi-column dataField="accountName" editCellTemplate="accountTemplate" [width]="400"></dxi-column>						   
+						    <div *dxTemplate="let cellInfo of 'vendorTemplate'">
+								<dx-drop-down-box
+								    [value]="cellInfo.value"
+								    valueExpr="id"
+								    displayExpr="name"								    
+								    [dataSource]="vendors"								   
+								    >
+								    <div *dxTemplate="let data of 'content'">
+									    <dx-data-grid
+											[dataSource]="vendors"
+											[hoverStateEnabled]="true"
+											[filterRow]="{ visible: true }"
+											[scrolling]="{ mode: 'virtual' }"
+											[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"										
+											keyExpr="id"
+											[(selectedRowKeys)]="selectedGlEventVendor"
+											(onSelectionChanged)="cellInfo.setValue($event.selectedRowsData[0].name)"
+											[columnAutoWidth]="true"
+											[allowColumnResizing]="true"
+											>
+											<dxo-selection
+									            showCheckBoxesMode="none"
+									            mode="single"
+									        ></dxo-selection>
+									        <dxi-column
+											    dataField="name"
+											    caption="Vendor Name">
+											</dxi-column>
+											<dxi-column
+											    dataField="code"
+											    caption="Vendor Code">
+											</dxi-column>
+											<dxi-column
+											    dataField="address1"
+											    caption="Address">
+											</dxi-column>
+									    </dx-data-grid>
+									</div>	
+								</dx-drop-down-box>
+							</div>
+							<div *dxTemplate="let cellInfo of 'accountTemplate'">
+								<dx-drop-down-box
+								    [value]="cellInfo.value"
+								    valueExpr="id"
+								    displayExpr="accountName"								    
+								    [dataSource]="glAccounts"
+								    >
+								    <div *dxTemplate="let data of 'content'">
+									    <dx-data-grid
+											[dataSource]="glAccounts"
+											[hoverStateEnabled]="true"
+											[filterRow]="{ visible: true }"
+											[scrolling]="{ mode: 'virtual' }"
+											[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+											keyExpr="id"
+											[(selectedRowKeys)]="selectedGlEventAccount"
+											(onSelectionChanged)="cellInfo.setValue($event.selectedRowsData[0].accountName)"
+											[columnAutoWidth]="true"
+											[allowColumnResizing]="true"
+											>
+											<dxo-selection
+									            showCheckBoxesMode="none"
+									            mode="single"
+									        ></dxo-selection>
+									        <dxi-column
+											    dataField="accountCategory">
+											</dxi-column>
+											<dxi-column
+											    dataField="accountName">
+											</dxi-column>
+											<dxi-column
+											    dataField="accountCode">
+											</dxi-column>
+											<dxi-column
+											    dataField="accountNumber"
+											    caption="External ID">
+											</dxi-column>
+											<dxi-column
+											    dataField="recognitionCategoryGaap">
+											</dxi-column>
+											<dxi-column
+											    dataField="recognitionCategoryIfrs">
+											</dxi-column>
+									    </dx-data-grid>
+									</div>	
+								</dx-drop-down-box>
+							</div>
+						</dx-data-grid>		
+					</mat-card-content>
+				</mat-card>	
+			</div>
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Taxes</mat-card-title>
+					</mat-card-header>
+					<mat-card-content *ngIf="charge.isTaxable">
+						
+					</mat-card-content>
+				</mat-card>
+			</div>
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Allocations</mat-card-title>
+					</mat-card-header>
+					<mat-card-content class="no-padding">						
+						<allocations [isChargeAllocations]="true"></allocations>						
+					</mat-card-content>
+				</mat-card>
+			</div>
+		</div>
+	</div>
+</div>
+

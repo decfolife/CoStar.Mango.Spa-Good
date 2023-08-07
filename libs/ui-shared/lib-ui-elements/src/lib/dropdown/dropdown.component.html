@@ -1,0 +1,102 @@
+<dx-select-box *ngIf="useSelectBox && !loading"
+  [id]="id"
+  [(opened)]="isDropDownBoxOpened"
+  [ngClass]="{red_border: showRedBorder}"
+  [placeholder]="placeholder"
+  [dataSource]="dataSource"
+  [valueExpr]="valueExpr"
+  [displayExpr]="displayExpr"
+  [disabled]="isDisabled"
+  [visible]="isVisible"
+  (onEnterKey)="onEnterKey()"
+  [showClearButton]="showClearButton"
+  (onValueChanged)="dropdownOnValueChanged($event)"
+  (onKeyDown)="onKeyDown($event, cell)"
+  [searchEnabled]="allowSearch"
+  [grouped]="grouped"
+  [groupTemplate]="useCustomGroupTemplate ? 'selectBoxCustomGroupTemplate' : 'group'"
+  [value]="selectBoxValue"
+  searchMode="startswith"
+  [deferRendering]="false"
+  [readOnly]="readOnly"
+  (onOpened)="openDropdown($event)"
+  (onClosed)="onDropdownClose($event)"
+  [inputAttr]="{ title: hoverText ? hoverText : placeholder, 'aria-controls': id, 'aria-label': hoverText ? hoverText : placeholder, id: 'input' + dataField}"
+  >
+    <div *dxTemplate="let data of 'selectBoxCustomGroupTemplate'">
+      <ng-template 
+        *ngTemplateOutlet="customHeaderTemplate; context: { fieldData : data }"
+        >
+      </ng-template>
+    </div>
+  <dx-validator #SelectBoxValidator>
+    <dxi-validation-rule *ngIf="required && !customRequireValidation"
+        type="required"
+    ></dxi-validation-rule>
+  </dx-validator>
+  <dxo-drop-down-options
+    [wrapperAttr]="selectBoxWrapperAttr">
+  </dxo-drop-down-options>
+
+</dx-select-box>
+<dx-drop-down-box *ngIf="!useSelectBox"
+  [id]="id + '_box'"
+  [(opened)]="isDropDownBoxOpened"
+  [placeholder]="placeholder"
+  [dataSource]="dataSource"
+  [value]="selectedDisplay"
+  [valueExpr]="valueExpr"
+  [displayExpr]="displayExpr"
+  (click)="(isDropDownBoxOpened === !isDropDownBoxOpened)"
+  [contentTemplate]="'dropdownTemplate'"
+  [disabled]="isDisabled"
+  [visible]="isVisible"
+  [showClearButton]="showClearButton"
+  (onValueChanged)="dropdownOnValueChanged($event)"
+  (onKeyDown)="onKeyDown($event, cell)"
+  [deferRendering]="false"
+  (onOpened)="openDropdown($event)"
+  (onClosed)="onDropdownClose($event)"
+  [inputAttr]="{ title: placeholder, 'aria-controls': id + 'dropdownContainer', 'aria-label': placeholder}"
+  >
+  <dxo-drop-down-options
+    [wrapperAttr]="wrapperAttr">
+  </dxo-drop-down-options>
+  <div
+    [id]="id + 'dropdownContainer'"
+    *dxTemplate="let data of 'dropdownTemplate'"
+  >
+  <fieldset>
+    <legend hidden=true>
+      Drop Down
+    </legend>
+    <dx-data-grid class="drop-down-box__grid"
+      dropdownTemplate
+      [dataSource]="dataSource"
+      [columns]="displayExpr"
+      [showColumnHeaders]="showColumnHeader"
+      [selectedRowKeys]="selections"
+      [showColumnLines]="false"
+      (onKeyDown)="onGridKeyDown($event, cell)"
+      (onSelectionChanged)="getSelectedRowsData($event)"
+      [scrolling]="{ mode: 'standard' }"
+      [elementAttr]="{ style: 'max-height: 345px;'}"
+      [paging]="false"
+      [keyExpr]="keyExpr || valueExpr"
+      (onContentReady)="ADAatributes($event)"
+    >
+      <dxo-filter-row [visible]="allowSearch"></dxo-filter-row>
+      <dxo-selection
+        [mode]="selectMode"
+        [showCheckBoxesMode]="showCheckBoxesMode"
+        selectAllMode="allPages"
+      ></dxo-selection>
+      <dxi-column
+        [dataField]="displayExpr"
+        [caption]="dropdownHeaderDisplay">
+      </dxi-column>
+    </dx-data-grid>
+  </fieldset>
+
+  </div>
+</dx-drop-down-box>

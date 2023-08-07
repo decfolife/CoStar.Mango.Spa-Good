@@ -1,0 +1,90 @@
+<crem-button *ngIf="showMoreMenu"
+  [disabled] = "buttonbDisabled"
+  class='{{(!buttonbDisabled) ? "" : "disabledToolButton"}}'
+  type="secondary"
+  mat-stroked-button
+  [matMenuTriggerFor]="listMenu"
+  #listMenuTrigger="matMenuTrigger"
+>
+  More <fa-icon [icon]="faCaretDown" class="more-menu-caret-icon" title="click to see the available options"></fa-icon>
+</crem-button>
+
+<mat-menu #listMenu="matMenu">
+  <button mat-menu-item
+    *ngIf="isSuperUser"
+    (click)="showDynamicSQL.next(); $event.stopPropagation()"
+  >Show Query</button>
+
+  <button mat-menu-item
+    *ngIf="isSuperUser && isCoStarListView"
+    (click)="saveDefault.next()"
+  >Save As Default</button>
+
+  <button mat-menu-item
+    *ngIf="showSaveAs"
+    [matMenuTriggerFor]="saveAsMenu"
+  >Save As...</button>
+
+  <button mat-menu-item
+    *ngIf="showSave"
+    (click)="updateListView.next(currentView)"
+  >Save</button>
+
+  <button mat-menu-item
+    *ngIf="showResetView"
+    (click)="resetListView.next()"
+  > Reset</button>
+
+  <button mat-menu-item
+    *ngIf="showExpandCollapse"
+    (click)="toggleExpanded.next()"
+  >
+    <span *ngIf="isExpanded">Collapse All</span>
+
+    <span *ngIf="!isExpanded">Expand All</span>
+  </button>
+
+  <button mat-menu-item
+    *ngIf="showColumnChooser"
+    (click)="displayColumnChooser.next()"
+  >Column Chooser</button>
+
+  <button mat-menu-item
+    *ngIf="showExport"
+    (click)="exportExcel.next()"
+  >Export</button>
+
+  <button mat-menu-item>
+    <mat-slide-toggle [checked]="includeActive"
+      (change)="toggleShowActive($event)"
+      (click)="$event.stopPropagation()"
+    >
+      Show Active
+    </mat-slide-toggle>
+  </button>
+
+  <button mat-menu-item>
+    <mat-slide-toggle [checked]="includeArchived"
+      (change)="toggleShowArchived($event)"
+      (click)="$event.stopPropagation()"
+    >
+      <ng-container *ngIf="!isGLEvent; else showDeleted">Show Archived</ng-container>
+      <ng-template #showDeleted>Show Deleted</ng-template>
+    </mat-slide-toggle>
+  </button>
+</mat-menu>
+
+<mat-menu #saveAsMenu="matMenu"
+  class="save-view-menu"
+>
+  <mat-form-field appearance="outline">
+    <input matInput
+      placeholder="New Saved View"
+      title="Save View as"
+      [formControl]="nameFormControl"
+      (click)="$event.stopPropagation()"
+      (keyup)="$event.stopPropagation()"
+      (keydown.enter)="createNewListView()"
+    >
+  </mat-form-field>
+</mat-menu>

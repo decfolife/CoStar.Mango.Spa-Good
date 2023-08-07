@@ -1,0 +1,227 @@
+{
+  "name": "mango-crem-features-alerts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/mango-crem-features/alerts/src",
+  "prefix": "mango",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "dependsOn": [],
+      "options": {
+        "outputPath": "dist/apps/mango-crem-features/alerts",
+        "index": "apps/mango-crem-features/alerts/src/index.html",
+        "main": "apps/mango-crem-features/alerts/src/main.ts",
+        "polyfills": "apps/mango-crem-features/alerts/src/polyfills.ts",
+        "tsConfig": "apps/mango-crem-features/alerts/tsconfig.app.json",
+        "stylePreprocessorOptions": {
+          "includePaths": [
+            "libs/ui-shared/lib-ui-elements/src/styles",
+            "apps/mango",
+            "apps/mango/src/assets/styles"
+          ]
+        },
+        "assets": [
+          "apps/mango-crem-features/alerts/src/favicon.ico",
+          "apps/mango-crem-features/alerts/src/assets"
+        ],
+        "styles": [
+          "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "node_modules/devextreme/dist/css/dx.common.css",
+          "node_modules/devextreme/dist/css/dx.light.css",
+          "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+          "node_modules/@angular/material/_theming.scss",
+          "apps/mango/src/assets/styles/costar-angular-material.scss",
+          "apps/mango/src/assets/styles/costar-bootstrap.scss",
+          "apps/mango/src/assets/styles/costar-dev-extreme.scss",
+          "apps/mango-crem-features/alerts/src/styles.scss"
+        ],
+        "scripts": [],
+        "vendorChunk": true,
+        "extractLicenses": false,
+        "buildOptimizer": false,
+        "sourceMap": true,
+        "optimization": false,
+        "namedChunks": true,
+        "aot": true
+      },
+      "configurations": {
+        "dev": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/alerts/src/environments/environment.dev.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "10mb",
+              "maximumError": "20mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "test": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/alerts/src/environments/environment.test.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "10mb",
+              "maximumError": "20mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "ops": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/alerts/src/environments/environment.ops.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "10mb",
+              "maximumError": "20mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "stage": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/alerts/src/environments/environment.stage.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "10mb",
+              "maximumError": "20mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "prod": {
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/alerts/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": false,
+          "commonChunk": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "10mb",
+              "maximumError": "20mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "mango-crem-features-alerts:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "mango-crem-features-alerts:build:production"
+        }
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "mango-crem-features-alerts:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/mango-crem-features/alerts/src/**/*.ts",
+          "apps/mango-crem-features/alerts/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/mango-crem-features/alerts"],
+      "options": {
+        "jestConfig": "apps/mango-crem-features/alerts/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

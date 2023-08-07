@@ -1,0 +1,459 @@
+@use 'mixins' as *;
+@use 'variables' as *;
+
+//------------------------------------------------
+//--- Alias Generator
+//------------------------------------------------
+// Helper for replicating complex common component styles
+@mixin costar-alias($alias, $type){
+  @if $alias == 'header' {
+    @include costar-alias-header($type);
+  }
+  @if $alias == 'button' {
+    @include costar-alias-button($type);
+  }
+  @else {
+    @warn "ERR: costar-alias(#{$alias}) not found.";
+  }
+}
+
+// Header
+@mixin costar-alias-header($type){
+  // Lead
+  @if $type == 'lead' {
+    @include costar(color, dark);
+    @include costar(font-size, lead);
+    @include costar(line-height, lead);
+    @include costar(font-weight, lead);
+  }
+  // Body
+  @else if $type == 'body' {
+    @include costar(color, dark);
+    @include costar(font-size, body);
+    @include costar(line-height, body);
+    @include costar(font-weight, body);
+  }
+  // Body
+  @else if $type == 'small' {
+    @include costar(color, dark);
+    @include costar(font-size, small);
+    @include costar(line-height, small);
+    @include costar(font-weight, small);
+  }
+  // H1
+  @else if $type == 'h1' {
+    @include costar(color, dark);
+    @include costar(font-size, h1);
+    @include costar(line-height, h1);
+    @include costar(font-weight, h1);
+  }
+  // H2
+  @else if $type == 'h2' {
+    @include costar(color, dark);
+    @include costar(font-size, h2);
+    @include costar(line-height, h2);
+    @include costar(font-weight, h2);
+  }
+  // H3
+  @else if $type == 'h3' {
+    @include costar(color, dark);
+    @include costar(font-size, h3);
+    @include costar(line-height, h3);
+    @include costar(font-weight, h3);
+  }
+  // H4
+  @else if $type == 'h4' {
+    @include costar(color, dark);
+    @include costar(font-size, h4);
+    @include costar(line-height, h4);
+    @include costar(font-weight, h4);
+  }
+  // Eyebrow
+  @else if $type == 'eyebrow' {
+    letter-spacing: 0.0625rem;
+    text-transform: uppercase;
+    @include costar(color, gray03);
+    @include costar(font-size, eyebrow);
+    @include costar(line-height, eyebrow);
+    @include costar(font-weight, eyebrow);
+  }
+  // Display-1
+  @else if $type == 'display-1' {
+    @include costar(color, dark);
+    @include costar(font-size, display-1);
+    @include costar(line-height, display-1);
+    @include costar(font-weight, display-1);
+  }
+  // Display-2
+  @else if $type == 'display-2' {
+    @include costar(color, dark);
+    @include costar(font-size, display-2);
+    @include costar(line-height, display-2);
+    @include costar(font-weight, display-2);
+  }
+  // Display-3
+  @else if $type == 'display-3' {
+    @include costar(color, dark);
+    @include costar(font-size, display-3);
+    @include costar(line-height, display-3);
+    @include costar(font-weight, display-3);
+  }
+  @else {
+    @warn "ERR: costar-alias-text(#{$type}) not found. Verify that the #{$type} is correct in costar-alias() or costar-alias-text().";
+  }
+}
+
+// Button
+@mixin costar-alias-button($type){
+  // Base
+  @include costar(font-family, body);
+  @include costar(border-radius, small);
+  @include costar(font-size, normal);
+  @include costar(transition, fast);
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: none;
+  height: 32px;
+  cursor: pointer;
+  @include costar(color, light);
+  border: none;
+  // Primary
+  @if $type == 'primary' {
+    @include costar(color, light);
+    @include costar(background-color, primary-light);
+    &:hover {
+      @include costar(background-color, primary-lighter);
+    }
+    &:disabled {
+      @include costar(color, light);
+      @include costar(background-color, primary-lighter);
+      &:hover {
+        @include costar(color, light);
+        @include costar(background-color, primary-lighter);
+      }
+    }
+  }
+  // Secondary
+  @if $type == 'secondary' {
+    @include costar(background-color, light);
+    @include costar(color, dark);
+    @include costar(border, gray04);
+    &:hover {
+      @include costar(background-color, light);
+      @include costar(color, gray03);
+    }
+    &:disabled {
+      @include costar(color, gray04);
+      @include costar(background-color, light);
+      &:hover {
+        @include costar(color, gray04);
+        @include costar(background-color, light);
+      }
+    }
+  }
+  @if $type == 'warning' {
+    @include costar(background-color, warning);
+    @include costar(color, light);
+    @include costar(border, warning);
+    &:hover {
+      @include costar(background-color, warning-lighter);
+    }
+    &:disabled {
+      @include costar(color, light);
+      @include costar(border-color, warning-lightest);
+      @include costar(background-color, warning-lighter);
+      &:hover {
+        @include costar(color, light);
+        @include costar(border-color, warning-lightest);
+        @include costar(background-color, warning-lighter);
+      }
+    }
+  }
+  @if $type == 'danger' {
+    @include costar(background-color, danger);
+    @include costar(color, light);
+    @include costar(border, danger);
+    &:hover {
+      @include costar(background-color, danger-lighter);
+    }
+    &:disabled {
+      @include costar(color, light);
+      @include costar(border, danger-lightest);
+      @include costar(background-color, danger-lightest);
+      &:hover {
+        @include costar(color, light);
+        @include costar(border, danger-lightest);
+        @include costar(background-color, danger-lightest);
+      }
+    }
+  }
+  @else {
+    @warn "ERR: costar-alias-button(#{$type}) not found. Verify that the #{$type} is correct in costar-alias() or costar-alias-button().";
+  }
+}
+
+//------------------------------------------------
+//--- Class Generator
+//------------------------------------------------
+// Mixin for generating utility classes
+// It generates the classes based on the values of the alias() mixin
+// E.g. .lead { font-size: 1rem; ... }
+@mixin costar-class-generator($type){
+  // General
+  @if $type == 'header' {
+    @each $scenario in ('lead', 'body', 'small', 'h1', 'h2', 'h3', 'h4', 'eyebrow', 'display-1', 'display-2', 'display-3'){
+      .#{$scenario}{
+        @include costar-alias($type, $scenario);
+      }
+    }
+  }
+  @if $type == 'button' {
+    @each $scenario in ( 'primary', 'secondary', 'warning', 'danger' ){
+      .btn-#{$scenario}{
+        @include costar-alias($type, $scenario);
+      }
+    }
+  }
+  // Background
+  @if $type == 'background' {
+    @each $scenario in map-keys($color-base) {
+      .bg-#{$scenario}{
+        @include costar(background-color, $scenario, $important: true);
+      }
+    }
+    .bg-transparent {
+      background-color: transparent !important;
+    }
+  }
+  // Color
+  @if $type == 'color' {
+    @each $scenario in map-keys($color-base) {
+      .color-#{$scenario}{
+        @include costar(color, $scenario, $important: true);
+      }
+    }
+  }
+  // Sizing
+  @if $type == 'height' {
+    @each $scenario in (25, 50, 75, 100, auto) {
+      .h-#{$scenario}{
+        height: if(type-of($scenario) == number, #{$scenario}+'%', $scenario) !important;
+      }
+    }
+  }
+  @if $type == 'width' {
+    @each $scenario in (25, 50, 75, 100, auto) {
+      .w-#{$scenario}{
+        width: if(type-of($scenario) == number, #{$scenario}+'%', $scenario) !important;
+      }
+    }
+  }
+  // Display & Visibility
+  @if $type == 'display' {
+    @each $scenario in ( block, none, inline, inline-block, flex, inline-flex, grid, inline-grid, flow-root) {
+      .d-#{$scenario}{
+        display: $scenario !important;
+      }
+    }
+  }
+  @if $type == 'visibility' {
+    @each $scenario in ( visible, hidden, collapse ) {
+      .visibility-#{$scenario}{
+        visibility: $scenario !important;
+      }
+    }
+  }
+  // Overflow
+  @if $type == 'overflow' {
+    @each $scenario in ( auto, hidden, visible, scroll, unset) {
+      .overflow-#{$scenario}{
+        overflow: $scenario !important;
+      }
+    }
+    @each $scenario in ( auto, hidden, visible, scroll, unset) {
+      .overflow-y-#{$scenario}{
+        overflow: $scenario !important;
+      }
+    }
+    @each $scenario in ( auto, hidden, visible, scroll, unset) {
+      .overflow-x-#{$scenario}{
+        overflow: $scenario !important;
+      }
+    }
+  }
+  // Spacing
+  @if $type == 'margin' {
+    @each $scenario in map-keys($spacing-base) {
+      .m-#{$scenario}{
+        @include costar(margin, $scenario, $important: true);
+      }
+    }
+    // Start (left)
+    @each $scenario in map-keys($spacing-base) {
+      .ml-#{$scenario}{
+        @include costar(margin-left, $scenario, $important: true);
+      }
+    }
+    // End (right)
+    @each $scenario in map-keys($spacing-base) {
+      .mr-#{$scenario}{
+        @include costar(margin-right, $scenario, $important: true);
+      }
+    }
+    // Top
+    @each $scenario in map-keys($spacing-base) {
+      .mt-#{$scenario}{
+        @include costar(margin-top, $scenario, $important: true);
+      }
+    }
+    // Bottom
+    @each $scenario in map-keys($spacing-base) {
+      .mb-#{$scenario}{
+        @include costar(margin-bottom, $scenario, $important: true);
+      }
+    }
+  }
+  @if $type == 'padding' {
+    @each $scenario in map-keys($spacing-base) {
+      .p-#{$scenario}{
+        @include costar(padding, $scenario, $important: true);
+      }
+    }
+    // Start (left)
+    @each $scenario in map-keys($spacing-base) {
+      .pl-#{$scenario}{
+        @include costar(padding-left, $scenario, $important: true);
+      }
+    }
+    // End (right)
+    @each $scenario in map-keys($spacing-base) {
+      .pr-#{$scenario}{
+        @include costar(padding-right, $scenario, $important: true);
+      }
+    }
+    // Top
+    @each $scenario in map-keys($spacing-base) {
+      .pt-#{$scenario}{
+        @include costar(padding-top, $scenario, $important: true);
+      }
+    }
+    // Bottom
+    @each $scenario in map-keys($spacing-base) {
+      .pb-#{$scenario}{
+        @include costar(padding-bottom, $scenario, $important: true);
+      }
+    }
+  }
+  // POSITION
+  @if $type == 'position' {
+    @each $scenario in ( static, relative, absolute, fixed, sticky ) {
+      .position-#{$scenario}{
+        position: $scenario !important;
+      }
+    }
+  }
+  @if $type == 'top' {
+    @each $scenario in ( 0, 50, 100 ) {
+      .top-#{$scenario}{
+        top: #{$scenario}+'%' !important;
+      }
+    }
+  }
+  @if $type == 'bottom' {
+    @each $scenario in ( 0, 50, 100 ) {
+      .bottom-#{$scenario}{
+        bottom: #{$scenario}+'%' !important;
+      }
+    }
+  }
+  @if $type == 'right' {
+    @each $scenario in ( 0, 50, 100 ) {
+      .right-#{$scenario}{
+        right: #{$scenario}+'%' !important;
+      }
+    }
+  }
+  @if $type == 'left' {
+    @each $scenario in ( 0, 50, 100 ) {
+      .left-#{$scenario}{
+        left: #{$scenario}+'%' !important;
+      }
+    }
+  }
+  // TEXT
+  @if $type == 'font-size' {
+    @each $scenario in map-keys(map-get($font, font-size)) {
+      .font-size-#{$scenario}{
+        font-size: map-get($font, font-size, $scenario) !important;
+      }
+    }
+  }
+  @if $type == 'font-style' {
+    @each $scenario in ( italic, normal ) {
+      .font-style-#{$scenario}{
+        font-size:  $scenario !important;
+      }
+    }
+  }
+  @if $type == 'text-align' {
+    @each $scenario in ( left, center, right, justify ) {
+      .text-#{$scenario}{
+        text-align: $scenario !important;
+      }
+    }
+  }
+  @if $type == 'text-wrap' {
+    @each $scenario in ( wrap, nowrap ) {
+      .text-#{$scenario}{
+        white-space: $scenario !important;
+      }
+    }
+  }
+  // BORDER
+  @if $type == 'border-radius' {
+    @each $scenario in map-keys(map-get($border, border-radius)){
+      // All Corners
+      .border-#{$scenario}{
+        background-color: map-get($border, border-radius, $scenario) !important;
+      }
+      // Double Corners
+      .border-bottom-#{$scenario}{
+        border-bottom-right-radius: map-get($border, border-radius, $scenario) !important;
+        border-bottom-left-radius: map-get($border, border-radius, $scenario) !important;
+      }
+      .border-top-#{$scenario}{
+        border-top-right-radius: map-get($border, border-radius, $scenario) !important;
+        border-top-left-radius: map-get($border, border-radius, $scenario) !important;
+      }
+      // Individual Corners
+      .border-top-right-#{$scenario}{
+        border-top-right-radius: map-get($border, border-radius, $scenario) !important;
+      }
+      .border-top-left-#{$scenario}{
+        border-top-left-radius: map-get($border, border-radius, $scenario) !important;
+      }
+      .border-bottom-right-#{$scenario}{
+        border-bottom-right-radius: map-get($border, border-radius, $scenario) !important;
+      }
+      .border-bottom-left-#{$scenario}{
+        border-bottom-left-radius: map-get($border, border-radius, $scenario) !important;
+      }
+    }
+  }
+  // CURSOR
+  @if $type == 'cursor' {
+    @each $scenario in ( help, wait, grab, grabbing, text, progress, zoom-in, zoom-out, pointer, default ) {
+      .cursor-#{$scenario}{
+        cursor: $scenario !important;
+      }
+    }
+  }
+  @else {
+    @warn "ERR: costar-class-generator(#{$type}) not found.";
+  }
+
+}

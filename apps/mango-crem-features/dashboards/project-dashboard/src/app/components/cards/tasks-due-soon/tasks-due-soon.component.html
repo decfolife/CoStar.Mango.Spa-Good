@@ -1,0 +1,116 @@
+<crem-card 
+    [id]="card.id"
+    [title]="card.title"
+    [subtitle]="card.subtitle"
+    [counter]="card.counter"
+    [filterData]="null"
+    [filterInitialValue]="null"
+    [showFilterClearButton]="false"
+	[moreOptions]="card.moreOptions"
+	(exportDataGrid)="exportAllGridData($event)"
+    fxFlexFill>
+
+	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
+		<dx-data-grid
+			#TasksDueSoonGrid
+			[id]="card.gridData.id + 'grid'"
+			[dataSource]="card.gridData.dataSource"
+			keyExpr="gridIndex"
+			[allowColumnReordering]="false"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[repaintChangesOnly]="true"
+			[showBorders]="false"
+			(onRowClick)="rowClick($event)"
+			[wordWrapEnabled]="true">
+
+
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-search-panel [visible]="false"></dxo-search-panel>
+			<dxo-pager [visible]="false"></dxo-pager>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+
+			<dxi-column
+				dataField="step"
+				alignment="left"
+				[width]="60"
+				[allowHeaderFiltering]="false">
+			</dxi-column>
+			
+			<dxi-column
+				dataField="taskName"
+				alignment="left">
+			</dxi-column>
+
+			<dxi-column
+				dataField="taskDueDate"
+				cellTemplate="dueDate"
+				dataType="date"
+				alignment="left"
+				[format]="cardsService.dateFormat"
+				aria-label="Task is overdue"
+				aria-hidden="false">
+			</dxi-column>
+			<div *dxTemplate="let cell of 'dueDate'">
+				<div class="dueDate" tabindex="0">
+					<div class="is-overdue" *ngIf="cell.data.isOverdue">
+						{{ cell.value | date: cardsService.dateFormat }}
+						<mat-icon
+							class="warning"
+							svgIcon="warning"
+							fill="#CF0201"
+							aria-hidden="false"
+							role="presentation"
+							aria-label="Task is overdue">
+					</mat-icon>
+					</div>
+					<div class="not-overdue" *ngIf="!cell.data.isOverdue">
+						{{ cell.value | date: cardsService.dateFormat  }}
+					</div>
+				</div>
+			</div>
+
+			<dxi-column
+				dataField="projectName"
+				[caption]="getProjectName()"
+				alignment="left">
+			</dxi-column>
+
+			<dxi-column
+				dataField="projectType"
+				[caption]="getProjectType()"
+				alignment="left">
+			</dxi-column>
+			
+			<dxi-column
+				dataField=" "
+				[cellTemplate]="'buttonTemplate'"
+				alignment="left"
+				[allowHeaderFiltering]="false">
+			</dxi-column>
+			
+			<div *dxTemplate="let data of 'buttonTemplate'" >
+				<div *ngIf="(data.data.numChildren > 0) || (data.data.numPredecessors > 0)">
+					Has child or pred.
+				</div>
+				<div class="button-wrap buttonTemplate" *ngIf="(data.data.numChildren == 0) && (data.data.numPredecessors == 0)">
+					<crem-button
+						type="text"
+						size="small"
+            class="bg-transparent color-primary-light"
+						(click)="approve(data.data, 'Approve')">Approve &nbsp;</crem-button>
+					|<crem-button
+						type="text"
+						size="small"
+            class="bg-transparent color-primary-light"
+						(click)="approve(data.data, 'Reject')">&nbsp; Reject
+					</crem-button>
+				</div>
+			</div>
+		</dx-data-grid>
+	</div>
+</crem-card>

@@ -1,0 +1,19 @@
+
+@import  "../lib/assets/styles/crem-lib.scss"; // @deprecated
+
+@use '../../../common/src/styles' as *;
+@use '../lib/button/button.component';
+
+@import '../lib/card/card.component.scss';
+@import '../lib/dropdown/dropdown.component.scss';
+@import '../lib/hero-metric/hero-metric.component.scss';
+@import '../lib/simple-grid/simple-grid.component.scss';
+@import '../lib/card/card.component.scss';
+@import '../lib/left-nav/left-nav.component.scss';
+@import '../lib/chip/chip.component.scss';
+@import '../lib/tooltip/tooltip.component.scss';
+@import '../lib/tooltip-basic/tooltip-basic.component.scss';
+
+.dx-texteditor.dx-editor-underlined:after {
+    border-bottom: none !important;
+}

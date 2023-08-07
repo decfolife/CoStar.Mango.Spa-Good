@@ -1,0 +1,109 @@
+<div class="dynamic-form">
+  <div class="dynamic-form-content">
+    <div class="row">
+      <div *ngFor="let section of formFields" [ngClass]="section.class">
+
+        <form-schedule
+          *ngIf="section.type === 'table'"
+          [section]="section"
+          [hasHistory]="false"
+        ></form-schedule>
+
+        <mat-card *ngIf="section.type != 'table'">
+
+          <mat-card-header>
+            <mat-card-title>{{ section.sectionName }}</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content [ngSwitch]="section.type">
+
+              <div *ngSwitchCase="'image'">
+                <img [src]="section.imagePath" alt=""/>
+              </div>
+
+              <div *ngSwitchCase="'clauses'" class="container-fluid">
+                <div *ngFor="let clause of section.clauses" class="row mt-3">
+                  <div class="col-2 col-md-2 col-sm-12 clause">
+                    <strong>{{clause.clause}}</strong>
+                  </div>
+                  <p class="col-10 col-md-10 col-sm-12 value">
+                    {{clause.value}}
+                  </p>
+                </div>
+              </div>
+
+              <dx-form
+                *ngSwitchCase="'fields'"
+                [(formData)]="section.data"
+                [colCount]="section.colCount ? section.colCount : 2"
+                labelLocation="left"
+                [showColonAfterLabel]="false"
+              >
+                <dxi-item
+                  *ngFor="let field of section.fields"
+                  [dataField]="field.value"
+                  [label]="{ text: field.label }"
+                  [editorType]="field.controlType"
+                  [editorOptions]="{
+                    items: field.dropdownValues,
+                    searchEnabled: true,
+                    disabled: field.readOnly
+                  }"
+                  [template]="field.dxTemplate"
+                  [colSpan]="field.colSpan"
+                >
+                </dxi-item>
+                  <!-- Templates -->
+                  <div *dxTemplate="let data of 'textBoxTemplate'">
+                    <dx-text-box
+                      [(value)]="section.data[data.dataField]"
+                      [disabled]="data.editorOptions.disabled"
+                    ></dx-text-box>
+                    <form-field-tooltip
+                      [fieldId]="data.dataField"
+                      [title]="data.dataField"
+                    ></form-field-tooltip>
+                  </div>
+                  <div *dxTemplate="let data of 'dateBoxTemplate'">
+                    <dx-date-box
+                      [(value)]="section.data[data.dataField]"
+                      [disabled]="data.editorOptions.disabled"
+                    ></dx-date-box>
+                    <form-field-tooltip
+                      [fieldId]="data.dataField"
+                    ></form-field-tooltip>
+                  </div>
+                  <div *dxTemplate="let data of 'selectBoxTemplate'">
+                    <dx-select-box
+                      [dataSource]="data.editorOptions.items"
+                      [(value)]="section.data[data.dataField]"
+                      [searchEnabled]="data.editorOptions.searchEnabled"
+                      valueExpr="value"
+                      displayExpr="display"
+                      [disabled]="data.editorOptions.disabled"
+                    ></dx-select-box>
+                    <form-field-tooltip
+                      [fieldId]="data.dataField"
+                    ></form-field-tooltip>
+                  </div>
+                  <div *dxTemplate="let data of 'clauseTemplate'">
+                    <dx-text-area
+                      [(value)]="section.data[data.dataField]"
+                      [height]="112"
+                      [disabled]="data.editorOptions.disabled"
+                    ></dx-text-area>
+                    <doc-sec-page></doc-sec-page>
+                    <form-field-tooltip
+                      [fieldId]="data.dataField"
+                    ></form-field-tooltip>
+                  </div>
+                  <!--/Templates -->
+              </dx-form>
+
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+  </div>
+</div>

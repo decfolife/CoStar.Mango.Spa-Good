@@ -1,0 +1,14 @@
+.user-maintenance-deletion-modal {
+    @import "./app/components/index/modal/user-deletion/user-deletion.component.scss";
+}
+
+user-maintenance {
+    /* You can add global styles to this file, and also import other style files */
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss";
+
+    // @import '~devexpress-gantt/dist/dx-gantt.css';
+
+
+    @import "./assets/styles/user-maintenance.scss";
+}

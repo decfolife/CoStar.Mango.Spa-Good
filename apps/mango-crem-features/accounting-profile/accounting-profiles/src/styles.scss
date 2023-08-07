@@ -1,0 +1,753 @@
+/* You can add global styles to this file, and also import other style files */
+app-discount-rate-profiles,
+app-discount-rate-profiles-add-edit {
+  @import '../../../../../libs/ui-shared/lib-ui-elements/src/lib/tooltip/tooltip.component.scss';
+  @import '@angular/material/prebuilt-themes/indigo-pink.css';
+}
+
+@import 'assets/styles/colors.scss';
+@import 'assets/styles/var.scss';
+
+
+h5#discount-rate-profiles-h5.dbl-right-margin {
+  font-family: Helvetica, sans-serif;
+  font-size: 16px !important;
+}
+
+#form.dx-field-item-help-text {
+  color: #636363;
+}
+
+#form.dx-field-item-required-mark {
+  color: transparent !important;
+}
+
+// Portfolio dropdown list hiding the dropdown
+#selectPortfolio-panel {
+  margin-top: 27px;
+}
+
+.discount-rate {
+  margin-bottom: 8px;
+
+  &__portfolio-dropdown>.mat-form-field-wrapper.ng-tns-c41-21>.mat-form-field-flex.ng-tns-c41-21 {
+    padding: 0 .1em 0 .75em !important;
+  }
+}
+
+#discount-rate-profiles-container.list-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  div.list-page-controls-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: $stdPadding;
+    font-size: 14px;
+    border-bottom: $stdBorder;
+
+    &>div {
+      display: flex;
+      align-items: center;
+      z-index: 500;
+
+      div.badge {
+        height: 16px;
+        min-width: 16px;
+        border-radius: $stdPadding;
+        border: $stdBorder;
+        padding: $stdPadding / 4;
+        font-size: 12px;
+        text-align: center;
+        box-sizing: border-box;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        &.primary {
+          color: white !important;
+
+          &.costar {
+            background: $costarBlue;
+            border-color: $costarBlue;
+          }
+
+          &.error {
+            background: $costarAlert;
+            border-color: $costarAlert;
+          }
+        }
+
+        &.secondary {
+          background: white;
+
+          &.costar {
+            color: $costarBlue;
+            border-color: $costarBlue;
+          }
+
+          &.error {
+            color: $costarAlert;
+            border-color: $costarAlert;
+          }
+        }
+
+        &.tertiary {
+          background: white;
+
+          &.costar {
+            color: $darkGray;
+            border-color: $darkGray;
+          }
+        }
+      }
+
+      &.controls-left {
+
+        mat-form-field.mat-form-field,
+        button.btn,
+        dx-text-box,
+        dx-drop-down-box {
+          margin-right: $dblPadding;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 0px;
+        }
+
+        .dx-texteditor-input:focus {
+          border: 0px solid #2e71b7 !important;
+          background: #FFF !important;
+          outline: 0;
+        }
+
+        .dx-texteditor-input:disabled {
+          color: #333 !important;
+        }
+
+      }
+
+      &.controls-right {
+
+        mat-form-field.mat-form-field,
+        button.btn,
+        mat-button-toggle-group {
+          margin-left: $dblPadding;
+        }
+      }
+    }
+
+    button.btn {
+      font-size: 14px;
+    }
+
+    mat-form-field {
+      &.mat-form-field {
+        height: $stdPadding * 4;
+
+        &.mat-form-field-appearance-outline {
+          div.mat-form-field-wrapper {
+            padding: 0px;
+            margin: 0px;
+          }
+        }
+      }
+    }
+  }
+
+  div.list-page-data-grid-wrapper {
+    display: flex;
+    flex-grow: 1;
+    overflow-y: auto;
+    flex-direction: column;
+  }
+}
+
+mat-form-field.discount-rate__portfolio-dropdown {
+  &.mat-form-field {
+    line-height: 21px;
+
+    &.mat-form-field-appearance-outline {
+      div.mat-form-field-wrapper {
+        margin: $stdPadding 0 $dblPadding 0;
+
+        div.mat-form-field-flex {
+          padding: 0 0.1em 0 .75em;
+
+          div.mat-form-field-infix {
+            padding: 0.4em 0px;
+            border-top: 4px solid transparent;
+            height: 35px;
+
+            span.mat-form-field-label-wrapper {
+              top: $stdPadding * -3;
+              overflow: visible;
+            }
+
+            mat-select.mat-select {
+              div.mat-select-trigger {
+                div.mat-select-arrow-wrapper {
+                  transform: none;
+                }
+              }
+            }
+          }
+
+          div.mat-form-field-outline {
+            background: white;
+
+            div.mat-form-field-outline-end {
+              border-radius: 2px;
+              border-color: $stdBorderGray;
+              border-top-left-radius: 0px;
+              border-bottom-left-radius: 0px;
+            }
+
+            div.mat-form-field-outline-start {
+              border-radius: 2px;
+              border-color: $stdBorderGray;
+              border-top-right-radius: 0px;
+              border-bottom-right-radius: 0px;
+            }
+
+            div.mat-form-field-outline-gap {
+              border-color: $stdBorderGray;
+              border-radius: 0px;
+            }
+          }
+
+          div.mat-form-field-suffix {
+            mat-datepicker-toggle.mat-date-picker-toggle {
+              button.mat-icon-button {
+                height: 28px;
+                width: 28px;
+                top: 3px;
+              }
+            }
+          }
+        }
+      }
+
+      &.mat-form-field-can-float {
+        &.mat-form-field-should-float {
+          label.mat-form-field-label {
+            transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+            width: 100%;
+
+            mat-label {
+              font-size: 14px;
+            }
+          }
+        }
+
+        label.mat-form-field-label {
+          transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+          width: 100%;
+
+          mat-label {
+            font-size: 14px;
+          }
+        }
+      }
+
+      &.clause-text {
+        div.mat-form-field-wrapper {
+          div.mat-form-field-flex {
+            div.mat-form-field-infix {
+              height: auto;
+            }
+          }
+        }
+      }
+    }
+
+    div.mat-form-field-wrapper {
+      div.mat-form-field-flex {
+        div.mat-form-field-suffix {
+          mat-icon.mat-icon {
+            fa-icon {
+              font-size: 20px;
+              color: $iconGrayDisabled;
+              position: absolute;
+            }
+          }
+        }
+
+        div.mat-form-field-prefix {
+          top: 6px;
+        }
+      }
+    }
+
+    &.read-only {
+      div.mat-form-field-wrapper {
+        div.mat-form-field-flex {
+          div.mat-form-field-outline {
+            background: inherit;
+          }
+        }
+      }
+    }
+  }
+
+  &.costar-toolbar-search {
+    background-color: white;
+    font-size: 14px;
+
+    &.mat-form-field {
+      &.mat-form-field-appearance-outline {
+        .mat-form-field-wrapper {
+          height: 32px;
+          width: 450px;
+          padding: 0px !important;
+          margin: 0px !important;
+
+          .mat-form-field-suffix {
+            mat-icon {
+              height: initial;
+              width: initial;
+              fill: #979797;
+              color: #979797;
+
+              button {
+                &.mat-icon-button {
+                  height: 1.5em;
+                  width: initial;
+                  top: -6px !important;
+                  font-size: 0.75em;
+                  color: #979797;
+                  margin-right: 2 * $dblPadding;
+
+                  i {
+                    font-size: 1.25rem;
+                    color: inherit;
+                  }
+
+                  fa-icon {
+                    margin-left: 0.75 * $stdPadding;
+                  }
+                }
+              }
+
+              fa-icon {
+                color: $costarBlue;
+              }
+            }
+          }
+        }
+
+        .mat-form-field-infix {
+          width: 450px;
+          padding: 0px !important;
+          border-top: 0px;
+
+          input {
+            font-size: 1rem;
+          }
+        }
+
+        .mat-form-field-flex {
+          height: 32px;
+          margin-top: 0px;
+
+          div.mat-form-field-outline {
+            height: 32px;
+            top: 0;
+
+            div.mat-form-field-outline-start,
+            div.mat-form-field-outline-gap,
+            div.mat-form-field-outline-end {
+              border-color: $stdBorderGray;
+            }
+
+            div.mat-form-field-outline-end {
+              border-radius: 2px;
+              border-top-left-radius: 0px !important;
+              border-bottom-left-radius: 0px !important;
+              border-color: $stdBorderGray;
+            }
+
+            div.mat-form-field-outline-start {
+              border-radius: 2px;
+              border-top-right-radius: 0px !important;
+              border-bottom-right-radius: 0px !important;
+              border-color: $stdBorderGray;
+            }
+
+            div.mat-form-field-outline-gap {
+              border-radius: 0px !important;
+              border-color: $stdBorderGray;
+
+            }
+          }
+
+          &:hover {
+            .mat-form-field-outline {
+              opacity: 1;
+
+              &.mat-form-field-outline-thick {
+                opacity: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+app-discount-rate-profiles-add-edit {
+  .dynamic-form {
+    padding: $dblPadding;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+
+    div.dynamic-form-controls-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: $stdPadding $dblPadding;
+      border-bottom: $stdBorder;
+      // margin-bottom: $dblPadding;
+      font-size: 14px;
+
+      &>div {
+        display: flex;
+        align-items: center;
+        z-index: 500;
+
+        &.controls-left {
+
+          mat-form-field.mat-form-field,
+          button.btn {
+            margin-right: $dblPadding;
+          }
+
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            margin: 0px;
+          }
+        }
+
+        &.controls-right {
+
+          mat-form-field.mat-form-field,
+          button.btn {
+            margin-left: $dblPadding;
+          }
+        }
+      }
+    }
+
+    div.dynamic-form-content {
+      padding: $dblPadding;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      overflow-y: auto;
+
+      mat-card {
+        margin-bottom: $stdPadding * 3;
+
+        mat-card-header.mat-card-header {
+          .mat-card-header-text {
+            margin: 0px;
+          }
+        }
+
+        mat-card-content.mat-card-content {
+          padding-top: $stdPadding * 3;
+
+          mat-form-field {
+            width: 100%;
+          }
+
+          mat-slide-toggle.mat-slide-toggle {
+            display: block;
+            // height: 44px;
+            height: 32px;
+            // margin-bottom: $dblPadding;
+            margin-bottom: 0px;
+          }
+
+          .form-field-tooltip {
+            color: $iconGrayDisabled;
+            position: relative;
+            top: -60px;
+            padding: 0px;
+            float: right;
+            min-width: 8px;
+
+            &.slide-toggle-tooltip {
+              top: -40px;
+              right: 11px;
+            }
+
+            &.datepicker-tooltip {
+              right: -30px;
+            }
+          }
+
+          .classification-test-link {
+            position: relative;
+            color: $primary;
+            margin: 0px $dblPadding;
+            float: right;
+            min-width: 8px;
+            cursor: pointer;
+          }
+
+          .accounting-measurement-date {
+            width: 100px;
+            margin-left: $stdPadding;
+          }
+        }
+      }
+    }
+    mat-card.mat-card {
+      border: $stdBorder;
+      border-radius: 2px !important;
+      box-shadow: none !important;
+      padding: 0px !important;
+
+      mat-card-header.mat-card-header {
+        padding: $stdPadding $dblPadding;
+        border-bottom: $stdBorder;
+        color: $stdTextGray;
+        justify-content: space-between;
+        align-items: center;
+
+        div.mat-card-header-text {
+          margin: 0px;
+
+          mat-card-title.mat-card-title {
+            margin: 0px;
+            font-weight: 200;
+            font-size: 18px;
+            display: inline-block;
+            margin-right: $stdPadding;
+          }
+
+          mat-card-subtitle.mat-card-subtitle {
+            margin: 0px;
+            font-weight: 200;
+            font-size: 16px;
+            color: $lightTextGray;
+            display: inline-block;
+            margin-right: $stdPadding;
+
+            &.sub-metric {
+              font-size: 14px;
+            }
+          }
+        }
+
+        mat-form-field.mat-form-field {
+          div.mat-form-field-wrapper {
+            margin: 0px;
+            padding: 0px;
+
+            div.mat-form-field-flex {
+              div.mat-form-field-infix {
+                span.mat-form-field-label-wrapper {
+                  top: 6px;
+                  right: 124px;
+                  left: auto;
+
+                  label.mat-form-field-label {}
+                }
+              }
+            }
+          }
+        }
+      }
+
+      mat-card-content.mat-card-content {
+        // background: $cardBodyBackgroundGray;
+        background: white;
+        padding: $dblPadding;
+      }
+
+      &.costar-hero-metric-card {
+        border: 0px;
+        // min-width: 180px;
+        display: inline-block;
+        height: 93px;
+        margin: $dblPadding $stdPadding $dblPadding 0px;
+        padding: 0px $stdPadding*3 0px $dblPadding  !important;
+
+        &:last-of-type {
+          border-right: $stdBorder;
+        }
+
+        mat-card-header.mat-card-header {
+          border-bottom: 0px;
+          padding: 0px;
+
+          div.mat-card-header-text {
+            margin: 0px;
+            display: flex;
+            flex-direction: column;
+
+            mat-card-title.mat-card-title {
+              height: $dblPadding;
+              font-size: 13px;
+              font-family: "Helvetica";
+              font-weight: 300;
+              letter-spacing: 0.25px;
+              line-height: $dblPadding;
+            }
+          }
+
+          div.addl-info-wrapper {
+            fa-icon {
+              color: $primary;
+            }
+          }
+        }
+
+        mat-card-content.mat-card-content {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          padding: 0px;
+          margin: 0;
+          background: white;
+
+          .hero-value {
+            font-size: $stdPadding * 5;
+            line-height: $dblPadding * 3;
+            color: #000000;
+          }
+
+          .sidekick-value-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-content: center;
+            margin-left: $dblPadding;
+
+            .sidekick-value {
+              border-radius: 3.6px;
+              font-size: 16px;
+              text-align: center;
+              background: $costarGreen;
+              color: #FFFFFF;
+              padding: $stdPadding/2 $dblPadding;
+              margin: $stdPadding/2 0px;
+            }
+          }
+        }
+
+        mat-card-footer.mat-card-footer {
+          margin: 0px;
+
+          mat-card-subtitle.mat-card-subtitle {
+            font-size: 16px;
+            font-weight: 300;
+            margin: 0px;
+          }
+        }
+
+        &.border-left {
+          border-left: $stdBorder;
+          // padding-left: $dblPadding !important;
+          // margin-left: $dblPadding;
+        }
+
+        &.border-right {
+          border-right: $stdBorder;
+          // padding-right: $dblPadding !important;
+          // margin-right: $dblPadding;
+        }
+      }
+
+      &.hero {
+        border: 0px;
+        border-right: $stdBorder;
+        width: 200px;
+        margin-bottom: 0px !important;
+        display: inline-block;
+
+        mat-card-header.mat-card-header {
+          border-bottom: 0px;
+
+          div.mat-card-header-text {
+            margin: 0px;
+            display: flex;
+            flex-direction: column;
+
+            mat-card-title.mat-card-title {
+              font-size: 28px;
+              font-weight: 400;
+            }
+
+            mat-card-subtitle.mat-card-subtitle {
+              span {
+                display: inline-block;
+                margin-right: $dblPadding;
+              }
+            }
+          }
+
+          fa-icon.ng-fa-icon {
+            position: absolute;
+            bottom: $dblPadding;
+            right: $dblPadding;
+            color: $primary;
+            cursor: pointer;
+          }
+        }
+
+        &.object-hero {
+          border: 0px;
+          border-left: $stdBorder;
+          display: flex;
+          align-content: center;
+          align-items: center;
+
+          mat-card-header.mat-card-header {
+            padding: 0px $stdPadding*3;
+
+            div.mat-card-header-text {
+              mat-card-title.mat-card-title {
+                font-size: 24px;
+              }
+
+              mat-card-subtitle.mat-card-subtitle {
+                font-size: 14px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .dx-field-item-content {
+    .dx-template-wrapper {
+      display: flex;
+      dx-text-box, dx-select-box, dx-date-box {
+        width: 100%;
+      }
+    }
+  }
+}

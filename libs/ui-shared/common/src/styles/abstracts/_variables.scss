@@ -1,0 +1,530 @@
+@use 'variables_legacy' as *; // TODO: Dispose of legacy variables stylesheet after completing the full migration to the conventions of this library
+@use 'functions' as *;
+@use 'mixins' as *;
+
+// Utils
+@use '../vendors/include-media' as *; // Media queries with a simple and natural syntax
+
+//------------------------------------------------
+//--- VARIABLES
+//------------------------------------------------
+// NOTE: Only add variables that are applicable to shared libraries or utilities and not to single-use components
+
+// Font Family
+$font-family: Roboto;
+$font-family-failover: Helvetica Neue, Helvetica, Arial, sans-serif;
+$font-family-code: Menlo, Andale Mono, monospace;
+// Check: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+$font-weight-bolder: 800;
+
+// Font Size
+$font-size-base: 16px;
+
+// Primary Colors
+$primary: #1B3A6E; //$costarDarkBlue;
+$primary-light: #0559B3; //$costarBlue;
+$primary-lighter: #779ede; //$costarMediumBlue;
+$primary-lightest: #E0EAF4; //$costarLightBlue;
+$primary-dark: #162f5a;
+$primary-darker: #0c1a31;
+$primary-darkest: #070f1c;
+
+$secondary: #ec4a08; //$color-brand-accent;
+$secondary-light: #f8692f;
+$secondary-lighter: #fa8d60;
+$secondary-lightest: #fdd4c3;
+$secondary-dark: #bb3b06;
+$secondary-darker: #892b05;
+$secondary-darkest: #581c03;
+
+// Neutral Colors
+$light: $color-white;
+$dark: $color-black;
+
+$background: #F5F5F5;
+$gray01: #393939;
+$gray02: #414141;
+$gray03: #757575;
+$gray04: #C8C8C8;
+$gray05: #dcdcdc;
+$gray06: #EDEDED;
+$gray07: #FBFBFB;
+
+// Feedback Colors
+$success: #017B30;//$costarGreen;
+$success-light: #01ae44;
+$success-lighter: #02e057;
+$success-lightest: #4afe8f;
+$success-dark: #01481c;
+$success-darker: #002f12;
+$success-darkest: #001609;
+
+$info: #669bd1;//$color-brand-primary-medium;
+$info-light: #8db5dd;
+$info-lighter: #b4cee9;
+$info-lightest: #dce8f4;
+$info-dark: #3068a1;
+$info-darker: #254f79;
+$info-darkest: #193552;
+
+$warning: #FFB400;//$color-brand-yellow;
+$warning-light: #ffc333;
+$warning-lighter: #ffcb4d;
+$warning-lightest: #ffda80;
+$warning-dark: #996c00;
+$warning-darker: #664800;
+$warning-darkest: #332400;
+
+$danger: #DE0000; //$color-brand-red;
+$danger-light: #ff1212;
+$danger-lighter: #ff4545;
+$danger-lightest: #ffabab;
+$danger-dark: #ab0000;
+$danger-darker: #780000;
+$danger-darkest: #450000;
+
+// Spacing
+$space-base: 4px;
+
+// Animation
+$animation-speed-slow: 600ms;
+$animation-speed-normal: 400ms;
+$animation-speed-fast: 250ms;
+$animation-speed-faster: 150ms;
+
+// Borders
+$border-radius: 2px;
+$border-width: 1px;
+
+//------------------------------------------------
+//--- Variable Maps or Tokens
+//------------------------------------------------
+
+// Important: Don't use the CSS (Eg. --primary-light) or SCSS (Eg. $primary) directly
+// use the costar mixin instead for CSS full compatibility across browsers
+// Note: Multiple variables assignations to support backward compatibility
+
+// The maps are required to use CSS property namings on the first level (E.g. 'background-color')
+// to make it work with the costar() mixin and the correct fallbacks
+// Maps should be always two levels deep, E.g. $color: ( background-color: (primary: $primary, ... ), color: ( body: $primary, ...) );
+// Note: Don't edit below this line unless necessary.
+// To allow reusability please define the SASS variables above before placing values directly below
+
+$color-base: (
+  // Primary Colors
+  primary: $primary,
+  primary-light: $primary-light,
+  primary-lighter: $primary-lighter,
+  primary-lightest: $primary-lightest,
+  primary-dark: $primary-dark,
+  primary-darker: $primary-darker,
+  primary-darkest: $primary-darkest,
+
+  secondary: $secondary,
+  secondary-light: $secondary-light,
+  secondary-lighter: $secondary-lighter,
+  secondary-lightest: $secondary-lightest,
+  secondary-dark: $secondary-dark,
+  secondary-darker: $secondary-darker,
+  secondary-darkest: $secondary-darkest,
+
+  // Neutral Colors
+  light: $light,
+  dark: $dark,
+
+  background: $background,
+
+  gray01: $gray01,
+  gray02: $gray02,
+  gray03: $gray03,
+  gray04: $gray04,
+  gray05: $gray05,
+  gray06: $gray06,
+  gray07: $gray07,
+
+  // Feedback Colors
+  success: $success,
+  success-light: $success-light,
+  success-lighter: $success-lighter,
+  success-lightest: $success-lightest,
+  success-dark: $success-dark,
+  success-darker: $success-darker,
+  success-darkest: $success-darkest,
+
+  info: $info,
+  info-light: $info-light,
+  info-lighter: $info-lighter,
+  info-lightest: $info-lightest,
+  info-dark: $info-dark,
+  info-darker: $info-darker,
+  info-darkest: $info-darkest,
+
+  warning: $warning,
+  warning-light: $warning-light,
+  warning-lighter: $warning-lighter,
+  warning-lightest: $warning-lightest,
+  warning-dark: $warning-dark,
+  warning-darker: $warning-darker,
+  warning-darkest: $warning-darkest,
+
+  danger: $danger,
+  danger-light: $danger-light,
+  danger-lighter: $danger-lighter,
+  danger-lightest: $danger-lightest,
+  danger-dark: $danger-dark,
+  danger-darker: $danger-darker,
+  danger-darkest: $danger-darkest,
+
+) !default;
+
+// Color Aggregation
+$color: (
+  color: ( $color-base ),
+) !default;
+
+// Font
+// The size is relative to the $base font size used in the body (16px)
+$font: (
+  font-size: (
+    // Navigation
+    navigation: 0.9rem,
+    // Body
+    lead: 1.125rem,
+    body: 1rem,
+    small: 0.875rem,
+    normal: 1rem,
+    big: 1.2rem,
+    // Headings
+    h1: 1.75rem,
+    h2: 1.25rem,
+    h3: 1.125rem,
+    h4: 1rem,
+    eyebrow: 0.9rem,
+    // Display
+    display-1: 2.625rem,
+    display-2: 2.25rem,
+    display-3: 2.25rem,
+  ),
+  line-height: (
+    // Body
+    lead: 1.5rem,
+    body: 1.5rem,
+    small: 1rem,
+    // Headings
+    h1: 2.0625rem,
+    h2: 1.4375rem,
+    h3: 1.3125rem,
+    h4: 1.3125rem,
+    eyebrow: 1.3125rem,
+    // Display
+    display-1: 3rem,
+    display-2: 2.625rem,
+    display-3: 2.625rem,
+  ),
+  font-family: (
+    head: $font-family + "," + $font-family-failover,
+    body: $font-family + "," + $font-family-failover,
+    code: $font-family-code,
+  ),
+  font-weight: (
+    light: $font-weight-light,
+    normal: $font-weight-normal,
+    medium: $font-weight-medium,
+    bold: $font-weight-bold,
+    bolder: $font-weight-bolder,
+    // Body
+    body: $font-weight-normal,
+    small: $font-weight-normal,
+    // Lead
+    lead: $font-weight-medium,
+    // Headings
+    h1: $font-weight-medium,
+    h2: $font-weight-medium,
+    h3: $font-weight-medium,
+    h4: $font-weight-bold,
+    eyebrow: $font-weight-medium,
+    // Display
+    display-1: $font-weight-medium,
+    display-2: $font-weight-medium,
+    display-3: $font-weight-medium,
+  ),
+) !default;
+
+// Spacings
+$spacing-base: (
+  base: $space-base,
+  0: 0,
+  1: $space-base,
+  2: $space-base * 2,
+  3: $space-base * 3,
+  4: $space-base * 4,
+  5: $space-base * 5,
+  6: $space-base * 6,
+) !default;
+
+$spacing: (
+  margin:         ( $spacing-base ),
+  margin-top:     ( $spacing-base ),
+  margin-right:   ( $spacing-base ),
+  margin-bottom:  ( $spacing-base ),
+  margin-left:    ( $spacing-base ),
+  padding:        ( $spacing-base ),
+  padding-top:    ( $spacing-base ),
+  padding-right:  ( $spacing-base ),
+  padding-bottom: ( $spacing-base ),
+  padding-left:   ( $spacing-base ),
+  gap:            ( $spacing-base ),
+) !default;
+
+// Borders
+$border: (
+  border: (
+    // Primary Border Colors
+    primary:          $border-width solid $primary,
+    primary-light:    $border-width solid $primary-light,
+    primary-lighter:  $border-width solid $primary-lighter,
+    primary-lightest: $border-width solid $primary-lightest,
+    primary-dark:     $border-width solid $primary-dark,
+    primary-darker:   $border-width solid $primary-darker,
+    primary-darkest:  $border-width solid $primary-darkest,
+
+    secondary:          $border-width solid $secondary,
+    secondary-light:    $border-width solid $secondary-light,
+    secondary-lighter:  $border-width solid $secondary-lighter,
+    secondary-lightest: $border-width solid $secondary-lightest,
+    secondary-dark:     $border-width solid $secondary-dark,
+    secondary-darker:   $border-width solid $secondary-darker,
+    secondary-darkest:  $border-width solid $secondary-darkest,
+
+    // Neutral Border Colors
+    gray01: $border-width solid $gray01,
+    gray02: $border-width solid $gray02,
+    gray03: $border-width solid $gray03,
+    gray04: $border-width solid $gray04,
+    gray05: $border-width solid $gray05,
+    gray06: $border-width solid $gray06,
+    gray07: $border-width solid $gray07,
+
+    light:  $border-width solid $light,
+    dark:   $border-width solid $dark,
+
+    // Feedback Border Color
+    success:          $border-width solid $success,
+    success-light:    $border-width solid $success-light,
+    success-lighter:  $border-width solid $success-lighter,
+    success-lightest: $border-width solid $success-lightest,
+    success-dark:     $border-width solid $success-dark,
+    success-darker:   $border-width solid $success-darker,
+    success-darkest:  $border-width solid $success-darkest,
+
+    info:          $border-width solid $info,
+    info-light:    $border-width solid $info-light,
+    info-lighter:  $border-width solid $info-lighter,
+    info-lightest: $border-width solid $info-lightest,
+    info-dark:     $border-width solid $info-dark,
+    info-darker:   $border-width solid $info-darker,
+    info-darkest:  $border-width solid $info-darkest,
+
+    warning:          $border-width solid $warning,
+    warning-light:    $border-width solid $warning-light,
+    warning-lighter:  $border-width solid $warning-lighter,
+    warning-lightest: $border-width solid $warning-lightest,
+    warning-dark:     $border-width solid $warning-dark,
+    warning-darker:   $border-width solid $warning-darker,
+    warning-darkest:  $border-width solid $warning-darkest,
+
+    danger:           $border-width solid $danger,
+    danger-light:     $border-width solid $danger-light,
+    danger-lighter:   $border-width solid $danger-lighter,
+    danger-lightest:  $border-width solid $danger-lightest,
+    danger-dark:      $border-width solid $danger-dark,
+    danger-darker:    $border-width solid $danger-darker,
+    danger-darkest:   $border-width solid $danger-darkest,
+
+  ),
+  border-radius: (
+    small: 0.15rem,
+    medium: 0.25rem,
+    big: 0.25rem,
+    round: 50%,
+    pill: 50rem,
+  ),
+) !default;
+
+// Media Queries
+// Read more https://eduardoboucas.github.io/include-media/documentation/
+// Use with the mixin media, E.g. `@include media(){...}`
+// Inclusive and exclusive operators for a finer control over the intervals
+// @include media(">=phone", "<=tablet") {
+//    ...
+// }
+$breakpoints: (
+  //  Phone or small: @include media(≥phone-xs) {...}
+  //  Older phones or smaller screen sizes: @include media(<phone-xs) {...}
+  phone: 576,
+  // Tablets or medium: @include media(≥phone-xs) {...}
+  tablet: 768px,
+  // Desktop or large: @include media(≥desktop-xs) {...}
+  desktop: 992px,
+  // Extra large desktop: @include media(≥desktop-xl) {...}
+  desktop-xl: 1200px,
+  // Extra large desktop: @include media(≥desktop-xxl) {...}
+  desktop-xxl: 1400px,
+  // Orientation
+  landscape: '(orientation: landscape)',
+  portrait: '(orientation: portrait)',
+);
+
+// Animations
+$animation: (
+  transition: (
+    faster: all $animation-speed-faster cubic-bezier(0, 0, 0.2, 1),
+    fast: all $animation-speed-fast cubic-bezier(0, 0, 0.2, 1),
+    normal: all $animation-speed-normal cubic-bezier(0, 0, 0.2, 1),
+    slow: all $animation-speed-slow cubic-bezier(0, 0, 0.2, 1),
+  ),
+) !default;
+
+// Shadows
+$shadow: (
+  box-shadow:(
+    // Primary Shadows
+    primary: 0 0 0 0.3rem $primary-lighter,
+    secondary: 0 0 0 0.3rem $secondary-lighter,
+
+    // Neutral Shadows
+    gray01: 0 0 0 0.2rem $gray01,
+    gray02: 0 0 0 0.2rem $gray02,
+    gray03: 0 0 0 0.2rem $gray03,
+    gray04: 0 0 0 0.3rem $gray04,
+    gray05: 0 0 0 0.2rem $gray05,
+    gray06: 0 0 0 0.2rem $gray06,
+    gray07: 0 0 0 0.2rem $gray07,
+
+    // Feedback Shadows
+    success: 0 0 0 0.2rem $success-lightest,
+    info: 0 0 0 0.2rem $info-lightest,
+    warning: 0 0 0 0.2rem $warning-lightest,
+    danger: 0 0 0 0.2rem $danger-lightest,
+  ),
+) !default;
+
+// Other
+$z-index: (
+  n1: -1,
+  0: 0,
+  1: 1,
+  2: 2,
+  3: 3,
+) !default;
+
+//------------------------------------------------
+//--- Map Aggregation & Configuration
+//------------------------------------------------
+// Aggregation of maps for easy access on component code using the main mixin
+// Don't use map names directly Eg. $color, should be just color
+
+// 1) $var-maps provides access to the actual map on costar() mixin
+$var-maps: (
+  color:      $color,
+  border:     $border,
+  font:       $font,
+  spacing:    $spacing,
+  animation:  $animation,
+  shadow:     $shadow,
+  z-index:    $z-index,
+) !default;
+
+// 2) $props identifies the location of the property on costar() mixin
+// E.g. @include costar(font-family, body);
+$props: (
+  color:                  color,
+  background-color:       color,
+  font-family:            font,
+  font-size:              font,
+  font-weight:            font,
+  line-height:            font,
+  border:                 border,
+  border-top:             border,
+  border-right:           border,
+  border-bottom:          border,
+  border-left:            border,
+  border-color:           color,
+  border-radius:          border,
+  padding:                spacing,
+  padding-top:            spacing,
+  padding-right:          spacing,
+  padding-bottom:         spacing,
+  padding-left:           spacing,
+  margin:                 spacing,
+  margin-top:             spacing,
+  margin-right:           spacing,
+  margin-bottom:          spacing,
+  margin-left:            spacing,
+  gap:                    spacing,
+  box-shadow:             shadow,
+  transition:             animation,
+  z-index:                z-index,
+) !default;
+
+// 3) Instruct what properties should include CSS4 variables when using the costar() mixin
+// In order to generate the CSS4 variables use _root.scss
+$css4-maps: (
+  color:                  true,
+  background-color:       true,
+  border-color:           true,
+) !default;
+
+//------------------------------------------------
+//--- Mixin for property access and fallback
+//------------------------------------------------
+// Creates CSS4 and CSS3 compatible variables
+// The maps are required to use CSS property namings to make it work
+// $fallback always true, otherwise call mixing using the false flag
+// todo: refactor to lower cyclomatic complexity using sass:list on props map, eg. $prop: ( font-family: (font, family) )
+@mixin costar($prop, $var, $fallback: true, $important: false) {
+  $map-name: map-get($props, $prop); // Access map location or actual names using the $props map (step 2)
+  $var-css: null;
+  $css4-eval: map-get($css4-maps, $prop);
+
+  @if $map-name {
+    $actual-map: map-get($var-maps, $map-name); // Access the actual map of values (step 1)
+
+    @if type-of($actual-map) == map {
+
+      $nth-value: map-get($actual-map, $prop);
+
+      @if $nth-value == null { // Try $prop, if null try $actual-map's name
+        $nth-value: map-get($actual-map, $map-name);
+      }
+
+      @if type-of($nth-value) == map {
+        $nth-value-value: map-get($nth-value, $var);
+        @if $nth-value-value {
+          // Eval if CSS4 variable should be created or the value should be use directly instead (step 3)
+          @if $css4-eval {
+            @if $fallback { // Only create fallbacks if CSS4 is true
+              #{$prop}: $nth-value-value if($important, !important, null);
+            }
+            $var-css: var(--costar-#{$map-name}-#{$var}, $nth-value-value) if($important, !important, null);
+            #{$prop}: $var-css;
+          } @else {
+            #{$prop}: $nth-value-value if($important, !important, null);
+          }
+        }
+        @else {
+          @debug 'ERR: costar(#{$prop}, #{$var}) not found. Check if #{$var} exists.';
+        }
+      }
+
+    }
+  }
+  @else {
+    @debug 'ERR: costar(#{$prop}, #{$var}) not found. Check if #{$prop} exists.';
+  }
+
+}

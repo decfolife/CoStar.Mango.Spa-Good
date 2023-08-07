@@ -1,0 +1,26 @@
+<crem-modal 
+	modalTitle="Column Limit Reached" 
+	[closeIconVisible]="true" 
+	primaryFooterButtonText="Close"
+	(primaryButtonAction)="deleteConfirmation()"
+	>
+	<div modalContent class="column-limit-modal__content">
+		<div>
+			The column selection has gone over the 20 column limit.
+		</div>
+		<!-- <div class="column-list">
+			<div *ngFor="let column of columns">
+				{{ column }}
+			</div>
+		</div> -->
+		<div>
+			<crem-simple-grid
+				[dataSource]="columns"
+				[pageSize]="20"
+				[gridHeight]="600"
+				[customPageSize]="[20, 50, 100, 200, 500]"
+			>
+			</crem-simple-grid>
+		</div>
+	</div>
+</crem-modal>

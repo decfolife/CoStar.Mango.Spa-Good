@@ -1,0 +1,86 @@
+<crem-modal 
+	[modalTitle]="data.reportName"
+  modalTitleId="RunReportModalTitle"
+  modalId="RunReportModal"
+	closeIconVisible="true"
+  primaryFooterButtonText="Run"
+	closeOrCancelButtonText="Cancel"
+  [customFooter]="true"
+  >
+	<div modalContent class="body-content">
+    <dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="showloading" [showIndicator]="true"
+		[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
+    <crem-vertical-stepper display="1" *ngIf="!loading && showSegment">
+      <dynamic-form #SegmentForm
+        [config]="segmentConfig"
+        (onChangeEvent)="onChange($event)"
+        idPrefix = "segmentForm"
+        >
+        <ng-template let-fieldData="fieldData">
+          <div class="form__section-item">
+            <crem-dropdown #SegmentDropdown
+              [id]="idPrefix + fieldData.dataField + '_dropdown'"
+              [isDisabled]='fieldData.disabled'
+              [dataSource]='fieldData.dataSource'
+              [placeholder]='fieldData.placeHolder || "Select..."' [showClearButton]='true'
+              [showColumnHeader]='false' [required]="fieldData.required"
+              [displayExpr]="fieldData.displayExpr || 'value'"
+              [valueExpr]="fieldData.valueExpr || 'value'"
+              [isVisible]="!fieldData.hidden"
+              [selectBoxValue]="data.redirectData?.newSegmentID ? data.redirectData.newSegmentID : []"
+              [dataField]="fieldData.dataField"
+              [allowSearch]='true'
+              [useSelectBox]="true"
+              [readOnly]="fieldData.readOnly"
+              [hoverText]="fieldData.hoverText || fieldData.caption"
+              [grouped]="true"
+              dropDownContainerCustomClass="criteria_report_custom_header_segments"
+              [useCustomGroupTemplate]="true"
+              (selectedItems)="segmentForm?.onChange($event,'dropdown', 'segmentID')"
+            >
+                <ng-template #customHeaderTemplate let-fieldData="data"> <!-- this template is utilizing the custom header for grouping -->
+                  <div class="segment_custom" (click)="customButtonClicked('custom')">Custom</div>
+                  <div class="segment_create_new" 
+                    [attr.title]="(!hasSegmentsAddRight) ? 'You do not have the necessary rights to create a segment.' : ''"
+                    [ngClass]="{'segment_create_new--disabled': !hasSegmentsAddRight}"
+                    (click)="customButtonClicked('create New Segment')"
+                  >Create New Segment</div>
+                </ng-template>
+            </crem-dropdown>
+            <div class="textbox_subtext">
+              <div *ngIf="!defaultValues">
+                Using 'Custom', you are manually selecting the desired criteria for this report export.
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </dynamic-form>
+    </crem-vertical-stepper>
+    <crem-vertical-stepper display="2" *ngIf="!loading" [showBorder]="false" [hideStepper]="!showSegment">
+      <mango-criteria-form *ngIf="!loading && !segmentLoading" #CriteriaForm
+        [criteriaSetId]="criteriaSetId"
+        [defaultValues]="defaultValues"
+        (onCriteriaLoadedChange)="onCriteriaLoadedChange()"
+        (onFormItemChange)="onFormItemChange($event)"
+        (loadingCallback)="setLoading($event)"
+        [idPrefix]="idPrefix"
+      >
+      </mango-criteria-form>
+    </crem-vertical-stepper>
+  </div>
+  <div modalFooter class="footer-content">
+      <div id="'ButtonTemplate'" class="footerRightControls">
+          <crem-button type="secondary" [id]="idPrefix + 'CancelButton'"
+            (click)="closeDialog($event)"
+            >
+              Cancel
+          </crem-button>
+          <crem-button [id]="idPrefix + 'ArchiveButton'"
+            type="primary"
+            (click)="runReport($event)"
+            >
+              Run
+          </crem-button>
+      </div>
+  </div>
+</crem-modal>

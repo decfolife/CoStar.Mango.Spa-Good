@@ -1,0 +1,32 @@
+<div class="page-controls-wrapper">
+    <div class="controls-left">
+        <div class="page-title dbl-right-margin"> Journal Entries To Approve </div>
+
+        <div id="dropdown">
+            <div class="dropdown">
+                <crem-dropdown #PortfolioDropdown id="dropdown--portfolio"
+                    title='journal-entries-dropdown-portfolio' dropDownContainerCustomClass="dashboardsDropDown"
+                    [isDisabled]='false' [dataSource]='portfolioList' [allowSearch]='true'
+                    placeholder='Portfolio' [showClearButton]='false' [showColumnHeader]='true'
+                    dropdownHeaderDisplay='Select All' displayExpr='displayString' valueExpr='intValue'
+                    [initialSelectedValue]="{}" selectMode="multiple" showCheckBoxesMode='always'
+                    (selectedItems)="dropdownChange('portfolio', $event)"></crem-dropdown>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-right">
+        <crem-button class="filter" id="filter" type="secondary" (click)="apply($event)"
+            [disabled]="true">
+            Filters</crem-button>
+        <crem-button id="download" type="primary" (click)="apply($event)"
+            [disabled]="true">
+            Download</crem-button>
+    </div>
+</div>
+
+<div class="grid-wrapper">
+    <div class="grid-message" *ngIf="true">
+        Please select a portfolio to get started
+    </div>
+</div>

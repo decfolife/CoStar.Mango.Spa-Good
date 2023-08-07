@@ -1,0 +1,45 @@
+<mat-card class="dashboard-card insights-hero-dash-card">
+	<mat-card-header>				
+		<mat-card-title>
+			<span>Financial Trends - AR</span>
+		</mat-card-title>
+	</mat-card-header>
+	<mat-card-content>										
+		<dx-chart [dataSource]="quarterlyPayments">
+			<dxo-export [enabled]="false"></dxo-export>
+			<!-- <dxo-argument-axis title="Quarter"></dxo-argument-axis> -->
+			<dxo-legend [visible]="true"></dxo-legend>
+			<dxo-legend
+			    horizontalAlignment="center"			    
+			    verticalAlignment="bottom">
+			</dxo-legend>
+			<dxo-tooltip
+			    [enabled]="true"
+			    [shared]="true"
+			    [customizeTooltip]="standardTooltip">	
+			    <dxo-format type="largeNumber" [precision]="1"></dxo-format>						    
+			</dxo-tooltip>
+			<dxo-common-series-settings 
+			    argumentField="quarter"
+		        type="bar"
+		        axis="countAxis"
+		        [barPadding]="0.2"
+	        >
+			</dxo-common-series-settings>		
+			<dxi-value-axis title="Revenue Received ($ in millions)" name="countAxis">
+			    <dxo-grid [visible]="true"></dxo-grid>
+			</dxi-value-axis>									
+		    <dxi-series
+		        valueField="realEstate"
+		        name="Real Estate"
+		        color="#F68338">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="nonRealEstate"
+		        name="Non Real Estate"
+		        color="#88b5e5"
+		        >
+		    </dxi-series>								   
+		</dx-chart>		
+	</mat-card-content>
+</mat-card>	

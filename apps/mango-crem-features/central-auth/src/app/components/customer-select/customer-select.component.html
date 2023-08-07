@@ -1,0 +1,10 @@
+<div class="customer-select">
+    <mango-ca-navbar></mango-ca-navbar>
+
+    <div id="company-logo">
+        <img src="costar-logo.png">
+    </div>
+
+    <mango-customer-selection (onClientSelected)="onClientSelected($event)"></mango-customer-selection>
+    <mango-contact-select (contactRecord)="contactRecordEvent($event)"></mango-contact-select>
+</div>

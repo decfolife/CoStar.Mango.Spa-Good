@@ -1,0 +1,109 @@
+.batch-event {
+  &__dropdown {
+    margin-right: 8px;
+  }
+}
+
+::ng-deep {
+  .mat-horizontal-stepper-header {
+    pointer-events: none !important;
+  }
+
+  dx-data-grid {
+    .dx-header-row > td > .dx-datagrid-text-content {
+      display: inline-block;
+      text-align: left;
+      vertical-align: top;
+      white-space: normal;
+    }
+  }
+}
+
+div.chip {
+  align-items: center;
+  border-color: rgb(194, 194, 194);
+  border-image: initial;
+  border-radius: 14px;
+  border-style: solid;
+  border-width: 1px;
+  display: flex;
+  font-size: 14px;
+  font-stretch: normal;
+  font-style: normal;
+  font-weight: 700;
+  height: 24px;
+  justify-content: center;
+  letter-spacing: normal;
+  line-height: normal;
+  min-width: 16px;
+  padding: 4px 8px;
+  text-align: center;
+
+  &.secondary {
+    background: rgb(255, 255, 255);
+
+    &.costar {
+      border-color: rgb(5, 89, 179);
+      color: rgb(5, 89, 179);
+    }
+  }
+}
+
+.no-portfolio-selected {
+  align-items: center;
+  color: #B1B3B0;
+  display: flex;
+  font-size: 28px;
+  height: 100%;
+  justify-content: center;
+}
+
+:host {
+  ::ng-deep {
+    .mat-horizontal-stepper-content {
+      flex-direction: column;
+      height:100%;
+    }
+
+    .mat-menu-panel {
+      background-color: #0559B3;
+      border-color: #0559B3;
+      color: white;
+      min-height: 0px !important;
+    }
+
+    .dx-cell-focus-disabled {
+      cursor: default;
+    }
+
+    .dx-toolbar-item {
+      padding: 7px 8px 0 0 !important;
+    }
+  }
+}
+
+.disabled {
+  cursor: default;
+}
+
+.hidden {
+  display: none;
+}
+
+.search-box {
+  margin-left: 16px;
+}
+
+.dx-field-value {
+  width: 100% !important;
+}
+
+[hidden] {
+  display:none;
+}
+
+:host::ng-deep{
+  .matMenuSize {
+    min-height:0px;
+  }
+}

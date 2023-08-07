@@ -1,0 +1,58 @@
+<div class="report-page">
+    <div class="report-page-controls-wrapper">
+		<div class="controls-left">
+            <div class="dbl-right-margin" style="display:flex"> 
+                <h2 class="pageTitle">
+                    {{objectType}}: &nbsp;
+                </h2>
+                {{pageTitle}}
+            </div>
+        </div>
+        <div class="controls-right">
+            <crem-button type="primary" (click)="exportToPDF()">Export</crem-button>
+        </div>
+    </div>
+    <div id="gantt" *ngIf="ganttChartData" class="grid-container">
+        <dx-gantt #GanttChart [ngClass]="{'requireMinHeight': ganttChartData.length <= 5}"
+            taskListWidth="500"
+            scaleType="auto"
+            (onContentReady)="onContentReady($event)"
+            taskTooltipContentTemplate="taskTooltipContentTemplate"
+            [focusStateEnabled]="true"
+        >    
+            <dxo-toolbar>
+                <dxi-item name="collapseAll"></dxi-item>
+                <dxi-item name="expandAll"></dxi-item>
+                <dxi-item name="separator"></dxi-item>
+                <dxi-item name="zoomIn"></dxi-item>
+                <dxi-item name="zoomOut"></dxi-item>
+            </dxo-toolbar>
+
+            <dxo-tasks 
+                [dataSource]="ganttChartData" 
+                keyExpr="taskId" 
+                titleExpr="taskLabel" 
+                startExpr="targetStartDate"
+                endExpr="targetCompleteDate" 
+                colorExpr="color">
+            </dxo-tasks>
+    
+            <dxi-column dataField="taskLabel" caption="Subject" [width]="300"></dxi-column>
+            <dxi-column dataField="targetStartDate" caption="Target Start" dataType="date" [format]="dateFormat"></dxi-column>
+            <dxi-column dataField="targetCompleteDate" caption="Target End" dataType="date" [format]="dateFormat"></dxi-column>
+    
+            
+    
+            <div *dxTemplate="let task of 'taskTooltipContentTemplate'" class="custom-task-edit-tooltip">
+                <div>
+                    <div class="custom-tooltip-title">Name: {{task.taskLabel}}</div>
+                    <div class="custom-tooltip-row"><div class="custom-tooltip-row__title">Target Start: </div>{{task.targetStartDate | date:dateFormat}}</div>
+                    <div class="custom-tooltip-row"><div class="custom-tooltip-row__title">Actual Start: </div>{{task.actualStartDate | date:dateFormat}}</div>
+                    <div class="custom-tooltip-row"><div class="custom-tooltip-row__title">Target Complete: </div>{{task.targetCompleteDate | date:dateFormat}}</div>
+                    <div class="custom-tooltip-row"><div class="custom-tooltip-row__title">Actual Complete: </div>{{task.actualCompleteDate | date:dateFormat}}</div>
+                </div>
+            </div>
+            
+        </dx-gantt>
+    </div>
+</div>

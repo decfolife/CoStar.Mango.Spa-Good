@@ -1,0 +1,195 @@
+<crem-modal 
+	[modalTitle]="modalTitle"
+	[modalTitleId]="prefix + 'title'"
+	closeIconVisible="true"
+	[customFooter]="true"
+	[primaryFooterButtonText]="primaryFooterButtonText" [closeOrCancelButtonText]="closeOrCancelButtonText"
+	(primaryButtonAction)="yesArchive()">
+	<div modalContent class="body-content" [id]="prefix + 'archive-content'">
+		<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading || archiving" [showIndicator]="true"
+			[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
+		<div *ngIf="!loading">
+			<div *ngIf="(archiveType === 'Lease' && !(buildingSelected && archived))">
+				<div class="grid__text">
+					<div *ngIf="archiveType === 'Lease' && !archived">
+						Please verify the item(s) you wish to archive.
+					</div>
+
+					<div *ngIf="archivedSuccess && archived" class="grid__text--success">
+						The following item(s) have been successfully archived.
+					</div>
+
+					<div *ngIf="!archivedSuccess && archived" class="grid__text--error">
+						Unable to archive the lease, see reason(s) below:
+					</div>
+
+					<div *ngIf="hasScheduled && !archived" class="grid__text--warning">
+						<div class="grid__icons--warning">
+							<fa-icon [icon]="faExclamationTriangle"></fa-icon>
+						</div>
+						Warning: there exists accounting events with scheduled journal entries on {{buildingSelected ?
+						scheduledCount + (scheduledCount > 1 ? ' leases' : ' lease') : 'the lease'}} listed below:
+					</div>
+				</div>
+				<dx-data-grid class="data-grid" [dataSource]="selectedLeaseData" [showColumnLines]="false" [id]="prefix + 'selected-lease'"
+					[showRowLines]="false" [showBorders]="false" [rowAlternationEnabled]="true"
+					[allowColumnResizing]="true" [allowColumnReordering]="true" [columnAutoWidth]="true"
+					[filterSyncEnabled]="true" [selectedRowKeys]="leaseDefaultSelectedRow" [wordWrapEnabled]="true"
+					(onEditorPreparing)="onleaseDefaultEditorPreparing($event)"
+					(onSelectionChanged)="onleaseDefaultSelectionChanged($event)"
+					(onCellPrepared)="onCellPrepared($event)" keyExpr="LeaseAbstractID">
+					<dxo-sorting mode="none">
+					</dxo-sorting>
+					<dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[25, 50, 100, 500]" [showInfo]="true">
+					</dxo-pager>
+
+					<dxo-paging [pageSize]="25"></dxo-paging>
+					<dxo-selection mode="multiple" [showCheckBoxesMode]="'always'" [selectAllMode]="'allPages'">
+					</dxo-selection>
+
+					<dxi-column [allowEditing]="false" [visible]="archivedSuccess" dataField="custom" caption=""
+						width="30" cellTemplate="infoTemplate" alignment="center" [allowHeaderFiltering]="false"
+						[allowSorting]="false"></dxi-column>
+					<div *dxTemplate="let portfolio of 'infoTemplate'" class="portfolio-maintenance__info">
+						<div class="grid__icons" id="">
+							<fa-icon [icon]="faArchive"></fa-icon>
+						</div>
+					</div>
+
+					<dxi-column *ngFor="let column of leaseGridColumns" [dataField]="column.dataField"
+						[caption]="column.caption" [dataType]="column.dataType" [format]="column.format"
+						[visible]="column.visible" [sortIndex]="column.sortIndex" [groupIndex]="column.groupIndex"
+						[sortingMethod]="column.sortingMethod" [sortOrder]="column.sortOrder"
+						[alignment]="column.alignment" [showInColumnChooser]="column.showInColumnChooser">
+
+						<dxo-format *ngIf="column.dataType === 'number' && column.precision >= 0" type="fixedPoint"
+							[precision]="column.precision"></dxo-format>
+					</dxi-column>
+				</dx-data-grid>
+			</div>
+			<div *ngIf="!archived" class="grid__text">
+				<div *ngIf="archiveType === 'Building' || archiveType === 'Premise'">
+					Please verify the item you wish to archive. Note, if the {{buildingTemplate?.toLowerCase()}} is
+					archived, the listed leases
+					below will also be archived.
+				</div>
+
+				<div *ngIf="(archiveType === 'Building' || archiveType === 'Premise') && hasScheduled && !archived"
+					class="grid__text--warning">
+					<div class="grid__icons--warning">
+						<fa-icon [icon]="faExclamationTriangle"></fa-icon>
+					</div>
+					Warning: there exists accounting events with scheduled journal entries on {{scheduledCount}}
+					{{(scheduledCount > 1 ? ' leases' : ' lease')}} listed below:
+				</div>
+
+				<div class="grid__text--error" *ngIf="archiveType === 'Lease'">
+					Do you wish to also archive the {{buildingTemplate?.toLowerCase()}} and all associated leases?
+				</div>
+			</div>
+			<div
+				*ngIf="archived && ((archiveType === 'Building' || archiveType === 'Premise') || (archiveType === 'Lease' && ((buildingSelected && archived) || !archived)))">
+				<div *ngIf="archivedSuccess" class="grid__text--success">
+					The following item(s) have been successfully archived.
+				</div>
+				<div *ngIf="!archivedSuccess" class="grid__text--error">
+					Unable to archive the {{buildingTemplate?.toLowerCase()}}, see reason(s) below:
+				</div>
+			</div>
+			<dx-data-grid #BuildingDataGrid [id]="prefix + 'building-grid'"
+				*ngIf="((archiveType === 'Building' || archiveType === 'Premise') || (archiveType === 'Lease' && ((buildingSelected && archived) || !archived)))"
+				class="data-grid" [dataSource]="buildingData" [showColumnLines]="false" [showRowLines]="false"
+				[showBorders]="false" [rowAlternationEnabled]="true" [allowColumnResizing]="true"
+				[allowColumnReordering]="true" [columnAutoWidth]="true" [filterSyncEnabled]="true"
+				[selectedRowKeys]="buildingDefaultSelectedRow" [wordWrapEnabled]="true"
+				(onEditorPreparing)="onEditorPreparing($event)" (onSelectionChanged)="onSelectionChanged($event)"
+				keyExpr="BuildingID">
+				<dxo-sorting mode="none">
+				</dxo-sorting>
+				<dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[25, 50, 100, 500]" [showInfo]="true">
+				</dxo-pager>
+
+				<dxo-paging [pageSize]="25"></dxo-paging>
+				<dxo-selection mode="multiple" [showCheckBoxesMode]="'always'" [selectAllMode]="'allPages'">
+				</dxo-selection>
+
+				<dxi-column [allowEditing]="false" [visible]="archivedSuccess" dataField="custom" caption="" width="30"
+					cellTemplate="infoTemplate" alignment="center" [allowHeaderFiltering]="false"
+					[allowSorting]="false"></dxi-column>
+				<div *dxTemplate="let portfolio of 'infoTemplate'" class="portfolio-maintenance__info">
+					<div class="grid__icons">
+						<fa-icon [icon]="faArchive"></fa-icon>
+					</div>
+				</div>
+
+				<dxi-column *ngFor="let column of buildingGridColumns" [dataField]="column.dataField"
+					[caption]="column.caption" [dataType]="column.dataType" [format]="column.format"
+					[visible]="column.visible" [sortIndex]="column.sortIndex" [groupIndex]="column.groupIndex"
+					[sortingMethod]="column.sortingMethod" [sortOrder]="column.sortOrder" [alignment]="column.alignment"
+					[showInColumnChooser]="column.showInColumnChooser" [cellTemplate]="column.cellTemplate">
+
+					<dxo-format *ngIf="column.dataType === 'number' && column.precision >= 0" type="fixedPoint"
+						[precision]="column.precision"></dxo-format>
+				</dxi-column>
+
+				<dxo-master-detail [enabled]="true" [autoExpandAll]="true" template="masterDetail"></dxo-master-detail>
+
+				<div *dxTemplate="let batchLog of 'masterDetail'">
+					<div class="grid__text">
+						<div>
+							Below are the leases associated with the {{buildingTemplate?.toLowerCase()}}.
+						</div>
+					</div>
+
+
+					<dx-data-grid [id]="prefix + 'lease-grid'" class="lease-datagrid" [ngClass]="{'building-master-details': (archiveType === 'Building' || archiveType === 'Premise')}" #DataGrid [showColumnLines]="false" [showRowLines]="false"
+						[showBorders]="false" [columnAutoWidth]="true" [dataSource]="leaseData"
+						[selectedRowKeys]="leaseSelectedRow" [noDataText]="noAssociatedLeaseBuildingText"
+						(onContentReady)="onGridContentReady()"
+						(onEditorPreparing)="onMasterDetailsEditorPreparing($event)"
+						(onSelectionChanged)="onMasterDetailsSelectionChanged($event)"
+						(onCellPrepared)="onCellPrepared($event)" keyExpr="LeaseAbstractID" [wordWrapEnabled]="true">
+						<dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[25, 50, 100, 500]"
+							[showInfo]="true" [showNavigationButtons]="true" [visible]="true"></dxo-pager>
+						<dxo-paging [pageSize]="25"></dxo-paging>
+						<dxo-selection mode="multiple" [showCheckBoxesMode]="'always'" [selectAllMode]="'allPages'">
+						</dxo-selection>
+						<dxo-header-filter [visible]="true"></dxo-header-filter>
+						<dxi-column [allowEditing]="false" [visible]="archivedSuccess" dataField="custom" caption=""
+							width="30" cellTemplate="infoTemplate" alignment="center" [allowHeaderFiltering]="false"
+							[allowSorting]="false"></dxi-column>
+						<div *dxTemplate="let portfolio of 'infoTemplate'" class="portfolio-maintenance__info">
+							<div class="grid__icons" id="">
+								<fa-icon [icon]="faArchive"></fa-icon>
+							</div>
+						</div>
+						<dxi-column *ngFor="let column of subLeaseGridColumns" [dataField]="column.dataField"
+							[caption]="column.caption" [dataType]="column.dataType" [format]="column.format"
+							[visible]="column.visible" [sortIndex]="column.sortIndex" [groupIndex]="column.groupIndex"
+							[sortingMethod]="column.sortingMethod" [alignment]="column.alignment"
+							[sortOrder]="column.sortOrder" [showInColumnChooser]="column.showInColumnChooser" [cellTemplate]="column.cellTemplate">
+							<dxo-format *ngIf="column.dataType === 'number' && column.precision >= 0" type="fixedPoint"
+								[precision]="column.precision"></dxo-format>
+						</dxi-column>
+					</dx-data-grid>
+				</div>
+			</dx-data-grid>
+		</div>
+	</div>
+	<div modalFooter class="footer-content">
+		<div id="'buttonTemplate'" class="footerRightControls">
+			<div class="grid__text--error" *ngIf="hasScheduled && !archived && !loading" [id]="prefix + 'archive-schedule'"
+				[ngClass]="{ 'grid__text--error-black': hasScheduledCheckbox }">
+				Archive all selected leases anyway?
+				<dx-check-box [(value)]="hasScheduledCheckbox"></dx-check-box>
+			</div>
+
+			<crem-button *ngIf="closeOrCancelButtonText" type="secondary" [id]="prefix + 'cancel-button'" (click)="closeDialog()"
+				[disabled]="loading || archiving">
+				{{closeOrCancelButtonText}}</crem-button>
+			<crem-button *ngIf="primaryFooterButtonText" [id]="prefix + 'archive-button'"
+				[disabled]="(!hasScheduledCheckbox && hasScheduled) || primaryFooterButtonEnabledDisabled || loading || archiving"
+				type="primary" (click)="yesArchive($event)"> {{primaryFooterButtonText}} </crem-button>
+		</div>
+	</div>
+</crem-modal>

@@ -1,0 +1,55 @@
+#projects-dashboard {
+  background: #fafafa;
+  padding: 0px;
+  position: relative;
+}
+
+div#popoverWrapper {
+  position: fixed;
+  width: 350px;
+  font-size: 14px;
+  font-family: Helvetica, 'system-ui', sans-serif;
+  top: -38px;
+  left: 60px;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 1px 1px 2px #808080;
+}
+svg {
+  width: 16px !important;
+  height: 16px !important;
+  use {
+    transform: scale(0.5);
+  }
+}
+
+filters {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+.mat-form-field-appearance-outline .mat-form-field-flex {
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  padding: 8px !important;
+  border-radius: 2px !important;
+}
+
+.card-containers {
+  min-width: 100%;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0px 8px;
+}
+cards div.cdk-drop-list.dropcards {
+  flex-direction: column !important;
+  box-sizing: border-box;
+  display: flex;
+}
+crem-card mat-card#project_milestones_card {
+  margin: 8px !important;
+}

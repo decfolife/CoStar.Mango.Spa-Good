@@ -1,0 +1,130 @@
+<div class="segments-right-container">
+	<div class="reports-toolBar-wrapper">
+		<div class="controls-left">
+			<div class="title"> Segments </div>
+			<div class="search">
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" ></cs-search>
+			</div>
+		</div>
+		<div class="controls-right">
+			<div class="controls-item">
+				<mat-button-toggle-group
+					(change)="segmentsToggleChanged($event)"
+					[disabled]="false"
+					(mouseenter)="segmentsToggleTooltipVisible = true"
+					(mouseleave)="segmentsToggleTooltipVisible = false"
+					id="segmentsFilterToggle"
+					>
+					<mat-button-toggle value="Active"
+						[(checked)]="showActiveSegments"
+					>Active</mat-button-toggle>
+
+					<mat-button-toggle value="Archived"
+						[(checked)]="showArchivedSegments"
+					>Archived</mat-button-toggle>
+
+					<mat-button-toggle value="All"
+						[(checked)]="showAllSegments"
+					>All</mat-button-toggle>
+				</mat-button-toggle-group>
+				<dx-tooltip target="#segmentsFilterToggle"
+					[(visible)]="segmentsToggleTooltipVisible"
+					[closeOnOutsideClick]="false"
+					>
+					<div *dxTemplate="let data = data; of: 'content'">
+						{{segmentToggleTooltipText}}
+					</div>
+				</dx-tooltip>
+			</div>
+			<div class="controls-item">
+				<crem-button type="secondary">
+					<div id="clearFilters" (click)="resetFilter($event); $event.preventDefault();">Clear Filters</div>
+				</crem-button>
+			</div>
+			<div class="controls-item">
+				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
+				<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
+					<button mat-menu-item (click)="resetFilter($event)">Reset</button>
+					<button mat-menu-item (click)="openColumnChooser()">Column Chooser</button> 
+				</mat-menu>	 
+			</div>
+			<div class="controls-item">
+				<crem-button type="primary" [title]="(hasSegmentsAddRight ? 'Create Segment' : 'You do not have the necessary rights to create a segment.')"
+					[disabled]="!hasSegmentsAddRight" (click)="hasSegmentsAddRight && createSegment(); $event.preventDefault()" >
+					<div id="CreateSegmentButton">Create Segment</div>
+				</crem-button>
+			</div>
+		</div>
+	</div>
+
+	<div class="segments-dataGrid-wrapper"> 
+		<dx-data-grid *ngIf="!loading"
+			#SegmentsDataGrid
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			columnResizingMode="widget"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[dataSource]="segmentFilteredData"
+			(onCellClick)="onCellClicked($event)"
+			keyExpr="segmentID"
+			[wordWrapEnabled]="true"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-paging [pageSize]="50"></dxo-paging>
+			<dxo-pager 
+				[showPageSizeSelector]="true"
+				[allowedPageSizes]="[50, 100, 200, 500]"
+				[showInfo]="true"
+				[showNavigationButtons]="true"
+				[visible]="true">
+			</dxo-pager>
+			<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
+			<dxo-column-chooser [enabled]="false" [allowSearch]="true" width="400" height="500"></dxo-column-chooser>
+
+			<dxi-column *ngFor="let col of columns" 
+				[dataField]="col.dataField" 
+				[alignment]="col.alignment"
+				[visible]="col.visible"
+				[dataType]="col.dataType"
+				[format]="col.format"
+				[caption]="col.caption"
+				[fixed]="col.fixed"
+				[width]="col.width"
+				[sortOrder]="col.sortOrder"
+				[allowEditing]="col.allowEditing"
+				[cellTemplate]="col.cellTemplate"
+			>
+				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+			</dxi-column>
+
+
+
+			<dxi-column caption="Actions" type="buttons" width="65" [showInColumnChooser]="false" [allowReordering]="false">
+				<dxi-button template="moreMenuTemplate">
+					<div *dxTemplate="let data of 'moreMenuTemplate'">
+						
+						<button aria-label="more menu" class="btn btn-link" (click)="$event.preventDefault()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon role="none" aria-label="Actions Menu">more_horiz</mat-icon></button>
+		    			<mat-menu #expenseMoreMenu="matMenu" class="segments-actions">
+							<ul role="menu">
+								<li mat-menu-item *ngIf="data.data.active && (data.data.rights !== 'Delete' && data.data.rights !== 'Add' && data.data.rights !== 'Edit')" [disabled]="!hasSegmentsViewRight" 
+									(click)="edit(data)"> View
+								</li>
+								<li mat-menu-item *ngIf="data.data.active && (data.data.rights === 'Delete' || data.data.rights === 'Add' || data.data.rights === 'Edit')" 
+									(click)="edit(data)"> Edit
+								</li>
+								<li mat-menu-item *ngIf="data.data.active" [disabled]="!hasSegmentsAddRight" (click)="hasSegmentsAddRight && copy(data);">Copy</li>
+								<li mat-menu-item [disabled]="data.data.rights !== 'Delete'" (click)="data.data.rights === 'Delete' && archiveAction(data)">{{data.data.active ? "Archive" : "Unarchive"}}</li>
+							</ul>
+						</mat-menu>
+					</div>
+				</dxi-button>		    	
+			</dxi-column>
+		</dx-data-grid>
+		<crem-loader *ngIf="loading"></crem-loader>
+	</div>
+
+</div>

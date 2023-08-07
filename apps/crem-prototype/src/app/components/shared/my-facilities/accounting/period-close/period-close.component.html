@@ -1,0 +1,41 @@
+<div class="dashboard">
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div *ngFor="let filter of filters">
+				<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible && filter.controlType == 'dropdown'"></costar-dropdown>			
+				<portfolio-menu *ngIf="filter.visible && filter.controlType == 'portfolio'" [showSearchRow]="filter.showSearchRow"></portfolio-menu>
+			</div>							
+			<button class="btn btn-default" (click)="getPeriods()">Apply</button>		
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" (click)="launchAddSchedulePopup()">Add Schedule</button>
+		</div>		
+	</div>
+	<div class="dashboard-content-wrapper">
+		<router-outlet></router-outlet>
+	</div>
+</div>
+
+<dx-popup
+	#AddSchedulePopup
+    width="92%"
+    height="92%"
+    [showTitle]="false"
+    [dragEnabled]="false"
+    [closeOnOutsideClick]="false"
+    [(visible)]="addSchedulePopupVisible">
+     <!-- <dxo-position
+        my="top"
+        at="top"
+        of="#cremContentWrapper">
+    </dxo-position> -->
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding popup-no-title">  
+    	<costar-popup>
+			<popup-content>		
+				<dx-scroll-view width="100%" >
+		    		<app-edit-schedule [isPopup]="true" (closed)="closeAddSchedulePopup()"></app-edit-schedule>
+		    	</dx-scroll-view>
+		    </popup-content>
+		</costar-popup>
+    </div>
+</dx-popup>	

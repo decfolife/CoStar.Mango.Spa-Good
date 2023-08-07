@@ -1,0 +1,11 @@
+<crem-modal 
+	modalTitle="Confirm Deletion" 
+	[closeIconVisible]="true" 
+	primaryFooterButtonText="Confirm"
+	closeOrCancelButtonText="Cancel" 
+	(primaryButtonAction)="deleteConfirmation()"
+	>
+	<div modalContent class="user-deletion-modal__content">
+		Are you sure you want to delete &nbsp; <div class="user-name"> {{ user}}</div>?
+	</div>
+</crem-modal>

@@ -1,0 +1,39 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/var.scss';
+
+:host::ng-deep {
+	popup-content {
+		.last-note-wrapper {
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+
+			.previous-note-header {
+				display: flex;
+				flex-direction: row;
+			}
+
+			.previous-notes {
+				display: flex;
+				flex-grow: 1;
+				overflow-y: auto;
+				flex-direction: column;
+
+				.note {
+					margin-bottom: $dblPadding;
+				}
+			}
+		}
+
+		.new-note-wrapper {
+			display: flex;
+			flex-direction: column;				
+			margin-top: $dblPadding;
+
+			dx-select-box {
+				margin-bottom: $stdPadding;
+			}				
+		}
+	}
+}

@@ -1,0 +1,224 @@
+<div class="portfolio-maintenance-page">
+	<div class="portfolio-maintenance-page-controls-wrapper">
+		<div class="controls-left">
+			<div class="portfolio-maintenance__page-title dbl-right-margin">{{ pageTitle }}</div>
+            <cs-search #SearchBox class="portfolio-maintenance-search"
+                (changed)="searchTreeList($event)"
+                >
+			</cs-search>
+
+        </div>
+		<div class="controls-right">
+            <crem-button class="portfolio-maintenance__button-padding" type="primary" (click)="redirectToAction(0,'addPortfolio')">Add Portfolio</crem-button>
+			<crem-button class="portfolio-maintenance__button-padding" type="secondary" (click)="toggleExpanded()">
+                {{isExpanded ? 'Collapse All' : 'Expand All'}}
+            </crem-button>
+            <crem-button type="secondary" (click)="exportTreeList()">Export</crem-button>
+		</div>
+    </div>
+
+    <div class="portfolio-maintenance-tree-list-wrapper">
+		<dx-tree-list *ngIf="portfolioMaintenanceData"
+            #TreeList
+            [dataSource]="portfolioMaintenanceData"
+            keyExpr="companyID"
+            parentIdExpr="parentGroup"
+            [columnAutoWidth]="true"
+            [wordWrapEnabled]="true"
+            [showBorders]="false"
+            [rowAlternationEnabled]="true" 
+            [autoExpandAll]="isExpanded"
+            (onRowUpdated)="onRowUpdated($event, 'edit')"
+            (onRowInserted)="onRowUpdated($event, 'add')"
+            (onCellPrepared)="onCellPrepared($event)"
+            (onCellClick)="onCellClicked($event)"
+            >
+            <dxo-paging 
+                [pageSize]="50"
+                [enabled]= "true">
+            </dxo-paging>,
+            <dxo-pager 
+		        [showPageSizeSelector]="true"
+		        [allowedPageSizes]="[50, 100, 200, 500]"
+		        [showInfo]="true"
+                [showNavigationButtons]="true"
+                [visible]="true"
+			>
+            </dxo-pager>
+            <dxo-editing
+                mode="form"
+            >
+                <dxo-form>
+                    <dxi-item *ngIf="showInlineDropdown" dataField="parentGroup" editorType="dxSelectBox" [editorOptions]="{
+                        dataSource: this.inlineEditDropdownData,
+                        valueExpr: 'companyID',
+                        displayExpr: 'companyInfo'
+                        }">
+                        <dxo-label [text]="parentDropdownText"></dxo-label>
+                    </dxi-item>  
+
+                    <dxi-item dataField="companyName">
+                        <dxo-label [text]="companyNameInputText"></dxo-label>
+                        <dxi-validation-rule
+                            type="required"
+                            message="This field is required">
+                        </dxi-validation-rule>
+                    </dxi-item>
+                </dxo-form>
+            </dxo-editing>
+            <dxo-scrolling mode="standard" columnRenderingMode="standard"></dxo-scrolling>
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+            <dxi-column dataField="parentGroup" caption="Parent Group ID" [visible]="false">
+            </dxi-column>        
+            <dxi-column *ngFor="let col of columns"
+                [dataField]="col.dataField"
+                [caption]="col.caption"
+                [allowEditing]="col.allowEditing"
+                [width]="col.width"
+                [editCellTemplate]="col.editCellTemplate"
+                [cellTemplate]="col.cellTemplate"
+                [visible]="col.visible"
+                >
+            </dxi-column>
+            <dxi-column [allowEditing]="false" dataField="custom" caption="Info" width="80" cellTemplate="infoTemplate" alignment="center" [allowHeaderFiltering]="false" [allowSorting]="false"></dxi-column>          
+            <div *dxTemplate="let portfolio of 'infoTemplate'" class="portfolio-maintenance__info">
+                <div class="portfolio-maintenance__icons" id="{{'Warning' + portfolio.data.companyID}}"
+                *ngIf="
+                    portfolio.data.hasMissingCustomRights ||
+                    portfolio.data.hasMissingRights ||
+                    portfolio.data.hasInsufficientRights
+                "
+                    (mouseenter)="toggleExclaimation(portfolio.data.companyID, 'on')"
+                    (mouseleave)="toggleExclaimation(portfolio.data.companyID, 'off')"
+                >
+                    <fa-icon [icon]="faExclamationCircle"></fa-icon>
+                </div>
+                <div class="portfolio-maintenance__icons" 
+                    *ngIf="!(portfolio.data.hasMissingCustomRights || portfolio.data.hasInsufficientRights || portfolio.data.hasMissingRights)">
+                </div>
+
+                <dx-tooltip
+                    target="{{'#Warning' + portfolio.data.companyID}}"
+                    [visible]="isWarningVisible[portfolio.data.companyID]"
+                    [closeOnOutsideClick]="false"
+                    >
+                    <dxo-animation>
+                        <dxo-show
+                            type="pop"
+                        ></dxo-show>
+                        <dxo-hide
+                            type="pop"
+                            [from]="{ scale: 1, opacity: 1 }"
+                            [to]="{ opacity: 0, scale: 0.1 }"
+                        ></dxo-hide>
+                    </dxo-animation>
+                    <div *ngIf="portfolio.data.hasMissingCustomRights">
+                        <div>This item is configured to have custom rights but none have been configured.  </div>
+                        <div>Either reset it to use default rights or configure the additional object rights.</div>
+                    </div>
+                    <div *ngIf="portfolio.data.hasInsufficientRights || portfolio.data.hasMissingRights">
+                        <div>You do not have rights defined for all portfolio objects,</div>
+                        <div>please verify that this is correct. It is not recommended.</div>
+                    </div>
+                </dx-tooltip>
+                
+                <div class="portfolio-maintenance__icons" id="{{'groupLookUp' + portfolio.data.companyID}}" *ngIf="portfolio.data.groupLooksUp" 
+                    (mouseenter)="toggleGroupLooksUp(portfolio.data.companyID, 'on')"
+                    (mouseleave)="toggleGroupLooksUp(portfolio.data.companyID, 'off')">
+                    <fa-icon [icon]="faArrowUp"></fa-icon>
+                </div>
+                <div class="portfolio-maintenance__icons" *ngIf="!(portfolio.data.groupLooksUp)"></div>
+
+                <dx-tooltip
+                    target="{{'#groupLookUp' + portfolio.data.companyID}}"
+                    [visible]="groupLooksUpTooltipVisible[portfolio.data.companyID]"
+                    [closeOnOutsideClick]="false"
+                    >
+                    <dxo-animation>
+                        <dxo-show
+                            type="pop"
+                        ></dxo-show>
+                        <dxo-hide
+                            type="pop"
+                            [from]="{ scale: 1, opacity: 1 }"
+                            [to]="{ opacity: 0, scale: 0.1 }"
+                        ></dxo-hide>
+                    </dxo-animation>
+                    <div>Group Looks Up: Users that are members of a security group that looks up</div>
+                    <div>can view any contact or company record that is part of the parent group </div>
+                </dx-tooltip>
+                
+                <div class="portfolio-maintenance__icons" id="{{'portfolio' + portfolio.data.companyID}}" *ngIf="portfolio.data.isPortfolio" 
+                    (mouseenter)="toggleIsPortfolio(portfolio.data.companyID, 'on')"
+                    (mouseleave)="toggleIsPortfolio(portfolio.data.companyID, 'off')"
+                >
+                    <fa-icon [icon]="faFolderOpen"></fa-icon>
+                </div>
+                <div class="portfolio-maintenance__icons" *ngIf="!portfolio.data.isPortfolio"></div>
+
+                <dx-tooltip
+                    target="{{'#portfolio' + portfolio.data.companyID}}"
+                    [visible]="isPortfolioTooltipVisible[portfolio.data.companyID]"
+                    [closeOnOutsideClick]="false"
+                    >
+                    <dxo-animation>
+                        <dxo-show
+                            type="pop"
+                        ></dxo-show>
+                        <dxo-hide
+                            type="pop"
+                            [from]="{ scale: 1, opacity: 1 }"
+                            [to]="{ opacity: 0, scale: 0.1 }"
+                        ></dxo-hide>
+                    </dxo-animation>
+                    <div> Is Portfolio </div>
+                </dx-tooltip>
+            </div>
+            <dxi-column dataField="Actions" caption="Actions" type="buttons" width="65">
+		    	<dxi-button	template="moreMenuTemplate">
+		    		<div *dxTemplate="let portfolio of 'moreMenuTemplate'" class="cursor-default">
+              <button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu">
+                <fa-icon [icon]="faEllipsisH"></fa-icon>
+              </button>
+		    			<mat-menu #UserMoreMenu="matMenu">
+				    		<ul>
+                                <li *ngIf="!((portfolio.data.companyLevel > 0 && portfolio.data.groupingLevels === portfolio.data.companyLevel) || !(portfolio.data.isActive))" 
+                                    (click)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'addSubPortfolio')">Add Sub Hierarchy</li>     
+
+                                <li  *ngIf="(portfolio.data.companyLevel !== 0 && portfolio.data.isActive)" 
+                                    (click)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'edit')">Edit </li>         
+                                <!-- Edit portfolio -->
+                                <li  *ngIf="portfolio.data.isPortfolio && portfolio.data.isActive" 
+                                    (click)="redirectToAction(portfolio.data, 'editPortfolio')">Edit </li>  
+
+                                <li (click)="redirectToAction(portfolio.data, 'showData')">Show Associated Objects</li>
+                                <!-- Change currency is displayed only for Active portfolios. -->
+                                <li *ngIf="(portfolio.data.isPortfolio && portfolio.data.isActive)" 
+                                    (click)="redirectToAction(portfolio.data, 'changeCurrency')">Change Currency for Reporting</li>
+                                
+                                <li *ngIf="portfolio.data.isPortfolio"
+                                    (click)="viewContacts(portfolio.data)">View Contacts in Group</li>
+                                
+                                <li *ngIf="portfolio.data.enableArchivePortfolio"
+                                    (click)="deleteOrArchiveData(portfolio.data)">Archive Portfolio</li> 
+                                
+                                <li *ngIf="portfolio.data.enableDeletePortfolio"
+                                    (click)="deleteOrArchiveData(portfolio.data)">{{portfolio.data.isPortfolio ? 'Delete Portfolio' : 'Delete Hierarchy'}}</li> 
+                                
+                                <li *ngIf="false"
+                                    (click)="redirectToAction(portfolio.data, 'editCamFilters')">Edit CAM Filters</li> 
+                            </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>
+        </dx-tree-list>
+        <dx-load-panel shadingColor="rgba(255,255,255,0.2)"
+            [visible]="loading"
+            [showIndicator]="true"
+            [showPane]="true"
+            [shading]="true"
+            [closeOnOutsideClick]="false"
+        ></dx-load-panel>
+	</div>
+</div>

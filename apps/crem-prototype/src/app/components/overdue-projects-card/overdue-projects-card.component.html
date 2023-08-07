@@ -1,0 +1,59 @@
+<mat-card class="dashboard-card project-dash-card">
+	<mat-card-header>				
+		<mat-card-title>
+			<div class="card-title-hero">{{overdueProjects.length}}</div>
+			<span>Overdue Projects</span>
+		</mat-card-title>
+		<div class="mat-card-header-toolbar">
+			<button class="btn btn-default btn-sm" [matMenuTriggerFor]="cardMenu"><mat-icon>more_horiz</mat-icon></button>
+			<mat-menu #cardMenu="matMenu">								
+				<button mat-menu-item>Refresh</button>
+				<button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>      
+				<button mat-menu-item (click)="exportDataGrid()">Export</button>				
+			</mat-menu>
+		</div>
+	</mat-card-header>
+	<mat-card-content class="no-padding">								
+		<dx-data-grid class="list-page-data-grid"
+			#OverdueProjectsDataGrid
+			[dataSource]="overdueProjects"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 							
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[wordWrapEnabled]="true"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>  
+			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>							
+			<dxi-column dataField="name"></dxi-column>
+			<dxi-column dataField="type"></dxi-column>
+			<dxi-column dataField="status"></dxi-column>
+			<dxi-column dataField="projectManager" caption="Manager"></dxi-column>
+			<dxi-column dataField="targetCompletionDate" caption="Due Date" dataType="date" alignment="center"></dxi-column>
+			<dxi-column dataField="daysOverdue" alignment="center"></dxi-column>	
+			<dxi-column type="buttons" width="40">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'">
+						<button class="btn btn-link btn-sm item-info" [id]="'OverdueProjectInfo' + data.data.id.toString()" (mouseover)="showPopover(data)" (mouseout)="hidePopover()"><mat-icon>info_outline</mat-icon></button>		    			
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>	
+		</dx-data-grid>					
+	</mat-card-content>
+</mat-card>	
+
+<dx-popover
+    [target]="popoverTarget" 
+    position="bottom"
+    [width]="480"
+    [(visible)]="popoverVisible">
+    <div *dxTemplate="let data = model of 'content'" class="rich-project-popover">
+		<project-popover [project]="hoveredRow"></project-popover>	        
+    </div>
+</dx-popover>

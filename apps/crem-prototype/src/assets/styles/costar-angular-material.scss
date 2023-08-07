@@ -1,0 +1,15 @@
+.mat-menu-panel {
+    min-height: 48px !important;
+}
+
+mat-card {
+    &.card-no-borders {
+        border: none;
+    }
+}
+
+mat-icon {
+    &.favorite-icon-table {
+        font-size: 18px;
+    }
+}

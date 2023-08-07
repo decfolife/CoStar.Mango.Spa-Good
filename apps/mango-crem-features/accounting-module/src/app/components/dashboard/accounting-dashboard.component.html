@@ -1,0 +1,124 @@
+<div class="accounting-dashboard-page-controls-wrapper">
+  <div class="controls-left">
+    <div class="accounting-dashboard__pageTitle dbl-right-margin"
+    >{{ pageTitle }}</div>
+
+    <div id="accounting-dashboard__dropdown">
+      <div class="accounting-dashboard-dropdown">
+        <crem-dropdown id="accounting-dashboard__dropdown--calendar"
+          title='accounting-dashboard-dropdown-calendar'
+          dropDownContainerCustomClass="dashboardsDropDown"
+          [isDisabled]='!cardData || !allCardDataLoaded'
+          [dataSource]='calendarList'
+          [allowSearch]='true'
+          placeholder='Calendar'
+          [showClearButton]='false'
+          [showColumnHeader]='false'
+          displayExpr='displayString'
+          valueExpr='intValue'
+          [initialSelectedValue]="initialSelectedCalendar"
+          (selectedItems)="dropdownChange('calendar', $event)"
+        ></crem-dropdown>
+
+        <crem-dropdown #PortfolioDropdown
+          id="accounting-dashboard__dropdown--portfolio"
+          title='accounting-dashboard-dropdown-portfolio'
+          dropDownContainerCustomClass="dashboardsDropDown"
+          [isDisabled]='!cardData || !allCardDataLoaded'
+          [dataSource]='portfolioList'
+          [allowSearch]='true'
+          placeholder='Portfolio'
+          [showClearButton]='false'
+          [showColumnHeader]='true'
+          dropdownHeaderDisplay='Select All'
+          displayExpr='displayString'
+          valueExpr='intValue'
+          [initialSelectedValue]="initialSelectedPortfolios"
+          selectMode="multiple"
+          showCheckBoxesMode='always'
+          (selectedItems)="dropdownChange('portfolio', $event)"
+        ></crem-dropdown>
+
+        <crem-dropdown #YearsDropdown
+          id="accounting-dashboard__dropdown--year"
+          title='accounting-dashboard-dropdown-year'
+          dropDownContainerCustomClass="dashboardsDropDown"
+          [isDisabled]='!cardData || !allCardDataLoaded'
+          [dataSource]='yearList'
+          [allowSearch]='true'
+          placeholder='Year'
+          [showClearButton]='false'
+          [showColumnHeader]='false'
+          displayExpr='displayString'
+          valueExpr='stringValue'
+          [initialSelectedValue]="initialSelectedYear"
+          showCheckBoxesMode='always'
+          (selectedItems)="dropdownChange('year', $event)"
+        ></crem-dropdown>
+      </div>
+
+      <div class="button__apply">
+        <crem-button id="accounting-dashboard__dropdown--apply"
+          type="secondary"
+          (click)="apply($event)"
+          [disabled]="(!selectedCalendar || !selectedPortfolios?.length || !selectedYears?.length || !cardData || !allCardDataLoaded)"
+        >Apply</crem-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls-right">
+  </div>
+</div>
+
+<div class="accounting-dashboard-page-data-grid-wrapper">
+  <div class="card-containers"
+    cdkDropList
+    cdkDropListOrientation="vertical"
+    (cdkDropListDropped)="cardMove($event)"
+  >
+    <div *ngFor="let config of cardData"
+      class="categories-item"
+      cdkDropListOrientation="horizontal"
+      [cdkDropListData]="{ card: card, index: i }"
+      fxLayout="row"
+      cdkDrag
+      [class.col-md-6]="!config.cardJSONSchema.fullWidth"
+      [class.col-md-12]="config.cardJSONSchema.fullWidth"
+      [class.hide]="!config.cardJSONSchema.visible"
+    >
+      <div cdkDragHandle
+        class="card-drag-handle"
+        *ngIf="config && config.cardJSONSchema.visible"
+        id="{{config.cardPendoId + '--drag_drop'}}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg"
+          class="drag_handle"
+          height="24px"
+          viewBox="0 0 24 24"
+          width="24px"
+          fill="#BFBFBF"
+        >
+          <path d="M0 0h24v24H0z" fill="none" />
+          <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
+        </svg>
+      </div>
+
+      <mango-accounting-card *ngIf="!cardJSONSchemaLoading && config.cardJSONSchema.visible"
+        [canSaveDefault]="canSaveDefault"
+        [cardData]="config"
+        [dsExportFileName]="exportDataSourceFileName"
+        (cardMove)="cardMove(event)"
+        [pendoId]="config.cardPendoId"
+      ></mango-accounting-card>
+    </div>
+  </div>
+</div>
+
+<dx-load-panel shadingColor="rgba(255,255,255,0.2)"
+  [visible]="!cardData && isInitialLoadSuccessful"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="false"
+  [closeOnOutsideClick]="false"
+></dx-load-panel>

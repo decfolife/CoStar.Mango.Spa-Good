@@ -1,0 +1,227 @@
+//------------------------------------------------
+//--- Legacy Variables
+//------------------------------------------------
+// Only add variables applicable to shared libraries or utilities and not single use components
+// @deprecated Don't use this variables directly, use _variables.scss instead
+// FIXME: duplicated variables on the following files, move in here and verify usage
+// - ./apps/mango-crem-features/accouting-module/src/variables.scss
+// - ./apps/mango-crem-features/admin-service/src/assets/styles/components.scss
+// - ./libs/ui-shared/cosmos/src/lib/assets/styles/crem-lib.scss
+// - ./libs/ui-shared/lib-ui-elements/src/lib/assets/styles/partials/_theme.scss
+// - ./libs/ui-shared/lib-ui-elements/src/lib/assets/styles/partials/_cosmos.scss
+
+//------------------------------------------------
+//--- Colors
+//------------------------------------------------
+$green: #66b360;
+$yellow: #f7e967;
+$costarLightOrange: #f68338;
+$sunset: #Ec4a08;
+$costarYellow: #ffb400;
+
+$white: #ffffff;
+$offWhite: #f8f8f8;
+$ultraLightGray: #f2f2f2;
+$lightGray: #e6e6e6;
+$gray: #c2c2c2;
+$mediumDarkGray: #696969;
+$darkGray: #3c3c3c;
+$black: #000000;
+$costarError: #ffbfbe;
+$costarAlert: #ec4a08;
+
+$color-white: #ffffff;
+$color-black:  #000;
+$color-neutral-light: #EAEAEA;
+$color-neutral-dark: #808080;
+$color-neutral-medium: #BFBFBF;
+$color-neutral-black: #000000;
+$color-neutral-darker: #404040;
+$color-neutral-lighter: #F5f5f5;
+$color-neutral-white: #FFFFFF;
+$color-dark-blue: #1e3a6f;
+$color-gray-shade: #9F9F9F;
+
+$color-brand-primary: #0559b3;
+$color-brand-primary-light: #e3f3fc;
+$color-brand-primary-medium: #669bd1;
+
+$color-brand-accent: #ec4a08;
+$color-brand-green: #017B30;
+$color-brand-red: #DE0000;
+$color-brand-yellow: #FFB400;
+
+$gray1: rgb(57, 57, 57);
+$gray2: rgb(65, 65, 65);
+$gray3: rgb(133, 133, 133);
+$gray4: rgb(200, 200, 200);
+$gray5: rgb(220, 220, 220);
+$gray6: rgb(237, 237, 237);
+
+$color-secondary: #1B3A6E;
+$color-primary: #0559B3;
+$color-primary-light: #669BD1;
+$color-primary-lighter: #E3F3FC;
+$color-accent: #EC4A08;
+$color-yellow: #FFB400;
+$color-red: #DE0000;
+$color-green: $color-brand-green;
+
+// CoStar Colors v2
+$costarDarkBlue: $color-secondary;
+$costarBlue: $color-primary;
+$costarMediumBlue:$color-primary;
+$costarLightBlue:$color-primary-light;
+$costarDarkOrange: $color-accent;
+$costarGreen: $color-green;
+$mediumGray: $color-neutral-darker;
+$iconGrayDisabled:$color-neutral-light;
+$costarOrange: $color-accent;
+$costarRichGray: $color-neutral-dark;
+$costarRichLightGray:$color-neutral-medium;
+$navGray: $color-neutral-light;
+$costarRed: $color-yellow;
+$yellow: $color-yellow;
+
+$hoverBlue : $costarLightBlue;
+$costarBlueHover:$color-primary;
+
+$success: $costarGreen;
+$primary : $costarBlue;
+$secondary: $costarLightBlue;
+$warning : $costarLightOrange;
+$danger : $costarRed;
+
+// Background
+$bodyBackgroundGray: $color-neutral-lighter;
+$bodyBackgroundDarkGray: rgb(234, 234, 234);
+$cardBodyBackgroundGray: rgb(252, 252, 252);
+$backgroundGray: $bodyBackgroundGray;
+
+//------------------------------------------------
+//--- Fonts
+//------------------------------------------------
+$font-family-brand: Helvetica, system-ui, sans-serif;
+$font-family-body: 'Helvetica, system-ui, sans-serif';
+$font-family-heading: 'CostarBrownRegular, system-ui, sans-serif';
+$font-family-monospace: 'Menlo, monospace';
+
+$font-weight-bold: 700;
+$font-weight-light: 200;
+$font-weight-regular: 400;
+
+$font-size-08: 8px;
+$font-size-10: 10px;
+$font-size-12: 12px;
+$font-size-14: 14px;
+$font-size-16: 16px;
+$font-size-18: 18px;
+$font-size-20: 20px;
+$font-size-22: 22px;
+$font-size-24: 24px;
+$font-size-26: 26px;
+$font-size-28: 28px;
+$font-size-30: 30px;
+$font-size-32: 32px;
+
+$font-size-x-lg: $font-size-22;
+$font-size-2-x-lg: $font-size-24;
+$font-size-2-x-sm: $font-size-10;
+$font-size-3-x-lg: $font-size-28;
+$font-size-3-x-sm: $font-size-08;
+$font-size-lg: $font-size-18;
+$font-size-med: $font-size-16;
+$font-size-sm: $font-size-14;
+$font-size-x-sm: $font-size-12;
+
+$font-size-xxxs: $font-size-08;
+$font-size-xxs: $font-size-10;
+$font-size-xs: $font-size-12;
+$font-size-s: $font-size-14;
+$font-size-md: $font-size-16;
+$font-size-lg: $font-size-18;
+$font-size-xl: $font-size-20;
+$font-size-xxl: $font-size-22;
+$font-size-xxxl: $font-size-24;
+$font-size-xxxxl: $font-size-32;
+
+$font-wt-100: 100;
+$font-wt-200: 200;
+$font-wt-300: 300;
+$font-wt-400: 400;
+$font-wt-500: 500;
+$font-wt-600: 600;
+$font-wt-700: 700;
+
+$font-wt-lt: $font-wt-200;
+$font-wt-normal: $font-wt-400;
+$font-wt-bold: $font-wt-700;
+
+$lightTextGray: $color-neutral-dark;
+$stdTextBlue: $color-primary;
+$iconGray: $lightTextGray;
+$textGray: $color-neutral-medium;
+$stdTextGray: $darkGray;
+
+//------------------------------------------------
+//--- Spacing
+//------------------------------------------------
+$sp-02: 2px;
+$sp-04: 4px;
+$sp-06: 6px;
+$sp-08: 8px;
+$sp-10: 10px;
+$sp-12: 12px;
+$sp-14: 14px;
+$sp-16: 16px;
+$sp-24: 24px;
+$sp-32: 32px;
+$sp-40: 40px;
+
+$space-em-0-25: .25em;
+$space-em-0-5: .5em;
+$space-em-0-75: .75em;
+$space-em-1: 1em;
+$space-em-1-5: 1.5em;
+$space-em-2: 2em;
+$space-em-2-5: 2.5em;
+$space-em-3: 3em;
+$space-em-3-5: 3.5em;
+$space-em-4: 4em;
+
+$space-2-x-small: 4px;
+$space-x-small: 8px;
+$space-small: 12px;
+$space-base: 16px;
+$space-large: 24px;
+$space-x-large: 32px;
+
+$space-2-x-large: 40px;
+$space-3-x-large: 48px;
+$space-4-x-large: 56px;
+$space-5-x-large: 64px;
+
+$space-rem-0-25: .25rem;
+$space-rem-0-5: .5rem;
+$space-rem-0-75: .75rem;
+$space-rem-1: 1rem;
+$space-rem-1-5: 1.5rem;
+$space-rem-2: 2rem;
+$space-rem-2-5: 2.5rem;
+$space-rem-3: 3rem;
+$space-rem-3-5: 3.5rem;
+$space-rem-4: 4rem;
+
+//------------------------------------------------
+//--- Borders
+//------------------------------------------------
+$lightBorderGray: rgb(231, 231, 231);
+$stdBorderGray: $gray;
+$darkBorderGray: rgb(186, 186, 186);
+$borderColor: $gray;
+$stdBorderColor: $stdBorderGray;
+$stdBorder: 1px solid $stdBorderGray;
+$borderColor: $lightGray;
+$darkBorderColor: $darkBorderGray;
+$border-radius-buttons: 2px;
+$border-width-brand: 1px;

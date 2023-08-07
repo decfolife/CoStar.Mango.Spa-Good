@@ -1,0 +1,17 @@
+body {
+	margin: 0 !important;
+    height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
+journal-entries-to-approve {
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
+    @import "./assets/styles/journal-entry-processing.scss";
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

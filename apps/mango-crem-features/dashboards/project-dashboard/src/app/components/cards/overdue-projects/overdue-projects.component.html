@@ -1,0 +1,67 @@
+<crem-card
+[id]="card.gridData.id"
+[title]="card.title"
+[counter]="card.counter"
+[filterData]="null"
+[filterInitialValue]="null"
+[showFilterClearButton]="false"
+[moreOptions]="card.moreOptions"
+(exportDataGrid)="exportAllGridData($event)"
+fxFlexFill
+>
+	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
+		<dx-data-grid
+				#OverdueProjectsGrid
+				[id]="card.gridData.id + 'grid'"
+				[showColumnLines]="false"
+				[showRowLines]="false"
+				[showBorders]="false"
+				[rowAlternationEnabled]="true"
+				[allowColumnResizing]="true"
+				[allowColumnReordering]="true"
+				[columnAutoWidth]="false"
+				[dataSource]="card.gridData.dataSource"
+				keyExpr="gridIndex"
+				(onRowClick)="rowClick($event)"
+				[wordWrapEnabled]="true"
+		>
+		<!-- //gets rid of default paging function -->
+		<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>	
+		<dxo-search-panel [visible]="false"></dxo-search-panel>
+		<dxo-pager [visible]="false"></dxo-pager>
+		<dxo-scrolling mode="virtual"></dxo-scrolling>
+				<dxi-column
+				caption="Name"
+				dataField="projectName"
+				alignment="left"
+				></dxi-column>
+				<dxi-column
+				caption="Type"
+				dataField="projectType"
+				alignment="left"
+				></dxi-column>
+				<dxi-column
+				caption="Manager"
+				dataField="projectManager"
+				alignment="left"
+				></dxi-column>
+				
+				<dxi-column
+				caption="Status"
+				dataField="projectStatus"
+				alignment="left"
+				></dxi-column>
+			<dxi-column
+			    caption="Due Date"
+				dataField="projectDueDate"
+				dataType="date"
+				alignment="left"
+				[format]="cardsService.dateFormat"
+				></dxi-column>
+				<dxi-column
+				dataField="daysOverdue"
+				alignment="right"
+				></dxi-column>
+		</dx-data-grid>
+	</div>
+</crem-card>

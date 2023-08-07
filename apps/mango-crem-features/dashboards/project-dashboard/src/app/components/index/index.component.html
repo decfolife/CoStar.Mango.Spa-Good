@@ -1,0 +1,46 @@
+
+
+
+<div  id="projects-dashboard">
+  <div class="project-filters">
+    <shadow-filters-container *ngIf="!filtersLoadingDone"></shadow-filters-container>
+    <dashboard-filters *ngIf="filtersLoadingDone && filtersAvailable"
+      [userId]="userId"
+      [showAddButton]="showAddButton"
+      [cachingEnabled]="cachingEnabled"
+      [filters]="filterDetails"
+      [dashboardId]="dashboardId"
+      [isDateEU]="isDateEU"
+      [objectTypeId]="objectTypeIds"
+      [objectTypeName]="objectType"
+      (selections)="selected($event)"
+      (applyFilterEvent)="applyFilter()"
+      (displayUserSettingsEvent)="displaySettings()"
+      (addItemEvent)="btnAddClick()"
+      (clearCacheEvent)="clearCacheClicked()"
+      >
+    </dashboard-filters>
+    <div class="message" *ngIf="filtersLoadingDone && !filtersAvailable">Filters Data not available at the time..please try again later</div>
+  </div>
+
+  <div class="project-metrics">
+    <crem-metric-container  *ngIf="metricsAvailable"
+      [schemaMetrics]="schemaMetrics"
+      [filterString]="filterString"
+      [moduleId]=2
+    >	
+    </crem-metric-container>
+    <div class="message" *ngIf="metricsLoadingDone && !metricsAvailable">Metrics Data not available at the time..please try again later</div>
+  </div>
+
+  <div class="project-cards">
+    <cards *ngIf="cardsLoadingDone && cardsAvailable"
+      [cards]="cards"
+      [objectType]="objectType"
+      [projectMilestoneCard]="projectsMilestoneCard" 
+      > 
+    </cards>
+    <div class="message" *ngIf="cardsLoadingDone && !cardsAvailable">Cards Data not available at the time..please try again later</div>
+  </div>
+  
+</div>

@@ -1,0 +1,177 @@
+@import '../assets/styles/crem-lib.scss';
+
+crem-card {
+  .mat-card.cremCard {
+    .mat-card.cremCard {
+      display: flex;
+      flex-direction: column;
+      min-width: 100%;
+      width: 100%;
+      min-height: 254px;
+
+      .mat-card-header.mat-card-header {
+        padding: 0px !important;
+        border-bottom: 1px solid #c2c2c2;
+        justify-content: space-between !important;
+        align-items: center;
+        color: #3c3c3c;
+        background: white !important;
+        font-family: Helvetica, 'system-ui', sans-serif !important;
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 0;
+        height: 40px !important;
+        max-height: 40px !important;
+
+        .mat-card-header-text {
+          margin: 0px !important;
+        }
+        .mat-card-title {
+          margin: 8px !important;
+        }
+      }
+      crem-icon {
+        color: $color-neutral-dark;
+      }
+      .mat-card-title.cremCardTitle {
+        .crem-card-title {
+          font-family: Helvetica;
+          font-size: 18px;
+          font-weight: 400;
+          letter-spacing: 0;
+          line-height: 22px;
+        }
+      }
+    }
+    .mat-card-content.mat-card-content.cremCardContent {
+      max-height: 280px !important;
+      min-height: 280px !important;
+      overflow: auto;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+ .cardHeader {
+    padding: 4px 16px !important;
+    border-bottom: 1px solid #c2c2c2;
+    justify-content: space-between !important;
+    align-items: center;
+    color: #3c3c3c;
+    background: white !important;
+    font-family: Helvetica, "system-ui", sans-serif !important;
+    line-height: 40px;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0;
+    margin: 0px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    width: unset !important;
+}
+  .mat-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
+    display: block;
+    align-items: center;
+    font-family: Helvetica, sans-serif;
+    padding: 0px !important;
+    font-size: 14px;
+    justify-content: center;
+  }
+
+  div.cardContent {
+    margin: -8px -16px !important;
+  }
+  crem-card {
+    margin: 10px;
+  }
+  div.class {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+  }
+
+  .card-layout {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .counter {
+    margin-right: 8px;
+    padding: 4px 8px;
+    background: $color-neutral-dark;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: $font-wt-normal;
+  }
+  .customHeader {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+.customHeader > div:first-child {
+  margin-right: 8px;
+}
+// .dx-popup-wrapper > .dx-overlay-content {
+//   border: 1px solid $color-primary;
+//   border-top: 1px solid $color-neutral-medium;
+//   background: #fff;
+//   box-shadow: 0 6px 12px rgba(0, 0, 0, 18%);
+//   border-radius: 0px 0px 6px 5px;
+// }
+dx-select-box.dx-show-invalid-badge.dx-selectbox.dx-textbox.dx-texteditor.dx-dropdowneditor-button-visible.dx-editor-outlined.dx-texteditor-empty.dx-widget.dx-dropdowneditor.dx-dropdowneditor-field-clickable {
+  margin-right: 16px;
+}
+
+crem-card
+  .mat-card#projects_by_type_card
+  .mat-card-content.mat-card-content.cremCardContent {
+  display: flex;
+  align-items: stretch;
+  font-family: Helvetica, sans-serif;
+  padding: 0px !important;
+  font-size: 14px;
+  justify-content: flex-start !important;
+  background: white;
+  height: 280px !important;
+  min-height: 280px !important;
+  overflow: hidden;
+}
+.mat-card-image:first-child {
+  margin-top: 0;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.mat-card-image {
+  width: calc(100% + 16px);
+  margin: 0;
+}
+.aside {
+  max-width: 15vw;
+}
+.card {
+  min-width: 25vw;
+  background: white;
+}
+crem-card .mat-card-header .mat-card-header-text {
+  margin: 0 !important;
+}
+crem-card
+  .mat-card.cremCard
+  .mat-card-content.mat-card-content.cremCardContent{
+  display: block;
+  align-items: center;
+  font-family: Helvetica, sans-serif;
+  padding: 0px !important;
+  font-size: 14px;
+  justify-content: center;
+  height: fit-content;
+  min-height: 100% !important;
+  max-height: 100% !important;
+}

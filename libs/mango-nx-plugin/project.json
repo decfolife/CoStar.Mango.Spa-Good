@@ -1,0 +1,51 @@
+{
+  "name": "mango-nx-plugin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mango-nx-plugin/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/mango-nx-plugin/**/*.ts"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/mango-nx-plugin"],
+      "options": {
+        "jestConfig": "libs/mango-nx-plugin/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/mango-nx-plugin",
+        "tsConfig": "libs/mango-nx-plugin/tsconfig.lib.json",
+        "packageJson": "libs/mango-nx-plugin/package.json",
+        "main": "libs/mango-nx-plugin/src/index.ts",
+        "assets": [
+          "libs/mango-nx-plugin/*.md",
+          {
+            "input": "./libs/mango-nx-plugin/src",
+            "glob": "**/*.!(ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./libs/mango-nx-plugin",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./libs/mango-nx-plugin",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    }
+  }
+}

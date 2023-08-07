@@ -1,0 +1,70 @@
+<div class="custom-data-grid-toolbar">
+	<div class="grid-controls-left">
+		<mat-slide-toggle [checked]="true">Active</mat-slide-toggle>
+	</div>
+	<div class="grid-controls-right">
+	</div>
+</div>
+<dx-data-grid class="list-page-data-grid"
+	#DataGrid
+	[dataSource]="data"
+	[showColumnLines]="false"
+	[showRowLines]="false"
+	[showBorders]="false"
+	[rowAlternationEnabled]="true" 							
+	[allowColumnResizing]="true"
+	[allowColumnReordering]="true"
+	[columnAutoWidth]="true"
+	(onToolbarPreparing)="onToolbarPreparing($event)" 
+>
+	<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+	<dxo-editing mode="batch"
+		[allowUpdating]="true"
+		[selectTextOnEditStart]="true"
+		[startEditAction]="startEditAction">
+	</dxo-editing>
+	<dxo-scrolling mode="virtual"></dxo-scrolling>							
+	<dxi-column dataField="measureEvent" [fixed]="true" [allowEditing]="false"></dxi-column>
+	<dxi-column dataField="accountingTermBeginDate">
+		<dxo-lookup [dataSource]="beginDateOptions"
+			displayExpr="id"
+			valueExpr="id">
+		</dxo-lookup>
+	</dxi-column>
+	<dxi-column dataField="accountingTermEndDate">
+		<dxo-lookup [dataSource]="endDateOptions"
+			displayExpr="id"
+			valueExpr="id">
+		</dxo-lookup>
+	</dxi-column>										
+	<dxi-column dataField="discountRateProfile">
+		<dxo-lookup [dataSource]="discountRateOptions"
+			displayExpr="id"
+			valueExpr="id">
+		</dxo-lookup>
+	</dxi-column>
+	<dxi-column dataField="journalEntryProfile">
+		<dxo-lookup [dataSource]="jeProfileOptions"
+			displayExpr="id"
+			valueExpr="id">
+		</dxo-lookup>
+	</dxi-column>										
+	<dxi-column dataField="functionalRate" caption="Functional Currency Translation">
+		<dxo-lookup [dataSource]="functionalRateOptions"
+			displayExpr="id"
+			valueExpr="id">
+		</dxo-lookup>
+	</dxi-column>										
+	<dxi-column dataField="defaultManualAssetAdjustment">
+		<dxo-lookup [dataSource]="defaultManualAdjustmentOptions"
+			displayExpr="id"
+			valueExpr="id">
+		</dxo-lookup>
+	</dxi-column>
+	<dxi-column dataField="comments">
+		<dxo-lookup [dataSource]="commentsOptions"
+			displayExpr="id"
+			valueExpr="id">
+		</dxo-lookup>
+	</dxi-column>											
+</dx-data-grid>	

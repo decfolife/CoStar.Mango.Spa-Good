@@ -1,0 +1,93 @@
+<div class="filterAndUsercontrols">
+  <div class="filterWrapper">
+
+    <div class="filterElement" *ngFor="let filter of getFilters()">
+      <crem-hierarchy-dropdown *ngIf="filter.placeHolderText ==='Hierarchy'"
+        [id]="filter.id"
+        dropDownContainerCustomClass="dashboardsFiltersDropDown"
+        [showColumnHeader]="filter.showColumnHeaders"
+        (selectedItems)="selected($event, filter.id)"
+        [placeholder]="filter.placeHolderText"
+        [displayExpr]="filter.displayKey"
+        [valueExpr]="filter.valueKey"
+        [parentIdExpr]="parentId"
+        [showCheckBoxesMode]="filter.showCheckBoxesMode"
+        [allowSearch]="filter.allowSearch"
+        [selectMode]="filter.selectMode"
+        [dataSource]="filter.dataSource"
+        [initialSelectedValue]="filter.selectedValues"
+      ></crem-hierarchy-dropdown>
+
+      <crem-dropdown *ngIf="filter.placeHolderText != 'Hierarchy'"
+        [id]="filter.id"
+        dropDownContainerCustomClass="dashboardsFiltersDropDown"
+        [showColumnHeader]="filter.showColumnHeaders"
+        (selectedItems)="selected($event, filter.id)"
+        [placeholder]="filter.placeHolderText"
+        [displayKey]="filter.displayKey"
+        [valueKey]="filter.valueKey"
+        [showCheckBoxesMode]="filter.showCheckBoxesMode"
+        [allowSearch]="filter.allowSearch"
+        [selectMode]="filter.selectMode"
+        [dataSource]="filter.dataSource"
+        [initialSelectedValue]="filter.selectedValues"
+        [useArrayOfKeys]="true"
+        [getWholeObject]="true"
+      ></crem-dropdown>
+    </div>
+
+    <crem-button type="secondary" [ariaLabel]="'Apply'">
+      <span
+        (click)="createApplyFilterEvent(); $event.preventDefault();"
+      >Apply</span>
+    </crem-button>
+  </div>
+
+  <div class="actionButtons">
+    <crem-button type="primary"
+    *ngIf="showAddButton == true && !addObjects && dashboardId !== 1"
+      (click)="btnAddItemClick(); $event.preventDefault()"
+    ><span>Add</span></crem-button>
+
+    <crem-button type="primary" id="add_project_wizard_dashboard"
+      *ngIf="dashboardId === 1 && !addObjects && showAddButton == true"
+      (click)="btnAddItemNewClick(); $event.preventDefault()"
+    ><span>Add</span></crem-button>
+
+    <crem-button type="primary"
+      *ngIf="showAddButton == true && addObjects && dashboardId !== 1"
+      [matMenuTriggerFor]="addMenu"
+      (click)="$event.preventDefault()"
+    ><span>Add</span></crem-button>
+
+    <mat-menu #addMenu="matMenu"
+      class="dashboardsAddMenu"
+    >
+      <button *ngFor="let addObject of addObjects"
+        (click)="btnAddMenuItemClick(addObject); $event.preventDefault();"
+        mat-menu-item
+      >{{addObject.moduleDesc}}</button>
+
+      <button *ngIf="showEnterBill"
+        (click)="enterBillClicked.emit()"
+        mat-menu-item
+      >Enter a Bill</button>
+    </mat-menu>
+
+    <crem-button type="secondary"
+      (click)="launchSettingsModal(); $event.preventDefault();"
+      ariaLabel="Dashboard Settings"
+    >
+      <crem-icon fill="#000" icon="brand-gear" library="local"></crem-icon>
+    </crem-button>
+
+    <crem-button type="secondary" *ngIf="cachingEnabled"
+      [disabled]="CacheButtonClicked" (click)='startTimer()'
+    ><span>Refresh</span></crem-button>
+
+    <crem-tooltip-basic *ngIf="cachingEnabled"
+      [helpTextData]='"Click Refresh to update the dashboard from using previously cached data. Data was last updated as of " + getRefreshDateTime()'
+    ></crem-tooltip-basic>
+
+  </div>
+</div>

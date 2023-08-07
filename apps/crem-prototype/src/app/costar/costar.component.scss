@@ -1,0 +1,74 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/var.scss';
+
+.app-container {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+.main-menu-button {
+	cursor: pointer;
+	color: $secondary;
+	width: 60px;
+	height: 48px;
+	border-right: $stdBorder;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+
+	mat-icon {		
+		color: $secondary;
+		font-size: $stdPadding *5;
+		height: $stdPadding *5;
+		width: $stdPadding *5;
+	}	
+}
+
+// $brandImageWidth: 161px;
+// $brandImageHeight: 48px;
+
+$brandImageWidth: 133px;
+$brandImageHeight: 40px;
+
+.costar-toolbar-wrapper {
+	display: inline-flex;
+	flex: 1 1 auto;
+	justify-content: center;
+}
+
+.costar-toolbar-logo {
+	display: inline-block;
+	width: $brandImageWidth;
+	height: $brandImageHeight;	
+	margin-right: $dblPadding;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: $brandImageWidth $brandImageHeight;
+	background-image: url('../../assets/images/logos/CoStarLogo161x48.png');		
+	cursor: pointer;
+}
+
+.costar-toolbar-right-side {
+	margin-right: $dblPadding;
+	display: flex;
+	align-items: center;
+
+	mat-icon {
+		cursor: pointer;
+		color: $neutral-dark;
+		font-size: $stdPadding * 4;
+		height: $stdPadding *4;
+		width: $stdPadding *4;
+		margin-right: $dblPadding;
+	}	
+}
+
+
+
+.search-wrapper {
+	display: flex;
+	align-items: center;		
+}

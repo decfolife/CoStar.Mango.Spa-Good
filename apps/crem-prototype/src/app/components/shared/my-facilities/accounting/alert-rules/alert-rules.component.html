@@ -1,0 +1,96 @@
+<div class="list-page">
+  <div class="list-page-controls-wrapper">
+    <div class="controls-left">
+      <h5 class="dbl-right-margin">Alert Rules</h5>
+
+			<costar-search (changed)="searchDataGrid($event)"></costar-search>
+    </div>
+
+    <div class="controls-right">
+      <button class="btn btn-default"
+        [matMenuTriggerFor]="moreMenu"
+      >More <fa-icon icon="caret-down"></fa-icon></button>
+
+      <mat-menu #moreMenu="matMenu">
+        <div mat-menu-item>
+          <mat-slide-toggle
+            (click)="$event.stopPropagation()"
+            [checked]="showInactive"
+          >Show Inactive</mat-slide-toggle>
+        </div>
+
+        <button mat-menu-item
+          (click)="exportDataGrid()"
+        >Export</button>
+      </mat-menu>
+
+      <button class="btn btn-primary"
+        disabled
+      >Save</button>
+    </div>
+  </div>
+
+  <div class="list-page-data-grid-wrapper">
+    <dx-data-grid #DataGrid
+      class="list-page-data-grid"
+      [dataSource]="gridData"
+      dataRowTemplate="customRowTemplate"
+      [allowColumnReordering]="false"
+      [grouping]="false"
+      [columnFixing]="false"
+      [headerFilter]="{ visible: true }"
+    >
+      <dxi-column dataField="RuleID"
+        caption="ID"
+        [width]="50"
+      ></dxi-column>
+      <dxi-column dataField="RuleName"
+        [width]="'50%'"
+      ></dxi-column>
+      <dxi-column dataField="AlertCode"
+        caption="Code"
+        [width]="50"
+      ></dxi-column>
+      <dxi-column dataField="SeverityLevel"
+        [width]="150"
+      ></dxi-column>
+      <dxi-column dataField="AlertType"
+      ></dxi-column>
+      <dxi-column caption="Is Dismissible"
+      ></dxi-column>
+      <dxi-column caption="Is Active"
+      ></dxi-column>
+
+      <ng-container *dxTemplate="let row of 'customRowTemplate'">
+        <tr class="dx-row dx-data-row">
+          <td>{{ row.data.RuleID }}</td>
+          <td>{{ row.data.RuleName }}</td>
+          <td>{{ row.data.AlertCode }}</td>
+          <td>
+            <dx-select-box [dataSource]="severitySelections"
+              class="{{ severityLevels[row.data.SeverityLevel] }}"
+              displayExpr="name"
+              valueExpr="value"
+              [value]="row.data.SeverityLevel"
+            ></dx-select-box>
+          </td>
+          <td>{{ row.data.AlertType }}</td>
+          <td>
+            <dx-check-box [value]="row.data.isDismissible"></dx-check-box>
+          </td>
+          <td>
+            <dx-check-box [value]="row.data.isActive"></dx-check-box>
+          </td>
+        </tr>
+
+        <tr class="dx-row dx-data-row sub-row">
+          <td colspan="7"
+            style="padding-left: 80px; padding-right: 80px; white-space: normal;"
+            [innerHtml]="formatDescription(row.data.RuleDescription)"
+          ></td>
+        </tr>
+      </ng-container>
+
+    </dx-data-grid>
+  </div>
+</div>

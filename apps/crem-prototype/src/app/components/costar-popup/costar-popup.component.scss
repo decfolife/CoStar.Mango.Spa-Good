@@ -1,0 +1,77 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/var.scss';
+
+:host::ng-deep {
+	
+	.popup-body {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		height: 100%;
+		justify-content: space-between;
+
+		popup-controls {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			padding: $dblPadding;
+
+			popup-footer-left {
+				dx-button, button, dx-select-box {
+					margin-right: $stdPadding;
+				}
+			}
+			popup-footer-right {
+				dx-button, button {
+					margin-left: $stdPadding;
+				}
+			}	
+		}
+
+		popup-content {
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+			overflow: auto;
+			padding-left: $stdPadding*3;
+			padding-right: $stdPadding*3;	
+
+			.dynamic-form {
+				background: white;
+
+				.dynamic-form-content {
+					padding: 0px;
+					padding-top: $stdPadding;
+				}
+			}		
+
+			dx-tab-panel {
+			    // height: 100%;
+			    position: absolute;
+				top: 0;
+				bottom: 80px;
+			    left: 0;
+			    right: 0;
+			}
+		}
+
+		popup-footer {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			padding: $stdPadding*3;
+			// border-top: $stdBorder;	
+			
+			popup-footer-left {
+				dx-button, button, dx-select-box {
+					margin-right: $dblPadding;
+				}
+			}
+			popup-footer-right {
+				dx-button, button {
+					margin-left: $dblPadding;
+				}
+			}					
+		}
+	}
+}

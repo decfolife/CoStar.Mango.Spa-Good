@@ -1,0 +1,24 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/var.scss';
+
+.project-card-files-popover {
+	display: flex;
+	flex-direction: column;
+
+	.project-card-files-toolbar {
+		display: flex;
+		justify-content: space-between;
+		padding: $dblPadding;
+	}
+
+	.project-card-files-grid {
+		display: flex;
+		height: 334px;
+		overflow-y: auto;
+
+		dx-data-grid {
+			height: 100%;
+			width: 100%;
+		}
+	}
+}

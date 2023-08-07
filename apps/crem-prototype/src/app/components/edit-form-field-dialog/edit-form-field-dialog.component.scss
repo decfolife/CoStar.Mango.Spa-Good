@@ -1,0 +1,41 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/var.scss';
+
+.control-type-config {
+	display: flex;
+	flex-direction: column;
+	// height: 320px;
+	
+	.dropdown-controls {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin-bottom: $stdPadding;
+
+		.controls-left {
+			display: flex;
+			flex-direction: row;
+
+			button, .dx-widget {
+				margin-right: $dblPadding;
+			}
+		}
+
+		.controls-right {
+			display: flex;
+			flex-direction: row;
+			button, .dx-widget {
+				margin-left: $dblPadding;
+			}
+		}
+	}
+
+	.values-grid-container {		
+		flex-grow: 1;
+		overflow: auto;
+		height: 320px;
+		margin-bottom: $dblPadding;
+	}
+
+}

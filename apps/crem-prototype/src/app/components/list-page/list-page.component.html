@@ -1,0 +1,172 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 *ngIf="showTitle" class="dbl-right-margin">{{title}}</h5>
+			<!-- <list-page-query-chooser #QueryChooser *ngIf="hasQueryChooser" [queries]="queries" (changed)="onQueryChanged($event)"></list-page-query-chooser>			 -->
+			<list-view-chooser #QueryChooser *ngIf="hasQueryChooser" [listViews]="queries" (changed)="onQueryChanged($event)"></list-view-chooser>
+			<costar-search *ngIf="hasSearch" (changed)="searchDataGrid($event)"></costar-search>
+			<portfolio-menu *ngIf="hasPortfolioDropdown"></portfolio-menu>
+			<span *ngIf="showStatusDisplay">({{recordStatusDisplay}})</span>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-default" (click)="showFilterBuilder()" *ngIf="hasFilterButton">
+				Filters
+				<div *ngIf="appliedFilterCount > 0 && !showClearFilters" class="badge primary costar std-left-margin" (mouseover)="toggleClearFilters()">
+					{{appliedFilterCount}}
+				</div>
+				<div *ngIf="appliedFilterCount > 0 && showClearFilters" class="badge primary costar std-left-margin underline" (mouseout)="toggleClearFilters()" (click)="clearGridFilters($event)">
+					Clear {{appliedFilterCount}} Filters
+				</div>
+			</button>
+			<button *ngIf="hasMoreMenu" class="btn btn-default" [matMenuTriggerFor]="moreMenu">More <fa-icon icon="caret-down"></fa-icon></button>
+			<mat-menu #moreMenu="matMenu">
+				<button mat-menu-item *ngIf="hasQueryChooser" [matMenuTriggerFor]="saveAsMenu">Save As...</button>
+				<button mat-menu-item *ngIf="hasQueryChooser">Save</button>
+				<button mat-menu-item *ngIf="hasGrouping" (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>
+				<button mat-menu-item *ngIf="hasColumnChooser" (click)="showColumnChooser()">Column Chooser</button>
+				<button mat-menu-item *ngIf="hasExport" (click)="exportDataGrid()">Export</button>
+				<div mat-menu-item *ngIf="archivedRecordToggle" class="no-hover">
+					<mat-slide-toggle (change)="updateRecordDisplayStatus($event)" (click)="$event.stopPropagation()" name="showActive" [checked]="showActive">Show Active</mat-slide-toggle>
+				</div>
+				<div mat-menu-item *ngIf="archivedRecordToggle" class="no-hover">
+					<mat-slide-toggle (change)="updateRecordDisplayStatus($event)" (click)="$event.stopPropagation()" name="showArchived" [checked]="showArchived">Show Archived</mat-slide-toggle>
+				</div>
+			</mat-menu>
+			<mat-menu #saveAsMenu="matMenu" class="save-query-menu">
+				<mat-form-field appearance="outline">
+					<input matInput placeholder="New List View" (click)="$event.stopPropagation()" (keyup)="$event.stopPropagation()">
+					<mat-icon matSuffix class="inline-save-control" (click)="cancelNewQuery()">close</mat-icon>
+					<mat-icon matSuffix class="inline-save-control" (click)="saveNewQuery()">check</mat-icon>
+				</mat-form-field>
+			</mat-menu>
+			<button *ngIf="hasAddButton && addWizards.length == 1" class="btn btn-primary" (click)="navigateToAddRoute(addWizards[0].route)"><fa-icon icon="plus"></fa-icon> {{addButtonText}}</button>
+			<button *ngIf="hasAddButton && addWizards.length > 1" class="btn btn-primary" [matMenuTriggerFor]="addMenu"><fa-icon icon="plus"></fa-icon> {{addButtonText}}</button>
+			<mat-button-toggle-group *ngIf="listMapToggle" name="ListMapToggle" [(value)]="viewToggleValue" class="list-map-button-toggle">
+				<mat-button-toggle value="list"><fa-icon icon="list"></fa-icon><span>List</span></mat-button-toggle>
+				<mat-button-toggle value="map"><fa-icon icon="map"></fa-icon><span>Map</span></mat-button-toggle>
+				<mat-button-toggle *ngIf="hasBoardView" value="board"><fa-icon icon="columns"></fa-icon><span>Board</span></mat-button-toggle>
+			</mat-button-toggle-group>
+			<mat-menu #addMenu="matMenu">
+				<button *ngFor="let wiz of addWizards" (click)="navigateToAddRoute(wiz.route)" mat-menu-item>{{wiz.name}}</button>
+			</mat-menu>
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<dx-data-grid *ngIf="viewToggleValue == 'list'"
+			class="list-page-data-grid"
+			#DataGrid
+			[dataSource]="data"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			(onRowClick)="navigateToObject($event)"
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			columnResizingMode="widget"
+			[columnAutoWidth]="columnAutoWidth"
+			[filterSyncEnabled]="true"
+			(onContentReady)="calculateAppliedFilterCount($event)"
+			(onCellPrepared)="onCellPrepared($event)"
+			[columnMinWidth]="10"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			<!-- <dxo-scrolling mode="virtual"></dxo-scrolling> -->
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxo-column-chooser [allowSearch]="true" mode="select">
+			</dxo-column-chooser>
+			<dxo-paging [pageSize]="100"></dxo-paging>
+		    <dxo-pager
+		        [showPageSizeSelector]="true"
+		        [allowedPageSizes]="[50, 100, 200, 500]"
+		        [showInfo]="true"
+		        [showNavigationButtons]="true">
+		    </dxo-pager>
+			<dxo-filter-builder-popup
+				[width]="600"
+				[height]="600"
+				[(visible)]="filterBuilderVisible">
+			</dxo-filter-builder-popup>
+			<dxo-filter-builder
+		        [customOperations]="customOperations">
+			</dxo-filter-builder>
+			<dxi-column *ngFor="let col of columns"
+				[dataField]="col.dataField"
+				[alignment]="col.alignment"
+				[visible]="col.visible"
+				[dataType]="col.dataType"
+				[caption]="col.caption"
+				[fixed]="col.fixed"
+				[allowEditing]="col.allowEditing"
+				[cellTemplate]="col.cellTemplate"
+				[width]="col.width"
+        [format]="col.format"
+        [precision]="col.precision"
+				>
+				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+			</dxi-column>
+			<dxi-column type="buttons" width="48" *ngIf="hasItemMoreMenu">
+		    	<dxi-button
+		    		template="moreMenuTemplate"
+		    	>
+					<div *dxTemplate="let data of 'moreMenuTemplate'">
+						<!-- <button class="btn btn-link">Yes</button> -->
+		    			<button class="btn btn-link" (click)="$event.stopPropagation()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #expenseMoreMenu="matMenu">
+				    		<ul>
+		                        <li>Upload File</li>
+		                        <li (click)="launchNoteModal(data)">Add Note</li>
+		                        <li>Archive</li>
+		                    </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>
+		    </dxi-column>
+			<dxi-column *ngIf="isTasksList" [width]="240" [allowFiltering]="false" [allowSorting]="false" cellTemplate="approveRejectTaskTemplate"></dxi-column>
+			<div *dxTemplate="let data of 'approveRejectTaskTemplate'">
+				<button class="btn btn-link dbl-right-margin">Reject</button>
+				<button class="btn btn-link dbl-left-margin">Approve</button>
+			</div>
+			<div *dxTemplate="let data of 'noteTemplate'">
+				{{data.value}}
+			</div>
+			<div *dxTemplate="let data of 'downlaodTemplate'">
+				<fa-icon [icon]="['fas', 'download']"></fa-icon>
+			</div>
+
+		<!-- Logic for Star rating column -->
+			<div *dxTemplate="let data of 'starsRatingTemplate'">
+				<span *ngFor="let i of [0, 1, 2, 3, 4]">
+				  <ng-container *ngIf="data.value <= i">
+					<fa-icon icon="star" class="rating-blank"></fa-icon>
+				  </ng-container>
+				  <ng-container *ngIf="data.value > i">
+					<fa-icon icon="star" class="rating"></fa-icon>
+				  </ng-container>
+				</span>
+			</div>
+		<!-- end of logic -->
+
+		</dx-data-grid>
+		<div *ngIf="viewToggleValue == 'map'">I'm a map</div>
+		<div *ngIf="viewToggleValue == 'gantt'">I'm a gantt chart</div>
+		<div *ngIf="viewToggleValue == 'milestone'">I'm a milestone chart</div>
+	</div>
+
+</div>
+
+<dx-popup
+	#LastNotePopup
+    [width]="600"
+    [height]="470"
+    [showTitle]="true"
+    title="Add New Note"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="noteModalVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    	<last-note-dialog (saved)="noteModalSave()" (cancelled)="noteModalCancel()"></last-note-dialog>
+    </div>
+</dx-popup>

@@ -1,0 +1,215 @@
+<costar-popup>
+	<popup-content>
+		<dx-tab-panel
+			#taskTabPanel								
+			[selectedIndex]="0"
+			[loop]="false"
+			[animationEnabled]="false"
+			[swipeEnabled]="false"
+			>
+			<dxi-item title="Details" class="oflow-y-auto">
+				<div class="dbl-padding">
+					<dx-form 
+						[(formData)]="task"
+						[colCount]="2"
+						labelLocation="left">
+						<dxi-item 
+							dataField="step">
+						</dxi-item>
+						<dxi-item 
+							dataField="isRequired"
+							[label]="{ text : 'Required' }"
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="taskName"
+							[label]="{ text : 'Name' }">
+						</dxi-item>
+						<dxi-item 
+							dataField="isMilestone"	
+							[label]="{ text : 'Milestone' }"					
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="description">
+						</dxi-item>
+						<dxi-item 
+							dataField="isShrinkable"
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="targetStart"
+							[editorOptions]="{ disabled: true }">
+						</dxi-item>
+						<dxi-item 
+							dataField="isConcurrent"
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="duration">
+						</dxi-item>
+						<dxi-item 
+							dataField="triggerStatus"
+							template="statusTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="dueDate"
+							[editorOptions]="{ disabled: true }">
+						</dxi-item>
+						<dxi-item 
+							dataField="percentComplete"
+							[label]="{ text : '% Complete' }">
+						</dxi-item>
+						<dxi-item 
+							dataField="completeDate"
+							[editorOptions]="{ disabled: true }">
+						</dxi-item>
+						<dxi-item 
+							dataField="allowEmailApprovals"
+							template="switchTemplate">
+						</dxi-item>
+						<div *dxTemplate="let data of 'datePickerTemplate'">
+							<dx-date-box [(value)]="task[data.dataField]"></dx-date-box>
+						</div>
+						<div *dxTemplate="let data of 'switchTemplate'">
+							<mat-slide-toggle [name]="data.dataField" [(checked)]="task[data.dataField]" (change)="handleToggleChange($event)"></mat-slide-toggle>
+						</div>
+						<div *dxTemplate="let data of 'statusTemplate'">
+							
+						</div>					
+					</dx-form>
+				</div>
+				
+			</dxi-item>
+			<dxi-item title="Approvals" class="oflow-y-auto">
+				<dx-scroll-view width="100%" height="100%" class="dbl-padding">
+					<dx-data-grid 
+	                    #ApproverGrid
+	                    [dataSource]="taskApprovers"
+	                    [showColumnLines]="false"
+	                    [showRowLines]="true"
+	                    [showBorders]="true"
+	                    [rowAlternationEnabled]="true" 
+	                    keyExpr="id"
+	                    >   	                                                                            
+	                    <dxo-scrolling mode="virtual"></dxo-scrolling>
+	                    <dxo-selection mode="single"></dxo-selection>
+	                    <dxo-master-detail [enabled]="false" template="approveRejectTemplate"></dxo-master-detail>
+	                    <dxi-column dataField="status" caption="Status" alignment="center" cellTemplate="statusTemplate"></dxi-column>
+	                    <dxi-column dataField="isApproved" caption="Approve" alignment="center" cellTemplate="approveTemplate"></dxi-column>
+	                    <dxi-column dataField="isRejected" caption="Reject" alignment="center" cellTemplate="rejectTemplate"></dxi-column> 	                    
+	                    <dxi-column dataField="actualStartDate" cellTemplate="startDateTemplate" width="150"></dxi-column> 	
+						<dxi-column dataField="hoursToDate"></dxi-column> 	
+						<dxi-column dataField="hoursLastUpdated"></dxi-column> 		                                        
+	                    <dxi-column dataField="newHours" alignment="center" cellTemplate="newHoursTemplate"></dxi-column> 	                    
+	                    <dxi-column dataField="approverName" caption="Contact"></dxi-column> 	   						
+						<div *dxTemplate="let task of 'statusTemplate'">
+							{{task.data.status}}
+						</div>
+						<div *dxTemplate="let task of 'approveTemplate'">
+							<button *ngIf="task.data.approverName == 'Jason Trkovsky' && !task.data.isApproved" class="btn btn-default" (click)="approveTask(task)">Approve</button>
+							<span *ngIf="task.data.isApproved">{{task.data.approvalDate}}</span>
+						</div>
+						<div *dxTemplate="let task of 'rejectTemplate'">
+							<button *ngIf="task.data.approverName == 'Jason Trkovsky' && !task.data.isRejected" class="btn btn-default" (click)="rejectTask(task)">Reject</button>
+							<span *ngIf="task.data.isRejected && !task.data.isApproved">Rejected</span>
+						</div>
+						<div *dxTemplate="let task of 'startDateTemplate'">
+							<dx-date-box *ngIf="task.data.approverName == 'Jason Trkovsky' && !task.data.isApproved" [(value)]="task[task.dataField]" style="width: 150px;"></dx-date-box>
+						</div>
+						<div *dxTemplate="let task of 'newHoursTemplate'">
+							<dx-text-box *ngIf="task.data.approverName == 'Jason Trkovsky' && !task.data.isApproved" [(value)]="task[task.dataField]" style="width: 80px; margin: 0px auto;"></dx-text-box>
+						</div>
+						<div *dxTemplate="let task of 'approveRejectTemplate'">
+							<dx-text-area
+							    [height]="90"
+							    [(value)]="task.data.note"
+							    placeholder="Enter note...">
+							</dx-text-area>
+							<div class="approve-reject-controls-wrapper">
+								<div class="blue clickable" (click)="toggleMoreNotes()"><span *ngIf="!showMoreNotes">Show prior notes</span><span *ngIf="showMoreNotes">Hide prior notes</span></div>
+								<div>
+									<button class="btn btn-default std-right-margin" (click)="cancelApproveReject()">Cancel</button>
+									<button class="btn btn-primary" (click)="saveApproveReject()">{{taskAction}}</button>
+								</div>
+							</div>
+							<div class="approve-reject-prior-notes" *ngIf="showMoreNotes">
+								
+							</div>
+						</div>               
+	                </dx-data-grid>      	
+				</dx-scroll-view>
+			</dxi-item>
+			<dxi-item title="Approvers" class="oflow-y-auto">
+				<dx-scroll-view width="100%" height="100%" class="dbl-padding">
+					<div class="task-approvers-wrapper">
+						<div class="available-approvers-list">
+							<h6>Available Approvers</h6>
+							<dx-list           
+					            [dataSource]="availableApprovers"
+					            [items]="availableApprovers"
+					            [repaintChangesOnly]="true"
+					            keyExpr="id"
+					            itemTemplate="listItem"
+					            [searchEnabled]="true"
+						        searchExpr="approverName"
+						        searchMode="contains">
+					            <dxo-item-dragging
+					                group="approvers"
+					                [data]="availableApprovers"
+					                [allowReordering]="true"
+					                [onDragStart]="onDragStart"
+					                [onAdd]="onAdd"
+					                [onRemove]="onRemove">
+					            </dxo-item-dragging>
+					            <div *dxTemplate="let item of 'listItem'">
+					            	{{item.approverName}}
+					            </div>
+					        </dx-list>	
+						</div>
+						<div class="current-approvers-list">
+							<h6>Current Approvers</h6>
+							<dx-list           
+					            [items]="taskApprovers"
+					            [repaintChangesOnly]="true"
+					            keyExpr="id"
+					            itemTemplate="listItem">
+					            <dxo-item-dragging
+					                group="approvers"
+					                [data]="taskApprovers"
+					                [allowReordering]="true"
+					                [onDragStart]="onDragStart"
+					                [onAdd]="onAdd"
+					                [onRemove]="onRemove">
+					            </dxo-item-dragging>
+					            <div *dxTemplate="let item of 'listItem'">
+					            	{{item.approverName}}
+					            </div>
+					        </dx-list>	
+						</div>
+					</div>
+				</dx-scroll-view>
+			</dxi-item>
+			<dxi-item title="Notes" class="oflow-y-auto"></dxi-item>
+			<dxi-item title="Files" class="oflow-y-auto"></dxi-item>
+		</dx-tab-panel>
+	</popup-content>
+	<popup-footer>
+		<popup-footer-left>
+			<dx-select-box 
+				[dataSource]="projectTasks" 
+				placeholder="Go to Task..." 
+				valueExpr="id" 
+				displayExpr="taskName" 
+				[searchEnabled]="true" 
+				(onValueChanged)="changeToTask($event)"
+				[width]="320">
+			</dx-select-box>
+		</popup-footer-left>
+		<popup-footer-right>
+			<button class="btn btn-default" (click)="close()">Close</button> 
+			<button class="btn btn-primary" (click)="save()">Save</button> 
+		</popup-footer-right>
+	</popup-footer>
+</costar-popup>
+

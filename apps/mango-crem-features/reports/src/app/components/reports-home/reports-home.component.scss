@@ -1,0 +1,100 @@
+.reports-right-container {
+	height: 100%;
+}
+
+div.reports-toolBar-wrapper {
+	width: 100%!important;
+  position: sticky!important;
+	top: 0;
+}
+.reports-toolBar-wrapper > div {
+	height: 32px;
+}
+
+.controls-left > div {
+	margin-right: 8px;
+}
+
+.controls-right > div {
+	margin-left: 8px;
+}
+
+.reports-toolBar-wrapper {
+	padding: 8px 16px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	.controls-left {
+		display: flex;
+		flex-direction: row;
+
+		.title {
+			font-size: 20px;
+			font-weight: 500;
+			font-family: Helvetica,sans-serif;
+			margin-right: 16px;
+			margin-bottom: 0px;
+		}
+	}
+
+	.controls-right {
+		display: flex;
+	}
+
+}
+
+.reports-dataGrid-wrapper {
+	height: calc(100% - 50px);
+	font-size: 16px;
+
+	dx-data-grid {
+		width: 100%;
+		height: 100% !important;
+	}
+}
+
+button.btn.btn-default.star {
+	display: flex;
+	align-items: center;
+}
+
+button.btn.btn-default.star:focus {
+	outline: 3px solid #779ede !important;
+}
+
+mat-icon.favorite-icon-table {
+	font-size: 18px;
+}
+
+button.btn.btn-default.moreButton {
+	display: flex;
+	align-items: center;
+	font-size: 16px;
+	color: #000;
+
+	mat-icon {
+		transform: translateY(2px);
+	}
+}
+
+::ng-deep mango-reports {
+	div.dx-datagrid.dx-gridbase-container {
+		div.dx-datagrid-pager {
+			div.dx-button-disable.dx-navigate-button {
+				&:focus {
+					outline: none !important;
+				}
+			}
+		}
+	}
+}
+
+.star-outline {
+	--favIconColor: transparent;
+}
+
+.star-favorited {
+	--favIconColor: #FFB400;
+}

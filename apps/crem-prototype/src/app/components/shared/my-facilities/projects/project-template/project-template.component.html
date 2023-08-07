@@ -1,0 +1,34 @@
+<div class="object-wrapper">
+	<div class="object-banner">
+		<div class="object-close" (click)="close()">
+			<fa-icon icon="times"></fa-icon>
+		</div>
+		<div class="object-header">
+			<div class="object-subtitle">
+				Project Template
+			</div>
+			<div class="object-title">
+				New Contstruction
+			</div>			
+		</div>		
+	</div>
+	<div class="object-content">
+		<mat-drawer-container>
+			<mat-drawer mode="side" opened class="left-nav">
+				<mat-nav-list>
+					<mat-list>						
+						<mat-list-item [routerLink]="['tasks']" [routerLinkActive]="['active']">Tasks</mat-list-item>						
+						<mat-list-item [routerLink]="['settings']" [routerLinkActive]="['active']">Settings</mat-list-item>						
+					</mat-list>
+					<mat-divider></mat-divider>
+					<mat-list>
+						<mat-list-item [routerLink]="['files']" [routerLinkActive]="['active']">Files</mat-list-item>
+					</mat-list>
+				</mat-nav-list>
+			</mat-drawer>
+			<mat-drawer-content>
+				<router-outlet></router-outlet>
+			</mat-drawer-content>
+		</mat-drawer-container>
+	</div>
+</div>

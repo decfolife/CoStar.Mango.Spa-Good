@@ -1,0 +1,45 @@
+<div [id]="tooltipId" class="dx-field">
+  <div class="iconWrapper dx-field-value-static">
+    <div [id]="tooltipId + 'Trigger'" (click)="getHelpText()">
+      <crem-icon
+        transform="scale(.8)"
+        fill="#808080"
+        icon="brand-info-border"
+        library="local"
+        tabindex="0"
+        (keydown.enter)="getHelpText()"
+        (keydown.space)="getHelpText(); $event.preventDefault()"
+        role="button"
+        [attr.aria-label]="'More information ' + tooltipId" 
+      ></crem-icon>
+    </div>
+
+    <dx-popover
+      [target]="'#' + tooltipId + 'Trigger'"
+      position="top"
+      [width]="400"
+      [(visible)]="withAnimationOptionsVisible"
+    >
+      <dxo-animation>
+        <dxo-show
+          type="pop"
+          [from]="{ scale: 0 }"
+          [to]="{ scale: 1 }"
+        ></dxo-show>
+        <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
+      </dxo-animation>
+      <div id="popoverWrapper">
+        <!-- <div *ngIf="fieldTitleData" id="popoverWrapper">
+          <div class="popoverTitle">
+            {{fieldTitleData}}
+          </div>
+        </div> -->
+        <div *ngIf="helpTextData" 
+          role="alert">{{ helpTextData }}</div>
+        <div *ngIf="helpTextData === null || helpTextData === undefined">
+          <p>No help text available.</p>
+        </div>
+      </div>
+    </dx-popover>
+  </div>
+</div>

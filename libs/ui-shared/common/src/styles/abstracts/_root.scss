@@ -1,0 +1,26 @@
+@use "mixins" as *;
+@use "variables" as *;
+
+//------------------------------------------------
+//--- GLOBAL TOKEN DEFINITIONS: Context agnostic variables
+//------------------------------------------------
+// Note: CSS4 variables can be directly used but prefer costar() mixin
+// todo: generate :root variables based on $css4-maps var for full correspondence
+:root {
+
+  //------------------------------------------------
+  // --- Colors Page
+  //------------------------------------------------
+  @include get-css4-vars($color);
+
+  //------------------------------------------------
+  // --- Fonts Page
+  //------------------------------------------------
+  @include get-css4-vars($font);
+
+  //------------------------------------------------
+  // --- Utilities Page
+  //------------------------------------------------
+  @include get-css4-vars($animation);
+
+}

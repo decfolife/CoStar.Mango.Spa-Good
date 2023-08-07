@@ -1,0 +1,31 @@
+@use "../../../../common/src/styles" as *;
+@import './assets/icon-sprites/icons-arrows.scss';
+@import './assets/icon-sprites/icons-brand.scss';
+@import './assets/icon-sprites/icons-social.scss';
+@import './assets/icon-sprites/icons-maps.scss';
+
+span {
+  &.icon {
+    &-primary {
+      @include costar(color, primary);
+    }
+    &-secondary {
+      @include costar(color, secondary);
+    }
+    &-light {
+      @include costar(color, light);
+    }
+    &-dark {
+      @include costar(color, dark);
+    }
+    &-danger {
+      @include costar(color, danger);
+    }
+    &-warning {
+      @include costar(color, warning);
+    }
+    &-info {
+      @include costar(color, info);
+    }
+  }
+}

@@ -1,0 +1,43 @@
+<button
+  type="button"
+  [ngClass]="getCssClasses()"
+  [class]="className"
+  [style]="styles"
+  [attr.aria-label]="ariaLabel"
+  [attr.disabled]="disabled ? true : null"
+>
+
+  <ng-container *ngIf="icon">
+    <crem-icon
+      class="icon"
+      [icon]="icon"
+      [library]="iconConf?.library"
+      [pack]="iconConf?.pack"
+      [color]="iconConf?.color"
+      [rotate]="iconConf?.rotate"
+      [flip]="iconConf?.flip"
+      [animation]="iconConf?.animation"
+      [size]="iconConf?.size"
+      [pull]="iconConf?.pull"
+      [fill]="iconConf?.fill"
+      [transform]="iconConf?.transform"
+    ></crem-icon>
+  </ng-container>
+
+  <span class="content">
+    <ng-container #textProp>
+      <ng-content class="text"></ng-content>
+    </ng-container>
+    <ng-container
+      *ngIf="
+        textProp.childElementCount === undefined ||
+        textProp.childElementCount === 0
+      "
+    >
+      {{text}}
+    </ng-container>
+  </span>
+
+  <span class="tag"></span>
+
+</button>

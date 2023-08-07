@@ -1,0 +1,99 @@
+<div class="row">
+	<div class="col-md-12 dbl-bottom-margin">
+		<mat-button-toggle-group name="duration" class="no-margins">
+			<mat-button-toggle>7 day</mat-button-toggle>
+			<mat-button-toggle class="mat-button-toggle-checked">30 day</mat-button-toggle>
+			<mat-button-toggle>60 day</mat-button-toggle>
+			<mat-button-toggle>90 day</mat-button-toggle>
+			<mat-button-toggle>6 mon</mat-button-toggle>
+			<mat-button-toggle>1 year</mat-button-toggle>
+			<mat-button-toggle>All</mat-button-toggle>
+		</mat-button-toggle-group>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-7">
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>
+				<mat-card-title>Listing Activity Summary</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+			</mat-card-content>
+		</mat-card>
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>
+				<mat-card-title>Top Acquisition Channels</mat-card-title>
+				<div>
+					<button class="btn btn-default" [matMenuTriggerFor]="acquisitionChannelChartMenu"><fa-icon icon="ellipsis-h"></fa-icon>
+					</button>
+					<mat-menu #acquisitionChannelChartMenu="matMenu">
+						<button mat-menu-item>Download</button>
+						<button mat-menu-item>Full Screen</button>
+					</mat-menu>
+				</div>
+			</mat-card-header>
+			<mat-card-content>
+			</mat-card-content>
+		</mat-card>
+	</div>
+	<div class="col-md-5">
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>
+				<mat-card-title>Listing Engagements</mat-card-title>
+				<div>
+					<button class="btn btn-default" [matMenuTriggerFor]="listingEngagementsChartMenu"><fa-icon icon="ellipsis-h"></fa-icon>
+					</button>
+					<mat-menu #listingEngagementsChartMenu="matMenu">
+						<button mat-menu-item>Download</button>
+						<button mat-menu-item>Full Screen</button>
+					</mat-menu>
+				</div>
+			</mat-card-header>
+			<mat-card-content>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>
+				<mat-card-title>Listing Performance</mat-card-title>
+				<mat-button-toggle-group name="chartToggle" class="no-margins">
+					<mat-button-toggle>Impressions</mat-button-toggle>
+					<mat-button-toggle>Detail Views</mat-button-toggle>				
+				</mat-button-toggle-group>
+				<div>
+					<button class="btn btn-default" [matMenuTriggerFor]="impressionChartMenu"><fa-icon icon="ellipsis-h"></fa-icon>
+					</button>
+					<mat-menu #impressionChartMenu="matMenu">
+						<button mat-menu-item>Download</button>
+						<button mat-menu-item>Full Screen</button>
+					</mat-menu>
+				</div>
+			</mat-card-header>
+			<mat-card-content>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<mat-card class="dbl-bottom-margin">
+			<mat-card-header>
+				<mat-card-title>Visitor Details</mat-card-title>
+				<div>
+					<button class="btn btn-default" [matMenuTriggerFor]="visitorChartMenu"><fa-icon icon="ellipsis-h"></fa-icon>
+					</button>
+					<mat-menu #visitorChartMenu="matMenu">
+						<button mat-menu-item>Download</button>
+						<button mat-menu-item>Full Screen</button>
+					</mat-menu>
+				</div>
+			</mat-card-header>
+			<mat-card-content>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</div>
+

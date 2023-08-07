@@ -1,0 +1,82 @@
+<mat-card class="mb-4">
+  <mat-card-header>
+    <mat-card-title>Component Inputs</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="quarter">
+      <mat-slide-toggle [(ngModel)]="showMore">
+        Show more menu?
+      </mat-slide-toggle>
+
+      <mat-slide-toggle [(ngModel)]="showPortfolio">
+        Show portfolio picker?
+      </mat-slide-toggle>
+
+      <mat-slide-toggle [(ngModel)]="showColumnChooser" [disabled]="!showMore"
+        >Show 'column chooser'?</mat-slide-toggle
+      >
+
+      <mat-slide-toggle [(ngModel)]="showAdd">
+        Show add button?
+      </mat-slide-toggle>
+    </div>
+
+    <div class="quarter">
+      <mat-slide-toggle [(ngModel)]="showListMap">
+        Show list/map toggle?
+      </mat-slide-toggle>
+
+      <mat-slide-toggle [(ngModel)]="showSaveAs" [disabled]="!showMore"
+        >Show 'save as'?</mat-slide-toggle
+      >
+
+      <mat-slide-toggle [(ngModel)]="showExport" [disabled]="!showMore"
+        >Show export?</mat-slide-toggle
+      >
+
+      <mat-slide-toggle [(ngModel)]="showHeaderFilter">
+        Show header filters?
+      </mat-slide-toggle>
+    </div>
+
+    <div class="quarter">
+      <mat-slide-toggle [(ngModel)]="showFilters">
+        Show filters button?
+      </mat-slide-toggle>
+
+      <mat-slide-toggle [(ngModel)]="showShare">
+        Show 'share'?
+      </mat-slide-toggle>
+    </div>
+
+    <div class="quarter">
+      <mat-slide-toggle [(ngModel)]="showSearch">
+        Show search?
+      </mat-slide-toggle>
+
+      <mat-slide-toggle [(ngModel)]="showExpandCollapse" [disabled]="!showMore"
+        >Show 'expand/collapse all'?</mat-slide-toggle
+      >
+
+      <mat-slide-toggle [(ngModel)]="showArchiveToggle" [disabled]="!showMore"
+        >Show archive?</mat-slide-toggle
+      >
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<app-list-page
+  [showMoreMenu]="showMore"
+  [showListMapToggle]="showListMap"
+  [showFilterButton]="showFilters"
+  [showSearch]="showSearch"
+  [showPortfolioPicker]="showPortfolio"
+  [showSaveAs]="showSaveAs"
+  [showShare]="showShare"
+  [showExpandCollapse]="showExpandCollapse"
+  [showColumnChooser]="showColumnChooser"
+  [showExport]="showExport"
+  [showAddButton]="showAdd"
+  [showHeaderFilter]="showHeaderFilter"
+></app-list-page>

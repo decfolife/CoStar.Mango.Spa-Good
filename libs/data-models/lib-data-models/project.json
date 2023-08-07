@@ -1,0 +1,27 @@
+{
+  "name": "data-models-lib-data-models",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/data-models/lib-data-models/src",
+  "prefix": "mango",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/data-models/lib-data-models/src/**/*.ts",
+          "libs/data-models/lib-data-models/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/data-models/lib-data-models"],
+      "options": {
+        "jestConfig": "libs/data-models/lib-data-models/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

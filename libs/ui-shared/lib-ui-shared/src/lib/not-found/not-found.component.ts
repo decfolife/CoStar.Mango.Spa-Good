@@ -1,0 +1,10 @@
+import { Component } from '@angular/core';
+import { fadeInOut } from '@mango/core-shared';
+
+@Component({
+  selector: 'not-found',
+  templateUrl: './not-found.component.html',
+  styleUrls: ['./not-found.component.scss'],
+  animations: [fadeInOut],
+})
+export class NotFoundComponent {}

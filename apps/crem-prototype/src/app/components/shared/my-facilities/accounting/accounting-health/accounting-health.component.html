@@ -1,0 +1,60 @@
+<div class="list-page">
+  <div class="list-page-controls-wrapper">
+    <div class="controls-left">
+      <h5 class="dbl-right-margin">Lease Alerts</h5>
+
+			<costar-search (changed)="searchDataGrid($event)"></costar-search>
+
+      <portfolio-menu (portfolioChanged)="onPortfolioChange($event)"></portfolio-menu>
+    </div>
+
+    <div class="controls-right">
+      <button class="btn btn-default"
+        (click)="showFilterBuilder()"
+      >Filters
+        <div *ngIf="appliedFilterCount > 0 && !showClearFilters"
+          class="badge primary costar std-left-margin"
+          (mouseover)="toggleClearFilters()"
+        >{{ appliedFilterCount }}</div>
+
+        <div *ngIf="appliedFilterCount > 0 && showClearFilters"
+          class="badge primary costar std-left-margin underline"
+          (mouseout)="toggleClearFilters()"
+          (click)="clearGridFilters($event)"
+        >Clear {{appliedFilterCount}} Filters</div>
+      </button>
+
+      <button class="btn btn-default"
+        [matMenuTriggerFor]="moreMenu"
+      >More <fa-icon icon="caret-down"></fa-icon></button>
+
+      <mat-menu #moreMenu="matMenu">
+				<button mat-menu-item
+          (click)="showColumnChooser()"
+        >Column Chooser</button>
+
+        <div mat-menu-item>
+          <mat-slide-toggle
+            (click)="$event.stopPropagation()"
+            [checked]="showDismissed"
+          >Show Dismissed</mat-slide-toggle>
+        </div>
+
+        <button mat-menu-item
+          (click)="exportDataGrid()"
+        >Export</button>
+      </mat-menu>
+
+      <button class="btn btn-primary"
+        [disabled]="toggleButtonDisabled"
+        (click)="toggleSelected()"
+      >Toggle Selected</button>
+    </div>
+  </div>
+
+  <div class="list-page-data-grid-wrapper">
+    <app-accounting-health-grid #AlertsGrid
+      (onGridSelectionChanged)="gridSelectionChanged($event)"
+    ></app-accounting-health-grid>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable, Optional } from '@angular/core';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { environment } from '../../../../../apps/mango/src/environments/environment.local';
+import { EndpointService } from './endpoint.service';
+
+@Injectable()
+
+export class DataService  extends EndpointService{
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
+  }
+
+  getPortfolioMetricDataByElementType(elementTypeName: string, unitOfMeasureId: number, selectedFilters: string, exchangeRateId: number): Observable<any> {
+   
+    return of(1);
+    // if (environment.isRestful) {
+    //   const url = `${environment.appUrls.dashboards}PortfolioMetrics/GetMetricDataByElementType`;
+    //   return this.callHttpPost(url, 'getMetricDataByElementType', { elementTypeName, unitOfMeasureId, selectedFilters, exchangeRateId })
+    // }
+
+    // const url = environment.appUrls.dashboards + 'GetMetricDataByElementType';
+    // return this.callHttpPost(url, 'getMetricDataByElementType', { elementTypeName, unitOfMeasureId, selectedFilters, exchangeRateId })
+  }
+
+  getProjectMetricDataByElementType(elementTypeName: string,  selectedFilters: string): Observable<any> {
+    return of(1);
+    // if (environment.isRestful) {
+    //   const url = 'http://localhost:57586/api/ProjectsMetrics/GetMetricDataByElementType';
+    //   return this.callHttpPost(url, 'getMetricDataByElementType', { elementTypeName, selectedFilters})
+    // }
+
+    // const url ='/v06/WebServices/Mango/Dashboards/Project.asmx/GetMetricDataByElementType';
+    // return this.callHttpPost(url, 'getMetricDataByElementType', { elementTypeName, selectedFilters})
+  }
+
+  getQuickSearchModules() : Observable<any> {
+    const url = `${environment.appUrls.quickSearch}/quicksearch/getmodulevalues`;
+    return this.callHttpGet(url, 'getmodulevalues');
+  }
+
+  getTypeAheadResults(searchString: string, moduleId: number): Observable<any> {
+    const url = `${environment.appUrls.quickSearch}/quicksearch/gettypeaheadvalues/${searchString}/${moduleId}`;
+    return this.callHttpGet(url, 'gettypeaheadvalues');
+  }
+
+  fetchAllPortfolioMetrics(schemaMetrics: any, unitOfMeasureId: number, selectedFilters: string, exchangeRateId: number): Observable<any> {
+    if (environment.isRestful) {
+      const url = `${environment.appUrls.dashboards}PortfolioMetrics/GetAllPortfolioMetrics`;
+      return this.callHttpPost(url, 'getAllPortfolioMetrics', { schemaMetrics, unitOfMeasureId, selectedFilters, exchangeRateId })
+    }
+
+    const url = environment.appUrls.dashboards + 'GetAllPortfolioMetrics';
+    return this.callHttpPost(url, 'getAllPortfolioMetrics', { schemaMetrics, unitOfMeasureId, selectedFilters, exchangeRateId })
+  }
+
+  fetchAllProjectMetrics(schemaMetrics: any, selectedFilters: string): Observable<any> {
+    if (environment.isRestful) {
+      const url = `${environment.appUrls.dashboards}ProjectsMetrics/GetAllProjectMetrics`;
+      return this.callHttpPost(url, 'getAllProjectMetrics', { schemaMetrics, selectedFilters })
+    }
+
+    const url = environment.appUrls.dashboards + 'GetAllProjectMetrics';
+    return this.callHttpPost(url, 'getAllProjectMetrics', { schemaMetrics, selectedFilters })
+  }
+}
+

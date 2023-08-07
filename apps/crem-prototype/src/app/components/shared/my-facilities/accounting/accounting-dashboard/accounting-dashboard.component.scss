@@ -1,0 +1,13 @@
+@import '../../../../../../assets/styles/colors.scss';
+
+.dashboard-card-drag {
+	.card-drag-handle {
+	  font-size: 2em;
+	  color: $neutral-dark;
+	  cursor: move;
+	  position: absolute;
+	  top: 12px;
+	  right: 28px;
+	  z-index: 10;
+	}
+}

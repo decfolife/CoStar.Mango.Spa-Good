@@ -1,0 +1,43 @@
+/* You can add global styles to this file, and also import other style files */
+// @import '~devexpress-gantt/dist/dx-gantt.css';
+
+body {
+    margin: 0px;
+}
+
+.main, .main-page {
+    height: 100%;
+}
+
+mango-reports,
+aws-report,
+exchange-rate-sets,
+mango-group-user-module-rights,
+mango-group-user-blocked-admin-links,
+mango-group-user-history,
+mango-project-gantt-chart,
+reports-segment,
+mango-group-user-navigation-rights {
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
+    @import "./assets/styles/reports.scss";
+
+    
+}
+
+reports-segment {
+    mat-button-toggle-group {
+        margin-left: 8px;
+
+        .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+            line-height: 32px !important;
+        }
+    }
+}
+
+.dx-overlay-wrapper.dx-popup-wrapper.reportsDropDown .dx-overlay-content {
+	min-width: 320px !important;
+}
+
+.dx-overlay-content.dx-popup-normal.dx-resizable.dx-popup-flex-height.reportsDropDown {
+    min-width: 320px !important;
+}

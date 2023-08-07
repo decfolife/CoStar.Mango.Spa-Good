@@ -1,0 +1,8 @@
+<div class="main-page">
+  <!-- Page content -->
+  <div class="main">
+    <router-outlet>
+      <mango-loading-screen [color]="'light'" [loading]="!(loaded$ | async)"></mango-loading-screen>
+    </router-outlet>
+  </div>
+</div>

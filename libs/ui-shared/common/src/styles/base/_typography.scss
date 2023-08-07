@@ -1,0 +1,59 @@
+// -----------------------------------------------
+// -- TYPOGRAPHY
+// _typography.scss uses RFS
+// Responsive Font Size (RFS) is an engine that automatically calculates and updates the font-size property
+// on elements based on the dimensions of the browser viewport while allowing to configure every single aspect.
+// Read more at https://github.com/twbs/rfs#configuration
+// or https://css-tricks.com/using-a-mixin-to-take-the-math-out-of-responsive-font-sizes/#aa-everything-is-configurable
+// -----------------------------------------------
+@use "../abstracts/variables" as *;
+@use "../vendors/font-family/roboto";
+
+body {
+  @include costar(font-family, body);
+  @include costar(font-size, body);
+}
+
+//------------------------------------------------
+//--- Headings & Display
+//------------------------------------------------
+
+h1 {
+  @include costar(font-size, h1);
+  @include costar(line-height, h1);
+}
+
+h2 {
+  @include costar(font-size, h2);
+  @include costar(line-height, h2);
+}
+
+h3 {
+  @include costar(font-size, h3);
+  @include costar(line-height, h3);
+}
+
+h4 {
+  @include costar(font-size, h4);
+  @include costar(line-height, h4);
+}
+
+.eyebrow{
+  @include costar(font-size, eyebrow);
+  @include costar(line-height, eyebrow);
+}
+
+.display-1{
+  @include costar(font-size, display-1);
+  @include costar(line-height, display-1);
+}
+
+.display-2{
+  @include costar(font-size, display-2);
+  @include costar(line-height, display-2);
+}
+
+.display-3{
+  @include costar(font-size, display-3);
+  @include costar(line-height, display-3);
+}

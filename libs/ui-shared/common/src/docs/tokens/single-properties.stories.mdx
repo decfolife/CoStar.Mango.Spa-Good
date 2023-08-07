@@ -1,0 +1,1846 @@
+import { Canvas, Meta, Story } from '@storybook/addon-docs';
+
+[comment]: # (This needs to be auto-generated using something like http://sassdoc.com)
+
+<Meta title="Styling/Single Properties"/>
+
+# Single Properties
+---
+
+The main mixin for **single properties is `costar()`**. It takes two parameters: the CSS property name 
+and the mixin parameter. The mixin parameter comes from the SCSS maps available at 
+ `./common/src/styles/abstract/_variables.scss`.
+
+Use the tables in here to find the mixin parameter for the component you want to style. 
+
+# Usage
+---
+
+Utilize the `costar()` mixin to ensure full compatibility across different web browsers. 
+The mixin will take care of both the CSS4 variable and the compiled variable value. 
+Don't use the CSS4 (E.g. --primary-light) or thee SCSS (Eg. $primary) variables directly. 
+
+E.g.
+``` SCSS
+button {
+  @include costar(font-family, body);
+  @include costar(border-radius, small);
+  @include costar(font-size, normal);
+  @include costar(transition, fast);
+}
+```
+
+This approach enables convenient theming and manipulation of CSS4 variables directly in the browser, 
+without relying on JavaScript. This can be particularly beneficial for enhancing accessibility and other 
+customizations.
+
+The SCSS mixin will compile into the CSS4 variable and the compiled value. E.g.:
+
+``` SCSS
+// SCSS
+@include costar(background-color, gray07);
+
+// Compiled CSS
+background-color: #FBFBFB; // For legacy support on older browsers
+background-color: var(--costar-color-gray07, #FBFBFB);
+```
+
+If the `costar()` mixin is not enough use the same CSS structure provided by the costar() mixin. 
+However, avoid using SASS variables directly, as it would defeat the purpose of CSS4 variables 
+(e.g., --costar-color-primary).
+
+E.g.
+
+``` SCSS
+// Bad
+.my-class {
+  color: $primary;
+}
+// Good
+.my-class {
+  color: map-get($color, color, primary);
+  color: var(--costar-color-primary);
+}
+
+```
+
+# Parameters
+---
+
+<br/>
+
+### Font
+
+<details>
+  <summary>font-family</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map + CSS4 Variable</th>
+    </tr>
+    {/* head */}
+    <tr>
+      <td rowspan="11">font-family</td>
+      <td>Head</td>
+      <td>@include costar(font-family, head);</td>
+      <td>
+        font-family: map-get($font, font-family, head);<br/>
+        font-family: var(--costar-font-family-head);
+      </td>
+    </tr>
+    {/* body */}
+    <tr>
+      <td>Body</td>
+      <td>@include costar(font-family, body);</td>
+      <td>
+        font-family: map-get($font, font-family, body);<br/>
+        font-family: var(--costar-font-family-body);
+      </td>
+    </tr>
+    {/* code */}
+    <tr>
+      <td>Code</td>
+      <td>@include costar(font-family, code);</td>
+      <td>
+        font-family: map-get($font, font-family, code);<br/>
+        font-family: var(--costar-font-family-code);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+<details>
+  <summary>font-size</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map + CSS4 Variable</th>
+    </tr>
+    {/* Body */}
+    <tr>
+      <td rowspan="11">font-size</td>
+      <td>Body</td>
+      <td>@include costar(font-size, body);</td>
+      <td>
+        font-size: map-get($font, font-size, body);<br/>
+        font-size: var(--costar-font-size-body);
+      </td>
+    </tr>
+    {/* Lead */}
+    <tr>
+      <td>Lead</td>
+      <td>@include costar(font-size, lead);</td>
+      <td>
+        font-size: map-get($font, font-size, lead);<br/>
+        font-size: var(--costar-font-size-lead);
+      </td>
+    </tr>
+    {/* Small */}
+    <tr>
+      <td>Small</td>
+      <td>@include costar(font-size, small);</td>
+      <td>
+        font-size: map-get($font, font-size, small);<br/>
+        font-size: var(--costar-font-size-small);
+      </td>
+    </tr>
+    {/* h1 */}
+    <tr>
+      <td>h1</td>
+      <td>@include costar(font-size, h1);</td>
+      <td>
+        font-size: map-get($font, font-size, h1);<br/>
+        font-size: var(--costar-font-size-h1);
+      </td>
+    </tr>
+    {/* h2 */}
+    <tr>
+      <td>h2</td>
+      <td>@include costar(font-size, h2);</td>
+      <td>
+        font-size: map-get($font, font-size, h2);<br/>
+        font-size: var(--costar-font-size-h2);
+      </td>
+    </tr>
+    {/* h3 */}
+    <tr>
+      <td>h3</td>
+      <td>@include costar(font-size, h3);</td>
+      <td>
+        font-size: map-get($font, font-size, h3);<br/>
+        font-size: var(--costar-font-size-h3);
+      </td>
+    </tr>
+    {/* h4 */}
+    <tr>
+      <td>h4</td>
+      <td>@include costar(font-size, h4);</td>
+      <td>
+        font-size: map-get($font, font-size, h4);<br/>
+        font-size: var(--costar-font-size-h4);
+      </td>
+    </tr>
+    {/* eyebrow */}
+    <tr>
+      <td>eyebrow</td>
+      <td>@include costar(font-size, eyebrow);</td>
+      <td>
+        font-size: map-get($font, font-size, eyebrow);<br/>
+        font-size: var(--costar-font-size-eyebrow);
+      </td>
+    </tr>
+    {/* display-1 */}
+    <tr>
+      <td>display-1</td>
+      <td>@include costar(font-size, display-1);</td>
+      <td>
+        font-size: map-get($font, font-size, display-1);<br/>
+        font-size: var(--costar-font-size-display-1);
+      </td>
+    </tr>
+    {/* display-2 */}
+    <tr>
+      <td>display-2</td>
+      <td>@include costar(font-size, display-2);</td>
+      <td>
+        font-size: map-get($font, font-size, display-2);<br/>
+        font-size: var(--costar-font-size-display-2);
+      </td>
+    </tr>
+    {/* display-3 */}
+    <tr>
+      <td>display-3</td>
+      <td>@include costar(font-size, display-3);</td>
+      <td>
+        font-size: map-get($font, font-size, display-3);<br/>
+        font-size: var(--costar-font-size-display-3);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+<details>
+  <summary>line-height</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map + CSS4 Variable</th>
+    </tr>
+    {/* Body */}
+    <tr>
+      <td rowspan="11">line-height</td>
+      <td>Body</td>
+      <td>@include costar(line-height, body);</td>
+      <td>
+        line-height: map-get($font, line-height, body);<br/>
+        line-height: var(--costar-line-height-body);
+      </td>
+    </tr>
+    {/* Lead */}
+    <tr>
+      <td>Lead</td>
+      <td>@include costar(line-height, lead);</td>
+      <td>
+        line-height: map-get($font, line-height, lead);<br/>
+        line-height: var(--costar-line-height-lead);
+      </td>
+    </tr>
+    {/* Small */}
+    <tr>
+      <td>Small</td>
+      <td>@include costar(line-height, small);</td>
+      <td>
+        line-height: map-get($font, line-height, small);<br/>
+        line-height: var(--costar-line-height-small);
+      </td>
+    </tr>
+    {/* h1 */}
+    <tr>
+      <td>h1</td>
+      <td>@include costar(line-height, h1);</td>
+      <td>
+        line-height: map-get($font, line-height, h1);<br/>
+        line-height: var(--costar-line-height-h1);
+      </td>
+    </tr>
+    {/* h2 */}
+    <tr>
+      <td>h2</td>
+      <td>@include costar(line-height, h2);</td>
+      <td>
+        line-height: map-get($font, line-height, h2);<br/>
+        line-height: var(--costar-line-height-h2);
+      </td>
+    </tr>
+    {/* h3 */}
+    <tr>
+      <td>h3</td>
+      <td>@include costar(line-height, h3);</td>
+      <td>
+        line-height: map-get($font, line-height, h3);<br/>
+        line-height: var(--costar-line-height-h3);
+      </td>
+    </tr>
+    {/* h4 */}
+    <tr>
+      <td>h4</td>
+      <td>@include costar(line-height, h4);</td>
+      <td>
+        line-height: map-get($font, line-height, h4);<br/>
+        line-height: var(--costar-line-height-h4);
+      </td>
+    </tr>
+    {/* eyebrow */}
+    <tr>
+      <td>eyebrow</td>
+      <td>@include costar(line-height, eyebrow);</td>
+      <td>
+        line-height: map-get($font, line-height, eyebrow);<br/>
+        line-height: var(--costar-line-height-eyebrow);
+      </td>
+    </tr>
+    {/* display-1 */}
+    <tr>
+      <td>display-1</td>
+      <td>@include costar(line-height, display-1);</td>
+      <td>
+        line-height: map-get($font, line-height, display-1);<br/>
+        line-height: var(--costar-line-height-display-1);
+      </td>
+    </tr>
+    {/* display-2 */}
+    <tr>
+      <td>display-2</td>
+      <td>@include costar(line-height, display-2);</td>
+      <td>
+        line-height: map-get($font, line-height, display-2);<br/>
+        line-height: var(--costar-line-height-display-2);
+      </td>
+    </tr>
+    {/* display-3 */}
+    <tr>
+      <td>display-3</td>
+      <td>@include costar(line-height, display-3);</td>
+      <td>
+        line-height: map-get($font, line-height, display-3);<br/>
+        line-height: var(--costar-line-height-display-3);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+<details>
+  <summary>font-weight</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map + CSS4 Variable</th>
+    </tr>
+    {/* light */}
+    <tr>
+      <td rowspan="20">font-weight</td>
+      <td>light</td>
+      <td>@include costar(font-weight, light);</td>
+      <td>
+        font-weight: map-get($font, font-weight, light);<br/>
+        font-weight: var(--costar-font-weight-light);
+      </td>
+    </tr>
+    {/* normal */}
+    <tr>
+      <td>normal</td>
+      <td>@include costar(font-weight, normal);</td>
+      <td>
+        font-weight: map-get($font, font-weight, normal);<br/>
+        font-weight: var(--costar-font-weight-normal);
+      </td>
+    </tr>
+    {/* medium */}
+    <tr>
+      <td>medium</td>
+      <td>@include costar(font-weight, medium);</td>
+      <td>
+        font-weight: map-get($font, font-weight, medium);<br/>
+        font-weight: var(--costar-font-weight-medium);
+      </td>
+    </tr>
+    {/* bold */}
+    <tr>
+      <td>bold</td>
+      <td>@include costar(font-weight, bold);</td>
+      <td>
+        font-weight: map-get($font, font-weight, bold);<br/>
+        font-weight: var(--costar-font-weight-bold);
+      </td>
+    </tr>
+    {/* bolder */}
+    <tr>
+      <td>bolder</td>
+      <td>@include costar(font-weight, bolder);</td>
+      <td>
+        font-weight: map-get($font, font-weight, bolder);<br/>
+        font-weight: var(--costar-font-weight-bolder);
+      </td>
+    </tr>
+    {/* body */}
+    <tr>
+      <td>body</td>
+      <td>@include costar(font-weight, body);</td>
+      <td>
+        font-weight: map-get($font, font-weight, body);<br/>
+        font-weight: var(--costar-font-weight-body);
+      </td>
+    </tr>
+    {/* small */}
+    <tr>
+      <td>small</td>
+      <td>@include costar(font-weight, small);</td>
+      <td>
+        font-weight: map-get($font, font-weight, small);<br/>
+        font-weight: var(--costar-font-weight-small);
+      </td>
+    </tr>
+    {/* lead */}
+    <tr>
+      <td>lead</td>
+      <td>@include costar(font-weight, lead);</td>
+      <td>
+        font-weight: map-get($font, font-weight, lead);<br/>
+        font-weight: var(--costar-font-weight-lead);
+      </td>
+    </tr>
+    {/* h1 */}
+    <tr>
+      <td>h1</td>
+      <td>@include costar(font-weight, h1);</td>
+      <td>
+        font-weight: map-get($font, font-weight, h1);<br/>
+        font-weight: var(--costar-font-weight-h1);
+      </td>
+    </tr>
+    {/* h2 */}
+    <tr>
+      <td>h2</td>
+      <td>@include costar(font-weight, h2);</td>
+      <td>
+        font-weight: map-get($font, font-weight, h2);<br/>
+        font-weight: var(--costar-font-weight-h2);
+      </td>
+    </tr>
+    {/* h3 */}
+    <tr>
+      <td>h3</td>
+      <td>@include costar(font-weight, h3);</td>
+      <td>
+        font-weight: map-get($font, font-weight, h3);<br/>
+        font-weight: var(--costar-font-weight-h3);
+      </td>
+    </tr>
+    {/* h4 */}
+    <tr>
+      <td>h4</td>
+      <td>@include costar(font-weight, h4);</td>
+      <td>
+        font-weight: map-get($font, font-weight, h4);<br/>
+        font-weight: var(--costar-font-weight-h4);
+      </td>
+    </tr>
+    {/* eyebrow */}
+    <tr>
+      <td>eyebrow</td>
+      <td>@include costar(font-weight, eyebrow);</td>
+      <td>
+        font-weight: map-get($font, font-weight, eyebrow);<br/>
+        font-weight: var(--costar-font-weight-eyebrow);
+      </td>
+    </tr>
+    {/* display-1 */}
+    <tr>
+      <td>display-1</td>
+      <td>@include costar(font-weight, display-1);</td>
+      <td>
+        font-weight: map-get($font, font-weight, display-1);<br/>
+        font-weight: var(--costar-font-weight-display-1);
+      </td>
+    </tr>
+    {/* display-2 */}
+    <tr>
+      <td>display-2</td>
+      <td>@include costar(font-weight, display-2);</td>
+      <td>
+        font-weight: map-get($font, font-weight, display-2);<br/>
+        font-weight: var(--costar-font-weight-display-2);
+      </td>
+    </tr>
+    {/* display-3 */}
+    <tr>
+      <td>display-3</td>
+      <td>@include costar(font-weight, display-3);</td>
+      <td>
+        font-weight: map-get($font, font-weight, display-3);<br/>
+        font-weight: var(--costar-font-weight-display-3);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+### Color
+The following table is for the CSS `color` property. 
+Use it as a reference for the CSS properties 
+`background-color`, and `border-color`.
+
+<details>
+  <summary>color</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map + CSS4 Variable</th>
+    </tr>
+    {/* PRIMARY */}
+    {/* primary base */}
+    <tr>
+      <td rowspan="100">
+        color
+      </td>
+      <td>primary</td>
+      <td>@include costar(color, primary);</td>
+      <td>
+        color: map-get($font, color, primary);<br/>
+        color: var(--costar-color-primary);
+      </td>
+    </tr>
+    {/* primary-light */}
+    <tr>
+      <td>primary-light</td>
+      <td>@include costar(color, primary-light);</td>
+      <td>
+        color: map-get($font, color, primary-light);<br/>
+        color: var(--costar-color-primary-light);
+      </td>
+    </tr>
+    {/* primary-lighter */}
+    <tr>
+      <td>primary-lighter</td>
+      <td>@include costar(color, primary-lighter);</td>
+      <td>
+        color: map-get($font, color, primary-lighter);<br/>
+        color: var(--costar-color-primary-lighter);
+      </td>
+    </tr>
+    {/* primary-lightest */}
+    <tr>
+      <td>primary-lightest</td>
+      <td>@include costar(color, primary-lightest);</td>
+      <td>
+        color: map-get($font, color, primary-lightest);<br/>
+        color: var(--costar-color-primary-lightest);
+      </td>
+    </tr>
+    {/* primary-dark */}
+    <tr>
+      <td>primary-dark</td>
+      <td>@include costar(color, primary-dark);</td>
+      <td>
+        color: map-get($font, color, primary-dark);<br/>
+        color: var(--costar-color-primary-dark);
+      </td>
+    </tr>
+    {/* primary-darker */}
+    <tr>
+      <td>primary-darker</td>
+      <td>@include costar(color, primary-darker);</td>
+      <td>
+        color: map-get($font, color, primary-darker);<br/>
+        color: var(--costar-color-primary-darker);
+      </td>
+    </tr>
+    {/* primary-darkest */}
+    <tr>
+      <td>primary-darkest</td>
+      <td>@include costar(color, primary-darkest);</td>
+      <td>
+        color: map-get($font, color, primary-darkest);<br/>
+        color: var(--costar-color-primary-darkest);
+      </td>
+    </tr>
+    {/* SECONDARY */}
+    {/* secondary base */}
+    <tr>
+      <td>secondary</td>
+      <td>@include costar(color, secondary);</td>
+      <td>
+        color: map-get($font, color, secondary);<br/>
+        color: var(--costar-color-secondary);
+      </td>
+    </tr>
+    {/* secondary-light */}
+    <tr>
+      <td>secondary-light</td>
+      <td>@include costar(color, secondary-light);</td>
+      <td>
+        color: map-get($font, color, secondary-light);<br/>
+        color: var(--costar-color-secondary-light);
+      </td>
+    </tr>
+    {/* secondary-lighter */}
+    <tr>
+      <td>secondary-lighter</td>
+      <td>@include costar(color, secondary-lighter);</td>
+      <td>
+        color: map-get($font, color, secondary-lighter);<br/>
+        color: var(--costar-color-secondary-lighter);
+      </td>
+    </tr>
+    {/* secondary-lightest */}
+    <tr>
+      <td>secondary-lightest</td>
+      <td>@include costar(color, secondary-lightest);</td>
+      <td>
+        color: map-get($font, color, secondary-lightest);<br/>
+        color: var(--costar-color-secondary-lightest);
+      </td>
+    </tr>
+    {/* secondary-dark */}
+    <tr>
+      <td>secondary-dark</td>
+      <td>@include costar(color, secondary-dark);</td>
+      <td>
+        color: map-get($font, color, secondary-dark);<br/>
+        color: var(--costar-color-secondary-dark);
+      </td>
+    </tr>
+    {/* secondary-darker */}
+    <tr>
+      <td>secondary-darker</td>
+      <td>@include costar(color, secondary-darker);</td>
+      <td>
+        color: map-get($font, color, secondary-darker);<br/>
+        color: var(--costar-color-secondary-darker);
+      </td>
+    </tr>
+    {/* secondary-darkest */}
+    <tr>
+      <td>secondary-darkest</td>
+      <td>@include costar(color, secondary-darkest);</td>
+      <td>
+        color: map-get($font, color, secondary-darkest);<br/>
+        color: var(--costar-color-secondary-darkest);
+      </td>
+    </tr>
+    {/* NEUTRAL */}
+    {/* light */}
+    <tr>
+      <td>light</td>
+      <td>@include costar(color, light);</td>
+      <td>
+        color: map-get($font, color, light);<br/>
+        color: var(--costar-color-light);
+      </td>
+    </tr>
+    {/* dark */}
+    <tr>
+      <td>dark</td>
+      <td>@include costar(color, dark);</td>
+      <td>
+        color: map-get($font, color, dark);<br/>
+        color: var(--costar-color-dark);
+      </td>
+    </tr>
+    {/* background */}
+    <tr>
+      <td>background</td>
+      <td>@include costar(color, background);</td>
+      <td>
+        color: map-get($font, color, background);<br/>
+        color: var(--costar-color-background);
+      </td>
+    </tr>
+    {/* GRAYS */}
+    {/* gray01 */}
+    <tr>
+      <td>gray01</td>
+      <td>@include costar(color, gray01);</td>
+      <td>
+        color: map-get($font, color, gray01);<br/>
+        color: var(--costar-color-gray01);
+      </td>
+    </tr>
+    {/* gray02 */}
+    <tr>
+      <td>gray02</td>
+      <td>@include costar(color, gray02);</td>
+      <td>
+        color: map-get($font, color, gray02);<br/>
+        color: var(--costar-color-gray02);
+      </td>
+    </tr>
+    {/* gray03 */}
+    <tr>
+      <td>gray03</td>
+      <td>@include costar(color, gray03);</td>
+      <td>
+        color: map-get($font, color, gray03);<br/>
+        color: var(--costar-color-gray03);
+      </td>
+    </tr>
+    {/* gray04 */}
+    <tr>
+      <td>gray04</td>
+      <td>@include costar(color, gray04);</td>
+      <td>
+        color: map-get($font, color, gray04);<br/>
+        color: var(--costar-color-gray04);
+      </td>
+    </tr>
+    {/* gray05 */}
+    <tr>
+      <td>gray05</td>
+      <td>@include costar(color, gray05);</td>
+      <td>
+        color: map-get($font, color, gray05);<br/>
+        color: var(--costar-color-gray05);
+      </td>
+    </tr>
+    {/* gray06 */}
+    <tr>
+      <td>gray06</td>
+      <td>@include costar(color, gray06);</td>
+      <td>
+        color: map-get($font, color, gray06);<br/>
+        color: var(--costar-color-gray06);
+      </td>
+    </tr>
+    {/* gray07 */}
+    <tr>
+      <td>gray07</td>
+      <td>@include costar(color, gray07);</td>
+      <td>
+        color: map-get($font, color, gray07);<br/>
+        color: var(--costar-color-gray07);
+      </td>
+    </tr>
+    {/* SUCCESS */}
+    {/* success base */}
+    <tr>
+      <td>success</td>
+      <td>@include costar(color, success);</td>
+      <td>
+        color: map-get($font, color, success);<br/>
+        color: var(--costar-color-success);
+      </td>
+    </tr>
+    {/* success-light */}
+    <tr>
+      <td>success-light</td>
+      <td>@include costar(color, success-light);</td>
+      <td>
+        color: map-get($font, color, success-light);<br/>
+        color: var(--costar-color-success-light);
+      </td>
+    </tr>
+    {/* success-lighter */}
+    <tr>
+      <td>success-lighter</td>
+      <td>@include costar(color, success-lighter);</td>
+      <td>
+        color: map-get($font, color, success-lighter);<br/>
+        color: var(--costar-color-success-lighter);
+      </td>
+    </tr>
+    {/* success-lightest */}
+    <tr>
+      <td>success-lightest</td>
+      <td>@include costar(color, success-lightest);</td>
+      <td>
+        color: map-get($font, color, success-lightest);<br/>
+        color: var(--costar-color-success-lightest);
+      </td>
+    </tr>
+    {/* success-dark */}
+    <tr>
+      <td>success-dark</td>
+      <td>@include costar(color, success-dark);</td>
+      <td>
+        color: map-get($font, color, success-dark);<br/>
+        color: var(--costar-color-success-dark);
+      </td>
+    </tr>
+    {/* success-darker */}
+    <tr>
+      <td>success-darker</td>
+      <td>@include costar(color, success-darker);</td>
+      <td>
+        color: map-get($font, color, success-darker);<br/>
+        color: var(--costar-color-success-darker);
+      </td>
+    </tr>
+    {/* success-darkest */}
+    <tr>
+      <td>success-darkest</td>
+      <td>@include costar(color, success-darkest);</td>
+      <td>
+        color: map-get($font, color, success-darkest);<br/>
+        color: var(--costar-color-success-darkest);
+      </td>
+    </tr>
+    {/* INFO */}
+    {/* info base */}
+    <tr>
+      <td>info</td>
+      <td>@include costar(color, info);</td>
+      <td>
+        color: map-get($font, color, info);<br/>
+        color: var(--costar-color-info);
+      </td>
+    </tr>
+    {/* info-light */}
+    <tr>
+      <td>info-light</td>
+      <td>@include costar(color, info-light);</td>
+      <td>
+        color: map-get($font, color, info-light);<br/>
+        color: var(--costar-color-info-light);
+      </td>
+    </tr>
+    {/* info-lighter */}
+    <tr>
+      <td>info-lighter</td>
+      <td>@include costar(color, info-lighter);</td>
+      <td>
+        color: map-get($font, color, info-lighter);<br/>
+        color: var(--costar-color-info-lighter);
+      </td>
+    </tr>
+    {/* info-lightest */}
+    <tr>
+      <td>info-lightest</td>
+      <td>@include costar(color, info-lightest);</td>
+      <td>
+        color: map-get($font, color, info-lightest);<br/>
+        color: var(--costar-color-info-lightest);
+      </td>
+    </tr>
+    {/* info-dark */}
+    <tr>
+      <td>info-dark</td>
+      <td>@include costar(color, info-dark);</td>
+      <td>
+        color: map-get($font, color, info-dark);<br/>
+        color: var(--costar-color-info-dark);
+      </td>
+    </tr>
+    {/* info-darker */}
+    <tr>
+      <td>info-darker</td>
+      <td>@include costar(color, info-darker);</td>
+      <td>
+        color: map-get($font, color, info-darker);<br/>
+        color: var(--costar-color-info-darker);
+      </td>
+    </tr>
+    {/* info-darkest */}
+    <tr>
+      <td>info-darkest</td>
+      <td>@include costar(color, info-darkest);</td>
+      <td>
+        color: map-get($font, color, info-darkest);<br/>
+        color: var(--costar-color-info-darkest);
+      </td>
+    </tr>
+    {/* WARNING */}
+    {/* warning base */}
+    <tr>
+      <td>warning</td>
+      <td>@include costar(color, warning);</td>
+      <td>
+        color: map-get($font, color, warning);<br/>
+        color: var(--costar-color-warning);
+      </td>
+    </tr>
+    {/* warning-light */}
+    <tr>
+      <td>warning-light</td>
+      <td>@include costar(color, warning-light);</td>
+      <td>
+        color: map-get($font, color, warning-light);<br/>
+        color: var(--costar-color-warning-light);
+      </td>
+    </tr>
+    {/* warning-lighter */}
+    <tr>
+      <td>warning-lighter</td>
+      <td>@include costar(color, warning-lighter);</td>
+      <td>
+        color: map-get($font, color, warning-lighter);<br/>
+        color: var(--costar-color-warning-lighter);
+      </td>
+    </tr>
+    {/* warning-lightest */}
+    <tr>
+      <td>warning-lightest</td>
+      <td>@include costar(color, warning-lightest);</td>
+      <td>
+        color: map-get($font, color, warning-lightest);<br/>
+        color: var(--costar-color-warning-lightest);
+      </td>
+    </tr>
+    {/* warning-dark */}
+    <tr>
+      <td>warning-dark</td>
+      <td>@include costar(color, warning-dark);</td>
+      <td>
+        color: map-get($font, color, warning-dark);<br/>
+        color: var(--costar-color-warning-dark);
+      </td>
+    </tr>
+    {/* warning-darker */}
+    <tr>
+      <td>warning-darker</td>
+      <td>@include costar(color, warning-darker);</td>
+      <td>
+        color: map-get($font, color, warning-darker);<br/>
+        color: var(--costar-color-warning-darker);
+      </td>
+    </tr>
+    {/* warning-darkest */}
+    <tr>
+      <td>warning-darkest</td>
+      <td>@include costar(color, warning-darkest);</td>
+      <td>
+        color: map-get($font, color, warning-darkest);<br/>
+        color: var(--costar-color-warning-darkest);
+      </td>
+    </tr>
+    {/* DANGER */}
+    {/* danger base */}
+    <tr>
+      <td>danger</td>
+      <td>@include costar(color, danger);</td>
+      <td>
+        color: map-get($font, color, danger);<br/>
+        color: var(--costar-color-danger);
+      </td>
+    </tr>
+    {/* danger-light */}
+    <tr>
+      <td>danger-light</td>
+      <td>@include costar(color, danger-light);</td>
+      <td>
+        color: map-get($font, color, danger-light);<br/>
+        color: var(--costar-color-danger-light);
+      </td>
+    </tr>
+    {/* danger-lighter */}
+    <tr>
+      <td>danger-lighter</td>
+      <td>@include costar(color, danger-lighter);</td>
+      <td>
+        color: map-get($font, color, danger-lighter);<br/>
+        color: var(--costar-color-danger-lighter);
+      </td>
+    </tr>
+    {/* danger-lightest */}
+    <tr>
+      <td>danger-lightest</td>
+      <td>@include costar(color, danger-lightest);</td>
+      <td>
+        color: map-get($font, color, danger-lightest);<br/>
+        color: var(--costar-color-danger-lightest);
+      </td>
+    </tr>
+    {/* danger-dark */}
+    <tr>
+      <td>danger-dark</td>
+      <td>@include costar(color, danger-dark);</td>
+      <td>
+        color: map-get($font, color, danger-dark);<br/>
+        color: var(--costar-color-danger-dark);
+      </td>
+    </tr>
+    {/* danger-darker */}
+    <tr>
+      <td>danger-darker</td>
+      <td>@include costar(color, danger-darker);</td>
+      <td>
+        color: map-get($font, color, danger-darker);<br/>
+        color: var(--costar-color-danger-darker);
+      </td>
+    </tr>
+    {/* danger-darkest */}
+    <tr>
+      <td>danger-darkest</td>
+      <td>@include costar(color, danger-darkest);</td>
+      <td>
+        color: map-get($font, color, danger-darkest);<br/>
+        color: var(--costar-color-danger-darkest);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+### Spacing
+The following table is for the CSS `padding` property; 
+use it as a reference replacing the property with one of the following: 
+`padding-top`, `padding-right`, `padding-bottom`, `padding-left`, `margin`, `margin-top`, `margin-right`, 
+`margin-bottom`, `margin-left`, and `gap`.
+
+<details>
+  <summary>padding</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map</th>
+    </tr>
+    {/* 0 */}
+    <tr>
+      <td rowspan="20">padding</td>
+      <td>0</td>
+      <td>@include costar(padding, 0);</td>
+      <td>
+        padding: map-get($font, padding, 0);
+      </td>
+    </tr>
+    {/* 1 */}
+    <tr>
+      <td>1</td>
+      <td>@include costar(padding, 1);</td>
+      <td>
+        padding: map-get($font, padding, 1);
+      </td>
+    </tr>
+    {/* 2 */}
+    <tr>
+      <td>2</td>
+      <td>@include costar(padding, 2);</td>
+      <td>
+        padding: map-get($font, padding, 2);
+      </td>
+    </tr>
+    {/* 3 */}
+    <tr>
+      <td>3</td>
+      <td>@include costar(padding, 3);</td>
+      <td>
+        padding: map-get($font, padding, 3);
+      </td>
+    </tr>
+    {/* 4 */}
+    <tr>
+      <td>4</td>
+      <td>@include costar(padding, 4);</td>
+      <td>
+        padding: map-get($font, padding, 4);
+      </td>
+    </tr>
+    {/* 5 */}
+    <tr>
+      <td>5</td>
+      <td>@include costar(padding, 5);</td>
+      <td>
+        padding: map-get($font, padding, 5);
+      </td>
+    </tr>
+    {/* 6 */}
+    <tr>
+      <td>6</td>
+      <td>@include costar(padding, 6);</td>
+      <td>
+        padding: map-get($font, padding, 6);
+      </td>
+    </tr>
+
+  </table>
+</details>
+<br/>
+
+### Border
+
+<details>
+  <summary>border</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map</th>
+    </tr>
+    {/* PRIMARY */}
+    {/* primary base */}
+    <tr>
+      <td rowspan="100">
+        border
+      </td>
+      <td>primary</td>
+      <td>@include costar(border, primary);</td>
+      <td>
+        border: map-get($font, border, primary);
+      </td>
+    </tr>
+    {/* primary-light */}
+    <tr>
+      <td>primary-light</td>
+      <td>@include costar(border, primary-light);</td>
+      <td>
+        border: map-get($font, border, primary-light);
+      </td>
+    </tr>
+    {/* primary-lighter */}
+    <tr>
+      <td>primary-lighter</td>
+      <td>@include costar(border, primary-lighter);</td>
+      <td>
+        border: map-get($font, border, primary-lighter);
+      </td>
+    </tr>
+    {/* primary-lightest */}
+    <tr>
+      <td>primary-lightest</td>
+      <td>@include costar(border, primary-lightest);</td>
+      <td>
+        border: map-get($font, border, primary-lightest);
+      </td>
+    </tr>
+    {/* primary-dark */}
+    <tr>
+      <td>primary-dark</td>
+      <td>@include costar(border, primary-dark);</td>
+      <td>
+        border: map-get($font, border, primary-dark);
+      </td>
+    </tr>
+    {/* primary-darker */}
+    <tr>
+      <td>primary-darker</td>
+      <td>@include costar(border, primary-darker);</td>
+      <td>
+        border: map-get($font, border, primary-darker);
+      </td>
+    </tr>
+    {/* primary-darkest */}
+    <tr>
+      <td>primary-darkest</td>
+      <td>@include costar(border, primary-darkest);</td>
+      <td>
+        border: map-get($font, border, primary-darkest);
+      </td>
+    </tr>
+    {/* SECONDARY */}
+    {/* secondary base */}
+    <tr>
+      <td>secondary</td>
+      <td>@include costar(border, secondary);</td>
+      <td>
+        border: map-get($font, border, secondary);
+      </td>
+    </tr>
+    {/* secondary-light */}
+    <tr>
+      <td>secondary-light</td>
+      <td>@include costar(border, secondary-light);</td>
+      <td>
+        border: map-get($font, border, secondary-light);
+      </td>
+    </tr>
+    {/* secondary-lighter */}
+    <tr>
+      <td>secondary-lighter</td>
+      <td>@include costar(border, secondary-lighter);</td>
+      <td>
+        border: map-get($font, border, secondary-lighter);
+      </td>
+    </tr>
+    {/* secondary-lightest */}
+    <tr>
+      <td>secondary-lightest</td>
+      <td>@include costar(border, secondary-lightest);</td>
+      <td>
+        border: map-get($font, border, secondary-lightest);
+      </td>
+    </tr>
+    {/* secondary-dark */}
+    <tr>
+      <td>secondary-dark</td>
+      <td>@include costar(border, secondary-dark);</td>
+      <td>
+        border: map-get($font, border, secondary-dark);
+      </td>
+    </tr>
+    {/* secondary-darker */}
+    <tr>
+      <td>secondary-darker</td>
+      <td>@include costar(border, secondary-darker);</td>
+      <td>
+        border: map-get($font, border, secondary-darker);
+      </td>
+    </tr>
+    {/* secondary-darkest */}
+    <tr>
+      <td>secondary-darkest</td>
+      <td>@include costar(border, secondary-darkest);</td>
+      <td>
+        border: map-get($font, border, secondary-darkest);
+      </td>
+    </tr>
+    {/* NEUTRAL */}
+    {/* light */}
+    <tr>
+      <td>light</td>
+      <td>@include costar(border, light);</td>
+      <td>
+        border: map-get($font, border, light);
+      </td>
+    </tr>
+    {/* dark */}
+    <tr>
+      <td>dark</td>
+      <td>@include costar(border, dark);</td>
+      <td>
+        border: map-get($font, border, dark);
+      </td>
+    </tr>
+    {/* background */}
+    <tr>
+      <td>background</td>
+      <td>@include costar(border, background);</td>
+      <td>
+        border: map-get($font, border, background);
+      </td>
+    </tr>
+    {/* GRAYS */}
+    {/* gray01 */}
+    <tr>
+      <td>gray01</td>
+      <td>@include costar(border, gray01);</td>
+      <td>
+        border: map-get($font, border, gray01);
+      </td>
+    </tr>
+    {/* gray02 */}
+    <tr>
+      <td>gray02</td>
+      <td>@include costar(border, gray02);</td>
+      <td>
+        border: map-get($font, border, gray02);
+      </td>
+    </tr>
+    {/* gray03 */}
+    <tr>
+      <td>gray03</td>
+      <td>@include costar(border, gray03);</td>
+      <td>
+        border: map-get($font, border, gray03);
+      </td>
+    </tr>
+    {/* gray04 */}
+    <tr>
+      <td>gray04</td>
+      <td>@include costar(border, gray04);</td>
+      <td>
+        border: map-get($font, border, gray04);
+      </td>
+    </tr>
+    {/* gray05 */}
+    <tr>
+      <td>gray05</td>
+      <td>@include costar(border, gray05);</td>
+      <td>
+        border: map-get($font, border, gray05);
+      </td>
+    </tr>
+    {/* gray06 */}
+    <tr>
+      <td>gray06</td>
+      <td>@include costar(border, gray06);</td>
+      <td>
+        border: map-get($font, border, gray06);
+      </td>
+    </tr>
+    {/* gray07 */}
+    <tr>
+      <td>gray07</td>
+      <td>@include costar(border, gray07);</td>
+      <td>
+        border: map-get($font, border, gray07);
+      </td>
+    </tr>
+    {/* SUCCESS */}
+    {/* success base */}
+    <tr>
+      <td>success</td>
+      <td>@include costar(border, success);</td>
+      <td>
+        border: map-get($font, border, success);
+      </td>
+    </tr>
+    {/* success-light */}
+    <tr>
+      <td>success-light</td>
+      <td>@include costar(border, success-light);</td>
+      <td>
+        border: map-get($font, border, success-light);
+      </td>
+    </tr>
+    {/* success-lighter */}
+    <tr>
+      <td>success-lighter</td>
+      <td>@include costar(border, success-lighter);</td>
+      <td>
+        border: map-get($font, border, success-lighter);
+      </td>
+    </tr>
+    {/* success-lightest */}
+    <tr>
+      <td>success-lightest</td>
+      <td>@include costar(border, success-lightest);</td>
+      <td>
+        border: map-get($font, border, success-lightest);
+      </td>
+    </tr>
+    {/* success-dark */}
+    <tr>
+      <td>success-dark</td>
+      <td>@include costar(border, success-dark);</td>
+      <td>
+        border: map-get($font, border, success-dark);
+      </td>
+    </tr>
+    {/* success-darker */}
+    <tr>
+      <td>success-darker</td>
+      <td>@include costar(border, success-darker);</td>
+      <td>
+        border: map-get($font, border, success-darker);
+      </td>
+    </tr>
+    {/* success-darkest */}
+    <tr>
+      <td>success-darkest</td>
+      <td>@include costar(border, success-darkest);</td>
+      <td>
+        border: map-get($font, border, success-darkest);
+      </td>
+    </tr>
+    {/* INFO */}
+    {/* info base */}
+    <tr>
+      <td>info</td>
+      <td>@include costar(border, info);</td>
+      <td>
+        border: map-get($font, border, info);
+      </td>
+    </tr>
+    {/* info-light */}
+    <tr>
+      <td>info-light</td>
+      <td>@include costar(border, info-light);</td>
+      <td>
+        border: map-get($font, border, info-light);
+      </td>
+    </tr>
+    {/* info-lighter */}
+    <tr>
+      <td>info-lighter</td>
+      <td>@include costar(border, info-lighter);</td>
+      <td>
+        border: map-get($font, border, info-lighter);
+      </td>
+    </tr>
+    {/* info-lightest */}
+    <tr>
+      <td>info-lightest</td>
+      <td>@include costar(border, info-lightest);</td>
+      <td>
+        border: map-get($font, border, info-lightest);
+      </td>
+    </tr>
+    {/* info-dark */}
+    <tr>
+      <td>info-dark</td>
+      <td>@include costar(border, info-dark);</td>
+      <td>
+        border: map-get($font, border, info-dark);
+      </td>
+    </tr>
+    {/* info-darker */}
+    <tr>
+      <td>info-darker</td>
+      <td>@include costar(border, info-darker);</td>
+      <td>
+        border: map-get($font, border, info-darker);
+      </td>
+    </tr>
+    {/* info-darkest */}
+    <tr>
+      <td>info-darkest</td>
+      <td>@include costar(border, info-darkest);</td>
+      <td>
+        border: map-get($font, border, info-darkest);
+      </td>
+    </tr>
+    {/* WARNING */}
+    {/* warning base */}
+    <tr>
+      <td>warning</td>
+      <td>@include costar(border, warning);</td>
+      <td>
+        border: map-get($font, border, warning);
+      </td>
+    </tr>
+    {/* warning-light */}
+    <tr>
+      <td>warning-light</td>
+      <td>@include costar(border, warning-light);</td>
+      <td>
+        border: map-get($font, border, warning-light);
+      </td>
+    </tr>
+    {/* warning-lighter */}
+    <tr>
+      <td>warning-lighter</td>
+      <td>@include costar(border, warning-lighter);</td>
+      <td>
+        border: map-get($font, border, warning-lighter);
+      </td>
+    </tr>
+    {/* warning-lightest */}
+    <tr>
+      <td>warning-lightest</td>
+      <td>@include costar(border, warning-lightest);</td>
+      <td>
+        border: map-get($font, border, warning-lightest);
+      </td>
+    </tr>
+    {/* warning-dark */}
+    <tr>
+      <td>warning-dark</td>
+      <td>@include costar(border, warning-dark);</td>
+      <td>
+        border: map-get($font, border, warning-dark);
+      </td>
+    </tr>
+    {/* warning-darker */}
+    <tr>
+      <td>warning-darker</td>
+      <td>@include costar(border, warning-darker);</td>
+      <td>
+        border: map-get($font, border, warning-darker);
+      </td>
+    </tr>
+    {/* warning-darkest */}
+    <tr>
+      <td>warning-darkest</td>
+      <td>@include costar(border, warning-darkest);</td>
+      <td>
+        border: map-get($font, border, warning-darkest);
+      </td>
+    </tr>
+    {/* DANGER */}
+    {/* danger base */}
+    <tr>
+      <td>danger</td>
+      <td>@include costar(border, danger);</td>
+      <td>
+        border: map-get($font, border, danger);
+      </td>
+    </tr>
+    {/* danger-light */}
+    <tr>
+      <td>danger-light</td>
+      <td>@include costar(border, danger-light);</td>
+      <td>
+        border: map-get($font, border, danger-light);
+      </td>
+    </tr>
+    {/* danger-lighter */}
+    <tr>
+      <td>danger-lighter</td>
+      <td>@include costar(border, danger-lighter);</td>
+      <td>
+        border: map-get($font, border, danger-lighter);
+      </td>
+    </tr>
+    {/* danger-lightest */}
+    <tr>
+      <td>danger-lightest</td>
+      <td>@include costar(border, danger-lightest);</td>
+      <td>
+        border: map-get($font, border, danger-lightest);
+      </td>
+    </tr>
+    {/* danger-dark */}
+    <tr>
+      <td>danger-dark</td>
+      <td>@include costar(border, danger-dark);</td>
+      <td>
+        border: map-get($font, border, danger-dark);
+      </td>
+    </tr>
+    {/* danger-darker */}
+    <tr>
+      <td>danger-darker</td>
+      <td>@include costar(border, danger-darker);</td>
+      <td>
+        border: map-get($font, border, danger-darker);
+      </td>
+    </tr>
+    {/* danger-darkest */}
+    <tr>
+      <td>danger-darkest</td>
+      <td>@include costar(border, danger-darkest);</td>
+      <td>
+        border: map-get($font, border, danger-darkest);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+<details>
+  <summary>border-radius</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map</th>
+    </tr>
+    {/* small */}
+    <tr>
+      <td rowspan="10">border-radius</td>
+      <td>small</td>
+      <td>@include costar(border-radius, small);</td>
+      <td>
+        border-radius: map-get($font, border-radius, small);
+      </td>
+    </tr>
+    {/* medium */}
+    <tr>
+      <td>medium</td>
+      <td>@include costar(border-radius, medium);</td>
+      <td>
+        border-radius: map-get($font, border-radius, medium);
+      </td>
+    </tr>
+    {/* big */}
+    <tr>
+      <td>big</td>
+      <td>@include costar(border-radius, big);</td>
+      <td>
+        border-radius: map-get($font, border-radius, big);
+      </td>
+    </tr>
+    {/* round */}
+    <tr>
+      <td>round</td>
+      <td>@include costar(border-radius, round);</td>
+      <td>
+        border-radius: map-get($font, border-radius, round);
+      </td>
+    </tr>
+    {/* pill */}
+    <tr>
+      <td>pill</td>
+      <td>@include costar(border-radius, pill);</td>
+      <td>
+        border-radius: map-get($font, border-radius, pill);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+### Breakpoints
+Media queries or breakpoints facilitated through the 
+[Include Media](https://eduardoboucas.github.io/include-media/documentation/) library 
+and uses a different mixin: `@include media(...)`.
+
+> Include-media is a Sass library for writing CSS media queries in an easy and maintainable way, using a natural and simplistic syntax.
+> It provides Flexible declaration of breakpoints, On-the-fly breakpoints, Smart support for media types, Support for different units, etc.
+
+The arguments are taken from the `_variables.scss` file and are used as follows:
+
+**Available queries**: `phone`, `tablet`, `desktop`, `desktop-xl`, `desktop-xxl`, `landscape`, and `portrait`.
+
+**Operators or Media Expressions:**: `>`, `<`, `>=`, and `<=`.
+
+**Examples**:
+<table width="100%">
+  <tr>
+    <th>Parameter 1</th>
+    <th>Parameter 2</th>
+    <th>Mixin</th>
+    <th>Description</th>
+  </tr>
+  {/* phone & tablet */}
+  <tr>
+    <td rowspan="10">phone</td>
+    <td>tablet</td>
+    <td>
+      <code>@include media("&gt;=phone", "&lt;=tablet") &#123; ... &#125; </code>
+    </td>
+    <td>Targets phones and tablets</td>
+  </tr>
+  {/* phone & tablet */}
+  <tr>
+    <td>desktop</td>
+    <td>
+      <code>@include media("&gt;=phone", "&lt;=desktop") &#123; ... &#125; </code>
+    </td>
+    <td>Targets phones (e.g. &gt;= 576px) and everything equal and below desktop (e.g. &lt;= 992px)</td>
+  </tr>
+  {/* phone & tablet */}
+  <tr>
+    <td>tablet & landscape</td>
+    <td>
+      <code>@include media("&gt;=phone", "&lt;=tablet", "landscape") &#123; ... &#125; </code>
+    </td>
+    <td>Targets phones and tablets on landscape mode</td>
+  </tr>
+</table>
+
+Please read the [official documentation](https://eduardoboucas.github.io/include-media/documentation/) for further details.
+
+### Animation
+
+<details>
+  <summary>transition</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map + CSS4 Variable</th>
+    </tr>
+    {/* faster */}
+    <tr>
+      <td rowspan="10">transition</td>
+      <td>faster</td>
+      <td>@include costar(transition, faster);</td>
+      <td>
+        transition: map-get($font, transition, faster);<br/>
+        transition: var(--costar-transition-faster);
+      </td>
+    </tr>
+    {/* fast */}
+    <tr>
+      <td>fast</td>
+      <td>@include costar(transition, fast);</td>
+      <td>
+        transition: map-get($font, transition, fast);<br/>
+        transition: var(--costar-transition-fast);
+      </td>
+    </tr>
+    {/* normal */}
+    <tr>
+      <td>normal</td>
+      <td>@include costar(transition, normal);</td>
+      <td>
+        transition: map-get($font, transition, normal);<br/>
+        transition: var(--costar-transition-normal);
+      </td>
+    </tr>
+    {/* slow */}
+    <tr>
+      <td>slow</td>
+      <td>@include costar(transition, slow);</td>
+      <td>
+        transition: map-get($font, transition, slow);<br/>
+        transition: var(--costar-transition-slow);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+### Box Shadow
+<details>
+  <summary>box-shadow</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map</th>
+    </tr>
+    {/* primary */}
+    <tr>
+      <td rowspan="20">box-shadow</td>
+      <td>primary</td>
+      <td>@include costar(box-shadow, primary);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, primary);
+      </td>
+    </tr>
+    {/* secondary */}
+    <tr>
+      <td>secondary</td>
+      <td>@include costar(box-shadow, secondary);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, secondary);
+      </td>
+    </tr>
+    {/* GRAYS */}
+    {/* gray01 */}
+    <tr>
+      <td>gray01</td>
+      <td>@include costar(box-shadow, gray01);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, gray01);
+      </td>
+    </tr>
+    {/* gray02 */}
+    <tr>
+      <td>gray02</td>
+      <td>@include costar(box-shadow, gray02);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, gray02);
+      </td>
+    </tr>
+    {/* gray03 */}
+    <tr>
+      <td>gray03</td>
+      <td>@include costar(box-shadow, gray03);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, gray03);
+      </td>
+    </tr>
+    {/* gray04 */}
+    <tr>
+      <td>gray04</td>
+      <td>@include costar(box-shadow, gray04);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, gray04);
+      </td>
+    </tr>
+    {/* gray05 */}
+    <tr>
+      <td>gray05</td>
+      <td>@include costar(box-shadow, gray05);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, gray05);
+      </td>
+    </tr>
+    {/* gray06 */}
+    <tr>
+      <td>gray06</td>
+      <td>@include costar(box-shadow, gray06);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, gray06);
+      </td>
+    </tr>
+    {/* gray07 */}
+    <tr>
+      <td>gray07</td>
+      <td>@include costar(box-shadow, gray07);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, gray07);
+      </td>
+    </tr>
+    {/* SYSTEM FEEDBACK */}
+    {/* success */}
+    <tr>
+      <td>success</td>
+      <td>@include costar(box-shadow, success);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, success);
+      </td>
+    </tr>
+    {/* success */}
+    <tr>
+      <td>success</td>
+      <td>@include costar(box-shadow, success);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, success);
+      </td>
+    </tr>
+    {/* info */}
+    <tr>
+      <td>info</td>
+      <td>@include costar(box-shadow, info);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, info);
+      </td>
+    </tr>
+    {/* warning */}
+    <tr>
+      <td>warning</td>
+      <td>@include costar(box-shadow, warning);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, warning);
+      </td>
+    </tr>
+    {/* danger */}
+    <tr>
+      <td>danger</td>
+      <td>@include costar(box-shadow, danger);</td>
+      <td>
+        box-shadow: map-get($font, box-shadow, danger);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>
+
+### Z-Index
+<details>
+  <summary>z-index</summary>
+  <table width="100%">
+    <tr>
+      <th>CSS Property</th>
+      <th>Style</th>
+      <th>Mixin</th>
+      <th>SCSS Map</th>
+    </tr>
+    {/* dropdown */}
+    <tr>
+      <td rowspan="11">z-index</td>
+      <td>dropdown</td>
+      <td>@include costar(z-index, dropdown);</td>
+      <td>
+        z-index: map-get($font, z-index, dropdown);
+      </td>
+    </tr>
+    {/* modal */}
+    <tr>
+      <td>modal</td>
+      <td>@include costar(z-index, modal);</td>
+      <td>
+        z-index: map-get($font, z-index, modal);
+      </td>
+    </tr>
+    {/* tooltip */}
+    <tr>
+      <td>tooltip</td>
+      <td>@include costar(z-index, tooltip);</td>
+      <td>
+        z-index: map-get($font, z-index, tooltip);
+      </td>
+    </tr>
+    {/* tooltip */}
+    <tr>
+      <td>master</td>
+      <td>@include costar(z-index, master);</td>
+      <td>
+        z-index: map-get($font, z-index, master);
+      </td>
+    </tr>
+  </table>
+</details>
+<br/>

@@ -1,0 +1,248 @@
+@use "../../../../../../apps/mango/src/assets/styles/colors";
+
+:host::ng-deep {  // Affects child component mat-expansion-panel in the lack of a better global styling
+  // TODO: Move to global style sheet
+  --sidebar-width: 220px;
+  --sidebar-width-collapse: 48px;
+
+  .sharedLeftNav-container {
+    height: 100%;
+    font-size: 14px;
+    overflow-x: hidden;
+    border-right: 1px solid colors.$gray;
+    background-color: colors.$bodyBackgroundGray;
+    font-family: Roboto, "Helvetica Neue", sans-serif !important;
+
+    &.mat-sidenav-container {
+
+      .mat-drawer-inner-container {
+        display: flex;
+        overflow-y: hidden;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      // Transition Effect
+      &:not(.sideNavCollapse) {
+        .mat-drawer-inner-container {
+          width: 100%;
+          min-width: var(--sidebar-width);
+          // transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+          .sidenavTop {
+            width: 100%;
+            min-width: var(--sidebar-width);
+            > ul {
+              opacity: 1;
+              transform: translateX(0%);
+              transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            }
+          }
+        }
+      }
+      &.sideNavCollapse {
+        .mat-drawer-inner-container {
+          width: var(--sidebar-width-collapse);
+          transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+          .sidenavTop {
+            overflow: hidden;
+          }
+          .sidenavTop > ul {
+            width: 100%; // Don't deform the text when collapsed
+            min-width: var(--sidebar-width);
+            opacity: 0;
+            // transform: translateX(-100%);
+            // transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .hideLinks ul li { // Hide links from screen reader when collapsed
+            visibility: collapse;
+          }
+        }
+      }
+      // END transition Effect
+
+      .sidenavTop {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .sidenavBottom {
+        // ADA: focus selectors are ada compliance
+        display: flex;
+        flex-direction: column;
+        margin: 0 12px;
+        &:focus-visible{
+          outline: none;
+        }
+        &:focus{
+          outline: 5px auto -webkit-focus-ring-color;
+          outline-offset: -2px; 
+          background-color: colors.$gray5;
+        }
+        .navCollExp {
+          width: 100%;
+          padding: 8px 0;
+          height: calc(32px + 16px); // For readability: icon size plus padding
+          background-color: unset;
+          border: unset;
+          cursor: pointer;
+          text-align: right;
+          border-top: 1px solid colors.$lightGray;
+          &:focus-visible{
+            outline: none;
+          }
+          &:focus{
+            outline: 5px auto -webkit-focus-ring-color;
+            outline-offset: -2px; 
+            background-color: colors.$gray5;
+          }
+          mat-icon {
+            font-size: 32px;
+            height: 32px;
+            width: 32px;
+          }
+        }
+      }
+
+      .mat-drawer-backdrop {
+        background-color: unset;
+      }
+
+      mat-sidenav {
+        height: 100%;
+        display: flex;
+        width: inherit;
+        box-shadow: unset;
+        position: relative;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: colors.$bodyBackgroundGray;
+      }
+
+    }
+
+    // Menu First Level
+    ul {
+      &.navList {
+        list-style: none;
+        padding-left: 0;
+        padding-top: 8px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        overflow-x: hidden;
+        > li {
+          &:hover {
+            background-color: colors.$lightGray;
+          }
+          > a {
+            color: colors.$black !important;
+            list-style: none;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            height: 36px;
+            padding: 0 16px;
+            cursor: pointer;
+            &.selected {
+              font-weight: bold;
+              text-decoration: none;
+              span {
+                border-bottom: 3px solid colors.$costarAlert;
+              }
+            }
+            &:visited {
+              font-weight: bold;
+              text-decoration: none;
+              span {
+                border-bottom: 3px solid colors.$costarAlert;
+              }
+            }
+            &:active {
+              font-weight: bold;
+              text-decoration: none;
+              box-sizing: unset !important;
+              span {
+                border-bottom: 3px solid colors.$costarAlert;
+              }
+            }
+            &:focus{
+              // TODO: <a> tags allow focus without providing a tabindex attribute. We need to figure out why we're having to give a hacky tabindex
+              outline: 5px auto -webkit-focus-ring-color;// TODO: Remove important once fully migrated to MangoSpa
+              outline-offset: -2px; 
+              background-color: colors.$gray5;
+            }
+          }
+
+        }
+      }
+    }
+    // End Menu First Level
+
+    // Menu Second Level / Accordion
+    mat-expansion-panel {
+      box-shadow: none;
+      border-radius: 0px;
+      background-color: colors.$bodyBackgroundGray;
+
+      .mat-expansion-panel-header {
+        padding: 0 16px;
+        height: 40px !important; // TODO: Remove important once fully migrated to MangoSpa
+        &-title,
+        &-description { // Adjust vertical spacing to avoid line break
+          margin-right: 6px;
+        }
+        &:focus{
+          outline: 5px auto -webkit-focus-ring-color;// TODO: Remove important once fully migrated to MangoSpa
+          outline-offset: -2px;
+          background-color: colors.$gray5;
+        }
+      }
+      .mat-expansion-panel-body {
+        padding: 0 0px 16px 0 !important; // TODO: Remove important once fully migrated to MangoSpa
+        ul {
+          padding-inline-start: 0;
+          > li {
+            > a {
+              min-height: 36px;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              padding: 5px 16px 5px 30px !important; // TODO: Remove important once fully migrated to MangoSpa
+              color: colors.$black !important; // TODO: Remove important once fully migrated to MangoSpa
+              text-decoration: none !important; // TODO: Remove important once fully migrated to MangoSpa
+              &:hover {
+                background-color: colors.$lightGray;
+              }
+              &:focus{
+                // TODO: <a> tags allow focus without providing a tabindex attribute. We need to figure out why we're having to give a hacky tabindex
+                outline: 5px auto -webkit-focus-ring-color;// TODO: Remove important once fully migrated to MangoSpa
+                outline-offset: -2px;
+                background-color: colors.$gray5;
+              }
+            }
+          }
+        }
+      }
+    }
+    // END Menu Second Level
+
+  }
+
+  // Mat expansion indicator position correction while collapsing
+  .mat-expansion-panel-header {
+    .mat-expansion-indicator::after {
+      display: flex;
+    }
+    &.mat-expanded {
+      .mat-expansion-indicator::after {
+        transform: translateY(-1px) rotate(45deg);
+      }
+    }
+    &:not(.mat-expanded) {
+      .mat-expansion-indicator::after {
+        transform: translateY(-1px) rotate(45deg);
+      }
+    }
+  }
+  // END Mat expansion indicator
+
+}

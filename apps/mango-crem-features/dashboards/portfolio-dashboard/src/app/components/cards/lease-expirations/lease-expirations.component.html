@@ -1,0 +1,71 @@
+<crem-card
+[id]="card.gridData.id"
+[title]="card.title"
+[subtitle]="card.subtitle"
+[filterData]="null"
+[filterInitialValue]="null"
+[showFilterClearButton]="false"
+[moreOptions]="card.moreOptions"
+(exportDataGrid)="exportChartToPng($event)"
+fxFlexFill
+
+>
+	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
+      <dx-chart
+				#LeaseExpirationsChart
+				[id]="card.id + 'chart'"
+				[dataSource]="card.chartData.dataSource"
+			>
+				<dxo-size
+					[height]="370"
+				>
+				</dxo-size>
+
+				<dxi-series
+					argumentField="quarter"
+					valueField="rentableArea"
+					name="Rentable Area"
+					[type]="card.chartData.type"
+					axis="rentableAreaAxis"
+					color="#EC4A08"
+				></dxi-series>
+
+				<dxi-series
+					axis="annualRentAxis"
+					argumentField="quarter"
+					valueField="annualRent"
+					name="Annualized Rent"
+					type="scatter"
+					color="#004FA6"
+				></dxi-series>
+
+				<dxi-series
+					argumentField="quarter"
+					valueField="expirationCount"
+					name="Expiration Count"
+					type="area"
+					axis="rentableAreaAxis"
+					color="#004FA6"
+					[visible]="true"
+					opacity="0"
+					[showInLegend]="false"
+				></dxi-series>
+
+				<dxo-argument-axis>
+					<dxo-title text="Quarter" verticalAlignment="bottom"></dxo-title>			
+				</dxo-argument-axis>
+				<dxi-value-axis name="rentableAreaAxis">
+					<dxo-title text="Rentable Area"></dxo-title>			
+				</dxi-value-axis>
+				<dxi-value-axis name="annualRentAxis" position="right" allowDecimals="true">
+					<dxo-grid [visible]="true"></dxo-grid>
+					<dxo-title text="Annualized Rent"></dxo-title>			
+				</dxi-value-axis>
+
+        <dxo-legend verticalAlignment="bottom" horizontalAlignment="center"></dxo-legend>
+        <dxo-tooltip [enabled]="true" [shared]="true" [customizeTooltip]="customizeTooltip">
+					<dxo-format type="largeNumber" [precision]="1"></dxo-format>						    						    
+				</dxo-tooltip>
+      </dx-chart>
+	</div>
+</crem-card>

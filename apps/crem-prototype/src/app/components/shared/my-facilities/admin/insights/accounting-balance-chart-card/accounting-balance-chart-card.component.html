@@ -1,0 +1,66 @@
+<mat-card class="dashboard-card">
+	<mat-card-header>				
+		<mat-card-title>
+			<span>Accounting Balance Trends</span>
+		</mat-card-title>
+		<mat-form-field appearance="outline" class="">
+			<mat-select value="All">
+				<mat-option value="All">All</mat-option>
+				<mat-option value="ASC 842 Operating">ASC 842 Operating</mat-option>						
+				<mat-option value="ASC 842 Finance">ASC 842 Finance</mat-option>						
+				<mat-option value="IFRS 16">IFRS 16</mat-option>						
+				<mat-option value="Operating Lessor">Operating Lessor</mat-option>						
+			</mat-select>
+		</mat-form-field>
+	</mat-card-header>
+	<mat-card-content>										
+		<dx-chart [dataSource]="quarterlyPayments">
+			<dxo-export [enabled]="false"></dxo-export>
+			<dxo-legend [visible]="true"></dxo-legend>
+			<dxo-legend
+			    horizontalAlignment="center"			    
+			    verticalAlignment="bottom">
+			</dxo-legend>
+			<dxo-tooltip
+			    [enabled]="true"
+			    [shared]="true"
+			    [customizeTooltip]="standardTooltip">	
+			    <dxo-format type="largeNumber" [precision]="1"></dxo-format>						    
+			</dxo-tooltip>
+			<dxo-common-series-settings 
+			    argumentField="quarter"
+		        type="stackedBar"
+		        axis="countAxis"
+		        [barPadding]="0.2"
+	        >
+			</dxo-common-series-settings>		
+			<dxi-value-axis title="USD in Millions" name="countAxis">
+			    <dxo-grid [visible]="true"></dxo-grid>
+			</dxi-value-axis>									
+		    <dxi-series
+		        valueField="realEstateAssetBalance"
+		        name="Real Estate Assets"
+		        color="#F68338"
+		        stack="asset">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="nonRealEstateAssetBalance"
+		        name="Non Real Estate Assets"
+		        color="#EC4A08"
+		        stack="asset">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="realEstateLiabilityBalance"
+		        name="Real Estate Liabilities"
+		        color="#88b5e5"
+		        stack="liability">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="nonRealEstateLiabilityBalance"
+		        name="Non Real Estate Liabilities"
+		        color="#0559b3"
+		        stack="liability">
+		    </dxi-series>								   
+		</dx-chart>			
+	</mat-card-content>
+</mat-card>	

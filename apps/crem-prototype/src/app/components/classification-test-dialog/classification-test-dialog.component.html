@@ -1,0 +1,80 @@
+<costar-popup>
+	<popup-content>
+		<div class="classification-test">
+			<div class="class-test-item-simple">
+				<span class="class-test-label">1.  Is ownership transferred at the end of the lease term?</span>
+				<dx-select-box [items]="yesNo" [width]="160"></dx-select-box>
+			</div>
+			<div class="class-test-item-simple">
+				<span class="class-test-label">2.  Is there is a bargain purchase option?</span>
+				<dx-select-box [items]="yesNo" [width]="160"></dx-select-box>
+			</div>
+			<div class="class-test-item-advanced">
+				<span class="class-test-label">3.  Is lease term 75% or greater of the economic life of the leased asset?</span>
+				<div class="class-test-calc-wrapper">
+					<div class="class-test-calc">
+						<div class="class-test-calc-calc">
+							<div class="numerator">
+								<dx-text-box placeholder="Term" [width]="160"></dx-text-box>
+							</div>
+							<mat-divider></mat-divider>
+							<div class="denominator">
+								<dx-text-box placeholder="Economic Life" [width]="160"></dx-text-box>
+							</div>
+						</div>
+						<div class="class-test-calc-equals">=</div>
+						<dx-number-box format="#0.00%" [step]="0.01" [width]="80"></dx-number-box>
+					</div>
+					<dx-select-box [items]="yesNo" [width]="160"></dx-select-box>
+				</div>
+			</div>
+			<div class="class-test-item-advanced">
+				<span class="class-test-label">4.  Is NPV of the lease payments and guaranteed residual value 90% or greater of the Fair Value of the asset?</span>
+				<div class="class-test-calc-wrapper">
+					<div class="class-test-calc">
+						<div class="class-test-calc-calc">
+							<div class="numerator">
+								<dx-text-box placeholder="NPV" [width]="160"></dx-text-box>
+								<span class="operator">-</span>
+								<dx-text-box placeholder="RV Guaranteed" [width]="160"></dx-text-box>
+							</div>
+							<mat-divider></mat-divider>
+							<div class="denominator">
+								<dx-text-box placeholder="Fair Market Value" [width]="160"></dx-text-box>
+							</div>
+						</div>
+						<div class="class-test-calc-equals">=</div>
+						<dx-number-box format="#0.00%" [step]="0.01" [width]="80"></dx-number-box>
+					</div>
+					<dx-select-box [items]="yesNo" [width]="160"></dx-select-box>
+				</div>
+			</div>
+			<div class="class-test-item-simple">
+				<span class="class-test-label">5.  Is the underlying asset of a specialized nature?</span>
+				<dx-select-box [items]="yesNo" [width]="160"></dx-select-box>
+			</div>
+			<mat-divider class="dbl-bottom-padding"></mat-divider>
+			<div class="class-test-item-simple">
+				<span class="class-test-label">Classification Test Result</span>
+				<dx-text-box placeholder="Classification test result" [width]="240"></dx-text-box>
+			</div>
+			<div class="class-test-item-simple">
+				<span class="class-test-label">Override Test Result?</span>
+				<mat-slide-toggle [checked]="true"></mat-slide-toggle>
+			</div>
+			<div class="class-test-item-simple">
+				<span class="class-test-label">Override Comments</span>
+				<dx-text-area [height]="45" [width]="400">
+				</dx-text-area>
+			</div>
+		</div>
+	</popup-content>
+	<popup-footer>		
+		<popup-footer-right>
+			<button class="btn btn-default" (click)="cancel()">Cancel</button> 
+			<button class="btn btn-primary" (click)="save()">Save</button> 
+		</popup-footer-right>
+	</popup-footer>
+</costar-popup>
+
+

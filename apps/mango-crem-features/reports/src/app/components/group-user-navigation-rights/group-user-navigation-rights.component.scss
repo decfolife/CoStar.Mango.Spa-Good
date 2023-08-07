@@ -1,0 +1,38 @@
+.report-page {
+    overflow: auto !important;
+}
+  
+.report-page-data-grid-wrapper {
+    height: 100%;
+}
+
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0px 16px 16px 16px;
+}
+
+.grid-title {
+    font-family: Helvetica, sans-serif;
+    font-weight: bold;
+    margin: 8px;
+}
+
+:host ::ng-deep .readOnly tr.dx-row.dx-data-row:hover {
+    cursor: default !important;
+}
+
+:host ::ng-deep .mat-form-field-infix {
+	display: flex !important;
+}
+
+.button {
+    &__apply {
+        padding-right: 8px;
+    }
+}
+.container-wrapper {
+  .custom-dx-data-grid {
+    max-height:500px;
+  }
+}

@@ -1,0 +1,26 @@
+<dx-popup
+	#DeleteReportPopup
+    [width]="480"
+    [height]="208"
+    [showTitle]="true"
+    [title]="title"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="isVisible"
+    (onHidden)="close()">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    	<costar-popup>
+            <popup-content>	
+                Are you sure you want to delete the report? 
+                <br>
+                <b>{{report.name}}</b>
+            </popup-content>
+            <popup-footer>		
+                <popup-footer-right>
+                    <button class="btn btn-default" (click)="close()">Cancel</button> 
+                    <button class="btn btn-primary" (click)="delete()">Delete</button> 
+                </popup-footer-right>
+            </popup-footer>
+        </costar-popup>
+    </div>
+</dx-popup>	

@@ -1,0 +1,288 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+@import 'assets/styles/colors.scss';
+@import 'assets/styles/var.scss';
+@import 'assets/styles/my-bootstrap.scss';
+@import 'assets/styles/my-devextreme.scss';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica, Arial", sans-serif;
+}
+
+.divMainContent {
+  height: 837px !important;
+}
+
+div.list-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  h5.dbl-right-margin {
+    font-family: Helvetica, sans-serif;
+    font-size: 16px !important;
+  }
+
+  div.list-page-controls-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: $stdPadding;
+    font-size: 14px;
+    border-bottom: $stdBorder;
+
+    &>div {
+      display: flex;
+      align-items: center;
+      z-index: 500;
+
+      &.controls-left {
+
+        mat-form-field.mat-form-field,
+        button.btn,
+        dx-text-box,
+        dx-drop-down-box {
+          margin-right: $dblPadding;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 0px;
+        }
+      }
+
+      &.controls-right {
+
+        mat-form-field.mat-form-field,
+        button.btn,
+        mat-button-toggle-group {
+          margin-left: $dblPadding;
+        }
+      }
+    }
+
+    button.btn {
+      font-size: 14px;
+    }
+
+    mat-form-field {
+      &.mat-form-field {
+        height: $stdPadding * 4;
+
+        &.mat-form-field-appearance-outline {
+          div.mat-form-field-wrapper {
+            padding: 0px;
+            margin: 0px;
+          }
+        }
+      }
+    }
+  }
+
+  div.list-page-data-grid-wrapper {
+    display: flex;
+    flex-grow: 1;
+    overflow-y: auto;
+    flex-direction: column;
+  }
+}
+
+mat-horizontal-stepper.mat-stepper-horizontal {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .mat-horizontal-stepper-wrapper {
+    height: 100%;
+  }
+
+  div.mat-horizontal-content-container {
+    display: flex;
+    flex-grow: 1;
+    padding: 0px;
+    flex-direction: column;
+    overflow-y: hidden;
+
+    div.mat-horizontal-stepper-content {
+      display: flex;
+      overflow: hidden;
+    }
+  }
+}
+
+div.dynamic-form {
+  padding: $dblPadding;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+
+  div.dynamic-form-controls-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: $stdPadding $dblPadding;
+    border-bottom: $stdBorder;
+    font-size: 14px;
+
+    &>div {
+      display: flex;
+      align-items: center;
+      z-index: 500;
+
+      &.controls-left {
+
+        mat-form-field.mat-form-field,
+        button.btn {
+          margin-right: $dblPadding;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          margin: 0px;
+        }
+      }
+
+      &.controls-right {
+
+        mat-form-field.mat-form-field,
+        button.btn {
+          margin-left: $dblPadding;
+        }
+      }
+    }
+  }
+
+  div.dynamic-form-content {
+    padding: $dblPadding;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+
+    mat-card {
+      margin-bottom: $stdPadding * 3;
+
+      mat-card-header.mat-card-header {
+        .mat-card-header-text {
+          margin: 0px;
+        }
+      }
+
+      mat-card-content.mat-card-content {
+        padding-top: $stdPadding * 3;
+
+        mat-form-field {
+          width: 100%;
+        }
+
+        mat-slide-toggle.mat-slide-toggle {
+          display: block;
+          height: 32px;
+          margin-bottom: 0px;
+        }
+
+        .form-field-tooltip {
+          color: $iconGrayDisabled;
+          position: relative;
+          top: -60px;
+          padding: 0px;
+          float: right;
+          min-width: 8px;
+
+          &.slide-toggle-tooltip {
+            top: -40px;
+            right: 11px;
+          }
+
+          &.datepicker-tooltip {
+            right: -30px;
+          }
+        }
+
+        .classification-test-link {
+          position: relative;
+          color: $primary;
+          margin: 0px $dblPadding;
+          float: right;
+          min-width: 8px;
+          cursor: pointer;
+        }
+
+        .accounting-measurement-date {
+          width: 100px;
+          margin-left: $stdPadding;
+        }
+      }
+    }
+  }
+}
+
+div.badge {
+  height: 16px;
+  min-width: 16px;
+  border-radius: $stdPadding;
+  border: $stdBorder;
+  padding: $stdPadding / 4;
+  font-size: 12px;
+  text-align: center;
+  box-sizing: border-box;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  &.primary {
+    color: white !important;
+
+    &.costar {
+      background: $costarBlue;
+      border-color: $costarBlue;
+    }
+
+    &.error {
+      background: $costarAlert;
+      border-color: $costarAlert;
+    }
+  }
+
+  &.secondary {
+    background: white;
+
+    &.costar {
+      color: $costarBlue;
+      border-color: $costarBlue;
+    }
+
+    &.error {
+      color: $costarAlert;
+      border-color: $costarAlert;
+    }
+  }
+
+  &.tertiary {
+    background: white;
+
+    &.costar {
+      color: $darkGray;
+      border-color: $darkGray;
+    }
+  }
+}

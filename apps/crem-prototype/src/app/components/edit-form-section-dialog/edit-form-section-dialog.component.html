@@ -1,0 +1,78 @@
+<costar-popup>
+	<popup-content>
+		<dx-tab-panel
+			#formItemTabPanel	
+			height="100%"					
+			[selectedIndex]="0"
+			[loop]="false"
+			[animationEnabled]="true"
+			[swipeEnabled]="true"
+			class="dbl-bottom-margin"
+			>
+			<dxi-item title="Configuration" class="oflow-y-auto">
+				<dx-scroll-view width="100%" height="100%" class="dbl-padding">
+					<div class="row">
+						<div class="col-md-6 dbl-bottom-margin">
+							<mat-card>
+								<mat-card-header>
+									<mat-card-title>Section Details</mat-card-title>
+								</mat-card-header>
+								<mat-card-content>
+									<dx-form 
+										[(formData)]="section"
+										[colCount]="2"
+										labelLocation="left">
+										<dxi-item 
+											dataField="id"
+											[label]="{ text : 'ID' }"
+											[editorOptions]="{ disabled: true}"
+											editorType="dxTextBox">				
+										</dxi-item>
+										<dxi-item 
+											dataField="sectionName"
+											[label]="{ text : 'Section Name' }"
+											[editorOptions]="{ disabled: false}"
+											editorType="dxTextBox">				
+										</dxi-item>
+										<dxi-item 
+											dataField="objectType"
+											[label]="{ text : 'Object Type' }"
+											[editorOptions]="{ disabled: true}"
+											editorType="dxTextBox">				
+										</dxi-item>												
+										<dxi-item 
+											dataField="columnCount"
+											[label]="{ text : 'Column Count' }"
+											[editorOptions]="{ disabled: false}"
+											editorType="dxTextBox">				
+										</dxi-item>	
+										<dxi-item 
+											dataField="isTableData"
+											[label]="{ text : 'Widget Section' }"
+											[editorOptions]="{ disabled: false }"
+											template="widgetTemplate">	
+										</dxi-item>		
+										<div *dxTemplate="let data of 'widgetTemplate'">
+										    <mat-slide-toggle [checked]="section[data.dataField]"></mat-slide-toggle>
+										</div>										
+									</dx-form>
+								</mat-card-content>
+							</mat-card>
+						</div>								
+					</div>
+				</dx-scroll-view>
+			</dxi-item>						
+			<dxi-item title="Usage" class="oflow-y-auto">
+				<dx-scroll-view width="100%" height="100%" class="dbl-padding">							
+				</dx-scroll-view>
+			</dxi-item>						
+		</dx-tab-panel>
+	</popup-content>
+	<popup-footer>
+		<popup-footer-right>
+			<button class="btn btn-default" (click)="remove()">Remove</button> 
+			<button class="btn btn-default" (click)="cancel()">Cancel</button> 
+			<button class="btn btn-primary" (click)="save()">Save</button> 
+		</popup-footer-right>		
+	</popup-footer>
+</costar-popup> 

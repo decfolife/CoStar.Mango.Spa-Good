@@ -1,0 +1,77 @@
+<dx-drop-down-box class="query-chooser"
+    #DropdownBox
+    [(value)]="queryName"
+>
+    <div *dxTemplate="let data of 'content'" class="query-chooser">
+        <dx-accordion
+            #accordion
+            [dataSource]="categories"
+            [collapsible]="true"
+            [multiple]="true"
+            [animationDuration]="300"
+            >
+            <div *dxTemplate="let category of 'title'">
+                <span>{{category.name}}</span>
+            </div>
+            <div *dxTemplate="let category of 'item'" >
+                <ul>
+                    <li *ngFor="let query of category.queries" (click)="setQuery(query)" (mouseover)="mouseOverQuery(query)">
+                        <span>{{query.name}}<span *ngIf="query.isDefault" class="dbl-left-margin gray">(Default)</span></span>
+                        <span *ngIf="hoverQuery==query.id" class="dbl-left-margin">                            
+                            <button class="btn btn-link btn-sm" [matMenuTriggerFor]="costarQueryMoreMenu" (click)="$event.stopPropagation()"><fa-icon icon="ellipsis-h"></fa-icon></button>
+                            <mat-menu #costarQueryMoreMenu="matMenu">
+                                <ul>
+                                    <li mat-menu-item (click)="makeDefault(query)">Make Default</li>
+                                    <li mat-menu-item *ngIf="category.name == 'My Views'" (click)="launchSharePopup(query)">Sharing <fa-icon icon="check"></fa-icon></li>
+                                    <li mat-menu-item>Hide</li>
+                                    <li mat-menu-item [matMenuTriggerFor]="queryInfoMenu" (click)="$event.stopPropagation()">Info</li>
+                                    <li mat-menu-item *ngIf="category.name == 'My Views'" (click)="launchDeletePopup(query)">Delete</li>
+                                </ul>                                            
+                            </mat-menu>
+                            <mat-menu #queryInfoMenu="matMenu" class="info-menu">
+                                <ul>
+                                    <li>{{query.name}}</li>
+                                    <li>Dataset:  Building and Lease Summary</li>
+                                    <li>Created:  Alexander Hamilton - 2020-12-31</li>
+                                    <li>Modified:  Kent Carpenter - 2021-01-28</li>
+                                </ul>
+                            </mat-menu>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </dx-accordion>
+    </div>
+</dx-drop-down-box>
+
+<dx-popup
+    #sharePopup
+    [width]="800"
+    [height]="480"
+    [showTitle]="true"
+    [title]="sharePopupTitle"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="sharePopupVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">  
+        <list-view-sharing-dialog [query]="shareQuery" (closed)="sharePopupClose($event)"></list-view-sharing-dialog>
+    </div>
+</dx-popup> 
+
+
+<dx-popup
+    #deletePopup
+    [width]="800"
+    [height]="480"
+    [showTitle]="true"
+    [title]="deletePopupTitle"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="deletePopupVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">  
+        <list-view-delete-dialog [query]="deleteQuery" (closed)="deletePopupClose($event)"></list-view-delete-dialog>
+    </div>
+</dx-popup> 
+
+
+

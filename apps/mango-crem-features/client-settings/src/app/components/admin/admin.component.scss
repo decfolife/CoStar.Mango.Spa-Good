@@ -1,0 +1,90 @@
+@use 'src/assets/styles/colors';
+
+:host ::ng-deep {
+    #admin-page-wrapper {
+        crem-card {
+            .mat-card {
+                border: 1px solid colors.$gray;
+                border-radius: 2px;
+                box-shadow: none;
+                padding: 0px;
+                label {
+                    font-family: "Helvetica", verdana, sans-serif; // TODO: Remove once MangoSpa becomes CREM
+                    font-size: inherit;
+                    line-height: 20px;
+                }
+                .dx-texteditor {
+                    &.dx-editor-outlined{
+                        height: 36px;  // TODO: Remove once MangoSpa becomes CREM
+                    }
+                }
+                .mat-card-header {
+                    height: 58px;
+                    padding: 8px 16px;
+                    border-bottom: 1px solid colors.$gray;
+                    color: colors.$darkGray;
+                    justify-content: space-between;
+                    align-items: center;
+                    .cardHeader {
+                        border-bottom: 0px;
+                        .mat-card-title {
+                            margin-bottom: 0;
+                        }
+                        .mat-card-header-text {
+                            margin: 0px;
+                        }
+                    }
+                    > .mat-card-header-text {
+                        position: absolute;
+                    }
+                }
+                .mat-card-content {
+                    .content {
+                        display: flex;
+                        margin-left: 20px;
+                        form {
+                            width: 100%;
+                        }
+                    }
+                    .crem-form {
+                        width: 100%;
+                    }
+                    .help-text {
+                        color: colors.$gray;
+                        font-style: italic;
+                        display: inline-block;
+                        .password-help-text-list {
+                            list-style-type: none;
+                            padding: 0;
+                            margin: 0;
+                        }
+                    }
+                    .btn-link {
+                        font-size: inherit;
+                    }
+                    .settings-form {
+                        margin-top: 8px;
+                        margin-bottom: 16px;
+                        .label-wrapper {
+                            width: 140px;
+                            padding-right: 0.5rem;
+                        }
+                        .input-wrapper {
+                           width: calc(100% - 150px - 30px); // Fill the rest of the row minus label, minus tooltip
+                           min-width: 240px;
+                           max-width: 320px;
+                        }
+                        .crem-tooltip {
+                            margin: 0 0 0 1.5rem;
+                        }
+                    }
+                    .icon-brand-info-border-dims {
+                        use {
+                            transform: scale(1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

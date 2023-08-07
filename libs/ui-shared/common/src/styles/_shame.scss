@@ -1,0 +1,14 @@
+// ==========================================================================
+// Please, document the following about the hacky solution in the _shame.scss file :
+// - What part of the codebase does it relate to?
+// - Why was this needed?
+// - How does this fix it?
+// - How might you fix it properly, given more time?
+// ==========================================================================
+
+// This is a hacky solution to fix the issue of the button font size being too small on V06
+// This overrides vp_system_Sass_frameless.min.css 8pt font size
+// todo: Remove once we fully migrate to Mango
+button{
+  font-size: 16px !important;
+}

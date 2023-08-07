@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+@use '../../../mango/src/assets/styles/colors.scss';
+@use './shame';
+
+@use './app/components/settings-page/settings-page.component.scss';
+@use './app/components/intervals-card/intervals-card.component.scss';
+@use './app/components/field-assignments-card/field-assignments-card.component.scss';
+
+body {
+  margin: 0;
+}

@@ -1,0 +1,42 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<button class="btn btn-primary-outline" [matMenuTriggerFor]="queryMenu">Object Type: {{objectType}} <fa-icon icon="caret-down" class="std-left-margin"></fa-icon></button>
+			<mat-menu #queryMenu="matMenu">
+				<button mat-menu-item *ngFor="let ot of objectTypes" (click)="changeObjectType(ot)">{{ot}}</button>		
+			</mat-menu>						
+		</div>
+		<div class="controls-right">
+			<mat-form-field appearance="outline" class="portfolio bg-white">
+				<input matInput placeholder="Search..." (keyup)="searchDataGrid($event.target.value)">
+				<mat-icon matPrefix>search</mat-icon>
+			</mat-form-field>			
+			<button class="btn btn-primary-outline" [matMenuTriggerFor]="listMenu">Actions <fa-icon icon="caret-down"></fa-icon></button>
+			<mat-menu #listMenu="matMenu">				
+				<button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>      
+				<button mat-menu-item (click)="exportDataGrid()">Export</button>        
+			</mat-menu>			
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<dx-data-grid class="list-page-data-grid"
+			#HistoryContainerDataGrid
+			id="changeHistoryGrid"
+			[dataSource]="filteredChangeHistory"
+			[showColumnLines]="false"
+			[showRowLines]="true"
+			[showBorders]="true"
+			[rowAlternationEnabled]="true" 
+		>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>			
+			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			<dxi-column dataField="object" [groupIndex]="0"></dxi-column> 
+			<dxi-column dataField="field"></dxi-column>
+			<dxi-column dataField="oldValue"></dxi-column>
+			<dxi-column dataField="newValue"></dxi-column>
+			<dxi-column dataField="user"></dxi-column>
+			<dxi-column dataField="lastModified"></dxi-column>
+			<dxi-column dataField="eventType"></dxi-column>			
+		</dx-data-grid>
+	</div>
+</div>

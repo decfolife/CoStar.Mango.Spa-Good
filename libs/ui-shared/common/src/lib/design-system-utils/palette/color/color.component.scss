@@ -1,0 +1,43 @@
+@use "../../../../../../common/src/styles" as *;
+
+:host {
+  max-width: 12rem;
+  min-width: 220px;
+  min-height: 12rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 160px minmax(120px, auto);
+  grid-template-areas: "color"
+                       "description";
+  @include costar(border-radius, medium);
+  @include costar(background-color, light);
+  @include costar(border-color, gray05);
+  overflow: hidden;
+  .color, .description {
+    display: flex;
+    flex-direction: column;
+    @include costar(padding, 4);
+  }
+  .color{
+    gap: 0.25rem;
+    display: flex;
+    grid-area: color;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    @include costar(background-color, gray07);
+  }
+  .description{
+    gap: 0.5rem;
+    grid-area: description;
+    .name{
+      font-weight: bold;
+      @include costar(color, dark);
+    }
+    .text, .example{
+      @include costar(color, gray03);
+      @include costar(color, gray03);
+    }
+  }
+}

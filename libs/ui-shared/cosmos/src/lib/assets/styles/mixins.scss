@@ -1,0 +1,15 @@
+@mixin xsmall-breakpoint {
+  @media (min-width: 768px) { @content; }
+}
+@mixin small-breakpoint {
+  @media (max-width: 960px) { @content; }
+}
+@mixin medium-breakpoint {
+  @media (max-width: 1280px) { @content; }
+}
+@mixin large-breakpoint {
+  @media (max-width: 1600px) { @content; }
+}
+@mixin xlarge-breakpoint {
+  @media (max-width: 1920px) { @content; }
+}

@@ -1,0 +1,68 @@
+:host {
+  .crem-content-wrapper {
+    position: relative;
+
+    .recentDrawer {
+      position: fixed; //This style is only need to make the component display in CREM as a custom element. This can be removed if using only in the angular app position: fixed !important;
+      top: 115px;
+      z-index: 999;
+      width: 400px;
+
+      .ghost-element-style {
+        margin: 16px 16px 0 16px;
+        ::ng-deep { // Affects child component ngx-skeleton-loader, this is necessary in the lack of a better global/child-component styling
+          span.loader.progress {
+            margin: 0 0 16px 0;
+          }
+        }
+      }
+
+      .mat-expansion-panel {
+        border-radius: 0px;
+        ::ng-deep { // Target the whole child structure regardless of bookmarks.component.html's html
+          .mat-expansion-panel-header {
+            &.mat-expanded {
+              background-color: #d3d3d3;
+            }
+          }
+          .mat-expansion-panel-content {
+            .mat-expansion-panel-body {
+              padding: unset;
+              margin-bottom: 16px;
+              ul {
+                padding-inline-start: 0px;
+              }
+              .mat-list-item {
+                height: unset;
+                font-size: 14px;
+                text-decoration: none !important;
+                .mat-list-item-content {
+                  padding: 8px 40px;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .mat-nav-list {
+        position: absolute;
+        top: 0;
+        bottom: 40px;
+        overflow-y: auto;
+        width: 100%;
+      }
+
+      .manageBookmarksLink{
+        bottom: 16px;
+        position: absolute;
+        a {
+          color: #1e3a6f;
+          margin-left: 16px;
+          font-size: 14px;
+        }
+      }
+
+    }
+  }
+}

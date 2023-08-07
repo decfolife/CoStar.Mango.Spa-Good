@@ -1,0 +1,87 @@
+// @deprecated please use ui-shared/common/src/styles instead
+@import  "../lib/assets/styles/crem-lib.scss";
+
+@import '../lib/button/button.component.scss';
+@import '../lib/card/card.component.scss';
+@import '../lib/dropdown/dropdown.component.scss';
+@import '../lib/hero-metric/hero-metric.component.scss';
+@import '../lib/simple-grid/simple-grid.component.scss';
+@import '../lib/card/card.component.scss';
+@import '../lib/left-nav/left-nav.component.scss';
+@import '../lib/tooltip/tooltip.component.scss';
+@import '../lib/tooltip-basic/tooltip-basic.component.scss';
+
+.dx-texteditor.dx-editor-underlined:after {
+    border-bottom: none !important;
+}
+.mat-tab-label {
+    height: 48px;
+    padding: 0 24px;
+    cursor: pointer;
+    box-sizing: border-box;
+    opacity: 1;
+    min-width: 50%;
+    text-align: center;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    width: 50% !important;
+    position: relative;
+}
+
+div.cosmos-theme{
+  width: fit-content !important;
+  min-width: unset !important;
+  max-width: unset !important;
+
+ .mat-select-panel {
+  overflow: auto;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 0;
+    padding-bottom: 0;
+    max-height: 256px;
+    min-width: 200px !important;
+    font-family: Helvetica, system-ui, sans-serif;
+    max-width: 200px;
+    border-radius: 2px;
+    outline: 0;
+    border-top: 1px solid #a7a7a7;
+}
+ div#cdk-overlay-0 {
+transform: none !important;
+}
+.cdk-overlay-connected-position-bounding-box {
+  width: -webkit-fit-content !important;
+  width: -moz-fit-content !important;
+  width: fit-content !important;
+  box-shadow: 0 0 4px $color-brand-primary;
+  top: 0px !important;
+  position: relative !important;
+  left: 3px!important;
+}
+.mat-select-panel .mat-optgroup-label, .mat-select-panel .mat-option {
+  font-size: 14px;
+  line-height: 1.5em;
+  height: 1.5em;
+}
+.mat-option .mat-pseudo-checkbox{ display: none !important; }
+mat-option{
+  &.mat-selected {
+  background: $color-brand-primary;
+  color: $color-white;
+  }
+  &:hover{
+  background: $color-brand-primary;
+  color: $color-white;
+  }
+}
+
+.mat-select-panel-wrap {
+  overflow: hidden ;
+}
+}
+
+
+

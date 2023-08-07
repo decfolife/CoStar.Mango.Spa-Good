@@ -1,0 +1,21 @@
+<mat-toolbar class="costar-unified-second-menu">
+	<mat-toolbar-row class="costar-second-menu">
+		<ul class="nav nav-pills" >
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['crem-home']" [routerLinkActive]="['active']">Home</a>
+			</li>						
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['crem-portfolio']" [routerLinkActive]="['active']">Portfolio</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['crem-projects']" [routerLinkActive]="['active']">Projects</a>				      
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['misc']" [routerLinkActive]="['active']">Misc</a>				      
+			</li>			
+		</ul>					
+	</mat-toolbar-row>
+</mat-toolbar>
+<div class="sandbox-content-wrapper">
+	<router-outlet></router-outlet>
+</div>

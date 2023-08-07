@@ -1,0 +1,433 @@
+<div class="dashboard">	
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div *ngFor="let filter of filters">
+				<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible && filter.controlType == 'dropdown'"></costar-dropdown>			
+				<portfolio-menu *ngIf="filter.visible && filter.controlType == 'portfolio'" [showSearchRow]="filter.showSearchRow"></portfolio-menu>			
+				<hierarchy-dropdown portfolioId="1" *ngIf="filter.visible && filter.controlType == 'hierarchy'"></hierarchy-dropdown>		
+			</div>		
+			<button class="btn btn-default">Apply</button>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" [matMenuTriggerFor]="addMenu">Add</button>
+			<mat-menu #addMenu="matMenu">
+				<button mat-menu-item (click)="launchAddChargePopup()">Expense</button>			
+				<button mat-menu-item (click)="launchAddChargePopup()">Revenue</button>			
+			</mat-menu>
+			<button class="btn btn-default"><fa-icon icon="cog"></fa-icon></button>
+		</div>
+	</div>
+	<div class="dashboard-content-wrapper">
+		<div class="dashboard-hero-wrapper">				
+			<dashboard-hero-card
+				[title]="'NOV 2020 EXPENSES'"
+				[heroMetric]="'$3.61 MM'"
+				[subtitle]="'+$251 K / +0.46%'"
+				[tooltip]="'The total November 2020 expense obligation is $3,605,784.41 USD which is up $ from October 2020, an increase of 0.46%.'"
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'DEC 2020 EXPENSES'"
+				[heroMetric]="'$3.80 MM'"
+				[subtitle]="'+$193 K / +5.35%'"
+				[tooltip]="'The total December 2020 expense obligation is $3,798,830.24 USD which is up $193,045.80 from November 2020, an increase of 5.35%.'"
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'NOV 2020 RENT'"
+				[heroMetric]="'$2.75 MM'"
+				[subtitle]="'+$139 K / +5.33%'"
+				[tooltip]="'The total November 2020 rent expenses are $2,753,764.24 USD which is up $139,467.32 from May 2020, an increase of 5.33%.'"
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'NOV 2020 OPEX'"
+				[heroMetric]="'$1.05 MM'"
+				[subtitle]="'+$54 K / +5.40%'"
+				[tooltip]="'The total November 2020 operating expenses are $1,045,065.97 USD which is up $53,578.48 from May 2020, an increase of 5.40%.'"
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'NOV 2020 REMAINING'"
+				[heroMetric]="'$76,648'"
+				[subtitle]="'1.98% / 16 leases'"
+				[tooltip]="'There is $76,648.12 in unexported AP transactions that are due in November 2020 which have not yet been exported.  This represents 1.98% of the $3.80 MM due in November 2020.  There are 16 leases which make up the outstanding $76,648.12.'"
+			></dashboard-hero-card>											
+		</div>
+		<div class="dashboard-cards-wrapper">				
+			<div class="row">
+				<div class="col-md-12">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Monthly Variance by Account</mat-card-title>
+							<mat-card-subtitle>(October 2020 versus November 2020)</mat-card-subtitle>						
+						</mat-card-header>
+						<mat-card-content class="no-padding">
+							<dx-data-grid class="list-page-data-grid"
+								#monthlyVarianceByAccountGrid
+								id="monthlyVarianceByAccountGrid"
+								[dataSource]="variancebyAccount"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 							
+								[allowColumnResizing]="true"
+								[allowColumnReordering]="true"
+								[columnAutoWidth]="true"
+							>
+								<dxo-scrolling mode="virtual"></dxo-scrolling>
+								<dxi-column dataField="account"></dxi-column>
+								<dxi-column dataField="month1" caption="Oct 2020" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month2" caption="Nov 2020" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="variance" caption="Variance" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="variancePct" caption="Variance %" dataType="number" format="percent"></dxi-column>
+								<dxo-summary>					
+									<dxi-total-item
+									    column="month1"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month2"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="variance"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+															
+								</dxo-summary>						
+							</dx-data-grid>
+						</mat-card-content>
+					</mat-card>
+				</div>
+				<div class="col-md-12">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Top Lease Variances</mat-card-title>
+							<mat-card-subtitle>(October 2020 vs November 2020)</mat-card-subtitle>						
+						</mat-card-header>
+						<mat-card-content class="no-padding">
+							<dx-data-grid class="list-page-data-grid"
+								#leaseVarianceGrid
+								id="leaseVarianceGrid"
+								[dataSource]="leaseVariances"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 							
+								[allowColumnResizing]="true"
+								[allowColumnReordering]="true"
+								[columnAutoWidth]="true"
+							>
+								<dxo-scrolling mode="virtual"></dxo-scrolling>
+								<dxi-column dataField="systemLeaseID" alignment="left"></dxi-column>
+								<dxi-column dataField="buildingName"></dxi-column>
+								<dxi-column dataField="expirationDate" alignment="center"></dxi-column>
+								<dxi-column dataField="month1" caption="Oct 2020" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month2" caption="Nov 2020" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="variance" caption="Variance" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="variancePct" caption="Variance %"></dxi-column>
+								<dxo-summary>					
+									<dxi-total-item
+									    column="month1"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month2"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="variance"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+															
+								</dxo-summary>						
+							</dx-data-grid>
+						</mat-card-content>
+					</mat-card>		
+				</div>
+				<div class="col-md-12">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Monthly Expense</mat-card-title>
+							<mat-card-subtitle>(Next 12 Months, By Account)</mat-card-subtitle>						
+						</mat-card-header>
+						<mat-card-content class="no-padding">							
+							<dx-data-grid class="list-page-data-grid"
+								#monthlyExpensesByAccountGrid
+								id="monthlyExpensesByAccountGrid"
+								[dataSource]="monthlyExpensesByAccount"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 							
+								[allowColumnResizing]="true"
+								[allowColumnReordering]="true"
+								[columnAutoWidth]="true"
+							>
+								<dxo-scrolling mode="virtual"></dxo-scrolling>
+								<dxi-column dataField="account"></dxi-column>
+								<dxi-column dataField="month1" caption="Nov 2020" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month2" caption="Dec 2020" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month3" caption="Jan 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month4" caption="Feb 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month5" caption="Mar 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month6" caption="Apr 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month7" caption="May 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month8" caption="Jun 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month9" caption="Jul 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month10" caption="Aug 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month11" caption="Sep 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month12" caption="Oct 2021" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="month13" caption="Nov 2021" dataType="number" format="currency"></dxi-column>	
+								<dxo-summary>					
+									<dxi-total-item
+									    column="month1"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month2"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month3"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month4"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month5"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month6"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month7"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month8"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month9"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month10"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month11"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month12"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>
+									<dxi-total-item
+									    column="month13"
+									    summaryType="sum"
+									    [customizeText]="customizeSum">
+									</dxi-total-item>								
+								</dxo-summary>						
+							</dx-data-grid>
+						</mat-card-content>
+					</mat-card>
+				</div>
+				<div class="col-md-12">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Monthly Expenses</mat-card-title>
+							<mat-card-subtitle>(YoY)</mat-card-subtitle>	
+							<mat-form-field appearance="outline" multiple class="std-right-margin">
+								<mat-label>Expense Category</mat-label>
+								<mat-select>
+									<mat-option value="All">All</mat-option>
+									<mat-option value="Admin">Admin</mat-option>
+									<mat-option value="CAM">CAM</mat-option>						
+									<mat-option value="Rent">Rent</mat-option>						
+									<mat-option value="Utilities">Utilities</mat-option>						
+								</mat-select>
+							</mat-form-field>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart id="monthlyExpenseLine" [dataSource]="monthlyObligations">
+								<dxo-export [enabled]="false"></dxo-export>
+								<dxo-argument-axis title="Month"></dxo-argument-axis>
+								<dxo-legend
+							        verticalAlignment="bottom"
+							        horizontalAlignment="center">
+							    </dxo-legend>
+								<dxo-tooltip [enabled]="true" location="edge" [customizeTooltip]="standardTooltip"></dxo-tooltip>
+								<dxi-value-axis title="Monthly Expense $ (millions)">
+								    <dxo-grid [visible]="true"></dxo-grid>
+								</dxi-value-axis>						
+							    <dxi-series valueField="lastYear" name="2019" color="#77B800"></dxi-series>
+							    <dxi-series valueField="currentYear" name="2020" color="#F68338"></dxi-series>
+							    <dxi-series valueField="nextYear" name="2021" color="rgb(34,91,173)"></dxi-series>
+							    <dxi-series valueField="lastYearAverage" name="2019 Average" color="#77B800" dashStyle="dot">
+							    	<dxo-point [visible]="false"></dxo-point>
+							    </dxi-series>
+							    <dxi-series valueField="currentYearAverage" name="2020 Average" color="#F68338" dashStyle="dot">
+							    	<dxo-point [visible]="false"></dxo-point>
+							    </dxi-series>
+							    <dxi-series valueField="nextYearAverage" name="2021 Average" color="rgb(34,91,173)" dashStyle="dot">
+							    	<dxo-point [visible]="false"></dxo-point>
+							    </dxi-series>
+							    <dxo-common-series-settings
+							    	argumentField="month"
+							        type="spline"
+							        hoverMode="allArgumentPoints"
+
+							    >
+
+							    </dxo-common-series-settings>
+
+							    <!-- <dxi-series
+							        argumentField="month"
+							        valueField="obligation"
+							        name="Monthly Expense"
+							        type="bar"
+							        color="#F68338">
+							    </dxi-series>	 -->				    
+							</dx-chart>			
+						</mat-card-content>
+					</mat-card>			
+				</div>
+				<!-- <div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Monthly Expense</mat-card-title>
+							<mat-card-subtitle>(Next 12 months)</mat-card-subtitle>									
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart id="monthlyExpenseLine" [dataSource]="monthlyObligations">
+								<dxo-export [enabled]="false"></dxo-export>
+								<dxo-argument-axis title="Month"></dxo-argument-axis>
+								<dxo-legend [visible]="false"></dxo-legend>
+								<dxo-tooltip [enabled]="true" location="edge" [customizeTooltip]="standardTooltip"></dxo-tooltip>
+								<dxi-value-axis title="Monthly Expense $ (millions)">
+								    <dxo-grid [visible]="true"></dxo-grid>
+								</dxi-value-axis>						
+							    <dxi-series
+							        argumentField="month"
+							        valueField="obligation"
+							        name="Monthly Expense"
+							        type="bar"
+							        color="#F68338">
+							    </dxi-series>					    
+							</dx-chart>			
+						</mat-card-content>
+					</mat-card>			
+				</div> -->
+				
+				<!-- <div class="col-md-6">		
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Remaining Obligation</mat-card-title>
+							<mat-card-subtitle>(By hierarchy, current month included)</mat-card-subtitle>						
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart id="remainingObligationHistogram" [dataSource]="remainingObligations" >		
+								<dxo-common-series-settings 
+								    argumentField="hierarchy"
+								    type="bar"
+								    valueField="remainingObligation"						    
+								    [ignoreEmptyPoints]="true"						    
+							        color="#F68338"
+							        [barPadding]="0.5">
+								</dxo-common-series-settings>
+								<dxi-value-axis title="Remaining Obligation $ (millions)">
+								    <dxo-grid [visible]="true"></dxo-grid>
+								</dxi-value-axis>
+								<dxo-argument-axis title="Region"></dxo-argument-axis>
+								<dxo-series-template nameField="hierarchy"></dxo-series-template>
+								<dxo-export [enabled]="false"></dxo-export>							
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>	
+				</div> -->
+				<div class="col-md-6">		
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Annual Obligations</mat-card-title>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart [dataSource]="annualObligations" [customizePoint]="customizePoint">		
+								<dxo-common-series-settings 
+								    argumentField="year"
+								    type="bar"
+								    valueField="obligation"						    
+								    [ignoreEmptyPoints]="true"						    
+							        color="#F68338"
+							        [barPadding]="0.5">
+								</dxo-common-series-settings>
+								<dxi-value-axis title="Annual Obligation $ (millions)">
+								    <dxo-grid [visible]="true"></dxo-grid>
+								</dxi-value-axis>
+								<dxo-argument-axis title="Year"></dxo-argument-axis>
+								<dxo-series-template nameField="year"></dxo-series-template>
+								<dxo-export [enabled]="false"></dxo-export>							
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<dx-popup
+	#AddChargePopup
+    width="92%"
+    height="92%"
+    [showTitle]="false"
+    [dragEnabled]="false"
+    [closeOnOutsideClick]="false"
+    [(visible)]="addChargePopupVisible">
+    <!-- <dxo-position
+        my="top"
+        at="top"
+        of="#cremContentWrapper">
+    </dxo-position> -->
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding popup-no-title">  
+    	<costar-popup>
+    		<popup-content>
+				<dx-scroll-view width="100%" >
+		    		<app-edit-expense [isPopup]="true" (closed)="closeAddChargePopup()"></app-edit-expense>
+		    	</dx-scroll-view>
+		    </popup-content> 
+		</costar-popup>
+    </div>
+</dx-popup>	

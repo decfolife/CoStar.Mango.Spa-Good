@@ -1,0 +1,59 @@
+import { createReducer, on, Action } from '@ngrx/store';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+
+import * as AppActions from './app.actions';
+import { MangoAppEntity as MangoAppEntity } from './app.models';
+import { Client, ContactRecord, MangoSubApps, UserAuth, UserInfo } from '@mango/data-models/lib-data-models';
+
+export const APP_FEATURE_KEY = 'mango';
+
+export interface State extends EntityState<MangoAppEntity> {
+  loaded: boolean,
+  error?: string | null,
+  currentSubApp: MangoSubApps,
+  client: string,
+  contactRecord: ContactRecord,
+  authenticatedUser: UserAuth,
+  userInfo: UserInfo,
+  clientInfo: Client,
+  moduleId: number,
+  renderFormLeftNavDisplayed: boolean
+}
+
+export interface MangoPartialState {
+  readonly [APP_FEATURE_KEY]: State;
+}
+
+export const appAdapter: EntityAdapter<MangoAppEntity> = createEntityAdapter<MangoAppEntity>();
+
+export const initialState: State = appAdapter.getInitialState({
+  loaded: false,
+  client: null,
+  currentSubApp: null,
+  contactRecord: null,
+  authenticatedUser: null,
+  userInfo: null,
+  clientInfo: null,
+  moduleId: null,
+  renderFormLeftNavDisplayed: false
+});
+
+const appReducer = createReducer(
+  initialState,
+  on(AppActions.init, (state) => ({ ...state, loaded: false, error: null })),
+  on(AppActions.loadSubApp, (state, { subApp }) => ({ ...state, error: null, currentSubApp: subApp })),
+  on(AppActions.setLoading, (state, { display }) => ({ ...state, loaded: !display, error: null })),
+  on(AppActions.setAuthenticatedUser, (state, { user }) => ({ ...state, error: null, authenticatedUser: user })),
+  on(AppActions.setUserInfo, (state, { userInfo }) => ({ ...state, error: null, userInfo: userInfo })),
+  on(AppActions.setClientInfo, (state, { clientInfo }) => ({ ...state, error: null, clientInfo: clientInfo })),
+  on(AppActions.setClientKey, (state, { clientKey }) => ({ ...state, error: null, client: clientKey })),
+  on(AppActions.setContactRecord, (state, { contactRecord }) => ({ ...state, error: null, contactRecord })),
+  on(AppActions.setModuleId, (state, { moduleId }) => ({ ...state, error: null, moduleId: moduleId })),
+  on(AppActions.setRenderFormLeftNavDisplayed, (state, { renderFormLeftNavDisplayed }) => ({ 
+    ...state, error: null, renderFormLeftNavDisplayed: renderFormLeftNavDisplayed 
+  })),
+);
+
+export function reducer(state: State | undefined, action: Action) {
+  return appReducer(state, action);
+}

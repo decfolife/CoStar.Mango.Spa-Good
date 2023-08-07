@@ -1,0 +1,42 @@
+::ng-deep {
+  dx-data-grid {
+    .dx-header-row > td > .dx-datagrid-text-content {
+      display: inline-block;
+      text-align: left;
+      vertical-align: top;
+      white-space: normal;
+    }
+
+    div.dx-button-content {
+      border: none !important;
+    }
+
+    input {
+      box-sizing: border-box !important;
+    }
+
+    .dx-datagrid-rowsview {
+      table {
+        &.dx-datagrid-table {
+          tbody {
+            &.dx-row:hover {
+              > tr {
+                border-color: #e3f3fc;
+                cursor: default;
+
+                td {
+                  background: #e3f3fc;
+                  border-color: #e3f3fc;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .data-description{
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}

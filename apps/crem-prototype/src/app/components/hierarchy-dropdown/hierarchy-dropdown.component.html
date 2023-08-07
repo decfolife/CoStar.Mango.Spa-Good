@@ -1,0 +1,30 @@
+<dx-drop-down-box *ngIf="hierarchyDropdown.controlType == 'hierarchy'"
+    [(value)]="selectedItems"
+    [valueExpr]="hierarchyDropdown.valueExpr"
+    [displayExpr]="hierarchyDropdown.displayExpr"
+    [placeholder]="hierarchyDropdown.placeholder"
+    [showClearButton]="false"
+    [dataSource]="hierarchyDropdown.items"
+    >
+    <div *dxTemplate="let data of 'content'" >
+	    <dx-tree-view
+	        id="treeview"
+	        [items]="hierarchyDropdown.items"	
+			dataStructure="plain"        
+			parentIdExpr="parentId"
+			keyExpr="id"
+			displayExpr="name"
+	        [elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+	        showCheckBoxesMode="normal"
+	        selectionMode="multiple"
+	        selectNodesRecursive="true"
+	        selectByClick="true"
+	        (onSelectionChanged)="treeViewSelectionChanged($event)"        
+	        (onContentReady)="treeViewContentReady($event)"
+	    >
+	        <div *dxTemplate="let item of 'item'">
+	            {{item.name}}
+	        </div>
+	    </dx-tree-view>
+	</div>
+</dx-drop-down-box>

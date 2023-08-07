@@ -1,0 +1,80 @@
+<div class="project-kanban-card" (click)="navigateToProject()">
+    <div class="project-card-main-wrapper">
+        <div class="project-card-priority"></div>
+        <div class="project-card-body">
+            <div class="project-name">{{ project.name }}</div>
+            <div class="project-type-id-wrapper">
+                <span>{{project.type}}</span>
+                <span *ngIf="project.internalId">&nbsp;--&nbsp;{{project.internalId}}</span>
+            </div>
+            <div class="project-manager-due-date-wrapper">
+                <span>{{project.manager}}</span>
+                <span>{{project.dueDate}}</span>
+            </div>
+            <div class="project-card-footer">
+                <div class="project-files-activity-wrapper">
+                    <span [id]="filesId" (click)="toggleFilePopover($event)">
+                        <mat-icon>attach_file</mat-icon>
+                        <span>{{project.fileCount}}</span>
+                    </span>            
+                    <span [id]="activityId" (click)="toggleActivityPopover($event)">
+                        <mat-icon class="material-icons-outlined">chat</mat-icon>
+                        <app-badge *ngIf="project.newActivityCount" type="notify" [text]="project.newActivityCount" class="std-left-margin"></app-badge>
+                        <span *ngIf="!project.newActivityCount" class="new-activity-placeholder"></span>
+                    </span>	
+                    <span (click)="toggleTasks($event)">                
+                        <mat-icon class="material-icons-outlined">checklist</mat-icon>
+                        <span class="std-left-margin">{{stageTasks.length}}</span>
+                        <mat-icon *ngIf="!tasksVisible" class="material-icons-outlined">arrow_right</mat-icon>
+                        <mat-icon *ngIf="tasksVisible" class="material-icons-outlined">arrow_drop_down</mat-icon>
+                    </span>									
+                </div>            
+            </div>        
+        </div>	
+    </div>    
+    <div *ngIf="tasksVisible" class="project-card-tasks-wrapper">
+        <div class="card-task-wrapper" *ngFor="let task of stageTasks">
+            <div class="task-status">
+                <mat-icon *ngIf="!task.completeDate" class="material-icons-outlined" [class.red]="task.isOverdue">radio_button_unchecked</mat-icon>                
+                <mat-icon *ngIf="task.completeDate" class="material-icons-outlined green">check_circle</mat-icon>
+            </div>
+            <div class="task-details">
+                <div class="task-name">
+                    {{task.taskName}}
+                </div>
+                <div class="task-due-approvers">
+                    <div>{{task.dueDate | date:'MM/dd/yyyy'}}</div>
+                    <div>
+                        <span *ngFor="let approver of task.approvers" class="task-approver-icon" [class.approved]="approver.isApproved" [matTooltip]="approver.approverName">{{approver.initials}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>			  
+</div>
+
+<dx-popover
+    [target]="filesTarget" 
+    [maxWidth]="600"
+    width="600"
+    height="400"
+    [(visible)]="filesPopoverVisible"
+    position="bottom"
+    >
+    <div class="popover-no-padding">        
+        <project-files-popover></project-files-popover> 
+    </div>
+</dx-popover>
+
+<dx-popover
+    [target]="activityTarget" 
+    [maxWidth]="600"
+    width="600"
+    height="400"
+    [(visible)]="activityPopoverVisible"
+    position="bottom"
+    >
+    <div class="popover-no-padding">
+        <activity-channel [activities]="filteredActivities" [mentions]="mentions" [projectId]="project.id"></activity-channel>
+    </div>
+</dx-popover>

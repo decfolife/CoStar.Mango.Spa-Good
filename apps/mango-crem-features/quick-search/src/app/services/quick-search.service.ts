@@ -1,0 +1,20 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable, Optional } from '@angular/core';
+import { Observable } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { environment } from '../../../../../mango/src/environments/environment.local';
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+
+@Injectable()
+export class QuickSearchService  extends EndpointService{
+  constructor(protected http: HttpClient, @Optional()  facade: MangoAppFacade  ) {
+    super(http, facade);
+  }
+
+   getQuickSearchResults(searchString: string, moduleId: number): Observable<any> {
+      const url = `${environment.appUrls.quickSearch}/quicksearch/getquicksearchresults/${searchString}/${moduleId}`;
+      return this.callHttpGet(url, 'getquicksearchresults');
+  }
+}
+

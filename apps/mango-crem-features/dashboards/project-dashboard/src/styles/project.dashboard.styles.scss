@@ -1,0 +1,587 @@
+@use 'colors';
+@import  '../../../../../mango/src/assets/styles/app-styles/dashboards.scss';
+
+//***** standard styles *****//
+
+$font-family-brand: Helvetica, system-ui, sans-serif;
+
+$stdBorder: 1px solid colors.$stdBorderColor;
+
+$font-size-14: 14px;
+
+$stdPadding: 8px;
+$dblPadding: 2 * $stdPadding;
+
+::-webkit-scrollbar{
+  width:5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb:horizontal {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: #d0d0d0;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  position: fixed;
+  bottom: 2px ;
+}
+::-webkit-scrollbar-thumb:vertical {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: #d0d0d0;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #AAA;
+}
+
+html {
+	background-color: colors.$bodyBackgroundGray;
+	scrollbar-width: thin;
+}
+
+body {
+	margin: 0;
+}
+
+//**** Filter Styles End ****//
+
+//**** Card Styles ****//
+#projects-dashboard .project-cards, .projects.dashboards-dragCardItems {
+	crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
+		height: 280px;
+	}
+
+	crem-card mat-card .cardContent {
+		height: 280px;
+		max-height: 280px;
+	}
+
+	crem-card mat-card.cremCard#activity_feed_card mat-card-content.mat-card-content.cremCardContent {
+    min-height: 480px !important;
+    height: 480px !important;
+    max-height: 480px !important;
+  }
+
+  crem-card mat-card#activity_feed_card .cardContent {
+    height: 480px !important;
+    max-height: 480px !important; 
+  }
+
+	crem-card .mat-card#projects_by_type_card .cardContent {
+    overflow: hidden;
+    padding: 16px !important;
+	}	
+
+	crem-card mat-card.cremCard#project_milestones_card mat-card-content.mat-card-content.cremCardContent {
+    display: flex;
+    align-items: stretch;
+    font-family: Helvetica, sans-serif;
+    padding: 0px !important;
+    font-size: 14px;
+    justify-content: flex-start !important;
+    background: colors.$white;
+    min-height: 600px !important;
+    height: 600px !important;
+    max-height: 600px !important;
+    overflow: hidden !important;
+	}
+	crem-card mat-card#project_milestones_card .cardContent {
+    height: 600px;
+    max-height: 600px;
+	}
+
+	crem-card mat-card.mat-card mat-card-header.mat-card-header .cardHeader {
+		height: 26px !important;
+    	border-bottom: none !important;
+	}
+
+	crem-card .cardHeader .customHeader {
+		height: 32px;
+		box-sizing: border-box;
+		align-items: center;
+
+		div div {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+		}
+	}
+
+	crem-card mat-card#project_milestones_card cs-chip .dx-field-value-static {
+    padding: 4px 8px !important;
+	}
+
+	crem-card mat-card#project_milestones_card .chipContent {
+    max-width: 182px !important;
+    overflow: hidden;
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    display: inline-block !important;
+    line-height: 16px;
+	}
+
+	crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row td, crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td {
+    vertical-align: middle !important;
+    padding: 0px 8px !important;
+	}
+
+	//ADA FIX: Text is clipped when resized, Project Milestones datagrid headers and cells
+	crem-card {
+		mat-card#project_milestones_card {
+			table.dx-datagrid-table {
+				tr.dx-row {
+					td {
+						overflow: auto;
+						&::-webkit-scrollbar {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// end of ADA Fix
+
+
+	//ADA FIX: Card pager for color contrast
+	div.dx-pager {
+		div.dx-pages {
+			div.dx-info {
+				color: colors.$black;
+			}
+		}
+	}
+	// end of ADA Fix
+
+	crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row td .dx-template-wrapper, crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td .dx-template-wrapper {
+    display: flex !important;
+	}
+
+	.customHeader .mat-slide-toggle {
+		white-space: nowrap;
+		// Solves ADA: Text is clipped when resized, for SLIDE TOGGLE
+		overflow: auto;
+		&::-webkit-scrollbar{
+			display: none;
+		}
+		// End of ADA style fix
+		text-overflow: ellipsis;
+		font-size: 14px;
+		font-family: Helvetica, sans-serif;
+		position: relative;
+		margin: 0 8px;
+		display: inline-block;
+		height: 24px;
+		max-width: 100%;
+		line-height: 24px;
+		outline: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+	
+	cs-search {
+    position: relative !important;
+    top: 0 !important;
+    height: 24px !important;
+    vertical-align: middle !important;
+    border: 1px solid #c3c3c3 !important;
+    border-radius: 2px;
+    font-size: 14px !important;
+    margin-right: 18px;
+
+		mat-form-field.mat-form-field div.mat-form-field-flex {
+			border: none !important;
+			padding: 0 !important;
+		}
+
+		mat-form-field.mat-form-field div.mat-form-field-flex div.mat-form-field-outline {
+			background: none !important;
+		}
+
+		mat-form-field.mat-form-field div.mat-form-field-flex div.mat-form-field-infix {
+			border: none !important;
+			height: 24px !important;  //** this is the one which adjust the search box infix height **//
+			box-sizing: border-box;
+		}
+
+		mat-icon.mat-icon.notranslate.icon-brand-search {
+			background-repeat: no-repeat;
+			display: inline-block;
+			position: relative;
+			fill: currentColor;
+			height: 24px;
+			width: 24px;
+			top: 3px;
+			right: -2px;
+		}
+
+		.mat-icon svg#brand-search {
+			fill: #3a3a3a;
+			width: 16px;
+			margin-left: 2px;
+			height: 100%;
+			transform: translateY(-2px);
+		}
+
+		input.mat-input-element {
+			margin-top: -4px
+		}
+
+		.mat-icon svg#brand-close {
+			fill: #3a3a3a;
+			width: 16px;
+			transform: scale(.75) translateY(-6px);
+			position: relative;
+			height: 100%;
+		}
+
+	} //** cs-search end **//
+
+	dx-data-grid div.dx-datagrid-pager.dx-pager div.dx-page-sizes div.dx-page-size.dx-selection {
+    color: colors.$white;
+    background-color: colors.$color-brand-primary;
+	}
+
+	dx-data-grid div.dx-datagrid-pager.dx-pager div.dx-pages div.dx-page.dx-selection {
+    color: colors.$white;
+    background-color: colors.$color-brand-primary;
+	}
+
+	.mat-form-field-appearance-outline { 
+		.mat-form-field-wrapper {
+			margin: 0.25em 0;
+		}
+		.mat-form-field-flex {
+			padding: 0 0.75em 0 0.75em;
+			margin-top: -0.25em;
+			position: relative;
+		}
+		div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-outline > * {
+			/* background: white; */
+			border: none !important;
+			/* outline: 0 !important; */
+		}
+		.mat-form-field-appearance-outline .mat-form-field-outline-start {
+			border-radius: 5px 0 0 5px;
+			min-width: 5px;
+		}
+
+	}	
+
+	.is-overdue {
+		color: colors.$color-brand-red;
+		display: flex;
+		.mat-icon {
+			position: relative;
+			top: -2px;
+			right: -2px;
+			svg {
+				fill: colors.$color-brand-red;
+				width: 16px;
+			}
+		}
+	}
+
+	div.buttonTemplate {
+    display: flex;
+    justify-content: center;
+	}
+
+	.tdtw-row-stike {
+  	text-decoration: line-through;
+	}
+
+	activity-feed-card a, a.hover, a:hover, a:active, a:focus {
+    color: #1e3a6f;
+    text-decoration: underline !important;
+	}
+
+	crem-card .dx-datagrid-pager {
+    position: relative !important;
+    border-bottom: 1px solid #dadada;
+    border-left: 1px solid #dadada;
+    // z-index: 4000;
+    background: colors.$white;
+	//Solves ADA: Text is clipped when resized, for cards pager
+	overflow: auto;
+	&::-webkit-scrollbar{
+		display: none;
+	}
+	// End of ADA style fix
+	}
+	
+	div.cdk-drop-list.dropCards {
+		flex-direction: column;
+		box-sizing: border-box;
+		display: flex;
+	}
+	
+} //**** cards end ****//
+
+//************card end here ******************//
+
+//***** Metric Styles ******//
+
+#projects-dashboard crem-metric {
+
+	font-family: $font-family-brand;
+	mat-card.mat-card.costar-hero-metric-card {
+		border: 0;
+		display: inline-block;
+		margin-bottom: 0;
+		margin-right: 30px;
+		min-width: max-content;
+		height: 80px;
+	}
+
+  mat-card.mat-card {
+    border: $stdBorder;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    padding: 0px !important;
+  }
+
+	mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+    border-bottom: 0px;
+    padding: 0px;
+    height: 16px;
+
+		div.mat-card-header-text {
+			margin: 0px;
+			display: flex;
+			flex-direction: column;
+			text-transform: capitalize !important;
+			font-size: 14px !important;
+
+		mat-card-title.mat-card-title {
+				font-size: 16px;
+				line-height: 16px;
+				color: colors.$mediumDarkGray;
+				font-weight: 400;
+				text-transform: capitalize !important;
+				margin: 0px 16px 0 0 !important;
+				//Solves ADA: Text is clipped when resized, for metric hero value
+				overflow: auto;
+				&::-webkit-scrollbar{
+					display: none;
+				}
+				// End of ADA style fix
+			}
+		}
+  }
+
+	mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0px;
+    margin: 0;
+    background: colors.$white;
+
+		.hero-value {
+			color: colors.$black;
+			font-size: 32px;
+			line-height: 32px;
+			margin: 8px 0px;
+			//Solves ADA: Text is clipped when resized, for metric titles
+			overflow: auto;
+			&::-webkit-scrollbar{
+				display: none;
+			}
+			// End of ADA style fix
+		}
+
+		.sidekick-value-wrapper {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-content: center;
+			margin-left: $dblPadding;
+		}
+  }
+
+  mat-card.mat-card.costar-hero-metric-card
+  mat-card-content.mat-card-content
+  .sidekick-value-wrapper
+  .sidekick-value {
+		display: flex;
+		align-items: center;
+		border-radius: 2px;
+		font-size: $font-size-14;
+		text-align: center;
+		padding: 0 4px;
+		margin: 0px;
+		//Solves ADA: Text is clipped when resized, for metric sidekick
+		overflow: auto;
+		&::-webkit-scrollbar{
+			display: none;
+		}
+		// End of ADA style fix
+		&.green {
+			border: 1px solid colors.$color-brand-green !important;
+			background: transparent !important;
+			color: colors.$color-brand-green !important;
+		}
+		&.red {
+			border: 1px solid colors.$color-brand-red !important;
+			background: transparent !important;
+			color: colors.$color-brand-red !important;
+		}
+		&.gray {
+			border: 1px solid colors.$color-neutral-dark !important;
+			background: transparent !important;
+			color: colors.$mediumDarkGray !important;
+		}
+	}
+	
+	crem-icon {
+    position: relative;
+    top: 4px;
+    left: 2px;
+  }
+
+	mat-card.mat-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
+    margin: 0px;
+    height: 14px;
+
+		mat-card-subtitle.mat-card-subtitle {
+			color: colors.$mediumDarkGray;
+			display: inline-block;
+			font-size: 14px;
+			line-height: 14px;
+			font-weight: 400;
+			margin: 0!important;
+			text-transform: capitalize;
+			//Solves ADA: Text is clipped when resized, for metric subtitle
+			overflow: auto;
+			&::-webkit-scrollbar{
+				display: none;
+			}
+			// End of ADA style fix
+		}
+  }
+
+	.iconWrapper.dx-field-value-static {
+		padding: 0px; 
+    width: 20px;
+    position: relative;
+    right: -7px;
+    top: -4px;
+  }
+}	
+//**** Metric Styles End ****//
+
+
+.taskApprovalModal .modalContent {
+  overflow: hidden !important;
+}
+
+#projects-dashboard crem-card .cardHeader .customHeader,
+.dashboards-dragCardItems crem-card .cardHeader .customHeader {
+	height: 32px;
+	box-sizing: border-box;
+	align-items: center;
+
+	div div {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+}
+
+//** Recent Activity Page styles //
+.recentActivities-container {
+	background-color: colors.$bodyBackgroundGray;
+
+	cs-search {
+		border: none !important;
+
+		mat-form-field.mat-form-field {
+			width: 200px;
+			margin-right: 8px;
+			height: 32px;
+
+			div.mat-form-field-wrapper {
+				padding: 0;
+				margin: 0;
+
+				div.mat-form-field-flex {
+					padding: 0px;
+					margin-top: 0px;
+				}
+			}
+		}
+
+		mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex {
+			div.mat-form-field-infix {
+				padding: 0px !important;
+				overflow: visible !important;
+				height: 32px !important;
+				border: 1px solid #c3c3c3 !important;
+				background: white !important;
+				margin-top: 0px !important;
+				padding-left: 8px !important;
+				font-size: 16px !important;
+				display: flex;
+				min-width: 200px;
+				align-items:center;
+		
+				mat-icon.mat-icon.notranslate.icon-brand-search svg {
+					top: 4px;
+					position: relative;
+					fill: #a3a3a3;
+				}
+			}
+		
+			.mat-form-field-suffix {
+				right: 0px;
+				position: absolute;
+				
+				mat-icon.mat-icon.notranslate.icon-brand-close svg {
+					fill: #a3a3a3;
+					position: relative;
+					cursor: pointer;
+					margin-top: 3px;
+					transform: translateY(-3px);
+				}
+			}
+		}	
+
+		input.search__input.mat-input-element {
+			margin-right: 28px;
+			border: none ;
+			padding: 0px ;
+			font-size: 16px ;
+		}
+
+	}
+
+	dx-data-grid {
+		width: 100%;
+		.dx-datagrid-headers {
+			border-bottom: none;
+			.dx-datagrid-table .dx-row > td {
+				border-bottom: none;
+			}
+		}
+		.dx-data-row {
+			white-space: pre-wrap;
+		}
+		a {
+			color: colors.$color-dark-blue;
+		}
+	}	
+} //** End recent activities styles

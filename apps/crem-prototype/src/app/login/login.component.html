@@ -1,0 +1,43 @@
+<login-masthead></login-masthead>
+<div class="login-wrapper">
+	<mat-card>	
+		<mat-card-header>
+			<mat-card-title>Secured Login</mat-card-title>
+		</mat-card-header>	
+		<mat-card-content>						
+			<form (submit)="onFormSubmit($event)">				
+				<div class="login-sso">
+					<button class="btn btn-default w100">Login via SSO</button>
+					<div class="login-or">
+						<hr>
+						<div>OR</div>	
+						<hr>
+					</div>
+				</div>				
+				<div class="center">Login with your email and password</div>
+				<dx-text-box #EmailInput [(value)]="user.email" width="320" placeholder="Email">
+					<dx-validator>
+						<dxi-validation-rule 
+							type="required"
+							message="Email is required">
+						</dxi-validation-rule>
+					</dx-validator>					
+				</dx-text-box>
+				<dx-text-box [(value)]="user.password" width="320" placeholder="Password" [mode]="passwordMode">
+					<dxi-button name="show" location="after" [options]="passwordButton"></dxi-button>
+					<dx-validator>
+						<dxi-validation-rule 
+							type="required"
+							message="Password is required">
+						</dxi-validation-rule>
+					</dx-validator>					
+				</dx-text-box>
+				<div class="forgot-password-link">
+					<button class="btn btn-link" (click)="iForgot()">Forgot Password?</button>
+				</div>				
+				<button class="btn btn-primary w100 dbl-top-margin" type="submit">Login</button>				
+			</form>
+		</mat-card-content>
+	</mat-card>
+</div>
+

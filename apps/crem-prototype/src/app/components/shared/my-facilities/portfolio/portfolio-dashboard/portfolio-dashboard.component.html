@@ -1,0 +1,371 @@
+<div class="dashboard">
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div class="filters-wrapper">
+				<ng-container *ngFor="let filter of filters">
+					<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible && filter.controlType == 'dropdown'"></costar-dropdown>
+					<portfolio-menu *ngIf="filter.visible && filter.controlType == 'portfolio'" [showSearchRow]="filter.showSearchRow"></portfolio-menu>
+					<hierarchy-dropdown portfolioId="1" *ngIf="filter.visible && filter.controlType == 'hierarchy'"></hierarchy-dropdown>
+				</ng-container>
+			</div>
+			<button class="btn btn-default">Apply</button>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" [matMenuTriggerFor]="addMenu">
+        <!-- <fa-icon icon="plus"></fa-icon>  -->
+        Add
+      </button>
+			<mat-menu #addMenu="matMenu">
+        <ng-container  *ngFor="let wiz of addWizards">
+          <button mat-menu-item (click)="popupManagement(wiz.eventName)">
+            {{wiz.name}}
+          </button>
+        </ng-container>
+			</mat-menu>
+			<button class="btn btn-default" (click)="launchSettingsModal()"><fa-icon icon="cog"></fa-icon></button>
+		</div>
+	</div>
+	<div class="dashboard-content-wrapper">
+		<div class="dashboard-hero-wrapper">
+			<ng-container *ngFor="let hero of heros">
+				<dashboard-hero-card *ngIf="hero.visible"
+					[title]="hero.title"
+					[heroMetric]="hero.hero"
+					[sidekickMetricA]="hero.sidekick"
+					[subtitle]="hero.subtitle"
+					[tooltip]="hero.helpText"
+				></dashboard-hero-card>
+			</ng-container>
+		</div>
+		<!-- <div class="dashboard-slideshow-wrapper" (click)="goToPhipps()">
+			<img src="assets/images/costar_property_slideshow.png">
+		</div>	 -->
+		<div class="dashboard-cards-wrapper">
+			<div class="row" cdkDropList (cdkDropListDropped)="drop($event)">
+				<div class="dashboard-card-drag" cdkDrag *ngFor="let card of cards; let i = index;" [class.col-md-6]="card.colSpan == 1" [class.col-md-12]="card.colSpan == 2" [class.hide]="!card.visible">
+					<mat-icon cdkDragHandle class="card-drag-handle">drag_handle</mat-icon>
+					<upcoming-expirations-card *ngIf="card.componentName == 'UpcomingExpirationsCardComponent'"></upcoming-expirations-card>
+					<critical-dates-card *ngIf="card.componentName == 'CriticalDatesCardComponent'"></critical-dates-card>
+					<new-leases-card *ngIf="card.componentName == 'NewLeasesCardComponent'"></new-leases-card>
+					<quarterly-expirations-card *ngIf="card.componentName == 'QuarterlyExpirationsCardComponent'"></quarterly-expirations-card>
+					<!-- <my-reports-card *ngIf="card.componentName == 'MyReportsCardComponent'" [isProject]="false"></my-reports-card> -->
+					<annual-expiration-rent-card *ngIf="card.componentName == 'AnnualExpirationRentCardComponent'"></annual-expiration-rent-card>
+					<utilization-card *ngIf="card.componentName == 'UtilizationCardComponent'"></utilization-card>
+					<rent-psf-card *ngIf="card.componentName == 'RentPsfCardComponent'"></rent-psf-card>
+					<sf-per-seat-card *ngIf="card.componentName == 'SfPerSeatCardComponent'"></sf-per-seat-card>
+					<activity-feed-card *ngIf="card.componentName == 'ActivityFeedCardComponent'" mode="portfolio"></activity-feed-card>
+					<!-- <unverified-leases-card *ngIf="card.componentName == 'UnverifiedLeasesCardComponent'"></unverified-leases-card> -->
+					<ownership-type-card *ngIf="card.componentName == 'OwnershipTypeCardComponent'"></ownership-type-card>
+					<building-type-card *ngIf="card.componentName == 'BuildingtypeCardComponent'"></building-type-card>
+					<store-format-card *ngIf="card.componentName == 'StoreFormatCardComponent'"></store-format-card>
+					<lease-count-by-hierarchy-card *ngIf="card.componentName == 'LeaseCountByHierarchyCardComponent'"></lease-count-by-hierarchy-card>
+					<archived-leases-card *ngIf="card.componentName == 'ArchivedLeasesCardComponent'"></archived-leases-card>
+					<financials-links-card *ngIf="card.componentName == 'FinancialLinksCardComponent'"></financials-links-card>
+					<building-state-card *ngIf="card.componentName == 'BuildingStateCardComponent'"></building-state-card>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<dx-popup
+  #AddBuildingPopup
+  width="92%"
+  height="92%"
+  [showTitle]="true"
+  title="Add New Building"
+  [dragEnabled]="true"
+  [closeOnOutsideClick]="false"
+  [(visible)]="addBuildingModalVisible"
+  contentTemplate="addBuildingContent"
+>
+  <div *dxTemplate="let data of 'addBuildingContent'" class="add-building">
+    <costar-popup>
+      <popup-content>
+        <dx-scroll-view width="100%" >
+          <div class="container-fluid m-0">
+            <div class="row">
+
+              <!-- Building Details -->
+              <div class="col col-lg-6">
+                <h4 class="border-bottom mb-4 pb-2">Details</h4>
+                <mat-card class="card-no-borders">
+                  <mat-card-content>
+                    <dx-form
+                      [colCount]="1"
+                      labelLocation="left"
+                      [showColonAfterLabel]="false"
+                      (onFieldDataChanged)="onFieldDataChanged($event)"
+                    >
+                      <dxi-item
+                        dataField="portfolioTemplate"
+                        [label]="{ text : 'Portfolio' }"
+                        template="portfolioTemplate"
+                        >
+                      </dxi-item>
+                      <div *dxTemplate="let data of 'portfolioTemplate'">
+                          <portfolio-menu
+                            [showColumnHeader]="false"
+                            placeholder="Select...">
+                          </portfolio-menu>
+                      </div>
+
+                      <dxi-item dataField="BuildingName">
+                        <dxi-validation-rule
+                          type="required"
+                          message="Building name is required"
+                        ></dxi-validation-rule>
+                      </dxi-item>
+
+                      <dxi-item
+                        dataField="Address"
+                        editorType="dxTextArea"
+                        [editorOptions]="{ height: 60 }"
+                      >
+                        <dxi-validation-rule
+                          type="required"
+                          message="Address is required"
+                        ></dxi-validation-rule>
+                      </dxi-item>
+
+                      <dxi-item
+                        dataField="Country"
+                        editorType="dxSelectBox"
+                        [editorOptions]="{ items: countries, searchEnabled: true, value: '' }">
+                        <dxi-validation-rule
+                          type="required"
+                          message="Country is required"
+                        ></dxi-validation-rule>
+                      </dxi-item>
+
+                      <dxi-item dataField="City">
+                        <dxi-validation-rule
+                          type="required"
+                          message="City is required"
+                        ></dxi-validation-rule>
+                      </dxi-item>
+
+                      <dxi-item dataField="State">
+                        <dxi-validation-rule
+                          type="required"
+                          message="State is required"
+                        ></dxi-validation-rule>
+                      </dxi-item>
+
+                      <dxi-item dataField="ZipCode">
+                        <dxi-validation-rule
+                          type="required"
+                          message="Zip Code is required"
+                        ></dxi-validation-rule>
+                        <dxi-validation-rule
+                          type="pattern"
+                          [pattern]="zipPattern"
+                          message="Please use a valid Zip Code"
+                        ></dxi-validation-rule>
+                      </dxi-item>
+
+                      <dxi-item>
+                        <button
+                          type="button"
+                          name="LookupAddress"
+                          class="btn btn-primary mt-4"
+                          (click)="lookupAddress()"
+                          [disabled]="lookupDisabled"
+                        >Lookup Address</button>
+                      </dxi-item>
+
+                    </dx-form>
+
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <!-- End Building Details -->
+
+              <!-- Building Lookup Results -->
+              <div class="col col-lg-6" *ngIf="showResultsVisible">
+                <h4 class="border-bottom mb-4 pb-2">Results</h4>
+                  <p>2 Costar matches found...</p>
+                  <mat-radio-group class="options" aria-label="Select an option" [(ngModel)]="selectedBuilding">
+                    <!-- Generate List from CoStar Data Service -->
+                    <mat-radio-button
+                      class="result-item"
+                      *ngFor="let property of pdsProperties ; let i = index"
+                      value="{{property.propertyId}}"
+                      (change)="selectAddress($event)"
+                    >
+                      <mat-card class="option-card">
+                        <mat-card-content>
+                          <div class="content">
+                            <mat-card-title-group>
+                              <mat-card-title>{{ property.streetAddress }} {{ property.buildingName }}</mat-card-title>
+                              <mat-card-subtitle>
+                                <div class="d-block">{{ property.displayText }}</div>
+                                <div class="d-block">{{ property.city }} {{ property.stateCode }} {{ property.postalCode }}</div>
+                              </mat-card-subtitle>
+                            </mat-card-title-group>
+                          </div>
+                          <div class="image" [ngStyle]="{'background-image': 'url(' + property.image + ')' }"></div>
+                        </mat-card-content>
+                      </mat-card>
+                    </mat-radio-button>
+                    <!-- END Generate List from CoStar Data Service -->
+
+                    <!-- Use entered Address -->
+                    <mat-radio-button class="result-item" value="0"
+                    (change)="selectAddress($event)">
+                      <mat-card class="option-card">
+                        <mat-card-content>
+                          <div class="content">
+                            <mat-card-title-group>
+                              <mat-card-title>No match?</mat-card-title>
+                              <mat-card-subtitle>
+                                Review the entered address and try again, or select this option to <strong>use the address as is</strong>.
+                              </mat-card-subtitle>
+                            </mat-card-title-group>
+                          </div>
+                        </mat-card-content>
+                      </mat-card>
+                    </mat-radio-button>
+                    <!-- END Use entered Address  -->
+                  </mat-radio-group>
+                </div>
+              </div>
+              <div class="col col-lg-6" *ngIf="!showResultsVisible"></div>
+              <!-- End Building Lookup Results -->
+
+          </div>
+
+        </dx-scroll-view>
+      </popup-content>
+      <popup-footer>
+        <popup-footer-right>
+          <button
+            name="save"
+            class="btn btn-default"
+            (click)="cancelAddBuilding('addBuilding')"
+          >Cancel</button>
+          <button
+            class="btn btn-primary"
+            (click)="saveBuilding()"
+            [disabled]="saveDisabled"
+          >Save</button>
+        </popup-footer-right>
+      </popup-footer>
+    </costar-popup>
+  </div>
+</dx-popup>
+
+<dx-popup
+	#PortfolioDashboardSettingsPopup
+    [width]="600"
+    [height]="570"
+    [showTitle]="true"
+    title="Portfolio Summary Settings"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="settingsModalVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    	<costar-popup>
+			<popup-content>
+				<dx-tab-panel
+					#settingsTabPanel
+					[selectedIndex]="0"
+					[loop]="false"
+					[animationEnabled]="true"
+					[swipeEnabled]="true"
+					>
+					<dxi-item title="Filters" class="oflow-y-auto">
+						<dx-scroll-view width="100%" height="100%" class="popup-tab-panel-item">
+							<dx-form
+								[(formData)]="filters"
+								[colCount]="1"
+								labelLocation="left">
+								<dxi-item *ngFor="let item of filters"
+									dataField="visible"
+									[label]="{ text : item.placeholder }"
+									template="switchTemplate"
+									[editorOptions]="{ name : item.placeholder }"
+									>
+								</dxi-item>
+								<div *dxTemplate="let data of 'switchTemplate'">
+									<mat-slide-toggle [(checked)]="data.dataField" [name]="data.editorOptions.name" (change)="handleToggleChange($event, 'filters')"></mat-slide-toggle>
+								</div>
+							</dx-form>
+						</dx-scroll-view>
+					</dxi-item>
+					<dxi-item title="Hero Metrics" class="oflow-y-auto">
+						<dx-scroll-view width="100%" height="100%" class="popup-tab-panel-item">
+							<dx-form
+								[(formData)]="heros"
+								[colCount]="1"
+								labelLocation="left">
+								<dxi-item *ngFor="let item of heros"
+									dataField="visible"
+									[label]="{ text : item.title }"
+									[editorOptions]="{ name : item.title }"
+									template="switchTemplate"
+									>
+								</dxi-item>
+								<div *dxTemplate="let data of 'switchTemplate'">
+									<mat-slide-toggle [(checked)]="data.dataField" [name]="data.editorOptions.name" (change)="handleToggleChange($event, 'heros')"></mat-slide-toggle>
+								</div>
+							</dx-form>
+						</dx-scroll-view>
+					</dxi-item>
+					<dxi-item title="Cards" class="oflow-y-auto">
+						<dx-scroll-view width="100%" height="100%" class="popup-tab-panel-item">
+							<dx-form
+								[(formData)]="cards"
+								[colCount]="1"
+								labelLocation="left">
+								<dxi-item *ngFor="let item of cards"
+									dataField="visible"
+									[label]="{ text : item.title }"
+									[editorOptions]="{ name : item.title }"
+									template="switchTemplate"
+									>
+								</dxi-item>
+								<div *dxTemplate="let data of 'switchTemplate'">
+									<mat-slide-toggle [(checked)]="data.dataField" [name]="data.editorOptions.name" (change)="handleToggleChange($event, 'cards')"></mat-slide-toggle>
+								</div>
+							</dx-form>
+						</dx-scroll-view>
+					</dxi-item>
+					<dxi-item title="Settings" class="oflow-y-auto">
+						<dx-scroll-view width="100%" height="100%" class="popup-tab-panel-item">
+							<dx-form
+								[colCount]="1"
+								labelLocation="left"
+								class="dbl-right-padding">
+								<dxi-item
+									[dataField]="selectedCurrency"
+									[label]="{ text : 'Currency' }"
+									template="currencyTemplate"
+									>
+								</dxi-item>
+								<div *dxTemplate="let data of 'currencyTemplate'">
+									<costar-dropdown [dropdownData]="currencies"></costar-dropdown>
+								</div>
+								<dxi-item
+									[dataField]="selectedUnitOfMeasure"
+									[label]="{ text : 'Unit of Area Measure' }"
+									template="uomTemplate"
+									>
+								</dxi-item>
+								<div *dxTemplate="let data of 'uomTemplate'">
+									<costar-dropdown [dropdownData]="unitsOfMeasure"></costar-dropdown>
+								</div>
+							</dx-form>
+						</dx-scroll-view>
+					</dxi-item>
+				</dx-tab-panel>
+			</popup-content>
+			<popup-footer>
+				<popup-footer-right>
+					<button class="btn btn-default" (click)="settingsModalCancel()">Cancel</button>
+	        		<button class="btn btn-primary" (click)="settingsModalCancel()">Save</button>
+				</popup-footer-right>
+			</popup-footer>
+		</costar-popup>
+    </div>
+</dx-popup>

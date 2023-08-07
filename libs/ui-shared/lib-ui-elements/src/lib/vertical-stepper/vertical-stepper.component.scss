@@ -1,0 +1,40 @@
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+
+.vertical_stepper_wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.stepper-left-border {
+    border-right: 1px solid #0000001f;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    margin: 5px 0 5px 0;
+}
+
+.stepper-text {
+    background: colors.$color-brand-primary;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-shrink: 0;
+    color: colors.$white;
+}
+
+.stepper-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.stepper-container__content {
+    display: flex;
+    flex-grow: 1;
+    flex-shrink:1;
+}

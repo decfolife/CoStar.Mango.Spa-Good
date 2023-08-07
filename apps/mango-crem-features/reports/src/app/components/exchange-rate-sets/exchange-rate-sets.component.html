@@ -1,0 +1,55 @@
+<div class="report-page">
+	<div class="report-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="reports__page-title dbl-right-margin">{{ pageTitle }}</h5>
+			<cs-search #SearchBox class="report-search" (changed)="searchDataGrid($event)"
+				[disabled]="!exchangeRateData">
+			</cs-search>
+			<div class="report-dropdown">
+				<crem-dropdown [dataSource]='portfolioDropdownData.items' keyExpr="valueKey" allowSearch='true'
+					placeholder='Portfolio' [initialSelectedValue]='portfolioDropdownData.selected'
+					[showColumnHeader]='true' [displayExpr]='portfolioDropdownData.displayExpr'
+					[valueExpr]='portfolioDropdownData.valueExpr' (selectedItems)="onPortfolioChange($event)"
+					dropDownContainerCustomClass="reportsDropDown"></crem-dropdown>
+			</div>
+
+			<div class="report-dropdown">
+				<crem-dropdown #PeriodDropdown [dataSource]='periodDropdownData.items' [isDisabled]="!selectedPortfolio"
+					allowSearch='true' placeholder='Periods' [showColumnHeader]='true' displayExpr="period"
+					valueExpr='ID' (selectedItems)="onPeriodChange($event)" showCheckBoxesMode='always'
+					dropDownContainerCustomClass="reportsDropDown" selectMode='multiple'></crem-dropdown>
+			</div>
+
+			<crem-button class="button__apply" type="secondary"
+				[disabled]="!(selectedPortfolio && selectedPeriods?.length)" (click)="apply()">Apply</crem-button>
+		</div>
+		<div class="controls-right">
+			<crem-button type="primary" [disabled]="!(exchangeRateData)" (click)="exportGrids()">Export</crem-button>
+		</div>
+	</div>
+
+	<div class="report-page-data-grid-wrapper">
+		<dx-data-grid *ngIf="exchangeRateData" class="report-page-data-grid" #DataGrid [dataSource]="exchangeRateData"
+			keyExpr="gridIndex" [showColumnLines]="false" [showRowLines]="false" [showBorders]="false"
+			[rowAlternationEnabled]="true" [allowColumnResizing]="true" [allowColumnReordering]="true"
+			[columnAutoWidth]="true" [filterSyncEnabled]="true" [columnMinWidth]="10">
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxo-column-chooser [allowSearch]="true" mode="select">
+			</dxo-column-chooser>
+			<dxo-paging [pageSize]="100"></dxo-paging>
+			<dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[50, 100, 200, 500]" [showInfo]="true"
+				[showNavigationButtons]="true" [visible]="true">
+			</dxo-pager>
+			<dxo-load-panel shadingColor="rgba(255,255,255,0.2)" [(visible)]="dataGridLoading" [showIndicator]="true"
+				[showPane]="true" [enabled]="true" [shading]="true" [closeOnOutsideClick]="false"></dxo-load-panel>
+			<dxi-column *ngFor="let col of columns" [dataField]="col.dataField" [alignment]="col.alignment"
+				[visible]="col.visible" [dataType]="col.dataType" [format]="col.format" [caption]="col.caption"
+				[fixed]="col.fixed" [allowEditing]="col.allowEditing" [cellTemplate]="col.cellTemplate">
+				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint"
+					[precision]="col.precision"></dxo-format>
+			</dxi-column>
+		</dx-data-grid>
+	</div>
+</div>

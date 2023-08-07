@@ -1,0 +1,26 @@
+import { Canvas, Meta, Story } from '@storybook/addon-docs';
+import atomicDesign from '../design-system/assets/Atomic-Design.png';
+
+<Meta title="Components/Getting Started"/>
+
+# Components
+Design systems play a crucial role in establishing consistent and efficient user interfaces. By leveraging the principles of 
+Atomic design, we can effectively organize and manage components within the design system.
+
+In this documentation, we have adopted the Atomic design principles to structure our components. We begin with the smallest 
+building blocks called "Atoms," which represent the elemental UI elements like buttons, inputs, and icons. These Atoms can 
+be combined to form more complex components known as "Molecules" that encapsulate specific UI patterns or functionalities. 
+Molecules represent reusable and self-contained UI components that are composed of one or more Atoms.
+
+<img src={atomicDesign} alt="Atomic Design" />
+
+Moving up the hierarchy, we have "Organisms" which are composed of multiple Molecules and form distinct sections or sections 
+of a user interface. These Organisms represent reusable and self-contained UI components that can be easily integrated 
+into different contexts.
+
+Additionally, we utilize Storybook as a powerful tool for documenting, visualizing, and testing our components. Storybook 
+provides a dedicated environment where developers and designers can collaborate, explore, and interact with the components in 
+isolation. It serves as a comprehensive showcase of our design system's components, allowing for easy reference and understanding.
+
+By leveraging the combination of design systems and Storybook implementations, we can streamline the development process, 
+enhance cross-team collaboration, and ensure a unified and delightful user experience throughout our applications.

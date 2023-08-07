@@ -1,0 +1,86 @@
+<mat-card id="ba-batch-parameters">
+  <mat-card-header>
+    <mat-card-title>Batch Parameters</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="no-padding">
+    <div class="dbl-padding">
+      <dx-form *ngIf="isReadOnly"
+        [colCount]="1"
+        [showColonAfterLabel]="false"
+        class="mb-4"
+      >
+        <dxi-item [class]="'own-row'">
+          <dxo-label text="Portfolio:
+            {{ scheduleObject?.SelectedPortfolio.portfolioName }} |
+            Original Workflow Step:
+            {{ scheduleObject?.SelectedWorkflowStatus.workflowStatus }} |
+            View: {{ scheduleObject?.SelectedView.name }}"
+          ></dxo-label>
+        </dxi-item>
+      </dx-form>
+
+      <dx-form #ParametersForm
+        [colCount]="2"
+        labelLocation="left"
+        [showColonAfterLabel]="false"
+        [formData]="parametersData"
+      >
+        <dxi-item editorType="dxSelectBox"
+          dataField="cardMeasureEvent"
+          [editorOptions]="{
+            items: measureEvents,
+            dropDownOptions: { maxHeight: '25vh' },
+            elementAttr: { id: 'ba-measure-event' },
+            showClearButton: true,
+            displayExpr: 'remeasureTypeName',
+            placeholder: 'Measure Events',
+            readOnly: isReadOnly,
+            onValueChanged: measureEventChanged
+          }"
+          [label]="{ text: 'Measure Event' }"
+        >
+          <dxi-validation-rule type="required"
+            *ngIf="!isReadOnly"
+            message="Measure Event is Required."
+          ></dxi-validation-rule>
+        </dxi-item>
+
+        <dxi-item editorType="dxSelectBox"
+          dataField="cardNextWorkflowStatus"
+          [editorOptions]="{
+            items: nextWorkflowStatuses,
+            dropDownOptions: { maxHeight: '25vh' },
+            elementAttr: { id: 'ba-next-wf-status' },
+            showClearButton: true,
+            displayExpr: 'workflowStatus',
+            placeholder: 'Workflow Status',
+            readOnly: isReadOnly
+          }"
+          [label]="{ text: 'Next Workflow Status' }"
+        >
+          <dxi-validation-rule type="required"
+            *ngIf="!isReadOnly"
+            message="Next Workflow Status is Required."
+          ></dxi-validation-rule>
+        </dxi-item>
+
+        <dxi-item *ngIf="parametersData.workflowSettings?.isCommentsEnabled"
+          editorType="dxTextBox"
+          dataField="cardWorkflowComment"
+          [editorOptions]="{
+            elementAttr: { id: 'ba-next-wf-comment' },
+            readOnly: isReadOnly
+          }"
+          [label]="{ text: 'Next Workflow Comment' }"
+        >
+          <dxi-validation-rule type="required"
+            message="Next Workflow Comment is Required."
+            *ngIf="parametersData.workflowSettings.isCommentsRequired && !isReadOnly"
+          ></dxi-validation-rule>
+        </dxi-item>
+
+      </dx-form>
+    </div>
+  </mat-card-content>
+</mat-card>

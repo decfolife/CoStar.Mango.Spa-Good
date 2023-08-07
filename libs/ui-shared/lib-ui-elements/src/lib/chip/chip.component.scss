@@ -1,0 +1,63 @@
+
+@import "../assets/styles/crem-lib.scss";
+
+
+
+
+
+
+
+	#chip{
+    max-height: 24px;
+    min-width: 16px;
+    max-width: -webkit-fit-content;
+    max-width: -moz-fit-content;
+    max-width: fit-content;
+    border-radius: 40px;
+    padding: 4px 8px;
+    font-size: 14px;
+    font-weight: 700;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    box-sizing: borderBox;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+		&.primary {
+			color: white !important;
+			&.costar {
+				background: $color-brand-primary;
+			}
+
+
+		}
+
+		&.secondary {
+      background: white;
+			&.costar {
+				color: $color-brand-primary;
+        border: 1px solid $color-brand-primary;
+      }
+
+			&.error {
+				color: $color-brand-red;
+				border-color:$color-brand-red;
+			}
+
+
+		}
+		&.tertiary {
+			background: white;
+			&.costar {
+				color:$color-neutral-medium;
+				border-color: none;
+			}
+		}
+	}
+
+
+

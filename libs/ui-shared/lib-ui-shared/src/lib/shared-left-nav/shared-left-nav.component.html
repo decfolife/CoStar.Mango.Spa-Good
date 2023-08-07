@@ -1,0 +1,63 @@
+<mat-sidenav-container
+  class="sharedLeftNav-container"
+  [ngClass]="{'sideNavExpand': expandNav, 'sideNavCollapse': !expandNav}"
+>
+  <mat-sidenav #sidenav  opened="true" class="shared-left-nav" [autoFocus]="false">
+
+    <div class='sidenavTop' id="sidebar-nav" [attr.aria-labelledby]="'sidebar-control'"
+      [ngClass]="{'hideLinks': !expandNav}">
+      <ul class="navList">
+        <ng-container *ngFor="let linkObj of navObjs">
+
+          <ng-container *ngIf="linkObj.category == null">
+            <li class="listItem" *ngFor="let link of linkObj.data"
+              [ngClass]="activeLink === link.name ? link.name + ' active' : link.name">
+              <a [id]="'left-nav__' + link?.moduleID + '-' + link?.dynamicName?.toLowerCase()?.replace(' ', '-')"
+                [ngClass]="activeLink === link.name ? 'selected' : '' " (click)="onNavLinkClick(link, $event)"
+                [tabindex]="-1">
+                <span>{{link.dynamicName}}</span>
+              </a>
+            </li>
+          </ng-container>
+
+          <ng-container *ngIf="linkObj.category != null">
+            <li>
+              <mat-expansion-panel [expanded]="true" class="leftnavPanel" [attr.aria-expanded]="expanded"
+                [attr.aria-label]="'Toggle section navigation'">
+
+                <mat-expansion-panel-header>
+                  <mat-panel-title> {{linkObj.category}} </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ul>
+                  <li class="listItem" *ngFor="let link of linkObj.data"
+                    [ngClass]="activeLink === link.name ? link.name + ' active' : link.name">
+                    <a [id]="'left-nav__' + link?.moduleID + '-' + link?.dynamicName?.toLowerCase()?.replace(' ', '-')"
+                      [ngClass]="activeLink === link.name ? 'selected' : '' " (click)="onNavLinkClick(link, $event)"
+                      [tabindex]="-1">
+                      <span>{{link.dynamicName}}</span>
+                    </a>
+                  </li>
+                </ul>
+
+              </mat-expansion-panel>
+            </li>
+          </ng-container>
+
+        </ng-container>
+      </ul>
+    </div>
+
+    <div class='sidenavBottom'>
+      <div id="sidebar-control" class="navCollExp" (click)="sidenavtoggle()" (keyup.enter)="sidenavtoggle()"
+        (keyup.Space)="sidenavtoggle()" [attr.role]="'tabpanel'" [attr.aria-controls]="'sidebar-nav'"
+        [attr.title]="expandNav ? 'Hide Sidebar' : 'Show Sidebar'"
+        [attr.aria-label]="expandNav ? 'Hide Sidebar' : 'Show Sidebar'" tabindex="-1">
+        <mat-icon class="arrowLeft" id="navArrowLeft" *ngIf="expandNav"
+          aria-label="Hide Sidebar">keyboard_double_arrow_left</mat-icon>
+        <mat-icon class="arrowRight" id="navArrowRight" *ngIf="!expandNav"
+          aria-label="Show Sidebar">keyboard_double_arrow_right</mat-icon>
+      </div>
+    </div>
+
+  </mat-sidenav>
+</mat-sidenav-container>

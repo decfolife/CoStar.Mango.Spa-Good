@@ -1,0 +1,31 @@
+<div class="project-info-wrapper">
+    <div class="project-name">
+        {{project.name}} ({{project.id}})
+    </div>
+    <div class="project-details-wrapper">
+        {{project.type}} | {{project.projectManager}} | {{project.targetCompletionDate}} | {{project.status}} | {{project.systemPercentComplete}}%
+    </div>
+</div>
+<div class="project-status-wrapper">
+    <h6>Last Status Note</h6>
+    <div class="project-note-wrapper">
+        {{project.lastStatusNote}}
+    </div>
+    <div class="project-task-approvals">
+        <h6>Recent Task Completions</h6>
+        <dx-data-grid 			
+			[dataSource]="approvals"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="true"
+			[rowAlternationEnabled]="false" 							
+			[allowColumnResizing]="false"
+			[allowColumnReordering]="false"
+			[columnAutoWidth]="false"
+		>
+			<dxi-column dataField="step" width="60"></dxi-column>						
+			<dxi-column dataField="taskName"></dxi-column>
+			<dxi-column dataField="dueDate" caption="Completed" dataType="date" alignment="center"></dxi-column>			
+		</dx-data-grid>
+    </div>
+</div>  

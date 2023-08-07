@@ -1,0 +1,30 @@
+:host {
+  ::ng-deep {
+    .dx-button-content {
+      line-height: 1;
+    }
+  }
+}
+
+.enable-financial-reporting-card {
+  margin-top: 16px;
+
+  mat-card-title {
+    align-items: center;
+    border-bottom: 1px solid #c2c2c2;
+    box-sizing: border-box;
+    color: #3c3c3c;
+    display: flex;
+    font-size: 20px;
+    justify-content: space-between;
+    padding: 16px;
+  }
+
+  .container-fluid {
+    padding: 0px;
+
+    .row {
+      min-height: 36px;
+    }
+  }
+}

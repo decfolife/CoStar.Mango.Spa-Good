@@ -1,0 +1,104 @@
+<mat-card class="dashboard-card project-dash-card">
+	<mat-card-header>				
+		<mat-card-title>
+			<div class="card-title-hero">{{tasksDueSoon.length}}</div>
+			<span>Tasks Due Soon</span>
+		</mat-card-title>
+		<mat-card-subtitle>(assigned to me)</mat-card-subtitle>
+		<div class="mat-card-header-toolbar">
+			<button class="btn btn-default btn-sm" [matMenuTriggerFor]="cardMenu"><mat-icon>more_horiz</mat-icon></button>
+			<mat-menu #cardMenu="matMenu">								
+				<button mat-menu-item>Refresh</button>
+				<button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>      
+				<button mat-menu-item (click)="exportDataGrid()">Export</button>				
+			</mat-menu>
+		</div>
+	</mat-card-header>
+	<mat-card-content class="no-padding">							
+		<dx-data-grid class="list-page-data-grid"
+			#TasksDueSoonDataGrid
+			id="TasksDueSoonDataGrid"
+			[dataSource]="tasksDueSoon"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 							
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			(onRowPrepared)="assignRowId($event)"	
+			[wordWrapEnabled]="true"		
+		>
+			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter> 
+			<dxi-column dataField="step" [width]="60" [allowHeaderFiltering]="false"></dxi-column>
+			<dxi-column dataField="taskName"></dxi-column>
+			<dxi-column [width]="110" dataType="date" dataField="dueDate" cellTemplate="dueDateTemplate"></dxi-column>
+			<dxi-column dataField="projectName"></dxi-column>
+			<dxi-column [width]="110" dataField="projectType" caption="Type"></dxi-column>
+			<!-- <dxi-column [width]="130" cellTemplate="openTaskTemplate"></dxi-column>
+			<div *dxTemplate="let data of 'openTaskTemplate'">
+				<button class="btn btn-link" (click)="launchApproveRejectPopup(data, 'Approve')">Approve</button> | <button class="btn btn-link" (click)="launchApproveRejectPopup(data, 'Reject')">Reject</button>
+			</div> -->
+			<div *dxTemplate="let task of 'dueDateTemplate'">
+				<span [class.red]="task.data.isOverdue">{{task.value | date: 'MM/dd/yyyy'}}</span>
+            	<fa-icon icon="exclamation-triangle" class="red std-left-margin" *ngIf="task.data.isOverdue" matTooltip="Task is overdue"></fa-icon>
+			</div>	
+			<dxi-column type="buttons" width="66">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'">
+						<button class="btn btn-link btn-sm item-info" [id]="'taskDueSoonInfo' + data.data.id.toString()" (mouseover)="showPopover(data)" (mouseout)="hidePopover()"><mat-icon>info_outline</mat-icon></button>
+		    			<button class="btn btn-link btn-sm" (click)="$event.stopPropagation()" [matMenuTriggerFor]="taskMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #taskMoreMenu="matMenu">
+				    		<ul>                        
+		                        <li (click)="launchApproveRejectPopup(data, 'Approve')">Approve</li>
+		                        <li (click)="launchApproveRejectPopup(data, 'Reject')">Reject</li>                        		                                            
+		                    </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>		
+		</dx-data-grid>
+	</mat-card-content>
+</mat-card>
+
+<dx-popover
+    [target]="popoverTarget" 
+    position="bottom"
+    [width]="480"
+    [(visible)]="popoverVisible">
+    <div *dxTemplate="let data = model of 'content'" class="rich-task-popover">
+		<project-task-popover [task]="hoveredRow"></project-task-popover>		
+    </div>
+</dx-popover>
+
+<dx-popup
+	#TaskPopup
+    width="60%"
+    height="80%"
+    [showTitle]="true"
+    [title]="taskPopupTitle"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="taskPopupVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    	<task-dialog [task]="currentTask" (closed)="close($event)" (saved)="taskSaved($event)" (transition)="transitionToTask($event)"></task-dialog>    
+    </div>
+</dx-popup>	
+
+<!-- <dx-popup
+	#TaskPopup
+    width="600"
+    height="240"
+    [showTitle]="true"
+    [title]="taskPopupTitle"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="taskPopupVisible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    	<task-approval [task]="currentTask" [mode]="taskPopupButtonText" (closed)="taskClosed($event)" (saved)="taskSaved($event)" (transition)="transitionToTask($event)"></task-approval>    
+    </div>
+</dx-popup>	 -->

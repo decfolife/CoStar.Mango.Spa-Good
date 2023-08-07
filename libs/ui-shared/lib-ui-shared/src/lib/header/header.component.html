@@ -1,0 +1,180 @@
+<header>
+
+  <a
+    href="#main-content"
+    class="skip-to-main"
+    aria-label="Skip to Main Content"
+  >
+    Skip to Main Content
+  </a>
+
+  <div class="brand">
+    <a href="/" tabindex="0" title="Go to home page" aria-label="Go to home page">
+      <img
+        class="glyph"
+        runat="server"
+        src="/assets/images/logos/CoStar.svg"
+        role="presentation"
+        (click)="logoClicked()"
+      />
+      <img
+        class="glyph phone"
+        runat="server"
+        src="/assets/images/logos/landmark.svg"
+        role="presentation"
+        (click)="logoClicked()"
+      />
+    </a>
+    <div class="wordmark">{{ productTitle }}</div>
+  </div>
+
+  <div class="search">
+    <form class="input-container">
+
+        <!-- Input Field -->
+        <mat-form-field appearance="outline" class="input">
+          <!-- Input box -->
+          <div class="input">
+            <input #searchInput
+              matInput
+              class="mqs-input"
+              placeholder="Search"
+              (click)="$event.stopPropagation()"
+              (keyup.enter) = "selectedOption($event);$event.preventDefault()"
+              [matAutocomplete]="auto"
+              [formControl]="myControl"
+              role="searchbox"
+              aria-label="search"
+            />
+            <mat-autocomplete #auto="matAutocomplete" class="mqs-autoComplete">
+              <mat-option *ngFor="let option of filteredOptions" [value]="option" (click)="selectedOption($event)">
+                {{option}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </mat-form-field>
+
+        <!-- Dropdown -->
+        <mat-form-field  class="select">
+          <!-- TODO: This should be another shared component -->
+          <!-- NOTE: Using native elements -->
+          <select
+            placeholder="All"
+            panelClass="mqs-selectPanel"
+            (click)="$event.stopPropagation()"
+            (focus)= "inputBlurred()"
+            (selectionChange)="moduleChange($event)"
+            matNativeControl
+          >
+            <option
+              *ngFor="let module of searchModules"
+              [value]="module.objectTypeTypeId"
+              (click)="$event.stopPropagation()"
+            >
+              {{ module.objectTypeType }}
+            </option>
+          </select>
+        </mat-form-field>
+
+        <!-- Search Button -->
+        <button
+          type="button"
+          class="submit btn-none"
+          (click)="search();$event.stopPropagation()"
+          aria-label="Submit search"
+        >
+          <crem-icon
+            icon="faMagnifyingGlass"
+            size="xs"
+          ></crem-icon>
+        </button>
+
+    </form>
+  </div>
+
+  <div class="profile">
+    <!-- Client Logo -->
+    <button class="client-logo btn-none" aria-label="Edit Logo Image">
+      <div class="image" [style.background-image]="'url(\''  + (ImageUrl$ | async) + '\')'"></div>
+      <span class="edit">
+        <crem-icon
+          icon="faPenToSquare"
+          size="sm"
+        ></crem-icon>
+      </span>
+    </button>
+
+    <!-- Resource Center -->
+    <div class="resources">
+      <button
+        mat-button
+        tabindex="0"
+        id="resource-center"
+        title="Resource Center"
+        aria-label="Resource Center"
+        [matMenuTriggerFor]="resourcesMenu"
+      >
+        <!-- Attach to the 'indicator' element the message(s) indicator -->
+        <span class="indicator"></span>
+        <crem-icon
+          icon="faQuestion"
+          size="xl"
+        ></crem-icon>
+      </button>
+      <mat-menu class="resources-menu" #resourcesMenu="matMenu">
+        <ul>
+          <li><a mat-menu-item aria-label="Pendo Resource Center">Pendo Resource Center</a></li>
+        </ul>
+      </mat-menu>
+    </div>
+
+    <!-- User Profile -->
+    <div class="user">
+      <button
+        mat-button
+        tabindex="0"
+        class="avatar btn-none"
+        title="My Profile"
+        aria-label="My Profile"
+        [matMenuTriggerFor]="userMenu"
+      >
+        {{ (contactRecord$ | async)?.firstName[0] }}{{ (contactRecord$ | async)?.lastName[0] }}
+      </button>
+      <mat-menu class="user-menu" #userMenu="matMenu">
+        <!-- Profile Details -->
+        <ul class="details">
+          <li>
+            <span tabindex="0" [attr.aria-label]="'Username: ' + (contactRecord$ | async)?.userName">
+              {{ (contactRecord$ | async)?.userName }}
+            </span>
+          </li>
+          <li>
+            <span tabindex="0" [attr.aria-label]="'Name: ' + (contactRecord$ | async)?.firstName + ' ' + (contactRecord$ | async)?.lastName">
+              <em>{{ (contactRecord$ | async)?.firstName }} {{ (contactRecord$ | async)?.lastName }}</em>
+            </span>
+          </li>
+          <li>
+            <span tabindex="0" [attr.aria-label]="'Email:' + (currentUser$ | async)?.email">
+              <em>{{ (currentUser$ | async)?.email }}</em>
+            </span>
+          </li>
+        </ul>
+        <ul>
+          <li><a aria-label="Your current profile" mat-menu-item>Profile: Default</a></li>
+        </ul>
+        <!-- User Options -->
+        <ul>
+          <li><a mat-menu-item aria-label="My Preferences">My Preferences</a></li>
+          <li><a mat-menu-item aria-label="My Contact Record">My Contact Record</a></li>
+          <li><a mat-menu-item aria-label="Date Calculator">Date Calculator</a></li>
+          <li><a mat-menu-item aria-label="Environments">Environments</a></li>
+          <li><a mat-menu-item aria-label="Emulate User" (click)="showEmulateUser()">Emulate User</a></li>
+          <li><a mat-menu-item aria-label="Switch Profiles">Switch Profiles</a></li>
+          <li><a mat-menu-item aria-label="Logout" (click)="logout()">Logout</a></li>
+        </ul>
+      </mat-menu>
+    </div>
+
+  </div>
+
+</header>

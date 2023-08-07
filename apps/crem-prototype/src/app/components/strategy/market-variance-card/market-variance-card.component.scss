@@ -1,0 +1,10 @@
+:host {
+  mat-card {
+    &.market-variance-feed{
+      mat-card-content {
+        height: 480px;
+        overflow: hidden;
+      }
+    }
+  }
+}

@@ -1,0 +1,88 @@
+
+@import "../assets/styles/cosmos.scss";
+
+.chip{
+  min-width: unset;
+  max-width: 200px;
+  width: 100% !important;
+  border-radius: 10px;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 14px;
+  letter-spacing: normal;
+  text-align: center;
+  box-sizing: borderBox;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+		&.primary {
+			border-radius: 10px !important;
+      font-family: Helvetica, sans-serif;
+      font-weight: 400;
+			&.costar {
+				background: $color-brand-primary;
+        color: white !important;
+			}
+
+			&.color-brand-red {
+				background: $color-brand-red;
+				border:1px solid darken($color-brand-red, 10%);
+        color: white !important;
+			}
+      &.color-brand-yellow {
+        background: $color-brand-yellow;
+        border: 1px solid darken($color-brand-yellow, 10%);
+        color: $color-neutral-black !important;
+
+      }
+      &.color-brand-green {
+        background: $color-brand-green;
+        border: 1px solid darken($color-brand-green, 10%);
+        color: white !important;
+
+      }
+      &.color-neutral-medium{
+        background: $color-neutral-light;
+        border: 1px solid #696969;
+        color:  #696969 !important;
+      }
+      &.color-brand-primary-light{
+        background: white;
+        border: 1px solid darken($color-brand-primary-light, 30%);
+        color: #696969 !important;
+      }
+		}
+
+		&.secondary {
+      background: white;
+			&.costar {
+				color: $color-brand-primary;
+        border: 1px solid $color-brand-primary;
+      }
+
+			&.error {
+				color: $color-brand-red;
+				border-color:$color-brand-red;
+			}
+
+
+		}
+		&.tertiary {
+			background: white;
+			&.costar {
+				color:$color-neutral-medium;
+				border-color: none;
+			}
+		}
+
+	}
+  .dx-field-value-static, .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+    width: 100% !important;
+    white-space: nowrap !important;
+}
+

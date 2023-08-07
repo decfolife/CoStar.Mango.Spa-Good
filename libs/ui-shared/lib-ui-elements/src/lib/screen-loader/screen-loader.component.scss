@@ -1,0 +1,74 @@
+@import '../assets/styles/crem-lib.scss';
+
+.spinner-3 {
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:conic-gradient(#0000 10%,$color-brand-primary);
+  -webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
+  animation:s3 1s infinite linear;
+  &.hidden{
+    display: none;
+  }
+}
+
+@keyframes s3 {to{transform: rotate(1turn)}}
+
+:host{
+  .loading-screen {
+    z-index: 1000;
+    display: flex;
+    opacity: 0;
+    -webkit-transition: opacity 0.3s;
+    transition: all 0.3s;
+    flex-direction: column;
+    justify-content: center;
+
+    &.loading {
+      opacity: 0.5;
+    }
+
+    &.loaded {
+      opacity: 0;
+    }
+
+    &.light{
+      background-color: $color-white;
+      color: $color-black;
+    }
+    &.dark{
+      background-color: $color-dark-blue;
+      color: $color-white;
+    }
+    &.gray{
+      background-color: $stdBorderGray;
+      color: $color-white;
+    }
+
+    // Logos
+    .logo {
+      height: 120px;
+      width: 300px;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    .tagline {
+      font-size: 1.5rem;
+    }
+
+    // Loading Screen Styles
+    &.fullscreen {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      position: fixed;
+      justify-content: center;
+      align-items: center;
+    }
+
+  }
+
+}

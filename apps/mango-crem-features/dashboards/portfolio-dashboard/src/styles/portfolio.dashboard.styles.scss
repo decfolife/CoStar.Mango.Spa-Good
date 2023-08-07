@@ -1,0 +1,225 @@
+@use 'colors';
+@import  '../../../../../mango/src/assets/styles/app-styles/dashboards.scss';
+
+//***** standard styles *****//
+
+$font-family-brand: Helvetica, system-ui, sans-serif;
+
+$stdBorder: 1px solid colors.$stdBorderColor;
+
+$font-size-14: 14px;
+
+$stdPadding: 8px;
+$dblPadding: 2 * $stdPadding;
+
+::-webkit-scrollbar{
+  width:5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb:horizontal {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: #d0d0d0;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  position: fixed;
+  bottom: 2px ;
+}
+::-webkit-scrollbar-thumb:vertical {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: #d0d0d0;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #AAA;
+}
+
+html {
+	background-color: colors.$backgroundGray;
+	scrollbar-width: thin;
+}
+
+body {
+	margin: 0;
+}
+
+portfolio-dashboard {
+	overflow-y: auto;
+	overflow-x: none;
+}
+
+//**** Filters and common styles ******//
+
+.user-settings-dialog #currencyUOMSettings {
+	crem-dropdown {
+		div.dx-texteditor-container{
+			width: 320px !important;
+		}
+	}
+}
+
+//***** Card Styles ******//
+
+
+//***** Metric Styles ******//
+
+#portfolio-dashboard crem-metric {
+
+	font-family: $font-family-brand;
+	mat-card.mat-card.costar-hero-metric-card {
+		border: 0;
+		display: inline-block;
+		margin-bottom: 0;
+		margin-right: 30px;
+		min-width: max-content;
+		height: 80px;
+	}
+
+  mat-card.mat-card {
+    border: $stdBorder;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    padding: 0px !important;
+  }
+
+	mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+    border-bottom: 0px;
+    padding: 0px;
+    height: 16px;
+
+		div.mat-card-header-text {
+			margin: 0px;
+			display: flex;
+			flex-direction: column;
+			text-transform: capitalize !important;
+			font-size: 14px !important;
+
+		mat-card-title.mat-card-title {
+				font-size: 16px;
+				line-height: 16px;
+				color: colors.$mediumDarkGray;
+				font-weight: 400;
+				text-transform: capitalize !important;
+				margin: 0px 16px 0 0 !important;
+			}
+		}
+  }
+
+	mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0px;
+    margin: 0;
+    background: colors.$white;
+
+		.hero-value {
+			color: colors.$black;
+			font-size: 32px;
+			line-height: 32px;
+			margin: 8px 0px;
+		}
+
+		.sidekick-value-wrapper {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-content: center;
+			margin-left: $dblPadding;
+		}
+  }
+
+  mat-card.mat-card.costar-hero-metric-card
+  mat-card-content.mat-card-content
+  .sidekick-value-wrapper
+  .sidekick-value {
+		display: flex;
+		align-items: center;
+		border-radius: 2px;
+		font-size: $font-size-14;
+		text-align: center;
+		padding: 0 4px;
+		margin: 0px;
+		&.green {
+			border: 1px solid colors.$color-brand-green !important;
+			background: transparent !important;
+			color: colors.$color-brand-green !important;
+		}
+		&.red {
+			border: 1px solid colors.$color-brand-red !important;
+			background: transparent !important;
+			color: colors.$color-brand-red !important;
+		}
+		&.gray {
+			border: 1px solid colors.$color-neutral-dark !important;
+			background: transparent !important;
+			color: colors.$mediumDarkGray !important;
+		}
+	}
+	
+	crem-icon {
+    position: relative;
+    top: 4px;
+    left: 2px;
+  }
+
+	mat-card.mat-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
+    margin: 0px;
+    height: 14px;
+
+		mat-card-subtitle.mat-card-subtitle {
+			color: colors.$costarRichGray;
+			display: inline-block;
+			font-size: 14px;
+			line-height: 14px;
+			font-weight: 400;
+			margin: 0!important;
+			text-transform: capitalize;
+		}
+  }
+
+	.iconWrapper.dx-field-value-static {
+		padding: 0px; 
+    width: 20px;
+    position: relative;
+    right: -7px;
+    top: -4px;
+  }
+}	
+
+
+#portfolio-dashboard crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent,
+.portfolio.dashboards-dragCardItems crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
+  height: 400px;
+}	
+
+#portfolio-dashboard crem-card mat-card .cardContent {
+    height: 400px;
+    max-height: 400px;
+}
+
+#portfolio-dashboard crem-card .cardHeader .customHeader,
+.dashboards-dragCardItems crem-card .cardHeader .customHeader {
+	height: 32px;
+	box-sizing: border-box;
+	align-items: center;
+
+	div div {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+}

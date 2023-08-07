@@ -1,0 +1,79 @@
+<div class="module-wrapper">
+	<mat-drawer-container >
+		<mat-drawer mode="side" opened [style.visibility]="'visible'" class="left-nav">
+			<mat-nav-list>
+				<mat-list [style.width]="drawerWidth">
+					<div *ngIf="isLeftNavOpened">
+						<mat-list-item [routerLink]="['dashboard']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Dashboard</span></mat-list-item>
+						<mat-list-item [routerLink]="['pivot']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Pivot</span></mat-list-item>
+						<mat-list-item [routerLink]="['charges']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Expenses & Revenue</span></mat-list-item>
+						<mat-expansion-panel #expensesPanel class="mat-elevation-z0" [class.open]="expensesPanel.expanded" [expanded]="true">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Expenses
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['enterbill']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Enter a Bill</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['paymentsapprove']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Approve Payments</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['paymentssubmit']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Submit Payments</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['paymentsexport']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Export Payments</span></mat-list-item>
+		                </mat-expansion-panel>
+		                <mat-expansion-panel #expensesPanel class="mat-elevation-z0" [class.open]="expensesPanel.expanded" [expanded]="true">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Revenue
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['invoiceapprove']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Approve Invoice Items</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['invoicegenerate']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Generate Invoices</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['receivepayment']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Receive Payments</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['editpayment']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Edit Payments</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['invoiceexport']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Export Invoices</span></mat-list-item>
+		                </mat-expansion-panel>
+		                <mat-expansion-panel #expensesPanel class="mat-elevation-z0" [class.open]="expensesPanel.expanded" [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Specialty Processing
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['processmtm']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">MTM / Holdover</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['processpercentrent']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Percent Rent</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['processindexcharge']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Indexed Charges</span></mat-list-item>	                    
+		                </mat-expansion-panel>
+		                <mat-list-item [routerLink]="['vendorcustomermgmt']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Vendors & Customers</span></mat-list-item>
+		                <mat-expansion-panel #expensesPanel class="mat-elevation-z0" [class.open]="expensesPanel.expanded" [expanded]="false">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Admin
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['ledgeraccounts']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Ledger Accounts</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['allocationcenters']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Allocation Centers</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['invoiceformat']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Invoice Formats</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['indexes']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Indices</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['variances']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Variances</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['fourwall']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Four Wall</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['salestax']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Sales Tax Authorities</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['adamfilter']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">ADAM Filter</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['percentrent']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Percent Rent</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['leaseoption']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Lease Option Classifications</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['straightlinedates']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Straightline Dates</span></mat-list-item>	                    
+		                </mat-expansion-panel>
+		                <mat-list-item [routerLink]="['exporthistory']" [routerLinkActive]="['active']"><span class="costar-left-nav-link">Export History</span></mat-list-item>
+		            </div>
+				</mat-list>
+				<!-- <div class="add-button-wrapper" [class.nav-minimized]="!isLeftNavOpened">
+	                <button class="btn btn-primary-outline left-nav-add-button" [matMenuTriggerFor]="AddPortfolioObjectMenu"><fa-icon icon="plus"></fa-icon> <span *ngIf="isLeftNavOpened">Add</span></button>
+	                <mat-menu #AddPortfolioObjectMenu="matMenu">
+						<button mat-menu-item>Expenses</button>
+						<button mat-menu-item>Revenue</button>						
+					</mat-menu>
+					<button class="btn btn-link dbl-top-margin float-right" (click)="toggleDrawer()"><fa-icon icon="chevron-left" *ngIf="isLeftNavOpened"></fa-icon><fa-icon icon="chevron-left" *ngIf="isLeftNavOpened"></fa-icon><fa-icon icon="chevron-right" *ngIf="!isLeftNavOpened"></fa-icon><fa-icon icon="chevron-right" *ngIf="!isLeftNavOpened"></fa-icon></button>						
+	            </div> -->
+			</mat-nav-list>
+		</mat-drawer>
+		<mat-drawer-content class="oflow-x-hidden" [style.marginLeft]="drawerWidth">
+			<router-outlet></router-outlet>
+		</mat-drawer-content>
+	</mat-drawer-container>
+</div>

@@ -1,0 +1,103 @@
+import { Canvas, Meta, Story } from '@storybook/addon-docs';
+
+<Meta title="Introduction/For Developers"/>
+
+# For Developers
+---
+
+1. **Don't use global stylesheets to fix micro-componentsg**
+
+Using global stylesheets collaborates to long stylesheets that are hard to read and understand, 
+therefore, hard to maintain. This is also considered to be part of component-based approach which is 
+a fundamental part of Angular. In Angular, the user interface is decomposed into reusable and self-contained components. 
+This same approach must be used when maintaining or creating new components and their respective styles.
+
+Additionally, it is important to keep in mind that using global stylesheets effectively breaks encapsulation 
+and significantly increases the likelihood of style overriding and CSS conflicts. To avoid conflicts on 
+legacy systems (e.g. V06) while fixing styles for new systems (e.g. MangoSPA), use `:host` and CSS 
+specificity instead; worst case scenario use a combination of `:host::ng-deep` / `:host{ ::ng-deep{...} }` 
+to locally pierce encapsulation without affecting other components. This way we can completely avoid 
+using the !important rule.
+
+2. **Use the common library**
+
+It adheres to best practices, follows the official SCSS architecture, and is designed 
+to support micro-components and shared-components.
+
+You can find ⁠examples of implementation here and in some of the shared components.
+
+If you are ready to start utilizing the shared library, you can proceed directly to the 
+[components](/story/components-getting-started--page) or [styling](/story/styling-getting-started--page) section.
+
+If you are involved in creating new components or collaborating with Storybook and the shared library, please 
+continue reading for further instructions.
+
+# Collaborate to Storybook and the shared library
+---
+
+<br/>
+
+## Creating New Shared Components
+
+When determining whether a component should be included in a shared library, consider asking the 
+following decision questions:
+
+1. Will the component be utilized by multiple projects or applications within the organization?
+2. Will the component provide generic and reusable functionality across various projects?
+3. Will the component contribute to code consistency and minimize duplicated efforts?
+4. Will the component remain stable without frequent changes or updates?
+5. Will the maintenance and updating of the component require specialized knowledge or expertise?
+6. Will the component align with the overarching goals and architecture of the shared library?
+7. Is there a likelihood that future projects or applications will require or request the use of this component?
+
+If you answered "yes" to the questions above, it means that the component should be included in the shared library.
+
+## Learn and Apply Best Practices
+
+Before you begin, it is important to familiarize yourself with CoStar best practices 
+and the general guidelines.
+
+Follow the Style guides and best practices
+- [**Learn to use the common library**](/story/styling-getting-started--page) for quickly styling components.
+- [**Frontend SCSS Architecture**](https://wiki.costargroup.com/x/bMWPLg): Architecture for building MangoSpa using industry's best practices (like 7-1 Pattern) in a common and scalable structure. This structure it's defined on `📁 ./libs/ui-shared/common`,
+- [**SCSS & CSS Style guide**](https://wiki.costargroup.com/x/pqaPLg): Provides consistency, scalability, and readability while fighting the natural progression of entropy in codebases, and in particular SCSS implementations. This applies to MangoSpa, `📁 ./libs/ui-shared/common` and any micro-component on `📁 ./apps/`.
+- [**TypeScript Style guide**](https://wiki.costargroup.com/x/TRd_MQ): This documentation covers aesthetic issues of formatting, code quality, and best practices conventions for TypeScript.
+- [**Writing WCAG Compliant code**](https://wiki.costargroup.com/x/zxk0Mg): The purpose of this document is to establish and gather some ADA (Americans with Disabilities Act) and WCAG (Web Content Accessibility Guidelines) compliance best practices for all development teams (based on regulations set by the USA government).
+
+Make sure to follow the desing tokens and component guidelines approved previously by the Product and Design System team.
+
+Additionally, the following documentation may be useful if you're writing Storybook stories:
+- [Creating simple documentation on Storybook](https://storybook.js.org/docs/react/writing-docs/docs-page)
+- [MDX Docs](https://mdxjs.com/docs/)
+
+## Follow The Shared Library Structure
+When creating or maintaining components, use the following structure:
+
+```
+📁 ./libs/ui-shared/      // UI related elements
+|
+|-  📁 common             // ✔️ SCSS library: common styles, mixins, variables, etc.
+|-  📁 lib-ui-elements    // ✔️ Smaller components (on design systems, atoms and molecules)
+|-  📁 lib-ui-shared      // ✔️ Bigger components, or components built using the lib-ui-elements' components
+|-  📁 storybook-host     // ✔️ Storybook Host or main Storybook app, use this visualize all the stories
+|-  📁 cosmos             // ❌ Deprecated cosmos library: please avoid its use in favor of one of the above folders
+
+```
+
+- `ui-shared-storybook-host`: it allows to connect, serve and build multiple Storybooks into one. 
+This is know by Nx as [Storybook composition](https://nx.dev/recipes/storybook/one-storybook-with-composition).<br/>
+Learn more about setting up [Nx for hosting multiple storybook instances](https://nx.dev/recipes/storybook/one-storybook-for-all) 
+and [Nx Storybook Best Practices](https://nx.dev/packages/storybook/documents/best-practices).
+
+## Run Storybook Locally
+
+[Storybook](https://storybook.js.org/) is a frontend tool for building and visualizing UI 
+components in isolation. Because Storybook's stories (or components) span through multiple 
+shared libraries, a single entry point for rendering is necessary.
+
+On your local environment:
+- **Serve Storybook**: `nx storybook ui-shared-storybook-host`
+- **Build Storybook**: `nx build-storybook ui-shared-storybook-host`
+- **Run unit tests**: `nx test ui-shared-storybook-host`
+
+The other `./libs/ui-shared` libraries can be run individually using similar CLI commands.

@@ -1,0 +1,29 @@
+@use "../../../../../common/src/styles" as *;
+
+label {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: calc(0.175rem + 1px);
+  padding-bottom: calc(0.175rem + 1px);
+  margin-bottom: 0;
+  font-size: inherit;
+  line-height: 1.5;
+  @include costar(gap, 2);
+
+  // Label Text
+  span {
+    display: inline-block;
+  }
+
+  // Prevent Superscripts and Subscripts from Affecting Line-Height
+  sup, sub {
+    @include costar(color, danger);
+    top: -0.4em;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    top: 0.4em;
+  }
+}

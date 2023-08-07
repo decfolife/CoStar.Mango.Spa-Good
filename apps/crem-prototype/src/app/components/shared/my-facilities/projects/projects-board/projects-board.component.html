@@ -1,0 +1,48 @@
+<div class="object-page">
+	<div class="object-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Projects Board</h5>	
+			<costar-search (changed)="searchProjects($event)"></costar-search>
+            <!-- Client Dropdown -->
+			<costar-dropdown [dropdownData]="clientFilter" (changed)="selectedClientChanged($event)"></costar-dropdown>	
+            <!-- Project Type Dropdown - should be multi-select if the Client has the setting for all Project Types to use the same phases -->
+			<costar-dropdown [dropdownData]="projectTypeFilter" [isReadOnly]="!projectTypes.length" (changed)="selectedProjectTypeChanged($event)"></costar-dropdown>	
+			<!-- Project Manager Dropdown - optional, multi-select -->
+			<costar-dropdown [dropdownData]="projectManagerFilter" [isReadOnly]="!projectManagers.length" (changed)="selectedProjectManagersChanged($event)"></costar-dropdown>	
+            <!-- Apply Button -->
+			<button class="btn btn-default" (click)="apply()" [disabled]="!selectedClient || !selectedProjectType">Apply</button>
+			<!-- Toggle for projects with New Activity -->
+			<mat-slide-toggle (change)="filterByNewActivity($event)" [checked]="showNewActivity">Show New Activity</mat-slide-toggle>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" (click)="add()">Add</button>
+			<!-- <button class="btn btn-default" [matMenuTriggerFor]="moreMenu">More <fa-icon icon="caret-down"></fa-icon></button>			 -->
+		</div>
+	</div>
+	<div class="board-page-content-wrapper">
+		<div *ngIf="data && selectedClient && selectedProjectType" class="board-wrapper">
+			<div class="list" *ngFor="let phase of filteredData; let phaseIndex = index">
+				<div class="list-title dx-theme-text-color">
+					{{phase.phase}}
+				</div>				
+				<div class="list-cards-wrapper">
+					<dx-sortable
+						class="sortable-cards"
+						group="cardsGroup"
+						[data]="phase.projects"
+						(onDragStart)="onTaskDragStart($event)"
+						(onReorder)="onTaskDrop($event)"
+						(onAdd)="onTaskDrop($event)"
+					>
+						<ng-container *ngFor="let project of phase.projects">
+							<project-kanban-card [project]="project"></project-kanban-card>
+						</ng-container>												
+					</dx-sortable>
+				</div>							
+			</div>
+		</div>
+		<div *ngIf="!data || !selectedClient || !selectedProjectType" class="splash-message">
+			<h2>Please select a portfolio and project type</h2>
+		</div>
+    </div>
+</div>

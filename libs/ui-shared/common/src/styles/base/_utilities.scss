@@ -1,0 +1,110 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/aliases" as *;
+
+// ==========================================================================
+// UTILITY CLASSES
+// Heavily inspired on popular frameworks like Bootstrap and TailwindCSSm these utility classes are small and
+// single-purpose classes that provide specific styling to elements.
+// These classes are designed to be reusable and typically handle one particular aspect of presentation.
+// Modularity and reusability, simpler markup, consistency, and faster development are some of the many benefits
+// that utility classes provide.
+// ==========================================================================
+
+//------------------------------------------------
+//--- FONT
+//------------------------------------------------
+@include costar-class-generator(text);
+@include costar-class-generator(font-size);
+@include costar-class-generator(font-style);
+.font-weight-light {@include costar(font-weight, light, $important: true);}
+.font-weight-normal {@include costar(font-weight, normal, $important: true);}
+.font-weight-medium {@include costar(font-weight, medium, $important: true);}
+.font-weight-bold {@include costar(font-weight, bold, $important: true);}
+.font-weight-bolder {@include costar(font-weight, bolder, $important: true);}
+
+//------------------------------------------------
+//--- BUTTONS
+//------------------------------------------------
+@include costar-class-generator(button);
+.btn-none {
+  // Resetting box model properties
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+
+  // Resetting font properties
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  text-align: inherit;
+  white-space: nowrap;
+
+  // Resetting background and foreground colors
+  background-color: transparent;
+  color: inherit;
+
+  // Resetting button states
+  &:hover,
+  &:active,
+  &:focus {
+    // Define specific styles for button states here, or keep them empty to have no styling
+  }
+}
+
+//------------------------------------------------
+//--- TEXT
+//------------------------------------------------
+@include costar-class-generator(color);
+@include costar-class-generator(text-align);
+@include costar-class-generator(text-wrap);
+
+//------------------------------------------------
+//--- BACKGROUND
+//------------------------------------------------
+@include costar-class-generator(background);
+
+//------------------------------------------------
+//--- SIZING
+//------------------------------------------------
+@include costar-class-generator(height);
+@include costar-class-generator(width);
+
+//------------------------------------------------
+//--- DISPLAY & VISIBILITY
+//------------------------------------------------
+@include costar-class-generator(display);
+@include costar-class-generator(visibility);
+
+//------------------------------------------------
+//--- OVERFLOW
+//------------------------------------------------
+@include costar-class-generator(overflow);
+
+//------------------------------------------------
+//--- SPACING
+//------------------------------------------------
+@include costar-class-generator(margin);
+@include costar-class-generator(padding);
+
+//------------------------------------------------
+//--- POSITION
+//------------------------------------------------
+@include costar-class-generator(position);
+@include costar-class-generator(top);
+@include costar-class-generator(bottom);
+@include costar-class-generator(left);
+@include costar-class-generator(right);
+
+//------------------------------------------------
+//--- BORDER
+//------------------------------------------------
+.border-none { border: 0 !important; }
+@include costar-class-generator(border-radius);
+
+//------------------------------------------------
+//--- MISC
+//------------------------------------------------
+@include costar-class-generator(cursor);

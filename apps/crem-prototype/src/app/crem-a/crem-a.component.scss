@@ -1,0 +1,151 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/var.scss';
+
+.app-container {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+div.crem-a-container {
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	position: relative;
+}
+
+// $brandImageWidth: 161px;
+// $brandImageHeight: 48px;
+$brandImageWidth: 134px;
+$brandImageHeight: 40px;
+
+.costar-toolbar-wrapper {
+	display: inline-flex;
+	flex: 1 1 auto;
+	justify-content: center;
+}
+
+
+.notifications-button {
+	cursor: pointer;
+	color: $primary;
+	float: right;
+
+	fa-icon {
+		margin-left: 8px;
+	}
+
+	span {
+		font-size: 16px;
+	}
+}
+
+mat-toolbar.costar-rem-toolbar {
+
+	justify-content: space-between;
+	border-bottom: 1px solid $borderColor;
+
+	div.costar-site-toolbar-left {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		align-content: center;
+		padding: $stdPadding/2 $dblPadding;
+
+		div.costar-toolbar-logo {
+			display: inline-block;
+			width: $brandImageWidth;
+			height: $brandImageHeight;	
+			margin-right: 1rem;
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-size: $brandImageWidth $brandImageHeight;
+			background-image: url('../../assets/images/logos/CoStarLogo161x48.png');		
+			cursor: pointer;
+		}
+
+		div.costar-app-name {
+			display: inline-block;
+			padding-left: 1rem;
+			border-left: 2px solid $borderColor;
+			color: $secondary;
+			font-size: 24px;
+			font-weight: 100;
+			margin-bottom: -8px;
+		}
+
+		div.costar-star-logo-mobile {
+			display: none;
+			width: 48px;
+			height: 45px;	
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-size: 48px 45px;
+			background-image: url('../../assets/images/logos/CoStar_logo_icon.png');		
+			cursor: pointer;
+		}
+	}
+
+	div.costar-site-toolbar-search {
+		display: flex;
+		flex-grow: 1;
+		justify-content: center;
+
+		.global-search-wrapper {
+			width: 100%;
+			display: flex;
+			align-content: center;
+			justify-content: center;
+		}
+	}
+
+	div.costar-site-toolbar-right {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding: $stdPadding/2 $dblPadding;
+
+		fa-icon {
+			margin-left: 16px;
+			font-size: 20px;
+			color: $secondary;
+			cursor: pointer;
+		}
+
+		div.user-avatar {
+			margin-left: 16px;
+			border: 2px solid $secondary;
+			color: $secondary;
+			height: 36px;
+			width: 36px;
+			border-radius: 18px;
+			padding: 1px;
+			font-size: 16px;
+			text-align: center;
+			cursor: pointer;
+		}
+
+		div.costar-client-logo {
+			display: inline-block;
+			width: 132px;
+			height: 48px;	
+			margin-right: 1rem;
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-size: 132px 48px;
+			background-image: url('../../assets/images/generic_company_logo_2.jpg');		
+		}
+	}
+}
+
+div.costar-b-content-wrapper {
+	position: absolute;
+	top: 64px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+}

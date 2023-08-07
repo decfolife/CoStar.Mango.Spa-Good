@@ -1,0 +1,99 @@
+<!-- Calculated -->
+<mat-form-field appearance="outline" *ngIf="field.controlType == 'Calculated'" (click)="editField()" [class.clickable]="clickable">
+	<mat-label>{{field.label}}</mat-label>
+	<input matInput [placeholder]="field.label" [value]="field.value" disabled [class.clickable]="clickable">
+	<mat-icon matSuffix><fa-icon icon="calculator"></fa-icon></mat-icon>
+</mat-form-field>
+
+<!-- Checkbox -->
+<mat-checkbox *ngIf="field.controlType == 'Checkbox'" (click)="editField()" [class.clickable]="clickable" [disabled]="isDisabled">{{field.label}}</mat-checkbox>
+
+<!-- Clause -->
+<div *ngIf="field.controlType == 'Clause'" (click)="editField()" class="clause clickable">
+	<mat-form-field appearance="outline" class="clause-text">
+		<mat-label>{{field.label}}</mat-label>
+		<textarea matInput [disabled]="isDisabled" [value]="field.value"></textarea>
+	</mat-form-field>
+	<div class="doc-sec-page">
+		<mat-form-field appearance="outline">
+			<mat-label>Doc</mat-label>
+			<input matInput [disabled]="isDisabled">
+		</mat-form-field>
+		<mat-form-field appearance="outline">
+			<mat-label>Sec</mat-label>
+			<input matInput [disabled]="isDisabled">
+		</mat-form-field>
+		<mat-form-field appearance="outline">
+			<mat-label>Page</mat-label>
+			<input matInput [disabled]="isDisabled">
+		</mat-form-field>
+	</div>
+</div>
+
+<!-- Date Picker -->
+<mat-form-field appearance="outline" *ngIf="field.controlType == 'Date Picker'" (click)="editField()" [class.clickable]="clickable">
+	<mat-label>{{field.label}}</mat-label>
+	<input matInput [matDatepicker]="picker" [class.clickable]="clickable" [value]="field.value">
+	<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+	<mat-datepicker #picker></mat-datepicker>
+</mat-form-field>
+
+<!-- Dropdown -->
+<mat-form-field appearance="outline" *ngIf="field.controlType == 'Dropdown'" (click)="editField()" [class.clickable]="clickable" >
+	<mat-label>{{field.label}}</mat-label>
+	<mat-select [disabled]="isDisabled">
+		<mat-option>--</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<!-- Hierarchy -->
+<mat-form-field appearance="outline" *ngIf="field.controlType == 'Hierarchy'" (click)="editField()" [class.clickable]="clickable">
+	<mat-label>{{field.label}}</mat-label>
+	<mat-select [disabled]="isDisabled">
+		<mat-option>--</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<!-- Input -->
+<mat-form-field appearance="outline" *ngIf="field.controlType == 'Input'" (click)="editField()" [class.clickable]="clickable">
+	<mat-label>{{field.label}}</mat-label>
+	<input matInput [placeholder]="field.label"  [class.clickable]="clickable" [value]="field.value">
+</mat-form-field>
+
+<!-- Radio Button -->
+<mat-radio-group *ngIf="field.controlType == 'Radio Button'" (click)="editField()" [class.clickable]="clickable" [disabled]="isDisabled">
+	<mat-radio-button value="1">Option 1</mat-radio-button>
+	<mat-radio-button value="2">Option 2</mat-radio-button>
+</mat-radio-group>
+
+<!-- Read Only -->
+<mat-form-field appearance="outline" *ngIf="field.controlType == 'Read Only'" (click)="editField()" class="clickable read-only">
+	<mat-label>{{field.label}}</mat-label>
+	<input matInput disabled [class.clickable]="clickable" [value]="field.value">
+</mat-form-field>
+
+<!-- Schedule -->
+
+<!-- Text Area -->
+<mat-form-field appearance="outline" *ngIf="field.controlType == 'Text Area'" (click)="editField()" [class.clickable]="clickable">
+	<mat-label>{{field.label}}</mat-label>
+	<textarea matInput [disabled]="isDisabled"></textarea>
+</mat-form-field>
+
+<!-- Toggle -->
+<mat-slide-toggle *ngIf="field.controlType == 'Toggle'" (click)="editField()" [class.clickable]="clickable" [disabled]="isDisabled">{{field.label}}</mat-slide-toggle>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

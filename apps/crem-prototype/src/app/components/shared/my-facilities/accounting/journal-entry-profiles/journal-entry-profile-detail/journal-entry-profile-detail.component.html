@@ -1,0 +1,67 @@
+<div class="page-card">
+	<div class="page-card-header">
+		<div>
+			<h5 *ngIf="profile">Journal Entry Profile - {{profile.name}}</h5>
+			<h5 *ngIf="!profile">New Journal Entry Profile</h5>
+		</div>
+		<div>
+			<button class="btn btn-danger-outline btn-sm dbl-left-margin"><fa-icon icon="trash-alt"></fa-icon></button>
+			<button class="btn btn-default btn-sm dbl-left-margin" (click)="close()">Close</button>
+			<button class="btn btn-primary btn-sm dbl-left-margin">Clone</button>
+			<button class="btn btn-primary btn-sm dbl-left-margin">Save</button>
+		</div>
+	</div>
+	<div class="page-card-content dbl-padding oflow-y-auto">
+		<div class="row dynamic-form">
+			<div class="col-md-12">
+				<mat-card>
+					<mat-card-header>
+						<mat-card-title>Journal Entry Profile Details</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>
+						<div class="row">
+							<div class="col-md-6">								
+								<mat-form-field appearance="outline">
+									<input matInput type="text" placeholder="Portfolio" [disabled]="true">							
+								</mat-form-field>
+								<mat-form-field appearance="outline">
+									<input matInput type="text" placeholder="Name">
+								</mat-form-field>
+								<mat-form-field appearance="outline">
+									<mat-label>Classification Type</mat-label>
+									<mat-select>
+										<mat-option value="Capital">Capital</mat-option>
+										<mat-option value="Operating">Operating</mat-option>
+										<mat-option value="Finance (ASC 842)">Finance (ASC 842)</mat-option>
+										<mat-option value="Operating (ASC 842)">Operating (ASC 842)</mat-option>
+										<mat-option value="IFRS 16">IFRS 16</mat-option>
+										<mat-option value="Operating (Lessor)">Operating (Lessor)</mat-option>
+										<mat-option value="Capital Income (Lessor)">Capital Income (Lessor)</mat-option>
+									</mat-select>
+								</mat-form-field>
+								<mat-form-field appearance="outline">
+									<input matInput type="text" placeholder="Comments">
+								</mat-form-field>
+							</div>
+							<div class="col-md-6">
+								<mat-form-field appearance="outline">
+									<input matInput type="text" placeholder="JE Export Debit Code">
+								</mat-form-field>
+								<mat-form-field appearance="outline">
+									<input matInput type="text" placeholder="JE Export Credit Code">
+								</mat-form-field>
+								<mat-slide-toggle [checked]="true">JE Export Use Absolute Values</mat-slide-toggle>								
+								<mat-slide-toggle [checked]="true">Active</mat-slide-toggle>
+							</div>
+						</div>
+					</mat-card-content>
+				</mat-card>	
+			</div>
+		</div>	
+		<div class="row">
+			<div class="col-md-12">
+				<journal-entry-accounts-card></journal-entry-accounts-card>            	
+			</div>
+		</div>
+	</div>
+</div>

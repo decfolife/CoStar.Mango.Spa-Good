@@ -1,0 +1,385 @@
+
+<div class="mat-drawer-container" [hidden]="loading">
+    <div class="mat-drawer-content oflow-x-hidden">
+
+        <div class="dynamic-form">
+            <div class="dynamic-form-controls-wrapper">
+                <div class="controls-left">
+                    <h5 class="dbl-right-margin ng-star-inserted">Discount Rate Profiles</h5>
+                </div>
+                <div class="controls-right">
+                    <mat-slide-toggle [ngClass]="{
+                        'no-toggle': disableToggleAnimation
+                        }"
+                        *ngIf="!isAdd"
+                        [disabled]="!userHasEditRights"
+                        [(ngModel)]="formData.active">
+                        {{ formData.active ? 'Active' : 'Archived' }}
+                    </mat-slide-toggle>
+                    <button id="cancelBtn" class="btn btn-primary-outline" (click)="cancelAddEditAction()">Cancel</button>
+                    <button id="saveBtn" *ngIf="service.userRights === 2" class="btn btn-primary" (click)="btnSaveProfile($event)" [disabled]="loading" >Save</button>
+                </div>
+            </div>
+
+            <div class="dynamic-form-content">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>
+                            Profile Information
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content class="no-padding">
+                        <div class="widget-container">
+                            <dx-form id="form"
+                                [(formData)]="formData"
+                                [showColonAfterLabel]="colonSetting"
+                                labelLocation="left"
+                                minColWidth="50%"
+                                colCount="1"
+                                width="100%"
+                                (onFieldDataChanged)="updateName(); setupMinMaxFormula()"
+                                (onContentReady)="onContentReady()">
+
+                                <dxi-item itemType="group" [colCount]="2">
+                                    <dxi-item
+                                        dataField="portfolio"
+                                        caption="Portfolio"
+                                        editorType="dxSelectBox"
+                                        [editorOptions]="{
+                                            dataSource: this.portfolioService.portfolios,
+                                            disabled: true,
+                                            valueExpr: 'masterGroupID',
+                                            displayExpr: 'companyName',
+                                            value: isAdd ? this.masterGroupID: this.formData.portfolio.masterGroupID
+                                            }"
+                                    >
+                                        <dxo-label text="Portfolio"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-select-box
+                                                [dataSource]="portfolioService.portfolios"
+                                                [value]="isAdd ? this.masterGroupID: this.formData.portfolio.masterGroupID"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('masterGroupID', $event)"
+                                                valueExpr="masterGroupID"
+                                                displayExpr="companyName"
+                                            >
+                                            </dx-select-box>
+                                            <div class="no-icon"></div>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="policyName" [editorOptions]="{ disabled: true }">
+                                        <dxo-label text="Profile Name"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.policyName"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('policyName', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='PolicyName' fieldHistoryName='policyName' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="amount" [editorOptions]="{ disabled: service.userRights !== 2 || this.isActive === false }">
+                                        <dxo-label text="Discount Rate"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box id="discount-rate__amount"
+                                                [value]="formData.amount"
+                                                [disabled]="service.userRights !== 2 || this.isActive === false"
+                                                (onValueChanged)="onFormChange('amount', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='Amount' fieldHistoryName='amount' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                        <dxi-validation-rule type="required" message="Discount Rate is Required."></dxi-validation-rule>
+                                        <dxi-validation-rule type="numeric" message="Discount Rate must be numeric."></dxi-validation-rule>
+                                        <dxi-validation-rule type="custom" [validationCallback]="validateDiscountRate" message="Discount Rate must have less than 14 decimal places and 18 total digits."></dxi-validation-rule>
+                                    </dxi-item>
+                                    <dxi-item dataField="profileAlias" [editorOptions]="{ disabled: service.userRights !== 2 || this.isActive === false }">
+                                        <dxo-label text="Profile Alias"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.profileAlias"
+                                                [disabled]="service.userRights !== 2 || this.isActive === false"
+                                                (onValueChanged)="onFormChange('profileAlias', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='ProfileAlias' fieldHistoryName='profileAlias' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                    </dxi-item>
+
+                                    <dxi-item dataField="termRangeMinMonths"
+                                        helpText= "{{ lblMinMaxFormula }}"
+                                        [editorOptions]="{ disabled: this.formData.inUse || service.userRights !== 2 || this.isActive === false, onvaluechanged: formMinMonthsChange() }">
+                                        <dxo-label text="Accounting Term - Min Months"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.termRangeMinMonths"
+                                                [disabled]="this.formData.inUse || service.userRights !== 2 || this.isActive === false"
+                                                (onValueChanged)="onFormChange('termRangeMinMonths', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='MinMonths' fieldHistoryName='termRangeMinMonths' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                        <dxi-validation-rule type="required" message="Minimum Months is Required."></dxi-validation-rule>
+                                        <dxi-validation-rule type="numeric" message="Minimum Months must be numeric."></dxi-validation-rule>
+                                        <dxi-validation-rule type="compare" [comparisonType]="minCompare"  [comparisonTarget]="compareMinToMax" message="Minimum Months must be less than or equal to Maximum Months."></dxi-validation-rule>
+                                        <dxi-validation-rule type="custom" [validationCallback]="validateTerm" message="Minimum Months must have less than 14 decimal places and 20 total digits."></dxi-validation-rule>
+                                        <dxi-validation-rule type="range" [min]="0" message="Minimum Months cannot be less than 0.00"></dxi-validation-rule>
+                                    </dxi-item>
+                                    <dxi-item dataField="termRangeMaxMonths" [editorOptions]="{ disabled: this.formData.inUse || service.userRights !== 2 || this.isActive === false }">
+                                        <dxo-label text="Accounting Term - Max Months"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.termRangeMaxMonths"
+                                                [disabled]="this.formData.inUse || service.userRights !== 2 || this.isActive === false"
+                                                (onValueChanged)="onFormChange('termRangeMaxMonths', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='MaxMonths' fieldHistoryName='termRangeMaxMonths' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                        <dxi-validation-rule type="required" message="Maximum Months is Required."></dxi-validation-rule>
+                                        <dxi-validation-rule type="numeric" message="Maximum Months must be numeric."></dxi-validation-rule>
+                                        <dxi-validation-rule type="compare" [comparisonType]="maxCompare" [comparisonTarget]="compareMaxToMin" message="Maximum Months must be greater than or equal to Minimum Months."></dxi-validation-rule>
+                                        <dxi-validation-rule type="custom" [validationCallback]="validateTerm" message="Maximum Months must have less than 14 decimal places and 20 total digits."></dxi-validation-rule>
+                                        <dxi-validation-rule type="range" [min]="0" message="Maximum Months cannot be less than 0.00"></dxi-validation-rule>
+                                    </dxi-item>
+
+                                    <dxi-item dataField="effectiveDate" caption="Effective Date" editorType="dxDateBox" [editorOptions]="{ disabled: (this.formData.inUse || service.userRights !== 2 || this.isActive === false), displayFormat: this.dateFormatterNoTime }">
+                                        <dxo-label text="Effective Date"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-date-box
+                                                [value]="formData.effectiveDate"
+                                                [disabled]="(this.formData.inUse || service.userRights !== 2 || this.isActive === false)"
+                                                (onValueChanged)="onFormChange('effectiveDate', $event)"
+                                                [displayFormat] = this.dateFormatterNoTime
+                                            >
+                                            </dx-date-box >
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='DiscountRateEffectiveDate' fieldHistoryName='effectiveDate' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                        <dxi-validation-rule type="required" message="Effective Date is Required."></dxi-validation-rule>
+                                        <dxi-validation-rule type="range" [min]="minDate" message="Effective Date must be greater than or equal to 1/1/1901"></dxi-validation-rule>
+                                    </dxi-item>
+                                    <dxi-item dataField="country" caption="Country" editorType="dxSelectBox"
+                                        [editorOptions]="{ dataSource: this.countriesList, valueExpr: 'countryName', displayExpr: 'countryName', disabled: this.formData.inUse || service.userRights !== 2 || this.isActive === false }"
+                                    >
+                                        <dxo-label text="Country"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-select-box
+                                                [dataSource]="countriesList"
+                                                [value]="formData.country"
+                                                [disabled]="this.formData.inUse || service.userRights !== 2 || this.isActive === false"
+                                                (onValueChanged)="onFormChange('country', $event)"
+                                                valueExpr="countryName"
+                                                displayExpr="countryName"
+                                            >
+                                            </dx-select-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='Country' fieldHistoryName='country' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="currency" caption="Currency" editorType="dxSelectBox"
+                                        [editorOptions]="{ dataSource: this.currenciesList, valueExpr: 'targetCurrency', displayExpr: 'targetCurrency', disabled: this.formData.inUse || service.userRights !== 2 || this.isActive === false }"
+                                    >
+                                        <dxo-label text="Currency"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-select-box
+                                                [dataSource]="currenciesList"
+                                                [value]="formData.currency"
+                                                [disabled]="this.formData.inUse || service.userRights !== 2 || this.isActive === false"
+                                                (onValueChanged)="onFormChange('currency', $event)"
+                                                valueExpr="targetCurrency"
+                                                displayExpr="targetCurrency"
+                                            >
+                                            </dx-select-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='Currency' fieldHistoryName='currency' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="annualRateType" caption="Annual Rate Type" editorType="dxSelectBox"
+                                        [editorOptions]="{ dataSource: this.annualRateTypes, valueExpr: 'Id', displayExpr: 'Name', disabled: this.formData.inUse || service.userRights !== 2 || this.isActive === false, value: this.initialRateType  }"
+                                    >
+                                        <dxo-label text="Annual Rate Type"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-select-box
+                                                [dataSource]="annualRateTypes"
+                                                [(value)]="initialRateType"
+                                                [disabled]="this.formData.inUse || service.userRights !== 2 || this.isActive === false"
+                                                (onValueChanged)="onFormChange('annualRateType', $event)"
+                                                valueExpr="Id"
+                                                displayExpr="Name"
+                                            >
+                                            </dx-select-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='AnnualRateType' fieldHistoryName='annualRateType' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="inUse" caption="In Use" editorType="dxCheckBox" [editorOptions]="{ disabled: true }">
+                                        <dxo-label text="In Use"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-check-box [value]="formData.inUse"
+                                                [disabled]= "true"
+                                                (onValueChanged)="onFormChange('inUse', $event)"
+                                            >
+                                            </dx-check-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='InUse' fieldHistoryName='inUse' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                    </dxi-item>
+                                </dxi-item>
+                            </dx-form>
+
+                            <dx-validation-summary id="summary"></dx-validation-summary>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>
+                            System Information
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content class="no-padding">
+                        <div class="widget-container">
+                            <dx-form id="form"
+                                [(formData)]="formData"
+                                [showColonAfterLabel]="colonSetting"
+                                labelLocation="left"
+                                minColWidth="50%"
+                                colCount="1"
+                                width="100%"
+                                (onFieldDataChanged)="updateName(); setupMinMaxFormula()">
+
+                                <dxi-item itemType="group" [colCount]="2">
+                                    <dxi-item dataField="sourceImportId" caption="Source Import ID" [editorOptions]="{ disabled: true }">
+                                        <dxo-label text="Source Import ID"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.sourceImportId"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('sourceImportId', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='SourceImportID' fieldHistoryName='sourceImportId' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="policyId" [editorOptions]="{ disabled: true }">
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.policyId"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('policyId', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioService.selectedPortfolioId" OTID="125" helptextName='PolicyId' fieldHistoryName='policyId' [objectID]='policyId'></crem-tooltip>
+                                        </div>
+                                        <dxo-label text="Profile ID"></dxo-label>
+                                    </dxi-item>
+                                    <dxi-item dataField="createdByName" [editorOptions]="{ disabled: true }">
+                                        <dxo-label text="Created By"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.createdByName"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('createdByName', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <div class="no-icon"></div>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="createdByDate" editorType="dxDateBox"  [editorOptions]="{ disabled: true, displayFormat: this.dateFormatterWithTime }" >
+                                        <dxo-label text="Created Date"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-date-box
+                                                [value]="formData.createdByDate"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('createdByDate', $event)"
+                                                [displayFormat] = this.dateFormatterWithTime
+                                            >
+                                            </dx-date-box >
+                                            <div class="no-icon"></div>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="modifiedByName"  [editorOptions]="{ disabled: true }">
+                                        <dxo-label text="Modified By"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-text-box
+                                                [value]="formData.modifiedByName"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('modifiedByName', $event)"
+                                            >
+                                            </dx-text-box>
+                                            <div class="no-icon"></div>
+                                        </div>
+                                    </dxi-item>
+                                    <dxi-item dataField="lastModifiedDate" editorType="dxDateBox" [editorOptions]="{ disabled: true, displayFormat: this.dateFormatterWithTime }">
+                                        <dxo-label text="Modified Date"></dxo-label>
+                                        <div *dxTemplate>
+                                            <dx-date-box
+                                                [value]="formData.lastModifiedDate"
+                                                [disabled]="true"
+                                                (onValueChanged)="onFormChange('lastModifiedDate', $event)"
+                                                [displayFormat] = this.dateFormatterWithTime
+                                            >
+                                            </dx-date-box >
+                                            <div class="no-icon"></div>
+                                        </div>
+                                    </dxi-item>
+                                </dxi-item>
+
+                            </dx-form>
+
+                            <dx-validation-summary id="summary"></dx-validation-summary>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<dx-popup
+        [width]="500"
+        [height]="320"
+        [showTitle]="true"
+        title="Accounting Schedules Update"
+        [dragEnabled]="false"
+        [closeOnOutsideClick]="false"
+        [(visible)]="associatedSchedulesPopupVisible">
+
+        <div class="note-dialog">
+            <div class="dialog-body">
+                <div class="dialog-content">
+
+                    <div>
+                        {{ discountRateAssociatedSchedules.total() }} - Accounting Schedule(s) will be updated.
+                    </div>
+                    <div>
+                        {{ discountRateAssociatedSchedules.scheduled }} - Initial Accounting Schedule(s) that will be recalculated using the new rate.
+                    </div>
+                    <div *ngIf="(discountRateAssociatedSchedules.historical + discountRateAssociatedSchedules.inProcess) > 0">
+                        {{ discountRateAssociatedSchedules.historical + discountRateAssociatedSchedules.inProcess }} - Accounting Schedule(s) with a JE status of In Process or Historical will remain calculated using previous rate and the discount rate profile modified to direct entry.
+                    </div>
+                    <div *ngIf="discountRateAssociatedSchedules.remeasures > 0">
+                            {{ discountRateAssociatedSchedules.remeasures }} - Remeasured Accounting Schedule(s) with a JE Status of Scheduled that will remain calculated using previous rate and the discount rate profile modified to direct entry.
+                    </div>
+
+                </div>
+                <div><br /></div>
+                <div class="dialog-footer">
+                    <button id="btnCancelAssociatedSchedules" (click)="associatedPopupCancel()" class="btn btn-primary-outline">Cancel</button>
+                    <button id="btnOkAssociatedSchedules" (click)="associatedPopupOk()" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+</dx-popup>
+
+<dx-load-panel
+    #loadPanel
+    shadingColor="rgba(0,0,0,0.4)"
+    [(visible)]="loading"
+    [showIndicator]="true"
+    [showPane]="true"
+    [shading]="true"
+    [closeOnOutsideClick]="false">
+</dx-load-panel>

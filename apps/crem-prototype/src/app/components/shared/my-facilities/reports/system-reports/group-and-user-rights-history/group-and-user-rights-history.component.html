@@ -1,0 +1,156 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Group and User Rights History</h5>	
+			<costar-search (changed)="searchDataGrid($event)"></costar-search>
+
+			<div class="dropdown-box">
+                <dx-drop-down-box placeholder="{{periodFromParsed}} To {{periodToParsed}}">   
+                    <div *dxTemplate="let data of 'content'" class="dbl-padding">
+						<dx-form>
+							<dxi-item>
+								<dxo-label text="Period From"></dxo-label>
+								<div *dxTemplate>
+									<dx-date-box
+										[(max)]="periodTo"
+										[displayFormat]="dateFormat"
+										[(value)]="periodFrom"
+										type="date"
+										pickerType="calendar"
+										(onValueChanged)="onPeriodFromChange($event)"
+									>
+									</dx-date-box>
+								</div>
+							</dxi-item>
+							<dxi-item>
+								<dxo-label text="Period To"></dxo-label>
+								<div *dxTemplate>
+									<dx-date-box
+										[(min)]="periodFrom"
+										[displayFormat]="dateFormat"
+										[(value)]="periodTo"
+										type="date"
+										pickerType="calendar"
+										(onValueChanged)="onPeriodToChange($event)"
+									>
+									</dx-date-box>
+								</div>
+							</dxi-item>
+						</dx-form>
+                    </div>
+                </dx-drop-down-box>
+			</div>
+			<button class="btn btn-default" (click)="apply()" [disabled]="!periodFrom || !periodTo">Apply</button> 
+		</div>
+		<div class="controls-right">
+            <button class="btn btn-primary" (click)="exportGrids()">Export</button> 
+        </div>
+
+	</div>
+    <dx-tab-panel *ngIf="isApplied"
+        [dataSource]="tabs"
+        [deferRendering]="false"
+        [selectedIndex]=0>  
+        <div *dxTemplate="let company of 'userRights'">  
+            <div class="list-page-data-grid-wrapper">
+				<dx-data-grid
+					class="list-page-data-grid"
+					#userDataGrid
+					[dataSource]="userDataFiltered"
+					[showColumnLines]="false"
+					[showRowLines]="false"
+					[showBorders]="false"
+					[rowAlternationEnabled]="true" 
+					[allowColumnResizing]="true"
+					[allowColumnReordering]="true"
+					[columnAutoWidth]="true"
+					[filterSyncEnabled]="true"
+					(onContentReady)="onContentReady($event)"
+					[columnMinWidth]="10"	
+				>
+					<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+					<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
+					<dxo-sorting mode="multiple"></dxo-sorting>
+					<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+					<dxo-column-chooser [allowSearch]="true" mode="select">
+					</dxo-column-chooser>
+					<dxo-paging [pageSize]="100"></dxo-paging>
+					<dxo-pager 
+						[showPageSizeSelector]="true"
+						[allowedPageSizes]="[50, 100, 200, 500]"
+						[showInfo]="true"
+						[showNavigationButtons]="true">
+					</dxo-pager>
+					<dxi-column *ngFor="let col of userColumns" 
+						[dataField]="col.dataField" 
+						[alignment]="col.alignment"
+						[visible]="col.visible"
+						[groupIndex]="col.groupIndex"
+						[dataType]="col.dataType"
+						[caption]="col.caption"
+						[fixed]="col.fixed"
+						[allowEditing]="col.allowEditing"
+						[cellTemplate]="col.cellTemplate"
+						>
+						<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+					</dxi-column>
+				</dx-data-grid>
+			</div>
+		</div>
+		<div *dxTemplate="let right of 'groupRights'">  
+            <div class="list-page-data-grid-wrapper">
+				<dx-data-grid
+					class="list-page-data-grid"
+					#groupDataGrid
+					[dataSource]="groupDataFiltered"
+					[showColumnLines]="false"
+					[showRowLines]="false"
+					[showBorders]="false"
+					[rowAlternationEnabled]="true" 
+					[allowColumnResizing]="true"
+					[allowColumnReordering]="true"
+					[columnAutoWidth]="true"
+					[filterSyncEnabled]="true"
+					(onContentReady)="onContentReady($event)"
+					[columnMinWidth]="10"	
+				>
+					<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+					<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
+					<dxo-sorting mode="multiple"></dxo-sorting>
+					<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+					<dxo-column-chooser [allowSearch]="true" mode="select">
+					</dxo-column-chooser>
+					<dxo-paging [pageSize]="100"></dxo-paging>
+					<dxo-pager 
+						[showPageSizeSelector]="true"
+						[allowedPageSizes]="[50, 100, 200, 500]"
+						[showInfo]="true"
+						[showNavigationButtons]="true">
+					</dxo-pager>
+					<dxi-column *ngFor="let col of groupColumns" 
+						[dataField]="col.dataField" 
+						[alignment]="col.alignment"
+						[visible]="col.visible"
+						[groupIndex]="col.groupIndex"
+						[dataType]="col.dataType"
+						[caption]="col.caption"
+						[fixed]="col.fixed"
+						[allowEditing]="col.allowEditing"
+						[cellTemplate]="col.cellTemplate"
+						>
+						<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+					</dxi-column>
+				</dx-data-grid>
+			</div>
+		</div>
+	</dx-tab-panel>
+</div>
+
+<dx-data-grid class="readOnly" stype="display:none"
+    #filterDataGrid
+    [dataSource]="[]"
+    [columnAutoWidth]="true"
+    [filterSyncEnabled]="true"
+    [columnMinWidth]="10"	
+>
+</dx-data-grid>

@@ -1,0 +1,348 @@
+// @deprecated please use ui-shared/common/src/styles instead
+@import  "cosmos-theme";
+
+
+$costarLightBlue: $color-primary-light;
+
+
+$costarOrange: $color-accent;
+$costarRichGray: $color-neutral-dark;
+$costarRichLightGray:$color-neutral-medium;
+$textGray: $color-neutral-medium;
+$navGray: $color-neutral-light;
+$yellow: $color-yellow;
+
+
+// CoStar Colors v2
+// $costarDarkBlue: #033871;
+$costarDarkBlue: $color-secondary;
+// $costarBlue: #0559b3;
+$costarBlue: $color-primary;
+// $costarMediumBlue: #88b5e5;
+$costarMediumBlue:$color-primary;
+// $costarBlueHover: #4687cc;
+$costarBlueHover:$color-primary;
+// $costarLightBlue: #cae3fe;
+$costarLightBlue:$color-primary-light;
+
+$costarLightOrange: #F68338;
+$costarDarkOrange: $color-accent;
+$costarGreen: $color-green;
+$costarRed: $color-yellow;
+$bodyBackgroundGray: $color-neutral-light;
+
+$color-white: #ffffff;
+$color-dark-blue: #1e3a6f;
+$offWhite: #f8f8f8;
+$ultraLightGray: #f2f2f2;
+$lightGray: #e6e6e6;
+$gray: $color-neutral-dark;
+$mediumGray: $color-neutral-darker;
+
+$color-black: #000000;
+
+
+$stdTextGray: $color-neutral-darker;
+$lightTextGray: $color-neutral-dark;
+$stdTextBlue: $color-primary;
+$lightBorderGray: rgb(231,231,231);
+$stdBorderGray: #C5C5C5;
+$darkBorderGray: rgb(186,186,186);
+$cardBodyBackgroundGray: rgb(252,252,252);
+$iconGray: $lightTextGray;
+$iconGrayDisabled:$color-neutral-light;
+
+$success: $costarGreen;
+$primary : $costarBlue;
+$secondary: $costarLightBlue;
+$warning : $costarLightOrange;
+$danger : $costarRed;
+
+$hoverBlue : $costarLightBlue;
+$borderColor: $lightGray;
+
+/* CoStar Web App Standards (work in progress) */
+
+$backgroundGray: $bodyBackgroundGray;
+
+
+$stdBorderColor: $stdBorderGray;
+$darkBorderColor: $darkBorderGray;
+
+/* The Fonts to be Used in the Document */
+$font: "Helvetica";
+
+/* Basic Numerical Values for the Document */
+$headerBarHeight: 50px;
+$mainNavWidth : 3.5rem;
+$toolbarHeight: 4.2em;
+$nav2Height: $headerBarHeight / 1.5;
+$catalogAddHeight: 48px;
+$catalogWidth: 300px;
+$catalogWidthXL : 380px;
+$iconWidth: 56px;
+// /*
+//  * tokens Font-weight
+//  * presenter font-weight
+//  */
+$stdBorder: 1px solid $stdBorderGray;
+$thickBorder: 2px solid $stdBorderGray;
+$darkBorder: 1px solid $darkBorderGray;
+$darkThickBorder: 2px solid $darkBorderGray;
+/* Default add-on styles */
+/* Text Colors */
+
+
+/* Borders */
+
+
+.border {
+  border:$stdBorder ;
+}
+
+.border-top, .top-border {
+  border-top: $stdBorder ;
+}
+
+.border-right {
+  border-right: $stdBorder ;
+}
+
+.border-bottom, .btm-border, .border-btm {
+  border-bottom: $stdBorder ;
+}
+
+.border-left {
+  border-left: $stdBorder ;
+}
+
+.no-border {
+  border: 0px ;
+}
+
+/* Padding & Margins */
+$stdPadding: 8px;
+$dblPadding: 2 * $stdPadding;
+
+.std-top-margin {
+  margin-top: $stdPadding ;
+}
+
+.std-bottom-margin {
+  margin-bottom: $stdPadding ;
+}
+
+.std-left-margin {
+  margin-left: $stdPadding ;
+}
+
+.std-right-margin {
+  margin-right: $stdPadding ;
+}
+
+.std-side-margin {
+  margin-left: $stdPadding ;
+  margin-right: $stdPadding ;
+}
+
+.dbl-top-margin {
+  margin-top: $dblPadding ;
+}
+
+.dbl-bottom-margin {
+  margin-bottom: $dblPadding ;
+}
+
+.dbl-left-margin {
+  margin-left: $dblPadding ;
+}
+
+.dbl-right-margin {
+  margin-right: $dblPadding ;
+}
+
+.auto-margin {
+  margin: 0px auto ;
+}
+
+.std-margin {
+  margin: $stdPadding ;
+}
+
+.dbl-margin {
+  margin: $dblPadding ;
+}
+
+.no-margins {
+  margin: 0px ;
+}
+
+.no-top-margin {
+  margin-top: 0px ;
+}
+
+.std-padding {
+  padding: $stdPadding ;
+}
+
+.dbl-padding {
+  padding: $dblPadding ;
+}
+
+.std-left-padding {
+  padding-left: $stdPadding ;
+}
+
+.std-right-padding {
+  padding-right: $stdPadding ;
+}
+
+.std-top-padding {
+  padding-top: $stdPadding ;
+}
+
+.std-bottom-padding {
+  padding-bottom: $stdPadding ;
+}
+
+.dbl-left-padding {
+  padding-left: $dblPadding ;
+}
+
+.dbl-right-padding {
+  padding-right: $dblPadding ;
+}
+
+.dbl-top-padding {
+  padding-top: $dblPadding ;
+}
+
+.dbl-bottom-padding {
+  padding-bottom: $dblPadding ;
+}
+
+.no-padding {
+  padding: 0px ;
+}
+
+.no-left-padding {
+  padding-left: 0px ;
+}
+
+.no-right-padding {
+  padding-right: 0px ;
+}
+
+/* Alignment & Positioning */
+.inline {
+  display: inline-block ;
+}
+
+.block {
+  display: block ;
+}
+
+.left {
+  text-align: left ;
+}
+
+.center {
+  text-align: center ;
+}
+
+.right {
+  text-align: right ;
+}
+
+.float-right {
+  float: right ;
+}
+
+.float-left {
+  float: left ;
+}
+
+.float-none {
+  float: none ;
+}
+
+.align-top {
+  vertical-align: top ;
+}
+
+.align-middle {
+  vertical-align: middle ;
+}
+
+/* Text Styling */
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.clickable {
+  cursor: pointer ;
+}
+
+.grab {
+  cursor: -webkit-grab;
+}
+
+b {
+  font-weight: 800;
+}
+
+/* Display */
+.show {
+  display: block;
+}
+
+.hide {
+  display: none ;
+}
+
+/* Fixed Widths */
+.w400 {
+  width: 400px ;
+}
+
+.w600 {
+  width: 600px ;
+}
+
+.w200 {
+  width: 200px;
+}
+
+.h100 {
+  height: 100%;
+}
+
+.w50 {
+  width: 50% ;
+}
+
+.w100 {
+  width: 100% ;
+}
+
+.no-min-height {
+  min-height: 0px ;
+}
+
+/* overflows */
+.oflow-y-auto {
+  overflow-y: auto ;
+}
+
+.oflow-y-hidden {
+  overflow-y: hidden ;
+}
+
+.oflow-x-hidden {
+  overflow-x: hidden ;
+}
+

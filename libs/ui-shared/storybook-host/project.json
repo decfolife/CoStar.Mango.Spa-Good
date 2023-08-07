@@ -1,0 +1,46 @@
+{
+  "name": "ui-shared-storybook-host",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/ui-shared/storybook-host/src",
+  "prefix": "mango",
+  "targets": {
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/ui-shared/storybook-host/.storybook",
+        "browserTarget": "ui-shared-storybook-host:build-storybook",
+        "styles": ["libs/ui-shared/common/src/styles/_index.scss"],
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/ui-shared-storybook-host",
+        "configDir": "libs/ui-shared/storybook-host/.storybook",
+        "browserTarget": "ui-shared-storybook-host:build-storybook",
+        "styles": ["libs/ui-shared/common/src/styles/_index.scss"],
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": [
+    "ui-shared-lib-ui-shared",
+    "ui-shared-lib-ui-elements",
+    "ui-shared-common"
+  ]
+}

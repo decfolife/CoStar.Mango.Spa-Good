@@ -1,0 +1,40 @@
+@import '../../../../../../../assets/styles/colors.scss';
+@import '../../../../../../../assets/styles/var.scss';
+
+mat-card.mat-card {
+	&.asset-marketing-card {
+		border-radius: 8px !important;
+
+		mat-card-header.mat-card-header {
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: flex-start;
+
+			div.asset-marketing-address {
+				font-size: 22px;
+				font-weight: 200;
+			}
+
+			div.asset-marketing-attributes {
+				display: flex;
+				flex-direction: row;
+
+				div.asset-marketing-attr {
+					font-size: 16px;
+					font-weight: 200;
+					padding: 0 1rem;
+					border-left: $stdBorder;
+
+					&:first-of-type {
+						padding-left: 0px;
+						border-left: none;
+					}
+				}
+			}
+		}
+
+		mat-card-content.mat-card-content {
+
+		}
+	}
+}

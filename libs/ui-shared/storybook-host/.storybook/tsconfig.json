@@ -1,0 +1,26 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "emitDecoratorMetadata": true
+  },
+
+  "exclude": ["../**/*.spec.ts"],
+  "include": [
+    /**
+     * Libraries and components, tokens and documentation below
+    */
+    // General Storybook Documentation
+    "../docs/**/*.stories.mdx",
+    // Tokens
+    "../../common/**/*.stories.ts",
+    "../../common/**/*.stories.mdx",
+    // Add ui-shared folders below, add same folders on main.js as well
+    "../../lib-ui-shared/**/*.stories.ts",
+    "../../lib-ui-shared/**/*.stories.mdx",
+    "../../lib-ui-elements/**/*.stories.ts",
+    "../../lib-ui-elements/**/*.stories.mdx",
+    "*.js",
+    "preview.ts",
+    "main.ts",
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "mango-crem-features-group-maintenance-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mango-crem-features/group-maintenance-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/mango-crem-features/group-maintenance-e2e/cypress.json",
+        "tsConfig": "apps/mango-crem-features/group-maintenance-e2e/tsconfig.e2e.json",
+        "devServerTarget": "mango-crem-features-group-maintenance:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "mango-crem-features-group-maintenance:serve:production"
+        }
+      }
+    }
+  }
+}

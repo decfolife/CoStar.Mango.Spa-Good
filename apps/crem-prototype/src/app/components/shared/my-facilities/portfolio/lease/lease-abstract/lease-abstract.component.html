@@ -1,0 +1,60 @@
+<div class="dynamic-form">
+	<div class="dynamic-form-controls-wrapper">
+		<div class="controls-left">
+			<h5>Lease Abstract</h5>
+		</div>
+		<div class="controls-right">			
+			<button class="btn btn-primary">Actions</button>
+		</div>
+	</div>
+	<div class="dynamic-form-content">		
+		<div class="row" *ngIf="!isLabelOnTop">
+			<div *ngFor="let section of formFields" class="col-md-12">
+				<form-schedule *ngIf="section.isTableData" [section]="section"></form-schedule>
+				<mat-card *ngIf="!section.isTableData">
+					<mat-card-header>
+						<mat-card-title>{{section.sectionName}}</mat-card-title>
+					</mat-card-header>
+					<mat-card-content>						
+						<dx-form 
+							[(formData)]="lease"
+							[colCount]="2"
+							labelLocation="left"
+							[showColonAfterLabel]="false">
+							<dxi-item *ngFor="let field of section.fields" 
+								[dataField]="field.value"
+								[label]="{ text : field.label }"
+								[editorType]="field.controlType"
+								[editorOptions]="{ items: field.dropdownValues, searchEnabled: true, disabled : field.readOnly }"
+								[template]="field.dxTemplate"
+								[colSpan]="field.colSpan"
+								>								
+							</dxi-item>
+							<div *dxTemplate="let data of 'textBoxTemplate'">
+							    <dx-text-box [(value)]="lease[data.dataField]" [disabled]="data.editorOptions.disabled"></dx-text-box>
+							    <form-field-tooltip [fieldId]="data.dataField"></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'dateBoxTemplate'">
+							    <dx-date-box [(value)]="lease[data.dataField]" [disabled]="data.editorOptions.disabled"></dx-date-box>
+							    <form-field-tooltip [fieldId]="data.dataField"></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'selectBoxTemplate'">
+							    <dx-select-box [dataSource]="data.editorOptions.items" [(value)]="lease[data.dataField]" [searchEnabled]="data.editorOptions.searchEnabled" valueExpr="value" displayExpr="display" [disabled]="data.editorOptions.disabled"></dx-select-box>
+							    <form-field-tooltip [fieldId]="data.dataField"></form-field-tooltip>
+							</div>
+							<div *dxTemplate="let data of 'clauseTemplate'">
+							    <dx-text-area [(value)]="lease[data.dataField]" [height]="112" [disabled]="data.editorOptions.disabled"></dx-text-area>
+							    <doc-sec-page></doc-sec-page>
+							    <div class="clause-bank-wrapper">
+							    	<form-field-tooltip [fieldId]="data.dataField"></form-field-tooltip>
+							    	<clause-bank [fieldId]="data.dataField" (pasted)="pasteClause($event)"></clause-bank>
+							    </div>
+							</div>
+						</dx-form>
+					</mat-card-content>
+				</mat-card>	
+			</div>	
+		</div>
+	</div>
+</div>	
+

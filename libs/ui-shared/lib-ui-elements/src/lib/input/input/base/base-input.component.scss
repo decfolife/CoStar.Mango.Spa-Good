@@ -1,0 +1,65 @@
+@use "../../../../../../common/src/styles" as *;
+
+:host {
+  width: 100%;
+  display: flex; // Don't overflow parent container
+  input{
+    outline: 0;
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.175rem 0.75rem;
+    background-clip: padding-box;
+    height: calc(1.175rem + 2px);
+    @include costar(color, dark);
+    @include costar(border, gray05);
+    @include costar(transition, fast);
+    @include costar(border-radius, medium);
+    &:focus{
+      @include costar(color, dark);
+      @include costar(border, primary-lightest);
+      @include costar(box-shadow, primary);
+    }
+
+    &.disabled {
+      &:focus{
+        box-shadow: unset;
+        cursor: not-allowed;
+        @include costar(border, gray05);
+      }
+    }
+
+    &.read-only {
+      @include costar(border, gray06);
+      @include costar(background-color, gray06);
+      &:focus{
+        border: none;
+        box-shadow: unset;
+        cursor: default;
+        @include costar(border, gray06);
+      }
+    }
+
+    &.warning {
+      @include costar(border, warning);
+      &:focus{
+        @include costar(box-shadow, warning);
+      }
+    }
+
+    &.error {
+      @include costar(border, danger);
+      &:focus{
+        @include costar(box-shadow, danger);
+      }
+    }
+
+    &.success {
+      @include costar(border, success);
+      &:focus{
+        @include costar(box-shadow, success);
+      }
+    }
+
+  }
+
+}

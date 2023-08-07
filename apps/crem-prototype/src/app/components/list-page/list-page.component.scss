@@ -1,0 +1,91 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/var';
+
+
+:host::ng-deep {
+
+	div.list-page {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+
+		div.list-page-controls-wrapper {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			padding: $stdPadding;
+			font-size: 14px;
+			border-bottom: $stdBorder;
+
+			&>div {
+				display: flex;
+				align-items: center;
+				z-index: 500;
+
+				&.controls-left {
+					mat-form-field.mat-form-field,
+					button.btn,
+					dx-text-box,
+					dx-drop-down-box,
+					dx-drop-down-button,
+					dx-select-box {
+						margin-right: $stdPadding;
+					}
+
+					h1, h2, h3, h4, h5, h6 {
+						margin: 0px;
+					}
+				}
+
+				&.controls-right {
+					mat-form-field.mat-form-field,
+					button.btn,
+					mat-button-toggle-group,
+					dx-drop-down-button,
+					dx-select-box {
+						margin-left: $stdPadding;
+					}
+				}
+			}
+
+			button.btn {
+				// font-size: 14px;
+			}
+
+			mat-form-field {
+				&.mat-form-field {
+					height: $stdPadding * 4;
+
+					&.mat-form-field-appearance-outline {
+						div.mat-form-field-wrapper {
+							padding: 0px;
+							margin: 0px;
+						}
+					}
+				}
+			}
+		}
+
+		.list-page-data-grid-wrapper {
+			display: flex;
+			flex-grow: 1;
+			overflow-y: auto;
+			flex-direction: column;
+
+			[aria-label="Column Market"],
+			[aria-label='Column Estimated Rent'],
+			[aria-label='Column Sub Market'],
+			[aria-label='Column Star Rating'],
+			[aria-label='Column Parcel'],
+			[aria-label='Column Primary Leasing'],
+			[aria-label='Column Vacancy SF'] {
+				background-color: $secondary;
+				color: $white;
+			}
+
+		}
+	}
+}

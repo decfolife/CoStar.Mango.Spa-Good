@@ -1,0 +1,51 @@
+  <crem-modal
+    class="qsr-modal"
+    [modalTitle] = "modalTitle"
+    [closeIconVisible] = "closeButton"
+    [closeOrCancelButtonText] = "secondaryFooterButtonText"
+    [modalId] = "modalId"
+  >
+  <crem-loader modalContent *ngIf="!searchRestultsRetrieved"></crem-loader>
+  <div modalContent class="qsr-modalContent" *ngIf="searchRestultsRetrieved">
+    <mat-divider></mat-divider>
+    <dx-tab-panel
+      #SearchResultsTabPanel	
+      height="100%"					
+      [selectedIndex]="0"
+      [loop]="false"
+      [animationEnabled]="true"
+      [swipeEnabled]="true"
+      class="search-results-tab-panel"
+      >
+      <dxi-item  *ngFor="let object of searchResults" title="{{object.objectTypeType}}">
+        <dx-data-grid 
+          class="qsr-search-results-grid"
+          #DataGrid
+          [dataSource]="object.results"
+          [showColumnLines]="false"
+          [showRowLines]="false"
+          [showBorders]="false"
+          [rowAlternationEnabled]="true" 
+          [allowColumnResizing]="true"
+          [allowColumnReordering]="true"
+          [columnAutoWidth]="true"
+          [columnMinWidth]="10"
+          [wordWrapEnabled]="true"
+          (onContentReady)="contentReady($event)"	
+        >
+          <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+          <dxo-sorting mode="multiple"></dxo-sorting>
+          <dxo-paging [pageSize]="100"></dxo-paging>
+            <dxo-pager 
+                [showPageSizeSelector]="true"
+                [visible]="true"
+                [allowedPageSizes]="[50, 100, 200, 500]"
+                [showInfo]="true"
+                [showNavigationButtons]="true">
+            </dxo-pager>		
+        </dx-data-grid>
+      </dxi-item>
+    </dx-tab-panel>
+  </div>
+ </crem-modal> 
+ 

@@ -1,0 +1,48 @@
+<div class="data-set-dictionary-controls-wrapper">
+  <div class="controls-left">
+    <div class="page_title">
+      <h5 class="dbl-right-margin">Data Set Dictionary</h5>
+    </div>
+
+    <dx-text-box class="search"  
+      [(value)]="searchText"
+      [inputAttr]="{ 'aria-label': 'dataSetNameSearch'}"
+      mode="search"
+      placeholder="Search..."
+      [showClearButton]="true"
+      valueChangeEvent="keyup"
+      (onValueChanged)="searchDataGrid()"
+    ></dx-text-box>
+  </div>
+
+  <div class="controls-right">
+    <button class="btn btn-default"
+      (click)="showFilterBuilder()"
+      id="filterBuilderButton"
+    >Filters
+      <div *ngIf="appliedFilterCount > 0 && !showClearFilters"
+        class="badge primary costar std-left-margin"
+        (mouseover)="toggleClearFilters()"
+      >{{ appliedFilterCount }}</div>
+
+      <div *ngIf="appliedFilterCount > 0 && showClearFilters"
+        class="badge primary costar std-left-margin underline"
+        (mouseout)="toggleClearFilters()"
+        (click)="clearGridFilters($event)"
+      >Clear {{ appliedFilterCount }} Filter{{ appliedFilterCount === 1 ? '' : 's' }}</div>
+    </button>
+  </div>
+</div>
+
+<div class="data-set-dictionary-grid-wrapper">
+  <ngx-skeleton-loader *ngIf="!rightsLoaded"
+    class="crem-button-shadow"
+    [theme]="{height: '125px', width: '100%'}"
+  ></ngx-skeleton-loader>
+
+  <mango-data-set-grid #dataSetGrid
+    *ngIf="rightsLoaded"
+    [hasAddRights]="hasAddRights"
+    (filterCountChanged)="updateFilterCount($event)"
+  ></mango-data-set-grid>
+</div>

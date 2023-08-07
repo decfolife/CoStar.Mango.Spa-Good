@@ -1,0 +1,14 @@
+
+<dx-text-box class="global-search-input" [(value)]="searchTerm" placeholder="Search..." [showClearButton]="true" width="400">
+	<dxi-button name="search" location="before" [options]="searchButton"></dxi-button>		
+</dx-text-box>
+<dx-drop-down-button
+    [items]="objectTypes"
+    displayExpr="value"
+    keyExpr="id"
+    selectedItemKey="0"    
+    useSelectMode="true"
+    width="120"  
+    class="global-search-dropdown"
+></dx-drop-down-button>
+

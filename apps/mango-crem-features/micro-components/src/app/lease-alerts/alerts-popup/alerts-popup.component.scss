@@ -1,0 +1,32 @@
+#openLeaseAlertsPopupButton {
+  background-color: #d4d0c8;
+  border: 1px solid #a7a49f;
+  height: 20px;
+  margin: 0 3px;
+  padding: 3px 8px;
+
+  .dx-button-text {
+    font-size: 8pt !important; // To match existing buttons
+  }
+}
+
+#leaseAlertsPopup {
+  dx-button.grey-button {
+    background-color: #d4d0c9;
+    border: 1px solid #a7a49f;
+  }
+
+  .dx-popup-bottom.dx-toolbar {
+    padding: 0px 16px 0px 16px !important;
+    margin-top: -12px;
+
+    .dx-toolbar-after {
+      .dx-item-content {
+        div {
+          color: #848484;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

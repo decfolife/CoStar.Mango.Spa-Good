@@ -1,0 +1,107 @@
+<div class="user-maintenance-page">
+	<div class="user-maintenance-page-controls-wrapper">
+		<div class="controls-left">
+			<div class="userMaintenace__pageTitle dbl-right-margin">{{ pageTitle }}</div>
+            <cs-search #SearchBox class="user-maintenance-search"
+                (changed)="searchDataGrid($event)"
+                >
+			</cs-search>
+			<div class="user-maintenance-dropdown">
+				<crem-dropdown
+					[isDisabled]='deleting'
+					[dataSource]='dropdownField'
+					[allowSearch]='false'
+					placeholder='User Filter'
+					initialSelectedValue='Active Log On'
+					[showClearButton]='false'
+					[showColumnHeader]='false'
+					displayExpr='value'
+					valueExpr='value'
+					(selectedItems)="onFilterChange($event)"
+				></crem-dropdown>
+			</div>
+		</div>
+		<div class="controls-right">
+			<div class="button__add">
+				<crem-button type="primary" [disabled]="!(userMaintenanceData)" (click)="addUser()">Add</crem-button>
+			</div>
+			<crem-button type="secondary" [disabled]="!(userMaintenanceData)" (click)="exportGrids()">Export</crem-button>
+		</div>
+    </div>
+
+    <div class="user-maintenance-page-data-grid-wrapper">
+		<dx-data-grid *ngIf="userMaintenanceData"
+			class="user-maintenance-page-data-grid"
+			#DataGrid
+			[dataSource]="userMaintenanceData"
+			keyExpr="contactID"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="true"
+			[filterSyncEnabled]="true"
+			[columnMinWidth]="10"
+			(onCellPrepared)="onCellPrepared($event)"
+            (onCellClick)="onCellClicked($event)"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxo-column-chooser [allowSearch]="true" mode="select">
+			</dxo-column-chooser>
+			<dxo-paging [pageSize]="50"></dxo-paging>
+		    <dxo-pager 
+		        [showPageSizeSelector]="true"
+		        [allowedPageSizes]="[50, 100, 200, 500]"
+		        [showInfo]="true"
+                [showNavigationButtons]="true"
+                [visible]="true"
+			>
+			</dxo-pager>
+			<dxi-column *ngFor="let col of columns" 
+				[dataField]="col.dataField" 
+				[alignment]="col.alignment"
+                [visible]="col.visible"
+				[dataType]="col.dataType"
+				[format]="col.format"
+				[caption]="col.caption"
+				[fixed]="col.fixed"
+				[allowEditing]="col.allowEditing"
+				[cellTemplate]="col.cellTemplate"
+				>
+				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+			</dxi-column>
+
+			<dxi-column dataField="Actions" caption="Actions" type="buttons" width="65">
+		    	<dxi-button	template="moreMenuTemplate">
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'" class="cursor-default">
+		    			<button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu">
+                <fa-icon [icon]="faEllipsisH"></fa-icon>
+              </button>
+		    			<mat-menu #UserMoreMenu="matMenu">
+				    		<ul>
+								<li *ngIf="!data.data.isContact" (click)="view(data.data.contactID)">View</li>                   
+		                        <li  (click)="edit(data.data.contactID)">Edit</li>
+		                        <li *ngIf="!data.data.isContact" (click)="assignObjectRights(data.data.contactID)">Assign User Rights</li>                        
+		                        <li *ngIf="!data.data.isContact" (click)="assignGroups(data.data.contactID)">Assign Groups</li>
+                                <li *ngIf="!data.data.isContact" (click)="assignModules(data.data.contactID)">Assign Modules</li>    
+                                <li *ngIf="(!data.data.isContact && userHaveAdminRights)" (click)="assignAdminLinks(data.data.contactID)">Assign Admin Links</li>                    
+                                <li (click)="deleteUser(data)">Delete</li>
+		                    </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>	
+		</dx-data-grid>
+		<dx-load-panel shadingColor="rgba(255,255,255,0.2)"
+			[visible]="!userMaintenanceData"
+			[showIndicator]="true"
+			[showPane]="true"
+			[shading]="true"
+			[closeOnOutsideClick]="false"
+		></dx-load-panel>
+	</div>
+</div>

@@ -1,0 +1,37 @@
+<div *ngIf="showLabel" class="input-label">
+  <span>{{ label }}</span>
+  <span *ngIf="optional" class="input-optional">(optional)</span>
+  <span *ngIf="required" class="input-required">*</span>
+</div>
+<mat-form-field appearance="outline" [class.disabled]="disabled">
+  <mat-icon [fill]="'#a3a3a3'" class="icon-brand-search icon-brand-search-dims" svgIcon="brandsearch" aria-label="Search"></mat-icon>
+  <input class="search__input"
+    matInput
+    #search
+    type="search"
+    [placeholder]="placeholder"
+    [value]="value"
+    (input)="outputSearchText($event.target.value)"
+    [disabled]="disabled"
+    title="Search"
+    aria-label="Search"
+  />
+    <mat-icon svgIcon="brandclose"
+      aria-hidden="false"
+      class="icon-brand-close icon-brand-close-dims"
+      *ngIf="value" role="button" [fill]="'#a3a3a3'"
+      (keydown.enter)="handleClear()" (click)="handleClear()" (keydown.space)="handleClear()"
+      matSuffix
+      tabindex="0"
+      aria-label="Clear Search Field"
+    ></mat-icon>
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+</mat-form-field>
+
+<!-- <div *ngIf="showLabel" class="input-label">{{label}}</div>
+<div class="input-container">
+	<input [placeholder]="placeholder" [value]="value" (input)="outputSearchText($event)">
+	<mat-icon>search</mat-icon>
+</div>
+<div *ngIf="hint" class="input-hint">{{hint}}</div>
+ -->

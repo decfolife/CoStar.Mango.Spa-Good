@@ -1,0 +1,78 @@
+<mat-card class="dashboard-card upcoming-feed">
+  <mat-card-header>
+    <mat-card-title>
+      <div class="card-title-hero">42</div>
+      <span>Upcoming Strategies</span>
+    </mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <div class="mat-card-header-toolbar">
+      <button class="btn btn-default btn-sm" [matMenuTriggerFor]="cardMenu">
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #cardMenu="matMenu">
+        <button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span
+            *ngIf="!isExpanded">Expand All</span></button>
+        <button mat-menu-item (click)="exportDataGrid()">Export</button>
+      </mat-menu>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="no-padding">
+
+    <dx-data-grid
+      class="list-page-data-grid"
+      #StrategyUpcomingDataGrid
+      [dataSource]="strategies"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="true"
+    >
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-paging [pageSize]="15" [pageIndex]="1">
+      </dxo-paging>
+      <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+      <dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+
+      <dxi-column dataField="buildingName"  caption="Building Name" width="180px"></dxi-column>
+      <dxi-column dataField="city" caption="City"></dxi-column>
+      <dxi-column dataField="state" caption="State"></dxi-column>
+      <dxi-column dataField="country" caption="Country"></dxi-column>
+      <dxi-column dataField="currentStrategy" caption="Current Strategy" width="180px"></dxi-column>
+      <dxi-column dataField="strategyYear" caption="Strategy Year" width="140px"></dxi-column>
+      <dxi-column dataField="budgetedCapital" caption="Budgeted Capital" dataType="number" format="currency" width="170px"></dxi-column>
+      <dxi-column dataField="lastUpdated" caption="Last Updated" sortOrder="asc" width="140px"></dxi-column>
+      <dxi-column dataField="lastUpdatedBy" caption="Last Updated By" width="180px"></dxi-column>
+
+    </dx-data-grid>
+
+    <dx-data-grid class="list-page-data-grid"
+      #StrategyUpcomingDataGrid
+      [dataSource]="strategies"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="true"
+    >
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-header-filter [visible]="true"></dxo-header-filter>
+      <dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+
+      <dxi-column dataField="buildingName" caption="Building Name"></dxi-column>
+      <dxi-column dataField="city" caption="City"></dxi-column>
+      <dxi-column dataField="state" caption="State"></dxi-column>
+      <dxi-column dataField="country" caption="Country"></dxi-column>
+      <dxi-column dataField="currentStrategy" caption="Current Strategy"></dxi-column>
+      <dxi-column dataField="strategyYear" caption="Strategy Year"></dxi-column>
+      <dxi-column dataField="budgetedCapital" caption="Budgeted Capital"></dxi-column>
+      <dxi-column dataField="lastUpdated" caption="Last Updated"></dxi-column>
+      <dxi-column dataField="lastUpdatedBy" caption="Last Updated By"></dxi-column>
+
+    </dx-data-grid>
+  </mat-card-content>
+</mat-card>

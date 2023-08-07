@@ -1,0 +1,47 @@
+$color-brand-accent: #ec4a08;
+
+mango-accounting-dashboard, mango-accounting-listpage {
+    /* You can add global styles to this file, and also import other style files */
+    @import "../../../mango/src/assets/styles/costar-angular-material.scss";
+    @import "../../../mango/src/assets/styles/costar-dev-extreme.scss";
+    @import "../../../mango/src/assets/styles/costar-mango.scss";
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss";
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/crem-pivot-table/crem-pivot-table.component.scss";
+    @import '~bootstrap/dist/css/bootstrap.min.css';
+    // @import '~devexpress-gantt/dist/dx-gantt.css';
+    @import "./assets/dx.generic.custom-light.scss";
+    @import "./assets/styles/accounting-module.scss";
+
+
+    // Global Styles for the Accounting Module Ng Application
+    .divMainContentInner {
+        top: 0 !important;
+        height: auto !important;
+        overflow: hidden !important;
+    }
+
+    .mainWrapper {
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: row !important;
+        width:100VW !important
+    }
+}
+
+.drilldown-datagrid {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.shared-left-nav li.listItem.active {
+    #left-nav__9-dashboard span {
+        font-weight: bold;
+        border-bottom: 3px solid $color-brand-accent;
+    }
+
+    #left-nav__9-accounting-events span {
+        font-weight: bold;
+        border-bottom: 3px solid $color-brand-accent;  
+    }
+}

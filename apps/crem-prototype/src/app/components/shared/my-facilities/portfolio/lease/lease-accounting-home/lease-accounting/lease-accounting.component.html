@@ -1,0 +1,80 @@
+<div class="list-page">
+  <div class="list-page-controls-wrapper">
+    <div class="controls-left">
+      <h5>Accounting</h5>
+
+      <div style="margin-left: 8px;">
+        <button class="btn btn-primary-outline"
+          [matMenuTriggerFor]="scheduleMenu"
+        >
+          {{ scheduleName }} <fa-icon icon="caret-down"></fa-icon>
+        </button>
+      </div>
+
+      <mat-menu #scheduleMenu="matMenu">
+        <button mat-menu-item
+          *ngFor="let schedule of schedules"
+          (click)="toggleSchedule(schedule)"
+        >{{ schedule.classification }} - {{ schedule.amortizationProfile }}</button>
+      </mat-menu>
+    </div>
+
+    <div class="controls-right">
+      <button class="btn btn-primary-outline"
+        (click)="showLeaseAlertsModal()">Alerts (1)</button>
+
+      <button class="btn btn-primary-outline"
+      >Run Report</button>
+
+      <button class="btn btn-primary-outline"
+        [matMenuTriggerFor]="workflowMenu"
+      >Needs Review <fa-icon icon="caret-down"
+        class="std-left-margin"></fa-icon>
+      </button>
+
+      <mat-menu #workflowMenu="matMenu">
+        <button mat-menu-item>Not Applicable</button>
+        <button mat-menu-item>Needs Review</button>
+        <button mat-menu-item>Pending Approval</button>
+        <button mat-menu-item disabled>Approved</button>
+      </mat-menu>
+
+      <button class="btn btn-primary-outline"
+        [matMenuTriggerFor]="workflowHistoryMenu"
+        style="margin-left: -2px;"
+      ><fa-icon icon="history"></fa-icon>
+      </button>
+
+      <mat-menu #workflowHistoryMenu="matMenu">
+        <div mat-menu-item>
+          <dx-data-grid [dataSource]="workflowStatusHistory"
+          ></dx-data-grid>
+        </div>
+      </mat-menu>
+
+      <button class="btn btn-primary"
+        [routerLink]="['../addschedule']"
+      ><fa-icon icon="plus"></fa-icon> Add Schedule
+      </button>
+    </div>
+  </div>
+
+  <div class="list-page-data-grid-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+
+  <dx-popup #leaseAlertsModal
+    [closeOnOutsideClick]="false"
+    [(visible)]="showLeaseAlerts"
+    [title]="'Lease Alerts'"
+  >
+    <dxi-toolbar-item
+      toolbar="bottom"
+      location="after"
+    >
+      <button class="btn btn-primary">Toggle Selected</button>
+    </dxi-toolbar-item>
+
+    <app-accounting-health-grid [hideDismissed]="true"></app-accounting-health-grid>
+  </dx-popup>
+</div>

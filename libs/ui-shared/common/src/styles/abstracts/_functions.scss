@@ -1,0 +1,16 @@
+@use "sass:color";
+@use "sass:math";
+
+//------------------------------------------------
+//--- Color Utilities
+//------------------------------------------------
+// Transform Hex to HSL
+@function hexToHsl($hex){
+  @if type-of($hex) == color {
+    $hue: math.round(color.hue($hex));
+    $saturation: math.round(color.saturation($hex));
+    $lightness: math.round(color.lightness($hex));
+    @return unquote("hsl(#{$hue}, #{$saturation}, #{$lightness})");
+  }
+  @return null;
+}

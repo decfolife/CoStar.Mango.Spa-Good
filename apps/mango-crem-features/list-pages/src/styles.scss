@@ -1,0 +1,246 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'src/assets/styles/colors';
+
+/**
+ * Undo System styles
+ * ! Overwrites CSS inside CREM
+ * TODO: Remove after CREM becomes MangoSpa
+ **/
+body {
+  > .pageMainMasterWrapper { // Only applies on CREM
+
+    #divMainContent {
+      top: -8px !important;
+      .divMainContentInner {
+        padding: 0 !important;
+      }
+    }
+    
+    input[type=text]:focus, input[type=text]:active, input[type=file]:focus,
+    input[type=file]:active, input[type=password]:focus, input[type=password]:active,
+    input[type=tel]:focus, input[type=tel]:active, input[type=search]:focus,
+    input[type=search]:active, select:focus, select:active, textarea:focus, textarea:active {
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    .actions-container {
+      input[type=text]:focus, input[type=text]:active, input[type=file]:focus,
+      input[type=file]:active, input[type=password]:focus, input[type=password]:active,
+      input[type=tel]:focus, input[type=tel]:active, input[type=search]:focus,
+      input[type=search]:active, select:focus, select:active, textarea:focus, textarea:active {
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
+
+    .mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button,
+    .mat-flat-button, .mat-fab, .mat-mini-fab {
+      border-radius: 2px !important;
+      font-family: "Helvetica Neue","Segoe UI",Helvetica,Verdana,sans-serif !important;
+      font-size: 14px !important;
+    }
+
+    button.mat-menu-item,
+    div.mat-list-item-content {
+      background: transparent !important;
+      cursor: pointer;
+    }
+
+    .dx-button.sql-button {
+      border: 1px solid colors.$costarBlue !important; // I hate global styles
+      border-radius: 2px !important;
+      color: colors.$costarBlue !important;
+      font-weight: bold !important;
+
+      &:hover {
+        background-color: colors.$costarBlue !important;
+        border-color: colors.$costarBlue !important;
+        color: colors.$white !important;
+      }
+    }
+
+    .notes-popup-wrapper {
+      .dx-popup-title.dx-toolbar.dx-widget {
+        padding: 24px 0 24px 0 !important;
+        height: unset !important;
+        border-bottom: unset;
+      }
+    }
+
+    #note-type-dropdown {
+      .dx-field-value {
+        width: 100% !important;
+      }
+
+      .dx-fieldset {
+        margin: 10px 0px 10px 0px;
+      }
+    }
+
+  }
+
+}
+
+div.paymentDetailsModal {
+  width: auto;
+}
+
+#paymentDetailsModalId {
+  height: 100%;
+  .modalHeader {
+    padding: 8px 16px !important;
+    background-color:  colors.$costarDarkBlue !important;
+    color: white;
+  }
+  div.modalContent {
+    overflow: hidden;
+    padding: 16px;
+  }
+
+  .pmntDtls-bottom mat-tab-group {
+    div.mat-tab-label .mat-tab-label-content{
+      color: colors.$darkerGray;
+    }
+    div.tab-data {
+      height: 380px;
+    }
+    mat-tab-header.mat-tab-header {
+      div.mat-tab-labels {
+        .mat-tab-label {
+          height: 36px;
+          background-color: colors.$lightGray;
+          margin-right: 2px;
+          &.mat-tab-label-active {
+            background-color: white;
+            font: bold;
+            border: 1px solid colors.$costarBlue;
+          }
+        }
+        .mat-tab-label:focus {
+          border: 1px solid colors.$costarDarkBlue;
+        }  
+      }
+      mat-ink-bar.mat-ink-bar {
+        display: none;
+      }
+    }
+  }  
+
+  dx-data-grid {
+    &#paymentProcessingGrid, &#paymentHistoryGrid, &#chargeAllocationsGrid {
+      height: 100%;
+      tr.dx-row.dx-header-row {
+        background-color: colors.$color-dark-blue !important;
+        color: white !important
+      }
+      tr.dx-row.dx-group-row, .dx-datagrid-group-closed::before, .dx-datagrid-group-opened::before {
+        color: black;
+      }
+      tr.dx-row.dx-group-row:focus {
+        border: 1px solid transparent;
+      }
+      
+    }
+
+    div.dx-datagrid-headers div.dx-datagrid-content table tbody tr.dx-header-row td div.dx-column-indicators 
+    span.dx-header-filter.dx-header-filter-empty {
+      color: white;
+    }
+  }
+}
+
+#rangeDateForm {
+  .dx-item-content.dx-box-item-content.dx-box-flex.dx-box.dx-widget { 
+    align-items: start;
+    flex-grow: unset;
+    gap: 8px;
+   .dx-item.dx-box-item:first-child {
+      width: 60px;
+      max-width: 60px;
+    }
+    .dx-item.dx-box-item {
+      width: 100px;
+      max-width: 100px;
+    }
+    .dx-item.dx-box-item:nth-last-child(-n+2) {  //** last two children **//
+      width: 138px;
+      max-width: 138px;
+    }
+  }  
+  .dx-layout-manager {
+    .dx-field-item:not(.dx-first-col) {
+      padding: 0px;
+    }
+  }  
+}
+
+app-action-menu crem-button.disabledAction {
+  pointer-events: none;
+  button {
+    background-color: colors.$color-neutral-light !important;
+    color: colors.$costarRichGray !important;
+  }
+}
+
+div.menu-section.btns-right crem-button {
+  button.button-secondary:focus, button.button-primary:focus {
+    border: 1px solid black;
+  }   
+}
+
+.list-page-data-grid {
+  .dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size:focus {
+    border: 1px solid transparent;
+    padding-bottom: none !important;
+  }
+
+  .dx-widget.dx-checkbox.dx-checkbox-indeterminate {
+    display: inline-block;
+  }
+
+  td {
+    vertical-align: middle !important;
+  }
+  .dx-datagrid-checkbox-size {
+    margin-top: 0px;
+  }
+}
+
+.listPageViews {
+  div.dx-scrollable-container:focus {
+    border: 1px solid colors.$costarBlue;
+  }
+}
+
+.cdk-overlay-container .cdk-overlay-pane .mat-menu-panel .mat-menu-content .view-list-item-flex .view-list-item.dbl-left-margin button:focus {
+  border: 1px solid transparent;
+}
+
+.mat-menu-item[disabled], mat-slide-toggle.mat-disabled {
+  color: colors.$costarRichGray !important;
+}
+
+.mat-slide-toggle-content {
+  font-family: Roboto,Helvetica Neue,sans-serif;
+  font-size: 14px;
+}
+
+app-list-page {
+  button.button-primary:disabled {
+    color: colors.$costarRichGray !important;
+  }
+} 
+
+button.mat-menu-item, button.mat-menu-item mat-slide-toggle label.mat-slide-toggle-label {
+  font-weight: 500 !important;
+}
+
+button.mat-menu-item[disabled="true"] mat-slide-toggle label.mat-slide-toggle-label, button.mat-menu-item[disabled="true"] {
+  font-weight: 400 !important;
+}
+
+button.actionTemplateButton[disabled] {
+  color: gray;
+  pointer-events: none;
+}

@@ -1,0 +1,65 @@
+<div class="task-kanban-card">
+    <div class="task-card-main-wrapper">  
+        <div class="task-card-edit-icon">
+            <mat-icon class="material-icons-outlined" (click)="launchEditTaskModal()">edit</mat-icon>
+        </div>      
+        <div class="task-card-body">
+            <div class="task-header">
+                <div class="task-status">
+                    <mat-icon *ngIf="!task.completeDate" class="material-icons-outlined" [class.red]="task.isOverdue">radio_button_unchecked</mat-icon>                
+                    <mat-icon *ngIf="task.completeDate" class="material-icons green">check_circle</mat-icon>
+                </div>
+                <div class="task-name">{{ task.taskName }}</div>            
+            </div>
+            <div class="task-date-assignees">
+                <div class="task-date" *ngIf="task.completeDate">
+                    Completed: {{task.completeDate | date:'MM/dd/yyyy' }}
+                </div>
+                <div class="task-date" *ngIf="!task.completeDate">
+                    Due: {{task.dueDate | date:'MM/dd/yyyy' }}
+                </div>
+                <div class="task-assignees">
+                    <span *ngFor="let approver of task.approvers" class="task-approver-icon" [class.approved]="approver.isApproved" [matTooltip]="approver.approverName">{{approver.initials}}</span>
+                </div>
+            </div>
+            <div class="task-files-activity">
+                <span class="task-files" [id]="filesId" (click)="toggleFilePopover($event)">
+                    <mat-icon>attach_file</mat-icon>
+                    <span>{{task.fileCount}}</span>
+                </span>                                            
+                <span class="task-activity" [id]="activityId" (click)="toggleActivityPopover($event)">
+                    <mat-icon class="material-icons-outlined">chat</mat-icon>
+                    <!-- <app-badge *ngIf="project.newActivityCount" type="notify" [text]="project.newActivityCount" class="std-left-margin"></app-badge>
+                    <span *ngIf="!project.newActivityCount" class="new-activity-placeholder"></span> -->
+                </span>	                
+            </div>                
+        </div>	
+    </div>        
+</div>
+
+<dx-popover
+    [target]="filesTarget" 
+    [maxWidth]="600"
+    width="600"
+    height="400"
+    [(visible)]="filesPopoverVisible"
+    position="bottom"
+    >
+    <div class="popover-no-padding">        
+        <project-files-popover></project-files-popover>        
+    </div>
+</dx-popover>
+
+<dx-popover
+    [target]="activityTarget" 
+    [maxWidth]="600"
+    width="600"
+    height="400"
+    [(visible)]="activityPopoverVisible"
+    position="bottom"
+    >
+    <div class="popover-no-padding">
+        <activity-channel [activities]="activities" [mentions]="mentions" [projectId]="task.projectId"></activity-channel>
+    </div>
+</dx-popover>
+

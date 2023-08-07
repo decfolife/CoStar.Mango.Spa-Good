@@ -1,0 +1,123 @@
+<mat-card class="dashboard-card strategy-global">
+  <mat-card-header>
+    <mat-card-title>{{ title }}</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <div class="mat-card-header-toolbar">
+      <button class="btn btn-default btn-sm" [matMenuTriggerFor]="cardMenu">
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #cardMenu="matMenu">
+        <button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span
+            *ngIf="!isExpanded">Expand All</span></button>
+      </mat-menu>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="dashboard-map no-padding">
+    <div>
+      <dx-map
+        [center]="mapConf.center"
+        [zoom]="mapConf.zoom"
+        [provider]="mapConf.provider"
+        [width]="mapConf.width"
+        [controls]="mapConf.controls"
+        [height]="mapConf.height"
+        [apiKey]=""
+        [markers]="markers"
+      ></dx-map>
+    </div>
+    <div class="charts">
+
+      <div>
+        <h5>Current Strategies</h5>
+        <dx-chart
+          id="chart-current-strategies"
+          class="full-width"
+          [rotated]="true"
+          [dataSource]="strategies"
+        >
+          <dxo-common-series-settings
+            argumentField="currentStrategy"
+            valueField="budgetedCapital"
+            type="stackedBar"
+            hoverMode="allSeriesPoints"
+            selectionMode="allSeriesPoints"
+          >
+            <dxo-aggregation enabled="true" method="sum"></dxo-aggregation>
+          </dxo-common-series-settings>
+          <dxo-series-template nameField="strategyYear"></dxo-series-template>
+
+          <dxi-value-axis name="currentStrategy" position="left">
+            <dxo-grid [visible]="true"></dxo-grid>
+          </dxi-value-axis>
+          <dxo-argument-axis [title]="{text: 'Current Strategy', margin: 10, weight: 600 }"></dxo-argument-axis>
+
+          <dxo-common-axis-settings [aggregatedPointsPosition]="'crossTicks'">
+            <dxo-tick [visible]="false"></dxo-tick>
+          </dxo-common-axis-settings>
+          <dxo-loading-indicator [enabled]="true"></dxo-loading-indicator>
+          <dxo-legend
+            verticalAlignment="top"
+            horizontalAlignment="center"
+            itemTextPosition="right"
+            title="Strategy Year"
+          ></dxo-legend>
+          <dxo-tooltip [enabled]="true" contentTemplate="content"></dxo-tooltip>
+          <div *dxTemplate="let info of 'content'" class="current-tooltip">
+            {{info.seriesName}} ({{info.argumentText}}): {{ info.point.data.budgetedCapital | currency: 'USD'}}
+          </div>
+        </dx-chart>
+      </div>
+
+      <div>
+        <h5>Capital Required by Year</h5>
+        <dx-chart
+          id="chart-capital-required"
+          [rotated]="true"
+          [dataSource]="strategies"
+          class="full-width"
+        >
+
+          <dxo-common-series-settings
+            argumentField="strategyYear"
+            valueField="budgetedCapital"
+            type="stackedBar"
+            hoverMode="allSeriesPoints"
+            selectionMode="allSeriesPoints"
+          >
+            <dxo-aggregation enabled="true" method="sum"></dxo-aggregation>
+          </dxo-common-series-settings>
+          <dxo-series-template nameField="currentStrategy"></dxo-series-template>
+
+          <dxo-argument-axis
+            [title]="{text: 'Strategy Year', margin: 10, weight: 600 }"
+            aggregateByCategory="true"
+          ></dxo-argument-axis>
+          <dxi-value-axis
+            name="currentStrategy"
+            position="left"
+            format="year"
+          >
+            <dxo-grid [visible]="true"></dxo-grid>
+          </dxi-value-axis>
+
+          <dxo-common-axis-settings>
+            <dxo-label [customizeText]="removeThousandSeparator"></dxo-label>
+            <dxo-tick [visible]="false"></dxo-tick>
+          </dxo-common-axis-settings>
+          <dxo-loading-indicator [enabled]="true"></dxo-loading-indicator>
+          <dxo-legend
+            verticalAlignment="top"
+            horizontalAlignment="center"
+            itemTextPosition="right"
+            title="Current Strategy"
+          ></dxo-legend>
+          <dxo-tooltip [enabled]="true" contentTemplate="content"></dxo-tooltip>
+          <div *dxTemplate="let info of 'content'" class="capital-tooltip">
+            {{info.seriesName}}: {{ info.point.data.budgetedCapital | currency: 'USD'}}
+          </div>
+        </dx-chart>
+      </div>
+
+    </div>
+  </mat-card-content>
+</mat-card>

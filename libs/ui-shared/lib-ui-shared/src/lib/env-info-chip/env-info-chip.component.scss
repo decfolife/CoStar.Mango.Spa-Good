@@ -1,0 +1,72 @@
+@import "../../../../lib-ui-elements/src/lib/assets/styles/cosmos-theme.scss";
+
+:host {
+  .env-info-chip {
+    .btn-env {
+      max-height: 24px;
+      min-width: 16px;
+      width: fit-content;
+      width: -webkit-fit-content;
+      width: -moz-fit-content;
+      border-radius: 40px;
+      padding: 4px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      text-align: center;
+      box-sizing: borderBox;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      white-space: nowrap;
+      &.primary {
+        color: white;
+        &.costar {
+          background: $color-brand-primary;
+        }
+        &.error {
+          background: $color-brand-red;
+          border-color:$color-brand-red;
+        }
+      }
+      &.secondary {
+        background: white;
+        &.costar {
+          color: $color-brand-primary;
+          border: 1px solid $color-brand-primary;
+        }
+        &.error {
+          color: $color-brand-red;
+          border-color:$color-brand-red;
+        }
+      }
+      &.tertiary {
+        background: white;
+        &.costar {
+          color:$color-neutral-medium;
+          border-color: none;
+        }
+      }
+      // ADA: add focus styling for environment chip
+      &:focus{
+        outline: 5px auto Highlight;
+        outline: 5px auto -webkit-focus-ring-color;
+      }
+    }
+    .chip-action {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .close-chip {
+      padding-left: 5px;
+      cursor: pointer;
+      &:after {
+        display: inline-block;
+        content: "\00d7";
+      }
+    }
+  }
+}

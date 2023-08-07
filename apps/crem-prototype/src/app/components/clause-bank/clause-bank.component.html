@@ -1,0 +1,69 @@
+<fa-icon icon="folder" (click)="openClauseBank()"></fa-icon>
+
+<dx-popup
+    #clauseBankPopup
+    [width]="800"
+    [height]="480"
+    [showTitle]="true"
+    [title]="popupTitle"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="popupVisible">
+    <div *dxTemplate="let data of 'content'" class="note-dialog">  
+        <div class="dialog-body">
+			<div class="dialog-content"> 
+			    <dx-scroll-view height="100%" width="100%">
+			        <div class="dialog-controls-wrapper">
+			            <div class="controls-left">
+			            	<dx-select-box
+				                [items]="clauseTypes"
+				                placeholder="Clause Type"				                
+				                [searchEnabled]="true"
+				                valueExpr="clauseType"
+				                displayExpr="display"
+				                (onValueChanged)="clauseTypeChanged($event)"
+				                [(value)]="clauseType"
+				            ></dx-select-box>
+			            </div>
+			            <div class="controls-right">
+			                <button class="btn btn-primary" (click)="addClause()">Add</button>
+			            </div>
+			        </div>
+			        <div class="dialog-table-wrapper">  
+			            <dx-data-grid 
+			                #clauseGrid
+			                [dataSource]="clauses"
+			                [showColumnLines]="false"
+			                [showRowLines]="true"
+			                [showBorders]="true"
+			                [rowAlternationEnabled]="true" 
+			                [columnAutoWidth]="true"
+							[wordWrapEnabled]="true"
+							[selectedRowKeys]="[0]"
+			                keyExpr="id">   
+			                <dxo-editing 
+			                    mode="inline"
+			                    [allowUpdating]="true"
+			                    [allowDeleting]="true"              
+			                    [useIcons]="true">
+			                </dxo-editing>         
+			                <dxo-selection mode="single"></dxo-selection>                                                     
+			                <dxo-header-filter [visible]="true"></dxo-header-filter>   
+			                <dxo-scrolling mode="virtual"></dxo-scrolling>
+			                <dxo-sorting mode="single"></dxo-sorting>
+			                <dxi-column dataField="name" caption="Clause Name"></dxi-column>
+			                <dxi-column dataField="clause" editCellTemplate="clauseTemplate" [allowFiltering]="false"></dxi-column>
+			                <div *dxTemplate="let cellInfo of 'clauseTemplate'">
+			                	<dx-text-area [(value)]="cellInfo.value" [height]="112"></dx-text-area>
+			                </div> 			                
+			            </dx-data-grid>                 
+			        </div>
+			    </dx-scroll-view>
+			</div>
+			<div class="dialog-footer">         
+				<button class="btn btn-primary-outline" (click)="close()">Close</button> 
+			    <button class="btn btn-primary" (click)="pasteSelected()">Paste Selected</button> 
+			</div>
+		</div>
+    </div>
+</dx-popup> 

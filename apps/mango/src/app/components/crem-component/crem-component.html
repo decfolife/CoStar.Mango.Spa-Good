@@ -1,0 +1,37 @@
+<div class="app-container">
+  <div class="crem-container">
+    <ng-container *ngIf="(userAppType$ | async) as userAppType">
+      <div class="crem-header">
+        <mango-header  (quickSearchEvent)="quickSearch($event)"></mango-header>
+        <costar-header *ngIf="userAppType === 1"></costar-header>
+
+        <mango-toolbar [chipContent]="(chipContent$ | async)" [ngClass]="{'suite-user':(userAppType == 1)}"
+          [popoverContent]="popoverContent" [moduleLinks]="toolbarModuleLinks">
+        </mango-toolbar>
+
+        <mango-breadcrumbs></mango-breadcrumbs>
+      
+        <crem-bookmarks [ngClass]="{'suite-user':(userAppType == 1)}"
+          #cremBookmark
+          [bookmarkGroups]="bookmarkGroups"
+          [useRouterOutletTag]="false"
+        ></crem-bookmarks>
+        
+      </div>
+      <div class="application-module"  [ngClass]="{'suite-user':(userAppType == 1)}">
+        <aside class="module-leftNav">
+          <shared-left-nav
+            [navigationLinks]="navigationLinks"
+            [activeLink]="activeLink"
+            (navigateSpa)="handleSpaNavigation($event)"
+            *ngIf="navLinksFetched"
+          >
+          </shared-left-nav>
+        </aside>
+        <main id='main' class="module-content">
+          <router-outlet class="mainContent-outlet"></router-outlet>
+        </main>
+      </div>
+   </ng-container>
+  </div>
+</div>

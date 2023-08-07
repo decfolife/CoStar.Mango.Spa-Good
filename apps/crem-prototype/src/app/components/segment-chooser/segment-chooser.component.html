@@ -1,0 +1,62 @@
+<dx-drop-down-box class="segment-chooser"
+    #DropdownBox
+    [(value)]="selectedItems"
+    valueExpr="id"
+    displayExpr="name"
+    placeholder="Segment"
+    [(opened)]="isOpened"  
+    (onValueChanged)="dropdownChange($event)"
+    [dataSource]="userSegments"
+    >
+    <div *dxTemplate="let data of 'content'" class="segment-chooser">
+        <!-- Need a search box -->
+        <costar-search (changed)="searchSegments($event)"></costar-search>
+        <!-- Need an Everything selection -->
+        <div class="segment-everything" [class.segment-active]="segment.id == 0" (click)="runEverythingSegment()">Everything</div>
+        <!-- Need a Create Segment selection -->
+        <div class="segment-create">Create Segment</div>
+        <!-- Segments from the DB -->
+        <dx-data-grid
+            #SegmentDataGrid
+			[dataSource]="userSegments"
+			[hoverStateEnabled]="true"
+			[scrolling]="{ mode: 'virtual' }"
+			[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+			keyExpr="id"
+			[(selectedRowKeys)]="selectedItems"
+			(onSelectionChanged)="selectionChanged()"
+			[showColumnHeaders]="false"
+			[showColumnLines]="false"
+            [filterValue]="['id', '<>', 0]"
+			>
+			<dxo-selection	            
+	            mode="single"
+	        ></dxo-selection>
+            <dxi-column	        	
+			    dataField="id"
+                [visible]="false">
+			</dxi-column>
+	        <dxi-column
+	        	id="theColumn"
+			    dataField="name"
+				sortIndex="0"
+				sortOrder="asc">
+			</dxi-column>
+            <dxi-column type="buttons" width="64">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'">	
+                        <div *ngIf="data.data.id > 0" class="segment-actions">
+                            <button (click)="launchEditSegment($event, data)" class="btn btn-link btn-sm segment-action" ><mat-icon>edit</mat-icon></button>		    			                        
+                            <button (click)="launchCopySegment($event, data)" class="btn btn-link btn-sm segment-action" ><mat-icon>content_copy</mat-icon></button>		    			                        
+                        </div>					                        
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>
+	    </dx-data-grid>
+    </div>
+</dx-drop-down-box>
+
+
+

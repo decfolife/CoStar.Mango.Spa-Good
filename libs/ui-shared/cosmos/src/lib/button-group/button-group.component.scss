@@ -1,0 +1,119 @@
+@import '../assets/styles/cosmos.scss';
+// cs-button-group {
+// 	.button-group {
+//     border-radius: 2px;
+//     max-height: 30px;
+//     box-sizing: border-box;
+//     border: 1px solid #BFBFBF;
+//     display: flex;
+//     align-items: center;
+
+// 		mat-button-toggle.mat-button-toggle.mat-button-toggle-appearance-standard {
+// 			font-family: $font-family-brand;
+// 			font-size: $font-size-med;
+// 			font-weight: $font-weight-regular;
+// 			background-color: $color-neutral-white;
+// 			border-left: 1px solid $color-neutral-medium;
+// 			height: 100%;
+
+// 			&:first-of-type {
+// 				border-left: none;
+//         }
+//         cs-button{
+// 			button.mat-button-toggle-button {
+// 				display: flex;
+// 				height: $space-x-large;
+// 				flex-direction: row;
+// 				align-items: center;
+// 				justify-content: center;
+//         max-height: 30px !important;
+
+// 				span.mat-button-toggle-label-content {
+// 					padding: 0px $space-x-small;
+// 					line-height: 30px !important;
+
+// 				}
+
+// 			}
+//     }
+// 			&.mat-button-toggle-checked {
+// 				background-color: $color-neutral-lighter;
+// 				font-weight: $font-weight-bold;
+
+// 			}
+
+// 			&::after {
+// 				font-family: $font-family-brand;
+// 				font-size: $font-size-med;
+// 				font-weight: $font-weight-bold;
+// 				display: block;
+// 				content: attr(title);
+// 				padding: 0px $space-x-small;
+// 				height: 1px;
+// 				color: transparent;
+// 				overflow: hidden;
+// 				visibility: hidden;
+// 			}
+
+//         }
+//       }
+
+// }
+cs-button-group {
+  mat-button-toggle-group.mat-button-toggle-group.button-group {
+    border-radius: $border-radius-buttons;
+    height: $space-x-large;
+    box-sizing: border-box;
+    border: 1px solid $color-neutral-medium;
+
+    mat-button-toggle.mat-button-toggle.mat-button-toggle-appearance-standard {
+      font-family: $font-family-brand;
+      font-size: $font-size-med;
+      font-weight: $font-weight-regular;
+      background-color: $color-neutral-white;
+      border-left: 1px solid $color-neutral-medium;
+      height: 100%;
+
+      &:first-of-type {
+        border-left: none;
+      }
+
+      button.mat-button-toggle-button {
+        display: flex;
+        height: $space-x-large;
+        height: 100%;
+        flex-direction: row;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+
+        span.mat-button-toggle-label-content {
+          padding: 0px $space-x-small;
+          line-height: unset;
+        }
+      }
+
+      &.mat-button-toggle-checked {
+        background-color: $color-neutral-lighter;
+        font-weight: $font-weight-bold;
+
+        &:hover {
+          @extend .mat-button-toggle-checked;
+        }
+      }
+
+      &::after {
+        font-family: $font-family-brand;
+        font-size: $font-size-med;
+        font-weight: $font-weight-bold;
+        display: block;
+        content: attr(title);
+        padding: 0px $space-x-small;
+        height: 1px;
+        color: transparent;
+        overflow: hidden;
+        visibility: hidden;
+      }
+    }
+  }
+}

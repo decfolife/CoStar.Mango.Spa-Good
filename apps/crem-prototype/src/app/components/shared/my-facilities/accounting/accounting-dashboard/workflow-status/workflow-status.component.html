@@ -1,0 +1,31 @@
+<mat-card class="dashboard-card">
+  <mat-card-header>
+    <mat-card-title>
+      <span>Accounting Workflow Status</span>
+    </mat-card-title>
+
+    <div class="mat-card-header-toolbar">
+      <span class="locked">
+        {{ lockedCount | number }}
+        <small class="dim">Locked</small>
+      </span>
+
+      <span>
+        <small class="dim">
+          {{ readyCount | number }}
+          Batches Ready to Queue
+        </small>
+      </span>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content class="no-padding">
+    <div class="stats-container">
+      <div *ngFor="let status of statuses; let i = index">
+        <sup>{{ i + 1 }}</sup> {{ status.name }}
+
+        <div>{{ status.count | number }}</div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

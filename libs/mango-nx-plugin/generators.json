@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "MangoSpa Nx Plugin",
+  "version": "0.0.1",
+  "generators": {
+    "micro-component": {
+      "factory": "./src/generators/micro-component/generator",
+      "schema": "./src/generators/micro-component/schema.json",
+      "description": "Micro-component generator"
+    }
+  }
+}

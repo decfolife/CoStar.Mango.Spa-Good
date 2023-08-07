@@ -1,0 +1,129 @@
+/// -----------------------------------------------------------------------------
+/// DEPRECATION NOTICE
+///
+/// This stylesheet contains deprecated code that should not be used anymore.
+/// Please use the common library following the related documentation for the
+/// frontend SCSS architecture
+/// -----------------------------------------------------------------------------
+
+// $costarBlue: #1E3A6F;
+// $costarMediumBlue: #2D71AA;
+$costarLightBlue: #59badb;
+$costarOrange: #cf7800;
+$costarRichGray: #63666a;
+$costarRichLightGray: #b1b3b0;
+$textGray: #333333;
+$navGray: #e6e6e6;
+
+/* Random colors from Apple days */
+$dark: #373737;
+$light: #ededeb;
+$med: rgb(210, 210, 210);
+$purple: #934bdf;
+$navy: #4a5bdd;
+$orange: #faa62f;
+$rust: #a05a5e;
+$turquoise: #5e9f96;
+$red: #ff605e;
+$blue: #79bde8;
+$green: #66b360;
+$anotherGreen: #51bc6a;
+$yellow: #f7e967;
+
+// CoStar Colors v2
+$costarDarkBlue: #033871;
+$costarBlue: #0559b3;
+$costarMediumBlue: #88b5e5;
+$costarLightBlue: #cae3fe;
+$costarLightOrange: #f68338;
+$costarDarkOrange: #ec4a08;
+$costarGreen: #77b800;
+$costarRed: #d30515;
+$bodyBackgroundGray: #f5f5f5;
+$sunset: #Ec4a08;
+$costarYellow: #ffb400;
+
+$white: #ffffff;
+$offWhite: #f8f8f8;
+$ultraLightGray: #f2f2f2;
+$lightGray: #e6e6e6;
+$gray: #c2c2c2;
+$mediumGray: #797979;
+$mediumDarkGray: #696969;
+$darkGray: #3c3c3c;
+$darkerGray: #101010;
+$black: #000000;
+$costarError: #ffbfbe;
+$costarAlert: #ec4a08;
+$costarADAAlert: #DE0000;
+
+$stdTextGray: $darkGray;
+$lightTextGray: #7f7f83;
+$stdTextBlue: $costarMediumBlue;
+$lightBorderGray: rgb(231, 231, 231);
+$stdBorderGray: $gray;
+$darkBorderGray: rgb(186, 186, 186);
+$bodyBackgroundDarkGray: rgb(234, 234, 234);
+$cardBodyBackgroundGray: rgb(252, 252, 252);
+$iconGray: $lightTextGray;
+$iconGrayDisabled: lightGray;
+$color-neutral-light: #EAEAEA;
+$color-neutral-dark: #808080;
+$color-neutral-medium: #BFBFBF;
+$color-neutral-black: #000000;
+$color-neutral-darker: #404040;
+$color-neutral-lighter: #F5f5f5;
+$color-neutral-white: #FFFFFF;
+$color-dark-blue: #1e3a6f;
+$color-gray-shade: #9F9F9F;
+
+/*$success : #51bc6a;*/
+$success: $costarGreen;
+$primary: $costarBlue;
+$secondary: $costarLightBlue;
+$warning: $costarLightOrange;
+$danger: $costarRed;
+
+// $hoverBlue : lighten($costarLightBlue, 30%);
+$hoverBlue: $costarLightBlue;
+$borderColor: $gray;
+
+/* CoStar Web App Standards (work in progress) */
+
+$backgroundGray: $bodyBackgroundGray;
+$gray1: rgb(57, 57, 57);
+$gray2: rgb(65, 65, 65);
+$gray3: rgb(133, 133, 133);
+$gray4: rgb(200, 200, 200);
+$gray5: rgb(220, 220, 220);
+$gray6: rgb(237, 237, 237);
+
+$color-brand-primary-light: #e3f3fc;
+$color-brand-accent: #ec4a08;
+$color-brand-green: #017B30;
+$color-brand-primary: #0559b3;
+$color-brand-primary-medium: #669bd1;
+$color-brand-red: #CF0201;
+$color-brand-yellow: #FFB400;
+
+$color-opaque-black-1: rgba(0,0,0,.5);
+$color-opaque-black-2: rgba(0,0,0,.2);
+$color-opaque-black-3: rgba(0,0,0,.3);
+$color-opaque-black-4: rgba(0,0,0,.4);
+$color-opaque-black-5: rgba(0,0,0,.5);
+$color-opaque-black-6: rgba(0,0,0,.6);
+$color-opaque-black-7: rgba(0,0,0,.7);
+$color-opaque-black-8: rgba(0,0,0,.8);
+$color-opaque-black-9: rgba(0,0,0,.9);
+$color-opaque-white-1: rgba(255,255,255,.1);
+$color-opaque-white-2: rgba(255,255,255,.2);
+$color-opaque-white-3: rgba(255,255,255,.3);
+$color-opaque-white-4: rgba(255,255,255,.4);
+$color-opaque-white-5: rgba(255,255,255,.5);
+$color-opaque-white-6: rgba(255,255,255,.6);
+$color-opaque-white-7: rgba(255,255,255,.7);
+$color-opaque-white-8: rgba(255,255,255,.8);
+$color-opaque-white-9: rgba(255,255,255,.9);
+
+$stdBorderColor: $stdBorderGray;
+$darkBorderColor: $darkBorderGray;

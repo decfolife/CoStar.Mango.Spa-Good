@@ -1,0 +1,229 @@
+<div class="object-page">
+	<div class="object-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Tasks</h5>	
+			<costar-search (changed)="searchTreeList($event)"></costar-search>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" (click)="add()" *ngIf="viewToggleValue == 'table'">Add</button>
+			<button class="btn btn-default" (click)="navigateToQuickApproval()" *ngIf="viewToggleValue == 'table'">Quick Approval</button>
+			<button class="btn btn-default" [matMenuTriggerFor]="moreMenu">More <fa-icon icon="caret-down"></fa-icon></button>
+			<mat-menu #moreMenu="matMenu">				
+				<button mat-menu-item (click)="applyTeam()">Apply Team to Tasks</button> 
+				<button mat-menu-item (click)="showColumnChooser()">Column Chooser</button>
+				<button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>      				        
+				<button mat-menu-item (click)="exportTreeList()">Export</button> 
+				<button mat-menu-item [matMenuTriggerFor]="importMenu">Import Template</button> 
+				<button mat-menu-item [matMenuTriggerFor]="saveTemplateMenu">Save as Template</button>				  								   								  								   
+				<button mat-menu-item (click)="navigateToSettings()">Settings</button>   								   
+			</mat-menu>	
+			<mat-menu #importMenu="matMenu">								
+				<div class="dbl-left-padding dbl-right-padding std-bottom-padding std-top-padding" style="width:300px;">
+					<costar-dropdown (click)="$event.stopPropagation();" [dropdownData]="taskTemplates"></costar-dropdown>	
+					<dx-check-box					
+                    	[value]="true"                    	
+                    	text="Apply team to tasks"
+						class="dbl-bottom-margin dbl-top-margin"
+						(click)="$event.stopPropagation();"
+                	></dx-check-box>
+					<button class="btn btn-primary w100">Import</button>
+				</div>				
+			</mat-menu>	
+			<mat-menu #saveTemplateMenu="matMenu">								
+				<div class="dbl-left-padding dbl-right-padding std-bottom-padding std-top-padding" style="width:300px;">	
+					<dx-text-box class="dbl-bottom-margin" (click)="$event.stopPropagation();" placeholder="New template name"></dx-text-box>				
+					<button class="btn btn-primary w100">Save</button>
+				</div>				
+			</mat-menu>	
+			<mat-button-toggle-group name="ListMapToggle" [(value)]="viewToggleValue" class="list-map-button-toggle">
+				<mat-button-toggle value="table"><fa-icon icon="list"></fa-icon><span>Table</span></mat-button-toggle>
+				<mat-button-toggle value="board"><fa-icon icon="columns"></fa-icon><span>Board</span></mat-button-toggle>
+				<mat-button-toggle value="calendar"><fa-icon icon="calendar"></fa-icon><span>Calendar</span></mat-button-toggle>
+			</mat-button-toggle-group>	
+		</div>
+	</div>
+	<div class="object-page-content-wrapper">
+		<dx-tree-list
+			*ngIf="viewToggleValue == 'table'"
+            #TreeList
+            [dataSource]="tasks"
+            [rootValue]="0"
+            keyExpr="id"
+            parentIdExpr="parentTaskId"
+            [columnAutoWidth]="true"
+            [wordWrapEnabled]="true"
+            [showBorders]="false"
+			[allowColumnResizing]="true"
+            [rowAlternationEnabled]="true" 
+            [autoExpandAll]="isExpanded"
+			(onRowClick)="navigateToTask($event)"
+			>
+            <dxo-editing mode="form"></dxo-editing>
+			<dxo-column-chooser [allowSearch]="true" mode="select" height="400" width="300"></dxo-column-chooser>
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>            
+			<dxi-column [allowHiding]="false" [fixed]="true" fixedPosition="left"  width="20"></dxi-column>  
+			<dxi-column cellTemplate="taskIndicatorsTemplate" [allowHiding]="false" [fixed]="true" fixedPosition="left" width="16"></dxi-column>  
+            <dxi-column dataField="step" [allowHeaderFiltering]="false"></dxi-column>
+			<dxi-column dataField="taskName"></dxi-column>  
+			<dxi-column cellTemplate="subTasksTemplate" caption="Sub Tasks"></dxi-column>  
+			<dxi-column dataField="hoursToDate" [visible]="false"></dxi-column> 
+			<dxi-column dataField="targetStart" dataType="date"></dxi-column>                        
+			<dxi-column dataField="dueDate" dataType="date"></dxi-column>      
+			<dxi-column dataField="actualStart" dataType="date" [visible]="false"></dxi-column>                        
+			<dxi-column dataField="completeDate" dataType="date"></dxi-column>                        
+			<dxi-column dataField="isMilestone" [visible]="false"></dxi-column>                        
+			<dxi-column dataField="isRequired" [visible]="false"></dxi-column>			
+			<dxi-column dataField="assignee" caption="Assignee(s)" cellTemplate="assigneesTemplate"></dxi-column> 
+			<!-- <dxi-column dataField="approvals" width="114"></dxi-column>  -->
+			<dxi-column dataField="predecessor" [visible]="false"></dxi-column> 
+			<dxi-column dataField="fileCount" cellTemplate="filesCellTemplate" caption="Files" [allowHeaderFiltering]="false"></dxi-column>
+			<dxi-column dataField="noteCount" cellTemplate="activityCellTemplate"caption="Activity" [allowHeaderFiltering]="false"></dxi-column>                            
+            <dxi-column type="buttons" width="48" [allowHiding]="false" [fixed]="true" fixedPosition="right">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let task of 'moreMenuTemplate'">
+		    			<button class="btn btn-link" (click)="$event.stopPropagation()" [matMenuTriggerFor]="TaskMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #TaskMoreMenu="matMenu">
+							<button mat-menu-item>Add Task</button> 
+							<button mat-menu-item (click)="addSubTask(task.data.id)">Add Sub Task</button> 
+							<button mat-menu-item>Add Note</button> 
+							<button mat-menu-item [matMenuTriggerFor]="overrideDateMenu" style="width:210px;">Override Completion Date</button> 
+							<button mat-menu-item>Upload File</button> 
+							<button mat-menu-item>Delete</button> 				    		
+				    	</mat-menu>
+						<mat-menu #overrideDateMenu="matMenu">								
+							<div class="dbl-left-padding dbl-right-padding std-bottom-padding std-top-padding" style="width:300px;">	
+								<dx-date-box class="dbl-bottom-margin" placeholder="New completion date" (click)="$event.stopPropagation()"></dx-date-box>			
+								<dx-text-area
+									[height]="90"
+									placeholder="Override reason"
+									class="dbl-bottom-margin"
+									(click)="$event.stopPropagation()">
+								</dx-text-area>
+								<button class="btn btn-primary w100">Save</button>
+							</div>				
+						</mat-menu>	
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>	
+			<div *dxTemplate="let task of 'taskIndicatorsTemplate'" class="task-indicator-column">
+				<!-- <fa-icon icon="circle" class="red dbl-right-padding" *ngIf="task.data.isOverdue && !task.data.completeDate" matTooltip="Overdue"></fa-icon>
+				<fa-icon icon="circle" class="green dbl-right-padding" *ngIf="task.data.completeDate" matTooltip="Complete"></fa-icon>
+				<fa-icon icon="flag" class="primary" *ngIf="task.data.assignee == 'Jake Gibbs'"  matTooltip="Assigned to you"></fa-icon> -->
+				<div class="task-status ts-completed" *ngIf="task.data.completeDate" matTooltip="Complete"></div>
+				<div class="task-status ts-overdue" *ngIf="task.data.isOverdue && !task.data.completeDate" matTooltip="Overdue"></div>
+				<!-- <div class="task-status-due-soon"></div> -->
+			</div>
+			<div *dxTemplate="let task of 'assigneesTemplate'">
+				<span *ngFor="let approver of task.data.approvers" class="task-approver-icon" [class.approved]="approver.isApproved" [matTooltip]="approver.approverName">{{approver.initials}}</span>
+			</div>
+			<div *dxTemplate="let task of 'subTasksTemplate'" class="sub-task-cell">
+				<span *ngIf="task.data.subTasksComplete + task.data.subTasksIncomplete">{{task.data.subTasksComplete + task.data.subTasksIncomplete}}</span>
+				<dx-pie-chart
+					*ngIf="task.data.subTasksComplete + task.data.subTasksIncomplete"
+					id="pie"
+					type="doughnut"					
+					[palette]="['#017B30', '#EAEAEA']"
+					[dataSource]="[{status: 'complete', val: task.data.subTasksComplete}, {status: 'incomplete', val: task.data.subTasksIncomplete}]"
+					innerRadius=".8"
+					startAngle="180"
+					class="inline std-left-margin"
+				>	
+					<dxo-size
+						[height]="23"
+						[width]="23">
+					</dxo-size>
+					<dxi-series argumentField="status"></dxi-series>
+				</dx-pie-chart>
+				<span *ngIf="task.data.subTasksComplete + task.data.subTasksIncomplete" class="std-left-margin">{{ (task.data.subTasksComplete / (task.data.subTasksComplete + task.data.subTasksIncomplete)) | percent }}</span>
+			</div>
+			<div *dxTemplate="let task of 'filesCellTemplate'">
+				<button class="btn btn-link btn-sm" [id]="'files_ppover_' + task.data.id.toString()" (click)="toggleFilePopover($event)">{{task.data.fileCount}}</button>				
+				<!-- <button class="btn btn-link btn-sm" (click)="$event.stopPropagation()" [matMenuTriggerFor]="taskFilesMenu">{{task.data.fileCount}}</button>
+				<mat-menu #taskFilesMenu="matMenu">
+					<button mat-menu-item>drawing.pdf</button> 
+					<button mat-menu-item>document.docx</button> 
+					<button mat-menu-item>spreadsheet.xlsx</button> 
+					<button mat-menu-item>building_photo.jpg</button> 
+					<button mat-menu-item>proposal.pdf</button> 
+				</mat-menu> -->
+			</div>
+			<div *dxTemplate="let task of 'activityCellTemplate'">
+				<button class="btn btn-link btn-sm" [id]="'activity_ppover_' + task.data.id.toString()" (click)="toggleActivityPopover($event)">{{task.data.noteCount}}</button>								
+			</div>
+        </dx-tree-list>	
+		
+		<div class="task-board-wrapper" *ngIf="viewToggleValue == 'board'">			
+			<ng-container *ngFor="let phase of phases">
+				<div class="list" [class.completed]="phase.completeDate">
+					<div class="list-header">
+						<div class="list-title">
+							<div class="list-status">
+								<mat-icon *ngIf="!phase.completeDate" class="material-icons-outlined" [class.red]="phase.isOverdue">radio_button_unchecked</mat-icon>                
+								<mat-icon *ngIf="phase.completeDate" class="material-icons green">check_circle</mat-icon>
+							</div>
+							<div class="list-name">
+								{{phase.phaseName}}
+							</div>
+						</div>	
+						<div *ngIf="phase.completeDate" class="list-date">
+							Completed: {{phase.completeDate | date:'MM/dd/yyyy'}}
+						</div>	
+						<div *ngIf="!phase.completeDate" class="list-date">
+							Due: {{phase.dueDate | date:'MM/dd/yyyy'}}
+						</div>			
+					</div>
+					
+					<div class="list-cards-wrapper">
+						<dx-sortable
+							class="sortable-cards"
+							group="cardsGroup"
+							[data]="phase.tasks"
+							(onDragStart)="onTaskDragStart($event)"
+							(onReorder)="onTaskDrop($event)"
+							(onAdd)="onTaskDrop($event)"
+						>
+							<ng-container *ngFor="let task of phase.tasks">
+								<!-- <div>{{task.taskName}}</div> -->
+								<task-kanban-card [task]="task"></task-kanban-card>
+							</ng-container>												
+						</dx-sortable>
+						<div class="add-new-task-wrapper" (click)="launchNewTaskModal(phase)">
+							<mat-icon>add</mat-icon><span>Add Task</span>
+						</div>
+					</div>
+				</div>
+			</ng-container> 													
+		</div>		
+		<ng-container *ngIf="viewToggleValue == 'calendar'">calendar view</ng-container>	
+	</div>	
+</div>
+
+<dx-popover
+    [target]="filesTarget" 
+    [maxWidth]="600"
+    width="600"
+    height="400"
+    [(visible)]="filesPopoverVisible"
+    position="bottom"
+    >
+    <div class="popover-no-padding">        
+        <project-files-popover></project-files-popover> 
+    </div>
+</dx-popover>
+
+<dx-popover
+    [target]="activityTarget" 
+    [maxWidth]="600"
+    width="600"
+    height="400"
+    [(visible)]="activityPopoverVisible"
+    position="bottom"
+    >
+    <div class="popover-no-padding">
+        <activity-channel [activities]="activities" [mentions]="mentions" [projectId]="projectId"></activity-channel>
+    </div>
+</dx-popover>
+
+<router-outlet></router-outlet>

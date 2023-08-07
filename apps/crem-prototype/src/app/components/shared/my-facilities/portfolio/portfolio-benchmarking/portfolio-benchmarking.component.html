@@ -1,0 +1,249 @@
+<div class="dashboard">	
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div *ngFor="let filter of filters">
+				<costar-dropdown [dropdownData]="filter"></costar-dropdown>			
+			</div>		
+			<button class="btn btn-default btn-sm">Apply</button>
+		</div>
+	</div>
+	<div class="dashboard-content-wrapper">
+		<div class="dashboard-hero-wrapper">
+			<dashboard-hero-card
+				[title]="'Average Utilization'"
+				[heroMetric]="'90%'"
+				tooltip="Your current average utilization in the Atlanta - GA market is 90%, compared to your peers at 84% and CoStar's market estimate of 62%."
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'Average Rent / SF'"
+				[heroMetric]="'$12'"
+				tooltip="'Your current average rent per SF in the Atlanta - GA market is $12.19, compared to your peers at $4 and CoStar's market estimate of $5."
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'Average SF / Seat'"
+				[heroMetric]="'250'"
+				tooltip="'Your current average SF per seat in the Atlanta - GA market is 250 SF, compared to your peers at 210 SF and CoStar's market estimate of 140 SF."					
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'Total Cost / Seat'"
+				[heroMetric]="'$500'"
+				tooltip="'Your current average rent per seat in the Atlanta - GA market is $500.42, compared to your peers at $610 and CoStar's market estimate of $920."
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'Total Cost / SF'"
+				[heroMetric]="'$18'"
+				tooltip="'Your current total cost per SF in the Atlanta - GA market is $18.36."
+			></dashboard-hero-card>
+			<dashboard-hero-card
+				[title]="'Average Remaining Term'"
+				[heroMetric]="'7'"
+				tooltip="'Your current average remaining term in the Atlanta - GA market is 7 years, compared to your peers at 5 years and CoStar's market estimate of 6 years."
+			></dashboard-hero-card>				
+			<dashboard-hero-card
+				[title]="'Average Original Term'"
+				[heroMetric]="'15'"
+				tooltip="'Your current average original term in the Atlanta - GA market is 15 years, compared to your peers at 10 years and CoStar's market estimate of 6 years."				
+			></dashboard-hero-card>				
+		</div>
+		<div class="dashboard-cards-wrapper">
+			<div class="row">
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Average Utilization</mat-card-title>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart 
+								id="avgUtilizationHistogram" 
+								[dataSource]="avgUtilization" 
+								[customizePoint]="customizePoint"
+								[valueAxis]="[{
+									name : 'myAxis',
+									position : 'left',
+									label : {
+										customizeText : customizeAxisTextPercentage
+									}
+								}]"
+							>		
+								<dxi-series 
+								    argumentField="peer"
+								    valueField="score"
+								    name="Average Utilization"
+								    type="bar"									    
+								    [ignoreEmptyPoints]="true"
+								    [barPadding]="0.5">
+								</dxi-series>	
+
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>		
+				</div>
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Average Rent / SF</mat-card-title>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart 
+								id="avgRentPerSFHistogram" 
+								[dataSource]="avgRentPerSF" 
+								[customizePoint]="customizePoint"
+								[valueAxis]="[{
+									name : 'myAxis',
+									position : 'left',
+									label : {
+										customizeText : customizeAxisTextCurrency
+									}
+								}]"
+							>		
+								<dxi-series 
+								    argumentField="peer"
+								    valueField="score"
+								    name="Average Rent / SF"
+								    type="bar"									    
+								    [ignoreEmptyPoints]="true"
+								    [barPadding]="0.5">
+								</dxi-series>							
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>		
+				</div>
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Average SF / Seat</mat-card-title>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart 
+								id="avgSFPerSeatHistogram" 
+								[dataSource]="avgSFPerSeat" 
+								[customizePoint]="customizePoint"
+							>		
+								<dxi-series 
+								    argumentField="peer"
+								    valueField="score"
+								    name="Average SF / Seat"
+								    type="bar"									    
+								    [ignoreEmptyPoints]="true"
+								    [barPadding]="0.5">
+								</dxi-series>							
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>		
+				</div>
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Total Cost / Seat</mat-card-title>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart 
+								id="avgRentPerSeatHistogram" 
+								[dataSource]="avgRentPerSeat" 
+								[customizePoint]="customizePoint"
+								[valueAxis]="[{
+									name : 'myAxis',
+									position : 'left',
+									label : {
+										customizeText : customizeAxisTextCurrency
+									}
+								}]"
+							>		
+								<dxi-series 
+								    argumentField="peer"
+								    valueField="score"
+								    name="Average Rent / Seat"
+								    type="bar"									    
+								    [ignoreEmptyPoints]="true"
+								    [barPadding]="0.5">
+								</dxi-series>							
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>		
+				</div>
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Average Remaining Term</mat-card-title>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart 
+								id="avgRemainingTermHistogram" 
+								[dataSource]="avgRemainingTerm" 
+								[customizePoint]="customizePoint"
+							>		
+								<dxi-series 
+								    argumentField="peer"
+								    valueField="score"
+								    name="Average Remaining Term"
+								    type="bar"									    
+								    [ignoreEmptyPoints]="true"
+								    [barPadding]="0.5">
+								</dxi-series>							
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>		
+				</div>
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Average Original Term</mat-card-title>
+						</mat-card-header>
+						<mat-card-content>
+							<dx-chart 
+								id="avgOriginalTermHistogram" 
+								[dataSource]="avgOriginalTerm" 
+								[customizePoint]="customizePoint"
+							>		
+								<dxi-series 
+								    argumentField="peer"
+								    valueField="score"
+								    name="Average Original Term"
+								    type="bar"									    
+								    [ignoreEmptyPoints]="true"
+								    [barPadding]="0.5">
+								</dxi-series>							
+								<dxo-legend [visible]="false"></dxo-legend>	
+								<dxo-tooltip
+								    [enabled]="true"
+								    [shared]="true"
+								    [customizeTooltip]="standardTooltip">							    
+								</dxo-tooltip>						
+							</dx-chart>
+						</mat-card-content>
+					</mat-card>		
+				</div>
+			</div>		
+		</div>
+	</div>
+</div>

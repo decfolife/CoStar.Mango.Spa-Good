@@ -1,0 +1,15 @@
+::ng-deep {
+  mat-card-content.mat-card-content {
+    display: flex;
+
+    .mat-slide-toggle {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .quarter {
+    margin-right: 1rem;
+    width: calc(25% - 0.5rem);
+  }
+
+}

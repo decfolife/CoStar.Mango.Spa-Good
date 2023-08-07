@@ -1,0 +1,40 @@
+<div class="module-wrapper">
+	<mat-drawer-container>
+		<mat-drawer mode="side" opened [style.visibility]="'visible'" class="left-nav">
+			<mat-nav-list>
+				<mat-list [style.width]="drawerWidth">
+					<div *ngIf="isLeftNavOpened">
+						<mat-list-item [routerLink]="['dashboard']" routerLinkActive="active"><span class="costar-left-nav-link">Dashboard</span></mat-list-item>
+						<mat-list-item [routerLink]="['re-properties']" routerLinkActive="active"><span class="costar-left-nav-link">Buildings</span></mat-list-item>
+						<mat-list-item [routerLink]="['re-leases']" routerLinkActive="active"><span class="costar-left-nav-link">Leases</span></mat-list-item>
+						<!-- <mat-expansion-panel #RealEstatePanel class="mat-elevation-z0" [class.open]="RealEstatePanel.expanded" [expanded]="true">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Real Estate
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['re-properties']" routerLinkActive="active"><span class="costar-left-nav-link">Buildings</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['re-leases']" routerLinkActive="active"><span class="costar-left-nav-link">Leases</span></mat-list-item>
+		                </mat-expansion-panel>
+		                <mat-expansion-panel #NonRealEstatePanel class="mat-elevation-z0" [class.open]="NonRealEstatePanel.expanded" [expanded]="true">
+		                    <mat-expansion-panel-header>
+		                        <mat-panel-title>
+		                            Non Real Estate
+		                        </mat-panel-title>
+		                    </mat-expansion-panel-header>
+		                    <mat-list-item [routerLink]="['nonre-properties']" routerLinkActive="active"><span class="costar-left-nav-link">Suppliers</span></mat-list-item>
+		                    <mat-list-item [routerLink]="['nonre-leases']" routerLinkActive="active"><span class="costar-left-nav-link">Equipment Leases</span></mat-list-item>	                    		                    
+		                </mat-expansion-panel> -->
+		                <mat-list-item [routerLink]="['documentstore']" routerLinkActive="active"><span class="costar-left-nav-link">Document Store</span></mat-list-item>
+		                <!-- <mat-list-item [routerLink]="['benchmarking']" routerLinkActive="active"><span class="costar-left-nav-link">Benchmarking</span></mat-list-item> -->
+		                <!-- <mat-list-item [routerLink]="['strategy']" routerLinkActive="active"><span class="costar-left-nav-link">Strategy</span></mat-list-item> -->
+		                <!-- <mat-list-item [routerLink]="['portfolios']" routerLinkActive="active"><span class="costar-left-nav-link">Portfolios</span></mat-list-item> -->
+	                </div>
+				</mat-list>				
+			</mat-nav-list>
+		</mat-drawer>
+		<mat-drawer-content class="oflow-x-hidden" [style.marginLeft]="drawerWidth">
+			<router-outlet></router-outlet>
+		</mat-drawer-content>
+	</mat-drawer-container>
+</div>

@@ -1,0 +1,55 @@
+<mat-card>
+	<mat-card-header>				
+		<mat-card-title>Active Deal Count</mat-card-title>
+		<mat-card-subtitle>(By deal stage and type)</mat-card-subtitle>						
+	</mat-card-header>
+	<mat-card-content>
+		<dx-chart 
+			id="dealCountHistogram" 
+			[dataSource]="dealCountByStage"
+			palette="Soft Blue"
+			(onLegendClick)="legendClick($event)"
+		>
+			<dxi-series
+		        valueField="newLease"
+		        name="New Lease">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="contraction"
+		        name="Contraction">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="expansion"
+		        name="Expansion">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="relocation"
+		        name="Relocation">
+		    </dxi-series>
+		    <dxi-series
+		        valueField="renewal"
+		        name="Renewal">
+		    </dxi-series>
+		    <dxi-value-axis title="Deal Count" name="countAxis">
+			    <dxo-grid [visible]="true"></dxo-grid>
+			</dxi-value-axis>
+			<dxo-common-series-settings 
+			    argumentField="stage"
+			    type="stackedBar"
+			    [barPadding]="0.2">
+			</dxo-common-series-settings>	
+			<dxo-legend
+		        verticalAlignment="bottom"
+		        horizontalAlignment="center"
+		        itemTextPosition="top">
+		    </dxo-legend>
+			<dxo-export [enabled]="false"></dxo-export>
+			<!-- <dxo-argument-axis title="Stage"></dxo-argument-axis> -->
+			<dxo-tooltip
+			    [enabled]="true"
+			    [shared]="true"
+			    [customizeTooltip]="standardTooltip">							    
+			</dxo-tooltip>
+		</dx-chart>			
+	</mat-card-content>
+</mat-card>

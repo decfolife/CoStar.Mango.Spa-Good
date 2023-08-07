@@ -1,0 +1,21 @@
+@use "../../../../../common/src/styles" as *;
+
+:host {
+
+  .description {
+    @include costar(color, gray03);
+  }
+
+  .warning{
+    @include costar(color, warning);
+  }
+
+  .error{
+    @include costar(color, danger);
+  }
+
+  .success{
+    @include costar(color, success);
+  }
+
+}

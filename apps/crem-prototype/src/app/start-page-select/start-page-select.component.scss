@@ -1,0 +1,45 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/var.scss';
+
+:host::ng-deep {
+	.client-select-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.login-or {
+			width: 300px;
+		}
+		.recent-clients-tile-wrapper {
+			width: 512px;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin-bottom: $stdPadding;
+
+			.client-tile {
+				display: flex;
+				width: 160px;
+				height: 64px;
+				border: $stdBorder;
+				border-radius: 2px;
+				justify-content: center;
+				align-items: center;				
+				padding: $stdPadding;
+				cursor: pointer;
+				margin-bottom: $dblPadding;
+
+				span {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+
+				&:hover {
+					background: $hoverBlue;
+				}
+			}
+		}	
+	}
+}

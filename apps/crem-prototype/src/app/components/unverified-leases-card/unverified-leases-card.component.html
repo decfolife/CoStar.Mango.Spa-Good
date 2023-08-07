@@ -1,0 +1,57 @@
+<mat-card class="dashboard-card">
+	<mat-card-header>
+		<mat-card-title>
+			<div class="card-title-hero">{{unverifiedLeases.length}}</div>
+			<span>Unverified Leases</span>
+		</mat-card-title>		
+	</mat-card-header>
+	<mat-card-content class="no-padding" style="height: 400px;">
+		<dx-data-grid class="list-page-data-grid"
+			id="chargeGrid"
+			#leaseVerificationDataGrid
+			[dataSource]="unverifiedLeases"
+			keyExpr="SystemLeaseID"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="true"			
+			[columnMinWidth]="10"
+			[masterDetail]="{ enabled: true, template: 'detail' }"
+			>   			
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    			
+			<dxo-sorting mode="multiple"></dxo-sorting>		
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxi-column dataField="verificationStatus"></dxi-column>
+			<dxi-column dataField="verificationStatusChangeDate" caption="Change Date" dataType="date" alignment="center"></dxi-column>
+			<dxi-column dataField="SystemLeaseID" caption="System Lease ID" alignment="center"></dxi-column> 
+			<dxi-column dataField="PropertyName"></dxi-column>
+			<dxi-column dataField="Address1"></dxi-column> 
+			<dxi-column dataField="City"></dxi-column> 
+			<dxi-column dataField="State"></dxi-column> 
+			<dxi-column dataField="Country"></dxi-column> 	
+		    <dxi-column type="buttons" width="48">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'">
+		    			<button class="btn btn-link" (click)="$event.stopPropagation()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #expenseMoreMenu="matMenu">
+				    		<ul>                        
+		                        <li>Set to Verified</li>
+		                        <li>Go to Full History</li>
+		                    </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>
+			<div *dxTemplate="let lease of 'detail'">
+		        <h6>Lease Verification History</h6>   
+		        <lease-verification-detail-grid [leaseId]="lease.key"></lease-verification-detail-grid>   		        
+		    </div>		   
+		</dx-data-grid>
+	</mat-card-content>
+</mat-card>

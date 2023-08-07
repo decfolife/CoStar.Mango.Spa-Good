@@ -1,0 +1,62 @@
+<div class="settings-page-controls-wrapper">
+  <div class="controls-left">
+    <div class="page_title">
+      <h5 class="dbl-right-margin">Financial Reporting Site Settings</h5>
+    </div>
+  </div>
+
+  <div class="controls-right">
+    <button *ngIf="isSuperUser && settingsData?.financialReportingEnabled"
+      id="refreshFinancialDataButton"
+      class="btn btn-default"
+      [disabled]="!canRefresh || isViewOnly || isSaving"
+      (click)="refreshFinancialData()"
+    >Refresh Financial Data</button>
+
+    <button *ngIf="settingsData?.financialReportingEnabled"
+      id="saveFinancialDataButton"
+      class="btn btn-primary"
+      [disabled]="noChanges || isViewOnly || isSaving"
+      (click)="saveChanges()"
+    >Save</button>
+  </div>
+</div>
+
+<div class="settings-page-cards-wrapper">
+  <div *ngIf="settingsData?.financialReportingEnabled else showEnableUIOrSkeleton">
+    <mango-intervals-card [intervalsData]="intervalsData"
+      [settingsData]="settingsData"
+      [currencies]="currencies"
+      [isViewOnly]="isViewOnly"
+      (changed)="noChanges = false"
+    ></mango-intervals-card>
+
+    <mango-field-assignments-card [settingsData]="settingsData"
+      [isViewOnly]="isViewOnly"
+      (changed)="noChanges = false"
+    ></mango-field-assignments-card>
+  </div>
+
+  <ng-template #showEnableUIOrSkeleton>
+    <ngx-skeleton-loader *ngIf="!settingsData"
+      class="crem-button-shadow"
+      [theme]="{height: '125px', width: '100%'}"
+    ></ngx-skeleton-loader>
+
+    <mango-enable-financial-reporting-card *ngIf="settingsData"
+      [isViewOnly]="isViewOnly"
+      (enabledChanged)="settingsData.financialReportingEnabled = $event"
+    ></mango-enable-financial-reporting-card>
+  </ng-template>
+</div>
+
+<dx-load-panel
+  #loadPanel
+  shadingColor="rgba(0,0,0,0)"
+  [position]="{ of: '.settings-page-card-wrapper' }"
+  [(visible)]="isSaving"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="false"
+>
+</dx-load-panel>

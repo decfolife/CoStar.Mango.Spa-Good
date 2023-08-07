@@ -1,0 +1,24 @@
+<ng-container *ngIf="library === 'fontAwesome'; then fontAwesome; else legacyLocal"></ng-container>
+
+<ng-template #fontAwesome>
+  <span [ngClass]="getCssClasses()">
+    <ng-container #faIconHost></ng-container>
+  </span>
+</ng-template>
+
+<ng-template #legacyLocal>
+  <i>
+    <svg
+      width="16"
+      height="16" 
+      viewport="4 4 16 16" 
+      [ngClass]="iconClass"
+    >
+      <use
+        [attr.fill]="fill"
+        [attr.transform]="transform"
+        attr.xlink:href="{{ iconCat }}-icons.svg#{{icon}}"
+      ></use>
+    </svg>
+  </i>
+</ng-template>

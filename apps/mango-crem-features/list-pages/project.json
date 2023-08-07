@@ -1,0 +1,232 @@
+{
+  "name": "mango-crem-features-list-pages",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/mango-crem-features/list-pages/src",
+  "prefix": "mango",
+  "targets": {
+    "build": {
+      "executor": "@angular-builders/custom-webpack:browser",
+      "dependsOn": [],
+      "options": {
+        "customWebpackConfig": {
+          "path": "./apps/mango-crem-features/list-pages/webpack.config.js",
+          "mergeStrategies": {
+            "externals": "replace"
+          }
+        },
+        "outputPath": "dist/apps/mango-crem-features/list-pages",
+        "index": "apps/mango-crem-features/list-pages/src/index.html",
+        "main": "apps/mango-crem-features/list-pages/src/main.ts",
+        "polyfills": "apps/mango-crem-features/list-pages/src/polyfills.ts",
+        "tsConfig": "apps/mango-crem-features/list-pages/tsconfig.app.json",
+        "aot": true,
+        "stylePreprocessorOptions": {
+          "includePaths": [
+            "libs/ui-shared",
+            "apps/mango",
+            "apps/mango/src/assets/styles",
+            "libs/ui-shared/common/src"
+          ]
+        },
+        "assets": [
+          "apps/mango-crem-features/list-pages/src/favicon.ico",
+          "apps/mango-crem-features/list-pages/src/assets"
+        ],
+        "styles": [
+          "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+          "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "node_modules/devextreme/dist/css/dx.light.css",
+          "node_modules/@angular/material/_theming.scss",
+          "apps/mango-crem-features/list-pages/src/styles.scss",
+          "libs/ui-shared/common/src/styles/_index.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "dev": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/list-pages/src/environments/environment.dev.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "10mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "test": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/list-pages/src/environments/environment.test.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "10mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "ops": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/list-pages/src/environments/environment.ops.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "10mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "stage": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/list-pages/src/environments/environment.stage.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "10mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        },
+        "prod": {
+          "optimization": true,
+          "outputHashing": "none",
+          "sourceMap": false,
+          
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango-crem-features/list-pages/src/environments/environment.prod.ts"
+            }
+          ],
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "10mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "1mb"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "mango-crem-features-list-pages:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "mango-crem-features-list-pages:build:production"
+        }
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "mango-crem-features-list-pages:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/mango-crem-features/list-pages/src/**/*.ts",
+          "apps/mango-crem-features/list-pages/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/mango-crem-features/list-pages"
+      ],
+      "options": {
+        "jestConfig": "apps/mango-crem-features/list-pages/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

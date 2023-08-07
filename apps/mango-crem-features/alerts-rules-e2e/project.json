@@ -1,0 +1,30 @@
+{
+  "name": "mango-crem-features-alerts-rules-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mango-crem-features/alerts-rules-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/mango-crem-features/alerts-rules-e2e/cypress.json",
+        "tsConfig": "apps/mango-crem-features/alerts-rules-e2e/tsconfig.e2e.json",
+        "devServerTarget": "mango-crem-features-alerts-rules:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "mango-crem-features-alerts-rules:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/mango-crem-features/alerts-rules-e2e/**/*.{js,ts}"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    }
+  }
+}

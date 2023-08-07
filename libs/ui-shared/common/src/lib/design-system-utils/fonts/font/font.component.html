@@ -1,0 +1,24 @@
+<div class="specs">
+  <h3 class="eyebrow">{{ fontDetails.name }}</h3>
+  <small><span>Size</span>{{ fontDetails.size }}</small>
+  <small><span>Root Em</span>{{ fontDetails.root }}</small>
+  <small><span>Height</span>{{ fontDetails.lineHeight }}</small>
+</div>
+<div class="details">
+  <div class="description">
+    <h4 class="eyebrow">Description</h4>
+    <p>{{ fontDetails.description }}</p>
+  </div>
+  <div class="examples">
+    <ng-container *ngFor="let example of examples">
+      <div class="example">
+        <h4 class="eyebrow">
+          {{ example.weight }}
+        </h4>
+        <p [class]="[fontDetails.name | lowercase, 'font-weight-' + example.weight | lowercase]">
+          {{ example.example }}
+        </p>
+      </div>
+    </ng-container>
+  </div>
+</div>

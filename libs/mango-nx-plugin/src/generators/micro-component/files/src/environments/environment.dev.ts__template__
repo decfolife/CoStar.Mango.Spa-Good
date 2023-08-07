@@ -1,0 +1,8 @@
+export const environment = {
+  production: false,
+  name: 'DEV',
+  appUrls: {
+    replaceMe: '/v06/WebServices/Mango/replaceMe/replaceMe.asmx/',
+  },
+  isRestful: false,
+}

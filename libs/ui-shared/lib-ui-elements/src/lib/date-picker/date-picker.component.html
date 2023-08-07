@@ -1,0 +1,21 @@
+<dx-date-box 
+    [(value)]="value" 
+    [displayFormat]="dateFormat"
+    [inputAttr]="{ id: inputId, 'aria-controls': 'dateBoxPopupWrapper', 'aria-label': 'date'}"
+    [invalidDateMessage]="invalidDateMessage || 'Value must be a date'"
+    (onValueChanged)="onValueChanged($event)"
+    [showClearButton]="showClearButton"
+    [useMaskBehavior]="useMaskBehavior"
+    [min]="min"
+    [max]="max"
+    >
+    <dxo-drop-down-options
+        [wrapperAttr]="{ id: 'dateBoxPopupWrapper' }"
+        >
+    </dxo-drop-down-options>
+    <dx-validator #DateBoxValidator>
+        <dxi-validation-rule *ngIf="isRequired"
+            type="required"
+        ></dxi-validation-rule>
+    </dx-validator>
+</dx-date-box>

@@ -1,0 +1,75 @@
+<div class="dbl-padding">
+	<div class="row">
+		<div class="col-md-6">
+			<mat-card class="dbl-bottom-margin">
+				<mat-card-header>
+					<mat-card-title>Property Templates</mat-card-title>
+					<div>
+						<button class="btn btn-default btn-sm" [matMenuTriggerFor]="PropertyMenu"><fa-icon icon="ellipsis-h"></fa-icon>
+						</button>
+						<mat-menu #PropertyMenu="matMenu">
+							<button mat-menu-item>Create New Template</button>
+							<button mat-menu-item [matMenuTriggerFor]="PropertyTemplatesMenu">Add Template</button>							
+						</mat-menu>
+						<mat-menu #PropertyTemplatesMenu="matMenu">
+							<button mat-menu-item> Property</button>
+							<button mat-menu-item> Building 2.0</button>
+							<button mat-menu-item> Shopping Center</button>
+						</mat-menu>
+					</div>
+				</mat-card-header>
+				<mat-card-content class="no-padding">	
+					<object-type-templates [objectType]="'Property'"></object-type-templates>
+				</mat-card-content>
+			</mat-card>
+		</div>
+		<div class="col-md-6">
+			<mat-card class="dbl-bottom-margin">
+				<mat-card-header>
+					<mat-card-title>Lease Templates</mat-card-title>
+					<div>
+						<button class="btn btn-default btn-sm" [matMenuTriggerFor]="LeaseMenu"><fa-icon icon="ellipsis-h"></fa-icon>
+						</button>
+						<mat-menu #LeaseMenu="matMenu">
+							<button mat-menu-item>Create New Template</button>
+							<button mat-menu-item [matMenuTriggerFor]="LeaseTemplatesMenu">Add Template</button>							
+						</mat-menu>
+						<mat-menu #LeaseTemplatesMenu="matMenu">
+							<button mat-menu-item> Equipment Lease</button>
+							<button mat-menu-item> Lease 2.0</button>
+							<button mat-menu-item> Truck Lease</button>
+							<button mat-menu-item> Copier Lease</button>
+						</mat-menu>
+					</div>
+				</mat-card-header>
+				<mat-card-content class="no-padding">	
+					<object-type-templates [objectType]="'Lease'"></object-type-templates>		
+				</mat-card-content>
+			</mat-card>
+		</div>
+		<div class="col-md-6">
+			<mat-card class="dbl-bottom-margin">
+				<mat-card-header>
+					<mat-card-title>Project Templates</mat-card-title>
+					<div>
+						<button class="btn btn-default btn-sm" [matMenuTriggerFor]="ProjectMenu"><fa-icon icon="ellipsis-h"></fa-icon>
+						</button>
+						<mat-menu #ProjectMenu="matMenu">
+							<button mat-menu-item>Create New Template</button>
+							<button mat-menu-item [matMenuTriggerFor]="ProjectTemplatesMenu">Add Template</button>							
+						</mat-menu>
+						<mat-menu #ProjectTemplatesMenu="matMenu">
+							<button mat-menu-item> Renewal</button>
+							<button mat-menu-item> New Construction</button>
+							<button mat-menu-item> Termination</button>
+							<button mat-menu-item> Demolition</button>
+						</mat-menu>
+					</div>
+				</mat-card-header>
+				<mat-card-content>	
+					<object-type-templates [objectType]="'Project'"></object-type-templates>				
+				</mat-card-content>
+			</mat-card>
+		</div>
+	</div>
+</div>

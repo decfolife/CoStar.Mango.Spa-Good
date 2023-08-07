@@ -1,0 +1,60 @@
+<div class="crem-content-wrapper">
+  <mat-drawer-container>
+
+    <mat-drawer #recentDrawer id="recentDrawer" class="recentDrawer" mode="over" position="end">
+      <div class="ghost-element-style" *ngIf="!bookmarkGroups">
+        <ngx-skeleton-loader count="5" [theme]="{height:'36px', width:'100%'}"></ngx-skeleton-loader>
+      </div>
+      <mat-nav-list role="navigation" aria-label="Bookmarks">
+        <mat-list role='list'>
+            <mat-expansion-panel
+              #BookmarkGroupPanel
+              class="mat-elevation-z0"
+              [expanded]="false"
+              [class.open]="BookmarkGroupPanel.expanded"
+              *ngFor="let bookmarkGroup of bookmarkGroups; let i = index"
+              role="listitem"
+            >
+
+              <mat-expansion-panel-header
+                [id]="'bookmark-heading-' + i"
+                [attr.aria-controls]="'bookmark-group-' + i"
+                [attr.aria-expanded]="BookmarkGroupPanel.expanded"
+                role="button"
+                [attr.aria-label]="bookmarkGroup.objectTypeName + 'List'"
+              >
+                <mat-panel-title> {{ bookmarkGroup.objectTypeName }} </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <ul role="list">
+                <li *ngFor="let bm of bookmarkGroup.bookmarks" role="listitem" class="andy">
+                  <div role="group">
+                    <a mat-list-item
+                      tabindex="0"
+                      role="button"
+                      [attr.aria-labelledby]="'bookmark-heading-' + i"
+                      (click)="recentDrawer.close(); goToBookmarkUrl(bookmarkGroup.objectTypeId, bm);"
+                    >
+                      <div [innerHTML]="bm.name"></div>
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </mat-expansion-panel>
+        </mat-list>
+      </mat-nav-list>
+      <div class="manageBookmarksLink">
+        <a [href]="'/v06/admin/Bookmarks.aspx'">Manage Bookmarks</a>
+      </div>
+    </mat-drawer>
+
+    <mat-drawer-content class="router-transitions">
+        <!-- When using this component in Mango the router-outlet tag
+              can not present in the html or an error will be thrown.
+              The ngIf in the router outlet can be removed when this component
+              is only used in the angular project and not exported as a custom element.-->
+        <router-outlet *ngIf="useRouterOutletTag"></router-outlet>
+    </mat-drawer-content>
+
+  </mat-drawer-container>
+</div>

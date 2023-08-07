@@ -1,0 +1,79 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/var.scss';
+
+:host::ng-deep {
+  div.dx-button-content {
+    border: 1px solid $navGray;
+    border-radius: 2px;
+    font-size: 12px;
+    height: 30px;
+
+    span.dx-button-text {
+      padding-left: 8px !important;
+    }
+  }
+
+  .queued_for_processing,
+  .queued_for_validation {
+    div.dx-button-content {
+      border-color: $costarYellow;
+      color: $costarYellow;
+    }
+  }
+
+  .validation_complete {
+    div.dx-button-content {
+      border-color: $costarGreen;
+      color: $costarGreen;
+    }
+  }
+
+  .complete {
+    div.dx-button-content {
+      border-color: $costarBlue;
+      color: $costarBlue;
+    }
+  }
+
+  .complete_with_error {
+    div.dx-button-content {
+      border-color: $costarRed;
+      color: $costarRed;
+    }
+  }
+
+  .batch-log__fa-icon > .ng-fa-icon {
+    color: $costarBlue !important;
+    font-size: 14px;
+  }
+
+  td {
+    &.dx-command-edit {
+      padding: 0;
+
+      .btn-link {
+        height: 34px;
+        width: 100%;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  dx-data-grid {
+    .dx-header-row > td > .dx-datagrid-text-content {
+      display: inline-block;
+      text-align: left;
+      vertical-align: top;
+      white-space: normal;
+    }
+  }
+
+  .dx-popup-wrapper {
+    .dx-overlay-content {
+      div.dx-popup-content {
+        padding: 0 !important;
+      }
+    }
+  }
+}

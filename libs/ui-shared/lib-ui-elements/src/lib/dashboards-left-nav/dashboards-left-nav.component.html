@@ -1,0 +1,47 @@
+
+<!-- <mat-sidenav-container class="dashboardsLeftNav-container">
+  <mat-sidenav #sidenav mode="side" opened class="dashboard-left-nav">
+    <div class='sidenavTop'>
+      <ul class="navList" >
+        <li class="listItem"  *ngFor="let link of links">
+          <a *ngIf="!link.style" mat-list-item [href]="link.href"> {{ link.text }} </a>
+          <a *ngIf="link.style" mat-list-item [ngStyle]="link.style" [href]="link.href"> {{ link.text }} </a>
+        </li>
+      </ul>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content class="dashboard-left-nav-content">
+   <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container> -->
+
+<mat-sidenav-container class="dashboardsLeftNav-container">
+  <mat-sidenav #sidenav  opened="true" class="dashboard-left-nav">
+    <div class='sidenavTop'>
+      <ul class="navList" >
+        <li class="listItem dashboard">
+          <a href="/v06/Mango/ProjectsDashboard/ProjectsDashboard.aspx">Dashboard</a>
+        </li>
+        <li class="projects">
+          <a href="/v06/Mango/ListPages/ListPage.aspx?ObjectTypeId=1">Projects </a>
+        </li>
+        <li class="documentStore" *ngIf="userHasDocumentStoreViewRight">
+          <a href="/v06/admin/DocumentsStore/DocumentsStore.aspx?ObjectTypeId=1">Document Store</a>
+        </li>
+        <mat-expansion-panel [expanded]="true" class="leftnavPanel">
+          <mat-expansion-panel-header>
+              <mat-panel-title>
+                  Configuration
+              </mat-panel-title>
+          </mat-expansion-panel-header>
+            <li class="teams" *ngIf="userHasManageTeamListsRight">
+              <a href="/v06/Contacts/Groups/ContactGroupList.aspx?grpType=project">Teams</a>
+            </li>
+            <li class="templates">
+              <a href="/v06/Projects/Templates/Templates.aspx">Templates</a>
+            </li>  
+        </mat-expansion-panel>
+      </ul>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

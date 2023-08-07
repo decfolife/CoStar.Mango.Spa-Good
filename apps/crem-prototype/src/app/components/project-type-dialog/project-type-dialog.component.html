@@ -1,0 +1,88 @@
+<costar-popup>
+	<popup-content>
+		<dx-tab-panel
+			#TransactionTypeTabPanel								
+			[selectedIndex]="0"
+			[loop]="false"
+			[animationEnabled]="false"
+			[swipeEnabled]="false"
+			>
+			<dxi-item title="Settings" class="oflow-y-auto">
+				<div class="dbl-padding">
+					Phases are configured at the portfolio level.
+					<!-- <dx-form 
+						[(formData)]="projectType"
+						[colCount]="1"
+						labelLocation="left">
+						<dxi-item 
+							dataField="allowPhaseCompletionWithoutAllTasksComplete"
+							[label]="{ text : 'Allow phase completion without all tasks complete' }"
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="autoCompleteTasksOnPhaseCompletion"
+							[label]="{ text : 'Auto complete tasks on phase completion' }"
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="requireApprovalNotes"
+							[label]="{ text : 'Require approval notes' }"
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="calculateDates"
+							[label]="{ text : 'Calculate dates' }"
+							template="switchTemplate">
+						</dxi-item>
+						<dxi-item 
+							dataField="calculateDatesFrom"
+							[label]="{ text : 'Calculate dates from' }"
+							template="switchTemplate">
+						</dxi-item>
+						
+						<div *dxTemplate="let data of 'switchTemplate'">
+							<mat-slide-toggle [(checked)]="projectType[data.dataField]"></mat-slide-toggle>
+						</div>
+					</dx-form> -->
+				</div>				
+			</dxi-item>
+			<dxi-item title="Phases" class="oflow-y-auto">
+				<dx-scroll-view width="100%" height="100%" class="dbl-padding">
+                    Phases are configured at the portfolio level.
+				</dx-scroll-view>
+			</dxi-item>
+			<dxi-item title="Templates" class="oflow-y-auto">
+				<dx-scroll-view width="100%" height="100%" class="no-padding">
+					<dx-data-grid class="list-page-data-grid"
+						#ProjectTypeTemplatesGrid
+						[dataSource]="templates"
+						[showColumnLines]="false"
+						[showRowLines]="false"
+						[showBorders]="false"
+						[rowAlternationEnabled]="true" 							
+						[allowColumnResizing]="true"
+						[allowColumnReordering]="true"
+						[columnAutoWidth]="true"
+						[masterDetail]="{ enabled: true, template: 'detail' }"
+					>
+						<dxo-scrolling mode="virtual"></dxo-scrolling>
+						<dxo-header-filter [visible]="true"></dxo-header-filter> 							
+						<dxi-column dataField="templateName"></dxi-column>
+						<div *dxTemplate="let template of 'detail'">								  
+							<!-- Phases and the tasks will show here -->
+							<kanban-tasks-template [templateId]="template.data.id"></kanban-tasks-template>   		        								
+						</div>	
+					</dx-data-grid>
+				</dx-scroll-view>
+			</dxi-item>			
+			<dxi-item title="Files" class="oflow-y-auto"></dxi-item>
+		</dx-tab-panel>
+	</popup-content>
+	<popup-footer>		
+		<popup-footer-right>
+			<button class="btn btn-default" (click)="close()">Close</button> 
+			<button class="btn btn-primary" (click)="save()">Save</button> 
+		</popup-footer-right>
+	</popup-footer>
+</costar-popup>
+

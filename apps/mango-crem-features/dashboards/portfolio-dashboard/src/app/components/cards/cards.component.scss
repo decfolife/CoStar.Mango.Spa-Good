@@ -1,0 +1,58 @@
+
+.card-containers {
+  min-width: 100%;
+  width: 100%;
+	display: inline-flex;
+	flex-wrap: wrap;
+  box-sizing: border-box;
+	padding: 8px;
+}
+
+.dropCards {
+  flex-direction: column;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.cardTypes {
+  display: flex;
+  justify-content: center;
+}
+
+.categories-item {
+  flex: 1 1 50% !important;
+  max-width: 50%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+div.cdk-drag.categories-item {	
+  position: relative;
+  .card-drag-handle {
+    cursor: move;
+    position: absolute;
+    top: 26px;
+    right: 24px;
+    z-index: 10;
+
+    svg.drag_handle {
+      overflow: hidden;
+      vertical-align: middle;
+      width: 24px;
+      height: 24px;
+    }
+  } 
+}
+
+div.width100 {
+  min-width: 100% !important;
+}
+
+
+.dispCardNone {
+  display: none;
+}
+
+.mat-slide-toggle-content {
+  font-size: 14px!important;
+}

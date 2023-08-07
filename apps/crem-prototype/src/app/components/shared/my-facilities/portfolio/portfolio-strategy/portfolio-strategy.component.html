@@ -1,0 +1,157 @@
+<div class="dashboard">	
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div *ngFor="let filter of filters">
+				<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible && filter.controlType == 'dropdown'"></costar-dropdown>			
+				<portfolio-menu *ngIf="filter.visible && filter.controlType == 'portfolio'" [showSearchRow]="filter.showSearchRow"></portfolio-menu>			
+				<hierarchy-dropdown portfolioId="1" *ngIf="filter.visible && filter.controlType == 'hierarchy'"></hierarchy-dropdown>		
+			</div>		
+			<button class="btn btn-default btn-sm">Apply</button>
+		</div>
+	</div>
+	<div class="dashboard-content-wrapper">
+		<div class="dashboard-cards-wrapper">
+			<div class="row">
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Building Strategy Distribution</mat-card-title>
+						</mat-card-header>
+						<mat-card-content class="no-padding">								
+							<dx-data-grid class="list-page-data-grid"											
+								[dataSource]="strategies"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 							
+								[allowColumnResizing]="true"
+								[allowColumnReordering]="true"
+								[columnAutoWidth]="false"
+							>
+								<dxo-scrolling mode="virtual"></dxo-scrolling>
+								<dxi-column dataField="strategy"></dxi-column>									
+								<dxi-column dataField="val" caption="Count"></dxi-column>
+								<dxi-column dataField="sf" caption="Rentable SF" dataType="number">
+									<dxo-format type="fixedPoint" [precision]="0"></dxo-format>
+								</dxi-column>
+								<dxi-column dataField="budgetedCapital" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="annualRent" dataType="number" format="currency"></dxi-column>									
+							</dx-data-grid>								
+						</mat-card-content>
+					</mat-card>
+				</div>		
+				<div class="col-md-6">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Outdated Strategies (unchanged last 12 months)</mat-card-title>
+						</mat-card-header>
+						<mat-card-content class="no-padding">								
+							<dx-data-grid class="list-page-data-grid"											
+								[dataSource]="outdatedStrategies"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 							
+								[allowColumnResizing]="true"
+								[allowColumnReordering]="true"
+								[columnAutoWidth]="false"
+								(onRowClick)="navigateToPropertyStrategy($event)"
+							>
+								<dxo-editing mode="popup" [allowUpdating]="true">
+									<dxo-texts
+							            editRow="Update">
+							        </dxo-texts>
+							        <dxo-popup
+						                title="Property Strategy"
+						                [showTitle]="true"
+						                [width]="700"
+						                [height]="325">
+						            </dxo-popup>
+						            <dxo-form>
+						            	<dxi-item itemType="group" [colCount]="2" [colSpan]="2">
+						                    <dxi-item dataField="building" editorType="dxTextBox" [editorOptions]="{ disabled: true }"></dxi-item>
+						                    <dxi-item dataField="strategy" editorType="dxSelectBox" [editorOptions]="{ items: strategyList }"></dxi-item>							
+		                                    <dxi-item
+						                        dataField="notes"
+						                        editorType="dxTextArea"
+						                        [colSpan]="2"
+						                        [editorOptions]="{ height: 100 }">
+						                    </dxi-item>
+						                </dxi-item>
+						            </dxo-form>
+							    </dxo-editing>
+								<dxo-scrolling mode="virtual"></dxo-scrolling>
+								<dxi-column dataField="building" caption="Building Name"></dxi-column>									
+								<dxi-column dataField="city"></dxi-column>
+								<dxi-column dataField="state"></dxi-column>
+								<dxi-column dataField="strategy"></dxi-column>									
+								<dxi-column dataField="lastUpdated" dataType="date" alignment="center"></dxi-column>									
+							</dx-data-grid>								
+						</mat-card-content>
+					</mat-card>
+				</div>					
+				<div class="col-md-12">
+					<mat-card>
+						<mat-card-header>
+							<mat-card-title>Strategy by Building</mat-card-title>
+						</mat-card-header>
+						<mat-card-content class="no-padding">							
+							<dx-data-grid class="list-page-data-grid"
+								#UpcomingExpirationsGrid
+								id="UpcomingExpirationsGrid"
+								[dataSource]="buildingStrategies"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 							
+								[allowColumnResizing]="true"
+								[allowColumnReordering]="true"
+								[columnAutoWidth]="true"
+								(onRowClick)="navigateToPropertyStrategy($event)"
+							>
+								<dxo-editing mode="popup" [allowUpdating]="true">
+									<dxo-texts
+							            editRow="Update">
+							        </dxo-texts>
+							        <dxo-popup
+						                title="Property Strategy"
+						                [showTitle]="true"
+						                [width]="700"
+						                [height]="325">
+						            </dxo-popup>
+						            <dxo-form>
+						            	<dxi-item itemType="group" [colCount]="2" [colSpan]="2">
+						                    <dxi-item dataField="building" editorType="dxTextBox" [editorOptions]="{ disabled: true }"></dxi-item>
+						                    <dxi-item dataField="strategy" editorType="dxSelectBox" [editorOptions]="{ items: strategyList }"></dxi-item>							
+		                                    <dxi-item
+						                        dataField="notes"
+						                        editorType="dxTextArea"
+						                        [colSpan]="2"
+						                        [editorOptions]="{ height: 100 }">
+						                    </dxi-item>
+						                </dxi-item>
+						            </dxo-form>
+							    </dxo-editing>
+								<dxo-header-filter [visible]="true"></dxo-header-filter>
+								<dxo-scrolling mode="virtual"></dxo-scrolling>
+								<dxi-column dataField="building" caption="Building Name"></dxi-column>																		
+								<dxi-column dataField="city"></dxi-column>
+								<dxi-column dataField="state"></dxi-column>
+								<dxi-column dataField="type"></dxi-column>
+								<dxi-column dataField="strategy"></dxi-column>
+								<dxi-column dataField="budgetedCapital" dataType="number" format="currency"></dxi-column>
+								<dxi-column dataField="rentableArea" caption="Rentable SF" dataType="number">
+									<dxo-format type="fixedPoint" [precision]="0"></dxo-format>
+								</dxi-column>
+								<dxi-column dataField="expDate" dataType="date" alignment="center"></dxi-column>																	
+								<dxi-column dataField="dealStatus"></dxi-column>
+								<dxi-column dataField="projectStatus"></dxi-column>							
+											
+							</dx-data-grid>
+						</mat-card-content>
+					</mat-card>
+				</div>						
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,48 @@
+<div class="dx-fieldset">
+  <div class="dx-field">
+    <!-- <div *ngIf="label" class="dx-field-label">{{ label }}</div> -->
+    <div class="dx-field-value">
+     
+      <dx-drop-down-box 
+        [id]="id"
+        [value]="selectedDisplay"
+        [valueExpr]="valueExpr"
+        [displayExpr]="displayExpr"
+        [placeholder]="placeholder"
+        [showClearButton]="showClearButton"
+        (onValueChanged)="dropdownOnValueChanged($event)"
+        [dataSource]="dataSource"
+        [inputAttr]="{title: placeholder, 'aria-controls': placeholder}"
+        [elementAttr]="{'id': placeholder}">
+
+        <dxo-drop-down-options
+          [wrapperAttr]="wrapperAttr">
+        </dxo-drop-down-options>
+
+        <div *dxTemplate="let data of 'content'" >
+          <dx-tree-view
+              id="treeview"
+              [items]="dataSource"
+              dataStructure="plain"
+              [parentIdExpr]="parentIdExpr"
+              [keyExpr]="valueExpr"
+              [displayExpr]="displayExpr"
+              [elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"
+              showCheckBoxesMode="normal"
+              [selectionMode]="selectMode"
+              [selectedRowKeys]="selections"
+              selectNodesRecursive="true"
+              selectByClick="true"
+              (onSelectionChanged)="treeViewSelectionChanged($event)">
+          
+              <div *dxTemplate="let item of 'item'">
+                  {{item[displayExpr]}}
+              </div>
+          </dx-tree-view>
+        </div>
+      </dx-drop-down-box>
+
+
+    </div>
+  </div>
+</div>

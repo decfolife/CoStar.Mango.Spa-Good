@@ -1,0 +1,33 @@
+@use "../../../../../common/src/styles" as *;
+
+:host {
+  &crem-input {
+    font-size: 1rem;
+    display: grid;
+    min-height: 90px;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr;
+    .input-container{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: start;
+      @include costar(gap, base);
+    }
+    &.inline{
+      min-height: 60px;
+      grid-template-rows: 1fr;
+      grid-template-columns: 1fr 1fr;
+      &.no-label{
+        grid-template-columns: 1fr;
+      }
+      // Pierce component crem-input-label to adjust label position
+      ::ng-deep{
+        crem-input-label label{
+          justify-content: flex-end;
+          margin-right: 1rem;
+        }
+      }
+    }
+  }
+}

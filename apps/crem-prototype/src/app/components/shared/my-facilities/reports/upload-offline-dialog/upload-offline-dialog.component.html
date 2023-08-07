@@ -1,0 +1,34 @@
+<dx-popup
+	#UploadOfflinePopup
+    [width]="600"
+    [height]="400"
+    [showTitle]="true"
+    [title]="title"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="isVisible"
+    (onHidden)="close()">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+    	<costar-popup>
+            <popup-content>	
+                <dx-scroll-view>
+                    <dx-file-uploader
+                        selectButtonText="Browse Files"
+                        [multiple]="false"
+                        labelText=""
+                        accept="*"
+                        uploadMode="useButtons"
+                        >
+                    </dx-file-uploader> 
+                </dx-scroll-view>                
+            </popup-content>
+            <popup-footer>		
+                <popup-footer-right>
+                    <button class="btn btn-default" (click)="close()">Close</button> 
+                </popup-footer-right>
+            </popup-footer>
+        </costar-popup>
+    </div>
+</dx-popup>	
+
+

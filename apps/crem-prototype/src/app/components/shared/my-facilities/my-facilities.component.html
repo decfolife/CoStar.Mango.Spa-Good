@@ -1,0 +1,243 @@
+
+<mat-toolbar [class.costar-unified-top-menu]="!isCostarStyle" [class.costar-unified-second-menu]="isCostarStyle">
+	<!-- <mat-toolbar-row class="sm" [class.toolbar-costar-blue]="service.getEnvironment()" [class.toolbar-costar-stage]="!service.getEnvironment()"> -->
+	<mat-toolbar-row [class.costar-top-menu]="!isCostarStyle" [class.costar-second-menu]="isCostarStyle">
+		<ul class="nav nav-pills" >
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['portfolio']" [routerLinkActive]="['active']">Portfolio</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['strategy']" [routerLinkActive]="['active']">Strategy</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['deals']" [routerLinkActive]="['active']">Deals</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['financials']" [routerLinkActive]="['active']">Financials</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['accounting']" [routerLinkActive]="['active']">Accounting</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['projects']" [routerLinkActive]="['active']">Projects</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['contacts']" [routerLinkActive]="['active']">Contacts</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['reports']" [routerLinkActive]="['active']">Reports</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" [routerLink]="['admin']" [routerLinkActive]="['active']">Admin</a>
+			</li>
+			<!-- <li class="nav-item" *ngIf="!isCostarStyle">
+				<a class="nav-link" [routerLink]="['sandbox']" [routerLinkActive]="['active']">Sandbox</a>
+			</li>			 -->
+			<!-- <li class="nav-item" *ngIf="!isCostarStyle">
+				<a class="nav-link" [routerLink]="['chart-sandbox']" [routerLinkActive]="['active']">Chart Sandbox</a>
+			</li>			 -->
+		</ul>
+		<app-chip text="PROTOTYPE - BLANK" type="secondary" id="environment" (click)="toggleEnvironmentPopover()"  *ngIf="!isCostarStyle"></app-chip>
+		<ul class="nav nav-pills mobile-hidden" >
+			<li class="nav-item" *ngIf="isPasswordExpiring">
+				<a class="nav-link" style="padding: 6px">
+					<!-- <app-chip text="Password expires in 5 days.&nbsp<a href='#' style='text-decoration: none;'>Change it</a>" type="secondary"></app-chip> -->
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link clickable" (click)="recentDrawer.toggle()" [class.active]="recentDrawer.opened">Bookmarks</a>
+			</li>
+		</ul>
+	</mat-toolbar-row>
+</mat-toolbar>
+<div class="crem-content-wrapper" id="cremContentWrapper">
+	<mat-drawer-container>
+		<mat-drawer #recentDrawer mode="over" position="end" class="bookmark-drawer">
+			<mat-nav-list>
+				<mat-list>
+					<mat-expansion-panel #BuildingsPanel class="mat-elevation-z0" [class.open]="BuildingsPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Reports
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item *ngFor="let report of favoriteReports" (click)="recentDrawer.close()">{{report.name}}</mat-list-item>
+	                </mat-expansion-panel>
+					<mat-expansion-panel #BuildingsPanel class="mat-elevation-z0" [class.open]="BuildingsPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Buildings
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item *ngFor="let bldg of favoriteBuildings" [routerLink]="[bldg.path]" (click)="recentDrawer.close()">{{bldg.name}}</mat-list-item>
+	                </mat-expansion-panel>
+	                <mat-expansion-panel #LeasesPanel class="mat-elevation-z0" [class.open]="LeasesPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Leases
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item *ngFor="let lease of favoriteLeases" [routerLink]="[lease.path]" (click)="recentDrawer.close()">{{lease.name}}</mat-list-item>
+	                </mat-expansion-panel>
+	                <mat-expansion-panel #ProjectsPanel class="mat-elevation-z0" [class.open]="ProjectsPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Projects
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item *ngFor="let project of favoriteProjects" [routerLink]="[project.path]" (click)="recentDrawer.close()">{{project.name}}</mat-list-item>
+	                </mat-expansion-panel>
+	                <mat-expansion-panel #DealsPanel class="mat-elevation-z0" [class.open]="DealsPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Deals
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item *ngFor="let deal of favoriteDeals" [routerLink]="[deal.path]" (click)="recentDrawer.close()">{{deal.name}}</mat-list-item>
+	                </mat-expansion-panel>
+	                <mat-expansion-panel #AccountingPanel class="mat-elevation-z0" [class.open]="AccountingPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Accounting
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <<mat-list-item *ngFor="let acctg of favoriteAccounting" [routerLink]="[acctg.path]" (click)="recentDrawer.close()">{{acctg.name}}</mat-list-item>
+	                </mat-expansion-panel>
+	                <mat-expansion-panel #DealsPanel class="mat-elevation-z0" [class.open]="DealsPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Contacts
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item *ngFor="let deal of favoriteDeals" [routerLink]="[deal.path]" (click)="recentDrawer.close()">{{deal.name}}</mat-list-item>
+	                </mat-expansion-panel>
+	                <mat-expansion-panel #DealsPanel class="mat-elevation-z0" [class.open]="DealsPanel.expanded" [expanded]="false">
+	                    <mat-expansion-panel-header>
+	                        <mat-panel-title>
+	                            Companies
+	                        </mat-panel-title>
+	                    </mat-expansion-panel-header>
+	                    <mat-list-item *ngFor="let deal of favoriteDeals" [routerLink]="[deal.path]" (click)="recentDrawer.close()">{{deal.name}}</mat-list-item>
+	                </mat-expansion-panel>
+				</mat-list>
+			</mat-nav-list>
+			<!-- <mat-tab-group>
+				<mat-tab label="Recents">
+					<mat-nav-list>
+						<mat-list>
+							<mat-expansion-panel #BuildingsPanel class="mat-elevation-z0" [class.open]="BuildingsPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Buildings
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let bldg of recentBuildings" [routerLink]="[bldg.path]" (click)="recentDrawer.close()">{{bldg.name}}</mat-list-item>
+
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #LeasesPanel class="mat-elevation-z0" [class.open]="LeasesPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Leases
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let lease of recentLeases" [routerLink]="[lease.path]" (click)="recentDrawer.close()">{{lease.name}}</mat-list-item>
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #ProjectsPanel class="mat-elevation-z0" [class.open]="ProjectsPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Projects
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let project of recentProjects" [routerLink]="[project.path]" (click)="recentDrawer.close()">{{project.name}}</mat-list-item>
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #DealsPanel class="mat-elevation-z0" [class.open]="DealsPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Deals
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let deal of recentDeals" [routerLink]="[deal.path]" (click)="recentDrawer.close()">{{deal.name}}</mat-list-item>
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #AccountingPanel class="mat-elevation-z0" [class.open]="AccountingPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Accounting
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <<mat-list-item *ngFor="let acctg of recentAccounting" [routerLink]="[acctg.path]" (click)="recentDrawer.close()">{{acctg.name}}</mat-list-item>
+			                </mat-expansion-panel>
+						</mat-list>
+					</mat-nav-list>
+				</mat-tab>
+				<mat-tab label="Bookmarks">
+					<mat-nav-list>
+						<mat-list>
+							<mat-expansion-panel #BuildingsPanel class="mat-elevation-z0" [class.open]="BuildingsPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Buildings
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let bldg of favoriteBuildings" [routerLink]="[bldg.path]" (click)="recentDrawer.close()">{{bldg.name}}</mat-list-item>
+
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #LeasesPanel class="mat-elevation-z0" [class.open]="LeasesPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Leases
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let lease of favoriteLeases" [routerLink]="[lease.path]" (click)="recentDrawer.close()">{{lease.name}}</mat-list-item>
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #ProjectsPanel class="mat-elevation-z0" [class.open]="ProjectsPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Projects
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let project of favoriteProjects" [routerLink]="[project.path]" (click)="recentDrawer.close()">{{project.name}}</mat-list-item>
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #DealsPanel class="mat-elevation-z0" [class.open]="DealsPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Deals
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <mat-list-item *ngFor="let deal of favoriteDeals" [routerLink]="[deal.path]" (click)="recentDrawer.close()">{{deal.name}}</mat-list-item>
+			                </mat-expansion-panel>
+			                <mat-expansion-panel #AccountingPanel class="mat-elevation-z0" [class.open]="AccountingPanel.expanded" [expanded]="false">
+			                    <mat-expansion-panel-header>
+			                        <mat-panel-title>
+			                            Accounting
+			                        </mat-panel-title>
+			                    </mat-expansion-panel-header>
+			                    <<mat-list-item *ngFor="let acctg of favoriteAccounting" [routerLink]="[acctg.path]" (click)="recentDrawer.close()">{{acctg.name}}</mat-list-item>
+			                </mat-expansion-panel>
+						</mat-list>
+					</mat-nav-list>
+				</mat-tab>
+			</mat-tab-group> -->
+		</mat-drawer>
+		<mat-drawer-content>
+			<router-outlet></router-outlet>
+		</mat-drawer-content>
+	</mat-drawer-container>
+</div>
+
+<dx-popover
+    target="#environment"
+    [maxWidth]="600"
+    width="auto"
+    height="auto"
+    [(visible)]="envPopoverVisible"
+    position="bottom"
+    >
+    <div *dxTemplate="let data = model of 'content'" >
+    	<div>
+	        <p>Database Server:  ATLSTAGEDB02</p>
+	        <p>Database Restore Date:  2020-04-15 12:57:42 </p>
+	        <p>Database Backup Date:  2020-04-12 22:46:08 </p>
+	        <p>Backup File Name:  VP_DANAHER_V05_backup_20200412224608.bak </p>
+	    </div>
+    </div>
+</dx-popover>

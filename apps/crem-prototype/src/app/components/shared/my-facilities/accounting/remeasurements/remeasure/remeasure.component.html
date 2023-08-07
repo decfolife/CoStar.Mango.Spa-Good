@@ -1,0 +1,804 @@
+<mat-horizontal-stepper #RemeasureStepper>
+	<mat-step label="Accounting Events">
+		<div class="list-page" style="height:100%;">			
+			<div class="list-page-controls-wrapper" >
+				<div class="controls-left">					
+					<portfolio-menu (portfolioChanged)="onPortfolioChange($event)"></portfolio-menu>
+					<costar-dropdown [dropdownData]="workflowDropdown" (changed)="onWorkflowChanged($event)"></costar-dropdown>
+					<costar-dropdown [dropdownData]="viewsDropdown" (changed)="onViewChanged($event)"></costar-dropdown>
+				</div>
+				<div class="controls-right" *ngIf="selectedPortfolio && selectedView">
+					<button class="btn btn-primary-outline" (click)="availableShowFilterBuilder()">
+						Filters
+						<div *ngIf="availableAppliedFilterCount > 0 && !availableShowClearFilters"
+							class="badge primary costar std-left-margin" (mouseover)="availableToggleClearFilters()">
+							{{availableAppliedFilterCount}}
+						</div>
+						<div *ngIf="availableAppliedFilterCount > 0 && availableShowClearFilters"
+							class="badge primary costar std-left-margin underline"
+							(mouseout)="availableToggleClearFilters()" (click)="availableClearGridFilters($event)">
+							Clear {{availableAppliedFilterCount}} Filters
+						</div>
+					</button>
+					<mat-form-field appearance="outline" class="portfolio bg-white">
+						<input matInput placeholder="Search..." (keyup)="availableSearchDataGrid($event.target.value)">
+						<mat-icon matPrefix>search</mat-icon>
+					</mat-form-field>
+					<button class="btn btn-primary-outline" [matMenuTriggerFor]="availablelistMenu">More <fa-icon
+							icon="caret-down"></fa-icon></button>
+					<mat-menu #availablelistMenu="matMenu">
+						<button mat-menu-item [matMenuTriggerFor]="saveAsMenu">Save As Filter Set...</button>
+						<button mat-menu-item (click)="availableToggleExpanded()"><span
+								*ngIf="availableIsExpanded">Collapse All</span><span *ngIf="!availableIsExpanded">Expand
+								All</span></button>
+						<button mat-menu-item (click)="availableShowColumnChooser()">Column Chooser</button>
+					</mat-menu>
+					<mat-menu #saveAsMenu="matMenu" class="save-query-menu">
+						<mat-form-field appearance="outline">
+							<input matInput placeholder="New Saved Filter Set" (click)="$event.stopPropagation()"
+								(keyup)="$event.stopPropagation()">
+						</mat-form-field>
+					</mat-menu>
+					<button class="btn btn-primary" (click)="nextStep(RemeasureStepper)">
+						Next
+					</button>
+				</div>
+				<!-- <div class="controls-right" *ngIf="viewToggleValue == 'batch'">
+					<button class="btn btn-primary-outline" (click)="batchShowFilterBuilder()">
+						Filters
+						<div *ngIf="batchAppliedFilterCount > 0 && !batchShowClearFilters"
+							class="badge primary costar std-left-margin" (mouseover)="batchToggleClearFilters()">
+							{{batchAppliedFilterCount}}
+						</div>
+						<div *ngIf="batchAppliedFilterCount > 0 && batchShowClearFilters"
+							class="badge primary costar std-left-margin underline"
+							(mouseout)="batchToggleClearFilters()" (click)="batchClearGridFilters($event)">
+							Clear {{batchAppliedFilterCount}} Filters
+						</div>
+					</button>
+					<mat-form-field appearance="outline" class="portfolio bg-white">
+						<input matInput placeholder="Search..." (keyup)="batchSearchDataGrid($event.target.value)">
+						<mat-icon matPrefix>search</mat-icon>
+					</mat-form-field>
+					<portfolio-menu (changed)="onPortfolioChange($event)"></portfolio-menu>
+					<button class="btn btn-primary-outline" [matMenuTriggerFor]="batchlistMenu">More <fa-icon
+							icon="caret-down"></fa-icon></button>
+					<mat-menu #batchlistMenu="matMenu">
+						<button mat-menu-item (click)="batchToggleExpanded()"><span *ngIf="batchIsExpanded">Collapse
+								All</span><span *ngIf="!batchIsExpanded">Expand All</span></button>
+						<button mat-menu-item (click)="batchShowColumnChooser()">Column Chooser</button>
+					</mat-menu>
+					<button class="btn btn-primary" (click)="removeSchedulesFromBatch()">
+						<fa-icon icon="plus"></fa-icon> Remove Selected from Batch
+					</button>
+				</div> -->
+			</div>
+			<div class="list-page-data-grid-wrapper" style="height: 100%;">
+				<div class="no-portfolio-selected" *ngIf="!(selectedPortfolio && selectedView && selectedWorkflowStatus)">
+					Select a Portfolio, Workflow Status, and View
+				</div>
+				<dx-data-grid *ngIf="selectedPortfolio && selectedView && selectedWorkflowStatus" class="list-page-data-grid" #AvailableDataGrid
+					[dataSource]="availableSchedules" [showColumnLines]="false" [showRowLines]="false"
+					[showBorders]="false" [rowAlternationEnabled]="true" [allowColumnResizing]="true"
+					[allowColumnReordering]="true" [columnAutoWidth]="true" [filterSyncEnabled]="true"
+					(onContentReady)="availableCalculateAppliedFilterCount($event)"
+					(onSelectionChanged)="onSelectionChanged($event)"
+					>
+					<dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[25, 50, 100, 200, 500]" [showInfo]="true">
+					</dxo-pager>
+					<dxo-paging [pageSize]="25">
+					</dxo-paging>
+					<dxo-header-filter [visible]="true"></dxo-header-filter>
+					<dxo-grouping #expand [autoExpandAll]="availableIsExpanded" [contextMenuEnabled]="true">
+					</dxo-grouping>
+					<!-- <dxo-scrolling mode="virtual"></dxo-scrolling> -->
+					<dxo-selection selectAllMode="allPages" showCheckBoxesMode="onClick" mode="multiple">
+					</dxo-selection>
+					<dxo-filter-builder-popup [width]="600" [height]="600" [(visible)]="availableFilterBuilderVisible">
+					</dxo-filter-builder-popup>
+					<dxi-column dataField="workflowStatus"></dxi-column>
+					<dxi-column dataField="leaseID" caption="System Lease ID"></dxi-column>
+					<dxi-column dataField="clientLeaseID"></dxi-column>
+					<dxi-column dataField="classification"></dxi-column>
+					<dxi-column dataField="amortizationProfile"></dxi-column>
+					<dxi-column dataField="jeProfile" caption="JE Profile"></dxi-column>
+					<dxi-column dataField="jeStatus" caption="JE Status"></dxi-column>
+					<dxi-column dataField="measureEvent"></dxi-column>
+					<dxi-column dataField="periodFrom" caption="Accounting Term Begin"></dxi-column>
+					<dxi-column dataField="periodTo" caption="Accounting Term End"></dxi-column>
+					<dxi-column dataField="numberOfPeriods"></dxi-column>
+					<dxi-column dataField="totalAmount"></dxi-column>
+					<dxi-column dataField="discountRate"></dxi-column>
+					<dxi-column dataField="presentValue"></dxi-column>
+					<dxi-column dataField="id" caption="Schedule ID"></dxi-column>
+					<dxo-summary [calculateCustomSummary]="calculateSelectedRow">
+						<dxi-total-item
+							name="Total"
+							summaryType="count"
+							displayFormat="Total: {0}"
+							showInColumn="workflowStatus"
+						>
+						</dxi-total-item>
+						<dxi-total-item
+							name="SelectedRowsSummary"
+							summaryType="custom"
+							displayFormat="Batched: {0}"
+							showInColumn="leaseID"
+						>
+						</dxi-total-item>
+					</dxo-summary>
+				</dx-data-grid>
+				<!-- <dx-data-grid *ngIf="viewToggleValue == 'batch'" class="list-page-data-grid" #BatchDataGrid
+					[dataSource]="batchSchedules" [showColumnLines]="false" [showRowLines]="false" [showBorders]="false"
+					[rowAlternationEnabled]="true" [allowColumnResizing]="true" [allowColumnReordering]="true"
+					[columnAutoWidth]="true" [filterSyncEnabled]="true"
+					(onContentReady)="batchCalculateAppliedFilterCount($event)">
+					<dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[25, 50, 100, 200, 500]" [showInfo]="true">
+					</dxo-pager>
+					<dxo-paging [pageSize]="25">
+					</dxo-paging>
+					<dxo-header-filter [visible]="true"></dxo-header-filter>
+					<dxo-grouping #expand [autoExpandAll]="batchIsExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+					<dxo-scrolling mode="virtual"></dxo-scrolling>
+					<dxo-selection selectAllMode="allPages" showCheckBoxesMode="onClick" mode="multiple">
+					</dxo-selection>
+					<dxo-filter-builder-popup [width]="600" [height]="600" [(visible)]="batchFilterBuilderVisible">
+					</dxo-filter-builder-popup>
+					<dxi-column dataField="workflowStatus"></dxi-column>
+					<dxi-column dataField="leaseID" caption="System Lease ID"></dxi-column>
+					<dxi-column dataField="clientLeaseID"></dxi-column>
+					<dxi-column dataField="classification"></dxi-column>
+					<dxi-column dataField="amortizationProfile"></dxi-column>
+					<dxi-column dataField="jeProfile" caption="JE Profile"></dxi-column>
+					<dxi-column dataField="jeStatus" caption="JE Status"></dxi-column>
+					<dxi-column dataField="measureEvent"></dxi-column>
+					<dxi-column dataField="periodFrom" caption="Accounting Term Begin"></dxi-column>
+					<dxi-column dataField="periodTo" caption="Accounting Term End"></dxi-column>
+					<dxi-column dataField="numberOfPeriods"></dxi-column>
+					<dxi-column dataField="totalAmount"></dxi-column>
+					<dxi-column dataField="discountRate"></dxi-column>
+					<dxi-column dataField="presentValue"></dxi-column>
+					<dxi-column dataField="id" caption="Schedule ID"></dxi-column>
+				</dx-data-grid> -->
+			</div>
+		</div>
+	</mat-step>
+	<mat-step label="Parameters">
+		<div class="dynamic-form bg-white">
+			<div class="dynamic-form-controls-wrapper no-border">
+				<div class="controls-left">
+				</div>
+				<div class="controls-right">
+					<button class="btn btn-default" (click)="lastStep(RemeasureStepper)">Previous</button>
+					<button class="btn btn-primary" (click)="nextStep(RemeasureStepper)" [disabled]="!(validateSchedules.length > 0)">Next</button>
+				</div>
+			</div>
+			<div class="dynamic-form-content">
+				<div class="row">
+					<div class="col-md-12">						
+						<mat-card>
+							<mat-card-header>
+								<mat-card-title>Batch Parameters</mat-card-title>
+							</mat-card-header>
+							<mat-card-content class="no-padding">
+								<div class="dbl-padding">	
+									<dx-form 
+										[colCount]="2"
+										labelLocation="left"
+										[showColonAfterLabel]="false">
+										<dxi-item  
+											[dataField]="measureEvent"	
+											[label]="{ text : 'Measure Event' }"
+											[editorOptions]="{ items: measureEvents, searchEnabled: true }"
+											template="selectBoxTemplate"								
+											>				
+										</dxi-item>	
+										<dxi-item itemType="empty"></dxi-item>
+										<dxi-item  
+											[dataField]="nextWorkflowStatus"	
+											[label]="{ text : 'Next Workflow Status' }"
+											[editorOptions]="{ items: workflowStatuses, searchEnabled: true }"
+											template="selectBoxTemplate"								
+											>				
+										</dxi-item>	
+										<dxi-item itemType="empty"></dxi-item>
+										<dxi-item  
+											[dataField]="workflowComment"	
+											[label]="{ text : 'Next Workflow Comment' }"
+											template="textBoxTemplate"								
+											>				
+										</dxi-item>	
+										<div *dxTemplate="let data of 'textBoxTemplate'">
+										    <dx-text-box [(value)]="data.dataField"></dx-text-box>
+										</div>
+										<div *dxTemplate="let data of 'selectBoxTemplate'">							    
+										    <costar-dropdown [dropdownData]="data.dataField"></costar-dropdown>						    
+										</div>								
+									</dx-form>									
+								</div>							
+							</mat-card-content>
+						</mat-card>
+					</div>
+					<div class="col-md-12">
+						<mat-card>
+							<mat-card-header>
+								<mat-card-title>
+									<span class="dbl-right-margin">Override Classification Parameters</span>
+									<mat-slide-toggle [(checked)]="overrideParameters" (change)="handleOverrideToggleChange($event)"></mat-slide-toggle>
+								</mat-card-title>								
+							</mat-card-header>
+							<mat-card-content *ngIf="overrideParameters">
+								<dx-form 
+									[colCount]="2"
+									labelLocation="left"
+									[showColonAfterLabel]="false"
+									[formData]="parameterOverride"
+								>
+									<dxi-item
+										[label]="{ text : 'Accounting Term Begin Date' }"
+										template="accountingDateTemplate"										
+										dataField="accountingTermBeginDateOverride"
+										>								
+									</dxi-item>
+									<dxi-item
+										[label]="{ text : 'Manual Asset Adjustment' }"
+										template="textBoxTemplate"
+										dataField="manualAssetAdjustmentOverride"
+										>								
+									</dxi-item>
+									<dxi-item
+										[label]="{ text : 'Accounting Term End Date' }"
+										template="accountingDateTemplate"
+										dataField="accountingTermEndDateOverride"
+										>								
+									</dxi-item>
+									<dxi-item
+										[label]="{ text : 'Comments' }"
+										template="textBoxTemplate"
+										dataField="commentsOverride"
+										>								
+									</dxi-item>
+									<dxi-item style="align-items: center;"
+										[label]="{ text : 'Discount Rate' }"
+									>
+										<dx-drop-down-box placeholder="{{parameterOverride?.annualRateOverride}}% {{parameterOverride?.annualRateTypeOverride === 'APR' ? 'APR' : 'APY'}}">
+											<div *dxTemplate="let data of 'content'" class="dbl-padding">
+												<dx-form
+												[formData]="parameterOverride"
+												>
+													<dxi-item dataField="annualRateOverride" [editorOptions]="{ disabled: true }">
+														<dxo-label text="Annual Rate"></dxo-label>
+														<div *dxTemplate>
+															<dx-text-box
+																[value]="parameterOverride.annualRateOverride"
+																([ngModel])="parameterOverride.annualRateOverride"
+																(onValueChanged)="discountRateParameterChange('annualRateOverride', $event)"
+																dataField="annualRateOverride"
+															>
+															</dx-text-box>
+														</div>
+													</dxi-item>
+													<dxi-item
+														[label]="{ text : 'Annual Rate Type' }"
+														editorType="dxSelectBox"
+														[editorOptions]="{ items: ['', 'APR', 'APY'], searchEnabled: true, value: parameterOverride.annualRateTypeOverride}"
+														dataField="annualRateTypeOverride"
+														>								
+													</dxi-item>
+													<dxi-item
+														[label]="{ text : 'Payment Timing' }"
+														editorType="dxSelectBox"
+														[editorOptions]="{ items: ['', 'Beginning of Period', 'End of Period'], searchEnabled: true, value: parameterOverride.paymentTimingOverride }"
+														dataField="paymentTimingOverride"
+														>								
+													</dxi-item>
+												</dx-form>
+											</div>
+										</dx-drop-down-box>
+									</dxi-item>
+									<div *dxTemplate="let data of 'accountingDateTemplate'">
+									    <dx-date-box [(value)]="parameterOverride[data.dataField]"></dx-date-box>
+									</div>
+									<div *dxTemplate="let data of 'textBoxTemplate'">
+									    <dx-text-box [(value)]="parameterOverride[data.dataField]"></dx-text-box>
+									</div>
+								</dx-form>		
+							</mat-card-content>
+						</mat-card>
+					</div>
+					<div class="col-md-12">
+						<mat-card>
+							<mat-card-header>
+								<mat-card-title>Batch Parameters</mat-card-title>
+							</mat-card-header>
+							<mat-card-content class="no-padding">
+								<dx-data-grid class="list-page-data-grid" #DataGrid [dataSource]="remeasureParameters" [showColumnLines]="false"
+									[showRowLines]="false" [showBorders]="false" [rowAlternationEnabled]="true"
+									[allowColumnResizing]="true" [allowColumnReordering]="false" [columnAutoWidth]="true"
+									(onToolbarPreparing)="onToolbarPreparing($event)">
+									<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+									<dxo-editing mode="batch" [allowUpdating]="true" [selectTextOnEditStart]="true"
+										[startEditAction]="startEditAction">
+									</dxo-editing>
+									<dxo-scrolling mode="virtual"></dxo-scrolling>
+									<dxi-column dataField="classificationType" [fixed]="true" [allowEditing]="false"></dxi-column>
+									<dxi-column dataField="accountingTermBeginDate" dataType="date" [allowEditing]="!parameterOverride?.accountingTermBeginDateOverride" cellTemplate="accountingTermBeginDateTemplate">
+										<dxo-lookup [dataSource]="beginDateOptions" displayExpr="id" valueExpr="id">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="accountingTermEndDate" cellTemplate="accountingTermEndDateTemplate" [allowEditing]="!parameterOverride?.accountingTermEndDateOverride">
+										<dxo-lookup [dataSource]="endDateOptions" displayExpr="id" valueExpr="id">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="discountRateProfile" cellTemplate="discountRateProfileTemplate" [allowEditing]="!parameterOverride?.annualRateOverride || !parameterOverride?.annualRateTypeOverride || !parameterOverride?.paymentTimingOverride">
+										<dxo-lookup [dataSource]="discountRateOptions" displayExpr="id" valueExpr="id">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="journalEntryProfile">
+										<dxo-lookup [dataSource]="jeProfileOptions" displayExpr="id" valueExpr="id">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="manualAssetAdjustment" cellTemplate="manualAssetAdjustmentTemplate" [allowEditing]="!parameterOverride?.manualAssetAdjustmentOverride">
+										<dxo-lookup [dataSource]="defaultManualAdjustmentOptions" displayExpr="id" valueExpr="id">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="comments" cellTemplate="commentsTemplate" [allowEditing]="!parameterOverride?.commentsOverride">
+										<dxo-lookup [dataSource]="commentsOptions" displayExpr="id" valueExpr="id">
+										</dxo-lookup>
+									</dxi-column>
+
+									<div *dxTemplate="let data of 'accountingTermBeginDateTemplate'">										
+										<div *ngIf="parameterOverride.accountingTermBeginDateOverride" class="warning disabled">
+											{{data.displayValue}}
+										</div>
+										<div *ngIf="!parameterOverride.accountingTermBeginDateOverride">
+											{{data.displayValue}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'discountRateProfileTemplate'">
+										<div *ngIf="parameterOverride.annualRateOverride && parameterOverride.annualRateTypeOverride && parameterOverride.paymentTimingOverride" class="warning disabled">
+											{{data.displayValue}}
+										</div>
+
+										<div *ngIf="!parameterOverride.annualRateOverride || !parameterOverride.annualRateTypeOverride || !parameterOverride.paymentTimingOverride">
+											{{data.displayValue}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'accountingTermEndDateTemplate'">
+										<div *ngIf="parameterOverride.accountingTermEndDateOverride" class="warning disabled">
+											{{data.displayValue}}
+										</div>
+										<div *ngIf="!parameterOverride.accountingTermEndDateOverride">
+											{{data.displayValue}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'manualAssetAdjustmentTemplate'">
+										<div *ngIf="parameterOverride.manualAssetAdjustmentOverride" class="warning disabled">
+											{{data.displayValue}}
+										</div>
+
+										<div *ngIf="!parameterOverride.manualAssetAdjustmentOverride">
+											{{data.displayValue}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'commentsTemplate'">
+										<div *ngIf="parameterOverride.commentsOverride" class="warning disabled">
+											{{data.displayValue}}
+										</div>
+										<div *ngIf="!parameterOverride?.commentsOverride">
+											{{data.displayValue}}
+										</div>
+									</div>
+								</dx-data-grid>
+							</mat-card-content>
+						</mat-card>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</mat-step>
+	<mat-step label="Confirmation">
+		<div class="dynamic-form bg-white">
+			<div class="dynamic-form-controls-wrapper no-border">
+				<div class="controls-left">
+		
+				</div>
+				<div class="controls-right">
+					<!-- <button class="btn btn-primary-outline" (click)="validateShowFilterBuilder()">
+						Filters
+						<div *ngIf="validateAppliedFilterCount > 0 && !validateShowClearFilters"
+							class="badge primary costar std-left-margin" (mouseover)="validateToggleClearFilters()">
+							{{validateAppliedFilterCount}}
+						</div>
+						<div *ngIf="validateAppliedFilterCount > 0 && validateShowClearFilters"
+							class="badge primary costar std-left-margin underline"
+							(mouseout)="validateToggleClearFilters()" (click)="validateClearGridFilters($event)">
+							Clear {{validateAppliedFilterCount}} Filters
+						</div>
+					</button>
+					<mat-form-field appearance="outline" class="portfolio bg-white">
+						<input matInput placeholder="Search..." (keyup)="validateSearchDataGrid($event.target.value)">
+						<mat-icon matPrefix>search</mat-icon>
+					</mat-form-field> -->
+					<!-- <button class="btn btn-primary-outline" [matMenuTriggerFor]="validatelistMenu">More <fa-icon
+							icon="caret-down"></fa-icon></button>
+					<mat-menu #validatelistMenu="matMenu">
+						<button mat-menu-item (click)="validateToggleExpanded()"><span
+								*ngIf="validateIsExpanded">Collapse All</span><span *ngIf="!validateIsExpanded">Expand
+								All</span></button>
+						<button mat-menu-item (click)="validateShowColumnChooser()">Column Chooser</button>
+					</mat-menu> -->
+					<app-chip [text]="validString" type="secondary" color="costar" class="std-right-margin"></app-chip>
+					<button class="btn btn-default" (click)="lastStep(RemeasureStepper)">
+						Back
+					</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary" (click)="confirmModalToggle()" style="margin-left:16px;display:flex;border-radius:2px 0px 0px 2px !important">Queue for validation</button>
+						<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" [matMenuTriggerFor]="dropdownMenuOne" style="margin-left:0px;border-radius:0px 2px 2px 0px !important">
+							  <span class="sr-only">Toggle Dropdown</span>
+						</button>
+						<mat-menu #dropdownMenuOne="matMenu" style="min-height:0px;" class="remeasure_validation">
+							<button mat-menu-item (click)="confirmModalToggle()">Queue for validation and process</button>
+						</mat-menu>
+					</div>
+				</div>
+			</div>
+			<div class="dynamic-form-content">
+				<div class="row">
+					<div class="col-md-12">	
+						<mat-card>
+							<mat-card-header>
+								<mat-card-title>Batch Parameters</mat-card-title>
+							</mat-card-header>
+							<mat-card-content class="no-padding">
+								<div class="dbl-padding">
+									Portfolio: {{selectedPortfolio}} | Next Workflow Step: {{selectedWorkflowStatus}} | View: {{selectedView}}
+								</div>	
+								<div class="dbl-padding">
+									<dx-form 
+										[colCount]="2"
+										labelLocation="left"
+										[showColonAfterLabel]="false">
+										<dxi-item  
+											[dataField]="measureEvent"	
+											[label]="{ text : 'Measure Event' }"
+											[editorOptions]="{ items: measureEvents, searchEnabled: true }"
+											template="selectBoxTemplate"								
+											>				
+										</dxi-item>	
+										<dxi-item itemType="empty"></dxi-item>
+										<dxi-item  
+											[dataField]="nextWorkflowStatus"	
+											[label]="{ text : 'Next Workflow Status' }"
+											[editorOptions]="{ items: workflowStatuses, searchEnabled: true }"
+											template="selectBoxTemplate"								
+											>				
+										</dxi-item>	
+										<dxi-item itemType="empty"></dxi-item>
+										<dxi-item  
+											[dataField]="workflowComment"	
+											[label]="{ text : 'Next Workflow Comment' }"
+											template="textBoxTemplate"								
+											>				
+										</dxi-item>	
+										<div *dxTemplate="let data of 'textBoxTemplate'">
+											<dx-text-box [(value)]="data.dataField" [readOnly]="true"></dx-text-box>
+										</div>
+										<div *dxTemplate="let data of 'selectBoxTemplate'">							    
+											<costar-dropdown [dropdownData]="data.dataField" [isReadOnly]="true"></costar-dropdown>						    
+										</div>								
+									</dx-form>									
+								</div>
+							</mat-card-content>
+						</mat-card>
+					</div>
+					<div class="col-md-12" *ngIf="
+						parameterOverride.accountingTermBeginDateOverride ||
+						parameterOverride?.annualRateOverride ||
+						parameterOverride?.paymentTimingOverride ||
+						parameterOverride?.annualRateTypeOverride ||
+						parameterOverride.accountingTermEndDateOverride ||
+						parameterOverride?.manualAssetAdjustmentOverride ||
+						parameterOverride?.commentsOverride"
+						>
+						<mat-card>
+							<mat-card-header>
+								<mat-card-title>
+									<span class="dbl-right-margin">Override Classification Parameters</span>
+								</mat-card-title>								
+							</mat-card-header>
+							<mat-card-content>
+								<dx-form 
+									[colCount]="2"
+									labelLocation="left"
+									[showColonAfterLabel]="false"
+									[formData]="parameterOverride"
+								>
+									<dxi-item
+										[label]="{ text : 'Accounting Term Begin Date' }"
+										template="accountingDateTemplate"										
+										dataField="accountingTermBeginDateOverride"
+										>								
+									</dxi-item>
+									<dxi-item
+										[label]="{ text : 'Manual Asset Adjustment' }"
+										template="textBoxTemplate"
+										dataField="manualAssetAdjustmentOverride"
+										>								
+									</dxi-item>
+									<dxi-item
+										[label]="{ text : 'Accounting Term End Date' }"
+										template="accountingDateTemplate"
+										dataField="accountingTermEndDateOverride"
+										>								
+									</dxi-item>
+									<dxi-item
+										[label]="{ text : 'Comments' }"
+										template="textBoxTemplate"
+										dataField="commentsOverride"
+										>								
+									</dxi-item>
+									<dxi-item style="align-items: center;"
+										[label]="{ text : 'Discount Rate' }"
+									>
+										<dx-drop-down-box placeholder="{{parameterOverride?.annualRateOverride}}% {{parameterOverride?.annualRateTypeOverride === 'APR' ? 'APR' : 'APY'}}">
+											<div *dxTemplate="let data of 'content'" class="dbl-padding">
+												<dx-form
+												[formData]="parameterOverride"
+												>
+													<dxi-item dataField="annualRateOverride" [editorOptions]="{ disabled: true }">
+														<dxo-label text="Annual Rate"></dxo-label>
+														<div *dxTemplate>
+															<dx-text-box
+																[value]="parameterOverride.annualRateOverride"
+																([ngModel])="parameterOverride.annualRateOverride"
+																(onValueChanged)="discountRateParameterChange('annualRateOverride', $event)"
+																dataField="annualRateOverride"
+																[readOnly]="true"
+															>
+															</dx-text-box>
+														</div>
+													</dxi-item>
+													<dxi-item
+														[label]="{ text : 'Annual Rate Type' }"
+														editorType="dxSelectBox"
+														[editorOptions]="{ items: ['', 'APR', 'APY'], searchEnabled: true, value: parameterOverride.annualRateTypeOverride, readOnly: true}"
+														dataField="annualRateTypeOverride"
+														>								
+													</dxi-item>
+													<dxi-item
+														[label]="{ text : 'Payment Timing' }"
+														editorType="dxSelectBox"
+														[editorOptions]="{ items: ['', 'Beginning of Period', 'End of Period'], searchEnabled: true, value: parameterOverride.paymentTimingOverride, readOnly: true }"
+														dataField="paymentTimingOverride"
+														>								
+													</dxi-item>
+												</dx-form>
+											</div>
+										</dx-drop-down-box>
+									</dxi-item>
+									<div *dxTemplate="let data of 'accountingDateTemplate'">
+										<dx-date-box [readOnly]="true" [(value)]="parameterOverride[data.dataField]"></dx-date-box>
+									</div>
+									<div *dxTemplate="let data of 'textBoxTemplate'">
+										<dx-text-box [readOnly]="true" [(value)]="parameterOverride[data.dataField]"></dx-text-box>
+									</div>
+								</dx-form>		
+							</mat-card-content>
+						</mat-card>
+					</div>
+
+					<div class="col-md-12">
+						<mat-card>
+							<mat-card-header>
+								<mat-card-title>Batch Parameters</mat-card-title>
+							</mat-card-header>
+							<mat-card-content class="no-padding">
+								<dx-data-grid class="list-page-data-grid" #DataGrid [dataSource]="remeasureParameters" [showColumnLines]="false"
+									[showRowLines]="false" [showBorders]="false" [rowAlternationEnabled]="true"
+									[allowColumnResizing]="true" [allowColumnReordering]="false" [columnAutoWidth]="true"
+									(onToolbarPreparing)="onToolbarPreparing($event)">
+									<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+									<dxo-editing mode="batch" [allowUpdating]="true" [selectTextOnEditStart]="true"
+										[startEditAction]="startEditAction">
+									</dxo-editing>
+									<dxo-scrolling mode="virtual"></dxo-scrolling>
+									<dxi-column dataField="classificationType" [fixed]="true" [allowEditing]="false"></dxi-column>
+									<dxi-column dataField="accountingTermBeginDate" cellTemplate="accountingTermBeginDateTemplate" [allowEditing]="!parameterOverride?.accountingTermBeginDateOverride">
+										<dxo-lookup [dataSource]="beginDateOptions" displayExpr="id" valueExpr="id" *ngIf="!parameterOverride?.accountingTermBeginDateOverride">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="accountingTermEndDate" cellTemplate="accountingTermEndDateTemplate" [allowEditing]="!parameterOverride?.accountingTermEndDateOverride">
+										<dxo-lookup [dataSource]="endDateOptions" displayExpr="id" valueExpr="id" *ngIf="!parameterOverride?.accountingTermEndDateOverride">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="discountRateProfile" cellTemplate="discountRateProfileTemplate" [allowEditing]="!parameterOverride?.annualRateOverride && !parameterOverride?.annualRateTypeOverride && !parameterOverride?.paymentTimingOverride">
+										<dxo-lookup [dataSource]="discountRateOptions" displayExpr="id" valueExpr="id" *ngIf="!parameterOverride?.annualRateOverride && !parameterOverride?.annualRateTypeOverride && !parameterOverride?.paymentTimingOverride">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="journalEntryProfile">
+										<dxo-lookup [dataSource]="jeProfileOptions" displayExpr="id" valueExpr="id">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="manualAssetAdjustment" cellTemplate="manualAssetAdjustmentTemplate" [allowEditing]="!parameterOverride?.manualAssetAdjustmentOverride">
+										<dxo-lookup [dataSource]="defaultManualAdjustmentOptions" displayExpr="id" valueExpr="id" *ngIf="!parameterOverride?.manualAssetAdjustmentOverride">
+										</dxo-lookup>
+									</dxi-column>
+									<dxi-column dataField="comments" cellTemplate="commentsTemplate" [allowEditing]="!parameterOverride?.commentsOverride">
+										<dxo-lookup [dataSource]="commentsOptions" displayExpr="id" valueExpr="id" *ngIf="!parameterOverride?.commentsOverride">
+										</dxo-lookup>
+									</dxi-column>
+
+									<div *dxTemplate="let data of 'accountingTermBeginDateTemplate'" class="disabled">
+										<div *ngIf="!parameterOverride?.accountingTermBeginDateOverride">
+											{{data.displayValue}}
+										</div>
+
+										<div *ngIf="parameterOverride?.accountingTermBeginDateOverride" class="warning disabled">
+											{{parameterOverride.accountingTermBeginDateOverride | date: 'MM/dd/yyyy'}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'discountRateProfileTemplate'">
+										<div *ngIf="!parameterOverride?.annualRateOverride && !parameterOverride?.annualRateTypeOverride && !parameterOverride?.paymentTimingOverride">
+											{{data.displayValue}}
+										</div>
+
+										<div *ngIf="parameterOverride?.annualRateOverride || parameterOverride?.annualRateTypeOverride || parameterOverride?.paymentTimingOverride" class="warning disabled">
+											{{parameterOverride?.annualRateOverride}}% {{parameterOverride?.annualRateTypeOverride === 'APR' ? 'APR' : 'APY'}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'accountingTermEndDateTemplate'">
+										<div *ngIf="!parameterOverride?.accountingTermEndDateOverride">
+											{{data.displayValue}}
+										</div>
+
+										<div *ngIf="parameterOverride?.accountingTermEndDateOverride" class="warning disabled">
+											{{parameterOverride.accountingTermEndDateOverride | date: 'MM/dd/yyyy'}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'manualAssetAdjustmentTemplate'">
+										<div *ngIf="!parameterOverride?.manualAssetAdjustmentOverride">
+											{{data.displayValue}}
+										</div>
+
+										<div *ngIf="parameterOverride?.manualAssetAdjustmentOverride" class="warning disabled">
+											{{parameterOverride?.manualAssetAdjustmentOverride}}
+										</div>
+									</div>
+									<div *dxTemplate="let data of 'commentsTemplate'">
+										<div *ngIf="!parameterOverride?.commentsOverride">
+											{{data.displayValue}}
+										</div>
+
+										<div *ngIf="parameterOverride?.commentsOverride" class="warning disabled">
+											{{parameterOverride?.commentsOverride}}
+										</div>
+									</div>
+								</dx-data-grid>
+							</mat-card-content>
+						</mat-card>
+					</div>
+				</div>
+			</div>
+
+			
+		</div>
+	</mat-step>
+	<!-- <mat-step label="Confirm">
+		<div class="remeasure-confirm-wrapper">
+			<div class="remeasure-confirm-counts">
+				<dashboard-hero-card [title]="'Valid Records'" [heroMetric]="'15'">
+				</dashboard-hero-card>
+				<dashboard-hero-card [title]="'Invalid Records'" [heroMetric]="'2'" [hasRightBorder]="false"></dashboard-hero-card>
+			</div>
+			<div class="remeasure-confirm-queue-button">
+				<button class="btn btn-primary">Queue Valid Records for Remeasurement</button>
+			</div>
+		</div>
+	</mat-step>
+	<mat-step label="Results">
+		<div class="dbl-padding w100">
+			<mat-card>
+				<mat-card-header>
+					<mat-card-title>Batch Details</mat-card-title>
+				</mat-card-header>
+				<mat-card-content>
+					<dx-form 
+						[colCount]="2"
+						labelLocation="left"
+						[showColonAfterLabel]="false">
+						<dxi-item  
+							[dataField]="batchId"	
+							[label]="{ text : 'Batch ID' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  
+							[dataField]="batchStatus"	
+							[label]="{ text : 'Batch Status' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>							
+						<dxi-item  
+							[dataField]="batchCreatedBy"	
+							[label]="{ text : 'Created By' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  
+							[dataField]="batchQueueDate"	
+							[label]="{ text : 'Batch Queue Date' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  
+							[dataField]="batchStart"	
+							[label]="{ text : 'Batch Start Time' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  
+							[dataField]="batchEnd"	
+							[label]="{ text : 'Batch Finish Time' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  
+							[dataField]="validRecordCount"	
+							[label]="{ text : 'Valid Schedules' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  
+							[dataField]="successCount"	
+							[label]="{ text : 'Successful Remeasurements' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  
+							[dataField]="errorCount"	
+							[label]="{ text : 'Errors' }"
+							template="textBoxTemplate"								
+							>				
+						</dxi-item>	
+						<dxi-item  							
+							template="buttonTemplate"								
+							>				
+						</dxi-item>	
+						<div *dxTemplate="let data of 'textBoxTemplate'">
+						    <dx-text-box [(value)]="data.dataField" [disabled]="true"></dx-text-box>
+						</div>
+						<div *dxTemplate="let data of 'buttonTemplate'" class="form-button-template">
+						    <button class="btn btn-primary">Download Results</button>
+						</div>						
+					</dx-form>		
+				</mat-card-content>
+			</mat-card>
+		</div>		
+	</mat-step> -->
+</mat-horizontal-stepper>
+
+<dx-popup
+	[width]="400"
+	[height]="320"
+	[showTitle]="true"
+	title="Confirm Batch Validation"
+	[dragEnabled]="true"
+	[closeOnOutsideClick]="false"
+	[(visible)]="confirmModalVisible">
+	<div *dxTemplate="let data of 'content'">
+		<div class="dialog-body">
+			<div class="dialog-content dbl-padding">		        			
+			Confirming the batch will put the batch accounting in queue
+			</div>
+			<div class="dialog-footer">
+				<div class="dialog-footer-left"></div>
+				<div class="dialog-footer-right">
+					<button class="btn btn-default" (click)="confirmModalToggle()">Cancel</button> 
+					<button class="btn btn-primary" (click)="queueForMeasurement()">Confirm</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+</dx-popup>

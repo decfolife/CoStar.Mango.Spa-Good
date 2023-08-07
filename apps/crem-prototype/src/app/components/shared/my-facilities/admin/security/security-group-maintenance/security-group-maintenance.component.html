@@ -1,0 +1,61 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Security Group Maintenance</h5>	
+			<costar-search (changed)="searchTreeList($event)"></costar-search>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary" (click)="add()">Add</button>
+            <button class="btn btn-default" (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>
+			<button class="btn btn-default" (click)="exportTreeList()">Export</button>			
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<dx-tree-list
+            #TreeList
+            [dataSource]="groups"
+            [rootValue]="278"
+            keyExpr="id"
+            parentIdExpr="parentGroupId"
+            [columnAutoWidth]="true"
+            [wordWrapEnabled]="true"
+            [showBorders]="false"
+            [rowAlternationEnabled]="true" 
+            [autoExpandAll]="isExpanded">
+            <dxo-editing
+                mode="form"></dxo-editing>
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+            <dxi-column dataField="name" caption="Group Name"></dxi-column>
+            <dxi-column dataField="id" caption="Group ID" width="100"></dxi-column>                        
+            <dxi-column dataField="isPortfolio" caption="Portfolio" width="100"cellTemplate="portfolioTemplate" alignment="center" [allowHeaderFiltering]="false" [allowSorting]="false"></dxi-column>
+            <div *dxTemplate="let group of 'portfolioTemplate'">
+                <mat-icon *ngIf="group.data.isPortfolio">folder_outline</mat-icon>
+            </div>            
+            <dxi-column dataField="looksUp" width="100" cellTemplate="looksUpTemplate" alignment="center" [allowHeaderFiltering]="false" [allowSorting]="false"></dxi-column>
+            <div *dxTemplate="let group of 'looksUpTemplate'">
+                <mat-icon *ngIf="group.data.looksUp">arrow_upward</mat-icon>
+            </div>            
+            <dxi-column type="buttons" width="48">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let group of 'moreMenuTemplate'">
+		    			<button class="btn btn-link" (click)="$event.stopPropagation()" [matMenuTriggerFor]="UserMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #UserMoreMenu="matMenu">
+				    		<ul>                        
+		                        <li>Edit</li>
+		                        <li (click)="addSubGroup(group.data.id)">Add Sub Group</li>                        
+		                        <li>Assign Rights</li>
+                                <li>Assign Users</li>
+                                <li>Assign Modules</li>    
+                                <li>Assign Admin Links</li>                    
+		                    </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>	
+        </dx-tree-list>
+		
+	</div>
+	
+</div>

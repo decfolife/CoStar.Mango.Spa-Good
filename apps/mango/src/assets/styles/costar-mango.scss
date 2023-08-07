@@ -1,0 +1,184 @@
+/// -----------------------------------------------------------------------------
+/// DEPRECATION NOTICE
+///
+/// This stylesheet contains deprecated code that should not be used anymore.
+/// Please use the common library following the related documentation for the
+/// frontend SCSS architecture
+/// -----------------------------------------------------------------------------
+
+@import 'colors.scss';
+
+.cremModal svg.icon-brand-close.icon-brand-close-dims {
+  -webkit-transform: translateY(-4px) scale(1.5) !important;
+  transform: translateY(-4px) scale(1.5) !important;
+}
+
+.user-settings-dialog .modalContent {
+  .mat-tab-header {
+    border-top: 1px solid $gray;
+    border-bottom: 1px solid $gray;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .mat-tab-label-container {
+    background-color: $bodyBackgroundDarkGray;
+  }
+
+  div.mat-tab-body-wrapper {
+    padding: 6px 0px 0px 16px;
+  }
+
+  .mat-tab-group.mat-primary .mat-ink-bar,
+  .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: $costarDarkOrange;
+    height: 3px;
+  }
+
+  .mat-tab-label {
+    height: 36px;
+    width: auto !important;
+    min-width: auto !important;
+    padding: 0 16px;
+    color: $black;
+
+    .mat-tab-label-content {
+      line-height: 17px;
+    }
+  }
+
+  .mat-tab-label.mat-focus-indicator.mat-tab-label-active {
+    opacity: 1 !important;
+  }
+
+
+}
+
+.user-settings-dialog div#\'buttonTemplate\' {
+  display: flex;
+}
+
+.btn:focus,
+.btn.focus,
+.btn:active:focus,
+.btn:active.focus,
+.btn.active:focus,
+.btn.active.focus {
+  outline: none;
+}
+
+button.btn.btn-default,
+dx-drop-down-button.btn.btn-default {
+  background-color: $white;
+  border-color: $gray;
+  color: $costarRichGray;
+}
+
+button.btn.btn-default:hover,
+dx-drop-down-button.btn.btn-default:hover {
+  background-color: $lightGray;
+}
+
+#myCalculator {
+  position: fixed;
+  z-index: 999999999;
+  background-color: white;
+  border: 1px solid #d3d3d3;
+  width: 280px;
+  text-align: center;
+  top: 250px;
+  left: 70%;
+  box-shadow: 2px 4px 6px 0px #444;
+
+  div#divtitlebar {
+    height: 36px !important;
+    background: #1a386e !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 7px 5px;
+    align-content: center !important;
+  }
+  
+  #titlebarleft {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    padding-top: 3px !important;
+    background: none !important;
+    font-size: 13px !important;
+    font-family: Helvetica, sans-serif !important;
+  }
+  
+  .titlebarleft {
+    background: none !important;
+    font-size: 13px !important;
+    font-family: Helvetica, sans-serif !important;
+  }
+  
+  .titlebarright {
+    width: 55%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    background: none !important;
+    margin-right: 0px !important;
+  }
+
+  input.fa.fa-close {
+    opacity: 0 !important;
+  }
+
+  i.fa.fa-close {
+    position: relative !important;
+    left: 22px !important;
+    color: #fff;
+    padding-right: 10px;
+    padding-top: 5px;
+  }
+
+  i.fa.fa-arrows {
+    color: #fff;
+    font-size: 14px;
+    padding-left: 5px;
+    padding-top: 0;
+    margin-right: 10px;
+  }
+
+  tr.numericInput {
+    display: inline-block;
+    padding: 10px 5px;
+  }
+
+  label {
+    font: normal normal 12px Helvetica,Arial,sans-serif;
+    width: unset !important;
+  }
+
+  input {
+    background-color: #fff !important;
+    font-family: Arial !important;
+    font-size: 8pt !important ;
+    border: 1px solid #ccc !important;
+    padding: 1px 0 1px 3px !important;
+    outline: 0 !important;
+  }
+
+  .inputCheck {
+    input {
+      margin-right: 4px !important;
+    }
+  }
+}
+
+cs-search{
+  .mat-input-element {
+    &:focus{
+      border: 1px solid $color-brand-primary !important;
+      background-color: $white;
+      outline: 0;
+    }
+  }
+}

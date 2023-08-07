@@ -1,0 +1,31 @@
+<costar-popup>	
+	<popup-content>  
+		<p class="dbl-padding">Deleting this list view will affect the following users and groups who currently have shared access to this list view.  Are you sure you want to delete this list view?</p>
+		<dx-scroll-view height="100%" width="100%">  
+			<div class="dialog-table-wrapper list-view-sharing-rights">  
+				<dx-data-grid 
+					#privilegeGrid
+					[dataSource]="listViewPrivileges"
+					[showColumnLines]="false"
+					[showRowLines]="true"
+					[showBorders]="true"
+					[rowAlternationEnabled]="true" 
+					keyExpr="id">   					                                                             
+					<dxo-header-filter [visible]="true"></dxo-header-filter>   
+					<dxo-scrolling mode="virtual"></dxo-scrolling>
+					<dxo-sorting mode="single"></dxo-sorting>
+					<dxi-column dataField="entityType" caption="Type"></dxi-column>
+					<dxi-column dataField="entityName" caption="Name"></dxi-column>
+					<dxi-column dataField="privilegeType" caption="Right Type">
+					</dxi-column> 					
+				</dx-data-grid>                                                  
+			</div>
+		</dx-scroll-view>            
+	</popup-content>
+	<popup-footer>      
+		<popup-footer-right>
+			<button class="btn btn-default" (click)="cancel()">Cancel</button> 
+			<button class="btn btn-primary" (click)="deleteListView()">Delete</button> 
+		</popup-footer-right>
+	</popup-footer>
+</costar-popup>   

@@ -1,0 +1,23 @@
+<table>
+    <tr>
+        <td><button routerLink="../user-maintenance/user-maintenance">User Maintenance</button></td>
+        <td><button routerLink="../group-maintenance/group-maintenance">Group Maintenance</button></td>
+        <td><button routerLink="../portfolio-maintenance/portfolio-maintenance">Portfolio Maintenance</button></td>
+        <td><button routerLink="../object-maintenance">Object Maintenance</button></td>
+    </tr>
+
+    <tr>
+        <td><button (click)="archiveBuilding($event)">Archive Building</button></td>
+        <td><button (click)="archiveLease($event)">Archive Lease</button></td>
+    </tr>
+
+    <div>
+        <mango-object-actions #ObjectActions
+            [objectName]="objectName"
+            [objectTypeId]="objectTypeId"
+            [objectId]="objectId"
+            [objectTypeTypeId]="objectTypeTypeId"
+            [hiddenPremise]="hiddenPremise">
+        </mango-object-actions>
+    </div>
+</table>

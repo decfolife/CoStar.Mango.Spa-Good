@@ -1,0 +1,113 @@
+<div class="dropcards">
+  <div class="cardTypes">
+    <div class="card-containers"
+      cdkDropList
+      cdkDropListOrientation="vertical"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <div
+        class="categories-item portfolio dashboards-dragCardItems"
+        (cdkDropListDropped)="drop($event)"
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="{ card: card, index: i }"
+        *ngFor="let card of getCards()"
+        fxLayout="row"
+        fxFlex="1 1 50%"
+        cdkDrag
+        [ngClass]="{'width100': ((card.id=='upcoming_lease_expirations_card') || 
+                                 (card.id=='critical_dates_card') ||
+                                 (card.id=='new_leases_card') ||
+                                 (card.id=='recently_archived_leases_card') ||
+                                 (card.id=='portfolio_activity_feed_card')),
+                     'dispCardNone': ((card.id == 'financials_accounting_links_card') && 
+                                      (!displayFinanceCard)
+                                     )            
+                   }"
+      >
+        <ngx-skeleton-loader *ngIf="!card.dispCard" class="crem-button-shadow"  [theme]="{height: '462px', width: '100%'}"></ngx-skeleton-loader>
+        <div cdkDragHandle class="card-drag-handle" [ngClass]="{'dispCardNone': !card.dispCard}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="drag_handle" height="24px" viewBox="0 0 24 24" width="24px" fill="#BFBFBF"><path d="M0 0h24v24H0z" fill="none"/><path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z"/></svg>
+        </div>
+        <div class="switchCard" [ngSwitch]="card.id" [ngClass]="{'dispCardNone': !card.dispCard}" >
+
+            <div *ngSwitchCase="'upcoming_lease_expirations_card'">
+              <upcoming-lease-expirations-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </upcoming-lease-expirations-card>
+            </div>
+
+						<div *ngSwitchCase="'lease_expirations_card'">
+              <lease-expirations-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </lease-expirations-card>
+            </div>
+
+						<div *ngSwitchCase="'annual_expiration_rent_value_card'">
+              <annual-expiration-rent-value-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </annual-expiration-rent-value-card>
+            </div>
+
+						<div *ngSwitchCase="'critical_dates_card'">
+              <critical-dates-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </critical-dates-card>
+            </div>
+
+						<div *ngSwitchCase="'new_leases_card'">
+              <new-leases-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </new-leases-card>
+            </div>
+
+						<div *ngSwitchCase="'recently_archived_leases_card'">
+              <recently-archived-leases-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </recently-archived-leases-card>
+            </div>
+
+						<div *ngSwitchCase="'ownership_type_card'">
+              <ownership-type-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </ownership-type-card>
+            </div>
+
+						<div *ngSwitchCase="'building_type_card'">
+              <building-type-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </building-type-card>
+            </div>
+
+						<div *ngSwitchCase="'portfolio_activity_feed_card'">
+              <portfolio-activity-feed-card 
+                [card]="card"
+                (rowClickEvent)="portfolioRowClick($event)">
+              </portfolio-activity-feed-card>
+            </div>
+           
+            <div *ngSwitchCase="'buildings_by_state_card'">
+              <building-by-state-card 
+                [card]="card"
+              >
+              </building-by-state-card>
+            </div>
+            <div *ngSwitchCase="'financials_accounting_links_card'">
+              <financials-accounting-links-card 
+                [card]="card"
+              >
+              </financials-accounting-links-card>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>	

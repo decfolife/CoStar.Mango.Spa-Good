@@ -1,0 +1,56 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Group and User Blocked Admin Links</h5>	
+			<costar-search (changed)="searchDataGrid($event)"></costar-search>
+		</div>
+		<div class="controls-right">
+            <button class="btn btn-primary" (click)="exportDataGrid()">Export</button> 
+        </div>
+
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<dx-data-grid
+			class="list-page-data-grid"
+			#DataGrid
+			[dataSource]="data"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="true"
+			[filterSyncEnabled]="true"
+			(onContentReady)="onContentReady($event)"
+			[columnMinWidth]="10"	
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+			<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxo-column-chooser [allowSearch]="true" mode="select">
+			</dxo-column-chooser>
+			<dxo-paging [pageSize]="100"></dxo-paging>
+		    <dxo-pager 
+		        [showPageSizeSelector]="true"
+		        [allowedPageSizes]="[50, 100, 200, 500]"
+		        [showInfo]="true"
+		        [showNavigationButtons]="true">
+		    </dxo-pager>
+			<dxi-column *ngFor="let col of columns" 
+				[dataField]="col.dataField" 
+				[alignment]="col.alignment"
+                [visible]="col.visible"
+                [groupIndex]="col.groupIndex"
+				[dataType]="col.dataType"
+				[caption]="col.caption"
+				[fixed]="col.fixed"
+				[allowEditing]="col.allowEditing"
+				[cellTemplate]="col.cellTemplate"
+				>
+				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+			</dxi-column>
+		</dx-data-grid>
+	</div>
+</div>

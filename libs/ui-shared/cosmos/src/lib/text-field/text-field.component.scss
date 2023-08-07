@@ -1,0 +1,204 @@
+@import '../assets/styles/cosmos.scss';
+
+// None of these styles seem to be used. It's all getting overwritten by costar.scss
+cs-text-field {
+  font-family: $font-family-brand;
+  padding-bottom: $space-base;
+
+  .input-label {
+    margin-bottom: $space-x-small;
+    margin-right: $space-x-large;
+    .input-optional {
+      margin-left: $space-2-x-small;
+      color: $color-neutral-dark;
+    }
+
+    .input-required {
+      margin-left: $space-2-x-small;
+      color: $color-brand-red;
+    }
+  }
+
+  mat-form-field.mat-form-field.mat-form-field-appearance-outline {
+    .mat-form-field-wrapper {
+      margin: 0;
+      border-radius: $border-radius-buttons;
+
+      .mat-form-field-flex {
+        font-family: $font-family-brand;
+        margin: 0;
+        padding: 0 $space-x-small;
+        align-items: center;
+        height: $space-x-large;
+        font-size: $font-size-med;
+
+        .mat-form-field-outline {
+          top: 0;
+
+          .mat-form-field-outline-start {
+            border-top-left-radius: $border-radius-buttons;
+            border-bottom-left-radius: $border-radius-buttons;
+            border: $border-width-brand solid $color-neutral-medium;
+            border-right-style: none;
+          }
+
+          .mat-form-field-outline-gap {
+            border: $border-width-brand solid $color-neutral-medium;
+            border-right-style: none;
+            border-left-style: none;
+          }
+
+          .mat-form-field-outline-end {
+            border-top-right-radius: $border-radius-buttons;
+            border-bottom-right-radius: $border-radius-buttons;
+            border: $border-width-brand solid $color-neutral-medium;
+            border-left-style: none;
+          }
+        }
+
+        .mat-form-field-infix {
+          input {
+            text-overflow: ellipsis;
+
+            &::placeholder {
+              color: $color-neutral-dark;
+            }
+          }
+        }
+
+        .mat-form-field-suffix {
+          top: 0;
+
+          mat-icon {
+            color: $color-neutral-medium;
+          }
+        }
+      }
+
+      .mat-form-field-subscript-wrapper {
+        position: relative;
+        padding: 0;
+        margin-top: $space-2-x-small;
+        color: $color-neutral-dark;
+        font-size: $font-size-sm;
+      }
+
+      &:focus-within {
+        .mat-form-field-outline {
+          outline: none;
+          box-shadow: 0 0 4px 0 $color-brand-primary;
+
+          .mat-form-field-outline-start {
+            border-color: $color-brand-primary;
+          }
+
+          .mat-form-field-outline-gap {
+            border-color: $color-brand-primary;
+          }
+
+          .mat-form-field-outline-end {
+            border-color: $color-brand-primary;
+          }
+        }
+      }
+    }
+
+    &.disabled {
+      .mat-form-field-wrapper {
+        .mat-form-field-flex {
+          font-family: $font-family-brand;
+
+          .mat-form-field-outline {
+            .mat-form-field-outline-start {
+              border-color: $color-neutral-light !important;
+            }
+
+            .mat-form-field-outline-gap {
+              border-color: $color-neutral-light;
+            }
+
+            .mat-form-field-outline-end {
+              border-color: $color-neutral-light;
+            }
+          }
+
+          .mat-form-field-infix {
+            input {
+              &::placeholder {
+                color: $color-neutral-medium;
+              }
+            }
+          }
+
+          .mat-form-field-suffix {
+            mat-icon {
+              color: $color-neutral-light;
+            }
+          }
+        }
+      }
+    }
+
+    &.form-error {
+      .mat-form-field-wrapper {
+        padding-bottom: 0px !important;
+    
+        .mat-form-field-flex {
+          .mat-form-field-outline {
+            .mat-form-field-outline-start {
+              border-color: red !important;
+            }
+
+            .mat-form-field-outline-gap {
+              border-color: red;
+            }
+
+            .mat-form-field-outline-end {
+              border-color: red;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// This is needed until we clean up css that is overriding
+// Form Validation
+:host ::ng-deep .form-error {
+	.mat-form-field-wrapper {
+		padding-bottom: 0px !important;
+
+		.mat-form-field-flex {
+			.mat-form-field-outline {
+				.mat-form-field-outline-start {
+					border-color: red !important;
+				}
+				.mat-form-field-outline-gap {
+					border-color: red !important;
+				}
+				.mat-form-field-outline-end {
+					border-color: red !important;
+				}
+			}
+		}
+	}
+}
+
+.mat-icon {
+  right: unset !important;
+}
+
+.mat-icon-button {
+  top: 0px !important;
+
+  .mat-icon {
+    top: unset !important;
+  }
+}
+
+:host ::ng-deep .mat-form-field-suffix {
+  .mat-icon {
+    top: 3px !important;
+  }
+}

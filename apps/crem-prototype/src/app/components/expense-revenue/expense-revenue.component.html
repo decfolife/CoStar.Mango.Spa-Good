@@ -1,0 +1,146 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<dx-select-box 
+				[dataSource]="chargeTypes"
+                displayExpr="display"
+                valueExpr="value"
+                [(value)]="chargeType"
+                (onValueChanged)="filterGLEvents($event)">
+            </dx-select-box>	
+            <portfolio-menu *ngIf="!isLease" (portfolioChanged)="portfolioChanged($event)" ></portfolio-menu>		      			 		
+			<costar-search (changed)="searchDataGrid($event)"></costar-search>
+		</div>
+		<div class="controls-right">
+			<button class="btn btn-primary-outline" (click)="showFilterBuilder()">
+				Filters 
+				<div *ngIf="appliedFilterCount > 0 && !showClearFilters" class="badge primary costar std-left-margin" (mouseover)="toggleClearFilters()">
+					{{appliedFilterCount}}
+				</div>
+				<div *ngIf="appliedFilterCount > 0 && showClearFilters" class="badge primary costar std-left-margin underline" (mouseout)="toggleClearFilters()" (click)="clearGridFilters($event)">
+					Clear {{appliedFilterCount}} Filters
+				</div>
+			</button>			
+			<button class="btn btn-primary-outline" [matMenuTriggerFor]="listMenu">More <fa-icon icon="caret-down"></fa-icon></button>
+			<mat-menu #listMenu="matMenu">
+				<button mat-menu-item *ngIf="isLease">Change Default Vendor</button>
+				<button mat-menu-item *ngIf="isLease">Change Default Customer</button>
+				<button mat-menu-item>Edit Selected</button>
+				<button mat-menu-item>Delete Selected</button>
+				<button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>    
+				<button mat-menu-item (click)="showColumnChooser()">Column Chooser</button>          
+				<button mat-menu-item (click)="exportDataGrid()">Export</button>   
+			</mat-menu>				
+			<button class="btn btn-primary" [matMenuTriggerFor]="addExpenseMenu"><fa-icon icon="plus"></fa-icon> Add</button>
+			<mat-menu #addExpenseMenu="matMenu">
+				<button mat-menu-item [routerLink]="['../addexpense']">Expense</button>
+				<button mat-menu-item [routerLink]="['../addrevenue']">Revenue</button>
+			</mat-menu>
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<dx-data-grid class="list-page-data-grid"
+			id="chargeGrid"
+			#expensesContainerDataGrid
+			[dataSource]="filteredGLEvents"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true" 
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="true"
+			[filterSyncEnabled]="true"
+			(onContentReady)="calculateAppliedFilterCount($event)"
+			[columnMinWidth]="10"
+			[masterDetail]="{ enabled: true, template: 'detail' }"
+			(onRowClick)="fetchScheduledTransactions($event)"
+		>   			
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			<!-- <dxo-scrolling mode="virtual"></dxo-scrolling> -->
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxo-column-chooser [allowSearch]="true" mode="select">
+			</dxo-column-chooser>
+			<dxo-paging [pageSize]="100"></dxo-paging>
+		    <dxo-pager 
+		        [showPageSizeSelector]="true"
+		        [allowedPageSizes]="[50, 100, 200, 500]"
+		        [showInfo]="true"
+		        [showNavigationButtons]="true">
+		    </dxo-pager>
+			<dxo-filter-builder-popup 
+				[width]="600"	
+				[height]="600"			
+				[(visible)]="filterBuilderVisible">
+			</dxo-filter-builder-popup>
+			<dxi-column dataField="leaseID" caption="System Lease ID" *ngIf="!isLease"></dxi-column> 
+			<dxi-column dataField="leaseName" [groupIndex]="0"  *ngIf="!isLease"></dxi-column>
+			<dxi-column dataField="buildingName" [visible]="false"></dxi-column> 
+			<dxi-column dataField="address" [visible]="false"></dxi-column> 
+			<dxi-column dataField="city" [visible]="false"></dxi-column> 
+			<dxi-column dataField="state" [visible]="false"></dxi-column> 
+			<dxi-column dataField="country" [visible]="false"></dxi-column> 
+			<dxi-column dataField="portfolio" [visible]="false"></dxi-column> 
+			<dxi-column dataField="name" caption="Charge Name"></dxi-column> 
+			<dxi-column dataField="accountName" [groupIndex]="1" *ngIf="!isLease"></dxi-column>
+			<dxi-column dataField="accountName" [groupIndex]="0" *ngIf="isLease"></dxi-column>
+			<dxi-column dataField="startDate" dataType="date" alignment="right"></dxi-column>
+			<dxi-column dataField="endDate" dataType="date" alignment="right"></dxi-column>
+			<dxi-column dataField="frequency" alignment="center"></dxi-column>
+			<dxi-column dataField="amount" dataType="number" format="currency">
+				<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+			</dxi-column>
+			<dxi-column dataField="currency" alignment="center"></dxi-column>
+			<dxi-column dataField="vendor"></dxi-column>
+			<dxi-column dataField="status"></dxi-column>
+			<dxi-column dataField="category" [visible]="false"></dxi-column> 
+			<dxi-column dataField="accountCode" [visible]="false"></dxi-column> 
+			<!-- <dxi-column cellTemplate="moreColumnTemplate">		        
+		    </dxi-column> -->
+		    <dxi-column type="buttons" width="60">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'">
+		    			<button class="btn btn-link" (click)="$event.stopPropagation()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #expenseMoreMenu="matMenu">
+				    		<ul>                        
+		                        <li>Edit Expense</li>
+		                        <li>Delete Expense</li>                        
+		                    </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>
+			<div *dxTemplate="let glEvent of 'detail'">
+		        <h6>Scheduled Transactions</h6>      
+		        <dx-data-grid 
+                    [dataSource]="glEvent.data.transactions"
+                    [showBorders]="true"
+                    [showColumnLines]="false"
+					[showRowLines]="false"
+					[rowAlternationEnabled]="true" 
+					[allowColumnResizing]="true"
+					[allowColumnReordering]="true"
+                >
+                    <dxi-column dataField="dueByDate" dataType="date" alignment="center"></dxi-column>
+                    <dxi-column dataField="amount" dataType="number" format="currency">
+						<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+					</dxi-column>                  
+                    <dxi-column dataField="status" alignment="center"></dxi-column>                    
+                </dx-data-grid>
+		    </div>
+		    <!-- <div *dxTemplate="let data of 'moreColumnTemplate'">
+		    	<button class="btn btn-link" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    	<mat-menu #expenseMoreMenu="matMenu">
+		    		<ul>                        
+                        <li>Edit Expense</li>
+                        <li>Delete Expense</li>                        
+                    </ul>
+		    	</mat-menu>
+		    </div> -->
+		</dx-data-grid>
+	</div>
+</div>

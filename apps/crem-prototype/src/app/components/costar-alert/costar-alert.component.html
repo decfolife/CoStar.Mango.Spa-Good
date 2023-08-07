@@ -1,0 +1,24 @@
+<dx-popup
+	#AlertPopup
+    [width]="width"
+    [height]="height"
+    [showTitle]="true"
+    [title]="title"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false"
+    [(visible)]="visible">
+    <div *dxTemplate="let data of 'content'" class="popup-no-padding">
+        <costar-popup>
+            <popup-content>
+                <p class="no-margins">{{message}}</p>
+            </popup-content>
+            <popup-footer>
+                <popup-footer-right>
+                    <button class="btn btn-default" (click)="alertCancel()">{{cancelButtonText}}</button> 
+                    <button class="btn btn-primary" (click)="alertOk()">{{okButtonText}}</button> 
+                </popup-footer-right>
+            </popup-footer>
+        </costar-popup>        
+    </div>
+</dx-popup>	
+

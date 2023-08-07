@@ -1,0 +1,384 @@
+@use "../../../../common/src/styles" as *;
+
+:host header {
+  gap: 10px;
+  height: 48px;
+  display: grid;
+  position: relative;
+  grid-template-rows: 0;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas: "brand search profile";
+  @include costar(background-color, light);
+
+  // WCAG 2.0 Skip to Main Content
+  .skip-to-main {
+    opacity: 0;
+    left: -9999px;
+    z-index: 999;
+    position: absolute;
+    @include costar(padding-left, 2);
+    @include costar(padding-right, 2);
+    @include costar(padding-top, 1);
+    @include costar(padding-bottom, 1);
+    @include costar(margin-top, 2);
+    @include costar(color, dark);
+    @include costar(font-size, small);
+    @include costar(border-radius, small);
+    @include costar(background-color, light);
+    &:focus {
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 1;
+    }
+  }
+
+  .brand, .search, .profile {
+    height: 48px;
+    flex-grow: 1;
+  }
+
+  // BRAND
+  .brand {
+    grid-area: brand;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    .glyph {
+      width: 143px;
+      height: 40px;
+      margin-top: -4px; // Corrects vertical positioning
+      &.phone {
+        display: none;
+      }
+    }
+    .wordmark {
+      @include costar(font-size, h1);
+      @include costar(color, primary);
+      font-weight: 100;
+      line-height: 32px;
+      border-left: 2px solid map-get($color, color, gray05);
+      border-left: 2px solid var(--costar-color-gray05);
+      margin-left: 0.65rem; // mimics 10px given the root font size
+      padding-left: 0.60rem;
+      height: 32px;
+    }
+  }
+
+  // SEARCH
+  .search {
+    grid-area: search;
+    justify-self: end; // TODO: Remove once fully migrated to MangoSPA, this was added to make it look seamless
+    width: 100%;
+    height: 52px;
+    max-width: 480px;
+    padding: 10px 0px;
+    margin: 0 16px; // TODO: Remove once fully migrated to MangoSPA, this was added to make it look seamless
+
+    .input-container {
+      height: 32px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 40px 1fr 145px;
+      grid-template-rows: 0;
+      grid-template-areas: "submit input select";
+      border: 2px solid map-get($color, color, gray05);
+      border: 2px solid var(--costar-color-gray05);
+      // Activate Focus
+      &:active, &:focus, &:focus-within {
+        border: 2px solid map-get($color, color, primary-light);
+        border: 2px solid var(--costar-color-primary-light);
+      }
+      // Direct descendant no matter what is implemented
+      .input {
+        grid-area: input;
+      }
+      .select {
+        grid-area: select;
+      }
+      .submit{
+        grid-area: submit;
+        height: 28px;
+        line-height: 0rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 2px solid transparent;
+        @include costar(background-color, gray06);
+        @include costar(transition, fast);
+        &:hover {
+          @include costar(background-color, gray05);
+        }
+        &:active, &:focus, &:focus-within {
+          @include costar(background-color, gray05);
+          border-right: 2px solid map-get($color, color, primary-light);
+          border-right: 2px solid var(--costar-color-primary-light);
+        }
+      }
+    }
+
+    // Adjust Material Styling for Search Input
+    ::ng-deep { // Pierce encapsulation without affecting other components
+      .mat-form-field-wrapper {
+        margin: 0px;
+        > .mat-form-field-flex { // Search input field
+          padding-left: 5px; // TODO: Remove once fully migrated to MangoSPA, this was added to make it look seamless
+        }
+        .mat-form-field-outline-start,
+        .mat-form-field-outline-end {
+          border: unset;
+        }
+        .mat-form-field-infix {
+          height: 28px;
+          border-top: 1px solid transparent;
+          border-left: 2px solid transparent; // Doesn't affects select size when :focus
+          .mat-form-field-label {
+            display: none; // TODO: We're using native elements
+          }
+          input::placeholder{
+            @include costar(color, gray02);
+          }
+          &:has( > select){
+            padding-left: 0.5rem;
+            &:after{
+              margin-right: 0.5rem;
+            }
+            @include costar(font-size, small);
+            @include costar(transition, faster);
+            &:active, &:focus, &:focus-within { // TODO: Not ideal SCSS, but there is a lot of overriding from global stylesheets
+              @include costar(background-color, gray05);
+              border-left: 2px solid map-get($color, color, primary-light);
+              border-left: 2px solid var(--costar-color-primary-light);
+            }
+
+          }
+        }
+        .mat-form-field-underline {
+          display: none; // TODO: We're using native elements
+        }
+        select {
+          top: -1.2em; // TODO: Magic number, weird fix for material select when label is not present
+        }
+      }
+    }
+
+  }
+
+  // PROFILE & HELP
+  .profile {
+    grid-area: profile;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    // Client Logo
+    .client-logo{
+      position: relative;
+      width: 160px;
+      height: 48px;
+      margin-right: 1.5rem;
+
+      .image {
+        width: 160px;
+        height: 48px;
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+      .edit {
+        top: 0;
+        left: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        text-align: right;
+        position: absolute;
+        @include costar(color, primary-light);
+        @include costar(transition, faster);
+        ::ng-deep {
+          crem-icon {
+            @include costar(margin, 1);
+            @include costar(padding, 1);
+          }
+        }
+        &:hover {
+          opacity: 1;
+          @include background-opacity(map-get($color, color, light), 0.9);
+          ::ng-deep {
+            crem-icon {
+              @include costar(background-color, light);
+            }
+          }
+        }
+      }
+      // Activate Focus
+      &:active, &:focus, &:focus-within {
+        .edit {
+          opacity: 1;
+          @include background-opacity(map-get($color, color, light), 0.9);
+          ::ng-deep {
+            crem-icon {
+              border: 2px solid map-get($color, color, primary-light);
+              border: 2px solid var(--costar-color-primary-light);
+            }
+          }
+        }
+      }
+    }
+
+    // Resource Center
+    .user,
+    .resources {
+      display: flex;
+      position: relative;
+      align-items: center;
+      justify-items: center;
+      @include costar(margin-right, 3);
+      > a,
+      > button {
+        height: 36px;
+        width: 36px;
+        display: flex;
+        align-items: center;
+        min-width: 0; // TODO: Global styles interfering, fix overrides
+        justify-content: center;
+        @include costar(color, primary);
+        @include costar(border-radius, round);
+        border: 3px solid map-get($color, color, primary);
+        border: 3px solid var(--costar-color-primary);
+        &:hover {
+          @include costar(color, primary-light);
+          border: 3px solid map-get($color, color, primary-light);
+          border: 3px solid var(--costar-color-primary-light);
+          text-decoration: none;
+        }
+        &:active, &:focus, &:focus-within {
+          @include costar(box-shadow, primary);
+        }
+      }
+    }
+    .resources{
+      .indicator{ // Attach 'Pendo' tooltip to this element
+        position: absolute;
+        top: 0px;
+        left: -15px;
+      }
+    }
+
+  }
+
+   // TODO: Simplify grid columns and other values once fully migrated to MangoSpa
+  // RESPONSIVE DESIGN
+  @include media("<desktop-xl") {
+    grid-template-columns: 1fr 1fr 480px;
+    .brand {
+      .wordmark {
+        display: none;
+      }
+    }
+  }
+  @include media("<=desktop", "portrait") {
+    grid-template-columns: 65px 1fr 45px;
+    gap: 1.5rem;
+    .brand {
+      .wordmark {
+        display: none;
+      }
+      .glyph {
+        width: auto;
+        display: none;
+        &.phone {
+          display: block;
+        }
+      }
+    }
+    .search {
+      width: 100%;
+      ::ng-deep{
+        mat-form-field { // Hide object type dropdown
+          display: none;
+        }
+      }
+    }
+    .profile {
+      .client-logo,
+      .resources {
+        display: none;
+      }
+    }
+  }
+  @include media("<=desktop", "landscape") {
+    grid-template-columns: 145px 1fr 1fr;
+    .brand {
+      .wordmark {
+        display: none;
+      }
+    }
+    .search {
+      width: 100%;
+    }
+  }
+
+}
+
+// Horrible solution, thanks to Angular Material
+::ng-deep {
+  .user-menu,
+  .resources-menu {
+    width: 210px;
+    min-width: 210px;
+    min-height: 42px;
+    @include costar(border, gray04);
+    ul {
+      > li {
+        padding: unset !important;
+        a,
+        &.info {
+          width: 100%;
+          height: 36px;
+          padding: 10px;
+          padding: 10px 20px !important;
+          @include costar(color, primary);
+          @include costar(line-height, small);
+          @include costar(transition, faster);
+          @include costar(background-color, light);
+          border: 2px solid transparent;
+          &:active, &:focus, &:focus-within {
+            box-shadow: unset;
+            @include costar(background-color, gray05);
+            @include costar(border-radius, small);
+            border: 2px solid map-get($color, color, primary-light);
+            border: 2px solid var(--costar-color-primary-light);
+          }
+          &:hover{
+            box-shadow: unset;
+            @include costar(background-color, gray06, $important: true);
+          }
+        }
+      }
+    }
+    ul {
+      &.details { // Use details only for options without links
+        @include costar(padding-bottom, 2);
+        @include costar(border-bottom, gray03);
+        li {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          height: 14px;
+          cursor: default;
+          padding: 0px 10px !important; // TODO: To mimic V06, improve after full migration to mango using tokens
+          font-size: 12px;
+          @include costar(color, gray02);
+          @include costar(line-height, small);
+          &:hover {
+            background-color: unset !important;
+          }
+        }
+        li:not(:last-child) {
+          margin-bottom: 3px; // TODO: To mimic V06, improve after full migration to mango using tokens
+        }
+      }
+    }
+
+  }
+}

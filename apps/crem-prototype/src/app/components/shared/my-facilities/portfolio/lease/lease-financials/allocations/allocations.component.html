@@ -1,0 +1,242 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin" *ngIf="!isChargeAllocations">Lease Allocations</h5>	
+		</div>
+		<div class="controls-right">			
+			<button class="btn btn-default" (click)="addAllocation()">Add</button>		
+			<button class="btn btn-default" (click)="revertSettings()">Cancel</button>		
+			<button class="btn btn-primary" *ngIf="!isChargeAllocations" (click)="saveSettings()">Save</button>		
+			<button class="btn btn-default" *ngIf="isChargeAllocations" (click)="saveSettings()">Apply</button>		
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<dx-data-grid
+			#AllocationDataGrid
+			[dataSource]="allocations"
+			[showColumnLines]="false"
+			[showRowLines]="true"
+			[showBorders]="true"
+			[rowAlternationEnabled]="true"
+			(onToolbarPreparing)="onToolbarPreparing($event)" 
+		>	
+			<dxo-editing mode="batch"
+				[allowUpdating]="true"
+				[selectTextOnEditStart]="true"
+				[startEditAction]="startEditAction"
+				[allowDeleting]="true"              
+				[useIcons]="true">
+			</dxo-editing>				
+		    <dxo-scrolling mode="virtual"></dxo-scrolling>
+		    <dxi-column dataField="alias" editCellTemplate="aliasTemplate"></dxi-column>
+		    <dxi-column dataField="segment1" editCellTemplate="segmentOneTemplate"></dxi-column>
+		    <dxi-column dataField="segment2" editCellTemplate="segmentTwoTemplate"></dxi-column>
+		    <dxi-column dataField="segment3" editCellTemplate="segmentThreeTemplate"></dxi-column>
+		    <dxi-column dataField="segment4" editCellTemplate="segmentFourTemplate"></dxi-column>		   
+		    <dxi-column dataField="costPercent" caption="Cost %" dataType="number">
+		    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		    </dxi-column>
+		    <dxi-column dataField="spacePercent" caption="Space %" dataType="number">
+		    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		    </dxi-column>
+		    <dxi-column dataField="headCount" dataType="number">
+		    	<dxo-format type="fixedPoint" [precision]="0"></dxo-format>
+		    </dxi-column>
+		    <dxi-column dataField="status"></dxi-column>
+		    <dxi-column dataField="useType"></dxi-column>		    
+		    <div *dxTemplate="let cellInfo of 'aliasTemplate'">
+				<dx-drop-down-box
+				    [value]="cellInfo.value"
+				    valueExpr="id"
+				    displayExpr="alias"								    
+				    [dataSource]="aliases"								   
+				    >
+				    <div *dxTemplate="let data of 'content'">
+					    <dx-data-grid
+							[dataSource]="aliases"
+							[hoverStateEnabled]="true"
+							[filterRow]="{ visible: true }"
+							[showColumnHeaders]="false"
+							[scrolling]="{ mode: 'virtual' }"
+							[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"										
+							keyExpr="id"
+							
+							(onSelectionChanged)="cellInfo.setValue($event.selectedRowsData[0].alias)"
+							[columnAutoWidth]="true"
+							[allowColumnResizing]="true"
+							>
+							<dxo-selection
+					            showCheckBoxesMode="none"
+					            mode="single"
+					        ></dxo-selection>
+					        <dxi-column
+							    dataField="alias"
+							    caption="Alias">
+							</dxi-column>							
+					    </dx-data-grid>
+					</div>	
+				</dx-drop-down-box>
+			</div>	
+			<div *dxTemplate="let cellInfo of 'segmentOneTemplate'">
+				<dx-drop-down-box
+				    [value]="cellInfo.value"
+				    valueExpr="id"
+				    displayExpr="allocCenter"								    
+				    [dataSource]="segmentOnes"								   
+				    >
+				    <div *dxTemplate="let data of 'content'">
+					    <dx-data-grid
+							[dataSource]="segmentOnes"
+							[hoverStateEnabled]="true"
+							[filterRow]="{ visible: true }"
+							[showColumnHeaders]="true"
+							[scrolling]="{ mode: 'virtual' }"
+							[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"										
+							keyExpr="id"							
+							(onSelectionChanged)="cellInfo.setValue($event.selectedRowsData[0].allocCenter)"
+							[columnAutoWidth]="true"
+							[allowColumnResizing]="true"
+							>
+							<dxo-selection
+					            showCheckBoxesMode="none"
+					            mode="single"
+					        ></dxo-selection>
+					        <dxi-column
+							    dataField="allocCenter"
+							    caption="Center">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocCode"
+							    caption="Code">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocNumber"
+							    caption="Number">
+							</dxi-column>							
+					    </dx-data-grid>
+					</div>	
+				</dx-drop-down-box>
+			</div>		
+			<div *dxTemplate="let cellInfo of 'segmentTwoTemplate'">
+				<dx-drop-down-box
+				    [value]="cellInfo.value"
+				    valueExpr="id"
+				    displayExpr="allocCenter"								    
+				    [dataSource]="segmentTwos"								   
+				    >
+				    <div *dxTemplate="let data of 'content'">
+					    <dx-data-grid
+							[dataSource]="segmentTwos"
+							[hoverStateEnabled]="true"
+							[filterRow]="{ visible: true }"
+							[showColumnHeaders]="true"
+							[scrolling]="{ mode: 'virtual' }"
+							[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"										
+							keyExpr="id"							
+							(onSelectionChanged)="cellInfo.setValue($event.selectedRowsData[0].allocCenter)"
+							[columnAutoWidth]="true"
+							[allowColumnResizing]="true"
+							>
+							<dxo-selection
+					            showCheckBoxesMode="none"
+					            mode="single"
+					        ></dxo-selection>
+					        <dxi-column
+							    dataField="allocCenter"
+							    caption="Center">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocCode"
+							    caption="Code">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocNumber"
+							    caption="Number">
+							</dxi-column>							
+					    </dx-data-grid>
+					</div>	
+				</dx-drop-down-box>
+			</div>		
+			<div *dxTemplate="let cellInfo of 'segmentThreeTemplate'">
+				<dx-drop-down-box
+				    [value]="cellInfo.value"
+				    valueExpr="id"
+				    displayExpr="allocCenter"								    
+				    [dataSource]="segmentThrees"								   
+				    >
+				    <div *dxTemplate="let data of 'content'">
+					    <dx-data-grid
+							[dataSource]="segmentThrees"
+							[hoverStateEnabled]="true"
+							[filterRow]="{ visible: true }"
+							[showColumnHeaders]="true"
+							[scrolling]="{ mode: 'virtual' }"
+							[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"										
+							keyExpr="id"							
+							(onSelectionChanged)="cellInfo.setValue($event.selectedRowsData[0].allocCenter)"
+							[columnAutoWidth]="true"
+							[allowColumnResizing]="true"
+							>
+							<dxo-selection
+					            showCheckBoxesMode="none"
+					            mode="single"
+					        ></dxo-selection>
+					        <dxi-column
+							    dataField="allocCenter"
+							    caption="Center">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocCode"
+							    caption="Code">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocNumber"
+							    caption="Number">
+							</dxi-column>							
+					    </dx-data-grid>
+					</div>	
+				</dx-drop-down-box>
+			</div>		
+			<div *dxTemplate="let cellInfo of 'segmentFourTemplate'">
+				<dx-drop-down-box
+				    [value]="cellInfo.value"
+				    valueExpr="id"
+				    displayExpr="allocCenter"								    
+				    [dataSource]="segmentFours"								   
+				    >
+				    <div *dxTemplate="let data of 'content'">
+					    <dx-data-grid
+							[dataSource]="segmentFours"
+							[hoverStateEnabled]="true"
+							[filterRow]="{ visible: true }"
+							[showColumnHeaders]="true"
+							[scrolling]="{ mode: 'virtual' }"
+							[elementAttr]="{ style: 'max-height: 345px;', class : 'select-box-dropdown-data-grid'}"										
+							keyExpr="id"							
+							(onSelectionChanged)="cellInfo.setValue($event.selectedRowsData[0].allocCenter)"
+							[columnAutoWidth]="true"
+							[allowColumnResizing]="true"
+							>
+							<dxo-selection
+					            showCheckBoxesMode="none"
+					            mode="single"
+					        ></dxo-selection>
+					        <dxi-column
+							    dataField="allocCenter"
+							    caption="Center">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocCode"
+							    caption="Code">
+							</dxi-column>							
+							<dxi-column
+							    dataField="allocNumber"
+							    caption="Number">
+							</dxi-column>							
+					    </dx-data-grid>
+					</div>	
+				</dx-drop-down-box>
+			</div>			
+		</dx-data-grid>		
+	</div>		
+</div>

@@ -1,0 +1,72 @@
+<div class="measurement-table-wrapper">
+	<h6>Measurement Summary</h6>
+
+	<dx-data-grid class="accounting-measurement-grid"
+		#MeasurementsDataGrid
+		id="MeasurementsDataGrid"
+		[dataSource]="measurements"
+		[showColumnLines]="false"
+		[showRowLines]="true"
+		[showBorders]="true"
+		[rowAlternationEnabled]="true"
+		[allowColumnReordering]="true"
+	  [allowColumnResizing]="true"
+	  [columnAutoWidth]="true"
+    [wordWrapEnabled]="true"
+    [width]="'100%'"
+		(onRowClick)="navigateToMeasurement($event)"
+	>
+		<dxo-selection mode="single"></dxo-selection>
+		<dxo-scrolling mode="virtual" columnRenderingMode="virtual"></dxo-scrolling>
+
+		<dxi-column dataField="measureIndex" caption="#"></dxi-column>
+		<dxi-column dataField="measureType" caption="Measure Event"></dxi-column>
+		<dxi-column dataField="status"></dxi-column>
+		<dxi-column dataField="beginDate"></dxi-column>
+		<dxi-column dataField="endDate"></dxi-column>
+		<dxi-column dataField="termYears" caption="Term (Years)" dataType="number"></dxi-column>
+		<dxi-column dataField="numberPeriods" caption="# of Periods" dataType="number"></dxi-column>
+
+		<dxi-column dataField="totalAmount" caption="Total Amount (USD)" dataType="number">
+			<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		</dxi-column>
+
+		<dxi-column dataField="discountRate" dataType="number" format="percent"></dxi-column>
+
+		<dxi-column dataField="presentValue" caption="Present Value (USD)" dataType="number">
+			<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		</dxi-column>
+
+		<dxi-column dataField="directCosts" caption="Direct Costs (USD)" dataType="number">
+			<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		</dxi-column>
+
+		<dxi-column dataField="beginningAssetBalance" dataType="number">
+			<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		</dxi-column>
+
+		<dxi-column dataField="beginningLiabilityBalance" dataType="number">
+			<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		</dxi-column>
+
+		<dxi-column dataField="levelExpense" caption="Level Expense (USD)" dataType="number">
+			<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		</dxi-column>
+
+		<dxi-column dataField="assetAmortization" dataType="number">
+			<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+		</dxi-column>
+
+		<dxi-column dataField="localCurrency" caption="Currency"></dxi-column>
+		<dxi-column dataField="reportingException"></dxi-column>
+		<dxi-column dataField="chargeType"></dxi-column>
+		<dxi-column dataField="isImpaired" caption="Impaired"></dxi-column>
+		<dxi-column dataField="comment"></dxi-column>
+		<dxi-column dataField="lastModifiedBy"></dxi-column>
+		<dxi-column dataField="lastModifiedDate"></dxi-column>
+	</dx-data-grid>
+</div>
+
+<div class="amortization-table-wrapper">
+	<router-outlet></router-outlet>
+</div>

@@ -1,0 +1,40 @@
+<costar-popup>
+	<popup-content class="dbl-padding">		
+		<div class="last-note-wrapper">
+			<div class="previous-note-header">
+				<h6 class="inline">Previous Notes</h6>
+				<div class="dbl-left-margin blue clickable" (click)="toggleMoreNotes()"><span *ngIf="!showMoreNotes">Show more</span><span *ngIf="showMoreNotes">Show less</span></div>
+			</div>
+			<dx-scroll-view width="100%" height="100%" class="previous-notes">
+				<div *ngIf="showMoreNotes">
+					<div class="note" *ngFor="let note of allNotes">			        			
+	        			<div><b>{{note.noteAuthor}}</b> | {{note.noteWhen}} | {{note.noteDate}}:</div>
+	        			<div class="">{{note.note}}</div>
+	        		</div>			        			
+				</div>	        				
+        		<div class="note" *ngIf="!showMoreNotes">			        			
+        			<div><b>{{allNotes[0].noteAuthor}}</b> | {{allNotes[0].noteWhen}} | {{allNotes[0].noteDate}}:</div>
+        			<div class="">{{allNotes[0].note}}</div>
+        		</div>			        		
+        	</dx-scroll-view>
+		</div>
+		<div class="new-note-wrapper">
+			<h6>New Note</h6>
+			<dx-select-box
+                [items]="noteTypes"
+                placeholder="Note Type"
+                [showClearButton]="false"
+            ></dx-select-box>
+            <dx-text-area
+		        [height]="90"
+		        placeholder="Note">
+		    </dx-text-area>
+		</div>	
+	</popup-content>
+	<popup-footer>		
+		<popup-footer-right>
+			<button class="btn btn-default" (click)="cancel()">Cancel</button> 
+    		<button class="btn btn-primary" (click)="save()">Save</button> 
+		</popup-footer-right>
+	</popup-footer>
+</costar-popup>

@@ -1,0 +1,20 @@
+<div class="list-page no-margin-wrapper">
+	<div class="card page-card">
+		<div class="card-header">
+			<div class="card-header-control-wrapper">
+				<mat-button-toggle-group name="view" class="no-margins">
+					<mat-button-toggle [routerLink]="['marketing-center']" [routerLinkActive]="['mat-button-toggle-checked']">Marketing Center</mat-button-toggle>
+					<mat-button-toggle [routerLink]="['impressions']" [routerLinkActive]="['mat-button-toggle-checked']">Impressions</mat-button-toggle>
+					<mat-button-toggle [routerLink]="['detailviews']" [routerLinkActive]="['mat-button-toggle-checked']">Detail Views</mat-button-toggle>
+					<mat-button-toggle [routerLink]="['duration']" [routerLinkActive]="['mat-button-toggle-checked']">Duration</mat-button-toggle>
+				</mat-button-toggle-group>
+			</div>
+			<div class="card-header-control-wrapper">
+				<button class="btn btn-primary">Add a Listing</button>
+			</div>
+		</div>
+		<div class="card-block">
+			<router-outlet></router-outlet>
+		</div>
+	</div>
+</div>

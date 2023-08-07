@@ -1,0 +1,121 @@
+@use 'src/assets/styles/colors';
+
+:host ::ng-deep {
+  h6 {
+    font: 500 16px "Helvetica Neue","Segoe UI",Helvetica,Verdana,sans-serif !important;
+
+    .clickable {
+      color: colors.$costarBlue;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 400;
+      margin-left: 16px;
+    }
+  }
+
+  .dx-selectbox {
+    margin-bottom: 8px;
+
+    &.error {
+      border-color: colors.$costarError;
+    }
+  }
+
+  .dx-texteditor {
+    .dx-texteditor-input {
+      font: 14px "Helvetica Neue","Segoe UI",Helvetica,Verdana,sans-serif !important;
+    }
+
+    &.dx-editor-outlined {
+      border-radius: 2px;
+    }
+
+    &.error {
+      border-color: colors.$costarError;
+    }
+  }
+
+  .dx-popup-wrapper {
+    .dx-popup-normal.dx-popup-draggable {
+      border-radius: 2px;
+      padding: 0 24px 24px 24px;
+    }
+  }
+
+  .dx-dropdowneditor-icon {
+    color: colors.$costarBlue;
+  }
+
+  .popup-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .remaining {
+      margin-top: 6px;
+    }
+
+    .popup-content {
+      height: 100%;
+      display: flex; 
+      flex-direction: column;
+      .previous-notes {
+        margin-bottom: 16px;
+        padding-top: 16px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction:column;
+        .note-header {
+          strong {
+            font-weight: 800;
+          }
+        }
+
+        .note-content {
+          margin-bottom: 16px;
+          white-space: pre-wrap;
+        }
+
+        dx-scroll-view {
+          flex-grow: 1;
+        }
+      }
+    }
+
+    .popup-footer {
+      text-align: right;
+
+
+      .dx-button {
+        border-radius: 2px;
+        font-family: Helvetica;
+        font-size: 14px;
+        margin-left: 16px;
+        padding: 8px 0;
+        text-align: center;
+        transition: all .25s;
+
+        &.primary {
+          background-color: colors.$costarBlue;
+          color: colors.$white !important; /* Because site-wide decided to use important. */
+
+          &:hover,
+          &:active {
+            background-color: darken(colors.$costarBlue, 5%);
+          }
+        }
+      }
+    }
+
+  }
+}
+
+#new-note-section {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 2;
+}
+
+#previous-note-scroll {
+  padding-right: 15px
+}

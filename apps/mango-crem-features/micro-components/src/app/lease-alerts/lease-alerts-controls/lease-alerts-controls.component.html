@@ -1,0 +1,143 @@
+<div class="list-page">
+  <div class="list-page-controls-wrapper">
+    <div class="controls-left">
+      <h5 class="dbl-right-margin" *ngIf="!isPopupView">Lease Alerts</h5>
+
+      <dx-text-box class="alerts__search"
+        [(value)]="searchText"
+        mode="search"
+        placeholder="Search..."
+        [showClearButton]="true"
+        valueChangeEvent="keyup"
+        (onValueChanged)="searchDataGrid()"
+        id="leaseAlertsSearchTextBox"
+      ></dx-text-box>
+
+      <dx-select-box
+        placeholder="Portfolio"
+        [dataSource]="portfolios"
+        [value]="currentPortfolio?.masterGroupId"
+        (onSelectionChanged)="portfolioChanged($event.selectedItem)"
+        [showClearButton]="true"
+        [searchEnabled]="true"
+        valueExpr="masterGroupId"
+        displayExpr="companyName"
+        *ngIf="!isPopupView"
+        id="leaseAlertsPortfolioDropdownSelector"
+      ></dx-select-box>
+    </div>
+
+    <div class="controls-right">
+      <dx-switch [value]="showDismissed"
+        switchedOffText="Hide Dismissed"
+        switchedOnText="Show Dismissed"
+        (onValueChanged)="setIsDismissedFilter($event.value)"
+        [disabled]="isLoadingData"
+        id="leaseAlertsDismissedToggle"
+      ></dx-switch>
+
+      <div>
+        <mat-button-toggle-group
+          (change)="leaseToggleChanged($event)"
+          (mouseenter)="leaseStatusTooltipVisible = true"
+          (mouseleave)="leaseStatusTooltipVisible = false"
+          *ngIf="!isPopupView"
+          [disabled]="isLoadingData"
+          id="leaseAlertsLeaseStatusFilterToggle"
+        >
+          <mat-button-toggle value="active"
+            [(checked)]="showActiveLeases"
+          >Active</mat-button-toggle>
+
+          <mat-button-toggle value="archived"
+            [(checked)]="showArchivedLeases"
+          >Archived</mat-button-toggle>
+
+          <mat-button-toggle value="all"
+            [(checked)]="showAllLeases"
+          >All</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <dx-tooltip target="#leaseAlertsLeaseStatusFilterToggle"
+          [(visible)]="leaseStatusTooltipVisible"
+          [closeOnOutsideClick]="false"
+        >
+          <div *dxTemplate="let data = data; of: 'content'">
+            Showing {{ getLeaseText() }} leases
+          </div>
+        </dx-tooltip>
+      </div>
+
+      <button class="btn btn-default"
+        (click)="showFilterBuilder()"
+        id="leaseAlertsFilterBuilderButton"
+      >Filters
+        <div *ngIf="appliedFilterCount > 0 && !showClearFilters"
+          class="badge primary costar std-left-margin"
+          (mouseover)="toggleClearFilters()"
+        >{{ appliedFilterCount }}</div>
+
+        <div *ngIf="appliedFilterCount > 0 && showClearFilters"
+          class="badge primary costar std-left-margin underline"
+          (mouseout)="toggleClearFilters()"
+          (click)="clearGridFilters($event)"
+        >Clear {{ appliedFilterCount }} Filter{{ appliedFilterCount === 1 ? '' : 's' }}</div>
+      </button>
+
+      <button class="btn btn-default"
+        [matMenuTriggerFor]="moreMenu"
+        id="leaseAlertsMoreMenuButton"
+      >
+        More <fa-icon [icon]="faCaretDown"></fa-icon>
+      </button>
+
+      <mat-menu #moreMenu="matMenu" class="alerts-more-menu">
+        <button mat-menu-item
+          (click)="showColumnChooser()"
+          [disabled]="isLoadingData"
+          id="columnChooserButton"
+        >Column Chooser</button>
+
+        <button mat-menu-item
+          [disabled]="isExporting"
+          (click)="exportDataGrid()"
+          id="exportButton"
+        >Export</button>
+
+        <button mat-menu-item
+          *ngIf="isCollapseExpandAllEnabled"
+          (click)="collapseExpandAll()"
+          id="collapseExpandAllButton"
+        >{{ getCollapseExpandAllText() }}</button>
+      </mat-menu>
+
+      <button class="btn btn-default"
+        *ngIf="isPopupView"
+        (click)="refreshAlerts()"
+        [disabled]="refreshingAlerts"
+        id="refreshAlertsButton"
+      >{{ getRefreshButtonText() }}</button>
+
+      <button class="btn btn-primary"
+        *ngIf="userHasAddRights && !(isPopupView && isArchived)"
+        [disabled]="toggleButtonDisabled || isLoadingData"
+        (click)="toggleSelected()"
+        id="updateSelectedButton"
+      >Update Selected</button>
+    </div>
+  </div>
+
+  <div class="list-page-data-grid-wrapper">
+    <mango-alerts-grid #alertsGrid
+      [userCanEdit]="userHasAddRights"
+      [isPopupView]="isPopupView"
+      [leaseAbstractID]="leaseAbstractID"
+      (gridSelectionChanged)="gridSelectionChanged($event)"
+      (filterCountChanged)="updateFilterCount($event)"
+      (archivedOnlyChanged)="isArchived = $event"
+      (isLoading)="isLoadingData = $event"
+      (enableCollapseExpandAll)="isCollapseExpandAllEnabled = $event"
+      id="leaseAlertsDataGrid"
+    ></mango-alerts-grid>
+  </div>
+</div>

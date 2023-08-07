@@ -1,0 +1,28 @@
+<div [ngClass]="classname">
+    <div *ngIf="newTag && !isEditing" (click)="initAddTag()" class="new-tag-clickable">
+        <mat-icon>add</mat-icon>
+        <span>Add New Tag</span>
+    </div>
+    <span [innerHTML]="sanitizedText()" *ngIf="!isEditing && !newTag"></span>
+    <div *ngIf="isEditing">
+        <dx-text-box
+            [(value)]="newTagText"
+            height="20"
+        >
+            <dxi-button
+                name="save"
+                location="after"
+                [options]="saveTagButton"
+            ></dxi-button>
+            <dxi-button
+                name="cancel"
+                location="after"
+                [options]="cancelEditTagButton"
+            ></dxi-button>
+        </dx-text-box>
+    </div>        
+    <div class="tag-edit-icons" *ngIf="enableRemove && !isEditing">
+        <mat-icon class="material-icons-outlined" (click)="initEditTag()">edit</mat-icon>
+        <mat-icon class="material-icons-outlined" (click)="deleteTag()">close</mat-icon>
+    </div>
+</div>

@@ -1,0 +1,231 @@
+<div *ngIf="!loading">
+    <h4 *ngIf="config.formTitle">
+        {{config.formTitle}}
+    </h4>
+    <div *ngFor="let section of config.section; let i = index" class="section" [id]="section.sectionId ? idPrefix + section.sectionId : ''">
+        <div class="section--title" *ngIf="section.sectionTitle">
+            {{section.sectionTitle}}
+        </div>
+        <div  class="section--border" *ngIf="!section.hideBorder">
+
+        </div>
+        <div class="section-items">
+            <div *ngFor="let sectionItem of section.formObjects" class="section-items--form">
+                <dx-form [id]="sectionItem.subSectionId ? idPrefix + sectionItem.subSectionId : ''" [colCount]="section.colCount || 1" [showColonAfterLabel]="false">
+
+                    <dxi-item *ngFor="let item of sectionItem?.sectionItems" class="dynamic-items"
+                        [(value)]="configKey[item.dataField].value" [dataField]="item.dataField" [visible]="!item.hidden"
+                        [cssClass]="configKey[item.dataField].customClass"
+                        [label]="{ location: labelPosition, visible: !item.hideLabel, text : item.caption, id: item.fieldType === 'toggle' ? idPrefix + item.dataField : 'input' + item.dataField }" [template]="item.fieldType" [disabled]="item.disabled">
+                        <dxi-validation-rule *ngIf="item.required" type="required"></dxi-validation-rule>
+                    </dxi-item>
+    
+                    <div *dxTemplate="let data of 'text'">
+                        <div [id]="idPrefix + data.dataField" class="item_wrapper">
+                            <crem-text-box #CremTextBox
+                                [(value)]="configKey[data.dataField].value"
+                                [maxLengthMessage]="configKey[data.dataField].maxLengthMessage"
+                                [maxLength]="configKey[data.dataField].maxLength"
+                                (onChangeEvent)="onChange($event, 'text', data.dataField)"
+                                (onInitialized)="onInitialized($event, data.dataField)"
+                                [isRequired]="configKey[data.dataField].required"
+                                [customRequireValidation]="configKey[data.dataField].customRequireValidation"
+                                [initialFocus]="configKey[data.dataField].initialFocus"
+                                [inputId]="'input' + data.dataField"
+                                [disabled]="readOnly"
+                                >
+                            </crem-text-box>
+                        </div>                            
+                    </div>
+
+                    <div *dxTemplate="let data of 'custom'">
+                        <div [id]="idPrefix + data.dataField" class="item_wrapper">
+                            <ng-template 
+                                *ngTemplateOutlet="templateRef; context: { fieldData : configKey[data.dataField] }"
+                            >
+                            </ng-template>
+                        </div>                            
+                    </div>
+
+                    <div *dxTemplate="let data of 'empty'">
+    
+                    </div>
+    
+                    <div *dxTemplate="let data of 'toggle'">
+                        <div class="toggle__container" [id]="idPrefix + data.dataField">
+                            <crem-toggle-slider #CremToggleSlider
+                                [(value)]="configKey[data.dataField].value"
+                                [disabled]="configKey[data.dataField].disabled || readOnly"
+                                (onChangeEvent)="onChange($event, 'slider', data.dataField)"
+                                [dataField]="data.dataField"
+                                >
+                            </crem-toggle-slider>
+                            <div class="toggle__item--text">
+                                {{configKey[data.dataField].value ? (configKey[data.dataField].trueDisplay || "") :
+                                (configKey[data.dataField].falseDisplay || "")}}
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div *dxTemplate="let data of 'dropdown'">
+                        <div [id]="idPrefix + data.dataField" class="item_wrapper">
+                            <crem-dropdown #CremDropdown *ngIf="configKey[data.dataField].selectMode !== 'multiple'"
+                                [id]="idPrefix + data.dataField + '_dropdown'"
+                                [isDisabled]='configKey[data.dataField]?.disabled || (!configKey[data.dataField]?.required && !configKey[data.dataField]?.dataSource?.length) || readOnly'
+                                dropDownContainerCustomClass="dynamicFormDropDown"
+                                [dataSource]='configKey[data.dataField].dataSource'
+                                [placeholder]='configKey[data.dataField].placeHolder || "Select..."' [showClearButton]='true'
+                                [showColumnHeader]='false' [required]="configKey[data.dataField].required"
+                                [displayExpr]="configKey[data.dataField].displayExpr || 'value'"
+                                [valueExpr]="configKey[data.dataField].valueExpr || 'value'"
+                                [isVisible]="!configKey[data.dataField].hidden"
+                                [selectBoxValue]="(configKey[data.dataField]?.value?.length && configKey[data.dataField].valueExpr) ? 
+                                    configKey[data.dataField]?.value[0][configKey[data.dataField].valueExpr] : []"
+                                [dataField]="data.dataField"
+                                [allowSearch]='true'
+                                [useSelectBox]="true"
+                                [hoverText]="configKey[data.dataField].hoverText || configKey[data.dataField].caption"
+                                (selectedItems)="onChange($event, 'dropdown', data.dataField)">
+                            </crem-dropdown>
+
+                            <crem-dropdown #CremDropdown *ngIf="(configKey[data.dataField]?.selectMode === 'multiple')"
+                                [id]="idPrefix + data.dataField + '_dropdown'"
+                                [isDisabled]='configKey[data.dataField]?.disabled || (!configKey[data.dataField]?.required && !configKey[data.dataField]?.dataSource?.length) || readOnly'
+                                [dropdownHeaderDisplay]="configKey[data.dataField]?.dropdownHeaderDisplay || configKey[data.dataField]?.caption"
+                                dropDownContainerCustomClass="dynamicFormDropDown"
+                                [dataSource]='configKey[data.dataField].dataSource'
+                                [placeholder]='configKey[data.dataField].placeholder || "Select..."' [showClearButton]='true'
+                                [showColumnHeader]='true'
+                                [required]="configKey[data.dataField].required"
+                                [displayExpr]="configKey[data.dataField].displayExpr || 'value'"
+                                [valueExpr]="configKey[data.dataField].valueExpr || 'value'"
+                                [isVisible]="!configKey[data.dataField].hidden"
+                                [initialSelectedValue]="configKey[data.dataField]?.value"
+                                [useArrayOfKeys]="true"
+                                [dataField]="data.dataField"
+                                [allowSearch]='true'
+                                [useSelectBox]="false"
+                                selectMode="multiple"
+                                showCheckBoxesMode="always"
+                                [hoverText]="configKey[data.dataField].hoverText || configKey[data.dataField].caption"
+                                (selectedItems)="onChange($event, 'dropdown', data.dataField)">
+                            </crem-dropdown>
+                        </div>
+
+                    </div>
+    
+                    <div *dxTemplate="let data of 'date'">
+                        <div [id]="idPrefix + data.dataField" class="item_wrapper">
+                            <crem-date-picker #CremDatePicker
+                                [(value)]="configKey[data.dataField].value"
+                                [showClearButton]="configKey[data.dataField].showClearButton"
+                                [dateFormat]="dateFormat"
+                                [isRequired]="configKey[data.dataField].required"
+                                [invalidDateMessage]="configKey[data.dataField].invalidDateMessage || 'Value must be a date'"
+                                (onChangeEvent)="onChange($event, 'date', data.dataField)"
+                                [inputId]="'input' + data.dataField"
+                                [disabled]="readOnly"
+                                >
+                            </crem-date-picker>
+                        </div>
+                    </div>
+
+                    <div *dxTemplate="let data of 'toFromDate'">
+                        <div class="to_from_date_wrapper">
+                            <div class="item_wrapper from_date">
+                                <div class="from_date_caption">
+                                    {{configKey[data.dataField].dataField1Caption}}
+                                </div>
+                                
+                                <crem-date-picker #CremDatePicker [id]="idPrefix + configKey[data.dataField].dataField1"
+                                    [(value)]="configKey[data.dataField].value1"
+                                    [showClearButton]="configKey[data.dataField].showClearButton"
+                                    [dateFormat]="dateFormat"
+                                    [isRequired]="configKey[data.dataField].required"
+                                    [invalidDateMessage]="configKey[data.dataField].invalidDateMessage || 'Value must be a date'"
+                                    (onChangeEvent)="onChange($event, 'toFromDate1', data.dataField)"
+                                    [inputId]="'input' + data.dataField"
+                                    [max]="configKey[data.dataField].value2"
+                                    [disabled]="readOnly"
+                                    >
+                                </crem-date-picker>
+                            </div>
+    
+                            <div class="item_wrapper to_date">
+                                <div class="to_date_caption">
+                                    {{configKey[data.dataField].dataField2Caption}}
+                                </div>
+                                <crem-date-picker #CremDatePicker [id]="idPrefix + configKey[data.dataField].dataField2"
+                                    [(value)]="configKey[data.dataField].value2"
+                                    [showClearButton]="configKey[data.dataField].showClearButton"
+                                    [dateFormat]="dateFormat"
+                                    [isRequired]="configKey[data.dataField].required"
+                                    [invalidDateMessage]="configKey[data.dataField].invalidDateMessage || 'Value must be a date'"
+                                    (onChangeEvent)="onChange($event, 'toFromDate2', data.dataField)"
+                                    [inputId]="'input' + data.dataField2"
+                                    [min]="configKey[data.dataField].value1"
+                                    [disabled]="readOnly"
+                                    >
+                                </crem-date-picker>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div *dxTemplate="let data of 'checkbox'">
+                        <div class="checkbox__container" [id]="idPrefix + data.dataField">
+                            <crem-check-box
+                                [(value)]="configKey[data.dataField].value"
+                                [elementAttr]="{ id: 'input' + data.dataField }"
+                                [disabled]="readOnly"
+                                (onChangeEvent)="onChange($event, 'checkbox', data.dataField)"
+                                >
+                            </crem-check-box>
+                            <div class="checkbox__item--text" [ngStyle]="{'font-size': configKey[data.dataField].textDisplayFontSize ? configKey[data.dataField].textDisplayFontSize + 'px' : '14px'}">
+                                {{configKey[data.dataField].textDisplay}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *dxTemplate="let data of 'customCombination'">
+                        <div [id]="idPrefix + data.dataField" class="item_wrapper" *ngIf="configKey[data.dataField]?.combinationType === 'text'">
+                            <crem-text-box #CremTextBox
+                                [(value)]="configKey[data.dataField].value"
+                                [maxLengthMessage]="configKey[data.dataField].maxLengthMessage"
+                                [maxLength]="configKey[data.dataField].maxLength"
+                                (onChangeEvent)="onChange($event, 'text', data.dataField)"
+                                (onInitialized)="onInitialized($event, data.dataField)"
+                                [isRequired]="configKey[data.dataField].required"
+                                [initialFocus]="configKey[data.dataField].initialFocus"
+                                [inputId]="'input' + data.dataField"
+                                [disabled]="readOnly"
+                                >
+                            </crem-text-box>
+                        </div>
+                        
+                        <div *ngIf="configKey[data.dataField]?.combinationType === 'dropdown'" [id]="idPrefix + data.dataField" class="item_wrapper">
+                            <crem-dropdown #CremDropdown
+                                [isDisabled]='configKey[data.dataField]?.disabled || (!configKey[data.dataField]?.required && !configKey[data.dataField]?.dataSource?.length) || readOnly'
+                                dropDownContainerCustomClass="dynamicFormDropDown"
+                                [dataSource]='configKey[data.dataField].dataSource'
+                                [placeholder]='configKey[data.dataField].placeHolder || "Select..."' [showClearButton]='true'
+                                [showColumnHeader]='false' [required]="configKey[data.dataField].required"
+                                [displayExpr]="configKey[data.dataField].displayExpr || 'value'"
+                                [valueExpr]="configKey[data.dataField].valueExpr || 'value'"
+                                [isVisible]="!configKey[data.dataField].hidden"
+                                [selectBoxValue]="(configKey[data.dataField]?.value?.length && configKey[data.dataField].valueExpr) ? 
+                                    configKey[data.dataField]?.value[0][configKey[data.dataField].valueExpr] : []"
+                                [dataField]="data.dataField"
+                                [allowSearch]='true'
+                                [hoverText]="configKey[data.dataField].hoverText || configKey[data.dataField].caption"
+                                [useSelectBox]="true"
+                                (selectedItems)="onChange($event, 'dropdown', data.dataField)">
+                            </crem-dropdown>
+                        </div>
+                    </div>
+                </dx-form>
+            </div>
+        </div>
+        <div  class="section--bottom_border" *ngIf="section.showBottomBorder"></div>
+    </div>
+</div>

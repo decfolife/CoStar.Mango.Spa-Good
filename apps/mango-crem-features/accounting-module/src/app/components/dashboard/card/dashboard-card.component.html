@@ -1,0 +1,168 @@
+<crem-card [id]="pendoId + '--card'"
+  [title]="config.title"
+  [showFilterClearButton]="false"
+  [pendoTitleId]="pendoId + '--title'"
+  [customDropdownMenu]="true"
+  fxFlexFill
+>
+  <ng-template #customDropdownMenu>
+    <div class="card-header--right">
+      <fa-icon class="chart-toggle"
+        id="{{pendoId + '--chart'}}"
+        (click)="toggleChartButton()"
+        [ngClass]="{ 'chart-toggle__visible': !chartVisible }"
+        [icon]="faChartBar"
+        title="Chart"
+      ></fa-icon>
+
+      <button id="{{pendoId + '--moreOption'}}"
+        class="btn btn-default btn-sm moreOptionsBtn"
+        [matMenuTriggerFor]="cardMenu"
+        (click)="$event.preventDefault()"
+        aria-label="More Options"
+      >
+        <mat-icon aria-label="More Options">more_horiz</mat-icon>
+      </button>
+
+      <mat-menu #cardMenu="matMenu">
+        <button mat-menu-item
+          (click)="exportGrid()"
+        >Export Pivot Grid</button>
+
+        <button mat-menu-item
+          (click)="exportDatasource()"
+        >Export Datasource</button>
+
+        <button mat-menu-item
+          (click)="toggleCardWidth()"
+        >Toggle Full Width</button>
+
+        <button mat-menu-item
+          (click)="showColumnChooser()"
+        >Field Chooser</button>
+
+        <button mat-menu-item>
+          <mat-slide-toggle
+            [checked]="cremPivotTable?.showRowGrandTotals"
+            (change)="toggleGrandTotal('row')"
+          >Show Row Grand Total</mat-slide-toggle>
+        </button>
+
+        <button mat-menu-item>
+          <mat-slide-toggle
+            [checked]="cremPivotTable?.showColumnGrandTotals"
+            (change)="toggleGrandTotal('column')"
+          >Show Column Grand Total</mat-slide-toggle>
+        </button>
+
+        <button mat-menu-item
+          (click)="useDefaultSetting()"
+        >Reset</button>
+
+        <button mat-menu-item
+          (click)="saveUserConfig(true)"
+          *ngIf="canSaveDefault"
+        >Save as Default</button>
+
+        <button mat-menu-item
+          (click)="saveUserConfig(false)"
+        >Save</button>
+      </mat-menu>
+    </div>
+  </ng-template>
+
+  <div class="cardContent" fxflexFill>
+    <crem-pivot-table #CremPivotTable
+      *ngIf="config.cardType === 'pivot'"
+      [id]="config.id"
+      [config]="config.pivotDataSource"
+      [dataGridKeyExpr]="config.dataGridKeyExpr"
+      [showRowGrandTotals]="config.showRowGrandTotals"
+      [showColumnGrandTotals]="config.showColumnGrandTotals"
+      [exportFileName]="config.exportFileName"
+      [allowDrillDown]="config.allowDrillDown"
+      [summationTypeConfig]="summationTypeConfig"
+      [fieldModal]="fieldModal"
+      applyChangesMode="onDemand"
+      (onChangedCallback)="onPivotChangeCallback($event)"
+      [chartVisible]="chartVisible"
+    ></crem-pivot-table>
+
+    <crem-simple-grid *ngIf="config.cardType === 'grid'"
+      [id]="config.id"
+      [dataSource]="config.pivotDataSource"
+      [keyExpr]="config.dataGridKeyExpr"
+    ></crem-simple-grid>
+  </div>
+
+  <div *ngIf="needUpdate"
+    class="dashboard-card__loader-wrapper"
+  >
+    <div _ngcontent-xtu-c546=""
+      class="dx-overlay-content dx-resizable dx-loadpanel-content dashboard-card-overlay-content"
+    >
+      <div _ngcontent-xtu-c546=""
+        class="dx-loadpanel-content-wrapper"
+      >
+        <div _ngcontent-xtu-c546=""
+          class="dx-loadpanel-indicator dx-loadindicator dx-widget"
+        >
+          <div _ngcontent-xtu-c546=""
+            class="dx-loadindicator-wrapper"
+          >
+            <div _ngcontent-xtu-c546=""
+              class="dx-loadindicator-content"
+            >
+              <div _ngcontent-xtu-c546=""
+                class="dx-loadindicator-icon"
+              >
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment7"
+                ></div>
+
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment6"
+                ></div>
+
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment5"
+                ></div>
+
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment4"
+                ></div>
+
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment3"
+                ></div>
+
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment2"
+                ></div>
+
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment1"
+                ></div>
+
+                <div _ngcontent-xtu-c546=""
+                  class="dx-loadindicator-segment dx-loadindicator-segment0"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div _ngcontent-xtu-c546=""
+          class="dx-loadpanel-message"
+        >Loading...</div>
+      </div>
+    </div>
+  </div>
+</crem-card>
+
+<div class="position-fixed visibility-hidden">
+  <crem-simple-grid #SimpleGrid
+    [dataSource]="exportData"
+    [exportFileName]="this.exportDataSourceFileName"
+  ></crem-simple-grid>
+</div>

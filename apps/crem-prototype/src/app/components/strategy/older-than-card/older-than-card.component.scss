@@ -1,0 +1,10 @@
+:host {
+  mat-card {
+    &.older-than-feed{
+      mat-card-content {
+        height: 480px;
+        overflow: hidden;
+      }
+    }
+  }
+}

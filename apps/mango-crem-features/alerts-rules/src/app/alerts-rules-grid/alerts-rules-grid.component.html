@@ -1,0 +1,126 @@
+<dx-data-grid #rulesGrid
+  class="list-page-data-grid"
+  [dataSource]="gridData"
+  keyExpr="alertRuleID"
+  [rowAlternationEnabled]="true"
+  dataRowTemplate="customRowTemplate"
+  [allowColumnReordering]="false"
+  [grouping]="false"
+  [columnFixing]="false"
+  [headerFilter]="{ visible: true }"
+  [filterSyncEnabled]="true"
+  [height]="'calc(100vh - 164px)'"
+  (filterValueChange)="updateFilterCount($event)"
+  (onContentReady)="setIsLoading(false)"
+>
+  <dxo-filter-builder-popup [width]="600"
+    [height]="600"
+    [(visible)]="filterBuilderVisible"
+  ></dxo-filter-builder-popup>
+
+  <dxo-paging [pageSize]="25"></dxo-paging>
+
+  <dxo-pager [visible]="true"
+    [allowedPageSizes]="[25,50,100]"
+    [showInfo]="true"
+    [showNavigationButtons]="true"
+    [showPageSizeSelector]="true"
+  ></dxo-pager>
+
+  <dxi-column dataField="alertRuleID"
+    caption="Rule ID"
+    dataType="number"
+    [width]="90"
+  ></dxi-column>
+
+  <dxi-column dataField="ruleName"
+    dataType="string"
+    [width]="'50%'"
+  ></dxi-column>
+
+  <dxi-column dataField="ruleCode"
+    caption="Code"
+    dataType="string"
+    [width]="80"
+  ></dxi-column>
+
+  <dxi-column dataField="alertRuleSeverityID"
+    caption="Severity Level"
+    [width]="130"
+  >
+    <dxo-header-filter [dataSource]="severityFilterOptions"></dxo-header-filter>
+
+    <dxo-lookup [dataSource]="severitySelections"
+      valueExpr="value"
+      displayExpr="name"
+    ></dxo-lookup>
+  </dxi-column>
+
+  <dxi-column dataField="alertTypeID"
+    caption="Alert Type"
+  >
+    <dxo-header-filter [dataSource]="alertFilterOptions"></dxo-header-filter>
+
+    <dxo-lookup [dataSource]="alertTypeSelections"
+      valueExpr="value"
+      displayExpr="name"
+    ></dxo-lookup>
+  </dxi-column>
+
+  <dxi-column dataField="isDismissable"
+    dataType="boolean"
+  >
+    <dxo-header-filter [dataSource]="boolFilterOptions"></dxo-header-filter>
+  </dxi-column>
+
+  <dxi-column dataField="isActive"
+    dataType="boolean"
+  >
+    <dxo-header-filter [dataSource]="boolFilterOptions"></dxo-header-filter>
+  </dxi-column>
+
+  <ng-container *dxTemplate="let row of 'customRowTemplate'">
+    <tr class="dx-row dx-data-row">
+      <td>{{ row.data.alertRuleID }}</td>
+      <td>{{ row.data.ruleName }}</td>
+      <td>{{ row.data.ruleCode }}</td>
+
+      <td>
+        <dx-select-box [dataSource]="severitySelections"
+          displayExpr="name"
+          valueExpr="value"
+          [disabled]="!editable || isLoadingData"
+          [value]="row.data.alertRuleSeverityID"
+          (onValueChanged)="severityChanged($event, row.data)"
+          class="severityLevelSelectorDropdown"
+        ></dx-select-box>
+      </td>
+
+      <td>{{ getAlertType(row.data.alertTypeID) }}</td>
+
+      <td class="text-center">
+        <dx-check-box [value]="row.data.isDismissable"
+          [disabled]="!editable || isLoadingData"
+          (onValueChanged)="dismissableChanged($event, row.data)"
+          class="isDismissableCheckbox"
+        ></dx-check-box>
+      </td>
+
+      <td class="text-center">
+        <dx-check-box [value]="row.data.isActive"
+          [disabled]="!editable || isLoadingData"
+          (onValueChanged)="activeChanged($event, row.data)"
+          class="isActiveCheckbox"
+        ></dx-check-box>
+      </td>
+    </tr>
+
+    <tr class="dx-row dx-data-row sub-row">
+      <td colspan="7"
+        class="data-description text-wrap"
+        [innerHtml]="row.data.description"
+      ></td>
+    </tr>
+  </ng-container>
+
+</dx-data-grid>

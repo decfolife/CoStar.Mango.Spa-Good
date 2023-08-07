@@ -1,0 +1,27 @@
+<crem-button
+  [disabled] = "buttonbDisabled"
+  [ngClass]='buttonbDisabled? "disabledAction" : ""'
+  type="secondary"
+  mat-stroked-button
+  [matMenuTriggerFor]='listMenu'
+  #actionMenuTrigger="matMenuTrigger"
+>
+  Action <fa-icon [icon]="faCaretDown" class="action-menu-caret-icon" title="click to see the available actions"></fa-icon>
+</crem-button>
+
+<mat-menu #listMenu="matMenu">
+  <button mat-menu-item (click)="changeDefaultVendorOrCustomerAction()"> Change Default {{this.vendorOrCustomer}} </button>
+  <button mat-menu-item (click)="ChangeVendorOrCustomer()" [disabled]="!chargesOnLease"> Change {{this.vendorOrCustomer}} </button>
+  <button mat-menu-item (click)="terminateLeaseChargesAction()" [disabled]="disableTerminateLeaseCharges || !chargesOnLease"> Terminate Lease Charges </button>
+  <button mat-menu-item (click)="editSelectedChargesAction()" [disabled]="numberOfItemsSelectedLessThanTwo"> Edit Selected Charges </button>
+  <button mat-menu-item (click)="deleteSelectedChargesAction()" [disabled]="numberOfItemsSelectedLessThanTwo || !enableDeleteOption"> Delete Selected Charges </button>
+  <button mat-menu-item [disabled]="!showHoldPaymentsToggle">
+    <mat-slide-toggle [checked]="isHoldPayments"
+      (change)="toggleIsHoldPayments($event)"
+      (click)="$event.stopPropagation()"
+    >
+      Hold Payments
+    </mat-slide-toggle>
+  </button>
+
+ </mat-menu>

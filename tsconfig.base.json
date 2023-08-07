@@ -1,0 +1,95 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@accounting-accountmanagement/*": [
+        "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/app/*"
+      ],
+      "@accounting-dashboard/*": [
+        "apps/mango-crem-features/accounting-module/src/app/*"
+      ],
+      "@accounting-profile/*": [
+        "apps/mango-crem-features/accounting-profile/accounting-profiles/src/app/*"
+      ],
+      "@batch-accounting/*": [
+        "apps/mango-crem-features/batch-accounting/src/app/*"
+      ],
+      "@client-settings/*": [
+        "apps/mango-crem-features/client-settings/src/app/*"
+      ],
+      "@forms/*": ["libs/forms-shared/src/lib/*"],
+      "@group-maintenance/*": [
+        "apps/mango-crem-features/group-maintenance/src/app/*"
+      ],
+      "@list-pages/*": ["apps/mango-crem-features/list-pages/src/app/*"],
+      "@mango/auth": ["libs/auth/src/index.ts"],
+      "@mango/core-shared": ["libs/core-shared/src/index.ts"],
+      "@mango/core-shared/lib-core-shared": ["libs/core-shared/src/index.ts"],
+      "@mango/data-models/lib-data-models": [
+        "libs/data-models/lib-data-models/src/index.ts"
+      ],
+      "@mango/forms-shared": ["libs/forms-shared/src/index.ts"],
+      "@mango/mango-nx-plugin": ["libs/mango-nx-plugin/src/index.ts"],
+      "@mango/ui-shared/common": ["libs/ui-shared/common/src/index.ts"],
+      "@mango/ui-shared/cosmos": ["libs/ui-shared/cosmos/src/index.ts"],
+      "@mango/ui-shared/lib-external-libraries": [
+        "libs/ui-shared/lib-external-libraries/src/index.ts"
+      ],
+      "@mango/ui-shared/lib-ui-elements": [
+        "libs/ui-shared/lib-ui-elements/src/index.ts"
+      ],
+      "@mango/ui-shared/lib-ui-shared": [
+        "libs/ui-shared/lib-ui-shared/src/index.ts"
+      ],
+      "@mango/ui-shared/storybook-host": [
+        "libs/ui-shared/storybook-host/src/index.ts"
+      ],
+      "@mangoSpa/*": ["apps/mango/*"],
+      "@micro-components/*": [
+        "apps/mango-crem-features/micro-components/src/app/*"
+      ],
+      "@nlas/*": ["apps/mango-crem-features/nlas/src/app/*"],
+      "@object-maintenance/*": [
+        "apps/mango-crem-features/object-maintenance/src/app/*"
+      ],
+      "@portfolio-dashboard/*": [
+        "apps/mango-crem-features/dashboards/portfolio-dashboard/src/app/*"
+      ],
+      "@portfolio-maintenance/*": [
+        "apps/mango-crem-features/portfolio-maintenance/src/app/*"
+      ],
+      "@project-dashboard/*": [
+        "apps/mango-crem-features/dashboards/project-dashboard/src/app/*"
+      ],
+      "@quick-search/*": ["apps/mango-crem-features/quick-search/src/app/*"],
+      "@reports/*": ["apps/mango-crem-features/reports/src/app/*"],
+      "@start-page/*": [
+        "apps/mango-crem-features/start-page-selection/src/app/*"
+      ],
+      "@user-maintenance/*": [
+        "apps/mango-crem-features/user-maintenance/src/app/*"
+      ],
+      "cldr": ["node_modules/cldrjs/dist/cldr"],
+      "cldr/*": ["node_modules/cldrjs/dist/cldr/*"],
+      "exceljs": ["node_modules/exceljs/dist/exceljs.bare.min"],
+      "globalize": ["node_modules/globalize/dist/globalize"],
+      "globalize/*": ["node_modules/globalize/dist/globalize/*"],
+      "stream": ["node_modules/stream-browserify"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

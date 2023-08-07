@@ -1,0 +1,555 @@
+<dx-load-panel
+  [closeOnOutsideClick]="false"
+  [visible]="isGLEvent && (isCopyCharge || isChargeAction)"
+  [message]="isCopyCharge? 'Please, wait...': 'Loading...'">
+</dx-load-panel>
+<div class="actions-container">
+  <div class="menu-section">
+    <app-list-view-menu *ngIf="showListViewSelector"
+      [enabled] ="inCriticalViewDataError || !inDisabledUIState"
+      [currentListViewName]="currentListViewName"
+      [listViews]="listViews"
+      [showShare]="showShare"
+      [isSuperUser]="isSuperUser"
+      (setCurrentListView)="setCurrentListView($event)"
+      (setDefaultListView)="setDefaultListView($event)"
+      (shareListView)="shareListView($event)"
+      (hideListView)="hideListView($event, true)"
+      (showListView)="hideListView($event, false)"
+      (deleteListView)="deleteListView($event)"
+      (clearDefault)="clearDefault($event)"
+    ></app-list-view-menu>
+
+    <!-- cs-search value does not contain @Input directive,
+    so it's impossible to assign value property like this:
+    [value]="searchText"-->
+    <cs-search
+      *ngIf="showSearch"
+      class="cs-search-list-pages"
+      [value] = "searchText"
+      [placeholder]="'Search...'"
+      class='{{ (searchTextBoxEnabled && !inDisabledUIState) ? "" : "disabledToolButton" }}'
+      [disabled]="!searchTextBoxEnabled || inDisabledUIState"
+      (changed)="searchDataGrid($event)"
+    >
+    </cs-search>
+
+    <crem-dropdown
+      *ngIf="showPortfolioPicker"
+      class="crem-dropdown-list-pages"
+      [dataSource]="portfolios"
+      [isDisabled]="!portfolioButtonEnabled || inDisabledUIState"
+      displayExpr="companyName"
+      valueExpr="masterGroupId"
+      selectMode="single"
+      placeholder="Portfolio"
+      [initialSelectedValue]="this.currentPortfolio?.masterGroupId"
+      (selectedItems)="portfolioChanged($event)"
+      [allowSearch]="true"
+      [showColumnHeader]="true"
+      [showClearButton]="true"
+    >
+    </crem-dropdown>
+    
+    <div class="archiveToggleHint">{{ this.archiveToggleHint }}</div>
+  </div>
+
+  <div class="menu-section btns-right">
+
+    <button mat-stroked-button
+      *ngIf="inCriticalViewDataError && isSuperUser"
+      color="primary"
+      class="filters"
+      type="button"
+      (click)="showDynamicSQL()"
+    >
+      Show Query
+      <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+    </button>
+
+    <app-action-menu class="action-menu" *ngIf="isGLEvent"
+      [buttonbDisabled] = "!showAddButton || this.isLeaseArchived || this.isLeaseLocked || inDisabledUIState"
+      [showHoldPaymentsToggle] = "showHoldPayments"
+      [enableDeleteOption] = "showDeleteButton"
+      [isHoldPayments]="isHoldPayments"
+      [vendorOrCustomer]="vendorOrCustomer"
+      [numberOfItemsSelectedLessThanTwo]="numberOfItemsSelectedLessThanTwo"
+      [disableTerminateLeaseCharges]="disableTerminateLeaseCharges"
+      [chargesOnLease] = "chargesOnLease"
+      (toggleHoldPayments)="setLeaseInfo($event)"
+      (editSelectedChargesEvent)="editSelectedCharges()"
+      (deleteSelectedChargesEvent)="deleteSelectedCharges()"
+      (terminateLeaseChargesEvent)="terminateLeaseCharges()"
+      (changeVendorOrCustomerEvent)="changeVendorOrCustomer()"
+      (changeDefaultVendorOrCustomerEvent)="changeDefaultVendorOrCustomer()"
+    ></app-action-menu>
+
+    <crem-button
+      *ngIf="showFilterButton"
+      [disabled]="inDisabledUIState"
+      type="secondary"
+      class="filters"
+      (click)="showFilterBuilder()"
+    >
+      Filters
+      <span *ngIf="!showClearFilters || listPageViewMode === 'map'"
+        class="badge"
+        (mouseover)="(listPageViewMode === 'map' || inDisabledUIState) ? null : showClearFilters = true"
+      >{{ getFilterCount() }}</span>
+      <span *ngIf="showClearFilters && (listPageViewMode !== 'map' && !inDisabledUIState)"
+        class="badge hovered"
+        (mouseout)="showClearFilters = false"
+        (click)="clearFilters($event)"
+      >{{ getClearFiltersText() }}</span>
+    </crem-button>
+
+    <app-more-menu class="more-menu"
+      [buttonbDisabled] = "!moreButtonEnabled || inDisabledUIState"
+      [showMoreMenu]="showMoreMenu"
+      [showColumnChooser]="showColumnChooser"
+      [isExpanded]="isExpanded"
+      [isSuperUser]="isSuperUser"
+      [isCoStarListView]="isCoStarListView(currentListView)"
+      [showSaveAs]="showSaveAs"
+      [showSave]="showSave"
+      [showExpandCollapse]="showExpandCollapse"
+      [showExport]="showExport"
+      [showResetView]="showResetView"
+      [includeActive]="includeActive"
+      [includeArchived]="includeArchived"
+      [isGLEvent]="isGLEvent"
+      (createListView)="createListView($event)"
+      (displayColumnChooser)="displayColumnChooser()"
+      (saveDefault)="updateListView()"
+      (toggleExpanded)="toggleExpanded()"
+      (toggleActive)="toggleShowActive($event)"
+      (toggleArchived)="toggleShowArchived($event)"
+      (updateListView)="updateListView()"
+      (exportExcel)="exportExcel()"
+      (resetListView)="resetListView()"
+      (showDynamicSQL)="showDynamicSQL()"
+    ></app-more-menu>
+
+    <app-add-new-menu
+      *ngIf="showAddButton && objectTypeId !== 1 && !this.isLeaseArchived && !this.isLeaseLocked"
+      class="add-button"
+      [enabled]="!inDisabledUIState"
+      [isGLEvent]="isGLEvent"
+      [editPages]="editPages"
+      (navigateToEditPage) = "navigateToEditPage($event)"
+    ></app-add-new-menu>
+
+    <crem-button type="primary" class="add-button--new" id="add_project_wizard_listpage"
+      [disabled]="inDisabledUIState"
+      *ngIf="objectTypeId === 1 && editPages?.length === 1 && showAddButton"
+      (click)="btnAddItemNewClick(); $event.preventDefault()"
+    >
+      <fa-icon [icon]="faPlus" class="small-plus"></fa-icon>
+      <span>Add</span>
+    </crem-button>
+
+    <div class="toggle-wrapper">
+      <mat-button-toggle-group *ngIf="showListMapToggle"
+        name="ListMapToggle"
+        class="list-map-button-toggle"
+        value="list"
+      >
+        <mat-button-toggle [class.active]="listPageViewMode !== 'map' && !inDisabledUIState"
+          (change)="toggleListMap('list')"
+          [disabled]="inDisabledUIState"
+        >
+          <fa-icon [icon]="faList"></fa-icon>
+          <span>&nbsp;List</span>
+        </mat-button-toggle>
+
+        <mat-button-toggle [class.active]="listPageViewMode === 'map' && !inDisabledUIState"
+          (change)="toggleListMap('map')"
+          [disabled]="inDisabledUIState"
+        >
+          <fa-icon [icon]="faMap"></fa-icon>
+          <span>&nbsp;Map</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+  </div>
+</div>
+
+<div class="list-page-data-grid-wrapper">
+  <dx-popup
+    [width]="popupInfo.width"
+    height="auto"
+    [showTitle]="true"
+    title="{{ popupInfo.popupTitle }}"
+    [dragEnabled]="popupInfo.dragEnabled"
+    [closeOnOutsideClick]="true"
+    [(visible)]="popupInfo.popupVisible"
+    position="{ my: 'center', at: 'center', of: window }"
+  >
+    <div class="listPageGridPopupMessage">{{ popupInfo.popupMessage }}</div>
+
+    <dxi-toolbar-item location="after"
+      toolbar="bottom"
+      widget="dxButton"
+      [visible]="popupInfo.cancelButtonOptions !== null"
+      [options]="{
+        text: popupInfo.cancelButtonOptions?.text,
+        onClick: popupInfo.cancelButtonOptions?.onClick
+      }"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item location="after"
+      toolbar="bottom"
+      widget="dxButton"
+      [visible]="popupInfo.actionButtonOptions !== null"
+      [options]="{
+        text: popupInfo.actionButtonOptions?.text,
+        onClick: popupInfo.actionButtonOptions?.onClick,
+        stylingMode: 'default'
+      }"
+    ></dxi-toolbar-item>
+
+  </dx-popup>
+
+  <dx-data-grid class="list-page-data-grid"
+    [ngClass]="{ 'copyInProgress': isGLEvent && isCopyCharge }"
+    [disabled] = "inDisabledUIState"
+    [filterValue] = "filterValue"
+    #DataGrid
+    [dataSource]="gridData"
+    [keyExpr]="keyExpr"
+    [allowColumnReordering]="true"
+    [rowAlternationEnabled]="true"
+    [showBorders]="false"
+    [showColumnLines]="false"
+    [allowColumnResizing]="true"
+    columnResizingMode="widget"
+    [columnAutoWidth]="true"
+    [height]="'100%'"
+    [hoverStateEnabled]="true"
+    (onRowClick)="gridRowClick($event)"
+    (onCellClick)="gridCellClick($event)"
+    [visible]="!showMap"
+    [filterSyncEnabled]="true"
+    [customizeColumns]="customizeColumns"
+    [wordWrapEnabled]="true"
+    [width]="'100%'"
+    [columnMinWidth]="32"
+    (onInitialized)="gridInitialized($event)"
+    (onSelectionChanged)="onGridSelectionChanged($event)"
+    [columnChooser]="{ width: 400, height: 500 }"
+    (onContentReady)="checkBoxAttributes($event); AdaAttributesInEmptyColumns($event)"
+    (onCellPrepared)="dataGridOnCellPrepared($event)"
+  >
+    <dxo-column-fixing [enabled]="true"
+    ></dxo-column-fixing>
+
+    <dxo-column-chooser [allowSearch]="true"
+    ></dxo-column-chooser>
+
+    <dxo-scrolling columnRenderingMode="virtual"
+    ></dxo-scrolling>
+
+    <dxo-paging [pageSize]="25"
+    ></dxo-paging>
+
+    <dxo-pager [showPageSizeSelector]="true"
+      [allowedPageSizes]="[25, 50, 100, 500]"
+      [showInfo]="true"
+      [showNavigationButtons]="true"
+      visible="true"
+    ></dxo-pager>
+
+    <dxo-search-panel *ngIf="showSearch"
+      [highlightCaseSensitive]="false"
+    ></dxo-search-panel>
+
+    <dxo-load-panel [enabled]="true"
+    ></dxo-load-panel>
+
+    <dxo-grouping [autoExpandAll]="false"
+      [contextMenuEnabled]="true"
+    ></dxo-grouping>
+
+    <dxo-sorting mode="multiple"
+    ></dxo-sorting>
+
+    <dxo-header-filter [visible]="showHeaderFilter"
+      [allowSearch]="true"
+    ></dxo-header-filter>
+
+    <dxo-filter-builder-popup [width]="1150"
+      [height]="600"
+      [resizeEnabled] = "true"
+      [(visible)]="filterBuilderVisible"
+      (visibleChange) = "onFilterPopupVisibleChange($event)"
+    ></dxo-filter-builder-popup>
+
+    <dxo-filter-builder
+      #FilterBuilder
+      [fields]="filterFields"
+      [customOperations]="customOperations"
+    >
+      <dx-form 
+      #RangeDateForm
+      id="rangeDateForm" 
+      *dxTemplate="let condition of 'rangeDateTemplate'"
+      [colCount]="5" 
+      [formData]="storedRangeFormData"
+      [labelMode]="'floating'"
+      >
+        <dxi-item [dataField]="rangeDateFilterFields[0].fieldName" [template]="'numOfIntervalsTemplate'"></dxi-item>
+        <dxi-item [dataField]="rangeDateFilterFields[1].fieldName" [template]="'intervalTypeTemplate'"></dxi-item>
+        <dxi-item [dataField]="rangeDateFilterFields[2].fieldName" [template]="'beforeAfterTemplate'"></dxi-item>
+        <dxi-item [dataField]="rangeDateFilterFields[3].fieldName" [template]="'selectDateTemplate'"></dxi-item>
+        <dxi-item name="customDateItem" [template]="'customDateTemplate'"></dxi-item>
+
+        <div *dxTemplate="let formElementData of 'numOfIntervalsTemplate'" class="dateRangeTemplate">
+          <dx-number-box class="numVal"
+            [value]="storedRangeFormData[formElementData.dataField]"
+            [width]="60"
+            (onContentReady)="convertRangeFilterTextToObject(condition)"
+            (onInput)="numOfIntervalsInputEvent($event)"
+            (onValueChanged)="setRangeDateFormValue(formElementData.dataField, $event)"
+            (onDisposing)="disposingNumOfIntervals()"
+          ></dx-number-box>
+        </div> 
+
+        <div *dxTemplate="let formElementData of 'intervalTypeTemplate'" class="dateRangeTemplate">
+          <dx-select-box class="interval"
+            [items]="intervals"
+            [value]="storedRangeFormData[formElementData.dataField]"
+            (onValueChanged)="setRangeDateFormValue(formElementData.dataField, $event)"
+          ></dx-select-box>
+        </div> 
+
+        <div *dxTemplate="let formElementData of 'beforeAfterTemplate'" class="dateRangeTemplate">
+          <dx-select-box class="befAfter"
+            [items]="beforeAfter"
+            [value]="storedRangeFormData[formElementData.dataField]"
+            (onValueChanged)="setRangeDateFormValue(formElementData.dataField, $event)"
+          ></dx-select-box>
+        </div> 
+
+        <div *dxTemplate="let formElementData of 'selectDateTemplate'" class="dateRangeTemplate">
+          <dx-select-box class="selectDate"
+            [items]="selectDate"
+            [value]="storedRangeFormData[formElementData.dataField]"
+            (onValueChanged)="setRangeDateFormValue(formElementData.dataField, $event)"
+          ></dx-select-box>
+        </div> 
+
+        <div *dxTemplate="let formElementData of 'customDateTemplate'" class="dateRangeTemplate">
+          <ng-container *ngIf=customDateSelected>
+            <dx-date-box 
+            [value]="storedRangeFormData[rangeDateFilterFields[4].fieldName]" 
+            type="date"
+            [displayFormat]="userPrefDateFormatForFilter"
+            (onValueChanged)="setRangeDateFormValue(rangeDateFilterFields[4].fieldName, $event)"
+            ></dx-date-box>
+          </ng-container>
+
+          <ng-container *ngIf=dateColumnSelected>
+            <dx-select-box  
+            [items]="filteredDateGridColumns"
+            [width]="250"
+            [value]="storedRangeFormData[rangeDateFilterFields[5].fieldName]"
+            (onValueChanged)="setRangeDateFormValue(rangeDateFilterFields[5].fieldName, $event)"
+            ></dx-select-box>
+          </ng-container>
+        </div> 
+      </dx-form>
+    </dxo-filter-builder>
+
+    <dxi-column *ngFor="let column of columns"
+      [dataField]="column.dataField"
+      [caption]="column.caption"
+      [dataType]="column.dataType"
+      [format]="column.format"
+      [(visible)]="column.visible"
+      [groupIndex]="column.groupIndex"
+      [sortIndex]="column.sortIndex"
+      [sortingMethod]="column.sortingMethod"
+      [sortOrder]="column.sortOrder"
+      [width]="column.width"
+      [fixed]="column.fixed"
+      [fixedPosition]="column.fixedPosition"
+      [allowSorting]="column.allowSorting"
+      [allowFiltering]="column.allowFiltering"
+      [allowGrouping]="column.allowGrouping"
+      [allowReordering]="column.allowReordering"
+      [allowResizing]="column.allowResizing"
+      [showInColumnChooser]="column.showInColumnChooser"
+      [type]="column.type"
+      [cellTemplate]="getCellTemplate(column)"
+      groupCellTemplate="groupTemplate"
+    ></dxi-column>
+
+    <div *dxTemplate="let itemData of 'groupTemplate'">
+      {{ itemData.column.caption }}: {{ itemData.displayValue }}
+      {{ itemData.groupContinuedMessage
+        ? '(' + itemData.groupContinuedMessage + '.'
+        : ''
+      }}{{ itemData.groupContinuedMessage
+        ? itemData.groupContinuesMessage
+          ? ' ' + itemData.groupContinuesMessage + '.)'
+          : ')'
+        : itemData.groupContinuesMessage
+          ? '(' + itemData.groupContinuesMessage + '.)'
+          : '' }}
+      ({{ itemData.data.aggregates[0] }})
+    </div>
+
+    <!-- Do not remove! DxoSummary.SummaryType forces the grid to generate an internal value for count and
+      store it at GroupData.data.aggregates[0]. If this summary element is removed then there will not be
+      an existing property with value at GroupData.data.aggregates[0] and the template above will fail with a console error.
+    -->
+    <dxo-summary>
+      <dxi-group-item
+        summaryType="count"
+        displayFormat="{0}"
+      ></dxi-group-item>
+    </dxo-summary>
+
+    <dxo-selection *ngIf="isGLEvent"
+      selectAllMode="allPages"
+      showCheckBoxesMode="always"
+      mode="multiple">
+    </dxo-selection>
+
+    <div *dxTemplate="let d of 'linkTemplate'">
+      <ng-container *ngIf="getTemplateLink(d) as cellNav; else showTextBlock">
+        <button mat-flat-button
+          class="grid-link"
+          (click)="validateSecurity(cellNav, $event)"
+          [title]="(d.text) ? d.text : ''"
+          [attr.aria-label]="(d.text) ? d.text : null"
+        >
+          <div class="show-carriage-returns">{{ d.text }}</div>
+        </button>
+      </ng-container>
+
+      <ng-template #showTextBlock>
+        <button mat-flat-button
+          class="grid-link"
+          [title]="(d.text) ? d.text : ''"
+          [attr.aria-label]="(d.text) ? d.text : null"
+        >
+          <a class="show-carriage-returns" (click)="gridRowClick(d)">{{ d.text }}</a>
+      </button>
+      </ng-template>
+    </div>
+    <div *dxTemplate="let task of 'tasksActionTemplate'"  class="approveRejectTemplate">
+      <div *ngIf="(task.data.numChildren > 0) || (task.data.numPredecessors > 0)">
+        Has child or pred.
+      </div>
+      <div id='buttonTemplate' class="buttons-wrap" *ngIf="(task.data.numChildren == 0) && (task.data.numPredecessors == 0)">
+        <crem-button
+          type="text"
+          size="small"
+          class="bg-transparent color-primary-light"
+          (click)="approve(task.data, 'Approve');">Approve &nbsp;</crem-button>
+        <span class="separator">|</span>
+        <crem-button
+          type="text"
+          size="small"
+          class="bg-transparent color-primary-light"
+          (click)="approve(task.data, 'Reject');$event.preventDefault();">&nbsp; Reject
+        </crem-button>
+      </div>
+    </div>  
+    <div *dxTemplate="let leaseCharge of 'leasePaymentsActionTemplate'" class="actionTemplate">
+      <button *ngIf="leaseCharge.data.IsActive === 'Active'"
+        [disabled]="isLeaseArchived || isLeaseLocked || !showAddButton"
+        class="btn btn-link" class="actionTemplateButton"
+        (click)="actionsClicked();$event.preventDefault();$event.preventDefault()" 
+        [matMenuTriggerFor]="leasePaymentsMenu" aria-label="Click to see Actions available for the Charge">
+        <mat-icon aria-label="Actions Menu">more_horiz</mat-icon>
+      </button>
+      <mat-menu #leasePaymentsMenu="matMenu" class="leasePayments-actions">
+        <ul role="list">
+          <li mat-menu-item role="listitem" *ngIf="showAddButton" (click)="editLeasePaymentCharge(leaseCharge.data)">Edit</li>
+          <li mat-menu-item role="listitem" *ngIf="showAddButton" (click)="copyLeasePaymentCharge(leaseCharge.data)">Copy</li>
+          <li mat-menu-item role="listitem" *ngIf="showDeleteButton && leaseCharge.data.ProcessingStatus && (leaseCharge.data.ProcessingStatus.toLowerCase() === 'scheduled' || leaseCharge.data.ProcessingStatus.toLowerCase() === 'estimated')" (click)="deleteLeasePaymentCharge(leaseCharge.data)">Delete</li>
+          <li mat-menu-item role="listitem" *ngIf="showAddButton && leaseCharge.data.ProcessingStatus && leaseCharge.data.ProcessingStatus.toLowerCase() === 'in process'" (click)="stopLeasePaymentCharge(leaseCharge.data)">Stop/Change Payment</li>
+        </ul>
+      </mat-menu>
+    </div>
+  </dx-data-grid>
+
+  <app-notes
+    [(showPopup)]="showNotes"
+    [noteData]="noteData"
+    (noteSaved)="updateRowNote($event)"
+  ></app-notes>
+
+  <div *ngIf="showMap && oIds" class="grid-map-container">
+    <app-map oIds="{{ oIds }}"
+      objectTypeId="{{ objectTypeId }}"
+    ></app-map>
+
+    <dx-popup width="800"
+      height="600"
+      resizeEnabled="true"
+      [(visible)]="filterBuilderMapVisible"
+      title="Filter Builder - View Only"
+      closeOnOutsideClick="true"
+    >
+      <dx-filter-builder
+        [fields]="filterFields"
+        [customOperations]="customOperations"
+        [value]="dataGrid.filterValue"
+        disabled="true"
+      ></dx-filter-builder>
+    </dx-popup>
+  </div>
+
+  <dx-popup [showTitle]="true"
+    title="Query"
+    [maxHeight]="'60%'"
+    [maxWidth]="'60%'"
+    [(visible)]="sqlPopupVisible"
+  >
+    <div *dxTemplate="let data of 'content'">
+      <dx-scroll-view height="100%"
+        width="100%"
+        direction="both"
+      >
+        <pre id="dynamic-sql"
+          class="overflow-unset"
+        >{{ formattedSql }}</pre>
+      </dx-scroll-view>
+    </div>
+
+    <dxi-toolbar-item
+      location="after"
+      toolbar="bottom"
+      widget="dxButton"
+      [options]="{
+        elementAttr: { class: 'sql-button' },
+        text: 'Copy to Clipboard',
+        onClick: copyToClipboard,
+        stylingMode: 'outlined'
+      }"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item
+      location="after"
+      toolbar="bottom"
+      widget="dxButton"
+      [options]="{
+        elementAttr: { class: 'sql-button' },
+        text: 'Close',
+        onClick: closeSqlPopup,
+        stylingMode: 'outlined'
+      }"
+    ></dxi-toolbar-item>
+  </dx-popup>
+
+  <app-share-view-popup #shareListViewPopup
+    [listView]="sharingListView"
+    [isSuperUser]="isSuperUser"
+    (closing)="reloadListViewMenu()"
+    (deleteClicked)="deleteListView(sharingListView, true)"
+  ></app-share-view-popup>
+</div>

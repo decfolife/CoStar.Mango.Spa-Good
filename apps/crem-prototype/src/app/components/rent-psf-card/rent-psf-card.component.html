@@ -1,0 +1,31 @@
+<mat-card class="dashboard-card">
+	<mat-card-header>
+		<mat-card-title>Rent per SF</mat-card-title>
+		<mat-card-subtitle>(YoY)</mat-card-subtitle>								
+	</mat-card-header>
+	<mat-card-content>
+		<dx-chart [dataSource]="rentPsf" [customizePoint]="customizePoint">		
+			<dxo-common-series-settings 
+			    argumentField="year"
+			    type="bar"
+			    valueField="rentpsf"
+			    [ignoreEmptyPoints]="true"
+			    [barPadding]="0.5"
+		        color="#F68338">
+			</dxo-common-series-settings>
+			<dxi-value-axis title="Rent Per SF $">
+			    <dxo-grid [visible]="true"></dxo-grid>
+			</dxi-value-axis>
+			<dxo-series-template nameField="year"></dxo-series-template>
+			<dxo-argument-axis title="Year"></dxo-argument-axis>
+			<dxo-export [enabled]="false"></dxo-export>							
+			<dxo-legend [visible]="false"></dxo-legend>	
+			<dxo-tooltip
+			    [enabled]="true"
+			    [shared]="true"
+			    [customizeTooltip]="standardTooltip">	
+			    <dxo-format type="currency" [precision]="2"></dxo-format>						    						    
+			</dxo-tooltip>						
+		</dx-chart>
+	</mat-card-content>
+</mat-card>

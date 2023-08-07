@@ -1,0 +1,62 @@
+.paymentDetails {
+	font: 14px Roboto,Helvetica Neue,sans-serif;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	.pmntDtls-top {
+		display: flex;
+		justify-content: space-between;
+
+		.table-data {
+			display: table;
+
+			.row-data {
+				display: table-row;
+				height: 24px;
+
+				.text-label, .value {
+					display: table-cell;
+				  padding: 2px 8px 2px 0;
+				}
+			}
+		}
+	}
+
+	.pmntDtls-center {
+		padding: 20px 0 16px;
+		flex-shrink: 0;
+		.notes {
+			display: flex;
+			.text-label {
+				padding-right: 16px
+			}
+			.value {
+				height: 48px;
+				width: 90%;
+				overflow-y: auto;
+				overflow-x: hidden;
+				white-space: pre-wrap;
+			}
+		}
+		//**** Below styles can be removed after migrating CREM to Mango - Begins here //
+		::-webkit-scrollbar {
+			width: 5px;
+			height: 5px;
+		}
+		::-webkit-scrollbar-track {
+			box-shadow: inset 0 0 6px rgb(0 0 0 / 30%);
+			border-radius: 10px;
+		}	
+		::-webkit-scrollbar-thumb:vertical {
+			-webkit-border-radius: 10px;
+			border-radius: 10px;
+			background: #d0d0d0;
+			-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+			box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+		}
+		//**** ends here( remove after migrating to CREM //
+	}
+
+}
+

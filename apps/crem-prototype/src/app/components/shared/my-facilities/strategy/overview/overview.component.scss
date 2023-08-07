@@ -1,0 +1,31 @@
+@use 'colors';
+
+:host::ng-deep {
+  .list-page-data-grid-wrapper {
+    [aria-label="Column Market Rent - Property"],
+    [aria-label="Column Market Rent - Submarket"],
+    [aria-label="Column Vacant SF - Property"],
+    [aria-label="Column Vacant SF - Submarket Rating"],
+    [aria-label="Column Vacant SF - Submarket"],
+    [aria-label="Column Vacancy Rate - Property"],
+    [aria-label="Column Vacancy Rate - Submarket Rating"],
+    [aria-label="Column Vacancy Rate - Submarket"],
+    [aria-label="Column Available SF - Property"],
+    [aria-label="Column Available SF - Submarket Peer Group"],
+    [aria-label="Column Available SF - Submarket"],
+    [aria-label="Column Availability Rate - Property"],
+    [aria-label="Column Availability Rate - Submarket Rating"],
+    [aria-label="Column Availability Rate - Submarket"],
+    [aria-label="Column Sublet SF - Property"],
+    [aria-label="Column Sublet SF - Submarket Rating"],
+    [aria-label="Column Sublet SF - Submarket"],
+    [aria-label="Column 12 Mo Net Absorption SF - Property"],
+    [aria-label="Column 12 Mo Net Absorption SF - Submarket Rating"],
+    [aria-label="Column 12 Mo Net Absorption SF - Submarket"],
+    [aria-label="Column 6 Mo Leasing Probability - Submarket Rating"],
+    [aria-label="Column 6 Mo Leasing Probability - Submarket"] {
+      background-color: colors.$costarDarkBlue;
+      color: colors.$white;
+    }
+  }
+}

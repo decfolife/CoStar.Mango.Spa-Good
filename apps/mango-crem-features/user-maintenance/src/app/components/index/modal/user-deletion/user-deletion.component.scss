@@ -1,0 +1,46 @@
+div {
+    display: flex;
+}
+
+.user-name {
+    font-weight: 600;
+}
+
+.user-deletion-modal {
+    &__content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+
+.footerRightControls {
+	display: flex;
+}
+
+.modalContent {
+	font-size: 14px !important;
+	padding: 0px 24px;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,Liberation Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+}
+
+.modalHeader {
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,Liberation Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+	padding: 24px 24px 8px !important;
+}
+
+.modalFooter {
+	padding: 24px !important;
+}
+
+.mat-dialog-container {
+	padding: 0px !important;
+}
+
+.modalHeader > .close-icon {
+	transform: translateY(-4px) scale(1.5) !important;
+}
+
+.view-contact-modal {
+	height: 800px !important;
+}

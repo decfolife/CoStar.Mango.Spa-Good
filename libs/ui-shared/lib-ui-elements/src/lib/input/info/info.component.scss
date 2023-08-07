@@ -1,0 +1,5 @@
+@use "../../../../../common/src/styles" as *;
+
+crem-icon {
+  @include costar(color, gray03)
+}

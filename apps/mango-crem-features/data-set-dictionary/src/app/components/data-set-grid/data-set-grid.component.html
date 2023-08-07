@@ -1,0 +1,90 @@
+<dx-data-grid #dataSetGrid
+  [dataSource]="gridData"
+  keyExpr="id"
+  [rowAlternationEnabled]="true"
+  [grouping]="false"
+  [allowColumnReordering]="false"
+  [headerFilter]="{ visible: true }"
+  [filterSyncEnabled]="true"
+  [height]="'calc(100vh - 164px)'"
+  (filterValueChange)="updateFilterCount($event)"
+  (onEditorPreparing)="onEditorPreparing($event)"
+  (onSaving)="onDataSetSaving($event)"
+  (onCellPrepared)="onCellPrepared($event)"
+  >
+  <dxo-filter-builder-popup [width]="600"
+    [height]="600"
+    [(visible)]="filterBuilderVisible"
+  ></dxo-filter-builder-popup>
+
+  <dxo-editing mode="row"
+    [allowUpdating]="hasAddRights"
+    [(editRowKey)]="editRowKey"
+  ></dxo-editing>
+
+  <dxo-paging [pageSize]="25"></dxo-paging>
+
+  <dxo-pager [visible]="true"
+    [allowedPageSizes]="[25,50,100]"
+    [showInfo]="true"
+    [showNavigationButtons]="true"
+    [showPageSizeSelector]="true"
+  ></dxo-pager>
+
+  <dxi-column dataField="name"
+    caption="Data Set Name"
+    dataType="string"
+    sortOrder="asc"
+    [allowEditing]="false"
+  ></dxi-column>
+
+  <dxi-column dataField="description"
+    dataType="string"
+  ></dxi-column>
+
+  <dxi-column *ngIf="isFinReportingEnabled"
+    dataField="assignFinancialFields"
+    dataType="boolean"
+  ></dxi-column>
+
+  <dxi-column dataField="adHocReportCount"
+    dataType="number"
+    [allowEditing]="false"
+  ></dxi-column>
+
+  <dxi-column dataField="listPageCount"
+    dataType="number"
+    [allowEditing]="false"
+  ></dxi-column>
+
+  <dxi-column type="buttons"
+    width="200"
+  >
+    <dxi-button name="edit"></dxi-button>
+    <dxi-button [onClick]="exportToExcel"
+      text="Send to Excel"
+    ></dxi-button>
+  </dxi-column>
+
+  <dxo-master-detail [enabled]="true"
+    template="detail"
+  ></dxo-master-detail>
+
+  <div *dxTemplate="let rowData of 'detail'">
+    <div class="master-detail-caption">{{
+      rowData.data.name + ' Data Set'
+    }}</div>
+
+    <mango-data-set-detail-grid [dataSet]="rowData.data"
+      [hasAddRights]="hasAddRights"
+    ></mango-data-set-detail-grid>
+  </div>
+  <dx-load-panel shadingColor="rgba(255,255,255,0.2)"
+  [visible]="showLoading"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="true"
+  [closeOnOutsideClick]="false"
+  ></dx-load-panel>
+  
+</dx-data-grid>

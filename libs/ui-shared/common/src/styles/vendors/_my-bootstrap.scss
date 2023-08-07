@@ -1,0 +1,35 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+// Overwrite Bootstrap variable to prevent possible color conflicts
+
+@include create-custom-root((
+  --blue: unset,
+  --indigo: unset,
+  --purple: unset,
+  --pink: unset,
+  --red: unset,
+  --orange: unset,
+  --yellow: unset,
+  --green: unset,
+  --teal: unset,
+  --cyan: unset,
+  --white: unset,
+  --gray: unset,
+  --gray-dark: unset,
+  --primary: unset,
+  --secondary: unset,
+  --success: unset,
+  --info: unset,
+  --warning: unset,
+  --danger: unset,
+  --light: $light,
+  --dark: $dark,
+  --breakpoint-xs: unset,
+  --breakpoint-sm: unset,
+  --breakpoint-md: unset,
+  --breakpoint-lg: unset,
+  --breakpoint-xl: unset,
+  --font-family-sans-serif: unset,
+  --font-family-monospace: unset,
+));

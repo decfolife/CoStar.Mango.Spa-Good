@@ -1,0 +1,24 @@
+<div *ngIf="label" class="input-label">
+  <span>{{ label }}</span>
+  <span *ngIf="optional" class="input-optional">(optional)</span>
+</div>
+
+<mat-form-field appearance="outline" [class.disabled]="disabled" [required]="required" [class.form-error]="error">
+  <input
+    matInput
+    [type]="type"
+    (input)="textEntered($event.target.value)"
+    [placeholder]="placeholder"
+    [value]="textValue"
+    [disabled]="disabled"
+  />
+  <ng-content select="[matSuffix]"></ng-content>
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+
+  <button *ngIf="icon && clickableIcon" (click)="onIconClick()" type="button" mat-icon-button matSuffix>
+    <mat-icon>{{ icon }}</mat-icon>
+  </button>
+  <mat-icon *ngIf="icon && !clickableIcon" matSuffix>{{ icon }}</mat-icon>
+</mat-form-field>
+
+<mat-error *ngIf="error">{{ errorMsg }}</mat-error>

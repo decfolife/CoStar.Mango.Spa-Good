@@ -1,0 +1,51 @@
+<div *ngIf="type === 'bar'">
+  <dx-chart [id]="id" [dataSource]="dataSource">
+    <dxi-series
+      [argumentField]="xAxis"
+      [valueField]="yAxis"
+      [name]="keyName"
+      [type]="type"
+      [color]="color"
+      width="100%"
+    >
+    </dxi-series>
+    <dxo-adaptive-layout [height]="250" [width]="1000"></dxo-adaptive-layout>
+  </dx-chart>
+</div>
+<div class="stackedBar" *ngIf="type === 'stackedBar'">
+  <dx-chart
+    id="chart"
+    title="User Logins"
+    [dataSource]="dataSource2"
+    width="100%"
+  >
+    <dxi-series
+      [valueField]="'totalLogins'"
+      name="Total Logins"
+      color="#0559b3"
+    ></dxi-series>
+    <dxi-series
+      [valueField]="'distinctContactLogins'"
+      name="Disctinct Contact Logins"
+      color="#ec4a08"
+    ></dxi-series>
+
+    <dxi-value-axis
+      aria-valuetext="logins"
+      displayMode="staggering"
+      position="left"
+    >
+      <dxo-title text="logins"></dxo-title>
+    </dxi-value-axis>
+    <dxo-common-series-settings [argumentField]="'month'" type="stackedBar">
+    </dxo-common-series-settings>
+    <dxo-legend
+      verticalAlignment="bottom"
+      horizontalAlignment="center"
+      itemTextPosition="top"
+    >
+    </dxo-legend>
+    <dxo-tooltip [enabled]="true" location="edge"> </dxo-tooltip>
+    <dxo-adaptive-layout [height]="250" [width]="600"></dxo-adaptive-layout>
+  </dx-chart>
+</div>

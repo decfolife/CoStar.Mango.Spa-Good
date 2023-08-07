@@ -1,0 +1,24 @@
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+
+.body-content {
+    padding: 0 24px;
+    font-size: 14px !important;
+}
+
+.modalContent {
+    // overflow-y: hidden !important;;
+    overflow-y: auto !important;
+}
+
+.object-name {
+    font-weight: bold;
+}
+
+.footerRightControls {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    crem-button {
+        padding: 8px 0px 8px 8px;
+    }
+}

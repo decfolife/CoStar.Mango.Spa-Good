@@ -1,0 +1,95 @@
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { CardDetails } from '../../../models';
+import { CardsService } from '../../../services/cards.service';
+import { environment } from '../../../../../../../../mango/src/environments/environment.local';
+import { TaskApprovalComponent } from '../../modal/task-approval/task-approval.component';
+import { MatDialog } from '@angular/material/dialog';
+
+@Component({
+  selector: 'new-tasks-card',
+  templateUrl: './new-tasks.component.html',
+  styleUrls: ['./new-tasks.component.scss']
+})
+export class NewTasksComponent implements OnInit {
+  @Input() card: CardDetails;
+  private selectedFilters : string;
+  @Output() rowClickEvent = new EventEmitter<any>();
+  @Input() objectType: string;
+  @ViewChild("NewTasksGrid") dataGrid: DxDataGridComponent;
+
+  public keyDate: string;
+
+  constructor(
+    private cardsService: CardsService,
+    private dialog: MatDialog
+  ) { }
+
+  ngOnInit(): void {
+    this.cardsService.filterString$.subscribe(data => {
+      this.selectedFilters = data;
+      this.getCardData();
+    });
+  }
+
+  customizeTaskAddedText(cellInfo){
+    let valueToReturn = (cellInfo.valueText === '01/01/1901' || cellInfo.valueText === '01.01.1901' ? "N/A" : cellInfo.valueText);
+    return valueToReturn;
+  }
+
+  rowClick(e: any) {
+    this.rowClickEvent.emit(e);
+  }
+  
+  exportAllGridData(e: any) {
+    this.dataGrid.instance.exportToExcel(false);
+  }
+
+  // decorating rows for completed tasks
+  decorateText(e: any) {
+    if (e.rowType == "data") {
+      if ((new Date(e.data.taskCompletedDate).getFullYear()) >= 1920) {
+        if (environment.isRestful) {
+          e.rowElement.classList.add('tdtw-row-stike');  //this line executes on Mango
+        } else {
+          e.rowElement[0].classList.add('tdtw-row-stike');  //this line executes On CREM
+        }
+      }
+    }
+  }
+  filter(e, cardId) {
+    this.card.filterInitialValue = e[0];
+    this.cardsService.newTasksDropdown = e[0];
+    this.getCardData();
+  }
+
+  getCardData() {
+    this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
+      (data: any) => {
+        this.card.dispCard = true;
+      }
+    );
+  }
+
+  getProjectName(){
+    return this.objectType + ' Name';
+  }
+
+  getProjectType(){
+    return this.objectType + ' Type';
+  }
+
+  approve(selectedTask, actionName) {
+    let dialogRef = this.dialog.open(TaskApprovalComponent, {
+      height: '240px',
+      width: '600px',
+      panelClass: 'taskApprovalModal',
+      data: {selectedTask, actionName}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+        if (result === "Approve") {
+          this.getCardData();
+        }
+      });
+  }
+}

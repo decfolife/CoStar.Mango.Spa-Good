@@ -1,0 +1,55 @@
+@import '../../styles/lib-styles.scss';
+cs-view-button {
+  height: $space-2-x-large;
+  display: inline-flex;
+
+  button {
+    font-family: $font-family-brand;
+    font-size: $font-size-x-sm !important;
+    display: flex;
+    flex-direction: column;
+    text-transform: uppercase;
+    border: none;
+    background: transparent;
+    color: $color-neutral-dark;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    margin: $space-x-small;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+
+    cs-icon {
+      use {
+        fill: #000;
+      }
+    }
+    .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+      display: flex;
+      max-height: 24px;
+      margin: 8px !important;
+      padding: 0px !important;
+    }
+    &:hover {
+      color: $color-brand-primary-medium;
+      cs-icon {
+        use {
+          fill: $color-brand-primary-medium;
+        }
+      }
+    }
+
+    &.active {
+      color: $color-brand-primary;
+
+      cs-icon {
+        use {
+          fill: $color-brand-primary;
+        }
+      }
+    }
+  }
+}

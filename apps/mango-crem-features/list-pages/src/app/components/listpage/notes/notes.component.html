@@ -1,0 +1,70 @@
+<div id="add-note">
+  <dx-popup #newNotePopup [elementAttr]="{ id: 'new-note-popup' }" [title]="getTitle()" [dragEnabled]="true"
+    [resizeEnabled]="true" [(visible)]="showPopup" [height]="550" [minHeight]="550" [width]="600" [minWidth]="600"
+    (onHidden)="onHide()" (onShowing)="onShowing($event)">
+    <div class="popup-body">
+      <div class="popup-content">
+
+        <div class="previous-notes" *ngIf="previousNotes.length">
+          <h6>
+            Previous Notes
+            <span class="clickable" (click)="showAll = !showAll">Show {{ showAll ? 'fewer' : 'more' }}</span>
+          </h6>
+
+          <dx-scroll-view height="140px">
+            <div id="previous-note-scroll">
+              <div *ngIf="showAll; else showOne">
+                <div *ngFor="let note of previousNotes">
+                  <div class="note-header">
+                    <strong>{{ note.author }}</strong> |
+                    {{ note.noteType.name }} |
+                    {{ note.timestamp | dfnsFormatDistanceToNow: {addSuffix: true} }} |
+                    {{ note.timestamp | date }}:
+                  </div>
+
+                  <div class="note-content" [innerHTML]="note.text">
+                  </div>
+                </div>
+              </div>
+
+              <ng-template #showOne>
+                <div class="note-header">
+                  <strong>{{ previousNotes[0].author }}</strong> |
+                  {{ previousNotes[0].noteType.name }} |
+                  {{ previousNotes[0].timestamp | dfnsFormatDistanceToNow: {addSuffix: true} }} |
+                  {{ previousNotes[0].timestamp | date }}:
+                </div>
+
+                <div class="note-content" [innerHTML]="previousNotes[0].text">
+                </div>
+              </ng-template>
+
+            </div>
+          </dx-scroll-view>
+        </div>
+
+        <div id="new-note-section">
+          <h6>New Note</h6>
+
+          <crem-dropdown id="note-type-dropdown" [class.error]="hasTypeError" [showColumnHeader]="true"
+            [placeholder]="'Note type'" [displayExpr]="'name'" [valueExpr]="'id'" [dataSource]="noteTypes"
+            (selectedItems)="noteTypesSelected($event)" [allowSearch]="true" [showHeader]="true" [isSearchable]="true">
+          </crem-dropdown>
+
+          <dx-text-area  placeholder="Note" [(value)]="newNote.text" height="100%"
+            (keyup)="calculateCharactersRemaining($event)" [class.error]="hasNoteError">
+          </dx-text-area>
+          <div class="remaining">
+            {{ remainingChars }} characters remaining.
+          </div>
+        </div>
+      </div>
+
+      <div class="popup-footer">
+        <dx-button (click)="newNotePopup.instance.hide()" [disabled]="disabled">Cancel</dx-button>
+        <dx-button class="primary" [disabled]="disabled" (click)="disabled = true; saveNote()">Save</dx-button>
+      </div>
+
+    </div>
+  </dx-popup>
+</div>

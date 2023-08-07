@@ -1,0 +1,76 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/var.scss';
+
+
+:host::ng-deep {
+	.classification-test {
+		display: flex;
+		flex-direction: column;
+		padding: $dblPadding;
+
+		.class-test-item-simple {
+			display: flex;
+			flex-direction: row;
+			padding-bottom: $dblPadding;
+			align-items: center;		
+		}
+
+		.class-test-item-advanced {
+			display: flex;
+			flex-direction: column;
+			padding-bottom: $stdPadding;
+
+			.class-test-calc-wrapper {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				padding-top: $stdPadding;
+
+				.class-test-calc {
+					display: flex;
+					flex-direction: row;
+					justify-content: center;
+					align-items: center;
+					flex-grow: 1;
+
+					.class-test-calc-calc {
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+
+						.numerator {
+							display: flex;
+							flex-direction: row;
+							padding-bottom: $stdPadding;
+							align-items: center;
+
+							.operator {
+								padding: 0px $stdPadding;
+							}
+						}
+
+						.denominator {
+							display: flex;
+							flex-direction: row;
+							padding-top: $stdPadding;
+
+						}
+					}
+
+					.class-test-calc-equals {
+						padding: 0px $stdPadding;
+					}
+				}
+			}
+		}
+
+		span.class-test-label {
+			flex-grow: 1;
+		}
+
+		mat-divider {
+			width: 100%;
+		}
+	}
+}
+

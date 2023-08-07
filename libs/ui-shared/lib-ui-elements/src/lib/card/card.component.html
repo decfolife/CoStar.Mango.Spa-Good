@@ -1,0 +1,71 @@
+<mat-card [id]="id" class="cremCard">
+  <mat-card-header class="better-card-header">
+    <div class="cardHeader">
+      <div class="mat-card-header-text">
+        <div *ngIf="counter > 0" class="counter">{{ counter }}</div>
+        <h2 mat-card-title id="{{pendoTitleId ? pendoTitleId : ''}}">
+          {{ title }} <span class="subtitle">{{ subtitle }}</span>
+        </h2>
+      </div>
+
+      <div class="customHeader">
+        <div *cardHeader="showCustomHeader ? true : false">
+          <ng-content select="'[customHeader]'"></ng-content>
+        </div>
+        <div *cardHeader="filterData ? true : false">
+          <crem-dropdown
+            [id]="'dropDownList-' + id"
+            [dataSource]="filterData"
+            [initialSelectedValue]="filterInitialValue.valueKey"
+            [showClearButton]="showFilterClearButton"
+            (selectedItems)="selected($event)"
+            selectionMode="single"
+            [placeholder]="filterInitialValue.displayKey"
+          ></crem-dropdown>
+        </div>  
+        <div *cardHeader="moreOptions ? true : false">
+          <button class="btn btn-default btn-sm moreOptionsBtn"
+            type='button'
+            [matMenuTriggerFor]="cardMenu"
+            (click)="$event.preventDefault()"
+            aria-label="More Options">
+            <mat-icon aria-label="More Menu">more_horiz</mat-icon>
+          </button>
+          <mat-menu #cardMenu="matMenu" class="dashboardsMoreOptions">
+            <button *ngIf="moreOptions.displayExpandOption" mat-menu-item (click)="toggleExpanded()"><span
+                *ngIf="moreOptions.isExpanded">Collapse All</span><span *ngIf="!moreOptions.isExpanded">Expand All</span></button>
+            <button *ngIf="moreOptions.export" mat-menu-item (click)="exportGridData()">Export</button>
+            <button *ngIf="moreOptions.hideLabels" mat-menu-item (click)="hideGridLabels()">Hide Labels</button>
+            <button *ngIf="moreOptions.hideLegend" mat-menu-item (click)="toggleLegend()">
+              <ng-container *ngIf="legendVisible">Hide Legend</ng-container>
+              <ng-container *ngIf="!legendVisible">Show Legend</ng-container>
+            </button>
+          </mat-menu>
+        </div>
+        <ng-container *ngIf="customDropdownMenu"
+          [ngTemplateOutlet]="customDropdownMenuRef"
+        >
+        </ng-container>
+          
+        <!-- <div cdkDragHandle>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            id="drag_indicator"
+            height="24"
+            viewBox="2 0 16 16"
+            width="16"
+          >
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path
+              d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+            />
+          </svg>
+        </div> -->
+      </div>
+    </div>
+    <ng-content select="'[cta-section]'"></ng-content>
+  </mat-card-header>
+  <mat-card-content class="cremCardContent" tabindex="0">
+    <ng-content></ng-content>
+  </mat-card-content>
+</mat-card>

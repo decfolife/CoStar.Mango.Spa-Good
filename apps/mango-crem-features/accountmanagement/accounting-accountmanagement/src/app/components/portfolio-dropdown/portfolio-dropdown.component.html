@@ -1,0 +1,10 @@
+<mat-form-field appearance="outline" class="dbl-right-margin">
+    <!-- <mat-label>Portfolio</mat-label> -->
+    <mat-select id="selectPortfolio" placeholder="Portfolio" [disabled]="disabled"
+    (selectionChange)="masterGroupIDChanged($event)" [(ngModel)]="service.selectedPortfolioId" disableOptionCentering>
+      <mat-option disabled>Portfolio</mat-option>
+      <mat-option *ngFor="let portfolio of service.portfolios" [value]="portfolio.masterGroupID">
+        {{portfolio.companyName}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>

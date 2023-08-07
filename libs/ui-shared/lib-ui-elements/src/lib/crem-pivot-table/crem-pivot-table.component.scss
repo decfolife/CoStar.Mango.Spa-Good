@@ -1,0 +1,121 @@
+
+@import '../../../../../../apps/mango/src/assets/styles/colors.scss';
+@import '../../../../../../apps/mango/src/assets/styles/costar-angular-material.scss';
+@import '../../../../../../apps/mango/src/assets/styles/costar-dev-extreme.scss';
+@import '../../../../../../apps/mango/src/assets/styles/costar-mango.scss';
+
+$stdPadding: 8px;
+$dblPadding: 2 * $stdPadding;
+
+crem-pivot-table {
+
+	.dx-dropdowneditor-icon {
+		color: $costarBlue;
+	}
+	
+	.dx-field-value {
+		width: 100% !important;
+	}
+	
+	.dx-fieldset {
+		margin: 0px !important;
+	}
+	
+	dx-pivot-grid {
+		height: 100%;
+		font-family: Helvetica;
+		font-size: 14px;
+        // td.dx-area-description-cell {
+            // background-color: $lightGray !important;
+        // }
+	
+		div.dx-pivotgrid-horizontal-headers {		
+			// background-color: $lightGray;
+            // ADA: add focus styling to pivot grid's vertical headers
+            div.dx-scrollable-wrapper{
+                div.dx-scrollable-container{
+                    &:focus-visible{
+                        outline: none
+                    }
+                    &:focus{
+                        outline: 5px auto -webkit-focus-ring-color; 
+                    }
+                }
+            }
+            tr {
+                td{
+                    color: #0559b3 !important;
+                    font-weight: 700 !important;
+                }
+            }
+        }
+
+        tbody.dx-pivotgrid-vertical-headers {
+            // background-color: $lightGray;
+            tr {
+                td{
+                    color: #0559b3 !important;
+                    font-weight: 700 !important;
+                }
+            }
+        }
+
+        div.dx-pivotgrid-vertical-headers {
+            // ADA: add focus styling to pivot grid's vertical headers
+            div.dx-scrollable-wrapper{
+                div.dx-scrollable-container{
+                    &:focus-visible{
+                        outline: none
+                    }
+                    &:focus{
+                        outline: 5px auto -webkit-focus-ring-color; 
+                    }
+                }
+            }
+        }
+    }
+
+    dx-chart {
+        padding-bottom: 16px;
+    }
+
+    dx-pivot-grid.allow_drilldown {
+        .dx-pivotgrid-container {
+            table {
+                tr.dx-bottom-row {
+                    td.dx-area-data-cell {
+                        .dx-pivotgrid-area {
+                            .dx-scrollable-wrapper {
+                                .dx-scrollable-container {
+                                    // ADA: add focus styling to pivot grid's table interior cells
+                                    &:focus-visible{
+                                        outline: none
+                                    }
+                                    &:focus{
+                                        outline: 5px auto -webkit-focus-ring-color;
+                                    }
+                                    .dx-scrollable-content {
+                                        table {
+                                            tbody {
+                                                tr {
+                                                    td {
+                                                        cursor: pointer !important;
+                                                        span {
+                                                            overflow: auto;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+

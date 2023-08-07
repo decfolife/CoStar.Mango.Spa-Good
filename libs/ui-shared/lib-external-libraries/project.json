@@ -1,0 +1,29 @@
+{
+  "name": "ui-shared-lib-external-libraries",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/ui-shared/lib-external-libraries/src",
+  "prefix": "mango",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/ui-shared/lib-external-libraries/src/**/*.ts",
+          "libs/ui-shared/lib-external-libraries/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/ui-shared/lib-external-libraries"
+      ],
+      "options": {
+        "jestConfig": "libs/ui-shared/lib-external-libraries/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

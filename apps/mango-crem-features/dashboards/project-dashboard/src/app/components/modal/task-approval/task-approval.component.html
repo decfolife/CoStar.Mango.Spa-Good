@@ -1,0 +1,11 @@
+<crem-modal 
+	[modalTitle]="taskName" 
+	[closeIconVisible]="closeButton" 
+	[primaryFooterButtonText]="action"
+	[closeOrCancelButtonText]="cancel" 
+	[primaryFooterButtonEnabledDisabled]="footerButtonDisabled"
+	(primaryButtonAction)="actionButton()">
+	<div modalContent class="body-content">
+		<textarea class="notes" placeholder="Enter note..." [(ngModel)]="taskNote" (ngModelChange)="onNotesTextChange($event)" ></textarea>
+	</div>
+</crem-modal>

@@ -1,0 +1,143 @@
+<div class="group-maintenance-page">
+	<div class="group-maintenance-page-controls-wrapper">
+		<div class="controls-left">
+			<div class="groupMaintenace__pageTitle dbl-right-margin">{{ pageTitle }}</div>
+            <cs-search #SearchBox class="group-maintenance-search"
+                (changed)="searchTreeList($event)"
+                >
+			</cs-search>
+
+        </div>
+		<div class="controls-right">
+            <crem-button class="group-maintenance__button-padding" type="primary" (click)="redirectToAction(0, 0, 'addGroup')">Add</crem-button>
+			<crem-button class="group-maintenance__button-padding" type="secondary" (click)="toggleExpanded()">
+                {{isExpanded ? 'Collapse All' : 'Expand All'}}
+            </crem-button>
+            <crem-button type="secondary" (click)="exportTreeList()">Export</crem-button>
+		</div>
+    </div>
+
+    <div class="group-maintenance-data-grid-wrapper">
+		<dx-tree-list *ngIf="groupMaintenanceData"
+            #TreeList
+            [dataSource]="groupMaintenanceData"
+            keyExpr="companyID"
+            parentIdExpr="parentGroupID"
+            [columnAutoWidth]="true"
+            [wordWrapEnabled]="true"
+            [showBorders]="false"
+            [rowAlternationEnabled]="true" 
+            [autoExpandAll]="isExpanded"
+            (onCellPrepared)="onCellPrepared($event)"
+            (onCellClick)="onCellClicked($event)"
+            >
+            <dxo-paging 
+                [pageSize]="50"
+                [enabled]= "true">
+            </dxo-paging>,
+            <dxo-pager 
+                [showPageSizeSelector]="true"
+                [allowedPageSizes]="[50, 100, 200, 500]"
+                [showInfo]="true"
+                [showNavigationButtons]="true"
+                [visible]="true"
+            >
+            </dxo-pager>
+            <dxo-editing
+                mode="form"
+            ></dxo-editing>
+            <dxo-scrolling mode="standard" columnRenderingMode="standard"></dxo-scrolling>
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>               
+            <dxi-column *ngFor="let col of columns"
+                [dataField]="col.dataField"
+                [caption]="col.caption"
+                [allowEditing]="col.allowEditing"
+                [width]="col.width"
+                [cellTemplate]="col.cellTemplate"
+                [visible]="col.visible"
+                >
+            </dxi-column>
+            <dxi-column [allowEditing]="false" dataField="portfolio" caption="Portfolio" width="100" cellTemplate="portfolioTemplate" alignment="center" [allowHeaderFiltering]="false" [allowSorting]="false"></dxi-column>          
+            <dxi-column dataField="groupLooksUp" width="100" caption="Looks Up" cellTemplate="looksUpTemplate" alignment="center" [allowHeaderFiltering]="false" [allowSorting]="false"></dxi-column>
+            <div *dxTemplate="let group of 'looksUpTemplate'">
+                <div id="{{'groupLookUp' + group.data.companyID}}" *ngIf="group.data.groupLooksUp" 
+                    (mouseenter)="toggleGroupLooksUp(group.data.companyID)"
+                    (mouseleave)="toggleGroupLooksUp(group.data.companyID)"
+                >
+                  <fa-icon [icon]="faArrowUp"></fa-icon>
+                </div>
+
+                <dx-tooltip
+                    target="{{'#groupLookUp' + group.data.companyID}}"
+                    [visible]="groupLooksUpTooltipVisible[group.data.companyID]"
+                    [closeOnOutsideClick]="false"
+                    >
+                    <dxo-animation>
+                        <dxo-show
+                            type="pop"
+                        ></dxo-show>
+                        <dxo-hide
+                            type="pop"
+                            [from]="{ scale: 1, opacity: 1 }"
+                            [to]="{ opacity: 0, scale: 0.1 }"
+                        ></dxo-hide>
+                    </dxo-animation>
+                    <div>Group Looks Up: Users that are members of a security group that looks up</div>
+                    <div>can view any contact or company record that is part of the parent group </div>
+                </dx-tooltip>
+            </div>
+            <div *dxTemplate="let group of 'portfolioTemplate'">
+                <div id="{{'portfolio' + group.data.companyID}}" *ngIf="group.data.portfolio === group.data.companyID" 
+                    (mouseenter)="toggleIsPortfolio(group.data.companyID, 'on')"
+                    (mouseleave)="toggleIsPortfolio(group.data.companyID, 'off')"
+                >
+                  <fa-icon [icon]="faFolderOpen"></fa-icon>
+                </div>
+
+                <dx-tooltip
+                    target="{{'#portfolio' + group.data.companyID}}"
+                    [visible]="isPortfolioTooltipVisible[group.data.companyID]"
+                    [closeOnOutsideClick]="false"
+                    >
+                    <dxo-animation>
+                        <dxo-show
+                            type="pop"
+                        ></dxo-show>
+                        <dxo-hide
+                            type="pop"
+                            [from]="{ scale: 1, opacity: 1 }"
+                            [to]="{ opacity: 0, scale: 0.1 }"
+                        ></dxo-hide>
+                    </dxo-animation>
+                    <div> Is Portfolio </div>
+                </dx-tooltip>
+            </div>
+            <dxi-column dataField="Actions" caption="Actions" type="buttons" width="65">
+		    	<dxi-button	template="moreMenuTemplate">
+		    		<div *dxTemplate="let group of 'moreMenuTemplate'" class="cursor-default">
+              <button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu">
+                <fa-icon [icon]="faEllipsisH"></fa-icon>
+              </button>
+		    			<mat-menu #UserMoreMenu="matMenu">
+				    		<ul>
+                  <li (click)="redirectToAction(group.data.companyID, group.data.portfolio, 'addSubGroup')">Add Sub Group</li>
+                  <li (click)="redirectToAction(group.data.companyID, group.data.portfolio, 'edit')">Edit </li>
+                  <li (click)="redirectToAction(group.data.companyID, group.data.portfolio, 'assignRightsToGroup')">Assign Rights</li>
+                  <li (click)="redirectToAction(group.data.companyID, group.data.portfolio, 'assignUsers')">Assign Users</li>
+                  <li (click)="redirectToAction(group.data.companyID, group.data.portfolio,'assignModulesToGroup')">Assign Modules</li>
+                  <li (click)="assignAdminLinks(group.data.companyID)" *ngIf="userHaveAdminRights">Assign Admin Links</li> 
+                </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>
+		    </dxi-column>
+        </dx-tree-list>
+        <dx-load-panel shadingColor="rgba(255,255,255,0.2)"
+            [visible]="!groupMaintenanceData"
+            [showIndicator]="true"
+            [showPane]="true"
+            [shading]="true"
+            [closeOnOutsideClick]="false"
+        ></dx-load-panel>
+	</div>
+</div>

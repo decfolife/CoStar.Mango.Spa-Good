@@ -1,0 +1,27 @@
+{
+  "name": "forms-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/forms-shared/src",
+  "prefix": "mango",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/forms-shared/src/**/*.ts",
+          "libs/forms-shared/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/forms-shared"],
+      "options": {
+        "jestConfig": "libs/forms-shared/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

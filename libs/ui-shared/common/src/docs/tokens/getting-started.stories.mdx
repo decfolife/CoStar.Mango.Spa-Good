@@ -1,0 +1,57 @@
+import { Canvas, Meta, Story } from '@storybook/addon-docs';
+
+<Meta title="Styling/Getting Started"/>
+
+# Introduction
+---
+
+The new common library that contains the design tokens (colors, spacing, font-family, etc.), 
+mixins, general layout, provides all the necessary tools to quickly develop CSS while maintaining 
+organized and scalable code.
+
+Please read the [Usage](#usage) section to learn how to use the library.
+
+# Usage
+---
+
+### 1. **Import the common library once**
+
+``` SCSS
+@use "./libs/ui-shared/common/src/styles" as *;
+```
+
+### 2. **Use the mixins**
+
+When using the mixins, you can either use `costar()` to access the properties or `costar-alias()` for accessing
+multiple properties at once.
+
+1. **Single CSS properties** 
+
+Use the costar() mixin if you want to have granular control over the styling process, including one SCSS property at a time.
+
+E.g.
+``` SCSS
+button {
+  @include costar(font-family, body);
+  @include costar(border-radius, small);
+  @include costar(font-size, normal);
+  @include costar(transition, fast);
+}
+```
+
+2. **Multiple CSS properties** 
+
+Use the costar-alias() mixin if you want to include multiple properties at once that accomodates to the design system.
+
+E.g.
+``` SCSS
+button {
+  @include costar-alias(button, primary);
+}
+```
+
+# Collaborate
+---
+
+- Read and get familiarized with the [CSS Style guides and best practices](/story/design-system-collaborate--page)
+- Token modifications or additions are subject to Product/Design approval

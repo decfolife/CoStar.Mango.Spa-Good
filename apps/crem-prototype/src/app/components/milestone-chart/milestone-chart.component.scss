@@ -1,0 +1,52 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/var.scss';
+
+// span.milestone {
+// 	height: $stdPadding * 4;
+// 	display: inline-block;
+// 	margin-right: $dblPadding;
+// 	border-radius: 8px;
+// 	padding: $stdPadding;
+// 	box-sizing: border-box;
+// 	font-size: 14px;
+// 	border: $stdBorder;
+// 	line-height: 14px;
+
+// 	&.complete {
+// 		background: $lightGray;
+// 		color: $gray;
+// 	}
+
+// 	&.behind {
+// 		background: $yellow;
+// 		color: black;
+// 	}
+
+// 	&.late {
+// 		// background: $costarRed;
+// 		background: #F1433F;
+// 		color: white;
+// 	}
+
+// 	&.ongoing {
+// 		// background: $costarGreen;
+// 		background: #A9CF54;
+// 		color: white;
+// 	}
+
+// 	&.upcoming {
+// 		// background: $costarMediumBlue;
+// 		// background: #70B7BA;
+// 		background: #3D4C53;
+// 		color: white;
+// 	}
+
+// 	&.show-date {
+// 		height: $stdPadding * 7;
+// 	}
+
+// 	div.milestone-date {
+// 		padding-top: $stdPadding;
+// 		text-align: center;
+// 	}
+// }

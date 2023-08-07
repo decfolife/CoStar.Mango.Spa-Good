@@ -1,0 +1,46 @@
+.navigateTo {
+	background-color: lightblue;
+}
+
+h2 {
+	color: #1e3a6f;
+	font-size: 20px;
+	font-weight: normal;
+	margin: 20px 0 0;
+}
+
+dx-data-grid.qsr-objectData {
+	border-bottom: 1px solid #9F9F9F;
+}
+
+.qsr-modalContent {
+
+	dx-tab-panel.dx-tabpanel.search-results-tab-panel div.dx-tabpanel-tabs div.dx-tabs {
+		justify-content: center;
+	}
+
+	dx-tab-panel.dx-tabpanel div.dx-tabpanel-tabs div.dx-tabs {
+    border: none;
+    box-shadow: none;
+    height: 36px;
+    border-bottom: 1px solid #BFBFBF;
+    border-top: 1px solid #BFBFBF;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+	}
+}
+
+crem-loader {
+	position: relative;
+	top: 30%;
+	left: 50%;
+	transform: translateX(-25PX);
+}
+
+.qsr-search-results-grid {
+	.dx-datagrid-headers + .dx-datagrid-rowsview {
+		border-top: none;
+	}	
+}

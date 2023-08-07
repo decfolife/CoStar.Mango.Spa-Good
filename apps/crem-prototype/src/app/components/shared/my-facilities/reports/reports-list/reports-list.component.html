@@ -1,0 +1,100 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">
+			<h5 class="dbl-right-margin">Reports</h5>	
+			<costar-search (changed)="searchDataGrid($event)"></costar-search>
+			<button class="btn btn-default btn-icon" (click)="toggleShowFavorites()">				
+				<mat-icon *ngIf="!showFavorites">star_outline</mat-icon>
+				<mat-icon *ngIf="showFavorites" class="yellow">star</mat-icon>
+			</button>
+			<!-- tags -->
+			<tag-dropdown (tagsChanged)="applyTagFilters($event)"></tag-dropdown>
+		</div>
+		<div class="controls-right">			
+			<button class="btn btn-default" [matMenuTriggerFor]="moreMenu">More <fa-icon icon="caret-down"></fa-icon></button>
+			<mat-menu #moreMenu="matMenu">				
+				<button mat-menu-item (click)="toggleExpanded()"><span *ngIf="isExpanded">Collapse All</span><span *ngIf="!isExpanded">Expand All</span></button>      
+				<button mat-menu-item (click)="showColumnChooser()">Column Chooser</button>        
+				<button mat-menu-item (click)="launchManageTagsModal()">Manage Tags</button>        
+                <button mat-menu-item (click)="launchUploadOfflineTemplateModal()">Upload Offline Template</button>        
+			</mat-menu>			
+			<button class="btn btn-primary">Create Report</button>			
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<dx-data-grid
+			class="list-page-data-grid"
+			#DataGrid
+			[dataSource]="filteredReports"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="columnAutoWidth"
+			[filterSyncEnabled]="true"
+			[columnMinWidth]="10"
+			[wordWrapEnabled]="true"	
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			<!-- <dxo-scrolling mode="virtual"></dxo-scrolling> -->
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+			<dxo-column-chooser [allowSearch]="true" mode="select">
+			</dxo-column-chooser>
+			<dxo-paging [pageSize]="50"></dxo-paging>
+		    <dxo-pager 
+		        [showPageSizeSelector]="true"
+		        [allowedPageSizes]="[50, 100, 200, 500]"
+		        [showInfo]="true"
+		        [showNavigationButtons]="true">
+		    </dxo-pager>	
+			<dxi-column dataField="isFavorite" [visible]="true" caption="Fav" cellTemplate="favoriteTemplate" width="48" [allowHeaderFiltering]="false" [showInColumnChooser]="false"></dxi-column>
+			<dxi-column dataField="name" [visible]="true"></dxi-column>
+			<dxi-column dataField="type" [visible]="true"></dxi-column>
+			<dxi-column dataField="description" [visible]="false" width="480"></dxi-column>
+			<dxi-column dataField="tags" [visible]="true" cellTemplate="tagsTemplate" width="144" [allowHeaderFiltering]="true"></dxi-column>
+			<dxi-column dataField="access" [visible]="true"></dxi-column>
+			<dxi-column dataField="datasetName" [visible]="true"></dxi-column>
+			<dxi-column dataField="isScheduled" caption="Scheduled" [visible]="true"></dxi-column>
+			<dxi-column dataField="createdBy" [visible]="false"></dxi-column>
+			<dxi-column dataField="runCount" [visible]="false"></dxi-column>
+			<dxi-column dataField="lastRunDate" [visible]="false"></dxi-column>
+			<dxi-column dataField="lastRunBy" [visible]="false"></dxi-column>
+			<dxi-column type="buttons" width="48" [showInColumnChooser]="false">
+		    	<dxi-button
+		    		template="moreMenuTemplate"   		
+		    	>
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'">
+		    			<button class="btn btn-link" (click)="$event.stopPropagation()" [matMenuTriggerFor]="itemMoreMenu"><mat-icon>more_horiz</mat-icon></button>
+		    			<mat-menu #itemMoreMenu="matMenu">
+				    		<ul>                        
+		                        <li (click)="launchAssignTagsModal(data)">Assign Tags</li> 
+								<li>Edit</li> 
+								<li>Run</li>		                                               
+		                        <li>Scheduling</li> 
+								<li (click)="launchShareReportModal(data)">Share</li> 
+								<li>View History</li> 
+								<li (click)="launchDeleteReportModal(data)">Delete</li> 
+		                    </ul>
+				    	</mat-menu>
+		    		</div>
+		    	</dxi-button>		    	
+		    </dxi-column>	
+			<div *dxTemplate="let rpt of 'favoriteTemplate'">		
+				<mat-icon *ngIf="!rpt.data.isFavorite" class="favorite-icon-table" (click)="toggleItemFavorite(rpt)">star_outline</mat-icon>
+				<mat-icon *ngIf="rpt.data.isFavorite" class="favorite-icon-table yellow" (click)="toggleItemFavorite(rpt)">star</mat-icon>
+			</div>
+			<div *dxTemplate="let rpt of 'tagsTemplate'">		
+				<ng-container *ngFor="let t of rpt.data.tags">
+					<tag [tag]="t"></tag>
+				</ng-container>				
+			</div>		
+		</dx-data-grid>		
+	</div>	
+</div>
+
+<router-outlet></router-outlet>
+

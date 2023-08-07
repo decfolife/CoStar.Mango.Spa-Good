@@ -1,0 +1,53 @@
+<costar-popup>
+	<popup-content>
+		<dx-form 
+            [(formData)]="task"
+            [colCount]="1"
+            labelLocation="left">
+            <dxi-item 
+                dataField="taskName"
+                [label]="{ text : 'Task Name' }"
+                template="textBoxTemplate">
+            </dxi-item>
+            <dxi-item 
+                dataField="role"
+                [label]="{ text : 'Role' }"
+                template="roleTemplate">
+            </dxi-item>
+            <!-- <dxi-item 
+                dataField="duration"
+                [label]="{ text : 'Duration (days)' }"
+                template="integerTemplate">
+            </dxi-item> -->
+            <dxi-item 
+                dataField="requireApprovalByAssignee"
+                [label]="{ text : 'Require approval by an assignee' }"
+                template="switchTemplate">
+            </dxi-item>
+            <dxi-item 
+                dataField="requireApprovalByAllAssignees"
+                [label]="{ text : 'Require approval by all assignees' }"
+                template="switchTemplate">
+            </dxi-item>
+            <div *dxTemplate="let data of 'textBoxTemplate'">
+                <dx-text-box [(value)]="task[data.dataField]"></dx-text-box>                
+            </div>
+            <div *dxTemplate="let data of 'integerTemplate'">
+                <dx-number-box [(value)]="task[data.dataField]" [showSpinButtons]="true" [showClearButton]="true"></dx-number-box>                
+            </div>
+            <div *dxTemplate="let data of 'roleTemplate'">
+                <costar-dropdown [dropdownData]="roles" (changed)="roleChanged($event)"></costar-dropdown>                
+            </div>
+            <div *dxTemplate="let data of 'switchTemplate'">
+                <mat-slide-toggle [(checked)]="task[data.dataField]"></mat-slide-toggle>
+            </div>
+        </dx-form>
+	</popup-content>
+	<popup-footer>		
+		<popup-footer-right>
+			<button class="btn btn-default" (click)="close()">Close</button> 
+			<button class="btn btn-primary" (click)="save()">Save</button> 
+		</popup-footer-right>
+	</popup-footer>
+</costar-popup>
+

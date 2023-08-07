@@ -1,0 +1,51 @@
+// Apparently, just using the component doesn't include the styles?
+@import "../../../../../../../libs/ui-shared/lib-ui-elements/src/lib/tooltip/tooltip.component.scss";
+
+:host {
+  ::ng-deep {
+    crem-tooltip {
+      display: inline-block;
+
+      .dx-field-value-static {
+        padding: 0;
+      }
+    }
+  }
+}
+
+.intervals-card {
+  mat-card-title {
+    align-items: center;
+    border-bottom: 1px solid #c2c2c2;
+    box-sizing: border-box;
+    color: #3c3c3c;
+    display: flex;
+    font-size: 20px;
+    justify-content: space-between;
+    padding: 16px;
+
+    .updated-text {
+      float: right;
+      font-style: italic;
+      font-size: 14px;
+      font-weight: normal;
+    }
+  }
+
+  .container-fluid {
+    padding: 0px;
+
+    .row {
+      min-height: 36px;
+    }
+  }
+
+  .col-7 {
+    dx-select-box {
+      margin-right: 16px;
+    }
+
+    display: flex;
+    flex-direction: row;
+  }
+}

@@ -1,0 +1,327 @@
+@use "../../../../common/src/styles" as *;
+
+button {
+  @include costar(font-family, body);
+  @include costar(border-radius, small);
+  @include costar(font-size, normal);
+  @include costar(transition, fast);
+
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: none;
+  height: 32px;
+  cursor: pointer;
+
+  // Flat Button
+  &.btn-flat {
+    @include costar(color, light);
+    border: none;
+    &.btn-primary {
+      @include costar(background-color, primary-light);
+      &:hover {
+        @include costar(background-color, primary-lighter);
+      }
+      &:disabled {
+        @include costar(color, light);
+        @include costar(background-color, primary-lighter);
+        &:hover {
+          @include costar(color, light);
+          @include costar(background-color, primary-lighter);
+        }
+      }
+    }
+    &.btn-secondary {
+      @include costar(background-color, light);
+      @include costar(color, dark);
+      @include costar(border, gray04);
+      &:hover {
+        @include costar(background-color, light);
+        @include costar(color, gray03);
+      }
+      &:disabled {
+        @include costar(color, gray04);
+        @include costar(background-color, light);
+        &:hover {
+          @include costar(color, gray04);
+          @include costar(background-color, light);
+        }
+      }
+    }
+    &.btn-warning {
+      @include costar(background-color, warning);
+      @include costar(color, light);
+      @include costar(border, warning);
+      &:hover {
+        @include costar(background-color, warning-lighter);
+      }
+      &:disabled {
+        @include costar(color, light);
+        @include costar(border-color, warning-lightest);
+        @include costar(background-color, warning-lighter);
+        &:hover {
+          @include costar(color, light);
+          @include costar(border-color, warning-lightest);
+          @include costar(background-color, warning-lighter);
+        }
+      }
+    }
+    &.btn-danger {
+      @include costar(background-color, danger);
+      @include costar(color, light);
+      @include costar(border, danger);
+      &:hover {
+        @include costar(background-color, danger-lighter);
+      }
+      &:disabled {
+        @include costar(color, light);
+        @include costar(border, danger-lightest);
+        @include costar(background-color, danger-lightest);
+        &:hover {
+          @include costar(color, light);
+          @include costar(border, danger-lightest);
+          @include costar(background-color, danger-lightest);
+        }
+      }
+    }
+  }
+
+  // Basic Button
+  &.btn-basic {
+    background-color: transparent;
+    border: none;
+    &.btn-primary {
+      @include costar(color, primary);
+      &:hover {
+        @include costar(color, primary);
+        @include costar(background-color, primary-lightest);
+      }
+      &:disabled {
+        @include costar(color, primary-lightest);
+        &:hover {
+          background-color: unset;
+          @include costar(color, primary-lightest);
+        }
+      }
+    }
+    &.btn-secondary {
+      @include costar(color, dark);
+      &:hover {
+        @include costar(background-color, gray06);
+      }
+      &:disabled {
+        @include costar(color, gray04);
+        &:hover {
+          background-color: unset;
+          @include costar(color, gray04);
+        }
+      }
+    }
+    &.btn-warning {
+      @include costar(color, warning);
+      &:hover {
+        @include costar(color, light);
+        @include costar(background-color, warning-lighter);
+      }
+      &:disabled {
+        @include costar(color, warning-lightest);
+        &:hover {
+          background-color: unset;
+          @include costar(color, warning-lightest);
+        }
+      }
+    }
+    &.btn-danger {
+      @include costar(color, danger);
+      &:hover {
+        @include costar(color, danger);
+        @include costar(background-color, danger-lightest);
+      }
+      &:disabled {
+        @include costar(color, danger-lightest);
+        &:hover {
+          background-color: unset;
+          @include costar(color, danger-lightest);
+        }
+      }
+    }
+  }
+
+  // Stroked Button
+  &.btn-stroked {
+    background-color: transparent;
+    &.btn-primary {
+      @include costar(color, primary);
+      @include costar(border, primary);
+      &:hover {
+        @include costar(background-color, primary-lightest);
+      }
+      &:disabled {
+        @include costar(color, primary-lightest);
+        @include costar(border-color, primary-lightest);
+        &:hover {
+          @include costar(color, primary-lightest);
+          background-color: transparent;
+        }
+      }
+    }
+    &.btn-secondary {
+      @include costar(color, dark);
+      @include costar(border, dark);
+      &:hover {
+        @include costar(background-color, gray06);
+      }
+      &:disabled {
+        @include costar(color, gray04);
+        @include costar(border, gray04);
+        &:hover {
+          @include costar(color, gray04);
+          background-color: transparent;
+        }
+      }
+    }
+    &.btn-warning {
+      @include costar(color, warning);
+      @include costar(border, warning);
+      &:hover {
+        @include costar(color, light);
+        @include costar(background-color, warning);
+      }
+      &:disabled {
+        @include costar(color, warning-lighter);
+        @include costar(border-color, warning-lightest);
+        &:hover {
+          @include costar(color, warning-lighter);
+          background-color: transparent;
+        }
+      }
+    }
+    &.btn-danger {
+      @include costar(color, danger);
+      @include costar(border, danger);
+      &:hover {
+        @include costar(color, light);
+        @include costar(background-color, danger);
+      }
+      &:disabled {
+        @include costar(color, danger-lightest);
+        @include costar(border-color, danger-lightest);
+        &:hover {
+          @include costar(color, danger-lightest);
+          background-color: transparent;
+        }
+      }
+    }
+  }
+
+  // Btn states
+  &.btn-primary {
+    &:focus {
+      @include costar(box-shadow, primary);
+    }
+    &:not(:disabled):not(.disabled):active {
+      @include costar(color, light);
+      @include costar(background-color, primary-light);
+      @include costar(border-color, primary);
+    }
+  }
+  &.btn-secondary {
+    &:focus {
+      @include costar(box-shadow, gray04);
+    }
+    &:not(:disabled):not(.disabled):active {
+      @include costar(color, dark);
+      @include costar(background-color, light);
+      @include costar(border-color, gray05);
+    }
+  }
+  &.btn-warning {
+    &:focus {
+      @include costar(box-shadow, warning);
+    }
+    &:not(:disabled):not(.disabled):active {
+      @include costar(color, light);
+      @include costar(background-color, warning-dark);
+      @include costar(border-color, warning);
+    }
+  }
+  &.btn-danger {
+    &:focus {
+      @include costar(box-shadow, danger);
+    }
+    &:not(:disabled):not(.disabled):active {
+      @include costar(color, light);
+      @include costar(background-color, danger-dark);
+      @include costar(border-color, danger);
+    }
+  }
+  &:disabled,
+  &.disabled {
+    border: none;
+    cursor: not-allowed;
+  }
+
+  // Btn Sizes
+  // todo: make these px values into relative values
+  &.btn-small {
+    height: auto;
+    min-height: 24px;
+    padding: 0.25rem 0.5rem;
+    &.no-text {
+      width: 24px;
+    }
+    @include costar(font-size, small);
+  }
+  &.btn-big {
+    height: auto;
+    min-height: 32px;
+    padding: 0.5rem 0.7rem;
+    &.no-text {
+      width: 54px;
+    }
+    @include costar(font-size, big);
+  }
+
+  // Btn Icon Position
+  &.btn-icon-left {
+    > .icon {
+      @include costar(margin-right, 1);
+    }
+  }
+  &.btn-icon-right {
+    flex-direction: row-reverse;
+    > .icon {
+      @include costar(margin-left, 1);
+    }
+  }
+
+  // No Text, just the icon
+  &.no-text {
+    padding: 0.7rem 0.45rem;
+    > .icon {
+      margin: 0px;
+    }
+  }
+
+  // Button Absolute Tag for attaching Pendo Elements
+  .tag {
+    position: absolute;
+    transform: translate(90%, -90%);
+  }
+
+  // Inline innerHTML elements
+  .content {
+    display: flex;
+    line-height: 1.5;
+    flex-direction: row;
+    // Badge
+    > span {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+}

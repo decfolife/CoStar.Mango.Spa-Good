@@ -1,0 +1,127 @@
+<div class="list-page">
+	<div class="list-page-controls-wrapper">
+		<div class="controls-left">		
+			<h5>Journal Entry Export</h5>
+		</div>
+		<div class="controls-right">	
+			<portfolio-menu></portfolio-menu>
+			<button class="btn btn-primary-outline" (click)="filterDrawer.toggle()">Filters</button>				
+			<button class="btn btn-primary-outline" [matMenuTriggerFor]="PreviewMenu">Download</button>
+			<mat-menu #PreviewMenu="matMenu" class="mat-menu-costar">
+				<form class="form-horizontal">
+					<label id="radio-group-label">Choose file to download:</label>
+					<mat-radio-group class="radio-group">
+						<mat-radio-button *ngFor="let filename of files" class="radio-button" [value]="filename.filename" (click)="$event.stopPropagation()">{{filename.filename}}</mat-radio-button>	
+					</mat-radio-group>
+					<button class="btn btn-primary w100"> Download </button>
+				</form>
+			</mat-menu>
+			<button class="btn btn-primary" [matMenuTriggerFor]="ExportMenu">Export</button>
+			<mat-menu #ExportMenu="matMenu" class="mat-menu-costar">
+				<button mat-menu-item>Export Only</button>
+				<button mat-menu-item>Export & Send to FTP</button>
+			</mat-menu>
+		</div>
+	</div>
+	<div class="list-page-data-grid-wrapper">
+		<mat-drawer-container class="h100">
+			<mat-drawer #filterDrawer mode="over" position="end">
+				<div *ngFor="let filter of filters" class="integration-filters-wrapper">
+					<costar-dropdown [dropdownData]="filter"></costar-dropdown>													
+				</div>
+				<div class="integration-filters-wrapper">
+					<button class="btn btn-primary" (click)="applyFilters()">Apply</button>
+				</div>
+			</mat-drawer>
+			<mat-drawer-content>
+				<dx-tab-panel *ngIf="files.length > 0"
+					#integrationTabPanel	
+					height="100%"					
+					[selectedIndex]="0"
+					[loop]="false"
+					[animationEnabled]="true"
+					[swipeEnabled]="true"
+					[dataSource]="files">
+					<div *dxTemplate="let file of 'title'">
+					    <span>{{file.filename}}</span>
+					</div>
+					<div *dxTemplate="let file of 'item'" class="integration-file-wrapper">
+						<div class="integration-file-header">
+							<dx-data-grid 						
+								[dataSource]="fileHeader"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 
+								[columnAutoWidth]="false"							
+								[columnMinWidth]="10">								
+							    <dxi-column dataField="recordCount" alignment="right" dataType="number"></dxi-column>
+							    <dxi-column dataField="totalDebit" alignment="right" dataType="number">
+							    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+							    </dxi-column>
+							    <dxi-column dataField="totalCredit" alignment="right" dataType="number">
+							    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+							    </dxi-column>							    
+							</dx-data-grid>
+						</div>
+						<div class="integration-file-detail">
+							<dx-data-grid 						
+								[dataSource]="file.data"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 
+								[allowColumnResizing]="true"
+								[columnAutoWidth]="true"							
+								[columnMinWidth]="10">
+								<dxo-header-filter [visible]="true"></dxo-header-filter>    							
+								<dxo-sorting mode="multiple"></dxo-sorting>
+								<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+								<dxo-paging [pageSize]="100"></dxo-paging>
+							    <dxo-pager 
+							        [showPageSizeSelector]="true"
+							        [allowedPageSizes]="[50, 100, 200, 500]"
+							        [showInfo]="true"
+							        [showNavigationButtons]="true">
+							    </dxo-pager>
+							    <dxi-column dataField="id" caption="ID" alignment="left" dataType="number"></dxi-column>
+							    <dxi-column dataField="portfolio" caption="Portfolio" alignment="left" dataType="string"></dxi-column>
+							    <dxi-column dataField="period" caption="Period" alignment="center" dataType="number"></dxi-column>
+							    <dxi-column dataField="accountName" caption="Account Name" alignment="left" dataType="string"></dxi-column>
+							    <dxi-column dataField="accountCode" caption="Account Code" alignment="left" dataType="string"></dxi-column>
+							    <dxi-column dataField="accountSubCode" caption="Sub Code" alignment="left" dataType="string"></dxi-column>
+							    <dxi-column dataField="description" caption="Description" alignment="left" dataType="string"></dxi-column>
+							    <dxi-column dataField="jeType" caption="JE Type" alignment="left" dataType="string"></dxi-column>
+							    <dxi-column dataField="debitCredit" caption="D/C" alignment="center" dataType="string"></dxi-column>
+							    <dxi-column dataField="amount" caption="Amount" alignment="right" dataType="number">
+							    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+							    </dxi-column>
+							    <dxi-column dataField="isBalanced" caption="Balanced" alignment="center" dataType="string"></dxi-column>
+							    <dxi-column dataField="postDate" caption="Post Date" alignment="center" dataType="string"></dxi-column>
+							    <dxi-column dataField="jeId" caption="JE ID" alignment="right" dataType="number"></dxi-column>
+							</dx-data-grid>
+						</div>
+						<div class="integration-file-footer">
+							<dx-data-grid 						
+								[dataSource]="fileFooter"
+								[showColumnLines]="false"
+								[showRowLines]="false"
+								[showBorders]="false"
+								[rowAlternationEnabled]="true" 
+								[columnAutoWidth]="false"							
+								[columnMinWidth]="10">								
+							    <dxi-column dataField="recordCount" alignment="right" dataType="number"></dxi-column>
+							    <dxi-column dataField="totalDebit" alignment="right" dataType="number">
+							    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+							    </dxi-column>
+							    <dxi-column dataField="totalCredit" alignment="right" dataType="number">
+							    	<dxo-format type="fixedPoint" [precision]="2"></dxo-format>
+							    </dxi-column>							    
+							</dx-data-grid>
+						</div>
+					</div>
+				</dx-tab-panel>
+			</mat-drawer-content>
+		</mat-drawer-container>
+	</div>
+</div>

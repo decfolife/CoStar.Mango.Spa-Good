@@ -1,0 +1,133 @@
+div.listPage{
+  --position-rel: relative;
+  --top: -5px;
+  --left: -10px;
+  --noborder: none !important;
+}
+div.listPage{
+  .dx-datagrid-pager {
+  border-top: 3px double #ddd;
+  position: fixed;
+  bottom: 0px;
+  z-index: 300;
+  background: white;
+}
+input[type=text], input[type=file], input[type=password], [type=number], select, textarea, .readonlytextarea {
+  border: var(--noborder);
+  position: var(--position-rel);
+  top: var(--top);
+  left: var(--left);
+  font-size: 10pt !important;
+  padding: 8px;
+}
+dx-text-box .dx-texteditor-container .dx-texteditor-input-container input.dx-texteditor-input {
+  border: none !important;
+  display: block !important;
+  position: relative !important;
+  top: -3px !important;
+  right: -5px !important;
+}
+dx-text-box .dx-texteditor-container .dx-texteditor-input-container input.dx-texteditor-input:active, dx-text-box .dx-texteditor-container .dx-texteditor-input-container input.dx-texteditor-input:focus, dx-text-box .dx-texteditor-container .dx-texteditor-input-container input.dx-texteditor-input:focused {
+  border: none !important;
+}
+
+.dx-texteditor-buttons-container {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex !important;
+  /* position: relative; */
+  justify-content: space-between !important;
+  /* left: 0px; */
+  /* border: inherit; */
+  border: none !important;
+}
+dx-text-box#listPageSearch{
+   .dx-texteditor-container {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #c2c2c2 !important;
+  padding: 5px;
+  background: white !important;
+  input.dx-texteditor-input {
+    border: none !important;
+    box-shadow: none !important;
+  &:focus, &:active{
+    border:none !important;
+    box-shadow: none !important;
+  }
+}
+   }
+   &:focus, &:active{
+    border:none !important;
+    box-shadow: none !important
+   }
+}
+
+
+span.dx-clear-button-area {
+  display: flex !important;
+}
+
+.dx-show-clear-button .dx-clear-button-area {
+  width: 34px !important;
+  min-width: 34px !important;
+  right: 0;
+}
+div.list-page-controls-wrapper>div.controls-right button.btn fa-icon {
+  font-size: 12px;
+  margin: 0px;
+}
+button#moreBtn fa-icon.ng-fa-icon {
+  right: -4px;
+  bottom: -4px;
+  color: #0559b3 !important;
+}
+.mat-menu-content {
+  overflow-x: hidden !important;
+}
+button#addBtn fa-icon.ng-fa-icon {
+  color: white !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+}
+div.list-page-controls-wrapper>div.controls-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 500;
+  position: relative !important;
+  top: -18px !important;
+  left: -20px !important;
+}
+div.list-page-controls-wrapper>div.controls-left {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.dx-datagrid-column-chooser input, .dx-datagrid-column-chooser textarea {
+  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
+  line-height: 1.35715;
+  position: relative !important;
+  left: 28px;
+  background: none !important;
+}
+
+}
+.dx-datagrid-column-chooser.dx-datagrid-column-chooser-mode-drag .dx-popup-content .dx-treeview-search .dx-texteditor-container .dx-texteditor-input-container input[type=text] {
+  position: relative;
+  left: 30px;
+}
+
+.discount-rate {
+  margin-bottom: 0px;
+}

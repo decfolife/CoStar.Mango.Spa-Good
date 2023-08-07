@@ -1,0 +1,30 @@
+<dx-button
+  [class]="getButtonClass()"
+  [text]="getButtonText()"
+  (onClick)="openLeaseAlertsPopup()"
+  id="openLeaseAlertsPopupButton"
+></dx-button>
+
+<dx-popup [wrapperAttr]="{ id: 'leaseAlertsPopup' }"
+  [width]="'75%'"
+  [height]="'75%'"
+  [showTitle]="true"
+  title="Lease Alerts"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="false"
+  [showCloseButton]="true"
+  [(visible)]="popupVisible"
+  (onHiding)="refreshButton()"
+>
+  <dxi-toolbar-item
+    [text]="getCachedDateString()"
+    toolbar="bottom"
+    location="after"
+    class="popup-footer-text"
+  ></dxi-toolbar-item>
+
+  <mango-alerts-lease-alerts-controls [isPopupView]="true"
+    [leaseAbstractID]="leaseAbstractID"
+    (refreshCachedDate)="refreshButton()"
+  ></mango-alerts-lease-alerts-controls>
+</dx-popup>

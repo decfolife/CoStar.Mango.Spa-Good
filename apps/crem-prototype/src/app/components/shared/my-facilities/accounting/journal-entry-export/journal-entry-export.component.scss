@@ -1,0 +1,42 @@
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.radio-button {
+  margin: 5px;
+}
+
+.export-tab-container {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	.export-detail-table-container {
+		flex-grow: 1;
+		overflow-y: auto;
+	}
+
+	.export-header-table-container, .export-footer-table-container {
+		flex-shrink: 0;
+	}
+}
+
+button.loading {
+	span {
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	&:disabled {
+		cursor: not-allowed;		
+	}
+}
+

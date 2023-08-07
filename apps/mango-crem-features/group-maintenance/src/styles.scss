@@ -1,0 +1,7 @@
+group-maintenance {
+    /* You can add global styles to this file, and also import other style files */
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss";
+
+    @import "./assets/styles/group-maintenance.scss";
+}

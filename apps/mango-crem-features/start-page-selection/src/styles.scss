@@ -1,0 +1,67 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'colors';
+
+body {
+  &.mango-crem-features-start-page-selection, 
+  .mango-crem-features-start-page-selection {
+    margin: 0px;
+
+    .dx-texteditor-input-container {
+      width: 270px;
+      height:32px;
+    }
+
+    .dx-texteditor-input {
+      &input {
+        width: 300px;
+        box-sizing: border-box;
+      }
+    }
+
+    .mat-card-header-text {
+      margin: 0;
+    }
+
+    crem-dropdown {
+      .dx-fieldset {
+        margin:0 !important;
+      }
+    }
+
+    .dx-popup-content {
+      padding: 0 !important;
+    }
+    
+    // TODO: Refactor/Remove?
+    .card-deck-container {
+      width: 512px;
+      font-size: 0.75rem;
+      max-height: 50rem;
+      overflow: auto;
+      .card-item {
+        min-width: 80px;
+        height: 68px;
+        margin: 5px;
+        cursor: pointer;
+        mat-card {
+          width: 160px;
+          height: 68px;
+          &:hover {
+            background: colors.$hoverBlue;
+          }
+        }
+        .mat-card-header {
+          .mat-card-title {
+            font-size: 0.875rem;
+            text-align: center;
+            max-width: 100px; 
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+
+  }
+}

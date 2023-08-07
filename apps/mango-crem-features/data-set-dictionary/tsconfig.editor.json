@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["**/*.ts", "src/app/components/index/index.module.ts"],
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  }
+}

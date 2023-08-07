@@ -1,0 +1,17 @@
+<div class="file-manager" [class.hide-folder-sidenav]="hideFolderSidenav">
+	<dx-file-manager 
+		id="fileManager"
+	    [fileSystemProvider]="remoteProvider"
+	    currentPath="Widescreen"
+	    >
+	    <dxo-permissions 
+	        create="true"
+	        copy="true"
+	        move="true"
+	        delete="true"
+	        rename="true"
+	        upload="true"
+	        download="true">
+	    </dxo-permissions>
+	</dx-file-manager>
+</div>

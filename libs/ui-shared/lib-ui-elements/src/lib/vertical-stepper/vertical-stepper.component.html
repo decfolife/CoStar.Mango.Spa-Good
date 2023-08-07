@@ -1,0 +1,14 @@
+<div class="stepper-container">
+    <div class="vertical_stepper_wrapper" *ngIf="!hideStepper">
+        <div class="stepper-text">
+            {{display}}
+        </div>
+        <div *ngIf="showBorder" class="stepper-left-border"></div>
+    </div>
+    <div  class="stepper-container__content">
+        <ng-content class="w-100">
+    
+        </ng-content>
+    </div>
+    
+</div>

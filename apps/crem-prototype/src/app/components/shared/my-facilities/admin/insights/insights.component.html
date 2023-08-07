@@ -1,0 +1,46 @@
+<div class="dashboard">	
+	<div class="dashboard-controls-wrapper">
+		<div class="controls-left">
+			<div *ngFor="let filter of filters">
+				<costar-dropdown [dropdownData]="filter" *ngIf="filter.visible && filter.controlType == 'dropdown'"></costar-dropdown>			
+				<portfolio-menu *ngIf="filter.visible && filter.controlType == 'portfolio'" [showSearchRow]="filter.showSearchRow"></portfolio-menu>			
+				<hierarchy-dropdown portfolioId="1" *ngIf="filter.visible && filter.controlType == 'hierarchy'"></hierarchy-dropdown>			
+			</div>		
+			<button class="btn btn-default btn-sm">Apply</button>
+		</div>
+		<div class="controls-right">						
+			<button class="btn btn-default btn-sm" (click)="launchSettingsModal()"><fa-icon icon="cog"></fa-icon></button>
+		</div>		
+	</div>
+	<div class="dashboard-content-wrapper">
+		<div class="dashboard-cards-wrapper">
+			<div class="row" cdkDropList (cdkDropListDropped)="drop($event)">
+				<div class="dashboard-card-drag" cdkDrag *ngFor="let card of cards; let i = index;" [class.col-md-6]="card.colSpan == 1" [class.col-md-12]="card.colSpan == 2" [class.hide]="!card.visible">					
+					<mat-icon cdkDragHandle class="card-drag-handle">drag_handle</mat-icon>
+					<real-estate-counts-insights *ngIf="card.componentName == 'RealEstateCountsInsightsComponent'"></real-estate-counts-insights> 	
+					<non-real-estate-counts-insights *ngIf="card.componentName == 'NonRealEstateCountsInsightsComponent'"></non-real-estate-counts-insights> 
+					<real-estate-finance-ap-card *ngIf="card.componentName == 'RealEstateFinanceApCardComponent'"></real-estate-finance-ap-card> 	
+					<non-real-estate-finance-ap-card *ngIf="card.componentName == 'NonRealEstateFinanceApCardComponent'"></non-real-estate-finance-ap-card> 	
+					<real-estate-finance-ap-chart-card *ngIf="card.componentName == 'RealEstateFinanceApChartCardComponent'"></real-estate-finance-ap-chart-card>					
+
+					<real-estate-finance-ar-card *ngIf="card.componentName == 'RealEstateFinanceArCardComponent'"></real-estate-finance-ar-card> 			
+					<non-real-estate-finance-ar-card *ngIf="card.componentName == 'NonRealEstateFinanceArCardComponent'"></non-real-estate-finance-ar-card> 
+
+					<real-estate-finance-ar-chart-card *ngIf="card.componentName == 'RealEstateFinanceArChartCardComponent'"></real-estate-finance-ar-chart-card>
+					
+					<real-estate-accounting-card *ngIf="card.componentName == 'RealEstateAccountingCardComponent'"></real-estate-accounting-card> 			
+					<non-real-estate-accounting-card *ngIf="card.componentName == 'NonRealEstateAccountingCardComponent'"></non-real-estate-accounting-card>
+
+					<accounting-balance-chart-card *ngIf="card.componentName == 'AccountingBalanceChartCardComponent'"></accounting-balance-chart-card>
+
+					<accounting-event-chart-card *ngIf="card.componentName == 'AccountingEventChartCardComponent'"></accounting-event-chart-card>
+
+					<active-users-card *ngIf="card.componentName == 'ActiveUsersCardComponent'"></active-users-card>
+					<customer-support-card *ngIf="card.componentName == 'CustomerSupportCardComponent'"></customer-support-card>
+
+					<file-usage-chart-card *ngIf="card.componentName == 'FileUsageChartCardComponent'"></file-usage-chart-card>
+				</div>						
+			</div>	
+		</div>
+	</div>
+</div>

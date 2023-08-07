@@ -1,0 +1,320 @@
+/* You can add global styles to this file, and also import other style files */
+@use './assets/styles/colors';
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~devextreme/dist/css/dx.common.css';
+@import '~devextreme/dist/css/dx.light.css';
+
+@import '~devexpress-gantt/dist/dx-gantt.css';
+@import './assets/styles/costar-bootstrap.scss';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Helvetica, Arial', sans-serif;
+}
+
+
+// *******************************************************************************
+// * Page transition
+.router-transitions {
+  opacity: 1;
+  transition: opacity .2s;
+
+  body.app-loading & {
+    opacity: .75;
+  }
+}
+
+.rich-task-popover {
+  padding: 0 !important;
+
+  mat-password-strength-info {
+    mat-card {
+      border: none !important;
+    }
+  }
+}
+
+
+// mango-toolbar div#chip.secondary.costar {
+//   transform: translateX(-62px);
+// }
+
+// mat-toolbar.mat-toolbar {
+//   font-family: "Helvetica" !important;
+//   mat-toolbar-row {
+//     padding: 0px;
+//   }
+// }
+
+.crem-container mango-header {
+  mat-toolbar.mat-toolbar.costar-rem-toolbar {
+    height: 48px;
+    min-height: 48px !important;
+  }
+
+  mat-toolbar.mat-toolbar mat-toolbar-row.costar-administration-bar {
+    display: flex;
+    justify-content: space-between;
+    height: 48px;
+    background: #FFFFFF;
+  }
+}
+
+div.costar-site-toolbar-search  {
+
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 16px;
+   div.mat-form-field-infix {
+    display: flex !important;
+    justify-content: space-between;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-flex {
+    margin-top: 0;
+  }
+
+  div.mat-form-field-wrapper {
+    padding-bottom: 0px;
+
+    div.mat-form-field-flex  {
+      width: 400px;
+      padding: 0 8px 0 0;
+    }
+  }
+  
+}
+
+
+.mat-select-panel.mqs-selectPanel {
+  transform: translateY(30px) translateX(8px) !important;
+  min-width: calc(100% + 16px) !important;
+}
+
+.mqs-autoComplete .mat-option {
+  height: 34px;
+}
+
+.mqs-search-results {
+  margin-top: 80px;
+  .modalFooter .footerRightControls {
+    height: 32px;
+  }
+
+  div#mat-select-value {
+    transform: translateY(-1px);
+  }
+
+  .mat-dialog-container {
+    overflow-y: hidden;
+  }
+}
+
+.mat-select.mqs-objects {
+  span.mat-select-placeholder {
+    color: rgba(0,0,0,0.87);
+  }
+}
+
+
+//**** Left Navigation Styles ****//
+.sharedLeftNav-container {
+  .mat-drawer-inner-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: hidden;
+  }
+
+  div.sidenavBottom {
+    display: flex;
+    flex-direction: column;
+    .navCollExp {
+      display: flex;
+      justify-content: flex-end;
+
+      mat-icon.mat-icon.arrowLeft {
+        transform: scale(1.3);
+        cursor: pointer;
+        margin-right: 16px;
+        margin-bottom: 2px;
+      }
+
+      mat-icon.mat-icon.arrowRight {
+        transform: scale(1.3) translateX(-8px);
+        cursor: pointer;
+        margin-bottom: 2px;
+      }
+    }
+
+  }
+
+  div.sidenavTop.hideLinks {
+    visibility: hidden;
+  }
+
+  .mat-expansion-panel-content {
+    visibility: inherit !important;
+  }
+}
+
+crem-bookmarks .mat-drawer-container {
+  z-index: 999999999;
+}
+
+mango-toolbar.suite-user {
+  mat-toolbar-row.costar-top-menu, a.nav-link.active, a.nav-link {
+    background-color: colors.$bodyBackgroundGray !important;
+    font-family: "Arial";
+    color: black !important;
+  }
+  mat-toolbar-row.costar-top-menu {
+    border-bottom: 1px solid #BFBFBF;
+  }
+}
+
+crem-bookmarks.suite-user {
+  #recentDrawer.mat-drawer {
+    top: 155px !important;
+  }
+}
+//**** this is a temp style, will be modified/removed as part of future stories //*****
+// .shared-left-nav {
+//   li.Dashboard, li.Contacts {
+//     a span {
+//       font-weight: bold;
+//       border-bottom: 3px solid #EC4A08;
+//     }
+//   }
+// }
+//** temp styles end **//
+
+//**** list page styles ****//
+app-list-page  .list-page-data-grid-wrapper {
+  height: calc(100% - 50px) !important;
+}
+
+
+#projects-dashboard div.project-filters {
+  z-index: 999 !important;
+}
+
+
+//**** quick search results ****//
+.qsr-objectData {
+	.dx-header-row {
+		background-color: colors.$color-dark-blue;
+		color: white;
+
+		td { 
+			border: 1px Solid colors.$color-gray-shade;
+		}	
+	}
+
+  table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td {
+    background: colors.$offWhite
+  }
+}
+
+crem-modal.qsr-modal {
+  div.modalContent {
+	  overflow: hidden;
+  }
+
+	div.qsr-modalContent {
+		height: 100%;
+	}
+  .modalFooter {
+    border-top: 1px solid #ddd;
+  } 
+  
+  dx-data-grid .dx-header-row > td > .dx-datagrid-text-content, .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+		font-size: 12px !important;
+	}
+}
+
+//**** Styles for Emulate User Modal on MangoSPA //
+mango-emulate-user-popup #emulateUserModal {
+	.modalHeader {
+		height: 28px ;
+		font-size: 12px;
+    color: white;
+		background-color: $costarDarkBlue;
+		padding: 6px;
+	}
+
+  .modalContent {
+    .userMsg {
+      font-size: 12px;
+    }
+    padding: 10px 16px;
+  }
+
+  .modalFooter {
+    display: flex;
+    padding: 11px 8px;
+    background-color: $costarRichLightGray;
+
+    div.footer-content {
+      margin-left: auto;
+      div#buttonTemplate {
+        display: flex;
+        justify-content: right;
+        button.button-primary, button.button-secondary, button.button-primary:hover, button.button-secondary:hover {
+          border: none;
+          font-size: 10px;
+          height: 24px;
+          color: white;
+          margin-left: 8px;
+          background-color: $costarDarkBlue;
+        }
+      }
+    }
+
+  }
+
+  cs-search {
+    mat-form-field.mat-form-field {
+      width: 200px;
+
+      div.mat-form-field-wrapper {
+        padding: 0 0 8px;
+      }
+
+      div.mat-form-field-flex {
+        padding: 0 0 0 6px ;
+        margin-top: -0.25em;
+
+        div.mat-form-field-infix {
+          box-sizing: border-box;
+          padding: 0.4em 0px;
+          position: relative;
+          display: flex;  //**this is the one which fixed the alignment of text
+        }
+
+        div.mat-form-field-suffix {
+          mat-icon {
+            transform: translateY(-3px);
+          }
+        }
+      }
+    }
+  }
+
+  crem-simple-grid {
+    dx-data-grid {
+      overflow: auto;
+      height: 300px;
+    }  
+  }
+
+  cs-text-field mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper {
+    margin: 0;
+    padding: 0 0 8px;
+  }
+}
+//**** Emulate User Modal styles end //

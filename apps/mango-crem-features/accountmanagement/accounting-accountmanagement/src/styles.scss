@@ -1,0 +1,464 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '../../../../mango/src/assets/styles/colors.scss';
+
+$stdPadding: 8px;
+$dblPadding: 2 * $stdPadding;
+$stdBorder: 1px solid $stdBorderColor;
+
+crem-card mat-card#project_milestones {
+  margin: 8px;
+}
+
+app-accounting-settings {
+  height: 100% !important;
+  position: relative;
+  width: 100% !important;
+  top: 0px;
+  overflow: scroll;
+
+  svg {
+    overflow: hidden;
+    vertical-align: middle;
+    width: 6px;
+    height: 8px;
+  }
+
+  .crem-tooltip crem-icon i svg {
+    fill: #c8c8c8 !important;
+    transform: translateY(-3px);
+  }
+
+  .mat-drawer-container {
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    overflow: unset;
+    top: 0px;
+  }
+
+  .tooltipAppPopover {
+    div#popupWrapper {
+      margin: -10px -20px -20px !important;
+    }
+
+    div.mat-tab-label {
+      padding: 8px 0px !important;
+      height: 36px !important;
+      display: block !important;
+      position: static !important;
+      min-width: 50% !important;
+      text-align: center;
+      opacity: 1;
+      white-space: nowrap;
+      width: 50% !important;
+      max-width: 50% !important;
+    }
+
+    div.mat-tab-label-container {
+      display: block !important;
+      width: 100% !important;
+      overflow: unset !important;
+      z-index: 1;
+      background: #f5f5f5 !important;
+      border-bottom: 1px solid #ddd;
+
+    }
+
+    div.mat-tab-label:focus:not(.mat-tab-disabled),
+    div.mat-tab-label-active {
+      font-weight: bold !important;
+      opacity: 1;
+      border-bottom: 2px solid #ec4a08 !important;
+      display: block !important;
+      position: static !important;
+      min-width: 50% !important;
+      text-align: center;
+      white-space: nowrap;
+      width: 50% !important;
+      max-width: 50% !important;
+    }
+
+    mat-tab-group.mat-tab-group.mat-primary {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .mat-tab-labels {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+    }
+
+    .mat-tab-label {
+      min-width: 50% !important;
+      padding: 0px !important;
+
+    }
+
+    .mat-tab-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .mat-tab-header {
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    div#mat-tab-label:focus mat-ink-bar {
+      position: absolute;
+      bottom: 0;
+      height: 2px !important;
+      background: #ec4a08 !important;
+      transition: 500ms cubic-bezier(0.35, 0, 0.25, 1);
+    }
+
+    .mat-tab-group.mat-primary .mat-ink-bar,
+    .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+      background-color: #ec4a08 !important;
+    }
+  }
+
+  mat-card.mat-card {
+    border: $stdBorder;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    padding: 0px !important;
+
+    mat-card-header.mat-card-header {
+      padding: $stdPadding $dblPadding;
+      border-bottom: $stdBorder;
+      color: $stdTextGray;
+      justify-content: space-between;
+      align-items: center;
+
+      div.mat-card-header-text {
+        margin: 0px;
+
+        mat-card-title.mat-card-title {
+          margin: 0px;
+          font-weight: 200;
+          font-size: 18px;
+          display: inline-block;
+          margin-right: $stdPadding;
+          font-family: "Helvetica";
+        }
+
+        mat-card-subtitle.mat-card-subtitle {
+          margin: 0px;
+          font-weight: 200;
+          font-size: 16px;
+          color: $lightTextGray;
+          display: inline-block;
+          margin-right: $stdPadding;
+
+          &.sub-metric {
+            font-size: 14px;
+          }
+        }
+      }
+
+      mat-form-field.mat-form-field {
+        div.mat-form-field-wrapper {
+          margin: 0px;
+          padding: 0px;
+
+          div.mat-form-field-flex {
+            div.mat-form-field-infix {
+              span.mat-form-field-label-wrapper {
+                top: 6px;
+                right: 124px;
+                left: auto;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    mat-card-content.mat-card-content {
+      background: white;
+      padding: $dblPadding;
+    }
+  }
+
+  mat-form-field {
+    &.mat-form-field {
+      line-height: 21px;
+
+      &.mat-form-field-appearance-outline {
+        div.mat-form-field-wrapper {
+          margin: $stdPadding 0 $dblPadding 0;
+
+          div.mat-form-field-flex {
+            padding: 0 0.1em 0 .75em;
+
+            div.mat-form-field-infix {
+              padding: 0.4em 0px;
+              border-top: 4px solid transparent;
+              height: 35px;
+
+              span.mat-form-field-label-wrapper {
+                top: $stdPadding * -3;
+                overflow: visible;
+              }
+
+              mat-select.mat-select {
+                div.mat-select-trigger {
+                  div.mat-select-arrow-wrapper {
+                    transform: none;
+                  }
+                }
+              }
+            }
+
+            div.mat-form-field-outline {
+              background: white;
+
+              div.mat-form-field-outline-end {
+                border-radius: 2px;
+                border-color: $stdBorderGray;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              }
+
+              div.mat-form-field-outline-start {
+                border-radius: 2px;
+                border-color: $stdBorderGray;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+              }
+
+              div.mat-form-field-outline-gap {
+                border-color: $stdBorderGray;
+                border-radius: 0px;
+              }
+            }
+
+            div.mat-form-field-suffix {
+              mat-datepicker-toggle.mat-date-picker-toggle {
+                button.mat-icon-button {
+                  height: 28px;
+                  width: 28px;
+                  top: 3px;
+                }
+              }
+            }
+          }
+        }
+
+        &.mat-form-field-can-float {
+          &.mat-form-field-should-float {
+            label.mat-form-field-label {
+              transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+              width: 100%;
+
+              mat-label {
+                font-size: 14px;
+              }
+            }
+          }
+
+          label.mat-form-field-label {
+            transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+            width: 100%;
+
+            mat-label {
+              font-size: 14px;
+            }
+          }
+        }
+
+        &.clause-text {
+          div.mat-form-field-wrapper {
+            div.mat-form-field-flex {
+              div.mat-form-field-infix {
+                height: auto;
+              }
+            }
+          }
+        }
+      }
+
+      div.mat-form-field-wrapper {
+        div.mat-form-field-flex {
+          div.mat-form-field-suffix {
+            mat-icon.mat-icon {
+              fa-icon {
+                font-size: 20px;
+                color: $iconGrayDisabled;
+                position: absolute;
+              }
+            }
+          }
+
+          div.mat-form-field-prefix {
+            top: 6px;
+          }
+        }
+      }
+
+      &.read-only {
+        div.mat-form-field-wrapper {
+          div.mat-form-field-flex {
+            div.mat-form-field-outline {
+              background: inherit;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  dx-form {
+    div.dx-template-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      dx-text-box,
+      dx-date-box,
+      dx-select-box,
+      dx-drop-down-box,
+      dx-number-box,
+      dx-text-area,
+      dx-range-slider {
+        display: inline-block;
+        flex-grow: 1;
+        height: 4 * $stdPadding;
+      }
+
+      &.label-on-top {
+
+        dx-text-box,
+        dx-date-box,
+        dx-select-box {
+          margin-right: -4 * $stdPadding;
+        }
+
+        fa-icon {
+          padding-right: $stdPadding / 2;
+          position: relative;
+          top: -34px;
+        }
+      }
+    }
+
+    .dx-field-item-help-text {
+      color: $gray;
+    }
+
+    div.dx-layout-manager {
+      .dx-field-item:not(.dx-last-col) {
+        padding-right: 0px;
+      }
+    }
+
+    div.form-button-template {
+      justify-content: center;
+    }
+  }
+
+  div.dynamic-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: $backgroundGray;
+
+    div.dynamic-form-controls-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: $stdPadding $dblPadding;
+      border-bottom: $stdBorder;
+      font-size: 14px;
+
+      &>div {
+        display: flex;
+        align-items: center;
+        z-index: 500;
+
+        &.controls-left {
+
+          mat-form-field.mat-form-field,
+          button.btn {
+            margin-right: $dblPadding;
+          }
+
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            margin: 0px;
+          }
+        }
+
+        &.controls-right {
+
+          mat-form-field.mat-form-field,
+          button.btn {
+            margin-left: $dblPadding;
+          }
+        }
+      }
+    }
+
+    div.dynamic-form-content {
+      padding: $dblPadding;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      overflow-y: scroll;
+
+      mat-card {
+        margin-bottom: $stdPadding * 3;
+
+        mat-card-header.mat-card-header {
+          .mat-card-header-text {
+            margin: 0px;
+          }
+        }
+
+        mat-card-content.mat-card-content {
+          padding-top: $stdPadding * 3;
+
+          mat-form-field {
+            width: 100%;
+          }
+
+          mat-slide-toggle.mat-slide-toggle {
+            display: block;
+            height: 32px;
+            margin-bottom: 0px;
+          }
+        }
+      }
+    }
+  }
+
+  .mat-drawer-container {
+    height: 100%;
+  }
+
+  div.dynamic-form {
+    div.dynamic-form-content {
+      padding: 16px !important;
+    }
+  }
+}
+

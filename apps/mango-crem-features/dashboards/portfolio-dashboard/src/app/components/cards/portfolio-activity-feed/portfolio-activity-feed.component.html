@@ -1,0 +1,78 @@
+<crem-card
+[id]="card.gridData.id"
+[title]="card.title"
+[subtitle]="card.subtitle"
+[counter]="card.counter"
+[filterData]="null"
+[filterInitialValue]="null"
+[showFilterClearButton]="false"
+[moreOptions]="card.moreOptions"
+[showCustomHeader]="false"
+(selectedFilter)="filter($event, card.id)"
+(expandDataGrid)="expandAllGridData($event)"
+(exportDataGrid)="exportAllGridData($event)"
+fxFlexFill
+
+>
+	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
+		<dx-data-grid
+			#ActivityFeedGrid
+			[id]="card.gridData.id + 'grid'"
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[dataSource]="card.gridData.dataSource"
+			keyExpr="gridIndex"
+			(onRowClick)="rowClick($event)"
+			[wordWrapEnabled]="true"
+	>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-pager [visible]="false"></dxo-pager>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+			<dxo-grouping #expand [autoExpandAll]="card.moreOptions.isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+			
+			<dxi-column
+				dataField="type"
+				alignment="left">
+			</dxi-column>
+			<dxi-column
+				dataField="template"
+				alignment="left">
+			</dxi-column>
+			<dxi-column
+				dataField="buildingName"
+				caption="Property Name"
+				alignment="left">
+			</dxi-column>
+			<dxi-column
+				dataField="activity"
+				alignment="left">
+			</dxi-column>
+			<dxi-column
+				dataField="description"
+				cellTemplate = "descriptionCellTemplate"
+				alignment="left">
+			</dxi-column>
+			<dxi-column
+				dataField="user"
+				alignment="left">
+			</dxi-column>
+			<dxi-column
+				dataField="date"
+				dataType="date"
+				[format]="portfolioDataService.dateFormat"
+				alignment="left">
+			</dxi-column>
+			<div *dxTemplate="let cell of 'descriptionCellTemplate'">
+				<a [href]='getDescriptionCellLink(cell)' *ngIf='isActivityNoteAdded(cell)'>{{cell.value}}</a>
+				<a href="" (click)='downloadfile(cell)' *ngIf='isActivityFileUpload(cell)'>{{cell.value}}</a>
+				<span *ngIf='!isActivityNoteAdded(cell) && !isActivityFileUpload'>{{cell.value}}</span>
+			</div>
+		</dx-data-grid>
+	</div>
+</crem-card>
