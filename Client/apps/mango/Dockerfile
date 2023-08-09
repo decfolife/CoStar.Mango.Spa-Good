@@ -8,6 +8,7 @@ RUN CYPRESS_INSTALL_BINARY=0 npm install --force
 RUN npm run build:mango
 
 
+
 # Stage 2: Serve app with nginx server
 FROM public.ecr.aws/nginx/nginx:alpine as final
 COPY ./config/nginx-spa.conf /etc/nginx/nginx.conf
