@@ -1,6 +1,8 @@
 import { moduleMetadata, Story, Meta } from '@storybook/angular';
 import { ModalComponent } from './modal.component';
 import { ModalModule } from './modal.module'
+import { ButtonModule } from '../button';
+import { IconModule } from '../icon';
 
 interface ModalComponentStory extends ModalComponent {
   modalContent: string,
@@ -12,39 +14,33 @@ export default {
   decorators: [
     moduleMetadata({
       declarations: [],
-      imports: [ ModalModule ],
+      imports: [
+        ModalModule,
+        ButtonModule,
+        IconModule,
+      ],
     }),
   ],
+  argTypes: {
+    closeIconVisible: { control: 'boolean', }
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: '',
+      },
+    },
+  },
 } as Meta<ModalComponent>;
 
-// TODO: Fix logic error for primaryFooterButtonEnabledDisabled, customFooter: hides anyway when explicitly false
-// primaryFooterButtonEnabledDisabled="${args?.['primaryFooterButtonEnabledDisabled']}"
-// customFooter="${args?.['customFooter']}"
-const Template: Story<ModalComponentStory> = ( args: ModalComponentStory ) => ({
+const Template: Story<ModalComponentStory> = (args: ModalComponentStory) => ({
   props: args,
-  template: `
-    <crem-modal
-      modalId="${args?.['modalId']}"
-      modalTitleId="${args?.['modalTitleId']}"
-      closeIconVisible="${args?.['closeIconVisible']}"
-      modalTitle="${args?.['modalTitle']}"
-      primaryFooterButtonText="${args?.['primaryFooterButtonText']}"
-      closeOrCancelButtonText="${args?.['closeOrCancelButtonText']}"
-    >
-      <div modalContent>${args?.['modalContent']}</div>
-    </crem-modal>
-  `,
 });
 
 export const Default = Template.bind({});
 Default.args = {
-  modalId: '',
+  modalTitle: 'Modal Title Example',
   modalTitleId: '',
-  closeIconVisible: false,
-  modalTitle: 'Confirm Deletion',
-  modalContent: "Are you sure you want to delete &nbsp; <div class='user-name'>Super Admin</div>?",
-  primaryFooterButtonText: 'Confirm',
-  closeOrCancelButtonText: 'Cancel',
-  // primaryFooterButtonEnabledDisabled: false,
-  // customFooter: false,
+  modalId: '',
+  closeIconVisible: true,
 };

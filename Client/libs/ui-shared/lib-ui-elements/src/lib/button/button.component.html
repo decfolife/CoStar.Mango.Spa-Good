@@ -5,22 +5,23 @@
   [style]="styles"
   [attr.aria-label]="ariaLabel"
   [attr.disabled]="disabled ? true : null"
+  (click)="handleClick()"
 >
 
   <ng-container *ngIf="icon">
     <crem-icon
       class="icon"
       [icon]="icon"
-      [library]="iconConf?.library"
-      [pack]="iconConf?.pack"
-      [color]="iconConf?.color"
-      [rotate]="iconConf?.rotate"
-      [flip]="iconConf?.flip"
-      [animation]="iconConf?.animation"
-      [size]="iconConf?.size"
-      [pull]="iconConf?.pull"
-      [fill]="iconConf?.fill"
-      [transform]="iconConf?.transform"
+      [library]="iconLibrary"
+      [pack]="iconPack"
+      [color]="iconColor"
+      [rotate]="iconRotate"
+      [flip]="iconFlip"
+      [animation]="iconAnimation"
+      [size]="iconSize"
+      [pull]="iconPull"
+      [fill]="iconFill"
+      [transform]="iconTransform"
     ></crem-icon>
   </ng-container>
 

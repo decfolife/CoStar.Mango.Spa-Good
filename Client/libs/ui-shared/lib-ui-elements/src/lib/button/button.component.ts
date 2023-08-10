@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-selector */
-import { Component, ContentChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ContentChild, ElementRef, OnChanges, SimpleChanges, Input, Output, EventEmitter } from '@angular/core';
 
 /**
  * Simple button, check Storybook for additional options
@@ -14,7 +14,6 @@ import { Component, ContentChild, ElementRef, Input, OnChanges, SimpleChanges } 
  * @param {string} [icon]: By default uses FontAwesome, refer to the official docs E.g. 'faUser'
  * @param {string} [iconPosition]: Icon alignment, left or right.
  * @param {string} [iconClass]: Apply a class to the icon for further customization, check crem-icon available params
- * @param {object} [iconConf]: 'crem-icon' advanced parameters, check crem-icon available params
  * @param {string} [type]: Deprecated, use the color parameter instead
  */
 @Component({
@@ -25,7 +24,7 @@ import { Component, ContentChild, ElementRef, Input, OnChanges, SimpleChanges } 
 export class ButtonComponent implements OnChanges {
 
   @Input() text?: string;
-  @Input() style?: 'flat' | 'basic' | 'stroked';
+  @Input() btnStyle?: 'flat' | 'basic' | 'stroked';
   @Input() color?: 'primary' | 'secondary' | 'warning' | 'danger';
   @Input() size?: 'small' | 'medium' | 'big';
   @Input() ariaLabel?: string;
@@ -36,16 +35,27 @@ export class ButtonComponent implements OnChanges {
 
   // Icon Configuration
   @Input() icon?: string;
+  @Input() iconPack?: string;
   @Input() iconClass?: string | null = null;
   @Input() iconPosition?: 'left' | 'right';
-  @Input() iconConf?: {[key: string]: string };
+  @Input() iconColor?: string;
+  @Input() iconRotate?: string;
+  @Input() iconFlip?: string;
+  @Input() iconAnimation?: string;
+  @Input() iconSize?: string;
+  @Input() iconPull?: string;
+  @Input() iconFill?: string;
+  @Input() iconTransform?: string;
 
   // Backward compatibility, @deprecated
   @Input() type?: 'primary' | 'secondary' | 'text';
 
+  // Output
+  @Output() buttonClick: EventEmitter<void> = new EventEmitter<void>();
+
   ngOnChanges(changes: SimpleChanges){
-    if (changes['style']?.currentValue === undefined) {
-      this.style = 'flat';
+    if (changes['btnStyle']?.currentValue === undefined) {
+      this.btnStyle = 'flat';
     }
     if (changes['size']?.currentValue === undefined) {
       this.size = 'medium';
@@ -57,10 +67,10 @@ export class ButtonComponent implements OnChanges {
 
   public getCssClasses() {
     return {
-      // Btn Style
-      'btn-flat': this.style === 'flat',
-      'btn-basic': this.style === 'basic' || this.type === 'text', // @deprecated type input
-      'btn-stroked': this.style === 'stroked',
+      // Btn Style Type
+      'btn-flat': this.btnStyle === 'flat',
+      'btn-basic': this.btnStyle === 'basic' || this.type === 'text', // @deprecated type input
+      'btn-stroked': this.btnStyle === 'stroked',
       // Btn Color
       'btn-primary': this.color === 'primary' || this.type === 'primary', // @deprecated type input
       'btn-secondary': this.color === 'secondary' || this.type === 'secondary', // @deprecated type input
@@ -75,6 +85,10 @@ export class ButtonComponent implements OnChanges {
       // Text
       'no-text': this.text === undefined || this.text === '',
     };
+  }
+
+  handleClick(){
+    this.buttonClick.emit();
   }
 
 }
