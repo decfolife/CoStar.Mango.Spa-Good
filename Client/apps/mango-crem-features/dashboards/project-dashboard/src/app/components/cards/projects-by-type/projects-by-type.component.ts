@@ -1,6 +1,5 @@
 import { Component, ContentChild, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
-import { stringify } from 'querystring';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
 import { CardContentDirective } from '../cardContent.directive';

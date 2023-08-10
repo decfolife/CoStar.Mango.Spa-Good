@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
           return true
         } else {
           const url = `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${window.location.origin}/auth/validate`
-          // window.location.href = url
+          window.location.href = url
          return false
         }
       }));
