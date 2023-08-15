@@ -23,6 +23,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.3" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,10 +67,6 @@
     <None Include="Client\angular.json" />
     <None Include="Client\package-lock.json" />
     <None Include="Client\package.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\BuildingBlocks\WebHost\WebHost.Customization\WebHost.Customization.csproj" />
   </ItemGroup>
 
 	<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

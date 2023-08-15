@@ -1,4 +1,3 @@
-using WebHost.Customization.Environments;
 using Mango.MangoSPA;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -67,6 +66,9 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
+        // Needed if not using IIS or NGINX server to serve the app
+        app.UseMiddleware<SecurityHeadersMiddleware>();
+
         //app.UseFileServer();
         app.UseStaticFiles();
 
@@ -80,9 +82,6 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseCors(_CorsPolicy);
-
-        // Needed if not using IIS or NGINX server to serve the app
-        //app.UseMiddleware<SecurityHeadersMiddleware>();
 
         app.UseEndpoints(endpoints =>
         {
