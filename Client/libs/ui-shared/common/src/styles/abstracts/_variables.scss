@@ -485,7 +485,7 @@ $css4-maps: (
 // Creates CSS4 and CSS3 compatible variables
 // The maps are required to use CSS property namings to make it work
 // $fallback always true, otherwise call mixing using the false flag
-// todo: refactor to lower cyclomatic complexity using sass:list on props map, eg. $prop: ( font-family: (font, family) )
+// todo: refactor to lower cyclomatic complexity using sass:list in prop maps, eg. $prop: ( font-family: (font, family) )
 @mixin costar($prop, $var, $fallback: true, $important: false) {
   $map-name: map-get($props, $prop); // Access map location or actual names using the $props map (step 2)
   $var-css: null;

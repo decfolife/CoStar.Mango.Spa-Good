@@ -37,23 +37,3 @@ h4 {
   @include costar(font-size, h4);
   @include costar(line-height, h4);
 }
-
-.eyebrow{
-  @include costar(font-size, eyebrow);
-  @include costar(line-height, eyebrow);
-}
-
-.display-1{
-  @include costar(font-size, display-1);
-  @include costar(line-height, display-1);
-}
-
-.display-2{
-  @include costar(font-size, display-2);
-  @include costar(line-height, display-2);
-}
-
-.display-3{
-  @include costar(font-size, display-3);
-  @include costar(line-height, display-3);
-}

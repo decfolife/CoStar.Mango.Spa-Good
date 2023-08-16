@@ -21,82 +21,82 @@
 @mixin costar-alias-header($type){
   // Lead
   @if $type == 'lead' {
-    @include costar(color, dark);
-    @include costar(font-size, lead);
-    @include costar(line-height, lead);
-    @include costar(font-weight, lead);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, lead, $important: true);
+    @include costar(line-height, lead, $important: true);
+    @include costar(font-weight, lead, $important: true);
   }
   // Body
   @else if $type == 'body' {
-    @include costar(color, dark);
-    @include costar(font-size, body);
-    @include costar(line-height, body);
-    @include costar(font-weight, body);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, body, $important: true);
+    @include costar(line-height, body, $important: true);
+    @include costar(font-weight, body, $important: true);
   }
   // Body
   @else if $type == 'small' {
-    @include costar(color, dark);
-    @include costar(font-size, small);
-    @include costar(line-height, small);
-    @include costar(font-weight, small);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, small, $important: true);
+    @include costar(line-height, small, $important: true);
+    @include costar(font-weight, small, $important: true);
   }
   // H1
   @else if $type == 'h1' {
-    @include costar(color, dark);
-    @include costar(font-size, h1);
-    @include costar(line-height, h1);
-    @include costar(font-weight, h1);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, h1, $important: true);
+    @include costar(line-height, h1, $important: true);
+    @include costar(font-weight, h1, $important: true);
   }
   // H2
   @else if $type == 'h2' {
-    @include costar(color, dark);
-    @include costar(font-size, h2);
-    @include costar(line-height, h2);
-    @include costar(font-weight, h2);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, h2, $important: true);
+    @include costar(line-height, h2, $important: true);
+    @include costar(font-weight, h2, $important: true);
   }
   // H3
   @else if $type == 'h3' {
-    @include costar(color, dark);
-    @include costar(font-size, h3);
-    @include costar(line-height, h3);
-    @include costar(font-weight, h3);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, h3, $important: true);
+    @include costar(line-height, h3, $important: true);
+    @include costar(font-weight, h3, $important: true);
   }
   // H4
   @else if $type == 'h4' {
-    @include costar(color, dark);
-    @include costar(font-size, h4);
-    @include costar(line-height, h4);
-    @include costar(font-weight, h4);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, h4, $important: true);
+    @include costar(line-height, h4, $important: true);
+    @include costar(font-weight, h4, $important: true);
   }
   // Eyebrow
   @else if $type == 'eyebrow' {
     letter-spacing: 0.0625rem;
     text-transform: uppercase;
-    @include costar(color, gray03);
-    @include costar(font-size, eyebrow);
-    @include costar(line-height, eyebrow);
-    @include costar(font-weight, eyebrow);
+    @include costar(color, gray03, $important: true);
+    @include costar(font-size, eyebrow, $important: true);
+    @include costar(line-height, eyebrow, $important: true);
+    @include costar(font-weight, eyebrow, $important: true);
   }
   // Display-1
   @else if $type == 'display-1' {
-    @include costar(color, dark);
-    @include costar(font-size, display-1);
-    @include costar(line-height, display-1);
-    @include costar(font-weight, display-1);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, display-1, $important: true);
+    @include costar(line-height, display-1, $important: true);
+    @include costar(font-weight, display-1, $important: true);
   }
   // Display-2
   @else if $type == 'display-2' {
-    @include costar(color, dark);
-    @include costar(font-size, display-2);
-    @include costar(line-height, display-2);
-    @include costar(font-weight, display-2);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, display-2, $important: true);
+    @include costar(line-height, display-2, $important: true);
+    @include costar(font-weight, display-2, $important: true);
   }
   // Display-3
   @else if $type == 'display-3' {
-    @include costar(color, dark);
-    @include costar(font-size, display-3);
-    @include costar(line-height, display-3);
-    @include costar(font-weight, display-3);
+    @include costar(color, dark, $important: true);
+    @include costar(font-size, display-3, $important: true);
+    @include costar(line-height, display-3, $important: true);
+    @include costar(font-weight, display-3, $important: true);
   }
   @else {
     @warn "ERR: costar-alias-text(#{$type}) not found. Verify that the #{$type} is correct in costar-alias() or costar-alias-text().";
@@ -395,7 +395,7 @@
   @if $type == 'font-style' {
     @each $scenario in ( italic, normal ) {
       .font-style-#{$scenario}{
-        font-size:  $scenario !important;
+        font-style:  $scenario !important;
       }
     }
   }
@@ -418,7 +418,7 @@
     @each $scenario in map-keys(map-get($border, border-radius)){
       // All Corners
       .border-#{$scenario}{
-        background-color: map-get($border, border-radius, $scenario) !important;
+        border-radius: map-get($border, border-radius, $scenario) !important;
       }
       // Double Corners
       .border-bottom-#{$scenario}{
@@ -441,6 +441,13 @@
       }
       .border-bottom-left-#{$scenario}{
         border-bottom-left-radius: map-get($border, border-radius, $scenario) !important;
+      }
+    }
+  }
+  @if $type == 'border-color'{
+    @each $scenario in map-keys(map-get($border, border)){
+      .border-color-#{$scenario}{
+        @include costar(border-color, $scenario, $important: true);
       }
     }
   }

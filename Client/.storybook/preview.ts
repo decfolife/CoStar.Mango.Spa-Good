@@ -11,7 +11,15 @@ export const previewParameters = {
       order: [
         'Introduction', ['Getting Started', 'For Developers', 'For Designers', 'FAQ'],
         'Components', ['Getting Started', 'Atoms', 'Molecules', 'Organisms'],
-        'Styling', ['Getting Started', 'Single Properties', 'Multiple Properties', 'Colors', 'Fonts'],
+        'Styling', [
+          'Getting Started',
+          'Single Properties',
+          'Multiple Properties',
+          'Utility Classes',
+          'Responsive Design',
+          'Color Palettes',
+          'Font Family'
+        ],
         'Patterns',
         'Pages',
       ],

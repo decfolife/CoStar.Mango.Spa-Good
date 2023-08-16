@@ -14,6 +14,7 @@
 //--- FONT
 //------------------------------------------------
 @include costar-class-generator(text);
+@include costar-class-generator(header);
 @include costar-class-generator(font-size);
 @include costar-class-generator(font-style);
 .font-weight-light {@include costar(font-weight, light, $important: true);}
@@ -102,6 +103,8 @@
 //--- BORDER
 //------------------------------------------------
 .border-none { border: 0 !important; }
+.border { border-width: $border-width !important; border-style: solid !important; }
+@include costar-class-generator(border-color);
 @include costar-class-generator(border-radius);
 
 //------------------------------------------------
