@@ -11,6 +11,9 @@ module.exports = {
   ],
   framework: '@storybook/angular',
   stories: [],
+  features: {
+    previewMdx2: true,
+  },
   webpackFinal: async config => {
     const tsPaths = new TsconfigPathsPlugin({
       configFile: './tsconfig.base.json',

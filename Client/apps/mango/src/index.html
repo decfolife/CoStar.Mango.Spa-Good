@@ -6,24 +6,24 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Needed once we start hosting mangospa using NGINX or MangoSPA .NET web server-->
+    <!--
+      Nonce is used to prevent XSS attacks for strict CSP policies.:
+      1. In the CSP-NONCE meta tag, the server modifies the 'random-csp-nonce' to a random value
+      2. In the Content-Security-Policy meta tag, the 'nonce-' is kept while 'random-csp-nonce' is modified to the actual nonce value
+    -->
     <meta name="CSP-NONCE" content="random-csp-nonce"/>
-    <!-- <meta http-equiv="Content-Security-Policy" content="style-src 'self' 'nonce-random-csp-nonce';"> -->
-    
-     <!-- Temporary for LOCAL testing only. 
-      We are already do this within the IIS web server (or NGINX web server) that will host mango-spa -->
-    <!-- <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self'; 
+    <!-- <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
               connect-src 'self' *.crem.aws.dshrp.com/ *.corp.virtualpremise.com:*/;
               frame-src 'self';
-              style-src 'self' *.googleapis.com; 
-              font-src 'self' https://fonts.gstatic.com/; 
+              script-src 'self' *.costar.com *.glancecdn.net *.google-analytics.com;
+              style-src 'self' 'nonce-random-csp-nonce';
+              frame-ancestors 'self';
               img-src 'self' *.corp.virtualpremise.com:*/;
               manifest-src 'self';
               media-src 'self';
               object-src 'self';
-              worker-src 'self';
-              script-src 'self' *.costar.com *.glancecdn.net *.google-analytics.com"> -->
+              worker-src 'self';"> -->
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>

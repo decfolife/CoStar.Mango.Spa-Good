@@ -412,14 +412,14 @@ export class DropdownComponent implements OnInit, OnChanges {
 
 	ADAatributes(e: any) {
 		// Search for the span element with class dx-datagrid-nodata
-		console.log("Test_Naveed")
+    // TODO: If possible, change to avoid accessing the DOM directly
 		const spanElement = e.component.$element().find('.dx-datagrid-nodata');
 		if (spanElement.length > 0) {
 		  spanElement.attr('role', 'alert');
 		  spanElement.attr('aria-live', 'polite');
 		}
-	  }
-    
+  }
+
   onEnterKey() {
     setTimeout(() => {
       if (!this.modalValueChanging) {
