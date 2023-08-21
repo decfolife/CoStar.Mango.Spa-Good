@@ -7,7 +7,7 @@ import { UserRecordsPopupComponent } from '../customer-select/user-records-popup
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 import { CentralAuthURLService } from '../../services/url.service';
 import { CentralAuthFacade } from '../../+state/facades';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.dev';
 import { Subscription } from 'rxjs';
 
@@ -56,14 +56,19 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
       this.isLoading = false;
       this.settingsService.clientKey$.next(payload.clientKey)
       this.storageService.savePermanentData(payload.clientKey, DBkeys.CLIENT_KEY)
-      let newCremURL = environment.cremBaseUrl.replace('[CLIENT]', payload.clientKey)
-      // newCremURL += this.openCremInNewTab ? '&mul=true' : '&mul=false'
-      this.centralAuthFacade.setRedirectionUri(newCremURL)
       this.subs.push(this.centralAuthFacade.redirectionUri$.pipe(
+        first(),
         map(redirectionUri => {
-          if (!!redirectionUri) {
-            this.router.navigate(['/oauth/authorize'], {queryParams: {redirect_uri: redirectionUri}})
-          } 
+          let newRedirectionUri = null
+          if (!redirectionUri) {
+            newRedirectionUri = environment.cremBaseUrl.replace('[CLIENT]', payload.clientKey)
+            // newCremURL += this.openCremInNewTab ? '&mul=true' : '&mul=false'
+            this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
+          } else {
+            newRedirectionUri = decodeURIComponent(redirectionUri)
+            this.centralAuthFacade.setRedirectionUri(decodeURIComponent(redirectionUri))
+          }
+          this.router.navigate(['/oauth/authorize'], { queryParams: { redirect_uri: newRedirectionUri } })
         })
       ).subscribe())
       return true;
@@ -187,12 +192,12 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
       requireSSO
     }
   }
-  
+
   openClientSSOUri(selectedSite: UserSite): void {
     window.location.href = selectedSite.ssoUri
   }
 
   ngOnDestroy(): void {
-      this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach(s => s.unsubscribe())
   }
 }
