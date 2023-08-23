@@ -1,9 +1,11 @@
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { Injector, ModuleWithProviders, NgModule, NgZone } from "@angular/core";
+import { Router } from "@angular/router";
 import { MangoErrorHandler, UserService } from "@mango/core-shared/lib-core-shared";
 import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
+import { CentralAuthFacade } from "../+state/facades";
 
 const IGNORED_ERRORS = [CentralAuthErrorCodes.ResetTokenExpired]
 
@@ -16,6 +18,14 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
 
   private get userService(): UserService {
     return this.injector.get(UserService)
+  }
+
+  private get router(): Router {
+    return this.injector.get(Router)
+  }
+
+  private get facade(): CentralAuthFacade {
+    return this.injector.get(CentralAuthFacade)
   }
 
   static forRoot(): ModuleWithProviders<CentralAuthHttpInterceptor> {
@@ -42,7 +52,8 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
             trackingId: null,
             traceId: null
           }
-          const caHttpError: CentralAuthHttpError = errorResponse.error.traceId ? errorResponse.error : genericErrorObject
+
+          const caHttpError: CentralAuthHttpError = errorResponse.error?.traceId ? errorResponse.error : genericErrorObject
 
           if (caHttpError.errorCode as CentralAuthErrorCodes === CentralAuthErrorCodes.SqsTimeout) {
             caHttpError.errorType = MangoErrorTypes.WARNING
@@ -56,6 +67,10 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
           if (caHttpError.errorCode === CentralAuthErrorCodes.ForceLogout) {
             this.userService.logout();
             window.location.href = '?caforcelogout=true';
+          }
+          if (caHttpError.status === 401) {
+            this.facade.logout()
+            this.router.navigate(['/'])
           }
           
           return throwError(caHttpError);
