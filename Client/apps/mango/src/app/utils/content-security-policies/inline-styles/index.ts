@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CustomStylesHost } from './shared_styles_host';
+import { CustomDomSharedStylesHost } from './shared_styles_host';
 import { ɵDomSharedStylesHost } from '@angular/platform-browser';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { CustomMediaMatcher } from './media-matcher';
 
 /**
  * CSP nonce value is injected into the DOM via a meta tag. This class
@@ -15,7 +17,8 @@ import { ɵDomSharedStylesHost } from '@angular/platform-browser';
 @NgModule({
   providers: [
     { provide: 'cspMetaSelector', useValue: 'meta[name="CSP-NONCE"]' },
-    { provide: ɵDomSharedStylesHost, useClass: CustomStylesHost },
+    { provide: ɵDomSharedStylesHost, useClass: CustomDomSharedStylesHost },
+    { provide: MediaMatcher, useClass: CustomMediaMatcher},
   ],
 })
 export class CSPModuleInlineStyles {}

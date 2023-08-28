@@ -2,7 +2,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CardModule, DropdownModule, LoaderModule, ModalModule, SimpleGridModule } from '@mango/ui-shared/lib-ui-elements';
@@ -46,7 +45,6 @@ const WARNING = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="
     MatSlideToggleModule,
     MatIconModule,
     CardModule,
-    FlexLayoutModule,
     ModalModule,
     TextAreaModule,
     NgxSkeletonLoaderModule,

@@ -35,7 +35,14 @@
       },
       "configurations": {
         "dev": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           "namedChunks": false,
@@ -62,7 +69,14 @@
           ]
         },
         "test": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           "namedChunks": false,
@@ -89,7 +103,14 @@
           ]
         },
         "ops": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           "namedChunks": false,
@@ -116,7 +137,14 @@
           ]
         },
         "stage": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           "namedChunks": false,
@@ -149,7 +177,14 @@
               "with": "apps/mango-crem-features/batch-accounting/src/environments/environment.prod.ts"
             }
           ],
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           "namedChunks": false,

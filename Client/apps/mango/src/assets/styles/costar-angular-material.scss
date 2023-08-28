@@ -8,7 +8,7 @@
 /// 
 @import 'colors.scss';
 @import 'var.scss';
-@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+@import 'mat-icons'; /* TODO: Deprecated, use crem-icon instead*/
 
 .title {
 	display: flex;

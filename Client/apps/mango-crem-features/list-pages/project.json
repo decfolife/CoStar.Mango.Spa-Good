@@ -45,7 +45,14 @@
       },
       "configurations": {
         "dev": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           
@@ -74,7 +81,14 @@
           ]
         },
         "test": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           
@@ -103,7 +117,14 @@
           ]
         },
         "ops": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           
@@ -132,7 +153,14 @@
           ]
         },
         "stage": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           
@@ -161,7 +189,14 @@
           ]
         },
         "prod": {
-          "optimization": true,
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "sourceMap": false,
           

@@ -6,13 +6,17 @@ import { ɵSharedStylesHost } from '@angular/platform-browser';
  * CSP nonce value is injected into the DOM via a meta tag. This class
  * provides a custom implementation of the `ɵSharedStylesHost` that
  * adds the nonce to all style tags.
+ * This an Angular 15 fix, version 16 provides built-in solution.
  * @export
- * @class CustomStylesHost
+ * @class CustomDomSharedStylesHost
  * @extends {ɵSharedStylesHost}
  * @implements {OnDestroy}
  */
 @Injectable()
-export class CustomStylesHost extends ɵSharedStylesHost implements OnDestroy {
+export class CustomDomSharedStylesHost
+  extends ɵSharedStylesHost
+  implements OnDestroy
+{
   // Maps all registered host nodes to a list of style nodes that have been added to the host node.
   private _hostNodes = new Map<Node, Node[]>();
   private _nonce: string | null | undefined = null;
@@ -43,6 +47,10 @@ export class CustomStylesHost extends ɵSharedStylesHost implements OnDestroy {
       styleNodes.push(host.appendChild(styleEl));
     });
 
+    // Modify the Link elements
+    const linkElement = document.querySelector('link[rel="stylesheet"]');
+    linkElement.setAttribute('nonce', this._nonce);
+
     if (this._nonce) {
       this._removeCSPNonceHeader();
     }
@@ -71,20 +79,19 @@ export class CustomStylesHost extends ɵSharedStylesHost implements OnDestroy {
     this._hostNodes.delete(hostNode);
   }
 
-  onStylesAdded(additions: Set<string>): void {
+  override onStylesAdded(additions: Set<string>): void {
     this._hostNodes.forEach((styleNodes, hostNode) => {
       this._addStylesToHost(additions, hostNode, styleNodes);
     });
   }
 
+  get nonce(): string | null | undefined {
+    return this._nonce;
+  }
+
   ngOnDestroy(): void {
     this._hostNodes.forEach((styleNodes) => styleNodes.forEach(removeStyle));
   }
-
-  // Remove styles without nonce: hammer solution
-
-
-
 }
 
 function removeStyle(styleNode: Node): void {

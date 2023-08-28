@@ -39,7 +39,15 @@ export function updateAngularJson(host: Tree, options: NormalizeSchema) {
         },
         "configurations": {
           "dev": {
-            "optimization": true,
+            
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
             "outputHashing": "none",
             "sourceMap": false,
             "
@@ -68,7 +76,15 @@ export function updateAngularJson(host: Tree, options: NormalizeSchema) {
             ]
           },
           "test": {
-            "optimization": true,
+            
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
             "outputHashing": "none",
             "sourceMap": false,
             "
@@ -97,7 +113,15 @@ export function updateAngularJson(host: Tree, options: NormalizeSchema) {
             ]
           },
           "ops": {
-            "optimization": true,
+            
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
             "outputHashing": "none",
             "sourceMap": false,
             "
@@ -126,7 +150,15 @@ export function updateAngularJson(host: Tree, options: NormalizeSchema) {
             ]
           },
           "stage": {
-            "optimization": true,
+            
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
             "outputHashing": "none",
             "sourceMap": false,
             "
@@ -155,7 +187,15 @@ export function updateAngularJson(host: Tree, options: NormalizeSchema) {
             ]
           },
           "prod": {
-            "optimization": true,
+            
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": false
+          },
             "outputHashing": "none",
             "sourceMap": false,
             "
