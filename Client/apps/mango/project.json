@@ -33,6 +33,7 @@
         ],
         "styles": [
           "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+          "node_modules/@fortawesome/fontawesome-svg-core/styles.css",
           "node_modules/ngx-toastr/toastr.css",
           "apps/mango/src/assets/styles/costar-mango.scss",
           "apps/mango/src/assets/styles/costar-dev-extreme.scss",

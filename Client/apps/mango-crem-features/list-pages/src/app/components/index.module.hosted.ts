@@ -19,7 +19,6 @@ import {
   DxDateBoxModule,
   DxLoadPanelModule,
 } from 'devextreme-angular';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -36,8 +35,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
-
-
 
 import { IndexComponent } from './index.component';
 import { HomeComponent } from './listpage/home/home.component';
@@ -69,6 +66,11 @@ import { AddFormWizardModule } from '@micro-components/form-wizard/modal/add-for
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { TaskApprovalModule }  from '@project-dashboard/components/modal/task-approval/task-approval.module';
 import { PaymentDetailsPopupComponent } from './listpage/payment-details/payment-details-popup.component';
+
+// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 @NgModule({
     declarations: [

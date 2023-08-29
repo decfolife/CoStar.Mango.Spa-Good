@@ -34,14 +34,17 @@ import {
   DxTreeViewModule,
 } from 'devextreme-angular';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
 import { ROUTES } from './index.routes';
 import { BatchEventListComponent } from '../batch-event-list/batch-event-list.component';
 import { BatchLogsComponent } from '../batch-logs/batch-logs.component';
 import { ParametersCardComponent } from '../batch-event-list/parameters-card/parameters-card.component';
 import { ParametersGridComponent } from '../batch-event-list/parameters-grid/parameters-grid.component';
 import { BaseService } from '../services/base.service';
+
+// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 @NgModule({
   declarations: [

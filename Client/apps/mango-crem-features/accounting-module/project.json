@@ -27,6 +27,7 @@
         ],
         "styles": [
           "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+          "node_modules/@fortawesome/fontawesome-svg-core/styles.css",
           "node_modules/devextreme/dist/css/dx.light.css",
           "node_modules/devexpress-gantt/dist/dx-gantt.css",
           "node_modules/@angular/material/_theming.scss",

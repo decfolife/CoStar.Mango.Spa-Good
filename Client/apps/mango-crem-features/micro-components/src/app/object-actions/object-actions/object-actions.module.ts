@@ -4,7 +4,6 @@ import { SearchModule } from '@mango/ui-shared/cosmos';
 import { DxButtonModule, DxDataGridModule, DxLoadPanelModule, DxPopupModule, DxTemplateModule, DxTooltipModule } from 'devextreme-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ButtonModule, DropdownModule, LibUiElementsModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
 import { ObjectActionsComponent } from './object-actions.component';
 import { DxCheckBoxModule } from 'devextreme-angular';
@@ -14,6 +13,11 @@ import { ArchiveCompanyAndContactComponent } from '../modal/archive-company-and-
 import { ArchiveLeaseComponent } from '../modal/archive-lease/archive-lease.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SharedService } from '../services/shared.service';
+
+// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 @NgModule({
   declarations: [

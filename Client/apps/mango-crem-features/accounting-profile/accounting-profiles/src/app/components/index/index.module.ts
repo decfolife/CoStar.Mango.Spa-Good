@@ -24,7 +24,6 @@ import { MatCardModule } from '@angular/material/card';
 import {
   DxDataGridModule, DxFormComponent, DxFormModule, DxSwitchModule, DevExtremeModule, DxValidationGroupModule, DxLoadPanelModule,
 } from 'devextreme-angular';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ConfigurationService } from '../../services/configuration.service';
 import { AmortizationProfilesComponent } from '../amortization-profiles/amortization-profiles.component';
 import { DiscountRateProfilesComponent } from '../dr-profiles/discount-rate-profiles.component';
@@ -39,6 +38,11 @@ import { DiscountRateService } from '../../services/discount-rate.service';
 import { PortfolioDropdownService } from '../../services/portfolio-dropdown.service';
 import { BaseService } from '../../services/base.service';
 import { SideNavModule } from 'libs/ui-shared/lib-ui-elements/src/lib/side-nav/side-nav.module';
+
+// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 @NgModule({
   declarations: [

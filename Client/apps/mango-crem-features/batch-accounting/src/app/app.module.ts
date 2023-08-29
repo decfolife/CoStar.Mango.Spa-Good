@@ -20,7 +20,6 @@ import {
   DxSelectBoxModule,
 } from 'devextreme-angular';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ScreenLoaderModule } from '@mango/ui-shared/lib-ui-elements';
 
 import { AppComponent } from './app.component';
@@ -31,6 +30,11 @@ import { ConfigurationService } from './services/configuration.service';
 import { EndpointService } from './services/endpoint.service';
 import { ParametersCardComponent } from './batch-event-list/parameters-card/parameters-card.component';
 import { ParametersGridComponent } from './batch-event-list/parameters-grid/parameters-grid.component';
+
+// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 @NgModule({
   declarations: [

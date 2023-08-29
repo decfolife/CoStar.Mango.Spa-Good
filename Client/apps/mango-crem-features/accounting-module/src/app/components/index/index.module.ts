@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IndexModule } from 'apps/mango-crem-features/list-pages/src/app/components/index.module.hosted';
 import { ModuleLeftNavAppComponent } from 'apps/mango-crem-features/micro-components/src/app/module-left-nav/module-left-nav.component';
 import { ProjectsDashboardLeftNavService } from 
@@ -12,6 +11,11 @@ import { DashboardModule } from '../../components/dashboard/accounting-dashboard
 import { IndexComponent } from '../../components/index/index.component';
 import { AccountingListpageComponent } from '../../components/listpage/accounting-listpage/accounting-listpage.component';
 import { IndexRoutingModule } from './index-routing.module';
+
+// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 @NgModule({
   declarations: [

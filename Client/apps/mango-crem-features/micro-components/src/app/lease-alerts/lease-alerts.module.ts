@@ -17,7 +17,6 @@ import {
   DxSwitchModule,
   DxSelectBoxModule,
 } from 'devextreme-angular';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LibUiElementsModule } from '@mango/ui-shared/lib-ui-elements';
 
 import { LeaseAlertsComponent } from './lease-alerts.component';
@@ -25,6 +24,11 @@ import { AlertsGridComponent } from './alerts-grid/alerts-grid.component';
 import { AlertsPopupComponent } from './alerts-popup/alerts-popup.component';
 import { LeaseAlertsControlsComponent } from './lease-alerts-controls/lease-alerts-controls.component';
 import { AlertsService } from './shared/service/alerts.service';
+
+// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false;
 
 @NgModule({
   declarations: [

@@ -10,7 +10,7 @@
 @import 'var.scss';
 
 button, .btn, .btn-sm, .card, .modal-content, .form-control, .input-group-addon {
-	border-radius: 2px !important;
+	// border-radius: 2px !important; //This approach is too broad and using is !important, is causing conflicts with other styles. A better solution is required.
 	font-size: 14px;
 	font-family: $font;
 	font-weight: normal;
