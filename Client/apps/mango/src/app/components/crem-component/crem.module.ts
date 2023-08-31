@@ -11,6 +11,7 @@ import { ToolbarModule } from 'libs/ui-shared/lib-ui-shared/src/lib/toolbar';
 import { SharedLeftNavModule } from 'libs/ui-shared/lib-ui-shared/src/lib/shared-left-nav';
 import {BreadcrumbsComponent} from '../breadcrumbs/breadcrumbs.component'
 import { CostarSuiteHeaderModule } from 'libs/ui-shared/lib-ui-shared/src/lib/costar-suite-header/costar-suite-header.module';
+import { DisplayBreadcrumbsModule } from 'libs/ui-shared/lib-ui-shared/src/lib/spa-breadcrumbs/display-breadcrumbs/display-breadcrumbs.module';
 
 @NgModule({
   declarations: [CremComponent, BreadcrumbsComponent],
@@ -24,6 +25,7 @@ import { CostarSuiteHeaderModule } from 'libs/ui-shared/lib-ui-shared/src/lib/co
     ToolbarModule,
     BookmarksModule,
     searchResultsModule,
+    DisplayBreadcrumbsModule,
     SharedLeftNavModule
   ],
   exports: [CremComponent]

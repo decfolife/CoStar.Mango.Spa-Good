@@ -9,3 +9,4 @@ export * from './lib/costar-suite-header';
 export * from './lib/hero-metrics-container';
 export * from './lib/dashboard-filters';
 export * from './lib/shared-left-nav';
+export * from './lib/spa-breadcrumbs/display-breadcrumbs';

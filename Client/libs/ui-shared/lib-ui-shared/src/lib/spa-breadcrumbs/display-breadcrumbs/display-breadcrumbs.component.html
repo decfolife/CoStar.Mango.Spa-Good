@@ -1,0 +1,8 @@
+<div class="breadcrumb-container">
+	<span *ngFor="let breadcrumb of breadcrumbs; let last = last" class="mango-breadcrumbs">
+			<a (click)="breadcrumbClicked(breadcrumb)"  class="breadcrumb"> {{ breadcrumb.label }} </a>
+			<span *ngIf="!last" class="breadcrumb-deliminator">
+					<small> {{ delineator }} </small>
+			</span>
+  </span>
+</div>
