@@ -9,6 +9,6 @@
 // This is a hacky solution to fix the issue of the button font size being too small on V06
 // This overrides vp_system_Sass_frameless.min.css 8pt font size
 // todo: Remove once we fully migrate to Mango
-button{
+button[class^="btn-"]{
   font-size: 16px !important;
 }
