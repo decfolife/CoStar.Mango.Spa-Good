@@ -9,7 +9,7 @@
           [popoverContent]="popoverContent" [moduleLinks]="toolbarModuleLinks">
         </mango-toolbar>
 
-        <display-breadcrumbs [breadcrumbs]="breadcrumbs" (navigateToBreadcrumb)="navigateToBreadcrumb($event)"></display-breadcrumbs>
+        <display-breadcrumbs [breadcrumbs]="(facade.breadcrumbs$ | async)" (navigateToBreadcrumb)="navigateToBreadcrumb($event)"></display-breadcrumbs>
       
         <crem-bookmarks [ngClass]="{'suite-user':(userAppType == 1)}"
           #cremBookmark

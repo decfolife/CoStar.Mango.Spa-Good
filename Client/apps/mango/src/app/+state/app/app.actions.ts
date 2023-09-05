@@ -1,4 +1,4 @@
-import { Client, ContactRecord, Link, MangoSubApps, UserAuth, UserInfo } from '@mango/data-models/lib-data-models';
+import { Client, ContactRecord, Link, MangoSubApps, UserAuth, UserInfo, BreadCrumb } from '@mango/data-models/lib-data-models';
 import { createAction, props } from '@ngrx/store';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 
@@ -15,6 +15,7 @@ export const SET_AUTHENTICATED_USER_ACTION = '[Mango App] Set Authenticated User
 export const SET_CLIENT_KEY_ACTION = '[Mango App] Set Client Key'
 export const SET_USER_INFO_ACTION = '[Mango App] Set User Info'
 export const SET_CLIENT_INFO_ACTION = '[Mango App] Set Client Info'
+export const SET_BREADCRUMBS = '[Mango App] Set Breadcrumbs'
 export const SET_CONTACT_RECORD = '[Mango App] Set Contact Record'
 export const LOGOUT_ACTION = '[Mango App] Log Out'
 export const SET_MODULE_ID = '[Mango App] Set Module Id'
@@ -35,6 +36,11 @@ export const setupClientKey = createAction(SETUP_CLIENT_KEY);
 export const setupContactRecord = createAction(SETUP_CONTACT_RECORD);
 
 export const setupUserInfo = createAction(SETUP_USER_INFO);
+
+export const setBreadcrumbs = createAction(
+  SET_BREADCRUMBS,
+  props<{ breadcrumbs: BreadCrumb[] }>()
+);
 
 export const setLoading = createAction(
   SET_LOADING,

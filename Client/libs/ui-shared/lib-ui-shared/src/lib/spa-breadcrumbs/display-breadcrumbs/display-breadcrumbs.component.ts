@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { BreadCrumb } from '../../../../../../../apps/mango/src/app/models/breadCrumb';
+import { BreadCrumb } from '@mango/data-models/lib-data-models'
 
 @Component({
   selector: 'display-breadcrumbs',

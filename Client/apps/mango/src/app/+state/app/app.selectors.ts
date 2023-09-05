@@ -29,6 +29,11 @@ export const userInfo = createSelector(
   (state: State) => state.userInfo
 );
 
+export const breadcrumbs = createSelector(
+  getAppState,
+  (state: State) => state.breadcrumbs
+)
+
 export const clientInfo = createSelector(
   getAppState,
   (state: State) => state.clientInfo

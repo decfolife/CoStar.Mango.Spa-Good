@@ -33,6 +33,7 @@ export * from './lib/models/central-auth/ui';
 export * from './lib/models/nlas';
 export * from './lib/models/central-auth/http.interfaces';
 export * from './lib/models/central-auth/errors';
+export * from './lib/models/breadCrumb';
 export * from './lib/constants/central-auth.constants';
 export * from './lib/constants/mango.constants';
 export * from './lib/lib-data-models.module';

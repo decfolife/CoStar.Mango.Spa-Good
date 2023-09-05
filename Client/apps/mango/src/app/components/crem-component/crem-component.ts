@@ -1,7 +1,7 @@
 import { HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { BookmarkGroup, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
+import { BookmarkGroup, ToolbarModuleLink, BreadCrumb } from '@mango/data-models/lib-data-models';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookmarks/bookmarks.component';
@@ -13,7 +13,6 @@ import { MangoAppFacade } from '../../+state/app/app.facade';
 import { filter, switchMap } from 'rxjs/operators';
 import { HeaderService } from '@mango/core-shared';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
-import { BreadCrumb } from '../../models/breadCrumb';
 
 @Component({
   selector: 'mango-crem-component',
@@ -31,7 +30,6 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   popoverContent: string[];
   activeLink: string = null;
   private subs: Subscription = new Subscription();
-  breadcrumbs: BreadCrumb[];
 
   protected httpOptions: any = {
     // hard coded until we start getting logged in with actual data for the user
@@ -51,7 +49,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     private headerService: HeaderService,
     private bookmarksService: BookmarksService,
     public dialog: MatDialog,
-    private facade: MangoAppFacade
+    public facade: MangoAppFacade
   ) {
     this.popoverContent = ['Backup File Name: E:RetailDemo_BackupsFULL_DEV_VP_RETAILDEMO_V05_20200930_020000.sqb',
       'Database Restore Date: 2020-09-30 11:17:54',
@@ -77,26 +75,6 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
       (routeUrl: string) => {
         this.getModuleNavLinksForRenderForm(routeUrl);
       }));
-
-
-      //**** this is temp code, will be removed eventually */
-      this.breadcrumbs = [
-        {
-          label : "Mainn Component",
-          params: {},
-          url   : "/crem/projects/"
-        },
-        {
-          label : "Child Component1",
-          params: {},
-          url   : "/crem/portfolio/"
-        },
-        {
-          label : "Child Component2",
-          params: {},
-          url   : "/crem/contacts/"
-        }
-      ]
   }
 
   getModuleNavLinks(moduleId: number) {

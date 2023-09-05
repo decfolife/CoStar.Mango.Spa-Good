@@ -17,6 +17,7 @@ export class MangoAppFacade {
   authenticatedUser$ = this.store.pipe(select(AppSelectors.authenticatedUser));
   clientKey$ = this.store.pipe(select(AppSelectors.client));
   userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
+  breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
   userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
   contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
   moduleId$ = this.store.pipe(select(AppSelectors.moduleId), take(1));

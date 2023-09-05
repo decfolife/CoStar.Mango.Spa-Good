@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { filter, tap } from 'rxjs/operators';
-import { BreadCrumb } from '../../models/breadCrumb';
+import { BreadCrumb } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-breadcrumbs',

@@ -3,7 +3,7 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 import * as AppActions from './app.actions';
 import { MangoAppEntity as MangoAppEntity } from './app.models';
-import { Client, ContactRecord, MangoSubApps, UserAuth, UserInfo } from '@mango/data-models/lib-data-models';
+import { Client, ContactRecord, MangoSubApps, UserAuth, UserInfo, BreadCrumb } from '@mango/data-models/lib-data-models';
 
 export const APP_FEATURE_KEY = 'mango';
 
@@ -15,6 +15,7 @@ export interface State extends EntityState<MangoAppEntity> {
   contactRecord: ContactRecord,
   authenticatedUser: UserAuth,
   userInfo: UserInfo,
+  breadcrumbs: BreadCrumb[],
   clientInfo: Client,
   moduleId: number,
   renderFormLeftNavDisplayed: boolean
@@ -33,6 +34,23 @@ export const initialState: State = appAdapter.getInitialState({
   contactRecord: null,
   authenticatedUser: null,
   userInfo: null,
+  breadcrumbs: [
+    {
+      label : "Mainn Component",
+      params: {},
+      url   : "/crem/projects/"
+    },
+    {
+      label : "Child Component1",
+      params: {},
+      url   : "/crem/portfolio/"
+    },
+    {
+      label : "Child Component2",
+      params: {},
+      url   : "/crem/contacts/"
+    }
+  ],
   clientInfo: null,
   moduleId: null,
   renderFormLeftNavDisplayed: false
@@ -47,6 +65,7 @@ const appReducer = createReducer(
   on(AppActions.setUserInfo, (state, { userInfo }) => ({ ...state, error: null, userInfo: userInfo })),
   on(AppActions.setClientInfo, (state, { clientInfo }) => ({ ...state, error: null, clientInfo: clientInfo })),
   on(AppActions.setClientKey, (state, { clientKey }) => ({ ...state, error: null, client: clientKey })),
+  on(AppActions.setBreadcrumbs, (state, { breadcrumbs }) => ({ ...state, error: null, breadcrumbs })),
   on(AppActions.setContactRecord, (state, { contactRecord }) => ({ ...state, error: null, contactRecord })),
   on(AppActions.setModuleId, (state, { moduleId }) => ({ ...state, error: null, moduleId: moduleId })),
   on(AppActions.setRenderFormLeftNavDisplayed, (state, { renderFormLeftNavDisplayed }) => ({ 
