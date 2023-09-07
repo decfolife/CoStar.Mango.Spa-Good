@@ -29,7 +29,6 @@ export default {
     '<rootDir>/libs/ui-shared/lib-ui-elements',
     '<rootDir>/libs/ui-shared/lib-ui-shared',
     '<rootDir>/apps/mango-crem-features/alerts',
-    '<rootDir>/apps/crem-prototype',
     '<rootDir>/apps/mango-crem-features/quick-search',
     '<rootDir>/apps/mango-crem-features/journal-entry-processing',
     '<rootDir>/libs/mango-nx-plugin',
