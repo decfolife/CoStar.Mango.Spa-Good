@@ -3,8 +3,6 @@
   "projects": {
     "auth": "libs/auth",
     "core-shared": "libs/core-shared",
-    "crem-prototype": "apps/crem-prototype",
-    "crem-prototype-e2e": "apps/crem-prototype-e2e",
     "data-models-lib-data-models": "libs/data-models/lib-data-models",
     "forms-shared": "libs/forms-shared",
     "mango": "apps/mango",
