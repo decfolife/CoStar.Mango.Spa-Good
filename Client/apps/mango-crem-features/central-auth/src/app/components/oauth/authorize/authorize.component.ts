@@ -40,8 +40,8 @@ export class AuthorizeComponent implements OnInit, OnDestroy {
         !!contact_id ? this.centralAuthFacade.setContactId(parseInt(contact_id)) : null
         this.centralAuthFacade.setRedirectionUri(encodeURIComponent(redirect_uri))
       }),
-      switchMap(_ => combineLatest([this.centralAuthFacade.isUserAuthenticated$, this.centralAuthFacade.redirectionUri$])),
-      switchMap(([isUserAuthenticated, redirectUri]) => !!isUserAuthenticated ? of(this.centralAuthFacade.retrieveAuthorizationCode(redirectUri)) : of(this.router.navigate(['/']))
+      switchMap(_ => combineLatest([this.centralAuthFacade.isUserAuthenticated$, this.centralAuthFacade.redirectionUri$, this.centralAuthFacade.clientKey$])),
+      switchMap(([isUserAuthenticated, redirectUri, clientKey]) => !!isUserAuthenticated ? of(this.centralAuthFacade.retrieveAuthorizationCode(redirectUri)) : of(this.router.navigate(['/', clientKey || '']))
       )
     ).subscribe())
   }

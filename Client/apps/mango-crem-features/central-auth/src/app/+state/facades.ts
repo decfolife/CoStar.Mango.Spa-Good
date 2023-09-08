@@ -10,6 +10,8 @@ export class CentralAuthFacade {
   isUserAuthenticated$ = this.store.pipe(select(AppSelectors.isUserAuthenticated));
   authorizationCode$ = this.store.pipe(select(AppSelectors.authorizationCode));
   redirectionUri$ = this.store.pipe(select(AppSelectors.redirectionUri));
+  clientKey$ = this.store.pipe(select(AppSelectors.clientKey));
+  contactId$ = this.store.pipe(select(AppSelectors.contactId));
 
   constructor(private store: Store) { }
 
