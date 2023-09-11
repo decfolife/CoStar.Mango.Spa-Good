@@ -50,6 +50,14 @@ export class ProjectMilestonesComponent implements OnInit {
       }
     );
   }
+
+  onKeyUpEvent(event){
+    const targetElement = event.target as HTMLElement;
+    if(targetElement.nodeName.toLowerCase() =="input"){
+      targetElement.setAttribute('aria-label', 'Search Filter For:  ' + event.target.value);
+    }
+}
+
   
   getProjectName(){
     return this.objectType + ' Name';

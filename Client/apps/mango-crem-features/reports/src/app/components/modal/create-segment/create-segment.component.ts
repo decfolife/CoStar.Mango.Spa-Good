@@ -29,6 +29,7 @@ export class CreateSegmentComponent {
     public segmentNameValid: boolean = false;
     public segmentLengthValid: boolean = true;
     public selectedCriteriaId: number;
+    public selectedReportCriteriaSet: boolean = true;
     public customValidationValid: boolean = false;
     public reportsData: any;
     public segmentName: string = "";
@@ -164,11 +165,14 @@ export class CreateSegmentComponent {
             this.segmentList = result.data;
         });
 
-        this.reportsService.GetCriteriaSetList().subscribe((res) => {
+        this.reportsService.GetCriteriaSetList(2).subscribe((res) => {
             this.reportsData = res.data;
             this.setformConfig(this.data);
             this.loading = false;
             this.showloading = false;
+            if (this.data.criteriaSetID) {
+                this.selectedReportCriteriaSet = res.data.find((x) => x.criteriaSetID == this.data.criteriaSetID).IsReportCriteriaSet
+            }
         })
         if (this.data.criteriaSetID && this.data.openReportAction === "saveAs") {
             this.selectedCriteriaId = this.data.criteriaSetID
@@ -335,6 +339,7 @@ export class CreateSegmentComponent {
                     this.showloading = true;
                     this.criteriaSetModified = true;
                     this.selectedCriteriaId = event[0].criteriaSetID;
+                    this.selectedReportCriteriaSet = this.reportsData.find((x) => x.criteriaSetID == this.selectedCriteriaId).isReportCriteriaSet
                 }
             })
         }

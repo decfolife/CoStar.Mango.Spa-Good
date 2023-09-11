@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NotificationService } from '@mango/core-shared';
+import { DBkeys, NotificationService, StorageService, UserService } from '@mango/core-shared';
 import { Observable, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { NotificationTypesEnum } from '@mango/data-models/lib-data-models';
@@ -22,6 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public toastr: ToastrService,
     private notificationService: NotificationService,
     private leftNavService: ProjectsDashboardLeftNavService,
+    private storageService: StorageService,
     private facade: MangoAppFacade,
   ) {
 
@@ -29,9 +30,17 @@ export class AppComponent implements OnInit, OnDestroy {
       .getNotification()
       .subscribe(notification => this.showNotification(notification)))
     this.loaded$ = this.facade.loaded$;
+    const authenticatedUser = this.storageService.getData(DBkeys.USER_AUTH)
+    const contactRecord = this.storageService.getData(DBkeys.CONTACT_RECORD)
+    const clientKey = this.storageService.getData(DBkeys.CLIENT_KEY)
+    if (authenticatedUser && contactRecord && clientKey) {
+      this.facade.setAuthenticatedUser(authenticatedUser),
+      this.facade.setContactRecord(contactRecord)
+      this.facade.setClientKey(clientKey)
+    }
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
     this.facade.init()
     const modId = 1; // hard coded until we start getting logged in with actual data for the user
     this.getModuleNavLinksNew(modId);

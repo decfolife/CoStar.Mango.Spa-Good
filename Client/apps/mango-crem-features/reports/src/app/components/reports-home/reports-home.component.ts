@@ -496,7 +496,7 @@ onKeydownMakeUnFavorite(event: KeyboardEvent, data: any) {
     });
   }
 
-  ADAatributes(e: any) {
+  ADAattributes(e: any) {
     // Search for the span element with class dx-datagrid-nodata
     const spanElement = e.component.$element().find('.dx-datagrid-nodata');
     if (spanElement.length > 0) {

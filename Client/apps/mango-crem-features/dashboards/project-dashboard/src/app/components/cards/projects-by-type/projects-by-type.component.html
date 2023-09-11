@@ -15,6 +15,9 @@
       [id]="card.id + 'chart'"
       [dataSource]="card.chartData.dataSource"
       *ngIf="displayChart"
+      [attr.aria-label]="card.title"
+      role="figure"
+      tabindex="0"
     >
       <dxo-size
         [height]="244">

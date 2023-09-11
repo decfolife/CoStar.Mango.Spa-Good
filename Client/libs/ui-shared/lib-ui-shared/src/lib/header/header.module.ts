@@ -5,6 +5,7 @@ import { HeaderComponent } from './header.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,10 +15,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconModule } from '@mango/ui-shared/lib-ui-elements'
 import { EmulateUserPopupModule } from './emulate-user-popup/emulate-user-popup.module';
 
-// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { config } from '@fortawesome/fontawesome-svg-core';
-config.autoAddCss = false;
 
 @NgModule({
   declarations: [HeaderComponent],

@@ -1,0 +1,18 @@
+div.cdk-drag.categories-item {
+    position: relative;
+  
+    .card-drag-handle {
+      cursor: move;
+      position: absolute;
+      top: 15px;
+      right: 24px;
+      z-index: 10;
+  
+      svg.drag_handle {
+        overflow: hidden;
+        vertical-align: middle;
+        width: 24px;
+        height: 24px;
+      }
+    }
+}

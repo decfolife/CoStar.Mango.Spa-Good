@@ -5,13 +5,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ObjectActionsModule } from './components/object-actions/object-actions.module';
 import { ObjectActionsComponent } from './components/object-actions/object-actions.component';
-
-// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { config } from '@fortawesome/fontawesome-svg-core';
-config.autoAddCss = false;
 
 @NgModule({
     declarations: [

@@ -99,11 +99,6 @@ export class AlertsGridComponent implements OnInit {
   selectedKeys = [];
   sortedFilterFields = [];
 
-  leaseStatusLookups = [
-    { value: true, display: 'Active' },
-    { value: false, display: 'Archived' },
-  ]
-
   private leaseAlerts: LeaseAlert[];
   private leaseLinks: RedirectorLink[];
 

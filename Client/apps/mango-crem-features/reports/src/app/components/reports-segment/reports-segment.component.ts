@@ -6,6 +6,9 @@ import { CreateSegmentComponent } from '../modal/create-segment/create-segment.c
 import { SearchComponent } from '@mango/ui-shared/cosmos';
 import notify from 'devextreme/ui/notify';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
+import { Workbook } from 'exceljs';
+import { exportDataGrid } from 'devextreme/excel_exporter';
+import { saveAs } from 'file-saver-es';
 
 
 @Component({
@@ -20,7 +23,7 @@ export class ReportsSegmentComponent implements OnInit {
   public segmentData: any = [];
   public segmentFilteredData: any = [];
   public columns: any = [];
-  public dateFormat: string = "MM/dd/yyyy";
+  public dateFormat: string = "MM/dd/yyyy HH:mm:ss";
   public loading: boolean = true;
   public hasSegmentsAddRight: boolean = false;
   public hasSegmentsViewRight: boolean = false;
@@ -78,7 +81,6 @@ export class ReportsSegmentComponent implements OnInit {
       {	dataField: "name",
 				dataType: "string",
 				caption: "Segment Name",
-        sortOrder: "asc"
 			},
       {	dataField: "segmentID",
 				alignment: "left",
@@ -89,12 +91,19 @@ export class ReportsSegmentComponent implements OnInit {
 				dataType: "string",
 				caption: "Criteria Set",
 			},
+      {
+        dataField: "criteriaSetID",
+        dataType: "number",
+        alignment: "left",
+        caption: "Criteria Set ID",
+        visible: false
+      },
       {	dataField: "shared",
         caption: "Shared",
 				dataType: "string"
 			},
       {	dataField: "created",
-        caption: "Date Created",
+        caption: "Created",
 				dataType: "date",
         format: this.dateFormat
 			},
@@ -265,6 +274,18 @@ export class ReportsSegmentComponent implements OnInit {
       this.segmentData = result.data;
       this.filterData();
       this.loading = false;
+    });
+  }
+
+  public exportExcel(event) {
+    const workbook = new Workbook();
+    exportDataGrid({
+      component: this.segmentDataGrid.instance,
+      worksheet: workbook.addWorksheet('Segments List Page')
+    }).then(function() {
+      workbook.xlsx.writeBuffer().then(function(buffer: BlobPart) {
+        saveAs(new Blob([buffer], { type:'application/octet-stream'}), 'CoStar_SegmentsListPage.xlsx')
+      });
     });
   }
 

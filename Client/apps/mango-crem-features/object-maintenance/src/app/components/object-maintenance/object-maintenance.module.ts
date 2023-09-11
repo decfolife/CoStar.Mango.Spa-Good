@@ -8,12 +8,8 @@ import { ButtonModule, DropdownModule, ModalModule } from '@mango/ui-shared/lib-
 import { DxDataGridModule, DxLoadPanelModule } from 'devextreme-angular';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import {  MatDialogModule } from '@angular/material/dialog';
-
-// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { config } from '@fortawesome/fontawesome-svg-core';
-config.autoAddCss = false;
+import {  MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [

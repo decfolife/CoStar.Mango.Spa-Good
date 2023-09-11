@@ -142,10 +142,33 @@ export class FormWizardAppComponent implements OnInit {
         this.defaultValues.shiftTimeline = data.clientPreferences.data?.[4]?.ClientSetupFieldValue === "1";
         this.linkBuildingsLeases = data.clientPreferences.data?.[3]?.ClientSetupFieldValue === "1";
       }
-      this.defaultValues.currency = this.currency !== null ? [data.currencyDropdownItem.data.find(x => x?.ExchangeRateID == this.currency)] || [] : [];
-      this.defaultValues.measurements = this.measureUnit !== null ? [data.measurementsDropdownItem.data.find(x => x?.MeasureUnitsID == this.measureUnit)] || [] : [];
-      this.managerDropdownItem = this.userId !== null ? [data.managerDropdownItem.data.find(x => x?.ContactID == this.userId)] || [] : [];
-      this.defaultValues.manager = this.userId !== null ? [data.managerDropdownItem.data.find(x => x?.ContactID == this.userId)] || [] : [];
+      this.defaultValues.currency = [];
+      this.defaultValues.measurements = [];
+      this.defaultValues.manager = [];
+      this.managerDropdownItem = [];
+      if (this.currency !== null) {
+        const defaultCurrency = data.currencyDropdownItem.data.find(x => x?.ExchangeRateID == this.currency);
+        if (defaultCurrency) {
+          this.defaultValues.currency = [defaultCurrency];
+        }
+      }
+
+      if (this.measureUnit !== null) {
+        const defaultMeasureUnit = data.measurementsDropdownItem.data.find(x => x?.MeasureUnitsID == this.measureUnit);
+        if (defaultMeasureUnit) {
+          this.defaultValues.measurements = [defaultMeasureUnit];
+        }
+        
+      }
+      
+      if (this.userId !== null) {
+        const defaultManager = data.managerDropdownItem.data.find(x => x?.ContactID == this.userId);
+        if (defaultManager) {
+          this.managerDropdownItem = [defaultManager];
+          this.defaultValues.manager = [defaultManager];
+        }
+      }
+      
       this.teamDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "GroupName")});
 
       if (this.objectTypeId === 3 || this.objectTypeId === 4) {
@@ -166,10 +189,10 @@ export class FormWizardAppComponent implements OnInit {
               if (selectedCountry) {
                 if (isLocal) {
                   country = selectedCountry;
-                  noStateCountry = selectedCountry + ",";
+                  noStateCountry = selectedCountry + "--";
                 } else {
                   country = '"' + selectedCountry + '"';
-                  noStateCountry = '"' + selectedCountry + "," + '"';
+                  noStateCountry = '"' + selectedCountry + "--" + '"';
                 }
   
                 this.formWizardService.getRenderSelect(country, 17).subscribe((stateData) => {
@@ -202,7 +225,10 @@ export class FormWizardAppComponent implements OnInit {
                             this.buildFormConfig();
                           })
                         } else {
-                          this.buildFormConfig();
+                          this.formWizardService.getRenderSelect(defaultInfo.BuildingID, 61).subscribe((data) => {
+                            this.leaseDropdownItem = data.data;
+                            this.buildFormConfig();
+                          });
                         }
                       } else {
                         this.buildFormConfig();
@@ -222,9 +248,9 @@ export class FormWizardAppComponent implements OnInit {
                       const stateName = defaultInfo.State                   
     
                       if (isLocal) {
-                        countryState = countryName + "," + stateName;
+                        countryState = countryName + "--" + stateName;
                       } else {
-                        countryState = '"' + countryName + "," + stateName + '"'
+                        countryState = '"' + countryName + "--" + stateName + '"'
                       }
                       this.formWizardService.getRenderSelect(countryState, 73).subscribe((data) => {
                         this.buildingDropdownItem = data.data;
@@ -617,10 +643,10 @@ export class FormWizardAppComponent implements OnInit {
         if (selectedId) {
           if (isLocal) {
             country = selectedId;
-            noStateCountry = selectedId + ",";
+            noStateCountry = selectedId + "--";
           } else {
             country = '"' + selectedId + '"';
-            noStateCountry = '"' + selectedId + "," + '"';
+            noStateCountry = '"' + selectedId + "--" + '"';
           }
           this.setLoadingCondition(true);
           this.formWizardService.getRenderSelect(country, 17).subscribe((data) => {
@@ -678,9 +704,9 @@ export class FormWizardAppComponent implements OnInit {
         
 
         if (isLocal) {
-          countryState = countryName + "," + stateName;
+          countryState = countryName + "--" + stateName;
         } else {
-          countryState = '"' + countryName + "," + stateName + '"'
+          countryState = '"' + countryName + "--" + stateName + '"'
         }
         if (countryName && stateName) {
           this.setLoadingCondition(true);

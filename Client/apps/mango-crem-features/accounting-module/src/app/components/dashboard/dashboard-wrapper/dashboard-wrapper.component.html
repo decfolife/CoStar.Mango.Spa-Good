@@ -1,0 +1,97 @@
+<mango-accounting-dashboard *ngIf="!featureFlagEnabled"></mango-accounting-dashboard>
+
+<div *ngIf="featureFlagEnabled" class="dashboard-right-container">
+	<div class="dashboard-toolbar-wrapper">
+		<div class="controls-left">
+			<div class="dashboard-toolbar__item">
+				<crem-dropdown
+					id="AccountingViewDropdown"
+					dropDownContainerCustomClass="accountingViewDropDown"
+					[dataSource]='accountingViewData'
+					placeholder='Select View' 
+					[showClearButton]='false'
+					[showColumnHeader]='false'
+					displayExpr="displayValue"
+					valueExpr="id"
+					[allowSearch]='true'
+					[useSelectBox]="true"
+					[selectBoxValue]="selectedView"
+					hoverText="Select View"
+					(selectedItems)="onAccountingViewChange($event)"
+					[isDisabled]="loading"
+				>
+				</crem-dropdown>
+			</div>
+
+			<div class="dashboard-toolbar__item">
+				<crem-dropdown
+					id="AccountingYearDropdown"
+					dropDownContainerCustomClass="accountingYearDropDown"
+					[dataSource]='accountingYearData'
+					placeholder='Select Year' 
+					[showClearButton]='false'
+					[showColumnHeader]='false'
+					displayExpr="value"
+					valueExpr="value"
+					[allowSearch]='true'
+					[useSelectBox]="true"
+					[selectBoxValue]="selectedYear"
+					hoverText="Select Year"
+					(selectedItems)="onAccountingYearChange($event)"
+					[isDisabled]="loading"
+				>
+				</crem-dropdown>
+			</div>
+
+			<div class="dashboard-toolbar__item">
+				<crem-dropdown
+					id="AccountingSegmentDropdown"
+					dropDownContainerCustomClass="accountingSegmentDropDown"
+					[dataSource]='accountingSegmentData'
+					placeholder='Select Segment' 
+					[showClearButton]='false'
+					[showColumnHeader]='false'
+					displayExpr="name"
+					valueExpr="segmentID"
+					[allowSearch]='true'
+					[useSelectBox]="true"
+					[selectBoxValue]="selectedSegment"
+					hoverText="Select View"
+					(selectedItems)="onAccountingSegmentChange($event)"
+					[isDisabled]="loading"
+				>
+				</crem-dropdown>
+			</div>
+
+			<crem-button id="accounting-dashboard__dropdown--apply"
+				[disabled]="loading"
+				type="secondary"
+				(buttonClick)="apply($event)">
+				Apply
+			</crem-button>
+		</div>
+		<div class="controls-right">
+			<!-- //export probably go here -->
+		</div>
+	</div>
+	<div class="dashboard-content-wrapper">
+		<div class="dashboard-content" *ngIf="!loading">
+			<workflow-and-alerts *ngIf="selectedView === 1">
+			</workflow-and-alerts>
+	
+			<asc-842-annual-disclosures *ngIf="selectedView === 2" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
+			</asc-842-annual-disclosures>
+	
+			<asc-842-quarterly-disclosures *ngIf="selectedView === 3">
+			</asc-842-quarterly-disclosures>
+	
+			<ifrs-16-annual-disclosures *ngIf="selectedView === 4">
+			</ifrs-16-annual-disclosures>
+	
+			<ifrs-16-quarterly-disclosures *ngIf="selectedView === 5">
+			</ifrs-16-quarterly-disclosures>
+		</div>
+
+
+	</div>
+</div>

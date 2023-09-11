@@ -17,6 +17,14 @@
 		</div>
     </div>
 
+    <div 
+        class="accessibilityControls" 
+        tabindex="0" 
+        style="border: 0;clip: rect(0 0 0 0);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;"
+    >
+        Portfolio Maintenance Grid. Use Tab to navigate the grid cells. While focused on a row: press Control + Right Arrow to expand a focused row. Or Control + Left Arrow to collapse.
+    </div>
+
     <div class="portfolio-maintenance-tree-list-wrapper">
 		<dx-tree-list *ngIf="portfolioMaintenanceData"
             #TreeList
@@ -176,37 +184,56 @@
             </div>
             <dxi-column dataField="Actions" caption="Actions" type="buttons" width="65">
 		    	<dxi-button	template="moreMenuTemplate">
-		    		<div *dxTemplate="let portfolio of 'moreMenuTemplate'" class="cursor-default">
-              <button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu">
+		    		<div *dxTemplate="let portfolio of 'moreMenuTemplate'" style="cursor: default">
+              <button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu" mat-button title="Menu" aria-haspopup="menu">
                 <fa-icon [icon]="faEllipsisH"></fa-icon>
               </button>
 		    			<mat-menu #UserMoreMenu="matMenu">
-				    		<ul>
+				    		<ul role="menu">
                                 <li *ngIf="!((portfolio.data.companyLevel > 0 && portfolio.data.groupingLevels === portfolio.data.companyLevel) || !(portfolio.data.isActive))" 
-                                    (click)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'addSubPortfolio')">Add Sub Hierarchy</li>     
+                                    (click)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'addSubPortfolio')"
+                                    (keydown.enter)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'addSubPortfolio')"
+                                    (keydown.space)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'addSubPortfolio')" role="menuitem" tabindex="0" mat-menu-item>Add Sub Hierarchy</li>     
 
                                 <li  *ngIf="(portfolio.data.companyLevel !== 0 && portfolio.data.isActive)" 
-                                    (click)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'edit')">Edit </li>         
+                                    (click)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'edit')" 
+                                    (keydown.enter)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'edit')" 
+                                    (keydown.space)="inlineAddOrEdit(portfolio.rowIndex, portfolio.data, 'edit')" role="menuitem" tabindex="0" mat-menu-item>Edit </li>         
                                 <!-- Edit portfolio -->
                                 <li  *ngIf="portfolio.data.isPortfolio && portfolio.data.isActive" 
-                                    (click)="redirectToAction(portfolio.data, 'editPortfolio')">Edit </li>  
+                                    (click)="redirectToAction(portfolio.data, 'editPortfolio')"                                     
+                                    (keydown.enter)="redirectToAction(portfolio.data, 'editPortfolio')" 
+                                    (keydown.space)="redirectToAction(portfolio.data, 'editPortfolio')" role="menuitem" tabindex="0" mat-menu-item>Edit </li>  
 
-                                <li (click)="redirectToAction(portfolio.data, 'showData')">Show Associated Objects</li>
-                                <!-- Change currency is displayed only for Active portfolios. -->
+                                <li (click)="redirectToAction(portfolio.data, 'showData')" 
+                                    (keydown.enter)="redirectToAction(portfolio.data, 'showData')"
+                                    (keydown.space)="redirectToAction(portfolio.data, 'showData')" role="menuitem" tabindex="0" mat-menu-item>Show Associated Objects</li>
+                                
+                                    <!-- Change currency is displayed only for Active portfolios. -->
                                 <li *ngIf="(portfolio.data.isPortfolio && portfolio.data.isActive)" 
-                                    (click)="redirectToAction(portfolio.data, 'changeCurrency')">Change Currency for Reporting</li>
+                                    (click)="redirectToAction(portfolio.data, 'changeCurrency')"                                    
+                                    (keydown.enter)="redirectToAction(portfolio.data, 'changeCurrency')" 
+                                    (keydown.space)="redirectToAction(portfolio.data, 'changeCurrency')" role="menuitem" tabindex="0" mat-menu-item>Change Currency for Reporting</li>
                                 
                                 <li *ngIf="portfolio.data.isPortfolio"
-                                    (click)="viewContacts(portfolio.data)">View Contacts in Group</li>
+                                    (click)="viewContacts(portfolio.data)"                                    
+                                    (keydown.enter)="viewContacts(portfolio.data)" 
+                                    (keydown.space)="viewContacts(portfolio.data)" role="menuitem" tabindex="0" mat-menu-item>View Contacts in Group</li>
                                 
                                 <li *ngIf="portfolio.data.enableArchivePortfolio"
-                                    (click)="deleteOrArchiveData(portfolio.data)">Archive Portfolio</li> 
+                                    (click)="deleteOrArchiveData(portfolio.data)"                                    
+                                    (keydown.enter)="deleteOrArchiveData(portfolio.data)"   
+                                    (keydown.space)="deleteOrArchiveData(portfolio.data)" role="menuitem" tabindex="0" mat-menu-item>Archive Portfolio</li> 
                                 
                                 <li *ngIf="portfolio.data.enableDeletePortfolio"
-                                    (click)="deleteOrArchiveData(portfolio.data)">{{portfolio.data.isPortfolio ? 'Delete Portfolio' : 'Delete Hierarchy'}}</li> 
+                                    (click)="deleteOrArchiveData(portfolio.data)"                                    
+                                    (keydown.enter)="deleteOrArchiveData(portfolio.data)"    
+                                    (keydown.space)="deleteOrArchiveData(portfolio.data)" role="menuitem" tabindex="0" mat-menu-item>{{portfolio.data.isPortfolio ? 'Delete Portfolio' : 'Delete Hierarchy'}}</li> 
                                 
                                 <li *ngIf="false"
-                                    (click)="redirectToAction(portfolio.data, 'editCamFilters')">Edit CAM Filters</li> 
+                                    (click)="redirectToAction(portfolio.data, 'editCamFilters')"
+                                    (keydown.enter)="redirectToAction(portfolio.data, 'editCamFilters')" 
+                                    (keydown.space)="redirectToAction(portfolio.data, 'editCamFilters')" role="menuitem" tabindex="0" mat-menu-item>Edit CAM Filters</li> 
                             </ul>
 				    	</mat-menu>
 		    		</div>

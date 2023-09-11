@@ -213,7 +213,7 @@ crem-dropdown {
   }
 }
 
-#dropdownContainer {
+div[id$="dropdownContainer"] {
   .dx-datagrid-content .dx-datagrid-table .dx-row > td:hover {
     background: $color-primary-lighter;
   }

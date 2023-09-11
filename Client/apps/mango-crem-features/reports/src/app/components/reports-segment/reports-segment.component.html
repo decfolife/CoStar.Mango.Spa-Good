@@ -45,7 +45,8 @@
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
 					<button mat-menu-item (click)="resetFilter($event)">Reset</button>
-					<button mat-menu-item (click)="openColumnChooser()">Column Chooser</button> 
+					<button mat-menu-item (click)="openColumnChooser()">Column Chooser</button>
+					<button mat-menu-item (click)="exportExcel($event)">Export</button> 
 				</mat-menu>	 
 			</div>
 			<div class="controls-item">
@@ -84,7 +85,6 @@
 			</dxo-pager>
 			<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
 			<dxo-column-chooser [enabled]="false" [allowSearch]="true" width="400" height="500"></dxo-column-chooser>
-
 			<dxi-column *ngFor="let col of columns" 
 				[dataField]="col.dataField" 
 				[alignment]="col.alignment"
@@ -103,7 +103,7 @@
 
 
 
-			<dxi-column caption="Actions" type="buttons" width="65" [showInColumnChooser]="false" [allowReordering]="false">
+			<dxi-column caption="Actions" type="buttons" width="65" [showInColumnChooser]="false" [allowReordering]="false" [fixed]="true">
 				<dxi-button template="moreMenuTemplate">
 					<div *dxTemplate="let data of 'moreMenuTemplate'">
 						

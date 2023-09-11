@@ -6,12 +6,8 @@ import { DateFnsModule } from 'ngx-date-fns';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LibUiElementsModule } from '@mango/ui-shared/lib-ui-elements';
-import { ToastrModule } from 'ngx-toastr';
-
-// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { config } from '@fortawesome/fontawesome-svg-core';
-config.autoAddCss = false;
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
     declarations: [AppComponent],

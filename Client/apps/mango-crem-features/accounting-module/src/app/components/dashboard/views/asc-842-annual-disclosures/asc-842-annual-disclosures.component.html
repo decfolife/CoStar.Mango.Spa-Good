@@ -1,0 +1,81 @@
+<div *ngIf="!loading">
+    <div class="card-containers"
+        cdkDropList
+        cdkDropListOrientation="vertical"
+        (cdkDropListDropped)="cardMove($event)"
+    >
+        <div class="categories-item"
+            cdkDropListOrientation="horizontal"
+            [cdkDropListData]="{ card: card, index: i }"
+            fxLayout="row"
+            cdkDrag
+            [class.col-md-6]="!fullWidth"
+            [class.col-md-12]="fullWidth"
+            >
+            <div cdkDragHandle
+                class="card-drag-handle"
+                id="LeaseCountsDragDrop"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="drag_handle"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#BFBFBF"
+                    >
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
+                </svg>
+            </div>
+            <crem-card id="LeaseCountsCard'"
+                title="Lease Counts"
+                [showFilterClearButton]="false"
+                [pendoTitleId]="LeaseCountsTitle"
+                [customDropdownMenu]="true"
+                fxFlexFill
+            >
+                <ng-template #customDropdownMenu>
+                    <div class="card-header--right">
+                        <button id="LeaseCountMoreOption"
+                            class="btn btn-default btn-sm moreOptionsBtn"
+                            [matMenuTriggerFor]="cardMenu"
+                            (click)="$event.preventDefault()"
+                            aria-label="More Options"
+                        >
+                            <mat-icon aria-label="More Options">more_horiz</mat-icon>
+                        </button>
+
+                        <mat-menu #cardMenu="matMenu">
+                            <button mat-menu-item
+                            (click)="toggleCardWidth()"
+                            >Toggle Full Width</button>
+                        </mat-menu>
+                    </div>
+                </ng-template>
+
+                <div class="cardContent" fxflexFill>
+                    <dx-pivot-grid #PivotGrid
+                        [allowSortingBySummary]="true"
+                        [allowFiltering]="true"
+                        [showBorders]="true"
+                        [showColumnGrandTotals]="false"
+                        [showRowGrandTotals]="false"
+                        [showColumnGrandTotals]="false"
+                        [showRowTotals]="false"
+                        [showColumnTotals]="false"
+                        [dataSource]="dataSource"
+                        [fields]="fieldConfig"
+                        (onCellPrepared)="onCellPrepared($event)"
+                        (onContextMenuPreparing)="contextMenuPreparing($event)"
+                        >
+                        <dxo-field-chooser
+                            [enabled]="false"
+                            >
+                        </dxo-field-chooser>
+                    </dx-pivot-grid>
+                </div>
+            </crem-card>
+        </div>
+    </div>
+    
+</div>

@@ -14,4 +14,5 @@ export class SettingsData {
   reportingCurrencyID = 0;
   fiscalYearAsEndMonth = false;
   financialReportingEnabled = false;
+  isImpactReportVisible = false;
 }

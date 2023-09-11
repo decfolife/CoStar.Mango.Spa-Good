@@ -49,16 +49,14 @@
     "mango-crem-features/accounting-profile-accounting-profiles-e2e": "apps/mango-crem-features/accounting-profile/accounting-profiles-e2e",
     "mango-crem-features/central-auth-e2e": "apps/mango-crem-features/central-auth-e2e",
     "mango-crem-features/dashboards-portfolio-dashboard-e2e": "apps/mango-crem-features/dashboards/portfolio-dashboard-e2e",
-    "mango-e2e": "apps/mango-e2e",
+    "mango-crem-features-client-delivery": "apps/mango-crem-features/client-delivery",
+    "mango-crem-features-client-delivery-e2e": "apps/mango-crem-features/client-delivery-e2e",   
     "mango-nx-plugin": "libs/mango-nx-plugin",
-    "mango-nx-plugin-e2e": "apps/mango-nx-plugin-e2e",
     "ui-shared-common": "libs/ui-shared/common",
     "ui-shared-cosmos": "libs/ui-shared/cosmos",
     "ui-shared-lib-external-libraries": "libs/ui-shared/lib-external-libraries",
     "ui-shared-lib-ui-elements": "libs/ui-shared/lib-ui-elements",
-    "ui-shared-lib-ui-elements-e2e": "apps/ui-shared-lib-ui-elements-e2e",
     "ui-shared-lib-ui-shared": "libs/ui-shared/lib-ui-shared",
-    "ui-shared-lib-ui-shared-e2e": "apps/ui-shared-lib-ui-shared-e2e",
     "ui-shared-storybook-host": "libs/ui-shared/storybook-host"
   },
   "defaultProject": "mango"

@@ -238,6 +238,7 @@ export class ListPageComponent implements OnInit {
   inCriticalViewDataError = false;
   lastGridDataRequest: GetGridDataRequest;
   public urlOID: number;
+  public noDataText: string = 'No Data';
 
   private _intitialListPageRequestedId: number = 0;
   private _isSuperUser = true;
@@ -462,12 +463,19 @@ export class ListPageComponent implements OnInit {
       this.isGLEvent = this.checkGLEvent(this.objectTypeId);
       this.service.getAddWizards(this.objectTypeId)
         .subscribe(result => { 
+          let tempEditPages = [];
+          if(result.data && result.data.addWizards) {
+            tempEditPages = result.data.addWizards;
+          }
+          else {
+            console.log(`Response from addWizards API is either empty or invalid`);
+          }
           if(this.isGLEvent) {
             this.archivedLabel = 'deleted';
-            this.unModifiedEditPages = result.data.addWizards;
+            this.unModifiedEditPages = tempEditPages;
           } else {
             this.archivedLabel = 'archived';
-            this.editPages = result.data.addWizards;
+            this.editPages = tempEditPages;
           }  
         });
 
@@ -2314,7 +2322,9 @@ export class ListPageComponent implements OnInit {
 
           if (this.isGLEvent) {
             this.checkExpRevOptions();
-            this.setEditPagesForLeasePayments();
+            if (this.unModifiedEditPages || this.editPages) {
+               this.setEditPagesForLeasePayments();
+            }
             this.getLeaseInfo(this.urlOID);
             if(this.gridData.length) {
               this.chargesOnLease = true;
@@ -2397,6 +2407,13 @@ export class ListPageComponent implements OnInit {
 
     this.service.getListViewSelectorItems(request).subscribe(result => {
       this.listViews = result.data;
+      if (this.listViews && Object.keys(this.listViews).length && (Object.values(this.listViews).some(x=> x.length))) {}
+      else {
+        this.dataGrid.instance.endCustomLoading();
+        this.noDataText = "This page could not load due to a missing object.  Please contact support.";
+        console.log(`The response from ListViewSelectorItems API is either Empty or Invalid.`);
+        return;
+      }
 
       this.activeListViewCount = this.listViews.coStarListViews.length
         + this.listViews.myListViews.length
@@ -2404,7 +2421,9 @@ export class ListPageComponent implements OnInit {
 
         if (this.showPortfolioPicker) {
           this.service.getPortfolios().subscribe(result => {
-            this.portfolios = result.data.portfolios;
+            if(result.data && result.data.portfolios && result.data.portfolios.length) {
+              this.portfolios = result.data.portfolios;
+            }
             this.configCurrentListView(refreshGrid, useSessionState, overrideDefaultListPage);
           });
         }

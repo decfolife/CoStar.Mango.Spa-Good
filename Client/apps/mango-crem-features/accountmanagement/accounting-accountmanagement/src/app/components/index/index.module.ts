@@ -18,13 +18,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DevExtremeModule, DxDataGridModule, DxFormModule, DxLoadPanelModule, DxSwitchModule, DxValidationGroupModule } from 'devextreme-angular';
 import { SideNavModule } from 'libs/ui-shared/lib-ui-elements/src/lib/side-nav/side-nav.module';
 
-// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { config } from '@fortawesome/fontawesome-svg-core';
-config.autoAddCss = false;
 
 @NgModule({
   declarations: [

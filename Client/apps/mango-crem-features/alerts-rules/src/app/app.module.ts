@@ -13,15 +13,11 @@ import {
   DxFormModule,
   DxPopupModule
 } from 'devextreme-angular';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { AppComponent } from './app.component';
 import { AlertsRulesComponent } from './alerts-rules/alerts-rules.component';
 import { AlertsRulesGridComponent } from './alerts-rules-grid/alerts-rules-grid.component';
-
-// TODO: The 'crem-icon' should be utilized instead of directly using the FontAwesome library.
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { config } from '@fortawesome/fontawesome-svg-core';
-config.autoAddCss = false;
 
 @NgModule({
   declarations: [

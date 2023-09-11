@@ -30,6 +30,7 @@ $stdPadding: 8px;
 .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
   font-size: 14px !important;
   font-family: Helvetica, sans-serif !important;
+  border-right: none !important;
 }
 
 table.dx-datagrid-table {
@@ -275,7 +276,7 @@ dx-select-box {
   }
 }
 
-#dropdownContainer {
+div[id$="dropdownContainer"] {
 
   .dx-datagrid-content .dx-datagrid-table .dx-row>td,
   .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
@@ -289,7 +290,7 @@ dx-select-box {
         .dx-datagrid-scrollable-simulated.dx-datagrid-content.dx-datagrid-scroll-container {
           table.dx-datagrid-table.dx-datagrid-table-fixed {
             tbody {
-              background-color: white !important;
+              background-color: colors.$lightGray;
 
               tr.dx-row.dx-header-row {
                 td.dx-datagrid-action {
@@ -379,12 +380,18 @@ dx-data-grid {
 
           tr.dx-header-row {
             td {
+              &:focus{
+                outline: #3068a1 solid 2px !important;
+              }
               div.dx-column-indicators {
                 span.dx-header-filter {
                   color: colors.$costarMediumBlue;
 
                   &.dx-header-filter-empty {
                     color: rgba(149, 149, 149, 0.5);
+                  }
+                  &:focus{
+                    outline: #3068a1 solid 2px !important;
                   }
                 }
               }
@@ -492,6 +499,8 @@ dx-data-grid {
   .dx-datagrid.dx-gridbase-container{
     span.dx-datagrid-nodata{
       overflow: auto;
+      color: colors.$textGray;
+      
     }
   }
   // End of ADA style fix
@@ -519,7 +528,7 @@ dx-data-grid {
                   color: colors.$costarMediumBlue;
 
                   &.dx-header-filter-empty {
-                    color: rgba(149, 149, 149, 0.5);
+                    color: #666666;
                   }
                 }
               }
@@ -768,3 +777,23 @@ crem-dropdown{
 .dx-overlay-wrapper.dx-overlay-modal.dx-overlay-shader.dx-loadpanel-wrapper {
   z-index: 2021 !important;
 }
+
+.dx-overlay-wrapper.dx-header-filter-menu.dx-popup-wrapper {
+  .dx-overlay-content {
+    .dx-popup-bottom.dx-toolbar {
+      padding: 16px ;
+      .dx-toolbar-item {
+        padding: 0 10px 0 0 ;
+        &:last-child {
+          padding: 0px ;
+        }
+      }
+      .dx-button {
+        padding: 0px !important;
+        min-width: 100px ;
+        border-radius: 4px;
+        margin-left: 0px !important;
+      }
+    }
+  } 
+}       

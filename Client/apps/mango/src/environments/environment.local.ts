@@ -24,6 +24,7 @@ class EnvironmentsCrem implements Environment {
     alertsRules: 'https://localhost:5001/api/Alerts',
     alerts: 'https://localhost:5001/api/Alerts',
     accountingService: 'http://localhost:39187/api/Accounting',
+    inAppDisclosure: 'http://localhost:39187/api/',
     leftNav: 'http://localhost:36786/api/',
     quickSearch: 'http://localhost:41568/api',
     userService: 'http://localhost:41569/api',

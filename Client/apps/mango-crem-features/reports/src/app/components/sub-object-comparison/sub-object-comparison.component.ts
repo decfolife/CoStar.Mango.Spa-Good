@@ -341,6 +341,15 @@ export class SubObjectComparisonComponent implements OnInit {
     this.dataGrid?.instance?.searchByText(data);
   }
 
+  
+  onKeyUpEvent(event){
+    const targetElement = event.target as HTMLElement;
+    if(targetElement.nodeName.toLowerCase() =="input"){
+      targetElement.setAttribute('aria-label', 'Search Filter For - ' + event.target.value);
+    }
+}
+
+
   public onImageLoad(subObjectTypeId, fileName, isError) {
     if (!this.imgLoaded[subObjectTypeId]) {
       this.imgLoaded[subObjectTypeId] = {};

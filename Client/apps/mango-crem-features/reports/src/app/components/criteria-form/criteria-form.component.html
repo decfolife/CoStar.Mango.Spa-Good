@@ -1,5 +1,5 @@
 
-<dynamic-form *ngIf="!loading" #PortfolioForm
+<dynamic-form *ngIf="!loading && isReportCriteriaSet" #PortfolioForm
   [config]="portfolioConfig"
   (onChangeEvent)="onDropdownChange($event)"
   [idPrefix] = "idPrefix"
@@ -32,7 +32,7 @@
     </div>
   </ng-template>
 </dynamic-form>
-<dynamic-form *ngIf="!dependentCriteriaLoading && selectedPortfolio" #DependentCriteriaDynamicForm
+<dynamic-form *ngIf="!dependentCriteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #DependentCriteriaDynamicForm
   [config]="dependentCriteriaConfig"
   (onChangeEvent)="onDependentChange($event)"
   (isLoading)="onDependentLoading($event)"
@@ -40,7 +40,7 @@
   [readOnly] = "readOnly"
   >
 </dynamic-form>
-<dynamic-form *ngIf="!criteriaLoading && selectedPortfolio" #CriteriaDynamicForm
+<dynamic-form *ngIf="!criteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #CriteriaDynamicForm
   [config]="criteriaConfig"
   (onChangeEvent)="onChange($event)"
   [idPrefix] = "idPrefix"

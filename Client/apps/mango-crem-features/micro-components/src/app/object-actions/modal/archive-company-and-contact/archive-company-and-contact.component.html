@@ -1,4 +1,4 @@
-<crem-modal [modalTitle]="modalTitle" closeIconVisible="true" [customFooter]="true" modalId="archive_company_contact_modal" modalTitleId="archive_company_contact_modal_title"
+<crem-modal [modalTitle]="modalTitle" closeIconVisible="true" [customFooter]="true" [modalId]="'Archive' + data.archiveType + 'ConfirmationModal'" modalTitleId="archive_company_contact_modal_title"
 	[primaryFooterButtonText]="primaryFooterButtonText" [closeOrCancelButtonText]="closeOrCancelButtonText"
 	(primaryButtonAction)="archive()">
 	<div modalContent class="body-content">

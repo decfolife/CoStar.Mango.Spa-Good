@@ -25,7 +25,7 @@ height="640px"
 		<div chipContent>Upcoming</div>
 	</cs-chip>
 	<mat-slide-toggle id="dateToggle" (change)="toggle()">Show Dates</mat-slide-toggle>
-	<cs-search [placeholder]="'Search...'" (changed)="searchFilter($event)"></cs-search>
+	<cs-search [placeholder]="'Search ...'" (keyup)="onKeyUpEvent($event)" (changed)="searchFilter($event)" ></cs-search>
 </div>
 
 	<div class="cardContent" cardContent *ngIf="card.dispCard">

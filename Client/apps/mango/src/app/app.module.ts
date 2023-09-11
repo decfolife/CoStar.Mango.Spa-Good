@@ -112,7 +112,7 @@ export class AppModule {
       switchMap(e => combineLatest([of(e.url), this.facade.clientKey$])),
       filter(([url, clientKey]) => !!url && !!clientKey),
       map(([url, clientKey]) => {
-        const newUrl = `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`
+        const newUrl = ` ${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
         window.location.href = newUrl
       })
     ).subscribe()

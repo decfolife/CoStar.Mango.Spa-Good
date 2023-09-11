@@ -62,7 +62,7 @@ export class CriteriaReportComponent {
         observableList = forkJoin({ 
             segmentRights: this.reportsService.getSegmentsRights(0, 2),
             reports: this.reportsService.getReport(this.data.reportId),
-            criteriaSets: this.reportsService.GetCriteriaSetList()
+            criteriaSets: this.reportsService.GetCriteriaSetList(1)
         })
 
         observableList.subscribe((data: any) => {
@@ -209,14 +209,7 @@ export class CriteriaReportComponent {
     
             this.reportsService.insertSelectedCriteria(saveObject).subscribe((result) => {
                 if (this.reportObject !== "SQLRSBatch") {
-                    this.reportProcessingPage = this.reportProcessingPage.replace("@ReportGUID", result.data);
-                    if (!this.reportProcessingPage.includes('&rs:Format')) {
-                        const index = this.reportProcessingPage.indexOf('&rs');
-                        let start = this.reportProcessingPage.slice(0, index);
-                        let end = this.reportProcessingPage.slice(index, this.reportProcessingPage.length);
-                        start += "&rs:Format=XLTemplate";
-                        this.reportProcessingPage = start + end;
-                    }
+                    this.reportProcessingPage = this.reportProcessingPage.replace("@ReportGUID", '{' + result.data + '}');
                     this.reportsService.insertReportIssue(this.reportProcessingPage).subscribe((reportIssue) => {
                         const reportIssueId = reportIssue.data;
                         const url = "../../../../v06/Reporting/ReportLaunchpad.aspx?processReportObject=" + this.reportObject + "&reportissueid=" + reportIssueId;
@@ -303,7 +296,7 @@ export class CriteriaReportComponent {
                     newSegmentConfig[x.CriteriaID] = Object.values(x)[1]
                 }
             })
-            this.dialog.open(CreateSegmentComponent, {
+            const redirectRef = this.dialog.open(CreateSegmentComponent, {
                 height: LargeModal.Height,
                 width: LargeModal.Width,
                 maxWidth: LargeModal.MaxWidth,
@@ -320,6 +313,11 @@ export class CriteriaReportComponent {
                     archived: false
                     }
               });
+            redirectRef.afterClosed().subscribe((data) => {
+                if (data) {
+                    this.dialog.open(CriteriaReportComponent, data)
+                }
+            })
             this.dialogRef.close();
         }
     }

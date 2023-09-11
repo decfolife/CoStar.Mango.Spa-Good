@@ -60,6 +60,7 @@
       <mango-criteria-form *ngIf="!loading && !segmentLoading" #CriteriaForm
         [criteriaSetId]="criteriaSetId"
         [defaultValues]="defaultValues"
+        isReportCriteriaSet="true"
         (onCriteriaLoadedChange)="onCriteriaLoadedChange()"
         (onFormItemChange)="onFormItemChange($event)"
         (loadingCallback)="setLoading($event)"

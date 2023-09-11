@@ -3,10 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { CanActivateGuard } from './app.component';
 import { AccountingDashboardComponent } from './components/dashboard/accounting-dashboard.component';
 import { AccountingListpageComponent } from './components/listpage/accounting-listpage/accounting-listpage.component';
+import { DashboardWrapperComponent } from './components/dashboard/dashboard-wrapper/dashboard-wrapper.component';
 
 const routes: Routes = [
   { path: 'dashboard', component: AccountingDashboardComponent, canActivate: [ CanActivateGuard ] },
   { path: 'accountingevents', component: AccountingListpageComponent },
+  { path: 'updated-dashboard', component: DashboardWrapperComponent },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full'},
 ];
 

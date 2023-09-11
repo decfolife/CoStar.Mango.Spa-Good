@@ -2,32 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>CoStar Real Estate Manager - MangoSPA</title>
+    <title>CoStar Real Estate Manager</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!--
-      Nonce is used to prevent XSS attacks for strict CSP policies.:
-      1. In the CSP-NONCE meta tag, the server modifies the 'random-csp-nonce' to a random value
-      2. In the Content-Security-Policy meta tag, the 'nonce-' is kept while 'random-csp-nonce' is modified to the actual nonce value
-      @src: https://angular.io/guide/security
-    -->
-    <meta name="CSP-NONCE" content="random-csp-nonce"/>
-    <!-- Uncomment this when testing with local development environment -->
-    <!-- <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self';
+    <!-- Needed once we start hosting mangospa using NGINX or MangoSPA .NET web server-->
+    <!-- <meta name="CSP-NONCE" content="random-csp-nonce"/>
+    <meta http-equiv="Content-Security-Policy" content="style-src 'self' 'nonce-random-csp-nonce';"> -->
+    
+     <!-- Temporary for LOCAL testing only. 
+      We are already do this within the IIS web server (or NGINX web server) that will host mango-spa -->
+    <!-- <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
               connect-src 'self' *.crem.aws.dshrp.com/ *.corp.virtualpremise.com:*/;
-              frame-ancestors 'self';
               frame-src 'self';
-              font-src 'self' *.googleapis.com *.gstatic.com/;
-              script-src 'self' 'nonce-random-csp-nonce' *.costar.com/ *.glancecdn.net/ *.google-analytics.com/ *.pendo.io/;
-              style-src 'self' 'nonce-random-csp-nonce' *.googleapis.com/;
-              style-src-elem 'self' 'nonce-random-csp-nonce';
-              img-src 'self' data: *.corp.virtualpremise.com:*/;
+              style-src 'self' *.googleapis.com; 
+              font-src 'self' https://fonts.gstatic.com/; 
+              img-src 'self' *.corp.virtualpremise.com:*/;
               manifest-src 'self';
               media-src 'self';
               object-src 'self';
-              worker-src 'self';"> -->
+              worker-src 'self';
+              script-src 'self' *.costar.com *.glancecdn.net *.google-analytics.com"> -->
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>

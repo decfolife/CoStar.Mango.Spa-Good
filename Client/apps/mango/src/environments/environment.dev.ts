@@ -26,11 +26,12 @@ class EnvironmentsCrem implements Environment {
     userService: 'http://service2.dev.corp.virtualpremise.com:8090/UserService/api',
     formWizard: 'http://service2.dev.corp.virtualpremise.com:8090/FormsEngine/api/',
     objectActions: 'http://service2.dev.corp.virtualpremise.com:8090/objectActions/api/',
-    header: 'http://service2.dev.corp.virtualpremise.com:8090/Header/api/'
+    header: 'http://service2.dev.corp.virtualpremise.com:8090/Header/api/',
+    inAppDisclosure: 'http://service2.dev.corp.virtualpremise.com:8090/AccountingService/api/'
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].dev.corp.virtualpremise.com';
-  CAUrl = 'https://client-alpha.dev.crem.aws.dshrp.com/';
+  CAUrl = 'http://localhost:4200/';
   mangoSpaUrl = 'http://service2.dev.corp.virtualpremise.com:8097/'
 }
 

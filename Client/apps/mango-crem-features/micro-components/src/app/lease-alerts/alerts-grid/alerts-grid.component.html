@@ -216,12 +216,7 @@
   <dxi-column dataField="systemLeaseStatus"
     caption="System Lease Status"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.systemLeaseStatus"
-  >
-    <dxo-lookup [dataSource]="leaseStatusLookups"
-      valueExpr="value"
-      displayExpr="display"
-    ></dxo-lookup>
-  </dxi-column>
+  ></dxi-column>
 
   <dxi-column dataField="buildingArchivedDate"
     caption="Building Archived Date"

@@ -17,6 +17,7 @@ import { DropdownComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdo
 export class CriteriaFormComponent {
 
     @Input() criteriaSetId: number;
+    @Input() isReportCriteriaSet: boolean;
     @Input() defaultValues: any;
     @Input() readOnly: boolean;
     @Input() idPrefix: string = "criteriaForm";
@@ -97,6 +98,8 @@ export class CriteriaFormComponent {
         };
         if (selectedPortfolioIndex) {
             this.onDropdownChange({values: {PortfolioID: {value: [selectedPortfolioIndex]}}})
+        } else if (!this.isReportCriteriaSet) {
+            this.onDropdownChange({values: { IsReportCriteriaSet: {value: false}}})
         }
         this.loading = false;
         this.setLoadingCallback(false);
@@ -104,7 +107,7 @@ export class CriteriaFormComponent {
 
     public onChange(config) {
         this.isItemSelected = this.criteriaDynamicForm?.isItemSelected();
-        this.portfolioSelected = this.portfolioConfig.section[0].formObjects[0].sectionItems[0].value?.length;
+        this.portfolioSelected = this.portfolioConfig.section[0].formObjects[0].sectionItems[0].value?.length || (!this.isReportCriteriaSet && this.isDependentItemSelected);
         if (this.portfolioConfig.section[0].formObjects[0].sectionItems[0].value?.length) {
             this.portfolioSelectionModified = true;
         }
@@ -116,11 +119,16 @@ export class CriteriaFormComponent {
         this.setLoadingCallback(true);
         this.onCriteriaLoadedChange.emit(true);
         this.isDependentItemSelected = this.dependentCriteriaDynamicForm?.isItemSelected();
+        var isReportCriteria = true;
         if (this.isDependentItemSelected && config !== null) {
             const config = this.dependentCriteriaDynamicForm.getConfig();
             let saveObject = [];
+            //This needs to be reworked to not be hardcoded asap
+            if (this.criteriaSetId == 8 || this.criteriaSetId == 9) {
+                isReportCriteria = false;
+            }
             saveObject = this.getSaveObject(config, saveObject, true);
-            this.reportsService.getCriteria(this.criteriaSetId, this.selectedPortfolio, saveObject).subscribe((result) => {
+            this.reportsService.getCriteria(this.criteriaSetId, this.selectedPortfolio, saveObject, isReportCriteria).subscribe((result) => {
                 if (result.data) {
                     this.setCriteriaFields(result.data, false);
                 }
@@ -135,44 +143,63 @@ export class CriteriaFormComponent {
     }
 
     public onDropdownChange(event) {
-        const portfolioItem = event.values.PortfolioID.value;
-        this.portfolioConfig.section[0].formObjects[0].sectionItems[0].value = event.values.PortfolioID.value;
+        if (event.values.PortfolioID) {
+            const portfolioItem = event.values.PortfolioID.value;
+            this.portfolioConfig.section[0].formObjects[0].sectionItems[0].value = event.values.PortfolioID.value;
 
-
-        setTimeout(() => {
-            if (portfolioItem?.length) {
-                setTimeout(() => {
-                    this.criteriaLoading = true;
-                    this.setLoadingCallback(true);
-                    this.onCriteriaLoadedChange.emit(true);
-                    this.onFormItemChange.emit(true)
-                    this.dependentCriteriaLoading = true;
-                    this.selectedPortfolio = portfolioItem[0].masterGroupID;
-                    this.reportsService.getNonDependentCriteria(this.criteriaSetId, this.selectedPortfolio).subscribe((result) => {
-                        this.dropdownKey = {};
-                        this.dependentDropdownKey = {};
-                        if (result.data?.dependentCriteriaCount > 0) {
-                            this.setCriteriaFields(result.data?.criteria, true)
-                        } else {
-                            this.setCriteriaFields(result.data?.criteria, false)
-                        }
-                        
+            setTimeout(() => {
+                if (portfolioItem?.length) {
+                    setTimeout(() => {
+                        this.criteriaLoading = true;
+                        this.setLoadingCallback(true);
+                        this.onCriteriaLoadedChange.emit(true);
+                        this.onFormItemChange.emit(true)
+                        this.dependentCriteriaLoading = true;
+                        this.selectedPortfolio = portfolioItem[0].masterGroupID;
+                        this.reportsService.getNonDependentCriteria(this.criteriaSetId, this.selectedPortfolio).subscribe((result) => {
+                            this.dropdownKey = {};
+                            this.dependentDropdownKey = {};
+                            if (result.data?.dependentCriteriaCount > 0) {
+                                this.setCriteriaFields(result.data?.criteria, true)
+                            } else {
+                                this.setCriteriaFields(result.data?.criteria, false)
+                            }
+                            
+                        })
                     })
-                })
+    
+                } else if (this.selectedPortfolio !== 0){
+                    setTimeout(() => {
+                        this.selectedPortfolio = 0;
+                        this.setLoadingCallback(false);
+                        this.onCriteriaLoadedChange.emit(false);
+                        this.onFormItemChange.emit(false);
+                        this.dependentCriteriaLoading = true;
+                        this.criteriaLoading = true;
+                    })
+    
+                }
+            })
 
-            } else if (this.selectedPortfolio !== 0){
-                setTimeout(() => {
-                    this.selectedPortfolio = 0;
-                    this.setLoadingCallback(false);
-                    this.onCriteriaLoadedChange.emit(false);
-                    this.onFormItemChange.emit(false);
-                    this.dependentCriteriaLoading = true;
-                    this.criteriaLoading = true;
+        } else if (event.values.IsReportCriteriaSet) {
+            setTimeout(() => {
+                this.criteriaLoading = true;
+                this.setLoadingCallback(true);
+                this.onCriteriaLoadedChange.emit(true);
+                this.onFormItemChange.emit(true)
+                this.dependentCriteriaLoading = true;
+                this.reportsService.getNonDependentCriteria(this.criteriaSetId, -1).subscribe((result) => {
+                    this.dropdownKey = {};
+                    this.dependentDropdownKey = {};
+                    if (result.data?.dependentCriteriaCount > 0) {
+                        this.setCriteriaFields(result.data?.criteria, true)
+                    } else {
+                        this.setCriteriaFields(result.data?.criteria, false)
+                    }
+                    
                 })
-
-            }
-        })
-        
+            })
+        }
     }
 
     public setCriteriaFields(criteriaItem, isDependent: boolean) {
@@ -232,7 +259,11 @@ export class CriteriaFormComponent {
                         //multi select dropdown
                         let defaultValueArray = [];
                         if (this.defaultValues?.[item.criteriaID]) {
-                            defaultValueArray = this.defaultValues?.[item?.criteriaID].split(",");
+                            if (Array.isArray(this.defaultValues?.[item.criteriaID])) {
+                                defaultValueArray = this.defaultValues?.[item?.criteriaID];
+                            } else {
+                                defaultValueArray = this.defaultValues?.[item?.criteriaID].split(",");
+                            }
                         }
                         
                         
@@ -529,12 +560,12 @@ export class CriteriaFormComponent {
                 let saveItem2 = {};
                 saveItem1 = {
                     CriteriaID: config[item].data.criteriaID1,
-                    DateData: new Date(config[item].value1)?.toJSON() ||  null
+                    DateData: new Date(config[item].value1 + 'z')?.toJSON() ||  null
                 }
 
                 saveItem2 = {
                     CriteriaID: config[item].data.criteriaID2,
-                    DateData: new Date(config[item].value2)?.toJSON() ||  null
+                    DateData: new Date(config[item].value2 + 'z')?.toJSON() ||  null
                 }
 
                 saveObject.push(saveItem1);
@@ -543,7 +574,7 @@ export class CriteriaFormComponent {
 
                 let saveItem = {
                     CriteriaID: config[item].data.criteriaID,
-                    DateData: new Date(config[item].value)?.toJSON()
+                    DateData: new Date(config[item].value + 'z')?.toJSON()
                 }
                
                 

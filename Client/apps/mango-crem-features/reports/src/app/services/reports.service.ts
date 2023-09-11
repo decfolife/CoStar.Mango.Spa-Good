@@ -109,14 +109,14 @@ export class ReportsService extends EndpointService{
     return this.callHttpPost(url, 'getNonDependentCriteria', { criteriaSetID: criteriaSetId, portfolioId })
   }
 
-  public getCriteria(criteriaSetId: number, portfolioId: number, request) {
+  public getCriteria(criteriaSetId: number, portfolioId: number, request, isReportCriteria: boolean = true) {
     if (environment.isRestful) {
       const url = `${environment.appUrls.reports}ReportsSegments/DependentCriteria`;
-      return this.callHttpPost(url, 'getDependentCriteria', {  CriteriaSetID: criteriaSetId, PortfolioID: portfolioId, DefinedCriteria: request })
+      return this.callHttpPost(url, 'getDependentCriteria', {  CriteriaSetID: criteriaSetId, PortfolioID: portfolioId, DefinedCriteria: request, IsReportCriteria: isReportCriteria })
     }
 
     const url = environment.appUrls.reports + 'getDependentCriteria';
-    return this.callHttpPost(url, 'getDependentCriteria', { request: { criteriaSetId, PortfolioID: portfolioId, DefinedCriteria: request } })
+    return this.callHttpPost(url, 'getDependentCriteria', { request: { criteriaSetId, PortfolioID: portfolioId, DefinedCriteria: request, IsReportCriteria: isReportCriteria } })
   }
 
   public getReport(reportId: number) {
@@ -203,13 +203,13 @@ export class ReportsService extends EndpointService{
     return this.callHttpPost(url, 'getSegmentsObjectrights', {objectId, securityTypeId})
   }
   
-  public GetCriteriaSetList() {
+  public GetCriteriaSetList(reportCriteria: number = 2) {
     if (environment.isRestful) {
-      const url = `${environment.appUrls.reports}ReportsSegments/CriteriaSetList`;
-      return this.callHttpGet(url, 'getCriteriaSetList',  {})
+      const url = `${environment.appUrls.reports}ReportsSegments/CriteriaSetList?reportCriteria=` + reportCriteria;
+      return this.callHttpGet(url, 'getCriteriaSetList',  { })
     }
     const url = environment.appUrls.reports + 'GetCriteriaSetList';
-    return this.callHttpPost(url, 'getCriteriaSetList', {})
+    return this.callHttpPost(url, 'getCriteriaSetList', { reportCriteria })
   }
 
   public getRCSSFeatureFlag() {

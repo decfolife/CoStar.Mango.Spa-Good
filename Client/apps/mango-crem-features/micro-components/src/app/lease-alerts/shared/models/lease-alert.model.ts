@@ -32,7 +32,7 @@ export interface LeaseAlert {
 
   // Reporting Leases Fields
   buildingStatus: boolean | null;
-  systemLeaseStatus: boolean | null;
+  systemLeaseStatus: string | null;
 
   buildingArchivedDate: Date | null;
   buildingCreatedDate: Date | null;

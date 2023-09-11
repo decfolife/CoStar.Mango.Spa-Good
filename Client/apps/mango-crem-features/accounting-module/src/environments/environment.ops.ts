@@ -12,7 +12,9 @@ class EnvironmentsCrem {
     quickSearch: '',
     userService: '',
     taskApproval: '',
-    formWizard: '/v06/WebServices/Mango/FormsEngine/FormsEngine.asmx/'
+    formWizard: '/v06/WebServices/Mango/FormsEngine/FormsEngine.asmx/',
+    reports:'/v06/WebServices/Mango/Reports/Reports.asmx/',
+    inAppDisclosure: ''
   };
   isRestful: false;
 }

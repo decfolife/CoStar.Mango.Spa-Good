@@ -13,7 +13,9 @@ class EnvironmentsCrem {
     userService: '',
     taskApproval: '',
     formWizard: '/v06/WebServices/Mango/FormsEngine/FormsEngine.asmx/',
-    header: ''
+    header: '',
+    reports:'/v06/WebServices/Mango/Reports/Reports.asmx/',
+    inAppDisclosure: ''
   };
   isRestful: false;
 }

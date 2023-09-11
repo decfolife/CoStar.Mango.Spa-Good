@@ -35,7 +35,8 @@ div.reports-toolBar-wrapper {
 			font-weight: 500;
 			font-family: Helvetica,sans-serif;
 			margin-right: 16px;
-			margin-bottom: 0px;
+			margin-bottom: 0;
+			margin-top: 0;
 		}
 	}
 
@@ -88,6 +89,10 @@ button.btn.btn-default.moreButton {
 				}
 			}
 		}
+	}
+	// more menu button
+	button.mat-menu-trigger.btn-link:focus{
+		box-shadow: 0 0 0 0.1rem #779ede;
 	}
 }
 

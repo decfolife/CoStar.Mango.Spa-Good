@@ -7,7 +7,7 @@
                 </div>
                 {{pageTitle}}
             </div>
-            <cs-search #SearchBox class="report-search" (changed)="searchDataGrid($event)" [disabled]="loading || !valid">
+            <cs-search #SearchBox class="report-search" (changed)="searchDataGrid($event)" (keyup)="onKeyUpEvent($event)"  [disabled]="loading || !valid">
             </cs-search>
             <crem-button class="button__apply" type="secondary" (click)="displayColumnChooser()" [disabled]="loading || !valid">Comparison Filter
             </crem-button>

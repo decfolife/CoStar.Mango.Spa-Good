@@ -5,6 +5,7 @@ import notify from 'devextreme/ui/notify';
 
 import { Currency, IntervalsData, SettingsData } from '../../models/';
 import { FinancialReportingSettingsService } from '../../services/financial-reporting-settings.service';
+import { ImpactReportResponse } from '../../models/Impact-report-response.modal';
 
 interface DontTouch {
   intervalSettingsID: number;
@@ -28,6 +29,11 @@ export class SettingsPageComponent implements OnInit {
   isViewOnly = true;
   isSuperUser = false;
   isSaving = false;
+  isPopupVisible = false;
+  filename = 'Financial Reporting Impact Report.xlsx';
+  componentName = 'settings-page';
+  isEuroDateFormat = false;
+  dateFormat = 'MM/dd/yyyy';
 
   constructor(private settingsService: FinancialReportingSettingsService) { }
 
@@ -61,13 +67,42 @@ export class SettingsPageComponent implements OnInit {
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event) {
     const confirmationMessage = this.noChanges ? null : 'onbeforeunload';
-    
+
     if (confirmationMessage) {
       event.preventDefault();
 
       return (event.returnValue = confirmationMessage);
     }
   }
+
+  cancel() {
+    this.isPopupVisible = false;
+    this.loadSettingsAndData();
+    this.noChanges = true;
+  }
+
+  learnMore() {
+    window.open("https://costarmanager.my.site.com/help/s/article/Financial-Reporting");
+    this.isPopupVisible = false;
+  }
+
+  migrationImpactReport() {
+    const isEuroElement = document.getElementById('isEuropeanDateFormat');
+    this.isEuroDateFormat = isEuroElement?.innerHTML.toLowerCase() === 'true';
+    if (this.isEuroDateFormat) {
+      this.dateFormat = 'dd.MM.yyyy';
+    }
+    this.settingsService.migrationImpactReport().subscribe(result => {
+      const data: ImpactReportResponse[] = result.data;
+      if (result.succeeded) {
+        this.settingsService.generateExcel(data, this.filename, this.dateFormat);
+        this.showNotification(result.message, !result.succeeded);
+      } else {
+        this.showNotification(result.message, !result.succeeded);
+      }
+    });
+  }
+
 
   refreshFinancialData() {
     this.canRefresh = false;
@@ -83,6 +118,7 @@ export class SettingsPageComponent implements OnInit {
   saveChanges() {
     this.noChanges = true;
     this.isSaving = true;
+    this.isPopupVisible = false;
 
     const saveData = {
       ...this.intervalsData,
@@ -143,7 +179,7 @@ export class SettingsPageComponent implements OnInit {
       message,
       type: isError ? 'error' : 'success',
       displayTime: 3000,
-      position: { at: 'bottom right', my: 'bottom right', offset: '-16 -16'},
+      position: { at: 'bottom right', my: 'bottom right', offset: '-16 -16' },
       maxWidth: '400px',
       closeOnClick: true,
     });
@@ -155,5 +191,12 @@ export class SettingsPageComponent implements OnInit {
         obj[key] = data[key];
       }
     });
+  }
+
+  getId(uniqueName: string, elementType: string, componentType?: string) {
+    if (componentType != undefined)
+      return `${this.componentName}-${componentType}-${uniqueName}-${elementType}`
+    else
+      return `${this.componentName}-${uniqueName}-${elementType}`
   }
 }

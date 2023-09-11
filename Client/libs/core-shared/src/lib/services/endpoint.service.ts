@@ -15,15 +15,16 @@ export abstract class EndpointService {
       EndpointService.logged = true;
     }
 
-    if (this.facade){
+    if (this.facade) {
       this.userId$ = this.facade.contactRecord$.pipe(filter(contactRecord => !!contactRecord), switchMap(contactRecord => of(contactRecord.contactID)))
       this.clientKey$ = this.facade.clientKey$.pipe(switchMap(clientKey => of(clientKey)))
     }
   }
 
   protected getHttpHeaders(): Observable<{ headers: HttpHeaders }> {
-    if (this.facade){
+    if (this.facade) {
       return combineLatest([this.userId$, this.clientKey$]).pipe(
+        filter(([userId, clientKey]) => !!userId && !!clientKey),
         switchMap(([userId, clientKey]) => of(
           {
             headers: new HttpHeaders({
@@ -37,7 +38,7 @@ export abstract class EndpointService {
         ))
       );
     }
-    else{
+    else {
       return of(
         {
           headers: new HttpHeaders({
@@ -93,18 +94,18 @@ export abstract class EndpointService {
       data: data.hasOwnProperty('data')
         ? data.data
         : data,
-        clientErrorMessage: data.succeeded ? null : data.message
+      clientErrorMessage: data.succeeded ? null : data.message
     };
   }
 
-  protected byteArrayFromResponse(response: any){
+  protected byteArrayFromResponse(response: any) {
     let data = response.d.hasOwnProperty('Result') ? response.d.Result : response.d;
 
     var binary_string = window.atob(data);
     var len = binary_string.length;
     var bytes = new Uint8Array(len);
     for (var i = 0; i < len; i++) {
-        bytes[i] = binary_string.charCodeAt(i);
+      bytes[i] = binary_string.charCodeAt(i);
     }
 
     return bytes.buffer;

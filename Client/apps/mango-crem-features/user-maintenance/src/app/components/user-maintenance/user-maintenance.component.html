@@ -77,19 +77,20 @@
 
 			<dxi-column dataField="Actions" caption="Actions" type="buttons" width="65">
 		    	<dxi-button	template="moreMenuTemplate">
-		    		<div *dxTemplate="let data of 'moreMenuTemplate'" class="cursor-default">
-		    			<button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu">
+		    		<div *dxTemplate="let data of 'moreMenuTemplate'" style="cursor: default">
+		    			<button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu" mat-button title="Menu" aria-haspopup="menu">
                 <fa-icon [icon]="faEllipsisH"></fa-icon>
               </button>
 		    			<mat-menu #UserMoreMenu="matMenu">
-				    		<ul>
-								<li *ngIf="!data.data.isContact" (click)="view(data.data.contactID)">View</li>                   
-		                        <li  (click)="edit(data.data.contactID)">Edit</li>
-		                        <li *ngIf="!data.data.isContact" (click)="assignObjectRights(data.data.contactID)">Assign User Rights</li>                        
-		                        <li *ngIf="!data.data.isContact" (click)="assignGroups(data.data.contactID)">Assign Groups</li>
-                                <li *ngIf="!data.data.isContact" (click)="assignModules(data.data.contactID)">Assign Modules</li>    
-                                <li *ngIf="(!data.data.isContact && userHaveAdminRights)" (click)="assignAdminLinks(data.data.contactID)">Assign Admin Links</li>                    
-                                <li (click)="deleteUser(data)">Delete</li>
+				    		<ul role="menu">
+								<li *ngIf="!data.data.isContact"
+								(click)="view(data.data.contactID)" (keydown.enter)="view(data.data.contactID)" (keydown.space)="view(data.data.contactID)"  role="menuitem" tabindex="0" mat-menu-item>View</li>                   
+		                        <li (click)="edit(data.data.contactID)" (keydown.enter)="edit(data.data.contactID)"	(keydown.space)="edit(data.data.contactID)" role="menuitem" tabindex="0" mat-menu-item>Edit</li>
+		                        <li *ngIf="!data.data.isContact" (click)="assignObjectRights(data.data.contactID)" (keydown.enter)="assignObjectRights(data.data.contactID)" (keydown.space)="assignObjectRights(data.data.contactID)" role="menuitem" tabindex="0" mat-menu-item>Assign User Rights</li>                        
+		                        <li *ngIf="!data.data.isContact" (click)="assignGroups(data.data.contactID)" (keydown.enter)="assignGroups(data.data.contactID)" (keydown.space)="assignGroups(data.data.contactID)" role="menuitem" tabindex="0" mat-menu-item>Assign Groups</li>
+                                <li *ngIf="!data.data.isContact" (click)="assignModules(data.data.contactID)" (keydown.enter)="assignModules(data.data.contactID)" (keydown.space)="assignModules(data.data.contactID)" role="menuitem" tabindex="0" mat-menu-item>Assign Modules</li>    
+                                <li *ngIf="(!data.data.isContact && userHaveAdminRights)" (click)="assignAdminLinks(data.data.contactID)" (keydown.enter)="assignAdminLinks(data.data.contactID)" (keydown.space)="assignAdminLinks(data.data.contactID)" role="menuitem" tabindex="0" mat-menu-item>Assign Admin Links</li>                    
+                                <li (click)="deleteUser(data)" (keydown.enter)="deleteUser(data)" (keydown.space)="deleteUser(data)" role="menuitem" tabindex="0" mat-menu-item>Delete</li>
 		                    </ul>
 				    	</mat-menu>
 		    		</div>

@@ -1,5 +1,5 @@
 <crem-modal 
-	modalId="ArchiveBuildingLeaseModal"
+	[modalId]="'Archive' + archiveType + (archived ? archivedSuccess ? 'Success' : 'Error' : 'Initial') + 'Modal'"
 	[modalTitle]="modalTitle"
 	[modalTitleId]="prefix + 'title'"
 	closeIconVisible="true"

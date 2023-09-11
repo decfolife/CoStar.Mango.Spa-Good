@@ -83,7 +83,9 @@
       [elementAttr]="{ style: 'max-height: 345px;'}"
       [paging]="false"
       [keyExpr]="keyExpr || valueExpr"
-      (onContentReady)="ADAatributes($event)"
+      (onContentReady)="ADAattributes($event)"
+      (onCellClick)="onCellClick($event)"
+      (keyup)="onKeyUp($event)"
     >
       <dxo-filter-row [visible]="allowSearch"></dxo-filter-row>
       <dxo-selection

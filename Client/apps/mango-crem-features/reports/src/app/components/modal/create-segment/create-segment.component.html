@@ -90,7 +90,7 @@
 
     <crem-vertical-stepper [display]="data.redirectData?.source === 'runreport' ? 2 : 3" [showBorder]="false" *ngIf="!loading">
       <div class="criteria-selection-wrapper">
-        <dynamic-form *ngIf="!selectedCriteriaId"
+        <dynamic-form *ngIf="!selectedCriteriaId "
           [config]="emptyItemConfig"
           (onChangeEvent)="onChange($event)"
           [idPrefix] = "idPrefix"
@@ -100,6 +100,7 @@
         <mango-criteria-form *ngIf="selectedCriteriaId" #CriteriaForm
           [defaultValues]="data.config ? data.config : defaultValues"
           [criteriaSetId]="selectedCriteriaId"
+          [isReportCriteriaSet]="selectedReportCriteriaSet"
           [readOnly]="data.archived"
           (onCriteriaLoadedChange)="onCriteriaLoadedChange($event)"
           (loadingCallback)="setLoading($event)"
