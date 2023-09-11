@@ -33,7 +33,12 @@
     "help": "nx help",
     "build:mango": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build mango --configuration=dev",
     "compodoc-cosmos": "npx compodoc -p libs/ui-shared/cosmos/tsconfig.lib.json -e html --theme material --output cosmos-documentation",
-    "compodoc-elements": "npx compodoc -p libs/ui-shared/lib-ui-elements/tsconfig.lib.json -e html --theme material --output crem-lib-documentation"
+    "compodoc-elements": "npx compodoc -p libs/ui-shared/lib-ui-elements/tsconfig.lib.json -e html --theme material --output crem-lib-documentation",
+    "build:dev:microcomponent-central-auth": "ng build mango-crem-features-central-auth --configuration=dev && node build-element.js central-auth",
+    "build:test:microcomponent-central-auth": "ng build mango-crem-features-central-auth --configuration=test && node build-element.js central-auth",
+    "build:ops:microcomponent-central-auth": "ng build mango-crem-features-central-auth --configuration=ops && node build-element.js central-auth",
+    "build:stage:microcomponent-central-auth": "ng build mango-crem-features-central-auth --configuration=stage && node build-element.js central-auth",
+    "build:prod:microcomponent-central-auth": "ng build mango-crem-features-central-auth --configuration=prod && node build-element.js central-auth"
   },
   "private": true,
   "dependencies": {
