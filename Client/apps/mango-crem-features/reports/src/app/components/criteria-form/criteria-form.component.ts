@@ -3,10 +3,8 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 
 import { Component, EventEmitter, Inject, Input, Output, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReportsService } from '@reports/services/reports.service';
 import { DynamicFormComponent, IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
-import notify from 'devextreme/ui/notify';
 import { DropdownComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component';
 
 @Component({
@@ -243,7 +241,7 @@ export class CriteriaFormComponent {
                     let valueKey = item.criteriaSourceFieldName
                     let displayName= item.criteriaSourceDisplayFieldName
                     if (item.values?.length) {
-                        if (item.values?.[0]?.[valueKey.toUpperCase()] || item.values?.[1]?.[valueKey.toUpperCase()]){
+                        if (item.values?.[0]?.[valueKey.toUpperCase()] != null || item.values?.[1]?.[valueKey.toUpperCase()] != null){
                             valueKey = valueKey.toUpperCase();
                             displayName = displayName.toUpperCase();
                         }
@@ -262,7 +260,7 @@ export class CriteriaFormComponent {
                             if (Array.isArray(this.defaultValues?.[item.criteriaID])) {
                                 defaultValueArray = this.defaultValues?.[item?.criteriaID];
                             } else {
-                                defaultValueArray = this.defaultValues?.[item?.criteriaID].split(",");
+                                defaultValueArray = this.defaultValues?.[item?.criteriaID].split(item.criteriaDelimeter ? item.criteriaDelimeter : ",");
                             }
                         }
                         
@@ -279,6 +277,7 @@ export class CriteriaFormComponent {
                             hoverText: "Select the " + item.criteriaDesc +" of the project",
                             disabled: false,
                             value: defaultValueArray ? defaultValueArray : [],
+                            delimeter: item.criteriaDelimeter,
                             data: {
                                 criteriaID: item.criteriaID
                             }
@@ -306,6 +305,7 @@ export class CriteriaFormComponent {
                             hoverText: "Select the " + item.criteriaDesc +" of the project",
                             disabled: false,
                             value: selectedIndex ? [selectedIndex] : [],
+                            delimeter: item.criteriaDelimeter,
                             data: {
                                 criteriaID: item.criteriaID
                             }
@@ -332,6 +332,7 @@ export class CriteriaFormComponent {
                             value: null,
                             value1: this.defaultValues ? this.defaultValues[item.criteriaID]: undefined,
                             value2: this.defaultValues ? this.defaultValues[criteriaItem?.[index + 1].criteriaID] : undefined,
+                            delimeter: item.criteriaDelimeter,
                             data: {
                                 criteriaID1: item.criteriaID,
                                 criteriaID2: criteriaItem?.[index + 1].criteriaID
@@ -353,6 +354,7 @@ export class CriteriaFormComponent {
                             disabled: false,
                             required: false,
                             value: this.defaultValues ? this.defaultValues[item.criteriaID]: undefined,
+                            delimeter: item.criteriaDelimeter,
                             data: {
                                 criteriaID: item.criteriaID
                             }
@@ -373,6 +375,7 @@ export class CriteriaFormComponent {
                         required: false,
                         value: this.defaultValues ? this.defaultValues[item.criteriaID]: undefined,
                         disabled: false,
+                        delimeter: item.criteriaDelimeter,
                         data: {
                             criteriaID: item.criteriaID
                         }
@@ -594,7 +597,8 @@ export class CriteriaFormComponent {
                         let multiDropdownValue = "";
                         config[item].value?.forEach((dropdownItem) => {
                             if (multiDropdownValue) {
-                                multiDropdownValue += ","
+                                const delimeter = config[item].delimeter;
+                                multiDropdownValue += delimeter ? delimeter : ","
                             }
                             multiDropdownValue += dropdownItem?.toString() || "";
                         })
