@@ -9,6 +9,9 @@ import {AddServiceAccountComponent} from '../add-service-account/add-service-acc
 import {ServiceAccountDetailsComponent} from '../service-account-details/service-account-details.component';
 import {DeleteServiceAccountComponent} from '../delete-service-account/delete-service-account.component';
 import { ClientDeliveryService } from '../../services/client-delivery.service';
+import { saveAs } from 'file-saver-es';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'mango-service-accounts',
@@ -23,7 +26,7 @@ export class ServiceAccountsComponent implements OnInit {
   // public dataGridLoading: false;
   public columns: any;
   public selectedFilter: string = 'all';
-  // public dateFormat: string;
+  public dateFormat: string;
   public deleting = false;
   public searchText: string = '';
 
@@ -32,6 +35,7 @@ export class ServiceAccountsComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private datepipe: DatePipe,
     private service: ClientDeliveryService
     ) {}
 
@@ -122,8 +126,37 @@ export class ServiceAccountsComponent implements OnInit {
     });
   }
 
-  public exportGrids() {
+  public exportGrids(): void {
+    const workbook = new ExcelJS.Workbook();
+    const serviceAccountMaintenanceSheet = workbook.addWorksheet('ServiceAccounts');
 
+    serviceAccountMaintenanceSheet.getRow(2).getCell(2).value = 'ServiceAccounts';
+    serviceAccountMaintenanceSheet.getRow(2).getCell(2).font = { bold: true, size: 16, underline: 'double' };
+    serviceAccountMaintenanceSheet.getRow(2).getCell(4).value = 'Filter:';
+    serviceAccountMaintenanceSheet.getRow(2).getCell(4).font = { bold: true };
+    serviceAccountMaintenanceSheet.getRow(2).getCell(5).value = this.selectedFilter;
+
+    const setBackground = (gridCell, excelCell) => {
+      if (gridCell.rowType === 'header') {
+        excelCell.font.color = { argb: '00558E' }
+        excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'd2d2d2' }, bgColor: { argb: 'd2d2d2' } };
+      }
+    }
+
+    exportDataGrid({
+      worksheet: serviceAccountMaintenanceSheet,
+      component: this.dataGrid.instance,
+      topLeftCell: { row: 5, column: 2 },
+      customizeCell: ({ gridCell, excelCell }) => {
+        setBackground(gridCell, excelCell)
+      }
+    }).then(() => {
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        const date = this.getCurrentDate();
+        const fileName = 'ServiceAccounts' + '_' + date + '.xlsx'
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName);
+      });
+    });
   }
 
   private setDropdownItem() {
@@ -161,6 +194,11 @@ export class ServiceAccountsComponent implements OnInit {
 				dataType : null
 			},
 		];
+  }
+
+  private getCurrentDate(): string {
+    const date = new Date();
+    return this.datepipe.transform(date, this.dateFormat);
   }
 
 }
