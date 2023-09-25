@@ -19,6 +19,9 @@
       "@accounting-accountmanagement/*": [
         "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/app/*"
       ],
+      "@service-accounts/*": [
+        "apps/mango-crem-features/client-delivery/src/app/*"
+      ],
       "@accounting-dashboard/*": [
         "apps/mango-crem-features/accounting-module/src/app/*"
       ],
