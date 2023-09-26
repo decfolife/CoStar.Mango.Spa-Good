@@ -30,7 +30,8 @@ class EnvironmentsCrem implements Environment {
     userService: 'http://localhost:41569/api',
     objectActions: 'http://localhost:27287/api/',
     formWizard: 'http://localhost:5000/api/',
-    header: 'http://localhost:39179/api/'
+    header: 'http://localhost:39179/api/',
+    accountingSummary:"http://localhost:5205/api/accountingSummary/"
   };
   isRestful = true;
   cremBaseUrl = 'retaildemo.local';

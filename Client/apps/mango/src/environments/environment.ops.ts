@@ -26,7 +26,8 @@ class EnvironmentsCrem implements Environment {
     objectActions: 'http://service2.ops.corp.virtualpremise.com:8090/objectActions/api/',
     header: 'http://service2.ops.corp.virtualpremise.com:8090/Header/api/',
     alerts: '',
-    inAppDisclosure: 'http://service2.ops.corp.virtualpremise.com:8090/AccountingService/api/'
+    inAppDisclosure: 'http://service2.ops.corp.virtualpremise.com:8090/AccountingService/api/',
+    accountingSummary:"http://service2.ops.corp.virtualpremise.com:8090/AccountingSummary/api/AccountingSummary/"
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].ops.corp.virtualpremise.com';

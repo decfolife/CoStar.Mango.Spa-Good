@@ -31,6 +31,7 @@
       "@lease-alerts/*": [
         "apps/mango-crem-features/alerts/src/app/*"
       ],
+      "@accounting-summary/*": [ "apps/mango-crem-features/accounting-summary/src/app/*" ],
       "@batch-accounting/*": [
         "apps/mango-crem-features/batch-accounting/src/app/*"
       ],

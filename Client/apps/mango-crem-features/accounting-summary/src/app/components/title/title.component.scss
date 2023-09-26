@@ -1,0 +1,58 @@
+.title{
+    width: fit-content;
+}
+
+.leaseName{
+color: #000;
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 18px;
+}
+
+.content-class{
+  width: 310px !important;
+  white-space: normal !important;
+  text-align: left;
+}
+
+.info-icon{
+  width: 16px;
+  float: right;
+  padding-left: 3px;
+  padding-top: 5px;
+  cursor: pointer;
+}
+
+.lock-icon{
+  width: 10px; 
+  float: left;
+}
+
+#title-lock-click.lock-notice-pill {
+  cursor: pointer;
+}    
+
+.lock-notice-pill {
+    align-items: center;
+    background-color: #0559B3;
+    border-radius: 14px;
+    box-sizing: border-box;
+    color: #fff;
+    display: inline-block;
+    font-size: 14px !important;
+    font-stretch: normal;
+    font-style: normal;
+    font-weight: 500;
+    justify-content: center;
+    letter-spacing: normal;
+    line-height: 16px;
+    max-height: 24px;
+    max-width: fit-content;
+    min-width: 24px;
+    padding: 4px 8px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    margin-left: 5px;
+  }
