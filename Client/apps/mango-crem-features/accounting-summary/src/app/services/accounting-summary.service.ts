@@ -39,6 +39,10 @@ export class AccountingSummaryService {
   getLeaseInfo() {
     return this.callHttpGet(`${this.apiUrl}getleaseinformation/lease/${this.leaseAbstractId}`, 'getLeaseInformation');
   }
+  
+  getAccountingEvents() {
+    return this.callHttpGet(`${this.apiUrl}getschedules/lease/${this.leaseAbstractId}`, 'getSchedules');
+  }
 
   protected callHttpGet(url: string, logName: string, httpOptionsParams?: HttpParamsObj) {
     if (httpOptionsParams) {

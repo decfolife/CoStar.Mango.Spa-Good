@@ -10,7 +10,7 @@ import { TitleComponent } from '@accounting-summary/components/title/title.compo
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
-import { DxTooltipModule } from 'devextreme-angular';
+import { DxDataGridComponent, DxDataGridModule, DxDropDownBoxModule, DxTooltipModule } from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
 import { IndexComponent } from './index.component';
 
@@ -27,6 +27,8 @@ import { IndexComponent } from './index.component';
     IconModule, 
     HttpClientModule,
     DxTooltipModule,
+    DxDropDownBoxModule,
+    DxDataGridModule
   ],
 
   providers: [AccountingSummaryService],
