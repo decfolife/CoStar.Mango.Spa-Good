@@ -40,4 +40,25 @@
           </dx-drop-down-box>
         </div>
     </div>
+
+    <div class="add-button">
+      <crem-button 
+        [id]="getId('add','button')"
+        type="primary"
+        (click)="AddEvent($event)"
+        [disabled]="isAddButtonDisabled"
+        (mouseenter)="onMouseEnter()"
+        (mouseleave)="onMouseLeave()"
+        >Add
+      </crem-button>
+      <dx-tooltip 
+        [id]="getId('add','tooltip')"
+        target="#accounts-summary-add-button"
+        [visible]="isTooltipVisible"
+        >
+        <div *dxTemplate="let data of 'content'">
+          {{ disableBtnReason }}
+        </div>
+      </dx-tooltip>
+    </div>
 </div>

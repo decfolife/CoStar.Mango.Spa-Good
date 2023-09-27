@@ -44,6 +44,10 @@ export class AccountingSummaryService {
     return this.callHttpGet(`${this.apiUrl}getschedules/lease/${this.leaseAbstractId}`, 'getSchedules');
   }
 
+  getUserInformation(){
+    return this.callHttpGet(`${this.apiUrl}getuserinformation/lease/${this.leaseAbstractId}`, 'getUserInformation');
+  }
+
   protected callHttpGet(url: string, logName: string, httpOptionsParams?: HttpParamsObj) {
     if (httpOptionsParams) {
       this.httpOptions.params = httpOptionsParams;
