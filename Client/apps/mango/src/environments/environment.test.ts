@@ -26,11 +26,13 @@ class EnvironmentsCrem implements Environment {
     formWizard: 'http://service2.test.corp.virtualpremise.com:8090/FormsEngine/api/',
     objectActions: 'http://service2.test.corp.virtualpremise.com:8090/objectActions/api/',
     header: 'http://service2.test.corp.virtualpremise.com:8090/Header/api/',
+    alerts: 'http://service2.test.corp.virtualpremise.com:8090/Alerts/api/',
     inAppDisclosure: 'http://service2.test.corp.virtualpremise.com:8090/AccountingService/api/'
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].test.corp.virtualpremise.com';
-  CAUrl = 'https://client.tst.crem.aws.dshrp.com/';
+  CAUrl = 'https://client-alpha.tst.crem.aws.dshrp.com/';
+  mangoSpaUrl = 'http://service2.test.corp.virtualpremise.com:8097/'
 }
 
 export const environment = new EnvironmentsCrem();

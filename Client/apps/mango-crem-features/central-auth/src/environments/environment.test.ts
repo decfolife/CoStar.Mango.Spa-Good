@@ -14,6 +14,9 @@ class EnvironmentsCrem {
     header: ''
   };
   isRestful: false;
+  mangoSpaUrl = 'http://service2.test.corp.virtualpremise.com:8097/'
+  cremBaseUrl = 'http://[CLIENT].test.corp.virtualpremise.com/';
+  CAUrl = 'https://client-alpha.tst.crem.aws.dshrp.com/';
 }
 
 export const environment = new EnvironmentsCrem();

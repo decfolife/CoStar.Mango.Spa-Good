@@ -1285,9 +1285,7 @@
     >Un-Dismiss</button>
 
     <dx-drop-down-button *ngIf="!d.data.isDismissed"
-      [elementAttr]="{
-        class: 'btn btn-primary add-hint color-light border-none w-100',
-      }"
+      class="btn btn-primary add-hint color-light border-none w-100"
       text="Dismiss"
       [hint]="getButtonDisabledReason(d.data)"
       [disabled]="isLoadingData || !isAlertDismissable(d.data)"

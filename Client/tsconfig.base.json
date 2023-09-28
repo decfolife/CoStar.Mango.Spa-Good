@@ -28,6 +28,9 @@
       "@accounting-profile/*": [
         "apps/mango-crem-features/accounting-profile/accounting-profiles/src/app/*"
       ],
+      "@lease-alerts/*": [
+        "apps/mango-crem-features/alerts/src/app/*"
+      ],
       "@batch-accounting/*": [
         "apps/mango-crem-features/batch-accounting/src/app/*"
       ],

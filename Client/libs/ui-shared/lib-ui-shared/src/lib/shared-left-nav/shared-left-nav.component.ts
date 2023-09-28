@@ -21,7 +21,8 @@ export class SharedLeftNavComponent implements OnChanges {
   public expandNav: boolean = true;
   public isRestful: boolean;
   @Input() activeLink: string = null;
-  @Output() navigateSpa: EventEmitter<SharedLeftNavLink> = new EventEmitter<SharedLeftNavLink>(null)
+  @Output() navigateSpa: EventEmitter<SharedLeftNavLink> = new EventEmitter<SharedLeftNavLink>(null);
+  @Output() toActiveLink: EventEmitter<string> = new EventEmitter(); 
 
   constructor(
     private router: Router
@@ -84,11 +85,13 @@ export class SharedLeftNavComponent implements OnChanges {
   }
 
   onNavLinkClick(navLink: SharedLeftNavLink, event: any) {
-    this.activeLink = navLink.name
+    this.activeLink = navLink.name;
+    this.toActiveLink.emit(this.activeLink);
     if (!environment.isRestful) {
       window.location.href =  navLink.spaUrl ? `${environment.CAUrl}oauth/authorize?client_key=blank&contact_id=2&redirect_uri=${environment.mangoSpaUrl}/auth/validate?redirect_uri=${encodeURIComponent(navLink.spaUrl)}` : `/${navLink.linkUrl}`
     } else {
       this.navigateSpa.emit(navLink)
     }
   }
+
 }

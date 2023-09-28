@@ -32,7 +32,6 @@ export default {
     '<rootDir>/apps/mango-crem-features/quick-search',
     '<rootDir>/apps/mango-crem-features/journal-entry-processing',
     '<rootDir>/libs/mango-nx-plugin',
-    '<rootDir>/apps/mango-nx-plugin-e2e',
     '<rootDir>/apps/mango-crem-features/object-actions',
     '<rootDir>/libs/forms-shared',
     '<rootDir>/apps/mango-crem-features/financial-reporting-settings',

@@ -5,15 +5,8 @@ import { PortfolioDropdownComponent } from '../portfolio-dropdown/portfolio-drop
 import { IndexComponent } from './index.component';
 
 const routes: Routes = [
-  {
-     path: '', 
-     component: IndexComponent,
-     children: [
-      { path: '', component: AccountingSettingsComponent },
-      { path: 'accountingsettings', component: AccountingSettingsComponent }, // todo: remove once fully moved to MangoSpa, redundant
-      { path: 'portfoliodropdown', component: PortfolioDropdownComponent },
-     ]    
-  }
+  { path: '', component: AccountingSettingsComponent },
+  { path: 'portfoliodropdown', component: PortfolioDropdownComponent },
 ];
 
 @NgModule({

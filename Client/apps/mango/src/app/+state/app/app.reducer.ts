@@ -34,23 +34,7 @@ export const initialState: State = appAdapter.getInitialState({
   contactRecord: null,
   authenticatedUser: null,
   userInfo: null,
-  breadcrumbs: [
-    {
-      label : "Mainn Component",
-      params: {},
-      url   : "/crem/projects/"
-    },
-    {
-      label : "Child Component1",
-      params: {},
-      url   : "/crem/portfolio/"
-    },
-    {
-      label : "Child Component2",
-      params: {},
-      url   : "/crem/contacts/"
-    }
-  ],
+  breadcrumbs: null,
   clientInfo: null,
   moduleId: null,
   renderFormLeftNavDisplayed: false

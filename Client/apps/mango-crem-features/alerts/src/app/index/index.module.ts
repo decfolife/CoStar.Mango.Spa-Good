@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import { IndexRoutingModule } from './index-routing.module';
 import { IndexComponent } from './index.component';
+import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
 
 @NgModule({
   declarations: [IndexComponent],
@@ -10,6 +11,7 @@ import { IndexComponent } from './index.component';
     CommonModule,
     IndexRoutingModule,
     SearchModule,
+    LeaseAlertsModule,
   ],
   providers: [
   ],

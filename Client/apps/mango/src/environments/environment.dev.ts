@@ -27,6 +27,7 @@ class EnvironmentsCrem implements Environment {
     formWizard: 'http://service2.dev.corp.virtualpremise.com:8090/FormsEngine/api/',
     objectActions: 'http://service2.dev.corp.virtualpremise.com:8090/objectActions/api/',
     header: 'http://service2.dev.corp.virtualpremise.com:8090/Header/api/',
+    alerts: 'http://service2.dev.corp.virtualpremise.com:8090/Alerts/api/',
     inAppDisclosure: 'http://service2.dev.corp.virtualpremise.com:8090/AccountingService/api/'
   };
   isRestful = true;

@@ -1,6 +1,6 @@
 import { HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { BookmarkGroup, ToolbarModuleLink, BreadCrumb } from '@mango/data-models/lib-data-models';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'apps/mango/src/environments/environment.local';
@@ -10,7 +10,7 @@ import { BookmarksService } from '../../../../../mango-crem-features/micro-compo
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { searchResultsComponent } from '@quick-search/components/modal/search-results/search-results.component';
 import { MangoAppFacade } from '../../+state/app/app.facade';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, switchMap, tap, startWith} from 'rxjs/operators';
 import { HeaderService } from '@mango/core-shared';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 
@@ -42,9 +42,13 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   };
 
   bookmarkGroups: BookmarkGroup[] = null;
+  public delineator = '»';
+  public breadcrumbs: BreadCrumb[];
+  public tempCrumbs: BreadCrumb[];
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private leftNavService: ProjectsDashboardLeftNavService,
     private headerService: HeaderService,
     private bookmarksService: BookmarksService,
@@ -75,6 +79,8 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
       (routeUrl: string) => {
         this.getModuleNavLinksForRenderForm(routeUrl);
       }));
+
+    this.buildBreadCrumbs();
   }
 
   getModuleNavLinks(moduleId: number) {
@@ -175,7 +181,53 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   navigateToBreadcrumb(breadcrumb: BreadCrumb) {
+    this.activeLink = breadcrumb.activeLink;
     this.router.navigate([breadcrumb.url], { queryParams: breadcrumb.params });
+  }
+
+  getActiveLink(toActiveLink: string) {
+    this.activeLink = toActiveLink;
+  }
+
+  buildBreadCrumbs() {
+    this.subs.add(this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        startWith(this.router),
+        tap(e => {
+          this.breadcrumbs = [];
+          let currentRoute = this.activatedRoute.snapshot;
+          let url = '';
+          while (currentRoute) {
+            const breadcrumb = currentRoute.data.breadCrumb;
+            url += '/' + currentRoute.url.map(segment => segment.path).join('/');
+            if (breadcrumb.label) {
+              const breadCrumb: BreadCrumb = {
+                label: breadcrumb.label,
+                url: url,
+                params: currentRoute.queryParams,
+                activeLink: breadcrumb.activeLink? breadcrumb.activeLink: this.activeLink 
+              };
+
+              if(breadcrumb.label && currentRoute.component){
+                if(breadcrumb.append){
+                  if(this.tempCrumbs && this.tempCrumbs.length ) {
+                    if (this.tempCrumbs.length == 5) {
+                      this.tempCrumbs = this.tempCrumbs.slice(1,5);
+                    }
+                    this.breadcrumbs = [...this.tempCrumbs];
+                    this.tempCrumbs = [];
+                  }
+                }
+               this.breadcrumbs.push(breadCrumb);
+              }
+            }
+            currentRoute = currentRoute.firstChild;
+          }
+          this.tempCrumbs = this.breadcrumbs;
+          this.facade.setBreadcrumbs(this.breadcrumbs);
+        })
+      ).subscribe());
   }
 
   ngOnDestroy(): void {

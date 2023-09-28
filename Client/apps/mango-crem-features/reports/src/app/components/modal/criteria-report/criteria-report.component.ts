@@ -206,7 +206,21 @@ export class CriteriaReportComponent {
             if (config) {
                 saveObject = this.criteriaForm.getSaveObject(config, saveObject, false);
             }
-    
+            let splitSaveObject = []
+            saveObject.forEach((x) => {
+                if(x.Delimeter) {
+                    let multiSelectArray = x.VarCharData.split(x.Delimeter)
+                    multiSelectArray.forEach((c) => {
+                        splitSaveObject.push({
+                            FieldName: x.FieldName,
+                            VarCharData: c
+                        })
+                    })
+                } else {
+                    splitSaveObject.push(x)
+                }
+            });
+            saveObject = splitSaveObject;
             this.reportsService.insertSelectedCriteria(saveObject).subscribe((result) => {
                 if (this.reportObject !== "SQLRSBatch") {
                     this.reportProcessingPage = this.reportProcessingPage.replace("@ReportGUID", '{' + result.data + '}');

@@ -49,7 +49,7 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
     this.isLoading = true
     const selectedContactRecord = this.contactRecords.find(c => c.contactID === payload.contactID)
     this.contactRecord.emit(selectedContactRecord)
-    this.centralAuthFacade.setContactId(selectedContactRecord.contactID)
+    this.centralAuthFacade.setContactId(selectedContactRecord?.contactID)
     try {
       var token = await this.userService.loginToClientSite(payload);
       this.storageService.savePermanentData(token, DBkeys.JWT_TOKEN)
@@ -61,7 +61,7 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
         map(redirectionUri => {
           let newRedirectionUri = null
           if (!redirectionUri) {
-            newRedirectionUri = environment.cremBaseUrl.replace('[CLIENT]', payload.clientKey)
+            newRedirectionUri = `${environment.cremBaseUrl.replace('[CLIENT]', payload.clientKey)}/v06/login.aspx`
             // newCremURL += this.openCremInNewTab ? '&mul=true' : '&mul=false'
             this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
           } else {
