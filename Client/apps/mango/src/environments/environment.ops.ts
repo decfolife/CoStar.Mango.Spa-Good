@@ -19,6 +19,8 @@ class EnvironmentsCrem implements Environment {
     objectMaintenance: 'http://service2.ops.corp.virtualpremise.com:8090/objectMaintenance/api/',
     groupMaintenance: 'http://service2.ops.corp.virtualpremise.com:8090/groupMaintenance/api/',
     adminService: 'http://service2.ops.corp.virtualpremise.com:8090/adminService/api/',
+    alertsRules: 'http://service2.ops.corp.virtualpremise.com:8090/Alerts',
+    alerts: 'http://service2.ops.corp.virtualpremise.com:8090/Alerts',
     leftNav: 'http://service2.ops.corp.virtualpremise.com:8090/leftNav/api/',
     quickSearch: 'http://service2.ops.corp.virtualpremise.com:8090/QuickSearch/api',
     userService: 'http://service2.ops.corp.virtualpremise.com:8090/UserService/api',

@@ -10,7 +10,7 @@ class EnvironmentsCrem implements Environment {
     bookmarks: 'http://service2.dev.corp.virtualpremise.com:8090/bookmarks/api/',
     portfolio: 'http://localhost:57586/api/',
     listpages: 'http://service2.dev.corp.virtualpremise.com:8090/listpages/api/listpage/',
-    financials:  'http://service2.dev.corp.virtualpremise.com:8090/financials/api/',
+    financials: 'http://service2.dev.corp.virtualpremise.com:8090/financials/api/',
     dashboards: 'http://service2.dev.corp.virtualpremise.com:8090/dashboards/api/',
     authenticate: 'https://identity.dev.crem.aws.dshrp.com/api',
     taskApproval: '', // For local testing.
@@ -20,6 +20,8 @@ class EnvironmentsCrem implements Environment {
     objectMaintenance: 'http://service2.dev.corp.virtualpremise.com:8090/objectMaintenance/api/',
     groupMaintenance: 'http://service2.dev.corp.virtualpremise.com:8090/groupMaintenance/api/',
     adminService: 'http://service2.dev.corp.virtualpremise.com:8090/adminService/api/',
+    alertsRules: 'http://service2.dev.corp.virtualpremise.com:8090/Alerts',
+    alerts: 'http://service2.dev.corp.virtualpremise.com:8090/Alerts',
     accountingService: 'http://service2.dev.corp.virtualpremise.com:8090/AccountingService/api/Accounting',
     leftNav: 'http://service2.dev.corp.virtualpremise.com:8090/leftnav/api/',
     quickSearch: 'http://service2.dev.corp.virtualpremise.com:8090/QuickSearch/api',
@@ -27,7 +29,6 @@ class EnvironmentsCrem implements Environment {
     formWizard: 'http://service2.dev.corp.virtualpremise.com:8090/FormsEngine/api/',
     objectActions: 'http://service2.dev.corp.virtualpremise.com:8090/objectActions/api/',
     header: 'http://service2.dev.corp.virtualpremise.com:8090/Header/api/',
-    alerts: 'http://service2.dev.corp.virtualpremise.com:8090/Alerts/api/',
     inAppDisclosure: 'http://service2.dev.corp.virtualpremise.com:8090/AccountingService/api/',
     accountingSummary:"http://service2.dev.corp.virtualpremise.com:8090/AccountingSummary/api/AccountingSummary/"
   };

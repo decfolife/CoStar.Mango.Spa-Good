@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '@mangoSpa/src/environments/environment.test';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 import { map, catchError } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
 import { Observable, of } from 'rxjs';
@@ -34,6 +34,10 @@ export class AccountingSummaryService {
 
   setLeaseAbstractId(leaseId:number){
     this.leaseAbstractId=leaseId;
+  }
+
+  getLeaseAbstractId(): number{
+    return this.leaseAbstractId;
   }
 
   getLeaseInfo() {

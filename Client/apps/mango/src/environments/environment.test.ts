@@ -19,6 +19,8 @@ class EnvironmentsCrem implements Environment {
     objectMaintenance: 'http://service2.test.corp.virtualpremise.com:8090/objectMaintenance/api/',
     groupMaintenance: 'http://service2.test.corp.virtualpremise.com:8090/groupMaintenance/api/',
     adminService: 'http://service2.test.corp.virtualpremise.com:8090/adminService/api/',
+    alertsRules: 'http://service2.test.corp.virtualpremise.com:8090/Alerts',
+    alerts: 'http://service2.test.corp.virtualpremise.com:8090/Alerts',
     accountingService: 'http://service2.test.corp.virtualpremise.com:8090/AccountingService/api/Accounting',
     leftNav: 'http://service2.test.corp.virtualpremise.com:8090/leftNav/api/',
     quickSearch: 'http://service2.test.corp.virtualpremise.com:8090/QuickSearch/api',
@@ -26,7 +28,6 @@ class EnvironmentsCrem implements Environment {
     formWizard: 'http://service2.test.corp.virtualpremise.com:8090/FormsEngine/api/',
     objectActions: 'http://service2.test.corp.virtualpremise.com:8090/objectActions/api/',
     header: 'http://service2.test.corp.virtualpremise.com:8090/Header/api/',
-    alerts: 'http://service2.test.corp.virtualpremise.com:8090/Alerts/api/',
     inAppDisclosure: 'http://service2.test.corp.virtualpremise.com:8090/AccountingService/api/',
     accountingSummary:"http://service2.test.corp.virtualpremise.com:8090/AccountingSummary/api/AccountingSummary/"
   };

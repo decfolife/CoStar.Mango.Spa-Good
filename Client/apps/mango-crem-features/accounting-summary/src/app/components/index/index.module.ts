@@ -1,7 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
 
 import { NgModule } from '@angular/core';
 
@@ -12,6 +9,7 @@ import { ButtonModule, IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
 import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule } from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
+import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
 import { IndexComponent } from './index.component';
 import { AddEventComponent } from '../add-event/add-event.component';
 
@@ -32,7 +30,8 @@ import { AddEventComponent } from '../add-event/add-event.component';
     DxDropDownBoxModule,
     DxDataGridModule,
     ButtonModule,
-  ],
+    LeaseAlertsModule,
+    ],
 
   providers: [AccountingSummaryService],
 

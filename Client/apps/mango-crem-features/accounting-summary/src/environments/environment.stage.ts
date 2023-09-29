@@ -3,6 +3,9 @@ class EnvironmentsCrem {
   name: 'STAGE';
   appUrls: {
     accountingSummary: '',
+    listpages: '',
+    alertsRules: '',
+    alerts: ''
   };
   
   isRestful:true

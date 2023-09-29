@@ -43,6 +43,10 @@ export class AccountsSummaryComponent implements OnInit {
     });
   }
 
+  returnLeaseAbstractId(): number {
+    return this.accountingSummaryService.getLeaseAbstractId()
+  }
+
   addButtonSetup() {
     this.accountingSummaryService.getLeaseInfo().subscribe(res => {
       if (res.succeeded) {

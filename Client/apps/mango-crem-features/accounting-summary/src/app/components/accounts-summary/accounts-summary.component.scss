@@ -1,5 +1,4 @@
 .accounting-events{
-    width: 98%;
     height: 66px;
     flex-shrink: 0;
     border-bottom: 1px solid var(--gray-06, #EDEDED);
@@ -9,6 +8,19 @@
 
 .container{
     padding-top: 16px;
+    margin-left: 0px;
+    max-width: unset;
+}
+
+#emptyAccountingEventDropdown{
+    box-sizing: unset;
+    width: 25%;
+    height: 22px;
+}
+
+#divLeaseAlertsPopupButton {
+    float: right;
+    margin-right: 20px;
 }
 
 .label{
@@ -41,10 +53,14 @@
     width: 30%;
     border: 1px solid var(--Primary, #0559B3);
     box-shadow: 0px 0px 4px 0px #0559B3;
+
+    dx-drop-down-box {
+        box-sizing: content-box;
+    }
 }
 
 .add-button{
     float: right;
-    padding: 2px 60px 0px 0px;
+    padding-right: 60px;
 }
 

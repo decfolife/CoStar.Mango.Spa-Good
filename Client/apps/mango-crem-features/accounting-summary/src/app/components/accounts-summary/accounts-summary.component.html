@@ -1,7 +1,7 @@
 <div class="accounting-events">
     <div class="container">
         <div class="label">Accounting</div>
-        <input *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
+        <input id="emptyAccountingEventDropdown" *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
         <div *ngIf="!isAccountingEventEmpty" class="events-dropdown">
           <dx-drop-down-box
             [(value)]="gridBoxValue"
@@ -12,6 +12,7 @@
             [inputAttr]="{ 'aria-label': 'Owner' }"
             [showClearButton]="false"
             [dataSource]="gridDataSource"
+            height="32px"
             (onOptionChanged)="onGridBoxOptionChanged($event)"
           >
             <div *dxTemplate="let data of 'content'">
@@ -39,7 +40,6 @@
             </div>
           </dx-drop-down-box>
         </div>
-    </div>
 
     <div class="add-button">
       <crem-button 
@@ -60,5 +60,9 @@
           {{ disableBtnReason }}
         </div>
       </dx-tooltip>
+    </div>
+
+    <div id="divLeaseAlertsPopupButton">
+      <mango-alerts-root [leaseAbstractId]="returnLeaseAbstractId()"></mango-alerts-root>
     </div>
 </div>

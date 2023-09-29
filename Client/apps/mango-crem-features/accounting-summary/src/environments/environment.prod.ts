@@ -3,6 +3,9 @@ class EnvironmentsCrem {
   name: 'PROD';
   appUrls: {
     accountingSummary: '',
+    listpages: '',
+    alertsRules: '',
+    alerts: ''
   };
 
   isRestful:true
