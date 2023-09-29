@@ -238,6 +238,7 @@ export class ListPageComponent implements OnInit {
   inCriticalViewDataError = false;
   lastGridDataRequest: GetGridDataRequest;
   public urlOID: number;
+  public urlOTTID: number;
   public noDataText: string = 'No Data';
 
   private _intitialListPageRequestedId: number = 0;
@@ -428,6 +429,11 @@ export class ListPageComponent implements OnInit {
     if(urlParams.has('OID')) {
       this.urlOID = parseInt(urlParams.get('OID'));
     }
+    if(urlParams.has('OTTID')) {
+      this.urlOTTID = parseInt(urlParams.get('OTTID'));
+    } else {
+      this.urlOTTID = 0;
+    }
 
     //Set the objectTypeId from the value passed in the route instead of from the service if overrideInputSettings is true 
     //and if the isRestful flag is true
@@ -461,7 +467,7 @@ export class ListPageComponent implements OnInit {
       });
 
       this.isGLEvent = this.checkGLEvent(this.objectTypeId);
-      this.service.getAddWizards(this.objectTypeId)
+      this.service.getAddWizards(this.objectTypeId, this.urlOTTID)
         .subscribe(result => { 
           let tempEditPages = [];
           if(result.data && result.data.addWizards) {
@@ -1993,7 +1999,7 @@ export class ListPageComponent implements OnInit {
   }
 
   editSelectedCharges() { 
-    let editChargeUrl: string = "/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=400&GLGroup=&IsIncome=&Mode=Edit&paramFinView=Status"
+    let editChargeUrl: string = `/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLGroup=&IsIncome=&Mode=Edit&paramFinView=Status`;
     let scheduledCharges = this.dataGrid.selectedRowKeys.filter(srk => srk.IsActive === 'Active');
 
     if(scheduledCharges.length <= 0){
@@ -2008,7 +2014,7 @@ export class ListPageComponent implements OnInit {
   }
 
   deleteSelectedCharges() {
-    const leaseObjectTypeTypeId: number = 400; 
+    const leaseObjectTypeTypeId: number = this.urlOTTID; 
 
     let allChargesWithIndex = this.dataGrid.selectedRowKeys.every(c => c.IndexRule);
     let someChargesWithIndex = allChargesWithIndex ? false : this.dataGrid.selectedRowKeys.some(c => c.IndexRule);
@@ -2066,20 +2072,20 @@ export class ListPageComponent implements OnInit {
   }
 
   terminateLeaseCharges() {
-    let terminateLeaseChargesUrl: string = "/v06/financials/TerminateLease.aspx?OID=&OTID=4&OTTID=400&Mode=Edit&IsIncome=&paramFinView=Status"
+    let terminateLeaseChargesUrl: string = `/v06/financials/TerminateLease.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&Mode=Edit&IsIncome=&paramFinView=Status`;
     terminateLeaseChargesUrl = this.replaceQueryParamsInLeasePaymentUrl(terminateLeaseChargesUrl, null);
     this.isChargeAction = true;
     this.navigateToUrl(terminateLeaseChargesUrl);
   }
 
   changeVendorOrCustomer() {
-    let changeUrl = `/v06/financials/ChangeVendor.aspx?OID=${this.urlOID}&OTID=4&OTTID=400&Mode=Edit&IsIncome=${this.isIncomeValue}&paramFinView=Status`;
+    let changeUrl = `/v06/financials/ChangeVendor.aspx?OID=${this.urlOID}&OTID=4&OTTID=${this.urlOTTID}&Mode=Edit&IsIncome=${this.isIncomeValue}&paramFinView=Status`;
     this.isChargeAction = true;
     document.location.href = changeUrl;
   }
 
   changeDefaultVendorOrCustomer() {
-    let changeDefaultVendorOrCustomerUrl: string = "javascript:loadDefaultVendor('/v06/financials/ChangeDefaultVendor.aspx?OID=&OTID=4&OTTID=400&Mode=Edit&IsIncome=&paramFinView=Status');"
+    let changeDefaultVendorOrCustomerUrl: string = `javascript:loadDefaultVendor('/v06/financials/ChangeDefaultVendor.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&Mode=Edit&IsIncome=&paramFinView=Status');`;
     changeDefaultVendorOrCustomerUrl = this.replaceQueryParamsInLeasePaymentUrl(changeDefaultVendorOrCustomerUrl, null);
     this.navigateToUrl(changeDefaultVendorOrCustomerUrl);
   }
@@ -2101,13 +2107,13 @@ export class ListPageComponent implements OnInit {
     } 
     
     this.isChargeAction = true;
-    let stopChargeUrl: string = `/v06/financials/Stop${taxStr}Charge.aspx?OID=&OTID=4&GLEID=&OTTID=400&IsIncome=&status=In%20Process${parentChargeStr}`
+    let stopChargeUrl: string = `/v06/financials/Stop${taxStr}Charge.aspx?OID=&OTID=4&GLEID=&OTTID=${this.urlOTTID}&IsIncome=&status=In%20Process${parentChargeStr}`;
     stopChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(stopChargeUrl, [leaseCharge.GLEventID]);
     this.navigateToUrl(stopChargeUrl);
   }
 
   editLeasePaymentCharge(leaseCharge) { 
-    let editChargeUrl: string = "/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=400&GLEID=&GLGroup=&IsIncome=&Mode=Edit"
+    let editChargeUrl: string = `/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLEID=&GLGroup=&IsIncome=&Mode=Edit`;
     editChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(editChargeUrl, [leaseCharge.GLEventID]);
     this.isChargeAction = true;
     this.navigateToUrl(editChargeUrl);
@@ -2121,7 +2127,7 @@ export class ListPageComponent implements OnInit {
       this.service.copyCharge(leaseCharge.GLEventID).subscribe(res => {
         if (res.success) {
           //If copy charge is successful use the GLEventId return to build the string
-          let copyChargeUrl: string = "/v06/Financials/EditCharge.aspx?OID=&OTID=4&OTTID=400&GLEID=&GLGroup=&IsIncome=&mode=edit&copy=1"
+          let copyChargeUrl: string = `/v06/Financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLEID=&GLGroup=&IsIncome=&mode=edit&copy=1`;
           let newGLEventId: number = res.data //Set to the one returned from the API
           copyChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(copyChargeUrl, [newGLEventId]);
           this.navigateToUrl(copyChargeUrl)
@@ -2133,7 +2139,7 @@ export class ListPageComponent implements OnInit {
   }
 
   deleteLeasePaymentCharge(leaseCharge: any) {
-    const leaseObjectTypeTypeId: number = 400; 
+    const leaseObjectTypeTypeId: number = this.urlOTTID; 
     if(leaseCharge.ProcessingStatus.toLowerCase() === 'in process' || leaseCharge.ProcessingStatus.toLowerCase() === 'historical' || leaseCharge.IsActive === 'Deleted')
     {
       alert("This charge can not be deleted.");
