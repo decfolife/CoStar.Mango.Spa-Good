@@ -62,7 +62,7 @@ export class DashboardWrapperComponent implements OnInit {
   
         this.accountingYearData = [
         ];
-        for(let i = -10; i < 11; i++) {
+        for(let i = 10; i > -11; i--) {
           this.accountingYearData.push({
             value: this.selectedYear + i
           });
