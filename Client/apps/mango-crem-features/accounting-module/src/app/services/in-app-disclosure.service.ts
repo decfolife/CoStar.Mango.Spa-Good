@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../mango/src/environments/environment.local';
-import { EndpointService } from './endpoint.service';
+import { EndpointService } from '../../../../../../libs/core-shared/src/lib/services/endpoint.service';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 
 
@@ -12,11 +13,17 @@ import { EndpointService } from './endpoint.service';
 export class InAppDisclosureService extends EndpointService{
 
   public dateFormat: string;
-  
+  private httpOptionsWithParams;
+  private httpOptions;
+
   constructor(
-     protected http: HttpClient
+     protected http: HttpClient, @Optional() facade: MangoAppFacade
     ) {
-    super(http);
+    super(http, facade);
+    this.getHttpHeaders().subscribe((result) => {
+      this.httpOptions = result;
+      this.httpOptionsWithParams = result;
+    })
   }
 
   public getSegments(criteriaSetID?, includeArchived: boolean = false) {
@@ -55,7 +62,7 @@ export class InAppDisclosureService extends EndpointService{
   }
 
 
-  private callHttpGet(url: string, functionName: string, httpOptionsParams?: any): Observable<any> {
+  public callHttpGet(url: string, functionName: string, httpOptionsParams?: any): Observable<any> {
     if (httpOptionsParams) {
       this.httpOptionsWithParams.params = httpOptionsParams
       return this.http.get(url, this.httpOptionsWithParams)
@@ -73,7 +80,7 @@ export class InAppDisclosureService extends EndpointService{
     
   }
 
-  private callHttpPost(url: string, functionName: string, postBody: any): Observable<any> {
+  public callHttpPost(url: string, functionName: string, postBody: any): Observable<any> {
     return this.http.post(url, postBody, this.httpOptions)
     .pipe(
       map(x => this.toObject(x) as any),
