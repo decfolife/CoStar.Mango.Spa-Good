@@ -20,7 +20,6 @@ class EnvironmentsCrem implements Environment {
     groupMaintenance: 'http://localhost:39180/api/',
     portfolioMaintenance: 'http://localhost:39181/api/',
     objectMaintenance: 'http://localhost:39182/api/',
-    adminService: 'http://localhost:39183/api/',
     alertsRules: 'https://localhost:5001/api/Alerts',
     alerts: 'https://localhost:5001/api/Alerts',
     accountingService: 'http://localhost:39187/api/Accounting',
