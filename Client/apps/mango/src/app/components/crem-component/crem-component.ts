@@ -201,7 +201,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
           while (currentRoute) {
             const breadcrumb = currentRoute.data.breadCrumb;
             url += '/' + currentRoute.url.map(segment => segment.path).join('/');
-            if (breadcrumb.label) {
+            if (breadcrumb && breadcrumb.label) {
               const breadCrumb: BreadCrumb = {
                 label: breadcrumb.label,
                 url: url,
@@ -209,7 +209,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
                 activeLink: breadcrumb.activeLink? breadcrumb.activeLink: this.activeLink 
               };
 
-              if(breadcrumb.label && currentRoute.component){
+              if(breadcrumb && breadcrumb.label && currentRoute.component){
                 if(breadcrumb.append){
                   if(this.tempCrumbs && this.tempCrumbs.length ) {
                     if (this.tempCrumbs.length == 5) {

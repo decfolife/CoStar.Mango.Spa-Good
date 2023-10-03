@@ -14,8 +14,7 @@ export class MangoNavigationService {
     if (navLink.spaUrl) {
       this.router.navigate([navLink.spaUrl])
     } else {
-      const baseUrl = environment.cremBaseUrl.replace('[CLIENT]', clientKey)
-      const redirectionUrl = `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${baseUrl}/v06/login.aspx?ReturnUrl=${navLink.linkUrl.replace('v06/', '')}`
+      const redirectionUrl = `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/${navLink.linkUrl}`
       window.location.href = redirectionUrl
     }
   }
