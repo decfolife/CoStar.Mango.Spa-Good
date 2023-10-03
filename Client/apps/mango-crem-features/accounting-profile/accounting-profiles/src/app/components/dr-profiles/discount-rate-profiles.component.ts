@@ -72,7 +72,7 @@ export class DiscountRateProfilesComponent implements OnInit {
     if (this.portfolioService.portfolios === undefined
         || this.portfolioService.portfolios.length === 0) {
       this.portfolioService.getPortfolios().subscribe((result) => {
-        this.portfolioService.portfolios = result;
+        this.portfolioService.portfolios = result.data;
         if (this.portfolioService.selectedPortfolio === undefined
             || this.portfolioService.selectedPortfolio === null) {
           const filter = this.portfolioService.portfolios.filter(
@@ -95,7 +95,7 @@ export class DiscountRateProfilesComponent implements OnInit {
     this.loadingVisible = true;
     this.service.getDiscountRateProfiles(masterGroupID ?? this.masterGroupID)
       .subscribe((result) => {
-        this.profiles = result;
+        this.profiles = result.data;
         this.loadingVisible = false;
       });
   }

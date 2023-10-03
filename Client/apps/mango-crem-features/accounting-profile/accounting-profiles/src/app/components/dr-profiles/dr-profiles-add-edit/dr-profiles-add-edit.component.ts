@@ -104,7 +104,7 @@ export class DiscountRateProfilesAddEditComponent implements OnInit, AfterViewIn
       if (this.portfolioService.portfolios === undefined
           || this.portfolioService.portfolios.length === 0) {
         this.portfolioService.getPortfolios().subscribe((result) => {
-          this.portfolioService.portfolios = result;
+          this.portfolioService.portfolios = result.data;
           if (this.portfolioService.selectedPortfolio === undefined
               || this.portfolioService.selectedPortfolio === null) {
             const filter = this.portfolioService.portfolios.filter(
@@ -128,7 +128,7 @@ export class DiscountRateProfilesAddEditComponent implements OnInit, AfterViewIn
 
         this.service.getDiscountRateProfile(this.masterGroupID, this.policyId)
           .subscribe((result) => {
-            this.formData = result;
+            this.formData = result.data;
             this.formData.portfolio = this.portfolioService.selectedPortfolio;
             this.formData.annualRateType = Number(result.annualRateType);
             this.initialRateType = this.formData.annualRateType;
@@ -160,20 +160,20 @@ export class DiscountRateProfilesAddEditComponent implements OnInit, AfterViewIn
   populateCountriesList(): void {
     this.service.getCountries()
       .subscribe(result => {
-        this.countriesList = result;
+        this.countriesList = result.data;
       });
   }
 
   populateCurrenciesList(): void {
     this.service.getCurrencies()
       .subscribe(result => {
-        this.currenciesList = result;
+        this.currenciesList = result.data;
       });
   }
 
   populatePortfolioSettings(): void {
     this.baseService.getPortfolioSettings(this.masterGroupID).subscribe((result) => {
-      this.portfolioSettings = result;
+      this.portfolioSettings = result.data;
       if (this.isAdd) {
         this.initialRateType = this.portfolioSettings.defaultAnnualRateType;
         this.setContentVisible();

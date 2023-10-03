@@ -6,7 +6,7 @@ class EnvironmentsCrem implements Environment {
   appUrls = {
     accounting: 'http://172.20.9.224:30004/api/accountmanagement',
     batchAccounting: 'http://172.20.9.224:30022/batchaccounting',
-    discountRateProfiles: 'http://172.20.9.224:30006/accountingprofiles/api',
+    discountRateProfiles: 'http://172.20.9.224:30006/api',
     bookmarks: 'http://172.20.9.224:30024/api/bookmarks',
     listpages: 'http://172.20.9.224:30000/api/listpage/',
     financials: 'http://172.20.9.224:30042/api/',

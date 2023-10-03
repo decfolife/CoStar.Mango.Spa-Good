@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import { map, catchError } from 'rxjs/operators';
 
-import { EndpointService } from '../services/endpoint.service';
+import { EndpointService } from '@mango/core-shared/lib-core-shared';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 import { Portfolio } from '../models/portfolio.model';
-import { environment } from '../../../../../../mango/src/environments/environment.local';
 
 @Injectable({ providedIn: 'root', })
 export class PortfolioDropdownService extends EndpointService {
@@ -12,25 +11,9 @@ export class PortfolioDropdownService extends EndpointService {
   selectedPortfolio: Portfolio;
   portfolios: Portfolio[];
 
-  private getPortfolioDropdownUrl(): string {
-    return this.rootUrl();
-  }
 
   getPortfolios() {
-    let url = `${this.getPortfolioDropdownUrl()}`;
-    if (environment.isRestful) {
-      url += 'base/GetPortfolios'
-      return this.http.get(url, this.httpOptions)
-        .pipe(
-          map(this.responseToObject),
-          catchError(this.handleError('getPortfolios')),
-        );
-    }
-    url += '/GetPortfolios'
-    return this.http.post(url, {})
-      .pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('getPortfolios')),
-      );
+    let url = `${environment.appUrls.discountRateProfiles}/Base/GetPortfolios`;
+    return this.callHttpGet(url, 'getPortfolios')
   }
 }
