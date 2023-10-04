@@ -4,7 +4,7 @@ class EnvironmentsCrem implements Environment {
   production = false;
   name = 'TEST';
   appUrls = {
-    accounting: 'http://172.20.9.224:30005/api/accountmanagement',
+    accounting: 'http://service2.test.corp.virtualpremise.com:8090/accountmanagement/api',
     batchAccounting: 'http://172.20.9.224:30023/batchaccounting',
     discountRateProfiles: 'http://172.20.9.224:30007/accountingprofiles/api',
     bookmarks: 'http://172.20.9.224:30025/api/bookmarks',
