@@ -15,7 +15,7 @@ export class DiscountRateService extends EndpointService {
 
   getDiscountRateProfile(masterGroupId: number,
     discountRateProfileId: number) {
-    const url = `${environment.appUrls.discountRateProfiles}/DiscountRateProfiles/GetDiscountRateProfiles/${masterGroupId}/${discountRateProfileId}`;
+    const url = `${environment.appUrls.discountRateProfiles}/DiscountRateProfiles/GetDiscountRateProfile/${masterGroupId}/${discountRateProfileId}`;
     return this.callHttpGet(url, 'getDiscountRateProfile')
   }
 
