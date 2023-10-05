@@ -294,7 +294,7 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               moduleId: 3,
-              objectTypeId: 5,
+              objectTypeId: 11,
               currentSubApp: MangoSubApps.LIST_PAGES,
               breadCrumb: { label: 'Companies', append: false, activeLink: 'Companies' }
             },
@@ -307,7 +307,7 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               moduleId: 3,
-              objectTypeId: 11,
+              objectTypeId: 5,
               currentSubApp: MangoSubApps.LIST_PAGES,
               breadCrumb: { label: 'Contacts', append: true }
             },
