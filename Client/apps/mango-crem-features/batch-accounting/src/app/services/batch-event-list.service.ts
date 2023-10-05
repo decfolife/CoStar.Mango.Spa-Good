@@ -1,137 +1,40 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
-
-import { map, catchError } from 'rxjs/operators';
-
-import { environment } from '../../../../../mango/src/environments/environment.local';
-import { EndpointService } from './endpoint.service';
-import { GetGridDataRequest } from '../shared/models/get-grid-data-request';
+import { EndpointService } from '@mango/core-shared/lib-core-shared';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 import { AccountingBatch } from '../shared/models/accounting-batch.model';
+import { GetGridDataRequest } from '../shared/models/get-grid-data-request';
 
 @Injectable({ providedIn: 'root' })
 export class BatchEventListService extends EndpointService {
   public userRights = 0; // 0 No Rights, 1 View Rights, 2 Add Rights
 
-  private listPageUrl = 'http://service2.dev.corp.virtualpremise.com:8090/ListPages/api/ListPage/';
-
-  private getBatchEventListUrl(): string {
-    const url = this.rootUrl;
-
-    if (environment.name.toString() !== 'LOCAL') {
-      if (!environment.isRestful) {
-          return url.toLocaleLowerCase().replace('/api', '');
-      }
-    }
-
-    return `${url}/BatchEventList`;
-  }
-
-  private getBatchConfirmationUrl(): string {
-    const url = this.rootUrl;
-
-    if (environment.name.toString() !== 'LOCAL') {
-      if (!environment.isRestful) {
-          return url.toLocaleLowerCase().replace('/api', '');
-      }
-    }
-
-    return `${url}/BatchConfirmation`;
-  }
-
   getWorkflowStatuses() {
-    const url = `${this.getBatchEventListUrl()}/GetWorkflowStatuses`;
-
-    if (environment.name === 'LOCAL' || environment.isRestful) {
-      return this.http.get(url, this.httpOptions).pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('GetWorkflowStatuses')),
-      );
-    }
-
-    return this.http.post(url, {}).pipe(
-      map(this.responseToObject),
-      catchError(this.handleError('GetWorkflowStatuses')),
-    );
+    const url = `${environment.appUrls.batchAccounting}/BatchEventList/GetWorkflowStatuses`;
+    return this.callHttpGet(url, 'getWorkflowStatuses')
   }
 
   getListViews() {
-    const url = `${this.getBatchEventListUrl()}/GetListViews`;
-
-    if (environment.name === 'LOCAL' || environment.isRestful) {
-      return this.http.get(`${this.listPageUrl}DataSetSelectorItems`, this.httpOptions).pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('GetListViews')),
-      );
-    }
-
-    return this.http.post(url, {}).pipe(
-      map(this.responseToObject),
-      catchError(this.handleError('GetListViews')),
-    );
+    const url = `${environment.appUrls.listpages}DataSetSelectorItems`
+    return this.callHttpGet(url, 'getListViews')
   }
 
   getDynamicSQL(request: GetGridDataRequest) {
-    const url = `${this.getBatchEventListUrl()}/GetDynamicSQL`;
-
-    if (environment.name === 'LOCAL' || environment.isRestful) {
-      return this.http.post(`${this.listPageUrl}dynamicSQL`, request, this.httpOptions).pipe(
-        map(x => ({ success: true, data: x } as any)),
-        catchError(this.handleError('GetDynamicSQL')),
-      );
-    }
-
-    return this.http.post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions).pipe(
-      map(x => ({ success: true, data: (x as any).d } as any)),
-      catchError(this.handleError('GetDynamicSQL')),
-    );
+    const url = `${environment.appUrls.listpages}dynamicSQL`
+    return this.callHttpPost(url, 'getListViews', request)
   }
 
   getColumnDefinitionList(listPageId: number) {
-    const url = `${this.getBatchEventListUrl()}/GetColumnDefinitionList`;
-    const listPageUrl = `${this.listPageUrl}${listPageId.toString()}/ColumnDefinitionList`;
-
-    if (environment.name === 'LOCAL' || environment.isRestful) {
-      return this.http.get(listPageUrl, this.httpOptions).pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('GetColumnDefinitionList')),
-      );
-    }
-
-    return this.http.post(url, { listPageId }).pipe(
-      map(this.responseToObject),
-      catchError(this.handleError('GetColumnDefinitionList')),
-    );
+    const url = `${environment.appUrls.listpages}${listPageId.toString()}/ColumnDefinitionList`
+    return this.callHttpGet(url, 'getColumnDefinitionList')
   }
 
   getGridData(gridDataRequest: GetGridDataRequest) {
-    const url = `${this.getBatchEventListUrl()}/GetGridData`;
-
-    if (environment.name === 'LOCAL' || environment.isRestful) {
-      return this.http.post(`${this.listPageUrl}GridData`, gridDataRequest, this.httpOptions).pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('GetGridData')),
-      );
-    }
-
-    return this.http.post(url, { gridDataRequest }).pipe(
-      map(this.responseToObject),
-      catchError(this.handleError('GetGridData')),
-    );
+    const url = `${environment.appUrls.listpages}GridData`
+    return this.callHttpPost(url, 'getGridData', gridDataRequest)
   }
 
   queueBatch(clientBatch: AccountingBatch) {
-    const url = `${this.getBatchConfirmationUrl()}/QueueBatch`;
-
-      if (environment.name === 'LOCAL' || environment.isRestful) {
-      return this.http.post(url, clientBatch, this.httpOptions).pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('QueueBatch')),
-      );
-    }
-
-    return this.http.post(url, { clientBatch }).pipe(
-      map(this.responseToObject),
-      catchError(this.handleError('QueueBatch')),
-    );
+    const url = `${environment.appUrls.batchAccounting}/BatchConfirmation/QueueBatch`;
+    return this.callHttpPost(url, 'queueBatch', clientBatch)
   }
 }

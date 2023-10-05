@@ -5,7 +5,7 @@ class EnvironmentsCrem implements Environment {
   name = 'DEV';
   appUrls = {
     accounting: 'http://service2.dev.corp.virtualpremise.com:8090/accountmanagement/api',
-    batchAccounting: 'http://172.20.9.224:30022/batchaccounting',
+    batchAccounting: 'http://172.20.9.224:30022/api',
     discountRateProfiles: 'http://172.20.9.224:30006/api',
     bookmarks: 'http://172.20.9.224:30024/api/bookmarks',
     listpages: 'http://172.20.9.224:30000/api/listpage/',
@@ -18,8 +18,8 @@ class EnvironmentsCrem implements Environment {
     portfolioMaintenance: 'http://172.20.9.224:30016/api/',
     objectMaintenance: 'http://172.20.9.224:30014/api/',
     groupMaintenance: 'http://172.20.9.224:30012/api/',
-    alertsRules: 'http://172.20.9.224:30020/Alerts',
-    alerts: 'http://172.20.9.224:30020/Alerts',
+    alertsRules: 'http://172.20.9.224:30020/api/Alerts',
+    alerts: 'http://172.20.9.224:30020/api/Alerts',
     accountingService: 'http://172.20.9.224:30008/api/Accounting',
     leftNav: 'http://172.20.9.224:30032/api/',
     quickSearch: 'http://172.20.9.224:30052/api',

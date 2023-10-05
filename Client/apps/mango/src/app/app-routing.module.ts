@@ -51,7 +51,7 @@ const routes: Routes = [
         path: 'projects',
         data: { moduleId: 2, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           {
             path: 'dashboard',
             loadChildren: () =>
@@ -98,7 +98,7 @@ const routes: Routes = [
             data: {
               moduleId: 2,
               objectTypeId: null,
-              breadCrumb: {label: 'Recent Activities', append: true}
+              breadCrumb: { label: 'Recent Activities', append: true }
             },
           },
         ]
@@ -109,8 +109,9 @@ const routes: Routes = [
         path: 'strategy',
         data: { breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-          {path: 'dashboard', // Todo: Temporary component pointing to 404
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+          {
+            path: 'dashboard', // Todo: Temporary component pointing to 404
             loadChildren: () =>
               import(
                 '@mangoSpa/src/app/components/not-found-page/not-found-page-routing.module'
@@ -118,7 +119,8 @@ const routes: Routes = [
             data: {
               moduleId: null,
               currentSubApp: null,
-              breadCrumb: { label: 'Strategy Dashboard', append: false, activeLink: 'Dashboard' } },
+              breadCrumb: { label: 'Strategy Dashboard', append: false, activeLink: 'Dashboard' }
+            },
           },
         ]
       },
@@ -128,8 +130,9 @@ const routes: Routes = [
         path: 'portfolio',
         data: { moduleId: 1, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-          {path: 'dashboard',
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+          {
+            path: 'dashboard',
             loadChildren: () =>
               import(
                 '@portfolio-dashboard/components/index/index.module'
@@ -140,7 +143,8 @@ const routes: Routes = [
               breadCrumb: { label: 'Portfolio Dashboard', append: false, activeLink: 'Dashboard' }
             },
           },
-          {path: 'buildings',
+          {
+            path: 'buildings',
             loadChildren: () =>
               import(
                 '@list-pages/components/index.module.hosted'
@@ -152,7 +156,8 @@ const routes: Routes = [
               breadCrumb: { label: 'Buildings', append: true }
             },
           },
-          {path: 'leases',
+          {
+            path: 'leases',
             loadChildren: () =>
               import(
                 '@list-pages/components/index.module.hosted'
@@ -172,12 +177,13 @@ const routes: Routes = [
         path: 'accounting',
         data: { moduleId: 9, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           // Dashboard & Accounting Events
-          {path: 'dashboard', loadChildren: () =>
-            import(
-              '@accounting-dashboard/components/index/index.module'
-            ).then((mod) => mod.IndexMainModule),
+          {
+            path: 'dashboard', loadChildren: () =>
+              import(
+                '@accounting-dashboard/components/index/index.module'
+              ).then((mod) => mod.IndexMainModule),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.ACCOUNT_MANAGEMENT,
@@ -194,7 +200,7 @@ const routes: Routes = [
             data: {
               moduleId: 9,
               objectTypeId: null,
-              breadCrumb: {label: 'Events', append: true}
+              breadCrumb: { label: 'Events', append: true }
             },
           },
           // Alerts
@@ -207,6 +213,18 @@ const routes: Routes = [
             data: {
               moduleId: 9,
               breadCrumb: { label: 'Lease Alerts', append: true }
+            },
+          },
+          {
+            path: 'alerts-rules',
+            loadChildren: () =>
+              import(
+                '@alerts-rules/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.ALERT_RULES,
+              breadCrumb: { label: 'Alerts Rules', append: true }
             },
           },
           // Batch Processes
@@ -267,8 +285,9 @@ const routes: Routes = [
         path: 'contacts',
         data: { moduleId: 3, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'companies/list', pathMatch: 'full'},
-          {path: 'companies/list',
+          { path: '', redirectTo: 'companies/list', pathMatch: 'full' },
+          {
+            path: 'companies/list',
             loadChildren: () =>
               import(
                 '@list-pages/components/index.module.hosted'
@@ -277,7 +296,7 @@ const routes: Routes = [
               moduleId: 3,
               objectTypeId: 5,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Companies', append: false, activeLink: 'Companies'}
+              breadCrumb: { label: 'Companies', append: false, activeLink: 'Companies' }
             },
           },
           {
@@ -301,7 +320,7 @@ const routes: Routes = [
         path: 'reports',
         data: { moduleId: 4, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'list', pathMatch: 'full'},
+          { path: '', redirectTo: 'list', pathMatch: 'full' },
           {
             path: 'list',
             loadChildren: () =>
@@ -318,7 +337,7 @@ const routes: Routes = [
         path: 'admin',
         data: { breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'list', pathMatch: 'full'},
+          { path: '', redirectTo: 'list', pathMatch: 'full' },
           {
             path: 'list',
             loadChildren: () =>
