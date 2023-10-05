@@ -18,14 +18,17 @@ class EnvironmentsCrem implements Environment {
     portfolioMaintenance: 'http://service2.ops.corp.virtualpremise.com:8090/portfolioMaintenance/api/',
     objectMaintenance: 'http://service2.ops.corp.virtualpremise.com:8090/objectMaintenance/api/',
     groupMaintenance: 'http://service2.ops.corp.virtualpremise.com:8090/groupMaintenance/api/',
-    adminService: 'http://service2.ops.corp.virtualpremise.com:8090/adminService/api/',
+    alertsRules: 'http://service2.ops.corp.virtualpremise.com:8090/Alerts',
+    alerts: 'http://service2.ops.corp.virtualpremise.com:8090/Alerts',
     leftNav: 'http://service2.ops.corp.virtualpremise.com:8090/leftNav/api/',
     quickSearch: 'http://service2.ops.corp.virtualpremise.com:8090/QuickSearch/api',
     userService: 'http://service2.ops.corp.virtualpremise.com:8090/UserService/api',
     formWizard: 'http://service2.ops.corp.virtualpremise.com:8090/FormsEngine/api/',
     objectActions: 'http://service2.ops.corp.virtualpremise.com:8090/objectActions/api/',
     header: 'http://service2.ops.corp.virtualpremise.com:8090/Header/api/',
-    inAppDisclosure: 'http://service2.ops.corp.virtualpremise.com:8090/AccountingService/api/'
+    alerts: '',
+    inAppDisclosure: 'http://service2.ops.corp.virtualpremise.com:8090/AccountingService/api/',
+    accountingSummary:"http://service2.ops.corp.virtualpremise.com:8090/AccountingSummary/api/AccountingSummary/"
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].ops.corp.virtualpremise.com';

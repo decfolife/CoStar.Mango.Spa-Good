@@ -134,6 +134,7 @@
       *ngIf="showAddButton && objectTypeId !== 1 && !this.isLeaseArchived && !this.isLeaseLocked"
       class="add-button"
       [enabled]="!inDisabledUIState"
+      [OTTID]="urlOTTID"
       [isGLEvent]="isGLEvent"
       [editPages]="editPages"
       (navigateToEditPage) = "navigateToEditPage($event)"

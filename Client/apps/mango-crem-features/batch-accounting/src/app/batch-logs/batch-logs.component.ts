@@ -212,10 +212,10 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
 
     this.batchEventService.getListViews().subscribe(res => {
       this.listViews = [
-        ...res.coStarListViews,
-        ...res.hiddenListViews,
-        ...res.myListViews,
-        ...res.sharedListViews
+        ...res.data.coStarListViews,
+        ...res.data.hiddenListViews,
+        ...res.data.myListViews,
+        ...res.data.sharedListViews
       ];
     });
 
@@ -235,11 +235,11 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         const servers: HeartbeatData[] = [];
         this.heartbeatDataLoading = false;
 
-        if (!Array.isArray(res) || res?.length === 0) {
+        if (!Array.isArray(res.data) || res?.data.length === 0) {
           return;
         }
 
-        res.forEach(item => {
+        res.data.forEach(item => {
           const start = new Date(JSON.parse(item.data).StartedAt);
           const beat = new Date(item.lastHeartbeat);
 
@@ -260,12 +260,12 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         return;
       }
 
-      result.forEach((item: any) => {
+      result.data.forEach((item: any) => {
         item.leaseCount = item.listOfLeaseIDs.split(',').length;
         item.batchCount = item.listOfScheduleIDs.split(',').length;
       });
 
-      this.batchLogs = result;
+      this.batchLogs = result.data;
       this.dataGrid?.instance.endCustomLoading();
     });
   }
@@ -453,11 +453,11 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
       this.populateBatchLogsAndParameters();
       this.dataGrid.instance.refresh();
 
-      const message = result.isCancelled
+      const message = result.data.isCancelled
         ? 'Batch Successfully Cancelled.'
         : `Batch failed to cancel for the following reason: ${result.errorMessage}`;
 
-      const type = result.isCancelled
+      const type = result.data.isCancelled
         ? 'success'
         : 'error';
 
@@ -572,8 +572,8 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
     this.service.getBatchById(data.id).subscribe(res => {
       const myData = Object.assign({}, data);
 
-      myData.isAutoProcess = res.isAutoProcess;
-      myData.accountingBatchEvents = res.accountingBatchEvents ?? [];
+      myData.isAutoProcess = res.data.isAutoProcess;
+      myData.accountingBatchEvents = res.data.accountingBatchEvents ?? [];
 
       const workbook = new Workbook();
       const batchInfoWs = workbook.addWorksheet('Batch Info');

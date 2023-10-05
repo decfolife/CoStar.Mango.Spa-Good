@@ -7,7 +7,7 @@ import { DashboardWrapperComponent } from '../dashboard/dashboard-wrapper/dashbo
 
 const routes: Routes = [
   {
-    path: 'dashboard',
+    path: '',
     component: AccountingDashboardComponent,
     canActivate: [CanActivateGuard],
   },

@@ -1,0 +1,68 @@
+<div class="accounting-events">
+    <div class="container">
+        <div class="label">Accounting</div>
+        <input id="emptyAccountingEventDropdown" *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
+        <div *ngIf="!isAccountingEventEmpty" class="events-dropdown">
+          <dx-drop-down-box
+            [(value)]="gridBoxValue"
+            [(opened)]="isGridBoxOpened"
+            valueExpr="sortOrder"
+            [deferRendering]="false"
+            [displayExpr]="gridBox_displayExpr"
+            [inputAttr]="{ 'aria-label': 'Owner' }"
+            [showClearButton]="false"
+            [dataSource]="gridDataSource"
+            height="32px"
+            (onOptionChanged)="onGridBoxOptionChanged($event)"
+          >
+            <div *dxTemplate="let data of 'content'">
+              <dx-data-grid
+                [dataSource]="gridDataSource"
+                [hoverStateEnabled]="true"
+                [(selectedRowKeys)]="gridBoxValue"
+                height="100%"
+              >
+              <dxi-column dataField="classificationType" caption="Classification"></dxi-column>
+              <dxi-column dataField="amortizationProfileName" caption="Amortization Profile"></dxi-column>
+                <dxo-selection mode="single"></dxo-selection>
+                <dxo-filter-row [visible]="true"></dxo-filter-row>
+                <dxo-paging [enabled]="true" [pageSize]="5"></dxo-paging>
+                <dxo-pager
+                  [visible]="true"
+                  [allowedPageSizes]="allowedPageSizes"
+                  [displayMode]="full"
+                  [showPageSizeSelector]="true"
+                  [showInfo]="true"
+                  [showNavigationButtons]="true"
+                >
+                </dxo-pager>
+              </dx-data-grid>
+            </div>
+          </dx-drop-down-box>
+        </div>
+
+    <div class="add-button">
+      <crem-button 
+        [id]="getId('add','button')"
+        type="primary"
+        (click)="AddEvent($event)"
+        [disabled]="isAddButtonDisabled"
+        (mouseenter)="onMouseEnter()"
+        (mouseleave)="onMouseLeave()"
+        >Add
+      </crem-button>
+      <dx-tooltip 
+        [id]="getId('add','tooltip')"
+        target="#accounts-summary-add-button"
+        [visible]="isTooltipVisible"
+        >
+        <div *dxTemplate="let data of 'content'">
+          {{ disableBtnReason }}
+        </div>
+      </dx-tooltip>
+    </div>
+
+    <div id="divLeaseAlertsPopupButton">
+      <mango-alerts-root [leaseAbstractId]="returnLeaseAbstractId()"></mango-alerts-root>
+    </div>
+</div>

@@ -91,6 +91,9 @@
 			<ifrs-16-quarterly-disclosures *ngIf="selectedView === 5">
 			</ifrs-16-quarterly-disclosures>
 		</div>
+		<div *ngIf="loading">
+			<crem-loader></crem-loader>
+		</div>
 
 
 	</div>

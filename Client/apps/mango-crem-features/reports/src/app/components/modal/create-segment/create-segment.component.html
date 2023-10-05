@@ -6,6 +6,7 @@
   primaryFooterButtonText="Run"
 	closeOrCancelButtonText="Cancel"
   [customFooter]="true"
+  [closeDialogResult]="saveAndNewClicked ? 'refresh' : ''"
   >
 	<div modalContent class="body-content">
     <dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="showloading" [showIndicator]="true"

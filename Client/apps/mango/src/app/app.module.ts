@@ -105,14 +105,14 @@ import { combineLatest, of } from 'rxjs';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { 
+export class AppModule {
   constructor(private router: Router, private facade: MangoAppFacade) {
     this.router.events.pipe(
       filter((e: RouterEvent) => e instanceof NavigationStart && e.url.includes('/v06')),
       switchMap(e => combineLatest([of(e.url), this.facade.clientKey$])),
       filter(([url, clientKey]) => !!url && !!clientKey),
       map(([url, clientKey]) => {
-        const newUrl = ` ${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
+        const newUrl = url.includes('AdminHome2.aspx') ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
         window.location.href = newUrl
       })
     ).subscribe()

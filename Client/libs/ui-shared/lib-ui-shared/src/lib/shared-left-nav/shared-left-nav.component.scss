@@ -206,6 +206,7 @@
               display: flex;
               align-items: center;
               width: 100%;
+              cursor: pointer;
               padding: 5px 16px 5px 30px !important; // TODO: Remove important once fully migrated to MangoSpa
               color: colors.$black !important; // TODO: Remove important once fully migrated to MangoSpa
               text-decoration: none !important; // TODO: Remove important once fully migrated to MangoSpa

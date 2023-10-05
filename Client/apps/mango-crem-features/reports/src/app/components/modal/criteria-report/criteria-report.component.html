@@ -1,7 +1,7 @@
 <crem-modal 
 	[modalTitle]="data.reportName"
   modalTitleId="RunReportModalTitle"
-  modalId="RunReportModal"
+  [modalId]="allowSegments ? 'RunReportModalWithSegments' : 'RunReportModal'"
 	closeIconVisible="true"
   primaryFooterButtonText="Run"
 	closeOrCancelButtonText="Cancel"
@@ -76,7 +76,7 @@
             >
               Cancel
           </crem-button>
-          <crem-button [id]="idPrefix + 'ArchiveButton'"
+          <crem-button [id]="idPrefix + 'RunButton'"
             type="primary"
             (click)="runReport($event)"
             >

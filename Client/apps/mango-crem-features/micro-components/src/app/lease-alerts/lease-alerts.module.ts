@@ -33,7 +33,7 @@ import { AlertsService } from './shared/service/alerts.service';
     AlertsPopupComponent,
     LeaseAlertsControlsComponent,
   ],
-  exports: [LeaseAlertsControlsComponent],
+  exports: [LeaseAlertsControlsComponent, LeaseAlertsComponent],
   imports: [
     CommonModule,
     DevExtremeModule,

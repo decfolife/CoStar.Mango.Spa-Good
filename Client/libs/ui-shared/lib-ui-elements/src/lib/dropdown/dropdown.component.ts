@@ -410,7 +410,7 @@ export class DropdownComponent implements OnInit, OnChanges {
     }
   }
 
-	ADAatributes(e: any) {
+	ADAattributes(e: any) {
 		// Search for the span element with class dx-datagrid-nodata
     // TODO: If possible, change to avoid accessing the DOM directly
 		const spanElement = e.component.$element().find('.dx-datagrid-nodata');

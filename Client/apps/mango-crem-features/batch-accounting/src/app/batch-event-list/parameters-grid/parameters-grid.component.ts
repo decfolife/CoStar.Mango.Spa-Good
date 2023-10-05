@@ -454,7 +454,7 @@ export class ParametersGridComponent implements OnInit {
     this.batchParametersService
       .getPortfolioClassificationConfigurationOptions(this.masterGroupID)
       .subscribe(result => {
-        this.portfolioClassificationConfigurationOptions = result;
+        this.portfolioClassificationConfigurationOptions = result.data;
 
         this.portfolioClassificationConfigurationOptions
           ?.journalEntryProfiles?.unshift(
@@ -480,7 +480,7 @@ export class ParametersGridComponent implements OnInit {
 
     this.batchParametersService.getPortfolioSettings(this.masterGroupID)
       .subscribe(result => {
-        this.portfolioSettings = result?.item1;
+        this.portfolioSettings = result?.data.item1;
 
         if (this.portfolioSettings?.defaultAnnualRateType) {
           this.parameterOverrides.annualRateTypeOverride =
@@ -505,7 +505,7 @@ export class ParametersGridComponent implements OnInit {
           discountRateProfile = 'Use Best Match';
         }
 
-        this.portfolioClassificationConfiguration = result?.map((item) => {
+        this.portfolioClassificationConfiguration = result?.data.map((item) => {
           item.discountRateProfile = discountRateProfile;
 
           return item;

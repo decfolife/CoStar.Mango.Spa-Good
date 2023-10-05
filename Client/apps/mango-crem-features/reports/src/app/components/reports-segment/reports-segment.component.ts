@@ -6,7 +6,7 @@ import { CreateSegmentComponent } from '../modal/create-segment/create-segment.c
 import { SearchComponent } from '@mango/ui-shared/cosmos';
 import notify from 'devextreme/ui/notify';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
-import { Workbook } from 'exceljs';
+import { Workbook, ValueType } from 'exceljs';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { saveAs } from 'file-saver-es';
 
@@ -283,6 +283,19 @@ export class ReportsSegmentComponent implements OnInit {
       component: this.segmentDataGrid.instance,
       worksheet: workbook.addWorksheet('Segments List Page')
     }).then(function() {
+      this.worksheet.columns.forEach((column) => {
+        let maxLength = 0;
+        column["eachCell"]({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value ? cell.value.toString().length + 3 : 10;
+          if (cell.type === ValueType.Date) {
+              maxLength = 20;
+          }
+          else if (columnLength > maxLength) {
+              maxLength = columnLength + 3;
+          }
+        });
+        column.width = maxLength < 10 ? 10 : maxLength;
+      });
       workbook.xlsx.writeBuffer().then(function(buffer: BlobPart) {
         saveAs(new Blob([buffer], { type:'application/octet-stream'}), 'CoStar_SegmentsListPage.xlsx')
       });

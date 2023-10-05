@@ -10,7 +10,6 @@ import { SharedLeftNavModule } from 'libs/ui-shared/lib-ui-shared/src/lib/shared
 import { AppComponent } from '../../app.component';
 import { DashboardModule } from '../../components/dashboard/accounting-dashboard.module';
 import { IndexComponent } from '../../components/index/index.component';
-import { AccountingListpageComponent } from '../../components/listpage/accounting-listpage/accounting-listpage.component';
 import { IndexRoutingModule } from './index-routing.module';
 import { DashboardWrapperModule } from '../dashboard/dashboard-wrapper/dashboard-wrapper.module';
 
@@ -19,7 +18,6 @@ import { DashboardWrapperModule } from '../dashboard/dashboard-wrapper/dashboard
     AppComponent,
     IndexComponent,
     ModuleLeftNavAppComponent,
-    AccountingListpageComponent,
   ],
 
   imports: [

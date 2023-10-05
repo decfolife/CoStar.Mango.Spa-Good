@@ -9,6 +9,7 @@
           [popoverContent]="popoverContent" [moduleLinks]="toolbarModuleLinks">
         </mango-toolbar>
 
+        <!-- <mango-breadcrumbs></mango-breadcrumbs> -->
         <display-breadcrumbs [breadcrumbs]="(facade.breadcrumbs$ | async)" (navigateToBreadcrumb)="navigateToBreadcrumb($event)"></display-breadcrumbs>
       
         <crem-bookmarks [ngClass]="{'suite-user':(userAppType == 1)}"
@@ -24,6 +25,7 @@
             [navigationLinks]="navigationLinks"
             [activeLink]="activeLink"
             (navigateSpa)="handleSpaNavigation($event)"
+            (toActiveLink)="getActiveLink($event)"
             *ngIf="navLinksFetched"
           >
           </shared-left-nav>
