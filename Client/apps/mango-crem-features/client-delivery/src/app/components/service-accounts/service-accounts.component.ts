@@ -42,14 +42,23 @@ export class ServiceAccountsComponent implements OnInit {
   ngOnInit(): void {
     this.setDropdownItem();
     this.buildGridColumns();
-    this.getServiceAccouts('all');
+    this.getServiceAccouts('active');
   }
 
   private getServiceAccouts(filter: string) {
     this.service.getServiceAccounts(filter)
-      .subscribe(result => {
-        // this.serviceAccountsData = result.data;
-        this.serviceAccountsData = result;
+      .subscribe(result => {        
+        if(result){          
+          if(result.data){
+            let filteredData = result.data.items;
+            if (filter === 'all')
+              this.serviceAccountsData =  filteredData;
+            else if (filter === 'inactive')
+              this.serviceAccountsData =  filteredData.filter(x=>x.contactActive === false);
+            else
+              this.serviceAccountsData =  filteredData.filter(x=>x.contactActive === true);
+          }          
+        }
         setTimeout(() => {
           this.searchDataGrid(this.searchText);
         })
@@ -87,7 +96,7 @@ export class ServiceAccountsComponent implements OnInit {
     }
   }
 
-  public deleteServiceAccount(data) {
+  public deleteServiceAccount(data, contactActiveFlg) {
     let dialogRef = this.dialog.open(DeleteServiceAccountComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
@@ -95,13 +104,17 @@ export class ServiceAccountsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const contactId = result.contactID;
+
+        //console.log(result);
+        const contactId = result.contactId;
+        const contactEmailAddress = result.contactEmailAddress;
         //TODO: clean code when integrate API call with real data
         // this.service.deleteServiceAccount(contactId, this.selectedFilter)   
-        this.service.deleteServiceAccount(this.serviceAccountsData, contactId, this.selectedFilter)       
+        this.service.deleteServiceAccount(this.serviceAccountsData, contactId, contactEmailAddress, contactActiveFlg, this.selectedFilter)       
         .subscribe(response => {
           if(response) {
-            this.serviceAccountsData = response;
+           // this.serviceAccountsData = response;
+           this.getServiceAccouts(this.selectedFilter);
             this.searchDataGrid(this.searchText);
           }
         });
@@ -109,17 +122,19 @@ export class ServiceAccountsComponent implements OnInit {
     });
   }
 
-  public addServiceAccount(){
+  public addServiceAccount(){    
+    
     let dialogRef = this.dialog.open(AddServiceAccountComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result.length > 0) {
+      if (result.length > 0) {        
         this.service.addServiceAccount(result)      
         .subscribe(result => {
           if (result) {
-            this.serviceAccountsData.push(result);
+            this.getServiceAccouts('active');
+            //this.serviceAccountsData.push(newEmail);
           }
         });
       }
@@ -175,7 +190,7 @@ export class ServiceAccountsComponent implements OnInit {
 
   private buildGridColumns() {
     this.columns = [
-			{	dataField : "contactID",
+			{	dataField : "contactId",
 				alignment : "left",
 				visible : true,
 				dataType : "number",
@@ -187,7 +202,7 @@ export class ServiceAccountsComponent implements OnInit {
 				visible : true,
 				dataType : null
 			},
-			{	dataField : "isActive",
+			{	dataField : "contactActive",
         caption : "Active",
 				alignment : null,
 				visible : true,

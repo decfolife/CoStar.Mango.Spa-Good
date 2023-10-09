@@ -13,6 +13,8 @@ class EnvironmentsCrem implements Environment {
     financials:  'http://service2.dev.corp.virtualpremise.com:8090/financials/api/',
     dashboards: 'http://service2.dev.corp.virtualpremise.com:8090/dashboards/api/',
     authenticate: 'https://identity.dev.crem.aws.dshrp.com/api',
+    authentication: 'https://authentication.dev.crem.aws.dshrp.com/api/',
+    authorization: 'http://service2.dev.corp.virtualpremise.com:8090/authorization/api/',
     taskApproval: '', // For local testing.
     reports: 'http://service2.dev.corp.virtualpremise.com:8090/reports/api/',
     userMaintenance: 'http://service2.dev.corp.virtualpremise.com:8090/UserMaintenance/api/',
