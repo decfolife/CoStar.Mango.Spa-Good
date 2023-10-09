@@ -3,9 +3,11 @@ export abstract class Environment {
   abstract readonly name: string;
   abstract readonly appUrls: {
     readonly accounting: string;
-    readonly listpages: string;
+    readonly listpages: string;   
     readonly dashboards: string;
     readonly authenticate: string;
+    readonly authentication: string;
+    readonly authorization: string;
     readonly taskApproval: string;
     readonly userMaintenance: string;
     readonly formWizard: string;
