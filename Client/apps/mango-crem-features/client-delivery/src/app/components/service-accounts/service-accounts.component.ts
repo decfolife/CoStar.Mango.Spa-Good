@@ -25,7 +25,7 @@ export class ServiceAccountsComponent implements OnInit {
   public dropdownField: any;
   // public dataGridLoading: false;
   public columns: any;
-  public selectedFilter: string = 'all';
+  public selectedFilter: string = 'active';
   public dateFormat: string;
   public deleting = false;
   public searchText: string = '';
@@ -42,7 +42,7 @@ export class ServiceAccountsComponent implements OnInit {
   ngOnInit(): void {
     this.setDropdownItem();
     this.buildGridColumns();
-    this.getServiceAccouts('all');
+    this.getServiceAccouts('active');
   }
 
   private getServiceAccouts(filter: string) {
