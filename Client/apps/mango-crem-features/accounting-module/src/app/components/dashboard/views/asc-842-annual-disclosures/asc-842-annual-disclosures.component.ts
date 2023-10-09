@@ -119,10 +119,18 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       this.pivotCardData.push(item7)
       this.pivotCardData.push(item8)
     })
-    this.dataSources.push( new PivotGridDataSource({
-      store: this.pivotCardData,
-      fields: this.fieldConfigs[0]
-    }))
+    if (this.dataSources.length > 0) {
+      this.dataSources[0] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[0]
+      });
+    } else {
+      this.dataSources.push( new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[0]
+      }));
+    }
+
     this.loading = false;
   }
 
@@ -194,10 +202,17 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       this.pivotCardData.push(item7)
       this.pivotCardData.push(item8)
     })
-    this.dataSources.push( new PivotGridDataSource({
-      store: this.pivotCardData,
-      fields: this.fieldConfigs[1]
-    }))
+    if (this.dataSources.length > 1) {
+      this.dataSources[1] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[1]
+      });
+    } else {
+      this.dataSources.push( new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[1]
+      }));
+    }
     this.loading = false;
   }
 
