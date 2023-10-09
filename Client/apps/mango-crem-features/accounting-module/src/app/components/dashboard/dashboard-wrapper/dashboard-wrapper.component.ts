@@ -28,6 +28,7 @@ export class DashboardWrapperComponent implements OnInit {
     private inAppDisclosureService: InAppDisclosureService
   ) {}
   ngOnInit() {
+    this.selectedYear = new Date().getFullYear();
     this.featureFlagEnabled = true;
     this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
       this.criteriaSet = result.data[0].CriteriaSetID;
@@ -60,19 +61,12 @@ export class DashboardWrapperComponent implements OnInit {
         ];
   
         this.accountingYearData = [
-          {
-            value: 2020
-          },
-          {
-            value: 2021,
-          },
-          {
-            value: 2022,
-          },
-          {
-            value: 2023,
-          }
         ];
+        for(let i = 10; i > -11; i--) {
+          this.accountingYearData.push({
+            value: this.selectedYear + i
+          });
+        }
         //fetch criteriaSetID for each view;
         if(this.selectedView == 2) {
           this.accountingSegmentData = data.segments.data;

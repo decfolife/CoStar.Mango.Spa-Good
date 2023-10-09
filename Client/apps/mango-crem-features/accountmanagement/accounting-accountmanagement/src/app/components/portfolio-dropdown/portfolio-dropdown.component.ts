@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
-import { ConfigurationService } from '../../services/configuration.service';
 import { PortfolioDropdownService } from '../../services/portfolio-dropdown.service';
 
 @Component({
@@ -16,7 +15,7 @@ export class PortfolioDropdownComponent implements OnInit {
   @Input() disabled = false;
   @Output() masterGroupID: EventEmitter<any> = new EventEmitter();
 
-  constructor(private configurations: ConfigurationService, public service: PortfolioDropdownService, public activeRoute: ActivatedRoute) {
+  constructor(public service: PortfolioDropdownService, public activeRoute: ActivatedRoute) {
 
   }
 
@@ -41,7 +40,7 @@ export class PortfolioDropdownComponent implements OnInit {
   populatePortfolios(): void {
     this.service.getPortfolios()
       .subscribe(result => {
-        this.service.portfolios = result;
+        this.service.portfolios = result.data;
         if (+this.routeMasterGroupId === 0) {
           this.service.selectedPortfolio = this.service.portfolios[0];
           this.service.selectedPortfolioId = this.service.portfolios[0].masterGroupID;

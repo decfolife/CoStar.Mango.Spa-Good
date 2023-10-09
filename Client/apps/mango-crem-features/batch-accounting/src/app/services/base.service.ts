@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-
-import { map, catchError } from 'rxjs/operators';
-
+import { EndpointService } from '@mango/core-shared/lib-core-shared';
 import { environment } from '@mangoSpa/src/environments/environment.local';
-import { EndpointService } from './endpoint.service';
+
 
 @Injectable({ providedIn: 'root' })
 export class BaseService extends EndpointService {
@@ -32,53 +30,16 @@ export class BaseService extends EndpointService {
     if (this.dateFormat.indexOf('/') > -1) {
       return `${isoDateParts[Year]}/${isoDateParts[Month]}/${isoDateParts[Day]}`;
     }
-
     return `${isoDateParts[Year]}.${isoDateParts[Day]}.${isoDateParts[Month]}`;
   }
 
-  private getBaseUrl(): string {
-    const url = this.rootUrl;
-
-    if (environment.name.toString() !== 'LOCAL') {
-      if (!environment.isRestful){
-        return url.toLocaleLowerCase().replace('/api', '');
-      }
-    }
-
-    return `${url}/Base`;
-  }
-
   getUserRights() {
-    if (environment.name === 'LOCAL' || environment.isRestful) {
-      const url = `${this.getBaseUrl()}/GetUserRights`;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('getUserRights')),
-      );
-    }
-
-    const url = `${this.getBaseUrl()}/GetUserRights`;
-
-    return this.http.post(url, {}).pipe(
-      map(this.responseToObject),
-      catchError(this.handleError('getUserRights')),
-    );
+    const url = `${environment.appUrls.batchAccounting}/Base/GetUserRights`;
+    return this.callHttpGet(url, 'getUserRights')
   }
 
   getPortfolios() {
-    const url = `${this.getBaseUrl()}/GetPortfolios`;
-
-    if (environment.name.toString() === 'LOCAL') {
-      return this.http.get(url, this.httpOptions).pipe(
-        map(this.responseToObject),
-        catchError(this.handleError('getPortfolios')),
-      );
-    }
-
-    return this.http.post(url, {}).pipe(
-      map(this.responseToObject),
-      catchError(this.handleError('getPortfolios')),
-    );
+    const url = `${environment.appUrls.batchAccounting}/Base/GetPortfolios`;
+    return this.callHttpGet(url, 'getPortfolios')
   }
 }

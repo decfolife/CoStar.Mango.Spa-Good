@@ -38,7 +38,7 @@ export class AuthorizeComponent implements OnInit, OnDestroy {
       map(({ redirect_uri, client_key, contact_id }) => {
         console.log({client_key, contact_id})
         !!client_key ? this.centralAuthFacade.setClientKey(client_key) : null
-        !!contact_id ? this.centralAuthFacade.setContactId(parseInt(contact_id)) : null
+        //!!contact_id ? this.centralAuthFacade.setContactId(parseInt(contact_id)) : null
         this.centralAuthFacade.setRedirectionUri(encodeURIComponent(redirect_uri))
       }),
       switchMap(_ => combineLatest([this.centralAuthFacade.isUserAuthenticated$, this.centralAuthFacade.redirectionUri$, this.centralAuthFacade.clientKey$])),

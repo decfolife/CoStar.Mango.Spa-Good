@@ -15,6 +15,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
+    LoaderModule
   ],
   providers: [
     InAppDisclosureService

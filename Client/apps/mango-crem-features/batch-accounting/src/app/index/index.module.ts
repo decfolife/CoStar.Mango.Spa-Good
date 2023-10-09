@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
@@ -36,12 +36,11 @@ import {
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-import { ROUTES } from './index.routes';
 import { BatchEventListComponent } from '../batch-event-list/batch-event-list.component';
-import { BatchLogsComponent } from '../batch-logs/batch-logs.component';
 import { ParametersCardComponent } from '../batch-event-list/parameters-card/parameters-card.component';
 import { ParametersGridComponent } from '../batch-event-list/parameters-grid/parameters-grid.component';
-import { BaseService } from '../services/base.service';
+import { BatchLogsComponent } from '../batch-logs/batch-logs.component';
+import { ROUTES } from './index.routes';
 
 @NgModule({
   declarations: [
@@ -84,12 +83,6 @@ import { BaseService } from '../services/base.service';
     ScreenLoaderModule,
     RouterModule.forChild(ROUTES),
   ],
-
-  providers: [
-    {
-      provide: 'BASE_URL',
-      useFactory: BaseService.baseUrl
-    },
-  ],
+  providers: [],
 })
 export class IndexModule { }

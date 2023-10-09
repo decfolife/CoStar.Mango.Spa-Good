@@ -3,4 +3,5 @@ export interface BreadCrumb {
     label: string;
     params?: Params;
     url: string;
+    activeLink? : string;
   }

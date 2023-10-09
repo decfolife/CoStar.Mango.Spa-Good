@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Optional } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../../apps/mango/src/environments/environment.local';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
+@Injectable()
 export abstract class EndpointService {
   private static logged = false;
   userId$: Observable<number> = new Observable<number>(null)
@@ -32,6 +33,7 @@ export abstract class EndpointService {
               'Accept': 'application/json',
               'UserId': userId ? userId.toString() : '2',
               'ClientKey': clientKey || 'RETAILDEMO',
+              UseQueryOptimization: '1',
               'ApiKey': 'u1rfLIr102JFGKwNHn4xj2'
             })
           }
@@ -73,29 +75,11 @@ export abstract class EndpointService {
   }
 
   protected toObject(value: any): any {
-    if (environment.isRestful) {
       return {
         success: value.succeeded,
         data: value.hasOwnProperty('data') ? value.data : value,
         clientErrorMessage: value.succeeded ? null : value.message
       }
-    }
-
-    let res = value.d.hasOwnProperty('Result') ? value.d.Result : value.d;
-    let data;
-    try {
-      data = JSON.parse(res);
-    } catch (e) {
-      data = res;
-    }
-
-    return {
-      success: data.succeeded,
-      data: data.hasOwnProperty('data')
-        ? data.data
-        : data,
-      clientErrorMessage: data.succeeded ? null : data.message
-    };
   }
 
   protected byteArrayFromResponse(response: any) {

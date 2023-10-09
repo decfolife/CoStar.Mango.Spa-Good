@@ -40,7 +40,7 @@ export class PortfolioDropdownComponent implements OnInit {
   populatePortfolios(): void {
     this.service.getPortfolios()
       .subscribe(result => {
-        this.service.portfolios = result;
+        this.service.portfolios = result.data;
         if (+this.routeMasterGroupId === 0) {
           this.service.selectedPortfolio = this.service.portfolios[0];
           this.service.selectedPortfolioId = this.service.portfolios[0].masterGroupID;

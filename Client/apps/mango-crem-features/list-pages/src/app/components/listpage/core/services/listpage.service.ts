@@ -205,9 +205,9 @@ export class ListPageService extends EndpointService {
       );
   }
 
-  getAddWizards(objectTypeId: number): Observable<ApiResponse> {
+  getAddWizards(objectTypeId: number, objectTypeTypeId: number): Observable<ApiResponse> {
     if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'addWizards/' + objectTypeId;
+      const url = environment.appUrls.listpages + 'addWizards/' + objectTypeId +'/' + objectTypeTypeId;
 
       return this.http.get(url, this.httpOptions).pipe(
         map((x) => this.toObject(x) as any),
@@ -218,7 +218,7 @@ export class ListPageService extends EndpointService {
     const url = environment.appUrls.listpages + 'GetAddWizards';
 
     return this.http
-      .post(url, `{ "objectTypeId": ${objectTypeId} }`, this.httpOptions)
+      .post(url, `{ "objectTypeId": ${objectTypeId}, "objectTypeTypeId": ${objectTypeTypeId} }`, this.httpOptions)
       .pipe(
         map((x) => this.toObject(x) as any),
         catchError(this.handleError('getAddWizards'))

@@ -502,7 +502,8 @@ export class CriteriaFormComponent {
     
                             saveItem = {
                                 FieldName: config[item].dataField,
-                                VarCharData: multiDropdownValue
+                                VarCharData: multiDropdownValue,
+                                Delimeter: config[item].delimeter ? config[item].delimeter : ','
                             }
                         } else {
                             saveItem = {

@@ -24,6 +24,7 @@ export class AddNewMenuComponent implements OnInit {
 
   @Input() enabled: boolean;
   @Input() isGLEvent: boolean;
+  @Input() OTTID: number;
   @Input()
   set editPages(editPages: EditPage[]) {
     this.onEditPagesChanged(editPages);
@@ -116,7 +117,7 @@ export class AddNewMenuComponent implements OnInit {
     );
   }
 getNavigationLink(objectTypeId:number){
-  this.service.getAddWizards(objectTypeId) //calls getAddWizards for specific ObjectTypeId and that returns MatMenu buttons related Popup on CREM
+  this.service.getAddWizards(objectTypeId, this.OTTID) //calls getAddWizards for specific ObjectTypeId and that returns MatMenu buttons related Popup on CREM
   .subscribe(result => { 
       this.navigationPages = result.data.addWizards;
       this.addButtonClickSingleForMatMenu();
