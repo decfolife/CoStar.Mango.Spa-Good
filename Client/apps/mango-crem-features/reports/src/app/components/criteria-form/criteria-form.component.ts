@@ -241,7 +241,7 @@ export class CriteriaFormComponent {
                     let valueKey = item.criteriaSourceFieldName
                     let displayName= item.criteriaSourceDisplayFieldName
                     if (item.values?.length) {
-                        if (item.values?.[0]?.[valueKey.toUpperCase()] != null || item.values?.[1]?.[valueKey.toUpperCase()] != null){
+                        if (valueKey.toUpperCase() in item.values?.[0] || valueKey.toUpperCase() in item.values?.[1]){
                             valueKey = valueKey.toUpperCase();
                             displayName = displayName.toUpperCase();
                         }
