@@ -16,6 +16,8 @@ class EnvironmentsCrem implements Environment {
     reports: 'http://localhost:64980/api/',
     dataSetDictionary: 'http://localhost:64980/api/',
     authenticate: 'http://localhost:5000/api',
+    authentication: 'http://localhost:5000/api',
+    authorization:'https://localhost:57999/api/',
     userMaintenance: 'http://localhost:39179/api/',
     groupMaintenance: 'http://localhost:39180/api/',
     portfolioMaintenance: 'http://localhost:39181/api/',
