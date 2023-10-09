@@ -27,8 +27,8 @@ export class ServiceAccountDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getChangeHistory();
-    this.active = 'Yes' //data.isActive;
-    this.emailAddress = 'test1@test.com' //data.emailAddress;
+    this.active = this.data.isActive;
+    this.emailAddress = this.data.contactEmailAddress;
   }
 
   resetPassword(){
