@@ -12,6 +12,8 @@ class EnvironmentsCrem implements Environment {
     financials: 'http://172.20.9.224:30043/api/',
     dashboards: 'http://172.20.9.224:30037/api/',
     authenticate: 'https://identity.tst.crem.aws.dshrp.com/api',
+    authentication: 'https://authentication.dev.crem.aws.dshrp.com/api/',
+    authorization: 'http://172.20.9.224:30055/api/',
     taskApproval: '', 
     reports: 'http://172.20.9.224:30039/api/',
     userMaintenance: 'http://172.20.9.224:30019/api/',
