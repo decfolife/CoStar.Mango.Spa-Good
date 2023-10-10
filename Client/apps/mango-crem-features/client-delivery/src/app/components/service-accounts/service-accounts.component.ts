@@ -128,7 +128,7 @@ export class ServiceAccountsComponent implements OnInit {
         this.service.addServiceAccount(result)      
         .subscribe(result => {
           if (result) {
-            this.getServiceAccouts(this.selectedFilter);
+            this.getServiceAccouts(this.selectedFilter.toLowerCase());
             //this.serviceAccountsData.push(newEmail);
           }
         });
