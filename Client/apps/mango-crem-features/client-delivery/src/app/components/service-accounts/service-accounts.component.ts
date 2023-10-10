@@ -71,7 +71,7 @@ export class ServiceAccountsComponent implements OnInit {
   }
 
   public onCellClicked(e): void {
-    if (e.column.dataField !== "Actions") {
+    if (e.rowType != "header" && e.column.dataField !== "Actions") {
       let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
         width: '1200px',
         panelClass: 'client-delivery-modal',
