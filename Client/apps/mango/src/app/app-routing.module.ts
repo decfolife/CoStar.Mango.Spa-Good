@@ -420,24 +420,6 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: { currentSubApp: MangoSubApps.SERVICE_ACCOUNTS, moduleId: null, breadCrumb: { label: 'Service Accounts', append: false } },
           },
-          // Service Accounts
-          {
-            path: 'service-accounts',
-            loadChildren: () =>
-              import(
-                '@service-accounts/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
-            data: { currentSubApp: MangoSubApps.SERVICE_ACCOUNTS, moduleId: null, breadCrumb: { label: 'Service Accounts', append: false } },
-          },
-          // Service Accounts
-          {
-            path: 'service-accounts',
-            loadChildren: () =>
-              import(
-                '@service-accounts/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
-            data: { currentSubApp: MangoSubApps.SERVICE_ACCOUNTS, moduleId: null, breadCrumb: { label: 'Service Accounts', append: false } },
-          },
           // Group Maintenance
           {
             path: 'group-maintenance',
