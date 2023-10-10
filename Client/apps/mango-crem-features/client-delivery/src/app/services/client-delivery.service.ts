@@ -16,14 +16,10 @@ export class ClientDeliveryService extends EndpointService
     super(http, facade);
   }
 
-  getServiceAccounts(filter: string): Observable<any> {
-    // //TODO: Integrate API call
-    // const url = `${environment.appUrls.clientDelivery}GetServiceAccounts/${emailAddress}`;
-    // return this.callHttpGet(url, 'GetServiceAccounts')    
+  getServiceAccounts(filter: string): Observable<any> {       
     let cKey : string;
     this.clientKey$.subscribe(clientKey=>{ cKey = clientKey;})
-    //console.log("qClientKey : " + qClientKey);  
-    if(!cKey) cKey ='Blank';  
+    if(!cKey) cKey ='retaildemo';  
     if(cKey){
       const url = `${environment.appUrls.authorization}serviceaccounts?Page=1&PageSize=10000&clientKey=${cKey}`;
       return this.callHttpGet(url, 'GetServiceAccounts')
@@ -32,21 +28,7 @@ export class ClientDeliveryService extends EndpointService
     
   }
 
-  deleteServiceAccount(serviceAccountsData: any, contactID: number, contactEmailAddress: string, contactActiveFlg: boolean, filter:string): Observable<any> {
-    // deleteServiceAccount(contactID: number, filter:string): Observable<any> {
-    // //TODO: Integrate API call
-    // const url = `${environment.appUrls.clientDelivery}DeleteServiceAccount/${contactID}`;
-    // return this.callHttpPost(url, 'DeleteServiceAccount', {contactID});
-      /*
-          https://authentication.dev.crem.aws.dshrp.com/api/user/serviceaccount/testblank285@costargroup.com/blank 
-          https://authentication.dev.crem.aws.dshrp.com/api/serviceaccount/testblank286%40costargroup.com/blank
-          {
-            "email": "testblank286@costargroup.com",
-            "clientKey": "blank",
-            "isActive": false
-          }
-      */
-         
+  deleteServiceAccount(serviceAccountsData: any, contactID: number, contactEmailAddress: string, contactActiveFlg: boolean, filter:string): Observable<any> {    
             let cKey : string;
             this.clientKey$.subscribe(clientKey=>{ cKey = clientKey;})
             
@@ -56,41 +38,19 @@ export class ClientDeliveryService extends EndpointService
               return this.callHttpPost(url, 'DeleteServiceAccount', reqbody)
             }
             return of({});
-/* 
-            const index = serviceAccountsData.findIndex((item) => {
-              return item.contactID.toString() === contactID.toString();
-            });
-            serviceAccountsData[index].isActive = 'inactive';
-
-            if (filter === 'all') {
-              return of(serviceAccountsData);
-            } 
-            else {
-              const filteredData = serviceAccountsData.filter(x=>x.isActive.toLowerCase() === filter.toLowerCase());
-              return of(filteredData);
-            } */
   }
 
-  addServiceAccount(emailAddress: string): Observable<any> {
-    // //TODO: Integrate API call
-    // const url = `${environment.appUrls.clientDelivery}AddServiceAccount/${emailAddress}`;
-    // return this.callHttpPost(url, 'AddServiceAccount', {emailAddress})
-
+  addServiceAccount(emailAddress: string): Observable<any> {  
      let cKey : string; 
    // let uID : number;
     this.clientKey$.subscribe(clientKey=>{ cKey = clientKey; });
     //this.userId$.subscribe(userid=>{ uID = userid; }); 
-
     if(!cKey) {
       cKey = "RETAILDEMO";
-    }
-   
-            var reqbody = {"email": emailAddress,  "clientKey": cKey };
-            const url = `${environment.appUrls.authentication}user/serviceaccount/`;
-            return this.callHttpPost(url, 'AddServiceAccount', reqbody)
-
-    //reqestion: callHttpDelete?
-    //  return of({contactID: 1000, contactEmailAddress: emailAddress, isActive: 1});
+    }   
+     var reqbody = {"email": emailAddress,  "clientKey": cKey };
+     const url = `${environment.appUrls.authentication}user/serviceaccount/`;
+     return this.callHttpPost(url, 'AddServiceAccount', reqbody)
   }
 
   resetPassword(emailAddress: string): Observable<any> {
