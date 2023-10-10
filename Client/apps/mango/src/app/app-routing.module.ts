@@ -169,6 +169,32 @@ const routes: Routes = [
               breadCrumb: { label: 'Leases', append: true }
             },
           },
+          {
+            path: 'revenues',
+            loadChildren: () =>
+              import(
+                '@list-pages/components/index.module.hosted'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 1,
+              objectTypeId: 194,
+              currentSubApp: MangoSubApps.REVENUES,
+              breadCrumb: { label: 'Revenues', append: true }
+            },
+          },
+          {
+            path: 'expenses',
+            loadChildren: () =>
+              import(
+                '@list-pages/components/index.module.hosted'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 1,
+              objectTypeId: 193,
+              currentSubApp: MangoSubApps.EXPENSES,
+              breadCrumb: { label: 'Expenses', append: true }
+            },
+          },
         ]
       },
 
@@ -328,6 +354,14 @@ const routes: Routes = [
                 '@reports/components/index/index.module'
               ).then((mod) => mod.IndexModule),
             data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Reports', append: false, activeLink: 'Reports' } },
+          },
+          {
+            path: 'data-set-dictionary',
+            loadChildren: () =>
+              import(
+                '@data-set-dictionary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Data Set Dictionary', append: false, activeLink: 'Data Set Dictionary' } },
           },
         ]
       },

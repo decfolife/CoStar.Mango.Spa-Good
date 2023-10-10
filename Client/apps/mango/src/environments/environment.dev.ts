@@ -30,7 +30,8 @@ class EnvironmentsCrem implements Environment {
     objectActions: 'http://172.20.9.224:30034/api/',
     header: 'http://172.20.9.224:30044/api/',
     inAppDisclosure: 'http://172.20.9.224:30008/api/',
-    accountingSummary:"http://172.20.9.224:30040/api/AccountingSummary/"
+    accountingSummary:"http://172.20.9.224:30040/api/AccountingSummary/",
+    dataSetDictionary: 'http://172.20.9.224:30039/api/'
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].dev.corp.virtualpremise.com';

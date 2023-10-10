@@ -12,6 +12,7 @@ export abstract class Environment {
     readonly userMaintenance: string;
     readonly formWizard: string;
     readonly quickSearch: string;
+    readonly dataSetDictionary: string;
     readonly userService: string;
     readonly header: string;
   };
