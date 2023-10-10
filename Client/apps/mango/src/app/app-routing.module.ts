@@ -363,6 +363,14 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Data Set Dictionary', append: false, activeLink: 'Data Set Dictionary' } },
           },
+          {
+            path: 'financial-reporting-settings',
+            loadChildren: () =>
+              import(
+                '@financial-reporting-settings/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Financial Reporting Settings', append: false, activeLink: 'Financial Reporting Settings' } },
+          },
         ]
       },
 
