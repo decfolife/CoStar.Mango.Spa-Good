@@ -45,6 +45,7 @@
           "apps/mango-crem-features/dashboards/portfolio-dashboard/src/styles.scss",
           "apps/mango-crem-features/dashboards/project-dashboard/src/styles.scss",
           "apps/mango-crem-features/accounting-profile/accounting-profiles/src/styles.scss",
+          "apps/mango-crem-features/reports/src/styles.scss",
           "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/styles.scss",
           "apps/mango-crem-features/group-maintenance/src/styles.scss",
           "apps/mango-crem-features/accounting-module/src/styles.scss",
