@@ -106,17 +106,12 @@ export class ServiceAccountsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-
-        //console.log(result);
         const contactId = result.contactId;
-        const contactEmailAddress = result.contactEmailAddress;
-        //TODO: clean code when integrate API call with real data
-        // this.service.deleteServiceAccount(contactId, this.selectedFilter)   
+        const contactEmailAddress = result.contactEmailAddress;        
         this.service.deleteServiceAccount(this.serviceAccountsData, contactId, contactEmailAddress, contactActiveFlg, this.selectedFilter)       
         .subscribe(response => {
-          if(response) {
-           // this.serviceAccountsData = response;
-           this.getServiceAccouts(this.selectedFilter);
+          if(response) {           
+           this.getServiceAccouts(this.selectedFilter.toLowerCase());
             this.searchDataGrid(this.searchText);
           }
         });
@@ -135,7 +130,7 @@ export class ServiceAccountsComponent implements OnInit {
         this.service.addServiceAccount(result)      
         .subscribe(result => {
           if (result) {
-            this.getServiceAccouts('active');
+            this.getServiceAccouts(this.selectedFilter.toLowerCase());
             //this.serviceAccountsData.push(newEmail);
           }
         });
