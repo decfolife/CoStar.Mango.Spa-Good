@@ -15,6 +15,7 @@ import {
 import { AlertsRulesGridComponent } from './alerts-rules-grid/alerts-rules-grid.component';
 import { AlertsRulesComponent } from './alerts-rules/alerts-rules.component';
 import { AppComponent } from './app.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { AppComponent } from './app.component';
     AlertsRulesGridComponent,
   ],
   imports: [
+    CommonModule,
     DevExtremeModule,
     DxDataGridModule,
     DxFormModule,

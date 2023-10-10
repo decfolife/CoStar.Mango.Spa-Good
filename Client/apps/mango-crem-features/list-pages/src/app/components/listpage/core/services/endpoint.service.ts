@@ -12,12 +12,14 @@ import { environment } from 'apps/mango/src/environments/environment.local';
 @Injectable()
 export class EndpointService {
   private static logged = false;
+
+  // This endpoint service is going to be removed in the next PR
   protected httpOptions: any = {
     headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'UserId': '2',
-        'ClientKey': 'RETAILDEMO'
+        'ClientKey': 'blank'
     })
   };
 

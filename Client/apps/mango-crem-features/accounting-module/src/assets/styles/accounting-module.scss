@@ -207,6 +207,7 @@ crem-card {
         padding-right: 0px;
         padding-bottom: 0px;
         padding-left: 0px;
+		margin-bottom: 16px;
         mat-card-header.mat-card-header {
             padding: 16px;
             border-bottom: 1px solid #c2c2c2;
@@ -224,10 +225,6 @@ crem-card {
 	width: 40px !important;
 	min-width: 40px !important;
 	max-width: 40px !important;
-}
-
-.dx-overlay-wrapper.dx-popup-wrapper.dx-dropdowneditor-overlay .dx-overlay-content {
-    min-width: 320px!important;
 }
 
 .dx-checkbox {

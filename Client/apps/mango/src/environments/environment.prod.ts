@@ -10,6 +10,8 @@ class EnvironmentsCrem implements Environment {
     financials: '',
     dashboards: '',
     authenticate: '',
+    authentication: '',
+    authorization: '',
     taskApproval: '', // For local testing.
     quickSearch: '',
     userMaintenance:'',

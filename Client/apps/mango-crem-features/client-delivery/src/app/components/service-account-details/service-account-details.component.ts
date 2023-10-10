@@ -27,8 +27,8 @@ export class ServiceAccountDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getChangeHistory();
-    this.active = 'Yes' //data.isActive;
-    this.emailAddress = 'test1@test.com' //data.emailAddress;
+    this.active = this.data.contactActive;
+    this.emailAddress = this.data.contactEmailAddress;
   }
 
   resetPassword(){
@@ -43,11 +43,11 @@ export class ServiceAccountDetailsComponent implements OnInit {
   private getChangeHistory() {
       //Temp data before client delivery API integration
       this.changeHistoryData = [
-      {changeDate: 191, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 402, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 403, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 415, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 955, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
+      {changeDate: 191, user: 'Li Liu 1', description: 'Create Account 1', oldValue: 'Old value', newValue: 'New value'},
+      {changeDate: 402, user: 'Li Liu 2', description: 'Create Account 2', oldValue: 'Old value', newValue: 'New value'},
+      {changeDate: 403, user: 'Li Liu 3', description: 'Create Account 3', oldValue: 'Old value', newValue: 'New value'},
+      {changeDate: 415, user: 'Li Liu 4', description: 'Create Account 4', oldValue: 'Old value', newValue: 'New value'},
+      {changeDate: 955, user: 'Li Liu 4', description: 'Create Account 5', oldValue: 'Old value', newValue: 'New value'},
       ];
   }
 

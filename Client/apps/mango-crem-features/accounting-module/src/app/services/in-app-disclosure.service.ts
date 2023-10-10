@@ -56,6 +56,15 @@ export class InAppDisclosureService extends EndpointService{
 
   }
 
+  public getIADCardConfigs(dashboardId) {
+    let param;
+    if (environment.isRestful) {
+      param = { dashboardId: dashboardId };
+      const url = `${environment.appUrls.inAppDisclosure}IAD/IADCardConfigs`;
+      return this.callHttpGet(url, 'getIADCardData',  param)
+    }
+  }
+
   public getAccountingCriteriaSets() {
     const url = `${environment.appUrls.accountingService}/criteriasets`
     return this.callHttpGet(url, 'getAccountingCriteriaSets');
