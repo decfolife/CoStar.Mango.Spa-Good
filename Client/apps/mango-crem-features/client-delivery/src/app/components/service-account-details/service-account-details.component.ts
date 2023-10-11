@@ -41,14 +41,14 @@ export class ServiceAccountDetailsComponent implements OnInit {
   }
 
   private getChangeHistory() {
-      //Temp data before client delivery API integration
-      this.changeHistoryData = [
-      {changeDate: 191, user: 'Li Liu 1', description: 'Create Account 1', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 402, user: 'Li Liu 2', description: 'Create Account 2', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 403, user: 'Li Liu 3', description: 'Create Account 3', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 415, user: 'Li Liu 4', description: 'Create Account 4', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 955, user: 'Li Liu 4', description: 'Create Account 5', oldValue: 'Old value', newValue: 'New value'},
-      ];
+    this.service.getServiceAccountChangeHistory(this.data.contactId)
+    .subscribe(result => {        
+      if(result){          
+        if(result.data){
+          this.changeHistoryData =  result.data.items;
+        }          
+      }
+    })
   }
 
   public closeDialog() {
