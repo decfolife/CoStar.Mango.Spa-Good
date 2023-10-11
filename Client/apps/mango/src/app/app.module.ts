@@ -1,12 +1,10 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AppComponent } from './app.component';
-import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
+import { MatPasswordStrengthModule } from '@angular-material-extensions/password-strength';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
-import { Environment, IS_CA_STANDALONE_APP, OAUTH_REDIRECT_QUERY_PARAM, RUNNING_IN_MANGO_SPA } from '@mango/data-models/lib-data-models';
-import { environment } from '../environments/environment.local';
+import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import {
   HeaderService,
   LibCoreSharedModule,
@@ -14,33 +12,33 @@ import {
   StorageService,
   UserService,
 } from '@mango/core-shared';
-import { AppService } from './app.service';
-import { ToastrModule } from 'ngx-toastr';
+import { CREM_FORCE_RELOGIN_URLS, Environment, IS_CA_STANDALONE_APP, OAUTH_REDIRECT_QUERY_PARAM, RUNNING_IN_MANGO_SPA } from '@mango/data-models/lib-data-models';
 import { LibExternalLibrariesModule } from '@mango/ui-shared/lib-external-libraries';
-import { MatPasswordStrengthModule } from '@angular-material-extensions/password-strength';
-import { BookmarksService } from '../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
-import { CentralAuthErrorHandler } from 'apps/mango-crem-features/central-auth/src/app/services/error-handler.service';
+import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
-import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import * as fromApp from './+state/app/app.reducer';
+import { CentralAuthErrorHandler } from 'apps/mango-crem-features/central-auth/src/app/services/error-handler.service';
+import { ToastrModule } from 'ngx-toastr';
+import { combineLatest, of } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { BookmarksService } from '../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
+import { environment } from '../environments/environment.local';
 import { MangoAppFacade } from './+state/app/app.facade';
-import { AppRoutingModule } from './app-routing.module';
-import { CremModule } from './components/crem-component/crem.module';
-import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
-import { CustomSerializer } from './utils/custom-route-serializer';
+import * as fromApp from './+state/app/app.reducer';
 import { AuthenticationEffects } from './+state/app/effects/authentication.effects';
 import { InitSetupEffects } from './+state/app/effects/init-setup.effects';
-import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
 import { NavigationEffect } from './+state/app/effects/navigation.effects';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { AppService } from './app.service';
+import { CremModule } from './components/crem-component/crem.module';
+import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
 import { MangoNavigationService } from './services/navigation.service';
-import { CremHttpInterceptor } from './helpers/crem-http.interceptor';
 import { CSPModuleInlineStyles } from './utils/content-security-policies/inline-styles';
-import { NavigationStart, Router } from '@angular/router';
-import { filter, map, switchMap } from 'rxjs/operators';
-import { RouterEvent } from '@angular/router';
-import { combineLatest, of } from 'rxjs';
+import { CustomSerializer } from './utils/custom-route-serializer';
 
 @NgModule({
   declarations: [
@@ -108,11 +106,12 @@ import { combineLatest, of } from 'rxjs';
 export class AppModule {
   constructor(private router: Router, private facade: MangoAppFacade) {
     this.router.events.pipe(
-      filter((e: RouterEvent) => e instanceof NavigationStart && e.url.includes('/v06')),
+      filter((e: RouterEvent) => e instanceof NavigationStart && e.url.includes('.asp')),
       switchMap(e => combineLatest([of(e.url), this.facade.clientKey$])),
       filter(([url, clientKey]) => !!url && !!clientKey),
       map(([url, clientKey]) => {
-        const newUrl = url.includes('AdminHome2.aspx') ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
+        const forceRelogin = CREM_FORCE_RELOGIN_URLS.some(subUrl => url.includes(subUrl))
+        const newUrl = forceRelogin ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
         window.location.href = newUrl
       })
     ).subscribe()
