@@ -110,7 +110,8 @@ export class ServiceAccountsComponent implements OnInit {
         const contactEmailAddress = result.contactEmailAddress;        
         this.service.deleteServiceAccount(this.serviceAccountsData, contactId, contactEmailAddress, contactActiveFlg, this.selectedFilter)       
         .subscribe(response => {
-          if(response) {           
+          if(response) {  
+            result.contactActive = contactActiveFlg;       
            this.getServiceAccouts(this.selectedFilter.toLowerCase());
             this.searchDataGrid(this.searchText);
           }
@@ -126,11 +127,17 @@ export class ServiceAccountsComponent implements OnInit {
       panelClass: 'client-delivery-modal',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result.length > 0) {        
-        this.service.addServiceAccount(result)      
+      if (result.length > 0) {   
+       /*  let newEmail:string;
+        newEmail = result; */
+        this.service.addServiceAccount(result)             
         .subscribe(result => {
           if (result) {
+            //this.serviceAccountsData = null;
+            if(!this.selectedFilter) this.selectedFilter = 'active';
             this.getServiceAccouts(this.selectedFilter.toLowerCase());
+            /* let newServiceAccount = this.serviceAccountsData.filter(x=>x.contactActive === true && x.contactEmailAddress === newEmail);
+            newServiceAccount.contactActive = true; */
             //this.serviceAccountsData.push(newEmail);
           }
         });
