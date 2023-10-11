@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+
+.dx-header-row {
+    background-color: #fff !important;
+    color: grey;
+    font-weight: 100;
+}
+
+table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-selection td {
+    background-color: rgb(216, 216, 216) !important;
+}
+
+.dx-editor-cell {
+    border-bottom: 0px !important;
+}

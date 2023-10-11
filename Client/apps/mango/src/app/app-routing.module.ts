@@ -39,6 +39,7 @@ const routes: Routes = [
   // MAIN APP
   {
     path: 'crem',
+    component: CremComponent,
     canActivate: [AuthGuard],
     data: { breadCrumb: { label: null, append: false } },
     children: [
@@ -48,20 +49,46 @@ const routes: Routes = [
       // PROJECTS/DEALS PATH
       {
         path: 'projects',
-        component: CremComponent,
         data: { moduleId: 2, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           {
             path: 'dashboard',
             loadChildren: () =>
               import(
                 '@project-dashboard/components/index/index.module'
               ).then((mod) => mod.IndexModule),
-            data: { currentSubApp: MangoSubApps.PROJECTS_DASHBOARD, moduleId: 2, breadCrumb: { label: 'Projects Dashboard', append: false } },
+            data: { currentSubApp: MangoSubApps.PROJECTS_DASHBOARD, moduleId: 2, breadCrumb: { label: 'Projects Dashboard', append: false, activeLink: 'Dashboard' } },
           },
           // Deals route
           // Tasks route
+          {
+            path: 'tasks',
+            loadChildren: () =>
+              import(
+                '@list-pages/components/index.module.hosted'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 2,
+              objectTypeId: 9,
+              currentSubApp: MangoSubApps.LIST_PAGES,
+              breadCrumb: { label: 'Tasks', append: true }
+            },
+          },
+          //Projects list page
+          {
+            path: 'projects',
+            loadChildren: () =>
+              import(
+                '@list-pages/components/index.module.hosted'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 2,
+              objectTypeId: 1,
+              currentSubApp: MangoSubApps.LIST_PAGES,
+              breadCrumb: { label: 'Projects', append: true }
+            },
+          },
           {
             path: 'recent-activities',
             loadChildren: () =>
@@ -71,7 +98,7 @@ const routes: Routes = [
             data: {
               moduleId: 2,
               objectTypeId: null,
-              breadCrumb: {label: 'Recent Activities', append: true}
+              breadCrumb: { label: 'Recent Activities', append: true }
             },
           },
         ]
@@ -80,11 +107,11 @@ const routes: Routes = [
       // STRATEGY
       {
         path: 'strategy',
-        component: CremComponent,
         data: { breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-          {path: 'dashboard', // Todo: Temporary component pointing to 404
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+          {
+            path: 'dashboard', // Todo: Temporary component pointing to 404
             loadChildren: () =>
               import(
                 '@mangoSpa/src/app/components/not-found-page/not-found-page-routing.module'
@@ -92,7 +119,8 @@ const routes: Routes = [
             data: {
               moduleId: null,
               currentSubApp: null,
-              breadCrumb: { label: 'Strategy Dashboard', append: false } },
+              breadCrumb: { label: 'Strategy Dashboard', append: false, activeLink: 'Dashboard' }
+            },
           },
         ]
       },
@@ -100,11 +128,11 @@ const routes: Routes = [
       // PORTFOLIO
       {
         path: 'portfolio',
-        component: CremComponent,
         data: { moduleId: 1, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-          {path: 'dashboard',
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+          {
+            path: 'dashboard',
             loadChildren: () =>
               import(
                 '@portfolio-dashboard/components/index/index.module'
@@ -112,10 +140,11 @@ const routes: Routes = [
             data: {
               moduleId: 1,
               currentSubApp: MangoSubApps.PORTFOLIO_DASHBOARD,
-              breadCrumb: { label: 'Portfolio Dashboard', append: false }
+              breadCrumb: { label: 'Portfolio Dashboard', append: false, activeLink: 'Dashboard' }
             },
           },
-          {path: 'buildings',
+          {
+            path: 'buildings',
             loadChildren: () =>
               import(
                 '@list-pages/components/index.module.hosted'
@@ -124,10 +153,11 @@ const routes: Routes = [
               moduleId: 1,
               objectTypeId: 5,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Buildings', append: false }
+              breadCrumb: { label: 'Buildings', append: true }
             },
           },
-          {path: 'leases',
+          {
+            path: 'leases',
             loadChildren: () =>
               import(
                 '@list-pages/components/index.module.hosted'
@@ -136,7 +166,33 @@ const routes: Routes = [
               moduleId: 1,
               objectTypeId: 4,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Leases', append: false }
+              breadCrumb: { label: 'Leases', append: true }
+            },
+          },
+          {
+            path: 'revenues',
+            loadChildren: () =>
+              import(
+                '@list-pages/components/index.module.hosted'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 1,
+              objectTypeId: 194,
+              currentSubApp: MangoSubApps.REVENUES,
+              breadCrumb: { label: 'Revenues', append: true }
+            },
+          },
+          {
+            path: 'expenses',
+            loadChildren: () =>
+              import(
+                '@list-pages/components/index.module.hosted'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 1,
+              objectTypeId: 193,
+              currentSubApp: MangoSubApps.EXPENSES,
+              breadCrumb: { label: 'Expenses', append: true }
             },
           },
         ]
@@ -145,20 +201,57 @@ const routes: Routes = [
       // ACCOUNTING PATH
       {
         path: 'accounting',
-        component: CremComponent,
         data: { moduleId: 9, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           // Dashboard & Accounting Events
-          {path: '', loadChildren: () =>
-            import(
-              '@accounting-dashboard/components/index/index.module'
-            ).then((mod) => mod.IndexMainModule),
+          {
+            path: 'dashboard', loadChildren: () =>
+              import(
+                '@accounting-dashboard/components/index/index.module'
+              ).then((mod) => mod.IndexMainModule),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.ACCOUNT_MANAGEMENT,
-              breadCrumb: { label: 'Accounting Dashboard', append: false }
+              breadCrumb: { label: 'Accounting Dashboard', append: false, activeLink: 'Dashboard' }
             }
+          },
+          //accounting events
+          {
+            path: 'events',
+            loadChildren: () =>
+              import(
+                '@accounting-dashboard/components/listpage/accounting-listpage/accounting-listpage.module'
+              ).then((mod) => mod.AccountingListpageModule),
+            data: {
+              moduleId: 9,
+              objectTypeId: null,
+              breadCrumb: { label: 'Events', append: true }
+            },
+          },
+          // Alerts
+          {
+            path: 'lease-alerts',
+            loadChildren: () =>
+              import(
+                '@lease-alerts/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              breadCrumb: { label: 'Lease Alerts', append: true }
+            },
+          },
+          {
+            path: 'alerts-rules',
+            loadChildren: () =>
+              import(
+                '@alerts-rules/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.ALERT_RULES,
+              breadCrumb: { label: 'Alerts Rules', append: true }
+            },
           },
           // Batch Processes
           {
@@ -170,7 +263,19 @@ const routes: Routes = [
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
-              breadCrumb: { label: 'Batch Accounting', append: false }
+              breadCrumb: { label: 'Batch Accounting', append: true }
+            },
+          },
+          {
+            path: 'summary',
+            loadChildren: () =>
+              import(
+                '@accounting-summary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
+              breadCrumb: { label: 'Accounting Summary', append: false }
             },
           },
           // Accounting Settings
@@ -182,12 +287,12 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               moduleId: 9,
-              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
-              breadCrumb: { label: 'Accounting Settings', append: false }
+              currentSubApp: MangoSubApps.LEASE_ALERTS,
+              breadCrumb: { label: 'Accounting Settings', append: true }
             },
           },
           { // Discount Rate Profile | Amortization Rate Profile | Journal Entries Profile, etc
-            path: '',
+            path: 'discountrateprofiles',
             loadChildren: () =>
               import(
                 '@accounting-profile/components/index/index.module'
@@ -195,7 +300,7 @@ const routes: Routes = [
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.ACCOUNTING_PROFILE,
-              breadCrumb: { label: 'Discount Rate Profiles', append: false }
+              breadCrumb: { label: 'Discount Rate Profiles', append: true }
             },
           },
         ]
@@ -204,20 +309,20 @@ const routes: Routes = [
       // CONTACTS
       {
         path: 'contacts',
-        component: CremComponent,
         data: { moduleId: 3, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'companies/list', pathMatch: 'full'},
-          {path: 'companies/list',
+          { path: '', redirectTo: 'companies/list', pathMatch: 'full' },
+          {
+            path: 'companies/list',
             loadChildren: () =>
               import(
                 '@list-pages/components/index.module.hosted'
               ).then((mod) => mod.IndexModule),
             data: {
               moduleId: 3,
-              objectTypeId: 5,
+              objectTypeId: 11,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Contacts', append: false }
+              breadCrumb: { label: 'Companies', append: false, activeLink: 'Companies' }
             },
           },
           {
@@ -228,9 +333,9 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               moduleId: 3,
-              objectTypeId: 11,
+              objectTypeId: 5,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Contacts', append: false }
+              breadCrumb: { label: 'Contacts', append: true }
             },
           },
         ]
@@ -239,17 +344,32 @@ const routes: Routes = [
       // REPORTS
       {
         path: 'reports',
-        component: CremComponent,
         data: { moduleId: 4, breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'list', pathMatch: 'full'},
+          { path: '', redirectTo: 'list', pathMatch: 'full' },
           {
             path: 'list',
             loadChildren: () =>
               import(
                 '@reports/components/index/index.module'
               ).then((mod) => mod.IndexModule),
-            data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Reports', append: false } },
+            data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Reports', append: false, activeLink: 'Reports' } },
+          },
+          {
+            path: 'data-set-dictionary',
+            loadChildren: () =>
+              import(
+                '@data-set-dictionary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Data Set Dictionary', append: false, activeLink: 'Data Set Dictionary' } },
+          },
+          {
+            path: 'financial-reporting-settings',
+            loadChildren: () =>
+              import(
+                '@financial-reporting-settings/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: { currentSubApp: MangoSubApps.REPORTS, moduleId: 4, breadCrumb: { label: 'Financial Reporting Settings', append: false, activeLink: 'Financial Reporting Settings' } },
           },
         ]
       },
@@ -257,10 +377,9 @@ const routes: Routes = [
       // ADMIN
       {
         path: 'admin',
-        component: CremComponent,
         data: { breadCrumb: { label: null, append: false } },
         children: [
-          {path: '', redirectTo: 'list', pathMatch: 'full'},
+          { path: '', redirectTo: 'list', pathMatch: 'full' },
           {
             path: 'list',
             loadChildren: () =>
@@ -270,7 +389,7 @@ const routes: Routes = [
             data: {
               moduleId: 6,
               currentSubApp: MangoSubApps.USER_MAINTENANCE,
-              breadCrumb: { label: 'Admin', append: false }
+              breadCrumb: { label: 'Admin', append: false, activeLink: 'Dashboard' }
             },
           },
           // TODO: Fix path to prevent duplicated path, E.g. /crem/admin/user-maintenance/user-maintenance
@@ -281,7 +400,16 @@ const routes: Routes = [
               import(
                 '@user-maintenance/components/index/index.module'
               ).then((mod) => mod.IndexModule),
-            data: { currentSubApp: MangoSubApps.USER_MAINTENANCE, moduleId: null, breadCrumb: { label: 'User Maintenance', append: false } },
+            data: { currentSubApp: MangoSubApps.USER_MAINTENANCE, moduleId: null, breadCrumb: { label: 'User Maintenance', append: true } },
+          },
+          // Service Accounts
+          {
+            path: 'service-accounts',
+            loadChildren: () =>
+              import(
+                '@service-accounts/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: { currentSubApp: MangoSubApps.SERVICE_ACCOUNTS, moduleId: null, breadCrumb: { label: 'Service Accounts', append: false } },
           },
           // Service Accounts
           {
@@ -299,7 +427,7 @@ const routes: Routes = [
               import(
                 '@group-maintenance/components/index/index.module'
               ).then((mod) => mod.IndexModule),
-            data: { currentSubApp: MangoSubApps.GROUP_MAINTENANCE, moduleId: null, breadCrumb: { label: 'Group Maintenance', append: false } },
+            data: { currentSubApp: MangoSubApps.GROUP_MAINTENANCE, moduleId: null, breadCrumb: { label: 'Group Maintenance', append: true } },
           },
           // Object Maintenance
           {
@@ -311,7 +439,7 @@ const routes: Routes = [
             data: {
               currentSubApp: MangoSubApps.OBJECT_MAINTENANCE,
               moduleId: null,
-              breadCrumb: { label: 'Object Maintenance', append: false }
+              breadCrumb: { label: 'Object Maintenance', append: true }
             },
           },
           // Portfolio Maintenance
@@ -324,7 +452,7 @@ const routes: Routes = [
             data: {
               currentSubApp: MangoSubApps.PORTFOLIO_MAINTENANCE,
               moduleId: null,
-              breadCrumb: { label: 'Portfolio Maintenance', append: false }
+              breadCrumb: { label: 'Portfolio Maintenance', append: true }
             },
           },
         ]

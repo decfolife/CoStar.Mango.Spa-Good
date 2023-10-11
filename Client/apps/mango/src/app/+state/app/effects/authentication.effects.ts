@@ -50,7 +50,7 @@ export class AuthenticationEffects {
           return [user, contactRecord, redirectUrl]
         }),
         switchMap(([user, contactRecord, redirectUrl]: [UserAuth, ContactRecord, string]) => {
-          this.router.navigate([redirectUrl || '/'])
+          this.router.navigateByUrl(decodeURIComponent(redirectUrl) || '/')
           return of(
             AppActions.setAuthenticatedUser({ user }),
             AppActions.setContactRecord({ contactRecord })

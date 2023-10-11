@@ -22,7 +22,6 @@ class EnvironmentsCrem implements Environment {
     groupMaintenance: 'http://localhost:39180/api/',
     portfolioMaintenance: 'http://localhost:39181/api/',
     objectMaintenance: 'http://localhost:39182/api/',
-    adminService: 'http://localhost:39183/api/',
     alertsRules: 'https://localhost:5001/api/Alerts',
     alerts: 'https://localhost:5001/api/Alerts',
     accountingService: 'http://localhost:39187/api/Accounting',
@@ -32,7 +31,8 @@ class EnvironmentsCrem implements Environment {
     userService: 'http://localhost:41569/api',
     objectActions: 'http://localhost:27287/api/',
     formWizard: 'http://localhost:5000/api/',
-    header: 'http://localhost:39179/api/'
+    header: 'http://localhost:39179/api/',
+    accountingSummary:"http://localhost:5205/api/accountingSummary/"
   };
   isRestful = true;
   cremBaseUrl = 'retaildemo.local';

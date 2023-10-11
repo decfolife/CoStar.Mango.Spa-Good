@@ -1,6 +1,6 @@
 <div class="breadcrumb-container">
 	<span *ngFor="let breadcrumb of breadcrumbs; let last = last" class="mango-breadcrumbs">
-			<a [routerLink]="breadcrumb.url" [queryParams]="breadcrumb.params" class="breadcrumb"> {{ breadcrumb.label }} </a>
+			<a [routerLink]="breadcrumb.url" [queryParams]="breadcrumb.params" class="breadcrumb"> {{ breadcrumb?.label }} </a>
 			<span *ngIf="!last" class="breadcrumb-deliminator">
 					<small> {{ delineator }} </small>
 			</span>

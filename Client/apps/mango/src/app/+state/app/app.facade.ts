@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Client, ContactRecord, Link, MangoSubApps, UserAuth, UserInfo } from '@mango/data-models/lib-data-models';
+import { BreadCrumb, Client, ContactRecord, Link, MangoSubApps, UserAuth, UserInfo } from '@mango/data-models/lib-data-models';
 
 import { select, Store, Action } from '@ngrx/store';
 import { BehaviorSubject } from 'rxjs';
@@ -50,6 +50,10 @@ export class MangoAppFacade {
 
   setUserInfo(userInfo: UserInfo): void {
     this.store.dispatch(AppActions.setUserInfo({ userInfo }))
+  }
+
+  setBreadcrumbs(breadcrumbs: BreadCrumb[]): void {
+    this.store.dispatch(AppActions.setBreadcrumbs({ breadcrumbs }));
   }
 
   setClientInfo(clientInfo: Client): void {

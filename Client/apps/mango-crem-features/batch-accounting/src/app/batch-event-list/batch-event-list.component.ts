@@ -172,13 +172,13 @@ export class BatchEventListComponent implements OnInit {
 
   populateMeasureEvents(): void {
     this.batchParametersService.getRemeasureTypes().subscribe(result => {
-      this.parametersData.measureEvents = result;
+      this.parametersData.measureEvents = result.data;
     });
   }
 
   populatePortfolios(): void {
     this.baseService.getPortfolios().subscribe(result => {
-      this.portfolios = result;
+      this.portfolios = result.data;
       this.portfoliosLoaded = true;
       this.updateShowLoaderValue();
     });
@@ -189,11 +189,11 @@ export class BatchEventListComponent implements OnInit {
       // The parameters card will handle its own sorting/filtering
       this.parametersData.workflowStatuses = result?.item1;
 
-      this.workflowStatuses = result?.item1
+      this.workflowStatuses = result?.data.item1
         .filter(workflow => workflow.allowScheduleEdit)
         .sort((a, b) => a.statusOrder - b.statusOrder);
 
-      this.workflowSettings = result?.item2;
+      this.workflowSettings = result?.data.item2;
       this.parametersData.workflowSettings = this.workflowSettings;
       this.workflowStatusesLoaded = true;
       this.updateShowLoaderValue();
@@ -208,7 +208,7 @@ export class BatchEventListComponent implements OnInit {
         return;
       }
 
-      const { coStarListViews, hiddenListViews, myListViews, sharedListViews } = result;
+      const { coStarListViews, hiddenListViews, myListViews, sharedListViews } = result.data;
 
       [coStarListViews, hiddenListViews, myListViews, sharedListViews].forEach(list => {
         list.forEach(item => {
@@ -816,7 +816,7 @@ export class BatchEventListComponent implements OnInit {
 
     this.batchEventListService.getColumnDefinitionList(listPageId)
       .subscribe(result => {
-        this.columnsDef = result.columnDefinitions;
+        this.columnsDef = result.data.columnDefinitions;
         this.gridColumns = [];
 
         const viewColumns = this.viewData.columns;

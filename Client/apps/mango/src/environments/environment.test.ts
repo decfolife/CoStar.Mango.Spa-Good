@@ -4,33 +4,39 @@ class EnvironmentsCrem implements Environment {
   production = false;
   name = 'TEST';
   appUrls = {
-    accounting: 'http://service2.test.corp.virtualpremise.com:8090/accountmanagement/api/accountmanagement',
-    batchAccounting: 'http://service2.test.corp.virtualpremise.com:8090/batchaccounting',
-    discountRateProfiles: 'http://service2.test.corp.virtualpremise.com:8090/accountingprofiles/api',
-    bookmarks: 'http://service2.test.corp.virtualpremise.com:8090/bookmarks/api/bookmarks',
-    listpages: 'http://service2.test.corp.virtualpremise.com:8090/listpages/api/listpage/',
-    financials: 'http://service2.test.corp.virtualpremise.com:8090/financials/api/',
-    dashboards: 'http://service2.test.corp.virtualpremise.com:8090/dashboards/api/',
+    accounting: 'http://service2.test.corp.virtualpremise.com:8090/accountmanagement/api',
+    batchAccounting: 'http://172.20.9.224:30023/batchaccounting',
+    discountRateProfiles: 'http://172.20.9.224:30007/accountingprofiles/api',
+    bookmarks: 'http://172.20.9.224:30025/api/bookmarks',
+    listpages: 'http://172.20.9.224:30001/api/listpage/',
+    financials: 'http://172.20.9.224:30043/api/',
+    dashboards: 'http://172.20.9.224:30037/api/',
     authenticate: 'https://identity.tst.crem.aws.dshrp.com/api',
-    taskApproval: '', // For local testing.
-    reports: 'http://service2.test.corp.virtualpremise.com:8090/reports/api/',
-    userMaintenance: 'http://service2.test.corp.virtualpremise.com:8090/UserMaintenance/api/',
-    portfolioMaintenance: 'http://service2.test.corp.virtualpremise.com:8090/portfolioMaintenance/api/',
-    objectMaintenance: 'http://service2.test.corp.virtualpremise.com:8090/objectMaintenance/api/',
-    groupMaintenance: 'http://service2.test.corp.virtualpremise.com:8090/groupMaintenance/api/',
-    adminService: 'http://service2.test.corp.virtualpremise.com:8090/adminService/api/',
-    accountingService: 'http://service2.test.corp.virtualpremise.com:8090/AccountingService/api/Accounting',
-    leftNav: 'http://service2.test.corp.virtualpremise.com:8090/leftNav/api/',
-    quickSearch: 'http://service2.test.corp.virtualpremise.com:8090/QuickSearch/api',
-    userService: 'http://service2.test.corp.virtualpremise.com:8090/UserService/api',
-    formWizard: 'http://service2.test.corp.virtualpremise.com:8090/FormsEngine/api/',
-    objectActions: 'http://service2.test.corp.virtualpremise.com:8090/objectActions/api/',
-    header: 'http://service2.test.corp.virtualpremise.com:8090/Header/api/',
-    inAppDisclosure: 'http://service2.test.corp.virtualpremise.com:8090/AccountingService/api/'
+    authentication: 'https://authentication.dev.crem.aws.dshrp.com/api/',
+    authorization: 'http://172.20.9.224:30055/api/',
+    taskApproval: '', 
+    reports: 'http://172.20.9.224:30039/api/',
+    userMaintenance: 'http://172.20.9.224:30019/api/',
+    portfolioMaintenance: 'http://172.20.9.224:30017/api/',
+    objectMaintenance: 'http://172.20.9.224:30015/api/',
+    groupMaintenance: 'http://172.20.9.224:30013/api/',
+    alertsRules: 'http://172.20.9.224:30021/api/Alerts',
+    alerts: 'http://172.20.9.224:30021/api/Alerts',
+    accountingService: 'http://172.20.9.224:30009/api/Accounting',
+    leftNav: 'http://172.20.9.224:30033/api/',
+    quickSearch: 'http://172.20.9.224:30053/api',
+    userService: 'http://172.20.9.224:30051/api',
+    formWizard: 'http://172.20.9.224:30031/api/',
+    objectActions: 'http://172.20.9.224:30035/api/',
+    header: 'http://172.20.9.224:30045/api/',
+    inAppDisclosure: 'http://172.20.9.224:30009/api/',
+    accountingSummary:"http://172.20.9.224:30041/api/AccountingSummary/",
+    dataSetDictionary: 'http://172.20.9.224:30039/api/'
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].test.corp.virtualpremise.com';
-  CAUrl = 'https://client.tst.crem.aws.dshrp.com/';
+  CAUrl = 'https://client-alpha.tst.crem.aws.dshrp.com/';
+  mangoSpaUrl = 'http://service2.test.corp.virtualpremise.com:8097/'
 }
 
 export const environment = new EnvironmentsCrem();

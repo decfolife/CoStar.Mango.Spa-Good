@@ -8,10 +8,6 @@ import {
 
 @Injectable()
 export class UtilitiesService {
-  static baseUrl() {
-    return document.getElementsByTagName('base')[0].href;
-  }
-
   static getCustomFilterOperation(): any {
     return [
       {

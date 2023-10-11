@@ -66,7 +66,7 @@ export class AccountingSettingsComponent implements OnInit {
   populateAccountingCalendars(): void {
     this.service.getAccountingCalendars()
       .subscribe((result: any) => {
-        this.accountingCalendars = result;
+        this.accountingCalendars = result.data;
       });
   }
 
@@ -83,7 +83,7 @@ export class AccountingSettingsComponent implements OnInit {
   getPortfolioClassificationConfiguration (masterGroupId: number): void {
     this.dropDownService.getPortfolioClassificationConfiguration(masterGroupId)
       .subscribe(result => {
-        this.dropDownService.classificationConfiguration = result;
+        this.dropDownService.classificationConfiguration = result.data;
         this.PortfolioClassificationConfigurationLoaded = true;
         this.checkloading();
       });
@@ -93,8 +93,8 @@ export class AccountingSettingsComponent implements OnInit {
     this.dropDownService.classificationConfiguration = [];
     this.service.getPortfolioSettings(masterGroupId)
       .subscribe(result => {
-        const settings = result.item1;
-        this.service.isCalendarInUse = result.item2;
+        const settings = result.data.item1;
+        this.service.isCalendarInUse = result.data.item2;
         this.service.portfolioSettings = new PortfolioSettings(
           settings.masterGroupID, settings.leaseRecognitionCalendarID, settings.amortizationMethodType,
           settings.defaultPaymentTimingType, settings.journalEntryProfileRequired, settings.defaultCompoundFrequencyType,
@@ -120,7 +120,7 @@ export class AccountingSettingsComponent implements OnInit {
 
       this.dropDownService.getPortfolioClassificationConfigurationOptions(masterGroupId)
         .subscribe(result => {
-        this.dropDownValues = result;
+        this.dropDownValues = result.data;
 
         //Add static values to journal entry profile options.
         this.dropDownValues.journalEntryProfiles.unshift({ profileID: 'Direct Entry', profileName: 'Direct Entry' });
@@ -128,7 +128,7 @@ export class AccountingSettingsComponent implements OnInit {
 
         this.service.getClassificationTypes()
           .subscribe (result => {
-            this.classificationTypes = result;
+            this.classificationTypes = result.data;
         });
 
         this.getPortfolioClassificationConfiguration(masterGroupId);

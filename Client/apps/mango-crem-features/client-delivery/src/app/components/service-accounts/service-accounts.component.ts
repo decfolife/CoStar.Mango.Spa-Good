@@ -70,12 +70,14 @@ export class ServiceAccountsComponent implements OnInit {
     this.dataGrid?.instance?.searchByText(data);
   }
 
-  public onRowClicked(item): void {
-    let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
-      width: '1200px',
-      panelClass: 'client-delivery-modal',
-      data: item.data
-    });
+  public onCellClicked(e): void {
+    if (e.rowType != "header" && e.column.dataField !== "Actions") {
+      let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
+        width: '1200px',
+        panelClass: 'client-delivery-modal',
+        data: e.data
+      });
+    }
   }
 
   public onFilterChange(e: any[]): void {

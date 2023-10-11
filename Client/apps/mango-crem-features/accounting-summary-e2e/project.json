@@ -1,0 +1,33 @@
+{
+  "name": "mango-crem-features-accounting-summary-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mango-crem-features/accounting-summary-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/mango-crem-features/accounting-summary-e2e/cypress.json",
+        "devServerTarget": "mango-crem-features-accounting-summary:serve:development",
+        "testingType": "e2e",
+        "tsConfig": "apps/mango-crem-features/accounting-summary-e2e/tsconfig.json"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "mango-crem-features-accounting-summary:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/mango-crem-features/accounting-summary-e2e/**/*.{js,ts}"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["mango-crem-features-accounting-summary"]
+}

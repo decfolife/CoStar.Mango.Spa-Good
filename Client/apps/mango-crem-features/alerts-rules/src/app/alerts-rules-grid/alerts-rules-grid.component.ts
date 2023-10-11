@@ -1,4 +1,5 @@
 /* eslint-disable rxjs-angular/prefer-composition */
+import { Location } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -8,13 +9,11 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Location } from '@angular/common';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import { custom } from 'devextreme/ui/dialog';
 import notify from 'devextreme/ui/notify';
 
-import { AlertsRulesService } from '../shared/services/alerts-rules.service';
 import {
   AlertRule,
   AlertRuleSeverity,
@@ -22,6 +21,7 @@ import {
   AlertType,
   ApiResponse,
 } from '../shared/models/';
+import { AlertsRulesService } from '../shared/services/alerts-rules.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FilterObj = { text: string, value: any };
@@ -290,6 +290,6 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
     const OTIDpart = this.location.path().split('&')
       .find(x => x.toLowerCase().includes('objecttypeid'));
 
-    return OTIDpart ? +OTIDpart.split('=')[1] : undefined;
+    return OTIDpart ? +OTIDpart.split('=')[1] : 4;
   }
 }

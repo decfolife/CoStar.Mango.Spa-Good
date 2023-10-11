@@ -17,6 +17,7 @@ export class ModalComponent  {
   @Input() closeOrCancelButtonText: string;
   @Input() modalId: string;
   @Input() customFooter: boolean = false;
+  @Input() closeDialogResult: string = '';
   @Output() primaryButtonAction = new EventEmitter<any>();
   @Output() closeButtonAction = new EventEmitter<any>();
 
@@ -27,7 +28,7 @@ export class ModalComponent  {
 
   public closeDialog() {
     this.closeButtonAction.emit();
-    this.dialogRef.close('');
+    this.dialogRef.close(this.closeDialogResult);
     //this.dialogRef.close('Closed');
   }
 

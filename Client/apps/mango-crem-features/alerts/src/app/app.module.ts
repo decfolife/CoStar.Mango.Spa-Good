@@ -7,12 +7,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { AppComponent } from './app.component';
-import { LeaseAlertsModule } from 'apps/mango-crem-features/micro-components/src/app/lease-alerts/lease-alerts.module';
 
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [AppComponent],
-  imports: [BrowserModule, BrowserAnimationsModule, HttpClientModule, LeaseAlertsModule, FontAwesomeModule],
+  imports: [BrowserModule, BrowserAnimationsModule, HttpClientModule, FontAwesomeModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {

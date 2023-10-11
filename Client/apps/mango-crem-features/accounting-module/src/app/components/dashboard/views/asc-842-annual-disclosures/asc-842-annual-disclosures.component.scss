@@ -16,3 +16,11 @@ div.cdk-drag.categories-item {
       }
     }
 }
+
+crem-loader {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+  height: calc(100vh - 50px);
+}
