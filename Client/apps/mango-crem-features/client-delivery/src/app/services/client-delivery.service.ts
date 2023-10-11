@@ -28,6 +28,18 @@ export class ClientDeliveryService extends EndpointService
     
   }
 
+  getServiceAccountChangeHistory(contactId: number): Observable<any> {       
+    let cKey : string;
+    this.clientKey$.subscribe(clientKey=>{ cKey = clientKey;})
+    if(!cKey) cKey ='blank';  
+    if(cKey){
+      const url = `${environment.appUrls.authorization}serviceaccounthistory/${cKey}/${contactId}`;
+      return this.callHttpGet(url, 'GetServiceAccountChangeHistory')
+    }
+    return of({});
+    
+  } 
+
   deleteServiceAccount(serviceAccountsData: any, contactID: number, contactEmailAddress: string, contactActiveFlg: boolean, filter:string): Observable<any> {    
             let cKey : string;
             this.clientKey$.subscribe(clientKey=>{ cKey = clientKey;})
