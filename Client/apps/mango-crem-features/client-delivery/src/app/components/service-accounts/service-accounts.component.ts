@@ -121,8 +121,8 @@ export class ServiceAccountsComponent implements OnInit {
         this.service.deleteServiceAccount(this.serviceAccountsData, contactId, contactEmailAddress, contactActiveFlg, this.selectedFilter)       
         .subscribe(response => {
           if(response) {  
-            //setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 1000);            
-            this.getServiceAccouts(this.selectedFilter);
+            setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 1000);            
+            //this.getServiceAccouts(this.selectedFilter);
             this.searchDataGrid(this.searchText);
           }
         });
@@ -142,8 +142,8 @@ export class ServiceAccountsComponent implements OnInit {
         .subscribe(result => {
           if (result) { 
             if(!this.selectedFilter) this.selectedFilter = 'Active';
-            //setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 2000);           
-            this.getServiceAccouts(this.selectedFilter);
+            setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 1500);           
+            //this.getServiceAccouts(this.selectedFilter);
           }
         });        
       }
