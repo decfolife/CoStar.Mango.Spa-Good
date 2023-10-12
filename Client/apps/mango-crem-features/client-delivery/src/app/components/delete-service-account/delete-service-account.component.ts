@@ -28,7 +28,7 @@ export class DeleteServiceAccountComponent implements OnInit {
     this.user = (this.data.contactEmailAddress);
     if(this.action) {
       this.editAction = "Deactivate"; 
-      this.editActionTitle = "Deavtivation"; 
+      this.editActionTitle = "Deactivation"; 
     } 
     else{
       this.editAction = "Reactivate"; 
