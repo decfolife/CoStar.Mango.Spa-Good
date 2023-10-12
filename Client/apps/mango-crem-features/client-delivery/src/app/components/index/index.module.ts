@@ -16,6 +16,7 @@ import { IndexRoutingModule } from '../index/index-routing.module';
 import { ServiceAccountDetailsComponent } from '../../components/service-account-details/service-account-details.component';
 import { AddServiceAccountComponent } from '../../components/add-service-account/add-service-account.component';
 import { DeleteServiceAccountComponent } from '../../components/delete-service-account/delete-service-account.component';
+import { ResetPasswordConfirmationComponent } from '../../components/reset-password-confirmation/reset-password-confirmation.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -26,6 +27,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
     ServiceAccountDetailsComponent,
     AddServiceAccountComponent,
     DeleteServiceAccountComponent,
+    ResetPasswordConfirmationComponent,
   ],
   imports: [
     CommonModule,
