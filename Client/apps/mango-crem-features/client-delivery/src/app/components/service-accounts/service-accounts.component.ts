@@ -45,24 +45,34 @@ export class ServiceAccountsComponent implements OnInit {
     this.getServiceAccouts('active');
   }
 
-  private getServiceAccouts(filter: string) {
-    this.service.getServiceAccounts(filter)
-      .subscribe(result => {        
-        if(result){          
-          if(result.data){
-            let filteredData = result.data.items;
-            if (filter === 'all')
-              this.serviceAccountsData =  filteredData;
-            else if (filter === 'inactive')
-              this.serviceAccountsData =  filteredData.filter(x=>x.contactActive === false);
-            else
+  private getServiceAccouts(filter: string){
+    this.service.getServiceAccounts(filter.toLowerCase())
+    .subscribe(result => {        
+      if(result){          
+        if(result.data){
+          this.serviceAccountsData = [];
+          let filteredData = result.data.items;            
+
+          switch (filter.toLowerCase()) {
+            case "active":
+            {
+              this.serviceAccountsData = [];
               this.serviceAccountsData =  filteredData.filter(x=>x.contactActive === true);
-          }          
-        }
-        setTimeout(() => {
-          this.searchDataGrid(this.searchText);
-        })
+              break;
+            }
+            case "inactive":
+              this.serviceAccountsData =  filteredData.filter(x=>x.contactActive === false);
+              break;
+            default:
+              this.serviceAccountsData =  filteredData;
+          }
+            this.dataGrid.instance?.refresh();
+        }          
+      }
+      setTimeout(() => {
+        this.searchDataGrid(this.searchText);
       })
+    })
   }
 
   public searchDataGrid(data: string): void {
@@ -106,13 +116,13 @@ export class ServiceAccountsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const contactId = result.contactId;
+        const contactId :number = result.contactId;
         const contactEmailAddress = result.contactEmailAddress;        
         this.service.deleteServiceAccount(this.serviceAccountsData, contactId, contactEmailAddress, contactActiveFlg, this.selectedFilter)       
         .subscribe(response => {
           if(response) {  
-            result.contactActive = contactActiveFlg;       
-           this.getServiceAccouts(this.selectedFilter.toLowerCase());
+            //setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 1000);            
+            this.getServiceAccouts(this.selectedFilter);
             this.searchDataGrid(this.searchText);
           }
         });
@@ -127,22 +137,17 @@ export class ServiceAccountsComponent implements OnInit {
       panelClass: 'client-delivery-modal',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result.length > 0) {   
-       /*  let newEmail:string;
-        newEmail = result; */
+      if (result.length > 0) {  
         this.service.addServiceAccount(result)             
         .subscribe(result => {
-          if (result) {
-            //this.serviceAccountsData = null;
-            if(!this.selectedFilter) this.selectedFilter = 'active';
-            this.getServiceAccouts(this.selectedFilter.toLowerCase());
-            /* let newServiceAccount = this.serviceAccountsData.filter(x=>x.contactActive === true && x.contactEmailAddress === newEmail);
-            newServiceAccount.contactActive = true; */
-            //this.serviceAccountsData.push(newEmail);
+          if (result) { 
+            if(!this.selectedFilter) this.selectedFilter = 'Active';
+            //setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 2000);           
+            this.getServiceAccouts(this.selectedFilter);
           }
-        });
+        });        
       }
-    });
+    });   
   }
 
   public exportGrids(): void {
