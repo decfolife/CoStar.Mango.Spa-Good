@@ -16,6 +16,7 @@ export class DeleteServiceAccountComponent implements OnInit {
   public projectRequiredTaskNotes: boolean = false;
   public user: string;
   public editAction: string;
+  public editActionTitle: string;
 
   constructor(
     public dialogRef: MatDialogRef<DeleteServiceAccountComponent>,
@@ -27,9 +28,11 @@ export class DeleteServiceAccountComponent implements OnInit {
     this.user = (this.data.contactEmailAddress);
     if(this.action) {
       this.editAction = "Deactivate"; 
+      this.editActionTitle = "Deavtivation"; 
     } 
     else{
       this.editAction = "Reactivate"; 
+      this.editActionTitle = "Reactivation"; 
     }
   }
   
