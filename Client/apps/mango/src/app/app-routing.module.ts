@@ -457,21 +457,20 @@ const routes: Routes = [
           },
         ]
       },
+      {
+        path: 'forms',
+        loadChildren: () =>
+          import(
+            '@forms/mango-forms/mango-forms.module'
+          ).then((mod) => mod.MangoFormsModule),
+        data: { moduleId: null, breadCrumb: { label: null, append: true } },
+      },
 
       // Auto-generated components below
       // @!micro-component-generator: don't delete this line
     ]
   },
 
-  // Edit & render forms
-  {
-    path: 'forms',
-    loadChildren: () =>
-      import(
-        '@forms/mango-forms/mango-forms.module'
-      ).then((mod) => mod.MangoFormsModule),
-    data: { moduleId: null, breadCrumb: { label: null, append: true } },
-  },
 
   // Redirect to Login
   { path: '', redirectTo: 'crem', pathMatch: 'full' },
