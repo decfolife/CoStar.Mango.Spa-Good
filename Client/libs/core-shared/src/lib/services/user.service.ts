@@ -67,7 +67,8 @@ export class UserService {
       authToken: jwt,
       clientKey: parsedJwt.clientKey,
       email: parsedJwt.email,
-      hasMultipleSites: parsedJwt.hasMultipleSites, isAutoProvisioned: parsedJwt.isAutoProvisioned
+      hasMultipleSites: parsedJwt.hasMultipleSites, 
+      isAutoProvisioned: parsedJwt.isAutoProvisioned
     }
     return user
   }
@@ -135,7 +136,8 @@ export class UserService {
           hasMultipleSites: response.hasMultipleSites,
           clientKey: response.clientKey,
           isAutoProvisioned: this.isAutoProvisioned(response.authToken),
-          authToken: response.authToken
+          authToken: response.authToken,
+          isServiceAccount: this.isServiceAccount(response.authToken)
         };
         this.setAuth(user);
         return this.currentUserValue;
@@ -265,6 +267,15 @@ export class UserService {
   isAutoProvisioned(token: string): boolean {
     var decoded = this.getDecodedAuthToken(token);
     if (decoded.isAutoProvisioned.toLowerCase() === "true") {
+      return true;
+    }
+
+    return false;
+  }
+
+  isServiceAccount(token: string): boolean {
+    var decoded = this.getDecodedAuthToken(token);
+    if (decoded.isServiceAccount.toLowerCase() === "true") {
       return true;
     }
 

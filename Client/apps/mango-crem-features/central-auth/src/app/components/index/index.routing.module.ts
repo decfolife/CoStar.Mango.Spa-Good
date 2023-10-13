@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CanActivateGuard } from '../../services/guards/can-activate.guard';
 import { CustomerSelectComponent } from '../customer-select/customer-select.component';
+import { ServiceAccountConfigurationComponent } from '../service-account-configuration/service-account-configuration.component';
 import { IndexComponent } from './index.component';
 
 const routes: Routes = [
@@ -9,6 +10,11 @@ const routes: Routes = [
     path: 'customer-selection',
     component: CustomerSelectComponent,
     canActivate: [CanActivateGuard],
+  },
+  {
+    path: 'service-account-configuration',
+    component: ServiceAccountConfigurationComponent,
+    // canActivate: [CanActivateGuard],
   },
   {
     path: 'reset-password',
@@ -26,7 +32,7 @@ const routes: Routes = [
   {
     path: ':clientKey',
     component: IndexComponent
-  }
+  },
 ];
 
 
