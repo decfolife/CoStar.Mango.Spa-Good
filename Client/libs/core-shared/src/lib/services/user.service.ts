@@ -17,7 +17,8 @@ import {
   ContactRecord,
   ContactRecordHTTPObject,
   OAuthAuthorizeHTTPResponse,
-  OAuthTokenHTTPResponse
+  OAuthTokenHTTPResponse,
+  ServiceAccountApiKeyInfo,
 } from '@mango/data-models/lib-data-models';
 import { Environment } from '@mango/data-models/lib-data-models';
 
@@ -281,4 +282,63 @@ export class UserService {
 
     return false;
   }
+
+  getServiceAccountApiKeyInfo(email: string): Observable<ServiceAccountApiKeyInfo> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountApiKeyInfo/{email}`;
+
+    // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
+    // );
+
+    const testData : ServiceAccountApiKeyInfo = {
+      userEmail: email,
+      dateGenerated: new Date('10/12/2023'),
+      expirationDate: new Date('12/12/2023'),
+    }
+
+    return of(testData);
+  }
+
+  generateApiKey(email: string): Observable<boolean> {
+    let url = `${this.env.appUrls.authenticate}/generateApiKey/{email}`;
+
+    // return this.http.post(url)(
+    // );
+
+    return of(true);
+  }
+
+  getServiceAccountSites(email: string): Observable<any> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountSites/{email}`;
+
+    // return this.http.post(url)(
+    // );
+
+    const testData : any = [ 
+      {siteName: 'BOEING', active: true},
+      {siteName: 'PIEDMONTHEALTHCARE', active: false},
+      {siteName: 'AMERICANEXPRESS', active: true},
+      {siteName: 'FIFTHTHIRD', active: false},
+      {siteName: 'CITI', active: true},
+      {siteName: 'WHIRLPOOL', active: true}
+    ];
+
+    return of(testData);
+  }
+
+  getServiceAccountChangeHistory(email: string): Observable<any> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountChangeHistory/{email}`;
+
+    // return this.http.get(url)(
+    // );
+
+    const testData : any = [
+          {lastModified: 'Date1', modifiedBy: 'Li Liu 1', description: 'Create Account 1', beforeChange: 'Old value', afterChange: 'New value'},
+          {lastModified: 'Date1', modifiedBy: 'Li Liu 2', description: 'Create Account 2', beforeChange: 'Old value', afterChange: 'New value'},
+          {lastModified: 'Date1', modifiedBy: 'Li Liu 3', description: 'Create Account 3', beforeChange: 'Old value', afterChange: 'New value'},
+          {lastModified: 'Date1', modifiedBy: 'Li Liu 4', description: 'Create Account 4', beforeChange: 'Old value', afterChange: 'New value'},
+          {lastModified: 'Date1', modifiedBy: 'Li Liu 4', description: 'Create Account 5', beforeChange: 'Old value', afterChange: 'New value'}];
+
+    return of(testData);
+  }
+
 }

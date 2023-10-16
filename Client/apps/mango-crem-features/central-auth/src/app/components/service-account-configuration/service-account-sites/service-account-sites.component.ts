@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { UserService } from '@mango/core-shared';
 
 @Component({
   selector: 'mango-service-account-sites',
@@ -6,19 +7,29 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./service-account-sites.component.scss'],
 })
 export class ServiceAccountSitesComponent implements OnInit {
+  @Input() userEmail: string;
   public sites: any;
+
+  constructor(
+    private userService: UserService,
+  ) { }
 
   ngOnInit(): void {
     this.getSites();
   }
 
+  toggleSite(e: any, index: number) {
+    console.log(e.checked);
+    console.log(index);
+  }
+
   private getSites() {
-    this.sites = [
-      // {changeDate: 191, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      // {changeDate: 402, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      // {changeDate: 403, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      // {changeDate: 415, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      // {changeDate: 955, user: 'Li Liu', description: 'Create Account', oldValue: 'Old value', newValue: 'New value'},
-      ];
+    this.userService.getServiceAccountSites(this.userEmail)
+    // this.userService.getClientSitesByUser(this.userEmail)
+    .subscribe(result => {        
+      if(result){          
+          this.sites =  result;      
+      }
+    })
   }
 }
