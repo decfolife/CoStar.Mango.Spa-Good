@@ -1,5 +1,6 @@
 import { Component, OnInit, Input} from '@angular/core';
 import { UserService } from '@mango/core-shared';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'mango-service-account-api-keys',
@@ -11,6 +12,8 @@ export class ServiceAccountApiKeysComponent implements OnInit {
   public dateGenerated: Date;
   public expirationDate: Date;
 
+  subs: Subscription[] = []
+
   constructor(
     private userService: UserService,
   ) { }
@@ -19,14 +22,20 @@ export class ServiceAccountApiKeysComponent implements OnInit {
       this.getAPIKeyInfo();
   }
 
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
+
   private getAPIKeyInfo() {
-    this.userService.getServiceAccountApiKeyInfo(this.userEmail)
-    .subscribe(result => {        
-      if(result){          
-          this.dateGenerated =  result.dateGenerated;
-          this.expirationDate =  result.expirationDate;        
-      }
-    })
+    this.subs.push(
+      this.userService.getServiceAccountApiKeyInfo(this.userEmail)
+      .subscribe(result => {        
+        if(result){          
+            this.dateGenerated =  result.dateGenerated;
+            this.expirationDate =  result.expirationDate;        
+        }
+      })
+    )
   }
 
   generateApiKey(){
