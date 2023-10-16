@@ -80,6 +80,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.centralAuthFacade.isUserAuthenticated$.subscribe(isUserFullyAuthenticated => {
       const currentUser = this.userService.currentUserValue
+
+      if (currentUser?.isServiceAccount) {
+        this.router.navigate(['service-account-configuration'], { relativeTo: this._route })
+      }
+
       if (currentUser?.isAutoProvisioned || isUserFullyAuthenticated) {
         this.router.navigate(['customer-selection'], { relativeTo: this._route })
       }
@@ -186,6 +191,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loggedInUser.emit(user)
         this.loading = false
         this.isErrored = false 
+
+        if (user?.isServiceAccount && !isUserFullyAuthenticated) {
+          this.router.navigate(['service-account-configuration'], { relativeTo: this._route })
+          return
+        }
+
         if (user.hasMultipleSites && !isUserFullyAuthenticated) {
           this.router.navigate(['customer-selection'], { relativeTo: this._route })
           return

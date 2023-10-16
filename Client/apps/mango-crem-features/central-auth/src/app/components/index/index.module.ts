@@ -11,6 +11,7 @@ import { ContactSelectModule } from '../contact-select/contact-select.module';
 import { CustomerSelectModule } from '../customer-select/customer-select.module';
 import { IndexRoutingModule } from './index.routing.module';
 import { NavbarModule } from '../navbar/navbar.module';
+import { ServiceAccountConfigurationModule} from '../service-account-configuration/service-account-configuration.module';
 
 @NgModule({
   declarations: [IndexComponent],
@@ -22,6 +23,7 @@ import { NavbarModule } from '../navbar/navbar.module';
     CustomerSelectModule,
     ContactSelectModule,
     NavbarModule,
+    ServiceAccountConfigurationModule,
     ToastrModule.forRoot({
       timeOut: 8000,
       positionClass: 'toast-bottom-center',
