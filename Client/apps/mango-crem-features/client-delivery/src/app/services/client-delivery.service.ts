@@ -5,13 +5,23 @@ import { environment } from '../../../../../mango/src/environments/environment.l
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { filter, switchMap } from 'rxjs/operators';
+import { CentralAuthHttpError } from '@mango/data-models/lib-data-models';
+import { UserService } from '@mango/core-shared';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientDeliveryService extends EndpointService 
 {
-  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) 
+  public isLoading = false;
+  public isErrored = false;
+  public requestHasBeenSent = false;
+
+  constructor(
+    private userService: UserService,
+    protected http: HttpClient, @Optional() facade: MangoAppFacade
+    )
   {
     super(http, facade);
   }
@@ -69,7 +79,22 @@ export class ClientDeliveryService extends EndpointService
     // //TODO: Integrate API call
     // const url = `${environment.appUrls.clientDelivery}ResetPassword/${emailAddress}`;
     // return this.callHttpPost(url, 'ResetPassword', {emailAddress})
+    const request = { email: emailAddress, fromServiceAccount:true };
 
+    this.userService.requestPasswordReset(request).subscribe(
+      () => this.sendRequestSuccess(),
+      (error) => this.sendRequestFailed(error)
+    );
     return of(true);
-  } 
+  }
+  private sendRequestSuccess() {
+    this.isLoading = false;
+    this.isErrored = false;
+    this.requestHasBeenSent = true;
+  }
+  private sendRequestFailed(error: CentralAuthHttpError) {
+    this.requestHasBeenSent = false;
+    this.isLoading = false;
+    this.isErrored = true;
+  }
 }
