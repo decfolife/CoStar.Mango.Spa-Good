@@ -314,12 +314,12 @@ export class UserService {
     // );
 
     const testData : any = [ 
-      {siteName: 'BOEING', active: true},
-      {siteName: 'PIEDMONTHEALTHCARE', active: false},
-      {siteName: 'AMERICANEXPRESS', active: true},
-      {siteName: 'FIFTHTHIRD', active: false},
-      {siteName: 'CITI', active: true},
-      {siteName: 'WHIRLPOOL', active: true}
+      {clientKey: 'BOEING', isActive: true},
+      {clientKey: 'PIEDMONTHEALTHCARE', isActive: false},
+      {clientKey: 'AMERICANEXPRESS', isActive: true},
+      {clientKey: 'FIFTHTHIRD', isActive: false},
+      {clientKey: 'CITI', isActive: true},
+      {clientKey: 'WHIRLPOOL', isActive: true}
     ];
 
     return of(testData);
