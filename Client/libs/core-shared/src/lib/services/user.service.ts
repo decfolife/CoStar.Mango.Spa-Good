@@ -289,10 +289,11 @@ export class UserService {
     // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
     // );
 
+    let date = new Date();
     const testData : ServiceAccountApiKeyInfo = {
       userEmail: email,
-      dateGenerated: new Date('10/12/2023'),
-      expirationDate: new Date('12/12/2023'),
+      dateGenerated: date,
+      expirationDate: date,
     }
 
     return of(testData);
