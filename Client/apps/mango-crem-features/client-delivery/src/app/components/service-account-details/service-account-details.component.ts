@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit} from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import { ClientDeliveryService } from '../../services/client-delivery.service';
+import {ResetPasswordConfirmationComponent} from '../reset-password-confirmation/reset-password-confirmation.component';
 
 @Component({
   selector: 'mango-service-account-details',
@@ -20,7 +21,8 @@ export class ServiceAccountDetailsComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ServiceAccountDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private service: ClientDeliveryService
+    private service: ClientDeliveryService,
+    private dialog: MatDialog,
     ) { 
 
     }
@@ -32,23 +34,32 @@ export class ServiceAccountDetailsComponent implements OnInit {
   }
 
   resetPassword(){
-      this.service.resetPassword(this.emailAddress)      
-      .subscribe(result => {
+      let dialogRef = this.dialog.open(ResetPasswordConfirmationComponent, {
+        width: '600px',
+        panelClass: 'client-delivery-modal',
+        data: this.data.contactEmailAddress
+      });
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          console.log(result);
+          this.service.resetPassword(this.emailAddress)      
+          .subscribe(result => {
+            if (result) {
+              this.closeDialog();
+            }
+          });
         }
       });
   }
 
   private getChangeHistory() {
-      //Temp data before client delivery API integration
-      this.changeHistoryData = [
-      {changeDate: 191, user: 'Li Liu 1', description: 'Create Account 1', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 402, user: 'Li Liu 2', description: 'Create Account 2', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 403, user: 'Li Liu 3', description: 'Create Account 3', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 415, user: 'Li Liu 4', description: 'Create Account 4', oldValue: 'Old value', newValue: 'New value'},
-      {changeDate: 955, user: 'Li Liu 4', description: 'Create Account 5', oldValue: 'Old value', newValue: 'New value'},
-      ];
+    this.service.getServiceAccountChangeHistory(this.data.contactId)
+    .subscribe(result => {        
+      if(result){          
+        if(result.data){
+          this.changeHistoryData =  result.data.items;
+        }          
+      }
+    })
   }
 
   public closeDialog() {

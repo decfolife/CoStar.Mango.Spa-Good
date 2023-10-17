@@ -17,7 +17,8 @@ import {
   ContactRecord,
   ContactRecordHTTPObject,
   OAuthAuthorizeHTTPResponse,
-  OAuthTokenHTTPResponse
+  OAuthTokenHTTPResponse,
+  ServiceAccountApiKeyInfo,
 } from '@mango/data-models/lib-data-models';
 import { Environment } from '@mango/data-models/lib-data-models';
 
@@ -67,7 +68,8 @@ export class UserService {
       authToken: jwt,
       clientKey: parsedJwt.clientKey,
       email: parsedJwt.email,
-      hasMultipleSites: parsedJwt.hasMultipleSites, isAutoProvisioned: parsedJwt.isAutoProvisioned
+      hasMultipleSites: parsedJwt.hasMultipleSites, 
+      isAutoProvisioned: parsedJwt.isAutoProvisioned
     }
     return user
   }
@@ -135,7 +137,8 @@ export class UserService {
           hasMultipleSites: response.hasMultipleSites,
           clientKey: response.clientKey,
           isAutoProvisioned: this.isAutoProvisioned(response.authToken),
-          authToken: response.authToken
+          authToken: response.authToken,
+          isServiceAccount: this.isServiceAccount(response.authToken)
         };
         this.setAuth(user);
         return this.currentUserValue;
@@ -270,4 +273,91 @@ export class UserService {
 
     return false;
   }
+
+  isServiceAccount(token: string): boolean {
+    var decoded = this.getDecodedAuthToken(token);
+    if (decoded.isServiceAccount.toLowerCase() === "true") {
+      return true;
+    }
+
+    return false;
+  }
+
+  getServiceAccountApiKeyInfo(email: string): Observable<ServiceAccountApiKeyInfo> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountApiKeyInfo/{email}`;
+
+    // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
+    // );
+
+    let date = new Date();
+    const testData : ServiceAccountApiKeyInfo = {
+      userEmail: email,
+      dateGenerated: date,
+      expirationDate: date,
+    }
+
+    return of(testData);
+  }
+
+  generateApiKey(email: string): Observable<boolean> {
+    let url = `${this.env.appUrls.authenticate}/generateApiKey/{email}`;
+
+    // return this.http.post(url)(
+    // );
+
+    return of(true);
+  }
+
+  getServiceAccountSites(email: string): Observable<any> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountSites/{email}`;
+
+    // return this.http.post(url)(
+    // );
+
+    const testData : any = [ 
+      {clientKey: 'BOEING', isActive: true},
+      {clientKey: 'PIEDMONTHEALTHCARE', isActive: false},
+      {clientKey: 'AMERICANEXPRESS', isActive: true},
+      {clientKey: 'FIFTHTHIRD', isActive: false},
+      {clientKey: 'CITI', isActive: true},
+      {clientKey: 'WHIRLPOOL', isActive: true}
+    ];
+
+    return of(testData);
+  }
+
+  getServiceAccountChangeHistory(email: string): Observable<any> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountChangeHistory/{email}`;
+
+    // return this.http.get(url)(
+    // );
+    let date = new Date();
+    const testData : any = [
+          {lastModified: date, modifiedBy: 'Li Liu 1', description: 'Create Account 1', beforeChange: 'Old value 1', afterChange: 'New value 1'},
+          {lastModified: date, modifiedBy: 'Li Liu 2', description: 'Create Account 2', beforeChange: 'Old value 2', afterChange: 'New value 2'},
+          {lastModified: date, modifiedBy: 'Li Liu 3', description: 'Create Account 3', beforeChange: 'Old value 3', afterChange: 'New value 3'},
+          {lastModified: date, modifiedBy: 'Li Liu 4', description: 'Create Account 4', beforeChange: 'Old value 4', afterChange: 'New value 4'},
+          {lastModified: date, modifiedBy: 'Li Liu 5', description: 'Create Account 5', beforeChange: 'Old value 5', afterChange: 'New value 5'}];
+
+    return of(testData);
+  }
+
+  getServiceAccountEndpoints(): Observable<any> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountEndpoints`;
+
+    // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
+    // );
+
+    const testData = [ 
+        {endpointName: 'Projects ', active: true},
+        {endpointName: 'Portfolio', active: false},
+        {endpointName: 'Accounting', active: false},
+        {endpointName: 'Financials', active: false},
+        {endpointName: 'Company', active: false},
+        {endpointName: 'Contacts', active: false}
+        ];
+
+    return of(testData);
+  }
+
 }

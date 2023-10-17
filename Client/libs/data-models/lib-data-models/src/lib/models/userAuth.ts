@@ -5,4 +5,5 @@ export interface UserAuth {
     clientKey: string;
     isAutoProvisioned: boolean;
     contactId?: number;
+    isServiceAccount?: boolean;
 }

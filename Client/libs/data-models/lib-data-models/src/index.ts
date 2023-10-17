@@ -27,6 +27,7 @@ export { ClientSettings } from './lib/models/central-auth/client-settings';
 export { ContactRecord } from './lib/models/central-auth/contact-record';
 export { ClientSitesByUser } from './lib/models/central-auth/client-sites-by-user';
 export { RecentUserSites } from './lib/models/central-auth/recent-user-sites';
+export { ServiceAccountApiKeyInfo } from './lib/models/service-account-api-key';
 export * from './lib/enums/mango.enums';
 export * from './lib/models/errors';
 export * from './lib/models/central-auth/ui';
