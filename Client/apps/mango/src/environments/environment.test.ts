@@ -7,7 +7,7 @@ class EnvironmentsCrem implements Environment {
     accounting: 'http://service2.test.corp.virtualpremise.com:8090/accountmanagement/api',
     batchAccounting: 'http://172.20.9.224:30023/batchaccounting',
     discountRateProfiles: 'http://172.20.9.224:30007/accountingprofiles/api',
-    bookmarks: 'http://172.20.9.224:30025/api/bookmarks',
+    bookmarks: 'http://172.20.9.224:30025/api/bookmarks/',
     listpages: 'http://172.20.9.224:30001/api/listpage/',
     financials: 'http://172.20.9.224:30043/api/',
     dashboards: 'http://172.20.9.224:30037/api/',
