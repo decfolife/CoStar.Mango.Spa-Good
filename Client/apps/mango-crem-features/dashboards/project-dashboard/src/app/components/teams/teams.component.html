@@ -1,0 +1,96 @@
+<div id="teams-container">
+	<div class="teams-toolBar-wrapper">
+		<div class="controls-left">
+			<h3 class="title"> Manage Team Lists </h3>
+			<div class="searchTeams">
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" ></cs-search>
+			</div>
+		</div>
+		<div class="controls-right">
+			<div class="clearFilters">
+				<crem-button type="secondary">
+					<!-- <span id="filterIcon"><mat-icon aria-label="filter">filter_alt</mat-icon></span> -->
+					<span id="clearFilters" (click)="clearAllFilters(); $event.preventDefault();">Clear Filters</span>
+				</crem-button>
+			</div>
+			<div class="actions">
+				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">Actions <mat-icon aria-label="Actions Menu">arrow_drop_down</mat-icon></button>
+				<mat-menu #actionsMenu="matMenu" class="teamsActionsMenu">				
+					<button mat-menu-item >Delete Team(s)</button>      
+					<button mat-menu-item >Remove Member(s)</button>                  
+				</mat-menu>	 
+			</div>
+
+			<div class="more">
+				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
+				<mat-menu #moreMenu="matMenu" class="teamsMoreMenu">				
+					<button mat-menu-item ><span >Expand All/Collapse All</span></button>      
+					<button mat-menu-item >Export</button>                   
+				</mat-menu>	 
+			</div>
+			<div class="addTeams">
+				<crem-button type="primary" (click)="addTeam(); $event.preventDefault()" >
+					<span id="addTeam">Add</span>
+				</crem-button>
+			</div>
+		</div>
+	</div>
+
+	<div class="teams-dataGrid-wrapper"> 
+		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
+		<dx-data-grid *ngIf="dataRetrieved" class="teams-data-grid"
+			#TeamsGrid
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			columnResizingMode="widget"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[dataSource]="teams"
+			keyExpr="teamId"
+			[filterSyncEnabled]="true"
+			[wordWrapEnabled]="true"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-filter-builder-popup [width]="600"
+				[height]="600"
+				[(visible)]="filterBuilderVisible">
+			</dxo-filter-builder-popup>
+
+			<dxo-paging [enabled]="false"></dxo-paging>
+
+			<dxo-selection
+				selectAllMode="allPages"
+				showCheckBoxesMode="always"
+				mode="multiple">
+			</dxo-selection>
+
+			<dxi-column dataField="teamId" caption="Team ID" alignment="center"></dxi-column>
+			<dxi-column dataField="teamName" caption="Name"></dxi-column>
+			<dxi-column dataField="members" alignment="center"></dxi-column>
+			<dxi-column dataField="modifiedBy" ></dxi-column>
+			<dxi-column dataField="modifiedDate" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
+			<dxi-column dataField="createdBy" ></dxi-column>
+			<dxi-column dataField="createdDate" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
+			<dxi-column dataField="securityLevel" caption='Rights' ></dxi-column>
+			<dxi-column type="buttons" width="60" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
+				<dxi-button template="actionsMenuTemplate">
+					<div *dxTemplate="let data of 'actionsMenuTemplate'">
+						<button aria-label="actions menu" class="btn btn-link teamActionsButton" (click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu"><mat-icon aria-label="Actions Menu">more_vert</mat-icon></button>
+		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
+							<ul role="menu">
+								<li mat-menu-item (click)="doSomethingForNow(data)">Edit</li>
+								<li mat-menu-item (click)="doSomethingForNow(data)">Delete</li>
+							</ul>
+						</mat-menu>
+					</div>
+				</dxi-button>		    	
+			</dxi-column>
+
+		</dx-data-grid>
+	</div>
+
+</div>
