@@ -169,6 +169,17 @@ export class UserService {
     );
   }
 
+  forceExpirePassword(request: RequestPasswordResetRequest): Observable<any> {
+    let url = `${this.env.appUrls.authentication}password/forceexpire`;
+
+    return this.http.post(url, request).pipe(
+      tap(result => {
+        return result;
+      })
+    );
+  }
+
+
   resetPassword(credentials): Observable<boolean> {
     let url = `${this.env.appUrls.authenticate}/password/reset`;
 
