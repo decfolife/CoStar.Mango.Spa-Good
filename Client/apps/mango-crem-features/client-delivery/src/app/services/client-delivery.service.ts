@@ -79,9 +79,12 @@ export class ClientDeliveryService extends EndpointService
     // //TODO: Integrate API call
     // const url = `${environment.appUrls.clientDelivery}ResetPassword/${emailAddress}`;
     // return this.callHttpPost(url, 'ResetPassword', {emailAddress})
-    const request = { email: emailAddress, fromServiceAccount:true };
+    let cKey : string;    
+    this.clientKey$.subscribe(clientKey=>{ cKey = clientKey; });
 
-    this.userService.requestPasswordReset(request).subscribe(
+    const request = { email: emailAddress, clientKey:cKey };
+
+    this.userService.forceExpirePassword(request).subscribe(
       () => this.sendRequestSuccess(),
       (error) => this.sendRequestFailed(error)
     );
