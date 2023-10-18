@@ -3,6 +3,7 @@ class EnvironmentsCrem {
   name = 'OPS';
   appUrls = {
     authenticate: 'https://identity.tsm.crem.aws.dshrp.com/api',
+    authentication: 'https://authentication.tsm.crem.aws.dshrp.com/api',
     bookmarks: '/v06/WebServices/Mango/Bookmarks/Bookmarks.asmx/',
     leftNav: '',
     dashboards: '',

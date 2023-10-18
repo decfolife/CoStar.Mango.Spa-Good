@@ -3,6 +3,7 @@ class EnvironmentsCrem {
   name = 'DEV';
   appUrls = {
     authenticate: 'https://identity.dev.crem.aws.dshrp.com/api',
+    authentication: 'https://authentication.dev.crem.aws.dshrp.com/api',
     bookmarks: '/v06/WebServices/Mango/Bookmarks/Bookmarks.asmx/',
     leftNav: '',
     dashboards: '',

@@ -116,9 +116,8 @@ export class ServiceAccountsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const contactId :number = result.contactId;
         const contactEmailAddress = result.contactEmailAddress;        
-        this.service.deleteServiceAccount(this.serviceAccountsData, contactId, contactEmailAddress, contactActiveFlg, this.selectedFilter)       
+        this.service.deleteServiceAccount(contactEmailAddress, contactActiveFlg)       
         .subscribe(response => {
           if(response) {  
             setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);            
