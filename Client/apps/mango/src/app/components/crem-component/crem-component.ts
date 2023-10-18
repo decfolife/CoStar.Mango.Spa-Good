@@ -29,6 +29,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   userAppType$: Observable<number> = of(null);
   popoverContent: string[];
   activeLink: string = null;
+  crumbActiveLink: string = null;
   private subs: Subscription = new Subscription();
 
   protected httpOptions: any = {
@@ -103,13 +104,17 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
         this.navigationLinks = res.data;
         this.navLinksFetched = true;
 
-        if (this.navigationLinks.length > 0) {
-          //This will need to change in the future
-          if (this.navigationLinks.find(nl => nl.name.toLowerCase() === 'dashboard') !== undefined)
-            this.activeLink = 'Dashboard';
-          else
-            this.activeLink = this.navigationLinks[0].name;
-        }
+        if(this.crumbActiveLink) { 
+          this.activeLink = this.crumbActiveLink;
+        } else { 
+          if (this.navigationLinks.length > 0) {
+            //This will need to change in the future
+            if (this.navigationLinks.find(nl => nl.name.toLowerCase() === 'dashboard') !== undefined)
+              this.activeLink = 'Dashboard';
+            else
+              this.activeLink = this.navigationLinks[0].name;
+          }
+        } 
       },
       (error: any) => {
         this.navLinksFetched = false;
@@ -190,6 +195,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   buildBreadCrumbs() {
+    this.crumbActiveLink = null;
     this.subs.add(this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -202,6 +208,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
             const breadcrumb = currentRoute.data.breadCrumb;
             url += '/' + currentRoute.url.map(segment => segment.path).join('/');
             if (breadcrumb && breadcrumb.label) {
+              if(breadcrumb.activeLink) this.crumbActiveLink = breadcrumb.activeLink;
               const breadCrumb: BreadCrumb = {
                 label: breadcrumb.label,
                 url: url,

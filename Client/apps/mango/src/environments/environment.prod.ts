@@ -16,6 +16,7 @@ class EnvironmentsCrem implements Environment {
     quickSearch: '',
     userMaintenance:'',
     formWizard: '',
+    projects: '',
     objectActions: ''
   };
   isRestful = true;

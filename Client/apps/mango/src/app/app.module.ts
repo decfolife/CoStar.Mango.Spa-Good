@@ -110,9 +110,14 @@ export class AppModule {
       switchMap(e => combineLatest([of(e.url), this.facade.clientKey$])),
       filter(([url, clientKey]) => !!url && !!clientKey),
       map(([url, clientKey]) => {
-        const forceRelogin = CREM_FORCE_RELOGIN_URLS.some(subUrl => url.includes(subUrl))
-        const newUrl = forceRelogin ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
-        window.location.href = newUrl
+        if (url.includes('RenderForm')) {
+          const queryParams = url.split('?')
+          this.router.navigateByUrl(`/crem/forms/render-form?${queryParams[1]}`)
+        } else {
+          const forceRelogin = CREM_FORCE_RELOGIN_URLS.some(subUrl => url.includes(subUrl))
+          const newUrl = forceRelogin ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
+          window.location.href = newUrl
+        }
       })
     ).subscribe()
   }

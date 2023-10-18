@@ -14,7 +14,7 @@ const routes: Routes = [
   {
     path: 'service-account-configuration',
     component: ServiceAccountConfigurationComponent,
-    // canActivate: [CanActivateGuard],
+    canActivate: [CanActivateGuard],
   },
   {
     path: 'reset-password',

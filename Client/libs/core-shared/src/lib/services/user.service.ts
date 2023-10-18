@@ -300,10 +300,11 @@ export class UserService {
     // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
     // );
 
+    let date = new Date();
     const testData : ServiceAccountApiKeyInfo = {
       userEmail: email,
-      dateGenerated: new Date('10/12/2023'),
-      expirationDate: new Date('12/12/2023'),
+      dateGenerated: date,
+      expirationDate: date,
     }
 
     return of(testData);
@@ -325,12 +326,12 @@ export class UserService {
     // );
 
     const testData : any = [ 
-      {siteName: 'BOEING', active: true},
-      {siteName: 'PIEDMONTHEALTHCARE', active: false},
-      {siteName: 'AMERICANEXPRESS', active: true},
-      {siteName: 'FIFTHTHIRD', active: false},
-      {siteName: 'CITI', active: true},
-      {siteName: 'WHIRLPOOL', active: true}
+      {clientKey: 'BOEING', isActive: true},
+      {clientKey: 'PIEDMONTHEALTHCARE', isActive: false},
+      {clientKey: 'AMERICANEXPRESS', isActive: true},
+      {clientKey: 'FIFTHTHIRD', isActive: false},
+      {clientKey: 'CITI', isActive: true},
+      {clientKey: 'WHIRLPOOL', isActive: true}
     ];
 
     return of(testData);
@@ -341,13 +342,31 @@ export class UserService {
 
     // return this.http.get(url)(
     // );
-
+    let date = new Date();
     const testData : any = [
-          {lastModified: 'Date1', modifiedBy: 'Li Liu 1', description: 'Create Account 1', beforeChange: 'Old value', afterChange: 'New value'},
-          {lastModified: 'Date1', modifiedBy: 'Li Liu 2', description: 'Create Account 2', beforeChange: 'Old value', afterChange: 'New value'},
-          {lastModified: 'Date1', modifiedBy: 'Li Liu 3', description: 'Create Account 3', beforeChange: 'Old value', afterChange: 'New value'},
-          {lastModified: 'Date1', modifiedBy: 'Li Liu 4', description: 'Create Account 4', beforeChange: 'Old value', afterChange: 'New value'},
-          {lastModified: 'Date1', modifiedBy: 'Li Liu 4', description: 'Create Account 5', beforeChange: 'Old value', afterChange: 'New value'}];
+          {lastModified: date, modifiedBy: 'Li Liu 1', description: 'Create Account 1', beforeChange: 'Old value 1', afterChange: 'New value 1'},
+          {lastModified: date, modifiedBy: 'Li Liu 2', description: 'Create Account 2', beforeChange: 'Old value 2', afterChange: 'New value 2'},
+          {lastModified: date, modifiedBy: 'Li Liu 3', description: 'Create Account 3', beforeChange: 'Old value 3', afterChange: 'New value 3'},
+          {lastModified: date, modifiedBy: 'Li Liu 4', description: 'Create Account 4', beforeChange: 'Old value 4', afterChange: 'New value 4'},
+          {lastModified: date, modifiedBy: 'Li Liu 5', description: 'Create Account 5', beforeChange: 'Old value 5', afterChange: 'New value 5'}];
+
+    return of(testData);
+  }
+
+  getServiceAccountEndpoints(): Observable<any> {
+    let url = `${this.env.appUrls.authenticate}/getServiceAccountEndpoints`;
+
+    // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
+    // );
+
+    const testData = [ 
+        {endpointName: 'Projects ', active: true},
+        {endpointName: 'Portfolio', active: false},
+        {endpointName: 'Accounting', active: false},
+        {endpointName: 'Financials', active: false},
+        {endpointName: 'Company', active: false},
+        {endpointName: 'Contacts', active: false}
+        ];
 
     return of(testData);
   }
