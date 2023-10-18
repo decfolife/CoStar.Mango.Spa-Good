@@ -585,3 +585,47 @@ body {
 		}
 	}	
 } //** End recent activities styles
+
+
+//*****  Teams Page Styles *****//
+.mat-menu-panel {
+ &.teamsActionsMenu, &.teamsMoreMenu {
+	 .mat-menu-content {
+			padding: 0 !important;
+	  }	
+		.mat-menu-item {
+			height: 34px;
+			display: flex;
+			line-height: 34px;
+			span { 
+				height: inherit;
+			}
+		}
+	}
+	&.teamActionsMenu .mat-menu-content {
+		padding: 0;
+	}
+}
+
+#teams-container {
+	button.mat-menu-trigger.btn-link:focus {
+		box-shadow: 0 0 0 0.1rem colors.$blueShade;
+	}
+
+	.teams-data-grid {
+		td {
+			vertical-align: middle !important;
+		}	
+		td.dx-command-edit {
+			span {
+				display: flex;
+				height: 24px;
+				width: 24px;
+				transform: translate(40%,40%)  !important
+			}
+		}
+		.dx-checkbox-icon {
+			border: 1px solid colors.$darkGray;
+		}
+	}
+}

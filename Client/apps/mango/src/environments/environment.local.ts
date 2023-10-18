@@ -32,6 +32,7 @@ class EnvironmentsCrem implements Environment {
     objectActions: 'http://localhost:27287/api/',
     formWizard: 'http://localhost:5000/api/',
     header: 'http://localhost:39179/api/',
+    projects: 'http://localhost:30057/api/projects/',
     accountingSummary:"http://localhost:5205/api/accountingSummary/"
   };
   isRestful = true;

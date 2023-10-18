@@ -15,82 +15,43 @@ export class DashboardService  extends EndpointService{
   }
 
   getDashboardByIdWithChildrenQuery(dashboardId: number): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/${dashboardId}`;
-      return this.callHttpGet(url, 'getDashboardByIdWithChildrenQuery')
-    }
-
-    const url = `${environment.appUrls.dashboards}GetDashboardByIdWithChildrenQuery`;
-    return this.callHttpPost(url, 'getDashboardByIdWithChildrenQuery', { dashboardId })
+    const url = `${environment.appUrls.dashboards}Dashboards/${dashboardId}`;
+    return this.callHttpGet(url, 'getDashboardByIdWithChildrenQuery')
   }
 
   getCardDataByElementType(dashboardId: number, elementTypeName: string, keyDate: string, selectedFilters: string): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}ProjectsCards/GetCardDataByElementType`;
-      return this.callHttpPost(url, 'getCardDataByElementType', { dashboardId, elementTypeName, keyDate, selectedFilters })
-    }
-    const url = environment.appUrls.dashboards + 'GetCardDataByElementType';
+    const url = `${environment.appUrls.dashboards}ProjectsCards/GetCardDataByElementType`;
     return this.callHttpPost(url, 'getCardDataByElementType', { dashboardId, elementTypeName, keyDate, selectedFilters })
   }
 
   getAllProjectFilters(elementTypeNames: any[]): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}ProjectsFilters/GetAllProjectFilters`;
-      return this.callHttpPost(url, 'GetAllProjectFilters',  elementTypeNames )
-    }
-
-    const url = environment.appUrls.dashboards + 'GetAllProjectFilters';
-    return this.callHttpPost(url, 'getAllProjectFilters', { elementTypeNames })
+    const url = `${environment.appUrls.dashboards}ProjectsFilters/GetAllProjectFilters`;
+    return this.callHttpPost(url, 'GetAllProjectFilters',  elementTypeNames )
   }
 
   getFilterDataByElementType(dashboardId: number, elementTypeName: string): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}ProjectsFilters/GetProjectsFilterDataByElementType/${dashboardId}/${elementTypeName}`;
-      return this.callHttpGet(url, 'getFilterDataByElementType')
-    }
-
-    const url = environment.appUrls.dashboards + 'GetProjectsFilterDataByElementType';
-    return this.callHttpPost(url, 'getFilterDataByElementType', { dashboardId, elementTypeName })
+    const url = `${environment.appUrls.dashboards}ProjectsFilters/GetProjectsFilterDataByElementType/${dashboardId}/${elementTypeName}`;
+    return this.callHttpGet(url, 'getFilterDataByElementType')
   }
 
   getUserFilters(dashboardId): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/GetUserFilters/${dashboardId}`;
-      return this.callHttpGet(url, 'getUserFilters')
-    }
-
-    const url = `${environment.appUrls.dashboards}GetUserFilters`;
-    return this.callHttpPost(url, 'getUserFilters', { dashboardId })
+    const url = `${environment.appUrls.dashboards}Dashboards/GetUserFilters/${dashboardId}`;
+    return this.callHttpGet(url, 'getUserFilters')
   }
 
   postCacheSettings(dashboardId: number): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/ClearDashboardCache`;
-      return this.callHttpPost(url, 'updateCacheSettings', dashboardId)
-    }
-
-    const url = environment.appUrls.dashboards + 'ClearDashboardCache';
-    return this.callHttpPost(url, 'updateCacheSettings', {dashboardId})
+    const url = `${environment.appUrls.dashboards}Dashboards/ClearDashboardCache`;
+    return this.callHttpPost(url, 'updateCacheSettings', dashboardId)
   }
   
   saveUserFilters(userSelectedFilters: UserSelectedFilters): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/SaveUserFilters`;
-      return this.callHttpPost(url, 'saveUserFilters',  userSelectedFilters)
-    }
-
-    const url = environment.appUrls.dashboards + 'SaveUserFilters';
-    return this.callHttpPost(url, 'saveUserFilters', { userSelectedFilters })
+    const url = `${environment.appUrls.dashboards}Dashboards/SaveUserFilters`;
+    return this.callHttpPost(url, 'saveUserFilters',  userSelectedFilters)
   }
 
   postUserSettings(dashboardUserSettings: any[]): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/SaveUserSettings`;
-      return this.callHttpPost(url, 'updateUserSettings',  dashboardUserSettings)
-    }
-
-    const url = environment.appUrls.dashboards + 'SaveUserSettings';
-    return this.callHttpPost(url, 'updateUserSettings', { dashboardUserSettings })
+    const url = `${environment.appUrls.dashboards}Dashboards/SaveUserSettings`;
+    return this.callHttpPost(url, 'updateUserSettings',  dashboardUserSettings)
   }
   
   // This method calls dashboard api to approve or reject task. If service is not restful, it will call
@@ -112,13 +73,8 @@ export class DashboardService  extends EndpointService{
   }
 
   getCardFilters(): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}ProjectsFilters/GetProjectsCardFilters`;
-      return this.callHttpGet(url, 'getCardFilters')
-    }
-
-    const url = `${environment.appUrls.dashboards}GetProjectsCardFilters`;
-    return this.callHttpPost(url, 'getCardFilters', null)
+    const url = `${environment.appUrls.dashboards}ProjectsFilters/GetProjectsCardFilters`;
+    return this.callHttpGet(url, 'getCardFilters')
   }
 
   // This method will call CREM app web method to request file
@@ -128,43 +84,28 @@ export class DashboardService  extends EndpointService{
   }
 
   DoesUserHaveProjectAddRights(): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/DoesUserHaveProjectAddRights`;
-      return this.callHttpGet(url, 'DoesUserHaveProjectAddRights')
-    }
-
-    const url = `${environment.appUrls.dashboards}DoesUserHaveProjectAddRights`;
-    return this.callHttpPost(url, 'DoesUserHaveProjectAddRights', null)
+    const url = `${environment.appUrls.dashboards}Dashboards/DoesUserHaveProjectAddRights`;
+    return this.callHttpGet(url, 'DoesUserHaveProjectAddRights')
   }
 
   GetUserPreferences(): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/GetUserPreferences`;
-      return this.callHttpGet(url, 'GetUserPreferences')
-    }
-    const url = `${environment.appUrls.dashboards}GetUserPreferences`;
-    return this.callHttpPost(url, 'GetUserPreferences', null)
+    const url = `${environment.appUrls.dashboards}Dashboards/GetUserPreferences`;
+    return this.callHttpGet(url, 'GetUserPreferences')
   }
   
   getObjectTypeNames(objectTypeIds: number[]): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Dashboards/GetObjectTypeNames`;
-      return this.callHttpPost(url, 'getObjectTypeNames',  { objectTypeIds })
-    }
-
-    const url = environment.appUrls.dashboards + 'GetObjectTypeNames';
-    return this.callHttpPost(url, 'getObjectTypeNames', { objectTypeIds })
+    const url = `${environment.appUrls.dashboards}Dashboards/GetObjectTypeNames`;
+    return this.callHttpPost(url, 'getObjectTypeNames',  { objectTypeIds })
   }
 
   getRecentActivities(durationInDays: number): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.dashboards}Projects/GetRecentActivities`;
-      return this.callHttpPost(url, 'getRecentActivities', durationInDays);
-    }
-
-    const url = environment.appUrls.dashboards + 'GetRecentActivities';
-    return this.callHttpPost(url, 'getRecentActivities', {durationInDays});
+    const url = `${environment.appUrls.dashboards}Projects/GetRecentActivities`;
+    return this.callHttpPost(url, 'getRecentActivities', durationInDays);
   }
   
+  getTeams(): Observable<any>  {
+    const url = `${environment.appUrls.projects}getteams`;
+    return this.callHttpGet(url,'getteams')
+  }
 }
 

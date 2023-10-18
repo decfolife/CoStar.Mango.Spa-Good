@@ -72,7 +72,7 @@ const routes: Routes = [
               moduleId: 2,
               objectTypeId: 9,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Tasks', append: true }
+              breadCrumb: { label: 'Tasks', append: true, activeLink: 'Tasks' }
             },
           },
           //Projects list page
@@ -86,7 +86,7 @@ const routes: Routes = [
               moduleId: 2,
               objectTypeId: 1,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Projects', append: true }
+              breadCrumb: { label: 'Projects', append: true, activeLink: 'Projects' }
             },
           },
           {
@@ -98,7 +98,19 @@ const routes: Routes = [
             data: {
               moduleId: 2,
               objectTypeId: null,
-              breadCrumb: { label: 'Recent Activities', append: true }
+              breadCrumb: { label: 'Recent Activities', append: true, activeLink: 'Recent Activities' }
+            },
+          },
+          {
+            path: 'teams',
+            loadChildren: () =>
+              import(
+                '@project-dashboard/components/teams/teams.module'
+              ).then((mod) => mod.TeamsModule),
+            data: {
+              moduleId: 2,
+              objectTypeId: null,
+              breadCrumb: { label: 'Teams', append: true, activeLink: 'Teams' }
             },
           },
         ]
