@@ -28,7 +28,7 @@ export class ServiceAccountSitesComponent implements OnInit {
 
   toggleSite(e: any, index: number) {
     const request: ToggleServiceAccountSiteRequest = {
-      userEmail: this.userEmail,
+      email: this.userEmail,
       clientKey: this.sites[index].clientKey,
       isActive: e.checked
     };
