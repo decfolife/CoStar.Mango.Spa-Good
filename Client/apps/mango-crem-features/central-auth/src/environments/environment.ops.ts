@@ -12,7 +12,8 @@ class EnvironmentsCrem {
     userMaintenance: '',
     taskApproval: '',
     formWizard: '',
-    header: ''
+    header: '',
+    projects: '',
   };
   isRestful: false;
 }
