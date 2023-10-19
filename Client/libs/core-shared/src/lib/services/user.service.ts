@@ -333,7 +333,7 @@ export class UserService {
   }
 
   toggleServiceAccountSite(request: ToggleServiceAccountSiteRequest): Observable<any> {
-    const url = `${this.env.appUrls.authentication}/serviceaccount/site`;
+    const url = `${this.env.appUrls.authentication}/serviceaccount/togglesite`;
 
     return this.http.post(url, request).pipe<boolean>(
       tap((response: any) => {
