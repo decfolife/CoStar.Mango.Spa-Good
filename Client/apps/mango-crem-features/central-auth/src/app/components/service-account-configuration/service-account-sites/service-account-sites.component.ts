@@ -37,7 +37,7 @@ export class ServiceAccountSitesComponent implements OnInit {
       this.userService.toggleServiceAccountSite(request)
       .subscribe(result => {    
           if(result){        
-          this.sites =  this.getSites();
+          this.getSites();
         }
       })
     )
