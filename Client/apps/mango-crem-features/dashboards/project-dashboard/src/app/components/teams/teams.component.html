@@ -24,7 +24,7 @@
 			<div class="more">
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="teamsMoreMenu">				
-					<button mat-menu-item ><span >Expand All/Collapse All</span></button>      
+					<button mat-menu-item (click)="toggleExpand()"><span >Expand All/Collapse All</span></button>      
 					<button mat-menu-item >Export</button>                   
 				</mat-menu>	 
 			</div>
@@ -55,11 +55,6 @@
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
-			<dxo-filter-builder-popup [width]="600"
-				[height]="600"
-				[(visible)]="filterBuilderVisible">
-			</dxo-filter-builder-popup>
-
 			<dxo-paging [enabled]="false"></dxo-paging>
 
 			<dxo-selection
@@ -89,6 +84,10 @@
 					</div>
 				</dxi-button>		    	
 			</dxi-column>
+			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="teamDetails"></dxo-master-detail>
+			<div *dxTemplate="let team of 'teamDetails'">
+				<team-members  [searchText]="searchText" [rights]="team.data.securityLevel" [teamMembers]="team.data.teamMembers"></team-members>
+			</div>
 
 		</dx-data-grid>
 	</div>

@@ -1,1 +1,58 @@
-<div>Team Member Details works!!!</div>
+<!-- <div>Team Member Details works!!!</div> -->
+<div id="teamsMembers-container">
+	<div class="teamMembers-dataGrid-wrapper"> 
+		<dx-data-grid class="teamsMembers-data-grid"
+			#TeamMembersGrid
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			columnResizingMode="widget"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[dataSource]="teamMembers"
+			keyExpr="memberId"
+			[filterSyncEnabled]="true"
+			[wordWrapEnabled]="true"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-paging [enabled]="false"></dxo-paging>
+
+			<dxo-selection *ngIf="rights.toLowerCase().trim() != 'view'"
+				selectAllMode="allPages"
+				showCheckBoxesMode="always"
+				mode="multiple">
+			</dxo-selection>
+
+			<dxi-column dataField="name"></dxi-column>
+			<dxi-column dataField="company"></dxi-column>
+			<dxi-column dataField="email"></dxi-column>
+			<dxi-column dataField="phoneNumber" ></dxi-column>
+			<dxi-column dataField="role"></dxi-column>
+			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
+			</dxi-column>
+			<dxi-column dataField="level" caption='Access Level' ></dxi-column>
+			<dxi-column type="buttons" width="60" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
+				<dxi-button template="actionsMenuTemplate">
+					<div *dxTemplate="let data of 'actionsMenuTemplate'">
+						<button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" (click)="$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu"><mat-icon aria-label="Actions Menu">more_vert</mat-icon></button>
+		    			<mat-menu #teamMemberActionsMenu="matMenu" class="teamMemberActionsMenu">
+							<ul role="menu">
+								<li mat-menu-item (click)="doSomethingForNow(data)">Edit</li>
+								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="rights.toLowerCase().trim() != 'view'">Remove</li>
+							</ul>
+						</mat-menu>
+					</div>
+				</dxi-button>		    	
+			</dxi-column>
+			<div *dxTemplate="let data of 'toggleTemplate'" >
+				<div class="emailToggle">
+					<mat-slide-toggle [checked]="data.data.emailOn"></mat-slide-toggle>
+				</div>		
+			</div>
+		</dx-data-grid>
+	</div>
+
+</div>

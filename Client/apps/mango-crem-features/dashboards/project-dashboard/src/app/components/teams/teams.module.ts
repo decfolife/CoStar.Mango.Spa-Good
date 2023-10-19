@@ -9,6 +9,7 @@ import { TeamsComponent } from './teams.component';
 import { TeamsRoutingModule } from './teams-routing.module';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { CardsService } from '@project-dashboard/services/cards.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TeamMembersComponent } from './team-members/team-members.component';
 
 @NgModule({
@@ -25,6 +26,7 @@ import { TeamMembersComponent } from './team-members/team-members.component';
     MatIconModule,
     DxDataGridModule,
     MatMenuModule,
+    MatSlideToggleModule,
     LoaderModule,
     FavoriteIconModule
   ],

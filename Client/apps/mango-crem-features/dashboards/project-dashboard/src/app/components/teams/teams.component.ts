@@ -19,6 +19,7 @@ export class TeamsComponent implements OnInit {
   teams: Team[];
   teamMembers: TeamMember[];
   dataRetrieved: boolean = false;
+  autoExpand: boolean = false;
 
   constructor(private dashboardService: DashboardService, private router: Router,
               private cardsService: CardsService) { }
@@ -35,9 +36,8 @@ export class TeamsComponent implements OnInit {
       (error: any) => console.log("Error occurred getting Teams Data ", error),
       () => {}
     );
-
   }
- 
+  
   addTeam() {}
 
   doSomethingForNow(data) {}
@@ -50,6 +50,10 @@ export class TeamsComponent implements OnInit {
         }
       }
     );
+  }
+
+  toggleExpand() {
+    this.autoExpand = !this.autoExpand;
   }
 
   searchDataGrid(data) {

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { TeamMember } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 
 
@@ -9,21 +10,26 @@ import { DxDataGridComponent } from 'devextreme-angular';
 })
 export class TeamMembersComponent implements OnInit {
 
-	@Input() leaseId : number;
-	teamMembers : any[];
+	@Input() teamMembers : TeamMember[];
+	@Input() searchText: string;
+	@Input() rights: string;
 	public dataRetrieved: boolean = false;
 
-	@ViewChild("teamMembersGrid") dataGrid: DxDataGridComponent;
+	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
 
 	constructor() {}	
 
 	ngOnInit() {
-		this.dataRetrieved = false;
-
 	}
 
-	detailRowClick(e: any) {
-		e.event.stopPropagation();
+	ngAfterViewInit() {
+    if(this.searchText) this.searchDataGrid();
+  }
+
+	searchDataGrid() {
+		this.teamMembersGrid.instance.searchByText(this.searchText);
 	}
+
+	doSomethingForNow(data) {}
 
 }

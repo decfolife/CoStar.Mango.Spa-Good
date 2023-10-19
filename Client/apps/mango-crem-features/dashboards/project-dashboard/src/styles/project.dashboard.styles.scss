@@ -602,13 +602,21 @@ body {
 			}
 		}
 	}
-	&.teamActionsMenu .mat-menu-content {
-		padding: 0;
+	&.teamActionsMenu, &.teamMemberActionsMenu {
+		& .mat-menu-content {
+			padding: 0;
+		}
 	}
 }
 
 #teams-container {
-	button.mat-menu-trigger.btn-link:focus {
+	button.mat-menu-trigger.btn-link:focus, 
+	button.actionsButton:focus, 
+	button.moreButton:focus,
+	.clearFilters button.btn-secondary:focus,
+	.searchTeams .mat-form-field.mat-focused
+	{
+		outline: none;
 		box-shadow: 0 0 0 0.1rem colors.$blueShade;
 	}
 
