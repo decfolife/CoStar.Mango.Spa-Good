@@ -50,16 +50,10 @@ export class ClientDeliveryService extends EndpointService
     
   } 
 
-  deleteServiceAccount(serviceAccountsData: any, contactID: number, contactEmailAddress: string, contactActiveFlg: boolean, filter:string): Observable<any> {    
-            let cKey : string;
-            this.clientKey$.subscribe(clientKey=>{ cKey = clientKey;})
-            
-            if(cKey){
-              const url = `${environment.appUrls.authentication}serviceaccount/${contactEmailAddress}/${cKey}`;
-              var reqbody = {"email": contactEmailAddress,  "clientKey": cKey, "isActive": contactActiveFlg };            
-              return this.callHttpPost(url, 'DeleteServiceAccount', reqbody)
-            }
-            return of({});
+  deleteServiceAccount(contactEmailAddress: string, contactActiveFlg: boolean): Observable<any> {    
+    const url = `${environment.appUrls.authentication}serviceaccount/site`;
+    var reqbody = {"email": contactEmailAddress, "isActive": contactActiveFlg };            
+    return this.callHttpPost(url, 'DeleteServiceAccount', reqbody)
   }
 
   addServiceAccount(emailAddress: string): Observable<any> {  

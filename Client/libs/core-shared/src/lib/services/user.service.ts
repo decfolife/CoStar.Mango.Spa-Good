@@ -19,6 +19,9 @@ import {
   OAuthAuthorizeHTTPResponse,
   OAuthTokenHTTPResponse,
   ServiceAccountApiKeyInfo,
+  ServiceAccountSites,
+  ServiceAccountEndpoints,
+  ToggleServiceAccountSiteRequest,
 } from '@mango/data-models/lib-data-models';
 import { Environment } from '@mango/data-models/lib-data-models';
 
@@ -294,54 +297,62 @@ export class UserService {
     return false;
   }
 
-  getServiceAccountApiKeyInfo(email: string): Observable<ServiceAccountApiKeyInfo> {
-    let url = `${this.env.appUrls.authenticate}/getServiceAccountApiKeyInfo/{email}`;
+  getServiceAccountApiKeyInfo(userEmail: string): Observable<ServiceAccountApiKeyInfo> {
+    const url = `${this.env.appUrls.authenticate}/getServiceAccountApiKeyInfo/{userEmail}`;
 
     // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
     // );
 
+    //To be deleted after API integration
     let date = new Date();
     const testData : ServiceAccountApiKeyInfo = {
-      userEmail: email,
+      userEmail: userEmail,
       dateGenerated: date,
       expirationDate: date,
     }
-
     return of(testData);
   }
 
-  generateApiKey(email: string): Observable<boolean> {
-    let url = `${this.env.appUrls.authenticate}/generateApiKey/{email}`;
+  generateApiKey(userEmail: string): Observable<boolean> {
+    const url = `${this.env.appUrls.authenticate}/generateApiKey/${userEmail}`;
 
     // return this.http.post(url)(
     // );
 
+    //To be deleted after API integration
     return of(true);
   }
 
-  getServiceAccountSites(email: string): Observable<any> {
-    let url = `${this.env.appUrls.authenticate}/getServiceAccountSites/{email}`;
+  getServiceAccountSites(userEmail: string): Observable<ServiceAccountSites> {
+    const url = `${this.env.appUrls.authenticate}/user/serviceaccount/clientsites/${userEmail}`;
 
-    // return this.http.post(url)(
-    // );
-
-    const testData : any = [ 
-      {clientKey: 'BOEING', isActive: true},
-      {clientKey: 'PIEDMONTHEALTHCARE', isActive: false},
-      {clientKey: 'AMERICANEXPRESS', isActive: true},
-      {clientKey: 'FIFTHTHIRD', isActive: false},
-      {clientKey: 'CITI', isActive: true},
-      {clientKey: 'WHIRLPOOL', isActive: true}
-    ];
-
-    return of(testData);
+    return this.http.get(url).pipe<ServiceAccountSites>(
+      tap((response: any) => {
+        return response;
+      })
+    );
   }
 
-  getServiceAccountChangeHistory(email: string): Observable<any> {
-    let url = `${this.env.appUrls.authenticate}/getServiceAccountChangeHistory/{email}`;
+  toggleServiceAccountSite(request: ToggleServiceAccountSiteRequest): Observable<any> {
+    const url = `${this.env.appUrls.authentication}/serviceaccount/togglesite`;
 
-    // return this.http.get(url)(
+    return this.http.post(url, request).pipe<boolean>(
+      tap((response: any) => {
+        return response;
+      })
+    );
+  }
+
+  getServiceAccountChangeHistory(userEmail: string): Observable<any> {
+    // const url = `${this.env.appUrls.authenticate}/getServiceAccountChangeHistory/{userEmail}`;
+
+    // return this.http.get(url).pipe<any>(
+    //   tap((response: any) => {
+    //     return response;
+    //   })
     // );
+
+    //To be deleted after API integration
     let date = new Date();
     const testData : any = [
           {lastModified: date, modifiedBy: 'Li Liu 1', description: 'Create Account 1', beforeChange: 'Old value 1', afterChange: 'New value 1'},
@@ -353,22 +364,14 @@ export class UserService {
     return of(testData);
   }
 
-  getServiceAccountEndpoints(): Observable<any> {
-    let url = `${this.env.appUrls.authenticate}/getServiceAccountEndpoints`;
+  getServiceAccountEndpoints(): Observable<ServiceAccountEndpoints> {    
+    const url = `${this.env.appUrls.authentication}/serviceaccount/endpoints`;
 
-    // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
-    // );
-
-    const testData = [ 
-        {endpointName: 'Projects ', active: true},
-        {endpointName: 'Portfolio', active: false},
-        {endpointName: 'Accounting', active: false},
-        {endpointName: 'Financials', active: false},
-        {endpointName: 'Company', active: false},
-        {endpointName: 'Contacts', active: false}
-        ];
-
-    return of(testData);
+    return this.http.get(url).pipe<ServiceAccountEndpoints>(
+      tap((response: any) => {
+        return response;
+      })
+    );
   }
 
 }
