@@ -20,6 +20,7 @@ import {
   OAuthTokenHTTPResponse,
   ServiceAccountApiKeyInfo,
   ServiceAccountSites,
+  ServiceAccountEndpoints,
   ToggleServiceAccountSiteRequest,
 } from '@mango/data-models/lib-data-models';
 import { Environment } from '@mango/data-models/lib-data-models';
@@ -343,9 +344,12 @@ export class UserService {
   }
 
   getServiceAccountChangeHistory(userEmail: string): Observable<any> {
-    const url = `${this.env.appUrls.authenticate}/getServiceAccountChangeHistory/{userEmail}`;
+    // const url = `${this.env.appUrls.authenticate}/getServiceAccountChangeHistory/{userEmail}`;
 
-    // return this.http.get(url)(
+    // return this.http.get(url).pipe<any>(
+    //   tap((response: any) => {
+    //     return response;
+    //   })
     // );
 
     //To be deleted after API integration
@@ -360,21 +364,14 @@ export class UserService {
     return of(testData);
   }
 
-  getServiceAccountEndpoints(): Observable<any> {    let url = `${this.env.appUrls.authenticate}/getServiceAccountEndpoints`;
+  getServiceAccountEndpoints(): Observable<ServiceAccountEndpoints> {    
+    const url = `${this.env.appUrls.authentication}/serviceaccount/endpoints`;
 
-  // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
-  // );
-
-    const testData = [ 
-        {endpointName: 'Projects ', active: true},
-        {endpointName: 'Portfolio', active: false},
-        {endpointName: 'Accounting', active: false},
-        {endpointName: 'Financials', active: false},
-        {endpointName: 'Company', active: false},
-        {endpointName: 'Contacts', active: false}
-        ];
-
-    return of(testData);
+    return this.http.get(url).pipe<ServiceAccountEndpoints>(
+      tap((response: any) => {
+        return response;
+      })
+    );
   }
 
 }

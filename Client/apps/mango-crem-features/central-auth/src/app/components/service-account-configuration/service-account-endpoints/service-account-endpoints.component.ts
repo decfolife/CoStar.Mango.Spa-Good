@@ -30,7 +30,7 @@ export class ServiceAccountEndpointsComponent implements OnInit {
       this.userService.getServiceAccountEndpoints()
       .subscribe(result => {        
         if(result){          
-            this.endpoints =  result;    
+            this.endpoints =  result.endpoints;    
         }
       })
     )
