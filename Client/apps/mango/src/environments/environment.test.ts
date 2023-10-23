@@ -4,15 +4,15 @@ class EnvironmentsCrem implements Environment {
   production = false;
   name = 'TEST';
   appUrls = {
-    accounting: 'http://service2.test.corp.virtualpremise.com:8090/accountmanagement/api',
+    accounting: 'http://mangospa.test.corp.virtualpremise.com:8090/accountmanagement/api',
     batchAccounting: 'http://mangospa.test.corp.virtualpremise.com:30080/batchAccounting/api',
-    discountRateProfiles: 'http://mangospa.test.corp.virtualpremise.com:30080/api',
-    bookmarks: 'http://mangospa.test.corp.virtualpremise.com:30080/bookmarks/api/bookmarks/',
+    discountRateProfiles: 'http://mangospa.test.corp.virtualpremise.com:30080/accountingprofiles/api',
+    bookmarks: 'http://mangospa.test.corp.virtualpremise.com:30080/bookmarks/api/',
     listpages: 'http://mangospa.test.corp.virtualpremise.com:30080/listpages/api/listpage/',
     financials: 'http://mangospa.test.corp.virtualpremise.com:30080/financials/api/',
     dashboards: 'http://mangospa.test.corp.virtualpremise.com:30080/dashboards/api/',
-    authenticate: 'https://identity.test.crem.aws.dshrp.com/api',
-    authentication: 'https://authentication.test.crem.aws.dshrp.com/api/',
+    authenticate: 'https://identity.tst.crem.aws.dshrp.com/api',
+    authentication: 'https://authentication.tst.crem.aws.dshrp.com/api/',
     authorization: 'http://mangospa.test.corp.virtualpremise.com:30080/authorization/api/',
     taskApproval: '', 
     reports: 'http://mangospa.test.corp.virtualpremise.com:30080/reports/api/',

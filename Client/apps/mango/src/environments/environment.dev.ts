@@ -4,10 +4,10 @@ class EnvironmentsCrem implements Environment {
   production = false;
   name = 'DEV';
   appUrls = {
-    accounting: 'http://service2.dev.corp.virtualpremise.com:8090/accountmanagement/api',
+    accounting: 'http://mangospa.dev.corp.virtualpremise.com:30080/accountmanagement/api',
     batchAccounting: 'http://mangospa.dev.corp.virtualpremise.com:30080/batchAccounting/api',
-    discountRateProfiles: 'http://mangospa.dev.corp.virtualpremise.com:30080/api',
-    bookmarks: 'http://mangospa.dev.corp.virtualpremise.com:30080/bookmarks/api/bookmarks/',
+    discountRateProfiles: 'http://mangospa.dev.corp.virtualpremise.com:30080/accountingprofiles/api',
+    bookmarks: 'http://mangospa.dev.corp.virtualpremise.com:30080/bookmarks/api/',
     listpages: 'http://mangospa.dev.corp.virtualpremise.com:30080/listpages/api/listpage/',
     financials: 'http://mangospa.dev.corp.virtualpremise.com:30080/financials/api/',
     dashboards: 'http://mangospa.dev.corp.virtualpremise.com:30080/dashboards/api/',
