@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { createEffect, Actions, ofType } from '@ngrx/effects';
-
-import * as AppActions from '../app.actions';
-import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { DBkeys, HeaderService, SettingsService, StorageService, UserInfoService } from '@mango/core-shared/lib-core-shared';
-import { MangoAppFacade } from '../app.facade';
-import { RouterNavigatedAction, ROUTER_NAVIGATED } from '@ngrx/router-store';
-import { EMPTY, iif, of } from 'rxjs';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DBkeys, HeaderService, SettingsService, StorageService, UserInfoService } from '@mango/core-shared/lib-core-shared';
 import { OAUTH_REDIRECT_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
+import { of } from 'rxjs';
+import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import * as AppActions from '../app.actions';
+import { MangoAppFacade } from '../app.facade';
 
 
 @Injectable()
@@ -39,14 +38,15 @@ export class InitSetupEffects {
             AppActions.setupClientKey(),
             AppActions.setupContactRecord(),
             AppActions.setupUserInfo(),
-            AppActions.setupHeader()) : of(
+            AppActions.setupHeader(),
+            AppActions.getGlobalSession()) : of(
               AppActions.setupAuthentication(),
               AppActions.setupClientKey(),
               AppActions.setupContactRecord(),
               AppActions.setupUserInfo(),
-              AppActions.setupHeader())
-        }
-        )
+              AppActions.setupHeader(),
+              AppActions.getGlobalSession())
+        })
       )
   )
 
@@ -93,6 +93,27 @@ export class InitSetupEffects {
         )
       )
   )
+
+  setupSession$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.GET_GLOBAL_SESSION),
+        switchMap(_ => this.userInfoService.getGlobalSession()),
+        switchMap(session =>
+          of(AppActions.getGlobalSessionSuccess({ session }))
+        )
+      )
+  )
+
+  updateGlobalSession$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.UPDATE_GLOBAL_SESSION),
+        switchMap(_ => this.userInfoService.updateGlobalSession()),
+        switchMap(_ => of(AppActions.updateGlobalSessionSuccess()))
+      )
+  )
+
 
   contactRecordSuccess$ = createEffect(
     () =>

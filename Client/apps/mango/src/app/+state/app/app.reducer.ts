@@ -18,7 +18,8 @@ export interface State extends EntityState<MangoAppEntity> {
   breadcrumbs: BreadCrumb[],
   clientInfo: Client,
   moduleId: number,
-  renderFormLeftNavDisplayed: boolean
+  renderFormLeftNavDisplayed: boolean,
+  globalSession: any
 }
 
 export interface MangoPartialState {
@@ -37,7 +38,8 @@ export const initialState: State = appAdapter.getInitialState({
   breadcrumbs: null,
   clientInfo: null,
   moduleId: null,
-  renderFormLeftNavDisplayed: false
+  renderFormLeftNavDisplayed: false,
+  globalSession: null
 });
 
 const appReducer = createReducer(
@@ -55,6 +57,7 @@ const appReducer = createReducer(
   on(AppActions.setRenderFormLeftNavDisplayed, (state, { renderFormLeftNavDisplayed }) => ({ 
     ...state, error: null, renderFormLeftNavDisplayed: renderFormLeftNavDisplayed 
   })),
+  on(AppActions.getGlobalSessionSuccess, (state, { session }) => ({ ...state, error: null, globalSession: session.data })),
 );
 
 export function reducer(state: State | undefined, action: Action) {

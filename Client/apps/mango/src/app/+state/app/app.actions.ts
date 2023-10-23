@@ -22,6 +22,10 @@ export const SET_MODULE_ID = '[Mango App] Set Module Id'
 export const SET_RENDER_FORM_LEFTNAV_DISPLAYED = '[Mango App] Render Form LeftNav Displayed'
 export const NAVIGATE_LEFT_NAV_MENU = '[Mango App] Navigate Left Nav Menu'
 export const NAVIGATE_HOME = '[Mango App] Navigate Home'
+export const GET_GLOBAL_SESSION = '[Mango App] Get Global Session'
+export const GET_GLOBAL_SESSION_SUCCESS = '[Mango App] Get Global Session Success'
+export const UPDATE_GLOBAL_SESSION = '[Mango App] Update Global Session'
+export const UPDATE_GLOBAL_SESSION_SUCCESS = '[Mango App] Update Global Session Success'
 
 export const init = createAction(APP_INIT);
 
@@ -29,7 +33,7 @@ export const setupHeader = createAction(SETUP_HEADER);
 
 export const setupAuthentication = createAction(SETUP_AUTHENTICATION);
 
-export const setupCremAuthentication = createAction(SETUP_CREM_AUTHENTICATION, props<{ authCode: string , redirectionUri: string}>());
+export const setupCremAuthentication = createAction(SETUP_CREM_AUTHENTICATION, props<{ authCode: string, redirectionUri: string }>());
 
 export const setupClientKey = createAction(SETUP_CLIENT_KEY);
 
@@ -99,3 +103,13 @@ export const navigateLeftNavMenu = createAction(
 export const navigateHome = createAction(
   NAVIGATE_HOME
 );
+
+export const getGlobalSession = createAction(GET_GLOBAL_SESSION);
+
+export const getGlobalSessionSuccess = createAction(
+  GET_GLOBAL_SESSION_SUCCESS,
+  props<{ session: any }>()
+);
+
+export const updateGlobalSession = createAction(UPDATE_GLOBAL_SESSION);
+export const updateGlobalSessionSuccess = createAction(UPDATE_GLOBAL_SESSION_SUCCESS);

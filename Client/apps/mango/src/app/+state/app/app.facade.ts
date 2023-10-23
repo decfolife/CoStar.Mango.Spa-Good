@@ -20,6 +20,7 @@ export class MangoAppFacade {
   breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
   userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
   contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
+  globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
   moduleId$ = this.store.pipe(select(AppSelectors.moduleId), take(1));
   renderFormLeftNavDisplayed$ = this.store.pipe(select(AppSelectors.renderFormLeftNavDisplayed), take(1));
   //Subjects
@@ -89,5 +90,13 @@ export class MangoAppFacade {
 
   navigateLeftNevMenu(navLink: SharedLeftNavLink): void {
     this.store.dispatch(AppActions.navigateLeftNavMenu({ navLink }))
+  }
+
+  getGlobalSesssoin(): void {
+    this.store.dispatch(AppActions.getGlobalSession())
+  }
+
+  updateGlobalSession(): void {
+    this.store.dispatch(AppActions.updateGlobalSession())
   }
 }

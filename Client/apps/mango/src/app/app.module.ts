@@ -110,6 +110,11 @@ export class AppModule {
       switchMap(e => combineLatest([of(e.url), this.facade.clientKey$])),
       filter(([url, clientKey]) => !!url && !!clientKey),
       map(([url, clientKey]) => {
+        this.facade.updateGlobalSession()
+        return [url, clientKey]
+      }),
+      map(([url, clientKey]) => {
+        console.log({url, clientKey})
         if (url.includes('RenderForm')) {
           const queryParams = url.split('?')
           this.router.navigateByUrl(`/crem/forms/render-form?${queryParams[1]}`)
@@ -118,7 +123,7 @@ export class AppModule {
           const newUrl = forceRelogin ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
           window.location.href = newUrl
         }
-      })
+      }),
     ).subscribe()
   }
 }
