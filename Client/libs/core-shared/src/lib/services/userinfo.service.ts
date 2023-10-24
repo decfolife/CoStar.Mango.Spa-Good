@@ -21,6 +21,7 @@ export class UserInfoService extends EndpointService {
 
     getGlobalSession(): Observable<any> {
         return combineLatest([this.facade.clientKey$, this.facade.contactRecord$]).pipe(
+            filter(([clientKey, contactRecord]) => !!clientKey && !!contactRecord),
             switchMap(([clientKey, contactRecord]) => this.callHttpGet(`${environment.appUrls.userService}/session?UserId=${contactRecord.contactID}&ClientKey=${clientKey}`, 'getGlobalSession'))
         )
     }

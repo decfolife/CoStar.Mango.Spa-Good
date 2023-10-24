@@ -22,22 +22,22 @@ class EnvironmentsCrem implements Environment {
     groupMaintenance: 'http://mangospa.dev.corp.virtualpremise.com:30080/groupMaintenance/api/',
     alertsRules: 'http://mangospa.dev.corp.virtualpremise.com:30080/Alerts/api/Alerts',
     alerts: 'http://mangospa.dev.corp.virtualpremise.com:30080/Alerts/api/Alerts',
-    accountingService: 'http://mangospa.dev.corp.virtualpremise.com:30080/Accounting/api/Accounting',
+    accountingService: 'http://mangospa.dev.corp.virtualpremise.com:30080/AccountingDashboard/api/Accounting',
     leftNav: 'http://mangospa.dev.corp.virtualpremise.com:30080/leftNav/api/',
     quickSearch: 'http://mangospa.dev.corp.virtualpremise.com:30080/quickSearch/api',
     userService: 'http://mangospa.dev.corp.virtualpremise.com:30080/userService/api',
-    formWizard: 'http://mangospa.dev.corp.virtualpremise.com:30080/formWizard/api/',
+    formWizard: 'http://mangospa.dev.corp.virtualpremise.com:30080/FormsEngine/api/',
     objectActions: 'http://mangospa.dev.corp.virtualpremise.com:30080/objectActions/api/',
     header: 'http://mangospa.dev.corp.virtualpremise.com:30080/header/api/',
-    inAppDisclosure: 'http://mangospa.dev.corp.virtualpremise.com:30080/inAppDisclosure/api/',
-    accountingSummary:"http://mangospa.dev.corp.virtualpremise.com:30080/accountingSummary/api/AccountingSummary/",
-    dataSetDictionary: 'http://mangospa.dev.corp.virtualpremise.com:30080/dataSetDictionary/api/',
+    inAppDisclosure: 'http://mangospa.dev.corp.virtualpremise.com:30080/AccountingDashboard/api/',
+    accountingSummary:"http://mangospa.dev.corp.virtualpremise.com:30080/AccountingSummary/api/AccountingSummary/",
+    dataSetDictionary: 'http://mangospa.dev.corp.virtualpremise.com:30080/reports/api/',
     projects: 'http://mangospa.dev.corp.virtualpremise.com:30080/projects/api/projects/',
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].dev.corp.virtualpremise.com';
   CAUrl = 'https://client-alpha.dev.crem.aws.dshrp.com/';
-  mangoSpaUrl = 'http://service2.dev.corp.virtualpremise.com:8097/'
+  mangoSpaUrl = 'http://mangospa.dev.corp.virtualpremise.com:30080/'
 }
 
 export const environment = new EnvironmentsCrem();
