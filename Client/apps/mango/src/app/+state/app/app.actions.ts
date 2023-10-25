@@ -1,4 +1,4 @@
-import { Client, ContactRecord, Link, MangoSubApps, UserAuth, UserInfo, BreadCrumb } from '@mango/data-models/lib-data-models';
+import { BreadCrumb, Client, ContactRecord, GlobalSessionHttpObject, MangoSubApps, UserAuth, UserInfo, V06GlobalSession } from '@mango/data-models/lib-data-models';
 import { createAction, props } from '@ngrx/store';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 
@@ -26,6 +26,7 @@ export const GET_GLOBAL_SESSION = '[Mango App] Get Global Session'
 export const GET_GLOBAL_SESSION_SUCCESS = '[Mango App] Get Global Session Success'
 export const UPDATE_GLOBAL_SESSION = '[Mango App] Update Global Session'
 export const UPDATE_GLOBAL_SESSION_SUCCESS = '[Mango App] Update Global Session Success'
+export const POPULATE_BREADCRUMBS_FROM_SESSION = '[Mango App] Populate Breadcrumbs From Session'
 
 export const init = createAction(APP_INIT);
 
@@ -108,8 +109,10 @@ export const getGlobalSession = createAction(GET_GLOBAL_SESSION);
 
 export const getGlobalSessionSuccess = createAction(
   GET_GLOBAL_SESSION_SUCCESS,
-  props<{ session: any }>()
+  props<{ session: GlobalSessionHttpObject }>()
 );
 
-export const updateGlobalSession = createAction(UPDATE_GLOBAL_SESSION);
+export const updateGlobalSession = createAction(UPDATE_GLOBAL_SESSION, props<{ session: V06GlobalSession}>());
 export const updateGlobalSessionSuccess = createAction(UPDATE_GLOBAL_SESSION_SUCCESS);
+
+export const populateBreadcrumbsFromSession = createAction(POPULATE_BREADCRUMBS_FROM_SESSION);

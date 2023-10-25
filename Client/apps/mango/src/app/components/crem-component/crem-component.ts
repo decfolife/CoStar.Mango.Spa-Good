@@ -1,18 +1,19 @@
 import { HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { BookmarkGroup, ToolbarModuleLink, BreadCrumb } from '@mango/data-models/lib-data-models';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from 'apps/mango/src/environments/environment.local';
-import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookmarks/bookmarks.component';
-import { Observable, of, Subscription } from 'rxjs';
-import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { HeaderService } from '@mango/core-shared';
+import { BookmarkGroup, BreadCrumb, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { searchResultsComponent } from '@quick-search/components/modal/search-results/search-results.component';
-import { MangoAppFacade } from '../../+state/app/app.facade';
-import { filter, switchMap, tap, startWith} from 'rxjs/operators';
-import { HeaderService } from '@mango/core-shared';
+import { environment } from 'apps/mango/src/environments/environment.local';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
+import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookmarks/bookmarks.component';
+import { Observable, Subscription, combineLatest, of } from 'rxjs';
+import { filter, startWith, switchMap, tap } from 'rxjs/operators';
+import { MangoAppFacade } from '../../+state/app/app.facade';
+import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
+import { GlobalSessionService } from '../../services/global-session.service';
 
 @Component({
   selector: 'mango-crem-component',
@@ -233,6 +234,13 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
           }
           this.tempCrumbs = this.breadcrumbs;
           this.facade.setBreadcrumbs(this.breadcrumbs);
+        }),
+        switchMap(_ => combineLatest([this.facade.breadcrumbs$, this.facade.globalSession$])),
+        filter(([breadcrumbs, globalSession]) => !!breadcrumbs && !!globalSession),
+        tap(([breadcrumbs, globalSession]) => {
+          const v06ParsedBreadcrumbs = GlobalSessionService.generateV06Breadcrumbs(breadcrumbs)
+          const updatedGlobalSession = {...globalSession, breadCrumbs: v06ParsedBreadcrumbs}
+          this.facade.updateGlobalSession(updatedGlobalSession)
         })
       ).subscribe());
   }

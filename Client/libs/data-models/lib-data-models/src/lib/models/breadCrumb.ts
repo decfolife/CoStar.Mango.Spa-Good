@@ -5,3 +5,13 @@ export interface BreadCrumb {
     url: string;
     activeLink? : string;
   }
+
+  export interface V06Breadcrumb {
+    DisplayTxt: string
+    IsList: boolean
+    LinkTxt: string
+    ObjId: number
+    DisplayTxObjTypet: number
+    ObjTypeType: number
+    Pagename: string
+  }

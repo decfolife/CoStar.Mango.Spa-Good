@@ -39,6 +39,7 @@ import { LoadingScreenComponent } from './components/loading-screen/loading-scre
 import { MangoNavigationService } from './services/navigation.service';
 import { CSPModuleInlineStyles } from './utils/content-security-policies/inline-styles';
 import { CustomSerializer } from './utils/custom-route-serializer';
+import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { CustomSerializer } from './utils/custom-route-serializer';
     EffectsModule.forFeature([
       AuthenticationEffects,
       InitSetupEffects,
-      NavigationEffect
+      NavigationEffect,
+      GlobalSessionEffects
     ]),
     StoreDevtoolsModule.instrument(),
     HttpClientModule,

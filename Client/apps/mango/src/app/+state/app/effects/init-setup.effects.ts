@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DBkeys, HeaderService, SettingsService, StorageService, UserInfoService } from '@mango/core-shared/lib-core-shared';
-import { OAUTH_REDIRECT_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { OAUTH_REDIRECT_QUERY_PARAM, SOURCE_APP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { of } from 'rxjs';
 import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
@@ -31,21 +31,21 @@ export class InitSetupEffects {
         ofType(AppActions.APP_INIT),
         delay(1000),
         switchMap(_ => this.activatedRoute.queryParams),
-        map(params => [params.auth_code, params[OAUTH_REDIRECT_QUERY_PARAM]]),
-        switchMap(([authCode, redirectionUri]) => {
-          return this.router.url.includes('auth/validate') ? of(
+        map(params => [params.auth_code, params[OAUTH_REDIRECT_QUERY_PARAM], params[SOURCE_APP_QUERY_PARAM]]),
+        switchMap(([authCode, redirectionUri, sourceApp]) => {
+          const actionsToDispatch: any[] = this.router.url.includes('auth/validate') ? [
             AppActions.setupCremAuthentication({ authCode, redirectionUri }),
             AppActions.setupClientKey(),
             AppActions.setupContactRecord(),
             AppActions.setupUserInfo(),
             AppActions.setupHeader(),
-            AppActions.getGlobalSession()) : of(
-              AppActions.setupAuthentication(),
-              AppActions.setupClientKey(),
-              AppActions.setupContactRecord(),
-              AppActions.setupUserInfo(),
-              AppActions.setupHeader(),
-              AppActions.getGlobalSession())
+            AppActions.getGlobalSession()] : [AppActions.setupAuthentication(),
+            AppActions.setupClientKey(),
+            AppActions.setupContactRecord(),
+            AppActions.setupUserInfo(),
+            AppActions.setupHeader()]
+            sourceApp === 'v06' ? actionsToDispatch.push(AppActions.getGlobalSession()) : null
+          return of(...actionsToDispatch)
         })
       )
   )
@@ -93,27 +93,6 @@ export class InitSetupEffects {
         )
       )
   )
-
-  setupSession$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.GET_GLOBAL_SESSION),
-        switchMap(_ => this.userInfoService.getGlobalSession()),
-        switchMap(session =>
-          of(AppActions.getGlobalSessionSuccess({ session }))
-        )
-      )
-  )
-
-  updateGlobalSession$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.UPDATE_GLOBAL_SESSION),
-        switchMap(_ => this.userInfoService.updateGlobalSession()),
-        switchMap(_ => of(AppActions.updateGlobalSessionSuccess()))
-      )
-  )
-
 
   contactRecordSuccess$ = createEffect(
     () =>

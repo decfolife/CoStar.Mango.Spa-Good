@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { V06GlobalSession } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable, combineLatest } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -26,13 +27,10 @@ export class UserInfoService extends EndpointService {
         )
     }
 
-    updateGlobalSession(): Observable<any> {
+    updateGlobalSession(session: V06GlobalSession): Observable<any> {
         return this.facade.globalSession$.pipe(
             filter(globalSession => !!globalSession),
-            switchMap(globalSession => {
-                console.log({globalSession})
-                return this.callHttpPost(`${environment.appUrls.userService}/session`, 'updateGlobalSession', globalSession)
-            })
+            switchMap(globalSession => this.callHttpPost(`${environment.appUrls.userService}/session`, 'updateGlobalSession', session || globalSession))
         )
     }
 }
