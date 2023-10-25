@@ -3,14 +3,14 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HeaderService } from '@mango/core-shared';
-import { BookmarkGroup, BreadCrumb, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
+import { BREADCUMBS_LENGTH, BookmarkGroup, BreadCrumb, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { searchResultsComponent } from '@quick-search/components/modal/search-results/search-results.component';
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookmarks/bookmarks.component';
 import { Observable, Subscription, combineLatest, of } from 'rxjs';
-import { filter, startWith, switchMap, tap } from 'rxjs/operators';
+import { delay, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { MangoAppFacade } from '../../+state/app/app.facade';
 import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
 import { GlobalSessionService } from '../../services/global-session.service';
@@ -105,9 +105,9 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
         this.navigationLinks = res.data;
         this.navLinksFetched = true;
 
-        if(this.crumbActiveLink) { 
+        if (this.crumbActiveLink) {
           this.activeLink = this.crumbActiveLink;
-        } else { 
+        } else {
           if (this.navigationLinks.length > 0) {
             //This will need to change in the future
             if (this.navigationLinks.find(nl => nl.name.toLowerCase() === 'dashboard') !== undefined)
@@ -115,7 +115,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
             else
               this.activeLink = this.navigationLinks[0].name;
           }
-        } 
+        }
       },
       (error: any) => {
         this.navLinksFetched = false;
@@ -201,7 +201,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
       .pipe(
         filter(event => event instanceof NavigationEnd),
         startWith(this.router),
-        tap(e => {
+        map(e => {
           this.breadcrumbs = [];
           let currentRoute = this.activatedRoute.snapshot;
           let url = '';
@@ -209,37 +209,39 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
             const breadcrumb = currentRoute.data.breadCrumb;
             url += '/' + currentRoute.url.map(segment => segment.path).join('/');
             if (breadcrumb && breadcrumb.label) {
-              if(breadcrumb.activeLink) this.crumbActiveLink = breadcrumb.activeLink;
+              if (breadcrumb.activeLink) this.crumbActiveLink = breadcrumb.activeLink;
               const breadCrumb: BreadCrumb = {
                 label: breadcrumb.label,
                 url: url,
                 params: currentRoute.queryParams,
-                activeLink: breadcrumb.activeLink? breadcrumb.activeLink: this.activeLink 
+                activeLink: breadcrumb.activeLink ? breadcrumb.activeLink : this.activeLink
               };
 
-              if(breadcrumb && breadcrumb.label && currentRoute.component){
-                if(breadcrumb.append){
-                  if(this.tempCrumbs && this.tempCrumbs.length ) {
-                    if (this.tempCrumbs.length == 5) {
-                      this.tempCrumbs = this.tempCrumbs.slice(1,5);
+              if (breadcrumb && breadcrumb.label && currentRoute.component) {
+                if (breadcrumb.append) {
+                  if (this.tempCrumbs && this.tempCrumbs.length) {
+                    if (this.tempCrumbs.length == BREADCUMBS_LENGTH) {
+                      this.tempCrumbs = this.tempCrumbs.slice(1, BREADCUMBS_LENGTH);
                     }
                     this.breadcrumbs = [...this.tempCrumbs];
                     this.tempCrumbs = [];
                   }
                 }
-               this.breadcrumbs.push(breadCrumb);
+                this.breadcrumbs.push(breadCrumb);
               }
             }
             currentRoute = currentRoute.firstChild;
           }
           this.tempCrumbs = this.breadcrumbs;
           this.facade.setBreadcrumbs(this.breadcrumbs);
+          return this.breadcrumbs
         }),
-        switchMap(_ => combineLatest([this.facade.breadcrumbs$, this.facade.globalSession$])),
+        delay(4000),
+        switchMap(breadcrumbs => combineLatest([of(breadcrumbs), this.facade.globalSession$])),
         filter(([breadcrumbs, globalSession]) => !!breadcrumbs && !!globalSession),
         tap(([breadcrumbs, globalSession]) => {
           const v06ParsedBreadcrumbs = GlobalSessionService.generateV06Breadcrumbs(breadcrumbs)
-          const updatedGlobalSession = {...globalSession, breadCrumbs: v06ParsedBreadcrumbs}
+          const updatedGlobalSession = { ...globalSession, breadCrumbs: v06ParsedBreadcrumbs }
           this.facade.updateGlobalSession(updatedGlobalSession)
         })
       ).subscribe());
