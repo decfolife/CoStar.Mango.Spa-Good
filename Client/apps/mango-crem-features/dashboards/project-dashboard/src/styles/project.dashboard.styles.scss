@@ -620,20 +620,33 @@ body {
 		box-shadow: 0 0 0 0.1rem colors.$blueShade;
 	}
 
-	.teams-data-grid {
+	#teamsData-grid {
 		td {
 			vertical-align: middle !important;
 		}	
+		tr.dx-edit-row, tr.dx-row.dx-data-row.dx-edit-row.dx-row-alt {
+			background-color: colors.$costarMediumBlue;
+		}
 		td.dx-command-edit {
-			span {
+			div.actionsMenuTemplate {
+				transform: translateY(40%);
+			} 
+
+			div.teamMemberEditButtons {
 				display: flex;
-				height: 24px;
-				width: 24px;
-				transform: translate(40%,40%)  !important
+				crem-button.cancelBtn {
+					transform: scale(.6);	
+				}
+				crem-button.saveBtn {
+					transform: scale(.6) translateX(-24px);
+				}
 			}
 		}
 		.dx-checkbox-icon {
 			border: 1px solid colors.$darkGray;
 		}
+	}
+	td.dx-cell-focus-disabled.dx-master-detail-cell {
+		background-color: colors.$lightGray;
 	}
 }

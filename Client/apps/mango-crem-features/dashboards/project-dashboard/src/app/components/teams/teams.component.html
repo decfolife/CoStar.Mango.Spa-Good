@@ -38,7 +38,7 @@
 
 	<div class="teams-dataGrid-wrapper"> 
 		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
-		<dx-data-grid *ngIf="dataRetrieved" class="teams-data-grid"
+		<dx-data-grid *ngIf="dataRetrieved" id="teamsData-grid"
 			#TeamsGrid
 			[showColumnLines]="false"
 			[showRowLines]="false"
@@ -63,6 +63,7 @@
 				mode="multiple">
 			</dxo-selection>
 
+			<dxi-column type="selection" [width]="40"></dxi-column>
 			<dxi-column dataField="teamId" caption="Team ID" alignment="center"></dxi-column>
 			<dxi-column dataField="teamName" caption="Name"></dxi-column>
 			<dxi-column dataField="members" alignment="center"></dxi-column>
@@ -73,8 +74,12 @@
 			<dxi-column dataField="securityLevel" caption='Rights' ></dxi-column>
 			<dxi-column type="buttons" width="60" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
-					<div *dxTemplate="let data of 'actionsMenuTemplate'">
-						<button aria-label="actions menu" class="btn btn-link teamActionsButton" (click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu"><mat-icon aria-label="Actions Menu">more_vert</mat-icon></button>
+					<div *dxTemplate="let data of 'actionsMenuTemplate'" class="actionsMenuTemplate">
+						<button aria-label="actions menu" class="btn btn-link teamActionsButton" 
+							[disabled]="data.data.securityLevel.toLowerCase().trim() == 'view'"
+							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu">
+							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
+						</button>
 		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
 							<ul role="menu">
 								<li mat-menu-item (click)="doSomethingForNow(data)">Edit</li>
@@ -86,7 +91,12 @@
 			</dxi-column>
 			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="teamDetails"></dxo-master-detail>
 			<div *dxTemplate="let team of 'teamDetails'">
-				<team-members  [searchText]="searchText" [rights]="team.data.securityLevel" [teamMembers]="team.data.teamMembers"></team-members>
+				<team-members [searchText]="searchText" 
+						[rights]="team.data.securityLevel" 
+						[teamMembers]="team.data.teamMembers"
+						[teamId]="team.data.teamId"
+				>
+				</team-members>
 			</div>
 
 		</dx-data-grid>

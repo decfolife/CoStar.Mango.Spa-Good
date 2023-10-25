@@ -15,41 +15,63 @@
 			keyExpr="memberId"
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
+			(onCellPrepared)="gridOnCellPrepared($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
 			<dxo-paging [enabled]="false"></dxo-paging>
 
-			<dxo-selection *ngIf="rights.toLowerCase().trim() != 'view'"
+			<dxo-selection 
 				selectAllMode="allPages"
 				showCheckBoxesMode="always"
 				mode="multiple">
 			</dxo-selection>
 
-			<dxi-column dataField="name"></dxi-column>
-			<dxi-column dataField="company"></dxi-column>
-			<dxi-column dataField="email"></dxi-column>
-			<dxi-column dataField="phoneNumber" ></dxi-column>
-			<dxi-column dataField="role"></dxi-column>
+			<dxo-editing
+				mode="row"
+				[allowUpdating]="true"
+				[allowDeleting]="true"
+				[allowAdding]="false"
+			>
+			</dxo-editing>
+
+			<dxi-column type="selection" [width]="40"></dxi-column>
+			<dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="phoneNumber" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="role" dataType="string"></dxi-column>
 			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
 			</dxi-column>
-			<dxi-column dataField="level" caption='Access Level' ></dxi-column>
-			<dxi-column type="buttons" width="60" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
+			<dxi-column dataField="level" caption='Access Level' dataType="string"></dxi-column>
+			<dxi-column type="buttons" width="110" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
-					<div *dxTemplate="let data of 'actionsMenuTemplate'">
-						<button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" (click)="$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu"><mat-icon aria-label="Actions Menu">more_vert</mat-icon></button>
-		    			<mat-menu #teamMemberActionsMenu="matMenu" class="teamMemberActionsMenu">
+					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
+						<button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" [disabled]="rights.toLowerCase().trim() == 'view'"
+							*ngIf="!member.data.editMode"
+							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu">
+							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
+						</button>
+		    		<mat-menu #teamMemberActionsMenu="matMenu" class="teamMemberActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item (click)="doSomethingForNow(data)">Edit</li>
-								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="rights.toLowerCase().trim() != 'view'">Remove</li>
+								<li mat-menu-item (click)="editRow(member)">Edit</li>
+								<li mat-menu-item (click)="doSomethingForNow(member)">Remove</li>
 							</ul>
 						</mat-menu>
+						<div *ngIf="member.data.editMode" class="teamMemberEditButtons">
+							<crem-button type="secondary" (click)="cancelChanges(member); $event.preventDefault()" class="cancelBtn" >
+								<span id="cancelChanges">Cancel</span>
+							</crem-button>
+							<crem-button type="primary" (click)="saveChanges(member); $event.preventDefault()" class="saveBtn">
+								<span id="saveChanges">Save</span>
+							</crem-button>
+						</div>
 					</div>
 				</dxi-button>		    	
 			</dxi-column>
-			<div *dxTemplate="let data of 'toggleTemplate'" >
+			<div *dxTemplate="let member of 'toggleTemplate'" >
 				<div class="emailToggle">
-					<mat-slide-toggle [checked]="data.data.emailOn"></mat-slide-toggle>
+					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode"></mat-slide-toggle>
 				</div>		
 			</div>
 		</dx-data-grid>
