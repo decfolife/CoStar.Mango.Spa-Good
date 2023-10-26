@@ -59,14 +59,14 @@
 		    		<mat-menu #teamMemberActionsMenu="matMenu" class="teamMemberActionsMenu">
 							<ul role="menu">
 								<li mat-menu-item (click)="editRow(member)">Edit</li>
-								<li mat-menu-item (click)="doSomethingForNow(member)">Remove</li>
+								<li mat-menu-item (click)="removeTeamMember(member.data)">Remove</li>
 							</ul>
 						</mat-menu>
 						<div *ngIf="member.data.editMode" class="teamMemberEditButtons">
 							<crem-button type="secondary" (click)="cancelChanges(member); $event.preventDefault()" class="cancelBtn" >
 								<span id="cancelChanges">Cancel</span>
 							</crem-button>
-							<crem-button type="primary" (click)="saveChanges(member); $event.preventDefault()" class="saveBtn">
+							<crem-button type="primary" (click)="saveMemberChanges(member); $event.preventDefault()" class="saveBtn">
 								<span id="saveChanges">Save</span>
 							</crem-button>
 						</div>
@@ -75,7 +75,7 @@
 			</dxi-column>
 			<div *dxTemplate="let member of 'toggleTemplate'" >
 				<div class="emailToggle">
-					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode"></mat-slide-toggle>
+					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode" (change)="emailtoggle($event)"></mat-slide-toggle>
 				</div>		
 			</div>
 		</dx-data-grid>

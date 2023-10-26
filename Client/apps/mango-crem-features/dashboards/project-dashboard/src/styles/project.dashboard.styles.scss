@@ -620,13 +620,13 @@ body {
 		box-shadow: 0 0 0 0.1rem colors.$blueShade;
 	}
 
-	#teamsData-grid {
+	.teamsData-grid {
 		td {
 			vertical-align: middle !important;
 			border-left: none;
 		}	
-		tr.dx-edit-row, tr.dx-row.dx-data-row.dx-edit-row.dx-row-alt {
-			background-color: colors.$costarMediumBlue;
+		tr.dx-edit-row td, tr.dx-edit-row:hover td {
+			background-color: colors.$costarMediumBlue !important;
 		}
 		td.dx-command-edit {
 			div.actionsMenuTemplate {
