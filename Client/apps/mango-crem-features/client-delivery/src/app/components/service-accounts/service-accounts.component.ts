@@ -80,7 +80,7 @@ export class ServiceAccountsComponent implements OnInit {
     this.dataGrid?.instance?.searchByText(data);
   }
 
-  public onCellClicked(e): void {
+  public openAccountDetails(e): void {
     if (e.rowType != "header" && e.column.dataField !== "Actions") {
       let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
         width: '1200px',
@@ -130,10 +130,11 @@ export class ServiceAccountsComponent implements OnInit {
   }
 
   public addServiceAccount(){    
-    
+    this.getServiceAccouts('all');
     let dialogRef = this.dialog.open(AddServiceAccountComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
+      data:this.serviceAccountsData.map(x => x.contactEmailAddress)
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result.length > 0) {  

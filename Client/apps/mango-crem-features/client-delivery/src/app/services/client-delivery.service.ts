@@ -58,7 +58,7 @@ export class ClientDeliveryService extends EndpointService
 
   addServiceAccount(emailAddress: string): Observable<any> {  
      var reqbody = {"email": emailAddress};
-     const url = `${environment.appUrls.authentication}user/serviceaccount/`;
+     const url = `${environment.appUrls.authentication}serviceaccount/`;
      return this.callHttpPost(url, 'AddServiceAccount', reqbody)
   }
 
