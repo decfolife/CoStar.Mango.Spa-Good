@@ -26,7 +26,7 @@ const routes: Routes = [
       breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' }
     },
   },
-  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '**', redirectTo: 'updated-dashboard', pathMatch: 'full' },
 ];
 
 @NgModule({

@@ -204,7 +204,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
                 params: currentRoute.queryParams,
                 activeLink: routeBreadcrumbData.activeLink ? routeBreadcrumbData.activeLink : this.activeLink
               };
-              if (routeBreadcrumbData && routeBreadcrumbData.append) {
+              if (routeBreadcrumbData.append) {
                 breadcrumbs.push(breadCrumb)
               }
             }

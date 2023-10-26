@@ -217,7 +217,7 @@ const routes: Routes = [
             data: {
               moduleId: 9,
               objectTypeId: null,
-              breadCrumb: { label: 'Events', append: true }
+              breadCrumb: { append: false }
             },
           },
           // Alerts

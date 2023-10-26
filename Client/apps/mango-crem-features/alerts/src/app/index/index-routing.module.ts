@@ -8,7 +8,7 @@ const routes: Routes = [
     component: IndexComponent,
     data: {
       moduleId: 9,
-      breadCrumb: { label: 'Lease Alerts', append: true }
+      breadCrumb: { label: 'Lease Alerts', append: true , activeLink: 'Lease Alerts'}
     }
   }
 ];
