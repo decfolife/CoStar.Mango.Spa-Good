@@ -2,7 +2,24 @@ import { BatchEventListComponent } from '../batch-event-list/batch-event-list.co
 import { BatchLogsComponent } from '../batch-logs/batch-logs.component';
 
 export const ROUTES = [
-  { path: '', component: BatchLogsComponent },
-  { path: 'batchlogs', component: BatchLogsComponent }, // todo: remove once fully moved to MangoSpa, redundant
-  { path: 'batcheventlist', component: BatchEventListComponent },
+  {
+    path: '',
+    component: BatchLogsComponent,
+    data: {
+      breadCrumb: { label: 'Batch Accounting', append: true }
+    }
+  },
+  {
+    path: 'batchlogs',
+    component: BatchLogsComponent,
+    data: {
+      breadCrumb: { label: 'Batch Logs', append: true }
+    }
+  }, // todo: remove once fully moved to MangoSpa, redundant
+  {
+    path: 'batcheventlist', component: BatchEventListComponent,
+    data: {
+      breadCrumb: { label: 'Batch Event List', append: true }
+    }
+  },
 ]

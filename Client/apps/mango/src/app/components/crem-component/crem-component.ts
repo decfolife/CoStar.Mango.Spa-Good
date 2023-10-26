@@ -33,20 +33,8 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   crumbActiveLink: string = null;
   private subs: Subscription = new Subscription();
 
-  protected httpOptions: any = {
-    // hard coded until we start getting logged in with actual data for the user
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      UserId: '2',
-      ClientKey: 'RETAILDEMO',
-    }),
-  };
-
   bookmarkGroups: BookmarkGroup[] = null;
   public delineator = '»';
-  public breadcrumbs: BreadCrumb[];
-  public tempCrumbs: BreadCrumb[];
 
   constructor(
     private router: Router,
@@ -202,39 +190,28 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
         filter(event => event instanceof NavigationEnd),
         startWith(this.router),
         map(e => {
-          this.breadcrumbs = [];
+          let breadcrumbs = []
           let currentRoute = this.activatedRoute.snapshot;
           let url = '';
           while (currentRoute) {
-            const breadcrumb = currentRoute.data.breadCrumb;
+            const routeBreadcrumbData = currentRoute.data.breadCrumb;
             url += '/' + currentRoute.url.map(segment => segment.path).join('/');
-            if (breadcrumb && breadcrumb.label) {
-              if (breadcrumb.activeLink) this.crumbActiveLink = breadcrumb.activeLink;
+            if (routeBreadcrumbData && routeBreadcrumbData.label) {
+              this.crumbActiveLink = routeBreadcrumbData.activeLink || this.crumbActiveLink;
               const breadCrumb: BreadCrumb = {
-                label: breadcrumb.label,
+                label: routeBreadcrumbData.label,
                 url: url,
                 params: currentRoute.queryParams,
-                activeLink: breadcrumb.activeLink ? breadcrumb.activeLink : this.activeLink
+                activeLink: routeBreadcrumbData.activeLink ? routeBreadcrumbData.activeLink : this.activeLink
               };
-
-              if (breadcrumb && breadcrumb.label && currentRoute.component) {
-                if (breadcrumb.append) {
-                  if (this.tempCrumbs && this.tempCrumbs.length) {
-                    if (this.tempCrumbs.length == BREADCUMBS_LENGTH) {
-                      this.tempCrumbs = this.tempCrumbs.slice(1, BREADCUMBS_LENGTH);
-                    }
-                    this.breadcrumbs = [...this.tempCrumbs];
-                    this.tempCrumbs = [];
-                  }
-                }
-                this.breadcrumbs.push(breadCrumb);
+              if (routeBreadcrumbData && routeBreadcrumbData.append) {
+                breadcrumbs.push(breadCrumb)
               }
             }
             currentRoute = currentRoute.firstChild;
           }
-          this.tempCrumbs = this.breadcrumbs;
-          this.facade.setBreadcrumbs(this.breadcrumbs);
-          return this.breadcrumbs
+          this.facade.setBreadcrumbs(breadcrumbs);
+          return breadcrumbs
         }),
         delay(4000),
         switchMap(breadcrumbs => combineLatest([of(breadcrumbs), this.facade.globalSession$])),

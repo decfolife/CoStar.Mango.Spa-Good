@@ -76,9 +76,9 @@ export abstract class EndpointService {
 
   protected toObject(value: any): any {
       return {
-        success: value.succeeded,
-        data: value.hasOwnProperty('data') ? value.data : value,
-        clientErrorMessage: value.succeeded ? null : value.message
+        success: value?.succeeded,
+        data: value?.hasOwnProperty('data') ? value.data : value,
+        clientErrorMessage: value?.succeeded ? null : value?.message
       }
   }
 

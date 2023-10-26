@@ -31,7 +31,7 @@ import { ButtonModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
     RouterModule.forChild([
       {
         path: '',
-        data: { pageTitle: 'Security Groups' },
+        data: { pageTitle: 'Security Groups', breadCrumb: { label: 'Group Maintenance', append: true } },
         component: GroupMaintenanceComponent,
       }
     ])

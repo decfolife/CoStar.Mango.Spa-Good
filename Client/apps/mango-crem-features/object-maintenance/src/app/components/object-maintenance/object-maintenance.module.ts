@@ -31,12 +31,12 @@ import {  MatDialogModule } from '@angular/material/dialog';
     RouterModule.forChild([
       {
         path: '',
-        data: { pageTitle: 'Objects' },
+        data: { pageTitle: 'Objects', breadCrumb: { label: 'Object Maintenance', append: true }},
         component: ObjectMaintenanceComponent,
       },
       {
         path: ':OTID',
-        data: { pageTitle: 'Objects' },
+        data: { pageTitle: 'Objects', breadCrumb: { label: 'Object Maintenance', append: true } },
         component: ObjectMaintenanceComponent,
       }
     ])

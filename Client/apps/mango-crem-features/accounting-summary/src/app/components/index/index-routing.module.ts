@@ -7,12 +7,27 @@ import { AddEventComponent } from '../add-event/add-event.component';
 
 const routes: Routes = [
   {
-     path: '', 
-     component: IndexComponent,
-     children: [
-      { path: '', component: AccountsSummaryComponent },
-      { path: 'addEvent', component: AddEventComponent },
-     ]    
+    path: '',
+    component: IndexComponent,
+    data: {
+      breadCrumb: { label: 'Summary', append: false }
+    },
+    children: [
+      {
+        path: '',
+        component: AccountsSummaryComponent,
+        data: {
+          breadCrumb: { label: 'Summary', append: true }
+        }
+      },
+      {
+        path: 'addEvent',
+        component: AddEventComponent,
+        data: {
+          breadCrumb: { label: 'Add Event', append: true }
+        }
+      },
+    ]
   }
 ];
 
@@ -20,4 +35,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class IndexRoutingModule {}
+export class IndexRoutingModule { }

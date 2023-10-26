@@ -6,7 +6,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [{
   path: '',
-  component: AppComponent
+  component: AppComponent,
+  data: {
+    breadCrumb: { label: 'Alert Rules', append: true }
+  }
 }]
 
 @NgModule({

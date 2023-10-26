@@ -3,7 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminLandingPageComponent } from './admin-landing-page.component';
 
 const routes: Routes = [
-  { path: '', component: AdminLandingPageComponent },
+  {
+    path: '',
+    component: AdminLandingPageComponent,
+  },
 ];
 
 @NgModule({
