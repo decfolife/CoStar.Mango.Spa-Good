@@ -50,6 +50,7 @@
 			[columnAutoWidth]="false"
 			[dataSource]="teams"
 			keyExpr="teamId"
+			[width]="'100%'"
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
 		>
@@ -63,7 +64,9 @@
 				mode="multiple">
 			</dxo-selection>
 
-			<dxi-column type="selection" [width]="40"></dxi-column>
+			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
+			</dxi-column>
 			<dxi-column dataField="teamId" caption="Team ID" alignment="center"></dxi-column>
 			<dxi-column dataField="teamName" caption="Name"></dxi-column>
 			<dxi-column dataField="members" alignment="center"></dxi-column>
@@ -72,7 +75,8 @@
 			<dxi-column dataField="createdBy" ></dxi-column>
 			<dxi-column dataField="createdDate" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
 			<dxi-column dataField="securityLevel" caption='Rights' ></dxi-column>
-			<dxi-column type="buttons" width="60" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
+			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let data of 'actionsMenuTemplate'" class="actionsMenuTemplate">
 						<button aria-label="actions menu" class="btn btn-link teamActionsButton" 

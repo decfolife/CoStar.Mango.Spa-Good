@@ -13,6 +13,7 @@
 			[columnAutoWidth]="false"
 			[dataSource]="teamMembers"
 			keyExpr="memberId"
+			[width]="'100%'"
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
 			(onCellPrepared)="gridOnCellPrepared($event)"
@@ -35,7 +36,9 @@
 			>
 			</dxo-editing>
 
-			<dxi-column type="selection" [width]="40"></dxi-column>
+			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
+			</dxi-column>
 			<dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
 			<dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
 			<dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
@@ -44,7 +47,8 @@
 			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
 			</dxi-column>
 			<dxi-column dataField="level" caption='Access Level' dataType="string"></dxi-column>
-			<dxi-column type="buttons" width="110" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
+			<dxi-column type="buttons" width="110" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
 						<button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" [disabled]="rights.toLowerCase().trim() == 'view'"

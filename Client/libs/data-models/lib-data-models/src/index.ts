@@ -43,3 +43,4 @@ export * from './lib/models/teamMember';
 export * from './lib/constants/central-auth.constants';
 export * from './lib/constants/mango.constants';
 export * from './lib/lib-data-models.module';
+export * from './lib/models/global-session';
