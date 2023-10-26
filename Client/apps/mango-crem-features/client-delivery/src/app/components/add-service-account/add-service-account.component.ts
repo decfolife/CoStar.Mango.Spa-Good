@@ -25,13 +25,18 @@ export class AddServiceAccountComponent {
   AddServiceAccount(rowFG: any){
     const emailAddress = this.serviceAccountForm.get('emailAddress').value;
     if (rowFG.valid) {
-      this.errorMsg = '';  
-      this.dialogRef.close(emailAddress);
+
+      if (this.data.includes(emailAddress)) {
+        this.errorMsg = "This email address already exists";
+      } else {
+        this.errorMsg = '';  
+        this.dialogRef.close(emailAddress);
+      }
     }
     else {
       this.errorMsg = (emailAddress.length === 0) 
-        ? 'Email address is required.'
-        : 'Email address in not in correct format.';
+        ? 'Email address is required'
+        : 'Email address in not in correct format';
       } 
   }
 }
