@@ -314,7 +314,7 @@ export class UserService {
   }
 
   generateApiKey(userEmail: string): Observable<boolean> {
-    const url = `${this.env.appUrls.authentication}/serviceaccount/createapikey/${userEmail}`;
+    const url = `${this.env.appUrls.authentication}/serviceaccount/createapikey`;
 
     // return this.http.post(url)(
     // );
