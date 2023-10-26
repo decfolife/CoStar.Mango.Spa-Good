@@ -7,10 +7,9 @@ import {
 } from '@mango/ui-shared/lib-ui-elements';
 import { FormWizardService } from '../services/form-wizard.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { AddBuildingWizardComponent } from './modal/add-building-wizard/add-building-wizard.component';
 
 @NgModule({
-  declarations: [FormWizardAppComponent, AddBuildingWizardComponent],
+  declarations: [FormWizardAppComponent],
   exports: [FormWizardAppComponent],
   imports: [CommonModule, ButtonModule, DynamicFormModule],
   providers: [FormWizardService],
