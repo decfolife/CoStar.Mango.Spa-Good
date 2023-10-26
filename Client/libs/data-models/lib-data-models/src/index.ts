@@ -30,7 +30,7 @@ export { RecentUserSites } from './lib/models/central-auth/recent-user-sites';
 export { ServiceAccountApiKeyInfo } from './lib/models/central-auth/service-account-api-key';
 export { ServiceAccountSites } from './lib/models/central-auth/service-account-sites';
 export { ServiceAccountEndpoints } from './lib/models/central-auth/service-account-endpoints';
-export { ToggleServiceAccountSiteRequest } from './lib/models/central-auth/toggle-service-account-site-request';
+export { UpdateServiceAccountApiAccessRequest } from './lib/models/central-auth/update-service-account-api-access-request';
 export * from './lib/enums/mango.enums';
 export * from './lib/models/errors';
 export * from './lib/models/central-auth/ui';

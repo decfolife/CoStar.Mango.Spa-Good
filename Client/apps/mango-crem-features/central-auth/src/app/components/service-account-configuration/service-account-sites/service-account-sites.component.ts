@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UserService } from '@mango/core-shared';
 import { Subscription } from 'rxjs';
-import {ToggleServiceAccountSiteRequest} from '@mango/data-models/lib-data-models';
+import {UpdateServiceAccountApiAccessRequest} from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-service-account-sites',
@@ -26,15 +26,15 @@ export class ServiceAccountSitesComponent implements OnInit {
     this.subs.forEach(s => s.unsubscribe())
   }
 
-  toggleSite(e: any, index: number) {
-    const request: ToggleServiceAccountSiteRequest = {
+  updateApiAccess(e: any, index: number) {
+    const request: UpdateServiceAccountApiAccessRequest = {
       email: this.userEmail,
       clientKey: this.sites[index].clientKey,
-      isActive: e.checked
+      apiAccess: e.checked
     };
 
     this.subs.push(
-      this.userService.toggleServiceAccountSite(request)
+      this.userService.updateServiceAccountApiAccess(request)
       .subscribe(result => {    
           if(result){        
           this.getSites();
@@ -48,7 +48,7 @@ export class ServiceAccountSitesComponent implements OnInit {
       this.userService.getServiceAccountSites(this.userEmail)
       .subscribe(result => {        
         if(result){          
-            this.sites =  result.userSites;      
+            this.sites =  result.serviceAccountSites;      
         }
       })
     )
