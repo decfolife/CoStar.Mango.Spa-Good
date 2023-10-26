@@ -1,8 +1,9 @@
 export interface ServiceAccountSites{
-  userSites: ServiceAccountSite[];
+  serviceAccountSites: ServiceAccountSite[];
 }
 
 export interface ServiceAccountSite{
   clientKey: string;
   isActive: boolean;
+  apiAccess: boolean;
 }

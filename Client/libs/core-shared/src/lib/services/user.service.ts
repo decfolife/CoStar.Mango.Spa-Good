@@ -21,7 +21,7 @@ import {
   ServiceAccountApiKeyInfo,
   ServiceAccountSites,
   ServiceAccountEndpoints,
-  ToggleServiceAccountSiteRequest,
+  UpdateServiceAccountApiAccessRequest,
 } from '@mango/data-models/lib-data-models';
 import { Environment } from '@mango/data-models/lib-data-models';
 
@@ -314,7 +314,7 @@ export class UserService {
   }
 
   generateApiKey(userEmail: string): Observable<boolean> {
-    const url = `${this.env.appUrls.authenticate}/generateApiKey/${userEmail}`;
+    const url = `${this.env.appUrls.authentication}/serviceaccount/createapikey/${userEmail}`;
 
     // return this.http.post(url)(
     // );
@@ -324,7 +324,7 @@ export class UserService {
   }
 
   getServiceAccountSites(userEmail: string): Observable<ServiceAccountSites> {
-    const url = `${this.env.appUrls.authenticate}/user/serviceaccount/clientsites/${userEmail}`;
+    const url = `${this.env.appUrls.authentication}/serviceaccount/sites/${userEmail}`;
 
     return this.http.get(url).pipe<ServiceAccountSites>(
       tap((response: any) => {
@@ -333,10 +333,10 @@ export class UserService {
     );
   }
 
-  toggleServiceAccountSite(request: ToggleServiceAccountSiteRequest): Observable<any> {
-    const url = `${this.env.appUrls.authentication}/serviceaccount/togglesite`;
+  updateServiceAccountApiAccess(request: UpdateServiceAccountApiAccessRequest): Observable<any> {
+    const url = `${this.env.appUrls.authentication}/serviceaccount/updateapiaccess`;
 
-    return this.http.post(url, request).pipe<boolean>(
+    return this.http.put(url, request).pipe<boolean>(
       tap((response: any) => {
         return response;
       })
