@@ -75,10 +75,12 @@ export abstract class EndpointService {
   }
 
   protected toObject(value: any): any {
+      let apiSuccess = value?.succeeded ? value?.succeeded: value?.success ? value?.success: null; 
+      let cemsg = value?.message? value?.message: value?.clientErrorMessage? value?.clientErrorMessage: null
       return {
-        success: value?.succeeded,
+        success: apiSuccess,
         data: value?.hasOwnProperty('data') ? value.data : value,
-        clientErrorMessage: value?.succeeded ? null : value?.message
+        clientErrorMessage: cemsg
       }
   }
 

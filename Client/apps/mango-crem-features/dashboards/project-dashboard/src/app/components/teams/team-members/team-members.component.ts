@@ -15,7 +15,6 @@ export class TeamMembersComponent implements OnInit {
 	@Input() teamMembers : TeamMember[];
 	@Input() searchText: string;
 	@Input() rights: string;
-	@Input() teamId: number;
 
 	public dataRetrieved: boolean = false;
 	memberIds: number[];
@@ -42,7 +41,6 @@ export class TeamMembersComponent implements OnInit {
 	editRow(memberData: any) {
 		this.editDataRow = memberData;
 		this.emailNotify = memberData.data.emailOn;
-		//this.subGridEditClicked.emit(this.teamId);
 		this.teamMembers.forEach(teamMember => { teamMember.editMode = false});
 		this.teamMembersGrid.instance.cancelEditData();
 		this.teamMembersGrid.instance.editRow(memberData.rowIndex);
@@ -60,22 +58,21 @@ export class TeamMembersComponent implements OnInit {
 	}
 
 	gridOnCellPrepared(e) {
-		if(this.rights.toLocaleLowerCase().trim()=="view") {
-			if( e.rowType == 'header' && e.column.command == 'select') {
+		if(this.rights.toLocaleLowerCase().trim()=="view" && e.column.command == 'select') {
+			if( e.rowType == 'header' ) {
 				this.headerHtmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
-				this.headerCheckBox = CheckBox.getInstance(this.headerHtmlCellElement.querySelector(".dx-select-checkbox")); 
-				if(!(!this.headerCheckBox))
-				this.headerCheckBox.option("disabled", true);  
+				this.headerCheckBox = CheckBox.getInstance(this.headerHtmlCellElement.querySelector(".dx-select-checkbox"));  
 				if(this.headerHtmlCellElement) {
 					this.headerHtmlCellElement.style.pointerEvents = 'none';
 				}
+			} else  {
+				let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
+				var editor = CheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));  
+				if(editor) {
+					editor.option("disabled", true);
+				}  
+				htmlCellElement.style.pointerEvents = 'none'; 
 			}
-			let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
-			var editor = CheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));  
-			if(editor) {
-				editor.option("disabled", true);
-			}  
-			htmlCellElement.style.pointerEvents = 'none'; 
 		}  
 	}
 
@@ -102,7 +99,7 @@ export class TeamMembersComponent implements OnInit {
 							removeIndex.push(this.teamMembers.findIndex(member => memberId == member.memberId));
 						});
 						removeIndex.forEach(index => this.teamMembers.splice(index, 1));
-        }
+        } else { console.log(`Team member deletion not successful`);}
       }
     );
 	}
