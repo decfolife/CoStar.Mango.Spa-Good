@@ -48,7 +48,7 @@ const routes: Routes = [
 
       {
         path: 'projects',
-        data: { moduleId: 2, breadCrumb: { label: 'Projects', append: true } },
+        data: { moduleId: 2, breadCrumb: { label: 'Projects', append: true, activeLink: 'Projects' } },
         children: [
           {
             path: '',
@@ -128,7 +128,7 @@ const routes: Routes = [
       // PORTFOLIO
       {
         path: 'portfolio',
-        data: { moduleId: 1, breadCrumb: { label: 'Portfolio', append: true } },
+        data: { moduleId: 1, breadCrumb: { label: 'Portfolio', append: true, activeLink: 'Portfolio' } },
         children: [
           {
             path: '',
@@ -152,7 +152,7 @@ const routes: Routes = [
               moduleId: 1,
               objectTypeId: 5,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Buildings', append: true }
+              breadCrumb: { label: 'Buildings', append: true, activeLink: 'Buildings'}
             },
           },
           {
@@ -165,7 +165,7 @@ const routes: Routes = [
               moduleId: 1,
               objectTypeId: 4,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Leases', append: true }
+              breadCrumb: { label: 'Leases', append: true, activeLink: 'Leases' }
             },
           },
           {
@@ -178,7 +178,7 @@ const routes: Routes = [
               moduleId: 1,
               objectTypeId: 194,
               currentSubApp: MangoSubApps.REVENUES,
-              breadCrumb: { label: 'Revenues', append: true }
+              breadCrumb: { label: 'Revenues', append: true, activeLink: 'Revenues' }
             },
           },
           {
@@ -191,7 +191,7 @@ const routes: Routes = [
               moduleId: 1,
               objectTypeId: 193,
               currentSubApp: MangoSubApps.EXPENSES,
-              breadCrumb: { label: 'Expenses', append: true }
+              breadCrumb: { label: 'Expenses', append: true, activeLink: 'Expenses' }
             },
           },
         ]
@@ -335,7 +335,7 @@ const routes: Routes = [
               moduleId: 3,
               objectTypeId: 5,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Contacts', append: true }
+              breadCrumb: { label: 'Contacts', append: true, activeLink: 'Contacts' }
             },
           },
         ]
@@ -344,7 +344,7 @@ const routes: Routes = [
       // REPORTS
       {
         path: 'reports',
-        data: { moduleId: 4, breadCrumb: { label: 'Reports', append: true } },
+        data: { moduleId: 4, breadCrumb: { label: 'Reports', append: true, activeLink: 'Reports' } },
         children: [
           {
             path: '',
@@ -388,7 +388,7 @@ const routes: Routes = [
       // ADMIN
       {
         path: 'admin',
-        data: { breadCrumb: { label: 'Admin', append: true } },
+        data: { breadCrumb: { label: 'Admin', append: true, activeLink: 'Admin' } },
         children: [
           {
             path: '',
@@ -470,7 +470,7 @@ const routes: Routes = [
           import(
             '@forms/mango-forms/mango-forms.module'
           ).then((mod) => mod.MangoFormsModule),
-        data: { moduleId: null, breadCrumb: { label: null, append: true } },
+        data: { moduleId: null, breadCrumb: { label: null, append: false } },
       },
 
       // Auto-generated components below

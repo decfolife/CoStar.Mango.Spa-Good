@@ -79,7 +79,7 @@ const routes: Routes = [
         loadChildren: () => import('../reports-segment/reports-segment.module')
           .then(m => m.ReportsSegmentModule),
           data: {
-            breadCrumb: { label: 'Segments', append: true }
+            breadCrumb: { label: 'Segments', append: true, activeLink: 'Segments' }
           }
       },
     ]

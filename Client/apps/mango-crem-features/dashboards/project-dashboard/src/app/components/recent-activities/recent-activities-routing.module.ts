@@ -7,7 +7,7 @@ const routes: Routes = [
     path: '',
     component: RecentActivitiesComponent,
     data: {
-      breadCrumb: { label: 'Recent Activities', append: true }
+      breadCrumb: { label: 'Recent Activities', append: true, activeLink: 'Recent Activities' }
     },
   }];
 

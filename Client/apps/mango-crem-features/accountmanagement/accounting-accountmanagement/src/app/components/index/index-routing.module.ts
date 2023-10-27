@@ -7,7 +7,7 @@ const routes: Routes = [
     path: '',
     component: AccountingSettingsComponent,
     data: {
-      breadCrumb: { label: 'Settings', append: true }
+      breadCrumb: { label: 'Settings', append: true, activeLink: 'Accounting Settings' }
     }
   },
 ];

@@ -7,7 +7,7 @@ const routes: Routes = [
     path: '',
     component: IndexComponent,
     data: {
-      breadCrumb: { label: 'Data Set Dictionnary', append: true }
+      breadCrumb: { label: 'Data Set Dictionary', append: true, activeLink: 'Data Set Dictionary' }
     }
   }];
 

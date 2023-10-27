@@ -7,7 +7,7 @@ const routes: Routes = [
     path: '',
     component: IndexComponent,
     data: {
-      breadCrumb: { label: 'Financial Reporting Settings', append: true }
+      breadCrumb: { label: 'Financial Reporting Settings', append: true, activeLink: 'Financial Reporting Settings' }
     }
   }];
 

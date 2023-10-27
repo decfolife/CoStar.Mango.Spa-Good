@@ -8,7 +8,7 @@ const routes: Routes = [{
   path: '',
   component: AppComponent,
   data: {
-    breadCrumb: { label: 'Alert Rules', append: true }
+    breadCrumb: { label: 'Alert Rules', append: true, activeLink: 'Alert Rules' }
   }
 }]
 

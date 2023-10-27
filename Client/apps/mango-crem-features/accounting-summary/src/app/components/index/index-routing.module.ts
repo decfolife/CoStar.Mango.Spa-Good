@@ -10,21 +10,21 @@ const routes: Routes = [
     path: '',
     component: IndexComponent,
     data: {
-      breadCrumb: { label: 'Summary', append: false }
+      breadCrumb: { label: 'Summary', append: false, activeLink: 'Summary' }
     },
     children: [
       {
         path: '',
         component: AccountsSummaryComponent,
         data: {
-          breadCrumb: { label: 'Summary', append: true }
+          breadCrumb: { label: 'Summary', append: true, activeLink: 'Summary' }
         }
       },
       {
         path: 'addEvent',
         component: AddEventComponent,
         data: {
-          breadCrumb: { label: 'Add Event', append: true }
+          breadCrumb: { label: 'Add Event', append: true, activeLink: 'Summary' }
         }
       },
     ]
