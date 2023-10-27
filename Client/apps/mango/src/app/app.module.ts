@@ -112,7 +112,6 @@ export class AppModule {
       switchMap(e => combineLatest([of(e.url), this.facade.clientKey$])),
       filter(([url, clientKey]) => !!url && !!clientKey),
       map(([url, clientKey]) => {
-        console.log({url, clientKey})
         if (url.includes('RenderForm')) {
           const queryParams = url.split('?')
           this.router.navigateByUrl(`/crem/forms/render-form?${queryParams[1]}`)

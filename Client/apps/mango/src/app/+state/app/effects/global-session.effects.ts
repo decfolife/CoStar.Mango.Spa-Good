@@ -46,7 +46,9 @@ export class GlobalSessionEffects {
         filter(globalSession => !!globalSession),
         map(globalSession => {
           const parsedBreadcrumbs = GlobalSessionService.generateMangoBreadcrumbs(globalSession.breadCrumbs)
-          this.facade.setBreadcrumbs(parsedBreadcrumbs)
+
+          /* Ignore using the sesssion breadcrumbs for now */
+          // this.facade.setBreadcrumbs(parsedBreadcrumbs)
         }),
       ), { dispatch: false }
   )
