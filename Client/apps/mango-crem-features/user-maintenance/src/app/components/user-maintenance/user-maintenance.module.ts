@@ -10,7 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UserDeletionComponent } from '../index/modal/user-deletion/user-deletion.component';
-import {  MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -33,7 +33,7 @@ import {  MatDialogModule } from '@angular/material/dialog';
     RouterModule.forChild([
       {
         path: '',
-        data: { pageTitle: 'Users' },
+        data: { pageTitle: 'Users', breadCrumb: { append: true, label: 'User Maintenance' } },
         component: UserMaintenanceComponent,
       }
     ])

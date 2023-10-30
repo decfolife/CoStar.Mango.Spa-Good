@@ -39,6 +39,7 @@ import { LoadingScreenComponent } from './components/loading-screen/loading-scre
 import { MangoNavigationService } from './services/navigation.service';
 import { CSPModuleInlineStyles } from './utils/content-security-policies/inline-styles';
 import { CustomSerializer } from './utils/custom-route-serializer';
+import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { CustomSerializer } from './utils/custom-route-serializer';
     EffectsModule.forFeature([
       AuthenticationEffects,
       InitSetupEffects,
-      NavigationEffect
+      NavigationEffect,
+      GlobalSessionEffects
     ]),
     StoreDevtoolsModule.instrument(),
     HttpClientModule,
@@ -118,7 +120,7 @@ export class AppModule {
           const newUrl = forceRelogin ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
           window.location.href = newUrl
         }
-      })
+      }),
     ).subscribe()
   }
 }

@@ -7,7 +7,10 @@ export const ROUTES: Routes = [
   {
     path: '',
     component: ListPageComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    data: {
+      breadCrumb: { append: false }
+    }
   },
   {
     path: 'listpagetest',

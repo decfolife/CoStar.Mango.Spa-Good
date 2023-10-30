@@ -1,1 +1,85 @@
-<div>Team Member Details works!!!</div>
+<!-- <div>Team Member Details works!!!</div> -->
+<div id="teamsMembers-container">
+	<div class="teamMembers-dataGrid-wrapper"> 
+		<dx-data-grid class="teamsMembers-data-grid"
+			#TeamMembersGrid
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			columnResizingMode="widget"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[dataSource]="teamMembers"
+			keyExpr="memberId"
+			[width]="'100%'"
+			[filterSyncEnabled]="true"
+			[wordWrapEnabled]="true"
+			(onCellPrepared)="gridOnCellPrepared($event)"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-paging [enabled]="false"></dxo-paging>
+
+			<dxo-selection 
+				selectAllMode="allPages"
+				showCheckBoxesMode="always"
+				mode="multiple">
+			</dxo-selection>
+
+			<dxo-editing
+				mode="row"
+				[allowUpdating]="true"
+				[allowDeleting]="true"
+				[allowAdding]="false"
+			>
+			</dxo-editing>
+
+			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
+			</dxi-column>
+			<dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="phoneNumber" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="role" dataType="string"></dxi-column>
+			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
+			</dxi-column>
+			<dxi-column dataField="level" caption='Access Level' dataType="string"></dxi-column>
+			<dxi-column type="buttons" width="110" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
+				<dxi-button template="actionsMenuTemplate">
+					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
+						<button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" [disabled]="rights.toLowerCase().trim() == 'view'"
+							*ngIf="!member.data.editMode"
+							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu">
+							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
+						</button>
+		    		<mat-menu #teamMemberActionsMenu="matMenu" class="teamMemberActionsMenu">
+							<ul role="menu">
+								<li mat-menu-item (click)="editRow(member)">Edit</li>
+								<li mat-menu-item (click)="removeTeamMember(member.data)">Remove</li>
+							</ul>
+						</mat-menu>
+						<div *ngIf="member.data.editMode" class="teamMemberEditButtons">
+							<crem-button type="secondary" (click)="cancelChanges(member); $event.preventDefault()" class="cancelBtn" >
+								<span id="cancelChanges">Cancel</span>
+							</crem-button>
+							<crem-button type="primary" (click)="saveMemberChanges(member); $event.preventDefault()" class="saveBtn">
+								<span id="saveChanges">Save</span>
+							</crem-button>
+						</div>
+					</div>
+				</dxi-button>		    	
+			</dxi-column>
+			<div *dxTemplate="let member of 'toggleTemplate'" >
+				<div class="emailToggle">
+					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode" (change)="emailtoggle($event)" aria-label="Email Notication">
+					</mat-slide-toggle>
+				</div>		
+			</div>
+		</dx-data-grid>
+	</div>
+
+</div>

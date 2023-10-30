@@ -12,6 +12,7 @@ export class CentralAuthFacade {
   redirectionUri$ = this.store.pipe(select(AppSelectors.redirectionUri));
   clientKey$ = this.store.pipe(select(AppSelectors.clientKey));
   contactId$ = this.store.pipe(select(AppSelectors.contactId));
+  user$ = this.store.pipe(select(AppSelectors.user));
 
   constructor(private store: Store) { }
 

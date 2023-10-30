@@ -1,0 +1,37 @@
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+
+::ng-deep .first-group,
+::ng-deep .second-group {
+  padding: 20px;
+}
+
+::ng-deep .second-group {
+  background-color: rgba(191, 191, 191, 0.15);
+}
+
+::ng-deep .form-avatar {
+  height: 128px;
+  width: 128px;
+  margin-right: 10px;
+  border: 1px solid #d2d3d5;
+  border-radius: 50%;
+  background-image: url('https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.body-content {
+  padding: 0 24px;
+  font-size: 14px !important;
+}
+
+.footerRightControls {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+
+  crem-button {
+    padding: 8px 0px 8px 8px;
+  }
+}

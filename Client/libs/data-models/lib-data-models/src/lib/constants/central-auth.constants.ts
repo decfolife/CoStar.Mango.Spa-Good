@@ -8,3 +8,6 @@ export const OAUTH_AUTH_CODE_QUERY_PARAM = 'auth_code'
 export const OAUTH_LOGOUT_QUERY_PARAM = 'logout'
 export const OAUTH_CLIENT_KEY_QUERY_PARAM = 'client_key'
 export const OAUTH_CONTACT_ID_QUERY_PARAM = 'contact_id'
+export const SOURCE_APP_QUERY_PARAM = 'source'
+
+export const IDLE_TIMOUT_DELAY_SECONDS = 900

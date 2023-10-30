@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, Optional } from '@angular/core';
-import { combineLatest, Observable, of } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Observable, combineLatest, of } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../../apps/mango/src/environments/environment.local';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export abstract class EndpointService {
@@ -11,7 +11,7 @@ export abstract class EndpointService {
   userId$: Observable<number> = new Observable<number>(null)
   clientKey$: Observable<string> = new Observable<string>(null)
 
-  constructor(protected http: HttpClient, @Optional() private facade: MangoAppFacade) {
+  constructor(protected http: HttpClient, protected facade: MangoAppFacade) {
     if (environment.name !== 'PROD' && !EndpointService.logged) {
       EndpointService.logged = true;
     }
@@ -75,10 +75,12 @@ export abstract class EndpointService {
   }
 
   protected toObject(value: any): any {
+      let apiSuccess = value?.succeeded ? value?.succeeded: value?.success ? value?.success: null; 
+      let cemsg = value?.message? value?.message: value?.clientErrorMessage? value?.clientErrorMessage: null
       return {
-        success: value.succeeded,
-        data: value.hasOwnProperty('data') ? value.data : value,
-        clientErrorMessage: value.succeeded ? null : value.message
+        success: apiSuccess,
+        data: value?.hasOwnProperty('data') ? value.data : value,
+        clientErrorMessage: cemsg
       }
   }
 

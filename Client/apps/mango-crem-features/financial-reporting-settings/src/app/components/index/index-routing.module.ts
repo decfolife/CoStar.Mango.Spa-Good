@@ -2,10 +2,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IndexComponent } from './index.component';
 
-const routes: Routes = [{ path: '', component: IndexComponent }];
+const routes: Routes = [
+  {
+    path: '',
+    component: IndexComponent,
+    data: {
+      breadCrumb: { label: 'Financial Reporting Settings', append: true, activeLink: 'Financial Reporting Settings' }
+    }
+  }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class IndexRoutingModule {}
+export class IndexRoutingModule { }

@@ -1,18 +1,19 @@
 import { HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { BookmarkGroup, ToolbarModuleLink, BreadCrumb } from '@mango/data-models/lib-data-models';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from 'apps/mango/src/environments/environment.local';
-import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookmarks/bookmarks.component';
-import { Observable, of, Subscription } from 'rxjs';
-import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { HeaderService } from '@mango/core-shared';
+import { BREADCUMBS_LENGTH, BookmarkGroup, BreadCrumb, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { searchResultsComponent } from '@quick-search/components/modal/search-results/search-results.component';
-import { MangoAppFacade } from '../../+state/app/app.facade';
-import { filter, switchMap, tap, startWith} from 'rxjs/operators';
-import { HeaderService } from '@mango/core-shared';
+import { environment } from 'apps/mango/src/environments/environment.local';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
+import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookmarks/bookmarks.component';
+import { Observable, Subscription, combineLatest, of } from 'rxjs';
+import { delay, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { MangoAppFacade } from '../../+state/app/app.facade';
+import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
+import { GlobalSessionService } from '../../services/global-session.service';
 
 @Component({
   selector: 'mango-crem-component',
@@ -32,20 +33,8 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   crumbActiveLink: string = null;
   private subs: Subscription = new Subscription();
 
-  protected httpOptions: any = {
-    // hard coded until we start getting logged in with actual data for the user
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      UserId: '2',
-      ClientKey: 'RETAILDEMO',
-    }),
-  };
-
   bookmarkGroups: BookmarkGroup[] = null;
   public delineator = '»';
-  public breadcrumbs: BreadCrumb[];
-  public tempCrumbs: BreadCrumb[];
 
   constructor(
     private router: Router,
@@ -104,9 +93,9 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
         this.navigationLinks = res.data;
         this.navLinksFetched = true;
 
-        if(this.crumbActiveLink) { 
+        if (this.crumbActiveLink) {
           this.activeLink = this.crumbActiveLink;
-        } else { 
+        } else {
           if (this.navigationLinks.length > 0) {
             //This will need to change in the future
             if (this.navigationLinks.find(nl => nl.name.toLowerCase() === 'dashboard') !== undefined)
@@ -114,7 +103,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
             else
               this.activeLink = this.navigationLinks[0].name;
           }
-        } 
+        }
       },
       (error: any) => {
         this.navLinksFetched = false;
@@ -200,39 +189,37 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
       .pipe(
         filter(event => event instanceof NavigationEnd),
         startWith(this.router),
-        tap(e => {
-          this.breadcrumbs = [];
+        map(e => {
+          let breadcrumbs = []
           let currentRoute = this.activatedRoute.snapshot;
           let url = '';
           while (currentRoute) {
-            const breadcrumb = currentRoute.data.breadCrumb;
+            const routeBreadcrumbData = currentRoute.data.breadCrumb;
             url += '/' + currentRoute.url.map(segment => segment.path).join('/');
-            if (breadcrumb && breadcrumb.label) {
-              if(breadcrumb.activeLink) this.crumbActiveLink = breadcrumb.activeLink;
+            if (routeBreadcrumbData && routeBreadcrumbData.label) {
+              this.crumbActiveLink = routeBreadcrumbData.activeLink || this.crumbActiveLink;
               const breadCrumb: BreadCrumb = {
-                label: breadcrumb.label,
+                label: routeBreadcrumbData.label,
                 url: url,
                 params: currentRoute.queryParams,
-                activeLink: breadcrumb.activeLink? breadcrumb.activeLink: this.activeLink 
+                activeLink: routeBreadcrumbData.activeLink ? routeBreadcrumbData.activeLink : this.activeLink
               };
-
-              if(breadcrumb && breadcrumb.label && currentRoute.component){
-                if(breadcrumb.append){
-                  if(this.tempCrumbs && this.tempCrumbs.length ) {
-                    if (this.tempCrumbs.length == 5) {
-                      this.tempCrumbs = this.tempCrumbs.slice(1,5);
-                    }
-                    this.breadcrumbs = [...this.tempCrumbs];
-                    this.tempCrumbs = [];
-                  }
-                }
-               this.breadcrumbs.push(breadCrumb);
+              if (routeBreadcrumbData.append) {
+                breadcrumbs.push(breadCrumb)
               }
             }
             currentRoute = currentRoute.firstChild;
           }
-          this.tempCrumbs = this.breadcrumbs;
-          this.facade.setBreadcrumbs(this.breadcrumbs);
+          this.facade.setBreadcrumbs(breadcrumbs);
+          return breadcrumbs
+        }),
+        delay(4000),
+        switchMap(breadcrumbs => combineLatest([of(breadcrumbs), this.facade.globalSession$])),
+        filter(([breadcrumbs, globalSession]) => !!breadcrumbs && !!globalSession),
+        tap(([breadcrumbs, globalSession]) => {
+          const v06ParsedBreadcrumbs = GlobalSessionService.generateV06Breadcrumbs(breadcrumbs)
+          const updatedGlobalSession = { ...globalSession, breadCrumbs: v06ParsedBreadcrumbs }
+          this.facade.updateGlobalSession(updatedGlobalSession)
         })
       ).subscribe());
   }

@@ -19,32 +19,33 @@
       "@accounting-accountmanagement/*": [
         "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/app/*"
       ],
-      "@service-accounts/*": [
-        "apps/mango-crem-features/client-delivery/src/app/*"
-      ],
       "@accounting-dashboard/*": [
         "apps/mango-crem-features/accounting-module/src/app/*"
       ],
       "@accounting-profile/*": [
         "apps/mango-crem-features/accounting-profile/accounting-profiles/src/app/*"
       ],
-      "@lease-alerts/*": [
-        "apps/mango-crem-features/alerts/src/app/*"
+      "@accounting-summary/*": [
+        "apps/mango-crem-features/accounting-summary/src/app/*"
       ],
-      "@alerts-rules/*": [
-        "apps/mango-crem-features/alerts-rules/src/app/*"
-      ],
-      "@accounting-summary/*": [ "apps/mango-crem-features/accounting-summary/src/app/*" ],
+      "@alerts-rules/*": ["apps/mango-crem-features/alerts-rules/src/app/*"],
       "@batch-accounting/*": [
         "apps/mango-crem-features/batch-accounting/src/app/*"
       ],
       "@client-settings/*": [
         "apps/mango-crem-features/client-settings/src/app/*"
       ],
+      "@data-set-dictionary/*": [
+        "apps/mango-crem-features/data-set-dictionary/src/app/*"
+      ],
+      "@financial-reporting-settings/*": [
+        "apps/mango-crem-features/financial-reporting-settings/src/app/*"
+      ],
       "@forms/*": ["libs/forms-shared/src/lib/*"],
       "@group-maintenance/*": [
         "apps/mango-crem-features/group-maintenance/src/app/*"
       ],
+      "@lease-alerts/*": ["apps/mango-crem-features/alerts/src/app/*"],
       "@list-pages/*": ["apps/mango-crem-features/list-pages/src/app/*"],
       "@mango/auth": ["libs/auth/src/index.ts"],
       "@mango/core-shared": ["libs/core-shared/src/index.ts"],
@@ -86,9 +87,10 @@
         "apps/mango-crem-features/dashboards/project-dashboard/src/app/*"
       ],
       "@quick-search/*": ["apps/mango-crem-features/quick-search/src/app/*"],
-      "@data-set-dictionary/*": ["apps/mango-crem-features/data-set-dictionary/src/app/*"],
-      "@financial-reporting-settings/*": ["apps/mango-crem-features/financial-reporting-settings/src/app/*"],
       "@reports/*": ["apps/mango-crem-features/reports/src/app/*"],
+      "@service-accounts/*": [
+        "apps/mango-crem-features/client-delivery/src/app/*"
+      ],
       "@start-page/*": [
         "apps/mango-crem-features/start-page-selection/src/app/*"
       ],
