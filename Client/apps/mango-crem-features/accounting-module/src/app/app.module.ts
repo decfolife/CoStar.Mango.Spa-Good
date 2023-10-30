@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, Injector, NgModule } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app-routing.module';
+import { IndexRoutingModule } from './components/index/index-routing.module';
 import { AppComponent } from './app.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClientModule } from '@angular/common/http';
@@ -29,7 +29,7 @@ import { DashboardWrapperModule } from './components/dashboard/dashboard-wrapper
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
+    IndexRoutingModule,
     FontAwesomeModule,
     HttpClientModule,
     SharedLeftNavModule,

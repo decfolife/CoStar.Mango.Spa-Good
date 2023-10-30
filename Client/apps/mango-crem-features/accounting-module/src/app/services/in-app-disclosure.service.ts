@@ -70,6 +70,15 @@ export class InAppDisclosureService extends EndpointService{
     return this.callHttpGet(url, 'getAccountingCriteriaSets');
   }
 
+  public exportIADData(segmentID, reportingYear) {
+    let param;
+    if (environment.isRestful) {
+      param = { segmentID: segmentID, reportingYear: reportingYear };
+      const url = `${environment.appUrls.inAppDisclosure}IAD/Export`;
+      return this.callHttpGet(url, 'Export',  param)
+    }
+  }
+
 
   public callHttpGet(url: string, functionName: string, httpOptionsParams?: any): Observable<any> {
     if (httpOptionsParams) {

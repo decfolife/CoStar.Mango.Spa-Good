@@ -6,6 +6,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
+import notify from 'devextreme/ui/notify';
 
 @Component({
   selector: 'mango-dashboard-wrapper',
@@ -117,6 +118,30 @@ export class DashboardWrapperComponent implements OnInit {
   public apply(data) {
     //console.log("apply")
     this.asc842AnnualDisclosuresComponent.refreshCardData();
+  }
+
+  public export(data) {
+    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear).subscribe((result) => {
+      if(result.data === 'export successful') {
+        notify({
+          message: 'Export Successful. You can find your report in VPDocuments.',
+          type: 'success',
+          displayTime: 5000,
+          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          maxWidth: '500px',
+          closeOnClick: true,
+        })
+      } else {
+        notify({
+          message: 'Export failed.',
+          type: 'error',
+          displayTime: 5000,
+          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          maxWidth: '500px',
+          closeOnClick: true,
+        })
+      }
+    });
   }
 
 }
