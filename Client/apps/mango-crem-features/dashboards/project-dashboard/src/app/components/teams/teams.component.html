@@ -24,7 +24,7 @@
 			<div class="more">
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="teamsMoreMenu">				
-					<button mat-menu-item ><span >Expand All/Collapse All</span></button>      
+					<button mat-menu-item (click)="toggleExpand()"><span >Expand All/Collapse All</span></button>      
 					<button mat-menu-item >Export</button>                   
 				</mat-menu>	 
 			</div>
@@ -38,7 +38,7 @@
 
 	<div class="teams-dataGrid-wrapper"> 
 		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
-		<dx-data-grid *ngIf="dataRetrieved" class="teams-data-grid"
+		<dx-data-grid *ngIf="dataRetrieved" class="teamsData-grid"
 			#TeamsGrid
 			[showColumnLines]="false"
 			[showRowLines]="false"
@@ -50,16 +50,12 @@
 			[columnAutoWidth]="false"
 			[dataSource]="teams"
 			keyExpr="teamId"
+			[width]="'100%'"
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
-			<dxo-filter-builder-popup [width]="600"
-				[height]="600"
-				[(visible)]="filterBuilderVisible">
-			</dxo-filter-builder-popup>
-
 			<dxo-paging [enabled]="false"></dxo-paging>
 
 			<dxo-selection
@@ -68,6 +64,9 @@
 				mode="multiple">
 			</dxo-selection>
 
+			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
+			</dxi-column>
 			<dxi-column dataField="teamId" caption="Team ID" alignment="center"></dxi-column>
 			<dxi-column dataField="teamName" caption="Name"></dxi-column>
 			<dxi-column dataField="members" alignment="center"></dxi-column>
@@ -76,19 +75,32 @@
 			<dxi-column dataField="createdBy" ></dxi-column>
 			<dxi-column dataField="createdDate" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
 			<dxi-column dataField="securityLevel" caption='Rights' ></dxi-column>
-			<dxi-column type="buttons" width="60" [showInColumnChooser]="false" [allowReordering]="false" [allowResizing]="false">
+			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
-					<div *dxTemplate="let data of 'actionsMenuTemplate'">
-						<button aria-label="actions menu" class="btn btn-link teamActionsButton" (click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu"><mat-icon aria-label="Actions Menu">more_vert</mat-icon></button>
+					<div *dxTemplate="let team of 'actionsMenuTemplate'" class="actionsMenuTemplate">
+						<button aria-label="actions menu" class="btn btn-link teamActionsButton" 
+							[disabled]="team.data.securityLevel.toLowerCase().trim() == 'view'"
+							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu">
+							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
+						</button>
 		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item (click)="doSomethingForNow(data)">Edit</li>
-								<li mat-menu-item (click)="doSomethingForNow(data)">Delete</li>
+								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="team.data.canEdit">Edit</li>
+								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="team.data.canDelete">Delete</li>
 							</ul>
 						</mat-menu>
 					</div>
 				</dxi-button>		    	
 			</dxi-column>
+			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="teamDetails"></dxo-master-detail>
+			<div *dxTemplate="let team of 'teamDetails'">
+				<team-members [searchText]="searchText" 
+						[rights]="team.data.securityLevel" 
+						[teamMembers]="team.data.teamMembers"
+				>
+				</team-members>
+			</div>
 
 		</dx-data-grid>
 	</div>

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BreadCrumb, Client, ContactRecord, Link, MangoSubApps, UserAuth, UserInfo } from '@mango/data-models/lib-data-models';
+import { BreadCrumb, Client, ContactRecord, MangoSubApps, UserAuth, UserInfo, V06GlobalSession } from '@mango/data-models/lib-data-models';
 
-import { select, Store, Action } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
+import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 import * as AppActions from './app.actions';
 import * as AppSelectors from './app.selectors';
-import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 
 @Injectable()
 export class MangoAppFacade {
@@ -20,6 +20,7 @@ export class MangoAppFacade {
   breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
   userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
   contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
+  globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
   moduleId$ = this.store.pipe(select(AppSelectors.moduleId), take(1));
   renderFormLeftNavDisplayed$ = this.store.pipe(select(AppSelectors.renderFormLeftNavDisplayed), take(1));
   //Subjects
@@ -89,5 +90,13 @@ export class MangoAppFacade {
 
   navigateLeftNevMenu(navLink: SharedLeftNavLink): void {
     this.store.dispatch(AppActions.navigateLeftNavMenu({ navLink }))
+  }
+
+  getGlobalSesssoin(): void {
+    this.store.dispatch(AppActions.getGlobalSession())
+  }
+
+  updateGlobalSession(session?: V06GlobalSession): void {
+    this.store.dispatch(AppActions.updateGlobalSession({ session }))
   }
 }

@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
-    LoaderModule
+    LoaderModule,
+    FontAwesomeModule
   ],
   providers: [
     InAppDisclosureService

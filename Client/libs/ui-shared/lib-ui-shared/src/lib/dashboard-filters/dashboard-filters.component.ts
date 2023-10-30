@@ -4,6 +4,7 @@ import { Subscription, timer } from 'rxjs';
 import * as dayjs from 'dayjs'
 import { MatDialog } from '@angular/material/dialog';
 import { AddFormWizardComponent } from '@micro-components/form-wizard/modal/add-form-wizard/add-form-wizard.component';
+import {AddBuildingModalComponent} from '../add-building-modal/add-building-modal.component'
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -141,6 +142,29 @@ export class DashboardFiltersComponent implements OnInit,OnChanges {
       }
     });
   }
+
+  public btnAddBuildingNewClick(addObject) {
+    if(addObject.moduleId == 3) {
+      let dialogRef = this.dialog.open(AddBuildingModalComponent, {
+        disableClose: true,
+        height: '81%',
+        width: '75%',
+        maxWidth: '1100px',
+        data: {
+          objectTypeId: this.objectTypeId,
+          userId: this.userId
+        }
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+  
+        }
+      });
+    }
+
+  }
+
 
   btnAddItemClick() {
     this.addItemEvent.emit();

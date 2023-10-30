@@ -602,30 +602,52 @@ body {
 			}
 		}
 	}
-	&.teamActionsMenu .mat-menu-content {
-		padding: 0;
+	&.teamActionsMenu, &.teamMemberActionsMenu {
+		& .mat-menu-content {
+			padding: 0;
+		}
 	}
 }
 
 #teams-container {
-	button.mat-menu-trigger.btn-link:focus {
+	button.mat-menu-trigger.btn-link:focus, 
+	button.actionsButton:focus, 
+	button.moreButton:focus,
+	.clearFilters button.btn-secondary:focus,
+	.searchTeams .mat-form-field.mat-focused
+	{
+		outline: none;
 		box-shadow: 0 0 0 0.1rem colors.$blueShade;
 	}
 
-	.teams-data-grid {
+	.teamsData-grid {
 		td {
 			vertical-align: middle !important;
+			border-left: none;
 		}	
+		tr.dx-edit-row td, tr.dx-edit-row:hover td {
+			background-color: colors.$costarMediumBlue !important;
+		}
 		td.dx-command-edit {
-			span {
+			div.actionsMenuTemplate {
+				transform: translateY(40%);
+			} 
+
+			div.teamMemberEditButtons {
 				display: flex;
-				height: 24px;
-				width: 24px;
-				transform: translate(40%,40%)  !important
+				crem-button.cancelBtn {
+					transform: scale(.6);	
+				}
+				crem-button.saveBtn {
+					transform: scale(.6) translateX(-24px);
+				}
 			}
 		}
 		.dx-checkbox-icon {
 			border: 1px solid colors.$darkGray;
 		}
+	}
+	td.dx-cell-focus-disabled.dx-master-detail-cell {
+		background-color: colors.$lightGray;
 	}
 }

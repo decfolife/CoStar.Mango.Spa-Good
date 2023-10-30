@@ -5,6 +5,7 @@ import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-di
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
+import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'mango-dashboard-wrapper',
@@ -21,6 +22,7 @@ export class DashboardWrapperComponent implements OnInit {
   public selectedYear: number = 2022;
   public loading: boolean = true;
   public criteriaSet: number;
+  faFileExport = faFileExport;
 
   @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
  

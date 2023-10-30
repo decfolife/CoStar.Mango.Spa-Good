@@ -6,17 +6,43 @@ import { DiscountRateProfilesAddEditComponent } from '../dr-profiles/dr-profiles
 import { JournalEntryProfilesComponent } from '../journal-entry-profiles/journal-entry-profiles.component';
 
 const routes: Routes = [
-  { path: '', component: DiscountRateProfilesComponent },
-  { path: 'amortizationprofiles', component: AmortizationProfilesComponent },
-  { path: 'discountrateprofiles/:masterGroupId', component: DiscountRateProfilesComponent },
-  { path: 'journalentryprofiles', component: JournalEntryProfilesComponent },
+  {
+    path: '', component: DiscountRateProfilesComponent,
+    data: {
+      breadCrumb: { label: 'Discount Rate Profiles', append: true, activeLink: 'Discount Rate Profiles' }
+    }
+  },
+  {
+    path: 'amortizationprofiles', component: AmortizationProfilesComponent,
+    data: {
+      breadCrumb: { label: 'Amortization Profiles', append: true, activeLink: 'Amortization Profiles' }
+    }
+  },
+  {
+    path: 'discountrateprofiles/:masterGroupId', component: DiscountRateProfilesComponent,
+    data: {
+      breadCrumb: { label: 'Discount Rate Profiles', append: true, activeLink: 'Discount Rate Profiles' }
+    }
+  },
+  {
+    path: 'journalentryprofiles', component: JournalEntryProfilesComponent,
+    data: {
+      breadCrumb: { label: 'Journal Entry Profiles', append: true, activeLink: 'Journal Entry Profiles' }
+    }
+  },
   {
     path: 'discountrateprofiles/add/:masterGroupId',
-    component: DiscountRateProfilesAddEditComponent
+    component: DiscountRateProfilesAddEditComponent,
+    data: {
+      breadCrumb: { label: 'Add Discount Rate Profile', append: true, activeLink: 'Discount Rate Profiles' }
+    }
   },
   {
     path: 'discountrateprofiles/edit/:masterGroupId/:policyId',
-    component: DiscountRateProfilesAddEditComponent
+    component: DiscountRateProfilesAddEditComponent,
+    data: {
+      breadCrumb: { label: 'Edit Discount Rate Profile', append: true, activeLink: 'Discount Rate Profiles' }
+    }
   },
 ];
 

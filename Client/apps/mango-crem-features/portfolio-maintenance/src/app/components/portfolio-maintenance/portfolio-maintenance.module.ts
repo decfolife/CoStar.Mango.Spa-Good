@@ -39,7 +39,7 @@ import { ViewGroupContactsComponent } from './modals/view-group-contacts/view-gr
     RouterModule.forChild([
       {
         path: '',
-        data: { pageTitle: 'Portfolios' },
+        data: { pageTitle: 'Portfolios', breadCrumb: { label: 'Portfolio Maintenance', append: true }},
         component: PortfolioMaintenanceComponent,
       }
     ])

@@ -1,8 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import {
   APP_FEATURE_KEY,
-  State,
-  MangoPartialState,
+  State
 } from './app.reducer';
 
 export const getAppState = createFeatureSelector< State>(
@@ -47,6 +46,11 @@ export const contactRecord = createSelector(
 export const client = createSelector(
   getAppState,
   (state: State) => state.client
+);
+
+export const globalSession = createSelector(
+  getAppState,
+  (state: State) => state.globalSession
 );
 
 export const moduleId = createSelector(

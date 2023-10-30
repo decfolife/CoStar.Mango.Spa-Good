@@ -9,4 +9,5 @@ export interface TeamMember {
   emailOn: boolean;
   role: string;
   level: string;
+  editMode?: boolean;
 }

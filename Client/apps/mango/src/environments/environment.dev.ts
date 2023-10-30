@@ -4,40 +4,40 @@ class EnvironmentsCrem implements Environment {
   production = false;
   name = 'DEV';
   appUrls = {
-    accounting: 'http://service2.dev.corp.virtualpremise.com:8090/accountmanagement/api',
-    batchAccounting: 'http://172.20.9.224:30022/api',
-    discountRateProfiles: 'http://172.20.9.224:30006/api',
-    bookmarks: 'http://172.20.9.224:30024/api/bookmarks/',
-    listpages: 'http://172.20.9.224:30000/api/listpage/',
-    financials: 'http://172.20.9.224:30042/api/',
-    dashboards: 'http://172.20.9.224:30036/api/',
+    accounting: 'http://mangospa.dev.corp.virtualpremise.com:30080/accountmanagement/api',
+    batchAccounting: 'http://mangospa.dev.corp.virtualpremise.com:30080/batchAccounting/api',
+    discountRateProfiles: 'http://mangospa.dev.corp.virtualpremise.com:30080/accountingprofiles/api',
+    bookmarks: 'http://mangospa.dev.corp.virtualpremise.com:30080/bookmarks/api/',
+    listpages: 'http://mangospa.dev.corp.virtualpremise.com:30080/listpages/api/listpage/',
+    financials: 'http://mangospa.dev.corp.virtualpremise.com:30080/financials/api/',
+    dashboards: 'http://mangospa.dev.corp.virtualpremise.com:30080/dashboards/api/',
     authenticate: 'https://identity.dev.crem.aws.dshrp.com/api',
     authentication: 'https://authentication.dev.crem.aws.dshrp.com/api/',
-    authorization: 'http://172.20.9.224:30054/api/',
+    authorization: 'http://mangospa.dev.corp.virtualpremise.com:30080/authorization/api/',
     taskApproval: '', 
-    reports: 'http://172.20.9.224:30038/api/',
-    userMaintenance: 'http://172.20.9.224:30018/api/',
-    portfolioMaintenance: 'http://172.20.9.224:30016/api/',
-    objectMaintenance: 'http://172.20.9.224:30014/api/',
-    groupMaintenance: 'http://172.20.9.224:30012/api/',
-    alertsRules: 'http://172.20.9.224:30020/api/Alerts',
-    alerts: 'http://172.20.9.224:30020/api/Alerts',
-    accountingService: 'http://172.20.9.224:30008/api/Accounting',
-    leftNav: 'http://172.20.9.224:30032/api/',
-    quickSearch: 'http://172.20.9.224:30052/api',
-    userService: 'http://172.20.9.224:30050/api',
-    formWizard: 'http://172.20.9.224:3003./api/',
-    objectActions: 'http://172.20.9.224:30034/api/',
-    header: 'http://172.20.9.224:30044/api/',
-    inAppDisclosure: 'http://172.20.9.224:30008/api/',
-    accountingSummary:"http://172.20.9.224:30040/api/AccountingSummary/",
-    dataSetDictionary: 'http://172.20.9.224:30039/api/',
-    projects: 'http://172.20.9.224:30056/api/projects/',
+    reports: 'http://mangospa.dev.corp.virtualpremise.com:30080/reports/api/',
+    userMaintenance: 'http://mangospa.dev.corp.virtualpremise.com:30080/userMaintenance/api/',
+    portfolioMaintenance: 'http://mangospa.dev.corp.virtualpremise.com:30080/portfolioMaintenance/api/',
+    objectMaintenance: 'http://mangospa.dev.corp.virtualpremise.com:30080/objectMaintenance/api/',
+    groupMaintenance: 'http://mangospa.dev.corp.virtualpremise.com:30080/groupMaintenance/api/',
+    alertsRules: 'http://mangospa.dev.corp.virtualpremise.com:30080/Alerts/api/Alerts',
+    alerts: 'http://mangospa.dev.corp.virtualpremise.com:30080/Alerts/api/Alerts',
+    accountingService: 'http://mangospa.dev.corp.virtualpremise.com:30080/AccountingDashboard/api/Accounting',
+    leftNav: 'http://mangospa.dev.corp.virtualpremise.com:30080/leftNav/api/',
+    quickSearch: 'http://mangospa.dev.corp.virtualpremise.com:30080/quickSearch/api',
+    userService: 'http://mangospa.dev.corp.virtualpremise.com:30080/userService/api',
+    formWizard: 'http://mangospa.dev.corp.virtualpremise.com:30080/FormsEngine/api/',
+    objectActions: 'http://mangospa.dev.corp.virtualpremise.com:30080/objectActions/api/',
+    header: 'http://mangospa.dev.corp.virtualpremise.com:30080/header/api/',
+    inAppDisclosure: 'http://mangospa.dev.corp.virtualpremise.com:30080/AccountingDashboard/api/',
+    accountingSummary:"http://mangospa.dev.corp.virtualpremise.com:30080/AccountingSummary/api/AccountingSummary/",
+    dataSetDictionary: 'http://mangospa.dev.corp.virtualpremise.com:30080/reports/api/',
+    projects: 'http://mangospa.dev.corp.virtualpremise.com:30080/projects/api/projects/',
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].dev.corp.virtualpremise.com';
   CAUrl = 'https://client-alpha.dev.crem.aws.dshrp.com/';
-  mangoSpaUrl = 'http://service2.dev.corp.virtualpremise.com:8097/'
+  mangoSpaUrl = 'http://mangospa.dev.corp.virtualpremise.com:30080/'
 }
 
 export const environment = new EnvironmentsCrem();

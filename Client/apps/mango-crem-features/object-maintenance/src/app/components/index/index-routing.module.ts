@@ -5,7 +5,7 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('../object-maintenance/object-maintenance.module')
-    .then(m => m.ObjectMaintenanceModule)
+      .then(m => m.ObjectMaintenanceModule)
   }
 ];
 

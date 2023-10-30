@@ -1,9 +1,9 @@
-import { createReducer, on, Action } from '@ngrx/store';
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
+import { Action, createReducer, on } from '@ngrx/store';
 
+import { BreadCrumb, Client, ContactRecord, MangoSubApps, UserAuth, UserInfo, V06GlobalSession } from '@mango/data-models/lib-data-models';
 import * as AppActions from './app.actions';
-import { MangoAppEntity as MangoAppEntity } from './app.models';
-import { Client, ContactRecord, MangoSubApps, UserAuth, UserInfo, BreadCrumb } from '@mango/data-models/lib-data-models';
+import { MangoAppEntity } from './app.models';
 
 export const APP_FEATURE_KEY = 'mango';
 
@@ -18,7 +18,8 @@ export interface State extends EntityState<MangoAppEntity> {
   breadcrumbs: BreadCrumb[],
   clientInfo: Client,
   moduleId: number,
-  renderFormLeftNavDisplayed: boolean
+  renderFormLeftNavDisplayed: boolean,
+  globalSession: V06GlobalSession
 }
 
 export interface MangoPartialState {
@@ -37,7 +38,8 @@ export const initialState: State = appAdapter.getInitialState({
   breadcrumbs: null,
   clientInfo: null,
   moduleId: null,
-  renderFormLeftNavDisplayed: false
+  renderFormLeftNavDisplayed: false,
+  globalSession: {}
 });
 
 const appReducer = createReducer(
@@ -52,9 +54,10 @@ const appReducer = createReducer(
   on(AppActions.setBreadcrumbs, (state, { breadcrumbs }) => ({ ...state, error: null, breadcrumbs })),
   on(AppActions.setContactRecord, (state, { contactRecord }) => ({ ...state, error: null, contactRecord })),
   on(AppActions.setModuleId, (state, { moduleId }) => ({ ...state, error: null, moduleId: moduleId })),
-  on(AppActions.setRenderFormLeftNavDisplayed, (state, { renderFormLeftNavDisplayed }) => ({ 
-    ...state, error: null, renderFormLeftNavDisplayed: renderFormLeftNavDisplayed 
+  on(AppActions.setRenderFormLeftNavDisplayed, (state, { renderFormLeftNavDisplayed }) => ({
+    ...state, error: null, renderFormLeftNavDisplayed: renderFormLeftNavDisplayed
   })),
+  on(AppActions.getGlobalSessionSuccess, (state, { session }) => ({ ...state, error: null, globalSession: session.data})),
 );
 
 export function reducer(state: State | undefined, action: Action) {

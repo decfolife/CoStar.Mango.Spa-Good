@@ -16,6 +16,7 @@ import { DashboardFiltersModule } from './dashboard-filters';
 import { SharedLeftNavModule } from './shared-left-nav';
 import { ShadowFiltersContainerModule } from './shadow-filters-container';
 import { CostarSuiteHeaderModule } from './costar-suite-header/costar-suite-header.module';
+import { AddBuildingModalModule } from './add-building-modal/add-building-modal.module';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { CostarSuiteHeaderModule } from './costar-suite-header/costar-suite-head
     DashboardFiltersModule,
     HeroMetricsContainerModule,
     ShadowFiltersContainerModule,
-    SharedLeftNavModule
+    SharedLeftNavModule,
+    AddBuildingModalModule
   ],
   exports: [
     FormsModule,
@@ -47,7 +49,8 @@ import { CostarSuiteHeaderModule } from './costar-suite-header/costar-suite-head
     DashboardFiltersModule,
     HeroMetricsContainerModule,
     ShadowFiltersContainerModule,
-    SharedLeftNavModule
+    SharedLeftNavModule,
+    AddBuildingModalModule
   ],
 })
 export class LibUiSharedModule {}

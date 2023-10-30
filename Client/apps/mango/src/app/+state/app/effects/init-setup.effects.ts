@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { createEffect, Actions, ofType } from '@ngrx/effects';
-
-import * as AppActions from '../app.actions';
-import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { DBkeys, HeaderService, SettingsService, StorageService, UserInfoService } from '@mango/core-shared/lib-core-shared';
-import { MangoAppFacade } from '../app.facade';
-import { RouterNavigatedAction, ROUTER_NAVIGATED } from '@ngrx/router-store';
-import { EMPTY, iif, of } from 'rxjs';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OAUTH_REDIRECT_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { DBkeys, HeaderService, SettingsService, StorageService, UserInfoService } from '@mango/core-shared/lib-core-shared';
+import { OAUTH_REDIRECT_QUERY_PARAM, SOURCE_APP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
+import { of } from 'rxjs';
+import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import * as AppActions from '../app.actions';
+import { MangoAppFacade } from '../app.facade';
 
 
 @Injectable()
@@ -32,21 +31,22 @@ export class InitSetupEffects {
         ofType(AppActions.APP_INIT),
         delay(1000),
         switchMap(_ => this.activatedRoute.queryParams),
-        map(params => [params.auth_code, params[OAUTH_REDIRECT_QUERY_PARAM]]),
-        switchMap(([authCode, redirectionUri]) => {
-          return this.router.url.includes('auth/validate') ? of(
+        map(params => [params.auth_code, params[OAUTH_REDIRECT_QUERY_PARAM], params[SOURCE_APP_QUERY_PARAM]]),
+        switchMap(([authCode, redirectionUri, sourceApp]) => {
+          const actionsToDispatch: any[] = this.router.url.includes('auth/validate') ? [
             AppActions.setupCremAuthentication({ authCode, redirectionUri }),
             AppActions.setupClientKey(),
             AppActions.setupContactRecord(),
             AppActions.setupUserInfo(),
-            AppActions.setupHeader()) : of(
-              AppActions.setupAuthentication(),
-              AppActions.setupClientKey(),
-              AppActions.setupContactRecord(),
-              AppActions.setupUserInfo(),
-              AppActions.setupHeader())
-        }
-        )
+            AppActions.setupHeader(),
+            AppActions.getGlobalSession()] : [AppActions.setupAuthentication(),
+            AppActions.setupClientKey(),
+            AppActions.setupContactRecord(),
+            AppActions.setupUserInfo(),
+            AppActions.setupHeader()]
+            sourceApp === 'v06' ? actionsToDispatch.push(AppActions.getGlobalSession()) : null
+          return of(...actionsToDispatch)
+        })
       )
   )
 

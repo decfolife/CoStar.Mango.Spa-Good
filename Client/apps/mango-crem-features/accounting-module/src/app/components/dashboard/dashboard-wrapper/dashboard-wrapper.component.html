@@ -69,9 +69,16 @@
 				(buttonClick)="apply($event)">
 				Apply
 			</crem-button>
+
 		</div>
 		<div class="controls-right">
-			<!-- //export probably go here -->
+				<crem-button id="accounting-dashboard__export"
+				[disabled]="loading"
+				type="secondary"
+				(buttonClick)="export($event)">
+				<fa-icon [icon]="faFileExport"></fa-icon>
+				Export
+			</crem-button>
 		</div>
 	</div>
 	<div class="dashboard-content-wrapper">

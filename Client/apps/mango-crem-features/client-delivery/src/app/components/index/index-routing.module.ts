@@ -4,8 +4,9 @@ import { ServiceAccountsComponent } from '../../components/service-accounts/serv
 
 const routes: Routes = [
   { 
-    // path: 'service-accounts', component: ServiceAccountsComponent },
-    path: '', component: ServiceAccountsComponent },
+    path: '', 
+    component: ServiceAccountsComponent
+   },
 ];
 
 @NgModule({
