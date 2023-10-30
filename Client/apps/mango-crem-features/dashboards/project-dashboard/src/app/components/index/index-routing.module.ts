@@ -28,7 +28,7 @@ const routes: Routes = [
     path: '',
     component: IndexComponent,
     data: {
-      breadCrumb: { label: 'Dashboard', append: true }
+      breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' }
     },
   }];
 

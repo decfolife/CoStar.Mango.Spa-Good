@@ -8,4 +8,5 @@ export class DBkeys {
   public static readonly USER_AUTH = 'user_auth';
   public static readonly CLIENT_KEY = 'client_key';
   public static readonly CONTACT_RECORD = 'contact_record';
+  public static readonly IDLE_TIMEOUT = 'idle_timeout';
 }
