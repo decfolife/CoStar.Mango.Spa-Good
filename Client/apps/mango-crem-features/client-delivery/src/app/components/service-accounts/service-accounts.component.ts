@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import {AddServiceAccountComponent} from '../add-service-account/add-service-account.component';
 import {ServiceAccountDetailsComponent} from '../service-account-details/service-account-details.component';
-import {DeleteServiceAccountComponent} from '../delete-service-account/delete-service-account.component';
+import {UpdateServiceAccountComponent} from '../update-service-account/update-service-account.component';
 import { ClientDeliveryService } from '../../services/client-delivery.service';
 import { saveAs } from 'file-saver-es';
 import { DatePipe } from '@angular/common';
@@ -22,8 +22,8 @@ export class ServiceAccountsComponent implements OnInit {
   // public pageTitle = this.route.snapshot.data['pageTitle'];
   public pageTitle = 'Service Accounts';
   public serviceAccountsData: any;
+  public allServiceAccountsData: any;
   public dropdownField: any;
-  // public dataGridLoading: false;
   public columns: any;
   public selectedFilter: string = 'active';
   public dateFormat: string;
@@ -48,26 +48,10 @@ export class ServiceAccountsComponent implements OnInit {
   private getServiceAccouts(filter: string){
     this.service.getServiceAccounts(filter.toLowerCase())
     .subscribe(result => {        
-      if(result){          
-        if(result.data){
-          this.serviceAccountsData = [];
-          let filteredData = result.data.items;            
-
-          switch (filter.toLowerCase()) {
-            case "active":
-            {
-              this.serviceAccountsData = [];
-              this.serviceAccountsData =  filteredData.filter(x=>x.contactActive === true);
-              break;
-            }
-            case "inactive":
-              this.serviceAccountsData =  filteredData.filter(x=>x.contactActive === false);
-              break;
-            default:
-              this.serviceAccountsData =  filteredData;
-          }
-            this.dataGrid.instance?.refresh();
-        }          
+      if(result && result.data){    
+        this.allServiceAccountsData = result.data.items;      
+        this.filterServiceAccountData(filter);  
+        this.dataGrid.instance?.refresh();       
       }
       setTimeout(() => {
         this.searchDataGrid(this.searchText);
@@ -80,7 +64,7 @@ export class ServiceAccountsComponent implements OnInit {
     this.dataGrid?.instance?.searchByText(data);
   }
 
-  public onCellClicked(e): void {
+  public openAccountDetails(e): void {
     if (e.rowType != "header" && e.column.dataField !== "Actions") {
       let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
         width: '1200px',
@@ -94,46 +78,30 @@ export class ServiceAccountsComponent implements OnInit {
     const filter: any = e?.[0]?.value || e?.[0] ;
     if (this.selectedFilter !== filter) {
       this.selectedFilter = filter;
-      this.serviceAccountsData = null;
-      switch (this.selectedFilter) {
-        case "Active":
-          this.getServiceAccouts('active');
-          break;
-        case "Inactive":
-          this.getServiceAccouts('inactive');
-          break;
-        default:
-          this.getServiceAccouts('all');
-      }
+      this.filterServiceAccountData(filter);
     }
   }
 
-  public deleteServiceAccount(data, contactActiveFlg) {
-    let dialogRef = this.dialog.open(DeleteServiceAccountComponent, {
-      width: '600px',
-      panelClass: 'client-delivery-modal',
-      data: data.data
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const contactEmailAddress = result.contactEmailAddress;        
-        this.service.deleteServiceAccount(contactEmailAddress, contactActiveFlg)       
-        .subscribe(response => {
-          if(response) {  
-            setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);            
-            //this.getServiceAccouts(this.selectedFilter);
-            this.searchDataGrid(this.searchText);
-          }
-        });
+  private filterServiceAccountData(filter: string) {
+    switch (filter.toLowerCase()) {
+      case "active":
+      {
+        this.serviceAccountsData =  this.allServiceAccountsData.filter(x=>x.contactActive === true);
+        break;
       }
-    });
+      case "inactive":
+        this.serviceAccountsData =  this.allServiceAccountsData.filter(x=>x.contactActive === false);
+        break;
+      default:
+        this.serviceAccountsData =  this.allServiceAccountsData;
+    }
   }
 
-  public addServiceAccount(){    
-    
+    public addServiceAccount(){    
     let dialogRef = this.dialog.open(AddServiceAccountComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
+      data: this.allServiceAccountsData.map(x => x.contactEmailAddress)
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result.length > 0) {  
@@ -142,11 +110,30 @@ export class ServiceAccountsComponent implements OnInit {
           if (result) { 
             if(!this.selectedFilter) this.selectedFilter = 'Active';
             setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);           
-            //this.getServiceAccouts(this.selectedFilter);
           }
         });        
       }
     });   
+  }
+
+  public updateServiceAccountStatus(data, contactActiveFlg) {
+    let dialogRef = this.dialog.open(UpdateServiceAccountComponent, {
+      width: '600px',
+      panelClass: 'client-delivery-modal',
+      data: data.data
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const contactEmailAddress = result.contactEmailAddress;        
+        this.service.updateServiceAccount(contactEmailAddress, result.contactId, contactActiveFlg)       
+        .subscribe(response => {
+          if(response) {  
+            setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);            
+            this.searchDataGrid(this.searchText);
+          }
+        });
+      }
+    });
   }
 
   public exportGrids(): void {
