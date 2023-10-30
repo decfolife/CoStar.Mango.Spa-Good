@@ -91,7 +91,6 @@ button {
 
   // Basic Button
   &.btn-basic {
-    background-color: transparent;
     border: none;
     &.btn-primary {
       @include costar(color, primary);

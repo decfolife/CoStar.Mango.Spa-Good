@@ -75,7 +75,8 @@
 			</dxi-column>
 			<div *dxTemplate="let member of 'toggleTemplate'" >
 				<div class="emailToggle">
-					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode" (change)="emailtoggle($event)"></mat-slide-toggle>
+					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode" (change)="emailtoggle($event)" aria-label="Email Notication">
+					</mat-slide-toggle>
 				</div>		
 			</div>
 		</dx-data-grid>

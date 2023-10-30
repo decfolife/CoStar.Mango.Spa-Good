@@ -7,6 +7,8 @@ import { CardsService } from '@project-dashboard/services/cards.service';
 import { Team, TeamMember} from '@mango/data-models/lib-data-models';
 import { TeamMembersComponent } from './team-members/team-members.component';
 import CheckBox from 'devextreme/ui/check_box';
+import { MatDialog } from '@angular/material/dialog';
+import { AddTeamComponent } from './add-team/add-team.component';
 
 @Component({
   selector: 'teams',
@@ -27,7 +29,7 @@ export class TeamsComponent implements OnInit {
 	headerHtmlCellElement: any;
 
   constructor(private dashboardService: DashboardService, private router: Router,
-              private cardsService: CardsService) { }
+              private dialog: MatDialog,  private cardsService: CardsService) { }
 
   ngOnInit(): void {
   
@@ -54,7 +56,20 @@ export class TeamsComponent implements OnInit {
     }
   }
 
-  addTeam() {}
+  addTeam() {
+    let dialogRef = this.dialog.open(AddTeamComponent, {
+      height: '500px',
+      width: '700px',
+      panelClass: 'AddTeamModal',
+      data: { team: "What Team?" 
+      },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+
+  }
 
   doSomethingForNow(data) {}
 
