@@ -192,7 +192,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loading = false
         this.isErrored = false 
 
-        if (user?.isServiceAccount && !isUserFullyAuthenticated) {
+        if (user?.isServiceAccount) {
           this.router.navigate(['service-account-configuration'], { relativeTo: this._route })
           return
         }
