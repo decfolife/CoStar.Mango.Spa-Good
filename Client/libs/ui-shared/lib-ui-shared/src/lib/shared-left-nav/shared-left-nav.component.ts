@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../../apps/mango/src/environments/environment.local';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
@@ -15,7 +15,7 @@ export interface linkObjects {
   templateUrl: 'shared-left-nav.component.html',
   styleUrls: ['shared-left-nav.component.scss'],
 })
-export class SharedLeftNavComponent implements OnChanges {
+export class SharedLeftNavComponent implements OnChanges, OnInit {
   @Input() navigationLinks: any[];
   public navObjs: linkObjects[];
   public expandNav: boolean = true;
@@ -24,11 +24,17 @@ export class SharedLeftNavComponent implements OnChanges {
   @Output() navigateSpa: EventEmitter<SharedLeftNavLink> = new EventEmitter<SharedLeftNavLink>(null);
   @Output() toActiveLink: EventEmitter<string> = new EventEmitter(); 
 
+  isSubleftnav: boolean = false
   constructor(
     private router: Router
   ) { this.isRestful = environment.isRestful }
 
+  ngOnInit(): void {
+    // To refactor and add an `expanded` flag to the sub left nav API response
+    
+  }
   ngOnChanges(changes: SimpleChanges) {
+    this.isSubleftnav = this.router.url.includes('render-form')
     for (let propName in changes) {
       if (propName.toLowerCase() === 'navigationlinks') {
         this.getCategorizeLinks();

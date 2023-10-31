@@ -44,7 +44,8 @@ export class InitSetupEffects {
             AppActions.setupContactRecord(),
             AppActions.setupUserInfo(),
             AppActions.setupHeader()]
-            sourceApp === 'v06' ? actionsToDispatch.push(AppActions.getGlobalSession()) : null
+            // Disable loading session 
+            // sourceApp === 'v06' ? actionsToDispatch.push(AppActions.getGlobalSession()) : null
           return of(...actionsToDispatch)
         })
       )
