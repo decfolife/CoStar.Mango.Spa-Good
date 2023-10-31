@@ -290,7 +290,7 @@ export class UserService {
 
   isServiceAccount(token: string): boolean {
     var decoded = this.getDecodedAuthToken(token);
-    if (decoded.isServiceAccount.toLowerCase() === "true") {
+    if (decoded.isServiceAccount?.toLowerCase() === "true") {
       return true;
     }
 
