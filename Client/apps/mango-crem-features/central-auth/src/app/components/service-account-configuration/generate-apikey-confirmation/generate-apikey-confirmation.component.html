@@ -1,0 +1,15 @@
+<crem-modal class="client-delivery-modal"
+	modalId = "generateApiKeyConfirmationComponentModalId"
+	modalTitle="{{title}}" 
+	closeIconVisible="" 
+	primaryFooterButtonText="{{confirmButtonText}}"
+	closeOrCancelButtonText="Cancel" 
+	(primaryButtonAction)="yes()"
+	>
+	<div modalContent class="account-modal-content">
+		<span>{{msg}}</span>
+	</div>
+
+	<button id="Close me">Test</button>
+</crem-modal>
+

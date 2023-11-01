@@ -273,14 +273,14 @@ export class UserService {
     return of(testData);
   }
 
-  generateApiKey(userEmail: string): Observable<boolean> {
-    const url = `${this.env.appUrls.authentication}/serviceaccount/createapikey`;
-
-    // return this.http.post(url)(
-    // );
-
-    //To be deleted after API integration
-    return of(true);
+  generateApiKey(): Observable<any> {    
+    const url = `${this.env.appUrls.authentication}/serviceaccount/createclientapikey`;
+    const body = { }
+     return this.http.post(url, body).pipe<string>(
+      tap( (response: any) => {
+        return response.data;
+      })
+    );
   }
 
   getServiceAccountSites(userEmail: string): Observable<ServiceAccountSites> {

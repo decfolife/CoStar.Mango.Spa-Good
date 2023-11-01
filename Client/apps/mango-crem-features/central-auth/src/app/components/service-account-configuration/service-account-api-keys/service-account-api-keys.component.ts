@@ -1,5 +1,8 @@
 import { Component, OnInit, Input} from '@angular/core';
 import { UserService } from '@mango/core-shared';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GenerateApiKeyConfirmationComponent } from '../generate-apikey-confirmation/generate-apikey-confirmation.component';
+import { CopyClipboardMessageComponent } from '../copy-clipboard-message/copy-clipboard-message.component';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -16,6 +19,7 @@ export class ServiceAccountApiKeysComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -39,11 +43,32 @@ export class ServiceAccountApiKeysComponent implements OnInit {
   }
 
   generateApiKey(){
-    this.userService.generateApiKey(this.userEmail)
-    .subscribe(result => {        
-      if(result){          
-        console.log('ApiKey generated.')
+    let dialogRef = this.dialog.open(GenerateApiKeyConfirmationComponent, {
+      width: '600px',
+      panelClass: 'client-delivery-modal',
+      data: {
+        msg: "This will generate a new API Key and replace the existing one, Are you sure you want to continue?",
+        confirmButtonText: "Yes",
+        title: "Generate ApiKey Confirmation"
+      },
+    });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.generateApiKey()     
+        .subscribe(result => {
+          if (result) {          
+            this.dialog.open(CopyClipboardMessageComponent, {
+              width: '650px',
+              height: '350px',
+              panelClass: 'client-delivery-modal',
+              data: {
+                apikey: result.data
+              },
+            });
+          }
+        });
       }
-    })
+    });
   }
 }
