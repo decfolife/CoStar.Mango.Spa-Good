@@ -10,6 +10,11 @@ export const user = createSelector(
     (state: State) => state.user
 );
 
+export const accessToken = createSelector(
+    getAppState,
+    (state: State) => state.accessToken
+);
+
 export const clientKey = createSelector(
     getAppState,
     (state: State) => state.clientKey

@@ -56,6 +56,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const user: UserAuth = this.storageService.getDataObject(DBkeys.USER_AUTH);
     const clientKey: string = this.storageService.getDataObject(DBkeys.CLIENT_KEY);
     const contactRecord: ContactRecord = this.storageService.getDataObject(DBkeys.CONTACT_RECORD);
+
     this.centralAuthFacade.setUser(user)
     this.centralAuthFacade.setClientKey(clientKey)
     this.centralAuthFacade.setContactId((contactRecord || {}).contactID)

@@ -12,6 +12,7 @@ export class CentralAuthFacade {
   redirectionUri$ = this.store.pipe(select(AppSelectors.redirectionUri));
   clientKey$ = this.store.pipe(select(AppSelectors.clientKey));
   contactId$ = this.store.pipe(select(AppSelectors.contactId));
+  accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
   user$ = this.store.pipe(select(AppSelectors.user));
 
   constructor(private store: Store) { }
@@ -22,6 +23,10 @@ export class CentralAuthFacade {
 
   setUser(user: UserAuth) {
     this.store.dispatch(AppActions.setUser({ user }));
+  }
+
+  setAccessToken(accessToken: string) {
+    this.store.dispatch(AppActions.setAccessToken({ accessToken }));
   }
 
   setClientKey(clientKey: string) {

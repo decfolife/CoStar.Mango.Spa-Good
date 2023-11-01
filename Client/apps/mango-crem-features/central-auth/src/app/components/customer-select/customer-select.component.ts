@@ -29,11 +29,6 @@ export class CustomerSelectComponent {
     private storageService: StorageService) { }
 
   async onClientSelected(client: UserSite): Promise<void> {
-    if (!this.userService.isUserAuthenticated()){
-      this.router.navigate(['/']);
-      return;
-    }
-    
     if (!client) {
       throw new CentralAuthError({
         message: UNEXPECTED_ERROR_MESSAGE,

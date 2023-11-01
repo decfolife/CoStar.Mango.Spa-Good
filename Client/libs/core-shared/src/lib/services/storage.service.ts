@@ -71,6 +71,12 @@ export class StorageService {
     }
   }
 
+  public clearAll() {
+    localStorage.clear()
+    sessionStorage.clear()
+    this.syncKeys = []
+  }
+
   public deleteData(key = StorageService.DBKEY_USER_DATA) {
     this.testForInvalidKeys(key);
 

@@ -2,7 +2,7 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 import { Injector, ModuleWithProviders, NgModule, NgZone } from "@angular/core";
 import { Router } from "@angular/router";
 import { MangoErrorHandler, UserService } from "@mango/core-shared/lib-core-shared";
-import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
+import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_MESSAGE } from "@mango/data-models/lib-data-models";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { CentralAuthFacade } from "../+state/facades";
@@ -55,6 +55,12 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
 
           const caHttpError: CentralAuthHttpError = errorResponse.error?.traceId ? errorResponse.error : genericErrorObject
 
+          if (caHttpError.status === 401) {
+            caHttpError.message = caHttpError.message;
+            this.facade.logout()
+            this.router.navigate(['/'])
+          }
+
           if (caHttpError.errorCode as CentralAuthErrorCodes === CentralAuthErrorCodes.SqsTimeout) {
             caHttpError.errorType = MangoErrorTypes.WARNING
             caHttpError.title = 'Warning'
@@ -65,12 +71,8 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
           }
 
           if (caHttpError.errorCode === CentralAuthErrorCodes.ForceLogout) {
-            this.userService.logout();
-            window.location.href = '?caforcelogout=true';
-          }
-          if (caHttpError.status === 401) {
             this.facade.logout()
-            this.router.navigate(['/'])
+            window.location.href = '?caforcelogout=true';
           }
           
           return throwError(caHttpError);

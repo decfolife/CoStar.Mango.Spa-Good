@@ -10,7 +10,7 @@ import {
   UserSite,
   ClientSitesByUser,
   UserAuth,
-  LoginResponse,
+  Token,
   RecentUserSites,
   MultiClientLoginHttpRequest,
   GetContactRecordHTTPResponse,
@@ -22,9 +22,9 @@ import {
   ServiceAccountSites,
   ServiceAccountEndpoints,
   UpdateServiceAccountApiAccessRequest,
+  AuthHTTPResponse,
 } from '@mango/data-models/lib-data-models';
 import { Environment } from '@mango/data-models/lib-data-models';
-
 import jwt_decode from "jwt-decode";
 import { JwtPayload } from "jwt-decode"
 
@@ -34,6 +34,9 @@ import { JwtPayload } from "jwt-decode"
 export class UserService {
   private currentUserSubject: BehaviorSubject<UserAuth>
   public currentUser: Observable<UserAuth>;
+
+  private accessTokenSubject = new BehaviorSubject<string>(null);
+  public accessToken = this.accessTokenSubject.asObservable();
 
   private isAuthenticatedSubject = new ReplaySubject<boolean>(1);
   public isAuthenticated = this.isAuthenticatedSubject.asObservable();
@@ -57,32 +60,39 @@ export class UserService {
       this._storageService.getDataObject(DBkeys.SELECTED_CUSTOMER));
   }
 
-  setAuth(user: UserAuth) {
+  public get currentUserValue(): UserAuth {
+    return this.currentUserSubject.value;
+  }
+
+  public get accessTokenValue(): string {
+    return this.accessTokenSubject.value;
+  }
+
+  public get selectedSiteValue(): UserSite {
+    return this.currentSelectedCustomer.value;
+  }
+
+  setAccessToken(accessToken: string) {
+    this.accessTokenSubject.next(accessToken);
+  }
+
+  setAuth(user: UserAuth, accessToken: string) {
     this._storageService.savePermanentData(user, DBkeys.USER_AUTH);
-    this._storageService.savePermanentData(user.authToken, DBkeys.JWT_TOKEN);
+    this.accessTokenSubject.next(accessToken);
     this.currentUserSubject.next(user);
     this.isAuthenticatedSubject.next(true);
   }
 
-  parseUserJWT(jwt: string): UserAuth {
-    const parsedJwt = JSON.parse(window.atob(jwt.split('.')[1]))
-    const user: UserAuth = {
-      contactId: parsedJwt.contactId,
-      authToken: jwt,
-      clientKey: parsedJwt.clientKey,
-      email: parsedJwt.email,
-      hasMultipleSites: parsedJwt.hasMultipleSites, 
-      isAutoProvisioned: parsedJwt.isAutoProvisioned
-    }
-    return user
-  }
-
-  retrieveContactRecord(email, contactId, clientKey): Observable<ContactRecordHTTPObject> {
-    return this.http.get<ContactRecordHTTPObject>(`${this.env.appUrls.authenticate}/user/contactrecord/${email}?contactId=${contactId}&clientKey=${clientKey}`)
+  purgeAuth() {
+    this._storageService.clearAll()
+    this.accessTokenSubject.next(null);
+    this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
+    this.currentSelectedCustomer.next(null);
   }
 
   retrieveAuthorizationCode(redirectUri: string): Observable<OAuthAuthorizeHTTPResponse> {
-    return this.http.get<OAuthAuthorizeHTTPResponse>(`${this.env.appUrls.authenticate}/oauth/authorize?clientId=mango-spa&responseType=code&redirectUri=${redirectUri}`)
+    return this.http.get<OAuthAuthorizeHTTPResponse>(`${this.env.appUrls.identity}/oauth/authorize?clientId=mango-spa&responseType=code&redirectUri=${redirectUri}`)
   }
 
   retrieveJwt(authCode: string): Observable<OAuthTokenHTTPResponse> {
@@ -92,78 +102,54 @@ export class UserService {
       redirectUrl: "",
       codeVerifier: ""
     }
-    return this.http.post<OAuthTokenHTTPResponse>(`${this.env.appUrls.authenticate}/oauth/token`, request)
-  }
-
-  parseContactRecordHttpObject(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
-    const { contactID, requireSSO, userRoleName } = contactRecordHttpObject
-    const contactRecord: ContactRecord = {
-      contactID,
-      firstName: contactRecordHttpObject.contactFirstName,
-      lastName: contactRecordHttpObject.contactLastName,
-      requireSSO,
-      userName: contactRecordHttpObject.contactUserID,
-      userRoleName
-    }
-    return contactRecord
-  }
-
-  purgeAuth() {
-    this._storageService.deleteData(DBkeys.USER_AUTH);
-    this._storageService.deleteData(DBkeys.JWT_TOKEN);
-    this._storageService.deleteData(DBkeys.CLIENT_KEY);
-    this._storageService.deleteData(DBkeys.CONTACT_RECORD);
-    this._storageService.deleteData(DBkeys.SELECTED_CUSTOMER);
-    this.currentUserSubject.next(null);
-    this.isAuthenticatedSubject.next(false);
-    this.currentSelectedCustomer.next(null);
-    sessionStorage.clear()
-  }
-
-  public get currentUserValue(): UserAuth {
-    return this.currentUserSubject.value;
-  }
-
-  public get selectedSiteValue(): UserSite {
-    return this.currentSelectedCustomer.value;
+    return this.http.post<OAuthTokenHTTPResponse>(`${this.env.appUrls.identity}/oauth/token`, request)
   }
 
   login(credentials): Observable<UserAuth> {
-    let url = `${this.env.appUrls.authenticate}/login`;
+    let url = `${this.env.appUrls.identity}/auth/login`;
 
     this.purgeAuth();
 
-    return this.http.post(url, credentials).pipe<UserAuth>(
+    return this.http.post(url, credentials, { withCredentials: true }).pipe<AuthHTTPResponse>(
       tap((response: any) => {
+        var decoded = this.getDecodedAuthToken(response.authToken);
+
         const user: UserAuth = {
           email: response.email,
           hasMultipleSites: response.hasMultipleSites,
           clientKey: response.clientKey,
-          isAutoProvisioned: this.isAutoProvisioned(response.authToken),
-          authToken: response.authToken,
-          isServiceAccount: this.isServiceAccount(response.authToken)
+          isAutoProvisioned: this.parseBool(decoded.isAutoProvisioned),
+          isServiceAccount: this.parseBool(decoded.isServiceAccount)
         };
-        this.setAuth(user);
+
+        this.setAuth(user, response.authToken);
         return this.currentUserValue;
       })
     );
   }
 
-  logout(): void {
-    this.purgeAuth();
-  }
-
   async loginToClientSite(payload: MultiClientLoginHttpRequest): Promise<string> {
-    const user = await this.http.post<UserAuth>(`${this.env.appUrls.authenticate}/login/client`, payload).toPromise();
+    const user = await this.http.post<AuthHTTPResponse>(`${this.env.appUrls.identity}/auth/login/client`, payload).toPromise();
 
-    this._storageService.deleteData(DBkeys.JWT_TOKEN);
-    this._storageService.savePermanentData(user.authToken, DBkeys.JWT_TOKEN);
+    this.accessTokenSubject.next(user.authToken);
 
     return user.authToken;
   }
 
+  // Get access token from memory or from the backend API using the session cookie
+  getCurrentUserAccessToken(): Observable<string> {
+    if (this.accessTokenValue) return of(this.accessTokenValue);
+    return this.http.get<string>(`${this.env.appUrls.identity}/auth/user/token`, { withCredentials: true });
+  }
+
+  logout() {
+    this.purgeAuth();
+    this.http.get(`${this.env.appUrls.identity}/auth/logout`, { withCredentials: true })
+      .subscribe();
+  }
+
   requestPasswordReset(request: RequestPasswordResetRequest): Observable<any> {
-    let url = `${this.env.appUrls.authenticate}/password/forgot`;
+    let url = `${this.env.appUrls.identity}/password/forgot`;
 
     return this.http.post(url, request).pipe(
       tap(result => {
@@ -182,9 +168,8 @@ export class UserService {
     );
   }
 
-
   resetPassword(credentials): Observable<boolean> {
-    let url = `${this.env.appUrls.authenticate}/password/reset`;
+    let url = `${this.env.appUrls.identity}/password/reset`;
 
     return this.http.post(url, credentials).pipe<boolean>(
       tap((response: any) => {
@@ -194,7 +179,7 @@ export class UserService {
   }
 
   validateTokenAndGetPasswordRequirements(resetToken: string): Observable<Password> {
-    let url = `${this.env.appUrls.authenticate}/password/requirements/${resetToken}`;
+    let url = `${this.env.appUrls.identity}/password/requirements/${resetToken}`;
 
     return this.http.get(url).pipe<Password>(
       tap((response: any) => {
@@ -204,7 +189,7 @@ export class UserService {
   }
 
   getClientSitesByUser(userEmail: string): Observable<ClientSitesByUser> {
-    const url = `${this.env.appUrls.authenticate}/user/clientsites/${userEmail}`;
+    const url = `${this.env.appUrls.identity}/user/clientsites/${userEmail}`;
 
     return this.http.get(url).pipe<ClientSitesByUser>(
       tap((response: any) => {
@@ -214,7 +199,7 @@ export class UserService {
   }
 
   getRecentSitesForUser(userEmail: string): Observable<RecentUserSites> {
-    const url = `${this.env.appUrls.authenticate}/user/recentsites/${userEmail}`;
+    const url = `${this.env.appUrls.identity}/user/recentsites/${userEmail}`;
 
     return this.http.get(url).pipe<RecentUserSites>(
       tap((response: any) => {
@@ -224,7 +209,24 @@ export class UserService {
   }
 
   getContactRecords(userEmail: string, clientKey: string): Promise<GetContactRecordHTTPResponse> {
-    return this.http.get<GetContactRecordHTTPResponse>(`${this.env.appUrls.authenticate}/user/contactrecords/${userEmail}/${clientKey}`).toPromise();
+    return this.http.get<GetContactRecordHTTPResponse>(`${this.env.appUrls.identity}/user/contactrecords/${userEmail}/${clientKey}`).toPromise();
+  }
+
+  getContactRecord(email, contactId, clientKey): Observable<ContactRecordHTTPObject> {
+    return this.http.get<ContactRecordHTTPObject>(`${this.env.appUrls.identity}/user/contactrecord/${email}?contactId=${contactId}&clientKey=${clientKey}`)
+  }
+
+  parseContactRecordHttpObject(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
+    const { contactID, requireSSO, userRoleName } = contactRecordHttpObject
+    const contactRecord: ContactRecord = {
+      contactID,
+      firstName: contactRecordHttpObject.contactFirstName,
+      lastName: contactRecordHttpObject.contactLastName,
+      requireSSO,
+      userName: contactRecordHttpObject.contactUserID,
+      userRoleName
+    }
+    return contactRecord
   }
 
   setSelectedSite(selectedCustomer: UserSite) {
@@ -235,28 +237,8 @@ export class UserService {
     this.currentSelectedCustomer.next(selectedCustomer);
   }
 
-  getAuthToken(): string {
-    return this._storageService.getDataObject(DBkeys.JWT_TOKEN);
-  }
-
-  getDecodedAuthToken(token: string): any {
-    return jwt_decode(token);
-  }
-
-  isUserAuthenticated(): boolean {
-    let token = this.getAuthToken();
-    if (token) {
-      let isExpired = this.isAuthTokenExpired(token);
-      
-      if (isExpired) {
-        this.purgeAuth();
-        return false;
-      }
-
-      return true;
-    }
-
-    return false;
+  getDecodedAuthToken(token: string): Token {
+    return jwt_decode<Token>(token);
   }
 
   getAuthTokenExpireDate(token: string): Date {
@@ -270,35 +252,13 @@ export class UserService {
     return date;
   }
 
-  isAuthTokenExpired(token?: string) {
-    if (!token) return true;
-
-    const expireDate = this.getAuthTokenExpireDate(token);
-    if (!expireDate) return false;
-
-    return expireDate.valueOf() < new Date().valueOf();
-  }
-
-  isAutoProvisioned(token: string): boolean {
-    var decoded = this.getDecodedAuthToken(token);
-    if (decoded.isAutoProvisioned.toLowerCase() === "true") {
-      return true;
-    }
-
-    return false;
-  }
-
-  isServiceAccount(token: string): boolean {
-    var decoded = this.getDecodedAuthToken(token);
-    if (decoded.isServiceAccount?.toLowerCase() === "true") {
-      return true;
-    }
-
-    return false;
+  parseBool(value: string): boolean {
+    if (!value) return false;
+    return value.toLowerCase() === 'true';
   }
 
   getServiceAccountApiKeyInfo(userEmail: string): Observable<ServiceAccountApiKeyInfo> {
-    const url = `${this.env.appUrls.authenticate}/getServiceAccountApiKeyInfo/{userEmail}`;
+    const url = `${this.env.appUrls.identity}/getServiceAccountApiKeyInfo/{userEmail}`;
 
     // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
     // );
@@ -344,7 +304,7 @@ export class UserService {
   }
 
   getServiceAccountChangeHistory(userEmail: string): Observable<any> {
-    // const url = `${this.env.appUrls.authenticate}/getServiceAccountChangeHistory/{userEmail}`;
+    // const url = `${this.env.appUrls.identity}/getServiceAccountChangeHistory/{userEmail}`;
 
     // return this.http.get(url).pipe<any>(
     //   tap((response: any) => {
@@ -373,5 +333,4 @@ export class UserService {
       })
     );
   }
-
 }

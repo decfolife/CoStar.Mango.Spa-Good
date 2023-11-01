@@ -2,7 +2,7 @@ export { Authenticate } from './lib/models/authenticate';
 export { Link } from './lib/models/link';
 export { ToolbarModuleLink } from './lib/models/toolbar';
 export { UserSite } from './lib/models/user-site';
-export { UserAuth } from './lib/models/userAuth';
+export { UserAuth, Token } from './lib/models/userAuth';
 export { LoginResponse } from './lib/models/login-response';
 export { ApiResponse } from './lib/models/apiResponse';
 export { Bookmark } from './lib/models/bookmark';

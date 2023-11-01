@@ -5,7 +5,7 @@ export abstract class Environment {
     readonly accounting: string;
     readonly listpages: string;   
     readonly dashboards: string;
-    readonly authenticate: string;
+    readonly identity: string;
     readonly authentication: string;
     readonly authorization: string;
     readonly taskApproval: string;

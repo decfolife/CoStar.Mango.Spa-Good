@@ -23,6 +23,11 @@ export const authenticatedUser = createSelector(
   (state: State) => state.authenticatedUser
 );
 
+export const accessToken = createSelector(
+  getAppState,
+  (state: State) => state.accessToken
+);
+
 export const userInfo = createSelector(
   getAppState,
   (state: State) => state.userInfo

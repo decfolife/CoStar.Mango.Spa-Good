@@ -10,6 +10,7 @@ export const CENTRAL_AUTH_FEATURE_KEY = 'central_auth';
 export interface State extends EntityState<CentralAuthEntity> {
   loaded: boolean,
   user: UserAuth,
+  accessToken: string,
   contactId: number,
   clientKey: string,
   redirectionUri: string,
@@ -25,6 +26,7 @@ export const appAdapter: EntityAdapter<CentralAuthEntity> = createEntityAdapter<
 export const initialState: State = appAdapter.getInitialState({
   loaded: false,
   user: null,
+  accessToken: null,
   contactId: null,
   clientKey: null,
   redirectionUri: null,
@@ -34,6 +36,7 @@ export const initialState: State = appAdapter.getInitialState({
 const appReducer = createReducer(
   initialState,
   on(AppActions.setUser, (state, { user }) => ({ ...state, error: null, user })),
+  on(AppActions.setAccessToken, (state, { accessToken }) => ({ ...state, error: null, accessToken })),
   on(AppActions.setClientKey, (state, { clientKey }) => ({ ...state, error: null, clientKey })),
   on(AppActions.setContactRecord, (state, { contactId }) => ({ ...state, error: null, contactId })),
   on(AppActions.setRedirectionUri, (state, { redirectionUri }) => ({ ...state, error: null, redirectionUri })),

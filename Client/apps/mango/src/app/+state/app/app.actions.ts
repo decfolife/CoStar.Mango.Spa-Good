@@ -12,6 +12,7 @@ export const SETUP_CONTACT_RECORD = '[Mango App] Setup Contact Record'
 export const SETUP_USER_INFO = '[Mango App] Setup User Info'
 export const LOAD_SUB_APP_ACTION = '[Mango App] Load Sub App'
 export const SET_AUTHENTICATED_USER_ACTION = '[Mango App] Set Authenticated User'
+export const SET_ACCESS_TOKEN_ACTION = '[Mango App] Set Access Token'
 export const SET_CLIENT_KEY_ACTION = '[Mango App] Set Client Key'
 export const SET_USER_INFO_ACTION = '[Mango App] Set User Info'
 export const SET_CLIENT_INFO_ACTION = '[Mango App] Set Client Info'
@@ -61,6 +62,11 @@ export const loadSubApp = createAction(
 export const setAuthenticatedUser = createAction(
   SET_AUTHENTICATED_USER_ACTION,
   props<{ user: UserAuth }>()
+);
+
+export const setAccessToken = createAction(
+  SET_ACCESS_TOKEN_ACTION,
+  props<{ accessToken: string }>()
 );
 
 export const setUserInfo = createAction(

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { CanActivateGuard } from '../../services/guards/can-activate.guard';
+import { AuthGuard } from '../../guards/auth.guard';
 import { IndexComponent } from './index.component';
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 import { CentralAuthHttpInterceptor } from '../../services/http.interceptor';
@@ -36,7 +36,7 @@ import { ServiceAccountConfigurationModule} from '../service-account-configurati
     CentralAuthHttpInterceptor.forRoot()
   ],
   exports: [IndexComponent],
-  providers: [CanActivateGuard],
+  providers: [AuthGuard],
   bootstrap: [IndexComponent],
 })
 export class IndexModule {}

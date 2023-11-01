@@ -11,8 +11,8 @@ class EnvironmentsCrem implements Environment {
     listpages: 'http://service2.ops.corp.virtualpremise.com:8094/listpages/api/listpage/',
     financials:  'http://service2.ops.corp.virtualpremise.com:8094/financials/api/',  
     dashboards: 'http://service2.ops.corp.virtualpremise.com:8094/dashboards/api/',
-    authenticate: 'http://service2.ops.corp.virtualpremise.com:8094/authentication/api',
-    authentication: 'https://authentication.dev.crem.aws.dshrp.com/api/',
+    identity: 'https://identity.tsm.crem.aws.dshrp.com/api',
+    authentication: 'https://authentication.tsm.crem.aws.dshrp.com/api/',
     authorization: 'http://172.20.9.224:30055/api/',
     reports: 'http://service2.ops.corp.virtualpremise.com:8090/reports/api/',
     taskApproval: '', // For local testing.
@@ -30,7 +30,8 @@ class EnvironmentsCrem implements Environment {
     header: 'http://service2.ops.corp.virtualpremise.com:8090/Header/api/',
     inAppDisclosure: 'http://service2.ops.corp.virtualpremise.com:8090/AccountingService/api/',
     projects: 'http://172.20.9.224:30057/api/projects/',
-    accountingSummary:"http://service2.ops.corp.virtualpremise.com:8090/AccountingSummary/api/AccountingSummary/"
+    accountingSummary:"http://service2.ops.corp.virtualpremise.com:8090/AccountingSummary/api/AccountingSummary/",
+    dataSetDictionary: '',
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].ops.corp.virtualpremise.com';

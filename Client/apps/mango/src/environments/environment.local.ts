@@ -15,7 +15,7 @@ class EnvironmentsCrem implements Environment {
     taskApproval: '', // For local testing.
     reports: 'http://localhost:64980/api/',
     dataSetDictionary: 'http://localhost:64980/api/',
-    authenticate: 'http://localhost:5000/api',
+    identity: 'http://localhost:5000/api',
     authentication: 'http://localhost:5000/api',
     authorization:'https://localhost:57999/api/',
     userMaintenance: 'http://localhost:39179/api/',

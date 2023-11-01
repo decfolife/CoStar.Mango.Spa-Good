@@ -179,7 +179,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.isErrored = true
       }
     );
-
   };
 
   private loginSuccess() {
@@ -188,6 +187,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       switchMap(_ => this.centralAuthFacade.isUserAuthenticated$),
       map(async isUserFullyAuthenticated => {
         const user = this.userService.currentUserValue
+        this.centralAuthFacade.setAccessToken(this.userService.accessTokenValue)
         this.loggedInUser.emit(user)
         this.loading = false
         this.isErrored = false 

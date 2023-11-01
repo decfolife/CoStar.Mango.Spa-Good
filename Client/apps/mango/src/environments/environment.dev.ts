@@ -11,7 +11,7 @@ class EnvironmentsCrem implements Environment {
     listpages: 'http://mangospa.dev.corp.virtualpremise.com:30080/listpages/api/listpage/',
     financials: 'http://mangospa.dev.corp.virtualpremise.com:30080/financials/api/',
     dashboards: 'http://mangospa.dev.corp.virtualpremise.com:30080/dashboards/api/',
-    authenticate: 'https://identity.dev.crem.aws.dshrp.com/api',
+    identity: 'https://identity.dev.crem.aws.dshrp.com/api',
     authentication: 'https://authentication.dev.crem.aws.dshrp.com/api/',
     authorization: 'http://mangospa.dev.corp.virtualpremise.com:30080/authorization/api/',
     taskApproval: '', 

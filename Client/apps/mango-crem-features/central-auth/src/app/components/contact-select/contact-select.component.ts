@@ -52,7 +52,7 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
     this.centralAuthFacade.setContactId(selectedContactRecord?.contactID)
     try {
       var token = await this.userService.loginToClientSite(payload);
-      this.storageService.savePermanentData(token, DBkeys.JWT_TOKEN)
+      this.centralAuthFacade.setAccessToken(token)
       this.isLoading = false;
       this.settingsService.clientKey$.next(payload.clientKey)
       this.storageService.savePermanentData(payload.clientKey, DBkeys.CLIENT_KEY)

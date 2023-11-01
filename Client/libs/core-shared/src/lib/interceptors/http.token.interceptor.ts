@@ -1,22 +1,16 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   HttpEvent,
   HttpInterceptor,
   HttpHandler,
-  HttpRequest,
-  HttpResponse,
-  HttpErrorResponse,
+  HttpRequest
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Guid } from '@mango/core-shared';
-import { JwtService } from '../services/jwt.service';
-import { UserService } from '../services';
-import { catchError, map, tap } from 'rxjs/operators';
-import { CentralAuthErrorCodes } from '@mango/data-models/lib-data-models';
+import { JwtService, UserService } from '../services';
 
 @Injectable()
 export class HttpTokenInterceptor implements HttpInterceptor {
-  constructor(private jwtService: JwtService, private userService: UserService) {}
+  constructor(private userService: UserService, private jwtService: JwtService) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -27,8 +21,7 @@ export class HttpTokenInterceptor implements HttpInterceptor {
       Accept: 'application/json'
     };
 
-    const token = this.jwtService.getToken();
-
+    let token = this.getAccessToken();
     if (token) {
       headersConfig['Authorization'] = `Bearer ${token}`;
     }
@@ -36,5 +29,26 @@ export class HttpTokenInterceptor implements HttpInterceptor {
     const request = req.clone({ setHeaders: headersConfig });
 
     return next.handle(request);
+  }
+
+  /** 
+   * Ideally, the access token (JWT) should be grabbed from state management as well as we should be 
+   * using http-only cookies to keep a user's session. 
+   * 
+   * CentralAuth now uses session cookies and no longer stores the JWT in localstorage. It stores the token in memory only. 
+   * However, MangoSPA still stores in localstorage until we add cookie auth for sessions.
+   * 
+   * So:
+   *    If application is CentralAuth, grab token from memory
+   *    If application is MangoSPA, grab token from localstorage
+  */
+  getAccessToken() {
+    let token = this.userService.accessTokenValue;
+
+    if (!token) {
+      token = this.jwtService.getToken(); // localstorage
+    }
+
+    return token;
   }
 }

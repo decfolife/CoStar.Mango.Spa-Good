@@ -36,6 +36,16 @@ export interface CremHttpResponse {
     d: CremHttpData
 }
 
+export interface AuthHTTPResponse {
+    authToken: string;
+    email: string;
+    hasMultipleSites: boolean;
+    clientKey: string;
+    isAutoProvisioned: boolean;
+    contactId?: number;
+    isServiceAccount?: boolean;
+}
+
 export interface OAuthAuthorizeHTTPResponse {
     code: string;
     redirectUrl: string;

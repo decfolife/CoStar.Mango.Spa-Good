@@ -23,6 +23,7 @@ export class CentralAuthEffects {
           this.centralAuthFacade.setClientKey(null)
           this.centralAuthFacade.setContactId(null)
           this.centralAuthFacade.setUser(null)
+          this.centralAuthFacade.setAccessToken(null)
           this.router.navigate(['/'])
         }
         )

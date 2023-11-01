@@ -8,12 +8,12 @@ export class JwtService {
     private _storageService: StorageService,
   ) {}
 
-  getToken(): String {
+  getToken(): string {
     return this._storageService.getDataObject(DBkeys.JWT_TOKEN);
   }
 
-  saveToken(token: String) {
-    this._storageService.saveSyncedSessionData(token, DBkeys.JWT_TOKEN);
+  saveToken(token: string) {
+    this._storageService.savePermanentData(token, DBkeys.JWT_TOKEN);
   }
 
   destroyToken() {

@@ -9,13 +9,16 @@ export const RETRIEVE_AUTHORIZATION_CODE = '[UI] Retrieve Authorization Code'
 export const RETRIEVE_AUTHORIZATION_CODE_SUCCESS = '[UI] Retrieve Authorization Code Success'
 export const REDIRECT_TO_CLIENT = '[UI] Redirect To Client'
 export const LOG_OUT = '[UI] Log Out'
+export const SET_ACCESS_TOKEN = '[UI] Set Access Token'
 
 
 export const logout = createAction(LOG_OUT);
 export const setUser = createAction(SET_USER, props<{ user: UserAuth }>());
+export const setAccessToken = createAction(SET_ACCESS_TOKEN, props<{ accessToken: string }>());
 export const setClientKey = createAction(SET_CLIENT_KEY, props<{ clientKey: string }>());
 export const setContactRecord = createAction(SET_CONTACT_RECORD, props<{ contactId: number }>());
 export const setRedirectionUri = createAction(SET_REDIRECTION_URI, props<{ redirectionUri: string }>());
 export const retrieveAuthorizationCode = createAction(RETRIEVE_AUTHORIZATION_CODE, props<{ redirectUri: string }>());
 export const retrieveAuthorizationCodeSuccess = createAction(RETRIEVE_AUTHORIZATION_CODE_SUCCESS, props<{ authorizationCode: string }>());
 export const redirectToClient = createAction(REDIRECT_TO_CLIENT);
+

@@ -15,6 +15,7 @@ export class MangoAppFacade {
   loaded$ = this.store.pipe(select(AppSelectors.loaded));
   currentSubApp$ = this.store.pipe(select(AppSelectors.currentSubApp));
   authenticatedUser$ = this.store.pipe(select(AppSelectors.authenticatedUser));
+  accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
   clientKey$ = this.store.pipe(select(AppSelectors.client));
   userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
   breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
@@ -45,6 +46,10 @@ export class MangoAppFacade {
 
   setAuthenticatedUser(user: UserAuth): void {
     this.store.dispatch(AppActions.setAuthenticatedUser({ user }))
+  }
+
+  setAccessToken(accessToken: string) {
+    this.store.dispatch(AppActions.setAccessToken({ accessToken }));
   }
 
   setUserInfo(userInfo: UserInfo): void {

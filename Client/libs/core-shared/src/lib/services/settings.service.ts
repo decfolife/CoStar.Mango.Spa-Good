@@ -24,7 +24,7 @@ export class SettingsService {
     ) { }
 
     getClientSsoSettings(clientKey: string): Observable<ClientSSOSettings> {
-        const url = `${environment.appUrls.authenticate}/settings/clientsso/${clientKey}`;
+        const url = `${environment.appUrls.identity}/settings/clientsso/${clientKey}`;
 
         return this._http.get(url).pipe<ClientSSOSettings>(
             tap((response: any) => {
@@ -37,10 +37,10 @@ export class SettingsService {
         let url: string;
         const { headers } = this.httpOptions
         if (environment.isRestful) {
-            return this.clientKey$.pipe(switchMap(clientKey => this._http.get<ClientSettings>(`${environment.appUrls.authenticate}/settings/${clientKey}`)));
+            return this.clientKey$.pipe(switchMap(clientKey => this._http.get<ClientSettings>(`${environment.appUrls.identity}/settings/${clientKey}`)));
         }
         else {
-            url = `${environment.appUrls.authenticate}/GetSettings`;
+            url = `${environment.appUrls.identity}/GetSettings`;
         }
 
         return this._http.get<any>(url, { headers })
@@ -51,7 +51,7 @@ export class SettingsService {
 
     saveClientSettings(clientSettings: ClientSettings): Observable<CremHTTPResult> {
         const { headers } = this.httpOptions
-        return this._http.post<CremHttpResponse>(`${environment.appUrls.authenticate}/UpdateSettings`,
+        return this._http.post<CremHttpResponse>(`${environment.appUrls.identity}/UpdateSettings`,
             { settings: clientSettings },
             { headers })
             .pipe(map(response => (response.d || {}).Result))
