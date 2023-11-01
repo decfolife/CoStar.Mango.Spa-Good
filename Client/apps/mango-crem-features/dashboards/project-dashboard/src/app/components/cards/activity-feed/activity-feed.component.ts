@@ -1,23 +1,26 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
 import * as fileSaver from 'file-saver-es';
 import { DashboardService } from '../../../services/dashboard.service';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'activity-feed-card',
   templateUrl: './activity-feed.component.html',
   styleUrls: ['./activity-feed.component.scss']
 })
-export class ActivityFeedComponent implements OnInit {
+export class ActivityFeedComponent implements OnInit, OnDestroy {
 
   @Input() card: CardDetails;
-  private selectedFilters : string;
+  private selectedFilters: string;
   @Output() cardDropEvent = new EventEmitter<any>();
   @Output() rowClickEvent = new EventEmitter<any>();
   @Input() objectType: string;
   @ViewChild("ProjectActivityFeedGrid") dataGrid: DxDataGridComponent;
+
+  subs: Subscription[] = []
 
   constructor(
     private cardsService: CardsService,
@@ -25,12 +28,12 @@ export class ActivityFeedComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.cardsService.filterString$.subscribe(data => {
+    this.subs.push(this.cardsService.filterString$.subscribe(data => {
       this.selectedFilters = data;
       this.getCardData();
-    });
+    }));
   }
-  
+
   rowClick(e: any) {
     this.rowClickEvent.emit(e);
   }
@@ -39,15 +42,15 @@ export class ActivityFeedComponent implements OnInit {
     this.dataGrid.instance.exportToExcel(false);
   }
 
-  isActivityNoteAdded(cell: any){
+  isActivityNoteAdded(cell: any) {
     return cell.data.activity.toLowerCase() !== 'file upload';
   }
 
-  isActivityFileUpload(cell: any){
+  isActivityFileUpload(cell: any) {
     return cell.data.activity.toLowerCase() === 'file upload';
   }
 
-  getDescriptionCellLink(cell: any){
+  getDescriptionCellLink(cell: any) {
     const taskIdUrl = cell.data.taskID > 0 ? `&ROTID=9&ROID=${cell.data.taskID}` : "";
     const urlLink = `/v06/Common/Notes/NotesList.aspx?OTID=1&OID=${cell.data.transactionID}${taskIdUrl}`;
 
@@ -56,25 +59,25 @@ export class ActivityFeedComponent implements OnInit {
 
   downloadfile(fileInformation: any): boolean {
     this.dashboardService.getActivityFeedFile(fileInformation.data.theLink).subscribe((response: any) => {
-      let blob:any = new Blob([response], { type: "application/octet-stream" });
+      let blob: any = new Blob([response], { type: "application/octet-stream" });
       fileSaver.saveAs(blob, fileInformation.data.description);
     }), (error: any) => console.log('Error downloading the file', error);
     return false;
   }
 
   getCardData() {
-    this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
+    this.subs.push(this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
       (data: any) => {
         this.card.dispCard = true;
       }
-    );
+    ));
   }
 
-  getProjectName(){
+  getProjectName() {
     return this.objectType + ' Name';
   }
 
-  getProjectType(){
+  getProjectType() {
     return this.objectType + ' Type';
   }
 
@@ -120,6 +123,9 @@ export class ActivityFeedComponent implements OnInit {
       observer.observe(button, { attributeFilter: ['class'] });
     });
   }
-  
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }
 

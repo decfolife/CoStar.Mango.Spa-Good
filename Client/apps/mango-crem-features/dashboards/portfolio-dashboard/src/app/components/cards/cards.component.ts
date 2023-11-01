@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { CardDetails, userSettings } from '../../models';
 import { MatDialog } from '@angular/material/dialog';
 import { PortfolioDashboardService } from '../../services/portfolio-dashboard.service';
@@ -14,15 +14,15 @@ import { PortfolioDataService } from '../../services/portfolio-data.service';
   styleUrls: ['./cards.component.scss'],
   providers: [],
 })
-export class CardsComponent implements OnInit {
+export class CardsComponent implements OnInit, OnDestroy {
   data: Subject<CardDetails>;
   @Input() cards: CardDetails[];
   @Input() displayFinanceCard: boolean = false;
-  
-  constructor( private portfolioDashboardService: PortfolioDashboardService,
-               private portfolioDataService: PortfolioDataService ) 
-    {}
 
+  constructor(private portfolioDashboardService: PortfolioDashboardService,
+    private portfolioDataService: PortfolioDataService) { }
+
+  subs: Subscription[] = []
   ngOnInit() {
   }
 
@@ -30,7 +30,7 @@ export class CardsComponent implements OnInit {
   //instead of the index component cardservice instance because the cardservice in the cards component has the observers
   //tied to it that triggers the event to refresh the cards.
   sendFilterString(filters: string) {
-      this.portfolioDataService.sendFilterString(filters);  
+    this.portfolioDataService.sendFilterString(filters);
   }
 
 
@@ -43,14 +43,14 @@ export class CardsComponent implements OnInit {
     //**  When the user logins, the order from DashboardUserSettings table is selected, if the table is empty, */
     //**  the default order is selected. */
 
-    this.cards.forEach( (card, index) => {
-      userSettingsData[index]= this.portfolioDataService.createUserSettingRec(card, index);
+    this.cards.forEach((card, index) => {
+      userSettingsData[index] = this.portfolioDataService.createUserSettingRec(card, index);
     })
 
-    return this.portfolioDashboardService.postUserSettings(userSettingsData).subscribe(
+    return this.subs.push(this.portfolioDashboardService.postUserSettings(userSettingsData).subscribe(
       (returnData: any) => (console.log("Returned results after card dragNDrop: ", returnData)),
       (error: any) => console.log("Error occurred updating userSettings: ", error)
-      );
+    ));
 
   }
 
@@ -66,8 +66,11 @@ export class CardsComponent implements OnInit {
 
   public getCards() {
     if (this.cards) {
-      return this.cards.filter(card => card.isActive == true); 
+      return this.cards.filter(card => card.isActive == true);
     }
   }
-  
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }

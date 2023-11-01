@@ -173,7 +173,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     };
     
     this.userService.login(credentials).subscribe(
-      () => this.loginSuccess(),
+      () =>  this.loginSuccess(),
       (error: CentralAuthHttpError) => {
         this.loading = false
         this.isErrored = true

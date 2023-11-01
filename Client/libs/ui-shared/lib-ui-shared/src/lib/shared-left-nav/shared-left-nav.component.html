@@ -22,7 +22,7 @@
 
           <ng-container *ngIf="linkObj.category != null">
             <li>
-              <mat-expansion-panel [expanded]="!isSubleftnav" class="leftnavPanel" [attr.aria-expanded]="expanded"
+              <mat-expansion-panel [expanded]="!(isSubleftnav$ | async)" class="leftnavPanel" [attr.aria-expanded]="expanded"
                 [attr.aria-label]="'Toggle section navigation'">
 
                 <mat-expansion-panel-header>

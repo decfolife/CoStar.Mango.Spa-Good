@@ -58,7 +58,12 @@ export const moduleId = createSelector(
   (state: State) => state.moduleId
 );
 
-export const renderFormLeftNavDisplayed = createSelector(
+export const showSubLeftNav = createSelector(
   getAppState,
-  (state: State) => state.renderFormLeftNavDisplayed
+  (state: State) => state.showSubLeftNav
+);
+
+export const currentRenderFormDocumentParams = createSelector(
+  getAppState,
+  (state: State) => state.currentRenderFormDocumentParams
 );

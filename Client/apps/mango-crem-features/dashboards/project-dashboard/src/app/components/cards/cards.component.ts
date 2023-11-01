@@ -1,16 +1,13 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { DxChartComponent } from 'devextreme-angular/ui/chart';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
+import { environment } from '../../../../../../../mango/src/environments/environment.local';
 import { CardDetails, MilestoneCardDetails, userSettings } from '../../models';
 import { CardsService } from '../../services/cards.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { CardContentDirective } from './cardContent.directive';
-import { DxDataGridComponent } from 'devextreme-angular';
-import { Milestone} from '@mango/data-models/lib-data-models';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { environment } from '../../../../../../../mango/src/environments/environment.local'
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector

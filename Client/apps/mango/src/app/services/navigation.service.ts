@@ -12,7 +12,7 @@ export class MangoNavigationService {
 
   handleSpaNavigation(navLink: SharedLeftNavLink, clientKey: string): void {
     if (navLink.spaUrl) {
-      this.router.navigate([navLink.spaUrl])
+      this.router.navigateByUrl(`${navLink.spaUrl}${navLink.spaQueryParameters ? `?${navLink.spaQueryParameters}`: ``}`)
     } else {
       const redirectionUrl = `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/${navLink.linkUrl}`
       window.location.href = redirectionUrl

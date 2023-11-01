@@ -1,9 +1,8 @@
-import { HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HeaderService } from '@mango/core-shared';
-import { BREADCUMBS_LENGTH, BookmarkGroup, BreadCrumb, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
+import { BookmarkGroup, BreadCrumb, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { searchResultsComponent } from '@quick-search/components/modal/search-results/search-results.component';
 import { environment } from 'apps/mango/src/environments/environment.local';
@@ -25,9 +24,8 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   navigationLinks: any = [];
   public navLinksFetched = false;
   toolbarModuleLinks: ToolbarModuleLink[];
-  public moduleId: number;
-  chipContent$: Observable<string> = of(null);
-  userAppType$: Observable<number> = of(null);
+  chipContent$: Observable<string> = this.facade.clientKey$.pipe(map(clientKey => `${clientKey} - ${environment.name}`));
+  userAppType$: Observable<number> = this.facade.userInfo$.pipe(filter((userInfo) => !!userInfo), switchMap(userInfo => of(userInfo.userAppType)))
   popoverContent: string[];
   activeLink: string = null;
   crumbActiveLink: string = null;
@@ -43,7 +41,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     private headerService: HeaderService,
     private bookmarksService: BookmarksService,
     public dialog: MatDialog,
-    public facade: MangoAppFacade
+    public facade: MangoAppFacade,
   ) {
     this.popoverContent = ['Backup File Name: E:RetailDemo_BackupsFULL_DEV_VP_RETAILDEMO_V05_20200930_020000.sqb',
       'Database Restore Date: 2020-09-30 11:17:54',
@@ -51,84 +49,22 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userAppType$ = this.facade.userInfo$.pipe(
-      filter((userInfo) => !!userInfo),
-      switchMap(userInfo => {
-        return of(userInfo.userAppType);;
-      }));
-
     this.getToolbarModuleLinks();
-    this.chipContent$ = this.facade.clientKey$.pipe(switchMap(clientKey => of(`${clientKey} - ${environment.name}`)))
-    this.subs.add(this.facade.moduleIdBehaviorSubject$.subscribe(
-      (modId: number) => {
-        this.moduleId = modId;
-        this.getModuleNavLinks(this.moduleId);
-      }));
-
-    this.subs.add(this.facade.renderFormBehaviorSubject$.subscribe(
-      (routeUrl: string) => {
-        this.getModuleNavLinksForRenderForm(routeUrl);
-      }));
-
+    this.loadLeftNavLinks()
     this.buildBreadCrumbs();
   }
 
-  getModuleNavLinks(moduleId: number) {
-    //Module id is undefined there is no need to load the links
-    if (moduleId === undefined) {
-      return;
-    }
-
-    //For now the null value will be used to clear the links from the leftnav.  This may change in the future.  
-    if (moduleId === null) {
-      this.navigationLinks = [];
-      this.navLinksFetched = true;
-      this.activeLink = null;
-
-      return;
-    }
-
-    this.subs.add(this.leftNavService.getModuleNavigationLinks(moduleId).subscribe(
-      (res: any) => {
-        this.navigationLinks = res.data;
-        this.navLinksFetched = true;
-
-        if (this.crumbActiveLink) {
-          this.activeLink = this.crumbActiveLink;
-        } else {
-          if (this.navigationLinks.length > 0) {
-            //This will need to change in the future
-            if (this.navigationLinks.find(nl => nl.name.toLowerCase() === 'dashboard') !== undefined)
-              this.activeLink = 'Dashboard';
-            else
-              this.activeLink = this.navigationLinks[0].name;
-          }
-        }
-      },
-      (error: any) => {
-        this.navLinksFetched = false;
-      }
-    ));
-  }
-
-  getModuleNavLinksForRenderForm(routeUrl: string) {
-    //Routeurl is null there is no need to get the links
-    if (routeUrl == null) {
-      return;
-    }
-
-    this.subs.add(this.leftNavService.getModuleNavigationLinksForRenderForm(routeUrl).subscribe(
-      (res: any) => {
-        this.navigationLinks = res.data;
-        this.navLinksFetched = true;
-        if (this.navigationLinks.length > 0) {
-          //This will need to change in the future
-          this.activeLink = this.navigationLinks[0].name;
-        }
-      },
-      (error: any) => {
-        this.navLinksFetched = false;
-      }));
+  loadLeftNavLinks() {
+    this.subs.add(
+      combineLatest([this.facade.showSubLeftNav$, this.facade.moduleId$, this.facade.currentRenderFormDocumentParams$]).pipe(
+        tap(_ => this.navLinksFetched = false),
+        switchMap(([showSubLeftNav, moduleId, url]) => !!showSubLeftNav ? this.leftNavService.getModuleNavigationLinksForRenderForm(url) : this.leftNavService.getModuleNavigationLinks(moduleId)),
+        tap(response => {
+          this.navLinksFetched = true;
+          this.navigationLinks = response.data;
+          this.activeLink = this.crumbActiveLink || (this.navigationLinks[0] || { name: null }).name;
+        })
+      ).subscribe())
   }
 
   ngAfterViewInit(): void {

@@ -51,7 +51,7 @@ import {
   ArchiveToggleValue
 } from './shared/enums';
 import { DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../../../../mango/src/environments/environment.local';
 import { MatDialog } from '@angular/material/dialog';
 import { AddFormWizardComponent } from '@micro-components/form-wizard/modal/add-form-wizard/add-form-wizard.component';
@@ -127,7 +127,7 @@ export class ListPageComponent implements OnInit {
   intervals: string[];
   beforeAfter: string[];
   selectDate: string[];
-  rangeDateFilterFields: any []; 
+  rangeDateFilterFields: any[];
   customDateSelected: boolean = false;
   dateColumnSelected: boolean = false;
 
@@ -177,8 +177,8 @@ export class ListPageComponent implements OnInit {
   chargesOnLease = false;
   includeActive = false;
   includeArchived = false;
-  numberOfItemsSelectedLessThanTwo = true;  
-  disableTerminateLeaseCharges = false;  
+  numberOfItemsSelectedLessThanTwo = true;
+  disableTerminateLeaseCharges = false;
   filterButtonEnabled = true;
   moreButtonEnabled = true;
   searchTextBoxEnabled = true;
@@ -408,7 +408,7 @@ export class ListPageComponent implements OnInit {
     return listView?.listViewType === ListViewType.CoStar;
   }
 
-  constructor(private activatedroute: ActivatedRoute, public service: ListPageService, public cdRef: ChangeDetectorRef, private dialog: MatDialog) {
+  constructor(private activatedroute: ActivatedRoute, public service: ListPageService, public cdRef: ChangeDetectorRef, private dialog: MatDialog, private router: Router) {
     // initialize currentPortfolio to allow use it properties in [displayExpr] and [valueExpr] in crem-dropdown component
     this.currentPortfolio = null;
     this.listViews = {} as any;
@@ -426,20 +426,16 @@ export class ListPageComponent implements OnInit {
 
   ngOnInit(): void {
     const urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.has('OID')) {
-      this.urlOID = parseInt(urlParams.get('OID'));
-    }
-    if(urlParams.has('OTTID')) {
-      this.urlOTTID = parseInt(urlParams.get('OTTID'));
-    } else {
-      this.urlOTTID = 0;
-    }
+    const upperCaseParams = {}
+    urlParams.forEach((value, key) => upperCaseParams[key.toUpperCase()] = value)
+    this.urlOID = upperCaseParams['OID'] ? parseInt(upperCaseParams['OID']) : null;
+    this.urlOTTID = parseInt(upperCaseParams['OTTID'] || '0');
 
     //Set the objectTypeId from the value passed in the route instead of from the service if overrideInputSettings is true 
     //and if the isRestful flag is true
-    if (this.overrideInputSettings && environment.isRestful ){
+    if (this.overrideInputSettings && environment.isRestful) {
       this.activatedroute.data.subscribe(routeData => {
-        this.objectTypeId= routeData.objectTypeId;
+        this.objectTypeId = routeData.objectTypeId;
       });
     }
 
@@ -447,7 +443,7 @@ export class ListPageComponent implements OnInit {
 
       if (this.overrideInputSettings === true) {
         //if the isRestful flag is false then we need to set the objectTypeId
-        if(!environment.isRestful){
+        if (!environment.isRestful) {
           this.objectTypeId = res.data.objectTypeId;
         }
         this._intitialListPageRequestedId = res.data.listPage ?? 0;
@@ -468,21 +464,21 @@ export class ListPageComponent implements OnInit {
 
       this.isGLEvent = this.checkGLEvent(this.objectTypeId);
       this.service.getAddWizards(this.objectTypeId, this.urlOTTID)
-        .subscribe(result => { 
+        .subscribe(result => {
           let tempEditPages = [];
-          if(result.data && result.data.addWizards) {
+          if (result.data && result.data.addWizards) {
             tempEditPages = result.data.addWizards;
           }
           else {
             console.log(`Response from addWizards API is either empty or invalid`);
           }
-          if(this.isGLEvent) {
+          if (this.isGLEvent) {
             this.archivedLabel = 'deleted';
             this.unModifiedEditPages = tempEditPages;
           } else {
             this.archivedLabel = 'archived';
             this.editPages = tempEditPages;
-          }  
+          }
         });
 
       (window as any).OpenPopup = (url: string) => {
@@ -512,56 +508,56 @@ export class ListPageComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  setPrefDateFormatForFilter(){
-    if(this.userPrefDateFormatForFilter === undefined || this.userPrefDateFormatForFilter === null){
-      if(this.userPrefDateFormat !== undefined)
+  setPrefDateFormatForFilter() {
+    if (this.userPrefDateFormatForFilter === undefined || this.userPrefDateFormatForFilter === null) {
+      if (this.userPrefDateFormat !== undefined)
         this.userPrefDateFormatForFilter = this.userPrefDateFormat
       else {
         const isEuroElement = document.getElementById('IsEuroDateFormat');
         let isEuroDateFormat = isEuroElement !== null && isEuroElement.innerHTML.toLowerCase() === 'true';
 
-        if(isEuroDateFormat)
+        if (isEuroDateFormat)
           this.userPrefDateFormatForFilter = "dd.MM.yyyy";
         else
           this.userPrefDateFormatForFilter = "MM/dd/yyyy";
-        }
+      }
     }
   }
 
-  getRangeFilterText(){
+  getRangeFilterText() {
     this.setPrefDateFormatForFilter();
 
     let isEmptyObject = JSON.stringify(this.rangeDateForm.formData) === '{}';
 
-    if(isEmptyObject)
+    if (isEmptyObject)
       return undefined;
 
     let setIntervalToSingular = false;
     let rangeDateFilterStrArray: any = [];
 
     this.rangeDateFilterFields.forEach(ff => {
-      if (this.rangeDateForm.formData.hasOwnProperty(ff.fieldName) && ff.fieldName !== 'customDate' && ff.fieldName !== 'dateColumn'){
+      if (this.rangeDateForm.formData.hasOwnProperty(ff.fieldName) && ff.fieldName !== 'customDate' && ff.fieldName !== 'dateColumn') {
         let displayStr = this.rangeDateForm.formData[ff.fieldName];
 
-        if(ff.fieldName === 'numOfIntervals' && displayStr === 1){
+        if (ff.fieldName === 'numOfIntervals' && displayStr === 1) {
           setIntervalToSingular = true;
         }
-        
-        if(ff.fieldName === 'intervalType' || ff.fieldName === 'beforeAfter'){
+
+        if (ff.fieldName === 'intervalType' || ff.fieldName === 'beforeAfter') {
           displayStr = displayStr.toLowerCase();
-          if(ff.fieldName === 'intervalType' && setIntervalToSingular)
-            displayStr = displayStr.slice(0, displayStr.length - 1);  ;
+          if (ff.fieldName === 'intervalType' && setIntervalToSingular)
+            displayStr = displayStr.slice(0, displayStr.length - 1);;
         }
 
-        if(ff.fieldName === 'selectDate' && displayStr !== 'Today'){
+        if (ff.fieldName === 'selectDate' && displayStr !== 'Today') {
           if (displayStr === 'Date Field') {
-              //Using a date column
-              displayStr = this.rangeDateForm.formData['dateColumn']
+            //Using a date column
+            displayStr = this.rangeDateForm.formData['dateColumn']
           }
-          else{
+          else {
             //Using a custom date
             let customDateStr = this.rangeDateForm.formData['customDate'] === undefined ? '' : this.rangeDateForm.formData['customDate'];
-            if(customDateStr !== '' && customDateStr instanceof Date){
+            if (customDateStr !== '' && customDateStr instanceof Date) {
               let localStr = this.userPrefDateFormatForFilter.indexOf('.') ? 'en-EU' : 'en-US';
               displayStr = formatDate(this.rangeDateForm.formData['customDate'], this.userPrefDateFormatForFilter, localStr)
             }
@@ -577,7 +573,7 @@ export class ListPageComponent implements OnInit {
     return displayStr;
   }
 
-  convertRangeFilterTextToObject(filterBuilderTemplate){
+  convertRangeFilterTextToObject(filterBuilderTemplate) {
     //This is a hacky way to get the filterbuilder instance so we can call setValue
     //in other places in the code.  There probably is a better solution but I could
     //not find one at the time.
@@ -585,7 +581,7 @@ export class ListPageComponent implements OnInit {
     let rangeFilterText = filterBuilderTemplate.value
 
     //This means that this is a new filter so we set storedRangeFormData to the default values
-    if(rangeFilterText === null){
+    if (rangeFilterText === null) {
       return;
     }
 
@@ -593,50 +589,49 @@ export class ListPageComponent implements OnInit {
     this.filteredDateGridColumns = this.dateGridColumns.filter(dgc => dgc !== this.storedFilterBuilderTemplate.field.caption);
 
     //Set customDateSelected and dateColumnSelected flags if they are true
-    if(parseRangeFilterReturnObj.customDateSelected)
-      this.customDateSelected =  parseRangeFilterReturnObj.customDateSelected;
-    if(parseRangeFilterReturnObj.dateColumnSelected)
-      this.dateColumnSelected =  parseRangeFilterReturnObj.dateColumnSelected;
+    if (parseRangeFilterReturnObj.customDateSelected)
+      this.customDateSelected = parseRangeFilterReturnObj.customDateSelected;
+    if (parseRangeFilterReturnObj.dateColumnSelected)
+      this.dateColumnSelected = parseRangeFilterReturnObj.dateColumnSelected;
 
     this.storedRangeFormData = parseRangeFilterReturnObj.rangeDateFilterObj;
   }
 
   numOfIntervalsInputEvent(e) {
-    let inputElement = e.event.currentTarget;  
+    let inputElement = e.event.currentTarget;
 
-    if (inputElement.value.length > 4)  
-      inputElement.value = inputElement.value.slice(0, 4);  
+    if (inputElement.value.length > 4)
+      inputElement.value = inputElement.value.slice(0, 4);
   }
 
   setRangeDateFormValue(dataFieldName, e) {
     let value = e.value;
 
-    if(dataFieldName == 'numOfIntervals'){
+    if (dataFieldName == 'numOfIntervals') {
       value = Number(value);
       let defaultValue = this.rangeDateFilterFields.find(ff => ff.fieldName === dataFieldName).defaultValue;
 
-      if(value < defaultValue){
+      if (value < defaultValue) {
         value = defaultValue;
       }
     }
-    else if(dataFieldName == 'selectDate')
-    {
+    else if (dataFieldName == 'selectDate') {
       this.customDateSelected = false;
       this.dateColumnSelected = false;
 
-      if(value  === 'Date Field'){
+      if (value === 'Date Field') {
         this.dateColumnSelected = true;
-        if(this.rangeDateForm.formData['dateColumn'] === null || this.rangeDateForm.formData['dateColumn'] === undefined){
+        if (this.rangeDateForm.formData['dateColumn'] === null || this.rangeDateForm.formData['dateColumn'] === undefined) {
           let foundFilterField = this.rangeDateFilterFields.find(ff => ff.fieldName == 'dateColumn');
 
           this.filteredDateGridColumns = this.dateGridColumns.filter(dgc => dgc !== this.storedFilterBuilderTemplate.field.caption);
-          foundFilterField.defaultValue = this.filteredDateGridColumns.length > 0 ? this.filteredDateGridColumns[0]: null;
+          foundFilterField.defaultValue = this.filteredDateGridColumns.length > 0 ? this.filteredDateGridColumns[0] : null;
           this.rangeDateForm.formData['dateColumn'] = foundFilterField.defaultValue;
         }
       }
-      else if(value  === 'Direct Entry'){
+      else if (value === 'Direct Entry') {
         this.customDateSelected = true;
-        if(this.rangeDateForm.formData['customDate'] === null || this.rangeDateForm.formData['customDate'] === undefined)
+        if (this.rangeDateForm.formData['customDate'] === null || this.rangeDateForm.formData['customDate'] === undefined)
           this.rangeDateForm.formData['customDate'] = new Date();
       }
     }
@@ -647,7 +642,7 @@ export class ListPageComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  setStoredRangeFormDataToDefaultValues(){
+  setStoredRangeFormDataToDefaultValues() {
     this.storedRangeFormData = {};
 
     this.rangeDateFilterFields.forEach(ff => {
@@ -655,25 +650,25 @@ export class ListPageComponent implements OnInit {
     });
   }
 
-  fillDateGridColumns(){
+  fillDateGridColumns() {
     this.dateGridColumns = [];
 
     this.columns.forEach(col => {
-      if(col.dataType === 'date')
+      if (col.dataType === 'date')
         this.dateGridColumns.push(col.caption);
     });
   }
 
   checkGLEvent(objectTypeId: number): boolean {
-    return objectTypeId == ObjectTypeIds.Expense || objectTypeId == ObjectTypeIds.Revenue; 
+    return objectTypeId == ObjectTypeIds.Expense || objectTypeId == ObjectTypeIds.Revenue;
   }
 
   getCellTemplate(column) {
     if (column.urlLink !== '') {
       return 'linkTemplate';
-    } else if(column.dataField == 'CustomAction' && this.objectTypeId == ObjectTypeIds.Tasks) {
+    } else if (column.dataField == 'CustomAction' && this.objectTypeId == ObjectTypeIds.Tasks) {
       return 'tasksActionTemplate';
-    } else if(column.dataField == 'CustomAction' && this.isGLEvent) {
+    } else if (column.dataField == 'CustomAction' && this.isGLEvent) {
       return 'leasePaymentsActionTemplate'
     } else {
       return '';
@@ -681,8 +676,8 @@ export class ListPageComponent implements OnInit {
   }
 
   public onGridSelectionChanged(e) {
-    var notActiveKeys = e.selectedRowKeys.filter(srk => srk.IsActive === 'Deleted'); 
-    
+    var notActiveKeys = e.selectedRowKeys.filter(srk => srk.IsActive === 'Deleted');
+
     //Set numberOfItemsSelectedLessThanTwo to the selected rows minus the ones that are not active
     this.numberOfItemsSelectedLessThanTwo = e.selectedRowKeys.length - notActiveKeys.length < 2
   }
@@ -695,7 +690,7 @@ export class ListPageComponent implements OnInit {
     this.approveRejectTask = true;
     let selectedTask = {
       taskName: task.TaskName,
-      projectRequiredTaskNotes: task.projectRequiredTaskNotes == '1' ? true: false,
+      projectRequiredTaskNotes: task.projectRequiredTaskNotes == '1' ? true : false,
       taskID: task.taskID,
       transactionID: task.OID,
       taskNumber: task.TaskStepNumber
@@ -706,21 +701,21 @@ export class ListPageComponent implements OnInit {
       height: '240px',
       width: '600px',
       panelClass: 'taskApprovalModal',
-      data: {selectedTask, actionName}
+      data: { selectedTask, actionName }
     });
     dialogRef.afterClosed().subscribe(result => {
-        if (result === "Approve") {
-          this.saveStateToSession();
-          this.populateGrid(true);
-        }
-      });
+      if (result === "Approve") {
+        this.saveStateToSession();
+        this.populateGrid(true);
+      }
+    });
   }
 
   showPaymentDetails(glEventData) {
 
     this.getDateFormat();
 
-    if(this.modalIsOpen) { return; }
+    if (this.modalIsOpen) { return; }
     this.modalIsOpen = true;
     this.isChargeAction = true;
     this.service.getGLEventInfo(glEventData.OID, glEventData.GLEventID).subscribe(res => {
@@ -730,15 +725,16 @@ export class ListPageComponent implements OnInit {
         console.log("GLEventInfo - no data fetched");
         return;
       }
-      if(res.data) {
+      if (res.data) {
         this.paymentDetails = res.data;
 
         let dialogRef = this.dialog.open(PaymentDetailsPopupComponent, {
           height: '780px',
           panelClass: 'paymentDetailsModal',
-          data: { paymentDetails: this.paymentDetails,  
-                  dateFormat: this.userPrefDateFormat, 
-                  vendorORCustomer: this.vendorOrCustomer
+          data: {
+            paymentDetails: this.paymentDetails,
+            dateFormat: this.userPrefDateFormat,
+            vendorORCustomer: this.vendorOrCustomer
           },
           disableClose: true
         });
@@ -748,11 +744,11 @@ export class ListPageComponent implements OnInit {
 
       }
     },
-    error => {
-      this.isChargeAction = false;
-      console.log("Error fetching GLEvent Info data");
-    });
-    
+      error => {
+        this.isChargeAction = false;
+        console.log("Error fetching GLEvent Info data");
+      });
+
   }
 
   gridRowClick(evt: any) {
@@ -763,7 +759,7 @@ export class ListPageComponent implements OnInit {
       return;
     }
 
-    if(this.isGLEvent) {
+    if (this.isGLEvent) {
       this.showPaymentDetails(evt.data);
       return;
     }
@@ -780,10 +776,15 @@ export class ListPageComponent implements OnInit {
 
     this.saveStateToSession();
 
-    document.location.href = urlLink
-      .replace(/\[OID\]/, evt.data.OID)
-      .replace(/\[OTID\]/, evt.data.OTID)
-      .replace(/\[OTTID\]/, evt.data.OTTID);
+    const isRenderFormPage = urlLink.includes('RenderForm.aspx')
+    if (isRenderFormPage) {
+      this.router.navigate(['/crem/forms/render-form'], { queryParams: { OID: evt.data.OID, OTID: evt.data.OTID, OTTID: evt.data.OTTID } })
+    } else {
+      document.location.href = urlLink
+        .replace(/\[OID\]/, evt.data.OID)
+        .replace(/\[OTID\]/, evt.data.OTID)
+        .replace(/\[OTTID\]/, evt.data.OTTID);
+    }
   }
 
   gridInitialized(evt: any) {
@@ -792,19 +793,19 @@ export class ListPageComponent implements OnInit {
   }
 
   checkBoxAttributes(e: any) {
-      const checkBox = document.getElementsByClassName("dx-checkbox");
-      const checkBoxarr = Array.from(checkBox);
-      checkBoxarr.forEach(element => {
-        element.setAttribute("title", "CheckBox")
-      });
+    const checkBox = document.getElementsByClassName("dx-checkbox");
+    const checkBoxarr = Array.from(checkBox);
+    checkBoxarr.forEach(element => {
+      element.setAttribute("title", "CheckBox")
+    });
 
-      if(this.isGLEvent && (this.isLeaseArchived || this.isLeaseLocked || !this._showAddButton)) {
-        if(!(!this.headerCheckBox))
-        this.headerCheckBox.option("disabled", true);  
-        if(this.headerHtmlCellElement) {
-          this.headerHtmlCellElement.style.pointerEvents = 'none';
-        }
+    if (this.isGLEvent && (this.isLeaseArchived || this.isLeaseLocked || !this._showAddButton)) {
+      if (!(!this.headerCheckBox))
+        this.headerCheckBox.option("disabled", true);
+      if (this.headerHtmlCellElement) {
+        this.headerHtmlCellElement.style.pointerEvents = 'none';
       }
+    }
   }
 
   AdaAttributesInEmptyColumns(e: any) {
@@ -1030,7 +1031,7 @@ export class ListPageComponent implements OnInit {
 
     this.populateListViewMenu(true, false)
   }
-  
+
   setDefaultListView(listView: ListView) {
     listView.isDefault = true;
 
@@ -1224,7 +1225,7 @@ export class ListPageComponent implements OnInit {
     this.saveStateToSession();
   }
 
-  toggleListMap(viewMode: ListPageViewMode, saveToSession : boolean = true) {
+  toggleListMap(viewMode: ListPageViewMode, saveToSession: boolean = true) {
     viewMode = viewMode ?? this.listPageViewMode;
 
     if (viewMode === ListPageViewMode.ListPageMap) {
@@ -1253,7 +1254,7 @@ export class ListPageComponent implements OnInit {
     this.portfolioButtonEnabled = isGrid;
     this.listPageViewMode = viewMode;
 
-    if (saveToSession){
+    if (saveToSession) {
       this.saveStateToSession();
     }
   }
@@ -1358,17 +1359,17 @@ export class ListPageComponent implements OnInit {
 
   resetListView() {
     this.service.getListView(this.currentListView).subscribe(result => {
-    this.currentListView = result.data;
+      this.currentListView = result.data;
 
-    this.configCurrentListView(true, false);
+      this.configCurrentListView(true, false);
 
-    this.dataGrid.instance.clearFilter()
-    
-    if (this.cremDropdownComponent) {
-      this.cremDropdownComponent.clearDropdown();
-    }  
-    
-    this.filterValue = JSON.parse(this.currentListView.view).filterValue;
+      this.dataGrid.instance.clearFilter()
+
+      if (this.cremDropdownComponent) {
+        this.cremDropdownComponent.clearDropdown();
+      }
+
+      this.filterValue = JSON.parse(this.currentListView.view).filterValue;
     });
   }
 
@@ -1466,7 +1467,7 @@ export class ListPageComponent implements OnInit {
   private expandGroupRowsFromSession() {
     const expandedRows: any[] = this.safeGetFromSession(SessionVariables.ExpandCollapse) ?? [];
 
-      expandedRows.forEach((row: Row) => {
+    expandedRows.forEach((row: Row) => {
       this.dataGrid.instance.expandRow(row.key);
     });
   }
@@ -1537,8 +1538,8 @@ export class ListPageComponent implements OnInit {
     this.dataGrid.instance.searchByText(this.searchText);
 
     this.currentPortfolio = useSessionState
-    ? this.safeGetFromSession(SessionVariables.Portfolio)
-    : this.portfolios.find(x => x.masterGroupId === this.currentListView.masterGroupId) ?? null;
+      ? this.safeGetFromSession(SessionVariables.Portfolio)
+      : this.portfolios.find(x => x.masterGroupId === this.currentListView.masterGroupId) ?? null;
 
     const isHiddenListView = this.listViews.hiddenListViews
       .some(x => x.id === this.currentListView.id);
@@ -1577,7 +1578,7 @@ export class ListPageComponent implements OnInit {
 
 
     this.dataGrid.instance.pageSize(viewDataObject.pageSize);
-    this.dataGrid.instance.pageIndex(viewDataObject.pageIndex);     
+    this.dataGrid.instance.pageIndex(viewDataObject.pageIndex);
 
     if (refreshGrid) {
       if (this.isCurrentViewRemoved) {
@@ -1620,14 +1621,13 @@ export class ListPageComponent implements OnInit {
     };
   }
 
-  private setUnmodifiedOriginalListView()
-  {
+  private setUnmodifiedOriginalListView() {
     setTimeout(() => {
       this.unmodifiedOriginalListView = Object.assign({}, this.currentListView);
       this.unmodifiedOriginalListView.view = JSON.stringify(this.dataGrid.instance.state());
 
       this.saveStateToSession();
-      }, 1500);
+    }, 1500);
   }
 
   private saveStateToSession() {
@@ -1637,7 +1637,7 @@ export class ListPageComponent implements OnInit {
     if (session !== null) {
       listPageObjectTypeSessions = JSON.parse(session);
       let index = listPageObjectTypeSessions.findIndex(x => x.objectTypeId === this.objectTypeId);
-      if (index >= 0) 
+      if (index >= 0)
         listPageObjectTypeSessions.splice(index, 1);
     }
 
@@ -1646,8 +1646,8 @@ export class ListPageComponent implements OnInit {
     state.searchText = this.searchText;
     state.filterValue = this.dataGrid.filterValue;
     this.currentListView.view = JSON.stringify(state)
-    
-    const listPageObjectTypeSession : ListPageObjectTypeSession = 
+
+    const listPageObjectTypeSession: ListPageObjectTypeSession =
     {
       objectTypeId: this.objectTypeId,
       currentListView: JSON.stringify(this.currentListView),
@@ -1677,7 +1677,7 @@ export class ListPageComponent implements OnInit {
     if (listPageObjectTypeSession === undefined || listPageObjectTypeSession === null)
       return null;
 
-    switch ( getType ) {
+    switch (getType) {
       case SessionVariables.ArchiveToggleValue:
         return listPageObjectTypeSession?.archiveToggleValue;
       case SessionVariables.CurrentListView:
@@ -1685,7 +1685,7 @@ export class ListPageComponent implements OnInit {
       case SessionVariables.ExpandCollapse:
         return JSON.parse(listPageObjectTypeSession?.expandCollapse);
       case SessionVariables.FilterFields:
-        return listPageObjectTypeSession?.filterFields 
+        return listPageObjectTypeSession?.filterFields
       case SessionVariables.ListPageViewMode:
         return listPageObjectTypeSession?.listPageViewMode;
       case SessionVariables.Portfolio:
@@ -1693,12 +1693,12 @@ export class ListPageComponent implements OnInit {
           return null
         }
         else {
-          return JSON.parse(listPageObjectTypeSession.portfolio); 
+          return JSON.parse(listPageObjectTypeSession.portfolio);
         }
       case SessionVariables.UnmodifiedOriginalCurrentListView:
-        return JSON.parse(listPageObjectTypeSession.unmodifiedOriginalCurrentListView);          
-      default: 
-          return null;
+        return JSON.parse(listPageObjectTypeSession.unmodifiedOriginalCurrentListView);
+      default:
+        return null;
     }
   }
 
@@ -1809,8 +1809,8 @@ export class ListPageComponent implements OnInit {
     }
 
     if ((this.currentPortfolio?.masterGroupId ?? null) !== (this.unmodifiedOriginalListView?.masterGroupId ?? null) ||
-    this.currentListView.isExpandAllSelected !== this.unmodifiedOriginalListView?.isExpandAllSelected ||
-    this.currentListView.archiveToggleValue !== this.unmodifiedOriginalListView?.archiveToggleValue
+      this.currentListView.isExpandAllSelected !== this.unmodifiedOriginalListView?.isExpandAllSelected ||
+      this.currentListView.archiveToggleValue !== this.unmodifiedOriginalListView?.archiveToggleValue
     ) {
       return true;
     }
@@ -1895,7 +1895,7 @@ export class ListPageComponent implements OnInit {
 
   checkExpRevOptions() {    //**** this is for lease payments page - expense and revenue **/
     this.vendorOrCustomer = '';
-    if(this.objectTypeId == ObjectTypeIds.Expense) {
+    if (this.objectTypeId == ObjectTypeIds.Expense) {
       this.vendorOrCustomer = 'Vendor';
     } else {
       this.vendorOrCustomer = 'Customer';
@@ -1908,10 +1908,10 @@ export class ListPageComponent implements OnInit {
         console.log("LeaseInfo API is not successful");
         return;
       }
-      if(res.data) {
+      if (res.data) {
         this.showHoldPayments = true;
         this.isHoldPayments = res.data.nonPayLease;
-        this.isLeaseArchived = res.data.leaseActive && res.data.leaseActive.trim().toLowerCase() == "archived" ? true: false;
+        this.isLeaseArchived = res.data.leaseActive && res.data.leaseActive.trim().toLowerCase() == "archived" ? true : false;
         this.isLeaseLocked = res.data.isLocked;
       }
     });
@@ -1933,76 +1933,76 @@ export class ListPageComponent implements OnInit {
   getDateFormat() {
     let obj;
     obj = this.columnsDef.find((ele) => {
-      if(ele.hasOwnProperty("dataField") &&  ele.dataField == "StartDate") {
+      if (ele.hasOwnProperty("dataField") && ele.dataField == "StartDate") {
         return ele;
       }
     });
-    
-    this.userPrefDateFormat = obj.format? obj.format: "MM/dd/yyyy";
+
+    this.userPrefDateFormat = obj.format ? obj.format : "MM/dd/yyyy";
   }
 
 
   setEditPagesForLeasePayments() {
-    let newIsIncomeValue : string = '';
+    let newIsIncomeValue: string = '';
 
-    if (this.vendorOrCustomer == 'Vendor') { 
+    if (this.vendorOrCustomer == 'Vendor') {
       newIsIncomeValue = 'False';
-    } else {  
+    } else {
       newIsIncomeValue = 'True';
-    }  
+    }
 
-    if(newIsIncomeValue !== this.isIncomeValue){
+    if (newIsIncomeValue !== this.isIncomeValue) {
       this.isIncomeValue = newIsIncomeValue;
 
       //Create a copy of the unModifiedEditPages array
-      let tempEditPages  = JSON.parse(JSON.stringify(this.unModifiedEditPages));
+      let tempEditPages = JSON.parse(JSON.stringify(this.unModifiedEditPages));
 
       tempEditPages.forEach(ep => {
         ep.navigationUrl = this.replaceQueryParamsInLeasePaymentUrl(ep.navigationUrl, null);
       })
 
       this.editPages = tempEditPages;
-    }  
- 
+    }
+
   }
 
-  dataGridOnCellPrepared(e){
+  dataGridOnCellPrepared(e) {
 
-    if(this.isGLEvent && e.rowType == 'header' && e.column.command == 'select') {
-      this.headerHtmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
-      this.headerCheckBox = CheckBox.getInstance(this.headerHtmlCellElement.querySelector(".dx-select-checkbox"));     
+    if (this.isGLEvent && e.rowType == 'header' && e.column.command == 'select') {
+      this.headerHtmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+      this.headerCheckBox = CheckBox.getInstance(this.headerHtmlCellElement.querySelector(".dx-select-checkbox"));
     }
 
     if (this.isGLEvent && e.rowType === "data") {
-      if (e.data.IsTaxable === 'Yes' && e.column.dataField === 'GLEventName' && e.data.GLEventName.indexOf('(Taxable)') < 0) 
+      if (e.data.IsTaxable === 'Yes' && e.column.dataField === 'GLEventName' && e.data.GLEventName.indexOf('(Taxable)') < 0)
         e.data.GLEventName = e.data.GLEventName.trim() + ' (Taxable)'
 
-      if (e.data.TaxableGLEventID > 0 && e.column.dataField === 'GLEventName' && e.data.GLEventName.indexOf('(Tax)') < 0) 
+      if (e.data.TaxableGLEventID > 0 && e.column.dataField === 'GLEventName' && e.data.GLEventName.indexOf('(Tax)') < 0)
         e.data.GLEventName = e.data.GLEventName.trim() + ' (Tax)'
 
 
-      if ((e.data.IsActive === 'Deleted' || this.isLeaseArchived || this.isLeaseLocked || !this._showAddButton) && e.column.command === 'select') { 
+      if ((e.data.IsActive === 'Deleted' || this.isLeaseArchived || this.isLeaseLocked || !this._showAddButton) && e.column.command === 'select') {
         //In mangospa the td element is in e.cellElement but in CREM it is in an array so we use e.cellElement[0]
-        let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
-        var editor = CheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));  
-        if(!(!editor)) {
+        let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+        var editor = CheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));
+        if (!(!editor)) {
           if (e.data.IsActive === 'Deleted') {
             editor.option("visible", false);
           } else {
             editor.option("disabled", true);
           }
-        }  
-         
-        htmlCellElement.style.pointerEvents = 'none';  
+        }
+
+        htmlCellElement.style.pointerEvents = 'none';
       }
-    }    
+    }
   }
 
-  editSelectedCharges() { 
+  editSelectedCharges() {
     let editChargeUrl: string = `/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLGroup=&IsIncome=&Mode=Edit&paramFinView=Status`;
     let scheduledCharges = this.dataGrid.selectedRowKeys.filter(srk => srk.IsActive === 'Active');
 
-    if(scheduledCharges.length <= 0){
+    if (scheduledCharges.length <= 0) {
       alert("There are not any charges to edit.")
       return;
     }
@@ -2014,7 +2014,7 @@ export class ListPageComponent implements OnInit {
   }
 
   deleteSelectedCharges() {
-    const leaseObjectTypeTypeId: number = this.urlOTTID; 
+    const leaseObjectTypeTypeId: number = this.urlOTTID;
 
     let allChargesWithIndex = this.dataGrid.selectedRowKeys.every(c => c.IndexRule);
     let someChargesWithIndex = allChargesWithIndex ? false : this.dataGrid.selectedRowKeys.some(c => c.IndexRule);
@@ -2024,19 +2024,19 @@ export class ListPageComponent implements OnInit {
     let deleteMsg: string = inProcessOrHistoricalExist ? "All selected Scheduled charges will be deleted! Historical or In Process Charges cannot be deleted!" :
       "All selected charges will be deleted! Do you wish to continue?";
 
-    if(confirm(deleteMsg)){
+    if (confirm(deleteMsg)) {
       let scheduledCharges = this.dataGrid.selectedRowKeys.filter(srk => srk.IsActive === 'Active');
-      if(inProcessOrHistoricalExist || someChargesWithIndex){
+      if (inProcessOrHistoricalExist || someChargesWithIndex) {
         //Get all scheduled charges with no index rule
         scheduledCharges = scheduledCharges.filter(sc => (sc.ProcessingStatus.toLowerCase() == 'scheduled' || sc.ProcessingStatus.toLowerCase() == 'estimated') && !sc.IndexRule);
       }
 
-      if(allChargesWithIndex) {
+      if (allChargesWithIndex) {
         alert("To delete this charge(s) you must first remove the charge from the charge group.");
         return;
       }
 
-      if(scheduledCharges.length <= 0){
+      if (scheduledCharges.length <= 0) {
         alert("There are not any scheduled charges to delete.");
         return;
       } else {
@@ -2048,25 +2048,25 @@ export class ListPageComponent implements OnInit {
       this.service.deleteCharge(leaseObjectTypeTypeId, glEventIdList).subscribe(res => {
         this.isChargeAction = false;
         if (res !== null && res.success) {
-          if(res.data !== null)
+          if (res.data !== null)
             alert(res.data);
           else
-          if(someChargesWithIndex) {
-            alert("Some charges may not have been deleted. Please review and try again.");
-          } else {
-            alert("The charges were deleted.");
-          }  
+            if (someChargesWithIndex) {
+              alert("Some charges may not have been deleted. Please review and try again.");
+            } else {
+              alert("The charges were deleted.");
+            }
 
-          this.populateGrid(false);  
+          this.populateGrid(false);
         }
-        else{
+        else {
           alert("The charges were not deleted. Please review and try again later.");
         }
       },
-      error => {
-        this.isChargeAction = false;
-        alert('An error occurred deleting the charges. Please review and try again later.');
-      });       
+        error => {
+          this.isChargeAction = false;
+          alert('An error occurred deleting the charges. Please review and try again later.');
+        });
     }
 
   }
@@ -2090,29 +2090,28 @@ export class ListPageComponent implements OnInit {
     this.navigateToUrl(changeDefaultVendorOrCustomerUrl);
   }
 
-  stopLeasePaymentCharge(leaseCharge) { 
+  stopLeasePaymentCharge(leaseCharge) {
     let isTaxable = leaseCharge.IsTaxable === 'Yes'
     let isTaxCharge = leaseCharge.TaxableGLEventID > 0
     let taxStr = '';
     let parentChargeStr = '';
 
-    if (isTaxable || isTaxCharge)
-    {
+    if (isTaxable || isTaxCharge) {
       taxStr = 'Tax';
 
-      if(isTaxable)
+      if (isTaxable)
         parentChargeStr = '&IsParentCharge=True'
       else
         parentChargeStr = '&IsParentCharge=False'
-    } 
-    
+    }
+
     this.isChargeAction = true;
     let stopChargeUrl: string = `/v06/financials/Stop${taxStr}Charge.aspx?OID=&OTID=4&GLEID=&OTTID=${this.urlOTTID}&IsIncome=&status=In%20Process${parentChargeStr}`;
     stopChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(stopChargeUrl, [leaseCharge.GLEventID]);
     this.navigateToUrl(stopChargeUrl);
   }
 
-  editLeasePaymentCharge(leaseCharge) { 
+  editLeasePaymentCharge(leaseCharge) {
     let editChargeUrl: string = `/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLEID=&GLGroup=&IsIncome=&Mode=Edit`;
     editChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(editChargeUrl, [leaseCharge.GLEventID]);
     this.isChargeAction = true;
@@ -2122,7 +2121,7 @@ export class ListPageComponent implements OnInit {
   copyLeasePaymentCharge(leaseCharge) {
     let copyMsg: string = "Are you sure you want to copy the selected charge?";
 
-    if(confirm(copyMsg)){
+    if (confirm(copyMsg)) {
       this.isCopyCharge = true;
       this.service.copyCharge(leaseCharge.GLEventID).subscribe(res => {
         if (res.success) {
@@ -2132,50 +2131,49 @@ export class ListPageComponent implements OnInit {
           copyChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(copyChargeUrl, [newGLEventId]);
           this.navigateToUrl(copyChargeUrl)
         } else {
-        this.isCopyCharge = false;
+          this.isCopyCharge = false;
         }
       });
-    }    
+    }
   }
 
   deleteLeasePaymentCharge(leaseCharge: any) {
-    const leaseObjectTypeTypeId: number = this.urlOTTID; 
-    if(leaseCharge.ProcessingStatus.toLowerCase() === 'in process' || leaseCharge.ProcessingStatus.toLowerCase() === 'historical' || leaseCharge.IsActive === 'Deleted')
-    {
+    const leaseObjectTypeTypeId: number = this.urlOTTID;
+    if (leaseCharge.ProcessingStatus.toLowerCase() === 'in process' || leaseCharge.ProcessingStatus.toLowerCase() === 'historical' || leaseCharge.IsActive === 'Deleted') {
       alert("This charge can not be deleted.");
       return;
     }
 
     let deleteMsg: string = "Are you sure you want to delete this charge?";
 
-    if(confirm(deleteMsg)){
+    if (confirm(deleteMsg)) {
       this.isChargeAction = true;
       this.service.deleteCharge(leaseObjectTypeTypeId, [leaseCharge.GLEventID]).subscribe(res => {
         this.isChargeAction = false;
         if (res !== null && res.success) {
-          if(res.data !== null)
+          if (res.data !== null)
             alert(res.data);
           else
             alert("The charge was deleted.")
 
-          this.populateGrid(false);  
+          this.populateGrid(false);
         }
-        else{
+        else {
           alert("The charge was not deleted. Please review and try again later.")
         }
       },
-      error => {
-        this.isChargeAction = false;
-        alert('An error occurred deleting the charge. Please review and try again later.');
-      });  
-    }    
+        error => {
+          this.isChargeAction = false;
+          alert('An error occurred deleting the charge. Please review and try again later.');
+        });
+    }
   }
 
   private replaceQueryParamsInLeasePaymentUrl(url: string, gleventIdList: number[]): string {
     url = url.replace('OID=', `OID=${this.urlOID}`);
     url = url.replace('IsIncome=', `IsIncome=${this.isIncomeValue}`);
 
-    if(gleventIdList !== null && gleventIdList.length > 0) {
+    if (gleventIdList !== null && gleventIdList.length > 0) {
       url = url.replace('GLEID=', `GLEID=${gleventIdList.join(',')}`);
       url = url.replace('GLGroup=', `GLGroup=${gleventIdList.join(',')}`);
     }
@@ -2185,7 +2183,7 @@ export class ListPageComponent implements OnInit {
 
   private navigateToUrl(url) {
     this.navigateToEditPage();
-    document.location.href = url;    
+    document.location.href = url;
   }
 
   private ensureJavaScript(htmlLink: string) {
@@ -2206,11 +2204,11 @@ export class ListPageComponent implements OnInit {
 
       const currentViewInSession = this.safeGetFromSession(SessionVariables.CurrentListView);
       const viewDataObject = useSessionState && currentViewInSession
-          ? JSON.parse(currentViewInSession.view, this.parseIsoDateStrToDate)
-          : JSON.parse(this.currentListView.view, this.parseIsoDateStrToDate);
+        ? JSON.parse(currentViewInSession.view, this.parseIsoDateStrToDate)
+        : JSON.parse(this.currentListView.view, this.parseIsoDateStrToDate);
 
-      const initViewDataObject  = this.originalViewObject;
- 
+      const initViewDataObject = this.originalViewObject;
+
       this.service.getListPageColumns(this.currentListView.listPageId).subscribe(result => {
         if (!result.success) {
           // The aspx host is currently set to always return a list page response.
@@ -2229,15 +2227,15 @@ export class ListPageComponent implements OnInit {
 
         this.columnsDef.forEach((col: any) => {
           let listViewColumn;
-          if(listViewColumns) {
+          if (listViewColumns) {
             listViewColumn = listViewColumns
               .filter((x: any) => x.dataField === col.dataField)[0];
           }
 
           let initListViewColumn;
-          if(initListViewColumns) {
+          if (initListViewColumns) {
             initListViewColumn = initListViewColumns
-            .filter((x: any) => x.dataField === col.dataField)[0];
+              .filter((x: any) => x.dataField === col.dataField)[0];
           }
 
           let column = {
@@ -2250,21 +2248,21 @@ export class ListPageComponent implements OnInit {
             dataType: col.dataType,
             visibleIndex: listViewColumn ? listViewColumn.visibleIndex : -1,
             format: col.format,
-            showInColumnChooser: initListViewColumn ? initListViewColumn.showInColumnChooser: true,
-            allowReordering: initListViewColumn ? initListViewColumn.allowReordering: true,
-            type: initListViewColumn ? initListViewColumn.type: '',
+            showInColumnChooser: initListViewColumn ? initListViewColumn.showInColumnChooser : true,
+            allowReordering: initListViewColumn ? initListViewColumn.allowReordering : true,
+            type: initListViewColumn ? initListViewColumn.type : '',
             urlLink: col.urlLink,
             useDefaultObjectFields: col.useDefaultObjectFields,
             width: col.width,
             fixed: col.fixed,
             fixedPosition: col.fixedPosition,
-            displayOrder : col.displayOrder,
-            allowSorting: initListViewColumn ? initListViewColumn.allowSorting: true,
-            allowFiltering: initListViewColumn ? initListViewColumn.allowFiltering: true,
-            allowResizing: initListViewColumn ? initListViewColumn.allowResizing: true,
-            allowGrouping: initListViewColumn ? initListViewColumn.allowGrouping: true,
-            isInFilter : filters.filter((x: any) => x === col.dataField).length > 0,
-            allowExporting : col.allowExporting ? col.allowExporting : true
+            displayOrder: col.displayOrder,
+            allowSorting: initListViewColumn ? initListViewColumn.allowSorting : true,
+            allowFiltering: initListViewColumn ? initListViewColumn.allowFiltering : true,
+            allowResizing: initListViewColumn ? initListViewColumn.allowResizing : true,
+            allowGrouping: initListViewColumn ? initListViewColumn.allowGrouping : true,
+            isInFilter: filters.filter((x: any) => x === col.dataField).length > 0,
+            allowExporting: col.allowExporting ? col.allowExporting : true
           };
 
           column = Object.assign(column, listViewColumn);
@@ -2306,45 +2304,45 @@ export class ListPageComponent implements OnInit {
             : this.currentListView.listPageId,
           userViewId: this.currentListView.listViewType === ListViewType.User
             ? this.currentListView.id
-            : null,       
+            : null,
           masterGroupId: this.currentPortfolio?.masterGroupId ?? null,
           gridStateOverride: this.currentListView.view,
           tempArchiveToggleValue: this.getArchiveToggleValue(),
           oid: this.urlOID
         };
-        
+
         this.service.getGridData(this.lastGridDataRequest).subscribe(res => {
           if (!res.success) {
             // The aspx host is currently set to always return a list page response.
             // Check the success flag.
             this.enterCriticalGridLoadErrorState(res.clientErrorMessage);
-            if(res.status === 408){
+            if (res.status === 408) {
               this.inDisabledUIState = false;
-            }            
+            }
             return;
-          }  
+          }
 
           this.gridData = res.data;
 
           if (this.isGLEvent) {
             this.checkExpRevOptions();
             if (this.unModifiedEditPages || this.editPages) {
-               this.setEditPagesForLeasePayments();
+              this.setEditPagesForLeasePayments();
             }
             this.getLeaseInfo(this.urlOID);
-            if(this.gridData.length) {
+            if (this.gridData.length) {
               this.chargesOnLease = true;
             }
             this.groupTaxableChargesTogether();
-          } 
+          }
 
-          setTimeout(() => {               
+          setTimeout(() => {
             //Only visible grid columns and columns in an active filter will show in filter dialog
             this.filterFields = this.filterFields.filter((x: any) => x.dataField !== 'CustomAction' && (x.visible === true || x.isInFilter === true));
-            this.filterValue = viewDataObject.filterValue;         
+            this.filterValue = viewDataObject.filterValue;
 
             this.includedDataFieldsFromLastGridReload = listViewColumns.filter((x: { visible: boolean; }) => x.visible)
-              .map((x:{ dataField: string; } )=> x.dataField);
+              .map((x: { dataField: string; }) => x.dataField);
 
             this.isExpanded
               ? this.dataGrid.instance.expandAll()
@@ -2354,7 +2352,7 @@ export class ListPageComponent implements OnInit {
 
               this.toggleListMap(this.safeGetFromSession(SessionVariables.ListPageViewMode) as ListPageViewMode, false);
 
-              this.unmodifiedOriginalListView ?? this.setUnmodifiedOriginalListView();            
+              this.unmodifiedOriginalListView ?? this.setUnmodifiedOriginalListView();
             }
             else {
               this.setUnmodifiedOriginalListView();
@@ -2413,7 +2411,7 @@ export class ListPageComponent implements OnInit {
 
     this.service.getListViewSelectorItems(request).subscribe(result => {
       this.listViews = result.data;
-      if (this.listViews && Object.keys(this.listViews).length && (Object.values(this.listViews).some(x=> x.length))) {}
+      if (this.listViews && Object.keys(this.listViews).length && (Object.values(this.listViews).some(x => x.length))) { }
       else {
         this.dataGrid.instance.endCustomLoading();
         this.noDataText = "This page could not load due to a missing object.  Please contact support.";
@@ -2425,17 +2423,17 @@ export class ListPageComponent implements OnInit {
         + this.listViews.myListViews.length
         + this.listViews.sharedListViews.length;
 
-        if (this.showPortfolioPicker) {
-          this.service.getPortfolios().subscribe(result => {
-            if(result.data && result.data.portfolios && result.data.portfolios.length) {
-              this.portfolios = result.data.portfolios;
-            }
-            this.configCurrentListView(refreshGrid, useSessionState, overrideDefaultListPage);
-          });
-        }
-        else {
+      if (this.showPortfolioPicker) {
+        this.service.getPortfolios().subscribe(result => {
+          if (result.data && result.data.portfolios && result.data.portfolios.length) {
+            this.portfolios = result.data.portfolios;
+          }
           this.configCurrentListView(refreshGrid, useSessionState, overrideDefaultListPage);
-        }
+        });
+      }
+      else {
+        this.configCurrentListView(refreshGrid, useSessionState, overrideDefaultListPage);
+      }
     });
   }
 

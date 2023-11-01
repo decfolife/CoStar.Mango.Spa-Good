@@ -19,7 +19,8 @@ export const SET_BREADCRUMBS = '[Mango App] Set Breadcrumbs'
 export const SET_CONTACT_RECORD = '[Mango App] Set Contact Record'
 export const LOGOUT_ACTION = '[Mango App] Log Out'
 export const SET_MODULE_ID = '[Mango App] Set Module Id'
-export const SET_RENDER_FORM_LEFTNAV_DISPLAYED = '[Mango App] Render Form LeftNav Displayed'
+export const SET_SHOW_SUB_LEFT_NAV = '[Mango App] Set Show Sub Left Nav'
+export const SET_CURRENT_RENDER_FORM_DOCUMENT_PARAMS = '[Mango App] Set Current Render Form Document Params'
 export const NAVIGATE_LEFT_NAV_MENU = '[Mango App] Navigate Left Nav Menu'
 export const NAVIGATE_HOME = '[Mango App] Navigate Home'
 export const GET_GLOBAL_SESSION = '[Mango App] Get Global Session'
@@ -91,9 +92,14 @@ export const setModuleId = createAction(
   props<{ moduleId: number }>()
 );
 
-export const setRenderFormLeftNavDisplayed = createAction(
-  SET_RENDER_FORM_LEFTNAV_DISPLAYED,
-  props<{ renderFormLeftNavDisplayed: boolean }>()
+export const setShowSubLetNav = createAction(
+  SET_SHOW_SUB_LEFT_NAV,
+  props<{ show: boolean }>()
+);
+
+export const setCurrentRenderFormDocumentParams = createAction(
+  SET_CURRENT_RENDER_FORM_DOCUMENT_PARAMS,
+  props<{ params: string }>()
 );
 
 export const navigateLeftNavMenu = createAction(

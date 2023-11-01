@@ -21,11 +21,9 @@ export class MangoAppFacade {
   userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
   contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
   globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
-  moduleId$ = this.store.pipe(select(AppSelectors.moduleId), take(1));
-  renderFormLeftNavDisplayed$ = this.store.pipe(select(AppSelectors.renderFormLeftNavDisplayed), take(1));
-  //Subjects
-  moduleIdBehaviorSubject$: BehaviorSubject<number> = new BehaviorSubject<number>(null)
-  renderFormBehaviorSubject$: BehaviorSubject<string> = new BehaviorSubject<string>(null)
+  moduleId$ = this.store.pipe(select(AppSelectors.moduleId));
+  showSubLeftNav$ = this.store.pipe(select(AppSelectors.showSubLeftNav));
+  currentRenderFormDocumentParams$ = this.store.pipe(select(AppSelectors.currentRenderFormDocumentParams));
 
   constructor(private store: Store) { }
 
@@ -71,17 +69,14 @@ export class MangoAppFacade {
 
   setModuleId(moduleId: number): void {
     this.store.dispatch(AppActions.setModuleId({ moduleId }))
-    this.setRenderFormLeftNavDisplayed(false);
-    this.moduleIdBehaviorSubject$.next(moduleId)
   }
 
-  setRenderFormLeftNavDisplayed(renderFormLeftNavDisplayed: boolean): void {
-    this.store.dispatch(AppActions.setRenderFormLeftNavDisplayed({ renderFormLeftNavDisplayed }))
+  showSubLeftNav(showSubLeftNav: boolean): void {
+    this.store.dispatch(AppActions.setShowSubLetNav({ show: showSubLeftNav }))
   }
 
-  dispatchRenderFormEvent(routeUrl: string): void {
-    this.setRenderFormLeftNavDisplayed(true);
-    this.renderFormBehaviorSubject$.next(routeUrl)
+  setCurrentRenderFormDocumentParams(params: string): void {
+    this.store.dispatch(AppActions.setCurrentRenderFormDocumentParams({ params }))
   }
 
   logout(): void {

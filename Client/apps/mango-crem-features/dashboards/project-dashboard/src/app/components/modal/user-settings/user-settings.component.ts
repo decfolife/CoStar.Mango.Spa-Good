@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, Inject, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Inject, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { CardDetails, FilterDetail, userSettings } from '../../../models';
 import { DashboardService } from '../../../services/dashboard.service';
 import { CardsService } from '../../../services/cards.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'mango-user-settings',
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.scss']
 })
-export class UserSettingsComponent implements OnInit {
+export class UserSettingsComponent implements OnInit, OnDestroy {
   @Output() changeSettingsEvent = new EventEmitter<any>();
   @Output() updateMetricDetailEvent = new EventEmitter<any>();
 
@@ -31,13 +32,14 @@ export class UserSettingsComponent implements OnInit {
   public metricsDisplay: any[] = [];
   public cardsDisplay: any[] = [];
   public cardOrderChanged: boolean = false;
- 
+
+  subs: Subscription[] = []
   constructor(
     private dashboardService: DashboardService,
-    private   cardsService: CardsService,
+    private cardsService: CardsService,
     public dialogRef: MatDialogRef<UserSettingsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.filters = this.data.filters;
@@ -53,31 +55,31 @@ export class UserSettingsComponent implements OnInit {
 
   extract(element: any) {
     let subObj: {}
-    if(element.placeHolderText) {
-      subObj = {  
-        "titleText"  : element.placeHolderText,
-        "isActive"   : element.isActive,
-        "elementId"  : element.elementId,
+    if (element.placeHolderText) {
+      subObj = {
+        "titleText": element.placeHolderText,
+        "isActive": element.isActive,
+        "elementId": element.elementId,
         "elementTypeId": element.elementTypeId,
         "elementTypeName": element.id
-      } 
-    }  else if (element.elementType) {
-      subObj = {  
-        "titleText"  : element.title,
-        "isActive"   : element.isActive,
-        "elementId"  : element.id,
+      }
+    } else if (element.elementType) {
+      subObj = {
+        "titleText": element.title,
+        "isActive": element.isActive,
+        "elementId": element.id,
         "elementTypeId": element.elementType.id,
         "elementTypeName": element.elementType.elementTypeName
       }
-    } 
-    else {   
-        subObj = {  
-          "titleText"  : element.title,
-          "isActive"   : element.isActive,
-          "elementId"  : element.elementId,
-          "elementTypeId": element.elementTypeId,
-          "elementTypeName": element.id
-        }
+    }
+    else {
+      subObj = {
+        "titleText": element.title,
+        "isActive": element.isActive,
+        "elementId": element.elementId,
+        "elementTypeId": element.elementTypeId,
+        "elementTypeName": element.id
+      }
     }
     return subObj;
   }
@@ -94,17 +96,17 @@ export class UserSettingsComponent implements OnInit {
     } else {
       elementIndex = elements.findIndex((e) => ((currElement.elementId == e.elementId) && (currElement.elementTypeId == e.elementTypeId)));
     }
-   
+
     let element = elements[elementIndex];
     element.isActive = currElement.isActive;
     const userSettingsData: userSettings[] = [];
     userSettingsData.push(this.cardsService.createUserSettingRec(element, element.elementOrder));
 
-    if(element.isActive && (element.dataSource === null || element.dataSource === undefined)) {
-      if(currElement.elementTypeName.endsWith("_filter"))
+    if (element.isActive && (element.dataSource === null || element.dataSource === undefined)) {
+      if (currElement.elementTypeName.endsWith("_filter"))
         //We only have to subscribe to the observable because we set the datasource of the element detail in the function
-        this.cardsService.getDataForFilterDetail(element).subscribe();
-      else if(currElement.elementTypeName.endsWith("_metric"))
+        this.subs.push(this.cardsService.getDataForFilterDetail(element).subscribe());
+      else if (currElement.elementTypeName.endsWith("_metric"))
         this.updateMetricDetailEvent.emit(element);
     }
 
@@ -121,19 +123,22 @@ export class UserSettingsComponent implements OnInit {
     moveItemInArray(this.cards, event.previousIndex, event.currentIndex);
     this.cardUserSettingsData = [];
 
-    this.cards.forEach( (card, index) => {
-      this.cardUserSettingsData[index]= this.cardsService.createUserSettingRec(card, index);
+    this.cards.forEach((card, index) => {
+      this.cardUserSettingsData[index] = this.cardsService.createUserSettingRec(card, index);
     })
 
   }
 
-  applySettings(){
-    if(this.cardOrderChanged) {
+  applySettings() {
+    if (this.cardOrderChanged) {
       return this.dashboardService.postUserSettings(this.cardUserSettingsData).subscribe(
-      (returnData: any) => (console.log("Returned results after card dragNDrop: ", returnData)),
-      (error: any) => console.log("Error occurred updating userSettings: ", error)
+        (returnData: any) => (console.log("Returned results after card dragNDrop: ", returnData)),
+        (error: any) => console.log("Error occurred updating userSettings: ", error)
       );
     }
   }
-  
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }

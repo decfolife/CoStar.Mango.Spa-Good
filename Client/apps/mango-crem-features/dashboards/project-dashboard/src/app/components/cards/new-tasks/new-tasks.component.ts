@@ -1,17 +1,18 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
 import { environment } from '../../../../../../../../mango/src/environments/environment.local';
 import { TaskApprovalComponent } from '../../modal/task-approval/task-approval.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'new-tasks-card',
   templateUrl: './new-tasks.component.html',
   styleUrls: ['./new-tasks.component.scss']
 })
-export class NewTasksComponent implements OnInit {
+export class NewTasksComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
   private selectedFilters : string;
   @Output() rowClickEvent = new EventEmitter<any>();
@@ -20,16 +21,17 @@ export class NewTasksComponent implements OnInit {
 
   public keyDate: string;
 
+  subs: Subscription[] = []
   constructor(
     private cardsService: CardsService,
     private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
-    this.cardsService.filterString$.subscribe(data => {
+    this.subs.push(this.cardsService.filterString$.subscribe(data => {
       this.selectedFilters = data;
       this.getCardData();
-    });
+    }));
   }
 
   customizeTaskAddedText(cellInfo){
@@ -64,11 +66,11 @@ export class NewTasksComponent implements OnInit {
   }
 
   getCardData() {
-    this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
+    this.subs.push(this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
       (data: any) => {
         this.card.dispCard = true;
       }
-    );
+    ));
   }
 
   getProjectName(){
@@ -91,5 +93,9 @@ export class NewTasksComponent implements OnInit {
           this.getCardData();
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
   }
 }

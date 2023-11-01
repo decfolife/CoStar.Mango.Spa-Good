@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Dropdown } from '@mango/data-models/lib-data-models';
@@ -10,6 +10,7 @@ import { PortfolioDataService } from '../../services/portfolio-data.service';
 import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
 import { CardsComponent } from '../cards/cards.component';
 import { UserSelectedFilters } from '../../models';
+import { Subscription } from 'rxjs';
 
 declare var doWizardLaunch;
 declare var parent;
@@ -19,7 +20,7 @@ declare var parent;
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
 })
-export class IndexComponent implements OnInit {
+export class IndexComponent implements OnInit, OnDestroy {
   dashboardId = 2;
   showAddButton = false;
   filterDetails: any;
@@ -48,7 +49,7 @@ export class IndexComponent implements OnInit {
   exchangeRateId = 13;
   unitOfMeasureId = 1;
   isDateEU: boolean = false;
-
+  subs: Subscription[] = []
   @ViewChild(CardsComponent)
   cardsComponent: CardsComponent;
 
@@ -68,7 +69,7 @@ export class IndexComponent implements OnInit {
   }
 
   getUserPreferences() {
-    this.portfolioDashboardService.getUserPreferences().subscribe(
+    this.subs.push(this.portfolioDashboardService.getUserPreferences().subscribe(
       (res: any) => {
         if (res.success) {
           this.userId = res.data.userId;
@@ -88,7 +89,7 @@ export class IndexComponent implements OnInit {
       () => {
         this.getStoragePreferences();
       }
-    );
+    ));
   }
 
   getStoragePreferences(): boolean {
@@ -135,7 +136,7 @@ export class IndexComponent implements OnInit {
     this.showFinanceCard = false;
     this.portfolioObjects = [];
 
-    this.portfolioDashboardService.getUserModuleRights(objectIds).subscribe(
+    this.subs.push(this.portfolioDashboardService.getUserModuleRights(objectIds).subscribe(
       (res: any) => {
         if (res.success) {
           //Set showFinanceCard value
@@ -149,7 +150,7 @@ export class IndexComponent implements OnInit {
         }
       },
       (error: any) => console.log('Error occurred getting Portfolio User Module rights: ', error)
-    );
+    ));
   }
 
   checkAddPrivilege() {
@@ -161,7 +162,7 @@ export class IndexComponent implements OnInit {
   }
 
   populatePortfolioDashboardSchema() {
-    this.portfolioDashboardService.getPortfolioDashboardByIdWithChildrenQuery(this.dashboardId).subscribe(
+    this.subs.push(this.portfolioDashboardService.getPortfolioDashboardByIdWithChildrenQuery(this.dashboardId).subscribe(
       (res: any) => {
         this.cachingEnabled = res.data.cachingEnabled;
         this.schemaFilters = res.data.filters;
@@ -169,7 +170,7 @@ export class IndexComponent implements OnInit {
         this.schemaMetrics = res.data.metrics;
 
         // Get user selected filters first. Then fetch filter and metric data.
-        this.portfolioDashboardService.getUserFilters(this.dashboardId).subscribe(
+        this.subs.push(this.portfolioDashboardService.getUserFilters(this.dashboardId).subscribe(
           (userSelectedFiltersResult: any) => {
             let userSelectedFilterValues = null;
 
@@ -202,11 +203,11 @@ export class IndexComponent implements OnInit {
             }
           },
           (error: any) => console.log('Error occurred getting User Filters Data: ', error)
-        );
+        ));
 
       },
       (error: any) => console.log('Error occurred getting Portfolio Dashboards Schema data: ', error)
-    );
+    ));
   }
 
   public processUserSelectedFilters(userSelectedfilters) {
@@ -230,13 +231,13 @@ export class IndexComponent implements OnInit {
       filterValues: userSelectedFilters
     };
 
-    this.portfolioDashboardService.saveUserFilters(userSelectedFiltersDto).subscribe();
+    this.subs.push(this.portfolioDashboardService.saveUserFilters(userSelectedFiltersDto).subscribe());
   }
 
   public getPortfolioFilterData(filters, userSelectedFilterValues) {
     const userSelectedfiltersArr = this.processUserSelectedFilters(userSelectedFilterValues);
 
-    this.portfolioDataService.fetchAllPortfolioFilters(filters, userSelectedfiltersArr).subscribe(
+    this.subs.push(this.portfolioDataService.fetchAllPortfolioFilters(filters, userSelectedfiltersArr).subscribe(
       (data: any) => {
         if (data) {
           this.filterDetails = data
@@ -246,7 +247,7 @@ export class IndexComponent implements OnInit {
 
         this.filtersLoadingDone = true;
       }
-    )
+    ))
   }
 
   // NOTE - value 1-unitofmeasureid and 13-exchangerateid below should be replace with client setting values once available
@@ -305,16 +306,16 @@ export class IndexComponent implements OnInit {
     this.cardsComponent.sendFilterString(selectedFilters);
     this.getFilteredMetricsData(selectedFilters);
     this.saveUserFilters(selectedFilters);
-    this.portfolioDashboardService.postCacheSettings(this.dashboardId).subscribe(
-       (res: any) =>{
+    this.subs.push(this.portfolioDashboardService.postCacheSettings(this.dashboardId).subscribe(
+      (res: any) => {
         if (res.success) {
-     
+
         }
-       },(error: any) => {
-         console.log('Error occurred while clearing cache', error);
-        }
-    ); 
-    
+      }, (error: any) => {
+        console.log('Error occurred while clearing cache', error);
+      }
+    ));
+
   }
 
   createFilterString() {
@@ -345,7 +346,7 @@ export class IndexComponent implements OnInit {
   }
 
   public getCardFiltersandReadyCards(cards, userSelectedFilterValues) {
-    this.portfolioDashboardService.getPortfolioCardFilters().subscribe(res => {
+    this.subs.push(this.portfolioDashboardService.getPortfolioCardFilters().subscribe(res => {
       if (res !== null && res.data) {
         this.monthsBackFilters = [];
 
@@ -381,7 +382,7 @@ export class IndexComponent implements OnInit {
       }
 
       this.cardsLoadingDone = true;
-    });
+    }));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -391,14 +392,18 @@ export class IndexComponent implements OnInit {
 
   enterBillClicked() {
     parent.modalBoxObject = parent.modalBox.openmodal(
-        'AddExpense',
-        'iframe',
-        '/v06/Financials/EnterBill.aspx',
-        'Enter A Bill'
-      );
+      'AddExpense',
+      'iframe',
+      '/v06/Financials/EnterBill.aspx',
+      'Enter A Bill'
+    );
   }
 
   clearCacheClicked() {
-    this.portfolioDashboardService.postCacheSettings(this.dashboardId).subscribe(() => this.populatePortfolioDashboardSchema());
+    this.subs.push(this.portfolioDashboardService.postCacheSettings(this.dashboardId).subscribe(() => this.populatePortfolioDashboardSchema()));
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
   }
 }

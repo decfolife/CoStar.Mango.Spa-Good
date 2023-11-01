@@ -6,20 +6,20 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
   Dropdown,
   Milestone,
   SelectedFilter,
 } from '@mango/data-models/lib-data-models';
-import { MatDialog } from '@angular/material/dialog';
 import { ToggleComponent } from '@mango/ui-shared/cosmos';
+import { HeroMetricsContainerComponent } from '@mango/ui-shared/lib-ui-shared';
 import { CardDetails, FilterDetail, MilestoneCardDetails, UserSelectedFilters } from '../../models';
 import { CardsService } from '../../services/cards.service';
-import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
-import { CardsComponent } from '../cards/cards.component';
 import { DashboardService } from '../../services/dashboard.service';
-import { HeroMetricsContainerComponent } from '@mango/ui-shared/lib-ui-shared';
-import { environment } from '@mangoSpa/src/environments/environment.local';
+import { CardsComponent } from '../cards/cards.component';
+import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
+import { Subscription } from 'rxjs';
 
 declare var doWizardLaunch;
 
@@ -28,7 +28,7 @@ declare var doWizardLaunch;
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
 })
-export class IndexComponent implements OnInit {
+export class IndexComponent implements OnInit, OnInit {
   @Input() userId: number;
   showAddButton: boolean;
   isVisible: boolean;
@@ -54,10 +54,10 @@ export class IndexComponent implements OnInit {
   public dashboardId: number = 1;
   @ViewChild('chip', { static: false }) chip: ToggleComponent;
   @ViewChild(CardsComponent) cardsComponent: CardsComponent;
-	@ViewChild(HeroMetricsContainerComponent) heroMetricsContainerComponent: HeroMetricsContainerComponent;
+  @ViewChild(HeroMetricsContainerComponent) heroMetricsContainerComponent: HeroMetricsContainerComponent;
   public readonly objectTypeIds: number[] = [1];
   isDateEU: boolean = false;
-
+  subs: Subscription[] = []
   constructor(
     private vcref: ViewContainerRef,
     private cfr: ComponentFactoryResolver,
@@ -80,15 +80,15 @@ export class IndexComponent implements OnInit {
   }
 
   doesUserHaveProjectAddRights() {
-    this.dashboardService.DoesUserHaveProjectAddRights().subscribe (
+    this.dashboardService.DoesUserHaveProjectAddRights().subscribe(
       (result) => {
         this.showAddButton = result.data;
       }
-    );   
+    );
   }
 
   btnAddClick() {
-    var Wizard =sessionStorage.getItem('AddProjectWizardSiteSetting');
+    var Wizard = sessionStorage.getItem('AddProjectWizardSiteSetting');
     doWizardLaunch();
   }
 
@@ -102,129 +102,129 @@ export class IndexComponent implements OnInit {
         let metrics = res.data.metrics;
         let id = res.data.id;
 
-        
+
         // Get user selected filters first. Then fetch filter and metric data.
         this.dashboardService.getUserFilters(this.dashboardId).subscribe(
-          (userSelectedFiltersResult:any) => {
+          (userSelectedFiltersResult: any) => {
             if (userSelectedFiltersResult.data != null || userSelectedFiltersResult.data != undefined) {
               this.filterString = userSelectedFiltersResult.data.filterValues;
             }
-  
-        //************************** Filter Data ***************************/
-        if (filters) {
-          this.getFilterData(filters, this.filterString);
-        } else {
-          this.filtersAvailable = false;
-          this.filtersLoadingDone = true;
-        }
 
-        //************************** Metric Data ***************************/
-         if (metrics){
-           this.schemaMetrics = metrics;
-           this.metricsAvailable = true;
-         } else {
-          this.metricsAvailable = false;
-          this.metricsLoadingDone= true; 
-         }
+            //************************** Filter Data ***************************/
+            if (filters) {
+              this.getFilterData(filters, this.filterString);
+            } else {
+              this.filtersAvailable = false;
+              this.filtersLoadingDone = true;
+            }
 
-         //************************** Cards Data ***************************/
-         if (cards){
-          this.getCardFiltersandReadyCards(cards);
-         } 
-         else {
-          this.cardsAvailable = false;
-          this.cardsLoadingDone= true; 
-         }
+            //************************** Metric Data ***************************/
+            if (metrics) {
+              this.schemaMetrics = metrics;
+              this.metricsAvailable = true;
+            } else {
+              this.metricsAvailable = false;
+              this.metricsLoadingDone = true;
+            }
+
+            //************************** Cards Data ***************************/
+            if (cards) {
+              this.getCardFiltersandReadyCards(cards);
+            }
+            else {
+              this.cardsAvailable = false;
+              this.cardsLoadingDone = true;
+            }
 
           },
           (error: any) => console.log("Error occurred getting User Filters Data: ", error),
-          () => {}
+          () => { }
         );
       },
-   
+
       (error: any) => console.log("Error occurred getting schema data: ", error),
-      ()=> {}
+      () => { }
     );
   }
 
   public processUserSelectedFilters(userSelectedfilters) {
     if (userSelectedfilters == null || userSelectedfilters == undefined)
       return [];
-      
+
     var selectedFiltersArr = userSelectedfilters.split('|');
     let userSelectedFilters = [];
-    
+
     selectedFiltersArr.forEach(selectedFilter => {
       userSelectedFilters.push(selectedFilter);
     });
- 
+
     return userSelectedFilters;
   }
-  
+
   public saveUserFilters(userSelectedFilters: string) {
     let userSelectedFiltersDto: UserSelectedFilters = {
       dashboardId: this.dashboardId,
       filterValues: userSelectedFilters
     };
-  
+
     this.dashboardService.saveUserFilters(userSelectedFiltersDto).subscribe(
-      (res:any) => {
-         
+      (res: any) => {
+
       },
       (error: any) => console.log("Error occurred getting User Filters Data: ", error),
-      () => {}
+      () => { }
     );
-  
+
   }
 
   public getFilterData(filters, userSelectedFilterValues) {
     let userSelectedfiltersArr = this.processUserSelectedFilters(userSelectedFilterValues);
 
-      // this.cardsService.generateFilterDetailList(filters, userSelectedfiltersArr).subscribe(
-      //   (data: any) => {
-      //     if (data) { 
-      //       this.filterDetails = data
-      //     }
-      //     else  { 
-      //       this.filtersAvailable = false; 
-      //     }
-      //     this.filtersLoadingDone= true;
-      //   }
-      // )
-      this.cardsService.fetchAllProjectFilters(filters, userSelectedfiltersArr).subscribe(
-        (data: any) => {
-          if (data) { 
-            this.filterDetails = data
-          }
-          else  {
-            this.filtersAvailable = false; 
-          }
-          this.filtersLoadingDone= true;
+    // this.subs.push(this.cardsService.generateFilterDetailList(filters, userSelectedfiltersArr).subscribe(
+    //   (data: any) => {
+    //     if (data) { 
+    //       this.filterDetails = data
+    //     }
+    //     else  { 
+    //       this.filtersAvailable = false; 
+    //     }
+    //     this.filtersLoadingDone= true;
+    //   }
+    // )
+    this.subs.push(this.cardsService.fetchAllProjectFilters(filters, userSelectedfiltersArr).subscribe(
+      (data: any) => {
+        if (data) {
+          this.filterDetails = data
         }
-      )
+        else {
+          this.filtersAvailable = false;
+        }
+        this.filtersLoadingDone = true;
+      }
+    ))
   }
 
   public getCardFiltersandReadyCards(cards) {
-    //this.cards =this.cardsService. generateCardDetails(cards);
+    //this.cards =this.subs.push(this.cardsService. generateCardDetails(cards);
 
-    this.dashboardService.getCardFilters().subscribe(res => {
-      if(res.data) {
+    this.subs.push(this.dashboardService.getCardFilters().subscribe(res => {
+      if (res.data) {
         //this.dashboardCardFiltersData = res.data;
 
         this.dashboardCardFiltersData = [];
         res.data.forEach(cardFilter => {
           let dropdownData: Dropdown = {
-          displayKey: cardFilter.display,
-          valueKey: cardFilter.value,
-        };
-        this.dashboardCardFiltersData.push(dropdownData);
-        }); 
+            displayKey: cardFilter.display,
+            valueKey: cardFilter.value,
+          };
+          this.dashboardCardFiltersData.push(dropdownData);
+        });
 
         this.cards = this.cardsService.generateCardDetails(cards, this.dashboardCardFiltersData, this.filterString);
       }
 
-      this.cardsLoadingDone= true;
-    });  
+      this.cardsLoadingDone = true;
+    }));
   }
 
   selected(e) {
@@ -257,8 +257,8 @@ export class IndexComponent implements OnInit {
       filtersWithValues.forEach((sel) => {
         filtersArray.push(
           sel.elementTypeName +
-            '=' +
-            sel.dropdown.map((dd) => dd.valueKey).join('!@!')
+          '=' +
+          sel.dropdown.map((dd) => dd.valueKey).join('!@!')
         );
       });
 
@@ -274,65 +274,67 @@ export class IndexComponent implements OnInit {
     this.metricsAvailable = false;
     const selectedFilters: string = this.createFilterString();
     this.cardsComponent.sendFilterString(selectedFilters);
-     this.filterString = selectedFilters;
-     this.metricsAvailable = true;
+    this.filterString = selectedFilters;
+    this.metricsAvailable = true;
 
-     this.saveUserFilters(selectedFilters);
-     this.dashboardService.postCacheSettings(this.dashboardId).subscribe(
-      (res: any) =>{
-       if (res.success) {
-     
-       }
-      },(error: any) => {
+    this.saveUserFilters(selectedFilters);
+    this.dashboardService.postCacheSettings(this.dashboardId).subscribe(
+      (res: any) => {
+        if (res.success) {
+
+        }
+      }, (error: any) => {
         console.log('Error occurred while clearing cache', error);
-       }
-    ); 
-    
+      }
+    );
+
   }
   displaySettings() {
-		let updateMetricDetailSubscription = null;
+    let updateMetricDetailSubscription = null;
 
     const dialogRef = this.dialog.open(UserSettingsComponent, {
-       width: '600px',
-       height: '570px',
-       panelClass: 'user-settings-dialog',
-       data: {filters: this.filterDetails, metrics: this.schemaMetrics, cards: this.cards, objectType: this.objectType},
-       disableClose: true
+      width: '600px',
+      height: '570px',
+      panelClass: 'user-settings-dialog',
+      data: { filters: this.filterDetails, metrics: this.schemaMetrics, cards: this.cards, objectType: this.objectType },
+      disableClose: true
     });
 
-		updateMetricDetailSubscription = dialogRef.componentInstance.updateMetricDetailEvent.subscribe((metric) => {
-			this.heroMetricsContainerComponent.updateMetricInList(metric);
-		});
+    updateMetricDetailSubscription = dialogRef.componentInstance.updateMetricDetailEvent.subscribe((metric) => {
+      this.heroMetricsContainerComponent.updateMetricInList(metric);
+    });
 
-    dialogRef.afterClosed().subscribe(result => 
-      {
-        if(updateMetricDetailSubscription !== null)
-        updateMetricDetailSubscription.unsubscribe();	
-      }
+    dialogRef.afterClosed().subscribe(result => {
+      if (updateMetricDetailSubscription !== null)
+        updateMetricDetailSubscription.unsubscribe();
+    }
     );
   }
 
-  getUserPreferences(){
+  getUserPreferences() {
     this.dashboardService.GetUserPreferences().subscribe(
-      (res:any) => {
+      (res: any) => {
         if (res.success) {
-            this.cardsService.setUserDateFormat(res.data.isDatesEU);
-            this.isDateEU = res.data.isDatesEU;
+          this.cardsService.setUserDateFormat(res.data.isDatesEU);
+          this.isDateEU = res.data.isDatesEU;
         }
       }
     );
   }
 
-  getObjectType(){
+  getObjectType() {
     this.dashboardService.getObjectTypeNames(this.objectTypeIds).subscribe(
-      (res:any) => {
+      (res: any) => {
         this.objectType = res.data.find(t => t.objectTypeId === 1).objectTypeName;
       }
-    );    
+    );
   }
 
-  clearCacheClicked(){
-    this.dashboardService.postCacheSettings(this.dashboardId).subscribe(() =>this.populateDashboardSchema);    
+  clearCacheClicked() {
+    this.dashboardService.postCacheSettings(this.dashboardId).subscribe(() => this.populateDashboardSchema);
   }
 
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DBkeys, HeaderService, SettingsService, StorageService, UserInfoService } from '@mango/core-shared/lib-core-shared';
-import { OAUTH_REDIRECT_QUERY_PARAM, SOURCE_APP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { OAUTH_REDIRECT_QUERY_PARAM, SOURCE_APP_QUERY_PARAM, SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { of } from 'rxjs';
 import { delay, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
@@ -44,8 +44,8 @@ export class InitSetupEffects {
             AppActions.setupContactRecord(),
             AppActions.setupUserInfo(),
             AppActions.setupHeader()]
-            // Disable loading session 
-            // sourceApp === 'v06' ? actionsToDispatch.push(AppActions.getGlobalSession()) : null
+          // Disable loading session 
+          // sourceApp === 'v06' ? actionsToDispatch.push(AppActions.getGlobalSession()) : null
           return of(...actionsToDispatch)
         })
       )
@@ -110,34 +110,13 @@ export class InitSetupEffects {
     () =>
       this.actions$.pipe(
         ofType(ROUTER_NAVIGATED),
-        filter((r: RouterNavigatedAction) => r.payload.routerState.url.toLocaleLowerCase().startsWith('/crem') ||
-          r.payload.routerState.url.toLocaleLowerCase().startsWith('/v06')),
-        switchMap((r: RouterNavigatedAction) => {
-          if (r.payload.routerState.url.toLocaleLowerCase().startsWith('/crem/forms/render-form')) {
-            of(this.facade.dispatchRenderFormEvent(r.payload.routerState.url))
-          }
-          else {
-            return this.facade.moduleId$.pipe(
-              //combine data into one object
-              mergeMap((currentModuleId: number) => {
-                return this.facade.renderFormLeftNavDisplayed$.pipe(
-                  map((rfLeftNavDisplayed: boolean) => { return { currentModuleId, rfLeftNavDisplayed }; })
-                );
-              }),
-              map((mappedObj: any) => {
-                const rootData = r.payload.routerState.root.data;
-                const newModuleId = rootData === undefined ||
-                  rootData === null ||
-                  rootData.moduleId === undefined ? undefined : rootData.moduleId;
-
-                //If the new module id equals the previous value there is no need to update the store by calling the action
-                //If the renderform left nav is displayed even if the module id is the same we need to load the left nav
-                if (newModuleId !== mappedObj.currentModuleId || mappedObj.rfLeftNavDisplayed) {
-                  this.facade.setModuleId(newModuleId);
-                }
-              }))
-          }
-        })),
-    { dispatch: false }
+        switchMap((r: RouterNavigatedAction) => SUB_LEFT_NEV_PAGES_URLS.some(pageUrl => r.payload.routerState.url.includes(pageUrl)) ? of(
+          AppActions.setCurrentRenderFormDocumentParams({ params: r.payload.routerState.url }),
+          AppActions.setShowSubLetNav({ show: true })
+        ) : of(
+          AppActions.setShowSubLetNav({ show: false }),
+          AppActions.setModuleId({ moduleId: r.payload.routerState.root.data.moduleId })
+        )
+        ))
   );
 }

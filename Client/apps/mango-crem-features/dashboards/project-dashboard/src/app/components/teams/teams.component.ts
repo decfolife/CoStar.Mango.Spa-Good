@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DxDataGridComponent } from 'devextreme-angular';
-import { SearchComponent } from '@mango/ui-shared/cosmos';
-import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { Router } from '@angular/router';
-import { CardsService } from '@project-dashboard/services/cards.service';
-import { Team, TeamMember} from '@mango/data-models/lib-data-models';
-import { TeamMembersComponent } from './team-members/team-members.component';
-import CheckBox from 'devextreme/ui/check_box';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { Team, TeamMember } from '@mango/data-models/lib-data-models';
+import { SearchComponent } from '@mango/ui-shared/cosmos';
+import { CardsService } from '@project-dashboard/services/cards.service';
+import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { DxDataGridComponent } from 'devextreme-angular';
 import { AddTeamComponent } from './add-team/add-team.component';
+import { TeamMembersComponent } from './team-members/team-members.component';
 
 @Component({
   selector: 'teams',

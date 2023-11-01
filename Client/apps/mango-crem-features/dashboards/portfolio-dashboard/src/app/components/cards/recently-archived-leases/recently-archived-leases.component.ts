@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { CardDetails } from '../../../models';
 import { PortfolioDashboardService } from '../../../services/portfolio-dashboard.service';
 import { PortfolioDataService } from '../../../services/portfolio-data.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../../../../mango/src/environments/environment.local';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'recently-archived-leases-card',
@@ -12,7 +13,7 @@ import { environment } from '../../../../../../../../mango/src/environments/envi
   styleUrls: ['./recently-archived-leases.component.scss']
 })
 
-export class RecentlyArchivedLeasesComponent implements OnInit {
+export class RecentlyArchivedLeasesComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
   private selectedFilters : string;
   @Output() cardDropEvent = new EventEmitter<any>();
@@ -21,6 +22,7 @@ export class RecentlyArchivedLeasesComponent implements OnInit {
   public isGridExpanded: boolean = false;
   @ViewChild("RecentlyArchivedLeasesGrid") dataGrid: DxDataGridComponent;
 
+  subs: Subscription[] = []
   constructor(
     private router: Router,
 		private portfolioDashboardService: PortfolioDashboardService,
@@ -30,10 +32,10 @@ export class RecentlyArchivedLeasesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.portfolioDataService.filterString$.subscribe(data => {
+    this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
       this.selectedFilters = data;
       this.getCardData();
-    });
+    }));
   }
 
   rowClick(e: any) {
@@ -57,11 +59,11 @@ export class RecentlyArchivedLeasesComponent implements OnInit {
   }
 
   getCardData() {
-    this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
+    this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
       (data: any) => {
         this.card.dispCard = true;
       }
-    );
+    ));
   }
 
   expandAllGridData(e: any) {
@@ -72,5 +74,8 @@ export class RecentlyArchivedLeasesComponent implements OnInit {
     this.dataGrid.instance.exportToExcel(false);
   }
 
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }
 

@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @angular-eslint/no-empty-lifecycle-method */
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
-import { environment } from '../../../../../../apps/mango/src/environments/environment.local';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../../../apps/mango/src/environments/environment.local';
 
 export interface linkObjects {
   category: string;
@@ -15,26 +14,21 @@ export interface linkObjects {
   templateUrl: 'shared-left-nav.component.html',
   styleUrls: ['shared-left-nav.component.scss'],
 })
-export class SharedLeftNavComponent implements OnChanges, OnInit {
+export class SharedLeftNavComponent implements OnChanges {
   @Input() navigationLinks: any[];
   public navObjs: linkObjects[];
   public expandNav: boolean = true;
   public isRestful: boolean;
   @Input() activeLink: string = null;
   @Output() navigateSpa: EventEmitter<SharedLeftNavLink> = new EventEmitter<SharedLeftNavLink>(null);
-  @Output() toActiveLink: EventEmitter<string> = new EventEmitter(); 
+  @Output() toActiveLink: EventEmitter<string> = new EventEmitter();
 
-  isSubleftnav: boolean = false
+  isSubleftnav$: Observable<boolean> = this.facade.showSubLeftNav$
   constructor(
-    private router: Router
+    private facade: MangoAppFacade
   ) { this.isRestful = environment.isRestful }
 
-  ngOnInit(): void {
-    // To refactor and add an `expanded` flag to the sub left nav API response
-    
-  }
   ngOnChanges(changes: SimpleChanges) {
-    this.isSubleftnav = this.router.url.includes('render-form')
     for (let propName in changes) {
       if (propName.toLowerCase() === 'navigationlinks') {
         this.getCategorizeLinks();
@@ -94,7 +88,7 @@ export class SharedLeftNavComponent implements OnChanges, OnInit {
     this.activeLink = navLink.name;
     this.toActiveLink.emit(this.activeLink);
     if (!environment.isRestful) {
-      window.location.href =  navLink.spaUrl ? `${environment.CAUrl}oauth/authorize?client_key=blank&contact_id=2&redirect_uri=${environment.mangoSpaUrl}/auth/validate?redirect_uri=${encodeURIComponent(navLink.spaUrl)}` : `/${navLink.linkUrl}`
+      window.location.href = navLink.spaUrl ? `${environment.CAUrl}oauth/authorize?client_key=blank&contact_id=2&redirect_uri=${environment.mangoSpaUrl}/auth/validate?redirect_uri=${encodeURIComponent(navLink.spaUrl)}` : `/${navLink.linkUrl}`
     } else {
       this.navigateSpa.emit(navLink)
     }

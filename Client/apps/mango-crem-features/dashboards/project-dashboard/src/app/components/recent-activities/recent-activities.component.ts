@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { Router } from '@angular/router';
 import { SearchComponent } from '@mango/ui-shared/cosmos';
+import { CardsService } from '@project-dashboard/services/cards.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { DxDataGridComponent } from 'devextreme-angular';
 import * as fileSaver from 'file-saver-es';
 import { environment } from '../../../../../../../mango/src/environments/environment.local';
-import { Router } from '@angular/router';
-import { CardsService } from '@project-dashboard/services/cards.service';
 
 @Component({
   selector: 'recent-activities',

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { Subscription } from 'rxjs';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
 
@@ -8,10 +9,10 @@ import { CardsService } from '../../../services/cards.service';
   templateUrl: './project-milestones.component.html',
   styleUrls: ['./project-milestones.component.scss']
 })
-export class ProjectMilestonesComponent implements OnInit {
+export class ProjectMilestonesComponent implements OnInit, OnDestroy {
 
   @Input() card: CardDetails;
-  private selectedFilters : string;
+  private selectedFilters: string;
   @Output() cardDropEvent = new EventEmitter<any>();
   @Output() rowClickEvent = new EventEmitter<any>();
   @Input() objectType: string;
@@ -19,15 +20,16 @@ export class ProjectMilestonesComponent implements OnInit {
 
   public checked: boolean = false;
 
+  subs: Subscription[] = []
   constructor(
     private cardsService: CardsService
   ) { }
 
   ngOnInit(): void {
-    this.cardsService.filterString$.subscribe(data => {
+    this.subs.push(this.cardsService.filterString$.subscribe(data => {
       this.selectedFilters = data;
       this.getCardData();
-    });
+    }));
   }
 
   rowClick(e: any) {
@@ -42,27 +44,27 @@ export class ProjectMilestonesComponent implements OnInit {
   searchFilter(e) {
     this.grid.instance.searchByText(e);
   }
-  
+
   getCardData() {
-    this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
+    this.subs.push(this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
       (data: any) => {
         this.card.dispCard = true;
       }
-    );
+    ));
   }
 
-  onKeyUpEvent(event){
+  onKeyUpEvent(event) {
     const targetElement = event.target as HTMLElement;
-    if(targetElement.nodeName.toLowerCase() =="input"){
+    if (targetElement.nodeName.toLowerCase() == "input") {
       targetElement.setAttribute('aria-label', 'Search Filter For:  ' + event.target.value);
     }
-}
+  }
 
-  
-  getProjectName(){
+
+  getProjectName() {
     return this.objectType + ' Name';
   }
-  
+
   adaAttr(e) {
     if (!e || !e.element) return; // Ensure that e.element exists
 
@@ -91,6 +93,9 @@ export class ProjectMilestonesComponent implements OnInit {
       observer.observe(button, { attributeFilter: ['class'] });
     });
   }
-  
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }
 
