@@ -2,14 +2,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AddBuildingModalComponent } from './add-building-modal.component';
-import { ButtonModule, ModalModule } from '@mango/ui-shared/lib-ui-elements'
+import { ButtonModule, ModalModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements'
 
 import {
+  DxButtonModule,
   DxSelectBoxModule,
   DxTextAreaModule,
   DxDateBoxModule,
   DxFormModule,
-  DxLoadPanelModule
+  DxLoadPanelModule,
 } from 'devextreme-angular';
 
 @NgModule({
@@ -21,7 +22,9 @@ import {
     DxDateBoxModule,
     DxFormModule,
     ModalModule,
-    DxLoadPanelModule
+    DxLoadPanelModule,
+    DropdownModule,
+    DxButtonModule
   ],
   declarations: [AddBuildingModalComponent],
 })

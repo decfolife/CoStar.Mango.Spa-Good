@@ -13,69 +13,85 @@
 			</h4>
 			<div class="section">
 				<div class="section--border"></div>
+				<form id="modal">
 
-				<!-- todo: build out ui -->
-				<div id="modal">
-					<dx-form id="form">
-						<dxi-item itemType="group" cssClass="first-group" [colCount]="4">
-							<dxi-item>
-								<div class="form-avatar"></div>
-							</dxi-item>
+					<dx-form id="form" validationGroup="centerForm">
 
-							<dxi-item itemType="group" [colSpan]="3">
+						<dxi-item itemType="group" cssClass="centerForm" [colCount]="1">
+
+							<dxi-item itemType="group">
+
 								<dxi-item dataField="Portfolio" editorType="dxSelectBox"
-									[editorOptions]="{ items: portfolios, value: '' }"></dxi-item>
-								<dxi-item dataField="Center Name"></dxi-item>
-							</dxi-item>
-						</dxi-item>
+									[editorOptions]="{ items: portfolios, value: '' }">
+								</dxi-item>
 
-						<dxi-item itemType="group" cssClass="second-group" [colCount]="3">
-							<dxi-item itemType="group">
+								<dxi-item dataField="Center Name">
+									<dxi-validation-rule type="required" message="You must enter a Center Name.">
+									</dxi-validation-rule>
+								</dxi-item>
+
 								<dxi-item dataField="Country" editorType="dxSelectBox"
-									[editorOptions]="{ items: countries, value: '' }"></dxi-item>
+									[editorOptions]="{ items: countries, value: '' }">
+								</dxi-item>
+
 								<dxi-item dataField="Street Address"></dxi-item>
+
 								<dxi-item dataField="City"></dxi-item>
-							</dxi-item>
 
-							<dxi-item itemType="group">
 								<dxi-item dataField="State" editorType="dxSelectBox"
-									[editorOptions]="{ items: states }"></dxi-item>
+									[editorOptions]="{ items: states }">
+								</dxi-item>
+
 								<dxi-item dataField="ZipCode"></dxi-item>
+
 								<dxi-item dataField="Template" editorType="dxSelectBox"
-									[editorOptions]="{ items:[ 'Center', 'Building'] }"></dxi-item>
+									[editorOptions]="{ items:[ 'Center', 'Building'] }">
+									<dxi-validation-rule type="required"
+										message="You must enter a template"></dxi-validation-rule>
+								</dxi-item>
+
+								<dxi-item dataField="Sub Group" editorType="dxSelectBox"
+									[editorOptions]="{ items:[ 'Here there', 'be dragons'] }">
+								</dxi-item>
+
+								<dxi-item dataField="Hierarchy" editorType="dxSelectBox"
+									[editorOptions]="{ items:[ 'Here there', 'be dragons'] }">
+								</dxi-item>
+
 							</dxi-item>
 
-							<dxi-item itemType="group">
-								<dxi-item dataField="Sub Group" editorType="dxSelectBox"
-									[editorOptions]="{ items:[ 'Here there', 'be dragons'] }"></dxi-item>
-								<dxi-item dataField="Hierarchy" editorType="dxSelectBox"
-									[editorOptions]="{ items:[ 'Here there', 'be dragons'] }"></dxi-item>
+						</dxi-item>
+
+						<dxi-item itemType="group" cssClass="footerControls" [colCount]="4">
+
+							<dxi-item>
+								<crem-button type="primary" id="add_building_modal__cancel_btn"
+									(click)="validateForm($event)">
+									Launch
+								</crem-button>
+							</dxi-item>
+
+							<dxi-item>
+								<crem-button type="secondary" id="add_building_modal__cancel_btn"
+									(click)="validateForm($event)">
+									Save</crem-button>
+							</dxi-item>
+
+							<dxi-item>
+								<crem-button type="secondary" id="add_building_modal__cancel_btn"
+									(click)="validateForm($event)">
+									Save and New</crem-button>
+							</dxi-item>
+
+							<dxi-item>
+								<crem-button type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
+									Cancel</crem-button>
 							</dxi-item>
 						</dxi-item>
+
 					</dx-form>
-				</div>
-
-
+				</form>
 			</div>
 		</div>
 	</div>
-	<!--  -->
-
-	<div modalFooter class="footer-content">
-		<div id="add_building_modal__modal_buttons" class="footerRightControls">
-			<crem-button [disabled]="loading" type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
-				Cancel</crem-button>
-			<crem-button [disabled]="loading" type="secondary" id="add_building_modal__save_btn">
-				Save</crem-button>
-			<crem-button [disabled]="loading" type="secondary" id="add_building_modal__save_and_new_btn">
-				Save & New</crem-button>
-			<crem-button [disabled]="loading" type="primary" id="add_building_modal__launch_btn"> Launch </crem-button>
-		</div>
-	</div>
 </crem-modal>
-
-
-<!-- todo: add logic for loading pane -->
-<!-- <dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" [showIndicator]="true"
-			[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel> -->
-<!--  -->

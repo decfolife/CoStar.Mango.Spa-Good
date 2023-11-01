@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {PortfolioDashboardService} from '@portfolio-dashboard/services/portfolio-dashboard.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Service } from './add-building-modal.service';
-import notify from 'devextreme/ui/notify';
+import { DxFormComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'mango-add-building-modal',
@@ -13,6 +12,9 @@ export class AddBuildingModalComponent implements OnInit{
   public loading = true;
   public contentVisible = true;
   public modalTitle: string;
+  
+  @ViewChild(DxFormComponent) form: DxFormComponent;
+
 
   positions: string[];
 
@@ -24,9 +26,7 @@ export class AddBuildingModalComponent implements OnInit{
 
   constructor(
     public service: Service,
-    public dialogRef: MatDialogRef<AddBuildingModalComponent>,
-    private dashboardService: PortfolioDashboardService,
-
+    public dialogRef: MatDialogRef<AddBuildingModalComponent>
   ) {
     this.states = service.getStates();
     this.portfolios = service.getPortfolios();
@@ -44,5 +44,9 @@ export class AddBuildingModalComponent implements OnInit{
 
   public close() {
       this.dialogRef.close();
+  }
+
+  public validateForm(e: any){
+    this.form.instance.validate()
   }
 }
