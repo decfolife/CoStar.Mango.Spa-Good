@@ -1,16 +1,7 @@
 <crem-modal modalId="add_building_modal__add_modal" modalTitleId="add_building_modal__create_project"
 	[modalTitle]="'Title'" closeIconVisible="true" [customFooter]="true">
 	<div modalContent class="body-content">
-
-		<!-- todo: add logic for loading pane -->
-		<!-- 	<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" [showIndicator]="true"
-			[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel> -->
-		<!--  -->
-
 		<div id="ngifloading">
-			<h4 id="ifTitle">
-				Title
-			</h4>
 			<div class="section">
 				<div class="section--border"></div>
 				<form id="modal">
@@ -22,7 +13,9 @@
 							<dxi-item itemType="group">
 
 								<dxi-item dataField="Portfolio" editorType="dxSelectBox"
-									[editorOptions]="{ items: portfolios, value: '' }">
+								[editorOptions]="{ items: portfolioDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName',  onValueChanged:onPortFolioValueChanged}">
+								<dxi-validation-rule type="required"
+										message="You must select a portfolio"></dxi-validation-rule>
 								</dxi-item>
 
 								<dxi-item dataField="Center Name">
@@ -31,31 +24,33 @@
 								</dxi-item>
 
 								<dxi-item dataField="Country" editorType="dxSelectBox"
-									[editorOptions]="{ items: countries, value: '' }">
+								[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'CountryID', displayExpr: 'Country', onValueChanged:onCountryChanged }">
 								</dxi-item>
 
 								<dxi-item dataField="Street Address"></dxi-item>
 
 								<dxi-item dataField="City"></dxi-item>
 
-								<dxi-item dataField="State" editorType="dxSelectBox"
-									[editorOptions]="{ items: states }">
+								<dxi-item  [visible]="!enableStateTextBox"  dataField="State" editorType="dxSelectBox"
+								[editorOptions]="{ dataSource: stateDropdownItem, valueExpr: 'StateID', displayExpr: 'State' }">
 								</dxi-item>
+
+								<dxi-item [visible]="enableStateTextBox" dataField="State"></dxi-item>
 
 								<dxi-item dataField="ZipCode"></dxi-item>
 
 								<dxi-item dataField="Template" editorType="dxSelectBox"
-									[editorOptions]="{ items:[ 'Center', 'Building'] }">
+								[editorOptions]="{ dataSource: templateDropdownItem, valueExpr: 'ObjectTypeTypeID', displayExpr: 'ObjectTypeTypeName' }">
 									<dxi-validation-rule type="required"
-										message="You must enter a template"></dxi-validation-rule>
+										message="You must select a template"></dxi-validation-rule>
 								</dxi-item>
 
 								<dxi-item dataField="Sub Group" editorType="dxSelectBox"
-									[editorOptions]="{ items:[ 'Here there', 'be dragons'] }">
+								[editorOptions]="{ dataSource: subGroupDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
 								</dxi-item>
 
 								<dxi-item dataField="Hierarchy" editorType="dxSelectBox"
-									[editorOptions]="{ items:[ 'Here there', 'be dragons'] }">
+								[editorOptions]="{ dataSource: hierarchyDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
 								</dxi-item>
 
 							</dxi-item>
