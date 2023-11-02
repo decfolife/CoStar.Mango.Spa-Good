@@ -274,7 +274,7 @@ export class UserService {
   }
 
   generateApiKey(): Observable<any> {    
-    const url = `${this.env.appUrls.authentication}/serviceaccount/createclientapikey`;
+    const url = `${this.env.appUrls.authentication}/serviceaccount/createapikey`;
     const body = { }
      return this.http.post(url, body).pipe<string>(
       tap( (response: any) => {
