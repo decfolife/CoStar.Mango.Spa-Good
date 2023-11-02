@@ -47,7 +47,6 @@
       ],
       "@lease-alerts/*": ["apps/mango-crem-features/alerts/src/app/*"],
       "@list-pages/*": ["apps/mango-crem-features/list-pages/src/app/*"],
-      "@mango/auth": ["libs/auth/src/index.ts"],
       "@mango/core-shared": ["libs/core-shared/src/index.ts"],
       "@mango/core-shared/lib-core-shared": ["libs/core-shared/src/index.ts"],
       "@mango/data-models/lib-data-models": [

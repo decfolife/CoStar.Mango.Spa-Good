@@ -1,7 +1,6 @@
 {
   "version": 2,
   "projects": {
-    "auth": "libs/auth",
     "core-shared": "libs/core-shared",
     "data-models-lib-data-models": "libs/data-models/lib-data-models",
     "forms-shared": "libs/forms-shared",

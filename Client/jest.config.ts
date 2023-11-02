@@ -21,7 +21,6 @@ export default {
     '<rootDir>/apps/mango-crem-features/start-page-selection',
     '<rootDir>/apps/mango-crem-features/user-maintenance',
     '<rootDir>/apps/mango/crem-features/central-auth',
-    '<rootDir>/libs/auth',
     '<rootDir>/libs/core-shared',
     '<rootDir>/libs/data-models/lib-data-models',
     '<rootDir>/libs/ui-shared/cosmos',
