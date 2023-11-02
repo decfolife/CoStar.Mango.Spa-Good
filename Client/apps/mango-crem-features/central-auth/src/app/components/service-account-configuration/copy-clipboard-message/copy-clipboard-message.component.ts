@@ -24,7 +24,6 @@ export class CopyClipboardMessageComponent {
 
   copyClipboard() {
     navigator.clipboard.writeText(this.apiKey);
-
     this.info = "Copied to clipboard";
   }
 

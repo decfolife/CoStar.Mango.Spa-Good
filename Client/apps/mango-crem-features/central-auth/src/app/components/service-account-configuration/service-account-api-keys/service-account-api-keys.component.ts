@@ -47,9 +47,9 @@ export class ServiceAccountApiKeysComponent implements OnInit {
       width: '600px',
       panelClass: 'client-delivery-modal',
       data: {
-        msg: "This will generate a new API Key and replace the existing one, Are you sure you want to continue?",
+        msg: "This will generate a new API Key and replace the existing one. Are you sure you want to continue?",
         confirmButtonText: "Yes",
-        title: "Generate ApiKey Confirmation"
+        title: "Generate API Key Confirmation"
       },
     });
     
