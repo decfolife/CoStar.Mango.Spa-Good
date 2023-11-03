@@ -57,8 +57,8 @@ export class TeamsComponent implements OnInit {
 
   addTeam() {
     let dialogRef = this.dialog.open(AddTeamComponent, {
-      height: '500px',
-      width: '700px',
+      height: '600px',
+      width: '2000px',
       panelClass: 'AddTeamModal',
       data: { team: "What Team?" 
       },

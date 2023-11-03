@@ -1,9 +1,130 @@
 <crem-modal
 [modalTitle] = "modalTitle"
 [closeIconVisible] = "closeButton"
+[primaryFooterButtonText]="'Save'"
+[closeOrCancelButtonText]="'Cancel'" 
+(primaryButtonAction)="saveTeam()"
 [modalId] = "modalId"
 >
-<div modalContent>
-  Add Team Works
+<div modalContent class="addTeamModal">
+  <div class="at-teamName">
+    <h3>Team Name <span class="at-required" aria-label="required">*</span></h3>
+    <div class="at-search">
+      <cs-text-field class="at-textInput"
+        type="text"
+        formControlName="teamName"
+        [placeholder]="'Team Name'"
+        [required]="true"
+        (onChange)="teamNameChange($event)"
+        required>
+      </cs-text-field>
+    </div>
+  </div>
+  <div class="at-members">
+    <h3>Members</h3>
+    <div id="container">
+      <dx-drop-down-box 
+          class="at-membersDropDown"
+          [(opened)]="isDropDownBoxOpened" 
+          (onInput)="searchTeamMembers($event)"
+          [acceptCustomValue]="true"
+          [openOnFieldClick]="false"
+      >
+          <dx-list 
+              class="at-membersList"
+              [dataSource]="filteredMembers" 
+              itemTemplate="membersListTemplate" 
+          >
+            <div *dxTemplate="let member of 'membersListTemplate'">
+                <button aria-label="Add Member" class="btn btn-link addMemberButton" [disabled]="member.added"
+                (click)="addMember(member);$event.preventDefault()">
+                <fa-icon [icon]="faCirclePlus" ></fa-icon>
+                </button>  
+              <span class="at-memberData">
+                <span class=at-memberName>{{member.Name}}</span>
+                <span class="at-company"> - {{member.Company}}</span>
+                <span class="at-email"> - {{member.Email}}</span>
+              </span>
+            </div>
+          </dx-list>
+      </dx-drop-down-box>
+    </div>
+  </div>
+  <div class="at-selectedMembers">
+    <div class="at-info-remove">
+      <crem-button type="secondary" (click)="removeMembers(); $event.preventDefault();">
+        <fa-icon [icon]="faCircleMinus" ></fa-icon>
+        <span >Remove</span>
+      </crem-button>
+    </div>
+    <div id="at-selectedMembers-container">
+      <div class="at-selectedMembers-dataGrid-wrapper"> 
+        <dx-data-grid class="at-selectedMembers-data-grid" class="addTeam-grid"
+          #SelectedMembersGrid
+          [showColumnLines]="false"
+          [showRowLines]="false"
+          [showBorders]="false"
+          [rowAlternationEnabled]="true"
+          [allowColumnResizing]="true"
+          columnResizingMode="widget"
+          [allowColumnReordering]="true"
+          [columnAutoWidth]="false"
+          [dataSource]="teamMembers"
+          keyExpr="memberId"
+          [width]="'100%'"
+          [wordWrapEnabled]="true"
+          (onContentReady)="updateDimentions()"
+        >
+          <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+          <dxo-sorting mode="multiple"></dxo-sorting> 
+          <dxo-paging [enabled]="false"></dxo-paging>
+
+          <dxo-selection 
+            selectAllMode="allPages"
+            showCheckBoxesMode="always"
+            mode="multiple">
+          </dxo-selection>
+
+          <dxo-editing
+            mode="row"
+            [allowUpdating]="true"
+            [allowDeleting]="true"
+            [allowAdding]="false"
+          >
+          </dxo-editing>
+
+          <dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+            [allowReordering]="false" [allowResizing]="false">
+          </dxi-column>
+          <dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
+          <dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
+          <dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
+          <dxi-column dataField="role" caption="Project Role" dataType="string"></dxi-column>
+          <dxi-column dataField="emailOn" caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
+          </dxi-column>
+          <dxi-column dataField="level" caption='Access Level' dataType="string"></dxi-column>
+          <dxi-column caption="" type="buttons" width="40" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+            [allowReordering]="false" [allowResizing]="false">
+            <dxi-button template="actionsMenuTemplate">
+              <div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
+                <button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" 
+                  *ngIf="!member.data.editMode"
+                  (click)="removeMembers();$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu">
+                  <fa-icon [icon]="faCircleMinus" ></fa-icon>
+                </button>
+              </div>
+            </dxi-button>		    	
+          </dxi-column>
+          <div *dxTemplate="let member of 'toggleTemplate'" >
+            <div class="emailToggle">
+              <mat-slide-toggle [checked]="member.data.emailOn"  (change)="emailtoggle($event)" aria-label="Email Notication">
+              </mat-slide-toggle>
+            </div>		
+          </div>
+        </dx-data-grid>
+      </div>
+
+    </div>
+  </div>
 </div>
 </crem-modal>

@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { DropdownModule, ButtonModule, LoaderModule, ModalModule } from '@mango/ui-shared/lib-ui-elements'
+import { ButtonModule, LoaderModule, ModalModule } from '@mango/ui-shared/lib-ui-elements'
 import { MatIconModule } from '@angular/material/icon';
-import { DxDataGridModule } from 'devextreme-angular';
+import { DxDataGridModule, DxDropDownBoxModule, DxListModule } from 'devextreme-angular';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatMenuModule } from '@angular/material/menu';
 import { TeamsComponent } from './teams.component';
 import { TeamsRoutingModule } from './teams-routing.module';
@@ -12,6 +13,7 @@ import { CardsService } from '@project-dashboard/services/cards.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TeamMembersComponent } from './team-members/team-members.component';
 import { AddTeamComponent } from './add-team/add-team.component';
+import { TextFieldModule } from '@mango/ui-shared/cosmos';
 
 @NgModule({
   declarations: [
@@ -23,14 +25,17 @@ import { AddTeamComponent } from './add-team/add-team.component';
     CommonModule,
     TeamsRoutingModule,
     SearchModule,
-    DropdownModule,   //******************see if you need this??
     ButtonModule,
     MatIconModule,
     DxDataGridModule,
+    FontAwesomeModule,
     MatMenuModule,
     MatSlideToggleModule,
     LoaderModule,
     ModalModule,
+    DxDropDownBoxModule,
+    DxListModule,
+    TextFieldModule,
   ],
   providers: [DashboardService, CardsService],
   exports: [TeamsComponent],

@@ -1,0 +1,43 @@
+.at-memberData {
+  pointer-events: none;
+  cursor: default;
+}
+
+fa-icon {
+  height: 20px;
+  width: 20px;
+  font-family: 'Open Sans', sans-serif;
+  color: black;
+  margin-right: 4px;
+  transform: translateY(2px);
+}
+
+.at-members {
+  margin-bottom: 40px;
+}
+
+.at-selectedMembers {
+  padding: 8px;
+  height: 290px;
+  width: 100%;
+
+  .at-info-remove{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+  }
+
+  #at-selectedMembers-container {
+    height: calc(100% - 40px);
+    .at-selectedMembers-dataGrid-wrapper {
+      height: 100%;
+    }
+
+    div.actionsMenuTemplate {
+      transform: translateY(6px);
+    }
+  }
+}
+
+	
+

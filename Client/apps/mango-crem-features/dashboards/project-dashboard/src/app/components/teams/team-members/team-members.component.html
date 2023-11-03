@@ -1,7 +1,7 @@
 <!-- <div>Team Member Details works!!!</div> -->
 <div id="teamsMembers-container">
 	<div class="teamMembers-dataGrid-wrapper"> 
-		<dx-data-grid class="teamsMembers-data-grid"
+		<dx-data-grid class="teamsMembers-data-grid" class="teamMembers-grid"
 			#TeamMembersGrid
 			[showColumnLines]="false"
 			[showRowLines]="false"
@@ -47,7 +47,7 @@
 			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
 			</dxi-column>
 			<dxi-column dataField="level" caption='Access Level' dataType="string"></dxi-column>
-			<dxi-column type="buttons" width="110" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
