@@ -3,7 +3,7 @@ import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
 import { MangoErrorHandler } from "@mango/core-shared/lib-core-shared";
 import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
 import { Observable, throwError } from "rxjs";
-import { catchError, switchMap } from "rxjs/operators";
+import { catchError, switchMap, take } from "rxjs/operators";
 import { CentralAuthFacade } from "../+state/facades";
 import { Router } from "@angular/router";
 
@@ -37,6 +37,7 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this.facade.accessToken$.pipe(
+      take(1),
       switchMap(token => {
         const headers = {
           'Content-Type': 'application/json',
