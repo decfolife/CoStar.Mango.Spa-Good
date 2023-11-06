@@ -25,7 +25,7 @@
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="teamsMoreMenu">				
 					<button mat-menu-item (click)="toggleExpand()"><span >Expand All/Collapse All</span></button>      
-					<button mat-menu-item >Export</button>                   
+					<button mat-menu-item (click)="exportToFile()">Export</button>                   
 				</mat-menu>	 
 			</div>
 			<div class="addTeams">

@@ -8,6 +8,9 @@ import { DashboardService } from '@project-dashboard/services/dashboard.service'
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AddEditTeamComponent } from './add-edit-team/add-edit-team.component';
 import { TeamMembersComponent } from './team-members/team-members.component';
+import * as ExcelJS from 'exceljs';
+import { Buffer, Workbook } from 'exceljs';
+import { saveAs } from 'file-saver-es';
 
 @Component({
   selector: 'teams',
@@ -115,4 +118,86 @@ export class TeamsComponent implements OnInit {
     this.teamsGrid.instance.searchByText(this.searchText);
   }
 
+  exportToFile() {
+    let excelFileName = "Teams.xlsx";
+    var workbook = new ExcelJS.Workbook();
+    var worksheet = workbook.addWorksheet('Teams');
+    //worksheet.outlineProperties = {summaryBelow: false};
+    
+    let masterRows = [];
+    this.teams.forEach((value, index) => {
+      masterRows.push({ rowIndex: index, data: value });
+    });
+    
+    const borderStyle = { style: "thin", color: { argb: "FF7E7E7E" } };
+    const insertRow = (currentIndex, outlineLevel) => {
+      const row = worksheet.insertRow(currentIndex, [], 'n');
+      
+      for(var j = worksheet.rowCount + 1; j > currentIndex; j--) {
+        worksheet.getRow(j).outlineLevel = worksheet.getRow(j - 1).outlineLevel;
+      }
+      row.outlineLevel = outlineLevel;
+      return row;
+    }
+
+    let rowIndex = 1;
+    const mainCaptions = ["Team ID", "Name", "Members", "Modified By", "Modified Date", "Created By", "Created Date", "Rights"];
+    let row = insertRow(rowIndex, 1);
+    mainCaptions.forEach((mainCaption, currentColumnIndex) => {
+      Object.assign(row.getCell(currentColumnIndex+1), {
+        value: mainCaption,
+        font: { bold: true }
+      });
+    });
+    
+    for(var i = 0; i < masterRows.length; i++) {
+      rowIndex++;
+      let row = insertRow(rowIndex, 1);
+      
+      let teamData = this.teams.find((item) => item.teamId === masterRows[i].data.teamId);
+      const mainColumns = ["teamId", "teamName", "members", "modifiedBy", "modifiedDate", "createdBy", "createdDate", "securityLevel"];
+
+      mainColumns.forEach((columnName, currentColumnIndex) => {
+        Object.assign(row.getCell(currentColumnIndex+1), {
+          value: teamData[columnName]
+        });
+      });
+
+      rowIndex++;
+      row = insertRow(rowIndex, 2);
+      Object.assign(row.getCell(1), {
+        value: 'Team Members',
+        font: { bold: true }
+      });
+
+      rowIndex++;
+      row = insertRow(rowIndex, 2);
+      const captions = ["Name", "Company", "Email", "Phone Number", "Role", "Email Notifications", "Access Level"];                    
+      captions.forEach((caption, currentColumnIndex) => {
+        Object.assign(row.getCell(currentColumnIndex+2), {
+          value: caption,
+          font: { bold: true },
+          border: { bottom: borderStyle, left: borderStyle, right: borderStyle, top: borderStyle }
+        });
+      });
+      
+      const columns = ["name", "company", "email", "phoneNumber", "role", "emailOn",  "level"];
+      this.teams.filter((team) => team.teamId === teamData.teamId)[0].teamMembers.forEach((teamMember, index) => {
+        rowIndex++;
+        row = insertRow(rowIndex, 2);
+
+        columns.forEach((columnName, currentColumnIndex) => {
+          Object.assign(row.getCell(currentColumnIndex+2), {
+            value: teamMember[columnName],
+            border: { bottom: borderStyle, left: borderStyle, right: borderStyle,top: borderStyle }
+          });
+        });
+      });
+    }
+      
+    workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
+      saveAs(new Blob([ buffer ], { type: 'application/octet-stream' }), excelFileName);
+    });
+  }
 }
+
