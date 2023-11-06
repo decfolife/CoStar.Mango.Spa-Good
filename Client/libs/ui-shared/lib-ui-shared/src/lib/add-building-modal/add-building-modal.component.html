@@ -46,11 +46,12 @@
 									message="You must select a template"></dxi-validation-rule>
 							</dxi-item>
 
-							<dxi-item dataField="tenantID" editorType="dxSelectBox"
+							<dxi-item dataField="Sub Group" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: subGroupDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
+								<dxi-validation-rule *ngIf="enableSubGroupDropDown" type="required" message="You must select a Sub group"></dxi-validation-rule>
 							</dxi-item>
 
-							<dxi-item dataField="hierarchy" editorType="dxSelectBox"
+							<dxi-item [visible]="enableHierachyDropDown" dataField="hierarchy" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: hierarchyDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
 							</dxi-item>
 

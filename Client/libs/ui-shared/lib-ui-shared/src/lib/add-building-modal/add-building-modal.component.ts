@@ -24,6 +24,8 @@ export class AddBuildingModalComponent implements OnInit {
   public stateDropdownItem: any = [];
   public subGroupDropdownItem: any = [];
   public templateDropdownItem: any = [];
+  public enableHierachyDropDown: any = [];
+  public enableSubGroupDropDown: any = [];
 
   @Output() isLoading = new EventEmitter();
   @ViewChild(DxFormComponent) form: DxFormComponent;
@@ -62,6 +64,20 @@ export class AddBuildingModalComponent implements OnInit {
     } else {
       this.buildModalTitle();
     }
+
+    this.formWizardService.getClientPreferenceByField("ClientHierarchyLevel").subscribe(
+      (result) => {
+        const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
+        this.enableHierachyDropDown = mappedValues?.some(value => value.toLowerCase().includes('building') || value.toLowerCase().includes('both'));
+      }
+    ); 
+
+    this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").subscribe(
+      (result) => {
+        const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
+        this.enableSubGroupDropDown = mappedValues?.some(value => value.toLowerCase().includes('-1') || value.toLowerCase().includes(' '));
+      }
+    ); 
   }
 
   ngAfterViewInit(): void {
@@ -127,7 +143,6 @@ export class AddBuildingModalComponent implements OnInit {
     });
   }
 
-  // button functions
   public validateForm(e: any) {
     this.form.instance.validate();
   }
