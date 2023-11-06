@@ -12,7 +12,6 @@ export class ToolbarComponent implements OnInit {
   isCostarStyle: boolean = false;
   envPopoverVisible: boolean = false;
   
-  selectedCustomer: UserSite;
 
   // chip items
   @Input() chipContent: string;
@@ -34,7 +33,6 @@ export class ToolbarComponent implements OnInit {
     //   }
     // });
     this.isCostarStyle = false;
-    this.selectedCustomer = this.userService.selectedSiteValue
   }
 
   toggleEnvironment() {}

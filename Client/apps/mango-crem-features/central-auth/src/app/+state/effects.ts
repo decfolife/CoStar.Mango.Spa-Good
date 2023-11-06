@@ -20,7 +20,7 @@ export class CentralAuthEffects {
         ofType(AppActions.LOG_OUT),
         map(_ => {
           this.userService.logout()
-          this.centralAuthFacade.setClientKey(null)
+          this.centralAuthFacade.setClient(null)
           this.centralAuthFacade.setContactId(null)
           this.centralAuthFacade.setUser(null)
           this.centralAuthFacade.setAccessToken(null)

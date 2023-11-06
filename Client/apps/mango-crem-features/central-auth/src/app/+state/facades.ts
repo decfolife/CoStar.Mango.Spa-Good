@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
+import { UserAuth, UserSite } from "@mango/data-models/lib-data-models";
 import { select, Store } from "@ngrx/store";
 import * as AppActions from './actions';
 import * as AppSelectors from './selectors';
-import { ContactRecord, UserAuth } from "@mango/data-models/lib-data-models";
 
 @Injectable()
 export class CentralAuthFacade {
@@ -10,7 +10,7 @@ export class CentralAuthFacade {
   isUserAuthenticated$ = this.store.pipe(select(AppSelectors.isUserAuthenticated));
   authorizationCode$ = this.store.pipe(select(AppSelectors.authorizationCode));
   redirectionUri$ = this.store.pipe(select(AppSelectors.redirectionUri));
-  clientKey$ = this.store.pipe(select(AppSelectors.clientKey));
+  client$ = this.store.pipe(select(AppSelectors.client));
   contactId$ = this.store.pipe(select(AppSelectors.contactId));
   accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
   user$ = this.store.pipe(select(AppSelectors.user));
@@ -29,8 +29,8 @@ export class CentralAuthFacade {
     this.store.dispatch(AppActions.setAccessToken({ accessToken }));
   }
 
-  setClientKey(clientKey: string) {
-    this.store.dispatch(AppActions.setClientKey({ clientKey }));
+  setClient(client: UserSite) {
+    this.store.dispatch(AppActions.setClient({ client }));
   }
 
   setContactId(contactId: number) {

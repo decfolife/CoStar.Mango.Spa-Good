@@ -1,10 +1,7 @@
-import { Component, EventEmitter, Inject, Output, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserService } from '@mango/core-shared';
-import { IS_CA_STANDALONE_APP, UserAuth } from '@mango/data-models/lib-data-models';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CentralAuthFacade } from '../../+state/facades';
-import { combineLatest, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'mango-central-auth',
@@ -12,15 +9,16 @@ import { switchMap } from 'rxjs/operators';
   styleUrls: ['./index.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class IndexComponent {
-  @Output() loginSuccess: EventEmitter<UserAuth> = new EventEmitter<UserAuth>()
+export class IndexComponent implements OnInit {
 
-  oauthUserFullyAuthenticated$ = combineLatest([this.centralAuthFacade.isUserAuthenticated$, this.centralAuthFacade.redirectionUri$]).pipe(switchMap(([userFullyAuthenticated, redirectionUri]) => of(!!userFullyAuthenticated && !!redirectionUri)))
+  user$ = this.centralAuthFacade.user$
 
-  constructor(private centralAuthFacade: CentralAuthFacade) { }
+  constructor(private centralAuthFacade: CentralAuthFacade, private router: Router) { }
 
-  userLoginSuccess(user: UserAuth): void {
-    this.centralAuthFacade.setUser(user)
-    this.loginSuccess.emit(user)
+  ngOnInit(): void {
+    this.user$.pipe(
+      filter(user => !!user),
+      tap(_ => this.router.navigate(['/customer-selection']))
+    ).subscribe()
   }
 }

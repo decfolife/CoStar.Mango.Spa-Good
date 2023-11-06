@@ -2,7 +2,6 @@ export * from './lib/lib-core-shared.module';
 export * from './lib/services/endpoint.service';
 export * from './lib/services/userinfo.service';
 
-export * from './lib/services/auth-guard.service';
 export * from './lib/services/jwt.service';
 export * from './lib/services/user.service';
 export * from './lib/services/data.service';

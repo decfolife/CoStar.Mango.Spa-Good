@@ -12,7 +12,13 @@ import {
   StorageService,
   UserService,
 } from '@mango/core-shared';
-import { CREM_FORCE_RELOGIN_URLS, Environment, IS_CA_STANDALONE_APP, OAUTH_REDIRECT_QUERY_PARAM, RUNNING_IN_MANGO_SPA } from '@mango/data-models/lib-data-models';
+import {
+  CREM_FORCE_RELOGIN_URLS,
+  Environment,
+  IS_CA_STANDALONE_APP,
+  OAUTH_REDIRECT_QUERY_PARAM,
+  RUNNING_IN_MANGO_SPA,
+} from '@mango/data-models/lib-data-models';
 import { LibExternalLibrariesModule } from '@mango/ui-shared/lib-external-libraries';
 import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
@@ -40,12 +46,10 @@ import { MangoNavigationService } from './services/navigation.service';
 import { CSPModuleInlineStyles } from './utils/content-security-policies/inline-styles';
 import { CustomSerializer } from './utils/custom-route-serializer';
 import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
+import { ValidateComponent } from './components/auth/validate/validate.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoadingScreenComponent,
-  ],
+  declarations: [AppComponent, LoadingScreenComponent, ValidateComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -65,7 +69,7 @@ import { GlobalSessionEffects } from './+state/app/effects/global-session.effect
       AuthenticationEffects,
       InitSetupEffects,
       NavigationEffect,
-      GlobalSessionEffects
+      GlobalSessionEffects,
     ]),
     StoreDevtoolsModule.instrument(),
     HttpClientModule,
@@ -76,7 +80,7 @@ import { GlobalSessionEffects } from './+state/app/effects/global-session.effect
     LibCoreSharedModule,
     LibExternalLibrariesModule,
     StoreRouterConnectingModule.forRoot({
-      serializer: CustomSerializer
+      serializer: CustomSerializer,
     }),
     ToastrModule.forRoot({
       timeOut: 8000,
@@ -101,26 +105,45 @@ import { GlobalSessionEffects } from './+state/app/effects/global-session.effect
     CentralAuthErrorHandler,
     MangoAppFacade,
     HeaderService,
-    MangoNavigationService
+    MangoNavigationService,
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(private router: Router, private facade: MangoAppFacade) {
-    this.router.events.pipe(
-      filter((e: RouterEvent) => e instanceof NavigationStart && e.url.includes('.asp')),
-      switchMap(e => combineLatest([of(e.url), this.facade.clientKey$])),
-      filter(([url, clientKey]) => !!url && !!clientKey),
-      map(([url, clientKey]) => {
-        if (url.includes('RenderForm')) {
-          const queryParams = url.split('?')
-          this.router.navigateByUrl(`/crem/forms/render-form?${queryParams[1]}`)
-        } else {
-          const forceRelogin = CREM_FORCE_RELOGIN_URLS.some(subUrl => url.includes(subUrl))
-          const newUrl = forceRelogin ? `${environment.CAUrl}oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}` : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}${url}`
-          window.location.href = newUrl
-        }
-      }),
-    ).subscribe()
+    this.router.events
+      .pipe(
+        filter(
+          (e: RouterEvent) =>
+            e instanceof NavigationStart && e.url.includes('.asp')
+        ),
+        switchMap((e) => combineLatest([of(e.url), this.facade.clientKey$])),
+        filter(([url, clientKey]) => !!url && !!clientKey),
+        map(([url, clientKey]) => {
+          if (url.includes('RenderForm')) {
+            const queryParams = url.split('?');
+            this.router.navigateByUrl(
+              `/crem/forms/render-form?${queryParams[1]}`
+            );
+          } else {
+            const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
+              url.includes(subUrl)
+            );
+            const newUrl = forceRelogin
+              ? `${
+                  environment.CAUrl
+                }oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace(
+                  '[CLIENT]',
+                  clientKey
+                )}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`
+              : `${environment.cremBaseUrl.replace(
+                  '[CLIENT]',
+                  clientKey
+                )}${url}`;
+            window.location.href = newUrl;
+          }
+        })
+      )
+      .subscribe();
   }
 }

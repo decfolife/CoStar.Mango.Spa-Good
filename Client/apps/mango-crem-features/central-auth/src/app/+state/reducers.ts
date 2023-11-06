@@ -1,9 +1,9 @@
-import { createReducer, on, Action } from '@ngrx/store';
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
+import { Action, createReducer, on } from '@ngrx/store';
 
+import { UserAuth, UserSite } from '@mango/data-models/lib-data-models';
 import * as AppActions from './actions';
 import { CentralAuthEntity } from './models';
-import { Client, ContactRecord, MangoSubApps, UserAuth, UserInfo } from '@mango/data-models/lib-data-models';
 
 export const CENTRAL_AUTH_FEATURE_KEY = 'central_auth';
 
@@ -12,7 +12,7 @@ export interface State extends EntityState<CentralAuthEntity> {
   user: UserAuth,
   accessToken: string,
   contactId: number,
-  clientKey: string,
+  client: UserSite,
   redirectionUri: string,
   authorizationCode: string
 }
@@ -27,8 +27,8 @@ export const initialState: State = appAdapter.getInitialState({
   loaded: false,
   user: null,
   accessToken: null,
+  client: null,
   contactId: null,
-  clientKey: null,
   redirectionUri: null,
   authorizationCode: null
 });
@@ -37,7 +37,7 @@ const appReducer = createReducer(
   initialState,
   on(AppActions.setUser, (state, { user }) => ({ ...state, error: null, user })),
   on(AppActions.setAccessToken, (state, { accessToken }) => ({ ...state, error: null, accessToken })),
-  on(AppActions.setClientKey, (state, { clientKey }) => ({ ...state, error: null, clientKey })),
+  on(AppActions.setClient, (state, { client }) => ({ ...state, error: null, client })),
   on(AppActions.setContactRecord, (state, { contactId }) => ({ ...state, error: null, contactId })),
   on(AppActions.setRedirectionUri, (state, { redirectionUri }) => ({ ...state, error: null, redirectionUri })),
   on(AppActions.retrieveAuthorizationCodeSuccess, (state, { authorizationCode }) => ({ ...state, error: null, authorizationCode })),

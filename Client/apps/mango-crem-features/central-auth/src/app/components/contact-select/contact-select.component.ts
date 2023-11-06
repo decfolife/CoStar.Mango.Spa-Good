@@ -1,15 +1,14 @@
-import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { DBkeys, SettingsService, StorageService, UserService, UtilitiesService } from '@mango/core-shared/lib-core-shared';
-import { CentralAuthErrorCodes, CentralAuthError, ContactRecord, ContactRecordSelection, Environment, GetContactRecordHTTPResponse, MultiClientLoginHttpRequest, MultiContactRecordQueryParams, UserSite, MangoErrorTypes, CentralAuthHttpError, IS_CA_STANDALONE_APP, ContactRecordHTTPObject, MANGO_SPA_DEFAULT_PAGE } from '@mango/data-models/lib-data-models';
+import { UserService } from '@mango/core-shared/lib-core-shared';
+import { CentralAuthError, ContactRecord, ContactRecordHTTPObject, ContactRecordSelection, GetContactRecordHTTPResponse, MangoErrorTypes, MultiClientLoginHttpRequest, MultiContactRecordQueryParams, UserSite } from '@mango/data-models/lib-data-models';
 import { DxLoadPanelComponent } from 'devextreme-angular';
-import { UserRecordsPopupComponent } from '../customer-select/user-records-popup/user-records-popup.component';
-import { CentralAuthErrorHandler } from '../../services/error-handler.service';
-import { CentralAuthURLService } from '../../services/url.service';
+import { EMPTY, Observable, Subscription, combineLatest, of } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../../+state/facades';
-import { first, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.dev';
-import { Subscription } from 'rxjs';
+import { CentralAuthURLService } from '../../services/url.service';
+import { UserRecordsPopupComponent } from '../customer-select/user-records-popup/user-records-popup.component';
 
 @Component({
   selector: 'mango-contact-select',
@@ -30,100 +29,79 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
   openCremInNewTab: boolean = true
   queryParams: MultiContactRecordQueryParams
 
-  constructor(private userService: UserService, @Inject(IS_CA_STANDALONE_APP) private isCAStandaloneApp: boolean = true, private settingsService: SettingsService, private storageService: StorageService, private env: Environment, private urlService: CentralAuthURLService, private router: Router, private centralAuthFacade: CentralAuthFacade) { }
+  constructor(private userService: UserService, private urlService: CentralAuthURLService, private router: Router, private centralAuthFacade: CentralAuthFacade) { }
 
-  async ngOnInit() {
-    const currentUser = this.userService.currentUserValue
-    if (!currentUser) {
-      return this.redirectToLogin()
-    }
-
+  ngOnInit() {
     this.queryParams = this.urlService.readMutliContactQueryParams()
     if (this.queryParams.showMultiContactPopup) {
       const clientSpecificKeyPresent = !!this.urlService.readClientSiteRouteParam()
-      await this.loadClientContactRecords(this.queryParams.clientKey.toLowerCase(), !clientSpecificKeyPresent, false)
+      this.subs.push(this.loadClientContactRecords(this.queryParams.clientKey?.toLowerCase(), !clientSpecificKeyPresent, false).subscribe())
     }
   }
 
-  async loginToClientSite(payload: MultiClientLoginHttpRequest): Promise<boolean> {
+  loginToClientSite(payload: MultiClientLoginHttpRequest): Observable<boolean> {
     this.isLoading = true
     const selectedContactRecord = this.contactRecords.find(c => c.contactID === payload.contactID)
     this.contactRecord.emit(selectedContactRecord)
     this.centralAuthFacade.setContactId(selectedContactRecord?.contactID)
-    try {
-      var token = await this.userService.loginToClientSite(payload);
-      this.centralAuthFacade.setAccessToken(token)
-      this.isLoading = false;
-      this.settingsService.clientKey$.next(payload.clientKey)
-      this.storageService.savePermanentData(payload.clientKey, DBkeys.CLIENT_KEY)
-      this.subs.push(this.centralAuthFacade.redirectionUri$.pipe(
-        first(),
-        map(redirectionUri => {
-          let newRedirectionUri = null
-          if (!redirectionUri) {
-            newRedirectionUri = `${environment.cremBaseUrl.replace('[CLIENT]', payload.clientKey)}/v06/login.aspx`
-            // newCremURL += this.openCremInNewTab ? '&mul=true' : '&mul=false'
-            this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
-          } else {
-            newRedirectionUri = decodeURIComponent(redirectionUri)
-            this.centralAuthFacade.setRedirectionUri(decodeURIComponent(redirectionUri))
-          }
-          this.router.navigate(['/oauth/authorize'], { queryParams: { redirect_uri: newRedirectionUri } })
-        })
-      ).subscribe())
-      return true;
-    } catch (errorResponse) {
-      this.isLoading = false;
-      return false;
-    }
+
+    return combineLatest([this.centralAuthFacade.redirectionUri$, this.userService.loginToClientSite(payload)]).pipe(
+      filter(([redirectionUri, authHttpResponse]) => !!authHttpResponse),
+      map(([redirectionUri, authHttpResponse]) => {
+        this.centralAuthFacade.setAccessToken(authHttpResponse.authToken)
+        let newRedirectionUri = null
+        if (!redirectionUri) {
+          newRedirectionUri = `${environment.cremBaseUrl.replace('[CLIENT]', payload.clientKey)}/v06/login.aspx`
+          // newCremURL += this.openCremInNewTab ? '&mul=true' : '&mul=false'
+          this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
+        } else {
+          newRedirectionUri = decodeURIComponent(redirectionUri)
+          this.centralAuthFacade.setRedirectionUri(decodeURIComponent(redirectionUri))
+        }
+        this.router.navigate(['/oauth/authorize'], { queryParams: { redirect_uri: newRedirectionUri } })
+        return true
+      })
+    )
   }
 
-  async loadClientContactRecords(clientKey: string, openCremInNewTab: boolean = true, openDefaultSelection: boolean = true): Promise<boolean> {
+  loadClientContactRecords(clientKey: string, openCremInNewTab: boolean = true, openDefaultSelection: boolean = true): Observable<any> {
     this.contactRecords = []
     this.isLoading = true
-    const { email } = this.userService.currentUserValue
     this.clientKey = clientKey
     this.openCremInNewTab = openCremInNewTab;
+    return this.centralAuthFacade.user$.pipe(
+      filter(user => !!user),
+      switchMap(user => combineLatest([of(user), this.centralAuthFacade.client$, this.userService.getContactRecords(user.email, clientKey)])),
+      switchMap(([user, client, response]) => {
+        this.contactRecords = response.contactRecords.map(this.contactRecordMapper)
+        const defaultContactId = this.getDefaultSelectedContactId(response)
+        if (!defaultContactId && response.contactRecords.length > 1 || !openDefaultSelection) {
+          this.initializeContactRecordsPopup(response);
+          return of(EMPTY);
+        }
+        const contactRecord = response.contactRecords[0];
+        if (!contactRecord && !user.isAutoProvisioned) {
+          throw new CentralAuthError(
+            {
+              message: `Access was not granted for ${clientKey}.`,
+              title: 'Error',
+              errorType: MangoErrorTypes.FATAL,
+              errorCode: ''
+            })
+        } else if (contactRecord && client.isSSOEnabled && contactRecord.requireSSO) {
+          window.open(client.ssoUri, "_blank");
+          return of(EMPTY);
+        }
 
-    try {
-      const contactRecordsHTTPResponse = await this.userService.getContactRecords(email, clientKey);
-      this.contactRecords = contactRecordsHTTPResponse.contactRecords.map(this.contactRecordMapper)
-      this.isLoading = false
+        let contactID = defaultContactId || contactRecord ? contactRecord.contactID : 0;
 
-      const defaultContactId = this.getDefaultSelectedContactId(contactRecordsHTTPResponse)
-      if (!defaultContactId && contactRecordsHTTPResponse.contactRecords.length > 1 || !openDefaultSelection) {
-        this.initializeContactRecordsPopup(contactRecordsHTTPResponse);
-        return true;
-      }
+        const payload: MultiClientLoginHttpRequest = { clientKey, contactID, contactRole: contactRecord?.userRoleName }
+        this.dxLoadPanel.instance.hide();
+        return this.loginToClientSite(payload);
+      }),
+    )
+    /*try {
 
-      var selectedSite = this.userService.selectedSiteValue
-
-      var contactRecord = contactRecordsHTTPResponse.contactRecords[0];
-      if (!contactRecord && !this.userService.currentUserValue.isAutoProvisioned) {
-        throw new CentralAuthError(
-          {
-            message: `Access was not granted for ${clientKey}.`,
-            title: 'Error',
-            errorType: MangoErrorTypes.FATAL,
-            errorCode: ''
-          })
-      } else if (contactRecord && selectedSite?.isSSOEnabled && contactRecord.requireSSO) {
-        window.open(selectedSite.ssoUri, "_blank");
-        return true;
-      }
-
-      let contactId = 0;
-      if (defaultContactId) {
-        contactId = defaultContactId;
-      } else {
-        contactId = contactRecord ? contactRecord.contactID : 0
-      }
-
-      const payload: MultiClientLoginHttpRequest = { clientKey: clientKey, contactID: contactId, contactRole: contactRecord?.userRoleName }
-      var success: boolean = await this.loginToClientSite(payload);
-      this.dxLoadPanel.instance.hide();
-
-      return success;
     } catch (error) {
       this.isLoading = false
       if (error.errorCode === CentralAuthErrorCodes.UserSiteNotActive) {
@@ -136,7 +114,7 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
       if (!CentralAuthErrorHandler.isHttpError(error)) {
         throw new CentralAuthError(error)
       }
-    }
+    }*/
   }
 
   redirectToLogin(): void {
@@ -146,7 +124,6 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Check if default contact record is selected and return the contactID
   getDefaultSelectedContactId(contactRecordsHTTPResponse: GetContactRecordHTTPResponse): number | null {
     const defaultContactRecord = contactRecordsHTTPResponse.contactRecords.find(c => c.isDefaultLoginContact === true)
     return defaultContactRecord ? defaultContactRecord.contactID : null
@@ -159,22 +136,28 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
     this.userRecordsPopupComponent.showPopup()
   }
 
-  async onContactRecordSubmit(selectedContactRecord: ContactRecordSelection): Promise<void> {
-    const selectedSite = this.userService.selectedSiteValue
-    if (selectedSite?.isSSOEnabled && selectedContactRecord.contactRecord.requireSSO) {
-      this.openClientSSOUri(selectedSite)
-    } else {
-      const { contactRecord, defaultSelection, isDefaultChanged } = selectedContactRecord
-      const payload: MultiClientLoginHttpRequest = {
-        contactID: contactRecord.contactID,
-        contactRole: contactRecord.userRoleName,
-        defaultLoginContactId: defaultSelection ? defaultSelection.contactID : 0,
-        clientKey: selectedSite ? selectedSite.clientKey : this.clientKey,
-        isDefaultLoginContact: isDefaultChanged
-      }
-
-      await this.loginToClientSite(payload);
-    }
+  onContactRecordSubmit(selectedContactRecord: ContactRecordSelection) {
+    this.centralAuthFacade.user$.pipe(
+      switchMap(user => this.userService.getClientSitesByUser(user.email)),
+      map((response) => response.userSites.find(client => client.clientKey.toLocaleLowerCase() === this.clientKey.toLocaleLowerCase())),
+      filter(client => !!client),
+      switchMap(client => {
+        this.centralAuthFacade.setClient(client)
+        if (client.isSSOEnabled && selectedContactRecord.contactRecord.requireSSO) {
+          return this.openClientSSOUri(client)
+        } else {
+          const { contactRecord, defaultSelection, isDefaultChanged } = selectedContactRecord
+          const payload: MultiClientLoginHttpRequest = {
+            contactID: contactRecord.contactID,
+            contactRole: contactRecord.userRoleName,
+            defaultLoginContactId: defaultSelection ? defaultSelection.contactID : 0,
+            clientKey: client.clientKey,
+            isDefaultLoginContact: isDefaultChanged
+          }
+          return this.loginToClientSite(payload);
+        }
+      })
+    ).subscribe()
   }
 
   contactRecordMapper(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
@@ -193,8 +176,9 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
     }
   }
 
-  openClientSSOUri(selectedSite: UserSite): void {
+  openClientSSOUri(selectedSite: UserSite): Observable<boolean> {
     window.location.href = selectedSite.ssoUri
+    return of(true)
   }
 
   ngOnDestroy(): void {

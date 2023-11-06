@@ -1,4 +1,5 @@
 export interface UserAuth {
+    authToken?: string
     email: string;
     hasMultipleSites?: boolean;
     clientKey: string;

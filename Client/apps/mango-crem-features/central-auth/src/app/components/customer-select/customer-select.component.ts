@@ -1,11 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { DBkeys, SettingsService, StorageService, UserService } from '@mango/core-shared/lib-core-shared';
-import { CentralAuthError, CentralAuthErrorCodes, ContactRecord, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE, UserSite } from '@mango/data-models/lib-data-models';
-import { CustomerSelectionListComponent } from '../customer-select/customer-selection-list/customer-selection-list.component';
-import { ToastrService } from 'ngx-toastr';
+import { CentralAuthError, CentralAuthErrorCodes, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE, UserSite } from '@mango/data-models/lib-data-models';
 import { Subscription } from 'rxjs';
+import { CentralAuthFacade } from '../../+state/facades';
 import { ContactSelectComponent } from '../contact-select/contact-select.component';
-import { Router } from '@angular/router';
+import { CustomerSelectionListComponent } from '../customer-select/customer-selection-list/customer-selection-list.component';
 
 @Component({
   selector: 'mango-customer-select',
@@ -17,18 +15,12 @@ export class CustomerSelectComponent {
   @ViewChild(ContactSelectComponent) contactSelectComponent: ContactSelectComponent
   @ViewChild(CustomerSelectionListComponent) customerSelectionListComponent: CustomerSelectionListComponent
   
-  contactRecords: ContactRecord[] = []
-  defaultContactRecordID: number
-  isLoading: boolean = false
   subs: Subscription[] = []
 
   constructor(
-    private userService: UserService, 
-    private router: Router,
-    private settingsService: SettingsService, 
-    private storageService: StorageService) { }
+    private centralAuthFacade: CentralAuthFacade) { }
 
-  async onClientSelected(client: UserSite): Promise<void> {
+  onClientSelected(client: UserSite){
     if (!client) {
       throw new CentralAuthError({
         message: UNEXPECTED_ERROR_MESSAGE,
@@ -38,20 +30,8 @@ export class CustomerSelectComponent {
       })
     }
 
-    this.userService.setSelectedSite(client);
-    if (client.isSSOEnabled && client.forceSSO) {
-      window.open(client.ssoUri, "_blank");
-      return;
-    }
-
-    var result = await this.contactSelectComponent.loadClientContactRecords(client.clientKey)
-    if (result === true) {
-      this.customerSelectionListComponent.reloadRecentSitesForUser();
-    }
-  }
-
-  contactRecordEvent(contactRecord: ContactRecord): void {
-    this.storageService.savePermanentData(contactRecord, DBkeys.CONTACT_RECORD)
-    this.settingsService.contactRecord$.next(contactRecord)
+    this.centralAuthFacade.setClient(client)
+    client.isSSOEnabled && client.forceSSO ? window.open(client.ssoUri, "_blank") : this.contactSelectComponent.loadClientContactRecords(client.clientKey).subscribe()
+    //this.customerSelectionListComponent.reloadRecentSitesForUser();
   }
 }

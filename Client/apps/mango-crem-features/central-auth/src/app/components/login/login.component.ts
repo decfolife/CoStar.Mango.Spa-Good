@@ -1,17 +1,15 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Optional, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService, SettingsService, StorageService, DBkeys } from '@mango/core-shared';
-import { CentralAuthHttpError, CentralAuthError, ClientSitesByUser, MangoErrorTypes, CentralAuthErrorCodes, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, UserAuth, ContactRecord } from '@mango/data-models/lib-data-models';
-import { AuthenticationService } from '../../services/authentication.service';
-import { ContactSelectComponent } from '../contact-select/contact-select.component';
-import { CentralAuthURLService } from '../../services/url.service';
-import { Subscription } from 'rxjs';
-import { CentralAuthErrorHandler } from '../../services/error-handler.service';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { noWhitespaceValidator } from '../reset-password/password-validator';
+import { SettingsService, UserService } from '@mango/core-shared';
+import { CentralAuthError, CentralAuthErrorCodes, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, UserAuth } from '@mango/data-models/lib-data-models';
+import { EMPTY, Observable, Subscription, combineLatest, of } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../../+state/facades';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { CentralAuthErrorHandler } from '../../services/error-handler.service';
+import { CentralAuthURLService } from '../../services/url.service';
+import { ContactSelectComponent } from '../contact-select/contact-select.component';
+import { noWhitespaceValidator } from '../reset-password/password-validator';
 
 @Component({
   selector: 'mango-login',
@@ -24,14 +22,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   @Output() loggedInUser: EventEmitter<UserAuth> = new EventEmitter<UserAuth>()
   @ViewChild(ContactSelectComponent) contactSelectComponent: ContactSelectComponent
 
-  public loading = false;
-  public loginForm: UntypedFormGroup;
-  public isErrored = false;
-  public showSSOButton = false;
-  public SSOUri: string;
-  public showPassword = false;
-  public isClientSiteActive = true;
-  
+  loading = false;
+  loginForm: UntypedFormGroup;
+  isErrored = false;
+  showSSOButton = false;
+  SSOUri: string;
+  showPassword = false;
+  isClientSiteActive = true;
+
   isClientSpecificLoginPage = false;
 
   subs: Subscription[] = []
@@ -41,19 +39,18 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private settingsService: SettingsService,
-    protected authentication: AuthenticationService,
     private router: Router,
     private _route: ActivatedRoute,
     private caErrorHandler: CentralAuthErrorHandler,
     private fb: UntypedFormBuilder,
     private urlService: CentralAuthURLService,
-    private storageService: StorageService,
     private centralAuthFacade: CentralAuthFacade,
-    @Optional() private facade: MangoAppFacade
   ) { }
 
   ngOnInit() {
-    this.createForm()
+    this.handleSSOClient().subscribe()
+
+    this.createLoginForm()
 
     const auth = this._route.snapshot.queryParamMap.get('auth')
     const forcelogout = this._route.snapshot.queryParamMap.get('caforcelogout')
@@ -78,53 +75,46 @@ export class LoginComponent implements OnInit, OnDestroy {
       })
     }
 
-    this.centralAuthFacade.isUserAuthenticated$.subscribe(isUserFullyAuthenticated => {
-      const currentUser = this.userService.currentUserValue
+    this.subs.push(combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.isUserAuthenticated$]).pipe(
+      filter(([user, isUserFullyAuthenticated]) => !!user),
+      switchMap(([user, isUserFullyAuthenticated]) => {
+        if (user?.isServiceAccount) {
+          return of(this.router.navigate(['service-account-configuration']))
+        }
+        if (user.hasMultipleSites && !isUserFullyAuthenticated) {
+          return of(this.router.navigate(['customer-selection']))
+        }
+        return of(EMPTY)
+      })
+    ).subscribe())
 
-      if (currentUser?.isServiceAccount) {
-        this.router.navigate(['service-account-configuration'], { relativeTo: this._route })
-      }
-
-      if (currentUser?.isAutoProvisioned || isUserFullyAuthenticated) {
-        this.router.navigate(['customer-selection'], { relativeTo: this._route })
-      }
-    })
-
-    this.getClientSsoSettings()
   }
 
 
-  getClientSsoSettings() {
+  handleSSOClient(): Observable<any> {
     const clientKey = this.urlService.readClientSiteRouteParam()
-
-    if (!clientKey) {
-      this.isClientSpecificLoginPage = false
-      return;
+    if (!!clientKey) {
+      this.isClientSpecificLoginPage = true
+      return this.settingsService.getClientSsoSettings(clientKey).pipe(
+        tap(response => {
+          if (response.forceSSO && response.isSSOEnabled) {
+            window.location.href = response.ssoUri
+          } else if (!response.forceSSO && response.isSSOEnabled) {
+            this.showSSOButton = true
+            this.SSOUri = response.ssoUri
+          }
+        })
+      )
+    } else {
+      return of(EMPTY)
     }
-
-    this.isClientSpecificLoginPage = true
-
-    this.settingsService.getClientSsoSettings(clientKey).subscribe(
-      (result) => {
-        if (result.forceSSO && result.isSSOEnabled) {
-          window.location.href = result.ssoUri
-        } else if (!result.forceSSO && result.isSSOEnabled) {
-          this.showSSOButton = true
-          this.SSOUri = result.ssoUri
-        }
-      },
-      (error: CentralAuthHttpError) => {
-        this.isErrored = true
-        this.isClientSiteActive = false
-      }
-    );
   }
 
   redirectToSSO = () => {
     window.location.href = this.SSOUri
   };
 
-  createForm() {
+  createLoginForm() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, noWhitespaceValidator]],
@@ -135,24 +125,15 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword
   };
 
-  getEmailErrorMsg = () => {
-    if (this.form.email.errors?.email) {
-      return 'Email is not valid'
-    }
-    else if (this.form.email.errors?.required) {
-      return 'Email is required'
-    }
+  getEmailErrorMsg() {
+    return this.form.email.errors?.email || this.form.email.errors?.required ? 'Email is not valid' : null
   };
 
-  hasValue = () => {
-    return !this.loginForm.get('password').hasError('required')
-  };
-
-  public resetPassword() {
-    this.router.navigate(['password-reset-request'], { relativeTo: this._route })
+  resetPassword() {
+    this.router.navigate(['password-reset-request'])
   }
 
-  login = () => {
+  login() {
     this.caErrorHandler.clearNotification()
     this.form.email.markAsTouched()
     this.form.password.markAsTouched()
@@ -171,67 +152,42 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: this.form.password.value,
       clientKey: this.urlService.readClientSiteRouteParam()
     };
-    
-    this.userService.login(credentials).subscribe(
-      () =>  this.loginSuccess(),
-      (error: CentralAuthHttpError) => {
-        this.loading = false
-        this.isErrored = true
-      }
-    );
+
+    this.subs.push(this.userService.login(credentials).pipe(
+      filter(user => !!user),
+      tap(user => this.loginSuccess(user))
+    ).subscribe(() => { }, _ => {
+      this.loading = false
+      this.isErrored = true
+    }))
   };
 
-  private loginSuccess() {
-    this.subs.push(this.userService.isAuthenticated.pipe(
-      filter(isUserAuthenticated => !!isUserAuthenticated),
-      switchMap(_ => this.centralAuthFacade.isUserAuthenticated$),
-      map(async isUserFullyAuthenticated => {
-        const user = this.userService.currentUserValue
-        this.centralAuthFacade.setAccessToken(this.userService.accessTokenValue)
-        this.loggedInUser.emit(user)
-        this.loading = false
-        this.isErrored = false 
-
-        if (user?.isServiceAccount) {
-          this.router.navigate(['service-account-configuration'], { relativeTo: this._route })
-          return
-        }
-
-        if (user.hasMultipleSites && !isUserFullyAuthenticated) {
-          this.router.navigate(['customer-selection'], { relativeTo: this._route })
-          return
-        }
-        await this.handleCustomerSpecificLogin()
-      })
-    ).subscribe())
+  loginSuccess(user: UserAuth): void {
+    this.loading = false
+    this.isErrored = false
+    this.centralAuthFacade.setUser(user)
+    this.centralAuthFacade.setAccessToken(user.authToken)
+    this.loggedInUser.emit(user)
+    //return this.handleCustomerSpecificLogin()
   }
 
   // If user is coming in through general login page AND only has 1 user site
   // If user is coming in through customer specific login page
-  async handleCustomerSpecificLogin() {
-    const selectedUser = this.userService.currentUserValue
-
-    this.subs.push(this.userService.getClientSitesByUser(selectedUser.email).subscribe(async (clientSites: ClientSitesByUser) => {
-      const selectedClient = clientSites.userSites.find(c => c.clientKey.toLowerCase() === selectedUser.clientKey.toLowerCase())
-      this.userService.setSelectedSite(selectedClient)
-      await this.contactSelectComponent.loadClientContactRecords(selectedUser.clientKey, !this.isClientSpecificLoginPage)
-    }))
+  handleCustomerSpecificLogin(): Observable<any> {
+    /*const selectedUser = this.userService.currentUserValue
+    return this.userService.getClientSitesByUser(selectedUser.email).pipe(
+      filter(clientSites => !!clientSites),
+      map((clientSites: ClientSitesByUser) => clientSites.userSites.find(c => c.clientKey.toLowerCase() === selectedUser.clientKey.toLowerCase())),
+      switchMap((selectedClient: UserSite) => {
+        this.userService.setSelectedSite(selectedClient)
+        return this.contactSelectComponent.loadClientContactRecords(selectedUser.clientKey, !this.isClientSpecificLoginPage)
+      })
+    )*/
+    return of()
   }
 
-  private validateForm(): boolean {
-    let isValid = true
-
-    if (this.form.email.errors?.required && this.form.password.errors?.required) {
-      isValid = false
-    } else if (this.form.email.errors?.required || this.form.email.errors?.email) {
-      isValid = false
-    } else if (this.form.password.errors?.required) {
-      isValid = false
-    } else if (this.form.password.errors?.whitespace) {
-      isValid = false
-    }
-
-    return isValid
+  validateForm(): boolean {
+    return (this.form.email.errors?.required && this.form.password.errors?.required) || (this.form.email.errors?.required || this.form.email.errors?.email) || (this.form.password.errors?.required) || (this.form.password.errors?.whitespace) ? false : true
   }
 
   getPasswordErrorMsg = () => {
@@ -242,11 +198,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       return 'Password is not valid';
     }
   };
-
-  contactRecordEvent(contactRecord: ContactRecord): void {
-    this.storageService.savePermanentData(contactRecord, DBkeys.CONTACT_RECORD)
-    this.settingsService.contactRecord$.next(contactRecord)
-  }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe())

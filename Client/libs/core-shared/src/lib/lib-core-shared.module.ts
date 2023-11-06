@@ -6,7 +6,6 @@ import { HttpTokenInterceptor } from './interceptors/http.token.interceptor';
 import {LibDataModelsModule} from '@mango/data-models/lib-data-models'
 
 import {
-  AuthGuard,
   JwtService,
   StorageService,
   UserService,
@@ -19,7 +18,6 @@ import { SanitizeHtmlPipe } from './pipes';
   imports: [CommonModule, LibDataModelsModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
-    AuthGuard,
     StorageService,
     UserService,
     JwtService,

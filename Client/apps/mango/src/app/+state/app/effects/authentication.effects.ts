@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { createEffect, Actions, ofType } from '@ngrx/effects';
-import * as AppActions from '../app.actions';
-import { concatMap, filter, map, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { DBkeys, HeaderService, JwtService, SettingsService, StorageService, UserService } from '@mango/core-shared/lib-core-shared';
-import { MangoAppFacade } from '../app.facade';
-import { combineLatest, of } from 'rxjs';
-import { ContactRecord, ContactRecordHTTPObject, OAuthTokenHTTPResponse, User, UserAuth } from '@mango/data-models/lib-data-models';
+import { DBkeys, HeaderService, JwtService, StorageService, UserService } from '@mango/core-shared/lib-core-shared';
+import { ContactRecord, ContactRecordHTTPObject, OAuthTokenHTTPResponse, UserAuth } from '@mango/data-models/lib-data-models';
 import { environment } from '@mangoSpa/src/environments/environment.local';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { combineLatest, of } from 'rxjs';
+import { concatMap, filter, map, switchMap, tap } from 'rxjs/operators';
+import * as AppActions from '../app.actions';
+import { MangoAppFacade } from '../app.facade';
 
 
 @Injectable()
@@ -16,7 +16,6 @@ export class AuthenticationEffects {
     private headerService: HeaderService,
     private storageService: StorageService,
     private userService: UserService,
-    private settingsService: SettingsService,
     private jwtService: JwtService,
     private router: Router,
     private facade: MangoAppFacade) { }
@@ -25,7 +24,7 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.SETUP_AUTHENTICATION),
-        map(_ => this.userService.currentUserValue),
+        map(_ => this.storageService.getData(DBkeys.USER_AUTH)),
         filter(authenticatedUser => !!authenticatedUser),
         switchMap(authenticatedUser => of(AppActions.setAuthenticatedUser({ user: authenticatedUser })))
       ),
@@ -46,23 +45,20 @@ export class AuthenticationEffects {
             isAutoProvisioned: this.userService.parseBool(decodedToken.isAutoProvisioned),
             isServiceAccount: this.userService.parseBool(decodedToken.isServiceAccount)
           }
-
           // Temporary until cookie auth is implemented in MangoSPA
           this.jwtService.saveToken(response.accessToken)
 
           this.userService.setAuth(user, response.accessToken)
-          this.settingsService.clientKey$.next(user.clientKey)
           this.storageService.savePermanentData(user.clientKey, DBkeys.CLIENT_KEY)
           return combineLatest([of(user), this.userService.getContactRecord(user.email, user.contactId, user.clientKey), of(redirectionUrl)])
         }),
         map(([user, contactRecordHttpResponse, redirectUrl]: [UserAuth, ContactRecordHTTPObject, string]) => {
           const contactRecord = this.userService.parseContactRecordHttpObject(contactRecordHttpResponse)
-          this.settingsService.contactRecord$.next(contactRecord)
           this.storageService.savePermanentData(contactRecord, DBkeys.CONTACT_RECORD)
           return [user, contactRecord, redirectUrl]
         }),
         switchMap(([user, contactRecord, redirectUrl]: [UserAuth, ContactRecord, string]) => {
-          let accessToken = this.userService.accessTokenValue
+          let accessToken = this.storageService.getData(DBkeys.JWT_TOKEN)
           this.router.navigateByUrl(decodeURIComponent(redirectUrl) || '/')
           return of(
             AppActions.setAuthenticatedUser({ user }),

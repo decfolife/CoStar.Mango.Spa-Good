@@ -1,8 +1,6 @@
-import { Component, OnInit, Optional } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserService } from '@mango/core-shared/lib-core-shared';
-import { faUserCircle, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Component } from '@angular/core';
+import { faArrowRightFromBracket, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { filter, map } from 'rxjs/operators';
 import { CentralAuthFacade } from '../../+state/facades';
 
 @Component({
@@ -10,21 +8,15 @@ import { CentralAuthFacade } from '../../+state/facades';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   faArrowRightFromBracket = faArrowRightFromBracket
   faUserCircle = faUserCircle
-  userEmail: string
+  userEmail$ = this.centralAuthFacade.user$.pipe(filter(user => !!user), map(user => user.email))
 
   constructor(
-    private userService: UserService, 
-    private router: Router, 
     private centralAuthFacade: CentralAuthFacade,
-    @Optional() private facade: MangoAppFacade
   ) { }
 
-  ngOnInit(): void {
-    this.userEmail = this.userService.currentUserValue.email
-  }
 
   logout(): void {
     this.centralAuthFacade.logout()

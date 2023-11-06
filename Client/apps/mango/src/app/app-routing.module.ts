@@ -1,29 +1,29 @@
 import { NgModule } from '@angular/core';
 import {
-  Routes,
-  RouterModule,
-  Router,
   ActivatedRoute,
-  NavigationEnd,
-  RouterEvent,
   NavigationCancel,
+  NavigationEnd,
   NavigationError,
   NavigationStart,
+  Router,
+  RouterEvent,
+  RouterModule,
+  Routes,
 } from '@angular/router';
 import { MangoSubApps } from '@mango/data-models/lib-data-models';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { MangoAppFacade } from './+state/app/app.facade';
+import { AppService } from './app.service';
+import { ValidateComponent } from './components/auth/validate/validate.component';
 import { CremComponent } from './components/crem-component';
 import { AuthGuard } from './services/guards/auth.guard';
-import { AppService } from './app.service';
-import { AppComponent } from './app.component';
 
 const routes: Routes = [
   // LOGIN
   {
     path: 'auth/validate',
-    component: AppComponent
+    component: ValidateComponent
   },
 
   // START PAGE

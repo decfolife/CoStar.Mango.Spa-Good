@@ -1,11 +1,8 @@
-import { ToastrService } from 'ngx-toastr';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '@mango/core-shared';
-import { CentralAuthError, MangoErrorTypes, CentralAuthErrorCodes, CentralAuthHttpError } from '@mango/data-models/lib-data-models';
-import { AuthenticationService } from '../../services/authentication.service';
-import { ActivatedRoute } from '@angular/router';
+import { CentralAuthError, CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes } from '@mango/data-models/lib-data-models';
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 
 @Component({
@@ -30,7 +27,6 @@ export class PasswordResetRequestComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    protected authentication: AuthenticationService,
     private router: Router,
     private caErrorHandler: CentralAuthErrorHandler,
     private fb: UntypedFormBuilder,

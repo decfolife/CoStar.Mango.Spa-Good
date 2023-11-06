@@ -15,9 +15,9 @@ export const accessToken = createSelector(
     (state: State) => state.accessToken
 );
 
-export const clientKey = createSelector(
+export const client = createSelector(
     getAppState,
-    (state: State) => state.clientKey
+    (state: State) => state.client
 );
 
 export const contactId = createSelector(
@@ -27,7 +27,7 @@ export const contactId = createSelector(
 
 export const isUserAuthenticated = createSelector(
     getAppState,
-    (state: State) => !!state.user && !!state.clientKey && !!state.contactId
+    (state: State) => !!state.user && !!state.client && !!state.contactId
 );
 
 export const redirectionUri = createSelector(

@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CentralAuthFacade } from '../../../+state/facades';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { EMPTY, Subscription, combineLatest, iif, of, throwError } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { CentralAuthError, CentralAuthUIError, MangoErrorTypes, OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_CONTACT_ID_QUERY_PARAM, OAUTH_LOGOUT_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { UserService } from '@mango/core-shared';
+import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_CONTACT_ID_QUERY_PARAM, OAUTH_LOGOUT_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { EMPTY, Subscription, combineLatest, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { CentralAuthFacade } from '../../../+state/facades';
 
 @Component({
   selector: 'mango-authorize',
@@ -17,7 +18,7 @@ import { CentralAuthError, CentralAuthUIError, MangoErrorTypes, OAUTH_CLIENT_KEY
 export class AuthorizeComponent implements OnInit, OnDestroy {
 
   subs: Subscription = new Subscription()
-  constructor(private centralAuthFacade: CentralAuthFacade, private activatedRoute: ActivatedRoute, private router: Router) { }
+  constructor(private centralAuthFacade: CentralAuthFacade, private activatedRoute: ActivatedRoute, private router: Router, private userService: UserService) { }
 
   ngOnInit(): void {
     this.subs.add(this.activatedRoute.queryParamMap.pipe(
@@ -36,13 +37,17 @@ export class AuthorizeComponent implements OnInit, OnDestroy {
         }
       }),
       map(({ redirect_uri, client_key, contact_id }) => {
-        console.log({client_key, contact_id})
-        !!client_key ? this.centralAuthFacade.setClientKey(client_key) : null
-        //!!contact_id ? this.centralAuthFacade.setContactId(parseInt(contact_id)) : null
+        !!client_key ? this.centralAuthFacade.setClient({ clientKey: client_key }) : null
+        !!contact_id ? this.centralAuthFacade.setContactId(parseInt(contact_id)) : null
         this.centralAuthFacade.setRedirectionUri(encodeURIComponent(redirect_uri))
       }),
-      switchMap(_ => combineLatest([this.centralAuthFacade.isUserAuthenticated$, this.centralAuthFacade.redirectionUri$, this.centralAuthFacade.clientKey$])),
-      switchMap(([isUserAuthenticated, redirectUri, clientKey]) => !!isUserAuthenticated ? of(this.centralAuthFacade.retrieveAuthorizationCode(redirectUri)) : of(this.router.navigate(['/', clientKey || '']))
+      switchMap(_ => combineLatest([this.centralAuthFacade.isUserAuthenticated$, this.centralAuthFacade.redirectionUri$, this.centralAuthFacade.client$])),
+      switchMap(([isUserAuthenticated, redirectUri, client]) => {
+        if (!client) {
+          return of(this.router.navigate(['/customer-selection']))
+        }
+        return !!isUserAuthenticated ? of(this.centralAuthFacade.retrieveAuthorizationCode(redirectUri)) : of(this.router.navigate(['/', client.clientKey || '']))
+      }
       )
     ).subscribe())
   }

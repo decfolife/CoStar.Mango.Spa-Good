@@ -26,11 +26,10 @@ export class CentralAuthErrorHandler extends MangoErrorHandler<CentralAuthError>
     }
     if (!(err instanceof CentralAuthHttpError)) {
       if (err.errorType) {
-       this.zone.run(() =>  this.showErrorNotification(err.message, 'Error', err.errorType)) 
+        this.zone.run(() => this.showErrorNotification(err.message, 'Error', err.errorType))
       }
       else {
         console.error(err)
-        this.showErrorNotification('Unexpected error', '', MangoErrorTypes.FATAL)
       }
     }
   }

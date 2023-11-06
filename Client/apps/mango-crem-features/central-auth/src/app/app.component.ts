@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DBkeys, StorageService } from '@mango/core-shared';
-import { ContactRecord, UserAuth } from '@mango/data-models/lib-data-models';
+import { UserAuth } from '@mango/data-models/lib-data-models';
 import * as dayjs from 'dayjs';
 import { UserIdleService } from 'libs/core-shared/src/lib/services';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CentralAuthFacade } from './+state/facades';
 
@@ -13,14 +13,34 @@ import { CentralAuthFacade } from './+state/facades';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'mango-central-auth';
 
   subs: Subscription[] = []
+
   constructor(private storageService: StorageService, private centralAuthFacade: CentralAuthFacade, private idleService: UserIdleService) { }
 
   ngOnInit(): void {
+    this.populateLoggedInUserData()
     this.logoutWhenTimedout()
-    this.subs.push(this.centralAuthFacade.user$.pipe(
+
+    this.subs.push(
+      this.setupRedirectionWhenLoggedIn().subscribe(),
+      this.setupIdleLogout().subscribe()
+    )
+  }
+
+  setupRedirectionWhenLoggedIn(): Observable<any> {
+    return combineLatest([
+      this.centralAuthFacade.authorizationCode$,
+      this.centralAuthFacade.client$,
+      this.centralAuthFacade.contactId$
+    ]).pipe(
+      filter(([authorizationCode, client, contactId]) => !!authorizationCode && !!client && !!contactId),
+      map(_ => this.centralAuthFacade.redirectToClient())
+    )
+  }
+
+  setupIdleLogout(): Observable<any> {
+    return this.centralAuthFacade.user$.pipe(
       filter(user => !!user),
       tap(_ => {
         document.onmousemove = _ => this.idleService.resetTimer()
@@ -28,19 +48,19 @@ export class AppComponent implements OnInit, OnDestroy {
         this.idleService.startWatching()
       }),
       switchMap(_ => this.idleService.onTimerStart()),
-      switchMap(_ => this.idleService.onTimeout().pipe(tap(_ => {
+      switchMap(_ => this.idleService.onTimeout()),
+      tap(_ => {
         this.idleService.stopWatching()
         document.onmousemove = null
         document.onkeydown = null
         this.centralAuthFacade.logout()
-      })))
-    ).subscribe())
+      })
+    )
+  }
 
-    this.populateLoggedInUserData()
-    this.centralAuthFacade.authorizationCode$.pipe(
-      filter(authorizationCode => !!authorizationCode),
-      map(_ => this.centralAuthFacade.redirectToClient())
-    ).subscribe()
+  populateLoggedInUserData(): void {
+    const user: UserAuth = this.storageService.getDataObject(DBkeys.USER_AUTH);
+    this.centralAuthFacade.setUser(user)
   }
 
   logoutWhenTimedout() {
@@ -52,18 +72,8 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  populateLoggedInUserData(): void {
-    const user: UserAuth = this.storageService.getDataObject(DBkeys.USER_AUTH);
-    const clientKey: string = this.storageService.getDataObject(DBkeys.CLIENT_KEY);
-    const contactRecord: ContactRecord = this.storageService.getDataObject(DBkeys.CONTACT_RECORD);
-
-    this.centralAuthFacade.setUser(user)
-    this.centralAuthFacade.setClientKey(clientKey)
-    this.centralAuthFacade.setContactId((contactRecord || {}).contactID)
-  }
-
   ngOnDestroy(): void {
-      this.subs.forEach(s => s.unsubscribe())
-      this.idleService.stopWatching()
+    this.subs.forEach(s => s.unsubscribe())
+    this.idleService.stopWatching()
   }
 }

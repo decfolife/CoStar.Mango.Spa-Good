@@ -1,22 +1,18 @@
 import { Injectable } from '@angular/core';
 import {
+  ActivatedRouteSnapshot,
   CanActivate,
   Router,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  CanActivateChild,
-  CanLoad,
-  Route,
+  RouterStateSnapshot
 } from '@angular/router';
 
 import { UserService } from '@mango/core-shared';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
 
-
 @Injectable()
-export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
+export class AuthGuard implements CanActivate {
   isInboundOn: boolean;
 
   constructor(
@@ -29,38 +25,20 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> {
-    const url: string = state.url;
-    return this.isAuthenticated();
-  }
-
-  canActivateChild(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
-    return this.canActivate(route, state);
-  }
-
-  canLoad(route: Route): Observable<boolean> {
-    const url = `/${route.path}`;
-    return this.isAuthenticated();
-  }
-
-  isAuthenticated(): Observable<boolean> {
-    return this.userService.getCurrentUserAccessToken().pipe(
-      map((token: string) => {
-        if (token) {
-          if (!this.userService.accessTokenValue) {
-            this.userService.setAccessToken(token)
-            this.centralAuthFacade.setAccessToken(this.userService.accessTokenValue)
-          }
-       
-          return true;
-        }
-
+    return this.getAccessToken().pipe(map(accessToken => {
+      if (accessToken) {
+        this.centralAuthFacade.setAccessToken(accessToken)
+        return true
+      } else {
         this.router.navigate(['/']);
-
         return false
-      })
+      }
+    }))
+  }
+
+  getAccessToken(): Observable<string> {
+    return this.centralAuthFacade.accessToken$.pipe(
+      switchMap(accessToken => accessToken ? of(accessToken) : this.userService.getCurrentUserAccessToken())
     )
   }
 }

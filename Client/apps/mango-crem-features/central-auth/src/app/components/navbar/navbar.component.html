@@ -6,7 +6,7 @@
 
                 <a class="nav-link text-dark" role="button" [matMenuTriggerFor]="menu">
                     <span class="me-2 d-none d-lg-inline text-light">
-                        {{ userEmail }}
+                        {{ (userEmail$ | async) }}
                     </span>
                     <fa-icon [icon]="faUserCircle" size="lg" [fixedWidth]="true" class="text-light"></fa-icon>
                 </a>
