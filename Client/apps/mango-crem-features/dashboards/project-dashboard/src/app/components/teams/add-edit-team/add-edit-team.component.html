@@ -106,7 +106,8 @@
           <dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
-          <dxi-column dataField="role" caption="Project Role"  dataType="string" showEditorAlways="true" aria-label="role">
+          <dxi-column dataField="phoneNumber" [allowEditing]="false" dataType="string"></dxi-column>
+          <dxi-column dataField="role" dataType="string" showEditorAlways="true" aria-label="role">
             <dxo-lookup [dataSource]="memberInfo.roles" aria-label="role" valueExpr="role" displayExpr="role"></dxo-lookup>
           </dxi-column>
           <dxi-column dataField="emailOn" caption='Email Notifications' alignment="center" [allowEditing]="false" [cellTemplate]="'toggleTemplate'">
