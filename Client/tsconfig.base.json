@@ -59,8 +59,6 @@
       "@mango/ui-shared/lib-external-libraries": [
         "libs/ui-shared/lib-external-libraries/src/index.ts"
       ],
-      "@form-engine/*": ["apps/mango-crem-features/micro-components/src/app/*"
-      ],
       "@mango/ui-shared/lib-ui-elements": [
         "libs/ui-shared/lib-ui-elements/src/index.ts"
       ],
