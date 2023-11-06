@@ -24,8 +24,9 @@ export class AuthorizeComponent implements OnInit, OnDestroy {
     this.subs.add(this.activatedRoute.queryParamMap.pipe(
       map(queryParams => ({
         redirect_uri: queryParams.get(OAUTH_REDIRECT_QUERY_PARAM),
-        client_key: queryParams.get(OAUTH_CLIENT_KEY_QUERY_PARAM),
-        contact_id: queryParams.get(OAUTH_CONTACT_ID_QUERY_PARAM),
+        // Disable reading client key and contact record
+        client_key: /*queryParams.get(OAUTH_CLIENT_KEY_QUERY_PARAM)*/ null,
+        contact_id: /*queryParams.get(OAUTH_CONTACT_ID_QUERY_PARAM)*/ null,
         logout: queryParams.get(OAUTH_LOGOUT_QUERY_PARAM)
       })),
       switchMap(({ redirect_uri, client_key, contact_id, logout }) => {

@@ -67,7 +67,7 @@ export class BookmarksService  extends EndpointService{
 
   getBookmarks(isbookmarks: boolean, isreports: boolean): Observable<any> {
     if (environment.isRestful) {
-      const url = `${environment.appUrls.bookmarks}Bookmarks/GetBookmarksAndReportsData/isbookmarks=${isbookmarks}/isreports=${isreports}`;
+      const url = `${environment.appUrls.bookmarks}Bookmarks/GetBookmarksAndReportsData/${isbookmarks}/${isreports}`;
       return this.callHttpGet(url, 'getBookmarks')
     }
 
