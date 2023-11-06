@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AddBuildingModalComponent } from './add-building-modal.component';
-import { ButtonModule, ModalModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements'
+import { ButtonModule, ModalModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 
 import {
   DxButtonModule,

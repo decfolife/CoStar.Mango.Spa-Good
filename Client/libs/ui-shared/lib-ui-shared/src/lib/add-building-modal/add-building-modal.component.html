@@ -1,92 +1,92 @@
+<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" *ngIf="loading" [showIndicator]="true"
+	[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
+
 <crem-modal modalId="add_building_modal__add_modal" modalTitleId="add_building_modal__create_project"
 	[modalTitle]="'Title'" closeIconVisible="true" [customFooter]="true">
 	<div modalContent class="body-content">
-		<div id="ngifloading">
-			<div class="section">
-				<div class="section--border"></div>
-				<form id="modal">
+		<div class="section" (loadCondition)="setLoadCondition($event)">
+			<div class="section--border"></div>
+			<form id="modal">
+				<dx-form id="form" validationGroup="centerForm">
 
-					<dx-form id="form" validationGroup="centerForm">
+					<dxi-item itemType="group" cssClass="centerForm" [colCount]="1">
 
-						<dxi-item itemType="group" cssClass="centerForm" [colCount]="1">
+						<dxi-item itemType="group">
 
-							<dxi-item itemType="group">
-
-								<dxi-item dataField="Portfolio" editorType="dxSelectBox"
+							<dxi-item dataField="portfolio" editorType="dxSelectBox"
 								[editorOptions]="{ items: portfolioDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName',  onValueChanged:onPortFolioValueChanged}">
 								<dxi-validation-rule type="required"
-										message="You must select a portfolio"></dxi-validation-rule>
-								</dxi-item>
+									message="You must select a portfolio"></dxi-validation-rule>
+							</dxi-item>
 
-								<dxi-item dataField="Center Name">
-									<dxi-validation-rule type="required" message="You must enter a Center Name.">
-									</dxi-validation-rule>
-								</dxi-item>
+							<dxi-item dataField="buildingName">
+								<dxi-validation-rule type="required" message="You must enter a Center Name.">
+								</dxi-validation-rule>
+							</dxi-item>
 
-								<dxi-item dataField="Country" editorType="dxSelectBox"
+							<dxi-item dataField="buildingCountry" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'CountryID', displayExpr: 'Country', onValueChanged:onCountryChanged }">
-								</dxi-item>
+							</dxi-item>
 
-								<dxi-item dataField="Street Address"></dxi-item>
+							<dxi-item dataField="buildingAddress"></dxi-item>
 
-								<dxi-item dataField="City"></dxi-item>
+							<dxi-item dataField="buildingCity"></dxi-item>
 
-								<dxi-item  [visible]="!enableStateTextBox"  dataField="State" editorType="dxSelectBox"
+							<dxi-item [visible]="!enableStateTextBox" dataField="buildingState" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: stateDropdownItem, valueExpr: 'StateID', displayExpr: 'State' }">
-								</dxi-item>
+							</dxi-item>
 
-								<dxi-item [visible]="enableStateTextBox" dataField="State"></dxi-item>
+							<dxi-item [visible]="enableStateTextBox" dataField="State"></dxi-item>
 
-								<dxi-item dataField="ZipCode"></dxi-item>
+							<dxi-item dataField="buildingZipCode"></dxi-item>
 
-								<dxi-item dataField="Template" editorType="dxSelectBox"
+							<dxi-item dataField="template" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: templateDropdownItem, valueExpr: 'ObjectTypeTypeID', displayExpr: 'ObjectTypeTypeName' }">
-									<dxi-validation-rule type="required"
-										message="You must select a template"></dxi-validation-rule>
-								</dxi-item>
+								<dxi-validation-rule type="required"
+									message="You must select a template"></dxi-validation-rule>
+							</dxi-item>
 
-								<dxi-item dataField="Sub Group" editorType="dxSelectBox"
+							<dxi-item dataField="tenantID" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: subGroupDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
-								</dxi-item>
+							</dxi-item>
 
-								<dxi-item dataField="Hierarchy" editorType="dxSelectBox"
+							<dxi-item dataField="hierarchy" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: hierarchyDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
-								</dxi-item>
-
 							</dxi-item>
 
 						</dxi-item>
 
-						<dxi-item itemType="group" cssClass="footerControls" [colCount]="4">
+					</dxi-item>
 
-							<dxi-item>
-								<crem-button type="primary" id="add_building_modal__cancel_btn"
-									(click)="validateForm($event)">
-									Launch
-								</crem-button>
-							</dxi-item>
+					<dxi-item itemType="group" cssClass="footerControls" [colCount]="4">
 
-							<dxi-item>
-								<crem-button type="secondary" id="add_building_modal__cancel_btn"
-									(click)="validateForm($event)">
-									Save</crem-button>
-							</dxi-item>
-
-							<dxi-item>
-								<crem-button type="secondary" id="add_building_modal__cancel_btn"
-									(click)="validateForm($event)">
-									Save and New</crem-button>
-							</dxi-item>
-
-							<dxi-item>
-								<crem-button type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
-									Cancel</crem-button>
-							</dxi-item>
+						<dxi-item>
+							<crem-button type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
+								Cancel</crem-button>
 						</dxi-item>
 
-					</dx-form>
-				</form>
-			</div>
+						<dxi-item>
+							<crem-button type="secondary" id="add_building_modal__save_btn" (click)="save($event)">
+								Save</crem-button>
+						</dxi-item>
+
+						<dxi-item>
+							<crem-button type="secondary" id="add_building_modal__savenew_btn"
+								(click)="saveAndNew($event)">
+								Save and New</crem-button>
+						</dxi-item>
+
+						<dxi-item>
+							<crem-button type="primary" id="add_building_modal__launch_btn"
+								(click)="validateForm($event)">
+								Launch
+							</crem-button>
+						</dxi-item>
+
+					</dxi-item>
+
+				</dx-form>
+			</form>
 		</div>
 	</div>
 </crem-modal>

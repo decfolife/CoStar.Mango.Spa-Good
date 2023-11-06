@@ -107,6 +107,23 @@ export class FormWizardService {
     return this.getHttpPostApiResponse(route, 'AddTransaction', param, environment.appUrls.formWizard + route)
   }
 
+  // todo: move to \libs\core-shared\src\lib\services\endpoint.service.ts
+  public addBuilding(building: any): Observable<any> {
+    let route = "AddBuilding";
+
+    let param;
+    if (!environment.isRestful) {
+      param = {
+        request: building
+      }
+      return this.getHttpPostApiResponse(route, 'AddBuilding', param, environment.appUrls.formWizard + route)
+    } else {
+      route = "FormWizards/" + route;
+      param = building;
+    }
+    return this.getHttpPostApiResponse(route, 'AddBuilding', param, environment.appUrls.formWizard + route)
+  }
+
   public getManagers(teamId: number): Observable<any> {
     let route = "GetManagers";
     let param = {
