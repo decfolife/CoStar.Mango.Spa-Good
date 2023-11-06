@@ -117,5 +117,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}getmemberslist`;
     return this.callHttpPost(url, 'getmemberslist', { search, all, pageSize, pageNumber })
   }
+
+  getmemberinfo(): Observable<any> {
+    const url = `${environment.appUrls.projects}getmemberinfo`;
+    return this.callHttpGet(url, 'getmemberinfo')
+  }
 }
 

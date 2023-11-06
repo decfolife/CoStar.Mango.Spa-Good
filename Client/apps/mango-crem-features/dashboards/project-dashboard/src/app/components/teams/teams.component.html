@@ -29,7 +29,7 @@
 				</mat-menu>	 
 			</div>
 			<div class="addTeams">
-				<crem-button type="primary" (click)="addTeam(); $event.preventDefault()" >
+				<crem-button type="primary" (click)="addOrEditTeam('add'); $event.preventDefault()" >
 					<span id="addTeam">Add</span>
 				</crem-button>
 			</div>
@@ -86,7 +86,7 @@
 						</button>
 		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="team.data.canEdit">Edit</li>
+								<li mat-menu-item (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit">Edit</li>
 								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="team.data.canDelete">Delete</li>
 							</ul>
 						</mat-menu>
@@ -98,6 +98,7 @@
 				<team-members [searchText]="searchText" 
 						[rights]="team.data.securityLevel" 
 						[teamMembers]="team.data.teamMembers"
+						[memberInfo]="memberInfo"
 				>
 				</team-members>
 			</div>

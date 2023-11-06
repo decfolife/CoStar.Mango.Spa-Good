@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { TeamMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, TeamMember } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import CheckBox from 'devextreme/ui/check_box';
@@ -15,6 +15,7 @@ export class TeamMembersComponent implements OnInit {
 	@Input() teamMembers : TeamMember[];
 	@Input() searchText: string;
 	@Input() rights: string;
+	@Input() memberInfo: MemberInfo; 
 
 	public dataRetrieved: boolean = false;
 	memberIds: number[];
@@ -75,6 +76,16 @@ export class TeamMembersComponent implements OnInit {
 			}
 		}  
 	}
+
+	setAttributes(e) {  
+    setTimeout(() => {
+      const inputElements = Array.from(document.getElementsByClassName('dx-texteditor-input'));
+      inputElements?.forEach(ele => {
+        ele.setAttribute('aria-label', 'select option');
+				ele.setAttribute('name', 'selectionOption');
+      })
+    })
+  }
 
 	emailtoggle(e) {
 		this.emailNotify = e.checked;

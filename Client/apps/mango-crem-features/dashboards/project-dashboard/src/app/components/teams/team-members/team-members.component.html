@@ -17,6 +17,7 @@
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
 			(onCellPrepared)="gridOnCellPrepared($event)"
+			(onContentReady)="setAttributes($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
@@ -43,11 +44,15 @@
 			<dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
 			<dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
 			<dxi-column dataField="phoneNumber" [allowEditing]="false" dataType="string"></dxi-column>
-			<dxi-column dataField="role" dataType="string"></dxi-column>
+			<dxi-column dataField="role" dataType="string">
+				<dxo-lookup [dataSource]="memberInfo.roles" aria-label="role" valueExpr="role" displayExpr="role"></dxo-lookup>
+			</dxi-column>
 			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
 			</dxi-column>
-			<dxi-column dataField="level" caption='Access Level' dataType="string"></dxi-column>
-			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+			<dxi-column dataField="level" caption='Access Level' dataType="string">
+				<dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
+			</dxi-column>
+			<dxi-column type="buttons" width="110" [fixed]="true" fixedPosition="right" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">

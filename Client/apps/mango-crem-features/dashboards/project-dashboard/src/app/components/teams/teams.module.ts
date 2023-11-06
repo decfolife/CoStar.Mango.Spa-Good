@@ -12,14 +12,14 @@ import { DashboardService } from '@project-dashboard/services/dashboard.service'
 import { CardsService } from '@project-dashboard/services/cards.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TeamMembersComponent } from './team-members/team-members.component';
-import { AddTeamComponent } from './add-team/add-team.component';
+import { AddEditTeamComponent } from './add-edit-team/add-edit-team.component';
 import { TextFieldModule } from '@mango/ui-shared/cosmos';
 
 @NgModule({
   declarations: [
     TeamsComponent,
     TeamMembersComponent,
-    AddTeamComponent
+    AddEditTeamComponent
   ],
   imports: [
     CommonModule,

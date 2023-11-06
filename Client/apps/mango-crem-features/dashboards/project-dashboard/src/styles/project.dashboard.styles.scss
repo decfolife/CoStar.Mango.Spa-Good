@@ -485,7 +485,7 @@ body {
 //**** Metric Styles End ****//
 
 
-.taskApprovalModal .modalContent, #addTeamModal .modalContent {
+.taskApprovalModal .modalContent, #addEditTeamModal .modalContent {
   overflow: hidden !important;
 }
 
@@ -649,8 +649,8 @@ body {
 	}
 }
 
-#addTeamModal {
-	.at-textInput .mat-form-field {
+#addEditTeamModal {
+	.aet-textInput .mat-form-field {
 		width: 100%;
 	}
 
@@ -660,7 +660,7 @@ body {
 	.modalFooter {
 		border-top: 1px solid colors.$stdBorderColor;
 	}
-	.dx-texteditor.dx-editor-outlined, .at-selectedMembers {
+	.dx-texteditor.dx-editor-outlined, .aet-selectedMembers {
 		border: 1px solid colors.$stdBorderColor;
 		border-radius: 4px;
 	}	
@@ -685,7 +685,7 @@ body {
 
 }
 
-.at-membersList {
+.aet-membersList {
 	height: 200px;
 	.dx-list-item {
 		border-top: none;
@@ -696,7 +696,7 @@ body {
 	}
 }
 
-#teams-container .teams-grid, #at-selectedMembers-container .addTeam-grid {
+#teams-container .teams-grid, #aet-selectedMembers-container .addTeam-grid {
 	td {
 		text-align: center;
 		vertical-align: middle !important;
@@ -705,7 +705,11 @@ body {
 	}	
 	
 	.dx-row.dx-data-row {
-		line-height: 12px;  //decreses the height of the data row on the grid
+		line-height: 12px;  //decreases the height of the data row on the grid
+	}
+
+	.dx-datagrid-nodata {
+		font-weight: bold;
 	}
 }
 

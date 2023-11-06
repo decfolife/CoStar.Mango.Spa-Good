@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Team, TeamMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, Team, TeamMember } from '@mango/data-models/lib-data-models';
 import { SearchComponent } from '@mango/ui-shared/cosmos';
 import { CardsService } from '@project-dashboard/services/cards.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { AddTeamComponent } from './add-team/add-team.component';
+import { AddEditTeamComponent } from './add-edit-team/add-edit-team.component';
 import { TeamMembersComponent } from './team-members/team-members.component';
 
 @Component({
@@ -22,6 +22,7 @@ export class TeamsComponent implements OnInit {
   searchText: string = "";
   teams: Team[];
   teamMembers: TeamMember[];
+  memberInfo: MemberInfo;
   dataRetrieved: boolean = false;
   autoExpand: boolean = false;
   headerCheckBox: any;
@@ -33,6 +34,7 @@ export class TeamsComponent implements OnInit {
   ngOnInit(): void {
   
     this.getUserPreferences();
+    this.getMemberInfo();
 
     this.dashboardService.getTeams().subscribe(
       (res:any) => {
@@ -55,19 +57,21 @@ export class TeamsComponent implements OnInit {
     }
   }
 
-  addTeam() {
-    let dialogRef = this.dialog.open(AddTeamComponent, {
+  addOrEditTeam(tFunc: string, editTeam?:Team ) {
+    let team = {};
+    if(tFunc == "edit") {
+      team=editTeam;
+    }
+    let dialogRef = this.dialog.open(AddEditTeamComponent, {
       height: '600px',
       width: '2000px',
-      panelClass: 'AddTeamModal',
-      data: { team: "What Team?" 
-      },
+      panelClass: 'addEditTeamModal',
+      data: { teamFunction: tFunc, memberInfo: this.memberInfo, team: team, },
       disableClose: true
     });
     dialogRef.afterClosed().subscribe(result => {
 
     });
-
   }
 
   doSomethingForNow(data) {}
@@ -79,6 +83,17 @@ export class TeamsComponent implements OnInit {
             this.cardsService.setUserDateFormat(res.data.isDatesEU);
         }
       }
+    );
+  }
+
+  getMemberInfo() {
+
+    this.dashboardService.getmemberinfo().subscribe(
+      (res:any) => {
+        this.memberInfo = res.data;
+      },
+      (error: any) => console.log("Error occurred getting Member Info Data ", error),
+      () => {}
     );
   }
 

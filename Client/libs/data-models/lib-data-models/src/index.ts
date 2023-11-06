@@ -38,6 +38,7 @@ export * from './lib/models/central-auth/errors';
 export * from './lib/models/breadCrumb';
 export * from './lib/models/team';
 export * from './lib/models/teamMember';
+export * from './lib/models/memberInfo';
 export * from './lib/models/contactMember';
 export * from './lib/constants/central-auth.constants';
 export * from './lib/constants/mango.constants';

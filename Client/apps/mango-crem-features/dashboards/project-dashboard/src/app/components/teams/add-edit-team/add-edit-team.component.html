@@ -1,16 +1,16 @@
 <crem-modal
-[modalTitle] = "modalTitle"
-[closeIconVisible] = "closeButton"
-[primaryFooterButtonText]="'Save'"
-[closeOrCancelButtonText]="'Cancel'" 
-(primaryButtonAction)="saveTeam()"
-[modalId] = "modalId"
+  [modalTitle] = "modalTitle"
+  [closeIconVisible] = "closeButton"
+  [primaryFooterButtonText]="'Save'"
+  [closeOrCancelButtonText]="'Cancel'" 
+  (primaryButtonAction)="saveTeam()"
+  [modalId] = "modalId"
 >
-<div modalContent class="addTeamModal">
-  <div class="at-teamName">
+<div modalContent class="addEditTeamModal">
+  <div class="aet-teamName">
     <h3>Team Name <span class="at-required" aria-label="required">*</span></h3>
-    <div class="at-search">
-      <cs-text-field class="at-textInput"
+    <div class="aet-search">
+      <cs-text-field class="aet-textInput"
         type="text"
         formControlName="teamName"
         [placeholder]="'Team Name'"
@@ -20,52 +20,59 @@
       </cs-text-field>
     </div>
   </div>
-  <div class="at-members">
+  <div class="aet-members">
     <h3>Members</h3>
     <div id="container">
       <dx-drop-down-box 
-          class="at-membersDropDown"
+          class="aet-membersDropDown"
           [(opened)]="isDropDownBoxOpened" 
           (onInput)="searchTeamMembers($event)"
+          (onEnterKey)="toggleList()"
           [acceptCustomValue]="true"
           [openOnFieldClick]="false"
+          [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}"
       >
           <dx-list 
-              class="at-membersList"
+              #SelectionMembersList
+              class="aet-membersList"
               [dataSource]="filteredMembers" 
-              itemTemplate="membersListTemplate" 
+              itemTemplate="membersListTemplate"
+              [activeStateEnabled]="false" 
+              [elementAttr]="{'aria-label': 'List of Members to Select'}"
+
           >
             <div *dxTemplate="let member of 'membersListTemplate'">
                 <button aria-label="Add Member" class="btn btn-link addMemberButton" [disabled]="member.added"
                 (click)="addMember(member);$event.preventDefault()">
                 <fa-icon [icon]="faCirclePlus" ></fa-icon>
                 </button>  
-              <span class="at-memberData">
-                <span class=at-memberName>{{member.Name}}</span>
-                <span class="at-company"> - {{member.Company}}</span>
-                <span class="at-email"> - {{member.Email}}</span>
+              <span class="aet-memberData">
+                <span class=aet-memberName>{{member.Name}}</span>
+                <span class="aet-company"> - {{member.Company}}</span>
+                <span class="aet-email"> - {{member.Email}}</span>
               </span>
             </div>
           </dx-list>
       </dx-drop-down-box>
     </div>
   </div>
-  <div class="at-selectedMembers">
-    <div class="at-info-remove">
+  <div class="aet-selectedMembers">
+    <div class="aet-remove-members">
       <crem-button type="secondary" (click)="removeMembers(); $event.preventDefault();">
         <fa-icon [icon]="faCircleMinus" ></fa-icon>
-        <span >Remove</span>
+        <span class="aet-removeText" >Remove</span>
       </crem-button>
     </div>
-    <div id="at-selectedMembers-container">
-      <div class="at-selectedMembers-dataGrid-wrapper"> 
-        <dx-data-grid class="at-selectedMembers-data-grid" class="addTeam-grid"
+    <div id="aet-selectedMembers-container">
+      <div class="aet-selectedMembers-dataGrid-wrapper"> 
+        <dx-data-grid class="aet-selectedMembers-data-grid" class="addTeam-grid"
           #SelectedMembersGrid
           [showColumnLines]="false"
           [showRowLines]="false"
           [showBorders]="false"
           [rowAlternationEnabled]="true"
           [allowColumnResizing]="true"
+          [noDataText]="noDataText"
           columnResizingMode="widget"
           [allowColumnReordering]="true"
           [columnAutoWidth]="false"
@@ -73,7 +80,7 @@
           keyExpr="memberId"
           [width]="'100%'"
           [wordWrapEnabled]="true"
-          (onContentReady)="updateDimentions()"
+          (onContentReady)="setAttributes($event)"
         >
           <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
           <dxo-sorting mode="multiple"></dxo-sorting> 
@@ -86,7 +93,7 @@
           </dxo-selection>
 
           <dxo-editing
-            mode="row"
+            mode="cell"
             [allowUpdating]="true"
             [allowDeleting]="true"
             [allowAdding]="false"
@@ -99,10 +106,14 @@
           <dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
-          <dxi-column dataField="role" caption="Project Role" dataType="string"></dxi-column>
-          <dxi-column dataField="emailOn" caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
+          <dxi-column dataField="role" caption="Project Role"  dataType="string" showEditorAlways="true" aria-label="role">
+            <dxo-lookup [dataSource]="memberInfo.roles" aria-label="role" valueExpr="role" displayExpr="role"></dxo-lookup>
           </dxi-column>
-          <dxi-column dataField="level" caption='Access Level' dataType="string"></dxi-column>
+          <dxi-column dataField="emailOn" caption='Email Notifications' alignment="center" [allowEditing]="false" [cellTemplate]="'toggleTemplate'">
+          </dxi-column>
+          <dxi-column dataField="level" caption='Access Level' dataType="string" showEditorAlways="true">
+            <dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
+          </dxi-column>
           <dxi-column caption="" type="buttons" width="40" [fixed]="true" fixedPosition="right" [allowSorting]="false"
             [allowReordering]="false" [allowResizing]="false">
             <dxi-button template="actionsMenuTemplate">

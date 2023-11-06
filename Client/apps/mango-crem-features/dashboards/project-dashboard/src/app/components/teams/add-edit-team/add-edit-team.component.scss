@@ -1,4 +1,4 @@
-.at-memberData {
+.aet-memberData {
   pointer-events: none;
   cursor: default;
 }
@@ -12,24 +12,28 @@ fa-icon {
   transform: translateY(2px);
 }
 
-.at-members {
+.aet-members {
   margin-bottom: 40px;
 }
 
-.at-selectedMembers {
+.aet-selectedMembers {
   padding: 8px;
   height: 290px;
   width: 100%;
 
-  .at-info-remove{
+  .aet-remove-members{
     display: flex;
     justify-content: flex-end;
     margin-bottom: 8px;
+    .aet-removeText {
+      height: 16px;
+      transform: translateY(3px);
+    }
   }
 
-  #at-selectedMembers-container {
+  #aet-selectedMembers-container {
     height: calc(100% - 40px);
-    .at-selectedMembers-dataGrid-wrapper {
+    .aet-selectedMembers-dataGrid-wrapper {
       height: 100%;
     }
 
