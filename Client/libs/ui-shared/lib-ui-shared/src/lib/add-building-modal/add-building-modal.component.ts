@@ -1,9 +1,11 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { FormWizardService } from '@micro-components/services/form-wizard.service';
-import { DxFormComponent } from 'devextreme-angular';
-import notify from 'devextreme/ui/notify';
 import { forkJoin } from 'rxjs';
+import notify from 'devextreme/ui/notify';
+import { DxFormComponent } from 'devextreme-angular';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { Component, EventEmitter, Inject, OnInit, Output, ViewChild } from '@angular/core';
+import { FormWizardService } from '@micro-components/services/form-wizard.service';
+
 
 @Component({
   selector: 'mango-add-building-modal',
@@ -28,7 +30,13 @@ export class AddBuildingModalComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<AddBuildingModalComponent>,
-    private formWizardService: FormWizardService
+    private formWizardService: FormWizardService,
+    private dashboardService: DashboardService,
+    @Inject(MAT_DIALOG_DATA) public data: {
+      objectTypeName: string;
+      objectTypeId: number;
+
+    }
 
   ) {
     this.onCountryChanged = this.onCountryChanged.bind(this);
@@ -43,6 +51,17 @@ export class AddBuildingModalComponent implements OnInit {
     })
     this.getDropdownData();
     this.loading = false;
+
+    if (!this.data.objectTypeName) {
+      this.dashboardService.getObjectTypeNames([3]).subscribe(
+        (result) => {
+          this.data.objectTypeName = result?.data?.[0]?.objectTypeName
+          this.buildModalTitle();
+        }
+      );   
+    } else {
+      this.buildModalTitle();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -73,6 +92,11 @@ export class AddBuildingModalComponent implements OnInit {
       this.enableStateTextBox = true;
     }
   }
+
+  public buildModalTitle() {
+    this.modalTitle = "Create " + this.data.objectTypeName;
+  }
+
 
   onPortFolioValueChanged(e: any) {
     this.formWizardService.getRenderSelect(e.value, 57).subscribe((data) => {

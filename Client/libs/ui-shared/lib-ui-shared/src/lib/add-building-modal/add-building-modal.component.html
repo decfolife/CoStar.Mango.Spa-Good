@@ -2,7 +2,7 @@
 	[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
 
 <crem-modal modalId="add_building_modal__add_modal" modalTitleId="add_building_modal__create_project"
-	[modalTitle]="'Title'" closeIconVisible="true" [customFooter]="true">
+	[modalTitle]="modalTitle" closeIconVisible="true" [customFooter]="true">
 	<div modalContent class="body-content">
 		<div class="section" (loadCondition)="setLoadCondition($event)">
 			<div class="section--border"></div>
