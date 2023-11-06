@@ -1,49 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '@mango/core-shared/lib-core-shared';
-import { ServiceAccountInfo, ServiceAccountEndpoint, ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
+import { filter, map } from 'rxjs/operators';
+import { CentralAuthFacade } from '../../+state/facades';
 
 @Component({
   selector: 'mango-service-account-configuration',
   templateUrl: './service-account-configuration.component.html',
   styleUrls: ['./service-account-configuration.component.scss'],
 })
-export class ServiceAccountConfigurationComponent implements OnInit{
-  public userEmail: string;
-  subs: Subscription[] = []
-  public servieAccountInfo: ServiceAccountInfo;
-  public apiKeyExpiresOn: string;
-  public serviceAccountSites : ServiceAccountSite[];
-  public serviceAccountEndpoints: ServiceAccountEndpoint[];
+export class ServiceAccountConfigurationComponent {
+  
+  userEmail$ = this.centralAuthFacade.user$.pipe(filter(user => !!user), map(user => user.email))
 
   constructor(
-    private userService: UserService,
-    ) { }
-
-
-    ngOnInit(): void {
-      this.userEmail = this.userService.currentUserValue.email;
-      this.getServiceAccountInfo();
-    }
-
-    ngOnDestroy(): void {
-      this.subs.forEach(s => s.unsubscribe())
-    }
-
-    serviceAccountUpdated() {
-      this.getServiceAccountInfo();
-    }
-  
-    private getServiceAccountInfo() {
-      this.subs.push(
-        this.userService.getServiceAccountInfo(this.userEmail)
-        .subscribe(result => {        
-          if(result){          
-              this.apiKeyExpiresOn = result.apiKeyExpiresOn === null ? '' : result.apiKeyExpiresOn.toLocaleString('en-US');
-              this.serviceAccountEndpoints = result.serviceAccountEndpoints; 
-              this.serviceAccountSites = result.serviceAccountSites; 
-          }
-        })
-      )
-    } 
+    private centralAuthFacade: CentralAuthFacade,
+  ) { }
 }

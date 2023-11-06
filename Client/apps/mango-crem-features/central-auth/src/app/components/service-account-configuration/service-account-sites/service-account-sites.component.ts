@@ -1,24 +1,30 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UserService } from '@mango/core-shared';
 import { Subscription } from 'rxjs';
 import {UpdateServiceAccountApiAccessRequest} from '@mango/data-models/lib-data-models';
-import { ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
 
 @Component({
   selector: 'mango-service-account-sites',
   templateUrl: './service-account-sites.component.html',
   styleUrls: ['./service-account-sites.component.scss'],
 })
-export class ServiceAccountSitesComponent {
+export class ServiceAccountSitesComponent implements OnInit {
   @Input() userEmail: string;
-  @Input() sites: ServiceAccountSite[];
-  @Output() apiAccessUpdated = new EventEmitter<boolean>();
+  public sites: any;
 
   subs: Subscription[] = []
 
   constructor(
     private userService: UserService,
   ) { }
+
+  ngOnInit(): void {
+    this.getSites();
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 
   updateApiAccess(e: any, index: number) {
     const request: UpdateServiceAccountApiAccessRequest = {
@@ -31,10 +37,20 @@ export class ServiceAccountSitesComponent {
       this.userService.updateServiceAccountApiAccess(request)
       .subscribe(result => {    
           if(result){        
-            this.apiAccessUpdated.emit(result);
+          this.getSites();
         }
       })
     )
   }
 
+  private getSites() {
+    this.subs.push(
+      this.userService.getServiceAccountSites(this.userEmail)
+      .subscribe(result => {        
+        if(result){          
+            this.sites =  result.serviceAccountSites;      
+        }
+      })
+    )
+  }
 }
