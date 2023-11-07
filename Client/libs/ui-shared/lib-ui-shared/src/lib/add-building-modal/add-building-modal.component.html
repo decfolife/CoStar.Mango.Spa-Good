@@ -24,21 +24,21 @@
 								</dxi-validation-rule>
 							</dxi-item>
 
-							<dxi-item dataField="Country" editorType="dxSelectBox"
+							<dxi-item dataField="buildingCountry" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'Country', displayExpr: 'Country', onValueChanged:onCountryChanged }">
 							</dxi-item>
 
-							<dxi-item dataField="Address"></dxi-item>
+							<dxi-item dataField="buildingAddress"></dxi-item>
 
-							<dxi-item dataField="City"></dxi-item>
+							<dxi-item dataField="buildingCity"></dxi-item>
 
-							<dxi-item [visible]="!enableStateTextBox" dataField="State" editorType="dxSelectBox"
+							<dxi-item [visible]="!enableStateTextBox" dataField="buildingState" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: stateDropdownItem, valueExpr: 'State', displayExpr: 'State' }">
 							</dxi-item>
 
-							<dxi-item [visible]="enableStateTextBox" dataField="State/Province"></dxi-item>
+							<dxi-item [visible]="enableStateTextBox" dataField="State"></dxi-item>
 
-							<dxi-item dataField="ZipCode"></dxi-item>
+							<dxi-item dataField="buildingZipCode"></dxi-item>
 
 							<dxi-item dataField="template" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: templateDropdownItem, valueExpr: 'ObjectTypeTypeID', displayExpr: 'ObjectTypeTypeName' }">
