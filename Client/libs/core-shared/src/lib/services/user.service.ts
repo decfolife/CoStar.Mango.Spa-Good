@@ -63,7 +63,6 @@ export class UserService {
      
       switchMap((response: any) => {
         const decodedJwt = this.getDecodedAuthToken(response.authToken);
-        console.log(decodedJwt)
         const user: UserAuth = {
           email: response.email,
           hasMultipleSites: response.hasMultipleSites,
@@ -168,7 +167,7 @@ export class UserService {
   }
 
   getServiceAccountInfo(userEmail: string): Observable<ServiceAccountInfo> {
-    return this.http.get<ServiceAccountInfo>(`${this.env.appUrls.authentication}/serviceaccount/accountinfo/${userEmail}`, { withCredentials: true })
+    return this.http.get<ServiceAccountInfo>(`${this.env.appUrls.authentication}/serviceaccount/accountinfo/${userEmail}`)
   }
 
   updateServiceAccountApiAccess(request: UpdateServiceAccountApiAccessRequest): Observable<boolean> {
