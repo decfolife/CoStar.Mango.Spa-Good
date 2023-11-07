@@ -18,7 +18,7 @@
 			[wordWrapEnabled]="true"
 			(onCellPrepared)="gridOnCellPrepared($event)"
 			(onContentReady)="setAttributes($event)"
-			(onEditorPreparing)="editorPreparing($event)"
+			(onKeyDown)="onKeyDown($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>

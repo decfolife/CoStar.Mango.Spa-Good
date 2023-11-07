@@ -116,18 +116,10 @@ export class TeamMembersComponent implements OnInit {
 		this.teamMembers.forEach(teamMember => { teamMember.editMode = false});
 	}
 
-	editorPreparing(e) {
-		if (e.parentType === 'dataRow') {
-			if(e.editorOptions) {
-				e.editorOptions.onKeyDown = function(args){  
-					if(args.event.keyCode && args.event.keyCode == 13){  
-							args.event.stopPropagation();  
-					}  
-				} 
-			} 
-		}  
-	}
-
+	onKeyDown(e){
+		if (e.event.keyCode == 13)
+        e.handled = true;
+  }
 
 	gridOnCellPrepared(e) {
 		if(this.rights.toLocaleLowerCase().trim()=="view" && e.column.command == 'select') {
