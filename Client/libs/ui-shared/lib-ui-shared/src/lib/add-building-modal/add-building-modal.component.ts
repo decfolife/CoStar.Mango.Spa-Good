@@ -74,7 +74,7 @@ export class AddBuildingModalComponent implements OnInit {
     this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").subscribe(
       (result) => {
         const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
-        this.enableSubGroupDropDown = mappedValues?.some(value => value.toLowerCase().includes('-1') || value.toLowerCase().includes(' '));
+        this.enableSubGroupDropDown = mappedValues?.some(value => value.includes('1'));
       }
     ); 
   }
@@ -152,7 +152,7 @@ export class AddBuildingModalComponent implements OnInit {
       buildingAddress: formData.buildingAddress,
       buildingCity: formData.buildingCity,
       buildingCountry: formData.buildingCountry,
-      buildingMasterGroupID: formData.Portfolio,
+      buildingMasterGroupID: formData.portfolio,
       buildingName: formData.buildingName,
       buildingState: formData.buildingState,
       buildingZipCode: formData.buildingZipCode,
