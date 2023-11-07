@@ -37,7 +37,6 @@ export class AddBuildingModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: {
       objectTypeName: string;
       objectTypeId: number;
-
     }
 
   ) {
@@ -102,7 +101,7 @@ export class AddBuildingModalComponent implements OnInit {
   }
 
   onCountryChanged(e: any) {
-    if (e.value == 225) {
+    if (e.value == 'United States') {
       this.enableStateTextBox = false;
     } else {
       this.enableStateTextBox = true;

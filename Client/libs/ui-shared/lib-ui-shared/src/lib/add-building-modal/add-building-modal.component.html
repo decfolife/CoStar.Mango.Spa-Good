@@ -25,7 +25,7 @@
 							</dxi-item>
 
 							<dxi-item dataField="buildingCountry" editorType="dxSelectBox"
-								[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'Country', displayExpr: 'Country' }">
+								[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'Country', displayExpr: 'Country', onValueChanged:onCountryChanged }">
 							</dxi-item>
 
 							<dxi-item dataField="buildingAddress"></dxi-item>
@@ -48,7 +48,8 @@
 
 							<dxi-item dataField="Sub Group" editorType="dxSelectBox"
 								[editorOptions]="{ dataSource: subGroupDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
-								<dxi-validation-rule *ngIf="enableSubGroupDropDown" type="required" message="You must select a Sub group"></dxi-validation-rule>
+								<dxi-validation-rule *ngIf="enableSubGroupDropDown" type="required"
+									message="You must select a Sub group"></dxi-validation-rule>
 							</dxi-item>
 
 							<dxi-item [visible]="enableHierachyDropDown" dataField="hierarchy" editorType="dxSelectBox"
