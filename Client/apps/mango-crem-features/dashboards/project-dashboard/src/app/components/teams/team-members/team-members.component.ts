@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { MemberInfo, TeamMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, TeamMemUpdate, TeamMember } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import CheckBox from 'devextreme/ui/check_box';
@@ -19,9 +19,9 @@ export class TeamMembersComponent implements OnInit {
 
 	public dataRetrieved: boolean = false;
 	memberIds: number[];
+	memberUpdate: TeamMemUpdate;
 	headerCheckBox: any;
 	headerHtmlCellElement: any;
-	editDataRow: any
 	emailNotify: boolean;
 
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
@@ -40,23 +40,94 @@ export class TeamMembersComponent implements OnInit {
 	}
 
 	editRow(memberData: any) {
-		this.editDataRow = memberData;
 		this.emailNotify = memberData.data.emailOn;
-		this.teamMembers.forEach(teamMember => { teamMember.editMode = false});
 		this.teamMembersGrid.instance.cancelEditData();
+		this.resetEditMode();
 		this.teamMembersGrid.instance.editRow(memberData.rowIndex);
 		memberData.data.editMode = true;
 	}
 
-	saveMemberChanges(memberData: any) {
-		memberData.row.data.emailOn = this.emailNotify;
-		//**** once API is ready call API and If update successful -
-		memberData.data.role = memberData.row.data.role;
-		memberData.data.emailOn = memberData.row.data.emailOn;
-		memberData.data.level = memberData.row.data.level;
-		memberData.data.editMode = false;
-		this.teamMembersGrid.instance.cancelEditData();
+	saveMemberChanges(e:any, member: TeamMember) {
+
+		member.emailOn = this.emailNotify;
+		this.memberUpdate = {
+			teamId: member.teamId,
+			contactId: member.contactId,
+			emailOn: member.emailOn,
+			role: member.role,
+			level: member.level.charAt(1),
+			share: member.share,
+		}
+
+		this.dashboardService.updateTeamMember(this.memberUpdate).subscribe(
+      (res:any) => {
+        if (res.success) {
+            console.log(`Team member has been updated successfully: ${member.memberId}`);
+						this.teamMembersGrid.instance.saveEditData();
+        } else { 
+					alert("Team Member could not be updated. Please review and try again later.");
+					this.teamMembersGrid.instance.cancelEditData();
+				}
+				member.editMode = false;
+				this.resetEditMode();
+      }
+
+    );
+
 	}
+
+	removeTeamMember(member: TeamMember) {
+		this.memberIds = [];
+		this.memberIds.push(member.memberId);
+
+		this.dashboardService.deleteTeamMembers(this.memberIds).subscribe(
+      (res:any) => {
+        if (res.success) {
+            console.log(`Team member deleted: ${member.memberId}`);
+						const removeIndex: number[] =[];
+						this.memberIds.forEach(memberId => {
+							removeIndex.push(this.teamMembers.findIndex(member => memberId == member.memberId));
+						});
+						removeIndex.forEach(index => this.teamMembers.splice(index, 1));
+        } else { alert("Team Member could not be deleted. Please review and try again later.");}
+      }
+    );
+	}
+
+	setRoleValue(newData, value: string, currentRowData) {
+		(this as any).defaultSetCellValue(newData, value);
+  }
+
+	setLevelValue(newData, value: string, currentRowData) {
+		newData.level = value;
+  }
+
+	emailtoggle(e) {
+		this.emailNotify = e.checked;
+	}
+	
+	cancelChanges(row) {
+		row.data.editMode = false;
+		this.teamMembersGrid.instance.cancelEditData();
+		this.resetEditMode();
+	}
+
+	resetEditMode() {
+		this.teamMembers.forEach(teamMember => { teamMember.editMode = false});
+	}
+
+	editorPreparing(e) {
+		if (e.parentType === 'dataRow') {
+			if(e.editorOptions) {
+				e.editorOptions.onKeyDown = function(args){  
+					if(args.event.keyCode && args.event.keyCode == 13){  
+							args.event.stopPropagation();  
+					}  
+				} 
+			} 
+		}  
+	}
+
 
 	gridOnCellPrepared(e) {
 		if(this.rights.toLocaleLowerCase().trim()=="view" && e.column.command == 'select') {
@@ -86,35 +157,5 @@ export class TeamMembersComponent implements OnInit {
       })
     })
   }
-
-	emailtoggle(e) {
-		this.emailNotify = e.checked;
-	}
-	
-	cancelChanges(row) {
-		row.data.editMode = false;
-		this.teamMembersGrid.instance.cancelEditData();
-	}
-
-
-	removeTeamMember(member: TeamMember) {
-		this.memberIds = [];
-		this.memberIds.push(member.memberId);
-
-		this.dashboardService.deleteTeamMembers(this.memberIds).subscribe(
-      (res:any) => {
-        if (res.success) {
-            console.log(`Team member deleted: ${member.memberId}`);
-						const removeIndex: number[] =[];
-						this.memberIds.forEach(memberId => {
-							removeIndex.push(this.teamMembers.findIndex(member => memberId == member.memberId));
-						});
-						removeIndex.forEach(index => this.teamMembers.splice(index, 1));
-        } else { console.log(`Team member deletion not successful`);}
-      }
-    );
-	}
-
-	doSomethingForNow(data) {}
 
 }

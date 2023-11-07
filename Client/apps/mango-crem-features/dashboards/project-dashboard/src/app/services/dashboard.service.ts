@@ -7,6 +7,7 @@ import { TaskApprovalDto } from '../models/task-approval';
 import { UserSelectedFilters } from '../models';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { TeamMemUpdate } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class DashboardService  extends EndpointService{
@@ -121,6 +122,11 @@ export class DashboardService  extends EndpointService{
   getmemberinfo(): Observable<any> {
     const url = `${environment.appUrls.projects}getmemberinfo`;
     return this.callHttpGet(url, 'getmemberinfo')
+  }
+
+  updateTeamMember(memberupdate: TeamMemUpdate): Observable<any> {
+    const url = `${environment.appUrls.projects}updateteammember`;
+    return this.callHttpPost(url, 'updateteammember', memberupdate);
   }
 }
 

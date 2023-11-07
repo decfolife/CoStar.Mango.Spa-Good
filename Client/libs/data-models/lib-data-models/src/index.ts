@@ -42,6 +42,7 @@ export * from './lib/models/team';
 export * from './lib/models/teamMember';
 export * from './lib/models/memberInfo';
 export * from './lib/models/contactMember';
+export * from './lib/models/teamMemUpdate';
 export * from './lib/constants/central-auth.constants';
 export * from './lib/constants/mango.constants';
 export * from './lib/lib-data-models.module';
