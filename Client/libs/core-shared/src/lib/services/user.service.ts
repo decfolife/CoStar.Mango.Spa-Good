@@ -13,16 +13,14 @@ import {
   Password,
   RecentUserSites,
   RequestPasswordResetRequest,
-  ServiceAccountApiKeyInfo,
-  ServiceAccountEndpoints,
-  ServiceAccountSites,
   Token,
+  ServiceAccountInfo,
   UpdateServiceAccountApiAccessRequest,
   UserAuth
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { DBkeys } from '../utilities/db-keys';
 import { StorageService } from './storage.service';
 
@@ -60,11 +58,12 @@ export class UserService {
 
   login(credentials): Observable<UserAuth> {
     this.purgeAuth();
-
-    return this.http.post(`${this.env.appUrls.identity}/auth/login`, credentials, { withCredentials: true }).pipe<AuthHTTPResponse>(
-      tap((response: any) => {
+ 
+    return this.http.post(`${this.env.appUrls.identity}/auth/login`, credentials, { withCredentials: true }).pipe<any>(
+     
+      switchMap((response: any) => {
         const decodedJwt = this.getDecodedAuthToken(response.authToken);
-
+        console.log(decodedJwt)
         const user: UserAuth = {
           email: response.email,
           hasMultipleSites: response.hasMultipleSites,
@@ -73,6 +72,7 @@ export class UserService {
           isServiceAccount: this.parseBool(decodedJwt.isServiceAccount)
         };
         this.setAuth(user, response.authToken);
+        return of(user)
       })
     );
   }
@@ -157,28 +157,18 @@ export class UserService {
     return value.toLowerCase() === 'true';
   }
 
-  getServiceAccountApiKeyInfo(userEmail: string): Observable<ServiceAccountApiKeyInfo> {
-    const url = `${this.env.appUrls.identity}/getServiceAccountApiKeyInfo/{userEmail}`;
-
-    // return this.http.get(url).pipe<ServiceAccountApiKeyInfo>(
-    // );
-
-    //To be deleted after API integration
-    let date = new Date();
-    const testData: ServiceAccountApiKeyInfo = {
-      userEmail: userEmail,
-      dateGenerated: date,
-      expirationDate: date,
-    }
-    return of(testData);
+  generateApiKey(): Observable<any> {    
+    const url = `${this.env.appUrls.authentication}/serviceaccount/createclientapikey`;
+    const body = { }
+     return this.http.post(url, body).pipe<string>(
+      tap( (response: any) => {
+        return response.data;
+      })
+    );
   }
 
-  generateApiKey(): Observable<any> {
-    return this.http.post<any>(`${this.env.appUrls.authentication}/serviceaccount/createapikey`, {})
-  }
-
-  getServiceAccountSites(userEmail: string): Observable<ServiceAccountSites> {
-    return this.http.get<ServiceAccountSites>(`${this.env.appUrls.authentication}/serviceaccount/sites/${userEmail}`)
+  getServiceAccountInfo(userEmail: string): Observable<ServiceAccountInfo> {
+    return this.http.get<ServiceAccountInfo>(`${this.env.appUrls.authentication}/serviceaccount/accountinfo/${userEmail}`, { withCredentials: true })
   }
 
   updateServiceAccountApiAccess(request: UpdateServiceAccountApiAccessRequest): Observable<boolean> {
@@ -204,9 +194,5 @@ export class UserService {
       { lastModified: date, modifiedBy: 'Li Liu 5', description: 'Create Account 5', beforeChange: 'Old value 5', afterChange: 'New value 5' }];
 
     return of(testData);
-  }
-
-  getServiceAccountEndpoints(): Observable<ServiceAccountEndpoints> {
-    return this.http.get<ServiceAccountEndpoints>(`${this.env.appUrls.authentication}/serviceaccount/endpoints`)
   }
 }
