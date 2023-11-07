@@ -7,7 +7,7 @@
 		<div class="section" (loadCondition)="setLoadCondition($event)">
 			<div class="section--border"></div>
 			<form id="modal">
-				<dx-form id="form" validationGroup="centerForm">
+				<dx-form #addBuildingForm id="form" validationGroup="centerForm">
 
 					<dxi-item itemType="group" cssClass="centerForm" [colCount]="1">
 
@@ -25,7 +25,7 @@
 							</dxi-item>
 
 							<dxi-item dataField="buildingCountry" editorType="dxSelectBox"
-								[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'CountryID', displayExpr: 'Country', onValueChanged:onCountryChanged }">
+								[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'Country', displayExpr: 'Country' }">
 							</dxi-item>
 
 							<dxi-item dataField="buildingAddress"></dxi-item>
@@ -33,7 +33,7 @@
 							<dxi-item dataField="buildingCity"></dxi-item>
 
 							<dxi-item [visible]="!enableStateTextBox" dataField="buildingState" editorType="dxSelectBox"
-								[editorOptions]="{ dataSource: stateDropdownItem, valueExpr: 'StateID', displayExpr: 'State' }">
+								[editorOptions]="{ dataSource: stateDropdownItem, valueExpr: 'State', displayExpr: 'State' }">
 							</dxi-item>
 
 							<dxi-item [visible]="enableStateTextBox" dataField="State"></dxi-item>

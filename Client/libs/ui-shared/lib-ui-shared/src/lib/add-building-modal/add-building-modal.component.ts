@@ -28,7 +28,7 @@ export class AddBuildingModalComponent implements OnInit {
   public enableSubGroupDropDown: any = [];
 
   @Output() isLoading = new EventEmitter();
-  @ViewChild(DxFormComponent) form: DxFormComponent;
+  @ViewChild('addBuildingForm') addBuildingForm: DxFormComponent;
 
   constructor(
     public dialogRef: MatDialogRef<AddBuildingModalComponent>,
@@ -144,12 +144,12 @@ export class AddBuildingModalComponent implements OnInit {
   }
 
   public validateForm(e: any) {
-    this.form.instance.validate();
+    this.addBuildingForm.instance.validate();
   }
 
-  private getBuildingFromFormData(): any {
-    const formData = this.form.formData;
-    return {
+  private getBuildingFromFormData() {
+    const formData = this.addBuildingForm.formData;
+    let building = {
       buildingAddress: formData.buildingAddress,
       buildingCity: formData.buildingCity,
       buildingCountry: formData.buildingCountry,
@@ -161,6 +161,7 @@ export class AddBuildingModalComponent implements OnInit {
       portfolioSubGroupID: formData.tenantID,
       tenantID: formData.hierarchy
     };
+    return building;
   }
 
   private handleAddBuildingResult(success: boolean, isSaveAndNew: boolean) {
@@ -168,7 +169,7 @@ export class AddBuildingModalComponent implements OnInit {
       this.showMessage();
       if (isSaveAndNew) {
         this.newBuildingSaved = true;
-        this.form.instance.resetValues();
+        this.addBuildingForm.instance.resetValues();
       } else {
         setTimeout(() => {
           this.dialogRef.close();
@@ -180,7 +181,7 @@ export class AddBuildingModalComponent implements OnInit {
   }
 
   public save(e: any) {
-    const isFormValid = this.form.instance.validate();
+    const isFormValid = this.addBuildingForm.instance.validate();
     if (isFormValid.isValid) {
       const building = this.getBuildingFromFormData();
       this.loading = true;
@@ -191,7 +192,7 @@ export class AddBuildingModalComponent implements OnInit {
   }
 
   public saveAndNew(e: any) {
-    const isFormValid = this.form.instance.validate();
+    const isFormValid = this.addBuildingForm.instance.validate();
     if (isFormValid.isValid) {
       const building = this.getBuildingFromFormData();
       this.loading = true;
@@ -201,7 +202,6 @@ export class AddBuildingModalComponent implements OnInit {
     }
   }
   //button functions end
-
 
   public setLoadCondition(loadCondition) {
     this.loading = loadCondition;
