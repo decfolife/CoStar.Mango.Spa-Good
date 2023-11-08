@@ -84,7 +84,7 @@
     "devextreme": "21.2",
     "devextreme-angular": "21.2",
     "document-register-element": "^1.14.10",
-    "exceljs": "^4.2.1",
+    "exceljs": "^4.4.0",
     "file-saver-es": "^2.0.5",
     "install": "^0.13.0",
     "jquery": "^3.6.0",

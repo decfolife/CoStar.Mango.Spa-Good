@@ -11,6 +11,7 @@ import { TeamMembersComponent } from './team-members/team-members.component';
 import * as ExcelJS from 'exceljs';
 import { Buffer, Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'teams',
@@ -119,11 +120,14 @@ export class TeamsComponent implements OnInit {
   }
 
   exportToFile() {
-    let excelFileName = "Teams.xlsx";
+    let excelFileName = 'TeamsList_' + formatDate(new Date(), 'yyyy-MM-dd_HHmmss', 'en-US') + '.xlsx';
     var workbook = new ExcelJS.Workbook();
     var worksheet = workbook.addWorksheet('Teams');
-    //worksheet.outlineProperties = {summaryBelow: false};
-    
+    worksheet.properties.outlineProperties = {
+      summaryBelow: false,
+      summaryRight: false,
+    };
+
     let masterRows = [];
     this.teams.forEach((value, index) => {
       masterRows.push({ rowIndex: index, data: value });
@@ -169,6 +173,8 @@ export class TeamsComponent implements OnInit {
         value: 'Team Members',
         font: { bold: true }
       });
+      worksheet.mergeCells(row.number, 1, row.number, 8);
+      row.hidden = true;
 
       rowIndex++;
       row = insertRow(rowIndex, 2);
@@ -180,12 +186,13 @@ export class TeamsComponent implements OnInit {
           border: { bottom: borderStyle, left: borderStyle, right: borderStyle, top: borderStyle }
         });
       });
-      
+      row.hidden = true;
+
       const columns = ["name", "company", "email", "phoneNumber", "role", "emailOn",  "level"];
       this.teams.filter((team) => team.teamId === teamData.teamId)[0].teamMembers.forEach((teamMember, index) => {
         rowIndex++;
         row = insertRow(rowIndex, 2);
-
+        row.hidden = true;
         columns.forEach((columnName, currentColumnIndex) => {
           Object.assign(row.getCell(currentColumnIndex+2), {
             value: teamMember[columnName],
@@ -195,6 +202,17 @@ export class TeamsComponent implements OnInit {
       });
     }
       
+    worksheet.columns.forEach(function (column, i) {
+      let maxLength = 0;
+      column["eachCell"]({ includeEmpty: true }, function (cell) {
+          var columnLength = cell.value ? cell.value.toString().length : 10;
+          if (columnLength > maxLength ) {
+              maxLength = columnLength;
+          }
+      });
+      column.width = maxLength < 10 ? 10 : maxLength;
+    });
+
     workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
       saveAs(new Blob([ buffer ], { type: 'application/octet-stream' }), excelFileName);
     });
