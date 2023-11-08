@@ -12,8 +12,8 @@ import { Subscription } from 'rxjs';
 })
 export class ServiceAccountApiKeysComponent {
   @Input() userEmail: string;
-  @Input() apiKeyExpiresOn: string;
-  @Input() apiKeyGeneratedDate: string;
+  @Input() apiKeyExpiresOn: Date;
+  @Input() apiKeyGeneratedDate: Date;
   @Output() apiKeyUpdated = new EventEmitter<boolean>();
 
   subs: Subscription[] = []

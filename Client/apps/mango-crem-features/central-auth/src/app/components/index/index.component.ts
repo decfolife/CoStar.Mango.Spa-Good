@@ -18,7 +18,7 @@ export class IndexComponent implements OnInit {
   ngOnInit(): void {
     this.user$.pipe(
       filter(user => !!user),
-      tap(_ => this.router.navigate(['/customer-selection']))
+      tap(user => this.router.navigate([user.isServiceAccount ? 'service-account-configuration' : '/customer-selection']))
     ).subscribe()
   }
 }

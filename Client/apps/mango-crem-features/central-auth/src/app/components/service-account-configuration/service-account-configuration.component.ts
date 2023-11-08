@@ -14,8 +14,8 @@ export class ServiceAccountConfigurationComponent implements OnInit{
   public userEmail: string;
   subs: Subscription[] = []
   public servieAccountInfo: ServiceAccountInfo;
-  public apiKeyExpiresOn: string;
-  public apiKeyGeneratedDate: string;
+  public apiKeyExpiresOn: Date;
+  public apiKeyGeneratedDate: Date;
   public serviceAccountSites : ServiceAccountSite[];
   public serviceAccountEndpoints: ServiceAccountEndpoint[];
 
@@ -43,8 +43,8 @@ export class ServiceAccountConfigurationComponent implements OnInit{
         this.userService.getServiceAccountInfo(this.userEmail)
         .subscribe(result => {        
           if(result){          
-              this.apiKeyExpiresOn = result.apiKeyExpiresOn === null ? '' : result.apiKeyExpiresOn.toLocaleString('en-US');
-              this.apiKeyGeneratedDate = result.apiKeyGeneratedDate === null ? '' : result.apiKeyGeneratedDate.toLocaleString('en-US');
+              this.apiKeyExpiresOn = result.apiKeyExpiresOn;
+              this.apiKeyGeneratedDate = result.apiKeyGeneratedDate ;
               this.serviceAccountEndpoints = result.serviceAccountEndpoints; 
               this.serviceAccountSites = result.serviceAccountSites; 
           }
