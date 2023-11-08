@@ -1,5 +1,6 @@
 export interface ServiceAccountInfo {
   apiKeyExpiresOn?: Date;
+  apiKeyGeneratedDate?: Date;
   serviceAccountSites : ServiceAccountSite[];
   serviceAccountEndpoints: ServiceAccountEndpoint[];
 }
