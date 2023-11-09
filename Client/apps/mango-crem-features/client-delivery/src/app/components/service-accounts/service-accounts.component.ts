@@ -98,22 +98,23 @@ export class ServiceAccountsComponent implements OnInit {
   }
 
     public addServiceAccount(){    
-    let dialogRef = this.dialog.open(AddServiceAccountComponent, {
-      width: '600px',
-      panelClass: 'client-delivery-modal',
-      data: this.allServiceAccountsData.map(x => x.contactEmailAddress)
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result.length > 0) {  
-        this.service.addServiceAccount(result)             
-        .subscribe(result => {
-          if (result) { 
-            if(!this.selectedFilter) this.selectedFilter = 'Active';
-            setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);           
-          }
-        });        
-      }
-    });   
+      let dialogRef = this.dialog.open(AddServiceAccountComponent, {
+        width: '460px',
+        panelClass: 'client-delivery-modal',
+        data: this.allServiceAccountsData.map(x => x.contactEmailAddress)
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.length > 0) {  
+          this.service.addServiceAccount(result)             
+          .subscribe(result => {
+            if (result) { 
+              if(!this.selectedFilter) this.selectedFilter = 'Active';
+              setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);           
+            }
+          });        
+        }
+      });   
   }
 
   public updateServiceAccountStatus(data, contactActiveFlg) {
