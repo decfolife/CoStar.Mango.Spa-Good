@@ -34,10 +34,9 @@ export class IndexComponent implements OnInit {
     return combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.isUserAuthenticated$]).pipe(
       filter(([user, isUserFullyAuthenticated]) => !!user),
       tap(([user, isUserFullyAuthenticated]) => {
-        if (user?.isServiceAccount) {
+        if (user.isServiceAccount) {
           this.router.navigate(['service-account-configuration'])
-        }
-        if (!isUserFullyAuthenticated) {
+        } else if (!isUserFullyAuthenticated) {
           this.router.navigate(['customer-selection'])
         }
       }),
