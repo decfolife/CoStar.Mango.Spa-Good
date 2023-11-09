@@ -32,7 +32,7 @@ export class UserService {
     private http: HttpClient,
     private _storageService: StorageService,
     private env: Environment
-  ) {}
+  ) { }
 
   setAuth(user: UserAuth, accessToken: string) {
     this._storageService.savePermanentData(user, DBkeys.USER_AUTH);
@@ -58,9 +58,7 @@ export class UserService {
 
   login(credentials): Observable<UserAuth> {
     this.purgeAuth();
- 
     return this.http.post(`${this.env.appUrls.identity}/auth/login`, credentials, { withCredentials: true }).pipe<any>(
-     
       switchMap((response: any) => {
         const decodedJwt = this.getDecodedAuthToken(response.authToken);
         const user: UserAuth = {
@@ -124,14 +122,15 @@ export class UserService {
   }
 
   parseContactRecordHttpObject(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
-    const { contactID, requireSSO, userRoleName } = contactRecordHttpObject
+    const { contactID, requireSSO, userRoleName, isDefaultLoginContact } = contactRecordHttpObject
     const contactRecord: ContactRecord = {
       contactID,
       firstName: contactRecordHttpObject.contactFirstName,
       lastName: contactRecordHttpObject.contactLastName,
       requireSSO,
       userName: contactRecordHttpObject.contactUserID,
-      userRoleName
+      userRoleName,
+      isDefaultLoginContact
     }
     return contactRecord
   }
@@ -156,11 +155,11 @@ export class UserService {
     return value.toLowerCase() === 'true';
   }
 
-  generateApiKey(): Observable<any> {    
+  generateApiKey(): Observable<any> {
     const url = `${this.env.appUrls.authentication}/serviceaccount/createapikey`;
-    const body = { }
-     return this.http.post(url, body).pipe<string>(
-      tap( (response: any) => {
+    const body = {}
+    return this.http.post(url, body).pipe<string>(
+      tap((response: any) => {
         return response.data;
       })
     );

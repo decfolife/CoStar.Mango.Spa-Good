@@ -1,54 +1,43 @@
 <div class="login-wrapper">
-	<mat-card>	
+	<mat-card>
 		<mat-card-header>
 			<mat-card-title>Secured Login</mat-card-title>
-		</mat-card-header>	
-		<mat-card-content>	
-			<div class="mx-auto">					
-				<form id="form" [formGroup]="loginForm" (ngSubmit)="login()">	
-					<div *ngIf="showSSOButton && isClientSiteActive" class="login-sso">
-						<button type="button" (click)="redirectToSSO()" class="btn btn-default w100">Login via SSO</button>
+		</mat-card-header>
+		<mat-card-content>
+			<div class="mx-auto">
+				<form id="form" [formGroup]="loginForm" (ngSubmit)="login()">
+					<div *ngIf="(showSSOButton$ | async) && (isClientSiteActive$ | async)" class="login-sso">
+						<button type="button" (click)="redirectToSSO()" class="btn btn-default w100">Login via
+							SSO</button>
 						<div class="login-or">
 							<hr>
-								<div>OR</div>	
+							<div>OR</div>
 							<hr>
 						</div>
 						<div class="instructions text-center">Login with your email and password</div>
-					</div>		
-					<cs-text-field
-						id="email"
-						type="email"
-						formControlName="email"
-						[placeholder]="'Email Address'"
-						[required]="true"
-						[error]="(form.email.touched && form.email.errors?.required) ||
-								(form.email.touched && form.email.errors?.email)"
-						[errorMsg]="getEmailErrorMsg()"
-						[disabled]="!isClientSiteActive"
-						required>
-					</cs-text-field>
-					<cs-text-field
-						id="password"
-						formControlName="password"
-						placeholder="Password"
-						[type]="showPassword ? 'text' : 'password'"
-						[error]="form.password.touched && 
-							    (form.password.errors?.required || form.password.errors?.whitespace)"
-						[errorMsg]="getPasswordErrorMsg()"
-						[icon]="showPassword ? 'visibility_off' : 'visibility'"
-						(iconClick)="toggleShow()"
-						[clickableIcon]="true"
-						[disabled]="!isClientSiteActive"
-						(keydown.space)="$event.preventDefault();"
-						required>
-					</cs-text-field>
-					<div class="forgot-password-link">						
-						<button type="button" class="btn btn-link pt-1" (click)="resetPassword()">Reset Password</button>
 					</div>
-					<button *ngIf="!loading" id="login-btn" class="btn btn-primary btn-block mt-3" type="submit" [disabled]="!isClientSiteActive">
+					<cs-text-field id="email" type="email" formControlName="email" [placeholder]="'Email Address'"
+						[required]="true" [error]="(formControls.email.touched && formControls.email.errors?.required) ||
+								(formControls.email.touched && formControls.email.errors?.email)" [errorMsg]="getEmailErrorMsg()"
+						[disabled]="!(isClientSiteActive$ | async)" required>
+					</cs-text-field>
+					<cs-text-field id="password" formControlName="password" placeholder="Password"
+						[type]="showPassword ? 'text' : 'password'" [error]="formControls.password.touched && 
+							    (formControls.password.errors?.required || formControls.password.errors?.whitespace)"
+						[errorMsg]="getPasswordErrorMsg()" [icon]="showPassword ? 'visibility_off' : 'visibility'"
+						(iconClick)="toggleShow()" [clickableIcon]="true" [disabled]="!(isClientSiteActive$ | async)"
+						(keydown.space)="$event.preventDefault();" required>
+					</cs-text-field>
+					<div class="forgot-password-link">
+						<button type="button" class="btn btn-link pt-1" [routerLink]="['password-reset-request']">Reset
+							Password</button>
+					</div>
+					<button *ngIf="!loading" id="login-btn" class="btn btn-primary btn-block mt-3" type="submit"
+						[disabled]="!(isClientSiteActive$ | async)">
 						Log In
 					</button>
-					<button *ngIf="loading" id="login-btn" class="btn btn-primary btn-block mt-3" type="button" disabled>
+					<button *ngIf="loading" id="login-btn" class="btn btn-primary btn-block mt-3" type="button"
+						disabled>
 						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 						Loading...
 					</button>
@@ -57,5 +46,3 @@
 		</mat-card-content>
 	</mat-card>
 </div>
-
-<mango-contact-select ></mango-contact-select>

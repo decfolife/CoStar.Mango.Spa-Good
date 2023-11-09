@@ -8,6 +8,7 @@ import { IconModule, TextFieldModule } from '@mango/ui-shared/cosmos';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import { MatCardModule } from '@angular/material/card';
   imports: [
     CommonModule,
     CardModule,
+    RouterModule,
     MatCardModule,
     TextFieldModule,
     MatButtonModule,

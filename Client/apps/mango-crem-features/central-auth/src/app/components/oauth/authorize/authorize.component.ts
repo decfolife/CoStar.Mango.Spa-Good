@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '@mango/core-shared';
 import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_CONTACT_ID_QUERY_PARAM, OAUTH_LOGOUT_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM } from '@mango/data-models/lib-data-models';
 import { EMPTY, Subscription, combineLatest, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../../../+state/facades';
 
 @Component({
@@ -34,11 +34,11 @@ export class AuthorizeComponent implements OnInit, OnDestroy {
           this.centralAuthFacade.logout()
           return EMPTY
         } else {
-          return of({ redirect_uri, client_key, contact_id })
+          return combineLatest([of(redirect_uri), of(client_key), of(contact_id), this.centralAuthFacade.userClients$, this.centralAuthFacade.accessToken$])
         }
       }),
-      map(({ redirect_uri, client_key, contact_id }) => {
-        !!client_key ? this.centralAuthFacade.setClient({ clientKey: client_key }) : null
+      map(([redirect_uri, client_key, contact_id, clients ]) => {
+        //!!client_key ? this.centralAuthFacade.setClient(clients.find(c => c.clientKey.toLowerCase() === client_key.toLowerCase())) : null
         !!contact_id ? this.centralAuthFacade.setContactId(parseInt(contact_id)) : null
         this.centralAuthFacade.setRedirectionUri(encodeURIComponent(redirect_uri))
       }),

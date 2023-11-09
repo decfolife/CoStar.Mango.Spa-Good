@@ -5,4 +5,5 @@ export interface ContactRecord {
     userName: string;
     requireSSO: boolean;
     userRoleName: string;
+    isDefaultLoginContact: boolean;
 }

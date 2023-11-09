@@ -4,6 +4,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { CustomerSelectComponent } from '../customer-select/customer-select.component';
 import { ServiceAccountConfigurationComponent } from '../service-account-configuration/service-account-configuration.component';
 import { IndexComponent } from './index.component';
+import { AuthorizeComponent } from '../oauth/authorize/authorize.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,16 @@ const routes: Routes = [
     path: 'service-account-configuration',
     component: ServiceAccountConfigurationComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'oauth',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'authorize',
+        component: AuthorizeComponent
+      }
+    ]
   },
   {
     path: 'reset-password',

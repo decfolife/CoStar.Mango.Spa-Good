@@ -1,12 +1,9 @@
-import { ToastrService } from 'ngx-toastr';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import * as _ from 'lodash';
-import { fadeInOut } from '@mango/core-shared'
-import { UserService } from '@mango/core-shared';
-import { ClientSitesByUser, UserSite } from '@mango/data-models/lib-data-models';
-import { CentralAuthFacade } from '../../../+state/facades';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { fadeInOut } from '@mango/core-shared';
+import { UserSite } from '@mango/data-models/lib-data-models';
 import { Observable, Subscription } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
+import { CentralAuthFacade } from '../../../+state/facades';
 
 @Component({
   selector: 'mango-customer-selection',
@@ -15,62 +12,46 @@ import { filter, switchMap, tap } from 'rxjs/operators';
   animations: [fadeInOut],
 })
 
-export class CustomerSelectionListComponent implements OnInit {
-  isLoading = true;
-  clients: UserSite[];
-  clientsDropdown: string[];
-  recentClients: UserSite[];
+export class CustomerSelectionListComponent implements OnInit, OnDestroy {
+  clients$ = this.centralAuthFacade.userClients$;
+  isLoading$ = this.clients$.pipe(map(clients => !clients));
+  recentClients$ = this.centralAuthFacade.userRecentClients$;
+  clientsDropdown$: Observable<string[]> = this.clients$.pipe(filter(clients => !!clients), map(clients => clients.map(client => client.clientKey.toUpperCase())));
+
   tooltipState: boolean[] = []
-  @Output() onClientSelected: EventEmitter<UserSite> = new EventEmitter<UserSite>()
 
   subs: Subscription[] = []
+  @Output() onClientSelected: EventEmitter<UserSite> = new EventEmitter<UserSite>()
+
   constructor(
-    private userService: UserService,
-    private _toastr: ToastrService,
     private centralAuthFacade: CentralAuthFacade
   ) { }
 
-  ngOnInit() {
-    this.subs.push(
-      this.getClientSitesForUser().pipe(
-        tap((response: ClientSitesByUser) => {
-          this.isLoading = false
-          this.clients = response.userSites;
-          this.recentClients = response.recentUserSites;
-          this.clientsDropdown = this.clients.map(item => item.clientKey.toUpperCase())
-        })).subscribe())
-  }
-
-  getClientSitesForUser(): Observable<ClientSitesByUser> {
-    return this.centralAuthFacade.user$.pipe(
-      filter(user => !!user),
-      switchMap(user => this.userService.getClientSitesByUser(user.email))
-    )
-  }
-
-  reloadRecentSitesForUser() {
-    this.centralAuthFacade.user$.pipe(
-      filter(user => !!user),
-      switchMap(user => this.userService.getRecentSitesForUser(user.email)),
-    ).subscribe(result => this.recentClients = result.recentUserSites)
+  ngOnInit(): void {
   }
 
   clientSelected(event) {
-    if (event.value !== null) {
-      const clientKey = event.value.toLowerCase();
-      const client = this.clients.find(c => c.clientKey.toLowerCase() === clientKey.toLowerCase())
-      this.centralAuthFacade.setClient(client)
-      this.onClientSelected.emit(client)
-    }
+    this.subs.push(
+      this.clients$.pipe(
+        filter(_ => !!event.value),
+        map(clients => clients.find(client => client.clientKey.toLowerCase() === event.value.toLowerCase())),
+        filter(selectedClient => !!selectedClient),
+        tap(selectedClient => {
+          this.onClientSelected.emit(selectedClient)
+        })
+      ).subscribe()
+    )
   }
 
   recentClientSelected(client: UserSite): void {
-    this._toastr.clear();
-    this.centralAuthFacade.setClient(client)
     this.onClientSelected.emit(client)
   }
 
   toggleTooltip(siteId: number): void {
     this.tooltipState[siteId] = !this.tooltipState[siteId]
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
   }
 }

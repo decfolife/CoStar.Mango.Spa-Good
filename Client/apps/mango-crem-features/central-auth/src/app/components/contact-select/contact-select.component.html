@@ -1,7 +1,7 @@
 <mango-user-records-popup 
-    [selectedClientKey]="clientKey"
-    [contactRecords]="contactRecords" 
-    [defaultContactRecordID]="defaultContactRecordID" 
+    [selectedClientKey]="(selectedClientKey$ | async)"
+    [contactRecords]="(contactRecords$ | async)" 
+    [defaultContactRecordID]="(defaultContactRecordID$ | async)" 
     (onSubmit)="onContactRecordSubmit($event)">
 </mango-user-records-popup>
 <dx-load-panel shadingColor="rgba(0,0,0,0.4)" [(visible)]="isLoading"

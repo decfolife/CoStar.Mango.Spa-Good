@@ -8,7 +8,7 @@ import {
 
 import { UserService } from '@mango/core-shared';
 import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
 
 @Injectable()
@@ -25,15 +25,19 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> {
-    return this.getAccessToken().pipe(map(accessToken => {
-      if (accessToken) {
-        this.centralAuthFacade.setAccessToken(accessToken)
-        return true
-      } else {
-        this.router.navigate(['/']);
+    return this.getAccessToken().pipe(
+      map(accessToken => {
+        if (accessToken) {
+          this.centralAuthFacade.setAccessToken(accessToken)
+          return true
+        }
         return false
-      }
-    }))
+      }),
+      catchError(error => {
+        this.router.navigateByUrl('/');
+        return of(false)
+      })
+    )
   }
 
   getAccessToken(): Observable<string> {

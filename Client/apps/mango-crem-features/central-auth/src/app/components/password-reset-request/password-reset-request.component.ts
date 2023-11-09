@@ -3,7 +3,6 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '@mango/core-shared';
 import { CentralAuthError, CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes } from '@mango/data-models/lib-data-models';
-import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 
 @Component({
   selector: 'mango-password-reset-request',
@@ -28,7 +27,6 @@ export class PasswordResetRequestComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private caErrorHandler: CentralAuthErrorHandler,
     private fb: UntypedFormBuilder,
     private route: ActivatedRoute
   ) { }
@@ -60,7 +58,6 @@ export class PasswordResetRequestComponent implements OnInit {
   };
 
   sendResetRequest = () => {
-    this.caErrorHandler.clearNotification()
     this.form.email.markAsTouched();
     this.isLoading = true;
 
@@ -116,8 +113,7 @@ export class PasswordResetRequestComponent implements OnInit {
     }
   };
 
-  public navigateToLoginPage() {
-    this.caErrorHandler.clearNotification()
+  navigateToLoginPage() {
     this.router.navigate(['/']);
   }
 
