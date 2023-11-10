@@ -35,7 +35,7 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
     this.selectedClientKey$ = this.centralAuthFacade.client$.pipe(filter(client => !!client), map(client => client.clientKey))
     this.defaultContactRecordID$ = this.contactRecords$.pipe(
       filter(contactRecords => !!contactRecords),
-      map(contactRecords => contactRecords.find(c => (c.isDefaultLoginContact === true) || { contactID: null } as ContactRecord).contactID)
+      map(contactRecords => (contactRecords.find(c => (c.isDefaultLoginContact === true)) || { contactID: null } as ContactRecord).contactID)
     )
   }
 
@@ -50,7 +50,7 @@ export class ContactSelectComponent implements OnInit, OnDestroy {
     this.isLoading = true
     return this.centralAuthFacade.userContactRecords$.pipe(
       filter(contactRecords => !!contactRecords),
-      map(contactRecords => contactRecords.find(c => c.contactID === payload.contactID)),
+      map(contactRecords => contactRecords.find(c => c.contactID === payload.contactID) || {contactID: 0, }),
       filter(selectedContactRecord => !!selectedContactRecord),
       tap(selectedContactRecord => {
         this.contactRecord.emit(selectedContactRecord)
