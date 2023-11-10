@@ -2,30 +2,13 @@
 @use "../../../../common/src/styles" as *;
 
 ::ng-deep {
-  .centerForm {
-    padding: 20px;
-  }
+  .modalFooter {
+    .addBuildingFooter {
+      display: flex;
 
-  .secondary div[role="button"] {
-    @include costar(color, dark);
-    &:hover {
-      @include costar(background-color, light);
-      @include costar(color, gray03)
-    }
-    &:disabled {
-      @include costar(color, gray04);
-      &:hover {
-        background-color: unset;
-        @include costar(color, gray04);
+      crem-button {
+        padding: 8px;
       }
-    }
-  }
-
-  .footerControls {
-    display: flex;
-    flex-direction: row-reverse;
-    .dx-item.dx-box-item {
-      flex: unset !important;
     }
   }
 }

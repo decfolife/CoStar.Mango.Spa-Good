@@ -20,6 +20,7 @@ export class AddBuildingModalComponent implements OnInit {
   private newBuildingSaved = false;
   public loading = true;
   public modalTitle: string;
+  public dynName: string;
   public portfolioDropdownItem: any = [];
   public stateDropdownItem: any = [];
   public subGroupDropdownItem: any = [];
@@ -51,7 +52,6 @@ export class AddBuildingModalComponent implements OnInit {
       }
     })
     this.getDropdownData();
-    this.loading = false;
 
     if (!this.data.objectTypeName) {
       this.dashboardService.getObjectTypeNames([3]).subscribe(
@@ -59,7 +59,7 @@ export class AddBuildingModalComponent implements OnInit {
           this.data.objectTypeName = result?.data?.[0]?.objectTypeName
           this.buildModalTitle();
         }
-      );   
+      );
     } else {
       this.buildModalTitle();
     }
@@ -69,14 +69,14 @@ export class AddBuildingModalComponent implements OnInit {
         const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
         this.enableHierachyDropDown = mappedValues?.some(value => value.toLowerCase().includes('building') || value.toLowerCase().includes('both'));
       }
-    ); 
+    );
 
     this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").subscribe(
       (result) => {
         const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
         this.enableSubGroupDropDown = mappedValues?.some(value => value.includes('1'));
       }
-    ); 
+    );
   }
 
   ngAfterViewInit(): void {
@@ -97,6 +97,8 @@ export class AddBuildingModalComponent implements OnInit {
       this.templateDropdownItem = data.templateDropdownItem.data.map(projectTemplateName => projectTemplateName.ProjectTemplateName);
       this.portfolioDropdownItem = data.portfolioDropdownItem.data;
       this.stateDropdownItem = data.stateDropDownItem.data;
+      this.loading = false;
+      this.focusFirstItem();
     });
   }
 
@@ -108,10 +110,12 @@ export class AddBuildingModalComponent implements OnInit {
     }
   }
 
+  // this funciton dynamically builds the form title and the name label in the form
   public buildModalTitle() {
     this.modalTitle = "Create " + this.data.objectTypeName;
+    this.dynName = this.data.objectTypeName
   }
-
+  // end 
 
   onPortFolioValueChanged(e: any) {
     this.formWizardService.getRenderSelect(e.value, 57).subscribe((data) => {
@@ -142,10 +146,6 @@ export class AddBuildingModalComponent implements OnInit {
     });
   }
 
-  public validateForm(e: any) {
-    this.addBuildingForm.instance.validate();
-  }
-
   private getBuildingFromFormData() {
     const formData = this.addBuildingForm.formData;
     let building = {
@@ -161,6 +161,18 @@ export class AddBuildingModalComponent implements OnInit {
       tenantID: formData.hierarchy
     };
     return building;
+  }
+
+  private focusFirstItem(){
+    setTimeout(() => {
+      let buildingNameInput = this.addBuildingForm.instance.getEditor('buildingName')
+      buildingNameInput.focus()
+    }, 200);
+  }
+
+  //button functions
+  public validateForm(e: any) {
+    this.addBuildingForm.instance.validate();
   }
 
   private handleAddBuildingResult(success: boolean, isSaveAndNew: boolean) {
@@ -201,9 +213,5 @@ export class AddBuildingModalComponent implements OnInit {
     }
   }
   //button functions end
-
-  public setLoadCondition(loadCondition) {
-    this.loading = loadCondition;
-  }
 
 }

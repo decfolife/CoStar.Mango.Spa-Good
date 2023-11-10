@@ -2,15 +2,15 @@
 	<div class="modalHeader" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
 		<h2 [id]="modalTitleId"class="modal-title"> {{ modalTitle }}</h2>
 		<crem-button
-      *ngIf="closeIconVisible"
-      (click)="closeDialog()"
-      class="btn-none"
-      color="secondary"
-      btnStyle="basic"
-      ariaLabel="Close"
-      icon="cremXMark"
-      iconPack="crem"
-    ></crem-button>
+			*ngIf="closeIconVisible"
+			(click)="closeDialog()"
+			class="btn-none"
+			color="secondary"
+			btnStyle="basic"
+			ariaLabel="Close"
+			icon="cremXMark"
+			iconPack="crem"
+		></crem-button>
 	</div>
 	<div class="modalContent">
    	 <ng-content select="'[modalContent]'"></ng-content>

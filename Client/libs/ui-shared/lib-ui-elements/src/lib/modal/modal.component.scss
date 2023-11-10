@@ -10,14 +10,14 @@
 	display: flex;
 	font-size: 22px;
 	padding: 8px 16px;
-	@include costar(background-color, primary);
+	@include costar(background-color, light);
 	justify-content: space-between;
 }
 
 .modal-title {
 	line-height: 1.5;
 	@include costar(font-size, h2);
-	@include costar(color, light);
+	@include costar(color, dark);
 }
 
 .modalContent {
