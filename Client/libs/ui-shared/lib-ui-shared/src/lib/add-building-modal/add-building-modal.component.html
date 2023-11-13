@@ -23,13 +23,13 @@
 							[editorOptions]="{ items: portfolioDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName',  onValueChanged:onPortFolioValueChanged}"
 							id="centerPortfolioID">
 							<dxi-validation-rule type="required"
-								message="You must select a portfolio"></dxi-validation-rule>
+								message="You must select a Portfolio"></dxi-validation-rule>
 						</dxi-item>
 
 						<dxi-item dataField="template" editorType="dxSelectBox" id="centerTemplateId"
 							[editorOptions]="{ dataSource: templateDropdownItem, valueExpr: 'ObjectTypeTypeID', displayExpr: 'ObjectTypeTypeName' }">
 							<dxi-validation-rule type="required"
-								message="You must select a template"></dxi-validation-rule>
+								message="You must select a Template"></dxi-validation-rule>
 						</dxi-item>
 
 						<dxi-item [visible]="enableHierachyDropDown" dataField="hierarchy" editorType="dxSelectBox"
@@ -69,7 +69,7 @@
 						<dxi-item dataField="Sub Group" editorType="dxSelectBox" id="centerSubGroupId"
 							[editorOptions]="{ dataSource: subGroupDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
 							<dxi-validation-rule *ngIf="enableSubGroupDropDown" type="required"
-								message="You must select a Sub group"></dxi-validation-rule>
+								message="You must select a Sub Group"></dxi-validation-rule>
 						</dxi-item>
 
 					</dxi-item>
