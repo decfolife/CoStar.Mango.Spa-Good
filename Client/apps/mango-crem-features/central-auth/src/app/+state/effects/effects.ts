@@ -200,7 +200,7 @@ export class CentralAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.SET_SELECTED_CONTACT_ID),
-        switchMap((action: { type: string, contactId: number }) => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.userContactRecords$.pipe(take(1)), of(action.contactId)])),
+        switchMap((action: { type: string, contactId: number }) => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.userContactRecords$, of(action.contactId)])),
         filter(([user, contactRecords, selectedContactId]) => !!user && !!contactRecords && !!selectedContactId),
         map(([user, contactRecords, selectedContactId]) => contactRecords.find(contacRecord => contacRecord.contactID === selectedContactId)),
         filter(selectedContactRecord => !!selectedContactRecord),

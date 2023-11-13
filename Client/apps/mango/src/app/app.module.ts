@@ -17,6 +17,7 @@ import {
   Environment,
   IS_CA_STANDALONE_APP,
   OAUTH_CLIENT_KEY_QUERY_PARAM,
+  OAUTH_CONTACT_ID_QUERY_PARAM,
   OAUTH_REDIRECT_QUERY_PARAM,
   RUNNING_IN_MANGO_SPA,
 } from '@mango/data-models/lib-data-models';
@@ -48,6 +49,7 @@ import { CSPModuleInlineStyles } from './utils/content-security-policies/inline-
 import { CustomSerializer } from './utils/custom-route-serializer';
 import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 import { ValidateComponent } from './components/auth/validate/validate.component';
+import { contactRecord } from './+state/app/app.selectors';
 
 @NgModule({
   declarations: [AppComponent, LoadingScreenComponent, ValidateComponent],
@@ -118,9 +120,9 @@ export class AppModule {
           (e: RouterEvent) =>
             e instanceof NavigationStart && e.url.includes('.asp')
         ),
-        switchMap((e) => combineLatest([of(e.url), this.facade.clientKey$])),
-        filter(([url, clientKey]) => !!url && !!clientKey),
-        map(([url, clientKey]) => {
+        switchMap((e) => combineLatest([of(e.url), this.facade.clientKey$, this.facade.contactRecord$])),
+        filter(([url, clientKey]) => !!url && !!clientKey && !!contactRecord),
+        map(([url, clientKey, contactRecord]) => {
           if (url.includes('RenderForm')) {
             const queryParams = url.split('?');
             this.router.navigateByUrl(
@@ -133,7 +135,7 @@ export class AppModule {
             const newUrl = forceRelogin
               ? `${
                   environment.CAUrl
-                }?${OAUTH_CLIENT_KEY_QUERY_PARAM}=${clientKey}&${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace(
+                }?${OAUTH_CLIENT_KEY_QUERY_PARAM}=${clientKey}&${OAUTH_CONTACT_ID_QUERY_PARAM}=${contactRecord.contactID}&${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace(
                   '[CLIENT]',
                   clientKey
                 )}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`

@@ -48,7 +48,7 @@ export class AuthenticationEffects {
         map(_ => {
           this.userService.logout()
           this.centralAuthFacade.clearState()
-          this.router.navigate(['/'])
+          this.router.navigate(['/'], {queryParamsHandling: 'merge'})
         }
         )
       ), { dispatch: false }
