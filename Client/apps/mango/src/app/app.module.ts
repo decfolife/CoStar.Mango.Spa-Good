@@ -16,6 +16,7 @@ import {
   CREM_FORCE_RELOGIN_URLS,
   Environment,
   IS_CA_STANDALONE_APP,
+  OAUTH_CLIENT_KEY_QUERY_PARAM,
   OAUTH_REDIRECT_QUERY_PARAM,
   RUNNING_IN_MANGO_SPA,
 } from '@mango/data-models/lib-data-models';
@@ -132,7 +133,7 @@ export class AppModule {
             const newUrl = forceRelogin
               ? `${
                   environment.CAUrl
-                }oauth/authorize?${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace(
+                }?${OAUTH_CLIENT_KEY_QUERY_PARAM}=${clientKey}&${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace(
                   '[CLIENT]',
                   clientKey
                 )}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`

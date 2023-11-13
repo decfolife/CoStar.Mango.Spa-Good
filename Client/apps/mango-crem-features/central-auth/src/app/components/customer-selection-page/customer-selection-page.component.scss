@@ -1,5 +1,5 @@
-@import '../../../../../../../../libs/ui-shared/cosmos/src/lib/assets/styles/cosmos.scss';
-@import '../../../../../../../mango/src/assets/styles/colors.scss';
+@import '../../../../../../../libs/ui-shared/cosmos/src/lib/assets/styles/cosmos.scss';
+@import '../../../../../../mango/src/assets/styles/colors.scss';
 $stdPadding: 8px;
 $dblPadding: 2 * $stdPadding;
 
@@ -89,4 +89,9 @@ $dblPadding: 2 * $stdPadding;
 
 .tooltip-content {
   padding: 8px;
+}
+
+#company-logo {
+    text-align: center;
+    margin-bottom: 10px;
 }

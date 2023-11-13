@@ -1,0 +1,41 @@
+<div class="customer-select" *ngIf="(isVisible$ | async)">
+  <mango-ca-navbar></mango-ca-navbar>
+
+  <div id="company-logo">
+    <img src="costar-logo.png">
+  </div>
+
+  <div class="customer-selection-wrapper mt-5 mx-2">
+    <mat-card>
+      <mat-card-content>
+        <div class="mx-auto">
+          <h6 class="text-center">Select a site</h6>
+          <div class="d-flex justify-content-center pb-2">
+            <dx-select-box [dataSource]="clientsDropdown$ | async" searchMode="contains" [searchEnabled]="true"
+              width="300" [showClearButton]="true" (onValueChanged)="onClientSelected($event.value)">
+            </dx-select-box>
+          </div>
+          <h6 class="text-center pt-4">Recently Visited</h6>
+          <div class="card-deck-container d-flex justify-content-center flex-wrap">
+            <div *ngFor="let client of (recentClients$ | async); let i = index"
+              class="card-item d-flex justify-content-center align-items-center">
+              <mat-card (click)="onClientSelected(client.clientKey)">
+                <mat-card-header>
+                  <mat-card-title id="{{'recent-site-card' + i}}" (mouseenter)="toggleTooltip(i)"
+                    (mouseleave)="toggleTooltip(i)">
+                    {{ client.clientKey.toUpperCase( ) }}
+                  </mat-card-title>
+                </mat-card-header>
+              </mat-card>
+              <dx-tooltip target="{{'#recent-site-card' + i}}" [(visible)]="tooltipState[i]" position='top'>
+                <div class="tooltip-content">{{ client.clientKey.toUpperCase( ) }}</div>
+              </dx-tooltip>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<mango-contact-records-popup></mango-contact-records-popup>

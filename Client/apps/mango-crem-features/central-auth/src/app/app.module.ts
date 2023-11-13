@@ -17,20 +17,53 @@ import { CentralAuthEffects } from './+state/effects/effects';
 import { CentralAuthFacade } from './+state/facades';
 import * as fromApp from './+state/reducers';
 import { AppComponent } from './app.component';
-import { IndexComponent } from './components/index/index.component';
-import { IndexModule } from './components/index/index.module';
+import { OAuthEffects } from './+state/effects/oauth.effects';
+import { LoginComponent } from './components/login/login.component';
+import { ServiceAccountConfigurationModule } from './components/service-account-configuration/service-account-configuration.module';
+import { CentralAuthErrorHandler } from './services/error-handler.service';
+import { CentralAuthHttpInterceptor } from './services/http.interceptor';
+import { CustomerSelectionPageComponent } from './components/customer-selection-page/customer-selection-page.component';
+import { ServiceAccountConfigurationComponent } from './components/service-account-configuration/service-account-configuration.component';
+import { AuthGuard } from './guards/auth.guard';
+import { DxLoadPanelModule } from 'devextreme-angular';
 @NgModule({
   declarations: [AppComponent],
   imports: [
     CommonModule,
     BrowserAnimationsModule,
-    IndexModule,
     LibUiSharedModule,
     HttpClientModule,
     RouterModule.forRoot([
       {
         path: '',
-        component: IndexComponent
+        component: LoginComponent
+      },
+      {
+        path: 'customer-selection',
+        component: CustomerSelectionPageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'service-account-configuration',
+        component: ServiceAccountConfigurationComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'reset-password',
+        loadChildren: () =>
+          import('./components/reset-password/reset-password.module').then(
+            (mod) => mod.ResetPasswordModule),
+      },
+      {
+        path: 'password-reset-request',
+        loadChildren: () =>
+          import('./components/password-reset-request/password-reset-request.module').then(
+            (mod) => mod.PasswordResetRequestModule
+          ),
+      },
+      {
+        path: ':clientKey',
+        component: LoginComponent
       },
       { path: '', redirectTo: '', pathMatch: 'full' },
       { path: '**', redirectTo: '', pathMatch: 'full' },
@@ -47,7 +80,7 @@ import { IndexModule } from './components/index/index.module';
     ),
     EffectsModule.forRoot([]),
     StoreModule.forFeature(fromApp.CENTRAL_AUTH_FEATURE_KEY, fromApp.reducer),
-    EffectsModule.forFeature([CentralAuthEffects, AuthenticationEffects]),
+    EffectsModule.forFeature([CentralAuthEffects, AuthenticationEffects, OAuthEffects]),
     StoreDevtoolsModule.instrument(),
     ToastrModule.forRoot({
       timeOut: 8000,
@@ -57,10 +90,15 @@ import { IndexModule } from './components/index/index.module';
       tapToDismiss: false,
       disableTimeOut: true,
     }),
+    ServiceAccountConfigurationModule,
+    CentralAuthErrorHandler.forRoot(),
+    CentralAuthHttpInterceptor.forRoot(),
+    DxLoadPanelModule
   ],
   providers: [
     { provide: Environment, useValue: environment },
     provideUserIdleConfig({ idle: 1, timeout: IDLE_TIMOUT_DELAY_SECONDS, ping: 2 }),
+    AuthGuard,
     UserService,
     StorageService,
     CentralAuthFacade

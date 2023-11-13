@@ -2,7 +2,7 @@ import { HTTP_INTERCEPTORS, HttpErrorResponse, HttpEvent, HttpHandler, HttpInter
 import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
 import { MangoErrorHandler } from "@mango/core-shared/lib-core-shared";
 import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
-import { Observable, throwError } from "rxjs";
+import { Observable, of, throwError } from "rxjs";
 import { catchError, switchMap, take } from "rxjs/operators";
 import { CentralAuthFacade } from "../+state/facades";
 import { Router } from "@angular/router";
@@ -36,7 +36,9 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return this.facade.accessToken$.pipe(
+    const withClientAccessToken = req.params.get('withClientAccessToken')
+    return of(withClientAccessToken).pipe(
+      switchMap(withClientAccessToken => withClientAccessToken === 'true' ? this.facade.clientAccessToken$ : this.facade.accessToken$),
       take(1),
       switchMap(token => {
         const headers = {
@@ -61,9 +63,10 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
         const caHttpError: CentralAuthHttpError = errorResponse.error?.traceId ? errorResponse.error : genericErrorObject
 
         if (caHttpError.status === 401) {
-          caHttpError.message = caHttpError.message;
+          caHttpError.errorType = MangoErrorTypes.WARNING
+          caHttpError.message = 'Unauthorized request, please login to continue'
           this.facade.logout()
-          this.router.navigate(['/'])
+          //this.router.navigate(['/'])
         }
 
         if (caHttpError.errorCode as CentralAuthErrorCodes === CentralAuthErrorCodes.SqsTimeout) {
@@ -73,7 +76,7 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
 
         if (!IGNORED_ERRORS.includes(caHttpError.errorCode as CentralAuthErrorCodes)) {
           this.showErrorNotification(caHttpError.message, caHttpError.title, caHttpError.errorType)
-          return 
+          return
         }
 
         if (caHttpError.errorCode === CentralAuthErrorCodes.ForceLogout) {

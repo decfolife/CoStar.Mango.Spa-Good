@@ -88,7 +88,7 @@ export class AuthenticationEffects {
           this.headerService.logout$.next(false)
           this.facade.setAuthenticatedUser(null)
           this.facade.setAccessToken(null)
-          const url = `${environment.CAUrl}oauth/authorize?logout=true`
+          const url = `${environment.CAUrl}?logout=true`
           window.location.href = url
         })
       ),

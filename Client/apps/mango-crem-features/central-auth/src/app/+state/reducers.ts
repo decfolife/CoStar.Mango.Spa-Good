@@ -3,17 +3,22 @@ import { Action, createReducer, on } from '@ngrx/store';
 
 import { ClientSSOSettings, ContactRecord, UserAuth, UserSite } from '@mango/data-models/lib-data-models';
 import * as AppActions from './actions';
+import * as OAuthActions from './actions/oauth.actions';
 import { CentralAuthEntity } from './models';
 
 export const CENTRAL_AUTH_FEATURE_KEY = 'central_auth';
 
 export interface State extends EntityState<CentralAuthEntity> {
-  loaded: boolean,
+  loading: boolean,
+  error: boolean,
   user: UserAuth,
   accessToken: string,
-  contactId: number,
+  clientAccessToken: string,
+  selectedContactId: number,
+  selectedContactRecord: ContactRecord
   selectedClientKey: string,
   selectedClient: UserSite,
+  openClientInNewTab: boolean,
   userClients: UserSite[],
   userContactRecords: ContactRecord[]
   ssoSettings: ClientSSOSettings,
@@ -30,16 +35,20 @@ export interface CentralAuthPartialState {
 export const appAdapter: EntityAdapter<CentralAuthEntity> = createEntityAdapter<CentralAuthEntity>();
 
 export const initialState: State = appAdapter.getInitialState({
-  loaded: false,
+  loading: false,
+  error: false,
   user: null,
   accessToken: null,
+  clientAccessToken: null,
+  selectedContactRecord: null,
   selectedClientKey: null,
   selectedClient: null,
+  openClientInNewTab: true,
   userClients: null,
   userRecentClients: null,
   userContactRecords: null,
   ssoSettings: null,
-  contactId: null,
+  selectedContactId: null,
   isClientSpecificLogin: false,
   redirectionUri: null,
   authorizationCode: null
@@ -47,17 +56,40 @@ export const initialState: State = appAdapter.getInitialState({
 
 const appReducer = createReducer(
   initialState,
-  on(AppActions.setUser, (state, { user }) => ({ ...state, error: null, user })),
-  on(AppActions.setSelectedClientKey, (state, { clientKey }) => ({ ...state, error: null, selectedClientKey: clientKey })),
-  on(AppActions.setAccessToken, (state, { accessToken }) => ({ ...state, error: null, accessToken })),
-  on(AppActions.setSelectedClient, (state, { client }) => ({ ...state, error: null, selectedClient: client })),
-  on(AppActions.setContactRecord, (state, { contactId }) => ({ ...state, error: null, contactId })),
-  on(AppActions.getUserClientsSuccess, (state, { clientSites }) => ({ ...state, error: null, userClients: clientSites.userSites, userRecentClients: clientSites.recentUserSites })),
-  on(AppActions.getClientSSOSettingsSuccess, (state, { ssoSettings }) => ({ ...state, error: null, ssoSettings })),
-  on(AppActions.setRedirectionUri, (state, { redirectionUri }) => ({ ...state, error: null, redirectionUri })),
-  on(AppActions.setClientSpecificLogin, (state, { isClientSpecific }) => ({ ...state, error: null, isClientSpecificLogin: isClientSpecific })),
-  on(AppActions.retrieveAuthorizationCodeSuccess, (state, { authorizationCode }) => ({ ...state, error: null, authorizationCode })),
-  on(AppActions.getContactRecordsSuccess, (state, { contactRecords }) => ({ ...state, error: null, userContactRecords: contactRecords })),
+  on(AppActions.setUser, (state, { user }) => ({ ...state, user })),
+  on(AppActions.login, (state) => ({ ...state, loading: true })),
+  on(AppActions.loginSuccess, (state) => ({ ...state, error: false, loading: false })),
+  on(AppActions.loginError, (state) => ({ ...state, error: true, loading: false })),
+  on(AppActions.setLoading, (state, { loading }) => ({ ...state, loading })),
+  on(AppActions.setSelectedClientKey, (state, { clientKey }) => ({ ...state, selectedClientKey: clientKey })),
+  on(AppActions.setAccessToken, (state, { accessToken }) => ({ ...state, accessToken })),
+  on(OAuthActions.setClientAccessToken, (state, { clientAccessToken }) => ({ ...state, clientAccessToken })),
+  on(AppActions.setSelectedClient, (state, { client }) => ({ ...state, selectedClient: client })),
+  on(AppActions.setSelectedContactID, (state, { contactId }) => ({ ...state, selectedContactId: contactId })),
+  on(AppActions.setContactRecord, (state, { contactRecord }) => ({ ...state, selectedContactRecord: contactRecord })),
+  on(AppActions.getUserClients, (state, _) => ({ ...state, error: false, loading: true })),
+  on(AppActions.getUserClientsSuccess, (state, { clientSites }) => ({ ...state, error: false, loading: false, userClients: clientSites.userSites, userRecentClients: clientSites.recentUserSites })),
+  on(AppActions.getClientSSOSettingsSuccess, (state, { ssoSettings }) => ({ ...state, error: false, ssoSettings })),
+  on(AppActions.setRedirectionUri, (state, { redirectionUri }) => ({ ...state, redirectionUri })),
+  on(AppActions.setClientSpecificLogin, (state, { isClientSpecific }) => ({ ...state, isClientSpecificLogin: isClientSpecific })),
+  on(AppActions.setOpenClientInNewTab, (state, { openClientInNewTab }) => ({ ...state, openClientInNewTab })),
+  on(OAuthActions.authorize, (state) => ({ ...state, loading: true })),
+  on(OAuthActions.authorizeSuccess, (state, { authorizationCode }) => ({ ...state, error: false, loading: false, authorizationCode })),
+  on(OAuthActions.authorizeError, (state) => ({ ...state, error: true, loading: false })),
+  on(AppActions.getContactRecords, (state, _) => ({ ...state, error: false, loading: true })),
+  on(AppActions.getContactRecordsSuccess, (state, { contactRecords }) => ({ ...state, error: false, loading: false, userContactRecords: contactRecords })),
+  on(AppActions.purgeClientSelection, (state) => ({
+    ...state,
+    userContactRecords: null,
+    selectedClient: null,
+    selectedClientKey: null,
+    selectedContactRecord: null,
+    selectedContactId: null,
+    openClientInNewTab: true,
+    authorizationCode: null,
+    clientAccessToken: null,
+    redirectionUri: null
+  })),
   on(AppActions.clearState, () => ({ ...initialState })),
 );
 

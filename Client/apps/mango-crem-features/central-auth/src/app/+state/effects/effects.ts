@@ -1,14 +1,15 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { DBkeys, SettingsService, StorageService, UserService } from "@mango/core-shared";
+import { CentralAuthError, CentralAuthErrorCodes, ContactRecord, ContactRecordHTTPObject, MangoErrorTypes, OAUTH_LOGOUT_QUERY_PARAM, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, UserAuth } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { combineLatest, of } from "rxjs";
 import * as dayjs from 'dayjs';
-import { filter, map, switchMap, tap } from "rxjs/operators";
-import * as AppActions from '../actions';
-import { CentralAuthFacade } from "../facades";
-import { ContactRecordHTTPObject, ContactRecord, UserAuth, CentralAuthError, CentralAuthErrorCodes, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
 import { UserIdleService } from "libs/core-shared/src/lib/services";
+import { combineLatest, of } from "rxjs";
+import { filter, first, map, single, switchMap, take, takeUntil, takeWhile, tap } from "rxjs/operators";
+import * as AppActions from '../actions';
+import * as OAuthActions from '../actions/oauth.actions';
+import { CentralAuthFacade } from "../facades";
 
 @Injectable()
 
@@ -22,26 +23,72 @@ export class CentralAuthEffects {
         ofType(AppActions.APP_INIT),
         switchMap(_ => of(
           AppActions.populateLoggedInUserData(),
-          AppActions.setSelectedClientKeyFromRoute(),
+          //AppActions.setupRouteAndQueryParams(),
           AppActions.handleCustomQueryParams(),
-          AppActions.setupRedirectionToClientWhenLoggedIn(),
+          OAuthActions.setupOAuthRedirectionToClient(),
           AppActions.setupIdle(),
           AppActions.setupLogoutWhenTimedOut()
         ))
       )
   )
 
-  setSelectedClientKeyFromRoute$ = createEffect(
+  handleUserAlreadyLoggedIn$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AppActions.SET_SELECTED_CLIENT_KEY_FROM_ROUTE),
-        switchMap(_ => combineLatest([this.acitvatedRoute.queryParamMap, this.acitvatedRoute.paramMap])),
-        map(([queryParamMap, paramMap]) => queryParamMap.get('clientKey') || paramMap.get('clientKey')),
-        filter(clientKey => !!clientKey),
-        map(clientKey => AppActions.setSelectedClientKey({ clientKey }))
-      )
+        ofType(AppActions.HANDLE_USER_ALREADY_LOGGED_IN),
+        switchMap(_ => combineLatest([this.centralAuthFacade.user$])),
+        filter(([user]) => !!user),
+        tap(([user]) => {
+          if (user.isServiceAccount) {
+            this.router.navigate(['service-account-configuration'])
+          } else {
+            this.router.navigate(['customer-selection'], { queryParamsHandling: 'merge' })
+          }
+        })
+      ), { dispatch: false }
   )
 
+  handleSSOClientLogin$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.HANDLE_SSO_CLIENT_LOGIN),
+        switchMap(_ => this.centralAuthFacade.ssoSettings$),
+        filter(ssoSettings => !!ssoSettings),
+        tap(ssoSettings => ssoSettings.forceSSO && ssoSettings.isSSOEnabled ? window.location.href = ssoSettings.ssoUri : null)
+      ), { dispatch: false }
+  )
+
+  redirectToCustomerSelection$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.REDIRECT_TO_CUSTOMER_SELECTION),
+        tap(_ => {
+          this.router.navigate(['/customer-selection'], { queryParamsHandling: 'merge' })
+        })
+      ), { dispatch: false }
+  )
+
+
+  /*setupRouteAndQueryParams$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.SETUP_ROUTE_AND_QUERY_PARAMS),
+        switchMap(_ => combineLatest([this.acitvatedRoute.firstChild.queryParamMap, this.acitvatedRoute.paramMap])),
+        tap(console.log),
+        map(([queryParamMap, paramMap]) => ([
+          queryParamMap.get('clientKey') || paramMap.get('clientKey') || queryParamMap.get(OAUTH_CLIENT_KEY_QUERY_PARAM),
+          queryParamMap.get(OAUTH_REDIRECT_QUERY_PARAM),
+          queryParamMap.get(OAUTH_CONTACT_ID_QUERY_PARAM)
+        ])),
+        switchMap(([clientKey, redirectUri, contactId]) => {
+          const actionsToDispatch = []
+          !!clientKey ? actionsToDispatch.push(AppActions.setSelectedClientKey({ clientKey })) : null
+          !!redirectUri ? actionsToDispatch.push(AppActions.setRedirectionUri({ redirectionUri: redirectUri })) : null
+          !!contactId ? actionsToDispatch.push(AppActions.setSelectedContactID({ contactId: parseInt(contactId) })) : null
+          return of(...actionsToDispatch)
+        })
+      )
+  )*/
 
   setupIdle$ = createEffect(
     () =>
@@ -65,19 +112,7 @@ export class CentralAuthEffects {
       )
   )
 
-  setupRedirectionToClientWhenLoggedIn$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.SETUP_REDIRECTION_TO_CLIENT_WHEN_LOGGED_IN),
-        switchMap(_ => combineLatest([
-          this.centralAuthFacade.authorizationCode$,
-          this.centralAuthFacade.client$,
-          this.centralAuthFacade.contactId$
-        ])),
-        filter(([authorizationCode, client, contactId]) => !!authorizationCode && !!client && !!contactId),
-        map(_ => AppActions.redirectToClient())
-      )
-  )
+
 
   setupLogoutWhenTimedOut$ = createEffect(
     () =>
@@ -97,8 +132,11 @@ export class CentralAuthEffects {
       this.actions$.pipe(
         ofType(AppActions.HANDLE_CUSTOM_QUERY_PARAMS),
         switchMap(_ => this.acitvatedRoute.queryParamMap),
-        map(queryParamsMap => [queryParamsMap.get('auth'), queryParamsMap.get('caforcelogout')]),
-        tap(([auth, caForceLogout]) => {
+        map(queryParamsMap => [queryParamsMap.get('auth'), queryParamsMap.get('caforcelogout'), queryParamsMap.get(OAUTH_LOGOUT_QUERY_PARAM)]),
+        tap(([auth, caForceLogout, logout]) => {
+          if (logout === 'true') {
+            this.centralAuthFacade.logout()
+          }
           if (auth === 'false') {
             this.centralAuthFacade.logout()
             throw new CentralAuthError({
@@ -108,7 +146,6 @@ export class CentralAuthEffects {
               errorCode: CentralAuthErrorCodes.InternalError
             })
           }
-
           if (caForceLogout === 'true') {
             this.centralAuthFacade.logout()
             throw new CentralAuthError({
@@ -140,22 +177,34 @@ export class CentralAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.GET_USER_CLIENTS),
-        switchMap(_ => this.centralAuthFacade.user$),
-        filter(user => !!user),
-        switchMap(user => this.userService.getClientSitesByUser(user.email)),
+        switchMap(_ => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.accessToken$.pipe(take(1))])),
+        filter(([user, accessToken]) => !!user && !!accessToken),
+        switchMap(([user, accessToken]) => this.userService.getClientSitesByUser(user.email)),
         map(response => AppActions.getUserClientsSuccess({ clientSites: response }))
       )
   )
 
-  populateSelectedClient$ = createEffect(
+  populateSelectedClientAndContactRecords$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.SET_SELECTED_CLIENT_KEY),
-        switchMap((action: { type: string, clientKey: string }) => combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.userClients$, of(action.clientKey)])),
+        switchMap((action: { type: string, clientKey: string }) => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.userClients$.pipe(first(clients => !!clients)), of(action.clientKey)])),
         filter(([user, clients, clientKey]) => !!user && !!clients && !!clientKey),
         map(([user, clients, clientKey]) => clients.find(client => client.clientKey.toLowerCase() === clientKey.toLowerCase())),
         filter(selectedClient => !!selectedClient),
-        map(selectedClient => AppActions.setSelectedClient({ client: selectedClient }))
+        switchMap(selectedClient => of(AppActions.setSelectedClient({ client: selectedClient }), AppActions.getContactRecords({ clientKey: selectedClient.clientKey })))
+      )
+  )
+
+  populateSelectedContactRecord$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.SET_SELECTED_CONTACT_ID),
+        switchMap((action: { type: string, contactId: number }) => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.userContactRecords$.pipe(take(1)), of(action.contactId)])),
+        filter(([user, contactRecords, selectedContactId]) => !!user && !!contactRecords && !!selectedContactId),
+        map(([user, contactRecords, selectedContactId]) => contactRecords.find(contacRecord => contacRecord.contactID === selectedContactId)),
+        filter(selectedContactRecord => !!selectedContactRecord),
+        map(selectedContactRecord => AppActions.setContactRecord({ contactRecord: selectedContactRecord }))
       )
   )
 
@@ -172,56 +221,42 @@ export class CentralAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.GET_CONTACT_RECORDS),
-        switchMap((action: { type: string, clientKey: string }) => combineLatest([of(action.clientKey), this.centralAuthFacade.user$])),
+        switchMap((action: { type: string, clientKey: string }) => combineLatest([of(action.clientKey), this.centralAuthFacade.user$.pipe(take(1))])),
         filter(([clientKey, user]) => !!clientKey && !!user),
         switchMap(([clientKey, user]) => this.userService.getContactRecords(user.email, clientKey)),
         map(response => AppActions.getContactRecordsSuccess({ contactRecords: response.contactRecords.map(contactRecordMapper) }))
       )
   )
 
-
-  retrieveAuthorizationCode$ = createEffect(
+  getContactRecordsSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AppActions.RETRIEVE_AUTHORIZATION_CODE),
-        switchMap((action: { type: string, redirectUri: string }) => this.userService.retrieveAuthorizationCode(action.redirectUri).pipe(
-          map(response => AppActions.retrieveAuthorizationCodeSuccess({ authorizationCode: response.code }))
-        ))
+        ofType(AppActions.GET_CONTACT_RECORDS_SUCCESS),
+        map((action: { type: string, contactRecords: ContactRecord[] }) => action.contactRecords),
+        filter(contactRecords => !!contactRecords && contactRecords.length <= 1),
+        switchMap(contactRecord => {
+          if (contactRecord.length === 0) {
+            return of(AppActions.setSelectedContactID({ contactId: 0 }), AppActions.setContactRecord({ contactRecord: { contactID: 0 } }))
+          } else {
+            return of(AppActions.setSelectedContactID({ contactId: contactRecord[0].contactID }))
+          }
+        })
       )
   )
 
-  redirectToClient$ = createEffect(
+  startAuthorizationWhenFullySelected$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AppActions.REDIRECT_TO_CLIENT),
-        switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$, this.centralAuthFacade.authorizationCode$])),
-        map(([redirectionUri, authorizationCode]) => {
-          let decodedRedirectUri = decodeURIComponent(redirectionUri)
-          // CREM Special handling
-          if (decodedRedirectUri.includes('v06') && decodedRedirectUri.includes('ReturnUrl')) {
-            const baseUrl = decodedRedirectUri.substring(0, decodedRedirectUri.indexOf('ReturnUrl') + 10)
-            const returnUrl = decodedRedirectUri.substring(decodedRedirectUri.indexOf('ReturnUrl') + 10)
-            decodedRedirectUri = `${baseUrl}${encodeURIComponent(returnUrl)}`
-          }
-          const url = updateQueryStringParameter(decodedRedirectUri, 'auth_code', authorizationCode)
-          window.location.href = url
-        })
-      ), { dispatch: false }
+        ofType(AppActions.START_AUTHORIZATION_WHEN_FULLY_SELECTED),
+        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$, this.centralAuthFacade.selectedContactRecord$])),
+        filter(([client, contactRecord]) => !!client && !!contactRecord),
+        map(_ => OAuthActions.initAuthorization()),
+      )
   )
 }
 
 
 // To be refactored
-function updateQueryStringParameter(uri, key, value) {
-  var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-  var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-  if (uri.match(re)) {
-    return uri.replace(re, '$1' + key + "=" + value + '$2');
-  }
-  else {
-    return uri + separator + key + "=" + value;
-  }
-}
 
 function contactRecordMapper(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
   const {

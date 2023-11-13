@@ -1,14 +1,13 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { DBkeys, SettingsService, StorageService, UserService } from "@mango/core-shared";
+import { SettingsService, StorageService, UserService } from "@mango/core-shared";
+import { UserAuth } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { combineLatest, of } from "rxjs";
-import * as dayjs from 'dayjs';
-import { filter, map, switchMap, tap } from "rxjs/operators";
+import { UserIdleService } from "libs/core-shared/src/lib/services";
+import { of } from "rxjs";
+import { catchError, filter, map, switchMap } from "rxjs/operators";
 import * as AppActions from '../actions';
 import { CentralAuthFacade } from "../facades";
-import { ContactRecordHTTPObject, ContactRecord, UserAuth, CentralAuthError, CentralAuthErrorCodes, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
-import { UserIdleService } from "libs/core-shared/src/lib/services";
 
 @Injectable()
 
@@ -21,11 +20,26 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOGIN),
-        switchMap((action: { type: string, credentials: any }) => this.userService.login(action.credentials)),
-        filter(user => !!user),
-        switchMap(user => of(AppActions.setUser({ user }), AppActions.setAccessToken({ accessToken: user.authToken })))
+        switchMap((action: { type: string, credentials: any }) => this.userService.login(action.credentials).pipe(
+          filter(user => !!user),
+          map(user => AppActions.loginSuccess({ user })),
+          catchError(_ => of(AppActions.loginError())
+          )),
+        )
       )
   )
+
+  loginSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.LOGIN_SUCCESS),
+        switchMap((action: { type: string, user: UserAuth }) => of(
+          AppActions.setUser({ user: action.user }),
+          AppActions.setAccessToken({ accessToken: action.user.authToken })
+        ))
+      )
+  )
+
 
   logout$ = createEffect(
     () =>

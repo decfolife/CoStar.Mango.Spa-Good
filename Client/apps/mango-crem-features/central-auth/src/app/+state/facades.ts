@@ -1,33 +1,48 @@
 import { Injectable } from "@angular/core";
-import { UserAuth, UserSite } from "@mango/data-models/lib-data-models";
-import { select, Store } from "@ngrx/store";
+import { ContactRecord, UserAuth, UserSite } from "@mango/data-models/lib-data-models";
+import { Store, select } from "@ngrx/store";
 import * as AppActions from './actions';
+import * as OAuthActions from './actions/oauth.actions';
 import * as AppSelectors from './selectors';
 
 @Injectable()
 export class CentralAuthFacade {
 
+  loading$ = this.store.pipe(select(AppSelectors.loading));
+  error$ = this.store.pipe(select(AppSelectors.error));
   isUserAuthenticated$ = this.store.pipe(select(AppSelectors.isUserAuthenticated));
   authorizationCode$ = this.store.pipe(select(AppSelectors.authorizationCode));
   redirectionUri$ = this.store.pipe(select(AppSelectors.redirectionUri));
   isClientSpecificLogin$ = this.store.pipe(select(AppSelectors.isClientSpecificLogin));
   userClients$ = this.store.pipe(select(AppSelectors.userClients));
   userRecentClients$ = this.store.pipe(select(AppSelectors.userRecentClients));
-  client$ = this.store.pipe(select(AppSelectors.client));
+  selectedClientKey$ = this.store.pipe(select(AppSelectors.selectedClientKey));
+  selectedClient$ = this.store.pipe(select(AppSelectors.selectedClient));
   contactId$ = this.store.pipe(select(AppSelectors.contactId));
+  selectedContactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
   accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
+  clientAccessToken$ = this.store.pipe(select(AppSelectors.clientAccessToken));
   user$ = this.store.pipe(select(AppSelectors.user));
   ssoSettings$ = this.store.pipe(select(AppSelectors.ssoSettings));
   userContactRecords$ = this.store.pipe(select(AppSelectors.userContactRecords));
+  openClientInNewTab$ = this.store.pipe(select(AppSelectors.openClientInNewTab));
 
   constructor(private store: Store) { }
 
   appInit() {
     this.store.dispatch(AppActions.init());
   }
-  
+
+  initAuthorization() {
+    this.store.dispatch(OAuthActions.initAuthorization());
+  }
+
+  setLoading(loading: boolean) {
+    this.store.dispatch(AppActions.setLoading({ loading }));
+  }
+
   login(credentials: any) {
-    this.store.dispatch(AppActions.login({ credentials}));
+    this.store.dispatch(AppActions.login({ credentials }));
   }
 
   logout() {
@@ -38,12 +53,28 @@ export class CentralAuthFacade {
     this.store.dispatch(AppActions.setUser({ user }));
   }
 
+  setOpenClientInNewTab(openClientInNewTab: boolean) {
+    this.store.dispatch(AppActions.setOpenClientInNewTab({ openClientInNewTab }));
+  }
+
   getUserClients() {
     this.store.dispatch(AppActions.getUserClients());
   }
 
   getContactRecords(clientKey: string) {
     this.store.dispatch(AppActions.getContactRecords({ clientKey }));
+  }
+  
+  handleUserAlreadyLoggedIn() {
+    this.store.dispatch(AppActions.handleUserAlreadyLoggedIn());
+  }
+
+  handleSSOClientLogin() {
+    this.store.dispatch(AppActions.handleSSOClientLogin());
+  }
+
+  purgeClientSelection() {
+    this.store.dispatch(AppActions.purgeClientSelection());
   }
 
   getClientSSOSetings(clientKey: string) {
@@ -52,6 +83,10 @@ export class CentralAuthFacade {
 
   setAccessToken(accessToken: string) {
     this.store.dispatch(AppActions.setAccessToken({ accessToken }));
+  }
+
+  setClientAccessToken(clientAccessToken: string) {
+    this.store.dispatch(OAuthActions.setClientAccessToken({ clientAccessToken }));
   }
 
   setClientSpecificLogin(isClientSpecific: boolean) {
@@ -66,20 +101,24 @@ export class CentralAuthFacade {
     this.store.dispatch(AppActions.setSelectedClient({ client }));
   }
 
-  setContactId(contactId: number) {
-    this.store.dispatch(AppActions.setContactRecord({ contactId }));
+  setSelectedContactId(contactId: number) {
+    this.store.dispatch(AppActions.setSelectedContactID({ contactId }));
+  }
+
+  setSelectedContactRecord(contactRecord: ContactRecord) {
+    this.store.dispatch(AppActions.setContactRecord({ contactRecord }));
   }
 
   setRedirectionUri(redirectionUri: string) {
     this.store.dispatch(AppActions.setRedirectionUri({ redirectionUri }));
   }
 
-  retrieveAuthorizationCode(redirectUri: string) {
-    this.store.dispatch(AppActions.retrieveAuthorizationCode({ redirectUri }));
+  startAuthorizationWhenFullySelected() {
+    this.store.dispatch(AppActions.startAuthorizationWhenFullySelected());
   }
 
-  redirectToClient() {
-    this.store.dispatch(AppActions.redirectToClient());
+  authorize() {
+    this.store.dispatch(OAuthActions.authorize());
   }
 
   clearState() {

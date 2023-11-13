@@ -11,7 +11,6 @@ import { DxDataGridModule } from 'devextreme-angular';
 import { MatCardModule } from '@angular/material/card';
 import { NavbarModule } from '../navbar/navbar.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { CremHeaderModule } from 'libs/ui-shared/lib-ui-shared/src/lib/crem-header/crem-header.module';
 import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
