@@ -19,6 +19,7 @@
 	top: 0;
     overflow-x: auto;
 	overflow-y: hidden;
+    z-index: 11;
     .controls-left {
         align-items: center;
                display: flex;
@@ -29,7 +30,6 @@
             font-family: Helvetica,sans-serif;
             margin-right: 16px;
         }
-
     }
 
     .controls-right {
@@ -67,6 +67,17 @@
 .dashboard-toolbar {
     &__item {
         margin-right: 8px;
+        crem-dropdown {
+            ::ng-deep #AccountingViewDropdown {
+                width: 275px;
+            }
+            ::ng-deep #AccountingYearDropdown {
+                width: 85px;
+            }
+            ::ng-deep #AccountingSegmentDropdown {
+                width: 250px;
+            }
+        }
     }
 }
 

@@ -17,6 +17,13 @@ div.cdk-drag.categories-item {
     }
 }
 
+div.cardContent {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 600px !important;
+  padding: 8px;
+}
+
 crem-loader {
   display: flex;
   justify-content: center;

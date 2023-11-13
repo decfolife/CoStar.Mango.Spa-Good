@@ -57,7 +57,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       let item1 = 
       { 
         DisclosureClassification:  item.DisclosureClassification,
-        Display: "Opening Lease Counter",
+        Display: "Opening Lease Count",
         PeriodYear: item.PeriodYear,
         data: item.OpeningCount,
       }
@@ -78,14 +78,14 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       let item4 = 
       { 
         DisclosureClassification:  item.DisclosureClassification,
-        Display: "CLosing Lease Count",
+        Display: "Closing Lease Count",
         PeriodYear: item.PeriodYear,
         data: item.ClosingCount,
       }
       let item5 = 
       { 
         DisclosureClassification:  "Total",
-        Display: "Opening Lease Counter",
+        Display: "Opening Lease Count",
         PeriodYear: item.PeriodYear,
         data: item.OpeningCount,
       }
@@ -106,7 +106,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       let item8 = 
       { 
         DisclosureClassification:  "Total",
-        Display: "CLosing Lease Count",
+        Display: "Closing Lease Count",
         PeriodYear: item.PeriodYear,
         data: item.ClosingCount,
       }
@@ -130,7 +130,6 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         fields: this.fieldConfigs[0]
       }));
     }
-
     this.loading = false;
   }
 
@@ -221,7 +220,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       result.data.forEach((card) => {
         let config = JSON.parse(card.CardJSONSchema)
         config[0].sortingMethod = this.rowSort;
-        console.log(config)
+        config[2].sortingMethod = this.disclosureClassificationSort;
         this.fieldConfigs.push(config);
       })
     })
@@ -229,10 +228,10 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
 
   public rowSort(a, b) {
     const rowSortOrderObject = {
-      "Opening Lease Counter": 1,
+      "Opening Lease Count": 1,
       " - Lease Added": 2,
       " - Leases Expired/Cancelled": 3,
-      "CLosing Lease Count": 4
+      "Closing Lease Count": 4
     }
     if (rowSortOrderObject?.[a.value] > rowSortOrderObject?.[b.value])  
             return 1;  
@@ -241,6 +240,22 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         else  
             return 0; 
   }
+
+  public disclosureClassificationSort(a, b) {
+    const disclosureClassificationSortOrderObject = {
+      "Mixed": 1,
+      "Finance 842": 2,
+      "Operating 842": 3,
+      "Total": 4
+    }
+
+      if (disclosureClassificationSortOrderObject?.[a.value] > disclosureClassificationSortOrderObject?.[b.value])  
+            return 1;  
+        if (disclosureClassificationSortOrderObject?.[b.value] > disclosureClassificationSortOrderObject?.[a.value])  
+            return -1;  
+        else  
+            return 0; 
+    }
 
   public contextMenuPreparing(e) {
     const dataSource = e.component.getDataSource();
