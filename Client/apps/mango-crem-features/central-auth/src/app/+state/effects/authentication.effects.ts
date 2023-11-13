@@ -6,7 +6,7 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { UserIdleService } from "libs/core-shared/src/lib/services";
 import { of } from "rxjs";
 import { catchError, filter, map, switchMap } from "rxjs/operators";
-import * as AppActions from '../actions';
+import * as AppActions from '../actions/actions';
 import { CentralAuthFacade } from "../facades";
 
 @Injectable()

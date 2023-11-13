@@ -7,7 +7,7 @@ import * as dayjs from 'dayjs';
 import { UserIdleService } from "libs/core-shared/src/lib/services";
 import { combineLatest, of } from "rxjs";
 import { filter, first, map, single, switchMap, take, takeUntil, takeWhile, tap } from "rxjs/operators";
-import * as AppActions from '../actions';
+import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
 

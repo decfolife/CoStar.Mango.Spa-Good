@@ -2,7 +2,7 @@ import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
 import { Action, createReducer, on } from '@ngrx/store';
 
 import { ClientSSOSettings, ContactRecord, UserAuth, UserSite } from '@mango/data-models/lib-data-models';
-import * as AppActions from './actions';
+import * as AppActions from './actions/actions';
 import * as OAuthActions from './actions/oauth.actions';
 import { CentralAuthEntity } from './models';
 
@@ -21,6 +21,7 @@ export interface State extends EntityState<CentralAuthEntity> {
   openClientInNewTab: boolean,
   userClients: UserSite[],
   userContactRecords: ContactRecord[]
+  userDefaultContactRecordId: number,
   ssoSettings: ClientSSOSettings,
   userRecentClients: UserSite[],
   isClientSpecificLogin: boolean,
@@ -47,6 +48,7 @@ export const initialState: State = appAdapter.getInitialState({
   userClients: null,
   userRecentClients: null,
   userContactRecords: null,
+  userDefaultContactRecordId: null,
   ssoSettings: null,
   selectedContactId: null,
   isClientSpecificLogin: false,
@@ -81,6 +83,7 @@ const appReducer = createReducer(
   on(AppActions.purgeClientSelection, (state) => ({
     ...state,
     userContactRecords: null,
+    userDefaultContactRecordId: null,
     selectedClient: null,
     selectedClientKey: null,
     selectedContactRecord: null,

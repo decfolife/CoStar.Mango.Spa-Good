@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ContactRecord, UserAuth, UserSite } from "@mango/data-models/lib-data-models";
 import { Store, select } from "@ngrx/store";
-import * as AppActions from './actions';
+import * as AppActions from './actions/actions';
 import * as OAuthActions from './actions/oauth.actions';
 import * as AppSelectors from './selectors';
 

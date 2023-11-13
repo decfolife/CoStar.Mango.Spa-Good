@@ -3,8 +3,8 @@ import { UserService } from "@mango/core-shared";
 import { MultiClientLoginHttpRequest } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Observable, combineLatest, of, pipe } from "rxjs";
-import { catchError, filter, map, switchMap, take, tap } from "rxjs/operators";
-import * as AppActions from '../actions';
+import { catchError, delay, filter, map, switchMap, take, tap } from "rxjs/operators";
+import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
 import { environment } from "../../../environments/environment.dev";
@@ -50,13 +50,13 @@ export class OAuthEffects {
       )
   )
 
-  redirectToClient$ = createEffect(
+ redirectToClient$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE_SUCCESS),
         switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.authorizationCode$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])),
         filter(([redirectionUri, authorizationCode]) => !!redirectionUri && !!authorizationCode),
-        map(([redirectionUri, authorizationCode, openClientInNewTab]) => {
+        tap(([redirectionUri, authorizationCode, openClientInNewTab]) => {
           let decodedRedirectUri = decodeURIComponent(redirectionUri)
           // CREM Special handling
           if (decodedRedirectUri.includes('v06') && decodedRedirectUri.includes('ReturnUrl')) {
@@ -66,8 +66,9 @@ export class OAuthEffects {
           }
           const url = updateQueryStringParameter(decodedRedirectUri, 'auth_code', authorizationCode)
           openClientInNewTab ? window.open(url, "_blank") : window.location.href = url
-          return AppActions.purgeClientSelection()
-        })
+        }),
+        delay(2000),
+        map(_ => AppActions.purgeClientSelection())
       )
   )
 }

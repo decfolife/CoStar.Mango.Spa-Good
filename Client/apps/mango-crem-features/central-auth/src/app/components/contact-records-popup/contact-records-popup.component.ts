@@ -34,7 +34,7 @@ export class ContactRecordsPopupComponent {
 
     this.selectedClient$ = this.centralAuthFacade.selectedClient$
     this.contactRecords$ = this.centralAuthFacade.userContactRecords$
-    this.visible$ = combineLatest([this.centralAuthFacade.selectedClient$, this.centralAuthFacade.userContactRecords$]).pipe(map(([selectedClient, contactRecords]) => !!selectedClient && !!contactRecords && contactRecords.length > 1))
+    this.visible$ = combineLatest([this.centralAuthFacade.selectedClient$, this.centralAuthFacade.userContactRecords$, this.centralAuthFacade.selectedContactRecord$, this.centralAuthFacade.contactId$]).pipe(map(([selectedClient, contactRecords, selectedContactRecord, selectedContactId]) => !!selectedClient && !!contactRecords && contactRecords.length > 1 && !selectedContactRecord && !selectedContactId))
   }
 
   onSelectionChanged(event) {

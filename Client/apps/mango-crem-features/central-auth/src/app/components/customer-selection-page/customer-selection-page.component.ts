@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { UserSite } from '@mango/data-models/lib-data-models';
 import { DxSelectBoxModule, DxTooltipModule } from 'devextreme-angular';
-import { Observable, combineLatest, of } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { CentralAuthFacade } from '../../+state/facades';
-import { NavbarModule } from '../navbar/navbar.module';
-import { UserSite } from '@mango/data-models/lib-data-models';
 import { ContactRecordsPopupComponent } from '../contact-records-popup/contact-records-popup.component';
+import { NavbarModule } from '../navbar/navbar.module';
 
 @Component({
   selector: 'mango-customer-selection-page',
@@ -31,7 +31,9 @@ export class CustomerSelectionPageComponent implements OnInit {
     this.clientsDropdown$ = this.clients$.pipe(
       filter(clients => !!clients), 
       map(clients => clients.map(client => client.clientKey.toUpperCase())));
-    this.isVisible$ = of(true)
+    this.isVisible$ = combineLatest([this.centralAuthFacade.userClients$, this.centralAuthFacade.userContactRecords$, this.centralAuthFacade.selectedContactRecord$, this.centralAuthFacade.contactId$]).pipe(
+      map(([clients, contactRecords, selectedContactRecord, selectedContactId]) => !!clients && !contactRecords && !selectedContactRecord && !selectedContactId)
+      )
   }
 
   ngOnInit(): void {
