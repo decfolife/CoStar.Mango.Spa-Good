@@ -2210,12 +2210,6 @@ export class ListPageComponent implements OnInit {
       const initViewDataObject = this.originalViewObject;
 
       this.service.getListPageColumns(this.currentListView.listPageId).subscribe(result => {
-        if (!result.success) {
-          // The aspx host is currently set to always return a list page response.
-          // Check the success flag.
-          this.enterCriticalGridLoadErrorState(result.clientErrorMessage);
-          return;
-        }
         this.columnsDef = result.data.columnDefinitions;
         this.columns = [];
 
@@ -2312,16 +2306,6 @@ export class ListPageComponent implements OnInit {
         };
 
         this.service.getGridData(this.lastGridDataRequest).subscribe(res => {
-          if (!res.success) {
-            // The aspx host is currently set to always return a list page response.
-            // Check the success flag.
-            this.enterCriticalGridLoadErrorState(res.clientErrorMessage);
-            if (res.status === 408) {
-              this.inDisabledUIState = false;
-            }
-            return;
-          }
-
           this.gridData = res.data;
 
           if (this.isGLEvent) {

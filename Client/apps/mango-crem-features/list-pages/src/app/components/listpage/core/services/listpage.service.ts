@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
-import { catchError, map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
+import { EndpointService } from '@mango/core-shared';
+import { environment } from 'apps/mango/src/environments/environment.local';
 import {
   ApiResponse,
   GetGridDataRequest,
   GetViewDropdownDataRequest,
   HideListViewRequest,
-  SetDefaultListViewRequest,
+  LeaseInfo,
   ListView,
   ObjectSecurityRequest,
-  LeaseInfo,
+  SetDefaultListViewRequest,
 } from '../../shared/models';
-import { EndpointService } from './endpoint.service';
 import { MapDataRequest } from '../../shared/models/map-data-request';
-import { environment } from 'apps/mango/src/environments/environment.local';
 
 @Injectable()
 export class ListPageService extends EndpointService {
@@ -22,506 +21,167 @@ export class ListPageService extends EndpointService {
     //this function's endpoint will always go to the ListPage.aspx. This is used to get
     //properties that was passed in as input variables into the old version of the list
     //pages custom element
-    if (environment.isRestful) {
-      //let result : ApiResponse ;
-      const result =
-      {
-        data: {
-            objectTypeId: 4,
-            isSuperUser: true,
-            canEditNotes: true,
-            showPortfolioPicker: true,
-            showAddButton: true,
-            showListMapToggle: true,
-            showDeleteButton: true
-        },
-        clientErrorMessage: '',
-        success: true,
-        status: null
-      };
-      return of(result);
-    }
+    //let result : ApiResponse ;
+    const result =
+    {
+      data: {
+        objectTypeId: 4,
+        isSuperUser: true,
+        canEditNotes: true,
+        showPortfolioPicker: true,
+        showAddButton: true,
+        showListMapToggle: true,
+        showDeleteButton: true
+      },
+      clientErrorMessage: '',
+      success: true,
+      status: null
+    };
+    return of(result);
 
-    const url = environment.appUrls.listpages + 'GetListPageProperties';
-
-    return this.http.post(url, `{}`, this.httpOptions).pipe(
-      map((x) => this.toObject(x) as any),
-      catchError(this.handleError('getListPageProperties'))
-    );
   }
 
   getGridData(request: GetGridDataRequest): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'gridData';
-
-      return this.http.post(url, request, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getGridData'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetGridData';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getGridData'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}gridData`, 'getGridData', request)
   }
 
   getListPageColumns(listPageId: number): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + listPageId + '/columnDefinitionList';
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getListPageColumns'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetColumnDefinitionList';
-
-    return this.http
-      .post(url, `{ "listPageId": ${listPageId} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getListPageColumns'))
-      );
+    return this.callHttpGet(`${environment.appUrls.listpages + listPageId}/columnDefinitionList`, 'getListPageColumns')
   }
 
   updateListView(listView): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'ListViewUpdate';
-
-      return this.http
-        .put(url, listView, this.httpOptions)
-        .pipe(catchError(this.handleError('updateListView')));
-    }
-
-    const url = environment.appUrls.listpages + 'UpdateListView';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(listView)} }`, this.httpOptions)
-      .pipe(catchError(this.handleError('updateListView')));
+    return this.callHttpPut(`${environment.appUrls.listpages}ListViewUpdate`, 'updateListView', listView)
   }
 
   setDefaultListView(
     request: SetDefaultListViewRequest
   ): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'SetDefaultListView';
-
-      return this.http
-        .put(url, request, this.httpOptions)
-        .pipe(catchError(this.handleError('setDefaultListView')));
-    }
-
-    const url = environment.appUrls.listpages + 'SetDefaultListView';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(catchError(this.handleError('setDefaultListView')));
+    return this.callHttpPut(`${environment.appUrls.listpages}SetDefaultListView`, 'setDefaultListView', request)
   }
 
   getClientPreferenceByField(Field: string): Observable<any> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.formWizard + 'FormWizards/GetClientPreferenceByField?Pref=' + Field;
-      return this.http
-        .get(
-          url,
-          this.httpOptions
-        )
-        .pipe(
-          map((x) => this.toObject(x) as any),
-          catchError(this.handleError('GetClientPreferenceByField'))
-        );
-    }
-    const url = environment.appUrls.formWizard + 'GetClientPreferenceByField?Pref=' + Field;
-    return this.http
-        .get(
-          url,
-          this.httpOptions
-        )
-        .pipe(
-          map((x) => this.toObject(x) as any),
-          catchError(this.handleError('GetClientPreferenceByField'))
-        );
+    return this.callHttpGet(`${environment.appUrls.formWizard}FormWizards/GetClientPreferenceByField?Pref=${Field}`, 'getClientPreferenceByField')
   }
 
   getListView(listView: ListView): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url =
-        environment.appUrls.listpages +
-        'views/' +
-        listView.id +
-        '/' +
-        listView.listViewType;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getListView'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetListView';
-
-    return this.http
-      .post(
-        url,
-        `{ "request": { "ListViewId":${listView.id}, "ListViewType":${listView.listViewType} } }`,
-        this.httpOptions
-      )
-      .pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getListView'))
-      );
+    return this.callHttpGet(`${environment.appUrls.listpages}views/${listView.id}/${listView.listViewType}`, 'getListView')
   }
 
   getListViewSelectorItems(
     request: GetViewDropdownDataRequest
   ): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url =
-        environment.appUrls.listpages + 'ListViewSelectorItems/' + request.objectTypeId;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getListViewSelectorItems'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetListViewSelectorItems';
-
-    return this.http
-      .post(
-        url,
-        `{ "objectTypeId": ${request.objectTypeId} }`,
-        this.httpOptions
-      )
-      .pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getListViewSelectorItems'))
-      );
+    return this.callHttpGet(`${environment.appUrls.listpages}ListViewSelectorItems/${request.objectTypeId}`, 'getListViewSelectorItems')
   }
 
   getAddWizards(objectTypeId: number, objectTypeTypeId: number): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'addWizards/' + objectTypeId +'/' + objectTypeTypeId;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getAddWizards'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetAddWizards';
-
-    return this.http
-      .post(url, `{ "objectTypeId": ${objectTypeId}, "objectTypeTypeId": ${objectTypeTypeId} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getAddWizards'))
-      );
+    return this.callHttpGet(`${environment.appUrls.listpages}addWizards/${objectTypeId}/${objectTypeTypeId}`, 'getAddWizards')
   }
+
   getUserModuleRights(objectTypeIds: string): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'GetUserModuleRights';
-
-      return this.http.post(url,{objectTypeIds}, this.httpOptions).pipe(
-        map((x) => this.toObject(x)),
-        catchError(this.handleError('getUserModuleRights'))
-      );
-    }
-
-    const url = environment.appUrls.listpages +'GetUserModuleRights';
-
-    return this.http
-      .post<any>(url, `{ "objectTypeIds": ${JSON.stringify( objectTypeIds)} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObject(x)),
-        catchError(this.handleError('getUserModuleRights'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}GetUserModuleRights`, 'getUserModuleRights', { objectTypeIds })
   }
 
   getRedirectorLinkList(): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'RedirectorLinkList';
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getRedirectorLinkList'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetRedirectorLinkList';
-
-    return this.http.post(url, '{}', this.httpOptions).pipe(
-      map((x) => this.toObject(x) as any),
-      catchError(this.handleError('getRedirectorLinkList'))
-    );
+    return this.callHttpGet(`${environment.appUrls.listpages}RedirectorLinkList`, 'getRedirectorLinkList')
   }
 
   getObjectSecurity(request: ObjectSecurityRequest): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'objectSecurity';
-
-      return this.http.post(url, request, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getObjectSecurity'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetObjectSecurity';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getObjectSecurity'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}objectSecurity`, 'getObjectSecurity', request)
   }
 
   getDynamicSQL(request: GetGridDataRequest): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'dynamicSQL';
-
-      return this.http.post(url, request, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getDynamicSQL'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetDynamicSQL';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(
-        map((x) => (x as any).d.Result as any),
-        catchError(this.handleError('getDynamicSQL'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}dynamicSQL`, 'getDynamicSQL', request)
   }
 
   createUserListView(userView: ListView): Observable<number> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'views';
-
-      return this.http.post(url, userView, this.httpOptions).pipe(
-        map((x) => (x as any) as number),
-        catchError(this.handleError('createUserView'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'CreateUserView';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(userView)} }`, this.httpOptions)
-      .pipe(
-        map((x) => (x as any).d.Result.data as number),
-        catchError(this.handleError('createUserView'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}views`, 'createUserListView', userView)
   }
 
   deleteUserView(userViewId: number): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'views/' + userViewId;
-
-      return this.http
-        .delete(url, this.httpOptions)
-        .pipe(catchError(this.handleError('deleteUserView')));
-    }
-
-    const url = environment.appUrls.listpages + 'DeleteUserView';
-
-    return this.http
-      .post(url, `{ "userViewId": ${userViewId} }`, this.httpOptions)
-      .pipe(catchError(this.handleError('deleteUserView')));
+    return this.callHttpDelete(`${environment.appUrls.listpages}views/${userViewId}`, 'deleteUserView')
   }
 
   getMarkerList(request: MapDataRequest): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'MarkerList';
-
-      return this.http.post(url, request, this.httpOptions).pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getMarkerList'))
-      );
-    }
-
-    const url = environment.appUrls.listpages + 'GetMarkerList';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObject(x) as any),
-        catchError(this.handleError('getMarkerList'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}MarkerList`, 'getMarkerList', request)
   }
 
   hideListView(request: HideListViewRequest): Observable<ApiResponse> {
-    if (environment.isRestful) {
-      const url = environment.appUrls.listpages + 'HideListView';
-
-      return this.http
-        .post(url, request, this.httpOptions)
-        .pipe(catchError(this.handleError('hideListView')));
-    }
-
-    const url = environment.appUrls.listpages + 'HideListView';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(catchError(this.handleError('hideListView')));
+    return this.callHttpPost(`${environment.appUrls.listpages}HideListView`, 'hideListView', request)
   }
 
   getPortfolios() {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.listpages}Portfolios`;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x)),
-        catchError(this.handleError('getPortfolios'))
-      );
-    }
-
-    const url = `${environment.appUrls.listpages}GetPortfolios`;
-
-    return this.http.post(url, '{}', this.httpOptions).pipe(
-      map((x) => this.toObject(x)),
-      catchError(this.handleError('getPortfolios'))
-    );
+    return this.callHttpGet(`${environment.appUrls.listpages}Portfolios`, 'getPortfolios')
   }
 
   getGoogleMapAPIKey() {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.listpages}GoogleMapAPIKey`;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x)),
-      catchError(this.handleError("googleMapAPIKey"))
-      );
-    }
-
-    const url = `${environment.appUrls.listpages}GetGoogleMapAPIKey`;
-
-    return this.http.post(url, this.httpOptions).pipe(
-      map((x) => this.toObject(x)),
-      catchError(this.handleError("googleMapAPIKey"))
-    );
+    const url = `${environment.appUrls.listpages}GoogleMapAPIKey`;
+    return this.callHttpGet(`${environment.appUrls.listpages}GoogleMapAPIKey`, 'getGoogleMapAPIKey')
   }
 
   getGoogleMappingChannel() {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.listpages}GoogleMappingChannel`;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x)),
-      catchError(this.handleError("googleMappingChannel"))
-      );
-    }
-
-    const url = `${environment.appUrls.listpages}GetGoogleMappingChannel`;
-
-    return this.http.post(url, this.httpOptions).pipe(
-      map((x) => this.toObject(x)),
-      catchError(this.handleError("googleMappingChannel"))
-    );
+    return this.callHttpGet(`${environment.appUrls.listpages}GoogleMappingChannel`, 'getGoogleMappingChannel')
   }
 
   getLeaseInfo(leaseAbstractID: number) {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.financials}Lease/LeaseInfo/${leaseAbstractID}`;
-
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObjectFinancialsApi(x)),
-      catchError(this.handleError("GetLeaseInfo"))
-      );
-    }
-
-    const url = `${environment.appUrls.financials}GetLeaseInfo`;
-
-    return this.http.post(url,`{ "leaseAbstractID": ${leaseAbstractID} }`,this.httpOptions).pipe(
-      map((x) => this.toObjectFinancialsApi(x)),
-      catchError(this.handleError("GetLeaseInfo"))
-    );
+    return this.callHttpGet(`${environment.appUrls.financials}Lease/LeaseInfo/${leaseAbstractID}`, 'getLeaseInfo')
   }
 
   postLeaseInfo(request: LeaseInfo) {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.financials}Lease/LeaseInfo`;
-
-      return this.http.post(url, request, this.httpOptions).pipe(
-        map((x) => this.toObjectFinancialsApi(x) as any),
-        catchError(this.handleError('SetLeaseInfo'))
-      );
-    }
-
-    const url = environment.appUrls.financials + 'SetLeaseInfo';
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObjectFinancialsApi(x) as any),
-        catchError(this.handleError('SetLeaseInfo'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}Lease/LeaseInfo`, 'postLeaseInfo', request)
   }
 
   copyCharge(glEventID: number) {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.financials}Lease/CopyCharge`;
-
-      return this.http.post(url, {glEventID}, this.httpOptions).pipe(
-        map((x) => this.toObjectFinancialsApi(x) as any),
-        catchError(this.handleError('copyCharge'))
-      );
-    }
-
-    const url = environment.appUrls.financials + 'CopyCharge';
-
-    return this.http
-      .post(url, `{ "glEventID": ${JSON.stringify(glEventID)} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObjectFinancialsApi(x) as any),
-        catchError(this.handleError('copyCharge'))
-      );
+    const url = `${environment.appUrls.financials}Lease/CopyCharge`;
+    return this.callHttpPost(`${environment.appUrls.listpages}Lease/CopyCharge`, 'copyCharge', { glEventID })
   }
 
   deleteCharge(objectTypeTypeId, gLEventIdList: number[]) {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.financials}Lease/DeleteGLEvents`;
-
-      return this.http.post(url, {objectTypeTypeId, gLEventIdList}, this.httpOptions).pipe(
-        map((x) => this.toObjectFinancialsApi(x) as any),
-        catchError(this.handleError('deleteCharge'))
-      );
-    }
-
-    const url = environment.appUrls.financials + 'DeleteGLEvents';
-    let request = { objectTypeTypeId,  gLEventIdList}
-
-    return this.http
-      .post(url, `{ "request": ${JSON.stringify(request)} }`, this.httpOptions)
-      .pipe(
-        map((x) => this.toObjectFinancialsApi(x) as any),
-        catchError(this.handleError('deleteCharge'))
-      );
+    return this.callHttpPost(`${environment.appUrls.listpages}Lease/DeleteGLEvents`, 'deleteCharge', { objectTypeTypeId, gLEventIdList })
   }
 
   getGLEventInfo(leaseAbstractID: number, glEventID: number) {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.financials}Lease/GLEventInfo/${leaseAbstractID}/${glEventID}`;
+    return this.callHttpGet(`${environment.appUrls.financials}Lease/GLEventInfo/${leaseAbstractID}/${glEventID}`, 'getGLEventInfo')
+  }
 
-      return this.http.get(url, this.httpOptions).pipe(
-        map((x) => this.toObject(x)),
-      catchError(this.handleError("GetGLEventInfo"))
-      );
-    }
-
-    const url = `${environment.appUrls.financials}GetGLEventInfo`;
-
-    return this.http.post(url,`{ "leaseAbstractID": ${leaseAbstractID}, "glEventID": ${glEventID} }`,this.httpOptions).pipe(
-      map((x) => this.toObjectFinancialsApi(x)),
-      catchError(this.handleError("GetGLEventInfo"))
-    );
+  protected handleError(operation = 'operation not provided') {
+    return (error: any): Observable<any> => {
+      console.error(operation, error);
+      // This code will fire when running locally. If hosted in aspx, the aspx page will
+      // likely catch 500 or other status codes and return a ListPageResponse with success=false, which is a 200
+      // in the sense of this error handling, therefore, these codes would be bypassed when hosted in aspx. 
+      if(operation === 'getGridData') {
+        if (error.status === 404) {
+          return of({
+            success: false,
+            clientErrorMessage:'You do not have permission to access this list view.'
+          });
+        } else if(error.status === 408) {
+          return of({
+            success: false,
+            clientErrorMessage:'The query for this view did not return within ' +
+            'the timeout limit. The recommendation is to reduce the number of columns and try ' +
+            'again. If this problem persists then the ad-hoc reporting features may yield better results.',
+            status: 408
+          });
+        }
+        return of({
+          success: false,
+          clientErrorMessage:'There was an error retrieving the data for this list view.'
+        });
+     }
+     if(operation === 'getListPageColumns'){
+      return of({
+        success: false,
+        clientErrorMessage:'There was an error retrieving the columns for this list view.'
+      });
+     }
+     if(operation == 'getDynamicSQL') {
+      return of({
+        success: false,
+        clientErrorMessage:'There was an error retrieving the data.'
+      });
+     }    
+     return of(null);
+    };
   }
 }
