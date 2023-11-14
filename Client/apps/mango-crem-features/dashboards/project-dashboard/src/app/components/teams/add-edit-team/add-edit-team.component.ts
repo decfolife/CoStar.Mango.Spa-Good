@@ -8,6 +8,7 @@ import { DashboardService } from '@project-dashboard/services/dashboard.service'
 import { Team, TeamMember, contactMember, MemberInfo } from '@mango/data-models/lib-data-models';
 import { faCirclePlus, faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'add-edit-Team-popup',
@@ -36,13 +37,14 @@ export class AddEditTeamComponent implements OnInit {
   faCircleMinus = faCircleMinus;
   initLoad: boolean = true;
   teamFunction: string;
-  noDataText: string = "No Data";
+  noDataText: string = "No members added yet.  Add members to get started.";
   removeDisabled: boolean = true;
   addTeam: boolean = false;
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 
   constructor(private dashboardService: DashboardService,
+    public toastr: ToastrService,
     public dialogRef: MatDialogRef<AddEditTeamComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
@@ -52,14 +54,13 @@ export class AddEditTeamComponent implements OnInit {
     this.team = <Team>{};
     if(this.data.teamFunction == "add") {
       this.modalTitle = "Add Team"
-      this.noDataText = "No members added yet.  Add members to get started.";
       this.addTeam = true;
       this.team.teamName = "";
     } else {
       this.team.teamId = this.data.team.teamId;
       this.team.teamName = this.data.team.teamName;
       this.team.securityLevel = this.data.team.securityLevel;
-      this.team.teamMembers = this.data.team.teamMembers;
+      this.team.teamMembers = [...this.data.team.teamMembers];
       this.modalTitle = "Edit Team";
     }
 
@@ -157,10 +158,10 @@ export class AddEditTeamComponent implements OnInit {
   saveTeam() {
 
     if (!this.team.teamName.trim()) {
-      window.alert("Group(Team) Name is a required field");
+      alert("Team Name is a required field");
       return;
     }
-    else if(!this.team.teamMembers) {
+    else if(!this.team.teamMembers || !this.team.teamMembers.length) {
       alert("Add team member in order to save.");
       return;
     } else {
@@ -171,7 +172,8 @@ export class AddEditTeamComponent implements OnInit {
         this.dashboardService.addTeam(this.team).subscribe(
         (res:any) => {
           if(res.success){
-            alert(`Saved Team Successfully`);
+            this.toastr.info("Team Saved Successfully", "", 
+                             {positionClass: 'toast-bottom-right', timeOut: 3000, closeButton:false, progressBar: false });
             this.dialogRef.close('true');
           }
         },
