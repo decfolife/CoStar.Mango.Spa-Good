@@ -12,7 +12,6 @@ import { CardsComponent } from '../cards/cards.component';
 import { UserSelectedFilters } from '../../models';
 import { Subscription } from 'rxjs';
 
-declare var doWizardLaunch;
 declare var parent;
 
 @Component({
@@ -383,11 +382,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
       this.cardsLoadingDone = true;
     }));
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  addMenuItemClick(wizard) {
-    doWizardLaunch(wizard);
   }
 
   enterBillClicked() {

@@ -21,8 +21,6 @@ import { CardsComponent } from '../cards/cards.component';
 import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
 import { Subscription } from 'rxjs';
 
-declare var doWizardLaunch;
-
 @Component({
   selector: 'mango-project-dashboard',
   templateUrl: './index.component.html',
@@ -89,7 +87,6 @@ export class IndexComponent implements OnInit, OnInit {
 
   btnAddClick() {
     var Wizard = sessionStorage.getItem('AddProjectWizardSiteSetting');
-    doWizardLaunch();
   }
 
   populateDashboardSchema() {
