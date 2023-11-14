@@ -8,26 +8,31 @@ fa-icon {
   width: 20px;
   font-family: 'Open Sans', sans-serif;
   color: black;
-  margin-right: 4px;
+  margin-right: 8px;
   transform: translateY(2px);
 }
 
-.aet-members {
+#aet-members {
   margin-bottom: 40px;
 }
 
-.aet-selectedMembers {
+#aet-selectedMembers {
   padding: 8px;
   height: 290px;
   width: 100%;
 
-  .aet-remove-members{
+  #aet-remove-members{
     display: flex;
     justify-content: flex-end;
     margin-bottom: 8px;
     .aet-removeText {
       height: 16px;
       transform: translateY(3px);
+    }
+    crem-button[ng-reflect-disabled="true"] {
+      fa-icon {
+        color: lightgray;
+      }
     }
   }
 
@@ -43,5 +48,13 @@ fa-icon {
   }
 }
 
+.aet-itemDisabled {
+  pointer-events: none;
+  color: lightgray;
+  cursor: default;
+  fa-icon {
+    color: lightgray;
+  }
+}
 	
 

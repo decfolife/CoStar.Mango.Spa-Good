@@ -9,4 +9,5 @@ interface Role {
 
 interface Level {
   level: string;
+  value: string;
 }

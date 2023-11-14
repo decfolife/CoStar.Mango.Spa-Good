@@ -24,9 +24,11 @@ export class AddEditTeamComponent implements OnInit {
   dateFormat: string;
   dateTimeFormat: string;
   filteredMembers: contactMember[];
+  teamName: string;
   team: Team;
   teamMembers: TeamMember[];
   memberInfo: MemberInfo;
+  selectedMemberIds: number[];
   searchMember: string;
   inputSubscription$;
   isDropDownBoxOpened = false;
@@ -35,6 +37,8 @@ export class AddEditTeamComponent implements OnInit {
   initLoad: boolean = true;
   teamFunction: string;
   noDataText: string = "No Data";
+  removeDisabled: boolean = true;
+  addTeam: boolean = false;
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 
@@ -44,76 +48,95 @@ export class AddEditTeamComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.teamMembers = this.data.team.teamMembers;
     this.memberInfo  = this.data.memberInfo;
+    this.team = <Team>{};
     if(this.data.teamFunction == "add") {
       this.modalTitle = "Add Team"
       this.noDataText = "No members added yet.  Add members to get started.";
+      this.addTeam = true;
+      this.team.teamName = "";
     } else {
+      this.team.teamId = this.data.team.teamId;
+      this.team.teamName = this.data.team.teamName;
+      this.team.securityLevel = this.data.team.securityLevel;
+      this.team.teamMembers = this.data.team.teamMembers;
       this.modalTitle = "Edit Team";
     }
 
     this.membersSearchInput$.pipe(
       debounceTime(250),
       switchMap(inputValue => ((inputValue && inputValue.length > 1) ? this.getMembers(inputValue) : of([])))
-    ).subscribe(filteredMembers => this.filteredMembers = filteredMembers)
+    ).subscribe(filteredMembers => {
+      this.filteredMembers = filteredMembers;
+    })
+  }
+
+  searchTeamMembers(e: any) {
+    this.membersSearchInput$.next(e.event.target.value)
   }
 
   teamNameChange(teamName: string) {
-  }
-
-  membersSearch() {
-
+    this.teamName = teamName;
+    this.team.teamName = teamName;
   }
 
   toggleList(){
     this.isDropDownBoxOpened = !this.isDropDownBoxOpened;
   }
 
+  removeMember(contactId) {
+    this.team.teamMembers = this.team.teamMembers.filter( member => member.contactId !== contactId);
+  }
+
   removeMembers() {
-
+    let removeIndex: number;
+    this.selectedMemberIds.forEach(contactId => {
+      removeIndex = (this.team.teamMembers.findIndex(member => contactId == member.contactId));
+      this.team.teamMembers.splice(removeIndex, 1);
+    });
   }
 
-  emailtoggle(e) {
-
+  emailtoggle(member, e) {
+    member.emailOn = e.checked;
   }
 
-  selectedMember(e) {
-
+  onItemRendered(e) {
+    if(this.team.teamMembers && this.team.teamMembers.length) {
+      this.team.teamMembers.forEach(member => {
+        if(member.contactId == e.itemData.contactID) {
+          this.setListItemAttributes(e);
+        }
+      })
+    }
   }
 
-  searchTeamMembers(e) {
-    this.membersSearchInput$.next(e.event.target.value)
+  onItemClicked(e) {
+    if(!this.team.teamMembers) this.team.teamMembers = [];
+    let teamMember = <TeamMember>{};
+    teamMember.company = e.itemData.Company;
+    teamMember.email = e.itemData.Email;
+    teamMember.name = e.itemData.Name;
+    teamMember.companyId = e.itemData.companyID;
+    teamMember.contactId = e.itemData.contactID;
+    teamMember.phoneNumber = "";
+    teamMember.emailOn = false;
+    teamMember.role = "";
+    teamMember.level = "L1";
+    teamMember.memberId= 0;
+    teamMember.teamId = 0;
+    teamMember.share = 0;
+
+    this.team.teamMembers.push(teamMember);
+    this.setListItemAttributes(e);
   }
 
-  getMembers(search: string) {
-    return this.dashboardService.getMembersList(search, true, 0, 0).pipe(
-      map(res => res.data),
-      catchError(error => {
-        console.log("ERROR occurred while getting Members List: ", error);
-        return of(error);
-      }
-      )
-    );
-  }
-
-  getmemberinfo() {
-    this.memberInfo = {
-      roles: [],
-      levels: []
-    };
-
-    this.dashboardService.getmemberinfo().subscribe(
-      (res:any) => {
-        this.memberInfo = res.data;
-      },
-      (error: any) => console.log("Error occurred getting Teams Data ", error),
-      () => {}
-    );
-  }
-
-  addMember(member) {
-    member.added = true;
+  onMemberSelectionChanged(e) {
+    this.selectedMemberIds = e.selectedRowKeys;
+    if((this.selectedMemberIds.length) > 1 ) 
+      this.removeDisabled = false;
+    else {
+      this.removeDisabled = true;
+    }  
   }
 
   setAttributes(e) {  
@@ -133,10 +156,51 @@ export class AddEditTeamComponent implements OnInit {
 
   saveTeam() {
 
+    if (!this.team.teamName.trim()) {
+      window.alert("Group(Team) Name is a required field");
+      return;
+    }
+    else if(!this.team.teamMembers) {
+      alert("Add team member in order to save.");
+      return;
+    } else {
+        if(this.addTeam) {
+          this.team.teamId = 0;
+          this.team.securityLevel = "Delete"
+        }
+        this.dashboardService.addTeam(this.team).subscribe(
+        (res:any) => {
+          if(res.success){
+            alert(`Saved Team Successfully`);
+            this.dialogRef.close('true');
+          }
+        },
+        (error: any) => alert("Failed Saving Team, Try again later "),
+        () => {}
+      );
+    }
   }
 
   public closeDialog() {
     this.dialogRef.close('');
+  }
+
+  setListItemAttributes(e) {
+    const listItem = e.itemElement as HTMLElement;
+    listItem.style.pointerEvents = 'none';
+    listItem.classList.add('aet-itemDisabled');
+  }
+
+
+  getMembers(search: string) {
+    return this.dashboardService.getMembersList(search, true, 0, 0).pipe(
+      map(res => res.data),
+      catchError(error => {
+        console.log("ERROR occurred while getting Members List: ", error);
+        return of(error);
+      }
+      )
+    );
   }
   
   ngOnDestroy() {

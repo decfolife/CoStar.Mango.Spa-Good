@@ -640,9 +640,6 @@ body {
 				}
 			}
 		}
-		.dx-checkbox-icon {
-			border: 1px solid colors.$darkGray;
-		}
 	}
 	td.dx-cell-focus-disabled.dx-master-detail-cell {
 		background-color: colors.$lightGray;
@@ -660,7 +657,7 @@ body {
 	.modalFooter {
 		border-top: 1px solid colors.$stdBorderColor;
 	}
-	.dx-texteditor.dx-editor-outlined, .aet-selectedMembers {
+	.dx-texteditor.dx-editor-outlined, #aet-selectedMembers {
 		border: 1px solid colors.$stdBorderColor;
 		border-radius: 4px;
 	}	
@@ -680,23 +677,32 @@ body {
 		}
 		.mat-form-field.mat-focused .mat-form-field-outline {
 			box-shadow: 0 0 0 0.1rem colors.$blueShade;
+			border-radius: 4px;
 		}
 	}
 
 }
 
-.aet-membersList {
+#aet-membersList {
 	height: 200px;
 	.dx-list-item {
 		border-top: none;
-		cursor: default;
+		//cursor: default;
 		.dx-list-item-content {
 			padding: 4px;
 		}
 	}
+	.aet-itemDisabled {
+		pointer-events: none;
+		color: colors.$darkGray;
+		cursor: default;
+		fa-icon {
+			color: lightgray;
+		}
+	}
 }
 
-#teams-container .teams-grid, #aet-selectedMembers-container .addTeam-grid {
+#teams-container .teams-grid, #aet-selectedMembers-container #addTeam-grid {
 	td {
 		text-align: center;
 		vertical-align: middle !important;
@@ -710,6 +716,10 @@ body {
 
 	.dx-datagrid-nodata {
 		font-weight: bold;
+	}
+
+	.dx-checkbox-icon {
+		border: 1px solid colors.$darkGray;
 	}
 }
 

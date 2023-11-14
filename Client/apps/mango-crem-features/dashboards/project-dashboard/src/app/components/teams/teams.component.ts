@@ -39,16 +39,7 @@ export class TeamsComponent implements OnInit {
   
     this.getUserPreferences();
     this.getMemberInfo();
-
-    this.dashboardService.getTeams().subscribe(
-      (res:any) => {
-        this.teams = res.data;
-        this.dataRetrieved = true;
-        this.initEditFlag(this.teams);
-      },
-      (error: any) => console.log("Error occurred getting Teams Data ", error),
-      () => {}
-    );
+    this.getTeamsData();
   }
   
   initEditFlag(teams) {
@@ -62,7 +53,7 @@ export class TeamsComponent implements OnInit {
   }
 
   addOrEditTeam(tFunc: string, editTeam?:Team ) {
-    let team = {};
+    let team = <Team>{};
     if(tFunc == "edit") {
       team=editTeam;
     }
@@ -74,11 +65,27 @@ export class TeamsComponent implements OnInit {
       disableClose: true
     });
     dialogRef.afterClosed().subscribe(result => {
-
+      if(result) { 
+        this.dataRetrieved = false;
+        this.getTeamsData();
+        this.teamsGrid.instance.refresh();
+      }
     });
   }
 
   doSomethingForNow(data) {}
+
+  getTeamsData() {
+    this.dashboardService.getTeams().subscribe(
+      (res:any) => {
+        this.teams = res.data;
+        this.dataRetrieved = true;
+        this.initEditFlag(this.teams);
+      },
+      (error: any) => console.log("Error occurred getting Teams Data ", error),
+      () => {}
+    );
+  }
 
   getUserPreferences(){
     this.dashboardService.GetUserPreferences().subscribe(

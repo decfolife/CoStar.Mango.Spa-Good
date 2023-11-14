@@ -6,5 +6,4 @@ export interface contactMember {
   Email: string;
   companyID: number;
   Company: string;
-  added?: boolean;
 }
