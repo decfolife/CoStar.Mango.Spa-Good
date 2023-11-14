@@ -8,6 +8,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { EditPage } from '../shared/models/edit-page';
+import { MatDialog } from '@angular/material/dialog';
+import { AddBuildingModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-building-modal/add-building-modal.component';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -18,7 +20,7 @@ import { EditPage } from '../shared/models/edit-page';
 export class AddNewMenuComponent implements OnInit {
   private _editPages: EditPage[] = [];
   navigationPages: EditPage[] = [];
-  queryParam: string;
+  objectTypeId: string;
   addButtonObjects: any = [];
   isChargeAction: boolean = false;
 
@@ -36,7 +38,7 @@ export class AddNewMenuComponent implements OnInit {
 
   faPlus = faPlus;
 
-  constructor(private sanitizer: DomSanitizer,public service: ListPageService,private route: ActivatedRoute) { }
+  constructor(private sanitizer: DomSanitizer,public service: ListPageService,private route: ActivatedRoute, private dialog: MatDialog) { }
 
   onEditPagesChanged(editPages: EditPage[]) {
     if (editPages === null) {
@@ -48,7 +50,7 @@ export class AddNewMenuComponent implements OnInit {
  
   ngOnInit(): void {
       this.getModuleRights()
-      this.queryParam = this.route.snapshot.queryParamMap.get('ObjectTypeId');
+      this.objectTypeId = this.route.snapshot.data.objectTypeId;
   }
 
   addButtonClick(editPage: EditPage) {
@@ -116,13 +118,35 @@ export class AddNewMenuComponent implements OnInit {
       (error: any) => console.log('Error occurred getting addMenu items: ', error)
     );
   }
+
 getNavigationLink(objectTypeId:number){
-  this.service.getAddWizards(objectTypeId, this.OTTID) //calls getAddWizards for specific ObjectTypeId and that returns MatMenu buttons related Popup on CREM
-  .subscribe(result => { 
-      this.navigationPages = result.data.addWizards;
-      this.addButtonClickSingleForMatMenu();
-  });
+
+  if (objectTypeId == 3) {
+    this.showAddBuildingPopup();
+  }
  
+}
+
+showAddBuildingPopup() {
+  
+      let dialogRef = this.dialog.open(AddBuildingModalComponent, {
+        disableClose: true,
+        height: '81%',
+        width: '75%',
+        maxWidth: '1100px',
+        data: {
+          objectTypeId: this.objectTypeId,
+          userId: 2
+        }
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+  
+        }
+      });
+    
+
 }
 
 }

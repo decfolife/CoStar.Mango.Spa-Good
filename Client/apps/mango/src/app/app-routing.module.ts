@@ -150,7 +150,7 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               moduleId: 1,
-              objectTypeId: 5,
+              objectTypeId: 3,
               currentSubApp: MangoSubApps.LIST_PAGES,
               breadCrumb: { label: 'Buildings', append: true, activeLink: 'Buildings'}
             },

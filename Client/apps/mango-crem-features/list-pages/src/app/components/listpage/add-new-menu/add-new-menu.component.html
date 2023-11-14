@@ -22,13 +22,13 @@
 
 <ng-template #multiButton >
    <!-- container only displays on specific list pages that has ObjectTypeId 2,3,4 -->
-  <ng-container *ngIf="queryParam == '2' || queryParam == '3' || queryParam == '4'">
+  <ng-container *ngIf="objectTypeId == '2' || objectTypeId == '3' || objectTypeId == '4'">
   <crem-button
     [disabled] = "!enabled"
     [matMenuTriggerFor]="addMenu"
     type="primary"
     class='{{ (enabled) ? "" : "disabledMenuButton" }}'
-    *ngIf="addButtonObjects?.length >0"
+    *ngIf="addButtonObjects?.length > 0"
     
   >
     <fa-icon class="small-plus" [icon]="faPlus"></fa-icon>
@@ -46,7 +46,7 @@
     </mat-menu>
   </ng-container> 
   <!-- container only displays on specific list pages other than has ObjectTypeId 2,3,4 -->
-  <ng-container  *ngIf="queryParam != '2' && queryParam != '3' && queryParam != '4'">    
+  <ng-container  *ngIf="objectTypeId != '2' && objectTypeId != '3' && objectTypeId != '4'">    
     <crem-button 
     [disabled] = "!enabled"
     type="primary"
