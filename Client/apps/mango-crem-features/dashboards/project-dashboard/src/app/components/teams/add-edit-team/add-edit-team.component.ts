@@ -50,8 +50,13 @@ export class AddEditTeamComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    let allMembers =  false;
+    let pageSize = 10;
+    let pageNumber = 1;
+
     this.memberInfo  = this.data.memberInfo;
     this.team = <Team>{};
+    this.team.teamMembers = [];
     if(this.data.teamFunction == "add") {
       this.modalTitle = "Add Team"
       this.addTeam = true;
@@ -60,20 +65,24 @@ export class AddEditTeamComponent implements OnInit {
       this.team.teamId = this.data.team.teamId;
       this.team.teamName = this.data.team.teamName;
       this.team.securityLevel = this.data.team.securityLevel;
-      this.team.teamMembers = [...this.data.team.teamMembers];
+      this.data.team.teamMembers.forEach(member => this.team.teamMembers.push(Object.assign({}, member)));
       this.modalTitle = "Edit Team";
     }
 
     this.membersSearchInput$.pipe(
       debounceTime(250),
-      switchMap(inputValue => ((inputValue && inputValue.length > 1) ? this.getMembers(inputValue) : of([])))
+      switchMap(inputValue => ((inputValue.length != 1) ? this.getMembers(inputValue, allMembers, pageSize, pageNumber) : of([])))
     ).subscribe(filteredMembers => {
       this.filteredMembers = filteredMembers;
-    })
+      allMembers = true;
+      pageNumber = 0;
+      pageSize = 0;
+    });
+
   }
 
-  searchTeamMembers(e: any) {
-    this.membersSearchInput$.next(e.event.target.value)
+  searchTeamMembers(val: string) {
+    this.membersSearchInput$.next(val)
   }
 
   teamNameChange(teamName: string) {
@@ -112,7 +121,6 @@ export class AddEditTeamComponent implements OnInit {
   }
 
   onItemClicked(e) {
-    if(!this.team.teamMembers) this.team.teamMembers = [];
     let teamMember = <TeamMember>{};
     teamMember.company = e.itemData.Company;
     teamMember.email = e.itemData.Email;
@@ -194,8 +202,8 @@ export class AddEditTeamComponent implements OnInit {
   }
 
 
-  getMembers(search: string) {
-    return this.dashboardService.getMembersList(search, true, 0, 0).pipe(
+  getMembers(search: string, all: boolean, pageSize: number, pageNumber: number) {
+    return this.dashboardService.getMembersList(search, all, pageSize, pageNumber).pipe(
       map(res => res.data),
       catchError(error => {
         console.log("ERROR occurred while getting Members List: ", error);

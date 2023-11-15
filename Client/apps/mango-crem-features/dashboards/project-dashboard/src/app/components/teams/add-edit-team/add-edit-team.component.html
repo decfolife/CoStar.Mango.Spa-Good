@@ -27,7 +27,7 @@
       <dx-drop-down-box 
           class="aet-membersDropDown"
           [(opened)]="isDropDownBoxOpened" 
-          (onInput)="searchTeamMembers($event)"
+          (onInput)="searchTeamMembers($event.event.target.value)"
           (onEnterKey)="toggleList()"
           [acceptCustomValue]="true"
           [openOnFieldClick]="true"
