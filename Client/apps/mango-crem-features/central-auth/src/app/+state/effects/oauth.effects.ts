@@ -2,12 +2,12 @@ import { Injectable } from "@angular/core";
 import { UserService } from "@mango/core-shared";
 import { MultiClientLoginHttpRequest } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { Observable, combineLatest, of, pipe } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import { catchError, delay, filter, map, switchMap, take, tap } from "rxjs/operators";
+import { environment } from "../../../environments/environment.dev";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
-import { environment } from "../../../environments/environment.dev";
 
 @Injectable()
 
@@ -22,19 +22,8 @@ export class OAuthEffects {
         switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.selectedContactRecord$.pipe(take(1))])),
         filter(([client, contactRecord]) => !!client && !!contactRecord),
         map(([client, contactRecord]): MultiClientLoginHttpRequest => ({ clientKey: client.clientKey, contactID: contactRecord.contactID, contactRole: contactRecord.userRoleName })),
-        tap(_ => this.centralAuthFacade.setLoading(true)),
-        switchMap(payload => this.userService.loginToClientSite(payload)),
-        tap(_ => this.centralAuthFacade.setLoading(false)),
-        filter(response => !!response && !!response.authToken),
-        tap(response => this.centralAuthFacade.setClientAccessToken(response.authToken)),
-        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])),
-        filter(([client, redirectionUri]) => !!client),
-        map(([client, redirectionUri, openClientInNewTab]) => {
-          const newRedirectionUri = !redirectionUri ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx?mul=${openClientInNewTab ? 'true' : 'false'}` : decodeURIComponent(redirectionUri)
-          this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
-          return OAuthActions.authorize()
-        }),
-      ) as Observable<any>
+        map(payload => OAuthActions.loginToClientSite({ payload }))
+      )
   )
 
   authorize$ = createEffect(
@@ -50,7 +39,33 @@ export class OAuthEffects {
       )
   )
 
- redirectToClient$ = createEffect(
+  loginToClientSite$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(OAuthActions.LOGIN_TO_CLIENT_SITE),
+        switchMap((action: { type: string, payload: MultiClientLoginHttpRequest }) => this.userService.loginToClientSite(action.payload).pipe(
+          map(response => OAuthActions.loginToClientSiteSuccess({ authToken: response.authToken })),
+          catchError(_ => of(OAuthActions.loginToClientSiteError(), AppActions.purgeClientSelection()))
+        ))
+      )
+  )
+
+  loginToClientSiteSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(OAuthActions.LOGIN_TO_CLIENT_SITE_SUCCESS),
+        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])),
+        filter(([client]) => !!client),
+        map(([client, redirectionUri, openClientInNewTab]) => {
+          const newRedirectionUri = !redirectionUri ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}v06/login.aspx?mul=${openClientInNewTab ? 'true' : 'false'}` : decodeURIComponent(redirectionUri)
+          this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
+          return OAuthActions.authorize()
+        }),
+      )
+  )
+
+
+  redirectToClient$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE_SUCCESS),
@@ -67,7 +82,7 @@ export class OAuthEffects {
           const url = updateQueryStringParameter(decodedRedirectUri, 'auth_code', authorizationCode)
           openClientInNewTab ? window.open(url, "_blank") : window.location.href = url
         }),
-        delay(2000),
+        delay(1000),
         map(_ => AppActions.purgeClientSelection())
       )
   )

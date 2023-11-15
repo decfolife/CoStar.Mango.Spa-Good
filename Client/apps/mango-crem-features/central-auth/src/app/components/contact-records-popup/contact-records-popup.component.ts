@@ -4,7 +4,7 @@ import { CentralAuthFacade } from '../../+state/facades';
 import { ContactRecord, UserSite } from '@mango/data-models/lib-data-models';
 import { Observable, combineLatest, of } from 'rxjs';
 import { DxCheckBoxComponent, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxPopupComponent, DxPopupModule, DxToolbarModule } from 'devextreme-angular';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'mango-contact-records-popup',
@@ -56,7 +56,7 @@ export class ContactRecordsPopupComponent {
     this.contactRecords$.pipe(
       filter(contactRecords => !!contactRecords),
       map(contactRecords => ({ contactRecords, checkboxesList: this.generateParsedCheckboxesList() })),
-      tap(({ contactRecords, checkboxesList }) => {
+      map(({ contactRecords, checkboxesList }) => {
         if (event.value == true) {
           checkboxesList.filter(c => c.name != data.contactID).forEach(checkbox => {
             checkbox.value = false
@@ -64,6 +64,12 @@ export class ContactRecordsPopupComponent {
         }
         const checkedCheckbox = checkboxesList.find(checkbox => checkbox.value === true)
         this.selectedDefaultContactRecord = checkedCheckbox ? contactRecords.find(c => c.contactID === Number.parseInt(checkedCheckbox.name)) : null
+        return this.selectedDefaultContactRecord
+      }),
+      filter(defaultContactRecord => !!defaultContactRecord),
+      switchMap(defaultContactRecord => combineLatest([of(defaultContactRecord), this.centralAuthFacade.userDefaultContactRecordId$.pipe(take(1))])),
+      tap(([defaultContactRecord, userDefaultContactRecordId]) => {
+        console.log({defaultContactRecord, userDefaultContactRecordId})
       })
     )
   }

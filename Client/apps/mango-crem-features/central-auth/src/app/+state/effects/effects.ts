@@ -6,7 +6,7 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as dayjs from 'dayjs';
 import { UserIdleService } from "libs/core-shared/src/lib/services";
 import { combineLatest, of } from "rxjs";
-import { filter, first, map, single, switchMap, take, takeUntil, takeWhile, tap } from "rxjs/operators";
+import { catchError, filter, first, map, switchMap, take, tap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
@@ -23,7 +23,6 @@ export class CentralAuthEffects {
         ofType(AppActions.APP_INIT),
         switchMap(_ => of(
           AppActions.populateLoggedInUserData(),
-          //AppActions.setupRouteAndQueryParams(),
           AppActions.handleCustomQueryParams(),
           OAuthActions.setupOAuthRedirectionToClient(),
           AppActions.setupIdle(),
@@ -67,28 +66,6 @@ export class CentralAuthEffects {
         })
       ), { dispatch: false }
   )
-
-
-  /*setupRouteAndQueryParams$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.SETUP_ROUTE_AND_QUERY_PARAMS),
-        switchMap(_ => combineLatest([this.acitvatedRoute.firstChild.queryParamMap, this.acitvatedRoute.paramMap])),
-        tap(console.log),
-        map(([queryParamMap, paramMap]) => ([
-          queryParamMap.get('clientKey') || paramMap.get('clientKey') || queryParamMap.get(OAUTH_CLIENT_KEY_QUERY_PARAM),
-          queryParamMap.get(OAUTH_REDIRECT_QUERY_PARAM),
-          queryParamMap.get(OAUTH_CONTACT_ID_QUERY_PARAM)
-        ])),
-        switchMap(([clientKey, redirectUri, contactId]) => {
-          const actionsToDispatch = []
-          !!clientKey ? actionsToDispatch.push(AppActions.setSelectedClientKey({ clientKey })) : null
-          !!redirectUri ? actionsToDispatch.push(AppActions.setRedirectionUri({ redirectionUri: redirectUri })) : null
-          !!contactId ? actionsToDispatch.push(AppActions.setSelectedContactID({ contactId: parseInt(contactId) })) : null
-          return of(...actionsToDispatch)
-        })
-      )
-  )*/
 
   setupIdle$ = createEffect(
     () =>
@@ -179,8 +156,10 @@ export class CentralAuthEffects {
         ofType(AppActions.GET_USER_CLIENTS),
         switchMap(_ => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.accessToken$.pipe(take(1))])),
         filter(([user, accessToken]) => !!user && !!accessToken),
-        switchMap(([user, accessToken]) => this.userService.getClientSitesByUser(user.email)),
-        map(response => AppActions.getUserClientsSuccess({ clientSites: response }))
+        switchMap(([user]) => this.userService.getClientSitesByUser(user.email).pipe(
+          map(response => AppActions.getUserClientsSuccess({ clientSites: response })),
+          catchError(_ => of(AppActions.getUserClientsError()))
+        )),
       )
   )
 
@@ -212,8 +191,10 @@ export class CentralAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.GET_CLIENT_SSO_SETTINGS),
-        switchMap((action: { type: string, clientKey: string }) => this.settingsService.getClientSsoSettings(action.clientKey)),
-        map(response => AppActions.getClientSSOSettingsSuccess({ ssoSettings: response }))
+        switchMap((action: { type: string, clientKey: string }) => this.settingsService.getClientSsoSettings(action.clientKey).pipe(
+          map(response => AppActions.getClientSSOSettingsSuccess({ ssoSettings: response })),
+          catchError(_ => of(AppActions.getClientSSOSettingsError()))
+        ))
       )
   )
 
@@ -223,8 +204,10 @@ export class CentralAuthEffects {
         ofType(AppActions.GET_CONTACT_RECORDS),
         switchMap((action: { type: string, clientKey: string }) => combineLatest([of(action.clientKey), this.centralAuthFacade.user$.pipe(take(1))])),
         filter(([clientKey, user]) => !!clientKey && !!user),
-        switchMap(([clientKey, user]) => this.userService.getContactRecords(user.email, clientKey)),
-        map(response => AppActions.getContactRecordsSuccess({ contactRecords: response.contactRecords.map(contactRecordMapper) }))
+        switchMap(([clientKey, user]) => this.userService.getContactRecords(user.email, clientKey).pipe(
+          map(response => AppActions.getContactRecordsSuccess({ contactRecords: response.contactRecords.map(contactRecordMapper) })),
+          catchError(_ => of(AppActions.getContactRecordsError()))
+        ))
       )
   )
 
@@ -234,12 +217,12 @@ export class CentralAuthEffects {
         ofType(AppActions.GET_CONTACT_RECORDS_SUCCESS),
         map((action: { type: string, contactRecords: ContactRecord[] }) => action.contactRecords),
         filter(contactRecords => !!contactRecords && contactRecords.length <= 1),
-        switchMap(contactRecord => {
-          if (contactRecord.length === 0) {
-            return of(AppActions.setSelectedContactID({ contactId: 0 }), AppActions.setContactRecord({ contactRecord: { contactID: 0 } }))
-          } else {
-            return of(AppActions.setSelectedContactID({ contactId: contactRecord[0].contactID }))
-          }
+        map(contactRecords => ({ contactRecords, defaultContactRecord: contactRecords.find(contactRecord => contactRecord.isDefaultLoginContact) })),
+        switchMap(({ contactRecords, defaultContactRecord }) => {
+          const actionsToDispatch = []
+          !!defaultContactRecord ? actionsToDispatch.push(AppActions.setUserDefaultContactId({ defaultContactId: defaultContactRecord.contactID })) : null
+          actionsToDispatch.push(contactRecords.length === 0 ? AppActions.setSelectedContactID({ contactId: 0 }) : AppActions.setSelectedContactID({ contactId: contactRecords[0].contactID }))
+          return of(...actionsToDispatch)
         })
       )
   )
