@@ -15,6 +15,7 @@ RUN npm run build:$COSTAR_ENVIRONMENT:microcomponent-central-auth
 FROM public.ecr.aws/nginx/nginx:alpine-slim as final
 COPY ./config/nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
+RUN apk update && apk add --upgrade openssl
 # RUN apk update
 # RUN apk del curl
 # RUN apk add 'curl>7.88.1'
