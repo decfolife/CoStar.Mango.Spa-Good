@@ -25,11 +25,6 @@ export const accessToken = createSelector(
     (state: State) => state.accessToken
 );
 
-export const userDefaultContactRecordId = createSelector(
-    getAppState,
-    (state: State) => state.userDefaultContactRecordId
-);
-
 export const clientAccessToken = createSelector(
     getAppState,
     (state: State) => state.clientAccessToken

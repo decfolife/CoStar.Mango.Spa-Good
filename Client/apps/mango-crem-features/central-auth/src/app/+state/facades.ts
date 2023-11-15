@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ContactRecord, MultiClientLoginHttpRequest, UserAuth, UserSite } from "@mango/data-models/lib-data-models";
+import { ContactRecord, UserAuth, UserSite } from "@mango/data-models/lib-data-models";
 import { Store, select } from "@ngrx/store";
 import * as AppActions from './actions/actions';
 import * as OAuthActions from './actions/oauth.actions';
@@ -26,7 +26,6 @@ export class CentralAuthFacade {
   ssoSettings$ = this.store.pipe(select(AppSelectors.ssoSettings));
   userContactRecords$ = this.store.pipe(select(AppSelectors.userContactRecords));
   openClientInNewTab$ = this.store.pipe(select(AppSelectors.openClientInNewTab));
-  userDefaultContactRecordId$ = this.store.pipe(select(AppSelectors.userDefaultContactRecordId));
 
   constructor(private store: Store) { }
 
@@ -54,10 +53,6 @@ export class CentralAuthFacade {
     this.store.dispatch(AppActions.setUser({ user }));
   }
 
-  setUserDefaultContactRecordIdChanged(changed: boolean) {
-    this.store.dispatch(AppActions.setIsUserDefaultContactIdChanged({ changed }));
-  }
-
   setOpenClientInNewTab(openClientInNewTab: boolean) {
     this.store.dispatch(AppActions.setOpenClientInNewTab({ openClientInNewTab }));
   }
@@ -69,7 +64,7 @@ export class CentralAuthFacade {
   getContactRecords(clientKey: string) {
     this.store.dispatch(AppActions.getContactRecords({ clientKey }));
   }
-
+  
   handleUserAlreadyLoggedIn() {
     this.store.dispatch(AppActions.handleUserAlreadyLoggedIn());
   }
@@ -90,16 +85,16 @@ export class CentralAuthFacade {
     this.store.dispatch(AppActions.setAccessToken({ accessToken }));
   }
 
+  setClientAccessToken(clientAccessToken: string) {
+    this.store.dispatch(OAuthActions.setClientAccessToken({ clientAccessToken }));
+  }
+
   setClientSpecificLogin(isClientSpecific: boolean) {
     this.store.dispatch(AppActions.setClientSpecificLogin({ isClientSpecific }));
   }
 
   setSelectedClientKey(clientKey: string) {
     this.store.dispatch(AppActions.setSelectedClientKey({ clientKey }));
-  }
-
-  loginToClientSite(payload: MultiClientLoginHttpRequest) {
-    this.store.dispatch(OAuthActions.loginToClientSite({ payload }));
   }
 
   setClient(client: UserSite) {
