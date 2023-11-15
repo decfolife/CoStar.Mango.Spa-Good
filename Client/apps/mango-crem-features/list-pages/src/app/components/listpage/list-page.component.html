@@ -384,23 +384,7 @@
       [showInColumnChooser]="column.showInColumnChooser"
       [type]="column.type"
       [cellTemplate]="getCellTemplate(column)"
-      groupCellTemplate="groupTemplate"
     ></dxi-column>
-
-    <div *dxTemplate="let itemData of 'groupTemplate'">
-      {{ itemData.column.caption }}: {{ itemData.displayValue }}
-      {{ itemData.groupContinuedMessage
-        ? '(' + itemData.groupContinuedMessage + '.'
-        : ''
-      }}{{ itemData.groupContinuedMessage
-        ? itemData.groupContinuesMessage
-          ? ' ' + itemData.groupContinuesMessage + '.)'
-          : ')'
-        : itemData.groupContinuesMessage
-          ? '(' + itemData.groupContinuesMessage + '.)'
-          : '' }}
-      ({{ itemData.data.aggregates[0] }})
-    </div>
 
     <!-- Do not remove! DxoSummary.SummaryType forces the grid to generate an internal value for count and
       store it at GroupData.data.aggregates[0]. If this summary element is removed then there will not be
