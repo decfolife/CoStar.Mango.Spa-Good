@@ -31,6 +31,7 @@
           (onEnterKey)="toggleList()"
           (onClick)="focusOnDropDownInput($event)"
           (onFocusIn)="focusOnDropDownInput($event)"
+          (onOpened)="focusOnDropDownInput($event)"
           [acceptCustomValue]="true"
           [openOnFieldClick]="false"
           [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}"
