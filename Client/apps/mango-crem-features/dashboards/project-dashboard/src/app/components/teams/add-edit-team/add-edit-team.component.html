@@ -29,8 +29,10 @@
           [(opened)]="isDropDownBoxOpened" 
           (onInput)="searchTeamMembers($event.event.target.value)"
           (onEnterKey)="toggleList()"
+          (onClick)="focusOnDropDownInput($event)"
+          (onFocusIn)="focusOnDropDownInput($event)"
           [acceptCustomValue]="true"
-          [openOnFieldClick]="true"
+          [openOnFieldClick]="false"
           [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}"
       >
           <dx-list 
@@ -46,10 +48,7 @@
           >
             <div *dxTemplate="let member of 'membersListTemplate'"  >
               <div>
-                <!-- <button aria-label="Add Member" class="btn btn-link addMemberButton" [disabled]="member.added"
-                (click)="addMember(member);$event.preventDefault()"> -->
                 <span class="aet-addPlusIcon"><fa-icon [icon]="faCirclePlus" ></fa-icon></span>
-                <!-- </button>   -->
                 <span class="aet-memberData">
                   <span class=aet-memberName>{{member.Name}}</span>
                   <span class="aet-company"> - {{member.Company}}</span>
@@ -141,7 +140,6 @@
           </div>
         </dx-data-grid>
       </div>
-
     </div>
   </div>
 </div>

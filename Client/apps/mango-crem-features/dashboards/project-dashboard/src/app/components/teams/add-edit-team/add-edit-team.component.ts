@@ -85,6 +85,14 @@ export class AddEditTeamComponent implements OnInit {
     this.membersSearchInput$.next(val)
   }
 
+  focusOnDropDownInput(e) { 
+    this.isDropDownBoxOpened = false; 
+    setTimeout(function() {  
+        e.component.focus();  
+    });  
+    this.isDropDownBoxOpened = true;
+  } 
+
   teamNameChange(teamName: string) {
     this.teamName = teamName;
     this.team.teamName = teamName;
@@ -96,6 +104,7 @@ export class AddEditTeamComponent implements OnInit {
 
   removeMember(contactId) {
     this.team.teamMembers = this.team.teamMembers.filter( member => member.contactId !== contactId);
+    this.filteredMembers = [...this.filteredMembers]; //to re-render the list and set attributes
   }
 
   removeMembers() {
@@ -104,6 +113,7 @@ export class AddEditTeamComponent implements OnInit {
       removeIndex = (this.team.teamMembers.findIndex(member => contactId == member.contactId));
       this.team.teamMembers.splice(removeIndex, 1);
     });
+    this.filteredMembers = [...this.filteredMembers];
   }
 
   emailtoggle(member, e) {
