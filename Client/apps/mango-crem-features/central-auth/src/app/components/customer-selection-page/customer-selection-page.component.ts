@@ -29,11 +29,11 @@ export class CustomerSelectionPageComponent implements OnInit {
     this.isLoading$ = this.clients$.pipe(map(clients => !clients));
     this.recentClients$ = this.centralAuthFacade.userRecentClients$;
     this.clientsDropdown$ = this.clients$.pipe(
-      filter(clients => !!clients), 
+      filter(clients => !!clients),
       map(clients => clients.map(client => client.clientKey.toUpperCase())));
-    this.isVisible$ = combineLatest([this.centralAuthFacade.userClients$, this.centralAuthFacade.userContactRecords$, this.centralAuthFacade.selectedContactRecord$, this.centralAuthFacade.contactId$]).pipe(
-      map(([clients, contactRecords, selectedContactRecord, selectedContactId]) => !!clients && !contactRecords && !selectedContactRecord && !selectedContactId)
-      )
+    this.isVisible$ = combineLatest([this.centralAuthFacade.userClients$, this.centralAuthFacade.userContactRecords$, this.centralAuthFacade.selectedContactRecord$, this.centralAuthFacade.contactId$, this.centralAuthFacade.isClientSpecificLogin$]).pipe(
+      map(([clients, contactRecords, selectedContactRecord, selectedContactId, isClientSpecificLogin]) => !!clients && !contactRecords && !selectedContactRecord && !selectedContactId && !isClientSpecificLogin)
+    )
   }
 
   ngOnInit(): void {

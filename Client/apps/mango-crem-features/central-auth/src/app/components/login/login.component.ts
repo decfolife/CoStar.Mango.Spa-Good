@@ -117,6 +117,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(
         filter(clientKey => !!clientKey),
         tap(_ => this.centralAuthFacade.setClientSpecificLogin(true)),
+        tap(clientKey => this.centralAuthFacade.setSelectedClientKey(clientKey)),
         tap(clientKey => this.centralAuthFacade.getClientSSOSetings(clientKey)),
       )
   }

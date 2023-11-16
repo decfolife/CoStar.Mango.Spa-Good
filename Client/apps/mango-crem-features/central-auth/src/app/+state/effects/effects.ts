@@ -188,7 +188,7 @@ export class CentralAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.SET_SELECTED_CLIENT_KEY),
-        switchMap((action: { type: string, clientKey: string }) => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.userClients$.pipe(first(clients => !!clients)), of(action.clientKey)])),
+        switchMap((action: { type: string, clientKey: string }) => combineLatest([this.centralAuthFacade.user$.pipe(first(user => !!user)), this.centralAuthFacade.userClients$.pipe(first(clients => !!clients)), of(action.clientKey)])),
         filter(([user, clients, clientKey]) => !!user && !!clients && !!clientKey),
         map(([user, clients, clientKey]) => clients.find(client => client.clientKey.toLowerCase() === clientKey.toLowerCase())),
         filter(selectedClient => !!selectedClient),
