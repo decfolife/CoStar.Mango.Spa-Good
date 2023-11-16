@@ -14,6 +14,7 @@ export class ServiceAccountApiKeysComponent {
   @Input() userEmail: string;
   @Input() apiKeyExpiresOn: Date;
   @Input() apiKeyGeneratedDate: Date;
+  @Input() apiKeyExpired: boolean;
   @Output() apiKeyUpdated = new EventEmitter<boolean>();
 
   subs: Subscription[] = []
