@@ -18,7 +18,7 @@ export class ServiceAccountConfigurationComponent implements OnInit{
   public apiKeyGeneratedDate: Date;
   public serviceAccountSites : ServiceAccountSite[];
   public serviceAccountEndpoints: ServiceAccountEndpoint[];
-  public apiKeyExpired: boolean;
+  public apiKeyExpired: boolean = false;
 
   constructor(
     private userService: UserService,
@@ -48,7 +48,7 @@ export class ServiceAccountConfigurationComponent implements OnInit{
               this.apiKeyGeneratedDate = result.apiKeyGeneratedDate ;
               this.serviceAccountEndpoints = result.serviceAccountEndpoints; 
               this.serviceAccountSites = result.serviceAccountSites; 
-              this.apiKeyExpired = new Date(result.apiKeyExpiresOn) <= new Date();
+              this.apiKeyExpired = new Date(result.apiKeyExpiresOn ?? '2099-12-31') <= new Date();
           }
         })
       )
