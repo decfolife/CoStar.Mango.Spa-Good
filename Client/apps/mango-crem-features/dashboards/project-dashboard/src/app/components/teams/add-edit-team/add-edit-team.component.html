@@ -26,6 +26,7 @@
     <div id="container">
       <dx-drop-down-box 
           class="aet-membersDropDown"
+          placeholder="Start typing to search for additional users."
           [(opened)]="isDropDownBoxOpened" 
           (onInput)="searchTeamMembers($event.event.target.value)"
           (onEnterKey)="toggleList()"
