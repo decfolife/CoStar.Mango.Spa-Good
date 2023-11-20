@@ -268,6 +268,7 @@ const routes: Routes = [
               breadCrumb: { append: false }
             },
           },
+          // Accounting Settings
           {
             path: 'settings',
             loadChildren: () =>

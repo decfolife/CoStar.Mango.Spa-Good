@@ -41,6 +41,7 @@
           "apps/mango-crem-features/list-pages/src/styles.scss",
           "apps/mango-crem-features/user-maintenance/src/styles.scss",
           "apps/mango-crem-features/batch-accounting/src/styles.scss",
+          "apps/mango-crem-features/accounting-summary/src/styles.scss",
           "apps/mango-crem-features/portfolio-maintenance/src/styles.scss",
           "apps/mango-crem-features/object-maintenance/src/styles.scss",
           "apps/mango-crem-features/dashboards/portfolio-dashboard/src/styles.scss",

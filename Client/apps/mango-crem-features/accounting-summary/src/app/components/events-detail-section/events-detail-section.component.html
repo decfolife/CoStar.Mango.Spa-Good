@@ -1,0 +1,98 @@
+<section class="section-grid">
+	<mat-expansion-panel [expanded]="true"> 
+		<mat-expansion-panel-header> 
+		  <mat-panel-title  class="header"> 
+				Accounting Events {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+		  </mat-panel-title>
+		</mat-expansion-panel-header>
+			<dx-data-grid
+				#EventsDataGrid
+				[id]="accountingSummaryService.getId(componentName ,'detail','section')"
+				[dataSource]="detailsGridData"
+        		keyExpr="leaseRecognitionScheduleID"
+				width='100%'
+				[columnMinWidth]="25"
+				[columns]="detailColumns"
+				[showColumnLines]="true"
+				[allowColumnReordering]="true"
+				[allowColumnResizing]="true"
+				columnResizingMode="widget"
+				[hoverStateEnabled]="true"
+				[(selectedRowKeys)]="selectedRowKeys"
+				[showRowLines]="true"
+				[showBorders]="true"
+				[remoteOperations]="true"
+				[class]="customGridClass"
+				(onOptionChanged)="onGridOptionChanged($event)"
+				(onCellClick)="onCellClick($event)"
+				(onRowClick)="onRowClick($event)"
+				(onContextMenuPreparing)="onContextMenuPreparing($event)"
+				(onContentReady)="onGridContentReady($event)"
+				>
+				<dxo-state-storing
+					[enabled]="true"
+					type="custom"
+					storageKey="eventsGridStateKey"
+					[customLoad]="loadState"
+					[customSave]="saveState">
+				</dxo-state-storing>
+				<dxo-scrolling columnRenderingMode="virtual"></dxo-scrolling>
+				<dxo-selection mode="single"></dxo-selection>
+				<dxo-column-chooser
+					[enabled]="true"
+					mode="select"
+					[allowSearch]="true"> 
+				</dxo-column-chooser>
+				<div *dxTemplate="let info of 'amortizationHeader'">
+					<p title={{info.column.caption}}
+						class="header-column-caption">
+					  {{info.column.caption}}
+					</p>    
+				  </div>
+				
+				  <div *dxTemplate="let cell of 'pointer'">
+					<div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+				  </div>
+
+				  <div *dxTemplate="let cell of 'clickable'">
+					<div *ngIf="cell.data.hasHistoricalCharges" class="pointer" title={{cell.text}}>
+						<a [id]="accountingSummaryService.getId(componentName,'present-value','link')" href="#" (click)="presentValueExcel($event, cell.data)" class="link-class">{{ cell.text }}</a>
+					</div>
+					<div *ngIf="!cell.data.hasHistoricalCharges" class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+				  </div>
+				
+				  <div *dxTemplate="let data of 'actionsTemplate'" #actionTemplate>
+					<div class="actions-icon" *ngIf="(data.data.isPublished && showEditIcon)">
+					<crem-icon  
+						[id]="accountingSummaryService.getId(componentName,'action-cog','icon')"
+						pack="solid" 
+						icon="faCog" 
+						color="primary"> 
+						</crem-icon>
+					</div> 
+
+					<div class="actions-icon" *ngIf="!data.data.isPublished || !showEditIcon">
+						<crem-icon 
+						[id]="accountingSummaryService.getId(componentName,'action-eye','icon')"
+						pack="solid" 
+						icon="faEye" 
+						color="primary"> 
+						</crem-icon>
+					</div>
+				  </div>
+				  <dxo-toolbar>
+					<dxi-item name="groupPanel"></dxi-item>
+					<dxi-item location="after">
+						<div class="more">
+							<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()" >More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')" aria-label="More Menu">arrow_drop_down</mat-icon></button>
+							<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
+						<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
+						<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
+						<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="resetGrid()">Reset Preferences</button>
+					</mat-menu>	 
+				</div>
+					</dxi-item>
+				</dxo-toolbar>
+			</dx-data-grid>
+	</mat-expansion-panel> 
+</section>

@@ -1,75 +1,95 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import CustomStore from 'devextreme/data/custom_store';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountingSummaryService } from '../../services/accounting-summary.service';
 import { Router } from '@angular/router';
 import { LeaseInfoResponse } from '../../models/lease-info-response.modal';
+import { Subscription, combineLatest } from 'rxjs';
+import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 
 @Component({
   selector: 'mango-accounts-summary',
   templateUrl: './accounts-summary.component.html',
   styleUrls: ['./accounts-summary.component.scss'],
 })
-export class AccountsSummaryComponent implements OnInit {
+export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
-  componentName: string = 'accounts-summary';
+  componentName = 'accounts-summary';
+  originalgridDataSource: any;
   gridDataSource: any;
-  gridBoxValue: number[] = [1];
-  isGridBoxOpened: boolean = false;
-  isAccountingEventEmpty: boolean = true;
-  readonly allowedPageSizes = [5, 'all'];
-  isAddButtonDisabled: boolean = false;
-
+  gridBoxValue = [];
+  isGridBoxOpened = false;
+  isAccountingEventEmpty = true;
+  readonly allowedPageSizes = ['all'];
+  isAddButtonDisabled = true;
+  eventSchedule: any;
   leaseInfoResponse: LeaseInfoResponse;
-  isLocked: boolean = false;
-  isArchived: boolean = false;
-  noUserRights: boolean = false;
-  disableBtnReason: string;
-  isTooltipVisible: boolean = false;
+  isLocked = false;
+  isArchived = false;
+  rightsInfo: any;
+  userInfo: UserInfoResponse;
+  noUserAddRights = false;
+  disableBtnReason = "Accounting Event cannot be added when user or lease information is not loaded.";
+  isTooltipVisible = false;
+  pagingEnabled = false;
+  private subscription = new Subscription();
+  masterScheduleID: number;
+  leaseRecognitionScheduleID: number;
+  classificationID: number;
 
-  constructor(private ref: ChangeDetectorRef, private accountingSummaryService: AccountingSummaryService, public router: Router) { }
+  constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }
 
   ngOnInit(): void {
+    this.getUserInfo();
     this.getEventsDropDownData();
-    this.addButtonSetup();
+    this.setRightsAndLeaseInfo();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   getEventsDropDownData() {
-    this.accountingSummaryService.getAccountingEvents().subscribe(response => {
-      if (response.succeeded && response.data.length != 0) {
-        const dropdownEvents = this.getUniqueEvents(response.data);
-        this.gridDataSource = this.makeAsyncDataSource(dropdownEvents);
+    this.subscription.add(this.accountingSummaryService.getAccountingEvents().subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success && response.data.length != 0) {
+        this.originalgridDataSource = response.data;
+        this.gridDataSource = response.data.filter(eventItem => eventItem.isPublished);
+        this.pagingEnabled = this.gridDataSource.length > 5;
+        this.gridBoxValue = [this.gridDataSource[0].masterScheduleID];
+        this.masterScheduleID = this.gridDataSource[0].masterScheduleID;
+        this.leaseRecognitionScheduleID = this.gridDataSource[0].leaseRecognitionScheduleID;
+        this.classificationID = this.gridDataSource[0].classificationID;
         this.isAccountingEventEmpty = false;
       }
-    });
+      else if (!response.success) {
+        this.accountingSummaryService.notify(response.clientErrorMessage);
+      }
+    }));
   }
 
   returnLeaseAbstractId(): number {
     return this.accountingSummaryService.getLeaseAbstractId()
   }
 
-  addButtonSetup() {
-    this.accountingSummaryService.getLeaseInfo().subscribe(res => {
-      if (res.succeeded) {
-        this.leaseInfoResponse = res.data;
-        this.isLocked = this.leaseInfoResponse.lockedReason != null;
-        this.isArchived = !this.leaseInfoResponse.isActive;
+  getUserInfo(){
+    this.subscription.add(this.accountingSummaryService.getUserInformation().subscribe(res => {
+      if (res === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
       }
-    });
-
-    this.accountingSummaryService.getUserInformation().subscribe(res => {
-      if (res.succeeded) {
-        this.noUserRights = res.data.leaseRight.objectTypeId < 3 ? true : false;
-        this.getDisabledBtnReason();
+      else if (res.success) {
+        this.userInfo = res.data
+      } else{
+        this.accountingSummaryService.notify(res.clientErrorMessage);
       }
-    });
-
+    }));
   }
 
   getDisabledBtnReason() {
-    this.isAddButtonDisabled = (this.isLocked || this.isArchived || this.noUserRights);
+    this.isAddButtonDisabled = (this.isLocked || this.isArchived || this.noUserAddRights);
     switch (this.isAddButtonDisabled) {
-      case this.noUserRights:
-        this.disableBtnReason = "Accounting Event cannot be added when user does not have Edit rights."
+      case this.noUserAddRights:
+        this.disableBtnReason = "Accounting Event cannot be added when user does not have Add rights."
         break;
       case this.isLocked:
         this.disableBtnReason = "Accounting Event cannot be added when Lease is Locked."
@@ -80,35 +100,13 @@ export class AccountsSummaryComponent implements OnInit {
     }
   }
 
-  getUniqueEvents(data: any[]) {
-    const uniqueObjectsMap = new Map();
-
-    // Iterate through the original array and add unique objects to the map
-    for (const item of data) {
-      const masterScheduleID = item.masterScheduleID;
-      if (!uniqueObjectsMap.has(masterScheduleID)) {
-        uniqueObjectsMap.set(masterScheduleID, item);
-      }
-    }
-
-    // Convert the map values (unique objects) back to an array
-    const uniqueObjectsArray = Array.from(uniqueObjectsMap.values());
-
-    // Return sorted array based on sortOrder
-    return uniqueObjectsArray.sort((a, b) => a.sortOrder - b.sortOrder);
-  }
-
-  makeAsyncDataSource(data: any[]) {
-    return new CustomStore({
-      loadMode: 'raw',
-      key: 'sortOrder',
-      load() {
-        return data;
-      },
-    });
+  setLeaseRecognitionScheduleID(eventSchedule: any) {
+    this.eventSchedule = eventSchedule;
+    this.leaseRecognitionScheduleID = eventSchedule.leaseRecognitionScheduleID;
   }
 
   gridBox_displayExpr(item) {
+    this.gridBoxValue = [item.masterScheduleID];
     return item && `${item.classificationType} (${item.amortizationProfileName})`;
   }
 
@@ -119,8 +117,27 @@ export class AccountsSummaryComponent implements OnInit {
     }
   }
 
+  onValueChanged(event: any) {
+    this.masterScheduleID = parseInt(event.value);
+    const selecetedEvent = this.gridDataSource.find(x => (x.masterScheduleID === this.masterScheduleID && x.isPublished));
+    this.classificationID = selecetedEvent.classificationID;
+    this.leaseRecognitionScheduleID = selecetedEvent.leaseRecognitionScheduleID;
+  }
+
   AddEvent(event) {
-    this.router.navigate(['addEvent']);
+    const queryString = window.location.search;
+    if (queryString !== "") {
+      const queryParamObj = {};
+      const queryParamArray = queryString.substring(1).split('&');
+      queryParamArray.forEach(qp => {
+        const nameValue = qp.split('=')
+        queryParamObj[nameValue[0]] = nameValue[1];
+      });
+
+      this.router.navigate(['addEvent'], { queryParams: queryParamObj });
+    } else {
+      this.router.navigate(['addEvent']);
+    }
   }
 
   onMouseEnter() {
@@ -133,11 +150,58 @@ export class AccountsSummaryComponent implements OnInit {
     this.isTooltipVisible = false;
   }
 
-  getId(uniqueName: string, elementType: string, componentType?: string) {
-    if (componentType != undefined)
-      return `${this.componentName}-${componentType}-${uniqueName}-${elementType}`
-    else
-      return `${this.componentName}-${uniqueName}-${elementType}`
-  }
+  private setRightsAndLeaseInfo(){
+    const userNavPageRight = this.accountingSummaryService.getUserNavPageRight();
+    const userNavPageWithLeaseRights = this.accountingSummaryService.getUserNavPageWithLeaseRights();
+    const workflowStatusOptions = this.accountingSummaryService.getWorkflowStatusOptions();
+    const leaseInformation = this.accountingSummaryService.getLeaseInfo();
+   this.subscription.add(combineLatest([userNavPageRight, userNavPageWithLeaseRights, workflowStatusOptions, leaseInformation]).subscribe(res => {
+      const userNavPageRightResponse = res[0];
+      const userNavPageWithLeaseRightsResponse = res[1];
+      const workflowStatusOptionsResponse = res[2];
+      const leaseInformationResponse = res[3];
 
+      if(userNavPageRightResponse === null || userNavPageWithLeaseRightsResponse === null || workflowStatusOptionsResponse === null || leaseInformationResponse === null ){
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (!userNavPageRightResponse.success) {
+        this.accountingSummaryService.notify(userNavPageRightResponse.clientErrorMessage);
+      }
+      else if (!userNavPageWithLeaseRightsResponse.success) {
+        this.accountingSummaryService.notify(userNavPageWithLeaseRightsResponse.clientErrorMessage);
+      }
+      else if (!workflowStatusOptionsResponse.success) {
+        this.accountingSummaryService.notify(workflowStatusOptionsResponse.clientErrorMessage);
+      }
+      else if (!leaseInformationResponse.success) {
+        this.accountingSummaryService.notify(leaseInformationResponse.clientErrorMessage);
+      }
+      else {
+        this.noUserAddRights = !userNavPageWithLeaseRightsResponse.data.canAddSchedule;
+
+        this.leaseInfoResponse = leaseInformationResponse.data;
+        this.isLocked = this.leaseInfoResponse.lockedReason != null;
+        this.isArchived = !this.leaseInfoResponse.isActive;
+
+        //send data to the title lease info subject so that the title component gets updated. This will save an extra api call to getLeaseInfo.
+        const titleLeaseInfo = {
+          leaseName: this.leaseInfoResponse.objectName,
+          isLocked: this.isLocked,
+          isArchived: this.isArchived,
+          lockedReason: this.leaseInfoResponse.lockedReason
+        }
+
+        this.accountingSummaryService.titleLeaseInfoSubject.next(titleLeaseInfo);
+
+        this.rightsInfo = {
+          userHasEditLeaseRights: userNavPageWithLeaseRightsResponse.data.leaseSecurityType >= 4 && userNavPageWithLeaseRightsResponse.data.leaseSecurityType !== 6,
+          wfStatusUserHasEditRights: workflowStatusOptionsResponse.data.options.filter(wfso => wfso.workflowStatusId === workflowStatusOptionsResponse.data.workflowStatusID)[0].allowScheduleEdit,
+          userHasLeftNavEditRights: userNavPageRightResponse.data >= 4 && userNavPageRightResponse.data !== 6, 
+          userCanDeleteSchedule: userNavPageWithLeaseRightsResponse.data.canDeleteSchedule
+        }
+
+        this.getDisabledBtnReason();
+      }
+    }));
+  }
 }

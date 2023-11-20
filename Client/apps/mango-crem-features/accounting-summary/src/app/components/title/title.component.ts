@@ -1,42 +1,40 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountingSummaryService } from '../../services/accounting-summary.service';
-import { LeaseInfoResponse } from '../../models/lease-info-response.modal';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'mango-accounts-summary-title',
   templateUrl: './title.component.html',
   styleUrls: ['./title.component.scss'],
 })
-export class TitleComponent implements OnInit {
+export class TitleComponent implements OnInit, OnDestroy {
 
-  leaseInfoResponse: LeaseInfoResponse;
-  leaseName: String;
+  leaseName: string;
   componentName = 'title';
-  showTooltip: boolean = false;
-  isLocked: boolean = false;
+  showTooltip = false;
+  isLocked  = false;
+  isArchived = false;
   lockedReason: string;
+  private subscription = new Subscription();
 
-  constructor(private accountingSummaryService: AccountingSummaryService) { }
+
+  constructor(public accountingSummaryService: AccountingSummaryService) { }
 
   ngOnInit(): void {
-    this.accountingSummaryService.getLeaseInfo().subscribe(res => {
-      if (res.succeeded) {
-        this.leaseInfoResponse = res.data;
-        this.leaseName = this.leaseInfoResponse.name;
-        this.isLocked = this.leaseInfoResponse.lockedReason != null;
-        this.lockedReason=this.leaseInfoResponse.lockedReason;
-      }
-    });
+    this.subscription.add(this.accountingSummaryService.getTitleInfoFromSubject().subscribe(titleInfo => {
+      this.leaseName = titleInfo.leaseName;
+      this.isLocked = titleInfo.isLocked;
+      this.isArchived = titleInfo.isArchived;
+      this.lockedReason = titleInfo.lockedReason;
+    }));
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   showObjectInfoPopup() {
     alert("will open object information");
   }
 
-  getId(uniqueName: string, elementType: string, componentType?: string) {
-    if (componentType != undefined)
-      return `${this.componentName}-${componentType}-${uniqueName}-${elementType}`
-    else
-      return `${this.componentName}-${uniqueName}-${elementType}`
-  }
 }

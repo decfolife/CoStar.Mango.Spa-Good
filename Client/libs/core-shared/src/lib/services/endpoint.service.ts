@@ -75,13 +75,22 @@ export abstract class EndpointService {
   }
 
   protected toObject(value: any): any {
-      let apiSuccess = value?.succeeded ? value?.succeeded: value?.success ? value?.success: null; 
-      let cemsg = value?.message? value?.message: value?.clientErrorMessage? value?.clientErrorMessage: null
-      return {
-        success: apiSuccess,
-        data: value?.hasOwnProperty('data') ? value.data : value,
-        clientErrorMessage: cemsg
-      }
+    if (value != null && value.hasOwnProperty('status')) {
+        const executionSuccessful = value.status === 200 ? true : false;
+        return {
+            success: executionSuccessful,
+            data: value.data,
+            clientErrorMessage: executionSuccessful ? null : value.title
+        };
+    } else {
+        let apiSuccess = value?.succeeded ? value?.succeeded : value?.success ? value?.success : null;
+        let cemsg = value?.message ? value?.message : value?.clientErrorMessage ? value?.clientErrorMessage : null
+        return {
+            success: apiSuccess,
+            data: value?.hasOwnProperty('data') ? value.data : value,
+            clientErrorMessage: cemsg
+        }
+    }
   }
 
   protected byteArrayFromResponse(response: any) {

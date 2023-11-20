@@ -1279,13 +1279,13 @@
 
   <div *dxTemplate="let d of 'dismissButtonTemplate'">
     <button *ngIf="d.data.isDismissed"
-      class="btn btn-primary lease-alerts-undismiss-button w-100"
+      class="btn btn-primary-alerts-grid lease-alerts-undismiss-button w-100"
       (click)="toggleAlert(d.data); $event.stopPropagation()"
       [disabled]="isLoadingData"
     >Un-Dismiss</button>
 
     <dx-drop-down-button *ngIf="!d.data.isDismissed"
-      class="btn btn-primary add-hint color-light border-none w-100"
+      [elementAttr]="{ class: 'btn btn-primary-alerts-grid add-hint color-light border-none w-100' }"
       text="Dismiss"
       [hint]="getButtonDisabledReason(d.data)"
       [disabled]="isLoadingData || !isAlertDismissable(d.data)"
@@ -1308,7 +1308,7 @@
   [(visible)]="showDismissPopup"
 >
   <dxi-toolbar-item widget="dxButton"
-    class="btn btn-primary"
+    class="btn btn-primary-alerts-grid"
     toolbar="bottom"
     location="after"
     [options]="dismissButtonOptions"

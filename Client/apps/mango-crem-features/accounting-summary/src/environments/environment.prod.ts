@@ -1,14 +1,20 @@
 class EnvironmentsCrem {
-  production: false;
-  name: 'PROD';
-  appUrls: {
+  production = false;
+  name = 'PROD';
+  appUrls = {
     accountingSummary: '',
+    dashboards: '',
     listpages: '',
     alertsRules: '',
-    alerts: ''
+    alerts: '',
+    authenticate: '',
+    userService: '',
+    quickSearch: '',
+    header: '',
+    identity: ''
   };
 
-  isRestful:true
+  isRestful = false
 }
 
 export const environment = new EnvironmentsCrem();

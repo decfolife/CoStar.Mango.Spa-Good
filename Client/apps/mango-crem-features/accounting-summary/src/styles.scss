@@ -1,15 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
+.mat-expansion-panel-header-title {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: 16px;
+    align-items: center;
+    padding-top: 1em;
+}
+
+.header {
+    border-bottom: 1px solid #1e3a6f;
+    color: #1e3a6f;
+    font-weight: 500;
+    line-height: 1.3em;
+    margin-bottom: 1em;
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+}
+
+.mat-expansion-panel-header.mat-expanded {
+    height: 55px;
+}
+
+.mat-expansion-panel-header {
+    height: 60px;
+}
 
 .dx-header-row {
-    background-color: #fff !important;
-    color: grey;
-    font-weight: 100;
+    background-color: rgb(36, 90, 136) !important;
+    color: rgb(255, 255, 255);
+    font-weight: 700;
 }
 
-table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-selection td {
-    background-color: rgb(216, 216, 216) !important;
+
+button.btn.btn-default.moreButton {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #000;
+    cursor: pointer;
+
+    mat-icon {
+        transform: translateY(2px);
+    }
 }
 
-.dx-editor-cell {
-    border-bottom: 0px !important;
+button.btn.btn-default.moreButton:focus {
+    box-shadow: 0 0 0 0.1rem #c8c8c8;
 }
+
+.section-grid {
+    padding:0 16px 10px 16px !important;
+}
+
+.header-column-caption {
+    white-space: normal;
+    text-align: center;
+    margin: 0px;
+    max-height: 42px;
+    font-size: 11px;
+}
+
+
+.dx-tab-content,
+.dx-tab-text,
+.dx-datagrid-content .dx-datagrid-table .dx-row>td,
+.dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
+    font-size: 11px !important;
+}
+
+.dx-header-filter{
+    color: #eeeeee !important;
+    
+}
+
+.dx-column-indicators{
+    float: right !important;
+  }
+

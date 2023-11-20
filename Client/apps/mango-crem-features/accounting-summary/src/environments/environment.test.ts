@@ -1,14 +1,20 @@
 class EnvironmentsCrem {
-  production: false;
-  name: 'TEST';
-  appUrls: {
-    accountingSummary: 'http://service2.test.corp.virtualpremise.com:8090/accountingsummary/api',
-    listpages: 'http://service2.test.corp.virtualpremise.com:8090/listpages/api/listpage/',
-    alertsRules: 'http://service2.test.corp.virtualpremise.com:8090/Alerts',
-    alerts: 'http://service2.test.corp.virtualpremise.com:8090/Alerts',
+  production = false;
+  name = 'TEST';
+  appUrls = {
+    accountingSummary: '/v06/WebServices/Mango/AccountingSummary/AccountingSummary.asmx/',
+    dashboards: '/v06/WebServices/Mango/Dashboards/Project.asmx/',
+    listpages: '/v06/WebServices/Mango/ListPages/Project.asmx/',
+    alertsRules: '/v06/WebServices/Mango/Alerts/Alerts.asmx',
+    alerts: '/v06/WebServices/Mango/Alerts/Alerts.asmx',
+    authenticate: '',
+    userService: '',
+    quickSearch: '',
+    header: '',
+    identity: ''
   };
 
-  isRestful:true
+  isRestful = false
 }
 
 export const environment = new EnvironmentsCrem();

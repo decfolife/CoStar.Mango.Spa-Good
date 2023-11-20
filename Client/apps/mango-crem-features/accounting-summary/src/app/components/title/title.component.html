@@ -4,7 +4,7 @@
   </div>
   <div class="info-icon">
     <crem-icon 
-      [id]="getId('info','icon')"
+      [id]="accountingSummaryService.getId(componentName ,'info','icon')"
       pack="solid" 
       icon="faCircleInfo" 
       color="dark"
@@ -13,26 +13,38 @@
   </div>
   <div
     *ngIf="isLocked"
-    [id]="getId('lock','click')"
+    [id]="accountingSummaryService.getId(componentName ,'lock','click')"
     class="lock-notice-pill"
     (click)="showTooltip = !showTooltip"
     >
     <div class="lock-icon">
       <crem-icon 
-        [id]="getId('lock','icon')"
+        [id]="accountingSummaryService.getId(componentName ,'lock','icon')"
         pack="solid" 
         icon="faLock"> 
       </crem-icon>
     </div>
     &nbsp;Locked
   </div>
+
+  <div *ngIf="isArchived" class="archive-notice-pill">
+    <div>
+      <crem-icon class="lock-icon"
+        [id]="accountingSummaryService.getId(componentName ,'archive','icon')"
+        pack="solid" 
+        icon="faLock"> 
+      </crem-icon>
+    </div>
+    &nbsp;Archived
+  </div>
+
   <dx-tooltip 
-    [id]="getId('lock','tooltip')"
+    [id]="accountingSummaryService.getId(componentName ,'lock','tooltip')"
     target="#title-lock-click"
     [visible]="showTooltip"
     (onHiding)="showTooltip = !showTooltip"
     >
-    <div [id] ="getId('content','tooltip')" *dxTemplate="let data of 'content'" class="content-class">
+    <div [id] ="accountingSummaryService.getId(componentName ,'content','tooltip')" *dxTemplate="let data of 'content'" class="content-class">
       {{ lockedReason }}
       <p><i>Locked records cannot be edited. Records will be unlocked when the batch has completed processing or has been canceled.</i></p>
     </div>

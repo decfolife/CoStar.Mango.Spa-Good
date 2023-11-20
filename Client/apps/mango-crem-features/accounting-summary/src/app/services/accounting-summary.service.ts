@@ -1,100 +1,214 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, Optional } from '@angular/core';
 import { environment } from '@mangoSpa/src/environments/environment.local';
-import { map, catchError } from 'rxjs/operators';
-import { ApiResponse } from '../models/api-response.model';
-import { Observable, of } from 'rxjs';
-
-type HttpParamsObj = HttpParams | { [param: string]: any };
-type HeadersObj = {
-  headers: HttpHeaders,
-  params?: HttpParamsObj
-};
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import notify from 'devextreme/ui/notify';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountingSummaryService {
+export class AccountingSummaryService extends EndpointService {
   private apiUrl: string;
   private leaseAbstractId: number
+  private navPageId: number
+  titleLeaseInfoSubject = new Subject<any>();
+  preferenceSavePendingMessage = " - You have unsaved preference changes.";
 
-  private httpOptions: HeadersObj = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      UserId: '2',
-      ClientKey: 'SUTTERHEALTH',
-      CAEnabled: 'false'
-    })
-  };
-
-  constructor(private http: HttpClient) {
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
     this.apiUrl = environment.appUrls.accountingSummary;
   }
 
-  setLeaseAbstractId(leaseId:number){
-    this.leaseAbstractId=leaseId;
+  setLeaseAbstractId(leaseId: number) {
+    this.leaseAbstractId = leaseId;
+
+    if (this.leaseAbstractId > 0) {
+      localStorage.setItem("accSumLeaseAbstractId", this.leaseAbstractId.toString());
+    } else {
+      const storedLeaseAbstractId = Number(localStorage.getItem("accSumLeaseAbstractId"));
+
+      //if stored lease abstract id is a number.  It should always be one but extra check will not hurt
+      if (!isNaN(storedLeaseAbstractId)) {
+        this.leaseAbstractId = storedLeaseAbstractId
+      }
+    }
   }
 
-  getLeaseAbstractId(): number{
+  getLeaseAbstractId(): number {
     return this.leaseAbstractId;
   }
 
+  getTitleInfoFromSubject(): Observable<any> {
+    return this.titleLeaseInfoSubject.asObservable();
+  }
+
+  setNavPageId(navPageId: number) {
+    this.navPageId = navPageId;
+
+    if (this.navPageId > 0) {
+      localStorage.setItem("accSumNavPageId", this.navPageId.toString());
+    } else {
+      const storedNavPageId = Number(localStorage.getItem("accSumNavPageId"));
+
+      //if stored navigation page id is a number.  It should always be one but extra check will not hurt
+      if (!isNaN(storedNavPageId)) {
+        this.navPageId = storedNavPageId
+      }
+    }
+  }
+
+  getNavPageId(): number {
+    return this.navPageId;
+  }
+
   getLeaseInfo() {
-    return this.callHttpGet(`${this.apiUrl}getleaseinformation/lease/${this.leaseAbstractId}`, 'getLeaseInformation');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getleaseinformation/lease/${this.leaseAbstractId}`, 'getLeaseInfo');
+    }
+
+    const url = `${this.apiUrl}getleaseinformation`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getLeaseInfo', { leaseAbstractId });
+  }
+
+  getAccountingEvents() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventsselector/lease/${this.leaseAbstractId}`, 'getAccountingEvents');
+    }
+
+    const url = `${this.apiUrl}getaccountingeventsselector`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getAccountingEvents', { leaseAbstractId });
+  }
+
+  getUserInformation() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getuserinformation`, 'getUserInformation');
+    }
+
+    const url = `${this.apiUrl}getuserinformation`;
+    return this.callHttpPost(url, 'getUserInformation', { });
+  }
+
+  getUserNavPageRight() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageRight/navPage/${this.navPageId}`, 'getUserNavPageRight');
+    }
+
+    const url = `${this.apiUrl}getUserNavPageRight`;
+    const navPageId = this.navPageId;
+    return this.callHttpPost(url, 'getUserNavPageRight', { navPageId });
+  }
+
+  getUserNavPageWithLeaseRights() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageWithLeaseRights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`, 'getUserNavPageWithLeaseRights');
+    }
+
+    const url = `${this.apiUrl}getUserNavPageWithLeaseRights`;
+    const leaseAbstractId = this.leaseAbstractId;
+    const navPageId = this.navPageId;
+    return this.callHttpPost(url, 'getUserNavPageWithLeaseRights', { navPageId, leaseAbstractId });
+  }
+
+  getWorkflowStatusOptions() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getAccountingWorkflowStatusInformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusOptions');
+    }
+
+    const url = `${this.apiUrl}getAccountingWorkflowStatusInformation`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getWorkflowStatusOptions', { leaseAbstractId });
+  }
+
+  getEventDetails(masterScheduleId: number) {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventssummary/masterschedule/${masterScheduleId}`, 'getEventDetails');
+    }
+
+    const url = `${this.apiUrl}getaccountingeventssummary`;
+    return this.callHttpPost(url, 'getEventDetails', { masterScheduleId });
+  }
+
+  getPaymentDetails(leaseRecognitionScheduleId: number) {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}Payments/gethistoricalpayments/schedule/${leaseRecognitionScheduleId}`, 'getPaymentDetails');
+    }
+
+    const url = `${this.apiUrl}gethistoricalpayments`;
+    return this.callHttpPost(url, 'getPaymentDetails', { leaseRecognitionScheduleId });
+  }
+
+  getPaymentPopupData(leaseRecognitonScheduleEventId: number) {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}Payments/gethistoricaltransactions/scheduleevent/${leaseRecognitonScheduleEventId}`, 'getPaymentPopupData');
+    }
+
+    const url = `${this.apiUrl}gethistoricaltransactions`;
+    return this.callHttpPost(url, 'getPaymentPopupData', { leaseRecognitonScheduleEventId });
+  }
+
+  getPortfolioSettings() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getportfoliosettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');
+    }
+
+    const url = `${this.apiUrl}getportfoliosettings`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getPortfolioSettings', { leaseAbstractId });
+  }
+
+  getGridPreferences() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getgridstates/lease/${this.leaseAbstractId}`, 'getGridStates');
+    }
+
+    const url = `${this.apiUrl}getgridstates`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getGridStates', { leaseAbstractId });
+  }
+
+  saveGridPreferences(classificationId: number, gridName: string, columnJson) {
+    if (environment.isRestful) {
+      return this.callHttpPost(`${this.apiUrl}AccountingSummary/savegridstates`, 'saveGridStates',
+        JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
+    }
+
+    const url = `${this.apiUrl}savegridstates`;
+    return this.callHttpPost(url, 'savegridstates', { request: { leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson } });
+  }
+
+  getAmortizationDetails(leaseRecognitionScheduleID: number) {
+    if (environment.isRestful) {
+        return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`, 'getAmortizationDetails');
+    }
+
+    const url = `${this.apiUrl}GetAmortizationPeriods`;
+    return this.callHttpPost(url, 'getAmortizationDetails', { leaseRecognitionScheduleID });
+  }
+
+  getId(componentName: string, uniqueName: string, elementType: string, componentType?: string) {
+    if (componentType != undefined)
+      return `${componentName}-${componentType}-${uniqueName}-${elementType}`
+    else
+      return `${componentName}-${uniqueName}-${elementType}`
+  }
+
+  displayContactSystemAdminMessage(){
+    this.notify("An error occurred please contact the system administrator.");
   }
   
-  getAccountingEvents() {
-    return this.callHttpGet(`${this.apiUrl}getschedules/lease/${this.leaseAbstractId}`, 'getSchedules');
+  notify(message: string) {
+    notify({
+      message: message,
+      type: "error",
+      displayTime: 5000,
+      position: { at: 'center bottom', my: 'center bottom', offset: '0 -16' },
+      maxWidth: "400px",
+      closeOnClick: true,
+    });
   }
 
-  getUserInformation(){
-    return this.callHttpGet(`${this.apiUrl}getuserinformation/lease/${this.leaseAbstractId}`, 'getUserInformation');
-  }
-
-  protected callHttpGet(url: string, logName: string, httpOptionsParams?: HttpParamsObj) {
-    if (httpOptionsParams) {
-      this.httpOptions.params = httpOptionsParams;
-    }
-
-    return this.http.get(url, this.httpOptions).pipe(
-      map(x => this.toApiResponse(x)),
-      catchError(this.handleError(logName))
-    );
-  }
-
-  private handleError(logName: string = 'Operation not provided') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (error: any): Observable<ApiResponse> => {
-      console.error(logName, error);
-
-      return of({
-        succeeded: false,
-        message: error.statusText,
-        data: []
-      });
-    };
-  }
-
-  private toApiResponse(value: any): ApiResponse {
-    const val = Object.prototype.hasOwnProperty.call(value, 'd')
-      ? value.d
-      : value;
-
-    const res = Object.prototype.hasOwnProperty.call(val, 'Result')
-      ? JSON.parse(val.Result)
-      : val;
-
-    const data = Object.prototype.hasOwnProperty.call(res, 'data')
-      ? (res.data instanceof String)
-        ? JSON.parse(res.data)
-        : res.data
-      : res;
-
-    return {
-      succeeded: res.succeeded ?? true,
-      message: res.message ?? '',
-      data: Object.prototype.hasOwnProperty.call(data, 'data') ? data.data : data
-    }
-  }
 }

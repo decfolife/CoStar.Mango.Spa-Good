@@ -1,0 +1,80 @@
+<section class="section-grid">
+	<mat-expansion-panel [expanded]="true"> 
+		<mat-expansion-panel-header> 
+		  <mat-panel-title class="header"> 
+				Payments {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+		  </mat-panel-title>
+		</mat-expansion-panel-header>
+			<dx-data-grid
+				#PaymentsDataGrid
+				[id]="accountingSummaryService.getId(componentName ,'detail','section')"
+				[dataSource]="paymentsGridData"
+        		keyExpr="leaseRecognitionScheduleEventID"
+				width='100%'
+				noDataText="Missing Historical Charge Data"
+				[columnMinWidth]="25"
+				[columns]="paymentsGridColumns"
+				[showColumnLines]="true"
+				[allowColumnReordering]="true"
+				[allowColumnResizing]="true"
+				columnResizingMode="widget"
+				[hoverStateEnabled]="true"
+				[showRowLines]="true"
+				[showBorders]="true"
+				[remoteOperations]="true"
+				[class]="paymentsGridClass"
+				(onOptionChanged)="onGridOptionChanged($event)"
+				(onRowClick)="onRowClick($event)"
+				>
+
+				<dxo-header-filter
+                	[visible]="true">
+            	</dxo-header-filter>
+
+				<dxo-state-storing
+					[enabled]="true"
+					type="custom"
+					storageKey="eventsGridStateKey"
+					[customLoad]="loadState"
+					[customSave]="saveState">
+				</dxo-state-storing>
+				<dxo-scrolling columnRenderingMode="virtual"></dxo-scrolling>
+				<dxo-selection mode="single"></dxo-selection>
+				<dxo-column-chooser
+					[enabled]="true"
+					mode="select"
+					[allowSearch]="true"> 
+				</dxo-column-chooser>
+				<div *dxTemplate="let info of 'amortizationHeader'">
+					<p title={{info.column.caption}}
+					  style="white-space: normal; text-align: center; margin: 0px; max-height: 42px">
+					  {{info.column.caption}}
+					</p>    
+				  </div>
+				
+				  <div *dxTemplate="let cell of 'pointer'">
+					<div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+				  </div>
+
+				  <div *dxTemplate="let cell of 'clickable'">
+					<div *ngIf="cell.data.hasHistoricalCharges" class="pointer" title={{cell.text}}>
+						<a [id]="accountingSummaryService.getId(componentName,'present-value','link')" href="#" (click)="presentValueExcel(cell.data)" class="link-class">{{ cell.text }}</a>
+					</div>
+					<div *ngIf="!cell.data.hasHistoricalCharges" class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+				  </div>
+				  <dxo-toolbar>
+					<dxi-item name="groupPanel"></dxi-item>
+					<dxi-item location="after">
+						<div class="more">
+					<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()" >More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')" aria-label="More Menu">arrow_drop_down</mat-icon></button>
+					<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
+						<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
+						<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
+						<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="resetGrid()">Reset Preferences</button>
+					</mat-menu>	 
+				</div>
+					</dxi-item>
+				</dxo-toolbar>
+			</dx-data-grid>
+	</mat-expansion-panel> 
+</section>
