@@ -176,7 +176,7 @@
   </div>
 </div>
 
-<div class="list-page-data-grid-wrapper">
+<div class="list-page-data-grid-wrapper" [ngClass]="{ 'financeListPages': isGLEvent}">
   <dx-popup
     [width]="popupInfo.width"
     height="auto"
@@ -447,7 +447,7 @@
     <div *dxTemplate="let leaseCharge of 'leasePaymentsActionTemplate'" class="actionTemplate">
       <button *ngIf="leaseCharge.data.IsActive === 'Active'"
         [disabled]="isLeaseArchived || isLeaseLocked || !showAddButton"
-        class="btn btn-link" class="actionTemplateButton"
+        class="btn btn-link actionTemplateButton" id="{{'actionButton' + leaseCharge.rowIndex}}"
         (click)="actionsClicked();$event.preventDefault();$event.preventDefault()" 
         [matMenuTriggerFor]="leasePaymentsMenu" aria-label="Click to see Actions available for the Charge">
         <mat-icon aria-label="Actions Menu">more_horiz</mat-icon>

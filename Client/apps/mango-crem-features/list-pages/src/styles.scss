@@ -132,7 +132,7 @@ div.paymentDetailsModal {
       height: 100%;
       tr.dx-row.dx-header-row {
         background-color: colors.$color-dark-blue !important;
-        color: white !important
+        color: white !important;
       }
       tr.dx-row.dx-group-row, .dx-datagrid-group-closed::before, .dx-datagrid-group-opened::before {
         color: black;
@@ -243,4 +243,17 @@ button.mat-menu-item[disabled="true"] mat-slide-toggle label.mat-slide-toggle-la
 button.actionTemplateButton[disabled] {
   color: gray;
   pointer-events: none;
+}
+
+.list-page-data-grid-wrapper.financeListPages, .pmntDtls-bottom div.dx-scrollable-wrapper {
+  tr.dx-row {
+    &.dx-data-row, &.dx-group-row {
+      td {
+        padding: 3px 7px;
+        border-bottom: 1px solid lightgray;
+      }
+      border-bottom: 1px solid lightgray;
+      line-height: 12px
+    }
+  }    
 }
