@@ -5,7 +5,7 @@ import { OAUTH_REDIRECT_QUERY_PARAM, SOURCE_APP_QUERY_PARAM, SUB_LEFT_NEV_PAGES_
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { of } from 'rxjs';
-import { delay, filter, map, switchMap, tap } from 'rxjs/operators';
+import { delay, filter, first, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
 
@@ -29,24 +29,12 @@ export class InitSetupEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.APP_INIT),
-        delay(1000),
-        switchMap(_ => this.activatedRoute.queryParams),
-        map(params => [params.auth_code, params[OAUTH_REDIRECT_QUERY_PARAM], params[SOURCE_APP_QUERY_PARAM]]),
-        switchMap(([authCode, redirectionUri, sourceApp]) => {
-          const actionsToDispatch: any[] = this.router.url.includes('auth/validate') ? [
-            AppActions.setupCremAuthentication({ authCode, redirectionUri })] : [AppActions.setupAuthentication()]
-
-          actionsToDispatch.push(
-            AppActions.setupClientKey(),
-            AppActions.setupContactRecord(),
-            AppActions.setupUserInfo(),
-            AppActions.setupHeader()
-          )
-
-          // Disable loading session 
-          // sourceApp === 'v06' ? actionsToDispatch.push(AppActions.getGlobalSession()) : null
-          return of(...actionsToDispatch)
-        })
+        switchMap(_ => of(
+          AppActions.setupClientKey(),
+          AppActions.setupContactRecord(),
+          AppActions.setupUserInfo(),
+          AppActions.setupHeader()
+        ))
       )
   )
 

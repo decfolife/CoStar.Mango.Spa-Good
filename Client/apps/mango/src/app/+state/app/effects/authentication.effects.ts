@@ -20,20 +20,21 @@ export class AuthenticationEffects {
     private router: Router,
     private facade: MangoAppFacade) { }
 
-  setupAuthentication$ = createEffect(
+
+  localAuth$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AppActions.SETUP_AUTHENTICATION),
+        ofType(AppActions.LOCAL_AUTH),
         map(_ => this.storageService.getData(DBkeys.USER_AUTH)),
         filter(authenticatedUser => !!authenticatedUser),
-        switchMap(authenticatedUser => of(AppActions.setAuthenticatedUser({ user: authenticatedUser })))
+        switchMap(authenticatedUser => of(AppActions.setAuthenticatedUser({ user: authenticatedUser }), AppActions.init()))
       ),
   );
 
-  setupCremAuthentication$ = createEffect(
+  oauthAuthentication$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AppActions.SETUP_CREM_AUTHENTICATION),
+        ofType(AppActions.OAUTH_AUTH),
         switchMap((action: { authCode: string, redirectionUri: string }) => combineLatest([this.userService.retrieveJwt(action.authCode), of(action.redirectionUri)])),
         concatMap(([response, redirectionUrl]: [OAuthTokenHTTPResponse, string]) => {
           let decodedToken = this.userService.getDecodedAuthToken(response.accessToken)
@@ -63,7 +64,8 @@ export class AuthenticationEffects {
           return of(
             AppActions.setAuthenticatedUser({ user }),
             AppActions.setAccessToken({ accessToken }),
-            AppActions.setContactRecord({ contactRecord })
+            AppActions.setContactRecord({ contactRecord }),
+            AppActions.init()
           )
         }),
       ),

@@ -41,7 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void { 
-    this.facade.init()
+    this.facade.localAuth()
     const modId = 1; // hard coded until we start getting logged in with actual data for the user
     this.getModuleNavLinksNew(modId);
   }
