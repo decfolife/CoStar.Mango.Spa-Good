@@ -19,6 +19,7 @@ export class ServiceAccountConfigurationComponent implements OnInit{
   public serviceAccountSites : ServiceAccountSite[];
   public serviceAccountEndpoints: ServiceAccountEndpoint[];
   public apiKeyExpired: boolean = false;
+  public apiKeyInfo: any;
 
   constructor(
     private userService: UserService,
@@ -44,11 +45,16 @@ export class ServiceAccountConfigurationComponent implements OnInit{
         this.userService.getServiceAccountInfo(this.userEmail)
         .subscribe(result => {        
           if(result){          
-              this.apiKeyExpiresOn = result.apiKeyExpiresOn;
-              this.apiKeyGeneratedDate = result.apiKeyGeneratedDate ;
               this.serviceAccountEndpoints = result.serviceAccountEndpoints; 
               this.serviceAccountSites = result.serviceAccountSites; 
-              this.apiKeyExpired = new Date(result.apiKeyExpiresOn ?? '2099-12-31') <= new Date();
+              this.apiKeyInfo = {
+                userEmail: this.userEmail,
+                apiKeyExpiresOn: result.apiKeyExpiresOn,
+                apiKeyGeneratedDate: result.apiKeyGeneratedDate,
+                apiKeyStatus: result.apiKeyExpiresOn === null 
+                  ? ''
+                  : new Date(result.apiKeyExpiresOn ?? '2099-12-31') <= new Date() ? 'Expired' : 'Active'
+              };
           }
         })
       )

@@ -11,10 +11,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./service-account-api-keys.component.scss'],
 })
 export class ServiceAccountApiKeysComponent {
-  @Input() userEmail: string;
-  @Input() apiKeyExpiresOn: Date;
-  @Input() apiKeyGeneratedDate: Date;
-  @Input() apiKeyExpired: boolean;
+  @Input() apiKeyInfo: any;
   @Output() apiKeyUpdated = new EventEmitter<boolean>();
 
   subs: Subscription[] = []
