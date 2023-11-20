@@ -111,9 +111,7 @@ export class AddNewMenuComponent implements OnInit {
     const objectIds = "3,4,174,175";  //calls module rights api for these ObjectTypeId's
     this.service.getUserModuleRights(objectIds).subscribe(
       (res: any) => {
-        if (res.success) {
-          this.addButtonObjects = res.data.filter(v=>v.hasAddRights);
-        }
+        this.addButtonObjects = res.data.filter(v=>v.hasAddRights);
       },
       (error: any) => console.log('Error occurred getting addMenu items: ', error)
     );
