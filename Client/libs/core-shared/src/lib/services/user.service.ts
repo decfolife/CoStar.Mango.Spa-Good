@@ -15,8 +15,9 @@ import {
   RequestPasswordResetRequest,
   Token,
   ServiceAccountInfo,
+  ServiceAccountChangeHistory,
   UpdateServiceAccountApiAccessRequest,
-  UserAuth
+  UserAuth,
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { Observable, of } from 'rxjs';
@@ -173,24 +174,7 @@ export class UserService {
     return this.http.put<boolean>(`${this.env.appUrls.authentication}/serviceaccount/updateapiaccess`, request)
   }
 
-  getServiceAccountChangeHistory(userEmail: string): Observable<any> {
-    // const url = `${this.env.appUrls.identity}/getServiceAccountChangeHistory/{userEmail}`;
-
-    // return this.http.get(url).pipe<any>(
-    //   tap((response: any) => {
-    //     return response;
-    //   })
-    // );
-
-    //To be deleted after API integration
-    let date = new Date();
-    const testData: any = [
-      { lastModified: date, modifiedBy: 'Li Liu 1', description: 'Create Account 1', beforeChange: 'Old value 1', afterChange: 'New value 1' },
-      { lastModified: date, modifiedBy: 'Li Liu 2', description: 'Create Account 2', beforeChange: 'Old value 2', afterChange: 'New value 2' },
-      { lastModified: date, modifiedBy: 'Li Liu 3', description: 'Create Account 3', beforeChange: 'Old value 3', afterChange: 'New value 3' },
-      { lastModified: date, modifiedBy: 'Li Liu 4', description: 'Create Account 4', beforeChange: 'Old value 4', afterChange: 'New value 4' },
-      { lastModified: date, modifiedBy: 'Li Liu 5', description: 'Create Account 5', beforeChange: 'Old value 5', afterChange: 'New value 5' }];
-
-    return of(testData);
+  getServiceAccountChangeHistory(userEmail: string): Observable<ServiceAccountChangeHistory[]> {
+    return this.http.get<ServiceAccountChangeHistory[]>(`${this.env.appUrls.authentication}/serviceaccount/accounthistory/${userEmail}`)
   }
 }

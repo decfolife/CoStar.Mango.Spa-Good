@@ -28,6 +28,7 @@ export { ContactRecord } from './lib/models/central-auth/contact-record';
 export { ClientSitesByUser } from './lib/models/central-auth/client-sites-by-user';
 export { RecentUserSites } from './lib/models/central-auth/recent-user-sites';
 export { ServiceAccountInfo } from './lib/models/central-auth/service-account-info';
+export { ServiceAccountChangeHistory } from './lib/models/central-auth/service-account-change-history';
 export { UpdateServiceAccountApiAccessRequest } from './lib/models/central-auth/update-service-account-api-access-request';
 export * from './lib/enums/mango.enums';
 export * from './lib/models/errors';

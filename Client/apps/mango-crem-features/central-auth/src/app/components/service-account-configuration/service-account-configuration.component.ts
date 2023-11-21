@@ -4,6 +4,7 @@ import { ServiceAccountInfo, ServiceAccountEndpoint, ServiceAccountSite } from '
 import { Subscription } from 'rxjs';
 import { CentralAuthFacade } from '../../+state/facades';
 import { filter, switchMap, tap, map } from 'rxjs/operators';
+import { ServiceAccountChangeHistory } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-service-account-configuration',
@@ -20,6 +21,7 @@ export class ServiceAccountConfigurationComponent implements OnInit{
   public serviceAccountEndpoints: ServiceAccountEndpoint[];
   public apiKeyExpired: boolean = false;
   public apiKeyInfo: any;
+  public serviceAccountChangeHistories: ServiceAccountChangeHistory[];
 
   constructor(
     private userService: UserService,
@@ -58,5 +60,14 @@ export class ServiceAccountConfigurationComponent implements OnInit{
           }
         })
       )
-    } 
+
+      this.subs.push(
+        this.userService.getServiceAccountChangeHistory(this.userEmail)
+        .subscribe(result => {        
+          if(result){          
+              this.serviceAccountChangeHistories = result;      
+          }
+        })
+      )
+    }
 }
