@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System.IO;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace MangoSPA;
 
@@ -11,18 +9,15 @@ public class Program
 {
     public async static Task Main(string[] args)
     {
-        await BuildWebHost(args).RunAsync();
+        await CreateHostBuilder(args).Build().RunAsync();
     }
 
-    public static IWebHost BuildWebHost(string[] args) =>
-        Microsoft.AspNetCore.WebHost.CreateDefaultBuilder(args)
-            .UseStartup<Startup>()
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .ConfigureLogging((hostingContext, builder) =>
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
             {
-                builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                builder.AddConsole();
+                webBuilder.UseStartup<Startup>();
             })
-            .Build();
+            .UseSerilog();
 }
 

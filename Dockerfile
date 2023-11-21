@@ -1,21 +1,35 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS base
 WORKDIR /app
 EXPOSE 8000
 ENV ASPNETCORE_URLS=http://*:8000
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS restore
 WORKDIR /src
 COPY ["Web/MangoSPA/MangoSPA.csproj", "Web/MangoSPA/"]
-COPY ["BuildingBlocks/WebHost/WebHost.Customization/WebHost.Customization.csproj", "BuildingBlocks/WebHost/WebHost.Customization/"]
-RUN dotnet restore "Web/MangoSPA/MangoSPA.csproj"
-COPY . .
-WORKDIR "/src/Web/MangoSPA"
-RUN dotnet build "MangoSPA.csproj" -c Release -o /app/build
 
-FROM build AS publish
+# Add Costar.Mango.BuildingBlocks as a nuget source
+ARG FEED_URL
+ARG FEED_ACCESSTOKEN
+RUN dotnet nuget add source "${FEED_URL}" -u "Costar.Mango.BuildingBlocks" -p "${FEED_ACCESSTOKEN}" --store-password-in-clear-text --valid-authentication-types basic
+
+RUN dotnet restore "Web/MangoSPA/MangoSPA.csproj"
+
+FROM restore AS publish
+COPY . .
 RUN dotnet publish "MangoSPA.csproj" -c Release -o /app/publish
 
 FROM base AS final
-WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MangoSPA.dll"]
+
+ARG USERNAME=mangospa-service
+ARG GROUPNAME=mangospa-group
+
+# -g is the GID
+RUN addgroup -g 1000 ${GROUPNAME}
+
+# -u is the UID
+# -D permits to create an user without password
+RUN adduser -u 1000 -G ${GROUPNAME} -D ${USERNAME}
+
+USER ${USERNAME}
