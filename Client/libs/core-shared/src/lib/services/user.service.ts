@@ -24,6 +24,7 @@ import { Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { DBkeys } from '../utilities/db-keys';
 import { StorageService } from './storage.service';
+import { LoginResponse } from 'libs/data-models/lib-data-models/src/lib/models/userAuth';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,7 @@ export class UserService {
     private env: Environment
   ) { }
 
-  setAuth(user: UserAuth, accessToken: string) {
+  setAuth(user: UserAuth) {
     this._storageService.savePermanentData(user, DBkeys.USER_AUTH);
   }
 
@@ -57,7 +58,7 @@ export class UserService {
     return this.http.post<OAuthTokenHTTPResponse>(`${this.env.appUrls.identity}/oauth/token`, request)
   }
 
-  login(credentials): Observable<UserAuth> {
+  login(credentials): Observable<LoginResponse> {
     this.purgeAuth();
     return this.http.post(`${this.env.appUrls.identity}/auth/login`, credentials, { withCredentials: true }).pipe<any>(
       switchMap((response: any) => {
@@ -69,8 +70,14 @@ export class UserService {
           isAutoProvisioned: this.parseBool(decodedJwt.isAutoProvisioned),
           isServiceAccount: this.parseBool(decodedJwt.isServiceAccount)
         };
-        this.setAuth(user, response.authToken);
-        return of(user)
+        this.setAuth(user);
+
+        const res: LoginResponse = {
+          user: user,
+          authToken: response.authToken,
+        };
+
+        return of(res)
       })
     );
   }

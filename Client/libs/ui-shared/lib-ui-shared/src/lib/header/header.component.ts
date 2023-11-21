@@ -45,8 +45,8 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.currentUser$ = this.headerService.loggedInUser$;
-    this.contactRecord$ = this.headerService.contactRecord$;
+    this.currentUser$ = this.facade.authenticatedUser$;
+    this.contactRecord$ = this.facade.contactRecord$;
     this.ImageUrl$ = this.facade.userClient$.pipe(
       filter(client => !!client),
       map(client => `${client.imageBaseUrl}${client.logoUri}`)
@@ -91,7 +91,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    this.headerService.logout$.next(true)
+    this.facade.logout()
   }
 
   logoClicked() {
@@ -114,7 +114,11 @@ export class HeaderComponent implements OnInit {
   search() {
     this.inputBlurred();
     let searchString;
-    if (this.myControl.value) { searchString = this.myControl.value.toLowerCase().trim(); }
+
+    if (this.myControl.value) { 
+      searchString = this.myControl.value.toLowerCase().trim(); 
+    }
+
     if (searchString) {
       this.filteredOptions = [];
       this.quickSearchEvent.emit({ searchStr: searchString, searchObjId: this.searchObjectId });
@@ -135,5 +139,4 @@ export class HeaderComponent implements OnInit {
   ngOnDestroy() {
     this.inputSubscription$.unsubscribe();
   }
-
 }

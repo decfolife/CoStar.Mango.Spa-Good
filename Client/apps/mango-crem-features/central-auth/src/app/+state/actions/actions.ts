@@ -1,5 +1,6 @@
 import { ClientSSOSettings, ClientSitesByUser, ContactRecord, MultiClientLoginHttpRequest, UserAuth, UserSite } from "@mango/data-models/lib-data-models";
 import { createAction, props } from "@ngrx/store";
+import { LoginResponse } from "libs/data-models/lib-data-models/src/lib/models/userAuth";
 
 export const APP_INIT = '[UI] App Init'
 export const LOGIN = '[UI] Login'
@@ -38,7 +39,7 @@ export const CLEAR_STATE = '[UI] Clear State'
 
 export const init = createAction(APP_INIT);
 export const login = createAction(LOGIN, props<{ credentials: string }>());
-export const loginSuccess = createAction(LOGIN_SUCCESS, props<{ user: UserAuth }>());
+export const loginSuccess = createAction(LOGIN_SUCCESS, props<{ response: LoginResponse }>());
 export const loginError = createAction(LOGIN_ERROR);
 export const setLoading = createAction(SET_LOADING, props<{ loading: boolean }>());
 export const setOpenClientInNewTab = createAction(SET_OPEN_CLIENT_IN_NEW_TAB, props<{ openClientInNewTab: boolean }>());

@@ -3,7 +3,6 @@ export { Link } from './lib/models/link';
 export { ToolbarModuleLink } from './lib/models/toolbar';
 export { UserSite } from './lib/models/user-site';
 export { UserAuth, Token } from './lib/models/userAuth';
-export { LoginResponse } from './lib/models/login-response';
 export { ApiResponse } from './lib/models/apiResponse';
 export { Bookmark } from './lib/models/bookmark';
 export { BookmarkGroup } from './lib/models/bookmarkGroup';

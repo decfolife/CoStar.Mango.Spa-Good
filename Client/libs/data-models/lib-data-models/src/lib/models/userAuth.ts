@@ -1,11 +1,15 @@
 export interface UserAuth {
-    authToken?: string
     email: string;
     hasMultipleSites?: boolean;
     clientKey: string;
     isAutoProvisioned: boolean;
     contactId?: number;
     isServiceAccount?: boolean;
+}
+
+export interface LoginResponse {
+    user: UserAuth;
+    authToken: string;
 }
 
 export interface Token {

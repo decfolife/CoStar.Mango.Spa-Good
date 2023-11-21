@@ -32,19 +32,8 @@ export class InitSetupEffects {
         switchMap(_ => of(
           AppActions.setupClientKey(),
           AppActions.setupContactRecord(),
-          AppActions.setupUserInfo(),
-          AppActions.setupHeader()
+          AppActions.setupUserInfo()
         ))
-      )
-  )
-
-  setupHeader$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.SETUP_HEADER),
-        switchMap(_ => this.headerService.logout$),
-        filter(logout => logout === true),
-        map(_ => AppActions.logout())
       )
   )
 
@@ -81,17 +70,6 @@ export class InitSetupEffects {
         )
       )
   )
-
-  contactRecordSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.SET_CONTACT_RECORD),
-        switchMap(_ => this.facade.contactRecord$),
-        filter(contactRecord => !!contactRecord),
-        tap(contactRecord => this.headerService.contactRecord$.next(contactRecord))
-      ),
-    { dispatch: false }
-  );
 
   getModuleIdValue$ = createEffect(
     () =>

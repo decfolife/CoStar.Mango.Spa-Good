@@ -93,6 +93,10 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.logout())
   }
 
+  clearState() {
+    this.store.dispatch(AppActions.clearState());
+  }
+
   navigateLeftNevMenu(navLink: SharedLeftNavLink): void {
     this.store.dispatch(AppActions.navigateLeftNavMenu({ navLink }))
   }

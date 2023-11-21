@@ -62,6 +62,7 @@ const appReducer = createReducer(
   on(AppActions.setShowSubLetNav, (state, { show }) => ({ ...state, error: null, showSubLeftNav: show })),
   on(AppActions.setCurrentRenderFormDocumentParams, (state, { params }) => ({ ...state, error: null, currentRenderFormDocumentParams: params })),
   on(AppActions.getGlobalSessionSuccess, (state, { session }) => ({ ...state, error: null, globalSession: session.data})),
+  on(AppActions.clearState, () => ({ ...initialState })),
 );
 
 export function reducer(state: State | undefined, action: Action) {

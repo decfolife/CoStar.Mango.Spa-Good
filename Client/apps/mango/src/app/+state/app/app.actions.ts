@@ -19,6 +19,7 @@ export const SET_CLIENT_INFO_ACTION = '[Mango App] Set Client Info'
 export const SET_BREADCRUMBS = '[Mango App] Set Breadcrumbs'
 export const SET_CONTACT_RECORD = '[Mango App] Set Contact Record'
 export const LOGOUT_ACTION = '[Mango App] Log Out'
+export const CLEAR_STATE = '[Mango App] Clear State'
 export const SET_MODULE_ID = '[Mango App] Set Module Id'
 export const SET_SHOW_SUB_LEFT_NAV = '[Mango App] Set Show Sub Left Nav'
 export const SET_CURRENT_RENDER_FORM_DOCUMENT_PARAMS = '[Mango App] Set Current Render Form Document Params'
@@ -35,8 +36,6 @@ export const init = createAction(APP_INIT);
 export const localAuth = createAction(LOCAL_AUTH);
 
 export const oauthAuth = createAction(OAUTH_AUTH, props<{ authCode: string, redirectionUri: string }>());
-
-export const setupHeader = createAction(SETUP_HEADER);
 
 export const setupClientKey = createAction(SETUP_CLIENT_KEY);
 
@@ -92,6 +91,8 @@ export const setContactRecord = createAction(
 export const logout = createAction(
   LOGOUT_ACTION
 );
+
+export const clearState = createAction(CLEAR_STATE);
 
 export const setModuleId = createAction(
   SET_MODULE_ID,

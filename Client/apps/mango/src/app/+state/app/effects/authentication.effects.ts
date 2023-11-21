@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { DBkeys, HeaderService, JwtService, StorageService, UserService } from '@mango/core-shared/lib-core-shared';
+import { DBkeys, JwtService, StorageService, UserService } from '@mango/core-shared/lib-core-shared';
 import { ContactRecord, ContactRecordHTTPObject, OAuthTokenHTTPResponse, UserAuth } from '@mango/data-models/lib-data-models';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -13,7 +13,6 @@ import { MangoAppFacade } from '../app.facade';
 @Injectable()
 export class AuthenticationEffects {
   constructor(private actions$: Actions,
-    private headerService: HeaderService,
     private storageService: StorageService,
     private userService: UserService,
     private jwtService: JwtService,
@@ -49,7 +48,7 @@ export class AuthenticationEffects {
           // Temporary until cookie auth is implemented in MangoSPA
           this.jwtService.saveToken(response.accessToken)
 
-          this.userService.setAuth(user, response.accessToken)
+          this.userService.setAuth(user)
           this.storageService.savePermanentData(user.clientKey, DBkeys.CLIENT_KEY)
           return combineLatest([of(user), this.userService.getContactRecord(user.email, user.contactId, user.clientKey), of(redirectionUrl)])
         }),
@@ -71,27 +70,14 @@ export class AuthenticationEffects {
       ),
   );
 
-  loginSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.SET_AUTHENTICATED_USER_ACTION),
-        switchMap(_ => this.facade.authenticatedUser$),
-        filter(user => !!user),
-        tap(user => this.headerService.loggedInUser$.next(user)),
-      ), { dispatch: false }
-  );
-
   logOut$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOGOUT_ACTION),
         tap(_ => {
           this.userService.logout()
-          this.headerService.logout$.next(false)
-          this.facade.setAuthenticatedUser(null)
-          this.facade.setAccessToken(null)
-          const url = `${environment.CAUrl}?logout=true`
-          window.location.href = url
+          this.facade.clearState()
+          window.location.href = `${environment.CAUrl}?logout=true`
         })
       ),
     { dispatch: false }
