@@ -2,8 +2,8 @@ import { HTTP_INTERCEPTORS, HttpErrorResponse, HttpEvent, HttpHandler, HttpInter
 import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
 import { MangoErrorHandler } from "@mango/core-shared/lib-core-shared";
 import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
-import { Observable, of, throwError } from "rxjs";
-import { catchError, switchMap, take } from "rxjs/operators";
+import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { CentralAuthFacade } from "../+state/facades";
 import { Router } from "@angular/router";
 
@@ -36,19 +36,7 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const withClientAccessToken = req.params.get('withClientAccessToken')
-    return of(withClientAccessToken).pipe(
-      switchMap(withClientAccessToken => withClientAccessToken === 'true' ? this.facade.clientAccessToken$ : this.facade.accessToken$),
-      take(1),
-      switchMap(token => {
-        const headers = {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        }
-        token ? headers['Authorization'] = `Bearer ${token}` : null
-        const request = req.clone({ setHeaders: headers })
-        return next.handle(request)
-      }),
+    return next.handle(req).pipe(
       catchError((errorResponse: HttpErrorResponse) => {
         const genericErrorObject: CentralAuthHttpError = {
           message: UNEXPECTED_ERROR_MESSAGE,
@@ -64,9 +52,9 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
 
         if (caHttpError.status === 401) {
           caHttpError.errorType = MangoErrorTypes.WARNING
-          caHttpError.message = 'Unauthorized request, please login to continue'
+          caHttpError.message = caHttpError.message;
           this.facade.logout()
-          //this.router.navigate(['/'])
+          this.router.navigate(['/'])
         }
 
         if (caHttpError.errorCode as CentralAuthErrorCodes === CentralAuthErrorCodes.SqsTimeout) {

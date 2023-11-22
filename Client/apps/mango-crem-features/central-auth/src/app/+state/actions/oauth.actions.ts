@@ -14,4 +14,3 @@ export const authorize = createAction(AUTHORIZE);
 export const authorizeSuccess = createAction(AUTHORIZE_SUCCESS, props<{ authorizationCode: string }>());
 export const authorizeError = createAction(AUTHORIZE_ERROR);
 export const setupOAuthRedirectionToClient = createAction(SETUP_OAUTH_REDIRECTION_TO_CLIENT);
-export const setClientAccessToken = createAction(SET_CLIENT_ACCESS_TOKEN, props<{ clientAccessToken: string }>());

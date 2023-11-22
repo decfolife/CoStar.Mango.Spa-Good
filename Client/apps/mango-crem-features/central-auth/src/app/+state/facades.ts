@@ -21,7 +21,6 @@ export class CentralAuthFacade {
   contactId$ = this.store.pipe(select(AppSelectors.contactId));
   selectedContactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
   accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
-  clientAccessToken$ = this.store.pipe(select(AppSelectors.clientAccessToken));
   user$ = this.store.pipe(select(AppSelectors.user));
   ssoSettings$ = this.store.pipe(select(AppSelectors.ssoSettings));
   userContactRecords$ = this.store.pipe(select(AppSelectors.userContactRecords));
@@ -83,10 +82,6 @@ export class CentralAuthFacade {
 
   setAccessToken(accessToken: string) {
     this.store.dispatch(AppActions.setAccessToken({ accessToken }));
-  }
-
-  setClientAccessToken(clientAccessToken: string) {
-    this.store.dispatch(OAuthActions.setClientAccessToken({ clientAccessToken }));
   }
 
   setClientSpecificLogin(isClientSpecific: boolean) {

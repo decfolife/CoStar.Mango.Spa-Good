@@ -25,11 +25,6 @@ export const accessToken = createSelector(
     (state: State) => state.accessToken
 );
 
-export const clientAccessToken = createSelector(
-    getAppState,
-    (state: State) => state.clientAccessToken
-);
-
 export const userClients = createSelector(
     getAppState,
     (state: State) => state.userClients

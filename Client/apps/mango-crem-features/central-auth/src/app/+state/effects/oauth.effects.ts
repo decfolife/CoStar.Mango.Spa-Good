@@ -26,7 +26,7 @@ export class OAuthEffects {
         switchMap(payload => this.userService.loginToClientSite(payload)),
         tap(_ => this.centralAuthFacade.setLoading(false)),
         filter(response => !!response && !!response.authToken),
-        tap(response => this.centralAuthFacade.setClientAccessToken(response.authToken)),
+        tap(response => this.centralAuthFacade.setAccessToken(response.authToken)),
         switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])),
         filter(([client, redirectionUri]) => !!client),
         map(([client, redirectionUri, openClientInNewTab]) => {
@@ -41,9 +41,9 @@ export class OAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE),
-        switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.clientAccessToken$.pipe(take(1))])),
-        filter(([redirectUri, clientAccessToken]) => !!redirectUri && !!clientAccessToken),
-        switchMap(([redirectUri, clientAccessToken]) => this.userService.retrieveAuthorizationCode(redirectUri).pipe(
+        switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.accessToken$.pipe(take(1))])),
+        filter(([redirectUri, accessToken]) => !!redirectUri && !!accessToken),
+        switchMap(([redirectUri, accessToken]) => this.userService.retrieveAuthorizationCode(redirectUri).pipe(
           map(response => OAuthActions.authorizeSuccess({ authorizationCode: response.code })),
           catchError(_ => of(OAuthActions.authorizeError()))
         ))
