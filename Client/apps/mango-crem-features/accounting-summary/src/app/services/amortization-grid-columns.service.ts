@@ -313,6 +313,7 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'true',
+          visible: false,
           columns: [
             {
               caption: 'Asset Balance - Opening',
@@ -377,8 +378,25 @@ export class AmortizationGridColumnsService {
               visible: false,
               appendsCurrency: 'false',
               headerCellTemplate: 'amortizationHeader'
-            }
-            , {
+            }, {
+              caption: 'Direct Costs',
+              name: 'DirectCosts',
+              dataField: 'directCosts',
+              usesLocalFormat: 'true',
+              usesFunctionalFormat: 'false',
+              visible: false,
+              appendsCurrency: 'false',
+              headerCellTemplate: 'amortizationHeader'
+            }, {
+              caption: 'Termination Fee',
+              name: 'TerminationFee',
+              dataField: 'terminationFee',
+              usesLocalFormat: 'true',
+              usesFunctionalFormat: 'false',
+              visible: false,
+              appendsCurrency: 'false',
+              headerCellTemplate: 'amortizationHeader'
+            }, {
               caption: 'Gain (Loss)',
               name: 'AdjustmentGainLoss',
               dataField: 'adjustmentGainLoss',
@@ -404,7 +422,6 @@ export class AmortizationGridColumnsService {
           caption: 'Local Asset',
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
-          visible: false,
           appendsCurrency: 'true',
           columns: [
             {
@@ -499,24 +516,6 @@ export class AmortizationGridColumnsService {
               caption: 'Cumulative Asset Adjustment Amount',
               name: 'CumulativeAdjustmentAmount',
               dataField: 'cumulativeAdjustmentAmount',
-              usesLocalFormat: 'true',
-              usesFunctionalFormat: 'false',
-              visible: false,
-              appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
-            }, {
-              caption: 'Level Expense',
-              name: 'LevelExpense',
-              dataField: 'levelExpense',
-              usesLocalFormat: 'true',
-              usesFunctionalFormat: 'false',
-              visible: false,
-              appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
-            }, {
-              caption: 'Cumulative Level Expense',
-              name: 'CumulativeLevelExpense',
-              dataField: 'cumulativeLevelExpense',
               usesLocalFormat: 'true',
               usesFunctionalFormat: 'false',
               visible: false,
@@ -693,7 +692,8 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             headerCellTemplate: 'amortizationHeader'
-          }, {
+          },
+          {
             caption: 'Accumulated Asset Amortization',
             name: 'AccumulatedAssetAmortization',
             dataField: 'accumulatedAssetAmortization',
@@ -730,43 +730,6 @@ export class AmortizationGridColumnsService {
             caption: 'Cumulative Asset Adjustment Amount',
             name: 'CumulativeAdjustmentAmount',
             dataField: 'cumulativeAdjustmentAmount',
-            usesLocalFormat: 'true',
-            usesFunctionalFormat: 'false',
-            visible: false,
-            appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
-          }, {
-            caption: 'Total Asset Adjustment',
-            name: 'AssetAdjustment',
-            dataField: 'adjustmentAmount',
-            usesLocalFormat: 'true',
-            usesFunctionalFormat: 'false',
-            visible: false,
-            appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
-          }, {
-            caption: 'System Asset Adjustment',
-            name: 'SystemAssetAdjustment',
-            dataField: 'systemAssetAdjustment',
-            usesLocalFormat: 'true',
-            usesFunctionalFormat: 'false',
-            visible: false,
-            appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
-          }, {
-            caption: 'Manual Asset Adjustment',
-            name: 'ManualAssetAdjustment',
-            dataField: 'manualAssetAdjustment',
-            usesLocalFormat: 'true',
-            usesFunctionalFormat: 'false',
-            visible: false,
-            appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
-          }
-          , {
-            caption: 'Gain (Loss)',
-            name: 'AdjustmentGainLoss',
-            dataField: 'adjustmentGainLoss',
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             visible: false,
@@ -825,20 +788,20 @@ export class AmortizationGridColumnsService {
             appendsCurrency: 'false',
             headerCellTemplate: 'amortizationHeader'
           }, {
+            caption: 'Lease Liability Interest Expense',
+            name: 'LeaseLiabilityInterestExpense',
+            dataField: 'interestExpense',
+            usesLocalFormat: 'true',
+            usesFunctionalFormat: 'false',
+            appendsCurrency: 'false',
+            headerCellTemplate: 'amortizationHeader'
+          }, {
             caption: 'Cumulative Liability Adjustment',
             name: 'CumulativeLiabilityAdjustmentAmount',
             dataField: 'cumulativeLiabilityAdjustmentAmount',
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             visible: false,
-            appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
-          }, {
-            caption: 'Lease Liability Interest Expense',
-            name: 'LeaseLiabilityInterestExpense',
-            dataField: 'interestExpense',
-            usesLocalFormat: 'true',
-            usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             headerCellTemplate: 'amortizationHeader'
           }, {
@@ -918,12 +881,30 @@ export class AmortizationGridColumnsService {
       }
     ]);
 
-    if (!this.functionalAssetColumns) {
-      this.finance842Columns[3].columns.push(
+    if (!this.functionalCurrencyEnabled) {
+      this.finance842Columns[2].columns.push(
         {
           caption: 'Cumulative Liability Reduction',
           name: 'CumulativeLiabilityReductionAmount',
           dataField: 'cumulativeLiabilityReductionAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Liability Adjustment',
+          name: 'LiabilityAdjustment',
+          dataField: 'liabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Cumulative Liability Adjustment',
+          name: 'CumulativeLiabilityAdjustmentAmount',
+          dataField: 'cumulativeLiabilityAdjustmentAmount',
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           visible: false,
@@ -931,7 +912,8 @@ export class AmortizationGridColumnsService {
           headerCellTemplate: 'amortizationHeader'
         }
       );
-    } else {
+    }
+    else {
       this.finance842Columns[3].columns.push(
         {
           caption: 'Cumulative Liability Reduction',
@@ -941,31 +923,28 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
           headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Liability Adjustment',
+          name: 'LiabilityAdjustment',
+          dataField: 'liabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Cumulative Liability Adjustment',
+          name: 'CumulativeLiabilityAdjustmentAmount',
+          dataField: 'cumulativeLiabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
         }
       );
     }
-
-    this.finance842Columns[3].columns.push(
-      {
-        caption: 'Liability Adjustment',
-        name: 'LiabilityAdjustment',
-        dataField: 'ciabilityAdjustmentAmount',
-        usesLocalFormat: 'true',
-        usesFunctionalFormat: 'false',
-        appendsCurrency: 'false',
-        headerCellTemplate: 'amortizationHeader'
-      }, {
-      caption: 'Cumulative Liability Adjustment',
-      name: 'CumulativeLiabilityAdjustmentAmount',
-      dataField: 'cumulativeLiabilityAdjustmentAmount',
-      usesLocalFormat: 'true',
-      usesFunctionalFormat: 'false',
-      visible: false,
-      appendsCurrency: 'false',
-      headerCellTemplate: 'amortizationHeader'
-    }
-    );
-
     this.finance842Columns = this.finance842Columns.concat(this.commonEndingColumns);
   }
 
@@ -1031,7 +1010,7 @@ export class AmortizationGridColumnsService {
     ]);
 
     if (!this.functionalCurrencyEnabled) {
-      this.operating842Columns[2].columns.push(
+      this.operating842Columns[1].columns.push(
         {
           caption: 'Cumulative Level Expense',
           name: 'CumulativeLevelExpense',
@@ -1053,7 +1032,7 @@ export class AmortizationGridColumnsService {
         }
       );
     } else {
-      this.operating842Columns[2].columns.push(
+      this.operating842Columns[1].columns.push(
         {
           caption: 'Cumulative Level Expense',
           name: 'CumulativeLevelExpense',
@@ -1077,38 +1056,70 @@ export class AmortizationGridColumnsService {
       );
     }
 
-    this.operating842Columns[3].columns.push(
-      {
-        caption: 'Cumulative Liability Reduction',
-        name: 'CumulativeLiabilityReductionAmount',
-        dataField: 'cumulativeLiabilityReductionAmount',
-        usesLocalFormat: 'true',
-        usesFunctionalFormat: 'false',
-        visible: false,
-        appendsCurrency: 'false',
-        headerCellTemplate: 'amortizationHeader'
-      },
-      {
-        caption: 'Liability Adjustment',
-        name: 'LiabilityAdjustment',
-        dataField: 'liabilityAdjustmentAmount',
-        usesLocalFormat: 'true',
-        usesFunctionalFormat: 'false',
-        appendsCurrency: 'false',
-        headerCellTemplate: 'amortizationHeader'
-      },
-      {
-        caption: 'Cumulative Liability Adjustment',
-        name: 'CumulativeLiabilityAdjustmentAmount',
-        dataField: 'cumulativeLiabilityAdjustmentAmount',
-        usesLocalFormat: 'true',
-        usesFunctionalFormat: 'false',
-        visible: false,
-        appendsCurrency: 'false',
-        headerCellTemplate: 'amortizationHeader'
-      }
-    );
-
+    if (!this.functionalCurrencyEnabled) {
+      this.operating842Columns[2].columns.push(
+        {
+          caption: 'Cumulative Liability Reduction',
+          name: 'CumulativeLiabilityReductionAmount',
+          dataField: 'cumulativeLiabilityReductionAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Liability Adjustment',
+          name: 'LiabilityAdjustment',
+          dataField: 'liabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Cumulative Liability Adjustment',
+          name: 'CumulativeLiabilityAdjustmentAmount',
+          dataField: 'cumulativeLiabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        }
+      );
+    }
+    else {
+      this.operating842Columns[3].columns.push(
+        {
+          caption: 'Cumulative Liability Reduction',
+          name: 'CumulativeLiabilityReductionAmount',
+          dataField: 'cumulativeLiabilityReductionAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Liability Adjustment',
+          name: 'LiabilityAdjustment',
+          dataField: 'liabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Cumulative Liability Adjustment',
+          name: 'CumulativeLiabilityAdjustmentAmount',
+          dataField: 'cumulativeLiabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        }
+      );
+    }
     this.operating842Columns = this.operating842Columns.concat(this.commonEndingColumns);
   }
 
@@ -1169,16 +1180,34 @@ export class AmortizationGridColumnsService {
             appendsCurrency: 'false',
             headerCellTemplate: 'amortizationHeader'
           },
+          {
+            caption: 'Cumulative Liability Reduction',
+            name: 'CumulativeLiabilityReductionAmount',
+            dataField: 'cumulativeLiabilityReductionAmount',
+            usesLocalFormat: 'true',
+            usesFunctionalFormat: 'false',
+            appendsCurrency: 'false',
+            headerCellTemplate: 'amortizationHeader'
+          }
         ],
       }
     ]);
 
     if (!this.functionalCurrencyEnabled) {
-      this.ifrs16Columns[3].columns.push(
+      this.ifrs16Columns[2].columns.push(
         {
-          caption: 'Cumulative Liability Reduction',
-          name: 'CumulativeLiabilityReductionAmount',
-          dataField: 'cumulativeLiabilityReductionAmount',
+          caption: 'Liability Adjustment',
+          name: 'LiabilityAdjustment',
+          dataField: 'liabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Cumulative Liability Adjustment',
+          name: 'CumulativeLiabilityAdjustmentAmount',
+          dataField: 'cumulativeLiabilityAdjustmentAmount',
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           visible: false,
@@ -1186,41 +1215,31 @@ export class AmortizationGridColumnsService {
           headerCellTemplate: 'amortizationHeader'
         }
       );
-    } else {
+    }
+
+    else {
       this.ifrs16Columns[3].columns.push(
         {
-          caption: 'Cumulative Liability Reduction',
-          name: 'CumulativeLiabilityReductionAmount',
-          dataField: 'cumulativeLiabilityReductionAmount',
+          caption: 'Liability Adjustment',
+          name: 'LiabilityAdjustment',
+          dataField: 'liabilityAdjustmentAmount',
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader'
+        },
+        {
+          caption: 'Cumulative Liability Adjustment',
+          name: 'CumulativeLiabilityAdjustmentAmount',
+          dataField: 'cumulativeLiabilityAdjustmentAmount',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
           appendsCurrency: 'false',
           headerCellTemplate: 'amortizationHeader'
         }
       );
     }
-
-    this.ifrs16Columns[3].columns.push(
-      {
-        caption: 'Liability Adjustment',
-        name: 'LiabilityAdjustment',
-        dataField: 'liabilityAdjustmentAmount',
-        usesLocalFormat: 'true',
-        usesFunctionalFormat: 'false',
-        appendsCurrency: 'false',
-        headerCellTemplate: 'amortizationHeader'
-      },
-      {
-        caption: 'Cumulative Liability Adjustment',
-        name: 'CumulativeLiabilityAdjustmentAmount',
-        dataField: 'cumulativeLiabilityAdjustmentAmount',
-        usesLocalFormat: 'true',
-        usesFunctionalFormat: 'false',
-        visible: false,
-        appendsCurrency: 'false',
-        headerCellTemplate: 'amortizationHeader'
-      }
-    );
 
     this.ifrs16Columns = this.ifrs16Columns.concat(this.commonEndingColumns);
   }
@@ -1256,7 +1275,7 @@ export class AmortizationGridColumnsService {
       },
     ];
 
-    if (this.functionalCurrencyEnabled && (this.classificationId === 2 || this.classificationId === 3 || this.classificationId === 4 || this.classificationId === 1)) {
+    if ([1, 2, 3, 4].includes(this.classificationId)) {
       this.commonEndingColumns[0].columns.push(
         {
           caption: 'Short Term Liability Reduction',

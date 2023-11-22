@@ -71,7 +71,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     const portfolioSettings = this.accountingSummaryService.getPortfolioSettings();
     this.subscription.add(combineLatest([amortizationDetails, portfolioSettings]).subscribe(([amortizationDetailsResponse, portfolioSettingsResponse]) => {
       if (amortizationDetailsResponse.success && portfolioSettingsResponse.success) {
-        this.amortizationdetailsGridData = amortizationDetailsResponse.data;//sort((a, b) => a.scheduleIndex - b.scheduleIndex);
+        this.amortizationdetailsGridData = amortizationDetailsResponse.data;
         this.selectedRowKey = [this.amortizationdetailsGridData[0].scheduleIndex];
         this.portfolioSettings = portfolioSettingsResponse.data;
  
@@ -166,12 +166,9 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   * @param classificationId Lease recognition classification ID
   */
   getAmortizationColumns(classificationId, currencyInfo) {
-      const isFunctional = '2|3'.indexOf(classificationId) > -1 &&
-        this.portfolioSettings.functionalCurrencyEnabled;
-  
       const defaultColumns = this.columnService
         .getSummaryColumns(classificationId, this.portfolioSettings.functionalCurrencyEnabled,
-          this.portfolioSettings.leaseRecognitionCalendarID != 1 ? true : false);
+          this.portfolioSettings.leaseRecognitionCalendarID != 1);
   
       // columns is ultimatly what will be used, it is the default by default
       const columns = defaultColumns;
@@ -179,8 +176,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       // these are the columns that appear when the lease's Functional Currency Site Setting is TRUE
       // If these appear, then they have the Functional Currency Name appended behind their captions
       const FunctionalColumns = [
-        'Functional_Asset'
-        ,
+        'Functional_Asset',
         'FunctionalAssetBeginBalance',
         'Functional_AssetBalance',
         'Functional_AccumulatedAssetAmortization',
@@ -231,7 +227,6 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
             } else if (subCol.name === 'PeriodStart' || subCol.name === 'PeriodEnd') {
               subCol.format = this.dateFormat;
             }  
-            // subCol.alignment = 'center';
           });
         }
       });
