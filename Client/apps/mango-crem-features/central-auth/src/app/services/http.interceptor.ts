@@ -2,8 +2,8 @@ import { HTTP_INTERCEPTORS, HttpErrorResponse, HttpEvent, HttpHandler, HttpInter
 import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
 import { MangoErrorHandler } from "@mango/core-shared/lib-core-shared";
 import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
-import { Observable, throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { Observable, of, throwError } from "rxjs";
+import { catchError, switchMap, take, tap } from "rxjs/operators";
 import { CentralAuthFacade } from "../+state/facades";
 import { Router } from "@angular/router";
 
@@ -36,7 +36,19 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(
+    // Remove this empty string
+    return of('').pipe(
+      switchMap(accessToken => this.facade.accessToken$),
+      take(1),
+      switchMap(token => {
+        const headers = {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }
+        token ? headers['Authorization'] = `Bearer ${token}` : null
+        const request = req.clone({ setHeaders: headers })
+        return next.handle(request)
+      }),
       catchError((errorResponse: HttpErrorResponse) => {
         const genericErrorObject: CentralAuthHttpError = {
           message: UNEXPECTED_ERROR_MESSAGE,

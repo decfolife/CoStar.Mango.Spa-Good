@@ -83,7 +83,7 @@ export class UserService {
   }
 
   loginToClientSite(payload: MultiClientLoginHttpRequest): Observable<AuthHTTPResponse> {
-    return this.http.post<AuthHTTPResponse>(`${this.env.appUrls.identity}/auth/login/client`, payload);
+    return this.http.post<AuthHTTPResponse>(`${this.env.appUrls.identity}/auth/login/client`, payload, { withCredentials: true });
   }
 
   getCurrentUserAccessToken(): Observable<string> {
