@@ -1,10 +1,16 @@
-import { forkJoin } from 'rxjs';
+import { combineLatest, forkJoin, of, Subscription } from 'rxjs';
 import notify from 'devextreme/ui/notify';
 import { DxFormComponent } from 'devextreme-angular';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { Component, EventEmitter, Inject, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output, ViewChild, OnDestroy } from '@angular/core';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
+import { filter, map, switchMap, tap} from 'rxjs/operators'
+
+//Constants
+const RENDER_SELECT_TEMPLATE_ID = 57;
+const RENDER_SELECT_HIERARCHY_ID = 10
+const RENDER_SELECT_SUBGROUP_ID = 9;
 
 
 @Component({
@@ -12,7 +18,8 @@ import { FormWizardService } from '@micro-components/services/form-wizard.servic
   templateUrl: './add-building-modal.component.html',
   styleUrls: ['./add-building-modal.component.scss'],
 })
-export class AddBuildingModalComponent implements OnInit {
+
+export class AddBuildingModalComponent implements OnInit, OnDestroy {
   public contentVisible = true;
   public countryDropdownItem: any = [];
   public enableStateTextBox: boolean = false;
@@ -27,6 +34,8 @@ export class AddBuildingModalComponent implements OnInit {
   public templateDropdownItem: any = [];
   public enableHierachyDropDown: any = [];
   public enableSubGroupDropDown: any = [];
+  private subscriptions = new Subscription();
+
 
   @Output() isLoading = new EventEmitter();
   @ViewChild('addBuildingForm') addBuildingForm: DxFormComponent;
@@ -46,62 +55,75 @@ export class AddBuildingModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dialogRef.keydownEvents().subscribe((event) => {
-      if (event.key === "Escape") {
-        this.close();
-      }
-    })
+    this.subscriptions.add(
+      this.dialogRef.keydownEvents().subscribe((event) => {
+        if (event.key === "Escape") {
+          this.close();
+        }
+      })
+    );
     this.getDropdownData();
 
     if (!this.data.objectTypeName) {
-      this.dashboardService.getObjectTypeNames([3]).subscribe(
-        (result) => {
-          this.data.objectTypeName = result?.data?.[0]?.objectTypeName
-          this.buildModalTitle();
-        }
+      this.subscriptions.add(
+        this.dashboardService.getObjectTypeNames([3]).subscribe(
+          (result) => {
+            this.data.objectTypeName = result?.data?.[0]?.objectTypeName;
+            this.buildModalTitle();
+          }
+        )
       );
     } else {
       this.buildModalTitle();
     }
 
-    this.formWizardService.getClientPreferenceByField("ClientHierarchyLevel").subscribe(
-      (result) => {
-        const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
-        this.enableHierachyDropDown = mappedValues?.some(value => value.toLowerCase().includes('building') || value.toLowerCase().includes('both'));
-      }
-    );
 
-    this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").subscribe(
+    this.subscriptions.add(
+      this.formWizardService.getClientPreferenceByField("ClientHierarchyLevel").subscribe(
+        (result) => {
+          const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
+          this.enableHierachyDropDown = mappedValues?.some(value => value.toLowerCase().includes('building') || value.toLowerCase().includes('both'));
+        }
+      )
+    )
+
+    this.subscriptions.add(this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").subscribe(
       (result) => {
         const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
 
         // this checks the client site configuration to determine if the sub group dropdown should be required or not
         this.enableSubGroupDropDown = mappedValues?.some(value => value.includes('1'));
       }
-    );
+    ));
   }
 
   ngAfterViewInit(): void {
     this.isLoading.emit(this.loading);
   }
 
+  ngOnDestroy(): void {
+    //close all subscriptions in this component
+    this.subscriptions.unsubscribe();
+  }
+
   public getDropdownData() {
-    let observableList;
-    observableList = forkJoin({
+    const observableList = forkJoin({
       templateDropdownItem: this.formWizardService.getRenderSelect("", 18),
       countryDropdownItem: this.formWizardService.getRenderSelect("0", 16),
       portfolioDropdownItem: this.formWizardService.getRenderSelect("", 62),
       stateDropDownItem: this.formWizardService.getRenderSelect("United States", 17),
     });
 
-    observableList.subscribe((data: any) => {
-      this.countryDropdownItem = data.countryDropdownItem.data;
-      this.templateDropdownItem = data.templateDropdownItem.data.map(projectTemplateName => projectTemplateName.ProjectTemplateName);
-      this.portfolioDropdownItem = data.portfolioDropdownItem.data;
-      this.stateDropdownItem = data.stateDropDownItem.data;
-      this.loading = false;
-      this.focusFirstItem();
-    });
+    this.subscriptions.add(
+      observableList.subscribe((data: any) => {
+        this.countryDropdownItem = data.countryDropdownItem.data;
+        this.templateDropdownItem = data.templateDropdownItem.data.map(projectTemplateName => projectTemplateName.ProjectTemplateName);
+        this.portfolioDropdownItem = data.portfolioDropdownItem.data;
+        this.stateDropdownItem = data.stateDropDownItem.data;
+        this.loading = false;
+        this.focusFirstItem();
+      })
+    )
   }
 
   onCountryChanged(e: any) {
@@ -120,15 +142,21 @@ export class AddBuildingModalComponent implements OnInit {
   // end 
 
   onPortFolioValueChanged(e: any) {
-    this.formWizardService.getRenderSelect(e.value, 57).subscribe((data) => {
-      this.templateDropdownItem = data.data;
-    })
-    this.formWizardService.getRenderSelect(e.value, 9).subscribe((data) => {
-      this.subGroupDropdownItem = data.data;
-    })
-    this.formWizardService.getRenderSelect(e.value, 10).subscribe((data) => {
-      this.hierarchyDropdownItem = data.data;
-    })
+    of(e.value).pipe(
+      filter(value => !!value),
+      switchMap(value => 
+        combineLatest([
+          this.formWizardService.getRenderSelect(value, RENDER_SELECT_TEMPLATE_ID).pipe(filter(v => !!v)),
+          this.formWizardService.getRenderSelect(value, RENDER_SELECT_HIERARCHY_ID).pipe(filter(v => !!v)),
+          this.formWizardService.getRenderSelect(value, RENDER_SELECT_SUBGROUP_ID).pipe(filter(v => !!v))
+        ])
+      ),
+      map(([templates, hierachies, subgroups]) => {
+        this.templateDropdownItem = templates.data;
+        this.hierarchyDropdownItem = hierachies.data;
+        this.subGroupDropdownItem  = subgroups.data
+      })
+    ).subscribe()
   }
 
   public close() {
@@ -165,7 +193,7 @@ export class AddBuildingModalComponent implements OnInit {
     return building;
   }
 
-  private focusFirstItem(){
+  private focusFirstItem() {
     setTimeout(() => {
       let buildingNameInput = this.addBuildingForm.instance.getEditor('buildingName')
       buildingNameInput.focus()
@@ -198,9 +226,9 @@ export class AddBuildingModalComponent implements OnInit {
     if (isFormValid.isValid) {
       const building = this.getBuildingFromFormData();
       this.loading = true;
-      this.formWizardService.addBuilding(building).subscribe((result) => {
+      this.subscriptions.add(this.formWizardService.addBuilding(building).subscribe((result) => {
         this.handleAddBuildingResult(result.success, false);
-      });
+      }));
     }
   }
 
@@ -209,9 +237,9 @@ export class AddBuildingModalComponent implements OnInit {
     if (isFormValid.isValid) {
       const building = this.getBuildingFromFormData();
       this.loading = true;
-      this.formWizardService.addBuilding(building).subscribe((result) => {
+      this.subscriptions.add(this.formWizardService.addBuilding(building).subscribe((result) => {
         this.handleAddBuildingResult(result.success, true);
-      });
+      }));
     }
   }
   //button functions end
