@@ -32,3 +32,13 @@
 tr.dx-row.dx-data-row.dx-column-lines:hover {
     cursor: pointer !important;
 }
+
+button.portfolioOptionsMenuBtn:focus{
+    box-shadow: 0 0 0 0.1rem #779ede;
+}
+
+:host::ng-deep {
+    .dx-show-clear-button .dx-icon-clear {
+      color: #666666;
+    }
+  }

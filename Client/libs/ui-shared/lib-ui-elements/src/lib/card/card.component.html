@@ -3,7 +3,7 @@
     <div class="cardHeader">
       <div class="mat-card-header-text">
         <div *ngIf="counter > 0" class="counter">{{ counter }}</div>
-        <h2 mat-card-title id="{{pendoTitleId ? pendoTitleId : ''}}">
+        <h2 mat-card-title id="{{pendoTitleId ? pendoTitleId : ''}}" tabindex="0">
           {{ title }} <span class="subtitle">{{ subtitle }}</span>
         </h2>
       </div>

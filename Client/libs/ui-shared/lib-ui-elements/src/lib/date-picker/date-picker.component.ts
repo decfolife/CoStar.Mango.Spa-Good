@@ -1,12 +1,18 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { DxDateBoxComponent, DxValidatorComponent } from 'devextreme-angular';
 
+
+/**
+ * Date Picker Input Field: Primarily to be used as part of the DynamicForms component
+ * @export
+ * @class DatePickerComponent
+ * @param {boolean} showDefaultValidationTooltip - Show DevExtreme default tooltip,
+ */
 @Component({
   selector: 'crem-date-picker',
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.scss'],
 })
-
 export class DatePickerComponent {
   @Input() value: string;
   @Input() dateFormat: string = 'MM/dd/yyyy';
@@ -18,6 +24,7 @@ export class DatePickerComponent {
   @Input() min: Date;
   @Input() max: Date;
   @Input() disabled: boolean;
+  @Input() showDefaultValidationTooltip?: boolean = true;
   @Output() onChangeEvent = new EventEmitter();
 
   @ViewChild("DateBoxValidator", { static: false }) dateBoxValidator: DxValidatorComponent

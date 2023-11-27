@@ -93,5 +93,12 @@ export class SharedLeftNavComponent implements OnChanges {
       this.navigateSpa.emit(navLink)
     }
   }
+  
+  leftNavOpened(e) {
+    if (!e || !e._element || !e._element.nativeElement || !e._element.nativeElement.children)
+      return;
 
+    e._element.nativeElement.children[1].removeAttribute('tabindex');
+    e._element.nativeElement.children[3].removeAttribute('tabindex');
+  }
 }

@@ -2435,5 +2435,63 @@ export class ListPageComponent implements OnInit {
       masterGroupId: -1
     }
   }
+  
+  adaAttr(e: any) {
+    if (!e || !e.element) return; // Ensure that e.element exists
+    let buttons;
+    if (e.element[0])
+      buttons = e.element[0].querySelectorAll(".dx-selection");
+    else 
+      buttons = e.element.querySelectorAll(".dx-selection");
+    
+    buttons.forEach(button => {
+      // Ensure button exists, has an aria-label and a class list
+      if (!button || !button.hasAttribute('aria-label') || !button.classList) return;
+
+      let SelectedPagingButton = button.getAttribute('aria-label');
+      if (!SelectedPagingButton.endsWith(' Selected')) {
+        SelectedPagingButton += ' Selected';
+        button.setAttribute('aria-label', SelectedPagingButton);
+      }
+
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (!button.classList.contains('dx-selection')) {
+            const currentAriaLabel = button.getAttribute('aria-label');
+            if (currentAriaLabel && currentAriaLabel.endsWith(' Selected')) {
+              const newAriaLabel = currentAriaLabel.slice(0, -9); // Remove ' Selected' from the end of the string
+              button.setAttribute('aria-label', newAriaLabel);
+            }
+          }
+        });
+      });
+      observer.observe(button, { attributeFilter: ['class'] });
+    });
+  }
+
+  adaAttrNoDataGrid(e:any) {
+    if (!e || !e.element) return;
+    
+    let noDataEl;
+    if (e.element[0])
+      noDataEl = e.element[0].querySelector(".dx-empty");
+    else 
+      noDataEl = e.element.querySelector(".dx-empty");
+      
+    let spanChild = null;
+
+    // Check if noDataEl exists
+    if (noDataEl) {
+        spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
+    }
+
+    // If either element is missing, exit the function
+    if (!noDataEl || !spanChild) {
+        return;
+    }
+
+    noDataEl.setAttribute("role", "row");
+    spanChild.setAttribute("role", "gridcell");
+  }
 
 }

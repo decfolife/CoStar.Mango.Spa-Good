@@ -26,7 +26,8 @@
 			[repaintChangesOnly]="true"
 			[showBorders]="false"
 			(onRowClick)="rowClick($event)"
-			[wordWrapEnabled]="true">
+			[wordWrapEnabled]="true"
+			(onContentReady)="adaAttrNoDataGrid($event)">
 
 
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>

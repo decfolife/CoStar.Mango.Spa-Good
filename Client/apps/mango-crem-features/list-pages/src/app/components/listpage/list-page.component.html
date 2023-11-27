@@ -158,6 +158,7 @@
         <mat-button-toggle [class.active]="listPageViewMode !== 'map' && !inDisabledUIState"
           (change)="toggleListMap('list')"
           [disabled]="inDisabledUIState"
+          [checked]="listPageViewMode !== 'map' ? true : false "
         >
           <fa-icon [icon]="faList"></fa-icon>
           <span>&nbsp;List</span>
@@ -240,7 +241,7 @@
     (onInitialized)="gridInitialized($event)"
     (onSelectionChanged)="onGridSelectionChanged($event)"
     [columnChooser]="{ width: 400, height: 500 }"
-    (onContentReady)="checkBoxAttributes($event); AdaAttributesInEmptyColumns($event)"
+    (onContentReady)="checkBoxAttributes($event); AdaAttributesInEmptyColumns($event); adaAttr($event); adaAttrNoDataGrid($event)"
     (onCellPrepared)="dataGridOnCellPrepared($event)"
   >
     <dxo-column-fixing [enabled]="true"

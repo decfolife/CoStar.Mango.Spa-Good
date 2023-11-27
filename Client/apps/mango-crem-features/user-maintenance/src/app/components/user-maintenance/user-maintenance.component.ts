@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent} from 'devextreme-angular';
 import 'regenerator-runtime/runtime';
 import * as ExcelJS from 'exceljs';
 import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -52,6 +52,15 @@ export class UserMaintenanceComponent implements OnInit {
     this.getUserFormId();
   }
 
+  addADAtoIconClear(): void {
+    const iconClearElement = document.querySelector('.dx-icon-clear') as HTMLElement | null;
+    if (iconClearElement) {
+      iconClearElement.setAttribute('tabindex', '0');
+      iconClearElement.setAttribute('role', 'button');
+      iconClearElement.setAttribute('aria-label', 'Clear Search Filter');
+    }
+  }
+
   public getUserList(filter) {
     this.service.getUserList(filter)
       .subscribe(result => {
@@ -96,11 +105,25 @@ export class UserMaintenanceComponent implements OnInit {
     }
   }
 
-  public onCellPrepared(e) {  
+  public onCellPrepared(e) {
     if (e.rowType == "data" && e.column.dataField === "Actions") {
       e.cellElement.className += " not-clickable";  
     }
+  
+    if (e.rowType === "header") {
+      const ele = e.cellElement.querySelector(".dx-header-filter");
+      if (ele) {
+        setTimeout(() => {
+          ele.addEventListener("click", () => {
+            ele.setAttribute("aria-label", "Column Expanded");
+            ele.setAttribute("aria-expanded", "true");
+          });
+        }, 150);
+      }
+    }
   }
+
+
 
   public onFilterChange(e: any[]): void {
     const selectedFilter: any = e?.[0]?.value || e?.[0] ;
@@ -286,4 +309,19 @@ export class UserMaintenanceComponent implements OnInit {
     const date = new Date();
     return this.datepipe.transform(date, this.dateFormat);
   }
+
+  public addADAAttributes(e) {
+    setTimeout(() => {
+      const spanElements = e.element.querySelectorAll('.dx-header-filter.dx-header-filter-empty');
+      if (spanElements) {
+        spanElements.forEach((spanElement, i) => {
+          const caption = e.component.columnOption(i, 'caption');
+          spanElement.setAttribute('aria-label', 'Show filter options for column ' + caption + 'button sub menu');
+          spanElement.setAttribute('role', 'button');
+          spanElement.setAttribute('aria-haspopup', 'dialog');
+          spanElement.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+  };
 }

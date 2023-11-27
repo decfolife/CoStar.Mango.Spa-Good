@@ -24,6 +24,7 @@ fxFlexFill
 				keyExpr="gridIndex"
 				(onRowClick)="rowClick($event)"
 				[wordWrapEnabled]="true"
+				(onContentReady)="adaAttrNoDataGrid($event)"
 		>
 		<!-- //gets rid of default paging function -->
 		<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>	

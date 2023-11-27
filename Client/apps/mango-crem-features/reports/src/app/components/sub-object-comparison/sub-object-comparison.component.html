@@ -1,12 +1,9 @@
 <div class="report-page">
     <div class="report-page-controls-wrapper">
         <div class="controls-left">
-            <div class="dbl-right-margin d-flex">
-                <div class="pageTitle">
-                    {{objectType}}: &nbsp;
-                </div>
-                {{pageTitle}}
-            </div>
+            <h1 class="dbl-right-margin" style="display:flex; font-size: 14px;"> 
+                {{objectType}}:&nbsp; {{pageTitle}}
+            </h1>
             <cs-search #SearchBox class="report-search" (changed)="searchDataGrid($event)" (keyup)="onKeyUpEvent($event)"  [disabled]="loading || !valid">
             </cs-search>
             <crem-button class="button__apply" type="secondary" (click)="displayColumnChooser()" [disabled]="loading || !valid">Comparison Filter

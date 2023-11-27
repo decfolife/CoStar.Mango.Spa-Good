@@ -30,6 +30,7 @@
             [autoExpandAll]="isExpanded"
             (onCellPrepared)="onCellPrepared($event)"
             (onCellClick)="onCellClicked($event)"
+            (onContentReady)="addADAAttributes($event)"
             >
             <dxo-paging 
                 [pageSize]="50"

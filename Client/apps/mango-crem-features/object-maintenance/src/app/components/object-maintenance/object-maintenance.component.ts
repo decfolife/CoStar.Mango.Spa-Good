@@ -95,7 +95,19 @@ export class ObjectMaintenanceComponent implements OnInit, OnDestroy {
     if (e.rowType == "data" && e.column.dataField === "actions") {
       e.cellElement.className += " not-clickable";  
     }
-}  
+
+    if (e.rowType === "header") {
+      const ele = e.cellElement.querySelector(".dx-header-filter");
+      if (ele) {
+        setTimeout(() => {
+          ele.addEventListener("click", () => {
+            ele.setAttribute("aria-label", "Column Expanded");
+            ele.setAttribute("aria-expanded", "true");
+          });
+        }, 150);
+      }
+    }
+  } 
 
   public onObjectTypeChange(object: any) {
     this.currentFilterType = "1";
@@ -219,5 +231,29 @@ export class ObjectMaintenanceComponent implements OnInit, OnDestroy {
         intValue: "-1"
       }
     )
+  }
+
+  public addADAAttributes(e) {
+    setTimeout(() => {
+      const spanElements = e.element.querySelectorAll('.dx-header-filter.dx-header-filter-empty');
+      if (spanElements) {
+        spanElements.forEach((spanElement, i) => {
+          const caption = e.component.columnOption(i, 'caption');
+          spanElement.setAttribute('aria-label', 'Show filter options for column ' + caption + ' button sub menu');
+          spanElement.setAttribute('role', 'button');
+          spanElement.setAttribute('aria-haspopup', 'dialog');
+          spanElement.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+  };
+
+  addADAtoIconClear(): void {
+    const iconClearElement = document.querySelector('.dx-icon-clear') as HTMLElement | null;
+    if (iconClearElement) {
+      iconClearElement.setAttribute('tabindex', '0');
+      iconClearElement.setAttribute('role', 'button');
+      iconClearElement.setAttribute('aria-label', 'Clear Search Filter');
+    }
   }
 }

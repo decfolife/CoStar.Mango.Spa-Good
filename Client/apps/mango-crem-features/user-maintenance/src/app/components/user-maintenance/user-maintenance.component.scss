@@ -6,6 +6,10 @@
     }
 }
 
+button.userOptionsMenuBtn:focus{
+    box-shadow: 0 0 0 0.1rem #779ede;
+}
+
 :host ::ng-deep .not-clickable {  
     cursor: default !important;  
 }

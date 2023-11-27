@@ -46,8 +46,9 @@
 			[columnMinWidth]="10"
 			(onCellPrepared)="onCellPrepared($event)"
             (onCellClick)="onCellClicked($event)"
+			(onContentReady)="addADAAttributes($event)"
 		>
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+			<dxo-header-filter [visible]="true" [allowSearch]="true" [elementattr]='addADAtoIconClear()'></dxo-header-filter>    
 			<dxo-sorting mode="multiple"></dxo-sorting>
 			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 			<dxo-column-chooser [allowSearch]="true" mode="select">
@@ -78,7 +79,12 @@
 			<dxi-column dataField="Actions" caption="Actions" type="buttons" width="65">
 		    	<dxi-button	template="moreMenuTemplate">
 		    		<div *dxTemplate="let data of 'moreMenuTemplate'" style="cursor: default">
-		    			<button class="btn btn-link" [matMenuTriggerFor]="UserMoreMenu" mat-button title="Menu" aria-haspopup="menu">
+		    			<button 
+							class="btn btn-link userOptionsMenuBtn" 
+							[matMenuTriggerFor]="UserMoreMenu" 
+							mat-button aria-haspopup="menu" 
+							aria-label="More User Options"
+						>
                 <fa-icon [icon]="faEllipsisH"></fa-icon>
               </button>
 		    			<mat-menu #UserMoreMenu="matMenu">

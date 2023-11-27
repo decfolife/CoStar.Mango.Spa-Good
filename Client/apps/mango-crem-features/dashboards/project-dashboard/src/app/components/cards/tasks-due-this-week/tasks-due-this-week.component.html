@@ -27,6 +27,7 @@ fxFlexFill
 				(onRowClick)="rowClick($event)"
 				(onRowPrepared) = "decorateText($event)"
 				[wordWrapEnabled]="true"
+				(onContentReady)="adaAttrNoDataGrid($event)"
 		>
 				<dxo-scrolling mode="virtual"></dxo-scrolling>
 				<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>

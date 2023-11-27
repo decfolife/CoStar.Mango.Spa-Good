@@ -25,7 +25,7 @@ fxFlexFill
 			keyExpr="gridIndex"
 			(onRowClick)="rowClick($event)"
 			[wordWrapEnabled]="true"
-			(onContentReady)="adaAttributes($event); adaAttr($event)"
+			(onContentReady)="adaAttributes($event); adaAttr($event); adaAttrNoDataGrid($event)"
 		>
 			<dxo-paging [pageSize]="50"></dxo-paging>
 			<dxo-pager [showPageSizeSelector]="true" [visible]="true" [allowedPageSizes]="[25, 50, 100]" [showInfo]="true">

@@ -43,6 +43,7 @@ $menuWidth: 275px;
   .gray {
     color: colors.$gray;
     padding-left: 1rem;
+    padding-top: 4.5pt;
   }
 
   .info-menu {
@@ -69,6 +70,80 @@ $menuWidth: 275px;
     color: colors.$costarBlue;
   }
 
+  .mat-accordion {
+    position: relative;
+    z-index: 100;
+  }
+
+  .mat-list {
+    padding-top: 0;
+    width: 275px;
+    border: 1px solid rgba(51, 51, 51, .15);
+  }
+
+  .mat-expansion-panel {
+    border-bottom: 1px solid rgba(51, 51, 51, .15);
+    border-radius: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+
+  .mat-expansion-panel-header {
+    font-size: 14px !important;
+    height: 32px !important;
+  }
+
+  .mat-list-item {
+    font-size: 14px !important;
+    height: 32px !important;
+  }
+
+  .mat-menu-trigger {
+    background-color: transparent;
+    border: none;
+    color: #0559b3;
+
+  }
+
+  .mat-menu-trigger:focus {
+    outline: #779ede solid 2px !important;
+    outline-offset: -3px;
+  }
+
+  .dbl-left-margin {
+    margin-left: 16px !important;
+  }
+
+  .view-list-item-flex button {
+    background: transparent;
+    border: 0;
+    font-size: 14px !important;
+  }
+
+  .view-list-item-flex button:hover {
+    background: rgba(0, 0, 0, .04);
+  }
+
+  .view-list-item-flex button:focus {
+    outline: #779ede solid 2px !important;
+    outline-offset: -3px;
+  }
+
+  .info-menu-ul {
+    margin-top: 10px !important;
+    background-color: #0559b3 !important;
+
+  }
+  .mat-expansion-panel-body {
+    padding: 7px 24px 7px !important;
+  }
+
+  .view-list-item-flex {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
 }
 
 /**
@@ -101,11 +176,11 @@ $menuWidth: 275px;
               border-bottom: 1px solid rgba(51, 51, 51, .15);
               border-radius: 0;
               .mat-expansion-panel-body {
-                padding: 0 0 16px 24px;
+                padding: 7px 24px 7px !important;
 
                 .mat-list-item {
-                  font-size: 14px;
-                  height: 32px;
+                  font-size: 14px !important;
+                  height: 32px !important;
                   .mat-list-item-content {
                     padding: 0 0 0 16px;
                   }
@@ -157,7 +232,30 @@ $menuWidth: 275px;
 
     }
   }
-}
+
+    .info-menu-ul {
+      margin-top: 10px;
+      margin-right: 15px;
+    }
+  
+    .mat-menu-child-button {
+      height: 35px;
+      line-height: 35px;
+      border-bottom: 1px solid rgba(51, 51, 51, .15);
+    }
+    
+    .mat-list-base .mat-list-item .mat-list-item-content {
+      padding: 0px !important;
+    }
+
+    .mat-expansion-panel header.mat-expanded {
+      height:  32px !important;
+    }
+
+    .mat-expansion-panel-body {
+      padding: 7px 24px 7px !important;
+    }
+  }
 
 // TODO: In use?
 .scroll-view-content {

@@ -123,6 +123,23 @@ export class ActivityFeedComponent implements OnInit, OnDestroy {
       observer.observe(button, { attributeFilter: ['class'] });
     });
   }
+  adaAttrNoDataGrid(e:any) {
+    let noDataEl = e.element.querySelector(".dx-empty");
+    let spanChild = null;
+
+    // Check if noDataEl exists
+    if (noDataEl) {
+        spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
+    }
+
+    // If either element is missing, exit the function
+    if (!noDataEl || !spanChild) {
+        return;
+    }
+
+    noDataEl.setAttribute("role", "row");
+    spanChild.setAttribute("role", "gridcell");
+  }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe())

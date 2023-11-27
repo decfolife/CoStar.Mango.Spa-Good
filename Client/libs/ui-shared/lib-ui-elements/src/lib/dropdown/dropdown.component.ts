@@ -26,14 +26,14 @@ import { DxDataGridComponent, DxDropDownBoxComponent, DxFormComponent, DxSelectB
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-//  export const dropdownData = (data: any[]) =>{
-//    const values: any[] = []
-//  return data.map((datum : Dropdown)=> {
-//    values.push(datum.displayKey)
-//    return data=values;
-//  })
-//  }
-
+/**
+ *
+ * @export Dropdown Component
+ * @class DropdownComponent
+ * @implements {OnInit}
+ * @implements {OnChanges}
+ * @param {boolean} showDefaultValidationTooltip - Show DevExtreme default tooltip
+ */
 @Component({
   selector: 'crem-dropdown',
   templateUrl: './dropdown.component.html',
@@ -50,6 +50,8 @@ export class DropdownComponent implements OnInit, OnChanges {
   public isDropDownBoxOpened: boolean = false;
   public modalValueChanging: boolean = false;
   public loading: boolean = true;
+  private clearButton: any;
+
   @Output() selectedItems = new EventEmitter<any[]>();
   @ViewChild('dropdownTemplate', { static: false })
   dropdownTemplate: DxDataGridComponent;
@@ -57,7 +59,6 @@ export class DropdownComponent implements OnInit, OnChanges {
   @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent
   @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent
   @ViewChild("SelectBoxValidator", { static: false }) SelectBoxValidator: DxValidatorComponent
-
 
   @Input() public id: string;
   @Input() public initialSelectedValue: any;
@@ -97,15 +98,27 @@ export class DropdownComponent implements OnInit, OnChanges {
   @Input() public allowSearch?: boolean = false;
   @Input() isDisabled: boolean = false;
   @Input() dropDownContainerCustomClass: string;
+  @Input() showDefaultValidationTooltip?: boolean = true;
 
   @ContentChild('customHeaderTemplate') customHeaderTemplate : TemplateRef<any>;
   @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent;
-  constructor() { }
+  @ViewChild('dropDownBox', { static: false }) dropDownBox: any;
 
   ngOnChanges(changes: SimpleChanges): void {
     const { previousValue, currentValue } = changes.dataSource || {}
     if (previousValue !== currentValue && currentValue && currentValue.length > 0) {
       this.initializeDropdown()
+    }
+  }
+
+  ngAfterViewInit() {
+    this.clearButton = document.querySelector('.dx-icon-clear') as HTMLElement | null;
+    if (this.clearButton) {
+      this.clearButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          this.dropDownBox.instance.option('value', null);
+        }
+      });
     }
   }
 
@@ -123,22 +136,22 @@ export class DropdownComponent implements OnInit, OnChanges {
     } else if (this.selectMode == 'multiple') {
       if (this.initialSelectedValue) {
         this.dataSource.forEach((data) => {
-            if (this.initialSelectedValue.includes((data?.[this.valueExpr])?.toString())) {
-              this.selectedDisplay.push(data?.[this.valueExpr]);
-              if (!this.useArrayOfKeys) {
-                this.selections.push(data);
-              }
-              if(this.getWholeObject) {
-                this.selectedObjects.push(data);
-              }
+          if (this.initialSelectedValue.includes((data?.[this.valueExpr])?.toString())) {
+            this.selectedDisplay.push(data?.[this.valueExpr]);
+            if (!this.useArrayOfKeys) {
+              this.selections.push(data);
             }
+            if (this.getWholeObject) {
+              this.selectedObjects.push(data);
+            }
+          }
         });
         if (this.useArrayOfKeys) {
           this.selections = this.initialSelectedValue;
         }
       }
 
-      if(this.getWholeObject) {
+      if (this.getWholeObject) {
         this.selectedItems.emit(this.selectedObjects);
       } else {
         this.selectedItems.emit(this.selections);
@@ -150,7 +163,7 @@ export class DropdownComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.dropdownHeaderDisplay = this.dropdownHeaderDisplay || this.placeholder;
     this.wrapperAttr = {
-      class: this.dropDownContainerCustomClass,
+      class: this.dropDownContainerCustomClass ? 'crem-select-box' + ' ' + this.dropDownContainerCustomClass : 'crem-select-box',
       id: 'crem-select-box'
     }
     this.selectBoxWrapperAttr = {
@@ -165,7 +178,7 @@ export class DropdownComponent implements OnInit, OnChanges {
       this.dataSource === undefined
     ) {
       this.loading = false;
-      
+
       return;
     }
     this.loading = false;
@@ -189,7 +202,7 @@ export class DropdownComponent implements OnInit, OnChanges {
       if (this.grouped) {
         this.dataSource?.forEach((group, gIndex) => {
           const tempItemIndex = group.items?.findIndex((data) => {
-            return data?.[this.valueExpr] === $event?.value 
+            return data?.[this.valueExpr] === $event?.value
           })
 
           if (tempItemIndex !== -1) {
@@ -202,7 +215,7 @@ export class DropdownComponent implements OnInit, OnChanges {
           return data?.[this.valueExpr] === $event?.value
         })
       }
-      
+
       if (!this.grouped && index !== -1) {
         this.modalValueChanging = true;
         this.selectedItems.emit([this.dataSource[index]]);
@@ -224,10 +237,36 @@ export class DropdownComponent implements OnInit, OnChanges {
       } else {
         this.clearSelectBox();
         this.selectedItems.emit([]);
-      }    
+      }
     }
 
   }
+
+  onCellClick(event) {
+    if (this.selectMode === 'multiple' && !event.column.type || event.column.type !== 'selection') {
+      this.dataGrid.instance.selectRows([event.key], true);
+    }
+    if (event.rowType == 'header') {
+      if (this.selectMode === 'multiple' && !event.column.type || event.column.type !== 'selection') {
+        if(this.dataGrid.instance.getSelectedRowKeys().length == this.dataGrid.instance.getDataSource().items().length) {
+          this.clearDropdown();
+        } else {
+          this.dataGrid.instance.selectAll();
+        }
+      }
+      let headerCheckboxContainer = event.component.$element().find('.dx-header-row .dx-checkbox-container');
+      let headerCheckboxAttr = event.component.$element().find('.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size').attr('aria-checked');
+      if (headerCheckboxAttr === 'true') {
+        headerCheckboxContainer.attr('aria-live', 'polite');
+        headerCheckboxContainer.attr('aria-label', 'All checkboxes are checked ');
+      } else {
+        headerCheckboxContainer.attr('aria-live', 'polite');
+        headerCheckboxContainer.attr('aria-label', 'All checkboxes are un-checked');
+      }
+
+    }
+  }
+
 
   getSelectedRowsData($event) {
     setTimeout(() => {
@@ -244,6 +283,7 @@ export class DropdownComponent implements OnInit, OnChanges {
     })
   }
 
+
   clearSelectBox() {
     this.selectedDisplay = [];
     this.selectBox?.instance ? this.selectBox.instance.reset() : null
@@ -254,16 +294,16 @@ export class DropdownComponent implements OnInit, OnChanges {
     this.dataGrid.instance ? this.dataGrid.instance.clearSelection() : null
   }
 
+  onKeyUp(event) {
+    const targetElement = event.target as HTMLElement;
+    if (targetElement) {
+      targetElement.setAttribute('aria-label', 'Search Filter For - ' + event.target.value);
+    }
+  }
+
   setDropdownvalue(data) {
     this.selectedDisplay = data.map((dropdown) => dropdown?.[this.valueExpr]);
     this.selections = data;
-  }
-  onDropdownClose(e) {
-    if (!this.useSelectBox) {
-      setTimeout(() => {
-        this.dropDown.instance.focus();
-      });
-    }
   }
 
   focusDropdown() {
@@ -277,13 +317,15 @@ export class DropdownComponent implements OnInit, OnChanges {
   isDropdownOpen() {
     if (this.useSelectBox) {
       return this.selectBox.instance.option().opened;
+    } else {
+      return this.dropDown.instance.option().opened;
     }
   }
 
   openDropdown(e) {
     this.setDropDownAttr(e);
     this.setDropDownHeaderAttr(e);
-  }  
+  }
 
   setDropDownAttr(e) {
     // Add title attribute to all dropdown options
@@ -403,34 +445,58 @@ export class DropdownComponent implements OnInit, OnChanges {
     }
   }
 
-  validate() {
+  public validate() {
     if (this.useSelectBox) {
-      const validation =  this.SelectBoxValidator.instance.validate();
+      const validation = this.SelectBoxValidator.instance.validate();
       return validation;
     }
   }
 
-	ADAattributes(e: any) {
-		// Search for the span element with class dx-datagrid-nodata
-    // TODO: If possible, change to avoid accessing the DOM directly
-		const spanElement = e.component.$element().find('.dx-datagrid-nodata');
-		if (spanElement.length > 0) {
-		  spanElement.attr('role', 'alert');
-		  spanElement.attr('aria-live', 'polite');
-		}
-  }
+  ADAattributes(e: any) {
+    // Search for the span element with class dx-datagrid-nodata
+    let spanElement = e.component.$element().find('.dx-datagrid-nodata');
+    if (spanElement.length > 0) {
+      spanElement.attr('role', 'alert');
+      spanElement.attr('aria-live', 'polite');
+    }
 
-  onEnterKey() {
-    setTimeout(() => {
-      if (!this.modalValueChanging) {
-        const isOpen = this.isDropdownOpen();
-        if (!isOpen) {
-          this.selectBox?.instance?.open();
-        } else {
-          this.selectBox?.instance?.close();
-        }
+    // Check if e.element is a jQuery object:
+    let element = (e.element && e.element.jquery) ? e.element[0] : e.element;
+
+    // Aria requirements for search icon in the drop down
+    let searchIcons = element.querySelectorAll(".dx-menu-item-has-icon");
+    if (!searchIcons) {
+      return;
+    } else {
+      searchIcons.forEach(searchIcon => {
+        if (!searchIcon) return;
+
+        // Remove the aria-haspopup attribute
+        searchIcon.removeAttribute('aria-haspopup');
+
+        // Make the searchIcon focusable
+        searchIcon.setAttribute('tabindex', '0');
+
+        // Set initial aria-label and aria-expanded attributes
+        searchIcon.setAttribute('aria-label', 'Search Button');
+        searchIcon.setAttribute('aria-expanded', 'false');
+
+        // Event listener for mouse hover
+        searchIcon.addEventListener('mouseover', () => {
+          searchIcon.setAttribute('aria-expanded', 'true');
+        });
+
+        // Reset on mouseout
+        searchIcon.addEventListener('mouseout', () => {
+          searchIcon.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      let spanSearchInput = e.component.$element().find('.dx-texteditor-input');
+      if (spanSearchInput.length > 0) {
+        spanSearchInput.attr('aria-label', 'Search Filter Text');
       }
-    })
+    }
   }
 
   closeSelectBox() {
@@ -438,16 +504,24 @@ export class DropdownComponent implements OnInit, OnChanges {
   }
 
   onKeyDown(event) {
-    if (this.selectMode !== 'single') {
-      if (event?.event?.originalEvent?.key === " " || event?.event?.originalEvent?.key === "ArrowDown") {
-        this.dropDown.instance.open();
-      }
+    const instanceToOpen = this.useSelectBox ? this.selectBox.instance : this.dropDown.instance;
+    if (event?.event?.originalEvent?.key === " " || event?.event?.originalEvent?.key === "ArrowDown" || event?.event?.originalEvent?.key === "Enter") {
+      instanceToOpen.open();
+      event.event.preventDefault();
+    }
+    const iconClearElement = document.querySelector('.dx-icon-clear') as HTMLElement | null;
+    if (iconClearElement) {
+      iconClearElement.setAttribute('tabindex', '0');
+      iconClearElement.setAttribute('role', 'button');
+      iconClearElement.setAttribute('aria-label', 'Clear Search Filter');
     }
   }
 
-  onGridKeyDown(event) {
-    if (event?.event?.originalEvent?.key === "Escape") {
-      this.dropDown.instance.close();
+  onGridKeyDown(event: any) {
+    if (event?.event?.key === "Escape") {
+      if (this.dropDown && this.dropDown.instance && typeof this.dropDown.instance.close === 'function') {
+        this.dropDown.instance.close();
+      }
     }
   }
 

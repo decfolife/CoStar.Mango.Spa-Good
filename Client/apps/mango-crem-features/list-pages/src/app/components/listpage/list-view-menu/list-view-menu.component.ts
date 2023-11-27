@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, HostListener } from '@angular/core';
 
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
@@ -18,8 +18,7 @@ import {
   styleUrls: ['./list-view-menu.component.scss']
 })
 export class ListViewMenuComponent  {
-  @ViewChild(MatMenuTrigger)
-  viewMenuTrigger: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger) viewMenuTrigger: MatMenuTrigger;
 
   @Input()
   currentListViewName: string;
@@ -54,6 +53,8 @@ export class ListViewMenuComponent  {
 
   constructor() { }
 
+  ShowMenu = false;
+
   mouseOverView(id: number) {
     this.hoverViewId = id;
   }
@@ -64,6 +65,17 @@ export class ListViewMenuComponent  {
   }
 
   closeMenu() {
-    this.viewMenuTrigger.closeMenu();
+    this.ShowMenu = false;
+  }
+
+  toggleMenu() {
+    this.ShowMenu = !this.ShowMenu;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (!(event.target as HTMLElement).closest('.list-view-button')) {
+      this.closeMenu();
+    }
   }
 }

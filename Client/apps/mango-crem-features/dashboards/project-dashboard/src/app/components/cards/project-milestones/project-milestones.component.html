@@ -43,7 +43,7 @@ height="640px"
 			keyExpr="gridIndex"
 			(onRowClick)="rowClick($event)"
 			[wordWrapEnabled]="true"
-			(onContentReady)="adaAttr($event)">
+			(onContentReady)="adaAttr($event); adaAttrNoDataGrid($event)">
 
 			<dxo-paging [pageSize]="50"></dxo-paging>
 			<dxo-pager [showPageSizeSelector]="true" 

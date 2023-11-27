@@ -1,17 +1,19 @@
 <button mat-stroked-button type="button"
-  [disabled] = "!enabled"
+  [disabled]="!enabled"
   class="list-view-button"
-  #listViewMenuTrigger="matMenuTrigger"
-  [matMenuTriggerFor]="listViewMenu"
+  (click)="toggleMenu()"
+  [attr.aria-label]="'List View Options'"
+  [attr.aria-expanded]="ShowMenu"
+  (keydown.escape)="closeMenu()"
 >
   <span title="{{ currentListViewName }}">{{ currentListViewName }}</span>
   <fa-icon [icon]="faCaretDown" title="click to see the list of views"></fa-icon>
 </button>
 
-<mat-menu #listViewMenu="matMenu" class="listPageViews">
-  <mat-list class="limit-width">
+<mat-accordion class="listPageViews" *ngIf="ShowMenu" class="mat-accordion"  (keydown.escape)="closeMenu()">
+    <mat-list class="limit-width mat-list">
     <mat-expansion-panel #CoStarQueriesPanel
-      class="mat-elevation-z0"
+      class="mat-expansion-panel"     
       [class.open]="CoStarQueriesPanel.expanded"
       [expanded]="false"
       (click)="$event.stopPropagation()"
@@ -30,32 +32,30 @@
           (mouseover)="mouseOverView(listView.id)"
         >
           <div class="view-list-item-flex">
-            <span title="{{ listView.name }}">{{ listView.name }}</span>
-
+            <button title="{{ listView.name }}">{{ listView.name }}</button>
             <span *ngIf="listView.isDefault"
               class="dbl-left-margin gray"
             >(Default)</span>
 
             <span class="dbl-left-margin view-list-item">
               <button [matMenuTriggerFor]="costarViewMoreMenu"
-                (click)="$event.stopPropagation()"
+                (click)="$event.stopPropagation(); $event.preventDefault()"
               >
-                <fa-icon [icon]="faEllipsisH" title="click to see the options"
-                  [style.opacity]="hoverViewId === listView.id ? 1 : 0"
+                <fa-icon [icon]="faEllipsisH" title="click to see the options"                 
                 ></fa-icon>
               </button>
 
               <mat-menu #costarViewMoreMenu="matMenu">
-                <button mat-menu-item *ngIf="!listView.isDefault"
+                <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
                 (click)="setDefaultListView.next(listView); $event.stopPropagation()"
                 >Make Default</button>
 
                 <button mat-menu-item
-                  *ngIf="listView.isDefault"
+                  *ngIf="listView.isDefault" class="mat-menu-child-button"
                   (click)="clearDefault.next(listView); $event.stopPropagation()"
                 >Clear Default</button>
 
-                <button mat-menu-item *ngIf="!listView.isDefault"
+                <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
                   (click)="hideListView.next(listView); $event.stopPropagation()"
                 >Hide</button>
               </mat-menu>
@@ -87,8 +87,7 @@
         (mouseover)="mouseOverView(listView.id)"
       > 
         <div class="view-list-item-flex">
-          <span title="{{ listView.name }}">{{ listView.name }}</span>
-
+          <button title="{{ listView.name }}">{{ listView.name }}</button>
           <span *ngIf="listView.isDefault"
             class="dbl-left-margin gray"
           >(Default)</span>
@@ -98,22 +97,20 @@
               (click)="$event.stopPropagation()"
             >
               <fa-icon [icon]="faEllipsisH" title="click to see the options"
-                [style.visibility]="hoverViewId === listView.id ? 'visible' : 'hidden'"
               ></fa-icon>
             </button>
 
             <mat-menu #myViewMoreMenu="matMenu">
-              <button mat-menu-item *ngIf="!listView.isDefault"
+              <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
               (click)="setDefaultListView.next(listView); $event.stopPropagation()"
               >Make Default</button>
 
-              <button mat-menu-item
-                *ngIf="listView.isDefault"
+              <button mat-menu-item *ngIf="listView.isDefault" class="mat-menu-child-button"
                 (click)="clearDefault.next(listView); $event.stopPropagation()"
               >Clear Default</button>
 
               <button mat-menu-item
-                *ngIf="showShare"
+                *ngIf="showShare" class="mat-menu-child-button"
                 (click)="shareListView.next(listView)"
               >
                 {{ listView.isSharedWithOthers ? "Sharing" : "Share" }}
@@ -123,17 +120,17 @@
                 ></fa-icon>
               </button>
 
-              <button mat-menu-item *ngIf="!listView.isDefault"
+              <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
                 (click)="hideListView.next(listView); $event.stopPropagation()"
               >Hide</button>
 
               <button mat-menu-item
-                *ngIf="!listView.isDefault"
+                *ngIf="!listView.isDefault" class="mat-menu-child-button"
                 (click)="deleteListView.next(listView)"
               >Delete</button>
 
               <button mat-menu-item
-                [matMenuTriggerFor]="infoMenu"
+                [matMenuTriggerFor]="infoMenu" class="mat-menu-child-button"
                 (click)="$event.stopPropagation()"
               >Info</button>
 
@@ -141,7 +138,7 @@
                 <mat-menu-item class="info-menu"
                   (click)="$event.stopPropagation()"
                 >
-                  <ul>
+                  <ul class="info-menu-ul">
                     <li>({{ listView.id }}) {{ listView.name }}</li>
                     <li>View Dataset: {{ listView.datasetName }}</li>
                     <li>Last Modified Date: {{ listView.lastModifiedDate }}</li>
@@ -177,7 +174,7 @@
           (mouseover)="mouseOverView(listView.id)"
         >
           <div class="view-list-item-flex">
-            <span title="{{ listView.name }}">{{ listView.name }}</span>
+            <button title="{{ listView.name }}">{{ listView.name }}</button>
 
             <span *ngIf="listView.isDefault"
               class="dbl-left-margin gray"
@@ -188,7 +185,6 @@
                 (click)="$event.stopPropagation()"
               >
                 <fa-icon [icon]="faEllipsisH" title="click to see the options"
-                  [style.opacity]="hoverViewId === listView.id ? 1 : 0"
                 ></fa-icon>
               </button>
 
@@ -222,7 +218,7 @@
                   <mat-menu-item class="info-menu"
                     (click)="$event.stopPropagation()"
                   >
-                    <ul>
+                    <ul class="info-menu-ul">
                       <li>({{ listView.id }}) {{ listView.name }}</li>
                       <li>Created By: {{ listView.createdBy }}</li>
                       <li>Created Date: {{ listView.createdDate }}</li>
@@ -260,11 +256,11 @@
           (mouseover)="mouseOverView(listView.id)"
         >
           <div class="view-list-item-flex">
-            <span title="{{ listView.name }}">{{listView.name}}</span>
+            <button title="{{ listView.name }}">{{listView.name}}</button>
 
             <span class="dbl-left-margin view-list-item">
               <button (click)="showListView.next(listView); $event.stopPropagation()">
-                <span [style.opacity]="hoverViewId === listView.id ? 1 : 0">Show</span>
+                Show
               </button>
             </span>
           </div>
@@ -273,5 +269,4 @@
     </dx-scroll-view>
     </mat-expansion-panel>
   </mat-list>
-</mat-menu>
-
+</mat-accordion>

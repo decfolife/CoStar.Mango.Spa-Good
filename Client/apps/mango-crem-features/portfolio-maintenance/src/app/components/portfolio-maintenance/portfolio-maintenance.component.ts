@@ -95,6 +95,15 @@ export class PortfolioMaintenanceComponent implements OnInit {
     this.treeList.instance.searchByText(data);
   }
 
+   addADAtoIconClear(): void {
+    const iconClearElement = document.querySelector('.dx-icon-clear') as HTMLElement | null;
+    if (iconClearElement) {
+      iconClearElement.setAttribute('tabindex', '0');
+      iconClearElement.setAttribute('role', 'button');
+      iconClearElement.setAttribute('aria-label', 'Clear Search Filter');
+    }
+  }
+
   public onCellClicked(e): void {
     if (!(e.event.target.parentElement.classList.contains("dx-treelist-expanded") 
         || e.event.target.parentElement.classList.contains("dx-treelist-collapsed")
@@ -119,6 +128,18 @@ export class PortfolioMaintenanceComponent implements OnInit {
         if (!(e.data.companyLevel !== 0 && e.data.isActive) && !(e.data.isPortfolio && e.data.isActive)) {
           e.cellElement.className += " not-clickable";
         }
+      }
+    }
+
+    if (e.rowType === "header") {
+      const ele = e.cellElement.querySelector(".dx-header-filter");
+      if (ele) {
+        setTimeout(() => {
+          ele.addEventListener("click", () => {
+            ele.setAttribute("aria-label", "Column Expanded");
+            ele.setAttribute("aria-expanded", "true");
+          });
+        }, 150);
       }
     }
   }
@@ -691,6 +712,19 @@ export class PortfolioMaintenanceComponent implements OnInit {
     }
   }
 
+  public addADAAttributes(e) {
+    setTimeout(() => {
+      const spanElement = e.element.querySelector('.dx-header-filter.dx-header-filter-empty');
+      if (spanElement) {
+          const caption = e.component.columnOption(1, 'caption');
+          spanElement.setAttribute('aria-label', 'Show filter options for column ' + caption + ' button sub menu');
+          spanElement.setAttribute('role', 'button');
+          spanElement.setAttribute('aria-haspopup', 'dialog');
+          spanElement.setAttribute('aria-expanded', 'false');
+      }
+    });
+  };
 }
+
 
 

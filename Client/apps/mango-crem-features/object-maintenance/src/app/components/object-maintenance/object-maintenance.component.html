@@ -8,6 +8,7 @@
 			</cs-search>
 			<div class="object-maintenance-page__dropdown">
 				<crem-dropdown *ngIf="objectTypeList?.length"
+					id="objectTypes"
 					[isDisabled]='isLoading'
 					[dataSource]='objectTypeList'
 					[allowSearch]='true'
@@ -22,6 +23,7 @@
 				></crem-dropdown>
 
 				<crem-dropdown *ngIf="!isLoading"
+					id="filterDropdown"
 					[isDisabled]='isLoading'
 					[dataSource]='filterDropdownField'
 					[allowSearch]='false'
@@ -58,8 +60,9 @@
 			[columnMinWidth]="10"
 			(onCellPrepared)="onCellPrepared($event)"
             (onRowClick)="onRowClicked($event)"
+			(onContentReady)="addADAAttributes($event)"
 		>
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
+			<dxo-header-filter [visible]="true" [allowSearch]="true" [elementattr]="addADAtoIconClear()"></dxo-header-filter>    
 			<dxo-sorting mode="multiple"></dxo-sorting>
 			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 			<dxo-column-chooser [allowSearch]="true" mode="select">

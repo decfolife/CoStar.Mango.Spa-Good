@@ -105,7 +105,23 @@ export class GroupMaintenanceComponent implements OnInit {
     if (e.rowType == "data" && e.column.dataField === "Actions") {
       e.cellElement.className += " not-clickable";  
     }
-  }
+
+    if (e.rowType === "header") {
+        const ele = e.cellElement.querySelector(".dx-header-filter");
+        if(ele){
+            setTimeout(() => {
+            
+                const setAriaAttributes = () => {
+                  ele.setAttribute("aria-label", "Column Expanded");
+                  ele.setAttribute("aria-expanded", "true");
+                };
+        
+                ele.addEventListener("click", setAriaAttributes);
+                ele.addEventListener("keydown", setAriaAttributes);
+            },150);
+        }
+      }
+    }
 
   private setColumnHeaderStyle(groupMaintenanceSheet, value, row, column, cell) {
     groupMaintenanceSheet.getRow(row).getCell(column).value = value;
@@ -375,4 +391,20 @@ export class GroupMaintenanceComponent implements OnInit {
   public toggleIsPortfolio(id) {
       this.isPortfolioTooltipVisible[id] = !this.isPortfolioTooltipVisible[id];
   }
+  
+  public addADAAttributes(e) {
+    setTimeout(() => {
+      const spanElements = e.element.querySelectorAll('.dx-header-filter.dx-header-filter-empty');
+
+      if (spanElements) {
+        spanElements.forEach((spanElement, i) => {
+          const caption = e.component.columnOption(i, 'caption');
+          spanElement.setAttribute('aria-label', 'Show filter options for column ' + caption + ' button sub menu');
+          spanElement.setAttribute('role', 'button');
+          spanElement.setAttribute('aria-haspopup', 'dialog');
+          spanElement.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+  };
 }

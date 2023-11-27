@@ -1,62 +1,67 @@
 .filterAndUsercontrols {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background: #F5F5F5;
-    border-bottom: 1px solid #c2c2c2;
-    padding: 0 16px 8px;
-    box-sizing: border-box;
-    font-size: 14px;
-  }
-  
-  .filterWrapper {
-    display: flex;
-    flex-wrap: wrap;
-  
-    crem-button {
-      margin-left: 0 !important;
-    }
-  }
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background: #F5F5F5;
+  border-bottom: 1px solid #c2c2c2;
+  padding: 0 16px 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.filterWrapper {
+  display: flex;
+  flex-wrap: wrap;
 
   crem-button {
-    margin-top: 8px;
+    margin-left: 0 !important;
   }
-  
-  .actionButtons {
-    display: Flex;
-    align-items: flex-start;
+}
+
+crem-button {
+  margin-top: 8px;
+}
+
+.actionButtons {
+  display: Flex;
+  align-items: flex-start;
+  margin-left: 8px;
+  crem-button {
     margin-left: 8px;
-    crem-button {
-      margin-left: 8px;
-    }
   }
-  
-  .filterElement {
-    display: flex;
-    justify-content: flex-start;
-    height: 32px;
-    margin: 0;
-    flex-basis: 0;
-    margin-top: 8px;
-  }
-  
+}
+
+.filterElement {
+  display: flex;
+  justify-content: flex-start;
+  height: 32px;
+  margin: 0;
+  flex-basis: 0;
+  margin-top: 8px;
+}
+
 
 crem-dropdown, crem-hierarchy-dropdown {
-  margin-right: 8px;
+margin-right: 8px;
 
-  .dx-fieldset {
-    margin: 0 !important;
-    padding: 0;
-  }  
+.dx-fieldset {
+  margin: 0 !important;
+  padding: 0;
+}  
 }
 
 button.mat-menu-item {
-  width: 100%;
+width: 100%;
 }
 
 div.mat-menu-panel div.mat-menu-content {
-  font-size: 14px;
+font-size: 14px;
 }
- 
-  
+
+:host::ng-deep {
+.dx-show-clear-button .dx-icon-clear {
+  color: #666666;
+}
+}
+

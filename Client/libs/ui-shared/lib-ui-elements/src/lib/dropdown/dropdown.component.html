@@ -8,7 +8,6 @@
   [displayExpr]="displayExpr"
   [disabled]="isDisabled"
   [visible]="isVisible"
-  (onEnterKey)="onEnterKey()"
   [showClearButton]="showClearButton"
   (onValueChanged)="dropdownOnValueChanged($event)"
   (onKeyDown)="onKeyDown($event, cell)"
@@ -20,8 +19,7 @@
   [deferRendering]="false"
   [readOnly]="readOnly"
   (onOpened)="openDropdown($event)"
-  (onClosed)="onDropdownClose($event)"
-  [inputAttr]="{ title: hoverText ? hoverText : placeholder, 'aria-controls': id, 'aria-label': hoverText ? hoverText : placeholder, id: 'input' + dataField}"
+  [inputAttr]="{ title: hoverText ? hoverText : placeholder, 'aria-controls': id, 'aria-label': hoverText ? hoverText : placeholder}"
   >
     <div *dxTemplate="let data of 'selectBoxCustomGroupTemplate'">
       <ng-template 
@@ -30,16 +28,25 @@
       </ng-template>
     </div>
   <dx-validator #SelectBoxValidator>
-    <dxi-validation-rule *ngIf="required && !customRequireValidation"
-        type="required"
-    ></dxi-validation-rule>
+    <ng-container *ngIf="showDefaultValidationTooltip; then DefaultValidationTooltip else NoDefaultValidationTooltip"></ng-container>
+    <ng-template #DefaultValidationTooltip>
+      <dxi-validation-rule *ngIf="required && !customRequireValidation"
+          type="required"
+      ></dxi-validation-rule>
+    </ng-template>
+    <ng-template #NoDefaultValidationTooltip>
+      <dxi-validation-rule *ngIf="required && !customRequireValidation"
+          type="required"
+          [message]="''"
+      ></dxi-validation-rule>
+    </ng-template>
   </dx-validator>
   <dxo-drop-down-options
     [wrapperAttr]="selectBoxWrapperAttr">
   </dxo-drop-down-options>
 
 </dx-select-box>
-<dx-drop-down-box *ngIf="!useSelectBox"
+<dx-drop-down-box *ngIf="!useSelectBox" #dropDownBox
   [id]="id + '_box'"
   [(opened)]="isDropDownBoxOpened"
   [placeholder]="placeholder"
@@ -56,7 +63,6 @@
   (onKeyDown)="onKeyDown($event, cell)"
   [deferRendering]="false"
   (onOpened)="openDropdown($event)"
-  (onClosed)="onDropdownClose($event)"
   [inputAttr]="{ title: placeholder, 'aria-controls': id + 'dropdownContainer', 'aria-label': placeholder}"
   >
   <dxo-drop-down-options
@@ -84,6 +90,7 @@
       [paging]="false"
       [keyExpr]="keyExpr || valueExpr"
       (onContentReady)="ADAattributes($event)"
+      (onCellClick)="onCellClick($event)"
       (keyup)="onKeyUp($event)"
     >
       <dxo-filter-row [visible]="allowSearch"></dxo-filter-row>

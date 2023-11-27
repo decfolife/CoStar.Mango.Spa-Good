@@ -29,6 +29,7 @@ fxFlexFill
 			keyExpr="gridIndex"
 			(onRowClick)="rowClick($event)"
 			[wordWrapEnabled]="true"
+			(onContentReady)="adaAttrNoDataGrid($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-search-panel [visible]="false"></dxo-search-panel>
