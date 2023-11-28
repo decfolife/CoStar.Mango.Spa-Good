@@ -17,6 +17,7 @@
 				[showColumnLines]="true"
 				[allowColumnReordering]="true"
 				[allowColumnResizing]="true"
+				[rowAlternationEnabled]="true"
 				columnResizingMode="widget"
 				[hoverStateEnabled]="true"
 				[showRowLines]="true"
@@ -27,7 +28,8 @@
 				>
 
 				<dxo-header-filter
-                	[visible]="true">
+                	[visible]="true"
+					[allowSearch]="true">
             	</dxo-header-filter>
 
 				<dxo-state-storing

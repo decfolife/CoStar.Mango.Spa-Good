@@ -74,7 +74,7 @@
     </div>
   </div>
 
-  <div>
+  <div *ngIf="!isAccountingEventEmpty">
     <mango-events-detail-section [masterScheduleID]="masterScheduleID" [leaseIsLocked]="isLocked" [leaseIsArchived]="isArchived" 
     [rightsInfo]="rightsInfo" [userInfo]="userInfo" (eventScheduleData)="setLeaseRecognitionScheduleID($event)"></mango-events-detail-section>
     <mango-payments-detail-section [eventScheduleData]="eventSchedule" [classificationID]="classificationID" [userInfo]="userInfo"></mango-payments-detail-section>

@@ -1,8 +1,7 @@
 <dx-popup id="transactionPopup"
-    class="popup"
     title="Scheduled Transactions"
     width="60%"
-    height="80%"
+    height="85%"
     [(visible)]="transactionPopupVisible"
     (onHidden)="onTransactionPopupHidden()"
     [closeOnOutsideClick]="true">
@@ -182,7 +181,7 @@
             </div>
 
         </dx-scroll-view>
-
+        <br/>
         <dx-data-grid
             #transactionPopupGrid
             [dataSource]="transactionPopupData.transactions"
@@ -196,7 +195,6 @@
             [allowColumnResizing]="true"
             [wordWrapEnabled]="true"
             [columnAutoWidth]="true"
-            height="50%"
             [remoteOperations]="false"
             [summary]="summaryFields"
 

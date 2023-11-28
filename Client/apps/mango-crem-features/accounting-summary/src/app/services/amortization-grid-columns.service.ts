@@ -21,6 +21,7 @@ export class AmortizationGridColumnsService {
   public functionalCurrencyEnabled = undefined;
   public isFiscalCalendar = undefined;
   private classificationId = -1;
+  private periodNameHeaderFilterDataSource;
 
   constructor(private formattingService: FormattingService) { }
 
@@ -123,7 +124,8 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             alignment: 'center',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            headerFilter: { allowsearch: false, dataSource: this.periodNameHeaderFilterDataSource}
           }, {
             caption: 'JE Status',
             name: 'JEStatus',
@@ -1456,9 +1458,11 @@ export class AmortizationGridColumnsService {
 
   public getSummaryColumns(classificationId: number,
     functionalCurrencyEnabled: boolean,
-    usesFiscalCalendar: boolean) {
+    usesFiscalCalendar: boolean,
+    periodNameHeaderFilterDataSource: any[]) {
     this.functionalCurrencyEnabled = functionalCurrencyEnabled;
     this.isFiscalCalendar = usesFiscalCalendar;
+    this.periodNameHeaderFilterDataSource = periodNameHeaderFilterDataSource;
     this.updateColumns(classificationId);
 
     switch (classificationId) {

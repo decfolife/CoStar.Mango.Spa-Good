@@ -23,6 +23,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   componentName = "amortization-grid"
   isGridStateChanged = false;
   amortizationdetailsGridData;
+  periodNameHeaderFilterDataSource: any[] = [];
   amortizationDetailColumns = [];
   summaryFields: any = {};
   gridName = 'Periods';
@@ -74,12 +75,13 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         this.amortizationdetailsGridData = amortizationDetailsResponse.data;
         this.selectedRowKey = [this.amortizationdetailsGridData[0].scheduleIndex];
         this.portfolioSettings = portfolioSettingsResponse.data;
+        this.periodNameHeaderFilterDataSource = amortizationDetailsResponse.data.map(amp => { return { text: amp.displayPeriod, value: ['displayPeriod', '=', amp.displayPeriod] } })
  
         this.isEuroDateFormat = this.userInfo.useDateEU;
         if (this.isEuroDateFormat) {
           this.dateFormat = 'dd.MM.yyyy';
         }
-        this.amortizationDetailColumns = this.getAmortizationColumns(this.classificationID, this.eventScheduleData);
+        this.amortizationDetailColumns = this.getAmortizationColumns(this.classificationID, this.eventScheduleData, this.periodNameHeaderFilterDataSource);
         this.getGridPreferences();
       } else if (!amortizationDetailsResponse.success || !portfolioSettingsResponse.success) {
         this.accountingSummaryService.notify(!amortizationDetailsResponse.success ? amortizationDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
@@ -165,10 +167,10 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   * Gets the appropriate columns from the service.
   * @param classificationId Lease recognition classification ID
   */
-  getAmortizationColumns(classificationId, currencyInfo) {
+  getAmortizationColumns(classificationId, currencyInfo, periodNameHeaderFilterDataSource) {
       const defaultColumns = this.columnService
         .getSummaryColumns(classificationId, this.portfolioSettings.functionalCurrencyEnabled,
-          this.portfolioSettings.leaseRecognitionCalendarID != 1);
+          this.portfolioSettings.leaseRecognitionCalendarID != 1, periodNameHeaderFilterDataSource);
   
       // columns is ultimatly what will be used, it is the default by default
       const columns = defaultColumns;
