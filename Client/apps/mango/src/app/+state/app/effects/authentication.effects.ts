@@ -74,10 +74,10 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOGOUT_ACTION),
-        tap(_ => {
+        tap((action: { logoutCA: boolean }) => {
           this.userService.logout()
           this.facade.clearState()
-          window.location.href = `${environment.CAUrl}?logout=true`
+          window.location.href = `${environment.CAUrl}${action.logoutCA ? `?logout=true` : ''}`
         })
       ),
     { dispatch: false }

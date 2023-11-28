@@ -89,8 +89,8 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.setCurrentRenderFormDocumentParams({ params }))
   }
 
-  logout(): void {
-    this.store.dispatch(AppActions.logout())
+  logout(config?: { logoutCA: boolean }): void {
+    this.store.dispatch(AppActions.logout({ logoutCA: (config || { logoutCA: true }).logoutCA }))
   }
 
   clearState() {

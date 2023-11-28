@@ -89,7 +89,8 @@ export const setContactRecord = createAction(
 );
 
 export const logout = createAction(
-  LOGOUT_ACTION
+  LOGOUT_ACTION,
+  props<{ logoutCA?: boolean }>()
 );
 
 export const clearState = createAction(CLEAR_STATE);
