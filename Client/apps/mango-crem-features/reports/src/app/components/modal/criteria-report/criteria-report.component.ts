@@ -228,7 +228,7 @@ export class CriteriaReportComponent {
                         const reportIssueId = reportIssue.data;
                         const url = "../../../../v06/Reporting/ReportLaunchpad.aspx?processReportObject=" + this.reportObject + "&reportissueid=" + reportIssueId;
                         notify({
-                            message : "Your report request has been processed and will be downloaded shortly.", 
+                          message: "Your report request has been processed and the report will be available shortly.", 
                             type : "success", 
                             displayTime : 5000,
                             position : { at: 'bottom right', my: 'bottom right', offset: '-16 -16'},
