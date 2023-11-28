@@ -25,6 +25,9 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
   preferenceSavePendingMessage: string;
+  transactionPopupVisible = false; 
+  transactionPopupData: any;
+  historicalTransactionData: any;
   initialState = {};
   private subscription = new Subscription();
 
@@ -46,8 +49,8 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onRowClick(e) {
-    alert('Payment clicked')
+  onRowClick(event: any) {
+    this.getTransactionPopupData(event.data.leaseRecognitionScheduleEventID);
   }
 
   private paymentsGridSetup(scheduleEventId: number) {
@@ -141,5 +144,28 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
   showColumnChooser() {
     this.paymentsDataGrid.instance.showColumnChooser();
+  }
+
+
+  private getTransactionPopupData(scheduleEventId: number) {
+    const historicalTransactionDetails = this.accountingSummaryService.getPaymentPopupData(scheduleEventId);
+  
+    this.subscription.add(historicalTransactionDetails.subscribe(
+      (res) => {
+        const historicalTransactionDetailsResponse = res;
+  
+        if (historicalTransactionDetailsResponse === null) {
+          this.accountingSummaryService.displayContactSystemAdminMessage();
+        } else if (!historicalTransactionDetailsResponse.success) {
+          this.accountingSummaryService.notify(historicalTransactionDetailsResponse.clientErrorMessage);
+        } else {
+          this.transactionPopupData = historicalTransactionDetailsResponse.data;
+          this.isEuroDateFormat = this.userInfo.useDateEU;
+          if (this.isEuroDateFormat) {
+            this.dateFormat = 'dd.MM.yyyy';
+          }
+        }
+      },
+    ));
   }
 }

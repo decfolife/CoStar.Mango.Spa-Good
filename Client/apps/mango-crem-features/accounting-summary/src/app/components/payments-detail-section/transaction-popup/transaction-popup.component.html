@@ -1,0 +1,221 @@
+<dx-popup id="transactionPopup"
+    class="popup"
+    title="Scheduled Transactions"
+    width="60%"
+    height="80%"
+    [(visible)]="transactionPopupVisible"
+    (onHidden)="onTransactionPopupHidden()"
+    [closeOnOutsideClick]="true">
+
+    <div *dxTemplate="let data of 'content'">
+        <dx-scroll-view height="50%">
+            <div class="half">
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="GlEventName">
+                        Event Name:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.glEventName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="PaymentFrequencyValue">
+                        Payment Frequency:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.paymentFrequency }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="Amount">
+                        Recurring Amount:
+                    </label>
+                    <div class="input-popup">
+                        {{ formattingService.localFormat(+transactionPopupData.recurringAmount, transactionPopupData.baseCurrencyDecimalPrecision) + ' ' + transactionPopupData.baseCurrency }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="EventPeriod">
+                        Event Period:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.eventBeginDate | date:dateFormat }}
+                        <span *ngIf="transactionPopupData.eventEndDate !== null"> - </span>
+                        {{ transactionPopupData.eventEndDate | date:dateFormat }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="PaymentFrequencyValue">
+                        Area:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.units }}
+                        {{ transactionPopupData.measureArea }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="LeaseAbstractName">
+                        Vendor:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.vendorName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="LeaseAbstractName">
+                        Prorated:
+                    </label>
+                    <div class="input-popup">
+                        {{ isProrated === 'Yes'
+                        ? isProrated + ': ' +
+                        transactionPopupData.prorationName
+                        : isProrated }}
+                    </div>
+                </div>
+        
+                <div class="clearfix" *ngIf="isProrated !== 'No' && isProrated !== null && isProrated !== ''">
+                    <label class="float-left label-popup" for="FirstRecurringDate">
+                        First Recurring Payment Date:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.firstRecurringDate | date:dateFormat }}
+                    </div>
+                </div>
+            </div>
+        
+            <div class="half">
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="GlAccountName">
+                        Account Name:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.glAccountName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="GlAccountCode">
+                        Account Code:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.glAccountCode }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="GlAccountCode">
+                        Account Category:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.glCategoryName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="GlAccountPolicyType">
+                        Recognition Category GAAP:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.glAccountPolicyTypeName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="IFRSGlAccountPolicyType">
+                        Recognition Category IFRS:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.ifrsglAccountPolicyTypeName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="PaymentFrequencyValue">
+                        Status:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.glAccountProcessingStatus }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="CreatedDate">
+                        Created:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.createdDate | date:dateFormat }}
+                        By {{ transactionPopupData.createdByName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="LastModifiedDate">
+                        Modified:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.lastModifiedDate | date:dateFormat }} By {{
+                        transactionPopupData.lastModifiedByName }}
+                    </div>
+                </div>
+        
+                <div class="clearfix">
+                    <label class="float-left label-popup" for="PaymentFrequencyValue">
+                        System Event ID:
+                    </label>
+                    <div class="input-popup">
+                        {{ transactionPopupData.glEventID }}
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix">
+                <div>
+                <label for="Notes">Notes:</label>
+                <br>
+                <textarea disabled id="Notes" rows="2" [(ngModel)]="transactionPopupData.glEventNotes"></textarea>
+            </div>
+            </div>
+
+        </dx-scroll-view>
+
+        <dx-data-grid
+            #transactionPopupGrid
+            [dataSource]="transactionPopupData.transactions"
+            [id]="accountingSummaryService.getId(componentName ,'popup','section')"
+            class="transactions"
+            [rowAlternationEnabled]="true"
+            [showColumnLines]="true"
+            [columns]="transactionGridColumns"
+            [showRowLines]="true"
+            [showBorders]="true"
+            [allowColumnResizing]="true"
+            [wordWrapEnabled]="true"
+            [columnAutoWidth]="true"
+            height="50%"
+            [remoteOperations]="false"
+            [summary]="summaryFields"
+
+            [loadPanel]="{enabled: true,
+                shading: true,
+                visible: true,
+                shadingColor: 'rgba(0, 0, 0, 0.4)'}">
+
+                <div *dxTemplate="let info of 'amortizationHeader'">
+					<p title={{info.column.caption}}
+                     class="header-column-caption">
+					  {{info.column.caption}}
+					</p>    
+				  </div>
+				
+				  <div *dxTemplate="let cell of 'pointer'">
+					<div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+				  </div>
+        <dxo-scrolling mode="virtual"></dxo-scrolling>
+      </dx-data-grid>
+    </div>
+</dx-popup>

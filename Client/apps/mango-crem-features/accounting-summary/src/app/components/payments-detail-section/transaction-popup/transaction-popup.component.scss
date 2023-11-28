@@ -1,0 +1,35 @@
+.half {
+    float: left;
+    width: calc(50% - 1em);
+}
+
+.clearfix::after {
+    clear: both;
+    content: '';
+    display: block;
+    padding-bottom: 5px;
+}
+
+.label-popup {
+    width: 50%;
+}
+
+.input-popup {
+    width: 95%;
+}
+
+textarea {
+    height: 60px;
+    width: 100%;
+    resize: none;
+    outline: none;
+}
+
+.popup p {
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.pointer {
+    cursor: pointer;
+}

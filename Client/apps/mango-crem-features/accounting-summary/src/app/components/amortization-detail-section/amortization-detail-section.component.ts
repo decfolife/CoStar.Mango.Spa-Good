@@ -254,6 +254,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       column: string;
       summaryType: string;
       displayFormat: string | ((value: any) => string);
+      alignment?: string;
     }
 
     const totalItems: Array<SummaryField> = [],
@@ -265,7 +266,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         'CashAPAmount',
         'StraightLineExpense',
         'DeferredLeaseExpense',
-        // 'adjustmentAmount',
+        // 'AdjustmentAmount',
         'AssetAmortization',
         'InterestExpense',
         'LevelExpense'],
@@ -280,7 +281,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       totalItems.push({
         column: name,
         summaryType: 'sum',
-        displayFormat: value => this.formatService.localFormat(+value, this.eventScheduleData.localCurrencyDecimalPrecision)
+        displayFormat: value => this.formatService.localFormat(+value, this.eventScheduleData.localCurrencyDecimalPrecision),
+        alignment: 'right'
       });
     });
 
@@ -289,7 +291,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       totalItems.push({
         column: name,
         summaryType: 'sum',
-        displayFormat: value => this.formatService.functionalFormat(+value, this.eventScheduleData.functionalCurrencyDecimalPrecision)
+        displayFormat: value => this.formatService.functionalFormat(+value, this.eventScheduleData.functionalCurrencyDecimalPrecision),
+        alignment: 'right'
       });
     });
 
