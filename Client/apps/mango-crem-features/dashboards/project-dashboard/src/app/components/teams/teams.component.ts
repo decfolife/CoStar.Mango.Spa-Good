@@ -12,6 +12,7 @@ import * as ExcelJS from 'exceljs';
 import { Buffer, Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { formatDate } from '@angular/common';
+import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 
 @Component({
   selector: 'teams',
@@ -32,12 +33,18 @@ export class TeamsComponent implements OnInit {
   headerCheckBox: any;
 	headerHtmlCellElement: any;
 
+  selectAllCheckBox: dxCheckBox;
+  teamSelected: boolean = false;
+  selectedMemberIds: number[] = [];
+  userModuleAddRights: boolean;
+
   constructor(private dashboardService: DashboardService, private router: Router,
               private dialog: MatDialog,  private cardsService: CardsService) { }
 
   ngOnInit(): void {
   
     this.getUserPreferences();
+    this.getModuleRights();
     this.getMemberInfo();
     this.getTeamsData();
   }
@@ -97,6 +104,18 @@ export class TeamsComponent implements OnInit {
     );
   }
 
+  getModuleRights() {
+    const objectType = 161;
+    const securityType = 3;
+    this.dashboardService.getModuleRights(objectType, securityType).subscribe(
+      (res:any) => {
+        if (res.success) {
+          this.userModuleAddRights = res.data;
+        }
+      }
+    );
+  }
+
   getMemberInfo() {
 
     this.dashboardService.getmemberinfo().subscribe(
@@ -126,6 +145,59 @@ export class TeamsComponent implements OnInit {
     this.teamsGrid.instance.searchByText(this.searchText);
   }
 
+  onEditorPreparing(e) {
+    if (e.type !== 'selection') return;
+    if (e.parentType === 'headerRow') {
+      e.editorOptions.onInitialized = (e: InitializedEvent) => {
+        if (e.component) this.selectAllCheckBox = e.component;
+      };
+    }  
+  }    
+
+  gridOnCellPrepared(e) { 
+    if(e.column.command == 'select') {
+			if( !this.userModuleAddRights ) {
+        this.disableCheckBoxes(e);
+      }	
+       else if(e.rowType !== 'header' && e.data.securityLevel.toLocaleLowerCase().trim() == "view") {
+        this.disableCheckBoxes(e);
+       }
+		} 
+	}
+
+  disableCheckBoxes(e) {
+    let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
+    var editor = dxCheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));  
+    if(editor) {
+      editor.option("disabled", true);
+    }  
+    htmlCellElement.style.pointerEvents = 'none'; 
+  }
+
+  onSelectionChanged(e:any){  
+    const deselectRowKeys: number[] = [];
+    const dataGrid = e.component;
+    e.selectedRowsData.forEach(row => {
+      if(row.securityLevel.toLocaleLowerCase().trim() == "view") {
+        deselectRowKeys.push(row.teamId);
+      }
+    });
+      if(deselectRowKeys.length) {
+        dataGrid.deselectRows(deselectRowKeys);
+      }
+
+      this.teamSelected = e.selectedRowsData.length? true: false;
+      this.selectAllCheckBox.option('value',  this.teamSelected);
+  }
+
+  selectedMembers(e) {
+    this.selectedMemberIds = this.selectedMemberIds.concat(e);
+  }
+
+  unSelectedMembers(e) {
+    this.selectedMemberIds = this.selectedMemberIds.filter(item => !e.includes(item));
+  }
+  
   exportToFile() {
     let excelFileName = 'TeamsList_' + formatDate(new Date(), 'yyyy-MM-dd_HHmmss', 'en-US') + '.xlsx';
     var workbook = new ExcelJS.Workbook();

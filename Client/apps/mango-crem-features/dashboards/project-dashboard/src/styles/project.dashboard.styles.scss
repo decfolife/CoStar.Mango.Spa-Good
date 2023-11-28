@@ -711,7 +711,7 @@ body {
 	}	
 	
 	.dx-row.dx-data-row {
-		line-height: 12px;  //decreases the height of the data row on the grid
+		line-height: 12px !important;  //decreases the height of the data row on the grid
 	}
 
 	.dx-datagrid-nodata {

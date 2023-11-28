@@ -3,33 +3,36 @@
 		<div class="controls-left">
 			<h3 class="title"> Manage Team Lists </h3>
 			<div class="searchTeams">
-				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" ></cs-search>
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)"  class="searchTeams-input"></cs-search>
 			</div>
 		</div>
 		<div class="controls-right">
 			<div class="clearFilters">
-				<crem-button type="secondary">
-					<!-- <span id="filterIcon"><mat-icon aria-label="filter">filter_alt</mat-icon></span> -->
+				<crem-button type="secondary" class="clearFilters-btn">
 					<span id="clearFilters" (click)="clearAllFilters(); $event.preventDefault();">Clear Filters</span>
 				</crem-button>
 			</div>
 			<div class="actions">
-				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">Actions <mat-icon aria-label="Actions Menu">arrow_drop_down</mat-icon></button>
+				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" [disabled]="!userModuleAddRights"
+				 (click)="$event.preventDefault()">Actions <mat-icon aria-label="Actions Menu">arrow_drop_down</mat-icon>
+				</button>
 				<mat-menu #actionsMenu="matMenu" class="teamsActionsMenu">				
-					<button mat-menu-item >Delete Team(s)</button>      
-					<button mat-menu-item >Remove Member(s)</button>                  
+					<button mat-menu-item class="teamsActionsMenu-delBtn" [disabled]="!teamSelected">Delete Team(s)</button>      
+					<button mat-menu-item class="teamsActionsMenu-remBtn" 
+						[disabled]="!selectedMemberIds.length">Remove Member(s)
+					</button>                  
 				</mat-menu>	 
 			</div>
 
 			<div class="more">
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="teamsMoreMenu">				
-					<button mat-menu-item (click)="toggleExpand()"><span >Expand All/Collapse All</span></button>      
-					<button mat-menu-item (click)="exportToFile()">Export</button>                   
+					<button mat-menu-item (click)="toggleExpand()" class="moreButton-expCollBtn"><span >Expand All/Collapse All</span></button>      
+					<button mat-menu-item (click)="exportToFile()" class="moreButton-exportBtn">Export</button>                   
 				</mat-menu>	 
 			</div>
-			<div class="addTeams">
-				<crem-button type="primary" (click)="addOrEditTeam('add'); $event.preventDefault()" >
+			<div class="addTeams" *ngIf="userModuleAddRights">
+				<crem-button type="primary" (click)="addOrEditTeam('add'); $event.preventDefault()" class="addTeams-Btn" >
 					<span id="addTeam">Add</span>
 				</crem-button>
 			</div>
@@ -53,6 +56,9 @@
 			[width]="'100%'"
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
+			(onCellPrepared)="gridOnCellPrepared($event)"
+			(onEditorPreparing)="onEditorPreparing($event)"
+			(onSelectionChanged)="onSelectionChanged($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
@@ -65,7 +71,7 @@
 			</dxo-selection>
 
 			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
-				[allowReordering]="false" [allowResizing]="false">
+				[allowReordering]="false" [allowResizing]="false" class="selectTeam">
 			</dxi-column>
 			<dxi-column dataField="teamId" caption="Team ID" alignment="center"></dxi-column>
 			<dxi-column dataField="teamName" caption="Name"></dxi-column>
@@ -78,16 +84,16 @@
 			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
-					<div *dxTemplate="let team of 'actionsMenuTemplate'" class="actionsMenuTemplate">
+					<div *dxTemplate="let team of 'actionsMenuTemplate'" class="actionsMenuTemplate" id="{{'teamActionButton' + team.rowIndex}}">
 						<button aria-label="actions menu" class="btn btn-link teamActionsButton" 
-							[disabled]="team.data.securityLevel.toLowerCase().trim() == 'view'"
+							[disabled]="!userModuleAddRights || team.data.securityLevel.toLowerCase().trim() == 'view'"
 							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu">
 							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
 						</button>
 		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit">Edit</li>
-								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="team.data.canDelete">Delete</li>
+								<li mat-menu-item (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit" class="tam-edit">Edit</li>
+								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="team.data.canDelete" class="tam-delete">Delete</li>
 							</ul>
 						</mat-menu>
 					</div>
@@ -97,8 +103,11 @@
 			<div *dxTemplate="let team of 'teamDetails'">
 				<team-members [searchText]="searchText" 
 						[rights]="team.data.securityLevel" 
+						[userModuleAddRights]="userModuleAddRights"
 						[teamMembers]="team.data.teamMembers"
 						[memberInfo]="memberInfo"
+						(selectedMembersEvent)="selectedMembers($event)"
+						(unSelectedMembersEvent)="unSelectedMembers($event)"
 				>
 				</team-members>
 			</div>

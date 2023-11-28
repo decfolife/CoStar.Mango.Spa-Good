@@ -133,5 +133,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}addteam`;
     return this.callHttpPost(url, 'addteam', team);
   }
+
+  getModuleRights(objectType: number, securityType: number) {
+    const url = `${environment.appUrls.projects}getmodulerights`;
+    return this.callHttpPost(url, 'getmodulerights', { objectType, securityType })
+  }
 }
 
