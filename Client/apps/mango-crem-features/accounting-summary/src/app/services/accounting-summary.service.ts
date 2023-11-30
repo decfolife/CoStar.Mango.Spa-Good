@@ -44,6 +44,15 @@ export class AccountingSummaryService extends EndpointService {
     return this.titleLeaseInfoSubject.asObservable();
   }
 
+  delayGridPanelCollapseWhenFilterIsVisible() {
+    let filterObject = document.querySelector("[aria-label='Filter options']:not(.dx-state-invisible)");
+    if(filterObject !== null){
+      let delay = 400
+      let start = new Date().getTime();
+      while (new Date().getTime() < start + delay);
+    } 
+  }
+
   setNavPageId(navPageId: number) {
     this.navPageId = navPageId;
 

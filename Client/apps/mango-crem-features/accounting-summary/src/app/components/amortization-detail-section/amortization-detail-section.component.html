@@ -1,5 +1,5 @@
 <section class="section-grid">
-    <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel [expanded]="true" (closed)="accountingSummaryService.delayGridPanelCollapseWhenFilterIsVisible()">
         <mat-expansion-panel-header>
             <mat-panel-title class="header">
                 Amortization Table {{isGridStateChanged ? preferenceSavePendingMessage : ''}}

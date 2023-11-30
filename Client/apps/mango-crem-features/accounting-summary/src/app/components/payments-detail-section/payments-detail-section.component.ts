@@ -30,7 +30,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   historicalTransactionData: any;
   initialState = {};
   private subscription = new Subscription();
-
+  
   constructor(public accountingSummaryService: AccountingSummaryService, private paymentsGridColumnService: PaymentsGridColumnsService) { 
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
@@ -89,12 +89,15 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
       const filteredData = response.data.filter(item => {
         return item.classificationID === this.classificationID && item.gridName === this.gridName;
       });
-      state.columns = [];
 
-      filteredData.forEach((item) => {
-        const parsedColumns = JSON.parse(item.columnJson);
-        state.columns.push(...parsedColumns);
-      });
+      if(state !== null) {
+        state.columns = [];
+
+        filteredData.forEach((item) => {
+          const parsedColumns = JSON.parse(item.columnJson);
+          state.columns.push(...parsedColumns);
+        });
+      }
 
       this.initialState = state;
       this.paymentsDataGrid.instance.state(state);

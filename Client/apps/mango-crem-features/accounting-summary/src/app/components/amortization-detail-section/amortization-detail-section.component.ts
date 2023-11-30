@@ -104,12 +104,15 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         const filteredData = response.data.filter(item => {
           return item.classificationID === this.classificationID && item.gridName === this.gridName;
         });
-        state.columns = [];
 
-        filteredData.forEach((item) => {
-          const parsedColumns = JSON.parse(item.columnJson);
-          state.columns.push(...parsedColumns);
-        });
+        if(state !== null) {
+          state.columns = [];
+
+          filteredData.forEach((item) => {
+            const parsedColumns = JSON.parse(item.columnJson);
+            state.columns.push(...parsedColumns);
+          });
+        }
 
         this.initialState = state;
         this.amortizationDataGrid.instance.state(state);

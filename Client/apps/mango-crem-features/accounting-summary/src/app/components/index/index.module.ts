@@ -7,7 +7,7 @@ import { TitleComponent } from '@accounting-summary/components/title/title.compo
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { ButtonModule, DropdownModule, IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
-import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule} from 'devextreme-angular';
+import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule} from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
 import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
 import { IndexComponent } from './index.component';
@@ -47,6 +47,7 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
     MatIconModule,
     MatMenuModule,
     DxPopupModule,
+    DxScrollViewModule,
     ],
 
   providers: [AccountingSummaryService, FormattingService],

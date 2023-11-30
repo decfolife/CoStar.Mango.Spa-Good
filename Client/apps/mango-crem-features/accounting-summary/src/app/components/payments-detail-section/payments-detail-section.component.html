@@ -1,5 +1,5 @@
 <section class="section-grid">
-	<mat-expansion-panel [expanded]="true"> 
+	<mat-expansion-panel [expanded]="true" (closed)="accountingSummaryService.delayGridPanelCollapseWhenFilterIsVisible()"> 
 		<mat-expansion-panel-header> 
 		  <mat-panel-title class="header"> 
 				Payments {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
@@ -77,5 +77,5 @@
 <mango-transaction-popup
     [(transactionPopupVisible)]="transactionPopupVisible"
     [transactionPopupData]="transactionPopupData"
-	[userInfo]="userInfo">
+	  [userInfo]="userInfo">
 </mango-transaction-popup>

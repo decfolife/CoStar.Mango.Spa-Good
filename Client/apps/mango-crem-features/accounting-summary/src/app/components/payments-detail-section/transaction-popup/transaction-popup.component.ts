@@ -50,35 +50,26 @@ export class TransactionPopupComponent {
   getSummaryFields() {
     interface SummaryField {
       column?: string;
-      summaryType: string;
+      summaryType?: string;
       displayFormat: string | ((value: any) => string);
       alignment?: string;
       name?: string;
       showInColumn?: string;
     }
-
-    const totalItems: Array<SummaryField> = [],
-      columns = [
-        'TargetAmount',
-        'BaseAmount',
-      ];
-
+    const totalItems: Array<SummaryField> = [];
     totalItems.push({
-      summaryType: 'custom',
       displayFormat: `Total Amount:`,
       alignment: 'right',
       showInColumn: 'dueBy',
       name: 'TotalsLabel_TargetAmount'
     });
-
     totalItems.push({
       column: 'TargetAmount',
       summaryType: 'sum',
       displayFormat: value => this.formattingService.localFormat(+value, this.transactionPopupData.targetCurrencyDecimalPrecision),
       alignment: 'right',
       showInColumn: 'targetAmount'
-    });
-
+    }); 
     totalItems.push({
       column: 'BaseAmount',
       summaryType: 'sum',
@@ -86,15 +77,12 @@ export class TransactionPopupComponent {
       alignment: 'right',
       showInColumn: 'baseAmount'
     });
-
     totalItems.push({
-      summaryType: 'custom',
       displayFormat: `Count:`,
       alignment: 'right',
       showInColumn: 'dueBy',
       name: 'CountLabel_TargetAmount'
     });
-
     totalItems.push({
       column: 'TargetAmount',
       summaryType: 'count',
@@ -102,7 +90,6 @@ export class TransactionPopupComponent {
       alignment: 'right',
       showInColumn: 'targetAmount'
     });
-
     totalItems.push({
       column: 'BaseAmount',
       summaryType: 'count',
@@ -110,7 +97,6 @@ export class TransactionPopupComponent {
       alignment: 'right',
       showInColumn: 'baseAmount'
     });
-
     return { totalItems };
   }
 
