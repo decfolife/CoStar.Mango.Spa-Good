@@ -138,5 +138,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}getmodulerights`;
     return this.callHttpPost(url, 'getmodulerights', { objectType, securityType })
   }
+
+  deleteTeams(teamIds: number[]) {
+    const url = `${environment.appUrls.projects}deleteteams`;
+    return this.callHttpPost(url, 'deleteteams',  teamIds)
+  }
 }
 

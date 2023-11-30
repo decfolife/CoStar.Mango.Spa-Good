@@ -13,6 +13,7 @@ import { Buffer, Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { formatDate } from '@angular/common';
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'teams',
@@ -36,9 +37,12 @@ export class TeamsComponent implements OnInit {
   selectAllCheckBox: dxCheckBox;
   teamSelected: boolean = false;
   selectedMemberIds: number[] = [];
+  selectedTeamIds: number[] = [];
+  selectedTeams: Team[] = [];
   userModuleAddRights: boolean;
 
   constructor(private dashboardService: DashboardService, private router: Router,
+              public toastr: ToastrService,
               private dialog: MatDialog,  private cardsService: CardsService) { }
 
   ngOnInit(): void {
@@ -78,6 +82,29 @@ export class TeamsComponent implements OnInit {
         this.teamsGrid.instance.refresh();
       }
     });
+  }
+
+  deleteTeams() {
+    let confirmText = "You are about to delete the following teams team name. Do you want to continue?\n"
+    this.selectedTeams.forEach(team => {
+      confirmText += team.teamName + "\n";
+    })
+    if(confirm(confirmText)) {
+      this.dashboardService.deleteTeams(this.selectedTeamIds).subscribe(
+        (res:any) => {
+          if (res.success) {
+              let removeIndex: number;
+              this.selectedTeams.forEach(selectedTeam => {
+                removeIndex = this.teams.findIndex(team => selectedTeam.teamId == team.teamId);
+                this.teams.splice(removeIndex, 1);
+              });
+          } else { 
+            this.toastr.info("The records could not be deleted. Please review and try again.", "", 
+                             {positionClass: 'toast-bottom-right', timeOut: 3000, closeButton:false, progressBar: false });
+          }
+        }
+      );
+    }
   }
 
   doSomethingForNow(data) {}
@@ -188,6 +215,9 @@ export class TeamsComponent implements OnInit {
 
       this.teamSelected = e.selectedRowsData.length? true: false;
       this.selectAllCheckBox.option('value',  this.teamSelected);
+
+      this.selectedTeams = e.selectedRowsData;
+      this.selectedTeamIds = e.selectedRowKeys;
   }
 
   selectedMembers(e) {

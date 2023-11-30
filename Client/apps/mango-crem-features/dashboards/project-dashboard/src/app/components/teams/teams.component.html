@@ -17,7 +17,9 @@
 				 (click)="$event.preventDefault()">Actions <mat-icon aria-label="Actions Menu">arrow_drop_down</mat-icon>
 				</button>
 				<mat-menu #actionsMenu="matMenu" class="teamsActionsMenu">				
-					<button mat-menu-item class="teamsActionsMenu-delBtn" [disabled]="!teamSelected">Delete Team(s)</button>      
+					<button mat-menu-item class="teamsActionsMenu-delBtn" [disabled]="!teamSelected" (click)="deleteTeams()">
+						Delete Team(s)
+					</button>      
 					<button mat-menu-item class="teamsActionsMenu-remBtn" 
 						[disabled]="!selectedMemberIds.length">Remove Member(s)
 					</button>                  
