@@ -38,6 +38,7 @@ export class TeamsComponent implements OnInit {
   teamSelected: boolean = false;
   selectedMemberIds: number[] = [];
   selectedTeamIds: number[] = [];
+  teamsTobeRemoved: number[] = [];
   selectedTeams: Team[] = [];
   userModuleAddRights: boolean;
 
@@ -84,18 +85,26 @@ export class TeamsComponent implements OnInit {
     });
   }
 
-  deleteTeams() {
-    let confirmText = "You are about to delete the following teams team name. Do you want to continue?\n"
-    this.selectedTeams.forEach(team => {
-      confirmText += team.teamName + "\n";
-    })
+  deleteTeams(removeTeam?:Team, singleTeam?: boolean) {
+    this.teamsTobeRemoved = [];
+    let confirmText = "You are about to delete the following team(s). Do you want to continue?\n"
+    if(singleTeam) {
+      confirmText += removeTeam.teamName + "\n";
+      this.teamsTobeRemoved.push(removeTeam.teamId);
+    } else {
+      this.teamsTobeRemoved = this.selectedTeamIds;
+      this.selectedTeams.forEach(team => {
+        confirmText += team.teamName + "\n";
+      })
+    }
+
     if(confirm(confirmText)) {
-      this.dashboardService.deleteTeams(this.selectedTeamIds).subscribe(
+      this.dashboardService.deleteTeams(this.teamsTobeRemoved).subscribe(
         (res:any) => {
           if (res.success) {
               let removeIndex: number;
-              this.selectedTeams.forEach(selectedTeam => {
-                removeIndex = this.teams.findIndex(team => selectedTeam.teamId == team.teamId);
+              this.teamsTobeRemoved.forEach(removedTeamId => {
+                removeIndex = this.teams.findIndex(team => removedTeamId == team.teamId);
                 this.teams.splice(removeIndex, 1);
               });
           } else { 
@@ -106,8 +115,19 @@ export class TeamsComponent implements OnInit {
       );
     }
   }
-
-  doSomethingForNow(data) {}
+ 
+  removeMembers() {
+		let confirmText = `Do you want to remove the Selected Members from their teams?`;
+		if(confirm(confirmText)) {
+			this.dashboardService.deleteTeamMembers(this.selectedMemberIds).subscribe(
+				(res:any) => {
+					if (res.success) {
+            this.getTeamsData();
+					} else { alert(`Selected Member(s) could not be deleted. Please review and try again later.`);}
+				}
+			);
+		}
+  }
 
   getTeamsData() {
     this.dashboardService.getTeams().subscribe(

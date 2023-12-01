@@ -20,8 +20,8 @@
 					<button mat-menu-item class="teamsActionsMenu-delBtn" [disabled]="!teamSelected" (click)="deleteTeams()">
 						Delete Team(s)
 					</button>      
-					<button mat-menu-item class="teamsActionsMenu-remBtn" 
-						[disabled]="!selectedMemberIds.length">Remove Member(s)
+					<button mat-menu-item class="teamsActionsMenu-remBtn" [disabled]="!selectedMemberIds.length"
+						(click)="removeMembers()" >Remove Member(s)
 					</button>                  
 				</mat-menu>	 
 			</div>
@@ -95,7 +95,7 @@
 		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
 							<ul role="menu">
 								<li mat-menu-item (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit" class="tam-edit">Edit</li>
-								<li mat-menu-item (click)="doSomethingForNow(data)" *ngIf="team.data.canDelete" class="tam-delete">Delete</li>
+								<li mat-menu-item (click)="deleteTeams(team.data, true)" *ngIf="team.data.canDelete" class="tam-delete">Delete</li>
 							</ul>
 						</mat-menu>
 					</div>

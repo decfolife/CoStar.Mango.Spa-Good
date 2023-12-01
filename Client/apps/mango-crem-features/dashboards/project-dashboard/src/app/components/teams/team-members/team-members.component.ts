@@ -80,17 +80,21 @@ export class TeamMembersComponent implements OnInit {
 		this.memberIds = [];
 		this.memberIds.push(member.memberId);
 
-		this.dashboardService.deleteTeamMembers(this.memberIds).subscribe(
-      (res:any) => {
-        if (res.success) {
-						const removeIndex: number[] =[];
-						this.memberIds.forEach(memberId => {
-							removeIndex.push(this.teamMembers.findIndex(member => memberId == member.memberId));
-						});
-						removeIndex.forEach(index => this.teamMembers.splice(index, 1));
-        } else { alert("Team Member could not be deleted. Please review and try again later.");}
-      }
-    );
+		let confirmText = `Do you want to Remove the member "${member.name}"?`;
+		if(confirm(confirmText)) {
+			this.dashboardService.deleteTeamMembers(this.memberIds).subscribe(
+				(res:any) => {
+					if (res.success) {
+							let removeIndex: number;
+							this.memberIds.forEach(memberId => {
+								removeIndex = this.teamMembers.findIndex(member => memberId == member.memberId);
+								this.teamMembers.splice(removeIndex, 1);
+							});
+					} else { alert("Team Member could not be deleted. Please review and try again later.");}
+				}
+			);
+		}
+
 	}
 
 	onSelectionChanged(e:any) {

@@ -30,6 +30,7 @@ export class AddEditTeamComponent implements OnInit {
   teamMembers: TeamMember[];
   memberInfo: MemberInfo;
   selectedMemberIds: number[];
+  selectedMembers: TeamMember[];
   searchMember: string;
   inputSubscription$;
   isDropDownBoxOpened = false;
@@ -40,6 +41,7 @@ export class AddEditTeamComponent implements OnInit {
   noDataText: string = "No members added yet.  Add members to get started.";
   removeDisabled: boolean = true;
   addTeam: boolean = false;
+  changesMade: boolean = false;
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 
@@ -96,6 +98,7 @@ export class AddEditTeamComponent implements OnInit {
   teamNameChange(teamName: string) {
     this.teamName = teamName;
     this.team.teamName = teamName;
+    this.changesMade = true;
   }
 
   toggleList(){
@@ -105,19 +108,39 @@ export class AddEditTeamComponent implements OnInit {
   removeMember(contactId) {
     this.team.teamMembers = this.team.teamMembers.filter( member => member.contactId !== contactId);
     this.filteredMembers = [...this.filteredMembers]; //to re-render the list and set attributes
+    this.changesMade = true;
   }
 
   removeMembers() {
-    let removeIndex: number;
-    this.selectedMemberIds.forEach(contactId => {
-      removeIndex = (this.team.teamMembers.findIndex(member => contactId == member.contactId));
-      this.team.teamMembers.splice(removeIndex, 1);
-    });
-    this.filteredMembers = [...this.filteredMembers];
+    let confirmText = "Do you want to Remove the members?\n"
+    this.selectedMembers.forEach(member => {
+      confirmText += member.name + "\n";
+    })
+
+    if(confirm(confirmText)) {
+      let removeIndex: number;
+      this.selectedMemberIds.forEach(contactId => {
+        removeIndex = (this.team.teamMembers.findIndex(member => contactId == member.contactId));
+        this.team.teamMembers.splice(removeIndex, 1);
+      });
+      this.filteredMembers = [...this.filteredMembers];
+      this.changesMade = true;
+    }
+  }
+
+  setRoleValue(newData, value: string) {
+    (this as any).defaultSetCellValue(newData, value);
+    this.changesMade = true;
+  }
+
+  setLevelValue(newData, value: string) {
+		newData.level = value;
+    this.changesMade = true;
   }
 
   emailtoggle(member, e) {
     member.emailOn = e.checked;
+    this.changesMade = true;
   }
 
   onItemRendered(e) {
@@ -146,11 +169,13 @@ export class AddEditTeamComponent implements OnInit {
     teamMember.share = 0;
 
     this.team.teamMembers.push(teamMember);
+    this.changesMade = true;
     this.setListItemAttributes(e);
   }
 
   onMemberSelectionChanged(e) {
     this.selectedMemberIds = e.selectedRowKeys;
+    this.selectedMembers = e.selectedRowsData;
     if((this.selectedMemberIds.length) > 1 ) 
       this.removeDisabled = false;
     else {

@@ -114,12 +114,12 @@
           <dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="phoneNumber" [allowEditing]="false" dataType="string"></dxi-column>
-          <dxi-column dataField="role" dataType="string" aria-label="role" showEditorAlways="true">
+          <dxi-column dataField="role" dataType="string" aria-label="role" showEditorAlways="true" [setCellValue]="setRoleValue">
             <dxo-lookup [dataSource]="memberInfo.roles" aria-label="role" valueExpr="role" displayExpr="role"></dxo-lookup>
           </dxi-column>
           <dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
           </dxi-column>
-          <dxi-column dataField="level" caption='Access Level' dataType="string" showEditorAlways="true">
+          <dxi-column dataField="level" caption='Access Level' dataType="string" showEditorAlways="true" [setCellValue]="setLevelValue">
             <dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
           </dxi-column>
           <dxi-column caption="" type="buttons" width="40" [fixed]="true" fixedPosition="right" [allowSorting]="false"
