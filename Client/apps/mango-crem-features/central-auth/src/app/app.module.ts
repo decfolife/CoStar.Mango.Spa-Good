@@ -36,23 +36,27 @@ import { DxLoadPanelModule } from 'devextreme-angular';
     RouterModule.forRoot([
       {
         path: '',
-        component: LoginComponent
+        component: LoginComponent,
+        title: 'CoStar Real Estate Manger Secure Login'
       },
       {
         path: 'customer-selection',
         component: CustomerSelectionPageComponent,
         canActivate: [AuthGuard],
+        title: 'Customer Selection - CoStar Real Estate Manger Secure Login'
       },
       {
         path: 'service-account-configuration',
         component: ServiceAccountConfigurationComponent,
         canActivate: [AuthGuard],
+        title: 'Service Account Configuration - CoStar Real Estate Manger Secure Login'
       },
       {
         path: 'reset-password',
         loadChildren: () =>
           import('./components/reset-password/reset-password.module').then(
             (mod) => mod.ResetPasswordModule),
+        title: 'Reset Password - CoStar Real Estate Manger Secure Login'
       },
       {
         path: 'password-reset-request',
@@ -60,10 +64,12 @@ import { DxLoadPanelModule } from 'devextreme-angular';
           import('./components/password-reset-request/password-reset-request.module').then(
             (mod) => mod.PasswordResetRequestModule
           ),
+          title: 'Reset Password - CoStar Real Estate Manger Secure Login'
       },
       {
         path: ':clientKey',
-        component: LoginComponent
+        component: LoginComponent,
+        title: 'CoStar Real Estate Manger Secure Login'
       },
       { path: '', redirectTo: '', pathMatch: 'full' },
       { path: '**', redirectTo: '', pathMatch: 'full' },
