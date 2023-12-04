@@ -7,6 +7,7 @@ WORKDIR /usr/local/app
 COPY ./ /usr/local/app/
 RUN npm set strict-ssl false
 RUN npm install --force
+RUN ng test mango-crem-features-central-auth
 RUN echo "building environment COSTAR_ENVIRONMENT=$COSTAR_ENVIRONMENT"
 RUN npm run build:$COSTAR_ENVIRONMENT:microcomponent-central-auth
 
