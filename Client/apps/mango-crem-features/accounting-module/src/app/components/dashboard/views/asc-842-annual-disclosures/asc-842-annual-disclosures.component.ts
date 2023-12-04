@@ -30,6 +30,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   constructor(
     private inAppDisclosureService: InAppDisclosureService
   ) {}
+
   ngOnInit() {
   //  this.inAppDisclosureService.getIADCardData(127).subscribe((data) => {
     // this.cardData = data.data;
@@ -43,7 +44,8 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
-    this.inAppDisclosureService.getIADCardData(this.selectedSegment, this.reportingYear, 'usd').subscribe((result) => {
+    
+    this.inAppDisclosureService.getIADCardData(this.selectedSegment, this.reportingYear).subscribe((result) => {
       this.setLeaseCountCardData(result.data[0])
       this.setROUAssetBalanceCardData(result.data[1])
       //this.setCardData(result.data[0])
@@ -53,79 +55,69 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
 
   public setLeaseCountCardData(data) {
     this.pivotCardData = [];
+
     data.forEach((item) => {
-      let item1 = 
-      { 
-        DisclosureClassification:  item.DisclosureClassification,
-        Display: "Opening Lease Count",
-        PeriodYear: item.PeriodYear,
-        data: item.OpeningCount,
-      }
-      let item2 = 
-      { 
-        DisclosureClassification:  item.DisclosureClassification,
-        Display: " - Lease Added",
-        PeriodYear: item.PeriodYear,
-        data: item.AddedCount,
-      }
-      let item3 = 
-      { 
-        DisclosureClassification:  item.DisclosureClassification,
-        Display: " - Leases Expired/Cancelled",
-        PeriodYear: item.PeriodYear,
-        data: item.EndedCount,
-      }
-      let item4 = 
-      { 
-        DisclosureClassification:  item.DisclosureClassification,
-        Display: "Closing Lease Count",
-        PeriodYear: item.PeriodYear,
-        data: item.ClosingCount,
-      }
-      let item5 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: "Opening Lease Count",
-        PeriodYear: item.PeriodYear,
-        data: item.OpeningCount,
-      }
-      let item6 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: " - Lease Added",
-        PeriodYear: item.PeriodYear,
-        data: item.AddedCount,
-      }
-      let item7 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: " - Leases Expired/Cancelled",
-        PeriodYear: item.PeriodYear,
-        data: item.EndedCount,
-      }
-      let item8 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: "Closing Lease Count",
-        PeriodYear: item.PeriodYear,
-        data: item.ClosingCount,
-      }
-      this.pivotCardData.push(item1)
-      this.pivotCardData.push(item2)
-      this.pivotCardData.push(item3)
-      this.pivotCardData.push(item4)
-      this.pivotCardData.push(item5)
-      this.pivotCardData.push(item6)
-      this.pivotCardData.push(item7)
-      this.pivotCardData.push(item8)
+      var items = [
+        { 
+          DisclosureClassification:  item.DisclosureClassification,
+          Display: "Opening Lease Count",
+          PeriodYear: item.PeriodYear,
+          data: item.OpeningCount,
+        },
+        { 
+          DisclosureClassification:  item.DisclosureClassification,
+          Display: " - Lease Added",
+          PeriodYear: item.PeriodYear,
+          data: item.AddedCount,
+        },
+        { 
+          DisclosureClassification:  item.DisclosureClassification,
+          Display: " - Leases Expired/Cancelled",
+          PeriodYear: item.PeriodYear,
+          data: item.EndedCount,
+        },
+        { 
+          DisclosureClassification:  item.DisclosureClassification,
+          Display: "Closing Lease Count",
+          PeriodYear: item.PeriodYear,
+          data: item.ClosingCount,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Opening Lease Count",
+          PeriodYear: item.PeriodYear,
+          data: item.OpeningCount,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: " - Lease Added",
+          PeriodYear: item.PeriodYear,
+          data: item.AddedCount,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: " - Leases Expired/Cancelled",
+          PeriodYear: item.PeriodYear,
+          data: item.EndedCount,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Closing Lease Count",
+          PeriodYear: item.PeriodYear,
+          data: item.ClosingCount,
+        }
+      ]
+
+      this.pivotCardData.push(items)
     })
+
     if (this.dataSources.length > 0) {
       this.dataSources[0] = new PivotGridDataSource({
         store: this.pivotCardData,
         fields: this.fieldConfigs[0]
       });
     } else {
-      this.dataSources.push( new PivotGridDataSource({
+      this.dataSources.push(new PivotGridDataSource({
         store: this.pivotCardData,
         fields: this.fieldConfigs[0]
       }));
@@ -135,72 +127,62 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
 
   public setROUAssetBalanceCardData(data) {
     this.pivotCardData = [];
+
     data.forEach((item) => {
-      let item1 = 
-      { 
-        DisclosureClassification:  item.disclosureClassification,
-        Display: "ROU Asset Balance",
-        PeriodYear: item.periodYear,
-        data: item.rouAssetBalance,
-      }
-      let item2 = 
-      { 
-        DisclosureClassification:  item.disclosureClassification,
-        Display: "Short Term Liability Balance",
-        PeriodYear: item.periodYear,
-        data: item.shortTermBalance,
-      }
-      let item3 = 
-      { 
-        DisclosureClassification:  item.disclosureClassification,
-        Display: "Long Term Liability Balance",
-        PeriodYear: item.periodYear,
-        data: item.longTermBalance,
-      }
-      let item4 = 
-      { 
-        DisclosureClassification:  item.disclosureClassification,
-        Display: "Total Liability Balance",
-        PeriodYear: item.periodYear,
-        data: item.totalBalance,
-      }
-      let item5 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: "ROU Asset Balance",
-        PeriodYear: item.periodYear,
-        data: item.rouAssetBalance,
-      }
-      let item6 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: "Short Term Liability Balance",
-        PeriodYear: item.periodYear,
-        data: item.shortTermBalance,
-      }
-      let item7 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: "Long Term Liability Balance",
-        PeriodYear: item.periodYear,
-        data: item.longTermBalance,
-      }
-      let item8 = 
-      { 
-        DisclosureClassification:  "Total",
-        Display: "Total Liability Balance",
-        PeriodYear: item.periodYear,
-        data: item.totalBalance,
-      }
-      this.pivotCardData.push(item1)
-      this.pivotCardData.push(item2)
-      this.pivotCardData.push(item3)
-      this.pivotCardData.push(item4)
-      this.pivotCardData.push(item5)
-      this.pivotCardData.push(item6)
-      this.pivotCardData.push(item7)
-      this.pivotCardData.push(item8)
+      var items = [
+        { 
+          DisclosureClassification:  item.disclosureClassification,
+          Display: "ROU Asset Balance",
+          PeriodYear: item.periodYear,
+          data: item.rouAssetBalance,
+        },
+        { 
+          DisclosureClassification:  item.disclosureClassification,
+          Display: "Short Term Liability Balance",
+          PeriodYear: item.periodYear,
+          data: item.shortTermBalance,
+        },
+        { 
+          DisclosureClassification:  item.disclosureClassification,
+          Display: "Long Term Liability Balance",
+          PeriodYear: item.periodYear,
+          data: item.longTermBalance,
+        },
+        { 
+          DisclosureClassification:  item.disclosureClassification,
+          Display: "Total Liability Balance",
+          PeriodYear: item.periodYear,
+          data: item.totalBalance,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "ROU Asset Balance",
+          PeriodYear: item.periodYear,
+          data: item.rouAssetBalance,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Short Term Liability Balance",
+          PeriodYear: item.periodYear,
+          data: item.shortTermBalance,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Long Term Liability Balance",
+          PeriodYear: item.periodYear,
+          data: item.longTermBalance,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Total Liability Balance",
+          PeriodYear: item.periodYear,
+          data: item.totalBalance,
+        }
+      ]
+
+      this.pivotCardData.push(items)
     })
+
     if (this.dataSources.length > 1) {
       this.dataSources[1] = new PivotGridDataSource({
         store: this.pivotCardData,
@@ -233,12 +215,13 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       " - Leases Expired/Cancelled": 3,
       "Closing Lease Count": 4
     }
+
     if (rowSortOrderObject?.[a.value] > rowSortOrderObject?.[b.value])  
-            return 1;  
-        if (rowSortOrderObject?.[b.value] > rowSortOrderObject?.[a.value])  
-            return -1;  
-        else  
-            return 0; 
+      return 1;  
+    if (rowSortOrderObject?.[b.value] > rowSortOrderObject?.[a.value])  
+      return -1;  
+    else  
+      return 0; 
   }
 
   public disclosureClassificationSort(a, b) {
@@ -249,21 +232,21 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       "Total": 4
     }
 
-      if (disclosureClassificationSortOrderObject?.[a.value] > disclosureClassificationSortOrderObject?.[b.value])  
-            return 1;  
-        if (disclosureClassificationSortOrderObject?.[b.value] > disclosureClassificationSortOrderObject?.[a.value])  
-            return -1;  
-        else  
-            return 0; 
-    }
+    if (disclosureClassificationSortOrderObject?.[a.value] > disclosureClassificationSortOrderObject?.[b.value])  
+      return 1;  
+    if (disclosureClassificationSortOrderObject?.[b.value] > disclosureClassificationSortOrderObject?.[a.value])  
+      return -1;  
+    else  
+      return 0; 
+  }
 
   public contextMenuPreparing(e) {
     const dataSource = e.component.getDataSource();
     const sourceField = e.field;
 
-    if (sourceField) {
-      if (sourceField.dataType === 'number') {
+    if (sourceField && sourceField.dataType === 'number') {
         let numberType = "number";
+        
         const setSummaryType = function (args) {
           let format;
           if (numberType === "currency") {
@@ -291,7 +274,6 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
             });
           }
 
-
           dataSource.load();
         };
         const menuItems = [];
@@ -307,8 +289,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
             onItemClick: setSummaryType,
             selected: e.field.summaryType === summaryTypeValue,
           });
-        }
-      }
+        }  
     }
   }
 
@@ -333,5 +314,4 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public updateDimention() {
     this.pivotGrid?.instance.updateDimensions();
   }
-
 }
