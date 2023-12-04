@@ -102,11 +102,10 @@ export class TeamsComponent implements OnInit {
       this.dashboardService.deleteTeams(this.teamsTobeRemoved).subscribe(
         (res:any) => {
           if (res.success) {
-              let removeIndex: number;
-              this.teamsTobeRemoved.forEach(removedTeamId => {
-                removeIndex = this.teams.findIndex(team => removedTeamId == team.teamId);
-                this.teams.splice(removeIndex, 1);
-              });
+            this.selectedMemberIds = [];
+            this.selectedTeamIds = [];
+            this.selectedTeams = [];
+            this.getTeamsData();
           } else { 
             this.toastr.info("The records could not be deleted. Please review and try again.", "", 
                              {positionClass: 'toast-bottom-right', timeOut: 3000, closeButton:false, progressBar: false });
@@ -122,6 +121,7 @@ export class TeamsComponent implements OnInit {
 			this.dashboardService.deleteTeamMembers(this.selectedMemberIds).subscribe(
 				(res:any) => {
 					if (res.success) {
+            this.selectedMemberIds = [];
             this.getTeamsData();
 					} else { alert(`Selected Member(s) could not be deleted. Please review and try again later.`);}
 				}

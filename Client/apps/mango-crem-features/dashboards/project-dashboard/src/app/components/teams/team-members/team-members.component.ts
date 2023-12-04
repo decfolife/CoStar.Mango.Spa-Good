@@ -90,6 +90,7 @@ export class TeamMembersComponent implements OnInit {
 								removeIndex = this.teamMembers.findIndex(member => memberId == member.memberId);
 								this.teamMembers.splice(removeIndex, 1);
 							});
+							this.memberIds = [];
 					} else { alert("Team Member could not be deleted. Please review and try again later.");}
 				}
 			);
