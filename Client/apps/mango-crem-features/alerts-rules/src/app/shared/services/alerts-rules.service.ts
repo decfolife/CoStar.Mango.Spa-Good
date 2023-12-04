@@ -4,7 +4,7 @@ import { environment } from '@mangoSpa/src/environments/environment.local';
 import { AlertRuleUpdate } from '../models';
 
 @Injectable({ providedIn: 'root' })
-export class AlertsRulesService extends EndpointService{
+export class AlertsRulesService extends EndpointService {
 
   getUserModuleRights() {
     return this.callHttpGet(`${environment.appUrls.alertsRules}/GetUserModuleRights`, 'getUserModuleRights');

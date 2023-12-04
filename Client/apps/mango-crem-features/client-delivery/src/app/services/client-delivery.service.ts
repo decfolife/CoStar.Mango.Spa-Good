@@ -8,7 +8,6 @@ import { filter, switchMap } from 'rxjs/operators';
 import { CentralAuthHttpError } from '@mango/data-models/lib-data-models';
 import { UserService } from '@mango/core-shared';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -20,34 +19,31 @@ export class ClientDeliveryService extends EndpointService
 
   constructor(
     private userService: UserService,
-    protected http: HttpClient, @Optional() facade: MangoAppFacade
-    )
+    protected http: HttpClient, @Optional() facade: MangoAppFacade)
   {
     super(http, facade);
   }
 
-  getServiceAccounts(filter: string): Observable<any> {       
+  getServiceAccounts(filter: string, page: number = 1, pageSize: number = 10000): Observable<any> {       
     let cKey : string;
-    this.clientKey$.subscribe(clientKey=>{ cKey = clientKey;})
-    if(!cKey) cKey ='retaildemo';  
-    if(cKey){
-      const url = `${environment.appUrls.authorization}serviceaccounts?Page=1&PageSize=10000&clientKey=${cKey}`;
+    this.clientKey$.subscribe(clientKey => { cKey = clientKey; })
+    if (!cKey) cKey ='retaildemo'; 
+    if (cKey) {
+      const url = `${environment.appUrls.authorization}serviceaccounts?Page=${page}&PageSize=${pageSize}&clientKey=${cKey}`;
       return this.callHttpGet(url, 'GetServiceAccounts')
     }
     return of({});
-    
   }
 
   getServiceAccountChangeHistory(contactId: number): Observable<any> {       
     let cKey : string;
-    this.clientKey$.subscribe(clientKey=>{ cKey = clientKey;})
-    if(!cKey) cKey ='blank';  
-    if(cKey){
+    this.clientKey$.subscribe(clientKey => { cKey = clientKey; })
+    if (!cKey) cKey ='blank';  
+    if (cKey) {
       const url = `${environment.appUrls.authorization}serviceaccounthistory/${cKey}/${contactId}`;
       return this.callHttpGet(url, 'GetServiceAccountChangeHistory')
     }
     return of({});
-    
   } 
 
   updateServiceAccount(contactEmailAddress: string, contactID:number, contactActiveFlg: boolean): Observable<any> {    
@@ -77,11 +73,13 @@ export class ClientDeliveryService extends EndpointService
     );
     return of(true);
   }
+
   private sendRequestSuccess() {
     this.isLoading = false;
     this.isErrored = false;
     this.requestHasBeenSent = true;
   }
+
   private sendRequestFailed(error: CentralAuthHttpError) {
     this.requestHasBeenSent = false;
     this.isLoading = false;

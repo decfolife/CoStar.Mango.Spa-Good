@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { EndpointService } from '@mango/core-shared';
 import { environment } from 'apps/mango/src/environments/environment.local';
 
-
 export interface SharedUserViewRight {
   sharedWithEntityId: number;
   sharedWithEntityType: number;

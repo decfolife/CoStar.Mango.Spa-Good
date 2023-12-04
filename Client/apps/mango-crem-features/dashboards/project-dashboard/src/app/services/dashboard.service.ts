@@ -59,18 +59,13 @@ export class DashboardService  extends EndpointService{
   // CREM app web method which will call Mango Dashboard service api
   // We are not calling Mango service at this time so we don't need to check for isRestful.
   UpdateTaskApproval(taskData: TaskApprovalDto): Observable<any> {
-    if (environment.isRestful) {
-      // Currently we are not supporting REST API for this feature.
-    }
-    else {
     const btnAction = taskData.isApproval ? "Approve" : "Reject"; 
-    const url = environment.appUrls.taskApproval + `?OID=${taskData.transactionId}` + `&ShowPage=1&PMMID=${taskData.taskId}` + `&cmdSubmit=${btnAction}`;
+    const url = `${environment.appUrls.taskApproval}?OID=${taskData.transactionId}&ShowPage=1&PMMID=${taskData.taskId}&cmdSubmit=${btnAction}`;
 
     return this.http.post(url, taskData, { observe: 'response', responseType: 'text'})
-     .pipe(map(data => {
-      return data;
-    }), catchError(this.handleTaskApprovalError('UpdateTaskApproval')));
-  }
+      .pipe(map(data => {
+        return data;
+      }), catchError(this.handleTaskApprovalError('UpdateTaskApproval')));
   }
 
   getCardFilters(): Observable<any> {

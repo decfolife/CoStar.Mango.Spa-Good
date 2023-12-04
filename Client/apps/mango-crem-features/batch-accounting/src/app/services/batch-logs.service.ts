@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-
 import { EndpointService } from '@mango/core-shared/lib-core-shared';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 
@@ -29,13 +28,13 @@ export class BatchLogsService extends EndpointService {
 
   cancelBatch(clientBatchId: number) {
     const cleanUrl = `${environment.appUrls.batchAccounting}/BatchLogs/CancelBatch`;
-    const url = cleanUrl + `?clientBatchId=${clientBatchId}`;
+    const url = `${cleanUrl}?clientBatchId=${clientBatchId}`;
     return this.callHttpGet(url, 'cancelBatch')
   }
 
   reverseBatch(clientBatchId: number) {
     const cleanUrl = `${environment.appUrls.batchAccounting}/BatchLogs/ReverseBatch`;
-    const url = cleanUrl + `?clientBatchId=${clientBatchId}`;
+    const url = `${cleanUrl}?clientBatchId=${clientBatchId}`;
     return this.callHttpGet(url, 'reverseBatch')
   }
 }

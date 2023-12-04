@@ -2,17 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { Bookmark } from 'libs/data-models/lib-data-models/src/lib/models/bookmark';
 import { BookmarkGroup } from 'libs/data-models/lib-data-models/src/lib/models/bookmarkGroup';
-import { combineLatest, forkJoin, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../../mango/src/environments/environment.local';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
-
-
 @Injectable({providedIn: 'root'})
 
-export class BookmarksService  extends EndpointService{
+export class BookmarksService extends EndpointService {
   //Reports = 7
   //Projects = 1
   //Store = 2
@@ -32,10 +30,10 @@ export class BookmarksService  extends EndpointService{
   createBookmarkList(): Observable<BookmarkGroup[]> {
     return combineLatest([
       this.getObjectTypeNames(this.bookmarkGroupsObjectTypeIdList),
-       this.getBookmarks(true, true),
-       this.getRedirectorLinkList(),
+      this.getBookmarks(true, true),
+      this.getRedirectorLinkList(),
       this.getUserPreferenceHidePremise()
-    ]).pipe(map (([objectTypeNameData, bookmarksData, redirectorLinksData,userPreferenceHidePremise ]) => {
+    ]).pipe(map(([objectTypeNameData, bookmarksData, redirectorLinksData,userPreferenceHidePremise]) => {
       let bookmarkGroupList = [];
       let hidePremise = userPreferenceHidePremise.data
       this.redirectorLinks = redirectorLinksData.data;
@@ -52,7 +50,7 @@ export class BookmarksService  extends EndpointService{
         bd.bookmarkText, this.findUrl(bd.objectID, bd.objectTypeID, bd.objectTypeTypeID)));
 
       //Create the data for the bookmark groups
-      if(bookmarksData.data) {
+      if (bookmarksData.data) {
         filteredBookmarkGroupsObjectTypeIdList.forEach(id => {
             let objectTypeName = objectTypeNameData.data.find(otnd => otnd.objectTypeId === id).objectTypeName;
             let filteredBookmarks = id === 7 ? reports : this.filterBookmarks(objectTypeName);
@@ -66,47 +64,28 @@ export class BookmarksService  extends EndpointService{
   }
 
   getBookmarks(isbookmarks: boolean, isreports: boolean): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.bookmarks}Bookmarks/GetBookmarksAndReportsData/${isbookmarks}/${isreports}`;
-      return this.callHttpGet(url, 'getBookmarks')
-    }
-
-    const url = environment.appUrls.bookmarks + 'GetBookmarksAndReportsData';
-    return this.callHttpPost(url, 'getBookmarks', { isbookmarks, isreports })
+    const url = `${environment.appUrls.bookmarks}Bookmarks/GetBookmarksAndReportsData/${isbookmarks}/${isreports}`;
+    return this.callHttpGet(url, 'getBookmarks')
   }
 
   getRedirectorLinkList(): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.bookmarks}Bookmarks/GetRedirectorLinkList`;
-      return this.callHttpGet(url, 'getRedirectorLinkList')
-    }
-
-    const url = `${environment.appUrls.bookmarks}GetRedirectorLinkList`;
-    return this.callHttpPost(url, 'getRedirectorLinkList', null)
+    const url = `${environment.appUrls.bookmarks}Bookmarks/GetRedirectorLinkList`;
+    return this.callHttpGet(url, 'getRedirectorLinkList')
   }
 
   getObjectTypeNames(objectTypeIds: number[]): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.bookmarks}Bookmarks/GetObjectTypeNames`;
-      return this.callHttpPost(url, 'getObjectTypeNames',  { objectTypeIds })
-    }
-
-    const url = environment.appUrls.bookmarks + 'GetObjectTypeNames';
-    return this.callHttpPost(url, 'getObjectTypeNames', { objectTypeIds })
+    const url = `${environment.appUrls.bookmarks}Bookmarks/GetObjectTypeNames`;
+    return this.callHttpPost(url, 'getObjectTypeNames',  { objectTypeIds })
   }
 
   getUserPreferenceHidePremise(): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.bookmarks}Bookmarks/GetUserPreferenceHidePremise`;
-      return this.callHttpGet(url, 'getUserPreferenceHidePremise')
-    }
-    const url = `${environment.appUrls.bookmarks}GetUserPreferenceHidePremise`;
-    return this.callHttpPost(url, 'getUserPreferenceHidePremise', {})
+    const url = `${environment.appUrls.bookmarks}Bookmarks/GetUserPreferenceHidePremise`;
+    return this.callHttpGet(url, 'getUserPreferenceHidePremise')
   }
 
   private filterBookmarks(object_type): Bookmark[] {
     return this.bookmarks.filter(
-      (itm) => itm.objectType == object_type
+      (item) => item.objectType == object_type
     );
   }
 

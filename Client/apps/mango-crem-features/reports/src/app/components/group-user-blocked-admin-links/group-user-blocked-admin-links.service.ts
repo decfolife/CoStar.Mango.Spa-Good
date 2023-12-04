@@ -1,22 +1,19 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../../mango/src/environments/environment.local';
-import { EndpointService } from '../../shared/services/endpoint.service';
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class GroupUserBlockedAdminLinksService extends EndpointService {
-  constructor(protected http: HttpClient) {
-    super(http);
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
   }
 
   getBlockedAdminLinkData(): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.reports}Reports/GetBlockedAdminLinkData`;
-      return this.callHttpGet(url, 'getBlockedAdminLinkData')
-    }
-    const url = `${environment.appUrls.reports}GetBlockedAdminLinkData`;
-    return this.callHttpPost(url, 'getBlockedAdminLinkData', {})
+    const url = `${environment.appUrls.reports}Reports/GetBlockedAdminLinkData`;
+    return this.callHttpGet(url, 'getBlockedAdminLinkData')
   }
 }
 

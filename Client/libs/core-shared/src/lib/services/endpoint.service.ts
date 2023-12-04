@@ -22,7 +22,7 @@ export abstract class EndpointService {
     }
   }
 
-  protected getHttpHeaders(): Observable<{ headers: HttpHeaders }> {
+  protected getHttpHeaders(): Observable<any> {
     if (this.facade) {
       return combineLatest([this.userId$, this.clientKey$]).pipe(
         filter(([userId, clientKey]) => !!userId && !!clientKey),
@@ -33,8 +33,7 @@ export abstract class EndpointService {
               'Accept': 'application/json',
               'UserId': userId ? userId.toString() : '2',
               'ClientKey': clientKey || 'RETAILDEMO',
-              UseQueryOptimization: '1',
-              'ApiKey': 'u1rfLIr102JFGKwNHn4xj2'
+              UseQueryOptimization: '1'
             })
           }
         ))
@@ -106,9 +105,15 @@ export abstract class EndpointService {
     return bytes.buffer;
   }
 
-  protected callHttpGet(url: string, functionName: string): Observable<any> {
+  protected callHttpGet(url: string, functionName: string, httpOptionsParams?: any): Observable<any> {
     return this.getHttpHeaders().pipe(
-      switchMap(httpHeaders => this.http.get(url, httpHeaders)),
+      switchMap(httpOptions => { 
+        if (httpOptionsParams) {
+          httpOptions.params = httpOptionsParams
+        }
+
+        return this.http.get(url, httpOptions) 
+      }),
       map(x => this.toObject(x) as any),
       catchError(this.handleError(functionName))
     )

@@ -108,7 +108,7 @@ export class GroupMaintenanceComponent implements OnInit {
 
     if (e.rowType === "header") {
         const ele = e.cellElement.querySelector(".dx-header-filter");
-        if(ele){
+        if (ele){
             setTimeout(() => {
             
                 const setAriaAttributes = () => {
@@ -118,7 +118,7 @@ export class GroupMaintenanceComponent implements OnInit {
         
                 ele.addEventListener("click", setAriaAttributes);
                 ele.addEventListener("keydown", setAriaAttributes);
-            },150);
+            }, 150);
         }
       }
     }
@@ -268,9 +268,9 @@ export class GroupMaintenanceComponent implements OnInit {
             data.parentGroupID = null;
           }
         })
+
         this.setCompanyNameDisplay();
         this.setSearchField();  
-
       })
   }
   public setSearchField() {
@@ -325,11 +325,9 @@ export class GroupMaintenanceComponent implements OnInit {
  
   public assignAdminLinks(companyId) {
     // route
-    window.location.href = '/v06/Admin/SecurityMaintenance/UserGroupLinks.aspx?GroupID=' 
-                            + companyId.toString();
+    window.location.href = `/v06/Admin/SecurityMaintenance/UserGroupLinks.aspx?GroupID=${companyId.toString()}` 
     return false;
   }
-
 
   private setGridcolumns() {
     this.columns = [

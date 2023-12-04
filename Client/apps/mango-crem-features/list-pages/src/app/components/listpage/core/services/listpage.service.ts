@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-
 import { EndpointService } from '@mango/core-shared';
 import { environment } from 'apps/mango/src/environments/environment.local';
+import { MapDataRequest } from '../../shared/models/map-data-request';
 import {
   ApiResponse,
   GetGridDataRequest,
@@ -13,14 +13,14 @@ import {
   ObjectSecurityRequest,
   SetDefaultListViewRequest,
 } from '../../shared/models';
-import { MapDataRequest } from '../../shared/models/map-data-request';
 
 @Injectable()
 export class ListPageService extends EndpointService {
+
+  // this function's endpoint will always go to the ListPage.aspx. This is used to get
+  // properties that was passed in as input variables into the old version of the list
+  // pages custom element
   getListPageProperties(): Observable<ApiResponse> {
-    //this function's endpoint will always go to the ListPage.aspx. This is used to get
-    //properties that was passed in as input variables into the old version of the list
-    //pages custom element
     //let result : ApiResponse ;
     const result =
     {
@@ -38,7 +38,6 @@ export class ListPageService extends EndpointService {
       status: null
     };
     return of(result);
-
   }
 
   getGridData(request: GetGridDataRequest): Observable<ApiResponse> {
@@ -53,9 +52,7 @@ export class ListPageService extends EndpointService {
     return this.callHttpPut(`${environment.appUrls.listpages}ListViewUpdate`, 'updateListView', listView)
   }
 
-  setDefaultListView(
-    request: SetDefaultListViewRequest
-  ): Observable<ApiResponse> {
+  setDefaultListView(request: SetDefaultListViewRequest): Observable<ApiResponse> {
     return this.callHttpPut(`${environment.appUrls.listpages}SetDefaultListView`, 'setDefaultListView', request)
   }
 
@@ -67,9 +64,7 @@ export class ListPageService extends EndpointService {
     return this.callHttpGet(`${environment.appUrls.listpages}views/${listView.id}/${listView.listViewType}`, 'getListView')
   }
 
-  getListViewSelectorItems(
-    request: GetViewDropdownDataRequest
-  ): Observable<ApiResponse> {
+  getListViewSelectorItems(request: GetViewDropdownDataRequest): Observable<ApiResponse> {
     return this.callHttpGet(`${environment.appUrls.listpages}ListViewSelectorItems/${request.objectTypeId}`, 'getListViewSelectorItems')
   }
 
@@ -149,13 +144,13 @@ export class ListPageService extends EndpointService {
       // This code will fire when running locally. If hosted in aspx, the aspx page will
       // likely catch 500 or other status codes and return a ListPageResponse with success=false, which is a 200
       // in the sense of this error handling, therefore, these codes would be bypassed when hosted in aspx. 
-      if(operation === 'getGridData') {
+      if (operation === 'getGridData') {
         if (error.status === 404) {
           return of({
             success: false,
             clientErrorMessage:'You do not have permission to access this list view.'
           });
-        } else if(error.status === 408) {
+        } else if (error.status === 408) {
           return of({
             success: false,
             clientErrorMessage:'The query for this view did not return within ' +
@@ -169,13 +164,13 @@ export class ListPageService extends EndpointService {
           clientErrorMessage:'There was an error retrieving the data for this list view.'
         });
      }
-     if(operation === 'getListPageColumns'){
+     if (operation === 'getListPageColumns'){
       return of({
         success: false,
         clientErrorMessage:'There was an error retrieving the columns for this list view.'
       });
      }
-     if(operation == 'getDynamicSQL') {
+     if (operation == 'getDynamicSQL') {
       return of({
         success: false,
         clientErrorMessage:'There was an error retrieving the data.'

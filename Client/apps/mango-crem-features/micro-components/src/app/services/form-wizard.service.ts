@@ -1,269 +1,76 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, Optional } from '@angular/core';
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { ApiResponse } from '@mango/data-models/lib-data-models';
-import { of, Observable } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
-export class FormWizardService {
-
-  baseUrl: string = "";
-  protected httpOptions: any = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'UserId': '2',
-      'ClientKey': 'BLANK',
-      'CAEnabled': 'false'
-    })
-  };
-
-  protected httpOptionsWithParams: any = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'UserId': '2',
-      'ClientKey': 'BLANK',
-      'CAEnabled': 'false'
-    })
-  };
-
-  constructor(
-    protected http: HttpClient
-  ) {
+export class FormWizardService extends EndpointService {
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
   }
 
   public getRenderSelect(lookupId, requestTypeId, lookupSql = "0", p1 = "0", p2 = "0", p3 = "0"): Observable<ApiResponse> {
-    let route = "RenderSelects";
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        LookupID: lookupId,
-        RequestTypeID: requestTypeId,
-        p1: p1,
-        p2: p2,
-        p3: p3,
-        LookupSQL: lookupSql
-      }
-      
-      return this.getHttpGetApiResponse(route, 'RenderSelects', param, environment.appUrls.formWizard + route);
-    } else {
-      route = "RenderSelects/" + route;
-      param = {
-        LookupID: lookupId,
-        RequestTypeID: requestTypeId,
-        p1: p1,
-        p2: p2,
-        p3: p3,
-        LookupSQL: lookupSql
-      }
+    let url = `${environment.appUrls.formWizard}RenderSelects/RenderSelects`;
+    let param = {
+      LookupID: lookupId,
+      RequestTypeID: requestTypeId,
+      p1: p1,
+      p2: p2,
+      p3: p3,
+      LookupSQL: lookupSql
     }
-    return this.getHttpGetApiResponse(route, 'RenderSelects', param, environment.appUrls.formWizard + route);
+    
+    return this.callHttpGet(url, 'RenderSelects', param);
   }
 
   public getUserPreferences(): Observable<any> {
-    let route = "GetUserPreferences";
-    if (!environment.isRestful) {
-      return this.getHttpPostApiResponse(route, 'GetUserPreferences', {}, environment.appUrls.dashboards + route)
-    } else {
-      route = "Dashboards/" + route;
-    }
-    return this.getHttpGetApiResponse(route, 'GetUserPreferences', {}, environment.appUrls.dashboards + route)
+    let url = `${environment.appUrls.dashboards}Dashboards/GetUserPreferences`;
+    return this.callHttpGet(url, 'GetUserPreferences')
   }
 
   public getRedirectorLink(OTID: number, OTTID: number): Observable<any> {
-    let route = "GetRedirectorLink";
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'GetRedirectorLink', { OTID: OTID, OTTID: OTTID }, environment.appUrls.formWizard + route)
-    } else {
-      route = "Dashboards/" + route;
-    }
-    return this.getHttpGetApiResponse(route, 'GetRedirectorLink', { OTID: OTID, OTTID: OTTID}, environment.appUrls.formWizard + route)
+    let url = `${environment.appUrls.formWizard}Dashboards/GetRedirectorLink`;  
+    return this.callHttpGet(url, 'GetRedirectorLink', { OTID: OTID, OTTID: OTTID})
   }
 
   public getBuildingLeaseDefaultInfo(OID: number, OTID: number): Observable<any> {
-    let route = "GetBuildingLeaseDefaultInfo";
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'GetBuildingLeaseDefaultInfo', { ObjectID: OID, ObjectTypeID: OTID }, environment.appUrls.formWizard + route)
-    } else {
-      route = "FormWizards/" + route;
-    }
-    return this.getHttpGetApiResponse(route, 'GetBuildingLeaseDefaultInfo', { ObjectID: OID, ObjectTypeID: OTID }, environment.appUrls.formWizard + route)
+    let url = `${environment.appUrls.formWizard}FormWizards/GetBuildingLeaseDefaultInfo`;
+    return this.callHttpGet(url, 'GetBuildingLeaseDefaultInfo', { ObjectID: OID, ObjectTypeID: OTID })
   }
 
   public addTransaction(transaction: any): Observable<any> {
-    let route = "AddTransaction";
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        request: transaction
-      }
-      return this.getHttpPostApiResponse(route, 'AddTransaction', param, environment.appUrls.formWizard + route)
-    } else {
-      route = "FormWizards/" + route;
-      param = transaction;
-    }
-    return this.getHttpPostApiResponse(route, 'AddTransaction', param, environment.appUrls.formWizard + route)
+    let url = `${environment.appUrls.formWizard}FormWizards/AddTransaction`;
+    let param  = transaction;
+
+    return this.callHttpPost(url, 'AddTransaction', param)
   }
 
-  // todo: move to \libs\core-shared\src\lib\services\endpoint.service.ts
   public addBuilding(building: any): Observable<any> {
-    let route = "AddBuilding";
+    let url = `${environment.appUrls.formWizard}FormWizards/AddBuilding`;
+    let param = building;
 
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        request: building
-      }
-      return this.getHttpPostApiResponse(route, 'AddBuilding', param, environment.appUrls.formWizard + route)
-    } else {
-      route = "FormWizards/" + route;
-      param = building;
-    }
-    return this.getHttpPostApiResponse(route, 'AddBuilding', param, environment.appUrls.formWizard + route)
+    return this.callHttpPost(url, 'AddBuilding', param)
   }
 
   public getManagers(teamId: number): Observable<any> {
-    let route = "GetManagers";
+    let url = `${environment.appUrls.formWizard}FormWizards/managers`;
     let param = {
       TeamID: teamId
     }
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'GetManagers', param, environment.appUrls.formWizard + route)
-    } else {
-      route = "FormWizards/managers";
-    }
-    return this.getHttpGetApiResponse(route, 'GetManagers', param, environment.appUrls.formWizard + route)
+  
+    return this.callHttpGet(url, 'GetManagers', param)
   }
   
   public getClientPreferenceByField(Field: string): Observable<any> {
-    let route = "GetClientPreferenceByField";
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'GetClientPreferenceByField', {Pref: Field}, environment.appUrls.formWizard + route)
-    }
-    route = "FormWizards/GetClientPreferenceByField";
-    return this.getHttpGetApiResponse(route, 'FormWizards/GetClientPreferenceByField', {Pref: Field}, environment.appUrls.formWizard + route)
+    let url = `${environment.appUrls.formWizard}FormWizards/GetClientPreferenceByField`;
+    return this.callHttpGet(url, 'FormWizards/GetClientPreferenceByField', { Pref: Field })
   }
 
   public getProjectWizardClientPreferences(): Observable<any> {
-    let route = "GetProjectWizardClientPreferences";
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'GetProjectWizardClientPreferences', {}, environment.appUrls.formWizard + route)
-    }
-    route = "FormWizards/GetProjectWizardClientPreferences";
-    return this.getHttpGetApiResponse(route, 'FormWizards/GetProjectWizardClientPreferences', {}, environment.appUrls.formWizard + route)
-  }
-
-  // ApiResponse calls //
-  protected getHttpGetApiResponse(url: string, functionName: string, httpOptionsParams?: HttpParams | { [param: string]: any }, overrideLocalUrl = null): Observable<ApiResponse> {
-    if (httpOptionsParams) {
-      this.httpOptionsWithParams.params = httpOptionsParams;
-    }
-    url = this.baseUrl + url;
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
-    if (httpOptionsParams) {
-      return this.http.get(url, this.httpOptionsWithParams)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
-    } else { 
-      return this.http.get(url, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
-    }
-  }
-
-  protected getHttpPostApiResponse(url: string, functionName: string, postBody: any, overrideLocalUrl): Observable<ApiResponse> {
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
-
-    return this.http.post(url, postBody, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
-  }
-
-  protected getHttpPutApiResponse(url: string, functionName: string, putBody: any, overrideBaseUrl: boolean = false, overrideLocalUrl): Observable<ApiResponse> {
-    if (overrideBaseUrl) {
-      url = environment.appUrls.formWizard + url
-    } else {
-      url = this.baseUrl + url;
-    }
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
-    // url = 'http://localhost:39187' + url;
-    return this.http.put(url, putBody, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
-  }
-
-  protected getHttpDeleteApiResponse(url: string, functionName: string, overrideBaseUrl: boolean = false, overrideLocalUrl): Observable<ApiResponse> {
-    if (overrideBaseUrl) {
-      url = environment.appUrls.formWizard + url
-    } else {
-      url = this.baseUrl + url;
-    }
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
-    // url = 'http://localhost:39187' + url;
-    return this.http.delete(url, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
-  }
-
-  protected handleApiResponseError(operation = 'operation not provided') {
-    return (error: any): Observable<any> => {
-      if (environment.isRestful && error) {
-        return of({
-          success: false,
-          data: '',
-          clientErrorMessage: error?.error?.clientErrorMessage || error.statusText
-        });
-      }
-      return of(null);
-    };
-  }
-
-  protected toApiResponse(value: any): ApiResponse {
-    let result: ApiResponse =
-    {
-      success: false,
-      data: "{}",
-      clientErrorMessage: ""
-    };
-
-    if (environment.isRestful) {
-      result.success = value.success ? value.success : false;
-      result.data = (value.data || (!value.data && value.data === 0)) ? value.data : "{}";
-      result.clientErrorMessage = result.success ? "" : result.data;
-      return result;
-    }
-
-    let res = value?.d?.Result ? value.d.Result : value.d;
-    let data;
-    
-    try {
-      data = JSON.parse(res);
-    } catch (e) {
-      data = res;
-    }
-    result.success = data.success;
-    result.data = (data.data || (!data.data && data.data === 0)) ? data.data : ((data || data === 0) ? data : "{}");
-    result.clientErrorMessage = result.success ? "" : result.data;
-    return result;
+    let url = `${environment.appUrls.formWizard}FormWizards/GetProjectWizardClientPreferences`;
+    return this.callHttpGet(url, 'FormWizards/GetProjectWizardClientPreferences')
   }
 }

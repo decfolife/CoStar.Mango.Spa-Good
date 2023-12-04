@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { V06GlobalSession } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../../apps/mango/src/environments/environment.local';
 import { EndpointService } from './endpoint.service';
@@ -21,10 +21,7 @@ export class UserInfoService extends EndpointService {
     }
 
     getGlobalSession(): Observable<any> {
-        return combineLatest([this.facade.clientKey$, this.facade.contactRecord$]).pipe(
-            filter(([clientKey, contactRecord]) => !!clientKey && !!contactRecord),
-            switchMap(([clientKey, contactRecord]) => this.callHttpGet(`${environment.appUrls.userService}/session?UserId=${contactRecord.contactID}&ClientKey=${clientKey}`, 'getGlobalSession'))
-        )
+        return this.callHttpGet(`${environment.appUrls.userService}/session`, 'getGlobalSession');
     }
 
     updateGlobalSession(session: V06GlobalSession): Observable<any> {

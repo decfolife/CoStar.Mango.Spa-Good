@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { EndpointService } from '../../shared/services/endpoint.service';
+import { Injectable, Optional } from '@angular/core';
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class ObjectActionsService extends EndpointService {
-  constructor(protected http: HttpClient) {
-    super(http);
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
   }
 }

@@ -73,129 +73,56 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   getLeaseInfo() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getleaseinformation/lease/${this.leaseAbstractId}`, 'getLeaseInfo');
-    }
-
-    const url = `${this.apiUrl}getleaseinformation`;
-    const leaseAbstractId = this.leaseAbstractId;
-    return this.callHttpPost(url, 'getLeaseInfo', { leaseAbstractId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getleaseinformation/lease/${this.leaseAbstractId}`, 'getLeaseInfo');
   }
 
   getAccountingEvents() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventsselector/lease/${this.leaseAbstractId}`, 'getAccountingEvents');
-    }
-
-    const url = `${this.apiUrl}getaccountingeventsselector`;
-    const leaseAbstractId = this.leaseAbstractId;
-    return this.callHttpPost(url, 'getAccountingEvents', { leaseAbstractId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventsselector/lease/${this.leaseAbstractId}`, 'getAccountingEvents');  
   }
 
   getUserInformation() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getuserinformation`, 'getUserInformation');
-    }
-
-    const url = `${this.apiUrl}getuserinformation`;
-    return this.callHttpPost(url, 'getUserInformation', { });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getuserinformation`, 'getUserInformation');
   }
 
   getUserNavPageRight() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageRight/navPage/${this.navPageId}`, 'getUserNavPageRight');
-    }
-
-    const url = `${this.apiUrl}getUserNavPageRight`;
-    const navPageId = this.navPageId;
-    return this.callHttpPost(url, 'getUserNavPageRight', { navPageId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageRight/navPage/${this.navPageId}`, 'getUserNavPageRight');
   }
 
   getUserNavPageWithLeaseRights() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageWithLeaseRights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`, 'getUserNavPageWithLeaseRights');
-    }
-
-    const url = `${this.apiUrl}getUserNavPageWithLeaseRights`;
-    const leaseAbstractId = this.leaseAbstractId;
-    const navPageId = this.navPageId;
-    return this.callHttpPost(url, 'getUserNavPageWithLeaseRights', { navPageId, leaseAbstractId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageWithLeaseRights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`, 'getUserNavPageWithLeaseRights');
   }
 
   getWorkflowStatusOptions() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getAccountingWorkflowStatusInformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusOptions');
-    }
-
-    const url = `${this.apiUrl}getAccountingWorkflowStatusInformation`;
-    const leaseAbstractId = this.leaseAbstractId;
-    return this.callHttpPost(url, 'getWorkflowStatusOptions', { leaseAbstractId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getAccountingWorkflowStatusInformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusOptions');
   }
 
   getEventDetails(masterScheduleId: number) {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventssummary/masterschedule/${masterScheduleId}`, 'getEventDetails');
-    }
-
-    const url = `${this.apiUrl}getaccountingeventssummary`;
-    return this.callHttpPost(url, 'getEventDetails', { masterScheduleId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventssummary/masterschedule/${masterScheduleId}`, 'getEventDetails');
   }
 
   getPaymentDetails(leaseRecognitionScheduleId: number) {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}Payments/gethistoricalpayments/schedule/${leaseRecognitionScheduleId}`, 'getPaymentDetails');
-    }
-
-    const url = `${this.apiUrl}gethistoricalpayments`;
-    return this.callHttpPost(url, 'getPaymentDetails', { leaseRecognitionScheduleId });
+    return this.callHttpGet(`${this.apiUrl}Payments/gethistoricalpayments/schedule/${leaseRecognitionScheduleId}`, 'getPaymentDetails');
   }
 
   getPaymentPopupData(leaseRecognitonScheduleEventId: number) {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}Payments/gethistoricaltransactions/scheduleevent/${leaseRecognitonScheduleEventId}`, 'getPaymentPopupData');
-    }
-
-    const url = `${this.apiUrl}gethistoricaltransactions`;
-    return this.callHttpPost(url, 'getPaymentPopupData', { leaseRecognitonScheduleEventId });
+    return this.callHttpGet(`${this.apiUrl}Payments/gethistoricaltransactions/scheduleevent/${leaseRecognitonScheduleEventId}`, 'getPaymentPopupData');
   }
 
   getPortfolioSettings() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getportfoliosettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');
-    }
-
-    const url = `${this.apiUrl}getportfoliosettings`;
-    const leaseAbstractId = this.leaseAbstractId;
-    return this.callHttpPost(url, 'getPortfolioSettings', { leaseAbstractId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getportfoliosettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');
   }
 
   getGridPreferences() {
-    if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getgridstates/lease/${this.leaseAbstractId}`, 'getGridStates');
-    }
-
-    const url = `${this.apiUrl}getgridstates`;
-    const leaseAbstractId = this.leaseAbstractId;
-    return this.callHttpPost(url, 'getGridStates', { leaseAbstractId });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getgridstates/lease/${this.leaseAbstractId}`, 'getGridStates');
   }
 
   saveGridPreferences(classificationId: number, gridName: string, columnJson) {
-    if (environment.isRestful) {
-      return this.callHttpPost(`${this.apiUrl}AccountingSummary/savegridstates`, 'saveGridStates',
-        JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
-    }
-
-    const url = `${this.apiUrl}savegridstates`;
-    return this.callHttpPost(url, 'savegridstates', { request: { leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson } });
+    return this.callHttpPost(`${this.apiUrl}AccountingSummary/savegridstates`, 'saveGridStates',
+      JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
   }
 
   getAmortizationDetails(leaseRecognitionScheduleID: number) {
-    if (environment.isRestful) {
-        return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`, 'getAmortizationDetails');
-    }
-
-    const url = `${this.apiUrl}GetAmortizationPeriods`;
-    return this.callHttpPost(url, 'getAmortizationDetails', { leaseRecognitionScheduleID });
+    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`, 'getAmortizationDetails');
   }
 
   getId(componentName: string, uniqueName: string, elementType: string, componentType?: string) {
@@ -205,7 +132,7 @@ export class AccountingSummaryService extends EndpointService {
       return `${componentName}-${uniqueName}-${elementType}`
   }
 
-  displayContactSystemAdminMessage(){
+  displayContactSystemAdminMessage() {
     this.notify("An error occurred please contact the system administrator.");
   }
   
@@ -219,5 +146,4 @@ export class AccountingSummaryService extends EndpointService {
       closeOnClick: true,
     });
   }
-
 }

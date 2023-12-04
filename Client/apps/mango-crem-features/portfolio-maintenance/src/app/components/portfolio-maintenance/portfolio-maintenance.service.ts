@@ -1,95 +1,54 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { Observable } from 'rxjs';
-import { EndpointService } from '../../shared/services/endpoint.service';
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class PortfolioMaintenanceService extends EndpointService {
-  constructor(protected http: HttpClient) {
-    super(http);
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
   }
 
   getCompanyHierarchyLabels(masterGroupId: number): Observable<any> {
-    if (environment.isRestful) {
       const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/GetCompanyHierarchyLabels/${masterGroupId}`;
       return this.callHttpGet(url, 'getCompanyHierarchyLabels')
-    }
-
-    const url = `${environment.appUrls.portfolioMaintenance}GetCompanyHierarchyLabels`;
-    return this.callHttpGet(url, 'getCompanyHierarchyLabels',
-      {
-        masterGroupId: masterGroupId
-      }
-    )
   }
 
   getGroupContacts(groupId: number): Observable<any> {
-    if (environment.isRestful) {
       const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/GroupContacts/${groupId}`;
       return this.callHttpGet(url, 'getGroupContacts')
-    }
-
-    const url = `${environment.appUrls.portfolioMaintenance}GroupContacts`;
-    return this.callHttpGet(url, 'getGroupContacts',
-      {
-        id: groupId
-      }
-    )
   }
 
   getPortfolioHierarchyList(): Observable<any> {
-    if (environment.isRestful) {
       const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/GetPortfolioHierarchyList`;
       return this.callHttpGet(url, 'getPortfolioHierarchyList')
-    }
-    const url = `${environment.appUrls.portfolioMaintenance}GetPortfolioHierarchyList`;
-    return this.callHttpGet(url, 'getPortfolioHierarchyList')
   }
 
   deleteCompany(portfolioId: number, companyId: number, isPortfolio: boolean): Observable<any> {
-    if (environment.isRestful) {
       const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/Delete/${companyId.toString()}`;
       return this.callHttpPost(url, 'delete', {})
-    }
-    const url = `${environment.appUrls.portfolioMaintenance}Delete`;
-    return this.callHttpPost(url, 'delete', { companyId })
   }
 
   hasData(portfolioId: number, companyId: number, isPortfolio: boolean): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/HasAssociatedData/${portfolioId.toString()}/${companyId.toString()}/${isPortfolio}`;
-      return this.callHttpPost(url, 'HasAssociatedData', {})
-    }
-    const url = `${environment.appUrls.portfolioMaintenance}HasAssociatedData`;
-    return this.callHttpPost(url, 'HasAssociatedData', { portfolioId, companyId, isPortfolio })
+    const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/HasAssociatedData/${portfolioId.toString()}/${companyId.toString()}/${isPortfolio}`;
+    return this.callHttpPost(url, 'HasAssociatedData', {})
   }
 
   archivePortfolio(portfolioId: number, canArchive: boolean = false): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/Archive/${portfolioId.toString()}/${canArchive}`;
-      return this.getHttpPostApiResponse(url, 'Archive', {})
-    }
-    const url = `${environment.appUrls.portfolioMaintenance}Archive`;
-    return this.getHttpPostApiResponse(url, 'Archive', { portfolioId, canArchive })
+    const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/Archive/${portfolioId.toString()}/${canArchive}`;
+    return this.callHttpPost(url, 'Archive', {})
   }
 
   deletePortfolio(portfolioId: number, isClearAll: boolean = false, name: string): Observable<any> {
-    const request : {PortfolioId: number, IsClearAll: boolean, Name: String} = {PortfolioId: portfolioId, IsClearAll: isClearAll, Name: name};
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/DeletePortfolio`;
-      return this.getHttpPostApiResponse(url, 'DeletePortfolio', request)
-    }
-    const url = `${environment.appUrls.portfolioMaintenance}DeletePortfolio`;
-    return this.getHttpPostApiResponse(url, 'DeletePortfolio', {request})
+    const request: {PortfolioId: number, IsClearAll: boolean, Name: String} = {PortfolioId: portfolioId, IsClearAll: isClearAll, Name: name};
+    const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/DeletePortfolio`;
+    return this.callHttpPost(url, 'DeletePortfolio', request)
   }
 
   saveSubHierarchy(request): Observable<any> {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/SaveSubHierarchy`;
-      return this.getHttpPostApiResponse(url, 'SaveSubHierarchy', request)
-    }
-    const url = `${environment.appUrls.portfolioMaintenance}SaveSubHierarchy`;
-    return this.getHttpPostApiResponse(url, 'SaveSubHierarchy', { request })
+    const url = `${environment.appUrls.portfolioMaintenance}PortfolioMaintenance/SaveSubHierarchy`;
+    return this.callHttpPost(url, 'SaveSubHierarchy', request)
   }
 }

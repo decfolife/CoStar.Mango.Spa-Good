@@ -15,10 +15,7 @@ export class HeaderService extends EndpointService {
   }
 
   getUserModules(): Observable<any> {
-      //This will only be called for mango spa and not for crem
-      if (environment.isRestful) {
-        const url = `${environment.appUrls.header}Header/GetUserModules`;
-        return this.callHttpGet(url, 'GetUserModules');
-      }
+    const url = `${environment.appUrls.header}Header/GetUserModules`;
+    return this.callHttpGet(url, 'GetUserModules');   
   }
 }

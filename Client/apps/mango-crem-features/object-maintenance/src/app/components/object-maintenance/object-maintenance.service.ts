@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../../../../mango/src/environments/environment.local';
-import { EndpointService } from '../../shared/services/endpoint.service';
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class ObjectMaintenanceService extends EndpointService {
-  constructor(protected http: HttpClient) {
-    super(http);
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
   }
 
   // Page Data from GET VM
@@ -63,29 +64,17 @@ export class ObjectMaintenanceService extends EndpointService {
   }
 
   private getObjectTypeOptions() {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.objectMaintenance}objectmaintenance/objecttype`;
-      return this.callHttpGet(url, 'GetObjectTypes')
-    }
-    const url = `${environment.appUrls.objectMaintenance}ObjectType`;
+    const url = `${environment.appUrls.objectMaintenance}objectmaintenance/objecttype`;
     return this.callHttpGet(url, 'GetObjectTypes')
   }
 
   private getPageData(objectTypeId: number) : any {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.objectMaintenance}objectmaintenance/${objectTypeId}`;
-      return this.callHttpGet(url, 'GetFilteredObjectList')
-    }
-    const url = `${environment.appUrls.objectMaintenance}GetObjectList`;
-    return this.callHttpGet(url, 'GetObjectList', { objectTypeId: objectTypeId })
+    const url = `${environment.appUrls.objectMaintenance}objectmaintenance/${objectTypeId}`;
+    return this.callHttpGet(url, 'GetFilteredObjectList')
   }
 
   private getFilteredPageData(objectTypeId: number, statusFilterVal: number) : any {
-    if (environment.isRestful) {
-      const url = `${environment.appUrls.objectMaintenance}objectmaintenance/${objectTypeId}/${statusFilterVal}`;
-      return this.callHttpGet(url, 'GetFilteredObjectList')
-    }
-    const url = `${environment.appUrls.objectMaintenance}GetFilteredObjectList`;
-    return this.callHttpGet(url, 'GetFilteredObjectList', { objectTypeId: objectTypeId, statusFilterVal: statusFilterVal })
+    const url = `${environment.appUrls.objectMaintenance}objectmaintenance/${objectTypeId}/${statusFilterVal}`;
+    return this.callHttpGet(url, 'GetFilteredObjectList')
   }
 }
