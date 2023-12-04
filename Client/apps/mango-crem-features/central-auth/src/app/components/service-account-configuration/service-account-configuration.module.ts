@@ -13,6 +13,7 @@ import { MatCardModule } from '@angular/material/card';
 import { NavbarModule } from '../navbar/navbar.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
     MatCardModule,
     DxDataGridModule,
     MatSlideToggleModule,
+    MatDialogModule,
     ModalModule
   ]
 })

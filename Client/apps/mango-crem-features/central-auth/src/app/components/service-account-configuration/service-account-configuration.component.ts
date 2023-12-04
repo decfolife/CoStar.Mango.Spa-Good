@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '@mango/core-shared/lib-core-shared';
 import { ServiceAccountInfo, ServiceAccountEndpoint, ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
 import { Subscription } from 'rxjs';
-import { CentralAuthFacade } from '../../+state/facades';
 import { filter, switchMap, tap, map } from 'rxjs/operators';
 import { ServiceAccountChangeHistory } from '@mango/data-models/lib-data-models';
 
@@ -17,8 +16,7 @@ export class ServiceAccountConfigurationComponent implements OnInit{
   public serviceAccountChangeHistories: ServiceAccountChangeHistory[];
 
   constructor(
-    private userService: UserService,
-    private centralAuthFacade: CentralAuthFacade,
+    private userService: UserService
     ) { }
 
 
