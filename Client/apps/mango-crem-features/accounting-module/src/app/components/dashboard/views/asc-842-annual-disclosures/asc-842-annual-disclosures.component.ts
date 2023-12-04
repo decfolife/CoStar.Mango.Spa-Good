@@ -44,8 +44,8 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
-    
-    this.inAppDisclosureService.getIADCardData(this.selectedSegment, this.reportingYear).subscribe((result) => {
+
+    this.inAppDisclosureService.getIADCardData(this.selectedSegment, this.reportingYear, 'usd').subscribe((result) => {
       this.setLeaseCountCardData(result.data[0])
       this.setROUAssetBalanceCardData(result.data[1])
       //this.setCardData(result.data[0])
