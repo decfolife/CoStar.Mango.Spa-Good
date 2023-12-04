@@ -29,10 +29,10 @@ export class AuthGuard implements CanActivate {
     const clientKey = route.queryParamMap.get('clientKey') || route.paramMap.get('clientKey') || route.queryParamMap.get(OAUTH_CLIENT_KEY_QUERY_PARAM)
     const contactId = route.queryParamMap.get(OAUTH_CONTACT_ID_QUERY_PARAM)
     const redirectUri = route.queryParamMap.get(OAUTH_REDIRECT_QUERY_PARAM)
-    !!clientKey ? this.centralAuthFacade.setSelectedClientKey(clientKey) : null
-    !!redirectUri ? this.centralAuthFacade.setRedirectionUri(redirectUri) : null
-    !!contactId ? this.centralAuthFacade.setSelectedContactId(parseInt(contactId)) : null
-    !!clientKey || !!redirectUri ? this.centralAuthFacade.setOpenClientInNewTab(false) : null
+    !!clientKey ? this.centralAuthFacade.setSelectedClientKey(clientKey) : null;
+    !!redirectUri ? this.centralAuthFacade.setRedirectionUri(redirectUri) : null;
+    !!contactId ? this.centralAuthFacade.setSelectedContactId(parseInt(contactId)) : null;
+    !!clientKey || !!redirectUri ? this.centralAuthFacade.setOpenClientInNewTab(false) : null;
     return this.centralAuthFacade.accessToken$.pipe(
       switchMap(accessToken => {
         if (accessToken) {

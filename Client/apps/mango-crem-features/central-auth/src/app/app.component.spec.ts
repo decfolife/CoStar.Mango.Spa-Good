@@ -1,33 +1,37 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { provideMockStore } from '@ngrx/store/testing';
 import { AppComponent } from './app.component';
-import { RouterTestingModule } from '@angular/router/testing';
+import { CentralAuthFacade } from './+state/facades';
+import { CentralAuthErrorHandler } from './services/error-handler.service';
+import { AppModule } from './app.module';
 
-describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [AppComponent],
-    }).compileComponents();
-  });
+describe('App Component', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [AppModule],
+      providers: [
+        CentralAuthErrorHandler,
+        CentralAuthFacade,
+        provideMockStore(),
+        provideRouter([]),
+        provideAnimations()
+      ]
+    })
+      .compileComponents();
+  }));
 
-  it(`should have as title 'mango-crem-features-central-authentication'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('mango-crem-features-central-authentication');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain(
-      'Welcome to mango-crem-features-central-authentication!'
-    );
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 });

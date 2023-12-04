@@ -13,7 +13,6 @@ import { provideUserIdleConfig } from 'libs/core-shared/src/lib/services';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from '../environments/environment.dev';
 import { AuthenticationEffects } from './+state/effects/authentication.effects';
-import { CentralAuthEffects } from './+state/effects/effects';
 import { CentralAuthFacade } from './+state/facades';
 import * as fromApp from './+state/reducers';
 import { AppComponent } from './app.component';
@@ -26,12 +25,13 @@ import { CustomerSelectionPageComponent } from './components/customer-selection-
 import { ServiceAccountConfigurationComponent } from './components/service-account-configuration/service-account-configuration.component';
 import { AuthGuard } from './guards/auth.guard';
 import { DxLoadPanelModule } from 'devextreme-angular';
+import { AppEffects } from './+state/effects/app.effects';
+import { HttpEffects } from './+state/effects/http.effects';
 @NgModule({
   declarations: [AppComponent],
   imports: [
     CommonModule,
     BrowserAnimationsModule,
-    LibUiSharedModule,
     HttpClientModule,
     RouterModule.forRoot([
       {
@@ -86,7 +86,7 @@ import { DxLoadPanelModule } from 'devextreme-angular';
     ),
     EffectsModule.forRoot([]),
     StoreModule.forFeature(fromApp.CENTRAL_AUTH_FEATURE_KEY, fromApp.reducer),
-    EffectsModule.forFeature([CentralAuthEffects, AuthenticationEffects, OAuthEffects]),
+    EffectsModule.forFeature([AppEffects, HttpEffects, AuthenticationEffects, OAuthEffects]),
     StoreDevtoolsModule.instrument(),
     ToastrModule.forRoot({
       timeOut: 8000,

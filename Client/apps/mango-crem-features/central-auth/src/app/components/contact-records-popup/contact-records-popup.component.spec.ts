@@ -1,35 +1,31 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatMenuModule } from '@angular/material/menu';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
 import { CentralAuthFacade } from '../../+state/facades';
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
-import { NavbarComponent } from './navbar.component';
+import { ContactRecordsPopupComponent } from './contact-records-popup.component';
 
-describe('Navbar Component', () => {
-  let component: NavbarComponent;
-  let fixture: ComponentFixture<NavbarComponent>;
+describe('Contact Record Component', () => {
+  let component: ContactRecordsPopupComponent;
+  let fixture: ComponentFixture<ContactRecordsPopupComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [NavbarComponent],
-      imports: [
-        HttpClientTestingModule,
-        MatMenuModule,
-        FontAwesomeModule
-      ],
+      imports: [ContactRecordsPopupComponent],
       providers: [
         CentralAuthErrorHandler,
         CentralAuthFacade,
-        provideMockStore()
+        provideMockStore(),
+        provideRouter([]),
+        provideAnimations()
       ]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NavbarComponent);
+    fixture = TestBed.createComponent(ContactRecordsPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

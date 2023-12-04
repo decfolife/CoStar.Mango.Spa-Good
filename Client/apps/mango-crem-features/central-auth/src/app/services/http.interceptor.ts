@@ -1,11 +1,11 @@
 import { HTTP_INTERCEPTORS, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
+import { Router } from "@angular/router";
 import { MangoErrorHandler } from "@mango/core-shared/lib-core-shared";
 import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
-import { Observable, of, throwError } from "rxjs";
-import { catchError, switchMap, take, tap } from "rxjs/operators";
+import { Observable, throwError } from "rxjs";
+import { catchError, switchMap, take } from "rxjs/operators";
 import { CentralAuthFacade } from "../+state/facades";
-import { Router } from "@angular/router";
 
 const IGNORED_ERRORS = [CentralAuthErrorCodes.ResetTokenExpired]
 
@@ -16,11 +16,11 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
     super(injector)
   }
 
-  private get router(): Router {
+  get router(): Router {
     return this.injector.get(Router)
   }
 
-  private get facade(): CentralAuthFacade {
+  get facade(): CentralAuthFacade {
     return this.injector.get(CentralAuthFacade)
   }
 
@@ -36,16 +36,10 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Remove this empty string
-    return of('').pipe(
-      switchMap(accessToken => this.facade.accessToken$),
+    return this.facade.accessToken$.pipe(
       take(1),
       switchMap(token => {
-        const headers = {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        }
-        token ? headers['Authorization'] = `Bearer ${token}` : null
+        const headers = this.generateRequestHeaders(token)
         const request = req.clone({ setHeaders: headers })
         return next.handle(request)
       }),
@@ -87,5 +81,14 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
         return throwError(caHttpError);
       })
     )
+  }
+
+  generateRequestHeaders(accessToken: string): any {
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    }
+    accessToken ? headers['Authorization'] = `Bearer ${accessToken}` : null
+    return headers
   }
 }

@@ -1,19 +1,17 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { SettingsService, StorageService, UserService } from "@mango/core-shared";
+import { Router } from "@angular/router";
+import { UserService } from "@mango/core-shared";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { UserIdleService } from "libs/core-shared/src/lib/services";
+import { LoginResponse } from "libs/data-models/lib-data-models/src/lib/models/userAuth";
 import { of } from "rxjs";
 import { catchError, filter, map, switchMap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
-import { CentralAuthFacade } from "../facades";
-import { LoginResponse } from "libs/data-models/lib-data-models/src/lib/models/userAuth";
 
 @Injectable()
 
 export class AuthenticationEffects {
 
-  constructor(private actions$: Actions, private userService: UserService, private centralAuthFacade: CentralAuthFacade, private router: Router, private settingsService: SettingsService, private acitvatedRoute: ActivatedRoute, private storageService: StorageService, private idleService: UserIdleService) { }
+  constructor(private actions$: Actions, private userService: UserService, private router: Router) { }
 
   login$ = createEffect(
     () =>
@@ -45,10 +43,10 @@ export class AuthenticationEffects {
         ofType(AppActions.LOG_OUT),
         map(_ => {
           this.userService.logout()
-          this.centralAuthFacade.clearState()
           this.router.navigate(['/'], {queryParamsHandling: 'merge'})
+          return AppActions.clearState()
         }
         )
-      ), { dispatch: false }
+      )
   )
 }

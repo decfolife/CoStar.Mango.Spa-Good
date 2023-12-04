@@ -6,16 +6,16 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as dayjs from 'dayjs';
 import { UserIdleService } from "libs/core-shared/src/lib/services";
 import { combineLatest, of } from "rxjs";
-import { filter, first, map, single, switchMap, take, takeUntil, takeWhile, tap } from "rxjs/operators";
+import { filter, first, map, switchMap, take, tap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
 
 @Injectable()
 
-export class CentralAuthEffects {
+export class AppEffects {
 
-  constructor(private actions$: Actions, private userService: UserService, private centralAuthFacade: CentralAuthFacade, private router: Router, private settingsService: SettingsService, private acitvatedRoute: ActivatedRoute, private storageService: StorageService, private idleService: UserIdleService) { }
+  constructor(private actions$: Actions, private centralAuthFacade: CentralAuthFacade, private router: Router, private settingsService: SettingsService, private acitvatedRoute: ActivatedRoute, private storageService: StorageService, private idleService: UserIdleService) { }
 
   appInit$ = createEffect(
     () =>
@@ -112,8 +112,6 @@ export class CentralAuthEffects {
       )
   )
 
-
-
   setupLogoutWhenTimedOut$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -159,28 +157,30 @@ export class CentralAuthEffects {
       ), { dispatch: false }
   )
 
-
-
   populateLoggedInUserData$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.POPULATE_LOGGED_IN_USER_DATA),
-        tap(_ => {
+        map(_ => {
           const user: UserAuth = this.storageService.getDataObject(DBkeys.USER_AUTH);
-          user ? this.centralAuthFacade.setUser(user) : null
+          return user ? AppActions.setUser({ user }) : AppActions.noOpAction()
         })
-      ), { dispatch: false }
+      )
   )
 
 
-  getUserClients$ = createEffect(
+  getContactRecordsSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AppActions.GET_USER_CLIENTS),
-        switchMap(_ => combineLatest([this.centralAuthFacade.user$.pipe(take(1)), this.centralAuthFacade.accessToken$.pipe(take(1))])),
-        filter(([user, accessToken]) => !!user && !!accessToken),
-        switchMap(([user, accessToken]) => this.userService.getClientSitesByUser(user.email)),
-        map(response => AppActions.getUserClientsSuccess({ clientSites: response }))
+        ofType(AppActions.GET_CONTACT_RECORDS_SUCCESS),
+        map((action: { type: string, contactRecords: ContactRecord[] }) => action.contactRecords),
+        filter(contactRecords => !!contactRecords && contactRecords.length <= 1),
+        switchMap(contactRecord => {
+          return contactRecord.length === 0 ?
+            of(AppActions.setSelectedContactID({ contactId: 0 }), AppActions.setContactRecord({ contactRecord: { contactID: 0 } }))
+            :
+            of(AppActions.setSelectedContactID({ contactId: contactRecord[0].contactID }))
+        })
       )
   )
 
@@ -208,42 +208,6 @@ export class CentralAuthEffects {
       )
   )
 
-  getClientSSSOSettings$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.GET_CLIENT_SSO_SETTINGS),
-        switchMap((action: { type: string, clientKey: string }) => this.settingsService.getClientSsoSettings(action.clientKey)),
-        map(response => AppActions.getClientSSOSettingsSuccess({ ssoSettings: response }))
-      )
-  )
-
-  getContactRecords$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.GET_CONTACT_RECORDS),
-        switchMap((action: { type: string, clientKey: string }) => combineLatest([of(action.clientKey), this.centralAuthFacade.user$.pipe(take(1))])),
-        filter(([clientKey, user]) => !!clientKey && !!user),
-        switchMap(([clientKey, user]) => this.userService.getContactRecords(user.email, clientKey)),
-        map(response => AppActions.getContactRecordsSuccess({ contactRecords: response.contactRecords.map(contactRecordMapper) }))
-      )
-  )
-
-  getContactRecordsSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.GET_CONTACT_RECORDS_SUCCESS),
-        map((action: { type: string, contactRecords: ContactRecord[] }) => action.contactRecords),
-        filter(contactRecords => !!contactRecords && contactRecords.length <= 1),
-        switchMap(contactRecord => {
-          if (contactRecord.length === 0) {
-            return of(AppActions.setSelectedContactID({ contactId: 0 }), AppActions.setContactRecord({ contactRecord: { contactID: 0 } }))
-          } else {
-            return of(AppActions.setSelectedContactID({ contactId: contactRecord[0].contactID }))
-          }
-        })
-      )
-  )
-
   startAuthorizationWhenFullySelected$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -255,22 +219,3 @@ export class CentralAuthEffects {
   )
 }
 
-
-// To be refactored
-
-function contactRecordMapper(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
-  const {
-    contactID,
-    contactFirstName: firstName,
-    contactLastName: lastName,
-    contactUserID: userName, userRoleName, requireSSO, isDefaultLoginContact } = contactRecordHttpObject
-  return {
-    contactID,
-    firstName,
-    lastName,
-    userName,
-    userRoleName,
-    requireSSO,
-    isDefaultLoginContact
-  }
-}

@@ -35,6 +35,7 @@ export const LOG_OUT = '[UI] Log Out'
 export const SET_ACCESS_TOKEN = '[UI] Set Access Token'
 export const PURGE_CLIENT_SELECTION = '[UI] Purge Client Selection'
 export const CLEAR_STATE = '[UI] Clear State'
+export const NO_OP_ACTION = '[UI] No Op Action'
 
 
 export const init = createAction(APP_INIT);
@@ -69,4 +70,5 @@ export const setContactRecord = createAction(SET_CONTACT_RECORD, props<{ contact
 export const setRedirectionUri = createAction(SET_REDIRECTION_URI, props<{ redirectionUri: string }>());
 export const purgeClientSelection = createAction(PURGE_CLIENT_SELECTION);
 export const clearState = createAction(CLEAR_STATE);
+export const noOpAction = createAction(NO_OP_ACTION);
 

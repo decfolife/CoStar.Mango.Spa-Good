@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserService } from "@mango/core-shared";
-import { MultiClientLoginHttpRequest } from "@mango/data-models/lib-data-models";
+import { MultiClientLoginHttpRequest, OAUTH_AUTH_CODE_QUERY_PARAM } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Observable, combineLatest, of, pipe } from "rxjs";
 import { catchError, delay, filter, map, switchMap, take, tap } from "rxjs/operators";
@@ -37,51 +37,49 @@ export class OAuthEffects {
       ) as Observable<any>
   )
 
-  authorize$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(OAuthActions.AUTHORIZE),
-        switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.accessToken$.pipe(take(1))])),
-        filter(([redirectUri, accessToken]) => !!redirectUri && !!accessToken),
-        switchMap(([redirectUri, accessToken]) => this.userService.retrieveAuthorizationCode(redirectUri).pipe(
-          map(response => OAuthActions.authorizeSuccess({ authorizationCode: response.code })),
-          catchError(_ => of(OAuthActions.authorizeError()))
-        ))
-      )
-  )
 
- redirectToClient$ = createEffect(
+  redirectToClient$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE_SUCCESS),
         switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.authorizationCode$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])),
         filter(([redirectionUri, authorizationCode]) => !!redirectionUri && !!authorizationCode),
         tap(([redirectionUri, authorizationCode, openClientInNewTab]) => {
-          let decodedRedirectUri = decodeURIComponent(redirectionUri)
-          // CREM Special handling
-          if (decodedRedirectUri.includes('v06') && decodedRedirectUri.includes('ReturnUrl')) {
-            const baseUrl = decodedRedirectUri.substring(0, decodedRedirectUri.indexOf('ReturnUrl') + 10)
-            const returnUrl = decodedRedirectUri.substring(decodedRedirectUri.indexOf('ReturnUrl') + 10)
-            decodedRedirectUri = `${baseUrl}${encodeURIComponent(returnUrl)}`
-          }
-          const url = updateQueryStringParameter(decodedRedirectUri, 'auth_code', authorizationCode)
+          const url = UtilsClass.generateClientUrl(redirectionUri, authorizationCode)
           openClientInNewTab ? window.open(url, "_blank") : window.location.href = url
         }),
         delay(2000),
         map(_ => AppActions.purgeClientSelection())
       )
   )
+
+  // To be refactored
+
+
 }
 
-// To be refactored
+export class UtilsClass {
 
-function updateQueryStringParameter(uri, key, value) {
-  var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-  var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-  if (uri.match(re)) {
-    return uri.replace(re, '$1' + key + "=" + value + '$2');
+  static generateClientUrl(redirectionUri: string, authorizationCode: string): string {
+    let decodedRedirectUri = decodeURIComponent(redirectionUri)
+    // CREM Special handling
+    if (decodedRedirectUri.includes('v06') && decodedRedirectUri.includes('ReturnUrl')) {
+      const baseUrl = decodedRedirectUri.substring(0, decodedRedirectUri.indexOf('ReturnUrl') + 10)
+      const returnUrl = decodedRedirectUri.substring(decodedRedirectUri.indexOf('ReturnUrl') + 10)
+      decodedRedirectUri = `${baseUrl}${encodeURIComponent(returnUrl)}`
+    }
+    const url = this.addQueryParamWithProperSymbol(decodedRedirectUri, OAUTH_AUTH_CODE_QUERY_PARAM, authorizationCode)
+    return url
   }
-  else {
-    return uri + separator + key + "=" + value;
+
+  static addQueryParamWithProperSymbol(uri, key, value) {
+    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+      return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    else {
+      return uri + separator + key + "=" + value;
+    }
   }
 }

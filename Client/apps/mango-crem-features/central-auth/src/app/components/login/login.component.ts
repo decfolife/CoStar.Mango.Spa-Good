@@ -30,7 +30,7 @@ import { noWhitespaceValidator } from '../reset-password/password-validator';
     MatButtonModule,
     IconModule
   ],
-  providers: [CentralAuthURLService]
+  providers: [CentralAuthURLService, CentralAuthErrorHandler]
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loading$: Observable<boolean>;
