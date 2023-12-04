@@ -18,6 +18,7 @@ import {
   ServiceAccountChangeHistory,
   UpdateServiceAccountApiAccessRequest,
   UserAuth,
+  UpdateServiceAccountExpiresInDaysRequest,
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { Observable, of } from 'rxjs';
@@ -173,15 +174,19 @@ export class UserService {
     );
   }
 
-  getServiceAccountInfo(userEmail: string): Observable<ServiceAccountInfo> {
-    return this.http.get<ServiceAccountInfo>(`${this.env.appUrls.authentication}/serviceaccount/accountinfo/${userEmail}`)
+  getServiceAccountInfo(): Observable<ServiceAccountInfo> {
+    return this.http.get<ServiceAccountInfo>(`${this.env.appUrls.authentication}/serviceaccount/accountinfo`)
   }
 
   updateServiceAccountApiAccess(request: UpdateServiceAccountApiAccessRequest): Observable<boolean> {
     return this.http.put<boolean>(`${this.env.appUrls.authentication}/serviceaccount/updateapiaccess`, request)
   }
 
-  getServiceAccountChangeHistory(userEmail: string): Observable<ServiceAccountChangeHistory[]> {
-    return this.http.get<ServiceAccountChangeHistory[]>(`${this.env.appUrls.authentication}/serviceaccount/accounthistory/${userEmail}`)
+  updateServiceAccountExpiresInDays(request: UpdateServiceAccountExpiresInDaysRequest): Observable<boolean> {
+    return this.http.put<boolean>(`${this.env.appUrls.authentication}/serviceaccount/expiresindays`, request)
+  }
+
+  getServiceAccountChangeHistory(): Observable<ServiceAccountChangeHistory[]> {
+    return this.http.get<ServiceAccountChangeHistory[]>(`${this.env.appUrls.authentication}/serviceaccount/accounthistory`)
   }
 }

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ServiceAccountConfigurationComponent } from './service-account-configuration.component';
 import { ServiceAccountApiKeysComponent } from './service-account-api-keys/service-account-api-keys.component';
+import { ServiceAccountApiKeyDurationComponent } from './service-account-api-key-duration/service-account-api-key-duration.component';
 import { ServiceAccountSitesComponent } from './service-account-sites/service-account-sites.component';
 import { ServiceAccountEndpointsComponent } from './service-account-endpoints/service-account-endpoints.component';
 import { ServiceAccountHistoryComponent } from './service-account-history/service-account-history.component';
@@ -17,6 +18,7 @@ import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
   declarations: [
     ServiceAccountConfigurationComponent,
     ServiceAccountApiKeysComponent,
+    ServiceAccountApiKeyDurationComponent,
     ServiceAccountSitesComponent,
     ServiceAccountEndpointsComponent,
     ServiceAccountHistoryComponent,

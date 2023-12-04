@@ -4,6 +4,7 @@ import { MatDialog} from '@angular/material/dialog';
 import { GenerateApiKeyConfirmationComponent } from '../generate-apikey-confirmation/generate-apikey-confirmation.component';
 import { CopyClipboardMessageComponent } from '../copy-clipboard-message/copy-clipboard-message.component';
 import { Subscription } from 'rxjs';
+import { ServiceAccountInfo } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-service-account-api-keys',
@@ -11,7 +12,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./service-account-api-keys.component.scss'],
 })
 export class ServiceAccountApiKeysComponent {
-  @Input() apiKeyInfo: any;
+  @Input() servieAccountInfo: ServiceAccountInfo
   @Output() apiKeyUpdated = new EventEmitter<boolean>();
 
   subs: Subscription[] = []

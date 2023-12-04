@@ -10,7 +10,6 @@ import { ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/mod
   styleUrls: ['./service-account-sites.component.scss'],
 })
 export class ServiceAccountSitesComponent {
-  @Input() userEmail: string;
   @Input() sites: ServiceAccountSite[];
   @Output() apiAccessUpdated = new EventEmitter<boolean>();
 
@@ -22,7 +21,6 @@ export class ServiceAccountSitesComponent {
 
   updateApiAccess(e: any, index: number) {
     const request: UpdateServiceAccountApiAccessRequest = {
-      email: this.userEmail,
       clientKey: this.sites[index].clientKey,
       apiAccess: e.checked
     };

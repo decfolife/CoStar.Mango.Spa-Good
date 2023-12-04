@@ -12,15 +12,8 @@ import { ServiceAccountChangeHistory } from '@mango/data-models/lib-data-models'
   styleUrls: ['./service-account-configuration.component.scss'],
 })
 export class ServiceAccountConfigurationComponent implements OnInit{
-  public userEmail: string;
   subs: Subscription[] = []
   public servieAccountInfo: ServiceAccountInfo;
-  public apiKeyExpiresOn: Date;
-  public apiKeyGeneratedDate: Date;
-  public serviceAccountSites : ServiceAccountSite[];
-  public serviceAccountEndpoints: ServiceAccountEndpoint[];
-  public apiKeyExpired: boolean = false;
-  public apiKeyInfo: any;
   public serviceAccountChangeHistories: ServiceAccountChangeHistory[];
 
   constructor(
@@ -30,7 +23,6 @@ export class ServiceAccountConfigurationComponent implements OnInit{
 
 
     ngOnInit(): void {
-      this.centralAuthFacade.user$.subscribe(user => this.userEmail = user.email);  
       this.getServiceAccountInfo();
     }
 
@@ -44,25 +36,16 @@ export class ServiceAccountConfigurationComponent implements OnInit{
   
     private getServiceAccountInfo() {
       this.subs.push(
-        this.userService.getServiceAccountInfo(this.userEmail)
+        this.userService.getServiceAccountInfo()
         .subscribe(result => {        
-          if(result){          
-              this.serviceAccountEndpoints = result.serviceAccountEndpoints; 
-              this.serviceAccountSites = result.serviceAccountSites; 
-              this.apiKeyInfo = {
-                userEmail: this.userEmail,
-                apiKeyExpiresOn: result.apiKeyExpiresOn,
-                apiKeyGeneratedDate: result.apiKeyGeneratedDate,
-                apiKeyStatus: result.apiKeyExpiresOn === null 
-                  ? ''
-                  : new Date(result.apiKeyExpiresOn ?? '2099-12-31') <= new Date() ? 'Expired' : 'Active'
-              };
+          if(result){       
+              this.servieAccountInfo = result;   
           }
         })
       )
 
       this.subs.push(
-        this.userService.getServiceAccountChangeHistory(this.userEmail)
+        this.userService.getServiceAccountChangeHistory()
         .subscribe(result => {        
           if(result){          
               this.serviceAccountChangeHistories = result;      
