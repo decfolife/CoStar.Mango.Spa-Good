@@ -12,7 +12,7 @@ import { ServiceAccountInfo } from '@mango/data-models/lib-data-models';
   styleUrls: ['./service-account-api-keys.component.scss'],
 })
 export class ServiceAccountApiKeysComponent {
-  @Input() servieAccountInfo: ServiceAccountInfo
+  @Input() serviceAccountInfo: ServiceAccountInfo
   @Output() apiKeyUpdated = new EventEmitter<boolean>();
 
   subs: Subscription[] = []

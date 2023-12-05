@@ -12,7 +12,7 @@ import { ServiceAccountChangeHistory } from '@mango/data-models/lib-data-models'
 })
 export class ServiceAccountConfigurationComponent implements OnInit{
   subs: Subscription[] = []
-  public servieAccountInfo: ServiceAccountInfo;
+  public serviceAccountInfo: ServiceAccountInfo;
   public serviceAccountChangeHistories: ServiceAccountChangeHistory[];
 
   constructor(
@@ -37,7 +37,7 @@ export class ServiceAccountConfigurationComponent implements OnInit{
         this.userService.getServiceAccountInfo()
         .subscribe(result => {        
           if(result){       
-              this.servieAccountInfo = result;   
+              this.serviceAccountInfo = result;   
           }
         })
       )
