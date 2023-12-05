@@ -58,6 +58,7 @@
         [attr.role]="'button'"
         [attr.aria-controls]="'sidebar-nav'"
         [attr.title]="expandNav ? 'Hide Sidebar' : 'Show Sidebar'"
+        [attr.aria-expanded]="expandNav"
         tabindex="0"
       >
         <mat-icon class="arrowLeft" id="navArrowLeft" *ngIf="expandNav"
