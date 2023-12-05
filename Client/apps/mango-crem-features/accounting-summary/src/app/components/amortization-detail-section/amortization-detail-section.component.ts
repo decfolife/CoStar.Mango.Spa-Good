@@ -84,7 +84,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         this.amortizationDetailColumns = this.getAmortizationColumns(this.classificationID, this.eventScheduleData, this.periodNameHeaderFilterDataSource);
         this.getGridPreferences();
       } else if (!amortizationDetailsResponse.success || !portfolioSettingsResponse.success) {
-        this.accountingSummaryService.notify(!amortizationDetailsResponse.success ? amortizationDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(!amortizationDetailsResponse.success ? amortizationDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
       }
     }));
   }
@@ -118,7 +118,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         this.amortizationDataGrid.instance.state(state);
         sessionStorage.setItem("amortizationGridStateKey", JSON.stringify(state));
       } else {
-        this.accountingSummaryService.notify(response.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
     }));
   }
@@ -153,7 +153,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       else if (response.success) {
         this.initialState = newState;
       } else {
-        this.accountingSummaryService.notify(response.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
     }));
   }

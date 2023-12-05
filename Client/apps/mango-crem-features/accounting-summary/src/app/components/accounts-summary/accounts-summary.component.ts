@@ -63,7 +63,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
         this.isAccountingEventEmpty = false;
       }
       else if (!response.success) {
-        this.accountingSummaryService.notify(response.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
     }));
   }
@@ -80,7 +80,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       else if (res.success) {
         this.userInfo = res.data
       } else{
-        this.accountingSummaryService.notify(res.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(res.clientErrorMessage);
       }
     }));
   }
@@ -165,16 +165,16 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
       else if (!userNavPageRightResponse.success) {
-        this.accountingSummaryService.notify(userNavPageRightResponse.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(userNavPageRightResponse.clientErrorMessage);
       }
       else if (!userNavPageWithLeaseRightsResponse.success) {
-        this.accountingSummaryService.notify(userNavPageWithLeaseRightsResponse.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(userNavPageWithLeaseRightsResponse.clientErrorMessage);
       }
       else if (!workflowStatusOptionsResponse.success) {
-        this.accountingSummaryService.notify(workflowStatusOptionsResponse.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(workflowStatusOptionsResponse.clientErrorMessage);
       }
       else if (!leaseInformationResponse.success) {
-        this.accountingSummaryService.notify(leaseInformationResponse.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(leaseInformationResponse.clientErrorMessage);
       }
       else {
         this.noUserAddRights = !userNavPageWithLeaseRightsResponse.data.canAddSchedule;

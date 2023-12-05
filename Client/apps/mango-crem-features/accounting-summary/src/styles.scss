@@ -85,4 +85,39 @@
     .dx-datagrid-summary-item {
         white-space: nowrap !important;
     }
+
+    .dx-overlay-content.dx-popup-normal.dx-resizable {
+        min-width: unset !important;
+    }
+
+    .workflow-dropdown-div {
+        dx-select-box,input{
+            border: 1px solid #a7a49f;
+            border-radius: 2px;
+        }
+
+        .dx-texteditor-input{
+            font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
+            border: 1px solid #a7a49f;
+            font-size: 15px;
+        }
+    }
+
+    &.workflow-dropdown-list-container {
+        .dx-list-item.dx-state-disabled {  
+            pointer-events: auto;  
+        }
+
+         .dx-list-item.dx-list-item-selected {  
+            background-color: #e3f3fc;  
+        }
+
+         &.dx-overlay-wrapper.dx-popup-wrapper > .dx-overlay-content.dx-popup-normal > .dx-popup-content {
+            padding: unset !important;
+        }
+    }
+
+    #openLeaseAlertsPopupButton{
+        border-radius: 2px;
+    }
 }

@@ -1,0 +1,36 @@
+<div>
+  <input [id]="accountingSummaryService.getId(componentName,'empty','disabled-input')" [value]="inputStatusText" *ngIf="!isWorkflowDropdownVisible" class="no-data-text-box" type="text" disabled="true">
+  <dx-select-box
+    [id]="accountingSummaryService.getId(componentName,'statuses','dropdown')"
+    [visible]="isWorkflowDropdownVisible"
+    [(value)]="dropdownStatusValue"
+    valueExpr="workflowStatusId"
+    displayExpr="workflowStatus"
+    [deferRendering]="false"
+    [inputAttr]="{ 'aria-label': 'Workflow Status Dropdown' }"
+    [showClearButton]="false"
+    [dataSource]="dropdownDataSource"
+    [dropDownOptions]="{ wrapperAttr: { class: 'accounting-summary-style-container workflow-dropdown-list-container' } }"
+    height="34px"
+    width="200px"
+    (onValueChanged)="onValueChanged($event)"
+    itemTemplate="item"
+  >
+    <div *dxTemplate="let itemData of 'item'" >
+      <div [id]="accountingSummaryService.getId(componentName,'status-item', itemData.workflowStatusId.toString())"
+      (mouseenter)="onMouseEnter($event, itemData)" (mouseleave)="onMouseLeave()"
+      >
+        {{itemData.workflowStatus}}
+      </div>
+    </div>
+  </dx-select-box>
+
+  <dx-tooltip
+    [visible]="isTooltipVisible" 
+	  [target]="toolTipTarget"
+  >
+    <div *dxTemplate="let data of 'content'">
+        {{ btnDisabledReason }}
+    </div>
+  </dx-tooltip>
+</div>

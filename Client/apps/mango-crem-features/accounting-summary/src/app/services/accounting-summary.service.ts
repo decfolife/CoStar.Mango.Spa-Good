@@ -116,6 +116,15 @@ export class AccountingSummaryService extends EndpointService {
     return this.callHttpGet(`${this.apiUrl}AccountingSummary/getgridstates/lease/${this.leaseAbstractId}`, 'getGridStates');
   }
 
+  getWorkflowStatuses() {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingWorkflowStatusInformation/Lease/${this.leaseAbstractId}`, 'getAccountingEvents');
+  }
+
+  saveWorkflowStatus(workflowStatusId: number, comment: string){
+    return this.callHttpPost(`${this.apiUrl}AccountingSummary/saveworkflowstatus`, 'saveWorkflowStatus',
+    JSON.stringify({ leaseAbstractID: this.leaseAbstractId, workflowStatusID: workflowStatusId, comment: comment }));
+  }
+
   saveGridPreferences(classificationId: number, gridName: string, columnJson) {
     return this.callHttpPost(`${this.apiUrl}AccountingSummary/savegridstates`, 'saveGridStates',
       JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
@@ -132,14 +141,22 @@ export class AccountingSummaryService extends EndpointService {
       return `${componentName}-${uniqueName}-${elementType}`
   }
 
-  displayContactSystemAdminMessage() {
-    this.notify("An error occurred please contact the system administrator.");
+  displayContactSystemAdminMessage(){
+    this.errorNotify("An error occurred please contact the system administrator.");
   }
   
-  notify(message: string) {
+  errorNotify(message: string) {
+    this.notifyPopup(message, "error")
+  }
+
+  successNotify(message: string) {
+    this.notifyPopup(message, "success")
+  }
+
+  private notifyPopup(message: string, messageType: string){
     notify({
       message: message,
-      type: "error",
+      type: messageType,
       displayTime: 5000,
       position: { at: 'center bottom', my: 'center bottom', offset: '0 -16' },
       maxWidth: "400px",

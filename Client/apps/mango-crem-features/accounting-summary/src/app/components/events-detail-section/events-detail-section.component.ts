@@ -120,7 +120,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
         this.eventScheduleData.emit(this.detailsGridData.filter(d => d.isPublished)[0]);
       } else if (!eventDetailsResponse.success || !portfolioSettingsResponse.success) {
-        this.accountingSummaryService.notify(!eventDetailsResponse.success ? eventDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(!eventDetailsResponse.success ? eventDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
       }
     }));
 
@@ -167,7 +167,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.eventsDataGrid.instance.state(state);
         sessionStorage.setItem("eventsGridStateKey", JSON.stringify(state));
       } else {
-        this.accountingSummaryService.notify(response.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
     }));
   }
@@ -189,7 +189,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       else if (response.success) {
         this.initialState = newState;
       } else {
-        this.accountingSummaryService.notify(response.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
     }));
   }

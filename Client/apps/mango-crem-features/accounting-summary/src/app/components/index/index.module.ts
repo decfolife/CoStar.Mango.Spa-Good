@@ -7,7 +7,7 @@ import { TitleComponent } from '@accounting-summary/components/title/title.compo
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { ButtonModule, DropdownModule, IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
-import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule} from 'devextreme-angular';
+import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule, DxSelectBoxModule} from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
 import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
 import { IndexComponent } from './index.component';
@@ -20,6 +20,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
+import { WorkflowDropdownComponent } from '../workflow-dropdown/workflow-dropdown.component';
 @NgModule({
   declarations: [
     IndexComponent,
@@ -29,6 +30,7 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
     EventsDetailSectionComponent,
     PaymentsDetailSectionComponent,
     TransactionPopupComponent,
+    WorkflowDropdownComponent,
     AmortizationDetailSectionComponent
   ],
 
@@ -41,6 +43,7 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
     DxTooltipModule,
     DxDropDownBoxModule,
     DxDataGridModule,
+    DxSelectBoxModule,
     ButtonModule,
     LeaseAlertsModule,
     DropdownModule,

@@ -30,7 +30,7 @@ class EnvironmentsCrem implements Environment {
     objectActions: 'http://mangospa.dev.corp.virtualpremise.com:30080/objectActions/api/',
     header: 'http://mangospa.dev.corp.virtualpremise.com:30080/header/api/',
     inAppDisclosure: 'http://mangospa.dev.corp.virtualpremise.com:30080/AccountingDashboard/api/',
-    accountingSummary:"http://mangospa.dev.corp.virtualpremise.com:30080/AccountingSummary/api/AccountingSummary/",
+    accountingSummary:"http://mangospa.dev.corp.virtualpremise.com:30080/AccountingSummary/api/",
     dataSetDictionary: 'http://mangospa.dev.corp.virtualpremise.com:30080/reports/api/',
     projects: 'http://mangospa.dev.corp.virtualpremise.com:30080/projects/api/projects/',
   };

@@ -68,6 +68,10 @@
         </dx-tooltip>
       </div>
 
+      <div class="workflow-dropdown-div">
+        <mango-workflow-dropdown [rightsInfo]="rightsInfo"></mango-workflow-dropdown>    
+      </div>
+
       <div [id]="accountingSummaryService.getId(componentName,'alerts','button')">
         <mango-alerts-root [leaseAbstractId]="returnLeaseAbstractId()"></mango-alerts-root>
       </div>

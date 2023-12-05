@@ -73,7 +73,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
        this.paymentsGridColumns = this.paymentsGridColumnService.getPaymentGridColumns(this.paymentsGridData, this.dateFormat);
        this.getGridPreferences();
      } else if (!paymentDetailsResponse.success) {
-       this.accountingSummaryService.notify(paymentDetailsResponse.clientErrorMessage);
+       this.accountingSummaryService.errorNotify(paymentDetailsResponse.clientErrorMessage);
      }
    }));
  }
@@ -103,7 +103,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
       this.paymentsDataGrid.instance.state(state);
       sessionStorage.setItem("paymentsGridStateKey", JSON.stringify(state));
     } else {
-      this.accountingSummaryService.notify(response.clientErrorMessage);
+      this.accountingSummaryService.errorNotify(response.clientErrorMessage);
     }
     }));
   }
@@ -125,7 +125,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
       else if (response.success) {
         this.initialState = newState;
       } else {
-        this.accountingSummaryService.notify(response.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
     }));
   }
@@ -160,7 +160,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
         if (historicalTransactionDetailsResponse === null) {
           this.accountingSummaryService.displayContactSystemAdminMessage();
         } else if (!historicalTransactionDetailsResponse.success) {
-          this.accountingSummaryService.notify(historicalTransactionDetailsResponse.clientErrorMessage);
+          this.accountingSummaryService.errorNotify(historicalTransactionDetailsResponse.clientErrorMessage);
         } else {
           this.transactionPopupData = historicalTransactionDetailsResponse.data;
           this.isEuroDateFormat = this.userInfo.useDateEU;
