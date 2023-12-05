@@ -16,6 +16,7 @@ export class TransactionPopupComponent {
   @Input() transactionPopupVisible: boolean;
   @Input() transactionPopupData: any;
   @Input() userInfo: UserInfoResponse;
+  @Input() eventScheduleData: any;
 
   componentName = "transaction"
   transactionGridColumns = [];
@@ -23,13 +24,15 @@ export class TransactionPopupComponent {
   dateFormat = 'MM/dd/yyyy';
   summaryFields: any = {};
 
+  baseAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.baseCurrencyDecimalPrecision);
+  targetAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.targetCurrencyDecimalPrecision);
+  
   constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, private transactionPopupGridColumnsService: TransactionPopupGridColumnsService) {
-    this.summaryFields = this.getSummaryFields();
 
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.transactionPopupData !== undefined) {
+    if (changes['transactionPopupData'] && !changes['transactionPopupData'].firstChange) {
       this.transactionPopupGridSetup();
       this.transactionPopupVisible = true;
     }
@@ -40,66 +43,50 @@ export class TransactionPopupComponent {
     if (this.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }
-    this.transactionGridColumns = this.transactionPopupGridColumnsService.getTransactionPopupGridColumns(this.transactionPopupData, this.dateFormat);
+    
+    const scheduleEventBeginDate = new Date(this.eventScheduleData.beginDate);
+    const scheduleEventEndDate = new Date(this.eventScheduleData.endDate);
+    const scheduleincludeFromFirst = this.eventScheduleData.includeFromFirst;
+
+    if (scheduleincludeFromFirst) {
+      scheduleEventBeginDate.setDate(1); // Set the day of the month to 1
+    }
+    
+      for (const transaction of this.transactionPopupData.transactions) {
+        const dueByDate = new Date(transaction.dueBy);
+        if (dueByDate < scheduleEventBeginDate || dueByDate > scheduleEventEndDate) {
+          transaction.targetAmount = 0;
+        }
+      }
+      this.transactionGridColumns = this.transactionPopupGridColumnsService.getTransactionPopupGridColumns(this.transactionPopupData, this.dateFormat);
   }
-  
+
   onTransactionPopupHidden() {
     this.transactionPopupVisible = false;
   }
 
-  getSummaryFields() {
-    interface SummaryField {
-      column?: string;
-      summaryType?: string;
-      displayFormat: string | ((value: any) => string);
-      alignment?: string;
-      name?: string;
-      showInColumn?: string;
+  customSummaryCalculation(options) {
+    if (options.summaryProcess === 'start') {
+      options.totalValue = 0;
+    } else if (options.summaryProcess === 'calculate') {
+      switch (options.name) {
+        case 'targetAmountCount':
+          if (options.value.targetAmount !== 0) {
+            options.totalValue += 1;
+          }
+          break;
+        case 'baseAmountCount':
+          options.totalValue += 1;
+          break;
+        case 'baseAmountTotal':
+          options.totalValue += options.value.baseAmount;
+          break;
+        case 'targetAmountTotal':
+          options.totalValue += options.value.targetAmount;
+          break;
+      }
     }
-    const totalItems: Array<SummaryField> = [];
-    totalItems.push({
-      displayFormat: `Total Amount:`,
-      alignment: 'right',
-      showInColumn: 'dueBy',
-      name: 'TotalsLabel_TargetAmount'
-    });
-    totalItems.push({
-      column: 'TargetAmount',
-      summaryType: 'sum',
-      displayFormat: value => this.formattingService.localFormat(+value, this.transactionPopupData.targetCurrencyDecimalPrecision),
-      alignment: 'right',
-      showInColumn: 'targetAmount'
-    }); 
-    totalItems.push({
-      column: 'BaseAmount',
-      summaryType: 'sum',
-      displayFormat: value => this.formattingService.localFormat(+value, this.transactionPopupData.baseCurrencyDecimalPrecision),
-      alignment: 'right',
-      showInColumn: 'baseAmount'
-    });
-    totalItems.push({
-      displayFormat: `Count:`,
-      alignment: 'right',
-      showInColumn: 'dueBy',
-      name: 'CountLabel_TargetAmount'
-    });
-    totalItems.push({
-      column: 'TargetAmount',
-      summaryType: 'count',
-      displayFormat: value => String(Number(value).toFixed(0)),
-      alignment: 'right',
-      showInColumn: 'targetAmount'
-    });
-    totalItems.push({
-      column: 'BaseAmount',
-      summaryType: 'count',
-      displayFormat: value => String(Number(value).toFixed(0)),
-      alignment: 'right',
-      showInColumn: 'baseAmount'
-    });
-    return { totalItems };
   }
-
 }
 
 

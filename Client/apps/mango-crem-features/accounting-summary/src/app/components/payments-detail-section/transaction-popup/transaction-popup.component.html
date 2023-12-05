@@ -171,6 +171,7 @@
                 </div>
             </div>
         </dx-scroll-view>
+
         <dx-data-grid
             #transactionPopupGrid
             [dataSource]="transactionPopupData.transactions"
@@ -183,15 +184,60 @@
             [allowColumnResizing]="true"
             [wordWrapEnabled]="true"
             [columnAutoWidth]="true"
-            [remoteOperations]="false"
             height="50%"
             width="100%"
-            [summary]="summaryFields"
-
             [loadPanel]="{enabled: true,
                 shading: true,
                 visible: true,
                 shadingColor: 'rgba(0, 0, 0, 0.4)'}">
+
+            <dxo-summary [calculateCustomSummary]="customSummaryCalculation">
+                <dxi-total-item
+                    alignment="right"
+                    name="TotalsLabel"
+                    summaryType="custom"
+                    showInColumn="DueBy"
+                    displayFormat="Total Amount:">
+                </dxi-total-item>
+
+                <dxi-total-item
+                    alignment="right"
+                    name="CountLabel"
+                    summaryType="custom"
+                    showInColumn="DueBy"
+                    displayFormat="Count:">
+                </dxi-total-item>
+
+                <dxi-total-item
+                    alignment="right"
+                    name="baseAmountTotal"
+                    summaryType="custom"
+                    showInColumn="baseAmount"
+                    [displayFormat]="baseAmountFormatter">
+                </dxi-total-item>
+                  
+                <dxi-total-item
+                    alignment="right"
+                    name="targetAmountTotal"
+                    summaryType="custom"
+                    showInColumn="targetAmount"
+                    [displayFormat]="targetAmountFormatter">
+                </dxi-total-item>
+
+                <dxi-total-item
+                    alignment="right"
+                    name="baseAmountCount"
+                    summaryType="custom"
+                    showInColumn="baseAmount">
+                </dxi-total-item>
+
+                <dxi-total-item
+                    alignment="right"
+                    name="targetAmountCount"
+                    summaryType="custom" 
+                    showInColumn="targetAmount">
+                </dxi-total-item>
+            </dxo-summary>
 
                 <div *dxTemplate="let info of 'amortizationHeader'">
 					<p title={{info.column.caption}}
@@ -199,11 +245,11 @@
 					  {{info.column.caption}}
 					</p>    
 				  </div>
-				
-				  <div *dxTemplate="let cell of 'pointer'">
-					<div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
-				  </div>
-        <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+                <div *dxTemplate="let cell of 'pointer'">
+                    <div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+                </div>
+                <dxo-scrolling mode="virtual"></dxo-scrolling>
       </dx-data-grid>
     </div>
 </dx-popup>
