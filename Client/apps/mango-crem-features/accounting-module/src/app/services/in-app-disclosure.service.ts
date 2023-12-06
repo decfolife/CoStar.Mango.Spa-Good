@@ -37,7 +37,7 @@ export class InAppDisclosureService extends EndpointService{
   }
 
   public getIADCardData(segmentID, reportingYear, reportingCurrency) {
-    let param = { segmentID : segmentID, reportingYear: reportingYear, reportingCurrency: reportingCurrency };
+    let param = { segmentID : segmentID, reportingYear: reportingYear, reportingCurrencyISO: reportingCurrency };
     const url = `${environment.appUrls.inAppDisclosure}IAD/IADCardData`;
     return this.callHttpGet(url, 'getIADCardData',  param)  
   }

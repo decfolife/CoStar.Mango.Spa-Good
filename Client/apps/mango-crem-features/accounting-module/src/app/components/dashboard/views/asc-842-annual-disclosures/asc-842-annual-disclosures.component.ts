@@ -108,7 +108,10 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         }
       ]
 
-      this.pivotCardData.push(items)
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+
+      })
     })
 
     if (this.dataSources.length > 0) {
@@ -131,56 +134,34 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     data.forEach((item) => {
       var items = [
         { 
-          DisclosureClassification:  item.disclosureClassification,
+          DisclosureClassification:  item.ClassificationName,
           Display: "ROU Asset Balance",
-          PeriodYear: item.periodYear,
-          data: item.rouAssetBalance,
+          PeriodYear: item.PeriodYear,
+          data: item.AssetBalanceClosingReporting,
         },
         { 
-          DisclosureClassification:  item.disclosureClassification,
+          DisclosureClassification:  item.ClassificationName,
           Display: "Short Term Liability Balance",
-          PeriodYear: item.periodYear,
-          data: item.shortTermBalance,
+          PeriodYear: item.PeriodYear,
+          data: item.ShortTermLiabilityClosingReporting,
         },
         { 
-          DisclosureClassification:  item.disclosureClassification,
+          DisclosureClassification:  item.ClassificationName,
           Display: "Long Term Liability Balance",
-          PeriodYear: item.periodYear,
-          data: item.longTermBalance,
+          PeriodYear: item.PeriodYear,
+          data: item.LongTermLiabilityClosingReporting,
         },
         { 
-          DisclosureClassification:  item.disclosureClassification,
+          DisclosureClassification:  item.ClassificationName,
           Display: "Total Liability Balance",
-          PeriodYear: item.periodYear,
-          data: item.totalBalance,
-        },
-        { 
-          DisclosureClassification:  "Total",
-          Display: "ROU Asset Balance",
-          PeriodYear: item.periodYear,
-          data: item.rouAssetBalance,
-        },
-        { 
-          DisclosureClassification:  "Total",
-          Display: "Short Term Liability Balance",
-          PeriodYear: item.periodYear,
-          data: item.shortTermBalance,
-        },
-        { 
-          DisclosureClassification:  "Total",
-          Display: "Long Term Liability Balance",
-          PeriodYear: item.periodYear,
-          data: item.longTermBalance,
-        },
-        { 
-          DisclosureClassification:  "Total",
-          Display: "Total Liability Balance",
-          PeriodYear: item.periodYear,
-          data: item.totalBalance,
+          PeriodYear: item.PeriodYear,
+          data: item.LiabilityBalanceClosingReporting,
         }
       ]
 
-      this.pivotCardData.push(items)
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+      })
     })
 
     if (this.dataSources.length > 1) {

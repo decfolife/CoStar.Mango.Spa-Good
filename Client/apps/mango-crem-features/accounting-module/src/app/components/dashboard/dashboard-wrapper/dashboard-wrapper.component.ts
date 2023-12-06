@@ -3,7 +3,6 @@
 
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 import notify from 'devextreme/ui/notify';
@@ -35,9 +34,7 @@ export class DashboardWrapperComponent implements OnInit {
     this.featureFlagEnabled = true;
     this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
       this.criteriaSet = result.data[0].CriteriaSetID;
-      const observableItem = forkJoin({
-        segments: this.inAppDisclosureService.getSegments(this.criteriaSet, false)
-      });
+      const observableItem = this.inAppDisclosureService.getSegments(this.criteriaSet, false);
   
       observableItem.subscribe((data) => {
         this.accountingViewData = [
@@ -72,7 +69,7 @@ export class DashboardWrapperComponent implements OnInit {
         }
         //fetch criteriaSetID for each view;
         if(this.selectedView == 2) {
-          this.accountingSegmentData = data.segments.data;
+          this.accountingSegmentData = data.data;
           this.selectedSegment = this.accountingSegmentData?.[0].segmentID
         }
         this.loading = false;
