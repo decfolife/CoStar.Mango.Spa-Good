@@ -2,6 +2,7 @@
     title="Scheduled Transactions"
     width="55%"
     height="80%"
+    [resizeEnabled]="true"
     [(visible)]="transactionPopupVisible"
     (onHidden)="onTransactionPopupHidden()"
     [closeOnOutsideClick]="true"
@@ -184,7 +185,7 @@
             [allowColumnResizing]="true"
             [wordWrapEnabled]="true"
             [columnAutoWidth]="true"
-            height="50%"
+            height="60%"
             width="100%"
             [loadPanel]="{enabled: true,
                 shading: true,
