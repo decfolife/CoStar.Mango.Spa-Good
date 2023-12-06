@@ -34,7 +34,16 @@ export class ContactRecordsPopupComponent {
 
     this.selectedClient$ = this.centralAuthFacade.selectedClient$
     this.contactRecords$ = this.centralAuthFacade.userContactRecords$
-    this.visible$ = combineLatest([this.centralAuthFacade.selectedClient$, this.centralAuthFacade.userContactRecords$, this.centralAuthFacade.selectedContactRecord$, this.centralAuthFacade.contactId$]).pipe(map(([selectedClient, contactRecords, selectedContactRecord, selectedContactId]) => !!selectedClient && !!contactRecords && contactRecords.length > 1 && !selectedContactRecord && !selectedContactId))
+    this.visible$ = combineLatest([
+      this.centralAuthFacade.selectedClient$,
+      this.centralAuthFacade.userContactRecords$,
+      this.centralAuthFacade.selectedContactRecord$,
+      this.centralAuthFacade.contactId$,
+      this.centralAuthFacade.isSwitchContactRecord$
+    ]).pipe(
+      map(([selectedClient, contactRecords, selectedContactRecord, selectedContactId, isSwitchContactRecord]) =>
+        !!selectedClient && !!contactRecords && !selectedContactRecord && !selectedContactId && (contactRecords.length > 1 || !!isSwitchContactRecord))
+    )
   }
 
   onSelectionChanged(event) {

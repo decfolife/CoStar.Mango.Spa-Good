@@ -89,3 +89,9 @@ export const userContactRecords = createSelector(
     getAppState,
     (state: State) => state.userContactRecords
 );
+
+
+export const isSwitchContactRecord = createSelector(
+    getAppState,
+    (state: State) => state.isSwitchContactRecord
+);

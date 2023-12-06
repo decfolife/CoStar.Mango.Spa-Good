@@ -175,7 +175,11 @@ export class AppEffects {
         ofType(AppActions.GET_CONTACT_RECORDS_SUCCESS),
         map((action: { type: string, contactRecords: ContactRecord[] }) => action.contactRecords),
         filter(contactRecords => !!contactRecords && contactRecords.length <= 1),
-        switchMap(contactRecord => {
+        switchMap(contactRecord => combineLatest([of(contactRecord), this.centralAuthFacade.isSwitchContactRecord$.pipe(take(1))])),
+        switchMap(([contactRecord, isSwitchContactRecord]) => {
+          if (!!isSwitchContactRecord) {
+            return of(AppActions.noOpAction())
+          }
           return contactRecord.length === 0 ?
             of(AppActions.setSelectedContactID({ contactId: 0 }), AppActions.setContactRecord({ contactRecord: { contactID: 0 } }))
             :

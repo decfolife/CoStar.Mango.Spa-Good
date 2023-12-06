@@ -25,6 +25,7 @@ export class CentralAuthFacade {
   ssoSettings$ = this.store.pipe(select(AppSelectors.ssoSettings));
   userContactRecords$ = this.store.pipe(select(AppSelectors.userContactRecords));
   openClientInNewTab$ = this.store.pipe(select(AppSelectors.openClientInNewTab));
+  isSwitchContactRecord$ = this.store.pipe(select(AppSelectors.isSwitchContactRecord));
 
   constructor(private store: Store) { }
 
@@ -54,6 +55,10 @@ export class CentralAuthFacade {
 
   setOpenClientInNewTab(openClientInNewTab: boolean) {
     this.store.dispatch(AppActions.setOpenClientInNewTab({ openClientInNewTab }));
+  }
+  
+  setIsSwitchContactRecord(isSwitchContactRecord: boolean) {
+    this.store.dispatch(AppActions.setIsSwitchContactRecord({ isSwitchContactRecord }));
   }
 
   getUserClients() {

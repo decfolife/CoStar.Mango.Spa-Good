@@ -26,6 +26,7 @@ export interface State extends EntityState<CentralAuthEntity> {
   isClientSpecificLogin: boolean,
   redirectionUri: string,
   authorizationCode: string
+  isSwitchContactRecord: boolean
 }
 
 export interface CentralAuthPartialState {
@@ -51,7 +52,8 @@ export const initialState: State = appAdapter.getInitialState({
   selectedContactId: null,
   isClientSpecificLogin: false,
   redirectionUri: null,
-  authorizationCode: null
+  authorizationCode: null,
+  isSwitchContactRecord: false
 });
 
 const appReducer = createReducer(
@@ -72,6 +74,7 @@ const appReducer = createReducer(
   on(AppActions.setRedirectionUri, (state, { redirectionUri }) => ({ ...state, redirectionUri })),
   on(AppActions.setClientSpecificLogin, (state, { isClientSpecific }) => ({ ...state, isClientSpecificLogin: isClientSpecific })),
   on(AppActions.setOpenClientInNewTab, (state, { openClientInNewTab }) => ({ ...state, openClientInNewTab })),
+  on(AppActions.setIsSwitchContactRecord, (state, { isSwitchContactRecord }) => ({ ...state, isSwitchContactRecord })),
   on(OAuthActions.authorize, (state) => ({ ...state, loading: true })),
   on(OAuthActions.authorizeSuccess, (state, { authorizationCode }) => ({ ...state, error: false, loading: false, authorizationCode })),
   on(OAuthActions.authorizeError, (state) => ({ ...state, error: true, loading: false })),
@@ -87,7 +90,9 @@ const appReducer = createReducer(
     selectedContactId: null,
     openClientInNewTab: true,
     authorizationCode: null,
-    redirectionUri: null
+    redirectionUri: null,
+    isSwitchContactRecord: null,
+    isClientSpecificLogin: null
   })),
   on(AppActions.clearState, () => ({ ...initialState })),
 );

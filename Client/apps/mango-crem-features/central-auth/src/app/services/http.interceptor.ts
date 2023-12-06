@@ -59,8 +59,8 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
         if (caHttpError.status === 401) {
           caHttpError.errorType = MangoErrorTypes.WARNING
           caHttpError.message = caHttpError.message;
-          this.facade.logout()
-          this.router.navigate(['/'])
+          //this.facade.logout()
+          //this.router.navigate(['/'])
         }
 
         if (caHttpError.errorCode as CentralAuthErrorCodes === CentralAuthErrorCodes.SqsTimeout) {
