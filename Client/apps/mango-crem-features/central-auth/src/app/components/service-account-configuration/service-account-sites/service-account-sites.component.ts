@@ -35,4 +35,7 @@ export class ServiceAccountSitesComponent {
     )
   }
 
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }

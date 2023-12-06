@@ -32,4 +32,8 @@ export class ServiceAccountApiKeyDurationComponent{
       })
     )
   }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
+  }
 }
