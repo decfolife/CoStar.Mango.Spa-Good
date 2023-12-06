@@ -51,7 +51,7 @@ export class ServiceAccountsComponent implements OnInit {
       if(result && result.data){    
         this.allServiceAccountsData = result.data.items;      
         this.filterServiceAccountData(filter);  
-        this.dataGrid.instance?.refresh();       
+        this.dataGrid.instance?.refresh();
       }
       setTimeout(() => {
         this.searchDataGrid(this.searchText);
@@ -202,7 +202,8 @@ export class ServiceAccountsComponent implements OnInit {
         caption : "Active",
 				alignment : null,
 				visible : true,
-				dataType : null
+				dataType : null,
+        cellTemplate:'contactActiveTemplate'
 			},
 		];
   }
