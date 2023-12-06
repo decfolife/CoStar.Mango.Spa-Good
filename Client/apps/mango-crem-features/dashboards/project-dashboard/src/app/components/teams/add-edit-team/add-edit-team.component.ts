@@ -42,6 +42,7 @@ export class AddEditTeamComponent implements OnInit {
   removeDisabled: boolean = true;
   addTeam: boolean = false;
   changesMade: boolean = false;
+  saveBtnClicked: boolean = false;
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 
@@ -199,13 +200,15 @@ export class AddEditTeamComponent implements OnInit {
   }
 
   saveTeam() {
-
+    this.saveBtnClicked = true;
     if (!this.team.teamName.trim()) {
       alert("Team Name is a required field");
+      this.saveBtnClicked = false;
       return;
     }
     else if(!this.team.teamMembers || !this.team.teamMembers.length) {
       alert("Add team member in order to save.");
+      this.saveBtnClicked = false;
       return;
     } else {
         if(this.addTeam) {
@@ -221,7 +224,7 @@ export class AddEditTeamComponent implements OnInit {
           }
         },
         (error: any) => alert("Failed Saving Team, Try again later "),
-        () => {}
+        () => {this.saveBtnClicked = true;}
       );
     }
   }
