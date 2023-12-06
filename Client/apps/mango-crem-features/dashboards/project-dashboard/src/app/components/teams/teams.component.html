@@ -108,8 +108,11 @@
 						[userModuleAddRights]="userModuleAddRights"
 						[teamMembers]="team.data.teamMembers"
 						[memberInfo]="memberInfo"
+						[teamMemberCount]="team.data.members"
 						(selectedMembersEvent)="selectedMembers($event)"
 						(unSelectedMembersEvent)="unSelectedMembers($event)"
+						(selectedTeamandMembersEvent)="selectedTeamandMembers($event)"
+						(getLatestTeamsDataEvent)="getTeamsData()"
 				>
 				</team-members>
 			</div>

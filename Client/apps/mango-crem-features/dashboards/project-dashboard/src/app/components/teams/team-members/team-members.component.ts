@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { MemberInfo, TeamMemUpdate, TeamMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, TeamKeys, TeamMemUpdate, TeamMember } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import CheckBox from 'devextreme/ui/check_box';
@@ -17,13 +17,17 @@ export class TeamMembersComponent implements OnInit {
 	@Input() rights: string;
 	@Input() userModuleAddRights: boolean;
 	@Input() memberInfo: MemberInfo; 
+	@Input() teamMemberCount: number;
 	@Output() selectedMembersEvent: EventEmitter<any> = new EventEmitter();
 	@Output() unSelectedMembersEvent: EventEmitter<any> = new EventEmitter();
+	@Output() selectedTeamandMembersEvent: EventEmitter<any> = new EventEmitter();
+	@Output() getLatestTeamsDataEvent: EventEmitter<any> = new EventEmitter();
 
 	public dataRetrieved: boolean = false;
 	memberIds: number[];
 	memberUpdate: TeamMemUpdate;
 	emailNotify: boolean;
+	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
 
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
 	@Output() subGridEditClicked: EventEmitter<any> = new EventEmitter();
@@ -80,30 +84,41 @@ export class TeamMembersComponent implements OnInit {
 		this.memberIds = [];
 		this.memberIds.push(member.memberId);
 
-		let confirmText = `Do you want to Remove the member "${member.name}"?`;
-		if(confirm(confirmText)) {
-			this.dashboardService.deleteTeamMembers(this.memberIds).subscribe(
-				(res:any) => {
-					if (res.success) {
-							let removeIndex: number;
-							this.memberIds.forEach(memberId => {
-								removeIndex = this.teamMembers.findIndex(member => memberId == member.memberId);
-								this.teamMembers.splice(removeIndex, 1);
-							});
+		if(this.teamMemberCount == 1) {
+			alert(`Team Member Removal can not be done. At least one team member must be assigned to the team.`);
+		} else {
+			let confirmText = `Do you want to Remove the member "${member.name}"?`;
+			if(confirm(confirmText)) {
+				this.dashboardService.deleteTeamMembers(this.memberIds).subscribe(
+					(res:any) => {
+						if (res.success) {
 							this.memberIds = [];
-					} else { alert("Team Member could not be deleted. Please review and try again later.");}
-				}
-			);
-		}
+							this.getLatestTeamsDataEvent.emit();
+						} else { alert("Team Member could not be deleted. Please review and try again later.");}
+					}
+				);
+			}
+		}	
 
 	}
 
 	onSelectionChanged(e:any) {
-		if(e.currentDeselectedRowKeys.length) 
-		  this.unSelectedMembersEvent.emit(e.currentDeselectedRowKeys);
+		if(e.currentSelectedRowKeys.length) {
+			this.selectedMembersEvent.emit(e.currentSelectedRowKeys);
+			if(this.selectedTeamandMembersData.teamId) {
+				this.selectedTeamandMembersData.memberIds = this.selectedTeamandMembersData.memberIds.concat(e.currentSelectedRowKeys);
+			} else {
+				this.selectedTeamandMembersData.teamId = e.selectedRowsData[0].teamId;
+				this.selectedTeamandMembersData.memberIds = e.currentSelectedRowKeys;
+			}
+		}
 
-		if(e.currentSelectedRowKeys.length) 
-		this.selectedMembersEvent.emit(e.currentSelectedRowKeys);
+		if(e.currentDeselectedRowKeys.length) {
+		  this.unSelectedMembersEvent.emit(e.currentDeselectedRowKeys);
+				this.selectedTeamandMembersData.memberIds = 
+					this.selectedTeamandMembersData.memberIds.filter(item => !(e.currentDeselectedRowKeys).includes(item));
+		}	
+		this.selectedTeamandMembersEvent.emit(this.selectedTeamandMembersData);
 	}
 
 	setRoleValue(newData, value: string, currentRowData) {

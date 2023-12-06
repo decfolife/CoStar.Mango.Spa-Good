@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { MemberInfo, Team, TeamMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, Team, TeamKeys, TeamMember } from '@mango/data-models/lib-data-models';
 import { SearchComponent } from '@mango/ui-shared/cosmos';
 import { CardsService } from '@project-dashboard/services/cards.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
@@ -40,6 +40,7 @@ export class TeamsComponent implements OnInit {
   selectedTeamIds: number[] = [];
   teamsTobeRemoved: number[] = [];
   selectedTeams: Team[] = [];
+  selectedMembersData: TeamKeys[] = [];
   userModuleAddRights: boolean;
 
   constructor(private dashboardService: DashboardService, private router: Router,
@@ -78,9 +79,7 @@ export class TeamsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if(result) { 
-        this.dataRetrieved = false;
         this.getTeamsData();
-        this.teamsGrid.instance.refresh();
       }
     });
   }
@@ -102,9 +101,10 @@ export class TeamsComponent implements OnInit {
       this.dashboardService.deleteTeams(this.teamsTobeRemoved).subscribe(
         (res:any) => {
           if (res.success) {
-            this.selectedMemberIds = [];
-            this.selectedTeamIds = [];
-            this.selectedTeams = [];
+            if(!singleTeam) {
+              this.selectedTeamIds = [];
+              this.selectedTeams = [];
+            }
             this.getTeamsData();
           } else { 
             this.toastr.info("The records could not be deleted. Please review and try again.", "", 
@@ -116,20 +116,32 @@ export class TeamsComponent implements OnInit {
   }
  
   removeMembers() {
-		let confirmText = `Do you want to remove the Selected Members from their teams?`;
-		if(confirm(confirmText)) {
-			this.dashboardService.deleteTeamMembers(this.selectedMemberIds).subscribe(
-				(res:any) => {
-					if (res.success) {
-            this.selectedMemberIds = [];
-            this.getTeamsData();
-					} else { alert(`Selected Member(s) could not be deleted. Please review and try again later.`);}
-				}
-			);
-		}
+    let removingAllTeamMembers = false;
+    this.selectedMembersData.forEach(selectedTeam => {
+      const index = this.teams.findIndex(team => team.teamId == selectedTeam.teamId);
+      if(this.teams[index].teamMembers.length == selectedTeam.memberIds.length){
+        removingAllTeamMembers = true;
+      }
+    });  
+    if(removingAllTeamMembers) {
+      alert(`Team Member Removal can not be done. You have selected all team members for one or more teams.  At least one team member must be assigned to a team.`);
+    } else {
+      let confirmText = `Do you want to remove the Selected Members from their teams?`;
+      if(confirm(confirmText)) {
+        this.dashboardService.deleteTeamMembers(this.selectedMemberIds).subscribe(
+          (res:any) => {
+            if (res.success) {
+              this.getTeamsData();
+            } else { alert(`Selected Member(s) could not be deleted. Please review and try again later.`);}
+          }
+        );
+      }
+    }
   }
 
   getTeamsData() {
+    this.selectedMembersData = [];
+    this.selectedMemberIds = [];
     this.dashboardService.getTeams().subscribe(
       (res:any) => {
         this.teams = res.data;
@@ -206,7 +218,7 @@ export class TeamsComponent implements OnInit {
 			if( !this.userModuleAddRights ) {
         this.disableCheckBoxes(e);
       }	
-       else if(e.rowType !== 'header' && e.data.securityLevel.toLocaleLowerCase().trim() == "view") {
+       else if(e.rowType !== 'header' && (!e.data.canDelete)) {
         this.disableCheckBoxes(e);
        }
 		} 
@@ -247,7 +259,20 @@ export class TeamsComponent implements OnInit {
   unSelectedMembers(e) {
     this.selectedMemberIds = this.selectedMemberIds.filter(item => !e.includes(item));
   }
-  
+
+  selectedTeamandMembers(e) {
+    if(this.selectedMembersData.length) {
+      const index = this.selectedMembersData.findIndex(team => team.teamId == e.teamId);
+      if (index > -1) {
+        this.selectedMembersData[index].memberIds = e.memberIds;
+      } else {
+        this.selectedMembersData.push(e);
+      }
+    } else {
+      this.selectedMembersData.push(e);
+    }
+  }
+   
   exportToFile() {
     let excelFileName = 'TeamsList_' + formatDate(new Date(), 'yyyy-MM-dd_HHmmss', 'en-US') + '.xlsx';
     var workbook = new ExcelJS.Workbook();
