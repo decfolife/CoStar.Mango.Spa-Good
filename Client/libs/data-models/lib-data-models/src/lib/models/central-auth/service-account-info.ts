@@ -1,11 +1,11 @@
 export interface ServiceAccountInfo {
-  email: string;
+  email?: string;
   apiKeyExpiresOn?: Date;
   apiKeyGeneratedDate?: Date;
   apiKeyExpiresInDays?: number;
-  serviceAccountSites : ServiceAccountSite[];
-  serviceAccountEndpoints: ServiceAccountEndpoint[];
-  apiKeyStatus: string;
+  serviceAccountSites? : ServiceAccountSite[];
+  serviceAccountEndpoints?: ServiceAccountEndpoint[];
+  apiKeyStatus?: string;
 }
 
 export interface ServiceAccountSite{

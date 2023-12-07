@@ -1,7 +1,7 @@
 @use "../../../../../../../../libs/ui-shared/common/src/styles/" as *;
 
 .msg{
-    color: rgba(255, 0, 0, 0.637);
+    @include costar(color, danger);
     font-weight: bold;
     text-align: center;
 }
@@ -16,5 +16,11 @@
 
 .sub{
     text-align: center;
+}
+
+::ng-deep {
+    .modalHeader {
+        justify-content: center !important;
+    }
 }
 

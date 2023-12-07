@@ -11,7 +11,7 @@ import { ServiceAccountChangeHistory } from '@mango/data-models/lib-data-models'
 })
 export class ServiceAccountConfigurationComponent implements OnInit{
   subs: Subscription[] = []
-  public serviceAccountInfo: ServiceAccountInfo;
+  public serviceAccountInfo: ServiceAccountInfo = {};
   public serviceAccountChangeHistories: ServiceAccountChangeHistory[];
 
   constructor(

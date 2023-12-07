@@ -35,6 +35,7 @@ export class ServiceAccountApiKeysComponent {
         confirmButtonText: "Yes",
         title: "Generate API Key Confirmation"
       },
+      disableClose: true
     });
     
     dialogRef.afterClosed().subscribe(result => {
@@ -50,6 +51,7 @@ export class ServiceAccountApiKeysComponent {
               data: {
                 apikey: result.data
               },
+              disableClose: true
             });
           }
         });
