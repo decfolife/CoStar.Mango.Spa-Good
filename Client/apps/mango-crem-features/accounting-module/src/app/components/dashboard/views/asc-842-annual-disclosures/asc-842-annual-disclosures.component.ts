@@ -156,7 +156,32 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           Display: "Total Liability Balance",
           PeriodYear: item.PeriodYear,
           data: item.LiabilityBalanceClosingReporting,
-        }
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "ROU Asset Balance",
+          PeriodYear: item.PeriodYear,
+          data: item.AssetBalanceClosingReporting,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Short Term Liability Balance",
+          PeriodYear: item.PeriodYear,
+          data: item.ShortTermLiabilityClosingReporting,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Long Term Liability Balance",
+          PeriodYear: item.PeriodYear,
+          data: item.LongTermLiabilityClosingReporting,
+        },
+        { 
+          DisclosureClassification:  "Total",
+          Display: "Total Liability Balance",
+          PeriodYear: item.PeriodYear,
+          data: item.LiabilityBalanceClosingReporting,
+        },
+
       ]
 
       items.forEach((item) => {
@@ -209,7 +234,9 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     const disclosureClassificationSortOrderObject = {
       "Mixed": 1,
       "Finance 842": 2,
+      "Finance (ASC 842)": 2.5,
       "Operating 842": 3,
+      "Operating (ASC 842)": 3.5,
       "Total": 4
     }
 
