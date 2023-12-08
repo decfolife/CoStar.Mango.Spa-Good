@@ -196,6 +196,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         'Functional_AdjustmentGainLoss',
       ];
   
+      let firstRetroPeriodRow = null;
+
       columns.forEach((col, index) => {
         col.visibleIndex = col.visibleIndex ?? index;
       
@@ -231,14 +233,29 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
               subCol.format = value => this.formatService.functionalFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision);
             } else if (subCol.name === 'PeriodStart' || subCol.name === 'PeriodEnd') {
               subCol.format = this.dateFormat;
-            }  
+            } 
+
+            if (subCol.name === 'AssetAdjustment' || subCol.name === 'Functional_AssetAdjustmentAmount' || subCol.name === 'LiabilityAdjustment') {
+
+              subCol.cellTemplate = (container, options) => {
+                if (options.data.isImpactedByRetro && options.text !== null && options.text !== undefined) {
+                  if (firstRetroPeriodRow === null || (firstRetroPeriodRow !== null && options.rowIndex === firstRetroPeriodRow)) {
+                    container.innerHTML = `<div>${options.text}</div>`;
+                    firstRetroPeriodRow = options.rowIndex;
+                  } else {
+                    container.innerHTML = `<div class="adjust-text">Adjusted</div>`;
+                  }
+                } else {
+                  container.innerHTML = `<div>${options.text}</div>`;
+                }
+              };
+            }
           });
         }
       });
-      
+
       return columns;
     }
-  
 
   showPopup(event: any) {
     this.popupVisible = true;
@@ -271,7 +288,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         'CashAPAmount',
         'StraightLineExpense',
         'DeferredLeaseExpense',
-        // 'AdjustmentAmount',
+        'AdjustmentAmount',
         'AssetAmortization',
         'InterestExpense',
         'LevelExpense'],
@@ -290,7 +307,6 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         alignment: 'right'
       });
     });
-
 
     functionalColumns.forEach(name => {
       totalItems.push({
