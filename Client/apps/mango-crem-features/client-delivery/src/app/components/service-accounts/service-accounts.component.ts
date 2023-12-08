@@ -69,7 +69,8 @@ export class ServiceAccountsComponent implements OnInit {
       let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
         width: '1200px',
         panelClass: 'client-delivery-modal',
-        data: e.data
+        data: e.data,
+        disableClose: true
       });
     }
   }
@@ -101,7 +102,8 @@ export class ServiceAccountsComponent implements OnInit {
       let dialogRef = this.dialog.open(AddServiceAccountComponent, {
         width: '460px',
         panelClass: 'client-delivery-modal',
-        data: this.allServiceAccountsData.map(x => x.contactEmailAddress)
+        data: this.allServiceAccountsData.map(x => x.contactEmailAddress),
+        disableClose: true
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -121,7 +123,8 @@ export class ServiceAccountsComponent implements OnInit {
     let dialogRef = this.dialog.open(UpdateServiceAccountComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
-      data: data.data
+      data: data.data,
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

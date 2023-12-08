@@ -37,7 +37,8 @@ export class ServiceAccountDetailsComponent implements OnInit {
       let dialogRef = this.dialog.open(ResetPasswordConfirmationComponent, {
         width: '600px',
         panelClass: 'client-delivery-modal',
-        data: this.data.contactEmailAddress
+        data: this.data.contactEmailAddress,
+        disableClose: true
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {

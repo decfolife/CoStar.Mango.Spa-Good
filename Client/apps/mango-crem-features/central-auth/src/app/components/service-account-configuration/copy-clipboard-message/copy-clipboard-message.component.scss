@@ -18,7 +18,7 @@
     text-align: center;
 }
 
-::ng-deep {
+:host ::ng-deep {
     .modalHeader {
         justify-content: center !important;
     }
