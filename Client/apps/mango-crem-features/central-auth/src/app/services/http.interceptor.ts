@@ -57,10 +57,11 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
         const caHttpError: CentralAuthHttpError = errorResponse.error?.traceId ? errorResponse.error : genericErrorObject
 
         if (caHttpError.status === 401) {
+          caHttpError.title = 'Unauthorized'
           caHttpError.errorType = MangoErrorTypes.WARNING
           caHttpError.message = caHttpError.message;
-          //this.facade.logout()
-          //this.router.navigate(['/'])
+          this.facade.logout()
+          this.router.navigate(['/'])
         }
 
         if (caHttpError.errorCode as CentralAuthErrorCodes === CentralAuthErrorCodes.SqsTimeout) {
