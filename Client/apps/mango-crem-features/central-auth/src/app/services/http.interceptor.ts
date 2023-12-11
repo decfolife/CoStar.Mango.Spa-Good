@@ -58,7 +58,6 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
 
         if (caHttpError.status === 401) {
           caHttpError.title = 'Unauthorized'
-          caHttpError.errorType = MangoErrorTypes.WARNING
           caHttpError.message = caHttpError.message;
           this.facade.logout()
           this.router.navigate(['/'])
