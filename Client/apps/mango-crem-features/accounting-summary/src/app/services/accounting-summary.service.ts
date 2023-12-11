@@ -125,15 +125,6 @@ export class AccountingSummaryService extends EndpointService {
     JSON.stringify({ leaseAbstractID: this.leaseAbstractId, workflowStatusID: workflowStatusId, comment: comment }));
   }
 
-  getWorkflowStatuses() {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingWorkflowStatusInformation/Lease/${this.leaseAbstractId}`, 'getAccountingEvents');
-  }
-
-  saveWorkflowStatus(workflowStatusId: number, comment: string){
-    return this.callHttpPost(`${this.apiUrl}AccountingSummary/saveworkflowstatus`, 'saveWorkflowStatus',
-    JSON.stringify({ leaseAbstractID: this.leaseAbstractId, workflowStatusID: workflowStatusId, comment: comment }));
-  }
-
   saveGridPreferences(classificationId: number, gridName: string, columnJson) {
     return this.callHttpPost(`${this.apiUrl}AccountingSummary/savegridstates`, 'saveGridStates',
       JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
