@@ -235,7 +235,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
               subCol.format = this.dateFormat;
             } 
 
-            if (subCol.name === 'AssetAdjustment' || subCol.name === 'Functional_AssetAdjustmentAmount' || subCol.name === 'LiabilityAdjustment') {
+            if (subCol.name === 'AssetAdjustment' || subCol.name === 'FunctionalAssetAdjustmentAmount' || subCol.name === 'LiabilityAdjustment') {
 
               subCol.cellTemplate = (container, options) => {
                 if (options.data.isImpactedByRetro && options.text !== null && options.text !== undefined) {

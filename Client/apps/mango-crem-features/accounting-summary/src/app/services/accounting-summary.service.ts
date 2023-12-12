@@ -45,10 +45,10 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   delayGridPanelCollapseWhenFilterIsVisible() {
-    let filterObject = document.querySelector("[aria-label='Filter options']:not(.dx-state-invisible)");
+    const filterObject = document.querySelector("[aria-label='Filter options']:not(.dx-state-invisible)");
     if(filterObject !== null){
-      let delay = 400
-      let start = new Date().getTime();
+      const delay = 400
+      const start = new Date().getTime();
       while (new Date().getTime() < start + delay);
     } 
   }
@@ -92,8 +92,8 @@ export class AccountingSummaryService extends EndpointService {
     return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageWithLeaseRights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`, 'getUserNavPageWithLeaseRights');
   }
 
-  getWorkflowStatusOptions() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getAccountingWorkflowStatusInformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusOptions');
+  getWorkflowStatusInformation() {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getAccountingWorkflowStatusInformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusOptions');
   }
 
   getEventDetails(masterScheduleId: number) {

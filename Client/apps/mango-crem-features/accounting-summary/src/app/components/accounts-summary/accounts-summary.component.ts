@@ -26,6 +26,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   isArchived = false;
   rightsInfo: any;
   userInfo: UserInfoResponse;
+  workflowStatusInfo: any
   noUserAddRights = false;
   disableBtnReason = "Accounting Event cannot be added when user or lease information is not loaded.";
   isTooltipVisible = false;
@@ -34,6 +35,8 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   masterScheduleID: number;
   leaseRecognitionScheduleID: number;
   classificationID: number;
+  modifiedByName: any;
+  modifiedDate: any;
 
   constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }
 
@@ -150,16 +153,42 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.isTooltipVisible = false;
   }
 
+  executeWorkflowStatusRefresh(refreshWorkflow: boolean)
+  {
+    if(refreshWorkflow){
+      this.getWorkflowInfo();
+    }
+  }
+
+  getWorkflowInfo() {
+    this.subscription.add(this.accountingSummaryService.getWorkflowStatusInformation().subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success) {
+        this.workflowStatusInfo = response.data; 
+        this.modifiedByName = this.workflowStatusInfo.modifiedByName;
+        this.modifiedDate = this.workflowStatusInfo.modifiedDate;
+      }
+      else if (!response.success) {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
+  }
+
   private setRightsAndLeaseInfo(){
     const userNavPageRight = this.accountingSummaryService.getUserNavPageRight();
     const userNavPageWithLeaseRights = this.accountingSummaryService.getUserNavPageWithLeaseRights();
-    const workflowStatusOptions = this.accountingSummaryService.getWorkflowStatusOptions();
+    const workflowStatusOptions = this.accountingSummaryService.getWorkflowStatusInformation();
     const leaseInformation = this.accountingSummaryService.getLeaseInfo();
    this.subscription.add(combineLatest([userNavPageRight, userNavPageWithLeaseRights, workflowStatusOptions, leaseInformation]).subscribe(res => {
       const userNavPageRightResponse = res[0];
       const userNavPageWithLeaseRightsResponse = res[1];
       const workflowStatusOptionsResponse = res[2];
       const leaseInformationResponse = res[3];
+
+      this.modifiedByName = workflowStatusOptionsResponse.data.modifiedByName;
+      this.modifiedDate = workflowStatusOptionsResponse.data.modifiedDate;
 
       if(userNavPageRightResponse === null || userNavPageWithLeaseRightsResponse === null || workflowStatusOptionsResponse === null || leaseInformationResponse === null ){
         this.accountingSummaryService.displayContactSystemAdminMessage();
@@ -179,6 +208,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       else {
         this.noUserAddRights = !userNavPageWithLeaseRightsResponse.data.canAddSchedule;
 
+        this.workflowStatusInfo = workflowStatusOptionsResponse.data;
         this.leaseInfoResponse = leaseInformationResponse.data;
         this.isLocked = this.leaseInfoResponse.lockedReason != null;
         this.isArchived = !this.leaseInfoResponse.isActive;

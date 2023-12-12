@@ -1,5 +1,5 @@
 .accounting-events{
-    height: 66px;
+    height: 70px;
     flex-shrink: 0;
     border-bottom: 1px solid var(--gray-06, #EDEDED);
     background: var(--gray-06, #EDEDED);
@@ -57,4 +57,9 @@
 .workflow-dropdown-div{
     float: right;
     margin-right: 20px;
+}
+
+.work-flow-change-info {
+    font-size: 12px;
+    color: #373737;
 }

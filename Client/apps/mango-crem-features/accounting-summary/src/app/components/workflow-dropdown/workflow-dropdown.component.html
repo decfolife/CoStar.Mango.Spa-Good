@@ -1,12 +1,11 @@
 <div>
-  <input [id]="accountingSummaryService.getId(componentName,'empty','disabled-input')" [value]="inputStatusText" *ngIf="!isWorkflowDropdownVisible" class="no-data-text-box" type="text" disabled="true">
+  <input [id]="accountingSummaryService.getId(componentName,'empty','disabled-input')" [value]="inputStatusText" *ngIf="!isWorkflowDropdownVisible" type="text" disabled="true" aria-label="No workflow status change right">
   <dx-select-box
     [id]="accountingSummaryService.getId(componentName,'statuses','dropdown')"
     [visible]="isWorkflowDropdownVisible"
     [(value)]="dropdownStatusValue"
     valueExpr="workflowStatusId"
     displayExpr="workflowStatus"
-    [deferRendering]="false"
     [inputAttr]="{ 'aria-label': 'Workflow Status Dropdown' }"
     [showClearButton]="false"
     [dataSource]="dropdownDataSource"
@@ -33,4 +32,34 @@
         {{ btnDisabledReason }}
     </div>
   </dx-tooltip>
+
+    <div class="work-flow-comments" *ngIf="this.commentsVisible">
+      <p class="work-flow-comment-label">Change Workflow Status</p>
+
+      <textarea
+        #commentTextArea
+        [id]="accountingSummaryService.getId(componentName,'status','textarea')"
+        autofocus
+        class="work-flow-commentText"
+        placeholder="Enter a comment"
+        [required]="isCommentsRequired"
+        [(ngModel)]="commentText"
+        placeholder="Enter a comment {{isCommentsRequired ? '(required)' : ''}}"
+      ></textarea>
+      
+      <div class="workflow-btns-container">
+        <crem-button
+          [id]="accountingSummaryService.getId(componentName,'save','button')"
+          type="primary"
+          (click)="saveWorkFlowComment()"
+          class="btn-primary-workflow-comments">
+          Save</crem-button>
+          
+        <crem-button
+          [id]="accountingSummaryService.getId(componentName,'cancel','button')"
+          type="secondary"
+          (click)="cancelChanges()">
+          Cancel</crem-button>
+    </div>
+
 </div>

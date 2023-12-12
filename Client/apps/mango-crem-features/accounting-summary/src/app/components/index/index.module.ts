@@ -17,6 +17,7 @@ import { AmortizationDetailSectionComponent } from '../amortization-detail-secti
 import { PaymentsDetailSectionComponent } from '@accounting-summary/components/payments-detail-section/payments-detail-section.component';
 import { TransactionPopupComponent } from '../payments-detail-section/transaction-popup/transaction-popup.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
@@ -51,6 +52,7 @@ import { WorkflowDropdownComponent } from '../workflow-dropdown/workflow-dropdow
     MatMenuModule,
     DxPopupModule,
     DxScrollViewModule,
+    FormsModule
     ],
 
   providers: [AccountingSummaryService, FormattingService],

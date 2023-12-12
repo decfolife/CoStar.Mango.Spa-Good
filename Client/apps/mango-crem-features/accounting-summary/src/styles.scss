@@ -94,6 +94,7 @@
         dx-select-box,input{
             border: 1px solid #a7a49f;
             border-radius: 2px;
+            margin-bottom: 0px;
         }
 
         .dx-texteditor-input{
@@ -123,5 +124,49 @@
 
     .adjust-text {
         color: gray; 
+      }
+
+    .work-flow-comments {
+        position: absolute;
+        margin-top: 10px;
+        right: 0%;
+        z-index: 10;
+        min-width: 350px;
+        background: #ffffff;
+        border-radius: 0.4em;
+        border: solid 1px #b6b6b6;
+        color: #000;
+        padding: 5px;
+        text-align: left;
+        max-width: calc(100% - 20px);
+    }
+    
+    .work-flow-commentText {
+        font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
+        position: relative;
+        display: block;
+        width: 95% !important;
+        height: 50px !important;
+        margin: 5px auto;
+      }
+      
+    .work-flow-comments:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 40%;
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-bottom-color: #8a8888;
+        border-top: 0;
+        border-left: 0;
+        margin-left: -5px;
+        margin-top: -10px;
+      }
+    
+    .work-flow-comment-label{
+        margin: 0 7.25px;
+        padding: 10px 0 5px 0px;
       }
 }
