@@ -92,7 +92,7 @@ export class TeamMembersComponent implements OnInit {
 			let message = 'Team Member Removal can not be done. At least one team member must be assigned to the team.';
 			this.dialogService.alert('Team Member Removal', message, 'ok').subscribe();
 		} else {
-			let confirmText = `Do you want to Remove the member "${member.name}"?`;
+			let confirmText = `Do you want to Remove the member "${member.name}" ?`;
 			this.dialogService.confirm('Remove Team Member', confirmText, 'confirm', 'cancel').pipe(
 				filter(confirmed => !!confirmed),
 				switchMap(_ => this.dashboardService.deleteTeamMembers(this.memberIds)),

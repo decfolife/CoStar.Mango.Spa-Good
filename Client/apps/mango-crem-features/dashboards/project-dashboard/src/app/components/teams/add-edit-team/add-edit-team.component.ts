@@ -115,7 +115,7 @@ export class AddEditTeamComponent implements OnInit {
   }
 
   removeMembers() {
-    let confirmText = "Do you want to Remove the members?\n"
+    let confirmText = "Do you want to Remove the members ?\n\n"
     this.selectedMembers.forEach(member => {
       confirmText += member.name + "\n";
     })
