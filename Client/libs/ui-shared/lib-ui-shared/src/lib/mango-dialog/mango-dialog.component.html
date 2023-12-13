@@ -1,0 +1,12 @@
+<div class="dialogContent">
+  <h2 class="dialogHeader" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <fa-icon class="dialogExclamation" [icon]="faExclamationCircle"></fa-icon>{{title}}
+  </h2>
+  <div class="dialogMessage"> <pre class="dialogMsgFormatted"> {{message}} </pre></div>
+  <footer class="dialogFooter">
+    <crem-button class="dialogSecBtn" type="secondary" *ngIf="secondaryBtnText"
+      (click)="secondaryButtonClicked()">{{secondaryBtnText}}
+    </crem-button>
+    <crem-button class="dialogPriBtn" type="primary" (click)="primaryButtonClicked()">{{primaryBtnText}}</crem-button>
+  </footer>
+</div>  

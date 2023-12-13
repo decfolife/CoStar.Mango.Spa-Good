@@ -15,6 +15,10 @@ import { formatDate } from '@angular/common';
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 import { ToastrService } from 'ngx-toastr';
 
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+
 @Component({
   selector: 'teams',
   templateUrl: './teams.component.html',
@@ -32,7 +36,7 @@ export class TeamsComponent implements OnInit {
   dataRetrieved: boolean = false;
   autoExpand: boolean = false;
   headerCheckBox: any;
-	headerHtmlCellElement: any;
+  headerHtmlCellElement: any;
 
   selectAllCheckBox: dxCheckBox;
   teamSelected: boolean = false;
@@ -44,17 +48,18 @@ export class TeamsComponent implements OnInit {
   userModuleAddRights: boolean;
 
   constructor(private dashboardService: DashboardService, private router: Router,
-              public toastr: ToastrService,
-              private dialog: MatDialog,  private cardsService: CardsService) { }
+    public toastr: ToastrService,
+    private dialogService: MangoDialogService,
+    private dialog: MatDialog, private cardsService: CardsService) { }
 
   ngOnInit(): void {
-  
-    this.getUserPreferences();
+
+    this.getUserPreferences().subscribe();
     this.getModuleRights();
     this.getMemberInfo();
-    this.getTeamsData();
+    this.getTeamsData().subscribe();
   }
-  
+
   initEditFlag(teams) {
     if(teams.length) {
       teams.forEach(team => {
@@ -77,16 +82,16 @@ export class TeamsComponent implements OnInit {
       data: { teamFunction: tFunc, memberInfo: this.memberInfo, team: team, },
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if(result) { 
-        this.getTeamsData();
-      }
-    });
+
+    dialogRef.afterClosed().pipe(
+      filter(res => !!res),
+      switchMap(_ => this.getTeamsData())
+    ).subscribe();
   }
 
   deleteTeams(removeTeam?:Team, singleTeam?: boolean) {
     this.teamsTobeRemoved = [];
-    let confirmText = "You are about to delete the following team(s). Do you want to continue?\n"
+    let confirmText = "You are about to delete the following team(s). Do you want to continue ?\n"
     if(singleTeam) {
       confirmText += removeTeam.teamName + "\n";
       this.teamsTobeRemoved.push(removeTeam.teamId);
@@ -97,24 +102,19 @@ export class TeamsComponent implements OnInit {
       })
     }
 
-    if(confirm(confirmText)) {
-      this.dashboardService.deleteTeams(this.teamsTobeRemoved).subscribe(
-        (res:any) => {
-          if (res.success) {
-            if(!singleTeam) {
-              this.selectedTeamIds = [];
-              this.selectedTeams = [];
-            }
-            this.getTeamsData();
-          } else { 
-            this.toastr.info("The records could not be deleted. Please review and try again.", "", 
-                             {positionClass: 'toast-bottom-right', timeOut: 3000, closeButton:false, progressBar: false });
-          }
+    this.dialogService.confirm('Teams Deletion', confirmText, 'confirm', 'cancel').pipe(
+      filter(confirmed => !!confirmed),
+      switchMap(_ => this.dashboardService.deleteTeams(this.teamsTobeRemoved)),
+      switchMap(res => {
+        if (res.success && !singleTeam) {
+          this.selectedTeamIds = [];
+          this.selectedTeams = [];
         }
-      );
-    }
+        return res.success ? this.getTeamsData() : of(this.toastr.info("The teams(s) could not be deleted. Please review and try again.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }))
+      })
+    ).subscribe();
   }
- 
+
   removeMembers() {
     let removingAllTeamMembers = false;
     this.selectedMembersData.forEach(selectedTeam => {
@@ -122,44 +122,40 @@ export class TeamsComponent implements OnInit {
       if(this.teams[index].teamMembers.length == selectedTeam.memberIds.length){
         removingAllTeamMembers = true;
       }
-    });  
+    });
     if(removingAllTeamMembers) {
-      alert(`Team Member Removal can not be done. You have selected all team members for one or more teams.  At least one team member must be assigned to a team.`);
+      this.dialogService.alert('Remove All Team Members!', `Team Member Removal can not be done. You have selected all team members for one or more teams.  At least one team member must be assigned to a team.`, 'ok').subscribe();
     } else {
-      let confirmText = `Do you want to remove the Selected Members from their teams?`;
-      if(confirm(confirmText)) {
-        this.dashboardService.deleteTeamMembers(this.selectedMemberIds).subscribe(
-          (res:any) => {
-            if (res.success) {
-              this.getTeamsData();
-            } else { alert(`Selected Member(s) could not be deleted. Please review and try again later.`);}
-          }
-        );
-      }
+      this.dialogService.confirm('Remove Members', `Do you want to remove the Selected Members from their teams?`, 'confirm', 'cancel').pipe(
+        filter(confirmed => !!confirmed),
+        switchMap(_ => this.dashboardService.deleteTeamMembers(this.selectedMemberIds)),
+        switchMap(res => !!res.success ? this.getTeamsData() : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'ok'))
+      ).subscribe();
     }
   }
 
-  getTeamsData() {
+  getLatestData() {
+    this.getTeamsData().subscribe();
+  }
+
+  getTeamsData(): Observable<any> {
     this.selectedMembersData = [];
     this.selectedMemberIds = [];
-    this.dashboardService.getTeams().subscribe(
-      (res:any) => {
+    return this.dashboardService.getTeams().pipe(
+      filter(res => !!res && !!res.success),
+      tap(res => {
         this.teams = res.data;
         this.dataRetrieved = true;
         this.initEditFlag(this.teams);
-      },
-      (error: any) => console.log("Error occurred getting Teams Data ", error),
-      () => {}
-    );
+      }),
+      catchError(error => of(console.log("Error occurred getting Teams Data ", error)))
+    )
   }
 
-  getUserPreferences(){
-    this.dashboardService.GetUserPreferences().subscribe(
-      (res:any) => {
-        if (res.success) {
-            this.cardsService.setUserDateFormat(res.data.isDatesEU);
-        }
-      }
+  getUserPreferences(): Observable<any> {
+    return this.dashboardService.GetUserPreferences().pipe(
+      filter(res => !!res && !!res.success),
+      map(res => this.cardsService.setUserDateFormat(res.data.isDatesEU))
     );
   }
 
@@ -192,8 +188,8 @@ export class TeamsComponent implements OnInit {
 
   searchDataGrid(data) {
     this.searchText = data;
-		this.teamsGrid.instance.searchByText(this.searchText);
-	}
+    this.teamsGrid.instance.searchByText(this.searchText);
+  }
 
   exportDataGrid(): void {
     this.teamsGrid.instance.exportToExcel(false);
@@ -210,30 +206,30 @@ export class TeamsComponent implements OnInit {
       e.editorOptions.onInitialized = (e: InitializedEvent) => {
         if (e.component) this.selectAllCheckBox = e.component;
       };
-    }  
-  }    
-
-  gridOnCellPrepared(e) { 
-    if(e.column.command == 'select') {
-			if( !this.userModuleAddRights ) {
-        this.disableCheckBoxes(e);
-      }	
-       else if(e.rowType !== 'header' && (!e.data.canDelete)) {
-        this.disableCheckBoxes(e);
-       }
-		} 
-	}
-
-  disableCheckBoxes(e) {
-    let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
-    var editor = dxCheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));  
-    if(editor) {
-      editor.option("disabled", true);
-    }  
-    htmlCellElement.style.pointerEvents = 'none'; 
+    }
   }
 
-  onSelectionChanged(e:any){  
+  gridOnCellPrepared(e) {
+    if(e.column.command == 'select') {
+      if( !this.userModuleAddRights ) {
+        this.disableCheckBoxes(e);
+      }
+      else if(e.rowType !== 'header' && (!e.data.canDelete)) {
+        this.disableCheckBoxes(e);
+      }
+    }
+  }
+
+  disableCheckBoxes(e) {
+    let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+    var editor = dxCheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));
+    if(editor) {
+      editor.option("disabled", true);
+    }
+    htmlCellElement.style.pointerEvents = 'none';
+  }
+
+  onSelectionChanged(e:any){
     const deselectRowKeys: number[] = [];
     const dataGrid = e.component;
     e.selectedRowsData.forEach(row => {
@@ -241,15 +237,15 @@ export class TeamsComponent implements OnInit {
         deselectRowKeys.push(row.teamId);
       }
     });
-      if(deselectRowKeys.length) {
-        dataGrid.deselectRows(deselectRowKeys);
-      }
+    if(deselectRowKeys.length) {
+      dataGrid.deselectRows(deselectRowKeys);
+    }
 
-      this.teamSelected = e.selectedRowsData.length? true: false;
-      this.selectAllCheckBox.option('value',  this.teamSelected);
+    this.teamSelected = e.selectedRowsData.length? true: false;
+    this.selectAllCheckBox.option('value',  this.teamSelected);
 
-      this.selectedTeams = e.selectedRowsData;
-      this.selectedTeamIds = e.selectedRowKeys;
+    this.selectedTeams = e.selectedRowsData;
+    this.selectedTeamIds = e.selectedRowKeys;
   }
 
   selectedMembers(e) {
@@ -272,7 +268,7 @@ export class TeamsComponent implements OnInit {
       this.selectedMembersData.push(e);
     }
   }
-   
+
   exportToFile() {
     let excelFileName = 'TeamsList_' + formatDate(new Date(), 'yyyy-MM-dd_HHmmss', 'en-US') + '.xlsx';
     var workbook = new ExcelJS.Workbook();
@@ -286,11 +282,11 @@ export class TeamsComponent implements OnInit {
     this.teams.forEach((value, index) => {
       masterRows.push({ rowIndex: index, data: value });
     });
-    
+
     const borderStyle = { style: "thin", color: { argb: "FF7E7E7E" } };
     const insertRow = (currentIndex, outlineLevel) => {
       const row = worksheet.insertRow(currentIndex, [], 'n');
-      
+
       for(var j = worksheet.rowCount + 1; j > currentIndex; j--) {
         worksheet.getRow(j).outlineLevel = worksheet.getRow(j - 1).outlineLevel;
       }
@@ -307,11 +303,11 @@ export class TeamsComponent implements OnInit {
         font: { bold: true }
       });
     });
-    
+
     for(var i = 0; i < masterRows.length; i++) {
       rowIndex++;
       let row = insertRow(rowIndex, 1);
-      
+
       let teamData = this.teams.find((item) => item.teamId === masterRows[i].data.teamId);
       const mainColumns = ["teamId", "teamName", "members", "modifiedBy", "modifiedDate", "createdBy", "createdDate", "securityLevel"];
 
@@ -332,7 +328,7 @@ export class TeamsComponent implements OnInit {
 
       rowIndex++;
       row = insertRow(rowIndex, 2);
-      const captions = ["Name", "Company", "Email", "Phone Number", "Role", "Email Notifications", "Access Level"];                    
+      const captions = ["Name", "Company", "Email", "Phone Number", "Role", "Email Notifications", "Access Level"];
       captions.forEach((caption, currentColumnIndex) => {
         Object.assign(row.getCell(currentColumnIndex+2), {
           value: caption,
@@ -355,14 +351,14 @@ export class TeamsComponent implements OnInit {
         });
       });
     }
-      
+
     worksheet.columns.forEach(function (column, i) {
       let maxLength = 0;
       column["eachCell"]({ includeEmpty: true }, function (cell) {
-          var columnLength = cell.value ? cell.value.toString().length : 10;
-          if (columnLength > maxLength ) {
-              maxLength = columnLength;
-          }
+        var columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength ) {
+          maxLength = columnLength;
+        }
       });
       column.width = maxLength < 10 ? 10 : maxLength;
     });

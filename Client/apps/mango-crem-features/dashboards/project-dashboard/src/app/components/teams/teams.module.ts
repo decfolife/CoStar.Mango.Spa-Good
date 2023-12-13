@@ -14,12 +14,13 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TeamMembersComponent } from './team-members/team-members.component';
 import { AddEditTeamComponent } from './add-edit-team/add-edit-team.component';
 import { TextFieldModule } from '@mango/ui-shared/cosmos';
+import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 
 @NgModule({
   declarations: [
     TeamsComponent,
     TeamMembersComponent,
-    AddEditTeamComponent
+    AddEditTeamComponent,
   ],
   imports: [
     CommonModule,
@@ -37,7 +38,7 @@ import { TextFieldModule } from '@mango/ui-shared/cosmos';
     DxListModule,
     TextFieldModule,
   ],
-  providers: [DashboardService, CardsService],
+  providers: [DashboardService, CardsService, MangoDialogService,],
   exports: [TeamsComponent],
 })
 export class TeamsModule { }

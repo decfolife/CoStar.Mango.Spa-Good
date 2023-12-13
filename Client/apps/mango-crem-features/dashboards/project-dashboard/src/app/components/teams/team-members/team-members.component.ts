@@ -3,7 +3,9 @@ import { MemberInfo, TeamKeys, TeamMemUpdate, TeamMember } from '@mango/data-mod
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import CheckBox from 'devextreme/ui/check_box';
-
+import { filter, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 
 @Component({
   selector: 'team-members',
@@ -32,7 +34,8 @@ export class TeamMembersComponent implements OnInit {
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
 	@Output() subGridEditClicked: EventEmitter<any> = new EventEmitter();
 
-	constructor(private dashboardService: DashboardService) {}	
+	constructor(private dashboardService: DashboardService,
+							private dialogService: MangoDialogService) {}	
 
 	ngOnInit() {}
 
@@ -69,7 +72,8 @@ export class TeamMembersComponent implements OnInit {
         if (res.success) {
 						this.teamMembersGrid.instance.saveEditData();
         } else { 
-					alert("Team Member could not be updated. Please review and try again later.");
+					let message = `Team Member could not be updated. Please review and try again later.`;
+					this.dialogService.alert('Update Member', message, 'ok').subscribe();
 					this.teamMembersGrid.instance.cancelEditData();
 				}
 				member.editMode = false;
@@ -84,20 +88,22 @@ export class TeamMembersComponent implements OnInit {
 		this.memberIds = [];
 		this.memberIds.push(member.memberId);
 
-		if(this.teamMemberCount == 1) {
-			alert(`Team Member Removal can not be done. At least one team member must be assigned to the team.`);
+		if (this.teamMemberCount == 1) {
+			let message = 'Team Member Removal can not be done. At least one team member must be assigned to the team.';
+			this.dialogService.alert('Team Member Removal', message, 'ok').subscribe();
 		} else {
 			let confirmText = `Do you want to Remove the member "${member.name}"?`;
-			if(confirm(confirmText)) {
-				this.dashboardService.deleteTeamMembers(this.memberIds).subscribe(
-					(res:any) => {
-						if (res.success) {
-							this.memberIds = [];
-							this.getLatestTeamsDataEvent.emit();
-						} else { alert("Team Member could not be deleted. Please review and try again later.");}
+			this.dialogService.confirm('Remove Team Member', confirmText, 'confirm', 'cancel').pipe(
+				filter(confirmed => !!confirmed),
+				switchMap(_ => this.dashboardService.deleteTeamMembers(this.memberIds)),
+				switchMap(res => {
+					if (res.success) {
+						this.memberIds = [];
+						this.getLatestTeamsDataEvent.emit();
 					}
-				);
-			}
+					return res.success ? of() : this.dialogService.alert('Removal unsuccessful!', 'Team Member could not be deleted. Please review and try again later.', 'ok');
+				})
+			).subscribe();
 		}	
 
 	}

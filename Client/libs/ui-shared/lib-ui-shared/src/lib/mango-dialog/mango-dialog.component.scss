@@ -1,0 +1,44 @@
+.dialogContent {
+  height: 100%;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .dialogHeader {
+    padding: 16px;
+    margin-bottom: 0;
+    border-bottom: 1px solid #C8C8C8;
+    .dialogExclamation {
+      padding-right: 8px;
+    }
+  }
+
+  .dialogMessage {
+    height: 100%;
+    overflow-y: auto;
+    padding: 8px 16px;
+    align-items: start;
+    .dialogMsgFormatted {
+      font-family: Roboto, "Helvetica Neue", sans-serif;
+      margin-bottom: 0;
+      white-space:pre-line;
+    }
+  }
+
+  .dialogFooter {
+    display: flex !important;
+    justify-content: flex-end;
+    border-top: 1px solid #C8C8C8;
+    display: block;
+    padding: 16px;
+
+    crem-button button {
+      margin-left: 16px;
+    }
+  }
+}
+
+h2.cdk-drag.cdk-drag-handle.dialogHeader {
+	cursor: move;
+}

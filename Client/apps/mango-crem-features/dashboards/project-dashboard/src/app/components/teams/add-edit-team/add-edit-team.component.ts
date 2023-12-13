@@ -9,6 +9,7 @@ import { Team, TeamMember, contactMember, MemberInfo } from '@mango/data-models/
 import { faCirclePlus, faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ToastrService } from 'ngx-toastr';
+import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 
 @Component({
   selector: 'add-edit-Team-popup',
@@ -48,6 +49,7 @@ export class AddEditTeamComponent implements OnInit {
 
   constructor(private dashboardService: DashboardService,
     public toastr: ToastrService,
+    private dialogService: MangoDialogService,
     public dialogRef: MatDialogRef<AddEditTeamComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
@@ -118,15 +120,19 @@ export class AddEditTeamComponent implements OnInit {
       confirmText += member.name + "\n";
     })
 
-    if(confirm(confirmText)) {
-      let removeIndex: number;
-      this.selectedMemberIds.forEach(contactId => {
-        removeIndex = (this.team.teamMembers.findIndex(member => contactId == member.contactId));
-        this.team.teamMembers.splice(removeIndex, 1);
-      });
-      this.filteredMembers = [...this.filteredMembers];
-      this.changesMade = true;
-    }
+    this.dialogService.confirm('Remove Members', confirmText, 'confirm', 'cancel').pipe(
+      filter(confirmed => !!confirmed),
+      switchMap(_ => {
+        let removeIndex: number;
+        this.selectedMemberIds.forEach(contactId => {
+          removeIndex = (this.team.teamMembers.findIndex(member => contactId == member.contactId));
+          this.team.teamMembers.splice(removeIndex, 1);
+        });
+        this.filteredMembers = [...this.filteredMembers];
+        this.changesMade = true;
+        return of();
+      })
+    ).subscribe();
   }
 
   setRoleValue(newData, value: string) {
@@ -202,30 +208,30 @@ export class AddEditTeamComponent implements OnInit {
   saveTeam() {
     this.saveBtnClicked = true;
     if (!this.team.teamName.trim()) {
-      alert("Team Name is a required field");
+      this.dialogService.alert('Team Name', 'Team Name is a required field.', 'ok').subscribe();
       this.saveBtnClicked = false;
       return;
     }
-    else if(!this.team.teamMembers || !this.team.teamMembers.length) {
-      alert("Add team member in order to save.");
+    else if (!this.team.teamMembers || !this.team.teamMembers.length) {
+      this.dialogService.alert('Team Member', 'Add at least one team member in order to save.', 'ok').subscribe();
       this.saveBtnClicked = false;
       return;
     } else {
-        if(this.addTeam) {
-          this.team.teamId = 0;
-          this.team.securityLevel = "Delete"
-        }
-        this.dashboardService.addTeam(this.team).subscribe(
-        (res:any) => {
-          if(res.success){
-            this.toastr.info("Team Saved Successfully", "", 
-                             {positionClass: 'toast-bottom-right', timeOut: 3000, closeButton:false, progressBar: false });
+      if (this.addTeam) {
+        this.team.teamId = 0;
+        this.team.securityLevel = "Delete"
+      }
+
+      this.dashboardService.addTeam(this.team).pipe(
+        switchMap(res => {
+          this.saveBtnClicked = false;
+          if (res.success) {
             this.dialogRef.close('true');
-          }
-        },
-        (error: any) => alert("Failed Saving Team, Try again later "),
-        () => {this.saveBtnClicked = true;}
-      );
+          } 
+          return res.success ? of(this.toastr.info("Team Saved Successfully", "",
+                 { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'Failed Saving Team, Try again later.', 'ok');
+        }),
+      ).subscribe();
     }
   }
 

@@ -17,6 +17,7 @@ import { SharedLeftNavModule } from './shared-left-nav';
 import { ShadowFiltersContainerModule } from './shadow-filters-container';
 import { CostarSuiteHeaderModule } from './costar-suite-header/costar-suite-header.module';
 import { AddBuildingModalModule } from './add-building-modal/add-building-modal.module';
+import { MangoDialogModule } from './mango-dialog';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { AddBuildingModalModule } from './add-building-modal/add-building-modal.
     HeroMetricsContainerModule,
     ShadowFiltersContainerModule,
     SharedLeftNavModule,
+    MangoDialogModule,
     AddBuildingModalModule
   ],
   exports: [
@@ -50,6 +52,7 @@ import { AddBuildingModalModule } from './add-building-modal/add-building-modal.
     HeroMetricsContainerModule,
     ShadowFiltersContainerModule,
     SharedLeftNavModule,
+    MangoDialogModule,
     AddBuildingModalModule
   ],
 })
