@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable rxjs-angular/prefer-composition */
 
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { of, Observable, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -13,17 +13,19 @@ import { ColumnArray, ColumnOverrideArray } from '../shared/models/dashboard-mod
 import { MatDialog } from '@angular/material/dialog';
 import { ColumnLimitComponent } from '../components/dashboard/modal/column-limit/column-limit.component';
 import { forkJoin } from 'rxjs';
+import { EndpointService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class DataService {
-  private static logged = false;
+export class DataService extends EndpointService {
   private _urlOverride = 'dashboards/';
   calendar: any;
   portfolios: any;
+  segmentID: any;
   years: any;
   dataStore: ArrayStore;
   columnStore: ArrayStore;
@@ -40,7 +42,7 @@ export class DataService {
       'Content-Type': 'application/json',
       Accept: 'application/json',
       UserId: '2',
-      ClientKey: 'BLANK',
+      ClientKey: 'pepsi',
       CAEnabled: 'false'
     })
   };
@@ -48,11 +50,13 @@ export class DataService {
 
   constructor(
     protected http: HttpClient,
-    protected dialog: MatDialog
+    protected dialog: MatDialog,
+    protected facade: MangoAppFacade
   ) {
-    if (environment.name !== 'PROD' && !DataService.logged) {
-      DataService.logged = true;
-    }
+    super(http, facade)
+    this.getHttpHeaders().subscribe((result) => {
+      this.httpOptions = result;
+    })
     // This url is used when not being overriden from the mango-root container
     // this.baseUrl = [Accounting Service];
 
@@ -190,7 +194,7 @@ export class DataService {
     if (newField) {
       this.columnStore.update(key, fields[0]);
       if (key === 'Leases') {
-        this.updateLeaseData(this.calendar, this.portfolios, false);
+        this.updateLeaseData(this.segmentID, false);
       } else if (key === 'Periods') {
         this.updatePeriodsData(this.calendar, this.portfolios, this.years, false);
       } else if (key === 'Alerts') {
@@ -209,26 +213,13 @@ export class DataService {
     this.dataStore.update(key, data);
   }
 
-  public async getDashboardData(calendar, portfolioIds, yearsObj) {
+  public async getDashboardData(segmentID, selectedYear, apiEndPoints?) {
     this._cardNeedUpdate.next({key: 'everything', needUpdate: true});
-    const portfolios = portfolioIds.map((portfolio) => {
-      return portfolio.intValue;
-    })
-
-    const years = Number(yearsObj.map((year) => {
-      return year.stringValue;
-    }).toString());
-
-    //data for the lease workflow grids go here, data will be replaced by data that actually make sense
-
-    this.calendar = calendar;
-    this.portfolios = portfolios;
-    this.years = years;
 
     setTimeout(() => {
-      this.updateLeaseData(calendar, portfolios, true);
-      this.updatePeriodsData(calendar, portfolios, years, true);
-      this.updateAlertsData(calendar, portfolios, true);
+      this.updateLeaseData(segmentID, true, apiEndPoints);
+      //this.updatePeriodsData(calendar, portfolios, selectedYear, true, apiEndPoints);
+      this.updateAlertsData(segmentID, true, apiEndPoints);
     })
   }
 
@@ -266,15 +257,15 @@ export class DataService {
     this.apiEndPoints = apiEndpoints
   }
 
-  private async updateLeaseData(calendar, portfolios, requiredDataRefresh: boolean = false) {
-    if (this.apiEndPoints.includes('Leases')) {
+  private async updateLeaseData(segmentID, requiredDataRefresh: boolean = false, apiEndPoints?) {
+    if (apiEndPoints?.includes('Leases') || this.apiEndPoints.includes('Leases')) {
       this._cardNeedUpdate.next({key: 'Leases', needUpdate: true});
       const columns = await this.columnStore.load({ filter: ['dataSourceKey', '=', 'Leases'] }).then(
         (data) => {
           return data;
         }
       );
-      this.getLeaseData(portfolios, calendar, columns).subscribe(apiResponse => {
+      this.getLeaseData(segmentID, columns).subscribe(apiResponse => {
         if (apiResponse.success) {
 
           //needed this conversion because currently the fields are treated as string instead of a date field
@@ -305,8 +296,8 @@ export class DataService {
     }
   }
 
-  private async updatePeriodsData(calendar, portfolios, years, requiredDataRefresh) {
-    if (this.apiEndPoints.includes('Periods')) {
+  private async updatePeriodsData(calendar, portfolios, years, requiredDataRefresh, apiEndPoints?) {
+    if (this.apiEndPoints.includes('Periods') || apiEndPoints?.includes('Periods')) {
       this._cardNeedUpdate.next({key: 'Periods', needUpdate: true});
       const columns = await this.columnStore.load({ filter: ['dataSourceKey', '=', 'Periods'] }).then(
         (data) => {
@@ -456,15 +447,15 @@ export class DataService {
     });
   }
 
-  private async updateAlertsData(calendar, portfolios, requiredDataRefresh: boolean = false) {
-    if (this.apiEndPoints.includes('Alerts')) {
+  private async updateAlertsData(segmentID, requiredDataRefresh: boolean = false, apiEndPoints?) {
+    if (this.apiEndPoints.includes('Alerts') || apiEndPoints?.includes('Alerts')) {
       this._cardNeedUpdate.next({key: 'Alerts', needUpdate: true});
       const columns = await this.columnStore.load({ filter: ['dataSourceKey', '=', 'Alerts'] }).then(
         (data) => {
           return data;
         }
       );
-      this.getAlertsData(portfolios, calendar, columns).subscribe(apiResponse => {
+      this.getAlertsData(segmentID, columns).subscribe(apiResponse => {
         if (apiResponse.success) {
 
           //needed this conversion because currently the fields are treated as string instead of a date field
@@ -497,14 +488,13 @@ export class DataService {
 
 
 
-  private getLeaseData(portfolios, calendar, columns): Observable<ApiResponse> {
+  private getLeaseData(segmentID, columns): Observable<ApiResponse> {
     let route = 'leases';
     let param;
     if (!environment.isRestful) {
       param = {
         request: {
-          portfolioIDs: portfolios,
-          calendarID: calendar,
+          segmentID: segmentID,
           Fields: (columns?.[0]?.columns)?.toString() || [].toString()
         }
       }
@@ -512,8 +502,7 @@ export class DataService {
     } else {
       route = '/' + route;
       param = {
-        portfolioIDs: portfolios,
-        calendarID: calendar,
+        segmentID: segmentID,
         Fields: (columns?.[0]?.columns)?.toString() || [].toString()
       }
     }
@@ -554,7 +543,7 @@ export class DataService {
     return this.getHttpPostApiResponse(route, 'periods', param, true, null);
   }
 
-  private getAlertsData(portfolios, calendar, columns): Observable<ApiResponse> {
+  private getAlertsData(segmentID, columns): Observable<ApiResponse> {
     const newColumns = columns?.[0]?.columns.map((column) => {
       if (ColumnOverrideArray.Alerts[column]) {
         return ColumnOverrideArray.Alerts[column]
@@ -567,8 +556,7 @@ export class DataService {
     if (!environment.isRestful) {
       param = {
         request: {
-          portfolioIDs: portfolios,
-          calendarID: calendar,
+          SegmentID: segmentID,
           Fields: newColumns.toString() || [].toString(),
         }
       }
@@ -576,8 +564,7 @@ export class DataService {
     } else {
       route = '/' + route;
       param = {
-        portfolioIDs: portfolios,
-        calendarID: calendar,
+        SegmentID: segmentID,
         Fields: newColumns.toString() || [].toString(),
       }
     }

@@ -83,7 +83,7 @@
 	</div>
 	<div class="dashboard-content-wrapper">
 		<div class="dashboard-content" *ngIf="!loading">
-			<workflow-and-alerts *ngIf="selectedView === 1">
+			<workflow-and-alerts *ngIf="selectedView === 1" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
 			</workflow-and-alerts>
 	
 			<asc-842-annual-disclosures *ngIf="selectedView === 2" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">

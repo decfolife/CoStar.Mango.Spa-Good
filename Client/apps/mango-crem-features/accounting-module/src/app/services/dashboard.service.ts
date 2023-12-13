@@ -10,6 +10,7 @@ import { DataService } from './data.service'
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { MatDialog } from '@angular/material/dialog';
 import { GenericErrorComponent } from '../components/dashboard/modal/genericError/genericError.component';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class DashboardService extends DataService {
@@ -18,8 +19,8 @@ export class DashboardService extends DataService {
     private _dashboardId: number;
   private _currentCalendarId: number;
  private hasResponse = true;
-    constructor(protected http: HttpClient, dialog: MatDialog) {
-        super(http, dialog);
+    constructor(protected http: HttpClient, dialog: MatDialog, facade: MangoAppFacade) {
+        super(http, dialog, facade);
     }
 
     // VM Data
@@ -91,7 +92,7 @@ export class DashboardService extends DataService {
     public loadDashboardData(): Observable<ApiResponse> {
         const route = `${this._baseUrlOverride}`;
         if (environment.isRestful) {
-            return this.getHttpGetApiResponse(route, 'GetDashboardData', environment.appUrls.dashboards + 'accounting/' + route)
+            return this.getHttpGetApiResponse(route, 'GetDashboardData', environment.appUrls.accountingService + route)
         }
         const url = `LoadAccountingDashboard`;
           return this.getHttpGetApiResponse(url, 'LoadAccountingDashboard', null, 

@@ -11,7 +11,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CremPivotTableModule } from 'libs/ui-shared/lib-ui-elements/src/lib/crem-pivot-table/crem-pivot-table.module';
 import { DataService } from '../../services/data.service';
-import { AccountingDashboardComponent } from './accounting-dashboard.component';
 import { DashboardService } from '../../services/dashboard.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {FormsModule} from '@angular/forms';
@@ -19,7 +18,7 @@ import { ColumnLimitComponent } from './modal/column-limit/column-limit.componen
 import { GenericErrorComponent } from './modal/genericError/genericError.component';
 
 @NgModule({
-  declarations: [AccountingDashboardComponent, DashboardCardComponent, ColumnLimitComponent, GenericErrorComponent],
+  declarations: [DashboardCardComponent, ColumnLimitComponent, GenericErrorComponent],
   imports: [
     CommonModule,
     ButtonModule,
@@ -43,6 +42,6 @@ import { GenericErrorComponent } from './modal/genericError/genericError.compone
     DataService,
     DashboardService,
   ],
-  exports: [AccountingDashboardComponent, DashboardCardComponent]
+  exports: [DashboardCardComponent]
 })
 export class DashboardModule {}

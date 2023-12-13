@@ -1,1 +1,43 @@
-workflow-and-alerts content
+<div class="accounting-dashboard-page-data-grid-wrapper">
+    <div class="card-containers"
+      cdkDropList
+      cdkDropListOrientation="vertical"
+      (cdkDropListDropped)="cardMove($event)"
+    >
+      <div *ngFor="let config of cardData"
+        class="categories-item"
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="{ card: card, index: i }"
+        fxLayout="row"
+        cdkDrag
+        [class.col-md-6]="!config.cardJSONSchema.fullWidth"
+        [class.col-md-12]="config.cardJSONSchema.fullWidth"
+        [class.hide]="!config.cardJSONSchema.visible"
+      >
+        <div cdkDragHandle
+          class="card-drag-handle"
+          *ngIf="config && config.cardJSONSchema.visible"
+          id="{{config.cardPendoId + '--drag_drop'}}"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="drag_handle"
+            height="24px"
+            viewBox="0 0 24 24"
+            width="24px"
+            fill="#BFBFBF"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
+          </svg>
+        </div>
+  
+        <mango-accounting-card *ngIf="!cardJSONSchemaLoading && config.cardJSONSchema.visible"
+          [canSaveDefault]="canSaveDefault"
+          [cardData]="config"
+          [dsExportFileName]="exportDataSourceFileName"
+          (cardMove)="cardMove(event)"
+          [pendoId]="config.cardPendoId"
+        ></mango-accounting-card>
+      </div>
+    </div>
+  </div>

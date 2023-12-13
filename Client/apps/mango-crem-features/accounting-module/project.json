@@ -16,6 +16,7 @@
         "tsConfig": "apps/mango-crem-features/accounting-module/tsconfig.app.json",
         "stylePreprocessorOptions": {
           "includePaths": [
+            "libs/ui-shared/common/src",
             "libs/ui-shared/lib-ui-elements/src/styles",
             "apps/mango",
             "apps/mango/src/assets/styles"

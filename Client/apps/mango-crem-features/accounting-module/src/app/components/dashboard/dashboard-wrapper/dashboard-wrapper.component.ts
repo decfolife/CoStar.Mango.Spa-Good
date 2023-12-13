@@ -6,6 +6,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 import notify from 'devextreme/ui/notify';
+import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
 
 @Component({
   selector: 'mango-dashboard-wrapper',
@@ -18,14 +19,16 @@ export class DashboardWrapperComponent implements OnInit {
   public accountingYearData: any[] = [];
   public accountingSegmentData: any[] = [];
   public selectedSegment: number;
-  public selectedView: number = 2;
+  public selectedView: number = 1;
   public selectedYear: number = 2022;
   public loading: boolean = true;
   public criteriaSet: number;
+  public workflowAlertsCriteriaSet: number;
   faFileExport = faFileExport;
 
   @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
- 
+  @ViewChild(WorkflowAndAlertsComponent) workflowAndAlertsComponent;
+  
   constructor(
     private inAppDisclosureService: InAppDisclosureService
   ) {}
@@ -34,8 +37,9 @@ export class DashboardWrapperComponent implements OnInit {
     this.featureFlagEnabled = true;
     this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
       this.criteriaSet = result.data[0].CriteriaSetID;
-      const observableItem = this.inAppDisclosureService.getSegments(this.criteriaSet, false);
-  
+      this.workflowAlertsCriteriaSet = result.data[1].CriteriaSetID;
+      const observableItem = this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false);
+      
       observableItem.subscribe((data) => {
         this.accountingViewData = [
           {
@@ -68,10 +72,8 @@ export class DashboardWrapperComponent implements OnInit {
           });
         }
         //fetch criteriaSetID for each view;
-        if(this.selectedView == 2) {
-          this.accountingSegmentData = data.data;
-          this.selectedSegment = this.accountingSegmentData?.[0].segmentID
-        }
+        this.accountingSegmentData = data.data;
+        this.selectedSegment = this.accountingSegmentData?.[0].segmentID
         this.loading = false;
   
       })
@@ -83,21 +85,27 @@ export class DashboardWrapperComponent implements OnInit {
 
   public onAccountingViewChange(data) {
     if (data.length) {
-      this.selectedView = data[0].id;
-      if (this.selectedView == 2) {
-        this.getSegments();
+      //this.selectedView = data[0].id;
+      if (data[0].id == 1 || data[0].id == 2) {
+        this.getSegments(data[0].id);
       }
     }
   }
 
-  public getSegments() {
-    this.accountingSegmentData = [];
-    this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
-      this.criteriaSet = result.data[0].CriteriaSetID;
-      this.inAppDisclosureService.getSegments(this.criteriaSet, false).subscribe((result) => {
-        this.accountingSegmentData = result.data;
+  public getSegments(view: number) {
+      this.accountingSegmentData = [];
+      this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
+        if (view == 1) {
+          this.criteriaSet = result.data[1].CriteriaSetID;
+        } else if (view == 2) {
+          this.criteriaSet = result.data[0].CriteriaSetID;
+        }
+        this.inAppDisclosureService.getSegments(this.criteriaSet, false).subscribe((result) => {
+          this.accountingSegmentData = result.data;
+          this.selectedSegment = result.data[0].segmentID;
+          this.selectedView = view;
+        })
       })
-    })
   }
 
   public onAccountingYearChange(data) {
@@ -114,7 +122,11 @@ export class DashboardWrapperComponent implements OnInit {
 
   public apply(data) {
     //console.log("apply")
-    this.asc842AnnualDisclosuresComponent.refreshCardData();
+    if (this.selectedView == 1) {
+      this.workflowAndAlertsComponent.refreshCardData();
+    } else if (this.selectedView == 2) {
+      this.asc842AnnualDisclosuresComponent.refreshCardData();
+    }
   }
 
   public export(data) {

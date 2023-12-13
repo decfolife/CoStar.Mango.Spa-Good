@@ -1,19 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CanActivateGuard } from '../../app.component';
-import { AccountingDashboardComponent } from '../../components/dashboard/accounting-dashboard.component';
 import { AccountingListpageComponent } from '../../components/listpage/accounting-listpage/accounting-listpage.component';
 import { DashboardWrapperComponent } from '../dashboard/dashboard-wrapper/dashboard-wrapper.component';
 
 const routes: Routes = [
-  {
-    path: 'dashboard',
-    component: AccountingDashboardComponent,
-    data: {
-      breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' }
-    },
-    canActivate: [CanActivateGuard],
-  },
   {
     path: 'accountingevents', component: AccountingListpageComponent,
     data: {
