@@ -134,6 +134,7 @@
     "@nrwl/nx-plugin": "15.4.5",
     "@nrwl/storybook": "15.4.5",
     "@nrwl/workspace": "15.4.5",
+    "@playwright/test": "^1.40.1",
     "@storybook/addon-a11y": "^6.5.15",
     "@storybook/addon-essentials": "^6.5.15",
     "@storybook/addon-jest": "^6.5.15",
