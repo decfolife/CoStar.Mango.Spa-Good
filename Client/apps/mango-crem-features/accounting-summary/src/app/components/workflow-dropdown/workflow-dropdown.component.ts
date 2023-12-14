@@ -130,7 +130,7 @@ export class WorkflowDropdownComponent {
         nextStatusOrderNumberAfterSelectedStatus = opt.statusOrder;
       }
 
-      if(!opt.userHasEditRights){
+      if(!opt.allUsersHaveRights && !opt.userHasEditRights){
         itemDisabled = true;
         itemDisabledReason = "You do not have rights to this status.";
       } else if(!this.workflowSettings.isApproveOwnChangesEnabled && opt.isApprovedStatus){
