@@ -1,10 +1,7 @@
 <crem-modal
   [modalTitle] = "modalTitle"
+  [customFooter]="true"
   [closeIconVisible] = "closeButton"
-  [primaryFooterButtonText]="'Save'"
-  [primaryFooterButtonEnabledDisabled]="saveBtnClicked"
-  [closeOrCancelButtonText]="'Cancel'" 
-  (primaryButtonAction)="saveTeam()"
   [modalId] = "modalId"
 >
 <div modalContent id="addEditTeamModal-content">
@@ -89,6 +86,7 @@
           [wordWrapEnabled]="true"
           (onContentReady)="setAttributes($event)"
           (onSelectionChanged)="onMemberSelectionChanged($event)"
+          (onEditorPreparing)="editorPreparing($event)"
         >
           <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
           <dxo-sorting mode="multiple"></dxo-sorting> 
@@ -144,6 +142,12 @@
         </dx-data-grid>
       </div>
     </div>
+  </div>
+</div>
+<div modalFooter class="addEditTeamModal-footerContent">
+  <div id="buttonTemplate" class="footerRightControls">
+    <crem-button  type="secondary" id="close-btn" (click)="cancelChanges()"> Cancel </crem-button>
+		<crem-button  [disabled]="saveBtnClicked" type="primary" (click)="saveTeam()"> Save </crem-button>
   </div>
 </div>
 </crem-modal>

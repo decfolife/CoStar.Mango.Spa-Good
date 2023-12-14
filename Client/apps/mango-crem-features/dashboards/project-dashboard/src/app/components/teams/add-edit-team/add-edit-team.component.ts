@@ -137,12 +137,18 @@ export class AddEditTeamComponent implements OnInit {
 
   setRoleValue(newData, value: string) {
     (this as any).defaultSetCellValue(newData, value);
-    this.changesMade = true;
+    this.changesMade = true;   //here 'this' refers to the column object
   }
 
   setLevelValue(newData, value: string) {
 		newData.level = value;
-    this.changesMade = true;
+    this.changesMade = true;  //here 'this' refers to the column object
+  }
+
+  editorPreparing(e) {
+    if (e.parentType === 'dataRow' && ((e.dataField == 'role') || (e.dataField == 'level')) && e.changesMade) {  
+        this.changesMade = true;
+    }
   }
 
   emailtoggle(member, e) {
@@ -229,14 +235,27 @@ export class AddEditTeamComponent implements OnInit {
             this.dialogRef.close('true');
           } 
           return res.success ? of(this.toastr.info("Team Saved Successfully", "",
-                 { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'Failed Saving Team, Try again later.', 'ok');
+                 { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this team. Please review and try again later', 'ok');
         }),
+        catchError(_ => this.dialogService.alert('Save Not Successful!', 'There was an issue with saving this team. Please review and try again later', 'ok'))
       ).subscribe();
     }
   }
 
-  public closeDialog() {
-    this.dialogRef.close('');
+  public cancelChanges() {
+    if(this.changesMade) {
+      this.dialogService.confirm('Changes Made!', 'Changes you made have not been saved. Would you like to continue editing or leave ?', 'Continue', 'Leave').pipe(
+        switchMap(res => {
+          if(!res) {
+            this.dialogRef.close('');
+          }
+          return of();
+        }),
+      ).subscribe();
+    } else {
+      this.dialogRef.close('');
+    }
+    
   }
 
   setListItemAttributes(e) {
