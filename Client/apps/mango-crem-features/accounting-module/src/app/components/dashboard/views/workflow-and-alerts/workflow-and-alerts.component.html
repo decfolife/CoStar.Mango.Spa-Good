@@ -12,7 +12,7 @@
         cdkDrag
         [class.col-md-6]="!config.cardJSONSchema.fullWidth"
         [class.col-md-12]="config.cardJSONSchema.fullWidth"
-        [class.hide]="!config.cardJSONSchema.visible"
+        [class.cdk-visually-hidden]="!config.cardJSONSchema.visible"
       >
         <div cdkDragHandle
           class="card-drag-handle"

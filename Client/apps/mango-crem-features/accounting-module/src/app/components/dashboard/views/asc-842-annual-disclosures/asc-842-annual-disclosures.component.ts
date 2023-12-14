@@ -13,7 +13,17 @@ import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
   styleUrls: ['./asc-842-annual-disclosures.component.scss'],
 })
 export class Asc842AnnualDisclosuresComponent implements OnInit {
-  public cardData: any;
+  public cardData: any = [{
+      id: 'LeaseCounts',
+      name: 'Lease Counts',
+      index: 0
+    },
+    {
+      id: 'AssetBalance',
+      name: 'ROU Asset Balance',
+      index: 1
+    }
+  ];
   public pivotCardData: any;
   public loading: boolean = true;
   public fieldConfigs: any;
@@ -311,7 +321,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   }
 
   public cardMove(event: CdkDragDrop<string[]>): void {
-    // moveItemInArray(this.cardData, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.cardData, event.previousIndex, event.currentIndex);
   }
 
   public toggleCardWidth() {

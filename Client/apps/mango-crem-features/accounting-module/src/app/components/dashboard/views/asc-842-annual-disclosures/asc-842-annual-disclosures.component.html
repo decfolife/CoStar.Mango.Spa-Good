@@ -4,7 +4,7 @@
         cdkDropListOrientation="vertical"
         (cdkDropListDropped)="cardMove($event)"
     >
-        <div class="categories-item"
+        <div *ngFor="let config of cardData" class="categories-item"
             cdkDropListOrientation="horizontal"
             [cdkDropListData]="{ card: card, index: i }"
             fxLayout="row"
@@ -14,7 +14,7 @@
             >
             <div cdkDragHandle
                 class="card-drag-handle"
-                id="LeaseCountsDragDrop"
+                [id]="config.id + 'DragDrop'"
             >
                 <svg xmlns="http://www.w3.org/2000/svg"
                     class="drag_handle"
@@ -27,16 +27,16 @@
                     <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
                 </svg>
             </div>
-            <crem-card id="LeaseCountsCard'"
-                title="Lease Counts"
+            <crem-card [id]="config.id + 'Card'"
+                [title]="config.name"
                 [showFilterClearButton]="false"
-                [pendoTitleId]="LeaseCountsTitle"
+                [pendoTitleId]="config.id + 'Title'"
                 [customDropdownMenu]="true"
                 fxFlexFill
             >
                 <ng-template #customDropdownMenu>
                     <div class="card-header--right">
-                        <button id="LeaseCountMoreOption"
+                        <button [id]="config.id + 'MoreOption'"
                             class="btn btn-default btn-sm moreOptionsBtn"
                             [matMenuTriggerFor]="cardMenu"
                             (click)="$event.preventDefault()"
@@ -63,56 +63,8 @@
                         [showColumnGrandTotals]="false"
                         [showRowTotals]="false"
                         [showColumnTotals]="false"
-                        [dataSource]="dataSources[0]"
-                        [fields]="fieldConfigs[0]"
-                        (onCellPrepared)="onCellPrepared($event)"
-                        (onContextMenuPreparing)="contextMenuPreparing($event)"
-                        >
-                        <dxo-field-chooser
-                            [enabled]="false"
-                            >
-                        </dxo-field-chooser>
-                    </dx-pivot-grid>
-                </div>
-            </crem-card>
-            <crem-card id="AssetBalanceCard'"
-                title="ROU Asset Balance"
-                [showFilterClearButton]="false"
-                [pendoTitleId]="AssetBalanceTitle"
-                [customDropdownMenu]="true"
-                fxFlexFill
-            >
-                <ng-template #customDropdownMenu>
-                    <div class="card-header--right">
-                        <button id="LeaseCountMoreOption"
-                            class="btn btn-default btn-sm moreOptionsBtn"
-                            [matMenuTriggerFor]="cardMenu"
-                            (click)="$event.preventDefault()"
-                            aria-label="More Options"
-                        >
-                            <mat-icon aria-label="More Options">more_horiz</mat-icon>
-                        </button>
-
-                        <mat-menu #cardMenu="matMenu">
-                            <button mat-menu-item
-                            (click)="toggleCardWidth()"
-                            >Toggle Full Width</button>
-                        </mat-menu>
-                    </div>
-                </ng-template>
-
-                <div class="cardContent" fxflexFill>
-                    <dx-pivot-grid #PivotGrid
-                        [allowSortingBySummary]="true"
-                        [allowFiltering]="true"
-                        [showBorders]="true"
-                        [showColumnGrandTotals]="false"
-                        [showRowGrandTotals]="false"
-                        [showColumnGrandTotals]="false"
-                        [showRowTotals]="false"
-                        [showColumnTotals]="false"
-                        [dataSource]="dataSources[1]"
-                        [fields]="fieldConfigs[1]"
+                        [dataSource]="dataSources[config.index]"
+                        [fields]="fieldConfigs[config.index]"
                         (onCellPrepared)="onCellPrepared($event)"
                         (onContextMenuPreparing)="contextMenuPreparing($event)"
                         >
