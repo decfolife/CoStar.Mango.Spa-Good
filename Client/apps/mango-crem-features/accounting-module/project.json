@@ -34,7 +34,8 @@
           "apps/mango/src/assets/styles/costar.scss",
           "apps/mango/src/assets/styles/costar-dev-extreme.scss",
           "apps/mango-crem-features/accounting-module/src/assets/dx.generic.overlay-theme.scss",
-          "apps/mango-crem-features/accounting-module/src/styles.scss"
+          "apps/mango-crem-features/accounting-module/src/styles.scss",
+          "libs/ui-shared/common/src/styles/_index.scss"
         ],
         "scripts": [],
         "vendorChunk": true,

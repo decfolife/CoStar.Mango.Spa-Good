@@ -7,6 +7,8 @@ import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclo
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 import notify from 'devextreme/ui/notify';
 import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
 
 @Component({
   selector: 'mango-dashboard-wrapper',
@@ -30,7 +32,8 @@ export class DashboardWrapperComponent implements OnInit {
   @ViewChild(WorkflowAndAlertsComponent) workflowAndAlertsComponent;
   
   constructor(
-    private inAppDisclosureService: InAppDisclosureService
+    private inAppDisclosureService: InAppDisclosureService,
+    public dialog: MatDialog,
   ) {}
   ngOnInit() {
     this.selectedYear = new Date().getFullYear();
@@ -150,6 +153,15 @@ export class DashboardWrapperComponent implements OnInit {
           closeOnClick: true,
         })
       }
+    });
+  }
+
+  launchSettingsModal() {
+    const dialogRef = this.dialog.open(UserSettingsComponent, {
+       width: '600px',
+       height: '570px',
+       panelClass: 'user-settings-dialog',
+       disableClose: true,
     });
   }
 

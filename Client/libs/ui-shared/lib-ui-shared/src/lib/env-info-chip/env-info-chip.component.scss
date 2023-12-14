@@ -1,3 +1,4 @@
+@use "styles" as *;
 @import "../../../../lib-ui-elements/src/lib/assets/styles/cosmos-theme.scss";
 
 :host {
@@ -8,7 +9,7 @@
       width: fit-content;
       width: -webkit-fit-content;
       width: -moz-fit-content;
-      border-radius: 40px;
+      @include costar(border-radius, pill, $important: true);
       padding: 4px 8px;
       font-size: 14px;
       font-weight: 700;

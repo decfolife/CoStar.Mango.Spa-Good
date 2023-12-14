@@ -72,13 +72,19 @@
 
 		</div>
 		<div class="controls-right">
-				<crem-button id="accounting-dashboard__export"
-				[disabled]="loading"
-				type="secondary"
-				(buttonClick)="export($event)">
+      <crem-button id="accounting-dashboard__export"
+      [disabled]="loading"
+      type="secondary"
+      (buttonClick)="export($event)">
 				<fa-icon [icon]="faFileExport"></fa-icon>
 				Export
 			</crem-button>
+      <crem-button
+      type="secondary"
+      ariaLabel="Dashboard Settings"
+      icon="faCog"
+      (click)="launchSettingsModal(); $event.preventDefault();"
+      ></crem-button>
 		</div>
 	</div>
 	<div class="dashboard-content-wrapper">

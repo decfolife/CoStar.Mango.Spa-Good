@@ -48,3 +48,76 @@
 div.cdk-drag.cdk-drag-handle.modalHeader {
 	cursor: move;
 }
+
+
+// New Design according to design system,
+// To apply this styling pass the className 'newModal'
+// If you're styling this shared component from your micro-component, please remove your CSS from there
+// once you're ready to fully migrate to this style, this to improve consistency across the app
+.cremModal.newModal{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .modalHeader {
+    display: flex;
+    font-size: 22px;
+    padding: 14px 20px;
+    position: relative;
+    @include costar(border-bottom, gray05);
+
+    .btn-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      ::ng-deep {
+        crem-icon {
+          @include costar(color, gray03);
+        }
+      }
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 400;
+      line-height: unset;
+      margin: 0;
+    }
+
+  }
+
+  .modalContent {
+    flex: 1;
+    overflow: auto;
+  }
+
+  .modalFooter {
+    display: flex;
+    padding: 14px 20px;
+    flex-direction: row-reverse;
+    gap: 8px;
+    @include costar(border-top, gray05);
+
+    .footerRightControls {
+      display: flex;
+      margin-left: auto;
+    }
+
+    ::ng-deep {
+      crem-button {
+        padding: 0px !important; // To overwrite micro-component level CSS code, remove after duplicated classes are deleted
+        margin-right: 8px;
+      }
+    }
+
+  }
+
+  #close-btn {
+    margin-right: 8px;
+  }
+
+  .close-icon {
+    cursor: pointer;
+  }
+
+}

@@ -1,6 +1,14 @@
-<crem-modal [modalTitle]="modalTitle" closeIconVisible="true" [customFooter]="true" [modalId]="'Archive' + data.archiveType + 'ConfirmationModal'" modalTitleId="archive_company_contact_modal_title"
-	[primaryFooterButtonText]="primaryFooterButtonText" [closeOrCancelButtonText]="closeOrCancelButtonText"
-	(primaryButtonAction)="archive()">
+<crem-modal
+  [modalTitle]="modalTitle"
+  closeIconVisible="true"
+  [customFooter]="true"
+  [modalId]="'Archive' + data.archiveType + 'ConfirmationModal'"
+  modalTitleId="archive_company_contact_modal_title"
+	[primaryFooterButtonText]="primaryFooterButtonText"
+  [closeOrCancelButtonText]="closeOrCancelButtonText"
+	(primaryButtonAction)="archive()"
+  className="newModal"
+>
 	<div modalContent class="body-content">
 		<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" [showIndicator]="true"
 			[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>

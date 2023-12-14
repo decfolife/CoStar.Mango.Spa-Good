@@ -16,6 +16,7 @@
         "tsConfig": "apps/mango/tsconfig.app.json",
         "stylePreprocessorOptions": {
           "includePaths": [
+            "libs/ui-shared/common/src",
             "libs/ui-shared",
             "apps/mango",
             "apps/mango/src/assets/styles",

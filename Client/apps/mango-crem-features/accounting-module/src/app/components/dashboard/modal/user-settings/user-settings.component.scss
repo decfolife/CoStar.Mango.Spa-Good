@@ -1,0 +1,48 @@
+@use "styles" as *;
+
+// User Settings Modal Dialog
+::ng-deep crem-modal {
+  .mat-tab-header {
+    @include costar(border-top, gray04);
+    @include costar(border-bottom, gray04);
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .mat-tab-label-container {
+    @include costar(background-color, gray06);
+  }
+
+  div.mat-tab-body-wrapper {
+    padding: 6px 0px 0px 16px;
+  }
+
+  .mat-tab-group.mat-primary .mat-ink-bar,
+  .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    @include costar(background-color, secondary-dark);
+    height: 3px;
+  }
+
+  .mat-tab-label {
+    height: 36px;
+    width: auto !important;
+    min-width: auto !important;
+    padding: 0 16px;
+    @include costar(color, dark);
+
+    .mat-tab-label-content {
+      line-height: 17px;
+    }
+  }
+
+  .mat-tab-label.mat-focus-indicator.mat-tab-label-active {
+    opacity: 1 !important;
+  }
+
+  .modalContent {
+    @include costar(padding, 0, $important: true);
+  }
+
+}

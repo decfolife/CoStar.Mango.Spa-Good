@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CremPivotTableModule } from 'libs/ui-shared/lib-ui-elements/src/lib/crem-pivot-table/crem-pivot-table.module';
 import { DataService } from '../../services/data.service';
@@ -16,9 +17,15 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {FormsModule} from '@angular/forms';
 import { ColumnLimitComponent } from './modal/column-limit/column-limit.component';
 import { GenericErrorComponent } from './modal/genericError/genericError.component';
+import { UserSettingsComponent } from './modal/user-settings/user-settings.component';
 
 @NgModule({
-  declarations: [DashboardCardComponent, ColumnLimitComponent, GenericErrorComponent],
+  declarations: [
+    DashboardCardComponent,
+    ColumnLimitComponent,
+    GenericErrorComponent,
+    UserSettingsComponent,
+  ],
   imports: [
     CommonModule,
     ButtonModule,
@@ -30,6 +37,7 @@ import { GenericErrorComponent } from './modal/genericError/genericError.compone
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
+    MatTabsModule,
     FontAwesomeModule,
     MatDialogModule,
     CardModule,

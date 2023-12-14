@@ -5,7 +5,8 @@
 	closeIconVisible="true" 
 	[customFooter]="true" 
 	(closeButtonAction)="close($event)"
-	>
+  className="newModal"
+>
 	<div modalContent class="body-content">
 		<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" [showIndicator]="true"
 		[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>

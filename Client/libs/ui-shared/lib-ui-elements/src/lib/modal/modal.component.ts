@@ -1,6 +1,12 @@
 import { Component, EventEmitter, Inject, Input, Optional, Output, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+/**
+ * Modal
+ * @export
+ * @class ModalComponent
+ * @param {string} [className]: Pass additional class names to the main component wrapper
+ */
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'crem-modal',
@@ -18,6 +24,7 @@ export class ModalComponent  {
   @Input() modalId: string;
   @Input() customFooter: boolean = false;
   @Input() closeDialogResult: string = '';
+  @Input() className?: string = '';
   @Output() primaryButtonAction = new EventEmitter<any>();
   @Output() closeButtonAction = new EventEmitter<any>();
 

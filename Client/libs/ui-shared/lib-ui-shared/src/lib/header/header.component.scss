@@ -242,7 +242,7 @@
         min-width: 0; // TODO: Global styles interfering, fix overrides
         justify-content: center;
         @include costar(color, primary);
-        @include costar(border-radius, round);
+        @include costar(border-radius, round, $important: true);
         border: 3px solid map-get($color, color, primary);
         border: 3px solid var(--costar-color-primary);
         &:hover {
