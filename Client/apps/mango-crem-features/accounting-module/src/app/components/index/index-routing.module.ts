@@ -12,12 +12,12 @@ const routes: Routes = [
     },
   },
   {
-    path: 'updated-dashboard', component: DashboardWrapperComponent,
+    path: 'dashboard', component: DashboardWrapperComponent,
     data: {
       breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' }
     },
   },
-  { path: '**', redirectTo: 'updated-dashboard', pathMatch: 'full' },
+  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
 ];
 
 @NgModule({
