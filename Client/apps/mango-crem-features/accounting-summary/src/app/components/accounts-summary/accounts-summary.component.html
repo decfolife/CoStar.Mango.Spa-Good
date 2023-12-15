@@ -71,7 +71,7 @@
       <div class="workflow-dropdown-div">
         <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo" (refreshWorkflowStatusInfo)="executeWorkflowStatusRefresh($event)"></mango-workflow-dropdown>
         <div *ngIf="modifiedDate || modifiedByName" class="work-flow-change-info">
-          Changed By {{ modifiedByName | slice: 0:12 }}
+          Changed By {{ modifiedByName | slice: 0:10 }}...
           {{ modifiedDate | date: this.userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
         </div>
       </div>
