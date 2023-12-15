@@ -73,7 +73,7 @@ export class TeamMembersComponent implements OnInit {
 						this.teamMembersGrid.instance.saveEditData();
         } else { 
 					let message = `Team Member could not be updated. Please review and try again later.`;
-					this.dialogService.alert('Update Member', message, 'ok').subscribe();
+					this.dialogService.alert('Update Member', message, 'OK').subscribe();
 					this.teamMembersGrid.instance.cancelEditData();
 				}
 				member.editMode = false;
@@ -90,10 +90,10 @@ export class TeamMembersComponent implements OnInit {
 
 		if (this.teamMemberCount == 1) {
 			let message = 'Team Member Removal can not be done. At least one team member must be assigned to the team.';
-			this.dialogService.alert('Team Member Removal', message, 'ok').subscribe();
+			this.dialogService.alert('Team Member Removal', message, 'OK').subscribe();
 		} else {
 			let confirmText = `Do you want to Remove the member "${member.name}" ?`;
-			this.dialogService.confirm('Remove Team Member', confirmText, 'confirm', 'cancel').pipe(
+			this.dialogService.confirm('Remove Team Member', confirmText, 'Confirm', 'Cancel').pipe(
 				filter(confirmed => !!confirmed),
 				switchMap(_ => this.dashboardService.deleteTeamMembers(this.memberIds)),
 				switchMap(res => {
@@ -101,7 +101,7 @@ export class TeamMembersComponent implements OnInit {
 						this.memberIds = [];
 						this.getLatestTeamsDataEvent.emit();
 					}
-					return res.success ? of() : this.dialogService.alert('Removal unsuccessful!', 'Team Member could not be deleted. Please review and try again later.', 'ok');
+					return res.success ? of() : this.dialogService.alert('Removal unsuccessful!', 'Team Member could not be deleted. Please review and try again later.', 'OK');
 				})
 			).subscribe();
 		}	

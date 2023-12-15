@@ -120,7 +120,7 @@ export class AddEditTeamComponent implements OnInit {
       confirmText += member.name + "\n";
     })
 
-    this.dialogService.confirm('Remove Members', confirmText, 'confirm', 'cancel').pipe(
+    this.dialogService.confirm('Remove Members', confirmText, 'Confirm', 'Cancel').pipe(
       filter(confirmed => !!confirmed),
       switchMap(_ => {
         let removeIndex: number;
@@ -214,12 +214,12 @@ export class AddEditTeamComponent implements OnInit {
   saveTeam() {
     this.saveBtnClicked = true;
     if (!this.team.teamName.trim()) {
-      this.dialogService.alert('Team Name', 'Team Name is a required field.', 'ok').subscribe();
+      this.dialogService.alert('Team Name', 'Team Name is a required field.', 'OK').subscribe();
       this.saveBtnClicked = false;
       return;
     }
     else if (!this.team.teamMembers || !this.team.teamMembers.length) {
-      this.dialogService.alert('Team Member', 'Add at least one team member in order to save.', 'ok').subscribe();
+      this.dialogService.alert('Team Member', 'Add at least one team member in order to save.', 'OK').subscribe();
       this.saveBtnClicked = false;
       return;
     } else {
@@ -235,9 +235,9 @@ export class AddEditTeamComponent implements OnInit {
             this.dialogRef.close('true');
           } 
           return res.success ? of(this.toastr.info("Team Saved Successfully", "",
-                 { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this team. Please review and try again later', 'ok');
+                 { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this team. Please review and try again later', 'OK');
         }),
-        catchError(_ => this.dialogService.alert('Save Not Successful!', 'There was an issue with saving this team. Please review and try again later', 'ok'))
+        catchError(_ => this.dialogService.alert('Save Not Successful!', 'There was an issue with saving this team. Please review and try again later', 'OK'))
       ).subscribe();
     }
   }

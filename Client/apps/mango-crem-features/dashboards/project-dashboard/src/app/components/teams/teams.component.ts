@@ -102,7 +102,7 @@ export class TeamsComponent implements OnInit {
       })
     }
 
-    this.dialogService.confirm('Teams Deletion', confirmText, 'confirm', 'cancel').pipe(
+    this.dialogService.confirm('Teams Deletion', confirmText, 'Confirm', 'Cancel').pipe(
       filter(confirmed => !!confirmed),
       switchMap(_ => this.dashboardService.deleteTeams(this.teamsTobeRemoved)),
       switchMap(res => {
@@ -124,12 +124,12 @@ export class TeamsComponent implements OnInit {
       }
     });
     if(removingAllTeamMembers) {
-      this.dialogService.alert('Remove All Team Members!', `Team Member Removal can not be done. You have selected all team members for one or more teams.  At least one team member must be assigned to a team.`, 'ok').subscribe();
+      this.dialogService.alert('Remove All Team Members!', `Team Member Removal can not be done. You have selected all team members for one or more teams.  At least one team member must be assigned to a team.`, 'OK').subscribe();
     } else {
-      this.dialogService.confirm('Remove Members', `Do you want to remove the Selected Members from their teams ?`, 'confirm', 'cancel').pipe(
+      this.dialogService.confirm('Remove Members', `Do you want to remove the Selected Members from their teams ?`, 'Confirm', 'Cancel').pipe(
         filter(confirmed => !!confirmed),
         switchMap(_ => this.dashboardService.deleteTeamMembers(this.selectedMemberIds)),
-        switchMap(res => !!res.success ? this.getTeamsData() : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'ok'))
+        switchMap(res => !!res.success ? this.getTeamsData() : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'OK'))
       ).subscribe();
     }
   }
