@@ -30,6 +30,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   noUserAddRights = false;
   disableBtnReason = "Accounting Event cannot be added when user or lease information is not loaded.";
   isTooltipVisible = false;
+  isChangeByTooltipVisible = false;
   pagingEnabled = false;
   private subscription = new Subscription();
   masterScheduleID: number;
@@ -142,6 +143,15 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       this.router.navigate(['addEvent']);
     }
   }
+
+  onChangeByTooltipMouseOver() {
+    this.isChangeByTooltipVisible = true;
+  }
+  
+  onChangeByTooltipMouseLeave() {
+    this.isChangeByTooltipVisible = false;
+  }
+
 
   onMouseEnter() {
     if (this.isAddButtonDisabled) {
