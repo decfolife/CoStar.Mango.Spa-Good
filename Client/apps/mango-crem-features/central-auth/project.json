@@ -29,7 +29,10 @@
         ],
         "scripts": [],
         "stylePreprocessorOptions": {
-          "includePaths": ["apps/mango/src/assets/styles"]
+          "includePaths": [
+            "libs/ui-shared/common/src",
+            "apps/mango/src/assets/styles"
+          ]
         },
         "vendorChunk": true,
         "extractLicenses": false,
