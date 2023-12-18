@@ -14,34 +14,30 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
   //Fix header filter ADA related issues
   public onCellPrepared(e) {
     if (e.rowType === "header") {
-      fromEvent(e.cellElement.querySelector(".dx-header-filter"), 'click').pipe(
-        delay(60), 
-        tap(() => this.FixFilterItems()),
-        switchMap(() => fromEvent(document.querySelector(".dx-texteditor-input"), 'change')),
-        delay(60),
-        tap(() => this.FixFilterItems()),
-        switchMap (() => fromEvent(document.querySelector("span.dx-clear-button-area"), 'click')),
-        delay(60),
-        tap(() => this.FixFilterItems())
-      ).subscribe();
+      ['click', 'keydown'].forEach(event => fromEvent(e.cellElement.querySelector(".dx-header-filter"), event).pipe(
+          delay(60), 
+          tap(() => this.FixFilterItems()),
+          switchMap(() => fromEvent(document.querySelector(".dx-texteditor-input"), 'change')),
+          delay(60),
+          tap(() => this.FixFilterItems()),
+          switchMap (() => fromEvent(document.querySelector("span.dx-clear-button-area"), 'click')),
+          delay(60),
+          tap(() => this.FixFilterItems())
+        ).subscribe()
+      );
     }
   }
 
   //Fix dx-datagrid-borders and table body ADA related issues
   public onContentReady(e) {
-    setTimeout(() => {
       const gridBorder = e.element.querySelector(".dx-datagrid-borders");
       if (gridBorder !== null) {
-        gridBorder.removeAttribute("role");
-        gridBorder.removeAttribute("aria-label");
-        gridBorder.removeAttribute("aria-rowcount");
-        gridBorder.removeAttribute("aria-colcount");
+        ['role', 'aria-label', 'aria-rowcount', 'aria-colcount'].forEach(attribute => gridBorder.removeAttribute(attribute));
 
         for (var element of gridBorder.getElementsByTagName("tbody")) {
           element.setAttribute("role", "grid");
         };
       }
-    })
   };
 
   ngOnDestroy(): void {
@@ -53,21 +49,18 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
   //  2.Treeview:  does not have dx-scrollview. dx-scrollable-content has role as "tree".
   private FixFilterItems(){
     const scrollableContent = document.querySelector(".dx-scrollable-content");
-
     if (scrollableContent) {
       const scrollviewContent = document.querySelector(".dx-scrollview-content");
       //Fix Listbox
       if (scrollviewContent) {
         this.FixDxListItems();
         scrollviewContent.setAttribute('aria-label', 'Filter Content');
-        const noDataMessage = scrollviewContent.querySelector(".dx-empty-message");
-        noDataMessage ? scrollviewContent.removeAttribute("role") : scrollviewContent.setAttribute("role", "listbox")
+        scrollviewContent.querySelector(".dx-empty-message") ? scrollviewContent.removeAttribute("role") : scrollviewContent.setAttribute("role", "listbox")
       } 
       //Fix Tree
       else {
         this.FixDxTreeViewItems();
-        const noDataMessage = scrollableContent.querySelector(".dx-empty-message");
-        noDataMessage ? scrollableContent.removeAttribute("role") : scrollableContent.setAttribute("role", "tree")
+        scrollableContent.querySelector(".dx-empty-message") ? scrollableContent.removeAttribute("role") : scrollableContent.setAttribute("role", "tree")
       }
     } 
   }
