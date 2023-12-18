@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: 'generate-apikey-confirmation.component.html',
   styleUrls: ['generate-apikey-confirmation.component.scss'],
 })
-export class GenerateApiKeyConfirmationComponent {
+export class GenerateApiKeyConfirmationComponent implements OnInit {
   public msg: string;
   public confirmButtonText: string;
   public title: string;

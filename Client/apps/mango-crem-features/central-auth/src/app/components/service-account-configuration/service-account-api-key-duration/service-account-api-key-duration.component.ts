@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnInit, EventEmitter} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
 import { UserService } from '@mango/core-shared';
 import { ServiceAccountInfo, UpdateServiceAccountExpiresInDaysRequest } from '@mango/data-models/lib-data-models';
 import { Subscription } from 'rxjs';
@@ -8,11 +8,11 @@ import { Subscription } from 'rxjs';
   templateUrl: './service-account-api-key-duration.component.html',
   styleUrls: ['./service-account-api-key-duration.component.scss'],
 })
-export class ServiceAccountApiKeyDurationComponent{
+export class ServiceAccountApiKeyDurationComponent implements OnDestroy{
   @Input() serviceAccountInfo: ServiceAccountInfo;
   @Output() apiKeyExpiresInDaysUpdated = new EventEmitter<boolean>();
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
 
   constructor(
     private userService: UserService,
@@ -23,14 +23,14 @@ export class ServiceAccountApiKeyDurationComponent{
       serviceAccountExpiresInDays: Number(days) === 0 ? null : Number(days)
     };
 
-    this.subs.push(
+    this.subs.push (
       this.userService.updateServiceAccountExpiresInDays(request)
       .subscribe(result => {    
           if(result){        
             this.apiKeyExpiresInDaysUpdated.emit(result);
         }
       })
-    )
+    );
   }
 
   ngOnDestroy(): void {

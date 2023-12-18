@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { UserService } from '@mango/core-shared';
 import { Subscription } from 'rxjs';
 import {UpdateServiceAccountApiAccessRequest} from '@mango/data-models/lib-data-models';
@@ -9,11 +9,11 @@ import { ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/mod
   templateUrl: './service-account-sites.component.html',
   styleUrls: ['./service-account-sites.component.scss'],
 })
-export class ServiceAccountSitesComponent {
+export class ServiceAccountSitesComponent implements OnDestroy {
   @Input() sites: ServiceAccountSite[];
   @Output() apiAccessUpdated = new EventEmitter<boolean>();
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
 
   constructor(
     private userService: UserService,
@@ -25,14 +25,14 @@ export class ServiceAccountSitesComponent {
       apiAccess: e.checked
     };
 
-    this.subs.push(
+    this.subs.push (
       this.userService.updateServiceAccountApiAccess(request)
       .subscribe(result => {    
           if(result){        
             this.apiAccessUpdated.emit(result);
         }
       })
-    )
+    );
   }
 
   ngOnDestroy(): void {

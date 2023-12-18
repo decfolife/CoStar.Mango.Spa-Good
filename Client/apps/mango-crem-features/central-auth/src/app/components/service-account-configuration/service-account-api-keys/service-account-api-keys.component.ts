@@ -15,7 +15,7 @@ export class ServiceAccountApiKeysComponent {
   @Input() serviceAccountInfo: ServiceAccountInfo
   @Output() apiKeyUpdated = new EventEmitter<boolean>();
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
 
   constructor(
     private userService: UserService,
@@ -40,21 +40,22 @@ export class ServiceAccountApiKeysComponent {
     
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.userService.generateApiKey()     
-        .subscribe(result => {
-          if (result) {     
-            this.apiKeyUpdated.emit(result);     
-            this.dialog.open(CopyClipboardMessageComponent, {
-              width: '650px',
-              height: '350px',
-              panelClass: 'client-delivery-modal',
-              data: {
-                apikey: result.data
-              },
-              disableClose: true
-            });
-          }
-        });
+        this.subs.push(
+          this.userService.generateApiKey()     
+          .subscribe(result => {
+            if (result) {     
+              this.apiKeyUpdated.emit(result);     
+              this.dialog.open(CopyClipboardMessageComponent, {
+                width: '650px',
+                height: '350px',
+                panelClass: 'client-delivery-modal',
+                data: {
+                  apikey: result.data
+                },
+                disableClose: true
+              });
+            }
+          }));
       }
     });
   }
