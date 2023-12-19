@@ -17,7 +17,28 @@ import { UserSettingsComponent } from '../modal/user-settings/user-settings.comp
 })
 export class DashboardWrapperComponent implements OnInit {
   public featureFlagEnabled: boolean = false;
-  public accountingViewData: any[] = [];
+  public accountingViewData: any[] = [
+    {
+      id: 1,
+      displayValue: "Workflow and Alerts"
+    },
+    {
+      id: 2,
+      displayValue: "ASC 842 Annual Disclosures"
+    },
+    {
+      id: 3,
+      displayValue: "ASC 842 Quarterly Disclosures"
+    },
+    {
+      id: 4,
+      displayValue: "IFRS 16 Annual Disclosures"
+    },
+    {
+      id: 5,
+      displayValue: "IFRS 16 Quarterly Disclosures"
+    }
+  ];
   public accountingYearData: any[] = [];
   public accountingSegmentData: any[] = [];
   public selectedSegment: number;
@@ -44,29 +65,6 @@ export class DashboardWrapperComponent implements OnInit {
       const observableItem = this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false);
       
       observableItem.subscribe((data) => {
-        this.accountingViewData = [
-          {
-            id: 1,
-            displayValue: "Workflow and Alerts"
-          }, 
-          {
-            id: 2,
-            displayValue: "ASC 842 Annual Disclosures"
-          }, 
-          {
-            id: 3,
-            displayValue: "ASC 842 Quarterly Disclosures"
-          }, 
-          {
-            id: 4,
-            displayValue: "IFRS 16 Annual Disclosures"
-          }, 
-          {
-            id: 5,
-            displayValue: "IFRS 16 Quarterly Disclosures"
-          }
-        ];
-  
         this.accountingYearData = [
         ];
         for(let i = 10; i > -11; i--) {
@@ -81,7 +79,6 @@ export class DashboardWrapperComponent implements OnInit {
   
       })
     });
-
     
         
   }
@@ -124,7 +121,6 @@ export class DashboardWrapperComponent implements OnInit {
   }
 
   public apply(data) {
-    //console.log("apply")
     if (this.selectedView == 1) {
       this.workflowAndAlertsComponent.refreshCardData();
     } else if (this.selectedView == 2) {
@@ -162,6 +158,9 @@ export class DashboardWrapperComponent implements OnInit {
        height: '570px',
        panelClass: 'user-settings-dialog',
        disableClose: true,
+       data: {
+        modalTitle: this.accountingViewData.find(obj => obj.id === this.selectedView).displayValue,
+       }
     });
   }
 

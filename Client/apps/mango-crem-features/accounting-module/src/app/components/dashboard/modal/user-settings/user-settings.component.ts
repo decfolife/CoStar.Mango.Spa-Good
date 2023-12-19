@@ -38,7 +38,9 @@ export class UserSettingsComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<UserSettingsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+  ) {
+    this.modalTitle = data && data.modalTitle ? data.modalTitle + ' Settings' : 'Accounting Dashboard Settings';
+  }
 
   ngOnInit(): void {}
 
