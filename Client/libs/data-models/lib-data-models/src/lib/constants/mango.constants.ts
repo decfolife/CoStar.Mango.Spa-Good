@@ -10,4 +10,4 @@ export const CREM_FORCE_RELOGIN_URLS = ['Admin', '.asp/', '.asp?']
 
 export const BREADCUMBS_LENGTH = 5
 
-export const SUB_LEFT_NEV_PAGES_URLS = ['render-form', '/crem/portfolio/expenses', '/crem/accounting/summary']
+export const SUB_LEFT_NEV_PAGES_URLS = ['render-form', '/crem/portfolio/expenses', '/crem/accounting/summary', '/crem/projects/project-team']

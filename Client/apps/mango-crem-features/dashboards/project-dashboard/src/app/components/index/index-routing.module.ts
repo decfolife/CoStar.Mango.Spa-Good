@@ -25,6 +25,16 @@ const routes: Routes = [
     },
   },
   {
+    path: 'project-team',
+    loadChildren: () =>
+      import(
+        '../project-team/project-team-routing.module'
+      ).then((mod) => mod.ProjectTeamRoutingModule),
+    data: {
+      breadCrumb: { label: 'Project-Team', append: false }
+    },
+  },
+  {
     path: '',
     component: IndexComponent,
     data: {
