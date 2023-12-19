@@ -88,27 +88,36 @@
       ></crem-button>
 		</div>
 	</div>
+
 	<div class="dashboard-content-wrapper">
-		<div class="dashboard-content" *ngIf="!loading">
-			<workflow-and-alerts *ngIf="selectedView === 1" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
-			</workflow-and-alerts>
-	
-			<asc-842-annual-disclosures *ngIf="selectedView === 2" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
-			</asc-842-annual-disclosures>
-	
-			<asc-842-quarterly-disclosures *ngIf="selectedView === 3">
-			</asc-842-quarterly-disclosures>
-	
-			<ifrs-16-annual-disclosures *ngIf="selectedView === 4">
-			</ifrs-16-annual-disclosures>
-	
-			<ifrs-16-quarterly-disclosures *ngIf="selectedView === 5">
-			</ifrs-16-quarterly-disclosures>
-		</div>
-		<div *ngIf="loading">
+
+    <ng-container *ngIf="!loading; else loadingBlock">
+      <div class="dashboard-content" *ngIf="selectedSegment !== undefined; else noData">
+        <workflow-and-alerts *ngIf="selectedView === 1" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
+        </workflow-and-alerts>
+
+        <asc-842-annual-disclosures *ngIf="selectedView === 2" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
+        </asc-842-annual-disclosures>
+
+        <asc-842-quarterly-disclosures *ngIf="selectedView === 3">
+        </asc-842-quarterly-disclosures>
+
+        <ifrs-16-annual-disclosures *ngIf="selectedView === 4">
+        </ifrs-16-annual-disclosures>
+
+        <ifrs-16-quarterly-disclosures *ngIf="selectedView === 5">
+        </ifrs-16-quarterly-disclosures>
+      </div>
+
+      <ng-template #noData>
+        <div class="no-data">No segments have been found to load data.</div>
+      </ng-template>
+    </ng-container>
+
+		<div *ngIf="loading" #loadingBlock>
 			<crem-loader></crem-loader>
 		</div>
 
-
 	</div>
+
 </div>

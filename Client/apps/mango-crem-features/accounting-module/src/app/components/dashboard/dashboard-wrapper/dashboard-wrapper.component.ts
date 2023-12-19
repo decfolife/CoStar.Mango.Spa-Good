@@ -2,20 +2,21 @@
 /* eslint-disable rxjs-angular/prefer-composition */
 
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 import notify from 'devextreme/ui/notify';
 import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'mango-dashboard-wrapper',
   templateUrl: './dashboard-wrapper.component.html',
   styleUrls: ['./dashboard-wrapper.component.scss'],
 })
-export class DashboardWrapperComponent implements OnInit {
+export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public featureFlagEnabled: boolean = false;
   public accountingViewData: any[] = [
     {
@@ -47,6 +48,7 @@ export class DashboardWrapperComponent implements OnInit {
   public loading: boolean = true;
   public criteriaSet: number;
   public workflowAlertsCriteriaSet: number;
+  subs: Subscription[] = [];
   faFileExport = faFileExport;
 
   @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
@@ -56,31 +58,39 @@ export class DashboardWrapperComponent implements OnInit {
     private inAppDisclosureService: InAppDisclosureService,
     public dialog: MatDialog,
   ) {}
+
   ngOnInit() {
     this.selectedYear = new Date().getFullYear();
     this.featureFlagEnabled = true;
-    this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
-      this.criteriaSet = result.data[0].CriteriaSetID;
-      this.workflowAlertsCriteriaSet = result.data[1].CriteriaSetID;
-      const observableItem = this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false);
-      
-      observableItem.subscribe((data) => {
-        this.accountingYearData = [
-        ];
-        for(let i = 10; i > -11; i--) {
-          this.accountingYearData.push({
-            value: this.selectedYear + i
-          });
+    this.subs.push(
+      this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
+        this.criteriaSet = result.data[0].CriteriaSetID;
+
+        if(result.data.length <= 1 ) {
+          this.loading = false;
+          return;
         }
-        //fetch criteriaSetID for each view;
-        this.accountingSegmentData = data.data;
-        this.selectedSegment = this.accountingSegmentData?.[0].segmentID
-        this.loading = false;
-  
-      })
-    });
-    
-        
+
+        this.workflowAlertsCriteriaSet = result.data[1].CriteriaSetID;
+        const observableItem = this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false);
+        this.subs.push(
+          observableItem.subscribe((data) => {
+            this.accountingYearData = [
+            ];
+            for(let i = 10; i > -11; i--) {
+              this.accountingYearData.push({
+                value: this.selectedYear + i
+              });
+            }
+            //fetch criteriaSetID for each view;
+            this.accountingSegmentData = data.data;
+            this.selectedSegment = this.accountingSegmentData?.[0].segmentID;
+            this.loading = false;
+          })
+        );
+
+      }
+    ));
   }
 
   public onAccountingViewChange(data) {
@@ -162,6 +172,10 @@ export class DashboardWrapperComponent implements OnInit {
         modalTitle: this.accountingViewData.find(obj => obj.id === this.selectedView).displayValue,
        }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe)
   }
 
 }
