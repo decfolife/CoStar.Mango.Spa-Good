@@ -58,11 +58,10 @@
                         [allowSortingBySummary]="true"
                         [allowFiltering]="true"
                         [showBorders]="true"
-                        [showColumnGrandTotals]="false"
                         [showRowGrandTotals]="false"
                         [showColumnGrandTotals]="false"
-                        [showRowTotals]="false"
-                        [showColumnTotals]="false"
+                        [showRowTotals]="true"
+                        [showColumnTotals]="true"
                         [dataSource]="dataSources[config.index]"
                         [fields]="fieldConfigs[config.index]"
                         (onCellPrepared)="onCellPrepared($event)"
@@ -72,6 +71,9 @@
                             [enabled]="false"
                             >
                         </dxo-field-chooser>
+                        <dxo-texts
+                            total="Total">
+                        </dxo-texts>
                     </dx-pivot-grid>
                 </div>
             </crem-card>

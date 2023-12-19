@@ -59,4 +59,11 @@ export class InAppDisclosureService extends EndpointService{
 
     return this.callHttpGet(url, 'Export',  param)
   }
+
+  public getCurrencyDecimalPrecision(currencyISO) {
+    let param = { currencyISO: currencyISO }
+    const url = `${environment.appUrls.inAppDisclosure}IAD/CurrencyPrecision`
+
+    return this.callHttpGet(url, 'getCurrencyPrecision', param)
+  }
 }

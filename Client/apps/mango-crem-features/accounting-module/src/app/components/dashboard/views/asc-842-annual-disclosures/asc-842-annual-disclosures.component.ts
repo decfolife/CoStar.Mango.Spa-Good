@@ -4,7 +4,6 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 
@@ -21,7 +20,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     },
     {
       id: 'AssetBalance',
-      name: 'ROU Asset Balance',
+      name: 'Assets and Liabilities Balances',
       index: 1
     }
   ];
@@ -32,7 +31,9 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public pendoId: string = "Asc842AnnualDisclosures"
   public fullWidth: boolean = true;
   private cardConfigs: string[];
-  decimalPipe: DecimalPipe = new DecimalPipe('en-US');
+
+  public selectedCurrency = "usd";
+  public currencyDecimalPrecision: number;
   
   @Input() selectedSegment: number;
   @Input() reportingYear: number;
@@ -44,23 +45,22 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-  //  this.inAppDisclosureService.getIADCardData(127).subscribe((data) => {
-    // this.cardData = data.data;
     this.dataSources = [];
     this.fieldConfigs = [];
-    this.refreshCardData();
-    //this.setCardData(this.cardData);
-  //  });
+    this.inAppDisclosureService.getCurrencyDecimalPrecision(this.selectedCurrency).subscribe((result) => {
+      this.currencyDecimalPrecision = result?.data?.DecimalPrecision;
+      this.refreshCardData();
+    })
+
   }
 
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
-
-    this.inAppDisclosureService.getIADCardData(this.selectedSegment, this.reportingYear, 'usd').subscribe((result) => {
+    
+    this.inAppDisclosureService.getIADCardData(this.selectedSegment, this.reportingYear, this.selectedCurrency).subscribe((result) => {
       this.setLeaseCountCardData(result.data[0])
       this.setROUAssetBalanceCardData(result.data[1])
-      //this.setCardData(result.data[0])
       this.loading = false;
     });
   }
@@ -94,7 +94,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
         },
-        { 
+        /**{ 
           DisclosureClassification:  "Total",
           Display: "Opening Lease Count",
           PeriodYear: item.PeriodYear,
@@ -119,7 +119,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
           dataType: 'number',
-        }
+        }**/
       ]
 
       items.forEach((item) => {
@@ -146,6 +146,11 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     this.pivotCardData = [];
 
     data.forEach((item) => {
+      if (item.ClassificationName.includes('Finance')) {
+        item.ClassificationName = 'Finance'
+      } else if (item.ClassificationName.includes('Operating')) {
+        item.ClassificationName = 'Operating'
+      }
       let items = [
         { 
           DisclosureClassification:  item.ClassificationName,
@@ -171,7 +176,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           PeriodYear: item.PeriodYear,
           data: item.LiabilityBalanceClosingReporting,
         },
-        { 
+        /**{ 
           DisclosureClassification:  "Total",
           Display: "ROU Asset Balance",
           PeriodYear: item.PeriodYear,
@@ -194,7 +199,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           Display: "Total Liability Balance",
           PeriodYear: item.PeriodYear,
           data: item.LiabilityBalanceClosingReporting,
-        },
+        },**/
 
       ]
 
@@ -223,6 +228,27 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         let config = JSON.parse(card.CardJSONSchema);
         config[0].sortingMethod = this.rowSort;
         config[2].sortingMethod = this.disclosureClassificationSort;
+        if (card.Title === 'ASC 842 Annual Disclosures') {
+          config[3].format = ",###";
+        } else if (card.Title === 'ASC 842 Annual Disclosures ROU Asset Balance') {
+          config[3].format = {
+            type: "fixedPoint",
+            precision: this.currencyDecimalPrecision
+          }
+        }
+        config[3].calculateCustomSummary = (options) => {
+          switch(options.summaryProcess) {
+            case "start":
+              options.totalValue = 0;
+              break;
+            case "calculate":
+              options.totalValue += options.value;
+              break;
+            case "finalize":
+              options.totalValue = options.totalValue.toFixed(this.currencyDecimalPrecision);
+              break;
+          }
+        }
         this.fieldConfigs.push(config);
       })
     })
@@ -247,10 +273,10 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public disclosureClassificationSort(a, b) {
     const disclosureClassificationSortOrderObject = {
       "Mixed": 1,
-      "Finance 842": 2,
-      "Finance (ASC 842)": 2.5,
-      "Operating 842": 3,
-      "Operating (ASC 842)": 3.5,
+      "Finance": 2,
+      "Finance 842": 2.5,
+      "Operating": 3,
+      "Operating 842": 3.5,
       "Total": 4
     }
 
@@ -331,10 +357,6 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       if (e.cell.columnPath[1] === "Total"){
         e.cellElement.classList.add("total");
       }
-    }
-    if(e.area === "data"){
-      e.cellElement.textContent =  this.decimalPipe.transform(Number(e.cellElement.textContent));
-
     }
   }
 

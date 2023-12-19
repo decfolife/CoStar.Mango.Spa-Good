@@ -38,7 +38,7 @@ crem-loader {
 
     // Style Totals
     // Table Main Data/Body
-    .total {
+    .total, .dx-total {
       @include costar(background-color, background);
     }
     &#AssetBalanceCardGrid { // Apply last row styling only to Asset Balance Grid/Table
