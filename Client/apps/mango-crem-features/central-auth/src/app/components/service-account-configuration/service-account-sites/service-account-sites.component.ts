@@ -25,6 +25,19 @@ export class ServiceAccountSitesComponent implements OnDestroy {
       apiAccess: e.checked
     };
 
+    this.updateServiceAccountApiAccess(request);
+  }
+
+  updateApiAccessADA(e: any, index: number) {
+    const request: UpdateServiceAccountApiAccessRequest = {
+      clientKey: this.sites[index].clientKey,
+      apiAccess: !e.srcElement.checked
+    };
+
+    this.updateServiceAccountApiAccess(request);
+  }
+
+  private updateServiceAccountApiAccess(request : UpdateServiceAccountApiAccessRequest){
     this.subs.push (
       this.userService.updateServiceAccountApiAccess(request)
       .subscribe(result => {    
