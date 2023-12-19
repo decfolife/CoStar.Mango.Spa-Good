@@ -83,6 +83,7 @@
       type="secondary"
       ariaLabel="Dashboard Settings"
       icon="faCog"
+      [disabled]="loading"
       (click)="launchSettingsModal(); $event.preventDefault();"
       ></crem-button>
 		</div>

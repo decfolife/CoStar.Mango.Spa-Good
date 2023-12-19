@@ -4,6 +4,7 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 
@@ -31,6 +32,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public pendoId: string = "Asc842AnnualDisclosures"
   public fullWidth: boolean = true;
   private cardConfigs: string[];
+  decimalPipe: DecimalPipe = new DecimalPipe('en-US');
   
   @Input() selectedSegment: number;
   @Input() reportingYear: number;
@@ -54,7 +56,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
-    
+
     this.inAppDisclosureService.getIADCardData(this.selectedSegment, this.reportingYear, 'usd').subscribe((result) => {
       this.setLeaseCountCardData(result.data[0])
       this.setROUAssetBalanceCardData(result.data[1])
@@ -67,7 +69,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     this.pivotCardData = [];
 
     data.forEach((item) => {
-      var items = [
+      let items = [
         { 
           DisclosureClassification:  item.DisclosureClassification,
           Display: "Opening Lease Count",
@@ -109,12 +111,14 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           Display: " - Leases Expired/Cancelled",
           PeriodYear: item.PeriodYear,
           data: item.EndedCount,
+          dataType: 'number',
         },
         { 
           DisclosureClassification:  "Total",
           Display: "Closing Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
+          dataType: 'number',
         }
       ]
 
@@ -142,7 +146,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     this.pivotCardData = [];
 
     data.forEach((item) => {
-      var items = [
+      let items = [
         { 
           DisclosureClassification:  item.ClassificationName,
           Display: "ROU Asset Balance",
@@ -216,7 +220,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public setFieldConfigs() {
     this.inAppDisclosureService.getIADCardConfigs(1004).subscribe((result) => {
       result.data.forEach((card) => {
-        let config = JSON.parse(card.CardJSONSchema)
+        let config = JSON.parse(card.CardJSONSchema);
         config[0].sortingMethod = this.rowSort;
         config[2].sortingMethod = this.disclosureClassificationSort;
         this.fieldConfigs.push(config);
@@ -318,6 +322,20 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     if (e.cell.text === "ROU Asset Balance" || e.cell.text === "Total Liability Balance") {
       e.cellElement.style.fontWeight = 'bold';
     }
+    if (e.area === "column") { // Apply background color when cell's header is total
+      if (e.cell.text === "Total"){
+        e.cellElement.classList.add("total");
+      }
+    }
+    if (e.rowType === "data" || e.area === "data") { // Apply background color when cell is a total
+      if (e.cell.columnPath[1] === "Total"){
+        e.cellElement.classList.add("total");
+      }
+    }
+    if(e.area === "data"){
+      e.cellElement.textContent =  this.decimalPipe.transform(Number(e.cellElement.textContent));
+
+    }
   }
 
   public cardMove(event: CdkDragDrop<string[]>): void {
@@ -325,11 +343,12 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   }
 
   public toggleCardWidth() {
-    this.fullWidth = !this.fullWidth;;
+    this.fullWidth = !this.fullWidth;
     this.updateDimention();
   }
 
   public updateDimention() {
     this.pivotGrid?.instance.updateDimensions();
   }
+
 }

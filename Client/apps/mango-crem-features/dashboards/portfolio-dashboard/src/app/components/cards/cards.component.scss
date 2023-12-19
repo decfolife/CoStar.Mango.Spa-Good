@@ -26,22 +26,9 @@
   box-sizing: border-box;
 }
 
-div.cdk-drag.categories-item {	
-  position: relative;
-  .card-drag-handle {
-    cursor: move;
-    position: absolute;
-    top: 26px;
-    right: 24px;
-    z-index: 10;
-
-    svg.drag_handle {
-      overflow: hidden;
-      vertical-align: middle;
-      width: 24px;
-      height: 24px;
-    }
-  } 
+// TODO: This is a quick fix for drag handle being misaligned just in this dashboard
+.cdk-drag.categories-item .card-drag-handle {
+  top: 24px;
 }
 
 div.width100 {

@@ -61,7 +61,7 @@ $card-dropDown-height: 24px;
 		padding: 0px;
 
 		mat-card-header.mat-card-header {
-			padding: 16px 44px 16px 16px;
+			padding: 16px;
 			border-bottom: 1px solid colors.$gray;
 			box-sizing: border-box;
 			color: colors.$darkGray;
@@ -182,17 +182,6 @@ $card-dropDown-height: 24px;
   font-family: $font-family-brand !important;
   }
 } 
-
-#projects-dashboard button.moreOptionsBtn,
-#portfolio-dashboard button.moreOptionsBtn,
-.dashboards-dragCardItems button.moreOptionsBtn {	
-	height: 24px;
-  margin: 0px !important;
-
-	mat-icon {
-		transform: translateY(-5.5px);
-	}
-}
 
 div.mat-menu-panel.dashboardsMoreOptions div.mat-menu-content .mat-menu-item {
   padding: 8px 16px;

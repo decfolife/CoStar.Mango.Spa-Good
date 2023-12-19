@@ -4,6 +4,32 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  
+  ::ng-deep{ // Apply right card and cards container spacing globally
+    .card-containers {
+      padding: 8px;
+      .categories-item {
+        box-sizing: border-box;
+        padding: 0 8px;
+        margin: 8px 0;
+      }
+    }
+  }
+  
+}
+
+::ng-deep{ // Dropdown created at the root level, breaking encapsulation for the sake of targeting
+  .accountingViewDropDown  { // Unique class name selector generated from ID passed down to crem-dropdown
+    > .dx-overlay-content {
+      min-width: 350px !important;
+    }
+  }
+  .accountingSegmentDropdown,
+  .accountingYearDropDown {
+    > .dx-overlay-content {
+      min-width: 320px !important;
+    }
+  }
 }
 
 .dashboard-toolbar-wrapper {
@@ -14,7 +40,7 @@
   flex-shrink: 0;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
+  padding: 8px 16px;
   position: sticky !important;
   top: 0;
   overflow-x: auto;
@@ -101,10 +127,6 @@
     flex-wrap: wrap;
     height: calc(100vh - 50px);
   }
-}
-
-.dashboard-content {
-  padding: 8px;
 }
 
 button.btn.btn-default.moreButton {

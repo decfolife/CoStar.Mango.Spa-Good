@@ -1,12 +1,66 @@
+@use 'styles'as *;
 
-@import '../../../../../../apps/mango/src/assets/styles/colors.scss';
-@import '../../../../../../apps/mango/src/assets/styles/costar-angular-material.scss';
-@import '../../../../../../apps/mango/src/assets/styles/costar-dev-extreme.scss';
-@import '../../../../../../apps/mango/src/assets/styles/costar-mango.scss';
+:host ::ng-deep { // In order to access the DevExtreme child components
 
-$stdPadding: 8px;
-$dblPadding: 2 * $stdPadding;
+  // Chart
+  dx-chart {
+    @include costar(margin-bottom, 4);
+  }
 
+  // Grid/Table
+  dx-pivot-grid {
+    height: 100%;
+    font-size: 14px;
+
+    .dx-pivotgrid-horizontal-headers {
+      // ADA: add focus styling to pivot grid's vertical headers
+      .dx-scrollable-wrapper {
+        .dx-scrollable-container {
+          &:focus-visible {
+            outline: none
+          }
+
+          &:focus {
+            outline: 5px auto -webkit-focus-ring-color;
+          }
+        }
+      }
+
+      tr {
+        td {
+          @include costar(color, primary-light, $important: true);
+          font-weight: 600;
+        }
+      }
+    }
+
+    .dx-pivotgrid-vertical-headers {
+      @include costar(background-color, light);
+      tr {
+        td {
+          @include costar(color, primary-light, $important: true);
+          font-weight: 600;
+        }
+      }
+      // ADA: add focus styling to pivot grid's vertical headers
+      .dx-scrollable-wrapper {
+        .dx-scrollable-container {
+          &:focus-visible {
+            outline: none
+          }
+
+          &:focus {
+            outline: 5px auto -webkit-focus-ring-color;
+          }
+        }
+      }
+    }
+
+  }
+
+}
+
+// The SCSS below doesn't work when the module is imported correctly
 crem-pivot-table {
 
 	.dx-dropdowneditor-icon {
@@ -118,4 +172,3 @@ crem-pivot-table {
     }
 
 }
-

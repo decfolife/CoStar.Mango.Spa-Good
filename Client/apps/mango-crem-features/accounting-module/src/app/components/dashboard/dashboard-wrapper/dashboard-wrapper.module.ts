@@ -39,7 +39,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatIconModule,
     MatButtonModule,
     LoaderModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    CremPivotTableModule,
   ],
   providers: [
     InAppDisclosureService

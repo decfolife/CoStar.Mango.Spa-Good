@@ -133,7 +133,7 @@
 	&.dx-dropdowneditor-overlay {
 		// &:not(.dx-selectbox-popup-wrapper):not(.dx-dropdownlist-popup-wrapper){
 			.dx-overlay-content {
-				min-width: 320px !important;
+				// min-width: 320px !important;// Removed, this affects too many components; please pass instead a unique class name into the 'crem-dropdown' component using the 'dropDownContainerCustomClass' parameter. Then create your styles using the class name passed inside your micro-component/mango-crem-feature for better CSS management, E.g. ::ng-deep { .accountingViewDropDown > > .dx-overlay-content { min-width: 350px; } }
 				div.dx-popup-content {
 					padding: 0px;
 				}

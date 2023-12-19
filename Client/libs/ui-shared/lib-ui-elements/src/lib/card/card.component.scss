@@ -1,4 +1,4 @@
-@import '../assets/styles/crem-lib.scss';
+@use 'styles' as *;
 
 crem-card {
   .mat-card.cremCard {
@@ -11,12 +11,11 @@ crem-card {
 
       .mat-card-header.mat-card-header {
         padding: 0px !important;
-        border-bottom: 1px solid #c2c2c2;
+        @include costar(border-bottom, gray04);
+        @include costar(color, gray01);
+        @include costar(background, light, $important: true);
         justify-content: space-between !important;
         align-items: center;
-        color: #3c3c3c;
-        background: white !important;
-        font-family: Helvetica, 'system-ui', sans-serif !important;
         font-size: 18px;
         font-weight: 400;
         letter-spacing: 0;
@@ -31,11 +30,11 @@ crem-card {
         }
       }
       crem-icon {
-        color: $color-neutral-dark;
+        @include costar(color, gray03);
       }
+
       .mat-card-title.cremCardTitle {
         .crem-card-title {
-          font-family: Helvetica;
           font-size: 18px;
           font-weight: 400;
           letter-spacing: 0;
@@ -54,13 +53,12 @@ crem-card {
     }
   }
  .cardHeader {
+    @include costar(border-bottom, gray04);
+    @include costar(color, gray01);
+    @include costar(background, light, $important: true);
     padding: 4px 16px !important;
-    border-bottom: 1px solid #c2c2c2;
     justify-content: space-between !important;
     align-items: center;
-    color: #3c3c3c;
-    background: white !important;
-    font-family: Helvetica, "system-ui", sans-serif !important;
     line-height: 40px;
     font-size: 18px;
     font-weight: 400;
@@ -70,7 +68,7 @@ crem-card {
     min-height: 40px !important;
     max-height: 40px !important;
     width: unset !important;
-}
+  }
   .mat-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
     display: block;
     align-items: center;
@@ -104,10 +102,10 @@ crem-card {
   .counter {
     margin-right: 8px;
     padding: 4px 8px;
-    background: $color-neutral-dark;
     border-radius: 6px;
     color: #fff;
-    font-weight: $font-wt-normal;
+    @include costar(background-color, gray01);
+    @include costar(font-weight, normal);
   }
   .customHeader {
     display: flex;
@@ -117,13 +115,38 @@ crem-card {
 .customHeader > div:first-child {
   margin-right: 8px;
 }
-// .dx-popup-wrapper > .dx-overlay-content {
-//   border: 1px solid $color-primary;
-//   border-top: 1px solid $color-neutral-medium;
-//   background: #fff;
-//   box-shadow: 0 6px 12px rgba(0, 0, 0, 18%);
-//   border-radius: 0px 0px 6px 5px;
-// }
+
+::ng-deep { // Allows to style the more button when using the #customDropdownMenu content projection
+  button.moreOptionsBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    margin: 0px;
+  }
+  .customHeader {
+      margin-right: 27px
+  }
+  .cdk-drag.categories-item {
+    position: relative;
+
+    .card-drag-handle {
+      cursor: move;
+      position: absolute;
+      top: 15px;
+      right: 24px;
+      z-index: 10;
+
+      svg.drag_handle {
+        overflow: hidden;
+        vertical-align: middle;
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+
 dx-select-box.dx-show-invalid-badge.dx-selectbox.dx-textbox.dx-texteditor.dx-dropdowneditor-button-visible.dx-editor-outlined.dx-texteditor-empty.dx-widget.dx-dropdowneditor.dx-dropdowneditor-field-clickable {
   margin-right: 16px;
 }
@@ -133,7 +156,6 @@ crem-card
   .mat-card-content.mat-card-content.cremCardContent {
   display: flex;
   align-items: stretch;
-  font-family: Helvetica, sans-serif;
   padding: 0px !important;
   font-size: 14px;
   justify-content: flex-start !important;
@@ -167,7 +189,6 @@ crem-card
   .mat-card-content.mat-card-content.cremCardContent{
   display: block;
   align-items: center;
-  font-family: Helvetica, sans-serif;
   padding: 0px !important;
   font-size: 14px;
   justify-content: center;
