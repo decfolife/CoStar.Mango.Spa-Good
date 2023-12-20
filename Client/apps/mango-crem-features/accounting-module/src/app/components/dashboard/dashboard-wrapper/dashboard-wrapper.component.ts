@@ -138,7 +138,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     }
   }
 
-  public export(data) {
+  public export() {
     this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear).subscribe((result) => {
       if(result.data === 'export successful') {
         notify({

@@ -4,7 +4,8 @@
       cdkDropListOrientation="vertical"
       (cdkDropListDropped)="cardMove($event)"
     >
-      <div *ngFor="let config of cardData"
+      <ng-container *ngFor="let config of cardData">
+      <div *ngIf="config.cardJSONSchema.visible !== false"
         class="categories-item"
         cdkDropListOrientation="horizontal"
         [cdkDropListData]="{ card: card, index: i }"
@@ -39,5 +40,6 @@
           [pendoId]="config.cardPendoId"
         ></mango-accounting-card>
       </div>
+      </ng-container>
     </div>
   </div>

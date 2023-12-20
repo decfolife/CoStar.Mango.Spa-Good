@@ -1,0 +1,49 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+// Toast/Notifications
+.dx-toast-wrapper {
+  .dx-toast-content {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 32px;
+    padding: 10px;
+    -webkit-box-shadow: 0 2px 3px 0 transparent;
+    box-shadow: 0 2px 3px 0 transparent;
+    border-radius: 2px;
+
+    .dx-toast-icon {
+      display: -webkit-inline-box;
+      display: -webkit-inline-flex;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      background-size: contain;
+      background-position: left center;
+      background-repeat: no-repeat;
+      margin-right: 10px;
+      width: 35px;
+      height: 35px;
+    }
+    .dx-toast-message {
+      display: -webkit-inline-box;
+      display: -webkit-inline-flex;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      line-height: 16px;
+    }
+    .dx-rtl .dx-toast-icon {
+      margin-left: 10px;
+      margin-right: 0;
+    }
+
+  }
+}

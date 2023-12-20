@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable rxjs-angular/prefer-composition */
 
-import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Location } from '@angular/common';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -19,7 +19,7 @@ import { NgStateObject } from '../../../../shared/models/app-state.model';
   templateUrl: './workflow-and-alerts.component.html',
   styleUrls: ['./workflow-and-alerts.component.scss'],
 })
-export class WorkflowAndAlertsComponent implements OnInit {
+export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
   title = 'Accounting Module';
   loading = true;
   env = environment.name.toUpperCase().trim() !== 'PROD'
@@ -214,7 +214,6 @@ export class WorkflowAndAlertsComponent implements OnInit {
           for (const [key, value] of Object.entries(columnDictionaryByKey)) {
             this.dataService.updateInitialColumnData(key, { dataSourceKey: key, columns: value });
           }
-
 
           setTimeout(() => {
             this.dataService.setApiEndpoints(apiEndPoints);

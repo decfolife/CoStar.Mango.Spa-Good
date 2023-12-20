@@ -35,26 +35,6 @@
 	}
 }
 
-.dx-toast-content {
-	padding: $dblPadding;
-
-	&.dx-toast-success {
-		background-color: $costarGreen;
-	}
-
-	&.dx-toast-info {
-		background-color: $costarBlue;
-	}
-
-	&.dx-toast-warning {
-		background-color: $costarLightOrange;
-	}
-
-	&.dx-toast-error {
-		background-color: $costarRed;
-	}
-}
-
 dx-data-grid {
 	height: 100%;
 

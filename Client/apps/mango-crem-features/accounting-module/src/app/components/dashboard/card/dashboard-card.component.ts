@@ -4,6 +4,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
+import notify from 'devextreme/ui/notify';
 
 import { environment } from '../../../../../../../mango/src/environments/environment.local';
 import { SimpleGridComponent } from '@mango/ui-shared/lib-ui-elements';
@@ -235,17 +236,51 @@ export class DashboardCardComponent implements OnInit {
   }
 
   public exportGrid() {
-    this.cremPivotTable.exportToExcel();
+    try {
+      this.cremPivotTable.exportToExcel(); // Current version doesn't has callback, no way to know if was a success
+      this.exportNotification('success');
+    } catch{
+      this.exportNotification('error');
+    }
   }
 
   public exportDatasource() {
-    this.exportData =new DataSource({
+    this.exportData = new DataSource({
       key: this.config.dataGridKeyExpr,
-      load: () => this.config.pivotDataSource.store
+      load: () => this.config.pivotDataSource.store,
+      // onChanged: _ => this.exportNotification('success'),
+      // onLoadError: _ => this.exportNotification('error'),
     })
     setTimeout(() => {
       this.simpleGrid.exportGrid();
     }, 100);
+  }
+
+  exportNotification(type: 'success' | 'error' , message?: string){
+    switch(type) {
+      case 'success': {
+        notify({
+          message: message ?? 'Report will be exported shortly.',
+          type: 'success',
+          displayTime: 95000,
+          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          maxWidth: '500px',
+          closeOnClick: false,
+        })
+        break;
+      }
+      case 'error': {
+        notify({
+          message: message ?? 'Error encountered during export. Please try again.',
+          type: 'error',
+          displayTime: 5000,
+          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          maxWidth: '500px',
+          closeOnClick: true,
+        })
+        break;
+      }
+    }
   }
 
   public toggleCardWidth() {

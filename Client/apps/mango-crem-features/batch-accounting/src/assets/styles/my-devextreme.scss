@@ -152,26 +152,6 @@
 	}
 }
 
-.dx-toast-content {
-	padding: $dblPadding;
-
-	&.dx-toast-success {
-		background-color: $costarGreen;
-	}
-
-	&.dx-toast-info {
-		background-color: $costarYellow;
-	}
-
-	&.dx-toast-warning {
-		background-color: $costarDarkOrange;
-	}
-
-	&.dx-toast-error {
-		background-color: $costarRed;
-	}
-}
-
 .dx-overlay-shader {
 	background-color: rgba(0,0,0,0.3);
 }
