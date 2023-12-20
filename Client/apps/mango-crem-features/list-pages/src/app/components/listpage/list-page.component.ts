@@ -2469,6 +2469,14 @@ export class ListPageComponent implements OnInit {
     });
   }
 
+  onKeyUpEvent(event) {
+    const targetElement = event.target as HTMLElement;
+    if (targetElement.nodeName.toLowerCase() == "input") {
+      targetElement.setAttribute('aria-label', 'Search Filter For:  ' + event.target.value);
+    }
+  }
+
+
   adaAttrNoDataGrid(e:any) {
     if (!e || !e.element) return;
     
