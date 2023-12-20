@@ -64,17 +64,54 @@ export class ServiceAccountsComponent implements OnInit {
     this.dataGrid?.instance?.searchByText(data);
   }
 
+  private openServiceAccountDetailsComponentPopup(selectedRowData){
+    let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
+      width: '1200px',
+      panelClass: 'client-delivery-modal',
+      data: selectedRowData
+    });
+  }
+
   public openAccountDetails(e): void {
     if (e.rowType != "header" && e.column.dataField !== "Actions") {
-      let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
-        width: '1200px',
-        panelClass: 'client-delivery-modal',
-        data: e.data,
-        disableClose: true
-      });
+        this.openServiceAccountDetailsComponentPopup(e.data);      
     }
   }
 
+  public onCellPrepared(e) {
+    if (e.rowType == "data" && e.column.dataField === "Actions") {
+      e.cellElement.className += " not-clickable";  
+    }
+  
+    if (e.rowType === "header") {
+      const ele = e.cellElement.querySelector(".dx-header-filter");
+      if (ele) {
+        setTimeout(() => {
+          ele.addEventListener("click", () => {
+            ele.setAttribute("aria-label", "Column Expanded");
+            ele.setAttribute("aria-expanded", "true");
+          });
+        }, 150);
+      }
+    }
+  }
+
+  public onKeyDownOpenAccountDetails(e) {    
+    if (e.event.key === "Enter") {
+      const focusedRowIndex = e.component.option("focusedRowIndex");
+      if(focusedRowIndex >= 0) {
+        const visibleRows = e.component.getVisibleRows();
+        const selRow = visibleRows[focusedRowIndex];
+        const focusedColumnIndex = e.component.option("focusedColumnIndex");
+        if(selRow && (selRow.rowType != "header" && selRow.cells[focusedColumnIndex].column.dataField !== "Actions"))
+        {        
+          this.openServiceAccountDetailsComponentPopup(selRow.data);
+        }
+      }     
+    }
+  }
+
+  
   public onFilterChange(e: any[]): void {
     const filter: any = e?.[0]?.value || e?.[0] ;
     if (this.selectedFilter !== filter) {
@@ -102,8 +139,7 @@ export class ServiceAccountsComponent implements OnInit {
       let dialogRef = this.dialog.open(AddServiceAccountComponent, {
         width: '460px',
         panelClass: 'client-delivery-modal',
-        data: this.allServiceAccountsData.map(x => x.contactEmailAddress),
-        disableClose: true
+        data: this.allServiceAccountsData.map(x => x.contactEmailAddress)
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -123,8 +159,7 @@ export class ServiceAccountsComponent implements OnInit {
     let dialogRef = this.dialog.open(UpdateServiceAccountComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
-      data: data.data,
-      disableClose: true
+      data: data.data
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -216,4 +251,26 @@ export class ServiceAccountsComponent implements OnInit {
     return this.datepipe.transform(date, this.dateFormat);
   }
 
+  public onContentReady(e) {
+    setTimeout(() => {
+
+      const gridADAElements = e.element.querySelectorAll(".dx-pager, .dx-datagrid-rowsview, .dx-page-size, .dx-button-disable, div.dx-page.dx-selection");
+      if (gridADAElements !== null) {       
+            gridADAElements.forEach((oElement, i) => {
+              if(oElement.hasAttribute("role")) {
+                oElement.removeAttribute("role");
+              }       
+              if(oElement.hasAttribute("aria-label")) {
+                oElement.removeAttribute("aria-label");  
+              }  
+              if(oElement.hasAttribute("tabindex")) {
+                oElement.removeAttribute("tabindex");
+              }  
+              if(oElement.hasAttribute("aria-current")) {
+                oElement.removeAttribute("aria-current");
+              }     
+            });
+      }
+    });
+  };
 }

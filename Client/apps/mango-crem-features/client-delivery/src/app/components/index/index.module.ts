@@ -5,7 +5,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import { ButtonModule, DropdownModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
-import { DxDataGridModule, DxLoadPanelModule } from 'devextreme-angular';
+import { DxDataGridModule, DxLoadPanelModule, DxCheckBoxModule } from 'devextreme-angular';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,6 +36,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
     ButtonModule,
     DxDataGridModule,
     DxLoadPanelModule,
+    DxCheckBoxModule,
     ModalModule,
     MatMenuModule,
     MatButtonModule,
