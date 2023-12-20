@@ -46,7 +46,7 @@ export class ReportsSegmentComponent implements OnInit {
   ngOnInit(): void {
     this.reportsService.getUserPreferences().subscribe((result) => {
       if (result?.data?.isDatesEU) {
-        this.dateFormat = "dd.MM.yyyy"
+        this.dateFormat = "dd.MM.yyyy HH:mm:ss"
       }
       this.getSegments();
       this.setSegmentColumns();
@@ -283,7 +283,7 @@ export class ReportsSegmentComponent implements OnInit {
       component: this.segmentDataGrid.instance,
       worksheet: workbook.addWorksheet('Segments List Page')
     }).then(function() {
-      this.worksheet.columns.forEach((column) => {
+      workbook.worksheets[0].columns.forEach((column) => {
         let maxLength = 0;
         column["eachCell"]({ includeEmpty: true }, (cell) => {
           const columnLength = cell.value ? cell.value.toString().length + 3 : 10;

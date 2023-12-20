@@ -9,7 +9,7 @@
   className="newModal"
   >
 	<div modalContent class="body-content">
-    <dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="showloading" [showIndicator]="true"
+    <dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="showLoading" [showIndicator]="true"
 		[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
     <crem-vertical-stepper display="1" *ngIf="!loading && showSegment">
       <dynamic-form #SegmentForm
@@ -24,7 +24,8 @@
               [isDisabled]='fieldData.disabled'
               [dataSource]='fieldData.dataSource'
               [placeholder]='fieldData.placeHolder || "Select..."' [showClearButton]='true'
-              [showColumnHeader]='false' [required]="fieldData.required"
+              [showColumnHeader]='false'
+              [required]="fieldData.required"
               [displayExpr]="fieldData.displayExpr || 'value'"
               [valueExpr]="fieldData.valueExpr || 'value'"
               [isVisible]="!fieldData.hidden"
@@ -58,7 +59,7 @@
       </dynamic-form>
     </crem-vertical-stepper>
     <crem-vertical-stepper display="2" *ngIf="!loading" [showBorder]="false" [hideStepper]="!showSegment">
-      <mango-criteria-form *ngIf="!loading && !segmentLoading" #CriteriaForm
+      <mango-criteria-form-report *ngIf="!loading && !segmentLoading" #CriteriaFormReport
         [criteriaSetId]="criteriaSetId"
         [defaultValues]="defaultValues"
         isReportCriteriaSet="true"
@@ -66,8 +67,7 @@
         (onFormItemChange)="onFormItemChange($event)"
         (loadingCallback)="setLoading($event)"
         [idPrefix]="idPrefix"
-      >
-      </mango-criteria-form>
+      ></mango-criteria-form-report>
     </crem-vertical-stepper>
   </div>
   <div modalFooter class="footer-content">

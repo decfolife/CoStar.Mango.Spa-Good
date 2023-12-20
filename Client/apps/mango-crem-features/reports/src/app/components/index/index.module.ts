@@ -14,12 +14,19 @@ import { CriteriaReportComponent } from '../modal/criteria-report/criteria-repor
 import { ReportsSegmentModule } from '../reports-segment/reports-segment.module';
 import { CreateSegmentComponent } from '../modal/create-segment/create-segment.component';
 import { TextBoxModule } from 'libs/ui-shared/lib-ui-elements/src/lib/text-box/text-box.module';
-import { CriteriaFormComponent } from '../criteria-form/criteria-form.component';
+import { CriteriaFormSegmentComponent } from '../criteria-form-segment/criteria-form-segment.component';
+import { CriteriaFormReportComponent } from '../criteria-form-report/criteria-form-report.component';
 import { VerticalStepperModule } from 'libs/ui-shared/lib-ui-elements/src/lib/vertical-stepper/vertical-stepper.module';
 
-
 @NgModule({
-  declarations: [IndexComponent, DeleteReportComponent, CriteriaReportComponent, CreateSegmentComponent, CriteriaFormComponent],
+  declarations: [
+    IndexComponent,
+    DeleteReportComponent,
+    CriteriaReportComponent,
+    CreateSegmentComponent,
+    CriteriaFormSegmentComponent,
+    CriteriaFormReportComponent
+  ],
   imports: [
     CommonModule,
     IndexRoutingModule,

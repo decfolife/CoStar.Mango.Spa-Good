@@ -5,9 +5,9 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ReportsService } from '@reports/services/reports.service';
-import { DynamicFormComponent, IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
+import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
 import notify from 'devextreme/ui/notify';
-import { CriteriaFormComponent } from '@reports/components/criteria-form/criteria-form.component';
+import { CriteriaFormReportComponent } from '@reports/components/criteria-form-report/criteria-form-report.component';
 import { DropdownComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component';
 import { CreateSegmentComponent } from '../create-segment/create-segment.component';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
@@ -20,14 +20,14 @@ import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 })
 export class CriteriaReportComponent {
 
-    public idPrefix: string = "criteriaReport"; 
+    public idPrefix: string = "criteriaReport";
     public loading: boolean = true;
     public criteriaLoading: boolean = true;
     public isItemSelected: boolean = false;
     public saveObject: any = {};
     public reportProcessingPage: string;
     public reportObject: string;    public criteriaSetId: number;
-    public showloading: boolean = true;
+    public showLoading: boolean = true;
     public segmentLoading: boolean = false
     public segmentConfig: any;
     public segmentData: any = [];
@@ -38,7 +38,7 @@ export class CriteriaReportComponent {
     public segmentDropdownDisabled: boolean = true;
     public allowSegments: boolean = false;
     @ViewChild('SegmentDropdown') segmentDropdown: DropdownComponent;
-    @ViewChild('CriteriaForm') criteriaForm: CriteriaFormComponent;
+    @ViewChild('CriteriaFormReport') criteriaForm: CriteriaFormReportComponent;
     @ViewChild('SegmentForm') segmentForm: DynamicFormComponent;
 
     constructor(
@@ -71,8 +71,6 @@ export class CriteriaReportComponent {
                 this.hasSegmentsViewRight = data.segmentRights.data.securityTypeID >= 2;
             }
 
-           
-
             if (data.reports?.data) {
                 this.reportProcessingPage = data.reports.data.reportProcessingPage;
                 this.reportObject = data.reports.data.reportObject;
@@ -94,13 +92,13 @@ export class CriteriaReportComponent {
                         }
                         this.segmentData = [{key: 'group 1', items: result.data}];
                         this.loading = false;
-                        this.showloading = false;
+                        this.showLoading = false;
                         this.setSegmentConfig();
                     }) 
                 } else {
                     this.showSegment = false;
                     this.loading = false;
-                    this.showloading = false;
+                    this.showLoading = false;
                 }
             }
         });
@@ -142,7 +140,6 @@ export class CriteriaReportComponent {
                         } else if (item.varcharData) {
                             this.defaultValues[item.criteriaID] = item.varcharData;
                         }
-                        
                     })
                     this.segmentLoading = false;
                 })
@@ -176,7 +173,7 @@ export class CriteriaReportComponent {
                             dataField: "segmentID",
                             fieldType: "custom",
                             caption: "Segment",
-                            required: false,
+                            required: true,
                             displayExpr: "name",
                             valueExpr: "segmentID",
                             placeHolder: "Custom",
@@ -194,8 +191,15 @@ export class CriteriaReportComponent {
         };
     }
 
-    public runReport(event) {
-        if (!(this.criteriaLoading || !this.isItemSelected)) {
+    public runReport(event: Event) {
+      // Consecutive of dependant values validation: Portfolio Form is validated it, and then dependant criteriaForm is
+      let isValid: boolean = false;
+      const { isValid: isValidPortfolio } = this.criteriaForm.segmentPortfolioDropdown.validate(); // Dropdown Component
+      if(isValidPortfolio) {
+        isValid = this.criteriaForm.criteriaDynamicForm.validate(); // Dynamic Form Component
+      }
+
+        if (!this.criteriaLoading && this.isItemSelected && isValid) {
             const config = this.criteriaForm?.criteriaDynamicForm?.getConfig();
             let saveObject = [];
             saveObject.push({
@@ -211,10 +215,22 @@ export class CriteriaReportComponent {
                 if(x.Delimeter) {
                     let multiSelectArray = x.VarCharData.split(x.Delimeter)
                     multiSelectArray.forEach((c) => {
-                        splitSaveObject.push({
-                            FieldName: x.FieldName,
-                            VarCharData: c
-                        })
+                        if (x.CriteriaDataType == 3) {
+                            splitSaveObject.push({
+                                FieldName: x.FieldName,
+                                IntData: c
+                            })
+                        } else if(x.CriteriaDataType == 7) {
+                            splitSaveObject.push({
+                                FieldName: x.FieldName,
+                                DateData: c
+                            })
+                        } else {
+                            splitSaveObject.push({
+                                FieldName: x.FieldName,
+                                VarCharData: c
+                            })
+                        }
                     })
                 } else {
                     splitSaveObject.push(x)
@@ -228,7 +244,7 @@ export class CriteriaReportComponent {
                         const reportIssueId = reportIssue.data;
                         const url = "../../../../v06/Reporting/ReportLaunchpad.aspx?processReportObject=" + this.reportObject + "&reportissueid=" + reportIssueId;
                         notify({
-                          message: "Your report request has been processed and the report will be available shortly.", 
+                            message: "Your report request has been processed and the report will be available shortly.", 
                             type : "success", 
                             displayTime : 5000,
                             position : { at: 'bottom right', my: 'bottom right', offset: '-16 -16'},
@@ -240,24 +256,35 @@ export class CriteriaReportComponent {
                     });
                 } else {
                     this.reportsService.runBatchReport(result.data, this.data.reportId).subscribe((result) => {
+                        if(result.data) {
+                            notify({
+                                message: 'Your report request has been processed and the report will be available shortly.',
+                                type: 'success',
+                                displayTime: 5000,
+                                position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+                                maxWidth: '500px',
+                                closeOnClick: true,
+                            })
+                        } else {
+                            notify({
+                                message: 'An error occurred while trying to process your report.',
+                                type: 'error',
+                                displayTime: 5000,
+                                position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+                                maxWidth: '500px',
+                                closeOnClick: true,
+                            })
+                        }
+                        this.dialogRef.close();
                     })
                 }
             })
 
-        } else {
-            notify({
-                message: 'At least one criteria selection is required.',
-                type: 'error',
-                displayTime: 5000,
-                position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-                maxWidth: '500px',
-                closeOnClick: true,
-            })
         }
     }
 
     public setLoading(loading) {
-        this.showloading = loading;
+        this.showLoading = loading;
     }
 
     public onFormItemChange(data) {

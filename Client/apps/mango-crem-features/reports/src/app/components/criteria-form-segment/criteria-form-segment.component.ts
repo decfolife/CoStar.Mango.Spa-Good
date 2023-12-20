@@ -1,18 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable rxjs-angular/prefer-composition */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-
 import { Component, EventEmitter, Inject, Input, Output, ViewChild } from '@angular/core';
 import { ReportsService } from '@reports/services/reports.service';
-import { DynamicFormComponent, IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
+import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
 import { DropdownComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component';
+import { IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
 
 @Component({
-  selector: 'mango-criteria-form',
-  templateUrl: './criteria-form.component.html',
-  styleUrls: ['./criteria-form.component.scss']
+  selector: 'mango-criteria-form-segment',
+  templateUrl: './criteria-form-segment.component.html',
+  styleUrls: ['./criteria-form-segment.component.scss']
 })
-export class CriteriaFormComponent {
+export class CriteriaFormSegmentComponent {
 
     @Input() criteriaSetId: number;
     @Input() isReportCriteriaSet: boolean;
@@ -46,6 +43,7 @@ export class CriteriaFormComponent {
     @ViewChild('CriteriaDynamicForm') criteriaDynamicForm: DynamicFormComponent;
     @ViewChild('DependentCriteriaDynamicForm') dependentCriteriaDynamicForm: DynamicFormComponent;
     @ViewChild('PortfolioForm') portfolioForm: DynamicFormComponent;
+
     constructor(
         private reportsService: ReportsService,
     ) { }
@@ -60,7 +58,7 @@ export class CriteriaFormComponent {
     public setconfigObjects() {
         this.loading = true;
         let selectedPortfolioIndex;
-        if (this.defaultValues) {
+        if (this.defaultValues != null && Object.keys(this.defaultValues).length > 0) {
             selectedPortfolioIndex = this.portfolioData.find((portfolio) => {
                 return portfolio.masterGroupID === this.defaultValues.PortfolioID;
             })
@@ -81,12 +79,11 @@ export class CriteriaFormComponent {
                         required: true,
                         displayExpr: "companyName",
                         valueExpr: "masterGroupID",
-                        customRequireValidation: true,
                         dataSource: this.portfolioData,
                         selectMode: "single",
                         hoverText: "Select the portfolio of the project",
                         disabled: false,
-                        value: selectedPortfolioIndex ? [selectedPortfolioIndex] : []
+                        value: selectedPortfolioIndex ? [selectedPortfolioIndex] : [],
                         },
                     ],
                     }
@@ -117,16 +114,11 @@ export class CriteriaFormComponent {
         this.setLoadingCallback(true);
         this.onCriteriaLoadedChange.emit(true);
         this.isDependentItemSelected = this.dependentCriteriaDynamicForm?.isItemSelected();
-        var isReportCriteria = true;
         if (this.isDependentItemSelected && config !== null) {
             const config = this.dependentCriteriaDynamicForm.getConfig();
             let saveObject = [];
-            //This needs to be reworked to not be hardcoded asap
-            if (this.criteriaSetId == 8 || this.criteriaSetId == 9) {
-                isReportCriteria = false;
-            }
             saveObject = this.getSaveObject(config, saveObject, true);
-            this.reportsService.getCriteria(this.criteriaSetId, this.selectedPortfolio, saveObject, isReportCriteria).subscribe((result) => {
+            this.reportsService.getCriteria(this.criteriaSetId, this.selectedPortfolio, saveObject, this.isReportCriteriaSet).subscribe((result) => {
                 if (result.data) {
                     this.setCriteriaFields(result.data, false);
                 }
@@ -234,6 +226,7 @@ export class CriteriaFormComponent {
         }
 
         let skipNextItem = false;
+        let noDefaultValues = this.defaultValues == null || Object.keys(this.defaultValues).length === 0;
         criteriaItem.forEach((item, index) => {
             if (!skipNextItem) {
                 let itemObject;
@@ -241,7 +234,8 @@ export class CriteriaFormComponent {
                     let valueKey = item.criteriaSourceFieldName
                     let displayName= item.criteriaSourceDisplayFieldName
                     if (item.values?.length) {
-                        if (valueKey.toUpperCase() in item.values?.[0] || valueKey.toUpperCase() in item.values?.[1]){
+                        if (valueKey.toUpperCase() in item.values?.[0] || (item.values?.[1] && valueKey.toUpperCase() in item.values?.[1]))
+                        {                            
                             valueKey = valueKey.toUpperCase();
                             displayName = displayName.toUpperCase();
                         }
@@ -262,9 +256,24 @@ export class CriteriaFormComponent {
                             } else {
                                 defaultValueArray = this.defaultValues?.[item?.criteriaID].split(item.criteriaDelimeter ? item.criteriaDelimeter : ",");
                             }
+                        } else if(noDefaultValues && !isDependent) {
+                            item.values.forEach((x) => {
+                                defaultValueArray.push('' + x[valueKey])
+                            })
                         }
-                        
-                        
+
+                        if(defaultValueArray[0] === '')
+                        {
+                            if(defaultValueArray?.[1] === '') {
+                                if(item.values?.[0]?.[valueKey] === null && item.values?.[0]?.[valueKey] === '') {
+                                    defaultValueArray[0] = null;
+                                }
+                            } else {
+                                if(item.values?.[0]?.[valueKey] === null && item.values?.[0]?.[valueKey] !== '') {
+                                    defaultValueArray[0] = null;
+                                }
+                            }
+                        }
                         itemObject = {
                             dataField: isDependent ? item.criteriaID : item.criteriaSourceFieldName,
                             fieldType: "dropdown",
@@ -280,18 +289,20 @@ export class CriteriaFormComponent {
                             delimeter: item.criteriaDelimeter,
                             data: {
                                 criteriaID: item.criteriaID
-                            }
+                            },
+                            criteriaDataType: item.criteriaDataType
                         }
-                        if (this.defaultValues) {
+                        if (this.defaultValues?.[item.criteriaID]) {
                             this.defaultValues[item.criteriaID] = "";
                         }
-                        
                     } else {
                         //single select dropdown
-
-                        const selectedIndex = item.values.find((object) => {
+                        let selectedIndex = item.values.find((object) => {
                             return object[valueKey]?.toString() === this.defaultValues?.[item.criteriaID]?.toString();
                         })
+                        if(!selectedIndex && noDefaultValues) {
+                            selectedIndex = item.values?.[0]
+                        }
 
                         itemObject = {
                             dataField: isDependent ? item.criteriaID : item.criteriaSourceFieldName,
@@ -304,11 +315,12 @@ export class CriteriaFormComponent {
                             selectMode: "single",
                             hoverText: "Select the " + item.criteriaDesc +" of the project",
                             disabled: false,
-                            value: selectedIndex ? [selectedIndex] : [],
                             delimeter: item.criteriaDelimeter,
+                            value: selectedIndex ? [selectedIndex] : [],
                             data: {
                                 criteriaID: item.criteriaID
-                            }
+                            },
+                            criteriaDataType: item.criteriaDataType
                         }
                         if (this.defaultValues?.[item.criteriaID]) {
                             this.defaultValues[item.criteriaID] = [];
@@ -330,15 +342,16 @@ export class CriteriaFormComponent {
                             disabled: false,
                             hideLabel: true,
                             value: null,
-                            value1: this.defaultValues ? this.defaultValues[item.criteriaID]: undefined,
-                            value2: this.defaultValues ? this.defaultValues[criteriaItem?.[index + 1].criteriaID] : undefined,
                             delimeter: item.criteriaDelimeter,
+                            value1: this.defaultValues ? this.defaultValues[item.criteriaID]: undefined,
+                            value2: this.defaultValues ? this.defaultValues[criteriaItem?.[index + 1]?.criteriaID] : undefined,
                             data: {
                                 criteriaID1: item.criteriaID,
                                 criteriaID2: criteriaItem?.[index + 1].criteriaID
-                            }
+                            },
+                            criteriaDataType: item.criteriaDataType
                         }
-                        if (this.defaultValues) {
+                        if (this.defaultValues && this.defaultValues[item.criteriaID] && this.defaultValues[criteriaItem?.[index + 1]?.criteriaID]) {
                             this.defaultValues[item.criteriaID] = undefined;
                             this.defaultValues[criteriaItem?.[index + 1].criteriaID] = undefined
                         }
@@ -352,14 +365,15 @@ export class CriteriaFormComponent {
                             caption: item.criteriaDesc,
                             showClearButton: true,
                             disabled: false,
-                            required: false,
-                            value: this.defaultValues ? this.defaultValues[item.criteriaID]: undefined,
+                            required: true,
                             delimeter: item.criteriaDelimeter,
+                            value: this.defaultValues ? this.defaultValues[item.criteriaID]: undefined,
                             data: {
                                 criteriaID: item.criteriaID
-                            }
+                            },
+                            criteriaDataType: item.criteriaDataType
                         }
-                        if (this.defaultValues) {
+                        if (this.defaultValues[item.criteriaID]) {
                             this.defaultValues[item.criteriaID] = undefined
                         }
                     }
@@ -378,7 +392,8 @@ export class CriteriaFormComponent {
                         delimeter: item.criteriaDelimeter,
                         data: {
                             criteriaID: item.criteriaID
-                        }
+                        },
+                        criteriaDataType: item.criteriaDataType
                     }
                     if (this.defaultValues) {
                         this.defaultValues[item.criteriaID] = undefined
@@ -434,25 +449,41 @@ export class CriteriaFormComponent {
             if (config[item].fieldType === 'toFromDate') {
                 let saveItem1 = {};
                 let saveItem2 = {};
+                if(typeof config[item].value1 === 'string') {
+                    let localDate = new Date(config[item].value1)
+                    let utcDate = new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0, 0))
+                    config[item].value1 = utcDate
+                } else if(config[item].value1) {
+                    let date = config[item].value1
+                    config[item].value1 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+                }
+                if(typeof config[item].value2 === 'string') {
+                    let localDate = new Date(config[item].value2)
+                    let utcDate = new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0, 0))
+                    config[item].value2 = utcDate
+                } else if (config[item].value2) {
+                    let date = config[item].value2
+                    config[item].value2 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+                }
                 if (!isDependent) {
                     saveItem1 = {
                         FieldName: config[item].dataField1,
-                        DateData: config[item].value1?.toString() ||  null
+                        DateData: config[item].value1?.toJSON() ||  null
                     }
     
                     saveItem2 = {
                         FieldName: config[item].dataField2,
-                        DateData: config[item].value2?.toString() ||  null
+                        DateData: config[item].value2?.toJSON() ||  null
                     }
                 } else {
                     saveItem1 = {
                         CriteriaID: config[item].dataField1,
-                        Values: config[item].value1?.toString() ||  null
+                        DateData: config[item].value1?.toJSON() ||  null
                     }
     
                     saveItem2 = {
                         CriteriaID: config[item].dataField2,
-                        Values: config[item].value2?.toString() ||  null
+                        DateData: config[item].value2?.toJSON() ||  null
                     }
                 }
 
@@ -475,14 +506,28 @@ export class CriteriaFormComponent {
             } else if (config[item].fieldType === 'dropdown') {
                 if (config[item].selectMode === 'single') {
                     if (!isDependent) {
-                        saveItem = {
-                            FieldName: config[item].dataField,
-                            VarCharData: config[item].value?.length ? config[item].value[0][this.dropdownKey[item]]?.toString() : null
+                        if(config[item].criteriaDataType === '3') {
+                            saveItem = {
+                                FieldName: config[item].dataField,
+                                IntData: config[item].value?.length ? config[item].value[0][this.dropdownKey[item]] : null
+                            }
+                        } else {
+                            saveItem = {
+                                FieldName: config[item].dataField,
+                                VarCharData: config[item].value?.length ? config[item].value[0][this.dropdownKey[item]]?.toString() : null
+                            }
                         }
                     } else {
-                        saveItem = {
-                            CriteriaID: config[item].dataField,
-                            Values: config[item].value?.length ? [config[item].value[0][this.dependentDropdownKey[item]]?.toString()] : []
+                        if(config[item].criteriaDataType === '3') {
+                            saveItem = {
+                                CriteriaID: config[item].dataField,
+                                Values: config[item].value?.length ? [config[item].value[0][this.dependentDropdownKey[item]]] : []
+                            }
+                        } else {
+                            saveItem = {
+                                CriteriaID: config[item].dataField,
+                                Values: config[item].value?.length ? [config[item].value[0][this.dependentDropdownKey[item]]?.toString()] : []
+                            }
                         }
                     }
                     
@@ -493,17 +538,20 @@ export class CriteriaFormComponent {
                     if (!isDependent) {
                         if (config[item].value?.length) {
                             let multiDropdownValue = "";
+                            let isFirstValue = true;
                             config[item].value?.forEach((dropdownItem) => {
-                                if (multiDropdownValue) {
-                                    multiDropdownValue += ","
+                                if (!isFirstValue) {
+                                    const delimeter = config[item].delimeter;
+                                    multiDropdownValue += delimeter ? delimeter : ","
                                 }
                                 multiDropdownValue += dropdownItem?.toString() || "";
+                                isFirstValue = false;
                             })
-    
                             saveItem = {
                                 FieldName: config[item].dataField,
                                 VarCharData: multiDropdownValue,
-                                Delimeter: config[item].delimeter ? config[item].delimeter : ','
+                                Delimeter: config[item].delimeter ? config[item].delimeter : ',',
+                                CriteriaDataType: config[item].criteriaDataType
                             }
                         } else {
                             saveItem = {
@@ -562,23 +610,47 @@ export class CriteriaFormComponent {
             if (config[item].fieldType === 'toFromDate') {
                 let saveItem1 = {};
                 let saveItem2 = {};
+                if(typeof config[item].value1 === 'string') {
+                    let localDate = new Date(config[item].value1)
+                    let utcDate = new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0, 0))
+                    config[item].value1 = utcDate
+                } else if (config[item].value1) {
+                    let date = config[item].value1
+                    config[item].value1 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+                }
+                if(typeof config[item].value2 === 'string') {
+                    let localDate = new Date(config[item].value2)
+                    let utcDate = new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0, 0))
+                    config[item].value2 = utcDate
+                } else if (config[item].value2) {
+                let date = config[item].value2
+                config[item].value2 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+                }
+
                 saveItem1 = {
                     CriteriaID: config[item].data.criteriaID1,
-                    DateData: new Date(config[item].value1 + 'z')?.toJSON() ||  null
+                    DateData: config[item].value1?.toJSON() ||  null
                 }
 
                 saveItem2 = {
                     CriteriaID: config[item].data.criteriaID2,
-                    DateData: new Date(config[item].value2 + 'z')?.toJSON() ||  null
+                    DateData: config[item].value2?.toJSON() ||  null
                 }
-
                 saveObject.push(saveItem1);
                 saveObject.push(saveItem2);
             } else if (config[item].fieldType==='date') {
 
+                if(typeof config[item].value === 'string') {
+                    let localDate = new Date(config[item].value)
+                    let utcDate = new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate(), 0, 0, 0, 0))
+                    config[item].value = utcDate
+                } else if (config[item].value) {
+                    let date = config[item].value
+                    config[item].value = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+                }
                 let saveItem = {
                     CriteriaID: config[item].data.criteriaID,
-                    DateData: new Date(config[item].value + 'z')?.toJSON()
+                    DateData: config[item].value?.toJSON() || null
                 }
                
                 
@@ -596,12 +668,14 @@ export class CriteriaFormComponent {
 
                     if (config[item].value?.length) {
                         let multiDropdownValue = "";
+                        let isFirstValue = true;
                         config[item].value?.forEach((dropdownItem) => {
-                            if (multiDropdownValue) {
+                            if (!isFirstValue) {
                                 const delimeter = config[item].delimeter;
-                                multiDropdownValue += delimeter ? delimeter : ","
+                                multiDropdownValue += delimeter? delimeter : ","
                             }
                             multiDropdownValue += dropdownItem?.toString() || "";
+                            isFirstValue = false;
                         })
 
                         saveItem = {

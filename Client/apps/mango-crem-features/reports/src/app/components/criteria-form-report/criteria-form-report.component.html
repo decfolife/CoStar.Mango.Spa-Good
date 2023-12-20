@@ -1,4 +1,3 @@
-
 <dynamic-form *ngIf="!loading && isReportCriteriaSet" #PortfolioForm
   [config]="portfolioConfig"
   (onChangeEvent)="onDropdownChange($event)"
@@ -10,8 +9,10 @@
         [isDisabled]='fieldData?.disabled || (!fieldData?.required && !fieldData?.dataSource?.length) || readOnly'
         dropDownContainerCustomClass="dynamicFormDropDown"
         [dataSource]='fieldData.dataSource'
-        [placeholder]='fieldData.placeholder || "Select..."' [showClearButton]='true'
-        [showColumnHeader]='false' [required]="fieldData.required"
+        [placeholder]='fieldData.placeholder || "Select..."'
+        [showClearButton]='true'
+        [showColumnHeader]='false'
+        [required]="fieldData.required"
         [displayExpr]="fieldData.displayExpr || 'value'"
         [valueExpr]="fieldData.valueExpr || 'value'"
         [isVisible]="!fieldData.hidden"
@@ -23,12 +24,10 @@
         [allowSearch]='true'
         [useSelectBox]="true"
         [hoverText]="fieldData.hoverText || fieldData.caption"
-        (selectedItems)="portfolioForm?.onChange($event,'dropdown', 'PortfolioID')">
+        (selectedItems)="portfolioForm?.onChange($event,'dropdown', 'PortfolioID')"
+        [showDefaultValidationTooltip]="true"
+      >
       </crem-dropdown>
-      <div class="textbox_subtext--warning" *ngIf="!portfolioConfig.section[0].formObjects[0].sectionItems[0].value?.length && portfolioSelectionModified">
-        <crem-icon class="icon" icon="faCircleInfo"></crem-icon>
-        This field is required
-      </div>
     </div>
   </ng-template>
 </dynamic-form>
@@ -38,12 +37,12 @@
   (isLoading)="onDependentLoading($event)"
   [idPrefix] = "idPrefix"
   [readOnly] = "readOnly"
-  >
-</dynamic-form>
+  [showDefaultValidationTooltip]="true"
+></dynamic-form>
 <dynamic-form *ngIf="!criteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #CriteriaDynamicForm
   [config]="criteriaConfig"
   (onChangeEvent)="onChange($event)"
   [idPrefix] = "idPrefix"
   [readOnly] = "readOnly"
-  >
-</dynamic-form>
+  [showDefaultValidationTooltip]="true"
+></dynamic-form>

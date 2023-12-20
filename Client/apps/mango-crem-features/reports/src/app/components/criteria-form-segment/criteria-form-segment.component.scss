@@ -1,0 +1,33 @@
+@use "libs/ui-shared/common/src/styles" as *;
+
+.form {
+    &__section-item {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.textbox_subtext {
+  font-size: 12px;
+  @include costar(color, gray03);
+
+  &--warning {
+    font-size: 12px;
+    @include costar(color, danger);
+}
+
+&--success {
+    font-size: 12px;
+    @include costar(color, success);
+}
+}
+
+// The Field is required but let's hide the required mark anyways
+::ng-deep{
+  #CreateSegment__Portfolio,
+  mango-criteria-form-segment {
+    span.dx-field-item-required-mark {
+      display: none;
+    }
+  }
+}

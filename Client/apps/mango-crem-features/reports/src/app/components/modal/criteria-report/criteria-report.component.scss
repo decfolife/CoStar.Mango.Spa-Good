@@ -1,5 +1,4 @@
-@use 'apps/mango/src/assets/styles/colors.scss' as colors;
-
+@use "libs/ui-shared/common/src/styles" as *;
 
 .body-content {
     padding: 0 24px;
@@ -29,16 +28,16 @@
 .textbox_subtext {
     min-height: 16px;
     font-size: 12px;
-    color: #757575;
+    @include costar(color, gray03);
 
     &--warning {
         font-size: 12px;
-        color: colors.$costarADAAlert;
+        @include costar(color, danger);
     }
 
     &--success {
         font-size: 12px;
-        color: colors.$color-brand-green;
+        @include costar(color, success);
     }
 
     &.hidden {
@@ -46,28 +45,26 @@
     }
 }
 
-dynamic-form, mango-criteria-form {
+dynamic-form, mango-criteria-form-report {
     width: 100%;
 }
 
 ::ng-deep {
-    mango-criteria-reports {
-        .footer-content {
-            crem-button {
-                button {
-                    margin: 0px !important;
-                }
-                
-                button:focus, button:focus-within {
-                    outline-color: #000000 !important;
-                    outline-style: solid !important;
-                    outline-width: thin !important;
-                }
-                button:focus-visible {
-                    outline-color: #000000 !important;
-                    outline-style: solid !important;
-                    outline-width: thin !important;
-                }
+    .footer-content {
+        crem-button {
+            button {
+                margin: 0px !important;
+            }
+
+            button:focus, button:focus-within {
+                outline-color: #000000 !important;
+                outline-style: solid !important;
+                outline-width: thin !important;
+            }
+            button:focus-visible {
+                outline-color: #000000 !important;
+                outline-style: solid !important;
+                outline-width: thin !important;
             }
         }
     }
@@ -100,4 +97,3 @@ dynamic-form, mango-criteria-form {
         }
     }
 }
-

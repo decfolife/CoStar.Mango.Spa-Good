@@ -99,7 +99,7 @@
           >
         </dynamic-form>
 
-        <mango-criteria-form *ngIf="selectedCriteriaId" #CriteriaForm
+        <mango-criteria-form-segment *ngIf="selectedCriteriaId" #CriteriaForm
           [defaultValues]="data.config ? data.config : defaultValues"
           [criteriaSetId]="selectedCriteriaId"
           [isReportCriteriaSet]="selectedReportCriteriaSet"
@@ -109,7 +109,7 @@
           (onFormItemChange)="onFormItemChange($event)"
           [idPrefix]="idPrefix"
         >
-        </mango-criteria-form>
+        </mango-criteria-form-segment>
       </div>
     </crem-vertical-stepper>
   </div>
