@@ -2,11 +2,10 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../../../apps/mango/src/environments/environment.local';
 
-export interface linkObjects {
+export interface NavLinksByCategory {
   category: string;
-  data: SharedLeftNavLink[];
+  children: SharedLeftNavLink[];
 }
 
 @Component({
@@ -15,18 +14,19 @@ export interface linkObjects {
   styleUrls: ['shared-left-nav.component.scss'],
 })
 export class SharedLeftNavComponent implements OnChanges {
-  @Input() navigationLinks: any[];
-  public navObjs: linkObjects[];
-  public expandNav: boolean = true;
-  public isRestful: boolean;
+  @Input() navigationLinks: SharedLeftNavLink[];
+  regularLeftNavItems: NavLinksByCategory[] = [];
+  commonLeftNavItems: NavLinksByCategory[] = []
+
+  expandNav: boolean = true;
+
   @Input() activeLink: string = null;
   @Output() navigateSpa: EventEmitter<SharedLeftNavLink> = new EventEmitter<SharedLeftNavLink>(null);
   @Output() toActiveLink: EventEmitter<string> = new EventEmitter();
 
   isSubleftnav$: Observable<boolean> = this.facade.showSubLeftNav$
-  constructor(
-    private facade: MangoAppFacade
-  ) { this.isRestful = environment.isRestful }
+
+  constructor(private facade: MangoAppFacade) { }
 
   ngOnChanges(changes: SimpleChanges) {
     for (let propName in changes) {
@@ -38,38 +38,22 @@ export class SharedLeftNavComponent implements OnChanges {
   }
 
   getCategorizeLinks() {
-    this.navObjs = [];
-    let prevCategory;
+    this.regularLeftNavItems = this.categorizeNavLinks(this.navigationLinks.filter(navlink => !navlink.isCommon))
+    this.commonLeftNavItems = this.categorizeNavLinks(this.navigationLinks.filter(navLink => !!navLink.isCommon))
+  }
 
-    for (let i = 0; i < this.navigationLinks.length; i++) {
-      if (!this.navigationLinks[i].category) {
-        this.createNavObj(this.navigationLinks[i]);
+  categorizeNavLinks(navLinks: SharedLeftNavLink[]): NavLinksByCategory[] {
+    return navLinks.reduce((acc: NavLinksByCategory[], currentNavLink) => {
+      if (!currentNavLink.category) {
+        acc.push({ category: currentNavLink.category, children: [currentNavLink]})
       } else {
-        if (this.navigationLinks[i].category == prevCategory) {
-          this.addLinkToCategory(this.navigationLinks[i]);
-        } else {
-          this.createNavObj(this.navigationLinks[i]);
-        }
+        const existingNavLinkItem = acc.find(navLink => navLink.category === currentNavLink.category)
+        existingNavLinkItem ? existingNavLinkItem.children.push(currentNavLink) : acc.push({ category: currentNavLink.category, children: [currentNavLink]})
       }
-      prevCategory = this.navigationLinks[i].category
-    }
+      return acc
+    }, [])
   }
 
-  createNavObj(navLink: SharedLeftNavLink) {
-    let data = [];
-    data.push(navLink);
-    let linkObj: linkObjects = {
-      category: navLink.category,
-      data: data
-    };
-    this.navObjs.push(linkObj);
-  }
-
-  addLinkToCategory(navLink: SharedLeftNavLink) {
-    let p = this.navObjs.find(obj => {
-      if (obj.category == navLink.category) { obj.data.push(navLink); }
-    })
-  }
 
   sidenavtoggle() {
     if (this.expandNav) {
@@ -87,13 +71,9 @@ export class SharedLeftNavComponent implements OnChanges {
   onNavLinkClick(navLink: SharedLeftNavLink, event: any) {
     this.activeLink = navLink.name;
     this.toActiveLink.emit(this.activeLink);
-    if (!environment.isRestful) {
-      window.location.href = navLink.spaUrl ? `${environment.CAUrl}oauth/authorize?client_key=blank&contact_id=2&redirect_uri=${environment.mangoSpaUrl}/auth/validate?redirect_uri=${encodeURIComponent(navLink.spaUrl)}` : `/${navLink.linkUrl}`
-    } else {
-      this.navigateSpa.emit(navLink)
-    }
+    this.navigateSpa.emit(navLink)
   }
-  
+
   leftNavOpened(e) {
     if (!e || !e._element || !e._element.nativeElement || !e._element.nativeElement.children)
       return;

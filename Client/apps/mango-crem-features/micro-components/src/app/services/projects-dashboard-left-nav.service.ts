@@ -3,6 +3,7 @@ import { Injectable, Optional } from '@angular/core';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { environment } from '../../../../../mango/src/environments/environment.local';
 
 @Injectable()
@@ -35,7 +36,13 @@ export class ProjectsDashboardLeftNavService extends EndpointService {
     const queryParams = (routeUrl.split('?') || ['', ''])[1]
     let encodedUrl = encodeURIComponent(`?${queryParams}`)
     const url = `${environment.appUrls.leftNav}LeftNav/GetRenderFormsNavigationLinks/${encodedUrl}`;
-    return this.callHttpGet(url, 'GetModuleNavigationLinksForRenderForm')
+
+    // To be refactored: isCommon field should be coming from the backend, once refactored remove the whole pipe logic below
+    const COMMON_LEFT_NAV_LINKS = ['common', 'reminders', 'filemanager', 'projects/contacts', 'objectrights']
+    return this.callHttpGet(url, 'GetModuleNavigationLinksForRenderForm').pipe(
+      filter(response => !!response && !!response.data),
+      map(response => ({ ...response, data: response.data.map(leftNavItem => ({ ...leftNavItem, isCommon: COMMON_LEFT_NAV_LINKS.some(commonLink => (leftNavItem.linkUrl || '').toLowerCase().includes(commonLink))})) })),
+    )
   }
 
   getToolbarModuleLinks(): Observable<any> {

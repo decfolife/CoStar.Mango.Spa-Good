@@ -1,5 +1,9 @@
 @use "../../../../../../apps/mango/src/assets/styles/colors";
 
+.regularNavItems {
+  margin-bottom: 60px;
+}
+
 :host::ng-deep {  // Affects child component mat-expansion-panel in the lack of a better global styling
   // TODO: Move to global style sheet
   --sidebar-width: 220px;
@@ -126,8 +130,6 @@
         list-style: none;
         padding-left: 0;
         padding-top: 8px;
-        margin-top: 0px;
-        margin-bottom: 0px;
         overflow-x: hidden;
         > li {
           &:hover {

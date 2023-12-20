@@ -16,5 +16,6 @@ export interface SharedLeftNavLink {
   dynamicName: string;
   usesNgRouting: boolean;
   spaUrl: string;
-  spaQueryParameters?: string
+  spaQueryParameters?: string,
+  isCommon?: boolean
 }
