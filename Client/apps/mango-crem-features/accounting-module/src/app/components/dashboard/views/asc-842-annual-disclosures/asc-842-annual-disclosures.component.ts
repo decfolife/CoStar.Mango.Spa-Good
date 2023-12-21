@@ -371,6 +371,9 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
 
   public updateDimention() {
     this.pivotGrid?.instance.updateDimensions();
+    setTimeout(() => {
+      this.pivotGrid?.instance.updateDimensions();
+    })
   }
 
 }

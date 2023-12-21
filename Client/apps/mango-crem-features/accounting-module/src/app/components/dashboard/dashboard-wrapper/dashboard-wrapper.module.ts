@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IADCardComponent } from '../card/IADCard/iad-card.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     Ifrs16AnnualDisclosuresComponent,
     Ifrs16QuarterlyDisclosuresComponent,
     WorkflowAndAlertsComponent,
+    IADCardComponent
   ],
   imports: [
     CommonModule,

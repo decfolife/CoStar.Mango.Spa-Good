@@ -1,54 +1,7 @@
-@use 'styles' as *;
-
-.cardContent {
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: 600px !important;
-  padding: 8px;
-}
-
 crem-loader {
   display: flex;
   justify-content: center;
   align-content: center;
   flex-wrap: wrap;
   height: calc(100vh - 50px);
-}
-
-:host ::ng-deep {
-  .dx-pivotgrid {
-
-    .dx-area-column-cell {
-      .dx-pivotgrid-horizontal-headers {
-        td > span {
-          @include costar(color, primary-light, $important: true);
-          font-weight: 600;
-        }
-      }
-    }
-
-    .dx-area-row-cell {
-      .dx-pivotgrid-vertical-headers {
-        td > span {
-          @include costar(color, primary-light, $important: true);
-          font-weight: 600;
-        }
-      }
-    }
-
-    // Style Totals
-    // Table Main Data/Body
-    .total, .dx-total {
-      @include costar(background-color, background);
-    }
-    &#AssetBalanceCardGrid { // Apply last row styling only to Asset Balance Grid/Table
-      .dx-bottom-row {
-        table tbody tr:last-child {
-          @include costar(background-color, background);
-        }
-      }
-    }
-
-  }
-
 }
