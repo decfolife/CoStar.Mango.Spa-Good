@@ -223,7 +223,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   }
 
   public setFieldConfigs() {
-    this.inAppDisclosureService.getIADCardConfigs(1004).subscribe((result) => {
+    this.inAppDisclosureService.getIADCardConfigs(4).subscribe((result) => {
       result.data.forEach((card) => {
         let config = JSON.parse(card.CardJSONSchema);
         config[0].sortingMethod = this.rowSort;
