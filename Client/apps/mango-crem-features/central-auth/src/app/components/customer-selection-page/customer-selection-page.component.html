@@ -2,7 +2,7 @@
   <mango-ca-navbar></mango-ca-navbar>
 
   <div id="company-logo">
-    <img src="costar-logo.png">
+    <img alt="Costar logo" src="costar-logo.png">
   </div>
 
   <div class="customer-selection-wrapper mt-5 mx-2">
@@ -12,7 +12,8 @@
           <h6 class="text-center">Select a site</h6>
           <div class="d-flex justify-content-center pb-2">
             <dx-select-box [dataSource]="clientsDropdown$ | async" searchMode="contains" [searchEnabled]="true"
-              width="300" [showClearButton]="true" (onValueChanged)="onClientSelected($event.value)">
+              width="300" [showClearButton]="true" (onValueChanged)="onClientSelected($event.value)"
+              [inputAttr]="{ title: 'Client name input' }">
             </dx-select-box>
           </div>
           <h6 class="text-center pt-4">Recently Visited</h6>

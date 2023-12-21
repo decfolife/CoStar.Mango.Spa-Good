@@ -15,7 +15,8 @@
   <ng-content select="[matSuffix]"></ng-content>
   <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
 
-  <button *ngIf="icon && clickableIcon" (click)="onIconClick()" type="button" mat-icon-button matSuffix>
+  <button *ngIf="icon && clickableIcon" (click)="onIconClick()" type="button" mat-icon-button matSuffix 
+          [attr.aria-label]="iconAriaLabel" title="Icon Button">
     <mat-icon>{{ icon }}</mat-icon>
   </button>
   <mat-icon *ngIf="icon && !clickableIcon" matSuffix>{{ icon }}</mat-icon>

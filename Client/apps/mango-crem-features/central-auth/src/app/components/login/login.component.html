@@ -1,6 +1,6 @@
 <div *ngIf="!(user$ | async)" id="login-page">
 	<div id="company-logo">
-		<img src="costar-logo.png">
+		<img alt="Costar logo" src="costar-logo.png">
 	</div>
   	<div class="login-wrapper mt-5 ml-5 mr-5">
 		<mat-card>
@@ -25,12 +25,12 @@
 									(formControls.email.touched && formControls.email.errors?.email)" [errorMsg]="getEmailErrorMsg()"
 							[disabled]="!(isClientSiteActive$ | async)" required>
 						</cs-text-field>
-						<cs-text-field id="password" formControlName="password" placeholder="Password"
+						<cs-text-field id="password" formControlName="password" placeholder="Password"				
 							[type]="showPassword ? 'text' : 'password'" [error]="formControls.password.touched && 
 									(formControls.password.errors?.required || formControls.password.errors?.whitespace)"
 							[errorMsg]="getPasswordErrorMsg()" [icon]="showPassword ? 'visibility_off' : 'visibility'"
-							(iconClick)="toggleShow()" [clickableIcon]="true" [disabled]="!(isClientSiteActive$ | async)"
-							(keydown.space)="$event.preventDefault();" required>
+							(iconClick)="toggleShow()" [clickableIcon]="true" [iconAriaLabel]="'Show/Hide password'" 
+							[disabled]="!(isClientSiteActive$ | async)" (keydown.space)="$event.preventDefault();" required>
 						</cs-text-field>
 						<div class="forgot-password-link">
 							<button type="button" class="btn btn-link pt-1" [routerLink]="['password-reset-request']">Reset

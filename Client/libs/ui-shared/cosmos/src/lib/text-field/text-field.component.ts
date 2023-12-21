@@ -36,6 +36,7 @@ export class TextFieldComponent implements ControlValueAccessor, OnChanges {
   @Input() type: string;
   @Input() icon?: string = null;
   @Input() clickableIcon? = false;
+  @Input() iconAriaLabel: string = null;
   @Output() onChange = new EventEmitter<any>();
   @Output() iconClick = new EventEmitter<any>();
 
