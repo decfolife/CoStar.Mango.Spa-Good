@@ -95,10 +95,15 @@ export class ServiceAccountsComponent implements OnInit {
       }
     }
   }
-
-  public onKeyDownOpenAccountDetails(e) {    
-    if (e.event.key === "Enter") {
-      const focusedRowIndex = e.component.option("focusedRowIndex");
+  
+  public onKeyDownOpenAccountDetails(e) {
+    
+    if (e.event.key === "Enter") {     
+      const cellheader = e.event.currentTarget.classList;
+      const result= cellheader.contains("dx-header-row");
+      if(result) return;
+      
+      const focusedRowIndex = e.component.option("focusedRowIndex");      
       if(focusedRowIndex >= 0) {
         const visibleRows = e.component.getVisibleRows();
         const selRow = visibleRows[focusedRowIndex];
