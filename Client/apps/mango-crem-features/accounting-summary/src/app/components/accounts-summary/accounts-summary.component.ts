@@ -188,7 +188,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   private setRightsAndLeaseInfo(){
     const userNavPageRight = this.accountingSummaryService.getUserNavPageRight();
-    const userNavPageWithLeaseRights = this.accountingSummaryService.getUserNavPageWithLeaseRights();
+    const userNavPageWithLeaseRights = this.accountingSummaryService.getAccountingSummaryRights();
     const workflowStatusOptions = this.accountingSummaryService.getWorkflowStatusInformation();
     const leaseInformation = this.accountingSummaryService.getLeaseInfo();
    this.subscription.add(combineLatest([userNavPageRight, userNavPageWithLeaseRights, workflowStatusOptions, leaseInformation]).subscribe(res => {

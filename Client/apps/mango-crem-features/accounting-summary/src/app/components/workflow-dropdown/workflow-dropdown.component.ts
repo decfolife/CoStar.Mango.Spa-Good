@@ -116,7 +116,7 @@ export class WorkflowDropdownComponent {
   }
 
   saveWorkflowStatus(workflowStatusId: number, comment: string) { 
-    this.subscription.add(this.accountingSummaryService.saveWorkflowStatus(workflowStatusId, comment).subscribe(response => {
+    this.subscription.add(this.accountingSummaryService.updateWorkflowStatus(workflowStatusId, comment).subscribe(response => {
       if (response === null) {
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }

@@ -24,8 +24,8 @@ export class TransactionPopupComponent {
   dateFormat = 'MM/dd/yyyy';
   summaryFields: any = {};
 
-  baseAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.baseCurrencyDecimalPrecision);
-  targetAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.targetCurrencyDecimalPrecision);
+  baseAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.chargeCurrencyDecimalPrecision);
+  targetAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.scheduleCurrencyDecimalPrecision);
   
   constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, private transactionPopupGridColumnsService: TransactionPopupGridColumnsService) {
 

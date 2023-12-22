@@ -25,21 +25,21 @@ export class TransactionPopupGridColumnsService {
         alignment:'left'
       },
       {
-        caption: 'Base (' + currencyInfo.baseCurrency + ')',
+        caption: 'Base (' + currencyInfo.chargeCurrency + ')',
         name: 'BaseAmount',
         dataField: 'baseAmount',
         headerCellTemplate:'amortizationHeader',
         cellTemplate: 'pointer',
-        format: value => this.formattingService.localFormat(+value, currencyInfo.baseCurrencyDecimalPrecision),
+        format: value => this.formattingService.localFormat(+value, currencyInfo.chargeCurrencyDecimalPrecision),
         alignment:'right'
       },
       {
-        caption: 'Target (' + currencyInfo.targetCurrency + ': ' + currencyInfo.conversionRate.toFixed(currencyInfo.targetCurrencyDecimalPrecision) + ')',
+        caption: 'Target (' + currencyInfo.scheduleCurrency + ': ' + currencyInfo.conversionRate.toFixed(currencyInfo.scheduleCurrencyDecimalPrecision) + ')',
         name: 'TargetAmount',
         dataField: 'targetAmount',
         headerCellTemplate:'amortizationHeader',
         cellTemplate: 'pointer',
-        format: value => this.formattingService.localFormat(+value, currencyInfo.targetCurrencyDecimalPrecision),
+        format: value => this.formattingService.localFormat(+value, currencyInfo.scheduleCurrencyDecimalPrecision),
         alignment:'right'
       },
       {

@@ -31,7 +31,7 @@
                         Recurring Amount:
                     </label>
                     <div class="input-popup">
-                        {{ formattingService.localFormat(+transactionPopupData.recurringAmount, transactionPopupData.baseCurrencyDecimalPrecision) + ' ' + transactionPopupData.baseCurrency }}
+                        {{ formattingService.localFormat(+transactionPopupData.recurringAmount, transactionPopupData.chargeCurrencyDecimalPrecision) + ' ' + transactionPopupData.chargeCurrency }}
                     </div>
                 </div>
                 <div class="clearfix">

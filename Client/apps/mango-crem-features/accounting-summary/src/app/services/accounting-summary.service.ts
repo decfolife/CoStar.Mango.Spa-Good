@@ -73,65 +73,134 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   getLeaseInfo() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getleaseinformation/lease/${this.leaseAbstractId}`, 'getLeaseInfo');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getleaseinformation/lease/${this.leaseAbstractId}`, 'getLeaseInfo');
+    }
+
+    const url = `${this.apiUrl}getleaseinformation`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getLeaseInfo', { leaseAbstractId });
   }
 
   getAccountingEvents() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventsselector/lease/${this.leaseAbstractId}`, 'getAccountingEvents');  
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventsselector/lease/${this.leaseAbstractId}`, 'getAccountingEvents');
+    }
+
+    const url = `${this.apiUrl}getaccountingeventsselector`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getAccountingEvents', { leaseAbstractId });
   }
 
   getUserInformation() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getuserinformation`, 'getUserInformation');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getuserinformation`, 'getUserInformation');
+    }
+
+    const url = `${this.apiUrl}getuserinformation`;
+    return this.callHttpPost(url, 'getUserInformation', { });
   }
 
   getUserNavPageRight() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageRight/navPage/${this.navPageId}`, 'getUserNavPageRight');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageRight/navPage/${this.navPageId}`, 'getUserNavPageRight');
+    }
+
+    const url = `${this.apiUrl}getUserNavPageRight`;
+    const navPageId = this.navPageId;
+    return this.callHttpPost(url, 'getUserNavPageRight', { navPageId });
   }
 
-  getUserNavPageWithLeaseRights() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getUserNavPageWithLeaseRights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`, 'getUserNavPageWithLeaseRights');
+  getAccountingSummaryRights() {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingsummaryrights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`, 'getaccountingsummaryrights');
+    }
+
+    const url = `${this.apiUrl}getaccountingsummaryrights`;
+    const leaseAbstractId = this.leaseAbstractId;
+    const navPageId = this.navPageId;
+    return this.callHttpPost(url, 'getaccountingsummaryrights', { navPageId, leaseAbstractId });
   }
 
   getWorkflowStatusInformation() {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getAccountingWorkflowStatusInformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusOptions');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getworkflowstatusinformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusOptions');
+    }
+
+    const url = `${this.apiUrl}getworkflowstatusinformation`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getWorkflowStatusOptions', { leaseAbstractId });
   }
 
   getEventDetails(masterScheduleId: number) {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventssummary/masterschedule/${masterScheduleId}`, 'getEventDetails');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getaccountingeventssummary/masterschedule/${masterScheduleId}`, 'getEventDetails');
+    }
+
+    const url = `${this.apiUrl}getaccountingeventssummary`;
+    return this.callHttpPost(url, 'getEventDetails', { masterScheduleId });
   }
 
   getPaymentDetails(leaseRecognitionScheduleId: number) {
-    return this.callHttpGet(`${this.apiUrl}Payments/gethistoricalpayments/schedule/${leaseRecognitionScheduleId}`, 'getPaymentDetails');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}Payments/gethistoricalpayments/schedule/${leaseRecognitionScheduleId}`, 'getPaymentDetails');
+    }
+
+    const url = `${this.apiUrl}gethistoricalpayments`;
+    return this.callHttpPost(url, 'getPaymentDetails', { leaseRecognitionScheduleId });
   }
 
   getPaymentPopupData(leaseRecognitonScheduleEventId: number) {
-    return this.callHttpGet(`${this.apiUrl}Payments/gethistoricaltransactions/scheduleevent/${leaseRecognitonScheduleEventId}`, 'getPaymentPopupData');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}Payments/gethistoricaltransactions/scheduleevent/${leaseRecognitonScheduleEventId}`, 'getPaymentPopupData');
+    }
+
+    const url = `${this.apiUrl}gethistoricaltransactions`;
+    return this.callHttpPost(url, 'getPaymentPopupData', { leaseRecognitonScheduleEventId });
   }
 
   getPortfolioSettings() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getportfoliosettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getportfoliosettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');
+    }
+
+    const url = `${this.apiUrl}getportfoliosettings`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getPortfolioSettings', { leaseAbstractId });
   }
 
   getGridPreferences() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/getgridstates/lease/${this.leaseAbstractId}`, 'getGridStates');
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/getgridstates/lease/${this.leaseAbstractId}`, 'getGridStates');
+    }
+
+    const url = `${this.apiUrl}getgridstates`;
+    const leaseAbstractId = this.leaseAbstractId;
+    return this.callHttpPost(url, 'getGridStates', { leaseAbstractId });
   }
 
-  getWorkflowStatuses() {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingWorkflowStatusInformation/Lease/${this.leaseAbstractId}`, 'getAccountingEvents');
-  }
-
-  saveWorkflowStatus(workflowStatusId: number, comment: string){
-    return this.callHttpPost(`${this.apiUrl}AccountingSummary/saveworkflowstatus`, 'saveWorkflowStatus',
+  updateWorkflowStatus(workflowStatusId: number, comment: string){
+    return this.callHttpPost(`${this.apiUrl}AccountingSummary/updateworkflowstatus`, 'updateworkflowstatus',
     JSON.stringify({ leaseAbstractID: this.leaseAbstractId, workflowStatusID: workflowStatusId, comment: comment }));
   }
 
   saveGridPreferences(classificationId: number, gridName: string, columnJson) {
-    return this.callHttpPost(`${this.apiUrl}AccountingSummary/savegridstates`, 'saveGridStates',
-      JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
+    if (environment.isRestful) {
+      return this.callHttpPost(`${this.apiUrl}AccountingSummary/updategridstates`, 'updategridstates',
+        JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
+    }
+
+    const url = `${this.apiUrl}updategridstates`;
+    return this.callHttpPost(url, 'updategridstates', { request: { leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson } });
   }
 
   getAmortizationDetails(leaseRecognitionScheduleID: number) {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`, 'getAmortizationDetails');
+    if (environment.isRestful) {
+        return this.callHttpGet(`${this.apiUrl}AmortizationPeriods/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`, 'getAmortizationDetails');
+    }
+
+    const url = `${this.apiUrl}GetAmortizationPeriods`;
+    return this.callHttpPost(url, 'getAmortizationDetails', { leaseRecognitionScheduleID });
   }
 
   getId(componentName: string, uniqueName: string, elementType: string, componentType?: string) {
