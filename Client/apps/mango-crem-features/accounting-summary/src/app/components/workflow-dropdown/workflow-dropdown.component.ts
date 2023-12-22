@@ -1,6 +1,8 @@
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'mango-workflow-dropdown',
@@ -28,25 +30,35 @@ export class WorkflowDropdownComponent {
   private originalOptionsList: any[]
   private commentDialogCanceled = false;
   private savedEventData: any;
+  private modifiedById: any;
+  private userId: any;
   commentText = '';
   @ViewChild('commentTextArea') commentTextArea: ElementRef;
 
 
-  constructor(public accountingSummaryService: AccountingSummaryService) { }
+  constructor(protected facade: MangoAppFacade, public accountingSummaryService: AccountingSummaryService) { 
+    if (this.facade) {
+      this.subscription.add(this.facade.contactRecord$.pipe(filter(contactRecord => !!contactRecord)).subscribe(contactRecord =>
+        {
+          this.userId = contactRecord.contactID;
+        }));
+    }
+  }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.rightsInfo.currentValue !== undefined){
+    if(!!changes.rightsInfo && changes.rightsInfo.currentValue !== undefined){
       this.isWorkflowDropdownVisible = this.rightsInfo.userHasEditLeaseRights;
     }
 
-    if(changes.workflowStatusInfo.currentValue !== undefined){
+    if(!!changes.workflowStatusInfo && changes.workflowStatusInfo.currentValue !== undefined){
       //make sure these are set before calling generateDataSourceArray
       this.inputStatusText = this.workflowStatusInfo.workflowStatus;
       this.dropdownStatusValue = this.workflowStatusInfo.workflowStatusID;
+      this.modifiedById = this.workflowStatusInfo.modifiedBy;
       this.workflowSettings = this.workflowStatusInfo.settings;
       this.isCommentsEnabled= this.workflowStatusInfo.settings.isCommentsEnabled;
       this.isCommentsRequired= this.workflowStatusInfo.settings.isCommentsRequired;
@@ -133,13 +145,14 @@ export class WorkflowDropdownComponent {
       if(!opt.allUsersHaveRights && !opt.userHasEditRights){
         itemDisabled = true;
         itemDisabledReason = "You do not have rights to this status.";
-      } else if(!this.workflowSettings.isApproveOwnChangesEnabled && opt.isApprovedStatus){
-        itemDisabled = true;
-        itemDisabledReason = "You cannot approve your own changes.";
       } else if(this.workflowSettings.isIncrementOneLevelEnforced && nextStatusOrderNumberAfterSelectedStatus !== null && 
                 opt.statusOrder > nextStatusOrderNumberAfterSelectedStatus){
         itemDisabled = true;
         itemDisabledReason = "You can only increment on status at a time.";
+      } else if(!this.workflowSettings.isApproveOwnChangesEnabled && opt.isApprovedStatus
+                && this.modifiedById === this.userId){
+        itemDisabled = true;
+        itemDisabledReason = "You cannot approve your own changes.";
       }
 
       const dataElement = {
