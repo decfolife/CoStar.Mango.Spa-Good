@@ -163,27 +163,10 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.isTooltipVisible = false;
   }
 
-  executeWorkflowStatusRefresh(refreshWorkflow: boolean)
+  updateLastModifiedInfo(lastModifiedInfo: any)
   {
-    if(refreshWorkflow){
-      this.getWorkflowInfo();
-    }
-  }
-
-  getWorkflowInfo() {
-    this.subscription.add(this.accountingSummaryService.getWorkflowStatusInformation().subscribe(response => {
-      if (response === null) {
-        this.accountingSummaryService.displayContactSystemAdminMessage();
-      }
-      else if (response.success) {
-        this.workflowStatusInfo = response.data; 
-        this.modifiedByName = this.workflowStatusInfo.modifiedByName;
-        this.modifiedDate = this.workflowStatusInfo.modifiedDate;
-      }
-      else if (!response.success) {
-        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
-      }
-    }));
+    this.modifiedByName = lastModifiedInfo.modifiedByName;
+    this.modifiedDate = lastModifiedInfo.modifiedDate;
   }
 
   private setRightsAndLeaseInfo(){

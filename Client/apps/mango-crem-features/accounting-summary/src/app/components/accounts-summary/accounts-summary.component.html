@@ -69,7 +69,7 @@
       </div>
 
       <div class="workflow-dropdown-div">
-        <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo" (refreshWorkflowStatusInfo)="executeWorkflowStatusRefresh($event)"></mango-workflow-dropdown>
+        <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo" (refreshLastModifiedInfo)="updateLastModifiedInfo($event)"></mango-workflow-dropdown>
         <div *ngIf="modifiedDate || modifiedByName"
           class="work-flow-change-info"
           [id]="accountingSummaryService.getId(componentName,'ChangeBy','tooltip')"

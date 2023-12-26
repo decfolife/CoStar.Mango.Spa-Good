@@ -1,8 +1,8 @@
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subscription, of } from 'rxjs';
+import { concatMap, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'mango-workflow-dropdown',
@@ -12,7 +12,7 @@ import { filter } from 'rxjs/operators';
 export class WorkflowDropdownComponent {
   @Input() rightsInfo: any;
   @Input() workflowStatusInfo: any;
-  @Output() refreshWorkflowStatusInfo: EventEmitter<boolean> = new EventEmitter();
+  @Output() refreshLastModifiedInfo: EventEmitter<any> = new EventEmitter();
 
   componentName = 'workflow-component';
   isWorkflowDropdownVisible = false;
@@ -28,7 +28,7 @@ export class WorkflowDropdownComponent {
   private subscription = new Subscription();
   private workflowSettings: any;
   private originalOptionsList: any[]
-  private commentDialogCanceled = false;
+  private stopOnValueChangedExecution = false;
   private savedEventData: any;
   private modifiedById: any;
   private userId: any;
@@ -74,8 +74,8 @@ export class WorkflowDropdownComponent {
   onValueChanged(event: any) {
     //This is to stop the loop that is created when we switch the value of the dropdown back
     //to the original value.
-    if(this.commentDialogCanceled){
-      this.commentDialogCanceled = false
+    if(this.stopOnValueChangedExecution){
+      this.stopOnValueChangedExecution = false
       return;
     }
 
@@ -116,17 +116,47 @@ export class WorkflowDropdownComponent {
   }
 
   saveWorkflowStatus(workflowStatusId: number, comment: string) { 
-    this.subscription.add(this.accountingSummaryService.updateWorkflowStatus(workflowStatusId, comment).subscribe(response => {
-      if (response === null) {
-        this.accountingSummaryService.displayContactSystemAdminMessage();
-      }
-      else if (response.success) {
-        this.accountingSummaryService.successNotify("Workflow status saved successfully.");
-        this.refreshWorkflowStatusInfo.emit(true);
-      } else {
-        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+    this.subscription.add(this.accountingSummaryService.updateWorkflowStatus(workflowStatusId, comment).pipe(
+      concatMap((response: any) => {
+        if (response === null) {
+          this.accountingSummaryService.displayContactSystemAdminMessage();
+          return of(false);
+        }
+        else if (response.success) {
+          this.accountingSummaryService.successNotify("Workflow status saved successfully.");
+          return of(true);
+        } else {
+          this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+          return of(false);
+        }
+      }),
+      concatMap((saveSuccessful: boolean) => {
+        if (saveSuccessful) {
+          this.dropdownDataSource = this.generateDataSourceArray();
+          return this.accountingSummaryService.getWorkflowStatusHistory();
+        }
+        else {
+          this.setDropdownToPreviousValue();
+          return of("saveError");
+        }
+      })
+    ).subscribe((historyResponse: any) => {
+      if(historyResponse !== "saveError"){
+        if (historyResponse === null) {
+          this.accountingSummaryService.displayContactSystemAdminMessage();
+        }
+        else if (historyResponse.success) {
+          this.refreshLastModifiedInfo.emit(historyResponse.data[0]);
+        } else {
+          this.accountingSummaryService.errorNotify(historyResponse.clientErrorMessage);
+        }
       }
     }));
+  }
+
+  private setDropdownToPreviousValue() {
+    this.stopOnValueChangedExecution = true;
+    this.savedEventData.component.option("value", this.savedEventData.previousValue);
   }
 
   private generateDataSourceArray() : any[] {
@@ -172,7 +202,6 @@ export class WorkflowDropdownComponent {
   cancelChanges() {
     this.commentsVisible = false;  
     this.commentText = '';
-    this.commentDialogCanceled = true;
-    this.savedEventData.component.option("value", this.savedEventData.previousValue);
+    this.setDropdownToPreviousValue();
   }
 }

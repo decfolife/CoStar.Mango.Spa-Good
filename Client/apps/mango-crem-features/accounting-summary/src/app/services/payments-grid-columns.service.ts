@@ -42,7 +42,7 @@ export class PaymentsGridColumnsService {
         dataField: 'recurringAmount',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
-        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.recurringAmount, rowData.baseCurrencyDecimalPrecision) + ' ' + rowData.baseCurrency
+        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.recurringAmount, rowData.chargeCurrencyDecimalPrecision) + ' ' + rowData.chargeCurrency
       },
       {
         caption: 'Target Amount In Period',
@@ -50,7 +50,7 @@ export class PaymentsGridColumnsService {
         dataField: 'targetAmountInPeriod',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
-        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.targetAmountInPeriod, rowData.targetCurrencyDecimalPrecision) + ' ' + rowData.targetCurrency
+        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.targetAmountInPeriod, rowData.scheduleCurrencyDecimalPrecision) + ' ' + rowData.scheduleCurrency
       }
     );
 
