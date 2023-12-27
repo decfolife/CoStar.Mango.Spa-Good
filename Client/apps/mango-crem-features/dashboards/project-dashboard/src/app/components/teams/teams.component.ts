@@ -110,7 +110,9 @@ export class TeamsComponent implements OnInit {
           this.selectedTeamIds = [];
           this.selectedTeams = [];
         }
-        return res.success ? this.getTeamsData() : of(this.toastr.info("The teams(s) could not be deleted. Please review and try again.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }))
+        return res.success ? 
+          (this.toastr.info("Selected Team(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
+          : of(this.toastr.info("The teams(s) could not be deleted. Please review and try again.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }))
       })
     ).subscribe();
   }
@@ -129,7 +131,10 @@ export class TeamsComponent implements OnInit {
       this.dialogService.confirm('Remove Members', `Do you want to remove the Selected Members from their teams ?`, 'Confirm', 'Cancel').pipe(
         filter(confirmed => !!confirmed),
         switchMap(_ => this.dashboardService.deleteTeamMembers(this.selectedMemberIds)),
-        switchMap(res => !!res.success ? this.getTeamsData() : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'OK'))
+        switchMap(res => !!res.success ? 
+          (this.toastr.info("Selected Members(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
+          : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'OK')
+        )
       ).subscribe();
     }
   }

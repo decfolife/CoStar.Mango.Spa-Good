@@ -6,6 +6,7 @@ import CheckBox from 'devextreme/ui/check_box';
 import { filter, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'team-members',
@@ -35,6 +36,7 @@ export class TeamMembersComponent implements OnInit {
 	@Output() subGridEditClicked: EventEmitter<any> = new EventEmitter();
 
 	constructor(private dashboardService: DashboardService,
+							public toastr: ToastrService,
 							private dialogService: MangoDialogService) {}	
 
 	ngOnInit() {}
@@ -101,7 +103,8 @@ export class TeamMembersComponent implements OnInit {
 						this.memberIds = [];
 						this.getLatestTeamsDataEvent.emit();
 					}
-					return res.success ? of() : this.dialogService.alert('Removal unsuccessful!', 'Team Member could not be deleted. Please review and try again later.', 'OK');
+					return res.success ? of(this.toastr.info("Selected Member(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) 
+					: this.dialogService.alert('Removal unsuccessful!', 'Team Member could not be deleted. Please review and try again later.', 'OK');
 				})
 			).subscribe();
 		}	
