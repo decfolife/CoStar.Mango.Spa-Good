@@ -1,5 +1,6 @@
 import { combineLatest, forkJoin, of, Subscription } from 'rxjs';
 import notify from 'devextreme/ui/notify';
+import { Router } from '@angular/router';
 import { DxFormComponent } from 'devextreme-angular';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
@@ -11,6 +12,7 @@ import { filter, map, switchMap, tap} from 'rxjs/operators'
 const RENDER_SELECT_TEMPLATE_ID = 57;
 const RENDER_SELECT_HIERARCHY_ID = 10
 const RENDER_SELECT_SUBGROUP_ID = 9;
+const OTID= 3;
 
 
 @Component({
@@ -44,6 +46,7 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<AddBuildingModalComponent>,
     private formWizardService: FormWizardService,
     private dashboardService: DashboardService,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: {
       objectTypeName: string;
       objectTypeId: number;
@@ -242,6 +245,49 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
       }));
     }
   }
-  //button functions end
 
+  public launch(data: any) {
+    const isFormValid = this.addBuildingForm.instance.validate();
+  
+    if (isFormValid) {
+      const formData = this.getBuildingFromFormData();
+      this.loading = true;
+  
+      this.formWizardService.addBuilding(formData).pipe(
+        switchMap((addBuildingResult) => {
+          if (addBuildingResult.success) {
+            const buidlingID: number = addBuildingResult.data;
+  
+            return forkJoin({
+              redirectorLinkResult: this.formWizardService.getRedirectorLink(OTID, formData.objectTypeTypeID),
+              buidlingID: of(buidlingID),
+            });
+          } else {
+            return of(null);
+          }
+        }),
+        switchMap((results) => {
+          if (results && results.redirectorLinkResult.success && results.redirectorLinkResult.data?.length > 0) {
+            const RDID = '';
+            const url =
+              results.redirectorLinkResult.data[0].BasePageUrl +
+              '&pgMode=' +
+              'Edit' +
+              '&OID=' +
+              results.buidlingID +
+              '&OTID=' +
+              OTID +
+              '&OTTID=' +
+              formData.objectTypeTypeID;
+              this.router.navigate([url]);
+            this.showMessage();
+            this.dialogRef.close(data);
+          }
+          return of(null);
+        })
+      ).subscribe(() => {
+        this.loading = false;
+      });
+    }
+  }
 }
