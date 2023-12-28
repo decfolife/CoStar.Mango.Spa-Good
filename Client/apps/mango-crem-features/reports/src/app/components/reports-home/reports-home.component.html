@@ -123,13 +123,13 @@
 						<button aria-label="more menu" class="btn btn-link" (click)="$event.preventDefault()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon aria-label="Actions Menu">more_horiz</mat-icon></button>
 		    			<mat-menu #expenseMoreMenu="matMenu" class="reports-actions">
 							<ul role="menu">
-								<li mat-menu-item (click)="runReport(data)">Run</li>
-								<li mat-menu-item (click)="editReport(data)" *ngIf="data.data.type == 'AdHoc' && (data.data.canEdit || data.data.canDelete)">Edit</li>
-								<li mat-menu-item (click)="shareReport(data)" *ngIf="data.data.type == 'AdHoc' && (data.data.canEdit || data.data.canDelete)">Share</li>
-								<li mat-menu-item (click)="scheduleReport(data)" *ngIf="data.data.type == 'AdHoc' && (data.data.canEdit || data.data.canDelete)">Schedule</li>
-								<li mat-menu-item (click)="assignReportTags(data)" *ngIf="data.data.canEdit || data.data.canDelete">Assign Tags</li>
-								<li mat-menu-item (click)="viewReportHistory(data)" *ngIf="data.data.type == 'AdHoc'">View History</li>
-								<li mat-menu-item (click)="deleteReport(data)" *ngIf="data.data.type == 'AdHoc' && data.data.canDelete">Delete</li>
+								<li mat-menu-item (keydown.space)="runReport(data)" (keydown.enter)="runReport(data)" (click)="runReport(data)">Run</li>
+								<li mat-menu-item (keydown.space)="editReport(data)" (keydown.enter)="editReport(data)" (click)="editReport(data)" *ngIf="data.data.type == 'AdHoc' && (data.data.canEdit || data.data.canDelete)">Edit</li>
+								<li mat-menu-item (keydown.space)="shareReport(data)" (keydown.enter)="shareReport(data)" (click)="shareReport(data)" *ngIf="data.data.type == 'AdHoc' && (data.data.canEdit || data.data.canDelete)">Share</li>
+								<li mat-menu-item (keydown.space)="scheduleReport(data)" (keydown.enter)="scheduleReport(data)" (click)="scheduleReport(data)" *ngIf="data.data.type == 'AdHoc' && (data.data.canEdit || data.data.canDelete)">Schedule</li>
+								<li mat-menu-item (keydown.space)="assignReportTags(data)" (keydown.enter)="assignReportTags(data)" (click)="assignReportTags(data)" *ngIf="data.data.canEdit || data.data.canDelete">Assign Tags</li>
+								<li mat-menu-item (keydown.space)="viewReportHistory(data)" (keydown.enter)="viewReportHistory(data)" (click)="viewReportHistory(data)" *ngIf="data.data.type == 'AdHoc'">View History</li>
+								<li mat-menu-item (keydown.space)="deleteReport(data)" (keydown.enter)="deleteReport(data)" (click)="deleteReport(data)" *ngIf="data.data.type == 'AdHoc' && data.data.canDelete">Delete</li>
 							</ul>
 						</mat-menu>
 					</div>

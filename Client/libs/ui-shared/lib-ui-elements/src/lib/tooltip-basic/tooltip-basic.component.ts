@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'crem-tooltip-basic',
@@ -13,6 +13,7 @@ export class TooltipBasicComponent implements OnInit {
   @Input() externalId: string;
   color = 'gray';
   type = 'text';
+  @ViewChild('helpText') helpText!: ElementRef;
 
   disabled = false;
 
@@ -20,7 +21,7 @@ export class TooltipBasicComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.tooltipId = this.externalId + 'Tooltip';
+    this.tooltipId = this.externalId;
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Tab') {
         // code to hide help text
@@ -31,5 +32,10 @@ export class TooltipBasicComponent implements OnInit {
 
   getHelpText() {
     this.withAnimationOptionsVisible = !this.withAnimationOptionsVisible;
+  }
+
+  // This method insures the screen reader readers the helptext
+  onShownHandler(e) {
+    this.helpText.nativeElement.focus();
   }
 }

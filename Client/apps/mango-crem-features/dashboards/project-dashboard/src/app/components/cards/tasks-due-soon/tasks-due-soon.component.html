@@ -64,10 +64,9 @@
 							class="warning"
 							svgIcon="warning"
 							fill="#CF0201"
-							aria-hidden="false"
-							role="presentation"
+							role="img"
 							aria-label="Task is overdue">
-					</mat-icon>
+						</mat-icon>
 					</div>
 					<div class="not-overdue" *ngIf="!cell.data.isOverdue">
 						{{ cell.value | date: cardsService.dateFormat  }}

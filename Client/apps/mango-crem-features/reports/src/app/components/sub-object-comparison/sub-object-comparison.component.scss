@@ -72,3 +72,19 @@ button.mat-focus-indicator.mat-menu-trigger.mat-stroked-button.mat-button-base.m
     display: none;
   }
 }
+
+:host::ng-deep {
+  .dx-show-clear-button .dx-icon-clear {
+    color: #666666;
+  }
+
+  dx-data-grid {
+    tr.dx-header-row {
+      td {
+        &:focus {
+          outline-offset: -2px;
+        }
+      }
+    }
+  }
+}
