@@ -217,19 +217,19 @@ export class TeamsComponent implements OnInit {
   gridOnCellPrepared(e) {
     if(e.column.command == 'select') {
       if( !this.userModuleAddRights ) {
-        this.disableCheckBoxes(e);
+        this.hideCheckBoxes(e);
       }
       else if(e.rowType !== 'header' && (!e.data.canDelete)) {
-        this.disableCheckBoxes(e);
+        this.hideCheckBoxes(e);
       }
     }
   }
 
-  disableCheckBoxes(e) {
+  hideCheckBoxes(e) {
     let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
     var editor = dxCheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));
     if(editor) {
-      editor.option("disabled", true);
+      editor.option("visible", false);
     }
     htmlCellElement.style.pointerEvents = 'none';
   }

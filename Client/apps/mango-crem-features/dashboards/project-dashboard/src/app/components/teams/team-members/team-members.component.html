@@ -60,7 +60,7 @@
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
 						<button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" 
-							[disabled]="!userModuleAddRights || rights.toLowerCase().trim() == 'view'"
+							[hidden]="!userModuleAddRights || rights.toLowerCase().trim() == 'view'"
 							*ngIf="!member.data.editMode" id="{{'memberActionButton' + member.rowIndex}}"
 							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu">
 							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>

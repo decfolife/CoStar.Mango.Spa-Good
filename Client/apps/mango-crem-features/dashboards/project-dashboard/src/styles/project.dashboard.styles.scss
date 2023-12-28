@@ -714,7 +714,20 @@ body {
 		vertical-align: middle !important;
 		border-left: none;
 		padding: 3px 7px;
+		min-height: 47.33px;
+		height: 47.33px;
 	}	
+
+  tr.dx-row {
+    &.dx-data-row, &.dx-group-row {
+      td {
+        padding: 3px 7px;
+        border-bottom: 1px solid lightgray;
+      }
+      border-bottom: 1px solid lightgray;
+      line-height: 12px
+    }
+  }
 	
 	.dx-row.dx-data-row {
 		line-height: 12px !important;  //decreases the height of the data row on the grid

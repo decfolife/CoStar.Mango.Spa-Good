@@ -162,7 +162,7 @@ export class TeamMembersComponent implements OnInit {
 			let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
 			var editor = CheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));  
 			if(editor) {
-				editor.option("disabled", true);
+				e.rowType == 'header' ? editor.option("disabled", true) : editor.option("visible", false);
 			}  
 			htmlCellElement.style.pointerEvents = 'none'; 
 		} 

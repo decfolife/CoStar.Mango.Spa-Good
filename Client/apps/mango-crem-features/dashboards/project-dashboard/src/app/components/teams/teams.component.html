@@ -88,7 +88,7 @@
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let team of 'actionsMenuTemplate'" class="actionsMenuTemplate" id="{{'teamActionButton' + team.rowIndex}}">
 						<button aria-label="actions menu" class="btn btn-link teamActionsButton" 
-							[disabled]="!userModuleAddRights || team.data.securityLevel.toLowerCase().trim() == 'view'"
+							[hidden]="!userModuleAddRights || team.data.securityLevel.toLowerCase().trim() == 'view'"
 							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu">
 							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
 						</button>
