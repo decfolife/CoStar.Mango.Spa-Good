@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -110,7 +111,7 @@ type VBBool = boolean | string;
   templateUrl: './list-page.component.html',
   styleUrls: ['./list-page.component.scss']
 })
-export class ListPageComponent implements OnInit {
+export class ListPageComponent implements OnInit, OnDestroy {
   @Input() objectTypeId = 4;
   @Input() overrideInputSettings = true;
   @Input() userId: number;
@@ -272,6 +273,9 @@ export class ListPageComponent implements OnInit {
   private isViewChanged = false;
   private isInitialLoad = true;
 
+  navigationButtonsObserver: MutationObserver;
+  pagingButtonsObserver: MutationObserver;
+
   @Input()
   set isSuperUser(value: VBBool) {
     this._isSuperUser = this.asBool(value);
@@ -422,6 +426,11 @@ export class ListPageComponent implements OnInit {
     window.onbeforeunload = () => {
       this.saveStateToSession();
     }
+  }
+
+  ngOnDestroy() {
+    this.navigationButtonsObserver.disconnect();
+    this.pagingButtonsObserver.disconnect();
   }
 
   ngOnInit(): void {
@@ -2454,7 +2463,7 @@ export class ListPageComponent implements OnInit {
         button.setAttribute('aria-label', SelectedPagingButton);
       }
 
-      const observer = new MutationObserver(mutations => {
+      this.pagingButtonsObserver = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (!button.classList.contains('dx-selection')) {
             const currentAriaLabel = button.getAttribute('aria-label');
@@ -2465,7 +2474,28 @@ export class ListPageComponent implements OnInit {
           }
         });
       });
-      observer.observe(button, { attributeFilter: ['class'] });
+      this.pagingButtonsObserver.observe(button, { attributeFilter: ['class'] });
+    });
+    
+    //dx-navigate-button remove tabindex tabbing to disabled button
+    const navigationButtons = e.element.querySelectorAll(".dx-navigate-button");
+    navigationButtons.forEach(button => {
+
+      if (button.classList.contains('dx-button-disable')) {
+        button.setAttribute('tabindex', -1);
+      }
+
+      this.navigationButtonsObserver = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (button.classList.contains('dx-button-disable')) {
+            button.setAttribute('tabindex', -1);
+          } else {
+            button.setAttribute('tabindex', 0);
+          }
+        });
+      });
+
+      this.navigationButtonsObserver.observe(button, { attributeFilter: ['class'] });
     });
   }
 

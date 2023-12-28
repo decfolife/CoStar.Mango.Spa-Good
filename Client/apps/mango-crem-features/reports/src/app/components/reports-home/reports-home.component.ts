@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ReportsService } from '../../services/reports.service';
 import { ReportsList } from '../../models';
 import { DxDataGridComponent } from "devextreme-angular";
@@ -21,7 +21,7 @@ declare var launchAssignTags;
   templateUrl: './reports-home.component.html',
   styleUrls: ['./reports-home.component.scss']
 })
-export class ReportsHomeComponent implements OnInit {
+export class ReportsHomeComponent implements OnInit, OnDestroy {
 
   @ViewChild("ReportsDataGrid") reportsDataGrid: DxDataGridComponent;
   @ViewChild('SearchBox') searchBox: SearchComponent;
@@ -48,11 +48,19 @@ export class ReportsHomeComponent implements OnInit {
     CICriteria: true,
     CICriteria2: true,
   }
+  
+  navigationButtonsObserver: MutationObserver;
+  pagingButtonsObserver: MutationObserver;
 
   constructor(
 		private reportsService: ReportsService,
     private dialog: MatDialog
 	) { }
+
+  ngOnDestroy() {
+    this.navigationButtonsObserver.disconnect();
+    this.pagingButtonsObserver.disconnect();
+  }
 
   ngOnInit(): void {
 
@@ -481,7 +489,7 @@ onKeydownMakeUnFavorite(event: KeyboardEvent, data: any) {
         button.setAttribute('aria-label', SelectedPagingButton);
       }
 
-      const observer = new MutationObserver(mutations => {
+      this.pagingButtonsObserver = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (!button.classList.contains('dx-selection')) {
             const currentAriaLabel = button.getAttribute('aria-label');
@@ -492,7 +500,29 @@ onKeydownMakeUnFavorite(event: KeyboardEvent, data: any) {
           }
         });
       });
-      observer.observe(button, { attributeFilter: ['class'] });
+      this.pagingButtonsObserver.observe(button, { attributeFilter: ['class'] });
+    });
+
+    
+    //dx-navigate-button remove tabindex tabbing to disabled button
+    const navigationButtons = e.element.querySelectorAll(".dx-navigate-button");
+    navigationButtons.forEach(button => {
+
+      if (button.classList.contains('dx-button-disable')) {
+        button.setAttribute('tabindex', -1);
+      }
+
+      this.navigationButtonsObserver = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (button.classList.contains('dx-button-disable')) {
+            button.setAttribute('tabindex', -1);
+          } else {
+            button.setAttribute('tabindex', 0);
+          }
+        });
+      });
+
+      this.navigationButtonsObserver.observe(button, { attributeFilter: ['class'] });
     });
   }
 
