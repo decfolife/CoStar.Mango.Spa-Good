@@ -621,6 +621,10 @@ body {
 		box-shadow: 0 0 0 0.1rem colors.$blueShade;
 	}
 
+	.searchTeams-input .mat-form-field-suffix {
+		top: .09em;
+	}
+	
 	.teams-grid {	
 		tr.dx-edit-row td, tr.dx-edit-row:hover td {
 			background-color: colors.$costarMediumBlue !important;
