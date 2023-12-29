@@ -284,7 +284,7 @@ export class TeamsComponent implements OnInit {
     };
 
     let masterRows = [];
-    this.teams.forEach((value, index) => {
+    this.teamsGrid.instance.getDataSource().items().forEach((value, index) => {
       masterRows.push({ rowIndex: index, data: value });
     });
 
