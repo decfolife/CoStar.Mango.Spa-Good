@@ -15,7 +15,7 @@
       [id]="card.id + 'chart'"
       [dataSource]="card.chartData.dataSource"
       *ngIf="displayChart"
-      [attr.aria-label]="card.title"
+      [attr.aria-label]="card.title + ' - This card provides a bar graph representation of ' + cardTitleOnly + ' by ' + cardTitleOnly + ' Type. Hovering over each bar will show the count of that ' + cardTitleOnly + ' Type.'"
       role="figure"
       tabindex="0"
     >

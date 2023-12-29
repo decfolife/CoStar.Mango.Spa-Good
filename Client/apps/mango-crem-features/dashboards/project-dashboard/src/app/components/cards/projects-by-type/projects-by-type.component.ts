@@ -21,12 +21,15 @@ export class ProjectsByTypeComponent implements OnInit, OnDestroy {
   cardContent: TemplateRef<any>;
   displayChart: boolean = false;
 
+  cardTitleOnly: String;
+
   subs: Subscription[] = []
   constructor(
     private cardsService: CardsService,
   ) { }
 
   ngOnInit(): void {
+    this.cardTitleOnly = this.card.title.replace(' by Type', '');
     this.subs.push(this.cardsService.filterString$.subscribe(data => {
       this.selectedFilters = data;
       this.getCardData();
