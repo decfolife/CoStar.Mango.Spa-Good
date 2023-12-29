@@ -72,7 +72,7 @@
 							</ul>
 						</mat-menu>
 						<div *ngIf="member.data.editMode" class="teamMemberEditButtons">
-							<crem-button type="secondary" (click)="cancelChanges(member); $event.preventDefault()" class="cancelBtn" >
+							<crem-button type="secondary" (click)="cancelChanges(member.data); $event.preventDefault()" class="cancelBtn" >
 								<span id="cancelChanges">Cancel</span>
 							</crem-button>
 							<crem-button type="primary" (click)="saveMemberChanges($event, member.data); $event.preventDefault()" class="saveBtn">
@@ -85,7 +85,7 @@
 			<div *dxTemplate="let member of 'toggleTemplate'" >
 				<div class="emailToggle">
 					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode" 
-						(change)="emailtoggle($event)" aria-label="Email Notication" class="emailTgle-slider"
+						(change)="emailtoggle($event, member.data)" aria-label="Email Notication" class="emailTgle-slider"
 					>
 					</mat-slide-toggle>
 				</div>		

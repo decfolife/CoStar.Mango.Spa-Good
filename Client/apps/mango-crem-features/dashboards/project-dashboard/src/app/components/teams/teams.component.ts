@@ -238,7 +238,7 @@ export class TeamsComponent implements OnInit {
     const deselectRowKeys: number[] = [];
     const dataGrid = e.component;
     e.selectedRowsData.forEach(row => {
-      if(row.securityLevel.toLocaleLowerCase().trim() == "view") {
+      if(!row.canDelete) {
         deselectRowKeys.push(row.teamId);
       }
     });

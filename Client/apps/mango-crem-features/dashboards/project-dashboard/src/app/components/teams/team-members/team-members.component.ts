@@ -30,6 +30,7 @@ export class TeamMembersComponent implements OnInit {
 	memberIds: number[];
 	memberUpdate: TeamMemUpdate;
 	emailNotify: boolean;
+	memberId : number;
 	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
 
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
@@ -51,6 +52,7 @@ export class TeamMembersComponent implements OnInit {
 
 	editRow(memberData: any) {
 		this.emailNotify = memberData.data.emailOn;
+		this.memberId = memberData.data.memberId;
 		this.teamMembersGrid.instance.cancelEditData();
 		this.resetEditMode();
 		this.teamMembersGrid.instance.editRow(memberData.rowIndex);
@@ -59,7 +61,6 @@ export class TeamMembersComponent implements OnInit {
 
 	saveMemberChanges(e:any, member: TeamMember) {
 
-		member.emailOn = this.emailNotify;
 		this.memberUpdate = {
 			teamId: member.teamId,
 			contactId: member.contactId,
@@ -138,18 +139,24 @@ export class TeamMembersComponent implements OnInit {
 		newData.level = value;
   }
 
-	emailtoggle(e) {
-		this.emailNotify = e.checked;
+	emailtoggle(e, member) {
+		member.emailOn = e.checked;
+		this.teamMembers.map(teamMember => teamMember.emailOn = (teamMember.memberId == member.memberId? e.checked: teamMember.emailOn));
 	}
 	
-	cancelChanges(row) {
-		row.data.editMode = false;
+	cancelChanges(member) {
+		member.editMode = false;
 		this.teamMembersGrid.instance.cancelEditData();
-		this.resetEditMode();
+		this.resetEditMode(true);
 	}
 
-	resetEditMode() {
-		this.teamMembers.forEach(teamMember => { teamMember.editMode = false});
+	resetEditMode(isCancel?: boolean) {
+		this.teamMembers.forEach(teamMember => { 
+			teamMember.editMode = false;
+			if(isCancel && teamMember.memberId == this.memberId) {
+				teamMember.emailOn = this.emailNotify;
+			} 
+		});
 	}
 
 	onKeyDown(e){
