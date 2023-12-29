@@ -13,7 +13,7 @@ crem-card {
         padding: 0px !important;
         @include costar(border-bottom, gray04);
         @include costar(color, gray01);
-        @include costar(background, light, $important: true);
+        @include costar(background-color, light, $important: true);
         justify-content: space-between !important;
         align-items: center;
         font-size: 18px;
@@ -55,7 +55,7 @@ crem-card {
  .cardHeader {
     @include costar(border-bottom, gray04);
     @include costar(color, gray01);
-    @include costar(background, light, $important: true);
+    @include costar(background-color, light, $important: true);
     padding: 4px 16px !important;
     justify-content: space-between !important;
     align-items: center;
@@ -133,8 +133,6 @@ crem-card {
     .card-drag-handle {
       cursor: move;
       position: absolute;
-      top: 15px;
-      right: 24px;
       z-index: 10;
 
       svg.drag_handle {

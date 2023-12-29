@@ -1,7 +1,10 @@
-crem-loader {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-wrap: wrap;
-  height: calc(100vh - 50px);
+:ng-deep {
+  .card-containers {
+    .categories-item {
+      .card-drag-handle {
+        top: 16px;
+        right: 16px;
+      }
+    }
+  }
 }

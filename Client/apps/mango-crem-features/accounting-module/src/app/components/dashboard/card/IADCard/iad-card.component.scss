@@ -10,8 +10,8 @@
 .card-drag-handle {
     cursor: move;
     position: absolute;
-    top: 15px;
-    right: 24px;
+    top: 16px !important; // todo: Only this card's drag handle is misaligned compared to the other dashboards.
+    right: 16px !important;
     z-index: 10;
 
     svg.drag_handle {

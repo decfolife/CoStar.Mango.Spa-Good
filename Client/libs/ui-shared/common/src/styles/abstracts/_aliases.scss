@@ -9,7 +9,7 @@
   @if $alias == 'header' {
     @include costar-alias-header($type);
   }
-  @if $alias == 'button' {
+  @else if $alias == 'button' {
     @include costar-alias-button($type);
   }
   @else {
@@ -138,7 +138,7 @@
     }
   }
   // Secondary
-  @if $type == 'secondary' {
+  @else if $type == 'secondary' {
     @include costar(background-color, light);
     @include costar(color, dark);
     @include costar(border, gray04);
@@ -155,7 +155,7 @@
       }
     }
   }
-  @if $type == 'warning' {
+  @else if $type == 'warning' {
     @include costar(background-color, warning);
     @include costar(color, light);
     @include costar(border, warning);
@@ -173,7 +173,7 @@
       }
     }
   }
-  @if $type == 'danger' {
+  @else if $type == 'danger' {
     @include costar(background-color, danger);
     @include costar(color, light);
     @include costar(border, danger);
@@ -211,7 +211,7 @@
       }
     }
   }
-  @if $type == 'button' {
+  @else if $type == 'button' {
     @each $scenario in ( 'primary', 'secondary', 'warning', 'danger' ){
       .btn-#{$scenario}{
         @include costar-alias($type, $scenario);
@@ -219,7 +219,7 @@
     }
   }
   // Background
-  @if $type == 'background' {
+  @else if $type == 'background' {
     @each $scenario in map-keys($color-base) {
       .bg-#{$scenario}{
         @include costar(background-color, $scenario, $important: true);
@@ -230,7 +230,7 @@
     }
   }
   // Color
-  @if $type == 'color' {
+  @else if $type == 'color' {
     @each $scenario in map-keys($color-base) {
       .color-#{$scenario}{
         @include costar(color, $scenario, $important: true);
@@ -238,14 +238,14 @@
     }
   }
   // Sizing
-  @if $type == 'height' {
+  @else if $type == 'height' {
     @each $scenario in (25, 50, 75, 100, auto) {
       .h-#{$scenario}{
         height: if(type-of($scenario) == number, #{$scenario}+'%', $scenario) !important;
       }
     }
   }
-  @if $type == 'width' {
+  @else if $type == 'width' {
     @each $scenario in (25, 50, 75, 100, auto) {
       .w-#{$scenario}{
         width: if(type-of($scenario) == number, #{$scenario}+'%', $scenario) !important;
@@ -253,14 +253,14 @@
     }
   }
   // Display & Visibility
-  @if $type == 'display' {
+  @else if $type == 'display' {
     @each $scenario in ( block, none, inline, inline-block, flex, inline-flex, grid, inline-grid, flow-root) {
       .d-#{$scenario}{
         display: $scenario !important;
       }
     }
   }
-  @if $type == 'visibility' {
+  @else if $type == 'visibility' {
     @each $scenario in ( visible, hidden, collapse ) {
       .visibility-#{$scenario}{
         visibility: $scenario !important;
@@ -268,7 +268,7 @@
     }
   }
   // Overflow
-  @if $type == 'overflow' {
+  @else if $type == 'overflow' {
     @each $scenario in ( auto, hidden, visible, scroll, unset) {
       .overflow-#{$scenario}{
         overflow: $scenario !important;
@@ -286,7 +286,7 @@
     }
   }
   // Spacing
-  @if $type == 'margin' {
+  @else if $type == 'margin' {
     @each $scenario in map-keys($spacing-base) {
       .m-#{$scenario}{
         @include costar(margin, $scenario, $important: true);
@@ -317,7 +317,7 @@
       }
     }
   }
-  @if $type == 'padding' {
+  @else if $type == 'padding' {
     @each $scenario in map-keys($spacing-base) {
       .p-#{$scenario}{
         @include costar(padding, $scenario, $important: true);
@@ -349,35 +349,35 @@
     }
   }
   // POSITION
-  @if $type == 'position' {
+  @else if $type == 'position' {
     @each $scenario in ( static, relative, absolute, fixed, sticky ) {
       .position-#{$scenario}{
         position: $scenario !important;
       }
     }
   }
-  @if $type == 'top' {
+  @else if $type == 'top' {
     @each $scenario in ( 0, 50, 100 ) {
       .top-#{$scenario}{
         top: #{$scenario}+'%' !important;
       }
     }
   }
-  @if $type == 'bottom' {
+  @else if $type == 'bottom' {
     @each $scenario in ( 0, 50, 100 ) {
       .bottom-#{$scenario}{
         bottom: #{$scenario}+'%' !important;
       }
     }
   }
-  @if $type == 'right' {
+  @else if $type == 'right' {
     @each $scenario in ( 0, 50, 100 ) {
       .right-#{$scenario}{
         right: #{$scenario}+'%' !important;
       }
     }
   }
-  @if $type == 'left' {
+  @else if $type == 'left' {
     @each $scenario in ( 0, 50, 100 ) {
       .left-#{$scenario}{
         left: #{$scenario}+'%' !important;
@@ -385,28 +385,28 @@
     }
   }
   // TEXT
-  @if $type == 'font-size' {
+  @else if $type == 'font-size' {
     @each $scenario in map-keys(map-get($font, font-size)) {
       .font-size-#{$scenario}{
         font-size: map-get($font, font-size, $scenario) !important;
       }
     }
   }
-  @if $type == 'font-style' {
+  @else if $type == 'font-style' {
     @each $scenario in ( italic, normal ) {
       .font-style-#{$scenario}{
         font-style:  $scenario !important;
       }
     }
   }
-  @if $type == 'text-align' {
+  @else if $type == 'text-align' {
     @each $scenario in ( left, center, right, justify ) {
       .text-#{$scenario}{
         text-align: $scenario !important;
       }
     }
   }
-  @if $type == 'text-wrap' {
+  @else if $type == 'text-wrap' {
     @each $scenario in ( wrap, nowrap ) {
       .text-#{$scenario}{
         white-space: $scenario !important;
@@ -414,7 +414,7 @@
     }
   }
   // BORDER
-  @if $type == 'border-radius' {
+  @else if $type == 'border-radius' {
     @each $scenario in map-keys(map-get($border, border-radius)){
       // All Corners
       .border-#{$scenario}{
@@ -444,7 +444,7 @@
       }
     }
   }
-  @if $type == 'border-color'{
+  @else if $type == 'border-color'{
     @each $scenario in map-keys(map-get($border, border)){
       .border-color-#{$scenario}{
         @include costar(border-color, $scenario, $important: true);
@@ -452,7 +452,7 @@
     }
   }
   // CURSOR
-  @if $type == 'cursor' {
+  @else if $type == 'cursor' {
     @each $scenario in ( help, wait, grab, grabbing, text, progress, zoom-in, zoom-out, pointer, default ) {
       .cursor-#{$scenario}{
         cursor: $scenario !important;

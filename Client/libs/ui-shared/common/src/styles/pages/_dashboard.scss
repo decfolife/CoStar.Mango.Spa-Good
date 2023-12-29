@@ -1,1 +1,33 @@
 @use "../abstracts/variables" as *;
+
+.card-containers {
+  @include costar(padding, 2, $important: true);
+  min-width: 100%;
+  width: 100%;
+	display: inline-flex;
+	flex-wrap: wrap;
+  box-sizing: border-box;
+
+  // Remove all the spacings for the cards/items
+  .categories-item {
+    width: 100%;
+    @include costar(padding, 2, $important: true);
+    margin: 0 !important;
+    .card-drag-handle {
+      top: 24px;
+      right: 20px;
+    }
+    .col-md-12,
+    .col-md-6 {
+      padding-right: 0 !important;
+      padding-left: 0 !important;
+    }
+    &.cdk-visually-hidden {
+      padding: 0px !important;
+    }
+    // &:not(:first-child):not(:last-child) {
+    //   padding-bottom: 0px !important; // Don't apply padding to elements in between
+    // }
+  }
+
+}

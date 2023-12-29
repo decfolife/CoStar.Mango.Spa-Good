@@ -37,14 +37,6 @@ filters {
   border-radius: 2px !important;
 }
 
-.card-containers {
-  min-width: 100%;
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 0px 8px;
-}
 cards div.cdk-drop-list.dropcards {
   flex-direction: column !important;
   box-sizing: border-box;
