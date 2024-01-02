@@ -12,7 +12,8 @@ import { concatMap, filter } from 'rxjs/operators';
 export class WorkflowDropdownComponent {
   @Input() rightsInfo: any;
   @Input() workflowStatusInfo: any;
-  @Output() refreshLastModifiedInfo: EventEmitter<any> = new EventEmitter();
+  @Input() modifiedById: number;
+  @Output() workflowStatusSavedEvent: EventEmitter<boolean> = new EventEmitter();
 
   componentName = 'workflow-component';
   isWorkflowDropdownVisible = false;
@@ -30,7 +31,6 @@ export class WorkflowDropdownComponent {
   private originalOptionsList: any[]
   private stopOnValueChangedExecution = false;
   private savedEventData: any;
-  private modifiedById: any;
   private userId: any;
   commentText = '';
   @ViewChild('commentTextArea') commentTextArea: ElementRef;
@@ -54,11 +54,15 @@ export class WorkflowDropdownComponent {
       this.isWorkflowDropdownVisible = this.rightsInfo.userHasEditLeaseRights;
     }
 
+    if(!!changes.modifiedById && changes.modifiedById.currentValue !== undefined && 
+       this.originalOptionsList !== undefined && changes.modifiedById.previousValue !== changes.modifiedById.currentValue){
+      this.dropdownDataSource = this.generateDataSourceArray();
+    }
+
     if(!!changes.workflowStatusInfo && changes.workflowStatusInfo.currentValue !== undefined){
       //make sure these are set before calling generateDataSourceArray
       this.inputStatusText = this.workflowStatusInfo.workflowStatus;
       this.dropdownStatusValue = this.workflowStatusInfo.workflowStatusID;
-      this.modifiedById = this.workflowStatusInfo.modifiedBy;
       this.workflowSettings = this.workflowStatusInfo.settings;
       this.isCommentsEnabled= this.workflowStatusInfo.settings.isCommentsEnabled;
       this.isCommentsRequired= this.workflowStatusInfo.settings.isCommentsRequired;
@@ -129,29 +133,18 @@ export class WorkflowDropdownComponent {
           this.accountingSummaryService.errorNotify(response.clientErrorMessage);
           return of(false);
         }
-      }),
-      concatMap((saveSuccessful: boolean) => {
+      })
+    ).subscribe(
+      (saveSuccessful: boolean) => {
         if (saveSuccessful) {
           this.dropdownDataSource = this.generateDataSourceArray();
-          return this.accountingSummaryService.getWorkflowStatusHistory();
         }
         else {
           this.setDropdownToPreviousValue();
-          return of("saveError");
         }
-      })
-    ).subscribe((historyResponse: any) => {
-      if(historyResponse !== "saveError"){
-        if (historyResponse === null) {
-          this.accountingSummaryService.displayContactSystemAdminMessage();
-        }
-        else if (historyResponse.success) {
-          this.refreshLastModifiedInfo.emit(historyResponse.data[0]);
-        } else {
-          this.accountingSummaryService.errorNotify(historyResponse.clientErrorMessage);
-        }
-      }
-    }));
+
+        this.workflowStatusSavedEvent.emit(saveSuccessful);
+      }));
   }
 
   private setDropdownToPreviousValue() {

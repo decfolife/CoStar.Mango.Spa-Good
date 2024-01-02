@@ -51,7 +51,7 @@
         <crem-button 
           [id]="accountingSummaryService.getId(componentName,'add','button')"
           type="primary"
-          (click)="AddEvent($event)"
+          (click)="addEvent($event)"
           [disabled]="isAddButtonDisabled"
           (mouseenter)="onMouseEnter()"
           (mouseleave)="onMouseLeave()"
@@ -68,21 +68,25 @@
         </dx-tooltip>
       </div>
 
+      <div class="workflow-history-popup-div">
+        <mango-workflow-history-popup [userInfo]="userInfo" [workflowStatusHistory]="workflowStatusHistory"></mango-workflow-history-popup>
+      </div>
+
       <div class="workflow-dropdown-div">
-        <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo" (refreshLastModifiedInfo)="updateLastModifiedInfo($event)"></mango-workflow-dropdown>
+        <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo" [modifiedById]="modifiedByID" (workflowStatusSavedEvent)="onWorkflowStatusSaved($event)"></mango-workflow-dropdown>
         <div *ngIf="modifiedDate || modifiedByName"
           class="work-flow-change-info"
           [id]="accountingSummaryService.getId(componentName,'ChangeBy','tooltip')"
           (mouseenter)="onChangeByTooltipMouseOver()"
           (mouseleave)="onChangeByTooltipMouseLeave()">
-          Changed By {{ modifiedByName | slice: 0:10 }}...
-          {{ modifiedDate | date: this.userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
+          Changed by {{ modifiedByName | slice: 0:10 }}...
+          {{ modifiedDate | date: userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
       
           <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
             target="#accounts-summary-ChangeBy-tooltip"
             [visible]="isChangeByTooltipVisible">
             <div *dxTemplate="let data of 'content'">
-              Changed by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
+              Changed by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
             </div>
           </dx-tooltip>   
         

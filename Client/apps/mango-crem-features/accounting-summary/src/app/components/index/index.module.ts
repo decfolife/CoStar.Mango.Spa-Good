@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule,DatePipe } from '@angular/common';
 
 import { NgModule } from '@angular/core';
 
@@ -22,6 +22,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { WorkflowDropdownComponent } from '../workflow-dropdown/workflow-dropdown.component';
+import { WorkflowHistoryPopupComponent } from '../workflow-history-popup/workflow-history-popup.component';
+import { TimelineModule } from 'primeng/timeline';
+
 @NgModule({
   declarations: [
     IndexComponent,
@@ -32,7 +35,8 @@ import { WorkflowDropdownComponent } from '../workflow-dropdown/workflow-dropdow
     PaymentsDetailSectionComponent,
     TransactionPopupComponent,
     WorkflowDropdownComponent,
-    AmortizationDetailSectionComponent
+    AmortizationDetailSectionComponent,
+    WorkflowHistoryPopupComponent
   ],
 
   imports: [
@@ -52,10 +56,11 @@ import { WorkflowDropdownComponent } from '../workflow-dropdown/workflow-dropdow
     MatMenuModule,
     DxPopupModule,
     DxScrollViewModule,
-    FormsModule
+    FormsModule,
+    TimelineModule
     ],
 
-  providers: [AccountingSummaryService, FormattingService],
+  providers: [AccountingSummaryService, FormattingService, DatePipe],
 
 })
 export class IndexModule { }

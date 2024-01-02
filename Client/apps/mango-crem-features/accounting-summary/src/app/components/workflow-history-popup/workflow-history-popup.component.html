@@ -1,0 +1,72 @@
+<div (click)="showHistoryPopup($event)">
+    <crem-icon icon="brand-info-border" library="local"></crem-icon>
+</div>
+
+<dx-popup 
+[id]="accountingSummaryService.getId(componentName,'data','popup')"
+[(visible)]="workflowHistoryPopVisible"
+[height]="500"
+[width]="900"
+[showCloseButton]="false"
+[resizeEnabled]="!isFullscreen"
+[dragEnabled]="!isFullscreen"
+[fullScreen]="isFullscreen"
+titleTemplate="title-item"
+[wrapperAttr]="{ class: 'accounting-summary-style-container workflow-history-popup-container' }"
+(onContentReady)="determineScrollViewHeight($event)"
+> 
+    <div *dxTemplate="let data of 'title-item'">
+        <div  class="popup-title-div">
+            <div class="popup-title-text-div">
+                Workflow Change History
+            </div>
+            <div class="popup-title-icon-div">
+                <crem-icon *ngIf="!isFullscreen" class="fa-lg" icon="faExpand" (click)="isFullscreen = true"></crem-icon>
+                <crem-icon *ngIf="isFullscreen" class="fa-lg" icon="faCompress" (click)="isFullscreen = false"></crem-icon>
+                <i class="dx-icon dx-icon-close" (click)="hideHistoryPopup($event)"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <dx-scroll-view
+    [id]="mainScrollViewId"
+    height="100%"
+    width="100%"
+    >
+        <p-timeline [value]="historyEvents" align="left">
+            <ng-template pTemplate="content" let-event>
+                <div class="first-row-div">
+                    <span class="status-pill">{{ event.workflowStatus }}</span>
+                </div>
+                <div class="second-row-div">Description:
+                    <dx-scroll-view
+                    *ngIf="event.description !== null && event.description !== ''"
+                    height="85px"
+                    width="95%"
+                    showScrollbar="always"
+                    >
+                        {{ event.description }}
+                    </dx-scroll-view>
+                </div>
+                <div class="third-row-div">Comments:
+                    <dx-scroll-view
+                    *ngIf="event.comment !== null && event.comment !== ''"
+                    height="85px"
+                    width="95%"
+                    showScrollbar="always"
+                    >
+                        {{ event.comment }}
+                    </dx-scroll-view>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="opposite" let-event>
+                {{ event.modifiedDate | date: dateFormat }}
+                <div class="workflow-history-username">
+                    {{ event.modifiedByName }}
+                </div>
+
+            </ng-template>
+        </p-timeline>
+    </dx-scroll-view>        
+</dx-popup> 

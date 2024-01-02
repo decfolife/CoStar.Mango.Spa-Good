@@ -1,3 +1,6 @@
+@import "primeng/resources/themes/saga-blue/theme.css";
+@import "primeng/resources/primeng.css";
+
 //**** All styles should go inside of accounting-summary-style-container to prevent styles from   ****//
 //**** bleeding into other components  ****//
 
@@ -115,6 +118,35 @@
 
          &.dx-overlay-wrapper.dx-popup-wrapper > .dx-overlay-content.dx-popup-normal > .dx-popup-content {
             padding: unset !important;
+        }
+    }
+    
+    &.workflow-history-popup-container {
+        .p-timeline-event-opposite {
+            text-align: left;
+            flex: unset;
+            width: 225px;
+        }
+
+        .dx-overlay-content.dx-popup-fullscreen>.dx-popup-content {
+            padding: 16px !important;
+        }
+
+        #workflow-history-component-main-scrollview>.dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content {
+            margin-top: 5px;
+        }
+
+        .second-row-div .dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content,
+        .third-row-div .dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content {
+            padding-right: 20px;
+        }
+
+        .dx-template-wrapper.dx-popup-title {
+            padding-right: 6px;
+        }
+
+        .popup-title-icon-div crem-icon > span {
+            vertical-align: unset;
         }
     }
 

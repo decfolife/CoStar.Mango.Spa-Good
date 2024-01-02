@@ -1,0 +1,73 @@
+crem-icon{
+    cursor: pointer;
+}
+
+.first-row-div {
+  margin: 0px 5px 5px 0px;
+}
+
+.second-row-div,.third-row-div {
+  margin-left: 10px;
+  margin-bottom: 15px;
+}  
+
+.second-row-div>dx-scroll-view,.third-row-div>dx-scroll-view {
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 6px;
+  margin-right: 10px;
+}
+
+.status-pill {
+  background-color: #0559B3;
+  border-radius: 20px;
+  padding: 2px 12px 5px 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.workflow-history-username {
+  font-weight: bold;
+}
+
+.popup-title-div {
+  display: flex;
+  height: 38px;
+
+  .popup-title-text-div {
+    flex: 1;
+    font-size: 20px;
+    padding: 6px 0px;
+  }
+
+  .popup-title-icon-div {
+    crem-icon.fa-lg {
+      display: inline-block;
+      height: 32px;
+      vertical-align: 0px;
+
+      &:hover {
+        background-color: #F5F5F5;
+      }
+
+      &:active {
+        background-color: #ccc;
+      }
+    }
+
+    .dx-icon.dx-icon-close {
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 15px;
+      height: 32px;
+
+      &:hover {
+        background-color: #F5F5F5;
+      }
+
+      &:active {
+        background-color: #ccc;
+      }
+    }
+  }
+}

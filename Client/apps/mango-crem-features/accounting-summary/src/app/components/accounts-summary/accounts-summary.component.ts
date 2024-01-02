@@ -27,6 +27,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   rightsInfo: any;
   userInfo: UserInfoResponse;
   workflowStatusInfo: any
+  workflowStatusHistory: any
   noUserAddRights = false;
   disableBtnReason = "Accounting Event cannot be added when user or lease information is not loaded.";
   isTooltipVisible = false;
@@ -36,7 +37,8 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   masterScheduleID: number;
   leaseRecognitionScheduleID: number;
   classificationID: number;
-  modifiedByName: any;
+  modifiedByID: number;
+  modifiedByName: string;
   modifiedDate: any;
 
   constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }
@@ -45,31 +47,11 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.getUserInfo();
     this.getEventsDropDownData();
     this.setRightsAndLeaseInfo();
+    this.getWorkflowHistoryInfo();
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-  }
-
-  getEventsDropDownData() {
-    this.subscription.add(this.accountingSummaryService.getAccountingEvents().subscribe(response => {
-      if (response === null) {
-        this.accountingSummaryService.displayContactSystemAdminMessage();
-      }
-      else if (response.success && response.data.length != 0) {
-        this.originalgridDataSource = response.data;
-        this.gridDataSource = response.data.filter(eventItem => eventItem.isPublished);
-        this.pagingEnabled = this.gridDataSource.length > 5;
-        this.gridBoxValue = [this.gridDataSource[0].masterScheduleID];
-        this.masterScheduleID = this.gridDataSource[0].masterScheduleID;
-        this.leaseRecognitionScheduleID = this.gridDataSource[0].leaseRecognitionScheduleID;
-        this.classificationID = this.gridDataSource[0].classificationID;
-        this.isAccountingEventEmpty = false;
-      }
-      else if (!response.success) {
-        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
-      }
-    }));
   }
 
   returnLeaseAbstractId(): number {
@@ -128,7 +110,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.leaseRecognitionScheduleID = selecetedEvent.leaseRecognitionScheduleID;
   }
 
-  AddEvent(event) {
+  addEvent(event) {
     const queryString = window.location.search;
     if (queryString !== "") {
       const queryParamObj = {};
@@ -163,10 +145,48 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.isTooltipVisible = false;
   }
 
-  updateLastModifiedInfo(lastModifiedInfo: any)
+  onWorkflowStatusSaved(workflowStatusSaved: boolean)
   {
-    this.modifiedByName = lastModifiedInfo.modifiedByName;
-    this.modifiedDate = lastModifiedInfo.modifiedDate;
+    this.getWorkflowHistoryInfo();
+  }
+
+  private getWorkflowHistoryInfo() {
+    this.subscription.add(this.accountingSummaryService.getWorkflowStatusHistory().subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success) {
+        this.workflowStatusHistory = response.data;
+        this.modifiedByID = this.workflowStatusHistory[0].modifiedBy;
+        this.modifiedByName = this.workflowStatusHistory[0].modifiedByName;
+        this.modifiedDate = this.workflowStatusHistory[0].modifiedDate;
+      }
+      else if (!response.success) {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
+
+  }
+
+  private getEventsDropDownData() {
+    this.subscription.add(this.accountingSummaryService.getAccountingEvents().subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success && response.data.length != 0) {
+        this.originalgridDataSource = response.data;
+        this.gridDataSource = response.data.filter(eventItem => eventItem.isPublished);
+        this.pagingEnabled = this.gridDataSource.length > 5;
+        this.gridBoxValue = [this.gridDataSource[0].masterScheduleID];
+        this.masterScheduleID = this.gridDataSource[0].masterScheduleID;
+        this.leaseRecognitionScheduleID = this.gridDataSource[0].leaseRecognitionScheduleID;
+        this.classificationID = this.gridDataSource[0].classificationID;
+        this.isAccountingEventEmpty = false;
+      }
+      else if (!response.success) {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
   }
 
   private setRightsAndLeaseInfo(){
