@@ -33,6 +33,13 @@ export class EventsGridColumnsService {
         allowHiding: false, allowReordering: false, allowResizing: false, allowSorting: false
       },
       {
+        caption: 'Published', 
+        dataField: 'isPublished',
+        headerCellTemplate: 'amortizationHeader', 
+        cellTemplate: 'pointer',
+        visible: false
+      },
+      {
         caption: 'Measure Event', name: 'MeasureEvent', dataField: 'measureEvent',
         headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
       },
@@ -55,7 +62,8 @@ export class EventsGridColumnsService {
       {
         caption: 'Term (Years)', dataField: 'term',
         alignment: 'right',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+        calculateCellValue: rowData => (Math.round(rowData.term * 10000) / 10000).toFixed(2)
       }
     );
 
@@ -114,7 +122,7 @@ export class EventsGridColumnsService {
       capitalColumns = [
         {
           caption: 'Discount Rate',
-          dataField: 'discountRate',
+          dataField: 'discountRateDisplay',
           headerCellTemplate: 'amortizationHeader',
           cellTemplate: 'pointer'
         },
@@ -137,7 +145,7 @@ export class EventsGridColumnsService {
       typeColumns = [// Type A/B and IFRS16
         {
           caption: 'Discount Rate',
-          dataField: 'discountRate',
+          dataField: 'discountRateDisplay',
           headerCellTemplate: 'amortizationHeader',
           cellTemplate: 'pointer'
         },

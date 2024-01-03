@@ -130,6 +130,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     element.currencyDisplay = this.currencyDisplay(element);
     element.isIncome = element.isIncome ? 'Income' : 'Expense';
     element.isImpaired = element.isImpaired ? 'Yes' : 'No';
+    element.isPublished = element.isPublished ? 'Yes' : 'No';
     element.isReportingException = element.isReportingException ? 'Yes' : 'No';
   }
 
@@ -216,11 +217,11 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   currencyDisplay(gridDataRow) {
     return gridDataRow.functionalCurrency == gridDataRow.localCurrency ?
     gridDataRow.localCurrency : gridDataRow.localCurrency + " | " +
-    gridDataRow.functionalCurrency + ": " + Math.round(gridDataRow.functionalCurrencyRate * 10000) / 10000 ;
+    gridDataRow.functionalCurrency + ": " + (Math.round(gridDataRow.functionalCurrencyRate * 10000) / 10000).toFixed(4);
   }
 
   discountRateDisplay(gridDataRow) {
-    return (!gridDataRow.discountRate ? "0.0000" : Math.round(gridDataRow.discountRate * 10000) / 10000) + "% " + (gridDataRow.annualRateTypeID == 1 ? "APR" : "APY");
+    return (!gridDataRow.discountRate ? "0.0000" : (Math.round(gridDataRow.discountRate * 10000) / 10000).toFixed(4)) + "% " + (gridDataRow.annualRateTypeID == 1 ? "APR" : "APY");
   }
 
   onCellClick(e) {

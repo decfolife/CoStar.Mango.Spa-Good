@@ -51,6 +51,65 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         calculateCellValue: rowData => this.formattingService.localFormat(+rowData.targetAmountInPeriod, rowData.scheduleCurrencyDecimalPrecision) + ' ' + rowData.scheduleCurrency
+      },
+      {
+        caption: 'Is Direct Cost',
+        name: 'IsDirectCost', 
+        dataField: 'isDirectCost',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        calculateCellValue: rowData => rowData.isDirectCost ? 'Yes' : 'No'
+      },
+      {
+        caption: '# of Payments',
+        name: 'NumberOfPayments', 
+        dataField: 'numberOfPayments',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+      },
+      {
+        caption: 'Is Prorated',
+        name: 'IsProrated', 
+        dataField: 'isProrated',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        calculateCellValue: rowData => rowData.isProrated ? 'Yes' : 'No'
+      },
+      {
+        caption: 'Reasonably Certain',
+        name: 'ReasonablyCertain', 
+        dataField: 'isReasonablyCertain',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        calculateCellValue: rowData => rowData.isReasonablyCertain ? 'Yes' : 'No'
+      },
+      {
+        caption: 'Recognition Category (GAAP)',
+        name: 'RecognitionCategoryGAAP', 
+        dataField: 'recognitionCategoryGAAP',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false
+      },
+      {
+        caption: 'Recognition Category (IFRS)',
+        name: 'RecognitionCategoryIFRS', 
+        dataField: 'recognitionCategoryIFRS',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false
+      },
+      {
+        caption: 'Payment Notes',
+        name: 'PaymentNotes', 
+        dataField: 'glEventNotes',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false
       }
     );
 

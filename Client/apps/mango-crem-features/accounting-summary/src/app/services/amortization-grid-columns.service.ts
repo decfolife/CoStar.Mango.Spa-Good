@@ -162,7 +162,7 @@ export class AmortizationGridColumnsService {
             headerCellTemplate: 'amortizationHeader'
           },
           {
-            caption: 'Schedule Index',
+            caption: 'Event Index',
             name: 'ScheduleIndex',
             dataField: 'scheduleIndex',
             usesLocalFormat: 'false',
