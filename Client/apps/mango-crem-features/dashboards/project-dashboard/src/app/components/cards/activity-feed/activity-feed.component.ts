@@ -96,33 +96,28 @@ export class ActivityFeedComponent implements OnInit, OnDestroy {
   };
 
   adaAttr(e) {
-    if (!e || !e.element) return; // Ensure that e.element exists
-
-    const buttons = e.element.querySelectorAll(".dx-selection");
+    if (!e || !e.element) return;
+    let buttons;
+    if (e.element[0])
+      buttons = e.element[0].querySelectorAll(".dx-selection");
+    else 
+      buttons = e.element.querySelectorAll(".dx-selection");
+    
     buttons.forEach(button => {
-      // Ensure button exists, has an aria-label and a class list
       if (!button || !button.hasAttribute('aria-label') || !button.classList) return;
-
-      let SelectedPagingButton = button.getAttribute('aria-label');
-      if (!SelectedPagingButton.endsWith(' Selected')) {
-        SelectedPagingButton += ' Selected';
-        button.setAttribute('aria-label', SelectedPagingButton);
-      }
-
+        button.setAttribute('aria-current', 'page');
+    
       const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (!button.classList.contains('dx-selection')) {
-            const currentAriaLabel = button.getAttribute('aria-label');
-            if (currentAriaLabel && currentAriaLabel.endsWith(' Selected')) {
-              const newAriaLabel = currentAriaLabel.slice(0, -9); // Remove ' Selected' from the end of the string
-              button.setAttribute('aria-label', newAriaLabel);
-            }
+            button.removeAttribute('aria-current');
           }
         });
       });
       observer.observe(button, { attributeFilter: ['class'] });
     });
   }
+  
   adaAttrNoDataGrid(e:any) {
     let noDataEl = e.element.querySelector(".dx-empty");
     let spanChild = null;

@@ -2446,7 +2446,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
   
   adaAttr(e: any) {
-    if (!e || !e.element) return; // Ensure that e.element exists
+    if (!e || !e.element) return;
     let buttons;
     if (e.element[0])
       buttons = e.element[0].querySelectorAll(".dx-selection");
@@ -2454,23 +2454,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
       buttons = e.element.querySelectorAll(".dx-selection");
     
     buttons.forEach(button => {
-      // Ensure button exists, has an aria-label and a class list
       if (!button || !button.hasAttribute('aria-label') || !button.classList) return;
-
-      let SelectedPagingButton = button.getAttribute('aria-label');
-      if (!SelectedPagingButton.endsWith(' Selected')) {
-        SelectedPagingButton += ' Selected';
-        button.setAttribute('aria-label', SelectedPagingButton);
-      }
-
-      this.pagingButtonsObserver = new MutationObserver(mutations => {
+        button.setAttribute('aria-current', 'page');
+    
+        this.pagingButtonsObserver = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (!button.classList.contains('dx-selection')) {
-            const currentAriaLabel = button.getAttribute('aria-label');
-            if (currentAriaLabel && currentAriaLabel.endsWith(' Selected')) {
-              const newAriaLabel = currentAriaLabel.slice(0, -9); // Remove ' Selected' from the end of the string
-              button.setAttribute('aria-label', newAriaLabel);
-            }
+            button.removeAttribute('aria-current');
           }
         });
       });
