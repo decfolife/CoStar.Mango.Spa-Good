@@ -5,6 +5,8 @@
   mat-stroked-button
   [matMenuTriggerFor]="listMenu"
   #listMenuTrigger="matMenuTrigger"
+  [ariaHasPopUp]="true"
+  [ariaExpanded]="listMenuTrigger.menuOpen"
 >
   More <fa-icon [icon]="faCaretDown" class="more-menu-caret-icon" title="click to see the available options"></fa-icon>
 </crem-button>

@@ -46,6 +46,8 @@ export class ButtonComponent implements OnChanges {
   @Input() iconPull?: string;
   @Input() iconFill?: string;
   @Input() iconTransform?: string;
+  @Input() ariaHasPopUp?: boolean;
+  @Input() ariaExpanded?: boolean;
 
   // Backward compatibility, @deprecated
   @Input() type?: 'primary' | 'secondary' | 'text';

@@ -6,6 +6,8 @@
   [attr.aria-label]="ariaLabel"
   [attr.disabled]="disabled ? true : null"
   (click)="handleClick()"
+  [attr.aria-haspopup]="ariaHasPopUp"
+  [attr.aria-expanded]="ariaExpanded"
 >
 
   <ng-container *ngIf="icon">
