@@ -242,7 +242,11 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
           userHasEditLeaseRights: userNavPageWithLeaseRightsResponse.data.leaseSecurityType >= 4 && userNavPageWithLeaseRightsResponse.data.leaseSecurityType !== 6,
           wfStatusUserHasEditRights: workflowStatusOptionsResponse.data.options.filter(wfso => wfso.workflowStatusId === workflowStatusOptionsResponse.data.workflowStatusID)[0].allowScheduleEdit,
           userHasLeftNavEditRights: userNavPageRightResponse.data >= 4 && userNavPageRightResponse.data !== 6, 
-          userCanDeleteSchedule: userNavPageWithLeaseRightsResponse.data.canDeleteSchedule
+          userCanDeleteSchedule: userNavPageWithLeaseRightsResponse.data.canDeleteSchedule,
+          canApproveJE: userNavPageWithLeaseRightsResponse.data.canApproveJE,
+          canUnapproveJE: userNavPageWithLeaseRightsResponse.data.canUnapproveJE,
+          canUnexportJE: userNavPageWithLeaseRightsResponse.data.canUnexportJE,
+          allowJEApproval: workflowStatusOptionsResponse.data.options[0].allowJEApproval
         }
 
         this.getDisabledBtnReason();

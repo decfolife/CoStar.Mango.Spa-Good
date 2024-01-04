@@ -7,7 +7,7 @@ import { TitleComponent } from '@accounting-summary/components/title/title.compo
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { ButtonModule, DropdownModule, IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
-import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule, DxSelectBoxModule} from 'devextreme-angular';
+import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule, DxSelectBoxModule, DxTemplateModule, DxTabPanelModule} from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
 import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
 import { IndexComponent } from './index.component';
@@ -16,6 +16,7 @@ import { EventsDetailSectionComponent } from '../events-detail-section/events-de
 import { AmortizationDetailSectionComponent } from '../amortization-detail-section/amortization-detail-section.component';
 import { PaymentsDetailSectionComponent } from '@accounting-summary/components/payments-detail-section/payments-detail-section.component';
 import { TransactionPopupComponent } from '../payments-detail-section/transaction-popup/transaction-popup.component';
+import { JeProcessingInfoComponent } from '../amortization-detail-section/je-processing-info/je-processing-info.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,6 +37,7 @@ import { TimelineModule } from 'primeng/timeline';
     TransactionPopupComponent,
     WorkflowDropdownComponent,
     AmortizationDetailSectionComponent,
+    JeProcessingInfoComponent,
     WorkflowHistoryPopupComponent
   ],
 
@@ -57,6 +59,8 @@ import { TimelineModule } from 'primeng/timeline';
     DxPopupModule,
     DxScrollViewModule,
     FormsModule,
+    DxTabPanelModule,
+    DxTemplateModule,
     TimelineModule
     ],
 

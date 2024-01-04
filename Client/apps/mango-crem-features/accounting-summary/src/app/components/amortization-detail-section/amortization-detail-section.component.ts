@@ -20,6 +20,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   @Input()
   classificationID: number;
   @Input() userInfo: UserInfoResponse;
+  @Input() rightsInfo: any;
   componentName = "amortization-grid"
   isGridStateChanged = false;
   amortizationdetailsGridData;
@@ -39,11 +40,22 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   isActionColumnClicked = false;
   selectedRowValue = 0;
   popupVisible = false;
+  jeProcessingInfoPopupVisible = false;
+  jeProcessingPopupData: any;
+  tabs = [{ "title": "Journal Entry", "template":"jeProcessingData" },
+          { "title": "Payment Detail", "template":"paymentDetailData" }
+          // ,{ "title": "Retrospective Adjustment", "template":"retrospectiveAdjustmentData" }
+        ];
+
   private subscription = new Subscription();
 
   constructor(public accountingSummaryService: AccountingSummaryService, private columnService: AmortizationGridColumnsService, private formatService: FormattingService) {
     this.summaryFields = this.getSummaryFields();
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
+  }
+
+  onJeProcessingInfoPopupHidden() {
+    this.jeProcessingInfoPopupVisible = false;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -257,8 +269,9 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       return columns;
     }
 
-  showPopup(event: any) {
-    this.popupVisible = true;
+  jeProcessingPopup(event: any) {
+    this.getJeProcessingPopupData(event.data.leaseRecognitionPeriodID);
+    this.jeProcessingInfoPopupVisible = true;
   }
 
   onPopupHidden() {
@@ -318,5 +331,32 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     });
 
     return { totalItems };
+  }
+
+  private getJeProcessingPopupData(leaseRecognitionPeriodID: number) {
+    const jeProcessingDetails = this.accountingSummaryService.getJeProcessingPopupData(leaseRecognitionPeriodID);
+  
+    this.subscription.add(jeProcessingDetails.subscribe(
+      (res) => {
+        const jeProcessingDetailsResponse = res;
+  
+        if (jeProcessingDetailsResponse === null) {
+          this.accountingSummaryService.displayContactSystemAdminMessage();
+        } else if (!jeProcessingDetailsResponse.success) {
+          this.accountingSummaryService.errorNotify(jeProcessingDetailsResponse.clientErrorMessage);
+        } else {
+          this.jeProcessingPopupData = jeProcessingDetailsResponse.data;
+          this.isEuroDateFormat = this.userInfo.useDateEU;
+          if (this.isEuroDateFormat) {
+            this.dateFormat = 'dd.MM.yyyy';
+          }
+        }
+      },
+    ));
+  }
+
+  onJeDataSaved() {
+    this.getJeProcessingPopupData(this.jeProcessingPopupData.leaseRecognitionPeriodID);
+    this.amortizationGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
   }
 }

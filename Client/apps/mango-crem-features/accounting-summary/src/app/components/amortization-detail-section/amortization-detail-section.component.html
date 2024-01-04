@@ -25,7 +25,7 @@
             noDataText="No Data"
             width='100%'
             (onOptionChanged)="onGridOptionChanged($event)"
-            (onRowClick)="showPopup($event)">
+            (onRowClick)="jeProcessingPopup($event)">
 
             <dxo-header-filter
                 [visible]="false"
@@ -92,18 +92,44 @@
                     </div>
                 </dxi-item>
             </dxo-toolbar>
-
         </dx-data-grid>
-
     </mat-expansion-panel>
 
-    <dx-popup [visible]="popupVisible"
-        (onHidden)="onPopupHidden()"
-        title="Popup Title"
-        [height]="500"
-        [width]="900"
-        [showCloseButton]="true"> 
-        The popup content goes here.
-    </dx-popup> 
+    <dx-popup
+        *ngIf="jeProcessingPopupData"
+        [id]="accountingSummaryService.getId(componentName ,'detail','section')"
+        [(visible)]="jeProcessingInfoPopupVisible"
+        (onHidden)="onJeProcessingInfoPopupHidden()"
+        [closeOnOutsideClick]="true"
+        width="70%"
+        height="70%"
+        [resizeEnabled]="true"
+        [wrapperAttr]="{ class: 'accounting-summary-style-container' }"
+        title="JE Processing Info: {{ jeProcessingPopupData.displayPeriod }}"
+        >    
+
+        <dx-tab-panel
+            [dataSource]="tabs"
+            [selectedIndex]="0"
+            tabsPosition="left">
+
+            <div *dxTemplate="let PeriodPopup of 'jeProcessingData'">
+                <mango-je-processing-info
+                    [jeProcessingPopupData]="jeProcessingPopupData" 
+                    [rightsInfo]="rightsInfo" [userInfo]="userInfo" 
+                    [eventScheduleData]="eventScheduleData"
+                    (jeActionTaken)="onJeDataSaved()"
+                    ></mango-je-processing-info>
+            </div>
+            <div *dxTemplate="let PeriodPopup of 'paymentDetailData'">
+                <!-- Payment Detail tab component -->
+            </div>
+
+            <div *dxTemplate="let PeriodPopup of 'retrospectiveAdjustmentData'">
+                <!-- Retrospective Adjustment tab component -->
+            </div>
+
+        </dx-tab-panel>
+    </dx-popup>
 
 </section>

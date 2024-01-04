@@ -1,7 +1,8 @@
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { Component, Input, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
-import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
+import { DxScrollViewComponent, } from 'devextreme-angular/ui/scroll-view';
+import ScrollView from "devextreme/ui/scroll_view";
 
 @Component({
   selector: 'mango-workflow-history-popup',
@@ -10,7 +11,6 @@ import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 })
 
 export class WorkflowHistoryPopupComponent {
-  @ViewChildren(DxScrollViewComponent) scrollViewComponents: QueryList<DxScrollViewComponent>;
   @Input() userInfo: UserInfoResponse;
   @Input() workflowStatusHistory: any;
 
@@ -21,9 +21,11 @@ export class WorkflowHistoryPopupComponent {
   dateFormat = 'MM/dd/yyyy, h:mm a';
   mainScrollViewId: string;
   currentTemplate = 'noDataTemplate'
+  scrollViewComponents: ScrollView[];
 
   constructor(public accountingSummaryService: AccountingSummaryService) {
-    this.mainScrollViewId = accountingSummaryService.getId(this.componentName,'main','scrollview')
+    this.mainScrollViewId = accountingSummaryService.getId(this.componentName,'main','scrollview');
+    this.scrollViewComponents = [];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -51,12 +53,16 @@ export class WorkflowHistoryPopupComponent {
   }
 
   determineScrollViewHeight(event) {
-    const svComponentsArray = this.scrollViewComponents.toArray().filter(svc => svc.instance.element().id !== this.mainScrollViewId &&
-        svc.instance.scrollHeight() === svc.instance.clientHeight());
-    svComponentsArray.forEach(svc => svc.instance.option("height", "fit-content"))
+    const svComponentsArray = this.scrollViewComponents.filter(svc => svc.element().id !== this.mainScrollViewId &&
+        svc.scrollHeight() === svc.clientHeight());
+    svComponentsArray.forEach(svc => svc.option("height", "fit-content"))
   }
 
   toggleFullscreen(event) {
     this.isFullscreen = !this.isFullscreen;
+  }
+
+  onScrollViewInitialized(event){
+    this.scrollViewComponents.push(event.component);
   }
 }

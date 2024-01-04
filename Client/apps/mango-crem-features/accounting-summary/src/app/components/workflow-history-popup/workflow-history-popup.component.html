@@ -40,7 +40,7 @@ titleTemplate="title-item"
             <p-timeline [value]="historyEvents" align="left">
                 <ng-template pTemplate="content" let-event>
                     <div class="first-row-div">
-                        <span class="status-pill">{{ event.workflowStatus }}</span>
+                        <span class="status-pill border-pill">{{ event.workflowStatus }}</span>
                     </div>
                     <div class="second-row-div">Description:
                         <dx-scroll-view
@@ -48,16 +48,18 @@ titleTemplate="title-item"
                         height="85px"
                         width="95%"
                         showScrollbar="always"
+                        (onInitialized)="onScrollViewInitialized($event)"
                         >
                             {{ event.description }}
                         </dx-scroll-view>
                     </div>
-                    <div class="third-row-div">Comments:
+                    <div class="third-row-div">Comment:
                         <dx-scroll-view
                         *ngIf="event.comment !== null && event.comment !== ''"
                         height="85px"
                         width="95%"
                         showScrollbar="always"
+                        (onInitialized)="onScrollViewInitialized($event)"
                         >
                             {{ event.comment }}
                         </dx-scroll-view>

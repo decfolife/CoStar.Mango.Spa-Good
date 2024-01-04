@@ -25,7 +25,9 @@ export class EventsGridColumnsService {
         allowHiding: false,
         allowReordering: false,
         allowResizing: false,
-        allowSorting: false
+        allowSorting: false,
+        fixed: true,
+        fixedPosition: 'right'
       },
       {
         caption: '#', dataField: 'scheduleIndex',
@@ -33,7 +35,7 @@ export class EventsGridColumnsService {
         allowHiding: false, allowReordering: false, allowResizing: false, allowSorting: false
       },
       {
-        caption: 'Published', 
+        caption: 'Is Published', 
         dataField: 'isPublished',
         headerCellTemplate: 'amortizationHeader', 
         cellTemplate: 'pointer',

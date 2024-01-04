@@ -201,8 +201,37 @@
         margin-top: -10px;
       }
     
-    .work-flow-comment-label{
+    .work-flow-comment-label {
         margin: 0 7.25px;
         padding: 10px 0 5px 0px;
-      }
+    }
+    
+    div.dx-tabs {
+        height: 40px !important;
+        justify-content: left !important;
+    }
+    
+    div.dx-tab-content {
+        border-bottom: 0px solid !important;
+    }
+    
+    .dx-tab-selected {
+        background-color: #2d71aa !important;
+        color: #fff !important;
+    }
+    
+    .dx-tabpanel>.dx-tabpanel-tabs .dx-tab.dx-tab-active .dx-tab-content,
+    .dx-tabpanel>.dx-tabpanel-tabs .dx-tab.dx-tab-selected .dx-tab-content {
+        color: #fff;
+        font-size: 14px;
+    }
+    
+    .dx-tabpanel>.dx-tabpanel-tabs .dx-tabs .dx-tab .dx-tab-content {
+        font-size: 14px;
+    }
+    
+    .dx-datagrid-content .dx-datagrid-table .dx-row>td,
+    .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
+        font-size: 12px !important;
+    }
 }

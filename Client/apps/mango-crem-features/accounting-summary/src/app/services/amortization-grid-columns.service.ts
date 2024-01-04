@@ -1500,6 +1500,7 @@ export class AmortizationGridColumnsService {
         caption: 'Account Name',
         name: 'AccountName',
         dataField: 'accountName',
+        alignment: 'left',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'false',
@@ -1528,7 +1529,7 @@ export class AmortizationGridColumnsService {
         dataField: 'description',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
+        alignment: 'left',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {

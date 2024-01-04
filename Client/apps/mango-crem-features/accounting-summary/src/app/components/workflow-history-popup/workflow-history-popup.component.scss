@@ -1,3 +1,5 @@
+@use "./libs/ui-shared/common/src/styles" as *;
+
 crem-icon{
     cursor: pointer;
 }
@@ -12,22 +14,19 @@ crem-icon{
 }  
 
 .second-row-div>dx-scroll-view,.third-row-div>dx-scroll-view {
-  font-size: 14px;
-  margin-left: 10px;
-  margin-top: 6px;
-  margin-right: 10px;
+  @include costar(font-size, small);
+  @include costar(padding, 2);
 }
 
 .status-pill {
-  background-color: #0559B3;
-  border-radius: 20px;
+  @include costar(background-color, primary-light);
   padding: 2px 12px 5px 12px;
-  font-weight: 600;
-  color: white;
+  @include costar(font-weight, medium);
+  @include costar(color, light);
 }
 
 .workflow-history-username {
-  font-weight: bold;
+  @include costar(font-weight, bold);
 }
 
 .no-data-div {
@@ -35,7 +34,7 @@ crem-icon{
   width: 100%;
 
   &>p {
-    font-size: 20px;
+    @include costar(font-size, h2);
     margin: 0;
     position: absolute;
     top: 50%;
@@ -50,7 +49,7 @@ crem-icon{
 
   .popup-title-text-div {
     flex: 1;
-    font-size: 20px;
+    @include costar(font-size, h2);
     padding: 6px 0px;
   }
 
@@ -61,11 +60,11 @@ crem-icon{
       vertical-align: 0px;
 
       &:hover {
-        background-color: #F5F5F5;
+        @include costar(background-color, gray06);
       }
 
       &:active {
-        background-color: #ccc;
+        @include costar(background-color, gray05);
       }
     }
 
@@ -76,11 +75,11 @@ crem-icon{
       height: 32px;
 
       &:hover {
-        background-color: #F5F5F5;
+        @include costar(background-color, gray06);
       }
 
       &:active {
-        background-color: #ccc;
+        @include costar(background-color, gray05);
       }
     }
   }

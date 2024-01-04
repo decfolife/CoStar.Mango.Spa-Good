@@ -163,6 +163,15 @@ export class AccountingSummaryService extends EndpointService {
     return this.callHttpPost(url, 'getPaymentPopupData', { leaseRecognitonScheduleEventId });
   }
 
+  getJeProcessingPopupData(leaseRecognitionPeriodID: number) {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AmortizationPeriods/getjournalentryprocessing/period/${leaseRecognitionPeriodID}`, 'getJeProcessingPopupData');
+    }
+
+    const url = `${this.apiUrl}getjournalentryprocessing`;
+    return this.callHttpPost(url, 'getJeProcessingPopupData', { leaseRecognitionPeriodID });
+  }
+
   getPortfolioSettings() {
     if (environment.isRestful) {
       return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetPortfolioSettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');
@@ -181,6 +190,11 @@ export class AccountingSummaryService extends EndpointService {
     const url = `${this.apiUrl}GetGridStates`;
     const leaseAbstractId = this.leaseAbstractId;
     return this.callHttpPost(url, 'getGridStates', { leaseAbstractId });
+  }
+
+  journalEntryProcess(periodID: number, actions: string){
+    return this.callHttpPost(`${this.apiUrl}AmortizationPeriods/JournalEntryAction`, 'journalEntryProcess',
+    JSON.stringify({ PeriodId: periodID, Action: actions }));
   }
 
   updateWorkflowStatus(workflowStatusId: number, comment: string){
