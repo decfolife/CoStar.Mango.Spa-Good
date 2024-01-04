@@ -34,6 +34,7 @@ export class HeaderComponent implements OnInit {
   inputSubscription$;
   searchModules: module[];
   ImageUrl$: Observable<string>;
+  private subs: Subscription[] = [];
 
   constructor(
     public dialog: MatDialog,
@@ -53,7 +54,7 @@ export class HeaderComponent implements OnInit {
     )
 
     this.getSearchModules();
-    this.inputSubscription$ = this.myControl.valueChanges
+    this.subs.push(this.myControl.valueChanges
       .pipe(
         //tap((data: string) => console.log("Data tapped: ", data)),  //leaving this comment, it helps for debugging
         debounceTime(250),
@@ -62,7 +63,8 @@ export class HeaderComponent implements OnInit {
       .subscribe(
         (res => this.filteredOptions = res),
         (error => console.log("Error occurred while subscribing to typeahead data: ", error))
-      );
+      )
+    );
   }
 
   getSearchModules() {
@@ -137,6 +139,6 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.inputSubscription$.unsubscribe();
+    this.subs.forEach(s => s.unsubscribe());
   }
 }
