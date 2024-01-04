@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy} from '@angular/core';
-import { Subscription, fromEvent, timer } from 'rxjs';
-import { delay, map, switchMap, tap } from 'rxjs/operators';
+import { Subscription, fromEvent } from 'rxjs';
+import { delay, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'mango-service-account-history',
@@ -12,32 +12,31 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
   subs: Subscription[] = [];
 
   //Fix header filter ADA related issues
-  public onCellPrepared(e) {
+  onCellPrepared(e) {
     if (e.rowType === "header") {
       ['click', 'keydown'].forEach(event => fromEvent(e.cellElement.querySelector(".dx-header-filter"), event).pipe(
-          delay(60), 
-          tap(() => this.FixFilterItems()),
-          switchMap(() => fromEvent(document.querySelector(".dx-texteditor-input"), 'change')),
-          delay(60),
-          tap(() => this.FixFilterItems()),
-          switchMap (() => fromEvent(document.querySelector("span.dx-clear-button-area"), 'click')),
-          delay(60),
-          tap(() => this.FixFilterItems())
-        ).subscribe()
-      );
+        delay(60), 
+        tap(() => this.FixFilterItems()),
+        switchMap(() => fromEvent(document.querySelector(".dx-texteditor-input"), 'change')),
+        delay(60),
+        tap(() => this.FixFilterItems()),
+        switchMap (() => fromEvent(document.querySelector("span.dx-clear-button-area"), 'click')),
+        delay(60),
+        tap(() => this.FixFilterItems())
+      ).subscribe());
     }
   }
 
   //Fix dx-datagrid-borders and table body ADA related issues
-  public onContentReady(e) {
-      const gridBorder = e.element.querySelector(".dx-datagrid-borders");
-      if (gridBorder !== null) {
-        ['role', 'aria-label', 'aria-rowcount', 'aria-colcount'].forEach(attribute => gridBorder.removeAttribute(attribute));
+  onContentReady(e) {
+    const gridBorder = e.element.querySelector(".dx-datagrid-borders");
+    if (gridBorder !== null) {
+      ['role', 'aria-label', 'aria-rowcount', 'aria-colcount'].forEach(attribute => gridBorder.removeAttribute(attribute));
 
-        for (var element of gridBorder.getElementsByTagName("tbody")) {
-          element.setAttribute("role", "grid");
-        };
-      }
+      for (var element of gridBorder.getElementsByTagName("tbody")) {
+        element.setAttribute("role", "grid");
+      };
+    }
   };
 
   ngOnDestroy(): void {
@@ -47,7 +46,7 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
   //Filter items can be treeview or listbox, both have dx-scrollable-content.  
   //  1.Listbox: has dx-scrollview with rols as "listbox";  dx-scrollable-content has no role. 
   //  2.Treeview:  does not have dx-scrollview. dx-scrollable-content has role as "tree".
-  private FixFilterItems(){
+  private FixFilterItems() {
     const scrollableContent = document.querySelector(".dx-scrollable-content");
     if (scrollableContent) {
       const scrollviewContent = document.querySelector(".dx-scrollview-content");
@@ -65,53 +64,35 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
     } 
   }
  
-  private FixDxListItems(){
-    const selectAllFilterItem = document.querySelector(".dx-list-select-all");
-    if (selectAllFilterItem !== null)
-      selectAllFilterItem.setAttribute('role', 'option');
+  private FixDxListItems() {
+    document.querySelector(".dx-list-select-all")?.setAttribute('role', 'option');
+    document.querySelector(".dx-list-select-all-checkbox")?.setAttribute('aria-label', 'Select all filter items');
 
-    const selectAllCheckbox = document.querySelector(".dx-list-select-all-checkbox");
-    if (selectAllFilterItem !== null)
-      selectAllCheckbox.setAttribute('aria-label', 'Select all filter items');
-
-    const filterItems = document.querySelectorAll(".dx-item.dx-list-item");
-    if (filterItems) {
-      filterItems.forEach((filterItem) => {
-        const ariaLabel = filterItem.querySelector("div.dx-item-content.dx-list-item-content").innerHTML;
-        const checkbox = filterItem.querySelector("div.dx-widget.dx-checkbox.dx-list-select-checkbox");
-        if (checkbox !== null)
-          checkbox.setAttribute('aria-label', ariaLabel);
-      });
-    } 
+    document.querySelectorAll(".dx-item.dx-list-item")?.forEach((filterItem) => {
+      const ariaLabel = filterItem.querySelector("div.dx-item-content.dx-list-item-content").innerHTML;
+      const checkbox = filterItem.querySelector("div.dx-widget.dx-checkbox.dx-list-select-checkbox");
+      if (checkbox !== null)
+        checkbox.setAttribute('aria-label', ariaLabel);
+    });
   }
 
-  private FixDxTreeViewItems(){
+  private FixDxTreeViewItems() {
     const el = document.querySelector('.dx-treeview-select-all-item');
-    if (el !== null) {
-      el.removeAttribute("aria-readonly");
-      el.setAttribute('role', 'treeitem');
-      el.setAttribute('aria-label', 'Select All');
-    }
+    el?.removeAttribute("aria-readonly");
+    el?.setAttribute('role', 'treeitem');
+    el?.setAttribute('aria-label', 'Select All');
 
     //Set aria label for each treeview item
-    const treeviewItems = document.querySelectorAll(".dx-treeview-item-with-checkbox");
-    if (treeviewItems) {
-      treeviewItems.forEach((treeviewItem) => {
-        const ariaLabel = treeviewItem.querySelector("div.dx-item-content.dx-treeview-item-content").innerHTML;
-        const checkbox = treeviewItem.querySelector("div.dx-widget.dx-checkbox");
-        if (checkbox !== null)
-          checkbox.setAttribute('aria-label', ariaLabel);
+    document.querySelectorAll(".dx-treeview-item-with-checkbox")?.forEach((treeviewItem) => {
+      treeviewItem.querySelector("div.dx-widget.dx-checkbox")?.setAttribute('aria-label', treeviewItem.querySelector("div.dx-item-content.dx-treeview-item-content")?.innerHTML);
 
-          const treeToggle = treeviewItem.querySelector("div.dx-treeview-toggle-item-visibility");     
-          if (treeToggle && treeToggle.classList.length === 1) //toggle closed
-          {   
-            treeToggle.addEventListener("click", () => {
-              this.subs.push(timer(60).subscribe(() => {
-                this.FixDxTreeViewItems();  
-              }));
-            });
-        }
-      });
-    }
+      const treeToggle = treeviewItem.querySelector("div.dx-treeview-toggle-item-visibility");     
+      if (treeToggle && treeToggle.classList.length === 1) {   //toggle closed
+        fromEvent(treeToggle, 'click').pipe(
+          delay(60),
+          tap(() => this.FixDxTreeViewItems())
+        ).subscribe();
+      }
+    });
   }
 }

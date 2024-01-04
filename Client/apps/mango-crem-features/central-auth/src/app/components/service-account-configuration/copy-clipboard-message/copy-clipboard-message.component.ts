@@ -1,6 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { GenerateApiKeyConfirmationComponent } from '../generate-apikey-confirmation/generate-apikey-confirmation.component';
+import { Component, Inject} from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'mango-copy-clipboard-message',
@@ -12,11 +11,7 @@ export class CopyClipboardMessageComponent {
   public value: string = "";
   public info: string = "";
 
-  constructor(
-    public dialogRef: MatDialogRef<CopyClipboardMessageComponent>,
-    public dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data: any) { 
-  }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
   ngOnInit() {
     this.apiKey = this.data.apikey;

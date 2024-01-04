@@ -12,7 +12,7 @@ export class GenerateApiKeyConfirmationComponent implements OnInit {
   public title: string;
 
   constructor(
-    public dialogRef: MatDialogRef<GenerateApiKeyConfirmationComponent>,
+    private dialogRef: MatDialogRef<GenerateApiKeyConfirmationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { 
   }
 

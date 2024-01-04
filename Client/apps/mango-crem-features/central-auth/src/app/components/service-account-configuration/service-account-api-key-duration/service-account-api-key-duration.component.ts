@@ -14,9 +14,7 @@ export class ServiceAccountApiKeyDurationComponent implements OnDestroy{
 
   subs: Subscription[] = [];
 
-  constructor(
-    private userService: UserService,
-  ) { }
+  constructor(private userService: UserService) {}
 
   saveExpiresInDays(days: string){
     const request: UpdateServiceAccountExpiresInDaysRequest = {

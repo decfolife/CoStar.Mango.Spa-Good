@@ -17,10 +17,7 @@ export class ServiceAccountApiKeysComponent {
 
   subs: Subscription[] = [];
 
-  constructor(
-    private userService: UserService,
-    public dialog: MatDialog
-  ) { }
+  constructor(private userService: UserService, private dialog: MatDialog) {}
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe())

@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 import { UserService } from '@mango/core-shared/lib-core-shared';
 import { ServiceAccountInfo } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
-import { Subscription } from 'rxjs';
 import { ServiceAccountChangeHistory } from '@mango/data-models/lib-data-models';
 
 @Component({
@@ -9,44 +9,20 @@ import { ServiceAccountChangeHistory } from '@mango/data-models/lib-data-models'
   templateUrl: './service-account-configuration.component.html',
   styleUrls: ['./service-account-configuration.component.scss'],
 })
-export class ServiceAccountConfigurationComponent implements OnInit, OnDestroy {
-  subs: Subscription[] = [];
-  public serviceAccountInfo: ServiceAccountInfo = {};
-  public serviceAccountChangeHistories: ServiceAccountChangeHistory[];
+export class ServiceAccountConfigurationComponent {
+  public serviceAccountInfo$: Observable<ServiceAccountInfo>;
+  public serviceAccountChangeHistories$: Observable<ServiceAccountChangeHistory[]>;
 
-  constructor(
-    private userService: UserService
-    ) { }
-
-  ngOnInit(): void {
-    this.getServiceAccountInfo();
-  }
-
-  ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
-  }
+  constructor(private userService: UserService) {     
+      this.getServiceAccountData();
+    }
 
   serviceAccountUpdated() {
-    this.getServiceAccountInfo();
+    this.getServiceAccountData();
   }
 
-  private getServiceAccountInfo() {
-    this.subs.push (
-      this.userService.getServiceAccountInfo()
-      .subscribe(result => {        
-        if(result){       
-            this.serviceAccountInfo = result;   
-        }
-      })
-    );
-
-    this.subs.push (
-      this.userService.getServiceAccountChangeHistory()
-      .subscribe(result => {        
-        if(result){          
-            this.serviceAccountChangeHistories = result;      
-        }
-      })
-    );
+  private getServiceAccountData() {
+    this.serviceAccountInfo$ = this.userService.getServiceAccountInfo();
+    this.serviceAccountChangeHistories$ = this.userService.getServiceAccountChangeHistory();
   }
 }
