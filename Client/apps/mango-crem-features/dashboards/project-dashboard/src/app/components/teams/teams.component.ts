@@ -132,7 +132,7 @@ export class TeamsComponent implements OnInit {
         filter(confirmed => !!confirmed),
         switchMap(_ => this.dashboardService.deleteTeamMembers(this.selectedMemberIds)),
         switchMap(res => !!res.success ? 
-          (this.toastr.info("Selected Members(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
+          (this.toastr.info("Selected Member(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
           : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'OK')
         )
       ).subscribe();
