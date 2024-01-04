@@ -345,7 +345,7 @@ export class SubObjectComparisonComponent implements OnInit {
   onKeyUpEvent(event){
     const targetElement = event.target as HTMLElement;
     if(targetElement.nodeName.toLowerCase() =="input"){
-      targetElement.setAttribute('aria-label', 'Search Filter For - ' + event.target.value);
+      targetElement.setAttribute('aria-label', 'Search Filter For - ' + event.target.value + ' applied');
     }
 }
 

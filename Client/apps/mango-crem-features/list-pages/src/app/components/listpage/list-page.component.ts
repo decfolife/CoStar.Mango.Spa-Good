@@ -2492,7 +2492,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   onKeyUpEvent(event) {
     const targetElement = event.target as HTMLElement;
     if (targetElement.nodeName.toLowerCase() == "input") {
-      targetElement.setAttribute('aria-label', 'Search Filter For:  ' + event.target.value);
+      targetElement.setAttribute('aria-label', 'Search Filter For - ' + event.target.value + ' applied');
     }
   }
 
