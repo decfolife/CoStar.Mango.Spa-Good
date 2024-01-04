@@ -20,6 +20,7 @@ export class WorkflowHistoryPopupComponent {
   historyEvents: any[]
   dateFormat = 'MM/dd/yyyy, h:mm a';
   mainScrollViewId: string;
+  currentTemplate = 'noDataTemplate'
 
   constructor(public accountingSummaryService: AccountingSummaryService) {
     this.mainScrollViewId = accountingSummaryService.getId(this.componentName,'main','scrollview')
@@ -34,7 +35,10 @@ export class WorkflowHistoryPopupComponent {
     }
 
     if(changes.workflowStatusHistory !== undefined && changes.workflowStatusHistory.currentValue !== undefined){
-      this.historyEvents = this.workflowStatusHistory;
+      if(changes.workflowStatusHistory.currentValue.length > 0){
+        this.historyEvents = this.workflowStatusHistory;
+        this.currentTemplate = 'dataTemplate';
+      }
     }
   }
 

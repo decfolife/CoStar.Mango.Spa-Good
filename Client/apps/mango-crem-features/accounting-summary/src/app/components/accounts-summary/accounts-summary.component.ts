@@ -147,7 +147,9 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   onWorkflowStatusSaved(workflowStatusSaved: boolean)
   {
-    this.getWorkflowHistoryInfo();
+    if(workflowStatusSaved){
+      this.getWorkflowHistoryInfo();
+    }
   }
 
   private getWorkflowHistoryInfo() {
@@ -157,9 +159,12 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       }
       else if (response.success) {
         this.workflowStatusHistory = response.data;
-        this.modifiedByID = this.workflowStatusHistory[0].modifiedBy;
-        this.modifiedByName = this.workflowStatusHistory[0].modifiedByName;
-        this.modifiedDate = this.workflowStatusHistory[0].modifiedDate;
+        if(response.data.length > 0){
+          this.modifiedByID = this.workflowStatusHistory[0].modifiedBy;
+          this.modifiedByName = this.workflowStatusHistory[0].modifiedByName;
+          this.modifiedDate = this.workflowStatusHistory[0].modifiedDate;
+  
+        }
       }
       else if (!response.success) {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
@@ -199,9 +204,6 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       const userNavPageWithLeaseRightsResponse = res[1];
       const workflowStatusOptionsResponse = res[2];
       const leaseInformationResponse = res[3];
-
-      this.modifiedByName = workflowStatusOptionsResponse.data.modifiedByName;
-      this.modifiedDate = workflowStatusOptionsResponse.data.modifiedDate;
 
       if(userNavPageRightResponse === null || userNavPageWithLeaseRightsResponse === null || workflowStatusOptionsResponse === null || leaseInformationResponse === null ){
         this.accountingSummaryService.displayContactSystemAdminMessage();

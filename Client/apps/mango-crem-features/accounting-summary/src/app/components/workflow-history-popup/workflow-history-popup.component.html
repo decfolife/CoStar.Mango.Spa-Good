@@ -11,6 +11,7 @@
 [resizeEnabled]="!isFullscreen"
 [dragEnabled]="!isFullscreen"
 [fullScreen]="isFullscreen"
+[contentTemplate]="currentTemplate"
 titleTemplate="title-item"
 [wrapperAttr]="{ class: 'accounting-summary-style-container workflow-history-popup-container' }"
 (onContentReady)="determineScrollViewHeight($event)"
@@ -28,45 +29,48 @@ titleTemplate="title-item"
         </div>
     </div>
 
+    <div *dxTemplate="let data of 'noDataTemplate'" class="no-data-div"><p>No Data</p></div>
 
-    <dx-scroll-view
-    [id]="mainScrollViewId"
-    height="100%"
-    width="100%"
-    >
-        <p-timeline [value]="historyEvents" align="left">
-            <ng-template pTemplate="content" let-event>
-                <div class="first-row-div">
-                    <span class="status-pill">{{ event.workflowStatus }}</span>
-                </div>
-                <div class="second-row-div">Description:
-                    <dx-scroll-view
-                    *ngIf="event.description !== null && event.description !== ''"
-                    height="85px"
-                    width="95%"
-                    showScrollbar="always"
-                    >
-                        {{ event.description }}
-                    </dx-scroll-view>
-                </div>
-                <div class="third-row-div">Comments:
-                    <dx-scroll-view
-                    *ngIf="event.comment !== null && event.comment !== ''"
-                    height="85px"
-                    width="95%"
-                    showScrollbar="always"
-                    >
-                        {{ event.comment }}
-                    </dx-scroll-view>
-                </div>
-            </ng-template>
-            <ng-template pTemplate="opposite" let-event>
-                {{ event.modifiedDate | date: dateFormat }}
-                <div class="workflow-history-username">
-                    {{ event.modifiedByName }}
-                </div>
-
-            </ng-template>
-        </p-timeline>
-    </dx-scroll-view>        
+    <div *dxTemplate="let data of 'dataTemplate'">
+        <dx-scroll-view 
+        [id]="mainScrollViewId"
+        height="100%"
+        width="100%"
+        >
+            <p-timeline [value]="historyEvents" align="left">
+                <ng-template pTemplate="content" let-event>
+                    <div class="first-row-div">
+                        <span class="status-pill">{{ event.workflowStatus }}</span>
+                    </div>
+                    <div class="second-row-div">Description:
+                        <dx-scroll-view
+                        *ngIf="event.description !== null && event.description !== ''"
+                        height="85px"
+                        width="95%"
+                        showScrollbar="always"
+                        >
+                            {{ event.description }}
+                        </dx-scroll-view>
+                    </div>
+                    <div class="third-row-div">Comments:
+                        <dx-scroll-view
+                        *ngIf="event.comment !== null && event.comment !== ''"
+                        height="85px"
+                        width="95%"
+                        showScrollbar="always"
+                        >
+                            {{ event.comment }}
+                        </dx-scroll-view>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="opposite" let-event>
+                    {{ event.modifiedDate | date: dateFormat }}
+                    <div class="workflow-history-username">
+                        {{ event.modifiedByName }}
+                    </div>
+    
+                </ng-template>
+            </p-timeline>
+        </dx-scroll-view>        
+    </div>
 </dx-popup> 

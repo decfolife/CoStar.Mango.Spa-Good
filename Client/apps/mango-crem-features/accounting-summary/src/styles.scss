@@ -128,6 +128,10 @@
             width: 225px;
         }
 
+        .dx-overlay-content.dx-popup-normal.dx-popup-draggable.dx-resizable {
+            padding: 0px;
+        }
+
         .dx-overlay-content.dx-popup-fullscreen>.dx-popup-content {
             padding: 16px !important;
         }
@@ -145,8 +149,8 @@
             padding-right: 6px;
         }
 
-        .popup-title-icon-div crem-icon > span {
-            vertical-align: unset;
+        .popup-title-icon-div crem-icon > span > fa-icon > svg {
+            vertical-align: 0px;
         }
     }
 

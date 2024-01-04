@@ -30,6 +30,20 @@ crem-icon{
   font-weight: bold;
 }
 
+.no-data-div {
+  height: 100%;
+  width: 100%;
+
+  &>p {
+    font-size: 20px;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
 .popup-title-div {
   display: flex;
   height: 38px;
@@ -57,7 +71,7 @@ crem-icon{
 
     .dx-icon.dx-icon-close {
       cursor: pointer;
-      font-size: 18px;
+      font-size: 19px;
       margin-left: 15px;
       height: 32px;
 
