@@ -26,9 +26,12 @@
 				(onOptionChanged)="onGridOptionChanged($event)"
 				(onRowClick)="onRowClick($event)"
 				>
-
+				<dxo-paging
+                	[enabled]="false">
+            	</dxo-paging>
+				
 				<dxo-header-filter
-          [visible]="false"
+          			[visible]="false"
 					[allowSearch]="true">
             	</dxo-header-filter>
 

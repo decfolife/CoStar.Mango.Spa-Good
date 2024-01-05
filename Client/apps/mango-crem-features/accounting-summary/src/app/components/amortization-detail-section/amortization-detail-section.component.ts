@@ -37,7 +37,6 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   preferenceSavePendingMessage: string;
   initialState = {};
   portfolioSettings: PortfolioSettingsResponse;
-  isActionColumnClicked = false;
   selectedRowValue = 0;
   popupVisible = false;
   jeProcessingInfoPopupVisible = false;

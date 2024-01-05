@@ -25,21 +25,21 @@ export class EventsGridColumnsService {
         allowHiding: false,
         allowReordering: false,
         allowResizing: false,
-        allowSorting: false,
         fixed: true,
         fixedPosition: 'right'
       },
       {
         caption: '#', dataField: 'scheduleIndex',
         headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
-        allowHiding: false, allowReordering: false, allowResizing: false, allowSorting: false
+        allowHiding: false, allowReordering: false, allowResizing: false
       },
       {
         caption: 'Is Published', 
         dataField: 'isPublished',
         headerCellTemplate: 'amortizationHeader', 
         cellTemplate: 'pointer',
-        visible: false
+        visible: false,
+        calculateCellValue: rowData => rowData.isPublished ? 'Yes' : 'No'
       },
       {
         caption: 'Measure Event', name: 'MeasureEvent', dataField: 'measureEvent',
@@ -252,15 +252,18 @@ export class EventsGridColumnsService {
     });
     columns.push({
       caption: 'Reporting Exception', dataField: 'isReportingException',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+      calculateCellValue: rowData => rowData.isReportingException ? 'Yes' : 'No'
     });
     columns.push({
       caption: 'Charge Type', dataField: 'isIncome',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+      calculateCellValue: rowData => rowData.isIncome ? 'Income' : 'Expense'
     });
     columns.push({
       caption: 'Impaired', dataField: 'isImpaired',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+      calculateCellValue: rowData => rowData.isImpaired ? 'Yes' : 'No'
     });
     columns.push({
       caption: 'Comments', dataField: 'comments',
@@ -291,6 +294,10 @@ export class EventsGridColumnsService {
       headerCellTemplate: 'amortizationHeader',
       cellTemplate: 'pointer',
       visible: false
+    });
+
+    columns.forEach(c => {
+      c.allowSorting = c.dataField == 'scheduleIndex' ? true : false
     });
 
     return columns;

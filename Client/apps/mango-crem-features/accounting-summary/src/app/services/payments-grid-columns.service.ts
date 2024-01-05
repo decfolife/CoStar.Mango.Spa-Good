@@ -79,7 +79,7 @@ export class PaymentsGridColumnsService {
         calculateCellValue: rowData => rowData.isProrated ? 'Yes' : 'No'
       },
       {
-        caption: 'Reasonably Certain',
+        caption: 'Is Reasonably Certain',
         name: 'ReasonablyCertain', 
         dataField: 'isReasonablyCertain',
         headerCellTemplate: 'amortizationHeader',

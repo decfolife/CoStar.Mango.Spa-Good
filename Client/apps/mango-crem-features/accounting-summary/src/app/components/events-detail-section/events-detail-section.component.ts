@@ -36,12 +36,12 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   isGridStateChanged = false;
   initialState = {};
   portfolioSettings: PortfolioSettingsResponse;
-  isActionColumnClicked = false;
-  selectedRowValue = 0;
   showEditIcon: boolean;
   private subscription = new Subscription();
   private masterScheduleIDChanged = false;
   private userInfoLoaded = false;
+  private publishedEvent: any;
+  private setInitialSelectedRow = false;
   userHasEditLeaseRights = true;
   wfStatusHasEditRights = true;
   userHasLeftNavEditRights = true;
@@ -102,12 +102,12 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         // Adding fields to datasource based on classificationId && manipulating fields to display correct text
         if (this.classificationId === 0 || this.classificationId === 5) {
           this.detailsGridData.forEach(element => {
-            this.columnDisplayFields(element);
+            element.currencyDisplay = this.currencyDisplay(element);
           })
         } else {
           this.detailsGridData.forEach(element => {
             element.discountRateDisplay = this.discountRateDisplay(element);
-            this.columnDisplayFields(element);
+            element.currencyDisplay = this.currencyDisplay(element);
           });
         }
 
@@ -118,7 +118,9 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.detailColumns = this.columnService.getDetailsColumns(this.classificationId, this.detailsGridData[0], this.portfolioSettings, this.dateFormat);
         this.getGridPreferences();
 
-        this.eventScheduleData.emit(this.detailsGridData.filter(d => d.isPublished)[0]);
+        this.publishedEvent = this.detailsGridData.filter(d => d.isPublished)[0];
+        this.setInitialSelectedRow = true;
+        this.eventScheduleData.emit(this.publishedEvent);
       } else if (!eventDetailsResponse.success || !portfolioSettingsResponse.success) {
         this.accountingSummaryService.errorNotify(!eventDetailsResponse.success ? eventDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
       }
@@ -126,20 +128,18 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   }
 
-  columnDisplayFields(element) {
-    element.currencyDisplay = this.currencyDisplay(element);
-    element.isIncome = element.isIncome ? 'Income' : 'Expense';
-    element.isImpaired = element.isImpaired ? 'Yes' : 'No';
-    element.isPublished = element.isPublished ? 'Yes' : 'No';
-    element.isReportingException = element.isReportingException ? 'Yes' : 'No';
-  }
-
   onGridContentReady(grid) {
     if (grid.component.totalCount() > 0) {
+      if(this.setInitialSelectedRow){
+        this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
+        this.setInitialSelectedRow = false;
+      }
+
+      const selectedRowIndex = grid.component.getRowIndexByKey(this.selectedRowKeys[0]);
+      grid.component.selectRowsByIndexes([selectedRowIndex]);  
+
       const rowHeight = grid.component.getRowElement(0)[0].clientHeight;
-      const lastRowIndex = grid.component.totalCount() - 1;
-      this.selectedRowKeys = [grid.component.getKeyByRowIndex(lastRowIndex)];
-      this.eventsDataGrid.instance.getScrollable().scrollTo({ y: lastRowIndex * rowHeight });
+      this.eventsDataGrid.instance.getScrollable().scrollTo({ y: selectedRowIndex * rowHeight });
     }
   }
 
@@ -164,6 +164,8 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           });
         }
 
+        this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
+        state.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
         this.initialState = state;
         this.eventsDataGrid.instance.state(state);
         sessionStorage.setItem("eventsGridStateKey", JSON.stringify(state));
@@ -225,12 +227,6 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   onCellClick(e) {
-    this.selectedRowValue = 0;
-
-    if (e.columnIndex !== 0) {
-      return;
-    }
-
     /*
     ClassificationID's:
     0 - Operating 840
@@ -242,14 +238,11 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     6 - Sales Type (Lessor) - INACTIVE Currently
     */
 
-    if (e.row.rowType === 'data' && e.columnIndex === 0) {
+    if (e.column.dataField === 'leaseRecognitionScheduleId' && e.rowType === 'data') {
       const newEvent = Object.assign({}, e.event, { type: 'dxcontextmenu' });
       e.event.stopPropagation();
       trigger(e.cellElement, newEvent);
     }
-
-    this.isActionColumnClicked = e.columnIndex === 0;
-    this.selectedRowValue = e.value;
   }
 
   onRowClick(e) {
