@@ -3,6 +3,7 @@
     [disabled]="disabled"
     (change)="onValueChanged($event)"
     (keydown.enter)="onEnter()"
+    [aria-label]="ariaLabel"
     >
     {{dataField}}
 </mat-slide-toggle>

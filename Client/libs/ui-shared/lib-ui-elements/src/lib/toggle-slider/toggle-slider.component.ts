@@ -11,6 +11,7 @@ export class ToggleSliderComponent {
   @Input() value: boolean;
   @Input() disabled: boolean;
   @Input() dataField: string;
+  @Input() ariaLabel?: string;
   @Output() onChangeEvent = new EventEmitter();
   @ViewChild('ToggleSlider') toggleSlider: MatSlideToggle;
 

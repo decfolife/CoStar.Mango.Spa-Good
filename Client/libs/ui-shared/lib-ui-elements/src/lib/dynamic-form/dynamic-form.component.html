@@ -58,6 +58,7 @@
                                 [disabled]="configKey[data.dataField].disabled || readOnly"
                                 (onChangeEvent)="onChange($event, 'slider', data.dataField)"
                                 [dataField]="data.dataField"
+                                [ariaLabel]="configKey[data.dataField].caption"
                                 >
                             </crem-toggle-slider>
                             <div class="toggle__item--text">
