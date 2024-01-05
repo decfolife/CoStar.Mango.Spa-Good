@@ -5,8 +5,13 @@ import { GenerateApiKeyConfirmationComponent } from '../generate-apikey-confirma
 import { CopyClipboardMessageComponent } from '../copy-clipboard-message/copy-clipboard-message.component';
 import { Subscription } from 'rxjs';
 import { ServiceAccountInfo } from '@mango/data-models/lib-data-models';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
+  standalone: true,
+  imports: [MatCardModule, CommonModule, MatDialogModule],
   selector: 'mango-service-account-api-keys',
   templateUrl: './service-account-api-keys.component.html',
   styleUrls: ['./service-account-api-keys.component.scss'],

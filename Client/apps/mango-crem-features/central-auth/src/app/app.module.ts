@@ -18,7 +18,6 @@ import * as fromApp from './+state/reducers';
 import { AppComponent } from './app.component';
 import { OAuthEffects } from './+state/effects/oauth.effects';
 import { LoginComponent } from './components/login/login.component';
-import { ServiceAccountConfigurationModule } from './components/service-account-configuration/service-account-configuration.module';
 import { CentralAuthErrorHandler } from './services/error-handler.service';
 import { CentralAuthHttpInterceptor } from './services/http.interceptor';
 import { CustomerSelectionPageComponent } from './components/customer-selection-page/customer-selection-page.component';
@@ -96,7 +95,6 @@ import { HttpEffects } from './+state/effects/http.effects';
       tapToDismiss: false,
       disableTimeOut: true,
     }),
-    ServiceAccountConfigurationModule,
     CentralAuthErrorHandler.forRoot(),
     CentralAuthHttpInterceptor.forRoot(),
     DxLoadPanelModule

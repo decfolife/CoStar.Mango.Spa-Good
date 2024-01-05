@@ -1,8 +1,12 @@
 import { Component, Input, OnDestroy} from '@angular/core';
 import { Subscription, fromEvent } from 'rxjs';
 import { delay, switchMap, tap } from 'rxjs/operators';
+import { MatCardModule } from '@angular/material/card';
+import { DxDataGridModule } from 'devextreme-angular';
 
 @Component({
+  standalone: true,
+  imports: [MatCardModule, DxDataGridModule],
   selector: 'mango-service-account-history',
   templateUrl: './service-account-history.component.html',
   styleUrls: ['./service-account-history.component.scss'],

@@ -1,7 +1,11 @@
 import { Component, Inject} from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
+  standalone: true,
+  imports:[ModalModule, MatDialogModule],
   selector: 'mango-copy-clipboard-message',
   templateUrl: 'copy-clipboard-message.component.html',
   styleUrls: ['copy-clipboard-message.component.scss'],

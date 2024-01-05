@@ -2,8 +2,11 @@ import { Component, Input, Output, EventEmitter, OnDestroy} from '@angular/core'
 import { UserService } from '@mango/core-shared';
 import { ServiceAccountInfo, UpdateServiceAccountExpiresInDaysRequest } from '@mango/data-models/lib-data-models';
 import { Subscription } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
+  standalone: true,
+  imports: [MatCardModule],
   selector: 'mango-service-account-api-key-duration',
   templateUrl: './service-account-api-key-duration.component.html',
   styleUrls: ['./service-account-api-key-duration.component.scss'],

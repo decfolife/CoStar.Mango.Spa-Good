@@ -3,8 +3,13 @@ import { UserService } from '@mango/core-shared';
 import { Subscription } from 'rxjs';
 import { UpdateServiceAccountApiAccessRequest} from '@mango/data-models/lib-data-models';
 import { ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
+import { MatCardModule } from '@angular/material/card';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
+  imports: [MatCardModule, MatSlideToggleModule, CommonModule],
   selector: 'mango-service-account-sites',
   templateUrl: './service-account-sites.component.html',
   styleUrls: ['./service-account-sites.component.scss'],
