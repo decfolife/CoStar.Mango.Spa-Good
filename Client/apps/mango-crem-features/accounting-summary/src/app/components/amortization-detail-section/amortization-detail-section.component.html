@@ -107,7 +107,7 @@
         [wrapperAttr]="{ class: 'accounting-summary-style-container' }"
         title="JE Processing Info: {{ jeProcessingPopupData.displayPeriod }}"
         >    
-
+        <dx-scroll-view>
         <dx-tab-panel
             [dataSource]="tabs"
             [selectedIndex]="0"
@@ -116,7 +116,8 @@
             <div *dxTemplate="let PeriodPopup of 'jeProcessingData'">
                 <mango-je-processing-info
                     [jeProcessingPopupData]="jeProcessingPopupData" 
-                    [rightsInfo]="rightsInfo" [userInfo]="userInfo" 
+                    [rightsInfo]="rightsInfo"
+                    [userInfo]="userInfo" 
                     [eventScheduleData]="eventScheduleData"
                     (setHeight)="setPopupHeight($event)"
                     (jeActionTaken)="onJeDataSaved()"
@@ -129,8 +130,8 @@
             <div *dxTemplate="let PeriodPopup of 'retrospectiveAdjustmentData'">
                 <!-- Retrospective Adjustment tab component -->
             </div>
-
         </dx-tab-panel>
+        </dx-scroll-view>   
     </dx-popup>
 
 </section>

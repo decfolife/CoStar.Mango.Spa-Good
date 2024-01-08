@@ -23,7 +23,6 @@
 }
 
 #section-one>div {
-    width: 300px;
     height: 120px;
     border: 1px;
     text-align: left;
@@ -42,7 +41,7 @@
 
 
 #section-three {
-    height: 550px;
+    height: auto;
     border: 2px;
     text-align: left;
 }
@@ -119,3 +118,7 @@
     cursor: pointer !important;
 }
 
+.container {
+    float: left;
+    width: 33%;
+}

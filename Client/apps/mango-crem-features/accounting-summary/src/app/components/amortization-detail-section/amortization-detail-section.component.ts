@@ -58,6 +58,15 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   onJeProcessingInfoPopupHidden() {
     this.jeProcessingInfoPopupVisible = false;
+
+    // Only refresh Amortization grid if JeStatus has changed
+    const match = this.amortizationdetailsGridData.find(x => x.leaseRecognitionPeriodID === this.jeProcessingPopupData.leaseRecognitionPeriodID);
+    if (match) {
+      if (match.jeStatus !== this.jeProcessingPopupData.jeStatus) {
+        match.jeStatus = this.jeProcessingPopupData.jeStatus;
+        this.amortizationGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
+      }
+    }
   }
 
   setPopupHeight(isMaxHeight: boolean): void {
@@ -363,6 +372,5 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   onJeDataSaved() {
     this.getJeProcessingPopupData(this.jeProcessingPopupData.leaseRecognitionPeriodID);
-    this.amortizationGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
   }
 }

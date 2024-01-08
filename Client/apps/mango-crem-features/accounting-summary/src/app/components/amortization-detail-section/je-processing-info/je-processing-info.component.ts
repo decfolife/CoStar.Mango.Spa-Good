@@ -4,7 +4,6 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
 import { AmortizationGridColumnsService } from '@accounting-summary/services/amortization-grid-columns.service';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { Subscription } from 'rxjs';
-import { faL } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'mango-je-processing-info',
@@ -58,7 +57,7 @@ export class JeProcessingInfoComponent {
 
     this.jeProcessingGridColumns.forEach(col => {
       if (col.usesLocalFormat === 'true') {
-        col.format = value => this.formattingService.localFormat(+value, this.eventScheduleData.LocalCurrencyDecimalPrecision);
+        col.format = value => this.formattingService.localFormat(+value, this.eventScheduleData.localCurrencyDecimalPrecision);
       }
       if (col.caption === 'Cost %') {
         col.format = value => this.formattingService.localFormat(+value, 4);
@@ -70,6 +69,14 @@ export class JeProcessingInfoComponent {
   previewJournalEntryClick(): void {
     this.toggleCallout(true);
     this.showJournalEntries = true;
+    if (!this.rightsInfo.wfStatusallowJEApproval) {
+      this.isButtonDisabled = true;
+      this.isTooltipVisible = false;
+    }
+    else {
+      this.isButtonDisabled = false;
+    }
+
     this.showActionButton = true;
     this.showPreviewButton = false;
     this.calloutText = 'Journal Entry Preview:';
@@ -184,19 +191,19 @@ export class JeProcessingInfoComponent {
     switch (this.changeButtonText) {
       case 'Approve':
         if (this.rightsInfo.canApproveJE && this.rightsInfo.wfStatusallowJEApproval) {
-          this.saveJournalEntryProcess (this.jeProcessingPopupData.leaseRecognitionPeriodID, 'Approve')
+          this.saveJournalEntryProcess (this.jeProcessingPopupData.leaseRecognitionPeriodID, this.changeButtonText)
         }
         break;
 
         case 'Unapprove':
         if (this.rightsInfo.canUnapproveJE) {
-          this.saveJournalEntryProcess (this.jeProcessingPopupData.leaseRecognitionPeriodID, 'Unapprove')
+          this.saveJournalEntryProcess (this.jeProcessingPopupData.leaseRecognitionPeriodID, this.changeButtonText)
         }
         break;
 
         case 'Unexport':
         if (this.rightsInfo.canUnexportJE) {
-          this.saveJournalEntryProcess (this.jeProcessingPopupData.leaseRecognitionPeriodID, 'Unexport')
+          this.saveJournalEntryProcess (this.jeProcessingPopupData.leaseRecognitionPeriodID, this.changeButtonText)
         }
         break;
     }
@@ -222,7 +229,9 @@ export class JeProcessingInfoComponent {
   }
 
   onMouseEnter() {
-    if (this.isButtonDisabled) {
+    if (this.isButtonDisabled && !this.rightsInfo.wfStatusallowJEApproval) {
+      this.isTooltipVisible = false; 
+    } else if (this.isButtonDisabled) {
       this.isTooltipVisible = true;
     }
   }
