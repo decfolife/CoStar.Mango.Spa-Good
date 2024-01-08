@@ -246,7 +246,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
           canApproveJE: userNavPageWithLeaseRightsResponse.data.canApproveJE,
           canUnapproveJE: userNavPageWithLeaseRightsResponse.data.canUnapproveJE,
           canUnexportJE: userNavPageWithLeaseRightsResponse.data.canUnexportJE,
-          allowJEApproval: workflowStatusOptionsResponse.data.options[0].allowJEApproval
+          wfStatusallowJEApproval: workflowStatusOptionsResponse.data.options.filter(wfso => wfso.workflowStatusId === workflowStatusOptionsResponse.data.workflowStatusID)[0].allowJEApproval
         }
 
         this.getDisabledBtnReason();

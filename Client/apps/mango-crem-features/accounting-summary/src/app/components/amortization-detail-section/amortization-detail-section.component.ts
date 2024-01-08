@@ -41,6 +41,9 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   popupVisible = false;
   jeProcessingInfoPopupVisible = false;
   jeProcessingPopupData: any;
+  popupHeight='';
+  maxHeight ='70%';
+  minHeight = '50%'
   tabs = [{ "title": "Journal Entry", "template":"jeProcessingData" },
           { "title": "Payment Detail", "template":"paymentDetailData" }
           // ,{ "title": "Retrospective Adjustment", "template":"retrospectiveAdjustmentData" }
@@ -55,6 +58,10 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   onJeProcessingInfoPopupHidden() {
     this.jeProcessingInfoPopupVisible = false;
+  }
+
+  setPopupHeight(isMaxHeight: boolean): void {
+    this.popupHeight = isMaxHeight ? this.maxHeight : this.minHeight;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

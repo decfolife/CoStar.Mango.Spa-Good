@@ -68,11 +68,11 @@
         <div id="section-two" [ngClass]="calloutClass" *ngIf="showJournalEntries">
             <div class="custom-col metric-label"><strong>Debits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
             <div class="custom-col metric-label"><strong>Credits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
-            <div class="custom-col metric-label"><strong>Credits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit - getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>   
+            <div class="custom-col metric-label"><strong>Variance: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit - getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>   
            
             <div class="custom-col metric-label"> <strong>Balanced: </strong>
-                <crem-icon *ngIf="jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md balanced-icon" icon="faCheckCircle"></crem-icon>
-                <crem-icon *ngIf="!jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md not-balanced-icon" icon="faTimesCircle"></crem-icon>
+                <crem-icon *ngIf="jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md balanced-icon" icon="faCheckCircle"></crem-icon>
+                <crem-icon *ngIf="jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && !jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md not-balanced-icon" icon="faTimesCircle"></crem-icon>
             </div>
 
             <div class="custom-col metric-label">{{calloutText}}</div>
@@ -97,6 +97,7 @@
                     [dataSource]="jeProcessingPopupData.journalEntries"
                     [columns]="jeProcessingGridColumns"
                     [rowAlternationEnabled]="true"
+                    [columnResizingMode]="'widget'"
                     [showColumnLines]="true"
                     [showRowLines]="true"
                     [showBorders]="true"
@@ -109,8 +110,9 @@
                         visible: true,
                         shadingColor: 'rgba(0, 0, 0, 0.4)'}">
                     <dxo-scrolling
-                        mode="standard">
+                        mode="virtual">
                     </dxo-scrolling>
+                    
                     <dxo-export [enabled]="true" fileName="CoStar_JEPReview {{ dateTimeStamp() | date:'medium' }}"></dxo-export>
 
                     <div *dxTemplate="let info of 'amortizationHeader'">

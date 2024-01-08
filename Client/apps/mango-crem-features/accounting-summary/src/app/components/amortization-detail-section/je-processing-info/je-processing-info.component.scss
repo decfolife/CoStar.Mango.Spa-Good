@@ -112,8 +112,10 @@
 .actions-button {
     font-size: 14px;
     cursor: pointer;
+    padding: 0 25px;
 }
 
 .actions-button.disabled {
     cursor: pointer !important;
 }
+

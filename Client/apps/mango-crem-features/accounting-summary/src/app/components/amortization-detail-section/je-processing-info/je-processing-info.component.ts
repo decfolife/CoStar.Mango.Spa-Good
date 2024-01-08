@@ -4,6 +4,7 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
 import { AmortizationGridColumnsService } from '@accounting-summary/services/amortization-grid-columns.service';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { Subscription } from 'rxjs';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'mango-je-processing-info',
@@ -17,11 +18,12 @@ export class JeProcessingInfoComponent {
   @Input() eventScheduleData: any;
   @Input() rightsInfo: any;
   @Output() jeActionTaken: EventEmitter<any> = new EventEmitter<any>();
+  @Output() setHeight = new EventEmitter<boolean>();
 
   jeProcessingGridColumns =[];
+  showPreviewButton = false
   showJournalEntries = false;
-  showPreviewButton = true;
-  componentName = "je-processing-info"
+  componentName = "je-processing-info";
   isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
   displayNoDataText = 'Loading Data...';
@@ -43,19 +45,35 @@ export class JeProcessingInfoComponent {
     this.getDebitCreditTotal();
   }
 
+  notifyHeight(isMaxHeight: boolean): void {
+    this.setHeight.emit(isMaxHeight);
+  }
+
   private jeProcessingInfoGridSetup() {
     this.isEuroDateFormat = this.userInfo.useDateEU;
     if (this.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }
     this.jeProcessingGridColumns = this.jeProcessingGridColumnsService.getJournalEntryGridColumns();
+
+    this.jeProcessingGridColumns.forEach(col => {
+      if (col.usesLocalFormat === 'true') {
+        col.format = value => this.formattingService.localFormat(+value, this.eventScheduleData.LocalCurrencyDecimalPrecision);
+      }
+      if (col.caption === 'Cost %') {
+        col.format = value => this.formattingService.localFormat(+value, 4);
+      }
+    });
+    return this.jeProcessingGridColumns;
   }
 
   previewJournalEntryClick(): void {
     this.toggleCallout(true);
     this.showJournalEntries = true;
+    this.showActionButton = true;
     this.showPreviewButton = false;
     this.calloutText = 'Journal Entry Preview:';
+    this.notifyHeight(true);
   }
 
   populateFields (){
@@ -64,19 +82,26 @@ export class JeProcessingInfoComponent {
     this.showActionButton = false;
 
     if (!this.eventScheduleData.isPublished) {
+        this.notifyHeight(false);
         this.showJournalEntries = false;
-        this.showPreviewButton = false;
         this.showActionButton = false;
+        this.showPreviewButton = false;
         return;
       }
 
     switch (this.jeProcessingPopupData.jeStatus) {
       case 'Scheduled':
-        this.showPreviewButton = true;
+        this.notifyHeight(false);
         this.showJournalEntries = false;
+        this.showActionButton = true;
+        this.showPreviewButton = true;
         this.changeButtonText = 'Approve';
+        
+        if (!this.rightsInfo.wfStatusallowJEApproval) {
+          this.isButtonDisabled = true;
+        }
 
-        if (this.rightsInfo.canApproveJE && this.rightsInfo.allowJEApproval) {
+        if (this.rightsInfo.canApproveJE) {
           this.showActionButton = true;
           this.isButtonDisabled = false;
         } else {
@@ -85,12 +110,15 @@ export class JeProcessingInfoComponent {
           this.disableBtnReason = 'You do not have rights to Approve';
         }
 
-        if (this.jeProcessingPopupData.journalEntries.length == 0) {
+        if (this.jeProcessingPopupData.journalEntries === null || this.jeProcessingPopupData.journalEntries.length === 0) {
+          this.notifyHeight(false);
           this.showActionButton = false;
-        } 
+          this.showPreviewButton = false;
+        }
         break;
 
       case 'Approved':
+        this.notifyHeight(true);
         this.showJournalEntries = true;
         this.showPreviewButton = false;
         this.changeButtonText = 'Unapprove';
@@ -104,12 +132,15 @@ export class JeProcessingInfoComponent {
           this.disableBtnReason = 'You do not have rights to Unapprove';
         }  
 
-        if (this.jeProcessingPopupData.journalEntries.length == 0) {
+        if (this.jeProcessingPopupData.journalEntries === null || this.jeProcessingPopupData.journalEntries.length === 0) {
+          this.notifyHeight(false);
           this.showActionButton = false;
-        } 
+          this.showJournalEntries = false;
+        }
         break;
 
       case 'Exported':
+        this.notifyHeight(true);
         this.showJournalEntries = true;
         this.showPreviewButton = false;
         this.changeButtonText = 'Unexport';
@@ -123,9 +154,11 @@ export class JeProcessingInfoComponent {
           this.disableBtnReason = 'You do not have rights to Unexport';
         }   
 
-        if (this.jeProcessingPopupData.journalEntries.length == 0) {
+        if (this.jeProcessingPopupData.journalEntries === null || this.jeProcessingPopupData.journalEntries.length === 0) {
+          this.notifyHeight(false);
           this.showActionButton = false;
-        } 
+          this.showJournalEntries = false;
+        }
         break;
     }
   }
@@ -150,7 +183,7 @@ export class JeProcessingInfoComponent {
   actionButton() {
     switch (this.changeButtonText) {
       case 'Approve':
-        if (this.rightsInfo.canApproveJE && this.rightsInfo.allowJEApproval) {
+        if (this.rightsInfo.canApproveJE && this.rightsInfo.wfStatusallowJEApproval) {
           this.saveJournalEntryProcess (this.jeProcessingPopupData.leaseRecognitionPeriodID, 'Approve')
         }
         break;
@@ -176,7 +209,6 @@ export class JeProcessingInfoComponent {
           this.accountingSummaryService.displayContactSystemAdminMessage();
         } else if (jeProcessResponse.success) {
           this.jeActionTaken.emit();
-          this.accountingSummaryService.successNotify("Record saved successfully.");
         }
         else {
             this.accountingSummaryService.errorNotify(jeProcessResponse.clientErrorMessage);

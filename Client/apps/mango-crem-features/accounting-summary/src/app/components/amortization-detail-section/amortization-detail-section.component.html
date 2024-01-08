@@ -102,7 +102,7 @@
         (onHidden)="onJeProcessingInfoPopupHidden()"
         [closeOnOutsideClick]="true"
         width="70%"
-        height="70%"
+        [height]="popupHeight"
         [resizeEnabled]="true"
         [wrapperAttr]="{ class: 'accounting-summary-style-container' }"
         title="JE Processing Info: {{ jeProcessingPopupData.displayPeriod }}"
@@ -118,6 +118,7 @@
                     [jeProcessingPopupData]="jeProcessingPopupData" 
                     [rightsInfo]="rightsInfo" [userInfo]="userInfo" 
                     [eventScheduleData]="eventScheduleData"
+                    (setHeight)="setPopupHeight($event)"
                     (jeActionTaken)="onJeDataSaved()"
                     ></mango-je-processing-info>
             </div>
