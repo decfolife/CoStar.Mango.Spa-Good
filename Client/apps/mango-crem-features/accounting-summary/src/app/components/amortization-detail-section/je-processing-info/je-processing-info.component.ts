@@ -69,14 +69,17 @@ export class JeProcessingInfoComponent {
   previewJournalEntryClick(): void {
     this.toggleCallout(true);
     this.showJournalEntries = true;
-    if (!this.rightsInfo.wfStatusallowJEApproval) {
+    if (!this.rightsInfo.canApproveJE) {
+      this.showActionButton = true;
       this.isButtonDisabled = true;
-      this.isTooltipVisible = false;
+      this.disableBtnReason = 'You do not have rights to Approve';
+    } else if (!this.rightsInfo.wfStatusallowJEApproval) {
+      this.isButtonDisabled = true;
+      this.disableBtnReason = 'Workflow status does not allow JE approval'
     }
     else {
       this.isButtonDisabled = false;
     }
-
     this.showActionButton = true;
     this.showPreviewButton = false;
     this.calloutText = 'Journal Entry Preview:';
@@ -229,11 +232,9 @@ export class JeProcessingInfoComponent {
   }
 
   onMouseEnter() {
-    if (this.isButtonDisabled && !this.rightsInfo.wfStatusallowJEApproval) {
-      this.isTooltipVisible = false; 
-    } else if (this.isButtonDisabled) {
-      this.isTooltipVisible = true;
-    }
+    if (this.isButtonDisabled) {
+      this.isTooltipVisible = true; 
+    } 
   }
 
   onMouseLeave() {

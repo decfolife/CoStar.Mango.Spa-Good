@@ -67,6 +67,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         this.amortizationGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
       }
     }
+    this.jeProcessingPopupData = null;
   }
 
   setPopupHeight(isMaxHeight: boolean): void {
