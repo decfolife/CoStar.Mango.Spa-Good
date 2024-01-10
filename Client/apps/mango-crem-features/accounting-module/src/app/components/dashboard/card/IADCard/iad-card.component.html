@@ -51,13 +51,13 @@
                 [showBorders]="true"
                 [showRowGrandTotals]="false"
                 [showColumnGrandTotals]="false"
-                [showRowTotals]="true"
-                [showColumnTotals]="true"
+                [showRowTotals]="false"
+                [showColumnTotals]="false"
                 [dataSource]="dataSource"
                 (onCellPrepared)="onCellPrepared($event)"
                 >
                 <dxo-field-chooser
-                    [enabled]="false"
+                    [enabled]="true"
                     >
                 </dxo-field-chooser>
                 <dxo-texts

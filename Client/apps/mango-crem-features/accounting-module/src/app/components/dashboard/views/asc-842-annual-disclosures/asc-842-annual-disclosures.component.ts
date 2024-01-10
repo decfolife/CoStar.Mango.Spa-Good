@@ -72,42 +72,49 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       let items = [
         { 
           DisclosureClassification:  item.DisclosureClassification,
+          LeaseType: item.LeaseType,
           Display: "Opening Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.OpeningCount,
         },
         { 
           DisclosureClassification:  item.DisclosureClassification,
+          LeaseType: item.LeaseType,
           Display: " - Lease Added",
           PeriodYear: item.PeriodYear,
           data: item.AddedCount,
         },
         { 
           DisclosureClassification:  item.DisclosureClassification,
+          LeaseType: item.LeaseType,
           Display: " - Leases Expired/Cancelled",
           PeriodYear: item.PeriodYear,
           data: item.EndedCount,
         },
         { 
           DisclosureClassification:  item.DisclosureClassification,
+          LeaseType: item.LeaseType,
           Display: "Closing Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
         },
-        /**{ 
+        { 
           DisclosureClassification:  "Total",
+          LeaseType: item.LeaseType,
           Display: "Opening Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.OpeningCount,
         },
         { 
           DisclosureClassification:  "Total",
+          LeaseType: item.LeaseType,
           Display: " - Lease Added",
           PeriodYear: item.PeriodYear,
           data: item.AddedCount,
         },
         { 
           DisclosureClassification:  "Total",
+          LeaseType: item.LeaseType,
           Display: " - Leases Expired/Cancelled",
           PeriodYear: item.PeriodYear,
           data: item.EndedCount,
@@ -115,11 +122,12 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         },
         { 
           DisclosureClassification:  "Total",
+          LeaseType: item.LeaseType,
           Display: "Closing Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
           dataType: 'number',
-        }**/
+        }
       ]
 
       items.forEach((item) => {
@@ -176,7 +184,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           PeriodYear: item.PeriodYear,
           data: item.LiabilityBalanceClosingReporting,
         },
-        /**{ 
+        { 
           DisclosureClassification:  "Total",
           Display: "ROU Asset Balance",
           PeriodYear: item.PeriodYear,
@@ -199,7 +207,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           Display: "Total Liability Balance",
           PeriodYear: item.PeriodYear,
           data: item.LiabilityBalanceClosingReporting,
-        },**/
+        }
 
       ]
 
@@ -229,14 +237,28 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         config[0].sortingMethod = this.rowSort;
         config[2].sortingMethod = this.disclosureClassificationSort;
         if (card.Title === 'ASC 842 Annual Disclosures') {
-          config[3].format = ",###";
+          config[4].format = ",###";
+          config[config.length - 1].calculateSummaryValue = function(summaryCell) {
+            if (summaryCell.field('column')?.dataField === 'LeaseType' || summaryCell.field('column')?.dataField === 'PeriodYear') {
+              return summaryCell.value() / 2;
+            } else {
+              return summaryCell.value();
+            }
+          }
         } else if (card.Title === 'ASC 842 Annual Disclosures ROU Asset Balance') {
           config[3].format = {
             type: "fixedPoint",
             precision: this.currencyDecimalPrecision
           }
+          config[config.length - 1].calculateSummaryValue = function(summaryCell) {
+            if (summaryCell.field('column')?.dataField === 'PeriodYear') {
+              return summaryCell.value() / 2;
+            } else {
+              return summaryCell.value();
+            }
+          }
         }
-        config[3].calculateCustomSummary = (options) => {
+        config[config.length - 1].calculateCustomSummary = (options) => {
           switch(options.summaryProcess) {
             case "start":
               options.totalValue = 0;
@@ -338,25 +360,6 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
             selected: e.field.summaryType === summaryTypeValue,
           });
         }  
-    }
-  }
-
-  public onCellPrepared(e) {
-    if (e.area === "data" && e.cell.text === "") {
-        e.cellElement.textContent = "0";
-    }
-    if (e.cell.text === "ROU Asset Balance" || e.cell.text === "Total Liability Balance") {
-      e.cellElement.style.fontWeight = 'bold';
-    }
-    if (e.area === "column") { // Apply background color when cell's header is total
-      if (e.cell.text === "Total"){
-        e.cellElement.classList.add("total");
-      }
-    }
-    if (e.rowType === "data" || e.area === "data") { // Apply background color when cell is a total
-      if (e.cell.columnPath[1] === "Total"){
-        e.cellElement.classList.add("total");
-      }
     }
   }
 

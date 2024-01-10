@@ -33,7 +33,7 @@ import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
           }
         }
         if (e.rowType === "data" || e.area === "data") { // Apply background color when cell is a total
-          if (e.cell.columnPath[1] === "Total"){
+          if (e.cell.columnPath[e.cell.columnPath.length - 1] === "Total"){
             e.cellElement.classList.add("total");
           }
         }
