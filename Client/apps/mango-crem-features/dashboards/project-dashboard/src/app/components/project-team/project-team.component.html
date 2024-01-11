@@ -37,7 +37,7 @@
 		</div>
 	</div>
 
-	<div class="teams-dataGrid-wrapper"> 
+	<div class="projectTeam-dataGrid-wrapper"> 
 		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
 		<dx-data-grid *ngIf="dataRetrieved" class="projectTeam-grid"
 			#projectTeamGrid
@@ -72,7 +72,7 @@
 			<dxi-column dataField="openTasks" [cellTemplate]="'openTasksTemplate'" alignment="center"></dxi-column>
 			<dxi-column dataField="role"></dxi-column>
 			<dxi-column dataField="memberType"></dxi-column>
-			<dxi-column dataField="accessLevel" alignment="center"></dxi-column>
+			<dxi-column dataField="accessLevel" [cellTemplate]="'accessLevelTemplate'" alignment="center"></dxi-column>
 			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'emailTemplate'"></dxi-column>
 			<dxi-column caption='Shared' alignment="center" [cellTemplate]="'sharedTemplate'" ></dxi-column>
 			<dxi-column dataField="description" [wordWrapEnabled]="false" width='160'cssClass="wrapOption-column"></dxi-column>
@@ -96,7 +96,7 @@
 			</dxi-column>
       <div *dxTemplate="let member of 'emailTemplate'" >
 				<div class="ptm-emailToggle">
-					<mat-slide-toggle [checked]="member.data.emailNotifications" 
+					<mat-slide-toggle [checked]="member.data.emailNotifications"
 						aria-label="Email Notification" class="ptm-emailTgle-slider"
 					>
 					</mat-slide-toggle>
@@ -112,6 +112,9 @@
 			</div>
 			<div *dxTemplate="let cell of 'openTasksTemplate'" >
 				<div class="openTasks">{{cell.value}} unapproved</div>		
+			</div>
+			<div *dxTemplate="let cell of 'accessLevelTemplate'" >
+				<div>{{cell.value == 1 ? 'L1' : cell.value == 2 ? 'L2': cell.value == 3? 'L3': 'n/a'}}</div>
 			</div>
 			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="memberDetails" class="projectMember-masterDetail"></dxo-master-detail>
 			<div *dxTemplate="let member of 'memberDetails'" class="projectMember-template">

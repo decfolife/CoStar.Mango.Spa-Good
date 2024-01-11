@@ -31,9 +31,13 @@
 		margin-left: 8px;
 	}
 	
-	.teams-dataGrid-wrapper {
+	.projectTeam-dataGrid-wrapper {
     height: calc(100% - 48px);
     font-size: 16px;
+
+		.mat-slide-toggle {
+			opacity: .38;
+		}
 	}
 
 	.controls-right {

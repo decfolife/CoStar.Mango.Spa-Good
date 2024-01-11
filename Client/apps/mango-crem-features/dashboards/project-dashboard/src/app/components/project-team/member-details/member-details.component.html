@@ -28,7 +28,7 @@
 	<div class="description-container">
 		<div class="descDetails">
 			<div class="detail-title">DESCRIPTION</div>
-			<textarea aria-label="desctiption" class="descContent" rows="5" cols="80" readonly> {{projectMember.description}} </textarea>
+			<textarea aria-label="desctiption" [ngClass]="{'emptyDescription': (!projectMember.description || !projectMember.description.trim().length)}" class="descContent" rows="5" cols="80" readonly> {{projectMember.description}} </textarea>
 		</div>
 	</div>
 </div>
