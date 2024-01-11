@@ -1,1 +1,125 @@
-<div>Project Teams Works</div>
+<div id="projectTeam-container">
+	<div class="teams-toolBar-wrapper">
+		<div class="controls-left">
+			<h3 class="title"> Manage Project Team </h3>
+			<div class="searchProjectTeam">
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)"  class="searchProjectTeam-input"></cs-search>
+			</div>
+		</div>
+		<div class="controls-right">
+			<div class="clearFilters">
+				<crem-button type="secondary" class="clearFilters-btn" (click)="clearAllFilters(); $event.preventDefault();">
+					<span>Clear Filters</span>
+				</crem-button>
+			</div>
+			<div class="actions">
+				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">Actions <mat-icon aria-label="Project Team Actions">arrow_drop_down</mat-icon></button>
+				<mat-menu #actionsMenu="matMenu" class="projectTeamActionsMenu">				
+					<button mat-menu-item (click)="toggleExpand()" class="actnBtn-removeMembers"><span >Remove Members</span></button>      
+					<button mat-menu-item class="actionsButton-exportBtn" class="actnBtn-saveTeamTemplate">Save Team as Template</button>                   
+				</mat-menu>	 
+			</div>
+			<div class="more">
+				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
+				<mat-menu #moreMenu="matMenu" class="projectTeamMoreMenu">				
+					<button mat-menu-item (click)="toggleExpand()" class="moreBtn-expCollBtn"><span >Expand All/Collapse All</span></button>      
+					<button mat-menu-item class="moreButton-colChooserBtn"  class="moreBtn-colChooser">Column Chooser</button>                   
+				</mat-menu>	 
+			</div>
+			<div class="addOptions">
+				<button class="btn btn-primary addButton" [matMenuTriggerFor]="addMenu" (click)="$event.preventDefault()">Add <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
+				<mat-menu #addMenu="matMenu" class="projectTeamAddMenu">				
+					<button mat-menu-item class="addBtn-teamMember">Add Team Member</button>      
+					<button mat-menu-item class="addBtn-temporaryUser">Add Temporary User</button>  
+					<button mat-menu-item class="addBtn-contact">Add Contact</button>                  
+				</mat-menu>	 
+			</div>
+		</div>
+	</div>
+
+	<div class="teams-dataGrid-wrapper"> 
+		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
+		<dx-data-grid *ngIf="dataRetrieved" class="projectTeam-grid"
+			#projectTeamGrid
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			columnResizingMode="widget"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[dataSource]="projectTeam"
+			keyExpr="contactID"
+			[width]="'100%'"
+			[filterSyncEnabled]="true"
+			[wordWrapEnabled]="true"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-paging [enabled]="false"></dxo-paging>
+
+			<dxo-selection
+				selectAllMode="allPages"
+				showCheckBoxesMode="always"
+				mode="multiple">
+			</dxo-selection>
+
+			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false" class="selectMember">
+			</dxi-column>
+			<dxi-column dataField="teamMember" ></dxi-column>
+			<dxi-column dataField="openTasks" [cellTemplate]="'openTasksTemplate'" alignment="center"></dxi-column>
+			<dxi-column dataField="role"></dxi-column>
+			<dxi-column dataField="memberType"></dxi-column>
+			<dxi-column dataField="accessLevel" alignment="center"></dxi-column>
+			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'emailTemplate'"></dxi-column>
+			<dxi-column caption='Shared' alignment="center" [cellTemplate]="'sharedTemplate'" ></dxi-column>
+			<dxi-column dataField="description" [wordWrapEnabled]="false" width='160'cssClass="wrapOption-column"></dxi-column>
+			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
+				<dxi-button template="actionsMenuTemplate">
+					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate" id="{{'memberActionButton' + member.rowIndex}}">
+						<button aria-label="actions menu" class="btn btn-link memberActionsButton" 
+							(click)="$event.preventDefault()" [matMenuTriggerFor]="memberActionsMenu">
+							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
+						</button>
+		    			<mat-menu #memberActionsMenu="matMenu" class="projectMemberActionsMenu">
+							<ul role="menu">
+								<li mat-menu-item  class="ptm-edit" *ngIf="((member.data.memberType).toLowerCase()) !== 'temporary contact' ">Edit</li>
+								<li mat-menu-item  class="ptm-remove">Remove</li>
+								<li mat-menu-item  class="ptm-makeManager" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
+							</ul>
+						</mat-menu>
+					</div>
+				</dxi-button>		    	
+			</dxi-column>
+      <div *dxTemplate="let member of 'emailTemplate'" >
+				<div class="ptm-emailToggle">
+					<mat-slide-toggle [checked]="member.data.emailNotifications" 
+						aria-label="Email Notification" class="ptm-emailTgle-slider"
+					>
+					</mat-slide-toggle>
+				</div>		
+			</div>
+      <div *dxTemplate="let member of 'sharedTemplate'" >
+				<div class="ptm-sharedToggle">
+					<mat-slide-toggle [checked]="member.data.shared" 
+						 aria-label="Shared Notification" class="ptm-sharedTgle-slider"
+					>
+					</mat-slide-toggle>
+				</div>		
+			</div>
+			<div *dxTemplate="let cell of 'openTasksTemplate'" >
+				<div class="openTasks">{{cell.value}} unapproved</div>		
+			</div>
+			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="memberDetails" class="projectMember-masterDetail"></dxo-master-detail>
+			<div *dxTemplate="let member of 'memberDetails'" class="projectMember-template">
+				<member-details class="projectMember-detail"
+						[projectMember]="member.data"
+				>
+				</member-details>
+			</div>
+		</dx-data-grid>
+	</div>
+</div>

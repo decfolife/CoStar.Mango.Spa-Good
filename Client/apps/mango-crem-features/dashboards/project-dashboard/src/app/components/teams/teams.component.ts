@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MemberInfo, Team, TeamKeys, TeamMember } from '@mango/data-models/lib-data-models';
@@ -16,7 +16,7 @@ import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 import { ToastrService } from 'ngx-toastr';
 
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 
 @Component({
@@ -24,7 +24,7 @@ import { MangoDialogService } from '@project-dashboard/services/mango-dialog.ser
   templateUrl: './teams.component.html',
   styleUrls: ['./teams.component.scss']
 })
-export class TeamsComponent implements OnInit {
+export class TeamsComponent implements OnInit, OnDestroy {
   @ViewChild("TeamsGrid") teamsGrid: DxDataGridComponent;
   @ViewChild('SearchBox') searchBox: SearchComponent;
   @ViewChild(TeamMembersComponent) teamMembersComponent: TeamMembersComponent;
@@ -46,6 +46,7 @@ export class TeamsComponent implements OnInit {
   selectedTeams: Team[] = [];
   selectedMembersData: TeamKeys[] = [];
   userModuleAddRights: boolean;
+  subs: Subscription[] = [];
 
   constructor(private dashboardService: DashboardService, private router: Router,
     public toastr: ToastrService,
@@ -54,10 +55,10 @@ export class TeamsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getUserPreferences().subscribe();
+    this.subs.push(this.getUserPreferences().subscribe());
     this.getModuleRights();
     this.getMemberInfo();
-    this.getTeamsData().subscribe();
+    this.subs.push(this.getTeamsData().subscribe());
   }
 
   initEditFlag(teams) {
@@ -83,10 +84,10 @@ export class TeamsComponent implements OnInit {
       disableClose: true
     });
 
-    dialogRef.afterClosed().pipe(
+    this.subs.push(dialogRef.afterClosed().pipe(
       filter(res => !!res),
       switchMap(_ => this.getTeamsData())
-    ).subscribe();
+    ).subscribe());
   }
 
   deleteTeams(removeTeam?:Team, singleTeam?: boolean) {
@@ -102,7 +103,7 @@ export class TeamsComponent implements OnInit {
       })
     }
 
-    this.dialogService.confirm('Teams Deletion', confirmText, 'Confirm', 'Cancel').pipe(
+    this.subs.push(this.dialogService.confirm('Teams Deletion', confirmText, 'Confirm', 'Cancel').pipe(
       filter(confirmed => !!confirmed),
       switchMap(_ => this.dashboardService.deleteTeams(this.teamsTobeRemoved)),
       switchMap(res => {
@@ -114,7 +115,7 @@ export class TeamsComponent implements OnInit {
           (this.toastr.info("Selected Team(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
           : of(this.toastr.info("The teams(s) could not be deleted. Please review and try again.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }))
       })
-    ).subscribe();
+    ).subscribe());
   }
 
   removeMembers() {
@@ -126,21 +127,21 @@ export class TeamsComponent implements OnInit {
       }
     });
     if(removingAllTeamMembers) {
-      this.dialogService.alert('Remove All Team Members!', `Team Member Removal can not be done. You have selected all team members for one or more teams.  At least one team member must be assigned to a team.`, 'OK').subscribe();
+      this.subs.push(this.dialogService.alert('Remove All Team Members!', `Team Member Removal can not be done. You have selected all team members for one or more teams.  At least one team member must be assigned to a team.`, 'OK').subscribe());
     } else {
-      this.dialogService.confirm('Remove Members', `Do you want to remove the Selected Members from their teams ?`, 'Confirm', 'Cancel').pipe(
+      this.subs.push(this.dialogService.confirm('Remove Members', `Do you want to remove the Selected Members from their teams ?`, 'Confirm', 'Cancel').pipe(
         filter(confirmed => !!confirmed),
         switchMap(_ => this.dashboardService.deleteTeamMembers(this.selectedMemberIds)),
         switchMap(res => !!res.success ? 
           (this.toastr.info("Selected Member(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
           : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'OK')
         )
-      ).subscribe();
+      ).subscribe());
     }
   }
 
   getLatestData() {
-    this.getTeamsData().subscribe();
+    this.subs.push(this.getTeamsData().subscribe());
   }
 
   getTeamsData(): Observable<any> {
@@ -167,24 +168,24 @@ export class TeamsComponent implements OnInit {
   getModuleRights() {
     const objectType = 161;
     const securityType = 3;
-    this.dashboardService.getModuleRights(objectType, securityType).subscribe(
+    this.subs.push(this.dashboardService.getModuleRights(objectType, securityType).subscribe(
       (res:any) => {
         if (res.success) {
           this.userModuleAddRights = res.data;
         }
       }
-    );
+    ));
   }
 
   getMemberInfo() {
 
-    this.dashboardService.getmemberinfo().subscribe(
+    this.subs.push(this.dashboardService.getmemberinfo().subscribe(
       (res:any) => {
         this.memberInfo = res.data;
       },
       (error: any) => console.log("Error occurred getting Member Info Data ", error),
       () => {}
-    );
+    ));
   }
 
   toggleExpand() {
@@ -372,5 +373,10 @@ export class TeamsComponent implements OnInit {
       saveAs(new Blob([ buffer ], { type: 'application/octet-stream' }), excelFileName);
     });
   }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe);
+  }
+
 }
 

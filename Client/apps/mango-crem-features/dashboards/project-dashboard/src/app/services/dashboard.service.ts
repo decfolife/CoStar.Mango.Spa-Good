@@ -138,5 +138,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}deleteteams`;
     return this.callHttpPost(url, 'deleteteams',  teamIds)
   }
+
+  getProjectTeams(projectId): Observable<any> {
+    const url = `${environment.appUrls.projects}getprojectteams/${projectId}`;
+    return this.callHttpGet(url, 'projectId')
+  }
 }
 

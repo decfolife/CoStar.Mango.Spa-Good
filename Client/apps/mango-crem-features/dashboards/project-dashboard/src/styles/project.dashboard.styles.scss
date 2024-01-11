@@ -587,9 +587,9 @@ body {
 } //** End recent activities styles
 
 
-//*****  Teams Page Styles *****//
+//*****  'Manage Teams'  and 'Project Team' Page Styles *****//
 .mat-menu-panel {
- &.teamsActionsMenu, &.teamsMoreMenu {
+ &.teamsActionsMenu, &.teamsMoreMenu, &.projectTeamMoreMenu, &.projectTeamActionsMenu, &.projectTeamAddMenu {
 	 .mat-menu-content {
 			padding: 0 !important;
 	  }	
@@ -602,7 +602,7 @@ body {
 			}
 		}
 	}
-	&.teamActionsMenu, &.teamMemberActionsMenu {
+	&.teamActionsMenu, &.teamMemberActionsMenu, &.projectMemberActionsMenu, &.projectTeamAddMenu {
 		min-height: unset;
 		& .mat-menu-content {
 			padding: 0;
@@ -610,22 +610,24 @@ body {
 	}
 }
 
-#teams-container {
+#teams-container, #projectTeam-container {
 	button.mat-menu-trigger.btn-link:focus, 
 	button.actionsButton:focus, 
 	button.moreButton:focus,
 	.clearFilters button.btn-secondary:focus,
-	.searchTeams .mat-form-field.mat-focused
+	.searchProjectTeam .mat-form-field.mat-focused
 	{
 		outline: none;
 		box-shadow: 0 0 0 0.1rem colors.$blueShade;
 	}
 
-	.searchTeams-input .mat-form-field-suffix {
-		top: .09em;
+	.searchTeams-input, .searchProjectTeam-input {
+		.mat-form-field-suffix {
+			top: .09em;
+		}
 	}
 	
-	.teams-grid {	
+	.teams-grid, .projectTeam-grid {	
 		tr.dx-edit-row td, tr.dx-edit-row:hover td {
 			background-color: colors.$costarMediumBlue !important;
 		}
@@ -647,6 +649,12 @@ body {
 	}
 	td.dx-cell-focus-disabled.dx-master-detail-cell {
 		background-color: colors.$lightGray;
+	}
+}
+
+#projectTeam-container {
+	td.dx-cell-focus-disabled.dx-master-detail-cell {
+		background-color: colors.$bodyBackgroundGray;
 	}
 }
 
@@ -712,7 +720,7 @@ body {
 	}
 }
 
-#teams-container .teams-grid, #aet-selectedMembers-container #addTeam-grid {
+#teams-container .teams-grid, #aet-selectedMembers-container #addTeam-grid , #projectTeam-container .projectTeam-grid {
 	td {
 		text-align: center;
 		vertical-align: middle !important;
@@ -720,6 +728,11 @@ body {
 		padding: 3px 7px;
 		min-height: 47.33px;
 		height: 47.33px;
+		border-left: none !important;
+
+		&.wrapOption-column {
+			white-space: nowrap;
+		}
 	}	
 
   tr.dx-row {
@@ -743,6 +756,12 @@ body {
 
 	.dx-checkbox-icon {
 		border: 1px solid colors.$darkGray;
+	}
+
+	mat-slide-toggle{
+		&.ptm-emailTgle-slider, &.ptm-sharedTgle-slider {
+			pointer-events: none;
+		}
 	}
 }
 

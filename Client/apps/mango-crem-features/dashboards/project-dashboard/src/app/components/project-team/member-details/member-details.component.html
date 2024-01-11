@@ -1,0 +1,34 @@
+<div class="memberDetails">
+	<div class="contactDetails-container">
+		<div class="contactDetails">
+			<div class="detail-title">CONTACT</div>
+			<div class="contactDetils-value">{{projectMember.teamMember}}</div>
+		</div>
+		<div class="contactDetails">
+			<div class="detail-title">COMPANY</div>
+			<div class="contactDetils-value">{{projectMember.company}}</div>
+		</div>
+		<div class="contactDetails">
+			<div class="detail-title">EMAIL</div>
+			<div class="contactDetils-value">{{projectMember.email}}</div>
+		</div>
+		<div class="contactDetails">	
+			<div class="detail-title">PHONE</div>
+			<div class="contactDetils-value">{{projectMember.phone}}</div>
+		</div>
+	</div>
+	<div class="tasks-container">
+		<div class="taskDetails">	
+			<div class="detail-title">TASKS OVERVIEW</div>
+				<ng-container *ngFor="let task of projectMember.taskStatusCounts">
+					<div class="taskDetails-content" >{{task.count}} {{task.status}}</div>
+				</ng-container>
+		</div>
+	</div>
+	<div class="description-container">
+		<div class="descDetails">
+			<div class="detail-title">DESCRIPTION</div>
+			<textarea aria-label="desctiption" class="descContent" rows="5" cols="80" readonly> {{projectMember.description}} </textarea>
+		</div>
+	</div>
+</div>

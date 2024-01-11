@@ -1,10 +1,10 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MemberInfo, TeamKeys, TeamMemUpdate, TeamMember } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import CheckBox from 'devextreme/ui/check_box';
 import { filter, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -13,7 +13,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './team-members.component.html',
   styleUrls: ['./team-members.component.scss']
 })
-export class TeamMembersComponent implements OnInit {
+export class TeamMembersComponent implements OnInit, OnDestroy {
 
 	@Input() teamMembers : TeamMember[];
 	@Input() searchText: string;
@@ -32,6 +32,7 @@ export class TeamMembersComponent implements OnInit {
 	emailNotify: boolean;
 	memberId : number;
 	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
+	subs: Subscription[] = [];
 
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
 	@Output() subGridEditClicked: EventEmitter<any> = new EventEmitter();
@@ -70,20 +71,20 @@ export class TeamMembersComponent implements OnInit {
 			share: member.share,
 		}
 
-		this.dashboardService.updateTeamMember(this.memberUpdate).subscribe(
+		this.subs.push(this.dashboardService.updateTeamMember(this.memberUpdate).subscribe(
       (res:any) => {
         if (res.success) {
 						this.teamMembersGrid.instance.saveEditData();
         } else { 
 					let message = `Team Member could not be updated. Please review and try again later.`;
-					this.dialogService.alert('Update Member', message, 'OK').subscribe();
+					this.subs.push(this.dialogService.alert('Update Member', message, 'OK').subscribe());
 					this.teamMembersGrid.instance.cancelEditData();
 				}
 				member.editMode = false;
 				this.resetEditMode();
       }
 
-    );
+    ));
 
 	}
 
@@ -93,10 +94,10 @@ export class TeamMembersComponent implements OnInit {
 
 		if (this.teamMemberCount == 1) {
 			let message = 'Team Member Removal can not be done. At least one team member must be assigned to the team.';
-			this.dialogService.alert('Team Member Removal', message, 'OK').subscribe();
+			this.subs.push(this.dialogService.alert('Team Member Removal', message, 'OK').subscribe());
 		} else {
 			let confirmText = `Do you want to Remove the member "${member.name}" ?`;
-			this.dialogService.confirm('Remove Team Member', confirmText, 'Confirm', 'Cancel').pipe(
+			this.subs.push(this.dialogService.confirm('Remove Team Member', confirmText, 'Confirm', 'Cancel').pipe(
 				filter(confirmed => !!confirmed),
 				switchMap(_ => this.dashboardService.deleteTeamMembers(this.memberIds)),
 				switchMap(res => {
@@ -107,7 +108,7 @@ export class TeamMembersComponent implements OnInit {
 					return res.success ? of(this.toastr.info("Selected Member(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) 
 					: this.dialogService.alert('Removal unsuccessful!', 'Team Member could not be deleted. Please review and try again later.', 'OK');
 				})
-			).subscribe();
+			).subscribe());
 		}	
 
 	}
@@ -183,6 +184,10 @@ export class TeamMembersComponent implements OnInit {
 				ele.setAttribute('name', 'selectionOption');
       })
     })
+  }
+
+	ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe);
   }
 
 }

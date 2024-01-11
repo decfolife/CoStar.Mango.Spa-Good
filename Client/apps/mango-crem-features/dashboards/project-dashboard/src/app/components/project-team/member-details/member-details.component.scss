@@ -1,0 +1,46 @@
+@use 'colors';
+
+.memberDetails {
+	background-color: colors.$bodyBackgroundGray;
+	padding: 16px 48px;
+  display: flex;  
+	flex-direction: row;
+	justify-content: space-between;
+
+	.contactDetails-container {
+		.contactDetails {
+			margin-bottom: 8px;
+		}
+
+	}
+
+	.taskDetails{
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	
+	.taskDetails, .descDetails {
+		.detail-title {
+			margin-bottom: 8px;
+		}
+	}
+	.detail-title {
+		font-size: 12px;
+		line-height: 14px;
+		font-weight: bold;
+		color: colors.$mediumDarkGray;
+	}
+
+	.taskDetails-content{
+		margin-bottom: 8px;
+	}
+
+	.descContent {
+		border-color: colors.$stdBorderGray;
+		background-color: colors.$bodyBackgroundGray;
+		border-radius: 4px;
+		resize: none;
+	}
+}
