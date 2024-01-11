@@ -17,6 +17,7 @@ import { AmortizationDetailSectionComponent } from '../amortization-detail-secti
 import { PaymentsDetailSectionComponent } from '@accounting-summary/components/payments-detail-section/payments-detail-section.component';
 import { TransactionPopupComponent } from '../payments-detail-section/transaction-popup/transaction-popup.component';
 import { JeProcessingInfoComponent } from '../amortization-detail-section/je-processing-info/je-processing-info.component';
+import { JePaymentInfoComponent } from '../amortization-detail-section/je-payment-info/je-payment-info.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,6 +39,7 @@ import { TimelineModule } from 'primeng/timeline';
     WorkflowDropdownComponent,
     AmortizationDetailSectionComponent,
     JeProcessingInfoComponent,
+    JePaymentInfoComponent,
     WorkflowHistoryPopupComponent
   ],
 

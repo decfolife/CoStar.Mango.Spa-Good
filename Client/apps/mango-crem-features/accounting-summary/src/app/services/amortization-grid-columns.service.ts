@@ -18,6 +18,7 @@ export class AmortizationGridColumnsService {
   private operatingLessorColumns = [];
   private salesTypeLessorColumns = [];
   private journalEntryColumns = [];
+  private jePaymentColumns = [];
   public functionalCurrencyEnabled = undefined;
   public isFiscalCalendar = undefined;
   private classificationId = -1;
@@ -1633,5 +1634,93 @@ export class AmortizationGridColumnsService {
       }
     ];
     return this.journalEntryColumns;
+  }
+
+  public getJePaymentGridColumns(dateFormat: string) {
+    this.jePaymentColumns = [
+      {
+        caption: 'Payment Event Source',
+        name: 'PaymentEventSource',
+        dataField: 'paymentEventSource',
+        visible: true,
+        alignment: 'left',
+        sortOrder: 'desc',
+        sortIndex: 1,
+        headerCellTemplate: 'amortizationHeader'
+      },
+      {
+        caption: 'Accounting Name',
+        name: 'GlAccountName',
+        dataField: 'glAccountName',
+        visible: true,
+        sortOrder: 'desc',
+        sortIndex: 3,
+        headerCellTemplate: 'amortizationHeader'
+      },
+      {
+        caption: 'Recognition Category',
+        name: 'RecognitionCategory',
+        dataField: 'recognitionCategory',
+        visible: true,
+        headerCellTemplate: 'amortizationHeader'
+      },
+      {
+        caption: 'Payment Frequency',
+        name: 'PaymentFrequency',
+        dataField: 'paymentFrequency',
+        visible: true,
+        headerCellTemplate: 'amortizationHeader'
+      },
+      {
+        caption: 'Due By Date',
+        name: 'DueBy',
+        dataField: 'dueBy',
+        dataType: 'date',
+        format: dateFormat,
+        visible: true,
+        sortOrder: 'desc',
+        sortIndex: 2,
+        headerCellTemplate: 'amortizationHeader'
+      },
+      {
+        caption: 'Currency',
+        name: 'Currency',
+        dataField: 'currency',
+        visible: true,
+        headerCellTemplate: 'amortizationHeader',
+        width: '220px'
+      },
+      {
+        caption: 'Amount in Payment Currency',
+        name: 'ChargeAmount',
+        dataField: 'chargeAmount',
+        visible: true,
+        headerCellTemplate: 'amortizationHeader'
+      },
+      {
+        caption: 'Direct Cost',
+        name: 'DirectCosts',
+        dataField: 'directCosts',
+        visible: true,
+        headerCellTemplate: 'amortizationHeader'
+      },
+      {
+        caption: 'Termination Fee',
+        name: 'TerminationFees',
+        dataField: 'terminationFees',
+        visible: true,
+        headerCellTemplate: 'amortizationHeader',
+      },
+      {
+        caption: 'Amount Due in Period',
+        name: 'ActualAmountDueInPeriod',
+        dataField: 'actualAmountDueInPeriod',
+        visible: true,
+        alignment: 'left',
+        headerCellTemplate: 'amortizationHeader',
+        appendsCurrency: 'true',
+      }
+    ];
+    return this.jePaymentColumns;
   }
 }

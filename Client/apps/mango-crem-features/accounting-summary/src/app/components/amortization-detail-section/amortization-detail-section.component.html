@@ -105,13 +105,14 @@
         [height]="popupHeight"
         [resizeEnabled]="true"
         [wrapperAttr]="{ class: 'accounting-summary-style-container' }"
-        title="JE Processing Info: {{ jeProcessingPopupData.displayPeriod }}"
+        [title]="jePopupTile"
         >    
         <dx-scroll-view>
         <dx-tab-panel
             [dataSource]="tabs"
             [selectedIndex]="0"
-            tabsPosition="left">
+            tabsPosition="left"
+            (onOptionChanged)="onTabChanged($event)">
 
             <div *dxTemplate="let PeriodPopup of 'jeProcessingData'">
                 <mango-je-processing-info
@@ -124,7 +125,10 @@
                     ></mango-je-processing-info>
             </div>
             <div *dxTemplate="let PeriodPopup of 'paymentDetailData'">
-                <!-- Payment Detail tab component -->
+                <mango-je-payment-info
+                [jePaymentPopupData]="jePaymentPopupData"
+                [userInfo]="userInfo">
+                </mango-je-payment-info>
             </div>
 
             <div *dxTemplate="let PeriodPopup of 'retrospectiveAdjustmentData'">

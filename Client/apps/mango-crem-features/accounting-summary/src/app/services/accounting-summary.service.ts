@@ -172,6 +172,15 @@ export class AccountingSummaryService extends EndpointService {
     return this.callHttpPost(url, 'getJeProcessingPopupData', { leaseRecognitionPeriodID });
   }
 
+  getJePaymentPopupData(leaseRecognitionPeriodID: number) {
+    if (environment.isRestful) {
+      return this.callHttpGet(`${this.apiUrl}AmortizationPeriods/GetPeriodPayments/period/${leaseRecognitionPeriodID}`, 'getJePaymentPopupData');
+    }
+
+    const url = `${this.apiUrl}getjepaymentpopupdata`;
+    return this.callHttpPost(url, 'getJePaymentPopupData', { leaseRecognitionPeriodID });
+  }
+
   getPortfolioSettings() {
     if (environment.isRestful) {
       return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetPortfolioSettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');

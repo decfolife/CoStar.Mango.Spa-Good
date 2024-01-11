@@ -3,6 +3,7 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { AmortizationGridColumnsService } from '@accounting-summary/services/amortization-grid-columns.service';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
+import { DatePipe } from '@angular/common';
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { DxDataGridComponent  } from 'devextreme-angular';
 import { Subscription, combineLatest } from 'rxjs';
@@ -41,6 +42,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   popupVisible = false;
   jeProcessingInfoPopupVisible = false;
   jeProcessingPopupData: any;
+  jePopupTile: string;
+  jePaymentPopupData: any;
   popupHeight='';
   maxHeight ='70%';
   minHeight = '50%'
@@ -51,7 +54,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   private subscription = new Subscription();
 
-  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: AmortizationGridColumnsService, private formatService: FormattingService) {
+  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: AmortizationGridColumnsService, private formatService: FormattingService, private datePipe: DatePipe) {
     this.summaryFields = this.getSummaryFields();
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
@@ -286,8 +289,16 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     }
 
   jeProcessingPopup(event: any) {
+    const rowIndex = event.rowIndex;
     this.getJeProcessingPopupData(event.data.leaseRecognitionPeriodID);
+    this.getJePaymentPopupData(event.data.leaseRecognitionPeriodID);
     this.jeProcessingInfoPopupVisible = true;
+
+    const start = new Date(this.amortizationdetailsGridData[rowIndex].periodStart);
+    start.setDate(1);
+    const formattedStart = this.datePipe.transform(start, this.dateFormat);
+    const formattedEnd = this.datePipe.transform(this.amortizationdetailsGridData[rowIndex].periodEnd, this.dateFormat);
+    this.jePopupTile = `Period: ${this.amortizationdetailsGridData[rowIndex].displayPeriod} (${formattedStart} - ${formattedEnd})`;
   }
 
   onPopupHidden() {
@@ -362,10 +373,24 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
           this.accountingSummaryService.errorNotify(jeProcessingDetailsResponse.clientErrorMessage);
         } else {
           this.jeProcessingPopupData = jeProcessingDetailsResponse.data;
-          this.isEuroDateFormat = this.userInfo.useDateEU;
-          if (this.isEuroDateFormat) {
-            this.dateFormat = 'dd.MM.yyyy';
-          }
+        }
+      },
+    ));
+  }
+
+  private getJePaymentPopupData(leaseRecognitionPeriodID: number) {
+    const jePaymentDetails = this.accountingSummaryService.getJePaymentPopupData(leaseRecognitionPeriodID);
+  
+    this.subscription.add(jePaymentDetails.subscribe(
+      (res) => {
+        const jePaymentDetailsResponse = res;
+  
+        if (jePaymentDetailsResponse === null) {
+          this.accountingSummaryService.displayContactSystemAdminMessage();
+        } else if (!jePaymentDetailsResponse.success) {
+          this.accountingSummaryService.errorNotify(jePaymentDetailsResponse.clientErrorMessage);
+        } else {
+          this.jePaymentPopupData = jePaymentDetailsResponse.data;
         }
       },
     ));
@@ -374,4 +399,12 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   onJeDataSaved() {
     this.getJeProcessingPopupData(this.jeProcessingPopupData.leaseRecognitionPeriodID);
   }
+
+  onTabChanged(event: any) {
+    if (event.name === 'selectedIndex' && event.value !== undefined) {
+      const selectedTab = this.tabs[event.value];
+        this.popupHeight = this.maxHeight;
+      }
+    }
+    
 }
