@@ -91,10 +91,7 @@
         <dxo-header-filter [visible]="true" [allowSearch]="true">
         </dxo-header-filter>
 
-        <dxo-export 
-            [enabled]="true"
-            fileName="CoStar_JEPReview {{ dateTimeStamp() | date:'medium' }}">
-        </dxo-export>
+        <dxo-export [enabled]="true" [fileName]="exportToExcelFileName()"></dxo-export>
 
         <div *dxTemplate="let info of 'amortizationHeader'">
             <p title={{info.column.caption}} class="header-column-caption">

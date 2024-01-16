@@ -20,6 +20,8 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   @Input() leaseIsArchived: boolean;
   @Input() rightsInfo: any;
   @Input() userInfo: UserInfoResponse;
+  @Input() classificationType: string;
+  @Input() amortizationProfileName: string;
   @Output() eventScheduleData = new EventEmitter<number>();
   detailsGridData;
   detailColumns = [];
@@ -453,4 +455,13 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     this.userHasDeleteAccountingSchedulesModuleRight = this.rightsInfo.userCanDeleteSchedule;
   }
 
+  exportToExcel() {
+    const classificationType = this.classificationType; 
+    const amortizationProfileName = this.amortizationProfileName;
+    const componentName = 'Accounting Events';
+    const sheetname = this.accountingSummaryService.getLeaseAbstractId() + ' - ' + amortizationProfileName;
+    const filename = this.accountingSummaryService.generateFileName(classificationType, amortizationProfileName, componentName);
+    this.accountingSummaryService.exportToExcel(this.eventsDataGrid.instance, filename, sheetname);
+  }
+  
 }

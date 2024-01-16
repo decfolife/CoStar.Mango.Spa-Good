@@ -40,6 +40,8 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   modifiedByID: number;
   modifiedByName: string;
   modifiedDate: any;
+  amortizationProfileName: string;
+  classificationType: string;
 
   constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }
 
@@ -108,6 +110,8 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     const selecetedEvent = this.gridDataSource.find(x => (x.masterScheduleID === this.masterScheduleID && x.isPublished));
     this.classificationID = selecetedEvent.classificationID;
     this.leaseRecognitionScheduleID = selecetedEvent.leaseRecognitionScheduleID;
+    this.amortizationProfileName = selecetedEvent.amortizationProfileName;
+    this.classificationType = selecetedEvent.classificationType;
   }
 
   addEvent(event) {
@@ -186,6 +190,8 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
         this.masterScheduleID = this.gridDataSource[0].masterScheduleID;
         this.leaseRecognitionScheduleID = this.gridDataSource[0].leaseRecognitionScheduleID;
         this.classificationID = this.gridDataSource[0].classificationID;
+        this.amortizationProfileName= this.gridDataSource[0].amortizationProfileName;
+        this.classificationType = this.gridDataSource[0].classificationType;
         this.isAccountingEventEmpty = false;
       }
       else if (!response.success) {

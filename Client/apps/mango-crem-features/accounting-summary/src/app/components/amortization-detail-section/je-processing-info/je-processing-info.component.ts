@@ -16,6 +16,7 @@ export class JeProcessingInfoComponent {
   @Input() amortizationdetailsGridData: any;
   @Input() eventScheduleData: any;
   @Input() rightsInfo: any;
+  @Input() displayPeriodTitle: string;
   @Output() jeActionTaken: EventEmitter<any> = new EventEmitter<any>();
   @Output() setHeight = new EventEmitter<boolean>();
 
@@ -241,7 +242,10 @@ export class JeProcessingInfoComponent {
     this.isTooltipVisible = false;
   }
 
-  dateTimeStamp() {
-    return new Date();
+  exportToExcelFileName(): string {
+    const dateTimeStamp = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
+    const fileName = `Period_${formattedDisplayPeriodTitle}_JE_Preview_${dateTimeStamp}`;
+    return fileName;
   }
 }

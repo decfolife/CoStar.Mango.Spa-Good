@@ -5,6 +5,9 @@ import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import notify from 'devextreme/ui/notify';
 import { Observable, Subject } from 'rxjs';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver-es';
+import { exportDataGrid } from 'devextreme/excel_exporter';
 
 @Injectable({
   providedIn: 'root'
@@ -235,6 +238,34 @@ export class AccountingSummaryService extends EndpointService {
       return `${componentName}-${componentType}-${uniqueName}-${elementType}`
     else
       return `${componentName}-${uniqueName}-${elementType}`
+  }
+
+  exportToExcel(component: any, filename: string, worksheetName: string): void {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet(worksheetName);
+  
+    exportDataGrid({
+      component: component,
+      worksheet: worksheet,
+    }).then(() => {
+      worksheet.eachRow({ includeEmpty: true }, function (row, rowNumber) {
+        row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
+          cell.alignment = { wrapText: true,  vertical: 'top', horizontal: 'center'};
+        });
+      });
+  
+      workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+      });
+    });
+  }
+
+  generateFileName(classificationType: string, amortizationProfileName: string, componentName?: string): string {
+    return `${this.getLeaseAbstractId()} ${componentName ? '- ' + componentName + ' -' : '-'} ${classificationType} - ${amortizationProfileName} - ${this.getTimeStamp().toLocaleString()}.xlsx`;
+  }
+
+  getTimeStamp() {
+    return new Date();
   }
 
   displayContactSystemAdminMessage(){

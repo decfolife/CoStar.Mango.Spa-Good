@@ -15,6 +15,8 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   @Input() eventScheduleData: any;
   @Input() classificationID: number;
   @Input() userInfo: UserInfoResponse;
+  @Input() classificationType: string;
+  @Input() amortizationProfileName: string;
 
   componentName = "payments-grid"
   isGridStateChanged = false;
@@ -171,4 +173,14 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
       },
     ));
   }
+
+  exportToExcel() {
+    const classificationType = this.classificationType;
+    const amortizationProfileName = this.amortizationProfileName;
+    const componentName = 'Payments';
+    const sheetname = this.accountingSummaryService.getLeaseAbstractId() + ' - ' + amortizationProfileName;
+    const filename = this.accountingSummaryService.generateFileName(classificationType, amortizationProfileName, componentName);
+    this.accountingSummaryService.exportToExcel(this.paymentsDataGrid.instance, filename, sheetname);
+  }
+
 }

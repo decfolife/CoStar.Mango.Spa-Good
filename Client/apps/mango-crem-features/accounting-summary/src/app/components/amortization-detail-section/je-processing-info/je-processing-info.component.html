@@ -110,8 +110,7 @@
                     <dxo-scrolling
                         mode="virtual">
                     </dxo-scrolling>
-                    
-                    <dxo-export [enabled]="true" fileName="CoStar_JEPReview {{ dateTimeStamp() | date:'medium' }}"></dxo-export>
+                    <dxo-export [enabled]="true" [fileName]="exportToExcelFileName()"></dxo-export>
 
                     <div *dxTemplate="let info of 'amortizationHeader'">
                         <p title={{info.column.caption}}

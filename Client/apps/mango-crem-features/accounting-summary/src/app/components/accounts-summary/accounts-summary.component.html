@@ -100,9 +100,32 @@
   </div>
 
   <div *ngIf="!isAccountingEventEmpty">
-    <mango-events-detail-section [masterScheduleID]="masterScheduleID" [leaseIsLocked]="isLocked" [leaseIsArchived]="isArchived" 
-    [rightsInfo]="rightsInfo" [userInfo]="userInfo" (eventScheduleData)="setLeaseRecognitionScheduleID($event)"></mango-events-detail-section>
-    <mango-payments-detail-section [eventScheduleData]="eventSchedule" [classificationID]="classificationID" [userInfo]="userInfo"></mango-payments-detail-section>
-    <mango-amortization-detail-section [eventScheduleData]="eventSchedule" [classificationID]="classificationID" [userInfo]="userInfo" [rightsInfo]="rightsInfo"></mango-amortization-detail-section>
+    <mango-events-detail-section
+      [masterScheduleID]="masterScheduleID"
+      [leaseIsLocked]="isLocked"
+      [leaseIsArchived]="isArchived" 
+      [rightsInfo]="rightsInfo"
+      [userInfo]="userInfo"
+      (eventScheduleData)="setLeaseRecognitionScheduleID($event)"
+      [amortizationProfileName]="amortizationProfileName"
+      [classificationType]="classificationType">
+    </mango-events-detail-section>
+
+    <mango-payments-detail-section
+      [eventScheduleData]="eventSchedule"
+      [classificationID]="classificationID"
+      [userInfo]="userInfo" 
+      [amortizationProfileName]="amortizationProfileName"
+      [classificationType]="classificationType">
+    </mango-payments-detail-section>
+
+    <mango-amortization-detail-section
+      [eventScheduleData]="eventSchedule"
+      [classificationID]="classificationID"
+      [userInfo]="userInfo"
+      [rightsInfo]="rightsInfo"
+      [amortizationProfileName]="amortizationProfileName"
+      [classificationType]="classificationType">
+    </mango-amortization-detail-section>
   </div>
 </div>

@@ -22,6 +22,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   classificationID: number;
   @Input() userInfo: UserInfoResponse;
   @Input() rightsInfo: any;
+  @Input() classificationType: string;
+  @Input() amortizationProfileName: string;
   componentName = "amortization-grid"
   isGridStateChanged = false;
   amortizationdetailsGridData;
@@ -43,6 +45,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   jeProcessingInfoPopupVisible = false;
   jeProcessingPopupData: any;
   jePopupTile: string;
+  displayPeriodTitle: string;
   jePaymentPopupData: any;
   popupHeight='';
   maxHeight ='70%';
@@ -289,16 +292,15 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     }
 
   jeProcessingPopup(event: any) {
-    const rowIndex = event.rowIndex;
-    this.getJeProcessingPopupData(event.data.leaseRecognitionPeriodID);
-    this.getJePaymentPopupData(event.data.leaseRecognitionPeriodID);
+    const { leaseRecognitionPeriodID, displayPeriod, periodStart, periodEnd } = event.data;
+    this.getJeProcessingPopupData(leaseRecognitionPeriodID);
+    this.getJePaymentPopupData(leaseRecognitionPeriodID);
     this.jeProcessingInfoPopupVisible = true;
+    const formattedStart = this.datePipe.transform(displayPeriod === 'Beginning Balance' ? periodStart : new Date(periodStart), this.dateFormat);
+    const formattedEnd = displayPeriod === 'Beginning Balance' ? '' : this.datePipe.transform(periodEnd, this.dateFormat);
+    this.jePopupTile = `Period: ${displayPeriod} (${formattedStart}${formattedEnd ? ' - ' + formattedEnd : ''})`;
 
-    const start = new Date(this.amortizationdetailsGridData[rowIndex].periodStart);
-    start.setDate(1);
-    const formattedStart = this.datePipe.transform(start, this.dateFormat);
-    const formattedEnd = this.datePipe.transform(this.amortizationdetailsGridData[rowIndex].periodEnd, this.dateFormat);
-    this.jePopupTile = `Period: ${this.amortizationdetailsGridData[rowIndex].displayPeriod} (${formattedStart} - ${formattedEnd})`;
+    this.displayPeriodTitle = displayPeriod
   }
 
   onPopupHidden() {
@@ -407,4 +409,11 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       }
     }
     
+  exportToExcel() {
+    const classificationType = this.classificationType;
+    const amortizationProfileName = this.amortizationProfileName;
+    const sheetname = this.accountingSummaryService.getLeaseAbstractId() + ' - ' + amortizationProfileName;
+    const filename = this.accountingSummaryService.generateFileName(classificationType, amortizationProfileName);
+    this.accountingSummaryService.exportToExcel(this.amortizationDataGrid.instance, filename, sheetname);
+  }
 }

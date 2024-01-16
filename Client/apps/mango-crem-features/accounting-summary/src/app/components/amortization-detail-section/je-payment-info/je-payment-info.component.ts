@@ -13,6 +13,7 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
 export class JePaymentInfoComponent{
   @Input() jePaymentPopupData: any;
   @Input() userInfo: UserInfoResponse;
+  @Input() displayPeriodTitle: string;
 
   jePaymentGridColumns = [];
   componentName = "je-payment-info";
@@ -28,10 +29,6 @@ export class JePaymentInfoComponent{
 
   ngOnChanges(changes: SimpleChanges) {
     this.jePaymentInfoGridSetup();
-  }
-
-  dateTimeStamp(){
-    return new Date();
   }
 
   jePaymentInfoGridSetup() {
@@ -74,6 +71,12 @@ export class JePaymentInfoComponent{
         case 'chargeAmount':
           options.totalValue += options.value.chargeAmount || 0;
           break;
+          case 'directCosts':
+            options.totalValue += options.value.directCosts || 0;
+            break;
+            case 'terminationFees':
+              options.totalValue += options.value.terminationFees || 0;
+              break;
         case 'actualAmountDueInPeriod':
           if (options.value.chargeAmount !== 0) {
             options.totalValue += options.value.actualAmountDueInPeriod || 0;
@@ -93,10 +96,17 @@ export class JePaymentInfoComponent{
     const getCurrency = delimiter.length > 1 ? delimiter[1]?.trim() : currency.trim();
   
     if (target === 'summaryRow') {
-      return `Sum in Event Currency (${getCurrency})`;
+      return `Sum in Event Currency (${getCurrency}):`;
     } else if (target === 'columnCaption') {
       return `Amount Due in Period (${getCurrency})`;
     }
+  }
+
+  exportToExcelFileName(): string {
+    const dateTimeStamp = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
+    const fileName = `Period_${formattedDisplayPeriodTitle}_Payment_Detail_${dateTimeStamp}`;
+    return fileName;
   }
 }
 
