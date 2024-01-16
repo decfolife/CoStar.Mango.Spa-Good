@@ -3,6 +3,10 @@ import { Injectable, Optional } from '@angular/core';
 import { environment } from '../../../../../mango/src/environments/environment.local';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Observable } from 'rxjs';
+
+import { CardConfig, SortingOrder } from '@mango/data-models/lib-data-models';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 
@@ -23,7 +27,7 @@ export class InAppDisclosureService extends EndpointService{
     })
   }
 
-  public getSegments(criteriaSetID?, includeArchived: boolean = false) {
+  public getSegments(criteriaSetID?, includeArchived: boolean = false): Observable<any> {
     let param;
    
     if (criteriaSetID) {
@@ -33,7 +37,7 @@ export class InAppDisclosureService extends EndpointService{
     }
 
     const url = `${environment.appUrls.reports}ReportsSegments/Segments`;
-    return this.callHttpGet(url, 'getSegments',  param)
+    return this.callHttpGet(url, 'getSegments',  param);
   }
 
   public getIADCardData(dashboardID, segmentID, reportingYear, reportingCurrency) {
@@ -42,10 +46,37 @@ export class InAppDisclosureService extends EndpointService{
     return this.callHttpGet(url, 'getIADCardData',  param)  
   }
 
-  public getIADCardConfigs(dashboardId) {
-    let param = { dashboardId: dashboardId };
+  public getIADCardConfigs(dashboardId: number, cardConfig?: CardConfig[]): Observable<any> {
+
+    const param = { dashboardId: dashboardId };
     const url = `${environment.appUrls.inAppDisclosure}IAD/IADCardConfigs`;
-    return this.callHttpGet(url, 'getIADCardData',  param)
+
+    if(cardConfig){
+      return this.callHttpGet(url, 'getIADCardData',  param)
+        .pipe(
+          map( result => {
+            const fieldConfigs = []
+            result.data.forEach( card => {
+              const fieldConfig = JSON.parse(card.CardJSONSchema);
+              fieldConfig.splice(3,1);
+              // todo: temp solution, combine this with fieldTransformation/fieldMapping which defines the field to be used
+              // todo: the data array should be transformed using the for each instead of pushing later
+              // The array corresponds to the order coming from the API in the CardJSONSchema field
+              // This should be 'find field' in the Array of objects, or API returns object to prevent changing indexes
+              fieldConfig[0].sortingMethod = () => this.rowSort(undefined, undefined, card.sortingOrder);
+              fieldConfig[2].sortingMethod =  () => this.rowSort(undefined, undefined, card.sortingOrder);
+              fieldConfig[3].format = card.format;
+              fieldConfig[fieldConfig.length - 1].calculateCustomSummary = () => this.calculateCustomSummary(undefined);
+              fieldConfigs.push(fieldConfig);
+            });
+            result.data = fieldConfigs;
+            return result;
+          }),
+        );
+    } else {
+      return this.callHttpGet(url, 'getIADCardData',  param);
+    }
+
   }
 
   public getAccountingCriteriaSets() {
@@ -60,10 +91,40 @@ export class InAppDisclosureService extends EndpointService{
     return this.callHttpGet(url, 'Export',  param)
   }
 
+  getUserPreferences(): Observable<any> {
+    const url = `${environment.appUrls.dashboards}Dashboards/GetUserPreferences`;
+    return this.callHttpGet(url, 'getGetUserPreferences')
+  }
+
   public getCurrencyDecimalPrecision(currencyISO) {
     let param = { currencyISO: currencyISO }
     const url = `${environment.appUrls.inAppDisclosure}IAD/CurrencyPrecision`
 
     return this.callHttpGet(url, 'getCurrencyPrecision', param)
   }
+
+  private rowSort(a?, b?, sortingOrder?: SortingOrder) {
+    if (sortingOrder?.[a.value] > sortingOrder?.[b.value])
+      return 1;
+    if (sortingOrder?.[b.value] > sortingOrder?.[a.value])
+      return -1;
+    else
+      return 0;
+  }
+
+  private calculateCustomSummary(options, currencyISO?:string){
+    // todo: this should be programmatically generated, missing return(?)
+    switch(options.summaryProcess) {
+      case "start":
+        options.totalValue = 0;
+        break;
+      case "calculate":
+        options.totalValue += options.value;
+        break;
+      case "finalize":
+        options.totalValue = options.totalValue.toFixed(2);
+        break;
+    }
+  }
+
 }

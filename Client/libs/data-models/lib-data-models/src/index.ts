@@ -43,6 +43,8 @@ export * from './lib/models/contactMember';
 export * from './lib/models/teamMemUpdate';
 export * from './lib/models/teamKeys';
 export * from './lib/models/projectTeamMember';
+export * from './lib/models/dashboards/cardConfig';
+export * from './lib/models/dashboards/cardConfig'
 export * from './lib/constants/central-auth.constants';
 export * from './lib/constants/mango.constants';
 export * from './lib/lib-data-models.module';

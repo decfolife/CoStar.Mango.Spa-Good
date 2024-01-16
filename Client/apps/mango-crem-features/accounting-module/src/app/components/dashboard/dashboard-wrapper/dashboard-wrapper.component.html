@@ -102,11 +102,18 @@
         <asc-842-quarterly-disclosures *ngIf="selectedView === 3">
         </asc-842-quarterly-disclosures>
 
-        <ifrs-16-annual-disclosures *ngIf="selectedView === 4">
-        </ifrs-16-annual-disclosures>
+        <ifrs-16-annual-disclosures
+          *ngIf="selectedView === 4"
+          [selectedSegment]="selectedSegment"
+          [reportingYear]="selectedYear"
+        ></ifrs-16-annual-disclosures>
 
-        <ifrs-16-quarterly-disclosures *ngIf="selectedView === 5">
-        </ifrs-16-quarterly-disclosures>
+        <ifrs-16-quarterly-disclosures
+          *ngIf="selectedView === 5"
+          [selectedSegment]="selectedSegment"
+          [reportingYear]="selectedYear"
+        ></ifrs-16-quarterly-disclosures>
+
       </div>
 
       <ng-template #noData>

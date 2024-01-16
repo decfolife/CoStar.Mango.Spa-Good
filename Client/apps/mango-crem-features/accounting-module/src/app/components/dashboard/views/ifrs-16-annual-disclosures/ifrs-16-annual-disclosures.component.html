@@ -1,1 +1,23 @@
-ifrs-16-annual-disclosures content
+<div *ngIf="!loading">
+  <div class="card-containers"
+    cdkDropList
+    cdkDropListOrientation="vertical"
+    (cdkDropListDropped)="cardMove($event)"
+  >
+    <div *ngFor="let config of cardData"
+      class="categories-item"
+      cdkDropListOrientation="horizontal"
+      [cdkDropListData]="{ card: card, index: i }"
+      fxLayout="row"
+    >
+      <mango-iad-card
+        [config]="config"
+        [dataSource]="pivotDataSources[config.index]"
+      ></mango-iad-card>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading">
+  <crem-loader></crem-loader>
+</div>

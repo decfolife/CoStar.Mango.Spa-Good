@@ -1,15 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable rxjs-angular/prefer-composition */
-
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
+
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
 import notify from 'devextreme/ui/notify';
-import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
 import { MatDialog } from '@angular/material/dialog';
-import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
 import { Subscription } from 'rxjs';
+
+import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
+import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
+import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
+import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
+import { switchMap, tap } from 'rxjs/operators';
+
+export interface DropdownSelection {
+  display: string,
+  id: number,
+}
 
 @Component({
   selector: 'mango-dashboard-wrapper',
@@ -17,7 +23,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./dashboard-wrapper.component.scss'],
 })
 export class DashboardWrapperComponent implements OnInit, OnDestroy {
-  public featureFlagEnabled: boolean = false;
+  public featureFlagEnabled = false as boolean;
   public accountingViewData: any[] = [
     {
       id: 1,
@@ -43,9 +49,9 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public accountingYearData: any[] = [];
   public accountingSegmentData: any[] = [];
   public selectedSegment: number;
-  public selectedView: number = 1;
-  public selectedYear: number = 2022;
-  public loading: boolean = true;
+  public selectedView = 1 as number;
+  public selectedYear = 2022 as number;
+  public loading = true as boolean;
   public criteriaSet: number;
   public workflowAlertsCriteriaSet: number;
   subs: Subscription[] = [];
@@ -53,7 +59,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
   @ViewChild(WorkflowAndAlertsComponent) workflowAndAlertsComponent;
-  
+  @ViewChild(Ifrs16AnnualDisclosuresComponent) ifrs16AnnualDisclosuresComponent;
+
   constructor(
     private inAppDisclosureService: InAppDisclosureService,
     public dialog: MatDialog,
@@ -93,29 +100,42 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     ));
   }
 
-  public onAccountingViewChange(data) {
-    if (data.length) {
-      //this.selectedView = data[0].id;
-      if (data[0].id == 1 || data[0].id == 2) {
+  public onAccountingViewChange(data: DropdownSelection[]) {
+    switch(data[0].id) {
+      default:
+      case 1:
+      case 2:
+      case 3:
+      case 4: {
         this.getSegments(data[0].id);
+        break;
       }
     }
   }
 
   public getSegments(view: number) {
-      this.accountingSegmentData = [];
-      this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
-        if (view == 1) {
-          this.criteriaSet = result.data[1].CriteriaSetID;
-        } else if (view == 2) {
-          this.criteriaSet = result.data[0].CriteriaSetID;
-        }
-        this.inAppDisclosureService.getSegments(this.criteriaSet, false).subscribe((result) => {
-          this.accountingSegmentData = result.data;
-          this.selectedSegment = result.data[0].segmentID;
+    this.accountingSegmentData = [];
+
+    this.inAppDisclosureService.getAccountingCriteriaSets()
+      .pipe(
+        switchMap( r => {
+          switch(view){
+            case 1: // Workflow and Alerts
+              this.criteriaSet = r.data[1].CriteriaSetID;
+              break;
+            default: // ASC 842 Annual Disclosures
+              this.criteriaSet = r.data[0].CriteriaSetID;
+              break;
+          }
+          return this.inAppDisclosureService.getSegments(this.criteriaSet, false);
+        }),
+        tap( r => {
+          this.accountingSegmentData = r.data;
+          this.selectedSegment = r.data[0].segmentID;
           this.selectedView = view;
         })
-      })
+      ).subscribe();
+
   }
 
   public onAccountingYearChange(data) {
@@ -131,10 +151,20 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   public apply(data) {
-    if (this.selectedView == 1) {
-      this.workflowAndAlertsComponent.refreshCardData();
-    } else if (this.selectedView == 2) {
-      this.asc842AnnualDisclosuresComponent.refreshCardData();
+    switch(this.selectedView){
+      default:
+      case 1: {
+        this.workflowAndAlertsComponent.refreshCardData();
+        break;
+      }
+      case 2: {
+        this.asc842AnnualDisclosuresComponent.refreshCardData();
+        break;
+      }
+      case 4: {
+        this.ifrs16AnnualDisclosuresComponent.refreshCardData();
+        break;
+      }
     }
   }
 
