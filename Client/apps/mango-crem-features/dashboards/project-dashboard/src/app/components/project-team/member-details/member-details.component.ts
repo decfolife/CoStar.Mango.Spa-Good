@@ -14,7 +14,7 @@ export class MemberDetailsComponent implements OnInit{
 	constructor() {}	
 
 	ngOnInit() {
-		console.log(`team: ${this.projectMember.teamMember}`);
+		
 	}
 
 }
