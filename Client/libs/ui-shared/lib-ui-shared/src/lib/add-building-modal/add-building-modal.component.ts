@@ -6,13 +6,13 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { Component, EventEmitter, Inject, OnInit, Output, ViewChild, OnDestroy } from '@angular/core';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
-import { filter, map, switchMap, tap} from 'rxjs/operators'
+import { filter, map, switchMap, tap } from 'rxjs/operators'
 
 //Constants
 const RENDER_SELECT_TEMPLATE_ID = 57;
 const RENDER_SELECT_HIERARCHY_ID = 10
 const RENDER_SELECT_SUBGROUP_ID = 9;
-const OTID= 3;
+const OTID = 3;
 
 
 @Component({
@@ -110,23 +110,33 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
   }
 
   public getDropdownData() {
-    const observableList = forkJoin({
-      templateDropdownItem: this.formWizardService.getRenderSelect("", 18),
-      countryDropdownItem: this.formWizardService.getRenderSelect("0", 16),
-      portfolioDropdownItem: this.formWizardService.getRenderSelect("", 62),
-      stateDropDownItem: this.formWizardService.getRenderSelect("United States", 17),
-    });
-
     this.subscriptions.add(
-      observableList.subscribe((data: any) => {
-        this.countryDropdownItem = data.countryDropdownItem.data;
-        this.templateDropdownItem = data.templateDropdownItem.data.map(projectTemplateName => projectTemplateName.ProjectTemplateName);
-        this.portfolioDropdownItem = data.portfolioDropdownItem.data;
-        this.stateDropdownItem = data.stateDropDownItem.data;
-        this.loading = false;
-        this.focusFirstItem();
-      })
-    )
+      combineLatest([
+        this.formWizardService.getRenderSelect("United States", 17),
+        this.formWizardService.getRenderSelect("0", 16),
+        this.formWizardService.getRenderSelect("", 62),
+        this.formWizardService.getRenderSelect("United States", 17)
+      ]).pipe(
+        filter(([
+          templateDropdownItem,
+          countryDropdownItem,
+          portfolioDropdownItem,
+          stateDropDownItem
+        ]) => !!templateDropdownItem && !!countryDropdownItem && !!portfolioDropdownItem && !!stateDropDownItem),
+        tap(([
+          templateDropdownItem,
+          countryDropdownItem,
+          portfolioDropdownItem,
+          stateDropDownItem
+        ]) => {
+          this.countryDropdownItem = countryDropdownItem.data;
+          this.templateDropdownItem = templateDropdownItem.data.map(projectTemplateName => projectTemplateName.ProjectTemplateName);
+          this.portfolioDropdownItem = portfolioDropdownItem.data;
+          this.stateDropdownItem = stateDropDownItem.data;
+          this.loading = false;
+          this.focusFirstItem();
+        })
+      ).subscribe())
   }
 
   onCountryChanged(e: any) {
@@ -147,7 +157,7 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
   onPortFolioValueChanged(e: any) {
     of(e.value).pipe(
       filter(value => !!value),
-      switchMap(value => 
+      switchMap(value =>
         combineLatest([
           this.formWizardService.getRenderSelect(value, RENDER_SELECT_TEMPLATE_ID).pipe(filter(v => !!v)),
           this.formWizardService.getRenderSelect(value, RENDER_SELECT_HIERARCHY_ID).pipe(filter(v => !!v)),
@@ -157,7 +167,7 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
       map(([templates, hierachies, subgroups]) => {
         this.templateDropdownItem = templates.data;
         this.hierarchyDropdownItem = hierachies.data;
-        this.subGroupDropdownItem  = subgroups.data
+        this.subGroupDropdownItem = subgroups.data
       })
     ).subscribe()
   }
@@ -248,16 +258,16 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
 
   public launch(data: any) {
     const isFormValid = this.addBuildingForm.instance.validate();
-  
+
     if (isFormValid) {
       const formData = this.getBuildingFromFormData();
       this.loading = true;
-  
+
       this.formWizardService.addBuilding(formData).pipe(
         switchMap((addBuildingResult) => {
           if (addBuildingResult.success) {
             const buidlingID: number = addBuildingResult.data;
-  
+
             return forkJoin({
               redirectorLinkResult: this.formWizardService.getRedirectorLink(OTID, formData.objectTypeTypeID),
               buidlingID: of(buidlingID),
@@ -279,7 +289,7 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
               OTID +
               '&OTTID=' +
               formData.objectTypeTypeID;
-              this.router.navigate([url]);
+            this.router.navigate([url]);
             this.showMessage();
             this.dialogRef.close(data);
           }
