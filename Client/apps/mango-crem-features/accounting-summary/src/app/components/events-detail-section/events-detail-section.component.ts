@@ -5,6 +5,7 @@ import { EventsGridColumnsService } from '@accounting-summary/services/events-gr
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { trigger } from 'devextreme/events';
+import { RowPreparedEvent, CellPreparedEvent } from 'devextreme/ui/data_grid';
 import { Subscription, combineLatest } from 'rxjs';
 
 @Component({
@@ -249,6 +250,26 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   onRowClick(e) {
     this.eventScheduleData.emit(e.data);
+    this.eventsDataGrid.instance.repaint();
+  }  
+
+  onCellPrepared(event: CellPreparedEvent) {
+    if (event?.row?.isSelected) {
+      if (event.row.data.scheduleIndex == 1) {
+        event.cellElement.style.fontWeight = '400';
+        return;
+      }
+
+      const previousRow = this.detailsGridData.filter(f => f.scheduleIndex == (event.row.data.scheduleIndex - 1))[0];
+
+      const oldValue = Object(previousRow)[event.column.dataField];
+      const newValue = Object(event.data)[event.column.dataField];
+      if(oldValue !== newValue) {
+        event.cellElement.style.fontWeight = '700';
+      } else {
+        event.cellElement.style.fontWeight = '400';
+      }
+    }
   }
 
   presentValueExcel(event, data) {
