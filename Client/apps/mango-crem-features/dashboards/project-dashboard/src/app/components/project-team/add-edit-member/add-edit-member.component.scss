@@ -1,0 +1,47 @@
+@use 'colors';
+#addEditMemberModal-content {
+  .label {
+    margin-bottom: 2px;
+  }
+
+  & > div {
+    padding: 20px 0;
+  }
+  .email-shared-data {
+    width: 100%;
+    padding-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+
+    .emailToggle, .sharedToggle {
+      width: 100%
+    }
+  }
+  .descContent {
+    outline: none;
+    width: 100%;
+    min-height: 30px;
+    border-color: colors.$borderColor;
+    border-radius: 2px;
+
+    &:focus {
+      box-shadow: 0 0 0 0.1rem colors.$primary;
+    }
+  }
+  .assgnedTasksHdr {
+    display: flex;
+    justify-content: space-between;
+  }  
+}
+
+.footerRightControls {
+  display: flex;
+
+  & > .aem-btn {
+    margin-left: 8px;
+  }
+
+  .modalFooter {
+    border-top: 1px solid colors.$borderColor;
+  }
+}

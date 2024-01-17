@@ -614,11 +614,12 @@ body {
 	button.mat-menu-trigger.btn-link:focus, 
 	button.actionsButton:focus, 
 	button.moreButton:focus,
+	button.addButton:focus,
 	.clearFilters button.btn-secondary:focus,
 	.searchProjectTeam .mat-form-field.mat-focused
 	{
 		outline: none;
-		box-shadow: 0 0 0 0.1rem colors.$blueShade;
+		box-shadow: 0 0 0 0.1rem colors.$primary;
 	}
 
 	.searchTeams-input, .searchProjectTeam-input {
@@ -658,9 +659,15 @@ body {
 	}
 }
 
-#addEditTeamModal {
+#addEditTeamModal, #addEditMemberModal {
 	.aet-textInput .mat-form-field {
 		width: 100%;
+	}
+
+	.aet-members {
+		.dx-dropdowneditor-icon {
+			font: 24px/20px DXIcons;
+		}
 	}
 
 	.at-required {
@@ -681,7 +688,10 @@ body {
 	}	
 	.dx-texteditor.dx-editor-outlined.dx-state-focused, button:focus {
 		outline: none;
-		box-shadow: 0 0 0 0.1rem colors.$blueShade;
+		box-shadow: 0 0 0 0.1rem colors.$primary;
+	}
+	.dx-texteditor.dx-editor-outlined {
+		border-radius: 2px;
 	}
 
 	cs-text-field {
@@ -694,7 +704,7 @@ body {
 			border-bottom-left-radius: 4px;
 		}
 		.mat-form-field.mat-focused .mat-form-field-outline {
-			box-shadow: 0 0 0 0.1rem colors.$blueShade;
+			box-shadow: 0 0 0 0.1rem colors.$primary;
 			border-radius: 4px;
 		}
 	}

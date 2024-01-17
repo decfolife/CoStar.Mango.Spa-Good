@@ -1,29 +1,35 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectTeamComponent } from './project-team.component';
-import { ButtonModule, LoaderModule, ModalModule } from '@mango/ui-shared/lib-ui-elements'
+import { ButtonModule, LoaderModule, ModalModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements'
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { SearchModule, TextAreaModule } from '@mango/ui-shared/cosmos';
-import { DxDataGridModule, DxListModule } from 'devextreme-angular';
+import { SearchModule } from '@mango/ui-shared/cosmos';
+import { DxDataGridModule, DxDropDownBoxModule, DxListModule } from 'devextreme-angular';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MemberDetailsComponent } from './member-details/member-details.component';
+import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
 
 @NgModule({
   declarations: [
     ProjectTeamComponent,
     MemberDetailsComponent,
+    AddEditMemberComponent,
   ],
   imports: [
     CommonModule,
     ButtonModule,
     LoaderModule,
     ModalModule,
+    DropdownModule,
+    FontAwesomeModule,
     MatSlideToggleModule,
     MatIconModule,
     MatMenuModule,
     SearchModule,
     DxDataGridModule,
+    DxDropDownBoxModule,
     DxListModule,
   ],
   providers: [],

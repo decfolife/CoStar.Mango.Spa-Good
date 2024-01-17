@@ -1,0 +1,105 @@
+<crem-modal
+  [modalTitle] = "modalTitle"
+  [customFooter]="true"
+  [closeIconVisible] = "closeButton"
+  [modalId] = "modalId"
+>
+<div modalContent id="addEditMemberModal-content">
+  <div class="aet-members">
+    <h4 class="nameLabel label">Name</h4>
+    <div id="container">
+      <dx-drop-down-box 
+          class="aet-membersDropDown"
+          placeholder="Start typing to search for additional users."
+          [(opened)]="isDropDownBoxOpened" 
+          (onInput)="searchTeamMembers($event.event.target.value)"
+          (onClick)="focusOnDropDownInput($event)"
+          [acceptCustomValue]="true"
+          [openOnFieldClick]="false"
+          [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}"
+      >
+          <dx-list 
+              #SelectionMembersList
+              id="aet-membersList"
+              [dataSource]="filteredMembers" 
+              itemTemplate="membersListTemplate"
+              [activeStateEnabled]="false" 
+              [elementAttr]="{'aria-label': 'List of Members to Select'}"
+              (onItemClick)="onItemClicked($event)"
+
+          >
+            <div *dxTemplate="let member of 'membersListTemplate'"  >
+              <div>
+                <span class="aet-addPlusIcon"><fa-icon [icon]="faCirclePlus" ></fa-icon></span>
+                <span class="aet-memberData">
+                  <span class=aet-memberName>{{member.Name}}</span>
+                  <span class="aet-company"> - {{member.Company}}</span>
+                  <span class="aet-email"> - {{member.Email}}</span>
+                </span>
+              </div>  
+            </div>
+          </dx-list>
+      </dx-drop-down-box>
+    </div>
+  </div>
+  <div class="email-shared-data">
+    <div class="emailToggle">
+      <mat-slide-toggle  [labelPosition]="labelPosition" (change)="emailtoggle()" aria-label="Email Notication">
+        <h4 class="label">Email Notifications</h4>
+      </mat-slide-toggle>
+    </div>
+    <div class="sharedToggle">
+      <mat-slide-toggle  [labelPosition]="labelPosition" (change)="sharedtoggle()" aria-label="Shared">
+        <h4 class="label">Shared</h4>
+      </mat-slide-toggle>
+    </div>
+  </div>
+  <div class="Role">
+    <h4 class="roleLabel label">Role</h4>
+    <crem-dropdown
+      id="memberRoleDropdown"
+      dropDownContainerCustomClass="memberRoleDropDown"
+      [dataSource]='memberInfo.levels'
+      placeholder='Select the Role'
+      [showClearButton]='false'
+      [allowSearch]="true"
+      displayExpr='level'
+      valueExpr='level'
+      [initialSelectedValue]=''
+      (selectedItems)="roleSelected($event)">
+    </crem-dropdown>
+  </div>
+  <div class="Level">
+    <h4 class="levelLabel label">Level</h4>
+    <crem-dropdown
+      id="memberLevelDropdown"
+      dropDownContainerCustomClass="memberLevelDropDown"
+      [dataSource]='memberInfo.roles'
+      placeholder='Select the Access Level'
+      [showClearButton]='false'
+      [allowSearch]="true"
+      displayExpr='role'
+      valueExpr='role'
+      [initialSelectedValue]=''
+      (selectedItems)="levelSelected($event)">
+    </crem-dropdown>
+  </div>
+  <div class="description">
+    <h4 class="descLabel label">Description</h4>
+    <textarea aria-label="description"  class="descContent" rows="1"> </textarea>
+  </div>
+  <div class="assignedTasks">
+    <div class="assgnedTasksHdr">
+      <h4 class="descLabel label">Assigned Tasks</h4>
+      <fa-icon [icon]="faInfoCircle" class="fa-light"></fa-icon>
+    </div>
+  </div>
+</div>
+<div modalFooter class="addEditTeamModal-footerContent">
+  <div id="buttonTemplate" class="footerRightControls">
+    <crem-button  type="secondary" class="cancelChanges aem-btn"> Cancel </crem-button>
+    <crem-button  type="secondary" class="saveChanges aem-btn"> Save </crem-button>
+		<crem-button  type="primary" class="applyChanges aem-btn"> Apply </crem-button>
+  </div>
+</div>
+</crem-modal>

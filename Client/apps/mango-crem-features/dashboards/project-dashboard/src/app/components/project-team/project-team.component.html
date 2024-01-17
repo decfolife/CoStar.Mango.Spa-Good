@@ -29,7 +29,7 @@
 			<div class="addOptions">
 				<button class="btn btn-primary addButton" [matMenuTriggerFor]="addMenu" (click)="$event.preventDefault()">Add <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #addMenu="matMenu" class="projectTeamAddMenu">				
-					<button mat-menu-item class="addBtn-teamMember">Add Team Member</button>      
+					<button mat-menu-item class="addBtn-teamMember" (click)="addOrEditTeamMember()">Add Team Member</button>      
 					<button mat-menu-item class="addBtn-temporaryUser">Add Temporary User</button>  
 					<button mat-menu-item class="addBtn-contact">Add Contact</button>                  
 				</mat-menu>	 
