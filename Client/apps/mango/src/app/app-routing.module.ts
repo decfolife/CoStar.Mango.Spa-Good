@@ -137,7 +137,7 @@ const routes: Routes = [
           },
         ]
       },
-
+      
       // PORTFOLIO
       {
         path: 'portfolio',
@@ -395,7 +395,26 @@ const routes: Routes = [
               moduleId: 4,
               breadCrumb: { append: false }
             },
-          },
+          }
+        ]
+      },
+
+      // REMINDERS
+      {
+        path: 'reminders',
+        data: { moduleId: 1, breadCrumb: { label: 'Reminders', append: true } },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                '@reminders-list/components/reminders-list/reminders-list.component'
+              ).then((mod) => mod.RemindersListComponent),
+            data: {
+              moduleId: 1,
+              breadCrumb: { append: true }
+            },
+          }
         ]
       },
 
