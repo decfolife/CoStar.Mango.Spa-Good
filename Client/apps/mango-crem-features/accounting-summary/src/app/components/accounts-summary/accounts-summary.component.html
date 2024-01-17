@@ -68,6 +68,15 @@
         </dx-tooltip>
       </div>
 
+      <div class="export-to-excel-button">
+        <crem-button 
+          [id]="accountingSummaryService.getId(componentName,'exportToExcel','button')"
+          type="secondary"
+          (click)="exportToExcel($event)"
+          >Export to Excel
+        </crem-button>
+      </div>
+
       <div class="workflow-history-popup-div">
         <mango-workflow-history-popup [userInfo]="userInfo" [workflowStatusHistory]="workflowStatusHistory"></mango-workflow-history-popup>
       </div>

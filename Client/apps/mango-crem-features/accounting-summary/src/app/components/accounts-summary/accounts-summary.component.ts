@@ -130,6 +130,31 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     }
   }
 
+  exportToExcel(event: any): void {
+    event.preventDefault();
+
+    //Set masterScheduleID
+    const masterScheduleId = this.masterScheduleID
+    
+    //Get Portfolio Settings
+    this.accountingSummaryService.getPortfolioSettings().subscribe();
+
+    //Get Event Details
+    this.accountingSummaryService.getEventDetails(masterScheduleId).subscribe();
+
+    //Get Payment Details
+    this.accountingSummaryService.getPaymentDetails(masterScheduleId).subscribe();
+
+    //Get Amortization Details
+    this.accountingSummaryService.getAmortizationDetails(masterScheduleId).subscribe();
+
+    //Get Lease Info Details
+    this.accountingSummaryService.getLeaseInfo().subscribe();
+
+    //Get LeaseAbstractID Details
+    this.accountingSummaryService.getLeaseAbstractId();
+  }
+
   onChangeByTooltipMouseOver() {
     this.isChangeByTooltipVisible = true;
   }

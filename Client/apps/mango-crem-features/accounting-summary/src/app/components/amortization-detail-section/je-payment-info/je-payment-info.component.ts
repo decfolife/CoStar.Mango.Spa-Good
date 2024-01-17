@@ -71,12 +71,12 @@ export class JePaymentInfoComponent{
         case 'chargeAmount':
           options.totalValue += options.value.chargeAmount || 0;
           break;
-          case 'directCosts':
-            options.totalValue += options.value.directCosts || 0;
-            break;
-            case 'terminationFees':
-              options.totalValue += options.value.terminationFees || 0;
-              break;
+        case 'directCosts':
+          options.totalValue += options.value.directCosts || 0;
+          break;
+        case 'terminationFees':
+          options.totalValue += options.value.terminationFees || 0;
+          break;
         case 'actualAmountDueInPeriod':
           if (options.value.chargeAmount !== 0) {
             options.totalValue += options.value.actualAmountDueInPeriod || 0;
