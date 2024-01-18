@@ -411,7 +411,7 @@ const routes: Routes = [
                 '@reminders-list/components/reminders-list/reminders-list.component'
               ).then((mod) => mod.RemindersListComponent),
             data: {
-              moduleId: 1,
+              moduleId: null,
               breadCrumb: { append: true }
             },
           }
