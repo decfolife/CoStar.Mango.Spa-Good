@@ -59,8 +59,9 @@
 					hoverText="Select View"
 					(selectedItems)="onAccountingSegmentChange($event)"
 					[isDisabled]="loading"
-				>
-				</crem-dropdown>
+          itemTemplate="withMenu"
+          [itemMenu]="itemMenu"
+				></crem-dropdown>
 			</div>
 
 			<crem-button id="accounting-dashboard__dropdown--apply"

@@ -25,6 +25,7 @@ import { Dropdown } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent, DxDropDownBoxComponent, DxFormComponent, DxSelectBoxComponent, DxValidatorComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { cremIcon } from '../icon/definitions/cremIcons';
 
 /**
  *
@@ -32,7 +33,41 @@ import { filter, map } from 'rxjs/operators';
  * @class DropdownComponent
  * @implements {OnInit}
  * @implements {OnChanges}
- * @param {boolean} showDefaultValidationTooltip - Show DevExtreme default tooltip
+ * @property {string} [valueKey] - 
+ * @param {any[]} dataSource - Select options' dropdown
+ * @param {string} id - Defines the HTML ID attribute
+ * @param {string} [label] - 
+ * @param {boolean} [useSelectBox] - If true it uses 'dx-select-box', if false/undefined it will use 'dx-drop-down-box'
+ * @param {any} [selectBoxValue] - 
+ * @param {string} [valueExpr] - 
+ * @param {string} [keyExpr] - 
+ * @param {string} [displayExpr] - 
+ * @param {boolean} [isSearchable] - 
+ * @param {any} [contentTemplate] - 
+ * @param {string} [hoverText] - 
+ * @param {boolean} [columnHeader] - 
+ * @param {boolean} [showHeader] - 
+ * @param {boolean} [showClearButton] - 
+ * @param {'single' | 'multiple'} [selectMode] - 
+ * @param {string} [dropdownHeaderDisplay] - 
+ * @param {boolean} [showColumnHeader] - 
+ * @param {boolean} [required] - 
+ * @param {boolean} [isVisible] - 
+ * @param {string} [dataField] - 
+ * @param {boolean} [readOnly] - 
+ * @param {boolean} [showRedBorder] - 
+ * @param {boolean} [customRequireValidation] - 
+ * @param {boolean} [grouped] - 
+ * @param {boolean} [useArrayOfKeys] - 
+ * @param {boolean} [getWholeObject] - 
+ * @param {boolean} [useCustomGroupTemplate] - 
+ * @param {any} [showCheckBoxesMode] - 
+ * @param {boolean} [allowSearch] -
+ * @param {boolean} isDisabled -
+ * @param {'default' | 'withMenu'} [itemTemplate] - Use a different item template, make sure to pass any additional parameter that may be needed by the template
+ * @param {any} [itemMenu] - Allows to dynamically build the (ellipsis) more menu
+ * @param {string} dropDownContainerCustomClass -
+ * @param {boolean} [showDefaultValidationTooltip] - Show/Hide DevExtreme default tooltip
  */
 @Component({
   selector: 'crem-dropdown',
@@ -47,9 +82,9 @@ export class DropdownComponent implements OnInit, OnChanges {
   public wrapperAttr: any;
   public selectBoxWrapperAttr: any;
   public selectedDisplay: any[] = [];
-  public isDropDownBoxOpened: boolean = false;
-  public modalValueChanging: boolean = false;
-  public loading: boolean = true;
+  public isDropDownBoxOpened = false as boolean;
+  public modalValueChanging = false as boolean;
+  public loading = true as boolean;
   private clearButton: any;
 
   @Output() selectedItems = new EventEmitter<any[]>();
@@ -62,7 +97,7 @@ export class DropdownComponent implements OnInit, OnChanges {
 
   @Input() public id: string;
   @Input() public initialSelectedValue: any;
-  @Input() public placeholder: string = 'Select...';
+  @Input() public placeholder = 'Select...' as string;
   @Input() public label?: string;
   public valueKey: string;
   @Input() public useSelectBox?: boolean = false;
@@ -96,9 +131,11 @@ export class DropdownComponent implements OnInit, OnChanges {
     | 'none' = 'none';
   @Input() public dataSource: any[];
   @Input() public allowSearch?: boolean = false;
-  @Input() isDisabled: boolean = false;
+  @Input() isDisabled = false as boolean;
   @Input() dropDownContainerCustomClass: string;
   @Input() showDefaultValidationTooltip?: boolean = true;
+  @Input() itemTemplate?: 'default' | 'withMenu';
+  @Input() itemMenu?: any; // todo: add the type and wire it up
 
   @ContentChild('customHeaderTemplate') customHeaderTemplate : TemplateRef<any>;
   @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent;

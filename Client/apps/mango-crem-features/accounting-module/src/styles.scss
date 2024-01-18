@@ -1,8 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+// TODO: Move the imports to project.json
 @import "../../../mango/src/assets/styles/costar-angular-material.scss";
-@import "../../../mango/src/assets/styles/costar-dev-extreme.scss";
+@import "../../../mango/src/assets/styles/costar-dev-extreme.scss"; 
 @import "../../../mango/src/assets/styles/costar-mango.scss";
-@import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
+// @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
 @import '~bootstrap/dist/css/bootstrap.min.css';
 // @import '~devexpress-gantt/dist/dx-gantt.css';
 @import "./assets/dx.generic.custom-light.scss";

@@ -1,4 +1,36 @@
-import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, IconPack } from '@fortawesome/free-solid-svg-icons';
+import {
+  FlipProp,
+  IconPrefix,
+  PullProp,
+  RotateProp,
+  SizeProp,
+} from '@fortawesome/fontawesome-svg-core';
+import { AnimationProp } from '@fortawesome/angular-fontawesome';
+import { IconStyle } from '@fortawesome/fontawesome-svg-core';
+import { colorProp } from './fontAwesome';
+
+/**
+ * Custom Icon definitions
+ */
+export type cremIcon = {
+  icon: string,
+  library?: 'fontAwesome' | 'local',
+  pack?: 'crem' | 'solid' | 'regular' | IconStyle,
+  // FontAwesome Options
+  rotate?: RotateProp,
+  flip?: FlipProp,
+  animation?: AnimationProp,
+  size?: SizeProp,
+  pull?: PullProp,
+  // Styling
+  color?: colorProp,
+  // Internal
+  faIcon: IconDefinition | IconPack | IconPrefix, // For assigning the fa-icon during dynamic import
+  /** @deprecated when @library is 'local' */
+  fill?: string,
+  transform?: string,
+}
 
 /**
  * Custom Icon definitions

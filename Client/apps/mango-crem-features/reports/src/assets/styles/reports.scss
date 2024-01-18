@@ -1,4 +1,4 @@
-@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+@use 'styles' as *;
 
 body {
 	margin: 0 !important
@@ -23,7 +23,7 @@ div.cdk-drop-list.dropcards {
 
 
 .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
-	background-color: colors.$color-brand-primary  !important;
+  @include costar(background-color, primary-light, $important: true); // background-color: colors.$color-brand-primary  !important;
 }
 
 .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
@@ -142,14 +142,14 @@ div.report-page {
 	overflow: hidden;
 
 	div.report-page-controls-wrapper {
-		background-color: colors.$bodyBackgroundGray;
+		@include costar(background-color, background); // background-color: colors.$bodyBackgroundGray;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
 		padding: $dblPadding;
 		font-size: 14px;
-		border-bottom: $stdBorder;
+    @include costar(border-bottom, gray06); //border-bottom: $stdBorder;
 
 		&>div {
 			display: flex;
@@ -181,7 +181,7 @@ div.report-page {
 				mat-form-field.mat-form-field,
 				button.btn,
 				mat-button-toggle-group {
-					margin-left: $dblPadding;
+          @include costar(padding, 4); // margin-left: $dblPadding;
 				}
 			}
 		}
@@ -192,7 +192,7 @@ div.report-page {
 
 		mat-form-field {
 			&.mat-form-field {
-				height: $stdPadding * 4;
+				height: calc( 8 * 4 ); //height: $stdPadding * 4;
 
 				&.mat-form-field-appearance-outline {
 					div.mat-form-field-wrapper {
@@ -218,7 +218,7 @@ div.report-page {
 
 		&.mat-form-field-appearance-outline {
 			div.mat-form-field-wrapper {
-				margin: $stdPadding 0 $dblPadding 0;
+				margin: 8px 0 16px 0; //margin: 8px 0 16px 0;
 
 				div.mat-form-field-flex {
 					padding: 0px;
@@ -251,9 +251,9 @@ dx-tab-panel.dx-multiview.dx-swipeable.dx-tabpanel.dx-widget.dx-visibility-chang
 // ***************** Reports Home Page Styles ****************
 div.reports-toolBar-wrapper {
 	z-index: 200;
-	background-color: colors.$bodyBackgroundGray;
+	@include costar(background-color, background); // background-color: colors.$bodyBackgroundGray;
 	font-size: 14px;
-	border-bottom: $stdBorder;
+	@include costar(border-bottom, gray06); // border-bottom: $stdBorder;
 
 	cs-search {
 		border: none !important;
@@ -365,7 +365,7 @@ div.reports-toolBar-wrapper {
 }
 
 .yellow {
-	color: colors.$color-brand-yellow  !important;
+	@include costar(color, warning, $important: true); // color: colors.$color-brand-yellow  !important;
 }
 
 .moreMatMenu button.mat-menu-item {
@@ -375,7 +375,7 @@ div.reports-toolBar-wrapper {
 	height: auto;
 
 	&:hover {
-		background-color: colors.$color-brand-primary-light  !important;
+		background-color: #e3f3fc !important; // background-color: colors.$color-brand-primary-light  !important;
 	}
 }
 
@@ -432,7 +432,7 @@ div.reports-toolBar-wrapper {
 			height: 32px !important;
 
 			&:hover {
-				background-color: colors.$costarLightBlue;
+        @include costar(background-color, info); // background-color: colors.$costarLightBlue; 
 			}
 		}
 	}
@@ -472,15 +472,15 @@ button.btn.btn-default, dx-drop-down-button.btn.btn-default {
 }
 dx-gantt {
 	tr.dx-row.dx-column-lines.dx-header-row, .dx-gantt-si {
-		color: $costarBlue !important;
-		background-color: $lightGray !important;
+    @include costar(color, primary-light, $important: true); // color: $costarBlue !important;
+		@include costar(background-color, gray05, $important: true); // background-color: $lightGray !important;
 		font-family: 'Helvetica' !important;
 		font-size: 14px !important;
 		font-weight: 700 !important;
 	}
 
 	tr.dx-row.dx-data-row.dx-row-lines.dx-column-lines {
-		font-family: 'Helvetica' !important;
+		// font-family: 'Helvetica' !important;
 		font-size: 14px !important;
 	}
 }

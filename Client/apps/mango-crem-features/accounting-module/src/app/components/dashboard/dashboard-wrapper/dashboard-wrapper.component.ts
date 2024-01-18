@@ -1,4 +1,5 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
+import { ReportsService } from '@reports/services/reports.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
@@ -12,9 +13,19 @@ import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclo
 import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
 import { switchMap, tap } from 'rxjs/operators';
 
-export interface DropdownSelection {
+export interface DropdownSelection { // Todo: Move to type definition file
   display: string,
   id: number,
+}
+
+export type selectBoxItemMenu = { // Todo: Move to type definition file
+  type: 'separator' | 'menu',
+  name?:string, icon?: string,
+  separator?: boolean,
+  action?: any,
+  disabled?: boolean,
+  class?: string,
+  stopPropagation?: boolean
 }
 
 @Component({
@@ -54,6 +65,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public loading = true as boolean;
   public criteriaSet: number;
   public workflowAlertsCriteriaSet: number;
+  itemMenu: selectBoxItemMenu[];
   subs: Subscription[] = [];
   faFileExport = faFileExport;
 
@@ -63,8 +75,45 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   constructor(
     private inAppDisclosureService: InAppDisclosureService,
+    // private reportsService: ReportsService,
     public dialog: MatDialog,
-  ) {}
+  ) {
+
+    // this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
+    //   console.log({result: result});
+    //   if(result.data) {
+    //     const hasSegmentDeleteRight = result.data.securityTypeID >= 5;
+    //     const hasSegmentsAddRight = result.data.securityTypeID >= 3;
+    //     const hasSegmentsViewRight = result.data.securityTypeID >= 2;
+    //   }
+    // });
+    // todo: create function to compare
+    this.itemMenu = [
+      {
+        type: 'menu',
+        name: 'Make default',
+        action: () => this.segmentMoreMenuClick(),
+        disabled: true,
+        stopPropagation: true,
+      },
+      { type: 'separator' },
+      {
+        type: 'menu',
+        name: 'Edit',
+        action: () => this.segmentMoreMenuClick(),
+        disabled: true,
+        stopPropagation: true,
+      },
+      { type: 'separator' },
+      {
+        type: 'menu',
+        name: 'Archive',
+        action: () => this.segmentMoreMenuClick(),
+        disabled: true,
+        stopPropagation: false,
+      },
+    ];
+  }
 
   ngOnInit() {
     this.selectedYear = new Date().getFullYear();
@@ -98,6 +147,10 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
       }
     ));
+  }
+
+  segmentMoreMenuClick(): void{
+    // console.log('menu pressed');
   }
 
   public onAccountingViewChange(data: DropdownSelection[]) {

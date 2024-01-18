@@ -1,6 +1,3 @@
-/* You can add global styles to this file, and also import other style files */
-// @import '~devexpress-gantt/dist/dx-gantt.css';
-
 body {
     margin: 0px;
 }
@@ -18,10 +15,8 @@ mango-group-user-history,
 mango-project-gantt-chart,
 reports-segment,
 mango-group-user-navigation-rights {
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
-    @import "./assets/styles/reports.scss";
-
-    
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss"; // FIXME: This shouldn't be defined like this, probably failing to import the crem-dropdown module somewhere
+    @import "./assets/styles/reports.scss"; // FIXME: This shouldn't be defined like this
 }
 
 reports-segment {

@@ -7,6 +7,7 @@ import {
   DropdownTemplateDirective,
   DropdownComponent,
 } from './dropdown.component';
+import { ButtonModule } from '../button';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxTemplateModule } from 'devextreme-angular/core';
@@ -16,6 +17,7 @@ import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
 import { DxFormModule } from 'devextreme-angular/ui/form';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { MatMenuModule} from '@angular/material/menu';
 
 @NgModule({
   imports: [
@@ -29,7 +31,9 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
     DxValidatorModule,
     DxFormModule,
     DxSelectBoxModule,
-    DxValidationSummaryModule
+    DxValidationSummaryModule,
+    MatMenuModule,
+    ButtonModule,
   ],
   declarations: [
     DropdownComponent,

@@ -19,14 +19,16 @@
   [deferRendering]="false"
   [readOnly]="readOnly"
   (onOpened)="openDropdown($event)"
+  [itemTemplate]="itemTemplate ? itemTemplate: 'default'"
   [inputAttr]="{ title: hoverText ? hoverText : placeholder, 'aria-controls': id, 'aria-label': hoverText ? hoverText : placeholder}"
-  >
-    <div *dxTemplate="let data of 'selectBoxCustomGroupTemplate'">
-      <ng-template 
-        *ngTemplateOutlet="customHeaderTemplate; context: { fieldData : data }"
-        >
-      </ng-template>
-    </div>
+>
+  <!-- Dropdown's header options -->
+  <div *dxTemplate="let data of 'selectBoxCustomGroupTemplate'">
+    <ng-template  *ngTemplateOutlet="customHeaderTemplate; context: { fieldData : data }"
+    ></ng-template>
+  </div>
+
+  <!-- Validators -->
   <dx-validator #SelectBoxValidator>
     <ng-container *ngIf="showDefaultValidationTooltip; then DefaultValidationTooltip else NoDefaultValidationTooltip"></ng-container>
     <ng-template #DefaultValidationTooltip>
@@ -41,11 +43,58 @@
       ></dxi-validation-rule>
     </ng-template>
   </dx-validator>
+
+  <!--  -->
   <dxo-drop-down-options
     [wrapperAttr]="selectBoxWrapperAttr">
   </dxo-drop-down-options>
 
+  <!-- Template: Default -->
+  <ng-container *dxTemplate="let item of 'default'">
+    {{ item.name || item.displayValue || item.value }}
+  </ng-container>
+
+  <!-- Template: With Item's Menu -->
+  <div class="item" *dxTemplate="let item of 'withMenu'">
+    <span class="item-name" title="">
+      {{ item.name || item.displayValue || item.value }}
+    </span>
+    <ng-container *ngIf="itemMenu">
+      <div class="item-menu" title="More Options">
+        <crem-button
+          btnStyle="basic"
+          color="secondary"
+          size="small"
+          className="icon"
+          icon="faEllipsisH"
+          iconPack="solid"
+          (click)="$event.stopPropagation(); $event.preventDefault()"
+          [matMenuTriggerFor]="ItemViewMore"
+        ></crem-button>
+
+          <mat-menu #ItemViewMore="matMenu">
+
+            <ng-container *ngFor="let item of itemMenu">
+              <ng-container [ngSwitch]="item.type">
+                <!-- Menu Item -->
+                <button *ngSwitchDefault
+                  mat-menu-item
+                  [class]="'mat-menu-child-button ' + (item.class ? item.class : '')"
+                  (click)="item.action(); item.stopPropagation ? $event.stopPropagation() : null"
+                >{{item.name}}</button>
+                <!-- Separator -->
+                <hr *ngSwitchCase="'separator'" />
+              </ng-container>
+            </ng-container>
+
+          </mat-menu>
+
+      </div>
+    </ng-container>
+  </div>
+
 </dx-select-box>
+
 <dx-drop-down-box *ngIf="!useSelectBox" #dropDownBox
   [id]="id + '_box'"
   [(opened)]="isDropDownBoxOpened"
@@ -64,47 +113,46 @@
   [deferRendering]="false"
   (onOpened)="openDropdown($event)"
   [inputAttr]="{ title: placeholder, 'aria-controls': id + 'dropdownContainer', 'aria-label': placeholder}"
-  >
-  <dxo-drop-down-options
-    [wrapperAttr]="wrapperAttr">
-  </dxo-drop-down-options>
-  <div
-    [id]="id + 'dropdownContainer'"
+>
+
+  <dxo-drop-down-options [wrapperAttr]="wrapperAttr"></dxo-drop-down-options>
+
+  <div [id]="id + 'dropdownContainer'"
     *dxTemplate="let data of 'dropdownTemplate'"
   >
-  <fieldset>
-    <legend hidden=true>
-      Drop Down
-    </legend>
-    <dx-data-grid class="drop-down-box__grid"
-      dropdownTemplate
-      [dataSource]="dataSource"
-      [columns]="displayExpr"
-      [showColumnHeaders]="showColumnHeader"
-      [selectedRowKeys]="selections"
-      [showColumnLines]="false"
-      (onKeyDown)="onGridKeyDown($event, cell)"
-      (onSelectionChanged)="getSelectedRowsData($event)"
-      [scrolling]="{ mode: 'standard' }"
-      [elementAttr]="{ style: 'max-height: 345px;'}"
-      [paging]="false"
-      [keyExpr]="keyExpr || valueExpr"
-      (onContentReady)="ADAattributes($event)"
-      (onCellClick)="onCellClick($event)"
-      (keyup)="onKeyUp($event)"
-    >
-      <dxo-filter-row [visible]="allowSearch"></dxo-filter-row>
-      <dxo-selection
-        [mode]="selectMode"
-        [showCheckBoxesMode]="showCheckBoxesMode"
-        selectAllMode="allPages"
-      ></dxo-selection>
-      <dxi-column
-        [dataField]="displayExpr"
-        [caption]="dropdownHeaderDisplay">
-      </dxi-column>
-    </dx-data-grid>
-  </fieldset>
-
+    <fieldset>
+      <legend hidden=true>
+        Drop Down
+      </legend>
+      <dx-data-grid class="drop-down-box__grid"
+        dropdownTemplate
+        [dataSource]="dataSource"
+        [columns]="displayExpr"
+        [showColumnHeaders]="showColumnHeader"
+        [selectedRowKeys]="selections"
+        [showColumnLines]="false"
+        (onKeyDown)="onGridKeyDown($event, cell)"
+        (onSelectionChanged)="getSelectedRowsData($event)"
+        [scrolling]="{ mode: 'standard' }"
+        [elementAttr]="{ style: 'max-height: 345px;'}"
+        [paging]="false"
+        [keyExpr]="keyExpr || valueExpr"
+        (onContentReady)="ADAattributes($event)"
+        (onCellClick)="onCellClick($event)"
+        (keyup)="onKeyUp($event)"
+      >
+        <dxo-filter-row [visible]="allowSearch"></dxo-filter-row>
+        <dxo-selection
+          [mode]="selectMode"
+          [showCheckBoxesMode]="showCheckBoxesMode"
+          selectAllMode="allPages"
+        ></dxo-selection>
+        <dxi-column
+          [dataField]="displayExpr"
+          [caption]="dropdownHeaderDisplay">
+        </dxi-column>
+      </dx-data-grid>
+    </fieldset>
   </div>
+
 </dx-drop-down-box>
