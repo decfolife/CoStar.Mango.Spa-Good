@@ -33,6 +33,7 @@ class EnvironmentsCrem implements Environment {
     accountingSummary:"http://mangospa.dev.corp.virtualpremise.com:30080/AccountingSummary/api/",
     dataSetDictionary: 'http://mangospa.dev.corp.virtualpremise.com:30080/reports/api/',
     projects: 'http://mangospa.dev.corp.virtualpremise.com:30080/projects/api/projects/',
+    reminders: 'https://localhost:60100/api/'
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].dev.corp.virtualpremise.com';
