@@ -2,7 +2,8 @@
     <crem-icon icon="brand-info-border" library="local"></crem-icon>
 </div>
 
-<dx-popup 
+<dx-popup
+#WorkflowHistoryPopup 
 [id]="accountingSummaryService.getId(componentName,'data','popup')"
 [(visible)]="workflowHistoryPopVisible"
 [height]="500"
@@ -15,6 +16,7 @@
 titleTemplate="title-item"
 [wrapperAttr]="{ class: 'accounting-summary-style-container workflow-history-popup-container' }"
 (onContentReady)="determineScrollViewHeight($event)"
+(onHiding)="onPopupHiddenEvent($event)"
 > 
     <div *dxTemplate="let data of 'title-item'">
         <div  class="popup-title-div">
@@ -32,8 +34,8 @@ titleTemplate="title-item"
     <div *dxTemplate="let data of 'noDataTemplate'" class="no-data-div"><p>No Data</p></div>
 
     <div *dxTemplate="let data of 'dataTemplate'">
-        <dx-scroll-view 
-        [id]="mainScrollViewId"
+        <dx-scroll-view
+        #PopupMainScrollView
         height="100%"
         width="100%"
         >

@@ -1,7 +1,8 @@
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
-import { Component, Input, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
-import { DxScrollViewComponent, } from 'devextreme-angular/ui/scroll-view';
+import { Component, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { DxPopupComponent } from 'devextreme-angular/ui/popup';
+import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import ScrollView from "devextreme/ui/scroll_view";
 
 @Component({
@@ -11,6 +12,8 @@ import ScrollView from "devextreme/ui/scroll_view";
 })
 
 export class WorkflowHistoryPopupComponent {
+  @ViewChild("WorkflowHistoryPopup") mainPopup: DxPopupComponent;
+  @ViewChild("PopupMainScrollView") mainScrollView: DxScrollViewComponent;
   @Input() userInfo: UserInfoResponse;
   @Input() workflowStatusHistory: any;
 
@@ -52,10 +55,14 @@ export class WorkflowHistoryPopupComponent {
     this.workflowHistoryPopVisible = false;
   }
 
+  onPopupHiddenEvent(event) {
+    this.isFullscreen = false;
+    this.resetVerticalScrollToTheTop();
+  }
+
   determineScrollViewHeight(event) {
-    const svComponentsArray = this.scrollViewComponents.filter(svc => svc.element().id !== this.mainScrollViewId &&
-        svc.scrollHeight() === svc.clientHeight());
-    svComponentsArray.forEach(svc => svc.option("height", "fit-content"))
+    const svComponentsArray = this.scrollViewComponents.filter(svc => svc.scrollHeight() === svc.clientHeight());
+    svComponentsArray.forEach(svc => svc.option("height", "fit-content"));
   }
 
   toggleFullscreen(event) {
@@ -64,5 +71,14 @@ export class WorkflowHistoryPopupComponent {
 
   onScrollViewInitialized(event){
     this.scrollViewComponents.push(event.component);
+  }
+
+  private resetVerticalScrollToTheTop() {
+    const svComponentsWithScrollArray = this.scrollViewComponents.filter(svc => svc.scrollHeight() > svc.clientHeight());
+    svComponentsWithScrollArray.forEach(svc => svc.scrollTo(0));
+
+    this.mainPopup.instance.option("height", "500");
+    this.mainPopup.instance.option("width", "900");
+    this.mainScrollView.instance.scrollTo(0);
   }
 }

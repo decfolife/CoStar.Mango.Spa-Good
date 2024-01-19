@@ -132,10 +132,9 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   exportToExcel(event: any): void {
     event.preventDefault();
-
     //Set masterScheduleID
     const masterScheduleId = this.masterScheduleID
-    
+
     //Get Portfolio Settings
     this.accountingSummaryService.getPortfolioSettings().subscribe();
 
