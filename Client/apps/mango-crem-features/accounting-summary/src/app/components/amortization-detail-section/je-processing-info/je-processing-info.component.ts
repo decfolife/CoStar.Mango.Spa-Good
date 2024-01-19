@@ -243,9 +243,9 @@ export class JeProcessingInfoComponent {
   }
 
   exportToExcelFileName(): string {
-    const dateTimeStamp = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'});
     const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
-    const fileName = `Period_${formattedDisplayPeriodTitle}_JE_Preview_${dateTimeStamp}`;
+    const fileName = `Period_${formattedDisplayPeriodTitle}_Journal Entry_${dateTimeStamp}`;
     return fileName;
   }
 }

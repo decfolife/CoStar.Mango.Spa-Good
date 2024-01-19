@@ -77,6 +77,16 @@ export class JePaymentInfoComponent{
         case 'terminationFees':
           options.totalValue += options.value.terminationFees || 0;
           break;
+        case 'sumDirectCostsAmountDueInPeriod':
+          if (options.value.directCosts !== 0) {
+            options.totalValue += options.value.actualAmountDueInPeriod || 0;
+          }
+          break;
+        case 'sumTerminationFeesAmountDueInPeriod':
+          if (options.value.terminationFees !== 0) {
+            options.totalValue += options.value.actualAmountDueInPeriod || 0;
+          }
+          break;
         case 'actualAmountDueInPeriod':
           if (options.value.chargeAmount !== 0) {
             options.totalValue += options.value.actualAmountDueInPeriod || 0;
@@ -103,7 +113,7 @@ export class JePaymentInfoComponent{
   }
 
   exportToExcelFileName(): string {
-    const dateTimeStamp = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
     const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
     const fileName = `Period_${formattedDisplayPeriodTitle}_Payment_Detail_${dateTimeStamp}`;
     return fileName;
