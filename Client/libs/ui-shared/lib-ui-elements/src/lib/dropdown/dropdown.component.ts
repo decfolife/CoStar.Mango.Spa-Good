@@ -65,7 +65,6 @@ import { cremIcon } from '../icon/definitions/cremIcons';
  * @param {boolean} [allowSearch] -
  * @param {boolean} isDisabled -
  * @param {'default' | 'withMenu'} [itemTemplate] - Use a different item template, make sure to pass any additional parameter that may be needed by the template
- * @param {any} [itemMenu] - Allows to dynamically build the (ellipsis) more menu
  * @param {string} dropDownContainerCustomClass -
  * @param {boolean} [showDefaultValidationTooltip] - Show/Hide DevExtreme default tooltip
  */
@@ -129,13 +128,12 @@ export class DropdownComponent implements OnInit, OnChanges {
     | 'onLongTap'
     | 'always'
     | 'none' = 'none';
-  @Input() public dataSource: any[];
+  @Input() public dataSource: any[]; // TODO: This needs a proper data type to know what to provide to the component
   @Input() public allowSearch?: boolean = false;
   @Input() isDisabled = false as boolean;
   @Input() dropDownContainerCustomClass: string;
   @Input() showDefaultValidationTooltip?: boolean = true;
   @Input() itemTemplate?: 'default' | 'withMenu';
-  @Input() itemMenu?: any; // todo: add the type and wire it up
 
   @ContentChild('customHeaderTemplate') customHeaderTemplate : TemplateRef<any>;
   @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent;

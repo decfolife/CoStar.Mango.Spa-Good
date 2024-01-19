@@ -1,7 +1,15 @@
 @use 'styles' as *;
 // @import "../assets/styles/crem-lib.scss";
 
-crem-dropdown {
+:host {
+  ::ng-deep {
+    .dx-placeholder {
+      line-height: 0px;
+    }
+  }
+}
+
+crem-dropdown { // FIXME: This is not being applied in most cases, only works when encapsulation is broken and styles imported manually
   .dx-dropdowneditor-icon:before {
     left: 41%;
   }
@@ -100,7 +108,7 @@ crem-dropdown {
   .dx-dropdowneditor-icon,
   .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
     border: none !important;
-    @include costar(background-color, primary-light); // color: $costarBlue;
+    // @include costar(background-color, primary-light); // color: $costarBlue;
     font: 24px/20px DXIcons;
   }
 
@@ -286,9 +294,7 @@ div[id$="dropdownContainer"] {
       color: #333 !important;
     }
   }
-  .cdk-overlay-container {
-    z-index: 2022 !important;
-  }
+
   .mat-menu-content {
     &:not(:empty) {
       padding-top: 0px;
@@ -322,4 +328,29 @@ div[id$="dropdownContainer"] {
     }
   }
 
+}
+
+// Breaking encapsulation to target root level components for Material and DevExtreme overlays
+// mat-menu (more menu) and dx-select-box (dropdown)
+::ng-deep{
+  mango-root {
+    // cdk-overlay-container can be mat-menu dropdown or modal
+    // generating z-index racing conditions in diff scenarios, an issue product of diff frameworks
+    &:not([aria-hidden="true"]){ // When Modal is not
+      ~ .dx-overlay-wrapper { // DevExtreme's Dropdown
+        z-index: 2022 !important;
+      }
+      ~ .cdk-overlay-container { // Material UI More Menu
+        z-index: 2023 !important;
+      }
+    }
+    &[aria-hidden="true"]{ // When Modal is open: Make mat lower z-index than DevExtreme's 
+      ~ .dx-overlay-wrapper { // DevExtreme's Dropdown
+        z-index: 2023 !important;
+      }
+      ~ .cdk-overlay-container { // Material UI More Menu
+        z-index: 2022 !important;
+      }
+    }
+  }
 }

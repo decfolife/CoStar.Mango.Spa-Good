@@ -44,7 +44,7 @@
     </ng-template>
   </dx-validator>
 
-  <!--  -->
+  <!-- Dropdown's Input -->
   <dxo-drop-down-options
     [wrapperAttr]="selectBoxWrapperAttr">
   </dxo-drop-down-options>
@@ -59,7 +59,9 @@
     <span class="item-name" title="">
       {{ item.name || item.displayValue || item.value }}
     </span>
-    <ng-container *ngIf="itemMenu">
+
+    <!-- More Menu -->
+    <ng-container *ngIf="item.moreMenu">
       <div class="item-menu" title="More Options">
         <crem-button
           btnStyle="basic"
@@ -72,25 +74,27 @@
           [matMenuTriggerFor]="ItemViewMore"
         ></crem-button>
 
-          <mat-menu #ItemViewMore="matMenu">
-
-            <ng-container *ngFor="let item of itemMenu">
-              <ng-container [ngSwitch]="item.type">
-                <!-- Menu Item -->
-                <button *ngSwitchDefault
-                  mat-menu-item
-                  [class]="'mat-menu-child-button ' + (item.class ? item.class : '')"
-                  (click)="item.action(); item.stopPropagation ? $event.stopPropagation() : null"
-                >{{item.name}}</button>
-                <!-- Separator -->
-                <hr *ngSwitchCase="'separator'" />
-              </ng-container>
+        <!-- More Menu Options -->
+        <mat-menu #ItemViewMore="matMenu" class="item-more-dropdown">
+          <ng-container *ngFor="let option of item.moreMenu">
+            <ng-container [ngSwitch]="option.type">
+              <!-- Menu Item -->
+              <button *ngSwitchDefault
+                mat-menu-item
+                [class]="'mat-menu-child-button ' + (option.class ? option.class : '')"
+                (click)="option.action(); option.stopPropagation ? $event.stopPropagation() : null"
+                [disabled]="option.disabled ? option.disabled : false"
+              >{{option.name}}</button>
+              <!-- Separator -->
+              <hr *ngSwitchCase="'separator'" />
             </ng-container>
-
-          </mat-menu>
-
+          </ng-container>
+        </mat-menu>
+        <!-- End More Menu Options -->
       </div>
     </ng-container>
+    <!-- End More Menu -->
+
   </div>
 
 </dx-select-box>

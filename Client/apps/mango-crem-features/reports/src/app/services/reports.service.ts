@@ -103,9 +103,7 @@ export class ReportsService extends EndpointService {
   }
 
   public getSegmentsRights(objectId, securityTypeId) {
-    //3 is add
-    //2 is view
-    //4 is delete
+    // Possible Responses: 1 Restricted View | 2 View | 3 Add | 4 Edit | 5 delete | 6 Block
     const url = `${environment.appUrls.reports}ReportsSegments/SegmentsObjectRights`;
     return this.callHttpGet(url, 'getSegmentsObjectrights',  {ObjectID: objectId, SecurityTypeID: securityTypeId})
   }

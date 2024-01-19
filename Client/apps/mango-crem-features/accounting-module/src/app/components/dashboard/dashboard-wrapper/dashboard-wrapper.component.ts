@@ -1,5 +1,4 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
-import { ReportsService } from '@reports/services/reports.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { faFileExport } from '@fortawesome/free-solid-svg-icons';
@@ -12,20 +11,11 @@ import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflo
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
 import { switchMap, tap } from 'rxjs/operators';
+import { selectBoxMenuItems, byItemMoreMenuOptions, moreMenuItem } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
 
 export interface DropdownSelection { // Todo: Move to type definition file
   display: string,
   id: number,
-}
-
-export type selectBoxItemMenu = { // Todo: Move to type definition file
-  type: 'separator' | 'menu',
-  name?:string, icon?: string,
-  separator?: boolean,
-  action?: any,
-  disabled?: boolean,
-  class?: string,
-  stopPropagation?: boolean
 }
 
 @Component({
@@ -65,9 +55,15 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public loading = true as boolean;
   public criteriaSet: number;
   public workflowAlertsCriteriaSet: number;
-  itemMenu: selectBoxItemMenu[];
   subs: Subscription[] = [];
   faFileExport = faFileExport;
+
+  // itemMenuInnerOptions: Initial structure for the segment 'more menu' or ellipsis
+  itemMenuInnerOptions: selectBoxMenuItems;
+
+  // bySegmentMoreMenuOptions: Once itemMenuInnerOptions is provided 'prepareSegmentMoreMenu'
+  // creates a menu for each segment with the right data, e.g. permissions or rights
+  bySegmentMoreMenuOptions: byItemMoreMenuOptions;
 
   @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
   @ViewChild(WorkflowAndAlertsComponent) workflowAndAlertsComponent;
@@ -75,25 +71,13 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   constructor(
     private inAppDisclosureService: InAppDisclosureService,
-    // private reportsService: ReportsService,
     public dialog: MatDialog,
   ) {
-
-    // this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
-    //   console.log({result: result});
-    //   if(result.data) {
-    //     const hasSegmentDeleteRight = result.data.securityTypeID >= 5;
-    //     const hasSegmentsAddRight = result.data.securityTypeID >= 3;
-    //     const hasSegmentsViewRight = result.data.securityTypeID >= 2;
-    //   }
-    // });
-    // todo: create function to compare
-    this.itemMenu = [
+    this.itemMenuInnerOptions = [
       {
         type: 'menu',
         name: 'Make default',
         action: () => this.segmentMoreMenuClick(),
-        disabled: true,
         stopPropagation: true,
       },
       { type: 'separator' },
@@ -101,16 +85,28 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         type: 'menu',
         name: 'Edit',
         action: () => this.segmentMoreMenuClick(),
-        disabled: true,
-        stopPropagation: true,
+        stopPropagation: false,
+        dataTransformer: [
+          {condition: 'View', name: 'View'},
+          {condition: 'Edit', name: 'Edit'},
+          {condition: 'Delete', name: 'Edit'},
+        ],
       },
       { type: 'separator' },
       {
         type: 'menu',
         name: 'Archive',
         action: () => this.segmentMoreMenuClick(),
-        disabled: true,
         stopPropagation: false,
+        dataTransformer: [
+          // Possible Responses: 1 Restricted View | 2 View | 3 Add | 4 Edit | 5 delete | 6 Block
+          {condition: 'Restricted View', disabled: true,},
+          {condition: 'View', disabled: true,},
+          {condition: 'Add', disabled: true,},
+          {condition: 'Edit', disabled: false,},
+          {condition: 'Delete', disabled: false,},
+          {condition: 'Block', disabled: false,},
+        ],
       },
     ];
   }
@@ -118,7 +114,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.selectedYear = new Date().getFullYear();
     this.featureFlagEnabled = true;
-    this.subs.push(
+    this.subs.push( // todo: this sequence of subscriptions needs to be inside a pipe or a forkjoin
       this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
         this.criteriaSet = result.data[0].CriteriaSetID;
 
@@ -131,8 +127,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         const observableItem = this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false);
         this.subs.push(
           observableItem.subscribe((data) => {
-            this.accountingYearData = [
-            ];
+            this.accountingYearData = [];
             for(let i = 10; i > -11; i--) {
               this.accountingYearData.push({
                 value: this.selectedYear + i
@@ -140,6 +135,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
             }
             //fetch criteriaSetID for each view;
             this.accountingSegmentData = data.data;
+            this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(data.data, this.itemMenuInnerOptions);
             this.selectedSegment = this.accountingSegmentData?.[0].segmentID;
             this.loading = false;
           })
@@ -147,10 +143,49 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
       }
     ));
+
   }
 
   segmentMoreMenuClick(): void{
     // console.log('menu pressed');
+  }
+
+  // For each segment item create a corresponding more menu (ellipsis) option
+  prepareSegmentMoreMenu(segmentsData, itemMenu: selectBoxMenuItems) {
+    const segmentsWithMoreMenu = [];
+
+    segmentsData.map( (segment) => {
+      const menuItems = [];
+
+      itemMenu.map( e => {
+        let newItem: Partial<moreMenuItem> = {};
+        newItem = this.prepareItemMoreMenu(e, segment.rights); // Transform more menu
+        menuItems.push(newItem); // Build Array of Menu Options
+      });
+
+      // Add Array of Menu Options to Segment Object
+      segmentsData = segment;
+      segmentsData['moreMenu'] = menuItems;
+      segmentsWithMoreMenu.push(segmentsData);
+
+    });
+
+    return segmentsWithMoreMenu;
+  }
+
+  prepareItemMoreMenu(menuItem: moreMenuItem, comparingValue: string | number | boolean): moreMenuItem {
+
+    if(menuItem.dataTransformer && comparingValue){
+      const elementExists = menuItem.dataTransformer.find( item => item.condition === comparingValue );
+      if(elementExists){
+        menuItem.name = elementExists?.name ?? menuItem.name;
+        menuItem.disabled = elementExists?.disabled ? elementExists?.disabled : menuItem.disabled || false;
+      }
+    } else {
+      console.error('error, incomplete or faulty arguments');
+    }
+
+    return menuItem;
   }
 
   public onAccountingViewChange(data: DropdownSelection[]) {
