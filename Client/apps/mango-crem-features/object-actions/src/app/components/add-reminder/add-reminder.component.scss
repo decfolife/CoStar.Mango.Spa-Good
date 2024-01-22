@@ -1,0 +1,11 @@
+::ng-deep {
+    .modalFooter {
+      .addReminderFooter {
+        display: flex;
+  
+        crem-button {
+          padding: 8px;
+        }
+      }
+    }
+  }

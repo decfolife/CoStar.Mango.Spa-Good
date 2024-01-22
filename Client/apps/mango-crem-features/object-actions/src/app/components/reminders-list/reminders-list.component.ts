@@ -10,6 +10,8 @@ import { SearchComponent } from '@mango/ui-shared/cosmos';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { Workbook, ValueType } from 'exceljs';
 import { ActivatedRoute } from '@angular/router';
+import { AddReminderComponent } from '../add-reminder/add-reminder.component';
+import { MatDialog } from '@angular/material/dialog';
 import { saveAs } from 'file-saver-es';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
@@ -41,7 +43,7 @@ export class RemindersListComponent implements OnInit {
   public searchText: string = "";
   public columns: any = [];
 
-  constructor(private service: RemindersService, private route: ActivatedRoute) {}
+  constructor(private service: RemindersService, private route: ActivatedRoute, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.loadRemindersData();
@@ -57,6 +59,27 @@ export class RemindersListComponent implements OnInit {
     });
   }
 
+  addReminder() {
+    
+    let dialogRef = this.dialog.open(AddReminderComponent, {
+      disableClose: true,
+      height: '90%',
+      width: '75%',
+      maxWidth: '1100px',
+      data: {
+        // objectTypeId: this.objectTypeId,
+        // userId: this.userId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+
+      }
+    });
+  
+}
+
   public resetFilter(e) {
     e.stopPropagation();
     this.remindersDataGrid.instance.clearFilter();
@@ -67,49 +90,56 @@ export class RemindersListComponent implements OnInit {
 
   public setReminderColumns() {
     this.columns = [
-      {	dataField: "Ticklername",
-				dataType: "string",
-				caption: "Event",
+      {
+        dataField: "Ticklername",
+        dataType: "string",
+        caption: "Event",
         cellTemplate: (container, options) => {
           const hasUserDefinedDate = options.data.UserDefinedDate !== null && options.data.UserDefinedDate !== undefined;
-        
+
           const customizedData = options.data.TicklerTypeID === 1 && hasUserDefinedDate
             ? options.data.Ticklername + options.data.UserDefinedDate
             : options.data.Ticklername;
-        
+
           container.innerText = customizedData;
         }
-			},
-      {	dataField: "DisplayName",
-				alignment: "left",
-				dataType: "string",
-				caption: "Name",
-			},
-			{	dataField: "CompanyName",
-				dataType: "string",
-				caption: "Company",
-			},
-      {	dataField: "TicklerDaysOut",
-				dataType: "number",
+      },
+      {
+        dataField: "DisplayName",
         alignment: "left",
-				caption: "Days",
-			},
-      {	dataField: "TicklerFrequency",
-				dataType: "number",
-				caption: "Frequency",
+        dataType: "string",
+        caption: "Name",
+      },
+      {
+        dataField: "CompanyName",
+        dataType: "string",
+        caption: "Company",
+      },
+      {
+        dataField: "TicklerDaysOut",
+        dataType: "number",
+        alignment: "left",
+        caption: "Days",
+      },
+      {
+        dataField: "TicklerFrequency",
+        dataType: "number",
+        caption: "Frequency",
         alignment: "left"
-			},
-      {	dataField: "TicklerID",
-      dataType: "number",
-      caption: "Tickler ID",
-      alignment: "left",
-      visible: false 
       },
-      {	dataField: "TicklerMessage",
-      dataType: "string",
-      caption: "Message",
+      {
+        dataField: "TicklerID",
+        dataType: "number",
+        caption: "Tickler ID",
+        alignment: "left",
+        visible: false
       },
-		];
+      {
+        dataField: "TicklerMessage",
+        dataType: "string",
+        caption: "Message",
+      },
+    ];
   }
 
 
@@ -119,8 +149,8 @@ export class RemindersListComponent implements OnInit {
 
   public searchDataGrid(data) {
     this.searchText = data;
-		this.remindersDataGrid.instance.searchByText(data);
-	}
+    this.remindersDataGrid.instance.searchByText(data);
+  }
 
 
   public exportExcel(event) {
@@ -128,55 +158,55 @@ export class RemindersListComponent implements OnInit {
     exportDataGrid({
       component: this.remindersDataGrid.instance,
       worksheet: workbook.addWorksheet('Reminders List Page')
-    }).then(function() {
+    }).then(function () {
       workbook.worksheets[0].columns.forEach((column) => {
         let maxLength = 0;
         column["eachCell"]({ includeEmpty: true }, (cell) => {
           const columnLength = cell.value ? cell.value.toString().length + 3 : 10;
           if (cell.type === ValueType.Date) {
-              maxLength = 20;
+            maxLength = 20;
           }
           else if (columnLength > maxLength) {
-              maxLength = columnLength + 3;
+            maxLength = columnLength + 3;
           }
         });
         column.width = maxLength < 10 ? 10 : maxLength;
       });
-      workbook.xlsx.writeBuffer().then(function(buffer: BlobPart) {
-        saveAs(new Blob([buffer], { type:'application/octet-stream'}), 'CoStar_RemindersList.xlsx')
+      workbook.xlsx.writeBuffer().then(function (buffer: BlobPart) {
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CoStar_RemindersList.xlsx')
       });
     });
   }
 
-  adaAttrNoDataGrid(e:any) {
+  adaAttrNoDataGrid(e: any) {
     let noDataEl = e.element.querySelector(".dx-empty");
     let spanChild = null;
 
     if (noDataEl) {
-        spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
+      spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
     }
 
     if (!noDataEl || !spanChild) {
-        return;
+      return;
     }
 
     noDataEl.setAttribute("role", "row");
     spanChild.setAttribute("role", "gridcell");
   }
 
-  
+
   adaPaginationAttr(e) {
     if (!e || !e.element) return;
     let buttons;
     if (e.element[0])
       buttons = e.element[0].querySelectorAll(".dx-selection");
-    else 
+    else
       buttons = e.element.querySelectorAll(".dx-selection");
-    
+
     buttons.forEach(button => {
       if (!button || !button.hasAttribute('aria-label') || !button.classList) return;
-        button.setAttribute('aria-current', 'page');
-    
+      button.setAttribute('aria-current', 'page');
+
       const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (!button.classList.contains('dx-selection')) {
