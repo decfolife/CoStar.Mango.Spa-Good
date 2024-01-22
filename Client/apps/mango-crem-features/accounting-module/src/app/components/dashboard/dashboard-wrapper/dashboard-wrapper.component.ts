@@ -11,7 +11,12 @@ import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflo
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
 import { switchMap, tap } from 'rxjs/operators';
+import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
+import { CreateSegmentComponent } from '@reports/components/modal/create-segment/create-segment.component'
+
+
 import { selectBoxMenuItems, byItemMoreMenuOptions, moreMenuItem } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
+import { ReportsService } from '@reports/services/reports.service';
 
 export interface DropdownSelection { // Todo: Move to type definition file
   display: string,
@@ -57,6 +62,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public workflowAlertsCriteriaSet: number;
   subs: Subscription[] = [];
   faFileExport = faFileExport;
+  public hasSegmentDeleteRight: boolean;
+  public hasSegmentsAddRight: boolean;
+  public hasSegmentsViewRight: boolean;
+
+  public moreMenuSegment: any;
 
   // itemMenuInnerOptions: Initial structure for the segment 'more menu' or ellipsis
   itemMenuInnerOptions: selectBoxMenuItems;
@@ -71,6 +81,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   constructor(
     private inAppDisclosureService: InAppDisclosureService,
+    private reportsService: ReportsService,
     public dialog: MatDialog,
   ) {
     this.itemMenuInnerOptions = [
@@ -84,7 +95,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       {
         type: 'menu',
         name: 'Edit',
-        action: () => this.segmentMoreMenuClick(),
+        action: () => this.edit(this.moreMenuSegment),
         stopPropagation: false,
         dataTransformer: [
           {condition: 'View', name: 'View'},
@@ -96,7 +107,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       {
         type: 'menu',
         name: 'Archive',
-        action: () => this.segmentMoreMenuClick(),
+        action: () => this.archiveAction(this.moreMenuSegment),
         stopPropagation: false,
         dataTransformer: [
           // Possible Responses: 1 Restricted View | 2 View | 3 Add | 4 Edit | 5 delete | 6 Block
@@ -144,7 +155,16 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
       }
     ));
-
+    this.subs.push(
+      this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
+        if (result.data) {
+          this.hasSegmentDeleteRight = result.data.securityTypeID >= 5;
+          this.hasSegmentsAddRight = result.data.securityTypeID >= 3;
+          this.hasSegmentsViewRight = result.data.securityTypeID >= 2;
+        }
+  
+      })
+    )
   }
 
   segmentMoreMenuClick(): void{
@@ -291,6 +311,90 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         modalTitle: this.accountingViewData.find(obj => obj.id === this.selectedView).displayValue,
        }
     });
+  }
+
+  public edit(data) {
+    if (this.hasSegmentsAddRight || this.hasSegmentsViewRight) {
+      const dialogRef = this.dialog.open(CreateSegmentComponent, {
+        height: LargeModal.Height,
+        width: LargeModal.Width,
+        maxWidth: LargeModal.MaxWidth,
+        maxHeight: LargeModal.MaxHeight,
+        disableClose: true,
+        data: {
+          openReportAction: "edit",
+          segmentID: data.segmentID,
+          criteriaSetID: data.criteriaSetID,
+          portfolioID: data.portfolioID,
+          name: data.name,
+          archived: !data.active
+        }
+      });
+
+      dialogRef.afterClosed().subscribe((data) => {
+        if (data === "refresh") {
+          this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+        } else if (data) {
+          this.redirectDialog(data)
+        }
+      });
+
+    }
+  }
+
+  public archiveAction(data) {
+    this.loading = true;
+    let request = { "SegmentID": data.segmentID }
+    if (data.active) {
+      this.reportsService.archiveSegment(request).subscribe((result) => {
+        if (result) {
+          this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+          notify({
+            message: 'Segment archived successfully.',
+            type: 'success',
+            displayTime: 5000,
+            position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+            maxWidth: '500px',
+            closeOnClick: true,
+        })
+        } else {
+          //error
+          this.loading = false;
+        }
+      })
+    } else {
+      this.reportsService.unarchiveSegment(request).subscribe((result) => {
+        if (result) {
+          this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+          notify({
+            message: 'Segment unarchived successfully.',
+            type: 'success',
+            displayTime: 5000,
+            position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+            maxWidth: '500px',
+            closeOnClick: true,
+        })
+        } else {
+          //error
+          this.loading = false;
+        }
+      })
+    }
+  }
+
+  public redirectDialog(config: any) {
+    const redirectRef = this.dialog.open(CreateSegmentComponent, config)
+    redirectRef.afterClosed().subscribe((data) => {
+      if (data === "refresh") {
+        this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+      } else if (data) {
+        this.redirectDialog(config);
+      }
+    });
+  }
+
+  public onMoreMenuItemClicked(item) {
+    this.moreMenuSegment = item;
   }
 
   ngOnDestroy(): void {

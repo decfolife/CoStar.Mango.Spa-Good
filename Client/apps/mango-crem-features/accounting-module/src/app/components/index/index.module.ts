@@ -12,6 +12,7 @@ import { DashboardModule } from '../../components/dashboard/accounting-dashboard
 import { IndexComponent } from '../../components/index/index.component';
 import { IndexRoutingModule } from './index-routing.module';
 import { DashboardWrapperModule } from '../dashboard/dashboard-wrapper/dashboard-wrapper.module';
+import { ReportsService } from '@reports/services/reports.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { DashboardWrapperModule } from '../dashboard/dashboard-wrapper/dashboard
     IndexModule
   ],
 
-  providers: [ ProjectsDashboardLeftNavService ]
+  providers: [ ProjectsDashboardLeftNavService, ReportsService ]
 })
 
 export class IndexMainModule {}

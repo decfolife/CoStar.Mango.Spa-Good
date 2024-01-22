@@ -58,6 +58,7 @@
 					[selectBoxValue]="selectedSegment"
 					hoverText="Select View"
 					(selectedItems)="onAccountingSegmentChange($event)"
+					(moreMenuItemClicked)="onMoreMenuItemClicked($event)"
 					[isDisabled]="loading"
           itemTemplate="withMenu"
 				></crem-dropdown>

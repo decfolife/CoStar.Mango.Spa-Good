@@ -70,7 +70,7 @@
           className="icon"
           icon="faEllipsisH"
           iconPack="solid"
-          (click)="$event.stopPropagation(); $event.preventDefault()"
+          (click)="$event.stopPropagation(); $event.preventDefault(); moreMenuDropdownClick(item)"
           [matMenuTriggerFor]="ItemViewMore"
         ></crem-button>
 

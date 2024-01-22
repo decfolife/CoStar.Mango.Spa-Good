@@ -87,6 +87,7 @@ export class DropdownComponent implements OnInit, OnChanges {
   private clearButton: any;
 
   @Output() selectedItems = new EventEmitter<any[]>();
+  @Output() moreMenuItemClicked = new EventEmitter<any>();
   @ViewChild('dropdownTemplate', { static: false })
   dropdownTemplate: DxDataGridComponent;
   @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent
@@ -558,6 +559,10 @@ export class DropdownComponent implements OnInit, OnChanges {
         this.dropDown.instance.close();
       }
     }
+  }
+
+  moreMenuDropdownClick(item: any) {
+    this.moreMenuItemClicked.emit(item);
   }
 
 }
