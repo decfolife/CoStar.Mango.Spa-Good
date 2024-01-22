@@ -100,10 +100,10 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         stopPropagation: false,
         dataTransformer: [
           // Possible Responses: 1 Restricted View | 2 View | 3 Add | 4 Edit | 5 delete | 6 Block
-          {condition: 'Restricted View', disabled: true,},
-          {condition: 'View', disabled: true,},
-          {condition: 'Add', disabled: true,},
-          {condition: 'Edit', disabled: false,},
+          {condition: 'Restricted View', disabled: true, title:'You don\'t have rights'},
+          {condition: 'View', disabled: true, title:'You don\'t have rights'},
+          {condition: 'Add', disabled: true, title:'You don\'t have rights'},
+          {condition: 'Edit', disabled: false},
           {condition: 'Delete', disabled: false,},
           {condition: 'Block', disabled: false,},
         ],
@@ -124,22 +124,23 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         }
 
         this.workflowAlertsCriteriaSet = result.data[1].CriteriaSetID;
-        const observableItem = this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false);
-        this.subs.push(
-          observableItem.subscribe((data) => {
-            this.accountingYearData = [];
-            for(let i = 10; i > -11; i--) {
-              this.accountingYearData.push({
-                value: this.selectedYear + i
-              });
-            }
-            //fetch criteriaSetID for each view;
-            this.accountingSegmentData = data.data;
-            this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(data.data, this.itemMenuInnerOptions);
-            this.selectedSegment = this.accountingSegmentData?.[0].segmentID;
-            this.loading = false;
-          })
-        );
+        const observableItem =
+          this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false)
+            .subscribe( (r) => {
+              this.accountingYearData = [];
+              for(let i = 10; i > -11; i--) {
+                this.accountingYearData.push({
+                  value: this.selectedYear + i
+                });
+              }
+              //fetch criteriaSetID for each view;
+              this.accountingSegmentData = r.data;
+              this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
+              this.selectedSegment = this.accountingSegmentData?.[0].segmentID;
+              this.loading = false;
+            });
+
+        this.subs.push(observableItem);
 
       }
     ));
@@ -156,10 +157,9 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
     segmentsData.map( (segment) => {
       const menuItems = [];
-
       itemMenu.map( e => {
         let newItem: Partial<moreMenuItem> = {};
-        newItem = this.prepareItemMoreMenu(e, segment.rights); // Transform more menu
+        newItem = this.prepareItemMoreMenu(e, segment.rights, segment.segmentID); // Transform more menu
         menuItems.push(newItem); // Build Array of Menu Options
       });
 
@@ -173,19 +173,20 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     return segmentsWithMoreMenu;
   }
 
-  prepareItemMoreMenu(menuItem: moreMenuItem, comparingValue: string | number | boolean): moreMenuItem {
-
-    if(menuItem.dataTransformer && comparingValue){
-      const elementExists = menuItem.dataTransformer.find( item => item.condition === comparingValue );
+  prepareItemMoreMenu(menuItem: moreMenuItem, comparingValue: string | number | boolean, attribute?: any, attributeName?: string): moreMenuItem {
+    const item = {...menuItem}
+    if(item.dataTransformer && comparingValue){
+      const elementExists = item.dataTransformer.find( item => item.condition === comparingValue );
       if(elementExists){
-        menuItem.name = elementExists?.name ?? menuItem.name;
-        menuItem.disabled = elementExists?.disabled ? elementExists?.disabled : menuItem.disabled || false;
+        item.name = elementExists?.name ?? item.name;
+        item.title = elementExists?.title ?? item.title;
+        item.disabled = elementExists?.disabled ? elementExists?.disabled : item.disabled || false;
       }
+      attribute && (item[ attributeName ?? 'attribute'] = attribute); // Additional attribute
     } else {
       console.error('error, incomplete or faulty arguments');
     }
-
-    return menuItem;
+    return item;
   }
 
   public onAccountingViewChange(data: DropdownSelection[]) {

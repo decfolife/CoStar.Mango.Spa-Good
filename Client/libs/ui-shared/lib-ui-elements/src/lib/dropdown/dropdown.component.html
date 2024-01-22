@@ -84,6 +84,7 @@
                 [class]="'mat-menu-child-button ' + (option.class ? option.class : '')"
                 (click)="option.action(); option.stopPropagation ? $event.stopPropagation() : null"
                 [disabled]="option.disabled ? option.disabled : false"
+                [title]="option.title ?? ''"
               >{{option.name}}</button>
               <!-- Separator -->
               <hr *ngSwitchCase="'separator'" />
