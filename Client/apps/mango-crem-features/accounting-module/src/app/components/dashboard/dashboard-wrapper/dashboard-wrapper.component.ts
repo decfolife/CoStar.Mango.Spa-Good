@@ -114,7 +114,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           {condition: 'Restricted View', disabled: true, title:'You don\'t have rights'},
           {condition: 'View', disabled: true, title:'You don\'t have rights'},
           {condition: 'Add', disabled: true, title:'You don\'t have rights'},
-          {condition: 'Edit', disabled: false},
+          {condition: 'Edit', disabled: true},
           {condition: 'Delete', disabled: false,},
           {condition: 'Block', disabled: false,},
         ],
