@@ -3,13 +3,13 @@
 		<div class="controls-left">
 			<h1 class="title"> Reminders List </h1>
 			<div class="search">
-				<cs-search #SearchBox [placeholder]="'Search...'" ></cs-search>
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" ></cs-search>
 			</div>
 		</div>
 		<div class="controls-right">
 			<div class="controls-item">
 				<crem-button type="secondary">
-					<div id="clearFilters">Clear Filters</div>
+					<div id="clearFilters" (click)="resetFilter($event); $event.preventDefault();">Clear Filters</div>
 				</crem-button>
 			</div>
 			<div class="controls-item">
@@ -18,9 +18,12 @@
 				</crem-button>
 			</div>
 			<div class="controls-item">
-				<crem-button type="secondary">
-					<div id="ExportExcel">Export Excel</div>
-				</crem-button>
+				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
+				<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
+					<button mat-menu-item (click)="resetFilter($event)">Reset</button>
+					<button mat-menu-item (click)="openColumnChooser()">Column Chooser</button>
+					<button mat-menu-item (click)="exportExcel($event)">Export</button> 
+				</mat-menu>	 
 			</div>
 		</div>
 	</div>
@@ -36,9 +39,48 @@
 			[allowColumnReordering]="true"
 			[columnAutoWidth]="false"
 			[dataSource]="gridData"
+			keyExpr="TicklerID"
 			[wordWrapEnabled]="true"
+			(onContentReady)="adaAttributes($event); adaPaginationAttr($event); adaAttrNoDataGrid($event)"
 		>
+		<dxo-column-chooser [enabled]="true"></dxo-column-chooser>
+		<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxi-column *ngFor="let col of columns" 
+			[dataField]="col.dataField" 
+			[alignment]="col.alignment"
+			[visible]="col.visible"
+			[dataType]="col.dataType"
+			[format]="col.format"
+			[caption]="col.caption"
+			[fixed]="col.fixed"
+			[width]="col.width"
+			[sortOrder]="col.sortOrder"
+			[allowEditing]="col.allowEditing"
+			[cellTemplate]="col.cellTemplate"
+		>
+			<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
+		</dxi-column>
+		<dxi-column caption="Actions" type="buttons" width="65" [showInColumnChooser]="false" [allowReordering]="false" [fixed]="true">
+			<dxi-button template="moreMenuTemplate">
+				<div *dxTemplate="let data of 'moreMenuTemplate'">
+					
+					<button aria-label="more menu" class="btn btn-link" (click)="$event.preventDefault()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon role="none" aria-label="Actions Menu">more_horiz</mat-icon></button>
+					<mat-menu #expenseMoreMenu="matMenu" class="segments-actions">
+						<ul role="menu">
+							<li mat-menu-item 
+								(click)="edit(data)"> Edit
+							</li>
+						</ul>
+						<ul role="menu">
+							<li mat-menu-item 
+								(click)="DeleteReminderList(data)"> Delete
+							</li>
+						</ul>
+					</mat-menu>
+				</div>
+			</dxi-button>		    	
+		</dxi-column>
 			<dxo-paging [pageSize]="50"></dxo-paging>
 			<dxo-pager 
 				[showPageSizeSelector]="true"
