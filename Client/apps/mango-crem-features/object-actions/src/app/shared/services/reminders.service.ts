@@ -13,7 +13,7 @@ export class RemindersService extends EndpointService {
   }
 
   getRemindersList(oID: number, oTID: number): Observable<any> {
-    let url = `${environment.appUrls.reminders}Reminders/GetReminders`;
+    let url = `${environment.appUrls.objectActions}Reminders/GetReminders`;
     const request = {
       objectid: oID,
       objectTypeId: oTID
