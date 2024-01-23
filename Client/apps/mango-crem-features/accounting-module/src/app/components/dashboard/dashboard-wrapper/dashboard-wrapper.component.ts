@@ -334,7 +334,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
       dialogRef.afterClosed().subscribe((data) => {
         if (data === "refresh") {
-          this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+          this.getSegments(this.selectedView);
         } else if (data) {
           this.redirectDialog(data)
         }
@@ -349,7 +349,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     if (data.active) {
       this.reportsService.archiveSegment(request).subscribe((result) => {
         if (result) {
-          this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+          this.getSegments(this.selectedView);
           notify({
             message: 'Segment archived successfully.',
             type: 'success',
@@ -366,7 +366,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     } else {
       this.reportsService.unarchiveSegment(request).subscribe((result) => {
         if (result) {
-          this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+          this.getSegments(this.selectedView);
           notify({
             message: 'Segment unarchived successfully.',
             type: 'success',
@@ -387,7 +387,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     const redirectRef = this.dialog.open(CreateSegmentComponent, config)
     redirectRef.afterClosed().subscribe((data) => {
       if (data === "refresh") {
-        this.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet);
+        this.getSegments(this.selectedView);
       } else if (data) {
         this.redirectDialog(config);
       }
