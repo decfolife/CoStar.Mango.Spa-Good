@@ -114,7 +114,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           {condition: 'Restricted View', disabled: true, title:'You don\'t have rights'},
           {condition: 'View', disabled: true, title:'You don\'t have rights'},
           {condition: 'Add', disabled: true, title:'You don\'t have rights'},
-          {condition: 'Edit', disabled: true},
+          {condition: 'Edit', disabled: true, title:'You don\'t have rights'},
           {condition: 'Delete', disabled: false,},
           {condition: 'Block', disabled: false,},
         ],
@@ -240,6 +240,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         }),
         tap( r => {
           this.accountingSegmentData = r.data;
+          this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
           this.selectedSegment = r.data[0].segmentID;
           this.selectedView = view;
         })
