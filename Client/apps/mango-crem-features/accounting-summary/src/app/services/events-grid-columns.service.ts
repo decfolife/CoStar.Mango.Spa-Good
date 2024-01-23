@@ -83,7 +83,6 @@ export class EventsGridColumnsService {
       columns.push({
         caption: '# of Periods',
         dataField: 'periods',
-        format: value => this.formattingService.formatNumber(+value, 2),
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer'
       });
@@ -199,8 +198,6 @@ export class EventsGridColumnsService {
           columns.push({
             caption: 'Level Expense (' + currencyInfo.functionalCurrency + ')',
             dataField: 'functionalLevelExpense',
-            format: value => (value < 0) ? 'N/A' :
-              this.formattingService.functionalFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision),
             headerCellTemplate: 'amortizationHeader',
             cellTemplate: 'pointer'
           });
@@ -208,8 +205,6 @@ export class EventsGridColumnsService {
           columns.push({
             caption: 'Level Expense (' + currencyInfo.localCurrency + ')',
             dataField: 'levelExpense',
-            format: value => (value < 0) ? 'N/A' :
-              this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
             headerCellTemplate: 'amortizationHeader',
             cellTemplate: 'pointer'
           });

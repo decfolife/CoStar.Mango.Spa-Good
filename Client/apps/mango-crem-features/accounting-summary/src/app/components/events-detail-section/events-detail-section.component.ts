@@ -2,6 +2,7 @@ import { PortfolioSettingsResponse } from '@accounting-summary/models/portfolio-
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { EventsGridColumnsService } from '@accounting-summary/services/events-grid-columns.service';
+import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { DxDataGridComponent, DxDropDownBoxComponent } from 'devextreme-angular';
 import { trigger } from 'devextreme/events';
@@ -61,7 +62,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   
   @Output() dataChanged: EventEmitter<any> = new EventEmitter();
 
-  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private ref: ChangeDetectorRef) {
+  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private formatService: FormattingService ,private ref: ChangeDetectorRef) {
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
 
@@ -125,6 +126,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           this.detailsGridData.forEach(element => {
             element.discountRateDisplay = this.discountRateDisplay(element);
             element.currencyDisplay = this.currencyDisplay(element);
+            element.formatCells = this.formatCells(element); 
           });
         }
 
@@ -242,6 +244,20 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   discountRateDisplay(gridDataRow) {
     return (!gridDataRow.discountRate ? "0.0000" : (Math.round(gridDataRow.discountRate * 10000) / 10000).toFixed(4)) + "% " + (gridDataRow.annualRateTypeID == 1 ? "APR" : "APY");
+  }
+
+  formatCells(gridDataRow) {
+    if (this.portfolioSettings.functionalCurrencyEnabled && gridDataRow.functionalLevelExpense < 0) {
+      gridDataRow.functionalLevelExpense = 'N/A';
+    } else {
+      gridDataRow.functionalLevelExpense = this.formatService.functionalFormat(gridDataRow.functionalLevelExpense, gridDataRow.functionalCurrencyDecimalPrecision);
+    }
+    if (!this.portfolioSettings.functionalCurrencyEnabled && gridDataRow.levelExpense < 0) {
+      gridDataRow.levelExpense = 'N/A';
+    } else {
+      gridDataRow.levelExpense = this.formatService.functionalFormat(gridDataRow.functionalLevelExpense, gridDataRow.localCurrencyDecimalPrecision);
+    }
+    gridDataRow.periods = gridDataRow.periods.toFixed(2);
   }
 
   onCellClick(e) {
