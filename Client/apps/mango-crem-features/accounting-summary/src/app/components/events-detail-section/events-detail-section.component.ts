@@ -159,7 +159,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
       const rowHeight = grid.component.getRowElement(0)[0].clientHeight;
       this.eventsDataGrid.instance.getScrollable().scrollTo({ y: selectedRowIndex * rowHeight });
-      this.highlightEventDifferencesForGridCell(grid);
+      this.highlightEventDifferencesForGridCell(grid, selectedRowIndex);
     }
   }
 
@@ -284,7 +284,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     this.eventsDataGrid.instance.repaint();
   }  
 
-  highlightEventDifferencesForGridCell(eventsGrid: any) {
+  highlightEventDifferencesForGridCell(eventsGrid: any, selectedRowIndex: number) {
     const visibleRows = eventsGrid.component.getVisibleRows();
     const visibleColumns = eventsGrid.component.getVisibleColumns();
     visibleRows.forEach(row => {
@@ -297,7 +297,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           data: row.data
         }
 
-        if (event?.row?.isSelected) {
+        if (event?.row?.rowIndex === selectedRowIndex) {
           if (event.row.data.scheduleIndex == 1) {
             event.cellElement.style.fontWeight = '400';
             return;
