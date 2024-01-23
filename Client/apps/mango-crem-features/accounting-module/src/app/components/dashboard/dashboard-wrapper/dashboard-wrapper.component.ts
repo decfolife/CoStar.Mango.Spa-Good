@@ -87,7 +87,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     this.itemMenuInnerOptions = [
       {
         type: 'menu',
-        name: 'Make default',
+        name: 'Make Default',
         action: () => this.segmentMoreMenuClick(),
         stopPropagation: true,
       },
