@@ -51,13 +51,13 @@
 
   <!-- Template: Default -->
   <ng-container *dxTemplate="let item of 'default'">
-    {{ item.name || item.displayValue || item.value }}
+    {{ item.name || item.displayValue || item.value || item[displayExpr]}}
   </ng-container>
 
   <!-- Template: With Item's Menu -->
   <div class="item" *dxTemplate="let item of 'withMenu'">
     <span class="item-name" title="">
-      {{ item.name || item.displayValue || item.value }}
+      {{ item.name || item.displayValue || item.value || item[displayExpr]}}
     </span>
 
     <!-- More Menu -->
