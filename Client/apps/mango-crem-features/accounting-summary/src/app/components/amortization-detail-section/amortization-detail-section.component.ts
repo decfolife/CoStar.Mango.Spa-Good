@@ -16,14 +16,13 @@ import { Subscription, combineLatest } from 'rxjs';
 
 export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy {
   @ViewChild("AmortizationDataGrid") amortizationDataGrid: DxDataGridComponent;
-  @Input()
-  eventScheduleData: any;
-  @Input()
-  classificationID: number;
+  @Input() eventScheduleData: any;
   @Input() userInfo: UserInfoResponse;
   @Input() rightsInfo: any;
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;
+  @Input() classificationID: number;
+
   componentName = "amortization-grid"
   isGridStateChanged = false;
   amortizationdetailsGridData;
@@ -42,19 +41,9 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   portfolioSettings: PortfolioSettingsResponse;
   selectedRowValue = 0;
   popupVisible = false;
-  jeProcessingInfoPopupVisible = false;
-  jeProcessingPopupData: any;
-  jePopupTile: string;
-  displayPeriodTitle: string;
-  jePaymentPopupData: any;
-  popupHeight='';
-  maxHeight ='70%';
-  minHeight = '50%'
-  tabs = [{ "title": "Journal Entry", "template":"jeProcessingData" },
-          { "title": "Payment Detail", "template":"paymentDetailData" }
-          // ,{ "title": "Retrospective Adjustment", "template":"retrospectiveAdjustmentData" }
-        ];
-
+  amortizationGridRowClickEvent: any;
+  retroAdustmentGridRowClickEvent: any
+  retroEventJeStatus = ""; 
   private subscription = new Subscription();
 
   constructor(public accountingSummaryService: AccountingSummaryService, private columnService: AmortizationGridColumnsService, private formatService: FormattingService, private datePipe: DatePipe) {
@@ -62,29 +51,15 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
 
-  onJeProcessingInfoPopupHidden() {
-    this.jeProcessingInfoPopupVisible = false;
-
-    // Only refresh Amortization grid if JeStatus has changed
-    const match = this.amortizationdetailsGridData.find(x => x.leaseRecognitionPeriodID === this.jeProcessingPopupData.leaseRecognitionPeriodID);
-    if (match) {
-      if (match.jeStatus !== this.jeProcessingPopupData.jeStatus) {
-        match.jeStatus = this.jeProcessingPopupData.jeStatus;
-        this.amortizationGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
-      }
-    }
-    this.jeProcessingPopupData = null;
-  }
-
-  setPopupHeight(isMaxHeight: boolean): void {
-    this.popupHeight = isMaxHeight ? this.maxHeight : this.minHeight;
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (this.eventScheduleData && this.eventScheduleData.leaseRecognitionScheduleID !== undefined && this.classificationID !== undefined &&
-            //The first time loading or the value in the dropdown changed
-            (changes.eventScheduleData.previousValue === undefined || 
-            (changes.eventScheduleData.previousValue.leaseRecognitionScheduleID !== this.eventScheduleData.leaseRecognitionScheduleID))) {
+      (
+        // The first time loading or the value in the dropdown changed
+        !changes.eventScheduleData ||
+        !changes.eventScheduleData.previousValue ||
+        (changes.eventScheduleData.previousValue.leaseRecognitionScheduleID !== this.eventScheduleData.leaseRecognitionScheduleID)
+      )
+    ) {
       this.isGridStateChanged = false;
       this.amortizationGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
     }
@@ -94,11 +69,34 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     this.subscription.unsubscribe();
   }
 
+  onJeRetroPopupClosed(eventJeProcessingPopupData) {
+    // Only refresh Amortization grid if JeStatus has changed
+    const match = this.amortizationdetailsGridData.find(x => x.leaseRecognitionPeriodID === eventJeProcessingPopupData.leaseRecognitionPeriodID);
+    if (match) {
+      if (match.jeStatus !== eventJeProcessingPopupData.jeStatus) {
+        match.jeStatus = eventJeProcessingPopupData.jeStatus;
+        this.amortizationGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
+      }
+    }
+  }
+
+  onUpdateRetroEventJeStatus(eventJeProcessingPopupData) {
+    this.retroEventJeStatus = eventJeProcessingPopupData.jeStatus;
+  }
+
+  onRetroAdustmentGridRowClick(event) {
+    this.retroAdustmentGridRowClickEvent = event;
+  }
+
   onGridOptionChanged(event) {
     if (event.fullName != 'columns' && event.name === 'columns') {
       // The grid state has changed
       this.isGridStateChanged = true;
     }
+  }
+
+  onGridRowClick(event) {
+    this.amortizationGridRowClickEvent = event;
   }
 
   amortizationGridSetup(leaseRecognitionScheduleID: number) {
@@ -291,17 +289,6 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       return columns;
     }
 
-  jeProcessingPopup(event: any) {
-    const { leaseRecognitionPeriodID, displayPeriod, periodStart, periodEnd } = event.data;
-    this.getJeProcessingPopupData(leaseRecognitionPeriodID);
-    this.getJePaymentPopupData(leaseRecognitionPeriodID);
-    this.jeProcessingInfoPopupVisible = true;
-    const formattedStart = this.datePipe.transform(displayPeriod === 'Beginning Balance' ? periodStart : new Date(periodStart), this.dateFormat);
-    const formattedEnd = displayPeriod === 'Beginning Balance' ? '' : this.datePipe.transform(periodEnd, this.dateFormat);
-    this.jePopupTile = `Period: ${displayPeriod} (${formattedStart}${formattedEnd ? ' - ' + formattedEnd : ''})`;
-
-    this.displayPeriodTitle = displayPeriod
-  }
 
   onPopupHidden() {
     this.popupVisible = false;
@@ -362,58 +349,15 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     return { totalItems };
   }
 
-  private getJeProcessingPopupData(leaseRecognitionPeriodID: number) {
-    const jeProcessingDetails = this.accountingSummaryService.getJeProcessingPopupData(leaseRecognitionPeriodID);
-  
-    this.subscription.add(jeProcessingDetails.subscribe(
-      (res) => {
-        const jeProcessingDetailsResponse = res;
-  
-        if (jeProcessingDetailsResponse === null) {
-          this.accountingSummaryService.displayContactSystemAdminMessage();
-        } else if (!jeProcessingDetailsResponse.success) {
-          this.accountingSummaryService.errorNotify(jeProcessingDetailsResponse.clientErrorMessage);
-        } else {
-          this.jeProcessingPopupData = jeProcessingDetailsResponse.data;
-        }
-      },
-    ));
-  }
-
-  private getJePaymentPopupData(leaseRecognitionPeriodID: number) {
-    const jePaymentDetails = this.accountingSummaryService.getJePaymentPopupData(leaseRecognitionPeriodID);
-  
-    this.subscription.add(jePaymentDetails.subscribe(
-      (res) => {
-        const jePaymentDetailsResponse = res;
-  
-        if (jePaymentDetailsResponse === null) {
-          this.accountingSummaryService.displayContactSystemAdminMessage();
-        } else if (!jePaymentDetailsResponse.success) {
-          this.accountingSummaryService.errorNotify(jePaymentDetailsResponse.clientErrorMessage);
-        } else {
-          this.jePaymentPopupData = jePaymentDetailsResponse.data;
-        }
-      },
-    ));
-  }
-
-  onJeDataSaved() {
-    this.getJeProcessingPopupData(this.jeProcessingPopupData.leaseRecognitionPeriodID);
-  }
-
-  onTabChanged(event: any) {
-    if (event.name === 'selectedIndex' && event.value !== undefined) {
-      const selectedTab = this.tabs[event.value];
-        this.popupHeight = this.maxHeight;
-      }
-    }
-    
   exportToExcel() {
     const classificationType = this.classificationType;
     const amortizationProfileName = this.amortizationProfileName;
     const sheetname = this.accountingSummaryService.getLeaseAbstractId() + ' - ' + amortizationProfileName;
     const filename = this.accountingSummaryService.generateFileName(classificationType, amortizationProfileName);
     this.accountingSummaryService.exportToExcel(this.amortizationDataGrid.instance, filename, sheetname);
+  }
+
+  openMoreMenu(event: Event): void {
+    event.stopPropagation();
   }
 }

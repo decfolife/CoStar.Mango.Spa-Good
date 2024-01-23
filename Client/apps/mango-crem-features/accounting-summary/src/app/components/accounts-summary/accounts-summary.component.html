@@ -4,133 +4,81 @@
 <div class="accounting-summary-style-container">
   <div class="accounting-events">
       <div class="container">
-      <input [id]="accountingSummaryService.getId(componentName,'empty','dropdown')" *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
-          <div *ngIf="!isAccountingEventEmpty" class="events-dropdown">
-            <dx-drop-down-box
-              [id]="accountingSummaryService.getId(componentName,'events','dropdown')"
-              [(value)]="gridBoxValue"
-              [(opened)]="isGridBoxOpened"
-              valueExpr="masterScheduleID"
-              [deferRendering]="false"
-              [displayExpr]="gridBox_displayExpr"
-              [inputAttr]="{ 'aria-label': 'Owner' }"
-              [showClearButton]="false"
-              [dataSource]="gridDataSource"
-              height="32px"
-              (onOptionChanged)="onGridBoxOptionChanged($event)"
-              (onValueChanged)="onValueChanged($event)"
-            >
-              <div *dxTemplate="let data of 'content'">
-                <dx-data-grid
-                  [id]="accountingSummaryService.getId(componentName,'events','grid','dropdown')"
-                  [dataSource]="gridDataSource"
-                  keyExpr="masterScheduleID"
-                  [hoverStateEnabled]="true"
-                  [(selectedRowKeys)]="gridBoxValue"
-                >
-                <dxi-column dataField="classificationType" caption="Classification"></dxi-column>
-                <dxi-column dataField="amortizationProfileName" caption="Amortization Profile"></dxi-column>
-                  <dxo-selection mode="single"></dxo-selection>
-                  <dxo-filter-row [visible]="true"></dxo-filter-row>
-                  <dxo-paging [enabled]="pagingEnabled" [pageSize]="5"></dxo-paging>
-                  <dxo-pager
-                    [visible]="pagingEnabled"
-                    [allowedPageSizes]="allowedPageSizes"
-                    [displayMode]="full"
-                    [showPageSizeSelector]="false"
-                    [showInfo]="true"
-                    [showNavigationButtons]="true"
-                  >
-                  </dxo-pager>
-                </dx-data-grid>
-              </div>
-            </dx-drop-down-box>
-          </div>
-
-      <div class="add-button">
-        <crem-button 
-          [id]="accountingSummaryService.getId(componentName,'add','button')"
-          type="primary"
-          (click)="addEvent($event)"
-          [disabled]="isAddButtonDisabled"
-          (mouseenter)="onMouseEnter()"
-          (mouseleave)="onMouseLeave()"
-          >Add
-        </crem-button>
-        <dx-tooltip 
-          [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
-          target="#accounts-summary-add-button"
-          [visible]="isTooltipVisible"
-          >
-          <div *dxTemplate="let data of 'content'">
-            {{ disableBtnReason }}
-          </div>
-        </dx-tooltip>
+        <div class="title-container">
+          <div class="accounting-summary-title"><mango-accounts-summary-title></mango-accounts-summary-title></div>
       </div>
-
-      <div class="export-to-excel-button">
-        <crem-button 
-          [id]="accountingSummaryService.getId(componentName,'exportToExcel','button')"
-          type="secondary"
-          (click)="exportToExcel($event)"
-          >Export to Excel
-        </crem-button>
-      </div>
-
-      <div class="workflow-history-popup-div">
-        <mango-workflow-history-popup [userInfo]="userInfo" [workflowStatusHistory]="workflowStatusHistory"></mango-workflow-history-popup>
-      </div>
-
-      <div class="workflow-dropdown-div">
-        <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo" [modifiedById]="modifiedByID" (workflowStatusSavedEvent)="onWorkflowStatusSaved($event)"></mango-workflow-dropdown>
-        <div *ngIf="modifiedDate || modifiedByName"
-          class="work-flow-change-info"
-          [id]="accountingSummaryService.getId(componentName,'ChangeBy','tooltip')"
-          (mouseenter)="onChangeByTooltipMouseOver()"
-          (mouseleave)="onChangeByTooltipMouseLeave()">
-          Changed by {{ modifiedByName | slice: 0:10 }}...
-          {{ modifiedDate | date: userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
-      
+      <div class="buttons-container">
+        <div class="add-button">
+          <crem-button [id]="accountingSummaryService.getId(componentName,'add','button')" type="primary"
+            (click)="addEvent($event)" [disabled]="isAddButtonDisabled" (mouseenter)="onMouseEnter()"
+            (mouseleave)="onMouseLeave()">Add
+          </crem-button>
           <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
-            target="#accounts-summary-ChangeBy-tooltip"
-            [visible]="isChangeByTooltipVisible">
+            target="#accounts-summary-add-button" [visible]="isTooltipVisible">
             <div *dxTemplate="let data of 'content'">
-              Changed by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
+              {{ disableBtnReason }}
             </div>
-          </dx-tooltip>   
-        
+          </dx-tooltip>
+        </div>
+        <div class="export-to-excel-button">
+          <crem-button [id]="accountingSummaryService.getId(componentName,'exportToExcel','button')" type="secondary"
+            (click)="exportToExcel($event)">Export to Excel
+          </crem-button>
+        </div>     
+        <div class="workflow-history-popup-div" >
+          <mango-workflow-history-popup [userInfo]="userInfo"
+            [workflowStatusHistory]="workflowStatusHistory"></mango-workflow-history-popup>
+        </div>   
+        <div class="workflow-dropdown-div">
+          <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo"
+            [modifiedById]="modifiedByID"
+            (workflowStatusSavedEvent)="onWorkflowStatusSaved($event)"></mango-workflow-dropdown>
+          <div *ngIf="modifiedDate || modifiedByName" class="work-flow-change-info"
+            [id]="accountingSummaryService.getId(componentName,'ChangeBy','tooltip')"
+            (mouseenter)="onChangeByTooltipMouseOver()" (mouseleave)="onChangeByTooltipMouseLeave()">
+            Changed by {{ modifiedByName | slice: 0:10 }}...
+            {{ modifiedDate | date: userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
+      
+            <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
+              target="#accounts-summary-ChangeBy-tooltip" [visible]="isChangeByTooltipVisible">
+              <div *dxTemplate="let data of 'content'">
+                Changed by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU !== undefined &&
+                userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
+              </div>
+            </dx-tooltip>
+          </div>
+        </div>
+      
+        <div [id]="accountingSummaryService.getId(componentName,'alerts','button')" class="alerts">
+          <mango-alerts-root [leaseAbstractId]="returnLeaseAbstractId()"></mango-alerts-root>
         </div>
       </div>
-
-      <div [id]="accountingSummaryService.getId(componentName,'alerts','button')">
-        <mango-alerts-root [leaseAbstractId]="returnLeaseAbstractId()"></mango-alerts-root>
       </div>
-    </div>
   </div>
 
   <div *ngIf="!isAccountingEventEmpty">
     <mango-events-detail-section
-      [masterScheduleID]="masterScheduleID"
       [leaseIsLocked]="isLocked"
       [leaseIsArchived]="isArchived" 
       [rightsInfo]="rightsInfo"
       [userInfo]="userInfo"
-      (eventScheduleData)="setLeaseRecognitionScheduleID($event)"
+      (eventScheduleSelectedEvent)="setLeaseRecognitionScheduleID($event)"
+      (dataChanged)="onDataChanged($event)"
       [amortizationProfileName]="amortizationProfileName"
       [classificationType]="classificationType">
     </mango-events-detail-section>
 
     <mango-payments-detail-section
-      [eventScheduleData]="eventSchedule"
       [classificationID]="classificationID"
+      [eventScheduleData]="eventSchedule"
       [userInfo]="userInfo" 
       [amortizationProfileName]="amortizationProfileName"
       [classificationType]="classificationType">
     </mango-payments-detail-section>
 
     <mango-amortization-detail-section
-      [eventScheduleData]="eventSchedule"
       [classificationID]="classificationID"
+      [eventScheduleData]="eventSchedule"
       [userInfo]="userInfo"
       [rightsInfo]="rightsInfo"
       [amortizationProfileName]="amortizationProfileName"

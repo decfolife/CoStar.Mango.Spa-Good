@@ -2,7 +2,68 @@
 	<mat-expansion-panel [expanded]="true"> 
 		<mat-expansion-panel-header> 
 		  <mat-panel-title  class="header"> 
-				Accounting Events {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+			<div class="card-header">
+				<div class="card-title">Accounting Events {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+				</div>
+				<div class="event-selector">
+					<input [id]="accountingSummaryService.getId(componentName,'empty','dropdown')" *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
+					<div *ngIf="!isAccountingEventEmpty" class="events-dropdown">
+					  <dx-drop-down-box #EventSelectorDropdown
+						[id]="accountingSummaryService.getId(componentName,'events','dropdown')"
+						[(value)]="gridBoxValue"
+						[(opened)]="isGridBoxOpened"
+						valueExpr="masterScheduleID"
+						[deferRendering]="false"
+						[displayExpr]="gridBox_displayExpr"
+						[inputAttr]="{ 'aria-label': 'Owner' }"
+						[showClearButton]="false"
+						[dataSource]="gridDataSource"
+						height="32px"
+						(click)="$event.stopPropagation();"
+						(keydown)="handleDropdownActivationKeys($event)"
+						(onOptionChanged)="onGridBoxOptionChanged($event)"
+						(onValueChanged)="onValueChanged($event)"
+						>
+						<div *dxTemplate="let data of 'content'">
+						  <dx-data-grid
+							[id]="accountingSummaryService.getId(componentName,'events','grid','dropdown')"
+							[dataSource]="gridDataSource"
+							keyExpr="masterScheduleID"
+							[hoverStateEnabled]="true"
+							[(selectedRowKeys)]="gridBoxValue"
+						  >
+						  <dxi-column dataField="classificationType" caption="Classification"></dxi-column>
+						  <dxi-column dataField="amortizationProfileName" caption="Amortization Profile"></dxi-column>
+							<dxo-selection mode="single"></dxo-selection>
+							<dxo-filter-row [visible]="true"></dxo-filter-row>
+							<dxo-paging [enabled]="pagingEnabled" [pageSize]="5"></dxo-paging>
+							<dxo-pager
+							  [visible]="pagingEnabled"
+							  [allowedPageSizes]="allowedPageSizes"
+							  [displayMode]="full"
+							  [showPageSizeSelector]="false"
+							  [showInfo]="true"
+							  [showNavigationButtons]="true"
+							>
+							</dxo-pager>
+						  </dx-data-grid>
+						</div>
+					  </dx-drop-down-box>
+					</div>
+				</div>
+				<div class="more-menu">
+					<div class="more">
+						<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')" aria-label="More Menu">arrow_drop_down</mat-icon></button>
+							<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
+								<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
+								<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
+								<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="resetGrid()">Reset Preferences</button>
+								<button [id]="accountingSummaryService.getId(componentName,'ExpertToExcel','button')" mat-menu-item (click)="exportToExcel()" title="Export to Excel">Export to Excel</button>
+							</mat-menu>	 
+					</div>
+				</div>
+			</div>
+
 		  </mat-panel-title>
 		</mat-expansion-panel-header>
 			<dx-data-grid
@@ -25,7 +86,6 @@
 				[class]="customGridClass"
 				(onOptionChanged)="onGridOptionChanged($event)"
 				(onCellClick)="onCellClick($event)"
-				(onCellPrepared)="onCellPrepared($event)"
 				(onRowClick)="onRowClick($event)"
 				(onContextMenuPreparing)="onContextMenuPreparing($event)"
 				(onContentReady)="onGridContentReady($event)"
@@ -41,7 +101,7 @@
 				<dxo-scrolling columnRenderingMode="virtual"></dxo-scrolling>
 				<dxo-selection mode="single"></dxo-selection>
 				<dxo-column-chooser
-					[enabled]="true"
+					[enabled]="false"
 					mode="select"
 					[allowSearch]="true"> 
 				</dxo-column-chooser>
@@ -82,20 +142,6 @@
 						</crem-icon>
 					</div>
 				  </div>
-				  <dxo-toolbar>
-					<dxi-item name="groupPanel"></dxi-item>
-						<dxi-item location="after">
-							<div class="more">
-							<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()" >More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')" aria-label="More Menu">arrow_drop_down</mat-icon></button>
-								<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
-									<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
-									<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
-									<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="resetGrid()">Reset Preferences</button>
-									<button [id]="accountingSummaryService.getId(componentName,'ExpertToExcel','button')" mat-menu-item (click)="exportToExcel()" title="Export to Excel">Export to Excel</button>
-								</mat-menu>	 
-						</div>
-					</dxi-item>
-				</dxo-toolbar>
 			</dx-data-grid>
 	</mat-expansion-panel> 
 </section>

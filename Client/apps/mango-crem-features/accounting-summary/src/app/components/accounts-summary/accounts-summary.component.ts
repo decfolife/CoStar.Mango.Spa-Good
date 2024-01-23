@@ -13,11 +13,6 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
 export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   componentName = 'accounts-summary';
-  originalgridDataSource: any;
-  gridDataSource: any;
-  gridBoxValue = [];
-  isGridBoxOpened = false;
-  isAccountingEventEmpty = true;
   readonly allowedPageSizes = ['all'];
   isAddButtonDisabled = true;
   eventSchedule: any;
@@ -32,7 +27,6 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   disableBtnReason = "Accounting Event cannot be added when user or lease information is not loaded.";
   isTooltipVisible = false;
   isChangeByTooltipVisible = false;
-  pagingEnabled = false;
   private subscription = new Subscription();
   masterScheduleID: number;
   leaseRecognitionScheduleID: number;
@@ -42,12 +36,12 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   modifiedDate: any;
   amortizationProfileName: string;
   classificationType: string;
+  isAccountingEventEmpty = false;
 
   constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }
 
   ngOnInit(): void {
     this.getUserInfo();
-    this.getEventsDropDownData();
     this.setRightsAndLeaseInfo();
     this.getWorkflowHistoryInfo();
   }
@@ -88,30 +82,11 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     }
   }
 
-  setLeaseRecognitionScheduleID(eventSchedule: any) {
-    this.eventSchedule = eventSchedule;
-    this.leaseRecognitionScheduleID = eventSchedule.leaseRecognitionScheduleID;
-  }
-
-  gridBox_displayExpr(item) {
-    this.gridBoxValue = [item.masterScheduleID];
-    return item && `${item.classificationType} (${item.amortizationProfileName})`;
-  }
-
-  onGridBoxOptionChanged(e) {
-    if (e.name === 'value') {
-      this.isGridBoxOpened = false;
-      this.ref.detectChanges();
-    }
-  }
-
-  onValueChanged(event: any) {
-    this.masterScheduleID = parseInt(event.value);
-    const selecetedEvent = this.gridDataSource.find(x => (x.masterScheduleID === this.masterScheduleID && x.isPublished));
-    this.classificationID = selecetedEvent.classificationID;
-    this.leaseRecognitionScheduleID = selecetedEvent.leaseRecognitionScheduleID;
-    this.amortizationProfileName = selecetedEvent.amortizationProfileName;
-    this.classificationType = selecetedEvent.classificationType;
+  onDataChanged(data: any) {
+    this.amortizationProfileName = data.amortizationProfileName;
+    this.classificationType = data.classificationType;
+    this.isAccountingEventEmpty = data.isAccountingEventEmpty;
+    this.classificationID = data.classificationID
   }
 
   addEvent(event) {
@@ -136,19 +111,19 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     const masterScheduleId = this.masterScheduleID
 
     //Get Portfolio Settings
-    this.accountingSummaryService.getPortfolioSettings().subscribe();
+    this.subscription.add(this.accountingSummaryService.getPortfolioSettings().subscribe());
 
     //Get Event Details
-    this.accountingSummaryService.getEventDetails(masterScheduleId).subscribe();
+    this.subscription.add(this.accountingSummaryService.getEventDetails(masterScheduleId).subscribe());
 
     //Get Payment Details
-    this.accountingSummaryService.getPaymentDetails(masterScheduleId).subscribe();
+    this.subscription.add(this.accountingSummaryService.getPaymentDetails(masterScheduleId).subscribe());
 
     //Get Amortization Details
-    this.accountingSummaryService.getAmortizationDetails(masterScheduleId).subscribe();
+    this.subscription.add(this.accountingSummaryService.getAmortizationDetails(masterScheduleId).subscribe());
 
     //Get Lease Info Details
-    this.accountingSummaryService.getLeaseInfo().subscribe();
+    this.subscription.add(this.accountingSummaryService.getLeaseInfo().subscribe());
 
     //Get LeaseAbstractID Details
     this.accountingSummaryService.getLeaseAbstractId();
@@ -201,27 +176,9 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   }
 
-  private getEventsDropDownData() {
-    this.subscription.add(this.accountingSummaryService.getAccountingEvents().subscribe(response => {
-      if (response === null) {
-        this.accountingSummaryService.displayContactSystemAdminMessage();
-      }
-      else if (response.success && response.data.length != 0) {
-        this.originalgridDataSource = response.data;
-        this.gridDataSource = response.data.filter(eventItem => eventItem.isPublished);
-        this.pagingEnabled = this.gridDataSource.length > 5;
-        this.gridBoxValue = [this.gridDataSource[0].masterScheduleID];
-        this.masterScheduleID = this.gridDataSource[0].masterScheduleID;
-        this.leaseRecognitionScheduleID = this.gridDataSource[0].leaseRecognitionScheduleID;
-        this.classificationID = this.gridDataSource[0].classificationID;
-        this.amortizationProfileName= this.gridDataSource[0].amortizationProfileName;
-        this.classificationType = this.gridDataSource[0].classificationType;
-        this.isAccountingEventEmpty = false;
-      }
-      else if (!response.success) {
-        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
-      }
-    }));
+  setLeaseRecognitionScheduleID(eventSchedule: any) {
+    this.eventSchedule = eventSchedule;
+    this.leaseRecognitionScheduleID = eventSchedule.leaseRecognitionScheduleID;
   }
 
   private setRightsAndLeaseInfo(){

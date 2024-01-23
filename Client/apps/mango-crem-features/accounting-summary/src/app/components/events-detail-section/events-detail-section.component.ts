@@ -2,8 +2,8 @@ import { PortfolioSettingsResponse } from '@accounting-summary/models/portfolio-
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { EventsGridColumnsService } from '@accounting-summary/services/events-grid-columns.service';
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { DxDataGridComponent, DxDropDownBoxComponent } from 'devextreme-angular';
 import { trigger } from 'devextreme/events';
 import { RowPreparedEvent, CellPreparedEvent } from 'devextreme/ui/data_grid';
 import { Subscription, combineLatest } from 'rxjs';
@@ -16,14 +16,15 @@ import { Subscription, combineLatest } from 'rxjs';
 export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   @ViewChild("EventsDataGrid") eventsDataGrid: DxDataGridComponent;
-  @Input() masterScheduleID: number;
+  @ViewChild('EventSelectorDropdown', { static: false }) EventSelectorDropdown: DxDropDownBoxComponent;
   @Input() leaseIsLocked: boolean;
   @Input() leaseIsArchived: boolean;
   @Input() rightsInfo: any;
   @Input() userInfo: UserInfoResponse;
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;
-  @Output() eventScheduleData = new EventEmitter<number>();
+  @Output() eventScheduleSelectedEvent = new EventEmitter<number>();
+  masterScheduleID: number;
   detailsGridData;
   detailColumns = [];
   gridName = 'Events';
@@ -49,9 +50,23 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   wfStatusHasEditRights = true;
   userHasLeftNavEditRights = true;
   userHasDeleteAccountingSchedulesModuleRight = true;
+  isGridBoxOpened = false;
+  originalgridDataSource: any;
+  gridDataSource: any;
+  gridBoxValue = [];
+  pagingEnabled = false;
+  leaseRecognitionScheduleID: number;
+  classificationID: number;
+  isAccountingEventEmpty = true;
+  
+  @Output() dataChanged: EventEmitter<any> = new EventEmitter();
 
-  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService) { 
+  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private ref: ChangeDetectorRef) {
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
+  }
+
+  ngOnInit(): void {
+    this.getEventsDropDownData();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -67,16 +82,15 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     if(this.masterScheduleIDChanged && this.userInfoLoaded){
       this.isGridStateChanged = false;
       this.eventsGridSetup(this.masterScheduleID);
-
       this.masterScheduleIDChanged = false;
     }
 
-    if(changes.rightsInfo !== undefined && changes.rightsInfo.currentValue !== undefined){
+    if (changes.rightsInfo !== undefined && changes.rightsInfo.currentValue !== undefined) {
       this.setRights();
     }
 
-    this.showEditIcon = this.userHasEditLeaseRights 
-      && this.wfStatusHasEditRights
+    this.showEditIcon = this.userHasEditLeaseRights
+          && this.wfStatusHasEditRights
       && this.userHasLeftNavEditRights
       && !this.leaseIsLocked
       && !this.leaseIsArchived
@@ -87,13 +101,13 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   eventsGridSetup(masterScheduleId: number) {
-     const eventDetails = this.accountingSummaryService.getEventDetails(masterScheduleId);
-     const portfolioSettings = this.accountingSummaryService.getPortfolioSettings();
-     this.subscription.add(combineLatest([eventDetails, portfolioSettings]).subscribe(res => {
+    const eventDetails = this.accountingSummaryService.getEventDetails(masterScheduleId);
+    const portfolioSettings = this.accountingSummaryService.getPortfolioSettings();
+    this.subscription.add(combineLatest([eventDetails, portfolioSettings]).subscribe(res => {
       const eventDetailsResponse = res[0];
       const portfolioSettingsResponse = res[1];
 
-      if (eventDetailsResponse === null || eventDetailsResponse.data.length === 0 || portfolioSettingsResponse === null ){
+      if (eventDetailsResponse === null || eventDetailsResponse.data.length === 0 || portfolioSettingsResponse === null) {
         this.eventsDataGrid.instance.state(null);
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
@@ -123,7 +137,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
         this.publishedEvent = this.detailsGridData.filter(d => d.isPublished)[0];
         this.setInitialSelectedRow = true;
-        this.eventScheduleData.emit(this.publishedEvent);
+        this.eventScheduleSelectedEvent.emit(this.publishedEvent);
       } else if (!eventDetailsResponse.success || !portfolioSettingsResponse.success) {
         this.accountingSummaryService.errorNotify(!eventDetailsResponse.success ? eventDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
       }
@@ -133,16 +147,17 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   onGridContentReady(grid) {
     if (grid.component.totalCount() > 0) {
-      if(this.setInitialSelectedRow){
+      if (this.setInitialSelectedRow) {
         this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
         this.setInitialSelectedRow = false;
       }
 
       const selectedRowIndex = grid.component.getRowIndexByKey(this.selectedRowKeys[0]);
-      grid.component.selectRowsByIndexes([selectedRowIndex]);  
+      grid.component.selectRowsByIndexes([selectedRowIndex]);
 
       const rowHeight = grid.component.getRowElement(0)[0].clientHeight;
       this.eventsDataGrid.instance.getScrollable().scrollTo({ y: selectedRowIndex * rowHeight });
+      this.highlightEventDifferencesForGridCell(grid);
     }
   }
 
@@ -158,7 +173,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           return item.classificationID === this.classificationId && item.gridName === this.gridName;
         });
 
-        if(state !== null) {
+        if (state !== null) {
           state.columns = [];
 
           filteredData.forEach((item) => {
@@ -249,29 +264,43 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   onRowClick(e) {
-    this.eventScheduleData.emit(e.data);
+    this.eventScheduleSelectedEvent.emit(e.data);
     this.eventsDataGrid.instance.repaint();
   }  
 
-  onCellPrepared(event: CellPreparedEvent) {
-    if (event?.row?.isSelected) {
-      if (event.row.data.scheduleIndex == 1) {
-        event.cellElement.style.fontWeight = '400';
-        return;
-      }
+  highlightEventDifferencesForGridCell(eventsGrid: any) {
+    const visibleRows = eventsGrid.component.getVisibleRows();
+    const visibleColumns = eventsGrid.component.getVisibleColumns();
+    visibleRows.forEach(row => {
+      visibleColumns.forEach(col => {
+        const cElement = eventsGrid.component.getCellElement(row.rowIndex, col.dataField);
+        const event = {
+          row: row,
+          column: col,
+          cellElement: cElement,
+          data: row.data
+        }
 
-      const previousRow = this.detailsGridData.filter(f => f.scheduleIndex == (event.row.data.scheduleIndex - 1))[0];
-
-      const oldValue = Object(previousRow)[event.column.dataField];
-      const newValue = Object(event.data)[event.column.dataField];
-      if(oldValue !== newValue) {
-        event.cellElement.style.fontWeight = '700';
-      } else {
-        event.cellElement.style.fontWeight = '400';
-      }
-    }
+        if (event?.row?.isSelected) {
+          if (event.row.data.scheduleIndex == 1) {
+            event.cellElement.style.fontWeight = '400';
+            return;
+          }
+    
+          const previousRow = this.detailsGridData.filter(f => f.scheduleIndex == (event.row.data.scheduleIndex - 1))[0];
+    
+          const oldValue = Object(previousRow)[event.column.dataField];
+          const newValue = Object(event.data)[event.column.dataField];
+          if(oldValue !== newValue) {
+            event.cellElement.style.fontWeight = '700';
+          } else {
+            event.cellElement.style.fontWeight = '400';
+          }
+        }
+      });
+    });
   }
-
+    
   presentValueExcel(event, data) {
     event.preventDefault();
     alert('present value clicked');
@@ -469,7 +498,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     }
   }
 
-  private setRights(){
+  private setRights() {
     this.userHasEditLeaseRights = this.rightsInfo.userHasEditLeaseRights;
     this.wfStatusHasEditRights = this.rightsInfo.wfStatusUserHasEditRights;
     this.userHasLeftNavEditRights = this.rightsInfo.userHasLeftNavEditRights;
@@ -477,12 +506,81 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   exportToExcel() {
-    const classificationType = this.classificationType; 
+    const classificationType = this.classificationType;
     const amortizationProfileName = this.amortizationProfileName;
     const componentName = 'Accounting Events';
     const sheetname = this.accountingSummaryService.getLeaseAbstractId() + ' - ' + amortizationProfileName;
     const filename = this.accountingSummaryService.generateFileName(classificationType, amortizationProfileName, componentName);
     this.accountingSummaryService.exportToExcel(this.eventsDataGrid.instance, filename, sheetname);
   }
+
+  onGridBoxOptionChanged(e) {
+    if (e.name === 'value') {
+      this.isGridBoxOpened = false;
+      this.ref.detectChanges();
+    }
+  }
+
+  onValueChanged(event: any) {
+    this.masterScheduleID = parseInt(event.value);
+    const selecetedEvent = this.gridDataSource.find(x => (x.masterScheduleID === this.masterScheduleID && x.isPublished));
+    this.classificationID = selecetedEvent.classificationID;
+    this.leaseRecognitionScheduleID = selecetedEvent.leaseRecognitionScheduleID;
+    this.amortizationProfileName = selecetedEvent.amortizationProfileName;
+    this.classificationType = selecetedEvent.classificationType;
+    this.eventsGridSetup(this.masterScheduleID);
+    this.emitDataChanged();
+  }
+
+  private getEventsDropDownData() {
+    this.subscription.add(this.accountingSummaryService.getAccountingEvents().subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success && response.data.length != 0) {
+        this.originalgridDataSource = response.data;
+        this.gridDataSource = response.data.filter(eventItem => eventItem.isPublished);
+        this.pagingEnabled = this.gridDataSource.length > 5;
+        this.gridBoxValue = [this.gridDataSource[0].masterScheduleID];
+        this.masterScheduleID = this.gridDataSource[0].masterScheduleID;
+        this.leaseRecognitionScheduleID = this.gridDataSource[0].leaseRecognitionScheduleID;
+        this.classificationID = this.gridDataSource[0].classificationID;
+        this.amortizationProfileName = this.gridDataSource[0].amortizationProfileName;
+        this.classificationType = this.gridDataSource[0].classificationType;
+        this.isAccountingEventEmpty = false;
+        this.eventsGridSetup(this.masterScheduleID);
+        this.emitDataChanged();
+      }
+      else if (!response.success) {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
+  }
+
+  gridBox_displayExpr(item) {
+    this.gridBoxValue = [item.masterScheduleID];
+    return item && `${item.classificationType} (${item.amortizationProfileName})`;
+  }
+
+  private emitDataChanged() {
+    this.dataChanged.emit({
+      amortizationProfileName: this.amortizationProfileName,
+      classificationType: this.classificationType,
+      isAccountingEventEmpty: this.isAccountingEventEmpty,
+      classificationID: this.classificationID
+    });
+  }
+
+  // Add keyboard accessibility for Events Selector
+  handleDropdownActivationKeys(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+      event.stopPropagation();
+      event.preventDefault();
+      this.EventSelectorDropdown.instance.open();
+    }
+  }
   
+  openMoreMenu(event: KeyboardEvent): void {
+    event.stopPropagation();
+  }
 }

@@ -1,73 +1,73 @@
-.accounting-events{
-    height: 70px;
+.accounting-events {
+    height: 65px;
     flex-shrink: 0;
     border-bottom: 1px solid var(--gray-06, #EDEDED);
     background: var(--gray-06, #EDEDED);
-    margin-top: 10px;    
 }
 
-.container{
-    padding-top: 16px;
+.container {
+    display: flex;
+    max-width: 88%;
+    justify-content: space-between;
+    position: fixed;
+    top: 50;
+    z-index: 100;
+    padding: 10px 10px 5px 0;
+    background: var(--gray-06, #EDEDED);
+    border-bottom: 1px solid #C8C8C8;
+}
+
+.title-container {
+    order: 1;
+    display: flex;
+    max-width: 100%;
+    justify-content: space-between;
+}
+
+.buttons-container {
+    order: 2;
+    display: flex;
+    max-width: 100%;
+    justify-content: space-between;
+    margin-right: 25px;
+}
+
+.buttons-container>* {
+    margin-left: 20px;
+}
+
+.buttons-container>.workflow-history-popup-div {
+    margin-left: 5px;
+}
+
+.buttons-container>.accounting-summary-title {
     margin-left: 0px;
-    max-width: unset;
-    padding-left: 40px;
 }
 
-#accounts-summary-empty-dropdown{
-  box-sizing: unset;
-  width: 25%;
-  height: 22px;
+.add-button {
+    order: 6;
 }
 
-#accounts-summary-alerts-button {
-    float: right;
-    margin-right: 20px;
+.export-to-excel-button {
+    order: 5;
 }
 
-.no-data-text-box{
-    box-sizing: unset;
-    display: inline-flex;
-    height: 22px;
-    padding: 5px 67px 4px 8px;
-    align-items: center;
-    flex-shrink: 0;
-    border-radius: 2px;
-    border: 1px solid var(--Primary, #0559B3);
-    background: var(--White, #FFF);
-    box-shadow: 0 0 4px #0559b3;
-    width: 25%;
+.workflow-history-popup-div {
+    order: 4;
 }
 
-.events-dropdown{
-    float: left;
-    width: 30%;
-    border: 1px solid var(--Primary, #0559B3);
-    box-shadow: 0px 0px 4px 0px #0559B3;
-
-    dx-drop-down-box {
-        box-sizing: content-box;
-    }
+.workflow-dropdown-div {
+    order: 3;
 }
 
-.add-button{
-    float: right;
-    padding-right: 15px;
+.alerts {
+    order: 2;
 }
 
-.export-to-excel-button  {
-    float: right;
-    padding-right: 15px;
-}
-
-.workflow-dropdown-div{
-    float: right;
-    margin-right: 5px;
-}
-
-.workflow-history-popup-div{
-    float: right;
-    margin-top: 2px;
-    margin-right: 20px;
+.accounting-summary-title {
+    order: 1;
+    width: 100%;
+    padding: 7px 0 0 5px;
 }
 
 .work-flow-change-info {

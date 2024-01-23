@@ -39,9 +39,13 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.eventScheduleData && this.eventScheduleData.leaseRecognitionScheduleID !== undefined && this.classificationID !== undefined &&
-          //The first time loading or the value in the dropdown changed
-          (changes.eventScheduleData.previousValue === undefined || 
-          (changes.eventScheduleData.previousValue.leaseRecognitionScheduleID !== this.eventScheduleData.leaseRecognitionScheduleID))) {
+      (
+        // The first time loading or the value in the dropdown changed
+        !changes.eventScheduleData ||
+        !changes.eventScheduleData.previousValue ||
+        (changes.eventScheduleData.previousValue.leaseRecognitionScheduleID !== this.eventScheduleData.leaseRecognitionScheduleID)
+      )
+    ) {
       this.isGridStateChanged = false;
       this.paymentsGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
     }
@@ -183,4 +187,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     this.accountingSummaryService.exportToExcel(this.paymentsDataGrid.instance, filename, sheetname);
   }
 
+  openMoreMenu(event: Event): void {
+    event.stopPropagation();
+  }
 }

@@ -1,14 +1,11 @@
 .header {
-    border-bottom-color: rgb(45, 87, 167);
-    color: rgb(148, 187, 226);
-    border-bottom: 1px solid #1e3a6f;
     color: #1e3a6f;
     font-weight: 500;
     line-height: 1.3em;
     margin-bottom: 1em;
 }
 
-.grid-header{
+.grid-header {
     text-align: center;
 }
 
@@ -24,22 +21,22 @@
 
 .pointer {
     cursor: pointer;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
     overflow: hidden;
 }
 
-.link-class{
+.link-class {
     box-shadow: none;
     text-decoration: underline;
 }
 
 button.btn.btn-default.moreButton {
-	display: flex;
-	align-items: center;
-	font-size: 16px;
-	color: #000;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #000;
 
-	mat-icon {
-		transform: translateY(2px);
-	}
+    mat-icon {
+        transform: translateY(2px);
+    }
 }

@@ -16,8 +16,8 @@ import { EventsDetailSectionComponent } from '../events-detail-section/events-de
 import { AmortizationDetailSectionComponent } from '../amortization-detail-section/amortization-detail-section.component';
 import { PaymentsDetailSectionComponent } from '@accounting-summary/components/payments-detail-section/payments-detail-section.component';
 import { TransactionPopupComponent } from '../payments-detail-section/transaction-popup/transaction-popup.component';
-import { JeProcessingInfoComponent } from '../amortization-detail-section/je-processing-info/je-processing-info.component';
-import { JePaymentInfoComponent } from '../amortization-detail-section/je-payment-info/je-payment-info.component';
+import { JeProcessingInfoComponent } from '../amortization-detail-section/je-retro-popup/je-processing-info/je-processing-info.component';
+import { JePaymentInfoComponent } from '../amortization-detail-section/je-retro-popup/je-payment-info/je-payment-info.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,6 +26,8 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
 import { WorkflowDropdownComponent } from '../workflow-dropdown/workflow-dropdown.component';
 import { WorkflowHistoryPopupComponent } from '../workflow-history-popup/workflow-history-popup.component';
 import { TimelineModule } from 'primeng/timeline';
+import { RetrospectiveAdjustmentInfoComponent } from '../amortization-detail-section/je-retro-popup/retrospective-adjustment-info/retrospective-adjustment-info.component';
+import { JeRetroPopupComponent } from '../amortization-detail-section/je-retro-popup/je-retro-popup.component';
 
 @NgModule({
   declarations: [
@@ -38,9 +40,11 @@ import { TimelineModule } from 'primeng/timeline';
     TransactionPopupComponent,
     WorkflowDropdownComponent,
     AmortizationDetailSectionComponent,
+    JeRetroPopupComponent,
     JeProcessingInfoComponent,
     JePaymentInfoComponent,
-    WorkflowHistoryPopupComponent
+    WorkflowHistoryPopupComponent,
+    RetrospectiveAdjustmentInfoComponent
   ],
 
   imports: [

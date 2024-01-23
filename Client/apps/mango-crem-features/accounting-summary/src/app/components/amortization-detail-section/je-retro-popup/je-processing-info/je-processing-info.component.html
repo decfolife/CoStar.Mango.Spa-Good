@@ -1,0 +1,128 @@
+<div *ngIf="jeProcessingPopupData">
+    <div>
+        <div id="section-one">
+            <div class="container">
+                <div class="clearfix">
+                    <label for="PeriodID" class="label-popup">Period ID:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.leaseRecognitionPeriodID }}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="ScheduleID" class="label-popup">Schedule ID:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.leaseRecognitionScheduleID }}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="approvedDate" class="label-popup">Created By:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.createdByName}}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="createdDate" class="label-popup">Created Date:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.createdDate | date:dateFormat}}</div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="clearfix">
+                    <label for="approvedByName" class="label-popup">Approved By:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.approvedByName }}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="approvedDate" class="label-popup">Approved Date:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.approvedDate | date:dateFormat}}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="exportedByName" class="label-popup">Exported By:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.exportedByName }}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="exportedDate" class="label-popup">Exported Date:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.exportedDate | date:dateFormat}}</div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="clearfix">
+                    <label for="jeStatus" class="label-popup">JE Status:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.jeStatus }}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="exportSystemBatchNumber" class="label-popup">System Batch ID:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.exportSystemBatchNumber }}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="exportClientBatchNumber" class="label-popup">Client Batch ID:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.exportClientBatchNumber }}</div>
+                </div>
+                <div class="clearfix">
+                    <label for="journalEntryProfileName" class="label-popup">Journal Entry Profile:</label>
+                    <div class="value-popup">{{ jeProcessingPopupData.journalEntryProfileName }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-show-jounal-entry-section" *ngIf="showPreviewButton"> 
+            <button
+                (click)="previewJournalEntryClick()"
+                class="btn btn-primary"
+                [id]="accountingSummaryService.getId(componentName,'showJournalEntry','button')"
+                >Preview Journal Entry</button>       
+        </div>   
+        <div id="section-two" [ngClass]="calloutClass" *ngIf="showJournalEntries">
+            <div class="custom-col metric-label"><strong>Debits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
+            <div class="custom-col metric-label"><strong>Credits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
+            <div class="custom-col metric-label"><strong>Variance: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit - getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>   
+           
+            <div class="custom-col metric-label"> <strong>Balanced: </strong>
+                <crem-icon *ngIf="jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md balanced-icon" icon="faCheckCircle"></crem-icon>
+                <crem-icon *ngIf="jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && !jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md not-balanced-icon" icon="faTimesCircle"></crem-icon>
+            </div>
+
+            <div class="custom-col metric-label">{{calloutText}}</div>
+
+            <div class="custom-col metric-label">
+                <button [id]="accountingSummaryService.getId(componentName,'ActionsButton','button')"
+                class="btn btn-primary actions-button" (click)="actionButton()"
+                *ngIf="showActionButton" [disabled]="isButtonDisabled"
+                (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">{{changeButtonText}}</button>
+            </div>
+            <dx-tooltip [id]="accountingSummaryService.getId(componentName,'ActionsButton','tooltip')"
+                target="#je-processing-info-ActionsButton-button"
+                [visible]="isTooltipVisible">
+                <div *dxTemplate="let data of 'content'">
+                    {{ disableBtnReason }}
+                </div>
+            </dx-tooltip>
+        </div>
+        <div id="section-three" *ngIf="showJournalEntries">
+            <dx-data-grid [id]="accountingSummaryService.getId(componentName,'popup','grid')"
+                    width="100%"
+                    [dataSource]="jeProcessingPopupData.journalEntries"
+                    [columns]="jeProcessingGridColumns"
+                    [rowAlternationEnabled]="true"
+                    [columnResizingMode]="'widget'"
+                    [showColumnLines]="true"
+                    [showRowLines]="true"
+                    [showBorders]="true"
+                    [allowColumnResizing]="true"
+                    [wordWrapEnabled]="false"
+                    [columnMinWidth]="15"
+                    [columnAutoWidth]="false"
+                    [loadPanel]="{ enabled: true,
+                        shading: true,
+                        visible: true,
+                        shadingColor: 'rgba(0, 0, 0, 0.4)'}">
+                    <dxo-scrolling
+                        mode="virtual">
+                    </dxo-scrolling>
+                    <dxo-export [enabled]="true" [fileName]="exportToExcelFileName()"></dxo-export>
+
+                    <div *dxTemplate="let info of 'amortizationHeader'">
+                        <p title={{info.column.caption}}
+                            class="header-column-caption">
+                            {{info.column.caption}}
+                        </p>
+                    </div>
+        
+                    <div *dxTemplate="let cell of 'pointer'">
+                        <div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+                    </div>                             
+                </dx-data-grid>  
+        </div>
+    </div>
+</div>

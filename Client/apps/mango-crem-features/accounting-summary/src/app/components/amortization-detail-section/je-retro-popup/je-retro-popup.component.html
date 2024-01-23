@@ -1,0 +1,51 @@
+<dx-popup
+*ngIf="jeProcessingPopupData"
+[id]="accountingSummaryService.getId(componentName ,'detail','section')"
+[(visible)]="jeRetroPopupVisible"
+(onHidden)="onJeRetroPopupHidden()"
+width="70%"
+[height]="popupHeight"
+[resizeEnabled]="true"
+[wrapperAttr]="{ class: 'accounting-summary-style-container' }"
+[title]="jePopupTile"
+[resizeEnabled]="false"
+>    
+  <dx-tab-panel
+      [dataSource]="tabs"
+      [selectedIndex]="0"
+      height="98%"
+      tabsPosition="left"
+      (onOptionChanged)="onTabChanged($event)">
+
+      <div class="jeProcessingInfoClass" *dxTemplate="let PeriodPopup of 'jeProcessingData'">
+          <mango-je-processing-info
+              [jeProcessingPopupData]="jeProcessingPopupData" 
+              [rightsInfo]="rightsInfo"
+              [userInfo]="userInfo" 
+              [eventScheduleData]="eventScheduleData"
+              [displayPeriodTitle]="displayPeriodTitle"
+              (setHeight)="setPopupHeight($event)"
+              (jeActionTaken)="onJeDataSaved()"
+              ></mango-je-processing-info>
+      </div>
+      <div *dxTemplate="let PeriodPopup of 'paymentDetailData'">
+          <mango-je-payment-info
+              [jePaymentPopupData]="jePaymentPopupData"
+              [userInfo]="userInfo"
+              [displayPeriodTitle]="displayPeriodTitle">
+          </mango-je-payment-info>
+      </div>
+
+      <div *dxTemplate="let PeriodPopup of 'retrospectiveAdjustmentData'">
+          <!-- Retrospective Adjustment tab component -->
+          <mango-retrospective-adjustment-info *ngIf="hasRetroSchedule"
+              [retrospectiveAdjustmentPopupData]="retrospectiveAdjustmentPopupData"
+              [amortizationDetailColumns]="amortizationDetailColumns" 
+              [classificationType]="classificationType" 
+              [amortizationProfileName]="amortizationProfileName" 
+              (retroAdustmentGridRowClickEvent) = "onRetroAdustmentGridRowClick($event)"
+               
+              ></mango-retrospective-adjustment-info>
+      </div>
+  </dx-tab-panel>
+</dx-popup>

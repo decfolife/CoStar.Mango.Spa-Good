@@ -2,7 +2,24 @@
     <mat-expansion-panel [expanded]="true" (closed)="accountingSummaryService.delayGridPanelCollapseWhenFilterIsVisible()">
         <mat-expansion-panel-header>
             <mat-panel-title class="header">
-                Amortization Table {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+                <div class="card-header">
+                    <div class="card-title">Amortization Table {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+                    </div>
+                    <div class="more-menu">
+                     <div class="more">
+                            <button [id]="accountingSummaryService.getId(componentName,'more','button')"
+                                class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" type="button" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon
+                                    [id]="accountingSummaryService.getId(componentName,'more','icon')"
+                                    aria-label="More Menu">arrow_drop_down</mat-icon></button>
+                            <mat-menu #moreMenu="matMenu" class="moreMatMenu">
+                                <button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>
+                                <button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
+                                <button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="resetGrid()" title="Reset Preferences">Reset Preferences</button>
+                                <button [id]="accountingSummaryService.getId(componentName,'ExpertToExcel','button')" mat-menu-item (click)="exportToExcel()" title="Export to Excel">Export to Excel</button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                </div>
             </mat-panel-title>
         </mat-expansion-panel-header>
 
@@ -25,7 +42,7 @@
             noDataText="No Data"
             width='100%'
             (onOptionChanged)="onGridOptionChanged($event)"
-            (onRowClick)="jeProcessingPopup($event)">
+            (onRowClick)="onGridRowClick($event)">
 
             <dxo-header-filter
                 [visible]="false"
@@ -58,7 +75,7 @@
             </dxo-column-fixing> -->
 
             <dxo-column-chooser
-                [enabled]="true"
+                [enabled]="false"
                 mode="select"
                 [allowSearch]="true">
             </dxo-column-chooser>
@@ -73,72 +90,15 @@
             <div *dxTemplate="let cell of 'pointer'">
                 <div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
             </div>
-
-            <dxo-toolbar>
-                <dxi-item name="groupPanel"></dxi-item>
-                <dxi-item location="after">
-                    <div class="more">
-                        <button [id]="accountingSummaryService.getId(componentName,'more','button')"
-                            class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" type="button" (click)="$event.preventDefault()">More <mat-icon
-                                [id]="accountingSummaryService.getId(componentName,'more','icon')"
-                                aria-label="More Menu">arrow_drop_down</mat-icon></button>
-
-                        <mat-menu #moreMenu="matMenu" class="moreMatMenu">
-                            <button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>
-                            <button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
-                            <button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="resetGrid()" title="Reset Preferences">Reset Preferences</button>
-                            <button [id]="accountingSummaryService.getId(componentName,'ExpertToExcel','button')" mat-menu-item (click)="exportToExcel()" title="Export to Excel">Export to Excel</button>
-                        </mat-menu>
-                        
-                    </div>
-                </dxi-item>
-            </dxo-toolbar>
         </dx-data-grid>
     </mat-expansion-panel>
 
-    <dx-popup
-        *ngIf="jeProcessingPopupData"
-        [id]="accountingSummaryService.getId(componentName ,'detail','section')"
-        [(visible)]="jeProcessingInfoPopupVisible"
-        (onHidden)="onJeProcessingInfoPopupHidden()"
-        [closeOnOutsideClick]="true"
-        width="70%"
-        [height]="popupHeight"
-        [resizeEnabled]="true"
-        [wrapperAttr]="{ class: 'accounting-summary-style-container' }"
-        [title]="jePopupTile"
-        >    
-        <dx-scroll-view>
-        <dx-tab-panel
-            [dataSource]="tabs"
-            [selectedIndex]="0"
-            tabsPosition="left"
-            (onOptionChanged)="onTabChanged($event)">
+    <!-- This is for the amortization grid -->
+    <mango-je-retro-popup [amortizationGridRowClickEvent]="amortizationGridRowClickEvent" [eventScheduleData]="eventScheduleData" [amortizationDetailColumns]="amortizationDetailColumns" [rightsInfo]="rightsInfo" 
+    [userInfo]="userInfo" [classificationType]="classificationType" [amortizationProfileName]="amortizationProfileName" [newRetroEventJeStatus]="retroEventJeStatus" (jeRetroPopupClosedEvent)="onJeRetroPopupClosed($event)" (retroAdustmentGridRowClickEvent)="onRetroAdustmentGridRowClick($event)"></mango-je-retro-popup>
 
-            <div *dxTemplate="let PeriodPopup of 'jeProcessingData'">
-                <mango-je-processing-info
-                    [jeProcessingPopupData]="jeProcessingPopupData" 
-                    [rightsInfo]="rightsInfo"
-                    [userInfo]="userInfo" 
-                    [eventScheduleData]="eventScheduleData"
-                    [displayPeriodTitle]="displayPeriodTitle"
-                    (setHeight)="setPopupHeight($event)"
-                    (jeActionTaken)="onJeDataSaved()"
-                    ></mango-je-processing-info>
-            </div>
-            <div *dxTemplate="let PeriodPopup of 'paymentDetailData'">
-                <mango-je-payment-info
-                    [jePaymentPopupData]="jePaymentPopupData"
-                    [userInfo]="userInfo"
-                    [displayPeriodTitle]="displayPeriodTitle">
-                </mango-je-payment-info>
-            </div>
-
-            <div *dxTemplate="let PeriodPopup of 'retrospectiveAdjustmentData'">
-                <!-- Retrospective Adjustment tab component -->
-            </div>
-        </dx-tab-panel>
-        </dx-scroll-view>   
-    </dx-popup>
+    <!-- This is for the retro adjustments grid.  This is called from the mango-je-retro-popup for the amortization grid.  -->
+    <mango-je-retro-popup [amortizationGridRowClickEvent]="retroAdustmentGridRowClickEvent" [eventScheduleData]="eventScheduleData" [amortizationDetailColumns]="amortizationDetailColumns" [rightsInfo]="rightsInfo" 
+    [userInfo]="userInfo" [classificationType]="classificationType" [amortizationProfileName]="amortizationProfileName" isPopupForRetroGridClick="true" (jeRetroPopupClosedEvent)="onUpdateRetroEventJeStatus($event)"></mango-je-retro-popup>
 
 </section>

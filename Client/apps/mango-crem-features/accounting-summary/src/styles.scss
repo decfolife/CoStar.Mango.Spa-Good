@@ -13,52 +13,58 @@
         align-items: center;
         padding-top: 1em;
     }
-    
+
     .header {
-        border-bottom: 1px solid #1e3a6f;
         color: #1e3a6f;
         font-weight: 500;
         line-height: 1.3em;
-        margin-bottom: 1em;
         padding-top: 1em;
-        padding-bottom: 0.5em;
     }
-    
+
     .mat-expansion-panel-header.mat-expanded {
         height: 55px;
     }
-    
+
     .mat-expansion-panel-header {
         height: 60px;
     }
-    
+
     .dx-header-row {
         background-color: rgb(36, 90, 136) !important;
         color: rgb(255, 255, 255);
         font-weight: bold !important;
     }
-    
-    
+
     button.btn.btn-default.moreButton {
         display: flex;
         align-items: center;
         font-size: 16px;
         color: #000;
         cursor: pointer;
-    
+
         mat-icon {
             transform: translateY(2px);
         }
     }
-    
+
     button.btn.btn-default.moreButton:focus {
         box-shadow: 0 0 0 0.1rem #c8c8c8;
     }
-    
+
     .section-grid {
-        padding:0 16px 10px 16px !important;
+        padding: 10px 16px 0px 16px !important;
+    }
+
+    #je-processing-info-popup-grid {
+        width: 100% !important;
+        height: 290px !important;
     }
     
+    #je-payment-info-popup-grid, #retrospective_adjustment-info-popup-grid {
+        width: 100% !important;
+        height: 495px !important;
+    }
+
     .header-column-caption {
         white-space: normal;
         text-align: center;
@@ -66,22 +72,21 @@
         max-height: 42px;
         font-size: 11px;
     }
-    
-    .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[id^="dx-col-"]    
-    {
+
+    .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[id^="dx-col-"] {
         font-size: 11px !important;
     }
-    
-    .dx-header-filter{
-        color: #eeeeee !important;
-        
-    }
-    
-    .dx-column-indicators{
-        float: right !important;
-     }
 
-     .dx-popup-content .dx-template-wrapper dx-data-grid#transaction-popup-section {
+    .dx-header-filter {
+        color: #eeeeee !important;
+
+    }
+
+    .dx-column-indicators {
+        float: right !important;
+    }
+
+    .dx-popup-content .dx-template-wrapper dx-data-grid#transaction-popup-section {
         height: 60% !important;
     }
 
@@ -94,13 +99,15 @@
     }
 
     .workflow-dropdown-div {
-        dx-select-box,input{
+
+        dx-select-box,
+        input {
             border: 1px solid #a7a49f;
             border-radius: 2px;
             margin-bottom: 0px;
         }
 
-        .dx-texteditor-input{
+        .dx-texteditor-input {
             font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
             border: 1px solid #a7a49f;
             font-size: 15px;
@@ -108,19 +115,19 @@
     }
 
     &.workflow-dropdown-list-container {
-        .dx-list-item.dx-state-disabled {  
-            pointer-events: auto;  
+        .dx-list-item.dx-state-disabled {
+            pointer-events: auto;
         }
 
-         .dx-list-item.dx-list-item-selected {  
-            background-color: #e3f3fc;  
+        .dx-list-item.dx-list-item-selected {
+            background-color: #e3f3fc;
         }
 
-         &.dx-overlay-wrapper.dx-popup-wrapper > .dx-overlay-content.dx-popup-normal > .dx-popup-content {
+        &.dx-overlay-wrapper.dx-popup-wrapper>.dx-overlay-content.dx-popup-normal>.dx-popup-content {
             padding: unset !important;
         }
     }
-    
+
     &.workflow-history-popup-container {
         .p-timeline-event-opposite {
             text-align: left;
@@ -149,18 +156,18 @@
             padding-right: 6px;
         }
 
-        .popup-title-icon-div crem-icon > span > fa-icon > svg {
+        .popup-title-icon-div crem-icon>span>fa-icon>svg {
             vertical-align: 0px;
         }
     }
 
-    #openLeaseAlertsPopupButton{
+    #openLeaseAlertsPopupButton {
         border-radius: 2px;
     }
 
     .adjust-text {
-        color: gray; 
-      }
+        color: gray;
+    }
 
     .work-flow-comments {
         position: absolute;
@@ -176,7 +183,7 @@
         text-align: left;
         max-width: calc(100% - 20px);
     }
-    
+
     .work-flow-commentText {
         font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
         position: relative;
@@ -184,8 +191,8 @@
         width: 95% !important;
         height: 50px !important;
         margin: 5px auto;
-      }
-      
+    }
+
     .work-flow-comments:after {
         content: '';
         position: absolute;
@@ -199,39 +206,67 @@
         border-left: 0;
         margin-left: -5px;
         margin-top: -10px;
-      }
-    
+    }
+
     .work-flow-comment-label {
         margin: 0 7.25px;
         padding: 10px 0 5px 0px;
     }
-    
+
     div.dx-tabs {
         height: 40px !important;
         justify-content: left !important;
     }
-    
+
     div.dx-tab-content {
         border-bottom: 0px solid !important;
     }
-    
+
     .dx-tab-selected {
         background-color: #2d71aa !important;
         color: #fff !important;
     }
-    
+
     .dx-tabpanel>.dx-tabpanel-tabs .dx-tab.dx-tab-active .dx-tab-content,
     .dx-tabpanel>.dx-tabpanel-tabs .dx-tab.dx-tab-selected .dx-tab-content {
         color: #fff;
         font-size: 14px;
     }
-    
+
     .dx-tabpanel>.dx-tabpanel-tabs .dx-tabs .dx-tab .dx-tab-content {
         font-size: 14px;
     }
-    
+
     .dx-datagrid-content .dx-datagrid-table .dx-row>td,
     .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
         font-size: 12px !important;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: left;
+        width: 100%;
+        padding: 0;
+        margin-bottom: 0;
+        border-bottom: #fff;
+        background-color: transparent;
+    }
+
+    .card-title {
+        order: 1;
+        margin-bottom: 0px;
+        margin-top: 5px;
+    }
+
+    .event-selector {
+        order: 2;
+        width: 70%;
+        margin-right: 10%;
+    }
+
+    .more-menu {
+        order: 3;
+        padding-right: 10px;
     }
 }

@@ -10,7 +10,7 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
   styleUrls: ['./je-payment-info.component.scss'],
 })
 
-export class JePaymentInfoComponent{
+export class JePaymentInfoComponent {
   @Input() jePaymentPopupData: any;
   @Input() userInfo: UserInfoResponse;
   @Input() displayPeriodTitle: string;
@@ -23,7 +23,7 @@ export class JePaymentInfoComponent{
   chargeAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.jePaymentPopupData[0].chargeCurrencyDecimalPrecision);
   scheduleAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.jePaymentPopupData[0].scheduleCurrencyDecimalPrecision);
 
-  constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, public jePaymentGridColumnsService: AmortizationGridColumnsService ) {
+  constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, public jePaymentGridColumnsService: AmortizationGridColumnsService) {
 
   }
 
@@ -52,7 +52,7 @@ export class JePaymentInfoComponent{
 
       if (column.name === 'ActualAmountDueInPeriod') {
         column.format = value => this.formattingService.localFormat(+value, this.jePaymentPopupData[0].scheduleCurrencyDecimalPrecision);
-        column.caption = this.getFormattedDisplay('columnCaption');     
+        column.caption = this.getFormattedDisplay('columnCaption');
       }
 
       if (column.name === 'ChargeAmount' || column.name === 'DirectCosts' || column.name === 'TerminationFees') {
@@ -98,13 +98,13 @@ export class JePaymentInfoComponent{
 
   getFormattedDisplay(target: 'summaryRow' | 'columnCaption'): string {
     if (!this.jePaymentPopupData || !this.jePaymentPopupData[0]) {
-      return ''; 
+      return '';
     }
-  
+
     const currency = this.jePaymentPopupData[0].currency;
     const delimiter = currency.split('|');
     const getCurrency = delimiter.length > 1 ? delimiter[1]?.trim() : currency.trim();
-  
+
     if (target === 'summaryRow') {
       return `Sum in Event Currency (${getCurrency}):`;
     } else if (target === 'columnCaption') {
@@ -113,7 +113,7 @@ export class JePaymentInfoComponent{
   }
 
   exportToExcelFileName(): string {
-    const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
+    const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
     const fileName = `Period_${formattedDisplayPeriodTitle}_Payment_Detail_${dateTimeStamp}`;
     return fileName;
