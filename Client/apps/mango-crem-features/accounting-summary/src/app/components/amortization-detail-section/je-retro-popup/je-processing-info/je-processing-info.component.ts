@@ -34,6 +34,7 @@ export class JeProcessingInfoComponent {
   isButtonDisabled = false;
   isTooltipVisible = false;
   disableBtnReason = '';
+  showNoJeProfileSelected = false;
   private subscription = new Subscription;
 
   constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, public jeProcessingGridColumnsService: AmortizationGridColumnsService) {
@@ -98,6 +99,11 @@ export class JeProcessingInfoComponent {
       this.showActionButton = false;
       this.showPreviewButton = false;
       return;
+    }
+
+    if (this.jeProcessingPopupData.journalEntryProfileName === null || this.jeProcessingPopupData.journalEntryProfileName === undefined)
+    {
+      this.showNoJeProfileSelected = true;
     }
 
     switch (this.jeProcessingPopupData.jeStatus) {

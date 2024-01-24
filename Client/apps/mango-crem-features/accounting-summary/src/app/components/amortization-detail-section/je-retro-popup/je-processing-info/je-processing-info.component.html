@@ -61,8 +61,11 @@
                 (click)="previewJournalEntryClick()"
                 class="btn btn-primary"
                 [id]="accountingSummaryService.getId(componentName,'showJournalEntry','button')"
-                >Preview Journal Entry</button>       
+                >Preview Journal Entry</button>
         </div>   
+        <div class="no-je-profile-selected" *ngIf="showNoJeProfileSelected">
+            No Journal Entry Profile Selected
+        </div>
         <div id="section-two" [ngClass]="calloutClass" *ngIf="showJournalEntries">
             <div class="custom-col metric-label"><strong>Debits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
             <div class="custom-col metric-label"><strong>Credits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
