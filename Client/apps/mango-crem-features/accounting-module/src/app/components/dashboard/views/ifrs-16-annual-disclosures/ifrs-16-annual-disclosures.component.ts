@@ -143,6 +143,11 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
       );
   }
 
+  updateCards() {
+    this.pivotDataSources = [];
+    this.getCards();
+  }
+
   setPivotGrid(cardData: Array<any>, fieldConfig: any, fieldTransform?: Partial<CardDataItem[]>, sortingOrder?: any): PivotGridDataSource {
     let dataSource: PivotGridDataSource;
     let pivotCardDataStore: Partial<CardDataItem>[] = [];

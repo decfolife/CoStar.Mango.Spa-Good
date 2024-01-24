@@ -272,7 +272,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         break;
       }
       case 4: {
-        this.ifrs16AnnualDisclosuresComponent.refreshCardData();
+        this.ifrs16AnnualDisclosuresComponent.updateCards();
         break;
       }
     }
