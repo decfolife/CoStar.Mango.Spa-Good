@@ -296,10 +296,9 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           cellElement: cElement,
           data: row.data
         }
-
+        
         if (event?.row?.rowIndex === selectedRowIndex) {
-          if (event.row.data.scheduleIndex == 1) {
-            event.cellElement.style.fontWeight = '400';
+          if (event.row.data.scheduleIndex == 1 || event.column?.caption === "#") {
             return;
           }
     
@@ -308,9 +307,9 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           const oldValue = Object(previousRow)[event.column.dataField];
           const newValue = Object(event.data)[event.column.dataField];
           if(oldValue !== newValue) {
-            event.cellElement.style.fontWeight = '700';
+            event.cellElement.classList.add("grid-cell-box-shadow");
           } else {
-            event.cellElement.style.fontWeight = '400';
+            event.cellElement.classList.remove("grid-cell-box-shadow");
           }
         }
       });
