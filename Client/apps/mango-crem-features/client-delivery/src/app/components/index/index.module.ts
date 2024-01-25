@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ServiceAccountsComponent } from '../service-accounts/service-accounts.component';
 import { ClientDeliveryService } from '../../services/client-delivery.service';
+import { UserMaintenanceService } from '../../../../../user-maintenance/src/app/components/user-maintenance/user-maintenance.service';
 import { IndexRoutingModule } from '../index/index-routing.module';
 import { ServiceAccountDetailsComponent } from '../../components/service-account-details/service-account-details.component';
 import { AddServiceAccountComponent } from '../../components/add-service-account/add-service-account.component';
@@ -51,6 +52,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
   exports: [RouterModule],
   providers: [
     ClientDeliveryService,
+    UserMaintenanceService,
     DatePipe
   ],
 })

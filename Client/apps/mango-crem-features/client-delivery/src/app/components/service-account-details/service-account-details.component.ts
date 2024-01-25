@@ -2,7 +2,9 @@ import { Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import { ClientDeliveryService } from '../../services/client-delivery.service';
 import {ResetPasswordConfirmationComponent} from '../reset-password-confirmation/reset-password-confirmation.component';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
+import { ServiceAccountHistory } from '@mango/data-models/lib-data-models';
+import { UserMaintenanceService } from '../../../../../user-maintenance/src/app/components/user-maintenance/user-maintenance.service';
 
 @Component({
   selector: 'mango-service-account-details',
@@ -16,22 +18,21 @@ export class ServiceAccountDetailsComponent implements OnInit, OnDestroy {
 
   public emailAddress: string;
   public active: string;
-  public changeHistoryData:any;
+  public changeHistoryData$:Observable<ServiceAccountHistory[]>;
   public columns: any;
 
   subs: Subscription[] = [];
   
   constructor(
+    private userMaintenanceService: UserMaintenanceService,
     public dialogRef: MatDialogRef<ServiceAccountDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: ClientDeliveryService,
     private dialog: MatDialog,
-    ) { 
-
-    }
+    ) { }
 
   ngOnInit(): void {
-    this.getChangeHistory();
+    this.changeHistoryData$ = this.userMaintenanceService.getServiceAccountChangeHistory(this.data.contactId);
     this.active = this.data.contactActive ? 'Yes' : 'No';
     this.emailAddress = this.data.contactEmailAddress;
   }
@@ -57,17 +58,6 @@ export class ServiceAccountDetailsComponent implements OnInit, OnDestroy {
                 this.closeDialog();
               }}));
         }});
-  }
-
-  private getChangeHistory() {
-    this.subs.push (
-      this.service.getServiceAccountChangeHistory(this.data.contactId)
-      .subscribe(result => {        
-        if(result){          
-          if(result.data){
-            this.changeHistoryData =  result.data.items;
-          }}
-      }));
   }
 
   public closeDialog() {

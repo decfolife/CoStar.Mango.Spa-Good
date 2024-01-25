@@ -43,7 +43,8 @@ export class AuthenticationEffects {
             contactId: parseInt(decodedToken.contactId),
             clientKey: decodedToken.clientKey,
             isAutoProvisioned: this.userService.parseBool(decodedToken.isAutoProvisioned),
-            isServiceAccount: this.userService.parseBool(decodedToken.isServiceAccount)
+            isServiceAccount: this.userService.parseBool(decodedToken.isServiceAccount),
+            isRemUser: parseInt(decodedToken.securityLevel) > -1,
           }
           // Temporary until cookie auth is implemented in MangoSPA
           this.jwtService.saveToken(response.accessToken)

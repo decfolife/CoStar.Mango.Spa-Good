@@ -29,6 +29,8 @@ export { RecentUserSites } from './lib/models/central-auth/recent-user-sites';
 export { ServiceAccountInfo } from './lib/models/central-auth/service-account-info';
 export { ServiceAccountChangeHistory } from './lib/models/central-auth/service-account-change-history';
 export { UpdateServiceAccountApiAccessRequest, UpdateServiceAccountExpiresInDaysRequest} from './lib/models/central-auth/service-account-requests';
+export { ServiceAccount } from './lib/models/service-account/service-account';
+export { ServiceAccountHistory } from './lib/models/service-account/service-account-history';
 export * from './lib/enums/mango.enums';
 export * from './lib/models/errors';
 export * from './lib/models/central-auth/ui';

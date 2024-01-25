@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'regenerator-runtime/runtime';
 import * as ExcelJS from 'exceljs';
@@ -11,176 +11,147 @@ import {UpdateServiceAccountComponent} from '../update-service-account/update-se
 import { ClientDeliveryService } from '../../services/client-delivery.service';
 import { saveAs } from 'file-saver-es';
 import { DatePipe } from '@angular/common';
+import { UserMaintenanceService } from '../../../../../user-maintenance/src/app/components/user-maintenance/user-maintenance.service';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Observable, Subscription, of } from 'rxjs';
+import { filter, map, switchMap, delay, tap } from 'rxjs/operators';
+import { ServiceAccount } from '@mango/data-models/lib-data-models';
 
-
+enum Status  {
+  active = "active",
+  inactive = "inactive",
+  all = "all"
+};
 @Component({
   selector: 'mango-service-accounts',
   templateUrl: './service-accounts.component.html',
   styleUrls: ['./service-accounts.component.scss'],
 })
-export class ServiceAccountsComponent implements OnInit {
-  // public pageTitle = this.route.snapshot.data['pageTitle'];
+export class ServiceAccountsComponent implements OnDestroy {
   public pageTitle = 'Service Accounts';
-  public serviceAccountsData: any;
-  public allServiceAccountsData: any;
-  public dropdownField: any;
-  public columns: any;
-  public selectedFilter: string = 'active';
-  public dateFormat: string;
-  public deleting = false;
-  public searchText: string = '';
+  public serviceAccountsData$: Observable<ServiceAccount[]>;
+  public isRemUser$: Observable<boolean> = of(false);
+  public syncMessage$: Observable<string> = of('');
 
-  faEllipsisH = faEllipsisH;
+  public dropdownFieldData: any = [
+    { "value": "active", "display": "Active"},
+    { "value": "inactive", "display": "Inactive"},
+    { "value": "all", "display": "All"},
+  ];
+
+  public gridColumns: any = [
+    {	dataField : "contactId",
+      alignment : "left",
+      visible : true,
+      dataType : "number",
+      caption : "Contact ID"
+    },
+    {	dataField : "contactEmailAddress",
+      caption : "Email",
+      alignment : null,
+      visible : true,
+      dataType : null
+    },
+    {	dataField : "contactActive",
+      caption : "Active",
+      alignment : null,
+      visible : true,
+      dataType : null,
+      cellTemplate:'contactActiveTemplate'
+    },
+  ];
+
+  private faEllipsisH = faEllipsisH;
+  private allServiceAccounts: ServiceAccount[];
+  private selectedFilter: Status = Status.active;
+  private searchText: string = '';
+  private subs: Subscription[] = [];
   @ViewChild("DataGrid") dataGrid: DxDataGridComponent;
 
   constructor(
     private dialog: MatDialog,
     private datepipe: DatePipe,
-    private service: ClientDeliveryService
-    ) {}
+    private clientDeliveryService: ClientDeliveryService,
+    private userMaintenanceService: UserMaintenanceService,
+    private mangoAppFacade: MangoAppFacade) {
+      this.isRemUser$ = this.mangoAppFacade.authenticatedUser$.pipe(
+        filter(user => !!user), 
+        map(user => !!user.isRemUser)
+      );
 
-  ngOnInit(): void {
-    this.setDropdownItem();
-    this.buildGridColumns();
-    this.getServiceAccouts('active');
+      this.getServiceAccounts();
+    }
+
+  searchDataGrid(searchText: string): void {
+    this.searchText = searchText;
+    this.dataGrid?.instance?.searchByText(searchText);
   }
 
-  private getServiceAccouts(filter: string){
-    this.service.getServiceAccounts(filter.toLowerCase())
-    .subscribe(result => {        
-      if(result && result.data){    
-        this.allServiceAccountsData = result.data.items;      
-        this.filterServiceAccountData(filter);  
-        this.dataGrid.instance?.refresh();
-      }
-      setTimeout(() => {
-        this.searchDataGrid(this.searchText);
-      })
-    })
-  }
-
-  public searchDataGrid(data: string): void {
-    this.searchText = data;
-    this.dataGrid?.instance?.searchByText(data);
-  }
-
-  private openServiceAccountDetailsComponentPopup(selectedRowData){
-    let dialogRef = this.dialog.open(ServiceAccountDetailsComponent, {
-      width: '1200px',
-      panelClass: 'client-delivery-modal',
-      data: selectedRowData
-    });
-  }
-
-  public openAccountDetails(e): void {
+  openAccountDetails(e): void {
     if (e.rowType != "header" && e.column.dataField !== "Actions") {
         this.openServiceAccountDetailsComponentPopup(e.data);      
     }
   }
-
-  public onCellPrepared(e) {
-    if (e.rowType == "data" && e.column.dataField === "Actions") {
-      e.cellElement.className += " not-clickable";  
-    }
   
-    if (e.rowType === "header") {
-      const ele = e.cellElement.querySelector(".dx-header-filter");
-      if (ele) {
-        setTimeout(() => {
-          ele.addEventListener("click", () => {
-            ele.setAttribute("aria-label", "Column Expanded");
-            ele.setAttribute("aria-expanded", "true");
-          });
-        }, 150);
-      }
-    }
-  }
-  
-  public onKeyDownOpenAccountDetails(e) {
-    
-    if (e.event.key === "Enter") {     
-      const cellheader = e.event.currentTarget.classList;
-      const result= cellheader.contains("dx-header-row");
-      if(result) return;
-      
-      const focusedRowIndex = e.component.option("focusedRowIndex");      
-      if(focusedRowIndex >= 0) {
-        const visibleRows = e.component.getVisibleRows();
-        const selRow = visibleRows[focusedRowIndex];
-        const focusedColumnIndex = e.component.option("focusedColumnIndex");
-        if(selRow && (selRow.rowType != "header" && selRow.cells[focusedColumnIndex].column.dataField !== "Actions"))
-        {        
-          this.openServiceAccountDetailsComponentPopup(selRow.data);
-        }
-      }     
+  onFilterChange(e: any[]): void {
+    const filterBy: any = e?.[0]?.value || e?.[0] ;
+    if (this.selectedFilter !== filterBy) {
+      this.selectedFilter = filterBy;
+      this.filterServiceAccountData(filterBy);
     }
   }
 
-  
-  public onFilterChange(e: any[]): void {
-    const filter: any = e?.[0]?.value || e?.[0] ;
-    if (this.selectedFilter !== filter) {
-      this.selectedFilter = filter;
-      this.filterServiceAccountData(filter);
-    }
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe())
   }
 
-  private filterServiceAccountData(filter: string) {
-    switch (filter.toLowerCase()) {
-      case "active":
-      {
-        this.serviceAccountsData =  this.allServiceAccountsData.filter(x=>x.contactActive === true);
-        break;
-      }
-      case "inactive":
-        this.serviceAccountsData =  this.allServiceAccountsData.filter(x=>x.contactActive === false);
-        break;
-      default:
-        this.serviceAccountsData =  this.allServiceAccountsData;
-    }
+  addServiceAccount(){    
+    let dialogRef = this.dialog.open(AddServiceAccountComponent, {
+      width: '460px',
+      panelClass: 'client-delivery-modal',
+      disableClose: true
+    }); 
+
+    this.subs.push (
+      dialogRef.afterClosed().pipe(
+        filter(result => !!result && result.length > 0),
+        switchMap (result => this.clientDeliveryService.addServiceAccount(result))
+      ).subscribe(
+        _ => this.getServiceAccounts()
+      )
+    );
   }
 
-    public addServiceAccount(){    
-      let dialogRef = this.dialog.open(AddServiceAccountComponent, {
-        width: '460px',
-        panelClass: 'client-delivery-modal',
-        data: this.allServiceAccountsData.map(x => x.contactEmailAddress)
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.length > 0) {  
-          this.service.addServiceAccount(result)             
-          .subscribe(result => {
-            if (result) { 
-              if(!this.selectedFilter) this.selectedFilter = 'Active';
-              setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);           
-            }
-          });        
-        }
-      });   
-  }
-
-  public updateServiceAccountStatus(data, contactActiveFlg) {
+  updateServiceAccountStatus(data, contactActiveFlg) {
     let dialogRef = this.dialog.open(UpdateServiceAccountComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
-      data: data.data
+      data: data.data,
+      disableClose: true
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const contactEmailAddress = result.contactEmailAddress;        
-        this.service.updateServiceAccount(contactEmailAddress, result.contactId, contactActiveFlg)       
-        .subscribe(response => {
-          if(response) {  
-            setTimeout(() => { this.getServiceAccouts(this.selectedFilter) }, 500);            
-            this.searchDataGrid(this.searchText);
-          }
-        });
-      }
-    });
+
+    this.subs.push (
+      dialogRef.afterClosed().pipe(
+        filter(result => !!result),
+        switchMap (result => this.clientDeliveryService.updateServiceAccount(result.contactEmailAddress, result.contactId, contactActiveFlg)),
+        delay(1200)
+      ).subscribe(
+          _ => this.getServiceAccounts()
+      )
+    );
   }
 
-  public exportGrids(): void {
+  syncOnPremToAWS(templateRef){
+    this.subs.push (
+      this.userMaintenanceService.syncOnPremToAWS().pipe(
+        switchMap(result => this.syncMessage$ = result ? of("Sync process was successful") : of("Error executing the SPROC"))
+      ).subscribe (
+        _ => this.dialog.open(templateRef, {width: '300px', disableClose: true})
+      )
+    );
+  }
+
+  exportGrids(): void {
     const workbook = new ExcelJS.Workbook();
     const serviceAccountMaintenanceSheet = workbook.addWorksheet('ServiceAccounts');
 
@@ -206,76 +177,98 @@ export class ServiceAccountsComponent implements OnInit {
       }
     }).then(() => {
       workbook.xlsx.writeBuffer().then((buffer) => {
-        const date = this.getCurrentDate();
+        const date = this.datepipe.transform(new Date()); 
         const fileName = 'ServiceAccounts' + '_' + date + '.xlsx'
         saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName);
       });
     });
   }
 
-  private setDropdownItem() {
-    this.dropdownField = [
-      {
-          "value": "Active"
-      },
-      {
-          "value": "Inactive"
-      },
-      {
-          "value": "All"
+  onCellPrepared(e) {
+    if (e.rowType == "data" && e.column.dataField === "Actions") {
+      e.cellElement.className += " not-clickable";  
+    }
+  
+    if (e.rowType === "header") {
+      const ele = e.cellElement.querySelector(".dx-header-filter");
+      if (ele) {
+        setTimeout(() => {
+          ele.addEventListener("click", () => {
+            ele.setAttribute("aria-label", "Column Expanded");
+            ele.setAttribute("aria-expanded", "true");
+          });
+        }, 150);
       }
-    ];
+    }
   }
 
-  private buildGridColumns() {
-    this.columns = [
-			{	dataField : "contactId",
-				alignment : "left",
-				visible : true,
-				dataType : "number",
-				caption : "Contact ID"
-			},
-			{	dataField : "contactEmailAddress",
-        caption : "Email",
-				alignment : null,
-				visible : true,
-				dataType : null
-			},
-			{	dataField : "contactActive",
-        caption : "Active",
-				alignment : null,
-				visible : true,
-				dataType : null,
-        cellTemplate:'contactActiveTemplate'
-			},
-		];
-  }
-
-  private getCurrentDate(): string {
-    const date = new Date();
-    return this.datepipe.transform(date, this.dateFormat);
-  }
-
-  public onContentReady(e) {
+  onContentReady(e) {
     setTimeout(() => {
 
       const gridADAElements = e.element.querySelectorAll(".dx-pager, .dx-datagrid-rowsview, .dx-page-size, .dx-button-disable, div.dx-page.dx-selection");
       if (gridADAElements !== null) {       
-            gridADAElements.forEach((oElement, i) => {
-              if(oElement.hasAttribute("role")) {
-                oElement.removeAttribute("role");
-              }       
-              if(oElement.hasAttribute("aria-label")) {
-                oElement.removeAttribute("aria-label");  
-              }  
-              if(oElement.hasAttribute("tabindex")) {
-                oElement.removeAttribute("tabindex");
-              }  
-              if(oElement.hasAttribute("aria-current")) {
-                oElement.removeAttribute("aria-current");
-              }     
-            });
+        gridADAElements.forEach((oElement, i) => {
+          if(oElement.hasAttribute("role")) {
+            oElement.removeAttribute("role");
+          }       
+          if(oElement.hasAttribute("aria-label")) {
+            oElement.removeAttribute("aria-label");  
+          }  
+          if(oElement.hasAttribute("tabindex")) {
+            oElement.removeAttribute("tabindex");
+          }  
+          if(oElement.hasAttribute("aria-current")) {
+            oElement.removeAttribute("aria-current");
+          }     
+        });
       }
     });
-  };
+  }
+
+  onKeyDownOpenAccountDetails(e) {  
+    if (e.event.key === "Enter") {     
+      const cellheader = e.event.currentTarget.classList;
+      const result= cellheader.contains("dx-header-row");
+      if(result) return;
+      
+      const focusedRowIndex = e.component.option("focusedRowIndex");      
+      if(focusedRowIndex >= 0) {
+        const visibleRows = e.component.getVisibleRows();
+        const selRow = visibleRows[focusedRowIndex];
+        const focusedColumnIndex = e.component.option("focusedColumnIndex");
+        if(selRow && (selRow.rowType != "header" && selRow.cells[focusedColumnIndex].column.dataField !== "Actions"))
+        {        
+          this.openServiceAccountDetailsComponentPopup(selRow.data);
+        }
+      }     
+    }
+  }
+
+  private getServiceAccounts(){
+    this.subs.push (
+      this.userMaintenanceService.getServiceAccounts().subscribe(
+        serviceAccounts => {
+          this.allServiceAccounts = serviceAccounts;
+          this.filterServiceAccountData(this.selectedFilter);
+          this.searchDataGrid(this.searchText);
+        }
+      )
+    );
+  }
+
+  private filterServiceAccountData(filterBy: Status) {
+    filterBy === Status.all
+      ? this.serviceAccountsData$ = of(this.allServiceAccounts)
+      : this.serviceAccountsData$ = of(this.allServiceAccounts.filter(account => account.contactActive === (filterBy === Status.active ? true : false)));
+  }
+
+  private openServiceAccountDetailsComponentPopup(selectedRowData){
+    this.dialog.open(ServiceAccountDetailsComponent, {
+      width: '1200px',
+      panelClass: 'client-delivery-modal',
+      data: selectedRowData,
+      disableClose: true
+    });
+  }
 }
+

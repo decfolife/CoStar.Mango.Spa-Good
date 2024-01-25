@@ -5,6 +5,7 @@ export interface UserAuth {
     isAutoProvisioned: boolean;
     contactId?: number;
     isServiceAccount?: boolean;
+    isRemUser?: boolean;
 }
 
 export interface LoginResponse {

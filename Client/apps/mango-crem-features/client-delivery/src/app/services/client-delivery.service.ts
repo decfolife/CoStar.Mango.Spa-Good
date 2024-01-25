@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of,  } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../../mango/src/environments/environment.local';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { filter, switchMap } from 'rxjs/operators';
 import { CentralAuthHttpError } from '@mango/data-models/lib-data-models';
 import { UserService } from '@mango/core-shared';
+import { ServiceAccount } from "../../../../../../libs/data-models/lib-data-models/src/lib/models/service-account/service-account";
 
 @Injectable({
   providedIn: 'root'
@@ -23,28 +25,6 @@ export class ClientDeliveryService extends EndpointService
   {
     super(http, facade);
   }
-
-  getServiceAccounts(filter: string, page: number = 1, pageSize: number = 10000): Observable<any> {       
-    let cKey : string;
-    this.clientKey$.subscribe(clientKey => { cKey = clientKey; })
-    if (!cKey) cKey ='retaildemo'; 
-    if (cKey) {
-      const url = `${environment.appUrls.authorization}serviceaccounts?Page=${page}&PageSize=${pageSize}&clientKey=${cKey}`;
-      return this.callHttpGet(url, 'GetServiceAccounts')
-    }
-    return of({});
-  }
-
-  getServiceAccountChangeHistory(contactId: number): Observable<any> {       
-    let cKey : string;
-    this.clientKey$.subscribe(clientKey => { cKey = clientKey; })
-    if (!cKey) cKey ='blank';  
-    if (cKey) {
-      const url = `${environment.appUrls.authorization}serviceaccounthistory/${cKey}/${contactId}`;
-      return this.callHttpGet(url, 'GetServiceAccountChangeHistory')
-    }
-    return of({});
-  } 
 
   updateServiceAccount(contactEmailAddress: string, contactID:number, contactActiveFlg: boolean): Observable<any> {    
     const url = `${environment.appUrls.authentication}serviceaccount`;
