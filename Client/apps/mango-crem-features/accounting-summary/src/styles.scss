@@ -273,4 +273,10 @@
         order: 3;
         padding-right: 10px;
     }
+
+    #payments-grid-detail-section .dx-datagrid-header-panel,
+    #events-grid-detail-section .dx-datagrid-header-panel,
+    #amortization-grid-detail-section .dx-datagrid-header-panel {
+      display: none;
+    }
 }
