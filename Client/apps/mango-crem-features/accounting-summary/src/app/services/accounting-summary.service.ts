@@ -141,7 +141,7 @@ export class AccountingSummaryService extends EndpointService {
 
   getEventDetails(masterScheduleId: number) {
     if (environment.isRestful) {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingEventsSummary/masterschedule/${masterScheduleId}`, 'getEventDetails');
+      return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingEvents/masterschedule/${masterScheduleId}`, 'getEventDetails');
     }
 
     const url = `${this.apiUrl}GetAccountingEventsSummary`;
