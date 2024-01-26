@@ -77,7 +77,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.baseService.getUserRights().subscribe((result) => {
-      this.service.userRights = Number(result);
+      this.service.userRights = Number(result.data);
     });
 
     this.isSuperUserElement = (document.getElementById('IsSuperUser') as HTMLDivElement);
@@ -254,7 +254,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
     }
 
     this.service.getBatchLogsAndParameters().subscribe((result) => {
-      if (!result || result?.errors) {
+      if (!result || result?.clientErrorMessage) {
         this.dataGrid?.instance.endCustomLoading();
 
         return;
@@ -455,7 +455,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
 
       const message = result.data.isCancelled
         ? 'Batch Successfully Cancelled.'
-        : `Batch failed to cancel for the following reason: ${result.errorMessage}`;
+        : `Batch failed to cancel for the following reason: ${result.clientErrorMessage}`;
 
       const type = result.data.isCancelled
         ? 'success'

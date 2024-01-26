@@ -42,8 +42,8 @@ export class SettingsPageComponent implements OnInit {
     this.isSuperUser = suDiv?.innerText === 'true';
 
     this.settingsService.getUserRights().subscribe(res => {
-      if (!res.succeeded) {
-        this.showNotification(res.message, true);
+      if (!res.success) {
+        this.showNotification(res.clientErrorMessage, true);
 
         return;
       }
@@ -54,8 +54,8 @@ export class SettingsPageComponent implements OnInit {
     this.loadSettingsAndData();
 
     this.settingsService.getCurrencyList().subscribe(res => {
-      if (!res.succeeded) {
-        this.showNotification(res.message, true);
+      if (!res.success) {
+        this.showNotification(res.clientErrorMessage, true);
 
         return;
       }
@@ -94,11 +94,11 @@ export class SettingsPageComponent implements OnInit {
     }
     this.settingsService.migrationImpactReport().subscribe(result => {
       const data: ImpactReportResponse[] = result.data;
-      if (result.succeeded) {
+      if (result.success) {
         this.settingsService.generateExcel(data, this.filename, this.dateFormat);
-        this.showNotification(result.message, !result.succeeded);
+        this.showNotification(result.clientErrorMessage, !result.success);
       } else {
-        this.showNotification(result.message, !result.succeeded);
+        this.showNotification(result.clientErrorMessage, !result.success);
       }
     });
   }
@@ -111,7 +111,7 @@ export class SettingsPageComponent implements OnInit {
       this.canRefresh = true;
 
       this.loadSettingsAndData();
-      this.showNotification(res.message, !res.succeeded);
+      this.showNotification(res.clientErrorMessage, !res.success);
     });
   }
 
@@ -127,14 +127,14 @@ export class SettingsPageComponent implements OnInit {
     };
 
     this.settingsService.saveFinancialReportingSettings(saveData).subscribe(res => {
-      if (!res.succeeded) {
+      if (!res.success) {
         this.isSaving = false;
-        this.showNotification(res.message, true);
+        this.showNotification(res.clientErrorMessage, true);
 
         return;
       }
 
-      this.showNotification(res.message);
+      this.showNotification(res.clientErrorMessage);
 
       this.intervalsData.lastSuccessfulIntervalUpdate =
         res.data.lastSuccessfulIntervalUpdate === null
@@ -150,8 +150,8 @@ export class SettingsPageComponent implements OnInit {
 
   private loadSettingsAndData() {
     this.settingsService.getFinancialReportingSettings().subscribe(res => {
-      if (!res.succeeded) {
-        this.showNotification(res.message, true);
+      if (!res.success) {
+        this.showNotification(res.clientErrorMessage, true);
 
         return;
       }
