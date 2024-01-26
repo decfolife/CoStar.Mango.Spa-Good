@@ -47,6 +47,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   selectedMembersData: TeamKeys[] = [];
   userModuleAddRights: boolean;
   subs: Subscription[] = [];
+  projectsPrivateSetting: number;
 
   constructor(private dashboardService: DashboardService, private router: Router,
     public toastr: ToastrService,
@@ -57,6 +58,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
 
     this.subs.push(this.getUserPreferences().subscribe());
     this.getModuleRights();
+    this.getProjectsPrivateSetting();
     this.getMemberInfo();
     this.subs.push(this.getTeamsData().subscribe());
   }
@@ -80,7 +82,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
       height: '600px',
       width: '2000px',
       panelClass: 'addEditTeamModal',
-      data: { teamFunction: tFunc, memberInfo: this.memberInfo, team: team, },
+      data: { teamFunction: tFunc, memberInfo: this.memberInfo, team: team, projectsPrivateSetting: this.projectsPrivateSetting},
       disableClose: true
     });
 
@@ -378,5 +380,16 @@ export class TeamsComponent implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe);
   }
 
+  private getProjectsPrivateSetting() {
+    this.subs.push(this.dashboardService.getClientPreference('ClientProjectsPrivate').subscribe(
+      (res:any) => {
+        if (res.success) {
+          this.projectsPrivateSetting = Number(res.data);
+        }
+      },
+      (error: any) => console.log("Error occurred getting Projects Private Setting", error),
+      () => {}
+    ));
+  }
 }
 

@@ -141,7 +141,12 @@ export class DashboardService  extends EndpointService{
 
   getProjectTeams(projectId): Observable<any> {
     const url = `${environment.appUrls.projects}getprojectteams/${projectId}`;
-    return this.callHttpGet(url, 'projectId')
+    return this.callHttpGet(url, 'getProjectTeams')
+  }
+
+  getClientPreference(clientPreferenceSetting): Observable<any> {
+    const url = `${environment.appUrls.projects}GetClientPreference/${clientPreferenceSetting}`;
+    return this.callHttpGet(url, 'getClientPreference')
   }
 }
 

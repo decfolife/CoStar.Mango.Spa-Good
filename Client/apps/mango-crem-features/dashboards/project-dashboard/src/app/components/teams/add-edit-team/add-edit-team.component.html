@@ -121,6 +121,9 @@
           <dxi-column dataField="level" caption='Access Level' dataType="string" showEditorAlways="true" [setCellValue]="setLevelValue">
             <dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
           </dxi-column>
+          <dxi-column [visible]="showShareColumn" alignment="center" caption='Share' width="90"
+            [cellTemplate]="'sharedToggleTemplate'">
+          </dxi-column>
           <dxi-column caption="" type="buttons" width="40" [fixed]="true" fixedPosition="right" [allowSorting]="false"
             [allowReordering]="false" [allowResizing]="false">
             <dxi-button template="actionsMenuTemplate">
@@ -139,7 +142,13 @@
               </mat-slide-toggle>
             </div>		
           </div>
-        </dx-data-grid>
+          <div *dxTemplate="let member of 'sharedToggleTemplate'" >
+            <div class="sharedToggle">
+              <mat-slide-toggle  [checked]="member.data.share" (change)="sharedtoggle(member.data, $event)" aria-label="Shared">
+              </mat-slide-toggle>
+            </div>
+          </div>
+            </dx-data-grid>
       </div>
     </div>
   </div>

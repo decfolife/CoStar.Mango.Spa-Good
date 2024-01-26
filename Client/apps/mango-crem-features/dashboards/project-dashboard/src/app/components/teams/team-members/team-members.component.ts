@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { MemberInfo, TeamKeys, TeamMemUpdate, TeamMember } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
@@ -13,12 +13,13 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './team-members.component.html',
   styleUrls: ['./team-members.component.scss']
 })
-export class TeamMembersComponent implements OnInit, OnDestroy {
+export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 
 	@Input() teamMembers : TeamMember[];
 	@Input() searchText: string;
 	@Input() rights: string;
 	@Input() userModuleAddRights: boolean;
+	@Input() projectsPrivateSetting: boolean;
 	@Input() memberInfo: MemberInfo; 
 	@Input() teamMemberCount: number;
 	@Output() selectedMembersEvent: EventEmitter<any> = new EventEmitter();
@@ -31,6 +32,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
 	memberUpdate: TeamMemUpdate;
 	emailNotify: boolean;
 	memberId : number;
+	showShareColumn = false;
 	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
 	subs: Subscription[] = [];
 
@@ -42,6 +44,12 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
 							private dialogService: MangoDialogService) {}	
 
 	ngOnInit() {}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		if(!!changes.projectsPrivateSetting && changes.projectsPrivateSetting.currentValue > 0) {
+			this.showShareColumn = changes.projectsPrivateSetting.currentValue <= 2;
+		}		
+	}
 
 	ngAfterViewInit() {
     if(this.searchText) this.searchDataGrid();
@@ -145,10 +153,19 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
 		this.teamMembers.map(teamMember => teamMember.emailOn = (teamMember.memberId == member.memberId? e.checked: teamMember.emailOn));
 	}
 	
+	sharedtoggle(e, member) {
+		member.share = e.checked;
+		this.teamMembers.map(teamMember => teamMember.share = (teamMember.memberId == member.memberId? e.share: teamMember.share));
+	}
+	
 	cancelChanges(member) {
 		member.editMode = false;
 		this.teamMembersGrid.instance.cancelEditData();
 		this.resetEditMode(true);
+	}
+
+	getShareDisplayValue(rowData){
+		return rowData.share ? 'On' : 'Off'
 	}
 
 	resetEditMode(isCancel?: boolean) {

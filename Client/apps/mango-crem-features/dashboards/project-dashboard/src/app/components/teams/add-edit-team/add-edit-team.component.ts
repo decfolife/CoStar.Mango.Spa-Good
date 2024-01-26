@@ -44,6 +44,7 @@ export class AddEditTeamComponent implements OnInit {
   addTeam: boolean = false;
   changesMade: boolean = false;
   saveBtnClicked: boolean = false;
+	showShareColumn = false;
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 
@@ -59,6 +60,7 @@ export class AddEditTeamComponent implements OnInit {
     let pageSize = 10;
     let pageNumber = 1;
 
+		this.showShareColumn = this.data.projectsPrivateSetting > 0 && this.data.projectsPrivateSetting <= 2;
     this.memberInfo  = this.data.memberInfo;
     this.team = <Team>{};
     this.team.teamMembers = [];
@@ -83,7 +85,6 @@ export class AddEditTeamComponent implements OnInit {
       pageNumber = 0;
       pageSize = 0;
     });
-
   }
 
   searchTeamMembers(val: string) {
@@ -156,6 +157,11 @@ export class AddEditTeamComponent implements OnInit {
     this.changesMade = true;
   }
 
+	sharedtoggle(member, e) {
+		member.share = e.checked;
+    this.changesMade = true;
+	}
+
   onItemRendered(e) {
     if(this.team.teamMembers && this.team.teamMembers.length) {
       this.team.teamMembers.forEach(member => {
@@ -179,7 +185,7 @@ export class AddEditTeamComponent implements OnInit {
     teamMember.level = "L1";
     teamMember.memberId= 0;
     teamMember.teamId = 0;
-    teamMember.share = 0;
+    teamMember.share = this.data.projectsPrivateSetting === 1;
 
     this.team.teamMembers.push(teamMember);
     this.changesMade = true;
