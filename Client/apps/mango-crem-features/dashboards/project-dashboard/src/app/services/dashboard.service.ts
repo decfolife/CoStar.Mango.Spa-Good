@@ -158,10 +158,5 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}getoutstandingrolesfortask/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
-  
-  getClientPreference(setting): Observable<any> {
-    const url = `${environment.appUrls.projects}getclientpreference/${setting}`;
-    return this.callHttpGet(url, 'setting')
-  }
 }
 
