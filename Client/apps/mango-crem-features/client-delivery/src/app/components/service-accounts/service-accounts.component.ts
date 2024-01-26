@@ -142,13 +142,15 @@ export class ServiceAccountsComponent implements OnDestroy {
   }
 
   syncOnPremToAWS(templateRef){
-    this.subs.push (
-      this.userMaintenanceService.syncOnPremToAWS().pipe(
-        switchMap(result => this.syncMessage$ = result ? of("Sync process was successful") : of("Error executing the SPROC"))
-      ).subscribe (
-        _ => this.dialog.open(templateRef, {width: '300px', disableClose: true})
-      )
-    );
+    this.syncMessage$ = of('Processing....  Please wait for result.');
+    this.dialog.open(templateRef, {width: '300px', disableClose: true});
+
+      this.subs.push (
+        this.userMaintenanceService.syncOnPremToAWS().pipe(
+          switchMap(result => this.syncMessage$ = result ? of("Sync process was successful") : of("Error executing the SPROC"))
+        ).subscribe (
+        )
+      );
   }
 
   exportGrids(): void {
