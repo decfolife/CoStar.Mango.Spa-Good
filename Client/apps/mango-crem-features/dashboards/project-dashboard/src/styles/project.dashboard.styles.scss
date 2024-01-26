@@ -660,14 +660,27 @@ body {
 }
 
 #addEditTeamModal, #addEditMemberModal {
+	color: colors.$black;
 	.aet-textInput .mat-form-field {
 		width: 100%;
 	}
 
-	.aet-members {
-		.dx-dropdowneditor-icon {
-			font: 24px/20px DXIcons;
-		}
+	.dx-texteditor.dx-editor-outlined .dx-texteditor-input {
+		padding-top: 8px;
+		height: 32px;
+		max-height: 32px;
+		font: 400 16px Helvetica, system-ui, san-serif;
+		color: #000;
+	}	
+	
+	div.dx-placeholder {
+		font-size: 16px;
+		font-family: Helvetica, system-ui, sans-serif;
+		color: colors.$color-neutral-dark;
+	}
+
+	div.dx-texteditor-container {
+		align-items: center;
 	}
 
 	.at-required {
@@ -686,10 +699,11 @@ body {
 		border: 1px solid colors.$stdBorderColor;
 		border-radius: 4px;
 	}	
-	.dx-texteditor.dx-editor-outlined.dx-state-focused, button:focus {
+	.dx-texteditor.dx-editor-outlined.dx-state-focused, button:focus, .taskListCheckbox.dx-state-focused .dx-checkbox-icon {
 		outline: none;
 		box-shadow: 0 0 0 0.1rem colors.$primary;
 	}
+
 	.dx-texteditor.dx-editor-outlined {
 		border-radius: 2px;
 	}
@@ -709,6 +723,23 @@ body {
 		}
 	}
 
+ .iconWrapper.dx-field-value-static {
+		position: relative;
+		top: -10px;
+		left: -8px;
+
+		svg {
+			transform: scale(1.4);
+		}
+	}
+
+	.assignedTasks-container  {
+		.dx-checkbox-icon {
+			width: 18px;
+			height: 18px;
+			border-color: colors.$mediumDarkGray
+		}
+	}
 }
 
 #aet-membersList {
@@ -727,6 +758,10 @@ body {
 		fa-icon {
 			color: lightgray;
 		}
+	}
+	fa-icon {
+		margin-right: 8px;
+		transform: translateY(2px);
 	}
 }
 
@@ -781,5 +816,21 @@ body {
 		margin-left: 16px;
 	}
 }
-//*****  Teams Page Styles End *****//
+
+.aet-level-selectionList, .aet-level-dropdownList {
+	div.dx-item.dx-list-item {
+		border-style: none;
+
+		div.dx-item-content.dx-list-item-content {
+			padding: 4px;
+		}
+	}
+}
+
+.aet-members  .aet-membersDropDown {
+  input.dx-texteditor-input {
+    font-size: 16px;
+  }
+}
+//*****  Teams Page and Project Teams Page Styles End *****//
 

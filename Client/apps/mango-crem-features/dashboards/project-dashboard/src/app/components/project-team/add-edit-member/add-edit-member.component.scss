@@ -5,9 +5,9 @@
   }
 
   & > div {
-    padding: 20px 0;
+    padding: 10px 0;
   }
-  .email-shared-data {
+  .aet-email-shared {
     width: 100%;
     padding-top: 20px;
     display: flex;
@@ -23,15 +23,71 @@
     min-height: 30px;
     border-color: colors.$borderColor;
     border-radius: 2px;
+    padding-left: 8px;
 
     &:focus {
       box-shadow: 0 0 0 0.1rem colors.$primary;
     }
   }
-  .assgnedTasksHdr {
+  .assgnedTasksHdr, .aet-firstLastName, .aet-expirationTypeDate{
     display: flex;
     justify-content: space-between;
   }  
+
+  .assignedTask-details {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 10px;
+    margin-bottom: 4px;
+
+    .assignedTask-stepandName {
+      display: flex;
+      justify-content: flex-start;
+      color: colors.$mediumDarkGray;
+
+      .assignedTask-name {
+        margin-left: 8px;
+        max-width: 330px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        word-break: break-all;
+        white-space: nowrap;
+      }
+
+      .taskName {
+        overflow: visible;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .aet-firstLastName, .aet-expirationTypeDate {
+    width: 100%;
+    .firstName, .lastName, .expirationType, .expirationDate {
+      width: 100%
+    }
+    .lastName, .expirationDate{
+      margin-left: 8px;
+    }
+  }
+
+  .aet-outstandingRoles {
+    display: flex;
+    justify-content: space-between;
+    .roleLabel {
+      display: inline;
+    }
+    .seperatorLine {
+      margin: 8px 0;
+    }
+
+    .outstandingRolesCount {
+      font-size: 14px;
+      margin-left: 20px;
+    }
+  }
+
 }
 
 .footerRightControls {
@@ -43,5 +99,21 @@
 
   .modalFooter {
     border-top: 1px solid colors.$borderColor;
+  }
+}
+
+.aet-members  .aet-membersDropDown {
+  input.dx-texteditor-input {
+    font-size: 16px;
+  }
+}
+
+.levelTemplate  {
+  & > div {
+    display: inline;
+  }  
+
+  .levelDesc {
+    margin-left: 8px;
   }
 }

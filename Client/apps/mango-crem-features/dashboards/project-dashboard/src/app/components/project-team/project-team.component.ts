@@ -19,6 +19,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   dataRetrieved: boolean = false;;
   projectTeam: ProjectTeamMember[];
+  projectId: number;
   memberInfo: MemberInfo = <MemberInfo>{};
   subs: Subscription[] = [];
   constructor(private dashboardService: DashboardService, 
@@ -29,19 +30,24 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subs.push(this.route.queryParams.pipe(
       filter(params => !!params && !!params.oid),
-      tap(params => console.log(`${params.oid}`)),
+      tap(params => {this.projectId = params.oid}),
       switchMap(params => this.getProjectTeam(params.oid)),
       tap(_ => this.getMemberInfo()),
     ).subscribe());
   }
 
-  addOrEditTeamMember() {
-
+  addOrEditMember(operation) {
+    let height;
+    if(operation == 'AC') {
+      height = '500px';
+    } else {
+      height = '800px';
+    }
     let dialogRef = this.dialog.open(AddEditMemberComponent, {
-      height: '800px',
+      height: height,
       width: '500px',
       panelClass: 'addEditMemberModal',
-      data: { memberInfo: this.memberInfo },
+      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation },
       disableClose: true
     });
 

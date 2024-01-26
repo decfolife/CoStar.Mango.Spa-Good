@@ -5,27 +5,30 @@
   [modalId] = "modalId"
 >
 <div modalContent id="addEditMemberModal-content">
-  <div class="aet-members">
+  <div class="aet-members" *ngIf="operation=='ATM'">
     <h4 class="nameLabel label">Name</h4>
     <div id="container">
       <dx-drop-down-box 
           class="aet-membersDropDown"
-          placeholder="Start typing to search for additional users."
-          [(opened)]="isDropDownBoxOpened" 
+          placeholder="Start typing to search for additional users"
+          [value]="selectedMember"
+          [(opened)]="isMemberDropDownBoxOpened" 
           (onInput)="searchTeamMembers($event.event.target.value)"
-          (onClick)="focusOnDropDownInput($event)"
+
           [acceptCustomValue]="true"
           [openOnFieldClick]="false"
-          [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}"
+          [showClearButton]="true"
+          [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'memberSelection'}"
       >
           <dx-list 
               #SelectionMembersList
               id="aet-membersList"
               [dataSource]="filteredMembers" 
+              selectionMode="single"
               itemTemplate="membersListTemplate"
               [activeStateEnabled]="false" 
               [elementAttr]="{'aria-label': 'List of Members to Select'}"
-              (onItemClick)="onItemClicked($event)"
+              (onItemClick)="onMemberClicked($event)"              
 
           >
             <div *dxTemplate="let member of 'membersListTemplate'"  >
@@ -42,64 +45,141 @@
       </dx-drop-down-box>
     </div>
   </div>
-  <div class="email-shared-data">
+  <div class="aet-name" *ngIf="operation=='ATU' || operation=='AC'">
+    <h4 class="nameLabel label">Name</h4>
+    <div class="aet-firstLastName">
+      <div class="firstName">
+        <dx-text-box
+          placeholder="First Name"
+          [inputAttr]="{ 'aria-label': 'First Name' }"
+        ></dx-text-box>
+      </div>
+      <div class="lastName">
+        <dx-text-box
+          placeholder="Last Name"
+          [inputAttr]="{ 'aria-label': 'Last Name' }"
+        ></dx-text-box>
+      </div>
+    </div>
+  </div>
+  <div class="aet-email" *ngIf="operation== Operations.ATU || operation == Operations.AC">
+    <h4 class="nameLabel label">Email</h4>
+      <dx-text-box
+        placeholder="Enter your Email Id"
+        [inputAttr]="{ 'aria-label': 'Name' }"
+      ></dx-text-box>
+  </div>
+  <div class="aet-email-shared" *ngIf="operation !== Operations.AC && operation !== Operations.EC">
     <div class="emailToggle">
       <mat-slide-toggle  [labelPosition]="labelPosition" (change)="emailtoggle()" aria-label="Email Notication">
         <h4 class="label">Email Notifications</h4>
       </mat-slide-toggle>
     </div>
-    <div class="sharedToggle">
+    <div class="sharedToggle" *ngIf="clientSettingPreference == '1' || clientSettingPreference == '2'">
       <mat-slide-toggle  [labelPosition]="labelPosition" (change)="sharedtoggle()" aria-label="Shared">
         <h4 class="label">Shared</h4>
       </mat-slide-toggle>
     </div>
   </div>
-  <div class="Role">
+  <div class="aet-outstandingRoles" *ngIf="(operation == Operations.ATU) && (outstandingRoles.length)">
+    <h4 class="roleLabel label">Outstanding Roles</h4>
+    <span class="outstandingRolesCount">{{outstandingRoles.length}} roles waiting to be assigned</span>
+    <crem-tooltip-basic
+      [externalId]="'outstandingRolesToolTipId'"
+      [helpTextData]="outstandingRolesHelpText"
+    ></crem-tooltip-basic>
+  </div>
+  <div class="aet-role">
     <h4 class="roleLabel label">Role</h4>
-    <crem-dropdown
-      id="memberRoleDropdown"
-      dropDownContainerCustomClass="memberRoleDropDown"
-      [dataSource]='memberInfo.levels'
-      placeholder='Select the Role'
-      [showClearButton]='false'
-      [allowSearch]="true"
-      displayExpr='level'
-      valueExpr='level'
-      [initialSelectedValue]=''
-      (selectedItems)="roleSelected($event)">
-    </crem-dropdown>
+      <dx-select-box 
+        class="aet-role-selectBox"
+        placeholder="Assign Role"
+        [dataSource]="memberInfo.roles"
+        valueExpr="role"
+        displayExpr="role"
+        [inputAttr]="{'aria-label': 'Select Role', 'name': 'roleSelection', 'class': 'aet-role-selectList'}"
+        [elementAttr]="{'aria-label': 'Select from Available Roles', 'class': 'aet-role-selectionList'}"
+        (onSelectionChanged)="roleSelected($event)"
+      >
+      </dx-select-box>
   </div>
-  <div class="Level">
+  <div class="aet-level" *ngIf="operation !== Operations.AC && operation !== Operations.EC">
     <h4 class="levelLabel label">Level</h4>
-    <crem-dropdown
-      id="memberLevelDropdown"
-      dropDownContainerCustomClass="memberLevelDropDown"
-      [dataSource]='memberInfo.roles'
-      placeholder='Select the Access Level'
-      [showClearButton]='false'
-      [allowSearch]="true"
-      displayExpr='role'
-      valueExpr='role'
-      [initialSelectedValue]=''
-      (selectedItems)="levelSelected($event)">
-    </crem-dropdown>
+    <dx-select-box 
+      class="aet-level-selectBox"
+      placeholder="Assign Level"
+      [dataSource]="memberInfo.levels"
+      valueExpr="level"
+      displayExpr="level"
+      itemTemplate="level"
+      [inputAttr]="{'aria-label': 'Select Level', 'name': 'levelSelection', 'class': 'aet-level-selectList'}"
+      (onSelectionChanged)="levelSelected($event)"
+    >
+      <div *dxTemplate="let data of 'level'" class="levelTemplate">
+        <div class="level">{{data.level}}</div><div class="levelDesc" [title]="data.description">{{data.description}}</div>
+      </div>
+    </dx-select-box>
   </div>
-  <div class="description">
+  <div class="aet-expirationType" *ngIf="operation==Operations.ATU">
+    <h4 class="expirationTypeLabel label">Expiration Type</h4>
+    <div class="aet-expirationTypeDate">
+      <div class="expirationType">
+        <dx-select-box 
+          class="aet-expirationType-selectBox"
+          placeholder="Select Expiration Type"
+          [dataSource]="expirationTypes"
+          [inputAttr]="{'aria-label': 'Select Expiration Type', 'name': 'expirationType', 'class': 'aet-expirationType-list'}"
+          (onSelectionChanged)="expirationTypeSelected($event)"
+        >
+        </dx-select-box>
+      </div>
+      <div class="expirationDate" *ngIf="isExpirationDateSelected">
+        <ng-container *ngIf="true">
+          <dx-date-box 
+            type="date"
+            [displayFormat]="cardsService.dateFormat"
+            (onValueChanged)="setExpirationDate($event)"
+            [inputAttr]="{'aria-label': 'Select Date', 'name': 'dateSelection', 'class': 'aet-expDate'}"
+          ></dx-date-box>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="aet-description">
     <h4 class="descLabel label">Description</h4>
     <textarea aria-label="description"  class="descContent" rows="1"> </textarea>
   </div>
-  <div class="assignedTasks">
+  <div class="aet-assignedTasks" *ngIf="(operation == Operations.ATM || operation == Operations.ATU) && projectTaskList.length">
     <div class="assgnedTasksHdr">
       <h4 class="descLabel label">Assigned Tasks</h4>
-      <fa-icon [icon]="faInfoCircle" class="fa-light"></fa-icon>
+      <crem-tooltip-basic
+      [externalId]="'assignedTasksToolTipId'"
+      [helpTextData]="'Check the box next to the Task to assign user to tasks. 
+                       Uncheck to unassign the user from the task. Click Save or Apply to lock in changes.'"
+    ></crem-tooltip-basic>
+    </div>
+    <div class="assignedTasks-container">
+      <ng-container *ngFor="let task of projectTaskList">
+        <div class="assignedTask-details">
+          <div class="assignedTask-stepandName">
+            <dx-check-box
+              class="assignedTask-checkbox"
+              aria-label="Check to select a role"
+              [elementAttr]="{ 'class': 'taskListCheckbox' }"
+            ></dx-check-box>
+            <div class="assignedTask-name">{{task.step}}&#41; <span class="taskName" [title]="task.taskName">{{task.taskName}}</span></div>
+          </div>
+          <div class="assignedTask-status">{{task.approvalStatus}}</div>
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>
 <div modalFooter class="addEditTeamModal-footerContent">
   <div id="buttonTemplate" class="footerRightControls">
-    <crem-button  type="secondary" class="cancelChanges aem-btn"> Cancel </crem-button>
-    <crem-button  type="secondary" class="saveChanges aem-btn"> Save </crem-button>
-		<crem-button  type="primary" class="applyChanges aem-btn"> Apply </crem-button>
+    <crem-button  type="secondary" class="cancelChanges aem-btn" (click)="closeModal()"> Cancel </crem-button>
+    <crem-button  [type]=buttonType class="saveChanges aem-btn"> Save </crem-button>
+		<crem-button  type="primary" class="applyChanges aem-btn" *ngIf="operation !== Operations.AC && operation !== Operations.EC"> Apply </crem-button>
   </div>
 </div>
 </crem-modal>

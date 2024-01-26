@@ -29,9 +29,9 @@
 			<div class="addOptions">
 				<button class="btn btn-primary addButton" [matMenuTriggerFor]="addMenu" (click)="$event.preventDefault()">Add <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #addMenu="matMenu" class="projectTeamAddMenu">				
-					<button mat-menu-item class="addBtn-teamMember" (click)="addOrEditTeamMember()">Add Team Member</button>      
-					<button mat-menu-item class="addBtn-temporaryUser">Add Temporary User</button>  
-					<button mat-menu-item class="addBtn-contact">Add Contact</button>                  
+					<button mat-menu-item class="addBtn-teamMember" (click)="addOrEditMember('ATM')">Add Team Member</button>      
+					<button mat-menu-item class="addBtn-temporaryUser" (click)="addOrEditMember('ATU')">Add Temporary User</button>  
+					<button mat-menu-item class="addBtn-contact" (click)="addOrEditMember('AC')">Add Contact</button>                  
 				</mat-menu>	 
 			</div>
 		</div>
@@ -114,7 +114,7 @@
 				<div class="openTasks">{{cell.value}} unapproved</div>		
 			</div>
 			<div *dxTemplate="let cell of 'accessLevelTemplate'" >
-				<div>{{cell.value == 1 ? 'L1' : cell.value == 2 ? 'L2': cell.value == 3? 'L3': 'n/a'}}</div>
+				<div>{{cell.value == 1 ? 'L1' : cell.value == 2 ? 'L2': cell.value == 3? 'L3': 'N/A'}}</div>
 			</div>
 			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="memberDetails" class="projectMember-masterDetail"></dxo-master-detail>
 			<div *dxTemplate="let member of 'memberDetails'" class="projectMember-template">

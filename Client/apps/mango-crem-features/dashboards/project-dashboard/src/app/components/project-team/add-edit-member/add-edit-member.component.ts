@@ -5,8 +5,18 @@ import { faCirclePlus, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { MemberInfo, TeamMember, contactMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, ProjectTaskDetails, TeamMember, contactMember } from '@mango/data-models/lib-data-models';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { CardsService } from '@project-dashboard/services/cards.service';
+
+enum Operations {
+  ATM = "ATM",
+  ATU = "ATU",
+  AC  = "AC",
+  ETM = "ETM",
+  ETU = "ETU",
+  EC  = "EC"
+}
 
 @Component({
   selector: 'add-edit-member-popup',
@@ -15,36 +25,63 @@ import { MangoDialogService } from '@project-dashboard/services/mango-dialog.ser
 })
 
 export class AddEditMemberComponent implements OnInit {
-  public modalTitle = "Add Team Member";
+  Operations = Operations;
+  public modalTitle;
   public modalId: string = "addEditMemberModal";
   public closeButton = true;
-  isDropDownBoxOpened = false;
-
-
-  teamMembers: TeamMember[];
-  filteredMembers: contactMember[];
+  isMemberDropDownBoxOpened = false;
+  outstandingRoles = [];
+  expirationTypes = ['Expiration Date', 'Project Completion', 'Task Completion'];
+  outstandingRolesHelpText: string;
+  buttonType: string = "secondary";
+  teamMembers: TeamMember[] = [];
+  filteredMembers: contactMember[] = [];
+  projectTaskList: ProjectTaskDetails[] = [];
+  clientSettingPreference: string;
   memberInfo: MemberInfo;
+  projectId: number;
+  operation: string;
+  selectedMember: string;
+  selectedRole: string;
+  selectedLevel: string;
   labelPosition = 'before';
   faCirclePlus = faCirclePlus;
   faInfoCircle = faInfoCircle;
-  
+  subs: Subscription[] = [];
+  isExpirationDateSelected: boolean = false;
 
+  
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 
   constructor(private dashboardService: DashboardService,
-
+    private cardsService: CardsService,
     private dialogService: MangoDialogService,
     public dialogRef: MatDialogRef<AddEditMemberComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
+    this.selectedRole = "somethingtotest";
     let allMembers =  false;
     let pageSize = 10;
     let pageNumber = 1;
     this.memberInfo  = this.data.memberInfo;
+    this.projectId = this.data.projectId;
+    this.operation = this.data.operation;
 
-    this.membersSearchInput$.pipe(
+    this.getTitle(this.operation);
+    if (this.operation == Operations.ATM || this.operation == Operations.ATU) {
+      this.getOutstandingRoles(this.projectId);
+      this.subs.push(this.getUserPreferences().subscribe());
+      this.getProjectAssignedTaskList(this.projectId);
+    }
+    if(this.operation == Operations.AC || this.operation == Operations.EC) {
+      this.buttonType = "primary";
+    }
+
+
+    this.subs.push(this.getClientSettingPreferences().subscribe());
+    this.subs.push(this.membersSearchInput$.pipe(
       debounceTime(250),
       switchMap(inputValue => ((inputValue.length != 1) ? this.getMembers(inputValue, allMembers, pageSize, pageNumber) : of([])))
     ).subscribe(filteredMembers => {
@@ -52,7 +89,7 @@ export class AddEditMemberComponent implements OnInit {
       allMembers = true;
       pageNumber = 0;
       pageSize = 0;
-    });
+    }));
 
   }
 
@@ -60,35 +97,63 @@ export class AddEditMemberComponent implements OnInit {
     this.membersSearchInput$.next(val)
   }
 
-  onItemClicked(e) {
-  }
-
-  focusOnDropDownInput(e) { 
-    this.isDropDownBoxOpened = false; 
-    setTimeout(function() {  
-        e.component.focus();  
-    });  
-    this.isDropDownBoxOpened = true;
-  } 
-
-  toggleList(){
-    this.isDropDownBoxOpened = !this.isDropDownBoxOpened;
+  onMemberClicked(e) {
+    this.selectedMember = e.itemData.Name;
+    this.isMemberDropDownBoxOpened = false;
   }
 
   roleSelected(e) {
-
+    this.selectedRole = e.selectedItem.role;
   }
 
   levelSelected(e) {
-    
+    this.selectedLevel = e.selectedItem.level;
   }
   
+  expirationTypeSelected(e) {
+    this.isExpirationDateSelected = false;
+    if(e.selectedItem == "Expiration Date") {
+      this.isExpirationDateSelected = true;
+    }
+  }
+
+  setExpirationDate(e) {
+    let selectedDate = e.value;
+  }
+
   emailtoggle() {
 
   }
 
   sharedtoggle() {
 
+  }
+
+  getTitle(operation) {
+    switch(operation) {
+      case "ATM":
+        this.modalTitle = "Add Team Member";
+        break;
+      case "ATU":
+        this.modalTitle = "Add Temporary User";
+        break;  
+      case "AC":
+        this.modalTitle = "Add Contact";
+        break; 
+      case "ETM":
+        this.modalTitle = "Edit Team Member";
+        break;
+      case "ETU":
+        this.modalTitle = "Edit Temporary User";
+        break;  
+      case "EC":
+        this.modalTitle = "Edit Contact";
+        break;     
+    }
+  }
+
+  closeModal() {
+    this.dialogRef.close();
   }
 
   getMembers(search: string, all: boolean, pageSize: number, pageNumber: number) {
@@ -101,9 +166,54 @@ export class AddEditMemberComponent implements OnInit {
       )
     );
   }
+
+  getUserPreferences(): Observable<any> {
+    return this.dashboardService.GetUserPreferences().pipe(
+      filter(res => !!res && !!res.success),
+      map(res => this.cardsService.setUserDateFormat(res.data.isDatesEU))
+    );
+  }
+
+  getClientSettingPreferences(): Observable<any> {
+    return this.dashboardService.getClientPreference('ClientProjectsPrivate').pipe(
+      filter(res => !!res && !!res.success),
+      tap(res => this.clientSettingPreference = res.data),
+      catchError(error => {
+        console.log("ERROR occurred while getting Client Setting Preferences: ", error);
+        return of(error);
+      })
+    );
+  }
+
+  public getProjectAssignedTaskList(projectId) {
+    this.subs.push(this.dashboardService.getProjectTaskList(projectId).subscribe(
+      (res:any) => {
+        this.projectTaskList = res.data;
+      },
+      (error: any) => console.log("Error occurred getting Project Task List ", error),
+      () => {}
+    ));
+  }
+
+  public getOutstandingRoles(projectId) {
+    this.subs.push(this.dashboardService.getOutstandingRolesforTask(projectId).subscribe(
+      (res:any) => {
+        this.outstandingRoles = res.data;
+        if(this.outstandingRoles.length) {
+          this.outstandingRolesHelpText = `These roles are waiting to be assigned: `;
+          this.outstandingRoles.forEach(role => {
+            this.outstandingRolesHelpText +=` ${role.projectMilestoneRole},`;
+          })
+        }
+      },
+      (error: any) => console.log("Error occurred getting Outstanding Roles ", error),
+      () => {}
+    ));
+  }
   
   ngOnDestroy() {
     this.membersSearchInput$.unsubscribe();
+    this.subs.forEach(s => s.unsubscribe);
   }
 
 }

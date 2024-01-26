@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import { ButtonModule, LoaderModule, ModalModule } from '@mango/ui-shared/lib-ui-elements'
 import { MatIconModule } from '@angular/material/icon';
-import { DxDataGridModule, DxDropDownBoxModule, DxListModule } from 'devextreme-angular';
+import { DxDataGridModule, DxDropDownBoxModule, DxListModule, DxSelectBoxModule } from 'devextreme-angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatMenuModule } from '@angular/material/menu';
 import { TeamsComponent } from './teams.component';
@@ -36,6 +36,7 @@ import { MangoDialogService } from '@project-dashboard/services/mango-dialog.ser
     ModalModule,
     DxDropDownBoxModule,
     DxListModule,
+    DxSelectBoxModule,
     TextFieldModule,
   ],
   providers: [DashboardService, CardsService, MangoDialogService,],
