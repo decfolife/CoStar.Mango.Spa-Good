@@ -3,7 +3,7 @@
 		<div class="controls-left">
 			<h1 class="title"> Reminders List </h1>
 			<div class="search">
-				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" ></cs-search>
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" class="searchReminders-input"></cs-search>
 			</div>
 		</div>
 		<div class="controls-right">
@@ -13,17 +13,17 @@
 				</crem-button>
 			</div>
 			<div class="controls-item">
-				<crem-button type="primary" (click)="addReminder()">
-					<div id="AddReminder">Add Reminder</div>
-				</crem-button>
-			</div>
-			<div class="controls-item">
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
 					<button mat-menu-item (click)="resetFilter($event)">Reset</button>
 					<button mat-menu-item (click)="openColumnChooser()">Column Chooser</button>
 					<button mat-menu-item (click)="exportExcel($event)">Export</button> 
 				</mat-menu>	 
+			</div>
+			<div class="controls-item">
+				<crem-button type="primary" (click)="addReminder()">
+					<div id="AddReminder">Add</div>
+				</crem-button>
 			</div>
 		</div>
 	</div>

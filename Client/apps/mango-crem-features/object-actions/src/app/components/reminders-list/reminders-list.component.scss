@@ -3,7 +3,13 @@
     flex-direction: column;
     height: 100%;
 }
-
+::ng-deep {
+    .searchReminders-input {
+        .mat-form-field-suffix {
+            top: .09em;
+        }
+    }
+}
 .reminders-toolBar-wrapper {
     display: flex;
     flex-shrink: 0;
@@ -27,6 +33,7 @@
             font-weight: 500;
             font-family: Helvetica,sans-serif;
             margin-right: 16px;
+            margin-bottom: 0px;
         }
 
         cs-search {

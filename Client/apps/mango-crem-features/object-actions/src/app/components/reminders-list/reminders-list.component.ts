@@ -130,7 +130,7 @@ export class RemindersListComponent implements OnInit {
       {
         dataField: "TicklerID",
         dataType: "number",
-        caption: "Tickler ID",
+        caption: "Reminder Id",
         alignment: "left",
         visible: false
       },
