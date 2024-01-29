@@ -75,7 +75,8 @@
         <h4 class="label">Email Notifications</h4>
       </mat-slide-toggle>
     </div>
-    <div class="sharedToggle" *ngIf="clientSettingPreference == '1' || clientSettingPreference == '2'">
+    <div class="sharedToggle" 
+      *ngIf="(clientSettingPreference == '1' || clientSettingPreference == '2') && (operation == Operations.ATM || operation == Operations.ETM)">
       <mat-slide-toggle  [labelPosition]="labelPosition" (change)="sharedtoggle()" aria-label="Shared">
         <h4 class="label">Shared</h4>
       </mat-slide-toggle>
