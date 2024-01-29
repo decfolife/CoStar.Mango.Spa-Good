@@ -88,8 +88,13 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       {
         type: 'menu',
         name: 'Make Default',
-        action: () => this.segmentMoreMenuClick(),
+        action: () => this.setDefaultSegment(this.moreMenuSegment.segmentID, this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet),
         stopPropagation: true,
+        dataTransformer: [
+          {
+            condition: 'Default', disabled: true
+          }
+        ]
       },
       { type: 'separator' },
       {
@@ -147,7 +152,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               //fetch criteriaSetID for each view;
               this.accountingSegmentData = r.data;
               this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
-              this.selectedSegment = this.accountingSegmentData?.[0].segmentID;
+              this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1).segmentID || this.accountingSegmentData?.[0].segmentID;
               this.loading = false;
             });
 
@@ -167,8 +172,15 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     )
   }
 
-  segmentMoreMenuClick(): void{
-    // console.log('menu pressed');
+  setDefaultSegment(segmentID, criteriaSetID): void{
+    this.subs.push(this.inAppDisclosureService.SetDefault(segmentID, criteriaSetID).subscribe((result) => {
+      if (result.data != -1) {
+        //refresh
+        this.getSegments(this.selectedView, false)
+      } else {
+        //error
+      }
+    }))
   }
 
   // For each segment item create a corresponding more menu (ellipsis) option
@@ -216,13 +228,14 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       case 2:
       case 3:
       case 4: {
-        this.getSegments(data[0].id);
+        this.getSegments(data[0].id, true);
         break;
       }
     }
   }
 
-  public getSegments(view: number) {
+  public getSegments(view: number, initialLoad: boolean) {
+    this.loading = true;
     this.accountingSegmentData = [];
 
     this.inAppDisclosureService.getAccountingCriteriaSets()
@@ -241,8 +254,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         tap( r => {
           this.accountingSegmentData = r.data;
           this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
-          this.selectedSegment = r.data[0].segmentID;
+          if (initialLoad) {
+            this.selectedSegment = r.data.find(s => s.default === 1)?.segmentID || r.data[0].segmentID;
+          }
           this.selectedView = view;
+          this.loading = false;
         })
       ).subscribe();
 
@@ -334,7 +350,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
       dialogRef.afterClosed().subscribe((data) => {
         if (data === "refresh") {
-          this.getSegments(this.selectedView);
+          this.getSegments(this.selectedView, false);
         } else if (data) {
           this.redirectDialog(data)
         }
@@ -349,7 +365,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     if (data.active) {
       this.reportsService.archiveSegment(request).subscribe((result) => {
         if (result) {
-          this.getSegments(this.selectedView);
+          this.getSegments(this.selectedView, false);
           notify({
             message: 'Segment archived successfully.',
             type: 'success',
@@ -366,7 +382,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     } else {
       this.reportsService.unarchiveSegment(request).subscribe((result) => {
         if (result) {
-          this.getSegments(this.selectedView);
+          this.getSegments(this.selectedView, false);
           notify({
             message: 'Segment unarchived successfully.',
             type: 'success',
@@ -387,7 +403,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     const redirectRef = this.dialog.open(CreateSegmentComponent, config)
     redirectRef.afterClosed().subscribe((data) => {
       if (data === "refresh") {
-        this.getSegments(this.selectedView);
+        this.getSegments(this.selectedView, false);
       } else if (data) {
         this.redirectDialog(config);
       }

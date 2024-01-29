@@ -127,4 +127,11 @@ export class InAppDisclosureService extends EndpointService{
     }
   }
 
+  public SetDefault(segmentID: number, criteriaSetID: number) {
+    let body = { SegmentID: segmentID, CriteriaSetID: criteriaSetID }
+    const url = `${environment.appUrls.reports}ReportsSegments/SetDefault`
+
+    return this.callHttpPost(url, 'setDefault', body)
+  }
+
 }
