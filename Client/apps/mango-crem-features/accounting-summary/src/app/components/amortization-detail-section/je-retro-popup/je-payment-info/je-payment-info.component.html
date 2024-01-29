@@ -13,6 +13,7 @@
                 [wordWrapEnabled]="false"
                 [columnMinWidth]="15"
                 [columnAutoWidth]="false"
+                (onExporting)="onExporting($event)"
                 [loadPanel]="{ enabled: true,
             shading: true,
             visible: true,
@@ -82,7 +83,7 @@
     <dxo-header-filter [visible]="true" [allowSearch]="true">
     </dxo-header-filter>
 
-    <dxo-export [enabled]="true" [fileName]="exportToExcelFileName()"></dxo-export>
+    <dxo-export [enabled]="true"></dxo-export>
 
     <div *dxTemplate="let info of 'amortizationHeader'">
       <p title={{info.column.caption}} class="header-column-caption">

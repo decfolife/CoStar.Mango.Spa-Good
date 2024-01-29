@@ -31,6 +31,10 @@ export class JePaymentInfoComponent {
     this.jePaymentInfoGridSetup();
   }
 
+  onExporting(event){
+    event.fileName = this.exportToExcelFileName()
+  }
+
   jePaymentInfoGridSetup() {
     this.isEuroDateFormat = this.userInfo.useDateEU;
     if (this.isEuroDateFormat) {

@@ -8,10 +8,12 @@
           [showRowLines]="true"
           [showBorders]="true"
           [allowColumnResizing]="true"
+          [allowColumnReordering]="true"
           [wordWrapEnabled]="false"
           [columnMinWidth]="80"
           [columnAutoWidth]="false"
           (onCellClick)="onRetroAmortizationCellClick($event)"
+          (onExporting)="onExporting($event)"
           [loadPanel]="{ enabled: true,
               shading: true,
               visible: true,
@@ -20,7 +22,7 @@
               mode="virtual">
           </dxo-scrolling>
           
-          <dxo-export [enabled]="true" [fileName]="exportToExcelFileName()"></dxo-export>
+          <dxo-export [enabled]="true"></dxo-export>
 
           <div *dxTemplate="let info of 'amortizationHeader'">
               <p title={{info.column.caption}}

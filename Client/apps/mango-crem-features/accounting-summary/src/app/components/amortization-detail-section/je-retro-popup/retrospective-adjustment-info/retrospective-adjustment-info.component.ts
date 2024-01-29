@@ -46,65 +46,31 @@ export class RetrospectiveAdjustmentInfoComponent {
     }
   }
 
+  onExporting(event){
+    event.fileName = this.exportToExcelFileName()
+  }
+
   private getRetrospectiveAdjustmentGridColumns() {
-    let amortizationDetailCols = [];
-    this.amortizationDetailColumns.filter(adc1 => !adc1.caption.startsWith("Functional Asset")).forEach(adc2 => amortizationDetailCols = amortizationDetailCols.concat(adc2.columns));
-    amortizationDetailCols = JSON.parse(JSON.stringify(amortizationDetailCols));
+    let amortizationDetailCols = JSON.parse(JSON.stringify(this.amortizationDetailColumns));
 
-    const columnsFound = [];
-    const columnCaptions = [
-      "Period Index",
-      "Period Name",
-      "Asset Balance - Opening",
-      "Asset Balance - Closing",
-      "Asset Amortization",
-      "Total Asset Adjustment",
-      "Termination Fee",
-      "Liability Balance - Opening",
-      "Liability Balance - Closing",
-      "Liability Reduction",
-      "Level Expense",
-      "Liability Adjustment",
-      "Short Term Liability - Opening",
-      "Short Term Liability - Closing",
-      "Short Term Liability Reduction",
-      "Short Term Liability Adjustment",
-      "Long Term Liability - Opening",
-      "Long Term Liability - Closing",
-      "Long Term Liability Reduction",
-      "Long Term Liability Adjustment",
-      "Scheduled Payments",
-      "Remaining Payments",
-      "Lease Liability Interest Expense",
-      "JE Status"];
-
-      let index = 1
-
-      columnCaptions.forEach(columnName => {
-        const foundColumn = amortizationDetailCols.find(adsc => adsc.caption === columnName);
-        if(foundColumn !== undefined) {
-          if(columnName !== "Period Index" && columnName !== "Period Name" && columnName !== "JE Status")
-          {
-            foundColumn.caption = foundColumn.caption + ' (USD)';
-            foundColumn.calculateCellValue = rowData => {
-              if(isNaN(rowData[foundColumn.dataField])) {
-                return '';
+      amortizationDetailCols.forEach(bandedCol => {
+        bandedCol.columns.forEach(col => {
+            if(col.name !== "PeriodIndex" && col.name !== "DisplayPeriod" && col.name !== "JEStatus")
+            {
+              col.calculateCellValue = rowData => {
+                if(isNaN(rowData[col.dataField])) {
+                  return '';
+                }
+  
+                return this.formattingService.formatNumber(rowData[col.dataField], 2);
               }
-
-              return this.formattingService.formatNumber(rowData[foundColumn.dataField], 2);
             }
-          }
-          else if(columnName === "JE Status"){
-            foundColumn.cellTemplate = "clickableLink"
-          }
-
-          foundColumn.visible = true;
-          foundColumn.visibleIndex = index;
-          columnsFound.push(foundColumn);
-          index++;
-        }
+            else if(col.name === "JEStatus"){
+              col.cellTemplate = "clickableLink"
+            }
+        });
       });
 
-    return columnsFound;
+    return amortizationDetailCols;
   }
 }

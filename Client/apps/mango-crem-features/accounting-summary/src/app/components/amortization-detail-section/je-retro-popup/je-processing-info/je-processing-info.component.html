@@ -79,13 +79,13 @@
             <div class="custom-col metric-label">{{calloutText}}</div>
 
             <div class="custom-col metric-label">
-                <button [id]="accountingSummaryService.getId(componentName,'ActionsButton','button')"
+                <button [id]="actionsButtonId"
                 class="btn btn-primary actions-button" (click)="actionButton()"
                 *ngIf="showActionButton" [disabled]="isButtonDisabled"
                 (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">{{changeButtonText}}</button>
             </div>
             <dx-tooltip [id]="accountingSummaryService.getId(componentName,'ActionsButton','tooltip')"
-                target="#je-processing-info-ActionsButton-button"
+                [target]="'#' + actionsButtonId"
                 [visible]="isTooltipVisible">
                 <div *dxTemplate="let data of 'content'">
                     {{ disableBtnReason }}
@@ -106,6 +106,7 @@
                     [wordWrapEnabled]="false"
                     [columnMinWidth]="15"
                     [columnAutoWidth]="false"
+                    (onExporting)="onExporting($event)"
                     [loadPanel]="{ enabled: true,
                         shading: true,
                         visible: true,
@@ -113,7 +114,7 @@
                     <dxo-scrolling
                         mode="virtual">
                     </dxo-scrolling>
-                    <dxo-export [enabled]="true" [fileName]="exportToExcelFileName()"></dxo-export>
+                    <dxo-export [enabled]="true"></dxo-export>
 
                     <div *dxTemplate="let info of 'amortizationHeader'">
                         <p title={{info.column.caption}}

@@ -17,6 +17,7 @@ export class JeProcessingInfoComponent {
   @Input() eventScheduleData: any;
   @Input() rightsInfo: any;
   @Input() displayPeriodTitle: string;
+  @Input() isPopupForRetroGridClick = false;
   @Output() jeActionTaken: EventEmitter<any> = new EventEmitter<any>();
   @Output() setHeight = new EventEmitter<boolean>();
 
@@ -35,9 +36,18 @@ export class JeProcessingInfoComponent {
   isTooltipVisible = false;
   disableBtnReason = '';
   showNoJeProfileSelected = false;
+  actionsButtonId = '';
   private subscription = new Subscription;
 
   constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, public jeProcessingGridColumnsService: AmortizationGridColumnsService) {
+  }
+
+  ngOnInit(){
+    if(this.isPopupForRetroGridClick){
+      this.componentName = this.componentName + "-retro" 
+    }
+
+    this.actionsButtonId = this.accountingSummaryService.getId(this.componentName,'ActionsButton','button');
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -48,6 +58,10 @@ export class JeProcessingInfoComponent {
 
   notifyHeight(isMaxHeight: boolean): void {
     this.setHeight.emit(isMaxHeight);
+  }
+
+  onExporting(event){
+    event.fileName = this.exportToExcelFileName()
   }
 
   private jeProcessingInfoGridSetup() {
