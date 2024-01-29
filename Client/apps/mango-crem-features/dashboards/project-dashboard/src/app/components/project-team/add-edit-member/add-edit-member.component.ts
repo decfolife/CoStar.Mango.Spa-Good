@@ -38,7 +38,7 @@ export class AddEditMemberComponent implements OnInit {
   filteredMembers: contactMember[] = [];
   projectTaskList: ProjectTaskDetails[] = [];
   clientSettingPreference: string;
-  memberInfo: MemberInfo;
+  memberInfo: MemberInfo = <MemberInfo>{};
   projectId: number;
   operation: string;
   selectedMember: string;
@@ -65,9 +65,17 @@ export class AddEditMemberComponent implements OnInit {
     let allMembers =  false;
     let pageSize = 10;
     let pageNumber = 1;
-    this.memberInfo  = this.data.memberInfo;
     this.projectId = this.data.projectId;
     this.operation = this.data.operation;
+    this.memberInfo.roles = [];
+    this.memberInfo.levels = [];
+
+
+    this.memberInfo.roles = Object.assign([], this.data.memberInfo.roles);
+    this.memberInfo.levels = Object.assign([], this.data.memberInfo.levels);
+    if(this.operation == Operations.ATU || this.operation == Operations.ETU) {
+      this.memberInfo.levels = this.memberInfo.levels.filter(level => level.level !== "L1");
+    }
 
     this.getTitle(this.operation);
     if (this.operation == Operations.ATM || this.operation == Operations.ATU) {

@@ -116,7 +116,7 @@
       (onSelectionChanged)="levelSelected($event)"
     >
       <div *dxTemplate="let data of 'level'" class="levelTemplate">
-        <div class="level">{{data.level}}</div><div class="levelDesc" [title]="data.description">{{data.description}}</div>
+        <div class="level">{{data.level}}<span class="levelDesc" [title]="data.description">{{data.description}}</span></div>
       </div>
     </dx-select-box>
   </div>
