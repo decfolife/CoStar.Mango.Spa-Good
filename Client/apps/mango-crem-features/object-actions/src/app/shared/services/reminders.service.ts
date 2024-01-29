@@ -20,4 +20,26 @@ export class RemindersService extends EndpointService {
     };
     return this.callHttpGet(url, 'GetReminders', request);
   }
+
+  getReminderEvents(oID: number, oTID: number): Observable<any> {
+    let url = `${environment.appUrls.objectActions}Reminders/GetReminderEvents`;
+    const request = {
+      objectid: oID,
+      objectTypeId: oTID
+    };
+    return this.callHttpGet(url, 'GetReminderEvents', request);
+  }
+
+  getReminderById(ticklerId: number): Observable<any> {
+    let url = `${environment.appUrls.objectActions}Reminders/GetReminderById`;
+    const request = {
+      ticklerId: ticklerId
+    };
+    return this.callHttpGet(url, 'GetReminderById', request);
+  }
+
+  deleteReminder(reminderID: number): Observable<any> {
+    let url = `${environment.appUrls.objectActions}Reminders/DeleteReminder`;
+    return this.callHttpPost(url, 'DeleteReminder', reminderID);
+  }
 }

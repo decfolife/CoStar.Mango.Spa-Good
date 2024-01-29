@@ -43,7 +43,9 @@
 			[wordWrapEnabled]="true"
 			(onContentReady)="adaAttributes($event); adaPaginationAttr($event); adaAttrNoDataGrid($event)"
 		>
-		<dxo-column-chooser [enabled]="true"></dxo-column-chooser>
+		<dxo-column-chooser [allowSearch]="true"
+        mode="select"
+      ></dxo-column-chooser>
 		<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxi-column *ngFor="let col of columns" 
