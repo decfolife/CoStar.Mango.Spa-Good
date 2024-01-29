@@ -49,7 +49,10 @@ export class OAuthEffects {
           openClientInNewTab ? window.open(url, "_blank") : window.location.href = url
         }),
         delay(2000),
-        map(_ => AppActions.purgeClientSelection())
+        switchMap(_ => of(
+          AppActions.purgeClientSelection(),
+          AppActions.getUserClients()
+        ))
       )
   )
 
