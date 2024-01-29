@@ -52,28 +52,28 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
         fieldTransform: [ // todo: rename to API data mapping
           {
             DisclosureClassification: 'DisclosureClassification',
-            LeaseType: 'LeaseType',
+            LeaseTemplate: 'LeaseTemplate',
             Display: 'Display',
             PeriodYear: 'PeriodYear',
             data: 'OpeningCount',
           },
           {
             DisclosureClassification: 'DisclosureClassification',
-            LeaseType: 'LeaseType',
+            LeaseTemplate: 'LeaseTemplate',
             Display: 'Display',
             PeriodYear: 'PeriodYear',
             data: 'AddedCount',
           },
           {
             DisclosureClassification: 'DisclosureClassification',
-            LeaseType: 'LeaseType',
+            LeaseTemplate: 'LeaseTemplate',
             Display: 'Display',
             PeriodYear: 'PeriodYear',
             data: 'EndedCount',
           },
           { 
             DisclosureClassification: 'DisclosureClassification',
-            LeaseType: 'LeaseType',
+            LeaseTemplate: 'LeaseTemplate',
             Display: 'Display',
             PeriodYear: 'PeriodYear',
             data: 'ClosingCount',

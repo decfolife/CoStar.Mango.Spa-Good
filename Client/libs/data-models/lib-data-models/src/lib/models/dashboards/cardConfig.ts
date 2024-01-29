@@ -24,7 +24,7 @@ export type CardDataItem = {
   closingCount?: number | string,
   DisclosureClassification?: string,
   EndedCount?: number | string,
-  LeaseType?: string,
+  LeaseTemplate?: string,
   OpeningCount?: number | string,
   Display: string,
   PeriodYear?: number | string,

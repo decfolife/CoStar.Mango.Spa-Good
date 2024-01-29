@@ -72,49 +72,49 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       let items = [
         { 
           DisclosureClassification:  item.DisclosureClassification,
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: "Opening Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.OpeningCount,
         },
         { 
           DisclosureClassification:  item.DisclosureClassification,
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: " - Lease Added",
           PeriodYear: item.PeriodYear,
           data: item.AddedCount,
         },
         { 
           DisclosureClassification:  item.DisclosureClassification,
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: " - Leases Expired/Cancelled",
           PeriodYear: item.PeriodYear,
           data: item.EndedCount,
         },
         { 
           DisclosureClassification:  item.DisclosureClassification,
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: "Closing Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
         },
         { 
           DisclosureClassification:  "Total",
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: "Opening Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.OpeningCount,
         },
         { 
           DisclosureClassification:  "Total",
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: " - Lease Added",
           PeriodYear: item.PeriodYear,
           data: item.AddedCount,
         },
         { 
           DisclosureClassification:  "Total",
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: " - Leases Expired/Cancelled",
           PeriodYear: item.PeriodYear,
           data: item.EndedCount,
@@ -122,7 +122,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         },
         { 
           DisclosureClassification:  "Total",
-          LeaseType: item.LeaseType,
+          LeaseTemplate: item.LeaseTemplate,
           Display: "Closing Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
@@ -239,7 +239,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         if (card.Title === 'ASC 842 Annual Disclosures') {
           config[4].format = ",###";
           config[config.length - 1].calculateSummaryValue = function(summaryCell) {
-            if (summaryCell.field('column')?.dataField === 'LeaseType' || summaryCell.field('column')?.dataField === 'PeriodYear') {
+            if (summaryCell.field('column')?.dataField === 'LeaseTemplate' || summaryCell.field('column')?.dataField === 'PeriodYear') {
               return summaryCell.value() / 2;
             } else {
               return summaryCell.value();
