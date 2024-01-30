@@ -31,6 +31,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	memberIds: number[];
 	memberUpdate: TeamMemUpdate;
 	emailNotify: boolean;
+	shareValue: boolean;
 	memberId : number;
 	showShareColumn = false;
 	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
@@ -61,6 +62,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 
 	editRow(memberData: any) {
 		this.emailNotify = memberData.data.emailOn;
+		this.shareValue = memberData.data.share;
 		this.memberId = memberData.data.memberId;
 		this.teamMembersGrid.instance.cancelEditData();
 		this.resetEditMode();
@@ -155,6 +157,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	
 	sharedtoggle(e, member) {
 		member.share = e.checked;
+		this.teamMembers.map(teamMember => teamMember.share = (teamMember.memberId == member.memberId? e.checked: teamMember.share));
 	}
 	
 	cancelChanges(member) {
@@ -172,6 +175,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 			teamMember.editMode = false;
 			if(isCancel && teamMember.memberId == this.memberId) {
 				teamMember.emailOn = this.emailNotify;
+				teamMember.share = this.shareValue;
 			} 
 		});
 	}
