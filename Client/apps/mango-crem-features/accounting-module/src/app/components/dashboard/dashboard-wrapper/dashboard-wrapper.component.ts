@@ -152,7 +152,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               //fetch criteriaSetID for each view;
               this.accountingSegmentData = r.data;
               this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
-              this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1).segmentID || this.accountingSegmentData?.[0].segmentID;
+              this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1)?.segmentID || this.accountingSegmentData?.[0].segmentID;
               this.loading = false;
             });
 
