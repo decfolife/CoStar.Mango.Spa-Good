@@ -312,12 +312,21 @@ div[id$="dropdownContainer"] {
 }
 
 .item {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 24px;
 
   &::before {
     display: none;
+  }
+
+  &-secondary {
+    @include costar(color, gray03);
+  }
+
+  &-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   ::ng-deep {

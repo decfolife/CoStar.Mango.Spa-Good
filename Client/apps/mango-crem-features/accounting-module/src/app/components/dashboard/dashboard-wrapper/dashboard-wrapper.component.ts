@@ -14,7 +14,6 @@ import { switchMap, tap } from 'rxjs/operators';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
 import { CreateSegmentComponent } from '@reports/components/modal/create-segment/create-segment.component'
 
-
 import { selectBoxMenuItems, byItemMoreMenuOptions, moreMenuItem } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
 import { ReportsService } from '@reports/services/reports.service';
 
@@ -150,7 +149,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
                 });
               }
               //fetch criteriaSetID for each view;
-              this.accountingSegmentData = r.data;
+              this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
               this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
               this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1)?.segmentID || this.accountingSegmentData?.[0].segmentID;
               this.loading = false;
@@ -172,19 +171,39 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     )
   }
 
-  setDefaultSegment(segmentID, criteriaSetID): void{
-    this.subs.push(this.inAppDisclosureService.SetDefault(segmentID, criteriaSetID).subscribe((result) => {
-      if (result.data != -1) {
-        //refresh
-        this.getSegments(this.selectedView, false)
-      } else {
-        //error
+  setDefaultSegment(segmentID: number, criteriaSetID: number): void{
+    let setDefault$: Subscription;
+
+    setDefault$ = this.inAppDisclosureService.SetDefault(segmentID, criteriaSetID)
+      .subscribe(
+        result => {
+          if (result.data != -1) {
+            this.getSegments(this.selectedView, false); //refresh
+          } else {
+            console.error('Failed setting the default segment', result.data);
+          }
+        },
+        error => console.error(error),
+      );
+
+    this.subs.push(setDefault$);
+  }
+
+  prepareSegmentDropdown(data: any): any { // Transform dropdown options data to be used by crem-dropdown
+    const dropdownData = [];
+
+    data.map( e => {
+      if( e.default === 1){ // If default is on, add a secondary text
+        e['secondaryText'] = '(Default)';
       }
-    }))
+      dropdownData.push(e)
+    });
+
+    return data;
   }
 
   // For each segment item create a corresponding more menu (ellipsis) option
-  prepareSegmentMoreMenu(segmentsData, itemMenu: selectBoxMenuItems) {
+  prepareSegmentMoreMenu(segmentsData, itemMenu: selectBoxMenuItems) { // todo: This should be part of the crem-dropdown component
     const segmentsWithMoreMenu = [];
 
     segmentsData.map( (segment) => {
@@ -207,16 +226,19 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   prepareItemMoreMenu(menuItem: moreMenuItem, comparingValue: string | number | boolean, attribute?: any, attributeName?: string): moreMenuItem {
     const item = {...menuItem}
-    if(item.dataTransformer && comparingValue){
-      const elementExists = item.dataTransformer.find( item => item.condition === comparingValue );
-      if(elementExists){
-        item.name = elementExists?.name ?? item.name;
-        item.title = elementExists?.title ?? item.title;
-        item.disabled = elementExists?.disabled ? elementExists?.disabled : item.disabled || false;
+    if(item.dataTransformer){
+      if (comparingValue) { // Only proceeds if there is something to compare with
+        const elementExists = item.dataTransformer.find( item => item.condition === comparingValue );
+        if(elementExists){
+          item.name = elementExists?.name ?? item.name;
+          item.title = elementExists?.title ?? item.title;
+          item.disabled = elementExists?.disabled ? elementExists?.disabled : item.disabled || false;
+        }
+        attribute && (item[ attributeName ?? 'attribute'] = attribute); // Additional attribute
       }
-      attribute && (item[ attributeName ?? 'attribute'] = attribute); // Additional attribute
-    } else {
-      console.error('error, incomplete or faulty arguments');
+      else {
+        console.error('Error: Incomplete or faulty arguments encountered when utilizing the "crem-dropdown"\'s more menu.');
+      }
     }
     return item;
   }
@@ -252,7 +274,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           return this.inAppDisclosureService.getSegments(this.criteriaSet, false);
         }),
         tap( r => {
-          this.accountingSegmentData = r.data;
+          this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
           this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
           if (initialLoad) {
             this.selectedSegment = r.data.find(s => s.default === 1)?.segmentID || r.data[0].segmentID;
