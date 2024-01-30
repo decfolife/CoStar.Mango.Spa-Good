@@ -10,21 +10,20 @@
 			<dx-form #addReminderForm id="form" validationGroup="centerForm" labelLocation="top">
 
 				<dxi-item itemType="group" cssClass="centerForm" [colCount]="1">
-
-                        <dxi-item dataField="reminderEvent" editorType="dxSelectBox"
-							[editorOptions]=""
+                        <dxi-item dataField="reminderEvent" editorType="dxSelectBox" 
+							[editorOptions]="{ items: reminderEventDropdown, valueExpr: 'TicklerTypeID', displayExpr: 'TickleDescription', onValueChanged: onPlGroupValueChanged} "
 							id="reminderEventId">
 							<dxi-validation-rule type="required"
 								message="You must select a Reminder Event."></dxi-validation-rule>
 						</dxi-item>
 
-                        <dxi-item dataField="userDefinedEvent" id="userDefinedEvent">
+                        <dxi-item dataField="userDefinedEvent" id="userDefinedEvent" *ngIf="shouldShowUserDefinedEvent()">
 							<dxo-label text="User Defined Event Name"></dxo-label>
 							<dxi-validation-rule type="required" message="You must enter an Event Name when selecting a user defined event.">
 							</dxi-validation-rule>
 						</dxi-item>
 
-                        <dxi-item dataField="userDefinedDate" id="userDefinedDate" editorType="dxDateBox">
+                        <dxi-item dataField="userDefinedDate" id="userDefinedDate" editorType="dxDateBox" *ngIf="shouldShowUserDefinedEvent()">
 							<dxo-label text="User Defined Event Date"></dxo-label>
 							<dxi-validation-rule type="required" message="You must enter an Event Date when selecting a user defined event.">
 							</dxi-validation-rule>
@@ -34,12 +33,18 @@
 							<dxo-label text="Begin Sending Reminder"></dxo-label>
 							<dxi-validation-rule type="required" message="The 'Begin Sending Reminder' field is required and must be a whole number greater than 0.">
 							</dxi-validation-rule>
+                            <dxi-validation-rule type="numeric" [max]="maxDate"
+                            message="Begin Sending Reminder should be a whole number greater than 0 (no commas)."
+                            ></dxi-validation-rule>
 						</dxi-item>
 					
                         <dxi-item dataField="freqDays" id="freqDays">
 							<dxo-label text="And Send Again Every"></dxo-label>
 							<dxi-validation-rule type="required" message="The 'And Send Again Every' field is required and must be a whole number greater than 0.">
 							</dxi-validation-rule>
+                            <dxi-validation-rule type="numeric" [max]="maxDate"
+                            message="Send Again Every Reminder should be a whole number greater than 0 (no commas)."
+                            ></dxi-validation-rule>
 						</dxi-item>
 
                         <dxi-item dataField="emailMessage" id="emailMessage" editorType="dxTextArea">
@@ -64,10 +69,11 @@
                                       [openOnFieldClick]="false"
                                       [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}"
                                   >
+                            
                                       <dx-list 
                                           #SelectionMembersList
                                           id="aet-membersList"
-                                          [dataSource]="recipients" 
+                                          [dataSource]="filteredremindersRecepient" 
                                           itemTemplate="membersListTemplate"
                                           [activeStateEnabled]="false" 
                                           [elementAttr]="{'aria-label': 'List of Members to Select'}"
@@ -78,9 +84,8 @@
                                           <div>
                                             <span class="aet-addPlusIcon"><fa-icon [icon]="faCirclePlus" ></fa-icon></span>
                                             <span class="aet-memberData">
-                                              <span class=aet-memberName>{{member.Name}}</span>
-                                              <span class="aet-company"> - {{member.Company}}</span>
-                                              <span class="aet-email"> - {{member.Email}}</span>
+                                              <span class=aet-memberName>{{member.ContactNameEmail}}</span>
+                                              <span class="aet-company" *ngIf="false">-{{member.ContactID}}</span>
                                             </span>
                                           </div>  
                                         </div>
@@ -89,12 +94,11 @@
                                 </div>
                             </div>
                             <div id="aet-selectedRecipients">
-                                <div id="aet-remove-recipient">
-                                <crem-button type="secondary" (click)="removeRecipient(); $event.preventDefault();" [disabled]="removeDisabled">
-                                    <!-- <fa-icon [icon]="faCircleMinus" ></fa-icon> -->
-                                    <span class="aet-removeText" >Remove</span>
+                              <div id="aet-remove-members">
+                                <crem-button type="secondary" (click)="removeMembers(); $event.preventDefault();" [disabled]="removeDisabled">
+                                  <span class="aet-removeText" >Remove</span>
                                 </crem-button>
-                                </div>
+                              </div>
                                 <div id="aet-selectedMembers-container">
                                 <div class="aet-selectedMembers-dataGrid-wrapper"> 
                                 
@@ -109,8 +113,8 @@
                                         columnResizingMode="widget"
                                         [allowColumnReordering]="true"
                                         [columnAutoWidth]="false"
-                                        [dataSource]="selectedRecipients"
-                                        keyExpr="contactId"
+                                        [dataSource]="remindersInfo.remindersRecepient"
+                                        
                                         [width]="'100%'"
                                         [wordWrapEnabled]="true"
                                         (onContentReady)="setAttributes($event)"
@@ -134,10 +138,23 @@
                                     >
                                     </dxo-editing>
                             
-                                     
-                                    <dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
-                                    <dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
-                                    
+                                    <dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+                                    [allowReordering]="false" [allowResizing]="false">
+                                    </dxi-column>
+                                    <dxi-column dataField="ContactId" [allowEditing]="false" dataType="string"></dxi-column>
+                                    <dxi-column dataField="ContactNameEmail" [allowEditing]="false" dataType="string"></dxi-column>
+                                    <dxi-column caption="" type="buttons" width="40" [fixed]="true" fixedPosition="right" [allowSorting]="false"
+                                    [allowReordering]="false" [allowResizing]="false">
+                                    <dxi-button template="actionsMenuTemplate">
+                                      <div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
+                                        <button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" 
+                                        
+                                          (click)="removeMember(member.data.contactId);$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu">
+                                          <fa-icon [icon]="faCircleMinus" ></fa-icon>
+                                        </button>
+                                      </div>
+                                    </dxi-button>		    	
+                                  </dxi-column>
                                     <div *dxTemplate="let member of 'toggleTemplate'" >
                                         <div class="emailToggle">
                                         <mat-slide-toggle [checked]="member.data.emailOn"  (change)="emailtoggle(member.data, $event)" aria-label="Email Notication">
@@ -160,14 +177,14 @@
 
 	</div>
 
-	<div modalFooter class="addReminderFooter">
+	<div modalFooter class="addEditTeamModal-footerContent">
+    <div id="buttonTemplate" class="footerRightControls">
 
-		<crem-button type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
-			Cancel</crem-button>
+        <crem-button  type="secondary" id="close-btn" (click)="cancelChanges()"> Cancel </crem-button>
 
 		<crem-button type="secondary" id="add_building_modal__save_btn" (click)="saveReminder($event)">
 			Save</crem-button>
- 
+    </div>
 
 	</div>
 </crem-modal>

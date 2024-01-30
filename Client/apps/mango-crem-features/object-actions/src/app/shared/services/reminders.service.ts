@@ -38,8 +38,17 @@ export class RemindersService extends EndpointService {
     return this.callHttpGet(url, 'GetReminderById', request);
   }
 
-  deleteReminder(reminderID: number): Observable<any> {
-    let url = `${environment.appUrls.objectActions}Reminders/DeleteReminder`;
-    return this.callHttpPost(url, 'DeleteReminder', reminderID);
+  getRecipientsContactsList(oID: number, oTID: number): Observable<any> {
+    let url = `${environment.appUrls.objectActions}Reminders/GetAvailableContacts`;
+    const request = {
+      objectid: oID,
+      objectTypeId: oTID
+    };
+    return this.callHttpGet(url, 'GetAvailableContacts', request);
+  }
+
+  SaveReminder(request: any): Observable<any> {
+    let url = 'https://localhost:60100/api/Reminders/SaveReminder';
+    return this.callHttpPost(url, 'SaveReminder', request);
   }
 }

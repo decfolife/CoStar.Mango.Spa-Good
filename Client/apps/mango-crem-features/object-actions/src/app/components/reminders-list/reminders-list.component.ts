@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatePipe } from '@angular/common';
 import { ButtonModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
@@ -42,39 +42,39 @@ export class RemindersListComponent implements OnInit {
   public gridData: any;
   public searchText: string = "";
   public columns: any = [];
+  @Input() otid : number;
+  @Input() oid : number;
 
-  constructor(private service: RemindersService, private route: ActivatedRoute, private dialog: MatDialog) {}
+  constructor(private service: RemindersService, private route: ActivatedRoute, private dialog: MatDialog) {
+    this.otid = Number(this.route.snapshot.queryParamMap.get('otid'));
+    this.oid = Number(this.route.snapshot.queryParamMap.get('oid'));
+  }
 
   ngOnInit(): void {
-    this.loadRemindersData();
+    this.loadRemindersData(this.otid , this.oid );
     this.setReminderColumns();
   }
 
-  private loadRemindersData(): void {
-    const otid: number = Number(this.route.snapshot.queryParamMap.get('otid'));
-    const oid: number = Number(this.route.snapshot.queryParamMap.get('oid'));
-
-    this.service.getRemindersList(oid, otid).subscribe(res => {
-      this.gridData = res.success ? res.data : null;
+  private loadRemindersData(otid: number, oid: number): void {
+    this.service.getRemindersList( oid , otid).subscribe(res => {
+      this.gridData = res?.success ? res.data : null;
     });
   }
 
   addReminder() {
-    
     let dialogRef = this.dialog.open(AddReminderComponent, {
       disableClose: true,
-      height: '90%',
-      width: '75%',
+      height: '70%',
+      width: '55%',
       maxWidth: '1100px',
       data: {
-        // objectTypeId: this.objectTypeId,
-        // userId: this.userId
+        objectTypeId: this.otid,
+        objectId: this.oid
       }
     });
-
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-
+      if (result === "Approve") {
+        this.loadRemindersData(this.otid , this.oid);
       }
     });
   

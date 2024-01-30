@@ -111,7 +111,6 @@ export abstract class EndpointService {
         if (httpOptionsParams) {
           httpOptions.params = httpOptionsParams
         }
-
         return this.http.get(url, httpOptions) 
       }),
       map(x => this.toObject(x) as any),

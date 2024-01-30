@@ -1,11 +1,72 @@
-::ng-deep {
-    .modalFooter {
-      .addReminderFooter {
-        display: flex;
-  
-        crem-button {
-          padding: 8px;
-        }
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+
+.aet-memberData {
+  pointer-events: none;
+  cursor: default;
+}
+
+fa-icon {
+  height: 20px;
+  width: 20px;
+  font-family: 'Open Sans', sans-serif;
+  color: black;
+  margin-right: 8px;
+  transform: translateY(2px);
+}
+
+#aet-members {
+  margin-bottom: 40px;
+}
+
+#aet-selectedMembers {
+  padding: 8px;
+  height: 290px;
+  width: 100%;
+
+  #aet-remove-members{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+    .aet-removeText {
+      height: 16px;
+      transform: translateY(3px);
+    }
+    crem-button[ng-reflect-disabled="true"] {
+      fa-icon {
+        color: lightgray;
       }
     }
   }
+
+  #aet-selectedMembers-container {
+    height: calc(100% - 40px);
+    .aet-selectedMembers-dataGrid-wrapper {
+      height: 100%;
+    }
+
+    div.actionsMenuTemplate {
+      transform: translateY(6px);
+    }
+  }
+}
+
+.aet-itemDisabled {
+  pointer-events: none;
+  color: lightgray;
+  cursor: default;
+  fa-icon {
+    color: lightgray;
+  }
+}
+
+.modalFooter {
+  border-top: 1px solid colors.$stdBorderColor;
+  .footerRightControls {
+    display: flex;
+    crem-button {
+      margin-left: 8px;
+    }
+  }
+}
+	
+
