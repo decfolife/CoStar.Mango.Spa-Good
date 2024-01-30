@@ -1,0 +1,14 @@
+<crem-modal
+    [className]="'newModal'"
+    [modalTitle]="'Delete Reminder?'"
+    [modalTitleId]="'deleteReminderModalTitle'"
+    [modalId]="'deleteReminderModal'"
+    closeIconVisible="true"
+    primaryFooterButtonText="Yes"
+	closeOrCancelButtonText="No"
+    (primaryButtonAction)="yesDelete()"
+    >
+    <div modalContent class="body-content"> 
+        <p>Are you sure you want to delete this reminder for <strong>{{ data.reminder.DisplayName }}</strong> ? </p>
+    </div>
+</crem-modal>

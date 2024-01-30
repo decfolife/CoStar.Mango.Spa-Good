@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatePipe } from '@angular/common';
 import { ButtonModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
@@ -16,6 +16,8 @@ import { saveAs } from 'file-saver-es';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { Subscription } from 'rxjs';
+import { DeleteReminderComponent } from '../modal/delete-reminder/delete-reminder.component';
 
 @Component({
   selector: 'mango-reminders-list',
@@ -35,30 +37,38 @@ import { MatMenuModule } from '@angular/material/menu';
   ],
   providers: [DatePipe, RemindersService]
 })
-export class RemindersListComponent implements OnInit {
+export class RemindersListComponent implements OnInit, OnDestroy {
   @ViewChild("RemindersDataGrid") remindersDataGrid: DxDataGridComponent;
   @ViewChild('SearchBox') searchBox: SearchComponent;
 
   public gridData: any;
   public searchText: string = "";
   public columns: any = [];
-  @Input() otid : number;
-  @Input() oid : number;
+  @Input() OTID : number;
+  @Input() OID : number;
+  private subscriptions = new Subscription();
 
-  constructor(private service: RemindersService, private route: ActivatedRoute, private dialog: MatDialog) {
-    this.otid = Number(this.route.snapshot.queryParamMap.get('otid'));
-    this.oid = Number(this.route.snapshot.queryParamMap.get('oid'));
+  constructor(private reminderService: RemindersService, private route: ActivatedRoute, private dialog: MatDialog) {
+    this.OTID = Number(this.route.snapshot.queryParamMap.get('otid'));
+    this.OID = Number(this.route.snapshot.queryParamMap.get('oid'));
   }
 
   ngOnInit(): void {
-    this.loadRemindersData(this.otid , this.oid );
+    this.loadRemindersData(this.OTID , this.OID );
     this.setReminderColumns();
   }
 
-  private loadRemindersData(otid: number, oid: number): void {
-    this.service.getRemindersList( oid , otid).subscribe(res => {
-      this.gridData = res?.success ? res.data : null;
-    });
+  ngOnDestroy(): void {
+    //close all subscriptions in this component
+    this.subscriptions.unsubscribe();
+  }
+
+  private loadRemindersData(OTID: number, OID: number): void {
+    this.subscriptions.add(
+      this.reminderService.getRemindersList(OID, OTID).subscribe(res => {
+        this.gridData = res.success ? res.data : null;
+      })
+    );
   }
 
   addReminder() {
@@ -68,17 +78,18 @@ export class RemindersListComponent implements OnInit {
       width: '55%',
       maxWidth: '1100px',
       data: {
-        objectTypeId: this.otid,
-        objectId: this.oid
+        objectTypeId: this.OTID,
+        objectId: this.OID
       }
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === "Approve") {
-        this.loadRemindersData(this.otid , this.oid);
-      }
-    });
-  
-}
+    this.subscriptions.add(
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === "Approve") {
+        this.loadRemindersData(this.OTID , this.OID);  
+        }
+      })
+    );
+  }
 
   public resetFilter(e) {
     e.stopPropagation();
@@ -231,4 +242,42 @@ export class RemindersListComponent implements OnInit {
       }
     });
   };
+
+  public deleteReminder(e) {
+    let reminder = e.data
+    let reminderId = reminder.TicklerID
+    let dialogRef = this.dialog.open(DeleteReminderComponent, {
+      height: '200px',
+      width: '600px',
+      data: { reminder }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result === "Yes") {
+        this.performDeleteReminder(reminderId);
+      }
+
+    });
+  }
+
+  // RID === remindId
+  public performDeleteReminder(RID: number) {
+    console.log("destroy all of it: " + RID)
+    this.subscriptions.add(
+      this.reminderService.deleteReminder(RID).subscribe(
+        (res: any) => {
+          if (res.success) {
+            this.gridData = this.gridData.filter(reminder => reminder.TicklerID !== RID)
+          }
+          else {
+            console.log("The Delete Reminder API call is not successful.");
+          }
+        },
+        (error: any) => {
+          console.log("Error deleting the reminder: ", error)
+        }
+      )
+    )
+  }
 }

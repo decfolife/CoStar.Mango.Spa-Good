@@ -41,7 +41,7 @@
 			[dataSource]="gridData"
 			keyExpr="TicklerID"
 			[wordWrapEnabled]="true"
-			(onContentReady)="adaAttributes($event); adaPaginationAttr($event); adaAttrNoDataGrid($event)"
+			(onContentReady)="adaAttributes($event); adaPaginationAttr($event); adaAttrNoDataGrid($event);"
 		>
 		<dxo-column-chooser [allowSearch]="true"
         mode="select"
@@ -67,18 +67,10 @@
 			<dxi-button template="moreMenuTemplate">
 				<div *dxTemplate="let data of 'moreMenuTemplate'">
 					
-					<button aria-label="more menu" class="btn btn-link" (click)="$event.preventDefault()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon role="none" aria-label="Actions Menu">more_horiz</mat-icon></button>
-					<mat-menu #expenseMoreMenu="matMenu" class="segments-actions">
-						<ul role="menu">
-							<li mat-menu-item 
-								(click)="edit(data)"> Edit
-							</li>
-						</ul>
-						<ul role="menu">
-							<li mat-menu-item 
-								(click)="DeleteReminderList(data)"> Delete
-							</li>
-						</ul>
+					<button aria-label="more menu" class="btn btn-link" (click)="$event.preventDefault()" [matMenuTriggerFor]="MoreMenu"><mat-icon role="none" aria-label="Actions Menu">more_horiz</mat-icon></button>
+					<mat-menu #MoreMenu="matMenu" class="segments-actions">
+						<button mat-menu-item>Edit</button>
+						<button mat-menu-item type="button" (click)="deleteReminder(data);" (keydown.space)="deleteReminder(data);" (keydown.enter)="deleteReminder(data)">Delete</button>
 					</mat-menu>
 				</div>
 			</dxi-button>		    	
