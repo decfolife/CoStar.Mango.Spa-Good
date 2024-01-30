@@ -110,7 +110,7 @@ export class JePaymentInfoComponent {
     const getCurrency = delimiter.length > 1 ? delimiter[1]?.trim() : currency.trim();
 
     if (target === 'summaryRow') {
-      return `Sum in Event Currency (${getCurrency}):`;
+      return `Sum in Accounting Currency (${getCurrency}):`;
     } else if (target === 'columnCaption') {
       return `Amount Due in Period (${getCurrency})`;
     }

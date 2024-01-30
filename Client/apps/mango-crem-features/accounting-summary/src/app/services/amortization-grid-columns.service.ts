@@ -1644,8 +1644,6 @@ export class AmortizationGridColumnsService {
         dataField: 'paymentEventSource',
         visible: true,
         alignment: 'left',
-        sortOrder: 'desc',
-        sortIndex: 1,
         headerCellTemplate: 'amortizationHeader'
       },
       {
@@ -1653,8 +1651,6 @@ export class AmortizationGridColumnsService {
         name: 'GlAccountName',
         dataField: 'glAccountName',
         visible: true,
-        sortOrder: 'desc',
-        sortIndex: 3,
         headerCellTemplate: 'amortizationHeader'
       },
       {
@@ -1678,8 +1674,6 @@ export class AmortizationGridColumnsService {
         dataType: 'date',
         format: dateFormat,
         visible: true,
-        sortOrder: 'desc',
-        sortIndex: 2,
         headerCellTemplate: 'amortizationHeader'
       },
       {
@@ -1688,7 +1682,7 @@ export class AmortizationGridColumnsService {
         dataField: 'currency',
         visible: true,
         headerCellTemplate: 'amortizationHeader',
-        width: '220px'
+        width: '230px'
       },
       {
         caption: 'Amount in Payment Currency',

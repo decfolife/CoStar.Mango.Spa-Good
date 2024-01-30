@@ -279,4 +279,24 @@
     #amortization-grid-detail-section .dx-datagrid-header-panel {
       display: none;
     }
+
+    #je-payment-info-popup-grid,
+    #je-processing-info-popup-grid,
+    #retrospective_adjustment-info-popup-grid,
+    #transaction-popup-section {
+        table.dx-datagrid-table {
+            tbody {
+                tr.dx-row.dx-data-row {
+                    &.dx-row-alt {
+                        &:hover {
+                            cursor: default;
+                            td {
+                            cursor: default;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
