@@ -155,7 +155,6 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	
 	sharedtoggle(e, member) {
 		member.share = e.checked;
-		this.teamMembers.map(teamMember => teamMember.share = (teamMember.memberId == member.memberId? e.share: teamMember.share));
 	}
 	
 	cancelChanges(member) {
