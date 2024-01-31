@@ -12,20 +12,20 @@ export class RemindersService extends EndpointService {
     super(http, facade);
   }
 
-  getRemindersList(OID: number, OTID: number): Observable<any> {
+  getRemindersList(oID: number, oTID: number): Observable<any> {
     let url = `${environment.appUrls.objectActions}Reminders/GetReminders`;
     const request = {
-      ObjectId: OID,
-      ObjectTypeId: OTID
+      objectid: oID,
+      objectTypeId: oTID
     };
     return this.callHttpGet(url, 'GetReminders', request);
   }
 
-  getReminderEvents(OID: number, OTID: number): Observable<any> {
+  getReminderEvents(oID: number, oTID: number): Observable<any> {
     let url = `${environment.appUrls.objectActions}Reminders/GetReminderEvents`;
     const request = {
-      objectid: OID,
-      objectTypeId: OTID
+      objectid: oID,
+      objectTypeId: oTID
     };
     return this.callHttpGet(url, 'GetReminderEvents', request);
   }
@@ -38,21 +38,17 @@ export class RemindersService extends EndpointService {
     return this.callHttpGet(url, 'GetReminderById', request);
   }
 
-  getRecipientsContactsList(OID: number, OTID: number): Observable<any> {
+  getRecipientsContactsList(oID: number, oTID: number): Observable<any> {
     let url = `${environment.appUrls.objectActions}Reminders/GetAvailableContacts`;
     const request = {
-      objectid: OID,
-      objectTypeId: OTID
+      objectid: oID,
+      objectTypeId: oTID
     };
     return this.callHttpGet(url, 'GetAvailableContacts', request);
   }
 
   SaveReminder(request: any): Observable<any> {
-    let url = 'https://localhost:60100/api/Reminders/SaveReminder';
+    let url = `${environment.appUrls.objectActions}Reminders/SaveReminder`;
     return this.callHttpPost(url, 'SaveReminder', request);
-  }
-
-  deleteReminder(RID: number): Observable<any>{
-    return this.callHttpDelete(`${environment.appUrls.objectActions}Reminders/DeleteReminder/${RID}`, 'DeleteReminder');
   }
 }
