@@ -13,6 +13,7 @@ import { OAuthEffects, UtilsClass } from './oauth.effects';
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import * as AppSelectors from '../selectors';
+import { toArray } from 'rxjs/operators';
 
 describe('OAUth Effects', () => {
   let userService: UserService;
@@ -55,7 +56,7 @@ describe('OAUth Effects', () => {
 
     it('should call window.open when openClientInNewTab is true', (done) => {
       jest.spyOn(window, 'open').mockReturnValue(null)
-      oauthEffects.redirectToClient$.subscribe(_ => {
+      oauthEffects.redirectToClient$.pipe(toArray()).subscribe(_ => {
         expect(window.open).toHaveBeenCalledTimes(1)
         expect(window.open).toHaveBeenCalledWith('https://url.com?auth_code=mock_authorization_code', '_blank')
         done()
@@ -63,9 +64,12 @@ describe('OAUth Effects', () => {
     })
 
     it('should dispatch purgeClientSelection', (done) => {
-      oauthEffects.redirectToClient$.subscribe(action => {
-        expect(action).toStrictEqual({
+      oauthEffects.redirectToClient$.pipe(toArray()).subscribe(actions => {
+        expect(actions[0]).toStrictEqual({
           type: AppActions.PURGE_CLIENT_SELECTION,
+        })
+        expect(actions[1]).toStrictEqual({
+          type: AppActions.GET_USER_CLIENTS,
         })
         done()
       })
