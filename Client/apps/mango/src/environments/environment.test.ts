@@ -11,8 +11,8 @@ class EnvironmentsCrem implements Environment {
     listpages: 'http://mangospa.test.corp.virtualpremise.com:30080/listpages/api/listpage/',
     financials: 'http://mangospa.test.corp.virtualpremise.com:30080/financials/api/',
     dashboards: 'http://mangospa.test.corp.virtualpremise.com:30080/dashboards/api/',
-    identity: 'https://identity.tst.crem.aws.dshrp.com/api',
-    authentication: 'https://authentication.tst.crem.aws.dshrp.com/api/',
+    identity: 'http://mangospa.test.corp.virtualpremise.com:30080/identity/api',
+    authentication: 'http://mangospa.test.corp.virtualpremise.com:30080/authentication/api/',
     authorization: 'http://mangospa.test.corp.virtualpremise.com:30080/authorization/api/',
     taskApproval: '', 
     reports: 'http://mangospa.test.corp.virtualpremise.com:30080/reports/api/',
@@ -36,7 +36,7 @@ class EnvironmentsCrem implements Environment {
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].test.corp.virtualpremise.com';
-  CAUrl = 'https://client-alpha.tst.crem.aws.dshrp.com/';
+  CAUrl = 'http://login.test.corp.virtualpremise.com:30080/';
   mangoSpaUrl = 'http://mangospa.test.corp.virtualpremise.com:30080/'
 }
 
