@@ -46,8 +46,10 @@
 
   <!-- Dropdown's Input -->
   <dxo-drop-down-options
-    [wrapperAttr]="selectBoxWrapperAttr">
-  </dxo-drop-down-options>
+    [container]="containerized ? id : undefined"
+    [hideOnParentScroll]="false"
+    [wrapperAttr]="selectBoxWrapperAttr"
+  ></dxo-drop-down-options>
 
   <!-- Template: Default -->
   <ng-container *dxTemplate="let item of 'default'">
@@ -120,7 +122,12 @@
   [inputAttr]="{ title: placeholder, 'aria-controls': id + 'dropdownContainer', 'aria-label': placeholder}"
 >
 
-  <dxo-drop-down-options [wrapperAttr]="wrapperAttr"></dxo-drop-down-options>
+  <dxo-drop-down-options
+    [id]="id + '_box'"
+    [container]="containerized ? id : undefined"
+    [hideOnParentScroll]="false"
+    [wrapperAttr]="wrapperAttr"
+  ></dxo-drop-down-options>
 
   <div [id]="id + 'dropdownContainer'"
     *dxTemplate="let data of 'dropdownTemplate'"

@@ -67,6 +67,7 @@ import { cremIcon } from '../icon/definitions/cremIcons';
  * @param {'default' | 'withMenu'} [itemTemplate] - Use a different item template, make sure to pass any additional parameter that may be needed by the template
  * @param {string} dropDownContainerCustomClass -
  * @param {boolean} [showDefaultValidationTooltip] - Show/Hide DevExtreme default tooltip
+ * @param {boolean} [containerized] - (DevExtreme) Specifies the container in which the UI Component is rendered, addressing issues related to dropdown container miscalculation on the y-axis. Read more at https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxPopup/Configuration/#container
  */
 @Component({
   selector: 'crem-dropdown',
@@ -131,6 +132,7 @@ export class DropdownComponent implements OnInit, OnChanges {
     | 'none' = 'none';
   @Input() public dataSource: any[]; // TODO: This needs a proper data type to know what to provide to the component
   @Input() public allowSearch?: boolean = false;
+  @Input() containerized?: boolean;
   @Input() isDisabled = false as boolean;
   @Input() dropDownContainerCustomClass: string;
   @Input() showDefaultValidationTooltip?: boolean = true;
@@ -198,6 +200,11 @@ export class DropdownComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.dropdownHeaderDisplay = this.dropdownHeaderDisplay || this.placeholder;
+    
+    if(this.containerized){ // If the ID is not present, a random ID is generated to render the dropdown inside the input field of the dropdown.
+      this.id = this.id ? this.id : 'rand-' + window.crypto.randomUUID();
+    }
+
     this.wrapperAttr = {
       class: this.dropDownContainerCustomClass ? 'crem-select-box' + ' ' + this.dropDownContainerCustomClass : 'crem-select-box',
       id: 'crem-select-box'
@@ -389,7 +396,7 @@ export class DropdownComponent implements OnInit, OnChanges {
                       checkboxElement.removeAttribute("aria-checked");
                     }
                   } else {
-                    childEl.setAttribute("title", childEl.innerHTML);
+                    childEl.setAttribute("title", childEl.innerHTML.replace(/<[^>]*>/g, ''));
                   }
                 }
               });
@@ -439,7 +446,7 @@ export class DropdownComponent implements OnInit, OnChanges {
               if (arr.length) {
                 arr.forEach((el) => {
                   if (el?.innerHTML?.length > 0) {
-                    el.setAttribute("title", el.innerHTML)
+                    el.setAttribute("title", el.innerHTML.replace(/<[^>]*>/g, ''));
                   }
                 })
               }

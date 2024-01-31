@@ -62,7 +62,8 @@
               [isDisabled]='fieldData.disabled'
               dropDownContainerCustomClass="dynamicFormDropDown"
               [dataSource]='fieldData.dataSource'
-              [placeholder]='fieldData.placeholder || "Select..."' [showClearButton]='true'
+              [placeholder]='fieldData.placeholder || "Select..."'
+              [showClearButton]='true'
               [showColumnHeader]='false' [required]="fieldData.required"
               [displayExpr]="fieldData.displayExpr || 'value'"
               [valueExpr]="fieldData.valueExpr || 'value'"
@@ -76,8 +77,9 @@
               [useSelectBox]="true"
               [readOnly]="fieldData.readOnly || data.archived || (!hasEditRight && !hasObjectEditRight)"
               [hoverText]="fieldData.hoverText || fieldData.caption"
-              (selectedItems)="onCriteriaDropdownChange($event)">
-            </crem-dropdown>
+              (selectedItems)="onCriteriaDropdownChange($event)"
+              [containerized]="true"
+            ></crem-dropdown>
             <div class="textbox_subtext--warning" *ngIf="!CriteriaSetForm.configKey[fieldData.dataField]?.value?.length && criteriaSetModified">
               <crem-icon class="icon" icon="faCircleInfo"></crem-icon>
               A criteria set is required.

@@ -86,8 +86,9 @@
                                 [allowSearch]='true'
                                 [useSelectBox]="true"
                                 [hoverText]="configKey[data.dataField].hoverText || configKey[data.dataField].caption"
-                                (selectedItems)="onChange($event, 'dropdown', data.dataField)">
-                            </crem-dropdown>
+                                (selectedItems)="onChange($event, 'dropdown', data.dataField)"
+                                [containerized]="true"
+                            ></crem-dropdown>
 
                             <crem-dropdown #CremDropdown *ngIf="(configKey[data.dataField]?.selectMode === 'multiple')"
                                 [id]="idPrefix + data.dataField + '_dropdown'"
@@ -109,8 +110,9 @@
                                 selectMode="multiple"
                                 showCheckBoxesMode="always"
                                 [hoverText]="configKey[data.dataField].hoverText || configKey[data.dataField].caption"
-                                (selectedItems)="onChange($event, 'dropdown', data.dataField)">
-                            </crem-dropdown>
+                                (selectedItems)="onChange($event, 'dropdown', data.dataField)"
+                                [containerized]="true"
+                            ></crem-dropdown>
                         </div>
 
                     </div>
@@ -220,8 +222,9 @@
                                 [allowSearch]='true'
                                 [hoverText]="configKey[data.dataField].hoverText || configKey[data.dataField].caption"
                                 [useSelectBox]="true"
-                                (selectedItems)="onChange($event, 'dropdown', data.dataField)">
-                            </crem-dropdown>
+                                (selectedItems)="onChange($event, 'dropdown', data.dataField)"
+                                [containerized]="true"
+                            ></crem-dropdown>
                         </div>
                     </div>
                 </dx-form>
