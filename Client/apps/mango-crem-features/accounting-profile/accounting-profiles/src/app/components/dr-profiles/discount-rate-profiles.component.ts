@@ -19,6 +19,9 @@ import { BaseService } from '../../services/base.service';
 import { PortfolioDropdownService } from '../../services/portfolio-dropdown.service';
 import { DiscountRateService } from '../../services/discount-rate.service';
 import { DiscountRateProfile } from '../../models/discount-rate-profile.model';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver-es';
+import { exportDataGrid } from 'devextreme/excel_exporter';
 
 @Component({
   selector: 'app-discount-rate-profiles',
@@ -198,8 +201,17 @@ export class DiscountRateProfilesComponent implements OnInit {
     this.filterBuilderVisible = true;
   }
 
-  exportDataGrid(): void {
-    this.dataGrid.instance.exportToExcel(false);
+  exportDataGrid() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet');
+    exportDataGrid({
+      component: this.dataGrid.instance,
+      worksheet: worksheet,
+    }).then(() => {
+      workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CoStar_DiscountRateProfiles.xlsx');
+      });
+    });
   }
 
   showColumnChooser(): void {

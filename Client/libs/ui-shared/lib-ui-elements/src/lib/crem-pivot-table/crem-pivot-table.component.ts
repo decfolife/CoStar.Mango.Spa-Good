@@ -6,6 +6,7 @@ import { Workbook } from 'exceljs';
 import PivotGridDataSource from "devextreme/ui/pivot_grid/data_source";
 import { saveAs } from 'file-saver-es'
 import DataSource from "devextreme/data/data_source";
+import * as ExcelJS from 'exceljs';
 
 interface ISummationTypeConfig {
   showSummationTypeConfig: boolean;
@@ -98,7 +99,16 @@ export class CremPivotTableComponent implements OnInit {
   }
 
   public exportToExcel() {
-    this.pivotGrid.instance.exportToExcel();
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Pivot');
+    exportPivotGrid({
+      component: this.pivotGrid.instance,
+      worksheet: worksheet,
+    }).then(() => {
+      workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), this.exportFileName + '.xlsx');
+      });
+    });
   }
 
   public onExporting(e) {
