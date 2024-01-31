@@ -36,7 +36,7 @@ class EnvironmentsCrem implements Environment {
   };
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].dev.corp.virtualpremise.com';
-  CAUrl = 'https://client-alpha.dev.crem.aws.dshrp.com/';
+  CAUrl = 'http://login.dev.corp.virtualpremise.com:30080/';
   mangoSpaUrl = 'http://mangospa.dev.corp.virtualpremise.com:30080/'
 }
 
