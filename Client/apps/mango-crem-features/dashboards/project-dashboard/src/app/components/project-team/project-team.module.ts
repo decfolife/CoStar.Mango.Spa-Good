@@ -11,6 +11,7 @@ import { DxDataGridModule, DxDropDownBoxModule, DxListModule, DxSelectBoxModule,
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MemberDetailsComponent } from './member-details/member-details.component';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
+import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,7 @@ import { AddEditMemberComponent } from './add-edit-member/add-edit-member.compon
     DxTextBoxModule,
     DxDateBoxModule,
   ],
-  providers: [],
+  providers: [MangoDialogService],
   exports: [ProjectTeamComponent],
 })
 export class ProjectTeamModule { }

@@ -21,6 +21,8 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   projectTeam: ProjectTeamMember[];
   projectId: number;
   memberInfo: MemberInfo = <MemberInfo>{};
+  selectedMemberContactIds: number[] = [];
+  userAccessLevel: number;
   subs: Subscription[] = [];
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
@@ -32,7 +34,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       filter(params => !!params && !!params.oid),
       tap(params => {this.projectId = params.oid}),
       switchMap(params => this.getProjectTeam(params.oid)),
-      tap(_ => this.getMemberInfo()),
+      tap(_ => {this.getMemberInfo(), this.getProjectContactLevel(this.projectId)}),
     ).subscribe());
   }
 
@@ -56,7 +58,16 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     ).subscribe());
   }
 
+  removeMembers() {
+
+  }
+
+  onSelectionChanged(e:any){
+    this.selectedMemberContactIds = e.selectedRowKeys;
+  }
+
   public getProjectTeam(projectId): Observable<any> {
+    this.selectedMemberContactIds = [];
     return this.dashboardService.getProjectTeams(projectId).pipe(
       filter(res => !!res && !!res.success),
       tap(res => {
@@ -73,6 +84,16 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
         this.memberInfo = res.data;
       },
       (error: any) => console.log("Error occurred getting Member Info Data ", error),
+      () => {}
+    ));
+  }
+
+  public getProjectContactLevel(projectId) {
+    this.subs.push(this.dashboardService.getProjectContactLevel(projectId).subscribe(
+      (res:any) => {
+        this.userAccessLevel = res.data;
+      },
+      (error: any) => console.log("Error occurred getting User Access Level ", error),
       () => {}
     ));
   }

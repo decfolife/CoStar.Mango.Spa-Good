@@ -158,5 +158,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}getoutstandingrolesfortask/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
+
+  getProjectContactLevel(projectId): Observable<any> {
+    const url = `${environment.appUrls.projects}getprojectcontactlevel/${projectId}`;
+    return this.callHttpGet(url, 'projectId')
+  }
 }
 

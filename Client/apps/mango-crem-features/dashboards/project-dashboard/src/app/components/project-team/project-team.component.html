@@ -15,7 +15,7 @@
 			<div class="actions">
 				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">Actions <mat-icon aria-label="Project Team Actions">arrow_drop_down</mat-icon></button>
 				<mat-menu #actionsMenu="matMenu" class="projectTeamActionsMenu">				
-					<button mat-menu-item (click)="toggleExpand()" class="actnBtn-removeMembers"><span >Remove Members</span></button>      
+					<button mat-menu-item class="actnBtn-removeMembers" [disabled]="!selectedMemberContactIds.length" (click)="removeMembers()"><span >Remove Members</span></button>      
 					<button mat-menu-item class="actionsButton-exportBtn" class="actnBtn-saveTeamTemplate">Save Team as Template</button>                   
 				</mat-menu>	 
 			</div>
@@ -54,6 +54,7 @@
 			[width]="'100%'"
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
+			(onSelectionChanged)="onSelectionChanged($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
@@ -66,7 +67,7 @@
 			</dxo-selection>
 
 			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
-				[allowReordering]="false" [allowResizing]="false" class="selectMember">
+				[allowReordering]="false" [allowResizing]="false" class="selectMember" [visible]="userAccessLevel == 1">
 			</dxi-column>
 			<dxi-column dataField="teamMember" ></dxi-column>
 			<dxi-column dataField="openTasks" [cellTemplate]="'openTasksTemplate'" alignment="center"></dxi-column>
