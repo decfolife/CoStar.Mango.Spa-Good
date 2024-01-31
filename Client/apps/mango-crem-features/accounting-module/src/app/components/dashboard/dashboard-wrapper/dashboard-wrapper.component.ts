@@ -91,7 +91,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         stopPropagation: true,
         dataTransformer: [
           {
-            condition: 'Default', disabled: true
+            condition: 1, disabled: true
           }
         ]
       },
@@ -210,7 +210,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       const menuItems = [];
       itemMenu.map( e => {
         let newItem: Partial<moreMenuItem> = {};
-        newItem = this.prepareItemMoreMenu(e, segment.rights, segment.segmentID); // Transform more menu
+        if (e.name === 'Make Default') {
+          newItem = this.prepareItemMoreMenu(e, segment.default, segment.segmentID); // Transform more menu
+        } else {
+          newItem = this.prepareItemMoreMenu(e, segment.rights, segment.segmentID); // Transform more menu
+        }
         menuItems.push(newItem); // Build Array of Menu Options
       });
 
