@@ -119,6 +119,10 @@ $menuWidth: 275px;
     background: transparent;
     border: 0;
     font-size: 14px !important;
+    text-align: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .view-list-item-flex button:hover {
