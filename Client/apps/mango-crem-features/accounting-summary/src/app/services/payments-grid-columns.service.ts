@@ -37,20 +37,29 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
       },
       {
-        caption: 'Recurring Amount',
+        caption: 'Payment Amount',
         name: 'RecurringAmount', 
         dataField: 'recurringAmount',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
-        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.recurringAmount, rowData.chargeCurrencyDecimalPrecision) + ' ' + rowData.chargeCurrency
+        dataType: 'number',
+        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.recurringAmount, rowData.chargeCurrencyDecimalPrecision)
       },
       {
-        caption: 'Target Amount In Period',
+        caption: 'Payment Currency',
+        name: 'ChargeCurrency', 
+        dataField: 'chargeCurrency',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+      },
+      {
+        caption: `Accounting Event Amount (${currencyInfo[0].scheduleCurrency})`,
         name: 'TargetAmountInPeriod', 
         dataField: 'targetAmountInPeriod',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
-        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.targetAmountInPeriod, rowData.scheduleCurrencyDecimalPrecision) + ' ' + rowData.scheduleCurrency
+        dataType: 'number',
+        calculateCellValue: rowData => this.formattingService.localFormat(+rowData.targetAmountInPeriod, rowData.scheduleCurrencyDecimalPrecision)
       },
       {
         caption: 'Is Direct Cost',
