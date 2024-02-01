@@ -11,6 +11,7 @@ export * from './lib/services/notification.service';
 export * from './lib/services/settings.service';
 export * from './lib/services/header.service';
 export * from './lib/services/error-handler.service';
+export * from './lib/services/export-datagrid.service';
 
 export * from './lib/utilities/animations'
 export * from './lib/utilities/db-keys'

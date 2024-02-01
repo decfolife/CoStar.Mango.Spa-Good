@@ -36,8 +36,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
-
-
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 import { IndexComponent } from './index.component';
 import { HomeComponent } from './listpage/home/home.component';
@@ -144,6 +143,7 @@ import { PaymentDetailsPopupComponent } from './listpage/payment-details/payment
         },
         NotesService,
         ShareViewPopupService,
+        ExportDevexDatagridService,
         FormWizardService
     ],
     exports: [ListPageComponent]

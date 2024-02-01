@@ -3,6 +3,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
 import { Subscription } from 'rxjs';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'new-projects-card',
@@ -22,6 +23,7 @@ export class NewProjectsComponent implements OnInit, OnDestroy {
 
   constructor(
     private cardsService: CardsService,
+    private exportToExcelService: ExportDevexDatagridService,
   ) { }
 
   ngOnInit(): void {
@@ -35,8 +37,8 @@ export class NewProjectsComponent implements OnInit, OnDestroy {
     this.rowClickEvent.emit(e);
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "New_Projects");
   }
 
   filter(e, cardId) {

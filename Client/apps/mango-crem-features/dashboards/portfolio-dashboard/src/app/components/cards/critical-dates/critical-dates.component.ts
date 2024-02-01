@@ -6,6 +6,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../../../../mango/src/environments/environment.local';
 import { Subscription } from 'rxjs';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'critical-dates-card',
@@ -24,7 +25,7 @@ export class CriticalDatesComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private portfolioDashboardService: PortfolioDashboardService,
+    private exportToExcelService: ExportDevexDatagridService,
     private portfolioDataService: PortfolioDataService,
   ) {
   }
@@ -68,8 +69,8 @@ export class CriticalDatesComponent implements OnInit, OnDestroy {
     this.card.moreOptions.isExpanded = e;
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+    this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Critical_Dates");
   }
 
   ngOnDestroy(): void {

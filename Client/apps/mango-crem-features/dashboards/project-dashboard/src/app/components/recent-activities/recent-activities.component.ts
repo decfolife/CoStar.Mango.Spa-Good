@@ -6,6 +6,7 @@ import { DashboardService } from '@project-dashboard/services/dashboard.service'
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as fileSaver from 'file-saver-es';
 import { environment } from '../../../../../../../mango/src/environments/environment.local';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'recent-activities',
@@ -24,6 +25,7 @@ export class RecentActivitiesComponent implements OnInit {
   public objectType: string = "Project";
 
   constructor(private dashboardService: DashboardService, private router: Router,
+              private exportToExcelService: ExportDevexDatagridService,
               private cardsService: CardsService) { }
 
   ngOnInit(): void {
@@ -68,7 +70,7 @@ export class RecentActivitiesComponent implements OnInit {
 	}
 
   exportDataGrid(): void {
-    this.recentActivitiesGrid.instance.exportToExcel(false);
+    this.exportToExcelService.exportToExcel(this.recentActivitiesGrid.instance, "Recent_Activities");
   }
 
   loadState() {

@@ -5,6 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
 import { TaskApprovalComponent } from '../../modal/task-approval/task-approval.component';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'tasks-due-soon-card',
@@ -27,6 +28,7 @@ export class TasksDueSoonComponent implements OnInit, OnDestroy {
   subs: Subscription[] = []
   constructor(
     private cardsService: CardsService,
+    private exportToExcelService: ExportDevexDatagridService,
     private dialog: MatDialog
   ) { }
 
@@ -41,8 +43,8 @@ export class TasksDueSoonComponent implements OnInit, OnDestroy {
     this.rowClickEvent.emit(e);
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Tasks_Due_Soon");
   }
 
   approve(selectedTask, actionName) {

@@ -6,6 +6,7 @@ import { environment } from '../../../../../../../../mango/src/environments/envi
 import { TaskApprovalComponent } from '../../modal/task-approval/task-approval.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'new-tasks-card',
@@ -24,6 +25,7 @@ export class NewTasksComponent implements OnInit, OnDestroy {
   subs: Subscription[] = []
   constructor(
     private cardsService: CardsService,
+    private exportToExcelService: ExportDevexDatagridService,
     private dialog: MatDialog
   ) { }
 
@@ -43,8 +45,8 @@ export class NewTasksComponent implements OnInit, OnDestroy {
     this.rowClickEvent.emit(e);
   }
   
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "New_Tasks");
   }
 
   // decorating rows for completed tasks

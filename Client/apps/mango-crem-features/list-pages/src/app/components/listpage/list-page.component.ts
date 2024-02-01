@@ -62,6 +62,7 @@ import { PaymentDetailsPopupComponent } from './payment-details/payment-details-
 import { DxFormComponent } from 'devextreme-angular';
 import { formatDate } from '@angular/common';
 import CheckBox from 'devextreme/ui/check_box';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 type VBBool = boolean | string;
 
@@ -412,7 +413,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
     return listView?.listViewType === ListViewType.CoStar;
   }
 
-  constructor(private activatedroute: ActivatedRoute, public service: ListPageService, public cdRef: ChangeDetectorRef, private dialog: MatDialog, private router: Router) {
+  constructor(private activatedroute: ActivatedRoute, public service: ListPageService, 
+              public cdRef: ChangeDetectorRef, private exportToExcelService: ExportDevexDatagridService,
+              private dialog: MatDialog, private router: Router) {
     // initialize currentPortfolio to allow use it properties in [displayExpr] and [valueExpr] in crem-dropdown component
     this.currentPortfolio = null;
     this.listViews = {} as any;
@@ -1424,8 +1427,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   exportExcel() {
-    this.dataGrid.export.fileName = this.currentListViewName;
-    this.dataGrid.instance.exportToExcel(false);
+    this.exportToExcelService.exportToExcel(this.dataGrid.instance, this.currentListViewName);
   }
 
   toggleShowActive(includeActive: boolean) {

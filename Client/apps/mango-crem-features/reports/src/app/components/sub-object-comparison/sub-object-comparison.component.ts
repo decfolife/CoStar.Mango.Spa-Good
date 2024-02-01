@@ -249,47 +249,47 @@ export class SubObjectComparisonComponent implements OnInit {
   }
 
   public exportpdf() {
-    const doc = new jsPDF();
-    exportDataGridToPdf({
-      jsPDFDocument: doc,
-      component: this.dataGrid.instance,
-      customizeCell: (options) => {
-        if (options.gridCell.rowType === 'data' && options.gridCell.column.dataField !== 'RowLabel' && options.gridCell.value) {
-          if (options?.gridCell?.data?.DataTypeId === '7') {
-            options.pdfCell.content = this.datepipe.transform(options?.gridCell.value, this.dateFormat);
-          }
+    // const doc = new jsPDF();
+    // exportDataGridToPdf({
+    //   jsPDFDocument: doc,
+    //   component: this.dataGrid.instance,
+    //   customizeCell: (options) => {
+    //     if (options.gridCell.rowType === 'data' && options.gridCell.column.dataField !== 'RowLabel' && options.gridCell.value) {
+    //       if (options?.gridCell?.data?.DataTypeId === '7') {
+    //         options.pdfCell.content = this.datepipe.transform(options?.gridCell.value, this.dateFormat);
+    //       }
 
-          if (options?.gridCell?.data?.DataTypeId === '6') {
-            options.pdfCell.content = this.currencyPipe.transform(options?.gridCell.value, 'USD');
-          }
+    //       if (options?.gridCell?.data?.DataTypeId === '6') {
+    //         options.pdfCell.content = this.currencyPipe.transform(options?.gridCell.value, 'USD');
+    //       }
 
-          if (((options?.gridCell?.data?.DataTypeId === '5' || options?.gridCell?.data?.DataTypeId === '206') && options?.gridCell?.data?.FormItemTypeId === '2') || (options?.gridCell?.data.DataTypeId === '5' && options?.gridCell?.data.FormItemTypeId === '9')) {
-            options.pdfCell.content = this.decimalPipe.transform(options?.gridCell.value, '1.2-2');
-          }
+    //       if (((options?.gridCell?.data?.DataTypeId === '5' || options?.gridCell?.data?.DataTypeId === '206') && options?.gridCell?.data?.FormItemTypeId === '2') || (options?.gridCell?.data.DataTypeId === '5' && options?.gridCell?.data.FormItemTypeId === '9')) {
+    //         options.pdfCell.content = this.decimalPipe.transform(options?.gridCell.value, '1.2-2');
+    //       }
 
-          if ((options?.gridCell?.data?.DataTypeId === '3') && options?.gridCell?.data?.FormItemTypeId === '2') {
-            options.pdfCell.content = this.decimalPipe.transform(options?.gridCell.value, '1.0');
-          }
+    //       if ((options?.gridCell?.data?.DataTypeId === '3') && options?.gridCell?.data?.FormItemTypeId === '2') {
+    //         options.pdfCell.content = this.decimalPipe.transform(options?.gridCell.value, '1.0');
+    //       }
 
-          if (options?.gridCell?.data?.FormItemTypeId === '3') {
-            options.pdfCell.content = options.gridCell.value.replaceAll('<br>', '\n')
-          }
+    //       if (options?.gridCell?.data?.FormItemTypeId === '3') {
+    //         options.pdfCell.content = options.gridCell.value.replaceAll('<br>', '\n')
+    //       }
 
-          if (options?.gridCell?.data.DataTypeId === '200' && options?.gridCell?.data.FormItemTypeId === '9') {
-            options.pdfCell.content = "";
-          }
+    //       if (options?.gridCell?.data.DataTypeId === '200' && options?.gridCell?.data.FormItemTypeId === '9') {
+    //         options.pdfCell.content = "";
+    //       }
 
-          if (options?.gridCell?.data.FormItemTypeId === '17' || options?.gridCell?.data.FormItemTypeId === '6') {
-            options.pdfCell.content = "";
-          }
-        }
+    //       if (options?.gridCell?.data.FormItemTypeId === '17' || options?.gridCell?.data.FormItemTypeId === '6') {
+    //         options.pdfCell.content = "";
+    //       }
+    //     }
 
-      }, // Customizes a grid cell
-    }).then(() => {
-      const currentDate = this.getCurrentDate();
-      const fileName = this.pageTitle + " - " + currentDate + '.pdf'
-      doc.save(fileName);
-    })
+    //   }, // Customizes a grid cell
+    // }).then(() => {
+    //   const currentDate = this.getCurrentDate();
+    //   const fileName = this.pageTitle + " - " + currentDate + '.pdf'
+    //   doc.save(fileName);
+    // })
 
   }
 

@@ -5,6 +5,7 @@ import * as fileSaver from 'file-saver-es';
 import { DashboardService } from '../../../services/dashboard.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Subscription } from 'rxjs';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'activity-feed-card',
@@ -24,7 +25,8 @@ export class ActivityFeedComponent implements OnInit, OnDestroy {
 
   constructor(
     private cardsService: CardsService,
-    private dashboardService: DashboardService
+    private exportToExcelService: ExportDevexDatagridService,
+    private dashboardService: DashboardService,
   ) { }
 
   ngOnInit(): void {
@@ -38,8 +40,8 @@ export class ActivityFeedComponent implements OnInit, OnDestroy {
     this.rowClickEvent.emit(e);
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Activity_Feed");
   }
 
   isActivityNoteAdded(cell: any) {

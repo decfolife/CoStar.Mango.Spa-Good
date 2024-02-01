@@ -9,6 +9,7 @@ import { RecentActivitiesComponent } from './recent-activities.component';
 import { RecentActivitiesRoutingModule } from './recent-activities-routing.module';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { CardsService } from '@project-dashboard/services/cards.service';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,7 @@ import { CardsService } from '@project-dashboard/services/cards.service';
     LoaderModule,
     FavoriteIconModule
   ],
-  providers: [DashboardService, CardsService],
+  providers: [DashboardService, CardsService, ExportDevexDatagridService],
   exports: [RecentActivitiesComponent],
 })
 export class RecentActivitiesModule { }

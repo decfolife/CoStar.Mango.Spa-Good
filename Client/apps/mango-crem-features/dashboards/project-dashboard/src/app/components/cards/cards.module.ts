@@ -24,6 +24,7 @@ import { ActivityFeedComponent } from './activity-feed/activity-feed.component';
 import { ProjectMilestonesComponent } from './project-milestones/project-milestones.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TaskApprovalModule } from '../modal/task-approval/task-approval.module';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 
 // eslint-disable-next-line max-len
@@ -52,7 +53,7 @@ const WARNING = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="
     FormsModule
   ],
   exports: [CardsComponent],
-  providers: [CardContentDirective],
+  providers: [CardContentDirective, ExportDevexDatagridService],
   bootstrap: [CardsModule],
 })
 export class CardsModule {

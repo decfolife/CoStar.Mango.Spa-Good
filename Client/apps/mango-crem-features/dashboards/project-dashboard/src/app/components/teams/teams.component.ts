@@ -18,6 +18,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { Observable, Subscription, of } from 'rxjs';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'teams',
@@ -50,6 +51,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   projectsPrivateSetting: number;
 
   constructor(private dashboardService: DashboardService, private router: Router,
+    private exportToExcelService: ExportDevexDatagridService,
     public toastr: ToastrService,
     private dialogService: MangoDialogService,
     private dialog: MatDialog, private cardsService: CardsService) { }
@@ -197,10 +199,6 @@ export class TeamsComponent implements OnInit, OnDestroy {
   searchDataGrid(data) {
     this.searchText = data;
     this.teamsGrid.instance.searchByText(this.searchText);
-  }
-
-  exportDataGrid(): void {
-    this.teamsGrid.instance.exportToExcel(false);
   }
 
   clearAllFilters() {

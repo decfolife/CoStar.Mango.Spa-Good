@@ -3,6 +3,7 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 import { DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
 import DataGrid from 'devextreme/ui/data_grid';
@@ -153,6 +154,7 @@ export class BatchEventListComponent implements OnInit {
   constructor(public baseService: BaseService,
     public batchEventListService: BatchEventListService,
     private batchParametersService: BatchParametersService,
+    private exportToExcelService: ExportDevexDatagridService,
     public router: Router,
     public cdRef: ChangeDetectorRef
   ) {
@@ -338,8 +340,9 @@ export class BatchEventListComponent implements OnInit {
   }
 
   exportDataGrid(): void {
-    // tslint:disable-next-line: deprecation
-    this.availableDataGrid?.instance.exportToExcel(false);
+    if(this.availableDataGrid?.instance) {
+      this.exportToExcelService.exportToExcel(this.availableDataGrid.instance, "Available_Data");
+    }
   }
 
   availableSearchDataGrid(event): void {

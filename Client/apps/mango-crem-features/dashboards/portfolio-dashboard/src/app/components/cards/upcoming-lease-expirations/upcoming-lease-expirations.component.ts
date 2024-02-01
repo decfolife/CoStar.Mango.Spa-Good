@@ -6,6 +6,7 @@ import { PortfolioDataService } from '../../../services/portfolio-data.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../../../../mango/src/environments/environment.local';
 import { Subscription } from 'rxjs';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'upcoming-lease-expirations-card',
@@ -23,6 +24,7 @@ export class UpcomingLeaseExpirationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private exportToExcelService: ExportDevexDatagridService,
     private portfolioDashboardService: PortfolioDashboardService,
     private portfolioDataService: PortfolioDataService,
   ) {
@@ -68,8 +70,8 @@ export class UpcomingLeaseExpirationsComponent implements OnInit, OnDestroy {
     this.card.moreOptions.isExpanded = e;
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Upcoming_Lease_Expirations");
   }
 
   ngOnDestroy(): void {

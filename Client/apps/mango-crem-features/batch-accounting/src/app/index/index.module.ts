@@ -15,7 +15,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ScreenLoaderModule } from '@mango/ui-shared/lib-ui-elements';
-
+import { ExportDevexDatagridService } from '@mango/core-shared';
 import {
   DevExtremeModule,
   DxChartModule,
@@ -83,6 +83,6 @@ import { ROUTES } from './index.routes';
     ScreenLoaderModule,
     RouterModule.forChild(ROUTES),
   ],
-  providers: [],
+  providers: [ExportDevexDatagridService],
 })
 export class IndexModule { }

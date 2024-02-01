@@ -7,6 +7,7 @@ import * as fileSaver from 'file-saver-es';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../../../../mango/src/environments/environment.local';
 import { Subscription } from 'rxjs';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'portfolio-activity-feed-card',
@@ -25,6 +26,7 @@ export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
   subs: Subscription[] = []
   constructor(
     private router: Router,
+    private exportToExcelService: ExportDevexDatagridService,
     private portfolioDashboardService: PortfolioDashboardService,
     private portfolioDataService: PortfolioDataService
   ) { }
@@ -66,8 +68,8 @@ export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
     this.card.moreOptions.isExpanded = e;
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+    this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Portfolio_Activity_Feed");
   }
 
   isActivityNoteAdded(cell: any) {

@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { environment } from '../../../../../../../../mango/src/environments/environment.local';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'tasks-due-this-week-card',
@@ -19,7 +20,8 @@ export class TasksDueThisWeekComponent implements OnInit, OnDestroy {
   @ViewChild("TasksDueThisWeekGrid") dataGrid: DxDataGridComponent;
   subs: Subscription[] = []
   constructor(
-    private cardsService: CardsService
+    private cardsService: CardsService,
+    private exportToExcelService: ExportDevexDatagridService,
   ) { }
 
   ngOnInit(): void {
@@ -34,8 +36,8 @@ export class TasksDueThisWeekComponent implements OnInit, OnDestroy {
     this.rowClickEvent.emit(e);
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Tasks_Due_This_Week");
   }
 
   decorateText(e: any) {

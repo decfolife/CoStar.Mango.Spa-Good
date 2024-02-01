@@ -3,6 +3,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Subscription } from 'rxjs';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'overdue-tasks-card',
@@ -20,7 +21,8 @@ export class OverdueTasksComponent implements OnInit, OnDestroy {
   subs: Subscription[] = []
 
   constructor(
-    private cardsService: CardsService
+    private cardsService: CardsService,
+    private exportToExcelService: ExportDevexDatagridService,
   ) { }
 
   ngOnInit(): void {
@@ -34,8 +36,8 @@ export class OverdueTasksComponent implements OnInit, OnDestroy {
     this.rowClickEvent.emit(e);
   }
 
-  exportAllGridData(e: any) {
-    this.dataGrid.instance.exportToExcel(false);
+  exportAllGridData() {
+   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Overdue_Tasks");
   }
 
   getCardData() {
