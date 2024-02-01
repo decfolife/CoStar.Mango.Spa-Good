@@ -123,7 +123,12 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     this.isGridStateChanged = false;
     const newState = this.paymentsDataGrid.instance.state();
     sessionStorage.setItem("paymentsGridStateKey", JSON.stringify(newState));
-    const columns = JSON.stringify(this.paymentsDataGrid.instance.state().columns);
+    const columnsState = this.paymentsDataGrid.instance.state().columns;
+    for (let index = 0; index < columnsState.length; index++) {
+      columnsState[index].caption = this.paymentsDataGrid.instance.columnOption(index, 'caption');
+      columnsState[index].headerCellTemplate = 'amortizationHeader';
+    }
+    const columns = JSON.stringify(columnsState);
     this.subscription.add(this.accountingSummaryService.saveGridPreferences(this.classificationID, this.gridName, columns).subscribe(response => {
       if (response === null) {
         this.accountingSummaryService.displayContactSystemAdminMessage();

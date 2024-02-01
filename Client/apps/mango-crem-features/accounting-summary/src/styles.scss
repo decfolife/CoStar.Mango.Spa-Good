@@ -17,7 +17,6 @@
     .grid-cell-box-shadow {
         box-shadow: inset 0px 0px 0px 20px #b4cee9;
     }
-    
     .header {
         color: #1e3a6f;
         font-weight: 500;
@@ -63,8 +62,9 @@
         width: 100% !important;
         height: 275px !important;
     }
-    
-    #je-payment-info-popup-grid, #retrospective_adjustment-info-popup-grid {
+
+    #je-payment-info-popup-grid,
+    #retrospective_adjustment-info-popup-grid {
         width: 100% !important;
         height: 480px !important;
     }
@@ -277,7 +277,7 @@
     #payments-grid-detail-section .dx-datagrid-header-panel,
     #events-grid-detail-section .dx-datagrid-header-panel,
     #amortization-grid-detail-section .dx-datagrid-header-panel {
-      display: none;
+        display: none;
     }
 
     #je-payment-info-popup-grid,
@@ -290,8 +290,9 @@
                     &.dx-row-alt {
                         &:hover {
                             cursor: default;
+
                             td {
-                            cursor: default;
+                                cursor: default;
                             }
                         }
                     }
@@ -299,4 +300,31 @@
             }
         }
     }
+
+    // Changing cursor icon of non-clickable columns to default and clickable to pointer
+    #events-grid-detail-section {
+        .dx-datagrid-content .dx-datagrid-table .dx-header-row>td {
+            cursor: default;
+        }
+
+        .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[aria-colindex="1"],
+        .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[aria-label="Column #"] {
+            cursor: pointer;
+        }
+    }
+}
+
+
+.dx-menu-base .dx-menu-item.dx-state-disabled {
+    opacity: 1;
+}
+
+    // Change Events grid action menu cursor icon of clickable items.
+.dx-menu-base .dx-menu-item {
+    cursor: pointer;
+}
+
+    // Events grid action menu cursor icon of Non-clickable items.
+.dx-menu-base .dx-menu-items-container {
+    cursor: default;
 }

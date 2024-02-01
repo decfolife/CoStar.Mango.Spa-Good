@@ -204,7 +204,12 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     this.isGridStateChanged = false;
     const newState = this.eventsDataGrid.instance.state();
     sessionStorage.setItem("eventsGridStateKey", JSON.stringify(newState));
-    const columns = JSON.stringify(this.eventsDataGrid.instance.state().columns);
+    const columnsState = this.eventsDataGrid.instance.state().columns;
+    for (let index = 0; index < columnsState.length; index++) {
+      columnsState[index].caption = this.eventsDataGrid.instance.columnOption(index, 'caption');
+      columnsState[index].headerCellTemplate = 'amortizationHeader';
+    }
+    const columns = JSON.stringify(columnsState);
     this.subscription.add(this.accountingSummaryService.saveGridPreferences(this.classificationId, this.gridName, columns).subscribe(response => {
       if (response === null) {
         this.accountingSummaryService.displayContactSystemAdminMessage();
@@ -427,7 +432,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     };
 
     const scheduleId = {
-      text: 'Schedule ID: ' + e.row.data.leaseRecognitionScheduleID,
+      text: 'Event ID: ' + e.row.data.leaseRecognitionScheduleID,
       disabled: true, selectable: true, beginGroup: true
     };
 

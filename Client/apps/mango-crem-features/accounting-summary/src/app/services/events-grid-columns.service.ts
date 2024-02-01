@@ -31,7 +31,7 @@ export class EventsGridColumnsService {
       {
         caption: '#', dataField: 'scheduleIndex',
         headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
-        allowHiding: false, allowReordering: false, allowResizing: false
+        allowHiding: false, allowReordering: false, allowResizing: false, width: 30, alignment:'center'
       },
       {
         caption: 'Is Published', 
@@ -66,6 +66,15 @@ export class EventsGridColumnsService {
         alignment: 'right',
         headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
         calculateCellValue: rowData => (Math.round(rowData.term * 10000) / 10000).toFixed(2)
+      },
+      {
+        caption: 'Payment Timing', dataField: 'paymentTiming',
+        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer', visible: false
+      },
+      {
+        caption: 'Compound Frequency', dataField: 'compoundFrequencyType',
+        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer', visible: false,
+
       }
     );
 

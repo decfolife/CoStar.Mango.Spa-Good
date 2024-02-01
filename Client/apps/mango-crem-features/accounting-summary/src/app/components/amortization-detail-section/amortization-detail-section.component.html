@@ -1,6 +1,6 @@
 <section class="section-grid">
     <mat-expansion-panel [expanded]="true" (closed)="accountingSummaryService.delayGridPanelCollapseWhenFilterIsVisible()">
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header aria-label="Amortization Table">
             <mat-panel-title class="header">
                 <div class="card-header">
                     <div class="card-title">Amortization Table {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
@@ -9,8 +9,7 @@
                      <div class="more">
                             <button [id]="accountingSummaryService.getId(componentName,'more','button')"
                                 class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" type="button" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon
-                                    [id]="accountingSummaryService.getId(componentName,'more','icon')"
-                                    aria-label="More Menu">arrow_drop_down</mat-icon></button>
+                                    [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
                             <mat-menu #moreMenu="matMenu" class="moreMatMenu">
                                 <button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>
                                 <button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>

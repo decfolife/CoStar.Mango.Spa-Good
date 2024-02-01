@@ -1,7 +1,7 @@
 <section class="section-grid">
 	<mat-expansion-panel [expanded]="true"> 
-		<mat-expansion-panel-header> 
-		  <mat-panel-title  class="header"> 
+		<mat-expansion-panel-header aria-label="Accounting Events"> 
+		  <mat-panel-title class="header" > 
 			<div class="card-header">
 				<div class="card-title">Accounting Events {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
 				</div>
@@ -15,7 +15,7 @@
 						valueExpr="masterScheduleID"
 						[deferRendering]="false"
 						[displayExpr]="gridBox_displayExpr"
-						[inputAttr]="{ 'aria-label': 'Owner' }"
+						[inputAttr]="{ 'aria-label': 'Accounting Event' }"
 						[showClearButton]="false"
 						[dataSource]="gridDataSource"
 						height="32px"
@@ -53,7 +53,7 @@
 				</div>
 				<div class="more-menu">
 					<div class="more">
-						<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')" aria-label="More Menu">arrow_drop_down</mat-icon></button>
+						<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
 							<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
 								<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
 								<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
@@ -128,8 +128,9 @@
 					<crem-icon  
 						[id]="accountingSummaryService.getId(componentName,'action-cog','icon')"
 						pack="solid" 
-						icon="faCog" 
-						color="primary"> 
+						icon="faEllipsisH" 
+						color="primary"
+						size="xl"> 
 						</crem-icon>
 					</div> 
 
@@ -137,8 +138,9 @@
 						<crem-icon 
 						[id]="accountingSummaryService.getId(componentName,'action-eye','icon')"
 						pack="solid" 
-						icon="faEye" 
-						color="primary"> 
+						icon="faEllipsisH" 
+						color="primary"
+						size="xl"> 
 						</crem-icon>
 					</div>
 				  </div>
