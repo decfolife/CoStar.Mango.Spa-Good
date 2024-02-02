@@ -150,12 +150,12 @@ export class DashboardService  extends EndpointService{
   }
 
   getProjectTaskList(projectId): Observable<any> {
-    const url = `${environment.appUrls.projects}getprojecttasklist/${projectId}`;
+    const url = `${environment.appUrls.tasks}getprojecttasklist/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
   getOutstandingRolesforTask(projectId): Observable<any> {
-    const url = `${environment.appUrls.projects}getoutstandingrolesfortask/${projectId}`;
+    const url = `${environment.appUrls.tasks}getoutstandingrolesfortask/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
