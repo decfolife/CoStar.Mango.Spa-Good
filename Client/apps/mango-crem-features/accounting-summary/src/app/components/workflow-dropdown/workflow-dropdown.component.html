@@ -10,7 +10,7 @@
     [showClearButton]="false"
     [dataSource]="dropdownDataSource"
     [dropDownOptions]="{ wrapperAttr: { class: 'accounting-summary-style-container workflow-dropdown-list-container' } }"
-    height="34px"
+    height="32px"
     width="200px"
     (onValueChanged)="onValueChanged($event)"
     itemTemplate="item"
@@ -33,7 +33,7 @@
     </div>
   </dx-tooltip>
 
-    <div class="work-flow-comments" *ngIf="this.commentsVisible">
+    <div #containerDiv id="containerDiv" class="work-flow-comments" *ngIf="this.commentsVisible">
       <p class="work-flow-comment-label">Change Workflow Status</p>
 
       <textarea
@@ -49,17 +49,17 @@
       
       <div class="workflow-btns-container">
         <crem-button
+          [id]="accountingSummaryService.getId(componentName,'cancel','button')"
+          type="secondary"
+          (click)="cancelChanges()">
+          Cancel</crem-button>
+
+        <crem-button
           [id]="accountingSummaryService.getId(componentName,'save','button')"
           type="primary"
           (click)="saveWorkFlowComment()"
           class="btn-primary-workflow-comments">
           Save</crem-button>
-          
-        <crem-button
-          [id]="accountingSummaryService.getId(componentName,'cancel','button')"
-          type="secondary"
-          (click)="cancelChanges()">
-          Cancel</crem-button>
     </div>
 
 </div>

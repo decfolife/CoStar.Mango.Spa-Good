@@ -1,6 +1,12 @@
-<div (click)="showHistoryPopup($event)">
-    <crem-icon icon="brand-info-border" library="local"></crem-icon>
-</div>
+<crem-button 
+    [id]="accountingSummaryService.getId(componentName,'history','icon')"
+    ariaLabel="workflow history"
+    type="secondary"
+    btnStyle="basic"
+    className="bg-transparent"
+    (buttonClick)="showHistoryPopup($event)">
+    <crem-icon icon="faClockRotateLeft" class="workflow-history-icon"></crem-icon>
+</crem-button>
 
 <dx-popup
 #WorkflowHistoryPopup 
@@ -94,7 +100,7 @@ titleTemplate="title-item"
                         showScrollbar="always"
                         (onInitialized)="onScrollViewInitialized($event)"
                         >
-                            {{ event.comment }}
+                        <div [innerHTML]="formatComment(event.comment)"></div>
                         </dx-scroll-view>
                     </div>
                 </ng-template>

@@ -53,6 +53,7 @@ export const cremIcons = [
 ];
 export const solidIcons = [
   "faAd",
+  "faClockRotateLeft",
   "faAddressBook",
   "faAddressCard",
   "faAdjust",

@@ -143,4 +143,8 @@ export class WorkflowHistoryPopupComponent {
     this.mainPopup.instance.option("width", "900");
     this.mainScrollView.instance.scrollTo(0);
   }
+
+  formatComment(comment: string): string {
+    return comment.replace(/\n/g, '<br>');
+  }
 }

@@ -1,5 +1,5 @@
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
-import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Subscription, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
@@ -10,6 +10,8 @@ import { concatMap, filter } from 'rxjs/operators';
   styleUrls: ['./workflow-dropdown.component.scss'],
 })
 export class WorkflowDropdownComponent {
+  @Input() leaseIsLocked: boolean;
+  @Input() leaseIsArchived: boolean;
   @Input() rightsInfo: any;
   @Input() workflowStatusInfo: any;
   @Input() modifiedById: number;
@@ -34,14 +36,17 @@ export class WorkflowDropdownComponent {
   private userId: any;
   commentText = '';
   @ViewChild('commentTextArea') commentTextArea: ElementRef;
+  @ViewChild('containerDiv') containerDiv: ElementRef;
+  divOpened = false;
+  divElement: any;
 
 
-  constructor(protected facade: MangoAppFacade, public accountingSummaryService: AccountingSummaryService) { 
+  constructor(protected facade: MangoAppFacade, public accountingSummaryService: AccountingSummaryService) {
     if (this.facade) {
-      this.subscription.add(this.facade.contactRecord$.pipe(filter(contactRecord => !!contactRecord)).subscribe(contactRecord =>
-        {
-          this.userId = contactRecord.contactID;
-        }));
+      this.subscription.add(this.facade.contactRecord$.pipe(filter(contactRecord => !!contactRecord)).subscribe(contactRecord => {
+        this.userId = contactRecord.contactID;
+      }));
+      document.addEventListener('click', this.onDocumentClick.bind(this));
     }
   }
 
@@ -165,7 +170,13 @@ export class WorkflowDropdownComponent {
         nextStatusOrderNumberAfterSelectedStatus = opt.statusOrder;
       }
 
-      if(!opt.allUsersHaveRights && !opt.userHasEditRights){
+      if(this.leaseIsLocked){
+        itemDisabled = true;
+        itemDisabledReason = "The workflow status cannot be modified when the lease is locked.";
+      } else if(this.leaseIsArchived){
+        itemDisabled = true;
+        itemDisabledReason = "The workflow status cannot be modified when the lease is archived.";
+      } else if(!opt.allUsersHaveRights && !opt.userHasEditRights){
         itemDisabled = true;
         itemDisabledReason = "You do not have rights to this status.";
       } else if(this.workflowSettings.isIncrementOneLevelEnforced && nextStatusOrderNumberAfterSelectedStatus !== null && 
@@ -176,7 +187,7 @@ export class WorkflowDropdownComponent {
                 && this.modifiedById === this.userId){
         itemDisabled = true;
         itemDisabledReason = "You cannot approve your own changes.";
-      }
+      } 
 
       const dataElement = {
         "workflowStatusId": opt.workflowStatusId,
@@ -193,8 +204,23 @@ export class WorkflowDropdownComponent {
   }
 
   cancelChanges() {
-    this.commentsVisible = false;  
+    this.commentsVisible = false;
+    this.divOpened = false;
     this.commentText = '';
     this.setDropdownToPreviousValue();
+  }
+
+  onDocumentClick(event: MouseEvent) {
+    if (!this.containerDiv.nativeElement.contains(event.target) && this.divOpened && this.commentsVisible) {
+      // // Clicked outside the div, hide it
+      this.divElement.remove();
+      this.divOpened = false;
+      this.cancelChanges();
+    }
+    this.divElement = document.getElementById('containerDiv');
+    if (this.divElement) {
+      this.divOpened = true;
+      this.commentTextArea.nativeElement.focus();
+    }
   }
 }

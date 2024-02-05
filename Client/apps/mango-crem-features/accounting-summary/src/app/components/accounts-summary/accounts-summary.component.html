@@ -29,19 +29,19 @@
           [workflowStatusHistory]="workflowStatusHistory"></mango-workflow-history-popup>
         </div>   
         <div class="workflow-dropdown-div">
-        <mango-workflow-dropdown [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo"
+        <mango-workflow-dropdown [leaseIsLocked]="isLocked" [leaseIsArchived]="isArchived" [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo"
           [modifiedById]="modifiedByID"
           (workflowStatusSavedEvent)="onWorkflowStatusSaved($event)"></mango-workflow-dropdown>
         <div *ngIf="modifiedDate || modifiedByName" class="work-flow-change-info"
           [id]="accountingSummaryService.getId(componentName,'ChangeBy','tooltip')"
           (mouseenter)="onChangeByTooltipMouseOver()" (mouseleave)="onChangeByTooltipMouseLeave()">
-          Changed by {{ modifiedByName | slice: 0:10 }}...
+          Modified by {{ modifiedByName | slice: 0:10 }}...
           {{ modifiedDate | date: userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
   
           <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
             target="#accounts-summary-ChangeBy-tooltip" [visible]="isChangeByTooltipVisible">
             <div *dxTemplate="let data of 'content'">
-              Changed by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU !== undefined &&
+              Modified by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU !== undefined &&
               userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
             </div>
           </dx-tooltip>

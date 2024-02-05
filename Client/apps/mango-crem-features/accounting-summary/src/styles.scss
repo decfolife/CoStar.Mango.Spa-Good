@@ -175,7 +175,6 @@
 
     .work-flow-comments {
         position: absolute;
-        margin-top: 10px;
         z-index: 10;
         min-width: 350px;
         background: #ffffff;
@@ -185,6 +184,11 @@
         padding: 5px;
         text-align: left;
         max-width: calc(100% - 20px);
+        overflow: auto;
+        resize: vertical;
+        min-height: 200px;
+        max-height: 75vh;
+        padding-bottom: 10px;
     }
 
     .work-flow-commentText {
@@ -192,23 +196,10 @@
         position: relative;
         display: block;
         width: 95% !important;
-        height: 50px !important;
+        min-height: 78px;
+        height: calc( 100% - 108px);
         margin: 5px auto;
-    }
-
-    .work-flow-comments:after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 40%;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-bottom-color: #8a8888;
-        border-top: 0;
-        border-left: 0;
-        margin-left: -5px;
-        margin-top: -10px;
+        resize:none;
     }
 
     .work-flow-comment-label {
@@ -312,6 +303,10 @@
             cursor: pointer;
         }
     }
+    
+    #openLeaseAlertsPopupButton {
+        height: 32px;
+      }
 }
 
 
