@@ -19,8 +19,9 @@ import { AddServiceAccountComponent } from '../../components/add-service-account
 import { UpdateServiceAccountComponent } from '../update-service-account/update-service-account.component';
 import { ResetPasswordConfirmationComponent } from '../../components/reset-password-confirmation/reset-password-confirmation.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { MatFormFieldModule } from '@angular/material/form-field'
     FormsModule,
     ReactiveFormsModule,
     MatTabsModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatIconModule
   ],
   exports: [RouterModule],
   providers: [
