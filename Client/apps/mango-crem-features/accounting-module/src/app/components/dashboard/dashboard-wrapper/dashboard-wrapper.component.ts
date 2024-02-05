@@ -54,6 +54,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public accountingYearData: any[] = [];
   public accountingSegmentData: any[] = [];
   public selectedSegment: number;
+  public appliedSegment: number;
   public selectedView = 1 as number;
   public selectedYear = 2022 as number;
   public loading = true as boolean;
@@ -152,6 +153,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
               this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
               this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1)?.segmentID || this.accountingSegmentData?.[0].segmentID;
+              this.appliedSegment = this.selectedSegment;
               this.loading = false;
             });
 
@@ -260,8 +262,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     }
   }
 
-  public getSegments(view: number, initialLoad: boolean) {
-    this.loading = true;
+  public getSegments(view: number, refresh: boolean) {
     this.accountingSegmentData = [];
 
     this.inAppDisclosureService.getAccountingCriteriaSets()
@@ -280,8 +281,9 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         tap( r => {
           this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
           this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
-          if (initialLoad) {
+          if (refresh) {
             this.selectedSegment = r.data.find(s => s.default === 1)?.segmentID || r.data[0].segmentID;
+            this.appliedSegment = this.selectedSegment;
           }
           this.selectedView = view;
           this.loading = false;
@@ -302,7 +304,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     }
   }
 
-  public apply(data) {
+  public apply() {
     switch(this.selectedView){
       default:
       case 1: {
@@ -318,6 +320,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         break;
       }
     }
+    this.appliedSegment = this.selectedSegment;
   }
 
   public export() {
@@ -373,12 +376,21 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           archived: !data.active
         }
       });
-
+      const editingSegment = data.segmentID;
       dialogRef.afterClosed().subscribe((data) => {
-        if (data === "refresh") {
-          this.getSegments(this.selectedView, false);
-        } else if (data) {
-          this.redirectDialog(data)
+        if (editingSegment == this.appliedSegment) {
+          if (data === "refresh") {
+            this.loading = true;
+            this.getSegments(this.selectedView, true);
+          } else if (data) {
+            this.redirectDialog(data)
+          }
+        } else {
+          if (data === "refresh") {
+            this.getSegments(this.selectedView, false);
+          } else if (data) {
+            this.redirectDialog(data)
+          }
         }
       });
 
@@ -386,12 +398,16 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   public archiveAction(data) {
-    this.loading = true;
     let request = { "SegmentID": data.segmentID }
     if (data.active) {
       this.reportsService.archiveSegment(request).subscribe((result) => {
         if (result) {
-          this.getSegments(this.selectedView, false);
+          if (data.segmentID === this.appliedSegment) {
+            this.loading = true;
+            this.getSegments(this.selectedView, true);
+          } else {
+            this.getSegments(this.selectedView, false);
+          }
           notify({
             message: 'Segment archived successfully.',
             type: 'success',
@@ -402,7 +418,6 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         })
         } else {
           //error
-          this.loading = false;
         }
       })
     } else {
@@ -419,7 +434,6 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         })
         } else {
           //error
-          this.loading = false;
         }
       })
     }
@@ -428,10 +442,19 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public redirectDialog(config: any) {
     const redirectRef = this.dialog.open(CreateSegmentComponent, config)
     redirectRef.afterClosed().subscribe((data) => {
-      if (data === "refresh") {
-        this.getSegments(this.selectedView, false);
-      } else if (data) {
-        this.redirectDialog(config);
+      if (config.data.segmentID == this.appliedSegment) {
+        if (data === "refresh") {
+          this.loading = true;
+          this.getSegments(this.selectedView, true);
+        } else if (data) {
+          this.redirectDialog(config)
+        }
+      } else {
+        if (data === "refresh") {
+          this.getSegments(this.selectedView, false);
+        } else if (data) {
+          this.redirectDialog(config)
+        }
       }
     });
   }
