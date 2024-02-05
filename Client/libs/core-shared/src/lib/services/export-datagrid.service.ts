@@ -12,7 +12,7 @@ export class ExportDevexDatagridService {
   exportToExcel(dataGridInstance: dxDataGrid, fileName: string){
 
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Overdue_Projects');
+    const worksheet = workbook.addWorksheet(fileName);
 
     exportDataGrid({
       component: dataGridInstance,
