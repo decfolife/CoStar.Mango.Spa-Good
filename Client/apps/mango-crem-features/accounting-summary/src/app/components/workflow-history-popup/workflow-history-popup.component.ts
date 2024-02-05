@@ -1,9 +1,12 @@
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { Component, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 import { DxPopupComponent } from 'devextreme-angular/ui/popup';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import ScrollView from "devextreme/ui/scroll_view";
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver-es';
 
 @Component({
   selector: 'mango-workflow-history-popup',
@@ -45,6 +48,65 @@ export class WorkflowHistoryPopupComponent {
         this.currentTemplate = 'dataTemplate';
       }
     }
+  }
+  
+   getTimeStamp() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}${minutes}${seconds}`;
+}
+
+  exportToExcel(): void {
+    const workbook = new ExcelJS.Workbook();
+    const worksheetName = `System Lease ID - ${this.accountingSummaryService.getLeaseAbstractId()}`
+    const filename = environment.name ==='PROD'? `WorkflowChangeHistory_${this.getTimeStamp()}.xlsx`:
+     `WorkflowChangeHistory_${this.getTimeStamp()}_${environment.name}.xlsx`;
+
+    const worksheet = workbook.addWorksheet(worksheetName);
+  
+    // Captions, corresponding keys, width of the column
+    const headers = [
+      { caption: 'Date', key: 'modifiedDate', width: 25 },
+      { caption: 'User', key: 'modifiedByName', width: 25 },
+      { caption: 'Status', key: 'workflowStatus', width: 25 },
+      { caption: 'Description', key: 'description', width: 40 },
+      { caption: 'Comment', key: 'comment', width: 40 }
+    ];
+  
+    const headerRow = headers.map(header => header.caption);
+    const headerRowObject = worksheet.addRow(headerRow);
+    headerRowObject.font = { bold: true };
+    headerRowObject.height = 25;
+  
+    headers.forEach((header, index) => {
+      worksheet.getColumn(index + 1).width = header.width;
+    });
+  
+    worksheet.views = [
+      { state: 'frozen', xSplit: 0, ySplit: 1, activeCell: 'A2' }
+    ];
+  
+    const workflowStatusHistory = this.workflowStatusHistory;
+  
+    workflowStatusHistory.forEach(item => {
+      const row = headers.map(header => item[header.key]);
+      worksheet.addRow(row);
+    });
+  
+    worksheet.eachRow({ includeEmpty: true }, function (row) {
+      row.eachCell({ includeEmpty: true }, function (cell) {
+        cell.alignment = { wrapText: true, vertical: 'top' };
+      });
+    });
+  
+    workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
+      saveAs(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+    });
   }
 
   showHistoryPopup(event: any) {

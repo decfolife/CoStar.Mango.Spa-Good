@@ -54,33 +54,18 @@ crem-icon{
   }
 
   .popup-title-icon-div {
-    crem-icon.fa-lg {
-      display: inline-block;
-      height: 32px;
-      vertical-align: 0px;
-
-      &:hover {
-        @include costar(background-color, gray06);
-      }
-
-      &:active {
-        @include costar(background-color, gray05);
-      }
-    }
-
-    .dx-icon.dx-icon-close {
-      cursor: pointer;
-      font-size: 19px;
-      margin-left: 15px;
-      height: 32px;
-
-      &:hover {
-        @include costar(background-color, gray06);
-      }
-
-      &:active {
-        @include costar(background-color, gray05);
-      }
-    }
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    justify-content: flex-end;
   }
+
+  .popup-title-icon-div>*{
+    padding-right: 8px;
+  }
+}
+
+.wfs-history-btn {
+  padding-top: 6px;
 }

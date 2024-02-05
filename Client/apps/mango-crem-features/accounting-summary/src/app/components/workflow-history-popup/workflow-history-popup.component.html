@@ -24,9 +24,40 @@ titleTemplate="title-item"
                 Workflow Change History
             </div>
             <div class="popup-title-icon-div">
-                <crem-icon *ngIf="!isFullscreen" class="fa-lg" icon="faExpand" (click)="isFullscreen = true"></crem-icon>
-                <crem-icon *ngIf="isFullscreen" class="fa-lg" icon="faCompress" (click)="isFullscreen = false"></crem-icon>
-                <i class="dx-icon dx-icon-close" (click)="hideHistoryPopup($event)"></i>
+                <crem-button
+				    [id]="accountingSummaryService.getId(componentName ,'export-to-excel','button')"
+                    (click)="exportToExcel()"
+                    btnStyle="basic"
+                    title="Export Workflow Status History to Excel"
+                    type="secondary">
+                    <crem-icon class="fa-lg fa-regular" icon="faFileExcel" pack="regular"></crem-icon>
+                </crem-button>
+                <crem-button
+                    [id]="accountingSummaryService.getId(componentName ,'full-screen','button')"
+                    (click)="isFullscreen = true"
+                    *ngIf="!isFullscreen"
+                    btnStyle="basic"
+                    title="Full Screen"
+                    type="secondary">
+                    <crem-icon class="fa-lg" icon="faExpand"></crem-icon>
+                </crem-button>
+                <crem-button 
+                    [id]="accountingSummaryService.getId(componentName ,'exit-full-screen','button')"
+                    (click)="isFullscreen = false"
+                    *ngIf="isFullscreen"
+                    btnStyle="basic"
+                    title="Exit Full Screen"
+                    type="secondary">
+                    <crem-icon class="fa-lg" icon="faCompress"></crem-icon>
+                </crem-button>
+                <crem-button
+                    [id]="accountingSummaryService.getId(componentName ,'close','button')"
+                    (click)="hideHistoryPopup($event)"
+                    btnStyle="basic"
+                    title="Close"
+                    type="secondary">
+                    <crem-icon class="fa-lg" icon="faX"></crem-icon>
+                </crem-button>
             </div>
         </div>
     </div>
