@@ -39,9 +39,9 @@ width="70%"
 
       <div *dxTemplate="let PeriodPopup of 'retrospectiveAdjustmentData'">
           <!-- Retrospective Adjustment tab component -->
-          <mango-retrospective-adjustment-info *ngIf="hasRetroSchedule"
+          <mango-retrospective-adjustment-info *ngIf="showRetroScheduleTab"
               [retrospectiveAdjustmentPopupData]="retrospectiveAdjustmentPopupData"
-              [amortizationDetailColumns]="amortizationDetailColumns" 
+              [gridColumnsForRetroPopup]="gridColumnsForRetroPopup" 
               [classificationType]="classificationType" 
               [amortizationProfileName]="amortizationProfileName" 
               (retroAdustmentGridRowClickEvent) = "onRetroAdustmentGridRowClick($event)"

@@ -9,7 +9,7 @@ import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/
 })
 export class RetrospectiveAdjustmentInfoComponent {
   @Input() retrospectiveAdjustmentPopupData: any;
-  @Input() amortizationDetailColumns: any[];
+  @Input() gridColumnsForRetroPopup: any[];
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;
   @Output() retroAdustmentGridRowClickEvent: EventEmitter<any> = new EventEmitter();
@@ -18,14 +18,15 @@ export class RetrospectiveAdjustmentInfoComponent {
   componentName = "retrospective_adjustment-info";
 
   gridData = []
-  gridColumn = []
+  gridColumns = []
 
   constructor(private formattingService: FormattingService, public accountingSummaryService: AccountingSummaryService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(!!changes.amortizationDetailColumns && changes.amortizationDetailColumns.currentValue !== undefined){
-      this.gridColumn = this.getRetrospectiveAdjustmentGridColumns();
+    if(!!changes.gridColumnsForRetroPopup && changes.gridColumnsForRetroPopup.currentValue !== undefined){
+      this.getRetrospectiveAdjustmentGridColumns();
+      this.gridColumns = this.gridColumnsForRetroPopup
       this.gridData = this.retrospectiveAdjustmentPopupData;
     }
   }
@@ -51,26 +52,19 @@ export class RetrospectiveAdjustmentInfoComponent {
   }
 
   private getRetrospectiveAdjustmentGridColumns() {
-    let amortizationDetailCols = JSON.parse(JSON.stringify(this.amortizationDetailColumns));
+    let breakLoop = false;
 
-      amortizationDetailCols.forEach(bandedCol => {
-        bandedCol.columns.forEach(col => {
-            if(col.name !== "PeriodIndex" && col.name !== "DisplayPeriod" && col.name !== "JEStatus")
-            {
-              col.calculateCellValue = rowData => {
-                if(isNaN(rowData[col.dataField])) {
-                  return '';
-                }
-  
-                return this.formattingService.formatNumber(rowData[col.dataField], 2);
-              }
+      this.gridColumnsForRetroPopup.some(bandedCol => {
+        bandedCol.columns.some(col => {
+            if(col.dataField.toLowerCase() === "jestatus"){
+              col.cellTemplate = "clickableLink";
+              breakLoop = true
             }
-            else if(col.name === "JEStatus"){
-              col.cellTemplate = "clickableLink"
-            }
+
+            return breakLoop;
         });
-      });
 
-    return amortizationDetailCols;
+        return breakLoop;
+      });
   }
 }

@@ -43,6 +43,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   popupVisible = false;
   amortizationGridRowClickEvent: any;
   retroAdustmentGridRowClickEvent: any
+  gridColumnsForRetroPopup: any;
   retroEventJeStatus = ""; 
   private subscription = new Subscription();
 
@@ -96,6 +97,10 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   }
 
   onGridRowClick(event) {
+    if(!!this.eventScheduleData.retroScheduleID) {
+      this.setupGridColumnsForRetroPopup(event.columns);
+    }
+
     this.amortizationGridRowClickEvent = event;
   }
 
@@ -196,7 +201,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   saveState(state) {
       sessionStorage.setItem("amortizationGridStateKey", JSON.stringify(state));
-    }
+  }
 
   /**
   * Gets the appropriate columns from the service.
@@ -359,5 +364,28 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   openMoreMenu(event: Event): void {
     event.stopPropagation();
+  }
+
+  private setupGridColumnsForRetroPopup(visibleColumns) {
+    this.gridColumnsForRetroPopup = JSON.parse(JSON.stringify(this.amortizationDataGrid.columns));
+    let resultColumnsArray = JSON.parse(JSON.stringify(this.amortizationDataGrid.columns));
+    let bandColIndex = 0;
+
+    this.gridColumnsForRetroPopup.forEach(bandedCol => {
+      let subColIndex = 0;
+
+      bandedCol.columns.forEach(subCol => {
+        const foundColumn = visibleColumns.find(vc => vc.name.toLowerCase() === subCol.name.toLowerCase());
+        if(foundColumn !== undefined) {
+          resultColumnsArray[bandColIndex].columns[subColIndex] = foundColumn;
+        } 
+
+        subColIndex++;
+      });
+
+      bandColIndex++;
+    });
+
+    this.gridColumnsForRetroPopup = resultColumnsArray;
   }
 }

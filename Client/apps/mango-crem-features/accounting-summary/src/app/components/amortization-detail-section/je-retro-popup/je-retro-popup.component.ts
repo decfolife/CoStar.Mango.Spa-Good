@@ -12,7 +12,7 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
 export class JeRetroPopupComponent {
   @Input() amortizationGridRowClickEvent: any; 
   @Input() eventScheduleData: any;
-  @Input() amortizationDetailColumns: any[];
+  @Input() gridColumnsForRetroPopup: any[];
   @Input() rightsInfo: any;
   @Input() userInfo: UserInfoResponse;
   @Input() classificationType: string;
@@ -24,7 +24,7 @@ export class JeRetroPopupComponent {
 
   dateFormat = 'MM/dd/yyyy';
   displayPeriodTitle: string;
-  hasRetroSchedule = false;
+  showRetroScheduleTab = false;
   jeRetroPopupVisible = false;
   jeProcessingPopupData: any;
   jePopupTile: string;
@@ -82,7 +82,8 @@ export class JeRetroPopupComponent {
 
   setupJeRetroPopup(event: any) {
     const { leaseRecognitionPeriodID, displayPeriod, periodStart, periodEnd } = event.data;
-    this.hasRetroSchedule = this.eventScheduleData.retroScheduleID !== null;
+    this.showRetroScheduleTab = (!!this.eventScheduleData.retroScheduleID) && (event.data.scheduleIndex === this.eventScheduleData.scheduleIndex) && event.data.isImpactedByRetro &&
+      ((!!this.eventScheduleData.adjustmentAmount) || (!!this.eventScheduleData.functional_AssetAdjustmentAmount) || (!!this.eventScheduleData.liabilityAdjustmentAmount));
 
     this.tabs = [{ "title": "Journal Entry", "template":"jeProcessingData" }];
     this.getJeProcessingPopupData(leaseRecognitionPeriodID);
@@ -91,7 +92,7 @@ export class JeRetroPopupComponent {
       this.tabs.push({ "title": "Payment Detail", "template":"paymentDetailData" })
       this.getJePaymentPopupData(leaseRecognitionPeriodID);
 
-      if(this.hasRetroSchedule){
+      if(this.showRetroScheduleTab){
         this.tabs.push({ "title": "Retrospective Adjustment", "template":"retrospectiveAdjustmentData" })
         this.getRetrospectiveAdjustmentPopupData(this.eventScheduleData.retroScheduleID);
       }
