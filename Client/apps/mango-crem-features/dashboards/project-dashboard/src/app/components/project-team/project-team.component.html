@@ -16,7 +16,9 @@
 				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">Actions <mat-icon aria-label="Project Team Actions">arrow_drop_down</mat-icon></button>
 				<mat-menu #actionsMenu="matMenu" class="projectTeamActionsMenu">				
 					<button mat-menu-item class="actnBtn-removeMembers" [disabled]="!selectedMemberContactIds.length" (click)="removeMembers()"><span >Remove Members</span></button>      
-					<button mat-menu-item class="actionsButton-exportBtn" class="actnBtn-saveTeamTemplate">Save Team as Template</button>                   
+					<button mat-menu-item class="actionsButton-saveTeamTemplate" (click)="saveTeamAsTemplate()"
+						*ngIf="userAccessLevel == 1 || userAccessLevel == 2 "> Save Team as Template
+					</button>                   
 				</mat-menu>	 
 			</div>
 			<div class="more">
@@ -78,7 +80,7 @@
 			<dxi-column caption='Shared' alignment="center" [cellTemplate]="'sharedTemplate'" ></dxi-column>
 			<dxi-column dataField="description" [wordWrapEnabled]="false" width='160'cssClass="wrapOption-column"></dxi-column>
 			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
-				[allowReordering]="false" [allowResizing]="false">
+				[allowReordering]="false" [allowResizing]="false" [visible]="userAccessLevel == 1">
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate" id="{{'memberActionButton' + member.rowIndex}}">
 						<button aria-label="actions menu" class="btn btn-link memberActionsButton" 

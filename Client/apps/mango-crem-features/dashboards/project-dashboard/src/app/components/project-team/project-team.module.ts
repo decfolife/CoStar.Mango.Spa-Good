@@ -12,12 +12,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MemberDetailsComponent } from './member-details/member-details.component';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
 
 @NgModule({
   declarations: [
     ProjectTeamComponent,
     MemberDetailsComponent,
     AddEditMemberComponent,
+    SaveTeamTemplateComponent,
   ],
   imports: [
     CommonModule,

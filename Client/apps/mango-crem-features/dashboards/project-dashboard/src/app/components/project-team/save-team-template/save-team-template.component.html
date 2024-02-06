@@ -1,0 +1,21 @@
+<crem-modal 
+	[modalTitle]="'Save Team As Template'" 
+  [modalId] = "'saveTeamTemplateModal'"
+	[closeIconVisible]="closeButton" 
+	[primaryFooterButtonText]="'Save'"
+	[closeOrCancelButtonText]="'Cancel'" 
+	[primaryFooterButtonEnabledDisabled]="templateName.trim().length == 0? true: false"
+	(primaryButtonAction)="saveTeamAsTemplate()">
+	<div modalContent class="saveTeamTemplateModal-content">
+    <div class="saveTeamTemplate-msg">
+      If the Team Manager is not sharing rights, none of the members in the new template will share rights.
+    </div>
+    <dx-text-box
+      class="templateName-input"
+      [(value)]="templateName"
+      placeholder="Enter Name for New Template"
+      [inputAttr]="{ 'aria-label': 'Team Template Name' }"
+      valueChangeEvent="keyup"
+    ></dx-text-box>
+	</div>
+</crem-modal>

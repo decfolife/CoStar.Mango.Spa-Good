@@ -163,5 +163,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}getprojectcontactlevel/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
+
+  saveTeamAsTemplate(teamTemplateName: string, projectId: number) {
+    const url = `${environment.appUrls.projects}createteamtemplate`;
+    return this.callHttpPost(url, 'createteamtemplate',  { teamTemplateName, projectId })
+  }
 }
 

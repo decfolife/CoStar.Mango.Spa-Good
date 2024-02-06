@@ -8,6 +8,7 @@ import { catchError, filter, first, map, switchMap, tap } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
 
 
 @Component({
@@ -60,6 +61,18 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   removeMembers() {
 
+  }
+
+  saveTeamAsTemplate() {
+    let dialogRef = this.dialog.open(SaveTeamTemplateComponent, {
+      height: '300px',
+      width: '600px',
+      panelClass: 'saveTeamTemplateModal',
+      data: { projectId: this.projectId },
+      disableClose: true
+    });
+
+    this.subs.push(dialogRef.afterClosed().subscribe());
   }
 
   onSelectionChanged(e:any){

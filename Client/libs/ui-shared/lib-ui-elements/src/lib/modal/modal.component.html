@@ -18,8 +18,8 @@
 	<div class="modalFooter" *ngIf="primaryFooterButtonText || closeOrCancelButtonText || customFooter">
 		<ng-content *ngIf="customFooter" select="'[modalFooter]'"></ng-content>
 		<div *ngIf="!customFooter" id="'buttonTemplate'" class="footerRightControls">
-			<crem-button *ngIf="closeOrCancelButtonText" type="secondary" id="close-btn" (click)="closeDialog()" (keydown.space)="closeDialog()" (keydown.enter)="closeDialog()">{{closeOrCancelButtonText}}</crem-button>
-			<crem-button *ngIf="primaryFooterButtonText" [disabled]="primaryFooterButtonEnabledDisabled" type="primary" (click)="primaryEvent($event)" (keydown.space)="primaryEvent($event)" (keydown.enter)="primaryEvent($event)"> {{primaryFooterButtonText}} </crem-button>
+			<crem-button *ngIf="closeOrCancelButtonText" type="secondary" id="close-btn" (click)="closeDialog()">{{closeOrCancelButtonText}}</crem-button>
+			<crem-button *ngIf="primaryFooterButtonText" [disabled]="primaryFooterButtonEnabledDisabled" type="primary" (click)="primaryEvent($event)"> {{primaryFooterButtonText}} </crem-button>
 		</div>
 	</div>
 </div>

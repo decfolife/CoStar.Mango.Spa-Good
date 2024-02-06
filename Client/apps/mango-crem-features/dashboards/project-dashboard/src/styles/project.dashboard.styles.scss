@@ -590,6 +590,7 @@ body {
 //*****  'Manage Teams'  and 'Project Team' Page Styles *****//
 .mat-menu-panel {
  &.teamsActionsMenu, &.teamsMoreMenu, &.projectTeamMoreMenu, &.projectTeamActionsMenu, &.projectTeamAddMenu {
+	  min-height: unset;
 	 .mat-menu-content {
 			padding: 0 !important;
 	  }	
@@ -659,7 +660,7 @@ body {
 	}
 }
 
-#addEditTeamModal, #addEditMemberModal {
+#addEditTeamModal, #addEditMemberModal, #saveTeamTemplateModal {
 	color: colors.$black;
 	.aet-textInput .mat-form-field {
 		width: 100%;
@@ -692,6 +693,7 @@ body {
 			display: flex;
 			crem-button {
 				margin-left: 8px;
+				margin-right: 0;
 			}
 		}
 	}
@@ -739,6 +741,14 @@ body {
 			height: 18px;
 			border-color: colors.$mediumDarkGray
 		}
+	}
+
+	.templateName-input {
+    margin-top: 16px;
+  }
+
+	.templateName-input {
+		width: 300px;
 	}
 }
 
@@ -813,7 +823,7 @@ body {
 .dialogServiceComponent {
 	.dialogContent crem-button button {
 		min-width: 70px;
-		margin-left: 16px;
+		margin-left: 8px;
 	}
 }
 
