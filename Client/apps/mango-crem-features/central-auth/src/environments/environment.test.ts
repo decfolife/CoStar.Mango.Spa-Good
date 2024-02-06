@@ -14,6 +14,7 @@ class EnvironmentsCrem {
     formWizard: '',
     header: '',
     projects: '',
+    tasks: ''
   };
   isRestful: false;
   mangoSpaUrl = 'http://service2.test.corp.virtualpremise.com:8097/'

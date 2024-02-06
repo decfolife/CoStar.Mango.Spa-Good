@@ -14,6 +14,7 @@ class EnvironmentsCrem {
     formWizard: '',
     header: '',
     projects: '',
+    tasks: ''
   };
   isRestful: false;
 }
