@@ -158,7 +158,8 @@
                                 <div class="to_date_caption">
                                     {{configKey[data.dataField].dataField2Caption}}
                                 </div>
-                                <crem-date-picker #CremDatePicker [id]="idPrefix + configKey[data.dataField].dataField2"
+                                <crem-date-picker #CremDatePicker
+                                    [id]="idPrefix + configKey[data.dataField].dataField2"
                                     [(value)]="configKey[data.dataField].value2"
                                     [showClearButton]="configKey[data.dataField].showClearButton"
                                     [dateFormat]="dateFormat"
