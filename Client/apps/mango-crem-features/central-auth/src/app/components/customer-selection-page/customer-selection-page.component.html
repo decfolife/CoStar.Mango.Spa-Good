@@ -11,7 +11,7 @@
         <div class="mx-auto">
           <h6 class="text-center">Select a site</h6>
           <div class="d-flex justify-content-center pb-2">
-            <dx-select-box [dataSource]="clientsDropdown$ | async" searchMode="contains" [searchEnabled]="true"
+            <dx-select-box id="clients-dropdown" [dataSource]="clientsDropdown$ | async" searchMode="contains" [searchEnabled]="true"
               width="300" [showClearButton]="true" (onValueChanged)="onClientSelected($event.value)"
               [inputAttr]="{ title: 'Client name input' }">
             </dx-select-box>

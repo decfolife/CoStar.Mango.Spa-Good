@@ -1,5 +1,5 @@
 <dx-popup [height]="600" [width]="800" [showTitle]="false" [dragEnabled]="true" [closeOnOutsideClick]="false"
-	[showCloseButton]="false" [visible]="(visible$ | async)">
+	[showCloseButton]="false" [visible]="(visible$ | async)" [focusStateEnabled]="false">
 	<dxi-toolbar-item widget="dxButton" toolbar="bottom" location="after"
 		[options]="{text: 'Cancel', onClick: onCancelClick, elementAttr: {class: 'button-secondary'}}">
 	</dxi-toolbar-item>
