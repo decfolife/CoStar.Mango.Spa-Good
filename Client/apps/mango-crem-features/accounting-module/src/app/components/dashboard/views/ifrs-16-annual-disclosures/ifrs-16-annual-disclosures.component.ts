@@ -80,6 +80,64 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
           },
         ]
       },
+      {
+        index: 1,
+        id: 'AssetBalance',
+        name: 'Asset Balance',
+        sortingOrder: {
+
+        },
+        fieldTransform: [
+          { 
+            DisclosureClassification:  'ClassificationName',
+            Display: "ROU Asset Balance",
+            PeriodYear: 'PeriodYear',
+            data: 'AssetBalanceClosingReporting',
+          },
+          { 
+            DisclosureClassification: 'ClassificationName',
+            Display: "Short Term Liability Balance",
+            PeriodYear:  'PeriodYear',
+            data: 'ShortTermLiabilityClosingReporting',
+          },
+          { 
+            DisclosureClassification: 'ClassificationName',
+            Display: "Long Term Liability Balance",
+            PeriodYear:  'PeriodYear',
+            data: 'LongTermLiabilityClosingReporting',
+          },
+          { 
+            DisclosureClassification: 'ClassificationName',
+            Display: "Total Liability Balance",
+            PeriodYear:  'PeriodYear',
+            data: 'LiabilityBalanceClosingReporting',
+          },
+          { 
+            DisclosureClassification:  "Total",
+            Display: "ROU Asset Balance",
+            PeriodYear:  'PeriodYear',
+            data: 'AssetBalanceClosingReporting',
+          },
+          { 
+            DisclosureClassification:  "Total",
+            Display: "Short Term Liability Balance",
+            PeriodYear:  'PeriodYear',
+            data: 'ShortTermLiabilityClosingReporting',
+          },
+          { 
+            DisclosureClassification:  "Total",
+            Display: "Long Term Liability Balance",
+            PeriodYear:  'PeriodYear',
+            data: 'LongTermLiabilityClosingReporting',
+          },
+          { 
+            DisclosureClassification:  "Total",
+            Display: "Total Liability Balance",
+            PeriodYear:  'PeriodYear',
+            data: 'LiabilityBalanceClosingReporting',
+          }
+        ]
+      }
     ];
     this.pivotDataSources = [];
   }
