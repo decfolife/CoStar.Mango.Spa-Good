@@ -239,10 +239,23 @@ export class JeProcessingInfoComponent {
         if (jeProcessResponse === null) {
           this.accountingSummaryService.displayContactSystemAdminMessage();
         } else if (jeProcessResponse.success) {
+          switch (this.changeButtonText) {
+            case 'Approve':
+              this.accountingSummaryService.successNotify('Approved Successfully');
+              break;
+
+            case 'Unapprove':
+              this.accountingSummaryService.successNotify('Unapproved Successfully');
+              break;
+
+            case 'Unexport':
+              this.accountingSummaryService.successNotify('Unexported Successfully');
+              break;
+          }
           this.jeActionTaken.emit();
         }
         else {
-          this.accountingSummaryService.errorNotify(jeProcessResponse.clientErrorMessage);
+          this.accountingSummaryService.errorNotify('Process Failed');
         }
       })
     );

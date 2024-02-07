@@ -33,7 +33,6 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   classificationId: number;
   isLoading = false;
   selectedRowKeys: number[];
-  customGridClass = 'custom-grid';
   isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
   expanded = true;

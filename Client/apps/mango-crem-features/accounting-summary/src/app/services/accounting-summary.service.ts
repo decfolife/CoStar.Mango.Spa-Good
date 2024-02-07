@@ -285,7 +285,7 @@ export class AccountingSummaryService extends EndpointService {
       message: message,
       type: messageType,
       displayTime: 5000,
-      position: { at: 'center bottom', my: 'center bottom', offset: '0 -16' },
+      position: { at: 'right bottom', my: 'right bottom', offset: '-16 -16' },
       maxWidth: "400px",
       closeOnClick: true,
     });

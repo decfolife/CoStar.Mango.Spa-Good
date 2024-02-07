@@ -83,7 +83,6 @@
 				[showRowLines]="true"
 				[showBorders]="true"
 				[remoteOperations]="true"
-				[class]="customGridClass"
 				(onOptionChanged)="onGridOptionChanged($event)"
 				(onCellClick)="onCellClick($event)"
 				(onRowClick)="onRowClick($event)"
@@ -124,25 +123,16 @@
 				  </div>
 				
 				  <div *dxTemplate="let data of 'actionsTemplate'" #actionTemplate>
-					<div class="actions-icon" *ngIf="(data.data.isPublished && showEditIcon)">
+					<div class="actions-icon">
 					<crem-icon  
 						[id]="accountingSummaryService.getId(componentName,'action-cog','icon')"
 						pack="solid" 
 						icon="faEllipsisH" 
 						color="primary"
-						size="xl"> 
+						size="lg"> 
 						</crem-icon>
 					</div> 
 
-					<div class="actions-icon" *ngIf="!data.data.isPublished || !showEditIcon">
-						<crem-icon 
-						[id]="accountingSummaryService.getId(componentName,'action-eye','icon')"
-						pack="solid" 
-						icon="faEllipsisH" 
-						color="primary"
-						size="xl"> 
-						</crem-icon>
-					</div>
 				  </div>
 			</dx-data-grid>
 	</mat-expansion-panel> 

@@ -211,7 +211,7 @@ export class WorkflowDropdownComponent {
   }
 
   onDocumentClick(event: MouseEvent) {
-    if (!this.containerDiv.nativeElement.contains(event.target) && this.divOpened && this.commentsVisible) {
+    if (!this.containerDiv?.nativeElement.contains(event.target) && this.divOpened && this.commentsVisible) {
       // // Clicked outside the div, hide it
       this.divElement.remove();
       this.divOpened = false;

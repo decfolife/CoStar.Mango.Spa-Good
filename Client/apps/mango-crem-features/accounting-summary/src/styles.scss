@@ -302,6 +302,10 @@
         .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[aria-label="Column #"] {
             cursor: pointer;
         }
+
+        .dx-scrollable-wrapper {
+            max-height: 94px;
+          }
     }
     
     #openLeaseAlertsPopupButton {

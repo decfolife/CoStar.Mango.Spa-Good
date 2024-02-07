@@ -283,6 +283,80 @@ const routes: Routes = [
           },
           // Accounting Settings
           {
+            path: 'summary',
+            loadChildren: () =>
+              import(
+                '@accounting-summary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
+              breadCrumb: { label: 'Accounting Summary', append: false }
+            },
+          },
+          {
+            path: 'summary',
+            loadChildren: () =>
+              import(
+                '@accounting-summary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
+              breadCrumb: { label: 'Accounting Summary', append: false }
+            },
+          },
+          {
+            path: 'summary',
+            loadChildren: () =>
+              import(
+                '@accounting-summary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
+              breadCrumb: { label: 'Accounting Summary', append: false }
+            },
+          },
+          // Accounting Settings
+          {
+            path: 'summary',
+            loadChildren: () =>
+              import(
+                '@accounting-summary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
+              breadCrumb: { label: 'Accounting Summary', append: false }
+            },
+          },
+          {
+            path: 'summary',
+            loadChildren: () =>
+              import(
+                '@accounting-summary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
+              breadCrumb: { label: 'Accounting Summary', append: false }
+            },
+          },
+          {
+            path: 'summary',
+            loadChildren: () =>
+              import(
+                '@accounting-summary/components/index/index.module'
+              ).then((mod) => mod.IndexModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
+              breadCrumb: { label: 'Accounting Summary', append: false }
+            },
+          },
+          // Accounting Settings
+          {
             path: 'settings',
             loadChildren: () =>
               import(
