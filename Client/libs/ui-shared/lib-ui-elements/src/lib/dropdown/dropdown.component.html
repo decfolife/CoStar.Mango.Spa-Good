@@ -123,8 +123,7 @@
 >
 
   <dxo-drop-down-options
-    [id]="id + '_box'"
-    [container]="containerized ? '#' + id : undefined"
+    [container]="containerized ? '#' + id + '_box' : undefined"
     [hideOnParentScroll]="false"
     [wrapperAttr]="wrapperAttr"
   ></dxo-drop-down-options>
