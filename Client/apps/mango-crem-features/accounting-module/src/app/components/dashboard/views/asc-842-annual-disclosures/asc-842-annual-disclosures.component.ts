@@ -246,6 +246,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
             }
           }
         } else if (card.Title === 'ASC 842 Annual Disclosures ROU Asset Balance') {
+          config[0].width = 134.469;
           config[3].format = {
             type: "fixedPoint",
             precision: this.currencyDecimalPrecision
