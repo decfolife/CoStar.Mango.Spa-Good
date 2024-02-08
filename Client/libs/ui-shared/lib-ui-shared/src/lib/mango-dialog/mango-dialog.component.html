@@ -1,6 +1,7 @@
 <div class="dialogContent">
   <h2 class="dialogHeader" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
-    <fa-icon class="dialogExclamation" [icon]="faExclamationCircle"></fa-icon>{{title}}
+    <mat-icon class="dialogExclamation" aria-label="Message">error</mat-icon> 
+    <span class="headerText">{{title}}</span>
   </h2>
   <div class="dialogMessage"> <pre class="dialogMsgFormatted"> {{message}} </pre></div>
   <footer class="dialogFooter">

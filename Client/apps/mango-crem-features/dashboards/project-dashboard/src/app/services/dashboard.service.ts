@@ -168,5 +168,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}createteamtemplate`;
     return this.callHttpPost(url, 'createteamtemplate',  { teamTemplateName, projectId })
   }
+
+  saveProjectManager(projectId: number, contactId: number) {
+    const url = `${environment.appUrls.projects}saveprojectmanager`;
+    return this.callHttpPost(url,  'saveprojectmanager', { projectId, contactId });
+  }
 }
 

@@ -2,6 +2,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { ToastrService } from 'ngx-toastr';
 
@@ -21,6 +22,7 @@ export class SaveTeamTemplateComponent implements OnInit {
   constructor(private dashboardService: DashboardService,
     public dialogRef: MatDialogRef<SaveTeamTemplateComponent>,
     public toastr: ToastrService,
+    private dialogService: MangoDialogService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -30,11 +32,13 @@ export class SaveTeamTemplateComponent implements OnInit {
 
     this.subs.push(this.dashboardService.saveTeamAsTemplate(this.templateName, this.data.projectId).subscribe(
       (res:any ) => {
-        if(res.success) {
+        if(!res || !res.success) {
+          this.dialogRef.close();
+          this.dialogService.alert('Team Template Not Saved', 
+            'There was an issue saving this team as a team template. Please review and try again.', 'OK');
+        } else {
           this.toastr.info("Team Template has been saved.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }); 
           this.dialogRef.close('true');
-        } else {
-          console.log("Error occurred saving team as Template, please try again later.");
         }
       },
       (error: any) => console.log("Error occurred Saving Team as Template ", error),

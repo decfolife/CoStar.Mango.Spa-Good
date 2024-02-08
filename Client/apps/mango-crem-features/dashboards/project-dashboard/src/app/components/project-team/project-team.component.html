@@ -12,10 +12,12 @@
 					<span>Clear Filters</span>
 				</crem-button>
 			</div>
-			<div class="actions">
-				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">Actions <mat-icon aria-label="Project Team Actions">arrow_drop_down</mat-icon></button>
+			<div class="actions" [ngClass]="{'hideActions': userAccessLevel == 3}" >
+				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">
+					Actions <mat-icon aria-label="Project Team Actions">arrow_drop_down</mat-icon>
+				</button>
 				<mat-menu #actionsMenu="matMenu" class="projectTeamActionsMenu">				
-					<button mat-menu-item class="actnBtn-removeMembers" [disabled]="!selectedMemberContactIds.length" (click)="removeMembers()"><span >Remove Members</span></button>      
+					<button mat-menu-item class="actnBtn-removeMembers" *ngIf="userAccessLevel == 1" [disabled]="!selectedMemberContactIds.length" (click)="removeMembers()"><span >Remove Members</span></button>      
 					<button mat-menu-item class="actionsButton-saveTeamTemplate" (click)="saveTeamAsTemplate()"
 						*ngIf="userAccessLevel == 1 || userAccessLevel == 2 "> Save Team as Template
 					</button>                   
@@ -47,6 +49,7 @@
 			[showRowLines]="false"
 			[showBorders]="false"
 			[rowAlternationEnabled]="true"
+			[noDataText]="noDataText"
 			[allowColumnResizing]="true"
 			columnResizingMode="widget"
 			[allowColumnReordering]="true"
@@ -57,6 +60,7 @@
 			[filterSyncEnabled]="true"
 			[wordWrapEnabled]="true"
 			(onSelectionChanged)="onSelectionChanged($event)"
+			(onCellPrepared)="onCellPrepared($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
@@ -71,7 +75,7 @@
 			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false" class="selectMember" [visible]="userAccessLevel == 1">
 			</dxi-column>
-			<dxi-column dataField="teamMember" ></dxi-column>
+			<dxi-column caption='Team Member' [cellTemplate]="'teamMemberNameTemplate'" ></dxi-column>
 			<dxi-column dataField="openTasks" [cellTemplate]="'openTasksTemplate'" alignment="center"></dxi-column>
 			<dxi-column dataField="role"></dxi-column>
 			<dxi-column dataField="memberType"></dxi-column>
@@ -91,7 +95,7 @@
 							<ul role="menu">
 								<li mat-menu-item  class="ptm-edit" *ngIf="((member.data.memberType).toLowerCase()) !== 'temporary contact' ">Edit</li>
 								<li mat-menu-item  class="ptm-remove">Remove</li>
-								<li mat-menu-item  class="ptm-makeManager" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
+								<li mat-menu-item  class="ptm-makeManager" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
 							</ul>
 						</mat-menu>
 					</div>
@@ -115,6 +119,12 @@
 			</div>
 			<div *dxTemplate="let cell of 'openTasksTemplate'" >
 				<div class="openTasks">{{cell.value}} unapproved</div>		
+			</div>
+			<div *dxTemplate="let member of 'teamMemberNameTemplate'" class="ptm-teamMemberTemplate" >
+				<span class="ptm-managerIcon" *ngIf="member.data.isManager">
+					<mat-icon role="none" aria-label="Manager">manage_accounts</mat-icon>
+				</span>
+				<span class="ptm-memberName">{{member.data.teamMember}}</span>		
 			</div>
 			<div *dxTemplate="let cell of 'accessLevelTemplate'" >
 				<div>{{cell.value == 1 ? 'L1' : cell.value == 2 ? 'L2': cell.value == 3? 'L3': 'N/A'}}</div>

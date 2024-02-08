@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, Inject, OnInit} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'mango-dialog',
@@ -11,7 +10,6 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 export class MangoDialogComponent implements OnInit {
 
-  faExclamationCircle = faExclamationCircle;
   title: string;
   message: string;
   dialogType: string;

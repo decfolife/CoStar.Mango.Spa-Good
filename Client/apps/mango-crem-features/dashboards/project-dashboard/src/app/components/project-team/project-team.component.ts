@@ -1,14 +1,16 @@
 import { Component, OnDestroy, OnInit, } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { MemberInfo, ProjectTeamMember } from '@mango/data-models/lib-data-models';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { MemberInfo, ProjectTeamMember } from '@mango/data-models/lib-data-models'
+import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { of } from 'rxjs/internal/observable/of';
-import { catchError, filter, first, map, switchMap, tap } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
-import { MatDialog } from '@angular/material/dialog';
 import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
+import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 
 
 @Component({
@@ -21,20 +23,24 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   dataRetrieved: boolean = false;;
   projectTeam: ProjectTeamMember[];
   projectId: number;
+  managerContactId: number;
   memberInfo: MemberInfo = <MemberInfo>{};
+  noDataText: string = "No Data.";
+  errorText: string = "Error Occurred while getting Project Team Members.";
   selectedMemberContactIds: number[] = [];
   userAccessLevel: number;
   subs: Subscription[] = [];
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
               private route: ActivatedRoute,
+              private dialogService: MangoDialogService,
   ) {}
 
   ngOnInit(): void {
     this.subs.push(this.route.queryParams.pipe(
       filter(params => !!params && !!params.oid),
-      tap(params => {this.projectId = params.oid}),
-      switchMap(params => this.getProjectTeam(params.oid)),
+      tap(params => {this.projectId = parseInt(params.oid)}),
+      switchMap(params => this.getProjectTeam(this.projectId)),
       tap(_ => {this.getMemberInfo(), this.getProjectContactLevel(this.projectId)}),
     ).subscribe());
   }
@@ -76,18 +82,62 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
   onSelectionChanged(e:any){
+    if(e.selectedRowKeys.includes(this.managerContactId)) {
+      e.selectedRowKeys = e.selectedRowKeys.filter(contactId => contactId != this.managerContactId);
+    }
     this.selectedMemberContactIds = e.selectedRowKeys;
   }
 
+  onCellPrepared(e) {
+    if(e.rowType !== 'header' && e.column.command == 'select' && this.userAccessLevel == 1 && e.data.isManager) {
+      this.managerContactId = e.data.contactID;
+      let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+      var editor = dxCheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));
+      if(editor) {
+        editor.option("visible", false);
+      }
+      htmlCellElement.style.pointerEvents = 'none';
+    }
+  }
+
+  makeProjectManager(contactId: number) {
+    this.subs.push(this.dashboardService.saveProjectManager(this.projectId, contactId).subscribe(
+      (res:any) => {
+        if(!res || !res.success) {
+          this.displayMessage();
+        } else {
+          this.subs.push(this.getProjectTeam(this.projectId).subscribe());
+        }
+        this.memberInfo = res.data;
+      },
+      (error: any) => this.displayMessage(),
+      () => {}
+    ));
+
+  }
+
+  displayMessage() {
+    this.dialogService.alert('Make Team Manager', 'We were not able to update Team Mananger, please try again later.', 'OK');
+  }
+
   public getProjectTeam(projectId): Observable<any> {
+    this.dataRetrieved = false;
     this.selectedMemberContactIds = [];
     return this.dashboardService.getProjectTeams(projectId).pipe(
+      tap(res => {
+        if (!res) {
+          this.noDataText = this.errorText;
+          this.dataRetrieved = true;
+        }
+      }),
       filter(res => !!res && !!res.success),
       tap(res => {
         this.projectTeam = res.data;
         this.dataRetrieved = true;
       }),
-      catchError(error => (this.dataRetrieved = true, console.log("Error occurred getting Teams Data ", error), of(false)))
+      catchError(error => {this.dataRetrieved = true; 
+        return of(false);
+      })
     )
   }
 
