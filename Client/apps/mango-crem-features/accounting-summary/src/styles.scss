@@ -207,6 +207,8 @@
         padding: 10px 0 5px 0px;
     }
 
+ /* Amortization Period Popup Tab Panel */
+ 
     div.dx-tabs {
         height: 40px !important;
         justify-content: left !important;
@@ -234,6 +236,27 @@
     .dx-datagrid-content .dx-datagrid-table .dx-row>td,
     .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
         font-size: 12px !important;
+    }
+
+ /* Fixes for Amortization Period Popup Tab Panel issues after enabling CSP. */
+    .dx-tab.dx-tab-selected .dx-tab-text {
+        color: #FFF;
+    }
+    
+    dx-tab-panel.dx-tabpanel div.dx-tabpanel-tabs div.dx-tabs {
+        border: none;
+    }
+    
+    .dx-tabpanel-tabs-position-left .dx-tabs .dx-tabs-scrollable::after {
+        border: 1px solid #dcdcdc;
+    }
+
+    .dx-tabs-vertical .dx-tabs-wrapper {
+        flex-direction: row;
+    }
+
+    .dx-tabs-wrapper {
+        border: none;
     }
 
     .card-header {

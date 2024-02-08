@@ -16,6 +16,7 @@
 
 .actions-icon {
     width: 16px;
+    height: 16px;
     margin-left: 32px;
 }
 
@@ -46,6 +47,10 @@ button.btn.btn-default.moreButton {
     box-sizing: unset;
     width: 25%;
     height: 22px;
+}
+
+.custom-grid {
+    max-height: 155px;
 }
 
 .no-data-text-box {

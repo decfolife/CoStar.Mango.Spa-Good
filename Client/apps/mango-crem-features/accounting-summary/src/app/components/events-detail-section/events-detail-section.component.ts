@@ -30,6 +30,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   detailColumns = [];
   gridName = 'Events';
   componentName = "events-grid"
+  customGridClass = 'custom-grid';
   classificationId: number;
   isLoading = false;
   selectedRowKeys: number[];

@@ -65,10 +65,9 @@
 					[allowSearch]="true"> 
 				</dxo-column-chooser>
 				<div *dxTemplate="let info of 'amortizationHeader'">
-					<p title={{info.column.caption}}
-					  style="white-space: normal; text-align: center; margin: 0px; max-height: 42px">
-					  {{info.column.caption}}
-					</p>    
+					<p title={{info.column.caption}} class="header-column-caption">
+						{{info.column.caption}}
+					</p>
 				  </div>
 				
 				  <div *dxTemplate="let cell of 'pointer'">
