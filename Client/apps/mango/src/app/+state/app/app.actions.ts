@@ -5,6 +5,7 @@ import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/mode
 export const SET_LOADING = '[UI] Set Loading'
 export const APP_INIT = '[Mango App] APP Init'
 export const SETUP_HEADER = '[Mango App] Setup Header'
+export const OAUTH_AUTH = '[Mango App] Start OAuth Auth'
 export const LOCAL_AUTH = '[Mango App] Start Local Auth'
 export const SETUP_CLIENT_KEY = '[Mango App] Setup Client Key'
 export const SETUP_CONTACT_RECORD = '[Mango App] Setup Contact Record'
@@ -33,6 +34,8 @@ export const POPULATE_BREADCRUMBS_FROM_SESSION = '[Mango App] Populate Breadcrum
 export const init = createAction(APP_INIT);
 
 export const localAuth = createAction(LOCAL_AUTH);
+
+export const oauthAuth = createAction(OAUTH_AUTH, props<{ authCode: string, redirectionUri: string }>());
 
 export const setupClientKey = createAction(SETUP_CLIENT_KEY);
 

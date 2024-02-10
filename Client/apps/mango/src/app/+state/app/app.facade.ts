@@ -36,6 +36,10 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.localAuth());
   }
 
+  oauthAuth(authCode: string, redirectionUri: string): void {
+    this.store.dispatch(AppActions.oauthAuth({ authCode, redirectionUri }))
+  }
+
   setLoading(display: boolean): void {
     this.store.dispatch(AppActions.setLoading({ display }))
   }

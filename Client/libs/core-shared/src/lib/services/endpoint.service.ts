@@ -16,8 +16,10 @@ export abstract class EndpointService {
       EndpointService.logged = true;
     }
 
+    if (this.facade) {
       this.userId$ = this.facade.contactRecord$.pipe(filter(contactRecord => !!contactRecord), switchMap(contactRecord => of(contactRecord.contactID)))
       this.clientKey$ = this.facade.clientKey$.pipe(switchMap(clientKey => of(clientKey)))
+    }
   }
 
   protected getHttpHeaders(): Observable<any> {
@@ -29,7 +31,6 @@ export abstract class EndpointService {
             headers: new HttpHeaders({
               'Content-Type': 'application/json',
               'Accept': 'application/json',
-              'source-app': 'crem-mango',
               'UserId': userId ? userId.toString() : '2',
               'ClientKey': clientKey || 'RETAILDEMO',
               UseQueryOptimization: '1'
@@ -44,7 +45,6 @@ export abstract class EndpointService {
           headers: new HttpHeaders({
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'source-app': 'crem-mango',
             'UserId': '2',
             'ClientKey': 'RETAILDEMO'
           })

@@ -84,12 +84,7 @@ export class UserService {
   }
 
   loginToClientSite(payload: MultiClientLoginHttpRequest): Observable<AuthHTTPResponse> {
-    const headers = {
-      'source-app': 'crem-mango'
-    };
-
-    return this.http.post<AuthHTTPResponse>(`${this.env.appUrls.identity}/auth/login/client`, payload,
-      { headers: headers, withCredentials: true });
+    return this.http.post<AuthHTTPResponse>(`${this.env.appUrls.identity}/auth/login/client`, payload, { withCredentials: true });
   }
 
   getCurrentUserAccessToken(): Observable<string> {
