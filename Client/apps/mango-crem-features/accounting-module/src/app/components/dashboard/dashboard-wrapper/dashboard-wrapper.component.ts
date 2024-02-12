@@ -71,7 +71,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   // itemMenuInnerOptions: Initial structure for the segment 'more menu' or ellipsis
   itemMenuInnerOptions: selectBoxMenuItems;
 
-  // bySegmentMoreMenuOptions: Once itemMenuInnerOptions is provided 'prepareSegmentMoreMenu'
+  // bySegmentMoreMenuOptions: Once itemMenuInnerOptions is provided 'prepareMoreMenu'
   // creates a menu for each segment with the right data, e.g. permissions or rights
   bySegmentMoreMenuOptions: byItemMoreMenuOptions;
 
@@ -88,6 +88,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       {
         type: 'menu',
         name: 'Make Default',
+        comparingValue: 'default',
+        attribute: 'segmentID',
         action: () => this.setDefaultSegment(this.moreMenuSegment.segmentID, this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet),
         stopPropagation: true,
         dataTransformer: [
@@ -100,6 +102,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       {
         type: 'menu',
         name: 'Edit',
+        comparingValue: 'rights',
+        attribute: 'segmentID',
         action: () => this.edit(this.moreMenuSegment),
         stopPropagation: false,
         dataTransformer: [
@@ -112,11 +116,13 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       {
         type: 'menu',
         name: 'Archive',
+        comparingValue: 'rights',
+        attribute: 'segmentID',
         action: () => this.archiveAction(this.moreMenuSegment),
         stopPropagation: false,
         dataTransformer: [
           // Possible Responses: 1 Restricted View | 2 View | 3 Add | 4 Edit | 5 delete | 6 Block
-          {condition: 'Restricted View', disabled: true, title:'You don\'t have rights'},
+          {condition: 'Restricted View', disabled: true, title:'You don\'t have rights', operator: '='},
           {condition: 'View', disabled: true, title:'You don\'t have rights'},
           {condition: 'Add', disabled: true, title:'You don\'t have rights'},
           {condition: 'Edit', disabled: true, title:'You don\'t have rights'},
@@ -151,7 +157,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               }
               //fetch criteriaSetID for each view;
               this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-              this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
+              this.bySegmentMoreMenuOptions = this.prepareMoreMenu(r.data, this.itemMenuInnerOptions);
               this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1)?.segmentID || this.accountingSegmentData?.[0].segmentID;
               this.appliedSegment = this.selectedSegment;
               this.loading = false;
@@ -204,46 +210,77 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     return data;
   }
 
-  // For each segment item create a corresponding more menu (ellipsis) option
-  prepareSegmentMoreMenu(segmentsData, itemMenu: selectBoxMenuItems) { // todo: This should be part of the crem-dropdown component
-    const segmentsWithMoreMenu = [];
+  /**
+   * Prepares more menu items for a given set of data.
+   * This method combines the 'moreMenuData' data and the 'itemMenu' object configuration creating an ellipsis/menu for each menu item.
+   *
+   * @method
+   * @param {any[]} moreMenuData - An array of data representing the main menu items. If it has a moreMenu.
+   * @param {selectBoxMenuItems} itemMenu - The select box menu items configuration.
+   * @returns {moreMenuItem[]} itemsWithMoreMenu - An array of main menu items with associated more menu options.
+   * @throws {Error} Will throw an error if there is an issue preparing the more menu items.
+   * @todo This function must be moved to the crem-dropdown shared component.
+   */
+  prepareMoreMenu(moreMenuData: any[], itemMenu: selectBoxMenuItems) {
+    const itemsWithMoreMenu = [];
 
-    segmentsData.map( (segment) => {
+    moreMenuData.map( (menuItem) => {
       const menuItems = [];
       itemMenu.map( e => {
         let newItem: Partial<moreMenuItem> = {};
-        if (e.name === 'Make Default') {
-          newItem = this.prepareItemMoreMenu(e, segment.default, segment.segmentID); // Transform more menu
-        } else {
-          newItem = this.prepareItemMoreMenu(e, segment.rights, segment.segmentID); // Transform more menu
-        }
+        newItem = this.prepareItemMoreMenu(e, menuItem[e.comparingValue] ?? undefined, menuItem[e.attribute] ?? undefined); // Transform more menu
         menuItems.push(newItem); // Build Array of Menu Options
       });
 
       // Add Array of Menu Options to Segment Object
-      segmentsData = segment;
-      segmentsData['moreMenu'] = menuItems;
-      segmentsWithMoreMenu.push(segmentsData);
+      moreMenuData = menuItem;
+      moreMenuData['moreMenu'] = menuItems;
+      itemsWithMoreMenu.push(moreMenuData);
 
     });
 
-    return segmentsWithMoreMenu;
+    return itemsWithMoreMenu;
   }
 
-  prepareItemMoreMenu(menuItem: moreMenuItem, comparingValue: string | number | boolean, attribute?: any, attributeName?: string): moreMenuItem {
+  /**
+   * Prepare an Item for the 'crem-dropdown' More Menu
+   *
+   * @method
+   * @param {moreMenuItem} menuItem: Main element to be transformed
+   * @param {(string | number | boolean)} comparingValue: If compared with the condition provided as part of the menu item.
+   * @param {*} [attribute]: Adds an additional custom element to the menu item, this is the value of the attributeName.
+   * @param {string} [attributeName]: Name of the attribute, if non provided the attribute name will be 'attribute'.
+   * @return {*}  {moreMenuItem}: Returning Item for the more menu.
+   * @memberof DashboardWrapperComponent
+   * @todo This needs to be moved to the 'crem-dropdown' shared component.
+   */
+  prepareItemMoreMenu(menuItem: moreMenuItem, comparingValue?: string | number | boolean, attribute?: any, attributeName?: string): moreMenuItem {
     const item = {...menuItem}
     if(item.dataTransformer){
       if (comparingValue) { // Only proceeds if there is something to compare with
-        const elementExists = item.dataTransformer.find( item => item.condition === comparingValue );
+        const elementExists = item.dataTransformer.find( e => {
+          switch(e.operator) {
+            case '>=':
+              return e.condition >= comparingValue;
+            case '<=':
+              return e.condition <= comparingValue;
+            case '>':
+              return e.condition > comparingValue;
+            case '<':
+              return e.condition < comparingValue;
+            case '!=':
+              return e.condition != comparingValue;
+            case '=':
+            default:
+              return e.condition === comparingValue;
+          }
+        });
         if(elementExists){
           item.name = elementExists?.name ?? item.name;
           item.title = elementExists?.title ?? item.title;
           item.disabled = elementExists?.disabled ? elementExists?.disabled : item.disabled || false;
         }
-        attribute && (item[ attributeName ?? 'attribute'] = attribute); // Additional attribute
-      }
-      else {
-        console.error('Error: Incomplete or faulty arguments encountered when utilizing the "crem-dropdown"\'s more menu.');
+        attribute && (item[ attributeName ?? 'attribute'] = attribute); // Adding custom attribute if exists
       }
     }
     return item;
@@ -280,7 +317,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         }),
         tap( r => {
           this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-          this.bySegmentMoreMenuOptions = this.prepareSegmentMoreMenu(r.data, this.itemMenuInnerOptions);
+          this.bySegmentMoreMenuOptions = this.prepareMoreMenu(r.data, this.itemMenuInnerOptions);
           if (refresh) {
             this.selectedSegment = r.data.find(s => s.default === 1)?.segmentID || r.data[0].segmentID;
             this.appliedSegment = this.selectedSegment;

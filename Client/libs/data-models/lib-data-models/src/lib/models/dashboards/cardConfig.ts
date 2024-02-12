@@ -15,18 +15,29 @@ export interface SortingOrder {
 
 /**
  * Pivot Data Type
- * If your are
+ *
+ * @typedef {Object} CardDataItem
+ * @property {number|string} [AddedCount] - The count of items added.
+ * @property {number|string} [closingCount] - The count of items being closed.
+ * @property {string|'Total'} [DisclosureClassification] - When 'Total' is passed the data transformation will be handled differently.
+ * @property {number|string} [EndedCount] - The count of items that have ended.
+ * @property {string} [LeaseTemplate] - The template used for leasing.
+ * @property {number|string} [OpeningCount] - The count of items being opened.
+ * @property {string} Display - The display text for the card item.
+ * @property {number|string} [PeriodYear] - The year or period associated with the data.
+ * @property {number|string} [dataType] - The type of data (number or string).
+ * @property {any} data - The actual data associated with the card item.
  * @export
  * @interface FieldConfig
  */
 export type CardDataItem = {
   AddedCount?: number | string,
   closingCount?: number | string,
-  DisclosureClassification?: string,
+  DisclosureClassification?: string | 'Total',
   EndedCount?: number | string,
   LeaseTemplate?: string,
   OpeningCount?: number | string,
-  Display: string,
+  Display?: string,
   PeriodYear?: number | string,
   dataType?: number | string,
   data: any,
@@ -58,6 +69,7 @@ export type CardDataTransformer = CardDataItem & object;
  * @property {string | FormatObject} [format] - Optional formatting information for the field.
  * @property {SortingOrder} [sortingOrder] - Optional sorting order for the field.
  * @property {Function} [sortingMethod] - Optional sorting method function for the field.
+ * @property {Function} [calculateSummaryValue] - "Specifies a custom post-processing function for summary values."
  * @property {Function} [calculateCustomSummary] - Optional function for custom summary calculation.
  * @property {CardDataItem} [fieldTransform] - Optional add how the data coming from the API is going to be used on the grid
  */
@@ -67,7 +79,8 @@ export type CardConfig = {
   index: number,
   format?: string | FormatObject,
   sortingOrder?: SortingOrder,
-  sortingMethod?: Function, // todo: fix
-  calculateCustomSummary?: Function, // todo: fix
+  sortingMethod?: Function,
+  calculateSummaryValue?: Function,
+  calculateCustomSummary?: Function,
   fieldTransform?: Partial<CardDataTransformer[]> | undefined,
 }

@@ -7,13 +7,17 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 
+// Configuration Data
+import { cardData, dashboardId, pendoId } from './conf/cardData';
+
 @Component({
   selector: 'ifrs-16-annual-disclosures',
   templateUrl: './ifrs-16-annual-disclosures.component.html',
   styleUrls: ['./ifrs-16-annual-disclosures.component.scss'],
 })
 export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
-
+  // Currency precision goes into the field
+  // Data goes into the store
   public loading = true as boolean;
   public selectedCurrency: string;
 
@@ -35,110 +39,9 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
   @ViewChild("PivotGrid") pivotGrid: DxPivotGridComponent;
 
   constructor(private inAppDisclosureService: InAppDisclosureService) {
-    this.pendoId = "IFSAnnualDisclosures";
-    this.dashboardId = 6; // 6: IFRS Annual Disclosure
-    this.cardData = [ // todo: exception handling when data coming from API doesn't match parameters provided
-      {
-        index: 0,
-        id: 'LeaseCounts',
-        name: 'Lease Counts',
-        format: ",###",
-        sortingOrder: { // todo: use sortingOrder for fieldTransform
-          "Opening Lease Count": 1,
-          "- Leases Added": 2,
-          "- Leases Expired/Cancelled": 3,
-          "Closing Lease Count": 4,
-        },
-        fieldTransform: [ // todo: rename to API data mapping
-          {
-            DisclosureClassification: 'DisclosureClassification',
-            LeaseTemplate: 'LeaseTemplate',
-            Display: 'Display',
-            PeriodYear: 'PeriodYear',
-            data: 'OpeningCount',
-          },
-          {
-            DisclosureClassification: 'DisclosureClassification',
-            LeaseTemplate: 'LeaseTemplate',
-            Display: 'Display',
-            PeriodYear: 'PeriodYear',
-            data: 'AddedCount',
-          },
-          {
-            DisclosureClassification: 'DisclosureClassification',
-            LeaseTemplate: 'LeaseTemplate',
-            Display: 'Display',
-            PeriodYear: 'PeriodYear',
-            data: 'EndedCount',
-          },
-          { 
-            DisclosureClassification: 'DisclosureClassification',
-            LeaseTemplate: 'LeaseTemplate',
-            Display: 'Display',
-            PeriodYear: 'PeriodYear',
-            data: 'ClosingCount',
-          },
-        ]
-      },
-      {
-        index: 1,
-        id: 'AssetBalance',
-        name: 'Asset Balance',
-        sortingOrder: {
-
-        },
-        fieldTransform: [
-          { 
-            DisclosureClassification:  'ClassificationName',
-            Display: "ROU Asset Balance",
-            PeriodYear: 'PeriodYear',
-            data: 'AssetBalanceClosingReporting',
-          },
-          { 
-            DisclosureClassification: 'ClassificationName',
-            Display: "Short Term Liability Balance",
-            PeriodYear:  'PeriodYear',
-            data: 'ShortTermLiabilityClosingReporting',
-          },
-          { 
-            DisclosureClassification: 'ClassificationName',
-            Display: "Long Term Liability Balance",
-            PeriodYear:  'PeriodYear',
-            data: 'LongTermLiabilityClosingReporting',
-          },
-          { 
-            DisclosureClassification: 'ClassificationName',
-            Display: "Total Liability Balance",
-            PeriodYear:  'PeriodYear',
-            data: 'LiabilityBalanceClosingReporting',
-          },
-          { 
-            DisclosureClassification:  "Total",
-            Display: "ROU Asset Balance",
-            PeriodYear:  'PeriodYear',
-            data: 'AssetBalanceClosingReporting',
-          },
-          { 
-            DisclosureClassification:  "Total",
-            Display: "Short Term Liability Balance",
-            PeriodYear:  'PeriodYear',
-            data: 'ShortTermLiabilityClosingReporting',
-          },
-          { 
-            DisclosureClassification:  "Total",
-            Display: "Long Term Liability Balance",
-            PeriodYear:  'PeriodYear',
-            data: 'LongTermLiabilityClosingReporting',
-          },
-          { 
-            DisclosureClassification:  "Total",
-            Display: "Total Liability Balance",
-            PeriodYear:  'PeriodYear',
-            data: 'LiabilityBalanceClosingReporting',
-          }
-        ]
-      }
-    ];
+    this.pendoId = pendoId;
+    this.dashboardId = dashboardId;
+    this.cardData = cardData;
     this.pivotDataSources = [];
   }
 
@@ -189,7 +92,6 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
               );
             this.pivotDataSources.push(pivotGrid); // Add Pivot Grid to DataSources
           });
-
         })
       ).subscribe(
         () => {
@@ -211,7 +113,6 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
     let pivotCardDataStore: Partial<CardDataItem>[] = [];
 
     pivotCardDataStore = this.mapFields(cardData, fieldTransform, sortingOrder);
-
     // Create Pivot Grid
     dataSource = new PivotGridDataSource({
       store: pivotCardDataStore,
@@ -224,27 +125,45 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
   mapFields(cardData: Array<any>, fieldTransform?: Partial<CardDataItem[]>, sortingOrder?: any){
     const transformedStore: any = [];
     const sortingItems = Object.entries(sortingOrder).map( ([key]) => key);
-    if(fieldTransform){
-      // Build new structure
+    if(fieldTransform){ // Transform & map values according to fieldTransform
       cardData.map( (e) => {
         const builtEntries: Partial<CardDataItem>[] = [];
-        // Re-map fields using the cardDataTransformer data provided
-        Object.entries(fieldTransform).forEach(( [key, value], i) => {
+        Object.entries(fieldTransform).forEach(( [_, value], i) => {
           const transformedObject: Partial<CardDataItem> = {};
           //Build rows
-          Object.entries(value).forEach(([key, value], i) => {
-            if(value) {
-              transformedObject[`${key}`] = e[`${value}`];
+          Object.entries(value).forEach(([k, v], i) => {
+            switch(value.LeaseTemplate) { // Depending on the 'DisclosureClassification' data will be mapped differently
+              case 'Total':
+                switch(k){
+                  case 'DisclosureClassification':
+                    transformedObject[k] = v;
+                    break;
+                  case 'LeaseTemplate':
+                    transformedObject[k] = v;
+                    break;
+                  case 'Display':
+                    transformedObject['Display'] = v;
+                    break;
+                  default:
+                    transformedObject[k] = e[v];
+                    break;
+                }
+                break;
+              default:
+                transformedObject[k] = e[v];
+                break;
             }
           });
-          transformedObject['Display'] = sortingItems[i];
+          if(value.DisclosureClassification != 'Total') {
+            transformedObject['Display'] = sortingItems[i];
+          }
           // Count sequence
           builtEntries.push(transformedObject);
         });
         transformedStore.push(...builtEntries);
       });
       return transformedStore;
-    } else {
+    } else { // Nothing was transformed return as is
       return cardData;
     }
   }

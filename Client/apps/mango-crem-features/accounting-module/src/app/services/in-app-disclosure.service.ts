@@ -51,22 +51,23 @@ export class InAppDisclosureService extends EndpointService{
     const param = { dashboardId: dashboardId };
     const url = `${environment.appUrls.inAppDisclosure}IAD/IADCardConfigs`;
 
-    if(cardConfig){
+    // TODO: Move logic back to corresponding dashboard
+    if(cardConfig){ // Only proceeds to custom configurations if cardConfig is provided
       return this.callHttpGet(url, 'getIADCardData',  param)
         .pipe(
           map( result => {
-            const fieldConfigs = []
-            result.data.forEach( card => {
+            const fieldConfigs = [];
+            result.data.forEach( (card, i) => {
               const fieldConfig = JSON.parse(card.CardJSONSchema);
-              fieldConfig.splice(3,1);
-              // todo: temp solution, combine this with fieldTransformation/fieldMapping which defines the field to be used
+              fieldConfig.splice(2,1);// todo: this needs to be fixed. API response w/ extra data (?)
               // todo: the data array should be transformed using the for each instead of pushing later
               // The array corresponds to the order coming from the API in the CardJSONSchema field
               // This should be 'find field' in the Array of objects, or API returns object to prevent changing indexes
               fieldConfig[0].sortingMethod = () => this.rowSort(undefined, undefined, card.sortingOrder);
-              fieldConfig[2].sortingMethod =  () => this.rowSort(undefined, undefined, card.sortingOrder);
-              fieldConfig[3].format = card.format;
-              fieldConfig[fieldConfig.length - 1].calculateCustomSummary = () => this.calculateCustomSummary(undefined);
+              fieldConfig[1].sortingMethod =  () => this.rowSort(undefined, undefined, card.sortingOrder);
+              fieldConfig[2].format = card.format;
+              fieldConfig[fieldConfig.length - 1].calculateSummaryValue = cardConfig[i]?.calculateSummaryValue;
+              fieldConfig[fieldConfig.length - 1].calculateCustomSummary = cardConfig[i]?.calculateCustomSummary;
               fieldConfigs.push(fieldConfig);
             });
             result.data = fieldConfigs;
@@ -110,21 +111,6 @@ export class InAppDisclosureService extends EndpointService{
       return -1;
     else
       return 0;
-  }
-
-  private calculateCustomSummary(options, currencyISO?:string){
-    // todo: this should be programmatically generated, missing return(?)
-    switch(options.summaryProcess) {
-      case "start":
-        options.totalValue = 0;
-        break;
-      case "calculate":
-        options.totalValue += options.value;
-        break;
-      case "finalize":
-        options.totalValue = options.totalValue.toFixed(2);
-        break;
-    }
   }
 
   public SetDefault(segmentID: number, criteriaSetID: number) {
