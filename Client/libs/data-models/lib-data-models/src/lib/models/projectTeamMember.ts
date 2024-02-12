@@ -37,3 +37,13 @@ export interface TaskStatusCount {
   count: number;
   status: string;
 }
+
+export interface RemoveTeamMembers {
+  projectId: number; 
+  teamMembers: RemoveMember [];
+} 
+
+export interface RemoveMember {
+  commonTeamId: number;
+  contactId: number;
+}

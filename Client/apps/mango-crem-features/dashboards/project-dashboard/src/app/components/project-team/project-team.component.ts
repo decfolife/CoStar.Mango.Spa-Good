@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { MemberInfo, ProjectTeamMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, ProjectTeamMember, RemoveMember, RemoveTeamMembers } from '@mango/data-models/lib-data-models';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
 import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -22,16 +23,17 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   dataRetrieved: boolean = false;;
   projectTeam: ProjectTeamMember[];
+  selectedTeamMembersData: RemoveTeamMembers = <RemoveTeamMembers>{};
   projectId: number;
   managerContactId: number;
   memberInfo: MemberInfo = <MemberInfo>{};
   noDataText: string = "No Data.";
   errorText: string = "Error Occurred while getting Project Team Members.";
-  selectedMemberContactIds: number[] = [];
   userAccessLevel: number;
   subs: Subscription[] = [];
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
+              public toastr: ToastrService,
               private route: ActivatedRoute,
               private dialogService: MangoDialogService,
   ) {}
@@ -39,7 +41,9 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subs.push(this.route.queryParams.pipe(
       filter(params => !!params && !!params.oid),
-      tap(params => {this.projectId = parseInt(params.oid)}),
+      tap(params => {this.projectId = parseInt(params.oid);
+        this.selectedTeamMembersData.projectId = this.projectId;
+      }),
       switchMap(params => this.getProjectTeam(this.projectId)),
       tap(_ => {this.getMemberInfo(), this.getProjectContactLevel(this.projectId)}),
     ).subscribe());
@@ -65,10 +69,6 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     ).subscribe());
   }
 
-  removeMembers() {
-
-  }
-
   saveTeamAsTemplate() {
     let dialogRef = this.dialog.open(SaveTeamTemplateComponent, {
       height: '300px',
@@ -84,8 +84,17 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   onSelectionChanged(e:any){
     if(e.selectedRowKeys.includes(this.managerContactId)) {
       e.selectedRowKeys = e.selectedRowKeys.filter(contactId => contactId != this.managerContactId);
+      e.selectedRowsData = e.selectedRowsData.filter(rowData => rowData.contactID != this.managerContactId);
     }
-    this.selectedMemberContactIds = e.selectedRowKeys;
+    this.selectedTeamMembersData.teamMembers = [];
+    e.selectedRowsData.forEach(rowData => {
+      let selectedMemberData = {
+        commonTeamId: rowData.teamID,
+        contactId: rowData.contactID
+      };
+
+      this.selectedTeamMembersData.teamMembers.push(selectedMemberData);
+    })
   }
 
   onCellPrepared(e) {
@@ -98,6 +107,17 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       }
       htmlCellElement.style.pointerEvents = 'none';
     }
+  }
+
+  removeMembers() {
+    this.subs.push(this.dialogService.confirm('Remove Members', `Do you want to delete the selected contacts/members ?`, 'Confirm', 'Cancel').pipe(
+      filter(confirmed => !!confirmed),
+      switchMap(_ => this.dashboardService.removeTeamMembers(this.selectedTeamMembersData)),
+      switchMap(res => !!res && !!res.success ? 
+        (this.toastr.info("Contact/Team Member(s) removed from this project.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getProjectTeam(this.projectId)) 
+        : this.dialogService.alert('Team Member Removal', 'There was an issue removing selected Team Member(s). Please review and try again later.', 'OK')
+      )
+    ).subscribe());
   }
 
   makeProjectManager(contactId: number) {
@@ -122,10 +142,10 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   public getProjectTeam(projectId): Observable<any> {
     this.dataRetrieved = false;
-    this.selectedMemberContactIds = [];
+    this.selectedTeamMembersData.teamMembers = [];
     return this.dashboardService.getProjectTeams(projectId).pipe(
       tap(res => {
-        if (!res) {
+        if (!res || !res.success) {
           this.noDataText = this.errorText;
           this.dataRetrieved = true;
         }

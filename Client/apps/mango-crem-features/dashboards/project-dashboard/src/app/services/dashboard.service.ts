@@ -173,5 +173,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}saveprojectmanager`;
     return this.callHttpPost(url,  'saveprojectmanager', { projectId, contactId });
   }
+
+  removeTeamMembers(projMemberData ) {
+    const url = `${environment.appUrls.projects}removeteammembers`;
+    return this.callHttpPost(url,  'removeteammembers',  projMemberData );
+  }
 }
 
