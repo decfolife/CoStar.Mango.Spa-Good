@@ -82,7 +82,7 @@
       </mat-slide-toggle>
     </div>
   </div>
-  <div class="aet-outstandingRoles" *ngIf="(operation == Operations.ATU) && (outstandingRoles.length)">
+  <div class="aet-outstandingRoles" *ngIf="outstandingRoles.length">
     <h4 class="roleLabel label">Outstanding Roles</h4>
     <span class="outstandingRolesCount">{{outstandingRoles.length}} roles waiting to be assigned</span>
     <crem-tooltip-basic

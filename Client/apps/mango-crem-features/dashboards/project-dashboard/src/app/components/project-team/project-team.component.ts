@@ -137,7 +137,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
   displayMessage() {
-    this.dialogService.alert('Make Team Manager', 'We were not able to update Team Mananger, please try again later.', 'OK');
+    this.dialogService.alert('Make Team Manager', 'We were not able to update Team Manager, please try again later.', 'OK');
   }
 
   public getProjectTeam(projectId): Observable<any> {

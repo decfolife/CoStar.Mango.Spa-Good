@@ -78,8 +78,8 @@ export class AddEditMemberComponent implements OnInit {
     }
 
     this.getTitle(this.operation);
+    this.getOutstandingRoles(this.projectId);
     if (this.operation == Operations.ATM || this.operation == Operations.ATU) {
-      this.getOutstandingRoles(this.projectId);
       this.subs.push(this.getUserPreferences().subscribe());
       this.getProjectAssignedTaskList(this.projectId);
     }

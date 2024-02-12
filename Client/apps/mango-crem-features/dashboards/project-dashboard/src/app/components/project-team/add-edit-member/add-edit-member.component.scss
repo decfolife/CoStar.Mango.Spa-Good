@@ -9,12 +9,15 @@
   }
   .aet-email-shared {
     width: 100%;
-    padding-top: 20px;
     display: flex;
     justify-content: flex-start;
 
     .emailToggle, .sharedToggle {
-      width: 100%
+      width: 100%;
+
+      h4.label {
+        transform: translateY(-10px);
+      }
     }
   }
   .descContent {
@@ -73,6 +76,7 @@
   }
 
   .aet-outstandingRoles {
+    height: 40px;
     display: flex;
     justify-content: space-between;
     .roleLabel {
