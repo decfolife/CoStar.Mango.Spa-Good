@@ -16,6 +16,7 @@ import { saveAs } from "file-saver-es";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
+import { Reminder } from "libs/data-models/lib-data-models/src/lib/models/Reminder";
 
 @Component({
   selector: "mango-reminders-list",
@@ -40,6 +41,8 @@ export class RemindersListComponent implements OnInit {
   @ViewChild("SearchBox") searchBox: SearchComponent;
 
   public gridData: any;
+
+  public reminderGridData: Reminder[];
   public searchText: string = "";
   public columns: any = [];
   @Input() otid: number;
@@ -62,18 +65,21 @@ export class RemindersListComponent implements OnInit {
   private loadRemindersData(otid: number, oid: number): void {
     this.service.getRemindersList(oid, otid).subscribe((res) => {
       this.gridData = res?.success ? res.data : null;
+
     });
   }
 
-  addReminder() {
+  openAddEditReminderDialog(tFunc: string, data?: any) {
     let dialogRef = this.dialog.open(AddReminderComponent, {
-      disableClose: true,
-      height: "70%",
-      width: "55%",
+      height: '600px',
+      width: '2000px',
       maxWidth: "1100px",
+      panelClass: 'addEditReminderModal',
       data: {
+        teamFunction: tFunc,
         objectTypeId: this.otid,
         objectId: this.oid,
+        data: data
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
@@ -104,7 +110,7 @@ export class RemindersListComponent implements OnInit {
 
           const customizedData =
             options.data.TicklerTypeID === 1 && hasUserDefinedDate
-              ? options.data.Ticklername + options.data.UserDefinedDate
+              ? options.data.Ticklername + ' ' + '(' + options.data.UserDefinedDate.split('T')[0] + ')'
               : options.data.Ticklername;
 
           container.innerText = customizedData;
@@ -146,6 +152,21 @@ export class RemindersListComponent implements OnInit {
         caption: "Message",
       },
     ];
+  }
+
+  addOrEditReminder(tFunc: any, data: any) {
+    let team = <Reminder>{};
+    let dialogRef = this.dialog.open(AddReminderComponent, {
+      height: '600px',
+      width: '2000px',
+      data: { info: data },
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === "true") {
+        this.loadRemindersData(this.otid, this.oid);
+      }
+    });
   }
 
   public openColumnChooser() {

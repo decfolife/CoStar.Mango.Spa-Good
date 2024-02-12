@@ -47,7 +47,8 @@ export class RemindersService extends EndpointService {
     return this.callHttpGet(url, 'GetAvailableContacts', request);
   }
 
-  SaveReminder(request: any): Observable<any> {
+  saveReminder(request: any): Observable<any> {
+    console.log(request)
     let url = `${environment.appUrls.objectActions}Reminders/SaveReminder`;
     return this.callHttpPost(url, 'SaveReminder', request);
   }

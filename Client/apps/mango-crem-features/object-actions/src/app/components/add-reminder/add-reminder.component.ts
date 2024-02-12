@@ -20,12 +20,12 @@ import {
   OnInit,
   Output,
   ViewChild,
-  OnDestroy,
+  OnDestroy, ChangeDetectorRef,
 } from "@angular/core";
 import { faCirclePlus, faCircleMinus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   combineLatest,
-  forkJoin,
   of,
   Subscription,
   BehaviorSubject,
@@ -33,15 +33,12 @@ import {
 import { RemindersService } from "@reminders-list/shared/services/reminders.service";
 import { catchError, filter, map, switchMap, tap, debounceTime } from "rxjs/operators";
 import { ActivatedRoute } from "@angular/router";
-import {
-  FaIconComponent,
-  AnimationProp,
-} from "@fortawesome/angular-fontawesome";
 import { ToastrService } from "ngx-toastr";
 import { MangoDialogService } from "@project-dashboard/services/mango-dialog.service";
-import { Reminder } from "../../../../../../../libs/data-models/lib-data-models/src/lib/models/Reminder";
-import { RemindersRecepient } from "./../../../../../../../libs/data-models/lib-data-models/src/lib/models/RemindersRecepient";
-import { RemindersFilteredRecepient } from "./../../../../../../../libs/data-models/lib-data-models/src/lib/models/RemindersFilteredRecepient";
+import { Reminder } from "libs/data-models/lib-data-models/src/lib/models/Reminder";
+import { RemindersRecepient } from "libs/data-models/lib-data-models/src/lib/models/RemindersRecepient";
+import { RemindersFilteredRecepient } from "libs/data-models/lib-data-models/src/lib/models/RemindersFilteredRecepient";
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
   selector: "add-reminder",
@@ -59,6 +56,7 @@ import { RemindersFilteredRecepient } from "./../../../../../../../libs/data-mod
     DxFormModule,
     DxDropDownBoxModule,
     DxListModule,
+    FontAwesomeModule,
   ],
   providers: [DatePipe, RemindersService],
 })
@@ -85,6 +83,17 @@ export class AddReminderComponent implements OnInit {
   selectedMemberIds: number[];
   otid: number;
   oid: number;
+  public modalTitle: string;
+  beginDays: string;
+  TicklerTypeID: number;
+  emailMessage: string;
+  defaultSelectedValue: number | null = null;
+  tickleFrequency: number | null = null;
+  ticklerDaysOut: number | null = null;
+  userDefinedEvent: string;
+  userDefinedDate: Date;
+  initLoad: boolean = true;
+
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>(
     ""
@@ -92,25 +101,60 @@ export class AddReminderComponent implements OnInit {
 
   @Output() isLoading = new EventEmitter();
   @ViewChild("addReminderForm") addReminderForm: DxFormComponent;
+  @ViewChild("SelectedRecipientsGrid") selectedRecipientsGrid: DxDataGridComponent;
 
   constructor(
     private remindersService: RemindersService,
     private route: ActivatedRoute,
     public toastr: ToastrService,
     public dialogRef: MatDialogRef<AddReminderComponent>,
-    private dialogService: MangoDialogService
+    private dialogService: MangoDialogService, private cdr: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
     this.onPlGroupValueChanged = this.onPlGroupValueChanged.bind(this);
     this.otid = Number(this.route.snapshot.queryParamMap.get("otid"));
     this.oid = Number(this.route.snapshot.queryParamMap.get("oid"));
   }
-
   ngOnInit(): void {
     let pageSize = 10;
     let pageNumber = 1;
     this.getDropdownData();
     this.remindersInfo = <Reminder>{};
     this.remindersInfo.remindersRecepient = [];
+    if (this.data.teamFunction == "add") {
+      this.modalTitle = "Add Reminder"
+    } else {
+      const { data: { data: gridData } } = this.data
+      this.modalTitle = "Edit Reminder";
+      this.emailMessage = gridData.TicklerMessage;
+      this.defaultSelectedValue = gridData.TicklerTypeID;
+      this.tickleFrequency = gridData.TicklerFrequency;
+      this.ticklerDaysOut = gridData.TicklerDaysOut;
+      this.userDefinedEvent = gridData.UserDefinedEvent;
+      this.userDefinedDate = gridData.UserDefinedDate?.split('T')[0];
+      const newRecipient: RemindersRecepient = {
+        contactId: gridData.ContactID,
+        contactNameEmail: gridData.DisplayName
+      };
+      this.remindersInfo.remindersRecepient.push(newRecipient);
+
+    }
+
+
+
+    this.membersSearchInput$.pipe(
+      debounceTime(250),
+      switchMap(inputValue => ((inputValue.length != 1) ? this.remindersService.getRecipientsContactsList(this.oid, this.otid) : of([])))
+    ).subscribe(filteredremindersRecepient => {
+      this.filteredremindersRecepient = filteredremindersRecepient.data.map(
+        (recipient) => ({
+          contactId: recipient.ContactID,
+          contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
+        })
+      )
+      pageNumber = 0;
+      pageSize = 0;
+    });
   }
 
   public getDropdownData() {
@@ -126,10 +170,10 @@ export class AddReminderComponent implements OnInit {
           ),
           tap(([reminderEventDropdown, recipientsContactsList]) => {
             this.reminderEventDropdown = reminderEventDropdown?.data;
-            this.filteredremindersRecepient= recipientsContactsList.data.map(
+            this.filteredremindersRecepient = recipientsContactsList.data.map(
               (recipient) => ({
                 contactId: recipient.ContactID,
-                contactNameEmail:   recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
+                contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
               })
             )
             this.loading = false;
@@ -145,13 +189,13 @@ export class AddReminderComponent implements OnInit {
     this.loading = true;
     for (const recipient of this.remindersInfo.remindersRecepient) {
       reminderData.ContactID = recipient.contactId;
-      this.remindersService.SaveReminder(reminderData).pipe(
+      this.remindersService.saveReminder(reminderData).pipe(
         switchMap(res => {
           if (res.success) {
             this.dialogRef.close('true');
-          } 
+          }
           return res.success ? of(this.toastr.info("Reminder Saved Successfully", "",
-                 { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this reminder. Please review and try again later', 'OK');
+            { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this reminder. Please review and try again later', 'OK');
         }),
         catchError(_ => this.dialogService.alert('Save Not Successful!', 'There was an issue with saving this team. Please review and try again later', 'OK'))
       ).subscribe();
@@ -185,7 +229,7 @@ export class AddReminderComponent implements OnInit {
       this.remindersInfo.remindersRecepient.length
     ) {
       this.remindersInfo.remindersRecepient.forEach((member) => {
-        if (member.contactId == e.itemData.ContactID) {
+        if (member.contactId === e.itemData.contactId) {
           this.setListItemAttributes(e);
         }
       });
@@ -221,7 +265,7 @@ export class AddReminderComponent implements OnInit {
   removeMembers() {
     let confirmText = "Do you want to Remove the members ?\n\n";
     this.selectedMembers.forEach((member) => {
-      confirmText += member.name + "\n";
+      confirmText += member.contactNameEmail + "\n";
     });
 
     this.dialogService
@@ -247,11 +291,7 @@ export class AddReminderComponent implements OnInit {
   }
 
   editorPreparing(e) {
-    if (
-      e.parentType === "dataRow" &&
-      (e.dataField == "role" || e.dataField == "level") &&
-      e.changesMade
-    ) {
+    if (e.parentType === 'dataRow' && ((e.dataField == 'role') || (e.dataField == 'level')) && e.changesMade) {
       this.changesMade = true;
     }
   }
@@ -265,7 +305,12 @@ export class AddReminderComponent implements OnInit {
     }
   }
 
-  setAttributes(e) {}
+  setAttributes(e) {
+      if(this.initLoad) {
+        this.selectedRecipientsGrid.instance.refresh();
+        this.initLoad = false;
+    }
+  }
 
   public cancelChanges() {
     if (this.changesMade) {
