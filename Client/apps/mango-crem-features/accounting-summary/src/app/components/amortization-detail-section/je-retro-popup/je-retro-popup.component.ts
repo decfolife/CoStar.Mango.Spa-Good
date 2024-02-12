@@ -32,6 +32,7 @@ export class JeRetroPopupComponent {
   maxHeight ='70%';
   minHeight = '50%'
   popupHeight='';
+  componentName = "amortization-period-popup";
   retrospectiveAdjustmentPopupData: any;
   tabs: any[] = null;
   private subscription = new Subscription();

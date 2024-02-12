@@ -33,7 +33,8 @@
     </div>
   </dx-tooltip>
 
-    <div #containerDiv id="containerDiv" class="work-flow-comments" *ngIf="this.commentsVisible">
+    <div #containerDiv id="containerDiv" class="work-flow-comments" *ngIf="this.commentsVisible"
+        [id]="accountingSummaryService.getId(componentName,'comment','popup')">
       <p class="work-flow-comment-label">Change Workflow Status</p>
 
       <textarea

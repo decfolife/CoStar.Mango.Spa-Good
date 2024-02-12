@@ -11,6 +11,7 @@ width="70%"
 [resizeEnabled]="false"
 >    
   <dx-tab-panel
+      [id]="accountingSummaryService.getId(componentName ,'tabs','section')"
       [dataSource]="tabs"
       [selectedIndex]="0"
       height="98%"

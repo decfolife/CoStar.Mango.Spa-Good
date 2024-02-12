@@ -33,13 +33,13 @@
           [modifiedById]="modifiedByID"
           (workflowStatusSavedEvent)="onWorkflowStatusSaved($event)"></mango-workflow-dropdown>
         <div *ngIf="modifiedDate || modifiedByName" class="work-flow-change-info"
-          [id]="accountingSummaryService.getId(componentName,'ChangeBy','tooltip')"
+          [id]="accountingSummaryService.getId(componentName,'modifiedBy','section')"
           (mouseenter)="onChangeByTooltipMouseOver()" (mouseleave)="onChangeByTooltipMouseLeave()">
           Modified by {{ modifiedByName | slice: 0:10 }}...
           {{ modifiedDate | date: userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
   
           <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
-            target="#accounts-summary-ChangeBy-tooltip" [visible]="isChangeByTooltipVisible">
+            target="#accounts-summary-modifiedBy-section" [visible]="isChangeByTooltipVisible">
             <div *dxTemplate="let data of 'content'">
               Modified by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU !== undefined &&
               userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}

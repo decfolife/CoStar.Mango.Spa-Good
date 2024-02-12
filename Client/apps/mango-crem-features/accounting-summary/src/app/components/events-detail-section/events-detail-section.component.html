@@ -3,13 +3,15 @@
 		<mat-expansion-panel-header aria-label="Accounting Events"> 
 		  <mat-panel-title class="header" > 
 			<div class="card-header">
-				<div class="card-title">Accounting Events {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+				<div class="card-title"
+					[id]="accountingSummaryService.getId(componentName,'card','title')">
+					Accounting Events {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
 				</div>
 				<div class="event-selector">
 					<input [id]="accountingSummaryService.getId(componentName,'empty','dropdown')" *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
 					<div *ngIf="!isAccountingEventEmpty" class="events-dropdown">
 					  <dx-drop-down-box #EventSelectorDropdown
-						[id]="accountingSummaryService.getId(componentName,'events','dropdown')"
+						[id]="accountingSummaryService.getId(componentName,'events-selector','dropdown')"
 						[(value)]="gridBoxValue"
 						[(opened)]="isGridBoxOpened"
 						valueExpr="masterScheduleID"
@@ -99,11 +101,18 @@
 				</dxo-state-storing>
 				<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 				<dxo-scrolling columnRenderingMode="virtual"></dxo-scrolling>
-				<dxo-selection mode="single"></dxo-selection>
+
 				<dxo-column-chooser
 					[enabled]="true"
 					mode="select"
-					[allowSearch]="true"> 
+					[allowSearch]="true"
+					height="500"
+					width="400"> 
+
+					<dxo-selection
+						mode="single"
+						allowSelectAll="true">
+					</dxo-selection>
 				</dxo-column-chooser>
 				<div *dxTemplate="let info of 'amortizationHeader'">
 					<p title={{info.column.caption}}

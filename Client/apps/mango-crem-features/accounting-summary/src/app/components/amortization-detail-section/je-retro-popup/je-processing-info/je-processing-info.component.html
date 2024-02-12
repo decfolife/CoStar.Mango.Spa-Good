@@ -86,9 +86,11 @@
                     [disabled]="isButtonDisabled"
                     (mouseenter)="onMouseEnter()"
                     (mouseleave)="onMouseLeave()">
-                    {{changeButtonText}}</crem-button>
+                    {{changeButtonText}}
+                </crem-button>
             </div>
-            <dx-tooltip [id]="accountingSummaryService.getId(componentName,'ActionsButton','tooltip')"
+            <dx-tooltip
+                [id]="accountingSummaryService.getId(componentName,'actions','tooltip')"
                 [target]="'#' + actionsButtonId"
                 [visible]="isTooltipVisible">
                 <div *dxTemplate="let data of 'content'">
