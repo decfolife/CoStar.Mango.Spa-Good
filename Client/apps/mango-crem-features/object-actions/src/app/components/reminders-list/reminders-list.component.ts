@@ -17,6 +17,9 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { Reminder } from "libs/data-models/lib-data-models/src/lib/models/Reminder";
+import { Observable } from "rxjs";
+import { UserInfo } from "@mango/data-models/lib-data-models";
+import { MangoAppFacade } from "@mangoSpa/src/app/+state/app/app.facade";
 
 @Component({
   selector: "mango-reminders-list",
@@ -40,24 +43,49 @@ export class RemindersListComponent implements OnInit {
   @ViewChild("RemindersDataGrid") remindersDataGrid: DxDataGridComponent;
   @ViewChild("SearchBox") searchBox: SearchComponent;
 
-  public gridData: any;
+  @Input() otid: number;
+  @Input() oid: number;
 
+  public gridData: any;
   public reminderGridData: Reminder[];
   public searchText: string = "";
   public columns: any = [];
-  @Input() otid: number;
-  @Input() oid: number;
+  public userRole: number;
+  
+  private currentUserInfo$:Observable<UserInfo>;
 
   constructor(
     private service: RemindersService,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private facade: MangoAppFacade,
   ) {
     this.otid = Number(this.route.snapshot.queryParamMap.get("otid"));
     this.oid = Number(this.route.snapshot.queryParamMap.get("oid"));
   }
 
   ngOnInit(): void {
+
+    // check the user's role for permission to edit a row from the actions column
+    // from tblContactRole
+    // useroles: 
+    // {
+    //   0 : Super User,
+    //   1 : System Admin,
+    //   2 : Admin,
+    //   3 : Manager,
+    //   4 : Power User,
+    //   5 : User,
+    //   6 : Guest
+    // }
+
+    this.currentUserInfo$ = this.facade.userInfo$
+    this.currentUserInfo$.subscribe(userInfo => {
+      this.userRole = userInfo.role;
+    });
+
+    // end permission check
+    
     this.loadRemindersData(this.otid, this.oid);
     this.setReminderColumns();
   }
