@@ -9,7 +9,10 @@ export const cardData: CardConfig[] = [ // todo: exception handling when data co
     index: 0,
     id: 'LeaseCounts',
     name: 'Lease Counts',
-    format: ",###",
+    format: {
+      type: 'fixedPoint',
+      precision: 2,
+    },
     sortingOrder: {
       "Opening Lease Count": 1,
       "- Leases Added": 2,
@@ -45,6 +48,7 @@ export const cardData: CardConfig[] = [ // todo: exception handling when data co
         PeriodYear: 'PeriodYear',
         data: 'ClosingCount',
       },
+      // Totals
       {
         DisclosureClassification: 'Total',
         LeaseTemplate: 'Total',
@@ -78,59 +82,139 @@ export const cardData: CardConfig[] = [ // todo: exception handling when data co
   {
     index: 1,
     id: 'AssetBalance',
-    name: 'Asset Balance',
+    name: 'Assets and Liabilities Balances',
+    format:  {
+      type: 'fixedPoint',
+      precision: 2,
+    },
     sortingOrder: {
+      'ROU Asset Balance - Opening': 1,
+      'ROU Asset Balance - Added': 2,
+      'ROU Asset Balance - Amortization': 3,
+      'ROU Asset Balance - Adjustment': 4,
+      'ROU Asset Balance - Closing': 5,
 
+      'Short Term Liability Balance': 6,
+      'Long Term Liability Balance': 7,
+      'Total Liability Balance': 8,
     },
     fieldTransform: [
-      { 
-        DisclosureClassification:  'ClassificationName',
-        Display: "ROU Asset Balance",
+      // First Part
+      {
+        DisclosureClassification: 'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
+        Display: "ROU Asset Balance - Opening",
+        PeriodYear:  'PeriodYear',
+        data: 'AssetBalanceOpeningReporting',
+      },
+      {
+        DisclosureClassification: 'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
+        Display: "ROU Asset Balance - Added",
+        PeriodYear:  'PeriodYear',
+        data: 'AssetBalanceAddedReporting',
+      },
+      {
+        DisclosureClassification:  'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
+        Display: "ROU Asset Balance - Amortization",
+        PeriodYear: 'PeriodYear',
+        data: 'AssetBalanceAmortizationReporting',
+      },
+      {
+        DisclosureClassification:  'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
+        Display: "ROU Asset Balance - Adjustment",
+        PeriodYear: 'PeriodYear',
+        data: 'AssetBalanceAdjustmentReporting',
+      },
+      {
+        DisclosureClassification:  'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
+        Display: "ROU Asset Balance - Closing",
         PeriodYear: 'PeriodYear',
         data: 'AssetBalanceClosingReporting',
       },
-      { 
-        DisclosureClassification: 'ClassificationName',
+      // Second Part
+      {
+        DisclosureClassification: 'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
         Display: "Short Term Liability Balance",
         PeriodYear:  'PeriodYear',
         data: 'ShortTermLiabilityClosingReporting',
       },
-      { 
-        DisclosureClassification: 'ClassificationName',
+      {
+        DisclosureClassification: 'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
         Display: "Long Term Liability Balance",
         PeriodYear:  'PeriodYear',
         data: 'LongTermLiabilityClosingReporting',
       },
-      { 
-        DisclosureClassification: 'ClassificationName',
+      {
+        DisclosureClassification: 'LeaseTemplate',
+        LeaseTemplate: 'LeaseTemplate',
         Display: "Total Liability Balance",
         PeriodYear:  'PeriodYear',
         data: 'LiabilityBalanceClosingReporting',
       },
-      { 
-        DisclosureClassification:  "Total",
-        Display: "ROU Asset Balance",
+      // Totals: First Part
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
+        Display: "ROU Asset Balance - Opening",
         PeriodYear:  'PeriodYear',
+        data: 'AssetBalanceOpeningReporting',
+      },
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
+        Display: "ROU Asset Balance - Added",
+        PeriodYear:  'PeriodYear',
+        data: 'AssetBalanceAddedReporting',
+      },
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
+        Display: "ROU Asset Balance - Amortization",
+        PeriodYear: 'PeriodYear',
+        data: 'AssetBalanceAmortizationReporting',
+      },
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
+        Display: "ROU Asset Balance - Adjustment",
+        PeriodYear: 'PeriodYear',
+        data: 'AssetBalanceAdjustmentReporting',
+      },
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
+        Display: "ROU Asset Balance - Closing",
+        PeriodYear: 'PeriodYear',
         data: 'AssetBalanceClosingReporting',
       },
-      { 
-        DisclosureClassification:  "Total",
+      // Totals: Second Part
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
         Display: "Short Term Liability Balance",
         PeriodYear:  'PeriodYear',
         data: 'ShortTermLiabilityClosingReporting',
       },
-      { 
-        DisclosureClassification:  "Total",
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
         Display: "Long Term Liability Balance",
         PeriodYear:  'PeriodYear',
         data: 'LongTermLiabilityClosingReporting',
       },
-      { 
-        DisclosureClassification:  "Total",
+      {
+        DisclosureClassification: 'Total',
+        LeaseTemplate: 'Total',
         Display: "Total Liability Balance",
         PeriodYear:  'PeriodYear',
         data: 'LiabilityBalanceClosingReporting',
-      }
+      },
     ]
   }
 ];

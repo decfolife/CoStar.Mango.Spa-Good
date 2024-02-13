@@ -1,11 +1,13 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
 import { Component, OnInit, OnDestroy, ViewChild, ViewChildren, Input } from '@angular/core';
-import { CardConfig, CardDataItem } from '@mango/data-models/lib-data-models';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import { switchMap, tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
+
+import { CardConfig, CardDataItem } from '@mango/data-models/lib-data-models';
+import { rowSort } from './definitions';
 
 // Configuration Data
 import { cardData, dashboardId, pendoId } from './conf/cardData';
@@ -42,6 +44,7 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
     this.pendoId = pendoId;
     this.dashboardId = dashboardId;
     this.cardData = cardData;
+    this.selectedCurrency = 'usd';
     this.pivotDataSources = [];
   }
 
@@ -61,16 +64,36 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
 
   private getCards(): void{
     /*
-     * Get Cards Info
+     * Get Cards:
      * 1. Get Card Configuration: getIADCardConfigs
-     * 2. Get All necessary additional data: getCurrencyDecimalPrecision
-     * 3. Get Pivot Configuration: getIADCardData
+     * 2. Get All necessary additional configuration data: getCurrencyDecimalPrecision
+     * 3. Get Card Data: getIADCardData
+     * 4. Set Pivot Grids with both cardData and cardConfig
      */
-    this.observableList$ = this.inAppDisclosureService.getIADCardConfigs(this.dashboardId, this.cardData)
+    this.observableList$ = this.inAppDisclosureService.getIADCardConfigs(this.dashboardId)
       .pipe(
         switchMap( (cardConfig) => {
-          this.fieldConfigs = cardConfig.data;
-          this.selectedCurrency = 'usd';
+          const fieldConfigs = [];
+          // todo: refactor, this should be programmatically configured
+          cardConfig?.data.map( (card, i) => {
+            // The array corresponds to the order coming from the API in the CardJSONSchema field
+            const fieldConfig = JSON.parse(card.CardJSONSchema);
+            switch(card.Title){ // todo: rework or fix cardConfig values to prevent this
+              case "IFRS 16 Annual Disclosures Lease Counts":
+                fieldConfig.splice(2,1);
+                break;
+              case "IFRS 16 Annual Disclosures Assets and Liabilities Balance":
+                fieldConfig.splice(3,1);
+                break;
+            }
+            fieldConfig[0].sortingMethod = () => rowSort(undefined, undefined, card.sortingOrder);
+            fieldConfig[1].sortingMethod =  () => rowSort(undefined, undefined, card.sortingOrder);
+            fieldConfig[fieldConfig.length - 1].format = this.cardData[i]?.format;
+            fieldConfig[fieldConfig.length - 1].calculateSummaryValue = card.calculateSummaryValue;
+            fieldConfig[fieldConfig.length - 1].calculateCustomSummary = card.calculateCustomSummary;
+            fieldConfigs.push(fieldConfig);
+          });
+          this.fieldConfigs = fieldConfigs;
           return this.inAppDisclosureService.getCurrencyDecimalPrecision(this.selectedCurrency);
         }),
         switchMap( (decimalPrecision) => {
@@ -135,10 +158,8 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
             switch(value.LeaseTemplate) { // Depending on the 'DisclosureClassification' data will be mapped differently
               case 'Total':
                 switch(k){
-                  case 'DisclosureClassification':
-                    transformedObject[k] = v;
-                    break;
                   case 'LeaseTemplate':
+                  case 'DisclosureClassification':
                     transformedObject[k] = v;
                     break;
                   case 'Display':

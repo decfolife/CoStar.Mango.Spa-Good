@@ -5,9 +5,6 @@ import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable } from 'rxjs';
 
-import { CardConfig, SortingOrder } from '@mango/data-models/lib-data-models';
-import { map } from 'rxjs/operators';
-
 @Injectable()
 
 export class InAppDisclosureService extends EndpointService{
@@ -46,38 +43,10 @@ export class InAppDisclosureService extends EndpointService{
     return this.callHttpGet(url, 'getIADCardData',  param)  
   }
 
-  public getIADCardConfigs(dashboardId: number, cardConfig?: CardConfig[]): Observable<any> {
-
+  public getIADCardConfigs(dashboardId: number): Observable<any> {
     const param = { dashboardId: dashboardId };
     const url = `${environment.appUrls.inAppDisclosure}IAD/IADCardConfigs`;
-
-    // TODO: Move logic back to corresponding dashboard
-    if(cardConfig){ // Only proceeds to custom configurations if cardConfig is provided
-      return this.callHttpGet(url, 'getIADCardData',  param)
-        .pipe(
-          map( result => {
-            const fieldConfigs = [];
-            result.data.forEach( (card, i) => {
-              const fieldConfig = JSON.parse(card.CardJSONSchema);
-              fieldConfig.splice(2,1);// todo: this needs to be fixed. API response w/ extra data (?)
-              // todo: the data array should be transformed using the for each instead of pushing later
-              // The array corresponds to the order coming from the API in the CardJSONSchema field
-              // This should be 'find field' in the Array of objects, or API returns object to prevent changing indexes
-              fieldConfig[0].sortingMethod = () => this.rowSort(undefined, undefined, card.sortingOrder);
-              fieldConfig[1].sortingMethod =  () => this.rowSort(undefined, undefined, card.sortingOrder);
-              fieldConfig[2].format = card.format;
-              fieldConfig[fieldConfig.length - 1].calculateSummaryValue = cardConfig[i]?.calculateSummaryValue;
-              fieldConfig[fieldConfig.length - 1].calculateCustomSummary = cardConfig[i]?.calculateCustomSummary;
-              fieldConfigs.push(fieldConfig);
-            });
-            result.data = fieldConfigs;
-            return result;
-          }),
-        );
-    } else {
-      return this.callHttpGet(url, 'getIADCardData',  param);
-    }
-
+    return this.callHttpGet(url, 'getIADCardData',  param);
   }
 
   public getAccountingCriteriaSets() {
@@ -102,15 +71,6 @@ export class InAppDisclosureService extends EndpointService{
     const url = `${environment.appUrls.inAppDisclosure}IAD/CurrencyPrecision`
 
     return this.callHttpGet(url, 'getCurrencyPrecision', param)
-  }
-
-  private rowSort(a?, b?, sortingOrder?: SortingOrder) {
-    if (sortingOrder?.[a.value] > sortingOrder?.[b.value])
-      return 1;
-    if (sortingOrder?.[b.value] > sortingOrder?.[a.value])
-      return -1;
-    else
-      return 0;
   }
 
   public SetDefault(segmentID: number, criteriaSetID: number) {

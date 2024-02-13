@@ -1,5 +1,5 @@
 export interface FormatObject {
-  type: string,
+  type?: string,
   precision: number,
 }
 
