@@ -20,6 +20,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   isLocked = false;
   isArchived = false;
   rightsInfo: any;
+  wfStatusRights: any;
   userInfo: UserInfoResponse;
   workflowStatusInfo: any
   workflowStatusHistory: any
@@ -44,6 +45,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.getUserInfo();
     this.setRightsAndLeaseInfo();
     this.getWorkflowHistoryInfo();
+    this.setWorkflowStatusRight();
   }
 
   ngOnDestroy() {
@@ -152,6 +154,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   {
     if(workflowStatusSaved){
       this.getWorkflowHistoryInfo();
+      this.setWorkflowStatusRight();
     }
   }
 
@@ -184,15 +187,13 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   private setRightsAndLeaseInfo(){
     const userNavPageRight = this.accountingSummaryService.getUserNavPageRight();
     const userNavPageWithLeaseRights = this.accountingSummaryService.getAccountingSummaryRights();
-    const workflowStatusOptions = this.accountingSummaryService.getWorkflowStatusInformation();
     const leaseInformation = this.accountingSummaryService.getLeaseInfo();
-   this.subscription.add(combineLatest([userNavPageRight, userNavPageWithLeaseRights, workflowStatusOptions, leaseInformation]).subscribe(res => {
+   this.subscription.add(combineLatest([userNavPageRight, userNavPageWithLeaseRights, leaseInformation]).subscribe(res => {
       const userNavPageRightResponse = res[0];
       const userNavPageWithLeaseRightsResponse = res[1];
-      const workflowStatusOptionsResponse = res[2];
-      const leaseInformationResponse = res[3];
+      const leaseInformationResponse = res[2];
 
-      if(userNavPageRightResponse === null || userNavPageWithLeaseRightsResponse === null || workflowStatusOptionsResponse === null || leaseInformationResponse === null ){
+      if(userNavPageRightResponse === null || userNavPageWithLeaseRightsResponse === null || leaseInformationResponse === null ){
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
       else if (!userNavPageRightResponse.success) {
@@ -201,16 +202,12 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       else if (!userNavPageWithLeaseRightsResponse.success) {
         this.accountingSummaryService.errorNotify(userNavPageWithLeaseRightsResponse.clientErrorMessage);
       }
-      else if (!workflowStatusOptionsResponse.success) {
-        this.accountingSummaryService.errorNotify(workflowStatusOptionsResponse.clientErrorMessage);
-      }
       else if (!leaseInformationResponse.success) {
         this.accountingSummaryService.errorNotify(leaseInformationResponse.clientErrorMessage);
       }
       else {
         this.noUserAddRights = !userNavPageWithLeaseRightsResponse.data.canAddSchedule;
 
-        this.workflowStatusInfo = workflowStatusOptionsResponse.data;
         this.leaseInfoResponse = leaseInformationResponse.data;
         this.isLocked = this.leaseInfoResponse.lockedReason != null;
         this.isArchived = !this.leaseInfoResponse.isActive;
@@ -227,17 +224,34 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
         this.rightsInfo = {
           userHasEditLeaseRights: userNavPageWithLeaseRightsResponse.data.leaseSecurityType >= 4 && userNavPageWithLeaseRightsResponse.data.leaseSecurityType !== 6,
-          wfStatusUserHasEditRights: workflowStatusOptionsResponse.data.options.filter(wfso => wfso.workflowStatusId === workflowStatusOptionsResponse.data.workflowStatusID)[0].allowScheduleEdit,
           userHasLeftNavEditRights: userNavPageRightResponse.data >= 4 && userNavPageRightResponse.data !== 6, 
           userCanDeleteSchedule: userNavPageWithLeaseRightsResponse.data.canDeleteSchedule,
           canApproveJE: userNavPageWithLeaseRightsResponse.data.canApproveJE,
           canUnapproveJE: userNavPageWithLeaseRightsResponse.data.canUnapproveJE,
           canUnexportJE: userNavPageWithLeaseRightsResponse.data.canUnexportJE,
-          wfStatusallowJEApproval: workflowStatusOptionsResponse.data.options.filter(wfso => wfso.workflowStatusId === workflowStatusOptionsResponse.data.workflowStatusID)[0].allowJEApproval
         }
 
         this.getDisabledBtnReason();
       }
     }));
+  }
+
+  private setWorkflowStatusRight() {
+    const workflowStatusOptions = this.accountingSummaryService.getWorkflowStatusInformation();
+    this.subscription.add(
+      workflowStatusOptions.subscribe(workflowStatusOptionsResponse => {
+        if (workflowStatusOptionsResponse === null) {
+          this.accountingSummaryService.displayContactSystemAdminMessage();
+        } else if (!workflowStatusOptionsResponse.success) {
+          this.accountingSummaryService.errorNotify(workflowStatusOptionsResponse.clientErrorMessage);
+        } else {
+          this.workflowStatusInfo = workflowStatusOptionsResponse.data;
+          this.wfStatusRights = {
+            wfStatusallowJEApproval: workflowStatusOptionsResponse.data.options.filter(wfso => wfso.workflowStatusId === workflowStatusOptionsResponse.data.workflowStatusID)[0].allowJEApproval,
+            wfStatusUserHasEditRights: workflowStatusOptionsResponse.data.options.filter(wfso => wfso.workflowStatusId === workflowStatusOptionsResponse.data.workflowStatusID)[0].allowScheduleEdit,
+          };
+        }
+      })
+    );
   }
 }

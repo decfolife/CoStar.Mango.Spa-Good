@@ -65,6 +65,9 @@
             <dxo-scrolling
                 columnRenderingMode="virtual">
             </dxo-scrolling>
+            <dxo-selection
+                mode="single">
+            </dxo-selection>
 
             <dxo-column-chooser
                 [enabled]="true"
@@ -74,7 +77,6 @@
                 width="400"> 
                 
                 <dxo-selection
-                    mode="single"
                     allowSelectAll="true">
                 </dxo-selection>
             </dxo-column-chooser>
@@ -93,7 +95,7 @@
     </mat-expansion-panel>
 
     <!-- This is for the amortization grid -->
-    <mango-je-retro-popup [amortizationGridRowClickEvent]="amortizationGridRowClickEvent" [eventScheduleData]="eventScheduleData" [gridColumnsForRetroPopup]="gridColumnsForRetroPopup" [rightsInfo]="rightsInfo" 
+    <mango-je-retro-popup [amortizationGridRowClickEvent]="amortizationGridRowClickEvent" [eventScheduleData]="eventScheduleData" [gridColumnsForRetroPopup]="gridColumnsForRetroPopup" [rightsInfo]="rightsInfo" [wfStatusRights]="wfStatusRights"
     [userInfo]="userInfo" [classificationType]="classificationType" [amortizationProfileName]="amortizationProfileName" [newRetroEventJeStatus]="retroEventJeStatus" (jeRetroPopupClosedEvent)="onJeRetroPopupClosed($event)" (retroAdustmentGridRowClickEvent)="onRetroAdustmentGridRowClick($event)"></mango-je-retro-popup>
 
     <!-- This is for the retro adjustments grid.  This is called from the mango-je-retro-popup for the amortization grid.  -->

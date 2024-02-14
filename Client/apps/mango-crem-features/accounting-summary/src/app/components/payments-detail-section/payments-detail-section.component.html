@@ -59,7 +59,14 @@
 					[customLoad]="loadState"
 					[customSave]="saveState">
 				</dxo-state-storing>
-				<dxo-scrolling columnRenderingMode="virtual"></dxo-scrolling>
+
+				<dxo-scrolling
+					columnRenderingMode="virtual">
+				</dxo-scrolling>
+				
+				<dxo-selection
+					mode="single">
+				</dxo-selection>
 
 				<dxo-column-chooser
 					[enabled]="true"
@@ -68,10 +75,9 @@
 					height="500"
 					width="400"> 
 
-						<dxo-selection
-							mode="single"
-							allowSelectAll="true">
-						</dxo-selection>
+					<dxo-selection
+						allowSelectAll="true">
+					</dxo-selection>
 				</dxo-column-chooser>
 				
 				<div *dxTemplate="let info of 'amortizationHeader'">

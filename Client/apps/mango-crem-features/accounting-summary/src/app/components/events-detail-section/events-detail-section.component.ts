@@ -6,7 +6,6 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { DxDataGridComponent, DxDropDownBoxComponent } from 'devextreme-angular';
 import { trigger } from 'devextreme/events';
-import { RowPreparedEvent, CellPreparedEvent } from 'devextreme/ui/data_grid';
 import { Subscription, combineLatest } from 'rxjs';
 
 @Component({
@@ -21,6 +20,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   @Input() leaseIsLocked: boolean;
   @Input() leaseIsArchived: boolean;
   @Input() rightsInfo: any;
+  @Input() wfStatusRights: any;
   @Input() userInfo: UserInfoResponse;
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;
@@ -86,12 +86,12 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       this.masterScheduleIDChanged = false;
     }
 
-    if (changes.rightsInfo !== undefined && changes.rightsInfo.currentValue !== undefined) {
+    if (changes.rightsInfo !== undefined && changes.rightsInfo.currentValue !== undefined && changes.wfStatusRights !== undefined && changes.wfStatusRights.currentValue !== undefined)  {
       this.setRights();
     }
 
     this.showEditIcon = this.userHasEditLeaseRights
-          && this.wfStatusHasEditRights
+      && this.wfStatusHasEditRights
       && this.userHasLeftNavEditRights
       && !this.leaseIsLocked
       && !this.leaseIsArchived
@@ -520,7 +520,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   private setRights() {
     this.userHasEditLeaseRights = this.rightsInfo.userHasEditLeaseRights;
-    this.wfStatusHasEditRights = this.rightsInfo.wfStatusUserHasEditRights;
+    this.wfStatusHasEditRights = this.wfStatusRights.wfStatusUserHasEditRights;
     this.userHasLeftNavEditRights = this.rightsInfo.userHasLeftNavEditRights;
     this.userHasDeleteAccountingSchedulesModuleRight = this.rightsInfo.userCanDeleteSchedule;
   }

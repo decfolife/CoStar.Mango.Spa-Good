@@ -1,6 +1,7 @@
 <crem-button 
     [id]="accountingSummaryService.getId(componentName,'history','icon')"
-    ariaLabel="workflow history"
+    ariaLabel="Workflow History"
+    title="Workflow History"
     type="secondary"
     btnStyle="basic"
     className="bg-transparent"
@@ -35,6 +36,7 @@ titleTemplate="title-item"
                     (click)="exportToExcel()"
                     btnStyle="basic"
                     title="Export Workflow Status History to Excel"
+                    ariaLabel="Export Workflow Status History to Excel"
                     type="secondary">
                     <crem-icon class="fa-lg fa-regular" icon="faFileExcel" pack="regular"></crem-icon>
                 </crem-button>
@@ -44,6 +46,7 @@ titleTemplate="title-item"
                     *ngIf="!isFullscreen"
                     btnStyle="basic"
                     title="Full Screen"
+                    ariaLabel="Full Screen"
                     type="secondary">
                     <crem-icon class="fa-lg" icon="faExpand"></crem-icon>
                 </crem-button>
@@ -53,6 +56,7 @@ titleTemplate="title-item"
                     *ngIf="isFullscreen"
                     btnStyle="basic"
                     title="Exit Full Screen"
+                    ariaLabel="Exit Full Screen"
                     type="secondary">
                     <crem-icon class="fa-lg" icon="faCompress"></crem-icon>
                 </crem-button>
@@ -61,6 +65,7 @@ titleTemplate="title-item"
                     (click)="hideHistoryPopup($event)"
                     btnStyle="basic"
                     title="Close"
+                    ariaLabel="Close"
                     type="secondary">
                     <crem-icon class="fa-lg" icon="faX"></crem-icon>
                 </crem-button>

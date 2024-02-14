@@ -14,6 +14,7 @@ export class JeRetroPopupComponent {
   @Input() eventScheduleData: any;
   @Input() gridColumnsForRetroPopup: any[];
   @Input() rightsInfo: any;
+  @Input() wfStatusRights: any;
   @Input() userInfo: UserInfoResponse;
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;

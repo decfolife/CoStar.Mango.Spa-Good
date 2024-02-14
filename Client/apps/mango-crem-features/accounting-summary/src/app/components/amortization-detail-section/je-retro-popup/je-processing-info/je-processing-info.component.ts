@@ -16,6 +16,7 @@ export class JeProcessingInfoComponent {
   @Input() amortizationdetailsGridData: any;
   @Input() eventScheduleData: any;
   @Input() rightsInfo: any;
+  @Input() wfStatusRights: any;
   @Input() displayPeriodTitle: string;
   @Input() isPopupForRetroGridClick = false;
   @Output() jeActionTaken: EventEmitter<any> = new EventEmitter<any>();
@@ -89,7 +90,7 @@ export class JeProcessingInfoComponent {
       this.showActionButton = true;
       this.isButtonDisabled = true;
       this.disableBtnReason = 'You do not have rights to Approve';
-    } else if (!this.rightsInfo.wfStatusallowJEApproval) {
+    } else if (!this.wfStatusRights.wfStatusallowJEApproval) {
       this.isButtonDisabled = true;
       this.disableBtnReason = 'Workflow status does not allow JE approval'
     }
@@ -128,7 +129,7 @@ export class JeProcessingInfoComponent {
         this.showPreviewButton = true;
         this.changeButtonText = 'Approve';
 
-        if (!this.rightsInfo.wfStatusallowJEApproval) {
+        if (!this.wfStatusRights.wfStatusallowJEApproval) {
           this.isButtonDisabled = true;
         }
 
@@ -214,7 +215,7 @@ export class JeProcessingInfoComponent {
   actionButton() {
     switch (this.changeButtonText) {
       case 'Approve':
-        if (this.rightsInfo.canApproveJE && this.rightsInfo.wfStatusallowJEApproval) {
+        if (this.rightsInfo.canApproveJE && this.wfStatusRights.wfStatusallowJEApproval) {
           this.saveJournalEntryProcess(this.jeProcessingPopupData.leaseRecognitionPeriodID, this.changeButtonText)
         }
         break;

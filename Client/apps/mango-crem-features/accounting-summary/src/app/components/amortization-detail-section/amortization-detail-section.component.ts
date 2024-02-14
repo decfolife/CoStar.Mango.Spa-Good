@@ -19,6 +19,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   @Input() eventScheduleData: any;
   @Input() userInfo: UserInfoResponse;
   @Input() rightsInfo: any;
+  @Input() wfStatusRights: any;
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;
   @Input() classificationID: number;
