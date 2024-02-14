@@ -18,6 +18,7 @@ export { Sidekick } from './lib/models/dashboards/sidekick';
 export { RequestPasswordResetRequest } from './lib/models/central-auth/request-password-reset-request';
 export { User } from './lib/models/central-auth/user';
 export { UserInfo } from './lib/models/user-info';
+export { UserRoleType } from './lib/models/central-auth/user-role-type'
 export { Client } from './lib/models/client';
 export { ClientSSOSettings } from './lib/models/central-auth/client-sso-settings';
 export { Password } from './lib/models/central-auth/password';

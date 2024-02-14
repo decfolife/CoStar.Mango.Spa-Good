@@ -54,7 +54,7 @@
 							[matMenuTriggerFor]="MoreMenu"><mat-icon role="none"
 								aria-label="Actions Menu">more_horiz</mat-icon></button>
 						<mat-menu #MoreMenu="matMenu">
-							<button mat-menu-item type="button"*ngIf="userRole < 3"
+							<button mat-menu-item type="button" *ngIf="(currentUserRole$ | async) < USER_ROLES.Manager"
 								(click)="openAddEditReminderDialog('edit',data);" >Edit</button>
 							<button mat-menu-item type="button" (click)="deleteReminder(data);"
 								(keydown.space)="deleteReminder(data);"

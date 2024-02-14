@@ -1,25 +1,24 @@
-import { Component, OnInit, ViewChild, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { DatePipe } from "@angular/common";
-import { ButtonModule, DropdownModule } from "@mango/ui-shared/lib-ui-elements";
-import { SearchModule } from "@mango/ui-shared/cosmos";
-import { DxDataGridModule, DxDataGridComponent } from "devextreme-angular";
-import { SharedModule } from "../../shared/shared.module";
-import { RemindersService } from "./../../shared/services/reminders.service";
-import { SearchComponent } from "@mango/ui-shared/cosmos";
-import { exportDataGrid } from "devextreme/excel_exporter";
-import { Workbook, ValueType } from "exceljs";
-import { ActivatedRoute } from "@angular/router";
-import { AddReminderComponent } from "../add-reminder/add-reminder.component";
-import { MatDialog } from "@angular/material/dialog";
-import { saveAs } from "file-saver-es";
+import { CommonModule, DatePipe } from "@angular/common";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatDialog } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
+import { ActivatedRoute } from "@angular/router";
+import { UserRoleType } from "@mango/data-models/lib-data-models";
+import { SearchComponent, SearchModule } from "@mango/ui-shared/cosmos";
+import { ButtonModule, DropdownModule } from "@mango/ui-shared/lib-ui-elements";
+import { MangoAppFacade } from "@mangoSpa/src/app/+state/app/app.facade";
+import { DxDataGridComponent, DxDataGridModule } from "devextreme-angular";
+import { exportDataGrid } from "devextreme/excel_exporter";
+import { ValueType, Workbook } from "exceljs";
+import { saveAs } from "file-saver-es";
 import { Reminder } from "libs/data-models/lib-data-models/src/lib/models/Reminder";
 import { Observable } from "rxjs";
-import { UserInfo } from "@mango/data-models/lib-data-models";
-import { MangoAppFacade } from "@mangoSpa/src/app/+state/app/app.facade";
+import { filter, map } from "rxjs/operators";
+import { SharedModule } from "../../shared/shared.module";
+import { AddReminderComponent } from "../add-reminder/add-reminder.component";
+import { RemindersService } from "./../../shared/services/reminders.service";
 
 @Component({
   selector: "mango-reminders-list",
@@ -50,9 +49,10 @@ export class RemindersListComponent implements OnInit {
   public reminderGridData: Reminder[];
   public searchText: string = "";
   public columns: any = [];
-  public userRole: number;
   
-  private currentUserInfo$:Observable<UserInfo>;
+  currentUserRole$: Observable<number>;
+
+  USER_ROLES = UserRoleType
 
   constructor(
     private service: RemindersService,
@@ -65,27 +65,7 @@ export class RemindersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    // check the user's role for permission to edit a row from the actions column
-    // from tblContactRole
-    // useroles: 
-    // {
-    //   0 : Super User,
-    //   1 : System Admin,
-    //   2 : Admin,
-    //   3 : Manager,
-    //   4 : Power User,
-    //   5 : User,
-    //   6 : Guest
-    // }
-
-    this.currentUserInfo$ = this.facade.userInfo$
-    this.currentUserInfo$.subscribe(userInfo => {
-      this.userRole = userInfo.role;
-    });
-
-    // end permission check
-    
+    this.currentUserRole$ = this.facade.userInfo$.pipe(filter(userInfo => !!userInfo), map(userInfo => userInfo.securityLevelID))    
     this.loadRemindersData(this.otid, this.oid);
     this.setReminderColumns();
   }
