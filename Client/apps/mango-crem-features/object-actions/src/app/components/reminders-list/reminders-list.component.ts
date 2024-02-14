@@ -1,24 +1,25 @@
-import { CommonModule, DatePipe } from "@angular/common";
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { Subscription, Observable } from 'rxjs';
+import { saveAs } from "file-saver-es";
+import { CommonModule,DatePipe } from "@angular/common";
+import { Workbook, ValueType } from "exceljs";
+import { ActivatedRoute } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
-import { ActivatedRoute } from "@angular/router";
 import { UserRoleType } from "@mango/data-models/lib-data-models";
 import { SearchComponent, SearchModule } from "@mango/ui-shared/cosmos";
 import { ButtonModule, DropdownModule } from "@mango/ui-shared/lib-ui-elements";
 import { MangoAppFacade } from "@mangoSpa/src/app/+state/app/app.facade";
 import { DxDataGridComponent, DxDataGridModule } from "devextreme-angular";
 import { exportDataGrid } from "devextreme/excel_exporter";
-import { ValueType, Workbook } from "exceljs";
-import { saveAs } from "file-saver-es";
 import { Reminder } from "libs/data-models/lib-data-models/src/lib/models/Reminder";
-import { Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
 import { SharedModule } from "../../shared/shared.module";
 import { AddReminderComponent } from "../add-reminder/add-reminder.component";
 import { RemindersService } from "./../../shared/services/reminders.service";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { Component, OnDestroy, OnInit, ViewChild, Input } from "@angular/core";
+import { DeleteReminderComponent } from '../modal/delete-reminder/delete-reminder.component';
 
 @Component({
   selector: "mango-reminders-list",
@@ -38,7 +39,7 @@ import { RemindersService } from "./../../shared/services/reminders.service";
   ],
   providers: [DatePipe, RemindersService],
 })
-export class RemindersListComponent implements OnInit {
+export class RemindersListComponent implements OnInit, OnDestroy {
   @ViewChild("RemindersDataGrid") remindersDataGrid: DxDataGridComponent;
   @ViewChild("SearchBox") searchBox: SearchComponent;
 
@@ -54,8 +55,10 @@ export class RemindersListComponent implements OnInit {
 
   USER_ROLES = UserRoleType
 
+  private subscriptions = new Subscription();
+
   constructor(
-    private service: RemindersService,
+    private reminderService: RemindersService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private facade: MangoAppFacade,
@@ -70,8 +73,12 @@ export class RemindersListComponent implements OnInit {
     this.setReminderColumns();
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
   private loadRemindersData(otid: number, oid: number): void {
-    this.service.getRemindersList(oid, otid).subscribe((res) => {
+    this.reminderService.getRemindersList(oid, otid).subscribe((res) => {
       this.gridData = res?.success ? res.data : null;
 
     });
@@ -270,5 +277,41 @@ export class RemindersListComponent implements OnInit {
         });
       }
     });
+  }
+  public deleteReminder(e) {
+    let reminder = e.data
+    let reminderId = reminder.TicklerID
+    let dialogRef = this.dialog.open(DeleteReminderComponent, {
+      height: '200px',
+      width: '600px',
+      data: { reminder }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result === "Yes") {
+        this.performDeleteReminder(reminderId);
+      }
+
+    });
+  }
+
+  public performDeleteReminder(RID: number) {
+    console.log("destroy all of it: " + RID)
+    this.subscriptions.add(
+      this.reminderService.deleteReminder(RID).subscribe(
+        (res: any) => {
+          if (res.success) {
+            this.gridData = this.gridData.filter(reminder => reminder.TicklerID !== RID)
+          }
+          else {
+            console.log("The Delete Reminder API call is not successful.");
+          }
+        },
+        (error: any) => {
+          console.log("Error deleting the reminder: ", error)
+        }
+      )
+    )
   }
 }

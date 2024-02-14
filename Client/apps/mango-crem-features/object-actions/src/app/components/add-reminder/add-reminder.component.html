@@ -6,9 +6,11 @@
   <div modalContent class="body-content">
     <div class="section">
       <dx-form #addReminderForm id="form" validationGroup="centerForm" labelLocation="top">
-        <dxi-item itemType="group" cssClass="centerForm" [colCount]="1">
-          <dxi-item dataField="reminderEvent" editorType="dxSelectBox" [editorOptions]="{ items: reminderEventDropdown, valueExpr: 'TicklerTypeID', displayExpr: 'TickleDescription', onValueChanged: onPlGroupValueChanged , 
-            value: defaultSelectedValue && defaultSelectedValue> 0 ? defaultSelectedValue  : null} "
+        <dxi-item itemType="group" cssClass="centerForm" [colCount]="1"> 
+          <dxi-item dataField="reminderEvent" editorType="dxSelectBox"
+           [editorOptions]="{ items: reminderEventDropdown, valueExpr: 'TicklerTypeID', displayExpr: 'TickleDescription',
+            onValueChanged: onPlGroupValueChanged, 
+            value: defaultSelectedValue> 0 ? defaultSelectedValue  : null} "
             id="reminderEventId">
             <dxi-validation-rule type="required" message="You must select a Reminder Event."></dxi-validation-rule>
           </dxi-item>
@@ -58,10 +60,11 @@
         </dxi-item>
         <dxi-item itemtype="group">
 
-          <div id="aet-members">
-            <dxo-label text="Recipients"></dxo-label>
+          <div id="aet-members" class="aet-members">
+            <h3>recipient</h3>
             <div id="container">
-              <dx-drop-down-box class="aet-membersDropDown" placeholder="Start typing to search for additional users."
+              <dx-drop-down-box class="aet-membersDropDown" 
+                placeholder="Start typing to search for additional users."
                 [(opened)]="isDropDownBoxOpened" (onEnterKey)="toggleList()" (onClick)="focusOnDropDownInput($event)"
                 (onFocusIn)="focusOnDropDownInput($event)" (onOpened)="focusOnDropDownInput($event)"
                 (onInput)="searchTeamMembers($event.event.target.value)" [acceptCustomValue]="true"
@@ -84,8 +87,8 @@
               </dx-drop-down-box>
             </div>
           </div>
-          <div id="aet-selectedMembers">
-            <div id="aet-remove-members">
+          <div id="aet-selectedMembers" class="aet-selectedMembers">
+            <div id="aet-remove-members" class="aet-remove-members">
               <crem-button type="secondary" (click)="removeMembers(); $event.preventDefault();"
                 [disabled]="removeDisabled">
                 <fa-icon [icon]="faCircleMinus"></fa-icon>

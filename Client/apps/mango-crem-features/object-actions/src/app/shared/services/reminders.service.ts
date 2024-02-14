@@ -52,4 +52,8 @@ export class RemindersService extends EndpointService {
     let url = `${environment.appUrls.objectActions}Reminders/SaveReminder`;
     return this.callHttpPost(url, 'SaveReminder', request);
   }
+
+  deleteReminder(RID: number): Observable<any>{
+    return this.callHttpDelete(`${environment.appUrls.objectActions}Reminders/DeleteReminder/${RID}`, 'DeleteReminder');
+  }
 }

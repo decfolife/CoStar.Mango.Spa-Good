@@ -87,12 +87,13 @@ export class AddReminderComponent implements OnInit {
   beginDays: string;
   TicklerTypeID: number;
   emailMessage: string;
-  defaultSelectedValue: number | null = null;
+  defaultSelectedValue: number;
   tickleFrequency: number | null = null;
   ticklerDaysOut: number | null = null;
   userDefinedEvent: string;
   userDefinedDate: Date;
   initLoad: boolean = true;
+  ticklerID: number;
 
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>(
@@ -116,8 +117,7 @@ export class AddReminderComponent implements OnInit {
     this.oid = Number(this.route.snapshot.queryParamMap.get("oid"));
   }
   ngOnInit(): void {
-    let pageSize = 10;
-    let pageNumber = 1;
+    console.log('defaultSelectedValue',this.defaultSelectedValue)
     this.getDropdownData();
     this.remindersInfo = <Reminder>{};
     this.remindersInfo.remindersRecepient = [];
@@ -132,6 +132,7 @@ export class AddReminderComponent implements OnInit {
       this.ticklerDaysOut = gridData.TicklerDaysOut;
       this.userDefinedEvent = gridData.UserDefinedEvent;
       this.userDefinedDate = gridData.UserDefinedDate?.split('T')[0];
+      this.ticklerID = gridData.TicklerID;
       const newRecipient: RemindersRecepient = {
         contactId: gridData.ContactID,
         contactNameEmail: gridData.DisplayName
@@ -139,10 +140,7 @@ export class AddReminderComponent implements OnInit {
       this.remindersInfo.remindersRecepient.push(newRecipient);
 
     }
-
-
-
-    this.membersSearchInput$.pipe(
+     this.membersSearchInput$.pipe(
       debounceTime(250),
       switchMap(inputValue => ((inputValue.length != 1) ? this.remindersService.getRecipientsContactsList(this.oid, this.otid) : of([])))
     ).subscribe(filteredremindersRecepient => {
@@ -152,8 +150,6 @@ export class AddReminderComponent implements OnInit {
           contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
         })
       )
-      pageNumber = 0;
-      pageSize = 0;
     });
   }
 
@@ -184,9 +180,12 @@ export class AddReminderComponent implements OnInit {
   }
 
   saveReminder(e) {
-    const isFormValid = this.addReminderForm.instance.validate();
     const reminderData = this.getSaveReminderData();
-    this.loading = true;
+    this.loading = true;  
+    if(this.remindersInfo.remindersRecepient.length == 0 ){
+      this.dialogService.alert('Recipient Name', 'Recipient field is a required field.', 'OK').subscribe();
+      return;
+    }
     for (const recipient of this.remindersInfo.remindersRecepient) {
       reminderData.ContactID = recipient.contactId;
       this.remindersService.saveReminder(reminderData).pipe(
@@ -244,6 +243,7 @@ export class AddReminderComponent implements OnInit {
 
   private getSaveReminderData() {
     const formData = this.addReminderForm.formData;
+
     let saveReminderData = {
       UserDefinedEvent: formData.userDefinedEvent,
       UserDefinedDate: formData.userDefinedDate,
@@ -254,6 +254,7 @@ export class AddReminderComponent implements OnInit {
       ObjectID: this.oid,
       ObjectTypeID: this.otid,
       TickleTypeId: formData.reminderEvent,
+      TicklerID : this.ticklerID 
     };
     return saveReminderData;
   }
@@ -345,10 +346,18 @@ export class AddReminderComponent implements OnInit {
   }
 
   onPlGroupValueChanged(e: any) {
+    this.defaultSelectedValue = e.component?.option("value");
     this.selectedReminderEventId = e.component?.option("text");
   }
 
   shouldShowUserDefinedEvent(): boolean {
     return this.selectedReminderEventId === "User Defined";
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+      this.membersSearchInput$.unsubscribe();
+      this.subscriptions.unsubscribe();
+    
   }
 }
