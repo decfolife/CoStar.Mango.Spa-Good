@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 export class TitleComponent implements OnInit, OnDestroy {
 
   leaseName: string;
-  componentName = 'accounts-summary-lease';
+  componentName = 'accounting-summary-lease';
   showTooltip = false;
   isLocked  = false;
   isArchived = false;

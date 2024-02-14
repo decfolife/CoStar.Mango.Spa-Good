@@ -12,7 +12,7 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
 })
 export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
-  componentName = 'accounts-summary';
+  componentName = 'accounting-summary';
   readonly allowedPageSizes = ['all'];
   isAddButtonDisabled = true;
   eventSchedule: any;
