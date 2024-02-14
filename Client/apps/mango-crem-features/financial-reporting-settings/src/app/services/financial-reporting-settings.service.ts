@@ -33,6 +33,10 @@ export class FinancialReportingSettingsService extends EndpointService {
     return this.callHttpGet(`${environment.appUrls.reports}reports/GetCurrencyList`, 'getCurrencyList');
   }
 
+  getUserInformation() {
+    return this.callHttpGet(`${environment.appUrls.reports}Reports/GetUserPreferences`, 'getUserPreferences');
+  }
+
   refreshFinancialData() {
     return this.callHttpGet(`${environment.appUrls.reports}reports/RefreshFinancialData`, 'refreshFinancialData');
   }

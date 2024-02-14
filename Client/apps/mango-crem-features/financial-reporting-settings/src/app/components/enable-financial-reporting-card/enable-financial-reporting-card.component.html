@@ -6,20 +6,54 @@
   <mat-card-content>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12 center">
+        <div class="col-12 center" *ngIf="!hasCustomConfigurations">
           This Financial Reporting feature enables a library of lease financial
           calulations to be available in ad hoc reporting.
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 center">
-          <dx-button (onClick)="showConfirm = true"
-            id="enableFinancialReportingButton"
-            [disabled]="isViewOnly"
-          >Enable Financial Reporting</dx-button>
+        <div class="col-12 center" *ngIf="hasCustomConfigurations">
+          Financial Reporting cannot be enabled due to customizations on your site, 
+          please contact CoStar Customer Support for assistance.
         </div>
       </div>
+
+      <div class="row text-row-div"  *ngIf="!isViewOnly && !hasCustomConfigurations">
+        <div class="text-area-wrapper">
+          <dx-text-area class="text-area" [readOnly]="true"
+          value="Financial Reporting will automatically be enabled on {{deadlineDate}}."
+          ></dx-text-area>
+        </div>
+      </div>
+
+      <div class="row or-row"  *ngIf="!isViewOnly && !hasCustomConfigurations">
+        <div class="col-12 center">
+        OR
+        </div>
+      </div>
+
+      <div class="row text-row-div">
+        <div class="center">
+          <crem-button (buttonClick)="showConfirm = true"
+          type="primary"
+          id="enableFinancialReportingButton"
+          [disabled]="isViewOnly || hasCustomConfigurations"
+        >Enable Financial Reporting Now</crem-button>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="hasCustomConfigurations && isSuperUser">
+        <div class="col-12 center">
+          <crem-simple-grid 
+          id="customConfigurationsGrid"
+          [dataSource]="customConfigurations"
+          [paging]="false"
+          [columns]="gridColumns"
+          [allowColumnReordering]="false"
+          gridHeight="400px"
+          >
+          </crem-simple-grid>
+        </div>
+      </div>
+
     </div>
   </mat-card-content>
 
@@ -29,7 +63,7 @@
     width="500px"
     height="200px"
   >
-    <div class="p-4">
+    <div class="pop-up-div">
       <div class="center">
         <strong>This is a one-time action that cannot be undone.</strong>
       </div>

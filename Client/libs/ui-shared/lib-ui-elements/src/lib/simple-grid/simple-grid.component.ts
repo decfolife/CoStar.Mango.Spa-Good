@@ -61,7 +61,6 @@ export class SimpleGridComponent{
     if (this.autoSetKeyExpr) {
       this.setKeyExpr();
     }
-     this.paging = this.paging || true;
    }
 
    public setKeyExpr() {

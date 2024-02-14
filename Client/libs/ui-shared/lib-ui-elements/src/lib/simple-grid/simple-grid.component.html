@@ -32,13 +32,13 @@
       >
       <dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
     </dxi-column>
-    <dxo-paging [enabled]="true" [pageSize]="pageSize" *ngIf="paging"></dxo-paging>
+    <dxo-paging [enabled]="paging" [pageSize]="pageSize" *ngIf="paging"></dxo-paging>
     <dxo-pager *ngIf="paging"
           [showPageSizeSelector]="true"
           [allowedPageSizes]="customPageSize"
           [showInfo]="true"
           [showNavigationButtons]="true"
-          [visible]="true"
+          [visible]="paging"
     >
     </dxo-pager>
     <dxo-scrolling mode="standard"></dxo-scrolling>

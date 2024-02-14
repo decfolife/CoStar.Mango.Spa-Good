@@ -13,12 +13,52 @@ import { FinancialReportingSettingsService } from '../../services/financial-repo
 export class EnableFinancialReportingCardComponent {
   @Input()
   isViewOnly = true;
+  @Input()
+  deadlineDate = null;
+
+  @Input()
+  hasCustomConfigurations = true;
+
+  @Input()
+  customConfigurations = [];
+
+  @Input()
+  isSuperUser = false;
 
   @Output()
   enabledChanged = new EventEmitter<boolean>();
 
   showConfirm = false;
   buttonDisabled = false;
+  gridColumns = [
+      {	dataField : "name",
+				alignment : "left",
+				dataType : "string",
+				caption : "Name",
+			},
+			{	dataField : "usedInExtract",
+        alignment : "center",
+        dataType : "string",
+				caption : "Used In Extract",
+			},
+			{	dataField : "extractName",
+        alignment : "left",
+        caption : "Extract Name",
+				dataType : "string",
+			},
+			{	dataField : "destinationTableName",
+        alignment : "left",
+        caption : "Destination Table Name",
+				dataType : "string"
+			},
+			{	dataField : "impactToSchemaOutput",
+        alignment : "center",
+        caption : "Impact To Schema Output",
+				dataType : "string",
+			},
+		];
+
+
 
   constructor(private service: FinancialReportingSettingsService) { }
 

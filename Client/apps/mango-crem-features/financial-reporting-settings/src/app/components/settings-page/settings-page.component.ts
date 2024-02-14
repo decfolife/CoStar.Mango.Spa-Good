@@ -6,6 +6,8 @@ import notify from 'devextreme/ui/notify';
 import { Currency, IntervalsData, SettingsData } from '../../models/';
 import { FinancialReportingSettingsService } from '../../services/financial-reporting-settings.service';
 import { ImpactReportResponse } from '../../models/Impact-report-response.modal';
+import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 interface DontTouch {
   intervalSettingsID: number;
@@ -32,12 +34,14 @@ export class SettingsPageComponent implements OnInit {
   isPopupVisible = false;
   filename = 'Financial Reporting Impact Report.xlsx';
   componentName = 'settings-page';
-  isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
+  deadlineDate = '';
+  private subscription = new Subscription();
 
-  constructor(private settingsService: FinancialReportingSettingsService) { }
+  constructor(private settingsService: FinancialReportingSettingsService, private datePipe: DatePipe) { }
 
   ngOnInit(): void {
+    this.getUserInfo();
     const suDiv = document.getElementById('IsSuperUser')
     this.isSuperUser = suDiv?.innerText === 'true';
 
@@ -87,11 +91,6 @@ export class SettingsPageComponent implements OnInit {
   }
 
   migrationImpactReport() {
-    const isEuroElement = document.getElementById('isEuropeanDateFormat');
-    this.isEuroDateFormat = isEuroElement?.innerHTML.toLowerCase() === 'true';
-    if (this.isEuroDateFormat) {
-      this.dateFormat = 'dd.MM.yyyy';
-    }
     this.settingsService.migrationImpactReport().subscribe(result => {
       const data: ImpactReportResponse[] = result.data;
       if (result.success) {
@@ -169,8 +168,13 @@ export class SettingsPageComponent implements OnInit {
           ? null
           : new Date(res.data.lastSuccessfulIntervalUpdate);
 
+      this.deadlineDate = this.formatDate(res.data.financialReportingDeadline);
+
       this.loadObjectFromData(this.intervalsData, res.data);
       this.loadObjectFromData(this.settingsData, res.data);
+
+      if(this.settingsData.customConfigurations == null)
+        this.settingsData.customConfigurations = [];
     });
   }
 
@@ -189,6 +193,13 @@ export class SettingsPageComponent implements OnInit {
     Object.keys(obj).forEach(key => {
       if (key !== 'lastSuccessfulIntervalUpdate') {
         obj[key] = data[key];
+
+        if(key === 'customConfigurations' && obj[key] !== null){
+          obj[key].forEach(element => {
+            element.usedInExtract = element.usedInExtract ? 'Yes' : 'No'
+            element.impactToSchemaOutput = element.impactToSchemaOutput ? 'Yes' : 'No'
+          });
+        }
       }
     });
   }
@@ -198,5 +209,18 @@ export class SettingsPageComponent implements OnInit {
       return `${this.componentName}-${componentType}-${uniqueName}-${elementType}`
     else
       return `${this.componentName}-${uniqueName}-${elementType}`
+  }
+
+  getUserInfo() {
+    this.subscription.add(this.settingsService.getUserInformation().subscribe(res => {
+      if (res.data) {
+        this.dateFormat = res.data.dateFormat;
+      }
+    }));
+  }
+
+  formatDate(date: Date | null): string | null {
+    if (!date) return null;
+    return this.datePipe.transform(date, this.dateFormat);
   }
 }

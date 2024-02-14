@@ -52,7 +52,11 @@
     ></ngx-skeleton-loader>
 
     <mango-enable-financial-reporting-card *ngIf="settingsData"
+      [deadlineDate]="deadlineDate"
       [isViewOnly]="isViewOnly"
+      [hasCustomConfigurations]="settingsData.hasCustomConfigurations"
+      [customConfigurations]="settingsData.customConfigurations"
+      [isSuperUser]="settingsData.isSuperUser"
       (enabledChanged)="settingsData.financialReportingEnabled = $event"
     ></mango-enable-financial-reporting-card>
   </ng-template>
