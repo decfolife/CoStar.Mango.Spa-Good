@@ -39,6 +39,7 @@ export class AuthenticationEffects {
           let decodedToken = this.userService.getDecodedAuthToken(response.accessToken)
 
           const user: UserAuth = {
+            userId: parseInt(decodedToken.userId),
             email: decodedToken.email,
             contactId: parseInt(decodedToken.contactId),
             clientKey: decodedToken.clientKey,

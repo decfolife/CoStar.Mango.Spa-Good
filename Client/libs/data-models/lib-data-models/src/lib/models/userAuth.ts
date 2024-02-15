@@ -1,4 +1,5 @@
 export interface UserAuth {
+    userId: number;
     email: string;
     hasMultipleSites?: boolean;
     clientKey: string;
@@ -14,6 +15,7 @@ export interface LoginResponse {
 }
 
 export interface Token {
+    userId: string;
     email: string;
     securityLevel: string;
     contactId?: string;

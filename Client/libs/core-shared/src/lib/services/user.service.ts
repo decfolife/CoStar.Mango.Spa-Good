@@ -65,6 +65,7 @@ export class UserService {
       switchMap((response: any) => {
         const decodedJwt = this.getDecodedAuthToken(response.authToken);
         const user: UserAuth = {
+          userId: parseInt(decodedJwt.userId),
           email: response.email,
           hasMultipleSites: response.hasMultipleSites,
           clientKey: response.clientKey,

@@ -3,6 +3,7 @@ import { UserSite } from "../models/user-site";
 import { LoginResponse, UserAuth } from "../models/userAuth";
 
 export const userMock: UserAuth = {
+  userId: 123,
   clientKey: 'blank',
   email: 'mockuser@costargroup.com',
   isAutoProvisioned: true,
