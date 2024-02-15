@@ -61,6 +61,7 @@
                 [id]="accountingSummaryService.getId(componentName ,'show-jounal-entry','button')"
                 (click)="previewJournalEntryClick()"
                 type="primary"
+                class="je-primary-button"
                 >Preview Journal Entry</crem-button>
         </div>   
         <div class="no-je-profile-selected" *ngIf="showNoJeProfileSelected">
@@ -81,11 +82,13 @@
             <div class="custom-col metric-label">
                 <crem-button
                     [id]="actionsButtonId"
-                    type="primary" (click)="actionButton()"
+                    type="primary"
+                    (click)="actionButton()"
                     *ngIf="showActionButton"
                     [disabled]="isButtonDisabled"
                     (mouseenter)="onMouseEnter()"
-                    (mouseleave)="onMouseLeave()">
+                    (mouseleave)="onMouseLeave()"
+                    class="je-primary-button">
                     {{changeButtonText}}
                 </crem-button>
             </div>
