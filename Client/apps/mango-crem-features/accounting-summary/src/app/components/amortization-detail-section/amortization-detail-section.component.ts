@@ -374,15 +374,21 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
     this.gridColumnsForRetroPopup.forEach(bandedCol => {
       let subColIndex = 0;
+      let setBandColVisibleToTrue = false;
 
       bandedCol.columns.forEach(subCol => {
         const foundColumn = visibleColumns.find(vc => vc.name.toLowerCase() === subCol.name.toLowerCase());
         if(foundColumn !== undefined) {
           resultColumnsArray[bandColIndex].columns[subColIndex] = foundColumn;
+          setBandColVisibleToTrue = true;
         } 
 
         subColIndex++;
       });
+
+      if(setBandColVisibleToTrue && !bandedCol.visible){
+        resultColumnsArray[bandColIndex].visible = true;
+      }
 
       bandColIndex++;
     });
