@@ -1,4 +1,5 @@
 export interface ProjectTaskDetails {
+  taskId: number;
   taskName: string;
   step: string;
   isCurrent: boolean;

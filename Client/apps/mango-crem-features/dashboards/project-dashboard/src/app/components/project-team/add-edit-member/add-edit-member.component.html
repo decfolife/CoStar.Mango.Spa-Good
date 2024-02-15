@@ -5,7 +5,7 @@
   [modalId] = "modalId"
 >
 <div modalContent id="addEditMemberModal-content">
-  <div class="aet-members" *ngIf="operation=='ATM'">
+  <div class="aet-members" *ngIf="operation=='ATM' || operation=='ETM'">
     <h4 class="nameLabel label">Name</h4>
     <div id="container">
       <dx-drop-down-box 
@@ -13,6 +13,7 @@
           placeholder="Start typing to search for additional users"
           [value]="selectedMember"
           [(opened)]="isMemberDropDownBoxOpened" 
+          [disabled]="operation == 'ETM'? true : false"
           (onInput)="searchTeamMembers($event.event.target.value)"
 
           [acceptCustomValue]="true"
@@ -33,7 +34,7 @@
           >
             <div *dxTemplate="let member of 'membersListTemplate'"  >
               <div>
-                <span class="aet-addPlusIcon"><fa-icon [icon]="faCirclePlus" ></fa-icon></span>
+                <span class="aet-addPlusIcon"><mat-icon aria-label="">add_circle</mat-icon></span>
                 <span class="aet-memberData">
                   <span class=aet-memberName>{{member.Name}}</span>
                   <span class="aet-company"> - {{member.Company}}</span>
@@ -45,39 +46,49 @@
       </dx-drop-down-box>
     </div>
   </div>
-  <div class="aet-name" *ngIf="operation=='ATU' || operation=='AC'">
+  <div class="aet-name" *ngIf="operation=='ATU' || operation=='ETU' || operation=='AC'">
     <h4 class="nameLabel label">Name</h4>
     <div class="aet-firstLastName">
       <div class="firstName">
         <dx-text-box
           placeholder="First Name"
+          [value]="firstName"
+          [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'First Name' }"
         ></dx-text-box>
       </div>
       <div class="lastName">
         <dx-text-box
           placeholder="Last Name"
+          [value]="lastName"
+          [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'Last Name' }"
         ></dx-text-box>
       </div>
     </div>
   </div>
-  <div class="aet-email" *ngIf="operation== Operations.ATU || operation == Operations.AC">
+  <div class="aet-email" *ngIf="operation== Operations.ATU || operation=='ETU' || operation == Operations.AC">
     <h4 class="nameLabel label">Email</h4>
       <dx-text-box
         placeholder="Enter Email Address"
+        [value]="emailId"
+        [disabled]="operation == 'ETU'? true : false"
         [inputAttr]="{ 'aria-label': 'Name' }"
       ></dx-text-box>
   </div>
-  <div class="aet-email-shared" *ngIf="operation !== Operations.AC && operation !== Operations.EC">
+  <div class="aet-email-shared" *ngIf="operation !== Operations.AC">
     <div class="emailToggle">
-      <mat-slide-toggle  [labelPosition]="labelPosition" (change)="emailtoggle()" aria-label="Email Notication">
+      <mat-slide-toggle  [labelPosition]="labelPosition" [checked]="emailNotificationChecked" 
+        (change)="emailtoggle()" aria-label="Email Notication"
+      >
         <h4 class="label">Email Notifications</h4>
       </mat-slide-toggle>
     </div>
     <div class="sharedToggle" 
       *ngIf="(clientSettingPreference == '1' || clientSettingPreference == '2') && (operation == Operations.ATM || operation == Operations.ETM)">
-      <mat-slide-toggle  [labelPosition]="labelPosition" (change)="sharedtoggle()" aria-label="Shared">
+      <mat-slide-toggle  [labelPosition]="labelPosition" [checked]="sharedChecked"
+        (change)="sharedtoggle()" aria-label="Shared"
+      >
         <h4 class="label">Shared</h4>
       </mat-slide-toggle>
     </div>
@@ -95,6 +106,7 @@
       <dx-select-box 
         class="aet-role-selectBox"
         placeholder="Assign Role"
+        [value]="selectedRole"
         [dataSource]="memberInfo.roles"
         valueExpr="role"
         displayExpr="role"
@@ -104,11 +116,12 @@
       >
       </dx-select-box>
   </div>
-  <div class="aet-level" *ngIf="operation !== Operations.AC && operation !== Operations.EC">
+  <div class="aet-level" *ngIf="operation !== Operations.AC">
     <h4 class="levelLabel label">Level</h4>
     <dx-select-box 
       class="aet-level-selectBox"
       placeholder="Assign Level"
+      [value]="selectedLevel"
       [dataSource]="memberInfo.levels"
       valueExpr="level"
       displayExpr="level"
@@ -121,7 +134,7 @@
       </div>
     </dx-select-box>
   </div>
-  <div class="aet-expirationType" *ngIf="operation==Operations.ATU">
+  <div class="aet-expirationType" *ngIf="operation==Operations.ATU || operation==Operations.ETU">
     <h4 class="expirationTypeLabel label">Expiration Type</h4>
     <div class="aet-expirationTypeDate">
       <div class="expirationType">
@@ -148,9 +161,9 @@
   </div>
   <div class="aet-description">
     <h4 class="descLabel label">Description</h4>
-    <textarea aria-label="description"  class="descContent" rows="1"> </textarea>
+    <textarea aria-label="description"  [value]="description" class="descContent" rows="1"> </textarea>
   </div>
-  <div class="aet-assignedTasks" *ngIf="(operation == Operations.ATM || operation == Operations.ATU) && projectTaskList.length">
+  <div class="aet-assignedTasks" *ngIf="operation !== Operations.AC && projectTaskList.length">
     <div class="assgnedTasksHdr">
       <h4 class="descLabel label">Assigned Tasks</h4>
       <crem-tooltip-basic
@@ -166,6 +179,7 @@
             <dx-check-box
               class="assignedTask-checkbox"
               aria-label="Check to select a role"
+              [value]= "operation == 'ETM' || operation == 'ETU'? checkTask(task) : false"
               [elementAttr]="{ 'class': 'taskListCheckbox' }"
             ></dx-check-box>
             <div class="assignedTask-name">{{task.step}}&#41; <span class="taskName" [title]="task.taskName">{{task.taskName}}</span></div>
@@ -180,7 +194,7 @@
   <div id="buttonTemplate" class="footerRightControls">
     <crem-button  type="secondary" class="cancelChanges aem-btn" (click)="closeModal()"> Cancel </crem-button>
     <crem-button  [type]=buttonType class="saveChanges aem-btn"> Save </crem-button>
-		<crem-button  type="primary" class="applyChanges aem-btn" *ngIf="operation !== Operations.AC && operation !== Operations.EC"> Apply </crem-button>
+		<crem-button  type="primary" class="applyChanges aem-btn" *ngIf="operation !== Operations.AC"> Apply </crem-button>
   </div>
 </div>
 </crem-modal>

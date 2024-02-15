@@ -773,6 +773,10 @@ body {
 		margin-right: 8px;
 		transform: translateY(2px);
 	}
+
+  .aet-addPlusIcon mat-icon.mat-icon {
+    transform: scale(.8) translateY(9px);
+  }
 }
 
 #teams-container .teams-grid, #aet-selectedMembers-container #addTeam-grid , #projectTeam-container .projectTeam-grid {

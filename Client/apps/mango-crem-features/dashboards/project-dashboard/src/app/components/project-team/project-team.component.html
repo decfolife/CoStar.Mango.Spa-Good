@@ -95,7 +95,10 @@
 						</button>
 		    			<mat-menu #memberActionsMenu="matMenu" class="projectMemberActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item  class="ptm-edit" *ngIf="((member.data.memberType).toLowerCase()) !== 'temporary contact' ">Edit</li>
+								<li mat-menu-item  class="ptm-edit" *ngIf="((member.data.memberType).toLowerCase().trim()) !== 'temporary contact' " 
+									(click)=" addOrEditMember(member.data.memberType.trim() == 'Team Member'? 'ETM' : 'ETU', member.data)">
+									Edit
+								</li>
 								<li mat-menu-item  class="ptm-remove">Remove</li>
 								<li mat-menu-item  class="ptm-makeManager" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
 							</ul>

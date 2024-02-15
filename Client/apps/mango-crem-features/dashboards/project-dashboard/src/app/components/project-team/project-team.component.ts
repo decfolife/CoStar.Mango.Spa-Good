@@ -49,7 +49,8 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     ).subscribe());
   }
 
-  addOrEditMember(operation) {
+  addOrEditMember(operation, member?) {
+
     let height;
     if(operation == 'AC') {
       height = '500px';
@@ -60,7 +61,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       height: height,
       width: '500px',
       panelClass: 'addEditMemberModal',
-      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation },
+      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation, teamMember: member },
       disableClose: true
     });
 

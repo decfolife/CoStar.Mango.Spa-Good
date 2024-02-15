@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { faCirclePlus, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { MemberInfo, ProjectTaskDetails, TeamMember, contactMember } from '@mango/data-models/lib-data-models';
+import { MemberInfo, ProjectTaskDetails, ProjectTeamMember, TeamMember, contactMember } from '@mango/data-models/lib-data-models';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { CardsService } from '@project-dashboard/services/cards.service';
 
@@ -15,7 +14,6 @@ enum Operations {
   AC  = "AC",
   ETM = "ETM",
   ETU = "ETU",
-  EC  = "EC"
 }
 
 @Component({
@@ -35,6 +33,7 @@ export class AddEditMemberComponent implements OnInit {
   outstandingRolesHelpText: string;
   buttonType: string = "secondary";
   teamMembers: TeamMember[] = [];
+  teamMember: ProjectTeamMember = <ProjectTeamMember>{};
   filteredMembers: contactMember[] = [];
   projectTaskList: ProjectTaskDetails[] = [];
   clientSettingPreference: string;
@@ -45,10 +44,14 @@ export class AddEditMemberComponent implements OnInit {
   selectedRole: string;
   selectedLevel: string;
   labelPosition = 'before';
-  faCirclePlus = faCirclePlus;
-  faInfoCircle = faInfoCircle;
   subs: Subscription[] = [];
   isExpirationDateSelected: boolean = false;
+  emailNotificationChecked: boolean = false;
+  sharedChecked: boolean = false;
+  description: string = "";
+  firstName: string = "";
+  lastName: string = "";
+  emailId: string = "";
 
   
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
@@ -79,14 +82,18 @@ export class AddEditMemberComponent implements OnInit {
 
     this.getTitle(this.operation);
     this.getOutstandingRoles(this.projectId);
-    if (this.operation == Operations.ATM || this.operation == Operations.ATU) {
+    this.getProjectAssignedTaskList(this.projectId);
+    if (this.operation == Operations.ATU || this.operation == Operations.ETU) {
       this.subs.push(this.getUserPreferences().subscribe());
-      this.getProjectAssignedTaskList(this.projectId);
     }
-    if(this.operation == Operations.AC || this.operation == Operations.EC) {
+    if(this.operation == Operations.AC) {
       this.buttonType = "primary";
     }
 
+    if(this.operation == Operations.ETM || this.operation == Operations.ETU) {
+      this.teamMember = this.data.teamMember;
+      this.populateTeamMembersData();
+    }
 
     this.subs.push(this.getClientSettingPreferences().subscribe());
     this.subs.push(this.membersSearchInput$.pipe(
@@ -99,6 +106,24 @@ export class AddEditMemberComponent implements OnInit {
       pageSize = 0;
     }));
 
+  }
+
+  populateTeamMembersData() {
+    this.selectedMember = this.teamMember.teamMember;
+    this.emailNotificationChecked = this.teamMember.emailNotifications;
+    this.sharedChecked = this.teamMember.shared;
+    this.selectedRole = this.teamMember.role;
+    this.selectedLevel = this.teamMember.accessLevel == 1? 'L1': this.teamMember.accessLevel == 2?'L2': this.teamMember.accessLevel == 3? 'L3': 'N/A' ;
+    this.description = this.teamMember.description;
+    this.emailId = this.teamMember.email;
+
+    const names = this.selectedMember.trim().split(' ');
+    this.firstName = names[0];
+    this.lastName = names[1];
+  }
+
+  checkTask(task: ProjectTaskDetails) {
+    return this.teamMember?.projectTasks?.some(memberTask => memberTask.taskID ==  task.taskId);
   }
 
   searchTeamMembers(val: string) {
@@ -137,6 +162,9 @@ export class AddEditMemberComponent implements OnInit {
 
   }
 
+  onCheckboxValueChanged(e) {
+  }
+
   getTitle(operation) {
     switch(operation) {
       case "ATM":
@@ -153,10 +181,7 @@ export class AddEditMemberComponent implements OnInit {
         break;
       case "ETU":
         this.modalTitle = "Edit Temporary User";
-        break;  
-      case "EC":
-        this.modalTitle = "Edit Contact";
-        break;     
+        break;       
     }
   }
 
@@ -185,7 +210,6 @@ export class AddEditMemberComponent implements OnInit {
   getClientSettingPreferences(): Observable<any> {
     return this.dashboardService.getClientPreference('ClientProjectsPrivate').pipe(
       filter(res => !!res && !!res.success),
-      tap(res => this.clientSettingPreference = res.data),
       catchError(error => {
         console.log("ERROR occurred while getting Client Setting Preferences: ", error);
         return of(error);
