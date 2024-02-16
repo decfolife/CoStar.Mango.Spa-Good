@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ModalComponent } from './modal.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ButtonModule } from '../button';
-import { IconModule } from '../icon';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [ModalComponent],
@@ -11,7 +11,7 @@ import { IconModule } from '../icon';
     CommonModule,
     DragDropModule,
     ButtonModule,
-    IconModule
+    MatIconModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [ModalComponent],

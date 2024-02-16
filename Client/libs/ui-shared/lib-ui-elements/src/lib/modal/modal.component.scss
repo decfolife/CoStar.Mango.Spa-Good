@@ -12,6 +12,13 @@
 	padding: 8px 16px;
 	@include costar(background-color, light);
 	justify-content: space-between;
+
+  .modalCloseButton {
+    border: none;
+    .closeIcon {
+      transform: scale(1.3) translateY(3px);
+    }
+  }
 }
 
 .modal-title {

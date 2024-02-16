@@ -210,6 +210,7 @@ export class AddEditMemberComponent implements OnInit {
   getClientSettingPreferences(): Observable<any> {
     return this.dashboardService.getClientPreference('ClientProjectsPrivate').pipe(
       filter(res => !!res && !!res.success),
+      tap(res => this.clientSettingPreference = res.data),
       catchError(error => {
         console.log("ERROR occurred while getting Client Setting Preferences: ", error);
         return of(error);
