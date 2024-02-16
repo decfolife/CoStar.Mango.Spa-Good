@@ -77,7 +77,7 @@
 			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false" class="selectMember" [visible]="userAccessLevel == 1">
 			</dxi-column>
-			<dxi-column caption='Team Member' [cellTemplate]="'teamMemberNameTemplate'" ></dxi-column>
+			<dxi-column dataField="teamMember" caption='Team Member' [cellTemplate]="'teamMemberNameTemplate'" sortOrder="asc" ></dxi-column>
 			<dxi-column dataField="openTasks" [cellTemplate]="'openTasksTemplate'" alignment="center"></dxi-column>
 			<dxi-column dataField="role"></dxi-column>
 			<dxi-column dataField="memberType"></dxi-column>
