@@ -10,7 +10,6 @@ export interface ServiceAccountInfo {
 
 export interface ServiceAccountSite{
   clientKey: string;
-  isActive: boolean;
   apiAccess: boolean;
 }
 
