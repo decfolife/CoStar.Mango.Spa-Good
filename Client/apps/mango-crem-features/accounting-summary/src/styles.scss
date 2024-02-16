@@ -58,15 +58,16 @@
         padding: 10px 16px 0px 16px !important;
     }
 
-    #je-processing-info-popup-grid {
+    #je-processing-info-popup-grid,
+    #je-processing-info-retro-popup-grid {
         width: 100% !important;
-        height: 275px !important;
+        height: 190px !important;
     }
 
     #je-payment-info-popup-grid,
     #retrospective_adjustment-info-popup-grid {
         width: 100% !important;
-        height: 480px !important;
+        height: 395px !important;
     }
 
     .header-column-caption {
