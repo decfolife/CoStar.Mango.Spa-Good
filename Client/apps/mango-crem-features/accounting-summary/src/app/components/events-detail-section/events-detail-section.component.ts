@@ -86,7 +86,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       this.masterScheduleIDChanged = false;
     }
 
-    if (changes.rightsInfo !== undefined && changes.rightsInfo.currentValue !== undefined && changes.wfStatusRights !== undefined && changes.wfStatusRights.currentValue !== undefined)  {
+    if ((changes.wfStatusRights && changes.wfStatusRights !== undefined && changes.wfStatusRights.currentValue !== undefined) || (changes.rightsInfo && changes.rightsInfo !== undefined && changes.rightsInfo.currentValue !== undefined)) {
       this.setRights();
     }
 
@@ -519,10 +519,10 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   private setRights() {
-    this.userHasEditLeaseRights = this.rightsInfo.userHasEditLeaseRights;
-    this.wfStatusHasEditRights = this.wfStatusRights.wfStatusUserHasEditRights;
-    this.userHasLeftNavEditRights = this.rightsInfo.userHasLeftNavEditRights;
-    this.userHasDeleteAccountingSchedulesModuleRight = this.rightsInfo.userCanDeleteSchedule;
+    this.userHasEditLeaseRights = this.rightsInfo?.userHasEditLeaseRights;
+    this.wfStatusHasEditRights = this.wfStatusRights?.wfStatusUserHasEditRights;
+    this.userHasLeftNavEditRights = this.rightsInfo?.userHasLeftNavEditRights;
+    this.userHasDeleteAccountingSchedulesModuleRight = this.rightsInfo?.userCanDeleteSchedule;
   }
 
   exportToExcel() {
