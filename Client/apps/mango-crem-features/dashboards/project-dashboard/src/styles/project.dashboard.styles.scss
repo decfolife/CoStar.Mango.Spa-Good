@@ -700,6 +700,12 @@ body {
 	.dx-texteditor.dx-editor-outlined, #aet-selectedMembers {
 		border: 1px solid colors.$stdBorderColor;
 		border-radius: 4px;
+
+		button.btn-flat.btn-secondary:disabled {
+      .aet-removeIcon {
+        color: lightgray;
+      }
+    }
 	}	
 	.dx-texteditor.dx-editor-outlined.dx-state-focused, button:focus, .taskListCheckbox.dx-state-focused .dx-checkbox-icon {
 		outline: none;

@@ -47,8 +47,8 @@
 
           >
             <div *dxTemplate="let member of 'membersListTemplate'"  >
-              <div>
-                <span class="aet-addPlusIcon"><mat-icon aria-label="">add_circle</mat-icon></span>
+              <div aria-label="click to add a member to the team">
+                <span class="aet-addPlusIcon"><mat-icon>add_circle</mat-icon></span>
                 <span class="aet-memberData">
                   <span class=aet-memberName>{{member.Name}}</span>
                   <span class="aet-company"> - {{member.Company}}</span>
@@ -62,8 +62,8 @@
   </div>
   <div id="aet-selectedMembers">
     <div id="aet-remove-members">
-      <crem-button type="secondary" (click)="removeMembers(); $event.preventDefault();" [disabled]="removeDisabled">
-        <fa-icon [icon]="faCircleMinus" ></fa-icon>
+      <crem-button type="secondary" (click)="removeMembers(); $event.preventDefault();" [disabled]="removeDisabled" class="aet-removeSelected">
+        <fa-icon [icon]="faCircleMinus" class="aet-removeIcon"></fa-icon>
         <span class="aet-removeText" >Remove</span>
       </crem-button>
     </div>
