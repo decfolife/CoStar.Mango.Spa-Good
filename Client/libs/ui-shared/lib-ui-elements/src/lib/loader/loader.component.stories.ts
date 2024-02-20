@@ -2,7 +2,7 @@ import { moduleMetadata, Story, Meta } from '@storybook/angular';
 import { LoaderComponent } from './loader.component';
 
 export default {
-  title: 'Components/Atoms/Spinner',
+  title: 'Components/Loader',
   component: LoaderComponent,
   decorators: [
     moduleMetadata({

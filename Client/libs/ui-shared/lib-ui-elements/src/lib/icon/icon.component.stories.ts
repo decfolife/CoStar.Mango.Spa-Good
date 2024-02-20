@@ -13,7 +13,7 @@ import {
 import { IconComponent } from './icon.component';
 
 export default {
-  title: 'Components/Atoms/Icon',
+  title: 'Components/Icon',
   component: IconComponent,
   argTypes: {
     pack: {

@@ -4,7 +4,7 @@ import { InputHintComponent } from './hint.component';
 import { hintTypes } from '../definitions';
 
 export default {
-  title: 'Components/Atoms/Hint',
+  title: 'Components/Hint',
   component: InputHintComponent,
   argTypes: {
     text: { control: 'text' },

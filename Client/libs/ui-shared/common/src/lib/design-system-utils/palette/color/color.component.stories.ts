@@ -2,7 +2,7 @@ import { Meta, Story } from '@storybook/angular';
 import { DesignSystemColorToken } from './color.component';
 
 export default {
-  title: 'Styling/Internal Utilities/Color',
+  title: 'Documentation/Styling/Internal Utilities/Color',
   component: DesignSystemColorToken,
   parameters: {
     docs: {

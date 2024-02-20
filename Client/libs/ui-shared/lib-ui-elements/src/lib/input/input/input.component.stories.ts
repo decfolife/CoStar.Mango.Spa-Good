@@ -4,7 +4,7 @@ import { InputComponent } from './input.component';
 import { inputState, inputTypes, labelPosition } from '../definitions';
 
 export default {
-  title: 'Components/Molecules/Input',
+  title: 'Components/Input',
   component: InputComponent,
   argTypes: {
     // Global

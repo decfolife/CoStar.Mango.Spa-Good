@@ -24,7 +24,7 @@ export class ToolbarComponent implements OnInit {
     color: 'costar',
   };
 
-  constructor(private userService: UserService) { }
+  constructor() { }
 
   ngOnInit(): void {
       // this.route.parent.url.subscribe((url) => {

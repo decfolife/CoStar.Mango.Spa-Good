@@ -2,7 +2,7 @@ import { Meta, Story } from '@storybook/angular';
 import { InputLabelComponent } from './label.component';
 
 export default {
-  title: 'Components/Atoms/Label',
+  title: 'Components/Label',
   component: InputLabelComponent,
   argTypes: {
     label: { control: 'text',},

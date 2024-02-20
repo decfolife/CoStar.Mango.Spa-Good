@@ -9,7 +9,7 @@ interface ButtonComponentStory extends ButtonComponent {
 }
 
 export default {
-  title: 'Components/Molecules/Button',
+  title: 'Components/Button',
   component: ButtonComponent,
   decorators: [
     moduleMetadata({

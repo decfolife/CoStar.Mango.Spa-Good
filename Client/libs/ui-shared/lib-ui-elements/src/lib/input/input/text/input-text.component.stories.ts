@@ -3,7 +3,7 @@ import { InputTextComponent } from './input-text.component';
 import { inputState } from '../../definitions';
 
 export default {
-  title: 'Components/Atoms/Input Text',
+  title: 'Components/Input Text',
   component: InputTextComponent,
   argTypes: {
     state: {control: 'select', options: inputState },

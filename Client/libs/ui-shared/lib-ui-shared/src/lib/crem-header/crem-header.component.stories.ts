@@ -2,7 +2,7 @@ import { moduleMetadata, Story, Meta } from '@storybook/angular';
 import { CremHeaderComponent } from './crem-header.component';
 
 export default {
-  title: 'Components/Organisms/Header',
+  title: 'Organisms/Header',
   component: CremHeaderComponent,
   decorators: [
     moduleMetadata({

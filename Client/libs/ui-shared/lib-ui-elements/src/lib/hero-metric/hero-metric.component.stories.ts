@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { TooltipBasicModule } from '../tooltip-basic/tooltip-basic.module';
 
 export default {
-  title: 'Components/Organisms/Hero Metrics',
+  title: 'Components/Hero Metrics',
   component: HeroMetricComponent,
   decorators: [
     moduleMetadata({

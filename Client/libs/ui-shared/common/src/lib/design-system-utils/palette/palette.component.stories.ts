@@ -2,7 +2,7 @@ import { Meta, Story } from '@storybook/angular';
 import { DesignSystemPalette } from './palette.component';
 
 export default {
-  title: 'Styling/Internal Utilities/Palette',
+  title: 'Documentation/Styling/Internal Utilities/Palette',
   component: DesignSystemPalette,
   argTypes: {
     palette: {

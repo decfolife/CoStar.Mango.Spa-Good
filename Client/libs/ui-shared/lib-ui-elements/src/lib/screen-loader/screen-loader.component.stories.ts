@@ -1,12 +1,14 @@
 import { moduleMetadata, Story, Meta } from '@storybook/angular';
 import { ScreenLoaderComponent } from './screen-loader.component';
+import { CommonModule } from '@angular/common';
+import { DxLoadIndicatorModule } from 'devextreme-angular';
 
 export default {
-  title: 'Components/Atoms/Spinner',
+  title: 'Components/Spinner',
   component: ScreenLoaderComponent,
   decorators: [
     moduleMetadata({
-      imports: [],
+      imports: [CommonModule, DxLoadIndicatorModule],
     }),
   ],
 } as Meta<ScreenLoaderComponent>;

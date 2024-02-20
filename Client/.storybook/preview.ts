@@ -9,8 +9,10 @@ export const previewParameters = {
     storySort: {
       method: 'alphabetical',
       order: [
+        'Components',
+        'Organisms',
+        'Pages',
         'Introduction', ['Getting Started', 'For Developers', 'For Designers', 'FAQ'],
-        'Components', ['Getting Started', 'Atoms', 'Molecules', 'Organisms'],
         'Styling', [
           'Getting Started',
           'Single Properties',
@@ -21,7 +23,6 @@ export const previewParameters = {
           'Font Family'
         ],
         'Patterns',
-        'Pages',
       ],
       locales: 'en-US',
     },

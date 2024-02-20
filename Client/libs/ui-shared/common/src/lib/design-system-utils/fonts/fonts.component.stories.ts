@@ -2,7 +2,7 @@ import { Meta, Story } from '@storybook/angular';
 import { DesignSystemFontsToken } from './fonts.component';
 
 export default {
-  title: 'Styling/Internal Utilities/Fonts',
+  title: 'Documentation/Styling/Internal Utilities/Fonts',
   component: DesignSystemFontsToken,
   parameters: {
     docs: {
