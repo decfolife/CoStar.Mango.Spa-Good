@@ -290,19 +290,18 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result === "Yes") {
-        this.performDeleteReminder(reminderId);
+        this.performDeleteReminder(reminder);
       }
 
     });
   }
 
-  public performDeleteReminder(RID: number) {
-    console.log("destroy all of it: " + RID)
+  public performDeleteReminder(reminderObj: any) {
     this.subscriptions.add(
-      this.reminderService.deleteReminder(RID).subscribe(
+      this.reminderService.deleteReminder(reminderObj.TicklerID,reminderObj.ObjectID ,reminderObj.ObjectTypeID ).subscribe(
         (res: any) => {
           if (res.success) {
-            this.gridData = this.gridData.filter(reminder => reminder.TicklerID !== RID)
+            this.gridData = this.gridData.filter(reminder => reminder.TicklerID !== reminderObj.TicklerID)
           }
           else {
             console.log("The Delete Reminder API call is not successful.");
