@@ -55,10 +55,41 @@
       "executor": "@storybook/angular:build-storybook",
       "outputs": ["{options.outputDir}"],
       "options": {
+        "stylePreprocessorOptions": {
+          "includePaths": [
+            "libs/ui-shared/common/src",
+            "libs/ui-shared",
+            "apps/mango",
+            "apps/mango/src/assets/styles"
+          ]
+        },
+        "styles": [
+          "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+          "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "node_modules/devextreme/dist/css/dx.common.css",
+          "node_modules/devextreme/dist/css/dx.light.css",
+          "node_modules/devexpress-gantt/dist/dx-gantt.css",
+          "node_modules/ngx-toastr/toastr.css",
+          "apps/mango/src/styles.scss",
+          "apps/mango-crem-features/list-pages/src/styles.scss",
+          "apps/mango-crem-features/user-maintenance/src/styles.scss",
+          "apps/mango-crem-features/batch-accounting/src/styles.scss",
+          "apps/mango-crem-features/accounting-summary/src/styles.scss",
+          "apps/mango-crem-features/portfolio-maintenance/src/styles.scss",
+          "apps/mango-crem-features/object-maintenance/src/styles.scss",
+          "apps/mango-crem-features/dashboards/portfolio-dashboard/src/styles.scss",
+          "apps/mango-crem-features/dashboards/project-dashboard/src/styles.scss",
+          "apps/mango-crem-features/accounting-profile/accounting-profiles/src/styles.scss",
+          "apps/mango-crem-features/reports/src/styles.scss",
+          "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/styles.scss",
+          "apps/mango-crem-features/group-maintenance/src/styles.scss",
+          "apps/mango-crem-features/accounting-module/src/styles.scss",
+          "apps/mango-crem-features/journal-entry-processing/src/styles.scss",
+          "libs/ui-shared/common/src/styles/_index.scss"
+        ],
         "outputDir": "dist/storybook/ui-shared-storybook-host",
         "configDir": "libs/ui-shared/storybook-host/.storybook",
         "browserTarget": "ui-shared-storybook-host:build-storybook",
-        "styles": ["libs/ui-shared/common/src/styles/_index.scss"],
         "compodoc": false
       },
       "configurations": {
