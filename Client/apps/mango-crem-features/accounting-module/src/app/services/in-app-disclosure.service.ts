@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { environment } from '../../../../../mango/src/environments/environment.local';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Injectable()
 
@@ -57,8 +58,20 @@ export class InAppDisclosureService extends EndpointService{
   public exportIADData(segmentID: number, reportingYear: number) {
     const param = { segmentID: segmentID, reportingYear: reportingYear };
     const url = `${environment.appUrls.inAppDisclosure}IAD/Export`;
+    let headers: HttpHeaders;
+    this.getHttpHeaders().subscribe((result) => {
 
-    return this.callHttpGet(url, 'Export',  param)
+      headers = new HttpHeaders({
+        'Content-Type': 'application/octet-stream',
+              'Accept': 'application/octet-stream',
+              'UserId': result.headers.get('userid'),
+              'ClientKey': result.headers.get('clientkey'),
+              UseQueryOptimization: '1'
+      })
+    }
+    );
+
+    return this.callHttpGet(url, 'Export',  param, headers, 'blob');
   }
 
   getUserPreferences(): Observable<any> {
@@ -79,5 +92,39 @@ export class InAppDisclosureService extends EndpointService{
 
     return this.callHttpPost(url, 'setDefault', body)
   }
+
+  public callHttpGet(url: string, functionName: string, httpOptionsParams?: any, httpOptionsHeaders?: any, responseType?: any): Observable<any> {
+    return this.getHttpHeaders().pipe(
+      switchMap(httpOptions => {
+        if(httpOptionsParams) {
+          httpOptions.params = httpOptionsParams;
+        }
+        if(httpOptionsHeaders) {
+          httpOptions.headers = httpOptionsHeaders;
+        }
+        if (responseType) {
+          httpOptions.responseType = responseType;
+          httpOptions.observe = 'response';
+        }
+        return this.http.get(url, httpOptions)
+      }),
+      map(x => this.toObject(x) as any),
+      catchError(this.handleError(functionName))
+    )
+  }
+
+  public toObject(value: any): any {
+    if(value instanceof HttpResponse) {
+        let apiSuccess = value.status === 200;
+        let cemsg = apiSuccess ? null : value.statusText
+        return {
+            success: apiSuccess,
+            data: { headers: value.headers, body: value.body },
+            clientErrorMessage: cemsg
+        }
+    } else {
+        return super.toObject(value);
+      }
+    }
 
 }

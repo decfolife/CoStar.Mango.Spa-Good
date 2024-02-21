@@ -362,14 +362,25 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   public export() {
     this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear).subscribe((result) => {
-      if(result.data === 'export successful') {
+      if(result.data) {        
         notify({
-          message: 'Export Successful. You can find your report in VPDocuments.',
+          contentTemplate: function (e) {
+            let blob = new Blob([result.data.body], {type: 'application/octet-stream'});
+            let downloadURL = URL.createObjectURL(blob);
+            let a = document.createElement('a')
+            let linkText = document.createTextNode("Export Successful. You can find your report here.");
+            a.appendChild(linkText);
+            a.href = downloadURL;
+            let contentDisposition = result.data.headers.get('content-disposition') as String;
+            let fileName = contentDisposition.split(/[=;]/)[2];
+            a.download = fileName;
+            return a;
+          },
           type: 'success',
-          displayTime: 5000,
+          displayTime: 999999999,
           position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
           maxWidth: '500px',
-          closeOnClick: true,
+          closeOnClick: false,
         })
       } else {
         notify({
