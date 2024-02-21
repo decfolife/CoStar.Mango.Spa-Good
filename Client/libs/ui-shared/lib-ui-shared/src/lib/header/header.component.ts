@@ -10,6 +10,7 @@ import { UntypedFormControl } from '@angular/forms';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { MatDialog } from '@angular/material/dialog';
 import { EmulateUserPopupComponent } from './emulate-user-popup/emulate-user-popup.component';
+import { DateCalculatorComponent } from './date-calculator/date-calculator.component';
 
 export interface module {
   objectTypeTypeId: number;
@@ -135,6 +136,15 @@ export class HeaderComponent implements OnInit {
       height: '528px',
       panelClass: 'emulate-user-dialog',
       disableClose: true
+    });
+  }
+
+  public showDateCalculatorDialog() {
+
+    let dialogRef = this.dialog.open(DateCalculatorComponent, {
+      hasBackdrop: false,
+      height: '350px',
+      width: '450px',
     });
   }
 

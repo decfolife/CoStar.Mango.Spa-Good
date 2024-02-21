@@ -1,0 +1,13 @@
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+@use "../../../../../common/src/styles/" as *;
+
+::ng-deep {
+
+  .footerRightControls {
+    display: flex;
+  
+    .modalFooter {
+      border-top: 1px solid colors.$borderColor;
+    }
+  }
+}

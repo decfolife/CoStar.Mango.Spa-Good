@@ -1,0 +1,33 @@
+<crem-modal [className]="'newModal'" [modalTitle]="'Date Calculator'" [modalTitleId]="'dateCalculator'"
+    [modalId]="'deleteReminderModal'" closeIconVisible="true" primaryFooterButtonText="Yes" closeOrCancelButtonText="No"
+    [customFooter]="true">
+    <div modalContent class="body-content">
+        <div class="section">
+            <dx-form [colCount]="3">
+                <dxi-item [colSpan]="3">
+                    <dx-check-box text="Include Input Date?"></dx-check-box>
+                </dxi-item>
+                <dxi-item dataField="inputDate" [editorOptions]="{placeholder: 'Input Date'}" [colSpan]="3"><dxo-label
+                        [visible]="false"></dxo-label></dxi-item>
+                <dxi-item dataField="years" [editorOptions]="{placeholder: '+Years'}" [colSpan]="1"><dxo-label
+                        [visible]="false"></dxo-label></dxi-item>
+                <dxi-item dataField="months" [editorOptions]="{placeholder: '+Months'}" [colSpan]="1"><dxo-label
+                        [visible]="false"></dxo-label></dxi-item>
+                <dxi-item dataField="days" [editorOptions]="{placeholder: '+Days'}" [colSpan]="1"><dxo-label
+                        [visible]="false"></dxo-label></dxi-item>
+                <dxi-item dataField="outputDate" [colSpan]="3"></dxi-item>
+            </dx-form>
+        </div>
+
+        <div modalFooter class="footer-content">
+            <div id="buttonTemplate" class="footerRightControls">
+                <crem-button type="secondary" id="calcOutDate">
+                    Calculate Output Date
+                </crem-button>
+                <crem-button type="secondary" id="calcDurations">
+                    Calculate Durations
+                </crem-button>
+            </div>
+        </div>
+    </div>
+</crem-modal>
