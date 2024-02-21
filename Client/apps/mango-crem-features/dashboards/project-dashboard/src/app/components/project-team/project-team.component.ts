@@ -141,6 +141,18 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     this.dialogService.alert('Make Team Manager', 'We were not able to update Team Manager, please try again later.', 'OK');
   }
 
+  applyTeamToTasks() {
+    this.subs.push(this.dialogService.confirm('Apply Team To Tasks', `Are you sure yo want to assign team members to tasks based on their roles ?`, 'Confirm', 'Cancel').pipe(
+      filter(confirmed => !!confirmed),
+      switchMap(_ => this.dashboardService.addContactsToTasksByRole(this.projectId)),
+      tap(res => { 
+        !!res && !!res.success ? 
+        this.toastr.info("Team members have successfully been added to tasks based on their role.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }) 
+        : this.dialogService.alert('Apply Team To Tasks', 'There was an issue adding Team members to Tasks. Please review and try again later.', 'OK');
+      })
+    ).subscribe());
+  }
+
   public getProjectTeam(projectId): Observable<any> {
     this.dataRetrieved = false;
     this.selectedTeamMembersData.teamMembers = [];

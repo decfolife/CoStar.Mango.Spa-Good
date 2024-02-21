@@ -28,8 +28,10 @@
 			<div class="more">
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="projectTeamMoreMenu">				
-					<button mat-menu-item (click)="toggleExpand()" class="moreBtn-expCollBtn"><span >Expand All/Collapse All</span></button>      
-					<button mat-menu-item class="moreButton-colChooserBtn"  class="moreBtn-colChooser">Column Chooser</button>                   
+					<button mat-menu-item (click)="applyTeamToTasks()" class="moreBtn-applyTeamToTasks">Apply Team to Tasks</button>
+					<button mat-menu-item class="moreBtn-composeEmail">Compose Email</button>	
+					<button mat-menu-item class="moreButton-colChooserBtn"  class="moreBtn-colChooser">Column Chooser</button>							
+					<button mat-menu-item (click)="toggleExpand()" class="moreBtn-expCollBtn"><span >Expand All/Collapse All</span></button>                         
 				</mat-menu>	 
 			</div>
 			<div class="addOptions">

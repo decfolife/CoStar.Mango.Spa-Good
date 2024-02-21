@@ -178,5 +178,10 @@ export class DashboardService  extends EndpointService{
     const url = `${environment.appUrls.projects}removeteammembers`;
     return this.callHttpPost(url,  'removeteammembers',  projMemberData );
   }
+
+  addContactsToTasksByRole(projectID: number) {
+    const url = `${environment.appUrls.tasks}addcontactstotasksbyrole`;
+    return this.callHttpPost(url, 'addcontactstotasksbyrole', { projectID } );
+  }
 }
 
