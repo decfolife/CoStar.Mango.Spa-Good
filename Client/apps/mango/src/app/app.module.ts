@@ -13,13 +13,9 @@ import {
   UserService,
 } from '@mango/core-shared';
 import {
-  CREM_FORCE_RELOGIN_URLS,
   Environment,
   IS_CA_STANDALONE_APP,
-  OAUTH_CLIENT_KEY_QUERY_PARAM,
-  OAUTH_CONTACT_ID_QUERY_PARAM,
-  OAUTH_REDIRECT_QUERY_PARAM,
-  RUNNING_IN_MANGO_SPA,
+  RUNNING_IN_MANGO_SPA
 } from '@mango/data-models/lib-data-models';
 import { LibExternalLibrariesModule } from '@mango/ui-shared/lib-external-libraries';
 import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
@@ -36,7 +32,9 @@ import { BookmarksService } from '../../../mango-crem-features/micro-components/
 import { environment } from '../environments/environment.local';
 import { MangoAppFacade } from './+state/app/app.facade';
 import * as fromApp from './+state/app/app.reducer';
+import { contactRecord } from './+state/app/app.selectors';
 import { AuthenticationEffects } from './+state/app/effects/authentication.effects';
+import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 import { InitSetupEffects } from './+state/app/effects/init-setup.effects';
 import { NavigationEffect } from './+state/app/effects/navigation.effects';
 import { AppRoutingModule } from './app-routing.module';
@@ -47,12 +45,9 @@ import { LoadingScreenComponent } from './components/loading-screen/loading-scre
 import { MangoNavigationService } from './services/navigation.service';
 import { CSPModuleInlineStyles } from './utils/content-security-policies/inline-styles';
 import { CustomSerializer } from './utils/custom-route-serializer';
-import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
-import { ValidateComponent } from './components/auth/validate/validate.component';
-import { contactRecord } from './+state/app/app.selectors';
 
 @NgModule({
-  declarations: [AppComponent, LoadingScreenComponent, ValidateComponent],
+  declarations: [AppComponent, LoadingScreenComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -129,20 +124,10 @@ export class AppModule {
               `/crem/forms/render-form?${queryParams[1]}`
             );
           } else {
-            const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
-              url.includes(subUrl)
-            );
-            const newUrl = forceRelogin
-              ? `${
-                  environment.CAUrl
-                }?${OAUTH_CLIENT_KEY_QUERY_PARAM}=${clientKey}&${OAUTH_CONTACT_ID_QUERY_PARAM}=${contactRecord.contactID}&${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace(
-                  '[CLIENT]',
-                  clientKey
-                )}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`
-              : `${environment.cremBaseUrl.replace(
-                  '[CLIENT]',
-                  clientKey
-                )}${url}`;
+            const newUrl = `${environment.cremBaseUrl.replace(
+              '[CLIENT]',
+              clientKey
+            )}${url}`;
             window.location.href = newUrl;
           }
         })

@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DBkeys, HeaderService, SettingsService, StorageService, UserInfoService } from '@mango/core-shared/lib-core-shared';
-import { OAUTH_REDIRECT_QUERY_PARAM, SOURCE_APP_QUERY_PARAM, SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
+import { UserInfoService, UserService } from '@mango/core-shared/lib-core-shared';
+import { SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { of } from 'rxjs';
-import { delay, filter, first, map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
 
@@ -16,12 +15,8 @@ export class InitSetupEffects {
 
   constructor(
     private actions$: Actions,
-    private headerService: HeaderService,
-    private storageService: StorageService,
-    private settingsService: SettingsService,
+    private userService: UserService,
     private userInfoService: UserInfoService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
     private facade: MangoAppFacade
   ) { }
 
@@ -41,9 +36,10 @@ export class InitSetupEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.SETUP_CLIENT_KEY),
-        map(_ => this.storageService.getData(DBkeys.CLIENT_KEY)),
-        map(clientKey =>
-          AppActions.setClientKey({ clientKey })
+        switchMap(_ => this.facade.authenticatedUser$),
+        filter(user => !!user),
+        map(user =>
+          AppActions.setClientKey({ clientKey: user.clientKey })
         )
       )
   )
@@ -52,7 +48,10 @@ export class InitSetupEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.SETUP_CONTACT_RECORD),
-        map(_ => this.storageService.getData(DBkeys.CONTACT_RECORD)),
+        switchMap(_ => this.facade.authenticatedUser$),
+        filter(user => !!user),
+        switchMap(user => this.userService.getContactRecord(user.email, user.contactId, user.clientKey)),
+        filter(contactRecord => !!contactRecord),
         map(contactRecord =>
           AppActions.setContactRecord({ contactRecord })
         )
