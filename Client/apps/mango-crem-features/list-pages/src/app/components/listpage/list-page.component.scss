@@ -27,6 +27,11 @@
 
       app-list-view-menu {
         margin-right: 8px;
+
+        .svg-inline--fa.fa-caret-down {
+          height: 1rem;
+          transform: translateY(-3px);
+        }
       }
       .crem-dropdown-list-pages {
         .dx-fieldset {
