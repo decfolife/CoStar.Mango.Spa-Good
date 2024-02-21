@@ -16,10 +16,17 @@ import { Observable, Subscription, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { MangoAppFacade } from './+state/app/app.facade';
 import { AppService } from './app.service';
+import { ValidateComponent } from './components/auth/validate/validate.component';
 import { CremComponent } from './components/crem-component';
 import { AuthGuard } from './services/guards/auth.guard';
 
 const routes: Routes = [
+  // LOGIN
+  {
+    path: 'auth/validate',
+    component: ValidateComponent
+  },
+
   // START PAGE
   {
     path: 'start-page',
