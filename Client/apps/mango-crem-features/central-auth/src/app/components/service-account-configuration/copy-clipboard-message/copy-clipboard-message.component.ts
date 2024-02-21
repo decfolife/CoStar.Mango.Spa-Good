@@ -22,7 +22,7 @@ export class CopyClipboardMessageComponent {
   }
 
   copyClipboard() {
-    navigator.clipboard.writeText(this.apiKey);
+    setTimeout(async()=> await window.navigator.clipboard.writeText(this.apiKey), 10);
     this.info = "Copied to clipboard";
   }
 
