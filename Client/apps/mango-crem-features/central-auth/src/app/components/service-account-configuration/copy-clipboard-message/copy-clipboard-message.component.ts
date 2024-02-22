@@ -22,11 +22,9 @@ export class CopyClipboardMessageComponent {
   }
 
   copyClipboard() {
-    if (window.isSecureContext && navigator.clipboard) {
+    if (window.location.protocol == "https:") {
       navigator.clipboard.writeText(this.apiKey);
-      console.log('using navigator.clipboard.writeText');
     } else {
-      console.log('using document.execCommand');
       const textarea = document.createElement("textarea");
       textarea.textContent = this.apiKey;
       document.body.appendChild(textarea);
