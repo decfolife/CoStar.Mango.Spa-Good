@@ -22,28 +22,17 @@ export class CopyClipboardMessageComponent {
   }
 
   copyClipboard() {
-    try {
+    if (window.isSecureContext && navigator.clipboard) {
       navigator.clipboard.writeText(this.apiKey);
       console.log('using navigator.clipboard.writeText');
-    } catch (error) {
+    } else {
       console.log('using document.execCommand');
-      const el = document.createElement('textarea');
-      el.value = this.apiKey;
-      el.setAttribute('readonly', '');
-      el.style.position = 'absolute';
-      el.style.left = '-9999px';
-      document.body.appendChild(el);
-      const selected =
-        document.getSelection().rangeCount > 0
-          ? document.getSelection().getRangeAt(0)
-          : false;
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-      if (selected) {
-        document.getSelection().removeAllRanges();
-        document.getSelection().addRange(selected);
-      }
+      const textarea = document.createElement("textarea");
+      textarea.textContent = this.apiKey;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
     }
 
     this.info = "Copied to clipboard";
