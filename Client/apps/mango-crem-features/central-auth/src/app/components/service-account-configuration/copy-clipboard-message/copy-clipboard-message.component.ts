@@ -22,8 +22,17 @@ export class CopyClipboardMessageComponent {
   }
 
   copyClipboard() {
-    setTimeout(async()=> await window.navigator.clipboard.writeText(this.apiKey), 10);
+    try {
+      navigator.clipboard.writeText(this.apiKey);
+    } catch (error) {
+      const textarea = document.createElement("textarea");
+      textarea.textContent = this.apiKey;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+
     this.info = "Copied to clipboard";
   }
-
 }
