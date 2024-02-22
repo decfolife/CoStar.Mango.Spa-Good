@@ -13,6 +13,7 @@ import { MemberDetailsComponent } from './member-details/member-details.componen
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
+import { ImportTeamComponent } from './import-team/import-team.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { SaveTeamTemplateComponent } from './save-team-template/save-team-templa
     MemberDetailsComponent,
     AddEditMemberComponent,
     SaveTeamTemplateComponent,
+    ImportTeamComponent,
   ],
   imports: [
     CommonModule,

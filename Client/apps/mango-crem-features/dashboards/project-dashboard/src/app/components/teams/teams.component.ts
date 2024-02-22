@@ -9,11 +9,10 @@ import { DxDataGridComponent } from 'devextreme-angular';
 import { AddEditTeamComponent } from './add-edit-team/add-edit-team.component';
 import { TeamMembersComponent } from './team-members/team-members.component';
 import * as ExcelJS from 'exceljs';
-import { Buffer, Workbook } from 'exceljs';
+import { Buffer } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { formatDate } from '@angular/common';
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
-import { ToastrService } from 'ngx-toastr';
 
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { Observable, Subscription, of } from 'rxjs';
@@ -52,7 +51,6 @@ export class TeamsComponent implements OnInit, OnDestroy {
 
   constructor(private dashboardService: DashboardService, private router: Router,
     private exportToExcelService: ExportDevexDatagridService,
-    public toastr: ToastrService,
     private dialogService: MangoDialogService,
     private dialog: MatDialog, private cardsService: CardsService) { }
 
@@ -116,8 +114,8 @@ export class TeamsComponent implements OnInit, OnDestroy {
           this.selectedTeams = [];
         }
         return res.success ? 
-          (this.toastr.info("Selected Team(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
-          : of(this.toastr.info("The teams(s) could not be deleted. Please review and try again.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }))
+        (this.dashboardService.successNotify("Selected Team(s) successfully removed."), this.getTeamsData()) 
+        : of(this.dashboardService.errorNotify("The teams(s) could not be deleted. Please review and try again."))
       })
     ).subscribe());
   }
@@ -137,7 +135,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
         filter(confirmed => !!confirmed),
         switchMap(_ => this.dashboardService.deleteTeamMembers(this.selectedMemberIds)),
         switchMap(res => !!res.success ? 
-          (this.toastr.info("Selected Member(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getTeamsData()) 
+          (this.dashboardService.successNotify("Selected Member(s) successfully removed."), this.getTeamsData()) 
           : this.dialogService.alert('Team Member Removal', 'Selected Member(s) could not be deleted. Please review and try again later.', 'OK')
         )
       ).subscribe());

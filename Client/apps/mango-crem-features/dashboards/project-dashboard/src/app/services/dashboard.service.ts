@@ -8,6 +8,7 @@ import { UserSelectedFilters } from '../models';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Team, TeamMemUpdate } from '@mango/data-models/lib-data-models';
+import notify from 'devextreme/ui/notify';
 
 @Injectable()
 export class DashboardService  extends EndpointService{
@@ -129,6 +130,11 @@ export class DashboardService  extends EndpointService{
     return this.callHttpPost(url, 'addteam', team);
   }
 
+  importTeam(projectID: number, teamID: number): Observable<any> {
+    const url = `${environment.appUrls.projects}importteam`;
+    return this.callHttpPost(url, 'importteam', { projectID, teamID });
+  }
+
   getModuleRights(objectType: number, securityType: number) {
     const url = `${environment.appUrls.projects}getmodulerights`;
     return this.callHttpPost(url, 'getmodulerights', { objectType, securityType })
@@ -182,6 +188,29 @@ export class DashboardService  extends EndpointService{
   addContactsToTasksByRole(projectID: number) {
     const url = `${environment.appUrls.tasks}addcontactstotasksbyrole`;
     return this.callHttpPost(url, 'addcontactstotasksbyrole', { projectID } );
+  }
+
+  displayContactSystemAdminMessage(){
+    this.errorNotify("An error occurred please contact the system administrator.");
+  }
+  
+  errorNotify(message: string) {
+    this.notifyPopup(message, "error")
+  }
+
+  successNotify(message: string) {
+    this.notifyPopup(message, "success")
+  }
+
+  private notifyPopup(message: string, messageType: string){
+    notify({
+      message: message,
+      type: messageType,
+      displayTime: 5000,
+      position: { at: 'right bottom', my: 'right bottom', offset: '-16 -16' },
+      maxWidth: "400px",
+      closeOnClick: true,
+    });
   }
 }
 

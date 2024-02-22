@@ -660,6 +660,18 @@ body {
 	}
 }
 
+#importTeamModal {
+	&.import-teams-modal-wrapper {
+		crem-tooltip-basic {
+			padding-right: 625px;
+		}
+
+		.iconWrapper.dx-field-value-static {
+			padding: 5px 0px;
+		}
+	}
+}
+
 #addEditTeamModal, #addEditMemberModal, #saveTeamTemplateModal {
 	color: colors.$black;
 	.aet-textInput .mat-form-field {

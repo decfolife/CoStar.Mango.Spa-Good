@@ -21,6 +21,8 @@ export class ModalComponent  {
   @Input() primaryFooterButtonText: string;
   @Input() primaryFooterButtonEnabledDisabled: boolean = false;
   @Input() closeOrCancelButtonText: string;
+  @Input() showTooltip: boolean = false;
+  @Input() tooltipText: string = '';
   @Input() modalId: string;
   @Input() customFooter: boolean = false;
   @Input() closeDialogResult: string = '';

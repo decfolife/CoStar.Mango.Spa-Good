@@ -20,6 +20,9 @@
 					<button mat-menu-item class="actnBtn-removeMembers" *ngIf="userAccessLevel == 1" [disabled]="!selectedTeamMembersData.teamMembers.length" 
 						(click)="removeMembers()"><span >Remove Members</span>
 					</button>      
+					<button mat-menu-item 
+						(click)="importMembers()" >Import Team Template
+					</button>                  
 					<button mat-menu-item class="actionsButton-saveTeamTemplate" (click)="saveTeamAsTemplate()"
 						*ngIf="userAccessLevel == 1 || userAccessLevel == 2 "> Save Team as Template
 					</button>                   

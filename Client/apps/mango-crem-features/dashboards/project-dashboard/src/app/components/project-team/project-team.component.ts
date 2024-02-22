@@ -12,6 +12,7 @@ import { AddEditMemberComponent } from './add-edit-member/add-edit-member.compon
 import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 import { ToastrService } from 'ngx-toastr';
+import { ImportTeamComponent } from './import-team/import-team.component';
 
 
 @Component({
@@ -31,6 +32,8 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   errorText: string = "Error Occurred while getting Project Team Members.";
   userAccessLevel: number;
   subs: Subscription[] = [];
+  projectsPrivateSetting: number;
+
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
               public toastr: ToastrService,
@@ -39,6 +42,8 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.getProjectsPrivateSetting();
+
     this.subs.push(this.route.queryParams.pipe(
       filter(params => !!params && !!params.oid),
       tap(params => {this.projectId = parseInt(params.oid);
@@ -110,12 +115,26 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     }
   }
 
+  importMembers() {
+    let dialogRef = this.dialog.open(ImportTeamComponent, {
+      height: '600px',
+      width: '900px',
+      data: { memberInfo: this.memberInfo, projectId: this.projectId, projectsPrivateSetting: this.projectsPrivateSetting},
+      disableClose: true
+    });
+
+    this.subs.push(dialogRef.afterClosed().pipe(
+      filter(res => !!res),
+      switchMap(_ => this.getProjectTeam(this.projectId))
+    ).subscribe());
+  }
+
   removeMembers() {
     this.subs.push(this.dialogService.confirm('Remove Members', `Do you want to delete the selected contacts/members ?`, 'Confirm', 'Cancel').pipe(
       filter(confirmed => !!confirmed),
       switchMap(_ => this.dashboardService.removeTeamMembers(this.selectedTeamMembersData)),
       switchMap(res => !!res && !!res.success ? 
-        (this.toastr.info("Contact/Team Member(s) removed from this project.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getProjectTeam(this.projectId)) 
+        (this.dashboardService.successNotify("Contact/Team Member(s) removed from this project."), this.getProjectTeam(this.projectId)) 
         : this.dialogService.alert('Team Member Removal', 'There was an issue removing selected Team Member(s). Please review and try again later.', 'OK')
       )
     ).subscribe());
@@ -208,5 +227,25 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe);
+  }
+
+  private getProjectsPrivateSetting() {
+    this.subs.push(this.dashboardService.getClientPreference('ClientProjectsPrivate').subscribe(
+      (res:any) => {
+        if (res === null) {
+          this.dashboardService.displayContactSystemAdminMessage();
+        }
+        else if (res.success) {
+          this.projectsPrivateSetting = Number(res.data);
+        } else {
+          this.dashboardService.errorNotify(res.clientErrorMessage);
+        }    
+      },
+      (error: any) => {
+        console.log("Error occurred getting Projects Private Setting", error);
+        this.dashboardService.displayContactSystemAdminMessage();
+      },
+      () => {}
+    ));
   }
 }

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UntypedFormControl } from '@angular/forms';
-import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { catchError, debounceTime, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { Team, TeamMember, contactMember, MemberInfo } from '@mango/data-models/lib-data-models';
@@ -49,7 +48,6 @@ export class AddEditTeamComponent implements OnInit {
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 
   constructor(private dashboardService: DashboardService,
-    public toastr: ToastrService,
     private dialogService: MangoDialogService,
     public dialogRef: MatDialogRef<AddEditTeamComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -240,8 +238,7 @@ export class AddEditTeamComponent implements OnInit {
           if (res.success) {
             this.dialogRef.close('true');
           } 
-          return res.success ? of(this.toastr.info("Team Saved Successfully", "",
-                 { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this team. Please review and try again later', 'OK');
+          return res.success ? of(this.dashboardService.successNotify("Team Saved Successfully")) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this team. Please review and try again later', 'OK');
         }),
         catchError(_ => this.dialogService.alert('Save Not Successful!', 'There was an issue with saving this team. Please review and try again later', 'OK'))
       ).subscribe();

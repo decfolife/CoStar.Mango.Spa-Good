@@ -1,6 +1,9 @@
 <div [ngClass]="'cremModal ' + className" [id]="modalId">
 	<div class="modalHeader" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
 		<h2 [id]="modalTitleId"class="modal-title"> {{ modalTitle }}</h2>
+		<crem-tooltip-basic *ngIf="showTooltip"
+		[helpTextData]="tooltipText"
+		></crem-tooltip-basic>
 		<button
 			*ngIf="closeIconVisible"
 			(click)="closeDialog()"
