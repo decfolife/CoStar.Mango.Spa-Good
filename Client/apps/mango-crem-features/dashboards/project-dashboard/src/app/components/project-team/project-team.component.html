@@ -12,7 +12,7 @@
 					<span>Clear Filters</span>
 				</crem-button>
 			</div>
-			<div class="actions" [ngClass]="{'hideActions': userAccessLevel == 3}" >
+			<div class="actions" [ngClass]="{'hideActions': (userAccessLevel !== 1 && userAccessLevel !== 2)}" >
 				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" (click)="$event.preventDefault()">
 					Actions <mat-icon aria-label="Project Team Actions">arrow_drop_down</mat-icon>
 				</button>
@@ -20,11 +20,11 @@
 					<button mat-menu-item class="actnBtn-removeMembers" *ngIf="userAccessLevel == 1" [disabled]="!selectedTeamMembersData.teamMembers.length" 
 						(click)="removeMembers()"><span >Remove Members</span>
 					</button>      
-					<button mat-menu-item 
-						(click)="importMembers()" >Import Team Template
+					<button mat-menu-item class="actnBtn-importTeamTemplate" (click)="importMembers()" >
+						Import Team Template
 					</button>                  
-					<button mat-menu-item class="actionsButton-saveTeamTemplate" (click)="saveTeamAsTemplate()"
-						*ngIf="userAccessLevel == 1 || userAccessLevel == 2 "> Save Team as Template
+					<button mat-menu-item class="actnBtn-saveTeamTemplate" (click)="saveTeamAsTemplate()">
+						 Save Team as Template
 					</button>                   
 				</mat-menu>	 
 			</div>
