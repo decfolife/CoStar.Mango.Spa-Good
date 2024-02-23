@@ -22,7 +22,6 @@ export class AmortizationGridColumnsService {
   public functionalCurrencyEnabled = undefined;
   public isFiscalCalendar = undefined;
   private classificationId = -1;
-  private periodNameHeaderFilterDataSource;
 
   constructor(private formattingService: FormattingService) { }
 
@@ -34,6 +33,8 @@ export class AmortizationGridColumnsService {
     this.commonStartingColumns = [
       {
         caption: 'Period Event',
+        isParent: true,
+        band: 'Period Event',
         columns: [
           {
             caption: 'Period Index',
@@ -44,6 +45,8 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Period Begin',
@@ -54,8 +57,10 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader',
-            dataType: 'date'
+            dataType: 'date',
+            isParent: false,
+            band: 'Period Event',
+            headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Period End',
             name: 'PeriodEnd',
@@ -65,8 +70,10 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader',
-            dataType: 'date'
+            dataType: 'date',
+            isParent: false,
+            band: 'Period Event',
+            headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Year',
             name: 'Year',
@@ -76,6 +83,8 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Quarter',
@@ -86,6 +95,8 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Period',
@@ -96,6 +107,8 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Days In Period',
@@ -106,6 +119,8 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Remaining Term (Months)',
@@ -116,6 +131,8 @@ export class AmortizationGridColumnsService {
             alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Period Name',
@@ -125,8 +142,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             alignment: 'center',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader',
-            headerFilter: { allowsearch: false, dataSource: this.periodNameHeaderFilterDataSource}
+            isParent: false,
+            band: 'Period Event',
+            headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'JE Status',
             name: 'JEStatus',
@@ -134,7 +152,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
             alignment: 'center',
-            headerCellTemplate: 'amortizationHeader'
+            isParent: false,
+            band: 'Period Event',
+            headerCellTemplate: 'amortizationHeader',
           }, {
             caption: 'Days In Full Period',
             name: 'DaysInFullPeriod',
@@ -143,6 +163,8 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             alignment: 'center',
             visible: false,
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Period Event',
@@ -152,6 +174,8 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             alignment: 'center',
             visible: false,
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Created By Schedule ID',
@@ -160,6 +184,8 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
             visible: false,
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           },
           {
@@ -170,6 +196,8 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             alignment: 'center',
             visible: false,
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }, {
             caption: 'Is Liability Matured',
@@ -178,6 +206,8 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
             visible: false,
+            isParent: false,
+            band: 'Period Event',
             headerCellTemplate: 'amortizationHeader'
           }
         ]
@@ -192,6 +222,8 @@ export class AmortizationGridColumnsService {
       usesLocalFormat: 'false',
       usesFunctionalFormat: 'true',
       appendsCurrency: 'true',
+      isParent: true,
+      band: 'Functional Asset',
       columns: [
         {
           caption: 'Asset Balance - Opening',
@@ -201,7 +233,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: true,
+          band: 'Functional Asset',
         }, {
           caption: 'Asset Balance - Closing',
           name: 'Functional_AssetBalance',
@@ -209,7 +243,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'false',
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'Asset Amortization',
           name: 'FunctionalAssetAmortization',
@@ -217,7 +253,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'false',
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'Accumulated Asset Amortization',
           name: 'FunctionalAccumulatedAssetAmortization',
@@ -225,7 +263,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'false',
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'Total Asset Adjustment',
           name: 'FunctionalAssetAdjustmentAmount',
@@ -233,7 +273,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'false',
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'System Asset Adjustment',
           name: 'Functional_SystemAssetAdjustment',
@@ -242,7 +284,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'Manual Asset Adjustment',
           name: 'FunctionalManualAssetAdjustment',
@@ -251,7 +295,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'Direct Costs',
           name: 'Functional_DirectCostsTotal',
@@ -260,7 +306,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'Termination Fee',
           name: 'FunctionalTerminationFee',
@@ -269,7 +317,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }, {
           caption: 'Gain (Loss)',
           name: 'Functional_AdjustmentGainLoss',
@@ -278,7 +328,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         },],
     },
     ];
@@ -292,7 +344,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'false',
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         },
         {
           caption: 'ROU Asset Interest Expense',
@@ -301,7 +355,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'false',
           usesFunctionalFormat: 'true',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Functional Asset',
         }
       );
     }
@@ -317,6 +373,8 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           appendsCurrency: 'true',
           visible: false,
+          isParent: true,
+          band: 'Local Asset',
           columns: [
             {
               caption: 'Asset Balance - Opening',
@@ -326,7 +384,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Asset Balance - Closing',
               name: 'ROUAsset',
@@ -335,7 +395,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Asset Amortization',
               name: 'AssetAmortization',
@@ -344,7 +406,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Accumulated Asset Amortization',
               name: 'AccumulatedAssetAmortization',
@@ -353,7 +417,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Total Asset Adjustment',
               name: 'AssetAdjustment',
@@ -362,7 +428,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'System Asset Adjustment',
               name: 'SystemAssetAdjustment',
@@ -371,7 +439,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Manual Asset Adjustment',
               name: 'ManualAssetAdjustment',
@@ -380,7 +450,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Direct Costs',
               name: 'DirectCosts',
@@ -389,7 +461,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Termination Fee',
               name: 'TerminationFee',
@@ -398,7 +472,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Gain (Loss)',
               name: 'AdjustmentGainLoss',
@@ -407,7 +483,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Cumulative Asset Adjustment Amount',
               name: 'CumulativeAdjustmentAmount',
@@ -416,7 +494,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }]
         }];
     } else {
@@ -426,6 +506,8 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'true',
+          isParent: true,
+          band: 'Local Asset',
           columns: [
             {
               caption: 'Asset Balance - Opening',
@@ -436,7 +518,9 @@ export class AmortizationGridColumnsService {
               visible: false,
               appendsCurrency: 'false',
               alignment: "center",
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
 
             }, {
               caption: 'Asset Balance - Closing',
@@ -445,7 +529,9 @@ export class AmortizationGridColumnsService {
               usesLocalFormat: 'true',
               usesFunctionalFormat: 'false',
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Asset Amortization',
               name: 'AssetAmortization',
@@ -453,7 +539,9 @@ export class AmortizationGridColumnsService {
               usesLocalFormat: 'true',
               usesFunctionalFormat: 'false',
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Accumulated Asset Amortization',
               name: 'AccumulatedAssetAmortization',
@@ -461,7 +549,9 @@ export class AmortizationGridColumnsService {
               usesLocalFormat: 'true',
               usesFunctionalFormat: 'false',
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Total Asset Adjustment',
               name: 'AssetAdjustment',
@@ -469,7 +559,9 @@ export class AmortizationGridColumnsService {
               usesLocalFormat: 'true',
               usesFunctionalFormat: 'false',
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'System Asset Adjustment',
               name: 'SystemAssetAdjustment',
@@ -478,7 +570,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Manual Asset Adjustment',
               name: 'ManualAssetAdjustment',
@@ -487,7 +581,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Direct Costs',
               name: 'DirectCosts',
@@ -496,7 +592,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Termination Fee',
               name: 'TerminationFee',
@@ -505,7 +603,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Gain (Loss)',
               name: 'AdjustmentGainLoss',
@@ -514,7 +614,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }, {
               caption: 'Cumulative Asset Adjustment Amount',
               name: 'CumulativeAdjustmentAmount',
@@ -523,7 +625,9 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              headerCellTemplate: 'amortizationHeader'
+              headerCellTemplate: 'amortizationHeader',
+              isParent: false,
+              band: 'Local Asset',
             }]
         }];
     }
@@ -536,6 +640,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Straight Line Expense',
         columns: [
           {
             caption: 'Straight Line Expense',
@@ -544,7 +650,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Straight Line Expense',
           }, {
             caption: 'Cumulative Straight Line Expense',
             name: 'CumulativeStraightLineExpense',
@@ -554,6 +662,8 @@ export class AmortizationGridColumnsService {
             visible: false,
             appendsCurrency: 'false',
             headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Straight Line Expense',
           }
         ]
       }, {
@@ -561,6 +671,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Deferred Rent Expense',
         columns: [
           {
             caption: 'Deferred Lease Expense',
@@ -569,7 +681,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Deferred Rent Expense',
           }, {
             caption: 'Cumulative Deferred Lease Expense',
             name: 'CumulativeDeferredLeaseExpense',
@@ -578,7 +692,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Deferred Rent Expense',
           }, {
             caption: 'Deferred Lease Expense Balance',
             name: 'DeferredLeaseExpenseBalance',
@@ -586,7 +702,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Deferred Rent Expense',
           }, {
             caption: 'Long Term Liability - Closing',
             name: 'LongTermLiability',
@@ -595,7 +713,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Deferred Rent Expense',
           }, {
             caption: 'Short Term Liability - Closing',
             name: 'ShortTermLiability',
@@ -604,7 +724,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Deferred Rent Expense',
           },
         ]
       },
@@ -613,6 +735,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Adjustments',
         columns: [
           {
             caption: 'Adjustments',
@@ -621,7 +745,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Adjustments',
           }, {
             caption: 'Cumulative Adjustments',
             name: 'CumulativeAdjustments',
@@ -630,7 +756,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Adjustments',
           },]
       },
       {
@@ -638,6 +766,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Payments',
         columns: [
           {
             caption: 'Scheduled Payments',
@@ -646,7 +776,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Payments',
           }, {
             caption: 'Remaining Payments',
             name: 'RemainingPayments',
@@ -655,7 +787,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Payments',
           }, {
             caption: 'Cumulative Scheduled Payments',
             name: 'CumulativeCash',
@@ -664,7 +798,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Payments',
           }]
       },
     ]);
@@ -677,6 +813,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Local Asset',
         columns: [
           {
             caption: 'Asset Balance - Opening',
@@ -686,7 +824,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Local Asset'
           }, {
             caption: 'Asset Balance - Closing',
             name: 'CapitalLeaseAssetAmount',
@@ -694,7 +834,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Local Asset'
           },
           {
             caption: 'Accumulated Asset Amortization',
@@ -703,7 +845,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Local Asset'
           }, {
             caption: 'Depreciation Expense',
             name: 'DepreciationExpense',
@@ -711,7 +855,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Local Asset'
           }, {
             caption: 'Cumulative Depreciation Expense',
             name: 'CumulativeDepreciationExpense',
@@ -720,7 +866,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Local Asset'
           }, {
             caption: 'Asset Adjustment',
             name: 'AssetAdjustment',
@@ -728,7 +876,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Local Asset'
           }, {
             caption: 'Cumulative Asset Adjustment Amount',
             name: 'CumulativeAdjustmentAmount',
@@ -737,7 +887,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Local Asset'
           },]
       },
       {
@@ -745,6 +897,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'false',
+        isParent: true,
+        band: 'Liability',
         columns: [
           {
             caption: 'Liability Balance - Opening',
@@ -754,7 +908,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Liability Balance - Closing',
             name: 'CapitalLeaseLiability',
@@ -762,7 +918,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
 
           {
@@ -772,7 +930,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Cumulative Liability Reduction',
             name: 'CumulativeLiabilityReductionAmount',
@@ -781,7 +941,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Liability Adjustment',
             name: 'LiabilityAdjustment',
@@ -789,7 +951,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Lease Liability Interest Expense',
             name: 'LeaseLiabilityInterestExpense',
@@ -797,7 +961,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Cumulative Liability Adjustment',
             name: 'CumulativeLiabilityAdjustmentAmount',
@@ -806,7 +972,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Cumulative Interest Expense',
             name: 'CumulativeInterestExpense',
@@ -815,7 +983,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
         ]
       },
@@ -836,6 +1006,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Liability',
         columns: [
           {
             caption: 'Liability Balance - Opening',
@@ -845,7 +1017,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Liability Balance - Closing',
             name: 'Liability',
@@ -853,7 +1027,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Liability Reduction',
             name: 'LiabilityReduction',
@@ -861,7 +1037,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Lease Liability Interest Expense',
             name: 'LeaseLiabilityInterestExpense',
@@ -869,7 +1047,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Cumulative Interest Expense',
             name: 'CumulativeInterestExpense',
@@ -878,7 +1058,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }
         ],
       }
@@ -893,7 +1075,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Liability Adjustment',
@@ -902,7 +1086,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Cumulative Liability Adjustment',
@@ -912,7 +1098,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         }
       );
     }
@@ -925,7 +1113,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Liability Adjustment',
@@ -934,7 +1124,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Cumulative Liability Adjustment',
@@ -944,7 +1136,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         }
       );
     }
@@ -963,6 +1157,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Liability',
         columns: [
           {
             caption: 'Liability Balance - Opening',
@@ -972,7 +1168,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Liability Balance - Closing',
             name: 'Liability',
@@ -980,7 +1178,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Liability Reduction',
             name: 'LiabilityReduction',
@@ -997,7 +1197,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Cumulative Interest Expense',
             name: 'CumulativeInterestExpense',
@@ -1006,7 +1208,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
         ],
       }
@@ -1022,7 +1226,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
         },
         {
           caption: 'Level Expense',
@@ -1031,7 +1237,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
         }
       );
     } else {
@@ -1044,7 +1252,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
         },
         {
           caption: 'Level Expense',
@@ -1054,7 +1264,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
         }
       );
     }
@@ -1068,7 +1280,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Liability Adjustment',
@@ -1077,7 +1291,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Cumulative Liability Adjustment',
@@ -1087,7 +1303,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         }
       );
     }
@@ -1100,7 +1318,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Liability Adjustment',
@@ -1109,7 +1329,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Cumulative Liability Adjustment',
@@ -1119,7 +1341,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         }
       );
     }
@@ -1136,6 +1360,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Liability',
         columns: [
           {
             caption: 'Liability Balance - Opening',
@@ -1145,7 +1371,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
           {
             caption: 'Liability Balance - Closing',
@@ -1154,7 +1382,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
           {
             caption: 'Liability Reduction',
@@ -1163,7 +1393,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
           {
             caption: 'Lease Liability Interest Expense',
@@ -1172,7 +1404,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }, {
             caption: 'Cumulative Interest Expense',
             name: 'CumulativeInterestExpense',
@@ -1181,7 +1415,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             visible: false,
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
           {
             caption: 'Cumulative Liability Reduction',
@@ -1190,7 +1426,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           }
         ],
       }
@@ -1205,7 +1443,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Cumulative Liability Adjustment',
@@ -1215,7 +1455,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         }
       );
     }
@@ -1229,7 +1471,9 @@ export class AmortizationGridColumnsService {
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         },
         {
           caption: 'Cumulative Liability Adjustment',
@@ -1239,7 +1483,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           visible: false,
           appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Liability'
         }
       );
     }
@@ -1255,6 +1501,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Short Term Liability',
         columns: [
           {
             caption: 'Short Term Liability - Opening',
@@ -1263,7 +1511,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Short Term Liability'
           },
           {
             caption: 'Short Term Liability - Closing',
@@ -1272,7 +1522,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Short Term Liability'
           },
         ],
       },
@@ -1288,7 +1540,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Short Term Liability'
         },
         {
           caption: 'Short Term Liability Adjustment',
@@ -1298,7 +1552,9 @@ export class AmortizationGridColumnsService {
           usesFunctionalFormat: 'false',
           appendsCurrency: 'false',
           visible: false,
-          headerCellTemplate: 'amortizationHeader'
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Short Term Liability'
         }
       );
     }
@@ -1309,6 +1565,8 @@ export class AmortizationGridColumnsService {
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Long Term Liability',
         columns: [
           {
             caption: 'Long Term Liability - Opening',
@@ -1318,7 +1576,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Long Term Liability'
           }, {
             caption: 'Long Term Liability - Closing',
             name: 'LongTermLiability',
@@ -1326,7 +1586,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Long Term Liability'
           }, {
             caption: 'Long Term Liability Reduction',
             name: 'LongTermLiabilityReductionAmount',
@@ -1335,7 +1597,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Long Term Liability'
           }, {
             caption: 'Long Term Liability Adjustment',
             name: 'LongTermLiabilityAdjustment',
@@ -1344,13 +1608,17 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Long Term Liability'
           },]
       }, {
         caption: 'Payments',
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
         appendsCurrency: 'true',
+        isParent: true,
+        band: 'Payments',
         columns: [
           {
             caption: 'Scheduled Payments',
@@ -1359,7 +1627,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Payments'
           }, {
             caption: 'Remaining Payments',
             name: 'RemainingPayments',
@@ -1368,7 +1638,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Payments'
           }, {
             caption: 'Cumulative Scheduled Payments',
             name: 'CumulativeCash',
@@ -1377,7 +1649,9 @@ export class AmortizationGridColumnsService {
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
             visible: false,
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Payments'
           },]
       },
     ]);
@@ -1390,24 +1664,30 @@ export class AmortizationGridColumnsService {
 
       if (column.caption.includes('Straight Line Expense')) {
         column.caption = column.caption.replace('Straight Line Expense', 'Straight Line Income');
+        column.band = column.band.replace('Straight Line Expense', 'Straight Line Income');
       }
       if (column.caption.includes('Deferred Rent Expense')) {
         column.caption = column.caption.replace('Deferred Rent Expense', 'Deferred Rent Receivable');
+        column.band = column.band.replace('Deferred Rent Expense', 'Deferred Rent Receivable');
       }
 
       column.columns.forEach(subcolumn => {
         if (subcolumn.caption.includes('Expense')) {
-          if (subcolumn.caption.includes('Straight Line Income ')) {
+          if (subcolumn.caption.includes('Straight Line Income')) {
             subcolumn.caption = subcolumn.caption.replace('Lease Expense', 'Rent Receivable');
           } else {
             subcolumn.caption = subcolumn.caption.replace('Expense', 'Income');
+            subcolumn.band = subcolumn.band.replace('Deferred Rent Expense', 'Deferred Rent Receivable');
+            subcolumn.band = subcolumn.band.replace('Straight Line Expense', 'Straight Line Income')
           }
         }
         if (subcolumn.caption.includes('Short Term Liability - Closing')) {
           subcolumn.caption = subcolumn.caption.replace('Short Term Liability - Closing', 'ST DRR');
+          subcolumn.band = subcolumn.band.replace('Deferred Rent Expense', 'Deferred Rent Receivable')
         }
         if (subcolumn.caption.includes('Long Term Liability - Closing')) {
           subcolumn.caption = subcolumn.caption.replace('Long Term Liability - Closing', 'LT DRR');
+          subcolumn.band = subcolumn.band.replace('Deferred Rent Expense', 'Deferred Rent Receivable')
         }
       });
 
@@ -1459,11 +1739,9 @@ export class AmortizationGridColumnsService {
 
   public getSummaryColumns(classificationId: number,
     functionalCurrencyEnabled: boolean,
-    usesFiscalCalendar: boolean,
-    periodNameHeaderFilterDataSource: any[]) {
+    usesFiscalCalendar: boolean) {
     this.functionalCurrencyEnabled = functionalCurrencyEnabled;
     this.isFiscalCalendar = usesFiscalCalendar;
-    this.periodNameHeaderFilterDataSource = periodNameHeaderFilterDataSource;
     this.updateColumns(classificationId);
 
     switch (classificationId) {

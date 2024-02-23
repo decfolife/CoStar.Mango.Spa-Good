@@ -27,7 +27,6 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   componentName = "amortization-grid"
   isGridStateChanged = false;
   amortizationdetailsGridData;
-  periodNameHeaderFilterDataSource: any[] = [];
   amortizationDetailColumns = [];
   summaryFields: any = {};
   gridName = 'Periods';
@@ -112,14 +111,12 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       if (amortizationDetailsResponse.success && portfolioSettingsResponse.success) {
         this.amortizationdetailsGridData = amortizationDetailsResponse.data;
         this.selectedRowKey = [this.amortizationdetailsGridData[0].scheduleIndex];
-        this.portfolioSettings = portfolioSettingsResponse.data;
-        this.periodNameHeaderFilterDataSource = amortizationDetailsResponse.data.map(amp => { return { text: amp.displayPeriod, value: ['displayPeriod', '=', amp.displayPeriod] } })
- 
+        this.portfolioSettings = portfolioSettingsResponse.data; 
         this.isEuroDateFormat = this.userInfo.useDateEU;
         if (this.isEuroDateFormat) {
           this.dateFormat = 'dd.MM.yyyy';
         }
-        this.amortizationDetailColumns = this.getAmortizationColumns(this.classificationID, this.eventScheduleData, this.periodNameHeaderFilterDataSource);
+        this.amortizationDetailColumns = this.getAmortizationColumns(this.classificationID, this.eventScheduleData);
         this.getGridPreferences();
       } else if (!amortizationDetailsResponse.success || !portfolioSettingsResponse.success) {
         this.accountingSummaryService.errorNotify(!amortizationDetailsResponse.success ? amortizationDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
@@ -177,6 +174,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       }
       columnsState[index].appendsCurrency = this.amortizationDataGrid.instance.columnOption(index, 'appendsCurrency');
       columnsState[index].caption = this.amortizationDataGrid.instance.columnOption(index, 'caption');
+      columnsState[index].isParent = this.amortizationDataGrid.instance.columnOption(index, 'isParent');
+      columnsState[index].band = this.amortizationDataGrid.instance.columnOption(index, 'band')
       columnsState[index].usesLocalFormat = this.amortizationDataGrid.instance.columnOption(index, 'usesLocalFormat');
       columnsState[index].usesFunctionalFormat = this.amortizationDataGrid.instance.columnOption(index, 'usesFunctionalFormat');
       columnsState[index].headerCellTemplate = 'amortizationHeader';
@@ -208,10 +207,10 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   * Gets the appropriate columns from the service.
   * @param classificationId Lease recognition classification ID
   */
-  getAmortizationColumns(classificationId, currencyInfo, periodNameHeaderFilterDataSource) {
+  getAmortizationColumns(classificationId, currencyInfo) {
       const defaultColumns = this.columnService
         .getSummaryColumns(classificationId, this.portfolioSettings.functionalCurrencyEnabled,
-          this.portfolioSettings.leaseRecognitionCalendarID != 1, periodNameHeaderFilterDataSource);
+          this.portfolioSettings.leaseRecognitionCalendarID != 1);
   
       // columns is ultimatly what will be used, it is the default by default
       const columns = defaultColumns;
