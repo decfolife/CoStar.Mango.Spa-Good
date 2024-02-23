@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, DoBootstrap, getPlatform, Injector, NgModule } 
 import { BrowserModule, platformBrowser } from '@angular/platform-browser';
 import { createCustomElement } from '@angular/elements';
 import { EnvInfoChipModule, SharedLeftNavModule } from '@mango/ui-shared/lib-ui-shared';
-import { BookmarksModule, DashboardsLeftNavModule, SimpleGridModule } from '@mango/ui-shared/lib-ui-elements';
+import { BookmarksModule, SimpleGridModule } from '@mango/ui-shared/lib-ui-elements';
 import { CremEnvInfoChipAppComponent } from './crem-env-info-chip/crem-env-info-chip.component';
 import { CremEnvChipService } from './crem-env-info-chip/crem-env-info-chip.service';
 import { BookmarksAppComponent } from './bookmarks/bookmarks.component';
@@ -43,7 +43,6 @@ import { OpenWidgetHistoryModalComponent } from './widget-history/open-widget-hi
         HttpClientJsonpModule,
         BookmarksModule,
         EnvInfoChipModule,
-        DashboardsLeftNavModule,
         SharedLeftNavModule,
         AlertChipModule,
         LeaseAlertsModule,

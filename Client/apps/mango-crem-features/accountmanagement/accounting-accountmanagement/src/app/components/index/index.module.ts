@@ -20,7 +20,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DevExtremeModule, DxDataGridModule, DxFormModule, DxLoadPanelModule, DxSwitchModule, DxValidationGroupModule } from 'devextreme-angular';
-import { SideNavModule } from 'libs/ui-shared/lib-ui-elements/src/lib/side-nav/side-nav.module';
 
 
 @NgModule({
@@ -51,7 +50,6 @@ import { SideNavModule } from 'libs/ui-shared/lib-ui-elements/src/lib/side-nav/s
     DxSwitchModule,
     DxValidationGroupModule,
     DevExtremeModule,
-    SideNavModule,
     DxLoadPanelModule
   ],
   providers: [

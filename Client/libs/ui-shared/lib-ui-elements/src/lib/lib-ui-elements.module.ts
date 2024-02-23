@@ -9,11 +9,9 @@ import { IconModule } from './icon';
 import { SimpleGridModule } from './simple-grid';
 import { TooltipModule } from './tooltip';
 import { TooltipBasicModule } from './tooltip-basic';
-import { SideNavModule } from './side-nav/side-nav.module';
 import { LoaderModule } from './loader';
 import { ScreenLoaderModule } from './screen-loader';
 import { ModalModule } from './modal';
-import { DashboardsLeftNavModule } from './dashboards-left-nav/dashboards-left-nav.module';
 import { HierarchyDropdownModule } from './hierarchy-dropdown';
 import { CremPivotTableModule } from './crem-pivot-table/crem-pivot-table.module';
 
@@ -34,10 +32,8 @@ import { CremPivotTableModule } from './crem-pivot-table/crem-pivot-table.module
     ScreenLoaderModule,
     SimpleGridModule,
     TooltipBasicModule,
-    SideNavModule,
     TooltipModule,
     ModalModule,
-    DashboardsLeftNavModule,
     CremPivotTableModule,
   ],
 })

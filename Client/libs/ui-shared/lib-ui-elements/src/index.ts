@@ -11,6 +11,5 @@ export * from './lib/simple-grid';
 export * from './lib/tooltip-basic';
 export * from './lib/modal';
 export * from './lib/bookmarks';
-export * from './lib/dashboards-left-nav';
 export * from './lib/favorite-icon';
 export * from './lib/dynamic-form';

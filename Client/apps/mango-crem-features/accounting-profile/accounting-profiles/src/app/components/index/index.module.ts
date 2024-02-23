@@ -38,7 +38,6 @@ import { IndexComponent } from './index.component';
 import { DiscountRateService } from '../../services/discount-rate.service';
 import { PortfolioDropdownService } from '../../services/portfolio-dropdown.service';
 import { BaseService } from '../../services/base.service';
-import { SideNavModule } from 'libs/ui-shared/lib-ui-elements/src/lib/side-nav/side-nav.module';
 
 @NgModule({
   declarations: [
@@ -64,7 +63,6 @@ import { SideNavModule } from 'libs/ui-shared/lib-ui-elements/src/lib/side-nav/s
     MatSlideToggleModule,
     MatCardModule,
     FontAwesomeModule,
-    SideNavModule,
     DxDataGridModule,
     DxFormModule,
     DxSwitchModule,
