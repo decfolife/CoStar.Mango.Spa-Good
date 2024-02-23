@@ -117,7 +117,6 @@ export class AddReminderComponent implements OnInit {
     this.oid = Number(this.route.snapshot.queryParamMap.get("oid"));
   }
   ngOnInit(): void {
-    console.log('defaultSelectedValue',this.defaultSelectedValue)
     this.getDropdownData();
     this.remindersInfo = <Reminder>{};
     this.remindersInfo.remindersRecepient = [];
@@ -188,6 +187,10 @@ export class AddReminderComponent implements OnInit {
     }
     for (const recipient of this.remindersInfo.remindersRecepient) {
       reminderData.ContactID = recipient.contactId;
+      if(reminderData.TickleTypeId !=1){
+        reminderData.UserDefinedDate =null; 
+        reminderData.UserDefinedEvent =null;
+      }
       this.remindersService.saveReminder(reminderData).pipe(
         switchMap(res => {
           if (res.success) {
@@ -243,7 +246,6 @@ export class AddReminderComponent implements OnInit {
 
   private getSaveReminderData() {
     const formData = this.addReminderForm.formData;
-
     let saveReminderData = {
       UserDefinedEvent: formData.userDefinedEvent,
       UserDefinedDate: formData.userDefinedDate,
@@ -351,7 +353,12 @@ export class AddReminderComponent implements OnInit {
   }
 
   shouldShowUserDefinedEvent(): boolean {
-    return this.selectedReminderEventId === "User Defined";
+    if(this.selectedReminderEventId === "User Defined"){
+      return true;
+    }
+    if( this.userDefinedEvent !=" " && this.defaultSelectedValue === 1){
+      return true;
+    }
   }
 
   ngOnDestroy(): void {

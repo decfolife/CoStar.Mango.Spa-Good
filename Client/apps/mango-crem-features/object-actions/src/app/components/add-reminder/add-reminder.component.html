@@ -15,7 +15,7 @@
             <dxi-validation-rule type="required" message="You must select a Reminder Event."></dxi-validation-rule>
           </dxi-item>
 
-          <dxi-item dataField="userDefinedEvent" id="userDefinedEvent" [editorOptions]="{value: beginDays }"
+          <dxi-item dataField="userDefinedEvent" id="userDefinedEvent" [editorOptions]="{value: userDefinedEvent }"
             *ngIf="shouldShowUserDefinedEvent()">
             <dxo-label text="User Defined Event Name"></dxo-label>
             <dxi-validation-rule type="required"
@@ -24,7 +24,7 @@
           </dxi-item>
 
           <dxi-item dataField="userDefinedDate" id="userDefinedDate" editorType="dxDateBox"
-            [editorOptions]="{value: beginDays }" *ngIf="shouldShowUserDefinedEvent()">
+            [editorOptions]="{value: userDefinedDate }" *ngIf="shouldShowUserDefinedEvent()">
             <dxo-label text="User Defined Event Date"></dxo-label>
             <dxi-validation-rule type="required"
               message="You must enter an Event Date when selecting a user defined event.">
