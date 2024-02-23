@@ -9,16 +9,19 @@ import {
 } from '@angular/core';
 import { FaIconComponent, AnimationProp } from '@fortawesome/angular-fontawesome';
 import {
+  config,
+  IconStyle,
   FlipProp,
   IconPrefix,
   PullProp,
   RotateProp,
   SizeProp,
 } from '@fortawesome/fontawesome-svg-core';
-import { IconStyle } from '@fortawesome/fontawesome-svg-core';
 import { IconDefinition, IconPack } from '@fortawesome/free-solid-svg-icons';
 
 import { colorProp } from './definitions/fontAwesome';
+
+config.autoAddCss = false;
 
 /** @deprecated */
 import { environment } from '../../../../../../apps/mango/src/environments/environment.local';
