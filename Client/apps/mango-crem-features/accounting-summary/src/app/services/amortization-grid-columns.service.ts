@@ -234,7 +234,7 @@ export class AmortizationGridColumnsService {
           appendsCurrency: 'false',
           visible: false,
           headerCellTemplate: 'amortizationHeader',
-          isParent: true,
+          isParent: false,
           band: 'Functional Asset',
         }, {
           caption: 'Asset Balance - Closing',
@@ -1188,7 +1188,9 @@ export class AmortizationGridColumnsService {
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
             appendsCurrency: 'false',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            isParent: false,
+            band: 'Liability'
           },
           {
             caption: 'Lease Liability Interest Expense',
@@ -1242,34 +1244,7 @@ export class AmortizationGridColumnsService {
           band: 'Local Asset'
         }
       );
-    } else {
-      this.operating842Columns[1].columns.push(
-        {
-          caption: 'Cumulative Level Expense',
-          name: 'CumulativeLevelExpense',
-          dataField: 'cumulativeLevelExpense',
-          usesLocalFormat: 'true',
-          usesFunctionalFormat: 'false',
-          visible: false,
-          appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader',
-          isParent: false,
-          band: 'Local Asset'
-        },
-        {
-          caption: 'Level Expense',
-          name: 'LevelExpense',
-          dataField: 'levelExpense',
-          usesLocalFormat: 'true',
-          usesFunctionalFormat: 'false',
-          visible: false,
-          appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader',
-          isParent: false,
-          band: 'Local Asset'
-        }
-      );
-    }
+    } 
 
     if (!this.functionalCurrencyEnabled) {
       this.operating842Columns[2].columns.push(
