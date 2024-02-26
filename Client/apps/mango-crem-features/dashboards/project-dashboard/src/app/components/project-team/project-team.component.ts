@@ -164,11 +164,10 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     this.subs.push(this.dialogService.confirm('Apply Team To Tasks', `Are you sure yo want to assign team members to tasks based on their roles ?`, 'Confirm', 'Cancel').pipe(
       filter(confirmed => !!confirmed),
       switchMap(_ => this.dashboardService.addContactsToTasksByRole(this.projectId)),
-      tap(res => { 
-        !!res && !!res.success ? 
-        this.toastr.info("Team members have successfully been added to tasks based on their role.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }) 
-        : this.dialogService.alert('Apply Team To Tasks', 'There was an issue adding Team members to Tasks. Please review and try again later.', 'OK');
-      })
+      switchMap(res => !!res && !!res.success ? 
+        (this.toastr.info("Team members have successfully been added to tasks based on their role.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }), this.getProjectTeam(this.projectId)) 
+        : this.dialogService.alert('Apply Team To Tasks', 'There was an issue adding Team members to Tasks. Please review and try again later.', 'OK')
+      )
     ).subscribe());
   }
 
