@@ -217,7 +217,7 @@ export class WorkflowDropdownComponent {
       this.divOpened = false;
       this.cancelChanges();
     }
-    this.divElement = document.getElementById('containerDiv');
+    this.divElement = document.getElementById('workflow-component-comment-popup');
     if (this.divElement) {
       this.divOpened = true;
       this.commentTextArea.nativeElement.focus();
