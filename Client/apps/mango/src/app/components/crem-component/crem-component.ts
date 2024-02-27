@@ -59,10 +59,11 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
       combineLatest([this.facade.showSubLeftNav$, this.facade.moduleId$, this.facade.currentRenderFormDocumentParams$]).pipe(
         tap(_ => this.navLinksFetched = false),
         switchMap(([showSubLeftNav, moduleId, url]) => !!showSubLeftNav ? this.leftNavService.getModuleNavigationLinksForRenderForm(url) : this.leftNavService.getModuleNavigationLinks(moduleId)),
+        filter(response => !!response),
         tap(response => {
-          this.navLinksFetched = true;
-          this.navigationLinks = response.data;
-          this.activeLink = this.crumbActiveLink || (this.navigationLinks[0] || { name: null }).name;
+            this.navLinksFetched = true;
+            this.navigationLinks = response.data;
+            this.activeLink = this.crumbActiveLink || (this.navigationLinks[0] || { name: null }).name;
         })
       ).subscribe())
   }

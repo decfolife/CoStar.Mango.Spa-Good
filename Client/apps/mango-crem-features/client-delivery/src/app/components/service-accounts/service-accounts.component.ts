@@ -186,53 +186,9 @@ export class ServiceAccountsComponent implements OnDestroy {
     });
   }
 
-  onCellPrepared(e) {
-    if (e.rowType == "data" && e.column.dataField === "Actions") {
-      e.cellElement.className += " not-clickable";  
-    }
-  
-    if (e.rowType === "header") {
-      const ele = e.cellElement.querySelector(".dx-header-filter");
-      if (ele) {
-        setTimeout(() => {
-          ele.addEventListener("click", () => {
-            ele.setAttribute("aria-label", "Column Expanded");
-            ele.setAttribute("aria-expanded", "true");
-          });
-        }, 150);
-      }
-    }
-  }
-
-  onContentReady(e) {
-    setTimeout(() => {
-
-      const gridADAElements = e.element.querySelectorAll(".dx-pager, .dx-datagrid-rowsview, .dx-page-size, .dx-button-disable, div.dx-page.dx-selection");
-      if (gridADAElements !== null) {       
-        gridADAElements.forEach((oElement, i) => {
-          if(oElement.hasAttribute("role")) {
-            oElement.removeAttribute("role");
-          }       
-          if(oElement.hasAttribute("aria-label")) {
-            oElement.removeAttribute("aria-label");  
-          }  
-          if(oElement.hasAttribute("tabindex")) {
-            oElement.removeAttribute("tabindex");
-          }  
-          if(oElement.hasAttribute("aria-current")) {
-            oElement.removeAttribute("aria-current");
-          }     
-        });
-      }
-    });
-  }
-
+  //ADA specific
   onKeyDownOpenAccountDetails(e) {  
-    if (e.event.key === "Enter") {     
-      const cellheader = e.event.currentTarget.classList;
-      const result= cellheader.contains("dx-header-row");
-      if(result) return;
-      
+    if (e.event.key === "Enter") {           
       const focusedRowIndex = e.component.option("focusedRowIndex");      
       if(focusedRowIndex >= 0) {
         const visibleRows = e.component.getVisibleRows();
