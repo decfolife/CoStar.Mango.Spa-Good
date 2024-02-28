@@ -1,3 +1,5 @@
+@use "styles" as *;
+
 :host {
   .crem-content-wrapper {
     position: relative;
@@ -22,7 +24,7 @@
         ::ng-deep { // Target the whole child structure regardless of bookmarks.component.html's html
           .mat-expansion-panel-header {
             &.mat-expanded {
-              background-color: #d3d3d3;
+              @include costar(background-color, gray05);
             }
           }
           .mat-expansion-panel-content {
@@ -34,7 +36,7 @@
               }
               .mat-list-item {
                 height: unset;
-                font-size: 14px;
+                @include costar(font-size, small);
                 text-decoration: none !important;
                 .mat-list-item-content {
                   padding: 8px 40px;
@@ -57,9 +59,9 @@
         bottom: 16px;
         position: absolute;
         a {
-          color: #1e3a6f;
+          @include costar(color, primary-dark);
           margin-left: 16px;
-          font-size: 14px;
+          @include costar(font-size, small);
         }
       }
 
