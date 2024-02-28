@@ -9,10 +9,17 @@
 				<button class="btn btn-default star" (click)="toggleShowFavorites(); $event.preventDefault()"
 				>
 					<div role="img" *ngIf="!showFavorites" aria-label="Show Favorite Reports">
-						<favorite-icon class="star-outline"></favorite-icon>
+						<crem-icon
+							icon="faStar"
+							pack="regular"
+				  		></crem-icon>
 					</div>
 					<div role="img" *ngIf="showFavorites" aria-label="Show Favorite Reports">
-						<favorite-icon class="star-favorited"></favorite-icon>
+						<crem-icon
+							icon="faStar"
+							pack="solid"
+							class="warning"
+				  		></crem-icon>
 					</div>
 				</button>
 			</div>
@@ -133,17 +140,24 @@
 							</ul>
 						</mat-menu>
 					</div>
-				</dxi-button>		    	
+				</dxi-button>
 			</dxi-column>
 
 			<div *dxTemplate="let rpt of 'favoriteTemplate'">
-				<div tabindex="0" *ngIf="!rpt.data.isFavorite" (click)="favoriteReport(rpt)" class="favorite-icon-table"
+				<div tabindex="0" *ngIf="!rpt.data.isFavorite" (click)="favoriteReport(rpt)" 
 					role="button" aria-label="Click to favorite report" (keydown)="onKeydownMakeFavorite($event, rpt)">
-					<favorite-icon class="star-outline"></favorite-icon>
+					<crem-icon
+						icon="faStar"
+						pack="regular"
+					></crem-icon>
 				</div>
-				<div tabindex="0" *ngIf="rpt.data.isFavorite" (click)="unFavoriteReport(rpt)" class="favorite-icon-table"
+				<div tabindex="0" *ngIf="rpt.data.isFavorite" (click)="unFavoriteReport(rpt)"
 					role="button" aria-label="Click to unfavorite report" (keydown)="onKeydownMakeUnFavorite($event, rpt)">
-					<favorite-icon class="star-favorited"></favorite-icon>
+					<crem-icon
+						icon="faStar"
+						pack="solid"
+						class="warning"
+					></crem-icon>
 				</div>
 			</div>
 			<div *dxTemplate="let rpt of 'tagsTemplate'">		

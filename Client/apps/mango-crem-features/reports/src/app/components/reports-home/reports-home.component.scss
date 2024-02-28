@@ -65,10 +65,6 @@ button.btn.btn-default.star:focus {
 	outline: 3px solid #779ede !important;
 }
 
-mat-icon.favorite-icon-table {
-	font-size: 18px;
-}
-
 button.btn.btn-default.moreButton {
 	display: flex;
 	align-items: center;
@@ -94,12 +90,4 @@ button.btn.btn-default.moreButton {
 	button.mat-menu-trigger.btn-link:focus{
 		box-shadow: 0 0 0 0.1rem #779ede;
 	}
-}
-
-.star-outline {
-	--favIconColor: transparent;
-}
-
-.star-favorited {
-	--favIconColor: #FFB400;
 }

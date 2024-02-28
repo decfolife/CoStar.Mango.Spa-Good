@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { DropdownModule, ButtonModule, LoaderModule, FavoriteIconModule } from '@mango/ui-shared/lib-ui-elements'
+import { DropdownModule, ButtonModule, LoaderModule } from '@mango/ui-shared/lib-ui-elements'
 import { MatIconModule } from '@angular/material/icon';
 import { DxDataGridModule } from 'devextreme-angular';
 import { MatMenuModule } from '@angular/material/menu';
@@ -24,8 +24,7 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
     MatIconModule,
     DxDataGridModule,
     MatMenuModule,
-    LoaderModule,
-    FavoriteIconModule
+    LoaderModule
   ],
   providers: [DashboardService, CardsService, ExportDevexDatagridService],
   exports: [RecentActivitiesComponent],
