@@ -69,15 +69,6 @@ div.dynamic-form-content {
 
 }
 
-:host ::ng-deep crem-tooltip .dx-field-value-static {
-	padding: 0;
-}
-
-:host ::ng-deep crem-tooltip .dx-field {
-	display:flex;
-	align-items:center;
-}
-
 div.dynamic-form {
 	padding: 0;
 }
@@ -101,10 +92,6 @@ div.dynamic-form {
 
 :host ::ng-deep .no-toggle .mat-slide-toggle-thumb-container {
     transition: none !important;
-}
-
-.crem-tooltip {
-	margin-left: 6px;
 }
 
 .tempARClass {

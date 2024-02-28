@@ -2,11 +2,10 @@
   <mat-card-header >
     <mat-card-title tabindex="0">{{ metric.title }}</mat-card-title>
     <div class="addl-info-wrapper">
-      <!-- <dx-button  (click)="toggleTooltip()" id="popoverId" ><fa-icon [icon]=""></fa-icon></dx-button> -->
-      <crem-tooltip-basic
+      <crem-tooltip
         [externalId]="metric.id"
         [helpTextData]="metric.tooltipData"
-      ></crem-tooltip-basic>
+      ></crem-tooltip>
     </div>
   </mat-card-header>
   <mat-card-content>

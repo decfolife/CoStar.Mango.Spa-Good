@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectTeamComponent } from './project-team.component';
-import { ButtonModule, LoaderModule, ModalModule, TooltipBasicModule } from '@mango/ui-shared/lib-ui-elements';
+import { ButtonModule, LoaderModule, ModalModule, TooltipModule } from '@mango/ui-shared/lib-ui-elements';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -28,7 +28,7 @@ import { ImportTeamComponent } from './import-team/import-team.component';
     ButtonModule,
     LoaderModule,
     ModalModule,
-    TooltipBasicModule,
+    TooltipModule,
     FontAwesomeModule,
     MatSlideToggleModule,
     MatIconModule,

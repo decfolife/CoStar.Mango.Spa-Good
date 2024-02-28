@@ -1,18 +1,3 @@
-// Apparently, just using the component doesn't include the styles?
-@import "../../../../../../../libs/ui-shared/lib-ui-elements/src/lib/tooltip/tooltip.component.scss";
-
-:host {
-  ::ng-deep {
-    crem-tooltip {
-      display: inline-block;
-
-      .dx-field-value-static {
-        padding: 0;
-      }
-    }
-  }
-}
-
 .intervals-card {
   mat-card-title {
     align-items: center;

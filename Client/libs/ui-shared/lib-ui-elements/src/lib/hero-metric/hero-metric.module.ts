@@ -10,14 +10,14 @@ import {
   DxTemplateModule,
 } from 'devextreme-angular';
 import { IconModule } from '../icon';
-import { TooltipBasicModule } from '../tooltip-basic';
+import { TooltipModule } from '../tooltip';
 
 @NgModule({
   declarations: [HeroMetricComponent],
   imports: [
     CommonModule,
     IconModule,
-    TooltipBasicModule,
+    TooltipModule,
     DxButtonModule,
     DxPopoverModule,
     DxTemplateModule,

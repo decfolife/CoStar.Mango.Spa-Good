@@ -2,7 +2,7 @@ import { moduleMetadata, Story, Meta } from '@storybook/angular';
 
 import { HeroMetricComponent } from './hero-metric.component';
 import { MatCardModule } from '@angular/material/card';
-import { TooltipBasicModule } from '../tooltip-basic/tooltip-basic.module';
+import { TooltipModule } from '../tooltip/tooltip.module';
 
 export default {
   title: 'Components/Hero Metrics',
@@ -11,7 +11,7 @@ export default {
     moduleMetadata({
       imports: [
         MatCardModule,
-        TooltipBasicModule,
+        TooltipModule
       ],
     }),
   ],

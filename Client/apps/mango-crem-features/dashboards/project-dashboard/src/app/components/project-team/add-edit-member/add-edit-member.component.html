@@ -96,10 +96,10 @@
   <div class="aet-outstandingRoles" *ngIf="outstandingRoles.length">
     <h4 class="roleLabel label">Outstanding Roles</h4>
     <span class="outstandingRolesCount">{{outstandingRoles.length}} roles waiting to be assigned</span>
-    <crem-tooltip-basic
+    <crem-tooltip
       [externalId]="'outstandingRolesToolTipId'"
       [helpTextData]="outstandingRolesHelpText"
-    ></crem-tooltip-basic>
+    ></crem-tooltip>
   </div>
   <div class="aet-role">
     <h4 class="roleLabel label">Role</h4>
@@ -166,11 +166,11 @@
   <div class="aet-assignedTasks" *ngIf="operation !== Operations.AC && projectTaskList.length">
     <div class="assgnedTasksHdr">
       <h4 class="descLabel label">Assigned Tasks</h4>
-      <crem-tooltip-basic
+      <crem-tooltip
       [externalId]="'assignedTasksToolTipId'"
       [helpTextData]="'Check the box next to the Task to assign user to tasks. 
                        Uncheck to unassign the user from the task. Click Save or Apply to lock in changes.'"
-    ></crem-tooltip-basic>
+    ></crem-tooltip>
     </div>
     <div class="assignedTasks-container">
       <ng-container *ngFor="let task of projectTaskList">

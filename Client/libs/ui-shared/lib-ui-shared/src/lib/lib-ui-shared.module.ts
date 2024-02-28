@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderModule } from './header/header.module';
 import { RouterModule } from '@angular/router';
-//import { LibCoreSharedModule } from '@mango/core-shared';
 import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ListErrorsModule } from './list-errors/list-errors.module';

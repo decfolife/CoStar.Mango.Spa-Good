@@ -8,7 +8,7 @@ export * from './lib/dropdown';
 export * from './lib/hero-metric';
 export * from './lib/icon';
 export * from './lib/simple-grid';
-export * from './lib/tooltip-basic';
+export * from './lib/tooltip';
 export * from './lib/modal';
 export * from './lib/bookmarks';
 export * from './lib/favorite-icon';

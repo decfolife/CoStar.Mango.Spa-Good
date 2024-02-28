@@ -24,11 +24,6 @@ app-accounting-settings {
     height: 8px;
   }
 
-  .crem-tooltip crem-icon i svg {
-    fill: #c8c8c8 !important;
-    transform: translateY(-3px);
-  }
-
   .mat-drawer-container {
     position: relative;
     z-index: 1;
@@ -37,98 +32,6 @@ app-accounting-settings {
     display: flex;
     overflow: unset;
     top: 0px;
-  }
-
-  .tooltipAppPopover {
-    div#popupWrapper {
-      margin: -10px -20px -20px !important;
-    }
-
-    div.mat-tab-label {
-      padding: 8px 0px !important;
-      height: 36px !important;
-      display: block !important;
-      position: static !important;
-      min-width: 50% !important;
-      text-align: center;
-      opacity: 1;
-      white-space: nowrap;
-      width: 50% !important;
-      max-width: 50% !important;
-    }
-
-    div.mat-tab-label-container {
-      display: block !important;
-      width: 100% !important;
-      overflow: unset !important;
-      z-index: 1;
-      background: #f5f5f5 !important;
-      border-bottom: 1px solid #ddd;
-
-    }
-
-    div.mat-tab-label:focus:not(.mat-tab-disabled),
-    div.mat-tab-label-active {
-      font-weight: bold !important;
-      opacity: 1;
-      border-bottom: 2px solid #ec4a08 !important;
-      display: block !important;
-      position: static !important;
-      min-width: 50% !important;
-      text-align: center;
-      white-space: nowrap;
-      width: 50% !important;
-      max-width: 50% !important;
-    }
-
-    mat-tab-group.mat-tab-group.mat-primary {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      width: 100%;
-    }
-
-    .mat-tab-labels {
-      display: flex;
-      width: 100%;
-      justify-content: space-around;
-    }
-
-    .mat-tab-label {
-      min-width: 50% !important;
-      padding: 0px !important;
-
-    }
-
-    .mat-tab-group {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      align-items: flex-start;
-      width: 100%;
-    }
-
-    .mat-tab-header {
-      display: flex;
-      overflow: hidden;
-      position: relative;
-      flex-shrink: 0;
-      width: 100%;
-    }
-
-    div#mat-tab-label:focus mat-ink-bar {
-      position: absolute;
-      bottom: 0;
-      height: 2px !important;
-      background: #ec4a08 !important;
-      transition: 500ms cubic-bezier(0.35, 0, 0.25, 1);
-    }
-
-    .mat-tab-group.mat-primary .mat-ink-bar,
-    .mat-tab-nav-bar.mat-primary .mat-ink-bar {
-      background-color: #ec4a08 !important;
-    }
   }
 
   mat-card.mat-card {

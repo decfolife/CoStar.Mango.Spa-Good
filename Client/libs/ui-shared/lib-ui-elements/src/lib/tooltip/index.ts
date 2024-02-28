@@ -1,1 +1,2 @@
-export * from './public-api';
+export * from './tooltip.module';
+export * from './tooltip.component';

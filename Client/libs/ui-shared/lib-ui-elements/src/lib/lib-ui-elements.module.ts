@@ -8,7 +8,6 @@ import { HeroMetricModule } from './hero-metric';
 import { IconModule } from './icon';
 import { SimpleGridModule } from './simple-grid';
 import { TooltipModule } from './tooltip';
-import { TooltipBasicModule } from './tooltip-basic';
 import { LoaderModule } from './loader';
 import { ScreenLoaderModule } from './screen-loader';
 import { ModalModule } from './modal';
@@ -31,7 +30,6 @@ import { CremPivotTableModule } from './crem-pivot-table/crem-pivot-table.module
     LoaderModule,
     ScreenLoaderModule,
     SimpleGridModule,
-    TooltipBasicModule,
     TooltipModule,
     ModalModule,
     CremPivotTableModule,

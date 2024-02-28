@@ -25,9 +25,9 @@
                                     </dx-number-box>
                                     <div class="help-text">Between 12 and 200 characters</div>
                                 </div>
-                                <crem-tooltip-basic class="crem-tooltip" [externalId]="'min-passwordlength-tooltip'"
+                                <crem-tooltip [externalId]="'min-passwordlength-tooltip'"
                                     [helpTextData]="'Set the minimum character length of all user passwords.'">
-                                </crem-tooltip-basic>
+                                </crem-tooltip>
                             </div>
                         </div>
 
@@ -43,9 +43,9 @@
                                     </dx-number-box>
                                     <div class="help-text">Between 1 and 90 days</div>
                                 </div>
-                                <crem-tooltip-basic class="crem-tooltip" [externalId]="'password-expiredays-tooltip'"
+                                <crem-tooltip [externalId]="'password-expiredays-tooltip'"
                                     [helpTextData]="'Set the number of days that a password is valid before forcing a reset.'">
-                                </crem-tooltip-basic>
+                                </crem-tooltip>
                             </div>
                         </div>
 
@@ -109,9 +109,9 @@
                                             formControlName="isSSOEnabled">
                                         </mat-slide-toggle>
                                     </div>
-                                    <crem-tooltip-basic class="col-form-label pl-3" [externalId]="'sso-enable-tooltip'"
+                                    <crem-tooltip class="col-form-label pl-3" [externalId]="'sso-enable-tooltip'"
                                                         [helpTextData]="'Enables Single Sign On. *Note: A license must be purchased in order for this to work and the company to company connection must be set up.'">
-                                    </crem-tooltip-basic>
+                                    </crem-tooltip>
                                 </div>
                             </div>
                         </div>
@@ -131,9 +131,9 @@
                                             Launch
                                         </div>
                                     </div>
-                                    <crem-tooltip-basic class="col-form-label" [externalId]="'sso-stageuri-tooltip'"
+                                    <crem-tooltip class="col-form-label" [externalId]="'sso-stageuri-tooltip'"
                                                         [helpTextData]="'URL that starts the SSO process for STAGE site only.'">
-                                    </crem-tooltip-basic>
+                                    </crem-tooltip>
                                 </div>
                                 <!-- SSO Stage Logout URI -->
                                 <div class="row mt-1">
@@ -147,10 +147,10 @@
                                             Launch
                                         </div>
                                     </div>
-                                    <crem-tooltip-basic class="crem-tooltip"
+                                    <crem-tooltip
                                                         [externalId]="'sso-stagelogouturi-tooltip'"
                                                         [helpTextData]="'This is the URL that will load when users log out of the application in STAGE only.'">
-                                    </crem-tooltip-basic>
+                                    </crem-tooltip>
                                 </div>
 
                             </div>
@@ -169,9 +169,9 @@
                                             Launch
                                         </div>
                                     </div>
-                                    <crem-tooltip-basic class="crem-tooltip" [externalId]="'sso-produri-tooltip'"
+                                    <crem-tooltip [externalId]="'sso-produri-tooltip'"
                                                         [helpTextData]="'URL that starts the SSO process for PROD site only.'">
-                                    </crem-tooltip-basic>
+                                    </crem-tooltip>
                                 </div>
 
                                 <!-- SSO Prod Logout URI -->
@@ -186,10 +186,10 @@
                                             Launch
                                         </div>
                                     </div>
-                                    <crem-tooltip-basic class="crem-tooltip"
+                                    <crem-tooltip
                                                         [externalId]="'sso-prodlogouturi-tooltip'"
                                                         [helpTextData]="'This is the URL that will load when users log out of the application in PROD only.'">
-                                    </crem-tooltip-basic>
+                                    </crem-tooltip>
                                 </div>
 
                             </div>
@@ -205,9 +205,9 @@
                                             formControlName="forceSSO">
                                         </mat-slide-toggle>
                                     </div>
-                                    <crem-tooltip-basic class="crem-tooltip pl-3" [externalId]="'sso-redirect-tooltip'"
+                                    <crem-tooltip class="pl-3" [externalId]="'sso-redirect-tooltip'"
                                                         [helpTextData]="'Toggling this on will prevent any user from ever getting to the client specific login page and will automatically forward them to the SSO URI provided in the text boxes above.'">
-                                    </crem-tooltip-basic>
+                                    </crem-tooltip>
                                 </div>
 
                             </div>

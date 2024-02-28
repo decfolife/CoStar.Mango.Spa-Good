@@ -57,7 +57,10 @@
                                                 displayExpr="calendarName"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='AccountingCalendar' fieldHistoryName='LeaseRecognitionCalendarID'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="AccountingCalendar"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -75,7 +78,10 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='AmortizationMethod' fieldHistoryName='AmortizationMethodType'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="AmortizationMethod"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -93,7 +99,10 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='DefaultPaymentTiming' fieldHistoryName='DefaultPaymentTimingType'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="DefaultPaymentTiming"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -105,7 +114,10 @@
                                                 [disabled]="baseService.userRights !== 2"
                                                 [(ngModel)]="service.portfolioSettings.journalEntryProfileRequired">
                                             </mat-slide-toggle>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='JournalEntryProfile' fieldHistoryName='JournalEntryProfileRequired'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="JournalEntryProfile"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -123,7 +135,10 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='DefaultCompoundFrequency' fieldHistoryName='DefaultCompoundFrequencyType'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="DefaultCompoundFrequency"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
                                 </dxi-item>
@@ -156,7 +171,10 @@
                                             [disabled]="baseService.userRights !== 2"
                                             [(ngModel)]="service.portfolioSettings.discountRateMatching">
                                         </mat-slide-toggle>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='DiscountRateMatching' fieldHistoryName='DiscountRateMatching'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="DiscountRateMatching"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -168,7 +186,10 @@
                                                 [disabled]="baseService.userRights !== 2"
                                                 [(ngModel)]="service.portfolioSettings.directEntryDiscountRateEnabled">
                                             </mat-slide-toggle>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='DirectEntryDiscountRate' fieldHistoryName='DirectEntryDiscountRateEnabled'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="DirectEntryDiscountRate"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -186,7 +207,10 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='MinMonthsOperator' fieldHistoryName='MinMonthsOperator'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="MinMonthsOperator"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -204,7 +228,10 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='DefaultAnnualRateType' fieldHistoryName='DefaultAnnualRateType'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="DefaultAnnualRateType"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -222,7 +249,10 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='MaxMonthsOperator' fieldHistoryName='MaxMonthsOperator'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="MaxMonthsOperator"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
                                 </dxi-item>
@@ -254,7 +284,10 @@
                                                 [disabled]="baseService.userRights !== 2"
                                                 [(ngModel)]="service.portfolioSettings.functionalCurrencyEnabled">
                                             </mat-slide-toggle>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='FunctionalCurrency' fieldHistoryName='FunctionalCurrencyEnabled'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="FunctionalCurrency"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -266,7 +299,10 @@
                                                 [(ngModel)]="service.portfolioSettings.directEntryFunctionalCurrencyRateEnabled"
                                                 (change)="functionalCurrencyRateDirectEntryChanged()">
                                             </mat-slide-toggle>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='DirectEntryFunctionalCurrencyRateEnabled' fieldHistoryName='DirectEntryFunctionalCurrencyRateEnabled'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="DirectEntryFunctionalCurrencyRateEnabled"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -283,7 +319,10 @@
                                                 (onValueChanged)="functionalCurrencyRatesetChanged()"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='FunctionalCurrencyRatesets' fieldHistoryName='FunctionalTranslationMethod'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="FunctionalCurrencyRatesets"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 
@@ -299,7 +338,10 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip class="crem-tooltip" [portfolioID]="portfolioDropdownService.selectedPortfolioId" OTID="128" helptextName='FunctionalCurrencyPeriods' fieldHistoryName='FunctionalTranslationValue'></crem-tooltip>
+                                            <crem-tooltip
+                                                externalId="FunctionalCurrencyPeriods"
+                                                helpTextData="">
+                                            </crem-tooltip>
                                         </div>
                                     </dxi-item>
 

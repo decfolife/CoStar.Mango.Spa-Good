@@ -4,7 +4,7 @@ import { ModalComponent } from './modal.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ButtonModule } from '../button';
 import { MatIconModule } from '@angular/material/icon';
-import { TooltipBasicModule } from '../tooltip-basic/tooltip-basic.module';
+import { TooltipModule } from '../tooltip/tooltip.module';
 
 @NgModule({
   declarations: [ModalComponent],
@@ -13,7 +13,7 @@ import { TooltipBasicModule } from '../tooltip-basic/tooltip-basic.module';
     DragDropModule,
     ButtonModule,
     MatIconModule,
-    TooltipBasicModule
+    TooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [ModalComponent],

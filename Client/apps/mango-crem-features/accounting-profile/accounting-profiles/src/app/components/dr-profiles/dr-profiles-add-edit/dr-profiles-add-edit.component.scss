@@ -7,15 +7,6 @@
     min-width: 300px;
 }
 
-:host ::ng-deep crem-tooltip .dx-field-value-static {
-	padding: 0;
-}
-
-:host ::ng-deep crem-tooltip .dx-field {
-	display:flex;
-	align-items:center;
-}
-
 .hidden { display: none !important;}
 
 :host ::ng-deep .no-toggle .mat-slide-toggle-bar {
@@ -28,10 +19,6 @@
 
 div.dynamic-form {
 	padding: 0;
-}
-
-.crem-tooltip {
-	margin-left: 6px;
 }
 
 .no-icon {

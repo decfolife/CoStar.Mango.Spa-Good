@@ -85,9 +85,9 @@
       [disabled]="CacheButtonClicked" (click)='startTimer()'
     ><span>Refresh</span></crem-button>
 
-    <crem-tooltip-basic *ngIf="cachingEnabled"
+    <crem-tooltip *ngIf="cachingEnabled"
       [helpTextData]='"Click Refresh to update the dashboard from using previously cached data. Data was last updated as of " + getRefreshDateTime()'
-    ></crem-tooltip-basic>
+    ></crem-tooltip>
 
   </div>
 </div>
