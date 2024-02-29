@@ -55,8 +55,8 @@ export class InAppDisclosureService extends EndpointService{
     return this.callHttpGet(url, 'getAccountingCriteriaSets');
   }
 
-  public exportIADData(segmentID: number, reportingYear: number) {
-    const param = { segmentID: segmentID, reportingYear: reportingYear };
+  public exportIADData(segmentID: number, reportingYear: number, reportingCurrencyISO: string) {
+    const param = { segmentID: segmentID, reportingYear: reportingYear, reportingCurrencyISO: reportingCurrencyISO };
     const url = `${environment.appUrls.inAppDisclosure}IAD/Export`;
     let headers: HttpHeaders;
     this.getHttpHeaders().subscribe((result) => {
