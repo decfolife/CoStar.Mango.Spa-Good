@@ -95,6 +95,7 @@ export class DropdownComponent implements OnInit, OnChanges {
   @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent
   @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent
   @ViewChild("SelectBoxValidator", { static: false }) SelectBoxValidator: DxValidatorComponent
+  @ViewChild("DropdownBoxValidator", { static: false }) DropdownBoxValidator: DxValidatorComponent
 
   @Input() public id: string;
   @Input() public initialSelectedValue: any;

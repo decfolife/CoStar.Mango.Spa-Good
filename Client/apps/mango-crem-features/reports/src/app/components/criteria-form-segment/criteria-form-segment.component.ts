@@ -2,7 +2,7 @@ import { Component, EventEmitter, Inject, Input, Output, ViewChild } from '@angu
 import { ReportsService } from '@reports/services/reports.service';
 import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
 import { DropdownComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component';
-import { IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
+import { IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/definitions';
 
 @Component({
   selector: 'mango-criteria-form-segment',
@@ -274,11 +274,11 @@ export class CriteriaFormSegmentComponent {
                                 }
                             }
                         }
-                        itemObject = {
+                        itemObject = { // Portfolio Field *********************************
                             dataField: isDependent ? item.criteriaID : item.criteriaSourceFieldName,
                             fieldType: "dropdown",
                             caption: item.criteriaDesc,
-                            required: false,
+                            required: item.criteriaID === 237 ? true : false,
                             displayExpr: displayName,
                             valueExpr: valueKey,
                             dataSource: item.values,
@@ -304,11 +304,11 @@ export class CriteriaFormSegmentComponent {
                             selectedIndex = item.values?.[0]
                         }
 
-                        itemObject = {
+                        itemObject = { // Calendar Field *********************************
                             dataField: isDependent ? item.criteriaID : item.criteriaSourceFieldName,
                             fieldType: "dropdown",
                             caption: item.criteriaDesc,
-                            required: false,
+                            required: true,
                             displayExpr: displayName,
                             valueExpr: valueKey,
                             dataSource: item.values,

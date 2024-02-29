@@ -9,7 +9,7 @@ import {
 import { ReportsService } from '@reports/services/reports.service';
 import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
 import { DropdownComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component';
-import { IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
+import { IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/definitions';
 
 @Component({
   selector: 'mango-criteria-form-report',

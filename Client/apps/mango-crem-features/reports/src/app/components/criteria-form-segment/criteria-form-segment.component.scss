@@ -21,13 +21,3 @@
     @include costar(color, success);
 }
 }
-
-// The Field is required but let's hide the required mark anyways
-::ng-deep{
-  #CreateSegment__Portfolio,
-  mango-criteria-form-segment {
-    span.dx-field-item-required-mark {
-      display: none;
-    }
-  }
-}

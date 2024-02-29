@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
 import { FormWizardService } from '../services/form-wizard.service';
-import { DynamicFormComponent, IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
+import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
+import { IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/definitions';
+
 import { forkJoin } from 'rxjs';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 

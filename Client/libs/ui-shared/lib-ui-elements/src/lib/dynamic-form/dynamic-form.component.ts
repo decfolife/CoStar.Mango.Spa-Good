@@ -1,6 +1,4 @@
 import { ChangeDetectorRef, Component, ContentChild, EventEmitter, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, ViewChildren } from "@angular/core";
-import { faPray } from "@fortawesome/free-solid-svg-icons";
-
 
 import { DxFormComponent } from "devextreme-angular/ui/form";
 import { DatePickerComponent } from "../date-picker/date-picker.component";
@@ -8,49 +6,8 @@ import { DropdownComponent } from "../dropdown/dropdown.component";
 import { TextBoxComponent } from "../text-box/text-box.component";
 import { ToggleSliderComponent } from "../toggle-slider/toggle-slider.component";
 
-export interface ISectionItem {
-  dataField?: string;
-  caption?: string;
-  displayExpr?: string
-  valueExpr?: string;
-  fieldType: "dropdown" | "text" | "toggle" | "checkbox" | "date" | "customCombination" | "empty" | "toFromDate" | "custom";
-  value?: any;
-  required?: boolean;
-  hidden?: boolean;
-  disabled?: boolean;
-  dataSource?: any;
-  trueDisplay?: any;
-  falseDisplay?: any;
-  maxLengthMessage?: string;
-  maxLength?: number;
-  showClearButton?: boolean;
-  textDisplay?: string;
-  textDisplayFontSize?: number;
-  dropdownFields?: any;
-  defaultValue?: any;
-  combinationType?: string;
-  initialFocus?: boolean;
-  hoverText?: string;
-  selectMode?: string;
-  placeholder?: string;
-  customRequireValidation?: boolean;
-  dataField1?: string;
-  dataField2?: string;
-}
-export interface IForm {
-  formTitle?: string;
-  section: {
-    sectionTitle?: string;
-    sectionId?: string;
-    hideBorder?: boolean;
-    showBottomBorder?: boolean;
-    colCount?: number;
-    formObjects: {
-      subSectionId?: string;
-      sectionItems: ISectionItem[]
-    }[];
-  }[];
-};
+import { IForm } from "./definitions";
+
 @Component({
   selector: "dynamic-form",
   templateUrl: "./dynamic-form.component.html",

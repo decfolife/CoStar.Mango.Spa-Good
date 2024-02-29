@@ -105,6 +105,7 @@
 <dx-drop-down-box *ngIf="!useSelectBox" #dropDownBox
   [id]="id + '_box'"
   [(opened)]="isDropDownBoxOpened"
+  [ngClass]="{red_border: showRedBorder}"
   [placeholder]="placeholder"
   [dataSource]="dataSource"
   [value]="selectedDisplay"
@@ -121,13 +122,30 @@
   (onOpened)="openDropdown($event)"
   [inputAttr]="{ title: placeholder, 'aria-controls': id + 'dropdownContainer', 'aria-label': placeholder}"
 >
+  <!-- Validators -->
+  <dx-validator #DropdownBoxValidator>
+    <ng-container *ngIf="showDefaultValidationTooltip; then DefaultValidationTooltip else NoDefaultValidationTooltip"></ng-container>
+    <ng-template #DefaultValidationTooltip>
+      <dxi-validation-rule *ngIf="required && !customRequireValidation"
+          type="required"
+      ></dxi-validation-rule>
+    </ng-template>
+    <ng-template #NoDefaultValidationTooltip>
+      <dxi-validation-rule *ngIf="required && !customRequireValidation"
+          type="required"
+          [message]="''"
+      ></dxi-validation-rule>
+    </ng-template>
+  </dx-validator>
 
+  <!-- Dropdown's Input -->
   <dxo-drop-down-options
     [container]="containerized ? '#' + id + '_box' : undefined"
     [hideOnParentScroll]="false"
     [wrapperAttr]="wrapperAttr"
   ></dxo-drop-down-options>
 
+  <!-- Dropdown's Options -->
   <div [id]="id + 'dropdownContainer'"
     *dxTemplate="let data of 'dropdownTemplate'"
   >
