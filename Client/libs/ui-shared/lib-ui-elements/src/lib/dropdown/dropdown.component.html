@@ -58,8 +58,8 @@
 
   <!-- Template: With Item's Menu -->
   <div class="item" *dxTemplate="let item of 'withMenu'">
-    <div class="item-name" title="">
-      {{ item.name || item.displayValue || item.value || item[displayExpr]}}
+    <div class="item-name" [attr.title]="(item.name || item.displayValue || item.value || item[displayExpr]) + ' ' + item.secondaryText">
+      <span class="item-title">{{ item.name || item.displayValue || item.value || item[displayExpr]}}</span>
       <span *ngIf="item.secondaryText" class="item-secondary">{{item.secondaryText}}</span><!-- Secondary Option Text, often used for the "(Default)" tag  -->
     </div>
     <!-- More Menu -->
