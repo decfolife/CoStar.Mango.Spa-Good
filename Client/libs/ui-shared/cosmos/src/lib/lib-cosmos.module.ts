@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { MaterialModule } from '../material.module';
 import { ButtonModule } from './button';
 import { ButtonGroupModule } from './button-group';
-import { ChipModule } from './chip';
 import { DatePickerModule } from './date-picker';
 import { IconModule } from './icon';
 import { LoaderModule } from './loader';
@@ -20,7 +19,6 @@ import { ViewButtonModule } from './view-button';
   exports: [
     ButtonModule,
     ButtonGroupModule,
-    ChipModule,
     DatePickerModule,
     IconModule,
     LoaderModule,

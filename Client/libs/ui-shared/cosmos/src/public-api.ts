@@ -7,6 +7,5 @@ export * from './lib/text-field/index';
 export * from './lib/text-area/index';
 export * from './lib/tooltip/index';
 export * from './lib/date-picker/index';
-export * from './lib/chip/index';
 export * from './lib/toggle/index';
 export * from './lib/loader/index';

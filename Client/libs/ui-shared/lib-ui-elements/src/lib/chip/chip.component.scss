@@ -1,63 +1,93 @@
+@use "styles" as *;
 
-@import "../assets/styles/crem-lib.scss";
+.chip {
+	min-width: unset;
+	max-width: 200px;
+	width: 100% !important;
+	border-radius: 10px;
+	padding: 4px 8px;
+	font-size: 14px;
+	font-weight: 500;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: 14px;
+	letter-spacing: normal;
+	text-align: center;
+	box-sizing: borderBox;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
 
+	&.primary {
+		border-radius: 10px !important;
+		font-family: Helvetica, sans-serif;
+		font-weight: 400;
 
-
-
-
-
-
-	#chip{
-    max-height: 24px;
-    min-width: 16px;
-    max-width: -webkit-fit-content;
-    max-width: -moz-fit-content;
-    max-width: fit-content;
-    border-radius: 40px;
-    padding: 4px 8px;
-    font-size: 14px;
-    font-weight: 700;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    text-align: center;
-    box-sizing: borderBox;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-		&.primary {
-			color: white !important;
-			&.costar {
-				background: $color-brand-primary;
-			}
-
-
+		&.costar {
+			background: $color-brand-primary;
+			@include costar(color, light, $important: true);
 		}
 
-		&.secondary {
-      background: white;
-			&.costar {
-				color: $color-brand-primary;
-        border: 1px solid $color-brand-primary;
-      }
-
-			&.error {
-				color: $color-brand-red;
-				border-color:$color-brand-red;
-			}
-
-
+		&.color-brand-red {
+			background: $color-brand-red;
+			border: 1px solid darken($color-brand-red, 10%);
+			@include costar(color, light, $important: true);
 		}
-		&.tertiary {
-			background: white;
-			&.costar {
-				color:$color-neutral-medium;
-				border-color: none;
-			}
+
+		&.color-brand-yellow {
+			background: $color-brand-yellow;
+			border: 1px solid darken($color-brand-yellow, 10%);
+			color: $color-neutral-black !important;
+		}
+
+		&.color-brand-green {
+			background: $color-brand-green;
+			border: 1px solid darken($color-brand-green, 10%);
+			@include costar(color, light, $important: true);
+		}
+
+		&.color-neutral-medium {
+			background: $color-neutral-light;
+			border: 1px solid;
+			@include costar(border-color, gray03);
+			@include costar(color, gray02, $important: true);
+		}
+
+		&.color-brand-primary-light {
+			@include costar(background-color, light);
+			border: 1px solid darken($color-brand-primary-light, 30%);
+			@include costar(color, gray02, $important: true);
 		}
 	}
 
+	&.secondary {
+		@include costar(background-color, light);
 
+		&.costar {
+			color: $color-brand-primary;
+			border: 1px solid $color-brand-primary;
+		}
 
+		&.error {
+			color: $color-brand-red;
+			border-color: $color-brand-red;
+		}
+	}
+
+	&.tertiary {
+		@include costar(background-color, light);
+
+		&.costar {
+			color: $color-neutral-medium;
+			border-color: none;
+		}
+	}
+}
+
+.dx-field-value-static,
+.dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+	width: 100% !important;
+	padding: 4px 8px !important;
+	white-space: nowrap !important;
+}

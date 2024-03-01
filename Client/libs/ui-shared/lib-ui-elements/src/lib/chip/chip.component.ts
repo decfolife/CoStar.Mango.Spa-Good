@@ -1,36 +1,51 @@
-import {Component, Input } from '@angular/core';
-
-export interface Chip {
-  env: string;
-  clientId: string;
-  data:string[];
-}
-export interface ChipStyle {
-  type: 'primary'| 'secondary' | 'tertiary';
-  color: 'costar'| 'color-brand-yellow'| 'color-brand-red'| 'color-brand-green'| 'color-neutral-medium' | 'color-brand-primary-light';
-}
+import { Component, Input } from '@angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'crem-chip',
   templateUrl: './chip.component.html',
   styleUrls: ['./chip.component.scss']
 })
 export class ChipComponent {
   withAnimationOptionsVisible: boolean;
+
   @Input() id: any;
-  @Input() width?: string;
+  maxWidth?: string;
   @Input() chipContent: string;
-    @Input() popoverContent?: string[];
-@Input() chipStyle: ChipStyle;
+  @Input() matTooltipContent?: string;
+  matTooltipClass: string;
+  @Input() chipStatus: string;
+  chipColor: string;
   constructor() {
     this.withAnimationOptionsVisible = false;
-  }
 
- toggleAnimationOptions($event) {
+  }
+  toggleAnimationOptions() {
     this.withAnimationOptionsVisible = !this.withAnimationOptionsVisible;
   }
-  // OffWithAnimationOptions() {
-  //   this.withAnimationOptionsVisible = false;
-  // }
+
+  ngOnInit() {
+
+    switch(this.chipStatus) {
+      case 'costar':
+        this.chipColor = 'color-brand-primary';
+        break;
+      case 'completeStatus':
+        this.chipColor = 'color-neutral-medium';
+        break;
+      case 'upcomingStatus':
+        this.chipColor = 'color-brand-primary-light';
+        break;
+      case 'overdueStatus':
+        this.chipColor = 'color-brand-red';
+        break;
+      case 'activeStatus':
+        this.chipColor = 'color-brand-green';
+        break;
+      case 'daysStatus':
+        this.chipColor = 'color-brand-yellow';
+        break;
+    }
+    
+  }
+
 }

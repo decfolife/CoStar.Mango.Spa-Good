@@ -1,44 +1,8 @@
-<div [id]="id" class="dx-field">
+<div [id]="'chip'+id" [style.max-width]="'200px'" [matTooltip]="matTooltipContent"
+  [matTooltipClass]="'milestone_tooltip'" class="dx-field">
   <div class="dx-field-value-static">
-
-      <!-- <div id="chip"  [ngClass]="[chipStyle.type, chipStyle.color]"
-          (click)="toggleAnimationOptions($event)"
-        >
-          {{chipContent}}
-
+    <div class="primary chip" [ngClass]="chipColor">
+      <ng-content select="'[chipContent]'"></ng-content>
     </div>
-    <div *ngIf="chipStyle.color !== 'costar' && chipStyle.color !== 'error'" class="dx-field-value-static"> -->
-
-      <div id="chip"  [ngClass]="chipStyle.type" [style.background]="chipStyle.color"
-          (click)="toggleAnimationOptions($event)"
-        >
-          {{chipContent}}
-
-    </div>
-    <dx-popover
-      target="#chip"
-      position="bottom"
-
-
-      [(visible)]="withAnimationOptionsVisible"
-    >
-
-      <div id="chipAPP">
-      <dxo-animation>
-        <dxo-show
-          type="pop"
-          [from]="{ scale: 0 }"
-          [to]="{ scale: 1 }"
-        ></dxo-show>
-        <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
-      </dxo-animation>
-      <div>
-        <p class="restore" *ngFor="let content of popoverContent">
-          {{content}}
-        </p>
-      </div>
-      </div>
-
-    </dx-popover>
   </div>
 </div>

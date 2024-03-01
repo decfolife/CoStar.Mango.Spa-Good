@@ -9,21 +9,21 @@ height="640px"
 >
 
 <div customHeader fxFlexFill>
-	<cs-chip [id]="'completeChip'" [chipStatus]="'completeStatus'" >
+	<crem-chip [id]="'completeChip'" [chipStatus]="'completeStatus'" >
 		<div chipContent>Complete</div>
-	</cs-chip>
-	<cs-chip [chipStatus]="'overdueStatus'" [id]="'overdueChip'" >
+	</crem-chip>
+	<crem-chip [chipStatus]="'overdueStatus'" [id]="'overdueChip'" >
 		<div chipContent>Overdue</div>
-	</cs-chip>
-	<cs-chip [chipStatus]="'daysStatus'" id="daysChip" >
+	</crem-chip>
+	<crem-chip [chipStatus]="'daysStatus'" id="daysChip" >
 		<div chipContent>Due Within 7 Days</div>
-	</cs-chip>
-	<cs-chip [chipStatus]="'activeStatus'" id="activeChip" >
+	</crem-chip>
+	<crem-chip [chipStatus]="'activeStatus'" id="activeChip" >
 		<div chipContent>Active</div>
-	</cs-chip>
-	<cs-chip [id]="'upcomingChip'"  [chipStatus]="'upcomingStatus'" >
+	</crem-chip>
+	<crem-chip [id]="'upcomingChip'"  [chipStatus]="'upcomingStatus'" >
 		<div chipContent>Upcoming</div>
-	</cs-chip>
+	</crem-chip>
 	<mat-slide-toggle id="dateToggle" (change)="toggle()">Show Dates</mat-slide-toggle>
 	<cs-search [placeholder]="'Search ...'" (keyup)="onKeyUpEvent($event)" (changed)="searchFilter($event)" ></cs-search>
 </div>
@@ -67,10 +67,10 @@ height="640px"
 
 			<div *dxTemplate="let cell of 'milestoneTemplate'">
 				<div class='chips' *ngFor="let chip of cell.data.chips">
-					<cs-chip [id]="chip.id" [chipStatus]="chip.chipStatus" [matTooltipContent]="chip.matTooltipContent">
+					<crem-chip [id]="chip.id" [chipStatus]="chip.chipStatus" [matTooltipContent]="chip.matTooltipContent">
 						<div chipContent class="chipContent">{{chip.chipContent}}<div *ngIf="checked">{{chip.due | date:cardsService.dateFormat}}</div>
 						</div>
-					</cs-chip>
+					</crem-chip>
 				</div>
 			</div>
 		</dx-data-grid>

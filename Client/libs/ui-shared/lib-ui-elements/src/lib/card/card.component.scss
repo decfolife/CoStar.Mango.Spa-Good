@@ -25,10 +25,12 @@ crem-card {
         .mat-card-header-text {
           margin: 0px !important;
         }
+
         .mat-card-title {
           margin: 8px !important;
         }
       }
+
       crem-icon {
         @include costar(color, gray03);
       }
@@ -42,6 +44,7 @@ crem-card {
         }
       }
     }
+
     .mat-card-content.mat-card-content.cremCardContent {
       max-height: 280px !important;
       min-height: 280px !important;
@@ -52,7 +55,8 @@ crem-card {
       align-items: center;
     }
   }
- .cardHeader {
+
+  .cardHeader {
     @include costar(border-bottom, gray04);
     @include costar(color, gray01);
     @include costar(background-color, light, $important: true);
@@ -69,6 +73,7 @@ crem-card {
     max-height: 40px !important;
     width: unset !important;
   }
+
   .mat-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
     display: block;
     align-items: center;
@@ -81,9 +86,11 @@ crem-card {
   div.cardContent {
     margin: -8px -16px !important;
   }
+
   crem-card {
     margin: 10px;
   }
+
   div.class {
     display: flex;
     flex-direction: row;
@@ -99,24 +106,29 @@ crem-card {
     flex-direction: row;
     width: 100%;
   }
+
   .counter {
     margin-right: 8px;
     padding: 4px 8px;
     border-radius: 6px;
-    color: #fff;
+    @include costar(color, light);
     @include costar(background-color, gray01);
     @include costar(font-weight, normal);
   }
+
   .customHeader {
     display: flex;
     justify-content: space-around;
   }
 }
-.customHeader > div:first-child {
+
+.customHeader>div:first-child {
   margin-right: 8px;
 }
 
-::ng-deep { // Allows to style the more button when using the #customDropdownMenu content projection
+::ng-deep {
+
+  // Allows to style the more button when using the #customDropdownMenu content projection
   button.moreOptionsBtn {
     display: flex;
     align-items: center;
@@ -124,9 +136,11 @@ crem-card {
     height: 24px;
     margin: 0px;
   }
+
   .customHeader {
-      margin-right: 27px
+    margin-right: 27px
   }
+
   .cdk-drag.categories-item {
     position: relative;
 
@@ -149,19 +163,18 @@ dx-select-box.dx-show-invalid-badge.dx-selectbox.dx-textbox.dx-texteditor.dx-dro
   margin-right: 16px;
 }
 
-crem-card
-  .mat-card#projects_by_type_card
-  .mat-card-content.mat-card-content.cremCardContent {
+crem-card .mat-card#projects_by_type_card .mat-card-content.mat-card-content.cremCardContent {
   display: flex;
   align-items: stretch;
   padding: 0px !important;
   font-size: 14px;
   justify-content: flex-start !important;
-  background: white;
+  @include costar(background-color, light);
   height: 280px !important;
   min-height: 280px !important;
   overflow: hidden;
 }
+
 .mat-card-image:first-child {
   margin-top: 0;
   border-top-left-radius: inherit;
@@ -172,19 +185,21 @@ crem-card
   width: calc(100% + 16px);
   margin: 0;
 }
+
 .aside {
   max-width: 15vw;
 }
+
 .card {
   min-width: 25vw;
-  background: white;
+  @include costar(background-color, light);
 }
+
 crem-card .mat-card-header .mat-card-header-text {
   margin: 0 !important;
 }
-crem-card
-  .mat-card.cremCard
-  .mat-card-content.mat-card-content.cremCardContent{
+
+crem-card .mat-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
   display: block;
   align-items: center;
   padding: 0px !important;
