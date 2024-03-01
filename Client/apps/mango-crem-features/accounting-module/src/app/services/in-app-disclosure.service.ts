@@ -56,7 +56,7 @@ export class InAppDisclosureService extends EndpointService{
   }
 
   public exportIADData(segmentID: number, reportingYear: number, reportingCurrencyISO: string, dashboardID: number) {
-    const param = { segmentID: segmentID, reportingYear: reportingYear, reportingCurrencyISO: reportingCurrencyISO };
+    const param = { segmentID: segmentID, reportingYear: reportingYear, reportingCurrencyISO: reportingCurrencyISO, dashboardID: dashboardID };
     const url = `${environment.appUrls.inAppDisclosure}IAD/Export`;
     let headers: HttpHeaders;
     this.getHttpHeaders().subscribe((result) => {
