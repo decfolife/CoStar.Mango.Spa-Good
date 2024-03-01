@@ -278,7 +278,7 @@ export class CriteriaFormSegmentComponent {
                             dataField: isDependent ? item.criteriaID : item.criteriaSourceFieldName,
                             fieldType: "dropdown",
                             caption: item.criteriaDesc,
-                            required: item.criteriaID === 237 ? true : false,
+                            required: item.criteriaSourceFieldName === 'PortfolioID' ? true : false,
                             displayExpr: displayName,
                             valueExpr: valueKey,
                             dataSource: item.values,
@@ -425,7 +425,7 @@ export class CriteriaFormSegmentComponent {
                 setTimeout(() => {
                     this.onChange(null);
                 })
-                
+
             })
         }
         
