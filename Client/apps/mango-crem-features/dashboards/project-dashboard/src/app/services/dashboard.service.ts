@@ -7,7 +7,7 @@ import { TaskApprovalDto } from '../models/task-approval';
 import { UserSelectedFilters } from '../models';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Team, TeamMemUpdate } from '@mango/data-models/lib-data-models';
+import { AssignTasks, Team, TeamMemUpdate, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
 import notify from 'devextreme/ui/notify';
 
 @Injectable()
@@ -188,6 +188,26 @@ export class DashboardService  extends EndpointService{
   addContactsToTasksByRole(projectID: number) {
     const url = `${environment.appUrls.tasks}addcontactstotasksbyrole`;
     return this.callHttpPost(url, 'addcontactstotasksbyrole', { projectID } );
+  }
+
+  updateProjectTeamMember(projectTeamMember: UpdateProjectTeamMember) {
+    const url = `${environment.appUrls.projects}updateprojectteammember`;
+    return this.callHttpPost(url, 'updateprojectteammember', projectTeamMember);
+  }
+
+  addTemporaryUser(temporaryUser: UpdateTemporaryUser) {
+    const url = `${environment.appUrls.projects}addtemporaryuser`;
+    return this.callHttpPost(url, 'addtemporaryuser', temporaryUser);
+  }
+
+  updateProjectContact(temporaryUser: UpdateProjectTeamMember) {
+    const url = `${environment.appUrls.projects}updateprojectcontact`;
+    return this.callHttpPost(url, 'updateprojectcontact', temporaryUser);
+  }
+
+  assignTasks(memberTasks: AssignTasks) {
+    const url = `${environment.appUrls.tasks}assigntasks`;
+    return this.callHttpPost(url, 'assigntasks', memberTasks);
   }
 
   displayContactSystemAdminMessage(){

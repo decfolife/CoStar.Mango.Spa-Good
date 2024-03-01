@@ -2,6 +2,7 @@
   [modalTitle] = "modalTitle"
   [customFooter]="true"
   [closeIconVisible] = "closeButton"
+  [closeDialogResult]="reloadMainGrid"
   [modalId] = "modalId"
 >
 <div modalContent id="addEditMemberModal-content">
@@ -15,12 +16,14 @@
           [(opened)]="isMemberDropDownBoxOpened" 
           [disabled]="operation == 'ETM'? true : false"
           (onInput)="searchTeamMembers($event.event.target.value)"
-
-          [acceptCustomValue]="true"
+          (onEnterKey)="toggleList()"
+          (onOpened)="focusOnDropDownInput($event)"
           [openOnFieldClick]="false"
+          [acceptCustomValue]="true"
           [showClearButton]="true"
           [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'memberSelection'}"
       >
+      <dxo-drop-down-options [focusStateEnabled]="true"></dxo-drop-down-options>
           <dx-list 
               #SelectionMembersList
               id="aet-membersList"
@@ -29,7 +32,9 @@
               itemTemplate="membersListTemplate"
               [activeStateEnabled]="false" 
               [elementAttr]="{'aria-label': 'List of Members to Select'}"
-              (onItemClick)="onMemberClicked($event)"              
+              (onItemClick)="onMemberClicked($event)"  
+              (onSelectionChanged)="selectionChanged($event)" 
+              (onItemRendered)="onItemRendered($event)"           
 
           >
             <div *dxTemplate="let member of 'membersListTemplate'"  >
@@ -52,7 +57,7 @@
       <div class="firstName">
         <dx-text-box
           placeholder="First Name"
-          [value]="firstName"
+          [(value)]="firstName"
           [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'First Name' }"
         ></dx-text-box>
@@ -60,7 +65,7 @@
       <div class="lastName">
         <dx-text-box
           placeholder="Last Name"
-          [value]="lastName"
+          [(value)]="lastName"
           [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'Last Name' }"
         ></dx-text-box>
@@ -71,7 +76,7 @@
     <h4 class="nameLabel label">Email</h4>
       <dx-text-box
         placeholder="Enter Email Address"
-        [value]="emailId"
+        [(value)]="emailId"
         [disabled]="operation == 'ETU'? true : false"
         [inputAttr]="{ 'aria-label': 'Name' }"
       ></dx-text-box>
@@ -79,7 +84,7 @@
   <div class="aet-email-shared" *ngIf="operation !== Operations.AC">
     <div class="emailToggle">
       <mat-slide-toggle  [labelPosition]="labelPosition" [checked]="emailNotificationChecked" 
-        (change)="emailtoggle()" aria-label="Email Notication"
+        (change)="emailtoggle($event)" aria-label="Email Notication"
       >
         <h4 class="label">Email Notifications</h4>
       </mat-slide-toggle>
@@ -87,7 +92,7 @@
     <div class="sharedToggle" 
       *ngIf="(clientSettingPreference == '1' || clientSettingPreference == '2') && (operation == Operations.ATM || operation == Operations.ETM)">
       <mat-slide-toggle  [labelPosition]="labelPosition" [checked]="sharedChecked"
-        (change)="sharedtoggle()" aria-label="Shared"
+        (change)="sharedtoggle($event)" aria-label="Shared"
       >
         <h4 class="label">Shared</h4>
       </mat-slide-toggle>
@@ -141,7 +146,10 @@
         <dx-select-box 
           class="aet-expirationType-selectBox"
           placeholder="Select Expiration Type"
+          [value]="expirationType"
           [dataSource]="expirationTypes"
+          valueExpr="value"
+          displayExpr="expType"
           [inputAttr]="{'aria-label': 'Select Expiration Type', 'name': 'expirationType', 'class': 'aet-expirationType-list'}"
           (onSelectionChanged)="expirationTypeSelected($event)"
         >
@@ -151,6 +159,7 @@
         <ng-container *ngIf="true">
           <dx-date-box 
             type="date"
+            [value]="expirationDate"
             [displayFormat]="cardsService.dateFormat"
             (onValueChanged)="setExpirationDate($event)"
             [inputAttr]="{'aria-label': 'Select Date', 'name': 'dateSelection', 'class': 'aet-expDate'}"
@@ -161,7 +170,7 @@
   </div>
   <div class="aet-description">
     <h4 class="descLabel label">Description</h4>
-    <textarea aria-label="description"  [value]="description" class="descContent" rows="1"> </textarea>
+    <textarea aria-label="description"  (input)="descriptionValueChanged($event)" [value]="description" class="descContent" rows="1"> </textarea>
   </div>
   <div class="aet-assignedTasks" *ngIf="operation !== Operations.AC && projectTaskList.length">
     <div class="assgnedTasksHdr">
@@ -181,8 +190,9 @@
               aria-label="Check to select a role"
               [value]= "operation == 'ETM' || operation == 'ETU'? checkTask(task) : false"
               [elementAttr]="{ 'class': 'taskListCheckbox' }"
+              (onValueChanged)="updateTask($event, task)"
             ></dx-check-box>
-            <div class="assignedTask-name">{{task.step}}&#41; <span class="taskName" [title]="task.taskName">{{task.taskName}}</span></div>
+            <div class="assignedTask-name">{{task.taskId}} -- {{task.step}}&#41; <span class="taskName" [title]="task.taskName">{{task.taskName}}</span></div>
           </div>
           <div class="assignedTask-status">{{task.approvalStatus}}</div>
         </div>
@@ -193,8 +203,8 @@
 <div modalFooter class="addEditTeamModal-footerContent">
   <div id="buttonTemplate" class="footerRightControls">
     <crem-button  type="secondary" class="cancelChanges aem-btn" (click)="closeModal()"> Cancel </crem-button>
-    <crem-button  [type]=buttonType class="saveChanges aem-btn"> Save </crem-button>
-		<crem-button  type="primary" class="applyChanges aem-btn" *ngIf="operation !== Operations.AC"> Apply </crem-button>
+    <crem-button  [type]=buttonType class="saveChanges aem-btn" (click)="saveMember('save')" [disabled]="applySaveButtonDisabled"> Save </crem-button>
+		<crem-button  type="primary" class="applyChanges aem-btn" (click)="saveMember('apply')" *ngIf="operation !== Operations.AC" [disabled]="applySaveButtonDisabled"> Apply </crem-button>
   </div>
 </div>
 </crem-modal>

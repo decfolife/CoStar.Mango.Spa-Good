@@ -33,6 +33,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   userAccessLevel: number;
   subs: Subscription[] = [];
   projectsPrivateSetting: number;
+  contactIds: number[] = [];
 
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
@@ -66,12 +67,13 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       height: height,
       width: '500px',
       panelClass: 'addEditMemberModal',
-      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation, teamMember: member },
+      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation, teamMember: member, contactIds: this.contactIds},
       disableClose: true
     });
 
     this.subs.push(dialogRef.afterClosed().pipe(
-      tap(_ => console.log(`modal closed`))
+      filter(reload => !!reload),
+      switchMap(_ => this.getProjectTeam(this.projectId)),
     ).subscribe());
   }
 
@@ -161,7 +163,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
   applyTeamToTasks() {
-    this.subs.push(this.dialogService.confirm('Apply Team To Tasks', `Are you sure yo want to assign team members to tasks based on their roles ?`, 'Confirm', 'Cancel').pipe(
+    this.subs.push(this.dialogService.confirm('Apply Team To Tasks', `Are you sure you want to assign team members to tasks based on their roles ?`, 'Confirm', 'Cancel').pipe(
       filter(confirmed => !!confirmed),
       switchMap(_ => this.dashboardService.addContactsToTasksByRole(this.projectId)),
       switchMap(res => !!res && !!res.success ? 
@@ -173,6 +175,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   public getProjectTeam(projectId): Observable<any> {
     this.dataRetrieved = false;
+    this.contactIds = [];
     this.selectedTeamMembersData.teamMembers = [];
     return this.dashboardService.getProjectTeams(projectId).pipe(
       tap(res => {
@@ -185,6 +188,9 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       tap(res => {
         this.projectTeam = res.data;
         this.dataRetrieved = true;
+        if(this.projectTeam.length) {
+          this.projectTeam.forEach(member => this.contactIds.push(member.contactID));
+        }
       }),
       catchError(error => {this.dataRetrieved = true; 
         return of(false);
