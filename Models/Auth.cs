@@ -1,5 +1,11 @@
 ﻿namespace MangoSPA.Models;
 
+public record LoginRequest(string Email, string Password, string ClientKey = "");
+public record LoginResponse(string AuthToken, string Email, bool HasMultipleSites, string ClientKey);
+public record LoginToClientRequest(string ClientKey, int ContactId, string ContactRole, bool? IsDefaultLoginContact, int DefaultLoginContactId);
+public record LoginToClientResponse(string AuthToken);
+
+
 public record AccessTokenRequest
 {
     // Required - value must be: authorization_code

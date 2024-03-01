@@ -15,6 +15,7 @@ public class Constants
     {
         public const string TrackingId = JwtRegisteredClaimNames.Jti;
         public const string Email = JwtRegisteredClaimNames.Email;
+        public const string UserId = "userId";
         public const string ContactId = "contactId";
         public const string ContactRole = "contactRole";
         public const string ClientKey = "clientKey";
@@ -31,6 +32,16 @@ public static class ClaimExtensions
 {
     public static string Email(this ClaimsPrincipal principal)
         => principal.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
+
+    //public static string Email(this ClaimsPrincipal principal)
+    //{
+    //    var email = principal.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
+    //    if (string.IsNullOrWhiteSpace(email))
+    //        email = principal.FindFirst(ClaimType.Email)?.Value ?? string.Empty;
+
+    //    return email;
+    //}
+
     public static int ContactId(this ClaimsPrincipal principal)
         => int.TryParse(principal.FindFirst(ClaimType.ContactId).Value, out int result) ? result : default;
 
@@ -47,10 +58,6 @@ public static class ClaimExtensions
 
     public static string AccessToken(this ClaimsPrincipal principal)
         => principal.FindFirst(ClaimType.AccessToken)?.Value ?? string.Empty;
-
-    // Indicates whether login endpoint or /token endpoint was used to generate a token
-    public static bool IsInternal(this ClaimsPrincipal principal)
-        => bool.TryParse(principal.FindFirst(ClaimType.IsInternal)?.Value, out bool result) && result;
 
     public static bool IsSecurityLevel2(this ClaimsPrincipal principal)
     {

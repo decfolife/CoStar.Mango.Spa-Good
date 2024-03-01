@@ -14,10 +14,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Serilog.Events;
 using Serilog;
 using System.Reflection;
-using WebHost.Customization.Environments;
 using Microsoft.OpenApi.Models;
 using System.IO;
 using System.Collections.Generic;
+using MangoSPA.Services;
 
 namespace MangoSPA;
 
@@ -43,12 +43,14 @@ public class Startup
         });
 
         services.AddHealthChecks();
+        services.AddHttpContextAccessor();
+
         AddSwagger(services);
         AddLogging(services);
         AddAppSettings(services, Configuration);
         AddAuth(services, Environment);
 
-        // Uncomment if we want to serve mangoSPA using .NET web server.
+        // Needed if we want to serve mangoSPA using .NET web server.
         // Setup where the compiled version of our spa application will be, when in production. 
         //services.AddSpaStaticFiles(options =>
         //{
@@ -84,6 +86,7 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration config)
     {
         app.UseForwardedHeaders();
+        app.UsePathBase("/api");
 
         if (!env.IsStage() && !env.IsProd())
         {
@@ -96,7 +99,7 @@ public class Startup
                 {
                     opt.PreSerializeFilters.Add((swagger, request) =>
                     {
-                        var serverUrl = $"{request.Scheme}://{request.Host}/userservice";
+                        var serverUrl = $"{request.Scheme}://{request.Host}/api";
                         swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
                     });
                 });
@@ -118,7 +121,7 @@ public class Startup
         }
 
         // *****
-        // Uncomment if we want to serve mangoSPA using .NET web server.
+        // Needed if we want to serve mangoSPA using .NET web server.
         // Needed if not using IIS or NGINX server to serve the app
         //app.UseMiddleware<SecurityHeadersMiddleware>();
 
@@ -131,8 +134,8 @@ public class Startup
         //}
         // *****
 
-        app.UseCors(_CorsPolicy);
         app.UseRouting();
+        app.UseCors(_CorsPolicy);
         app.UseAuthentication();
         app.UseAuthorization();
  
@@ -144,7 +147,7 @@ public class Startup
 
         app.UseSerilogRequestLogging();
 
-        // Uncomment if we want to serve mangoSPA using .NET web server.
+        // Needed if we want to serve mangoSPA using .NET web server.
         // Handles all still unattended (by any other middleware) requests by returning the default page of the SPA (wwwroot/index.html).
         //app.UseSpa(spa =>
         //{
@@ -172,7 +175,7 @@ public class Startup
     {
         services.AddSwaggerGen(opts =>
         {
-            opts.SwaggerDoc("v1", new OpenApiInfo() { Title = "MangoSPA Server", Version = "v1" });
+            opts.SwaggerDoc("v1", new OpenApiInfo() { Title = "MangoSPA Server", Description = "Used to act as a Web server for Mango SPA and create authentication cookie.", Version = "v1" });
 
             string filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
             opts.IncludeXmlComments(filePath, true);
@@ -200,20 +203,24 @@ public class Startup
 
     public void AddAuth(IServiceCollection services, IWebHostEnvironment env)
     {
+        services.AddScoped<IAuthService, AuthService>();
+
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opts =>
                 {
                     opts.Cookie.Name = "mango";
-                    opts.Cookie.SameSite = env.IsLocal() || env.IsDev() ? SameSiteMode.None : SameSiteMode.Strict;
-                    opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    opts.Cookie.SameSite = env.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict;
+                    opts.Cookie.SecurePolicy = env.IsLowerEnvs() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
                     opts.Cookie.HttpOnly = true;
+                    opts.ExpireTimeSpan = TimeSpan.FromMinutes(int.Parse(Configuration["Auth:CookieExpireInMinutes"]));
+                    //opts.SlidingExpiration = true;
 
                     opts.Events = new CookieAuthenticationEvents
                     {
                         OnRedirectToLogin = async (context) =>
                         {
                             await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                            context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         }
                     };
                 });
