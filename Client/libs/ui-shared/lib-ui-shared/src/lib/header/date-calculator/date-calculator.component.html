@@ -1,33 +1,103 @@
-<crem-modal [className]="'newModal'" [modalTitle]="'Date Calculator'" [modalTitleId]="'dateCalculator'"
-    [modalId]="'deleteReminderModal'" closeIconVisible="true" primaryFooterButtonText="Yes" closeOrCancelButtonText="No"
+<crem-modal className="newModal" modalTitle="Date Calculator" modalTitleId="dateCalculator"
+    modalId="deleteReminderModal" closeIconVisible="true" closeOrCancelButtonText="No"
     [customFooter]="true">
     <div modalContent class="body-content">
         <div class="section">
-            <dx-form [colCount]="3">
+            <dx-form #dateCalculatorForm [colCount]="3">
+
                 <dxi-item [colSpan]="3">
-                    <dx-check-box text="Include Input Date?"></dx-check-box>
+                    <dx-check-box text="Include Input Date?" [(value)]="includeInputDate"></dx-check-box>
                 </dxi-item>
-                <dxi-item dataField="inputDate" [editorOptions]="{placeholder: 'Input Date'}" [colSpan]="3"><dxo-label
-                        [visible]="false"></dxo-label></dxi-item>
-                <dxi-item dataField="years" [editorOptions]="{placeholder: '+Years'}" [colSpan]="1"><dxo-label
-                        [visible]="false"></dxo-label></dxi-item>
-                <dxi-item dataField="months" [editorOptions]="{placeholder: '+Months'}" [colSpan]="1"><dxo-label
-                        [visible]="false"></dxo-label></dxi-item>
-                <dxi-item dataField="days" [editorOptions]="{placeholder: '+Days'}" [colSpan]="1"><dxo-label
-                        [visible]="false"></dxo-label></dxi-item>
-                <dxi-item dataField="outputDate" [colSpan]="3"></dxi-item>
+
+                    <dxi-item [colSpan]="3">
+                        <dx-validation-group  #inputGroup>
+                            <dx-date-box
+                                placeholder="Input Date"
+                                type="date"
+                                [displayFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'shortdate' "
+                                [(value)]="inputDate"
+                                [inputAttr]="{ 'aria-label': 'Date' }">
+                                <dx-validator>
+                                    <dxi-validation-rule
+                                      type="required"
+                                      message="Input Date is Required"
+                                    ></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-date-box>
+                        </dx-validation-group>
+                    </dxi-item>
+                    
+                    
+                    <dxi-item dataField="years" [colSpan]="1">
+                        <dx-validation-group #inputGroup>
+                            <dxo-label text="±Years"></dxo-label>
+                            <dx-number-box format="#0" [(value)]="years" [showSpinButtons]="true" [inputAttr]="{ 'aria-label': 'years' }">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Must Be Numeric"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-number-box>
+                        </dx-validation-group>
+                    </dxi-item>
+
+
+                    <dxi-item dataField="months" [colSpan]="1">
+                        <dx-validation-group #inputGroup>
+                            <dxo-label text="±Months"></dxo-label>
+                            <dx-number-box format="#0" [(value)]="months" [showSpinButtons]="true" [inputAttr]="{ 'aria-label': 'months' }">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Must Be Numeric"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-number-box>
+                        </dx-validation-group>
+                    </dxi-item>
+                    
+                    <dxi-item dataField="days" [colSpan]="1">
+                        <dx-validation-group #inputGroup>
+                            <dxo-label text="±Days"></dxo-label>
+                            <dx-number-box format="#0" [(value)]="days" [showSpinButtons]="true" [inputAttr]="{ 'aria-label': 'days' }">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Must Be Numeric"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-number-box>
+                        </dx-validation-group>
+                    </dxi-item>
+
+                    <dxi-item [colSpan]="3">
+                        <dx-validation-group #outputGroup>
+                            <dx-date-box
+                                placeholder="Output Date"
+                                type="date"
+                                [displayFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'shortdate' "
+                                [(value)]="outputDate"
+                                [inputAttr]="{ 'aria-label': 'outputDate' }">
+                                <dx-validator>
+                                    <dxi-validation-rule
+                                      type="required"
+                                      message="Output Date is Required"
+                                    ></dxi-validation-rule>
+                                  </dx-validator>
+                            </dx-date-box>
+                        </dx-validation-group>
+        
+                    </dxi-item>
+                    <dxi-item colSpan="3" [cssClass]="'dayOfWeek'">
+                        <h2 *dxTemplate="let data of 'dayOfWeekTemplate'">
+                            {{ dayOfWeek }}
+                        </h2>
+                    </dxi-item>
+
             </dx-form>
         </div>
+    </div>
 
-        <div modalFooter class="footer-content">
-            <div id="buttonTemplate" class="footerRightControls">
-                <crem-button type="secondary" id="calcOutDate">
-                    Calculate Output Date
-                </crem-button>
-                <crem-button type="secondary" id="calcDurations">
-                    Calculate Durations
-                </crem-button>
-            </div>
+    <div modalFooter class="footer-content">
+        <div id="ButtonTemplate" class="footerRightControls">
+            <crem-button type="secondary" id="calcOutputDate" (click)="calcOutputDate()">
+                Calculate Output Date
+            </crem-button>
+            <crem-button type="secondary" id="calcDurations" (click)="calcDateDifference()">
+                Calculate Durations
+            </crem-button>
         </div>
     </div>
 </crem-modal>

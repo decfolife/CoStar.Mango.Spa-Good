@@ -4,10 +4,20 @@
 ::ng-deep {
 
   .footerRightControls {
-    display: flex;
+      display: flex;
   
-    .modalFooter {
-      border-top: 1px solid colors.$borderColor;
+      crem-button {
+        padding: 8px;
+      }
     }
+
+  .dx-datebox .dx-texteditor-buttons-container {
+    display: none;
   }
+
+  .dayOfWeek{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 }
