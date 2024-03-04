@@ -134,12 +134,14 @@ export class AddReminderComponent implements OnInit {
       this.ticklerID = gridData.TicklerID;
       const newRecipient: RemindersRecepient = {
         contactId: gridData.ContactID,
-        contactNameEmail: gridData.DisplayName
+        contactNameEmail: gridData.DisplayName,
+        companyName: gridData.CompanyName,
+        contactEmailAddress: gridData.contactEmailAddress
       };
       this.remindersInfo.remindersRecepient.push(newRecipient);
 
     }
-     this.membersSearchInput$.pipe(
+    this.membersSearchInput$.pipe(
       debounceTime(250),
       switchMap(inputValue => ((inputValue.length != 1) ? this.remindersService.getRecipientsContactsList(this.oid, this.otid) : of([])))
     ).subscribe(filteredremindersRecepient => {
@@ -147,6 +149,8 @@ export class AddReminderComponent implements OnInit {
         (recipient) => ({
           contactId: recipient.ContactID,
           contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
+          companyName: recipient.CompanyName,
+          contactEmailAddress: recipient.contactEmailAddress
         })
       )
     });
@@ -169,6 +173,8 @@ export class AddReminderComponent implements OnInit {
               (recipient) => ({
                 contactId: recipient.ContactID,
                 contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
+                companyName: recipient.CompanyName,
+                contactEmailAddress: recipient.contactEmailAddress
               })
             )
             this.loading = false;
@@ -220,6 +226,8 @@ export class AddReminderComponent implements OnInit {
     let remindersRecepient = <RemindersRecepient>{};
     remindersRecepient.contactId = e.itemData.contactId;
     remindersRecepient.contactNameEmail = e.itemData.contactNameEmail;
+    remindersRecepient.companyName = e.itemData.companyName;
+    remindersRecepient.contactEmailAddress = e.itemData.contactEmailAddress;
     this.remindersInfo.remindersRecepient.push(remindersRecepient);
     this.changesMade = true;
     this.setListItemAttributes(e);
@@ -246,6 +254,7 @@ export class AddReminderComponent implements OnInit {
 
   private getSaveReminderData() {
     const formData = this.addReminderForm.formData;
+    if( this.addReminderForm.instance.validate()){
     let saveReminderData = {
       UserDefinedEvent: formData.userDefinedEvent,
       UserDefinedDate: formData.userDefinedDate,
@@ -259,6 +268,7 @@ export class AddReminderComponent implements OnInit {
       TicklerID : this.ticklerID 
     };
     return saveReminderData;
+  }
   }
 
   toggleList() {

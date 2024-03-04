@@ -18,7 +18,7 @@ import { SharedModule } from "../../shared/shared.module";
 import { AddReminderComponent } from "../add-reminder/add-reminder.component";
 import { RemindersService } from "./../../shared/services/reminders.service";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { Component, OnDestroy, OnInit, ViewChild, Input } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild, Input, EventEmitter,Output} from "@angular/core";
 import { DeleteReminderComponent } from '../modal/delete-reminder/delete-reminder.component';
 
 @Component({
@@ -42,6 +42,7 @@ import { DeleteReminderComponent } from '../modal/delete-reminder/delete-reminde
 export class RemindersListComponent implements OnInit, OnDestroy {
   @ViewChild("RemindersDataGrid") remindersDataGrid: DxDataGridComponent;
   @ViewChild("SearchBox") searchBox: SearchComponent;
+  @Output() saveDefault = new EventEmitter(null);
 
   @Input() otid: number;
   @Input() oid: number;
@@ -80,7 +81,6 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   private loadRemindersData(otid: number, oid: number): void {
     this.reminderService.getRemindersList(oid, otid).subscribe((res) => {
       this.gridData = res?.success ? res.data : null;
-
     });
   }
 
@@ -106,10 +106,12 @@ export class RemindersListComponent implements OnInit, OnDestroy {
 
   public resetFilter(e) {
     e.stopPropagation();
-    this.remindersDataGrid.instance.clearFilter();
-    this.remindersDataGrid.instance.clearSorting();
     this.searchText = "";
     this.searchBox.handleClear();
+    this.remindersDataGrid.instance.clearFilter();
+    this.remindersDataGrid.instance.clearSorting();
+    this.remindersDataGrid.instance.clearGrouping();
+    this.remindersDataGrid.instance.refresh();
   }
 
   public setReminderColumns() {
@@ -136,6 +138,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         alignment: "left",
         dataType: "string",
         caption: "Name",
+        cellTemplate: (container, options) => {
+          container.innerText = options.data.ContactFirstName + ' '+  options.data.ContactLastName;;
+        },
       },
       {
         dataField: "CompanyName",
@@ -158,6 +163,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         dataField: "TicklerID",
         dataType: "number",
         caption: "Reminder Id",
+        sortOrder:"desc",
         alignment: "left",
         visible: false,
       },
@@ -165,6 +171,41 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         dataField: "TicklerMessage",
         dataType: "string",
         caption: "Message",
+      },
+      {
+        dataField: "LastModified",
+        dataType: "date",
+        caption: "Last Modified Date",
+        sortOrder:"desc",
+        visible: false,
+      },
+      {
+        dataField: "AutoLoadReminderType",
+        dataType: "string",
+        caption: "Auto Load Reminder Type",
+        sortOrder:"desc",
+        visible: false,
+      },
+      {
+        dataField: "LastModifiedBy",
+        dataType: "string",
+        caption: "Last Modified By",
+        visible: false,
+      },
+      {
+        dataField: "ContactEmailAddress",
+        dataType: "string",
+        caption: "Recepient Email",
+        visible: false,
+      },
+      {
+        dataField: "AutoLoadReminderID",
+        dataType: "boolean",
+        caption: "Is Auto Load Reminder",
+        visible: false,
+        cellTemplate: (container, options) => {
+          container.innerText = options.data.AutoLoadReminderID? true : false;
+        },
       },
     ];
   }

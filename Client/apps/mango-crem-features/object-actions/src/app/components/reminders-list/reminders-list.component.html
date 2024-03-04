@@ -21,6 +21,7 @@
 					<button mat-menu-item (click)="resetFilter($event)">Reset</button>
 					<button mat-menu-item (click)="openColumnChooser()">Column Chooser</button>
 					<button mat-menu-item (click)="exportExcel($event)">Export</button>
+					<button mat-menu-item   (click)="saveDefault.next()">Save As Default</button>
 				</mat-menu>
 			</div>
 			<div class="controls-item">
@@ -39,6 +40,10 @@
 			<dxo-column-chooser [allowSearch]="true" mode="select"></dxo-column-chooser>
 			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-column-fixing [enabled]="true"></dxo-column-fixing> 
+			<dxo-grouping #expand [autoExpandAll]="false"></dxo-grouping>
 			<dxi-column *ngFor="let col of columns" [dataField]="col.dataField" [alignment]="col.alignment"
 				[visible]="col.visible" [dataType]="col.dataType" [format]="col.format" [caption]="col.caption"
 				[fixed]="col.fixed" [width]="col.width" [sortOrder]="col.sortOrder" [allowEditing]="col.allowEditing"
@@ -63,6 +68,9 @@
 					</div>
 				</dxi-button>
 			</dxi-column>
+			<dxo-summary>
+				<dxi-group-item column="Id" summaryType="count"> </dxi-group-item>
+			  </dxo-summary>
 			<dxo-paging [pageSize]="50"></dxo-paging>
 			<dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[50, 100, 200, 500]" [showInfo]="true"
 				[showNavigationButtons]="true" [visible]="true">

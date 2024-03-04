@@ -5,7 +5,7 @@
   closeIconVisible="true" [customFooter]="true">
   <div modalContent class="body-content">
     <div class="section">
-      <dx-form #addReminderForm id="form" validationGroup="centerForm" labelLocation="top">
+      <dx-form #addReminderForm id="form" validationGroup="centerForm" labelLocation="left">
         <dxi-item itemType="group" cssClass="centerForm" [colCount]="1"> 
           <dxi-item dataField="reminderEvent" editorType="dxSelectBox"
            [editorOptions]="{ items: reminderEventDropdown, valueExpr: 'TicklerTypeID', displayExpr: 'TickleDescription',
@@ -59,9 +59,8 @@
 
         </dxi-item>
         <dxi-item itemtype="group">
-
           <div id="aet-members" class="aet-members">
-            <h3>recipient</h3>
+            <h3>Recipients</h3>
             <div id="container">
               <dx-drop-down-box class="aet-membersDropDown" 
                 placeholder="Start typing to search for additional users."
@@ -78,8 +77,11 @@
                     <div>
                       <span class="aet-addPlusIcon"><fa-icon [icon]="faCirclePlus"></fa-icon></span>
                       <span class="aet-memberData">
-                        <span class="aet-memberName">{{member.contactNameEmail}}</span>
-                        <span class="aet-company" *ngIf="false">{{member.contactId}}</span>
+                        <span class="aet-company">{{member.contactId}}</span>
+                        <span class="aet-memberName"> - {{member.contactNameEmail}}</span>
+                        <span class="aet-memberName"> - {{member.companyName}}</span>
+                        <span class="aet-memberName"> - {{member.contactEmailAddress}}</span>
+                
                       </span>
                     </div>
                   </div>
@@ -112,8 +114,10 @@
                   <dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
                     [allowReordering]="false" [allowResizing]="false">
                   </dxi-column>
-                  <dxi-column *ngIf="false" dataField="contactId" [allowEditing]="false" dataType="number"></dxi-column>
-                  <dxi-column dataField="contactNameEmail" [allowEditing]="false" dataType="string"></dxi-column>
+                  <dxi-column dataField="contactId" [allowEditing]="false" dataType="string"></dxi-column>
+                  <dxi-column dataField="contactNameEmail" caption="Contact Name "[allowEditing]="false" dataType="string"></dxi-column>
+                  <dxi-column dataField="companyName" [allowEditing]="false" dataType="string"></dxi-column>
+                  <dxi-column dataField="contactEmailAddress" [allowEditing]="false" dataType="string"></dxi-column>
                   <dxi-column caption="" type="buttons" width="40" [fixed]="true" fixedPosition="right"
                     [allowSorting]="false" [allowReordering]="false" [allowResizing]="false">
                     <dxi-button template="actionsMenuTemplate">
