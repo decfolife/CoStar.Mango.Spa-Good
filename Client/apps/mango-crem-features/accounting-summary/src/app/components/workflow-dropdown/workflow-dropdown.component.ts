@@ -39,6 +39,7 @@ export class WorkflowDropdownComponent {
   @ViewChild('containerDiv') containerDiv: ElementRef;
   divOpened = false;
   divElement: any;
+  private initialMouseDownTarget: HTMLElement;
 
 
   constructor(protected facade: MangoAppFacade, public accountingSummaryService: AccountingSummaryService) {
@@ -211,6 +212,10 @@ export class WorkflowDropdownComponent {
   }
 
   onDocumentClick(event: MouseEvent) {
+    if (this.initialMouseDownTarget && this.initialMouseDownTarget.id === 'workflow-component-comment-popup') {
+      this.initialMouseDownTarget = null; // Reset the initialMouseDownTarget
+      return;
+    }
     if (!this.containerDiv?.nativeElement.contains(event.target) && this.divOpened && this.commentsVisible) {
       // // Clicked outside the div, hide it
       this.divElement.remove();
@@ -222,5 +227,11 @@ export class WorkflowDropdownComponent {
       this.divOpened = true;
       this.commentTextArea.nativeElement.focus();
     }
+  }
+
+  @HostListener('document:mousedown', ['$event'])
+  onMouseDown(event: MouseEvent) {
+    // Store the initial target element of the mousedown event
+    this.initialMouseDownTarget = event.target as HTMLElement;
   }
 }
