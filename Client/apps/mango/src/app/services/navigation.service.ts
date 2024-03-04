@@ -15,7 +15,7 @@ export class MangoNavigationService {
       this.router.navigateByUrl(`${navLink.spaUrl}${navLink.spaQueryParameters ? `?${navLink.spaQueryParameters}`: ``}`)
     } else {
       const redirectionUrl = `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/${navLink.linkUrl}`
-      window.location.href = redirectionUrl
+      this.navigateToUrl(redirectionUrl)
     }
   }
 
@@ -32,8 +32,31 @@ export class MangoNavigationService {
   }
 
   extractValue(data, key) {
-    var rx = new RegExp(key + "=(.*?)\\s+(\&|\?)");
-    var values = rx.exec(data); // or: data.match(rx);
+    const rx = new RegExp(key + "=(.*?)\\s+(\&|\?)");
+    const values = rx.exec(data); // or: data.match(rx);
     return values && values[1];
   }
+
+  // This is used because v06 needs a referer header when opening a classic asp page
+  navigateToUrl(url) {
+    const f = document.createElement("FORM") as HTMLFormElement;
+    f.action = url;
+
+    const indexQM = url.indexOf("?");
+    if (indexQM >= 0) {
+      const params = url.substring(indexQM + 1).split("&");
+      for (let i = 0; i < params.length; i++) {
+        const keyValuePair = params[i].split("=");
+        const input = document.createElement("INPUT") as any
+        input.type = "hidden";
+        input.name = keyValuePair[0];
+        input.value = keyValuePair[1];
+        f.appendChild(input);
+      }
+    }
+
+    document.body.appendChild(f);
+    f.submit();
+  }
+
 }
