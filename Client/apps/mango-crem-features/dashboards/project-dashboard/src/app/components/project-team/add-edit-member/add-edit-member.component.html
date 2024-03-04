@@ -60,6 +60,7 @@
           [(value)]="firstName"
           [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'First Name' }"
+          (onValueChanged)="updateFlag()"
         ></dx-text-box>
       </div>
       <div class="lastName">
@@ -68,6 +69,7 @@
           [(value)]="lastName"
           [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'Last Name' }"
+          (onValueChanged)="updateFlag()"
         ></dx-text-box>
       </div>
     </div>
@@ -79,6 +81,7 @@
         [(value)]="emailId"
         [disabled]="operation == 'ETU'? true : false"
         [inputAttr]="{ 'aria-label': 'Name' }"
+        (onValueChanged)="updateFlag()"
       ></dx-text-box>
   </div>
   <div class="aet-email-shared" *ngIf="operation !== Operations.AC">
@@ -192,7 +195,7 @@
               [elementAttr]="{ 'class': 'taskListCheckbox' }"
               (onValueChanged)="updateTask($event, task)"
             ></dx-check-box>
-            <div class="assignedTask-name">{{task.taskId}} -- {{task.step}}&#41; <span class="taskName" [title]="task.taskName">{{task.taskName}}</span></div>
+            <div class="assignedTask-name">{{task.step}}&#41; <span class="taskName" [title]="task.taskName">{{task.taskName}}</span></div>
           </div>
           <div class="assignedTask-status">{{task.approvalStatus}}</div>
         </div>
@@ -203,8 +206,8 @@
 <div modalFooter class="addEditTeamModal-footerContent">
   <div id="buttonTemplate" class="footerRightControls">
     <crem-button  type="secondary" class="cancelChanges aem-btn" (click)="closeModal()"> Cancel </crem-button>
-    <crem-button  [type]=buttonType class="saveChanges aem-btn" (click)="saveMember('save')" [disabled]="applySaveButtonDisabled"> Save </crem-button>
-		<crem-button  type="primary" class="applyChanges aem-btn" (click)="saveMember('apply')" *ngIf="operation !== Operations.AC" [disabled]="applySaveButtonDisabled"> Apply </crem-button>
+    <crem-button  [type]=buttonType class="saveChanges aem-btn" (click)="saveMember('save')" [disabled]="applySaveButtonDisabled || (!changesMade && !assignedTasksChanged)"> Save </crem-button>
+		<crem-button  type="primary" class="applyChanges aem-btn" (click)="saveMember('apply')" *ngIf="operation !== Operations.AC" [disabled]="applySaveButtonDisabled || (!changesMade && !assignedTasksChanged)"> Apply </crem-button>
   </div>
 </div>
 </crem-modal>

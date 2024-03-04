@@ -49,6 +49,8 @@ export class AddEditMemberComponent implements OnInit {
   reloadMainGrid: boolean = false;
   assignedTasksChanged: boolean = false;
   applySaveButtonDisabled = false;
+  changesMade: boolean = false;
+  changesSaved: boolean = false;
   projectId: number;
   operation: string;
   selectedMember: string;
@@ -175,35 +177,45 @@ export class AddEditMemberComponent implements OnInit {
 
   roleSelected(e) {
     this.selectedRole = e.selectedItem.role;
+    this.changesMade = (this.selectedRole == e.component._initialValue && !this.changesMade && !this.changesSaved) ? false : true;
   }
 
   levelSelected(e) {
     this.selectedLevel = e.selectedItem.level;
+    this.changesMade = (this.selectedLevel == e.component._initialValue && !this.changesMade && !this.changesSaved) ? false : true;
   }
   
   expirationTypeSelected(e) {
     this.isExpirationDateSelected = (e.selectedItem.value == '1') ? true : false;
+    if(!this.isExpirationDateSelected) { 
+      this.expirationDate = null;
+    }
     this.expirationType = e.selectedItem.value;
+    this.changesMade = (this.expirationType == e.component._initialValue && !this.changesMade && !this.changesSaved) ? false : true;
   }
 
   setExpirationDate(e) {
+    this.changesMade = true;
     this.expirationDate = e.value;
-    //this.expirationDate = e.value.toISOString();
   }
 
   emailtoggle(e) {
+    this.changesMade = true;
     this.emailNotificationChecked = e.checked;
   }
 
   sharedtoggle(e) {
+    this.changesMade = true;
     this.sharedChecked = e.checked;
   }
 
   descriptionValueChanged(e) {
+    this.changesMade = true;
     this.description = e.target.value;
   }
 
-  onCheckboxValueChanged(e) {
+  updateFlag() {
+    this.changesMade = true;
   }
 
   focusOnDropDownInput(e) { 
@@ -218,6 +230,7 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   selectionChanged(e) {
+    this.changesMade = true;
     this.isMemberDropDownBoxOpened = false;
     this.dropdownbox.focus();
   }
@@ -252,6 +265,10 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   updateTeamMember(updateType: string) {
+    if(this.assignedTasksChanged && !this.changesMade && (this.operation == Operations.ETM || this.operation == Operations.ETU)) {
+      this.assignTasks(updateType);
+      return;
+    }
     this.applySaveButtonDisabled = true;
     this.updateTeamMemberData.projectID = this.projectId;
     this.updateTeamMemberData.contactID = this.contactId;
@@ -267,9 +284,11 @@ export class AddEditMemberComponent implements OnInit {
     this.subs.push(this.dashboardService.updateProjectTeamMember(this.updateTeamMemberData).subscribe(
       (res:any) => {
         this.applySaveButtonDisabled = false;
+        this.changesSaved = true;
+        this.changesMade = false;
         if(!!res && res.success) {
           this.reloadMainGrid = true;
-          (this.memberTasks.assignTasks.length && this.assignedTasksChanged)  && this.assignTasks(); //assignTasks() executes only if memberTasks.assignTasks length is > 0
+          (this.memberTasks.assignTasks.length && this.assignedTasksChanged)  && this.assignTasks(updateType); //assignTasks() executes only if memberTasks.assignTasks length is > 0
           
           if(updateType == 'save') {
             this.closeModal();
@@ -308,11 +327,13 @@ export class AddEditMemberComponent implements OnInit {
     this.subs.push(this.dashboardService.addTemporaryUser(this.updateTemporaryUserData).subscribe(
       (res:any) => {
         this.applySaveButtonDisabled = false;
+        this.changesMade = false;
+        this.changesSaved = true;
         if(!!res && res.success) {
           this.contactId = res.data;
           this.memberTasks.contactID = res.data;
           this.reloadMainGrid = true;
-          (this.memberTasks.assignTasks.length && this.assignedTasksChanged) && this.assignTasks();
+          (this.memberTasks.assignTasks.length && this.assignedTasksChanged) && this.assignTasks(updateType);
           (updateType == 'save') && this.closeModal();
           this.operation = Operations.ETU;
         } else {
@@ -323,13 +344,15 @@ export class AddEditMemberComponent implements OnInit {
     ));
   }
 
-  public assignTasks() {
+  public assignTasks(updateType: string) {
     this.subs.push(this.dashboardService.assignTasks(this.memberTasks).subscribe(
       (res: any) => {
         this.assignedTasksChanged = false;
         if(!res || !res.success) {
           this.dialogService.alert('Add/Update Team Member', `Member updated sucessfully but there was an issue updating Assigned Tasks for the Member, Please try again later.`, 'OK');
         }
+        this.reloadMainGrid = true;
+        (updateType == 'save') && this.closeModal();
       }
     ))
   }
