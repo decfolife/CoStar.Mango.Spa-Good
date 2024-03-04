@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 
 @Injectable()
 export class UtilitiesService {
@@ -28,6 +29,14 @@ export class UtilitiesService {
     }
 
     return trackingId;
+  }
+
+  public static isLocalEnvironment() {
+    if (environment.name === 'LOCAL' || window.location.origin.includes('localhost')) {
+      return true;
+    }
+
+    return false;
   }
 
   public static getCremUrl(clientKey: string, env: string, token?: string) {

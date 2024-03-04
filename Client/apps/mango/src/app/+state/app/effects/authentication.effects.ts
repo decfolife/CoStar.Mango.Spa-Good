@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { DBkeys, JwtService, StorageService, UserService } from '@mango/core-shared/lib-core-shared';
+import { DBkeys, JwtService, StorageService, UserService, UtilitiesService } from '@mango/core-shared/lib-core-shared';
 import { ContactRecord, ContactRecordHTTPObject, OAuthTokenHTTPResponse, UserAuth } from '@mango/data-models/lib-data-models';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -47,20 +47,22 @@ export class AuthenticationEffects {
             isServiceAccount: this.userService.parseBool(decodedToken.isServiceAccount),
             isRemUser: parseInt(decodedToken.securityLevel) > -1,
           }
-          // Temporary until cookie auth is implemented in MangoSPA
-          this.jwtService.saveToken(response.accessToken)
 
+          if (UtilitiesService.isLocalEnvironment()) {
+            this.jwtService.saveToken(response.accessToken)
+          }
+
+          this.facade.setAccessToken(response.accessToken)
           this.userService.setAuth(user)
           this.storageService.savePermanentData(user.clientKey, DBkeys.CLIENT_KEY)
-          return combineLatest([of(user), this.userService.getContactRecord(user.email, user.contactId, user.clientKey), of(redirectionUrl)])
+          return combineLatest([of(user), of(response.accessToken), this.userService.getContactRecord(user.email, user.contactId, user.clientKey), of(redirectionUrl)])
         }),
-        map(([user, contactRecordHttpResponse, redirectUrl]: [UserAuth, ContactRecordHTTPObject, string]) => {
+        map(([user, accessToken, contactRecordHttpResponse, redirectUrl]: [UserAuth, string, ContactRecordHTTPObject, string]) => {
           const contactRecord = this.userService.parseContactRecordHttpObject(contactRecordHttpResponse)
           this.storageService.savePermanentData(contactRecord, DBkeys.CONTACT_RECORD)
-          return [user, contactRecord, redirectUrl]
+          return [user, accessToken, contactRecord, redirectUrl]
         }),
-        switchMap(([user, contactRecord, redirectUrl]: [UserAuth, ContactRecord, string]) => {
-          let accessToken = this.storageService.getData(DBkeys.JWT_TOKEN)
+        switchMap(([user, accessToken, contactRecord, redirectUrl]: [UserAuth, string, ContactRecord, string]) => {
           this.router.navigateByUrl(decodeURIComponent(redirectUrl) || '/')
           return of(
             AppActions.setAuthenticatedUser({ user }),
@@ -77,9 +79,9 @@ export class AuthenticationEffects {
       this.actions$.pipe(
         ofType(AppActions.LOGOUT_ACTION),
         tap((action: { logoutCA: boolean }) => {
-          this.userService.logout()
+          this.userService.logoutCREM()
           this.facade.clearState()
-          window.location.href = `${environment.CAUrl}${action.logoutCA ? `?logout=true` : ''}`
+          window.location.href = environment.CAUrl
         })
       ),
     { dispatch: false }

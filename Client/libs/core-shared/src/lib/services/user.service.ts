@@ -31,6 +31,8 @@ import { LoginResponse } from 'libs/data-models/lib-data-models/src/lib/models/u
   providedIn: 'root',
 })
 export class UserService {
+  spaServer: string = `${window.location.origin}/api`
+
   constructor(
     private http: HttpClient,
     private _storageService: StorageService,
@@ -56,7 +58,7 @@ export class UserService {
       redirectUrl: "",
       codeVerifier: ""
     }
-    return this.http.post<OAuthTokenHTTPResponse>(`${this.env.appUrls.identity}/oauth/token`, request)
+    return this.http.post<OAuthTokenHTTPResponse>(`${this.spaServer}/oauth/token`, request)
   }
 
   login(credentials): Observable<LoginResponse> {
@@ -88,13 +90,25 @@ export class UserService {
     return this.http.post<AuthHTTPResponse>(`${this.env.appUrls.identity}/auth/login/client`, payload, { withCredentials: true });
   }
 
+  // CA web app specific
   getCurrentUserAccessToken(): Observable<string> {
     return this.http.get<string>(`${this.env.appUrls.identity}/auth/user/token`, { withCredentials: true });
   }
 
+  getCurrentCREMUserAccessToken(): Observable<string> {
+    return this.http.get<string>(`${this.spaServer}/auth/user/token`, { withCredentials: true });
+  }
+
+  // CA web app specific
   logout() {
     this.purgeAuth();
     this.http.get(`${this.env.appUrls.identity}/auth/logout`, { withCredentials: true })
+      .subscribe();
+  }
+
+  logoutCREM() {
+    this.purgeAuth();
+    this.http.get(`${this.spaServer}/auth/logout`, { withCredentials: true })
       .subscribe();
   }
 

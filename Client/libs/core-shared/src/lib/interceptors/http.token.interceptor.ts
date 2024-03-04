@@ -1,3 +1,4 @@
+import { JwtService, UtilitiesService } from '@mango/core-shared/lib-core-shared';
 import { Injectable } from '@angular/core';
 import {
   HttpEvent,
@@ -6,28 +7,40 @@ import {
   HttpRequest
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { JwtService, UserService } from '../services';
+import { switchMap, take } from 'rxjs/operators';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class HttpTokenInterceptor implements HttpInterceptor {
-  constructor(private jwtService: JwtService) { }
+  constructor(private facade: MangoAppFacade, private jwtService: JwtService) { }
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const headersConfig = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    };
-
-    let token = this.jwtService.getToken();
-    if (token) {
-      headersConfig['Authorization'] = `Bearer ${token}`;
+    if (UtilitiesService.isLocalEnvironment()) {
+      let token = this.jwtService.getToken()
+      const headers = this.generateRequestHeaders(token)
+      const request = req.clone({ setHeaders: headers })
+      return next.handle(request)
     }
 
-    const request = req.clone({ setHeaders: headersConfig });
+    return this.facade.accessToken$.pipe(
+      take(1),
+      switchMap(token => {
+        const headers = this.generateRequestHeaders(token)
+        const request = req.clone({ setHeaders: headers })
+        return next.handle(request)
+      }))
+  }
 
-    return next.handle(request);
+  generateRequestHeaders(accessToken: string): any {
+    const headers = {
+      'source-app': 'crem-mango',
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    }
+    accessToken ? headers['Authorization'] = `Bearer ${accessToken}` : null
+    return headers
   }
 }
