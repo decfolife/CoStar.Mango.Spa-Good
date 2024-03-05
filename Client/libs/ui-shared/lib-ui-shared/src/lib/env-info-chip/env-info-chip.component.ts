@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit } from "@angular/core";
+import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 
 export interface EnvInfoChip {
@@ -18,20 +18,28 @@ export enum Color { 'costar', 'error' };
   templateUrl: './env-info-chip.component.html',
   styleUrls: ['./env-info-chip.component.scss']
 })
-export class EnvInfoChipComponent implements OnInit {
+export class EnvInfoChipComponent implements OnInit, OnChanges {
   withAnimationOptionsVisible: boolean;
   @Input() id: any;
   @Input() width: string;
   @Input() chipContent: string;
-  @Input() popoverContent: string[];
+  @Input() popoverContent: string;
   @Input() chipStyle: EnvInfoChipStyle;
   @Input() withPopup: boolean = true;
   @Input() actionText: string;
   @Input() actionHandlerWindowFunction: string;
   @Input() closable: boolean = false;
 
+  parsedPopoverContent: string[];
+
   constructor(private elementRef: ElementRef) {
     this.withAnimationOptionsVisible = false;
+  }
+
+  ngOnChanges(): void {
+    if(this.popoverContent !== undefined){
+        this.parsedPopoverContent =  this.popoverContent.split("&#10;");
+      }
   }
 
   ngOnInit(): void {

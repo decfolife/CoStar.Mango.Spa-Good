@@ -1,0 +1,67 @@
+<div class="object-wrapper1">
+
+    <div class="object-banner1 hero" id="objectHeroMetricWrapper1">
+  
+      <div class="object-close" >
+        <fa-icon [icon]="faClose" (click)="close(); $event.preventDefault()"></fa-icon>
+      </div>
+  
+      <div class="object-image"></div>
+  
+      <div class="object-group">
+        <div class="title-and-subtitle">
+            <a class="title">3438 Peachtree Rd NE</a>
+            <div class="subtitle">
+              <div class="subtitle-line">{{data.data.formName}}</div>
+              <div class="subtitle-line">address</div>
+              <div class="subtitle-line">city, state zip</div>
+              <div class="subtitle-line">
+                <div class="dot"></div>
+                <a href="https://www.manulifeim.com/realestate/en/properties/3438-peachtree-road-atlanta" title="Visit website" target="_blank" 
+                rel="noopener" class="link">Website</a>
+              </div>
+            </div>
+          </div>
+
+        <div id="renderFormHeader" class="bounds" >
+            <ng-container *ngFor="let metric of schemaMetrics" >
+                <div class="metric-container" *ngIf="metric.isActive" >
+                  <crem-metric [metric]="metric"></crem-metric>
+                </div>
+              </ng-container>
+          </div>  
+
+        <div class="reviews">
+          <!-- LOGOS -->
+          <div class="images">
+            <div class="stars">
+              <img src="/assets/images/stars.svg" alt="" />
+            </div>
+            <div class="logos">
+              <img src="/assets/images/Leed-Logo.svg" alt="Energy Star" />
+              <img
+                src="/assets/images/Energy-Star-Logo.svg"
+                alt="Leadership in Energy and Environmental Design"
+              />
+            </div>
+          </div>
+          <!-- END LOGOS -->
+        </div>
+      </div>
+  
+      <div class="object-file-comments-notifications">
+        <mat-icon
+          class="clickable"
+          >comment</mat-icon
+        >
+        <mat-icon
+          class="clickable"
+          >folder</mat-icon
+        >
+        <mat-icon
+          class="clickable"
+          >notifications</mat-icon
+        >
+      </div>
+    </div>
+  </div>

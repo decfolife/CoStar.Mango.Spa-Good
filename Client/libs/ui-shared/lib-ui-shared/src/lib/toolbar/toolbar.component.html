@@ -23,7 +23,7 @@
 
     <!-- CREM Environment Chip -->
     <div class="environment">
-      <crem-env-info-chip
+      <crem-env-info-chip *ngIf="popoverContent"
         [id]="id"
         [chipStyle]="chipStyle"
         [chipContent]="chipContent"

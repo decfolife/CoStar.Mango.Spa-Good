@@ -2,14 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'mango-mango-forms',
-  templateUrl: './mango-forms.component.html',
-  styleUrls: ['./mango-forms.component.scss']
+  templateUrl: './mango-forms.component.html'
 })
-export class MangoFormsComponent implements OnInit {
+export class MangoFormsComponent {
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

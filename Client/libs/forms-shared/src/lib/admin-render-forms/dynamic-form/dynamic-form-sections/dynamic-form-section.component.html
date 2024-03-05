@@ -1,0 +1,127 @@
+<!-- <p>Sections State: <br/> {{section  | json }}</p>   -->
+<!-- <p>Render Form State: <br/> {{selectRenderFormData | json }}</p>   -->
+
+
+<div [formGroup]="form">
+  <div>
+    <mat-card  [formGroupName]="'childForm'">
+      <mat-card-header >
+        <mat-card-title #sectionTitle >{{ section.formSectionName }}</mat-card-title>
+        <div class="controls-right">
+          <crem-button type="secondary" *ngIf="!isRenderForm" [matMenuTriggerFor]="AddFieldMenu">Add Field(s)</crem-button>
+          <mat-menu #AddFieldMenu="matMenu">
+            <button mat-menu-item [matMenuTriggerFor]="ExistingFieldMenu">
+              Existing Field
+            </button>
+            <button mat-menu-item (click)="createNewField()">New Field</button>
+          </mat-menu>
+          <mat-menu #ExistingFieldMenu="matMenu" class="existing-fields-menu" (click)="$event.stopPropagation()">
+            <form class="form-horizontal filters-menu-form" (click)="$event.stopPropagation()">
+              <cs-search #SearchBox [placeholder]="'Search...'"
+                (changed)="searchAvailableFieldsDataGrid($event)"></cs-search>
+              <dx-data-grid #availableFieldsGrid id="availableFieldsContainer"
+                [dataSource]="selectAvailableFormFieldsBySectionId$ | async" [showColumnLines]="false" [showRowLines]="true"
+                [showBorders]="true" [rowAlternationEnabled]="true" keyExpr="formItemID">
+                <dxo-selection selectAllMode="true" showCheckBoxesMode="false" mode="multiple"></dxo-selection>
+                <dxi-column caption="Label" dataField="formItemLabel" [alignment]="'left'"></dxi-column>
+                <dxi-column caption="Control Type" dataField="formItemType.formItemType" [alignment]="'left'"></dxi-column>
+              </dx-data-grid>
+              <button class="btn btn-primary btn-sm std-top-margin" (click)="addFields(); $event.preventDefault()">
+                Add Fields
+              </button>
+            </form>
+          </mat-menu>
+          <div class="actions">
+            <crem-button *ngIf="!isRenderForm" type="secondary" ariaLabel="Dynamic Form Section Settings" icon="faCog"
+              (click)="launchFormSectionPopup(); $event.preventDefault()"></crem-button>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content *ngIf="!isLoading" >
+        <p>{{validationErrors}}</p>
+        <div *ngIf="sectionFields$ | async as fields">
+          <dx-form 
+              [formData]="selectRenderFormData"
+              (formDataChange)="onFormDataChange($event)"
+              [colCount]="section.formSectionColumns" 
+              labelLocation="left" 
+              [showColonAfterLabel]="false">
+            <dxi-item *ngFor="let field of fields;" 
+                              [dataField]="field.formItemID" 
+                              [name]="field" 
+                              [colSpan]="field.widgetID !== null && field.widgetID > 0 ? '2' : '1'"
+                              [template]="field.formItemType.formItemType">
+              <dxo-label [text]="field.widgetID !== null && field.widgetID > 0 ? '' : field.formItemSectionDetail.formItemLabel"></dxo-label>
+            </dxi-item>
+            <div *dxTemplate="let data of 'Text Field'">
+              <dx-text-box *ngIf="isRenderForm" [formControlName]="data.dataField" > </dx-text-box>
+              <dx-text-box *ngIf="!isRenderForm" [disabled]="!editMode"></dx-text-box>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <!-- <div *dxTemplate="let data of 'EmailAddress'">
+              <dx-text-box [(value)]="formDataLookup[data.dataField]?.[data.name.sourceColumn] || defaultValue" [formControlName]="data.dataField"></dx-text-box>
+              <fa-icon [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div> -->
+            <div *dxTemplate="let data of 'Date'">
+              <dx-date-box *ngIf="isRenderForm" [formControlName]="data.dataField"></dx-date-box>
+              <dx-date-box *ngIf="!isRenderForm" [disabled]="!editMode"></dx-date-box>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <div *dxTemplate="let data of 'List Box'" [id]="'List_Box' + data.dataField">
+              <ng-container *ngIf="!isDropdownValuesLoading" >
+                <dx-text-box *ngIf="isRenderForm && !editMode" [formControlName]="data.dataField"></dx-text-box>
+                <ng-container *ngIf="isRenderForm && editMode" >
+                  <dx-select-box *ngIf="(dropdownValues$ | async) as dropdownValues"
+                                  [dataSource]="dropdownValues[data.dataField]"
+                                  [displayExpr]="'display'"
+                                  [valueExpr]="'value'"
+                                  [formControlName]="data.dataField">
+                  </dx-select-box>
+                </ng-container>
+                <dx-select-box *ngIf="!isRenderForm" [disabled]="!editMode"> </dx-select-box>
+              </ng-container>
+              <ngx-skeleton-loader [id]="'skelDropdown' + data.dataField" *ngIf="isDropdownValuesLoading" class="crem-button-shadow" ></ngx-skeleton-loader>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <div *dxTemplate="let data of 'Comment Area'">
+              <dx-text-area *ngIf="isRenderForm" [height]="112" [formControlName]="data.dataField"></dx-text-area>
+              <dx-text-area *ngIf="!isRenderForm" [disabled]="!editMode" [height]="112" ></dx-text-area>
+              <mango-dynamic-form-field-doc-sec-page></mango-dynamic-form-field-doc-sec-page>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <div *dxTemplate="let data of 'Widget'">
+                  <mango-dynamic-form-widgets
+                    [form]="form" 
+                    [section]="section" 
+                    [field]="data.name"
+                    style="width: 100%; margin-right:5px">
+                  </mango-dynamic-form-widgets>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <div *dxTemplate="let data of 'Calculated'">
+              <dx-text-box *ngIf="isRenderForm" [formControlName]="data.dataField" placeholder="Calculated"></dx-text-box>
+              <dx-text-box *ngIf="!isRenderForm" [disabled]="!editMode" placeholder="Calculated"></dx-text-box>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <div *dxTemplate="let data of 'Clause'">
+              <mango-dynamic-form-field-doc-sec-page [form]="form" [section]="section" [field]="data.name"></mango-dynamic-form-field-doc-sec-page>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <div *dxTemplate="let data of 'Checkbox'"> 
+              <dx-check-box *ngIf="isRenderForm" [formControlName]="data.dataField"></dx-check-box>
+              <dx-check-box *ngIf="!isRenderForm" [disabled]="!editMode" ></dx-check-box>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div>
+            <div *dxTemplate="let data of 'Radio Button'">
+              <dx-radio-group *ngIf="isRenderForm" [items]="sampleRadioItems" [value]="sampleRadioItems[0]" layout="horizontal" [formControlName]="data.dataField"></dx-radio-group>
+              <dx-radio-group *ngIf="!isRenderForm" [disabled]="!editMode" [items]="sampleRadioItems" [value]="sampleRadioItems[0]" layout="horizontal"></dx-radio-group>
+              <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+            </div> 
+          </dx-form>
+        </div>
+      
+      </mat-card-content>
+      <ngx-skeleton-loader *ngIf="isLoading" class="crem-button-shadow" [theme]="{ height: '100px', width: '100%' }"></ngx-skeleton-loader>
+    </mat-card>
+  </div>
+</div>

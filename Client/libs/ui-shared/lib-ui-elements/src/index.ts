@@ -12,3 +12,4 @@ export * from './lib/tooltip';
 export * from './lib/modal';
 export * from './lib/bookmarks';
 export * from './lib/dynamic-form';
+export * from './lib/text-box';

@@ -10,7 +10,14 @@
         </mango-toolbar>
 
         <display-breadcrumbs [breadcrumbs]="(facade.breadcrumbs$ | async)" (navigateToBreadcrumb)="navigateToBreadcrumb($event)"></display-breadcrumbs>
-      
+        
+        <div class="render-form-header" *ngIf="showRenderFormPropertyHeader" >
+          <mango-render-form-header  
+              #renderFormHeader
+              [data]="renderFormHeaderData">
+            </mango-render-form-header>
+        </div>
+        
         <crem-bookmarks [ngClass]="{'suite-user':(userAppType == 1)}"
           #cremBookmark
           [bookmarkGroups]="bookmarkGroups"
@@ -18,7 +25,7 @@
         ></crem-bookmarks>
         
       </div>
-      <div class="application-module"  [ngClass]="{'suite-user':(userAppType == 1)}">
+      <div class="application-module"  [ngClass]="{'suite-user':(userAppType == 1)}" #appModule>
         <aside class="module-leftNav">
           <shared-left-nav
             [navigationLinks]="navigationLinks"

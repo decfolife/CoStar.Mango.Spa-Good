@@ -18,4 +18,9 @@ export class HeaderService extends EndpointService {
     const url = `${environment.appUrls.header}Header/GetUserModules`;
     return this.callHttpGet(url, 'GetUserModules');   
   }
+
+  getDBLastRestore(): Observable<any> {
+    const url = `${environment.appUrls.header}Header/GetDBLastRestore`;
+    return this.callHttpGet(url, 'GetDBLastRestore');   
+  }
 }

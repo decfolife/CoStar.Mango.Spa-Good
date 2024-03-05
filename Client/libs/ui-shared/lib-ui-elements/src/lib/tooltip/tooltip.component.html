@@ -1,22 +1,20 @@
 <div [id]="tooltipId" class="dx-field">
   <div class="iconWrapper dx-field-value-static">
-    <div [id]="tooltipId + 'Trigger'">
+    <div [attr.id]="'t' + tooltipId + 'Trigger'" [id]="tooltipId + 'Trigger'">
       <crem-icon
         transform="scale(.8)"
         fill="#808080"
         icon="brand-info-border"
         library="local"
         tabindex="0"
-        (click)="getHelpText()"
         (keydown.enter)="getHelpText()"
         (keydown.space)="getHelpText(); $event.preventDefault()"
         role="button"
         [attr.aria-label]="tooltipId + ' More information'"
       ></crem-icon>
     </div>
-
     <dx-popover
-      [target]="'#' + tooltipId + 'Trigger'"
+      [target]="'#' + 't' +  tooltipId + 'Trigger'"
       position="top"
       [width]="400"
       [(visible)]="withAnimationOptionsVisible"
@@ -39,4 +37,4 @@
       </div>
     </dx-popover>
   </div>
-</div>
+</div> 

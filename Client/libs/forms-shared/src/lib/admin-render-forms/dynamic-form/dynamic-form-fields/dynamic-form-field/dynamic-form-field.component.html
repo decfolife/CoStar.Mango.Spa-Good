@@ -1,0 +1,73 @@
+<!-- <div [formGroup]="form">
+    <div [ngSwitch]="field.formItemType.formItemType">
+        <div *ngSwitchCase="'Text Field'" >
+            <crem-text-box *ngIf="isRenderForm" 
+                [value]="form.get(field.formItemID.toString()).value"
+                [id]="field.formItemID"></crem-text-box>
+            <crem-text-box *ngIf="!isRenderForm" 
+                [id]="field.formItemID"></crem-text-box>
+        </div>
+       
+    </div>
+</div>
+   
+<dxi-item *ngFor="let field of fields; trackBy: trackField" 
+[dataField]="field.widgetID !== null && field.widgetID > 0 ? '' : field.formItemID" 
+[name]="field" 
+[colSpan]="field.widgetID !== null && field.widgetID > 0 ? '2' : '1'"
+[template]="field.formItemType.formItemType">
+<dxo-label [text]="field.widgetID !== null && field.widgetID > 0 ? '' : field.formItemSectionDetail.formItemLabel"></dxo-label>
+</dxi-item>
+<div *dxTemplate="let data of 'Text Field'">
+<dx-text-box *ngIf="isRenderForm" [formControlName]="data.dataField" > </dx-text-box>
+<dx-text-box *ngIf="!isRenderForm" [disabled]="!editMode"></dx-text-box>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+ <div *dxTemplate="let data of 'EmailAddress'"></div> 
+<div *dxTemplate="let data of 'Date'">
+<dx-date-box [disabled]="!editMode"></dx-date-box>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+<div *dxTemplate="let data of 'List Box'">
+<ng-container *ngIf="!isDropdownValuesLoading">
+<dx-text-box *ngIf="isRenderForm && !editMode"
+[formControlName]="data.dataField">
+</dx-text-box>
+<ng-container *ngIf="isRenderForm && editMode" >
+<dx-select-box *ngIf="(dropdownValues$ | async) as dropdownValues"
+            [dataSource]="dropdownValues[data.dataField]"
+            [displayExpr]="'display'"
+            [valueExpr]="'value'"
+            [disabled]="!editMode">
+</dx-select-box>
+</ng-container>
+<dx-select-box *ngIf="!isRenderForm" [disabled]="!editMode"> </dx-select-box>
+</ng-container>
+<ngx-skeleton-loader [id]="'skelDropdown' + data.dataField" *ngIf="isDropdownValuesLoading" class="crem-button-shadow" ></ngx-skeleton-loader>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+<div *dxTemplate="let data of 'Comment Area'">
+<dx-text-area [height]="112" [disabled]="!editMode"></dx-text-area>
+<mango-dynamic-form-field-doc-sec-page></mango-dynamic-form-field-doc-sec-page>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+<div *dxTemplate="let data of 'Widget'">
+<mango-dynamic-form-widgets [form]="form" [section]="section" [field]="data.name" style="width: 100%; margin-right:5px"></mango-dynamic-form-widgets>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+<div *dxTemplate="let data of 'Calculated'">
+<dx-text-box [disabled]="!editMode" placeholder="Calculated"></dx-text-box>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+<div *dxTemplate="let data of 'Clause'">
+<mango-dynamic-form-field-doc-sec-page [form]="form" [section]="section" [field]="data.name"></mango-dynamic-form-field-doc-sec-page>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+<div *dxTemplate="let data of 'Checkbox'">
+<dx-check-box [disabled]="!editMode"></dx-check-box>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>
+<div *dxTemplate="let data of 'Radio Button'">
+<dx-radio-group [items]="sampleRadioItems" [value]="sampleRadioItems[0]" layout="horizontal" style="margin-right:5px" [disabled]="!editMode"></dx-radio-group>
+<fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
+</div>  --> -->

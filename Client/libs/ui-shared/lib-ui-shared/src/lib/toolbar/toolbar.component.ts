@@ -15,7 +15,7 @@ export class ToolbarComponent implements OnInit {
 
   // chip items
   @Input() chipContent: string;
-  @Input() popoverContent: string[];
+  @Input() popoverContent: string;
   @Input() moduleLinks: ToolbarModuleLink[];
 
   id = 'cremChip';

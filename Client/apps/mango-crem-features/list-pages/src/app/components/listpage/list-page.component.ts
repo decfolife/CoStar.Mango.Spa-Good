@@ -789,15 +789,25 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.saveStateToSession();
 
     const isRenderFormPage = urlLink.includes('RenderForm.aspx')
-    if (isRenderFormPage) {
-      this.router.navigate(['/crem/forms/render-form'], { queryParams: { OID: evt.data.OID, OTID: evt.data.OTID, OTTID: evt.data.OTTID } })
-    } else {
-      document.location.href = urlLink
-        .replace(/\[OID\]/, evt.data.OID)
-        .replace(/\[OTID\]/, evt.data.OTID)
-        .replace(/\[OTTID\]/, evt.data.OTTID);
+    const urlSplit = urlLink.split('?');
+    const queryParams = {};
+
+    if (urlSplit.length > 1) {
+      const params = urlSplit[1].split('&');
+      params.forEach(param => {
+        const [key, value] = param.split('=');
+        queryParams[key] = value
+          .replace(/\[OID\]/, evt.data.OID)
+          .replace(/\[OTID\]/, evt.data.OTID)
+          .replace(/\[OTTID\]/, evt.data.OTTID);
+      });
     }
-  }
+    if (isRenderFormPage) {
+      this.router.navigate(['/crem/forms/render-form'], { queryParams });
+    }else{
+      this.router.navigate([urlSplit[0]], { queryParams });
+    }
+ }
 
   gridInitialized(evt: any) {
     this.dataGrid.instance.beginCustomLoading('Initializing...');

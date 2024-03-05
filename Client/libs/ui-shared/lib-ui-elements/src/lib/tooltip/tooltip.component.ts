@@ -21,7 +21,7 @@ export class TooltipComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.tooltipId = this.externalId;
+    this.tooltipId = this.externalId + 'Tooltip';
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Tab') {
         // code to hide help text

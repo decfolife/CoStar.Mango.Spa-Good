@@ -32,6 +32,7 @@ export { ServiceAccountChangeHistory } from './lib/models/central-auth/service-a
 export { UpdateServiceAccountApiAccessRequest, UpdateServiceAccountExpiresInDaysRequest} from './lib/models/central-auth/service-account-requests';
 export { ServiceAccount } from './lib/models/service-account/service-account';
 export { ServiceAccountHistory } from './lib/models/service-account/service-account-history';
+export { RenderFormHeaderData } from './lib/models/renderForm/renderFormHeaderData';
 export * from './lib/enums/mango.enums';
 export * from './lib/models/errors';
 export * from './lib/models/central-auth/ui';
@@ -54,4 +55,5 @@ export * from './lib/constants/mango.constants';
 export * from './lib/lib-data-models.module';
 export * from './lib/models/global-session';
 export * from './lib/mock/central-auth.mock';
+export * from './lib/models/renderForm/renderFormHeaderData';
 export * from './lib/models/Reminder';

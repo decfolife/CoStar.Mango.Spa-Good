@@ -1,0 +1,97 @@
+<!-- <div *ngFor="let control of form.controls | keyvalue">
+  <p>{{ control.key }}: {{ control.value.value | json }}</p>
+  <p>Pristine: {{ control.value.pristine }}</p>
+  <p>Valid: {{ control.value.valid }}</p>
+  <p *ngIf="control.value.errors">Validation errors:</p>
+  <ul *ngIf="control.value.errors">
+    <li *ngFor="let error of control.value.errors | keyvalue">{{ error.key }}: {{ error.value }}</li>
+  </ul>
+</div> -->
+
+<div *ngIf="isLoading">
+  <crem-loader></crem-loader>
+</div>
+<!-- <pre>{{ logOutput }}</pre> -->
+<div id="divTop"></div>
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <div id="dynamic-forms-container">
+    <div *ngIf="!isLoading" class="dynamic-forms-controls-wrapper">
+      <div class="controls-left">
+        <div *ngIf="isRenderForm">
+          <ng-container [ngSwitch]="form.get('objectType').value.toUpperCase()">
+            <h5 *ngSwitchCase="'LEASE'">Lease Abstract</h5>
+            <h5 *ngSwitchCase="'BUILDING'">Building Details</h5>
+            <h5 *ngSwitchCase="'CONTACT'">Contact Details</h5>
+            <h5 *ngSwitchDefault>Default Content</h5>
+          </ng-container>
+        </div>
+        <h5 *ngIf="!isRenderForm">Form - {{ form.get('formName').value }} ({{ form.get('objectType').value }})</h5>
+      </div>
+      <div class="controls-right">
+        <crem-button type="secondary" *ngIf="!isRenderForm" [matMenuTriggerFor]="AddSectionMenu">Add Section</crem-button>
+        <mat-menu #AddSectionMenu="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="ExistingSectionMenu"> Existing Section </button>
+          <button mat-menu-item [matMenuTriggerFor]="NewSectionMenu">  New Section </button>
+        </mat-menu>
+        <mat-menu #NewSectionMenu="matMenu">
+          <button mat-menu-item (click)="createNewSection(1)">1 Column</button>
+          <button mat-menu-item (click)="createNewSection(2)">2 Columns</button>
+          <button mat-menu-item (click)="createNewSection(0)">Widget</button>
+        </mat-menu>
+        <mat-menu class="existing-section-menu" #ExistingSectionMenu="matMenu" (click)="$event.stopPropagation()">
+          <form (click)="$event.stopPropagation()">
+            <cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchAvailableSectionsDataGrid($event)"></cs-search>
+            <dx-data-grid #availableSectionsGrid id="availableSectionsContainer"
+              [dataSource]="selectAvailableFormSections$ | async" [showColumnLines]="false" [showRowLines]="true"
+              [showBorders]="true" [rowAlternationEnabled]="true" keyExpr="formSectionID">
+              <dxo-load-panel [enabled]="true"></dxo-load-panel>
+              <dxo-selection [selectAllMode]="'true'" [showCheckBoxesMode]="'false'" mode="multiple"></dxo-selection>
+              <!-- <dxo-scrolling mode="virtual"></dxo-scrolling> -->
+              <dxi-column caption="Section Name" dataField="formSectionName" [alignment]="'left'"></dxi-column>
+            </dx-data-grid>
+            <crem-button type="primary" (click)="addSections()">Add Sections</crem-button>
+          </form>
+        </mat-menu>
+        <div class="actions">
+          <crem-button *ngIf="!isRenderForm" type="secondary" ariaLabel="Dynamic Form Settings" icon="faCog" (click)="$event.preventDefault()"></crem-button>
+        </div>
+        <div class="designModeForm" *ngIf="isRenderForm && !editMode">
+          <crem-button type="secondary" (click)="designModeClicked(); $event.preventDefault()">
+            <span>Design Mode</span>
+          </crem-button>
+        </div>
+        <div class="more">
+          <crem-button *ngIf="!editMode" type="secondary" (click)="close(); $event.preventDefault()">
+            <span>Close</span>
+          </crem-button>
+          <crem-button *ngIf="editMode" type="secondary" (click)="cancel(); $event.preventDefault()">
+            <span>Cancel</span>
+          </crem-button>
+        </div>
+        <div class="editForm" *ngIf="isRenderForm && !editMode">
+          <crem-button type="primary" (click)="editClicked(); $event.preventDefault()">
+            <span>Edit</span>
+          </crem-button>
+        </div>
+        <div class="saveForm" *ngIf="editMode || (!isRenderForm && !editMode)">
+          <crem-button type="primary" [disabled]="!form.valid || form.pristine" (click)="saveForm(); $event.preventDefault()">
+            <span>Save</span>
+          </crem-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dynamic-form-content">
+      <div class="row" *ngIf="selectFormSections$ | async as sections">
+        <div *ngFor="let section of sections" class="col-md-12">
+          <mango-dynamic-form-section [section]="section" [form]="form" [editMode]="editMode"> </mango-dynamic-form-section>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<crem-button *ngIf="!isLoading" class="scroll-to-top-button" type="primary"
+  (click)="scrollToTop(); $event.preventDefault()">
+  <span>Scroll to Top</span>
+</crem-button>

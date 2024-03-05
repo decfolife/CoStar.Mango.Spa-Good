@@ -28,10 +28,10 @@
         <dxo-show type="pop" [from]="{ scale: 0 }" [to]="{ scale: 1 }"></dxo-show>
         <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
       </dxo-animation>
-      <p class="restore" [id]="'restore'+ id" *ngFor="let content of popoverContent" [attr.aria-hidden]="!withAnimationOptionsVisible" [attr.aria-live]="withAnimationOptionsVisible ? 'assertive' : 'off'">
+      <p class="restore" [id]="'restore'+ id" *ngFor="let content of parsedPopoverContent" [attr.aria-hidden]="!withAnimationOptionsVisible" [attr.aria-live]="withAnimationOptionsVisible ? 'assertive' : 'off'">
         {{content}}
       </p>
     </dx-popover>
-
+ 
   </div>
 </div>

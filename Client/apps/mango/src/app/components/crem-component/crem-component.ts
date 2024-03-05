@@ -1,35 +1,44 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HeaderService } from '@mango/core-shared';
-import { BookmarkGroup, BreadCrumb, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
+import { BookmarkGroup, BreadCrumb, RenderFormHeaderData, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { searchResultsComponent } from '@quick-search/components/modal/search-results/search-results.component';
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookmarks/bookmarks.component';
 import { Observable, Subscription, combineLatest, of } from 'rxjs';
-import { delay, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { delay, filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { MangoAppFacade } from '../../+state/app/app.facade';
 import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
 import { GlobalSessionService } from '../../services/global-session.service';
+import {Renderer2} from '@angular/core';
+import { RenderFormHeaderComponent } from 'libs/forms-shared/src/lib/render-form-header/render-form-header.component';
 
 @Component({
   selector: 'mango-crem-component',
   templateUrl: './crem-component.html',
   styleUrls: ['./crem-component.scss'],
+  entryComponents: [RenderFormHeaderComponent]
 })
 export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
-  @ViewChild('cremBookmark', { static: false }) cremBookmarkComponent: BookmarksComponent;
+   @ViewChild('cremBookmark', { static: false }) cremBookmarkComponent: BookmarksComponent;
+  @ViewChild('appModule') appModule: ElementRef<HTMLDivElement>; 
+  
   navigationLinks: any = [];
   public navLinksFetched = false;
   toolbarModuleLinks: ToolbarModuleLink[];
   chipContent$: Observable<string> = this.facade.clientKey$.pipe(map(clientKey => `${clientKey} - ${environment.name}`));
   userAppType$: Observable<number> = this.facade.userInfo$.pipe(filter((userInfo) => !!userInfo), switchMap(userInfo => of(userInfo.userAppType)))
-  popoverContent: string[];
+  popoverContent: string;
   activeLink: string = null;
   crumbActiveLink: string = null;
   private subs: Subscription = new Subscription();
+
+  public headerDefaultHeight: number;
+  public showRenderFormPropertyHeader: boolean;
+  public renderFormHeaderData: RenderFormHeaderData;
 
   bookmarkGroups: BookmarkGroup[] = null;
   public delineator = '»';
@@ -42,14 +51,13 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     private bookmarksService: BookmarksService,
     public dialog: MatDialog,
     public facade: MangoAppFacade,
+    private renderer: Renderer2
   ) {
-    this.popoverContent = ['Backup File Name: E:RetailDemo_BackupsFULL_DEV_VP_RETAILDEMO_V05_20200930_020000.sqb',
-      'Database Restore Date: 2020-09-30 11:17:54',
-      ' Database Backup Date: 2020-09-30 02:00:50 '];
   }
 
   ngOnInit(): void {
     this.getToolbarModuleLinks();
+    this.getDatabaseRestoreInfo();
     this.loadLeftNavLinks()
     this.buildBreadCrumbs();
   }
@@ -58,8 +66,16 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     this.subs.add(
       combineLatest([this.facade.showSubLeftNav$, this.facade.moduleId$, this.facade.currentRenderFormDocumentParams$]).pipe(
         tap(_ => this.navLinksFetched = false),
-        switchMap(([showSubLeftNav, moduleId, url]) => !!showSubLeftNav ? this.leftNavService.getModuleNavigationLinksForRenderForm(url) : this.leftNavService.getModuleNavigationLinks(moduleId)),
-        filter(response => !!response),
+        switchMap(([showSubLeftNav, moduleId, url]) => {
+
+          if (!!showSubLeftNav) {
+            return this.leftNavService.getModuleNavigationLinksForRenderForm(url);
+          } else if (moduleId == 6) {
+            return this.leftNavService.getAdminModulesNavigationLinks(moduleId);
+          } else {
+            return this.leftNavService.getModuleNavigationLinks(moduleId);;
+          }
+        }),
         tap(response => {
             this.navLinksFetched = true;
             this.navigationLinks = response.data;
@@ -73,11 +89,27 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
       'ToogleBookmarkDrawer',
       this.openCloseBookmarkDrawer.bind(this)
     );
+
+    window.addEventListener(
+      'RenderFormShowPropertyHeader',
+      this.showRenderFormHeader.bind(this)
+      
+    );
+
+    this.updateHeight();
   }
 
   private getToolbarModuleLinks() {
     this.subs.add(this.headerService.getUserModules().subscribe({
       next: (res: any) => this.toolbarModuleLinks = res.data
+    }))
+  }
+
+  
+
+  private getDatabaseRestoreInfo(){
+    this.subs.add(this.headerService.getDBLastRestore().subscribe({
+      next: (res: any) => this.popoverContent = res.data
     }))
   }
 
@@ -121,6 +153,21 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   buildBreadCrumbs() {
+
+    // if the breadcrumbs get updated
+    // then update the activeLink accordingly
+    this.subs.add(
+    this.facade.breadcrumbs$.pipe(
+      map(breadcrumbs => {
+        if (!breadcrumbs || breadcrumbs.length === 0) {
+          return; 
+        }
+        const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1]; 
+        this.activeLink = lastBreadcrumb.activeLink; 
+      })
+    ).subscribe());
+
+    // populate breadcrumbs for the app
     this.crumbActiveLink = null;
     this.subs.add(this.router.events
       .pipe(
@@ -159,6 +206,27 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
           this.facade.updateGlobalSession(updatedGlobalSession)
         })
       ).subscribe());
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.updateHeight(); 
+  }
+  private showRenderFormHeader(event: CustomEvent) {
+    if (event.detail instanceof RenderFormHeaderData) {
+        this.renderFormHeaderData = event.detail;
+        this.showRenderFormPropertyHeader = this.renderFormHeaderData.isVisible;
+        this.headerDefaultHeight = !this.renderFormHeaderData.isVisible ? 115 : 240;
+        this.updateHeight();
+    }
+  } 
+
+  private updateHeight() {
+    if (this.appModule) {
+      const windowHeight = window.innerHeight;
+      const calculatedHeight = windowHeight - this.headerDefaultHeight;
+      this.renderer.setStyle(this.appModule.nativeElement, 'height', calculatedHeight + 'px');
+    }
   }
 
   ngOnDestroy(): void {

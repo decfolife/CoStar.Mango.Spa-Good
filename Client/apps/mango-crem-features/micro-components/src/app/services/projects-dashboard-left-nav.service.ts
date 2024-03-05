@@ -42,4 +42,9 @@ export class ProjectsDashboardLeftNavService extends EndpointService {
     const url = `${environment.appUrls.leftNav}Navigation/GetSpaNavigationLinks`;
     return this.callHttpGet(url, 'GetToolbarModuleLinks')
   }
+
+  getAdminModulesNavigationLinks(moduleID: number): Observable<any> {
+    const url = `${environment.appUrls.leftNav}LeftNav/GetAdminModulesNavigationLinks/${moduleID}`;
+    return this.callHttpGet(url, 'GetAdminModulesNavigationLinks')
+  }
 }

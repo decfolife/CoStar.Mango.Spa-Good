@@ -86,8 +86,8 @@ export class IconComponent implements OnChanges, OnInit {
     /** @deprecated */
     // CSS Class, todo: check if being used
     this.iconClass = [`icon-${this.icon}`, `icon-${this.icon}-dims`];
-    if (this.icon !== null || this.icon !== undefined) {
-      this.iconArray = this.icon.split('-');
+    if (this.icon !== null && this.icon !== undefined) {
+      this.iconArray = this.icon.includes('-') ? this.icon.split('-') : [this.icon];
       this.iconCat = this.iconPath + this.iconArray[0];
     }
   }
@@ -99,7 +99,7 @@ export class IconComponent implements OnChanges, OnInit {
     if (this.pack === undefined){
       this.pack = 'solid';
     }
-    if(this.library === 'fontAwesome' || this.pack != undefined){
+    if (this.library === 'fontAwesome' && this.pack !== undefined && (this.icon !== null && this.icon !== undefined)) {
       this.getIcon();
     }
   }

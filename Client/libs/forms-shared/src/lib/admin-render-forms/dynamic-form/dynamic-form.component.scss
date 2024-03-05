@@ -1,0 +1,103 @@
+#dynamic-forms-container {
+  height: 100%;
+  overflow: hidden;
+  
+  .dynamic-forms-controls-wrapper {
+    width: 100% !important;
+    border-bottom: 1px solid #c5c5c5;
+    top: 0;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    & > div {
+      display: flex;
+      align-items: center;
+      z-index: 500;
+
+      &.controls-right {
+        margin-left: 20px;
+        .more,
+        .actions,
+        .editForm,
+        .designModeForm,
+        .saveForm {
+          margin-left: 8px;
+        }
+      }
+      &.controls-left {
+        margin: 0px;
+        h5 {
+          margin: 0px;
+        }
+      }
+      
+    }
+  }
+
+  div.dynamic-form-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+
+    .mat-card {
+      border: 1px solid #BFBFBF;
+      border-radius: 2px !important;
+      box-shadow: none !important;
+      margin-bottom: 24px !important;
+
+      .mat-card-header {
+        padding: 16px;
+        box-sizing: border-box;
+        border-bottom: 1px solid #bfbfbf;
+        color: #000000;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      mat-card-content.mat-card-content {
+        padding-top: 24px;
+        padding: 16px;
+
+        mat-form-field {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+
+.scroll-to-top-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+::ng-deep fa-icon{
+  cursor: pointer;
+}
+::ng-deep cs-search .mat-form-field {
+  width: 800px;
+}
+
+::ng-deep .mat-menu-panel.existing-section-menu {
+  max-width: 800px;
+}
+
+.drag-handle {
+  cursor: move;
+  display: inline-block;
+  margin-right: 10px; /* Adjust as needed */
+}

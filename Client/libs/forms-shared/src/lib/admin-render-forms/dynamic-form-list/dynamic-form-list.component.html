@@ -1,0 +1,59 @@
+<div id="dynamicForms-container">
+  <div class="dynamicForms-toolBar-wrapper">
+    <div class="controls-left">
+      <h3 class="title">Dynamic Forms List</h3>
+      <div class="searchdynamicForms">
+        <cs-search
+          #SearchBox
+          [placeholder]="'Search...'"
+          (changed)="searchDataGrid($event)"
+          class="searchdynamicForms-input"
+        ></cs-search>
+      </div>
+    </div>
+    <div class="controls-right">
+      <div class="clearFilters">
+        <crem-button type="secondary" class="clearFilters-btn">
+          <span
+            id="clearFilters"
+            (click)="clearAllFilters(); $event.preventDefault()"
+            >Clear Filters</span
+          >
+        </crem-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dynamicForms-dataGrid-wrapper">
+    <dx-data-grid
+      #DynamicFormsGrid
+      [dataSource]="forms$ | async"
+      [showBorders]="true"
+      [columnAutoWidth]="true"
+      [rowAlternationEnabled]="true"
+      [columnMinWidth]="10"
+      (onRowClick)="navigateToObject($event)"
+    >
+      <dxo-load-panel [enabled]="true"></dxo-load-panel>
+      <dxi-column dataField="formID" [alignment]="'left'" sortOrder="asc"></dxi-column>
+      <dxi-column dataField="formName"></dxi-column>
+      <dxi-column dataField="formTypeName"></dxi-column>
+      <dxi-column dataField="objectType"></dxi-column>
+      <dxi-column dataField="lastModifiedDate"></dxi-column>
+
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[50, 100]"
+        [showInfo]="true"
+      >
+      </dxo-pager>
+      <dxo-paging [pageSize]="50"> </dxo-paging>
+      <dxo-sorting [mode]="'multiple'"></dxo-sorting>
+    </dx-data-grid>
+  </div>
+</div>

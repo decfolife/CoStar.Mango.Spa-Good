@@ -1,0 +1,111 @@
+.footerRightControls {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    crem-button {
+        padding: 8px 0px 8px 8px;
+    }
+}
+.row{
+    margin-right: 0px;
+    margin-left: 0px;
+}
+.control-type-config {
+	display: flex;
+	flex-direction: column;
+	// height: 320px;
+	
+	.dropdown-controls {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin-bottom: 8px;
+
+		.controls-left {
+			display: flex;
+			flex-direction: row;
+
+			button, .dx-widget {
+				margin-right: 16px;
+			}
+		}
+
+		.controls-right {
+			display: flex;
+			flex-direction: row;
+			button, .dx-widget {
+				margin-left: 16px;
+			}
+		}
+	}
+
+
+	.values-grid-container {		
+		flex-grow: 1;
+		overflow: auto;
+		height: 320px;
+		margin-bottom: 16px;
+	}
+
+}
+.mat-card {
+    margin-bottom: 24px !important;
+    padding: 0px;
+
+    .mat-card-header {
+      padding: 16px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #bfbfbf;
+      color: #000000;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    mat-card-content.mat-card-content {
+      padding-top: 24px;
+      padding: 16px;
+
+      mat-form-field {
+        width: 100%;
+      }
+    }
+  }
+
+  ::ng-deep .mat-ink-bar {
+	background-color: #ec4a08 !important;
+	height: 3px !important;
+ }
+ .dx-tabs {
+	border: none;
+	border-bottom: #bfbfbf;
+	display: flex;
+
+	div.dx-tabs-wrapper {
+		background: #f5f5f5;
+		display: flex;
+		flex-grow: 1;
+
+		div.dx-tab {
+			padding: 16px;
+			background: #f5f5f5;
+			display: flex;
+			flex-grow: 1;
+			justify-content: center;
+
+			&.dx-tab-selected {
+				background: #ec4a08 ;
+				border-bottom: 3px solid #ec4a08;							    	
+				font-weight: bold;
+
+				&:after {
+					border: none;
+				}
+			}
+
+			&.dx-state-focused:after {
+				border-color: #c2c2c2;
+			}				
+		}
+	}		
+}

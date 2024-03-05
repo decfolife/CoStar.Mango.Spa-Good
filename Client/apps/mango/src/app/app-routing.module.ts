@@ -11,7 +11,7 @@ import {
   RouterModule,
   Routes,
 } from '@angular/router';
-import { MangoSubApps } from '@mango/data-models/lib-data-models';
+import { MangoSubApps, RenderFormHeaderData } from '@mango/data-models/lib-data-models';
 import { Observable, Subscription, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { MangoAppFacade } from './+state/app/app.facade';
@@ -421,7 +421,7 @@ const routes: Routes = [
       // ADMIN
       {
         path: 'admin',
-        data: { breadCrumb: { label: 'Admin', append: true, activeLink: 'Admin' } },
+        data: { moduleId: 6, breadCrumb: { label: 'Admin', append: true, activeLink: 'Admin' } },
         children: [
           {
             path: '',
@@ -431,7 +431,7 @@ const routes: Routes = [
               ).then((mod) => mod.AdminModule),
             data: {
               moduleId: 6,
-              currentSubApp: MangoSubApps.USER_MAINTENANCE,
+              currentSubApp: MangoSubApps.ADMIN,
               breadCrumb: { append: false }
             },
           },
@@ -443,7 +443,7 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               currentSubApp: MangoSubApps.USER_MAINTENANCE,
-              moduleId: null,
+              moduleId: 6,
               breadCrumb: { append: false }
             },
           },
@@ -455,7 +455,7 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               currentSubApp: MangoSubApps.SERVICE_ACCOUNTS,
-              moduleId: null,
+              moduleId: 6,
               breadCrumb: { append: false }
             },
           },
@@ -467,7 +467,7 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               currentSubApp: MangoSubApps.GROUP_MAINTENANCE,
-              moduleId: null,
+              moduleId: 6,
               breadCrumb: { append: false }
             },
           },
@@ -479,7 +479,7 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               currentSubApp: MangoSubApps.OBJECT_MAINTENANCE,
-              moduleId: null,
+              moduleId: 6,
               breadCrumb: { append: false }
             },
           },
@@ -491,9 +491,17 @@ const routes: Routes = [
               ).then((mod) => mod.IndexModule),
             data: {
               currentSubApp: MangoSubApps.PORTFOLIO_MAINTENANCE,
-              moduleId: null,
+              moduleId: 6,
               breadCrumb: { append: false }
             },
+          },
+          {
+            path: 'forms-maintenance',
+            loadChildren: () =>
+              import(
+                '@forms/mango-forms/mango-forms.module'
+              ).then((mod) => mod.MangoFormsModule),
+              data: {  currentSubApp: MangoSubApps.FORMS_MAINTENANCE, moduleId: 6, breadCrumb: { label: null, append: true } },
           },
         ]
       },
@@ -503,7 +511,6 @@ const routes: Routes = [
           import(
             '@forms/mango-forms/mango-forms.module'
           ).then((mod) => mod.MangoFormsModule),
-        data: { moduleId: null, breadCrumb: { label: null, append: false } },
       },
 
       // Auto-generated components below
@@ -566,10 +573,17 @@ export class AppRoutingModule {
       })
     );
   }
+  
+  raiseRenderFormShowPropertyHeader(){
+    const renderFormHeaderData = new RenderFormHeaderData(false, null);
+    const evt = new CustomEvent("RenderFormShowPropertyHeader", {detail: renderFormHeaderData});
+    window.dispatchEvent(evt);
+  }
 
   // Loading Indicator using the router
   private navigationInterceptor(e: RouterEvent) {
     if (e instanceof NavigationStart) {
+      this.raiseRenderFormShowPropertyHeader();
       this.facade.setLoading(true);
     }
     if (e instanceof NavigationEnd) {
