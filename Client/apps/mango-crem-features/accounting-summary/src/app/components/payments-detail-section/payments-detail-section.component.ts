@@ -125,7 +125,10 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     sessionStorage.setItem("paymentsGridStateKey", JSON.stringify(newState));
     const columnsState = this.paymentsDataGrid.instance.state().columns;
     for (let index = 0; index < columnsState.length; index++) {
+      columnsState[index].appendsCurrency = this.paymentsDataGrid.instance.columnOption(index, 'appendsCurrency');
       columnsState[index].caption = this.paymentsDataGrid.instance.columnOption(index, 'caption');
+      columnsState[index].usesLocalFormat = this.paymentsDataGrid.instance.columnOption(index, 'usesLocalFormat');
+      columnsState[index].usesFunctionalFormat = this.paymentsDataGrid.instance.columnOption(index, 'usesFunctionalFormat');
       columnsState[index].headerCellTemplate = 'amortizationHeader';
     }
     const columns = JSON.stringify(columnsState);

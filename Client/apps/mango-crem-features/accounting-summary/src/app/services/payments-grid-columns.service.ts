@@ -13,28 +13,68 @@ export class PaymentsGridColumnsService {
 
     columns.push(
       {
-        caption: 'Account Name', name: 'AccountName', dataField: 'glAccountName',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Account Name',
+        name: 'AccountName',
+        dataField: 'glAccountName',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'Event Name', name: 'EventName', dataField: 'glEventName',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Event Name',
+        name: 'EventName',
+        dataField: 'glEventName',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
       },
       {
-        caption: 'Payment Event Source', name: 'PaymentEventSource', dataField: 'paymentEventSource',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Payment Event Source',
+        name: 'PaymentEventSource',
+        dataField: 'paymentEventSource',
+        headerCellTemplate: 'amortizationHeader', 
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'Payment Frequency', name: 'PaymentFrequency', dataField: 'paymentFrequency',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Payment Frequency',
+        name: 'PaymentFrequency',
+        dataField: 'paymentFrequency',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'Start Date', name: 'StartDate', dataField: 'eventBeginDate', dataType:'date' ,format: dateFormat,
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Start Date',
+        name: 'StartDate',
+        dataField: 'eventBeginDate',
+        dataType:'date',
+        format: dateFormat,
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'End Date', name: 'EndDate', dataField: 'eventEndDate', dataType:'date', format: dateFormat,
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'End Date',
+        name: 'EndDate',
+        dataField: 'eventEndDate',
+        dataType:'date',
+        format: dateFormat,
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
         caption: 'Payment Amount',
@@ -43,6 +83,9 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         dataType: 'number',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'true',
+        usesFunctionalFormat: 'false',
         calculateCellValue: rowData => this.formattingService.localFormat(+rowData.recurringAmount, rowData.chargeCurrencyDecimalPrecision)
       },
       {
@@ -51,6 +94,9 @@ export class PaymentsGridColumnsService {
         dataField: 'chargeCurrency',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
         caption: `Accounting Event Amount (${currencyInfo[0].scheduleCurrency})`,
@@ -59,6 +105,9 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         dataType: 'number',
+        appendsCurrency: 'true',
+        usesLocalFormat: 'true',
+        usesFunctionalFormat: 'false',
         calculateCellValue: rowData => this.formattingService.localFormat(+rowData.targetAmountInPeriod, rowData.scheduleCurrencyDecimalPrecision)
       },
       {
@@ -68,6 +117,9 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
         calculateCellValue: rowData => rowData.isDirectCost ? 'Yes' : 'No'
       },
       {
@@ -77,6 +129,9 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
         caption: 'Is Prorated',
@@ -85,6 +140,9 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
         calculateCellValue: rowData => rowData.isProrated ? 'Yes' : 'No'
       },
       {
@@ -94,6 +152,9 @@ export class PaymentsGridColumnsService {
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
         calculateCellValue: rowData => rowData.isReasonablyCertain ? 'Yes' : 'No'
       },
       {
@@ -102,7 +163,10 @@ export class PaymentsGridColumnsService {
         dataField: 'recognitionCategoryGAAP',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
-        visible: false
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
         caption: 'Recognition Category (IFRS)',
@@ -110,7 +174,10 @@ export class PaymentsGridColumnsService {
         dataField: 'recognitionCategoryIFRS',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
-        visible: false
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
         caption: 'Payment Notes',
@@ -118,7 +185,10 @@ export class PaymentsGridColumnsService {
         dataField: 'glEventNotes',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
-        visible: false
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       }
     );
 

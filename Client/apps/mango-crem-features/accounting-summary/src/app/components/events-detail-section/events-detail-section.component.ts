@@ -206,7 +206,10 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     sessionStorage.setItem("eventsGridStateKey", JSON.stringify(newState));
     const columnsState = this.eventsDataGrid.instance.state().columns;
     for (let index = 0; index < columnsState.length; index++) {
+      columnsState[index].appendsCurrency = this.eventsDataGrid.instance.columnOption(index, 'appendsCurrency');
       columnsState[index].caption = this.eventsDataGrid.instance.columnOption(index, 'caption');
+      columnsState[index].usesLocalFormat = this.eventsDataGrid.instance.columnOption(index, 'usesLocalFormat');
+      columnsState[index].usesFunctionalFormat = this.eventsDataGrid.instance.columnOption(index, 'usesFunctionalFormat');
       columnsState[index].headerCellTemplate = 'amortizationHeader';
     }
     const columns = JSON.stringify(columnsState);

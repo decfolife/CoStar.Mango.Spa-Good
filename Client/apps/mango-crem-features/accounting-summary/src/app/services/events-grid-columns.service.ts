@@ -26,12 +26,24 @@ export class EventsGridColumnsService {
         allowReordering: false,
         allowResizing: false,
         fixed: true,
-        fixedPosition: 'right'
+        fixedPosition: 'right',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: '#', dataField: 'scheduleIndex',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
-        allowHiding: false, allowReordering: false, allowResizing: false, width: 30, alignment:'center'
+        caption: '#',
+        dataField: 'scheduleIndex',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        allowHiding: false,
+        allowReordering: false,
+        allowResizing: false,
+        width: 30,
+        alignment:'center',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
         caption: 'Is Published', 
@@ -39,42 +51,93 @@ export class EventsGridColumnsService {
         headerCellTemplate: 'amortizationHeader', 
         cellTemplate: 'pointer',
         visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
         calculateCellValue: rowData => rowData.isPublished ? 'Yes' : 'No'
       },
       {
-        caption: 'Measure Event', name: 'MeasureEvent', dataField: 'measureEvent',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Measure Event',
+        name: 'MeasureEvent',
+        dataField: 'measureEvent',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'Status', name: 'JEStatus', dataField: 'jeStatus',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Status',
+        name: 'JEStatus',
+        dataField: 'jeStatus',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'JE Profile', name: 'JEProfile', dataField: 'journalEntryProfileName',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'JE Profile',
+        name: 'JEProfile',
+        dataField: 'journalEntryProfileName',
+        headerCellTemplate: 'amortizationHeader', 
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'Begin Date', dataField: 'beginDate', dataType:'date' ,format: dateFormat,
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'Begin Date',
+        dataField: 'beginDate',
+        dataType:'date',
+        format: dateFormat,
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'End Date', dataField: 'endDate', dataType:'date', format: dateFormat,
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+        caption: 'End Date',
+        dataField: 'endDate',
+        dataType:'date',
+        format: dateFormat,
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'Term (Years)', dataField: 'term',
+        caption: 'Term (Years)',
+        dataField: 'term',
         alignment: 'right',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
         calculateCellValue: rowData => (Math.round(rowData.term * 10000) / 10000).toFixed(2)
       },
       {
-        caption: 'Payment Timing', dataField: 'paymentTiming',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer', visible: false
+        caption: 'Payment Timing',
+        dataField: 'paymentTiming',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       },
       {
-        caption: 'Compound Frequency', dataField: 'compoundFrequencyType',
-        headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer', visible: false,
-
+        caption: 'Compound Frequency',
+        dataField: 'compoundFrequencyType',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       }
     );
 
@@ -84,16 +147,22 @@ export class EventsGridColumnsService {
       columns.push({
         caption: 'Days In Term',
         dataField: 'daysInTerm',
-        format: value => this.formattingService.formatNumber(+value, 0),
         headerCellTemplate: 'amortizationHeader',
-        cellTemplate: 'pointer'
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: value => this.formattingService.formatNumber(+value, 0)
       });
     } else {
       columns.push({
         caption: '# of Periods',
         dataField: 'periods',
         headerCellTemplate: 'amortizationHeader',
-        cellTemplate: 'pointer'
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false'
       });
     }
 
@@ -101,18 +170,24 @@ export class EventsGridColumnsService {
       {
         caption: 'Total Amount (' + currencyInfo.localCurrency + ')',
         dataField: 'totalAmount',
-        format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
         headerCellTemplate: 'amortizationHeader',
-        cellTemplate: 'pointer'
+        cellTemplate: 'pointer',
+        appendsCurrency: 'true',
+        usesLocalFormat: 'true',
+        usesFunctionalFormat: 'false',
+        format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
       });
 
     const operatingColumns = [
       {
         caption: 'Adjustment',
         dataField: 'adjustmentAmount',
-        format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
         headerCellTemplate: 'amortizationHeader',
-        cellTemplate: 'pointer'
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'true',
+        usesFunctionalFormat: 'false',
+        format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
       },
       {
         caption: portfolioSettings.leaseRecognitionCalendarID != 1
@@ -125,30 +200,41 @@ export class EventsGridColumnsService {
           this.formattingService.formatNumber(+value, 14) :
           this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
         headerCellTemplate: 'amortizationHeader',
-        cellTemplate: 'pointer'
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'true',
+        usesFunctionalFormat: 'false'  
       }
     ],
-
       capitalColumns = [
         {
           caption: 'Discount Rate',
           dataField: 'discountRateDisplay',
           headerCellTemplate: 'amortizationHeader',
-          cellTemplate: 'pointer'
+          cellTemplate: 'pointer',
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false'
         },
         {
           caption: 'Present Value (' + currencyInfo.localCurrency + ')',
           dataField: 'presentValue',
-          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
           headerCellTemplate: 'amortizationHeader',
-          cellTemplate: 'clickable'
+          cellTemplate: 'clickable',
+          appendsCurrency: 'true',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
         },
         {
           caption: 'FMV',
           dataField: 'fmv',
-          format: value => this.formattingService.fmvFormat(+value),
           headerCellTemplate: 'amortizationHeader',
-          cellTemplate: 'pointer'
+          cellTemplate: 'pointer',
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: value => this.formattingService.fmvFormat(+value)
         }
       ],
 
@@ -157,14 +243,20 @@ export class EventsGridColumnsService {
           caption: 'Discount Rate',
           dataField: 'discountRateDisplay',
           headerCellTemplate: 'amortizationHeader',
-          cellTemplate: 'pointer'
+          cellTemplate: 'pointer',
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false'
         },
         {
           caption: 'Present Value (' + currencyInfo.localCurrency + ')',
           dataField: 'presentValue',
-          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
           headerCellTemplate: 'amortizationHeader',
-          cellTemplate: 'clickable'
+          cellTemplate: 'clickable',
+          appendsCurrency: 'true',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
         },
       ];
 
@@ -189,9 +281,12 @@ export class EventsGridColumnsService {
         columns.push({
           caption: 'Asset Amortization',
           dataField: 'assetAmortization',
-          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
           headerCellTemplate: 'amortizationHeader',
-          cellTemplate: 'pointer'
+          cellTemplate: 'pointer',
+          appendsCurrency: 'false',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
         });
         break;
       case 3: // Operating 842
@@ -208,14 +303,20 @@ export class EventsGridColumnsService {
             caption: 'Level Expense (' + currencyInfo.functionalCurrency + ')',
             dataField: 'functionalLevelExpense',
             headerCellTemplate: 'amortizationHeader',
-            cellTemplate: 'pointer'
+            cellTemplate: 'pointer',
+            appendsCurrency: 'true',
+            usesLocalFormat: 'false',
+            usesFunctionalFormat: 'false'
           });
         } else {
           columns.push({
             caption: 'Level Expense (' + currencyInfo.localCurrency + ')',
             dataField: 'levelExpense',
             headerCellTemplate: 'amortizationHeader',
-            cellTemplate: 'pointer'
+            cellTemplate: 'pointer',
+            appendsCurrency: 'true',
+            usesLocalFormat: 'false',
+            usesFunctionalFormat: 'false'
           });
         }
         break;
@@ -231,9 +332,12 @@ export class EventsGridColumnsService {
         columns.push({
           caption: 'Asset Amortization',
           dataField: 'assetAmortization',
-          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
           headerCellTemplate: 'amortizationHeader',
-          cellTemplate: 'pointer'
+          cellTemplate: 'pointer',
+          appendsCurrency: 'false',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
         });
         break;
       case 5: // Operating (Lessor)
@@ -253,29 +357,57 @@ export class EventsGridColumnsService {
       dataField: 'currencyDisplay',
       headerCellTemplate: 'amortizationHeader',
       cellTemplate: 'pointer',
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false'
     });
     columns.push({
-      caption: 'Reporting Exception', dataField: 'isReportingException',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+      caption: 'Reporting Exception',
+      dataField: 'isReportingException',
+      headerCellTemplate: 'amortizationHeader',
+      cellTemplate: 'pointer', 
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
       calculateCellValue: rowData => rowData.isReportingException ? 'Yes' : 'No'
     });
     columns.push({
-      caption: 'Charge Type', dataField: 'isIncome',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+      caption: 'Charge Type',
+      dataField: 'isIncome',
+      headerCellTemplate: 'amortizationHeader',
+      cellTemplate: 'pointer',
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
       calculateCellValue: rowData => rowData.isIncome ? 'Income' : 'Expense'
     });
     columns.push({
-      caption: 'Impaired', dataField: 'isImpaired',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer',
+      caption: 'Impaired',
+      dataField: 'isImpaired',
+      headerCellTemplate: 'amortizationHeader',
+      cellTemplate: 'pointer',
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
       calculateCellValue: rowData => rowData.isImpaired ? 'Yes' : 'No'
     });
     columns.push({
-      caption: 'Comments', dataField: 'comments',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+      caption: 'Comments',
+      dataField: 'comments',
+      headerCellTemplate: 'amortizationHeader',
+      cellTemplate: 'pointer',
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
     });
     columns.push({
-      caption: 'Last Modified By', dataField: 'lastModifiedBy',
-      headerCellTemplate: 'amortizationHeader', cellTemplate: 'pointer'
+      caption: 'Last Modified By',
+      dataField: 'lastModifiedBy',
+      headerCellTemplate: 'amortizationHeader',
+      cellTemplate: 'pointer',
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
     });
     columns.push({
       caption: 'Last Modified Date',
@@ -283,21 +415,30 @@ export class EventsGridColumnsService {
       dataType:'date',
       format: dateFormat +' HH:mm:ss',
       headerCellTemplate: 'amortizationHeader',
-      cellTemplate: 'pointer'
+      cellTemplate: 'pointer',
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false'
     });
     columns.push({
       caption: 'Batch ID',
       dataField: 'batchID',
       headerCellTemplate: 'amortizationHeader',
       cellTemplate: 'pointer',
-      visible: false
+      visible: false,
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false'
     });
     columns.push({
       caption: 'Source Import ID',
       dataField: 'sourceImportID',
       headerCellTemplate: 'amortizationHeader',
       cellTemplate: 'pointer',
-      visible: false
+      visible: false,
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false'
     });
 
     columns.forEach(c => {
@@ -311,23 +452,33 @@ export class EventsGridColumnsService {
     columns.push({
       caption: 'Direct Costs (' + currencyInfo.localCurrency + ')',
       dataField: 'directCosts',
-      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
       headerCellTemplate: 'amortizationHeader',
-      cellTemplate: 'pointer'
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'true',
+      usesFunctionalFormat: 'false',
+      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
     });
     columns.push({
       caption: 'Beginning Asset Balance (' + currencyInfo.localCurrency + ')',
       dataField: 'openingAssetBalance',
-      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
       headerCellTemplate: 'amortizationHeader',
-      cellTemplate: 'pointer'
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'true',
+      usesFunctionalFormat: 'false',
+      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
     });
     columns.push({
       caption: 'Beginning Liability Balance (' + currencyInfo.localCurrency + ')',
       dataField: 'openingLiabilityBalance',
-      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
       headerCellTemplate: 'amortizationHeader',
-      cellTemplate: 'pointer'
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'true',
+      usesFunctionalFormat: 'false',
+      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
+
     });
   }
 
@@ -335,23 +486,33 @@ export class EventsGridColumnsService {
     columns.push({
       caption: 'Direct Costs (' + currencyInfo.functionalCurrency + ')',
       dataField: 'functionalDirectCosts',
-      format: value => this.formattingService.functionalFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision),
       headerCellTemplate: 'amortizationHeader',
-      cellTemplate: 'pointer'
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'true',
+      format: value => this.formattingService.functionalFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision),
+
     });
     columns.push({
       caption: 'Beginning Asset Balance (' + currencyInfo.functionalCurrency + ')',
       dataField: 'functionalOpeningAssetBalance',
-      format: value => this.formattingService.functionalFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision),
       headerCellTemplate: 'amortizationHeader',
-      cellTemplate: 'pointer'
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'true',
+      format: value => this.formattingService.functionalFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision)
     });
     columns.push({
       caption: 'Beginning Liability Balance (' + currencyInfo.localCurrency + ')',
       dataField: 'openingLiabilityBalance',
-      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
       headerCellTemplate: 'amortizationHeader',
-      cellTemplate: 'pointer'
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'true',
+      usesFunctionalFormat: 'false',
+      format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
     });
   }
 }
