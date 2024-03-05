@@ -1,30 +1,30 @@
 version: '3.9'
 
 services:
-  # mango-spa:
-  #   image: ${DOCKER_REGISTRY-}mango-spa
-  #   container_name: mango-spa
-  #   build:
-  #     context: Client
-  #     dockerfile: apps/mango/Dockerfile
-  #   environment:
-  #     - name=LOCAL
-  #   ports:
-  #     - 8084:8000
-  #   restart: "no"
-
-  mango-spa-server:
-    image: ${DOCKER_REGISTRY-}mango-spa-server
-    container_name: mango-spa-server
+  mango-spa:
+    image: ${DOCKER_REGISTRY-}mango-spa
+    container_name: mango-spa
     build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-          FEED_URL: http://tfs.corp.virtualpremise.com:8080/tfs/DefaultCollection/CoStar.Mango/_packaging/Costar.Mango.BuildingBlocks/nuget/v3/index.json
-          FEED_ACCESSTOKEN: 4mc7thegnahwhbewkrbmfnjsgrvqbqmfvcer2sumgq3wa4tqdfrq
+      context: Client
+      dockerfile: apps/mango/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=local
+      - name=LOCAL
     ports:
-      - 8085:8000
+      - 8084:8000
     restart: "no"
+
+  # mango-spa-server:
+  #   image: ${DOCKER_REGISTRY-}mango-spa-server
+  #   container_name: mango-spa-server
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     args:
+  #         FEED_URL: http://tfs.corp.virtualpremise.com:8080/tfs/DefaultCollection/CoStar.Mango/_packaging/Costar.Mango.BuildingBlocks/nuget/v3/index.json
+  #         FEED_ACCESSTOKEN: 4mc7thegnahwhbewkrbmfnjsgrvqbqmfvcer2sumgq3wa4tqdfrq
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=local
+  #   ports:
+  #     - 8085:8000
+  #   restart: "no"
   
