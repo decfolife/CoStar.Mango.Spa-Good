@@ -60,7 +60,7 @@
           [(value)]="firstName"
           [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'First Name' }"
-          (onValueChanged)="updateFlag()"
+          (onInput)="updateFlag()"
         ></dx-text-box>
       </div>
       <div class="lastName">
@@ -69,7 +69,7 @@
           [(value)]="lastName"
           [disabled]="operation == 'ETU'? true : false"
           [inputAttr]="{ 'aria-label': 'Last Name' }"
-          (onValueChanged)="updateFlag()"
+          (onInput)="updateFlag()"
         ></dx-text-box>
       </div>
     </div>
@@ -81,7 +81,7 @@
         [(value)]="emailId"
         [disabled]="operation == 'ETU'? true : false"
         [inputAttr]="{ 'aria-label': 'Name' }"
-        (onValueChanged)="updateFlag()"
+        (onInput)="updateFlag()"
       ></dx-text-box>
   </div>
   <div class="aet-email-shared" *ngIf="operation !== Operations.AC">

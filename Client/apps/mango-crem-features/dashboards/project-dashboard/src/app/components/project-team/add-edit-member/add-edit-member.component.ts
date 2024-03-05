@@ -366,6 +366,20 @@ export class AddEditMemberComponent implements OnInit {
     this.updateContactData.contactLastName = this.lastName;
     this.updateContactData.contactEmail = this.emailId;
 
+    this.subs.push(this.dashboardService.updateProjectContact(this.updateContactData).subscribe(
+      (res:any) => {
+        this.applySaveButtonDisabled = false;
+        this.changesMade = false;
+        if(!!res && res.success) {
+          this.reloadMainGrid = true;
+        } else {
+          this.dialogService.alert('Add Project Contact', `There was an issue Adding Project Contact, Please try again later.`, 'OK');
+        }
+        this.closeModal();
+      },
+      (error: any) => console.log("Error occurred while Adding Project Contact.", error),
+      () => {}
+    ));
   }
 
   getTitle(operation) {

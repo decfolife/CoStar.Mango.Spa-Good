@@ -7,7 +7,7 @@ import { TaskApprovalDto } from '../models/task-approval';
 import { UserSelectedFilters } from '../models';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { AssignTasks, Team, TeamMemUpdate, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
+import { AssignTasks, Team, TeamMemUpdate, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
 import notify from 'devextreme/ui/notify';
 
 @Injectable()
@@ -200,9 +200,9 @@ export class DashboardService  extends EndpointService{
     return this.callHttpPost(url, 'addtemporaryuser', temporaryUser);
   }
 
-  updateProjectContact(temporaryUser: UpdateProjectTeamMember) {
+  updateProjectContact(projectContact: UpdateContact) {
     const url = `${environment.appUrls.projects}updateprojectcontact`;
-    return this.callHttpPost(url, 'updateprojectcontact', temporaryUser);
+    return this.callHttpPost(url, 'updateprojectcontact', projectContact);
   }
 
   assignTasks(memberTasks: AssignTasks) {
