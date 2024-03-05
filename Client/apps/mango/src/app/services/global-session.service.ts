@@ -3,7 +3,6 @@ import { BreadCrumb, V06Breadcrumb } from "@mango/data-models/lib-data-models";
 
 @Injectable()
 export class GlobalSessionService {
-
     static generateMangoBreadcrumbs(v06Breadcrumbs: V06Breadcrumb[]): BreadCrumb[] {
         return v06Breadcrumbs
             .filter((v06Breadcrumb: V06Breadcrumb) => v06Breadcrumb.DisplayTxt && v06Breadcrumb.LinkTxt)
