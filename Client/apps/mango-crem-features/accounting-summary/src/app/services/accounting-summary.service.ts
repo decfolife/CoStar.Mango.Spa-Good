@@ -18,6 +18,8 @@ export class AccountingSummaryService extends EndpointService {
   private navPageId: number
   titleLeaseInfoSubject = new Subject<any>();
   preferenceSavePendingMessage = " - You have unsaved preference changes.";
+  isLocked: boolean;
+  isArchived: boolean;
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -290,4 +292,21 @@ export class AccountingSummaryService extends EndpointService {
       closeOnClick: true,
     });
   }
+
+  setIsLocked(isLocked: boolean) {
+    this.isLocked = isLocked;
+  }
+
+  setIsArchived(isArchived: boolean) {
+    this.isArchived = isArchived;
+  }
+
+  getIsLocked() {
+    return this.isLocked;
+  }
+
+  getIsArchived() {
+    return this.isArchived;
+  }
+
 }

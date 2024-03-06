@@ -55,19 +55,11 @@
                     <div class="value-popup">{{ jeProcessingPopupData.journalEntryProfileName }}</div>
                 </div>
             </div>
-        </div>
-        <div class="show-jounal-entry-section" *ngIf="showPreviewButton"> 
-            <crem-button
-                [id]="accountingSummaryService.getId(componentName ,'show-jounal-entry','button')"
-                (click)="previewJournalEntryClick()"
-                type="primary"
-                class="je-primary-button"
-                >Preview Journal Entry</crem-button>
-        </div>   
+        </div>  
         <div class="no-je-profile-selected" *ngIf="showNoJeProfileSelected">
             No Journal Entry Profile Selected
         </div>
-        <div id="section-two" [ngClass]="calloutClass" *ngIf="showJournalEntries">
+        <div id="section-two" [ngClass]="calloutClass" *ngIf="showJournalEntries || showActionButton">
             <div class="custom-col metric-label"><strong>Debits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
             <div class="custom-col metric-label"><strong>Credits: </strong>{{ formattingService.localFormat(getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>
             <div class="custom-col metric-label"><strong>Variance: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit - getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>   

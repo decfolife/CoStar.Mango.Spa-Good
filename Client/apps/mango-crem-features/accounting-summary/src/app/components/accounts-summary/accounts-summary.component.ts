@@ -212,6 +212,9 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
         this.isLocked = this.leaseInfoResponse.lockedReason != null;
         this.isArchived = !this.leaseInfoResponse.isActive;
 
+        this.accountingSummaryService.setIsLocked(this.isLocked);
+        this.accountingSummaryService.setIsArchived(this.isArchived);
+
         //send data to the title lease info subject so that the title component gets updated. This will save an extra api call to getLeaseInfo.
         const titleLeaseInfo = {
           leaseName: this.leaseInfoResponse.objectName,
