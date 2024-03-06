@@ -263,7 +263,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     if (!this.portfolioSettings.functionalCurrencyEnabled && gridDataRow.levelExpense < 0) {
       gridDataRow.levelExpense = 'N/A';
     } else {
-      gridDataRow.levelExpense = this.formatService.functionalFormat(gridDataRow.functionalLevelExpense, gridDataRow.localCurrencyDecimalPrecision);
+      gridDataRow.levelExpense = this.formatService.localFormat(gridDataRow.levelExpense, gridDataRow.localCurrencyDecimalPrecision);
     }
     gridDataRow.periods = gridDataRow.periods.toFixed(2);
   }
