@@ -1,23 +1,22 @@
-@use 'apps/mango/src/assets/styles/colors.scss' as colors;
-@use "../../../../../common/src/styles/" as *;
+@use "styles" as *;
 
 ::ng-deep {
 
   .footerRightControls {
-      display: flex;
-  
-      crem-button {
-        padding: 8px;
-      }
+    display: flex;
+
+    crem-button {
+      padding: 8px;
     }
+  }
 
   .dx-datebox .dx-texteditor-buttons-container {
     display: none;
   }
 
-  .dayOfWeek{
+  .dayOfWeek {
     display: flex;
     justify-content: center;
     align-items: center;
-}
+  }
 }

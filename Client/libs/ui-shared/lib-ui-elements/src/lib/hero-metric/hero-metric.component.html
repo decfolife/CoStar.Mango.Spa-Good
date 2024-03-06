@@ -16,18 +16,19 @@
       <div class="sidekick-value" [ngClass]="valColor">
         <div [ngSwitch]="valDirection">
           <div *ngSwitchCase="'arrows-brand-up'" class="arrows-brand-up">
-            <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 16 16" width="8px" [attr.fill]="fill">
-              <path d="M 6.989 20.174 L 9.011 20.174 L 9.011 8.052 L 14.566 13.608 L 16 12.174 L 8 4.174 L 0 12.174 L 1.437 13.608 L 6.989 8.052 Z" fill-rule="evenodd" />
-            </svg>
+            <crem-icon
+              icon="faArrowUp">
+            </crem-icon>
           </div>
+
           <div *ngSwitchCase="'arrows-brand-down'" class="arrows-brand-down">
-            <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 16 16" width="8px" [attr.fill]="fill">
-              <path d="M 6.993 4.475 L 9.008 4.475 L 9.008 16.564 L 14.549 11.023 L 15.979 12.453 L 8.001 20.432 L 0.022 12.453 L 1.453 11.023 L 6.993 16.564 Z"  fill-rule="evenodd" />
-            </svg>
+            <crem-icon
+              icon="faArrowDown">
+            </crem-icon>
           </div>
+          
         </div>
         {{ metric.sidekick.metricValue }}
-        <!-- <div class="sidekick-value" *ngIf="sidekickMetricB">{{sidekickMetricB}}</div> -->
       </div>
     </div>
   </mat-card-content>

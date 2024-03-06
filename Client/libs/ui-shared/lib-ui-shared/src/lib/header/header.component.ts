@@ -36,6 +36,7 @@ export class HeaderComponent implements OnInit {
   searchModules: module[];
   ImageUrl$: Observable<string>;
   private subs: Subscription[] = [];
+  private isDateCalcOpen: boolean = false
 
   constructor(
     public dialog: MatDialog,
@@ -139,13 +140,23 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  public showDateCalculatorDialog() {
+  public showDateCalculatorDialog(): void {
+    if (this.isDateCalcOpen) {
+      return;
+    };
+
+    this.isDateCalcOpen = true;
 
     let dialogRef = this.dialog.open(DateCalculatorComponent, {
       hasBackdrop: false,
       height: '350px',
       width: '500px',
     });
+
+    this.subs.push(
+      dialogRef.afterClosed().subscribe(() => {
+        this.isDateCalcOpen = false;
+      }));
   }
 
   ngOnDestroy() {

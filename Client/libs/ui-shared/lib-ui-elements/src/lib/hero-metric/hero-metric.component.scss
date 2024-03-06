@@ -1,9 +1,9 @@
-@use 'apps/mango/src/assets/styles/colors.scss';
-@import "../assets/styles/crem-lib.scss";
+@use "styles" as *;
 
 crem-metric {
+  
   mat-card.mat-card {
-    border: $stdBorder;
+    @include costar(border, gray04);
     border-radius: 2px !important;
     box-shadow: none !important;
     padding: 0px !important;
@@ -17,9 +17,9 @@ crem-metric {
     mat-card-header.mat-card-header
     div.mat-card-header-text
     mat-card-title.mat-card-title {
-    font-size: 16px !important;
-    font-family: Helvetica, 'system-ui', sans-serif;
-    font-weight: 400;
+    @include costar(font-size, body);
+    @include costar(font-family, body);
+    @include costar(font-weight, light);
     text-transform: capitalize !important;
   }
 
@@ -27,8 +27,8 @@ crem-metric {
     mat-card-header.mat-card-header
     div.mat-card-header-text
     mat-card-subtitle.mat-card-subtitle.sub-metric {
-    font-size: 14px;
-    font-family: $font-family-brand;
+    font-size: $font-size-14;
+    @include costar(font-family, body);
   }
 
   mat-card.mat-card
@@ -52,8 +52,8 @@ crem-metric {
   }
 
   mat-card.mat-card mat-card-content.mat-card-content {
-    background: #fcfcfc;
-    padding: $dblPadding;
+    @include costar (background, gray07);
+    @include costar(padding, 4);
   }
 
   mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
@@ -68,9 +68,9 @@ crem-metric {
     margin: 0px;
     display: flex;
     flex-direction: column;
-    font-family: Helvetica, 'system-ui', sans-serif;
+    @include costar(font-family, body);
     text-transform: capitalize !important;
-    font-size: 14px !important;
+    font-size: $font-size-14 !important;
   }
 
   mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
@@ -80,15 +80,16 @@ crem-metric {
     align-items: center;
     padding: 0px;
     margin: 0;
-    background: colors.$white;
+    @include costar(background, light);
+
   }
 
   mat-card.mat-card.costar-hero-metric-card
     mat-card-content.mat-card-content
     .hero-value {
-    color: colors.$color-neutral-black;
-    font-family: Helvetica, 'System-ui', sans-serif;
-    font-size: 32px;
+    @include costar(color, dark);
+    @include costar(font-family, body);
+    @include costar(font-size, display-3);
     line-height: 32px;
     margin: 8px 0px;
   }
@@ -100,7 +101,7 @@ crem-metric {
     flex-direction: column;
     justify-content: flex-start;
     align-content: center;
-    margin-left: $dblPadding;
+    @include costar(margin-left, 4);
   }
 
   mat-card.mat-card.costar-hero-metric-card
@@ -109,24 +110,24 @@ crem-metric {
     .sidekick-value {
     border-radius: 2px;
     font-size: $font-size-14;
-    font-family: $font-family-brand;
+    @include costar(font-family, body);
     text-align: center;
     padding: 0 4px;
     margin: 0px;
     &.green {
-      border: 1px solid $color-brand-green !important;
+      @include costar(border, success, $important: true);
       background: transparent !important;
-      color: colors.$color-brand-green !important;
+      @include costar(color, success, $important: true);
     }
     &.red {
-      border: 1px solid $color-brand-red !important;
+      @include costar (border, danger, $important: true);
       background: transparent !important;
-      color: colors.$color-brand-red !important;
+      @include costar(color, danger, $important: true);
     }
     &.gray {
-      border: 1px solid $color-neutral-dark !important;
+      @include costar(border, gray03, $important: true);
       background: transparent !important;
-      color: colors.$mediumDarkGray !important;
+      @include costar(color, gray03, $important: true);
     }
   }
   crem-icon {
@@ -134,6 +135,7 @@ crem-metric {
     top: 4px;
     left: 2px;
   }
+
   mat-card.mat-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
     margin: 0px;
     height: 14px;
@@ -163,20 +165,21 @@ crem-metric {
     mat-card-subtitle.mat-card-subtitle
     span {
     display: inline-block;
-    margin-right: $dblPadding;
+    @include costar(margin-right, 4);
   }
 
   mat-card.mat-card.hero mat-card-header.mat-card-header fa-icon {
     position: absolute;
-    bottom: $dblPadding;
-    right: $dblPadding;
-    color: colors.$color-neutral-medium;
+    @include costar(bottom, 4);
+    @include costar(right, 4);
+    @include costar(color, gray04);
     cursor: pointer;
   }
 
   mat-card.mat-card.hero.object-hero {
     border: 0px;
-    border-left: $stdBorder;
+    @include costar(border-left, gray04);
+
     display: flex;
     align-content: center;
     align-items: center;
@@ -203,14 +206,10 @@ crem-metric {
     max-width: 100%;
     width: fit-content !important;
     position: relative;
-    background: colors.$white !important;
+    @include costar(background, light, $important: true);
     box-shadow: 1px 1px 3px !important;
     border-radius: 2px !important;
   }
-  // button.mat-icon-button.infobutton{
-  //   width: 13px !important;
-  //   height: 13px !important;
-  // }
 
   button.mat-icon-button {
     height: 18px;
@@ -228,26 +227,20 @@ crem-metric {
     border: none !important;
   }
   .dx-button .fa-icon {
-    color: colors.$color-neutral-medium;
+    @include costar(color, gray04);
   }
-  // .hero-tooltip.dx-template-wrapper {
-  //   background: white;
-  //   font-family: helvetica;
-  //   font-size: 13px;
-  //   box-shadow: 1px 2px 5px #000 !important;
-  //   padding: 8px;
-  //   border-radius: 4px;
-  // }
 
   mat-card.mat-card.costar-hero-metric-card
     mat-card-footer.mat-card-footer
     mat-card-subtitle.mat-card-subtitle {
-    color: grey;
+    @include costar(color, gray03);
     display: inline-block;
-    font-family: Helvetica, 'system-ui', sans-serif !important;
-    font-size: 14px;
+    @include costar(font-family, body, $important: true,);
+
+    font-size: $font-size-14;
     line-height: 14px;
-    font-weight: 400;
+    @include costar(font-weight, light);
+
     margin: 0 !important;
     text-transform: capitalize;
   }
@@ -255,11 +248,11 @@ crem-metric {
     mat-card-header.mat-card-header
     div.mat-card-header-text
     mat-card-title.mat-card-title {
-    font-size: 16px;
+    @include costar(font-size, body);
     line-height: 16px;
-    font-family: Helvetica, 'system-ui', sans-serif;
-    color: colors.$mediumDarkGray;
-    font-weight: 400;
+    @include costar(font-family, body);
+    @include costar(color, gray03);
+    @include costar(font-weight, light);
     text-transform: capitalize !important;
     margin: 0 16px 0 0 !important;
   }
@@ -284,10 +277,10 @@ crem-metric {
     mat-card-header.mat-card-header
     div.mat-card-header-text
     mat-card-title.mat-card-title {
-    font-size: 16px;
-    font-family: Helvetica, 'system-ui', sans-serif;
-    color: #808080 !important;
-    font-weight: 400;
+    @include costar(font-size, body);
+    @include costar(font-family, body);
+    @include costar(color, gray03);
+    @include costar(font-weight, light);
     text-transform: capitalize !important;
     margin-bottom: 0px !important;
   }
@@ -302,10 +295,6 @@ crem-metric {
 }
 
 div.arrows-brand-up, div.arrows-brand-down {
-  width: 16px;
-  height: 16px;
-
-  svg path {
-    transform: translateY(-4px);
-  }
+  width: 20px;
+  height: 20px;
 }

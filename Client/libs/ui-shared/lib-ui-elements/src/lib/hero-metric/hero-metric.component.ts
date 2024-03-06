@@ -31,6 +31,7 @@ export class HeroMetricComponent {
     if (valIndicator[0] === 'positive') {
       this.valColor = 'green';
       this.fill = '#017B30';
+
     } else if (valIndicator[0] === 'negative') {
       this.valColor = 'red';
       this.fill = '#CF0201';
