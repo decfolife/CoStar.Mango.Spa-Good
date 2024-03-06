@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MemberInfo, ProjectTeamMember, RemoveMember, RemoveTeamMembers } from '@mango/data-models/lib-data-models';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { of } from 'rxjs/internal/observable/of';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
@@ -33,6 +33,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   userAccessLevel: number;
   subs: Subscription[] = [];
   projectsPrivateSetting: number;
+  addTempUserSetting: number
   contactIds: number[] = [];
 
   constructor(private dashboardService: DashboardService, 
@@ -43,7 +44,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.getProjectsPrivateSetting();
+    this.getClientPreferences();
 
     this.subs.push(this.route.queryParams.pipe(
       filter(params => !!params && !!params.oid),
@@ -234,20 +235,21 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe);
   }
 
-  private getProjectsPrivateSetting() {
-    this.subs.push(this.dashboardService.getClientPreference('ClientProjectsPrivate').subscribe(
-      (res:any) => {
-        if (res === null) {
+  private getClientPreferences() {
+    this.subs.push(combineLatest([this.dashboardService.getClientPreference('ClientProjectsPrivate'), this.dashboardService.getClientPreference('ProjectTeamAddTempUser')])
+      .subscribe(([cpp, atu]) => {
+        if(!cpp || !atu) {
           this.dashboardService.displayContactSystemAdminMessage();
-        }
-        else if (res.success) {
-          this.projectsPrivateSetting = Number(res.data);
+        } else if(cpp.success && atu.success) {
+          this.projectsPrivateSetting = Number(cpp.data);
+          this.addTempUserSetting = Number(atu.data);
         } else {
-          this.dashboardService.errorNotify(res.clientErrorMessage);
-        }    
+          this.dashboardService.errorNotify(cpp.clientErrorMessage);
+          this.dashboardService.errorNotify(atu.clientErrorMessage);
+        }
       },
       (error: any) => {
-        console.log("Error occurred getting Projects Private Setting", error);
+        console.log("Error occurred getting Projects Client Preferences", error);
         this.dashboardService.displayContactSystemAdminMessage();
       },
       () => {}

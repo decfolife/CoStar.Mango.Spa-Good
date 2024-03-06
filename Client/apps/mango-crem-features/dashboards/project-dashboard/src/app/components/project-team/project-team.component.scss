@@ -52,7 +52,7 @@
 		.more, .actions, .addOptions{
 			margin-left: 8px;
 
-			&.hideActions{
+			&.hideActions, &.hideAdd {
 				display: none;
 			}
 		}

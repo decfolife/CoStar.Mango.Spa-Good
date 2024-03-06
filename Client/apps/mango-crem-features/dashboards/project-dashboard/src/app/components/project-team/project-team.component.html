@@ -32,16 +32,16 @@
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="projectTeamMoreMenu">				
 					<button mat-menu-item (click)="applyTeamToTasks()" class="moreBtn-applyTeamToTasks">Apply Team to Tasks</button>
-					<button mat-menu-item class="moreBtn-composeEmail">Compose Email</button>	
-					<button mat-menu-item class="moreButton-colChooserBtn"  class="moreBtn-colChooser">Column Chooser</button>							
+					<button mat-menu-item class="moreBtn-composeEmail">Compose Email</button>								
 					<button mat-menu-item (click)="toggleExpand()" class="moreBtn-expCollBtn"><span >Expand All/Collapse All</span></button>                         
 				</mat-menu>	 
 			</div>
-			<div class="addOptions">
-				<button class="btn btn-primary addButton" [matMenuTriggerFor]="addMenu" (click)="$event.preventDefault()">Add <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
+			<div class="addOptions" [ngClass]="{'hideAdd': (userAccessLevel !== 1 && userAccessLevel !== 2)}">
+				<button class="btn btn-primary addButton" [matMenuTriggerFor]="addMenu" (click)="$event.preventDefault()">
+					Add <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #addMenu="matMenu" class="projectTeamAddMenu">				
-					<button mat-menu-item class="addBtn-teamMember" (click)="addOrEditMember('ATM')">Add Team Member</button>      
-					<button mat-menu-item class="addBtn-temporaryUser" (click)="addOrEditMember('ATU')">Add Temporary User</button>  
+					<button mat-menu-item class="addBtn-teamMember" (click)="addOrEditMember('ATM')" *ngIf="userAccessLevel == 1">Add Team Member</button>      
+					<button mat-menu-item class="addBtn-temporaryUser" (click)="addOrEditMember('ATU')" *ngIf="userAccessLevel == 1 && addTempUserSetting == 1">Add Temporary User</button>  
 					<button mat-menu-item class="addBtn-contact" (click)="addOrEditMember('AC')">Add Contact</button>                  
 				</mat-menu>	 
 			</div>
