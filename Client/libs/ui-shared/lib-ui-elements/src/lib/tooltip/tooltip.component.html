@@ -7,6 +7,7 @@
         icon="brand-info-border"
         library="local"
         tabindex="0"
+        (click)="getHelpText()"
         (keydown.enter)="getHelpText()"
         (keydown.space)="getHelpText(); $event.preventDefault()"
         role="button"

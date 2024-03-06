@@ -40,7 +40,7 @@
         </mat-menu>
         <mat-menu class="existing-section-menu" #ExistingSectionMenu="matMenu" (click)="$event.stopPropagation()">
           <form (click)="$event.stopPropagation()">
-            <cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchAvailableSectionsDataGrid($event)"></cs-search>
+            <cs-search class="df-search" #SearchBox [placeholder]="'Search...'" (changed)="searchAvailableSectionsDataGrid($event)"></cs-search>
             <dx-data-grid #availableSectionsGrid id="availableSectionsContainer"
               [dataSource]="selectAvailableFormSections$ | async" [showColumnLines]="false" [showRowLines]="true"
               [showBorders]="true" [rowAlternationEnabled]="true" keyExpr="formSectionID">
