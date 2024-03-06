@@ -16,6 +16,7 @@ import { CreateSegmentComponent } from '@reports/components/modal/create-segment
 
 import { selectBoxMenuItems, byItemMoreMenuOptions, moreMenuItem } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
 import { ReportsService } from '@reports/services/reports.service';
+import hideToasts from "devextreme/ui/toast/hide_toasts";
 
 export interface DropdownSelection { // Todo: Move to type definition file
   display: string,
@@ -361,25 +362,47 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   public export() {
+    notify({
+      message: 'Report will be exported shortly.',
+      type: 'success',
+      displayTime: 3000,
+      position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+      maxWidth: '500px',
+      closeOnClick: true,
+    });
     this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, "usd", this.selectedView + 3).subscribe((result) => {
       if(result.data) {        
         notify({
           contentTemplate: function (e) {
             let blob = new Blob([result.data.body], {type: 'application/octet-stream'});
             let downloadURL = URL.createObjectURL(blob);
-            let a = document.createElement('a')
-            let linkText = document.createTextNode("Export Successful. You can find your report here.");
+            let div = document.createElement('div');
+            let a = document.createElement('a');
+            let span1 = document.createElement('span')
+            let span2 = document.createElement('span');
+            let beforeText = document.createTextNode("Report is ready for download, ");
+            let afterText = document.createTextNode(" to download report.");
+            span1.appendChild(beforeText);
+            span2.appendChild(afterText);
+            let linkText = document.createTextNode("click here");
+            div.appendChild(span1)
+            div.appendChild(a)
+            div.appendChild(span2)
             a.appendChild(linkText);
             a.href = downloadURL;
+            a.style.color = "white";
+            a.style.textDecoration = "underline";
+            a.onclick = () => { hideToasts(); };
             let contentDisposition = result.data.headers.get('content-disposition') as String;
             let fileName = contentDisposition.split(/[=;]/)[2];
             a.download = fileName;
-            return a;
+            return div;
           },
           type: 'success',
           displayTime: 999999999,
           position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
           maxWidth: '500px',
+
           closeOnClick: false,
         })
       } else {
