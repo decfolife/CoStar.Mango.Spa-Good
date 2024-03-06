@@ -26,6 +26,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { DxLoadPanelModule } from 'devextreme-angular';
 import { AppEffects } from './+state/effects/app.effects';
 import { HttpEffects } from './+state/effects/http.effects';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [

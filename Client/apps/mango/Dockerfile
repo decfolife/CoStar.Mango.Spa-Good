@@ -3,9 +3,10 @@ FROM public.ecr.aws/docker/library/node:16-alpine as build
 ARG COSTAR_ENVIRONMENT=dev 
 WORKDIR /app
 COPY package*.json ./
-COPY ./ /app/
+COPY decorate-angular-cli.js ./
 RUN npm set strict-ssl false
 RUN CYPRESS_INSTALL_BINARY=0 npm install --force
+COPY ./ /app/
 RUN echo "building environment=$COSTAR_ENVIRONMENT"
 RUN npm run build:$COSTAR_ENVIRONMENT:mango
 

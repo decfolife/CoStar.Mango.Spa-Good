@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CentralAuthFacade } from './+state/facades';
 import { Observable } from 'rxjs';
-import { CentralAuthURLService } from './services/url.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
