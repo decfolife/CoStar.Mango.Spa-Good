@@ -1,3 +1,5 @@
+@use 'styles' as *; 
+
 .reminders-right-container {
     display: flex;
     flex-direction: column;
@@ -34,7 +36,7 @@
         display: flex;
 
         .title {
-            font-size: 20px;
+            font-size: $font-size-20;
             font-weight: 500;
             font-family: Helvetica, sans-serif;
             margin-right: 16px;
@@ -95,10 +97,15 @@ button.btn.btn-default.moreButton {
     display: flex;
     align-items: center;
     font-size: 16px;
-    color: #000;
+    color: $color-black;
 
     mat-icon {
         transform: translateY(2px);
+    }
+
+    &:focus{
+        outline: 2px solid $color-black;
+        @include costar(box-shadow, gray04)
     }
 }
 
@@ -107,3 +114,29 @@ button.btn.btn-default.moreButton {
         height: 32px !important;
     }
 }
+
+button.mat-menu-trigger.btn-link:focus, 
+	button.actionsButton:focus
+    {
+        outline: none;
+		box-shadow: 0 0 0 0.1rem;
+        @include costar(box-shadow, primary-light)
+	} 
+
+    :host ::ng-deep table.dx-datagrid-table {
+		tbody {
+			tr.dx-row.dx-data-row {
+				&:hover {
+					cursor: default;
+				}
+				&.dx-row-alt {
+					&:hover {
+						cursor: default;
+						td {
+							cursor: default;
+						}
+					}
+                }
+            }
+        }
+    }

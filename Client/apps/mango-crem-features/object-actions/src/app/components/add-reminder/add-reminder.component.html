@@ -63,13 +63,13 @@
             <h3>Recipients</h3>
             <div id="container">
               <dx-drop-down-box class="aet-membersDropDown" 
-                placeholder="Start typing to search for additional users."
+                placeholder="Start typing to search for Recipients."
                 [(opened)]="isDropDownBoxOpened" (onEnterKey)="toggleList()" (onClick)="focusOnDropDownInput($event)"
                 (onFocusIn)="focusOnDropDownInput($event)" (onOpened)="focusOnDropDownInput($event)"
-                (onInput)="searchTeamMembers($event.event.target.value)" [acceptCustomValue]="true"
+                (onInput)="searchRecipient($event.event.target.value)" [acceptCustomValue]="true"
                 [openOnFieldClick]="false"
                 [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}">
-                <dx-list #SelectionMembersList id="aet-membersList" [dataSource]="filteredremindersRecepient"
+                <dx-list #SelectionMembersList id="aer-membersList" [dataSource]="filteredremindersRecepient"
                   itemTemplate="membersListTemplate" [activeStateEnabled]="false"
                   [elementAttr]="{'aria-label': 'List of Recipients to Select'}" (onItemClick)="onItemClicked($event)"
                   (onItemRendered)="onItemRendered($event)">

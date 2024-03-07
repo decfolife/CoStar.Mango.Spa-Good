@@ -193,7 +193,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         visible: false,
       },
       {
-        dataField: "ContactEmailAddress",
+        dataField: "contactEmailAddress",
         dataType: "string",
         caption: "Recepient Email",
         visible: false,

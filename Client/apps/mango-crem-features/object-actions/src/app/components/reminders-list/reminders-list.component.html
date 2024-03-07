@@ -15,7 +15,7 @@
 			</div>
 			<div class="controls-item">
 				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu"
-					(click)="$event.preventDefault()">More <mat-icon
+					(click)="$event.preventDefault()">More<mat-icon
 						aria-label="More Menu">arrow_drop_down</mat-icon></button>
 				<mat-menu #moreMenu="matMenu" class="moreMatMenu">
 					<button mat-menu-item (click)="resetFilter($event)">Reset</button>
@@ -55,13 +55,13 @@
 				[allowReordering]="false" [fixed]="true">
 				<dxi-button template="moreMenuTemplate">
 					<div *dxTemplate="let data of 'moreMenuTemplate'">
-						<button aria-label="more menu" class="btn btn-link" (click)="$event.preventDefault()"
+						<button aria-label="more menu" [disabled]= "data.data.AutoLoadReminderID == 1" class="btn btn-link" (click)="$event.preventDefault()"
 							[matMenuTriggerFor]="MoreMenu"><mat-icon role="none"
 								aria-label="Actions Menu">more_horiz</mat-icon></button>
 						<mat-menu #MoreMenu="matMenu">
 							<button mat-menu-item type="button" *ngIf="(currentUserRole$ | async) < USER_ROLES.Manager"
 								(click)="openAddEditReminderDialog('edit',data);" >Edit</button>
-							<button mat-menu-item type="button" (click)="deleteReminder(data);"
+							<button mat-menu-item type="button"   (click)="deleteReminder(data);"
 								(keydown.space)="deleteReminder(data);"
 								(keydown.enter)="deleteReminder(data)">Delete</button>
 						</mat-menu>

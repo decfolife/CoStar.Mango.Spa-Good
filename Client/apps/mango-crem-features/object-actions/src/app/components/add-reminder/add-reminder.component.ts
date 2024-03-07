@@ -20,7 +20,7 @@ import {
   OnInit,
   Output,
   ViewChild,
-  OnDestroy, ChangeDetectorRef,
+  OnDestroy, ChangeDetectorRef,ViewEncapsulation
 } from "@angular/core";
 import { faCirclePlus, faCircleMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -45,6 +45,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
   standalone: true,
   templateUrl: "./add-reminder.component.html",
   styleUrls: ["./add-reminder.component.scss"],
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     DropdownModule,
@@ -56,7 +57,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
     DxFormModule,
     DxDropDownBoxModule,
     DxListModule,
-    FontAwesomeModule,
+    FontAwesomeModule
   ],
   providers: [DatePipe, RemindersService],
 })
@@ -143,16 +144,29 @@ export class AddReminderComponent implements OnInit {
     }
     this.membersSearchInput$.pipe(
       debounceTime(250),
-      switchMap(inputValue => ((inputValue.length != 1) ? this.remindersService.getRecipientsContactsList(this.oid, this.otid) : of([])))
-    ).subscribe(filteredremindersRecepient => {
-      this.filteredremindersRecepient = filteredremindersRecepient.data.map(
-        (recipient) => ({
-          contactId: recipient.ContactID,
-          contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
-          companyName: recipient.CompanyName,
-          contactEmailAddress: recipient.contactEmailAddress
-        })
-      )
+      switchMap(inputValue => {
+        if (inputValue.length !== 1) {
+          return this.remindersService.getRecipientsContactsList(this.oid, this.otid).pipe(
+            map(filteredremindersRecepient => {
+              return filteredremindersRecepient.data.filter(ci => {
+                return !inputValue || 
+                  ci.CompanyName.toLowerCase().includes(inputValue.toLowerCase()) ||
+                  ci.TeamMember.toLowerCase().includes(inputValue.toLowerCase()) ||
+                  ci.contactEmailAddress.toLowerCase().includes(inputValue.toLowerCase());
+              }).map(recipient => ({
+                contactId: recipient.ContactID,
+                contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
+                companyName: recipient.CompanyName,
+                contactEmailAddress: recipient.contactEmailAddress
+              }));
+            })
+          );
+        } else {
+          return of([]);
+        }
+      })
+    ).subscribe(filteredData => {
+      this.filteredremindersRecepient = filteredData;
     });
   }
 
@@ -182,6 +196,7 @@ export class AddReminderComponent implements OnInit {
         )
         .subscribe()
     );
+
   }
 
   saveReminder(e) {
@@ -210,7 +225,7 @@ export class AddReminderComponent implements OnInit {
     }
   }
 
-  searchTeamMembers(val: string) {
+  searchRecipient(val: string) {
     this.membersSearchInput$.next(val);
   }
 

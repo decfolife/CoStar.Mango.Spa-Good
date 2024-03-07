@@ -1,4 +1,5 @@
 @use "apps/mango/src/assets/styles/colors.scss" as colors;
+@use 'styles' as *; 
 
 .aet-memberData {
   pointer-events: none;
@@ -10,6 +11,11 @@ fa-icon {
   width: 20px;
   font-family: "Open Sans", sans-serif;
   color: black;
+  &:focus{
+    outline: none;
+    box-shadow: 0 0 0 0.1rem;
+    @include costar(box-shadow, gray04)
+  }
 }
 
 #aet-members {
@@ -58,12 +64,35 @@ fa-icon {
   }
 }
 
+#aer-membersList {
+	height: 200px;
+	.dx-list-item {
+		border-top: none;
+		color: black;
+		.dx-list-item-content {
+			padding: 4px;
+		}
+	}
+	.aet-itemDisabled {
+		pointer-events: none;
+		color: colors.$darkGray;
+		cursor: default;
+		fa-icon {
+			color: lightgray;
+		}
+	}
+	fa-icon{
+		margin-right: 8px;
+		transform: translateY(2px);
+	}
+}
+
 .aet-itemDisabled {
   pointer-events: none;
   color: lightgray;
   cursor: default;
 
-  fa-icon {
+  .ng-fa-icon {
     color: lightgray;
   }
 }
@@ -84,4 +113,20 @@ fa-icon {
   input.dx-texteditor-input {
     font-size: 16px;
   }
+}
+
+#addEditReminderModal button.btn-close.btn-none.modalCloseButton:focus{
+  outline: none;
+  box-shadow: 0 0 0 0.1rem $primary-lighter;
+}
+
+  #addEditReminderModal .dx-checkbox-container:focus {
+  outline: none;
+  @include costar(box-shadow, primary-light)
+}
+
+.btn.btn-link.teamMemberActionsButton:focus{
+  outline: none;
+  box-shadow: 0 0 0 0.1rem;
+  @include costar(box-shadow, primary-light)
 }
