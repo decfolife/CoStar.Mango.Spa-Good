@@ -99,13 +99,8 @@ fa-icon {
 
 .footerRightControls {
   display: flex;
-
   & > .aem-btn {
-    margin-left: 8px;
-  }
-
-  .modalFooter {
-    border-top: 1px solid colors.$borderColor;
+    margin-right: 8px;
   }
 }
 

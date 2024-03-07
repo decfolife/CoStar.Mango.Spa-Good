@@ -140,10 +140,9 @@
   </div>
   <div modalFooter class="addEditReminderModal-footerContent">
     <div id="buttonTemplate" class="footerRightControls">
-      <crem-button type="secondary" id="close-btn" class="cancelChanges aem-btn" (click)="cancelChanges()"> Cancel
+      <crem-button  type="secondary" id="close-btn" class="cancelChanges aem-btn" (click)="cancelChanges()"> Cancel
       </crem-button>
-      <crem-button type="secondary" id="save_reminder_btn" class="saveChanges aem-btn"
-        (click)="saveReminder($event)">Save</crem-button>
+      <crem-button type="primary" id="save_reminder_btn" (click)="saveReminder($event)">Save</crem-button>
     </div>
   </div>
 </crem-modal>
