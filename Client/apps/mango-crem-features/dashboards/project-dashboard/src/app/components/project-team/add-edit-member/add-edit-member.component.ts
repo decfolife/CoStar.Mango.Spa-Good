@@ -275,7 +275,7 @@ export class AddEditMemberComponent implements OnInit {
     this.updateTeamMemberData.contactRole = this.selectedRole;
     this.updateTeamMemberData.email = this.emailNotificationChecked;
     this.updateTeamMemberData.roleLevel = this.selectedLevel == 'L1' ? 1: this.selectedLevel == 'L2'? 2: this.selectedLevel == 'L3'? 3: undefined;
-    this.updateTeamMemberData.shareRightsWithGroup = true;
+    this.updateTeamMemberData.shareRightsWithGroup = this.sharedChecked;
     this.updateTeamMemberData.contactNotes = this.description ? this.description: "";
     this.updateTeamMemberData.update = this.operation == 'ATM'? 0 : 1; 
     this.updateTeamMemberData.expirationType = this.expirationType;
