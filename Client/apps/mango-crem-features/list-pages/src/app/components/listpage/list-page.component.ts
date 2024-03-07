@@ -432,8 +432,12 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.navigationButtonsObserver.disconnect();
-    this.pagingButtonsObserver.disconnect();
+    if (this.navigationButtonsObserver) {
+      this.navigationButtonsObserver.disconnect();
+    }
+    if (this.pagingButtonsObserver) {
+        this.pagingButtonsObserver.disconnect();
+    }
   }
 
   ngOnInit(): void {
