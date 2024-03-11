@@ -36,7 +36,7 @@ export class WorkflowHistoryPopupComponent {
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes.userInfo !== undefined && changes.userInfo.currentValue !== undefined){
-      const isEuroDateFormat = this.userInfo.useDateEU;
+      const isEuroDateFormat = this.userInfo?.useDateEU;
       if (isEuroDateFormat) {
         this.dateFormat = 'dd.MM.yyyy, h:mm a';
       }
@@ -139,9 +139,9 @@ export class WorkflowHistoryPopupComponent {
     const svComponentsWithScrollArray = this.scrollViewComponents.filter(svc => svc.scrollHeight() > svc.clientHeight());
     svComponentsWithScrollArray.forEach(svc => svc.scrollTo(0));
 
-    this.mainPopup.instance.option("height", "500");
-    this.mainPopup.instance.option("width", "900");
-    this.mainScrollView.instance.scrollTo(0);
+    this.mainPopup?.instance.option("height", "500");
+    this.mainPopup?.instance.option("width", "900");
+    this.mainScrollView?.instance.scrollTo(0);
   }
 
   formatComment(comment: string): string {

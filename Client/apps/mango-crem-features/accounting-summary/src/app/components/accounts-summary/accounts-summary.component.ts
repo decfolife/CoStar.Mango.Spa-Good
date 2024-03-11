@@ -16,6 +16,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   readonly allowedPageSizes = ['all'];
   isAddButtonDisabled = true;
   eventSchedule: any;
+  gridState: any;
   leaseInfoResponse: LeaseInfoResponse;
   isLocked = false;
   isArchived = false;
@@ -179,9 +180,10 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   }
 
-  setLeaseRecognitionScheduleID(eventSchedule: any) {
-    this.eventSchedule = eventSchedule;
-    this.leaseRecognitionScheduleID = eventSchedule.leaseRecognitionScheduleID;
+  setLeaseRecognitionScheduleID(emittedEvent:[eventSchedule: any, gridState: any]) {
+    this.gridState = emittedEvent[1];
+    this.eventSchedule = emittedEvent[0];
+    this.leaseRecognitionScheduleID = emittedEvent[0].leaseRecognitionScheduleID;
   }
 
   private setRightsAndLeaseInfo(){

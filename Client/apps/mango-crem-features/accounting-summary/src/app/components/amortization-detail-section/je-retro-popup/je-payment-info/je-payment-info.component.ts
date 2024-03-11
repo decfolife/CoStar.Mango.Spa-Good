@@ -36,7 +36,7 @@ export class JePaymentInfoComponent {
   }
 
   jePaymentInfoGridSetup() {
-    this.isEuroDateFormat = this.userInfo.useDateEU;
+    this.isEuroDateFormat = this.userInfo?.useDateEU;
     if (this.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }

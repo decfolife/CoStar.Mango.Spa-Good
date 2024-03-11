@@ -36,13 +36,13 @@
           [id]="accountingSummaryService.getId(componentName,'modifiedBy','details')"
           (mouseenter)="onChangeByTooltipMouseOver()" (mouseleave)="onChangeByTooltipMouseLeave()">
           Modified by {{ modifiedByName | slice: 0:10 }}...
-          {{ modifiedDate | date: userInfo.useDateEU !== undefined && userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
+          {{ modifiedDate | date: userInfo?.useDateEU !== undefined && userInfo?.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
   
           <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
             target="#accounting-summary-modifiedBy-details" [visible]="isChangeByTooltipVisible">
             <div *dxTemplate="let data of 'content'">
-              Modified by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo.useDateEU !== undefined &&
-              userInfo.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
+              Modified by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo?.useDateEU !== undefined &&
+              userInfo?.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
             </div>
           </dx-tooltip>
         </div>
@@ -62,14 +62,13 @@
       [userInfo]="userInfo"
       [wfStatusRights]="wfStatusRights"
       (eventScheduleSelectedEvent)="setLeaseRecognitionScheduleID($event)"
-      (dataChanged)="onDataChanged($event)"
-      [amortizationProfileName]="amortizationProfileName"
-      [classificationType]="classificationType">
+      (dataChanged)="onDataChanged($event)">
     </mango-events-detail-section>
 
     <mango-payments-detail-section
       [classificationID]="classificationID"
       [eventScheduleData]="eventSchedule"
+      [gridState]="gridState"
       [userInfo]="userInfo" 
       [amortizationProfileName]="amortizationProfileName"
       [classificationType]="classificationType">
@@ -78,6 +77,7 @@
     <mango-amortization-detail-section
       [classificationID]="classificationID"
       [eventScheduleData]="eventSchedule"
+      [gridState]="gridState"
       [userInfo]="userInfo"
       [rightsInfo]="rightsInfo"
       [wfStatusRights]="wfStatusRights"

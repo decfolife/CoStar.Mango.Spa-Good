@@ -67,7 +67,7 @@ export class JeProcessingInfoComponent {
   }
 
   private jeProcessingInfoGridSetup() {
-    this.isEuroDateFormat = this.userInfo.useDateEU;
+    this.isEuroDateFormat = this.userInfo?.useDateEU;
     if (this.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }

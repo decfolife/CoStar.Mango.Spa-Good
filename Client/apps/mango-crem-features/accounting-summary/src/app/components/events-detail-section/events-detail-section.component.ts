@@ -22,9 +22,10 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   @Input() rightsInfo: any;
   @Input() wfStatusRights: any;
   @Input() userInfo: UserInfoResponse;
-  @Input() classificationType: string;
-  @Input() amortizationProfileName: string;
-  @Output() eventScheduleSelectedEvent = new EventEmitter<number>();
+  @Output() eventScheduleSelectedEvent = new EventEmitter();
+  @Output() dataChanged: EventEmitter<any> = new EventEmitter();
+  classificationType: string;
+  amortizationProfileName: string;
   masterScheduleID: number;
   detailsGridData;
   detailColumns = [];
@@ -59,8 +60,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   leaseRecognitionScheduleID: number;
   classificationID: number;
   isAccountingEventEmpty = true;
-  
-  @Output() dataChanged: EventEmitter<any> = new EventEmitter();
+  gridsState: any;
 
   constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private formatService: FormattingService ,private ref: ChangeDetectorRef) {
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
@@ -116,6 +116,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.classificationId = eventDetailsResponse.data[0].classificationID;
         this.detailsGridData = eventDetailsResponse.data.sort((a, b) => a.scheduleIndex - b.scheduleIndex);
         this.portfolioSettings = portfolioSettingsResponse.data;
+        this.accountingSummaryService.setPortfolioSettings(this.portfolioSettings);
 
         // Adding fields to datasource based on classificationId && manipulating fields to display correct text
         if (this.classificationId === 0 || this.classificationId === 5) {
@@ -130,16 +131,16 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           });
         }
 
-        this.isEuroDateFormat = this.userInfo.useDateEU;
+        this.isEuroDateFormat = this.userInfo?.useDateEU;
         if (this.isEuroDateFormat) {
           this.dateFormat = 'dd.MM.yyyy';
         }
         this.detailColumns = this.columnService.getDetailsColumns(this.classificationId, this.detailsGridData[0], this.portfolioSettings, this.dateFormat);
-        this.getGridPreferences();
-
+        
         this.publishedEvent = this.detailsGridData.filter(d => d.isPublished)[0];
         this.setInitialSelectedRow = true;
-        this.eventScheduleSelectedEvent.emit(this.publishedEvent);
+
+        this.getGridPreferences();
       } else if (!eventDetailsResponse.success || !portfolioSettingsResponse.success) {
         this.accountingSummaryService.errorNotify(!eventDetailsResponse.success ? eventDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
       }
@@ -169,26 +170,29 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
       else if (response.success) {
+        this.gridsState= response.data;
         const state = JSON.parse(sessionStorage.getItem("eventsGridStateKey"))
         // Filter the data
         const filteredData = response.data.filter(item => {
           return item.classificationID === this.classificationId && item.gridName === this.gridName;
         });
 
+        this.selectedRowKeys = [this.publishedEvent?.leaseRecognitionScheduleID];
+        
         if (state !== null) {
           state.columns = [];
-
+          state.selectedRowKeys = [this.publishedEvent?.leaseRecognitionScheduleID];
+          
           filteredData.forEach((item) => {
             const parsedColumns = JSON.parse(item.columnJson);
             state.columns.push(...parsedColumns);
           });
         }
 
-        this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
-        state.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
         this.initialState = state;
         this.eventsDataGrid.instance.state(state);
         sessionStorage.setItem("eventsGridStateKey", JSON.stringify(state));
+        this.eventScheduleSelectedEvent.emit([this.publishedEvent, this.gridsState]);
       } else {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
@@ -288,7 +292,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   onRowClick(e) {
-    this.eventScheduleSelectedEvent.emit(e.data);
+    this.eventScheduleSelectedEvent.emit([e.data, this.gridsState]);
     this.eventsDataGrid.instance.repaint();
   }  
 
@@ -315,9 +319,9 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           const oldValue = Object(previousRow)[event.column.dataField];
           const newValue = Object(event.data)[event.column.dataField];
           if(oldValue !== newValue) {
-            event.cellElement.classList.add("grid-cell-box-shadow");
+            event.cellElement?.classList.add("grid-cell-box-shadow");
           } else {
-            event.cellElement.classList.remove("grid-cell-box-shadow");
+            event.cellElement?.classList.remove("grid-cell-box-shadow");
           }
         }
       });

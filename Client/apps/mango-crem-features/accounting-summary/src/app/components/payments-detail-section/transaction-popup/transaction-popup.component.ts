@@ -39,7 +39,7 @@ export class TransactionPopupComponent {
   }
 
   private transactionPopupGridSetup() {
-    this.isEuroDateFormat = this.userInfo.useDateEU;
+    this.isEuroDateFormat = this.userInfo?.useDateEU;
     if (this.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }

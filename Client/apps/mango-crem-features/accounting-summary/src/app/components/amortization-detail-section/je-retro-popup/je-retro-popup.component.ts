@@ -51,7 +51,7 @@ export class JeRetroPopupComponent {
     }
 
     if (!!changes.userInfo && changes.userInfo.currentValue !== undefined) {
-      if (this.userInfo.useDateEU) {
+      if (this.userInfo?.useDateEU) {
         this.dateFormat = 'dd.MM.yyyy';
       }
     }

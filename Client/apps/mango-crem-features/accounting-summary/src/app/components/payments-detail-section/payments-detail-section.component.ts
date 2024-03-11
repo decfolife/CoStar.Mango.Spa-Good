@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   @ViewChild("PaymentsDataGrid") paymentsDataGrid: DxDataGridComponent;
   @Input() eventScheduleData: any;
+  @Input() gridState: any;
   @Input() classificationID: number;
   @Input() userInfo: UserInfoResponse;
   @Input() classificationType: string;
@@ -32,13 +33,15 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   historicalTransactionData: any;
   initialState = {};
   private subscription = new Subscription();
+  contentLoaded = false;
   
   constructor(public accountingSummaryService: AccountingSummaryService, private paymentsGridColumnService: PaymentsGridColumnsService) { 
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.eventScheduleData && this.eventScheduleData.leaseRecognitionScheduleID !== undefined && this.classificationID !== undefined &&
+    if (this.eventScheduleData && this.gridState && this.eventScheduleData.leaseRecognitionScheduleID !== undefined && this.classificationID !== undefined &&
+      (this.amortizationProfileName === this.eventScheduleData?.amortizationProfileName) &&
       (
         // The first time loading or the value in the dropdown changed
         !changes.eventScheduleData ||
@@ -71,7 +74,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
      else if (paymentDetailsResponse.success) {
        this.paymentsGridData = paymentDetailsResponse.data;
 
-       this.isEuroDateFormat = this.userInfo.useDateEU;
+       this.isEuroDateFormat = this.userInfo?.useDateEU;
        if (this.isEuroDateFormat) {
          this.dateFormat = 'dd.MM.yyyy';
        }
@@ -85,14 +88,9 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
  }
 
  getGridPreferences() {
-  this.subscription.add(this.accountingSummaryService.getGridPreferences().subscribe(response => {
-    if (response === null) {
-      this.accountingSummaryService.displayContactSystemAdminMessage();
-    }
-    else if (response.success) {
       const state = JSON.parse(sessionStorage.getItem("paymentsGridStateKey"))
       // Filter the data
-      const filteredData = response.data.filter(item => {
+      const filteredData = this.gridState.filter(item => {
         return item.classificationID === this.classificationID && item.gridName === this.gridName;
       });
 
@@ -106,12 +104,15 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
       }
 
       this.initialState = state;
-      this.paymentsDataGrid.instance.state(state);
       sessionStorage.setItem("paymentsGridStateKey", JSON.stringify(state));
-    } else {
-      this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      this.contentLoaded = false;
+  }
+
+  onGridContentReady(){
+    if(!this.contentLoaded){
+      this.paymentsDataGrid.instance.state(this.initialState);
+      this.contentLoaded = true;
     }
-    }));
   }
 
   resetGrid() {
@@ -177,7 +178,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
           this.accountingSummaryService.errorNotify(historicalTransactionDetailsResponse.clientErrorMessage);
         } else {
           this.transactionPopupData = historicalTransactionDetailsResponse.data;
-          this.isEuroDateFormat = this.userInfo.useDateEU;
+          this.isEuroDateFormat = this.userInfo?.useDateEU;
           if (this.isEuroDateFormat) {
             this.dateFormat = 'dd.MM.yyyy';
           }

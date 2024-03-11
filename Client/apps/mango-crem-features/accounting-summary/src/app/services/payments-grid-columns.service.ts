@@ -99,7 +99,7 @@ export class PaymentsGridColumnsService {
         usesFunctionalFormat: 'false'
       },
       {
-        caption: `Accounting Event Amount (${currencyInfo[0].scheduleCurrency})`,
+        caption: `Accounting Event Amount (${currencyInfo[0]?.scheduleCurrency})`,
         name: 'TargetAmountInPeriod', 
         dataField: 'targetAmountInPeriod',
         headerCellTemplate: 'amortizationHeader',

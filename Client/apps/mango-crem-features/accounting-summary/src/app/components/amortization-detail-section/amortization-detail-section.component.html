@@ -43,7 +43,8 @@
             noDataText="No Data"
             width='100%'
             (onOptionChanged)="onGridOptionChanged($event)"
-            (onRowClick)="onGridRowClick($event)">
+            (onRowClick)="onGridRowClick($event)"
+            (onContentReady)="onGridContentReady()">
 
             <dxo-header-filter
                 [visible]="false"

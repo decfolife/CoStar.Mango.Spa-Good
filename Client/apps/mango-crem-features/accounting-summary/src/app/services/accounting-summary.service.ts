@@ -8,6 +8,7 @@ import { Observable, Subject } from 'rxjs';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
+import { PortfolioSettingsResponse } from '@accounting-summary/models/portfolio-settings-response.modal';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class AccountingSummaryService extends EndpointService {
   preferenceSavePendingMessage = " - You have unsaved preference changes.";
   isLocked: boolean;
   isArchived: boolean;
+  portolioSettings : PortfolioSettingsResponse;
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -307,6 +309,14 @@ export class AccountingSummaryService extends EndpointService {
 
   getIsArchived() {
     return this.isArchived;
+  }
+
+  setPortfolioSettings(portfolioSettings: PortfolioSettingsResponse){
+    this.portolioSettings= portfolioSettings;
+  }
+
+  getSavedPortfolioSettings(){
+    return this.portolioSettings;
   }
 
 }
