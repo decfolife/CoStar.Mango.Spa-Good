@@ -26,6 +26,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { DBkeys } from '../utilities/db-keys';
 import { StorageService } from './storage.service';
 import { LoginResponse } from 'libs/data-models/lib-data-models/src/lib/models/userAuth';
+import { UtilitiesService } from '@mango/core-shared';
 
 @Injectable({
   providedIn: 'root',
@@ -52,13 +53,15 @@ export class UserService {
   }
 
   retrieveJwt(authCode: string): Observable<OAuthTokenHTTPResponse> {
+    let baseUrl = UtilitiesService.isLocalEnvironment() ? this.env.appUrls.identity : this.spaServer;
+
     const request = {
       grantType: "authorization_code",
       code: authCode,
       redirectUrl: "",
       codeVerifier: ""
     }
-    return this.http.post<OAuthTokenHTTPResponse>(`${this.spaServer}/oauth/token`, request)
+    return this.http.post<OAuthTokenHTTPResponse>(`${baseUrl}/oauth/token`, request)
   }
 
   login(credentials): Observable<LoginResponse> {
