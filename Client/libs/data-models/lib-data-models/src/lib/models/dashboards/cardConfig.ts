@@ -1,5 +1,5 @@
 export interface FormatObject {
-  type?: string,
+  type: string,
   precision: number,
 }
 
@@ -77,7 +77,7 @@ export type CardConfig = {
   id: string,
   name: string,
   index: number,
-  format?: string | FormatObject,
+  format?: FormatObject,
   sortingOrder?: SortingOrder,
   sortingMethod?: Function,
   calculateSummaryValue?: Function,

@@ -2,8 +2,8 @@ import { CardConfig } from '@mango/data-models/lib-data-models';
 
 
 // IFRS 16 Configuration
-export const dashboardId: number = 6;
-export const pendoId: string = "IFSAnnualDisclosures";
+export const dashboardId = 6 as number;
+export const pendoId = "IFRSAnnualDisclosures" as string;
 export const cardData: CardConfig[] = [ // todo: exception handling when data coming from API doesn't match parameters provided
   {
     index: 0,
