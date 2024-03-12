@@ -105,7 +105,7 @@
                   [allowColumnReordering]="true" [columnAutoWidth]="false"
                   [dataSource]="remindersInfo.remindersRecepient" [width]="'100%'" [wordWrapEnabled]="true"
                   (onContentReady)="setAttributes($event)" (onSelectionChanged)="onMemberSelectionChanged($event)"
-                  (onEditorPreparing)="editorPreparing($event)">
+                  (onEditorPreparing)="editorPreparing($event)" (onCellPrepared)="onCellClick($event)">
                   <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
                   <dxo-sorting mode="multiple"></dxo-sorting>
                   <dxo-paging [enabled]="false"></dxo-paging>
@@ -142,7 +142,7 @@
     <div id="buttonTemplate" class="footerRightControls">
       <crem-button  type="secondary" id="close-btn" class="cancelChanges aem-btn" (click)="cancelChanges()"> Cancel
       </crem-button>
-      <crem-button type="primary" id="save_reminder_btn" (click)="saveReminder($event)">Save</crem-button>
+      <crem-button type="primary" id="save_reminder_btn" (click)="saveReminder($event)" [disabled]="saveBtnClicked">Save</crem-button>
     </div>
   </div>
 </crem-modal>

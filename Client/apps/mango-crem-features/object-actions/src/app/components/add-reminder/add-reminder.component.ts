@@ -95,6 +95,7 @@ export class AddReminderComponent implements OnInit {
   userDefinedDate: Date;
   initLoad: boolean = true;
   ticklerID: number;
+  saveBtnClicked: boolean = false;
 
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>(
@@ -202,8 +203,10 @@ export class AddReminderComponent implements OnInit {
   saveReminder(e) {
     const reminderData = this.getSaveReminderData();
     this.loading = true;  
+    this.saveBtnClicked = true;
     if(this.remindersInfo.remindersRecepient.length == 0 ){
       this.dialogService.alert('Recipient Name', 'Recipient field is a required field.', 'OK').subscribe();
+      this.saveBtnClicked = false;
       return;
     }
     for (const recipient of this.remindersInfo.remindersRecepient) {
@@ -225,6 +228,20 @@ export class AddReminderComponent implements OnInit {
     }
   }
 
+  onCellClick(event) {
+    if (event.rowType == 'header') {
+      let headerCheckboxContainer = event.component.$element().find('.dx-header-row .dx-checkbox-container');
+      let headerCheckboxAttr = event.component.$element().find('.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size').attr('aria-checked');
+      if (headerCheckboxAttr === 'true') {
+        headerCheckboxContainer.attr('aria-live', 'polite');
+        headerCheckboxContainer.attr('aria-label', 'All checkboxes are checked ');
+      } else {
+        headerCheckboxContainer.attr('aria-live', 'polite');
+        headerCheckboxContainer.attr('aria-label', 'All checkboxes are un-checked');
+      }
+    }
+  }
+
   searchRecipient(val: string) {
     this.membersSearchInput$.next(val);
   }
@@ -238,15 +255,21 @@ export class AddReminderComponent implements OnInit {
   }
 
   onItemClicked(e) {
-    let remindersRecepient = <RemindersRecepient>{};
-    remindersRecepient.contactId = e.itemData.contactId;
-    remindersRecepient.contactNameEmail = e.itemData.contactNameEmail;
-    remindersRecepient.companyName = e.itemData.companyName;
-    remindersRecepient.contactEmailAddress = e.itemData.contactEmailAddress;
-    this.remindersInfo.remindersRecepient.push(remindersRecepient);
-    this.changesMade = true;
-    this.setListItemAttributes(e);
-  }
+    const listItem = e.itemElement as HTMLElement;
+    if (e.event.code === 'Enter' && listItem.classList.contains('aet-itemDisabled')) {
+        return false;
+    } else {
+        const remindersRecepient = {
+            contactId: e.itemData.contactId,
+            contactNameEmail: e.itemData.contactNameEmail,
+            companyName: e.itemData.companyName,
+            contactEmailAddress: e.itemData.contactEmailAddress
+        };
+        this.remindersInfo.remindersRecepient.push(remindersRecepient);
+        this.changesMade = true;
+        this.setListItemAttributes(e);
+    }
+}
 
   onItemRendered(e) {
     if (
