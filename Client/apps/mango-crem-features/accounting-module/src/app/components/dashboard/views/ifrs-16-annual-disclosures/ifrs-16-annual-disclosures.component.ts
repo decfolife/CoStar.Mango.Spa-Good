@@ -172,8 +172,8 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
       fieldConfig[0].sortingMethod = () => rowSort(undefined, undefined, card.sortingOrder);
       fieldConfig[1].sortingMethod =  () => rowSort(undefined, undefined, card.sortingOrder);
       fieldConfig[fieldConfig.length - 1].format = {
-        type: cardData[i]?.format?.type && 'fixedPoint',
-        precision: decimalPrecision && 2,
+        type: cardData[i]?.format?.type ?? 'fixedPoint',
+        precision: decimalPrecision ?? 2,
       };
       fieldConfig[fieldConfig.length - 1].calculateSummaryValue = card.calculateSummaryValue;
       fieldConfig[fieldConfig.length - 1].calculateCustomSummary = card.calculateCustomSummary;
