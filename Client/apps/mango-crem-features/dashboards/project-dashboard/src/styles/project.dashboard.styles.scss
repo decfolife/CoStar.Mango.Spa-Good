@@ -840,6 +840,19 @@ body {
 	}
 }
 
+.teamsMembers-container {
+	.teamMembers-dataGrid-wrapper {
+		padding: 4px 24px;
+		tr.dx-header-row {
+			background-color: white;
+			border: 1px solid colors.$darkBorderGray;
+			td {
+				border-bottom: none;
+			}
+		}
+	}
+}
+
 .dialogServiceComponent {
 	.dialogContent crem-button button {
 		min-width: 70px;

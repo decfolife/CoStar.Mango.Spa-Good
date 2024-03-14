@@ -170,6 +170,10 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 		return rowData.share ? 'On' : 'Off'
 	}
 
+	getEmailonDisplayValue(rowData) {
+		return rowData.emailOn ? 'On' : 'Off';
+	}
+
 	resetEditMode(isCancel?: boolean) {
 		this.teamMembers.forEach(teamMember => { 
 			teamMember.editMode = false;

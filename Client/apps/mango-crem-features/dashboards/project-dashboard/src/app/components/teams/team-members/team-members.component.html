@@ -1,7 +1,7 @@
 <!-- <div>Team Member Details works!!!</div> -->
-<div id="teamsMembers-container">
+<div class="teamsMembers-container">
 	<div class="teamMembers-dataGrid-wrapper"> 
-		<dx-data-grid class="teamsMembers-data-grid" class="teamMembers-grid"
+		<dx-data-grid class="teamMembers-grid"
 			#TeamMembersGrid
 			[showColumnLines]="false"
 			[showRowLines]="false"
@@ -50,9 +50,10 @@
 			<dxi-column dataField="role" dataType="string" [setCellValue]="setRoleValue">
 				<dxo-lookup [dataSource]="memberInfo.roles" aria-label="role" valueExpr="role" displayExpr="role"></dxo-lookup>
 			</dxi-column>
-			<dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
+			<dxi-column caption='Email Notifications' dataField="emailOn" alignment="center" dataType="string" width="90"
+				[calculateDisplayValue]="getEmailonDisplayValue" editCellTemplate="emailToggleTemplate">
 			</dxi-column>
-			<dxi-column dataField="level" caption='Access Level' dataType="string" [setCellValue]="setLevelValue">
+			<dxi-column dataField="level" caption='Access Level' dataType="string" alignment="center" [setCellValue]="setLevelValue">
 				<dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
 			</dxi-column>
 			<dxi-column [visible]="showShareColumn" dataField="share" alignment="center" caption='Share' dataType="string" width="90"
@@ -85,7 +86,7 @@
 					</div>
 				</dxi-button>		    	
 			</dxi-column>
-			<div *dxTemplate="let member of 'toggleTemplate'" >
+			<div *dxTemplate="let member of 'emailToggleTemplate'" >
 				<div class="emailToggle">
 					<mat-slide-toggle [checked]="member.data.emailOn" [disabled]="!member.data.editMode" 
 						(change)="emailtoggle($event, member.data)" aria-label="Email Notication" class="emailTgle-slider"
