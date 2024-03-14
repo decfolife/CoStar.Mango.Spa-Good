@@ -3,7 +3,7 @@
 		<div class="controls-left">
 			<h3 class="title"> Manage Team Lists </h3>
 			<div class="searchTeams">
-				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)"  class="searchTeams-input"></cs-search>
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" (click)="searchBoxClick()"  class="searchTeams-input"></cs-search>
 			</div>
 		</div>
 		<div class="controls-right">
@@ -61,6 +61,8 @@
 			(onCellPrepared)="gridOnCellPrepared($event)"
 			(onEditorPreparing)="onEditorPreparing($event)"
 			(onSelectionChanged)="onSelectionChanged($event)"
+			(onCellClick)="onCellClick($event)"
+			(onOptionChanged)="onOptionChanged($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>

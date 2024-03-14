@@ -191,6 +191,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   }
 
   toggleExpand() {
+    this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
     this.autoExpand = !this.autoExpand;
   }
 
@@ -199,7 +200,12 @@ export class TeamsComponent implements OnInit, OnDestroy {
     this.teamsGrid.instance.searchByText(this.searchText);
   }
 
+  searchBoxClick() {
+    this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+  }
+
   clearAllFilters() {
+    this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
     this.teamsGrid.instance.clearFilter();
     this.teamsGrid.instance.searchByText(this.searchText);
   }
@@ -250,6 +256,18 @@ export class TeamsComponent implements OnInit, OnDestroy {
 
     this.selectedTeams = e.selectedRowsData;
     this.selectedTeamIds = e.selectedRowKeys;
+  }
+
+  onCellClick(e:any) {
+    if(e.rowType === 'header' && e.columnIndex > 1) {
+      this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+    }
+  }
+
+  onOptionChanged(e:any) {
+    if (e.name === "columns" && e.fullName.endsWith("filterValues")) {
+      this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+    }
   }
 
   selectedMembers(e) {

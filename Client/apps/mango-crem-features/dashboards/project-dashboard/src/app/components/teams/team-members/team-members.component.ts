@@ -174,6 +174,13 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 		return rowData.emailOn ? 'On' : 'Off';
 	}
 
+	callCancelChangesForOutsideOfGridClick() {
+		const teamMember = this.teamMembers.find(tm => tm.editMode);
+		if(teamMember !== undefined) {
+			this.cancelChanges(teamMember);
+		}
+	}
+
 	resetEditMode(isCancel?: boolean) {
 		this.teamMembers.forEach(teamMember => { 
 			teamMember.editMode = false;
