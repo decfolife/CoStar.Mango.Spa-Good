@@ -421,13 +421,13 @@ mat-button-toggle-group.mat-button-toggle-group {
 	}
 }
 
-mat-card.mat-card {
+mat-card.mat-mdc-card {
 	border: $stdBorder;
 	border-radius: 2px !important;
 	box-shadow: none !important;
 	padding: 0px !important;
 
-	mat-card-header.mat-card-header{
+	mat-card-header.mat-mdc-card-header{
 		padding: $stdPadding $dblPadding;
 		border-bottom: $stdBorder;
 		color: $stdTextGray;
@@ -498,7 +498,7 @@ mat-card.mat-card {
 		// 	border-right: $stdBorder;
 		// }
 
-		mat-card-header.mat-card-header {
+		mat-card-header.mat-mdc-card-header {
 			border-bottom: 0px;
 			padding: 0px;
 
@@ -587,7 +587,7 @@ mat-card.mat-card {
 		margin-bottom: 0px !important;
 		display: inline-block;
 
-		mat-card-header.mat-card-header {
+		mat-card-header.mat-mdc-card-header {
 			border-bottom: 0px;
 
 			div.mat-card-header-text {
@@ -624,7 +624,7 @@ mat-card.mat-card {
 			align-content: center;
 			align-items: center;
 
-			mat-card-header.mat-card-header{
+			mat-card-header.mat-mdc-card-header{
 				padding: 0px $stdPadding*3;
 
 				div.mat-card-header-text {
@@ -689,7 +689,7 @@ button.left-nav-add-button {
 	}
 }
 
-.mat-menu-content {
+.mat-mdc-menu-content {
 	.dashboard-kpi-helper, .hero-tooltip {
 		font-size: 14px;
 		padding: $stdPadding;
@@ -1180,7 +1180,7 @@ mat-card {
 
 			mat-card {
 				mat-card-header {
-					&.mat-card-header {
+					&.mat-mdc-card-header {
 						padding-right: $stdPadding * 5.5;
 					}
 				}
@@ -1196,9 +1196,9 @@ mat-card {
 	margin: $dblPadding;
 }
 
-.mat-menu-panel {
+.mat-mdc-menu-panel {
 	max-width: 800px !important;
-	.mat-menu-content {
+	.mat-mdc-menu-content {
 		button {
 			margin: 0px;
 		}
@@ -1280,7 +1280,7 @@ mat-chip-list.mat-chip-list {
 		width: 400px;
 	}
 
-	.mat-menu-content {
+	.mat-mdc-menu-content {
 		padding: $dblPadding;
 	}
 }
@@ -1414,8 +1414,8 @@ mat-tab-group.mat-tab-group {
 }
 
 
-div.mat-menu-panel.product-menu {
-	div.mat-menu-content {
+div.mat-mdc-menu-panel.product-menu {
+	div.mat-mdc-menu-content {
 		width: 300px;
 		// height: 360px;
 
@@ -1862,7 +1862,7 @@ div.dynamic-form {
 		mat-card {
 			margin-bottom: $stdPadding * 3;
 
-			mat-card-header.mat-card-header {
+			mat-card-header.mat-mdc-card-header {
 				.mat-card-header-text {
 					margin: 0px;
 				}
@@ -2262,11 +2262,11 @@ div.dxc-tooltip {
 	z-index: 50000;
 }
 
-div.mat-menu-panel {
+div.mat-mdc-menu-panel {
 	&.save-query-menu {
 		min-height: 48px;
 
-		div.mat-menu-content {
+		div.mat-mdc-menu-content {
 			padding: $stdPadding;
 
 			mat-form-field.mat-form-field {
@@ -2863,11 +2863,11 @@ div.dx-popup-content {
 	padding: $dblPadding;
 }
 
-mat-card.mat-card.project-dash-card, mat-car {
+mat-card.mat-mdc-card.project-dash-card, mat-car {
 	$maxHeight: 280px;
 
 	mat-card-header {
-		&.mat-card-header {
+		&.mat-mdc-card-header {
 			padding-right: $stdPadding * 5.5;
 
 			mat-form-field {

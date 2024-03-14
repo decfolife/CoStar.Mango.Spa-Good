@@ -6,7 +6,7 @@
   "prefix": "mango",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/data-models/lib-data-models/src/**/*.ts",
@@ -16,7 +16,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/data-models/lib-data-models"],
       "options": {
         "jestConfig": "libs/data-models/lib-data-models/jest.config.ts",

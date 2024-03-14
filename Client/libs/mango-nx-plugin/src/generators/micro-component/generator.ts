@@ -3,7 +3,7 @@ import {
   readProjectConfiguration,
   formatFiles,
   Tree,
-} from '@nrwl/devkit';
+} from '@nx/devkit';
 import { MangoNxPluginGeneratorSchema } from './schema';
 
 import {
@@ -24,32 +24,30 @@ export default async function (
   options: MangoNxPluginGeneratorSchema
 ) {
   const normalizedOptions = normalizeOptions(host, options);
-  const mangoSpaRoute = `${readProjectConfiguration(host, 'mango').sourceRoot}/app/app-routing.module.ts`;
+  const mangoSpaRoute = `${
+    readProjectConfiguration(host, 'mango').sourceRoot
+  }/app/app-routing.module.ts`;
 
-  addProjectConfiguration(
-    host, 
-    normalizedOptions.projectName, 
-    {
-      root: normalizedOptions.projectRoot,
-      projectType: 'application',
-      sourceRoot: `${normalizedOptions.projectRoot}/src`,
-      targets: {
-        build: {
-          executor: '@mango/mango-nx-plugin:build',
-        },
+  addProjectConfiguration(host, normalizedOptions.projectName, {
+    root: normalizedOptions.projectRoot,
+    projectType: 'application',
+    sourceRoot: `${normalizedOptions.projectRoot}/src`,
+    targets: {
+      build: {
+        executor: '@mango/mango-nx-plugin:build',
       },
-      tags: normalizedOptions.parsedTags,
-    }
-  );
+    },
+    tags: normalizedOptions.parsedTags,
+  });
 
   // Create main component
   addFiles(host, normalizedOptions);
   // Add unit Tests
-  if(normalizedOptions.addUnitTesting){
+  if (normalizedOptions.addUnitTesting) {
     await addE2e(host, normalizedOptions);
   }
   // Create e2e test suite
-  if(normalizedOptions.addEnd2EndTesting){
+  if (normalizedOptions.addEnd2EndTesting) {
     await addUnitTestRunner(host, normalizedOptions);
   }
   // Add extra build options to Package.json
@@ -59,12 +57,13 @@ export default async function (
   updateAngularJson(host, normalizedOptions);
 
   // Update MangoSpa routes
-  if(normalizedOptions.updateMangoSpaRoute){
+  if (normalizedOptions.updateMangoSpaRoute) {
     updateMangoRoute(host, normalizedOptions, mangoSpaRoute);
-    console.log("\x1b[34mNOTE \x1b[0m If you decide to remove the component, remove it from 'app-routing.module.ts' as well.");
+    console.log(
+      "\x1b[34mNOTE \x1b[0m If you decide to remove the component, remove it from 'app-routing.module.ts' as well."
+    );
   }
 
   // Formats all the created or updated files using Prettier
   await formatFiles(host);
-
 }

@@ -40,7 +40,7 @@ app-accounting-settings {
     box-shadow: none !important;
     padding: 0px !important;
 
-    mat-card-header.mat-card-header {
+    mat-card-header.mat-mdc-card-header {
       padding: $stdPadding $dblPadding;
       border-bottom: $stdBorder;
       color: $stdTextGray;
@@ -331,7 +331,7 @@ app-accounting-settings {
       mat-card {
         margin-bottom: $stdPadding * 3;
 
-        mat-card-header.mat-card-header {
+        mat-card-header.mat-mdc-card-header {
           .mat-card-header-text {
             margin: 0px;
           }

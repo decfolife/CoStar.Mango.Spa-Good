@@ -6,23 +6,23 @@ import {
   NavigationStart,
   NavigationEnd,
   NavigationError,
-  NavigationCancel
+  NavigationCancel,
 } from '@angular/router';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { environment } from '../../../../../mango/src/environments/environment.local';
 
 @Component({
   selector: 'mango-alerts',
   templateUrl: './index.component.html',
-  styleUrls: [ './index.component.scss' ],
+  styleUrls: ['./index.component.scss'],
 })
 export class IndexComponent implements OnInit {
   title = 'mango-crem-features-alerts';
   loading = true;
   env = environment.name;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.router.initialNavigation(); // Manually triggering initial navigation for @angular/elements
@@ -37,12 +37,12 @@ export class IndexComponent implements OnInit {
       this.loading = true;
     }
 
-    if (routerEvent instanceof NavigationEnd ||
+    if (
+      routerEvent instanceof NavigationEnd ||
       routerEvent instanceof NavigationCancel ||
       routerEvent instanceof NavigationError
     ) {
       this.loading = false;
     }
   }
-
 }

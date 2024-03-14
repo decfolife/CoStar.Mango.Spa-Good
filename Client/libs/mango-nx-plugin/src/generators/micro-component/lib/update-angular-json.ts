@@ -1,13 +1,13 @@
-import { Tree, updateJson } from '@nrwl/devkit';
+import { Tree, updateJson } from '@nx/devkit';
 import type { NormalizeSchema } from './normalize-schema';
 
 export function updateAngularJson(host: Tree, options: NormalizeSchema) {
   updateJson(host, 'angular.json', (json) => {
     json.projects = json.projects ?? {};
     json.projects[`${options.projectName}`] =
-    json.projects[`${options.projectName}`] ?? {};
+      json.projects[`${options.projectName}`] ?? {};
     json.projects[`${options.projectName}`].architect =
-    json.projects[`${options.projectName}`].architect ?? {};
+      json.projects[`${options.projectName}`].architect ?? {};
     json.projects[`${options.projectName}`].architect = JSON.parse(`
       {
         "build": {
@@ -243,7 +243,7 @@ export function updateAngularJson(host: Tree, options: NormalizeSchema) {
         }
       },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nx/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/mango-crem-features/${options.name}/src/**/*.ts",
@@ -252,7 +252,7 @@ export function updateAngularJson(host: Tree, options: NormalizeSchema) {
           }
         },
         "test": {
-          "builder": "@nrwl/jest:jest",
+          "builder": "@nx/jest:jest",
           "outputs": [
             "coverage/apps/mango-crem-features/${options.name}"
           ],

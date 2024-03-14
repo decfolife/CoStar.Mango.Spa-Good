@@ -15,9 +15,7 @@
         "polyfills": "apps/mango-crem-features/reports/src/polyfills.ts",
         "tsConfig": "apps/mango-crem-features/reports/tsconfig.app.json",
         "stylePreprocessorOptions": {
-          "includePaths": [
-            "libs/ui-shared/common/src"
-          ]
+          "includePaths": ["libs/ui-shared/common/src"]
         },
         "assets": [
           "apps/mango-crem-features/reports/src/favicon.ico",
@@ -240,7 +238,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/mango-crem-features/reports/src/**/*.ts",
@@ -250,7 +248,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/mango-crem-features/reports"],
       "options": {
         "jestConfig": "apps/mango-crem-features/reports/jest.config.ts",

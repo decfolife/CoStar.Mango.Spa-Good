@@ -115,7 +115,7 @@
 ::ng-deep #renderFormHeader crem-metric {
 
 	// font-family: $font-family-brand;
-	mat-card.mat-card.costar-hero-metric-card {
+	mat-card.mat-mdc-card.costar-hero-metric-card {
 		border: 0;
 		display: inline-block;
 		margin-bottom: 0;
@@ -124,14 +124,14 @@
 		height: 80px;
 	}
 
-  mat-card.mat-card {
+  mat-card.mat-mdc-card {
     // border: $stdBorder;
     border-radius: 2px !important;
     box-shadow: none !important;
     padding: 0px !important;
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-card-header {
     border-bottom: 0px;
     padding: 0px;
     height: 16px;
@@ -154,7 +154,7 @@
 		}
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-card-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -179,7 +179,7 @@
 		}
   }
 
-  mat-card.mat-card.costar-hero-metric-card
+  mat-card.mat-mdc-card.costar-hero-metric-card
   mat-card-content.mat-card-content
   .sidekick-value-wrapper
   .sidekick-value {
@@ -213,7 +213,7 @@
     left: 2px;
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
     margin: 0px;
     height: 14px;
 
@@ -290,7 +290,7 @@
 //     }
 //   }
 
-//   ::ng-deep crem-metric mat-card.mat-card.costar-hero-metric-card {
+//   ::ng-deep crem-metric mat-card.mat-mdc-card.costar-hero-metric-card {
 //     border: 0;
 //     display: inline-block;
 //     margin-bottom: 0;
@@ -299,7 +299,7 @@
 //     height: 80px;
 // }
 
-// ::ng-deep crem-metric mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header div.mat-card-header-text mat-card-title.mat-card-title {
+// ::ng-deep crem-metric mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-card-header div.mat-card-header-text mat-card-title.mat-card-title {
 //     font-size: 16px;
 //     line-height: 16px;
 //     color: #696969;
@@ -315,14 +315,14 @@
 //     margin: 8px 0px;
 // }
 
-// ::ng-deep crem-metric mat-card.mat-card {
+// ::ng-deep crem-metric mat-card.mat-mdc-card {
 //     border: 1px solid #c2c2c2;
 //     border-radius: 2px !important;
 //     box-shadow: none !important;
 //     padding: 0px !important;
 // }
 
-// ::ng-deep mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+// ::ng-deep mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-card-header {
 //     border-bottom: 0px;
 //     padding: 0px;
 //     height: 16px;

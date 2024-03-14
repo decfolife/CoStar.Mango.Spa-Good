@@ -1,8 +1,59 @@
 @use 'styles' as *;
 
+:host::ng-deep {
+
+  mat-card {
+    @include costar(border, gray04);
+    @include costar(padding, 0);
+    @include costar(box-shadow, none);
+    min-height: 254px;
+
+    mat-card-header {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: space-between;
+      @include costar(padding, 4);
+      @include costar(border-radius, medium);
+      @include costar(color, gray01);
+      @include costar(background-color, light, $important: true);
+      max-height: 58px;
+      overflow: hidden;
+
+      h2 {
+        @include costar(margin-right, 2);
+        .subtitle {
+          @include costar(color, gray03);
+          margin: 0px;
+          font-weight: 200;
+          font-size: 14px;
+          display: inline-block;
+          margin-right: 8px;
+        }
+      }
+    }
+
+    mat-card-content {
+      @include costar(border-top, gray04);
+      @include costar(padding, 0, $important: true);
+      overflow: auto;
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: column;
+      align-items: center;
+      & > div,
+      & > .cardContent {
+        width: 100% !important;
+      }
+    }
+  }
+
+}
+
+// todo: remove/fix this 'crem-card' redundant selector,
+// The below code will not work work unless manually imported
 crem-card {
-  .mat-card.cremCard {
-    .mat-card.cremCard {
+  .mat-mdc-card.cremCard {
       display: flex;
       flex-direction: column;
       min-width: 100%;
@@ -56,25 +107,25 @@ crem-card {
     }
   }
 
-  .cardHeader {
-    @include costar(border-bottom, gray04);
-    @include costar(color, gray01);
-    @include costar(background-color, light, $important: true);
-    padding: 4px 16px !important;
-    justify-content: space-between !important;
-    align-items: center;
-    line-height: 40px;
-    font-size: 18px;
-    font-weight: 400;
-    letter-spacing: 0;
-    margin: 0px !important;
-    height: 40px !important;
-    min-height: 40px !important;
-    max-height: 40px !important;
-    width: unset !important;
-  }
+  // .cardHeader {
+  //   @include costar(border-bottom, gray04);
+  //   @include costar(color, gray01);
+  //   @include costar(background-color, light, $important: true);
+  //   padding: 4px 16px !important;
+  //   justify-content: space-between !important;
+  //   align-items: center;
+  //   line-height: 40px;
+  //   font-size: 18px;
+  //   font-weight: 400;
+  //   letter-spacing: 0;
+  //   margin: 0px !important;
+  //   height: 40px !important;
+  //   min-height: 40px !important;
+  //   max-height: 40px !important;
+  //   width: unset !important;
+  // }
 
-  .mat-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
+  .mat-mdc-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
     display: block;
     align-items: center;
     font-family: Helvetica, sans-serif;
@@ -120,7 +171,7 @@ crem-card {
     display: flex;
     justify-content: space-around;
   }
-}
+
 
 .customHeader>div:first-child {
   margin-right: 8px;
@@ -163,7 +214,7 @@ dx-select-box.dx-show-invalid-badge.dx-selectbox.dx-textbox.dx-texteditor.dx-dro
   margin-right: 16px;
 }
 
-crem-card .mat-card#projects_by_type_card .mat-card-content.mat-card-content.cremCardContent {
+crem-card .mat-mdc-card#projects_by_type_card .mat-card-content.mat-card-content.cremCardContent {
   display: flex;
   align-items: stretch;
   padding: 0px !important;
@@ -199,7 +250,7 @@ crem-card .mat-card-header .mat-card-header-text {
   margin: 0 !important;
 }
 
-crem-card .mat-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
+crem-card .mat-mdc-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
   display: block;
   align-items: center;
   padding: 0px !important;

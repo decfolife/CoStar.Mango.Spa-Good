@@ -21,6 +21,6 @@ The built files can be found on `./dis/cremDist/mango-crem-features-financial-re
 ## Remove Micro-component
 
 If created, remove the testing suite first, then remove the micro-component:
-`nx g @nrwl/workspace:remove mango-crem-features-financial-reporting-settings-e2e ; nx g @nrwl/workspace:remove mango-crem-features-financial-reporting-settings`. Additionally, if a routing option was added to MangoSpa, you will need to manually remove it in `./apps/mango/src/app/app-routing.module.ts`.
+`nx g @nx/workspace:remove mango-crem-features-financial-reporting-settings-e2e ; nx g @nx/workspace:remove mango-crem-features-financial-reporting-settings`. Additionally, if a routing option was added to MangoSpa, you will need to manually remove it in `./apps/mango/src/app/app-routing.module.ts`.
 
 For a completely manual process discard the changes in Git, or delete the lines in the following files: `./angular.json`, `./tsconfig.json`, `./jest.config.js`, `nx.json`, `./apps/mango/src/app/app-routing.module.ts` and `./apps/mango-crem-features/mango-crem-features-financial-reporting-settings`.

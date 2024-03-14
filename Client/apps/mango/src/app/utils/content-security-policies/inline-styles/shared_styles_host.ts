@@ -1,3 +1,7 @@
+/**
+ * @deprecated for Angular >= 16
+ */
+
 import { DOCUMENT, ɵgetDOM as getDOM } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { ɵSharedStylesHost } from '@angular/platform-browser';

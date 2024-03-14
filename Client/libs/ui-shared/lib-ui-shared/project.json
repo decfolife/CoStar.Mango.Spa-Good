@@ -6,7 +6,7 @@
   "prefix": "mango",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/ui-shared/lib-ui-shared/src/**/*.ts",
@@ -16,7 +16,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/ui-shared/lib-ui-shared"],
       "options": {
         "jestConfig": "libs/ui-shared/lib-ui-shared/jest.config.ts",
@@ -54,8 +54,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": [
-    "ui-shared-lib-ui-elements",
-    "ui-shared-common"
-  ]
+  "implicitDependencies": ["ui-shared-lib-ui-elements", "ui-shared-common"]
 }

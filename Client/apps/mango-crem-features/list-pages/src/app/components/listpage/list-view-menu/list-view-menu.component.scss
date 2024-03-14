@@ -159,12 +159,12 @@ $menuWidth: 275px;
       .cdk-focused.cdk-mouse-focused {
         outline: none;
       }
-      .mat-menu-panel {
+      .mat-mdc-menu-panel {
         max-width: unset;
         overflow: hidden;
         min-height: unset;
 
-        .mat-menu-content {
+        .mat-mdc-menu-content {
           &:not(:empty) {
             padding: 0;
           }

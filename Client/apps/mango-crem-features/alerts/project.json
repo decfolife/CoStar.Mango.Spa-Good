@@ -241,7 +241,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/mango-crem-features/alerts/src/**/*.ts",
@@ -251,7 +251,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/mango-crem-features/alerts"],
       "options": {
         "jestConfig": "apps/mango-crem-features/alerts/jest.config.ts",

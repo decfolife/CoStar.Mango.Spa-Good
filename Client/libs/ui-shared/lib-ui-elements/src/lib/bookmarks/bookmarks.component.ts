@@ -1,4 +1,4 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -9,7 +9,7 @@ import { environment } from 'apps/mango/src/environments/environment.local';
 @Component({
   selector: 'crem-bookmarks',
   templateUrl: './bookmarks.component.html',
-  styleUrls: ['./bookmarks.component.scss']
+  styleUrls: ['./bookmarks.component.scss'],
 })
 export class BookmarksComponent {
   @ViewChild('recentDrawer', { static: true }) recentDrawer: MatDrawer;
@@ -18,25 +18,29 @@ export class BookmarksComponent {
 
   constructor(private router: Router) {}
 
-  toggleBookmarkDrawer(){
+  toggleBookmarkDrawer() {
     this.recentDrawer.toggle();
   }
 
-  private goToBookmarkUrl(objectTypeId: number, bm: any){
-    if(environment.isRestful) {
-      if(objectTypeId === 7) { null }
-      else {
-        this.router.navigate(
-          ['crem/forms/render-form'],
-          {
-            queryParams: { fid: 312, oid: bm.objectID, otid: bm.objectTypeID, ottid: bm.objectTypeTypeID }
-          });
+  private goToBookmarkUrl(objectTypeId: number, bm: any) {
+    if (environment.isRestful) {
+      if (objectTypeId === 7) {
+        null;
+      } else {
+        this.router.navigate(['crem/forms/render-form'], {
+          queryParams: {
+            fid: 312,
+            oid: bm.objectID,
+            otid: bm.objectTypeID,
+            ottid: bm.objectTypeTypeID,
+          },
+        });
       }
-    }
-    else {
-      if(objectTypeId === 7) { //Report
+    } else {
+      if (objectTypeId === 7) {
+        //Report
         window.open(bm.path);
-      }else {
+      } else {
         document.location.href = bm.path;
       }
     }

@@ -1,25 +1,18 @@
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-
 module.exports = {
-  core: {
-    builder: 'webpack5',
+  addons: ['@storybook/addon-a11y', '@storybook/addon-jest', '@storybook/addon-mdx-gfm'],
+  framework: {
+    name: '@storybook/angular',
+    options: {}
   },
-  addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-a11y',
-    '@storybook/addon-jest',
-  ],
-  framework: '@storybook/angular',
-  stories: [],
   features: {
-    previewMdx2: true,
+    previewMdx2: true
   },
   webpackFinal: async config => {
     const tsPaths = new TsconfigPathsPlugin({
-      configFile: './tsconfig.base.json',
+      configFile: './tsconfig.base.json'
     });
-
-    config.resolve.plugins ? config.resolve.plugins.push(tsPaths) : (config.resolve.plugins = [tsPaths]);
+    config.resolve.plugins ? config.resolve.plugins.push(tsPaths) : config.resolve.plugins = [tsPaths];
 
     // add your own webpack tweaks below if needed
 
@@ -27,4 +20,7 @@ module.exports = {
 
     return config;
   },
+  docs: {
+    autodocs: true
+  }
 };

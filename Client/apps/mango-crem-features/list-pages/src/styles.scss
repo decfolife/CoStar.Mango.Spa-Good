@@ -41,7 +41,7 @@ body {
       font-size: 14px !important;
     }
 
-    button.mat-menu-item,
+    button.mat-mdc-menu-item,
     div.mat-list-item-content {
       background: transparent !important;
       cursor: pointer;
@@ -106,7 +106,7 @@ div.paymentDetailsModal {
       height: 380px;
     }
     mat-tab-header.mat-tab-header {
-      div.mat-tab-labels {
+      div.mat-mdc-tab-labels {
         .mat-tab-label {
           height: 36px;
           background-color: colors.$lightGray;
@@ -213,11 +213,11 @@ div.menu-section.btns-right crem-button {
   }
 }
 
-.cdk-overlay-container .cdk-overlay-pane .mat-menu-panel .mat-menu-content .view-list-item-flex .view-list-item.dbl-left-margin button:focus {
+.cdk-overlay-container .cdk-overlay-pane .mat-mdc-menu-panel .mat-mdc-menu-content .view-list-item-flex .view-list-item.dbl-left-margin button:focus {
   border: 1px solid transparent;
 }
 
-.mat-menu-item[disabled], mat-slide-toggle.mat-disabled {
+.mat-mdc-menu-item[disabled], mat-slide-toggle.mat-disabled {
   color: colors.$costarRichGray !important;
 }
 
@@ -232,11 +232,11 @@ app-list-page {
   }
 } 
 
-button.mat-menu-item, button.mat-menu-item mat-slide-toggle label.mat-slide-toggle-label {
+button.mat-mdc-menu-item, button.mat-mdc-menu-item mat-slide-toggle label.mat-slide-toggle-label {
   font-weight: 500 !important;
 }
 
-button.mat-menu-item[disabled="true"] mat-slide-toggle label.mat-slide-toggle-label, button.mat-menu-item[disabled="true"] {
+button.mat-mdc-menu-item[disabled="true"] mat-slide-toggle label.mat-slide-toggle-label, button.mat-mdc-menu-item[disabled="true"] {
   font-weight: 400 !important;
 }
 

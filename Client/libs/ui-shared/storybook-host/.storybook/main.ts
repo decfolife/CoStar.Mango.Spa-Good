@@ -1,14 +1,14 @@
 const rootMain = require('../../../../.storybook/main');
-import type { StorybookConfig, Options } from '@storybook/core-common';
+import type { StorybookConfig } from '@storybook/angular';
 
 const config: StorybookConfig = {
   ...rootMain,
   core: { ...rootMain.core, builder: 'webpack5' },
   stories: [
-    ...rootMain.stories,
+    // ...rootMain.stories,
     /**
      * Libraries and components, tokens and documentation below
-    */
+     */
     // General Storybook Documentation
     '../docs/**/*.stories.mdx',
     // Tokens
@@ -20,16 +20,7 @@ const config: StorybookConfig = {
     '../../lib-ui-elements/**/*.stories.mdx',
     '../../lib-ui-elements/**/*.stories.@(js|jsx|ts|tsx)',
   ],
-  addons: [...(rootMain.addons || [])],
-  webpackFinal: async (config, { configType }: Options) => {
-    // apply any global webpack configs that might have been specified in .storybook/main.ts
-    if (rootMain.webpackFinal) {
-      config = await rootMain.webpackFinal(config, { configType } as Options);
-    }
-
-    // add your own webpack tweaks if needed
-    return config;
-  },
+  addons: ['@storybook/addon-essentials', ...(rootMain.addons || [])],
 };
 
 module.exports = config;

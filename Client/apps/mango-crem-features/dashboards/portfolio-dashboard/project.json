@@ -49,7 +49,6 @@
           },
           "outputHashing": "none",
           "sourceMap": false,
-          
           "namedChunks": false,
           "aot": true,
           "extractLicenses": true,
@@ -85,7 +84,6 @@
           },
           "outputHashing": "none",
           "sourceMap": false,
-          
           "namedChunks": false,
           "aot": true,
           "extractLicenses": true,
@@ -121,7 +119,6 @@
           },
           "outputHashing": "none",
           "sourceMap": false,
-          
           "namedChunks": false,
           "aot": true,
           "extractLicenses": true,
@@ -157,7 +154,6 @@
           },
           "outputHashing": "none",
           "sourceMap": false,
-          
           "namedChunks": false,
           "aot": true,
           "extractLicenses": true,
@@ -193,7 +189,6 @@
           },
           "outputHashing": "none",
           "sourceMap": false,
-          
           "namedChunks": false,
           "aot": true,
           "extractLicenses": true,
@@ -238,7 +233,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/mango-crem-features/dashboards/portfolio-dashboard/src/**/*.ts",
@@ -248,7 +243,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
         "{workspaceRoot}/coverage/apps/mango-crem-features/dashboards/portfolio-dashboard"
       ],

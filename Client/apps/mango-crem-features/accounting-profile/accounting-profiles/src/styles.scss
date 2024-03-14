@@ -465,7 +465,7 @@ app-discount-rate-profiles-add-edit {
       mat-card {
         margin-bottom: $stdPadding * 3;
 
-        mat-card-header.mat-card-header {
+        mat-card-header.mat-mdc-card-header {
           .mat-card-header-text {
             margin: 0px;
           }
@@ -520,13 +520,13 @@ app-discount-rate-profiles-add-edit {
         }
       }
     }
-    mat-card.mat-card {
+    mat-card.mat-mdc-card {
       border: $stdBorder;
       border-radius: 2px !important;
       box-shadow: none !important;
       padding: 0px !important;
 
-      mat-card-header.mat-card-header {
+      mat-card-header.mat-mdc-card-header {
         padding: $stdPadding $dblPadding;
         border-bottom: $stdBorder;
         color: $stdTextGray;
@@ -596,7 +596,7 @@ app-discount-rate-profiles-add-edit {
           border-right: $stdBorder;
         }
 
-        mat-card-header.mat-card-header {
+        mat-card-header.mat-mdc-card-header {
           border-bottom: 0px;
           padding: 0px;
 
@@ -686,7 +686,7 @@ app-discount-rate-profiles-add-edit {
         margin-bottom: 0px !important;
         display: inline-block;
 
-        mat-card-header.mat-card-header {
+        mat-card-header.mat-mdc-card-header {
           border-bottom: 0px;
 
           div.mat-card-header-text {
@@ -723,7 +723,7 @@ app-discount-rate-profiles-add-edit {
           align-content: center;
           align-items: center;
 
-          mat-card-header.mat-card-header {
+          mat-card-header.mat-mdc-card-header {
             padding: 0px $stdPadding*3;
 
             div.mat-card-header-text {

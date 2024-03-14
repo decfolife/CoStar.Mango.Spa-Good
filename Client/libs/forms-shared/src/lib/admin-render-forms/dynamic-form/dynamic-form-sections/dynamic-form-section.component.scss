@@ -1,5 +1,5 @@
 
-mat-card.mat-card
+mat-card.mat-mdc-card
 {
     border: 1px solid #BFBFBF;
     border-radius: 2px !important;
@@ -17,7 +17,7 @@ mat-card.mat-card
       }
 }
 
-mat-card.mat-card mat-card-header.mat-card-header{
+mat-card.mat-mdc-card mat-card-header.mat-card-header{
     padding: 16px;
     box-sizing: border-box;
     border-bottom: 1px solid #BFBFBF;
@@ -41,7 +41,7 @@ mat-card.mat-card mat-card-header.mat-card-header{
   }
 }
 
-::ng-deep .mat-menu-panel.existing-fields-menu  {
+::ng-deep .mat-mdc-menu-panel.existing-fields-menu  {
   max-width: 800px;
 }
 

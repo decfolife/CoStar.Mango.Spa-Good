@@ -49,13 +49,13 @@
     flex-grow: 1;
     overflow-y: auto;
 
-    .mat-card {
+    .mat-mdc-card {
       border: 1px solid #BFBFBF;
       border-radius: 2px !important;
       box-shadow: none !important;
       margin-bottom: 24px !important;
 
-      .mat-card-header {
+      .mat-mdc-card-header {
         padding: 16px;
         box-sizing: border-box;
         border-bottom: 1px solid #bfbfbf;
@@ -92,7 +92,7 @@
   width: 800px;
 }
 
-::ng-deep .mat-menu-panel.existing-section-menu {
+::ng-deep .mat-mdc-menu-panel.existing-section-menu {
   max-width: 800px;
 }
 

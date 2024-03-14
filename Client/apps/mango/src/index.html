@@ -5,32 +5,9 @@
     <title>CoStar Real Estate Manager</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Needed once we start hosting mangospa using NGINX or MangoSPA .NET web server-->
-    <!-- 1) Activate CSP: Comment out the below meta tags and make sure the headers are activated on nginx-spa.conf -->
-    <meta name="CSP-NONCE" content="random-csp-nonce"/>
-    <meta http-equiv="Content-Security-Policy" content="style-src 'self' 'nonce-random-csp-nonce';">
-
-    <!-- For Local Testing only. -->
-    <!-- 2) Testing locally: Comment out the below meta tags to test headers serve locally. -->
-    <!-- <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self';
-              connect-src 'self' *.crem.aws.dshrp.com/ *.corp.virtualpremise.com:*/;
-              frame-src 'self';
-              style-src 'self' *.googleapis.com;
-              font-src 'self' https://fonts.gstatic.com/;
-              img-src 'self' *.corp.virtualpremise.com:*/;
-              manifest-src 'self';
-              media-src 'self';
-              object-src 'self';
-              worker-src 'self';
-              script-src 'self' *.costar.com *.glancecdn.net *.google-analytics.com"> -->
-
-    <!-- 3) Test using Nginx: For testing closer to dev/test environment run `docker-compose up` from ./Costar.Mango.Spa -->
-
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
   <body>
-    <mango-root></mango-root>
+    <mango-root ngCspNonce="random-csp-nonce"></mango-root>
   </body>
 </html>

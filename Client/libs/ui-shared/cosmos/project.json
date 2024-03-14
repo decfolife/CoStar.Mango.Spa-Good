@@ -6,7 +6,7 @@
   "prefix": "cosmos",
   "targets": {
     "build": {
-      "executor": "@nrwl/angular:ng-packagr-lite",
+      "executor": "@nx/angular:ng-packagr-lite",
       "options": {
         "project": "libs/ui-shared/cosmos/ng-package.json",
         "tsConfig": "libs/ui-shared/cosmos/tsconfig.lib.json",
@@ -15,22 +15,18 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/ui-shared/cosmos/src/**/*.ts",
           "libs/ui-shared/cosmos/src/**/*.html"
         ]
       },
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/libs/ui-shared/cosmos"
-      ],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/ui-shared/cosmos"],
       "options": {
         "jestConfig": "libs/ui-shared/cosmos/jest.config.ts",
         "passWithNoTests": true

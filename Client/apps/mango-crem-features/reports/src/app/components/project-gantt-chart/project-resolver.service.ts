@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { ResolvedData } from '../../shared/models/index';
@@ -9,7 +9,7 @@ import { ProjectGanttChartService } from "./project-gantt-chart.service";
     providedIn: 'any'
 })
 
-export class ProjectResolver implements Resolve<ResolvedData> {
+export class ProjectResolver  {
 
     constructor(private service: ProjectGanttChartService) { }
 

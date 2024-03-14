@@ -45,7 +45,6 @@ import { AppService } from './app.service';
 import { CremModule } from './components/crem-component/crem.module';
 import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
 import { MangoNavigationService } from './services/navigation.service';
-import { CSPModuleInlineStyles } from './utils/content-security-policies/inline-styles';
 import { CustomSerializer } from './utils/custom-route-serializer';
 import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 import { ValidateComponent } from './components/auth/validate/validate.component';
@@ -92,7 +91,6 @@ import { contactRecord } from './+state/app/app.selectors';
       closeButton: true,
     }),
     MatPasswordStrengthModule.forRoot(),
-    CSPModuleInlineStyles,
   ],
   providers: [
     { provide: Environment, useValue: environment },
@@ -117,7 +115,7 @@ export class AppModule {
     this.router.events
       .pipe(
         filter(
-          (e: RouterEvent) =>
+          (e: RouterEvent | any) =>
             e instanceof NavigationStart && e.url.includes('.asp')
         ),
         switchMap((e) => combineLatest([of(e.url), this.facade.clientKey$, this.facade.contactRecord$])),

@@ -2,7 +2,7 @@
 /* eslint-disable rxjs-angular/prefer-composition */
 
 import { Component, SecurityContext, ElementRef, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ProjectsDashboardLeftNavService } from
   'apps/mango-crem-features/micro-components/src/app/services/projects-dashboard-left-nav.service';
@@ -39,7 +39,7 @@ export class AppComponent {
 }
 
 @Injectable()
-export class CanActivateGuard implements CanActivate {
+export class CanActivateGuard  {
 
   constructor(
     private router: Router,

@@ -46,96 +46,96 @@ $dblPadding: 2 * $stdPadding;
 	background: #AAA;
 }
 
-html {
-	background-color: colors.$bodyBackgroundGray;
-	scrollbar-width: thin;
-}
+// html {
+// 	background-color: colors.$bodyBackgroundGray;
+// 	scrollbar-width: thin;
+// }
 
-body {
-	margin: 0;
-}
+// body {
+// 	margin: 0;
+// }
 
 //**** Filter Styles End ****//
 
 //**** Card Styles ****//
 #projects-dashboard .project-cards, .projects.dashboards-dragCardItems {
-	crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
-		height: 280px;
-	}
+// 	crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
+// 		height: 280px;
+// 	}
 
-	crem-card mat-card .cardContent {
-		height: 280px;
-		max-height: 280px;
-	}
+// 	crem-card mat-card .cardContent {
+// 		height: 280px;
+// 		max-height: 280px;
+// 	}
 
-	crem-card mat-card.cremCard#activity_feed_card mat-card-content.mat-card-content.cremCardContent {
-    min-height: 480px !important;
-    height: 480px !important;
-    max-height: 480px !important;
-  }
+// 	crem-card mat-card.cremCard#activity_feed_card mat-card-content.mat-card-content.cremCardContent {
+//     min-height: 480px !important;
+//     height: 480px !important;
+//     max-height: 480px !important;
+//   }
 
-  crem-card mat-card#activity_feed_card .cardContent {
-    height: 480px !important;
-    max-height: 480px !important; 
-  }
+//   crem-card mat-card#activity_feed_card .cardContent {
+//     height: 480px !important;
+//     max-height: 480px !important; 
+//   }
 
-	crem-card .mat-card#projects_by_type_card .cardContent {
-    overflow: hidden;
-    padding: 16px !important;
-	}	
+// 	crem-card .mat-card#projects_by_type_card .cardContent {
+//     overflow: hidden;
+//     padding: 16px !important;
+// 	}	
 
-	crem-card mat-card.cremCard#project_milestones_card mat-card-content.mat-card-content.cremCardContent {
-    display: flex;
-    align-items: stretch;
-    font-family: Helvetica, sans-serif;
-    padding: 0px !important;
-    font-size: 14px;
-    justify-content: flex-start !important;
-    background: colors.$white;
-    min-height: 600px !important;
-    height: 600px !important;
-    max-height: 600px !important;
-    overflow: hidden !important;
-	}
-	crem-card mat-card#project_milestones_card .cardContent {
-    height: 600px;
-    max-height: 600px;
-	}
+// 	crem-card mat-card.cremCard#project_milestones_card mat-card-content.mat-card-content.cremCardContent {
+//     display: flex;
+//     align-items: stretch;
+//     font-family: Helvetica, sans-serif;
+//     padding: 0px !important;
+//     font-size: 14px;
+//     justify-content: flex-start !important;
+//     background: colors.$white;
+//     min-height: 600px !important;
+//     height: 600px !important;
+//     max-height: 600px !important;
+//     overflow: hidden !important;
+// 	}
+// 	crem-card mat-card#project_milestones_card .cardContent {
+//     height: 600px;
+//     max-height: 600px;
+// 	}
 
-	crem-card mat-card.mat-card mat-card-header.mat-card-header .cardHeader {
-		height: 26px !important;
-    	border-bottom: none !important;
-	}
+// 	crem-card mat-card.mat-card mat-card-header.mat-card-header .cardHeader {
+// 		height: 26px !important;
+//     	border-bottom: none !important;
+// 	}
 
-	crem-card .cardHeader .customHeader {
-		height: 32px;
-		box-sizing: border-box;
-		align-items: center;
+// 	crem-card .cardHeader .customHeader {
+// 		// height: 32px;
+// 		box-sizing: border-box;
+// 		align-items: center;
 
-		div div {
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-		}
-	}
+// 		div div {
+// 			display: flex;
+// 			justify-content: flex-end;
+// 			align-items: center;
+// 		}
+// 	}
 
-	crem-card mat-card#project_milestones_card cs-chip .dx-field-value-static {
-    padding: 4px 8px !important;
-	}
+// 	crem-card mat-card#project_milestones_card cs-chip .dx-field-value-static {
+//     padding: 4px 8px !important;
+// 	}
 
-	crem-card mat-card#project_milestones_card .chipContent {
-    max-width: 182px !important;
-    overflow: hidden;
-    text-overflow: ellipsis !important;
-    white-space: nowrap;
-    display: inline-block !important;
-    line-height: 16px;
-	}
+// 	crem-card mat-card#project_milestones_card .chipContent {
+//     max-width: 182px !important;
+//     overflow: hidden;
+//     text-overflow: ellipsis !important;
+//     white-space: nowrap;
+//     display: inline-block !important;
+//     line-height: 16px;
+// 	}
 
-	crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row td, crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td {
-    vertical-align: middle !important;
-    padding: 0px 8px !important;
-	}
+// 	crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row td, crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td {
+//     vertical-align: middle !important;
+//     padding: 0px 8px !important;
+// 	}
 
 	//ADA FIX: Text is clipped when resized, Project Milestones datagrid headers and cells
 	crem-card {
@@ -337,7 +337,7 @@ body {
 #projects-dashboard crem-metric {
 
 	font-family: $font-family-brand;
-	mat-card.mat-card.costar-hero-metric-card {
+	mat-card.mat-mdc-card.costar-hero-metric-card {
 		border: 0;
 		display: inline-block;
 		margin-bottom: 0;
@@ -346,14 +346,14 @@ body {
 		height: 80px;
 	}
 
-  mat-card.mat-card {
+  mat-card.mat-mdc-card {
     border: $stdBorder;
     border-radius: 2px !important;
     box-shadow: none !important;
     padding: 0px !important;
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-mdc-card-header {
     border-bottom: 0px;
     padding: 0px;
     height: 16px;
@@ -382,7 +382,7 @@ body {
 		}
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-card-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -413,7 +413,7 @@ body {
 		}
   }
 
-  mat-card.mat-card.costar-hero-metric-card
+  mat-card.mat-mdc-card.costar-hero-metric-card
   mat-card-content.mat-card-content
   .sidekick-value-wrapper
   .sidekick-value {
@@ -586,13 +586,13 @@ body {
 
 
 //*****  'Manage Teams'  and 'Project Team' Page Styles *****//
-.mat-menu-panel {
+.mat-mdc-menu-panel {
  &.teamsActionsMenu, &.teamsMoreMenu, &.projectTeamMoreMenu, &.projectTeamActionsMenu, &.projectTeamAddMenu {
 	  min-height: unset;
-	 .mat-menu-content {
+	 .mat-mdc-menu-content {
 			padding: 0 !important;
 	  }	
-		.mat-menu-item {
+		.mat-mdc-menu-item {
 			height: 34px;
 			display: flex;
 			line-height: 34px;
@@ -603,7 +603,7 @@ body {
 	}
 	&.teamActionsMenu, &.teamMemberActionsMenu, &.projectMemberActionsMenu, &.projectTeamAddMenu {
 		min-height: unset;
-		& .mat-menu-content {
+		& .mat-mdc-menu-content {
 			padding: 0;
 		}
 	}

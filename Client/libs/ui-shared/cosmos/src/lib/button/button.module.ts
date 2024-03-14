@@ -5,15 +5,11 @@ import { ButtonComponent } from './button.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatIconModule } from '@angular/material/icon';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 
 @NgModule({
   declarations: [ButtonComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatBadgeModule
-  ],
+  imports: [CommonModule, MatButtonModule, MatBadgeModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [ButtonComponent],
 })

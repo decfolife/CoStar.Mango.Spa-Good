@@ -1,3 +1,7 @@
+/**
+ * @deprecated for Angular >= 16
+ */
+
 import { Inject, Injectable } from '@angular/core';
 import { Platform } from '@angular/cdk/platform';
 import { CustomDomSharedStylesHost } from './shared_styles_host';

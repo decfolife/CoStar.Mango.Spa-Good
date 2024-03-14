@@ -78,7 +78,7 @@ portfolio-dashboard {
 #portfolio-dashboard crem-metric {
 
 	font-family: $font-family-brand;
-	mat-card.mat-card.costar-hero-metric-card {
+	mat-card.mat-mdc-card.costar-hero-metric-card {
 		border: 0;
 		display: inline-block;
 		margin-bottom: 0;
@@ -87,14 +87,14 @@ portfolio-dashboard {
 		height: 80px;
 	}
 
-  mat-card.mat-card {
+  mat-card.mat-mdc-card {
     border: $stdBorder;
     border-radius: 2px !important;
     box-shadow: none !important;
     padding: 0px !important;
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-mdc-card-header {
     border-bottom: 0px;
     padding: 0px;
     height: 16px;
@@ -117,7 +117,7 @@ portfolio-dashboard {
 		}
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-card-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -142,7 +142,7 @@ portfolio-dashboard {
 		}
   }
 
-  mat-card.mat-card.costar-hero-metric-card
+  mat-card.mat-mdc-card.costar-hero-metric-card
   mat-card-content.mat-card-content
   .sidekick-value-wrapper
   .sidekick-value {
@@ -174,7 +174,7 @@ portfolio-dashboard {
     position: relative;
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
     margin: 0px;
     height: 14px;
 

@@ -13,7 +13,5 @@ import { CommonModule } from '@angular/common';
   ],
   declarations: [
   ],
-  entryComponents: [
-  ]
 })
 export class SharedModule { }

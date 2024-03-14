@@ -1,3 +1,7 @@
+/**
+ * @deprecated for Angular >= 16
+ */
+
 import { NgModule } from '@angular/core';
 import { CustomDomSharedStylesHost } from './shared_styles_host';
 import { ɵDomSharedStylesHost } from '@angular/platform-browser';

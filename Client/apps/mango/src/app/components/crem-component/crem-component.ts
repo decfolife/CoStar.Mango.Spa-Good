@@ -20,7 +20,7 @@ import { RenderFormHeaderComponent } from 'libs/forms-shared/src/lib/render-form
   selector: 'mango-crem-component',
   templateUrl: './crem-component.html',
   styleUrls: ['./crem-component.scss'],
-  entryComponents: [RenderFormHeaderComponent]
+  // entryComponents: [RenderFormHeaderComponent] // @deprecated in Angular@16 https://stackoverflow.com/questions/77057726/entrycomponents-substitution-in-angular-16
 })
 export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
    @ViewChild('cremBookmark', { static: false }) cremBookmarkComponent: BookmarksComponent;

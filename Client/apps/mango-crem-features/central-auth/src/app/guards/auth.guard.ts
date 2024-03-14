@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Router,
-  RouterStateSnapshot
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 
 import { UserService } from '@mango/core-shared';
 import { Observable, of } from 'rxjs';
@@ -13,7 +8,7 @@ import { CentralAuthFacade } from '../+state/facades';
 import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_CONTACT_ID_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM, SHOW_MULTI_CONTACT_POPUP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard  {
   isInboundOn: boolean;
 
   constructor(

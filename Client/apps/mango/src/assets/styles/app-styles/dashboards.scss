@@ -55,7 +55,7 @@ $card-dropDown-height: 24px;
 #projects-dashboard crem-card,
 #portfolio-dashboard crem-card,
 .dashboards-dragCardItems crem-card {
-  .mat-card {
+  .mat-mdc-card {
     border: 1px solid colors.$gray;
     box-shadow: none !important;
 		padding: 0px;
@@ -91,7 +91,7 @@ $card-dropDown-height: 24px;
  	 	}
 	}	
 
-  .mat-card#project_milestones_card mat-card-header.mat-card-header {
+  .mat-mdc-card#project_milestones_card mat-card-header.mat-card-header {
     overflow: hidden;
   }
 
@@ -183,18 +183,18 @@ $card-dropDown-height: 24px;
   }
 } 
 
-div.mat-menu-panel.dashboardsMoreOptions div.mat-menu-content .mat-menu-item {
+div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-menu-item {
   padding: 8px 16px;
   cursor: pointer;
   line-height: 18px!important;
   height: auto;
 }
-#projects-dashboard div.mat-menu-panel.dashboardsMoreOptions,
-#portfolio-dashboard div.mat-menu-panel.dashboardsMoreOptions,  div.mat-menu-panel.dashboardsAddMenu,
-.dashboards-dragCardItems div.mat-menu-panel.dashboardsMoreOptions {
+#projects-dashboard div.mat-mdc-menu-panel.dashboardsMoreOptions,
+#portfolio-dashboard div.mat-mdc-menu-panel.dashboardsMoreOptions,  div.mat-mdc-menu-panel.dashboardsAddMenu,
+.dashboards-dragCardItems div.mat-mdc-menu-panel.dashboardsMoreOptions {
 	overflow-x: hidden;
 
-	& div.mat-menu-content .mat-menu-item {
+	& div.mat-mdc-menu-content .mat-mdc-menu-item {
 		padding: 8px 16px;
 		cursor: pointer;
 		line-height: 18px !important;
@@ -320,11 +320,11 @@ div.mat-menu-panel.dashboardsMoreOptions div.mat-menu-content .mat-menu-item {
 }
 
 #portfolio-dashboard crem-card, .dashboards-dragCardItems crem-card {
-  .mat-card#building_type_card .cardContent, .mat-card#lease_expirations_card .cardContent,
-  .mat-card#stores_by_format_card .cardContent, .mat-card#ownership_type_card .cardContent,
-  .mat-card#annual_expiration_rent_value_card .cardContent,
-  .mat-card#buildings_by_state_card .cardContent,
-  .mat-card#financials_accounting_links_card .cardContent
+  .mat-mdc-card#building_type_card .cardContent, .mat-mdc-card#lease_expirations_card .cardContent,
+  .mat-mdc-card#stores_by_format_card .cardContent, .mat-mdc-card#ownership_type_card .cardContent,
+  .mat-mdc-card#annual_expiration_rent_value_card .cardContent,
+  .mat-mdc-card#buildings_by_state_card .cardContent,
+  .mat-mdc-card#financials_accounting_links_card .cardContent
   {
     padding: 16px;
     box-sizing: border-box;
@@ -380,7 +380,7 @@ div.mat-menu-panel.dashboardsMoreOptions div.mat-menu-content .mat-menu-item {
 		z-index: 10;
  	}
 
- .mat-tab-label-container {
+ .mat-mdc-tab-label-container {
 		background-color: colors.$bodyBackgroundDarkGray;
  	}
 

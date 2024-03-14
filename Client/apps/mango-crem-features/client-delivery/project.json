@@ -15,10 +15,8 @@
         "polyfills": "apps/mango-crem-features/client-delivery/src/polyfills.ts",
         "tsConfig": "apps/mango-crem-features/client-delivery/tsconfig.app.json",
         "stylePreprocessorOptions": {
-          "includePaths": [
-            "libs/ui-shared/common/src"
-          ]
-        },        
+          "includePaths": ["libs/ui-shared/common/src"]
+        },
         "assets": [
           "apps/mango-crem-features/client-delivery/src/favicon.ico",
           "apps/mango-crem-features/client-delivery/src/assets"
@@ -240,7 +238,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
         "{workspaceRoot}/coverage/apps/mango-crem-features/client-delivery"
       ],

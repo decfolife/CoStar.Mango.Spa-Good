@@ -3,13 +3,7 @@ export default {
   displayName: 'mango-crem-features-data-set-dictionary',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  globals: {
-    'ts-jest': {
-      stringifyContentPathRegex: '\\.(html|svg)$',
-
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
+  globals: {},
 
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
@@ -18,7 +12,14 @@ export default {
   coverageDirectory:
     '../../../coverage/apps/mango-crem-features/data-set-dictionary',
   transform: {
-    '^.+.(ts|mjs|js|html)$': 'jest-preset-angular',
+    '^.+.(ts|mjs|js|html)$': [
+      'jest-preset-angular',
+      {
+        stringifyContentPathRegex: '\\.(html|svg)$',
+
+        tsconfig: '<rootDir>/tsconfig.spec.json',
+      },
+    ],
   },
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],

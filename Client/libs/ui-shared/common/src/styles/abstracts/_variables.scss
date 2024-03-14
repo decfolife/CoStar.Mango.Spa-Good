@@ -410,6 +410,9 @@ $shadow: (
     info: 0 0 0 0.2rem $info-lightest,
     warning: 0 0 0 0.2rem $warning-lightest,
     danger: 0 0 0 0.2rem $danger-lightest,
+
+    none: none,
+    0: none,
   ),
 ) !default;
 

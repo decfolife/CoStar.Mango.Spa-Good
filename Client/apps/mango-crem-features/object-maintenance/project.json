@@ -15,9 +15,7 @@
         "polyfills": "apps/mango-crem-features/object-maintenance/src/polyfills.ts",
         "tsConfig": "apps/mango-crem-features/object-maintenance/tsconfig.app.json",
         "stylePreprocessorOptions": {
-          "includePaths": [
-            "libs/ui-shared/common/src"
-          ]
+          "includePaths": ["libs/ui-shared/common/src"]
         },
         "assets": [
           "apps/mango-crem-features/object-maintenance/src/favicon.ico",
@@ -239,7 +237,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
         "{workspaceRoot}/coverage/apps/mango-crem-features/object-maintenance"
       ],

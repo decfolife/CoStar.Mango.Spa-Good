@@ -368,7 +368,7 @@ div.reports-toolBar-wrapper {
 	@include costar(color, warning, $important: true); // color: colors.$color-brand-yellow  !important;
 }
 
-.moreMatMenu button.mat-menu-item {
+.moreMatMenu button.mat-mdc-menu-item {
 	padding: 8px 16px;
 	cursor: pointer;
 	line-height: 18px;
@@ -379,8 +379,8 @@ div.reports-toolBar-wrapper {
 	}
 }
 
-.mat-menu-content {
-	.mat-menu-item {
+.mat-mdc-menu-content {
+	.mat-mdc-menu-item {
 		height: auto !important;
 	}
 }
@@ -413,7 +413,7 @@ div.reports-toolBar-wrapper {
 	}
 }
 
-.reports-actions.mat-menu-panel>.mat-menu-content {
+.reports-actions.mat-mdc-menu-panel>.mat-mdc-menu-content {
 	font-size: 14px;
 
 	&>ul {

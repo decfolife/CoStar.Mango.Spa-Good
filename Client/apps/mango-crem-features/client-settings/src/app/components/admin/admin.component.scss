@@ -3,7 +3,7 @@
 :host ::ng-deep {
     #admin-page-wrapper {
         crem-card {
-            .mat-card {
+            .mat-mdc-card {
                 border: 1px solid colors.$gray;
                 border-radius: 2px;
                 box-shadow: none;
@@ -18,7 +18,7 @@
                         height: 36px;  // TODO: Remove once MangoSpa becomes CREM
                     }
                 }
-                .mat-card-header {
+                .mat-mdc-card-header {
                     height: 58px;
                     padding: 8px 16px;
                     border-bottom: 1px solid colors.$gray;

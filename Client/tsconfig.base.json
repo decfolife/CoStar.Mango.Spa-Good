@@ -86,6 +86,9 @@
         "apps/mango-crem-features/dashboards/project-dashboard/src/app/*"
       ],
       "@quick-search/*": ["apps/mango-crem-features/quick-search/src/app/*"],
+      "@reminders-list/*": [
+        "apps/mango-crem-features/object-actions/src/app/*"
+      ],
       "@reports/*": ["apps/mango-crem-features/reports/src/app/*"],
       "@service-accounts/*": [
         "apps/mango-crem-features/client-delivery/src/app/*"
@@ -95,9 +98,6 @@
       ],
       "@user-maintenance/*": [
         "apps/mango-crem-features/user-maintenance/src/app/*"
-      ],
-      "@reminders-list/*": [
-        "apps/mango-crem-features/object-actions/src/app/*"
       ],
       "cldr": ["node_modules/cldrjs/dist/cldr"],
       "cldr/*": ["node_modules/cldrjs/dist/cldr/*"],
