@@ -7,7 +7,6 @@
 /// -----------------------------------------------------------------------------
 
 @use 'colors';
-$font-family-brand: Helvetica, system-ui, sans-serif;
 $card-dropDown-height: 24px;
 
 #portfolio-dashboard,
@@ -40,8 +39,10 @@ $card-dropDown-height: 24px;
 			line-height: normal;
 			letter-spacing: normal;
 			top: 0px !important;
-			font-family: $font-family-brand !important;
 			color: colors.$color-neutral-dark !important;
+			&::before {
+				padding-top: 5px;
+			}	
 		}
 
 		crem-button {
@@ -142,7 +143,7 @@ $card-dropDown-height: 24px;
 		// height: 400px;
 		display: flex;
 		align-items: stretch;
-		font-family: Helvetica, sans-serif;
+		//font-family: Helvetica, sans-serif;
 		padding: 0px !important;
 		justify-content: flex-start !important;
 		background: colors.$white;
@@ -179,7 +180,6 @@ $card-dropDown-height: 24px;
   > tr
   > td:not(.dx-datagrid-headers) {
   vertical-align: top;
-  font-family: $font-family-brand !important;
   }
 } 
 
@@ -453,7 +453,7 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
 
 		input.dx-texteditor-input {
 		
-			font: 400 16px Helvetica,system-ui,sans-serif;
+			font: 400 16px;
 			border: none;
 			display: flex;
 			align-items: center;
@@ -525,7 +525,6 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
 
 	crem-tooltip{
 		div.dx-field {
-			font-family: $font-family-brand;
 			font-weight: 400;
 			width: 16px;
 			min-height: 16px;

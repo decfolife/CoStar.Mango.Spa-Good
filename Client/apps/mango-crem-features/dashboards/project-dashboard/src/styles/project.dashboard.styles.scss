@@ -1,9 +1,8 @@
+@use 'styles' as *;
 @use 'colors';
 @import  '../../../../../mango/src/assets/styles/app-styles/dashboards.scss';
 
 //***** standard styles *****//
-
-$font-family-brand: Helvetica, system-ui, sans-serif;
 
 $stdBorder: 1px solid colors.$stdBorderColor;
 
@@ -46,96 +45,95 @@ $dblPadding: 2 * $stdPadding;
 	background: #AAA;
 }
 
-// html {
-// 	background-color: colors.$bodyBackgroundGray;
-// 	scrollbar-width: thin;
-// }
+html {
+	background-color: colors.$bodyBackgroundGray;
+	scrollbar-width: thin;
+}
 
-// body {
-// 	margin: 0;
-// }
+body {
+	margin: 0;
+}
 
 //**** Filter Styles End ****//
 
 //**** Card Styles ****//
 #projects-dashboard .project-cards, .projects.dashboards-dragCardItems {
-// 	crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
-// 		height: 280px;
-// 	}
+	crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
+		height: 280px;
+	}
 
-// 	crem-card mat-card .cardContent {
-// 		height: 280px;
-// 		max-height: 280px;
-// 	}
+	crem-card mat-card .cardContent {
+		height: 280px;
+		max-height: 280px;
+	}
 
-// 	crem-card mat-card.cremCard#activity_feed_card mat-card-content.mat-card-content.cremCardContent {
-//     min-height: 480px !important;
-//     height: 480px !important;
-//     max-height: 480px !important;
-//   }
+	crem-card mat-card.cremCard#activity_feed_card mat-card-content.mat-card-content.cremCardContent {
+    min-height: 480px !important;
+    height: 480px !important;
+    max-height: 480px !important;
+  }
 
-//   crem-card mat-card#activity_feed_card .cardContent {
-//     height: 480px !important;
-//     max-height: 480px !important; 
-//   }
+  crem-card mat-card#activity_feed_card .cardContent {
+    height: 480px !important;
+    max-height: 480px !important; 
+  }
 
-// 	crem-card .mat-card#projects_by_type_card .cardContent {
-//     overflow: hidden;
-//     padding: 16px !important;
-// 	}	
+	crem-card .mat-card#projects_by_type_card .cardContent {
+    overflow: hidden;
+    padding: 16px !important;
+	}	
 
-// 	crem-card mat-card.cremCard#project_milestones_card mat-card-content.mat-card-content.cremCardContent {
-//     display: flex;
-//     align-items: stretch;
-//     font-family: Helvetica, sans-serif;
-//     padding: 0px !important;
-//     font-size: 14px;
-//     justify-content: flex-start !important;
-//     background: colors.$white;
-//     min-height: 600px !important;
-//     height: 600px !important;
-//     max-height: 600px !important;
-//     overflow: hidden !important;
-// 	}
-// 	crem-card mat-card#project_milestones_card .cardContent {
-//     height: 600px;
-//     max-height: 600px;
-// 	}
+	crem-card mat-card.cremCard#project_milestones_card mat-card-content.mat-card-content.cremCardContent {
+    display: flex;
+    align-items: stretch;
+    padding: 0px !important;
+    font-size: 14px;
+    justify-content: flex-start !important;
+    background: colors.$white;
+    min-height: 600px !important;
+    height: 600px !important;
+    max-height: 600px !important;
+    overflow: hidden !important;
+	}
+	crem-card mat-card#project_milestones_card .cardContent {
+    height: 600px;
+    max-height: 600px;
+	}
 
-// 	crem-card mat-card.mat-card mat-card-header.mat-card-header .cardHeader {
-// 		height: 26px !important;
-//     	border-bottom: none !important;
-// 	}
+	crem-card mat-card.mat-card mat-card-header.mat-card-header .cardHeader {
+		height: 26px !important;
+    	border-bottom: none !important;
+	}
 
-// 	crem-card .cardHeader .customHeader {
-// 		// height: 32px;
-// 		box-sizing: border-box;
-// 		align-items: center;
+	crem-card .cardHeader .customHeader {
+		height: 32px;
+		box-sizing: border-box;
+		align-items: center;
 
-// 		div div {
-// 			display: flex;
-// 			justify-content: flex-end;
-// 			align-items: center;
-// 		}
-// 	}
+		div div {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+		}
+	}
 
-// 	crem-card mat-card#project_milestones_card cs-chip .dx-field-value-static {
-//     padding: 4px 8px !important;
-// 	}
+	crem-card mat-card#project_milestones_card cs-chip .dx-field-value-static {
+    padding: 4px 8px !important;
+	}
 
-// 	crem-card mat-card#project_milestones_card .chipContent {
-//     max-width: 182px !important;
-//     overflow: hidden;
-//     text-overflow: ellipsis !important;
-//     white-space: nowrap;
-//     display: inline-block !important;
-//     line-height: 16px;
-// 	}
+	crem-card mat-card#project_milestones_card .chipContent {
+    max-width: 182px !important;
+    overflow: hidden;
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    display: inline-block !important;
+    line-height: 16px;
+	}
 
-// 	crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row td, crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td {
-//     vertical-align: middle !important;
-//     padding: 0px 8px !important;
-// 	}
+	crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row td, crem-card mat-card#project_milestones_card dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td {
+    vertical-align: middle !important;
+    padding: 0px 8px !important;
+	}
 
 	//ADA FIX: Text is clipped when resized, Project Milestones datagrid headers and cells
 	crem-card {
@@ -180,7 +178,6 @@ $dblPadding: 2 * $stdPadding;
 		// End of ADA style fix
 		text-overflow: ellipsis;
 		font-size: 14px;
-		font-family: Helvetica, sans-serif;
 		position: relative;
 		margin: 0 8px;
 		display: inline-block;
@@ -336,8 +333,7 @@ $dblPadding: 2 * $stdPadding;
 
 #projects-dashboard crem-metric {
 
-	font-family: $font-family-brand;
-	mat-card.mat-mdc-card.costar-hero-metric-card {
+	mat-card.mat-card.costar-hero-metric-card {
 		border: 0;
 		display: inline-block;
 		margin-bottom: 0;
@@ -346,14 +342,14 @@ $dblPadding: 2 * $stdPadding;
 		height: 80px;
 	}
 
-  mat-card.mat-mdc-card {
+  mat-card.mat-card {
     border: $stdBorder;
     border-radius: 2px !important;
     box-shadow: none !important;
     padding: 0px !important;
   }
 
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-mdc-card-header {
+	mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
     border-bottom: 0px;
     padding: 0px;
     height: 16px;
@@ -382,7 +378,7 @@ $dblPadding: 2 * $stdPadding;
 		}
   }
 
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-card-content {
+	mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -413,7 +409,7 @@ $dblPadding: 2 * $stdPadding;
 		}
   }
 
-  mat-card.mat-mdc-card.costar-hero-metric-card
+  mat-card.mat-card.costar-hero-metric-card
   mat-card-content.mat-card-content
   .sidekick-value-wrapper
   .sidekick-value {
@@ -586,13 +582,13 @@ $dblPadding: 2 * $stdPadding;
 
 
 //*****  'Manage Teams'  and 'Project Team' Page Styles *****//
-.mat-mdc-menu-panel {
+.mat-menu-panel {
  &.teamsActionsMenu, &.teamsMoreMenu, &.projectTeamMoreMenu, &.projectTeamActionsMenu, &.projectTeamAddMenu {
 	  min-height: unset;
-	 .mat-mdc-menu-content {
+	 .mat-menu-content {
 			padding: 0 !important;
 	  }	
-		.mat-mdc-menu-item {
+		.mat-menu-item {
 			height: 34px;
 			display: flex;
 			line-height: 34px;
@@ -603,7 +599,7 @@ $dblPadding: 2 * $stdPadding;
 	}
 	&.teamActionsMenu, &.teamMemberActionsMenu, &.projectMemberActionsMenu, &.projectTeamAddMenu {
 		min-height: unset;
-		& .mat-mdc-menu-content {
+		& .mat-menu-content {
 			padding: 0;
 		}
 	}
@@ -680,13 +676,12 @@ $dblPadding: 2 * $stdPadding;
 		padding-top: 8px;
 		height: 32px;
 		max-height: 32px;
-		font: 400 16px Helvetica, system-ui, san-serif;
+		font: 400 16px;
 		color: #000;
 	}	
 	
 	div.dx-placeholder {
 		font-size: 16px;
-		font-family: Helvetica, system-ui, sans-serif;
 		color: colors.$color-neutral-dark;
 	}
 
@@ -836,19 +831,6 @@ $dblPadding: 2 * $stdPadding;
 	mat-slide-toggle{
 		&.ptm-emailTgle-slider, &.ptm-sharedTgle-slider {
 			pointer-events: none;
-		}
-	}
-}
-
-.teamsMembers-container {
-	.teamMembers-dataGrid-wrapper {
-		padding: 4px 24px;
-		tr.dx-header-row {
-			background-color: white;
-			border: 1px solid colors.$darkBorderGray;
-			td {
-				border-bottom: none;
-			}
 		}
 	}
 }
