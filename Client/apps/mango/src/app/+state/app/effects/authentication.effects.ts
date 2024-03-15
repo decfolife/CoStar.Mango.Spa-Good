@@ -5,9 +5,10 @@ import { ContactRecord, ContactRecordHTTPObject, OAuthTokenHTTPResponse, UserAut
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { combineLatest, of } from 'rxjs';
-import { concatMap, filter, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
+import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
 
 
 @Injectable()
@@ -16,6 +17,7 @@ export class AuthenticationEffects {
     private storageService: StorageService,
     private userService: UserService,
     private jwtService: JwtService,
+    private navigationService: MangoNavigationService, 
     private router: Router,
     private facade: MangoAppFacade) { }
 
@@ -34,9 +36,21 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.OAUTH_AUTH),
-        switchMap((action: { authCode: string, redirectionUri: string }) => combineLatest([this.userService.retrieveJwt(action.authCode), of(action.redirectionUri)])),
-        concatMap(([response, redirectionUrl]: [OAuthTokenHTTPResponse, string]) => {
-          let decodedToken = this.userService.getDecodedAuthToken(response.accessToken)
+        switchMap((action: { authCode: string, redirectionUri: string, source: string }) => 
+          this.userService.retrieveJwt(action.authCode, action.source).pipe(
+            filter(response => !!response),
+            map(response => AppActions.oauthAuthSuccess({ response: response, redirectionUrl: action.redirectionUri, source: action.source })),
+            catchError(_ => of(AppActions.logout({ logoutV06: false})))
+          ))
+      )
+  );
+
+  oauthAuthenticationSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.OAUTH_AUTH_SUCCESS),
+        switchMap((action: { response: OAuthTokenHTTPResponse, redirectionUrl: string, source: string }) => {
+          let decodedToken = this.userService.getDecodedAuthToken(action.response.accessToken)
 
           const user: UserAuth = {
             userId: parseInt(decodedToken.userId),
@@ -49,13 +63,17 @@ export class AuthenticationEffects {
           }
 
           if (UtilitiesService.isLocalEnvironment()) {
-            this.jwtService.saveToken(response.accessToken)
+            this.jwtService.saveToken(action.response.accessToken)
+          } else if (!action.source) {
+            // Only redirect to V06 to finalize login if source has no value.
+            this.facade.setV06oauthAuth(action.response.code, action.redirectionUrl, user.clientKey)
           }
 
-          this.facade.setAccessToken(response.accessToken)
+          this.facade.setAccessToken(action.response.accessToken)
           this.userService.setAuth(user)
           this.storageService.savePermanentData(user.clientKey, DBkeys.CLIENT_KEY)
-          return combineLatest([of(user), of(response.accessToken), this.userService.getContactRecord(user.email, user.contactId, user.clientKey), of(redirectionUrl)])
+
+          return combineLatest([of(user), of(action.response.accessToken), this.userService.getContactRecord(user.email, user.contactId, user.clientKey), of(action.redirectionUrl)])
         }),
         map(([user, accessToken, contactRecordHttpResponse, redirectUrl]: [UserAuth, string, ContactRecordHTTPObject, string]) => {
           const contactRecord = this.userService.parseContactRecordHttpObject(contactRecordHttpResponse)
@@ -63,7 +81,9 @@ export class AuthenticationEffects {
           return [user, accessToken, contactRecord, redirectUrl]
         }),
         switchMap(([user, accessToken, contactRecord, redirectUrl]: [UserAuth, string, ContactRecord, string]) => {
-          this.router.navigateByUrl(decodeURIComponent(redirectUrl) || '/')
+          let url = redirectUrl ? decodeURIComponent(redirectUrl) : '/'
+          this.router.navigateByUrl(url)
+          
           return of(
             AppActions.setAuthenticatedUser({ user }),
             AppActions.setAccessToken({ accessToken }),
@@ -78,10 +98,21 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOGOUT_ACTION),
-        tap((action: { logoutCA: boolean }) => {
+        tap((action: { logoutV06: boolean }) => {
           this.userService.logoutCREM()
           this.facade.clearState()
-          window.location.href = environment.CAUrl
+
+          if (UtilitiesService.isLocalEnvironment()) {
+            window.location.href = environment.CAUrl
+            return
+          }
+
+          if (action.logoutV06) {
+            this.navigationService.redirectToV06Logout()
+            return
+          }
+
+          this.navigationService.redirectToCentralAuth()
         })
       ),
     { dispatch: false }

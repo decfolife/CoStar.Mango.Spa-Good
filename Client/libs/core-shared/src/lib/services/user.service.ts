@@ -52,16 +52,17 @@ export class UserService {
     return this.http.get<OAuthAuthorizeHTTPResponse>(`${this.env.appUrls.identity}/oauth/authorize?clientId=mango-spa&responseType=code&redirectUri=${redirectUri}`, { withCredentials: true })
   }
 
-  retrieveJwt(authCode: string): Observable<OAuthTokenHTTPResponse> {
+  retrieveJwt(authCode: string, source: string): Observable<OAuthTokenHTTPResponse> {
     let baseUrl = UtilitiesService.isLocalEnvironment() ? this.env.appUrls.identity : this.spaServer;
 
     const request = {
       grantType: "authorization_code",
       code: authCode,
-      redirectUrl: "",
-      codeVerifier: ""
+      redirectUri: "",
+      codeVerifier: "",
+      source: source
     }
-    return this.http.post<OAuthTokenHTTPResponse>(`${baseUrl}/oauth/token`, request)
+    return this.http.post<OAuthTokenHTTPResponse>(`${baseUrl}/oauth/token`, request, { withCredentials: true })
   }
 
   login(credentials): Observable<LoginResponse> {
@@ -111,7 +112,7 @@ export class UserService {
 
   logoutCREM() {
     this.purgeAuth();
-    this.http.get(`${this.spaServer}/auth/logout`, { withCredentials: true })
+    this.http.post(`${this.spaServer}/auth/logout`, { withCredentials: true })
       .subscribe();
   }
 

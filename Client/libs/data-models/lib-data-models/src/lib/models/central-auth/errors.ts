@@ -10,6 +10,7 @@ export enum CentralAuthErrorCodes {
   NotValid = "NOT_VALID",
   NotAuthorized = "NOT_AUTHORIZED",
   ForceLogout = "FORCE_LOGOUT",
+  V06LoginError = "REM_LOGIN_ERROR",
   SqsTimeout = "SQS_TIMEOUT",
   UserNotAuthorizedForClient = "NOT_AUTHORIZED_FOR_CLIENT",
   AccountLockedOut = "ACCOUNT_LOCKED_OUT",

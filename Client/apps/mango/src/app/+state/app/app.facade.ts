@@ -16,6 +16,7 @@ export class MangoAppFacade {
   currentSubApp$ = this.store.pipe(select(AppSelectors.currentSubApp));
   authenticatedUser$ = this.store.pipe(select(AppSelectors.authenticatedUser));
   accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
+  v06Auth$ = this.store.pipe(select(AppSelectors.v06Auth));
   clientKey$ = this.store.pipe(select(AppSelectors.client));
   userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
   breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
@@ -36,8 +37,14 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.localAuth());
   }
 
-  oauthAuth(authCode: string, redirectionUri: string): void {
-    this.store.dispatch(AppActions.oauthAuth({ authCode, redirectionUri }))
+  // If source=v06, that means we came from V06 and V06 is already logged in.
+  // Therefore, there is no need to redirect to V06 to finalize login.
+  oauthAuth(authCode: string, redirectionUri: string, source: string): void {
+    this.store.dispatch(AppActions.oauthAuth({ authCode, redirectionUri, source }))
+  }
+
+  setV06oauthAuth(authCode: string, redirectionUri: string, clientKey: string): void {
+    this.store.dispatch(AppActions.setV06Auth({ authCode, redirectionUri, clientKey }))
   }
 
   setLoading(display: boolean): void {
@@ -47,7 +54,6 @@ export class MangoAppFacade {
   loadSubApp(subApp: MangoSubApps): void {
     this.store.dispatch(AppActions.loadSubApp({ subApp }))
   }
-
 
   setAuthenticatedUser(user: UserAuth): void {
     this.store.dispatch(AppActions.setAuthenticatedUser({ user }))
@@ -89,8 +95,8 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.setCurrentRenderFormDocumentParams({ params }))
   }
 
-  logout(config?: { logoutCA: boolean }): void {
-    this.store.dispatch(AppActions.logout({ logoutCA: (config || { logoutCA: true }).logoutCA }))
+  logout(logoutV06: boolean = false): void {
+    this.store.dispatch(AppActions.logout({ logoutV06: logoutV06 }))
   }
 
   clearState() {

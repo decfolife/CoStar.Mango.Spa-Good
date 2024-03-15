@@ -4,9 +4,12 @@ import { SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
+import { environment } from '@mangoSpa/src/environments/environment.local';
+import { ActivatedRoute } from '@angular/router';
+import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
 
 
 @Injectable()
@@ -17,20 +20,30 @@ export class InitSetupEffects {
     private actions$: Actions,
     private userService: UserService,
     private userInfoService: UserInfoService,
-    private facade: MangoAppFacade
+    private navigationService: MangoNavigationService, 
+    private facade: MangoAppFacade,
+    private acitvatedRoute: ActivatedRoute
   ) { }
 
   initSetup$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.APP_INIT),
+        switchMap(_ => this.acitvatedRoute.queryParamMap),
+        map(queryParamsMap => [queryParamsMap.get('logout')]),
+        tap(([logout]) => {
+          // When logging out of V06, V06 will redirect to SPA with a query param to logout
+          if (logout === 'true') {
+            this.facade.logout()
+          }
+        }),
         switchMap(_ => of(
           AppActions.setupClientKey(),
           AppActions.setupContactRecord(),
-          AppActions.setupUserInfo()
+          AppActions.setupUserInfo(),
+          AppActions.redirectToV06ToFinalizeLogin()
         ))
-      )
-  )
+  ))
 
   setupClientKey$ = createEffect(
     () =>
@@ -68,6 +81,20 @@ export class InitSetupEffects {
           of(AppActions.setUserInfo({ userInfo: userInfo.data }), AppActions.setClientInfo({ clientInfo: userInfo.data.client }))
         )
       )
+  )
+
+  // To complete login, need to login to V06 as well.
+  redirectToV06ToFinalizeLogin$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.REDIRECT_TO_V06_TO_FINALIZE_LOGIN),
+        switchMap(_ => this.facade.v06Auth$),      
+        filter(v06Auth => !!v06Auth),  
+        tap(v06Auth => {
+          this.navigationService.redirectToV06Login(v06Auth.authCode)
+        })
+      ),
+      { dispatch: false }
   )
 
   getModuleIdValue$ = createEffect(

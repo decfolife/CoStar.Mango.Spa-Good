@@ -3,9 +3,8 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as AppActions from '../app.actions';
 import { map, switchMap } from "rxjs/operators";
 import { SharedLeftNavLink } from "libs/data-models/lib-data-models/src/lib/models/link";
-import { Router } from "@angular/router";
 import { MangoAppFacade } from "../app.facade";
-import { combineLatest, forkJoin, merge, of } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import { MangoNavigationService } from "@mangoSpa/src/app/services/navigation.service";
 
 @Injectable()
@@ -18,7 +17,7 @@ export class NavigationEffect {
     () =>
       this.actions$.pipe(
         ofType(AppActions.NAVIGATE_LEFT_NAV_MENU),
-        switchMap(action => combineLatest(of(action), this.facade.clientKey$)),
+        switchMap(action => combineLatest([of(action), this.facade.clientKey$])),
         map(([{ navLink }, clientKey]: [{ navLink: SharedLeftNavLink }, string]) =>
           this.mangoNavigationService.handleSpaNavigation(navLink, clientKey)
         )

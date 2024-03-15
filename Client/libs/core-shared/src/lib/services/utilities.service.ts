@@ -6,6 +6,11 @@ import { environment } from '@mangoSpa/src/environments/environment.local';
 export class UtilitiesService {
   public static baseUrl() {
     return document.getElementsByTagName('base')[0].href;
+    // return window.location.origin // better?
+  }
+
+  public static getClientKeyFromUrl() {
+    return window.location.origin.split('.')[0].split('//')[1]
   }
 
   // Parse string to json format

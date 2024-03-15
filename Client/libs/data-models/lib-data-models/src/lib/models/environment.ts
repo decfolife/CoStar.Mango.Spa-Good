@@ -18,5 +18,6 @@ export abstract class Environment {
   };
   abstract readonly isRestful: boolean;
   abstract readonly CAUrl?: string;
+  abstract readonly cremBaseUrl?: string;
   abstract readonly mangoSpaUrl?: string;
 }

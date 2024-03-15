@@ -19,9 +19,9 @@ export class ValidateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subs.push(this.activatedRoute.queryParams.pipe(
       first(queryParams => !!queryParams),
-      map(params => [params.auth_code, params[OAUTH_REDIRECT_QUERY_PARAM]]),
-      filter(([authCode, redirectionUri]) => !!authCode),
-      map(([authCode, redirectionUri]) => this.facade.oauthAuth(authCode, redirectionUri))
+      map(params => [params.auth_code, params.source, params[OAUTH_REDIRECT_QUERY_PARAM]]),
+      filter(([authCode, source, redirectionUri]) => !!authCode),
+      map(([authCode, source, redirectionUri]) => this.facade.oauthAuth(authCode, redirectionUri, source))
     ).subscribe())
   }
 

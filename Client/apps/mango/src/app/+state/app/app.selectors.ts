@@ -4,7 +4,7 @@ import {
   State
 } from './app.reducer';
 
-export const getAppState = createFeatureSelector< State>(
+export const getAppState = createFeatureSelector<State>(
   APP_FEATURE_KEY
 );
 
@@ -26,6 +26,11 @@ export const authenticatedUser = createSelector(
 export const accessToken = createSelector(
   getAppState,
   (state: State) => state.accessToken
+);
+
+export const v06Auth = createSelector(
+  getAppState,
+  (state: State) => state.v06Auth
 );
 
 export const userInfo = createSelector(

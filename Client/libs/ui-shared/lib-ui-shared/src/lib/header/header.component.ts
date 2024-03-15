@@ -95,7 +95,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    this.facade.logout()
+    this.facade.logout(true)
   }
 
   logoClicked() {

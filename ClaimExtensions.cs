@@ -31,16 +31,13 @@ public class Constants
 public static class ClaimExtensions
 {
     public static string Email(this ClaimsPrincipal principal)
-        => principal.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
+    {
+        var email = principal.Claims?
+            .FirstOrDefault(x => x.Type == ClaimTypes.Email || x.Type == ClaimType.Email)
+            ?.Value ?? string.Empty;
 
-    //public static string Email(this ClaimsPrincipal principal)
-    //{
-    //    var email = principal.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
-    //    if (string.IsNullOrWhiteSpace(email))
-    //        email = principal.FindFirst(ClaimType.Email)?.Value ?? string.Empty;
-
-    //    return email;
-    //}
+        return email;
+    }
 
     public static int ContactId(this ClaimsPrincipal principal)
         => int.TryParse(principal.FindFirst(ClaimType.ContactId).Value, out int result) ? result : default;

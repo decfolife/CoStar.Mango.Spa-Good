@@ -1,6 +1,7 @@
 import { Location } from "@angular/common";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
+import { UtilitiesService } from "@mango/core-shared";
 import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_CONTACT_ID_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM } from "@mango/data-models/lib-data-models";
 import { environment } from "@mangoSpa/src/environments/environment.local";
 import { SharedLeftNavLink } from "libs/data-models/lib-data-models/src/lib/models/link";
@@ -28,6 +29,18 @@ export class MangoNavigationService {
     const extraParamsIndex = urlParts.findIndex(urlPart => urlPart.includes(OAUTH_CLIENT_KEY_QUERY_PARAM) || urlPart.includes(OAUTH_CONTACT_ID_QUERY_PARAM))
     const redirectUri = urlParts.filter((urlPart, index) => index !== extraParamsIndex).join('?')
     const url = `${environment.CAUrl}?${extraParamsIndex !== -1 ? `${urlParts[extraParamsIndex]}&` : ''}${OAUTH_REDIRECT_QUERY_PARAM}=${`${window.location.origin}/auth/validate?redirect_uri=${encodeURIComponent(redirectUri)}`}`
+    window.location.href = url
+  }
+
+  redirectToV06Logout(): void {
+    let clientKey = UtilitiesService.getClientKeyFromUrl()
+    let url = `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/logout.aspx`
+    window.location.href = url
+  }
+
+  redirectToV06Login(authCode: string): void {
+    let clientKey = UtilitiesService.getClientKeyFromUrl()
+    let url = `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/login.aspx?auth_code=${authCode}&source=spa`
     window.location.href = url
   }
 

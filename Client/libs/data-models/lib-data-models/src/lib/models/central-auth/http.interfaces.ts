@@ -56,4 +56,8 @@ export interface OAuthAuthorizeHTTPResponse {
 export interface OAuthTokenHTTPResponse {
     accessToken: string;
     tokenType: string
+    code: string;
+    redirectUri: string;
+    state: string;
+    issuer: string;
 }

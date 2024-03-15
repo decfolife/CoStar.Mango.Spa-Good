@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { DBkeys, SettingsService, StorageService, UserService } from "@mango/core-shared";
-import { CentralAuthError, CentralAuthErrorCodes, ContactRecord, ContactRecordHTTPObject, MangoErrorTypes, OAUTH_LOGOUT_QUERY_PARAM, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, UserAuth } from "@mango/data-models/lib-data-models";
+import { DBkeys, SettingsService, StorageService } from "@mango/core-shared";
+import { CentralAuthError, CentralAuthErrorCodes, ContactRecord, MangoErrorTypes, OAUTH_LOGOUT_QUERY_PARAM, V06_LOGIN_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, UserAuth } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as dayjs from 'dayjs';
 import { UserIdleService } from "libs/core-shared/src/lib/services";
@@ -132,16 +132,16 @@ export class AppEffects {
         switchMap(_ => this.acitvatedRoute.queryParamMap),
         map(queryParamsMap => [queryParamsMap.get('auth'), queryParamsMap.get('caforcelogout'), queryParamsMap.get(OAUTH_LOGOUT_QUERY_PARAM)]),
         tap(([auth, caForceLogout, logout]) => {
-          if (logout === 'true') {
-            this.centralAuthFacade.logout()
-          }
+          // if (logout === 'true') {
+          //   this.centralAuthFacade.logout()
+          // }
           if (auth === 'false') {
-            this.centralAuthFacade.logout()
+            //this.centralAuthFacade.logout()
             throw new CentralAuthError({
-              message: UNEXPECTED_ERROR_MESSAGE,
+              message: V06_LOGIN_ERROR_MESSAGE,
               title: 'Error',
               errorType: MangoErrorTypes.FATAL,
-              errorCode: CentralAuthErrorCodes.InternalError
+              errorCode: CentralAuthErrorCodes.V06LoginError
             })
           }
           if (caForceLogout === 'true') {

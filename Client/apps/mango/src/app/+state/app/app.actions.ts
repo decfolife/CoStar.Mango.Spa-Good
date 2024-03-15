@@ -1,4 +1,4 @@
-import { BreadCrumb, Client, ContactRecord, GlobalSessionHttpObject, MangoSubApps, UserAuth, UserInfo, V06GlobalSession } from '@mango/data-models/lib-data-models';
+import { BreadCrumb, Client, ContactRecord, GlobalSessionHttpObject, MangoSubApps, OAuthTokenHTTPResponse, UserAuth, UserInfo, V06GlobalSession } from '@mango/data-models/lib-data-models';
 import { createAction, props } from '@ngrx/store';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 
@@ -6,7 +6,10 @@ export const SET_LOADING = '[UI] Set Loading'
 export const APP_INIT = '[Mango App] APP Init'
 export const SETUP_HEADER = '[Mango App] Setup Header'
 export const OAUTH_AUTH = '[Mango App] Start OAuth Auth'
+export const OAUTH_AUTH_SUCCESS = '[Mango App] OAuth Auth Success'
 export const LOCAL_AUTH = '[Mango App] Start Local Auth'
+export const REDIRECT_TO_V06_TO_FINALIZE_LOGIN = '[Mango App] Redirect to V06 To Finalize Login'
+export const SET_V06_AUTH_ACTION = '[Mango App] Set V06 Auth Code and Redirect URI temporarily'
 export const SETUP_CLIENT_KEY = '[Mango App] Setup Client Key'
 export const SETUP_CONTACT_RECORD = '[Mango App] Setup Contact Record'
 export const SETUP_USER_INFO = '[Mango App] Setup User Info'
@@ -32,16 +35,18 @@ export const UPDATE_GLOBAL_SESSION_SUCCESS = '[Mango App] Update Global Session 
 export const POPULATE_BREADCRUMBS_FROM_SESSION = '[Mango App] Populate Breadcrumbs From Session'
 
 export const init = createAction(APP_INIT);
-
 export const localAuth = createAction(LOCAL_AUTH);
-
-export const oauthAuth = createAction(OAUTH_AUTH, props<{ authCode: string, redirectionUri: string }>());
-
+export const oauthAuth = createAction(OAUTH_AUTH, props<{ authCode: string, redirectionUri: string, source: string }>());
+export const oauthAuthSuccess = createAction(OAUTH_AUTH_SUCCESS, props<{ response: OAuthTokenHTTPResponse, redirectionUrl: string, source: string }>());
 export const setupClientKey = createAction(SETUP_CLIENT_KEY);
-
 export const setupContactRecord = createAction(SETUP_CONTACT_RECORD);
-
 export const setupUserInfo = createAction(SETUP_USER_INFO);
+export const redirectToV06ToFinalizeLogin = createAction(REDIRECT_TO_V06_TO_FINALIZE_LOGIN);
+
+export const setV06Auth = createAction(
+  SET_V06_AUTH_ACTION,
+  props<{ authCode: string, redirectionUri: string, clientKey: string }>()
+);
 
 export const setBreadcrumbs = createAction(
   SET_BREADCRUMBS,
@@ -90,7 +95,7 @@ export const setContactRecord = createAction(
 
 export const logout = createAction(
   LOGOUT_ACTION,
-  props<{ logoutCA?: boolean }>()
+  props<{ logoutV06?: boolean }>()
 );
 
 export const clearState = createAction(CLEAR_STATE);

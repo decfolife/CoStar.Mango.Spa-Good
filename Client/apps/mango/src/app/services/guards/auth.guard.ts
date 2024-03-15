@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, CanActivate, Params, UrlTree } from '@angular/router';
 import { Observable, combineLatest, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { MangoAppFacade } from '../../+state/app/app.facade';
 import { MangoNavigationService } from '../navigation.service';
 import { JwtService, UserService, UtilitiesService } from '@mango/core-shared';

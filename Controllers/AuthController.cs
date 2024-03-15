@@ -7,11 +7,7 @@ using Microsoft.Extensions.Logging;
 using MangoSPA;
 using MangoSPA.Models;
 using MangoSPA.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using static MangoSPA.Constants;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using System;
 
 namespace Mango.MangoSPA.Server.Controllers;
 
@@ -37,12 +33,40 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<AccessTokenResponse>> AccessToken([FromBody] AccessTokenRequest request)
+    public async Task<ActionResult<OAuthResponse>> AccessToken([FromBody] AccessTokenRequest request)
     {
         _logger.LogInformation("AccessToken request started. Calling Identity API to get access token.");
 
-        var result = await _authService.OAuthToken(request);
-        if (result is null) return Unauthorized();
+        var tokenResponse = await _authService.OAuthToken(request);
+        if (tokenResponse is null) return Unauthorized();
+
+        // If source has a value, there is no need to generate an auth code for V06.
+        if (!string.IsNullOrWhiteSpace(request.Source) && request.Source.Equals("v06", StringComparison.OrdinalIgnoreCase)) 
+        {
+            await _authService.CreateAuthenticationCookie(tokenResponse.AccessToken);
+            _logger.LogInformation("AccessToken request completed successfully.");
+
+            return Ok(new OAuthResponse
+            {
+                AccessToken = tokenResponse.AccessToken,
+                RedirectUri = request.RedirectUri
+            });
+        }
+
+        _logger.LogInformation("Calling Identity API to get generate an auth code for V06.");
+
+        // Generate a new authCode for V06 so it can use it fetch the JWT
+        var authorizeResponse = await _authService.OAuthAuthorize(tokenResponse.AccessToken, request.RedirectUri);
+        if (authorizeResponse is null) return Unauthorized();
+
+        await _authService.CreateAuthenticationCookie(tokenResponse.AccessToken);
+
+        var result = new OAuthResponse
+        {
+            AccessToken = tokenResponse.AccessToken,  
+            Code = authorizeResponse.Code,
+            RedirectUri = authorizeResponse.RedirectUri
+        };
 
         _logger.LogInformation("AccessToken request completed successfully.");
 
@@ -106,7 +130,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<string> AccessToken()
     {
-        _logger.LogInformation("AccessToken request started for logged-in user {Email}.", User.Email());
+        _logger.LogInformation("Fetching accessToken for logged-in user {Email}.", User.Email());
 
         var token = User.AccessToken();
         if (string.IsNullOrWhiteSpace(token))
@@ -115,7 +139,7 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        _logger.LogInformation("AccessToken request completed successfully for logged-in user {Email}.", User.Email());
+        _logger.LogInformation("Successfully fetched accessToken for logged-in user {Email}.", User.Email());
 
         return Ok(token);
     }
