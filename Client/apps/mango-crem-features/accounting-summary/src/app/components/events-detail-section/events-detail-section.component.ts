@@ -327,10 +327,27 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       });
     });
   }
-    
-  presentValueExcel(event, data) {
+  
+  presentValueExcel(event) {
     event.preventDefault();
-    alert('present value clicked');
+    const filename = this.accountingSummaryService.getFileName('PresentValueTable');
+    this.subscription.add(this.accountingSummaryService.exportPresentValueFile(this.leaseRecognitionScheduleID, filename).subscribe(
+      (presentValueResponse: any) => {
+        if (!presentValueResponse.data) {
+          this.accountingSummaryService.errorNotify('Downloading the present value table failed.');
+        }
+        else {
+          const url = window.URL.createObjectURL(presentValueResponse.data);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        }
+      })
+    );
   }
 
   onContextMenuPreparing(e) {

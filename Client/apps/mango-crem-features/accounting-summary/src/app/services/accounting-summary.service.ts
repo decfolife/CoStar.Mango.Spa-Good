@@ -218,6 +218,11 @@ export class AccountingSummaryService extends EndpointService {
     JSON.stringify({ leaseAbstractID: this.leaseAbstractId, workflowStatusID: workflowStatusId, comment: comment }));
   }
 
+  exportPresentValueFile(scheduleId, fileName) {
+    return this.callHttpPostWithBlobResponse(`${this.apiUrl}AccountingEvents/ExportPresentValueFile`, 'exportPresentValueFile',
+      JSON.stringify({ ScheduleId: scheduleId, FileName: fileName}))
+  }
+ 
   saveGridPreferences(classificationId: number, gridName: string, columnJson) {
     if (environment.isRestful) {
       return this.callHttpPost(`${this.apiUrl}AccountingSummary/UpdateGridStates`, 'saveGridPreferences',
@@ -269,7 +274,20 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   getTimeStamp() {
-    return new Date();
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}${minutes}${seconds}`;
+  }
+
+  getFileName(componentName) {
+    const env = environment.name === 'PROD' ? '' : '_' + environment.name;
+    const timeStamp = this.getTimeStamp();
+    return `${componentName}_${timeStamp}${env}.xlsx`;
   }
 
   displayContactSystemAdminMessage(){

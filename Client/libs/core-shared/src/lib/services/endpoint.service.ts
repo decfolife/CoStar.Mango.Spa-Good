@@ -126,6 +126,17 @@ export abstract class EndpointService {
     )
   }
 
+  protected callHttpPostWithBlobResponse(url: string, functionName: string, postBody: any): Observable<any> {
+    return this.getHttpHeaders().pipe(
+      switchMap(httpHeaders => {
+        httpHeaders.responseType = 'blob' as 'json';
+        return this.http.post(url, postBody, httpHeaders)
+      }),
+      map(x => this.toObject(x) as any),
+      catchError(this.handleError(functionName))
+    )
+  }
+
   protected callHttpPut(url: string, functionName: string, postBody: any): Observable<any> {
     return this.getHttpHeaders().pipe(
       switchMap(httpHeaders => this.http.put(url, postBody, httpHeaders)),
