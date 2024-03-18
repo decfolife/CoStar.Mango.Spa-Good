@@ -14,9 +14,10 @@
         [dataSource]="dataSource"
         [inputAttr]="{title: placeholder, 'aria-controls': placeholder}"
         [elementAttr]="{'id': placeholder}">
-
         <dxo-drop-down-options
-          [wrapperAttr]="wrapperAttr">
+          [wrapperAttr]="wrapperAttr"
+          [width]="350"
+        >
         </dxo-drop-down-options>
 
         <div *dxTemplate="let data of 'content'" >
@@ -34,7 +35,7 @@
               selectNodesRecursive="true"
               selectByClick="true"
               (onSelectionChanged)="treeViewSelectionChanged($event)">
-          
+              
               <div *dxTemplate="let item of 'item'">
                   {{item[displayExpr]}}
               </div>
