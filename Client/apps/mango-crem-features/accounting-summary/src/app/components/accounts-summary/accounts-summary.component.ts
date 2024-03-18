@@ -47,6 +47,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.setRightsAndLeaseInfo();
     this.getWorkflowHistoryInfo();
     this.setWorkflowStatusRight();
+    this.getPortfolioSettings();
   }
 
   ngOnDestroy() {
@@ -258,5 +259,18 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  getPortfolioSettings(){
+    this.subscription.add(this.accountingSummaryService.getPortfolioSettings().subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success) {
+        this.accountingSummaryService.setPortfolioSettings(response.data);
+      } else {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
   }
 }

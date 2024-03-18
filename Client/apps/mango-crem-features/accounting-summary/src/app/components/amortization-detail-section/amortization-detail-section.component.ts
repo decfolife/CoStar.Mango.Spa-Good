@@ -48,6 +48,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   retroEventJeStatus = "";
   private subscription = new Subscription();
   contentLoaded = false;
+  resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
+  clearBtnHoverText ='This will clear all pending changes in the grid';
 
   constructor(public accountingSummaryService: AccountingSummaryService, private columnService: AmortizationGridColumnsService, private formatService: FormattingService, private datePipe: DatePipe) {
     this.summaryFields = this.getSummaryFields();
@@ -159,7 +161,21 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     }
   }
 
-  resetGrid() {
+  resetGridPreferences() {
+    this.subscription.add(this.accountingSummaryService.resetGridPreferences(this.classificationID, this.gridName).subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success) {
+        this.amortizationDataGrid.instance.state({});
+        this.accountingSummaryService.successNotify(response.clientErrorMessage);
+      } else {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
+  }
+
+  clearGridChanges(){
     this.isGridStateChanged = false;
     this.amortizationDataGrid.instance.state(this.initialState);
   }

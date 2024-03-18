@@ -233,6 +233,16 @@ export class AccountingSummaryService extends EndpointService {
     return this.callHttpPost(url, 'saveGridPreferences', { request: { leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson } });
   }
 
+  resetGridPreferences(classificationId: number, gridName: string) {
+    if (environment.isRestful) {
+      return this.callHttpPost(`${this.apiUrl}AccountingSummary/ResetGridState`, 'resetGridState',
+        JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName }));
+    }
+
+    const url = `${this.apiUrl}ResetGridState`;
+    return this.callHttpPost(url, 'resetGridState', { request: { leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName } });
+  }
+
   getAmortizationDetails(leaseRecognitionScheduleID: number) {
     if (environment.isRestful) {
         return this.callHttpGet(`${this.apiUrl}AmortizationPeriods/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`, 'getAmortizationDetails');

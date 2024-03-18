@@ -61,6 +61,8 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   classificationID: number;
   isAccountingEventEmpty = true;
   gridsState: any;
+  resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
+  clearBtnHoverText ='This will clear all pending changes in the grid';
 
   constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private formatService: FormattingService ,private ref: ChangeDetectorRef) {
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
@@ -81,7 +83,6 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     }
 
     if(this.masterScheduleIDChanged && this.userInfoLoaded){
-      this.isGridStateChanged = false;
       this.eventsGridSetup(this.masterScheduleID);
       this.masterScheduleIDChanged = false;
     }
@@ -102,21 +103,18 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   eventsGridSetup(masterScheduleId: number) {
+    this.isGridStateChanged = false;
     const eventDetails = this.accountingSummaryService.getEventDetails(masterScheduleId);
-    const portfolioSettings = this.accountingSummaryService.getPortfolioSettings();
-    this.subscription.add(combineLatest([eventDetails, portfolioSettings]).subscribe(res => {
-      const eventDetailsResponse = res[0];
-      const portfolioSettingsResponse = res[1];
+    this.subscription.add(eventDetails.subscribe(eventDetailsResponse => {
 
-      if (eventDetailsResponse === null || eventDetailsResponse.data.length === 0 || portfolioSettingsResponse === null) {
+      if (eventDetailsResponse === null || eventDetailsResponse.data.length === 0) {
         this.eventsDataGrid.instance.state(null);
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
-      else if (eventDetailsResponse.data.length != 0 && eventDetailsResponse.success && portfolioSettingsResponse.success) {
+      else if (eventDetailsResponse.data.length != 0 && eventDetailsResponse.success) {
         this.classificationId = eventDetailsResponse.data[0].classificationID;
         this.detailsGridData = eventDetailsResponse.data.sort((a, b) => a.scheduleIndex - b.scheduleIndex);
-        this.portfolioSettings = portfolioSettingsResponse.data;
-        this.accountingSummaryService.setPortfolioSettings(this.portfolioSettings);
+        this.portfolioSettings = this.accountingSummaryService.getSavedPortfolioSettings();
 
         // Adding fields to datasource based on classificationId && manipulating fields to display correct text
         if (this.classificationId === 0 || this.classificationId === 5) {
@@ -136,13 +134,13 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           this.dateFormat = 'dd.MM.yyyy';
         }
         this.detailColumns = this.columnService.getDetailsColumns(this.classificationId, this.detailsGridData[0], this.portfolioSettings, this.dateFormat);
-        
+
         this.publishedEvent = this.detailsGridData.filter(d => d.isPublished)[0];
         this.setInitialSelectedRow = true;
 
         this.getGridPreferences();
-      } else if (!eventDetailsResponse.success || !portfolioSettingsResponse.success) {
-        this.accountingSummaryService.errorNotify(!eventDetailsResponse.success ? eventDetailsResponse.clientErrorMessage : portfolioSettingsResponse.clientErrorMessage);
+      } else if (!eventDetailsResponse.success) {
+        this.accountingSummaryService.errorNotify(eventDetailsResponse.clientErrorMessage);
       }
     }));
 
@@ -199,7 +197,21 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     }));
   }
 
-  resetGrid() {
+  resetGridPreferences() {
+    this.subscription.add(this.accountingSummaryService.resetGridPreferences(this.classificationId, this.gridName).subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success) {
+        this.eventsDataGrid.instance.state({});
+        this.accountingSummaryService.successNotify(response.clientErrorMessage);
+      } else {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
+  }
+
+  clearGridChanges(){
     this.isGridStateChanged = false;
     this.eventsDataGrid.instance.state(this.initialState);
   }

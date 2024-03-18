@@ -34,6 +34,8 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   initialState = {};
   private subscription = new Subscription();
   contentLoaded = false;
+  resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
+  clearBtnHoverText ='This will clear all pending changes in the grid';
   
   constructor(public accountingSummaryService: AccountingSummaryService, private paymentsGridColumnService: PaymentsGridColumnsService) { 
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
@@ -115,7 +117,21 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     }
   }
 
-  resetGrid() {
+  resetGridPreferences() {
+    this.subscription.add(this.accountingSummaryService.resetGridPreferences(this.classificationID, this.gridName).subscribe(response => {
+      if (response === null) {
+        this.accountingSummaryService.displayContactSystemAdminMessage();
+      }
+      else if (response.success) {
+        this.paymentsDataGrid.instance.state({});
+        this.accountingSummaryService.successNotify(response.clientErrorMessage);
+      } else {
+        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
+      }
+    }));
+  }
+
+  clearGridChanges(){
     this.isGridStateChanged = false;
     this.paymentsDataGrid.instance.state(this.initialState);
   }
