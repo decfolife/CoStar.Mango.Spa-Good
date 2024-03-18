@@ -50,7 +50,7 @@
 			<dxi-column dataField="role" dataType="string" [setCellValue]="setRoleValue">
 				<dxo-lookup [dataSource]="memberInfo.roles" aria-label="role" valueExpr="role" displayExpr="role"></dxo-lookup>
 			</dxi-column>
-			<dxi-column caption='Email Notifications' dataField="emailOn" alignment="center" dataType="string" width="90"
+			<dxi-column caption='Email Notifications' dataField="emailOn" alignment="center" dataType="string"
 				[calculateDisplayValue]="getEmailonDisplayValue" editCellTemplate="emailToggleTemplate">
 			</dxi-column>
 			<dxi-column dataField="level" caption='Access Level' dataType="string" alignment="center" [setCellValue]="setLevelValue">

@@ -8,13 +8,14 @@ import { ProjectTeamMember } from '@mango/data-models/lib-data-models';
 })
 export class MemberDetailsComponent implements OnInit{
 	@Input() projectMember: ProjectTeamMember;
+	projectMemberData: ProjectTeamMember[] = [];
 
 	public dataRetrieved: boolean = false;
 
 	constructor() {}	
 
 	ngOnInit() {
-		
+			this.projectMemberData.push(this.projectMember);
 	}
 
 }

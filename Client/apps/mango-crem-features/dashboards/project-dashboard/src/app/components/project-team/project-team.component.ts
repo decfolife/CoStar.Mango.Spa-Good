@@ -118,6 +118,14 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     }
   }
 
+  getEmailNotifyDisplayValue(rowData) {
+    return rowData.emailNotifications ? 'On' : 'Off';
+  }
+
+  getSharedDisplayValue(rowData) {
+    return rowData.shared ? 'On' : 'Off';
+  }
+
   importMembers() {
     let dialogRef = this.dialog.open(ImportTeamComponent, {
       height: '600px',

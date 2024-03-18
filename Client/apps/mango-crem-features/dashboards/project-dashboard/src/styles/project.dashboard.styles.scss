@@ -642,6 +642,33 @@ body {
 				}
 			}
 		}
+
+		.memberDetails-grid  {
+			tr.dx-row.dx-data-row {
+				td {
+					padding-top: 8px;
+					vertical-align: top !important;
+
+					.taskDetails-content {
+						margin-bottom: 16px;
+					}
+				}
+				td.md-description {
+					text-align: left;
+					text-wrap: wrap;
+					line-height: 20px;
+					padding-top: 4px;
+				}
+			}
+			.dx-row.dx-header-row {
+				background-color: white;
+				border: none;
+				td {
+					border-bottom: none;
+					border-image: none;
+				}
+			}
+		}	
 	}
 	td.dx-cell-focus-disabled.dx-master-detail-cell {
 		background-color: colors.$lightGray;
@@ -650,7 +677,7 @@ body {
 
 #projectTeam-container {
 	td.dx-cell-focus-disabled.dx-master-detail-cell {
-		background-color: colors.$bodyBackgroundGray;
+		padding: 8px 24px;
 	}
 }
 
