@@ -26,6 +26,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	@Output() unSelectedMembersEvent: EventEmitter<any> = new EventEmitter();
 	@Output() selectedTeamandMembersEvent: EventEmitter<any> = new EventEmitter();
 	@Output() getLatestTeamsDataEvent: EventEmitter<any> = new EventEmitter();
+  @Output() subGridEditClickedEvent: EventEmitter<any> = new EventEmitter();
 
 	public dataRetrieved: boolean = false;
 	memberIds: number[];
@@ -38,7 +39,6 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	subs: Subscription[] = [];
 
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
-	@Output() subGridEditClicked: EventEmitter<any> = new EventEmitter();
 
 	constructor(private dashboardService: DashboardService,
 							public toastr: ToastrService,
@@ -68,6 +68,8 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 		this.resetEditMode();
 		this.teamMembersGrid.instance.editRow(memberData.rowIndex);
 		memberData.data.editMode = true;
+
+		this.subGridEditClickedEvent.emit({ memberData, membersGrid: this.teamMembersGrid, emailNotify: this.emailNotify, shareValue: this.shareValue});
 	}
 
 	saveMemberChanges(e:any, member: TeamMember) {
@@ -172,13 +174,6 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 
 	getEmailonDisplayValue(rowData) {
 		return rowData.emailOn ? 'On' : 'Off';
-	}
-
-	callCancelChangesForOutsideOfGridClick() {
-		const teamMember = this.teamMembers.find(tm => tm.editMode);
-		if(teamMember !== undefined) {
-			this.cancelChanges(teamMember);
-		}
 	}
 
 	resetEditMode(isCancel?: boolean) {

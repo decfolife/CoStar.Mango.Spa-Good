@@ -29,6 +29,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   @ViewChild('SearchBox') searchBox: SearchComponent;
   @ViewChild(TeamMembersComponent) teamMembersComponent: TeamMembersComponent;
 
+	private subEditedMembersDataAndGridList: any [] = [];
   searchText: string = "";
   teams: Team[];
   teamMembers: TeamMember[];
@@ -191,7 +192,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   }
 
   toggleExpand() {
-    this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+    this.cancelChangesForOutsideOfGridClick();
     this.autoExpand = !this.autoExpand;
   }
 
@@ -201,11 +202,11 @@ export class TeamsComponent implements OnInit, OnDestroy {
   }
 
   searchBoxClick() {
-    this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+    this.cancelChangesForOutsideOfGridClick();
   }
 
   clearAllFilters() {
-    this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+    this.cancelChangesForOutsideOfGridClick();
     this.teamsGrid.instance.clearFilter();
     this.teamsGrid.instance.searchByText(this.searchText);
   }
@@ -260,13 +261,13 @@ export class TeamsComponent implements OnInit, OnDestroy {
 
   onCellClick(e:any) {
     if(e.rowType === 'header' && e.columnIndex > 1) {
-      this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+      this.cancelChangesForOutsideOfGridClick();
     }
   }
 
   onOptionChanged(e:any) {
     if (e.name === "columns" && e.fullName.endsWith("filterValues")) {
-      this.teamMembersComponent.callCancelChangesForOutsideOfGridClick();
+      this.cancelChangesForOutsideOfGridClick();
     }
   }
 
@@ -289,6 +290,16 @@ export class TeamsComponent implements OnInit, OnDestroy {
     } else {
       this.selectedMembersData.push(e);
     }
+  }
+
+  subGridEditClicked(e){
+		const foundIndex = this.subEditedMembersDataAndGridList.findIndex(em => em.memberData.data.teamId === e.memberData.data.teamId);
+
+		//remove if found because 2 team members can not be in edit mode on the same team
+		if (foundIndex >= 0)
+			this.subEditedMembersDataAndGridList.splice(foundIndex, 1);
+
+		this.subEditedMembersDataAndGridList.push(e);
   }
 
   exportToFile() {
@@ -393,6 +404,17 @@ export class TeamsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe);
   }
+
+	private cancelChangesForOutsideOfGridClick() {
+		this.subEditedMembersDataAndGridList.forEach(memDataAndGrid => {
+			memDataAndGrid.memberData.data.editMode = false;
+			memDataAndGrid.membersGrid.instance.cancelEditData();
+      memDataAndGrid.memberData.data.emailOn = memDataAndGrid.emailNotify;
+      memDataAndGrid.memberData.data.share = memDataAndGrid.shareValue;
+  });
+
+		this.subEditedMembersDataAndGridList = [];
+	}
 
   private getProjectsPrivateSetting() {
     this.subs.push(this.dashboardService.getClientPreference('ClientProjectsPrivate').subscribe(
