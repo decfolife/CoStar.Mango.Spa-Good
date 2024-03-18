@@ -328,10 +328,10 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     });
   }
   
-  presentValueExcel(event) {
+  presentValueExcel(event, data) {
     event.preventDefault();
     const filename = this.accountingSummaryService.getFileName('PresentValueTable');
-    this.subscription.add(this.accountingSummaryService.exportPresentValueFile(this.leaseRecognitionScheduleID, filename).subscribe(
+    this.subscription.add(this.accountingSummaryService.exportPresentValueFile(data.leaseRecognitionScheduleID, filename).subscribe(
       (presentValueResponse: any) => {
         if (!presentValueResponse.data) {
           this.accountingSummaryService.errorNotify('Downloading the present value table failed.');
