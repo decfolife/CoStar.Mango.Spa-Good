@@ -1,1 +1,2 @@
-export * from './public-api';
+export * from './modal.module';
+export * from './modal.component';

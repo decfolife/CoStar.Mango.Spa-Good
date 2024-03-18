@@ -1,9 +1,0 @@
-<div *ngIf="showLabel" class="input-label">
-	<span>{{label}}</span>
-	<span *ngIf="optional" class="input-optional">(optional)</span>
-	<span *ngIf="required" class="input-required">*</span>
-</div>
-<mat-form-field appearance="outline" [class.disabled]="disabled">
-    <textarea matInput [placeholder]="placeholder" [value]="value" [disabled]="disabled"></textarea>
-    <mat-hint *ngIf="hint">{{hint}}</mat-hint>
-</mat-form-field>

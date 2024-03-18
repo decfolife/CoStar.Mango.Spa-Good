@@ -12,7 +12,6 @@ import {
   Milestone,
   SelectedFilter,
 } from '@mango/data-models/lib-data-models';
-import { ToggleComponent } from '@mango/ui-shared/cosmos';
 import { HeroMetricsContainerComponent } from '@mango/ui-shared/lib-ui-shared';
 import { CardDetails, FilterDetail, MilestoneCardDetails, UserSelectedFilters } from '../../models';
 import { CardsService } from '../../services/cards.service';
@@ -50,7 +49,6 @@ export class IndexComponent implements OnInit, OnInit {
   dashboardCardFiltersData: Dropdown[] = null;
   public objectType: string = "Project";
   public dashboardId: number = 1;
-  @ViewChild('chip', { static: false }) chip: ToggleComponent;
   @ViewChild(CardsComponent) cardsComponent: CardsComponent;
   @ViewChild(HeroMetricsContainerComponent) heroMetricsContainerComponent: HeroMetricsContainerComponent;
   public readonly objectTypeIds: number[] = [1];

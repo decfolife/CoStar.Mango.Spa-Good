@@ -1,1 +1,2 @@
-export * from './public-api';
+export * from './text-field.component';
+export * from './text-field.module';

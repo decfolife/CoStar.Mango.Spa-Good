@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ModalModule} from '@mango/ui-shared/lib-ui-elements';
 import { TaskApprovalComponent } from './task-approval.component';
-import { TextAreaModule} from '@mango/ui-shared/cosmos';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
@@ -10,7 +9,6 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     ModalModule,
-    TextAreaModule,
     FormsModule,
   ],
   exports: [TaskApprovalComponent],

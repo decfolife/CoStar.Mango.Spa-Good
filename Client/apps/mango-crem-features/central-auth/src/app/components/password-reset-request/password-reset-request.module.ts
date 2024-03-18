@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { PasswordResetRequestComponent } from './password-reset-request.component';
 import { CardModule } from '@mango/ui-shared/lib-ui-elements';
-import { IconModule, TextFieldModule } from '@mango/ui-shared/cosmos';
+import { TextFieldModule } from '@mango/ui-shared/cosmos';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PasswordResetRequestRoutingModule } from './password-reset-request-routing.module';
@@ -19,7 +19,6 @@ import { PasswordResetRequestRoutingModule } from './password-reset-request-rout
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    IconModule,
     DxTextBoxModule,
     LibUiSharedModule
   ],

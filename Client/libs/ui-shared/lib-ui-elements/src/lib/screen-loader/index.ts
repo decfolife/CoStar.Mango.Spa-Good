@@ -1,1 +1,2 @@
-export * from './public-api';
+export * from './screen-loader.component';
+export * from './screen-loader.module';

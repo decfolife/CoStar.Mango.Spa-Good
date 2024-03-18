@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ResetPasswordRoutingModule } from './reset-password-routing.module';
 import { ResetPasswordComponent } from './reset-password.component';
 import { CardModule } from '@mango/ui-shared/lib-ui-elements';
-import { IconModule, TextFieldModule } from '@mango/ui-shared/cosmos';
+import { TextFieldModule } from '@mango/ui-shared/cosmos';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
@@ -24,7 +24,6 @@ import { DxPopoverModule } from 'devextreme-angular';
     TextFieldModule,
     MatButtonModule,
     FormsModule,
-    IconModule,
     DxPopoverModule,
     MatPasswordStrengthModule
   ],

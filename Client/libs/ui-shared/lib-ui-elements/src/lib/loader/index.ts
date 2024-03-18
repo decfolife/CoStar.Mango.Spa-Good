@@ -1,1 +1,2 @@
-export * from './public-api';
+export * from './loader.component';
+export * from './loader.module';

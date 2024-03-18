@@ -5,7 +5,7 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CardModule, ChipModule, DropdownModule, LoaderModule, ModalModule, SimpleGridModule } from '@mango/ui-shared/lib-ui-elements';
-import {SearchModule, TextAreaModule} from '@mango/ui-shared/cosmos';
+import {SearchModule} from '@mango/ui-shared/cosmos';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
@@ -47,7 +47,6 @@ const WARNING = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="
     MatIconModule,
     CardModule,
     ModalModule,
-    TextAreaModule,
     NgxSkeletonLoaderModule,
     TaskApprovalModule,
     FormsModule
