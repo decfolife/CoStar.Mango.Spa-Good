@@ -22,7 +22,12 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       id: 'AssetBalance',
       name: 'Assets and Liabilities Balances',
       index: 1
-    }
+    },
+    {
+      id: 'LeaseCosts',
+      name: 'Lease Cost',
+      index: 2
+    },
   ];
   public pivotCardData: any;
   public loading: boolean = true;
@@ -57,12 +62,14 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
-    
-    this.inAppDisclosureService.getIADCardData(4, this.selectedSegment, this.reportingYear, this.selectedCurrency).subscribe((result) => {
-      this.setLeaseCountCardData(result.data[0])
-      this.setROUAssetBalanceCardData(result.data[1])
-      this.loading = false;
-    });
+    this.inAppDisclosureService.getIADCardData(4, this.selectedSegment, this.reportingYear, this.selectedCurrency)
+      .subscribe((result) => {
+        this.setLeaseCountCardData(result.data[0])
+        this.setROUAssetBalanceCardData(result.data[1])
+        const mergedArrayCostCard = this.mergeArraysOfObjects(result.data[2],result.data[3]);
+        this.setLeaseCostCardData(mergedArrayCostCard)
+        this.loading = false;
+      });
   }
 
   public setLeaseCountCardData(data) {
@@ -230,35 +237,145 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     this.loading = false;
   }
 
+  public setLeaseCostCardData(data){ // copy/paste function
+    this.pivotCardData = [];
+
+    data.forEach((item) => {
+      const total = item.FinanceLeaseCostReporting +
+                    item.AssetAmortizationReporting +
+                    item.LeaseLiabilityInterestReporting +
+                    item.OperatingLeaseCostReporting +
+                    item.ShortTermLeaseAndReportingExceptionCostReporting +
+                    item.VariableLeaseCostReporting +
+                    item.VariableLeaseCostOfIndexedPaymentsReporting +
+                    item.SubleaseIncome;
+      const items = [
+        {
+          Display: 'Finance Lease Cost',
+          PeriodYear: item.PeriodYear,
+          data: item.FinanceLeaseCostReporting,
+        },
+        {
+          Display: ' - Amortization of right-of-use Assets',
+          PeriodYear: item.PeriodYear,
+          data: item.AssetAmortizationReporting,
+        },
+        {
+          Display: ' - Interest on Lease Liabilities',
+          PeriodYear: item.PeriodYear,
+          data: item.LeaseLiabilityInterestReporting,
+        },
+        {
+          Display: ' - Operating Lease Cost',
+          PeriodYear: item.PeriodYear,
+          data: item.OperatingLeaseCostReporting,
+        },
+        {
+          Display: 'Short-term Lease & Reporting Exceptions Cost',
+          PeriodYear: item.PeriodYear,
+          data: item.ShortTermLeaseAndReportingExceptionCostReporting,
+        },
+        {
+          Display: 'Variable Lease Cost',
+          PeriodYear: item.PeriodYear,
+          data: item.VariableLeaseCostReporting,
+        },
+        {
+          Display: 'Variable Cost of Indexed Payments',
+          PeriodYear: item.PeriodYear,
+          data: item.VariableLeaseCostOfIndexedPaymentsReporting,
+        },
+        {
+          Display: 'Sublease Income',
+          PeriodYear: item.PeriodYear,
+          data: item.SubleaseIncome,
+        },
+        {
+          Display: 'Total Lease Cost',
+          PeriodYear: item.PeriodYear,
+          data: total,
+        },
+      ]
+
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+      })
+    });
+    console.log(data)
+    console.log('this.pivotCardData',this.pivotCardData)
+    console.log('this.fieldConfigs',this.fieldConfigs)
+
+    if (this.dataSources.length > 0) {
+      this.dataSources[2] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[2]
+      });
+    } else {
+      this.dataSources.push(new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[2]
+      }));
+    }
+    this.loading = false;
+  }
+
+  mergeArraysOfObjects(data1: {[key: string]: any}[], data2: {[key: string]: any}[]): Array<object>{
+    const hashMap = new Map(
+      data2.map( item => {
+        return [`${item.LeaseTemplate}-${item.DueByYear}`, item]
+      })
+    );
+    const mergedArray = data1.map( item => {
+      const key = `${item.LeaseTemplate}-${item.PeriodYear}`;
+      const itemToMerge = hashMap.get(key);
+      if(itemToMerge && typeof itemToMerge === 'object'){
+        return { ...item, ...itemToMerge };
+      }
+    });
+    return mergedArray;
+  }
+
   public setFieldConfigs() {
     this.inAppDisclosureService.getIADCardConfigs(4).subscribe((result) => {
       result.data.forEach((card) => {
         let config = JSON.parse(card.CardJSONSchema);
         config[0].sortingMethod = this.rowSort;
         config[2].sortingMethod = this.disclosureClassificationSort;
-        if (card.Title === 'ASC 842 Annual Disclosures') {
-          config[4].format = ",###";
-          config[config.length - 1].calculateSummaryValue = function(summaryCell) {
-            if (summaryCell.field('column')?.dataField === 'LeaseTemplate' || summaryCell.field('column')?.dataField === 'PeriodYear') {
-              return summaryCell.value() / 2;
-            } else {
-              return summaryCell.value();
+
+        switch(card.Title){
+          case 'ASC 842 Annual Disclosures':
+            config[4].format = ",###";
+            config[config.length - 1].calculateSummaryValue = function(summaryCell) {
+              if (summaryCell.field('column')?.dataField === 'LeaseTemplate' || summaryCell.field('column')?.dataField === 'PeriodYear') {
+                return summaryCell.value() / 2;
+              } else {
+                return summaryCell.value();
+              }
             }
-          }
-        } else if (card.Title === 'ASC 842 Annual Disclosures ROU Asset Balance') {
-          config[0].width = 134.469;
-          config[3].format = {
-            type: "fixedPoint",
-            precision: this.currencyDecimalPrecision
-          }
-          config[config.length - 1].calculateSummaryValue = function(summaryCell) {
-            if (summaryCell.field('column')?.dataField === 'PeriodYear') {
-              return summaryCell.value() / 2;
-            } else {
-              return summaryCell.value();
+            break;
+          case 'ASC 842 Annual Disclosures ROU Asset Balance':
+            config[0].width = 134.469;
+            config[3].format = {
+              type: "fixedPoint",
+              precision: this.currencyDecimalPrecision
             }
-          }
+            config[config.length - 1].calculateSummaryValue = function(summaryCell) {
+              if (summaryCell.field('column')?.dataField === 'PeriodYear') {
+                return summaryCell.value() / 2;
+              } else {
+                return summaryCell.value();
+              }
+            }
+            break;
+          case 'ASC 842 Annual Lease Costs':
+            config[0].width = 180;
+            config[2].format = {
+              type: "fixedPoint",
+              precision: this.currencyDecimalPrecision
+            };
+            break;
         }
+
         config[config.length - 1].calculateCustomSummary = (options) => {
           switch(options.summaryProcess) {
             case "start":
