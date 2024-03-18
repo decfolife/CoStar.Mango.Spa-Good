@@ -370,7 +370,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       maxWidth: '500px',
       closeOnClick: true,
     });
-    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, "usd", this.selectedView + 3).subscribe((result) => {
+    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, "usd", this.selectedView + 2).subscribe((result) => {
       if(result.data) {        
         notify({
           contentTemplate: function (e) {
