@@ -266,7 +266,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           data: item.LeaseLiabilityInterestReporting,
         },
         {
-          Display: ' - Operating Lease Cost',
+          Display: 'Operating Lease Cost',
           PeriodYear: item.PeriodYear,
           data: item.OperatingLeaseCostReporting,
         },
