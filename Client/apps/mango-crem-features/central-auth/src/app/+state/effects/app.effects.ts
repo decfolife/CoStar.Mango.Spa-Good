@@ -136,7 +136,6 @@ export class AppEffects {
           //   this.centralAuthFacade.logout()
           // }
           if (auth === 'false') {
-            //this.centralAuthFacade.logout()
             throw new CentralAuthError({
               message: V06_LOGIN_ERROR_MESSAGE,
               title: 'Error',

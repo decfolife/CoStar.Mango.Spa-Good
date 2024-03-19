@@ -3,7 +3,7 @@ import { UserService } from "@mango/core-shared";
 import { MultiClientLoginHttpRequest, OAUTH_AUTH_CODE_QUERY_PARAM } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Observable, combineLatest, of, pipe } from "rxjs";
-import { catchError, delay, filter, map, switchMap, take, tap } from "rxjs/operators";
+import { delay, filter, map, switchMap, take, tap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
@@ -27,10 +27,10 @@ export class OAuthEffects {
         tap(_ => this.centralAuthFacade.setLoading(false)),
         filter(response => !!response && !!response.authToken),
         tap(response => this.centralAuthFacade.setAccessToken(response.authToken)),
-        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))])),
+        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1))])),
         filter(([client, redirectionUri]) => !!client),
-        map(([client, redirectionUri, isClientSpecificLogin]) => {
-          const newRedirectionUri = !redirectionUri ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx?mul=${isClientSpecificLogin ? 'false' : 'true'}` : decodeURIComponent(redirectionUri)
+        map(([client, redirectionUri]) => {
+          const newRedirectionUri = !redirectionUri ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` : decodeURIComponent(redirectionUri)
           this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
           return OAuthActions.authorize()
         }),

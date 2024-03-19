@@ -1,12 +1,9 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { DBkeys, SettingsService, StorageService, UserService } from "@mango/core-shared";
-import { CentralAuthError, CentralAuthErrorCodes, ContactRecord, ContactRecordHTTPObject, MangoErrorTypes, OAUTH_LOGOUT_QUERY_PARAM, UNEXPECTED_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, UserAuth } from "@mango/data-models/lib-data-models";
+import { SettingsService, UserService } from "@mango/core-shared";
+import { ContactRecord, ContactRecordHTTPObject } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import * as dayjs from 'dayjs';
-import { UserIdleService } from "libs/core-shared/src/lib/services";
 import { combineLatest, of } from "rxjs";
-import { catchError, filter, first, map, switchMap, take, tap } from "rxjs/operators";
+import { catchError, filter, map, switchMap, take } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";

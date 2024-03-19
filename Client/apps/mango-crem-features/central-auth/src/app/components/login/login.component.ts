@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.centralAuthFacade.handleUserAlreadyLoggedIn()
-    this.subs.push(this.customerSpecificLoginHandler().subscribe())
+    this.subs.push(this.clientSpecificLoginHandler().subscribe())
   }
 
   redirectToSSO = () => {
@@ -112,11 +112,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   };
 
-  customerSpecificLoginHandler(): Observable<any> {
+  clientSpecificLoginHandler(): Observable<any> {
     return of(this.urlService.readClientSiteRouteParam())
       .pipe(
         filter(clientKey => !!clientKey),
         tap(_ => this.centralAuthFacade.setClientSpecificLogin(true)),
+        tap(_ => this.centralAuthFacade.setOpenClientInNewTab(false)),
         tap(clientKey => this.centralAuthFacade.setSelectedClientKey(clientKey)),
         tap(clientKey => this.centralAuthFacade.getClientSSOSetings(clientKey)),
       )
