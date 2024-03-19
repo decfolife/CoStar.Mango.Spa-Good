@@ -2,21 +2,53 @@
 
 ::ng-deep {
 
-  .footerRightControls {
-    display: flex;
+  mango-date-calculator .cremModal.newModal {
+    .modalContent {
+      height: 250px !important;
+    }
 
-    crem-button {
-      padding: 8px;
+    .modalHeader {
+      padding: 8px 16px !important;
+    }
+
+    .modalFooter {
+      padding: 10px 10px !important;
+
+      .footerRightControls {
+        display: flex;
+      }
+    }
+
+    div>div.dayOfWeek {
+      padding-left: 0 !important;
+
+      h2 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    button.btn-close.btn-none.modalCloseButton:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.1rem $primary-lighter;
     }
   }
 
-  .dx-datebox .dx-texteditor-buttons-container {
-    display: none;
+  .section--border {
+    border-bottom: 1px solid $gray05;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 
-  .dayOfWeek {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .dx-form-group {
+    .dx-box-flex{
+      gap: 5px;
+      .dx-first-row.dx-field-item{
+        padding-inline-start: 0px;
+        padding-inline-end: 0px;
+      }
+    }
   }
+
 }

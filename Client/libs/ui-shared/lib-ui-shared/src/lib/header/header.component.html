@@ -166,7 +166,7 @@
         <ul>
           <li><a mat-menu-item aria-label="My Preferences">My Preferences</a></li>
           <li><a mat-menu-item aria-label="My Contact Record">My Contact Record</a></li>
-          <li><a mat-menu-item aria-label="Date Calculator" (click)="showDateCalculatorDialog()">Date Calculator</a></li>
+          <li><a mat-menu-item role="button" aria-label="Date Calculator" (keydown.enter)="showDateCalculatorDialog()" (click)="showDateCalculatorDialog(); $event.preventDefault()">Date Calculator</a></li>
           <li><a mat-menu-item aria-label="Environments">Environments</a></li>
           <li><a mat-menu-item aria-label="Emulate User" (click)="showEmulateUser()">Emulate User</a></li>
           <li><a mat-menu-item aria-label="Switch Profiles">Switch Profiles</a></li>

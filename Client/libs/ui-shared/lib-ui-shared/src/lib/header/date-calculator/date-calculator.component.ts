@@ -8,15 +8,14 @@ import { Observable, Subscription } from 'rxjs';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationGroupComponent, DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxNumberBoxModule } from 'devextreme-angular';
-
-
+import { DatePickerModule } from '../../../../../lib-ui-elements/src/lib/date-picker/date-picker.module';
 
 @Component({
   selector: 'mango-date-calculator',
   standalone: true,
   templateUrl: './date-calculator.component.html',
   styleUrls: ['./date-calculator.component.scss'],
-  imports: [ModalModule, DxCheckBoxModule, DxFormModule, ButtonModule, DxDateBoxModule, DxValidatorModule, DxValidationGroupModule, DxNumberBoxModule]
+  imports: [ModalModule, DxCheckBoxModule, DxFormModule, ButtonModule, DxDateBoxModule, DxValidatorModule, DxValidationGroupModule, DxNumberBoxModule, DatePickerModule]
 })
 export class DateCalculatorComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription()
@@ -52,14 +51,6 @@ export class DateCalculatorComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe()
-  }
-
-  yesDelete() {
-    this.close("Yes");
-  }
-
-  public close(data: any) {
-    this.dialogRef.close(data);
   }
 
   public calcOutputDate() {

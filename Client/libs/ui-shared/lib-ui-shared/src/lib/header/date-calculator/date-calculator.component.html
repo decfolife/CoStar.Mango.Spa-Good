@@ -6,32 +6,37 @@
             <dx-form #dateCalculatorForm [colCount]="3">
 
                 <dxi-item [colSpan]="3">
-                    <dx-check-box text="Include Input Date?" [(value)]="includeInputDate"></dx-check-box>
+                    <dx-check-box [focusStateEnabled]="true" text="Include Input Date?" [(value)]="includeInputDate"></dx-check-box>
+                </dxi-item>
+                
+                <dxi-item [colSpan]="3">
+                    <dx-validation-group #inputGroup>
+                        <dx-date-box
+                            label="Input Date"
+                            labelMode="outside"
+                            type="date"
+                            [displayFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'shortdate' "
+                            [(value)]="inputDate"
+                            [inputAttr]="{ 'aria-label': 'Input Date Field' }">
+                            <dx-validator>
+                                <dxi-validation-rule
+                                    type="required"
+                                    message="Input Date is Required"
+                                ></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-date-box>
+                    </dx-validation-group>
                 </dxi-item>
 
-                    <dxi-item [colSpan]="3">
-                        <dx-validation-group  #inputGroup>
-                            <dx-date-box
-                                placeholder="Input Date"
-                                type="date"
-                                [displayFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'shortdate' "
-                                [(value)]="inputDate"
-                                [inputAttr]="{ 'aria-label': 'Date' }">
-                                <dx-validator>
-                                    <dxi-validation-rule
-                                      type="required"
-                                      message="Input Date is Required"
-                                    ></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-date-box>
-                        </dx-validation-group>
-                    </dxi-item>
-                    
-                    
-                    <dxi-item dataField="years" [colSpan]="1">
+                <dxi-item [colSpan]="3">
+                    <div class="section--border"></div>
+                </dxi-item>
+
+                <dxi-item itemType="group" [colCount]="3" [colSpan]="3">
+                    <dxi-item [colSpan]="1">
                         <dx-validation-group #inputGroup>
-                            <dxo-label text="±Years"></dxo-label>
-                            <dx-number-box format="#0" [(value)]="years" [showSpinButtons]="true" [inputAttr]="{ 'aria-label': 'years' }">
+                            <!-- <dxo-label text="±Years"></dxo-label> -->
+                            <dx-number-box label="±Years" labelMode="outside" format="#0" [(value)]="years" [showSpinButtons]="true">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message="Must Be Numeric"></dxi-validation-rule>
                                 </dx-validator>
@@ -40,10 +45,10 @@
                     </dxi-item>
 
 
-                    <dxi-item dataField="months" [colSpan]="1">
+                    <dxi-item [colSpan]="1">
                         <dx-validation-group #inputGroup>
-                            <dxo-label text="±Months"></dxo-label>
-                            <dx-number-box format="#0" [(value)]="months" [showSpinButtons]="true" [inputAttr]="{ 'aria-label': 'months' }">
+                            <!-- <dxo-label text="±Months"></dxo-label> -->
+                            <dx-number-box label="±Months" labelMode="outside" format="#0" [(value)]="months" [showSpinButtons]="true">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message="Must Be Numeric"></dxi-validation-rule>
                                 </dx-validator>
@@ -51,40 +56,46 @@
                         </dx-validation-group>
                     </dxi-item>
                     
-                    <dxi-item dataField="days" [colSpan]="1">
+                    <dxi-item [colSpan]="1">
                         <dx-validation-group #inputGroup>
-                            <dxo-label text="±Days"></dxo-label>
-                            <dx-number-box format="#0" [(value)]="days" [showSpinButtons]="true" [inputAttr]="{ 'aria-label': 'days' }">
+                            <!-- <dxo-label text="±Days"></dxo-label> -->
+                            <dx-number-box label="±Days" labelMode="outside" format="#0" [(value)]="days" [showSpinButtons]="true">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message="Must Be Numeric"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-number-box>
                         </dx-validation-group>
                     </dxi-item>
+                </dxi-item>
 
-                    <dxi-item [colSpan]="3">
-                        <dx-validation-group #outputGroup>
-                            <dx-date-box
-                                placeholder="Output Date"
-                                type="date"
-                                [displayFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'shortdate' "
-                                [(value)]="outputDate"
-                                [inputAttr]="{ 'aria-label': 'outputDate' }">
-                                <dx-validator>
-                                    <dxi-validation-rule
-                                      type="required"
-                                      message="Output Date is Required"
-                                    ></dxi-validation-rule>
-                                  </dx-validator>
-                            </dx-date-box>
-                        </dx-validation-group>
-        
-                    </dxi-item>
-                    <dxi-item colSpan="3" [cssClass]="'dayOfWeek'">
-                        <h2 *dxTemplate="let data of 'dayOfWeekTemplate'">
-                            {{ dayOfWeek }}
-                        </h2>
-                    </dxi-item>
+                <dxi-item [colSpan]="3">
+                    <div class="section--border"></div>
+                </dxi-item>
+
+                <dxi-item [colSpan]="3">
+                    <dx-validation-group #outputGroup>
+                        <dx-date-box
+                            label="Output Date"
+                            labelMode="outside"
+                            type="date"
+                            [displayFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'shortdate' "
+                            [(value)]="outputDate"
+                            [inputAttr]="{ 'aria-label': 'Output Date Field' }">
+                            <dx-validator>
+                                <dxi-validation-rule
+                                    type="required"
+                                    message="Output Date is Required"
+                                ></dxi-validation-rule>
+                                </dx-validator>
+                        </dx-date-box>
+                    </dx-validation-group>
+    
+                </dxi-item>
+                <dxi-item colSpan="3" [cssClass]="'dayOfWeek'">
+                    <h2 *dxTemplate="let data of 'dayOfWeekTemplate'" [attr.tabindex]="dayOfWeek ? '0' : '-1'">
+                        {{ dayOfWeek }}
+                    </h2>
+                </dxi-item>
 
             </dx-form>
         </div>

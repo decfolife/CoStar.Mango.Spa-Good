@@ -149,8 +149,8 @@ export class HeaderComponent implements OnInit {
 
     let dialogRef = this.dialog.open(DateCalculatorComponent, {
       hasBackdrop: false,
-      height: '350px',
-      width: '500px',
+      height: '440px',
+      width: '300px',
     });
 
     this.subs.push(

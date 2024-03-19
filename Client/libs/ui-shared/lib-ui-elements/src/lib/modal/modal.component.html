@@ -1,5 +1,5 @@
-<div [ngClass]="'cremModal ' + className" [id]="modalId"  aria-hidden="true"  role="main"  role="dialog" aria-modal="true">
-	<div class="modalHeader" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle >
+<div [ngClass]="'cremModal ' + className" [id]="modalId" role="dialog" [attr.aria-labelledby]="modalTitleId" aria-modal="true">
+	<div class="modalHeader" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
 		<h2 [id]="modalTitleId" class="modal-title"> {{ modalTitle }}</h2>
 		<crem-tooltip *ngIf="showTooltip"
 		[helpTextData]="tooltipText"
