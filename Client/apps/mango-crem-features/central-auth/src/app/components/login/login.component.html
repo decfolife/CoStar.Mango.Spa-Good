@@ -20,7 +20,7 @@
 							</div>
 							<div class="instructions text-center">Login with your email and password</div>
 						</div>
-						<cs-text-field id="email" type="email" formControlName="email" [placeholder]="'Email Address'"
+						<cs-text-field id="email" type="email" formControlName="email" [placeholder]="'Email'"
 							[required]="true" [error]="(formControls.email.touched && formControls.email.errors?.required) ||
 									(formControls.email.touched && formControls.email.errors?.email)" [errorMsg]="getEmailErrorMsg()"
 							[disabled]="!(isClientSiteActive$ | async)" required>

@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../../../../../../../libs/ui-shared/cosmos/src/lib/assets/styles/cosmos.scss';
 
 #company-logo {
@@ -60,7 +61,6 @@ $dblPadding: 2 * $stdPadding;
 				.forgot-password-link {
 					display: flex;
 					justify-content: flex-end;
-					//padding-top: $stdPadding;
 
 					button.btn-link {
 						font-size: 14px;
@@ -92,16 +92,13 @@ $dblPadding: 2 * $stdPadding;
 	}
 }
 
-:host ::ng-deep .mat-form-field {
-    display: unset;
+:host ::ng-deep #password .mat-mdc-text-field-wrapper {
+	margin-bottom: 0 !important;
 }
 
-:host ::ng-deep .mat-form-field-wrapper {
-	margin-bottom: 0px !important;
-}
-
-:host ::ng-deep #password .mat-form-field-wrapper {
-	padding-bottom: 0 !important;
+:host ::ng-deep #password .mat-mdc-icon-button {
+	height: 40px;
+	padding: 8px;
 }
 
 .mat-card-subtitle, .instructions {

@@ -1,4 +1,5 @@
 @use 'node_modules/@fortawesome/fontawesome-svg-core/styles';
+@use '@angular/material' as mat;
 @import 'colors';
 @import 'var';
 
@@ -19,46 +20,46 @@ body {
 
 mat-form-field {	
 
-	&.mat-form-field {
-		line-height: 21px;
+	&.mat-mdc-form-field {
+		display: unset;
+		@include mat.form-field-density(-4);
 
 		&.mat-form-field-appearance-outline {
 
-			div.mat-form-field-wrapper {
+			div.mat-mdc-text-field-wrapper {
 				margin: $stdPadding 0 $dblPadding 0;
 
-				div.mat-form-field-flex {
-					padding: 0 0.1em 0 .75em;
+				div.mat-mdc-form-field-flex {
+					padding: 0 0.1em 0 0;
 
-					div.mat-form-field-infix {
-						padding: 0.4em 0px;
-						border-top: 4px solid transparent;
-						height: 35px;
+					// div.mat-form-field-infix {
+					// 	padding: 0.4em 0px;
+					// 	border-top: 4px solid transparent;
+					// 	height: 35px;
 						
-						span.mat-form-field-label-wrapper {
-							top: $stdPadding * -3;
-							overflow: visible;
-						}
-					}
+					// 	span.mat-form-field-label-wrapper {
+					// 		top: $stdPadding * -3;
+					// 		overflow: visible;
+					// 	}
+					// }
 
-					div.mat-form-field-outline {
-						background:white;					
+					div.mdc-notched-outline {
 
-						div.mat-form-field-outline-end {
+						div.mdc-notched-outline__trailing {
 							border-radius: 2px;
 							border-color: $stdBorderGray;
 							border-top-left-radius: 0px;
 						    border-bottom-left-radius: 0px;
 						}
 
-						div.mat-form-field-outline-start {
+						div.mdc-notched-outline__leading {
 							border-radius: 2px;
 							border-color: $stdBorderGray;
 							border-top-right-radius: 0px;
 						    border-bottom-right-radius: 0px;
 						}
 
-						div.mat-form-field-outline-gap {
+						div.mdc-notched-outline__notch {
 							border-color: $stdBorderGray;
 							border-radius: 0px;					
 						}
@@ -86,10 +87,10 @@ mat-form-field {
 			}
 		}
 
-		div.mat-form-field-wrapper {
+		div.mat-mdc-text-field-wrapper {
 
-			div.mat-form-field-flex {
-				div.mat-form-field-suffix {
+			div.mat-mdc-form-field-flex {
+				div.mat-mdc-form-field-icon-suffix {
 					mat-icon.mat-icon {
 						fa-icon {
 							font-size: 20px;
@@ -106,9 +107,9 @@ mat-form-field {
 		}
 
 		&.read-only {
-			div.mat-form-field-wrapper {
-				div.mat-form-field-flex {
-					div.mat-form-field-outline {
+			div.mat-mdc-text-field-wrapper {
+				div.mat-mdc-form-field-flex {
+					div.mdc-notched-outline {
 						background: inherit;
 					}
 				}
@@ -117,10 +118,8 @@ mat-form-field {
 	}
 }
 
-.mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button {
-	height: 28px !important;
-	width: 28px !important;
-	top: 3px !important;
+.mat-card-header-text {
+	margin: 0px !important;
 }
 
 dx-data-grid {
@@ -303,8 +302,4 @@ div.dx-button {
       border-bottom: $stdBorder;
     }
   }
-}
-
-.mat-card-header-text {
-	margin: 0px !important;
 }
