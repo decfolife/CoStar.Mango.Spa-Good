@@ -27,10 +27,13 @@ export class OAuthEffects {
         tap(_ => this.centralAuthFacade.setLoading(false)),
         filter(response => !!response && !!response.authToken),
         tap(response => this.centralAuthFacade.setAccessToken(response.authToken)),
-        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1))])),
+        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))])),
         filter(([client, redirectionUri]) => !!client),
-        map(([client, redirectionUri]) => {
-          const newRedirectionUri = !redirectionUri ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` : decodeURIComponent(redirectionUri)
+        map(([client, redirectionUri, isClientSpecificLogin]) => {
+          const newRedirectionUri = !redirectionUri 
+            ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx?mul=${isClientSpecificLogin ? 'false' : 'true'}` 
+            : decodeURIComponent(redirectionUri)
+
           this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
           return OAuthActions.authorize()
         }),
