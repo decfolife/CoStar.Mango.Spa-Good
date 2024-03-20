@@ -112,7 +112,7 @@ export class AuthenticationEffects {
             return
           }
 
-          this.navigationService.redirectToCentralAuth()
+          this.navigationService.redirectToCentralAuth(false)
         })
       ),
     { dispatch: false }

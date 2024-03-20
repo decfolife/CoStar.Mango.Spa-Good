@@ -24,7 +24,12 @@ export class MangoNavigationService {
     this.router.navigate(['/'])
   }
 
-  redirectToCentralAuth(): void {
+  redirectToCentralAuth(includeRedirectUri: boolean = true): void {
+    if (!includeRedirectUri) {
+      window.location.href = environment.CAUrl
+      return
+    }
+
     const urlParts = this.routerLocation.path().split('?')
     const extraParamsIndex = urlParts.findIndex(urlPart => urlPart.includes(OAUTH_CLIENT_KEY_QUERY_PARAM) || urlPart.includes(OAUTH_CONTACT_ID_QUERY_PARAM))
     const redirectUri = urlParts.filter((urlPart, index) => index !== extraParamsIndex).join('?')
