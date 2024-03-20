@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { MemberInfo, ProjectTeamMember, RemoveMember, RemoveTeamMembers } from '@mango/data-models/lib-data-models';
+import { MemberInfo, ProjectTeamMember, RemoveTeamMembers } from '@mango/data-models/lib-data-models';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { Subscription, combineLatest } from 'rxjs';
@@ -13,6 +13,8 @@ import { SaveTeamTemplateComponent } from './save-team-template/save-team-templa
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 import { ToastrService } from 'ngx-toastr';
 import { ImportTeamComponent } from './import-team/import-team.component';
+import { DxDataGridComponent } from 'devextreme-angular';
+import { MemberDetailsComponent } from './member-details/member-details.component';
 
 
 @Component({
@@ -21,6 +23,8 @@ import { ImportTeamComponent } from './import-team/import-team.component';
   styleUrls: ['./project-team.component.scss']
 })
 export class ProjectTeamComponent implements OnInit, OnDestroy {
+
+  @ViewChild("ProjectTeamGrid") projectTeamGrid: DxDataGridComponent;
 
   dataRetrieved: boolean = false;;
   projectTeam: ProjectTeamMember[];
@@ -35,6 +39,9 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   projectsPrivateSetting: number;
   addTempUserSetting: number
   contactIds: number[] = [];
+  searchText: string = "";
+  autoExpand: boolean = false;
+  count:number = 0;
 
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
@@ -140,8 +147,19 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     ).subscribe());
   }
 
+  removeContactOrMember(member) {
+    this.selectedTeamMembersData.teamMembers = [];
+    let selectedMemberData = {
+      commonTeamId: member.teamID,
+      contactId: member.contactID
+    };
+
+    this.selectedTeamMembersData.teamMembers.push(selectedMemberData);
+    this.removeMembers();
+  }
+
   removeMembers() {
-    this.subs.push(this.dialogService.confirm('Remove Members', `Do you want to delete the selected contacts/members ?`, 'Confirm', 'Cancel').pipe(
+    this.subs.push(this.dialogService.confirm('Remove Member(s)', `Do you want to delete the selected contact(s)/member(s) ?`, 'Confirm', 'Cancel').pipe(
       filter(confirmed => !!confirmed),
       switchMap(_ => this.dashboardService.removeTeamMembers(this.selectedTeamMembersData)),
       switchMap(res => !!res && !!res.success ? 
@@ -228,15 +246,16 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
   toggleExpand() {
-    
+    this.autoExpand = !this.autoExpand;
   }
 
   clearAllFilters() {
-
+    this.projectTeamGrid.instance.clearFilter();
   }
 
-  searchDataGrid(e) {
-    
+  searchDataGrid(searchText) {
+    this.searchText = searchText;
+    this.projectTeamGrid.instance.searchByText(searchText);
   }
 
 	ngOnDestroy(): void {

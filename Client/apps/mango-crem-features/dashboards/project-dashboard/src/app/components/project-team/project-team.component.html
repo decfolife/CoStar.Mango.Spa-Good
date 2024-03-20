@@ -51,7 +51,7 @@
 	<div class="projectTeam-dataGrid-wrapper"> 
 		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
 		<dx-data-grid *ngIf="dataRetrieved" class="projectTeam-grid"
-			#projectTeamGrid
+			#ProjectTeamGrid
 			[showColumnLines]="false"
 			[showRowLines]="false"
 			[showBorders]="false"
@@ -104,7 +104,7 @@
 									(click)=" addOrEditMember(member.data.memberType.trim() == 'Team Member'? 'ETM' : 'ETU', member.data)">
 									Edit
 								</li>
-								<li mat-menu-item  class="ptm-remove">Remove</li>
+								<li mat-menu-item  class="ptm-remove" (click)="removeContactOrMember(member.data)">Remove</li>
 								<li mat-menu-item  class="ptm-makeManager" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
 							</ul>
 						</mat-menu>
@@ -126,6 +126,7 @@
 			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="memberDetails" class="projectMember-masterDetail"></dxo-master-detail>
 			<div *dxTemplate="let member of 'memberDetails'" class="projectMember-template">
 				<member-details class="projectMember-detail"
+						[searchText]="searchText"
 						[projectMember]="member.data"
 				>
 				</member-details>
