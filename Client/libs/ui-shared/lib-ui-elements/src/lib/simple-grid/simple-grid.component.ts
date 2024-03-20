@@ -47,14 +47,6 @@ export class SimpleGridComponent{
   @ViewChild("DataGrid") dataGrid: DxDataGridComponent;
 
   constructor() {
-
-    // this.buttonColumn ? this.dataSource.array.forEach(element => {
-    //   element['Approval']= `${this.buttonColContent.createEmbeddedView(this.buttonTemplate)}`
-    //   return this.dataSource;
-    // }) : null;
-
-
-
    }
 
    ngOnInit() {

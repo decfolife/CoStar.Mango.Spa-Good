@@ -1,17 +1,15 @@
-@import "../../../../../mango/src/assets/styles/costar-angular-material.scss";
-@import "../../../../../mango/src/assets/styles/costar-dev-extreme.scss";
-@import "../../../../..//mango/src/assets/styles/costar-mango.scss";
-@import "../../../../../../libs/ui-shared/lib-ui-elements/src/lib/simple-grid/simple-grid.component.scss";
+@use "styles" as *;
+
 
 .emulate-user {
   cs-search > mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-outline >* {
-    background: white !important;
+    @include costar(background-color, light);
     border: none !important;
     display: none !important
   }
   
   cs-search > mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-outline>* {
-    background: white;
+    @include costar(background-color, light);
     border: none !important ;
     outline: 0 !important;
     display:none !important;
@@ -21,8 +19,9 @@
     padding: 0px !important;
     overflow: visible !important;
     height: 32px !important;
-    border: 1px solid #c3c3c3 !important;
-    background: white !important;
+    border: 1px solid !important;
+    @include costar(border, gray04);
+    @include costar(background-color, light);
     margin-top: 0px !important;
     padding-left: 8px !important;
     font-size: 16px !important;
@@ -75,7 +74,7 @@
 
   cs-text-field {
     mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-outline>* {
-        background: white;
+      @include costar(background-color, light);
         border: none !important ;
         outline: 0 !important;
         display:none !important;
@@ -84,8 +83,8 @@
         padding: 0px !important;
         overflow: visible !important;
         height: 32px !important;
-        border: 1px solid #c3c3c3 !important;
-        background: white !important;
+        @include costar(border, gray04);
+        @include costar(background-color, light);
         margin-top: 0px !important;
         padding-left: 8px !important;
         font-size: 16px !important;
@@ -97,7 +96,7 @@
     }
 
     mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-outline >* {
-        background: white !important;
+        @include costar(background-color, light);
         border: none !important;
         display: none !important
     }
@@ -125,15 +124,6 @@
       }
     }
   }
-
-  // #emulate-user-selected-user {
-  //     display: none !important;
-  // }
-
-  // #emulate-user-password {
-  //     display: none !important;
-  // }
-
   .emulate-user__password-field {
       margin-top: 12px;
   }
