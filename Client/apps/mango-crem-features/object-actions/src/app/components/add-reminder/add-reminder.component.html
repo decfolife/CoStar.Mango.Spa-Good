@@ -106,7 +106,6 @@
                   [dataSource]="remindersInfo.remindersRecepient" [width]="'100%'" [wordWrapEnabled]="true"
                   (onContentReady)="setAttributes($event)" (onSelectionChanged)="onMemberSelectionChanged($event)"
                   (onEditorPreparing)="editorPreparing($event)" (onCellPrepared)="onCellClick($event)">
-                  <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
                   <dxo-sorting mode="multiple"></dxo-sorting>
                   <dxo-paging [enabled]="false"></dxo-paging>
                   <dxo-selection selectAllMode="allPages" showCheckBoxesMode="always" mode="multiple">
