@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  Renderer2,
 } from '@angular/core';
 
 import {
@@ -113,6 +114,7 @@ type VBBool = boolean | string;
   styleUrls: ['./list-page.component.scss']
 })
 export class ListPageComponent implements OnInit, OnDestroy {
+  @Input() oIds = '';
   @Input() objectTypeId = 4;
   @Input() overrideInputSettings = true;
   @Input() userId: number;
@@ -125,6 +127,12 @@ export class ListPageComponent implements OnInit, OnDestroy {
   @ViewChild('shareListViewPopup') shareListViewPopup: ShareViewPopupComponent;
   @ViewChild(DropdownComponent) cremDropdownComponent: DropdownComponent
   @ViewChild('RangeDateForm', { static: false }) rangeDateForm: DxFormComponent;
+
+
+  public googleMapAPIKey: any;
+  public googleMappingChannel: any;
+  public googleMapAPIKeyLoaded = false;
+  public googleMappingChannelLoaded = false;
 
   intervals: string[];
   beforeAfter: string[];
@@ -167,7 +175,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   searchText: string = null;
   archiveField: any[] = [];
-  oIds = '';
+  //oIds = '';
   listPageViewMode = ListPageViewMode.ListPageGrid;
   archiveToggleHint: string;
 
@@ -415,8 +423,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   constructor(private activatedroute: ActivatedRoute, public service: ListPageService, 
               public cdRef: ChangeDetectorRef, private exportToExcelService: ExportDevexDatagridService,
-              private dialog: MatDialog, private router: Router) {
-    // initialize currentPortfolio to allow use it properties in [displayExpr] and [valueExpr] in crem-dropdown component
+              private dialog: MatDialog, private router: Router,
+              private renderer2: Renderer2) {
+    // initialize currentPortfolio to allow use it properties in [displayExpr] and [valueExpr] in crem-dropdown component    
     this.currentPortfolio = null;
     this.listViews = {} as any;
     this.customOperations = UtilitiesService.getCustomFilterOperation();
@@ -454,6 +463,19 @@ export class ListPageComponent implements OnInit, OnDestroy {
         this.objectTypeId = routeData.objectTypeId;
       });
     }
+
+
+    this.service.getGoogleMapAPIKey().subscribe(x => {
+      //console.log(x)
+      this.googleMapAPIKey = x.data.googleMapAPIKey;
+      this.googleMapAPIKeyLoaded = true;
+      this.service.getGoogleMappingChannel().subscribe(x => {
+        //console.log(x)
+        this.googleMappingChannel = x.data.googleMappingChannel;
+        this.googleMappingChannelLoaded = true;
+        this.loadGoogleMapsAPIScript()
+      })
+    });
 
     this.service.getListPageProperties().subscribe((res: ApiResponse) => {
 
@@ -516,7 +538,15 @@ export class ListPageComponent implements OnInit, OnDestroy {
       this.populateListViewMenu(true, true);
     });
   }
-
+  
+  loadGoogleMapsAPIScript() {
+    const googleUrl = `https://maps.googleapis.com/maps/api/js?key=${ this.googleMapAPIKey }&channel=${ this.googleMappingChannel }`;    
+    const s = this.renderer2.createElement('script');
+    s.type = 'text/javascript';
+    s.src = googleUrl;
+    this.renderer2.appendChild(document.body, s);      
+  }
+    
   disposingNumOfIntervals() {
     this.setStoredRangeFormDataToDefaultValues();
     this.customDateSelected = false;
@@ -1257,7 +1287,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
     if (viewMode === ListPageViewMode.ListPageMap) {
       const visibleIds: string[] = this.getVisibleFieldValuesFromGrid('OID');
 
-      this.oIds = visibleIds.slice(0, 500).join(',');
+      this.oIds = visibleIds.slice(0, 1500).join(',');
 
       if (!this.oIds) {
         this.showMap = false;
@@ -1726,37 +1756,36 @@ export class ListPageComponent implements OnInit, OnDestroy {
         return null;
     }
   }
+  
+  getDataGridAllRows(){
+    let grid: DataGrid | undefined = this.dataGrid?.instance;
+    let filterExpr = grid?.getCombinedFilter(true);
+    const dataSource = grid?.getDataSource();
+    const loadOptions = dataSource?.loadOptions();
+    let allrows: any[] = [];
+    dataSource
+      ?.store()
+      .load({ filter: filterExpr, sort: loadOptions?.sort, group: loadOptions?.group })
+      .then((result: any) => { 
+        allrows = result;
+      });
+      return allrows;
+  }
 
   private getVisibleFieldValuesFromGrid(fieldName: string): string[] {
-    const recursive = (field: string, items: any[], results: string[]) => {
-      if (items[0].hasOwnProperty('items') && Array.isArray(items[0].items)) {
-        items.forEach((item) => {
-          recursive(field, item.items, results);
-        });
-
-        return;
-      }
-
-      items.map(item => {
-        results.push(item[field]);
-      });
-    };
 
     const result: string[] = [];
-    const dataAndUnexpandedGroups = (x: Row) => {
-      return x.rowType === 'data' ||
-        (x.rowType === 'group' && x.isExpanded === false);
-    };
-
-    this.dataGrid.instance.getVisibleRows()
-      .filter(dataAndUnexpandedGroups)
+    const datagridAllRows = this.getDataGridAllRows();
+    datagridAllRows      
       .forEach((row) => {
-        if (row.rowType === 'data') {
-          result.push(row.data[fieldName]);
-          return;
-        }
-
-        recursive(fieldName, row.data.collapsedItems, result);
+         if(row.hasOwnProperty('items') && Array.isArray(row.items)){
+            row.items.forEach((item) => {
+              result.push(item[fieldName]);
+              });
+         }
+         else{
+          result.push(row[fieldName]);
+         }
       });
 
     return result;

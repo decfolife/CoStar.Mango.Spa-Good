@@ -6,6 +6,7 @@ import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { MapDataRequest } from '../shared/models/map-data-request';
 import { Marker } from '../shared/models/marker';
 import { ListPageService } from '../core/services/listpage.service';
+import { ListPageObjectTypeSession } from '../shared/models/listpage-session';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -45,16 +46,32 @@ export class MapComponent implements OnInit {
     maxZoom: 20,
     minZoom: 0,
   };
+  sortColumns: any = [];
+  sortFieldName: string = '';
+  sortListOrder: string = '';
+  sortVisibleColumns: any = [];
 
   constructor(public service: ListPageService) { }
 
   ngOnInit() {
+    
+    const listPageSessionKey: string = 'ListPageState';
+    if (sessionStorage.getItem('ListPageState') !== null) {      
+      const listPageSessionValue = sessionStorage.getItem(listPageSessionKey);
+      if(listPageSessionValue !== null){        
+        const listPageObjectTypeSessions = JSON.parse(listPageSessionValue) as ListPageObjectTypeSession[];
+        const currentListView = JSON.parse(listPageObjectTypeSessions[0].currentListView).view;
+        this.sortColumns = JSON.parse(currentListView).columns;  
+      }     
+    }
+
     const request: MapDataRequest = {
       objectTypeId: +this.objectTypeId,
       objectIds: this.oIds
     };
 
     this.service.getMarkerList(request).subscribe(res => {
+      res.success = true;
       if (!res.success) {
         this.showErrorPopup(res.clientErrorMessage);
         this.markerList = [];
@@ -62,8 +79,7 @@ export class MapComponent implements OnInit {
         return;
       }
 
-      this.markerList = res.data.mapMarkers;
-
+      this.markerList = res.data.mapMarkers;  
       if (res.data?.length === 0) {
         this.showErrorPopup('No map markers found.');
 
@@ -83,6 +99,82 @@ export class MapComponent implements OnInit {
 
     const bounds = new google.maps.LatLngBounds();
 
+    const visibleSortColumns = this.sortColumns.filter(x=>x.visible === true);
+    visibleSortColumns.forEach(element => {
+      if(element.sortOrder){
+        this.sortFieldName = element.dataField;
+        this.sortListOrder = element.sortOrder;
+      }
+    });
+
+    this.markerList.sort((a,b)=>{
+
+      switch (this.sortFieldName) {
+        case 'BuildingAddress_1':
+          {
+            if(this.sortListOrder === 'asc'){
+              if(a.address1 < b.address1) { return -1; } 
+              if(a.address1 > b.address1) { return 1; }
+            }
+            else if(this.sortListOrder === 'desc'){
+              if(a.address1 < b.address1) { return 1; } 
+              if(a.address1 > b.address1) { return -1; }
+            }
+            break;
+          }          
+        case 'BuildingCountry':{
+          if(this.sortListOrder === 'asc'){
+            if(a.country < b.country) return -1;  
+            if(a.country > b.country) return 1;                   
+          }
+          else if(this.sortListOrder === 'desc'){
+            if(a.country < b.country) return 1;  
+            if(a.country > b.country) return -1;    ;
+          }
+          break;
+        }
+        case 'BuildingID':{
+          if(this.sortListOrder === 'asc'){
+            if(a.objectId < b.objectId) return -1;
+            if(a.objectId > b.objectId) return 1;                     
+          }
+          else if(this.sortListOrder === 'desc'){
+            if(a.objectId < b.objectId) return 1;
+            if(a.objectId > b.objectId) return -1;                     
+          }
+          break;
+        }
+        case 'TenantHierarchy':{
+          if(this.sortListOrder === 'asc'){
+            if(a.name < b.name) return -1;
+            if(a.name > b.name) return 1;                     
+          }
+          else if(this.sortListOrder === 'desc'){
+            if(a.name < b.name) return 1;
+            if(a.name > b.name) return -1;                     
+          }
+          break;
+        }
+        case 'BuildingAddress_2':
+        case 'BuildingCity':
+        case 'BuildingState':
+        case 'BuildingZipCode': {
+            if(this.sortListOrder === 'asc'){
+              if(a.address2 < b.address2) return -1; 
+              if(a.address2 > b.address2) return 1;                    
+            }
+            else if(this.sortListOrder === 'desc'){
+              if(a.address2 < b.address2) return 1; 
+              if(a.address2 > b.address2) return -1;   
+            }
+            break;
+        }
+        default:
+          return 0;          
+      }
+      return 0;
+    });
+
     this.markerList.forEach(marker => {
       if (marker.zoomOnMapUrl) {
         bounds.extend(new google.maps.LatLng(marker.latitude, marker.longitude));
@@ -97,7 +189,7 @@ export class MapComponent implements OnInit {
         });
       }
     });
-
+   
     setTimeout(() => {
       this.map.fitBounds(bounds);
     }, 200);
@@ -138,8 +230,10 @@ export class MapComponent implements OnInit {
   }
 
   showErrorPopup(message: string) {
-    this.popupInfo.popupMessage = message;
-    this.popupInfo.popupVisible = true;
-    this.popupInfo.popupTitle = 'Error';
+    if(message && message.length>0){
+      this.popupInfo.popupMessage = message;
+      this.popupInfo.popupVisible = true;
+      this.popupInfo.popupTitle = 'Error';
+    }    
   }
 }

@@ -106,7 +106,6 @@ import { PaymentDetailsPopupComponent } from './listpage/payment-details/payment
         DxDateBoxModule,
         DxLoadPanelModule,
         FontAwesomeModule,
-        GoogleMapsModule,
         HttpClientModule,
         MatButtonModule,
         MatButtonToggleModule,
