@@ -2,11 +2,13 @@
 #addEditMemberModal-content {
   .label {
     margin-bottom: 2px;
+    margin-top: 8px;
   }
 
   & > div {
     padding: 10px 0;
   }
+
   .aet-email-shared {
     width: 100%;
     display: flex;
@@ -14,12 +16,14 @@
 
     .emailToggle, .sharedToggle {
       width: 100%;
+      margin-top: 12px;
 
       h4.label {
-        transform: translateY(-10px);
+        transform: translateY(-3px);
       }
     }
   }
+
   .descContent {
     outline: none;
     width: 100%;
@@ -32,10 +36,15 @@
       box-shadow: 0 0 0 0.1rem colors.$primary;
     }
   }
-  .assgnedTasksHdr, .aet-firstLastName, .aet-expirationTypeDate{
+
+  .assgnedTasksHdr, .aet-firstLastName, .aet-expirationTypeDate {
     display: flex;
     justify-content: space-between;
-  }  
+  }
+
+  .assgnedTasksHdr crem-tooltip {
+    margin-top: 10px;
+  }
 
   .assignedTask-details {
     display: flex;
@@ -67,10 +76,12 @@
 
   .aet-firstLastName, .aet-expirationTypeDate {
     width: 100%;
+
     .firstName, .lastName, .expirationType, .expirationDate {
       width: 100%
     }
-    .lastName, .expirationDate{
+
+    .lastName, .expirationDate {
       margin-left: 8px;
     }
   }
@@ -79,9 +90,11 @@
     height: 40px;
     display: flex;
     justify-content: space-between;
+
     .roleLabel {
       display: inline;
     }
+
     .seperatorLine {
       margin: 8px 0;
     }
@@ -92,6 +105,13 @@
     }
   }
 
+  .dx-selectbox.dx-invalid {
+    border-color: #d9534f;
+  }
+
+  .fieldInvalid {
+    color: #d9534f;
+  }
 }
 
 .footerRightControls {

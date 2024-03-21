@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import { DxDataGridModule, DxDropDownBoxModule, DxListModule, DxSelectBoxModule, 
-         DxCheckBoxModule, DxTextBoxModule, DxDateBoxModule} from 'devextreme-angular';
+         DxCheckBoxModule, DxTextBoxModule, DxDateBoxModule, DxValidatorModule, DxValidationGroupModule} from 'devextreme-angular';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MemberDetailsComponent } from './member-details/member-details.component';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
@@ -41,6 +41,8 @@ import { ImportTeamComponent } from './import-team/import-team.component';
     DxCheckBoxModule,
     DxTextBoxModule,
     DxDateBoxModule,
+    DxValidatorModule,
+    DxValidationGroupModule
   ],
   providers: [MangoDialogService],
   exports: [ProjectTeamComponent],

@@ -71,11 +71,14 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     } else {
       height = '800px';
     }
+
+    let emailAddressList = this.projectTeam.map(t => t.email);
+
     let dialogRef = this.dialog.open(AddEditMemberComponent, {
       height: height,
       width: '500px',
       panelClass: 'addEditMemberModal',
-      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation, teamMember: member, contactIds: this.contactIds},
+      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation, teamMember: member, contactIds: this.contactIds, emailAddressList},
       disableClose: true
     });
 

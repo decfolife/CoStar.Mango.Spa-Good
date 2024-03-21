@@ -7,6 +7,7 @@ import { DashboardService } from '@project-dashboard/services/dashboard.service'
 import { AssignTasks, MemberInfo, ProjectTaskDetails, ProjectTeamMember, TeamMember, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser, contactMember } from '@mango/data-models/lib-data-models';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { CardsService } from '@project-dashboard/services/cards.service';
+import { DxValidationGroupComponent, DxValidatorComponent } from 'devextreme-angular';
 
 enum Operations {
   ATM = "ATM",
@@ -23,6 +24,9 @@ enum Operations {
 })
 
 export class AddEditMemberComponent implements OnInit {
+  @ViewChild('targetGroup', {static: false}) validationGroup: DxValidationGroupComponent
+  @ViewChild('emailValidator', { static: false }) emailValidator: DxValidatorComponent;
+
   Operations = Operations;
   public modalTitle;
   public modalId: string = "addEditMemberModal";
@@ -39,6 +43,7 @@ export class AddEditMemberComponent implements OnInit {
   clientSettingPreference: string;
   memberInfo: MemberInfo = <MemberInfo>{};
   projectContactIds: number[] = [];
+  emailAddressList: string[] = [];
   updateTeamMemberData: UpdateProjectTeamMember = <UpdateProjectTeamMember>{};
   updateTemporaryUserData: UpdateTemporaryUser = <UpdateTemporaryUser>{};
   updateContactData: UpdateContact = <UpdateContact>{};
@@ -51,6 +56,14 @@ export class AddEditMemberComponent implements OnInit {
   applySaveButtonDisabled = false;
   changesMade: boolean = false;
   changesSaved: boolean = false;
+  nameFieldInvalid = false;
+  firstNameFieldInvalid = false;
+  lastNameFieldInvalid = false;
+  emailAddressFieldInvalid = false;
+  roleFieldInvalid = false;
+  levelFieldInvalid = false;
+  expirationTypeFieldInvalid = false;
+  expirationDateFieldInvalid = false;
   projectId: number;
   operation: string;
   selectedMember: string;
@@ -74,8 +87,10 @@ export class AddEditMemberComponent implements OnInit {
     private cardsService: CardsService,
     private dialogService: MangoDialogService,
     public dialogRef: MatDialogRef<AddEditMemberComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: any) {
+      //Custom validators run in their own context.  This line is needed to access variables in this component.
+      this.duplicateEmailAddressValidation = this.duplicateEmailAddressValidation.bind(this);
+   }
 
   ngOnInit(): void {
     let allMembers =  false;
@@ -84,6 +99,7 @@ export class AddEditMemberComponent implements OnInit {
     this.projectId = this.data.projectId;
     this.operation = this.data.operation;
     this.projectContactIds = this.data.contactIds;
+    this.emailAddressList = this.data.emailAddressList;
     this.memberInfo.roles = [];
     this.memberInfo.levels = [];
     this.memberTasks.contactID = 0;
@@ -177,11 +193,13 @@ export class AddEditMemberComponent implements OnInit {
 
   roleSelected(e) {
     this.selectedRole = e.selectedItem.role;
+    this.roleFieldInvalid = false;
     this.changesMade = (this.selectedRole == e.component._initialValue && !this.changesMade && !this.changesSaved) ? false : true;
   }
 
   levelSelected(e) {
     this.selectedLevel = e.selectedItem.level;
+    this.levelFieldInvalid = false;
     this.changesMade = (this.selectedLevel == e.component._initialValue && !this.changesMade && !this.changesSaved) ? false : true;
   }
   
@@ -191,12 +209,14 @@ export class AddEditMemberComponent implements OnInit {
       this.expirationDate = null;
     }
     this.expirationType = e.selectedItem.value;
+    this.expirationTypeFieldInvalid = false;
     this.changesMade = (this.expirationType == e.component._initialValue && !this.changesMade && !this.changesSaved) ? false : true;
   }
 
   setExpirationDate(e) {
     this.changesMade = true;
     this.expirationDate = e.value;
+    this.expirationDateFieldInvalid = e.value === null;
   }
 
   emailtoggle(e) {
@@ -218,6 +238,21 @@ export class AddEditMemberComponent implements OnInit {
     this.changesMade = true;
   }
 
+  firstNameChanged(e) {
+    this.firstNameFieldInvalid = e.component._changedValue.trim() === '';
+  }
+
+  lastNameChanged(e) {
+    this.lastNameFieldInvalid = e.component._changedValue.trim() === '';
+  }
+
+  emailAddressChanged(e) {
+    if(e.component._changedValue.trim() !== ''){
+      let emailValidationResult = this.emailValidator.instance.validate();
+      this.emailAddressFieldInvalid = !emailValidationResult.isValid;
+    }
+  }
+
   focusOnDropDownInput(e) { 
     this.dropdownbox = e.component;
     setTimeout(function() {  
@@ -231,6 +266,7 @@ export class AddEditMemberComponent implements OnInit {
 
   selectionChanged(e) {
     this.changesMade = true;
+    this.nameFieldInvalid = false;
     this.isMemberDropDownBoxOpened = false;
     this.dropdownbox.focus();
   }
@@ -252,16 +288,29 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   saveMember(type: string) {
+    let validationResult = this.validationGroup.instance.validate();
 
-    if (this.operation == Operations.ATM || this.operation == Operations.ETM || this.operation == Operations.ETU) {
-      this.updateTeamMember(type);
-    } else 
-    if (this.operation == Operations.ATU) {
-      this.addTemporaryUser(type);
+    if(validationResult.isValid){
+      if (this.operation == Operations.ATM || this.operation == Operations.ETM || this.operation == Operations.ETU) {
+        this.updateTeamMember(type);
+      } else 
+      if (this.operation == Operations.ATU) {
+        this.addTemporaryUser(type);
+      } else {
+        this.updateContact()
+      }
     } else {
-      this.updateContact()
+      this.executeFieldValidation(validationResult);
+    }
+  }
+
+  duplicateEmailAddressValidation(e) {
+    if(this.operation=='ATU' || this.operation=='ETU'){
+      const foundIndex = this.emailAddressList.findIndex(ea => ea == e.value.trim());
+      return foundIndex < 0;
     }
 
+    return true;
   }
 
   updateTeamMember(updateType: string) {
@@ -466,4 +515,52 @@ export class AddEditMemberComponent implements OnInit {
     this.subs.forEach(s => s.unsubscribe);
   }
 
+  private executeFieldValidation(validationResult: any) {
+    this.nameFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "nameValidator");
+    this.firstNameFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "firstNameValidator");
+    this.lastNameFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "lastNameValidator");
+    this.emailAddressFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "emailAddressValidator");
+    this.roleFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "roleValidator");
+    this.levelFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "levelValidator");
+    this.expirationTypeFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "expirationTypeValidator");
+    this.expirationDateFieldInvalid = !this.determineIsValidFromValidationResult(validationResult, "expirationDateValidator");
+
+    let validationStrArray: string[] = [];
+    const requiredMsg = "You have left at least one required field empty.";
+
+    if(this.nameFieldInvalid || this.firstNameFieldInvalid || this.lastNameFieldInvalid || this.roleFieldInvalid || 
+      this.levelFieldInvalid || this.expirationTypeFieldInvalid || this.expirationDateFieldInvalid){
+      validationStrArray.push(requiredMsg);
+    } 
+    
+    if(this.emailAddressFieldInvalid) {
+      const foundValidator = validationResult.validators.find(v => v._validationInfo.result.name === "emailAddressValidator");
+      const ruleBroken = foundValidator._validationInfo.result.brokenRule.type;
+
+      if(ruleBroken === "required") {
+        if(validationStrArray.length === 0) {
+          validationStrArray.push(requiredMsg);
+        }
+      }
+      else if(ruleBroken === "email") {
+        validationStrArray.push("The e-mail address is not in the correct format required for an e-mail address.")
+      } else {
+        validationStrArray.push("The e-mail address is already in use for a temporary user.");
+      }
+    }
+
+    validationStrArray.push("\r\nPlease update and try again.");
+
+    this.dialogService.alert('Validation Error(s)', validationStrArray.join("\r\n"), 'OK');
+  }
+
+  private determineIsValidFromValidationResult(validationResult: any, validatorName: string) {
+    const foundValidator = validationResult.validators.find(v => v._validationInfo.result.name === validatorName);
+
+    if(foundValidator === undefined){
+      return true;
+    } else {
+      return foundValidator._validationInfo.result.isValid;
+    }
+  }
 }
