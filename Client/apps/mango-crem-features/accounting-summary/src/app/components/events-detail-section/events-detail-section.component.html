@@ -135,11 +135,11 @@
 				  </div>
 
 				  <div *dxTemplate="let cell of 'clickable'">
-					<div *ngIf="cell.data.hasHistoricalCharges" class="pointer" title={{cell.text}}>
+					<div *ngIf="cell.data.hasHistoricalCharges && cell.data.measureEvent!=='Full Termination'" class="pointer" title={{cell.text}}>
 						<a [id]="accountingSummaryService.getId(componentName,'present-value','link')" href="#" (click)="presentValueExcel($event, cell.data)" class="link-class">{{ cell.text }}</a>
 					</div>
-					<div *ngIf="!cell.data.hasHistoricalCharges" class="pointer" title={{cell.text}}>{{ cell.text }}</div>
-				  </div>
+					<div *ngIf="!cell.data.hasHistoricalCharges || cell.data.measureEvent==='Full Termination'" class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+				</div>
 				
 				  <div *dxTemplate="let data of 'actionsTemplate'" #actionTemplate>
 					<div class="actions-icon">

@@ -260,9 +260,18 @@ export class EventsGridColumnsService {
         },
       ];
 
-
     switch (classificationId) {
       case 0: // Operating 840
+        columns.push({
+          caption: 'Present Value (' + currencyInfo.localCurrency + ')',
+          dataField: 'presentValue',
+          headerCellTemplate: 'amortizationHeader',
+          cellTemplate: 'clickable',
+          appendsCurrency: 'true',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
+        });
         columns = columns.concat(operatingColumns);
         break;
       case 1: // Capital 840
@@ -346,8 +355,17 @@ export class EventsGridColumnsService {
             column.caption = column.caption.replace('Expense', 'Income');
           }
         });
+        columns.push({
+        caption: 'Present Value (' + currencyInfo.localCurrency + ')',
+        dataField: 'presentValue',
+        headerCellTemplate: 'amortizationHeader',
+        cellTemplate: 'clickable',
+        appendsCurrency: 'true',
+        usesLocalFormat: 'true',
+        usesFunctionalFormat: 'false',
+        format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
+        });       
         columns = columns.concat(operatingColumns);
-
     }
 
     // Every type gets currency, comments, lastmodifiedby, and lastmodified date
