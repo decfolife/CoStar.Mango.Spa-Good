@@ -62,9 +62,9 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   isAccountingEventEmpty = true;
   gridsState: any;
   resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
-  clearBtnHoverText ='This will clear all pending changes in the grid';
+  clearBtnHoverText = 'This will clear all pending changes in the grid';
 
-  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private formatService: FormattingService ,private ref: ChangeDetectorRef) {
+  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private formatService: FormattingService, private ref: ChangeDetectorRef) {
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
 
@@ -82,7 +82,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       this.userInfoLoaded = true;
     }
 
-    if(this.masterScheduleIDChanged && this.userInfoLoaded){
+    if (this.masterScheduleIDChanged && this.userInfoLoaded) {
       this.eventsGridSetup(this.masterScheduleID);
       this.masterScheduleIDChanged = false;
     }
@@ -125,7 +125,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           this.detailsGridData.forEach(element => {
             element.discountRateDisplay = this.discountRateDisplay(element);
             element.currencyDisplay = this.currencyDisplay(element);
-            element.formatCells = this.formatCells(element); 
+            element.formatCells = this.formatCells(element);
           });
         }
 
@@ -168,7 +168,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
       else if (response.success) {
-        this.gridsState= response.data;
+        this.gridsState = response.data;
         const state = JSON.parse(sessionStorage.getItem("eventsGridStateKey"))
         // Filter the data
         const filteredData = response.data.filter(item => {
@@ -176,11 +176,11 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         });
 
         this.selectedRowKeys = [this.publishedEvent?.leaseRecognitionScheduleID];
-        
+
         if (state !== null) {
           state.columns = [];
           state.selectedRowKeys = [this.publishedEvent?.leaseRecognitionScheduleID];
-          
+
           filteredData.forEach((item) => {
             const parsedColumns = JSON.parse(item.columnJson);
             state.columns.push(...parsedColumns);
@@ -211,7 +211,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     }));
   }
 
-  clearGridChanges(){
+  clearGridChanges() {
     this.isGridStateChanged = false;
     this.eventsDataGrid.instance.state(this.initialState);
   }
@@ -262,8 +262,8 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   currencyDisplay(gridDataRow) {
     return gridDataRow.functionalCurrency == gridDataRow.localCurrency ?
-    gridDataRow.localCurrency : gridDataRow.localCurrency + " | " +
-    gridDataRow.functionalCurrency + ": " + (Math.round(gridDataRow.functionalCurrencyRate * 10000) / 10000).toFixed(4);
+      gridDataRow.localCurrency : gridDataRow.localCurrency + " | " +
+      gridDataRow.functionalCurrency + ": " + (Math.round(gridDataRow.functionalCurrencyRate * 10000) / 10000).toFixed(4);
   }
 
   discountRateDisplay(gridDataRow) {
@@ -306,7 +306,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   onRowClick(e) {
     this.eventScheduleSelectedEvent.emit([e.data, this.gridsState]);
     this.eventsDataGrid.instance.repaint();
-  }  
+  }
 
   highlightEventDifferencesForGridCell(eventsGrid: any, selectedRowIndex: number) {
     const visibleRows = eventsGrid.component.getVisibleRows();
@@ -320,17 +320,17 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           cellElement: cElement,
           data: row.data
         }
-        
+
         if (event?.row?.rowIndex === selectedRowIndex) {
           if (event.row.data.scheduleIndex == 1 || event.column?.caption === "#") {
             return;
           }
-    
+
           const previousRow = this.detailsGridData.filter(f => f.scheduleIndex == (event.row.data.scheduleIndex - 1))[0];
-    
+
           const oldValue = Object(previousRow)[event.column.dataField];
           const newValue = Object(event.data)[event.column.dataField];
-          if(oldValue !== newValue) {
+          if (oldValue !== newValue) {
             event.cellElement?.classList.add("grid-cell-box-shadow");
           } else {
             event.cellElement?.classList.remove("grid-cell-box-shadow");
@@ -339,7 +339,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       });
     });
   }
-  
+
   presentValueExcel(event, data) {
     event.preventDefault();
     const filename = this.accountingSummaryService.getFileName('PresentValueTable');
@@ -349,14 +349,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           this.accountingSummaryService.errorNotify('Downloading the present value table failed.');
         }
         else {
-          const url = window.URL.createObjectURL(presentValueResponse.data);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = filename;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
+          this.accountingSummaryService.downloadExcel(presentValueResponse.data, filename);
         }
       })
     );
@@ -369,7 +362,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     }
 
     const edit = {
-      text: 'Edit', 
+      text: 'Edit',
       icon: 'fa fa-pencil fa-fw blueicon',
       visible: e.row.data.isPublished && this.showEditIcon && e.row.data.jeStatus === 'Scheduled',
       value: e.row.data.leaseRecognitionScheduleID,
@@ -460,7 +453,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     const deleteSchedule = {
       text: 'Delete', icon: 'fa fa-trash-o fa-fw redicon',
       value: e.row.data.leaseRecognitionScheduleID + '|' + e.row.data.jeStatus,
-      beginGroup: true, 
+      beginGroup: true,
       visible: e.row.data.isPublished && this.showEditIcon,
       onItemClick: () => {
         alert("Delete Clicked");
@@ -635,7 +628,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       this.EventSelectorDropdown.instance.open();
     }
   }
-  
+
   openMoreMenu(event: KeyboardEvent): void {
     event.stopPropagation();
   }

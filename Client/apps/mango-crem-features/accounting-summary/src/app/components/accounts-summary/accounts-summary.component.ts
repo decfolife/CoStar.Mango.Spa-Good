@@ -39,6 +39,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   amortizationProfileName: string;
   classificationType: string;
   isAccountingEventEmpty = false;
+  exportClicked = false;
 
   constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }
 
@@ -58,14 +59,14 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     return this.accountingSummaryService.getLeaseAbstractId()
   }
 
-  getUserInfo(){
+  getUserInfo() {
     this.subscription.add(this.accountingSummaryService.getUserInformation().subscribe(res => {
       if (res === null) {
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
       else if (res.success) {
         this.userInfo = res.data
-      } else{
+      } else {
         this.accountingSummaryService.errorNotify(res.clientErrorMessage);
       }
     }));
@@ -111,32 +112,23 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   exportToExcel(event: any): void {
     event.preventDefault();
-    //Set masterScheduleID
-    const masterScheduleId = this.masterScheduleID
-
-    //Get Portfolio Settings
-    this.subscription.add(this.accountingSummaryService.getPortfolioSettings().subscribe());
-
-    //Get Event Details
-    this.subscription.add(this.accountingSummaryService.getEventDetails(masterScheduleId).subscribe());
-
-    //Get Payment Details
-    this.subscription.add(this.accountingSummaryService.getPaymentDetails(masterScheduleId).subscribe());
-
-    //Get Amortization Details
-    this.subscription.add(this.accountingSummaryService.getAmortizationDetails(masterScheduleId).subscribe());
-
-    //Get Lease Info Details
-    this.subscription.add(this.accountingSummaryService.getLeaseInfo().subscribe());
-
-    //Get LeaseAbstractID Details
-    this.accountingSummaryService.getLeaseAbstractId();
+    this.exportClicked = true;
+    const fileName = this.accountingSummaryService.getFileName('AccountingEventSummary');
+    this.subscription.add(this.accountingSummaryService.exportAccountingEventSummaryReport(this.leaseRecognitionScheduleID, fileName).subscribe(response => {
+      this.exportClicked = false;
+      if (!response?.data) {
+        this.accountingSummaryService.errorNotify('Downloading the Accounting Event Summary failed.');
+      }
+      else {
+        this.accountingSummaryService.downloadExcel(response.data, fileName);
+      }
+    }));
   }
 
   onChangeByTooltipMouseOver() {
     this.isChangeByTooltipVisible = true;
   }
-  
+
   onChangeByTooltipMouseLeave() {
     this.isChangeByTooltipVisible = false;
   }
@@ -152,9 +144,8 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.isTooltipVisible = false;
   }
 
-  onWorkflowStatusSaved(workflowStatusSaved: boolean)
-  {
-    if(workflowStatusSaved){
+  onWorkflowStatusSaved(workflowStatusSaved: boolean) {
+    if (workflowStatusSaved) {
       this.getWorkflowHistoryInfo();
       this.setWorkflowStatusRight();
     }
@@ -167,11 +158,11 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       }
       else if (response.success) {
         this.workflowStatusHistory = response.data;
-        if(response.data.length > 0){
+        if (response.data.length > 0) {
           this.modifiedByID = this.workflowStatusHistory[0].modifiedBy;
           this.modifiedByName = this.workflowStatusHistory[0].modifiedByName;
           this.modifiedDate = this.workflowStatusHistory[0].modifiedDate;
-  
+
         }
       }
       else if (!response.success) {
@@ -181,22 +172,22 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
   }
 
-  setLeaseRecognitionScheduleID(emittedEvent:[eventSchedule: any, gridState: any]) {
+  setLeaseRecognitionScheduleID(emittedEvent: [eventSchedule: any, gridState: any]) {
     this.gridState = emittedEvent[1];
     this.eventSchedule = emittedEvent[0];
     this.leaseRecognitionScheduleID = emittedEvent[0].leaseRecognitionScheduleID;
   }
 
-  private setRightsAndLeaseInfo(){
+  private setRightsAndLeaseInfo() {
     const userNavPageRight = this.accountingSummaryService.getUserNavPageRight();
     const userNavPageWithLeaseRights = this.accountingSummaryService.getAccountingSummaryRights();
     const leaseInformation = this.accountingSummaryService.getLeaseInfo();
-   this.subscription.add(combineLatest([userNavPageRight, userNavPageWithLeaseRights, leaseInformation]).subscribe(res => {
+    this.subscription.add(combineLatest([userNavPageRight, userNavPageWithLeaseRights, leaseInformation]).subscribe(res => {
       const userNavPageRightResponse = res[0];
       const userNavPageWithLeaseRightsResponse = res[1];
       const leaseInformationResponse = res[2];
 
-      if(userNavPageRightResponse === null || userNavPageWithLeaseRightsResponse === null || leaseInformationResponse === null ){
+      if (userNavPageRightResponse === null || userNavPageWithLeaseRightsResponse === null || leaseInformationResponse === null) {
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
       else if (!userNavPageRightResponse.success) {
@@ -230,7 +221,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
         this.rightsInfo = {
           userHasEditLeaseRights: userNavPageWithLeaseRightsResponse.data.leaseSecurityType >= 4 && userNavPageWithLeaseRightsResponse.data.leaseSecurityType !== 6,
-          userHasLeftNavEditRights: userNavPageRightResponse.data >= 4 && userNavPageRightResponse.data !== 6, 
+          userHasLeftNavEditRights: userNavPageRightResponse.data >= 4 && userNavPageRightResponse.data !== 6,
           userCanDeleteSchedule: userNavPageWithLeaseRightsResponse.data.canDeleteSchedule,
           canApproveJE: userNavPageWithLeaseRightsResponse.data.canApproveJE,
           canUnapproveJE: userNavPageWithLeaseRightsResponse.data.canUnapproveJE,
@@ -261,7 +252,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     );
   }
 
-  getPortfolioSettings(){
+  getPortfolioSettings() {
     this.subscription.add(this.accountingSummaryService.getPortfolioSettings().subscribe(response => {
       if (response === null) {
         this.accountingSummaryService.displayContactSystemAdminMessage();

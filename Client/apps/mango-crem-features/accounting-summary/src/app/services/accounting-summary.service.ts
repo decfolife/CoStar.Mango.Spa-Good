@@ -220,7 +220,7 @@ export class AccountingSummaryService extends EndpointService {
 
   exportPresentValueFile(scheduleId, fileName) {
     return this.callHttpPostWithBlobResponse(`${this.apiUrl}AccountingEvents/ExportPresentValueFile`, 'exportPresentValueFile',
-      JSON.stringify({ ScheduleId: scheduleId, FileName: fileName}))
+      JSON.stringify({ ScheduleId: scheduleId, FileName: fileName}));
   }
  
   saveGridPreferences(classificationId: number, gridName: string, columnJson) {
@@ -345,6 +345,22 @@ export class AccountingSummaryService extends EndpointService {
 
   getSavedPortfolioSettings(){
     return this.portolioSettings;
+  }
+
+  exportAccountingEventSummaryReport(scheduleId, fileName: string){
+      return this.callHttpPostWithBlobResponse(`${this.apiUrl}AccountingSummary/ExportAccountingEventSummaryReport`, 'exportAccountingEventSummaryReport',
+        JSON.stringify({ scheduleList: [scheduleId], FileName: fileName}));
+  }
+
+  downloadExcel(data: Blob, fileName: string){
+    const url = window.URL.createObjectURL(data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
 }
