@@ -55,7 +55,7 @@ cs-search {
           }
         }
 
-        .mat-form-field-infix {
+        .mat-mdc-form-field-infix {
           display: flex;
           align-items: center;
           input {
@@ -124,7 +124,7 @@ cs-search {
             }
           }
 
-          .mat-form-field-infix {
+          .mat-mdc-form-field-infix {
             input {
               &::placeholder {
                 color: $color-neutral-medium;
@@ -142,48 +142,7 @@ cs-search {
     }
   }
 
-// cs-search {
-// 	.input-label {
-// 		margin-bottom: $space-x-small;
-// 	}
-// 	.input-container {
-// 		position: relative;
-
-// 		input {
-// 			font-family: $font-family-brand;;
-// 			margin: 0;
-// 			padding: 0 $space-x-small;
-// 			align-items: center;
-// 			height: $space-x-large;
-// 			font-size: $font-size-med;
-// 			border: $border-width-brand solid $color-neutral-medium;
-// 			border-radius: $border-radius-buttons;
-
-// 			&::placeholder {
-// 				color: $color-neutral-dark;
-// 			}
-
-// 			&:focus {
-// 				outline: none;
-// 				border-color: $color-brand-primary;
-// 				box-shadow: 0 0 4px 0 $color-brand-primary;
-// 			}
-// 		}
-
-// 		mat-icon {
-// 			position: absolute;
-// 			right: 6px;
-// 			top: 5px;
-// 			color: $color-neutral-medium;
-// 		}
-// 	}
-
-// 	.input-hint {
-// 		margin-top: $space-2-x-small;
-// 		color: $color-neutral-dark;
-// 	}
-// }
-mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-infix {
+mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-mdc-form-field-infix {
   padding: 0.4em 8px !important;
   font-size: 16px !important;
   height: 35px !important;

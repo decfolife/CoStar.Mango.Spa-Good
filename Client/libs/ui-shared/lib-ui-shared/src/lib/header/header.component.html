@@ -1,13 +1,11 @@
 <header>
 
-  <a
-    class="skip-to-main"
+  <a class="skip-to-main"
     aria-label="Skip to Main Content"
-    [routerLink]="[]" fragment="main-content"
-  >
-    Skip to Main Content
-  </a>
-  
+    [routerLink]="[]"
+    fragment="main-content"
+  >Skip to Main Content</a>
+
   <div class="brand">
     <a href="/" tabindex="0" title="Go to home page" aria-label="Go to home page">
       <img
@@ -138,7 +136,7 @@
         aria-label="My Profile"
         [matMenuTriggerFor]="userMenu"
       >
-        {{ (contactRecord$ | async)?.firstName }}{{ (contactRecord$ | async)?.lastName }}
+        {{ (contactRecord$ | async)?.firstName[0] }}{{ (contactRecord$ | async)?.lastName[0] }}
       </button>
       <mat-menu class="user-menu" #userMenu="matMenu">
         <!-- Profile Details -->

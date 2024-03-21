@@ -17,6 +17,7 @@
       display: flex;
       height: 32px;
       margin: 0;
+      gap: 8px;
 
       crem-button.add-button--new {
         padding-left: 8px;
@@ -26,7 +27,6 @@
       }
 
       app-list-view-menu {
-        margin-right: 8px;
 
         .svg-inline--fa.fa-caret-down {
           height: 1rem;
@@ -45,10 +45,6 @@
         .dx-dropdowneditor-input-wrapper {
           height: 32px !important;
           box-shadow: unset !important;
-        }
-
-        .dx-texteditor-container {
-          border-radius: 0 !important;
         }
 
         .dx-texteditor.dx-editor-outlined {
@@ -72,13 +68,6 @@
           font-style: normal;
           line-height: normal;
           letter-spacing: normal;
-        }
-      }
-
-
-      .mat-form-field {
-        &.mat-focused {
-          border: 1px solid colors.$costarBlue;
         }
       }
 
@@ -255,7 +244,6 @@
       }
     }
 
-    .mat-input-element,
     .mat-form-field-autofill-control,
     .mat-button,
     .mat-raised-button,
@@ -264,12 +252,7 @@
     .mat-flat-button,
     .mat-fab,
     .mat-mini-fab {
-      font-family: "Helvetica Neue", "Segoe UI", Helvetica, Verdana, sans-serif;
       font-size: 14px;
-    }
-
-    input.mat-input-element {
-      margin-top: .2em;
     }
 
     .mat-flat-button,
@@ -342,7 +325,7 @@
         }
       }
 
-      &.mat-form-field {
+      &.mat-mdc-form-field {
         .mat-form-field-wrapper {
           height: 100%;
           margin: 0;
@@ -377,7 +360,7 @@
         border-color: rgba(0, 0, 0, .12);
       }
 
-      .mat-form-field-infix {
+      .mat-mdc-form-field-infix {
         border: 0 !important;
         /* Site-wide changed. */
         // padding: 4px 0 0 !important;
@@ -446,50 +429,6 @@
         flex-direction: column;
         justify-content: center;
         line-height: inherit;
-      }
-    }
-
-    .cs-search-list-pages {
-      height: 32px !important;
-      border: 1px solid #ddd;
-      margin-right: 8px;
-      display: flex;
-      align-items: center;
-      background-color: colors.$white !important;
-      // styles copied from CREM list pages BODY style,
-      // because this styles override CREM body which make
-      // impossible to make the same cs-search style on CREM and Mango app
-      font: 8pt Roboto, 'Helvetica Neue', sans-serif !important;
-      white-space: normal !important;
-
-      mat-form-field {
-        height: 100%;
-        margin-right: 0px;
-        .mat-stroked-button {
-          background-color: colors.$white !important;
-          margin-right: 0 !important;
-        }
-      }
-
-      .mat-form-field-infix {
-        display: flex;
-        margin: 0px;
-        padding: 0px;
-        border-top: 0px;
-        padding: 0 !important;
-        border-top: 0 !important;
-        align-items: center!important;
-        height: 100% !important;
-        align-items: center !important;
-      }
-
-      .mat-icon {
-        height: 18px;
-        font-size: unset !important;
-      }
-
-      .mat-form-field-suffix {
-        top: -0.2em !important;
       }
     }
 
@@ -759,7 +698,6 @@
   }
 
   .dx-texteditor-container {
-    border-radius: 4px;
 
     .dxtexteditor-input {
       padding: 0px 0px 0px 34px !important;

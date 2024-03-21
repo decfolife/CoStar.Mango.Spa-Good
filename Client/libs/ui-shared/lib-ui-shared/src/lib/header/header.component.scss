@@ -1,4 +1,4 @@
-@use "../../../../common/src/styles" as *;
+@use "styles" as *;
 
 :host header {
   gap: 10px;
@@ -30,6 +30,10 @@
       transform: translateX(-50%);
       opacity: 1;
     }
+    &:active, &:focus-within, &:focus-visible {
+      @include costar(box-shadow, primary);
+    }
+
   }
 
   .brand, .search, .profile {
@@ -113,51 +117,6 @@
           @include costar(background-color, gray05);
           border-right: 2px solid map-get($color, color, primary-light);
           border-right: 2px solid var(--costar-color-primary-light);
-        }
-      }
-    }
-
-    // Adjust Material Styling for Search Input
-    ::ng-deep { // Pierce encapsulation without affecting other components
-      .mat-form-field-wrapper {
-        margin: 0px;
-        > .mat-form-field-flex { // Search input field
-          padding-left: 5px; // TODO: Remove once fully migrated to MangoSPA, this was added to make it look seamless
-        }
-        .mat-form-field-outline-start,
-        .mat-form-field-outline-end {
-          border: unset;
-        }
-        .mat-form-field-infix {
-          height: 28px;
-          border-top: 1px solid transparent;
-          border-left: 2px solid transparent; // Doesn't affects select size when :focus
-          .mat-form-field-label {
-            display: none; // TODO: We're using native elements
-          }
-          input::placeholder{
-            @include costar(color, gray02);
-          }
-          &:has( > select){
-            padding-left: 0.5rem;
-            &:after{
-              margin-right: 0.5rem;
-            }
-            @include costar(font-size, small);
-            @include costar(transition, faster);
-            &:active, &:focus, &:focus-within { // TODO: Not ideal SCSS, but there is a lot of overriding from global stylesheets
-              @include costar(background-color, gray05);
-              border-left: 2px solid map-get($color, color, primary-light);
-              border-left: 2px solid var(--costar-color-primary-light);
-            }
-
-          }
-        }
-        .mat-form-field-underline {
-          display: none; // TODO: We're using native elements
-        }
-        select {
-          top: -1.2em; // TODO: Magic number, weird fix for material select when label is not present
         }
       }
     }
@@ -266,7 +225,7 @@
 
   }
 
-   // TODO: Simplify grid columns and other values once fully migrated to MangoSpa
+  // TODO: Simplify grid columns and other values once fully migrated to MangoSpa
   // RESPONSIVE DESIGN
   @include media("<desktop-xl") {
     grid-template-columns: 1fr 1fr 480px;
@@ -320,7 +279,7 @@
 
 }
 
-::ng-deep {
+:host ::ng-deep {
   .user-menu,
   .resources-menu {
     width: 210px;
@@ -374,7 +333,7 @@
           }
         }
         li:not(:last-child) {
-          margin-bottom: 3px; // TODO: To mimic V06, improve after full migration to mango using tokens
+          @include costar(margin-bottom, 2);
         }
       }
     }

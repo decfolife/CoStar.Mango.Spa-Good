@@ -31,7 +31,7 @@ div.cdk-drop-list.dropcards {
 	outline: 0 !important;
 }
 
-.group-maintenance-search>mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-infix {
+.group-maintenance-search>mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-mdc-form-field-infix {
 	padding: 0px !important;
 	overflow: visible !important;
 	height: 32px !important;
@@ -57,7 +57,7 @@ dx-data-grid.drop-down-box__grid {
 	}
 }
 
-input.search__input.mat-input-element {
+input.search__input.mat-mdc-input-element {
 
 	margin-top: 0px !important;
 	margin-right: 28px;
@@ -185,7 +185,7 @@ div.group-maintenance-page {
 		}
 
 		mat-form-field {
-			&.mat-form-field {
+			&.mat-mdc-form-field {
 				height: $stdPadding * 4;
 
 				&.mat-form-field-appearance-outline {
@@ -207,7 +207,7 @@ div.group-maintenance-page {
 }
 
 .group-maintenance-search>mat-form-field {
-	&.mat-form-field {
+	&.mat-mdc-form-field {
 		line-height: 21px;
 
 		&.mat-form-field-appearance-outline {
@@ -222,7 +222,7 @@ div.group-maintenance-page {
 	}
 }
 
-.mat-form-field-infix {
+.mat-mdc-form-field-infix {
 	display: flex !important;
 }
 

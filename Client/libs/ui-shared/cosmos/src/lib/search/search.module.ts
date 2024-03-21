@@ -20,8 +20,8 @@ export const brandclose = `<svg width="24" height="24" id="brand-close" y="0">
   imports: [
     CommonModule,
     MatInputModule,
-   MatIconModule,
-   HttpClientModule,
+    MatIconModule,
+    HttpClientModule,
     MatFormFieldModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

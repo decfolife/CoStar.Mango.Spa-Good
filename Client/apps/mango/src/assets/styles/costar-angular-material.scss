@@ -28,8 +28,7 @@
 }
 
 mat-form-field {	
-	&.mat-form-field {
-		line-height: 21px;
+	&.mat-mdc-form-field {
 		&.mat-form-field-appearance-outline {
 			div.mat-form-field-wrapper {
 				margin: 0;
@@ -37,7 +36,7 @@ mat-form-field {
 				div.mat-form-field-flex {
 					// padding: 0 0.1em 0 .75em;
 
-					div.mat-form-field-infix {
+					div.mat-mdc-form-field-infix {
 						padding: 0.4em 0px;
 						border-top: 4px solid transparent;
 						height: 35px;
@@ -106,7 +105,7 @@ mat-form-field {
 			&.clause-text {
 				div.mat-form-field-wrapper {
 					div.mat-form-field-flex {
-						div.mat-form-field-infix {
+						div.mat-mdc-form-field-infix {
 							height: auto;
 						}
 					}

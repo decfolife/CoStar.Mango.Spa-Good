@@ -36,7 +36,7 @@ div.cdk-drop-list.dropcards {
 	outline: 0 !important;
 }
 
-.report-search>mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-infix {
+.report-search>mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-mdc-form-field-infix {
 	padding: 0px !important;
 	overflow: visible !important;
 	height: 32px !important;
@@ -62,7 +62,7 @@ dx-data-grid.drop-down-box__grid {
 	}
 }
 
-input.search__input.mat-input-element {
+input.search__input.mat-mdc-input-element {
 
 	margin-top: 0px !important;
 	margin-right: 28px;
@@ -191,7 +191,7 @@ div.report-page {
 		}
 
 		mat-form-field {
-			&.mat-form-field {
+			&.mat-mdc-form-field {
 				height: calc( 8 * 4 ); //height: $stdPadding * 4;
 
 				&.mat-form-field-appearance-outline {
@@ -213,7 +213,7 @@ div.report-page {
 }
 
 .report-search>mat-form-field {
-	&.mat-form-field {
+	&.mat-mdc-form-field {
 		line-height: 21px;
 
 		&.mat-form-field-appearance-outline {
@@ -255,27 +255,6 @@ div.reports-toolBar-wrapper {
 	font-size: 14px;
 	@include costar(border-bottom, gray06); // border-bottom: $stdBorder;
 
-	cs-search {
-		border: none !important;
-
-		mat-form-field.mat-form-field {
-			width: 200px;
-			margin-right: 8px;
-			height: 32px;
-
-			div.mat-form-field-wrapper {
-				padding: 0;
-				margin: 0;
-
-				div.mat-form-field-flex {
-					padding: 0px;
-					margin-top: 0px;
-				}
-			}
-		}
-	}
-
-
 	crem-dropdown {
 		div.dx-field-value {
 			height: 32px !important;
@@ -294,7 +273,7 @@ div.reports-toolBar-wrapper {
 		}
 	}
 
-	input.search__input.mat-input-element {
+	input.search__input.mat-mdc-input-element {
 		margin-right: 28px;
 		border: none !important;
 		padding: 0px !important;
@@ -314,7 +293,7 @@ div.reports-toolBar-wrapper {
 }
 
 cs-search mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex {
-	div.mat-form-field-infix {
+	div.mat-mdc-form-field-infix {
 		padding: 0px !important;
 		overflow: visible !important;
 		height: 32px !important;

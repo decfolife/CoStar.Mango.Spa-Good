@@ -172,13 +172,3 @@ dx-drop-down-button.btn.btn-default:hover {
     }
   }
 }
-
-cs-search{
-  .mat-input-element {
-    &:focus{
-      border: 1px solid $color-brand-primary !important;
-      background-color: $white;
-      outline: 0;
-    }
-  }
-}

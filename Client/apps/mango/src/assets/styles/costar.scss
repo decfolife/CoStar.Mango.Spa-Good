@@ -270,7 +270,7 @@ mat-form-field {
 		background-color: white;		
 		font-size: 0.75rem;
 		
-		&.mat-form-field {
+		&.mat-mdc-form-field {
 			&.mat-form-field-appearance-outline {
 				.mat-form-field-wrapper {
 					padding: 0px !important;
@@ -312,7 +312,7 @@ mat-form-field {
 					}				
 				}
 
-				.mat-form-field-infix {
+				.mat-mdc-form-field-infix {
 					padding: 0.33rem 0 0.5rem 0;
 					input {
 						font-size: 0.85rem;
@@ -459,13 +459,13 @@ mat-card.mat-mdc-card {
 			}
 		}
 
-		mat-form-field.mat-form-field {
+		mat-form-field.mat-mdc-form-field {
 			div.mat-form-field-wrapper {
 				margin: 0px;
 				padding: 0px;
 
 				div.mat-form-field-flex {
-					div.mat-form-field-infix {
+					div.mat-mdc-form-field-infix {
 						span.mat-form-field-label-wrapper {
 							top: 6px;
 							right: 124px;
@@ -771,7 +771,7 @@ table.mat-table {
 	}
 
 	.mat-form-field-appearance-outline {
-		.mat-form-field-infix {
+		.mat-mdc-form-field-infix {
 			padding: 0.5em 0;
 		}
 	}
@@ -1125,7 +1125,7 @@ mat-card {
 		}		
 
 		mat-form-field {
-			&.mat-form-field {
+			&.mat-mdc-form-field {
 				&.mat-form-field-appearance-outline {
 					div.mat-form-field-wrapper {
 						padding: 0px !important;
@@ -1240,7 +1240,7 @@ mat-chip-list.mat-chip-list {
 
 		mat-form-field {
 			font-size: 14px;
-			&.mat-form-field {
+			&.mat-mdc-form-field {
 				&.mat-form-field-appearance-outline {
 					div.mat-form-field-wrapper {
 						padding: 0px !important;
@@ -1327,7 +1327,7 @@ snack-bar-container.mat-snack-bar-container {
 		}
 	}
 
-	mat-form-field.mat-form-field {
+	mat-form-field.mat-mdc-form-field {
 		&.rights-table-search {
 			vertical-align: top;
 
@@ -1382,7 +1382,7 @@ mat-card.dynamic-form-section {
 	}
 
 	.doc-sec-page {
-		mat-form-field.mat-form-field {
+		mat-form-field.mat-mdc-form-field {
 			width: 33.333%;
 
 			div.mat-form-field-wrapper {
@@ -1584,7 +1584,7 @@ div.data-grid-wrapper {
 		}
 
 		mat-form-field {
-			&.mat-form-field {
+			&.mat-mdc-form-field {
 
 				&.mat-form-field-appearance-outline {
 					div.mat-form-field-wrapper {
@@ -1640,7 +1640,7 @@ div.list-page {
 		}
 
 		mat-form-field {
-			&.mat-form-field {
+			&.mat-mdc-form-field {
 				height: $stdPadding * 4;
 				&.mat-form-field-appearance-outline {
 					div.mat-form-field-wrapper {
@@ -2030,7 +2030,7 @@ div.amortization-table-wrapper {
 }
 
 mat-form-field {	
-	&.mat-form-field {
+	&.mat-mdc-form-field {
 		line-height: 21px;
 		&.mat-form-field-appearance-outline {
 			div.mat-form-field-wrapper {
@@ -2039,7 +2039,7 @@ mat-form-field {
 				div.mat-form-field-flex {
 					padding: 0 0.1em 0 .75em;
 
-					div.mat-form-field-infix {
+					div.mat-mdc-form-field-infix {
 						padding: 0.4em 0px;
 						border-top: 4px solid transparent;
 						height: 35px;
@@ -2108,7 +2108,7 @@ mat-form-field {
 			&.clause-text {
 				div.mat-form-field-wrapper {
 					div.mat-form-field-flex {
-						div.mat-form-field-infix {
+						div.mat-mdc-form-field-infix {
 							height: auto;
 						}
 					}
@@ -2160,7 +2160,7 @@ mat-form-field {
 		background-color: white;
 		font-size: 14px;		
 		
-		&.mat-form-field {
+		&.mat-mdc-form-field {
 			&.mat-form-field-appearance-outline {
 				.mat-form-field-wrapper {
 					height: 32px;
@@ -2200,7 +2200,7 @@ mat-form-field {
 					}				
 				}
 
-				.mat-form-field-infix {
+				.mat-mdc-form-field-infix {
 					width: 450px;
 					padding: 0px !important;
 					border-top: 0px;
@@ -2269,7 +2269,7 @@ div.mat-mdc-menu-panel {
 		div.mat-mdc-menu-content {
 			padding: $stdPadding;
 
-			mat-form-field.mat-form-field {
+			mat-form-field.mat-mdc-form-field {
 				div.mat-form-field-wrapper {
 					margin: 0px;
 					padding-bottom: 0px;
@@ -2547,7 +2547,7 @@ div.classification-test {
 			width: 150px !important;
 		}		
 
-		mat-form-field.mat-form-field {
+		mat-form-field.mat-mdc-form-field {
 			div.mat-form-field-wrapper {
 				margin-bottom: 0px !important;
 				padding-bottom: $stdPadding !important;
@@ -2637,7 +2637,7 @@ app-accounting-year {
 						}
 					}
 
-					mat-form-field.mat-form-field {
+					mat-form-field.mat-mdc-form-field {
 						margin-right: $stdPadding;
 						background: white;
 
@@ -2913,7 +2913,7 @@ mat-card.mat-mdc-card.project-dash-card, mat-car {
 
 					mat-form-field {
 						width: 164px;
-						&.mat-form-field {
+						&.mat-mdc-form-field {
 							&.mat-form-field-appearance-outline {
 								div.mat-form-field-wrapper {
 									padding: 0px !important;

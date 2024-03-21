@@ -188,64 +188,6 @@ body {
 		-webkit-tap-highlight-color: transparent;
 	}
 	
-	cs-search {
-    position: relative !important;
-    top: 0 !important;
-    height: 24px !important;
-    vertical-align: middle !important;
-    border: 1px solid #c3c3c3 !important;
-    border-radius: 2px;
-    font-size: 14px !important;
-    margin-right: 18px;
-
-		mat-form-field.mat-form-field div.mat-form-field-flex {
-			border: none !important;
-			padding: 0 !important;
-		}
-
-		mat-form-field.mat-form-field div.mat-form-field-flex div.mat-form-field-outline {
-			background: none !important;
-		}
-
-		mat-form-field.mat-form-field div.mat-form-field-flex div.mat-form-field-infix {
-			border: none !important;
-			height: 24px !important;  //** this is the one which adjust the search box infix height **//
-			box-sizing: border-box;
-		}
-
-		mat-icon.mat-icon.notranslate.icon-brand-search {
-			background-repeat: no-repeat;
-			display: inline-block;
-			position: relative;
-			fill: currentColor;
-			height: 24px;
-			width: 24px;
-			top: 3px;
-			right: -2px;
-		}
-
-		.mat-icon svg#brand-search {
-			fill: #3a3a3a;
-			width: 16px;
-			margin-left: 2px;
-			height: 100%;
-			transform: translateY(-2px);
-		}
-
-		input.mat-input-element {
-			margin-top: -4px
-		}
-
-		.mat-icon svg#brand-close {
-			fill: #3a3a3a;
-			width: 16px;
-			transform: scale(.75) translateY(-6px);
-			position: relative;
-			height: 100%;
-		}
-
-	} //** cs-search end **//
-
 	dx-data-grid div.dx-datagrid-pager.dx-pager div.dx-page-sizes div.dx-page-size.dx-selection {
     color: colors.$white;
     background-color: colors.$color-brand-primary;
@@ -307,8 +249,6 @@ body {
 
 	crem-card .dx-datagrid-pager {
     position: relative !important;
-    border-bottom: 1px solid #dadada;
-    border-left: 1px solid #dadada;
     // z-index: 4000;
     background: colors.$white;
 	//Solves ADA: Text is clipped when resized, for cards pager
@@ -503,7 +443,7 @@ body {
 	cs-search {
 		border: none !important;
 
-		mat-form-field.mat-form-field {
+		mat-form-field.mat-mdc-form-field {
 			width: 200px;
 			margin-right: 8px;
 			height: 32px;
@@ -520,7 +460,7 @@ body {
 		}
 
 		mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex {
-			div.mat-form-field-infix {
+			div.mat-mdc-form-field-infix {
 				padding: 0px !important;
 				overflow: visible !important;
 				height: 32px !important;
@@ -554,7 +494,7 @@ body {
 			}
 		}	
 
-		input.search__input.mat-input-element {
+		input.search__input.mat-mdc-input-element {
 			margin-right: 28px;
 			border: none ;
 			padding: 0px ;
@@ -695,7 +635,7 @@ body {
 
 #addEditTeamModal, #addEditMemberModal, #saveTeamTemplateModal {
 	color: colors.$black;
-	.aet-textInput .mat-form-field {
+	.aet-textInput .mat-mdc-form-field {
 		width: 100%;
 	}
 

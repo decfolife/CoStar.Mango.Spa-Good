@@ -1,8 +1,11 @@
+@use 'styles' as *;
+
 .reports-right-container {
 	height: 100%;
 }
 
-div.reports-toolBar-wrapper {
+.reports-toolBar-wrapper {
+  @include costar(border-bottom, gray04);
 	width: 100%!important;
   position: sticky!important;
 	top: 0;

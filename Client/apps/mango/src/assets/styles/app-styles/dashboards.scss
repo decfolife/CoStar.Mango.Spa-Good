@@ -26,7 +26,6 @@ $card-dropDown-height: 24px;
 	crem-dropdown, crem-hierarchy-dropdown {
 		div.dx-texteditor-container{
 			height: 32px !important;
-			border: 1px solid #808080 !important;
 			width: 200px;
 			box-sizing: border-box;
 		}
@@ -423,11 +422,6 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
 #projects-dashboard, .user-settings-dialog,
 #portfolio-dashboard, .user-settings-dialog {
 	crem-dropdown, crem-hierarchy-dropdown {
-		.dx-texteditor.dx-editor-outlined {
-			background: #fff;
-			border: none !important;
-			border-radius: 2px !important;
-		}
 
 		dx-drop-down-box .dx-dropdowneditor-input-wrapper {
 			-webkit-tap-highlight-color: transparent;

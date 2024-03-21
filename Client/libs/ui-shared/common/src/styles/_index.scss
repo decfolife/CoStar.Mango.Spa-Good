@@ -29,7 +29,7 @@
 // @Description: Contains site-wide boilerplate. It should contain typography, resets and some common and globally
 // use code for HTML elements (Eg. _base.scss). Animation can be added here as well (Eg. _animations.scss).
 // The code in this folder should not be overwritten later.
-// @forward './base/reset'; // Reset/normalize
+@forward './base/reset'; // Reset/normalize
 @forward './base/typography'; // Typography rules
 @forward './base/utilities'; // Utility classes
 
@@ -65,10 +65,10 @@
 // ==========================================================================
 // Vendor overwrites for your global components (Eg. vendors-extensions/_bootstrap.scss).
 @forward './vendors/include-media'; // Responsive library
-@forward './vendors/my-bootstrap';
-@forward './vendors/my-devextreme';
-@forward './vendors/my-material';
-@forward './vendors/my-fontawesome';
+@forward './vendors/theme-bootstrap';
+@forward './vendors/theme-devextreme';
+@forward './vendors/theme-material';
+@forward './vendors/theme-fontawesome';
 
 // ==========================================================================
 // SHAME - Hacky styles to be fixed later

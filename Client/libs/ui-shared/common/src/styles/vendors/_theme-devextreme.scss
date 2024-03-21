@@ -47,3 +47,13 @@
 
   }
 }
+
+// Pager
+.dx-widget {
+  &.dx-datagrid-pager {
+    &.dx-pager {
+      @include costar(padding-left, 2);
+      @include costar(padding-right, 2);
+    }
+  }
+}

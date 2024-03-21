@@ -1,0 +1,26 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.mat-dialog-container {
+	padding: 0 !important;
+}
+
+.material-icons {
+  font-family: "Material Icons";
+}
+
+mat-form-field {
+  .mat-mdc-text-field-wrapper {
+    &.mdc-text-field--outlined {
+      --mdc-outlined-text-field-outline-width: 0;
+      --mdc-outlined-text-field-focus-outline-width: 0;
+      --mdc-outlined-text-field-container-shape: 0px;
+    }
+    .mat-mdc-form-field-infix {
+      display: flex;
+      min-height: unset;
+      @include costar(padding-top, 1, $important: true);
+      @include costar(padding-bottom, 1, $important: true);
+    }
+  }
+}

@@ -69,7 +69,7 @@ div.costar-site-toolbar-search  {
 
   font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 16px;
-   div.mat-form-field-infix {
+   div.mat-mdc-form-field-infix {
     display: flex !important;
     justify-content: space-between;
   }
@@ -237,84 +237,56 @@ crem-modal.qsr-modal {
 	}
 }
 
-//**** Styles for Emulate User Modal on MangoSPA //
-mango-emulate-user-popup #emulateUserModal {
-	.modalHeader {
-		height: 28px ;
-		font-size: 12px;
-    color: white;
-		background-color: $costarDarkBlue;
-		padding: 6px;
-	}
+// //**** Styles for Emulate User Modal on MangoSPA //
+// mango-emulate-user-popup #emulateUserModal {
+// 	.modalHeader {
+// 		height: 28px ;
+// 		font-size: 12px;
+//     color: white;
+// 		background-color: $costarDarkBlue;
+// 		padding: 6px;
+// 	}
 
-  .modalContent {
-    .userMsg {
-      font-size: 12px;
-    }
-    padding: 10px 16px;
-  }
+//   .modalContent {
+//     .userMsg {
+//       font-size: 12px;
+//     }
+//     padding: 10px 16px;
+//   }
 
-  .modalFooter {
-    display: flex;
-    padding: 11px 8px;
-    background-color: $costarRichLightGray;
+//   .modalFooter {
+//     display: flex;
+//     padding: 11px 8px;
+//     background-color: $costarRichLightGray;
 
-    div.footer-content {
-      margin-left: auto;
-      div#buttonTemplate {
-        display: flex;
-        justify-content: right;
-        button.button-primary, button.button-secondary, button.button-primary:hover, button.button-secondary:hover {
-          border: none;
-          font-size: 10px;
-          height: 24px;
-          color: white;
-          margin-left: 8px;
-          background-color: $costarDarkBlue;
-        }
-      }
-    }
+//     div.footer-content {
+//       margin-left: auto;
+//       div#buttonTemplate {
+//         display: flex;
+//         justify-content: right;
+//         button.button-primary, button.button-secondary, button.button-primary:hover, button.button-secondary:hover {
+//           border: none;
+//           font-size: 10px;
+//           height: 24px;
+//           color: white;
+//           margin-left: 8px;
+//           background-color: $costarDarkBlue;
+//         }
+//       }
+//     }
 
-  }
+//   }
 
-  cs-search {
-    mat-form-field.mat-form-field {
-      width: 200px;
+//   crem-simple-grid {
+//     dx-data-grid {
+//       overflow: auto;
+//       height: 300px;
+//     }  
+//   }
 
-      div.mat-form-field-wrapper {
-        padding: 0 0 8px;
-      }
-
-      div.mat-form-field-flex {
-        padding: 0 0 0 6px ;
-        margin-top: -0.25em;
-
-        div.mat-form-field-infix {
-          box-sizing: border-box;
-          padding: 0.4em 0px;
-          position: relative;
-          display: flex;  //**this is the one which fixed the alignment of text
-        }
-
-        div.mat-form-field-suffix {
-          mat-icon {
-            transform: translateY(-3px);
-          }
-        }
-      }
-    }
-  }
-
-  crem-simple-grid {
-    dx-data-grid {
-      overflow: auto;
-      height: 300px;
-    }  
-  }
-
-  cs-text-field mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper {
-    margin: 0;
-    padding: 0 0 8px;
-  }
-}
-//**** Emulate User Modal styles end //
+//   cs-text-field mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper {
+//     margin: 0;
+//     padding: 0 0 8px;
+//   }
+// }
+// //**** Emulate User Modal styles end //

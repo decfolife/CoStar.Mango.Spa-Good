@@ -1,4 +1,4 @@
-@use "../../../../common/src/styles" as *;
+@use "styles" as *;
 
 .cremModal {
 	height: 100%;
@@ -105,12 +105,12 @@ div.cdk-drag.cdk-drag-handle.modalHeader {
     gap: 8px;
     @include costar(border-top, gray05);
 
-    .footerRightControls {
-      display: flex;
-      margin-left: auto;
-    }
-
     ::ng-deep {
+      .footerRightControls {
+        display: flex;
+        margin-left: auto;
+      }
+
       crem-button {
         padding: 0px !important; // To overwrite micro-component level CSS code, remove after duplicated classes are deleted
         margin-right: 8px;

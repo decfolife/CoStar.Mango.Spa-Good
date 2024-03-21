@@ -1,12 +1,26 @@
 @use 'styles' as *;
-// @import "../assets/styles/crem-lib.scss";
 
-:host {
-  ::ng-deep {
-    .dx-placeholder {
-      line-height: 0px;
+:host ::ng-deep {
+  .dx-editor-outlined {
+    border: none !important;
+  }
+
+  dx-select-box,
+  dx-drop-down-box {
+    .dx-texteditor-container{
+      @include costar(border, gray04);
+      @include costar(border-radius, small);
+      .dx-placeholder {
+        line-height: 0px;
+      }
+    }
+    &.dx-dropdowneditor-active {
+      .dx-texteditor-container{
+        @include costar(border, primary-light);
+      }
     }
   }
+
 }
 
 crem-dropdown { // FIXME: This is not being applied in most cases, only works when encapsulation is broken and styles imported manually

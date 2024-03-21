@@ -1,3 +1,5 @@
+@use 'styles' as *;
+
 .segments-right-container {
     display: flex;
     flex-direction: column;
@@ -5,21 +7,18 @@
 }
 
 .reports-toolBar-wrapper {
-    display: flex;
-    flex-shrink: 0;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    position: sticky !important;
-	top: 0;
-    overflow-x: auto;
-	overflow-y: hidden;
+  @include costar(border-bottom, gray04);
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  position: sticky !important;
+  top: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
     .controls-left {
         align-items: center;
-        cs-search {
-            padding-right: 8px;
-            height: 32px;
-        }
         display: flex;
 
         .title {
@@ -28,11 +27,6 @@
             font-family: Helvetica,sans-serif;
             margin-right: 16px;
         }
-
-        cs-search {
-			padding-right: 0px;
-		}
-
     }
 
     .controls-right {
