@@ -169,7 +169,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       }
       else if (response.success) {
         this.amortizationDataGrid.instance.state({});
-        this.accountingSummaryService.successNotify(response.clientErrorMessage);
+        this.accountingSummaryService.successNotify('Value Reset Successfully');
       } else {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }

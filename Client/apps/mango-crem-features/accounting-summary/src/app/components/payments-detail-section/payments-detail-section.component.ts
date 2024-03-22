@@ -124,7 +124,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
       }
       else if (response.success) {
         this.paymentsDataGrid.instance.state({});
-        this.accountingSummaryService.successNotify(response.clientErrorMessage);
+        this.accountingSummaryService.successNotify('Value Reset Successfully');
       } else {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }

@@ -205,7 +205,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       }
       else if (response.success) {
         this.eventsDataGrid.instance.state({});
-        this.accountingSummaryService.successNotify(response.clientErrorMessage);
+        this.accountingSummaryService.successNotify('Value Reset Successfully');
       } else {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
