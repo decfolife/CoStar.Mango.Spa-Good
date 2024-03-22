@@ -37,6 +37,8 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	showShareColumn = false;
 	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
 	subs: Subscription[] = [];
+	teamMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
+														Please consider replacing this team member or updating their User record.`;
 
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
 

@@ -815,6 +815,35 @@ body {
 	}
 }
 
+.teamsMembers-container, #aet-selectedMembers-container {
+	.mtm-memberNameAndInfo, .aet-memberNameAndInfo {
+		display: flex;
+		.mtm-info, .aet-info {
+			crem-tooltip {
+				div.dx-field {
+					min-height: 16px;
+					[id^="tmtmToolTip"], [id^="taetToolTip"] {
+						height: 16px;
+					}
+					.dx-field-value-static {
+						padding: 0;
+					}
+					crem-icon, crem-icon i {
+						display: inline-block;
+						height: 16px;
+					}
+				}
+			}
+		}
+		.mtm-info svg {
+			transform: translateY(-4px);
+		}
+		.aet-info svg {
+			transform: translate(8px, 6px) scale(1);
+		} 
+	}
+}
+
 .dialogServiceComponent {
 	.dialogContent crem-button button {
 		min-width: 70px;

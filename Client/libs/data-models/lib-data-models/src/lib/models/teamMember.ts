@@ -11,5 +11,7 @@ export interface TeamMember {
   role: string;
   level: string;
   share: boolean;
+  isActive: boolean;
+  allowLogOn: boolean;
   editMode?: boolean;
 }

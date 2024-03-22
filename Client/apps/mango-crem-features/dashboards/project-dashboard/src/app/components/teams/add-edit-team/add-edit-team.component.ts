@@ -44,6 +44,8 @@ export class AddEditTeamComponent implements OnInit {
   changesMade: boolean = false;
   saveBtnClicked: boolean = false;
 	showShareColumn = false;
+  teamMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
+                            Please consider replacing this team member or updating their User record.`
 
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
 

@@ -109,7 +109,7 @@
           <dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
             [allowReordering]="false" [allowResizing]="false">
           </dxi-column>
-          <dxi-column dataField="name" [allowEditing]="false" dataType="string"></dxi-column>
+          <dxi-column dataField="name" [allowEditing]="false" dataType="string" cellTemplate="teamMemberNameTemplate"></dxi-column>
           <dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
           <dxi-column dataField="phoneNumber" [allowEditing]="false" dataType="string"></dxi-column>
@@ -136,6 +136,17 @@
               </div>
             </dxi-button>		    	
           </dxi-column>
+          <div *dxTemplate="let member of 'teamMemberNameTemplate'" class="ptm-teamMemberTemplate" >
+            <div class="aet-memberNameAndInfo">
+              <span class="aet-memberName"> {{member.data.name}}</span>
+              <span class="aet-info" *ngIf="!member.data.isActive || !member.data.allowLogOn">
+                <crem-tooltip
+                  [externalId]="'aetToolTipId' + member.data.contactId + member.data.teamId"
+                  [helpTextData]="teamMemberInfo"
+                ></crem-tooltip>
+              </span>	
+            </div>
+          </div>
           <div *dxTemplate="let member of 'toggleTemplate'" >
             <div class="emailToggle">
               <mat-slide-toggle [checked]="member.data.emailOn"  (change)="emailtoggle(member.data, $event)" aria-label="Email Notication">
