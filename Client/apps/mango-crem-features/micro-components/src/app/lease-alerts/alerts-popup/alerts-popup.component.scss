@@ -10,6 +10,10 @@
   }
 }
 
+.cdk-overlay-container{
+  z-index: 1510;
+}
+
 #leaseAlertsPopup {
   dx-button.grey-button {
     background-color: #d4d0c9;
