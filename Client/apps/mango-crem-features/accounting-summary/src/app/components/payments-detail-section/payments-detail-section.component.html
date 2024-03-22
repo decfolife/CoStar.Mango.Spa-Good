@@ -46,12 +46,7 @@
 				>
 				<dxo-paging
                 	[enabled]="false">
-            	</dxo-paging>
-				
-				<dxo-header-filter
-          			[visible]="false"
-					[allowSearch]="true">
-            	</dxo-header-filter>
+            	</dxo-paging>				
 
 				<dxo-state-storing
 					[enabled]="true"
@@ -72,9 +67,12 @@
 				<dxo-column-chooser
 					[enabled]="true"
 					mode="select"
-					[allowSearch]="true"
 					height="500"
 					width="400"> 
+
+					<dxo-search
+						[enabled]="true">
+					</dxo-search>
 
 					<dxo-selection
 						allowSelectAll="true">

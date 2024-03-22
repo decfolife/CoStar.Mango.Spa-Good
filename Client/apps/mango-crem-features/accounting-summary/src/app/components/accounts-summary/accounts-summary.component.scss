@@ -10,11 +10,11 @@
     border-bottom: 1px solid #C5C5C5;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
     padding: 10px 16px 5px 5px;
     position: sticky;
 	top: 0;
-
     z-index: 11;
 
     .controls-left {
@@ -28,7 +28,7 @@
         align-items: center;
         display: flex;
         align-items: flex-start;
-
+        flex-wrap: wrap;
     }
 
     .controls-right>* {

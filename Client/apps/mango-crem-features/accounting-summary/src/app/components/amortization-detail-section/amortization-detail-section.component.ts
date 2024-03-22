@@ -113,6 +113,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     const amortizationDetails = this.accountingSummaryService.getAmortizationDetails(leaseRecognitionScheduleID);
       this.subscription.add(amortizationDetails.subscribe((amortizationDetailsResponse) => {
       if (amortizationDetailsResponse.success) {
+        this.amortizationDataGrid.instance.option("noDataText", "");
         this.amortizationdetailsGridData = amortizationDetailsResponse.data;
         this.selectedRowKey = [this.amortizationdetailsGridData[0]?.scheduleIndex];
         this.portfolioSettings = this.accountingSummaryService.getSavedPortfolioSettings();
@@ -227,8 +228,8 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   */
   getAmortizationColumns(classificationId, currencyInfo) {
     const defaultColumns = this.columnService
-      .getSummaryColumns(classificationId, this.portfolioSettings.functionalCurrencyEnabled,
-        this.portfolioSettings.leaseRecognitionCalendarID != 1);
+      .getSummaryColumns(classificationId, this.portfolioSettings?.functionalCurrencyEnabled,
+        this.portfolioSettings?.leaseRecognitionCalendarID != 1);
 
     // columns is ultimatly what will be used, it is the default by default
     const columns = defaultColumns;

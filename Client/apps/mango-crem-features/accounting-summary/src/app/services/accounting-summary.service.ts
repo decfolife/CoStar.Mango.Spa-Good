@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
-import { environment } from '@mangoSpa/src/environments/environment.test';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import notify from 'devextreme/ui/notify';
@@ -218,7 +218,7 @@ export class AccountingSummaryService extends EndpointService {
     JSON.stringify({ leaseAbstractID: this.leaseAbstractId, workflowStatusID: workflowStatusId, comment: comment }));
   }
 
-  exportPresentValueFile(scheduleId, fileName) {
+  exportPresentValueFile(scheduleId: number, fileName: string) {
     return this.callHttpPostWithBlobResponse(`${this.apiUrl}AccountingEvents/ExportPresentValueFile`, 'exportPresentValueFile',
       JSON.stringify({ ScheduleId: scheduleId, FileName: fileName}));
   }

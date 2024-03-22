@@ -60,7 +60,7 @@
 
         <dx-tooltip target="#leaseAlertsLeaseStatusFilterToggle"
           [(visible)]="leaseStatusTooltipVisible"
-          [closeOnOutsideClick]="false"
+          [hideOnOutsideClick]="false"
         >
           <div *dxTemplate="let data = data; of: 'content'">
             Showing {{ getLeaseText() }} leases

@@ -112,6 +112,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.accountingSummaryService.displayContactSystemAdminMessage();
       }
       else if (eventDetailsResponse.data.length != 0 && eventDetailsResponse.success) {
+        this.eventsDataGrid.instance.option("noDataText", "");
         this.classificationId = eventDetailsResponse.data[0].classificationID;
         this.detailsGridData = eventDetailsResponse.data.sort((a, b) => a.scheduleIndex - b.scheduleIndex);
         this.portfolioSettings = this.accountingSummaryService.getSavedPortfolioSettings();
@@ -272,12 +273,12 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   formatCells(gridDataRow) {
-    if (this.portfolioSettings.functionalCurrencyEnabled && gridDataRow.functionalLevelExpense < 0) {
+    if (this.portfolioSettings?.functionalCurrencyEnabled && gridDataRow.functionalLevelExpense < 0) {
       gridDataRow.functionalLevelExpense = 'N/A';
     } else {
       gridDataRow.functionalLevelExpense = this.formatService.functionalFormat(gridDataRow.functionalLevelExpense, gridDataRow.functionalCurrencyDecimalPrecision);
     }
-    if (!this.portfolioSettings.functionalCurrencyEnabled && gridDataRow.levelExpense < 0) {
+    if (!this.portfolioSettings?.functionalCurrencyEnabled && gridDataRow.levelExpense < 0) {
       gridDataRow.levelExpense = 'N/A';
     } else {
       gridDataRow.levelExpense = this.formatService.localFormat(gridDataRow.levelExpense, gridDataRow.localCurrencyDecimalPrecision);
@@ -472,7 +473,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
     if (this.showEditIcon) {
       e.items.push(edit);
-      if (this.portfolioSettings.leaseRecognitionCalendarID != 1 && this.classificationId === 1) {
+      if (this.portfolioSettings?.leaseRecognitionCalendarID != 1 && this.classificationId === 1) {
         // No Remeasure option for Cap 840 using custom calendar
       } else {
         e.items.push(remeasure);

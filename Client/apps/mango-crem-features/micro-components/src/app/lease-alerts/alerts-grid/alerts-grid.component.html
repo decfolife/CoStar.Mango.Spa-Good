@@ -25,11 +25,15 @@
     [(visible)]="filterBuilderVisible"
   ></dxo-filter-builder-popup>
 
-  <dxo-column-chooser [allowSearch]="true"
+  <dxo-column-chooser
     [sortOrder]="'asc'"
     [width]="400"
     [height]="500"
-  ></dxo-column-chooser>
+  >
+    <dxo-search
+      [enabled]="true">
+    </dxo-search>
+</dxo-column-chooser>
 
   <dxo-selection *ngIf="!(isPopupView && isArchived)"
     [mode]="userCanEdit ? 'multiple' : 'none'"
@@ -1300,7 +1304,7 @@
 
 <dx-popup #dismissPopup
   title="Dismiss Reason"
-  [closeOnOutsideClick]="false"
+  [hideOnOutsideClick]="false"
   [dragEnabled]="false"
   [showCloseButton]="false"
   [width]="400"
@@ -1330,7 +1334,7 @@
 
 <dx-popup #dismissTogglePopup
   title="Dismiss Reason"
-  [closeOnOutsideClick]="false"
+  [hideOnOutsideClick]="false"
   [dragEnabled]="false"
   [showCloseButton]="false"
   [width]="400"

@@ -74,8 +74,8 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
        this.accountingSummaryService.displayContactSystemAdminMessage();
      }
      else if (paymentDetailsResponse.success) {
+      this.paymentsDataGrid.instance.option("noDataText", "");
        this.paymentsGridData = paymentDetailsResponse.data;
-
        this.isEuroDateFormat = this.userInfo?.useDateEU;
        if (this.isEuroDateFormat) {
          this.dateFormat = 'dd.MM.yyyy';

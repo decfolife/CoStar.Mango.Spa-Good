@@ -5,7 +5,7 @@
     [resizeEnabled]="true"
     [(visible)]="transactionPopupVisible"
     (onHidden)="onTransactionPopupHidden()"
-    [closeOnOutsideClick]="true"
+    [hideOnOutsideClick]="true"
     [wrapperAttr]="{ class: 'accounting-summary-style-container' }">
     <div *dxTemplate="let data of 'content'">
         <dx-scroll-view height="40%">

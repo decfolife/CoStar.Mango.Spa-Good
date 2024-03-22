@@ -46,11 +46,6 @@
             (onRowClick)="onGridRowClick($event)"
             (onContentReady)="onGridContentReady()">
 
-            <dxo-header-filter
-                [visible]="false"
-                [allowSearch]="true">
-            </dxo-header-filter>
-
             <dxo-paging
                 [enabled]="false">
             </dxo-paging>
@@ -73,10 +68,13 @@
             <dxo-column-chooser
                 [enabled]="true"
                 mode="select"
-                [allowSearch]="true"
                 height="500"
                 width="400"> 
                 
+                <dxo-search
+                    [enabled]="true">
+                </dxo-search>
+
                 <dxo-selection
                     allowSelectAll="true">
                 </dxo-selection>
