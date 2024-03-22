@@ -206,6 +206,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
       }
       else if (response.success) {
         this.initialState = newState;
+        this.accountingSummaryService.successNotify(response.clientErrorMessage);
       } else {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
