@@ -71,22 +71,27 @@ export class MapComponent implements OnInit {
     };
 
     this.service.getMarkerList(request).subscribe(res => {
-      res.success = true;
-      if (!res.success) {
-        this.showErrorPopup(res.clientErrorMessage);
-        this.markerList = [];
+      //res.success = true;
+      // if (res && !res.success) {
+      //   this.showErrorPopup(res.clientErrorMessage);
+      //   this.markerList = [];
 
-        return;
+      //   return;
+      // }
+
+      if(res){
+        this.markerList = res.data.mapMarkers;  
+        if (res.data?.length === 0) {
+          this.showErrorPopup('No map markers found.');
+  
+          return;
+        }
+  
+        this.loadMap();
       }
-
-      this.markerList = res.data.mapMarkers;  
-      if (res.data?.length === 0) {
-        this.showErrorPopup('No map markers found.');
-
-        return;
+      else{
+        this.showErrorPopup("Error Loading Map");
       }
-
-      this.loadMap();
     });
   }
 

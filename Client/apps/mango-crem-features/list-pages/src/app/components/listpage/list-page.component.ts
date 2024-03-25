@@ -1,3 +1,4 @@
+import { async } from '@angular/core/testing';
 /* eslint-disable no-prototype-builtins */
 import {
   ChangeDetectorRef,
@@ -544,6 +545,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
     const s = this.renderer2.createElement('script');
     s.type = 'text/javascript';
     s.src = googleUrl;
+    s.async = true;
     this.renderer2.appendChild(document.body, s);      
   }
     
