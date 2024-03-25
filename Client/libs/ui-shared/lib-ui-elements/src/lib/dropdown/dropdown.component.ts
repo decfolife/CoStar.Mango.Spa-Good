@@ -287,11 +287,11 @@ export class DropdownComponent implements OnInit, OnChanges {
   }
 
   onCellClick(event) {
-    if (this.selectMode === 'multiple' && !event.column.type || event.column.type !== 'selection') {
+    if (this.selectMode === 'multiple' && (!event.column.type || event.column.type !== 'selection')) {
       this.dataGrid.instance.selectRows([event.key], true);
     }
     if (event.rowType == 'header') {
-      if (this.selectMode === 'multiple' && !event.column.type || event.column.type !== 'selection') {
+      if (this.selectMode === 'multiple' && (!event.column.type || event.column.type !== 'selection')) {
         if(this.dataGrid.instance.getSelectedRowKeys().length == this.dataGrid.instance.getDataSource().items().length) {
           this.clearDropdown();
         } else {
