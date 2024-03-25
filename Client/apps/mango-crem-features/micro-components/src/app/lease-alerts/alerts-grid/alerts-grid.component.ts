@@ -6,7 +6,7 @@ import notify from 'devextreme/ui/notify';
 import CheckBox from 'devextreme/ui/check_box';
 import { Column } from 'devextreme/ui/data_grid';
 import * as events from 'devextreme/events';
-import { forkJoin, of } from 'rxjs';
+import { Subscription, combineLatest, of } from 'rxjs';
 
 import { AlertsService } from '../shared/service/alerts.service';
 import {
@@ -102,13 +102,15 @@ export class AlertsGridComponent implements OnInit {
   private leaseAlerts: LeaseAlert[];
   private leaseLinks: RedirectorLink[];
 
+  private subscription = new Subscription();
+
   dismissButtonOptions = {
     text: 'Dismiss',
     elementAttr: { class: 'btn btn-primary' },
     onClick: () => {
       if (this.dismissReasonText.length === 0 && this.isDismissReasonRequired) {
         notify({
-          message:'Dismiss reason is required.',
+          message: 'Dismiss reason is required.',
           type: 'error',
           displayTime: 3000,
           position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
@@ -133,7 +135,7 @@ export class AlertsGridComponent implements OnInit {
 
       if ((isCustomWithoutText || this.selectedDismissToggleReason === '') && this.isDismissReasonRequired) {
         notify({
-          message:'Dismiss reason is required.',
+          message: 'Dismiss reason is required.',
           type: 'error',
           displayTime: 3000,
           position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
@@ -437,6 +439,10 @@ export class AlertsGridComponent implements OnInit {
     this.loadLeaseAlerts(isFirstLoad, configuration);
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
   redirectToLeaseAbstract(evt) {
     if (this.isPopupView || evt.event.originalEvent.currentTarget.localName !== 'table') {
       return;
@@ -716,36 +722,32 @@ export class AlertsGridComponent implements OnInit {
     const secondPageNumber = firstPageNumber + 1;
     const thirdPageNumber = secondPageNumber + 1;
 
-    let observableList;
+    let pageOneReturn;
+    let pageTwoReturn;
+    let pageThreeReturn;
 
     if (firstPageNumber === totalPages) {
-      observableList = forkJoin({
-        pageOneReturn: this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
-        pageTwoReturn: of ({data: {leaseAlerts: []}}),
-        pageThreeReturn: of ({data: {leaseAlerts: []}})
-      });
+      pageOneReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
+        pageTwoReturn = of({ data: { leaseAlerts: [] } }),
+        pageThreeReturn = of({ data: { leaseAlerts: [] } })
     }
 
     if (secondPageNumber === totalPages) {
-      observableList = forkJoin({
-        pageOneReturn: this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
-        pageTwoReturn: this.alertsService.filterLeaseAlerts(leaseAlertFilter, secondPageNumber),
-        pageThreeReturn: of ({data: {leaseAlerts: []}})
-      });
+      pageOneReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
+        pageTwoReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, secondPageNumber),
+        pageThreeReturn = of({ data: { leaseAlerts: [] } })
     }
 
     if (thirdPageNumber <= totalPages) {
-      observableList = forkJoin({
-        pageOneReturn: this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
-        pageTwoReturn: this.alertsService.filterLeaseAlerts(leaseAlertFilter, secondPageNumber),
-        pageThreeReturn: this.alertsService.filterLeaseAlerts(leaseAlertFilter, thirdPageNumber)
-      });
+      pageOneReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
+        pageTwoReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, secondPageNumber),
+        pageThreeReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, thirdPageNumber)
     }
 
-    observableList.subscribe((res: any) => {
-      this.leaseAlerts.push(...res.pageOneReturn.data.leaseAlerts as LeaseAlert[]);
-      this.leaseAlerts.push(...res.pageTwoReturn.data.leaseAlerts as LeaseAlert[]);
-      this.leaseAlerts.push(...res.pageThreeReturn.data.leaseAlerts as LeaseAlert[]);
+    this.subscription.add(combineLatest([pageOneReturn, pageTwoReturn, pageThreeReturn]).subscribe((res: any) => {
+      this.leaseAlerts.push(...res[0].data.leaseAlerts as LeaseAlert[]);
+      this.leaseAlerts.push(...res[1].data.leaseAlerts as LeaseAlert[]);
+      this.leaseAlerts.push(...res[2].data.leaseAlerts as LeaseAlert[]);
 
       if (thirdPageNumber < totalPages) {
         return this.recurseGetAllPages(totalCount, totalPages, thirdPageNumber + 1, leaseAlertFilter);
@@ -756,7 +758,7 @@ export class AlertsGridComponent implements OnInit {
       }
     }, () => {
       this.getLeaseAlertsErrorOccured();
-    });
+    }));
   }
 
   private getLeaseAlertsErrorOccured() {
@@ -839,7 +841,7 @@ export class AlertsGridComponent implements OnInit {
 
     this.alertsService.toggleLeaseAlertsIsDismissed(dto).subscribe((res: ApiResponse) => {
       notify({
-        message:`Lease alert update ${res.succeeded ? 'successful' : 'failed'}.`,
+        message: `Lease alert update ${res.succeeded ? 'successful' : 'failed'}.`,
         type: res.succeeded ? 'success' : 'error',
         displayTime: 3000,
         position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
@@ -850,7 +852,7 @@ export class AlertsGridComponent implements OnInit {
       this.resetLeaseAlerts();
     }, () => {
       notify({
-        message:'There was an error processing lease alert changes.',
+        message: 'There was an error processing lease alert changes.',
         type: 'error',
         displayTime: 3000,
         position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },

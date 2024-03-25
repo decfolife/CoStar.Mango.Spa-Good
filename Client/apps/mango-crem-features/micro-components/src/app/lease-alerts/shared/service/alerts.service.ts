@@ -1,42 +1,25 @@
 /* eslint-disable no-prototype-builtins */
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, Optional } from '@angular/core';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { environment } from '../../../../../../../mango/src/environments/environment.local';
-import { ApiResponse, LeaseAlertFilter, LeaseAlertToggleDTO } from '../models';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type HttpParamsObj = HttpParams | { [param: string]: any };
-type HeadersObj = {
-  headers: HttpHeaders;
-  params?: HttpParamsObj;
-};
+import { LeaseAlertFilter, LeaseAlertToggleDTO } from '../models';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { EndpointService } from '@mango/core-shared';
 
 const LEASE_OTID = 4;
 
 @Injectable({ providedIn: 'root' })
-export class AlertsService {
+export class AlertsService extends EndpointService {
   isEuroDateFormat = false;
 
   private apiUrl: string;
 
   private readonly OBJECT_TYPE_ID = 4;
 
-  private httpOptions: HeadersObj = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      UserId: '2',
-      ClientKey: 'RETAILDEMO',
-      CAEnabled: 'false',
-    }),
-  };
-
-  constructor(private http: HttpClient) {
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
     this.apiUrl = environment.appUrls.alerts;
   }
 
@@ -196,77 +179,5 @@ export class AlertsService {
       'getAlertDismissReasons',
       { objectTypeId: LEASE_OTID }
     );
-  }
-
-  protected callHttpGet(
-    url: string,
-    logName: string,
-    httpOptionsParams?: HttpParamsObj
-  ) {
-    if (httpOptionsParams) {
-      this.httpOptions.params = httpOptionsParams;
-    }
-
-    return this.http.get(url, this.httpOptions).pipe(
-      map((x) => this.toApiResponse(x)),
-      catchError(this.handleError(logName))
-    );
-  }
-
-  protected callHttpPost(url: string, logName: string, postBody: string) {
-    return this.http.post(url, postBody, this.httpOptions).pipe(
-      map((x) => this.toApiResponse(x)),
-      catchError(this.handleError(logName))
-    );
-  }
-
-  private handleError(logName: string = 'Operation not provided') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (error: any): Observable<ApiResponse> => {
-      console.error(logName, error);
-
-      return of({
-        succeeded: false,
-        message: error.statusText,
-        data: [],
-      });
-    };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private toApiResponse(value: any): ApiResponse {
-    // ListPages API returns a different object, so this alters it to match the expected object
-    if (value.hasOwnProperty('portfolios')) {
-      value = new ApiResponse(true, '', value.portfolios);
-    }
-
-    const val = value.hasOwnProperty('d') ? value.d : value;
-
-    const res = val.hasOwnProperty('Result')
-      ? typeof val.Result === 'string'
-        ? JSON.parse(val.Result)
-        : val.Result
-      : val;
-
-    let data = res.hasOwnProperty('data')
-      ? typeof res.data === 'string'
-        ? JSON.parse(res.data)
-        : res.data
-      : res;
-
-    // Again with listpages differences
-    if (typeof data === 'string') {
-      data = JSON.parse(data);
-    }
-
-    if (data.portfolios) {
-      data = data.portfolios;
-    }
-
-    return {
-      succeeded: res.succeeded,
-      message: res.message,
-      data: data.hasOwnProperty('data') ? data.data : data,
-    };
   }
 }
