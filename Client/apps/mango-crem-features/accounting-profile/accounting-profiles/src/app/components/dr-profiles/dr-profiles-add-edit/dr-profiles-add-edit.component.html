@@ -22,13 +22,11 @@
             </div>
 
             <div class="dynamic-form-content">
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>
-                            Profile Information
-                        </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="no-padding">
+
+                <crem-card
+                    [title]="'Profile Information'"
+                    fxflexFill>
+                    <div class="cardContent widget-container" fxflexFill>
                         <div class="widget-container">
                             <dx-form id="form"
                                 [(formData)]="formData"
@@ -258,16 +256,13 @@
 
                             <dx-validation-summary id="summary"></dx-validation-summary>
                         </div>
-                    </mat-card-content>
-                </mat-card>
-
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>
-                            System Information
-                        </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="no-padding">
+                    </div>
+                </crem-card>
+                
+                <crem-card
+                    [title]="'System Information'"
+                    fxflexFill>
+                    <div class="cardContent widget-container" fxflexFill>
                         <div class="widget-container">
                             <dx-form id="form"
                                 [(formData)]="formData"
@@ -365,8 +360,9 @@
 
                             <dx-validation-summary id="summary"></dx-validation-summary>
                         </div>
-                    </mat-card-content>
-                </mat-card>
+                    </div>
+                </crem-card>
+
             </div>
         </div>
     </div>
