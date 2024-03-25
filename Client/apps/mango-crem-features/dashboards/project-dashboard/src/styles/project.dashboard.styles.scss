@@ -545,7 +545,7 @@ body {
 	}
 }
 
-#teams-container, #projectTeam-container {
+#teams-container, #projectTeam-container, #importTeamModal{
 	button.mat-menu-trigger.btn-link:focus, 
 	button.actionsButton:focus, 
 	button.moreButton:focus,
@@ -622,13 +622,28 @@ body {
 }
 
 #importTeamModal {
-	&.import-teams-modal-wrapper {
-		crem-tooltip {
-			padding-right: 625px;
-		}
+	crem-tooltip {
+		padding-right: calc(100% - 250px);
+	}
 
-		.iconWrapper.dx-field-value-static {
-			padding: 5px 0px;
+	crem-loader {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+  }
+
+	.iconWrapper.dx-field-value-static {
+		padding: 5px 0px;
+	}
+
+	.import-teamMembers-dataGrid-wrapper {
+		padding: 4px 24px;
+		tr.dx-header-row {
+			background-color: white;
+			border: 1px solid colors.$darkBorderGray;
+			td {
+				border-bottom: none;
+			}
 		}
 	}
 }
@@ -757,7 +772,8 @@ body {
   }
 }
 
-#teams-container .teams-grid, #aet-selectedMembers-container #addTeam-grid , #projectTeam-container .projectTeam-grid {
+#teams-container .teams-grid, #aet-selectedMembers-container #addTeam-grid , #projectTeam-container .projectTeam-grid,
+#importTeamModal .import-teams-dataGrid-wrapper {
 	td {
 		text-align: center;
 		vertical-align: middle !important;

@@ -138,7 +138,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   importMembers() {
     let dialogRef = this.dialog.open(ImportTeamComponent, {
-      height: '600px',
+      height: '605px',
       width: '900px',
       data: { memberInfo: this.memberInfo, projectId: this.projectId, projectsPrivateSetting: this.projectsPrivateSetting},
       disableClose: true

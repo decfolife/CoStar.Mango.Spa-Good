@@ -1,0 +1,13 @@
+.import-teams-dataGrid-wrapper {
+  height: calc(100% - 48px);
+  font-size: 16px;
+
+  .mat-slide-toggle {
+    opacity: .38;
+  }
+
+  .ptm-teamMemberTemplate.dx-template-wrapper {
+    align-items: center;
+    display: flex;
+  }
+}
