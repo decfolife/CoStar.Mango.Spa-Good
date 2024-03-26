@@ -16,8 +16,8 @@
                         [(ngModel)]="formData.active">
                         {{ formData.active ? 'Active' : 'Archived' }}
                     </mat-slide-toggle>
-                    <button id="cancelBtn" class="btn btn-primary-outline" (click)="cancelAddEditAction()">Cancel</button>
-                    <button id="saveBtn" *ngIf="service.userRights === 2" class="btn btn-primary" (click)="btnSaveProfile($event)" [disabled]="loading" >Save</button>
+                    <crem-button id="cancelBtn" type="primary" btnStyle="stroked" (click)="cancelAddEditAction()" text="Cancel"></crem-button>
+                    <crem-button id="saveBtn" *ngIf="service.userRights === 2" type="primary" btnStyle="flat" (click)="btnSaveProfile($event)" [disabled]="loading" text="Save"></crem-button>
                 </div>
             </div>
 
@@ -401,8 +401,8 @@
                 </div>
                 <div><br /></div>
                 <div class="dialog-footer">
-                    <button id="btnCancelAssociatedSchedules" (click)="associatedPopupCancel()" class="btn btn-primary-outline">Cancel</button>
-                    <button id="btnOkAssociatedSchedules" (click)="associatedPopupOk()" class="btn btn-primary">OK</button>
+                    <crem-button id="btnCancelAssociatedSchedules" type="primary" btnStyle="stroked" (click)="associatedPopupCancel()">Cancel</crem-button>
+                    <crem-button id="btnOkAssociatedSchedules" type="primary" btnStyle="flat" (click)="associatedPopupOk()">OK</crem-button>
                 </div>
             </div>
         </div>

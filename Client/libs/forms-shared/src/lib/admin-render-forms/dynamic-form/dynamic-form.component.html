@@ -1,17 +1,7 @@
-<!-- <div *ngFor="let control of form.controls | keyvalue">
-  <p>{{ control.key }}: {{ control.value.value | json }}</p>
-  <p>Pristine: {{ control.value.pristine }}</p>
-  <p>Valid: {{ control.value.valid }}</p>
-  <p *ngIf="control.value.errors">Validation errors:</p>
-  <ul *ngIf="control.value.errors">
-    <li *ngFor="let error of control.value.errors | keyvalue">{{ error.key }}: {{ error.value }}</li>
-  </ul>
-</div> -->
-
 <div *ngIf="isLoading">
   <crem-loader></crem-loader>
 </div>
-<!-- <pre>{{ logOutput }}</pre> -->
+
 <div id="divTop"></div>
 <form (ngSubmit)="onSubmit()" [formGroup]="form">
   <div id="dynamic-forms-container">

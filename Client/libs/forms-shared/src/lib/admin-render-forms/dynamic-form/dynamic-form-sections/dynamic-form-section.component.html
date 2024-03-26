@@ -26,9 +26,7 @@
                 <dxi-column caption="Label" dataField="formItemLabel" [alignment]="'left'"></dxi-column>
                 <dxi-column caption="Control Type" dataField="formItemType.formItemType" [alignment]="'left'"></dxi-column>
               </dx-data-grid>
-              <button class="btn btn-primary btn-sm std-top-margin" (click)="addFields(); $event.preventDefault()">
-                Add Fields
-              </button>
+              <crem-button type="primary" btnStyle="flat" text="Add Fields" (click)="addFields(); $event.preventDefault()"></crem-button>
             </form>
           </mat-menu>
           <div class="actions">
@@ -58,10 +56,6 @@
               <dx-text-box *ngIf="!isRenderForm" [disabled]="!editMode"></dx-text-box>
               <fa-icon *ngIf="!isRenderForm"  [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
             </div>
-            <!-- <div *dxTemplate="let data of 'EmailAddress'">
-              <dx-text-box [(value)]="formDataLookup[data.dataField]?.[data.name.sourceColumn] || defaultValue" [formControlName]="data.dataField"></dx-text-box>
-              <fa-icon [icon]="faCog" (click)="launchFormItemPopup(data)" class="form-field-tooltip"></fa-icon>
-            </div> -->
             <div *dxTemplate="let data of 'Date'">
               <dx-date-box *ngIf="isRenderForm" [formControlName]="data.dataField"></dx-date-box>
               <dx-date-box *ngIf="!isRenderForm" [disabled]="!editMode"></dx-date-box>

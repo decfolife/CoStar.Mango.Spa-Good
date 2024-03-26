@@ -24,3 +24,7 @@ div.dynamic-form {
 .no-icon {
     width: 30px;
 }
+
+:host ::ng-deep crem-button {
+    margin-left: 16px;
+}

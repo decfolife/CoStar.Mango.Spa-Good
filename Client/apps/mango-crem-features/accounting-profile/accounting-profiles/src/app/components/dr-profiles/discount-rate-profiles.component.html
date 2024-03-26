@@ -5,19 +5,21 @@
             <dx-text-box [(value)]="searchText" id="listPageSearch" class="searchbox" placeholder="Search..." [showClearButton]="true" valueChangeEvent="keyup" (onValueChanged)="searchDataGrid($event)"></dx-text-box>
             <app-portfolio-dropdown class="discount-rate" (masterGroupID)="populateDiscountRateProfiles($event)"></app-portfolio-dropdown>
         </div>
+
         <div class="controls-right">
-            <button id="filterBtn" class="btn btn-primary-outline" (click)="showFilterBuilder()">
-                Filters
+            <crem-button id="filterBtn" type="primary" btnStyle="stroked" (click)="showFilterBuilder()">
+                <div id="filterTxt">Filters</div>
                 <div *ngIf="appliedFilterCount > 0 && !showClearFilters" class="badge primary costar std-left-margin" (mouseover)="toggleClearFilters()">
                     {{appliedFilterCount}}
                 </div>
                 <div *ngIf="appliedFilterCount > 0 && showClearFilters" class="badge primary costar std-left-margin underline" (mouseout)="toggleClearFilters()" (click)="clearGridFilters($event)">
                     Clear {{appliedFilterCount}} Filters
                 </div>
-            </button>
-            <button id="moreBtn" class="btn btn-primary-outline" [matMenuTriggerFor]="listMenu">
-              More <fa-icon [icon]="faCaretDown"></fa-icon>
-            </button>
+            </crem-button>
+
+            <crem-button id="moreBtn" type="primary" btnStyle="stroked" [matMenuTriggerFor]="listMenu" text="More" icon="faCaretDown" iconPosition="right">
+            </crem-button>
+
             <mat-menu #listMenu="matMenu">
                 <button id="columnChooserBtn" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>
                 <button id="exportBtn" mat-menu-item (click)="exportDataGrid()">Export</button>
@@ -25,12 +27,11 @@
                 <mat-button-toggle-group mat-menu-item>
                     <mat-slide-toggle [(ngModel)]="showArchived" (click)="$event.stopPropagation()" (change)="toggleArchiveFilter($event)">Show Archived</mat-slide-toggle>
                 </mat-button-toggle-group>
-
             </mat-menu>
-            <button type="button" *ngIf="service.userRights === 2" id="addBtn" class="btn btn-primary" (click)="addDiscountRateProfile($event)">
-              <fa-icon [icon]="faPlus"></fa-icon> Add
-            </button>
+
+            <crem-button type="primary" icon="faPlus" *ngIf="service.userRights === 2" (click)="addDiscountRateProfile($event)" text="Add" id="addBtn" iconPosition="right"></crem-button>
         </div>
+
     </div>
 
     <div id="discountRateGrid" class="list-page-data-grid-wrapper">

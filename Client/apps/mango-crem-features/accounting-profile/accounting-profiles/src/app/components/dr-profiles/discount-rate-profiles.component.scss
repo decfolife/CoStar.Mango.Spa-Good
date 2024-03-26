@@ -80,15 +80,6 @@ span.dx-clear-button-area {
   min-width: 34px !important;
   right: 0;
 }
-div.list-page-controls-wrapper>div.controls-right button.btn fa-icon {
-  font-size: 12px;
-  margin: 0px;
-}
-button#moreBtn fa-icon.ng-fa-icon {
-  right: -4px;
-  bottom: -4px;
-  color: #0559b3 !important;
-}
 .mat-mdc-menu-content {
   overflow-x: hidden !important;
 }
@@ -98,15 +89,6 @@ button#addBtn fa-icon.ng-fa-icon {
   right: 0 !important;
   top: 0 !important;
   bottom: 0 !important;
-}
-div.list-page-controls-wrapper>div.controls-right {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  z-index: 500;
-  position: relative !important;
-  top: -18px !important;
-  left: -20px !important;
 }
 div.list-page-controls-wrapper>div.controls-left {
   display: flex;
@@ -130,4 +112,11 @@ div.list-page-controls-wrapper>div.controls-left {
 
 .discount-rate {
   margin-bottom: 0px;
+}
+
+:host ::ng-deep crem-button{
+  margin-left: 16px;
+  div#filterTxt {
+    padding: 2px;
+  }
 }
