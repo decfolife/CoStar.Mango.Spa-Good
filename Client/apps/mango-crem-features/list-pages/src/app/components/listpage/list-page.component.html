@@ -407,10 +407,10 @@
 
     <div *dxTemplate="let d of 'linkTemplate'">
       <ng-container *ngIf="getTemplateLink(d) as cellNav; else showTextBlock">
-        <button mat-flat-button
+        <button
           class="grid-link"
           (click)="validateSecurity(cellNav, $event)"
-          [title]="(d.text) ? d.text : ''"
+          [title]="(d.text) ? d.text : 'No data'"
           [attr.aria-label]="(d.text) ? d.text : null"
         >
           <div class="show-carriage-returns">{{ d.text }}</div>
@@ -418,9 +418,9 @@
       </ng-container>
 
       <ng-template #showTextBlock>
-        <button mat-flat-button
+        <button
           class="grid-link"
-          [title]="(d.text) ? d.text : ''"
+          [title]="(d.text) ? d.text : 'No data'"
           [attr.aria-label]="(d.text) ? d.text : null"
         >
           <a class="show-carriage-returns" (click)="gridRowClick(d)">{{ d.text }}</a>

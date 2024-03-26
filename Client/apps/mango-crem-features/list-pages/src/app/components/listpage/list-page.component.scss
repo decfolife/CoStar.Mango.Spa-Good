@@ -249,13 +249,11 @@
     .mat-raised-button,
     .mat-icon-button,
     .mat-stroked-button,
-    .mat-flat-button,
     .mat-fab,
     .mat-mini-fab {
       font-size: 14px;
     }
 
-    .mat-flat-button,
     .mat-fab,
     .mat-mini-fab {
       height: 32px;
@@ -497,27 +495,6 @@
           vertical-align: baseline;
         }
 
-        .mat-flat-button {
-          background-color: transparent !important;
-          color: colors.$costarBlue !important;
-          cursor: pointer;
-          font-weight: normal;
-          line-height: inherit;
-          margin: 0;
-          padding: 0;
-          white-space: normal;
-          height: 100%;
-          text-align: left;
-
-          &:focus,
-          &:active {
-            outline: 0;
-          }
-
-          [matripple] {
-            display: none;
-          }
-        }
 
         .dx-row.dx-data-row {
           &.dx-state-hover {
@@ -601,18 +578,34 @@
         height: calc(100vh - 50px);
       }
     }
-  }
+
+    .grid-link {
+        background-color: transparent;
+        color: colors.$costarBlue;
+        cursor: pointer;
+        font-weight: normal;
+        line-height: inherit;
+        margin: 0;
+        padding: 0;
+        white-space: normal;
+        height: 100%;
+        text-align: left;
+        letter-spacing: normal;
+        border: 0px;
+    
+        &:focus,
+        &:active {
+            outline: 0;
+        }
+      }
+
+      .show-carriage-returns {
+        white-space: pre-wrap;
+        color: colors.$costarBlue; 
+      }
+    }
   // END List Grid Wrapper
 
-  button.mat-focus-indicator.grid-link.mat-flat-button.mat-button-base {
-    &:hover{
-      text-decoration: none !important;
-    }
-    a.show-carriage-returns {
-      white-space: pre-wrap;
-      color:#055094;
-    }
-  }
 
     div.dx-datagrid.dx-gridbase-container{
       div.dx-datagrid-pager.dx-state-focused {
