@@ -34,8 +34,14 @@ export class SaveTeamTemplateComponent implements OnInit {
       (res:any ) => {
         if(!res || !res.success) {
           this.dialogRef.close();
-          this.dialogService.alert('Team Template Not Saved', 
+          if(res.clientErrorMessage != null && res.clientErrorMessage.startsWith('The team:') && res.clientErrorMessage.endsWith('already exists')) {
+            this.dialogService.alert('Team Name Duplicated', 
+            'There is another team with the same name. Please re-name this team template or edit the existing team template as needed.', 'OK');
+          }
+          else {
+            this.dialogService.alert('Team Template Not Saved', 
             'There was an issue saving this team as a team template. Please review and try again.', 'OK');
+          }
         } else {
           this.toastr.info("Team Template has been saved.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false }); 
           this.dialogRef.close('true');
