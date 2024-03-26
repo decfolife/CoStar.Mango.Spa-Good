@@ -9,11 +9,38 @@ import { EndpointService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { AssignTasks, Team, TeamMemUpdate, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
 import notify from 'devextreme/ui/notify';
+import { DxoHeaderFilterComponent } from 'devextreme-angular/ui/nested/header-filter';
 
 @Injectable()
 export class DashboardService  extends EndpointService{
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
+  }
+
+  accessLevelHeaderFilter: DxoHeaderFilterComponent['dataSource'] = [{
+    text: 'L1',
+    value: ['accessLevel', '=', 1]
+  }, {
+    text: 'L2',
+    value: ['accessLevel', '=', 2]
+  }, {
+    text: 'L3',
+    value: ['accessLevel', '=', 3]
+  }, {
+    text: 'N/A',
+    value: ['accessLevel', '=', 99]
+  }];  
+
+  returnOnOffHeaderFilters(fieldName: string): any {
+    let headerFilter: DxoHeaderFilterComponent['dataSource'] = [{
+      text: 'Off',
+      value: [fieldName, '=', false],
+    }, {
+      text: 'On',
+      value: [fieldName, '=', true],
+    }];  
+
+    return headerFilter;
   }
 
   getDashboardByIdWithChildrenQuery(dashboardId: number): Observable<any> {

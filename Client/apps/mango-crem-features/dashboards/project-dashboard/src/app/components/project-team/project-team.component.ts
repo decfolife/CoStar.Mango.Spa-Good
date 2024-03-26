@@ -41,14 +41,21 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   contactIds: number[] = [];
   searchText: string = "";
   autoExpand: boolean = false;
+  emailHeaderFilter: any;
+	shareHeaderFilter: any
+	accessLevelHeaderFilter: any
   count:number = 0;
 
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
               public toastr: ToastrService,
               private route: ActivatedRoute,
-              private dialogService: MangoDialogService,
-  ) {}
+              private dialogService: MangoDialogService
+  ) {
+      this.emailHeaderFilter = dashboardService.returnOnOffHeaderFilters('emailNotifications');;
+      this.shareHeaderFilter = dashboardService.returnOnOffHeaderFilters('shared');;
+      this.accessLevelHeaderFilter = dashboardService.accessLevelHeaderFilter;
+  }
 
   ngOnInit(): void {
     this.getClientPreferences();

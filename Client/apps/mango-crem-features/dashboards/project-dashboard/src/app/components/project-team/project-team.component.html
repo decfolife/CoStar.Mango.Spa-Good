@@ -86,9 +86,21 @@
 			<dxi-column dataField="openTasks" [cellTemplate]="'openTasksTemplate'" alignment="center"></dxi-column>
 			<dxi-column dataField="role"></dxi-column>
 			<dxi-column dataField="memberType"></dxi-column>
-			<dxi-column dataField="accessLevel" [cellTemplate]="'accessLevelTemplate'" alignment="center"></dxi-column>
-			<dxi-column dataField="emailNotifications" alignment="center" [calculateDisplayValue]="getEmailNotifyDisplayValue" dataType="string"></dxi-column>
-			<dxi-column dataField="shared" alignment="center" [calculateDisplayValue]="getSharedDisplayValue" max-width="95" dataType="string"></dxi-column>
+			<dxi-column dataField="accessLevel" [cellTemplate]="'accessLevelTemplate'" alignment="center">
+				<dxo-header-filter
+				[dataSource]="accessLevelHeaderFilter"
+			></dxo-header-filter>
+</dxi-column>
+			<dxi-column dataField="emailNotifications" alignment="center" [calculateDisplayValue]="getEmailNotifyDisplayValue" dataType="string">
+					<dxo-header-filter
+					[dataSource]="emailHeaderFilter"
+				></dxo-header-filter>
+			</dxi-column>
+			<dxi-column dataField="shared" alignment="center" [calculateDisplayValue]="getSharedDisplayValue" max-width="95" dataType="string">
+				<dxo-header-filter
+				[dataSource]="shareHeaderFilter"
+				></dxo-header-filter>
+			</dxi-column>
 			<dxi-column dataField="description" [wordWrapEnabled]="false" width='160'cssClass="wrapOption-column"></dxi-column>
 			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false" [visible]="userAccessLevel == 1">

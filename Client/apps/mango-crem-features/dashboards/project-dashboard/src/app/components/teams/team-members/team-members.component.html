@@ -52,12 +52,18 @@
 			</dxi-column>
 			<dxi-column caption='Email Notifications' dataField="emailOn" alignment="center" dataType="string"
 				[calculateDisplayValue]="getEmailonDisplayValue" editCellTemplate="emailToggleTemplate">
+					<dxo-header-filter
+					[dataSource]="emailHeaderFilter"
+				></dxo-header-filter>
 			</dxi-column>
 			<dxi-column dataField="level" caption='Access Level' dataType="string" alignment="center" [setCellValue]="setLevelValue">
 				<dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
 			</dxi-column>
 			<dxi-column [visible]="showShareColumn" dataField="share" alignment="center" caption='Share' dataType="string" width="90"
 				[calculateDisplayValue]="getShareDisplayValue" editCellTemplate="sharedToggleTemplate">
+					<dxo-header-filter
+					[dataSource]="shareHeaderFilter"
+					></dxo-header-filter>
 			</dxi-column>
 			<dxi-column type="buttons" width="110" [fixed]="true" fixedPosition="right" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false">
