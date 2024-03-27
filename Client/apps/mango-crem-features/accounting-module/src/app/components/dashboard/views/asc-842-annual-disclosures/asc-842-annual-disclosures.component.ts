@@ -28,6 +28,11 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       name: 'Lease Cost',
       index: 2
     },
+    {
+      id: 'ShortTermReportingExceptionsMetrics',
+      name: 'Short Term Reporting Exceptions Metrics',
+      index: 3
+    },
   ];
   public pivotCardData: any;
   public loading: boolean = true;
@@ -52,10 +57,11 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   ngOnInit() {
     this.dataSources = [];
     this.fieldConfigs = [];
-    this.inAppDisclosureService.getCurrencyDecimalPrecision(this.selectedCurrency).subscribe((result) => {
-      this.currencyDecimalPrecision = result?.data?.DecimalPrecision;
-      this.refreshCardData();
-    })
+    this.inAppDisclosureService.getCurrencyDecimalPrecision(this.selectedCurrency)
+      .subscribe((result) => {
+        this.currencyDecimalPrecision = result?.data?.DecimalPrecision;
+        this.refreshCardData();
+      });
 
   }
 
@@ -66,8 +72,8 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       .subscribe((result) => {
         this.setLeaseCountCardData(result.data[0])
         this.setROUAssetBalanceCardData(result.data[1])
-        const mergedArrayCostCard = this.mergeArraysOfObjects(result.data[2],result.data[3]);
-        this.setLeaseCostCardData(mergedArrayCostCard)
+        this.setLeaseCostCardData(this.mergeArraysOfObjects(result.data[2],result.data[3]));
+        this.setShortTermReportingExceptionsMetrics(result.data[4]);
         this.loading = false;
       });
   }
@@ -152,6 +158,40 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       this.dataSources.push(new PivotGridDataSource({
         store: this.pivotCardData,
         fields: this.fieldConfigs[0]
+      }));
+    }
+    this.loading = false;
+  }
+
+  public setShortTermReportingExceptionsMetrics(data){
+    this.pivotCardData = [];
+    data.forEach((item) => {
+      let items = [
+        {
+          Display: "ST Lease & Reporting Exceptions Cost - Cash Basis",
+          PeriodYear: item.PeriodYear,
+          data: item.ShortTermLeaseAndReportingExceptionCostCashBasisReporting,
+        },
+        {
+          Display: "- ST Lease & Reporting Exceptions Cost - SL Accrual Basis",
+          PeriodYear: item.PeriodYear,
+          data: item.ShortTermLeaseAndReportingExceptionCostAccrualBasisReporting,
+        },
+      ];
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+      })
+    })
+
+    if (this.dataSources.length > 1) {
+      this.dataSources[3] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[3]
+      });
+    } else {
+      this.dataSources.push( new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[3]
       }));
     }
     this.loading = false;
@@ -301,9 +341,6 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         this.pivotCardData.push(item)
       })
     });
-    console.log(data)
-    console.log('this.pivotCardData',this.pivotCardData)
-    console.log('this.fieldConfigs',this.fieldConfigs)
 
     if (this.dataSources.length > 0) {
       this.dataSources[2] = new PivotGridDataSource({
@@ -365,6 +402,13 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
               } else {
                 return summaryCell.value();
               }
+            }
+            break;
+          case 'ASC 842 Annual Disclosures Short Term Reporting Exceptions Cost':
+            config[0].width = 200;
+            config[2].format = {
+              type: "fixedPoint",
+              precision: this.currencyDecimalPrecision
             }
             break;
           case 'ASC 842 Annual Lease Costs':
