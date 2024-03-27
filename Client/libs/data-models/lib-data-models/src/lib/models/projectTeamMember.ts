@@ -18,6 +18,8 @@ export interface ProjectTeamMember {
   email: string;
   phone: string;
   memberType: string;
+  allowLogOn: boolean;
+  isActive: boolean;
   projectTasks: ProjectTask[];
   taskStatusCounts: TaskStatusCount[];
 }

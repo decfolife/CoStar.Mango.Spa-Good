@@ -45,6 +45,8 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 	shareHeaderFilter: any
 	accessLevelHeaderFilter: any
   count:number = 0;
+  projectMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
+                                Please consider replacing this team member or updating their User record.`;
 
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,

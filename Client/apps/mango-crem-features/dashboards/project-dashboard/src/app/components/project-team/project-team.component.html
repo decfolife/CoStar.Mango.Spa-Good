@@ -112,12 +112,12 @@
 						</button>
 		    			<mat-menu #memberActionsMenu="matMenu" class="projectMemberActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item  class="ptm-edit" *ngIf="((member.data.memberType).toLowerCase().trim()) !== 'temporary contact' " 
+								<li mat-mdc-menu-item  class="ptm-edit" *ngIf="((member.data.memberType).toLowerCase().trim()) !== 'temporary contact' " 
 									(click)=" addOrEditMember(member.data.memberType.trim() == 'Team Member'? 'ETM' : 'ETU', member.data)">
 									Edit
 								</li>
-								<li mat-menu-item  class="ptm-remove" (click)="removeContactOrMember(member.data)">Remove</li>
-								<li mat-menu-item  class="ptm-makeManager" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
+								<li mat-mdc-menu-item  class="ptm-remove" (click)="removeContactOrMember(member.data)">Remove</li>
+								<li mat-mdc-menu-item  class="ptm-makeManager" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
 							</ul>
 						</mat-menu>
 					</div>
@@ -130,7 +130,13 @@
 				<span class="ptm-managerIcon" *ngIf="member.data.isManager">
 					<mat-icon role="none" aria-label="Manager">manage_accounts</mat-icon>
 				</span>
-				<span class="ptm-memberName">{{member.data.teamMember}}</span>		
+				<span class="ptm-memberName">{{member.data.teamMember}}</span>
+				<span class="ptm-info" *ngIf="!member.data.isActive || !member.data.allowLogOn">
+					<crem-tooltip
+						[externalId]="'ptmToolTipId' + member.data.contactID + member.data.teamId"
+						[helpTextData]="projectMemberInfo"
+					></crem-tooltip>
+				</span>			
 			</div>
 			<div *dxTemplate="let cell of 'accessLevelTemplate'" >
 				<div>{{cell.value == 1 ? 'L1' : cell.value == 2 ? 'L2': cell.value == 3? 'L3': 'N/A'}}</div>

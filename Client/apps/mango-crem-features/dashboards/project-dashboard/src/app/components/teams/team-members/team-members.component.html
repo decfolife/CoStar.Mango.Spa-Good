@@ -77,8 +77,8 @@
 						</button>
 		    		<mat-menu #teamMemberActionsMenu="matMenu" class="teamMemberActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item (click)="editRow(member)" class="tmam-edit">Edit</li>
-								<li mat-menu-item (click)="removeTeamMember(member.data)" class="tmam-remove">Remove</li>
+								<li mat-mdc-menu-item (click)="editRow(member)" class="tmam-edit">Edit</li>
+								<li mat-mdc-menu-item (click)="removeTeamMember(member.data)" class="tmam-remove">Remove</li>
 							</ul>
 						</mat-menu>
 						<div *ngIf="member.data.editMode" class="teamMemberEditButtons">

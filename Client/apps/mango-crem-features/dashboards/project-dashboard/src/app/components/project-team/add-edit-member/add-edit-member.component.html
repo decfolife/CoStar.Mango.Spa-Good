@@ -8,57 +8,71 @@
   <div modalContent id="addEditMemberModal-content">
     <dx-validation-group #targetGroup>  
       <div class="aet-members" *ngIf="operation=='ATM' || operation=='ETM'">
-      <h4 class="nameLabel label" [ngClass]="nameFieldInvalid ? 'fieldInvalid' : ''">{{nameFieldInvalid ? '*' : ''}} Name</h4>
-      <div id="container">
-        <dx-drop-down-box 
-            class="aet-membersDropDown"
-            placeholder="Start typing to search for additional users"
-            [value]="selectedMember"
-            [(opened)]="isMemberDropDownBoxOpened" 
-            [disabled]="operation == 'ETM'? true : false"
-            (onInput)="searchTeamMembers($event.event.target.value)"
-            (onEnterKey)="toggleList()"
-            (onOpened)="focusOnDropDownInput($event)"
-            [openOnFieldClick]="false"
-            [acceptCustomValue]="true"
-            [showClearButton]="true"
-            [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'memberSelection'}"
-        >
-          <dxo-drop-down-options [focusStateEnabled]="true"></dxo-drop-down-options>
-          <dx-list 
-              #SelectionMembersList
-              id="aet-membersList"
-              [dataSource]="filteredMembers" 
-              selectionMode="single"
-              itemTemplate="membersListTemplate"
-              [activeStateEnabled]="false" 
-              [elementAttr]="{'aria-label': 'List of Members to Select'}"
-              (onItemClick)="onMemberClicked($event)"  
-              (onSelectionChanged)="selectionChanged($event)" 
-              (onItemRendered)="onItemRendered($event)"           
+        <h4 class="nameLabel label info" [ngClass]="nameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">{{nameFieldInvalid ? '*' : ''}} Name</span>
+          <span class="aem-info" *ngIf="operation=='ETM' && (!teamMember.isActive || !teamMember.allowLogOn)">
+            <crem-tooltip
+              [externalId]="'aemToolTipId' + teamMember.contactID + teamMember.teamId"
+              [helpTextData]="projectMemberInfo"
+            ></crem-tooltip>
+          </span>
+        </h4>
+        <div id="container">
+          <dx-drop-down-box 
+              class="aet-membersDropDown"
+              placeholder="Start typing to search for additional users"
+              [value]="selectedMember"
+              [(opened)]="isMemberDropDownBoxOpened" 
+              [disabled]="operation == 'ETM'? true : false"
+              (onInput)="searchTeamMembers($event.event.target.value)"
+              (onEnterKey)="toggleList()"
+              (onOpened)="focusOnDropDownInput($event)"
+              [openOnFieldClick]="false"
+              [acceptCustomValue]="true"
+              [showClearButton]="true"
+              [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'memberSelection'}"
           >
-            <div *dxTemplate="let member of 'membersListTemplate'"  >
-              <div>
-                <span class="aet-addPlusIcon"><mat-icon aria-label="">add_circle</mat-icon></span>
-                <span class="aet-memberData">
-                  <span class=aet-memberName>{{member.Name}}</span>
-                  <span class="aet-company"> - {{member.Company}}</span>
-                  <span class="aet-email"> - {{member.Email}}</span>
-                </span>
-              </div>  
-            </div>
-          </dx-list>
-          <dx-validator name="nameValidator">
-            <dxi-validation-rule
-              type="required"
-              message=""
-            ></dxi-validation-rule>
-          </dx-validator>
-      </dx-drop-down-box>
-      </div>
+            <dxo-drop-down-options [focusStateEnabled]="true"></dxo-drop-down-options>
+            <dx-list 
+                #SelectionMembersList
+                id="aet-membersList"
+                [dataSource]="filteredMembers" 
+                selectionMode="single"
+                itemTemplate="membersListTemplate"
+                [activeStateEnabled]="false" 
+                [elementAttr]="{'aria-label': 'List of Members to Select'}"
+                (onItemClick)="onMemberClicked($event)"  
+                (onSelectionChanged)="selectionChanged($event)" 
+                (onItemRendered)="onItemRendered($event)"           
+            >
+              <div *dxTemplate="let member of 'membersListTemplate'"  >
+                <div>
+                  <span class="aet-addPlusIcon"><mat-icon aria-label="">add_circle</mat-icon></span>
+                  <span class="aet-memberData">
+                    <span class=aet-memberName>{{member.Name}}</span>
+                    <span class="aet-company"> - {{member.Company}}</span>
+                    <span class="aet-email"> - {{member.Email}}</span>
+                  </span>
+                </div>  
+              </div>
+            </dx-list>
+            <dx-validator name="nameValidator">
+              <dxi-validation-rule
+                type="required"
+                message=""
+              ></dxi-validation-rule>
+            </dx-validator>
+         </dx-drop-down-box>
+        </div>
       </div>
       <div class="aet-name" *ngIf="operation=='ATU' || operation=='ETU' || operation=='AC'">
-        <h4 class="nameLabel label" [ngClass]="firstNameFieldInvalid || lastNameFieldInvalid ? 'fieldInvalid' : ''">{{firstNameFieldInvalid || lastNameFieldInvalid ? '*' : ''}} Name</h4>
+        <h4 class="nameLabel label info" [ngClass]="firstNameFieldInvalid || lastNameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">{{firstNameFieldInvalid || lastNameFieldInvalid ? '*' : ''}} Name</span>
+          <span class="aem-info" *ngIf="operation=='ETU' && (!teamMember.isActive || !teamMember.allowLogOn)">
+            <crem-tooltip
+              [externalId]="'aemToolTipId' + teamMember.contactID + teamMember.teamId"
+              [helpTextData]="projectMemberInfo"
+            ></crem-tooltip>
+          </span>
+        </h4>
         <div class="aet-firstLastName">
           <div class="firstName">
             <dx-text-box

@@ -79,6 +79,8 @@ export class AddEditMemberComponent implements OnInit {
   lastName: string = "";
   emailId: string = "";
   dropdownbox;
+  projectMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
+                              Please consider replacing this team member or updating their User record.`;
 
   
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')

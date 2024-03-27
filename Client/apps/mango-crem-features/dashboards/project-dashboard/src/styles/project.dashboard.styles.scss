@@ -522,24 +522,23 @@ body {
 
 
 //*****  'Manage Teams'  and 'Project Team' Page Styles *****//
-.mat-menu-panel {
+.mat-mdc-menu-panel {
  &.teamsActionsMenu, &.teamsMoreMenu, &.projectTeamMoreMenu, &.projectTeamActionsMenu, &.projectTeamAddMenu {
 	  min-height: unset;
-	 .mat-menu-content {
+	 .mat-mdc-menu-content {
 			padding: 0 !important;
 	  }	
-		.mat-menu-item {
+		.mat-mdc-menu-item {
+			padding: 8px 16px;
 			height: 34px;
+			min-height: 34px;
 			display: flex;
 			line-height: 34px;
-			span { 
-				height: inherit;
-			}
 		}
 	}
 	&.teamActionsMenu, &.teamMemberActionsMenu, &.projectMemberActionsMenu, &.projectTeamAddMenu {
 		min-height: unset;
-		& .mat-menu-content {
+		& .mat-mdc-menu-content {
 			padding: 0;
 		}
 	}
@@ -831,14 +830,14 @@ body {
 	}
 }
 
-.teamsMembers-container, #aet-selectedMembers-container {
-	.mtm-memberNameAndInfo, .aet-memberNameAndInfo {
+.teamsMembers-container, #aet-selectedMembers-container, #projectTeam-container, #addEditMemberModal-content {
+	.mtm-memberNameAndInfo, .aet-memberNameAndInfo, .ptm-teamMemberTemplate, .nameLabel.label.info {
 		display: flex;
-		.mtm-info, .aet-info {
+		.mtm-info, .aet-info, .ptm-info, .aem-info {
 			crem-tooltip {
 				div.dx-field {
 					min-height: 16px;
-					[id^="tmtmToolTip"], [id^="taetToolTip"] {
+					[id^="tmtmToolTip"], [id^="taetToolTip"], [id^="tptmToolTip"],  [id^="taemToolTip"] {
 						height: 16px;
 					}
 					.dx-field-value-static {
@@ -857,6 +856,13 @@ body {
 		.aet-info svg {
 			transform: translate(8px, 6px) scale(1);
 		} 
+		.ptm-info svg {
+			transform: translateY(-2px);
+		}
+		.aem-info {
+			margin-left: 8px;
+			transform: translate(2px, 8px) scale(0.8);
+		}
 	}
 }
 

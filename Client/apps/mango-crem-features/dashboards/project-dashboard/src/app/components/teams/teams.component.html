@@ -96,8 +96,8 @@
 						</button>
 		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
 							<ul role="menu">
-								<li mat-menu-item (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit" class="tam-edit">Edit</li>
-								<li mat-menu-item (click)="deleteTeams(team.data, true)" *ngIf="team.data.canDelete" class="tam-delete">Delete</li>
+								<li mat-mdc-menu-item (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit" class="tam-edit">Edit</li>
+								<li mat-mdc-menu-item (click)="deleteTeams(team.data, true)" *ngIf="team.data.canDelete" class="tam-delete">Delete</li>
 							</ul>
 						</mat-menu>
 					</div>
