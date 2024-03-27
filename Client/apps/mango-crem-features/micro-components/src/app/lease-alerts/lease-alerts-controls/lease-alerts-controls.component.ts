@@ -192,14 +192,14 @@ export class LeaseAlertsControlsComponent implements OnInit {
 
   refreshAlerts() {
     this.refreshingAlerts = true;
-    this.service.runLeaseAlertRulesByLeaseAbstractID(this.leaseAbstractID).subscribe((res: ApiResponse) => {
-      if (res.succeeded) {
+    this.service.runLeaseAlertRulesByLeaseAbstractID(this.leaseAbstractID).subscribe((res: any) => {
+      if (res.success) {
         this.alertsGrid.filterLeases(this.alertsGrid.currentPortfolio, this.currentLeaseStatusFilter);
       }
 
       notify({
-        message: res.succeeded ? 'Alerts successfully refreshed' : 'There was an issue while refreshing alerts',
-        type: res.succeeded ? 'success' : 'error',
+        message: res.success ? 'Alerts successfully refreshed' : 'There was an issue while refreshing alerts',
+        type: res.success ? 'success' : 'error',
         displayTime: 3000,
         position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
         maxWidth: '400px',

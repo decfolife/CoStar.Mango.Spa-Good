@@ -839,10 +839,10 @@ export class AlertsGridComponent implements OnInit {
       ? this.dismissToggleReasonText
       : this.selectedDismissToggleReason;
 
-    this.alertsService.toggleLeaseAlertsIsDismissed(dto).subscribe((res: ApiResponse) => {
+    this.alertsService.toggleLeaseAlertsIsDismissed(dto).subscribe((res: any) => {
       notify({
-        message: `Lease alert update ${res.succeeded ? 'successful' : 'failed'}.`,
-        type: res.succeeded ? 'success' : 'error',
+        message: `Lease alert update ${res.success ? 'successful' : 'failed'}.`,
+        type: res.success ? 'success' : 'error',
         displayTime: 3000,
         position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
         maxWidth: '400px',

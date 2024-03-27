@@ -183,7 +183,7 @@ export class WorkflowDropdownComponent {
       } else if(this.workflowSettings.isIncrementOneLevelEnforced && nextStatusOrderNumberAfterSelectedStatus !== null && 
                 opt.statusOrder > nextStatusOrderNumberAfterSelectedStatus){
         itemDisabled = true;
-        itemDisabledReason = "You can only increment on status at a time.";
+        itemDisabledReason = "You can only increment one status at a time.";
       } else if(!this.workflowSettings.isApproveOwnChangesEnabled && opt.isApprovedStatus
                 && this.modifiedById === this.userId){
         itemDisabled = true;
