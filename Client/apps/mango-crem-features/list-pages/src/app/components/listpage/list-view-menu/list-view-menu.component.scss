@@ -1,37 +1,58 @@
 @use 'src/assets/styles/colors';
 
 $menuWidth: 275px;
-
+$menuItemHeight: 32px;
 /**
  * :host :ng-deep: It will work from that component down (Into the children, grand children etc).
  */
 :host ::ng-deep {
-
   .list-view-button {
     width: $menuWidth;
+    height:$menuItemHeight;
+    background-color: colors.$white;
+    border: 1px solid colors.$gray5;
+    display: flex;
+    justify-content: space-between;
 
-    &[aria-expanded="true"] {
-      fa-icon {
-        background-color: colors.$color-neutral-medium;
-      }
+    &:hover,:focus, :focus-visible {
+      background-color: colors.$white;
+      border-color: rgba(51, 122, 183, 0.4);
     }
-
-    &[aria-expanded="true"] {
-      fa-icon {
-        background-color: colors.$color-neutral-medium;
-      }
+    
+    &:focus {
+      border-color: rgba(51, 122, 183, 0.4);
     }
-
-    .mat-button-wrapper {
-      display: flex;
-      justify-content: space-between;
-
       span {
         display: block;
         max-width: 100%;
         overflow: hidden;
         text-align: left;
         text-overflow: ellipsis;
+        padding-top: 2px;
+      }
+
+      svg {
+        padding-top: 6px;
+      }
+  
+      fa-icon {
+        border-radius: 2px;
+        color: colors.$costarBlue;
+        height: 26px;
+        margin: -6px -5px 0 0;
+        width: $menuItemHeight;
+      }
+  
+      &:hover {
+        fa-icon {
+          background-color: colors.$navGray;
+          margin: -6px -5px 0 0;
+        }
+    }
+  
+    &[aria-expanded="true"] {
+      fa-icon {
+        background-color: colors.$color-neutral-medium;
       }
     }
   }
@@ -76,43 +97,43 @@ $menuWidth: 275px;
   }
 
   .mat-list {
-    padding-top: 0;
+    padding: 0;
     width: 275px;
     border: 1px solid rgba(51, 51, 51, .15);
   }
-
   .mat-expansion-panel {
     border-bottom: 1px solid rgba(51, 51, 51, .15);
     border-radius: 0;
     padding: 0 !important;
     margin: 0 !important;
-  }
 
+    header.mat-expanded {
+      height: $menuItemHeight;
+    }
+  
+    .mat-expansion-panel-body {
+      padding: 2px 5px 2px;
+    }
+  
+   .mat-expansion-panel-header {
+      font-size: 14px;
+      height: $menuItemHeight;
+      font-weight: 400;
 
-  .mat-expansion-panel-header {
-    font-size: 14px !important;
-    height: 32px !important;
+      &:focus {
+        background-color: colors.$gray5;
+      }
+    }
   }
 
   .mat-list-item {
     font-size: 14px !important;
-    height: 32px !important;
-  }
-
-  .mat-menu-trigger {
-    background-color: transparent;
-    border: none;
-    color: #0559b3;
-
-  }
-
-  .mat-menu-trigger:focus {
-    outline: #779ede solid 2px !important;
-    outline-offset: -3px;
+    height: $menuItemHeight !important;
   }
 
   .dbl-left-margin {
     margin-left: 16px !important;
+    font-size: 14px;
   }
 
   .view-list-item-flex button {
@@ -126,27 +147,28 @@ $menuWidth: 275px;
   }
 
   .view-list-item-flex button:hover {
-    background: rgba(0, 0, 0, .04);
+    background: colors.$gray6;
   }
 
   .view-list-item-flex button:focus {
-    outline: #779ede solid 2px !important;
+    outline: colors.$blueShade solid 2px;
     outline-offset: -3px;
   }
 
   .info-menu-ul {
-    margin-top: 10px !important;
-    background-color: #0559b3 !important;
-
-  }
-  .mat-expansion-panel-body {
-    padding: 7px 24px 7px !important;
+    margin-top: 10px;
+    background-color: colors.$costarBlue;
   }
 
   .view-list-item-flex {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    font-weight: 400;
+  }
+
+  .mdc-list-item.mdc-list-item--with-one-line {
+    height: 35px;
   }
 }
 
@@ -172,10 +194,6 @@ $menuWidth: 275px;
             padding-top: 0;
             width: $menuWidth;
 
-            .mat-expansion-panel-header {
-              font-size: 14px;
-              height: 32px;
-            }
             .mat-expansion-panel {
               border-bottom: 1px solid rgba(51, 51, 51, .15);
               border-radius: 0;
@@ -184,7 +202,7 @@ $menuWidth: 275px;
 
                 .mat-list-item {
                   font-size: 14px !important;
-                  height: 32px !important;
+                  height: $menuItemHeight !important;
                   .mat-list-item-content {
                     padding: 0 0 0 16px;
                   }
@@ -199,6 +217,7 @@ $menuWidth: 275px;
             display: flex;
             justify-content: space-between;
             width: 100%;
+            font-weight: 400;
 
             span:not(.dbl-left-margin) {
               overflow: hidden;
@@ -241,24 +260,20 @@ $menuWidth: 275px;
       margin-top: 10px;
       margin-right: 15px;
     }
-  
     .mat-menu-child-button {
-      height: 35px;
+      min-height: 35px;
       line-height: 35px;
       border-bottom: 1px solid rgba(51, 51, 51, .15);
+      
+    span.mat-mdc-menu-item-text{
+      font-size: 14px !important;
     }
+  }
     
     .mat-list-base .mat-list-item .mat-list-item-content {
       padding: 0px !important;
     }
 
-    .mat-expansion-panel header.mat-expanded {
-      height:  32px !important;
-    }
-
-    .mat-expansion-panel-body {
-      padding: 7px 24px 7px !important;
-    }
   }
 
 // TODO: In use?
