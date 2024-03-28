@@ -90,7 +90,7 @@ export class LeaseAlertsControlsComponent implements OnInit {
     }
 
     this.service.getPortfolios().subscribe(res => {
-      this.portfolios = res.data as Portfolio[];
+      this.portfolios = res.data.portfolios as Portfolio[];
     });
 
     this.sessionState = this.loadSessionState();
