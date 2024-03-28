@@ -14,7 +14,7 @@
 }
 
 .user-settings-dialog .modalContent {
-  .mat-tab-header {
+  .mat-mdc-tab-header {
     border-top: 1px solid $gray;
     border-bottom: 1px solid $gray;
     position: sticky;
@@ -27,29 +27,31 @@
     background-color: $bodyBackgroundDarkGray;
   }
 
-  div.mat-tab-body-wrapper {
+  div.mat-mdc-tab-body-wrapper {
     padding: 6px 0px 0px 16px;
   }
 
-  .mat-tab-group.mat-primary .mat-ink-bar,
-  .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  .mdc-tab-indicator__content.mdc-tab-indicator__content--underline, .mat-mdc-tab.mdc-tab--active:focus .mdc-tab-indicator__content--underline, .mat-mdc-tab.mdc-tab--active:hover .mdc-tab-indicator__content--underline {
     background-color: $costarDarkOrange;
+    border-color: $costarDarkOrange;
     height: 3px;
   }
 
-  .mat-tab-label {
+  .mat-mdc-tab, .mat-mdc-tab:hover, .mat-mdc-tab.cdk-mouse-focused {
     height: 36px;
     width: auto !important;
     min-width: auto !important;
     padding: 0 16px;
-    color: $black;
-
-    .mat-tab-label-content {
+    flex-grow: unset !important;
+    opacity: .6 !important;
+    .mdc-tab__text-label {
       line-height: 17px;
+      color: $black;
+      letter-spacing: 0;
     }
   }
 
-  .mat-tab-label.mat-focus-indicator.mat-tab-label-active {
+  .mat-mdc-tab.mat-mdc-focus-indicator.mdc-tab-indicator--active {
     opacity: 1 !important;
   }
 

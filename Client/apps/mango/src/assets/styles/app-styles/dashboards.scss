@@ -370,7 +370,7 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
 
 
 .user-settings-dialog .modalContent {
-	.mat-tab-header {
+	.mat-mdc-tab-header {
 		border-top: 1px solid colors.$color-neutral-dark;
 		border-bottom: 1px solid colors.$color-neutral-dark;
 		position: sticky;
@@ -383,27 +383,27 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
 		background-color: colors.$bodyBackgroundDarkGray;
  	}
 
- 	div.mat-tab-body-wrapper {
+ 	div.mat-mdc-tab-body-wrapper {
 		padding: 6px 0px 0px 16px;
 	}
 
- 	.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+ 	.mat-mdc-tab-group.mat-primary .mat-ink-bar, .mat-mdc-tab-nav-bar.mat-primary .mat-ink-bar {
 		background-color: colors.$costarDarkOrange;
 		height: 3px;
  	}
- 	.mat-tab-label {
+ 	.mat-mdc-tab-label {
 		height: 36px;
 		width: auto !important;
 		min-width: auto !important;
 		padding: 0 16px;
 		color: colors.$black;
 
-		.mat-tab-label-content {
+		.mat-mdc-tab-label-content {
 			line-height: 17px;
 		}
   }  
 
- .mat-tab-label.mat-focus-indicator.mat-tab-label-active {
+ .mat-mdc-tab-label.mat-focus-indicator.mat-mdc-tab-label-active {
 		opacity: 1 !important;
   }
 
