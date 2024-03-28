@@ -37,8 +37,7 @@
 				</mat-menu>	 
 			</div>
 			<div class="addOptions" [ngClass]="{'hideAdd': (userAccessLevel !== 1 && userAccessLevel !== 2)}">
-				<crem-button btnStyle="stroked" color="primary" text="Add" iconPosition="right" icon="faCaretDown" [matMenuTriggerFor]="addMenu" (click)="$event.preventDefault()">
-				</crem-button>
+				<crem-button btnStyle="flat" color="primary" text="Add" iconPosition="right" icon="faCaretDown" [matMenuTriggerFor]="addMenu" (click)="$event.preventDefault()"></crem-button>
 				<mat-menu #addMenu="matMenu" class="projectTeamAddMenu">				
 					<button mat-menu-item class="addBtn-teamMember" (click)="addOrEditMember('ATM')" *ngIf="userAccessLevel == 1">Add Team Member</button>      
 					<button mat-menu-item class="addBtn-temporaryUser" (click)="addOrEditMember('ATU')" *ngIf="userAccessLevel == 1 && addTempUserSetting == 1">Add Temporary User</button>  
