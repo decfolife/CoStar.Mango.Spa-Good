@@ -65,6 +65,7 @@ export class CreateSegmentComponent {
             name: string;
             active: boolean;
             archived: boolean;
+            hideToasts: boolean;
         }
     ) { }
 
@@ -562,6 +563,7 @@ export class CreateSegmentComponent {
                                     }
                                 })
                             } else {
+                              if(!this.data.hideToasts || this.data.hideToasts == null){
                                 notify({
                                     message: 'Required Field Missing.',
                                     type: 'error',
@@ -570,6 +572,7 @@ export class CreateSegmentComponent {
                                     maxWidth: '500px',
                                     closeOnClick: true,
                                 })
+                              }
                             }
                         }
                     })
