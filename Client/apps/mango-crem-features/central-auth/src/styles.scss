@@ -299,6 +299,7 @@ div.dx-button {
 	}
 }
 
+// Dx Popup
 .dx-popup-wrapper {
   .dx-overlay-content {
     border-radius: 2px;
@@ -312,4 +313,11 @@ div.dx-button {
   div.dx-popup-content {
 	padding: 0;
   }
+}
+
+// Dx tooltip for customer-selection page.
+#client-tooltip {
+	.dx-overlay-content, .dx-popup-content {
+		padding: 0;
+	}
 }

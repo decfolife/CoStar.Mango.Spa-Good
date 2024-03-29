@@ -28,7 +28,7 @@
                   </mat-card-title>
                 </mat-card-header>
               </mat-card>
-              <dx-tooltip target="{{'#recent-site-card' + i}}" [(visible)]="tooltipState[i]" position='top'>
+              <dx-tooltip target="{{'#recent-site-card' + i}}" [(visible)]="tooltipState[i]" position='top' [wrapperAttr]="{ id: 'client-tooltip'}">
                 <div class="tooltip-content">{{ client.clientKey.toUpperCase( ) }}</div>
               </dx-tooltip>
             </div>
