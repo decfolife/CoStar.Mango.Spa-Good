@@ -45,6 +45,7 @@ export class AuthGuard implements CanActivate {
             }
           }),
           catchError(error => {
+            this.facade.logout()
             this.navigationService.redirectToCentralAuth()
             return of(false)
           })

@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DBkeys, NotificationService, StorageService } from '@mango/core-shared';
-import { Notification, NotificationTypesEnum, OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_CONTACT_ID_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { Notification, NotificationTypesEnum } from '@mango/data-models/lib-data-models';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription, combineLatest } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
 import { MangoAppFacade } from './+state/app/app.facade';
 import { MangoNavigationService } from './services/navigation.service';
 
@@ -29,14 +28,15 @@ export class AppComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private navigationService: MangoNavigationService
   ) {
-
     this.subs.add(this.notificationService
       .getNotification()
       .subscribe(notification => this.showNotification(notification)))
+
     this.loaded$ = this.facade.loaded$;
     const authenticatedUser = this.storageService.getData(DBkeys.USER_AUTH)
     const contactRecord = this.storageService.getData(DBkeys.CONTACT_RECORD)
     const clientKey = this.storageService.getData(DBkeys.CLIENT_KEY)
+    
     if (authenticatedUser && contactRecord && clientKey) {
       this.facade.setAuthenticatedUser(authenticatedUser),
       this.facade.setContactRecord(contactRecord)
@@ -46,22 +46,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.facade.localAuth()
-    combineLatest([this.activatedRoute.queryParams, this.facade.clientKey$, this.facade.contactRecord$]).pipe(
-      filter(([queryParams, clientKey, contactRecord]) => !!queryParams && Object.keys(queryParams).length > 0 && !!clientKey && !!contactRecord),
-      map(([queryParams, clientKey, contactRecord]) => ({
-        clientKey: queryParams[OAUTH_CLIENT_KEY_QUERY_PARAM],
-        contactId: queryParams[OAUTH_CONTACT_ID_QUERY_PARAM],
-        currentClientKey: clientKey,
-        currentContactId: contactRecord.contactID
-      })),
-      tap(({ clientKey, contactId, currentClientKey, currentContactId }) => {
-        if ((!!clientKey && clientKey != currentClientKey) || (!!contactId && !!currentContactId && contactId != currentContactId)) {
-          this.storageService.deleteData(DBkeys.USER_AUTH)
-          this.facade.clearState()
-          this.navigationService.redirectToCentralAuth()
-        }
-      })
-    ).subscribe()
     const modId = 1; // hard coded until we start getting logged in with actual data for the user
     this.getModuleNavLinksNew(modId);
   }
@@ -103,7 +87,6 @@ export class AppComponent implements OnInit, OnDestroy {
         break;
     }
   }
-
 
   ngOnDestroy(): void {
     this.subs.unsubscribe()

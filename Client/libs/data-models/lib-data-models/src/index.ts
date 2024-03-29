@@ -24,7 +24,8 @@ export { ClientSSOSettings } from './lib/models/central-auth/client-sso-settings
 export { Password } from './lib/models/central-auth/password';
 export { PasswordRequirements } from './lib/models/central-auth/password-requirements';
 export { ClientSettings } from './lib/models/central-auth/client-settings';
-export { ContactRecord } from './lib/models/central-auth/contact-record';
+// export { ContactRecord } from './lib/models/central-auth/contact-record';
+export { ContactRecord } from './lib/models/contact';
 export { ClientSitesByUser } from './lib/models/central-auth/client-sites-by-user';
 export { RecentUserSites } from './lib/models/central-auth/recent-user-sites';
 export { ServiceAccountInfo } from './lib/models/central-auth/service-account-info';

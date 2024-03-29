@@ -1,10 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AuthHTTPResponse,
   ClientSitesByUser,
   ContactRecord,
-  ContactRecordHTTPObject,
   Environment,
   GetContactRecordHTTPResponse,
   MultiClientLoginHttpRequest,
@@ -18,7 +17,7 @@ import {
   ServiceAccountChangeHistory,
   UpdateServiceAccountApiAccessRequest,
   UserAuth,
-  UpdateServiceAccountExpiresInDaysRequest,
+  UpdateServiceAccountExpiresInDaysRequest
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { Observable, of } from 'rxjs';
@@ -145,23 +144,30 @@ export class UserService {
     return this.http.get<GetContactRecordHTTPResponse>(`${this.env.appUrls.identity}/user/contactrecords/${userEmail}/${clientKey}`, { withCredentials: true });
   }
 
-  getContactRecord(email, contactId, clientKey): Observable<ContactRecordHTTPObject> {
-    return this.http.get<ContactRecordHTTPObject>(`${this.env.appUrls.identity}/user/contactrecord/${email}?contactId=${contactId}&clientKey=${clientKey}`, { withCredentials: true })
+  getContactRecord(email: string, contactId: number, clientKey: string): Observable<ContactRecord> {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'UserId': contactId,
+      'ClientKey': clientKey
+    })
+
+    return this.http.get<ContactRecord>(`${this.env.appUrls.userMaintenance}usermaintenance/getuser/${email}?contactId=${contactId}`, { headers: headers })
   }
 
-  parseContactRecordHttpObject(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
-    const { contactID, requireSSO, userRoleName, isDefaultLoginContact } = contactRecordHttpObject
-    const contactRecord: ContactRecord = {
-      contactID,
-      firstName: contactRecordHttpObject.contactFirstName,
-      lastName: contactRecordHttpObject.contactLastName,
-      requireSSO,
-      userName: contactRecordHttpObject.contactUserID,
-      userRoleName,
-      isDefaultLoginContact
-    }
-    return contactRecord
-  }
+  // parseContactRecordHttpObject(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
+  //   const { contactID, requireSSO, userRoleName, isDefaultLoginContact } = contactRecordHttpObject
+  //   const contactRecord: ContactRecord = {
+  //     contactID,
+  //     firstName: contactRecordHttpObject.contactFirstName,
+  //     lastName: contactRecordHttpObject.contactLastName,
+  //     requireSSO,
+  //     userName: contactRecordHttpObject.contactUserID,
+  //     userRoleName,
+  //     isDefaultLoginContact
+  //   }
+  //   return contactRecord
+  // }
 
   getDecodedAuthToken(token: string): Token {
     return jwt_decode<Token>(token);

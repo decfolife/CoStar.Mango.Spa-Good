@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxFormModule, DxCheckBoxModule, DxDateBoxModule, DxFormComponent } from 'devextreme-angular';
 import { ButtonModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
-import { UserInfo } from "@mango/data-models/lib-data-models";
+import { ContactRecord } from "@mango/data-models/lib-data-models";
 import { MangoAppFacade } from "@mangoSpa/src/app/+state/app/app.facade";
 import { Observable, Subscription } from 'rxjs';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
@@ -19,7 +19,7 @@ import { DatePickerModule } from '../../../../../lib-ui-elements/src/lib/date-pi
 })
 export class DateCalculatorComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription()
-  private currentUserInfo$: Observable<UserInfo>;
+  private currentUserInfo$: Observable<ContactRecord>;
   @ViewChild('dateCalculatorForm') dateCalculatorForm: DxFormComponent;
   @ViewChild('inputGroup', { static: false }) inputGroup: DxValidationGroupComponent;
   @ViewChild('outputGroup', { static: false }) outputGroup: DxValidationGroupComponent
@@ -41,14 +41,14 @@ export class DateCalculatorComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-
     this.inputDate = new Date()
 
-    this.currentUserInfo$ = this.facade.userInfo$
-    this.subscriptions.add(this.currentUserInfo$.subscribe(userInfo => {
-      this.isUserDatesEU = userInfo.userPreferences.userDatesEU;
+    this.currentUserInfo$ = this.facade.contactRecord$
+    this.subscriptions.add(this.currentUserInfo$.subscribe(contact => {
+      this.isUserDatesEU = contact.preferences.contactDatesEU;
     }));
   }
+  
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe()
   }

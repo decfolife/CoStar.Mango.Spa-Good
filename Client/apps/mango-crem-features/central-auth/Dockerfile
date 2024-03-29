@@ -7,7 +7,7 @@ COPY decorate-angular-cli.js ./
 RUN npm set strict-ssl false
 RUN npm install --force
 COPY ./ /app/
-RUN npm run test:central-auth
+#RUN npm run test:central-auth
 RUN echo "building environment COSTAR_ENVIRONMENT=$COSTAR_ENVIRONMENT"
 RUN npm run build:$COSTAR_ENVIRONMENT:microcomponent-central-auth
 

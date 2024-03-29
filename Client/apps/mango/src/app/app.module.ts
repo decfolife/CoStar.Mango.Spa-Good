@@ -123,24 +123,18 @@ export class AppModule {
         map(([url, clientKey, contactRecord]) => {
           if (url.includes('RenderForm')) {
             const queryParams = url.split('?');
-            this.router.navigateByUrl(
-              `/crem/forms/render-form?${queryParams[1]}`
-            );
+            this.router.navigateByUrl(`/crem/forms/render-form?${queryParams[1]}`);
           } else {
             const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
               url.includes(subUrl)
             );
+
+            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey)
+
             const newUrl = forceRelogin
-              ? `${
-                  environment.CAUrl
-                }?${OAUTH_CLIENT_KEY_QUERY_PARAM}=${clientKey}&${OAUTH_CONTACT_ID_QUERY_PARAM}=${contactRecord.contactID}&${OAUTH_REDIRECT_QUERY_PARAM}=${environment.cremBaseUrl.replace(
-                  '[CLIENT]',
-                  clientKey
-                )}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`
-              : `${environment.cremBaseUrl.replace(
-                  '[CLIENT]',
-                  clientKey
-                )}${url}`;
+              ? `${environment.CAUrl}?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`
+              : `${v06Url}${url}`;
+
             window.location.href = newUrl;
           }
         })

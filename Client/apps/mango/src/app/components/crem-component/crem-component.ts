@@ -14,7 +14,6 @@ import { MangoAppFacade } from '../../+state/app/app.facade';
 import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
 import { GlobalSessionService } from '../../services/global-session.service';
 import {Renderer2} from '@angular/core';
-import { RenderFormHeaderComponent } from 'libs/forms-shared/src/lib/render-form-header/render-form-header.component';
 
 @Component({
   selector: 'mango-crem-component',
@@ -30,7 +29,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   public navLinksFetched = false;
   toolbarModuleLinks: ToolbarModuleLink[];
   chipContent$: Observable<string> = this.facade.clientKey$.pipe(map(clientKey => `${clientKey} - ${environment.name}`));
-  userAppType$: Observable<number> = this.facade.userInfo$.pipe(filter((userInfo) => !!userInfo), switchMap(userInfo => of(userInfo.userAppType)))
+  userAppType$: Observable<number> = this.facade.contactRecord$.pipe(filter((contact) => !!contact), switchMap(contact => of(contact.userAppType)))
   popoverContent: string;
   activeLink: string = null;
   crumbActiveLink: string = null;

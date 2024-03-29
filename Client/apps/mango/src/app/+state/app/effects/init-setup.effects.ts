@@ -3,17 +3,15 @@ import { UserInfoService, UserService } from '@mango/core-shared/lib-core-shared
 import { SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
-import { of } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
-import { environment } from '@mangoSpa/src/environments/environment.local';
 import { ActivatedRoute } from '@angular/router';
 import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
 
 
 @Injectable()
-
 export class InitSetupEffects {
 
   constructor(
@@ -40,7 +38,6 @@ export class InitSetupEffects {
         switchMap(_ => of(
           AppActions.setupClientKey(),
           AppActions.setupContactRecord(),
-          AppActions.setupUserInfo(),
           AppActions.redirectToV06ToFinalizeLogin()
         ))
   ))
@@ -61,9 +58,9 @@ export class InitSetupEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.SETUP_CONTACT_RECORD),
-        switchMap(_ => this.facade.authenticatedUser$),
-        filter(user => !!user),
-        switchMap(user => this.userService.getContactRecord(user.email, user.contactId, user.clientKey)),
+        switchMap(_ => combineLatest([this.facade.authenticatedUser$, this.facade.contactRecord$])),
+        filter(([user, contact]) => !!user && !contact),
+        switchMap(([user, contact]) => this.userService.getContactRecord(user.email, user.contactId, user.clientKey)),
         filter(contactRecord => !!contactRecord),
         map(contactRecord =>
           AppActions.setContactRecord({ contactRecord })

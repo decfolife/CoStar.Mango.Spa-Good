@@ -69,7 +69,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.currentUserRole$ = this.facade.userInfo$.pipe(filter(userInfo => !!userInfo), map(userInfo => userInfo.securityLevelID))    
+    this.currentUserRole$ = this.facade.contactRecord$.pipe(filter(contact => !!contact), map(contact => contact.userRole))    
     this.loadRemindersData(this.otid, this.oid);
     this.setReminderColumns();
   }

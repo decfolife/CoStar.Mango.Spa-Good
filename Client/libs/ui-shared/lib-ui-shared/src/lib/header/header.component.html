@@ -136,7 +136,7 @@
         aria-label="My Profile"
         [matMenuTriggerFor]="userMenu"
       >
-        {{ (contactRecord$ | async)?.firstName }}{{ (contactRecord$ | async)?.lastName }}
+        {{ (contactRecord$ | async)?.firstName?.charAt(0) }}{{ (contactRecord$ | async)?.lastName?.charAt(0) }}
       </button>
       <mat-menu class="user-menu" #userMenu="matMenu">
         <!-- Profile Details -->

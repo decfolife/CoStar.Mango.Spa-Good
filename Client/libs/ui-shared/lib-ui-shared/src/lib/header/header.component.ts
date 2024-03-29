@@ -1,10 +1,10 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderService } from '@mango/core-shared/lib-core-shared';
 import { DataService } from '@mango/core-shared';
 import { ContactRecord, MANGO_SPA_DEFAULT_PAGE, UserAuth } from '@mango/data-models/lib-data-models';
 import { Observable, of, Subscription } from 'rxjs';
-import { catchError, debounceTime, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, filter, map, switchMap } from 'rxjs/operators';
 import { UntypedFormControl } from '@angular/forms';
 
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
