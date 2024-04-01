@@ -31,6 +31,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   selectedTeamMembersData: RemoveTeamMembers = <RemoveTeamMembers>{};
   projectId: number;
   managerContactId: number;
+  managerSharedValue: boolean;
   memberInfo: MemberInfo = <MemberInfo>{};
   noDataText: string = "No Data.";
   errorText: string = "Error Occurred while getting Project Team Members.";
@@ -149,7 +150,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     let dialogRef = this.dialog.open(ImportTeamComponent, {
       height: '605px',
       width: '900px',
-      data: { memberInfo: this.memberInfo, projectId: this.projectId, projectsPrivateSetting: this.projectsPrivateSetting},
+      data: { memberInfo: this.memberInfo, projectId: this.projectId, projectsPrivateSetting: this.projectsPrivateSetting, managerSharedValue: this.managerSharedValue},
       disableClose: true
     });
 
@@ -228,7 +229,12 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
         this.projectTeam = res.data;
         this.dataRetrieved = true;
         if(this.projectTeam.length) {
-          this.projectTeam.forEach(member => this.contactIds.push(member.contactID));
+          this.projectTeam.forEach(member => {
+            this.contactIds.push(member.contactID);
+            if(member.isManager){
+              this.managerSharedValue = member.shared;
+            }
+          });
         }
       }),
       catchError(error => {this.dataRetrieved = true; 

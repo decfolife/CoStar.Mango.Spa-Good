@@ -19,6 +19,7 @@ export class ImportTeamComponent {
   private currentSelectedTeamId: number = null
   dataRetrieved: boolean = true;
   memberInfo: MemberInfo;
+  managerSharedValue: boolean;
   importTeams: Team[] = [];
 	showShareColumn = false;
   importButtonDisabled = true;
@@ -33,6 +34,7 @@ export class ImportTeamComponent {
 		this.showShareColumn = this.data.projectsPrivateSetting > 0 && this.data.projectsPrivateSetting <= 2;
     this.textForTooltip = "If the Project Manager does not have group share turned on, these share rights will default to OFF once imported."
     this.memberInfo  = this.data.memberInfo;
+    this.managerSharedValue = this.data.managerSharedValue;
     this.getImportTeams();
   }
 
@@ -88,7 +90,7 @@ export class ImportTeamComponent {
       return;
     }
 
-    this.subscription.add(this.dashboardService.importTeam(this.data.projectId, this.currentSelectedTeamId).subscribe(res => {
+    this.subscription.add(this.dashboardService.importTeam(this.data.projectId, this.currentSelectedTeamId, this.managerSharedValue).subscribe(res => {
       if (res === null) {
         this.modalComponent.dialogRef.close('');
         this.dashboardService.displayContactSystemAdminMessage();

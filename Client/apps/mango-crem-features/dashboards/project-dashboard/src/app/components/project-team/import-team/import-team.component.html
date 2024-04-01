@@ -85,7 +85,7 @@
       
               <div *dxTemplate="let member of 'sharedToggleTemplate'" >
                 <div class="sharedToggle">
-                  <mat-slide-toggle  [checked]="member.data.share" aria-label="Shared" [disabled]="true">
+                  <mat-slide-toggle  [checked]="managerSharedValue ? member.data.share : managerSharedValue" aria-label="Shared" [disabled]="true">
                   </mat-slide-toggle>
                 </div>
               </div>

@@ -157,9 +157,9 @@ export class DashboardService  extends EndpointService{
     return this.callHttpPost(url, 'addteam', team);
   }
 
-  importTeam(projectID: number, teamID: number): Observable<any> {
+  importTeam(projectID: number, teamID: number, projectManagerSharedValue: boolean): Observable<any> {
     const url = `${environment.appUrls.projects}importteam`;
-    return this.callHttpPost(url, 'importteam', { projectID, teamID });
+    return this.callHttpPost(url, 'importteam', { projectID, teamID, projectManagerSharedValue });
   }
 
   getModuleRights(objectType: number, securityType: number) {
