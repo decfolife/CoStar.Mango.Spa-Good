@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable rxjs-angular/prefer-composition */
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute} from '@angular/router';
 import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import notify from 'devextreme/ui/notify';
@@ -71,7 +71,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
   private hoveredRowBatchId: number;
   private listViews: any[];
 
-  constructor(private router: Router, private batchEventService: BatchEventListService,
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private batchEventService: BatchEventListService,
     public baseService: BaseService, public service: BatchLogsService
   ) { }
 
@@ -442,7 +442,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
 
   addNewBatch() {
     window.clearInterval(this.intervalId);
-    this.router.navigate(['batcheventlist'], { queryParamsHandling: 'merge' });
+    this.router.navigate(['batcheventlist'], {relativeTo: this.activatedRoute, queryParamsHandling: 'merge' });
   }
 
   cancelBatch() {
