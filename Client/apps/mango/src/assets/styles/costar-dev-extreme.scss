@@ -20,11 +20,6 @@ $stdPadding: 8px;
   }
 }
 
-
-.dx-datagrid-content .dx-datagrid-table .dx-row.dx-data-row>td:hover {
-  background: colors.$color-brand-primary-light;
-}
-
 .dx-datagrid-content .dx-datagrid-table .dx-row>td,
 .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
   font-size: 14px !important;
@@ -33,40 +28,23 @@ $stdPadding: 8px;
 
 table.dx-datagrid-table {
   tbody {
-    tr.dx-row.dx-data-row {
-      &:hover {
-        background: colors.$color-brand-primary-light  !important;
-      }
-
-      &.dx-row-alt {
-        &:hover {
+    tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
+      &.dx-state-hover, &.dx-state-hover.dx-selection {
+        color: colors.$textGray  !important;
+        background: colors.$hoverBlue  !important;
+        cursor: pointer;
+        td:hover {
           background: colors.$color-brand-primary-light  !important;
-
-          td {
-            background: colors.$color-brand-primary-light  !important;
-          }
         }
-
+      }
+    }
+    tr.dx-row.dx-data-row {
+      &.dx-row-alt {
         td {
           background: colors.$offWhite;
         }
       }
-
       &.dx-selection {
-        &:hover {
-          background: colors.$color-brand-primary-light  !important;
-          color: white;
-        }
-
-        &.dx-row-alt {
-          &:hover {
-            td {
-              background: colors.$color-brand-primary-light  !important;
-              color: white;
-            }
-          }
-        }
-
         td {
           background: colors.$color-brand-primary-light  !important;
           color: black;
@@ -399,44 +377,25 @@ dx-data-grid {
 
   table.dx-datagrid-table {
     tbody {
-      tr.dx-row.dx-data-row {
-        &:hover {
+      tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
+        &.dx-state-hover, &.dx-state-hover.dx-selection {
+          color: colors.$textGray  !important;
           background: colors.$hoverBlue  !important;
           cursor: pointer;
-        }
-
-        &.dx-row-alt {
-          &:hover {
-            background: colors.$hoverBlue  !important;
-            cursor: pointer;
-
-            td {
-              background: colors.$hoverBlue  !important;
-              cursor: pointer;
-            }
+          td:hover {
+            background: colors.$color-brand-primary-light  !important;
           }
+        }
+      }
 
+      tr.dx-row.dx-data-row {
+        &.dx-row-alt {
           td {
             background: colors.$offWhite;
           }
         }
 
         &.dx-selection {
-
-          &:hover {
-            background: colors.$costarLightBlue;
-            color: white;
-          }
-
-          &.dx-row-alt {
-            &:hover {
-              td {
-                background: colors.$costarLightBlue  !important;
-                color: white;
-              }
-            }
-          }
-
           td {
             background: colors.$costarLightBlue;
             color: black;
@@ -535,44 +494,24 @@ dx-data-grid {
 
   table.dx-datagrid-table {
     tbody {
-      tr.dx-row.dx-data-row {
-        &:hover {
+      tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
+        &.dx-state-hover, &.dx-state-hover.dx-selection {
+          color: colors.$textGray  !important;
           background: colors.$hoverBlue  !important;
           cursor: pointer;
-        }
-
-        &.dx-row-alt {
-          &:hover {
-            background: colors.$hoverBlue  !important;
-            cursor: pointer;
-
-            td {
-              background: colors.$hoverBlue  !important;
-              cursor: pointer;
-            }
+          td:hover {
+            background: colors.$color-brand-primary-light  !important;
           }
-
+        }
+      }
+      
+      tr.dx-row.dx-data-row {
+        &.dx-row-alt {
           td {
             background: colors.$offWhite;
           }
         }
-
         &.dx-selection {
-
-          &:hover {
-            background: colors.$costarLightBlue;
-            color: white;
-          }
-
-          &.dx-row-alt {
-            &:hover {
-              td {
-                background: colors.$costarLightBlue  !important;
-                color: white;
-              }
-            }
-          }
-
           td {
             background: colors.$costarLightBlue;
             color: black;

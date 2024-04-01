@@ -57,3 +57,19 @@
     }
   }
 }
+
+dx-data-grid table.dx-datagrid-table {
+  tbody {
+    tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
+      &:hover, &.dx-state-hover, &.dx-state-hover.dx-selection, &.dx-selection:hover {
+        color: #333333;
+        background: #cae3fe ;
+        cursor: pointer;
+        td, td:hover {
+          color: #333333;
+          background: #e3f3fc ;
+        }
+      }
+    }
+  }
+}  
