@@ -42,7 +42,7 @@ export class ContactRecordsPopupComponent {
       this.centralAuthFacade.isSwitchContactRecord$
     ]).pipe(
       map(([selectedClient, contactRecords, selectedContactRecord, selectedContactId, isSwitchContactRecord]) =>
-        !!selectedClient && !!contactRecords && !selectedContactRecord && !selectedContactId && (contactRecords.length > 1 || !!isSwitchContactRecord))
+        !!selectedClient && !!contactRecords && (contactRecords.length > 1 || !!isSwitchContactRecord))
     )
   }
 

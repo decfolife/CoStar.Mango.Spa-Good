@@ -34,6 +34,7 @@ export class OAuthEffects {
             ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx?mul=${isClientSpecificLogin ? 'false' : 'true'}` 
             : decodeURIComponent(redirectionUri)
 
+          this.centralAuthFacade.setSelectedContactId(0)
           this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
           return OAuthActions.authorize()
         }),
