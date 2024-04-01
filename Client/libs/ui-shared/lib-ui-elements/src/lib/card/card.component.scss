@@ -11,7 +11,7 @@
     mat-card-header {
       display: flex;
       align-items: center;
-      flex-direction: column;
+      flex-direction: row;
       justify-content: space-between;
       @include costar(padding, 4);
       @include costar(border-radius, medium);
@@ -107,6 +107,11 @@ crem-card {
     }
   }
 
+  mat-card mat-card-header div.cardHeader div.mat-card-header-text{
+    display: flex;
+    padding-top: 4px;
+  }
+
   // .cardHeader {
   //   @include costar(border-bottom, gray04);
   //   @include costar(color, gray01);
@@ -165,6 +170,7 @@ crem-card {
     @include costar(color, light);
     @include costar(background-color, gray01);
     @include costar(font-weight, normal);
+    align-content: center;
   }
 
   .customHeader {

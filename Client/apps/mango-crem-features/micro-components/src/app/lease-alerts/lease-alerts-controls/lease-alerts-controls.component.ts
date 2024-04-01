@@ -192,7 +192,7 @@ export class LeaseAlertsControlsComponent implements OnInit {
 
   refreshAlerts() {
     this.refreshingAlerts = true;
-    this.service.runLeaseAlertRulesByLeaseAbstractID(this.leaseAbstractID).subscribe((res: any) => {
+    this.service.runLeaseAlertRulesByLeaseAbstractID(this.leaseAbstractID).subscribe((res: ApiResponse) => {
       if (res.success) {
         this.alertsGrid.filterLeases(this.alertsGrid.currentPortfolio, this.currentLeaseStatusFilter);
       }
