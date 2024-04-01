@@ -8,7 +8,7 @@
   <div modalContent id="addEditMemberModal-content">
     <dx-validation-group #targetGroup>  
       <div class="aet-members" *ngIf="operation=='ATM' || operation=='ETM'">
-        <h4 class="nameLabel label info" [ngClass]="nameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">{{nameFieldInvalid ? '*' : ''}} Name</span>
+        <h4 class="nameLabel label info" [ngClass]="nameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">* Name</span>
           <span class="aem-info" *ngIf="operation=='ETM' && (!teamMember.isActive || !teamMember.allowLogOn)">
             <crem-tooltip
               [externalId]="'aemToolTipId' + teamMember.contactID + teamMember.teamId"
@@ -65,7 +65,7 @@
         </div>
       </div>
       <div class="aet-name" *ngIf="operation=='ATU' || operation=='ETU' || operation=='AC'">
-        <h4 class="nameLabel label info" [ngClass]="firstNameFieldInvalid || lastNameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">{{firstNameFieldInvalid || lastNameFieldInvalid ? '*' : ''}} Name</span>
+        <h4 class="nameLabel label info" [ngClass]="firstNameFieldInvalid || lastNameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">* Name</span>
           <span class="aem-info" *ngIf="operation=='ETU' && (!teamMember.isActive || !teamMember.allowLogOn)">
             <crem-tooltip
               [externalId]="'aemToolTipId' + teamMember.contactID + teamMember.teamId"
@@ -111,7 +111,7 @@
         </div>
       </div>
       <div class="aet-email" *ngIf="operation== Operations.ATU || operation=='ETU' || operation == Operations.AC">
-        <h4 class="nameLabel label" [ngClass]="emailAddressFieldInvalid ? 'fieldInvalid' : ''">{{emailAddressFieldInvalid ? '*' : ''}} Email</h4>
+        <h4 class="nameLabel label" [ngClass]="emailAddressFieldInvalid ? 'fieldInvalid' : ''">* Email</h4>
           <dx-text-box
             placeholder="Enter Email Address"
             [(value)]="emailId"
@@ -163,7 +163,7 @@
         ></crem-tooltip>
       </div>
       <div class="aet-role">
-        <h4 class="roleLabel label" [ngClass]="roleFieldInvalid ? 'fieldInvalid' : ''">{{roleFieldInvalid ? '*' : ''}} Role</h4>
+        <h4 class="roleLabel label" [ngClass]="roleFieldInvalid ? 'fieldInvalid' : ''">* Role</h4>
           <dx-select-box 
             class="aet-role-selectBox"
             placeholder="Assign Role"
@@ -184,7 +184,7 @@
       </dx-select-box>
       </div>
       <div class="aet-level" *ngIf="operation !== Operations.AC">
-        <h4 class="levelLabel label" [ngClass]="levelFieldInvalid ? 'fieldInvalid' : ''">{{levelFieldInvalid ? '*' : ''}} Level</h4>
+        <h4 class="levelLabel label" [ngClass]="levelFieldInvalid ? 'fieldInvalid' : ''">* Level</h4>
         <dx-select-box 
           class="aet-level-selectBox"
           placeholder="Assign Level"
@@ -208,7 +208,7 @@
         </dx-select-box>
       </div>
       <div class="aet-expirationType" *ngIf="operation==Operations.ATU || operation==Operations.ETU">
-        <h4 class="expirationTypeLabel label" [ngClass]="expirationTypeFieldInvalid || expirationDateFieldInvalid ? 'fieldInvalid' : ''">{{expirationTypeFieldInvalid || expirationDateFieldInvalid ? '*' : ''}} Expiration Type</h4>
+        <h4 class="expirationTypeLabel label" [ngClass]="expirationTypeFieldInvalid || expirationDateFieldInvalid ? 'fieldInvalid' : ''">* Expiration Type</h4>
         <div class="aet-expirationTypeDate">
           <div class="expirationType">
             <dx-select-box 

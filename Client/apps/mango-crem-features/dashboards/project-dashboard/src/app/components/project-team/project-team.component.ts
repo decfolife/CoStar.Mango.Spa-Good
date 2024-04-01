@@ -82,7 +82,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       height = '800px';
     }
 
-    let emailAddressList = this.projectTeam.map(t => t.email);
+    let emailAddressList = this.projectTeam.filter(pt => pt.memberType.toLocaleLowerCase() === 'team member' || pt.memberType.toLocaleLowerCase() === 'temporary user').map(t => t.email);
 
     let dialogRef = this.dialog.open(AddEditMemberComponent, {
       height: height,
