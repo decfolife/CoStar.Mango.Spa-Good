@@ -279,7 +279,7 @@
 
 }
 
-:host ::ng-deep {
+::ng-deep {
   .user-menu,
   .resources-menu {
     width: 210px;
@@ -291,6 +291,10 @@
         padding: unset !important;
         a,
         &.info {
+          > span {
+            font-size: 14px !important;
+          }
+          min-height: unset !important;
           width: 100%;
           height: 36px;
           padding: 10px;
