@@ -174,7 +174,8 @@ export class ReportsSegmentComponent implements OnInit {
           criteriaSetID: data.data.criteriaSetID,
           portfolioID: data.data.portfolioID,
           name: data.data.name,
-          archived: !data.data.active
+          archived: !data.data.active,
+          hideToastsOn: 'Accounting Dashboard',
         }
       });
 

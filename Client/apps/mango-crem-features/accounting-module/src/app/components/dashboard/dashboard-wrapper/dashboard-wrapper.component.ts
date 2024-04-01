@@ -445,7 +445,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           portfolioID: data.portfolioID,
           name: data.name,
           archived: !data.active,
-          hideToasts: true,
+          hideToastsOn: 'Accounting Dashboard',
         }
       });
       const editingSegment = data.segmentID;

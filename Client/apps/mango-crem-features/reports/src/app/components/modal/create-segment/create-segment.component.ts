@@ -46,6 +46,7 @@ export class CreateSegmentComponent {
     public hasObjectEditRight: boolean;
     public hasObjectViewRight: boolean;
     public hasObjectDeleteRight: boolean;
+    currentCriteriaName: string;
 
     @ViewChild('CriteriaForm') criteriaForm: CriteriaFormSegmentComponent;
     @ViewChild('CriteriaSetForm') CriteriaSetForm: DynamicFormComponent;
@@ -65,7 +66,7 @@ export class CreateSegmentComponent {
             name: string;
             active: boolean;
             archived: boolean;
-            hideToasts: boolean;
+            hideToastsOn: string;
         }
     ) { }
 
@@ -340,6 +341,7 @@ export class CreateSegmentComponent {
                 }
             })
         }
+        this.currentCriteriaName = this.reportsData.find((x) => x.criteriaSetID == this.selectedCriteriaId).name
     }
 
     public saveAsClicked(event) {
@@ -405,6 +407,7 @@ export class CreateSegmentComponent {
                         criteriaSetID: this.selectedCriteriaId,
                         openReportAction: "saveAs",
                         archived: this.data.archived,
+                        hideToastsOn: this.data.hideToastsOn,
                     }
                 };
                 this.dialogRef.close(saveAsConfig);
@@ -414,6 +417,7 @@ export class CreateSegmentComponent {
         }
         
     }
+
     public saveSegment(event, isSaveAndNew) {
         this.criteriaSetModified = true;
         this.textboxHasBeenModified = true;
@@ -552,7 +556,7 @@ export class CreateSegmentComponent {
                                                         redirectData: {
                                                             segmentValues: newSegmentConfig,
                                                             newSegmentID: result.data
-                                                        }
+                                                        },
                                                     }
                                                 };
                                                 this.dialogRef.close(reportConfig);
@@ -563,7 +567,9 @@ export class CreateSegmentComponent {
                                     }
                                 })
                             } else {
-                              if(!this.data.hideToasts || this.data.hideToasts == null){
+                              if(this.data.hideToastsOn === this.currentCriteriaName) {
+                                // Do nothing
+                              } else {
                                 notify({
                                     message: 'Required Field Missing.',
                                     type: 'error',
@@ -608,14 +614,17 @@ export class CreateSegmentComponent {
 
     public showNotifyMessage(messageType) {
         if (messageType === "noSelectedCriteria") {
-            notify({
-                message: 'At least one criteria selection is required.',
-                type: 'error',
-                displayTime: 5000,
-                position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-                maxWidth: '500px',
-                closeOnClick: true,
-            })
+          if(this.data.hideToastsOn === this.currentCriteriaName){
+            return
+          }
+          notify({
+              message: 'At least one criteria selection is required.',
+              type: 'error',
+              displayTime: 5000,
+              position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+              maxWidth: '500px',
+              closeOnClick: true,
+          })
         }
     }
 
