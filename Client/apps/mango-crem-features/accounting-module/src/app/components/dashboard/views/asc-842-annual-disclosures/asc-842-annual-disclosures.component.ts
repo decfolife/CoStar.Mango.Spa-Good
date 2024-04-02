@@ -33,6 +33,11 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       name: 'Short Term Reporting Exceptions Metrics',
       index: 3
     },
+    {
+      id: 'OtherInformation',
+      name: 'Other Information',
+      index: 4
+    },
   ];
   public pivotCardData: any;
   public loading: boolean = true;
@@ -74,8 +79,87 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         this.setROUAssetBalanceCardData(result.data[1])
         this.setLeaseCostCardData(this.mergeArraysOfObjects(result.data[2],result.data[3]));
         this.setShortTermReportingExceptionsMetrics(result.data[4]);
+        this.setOtherInformation(result.data[5]);
         this.loading = false;
       });
+  }
+
+  public setOtherInformation(data){ // copy/pasted function
+    this.pivotCardData = [];
+    data.forEach((item) => {
+      const cashFlowTotal = item.OperatingCashFlowsFromFinanceLeases +
+                            item.OperatingCashFlowsFromOperatingLeases +
+                            item.FinancingCashFlowsFromFinanceLeases;
+      const items = [
+        {
+          Display: 'Cash Paid for Amounts Included In Measurement of Liabilities',
+          PeriodYear: item.PeriodYear,
+          data: cashFlowTotal,
+        },
+        {
+          Display: ' - Operating Cash Flows From Finance Leases',
+          PeriodYear: item.PeriodYear,
+          data: item.OperatingCashFlowsFromFinanceLeases,
+        },
+        {
+          Display: ' - Operating Cash Flows From Operating Leases',
+          PeriodYear: item.PeriodYear,
+          data: item.OperatingCashFlowsFromOperatingLeases,
+        },
+        {
+          Display: ' - Financing Cash Flows From Finance Leases',
+          PeriodYear: item.PeriodYear,
+          data: item.FinancingCashFlowsFromFinanceLeases,
+        },
+        {
+          Display: 'ROU Assets Obtained In Exchange For New Finance Liabilities',
+          PeriodYear: item.PeriodYear,
+          data: item.ROUAssetsObtainedInExchangeForNewFinanceLiabilities,
+        },
+        {
+          Display: 'ROU Assets Obtained In Exchange For New Operating Liabilities',
+          PeriodYear: item.PeriodYear,
+          data: item.ROUAssetsObtainedInExchangeForNewOperatingLiabilities,
+        },
+        {
+          Display: 'Weight-Average Remaining Lease Term - Finance Leases',
+          PeriodYear: item.PeriodYear,
+          data: item.WeightedAverageMonthsRemainingFinance,
+        },
+        {
+          Display: 'Weight-Average Remaining Lease Term - Operating Leases',
+          PeriodYear: item.PeriodYear,
+          data: item.WeightedAverageMonthsRemainingOperating,
+        },
+        {
+          Display: 'Weight-Average Discount Rate - Finance Leases',
+          PeriodYear: item.PeriodYear,
+          data: item.WeightedAverageDiscountRateFinance,
+        },
+        {
+          Display: 'Weight-Average Discount Rate - Operating Leases',
+          PeriodYear: item.PeriodYear,
+          data: item.WeightedAverageDiscountRateOperating,
+        },
+      ]
+
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+      })
+    });
+
+    if (this.dataSources.length > 0) {
+      this.dataSources[4] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[4]
+      });
+    } else {
+      this.dataSources.push(new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[4]
+      }));
+    }
+    this.loading = false;
   }
 
   public setLeaseCountCardData(data) {
@@ -166,7 +250,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public setShortTermReportingExceptionsMetrics(data){
     this.pivotCardData = [];
     data.forEach((item) => {
-      let items = [
+      const items = [
         {
           Display: "ST Lease & Reporting Exceptions Cost - Cash Basis",
           PeriodYear: item.PeriodYear,
@@ -413,6 +497,13 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
             break;
           case 'ASC 842 Annual Lease Costs':
             config[0].width = 180;
+            config[2].format = {
+              type: "fixedPoint",
+              precision: this.currencyDecimalPrecision
+            };
+            break;
+          case 'ASC 842 Annual Disclosures Other Information':
+            config[0].width = 200;
             config[2].format = {
               type: "fixedPoint",
               precision: this.currencyDecimalPrecision
