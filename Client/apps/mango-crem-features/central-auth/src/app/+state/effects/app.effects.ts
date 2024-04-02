@@ -36,9 +36,15 @@ export class AppEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.HANDLE_USER_ALREADY_LOGGED_IN),
-        switchMap(_ => combineLatest([this.centralAuthFacade.user$])),
-        filter(([user]) => !!user),
-        tap(([user]) => {
+       switchMap(_ => combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.isClientSpecificLogin$])),
+        filter(([user, isClientSpecificLogin]) => !!user),
+        tap(([user, isClientSpecificLogin]) => {
+          if (isClientSpecificLogin) {
+            this.centralAuthFacade.getUserClients()
+            this.centralAuthFacade.startAuthorizationWhenFullySelected()
+            return
+          }
+          
           if (user.isServiceAccount) {
             this.router.navigate(['service-account-configuration'])
           } else {

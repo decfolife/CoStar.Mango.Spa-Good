@@ -1,3 +1,4 @@
+import { noOpAction } from './../actions/actions';
 import { Injectable } from "@angular/core";
 import { UserService } from "@mango/core-shared";
 import { MultiClientLoginHttpRequest, OAUTH_AUTH_CODE_QUERY_PARAM } from "@mango/data-models/lib-data-models";
@@ -46,17 +47,26 @@ export class OAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE_SUCCESS),
-        switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.authorizationCode$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])),
+        switchMap(_ => combineLatest(
+          [this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.authorizationCode$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])
+        ),
         filter(([redirectionUri, authorizationCode]) => !!redirectionUri && !!authorizationCode),
         tap(([redirectionUri, authorizationCode, openClientInNewTab]) => {
           const url = UtilsClass.generateClientUrl(redirectionUri, authorizationCode)
           openClientInNewTab ? window.open(url, "_blank") : window.location.href = url
         }),
         delay(2000),
-        switchMap(_ => of(
-          AppActions.purgeClientSelection(),
-          AppActions.getUserClients()
-        ))
+        switchMap(_ => this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))),
+        switchMap((isClientSpecificLogin) => {
+          if (isClientSpecificLogin) {
+            return of(AppActions.noOpAction())
+          }
+
+          return of(
+            AppActions.purgeClientSelection(),
+            AppActions.getUserClients()
+          )
+        })
       )
   )
 
