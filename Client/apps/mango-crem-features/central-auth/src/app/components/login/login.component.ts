@@ -13,6 +13,7 @@ import { CentralAuthFacade } from '../../+state/facades';
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 import { CentralAuthURLService } from '../../services/url.service';
 import { noWhitespaceValidator } from '../reset-password/password-validator';
+import { ContactRecordsPopupComponent } from '../contact-records-popup/contact-records-popup.component';
 
 @Component({
   selector: 'mango-login',
@@ -28,20 +29,20 @@ import { noWhitespaceValidator } from '../reset-password/password-validator';
     TextFieldModule,
     MatCardModule,
     MatButtonModule,
-    IconModule
+    IconModule,
+    ContactRecordsPopupComponent
   ],
   providers: [CentralAuthURLService, CentralAuthErrorHandler]
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loading$: Observable<boolean>;
-
   loginForm: UntypedFormGroup
-
   formControls: any
   user$: Observable<UserAuth>
   showSSOButton$: Observable<boolean>
   SSOUri$: Observable<string>
   isClientSiteActive$: Observable<boolean>
+  isClientSpecificLogin$: Observable<boolean>
   showPassword = false;
 
   subs: Subscription[] = []
@@ -53,6 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private centralAuthFacade: CentralAuthFacade,
   ) {
     this.user$ = this.centralAuthFacade.user$
+    this.isClientSpecificLogin$ = this.centralAuthFacade.isClientSpecificLogin$
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, noWhitespaceValidator]],
@@ -98,6 +100,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.centralAuthFacade.login(credentials)
     }
   };
+
+  contactsPopupCancelled() {
+    this.centralAuthFacade.clearState()
+    this.subs.push(this.clientSpecificLoginHandler().subscribe())
+  }
 
   validateForm(): boolean {
     return (this.formControls.email.errors?.required && this.formControls.password.errors?.required) || (this.formControls.email.errors?.required || this.formControls.email.errors?.email) || (this.formControls.password.errors?.required) || (this.formControls.password.errors?.whitespace) ? false : true

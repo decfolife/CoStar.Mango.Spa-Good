@@ -1,4 +1,4 @@
-import { Component, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CentralAuthFacade } from '../../+state/facades';
 import { ContactRecord, UserSite } from '@mango/data-models/lib-data-models';
@@ -18,6 +18,7 @@ export class ContactRecordsPopupComponent {
   @ViewChildren(DxCheckBoxComponent) defaultCheckboxes: QueryList<DxCheckBoxComponent>
   @ViewChild(DxPopupComponent) popupComponent: DxPopupComponent
   @ViewChild(DxDataGridComponent) dataGridComponent: DxDataGridComponent
+  @Output() contactsPopupCancelled = new EventEmitter<boolean>();
 
   visible$: Observable<boolean>
 
@@ -59,6 +60,7 @@ export class ContactRecordsPopupComponent {
 
   onCancelClick() {
     this.centralAuthFacade.purgeClientSelection()
+    this.contactsPopupCancelled.emit(true);
   }
 
   onDefaultCheckboxValueChanged(event, data) {

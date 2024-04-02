@@ -45,8 +45,7 @@ export class AuthenticationEffects {
           this.userService.logout()
           this.router.navigate(['/'], {queryParamsHandling: 'merge'})
           return AppActions.clearState()
-        }
-        )
+        })
       )
   )
 }

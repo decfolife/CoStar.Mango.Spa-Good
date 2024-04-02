@@ -1,4 +1,4 @@
-<div *ngIf="!(user$ | async)" id="login-page">
+<div *ngIf="!(user$ | async) || ((user$ | async) && (isClientSpecificLogin$ | async)) " id="login-page">
 	<div id="company-logo">
 		<img alt="Costar logo" src="costar-logo.png">
 	</div>
@@ -52,4 +52,4 @@
 	</div>
   </div>
   
-
+  <mango-contact-records-popup (contactsPopupCancelled) = "contactsPopupCancelled()"></mango-contact-records-popup>

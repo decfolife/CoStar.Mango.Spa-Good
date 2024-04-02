@@ -91,8 +91,7 @@ const appReducer = createReducer(
     openClientInNewTab: true,
     authorizationCode: null,
     redirectionUri: null,
-    isSwitchContactRecord: null,
-    isClientSpecificLogin: null
+    isSwitchContactRecord: null
   })),
   on(AppActions.clearState, () => ({ ...initialState })),
 );
