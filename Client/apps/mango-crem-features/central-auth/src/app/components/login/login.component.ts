@@ -14,6 +14,7 @@ import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 import { CentralAuthURLService } from '../../services/url.service';
 import { noWhitespaceValidator } from '../reset-password/password-validator';
 import { ContactRecordsPopupComponent } from '../contact-records-popup/contact-records-popup.component';
+import { DBkeys, StorageService } from '@mango/core-shared';
 
 @Component({
   selector: 'mango-login',
@@ -52,6 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private fb: UntypedFormBuilder,
     private urlService: CentralAuthURLService,
     private centralAuthFacade: CentralAuthFacade,
+    private storageService: StorageService
   ) {
     this.user$ = this.centralAuthFacade.user$
     this.isClientSpecificLogin$ = this.centralAuthFacade.isClientSpecificLogin$
@@ -120,6 +122,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   };
 
   clientSpecificLoginHandler(): Observable<any> {
+    let user = this.storageService.getDataObject(DBkeys.USER_AUTH)
+    if (user) {
+      // The user logged in via the general login page recently
+      return of(null)
+    }
+
     return of(this.urlService.readClientSiteRouteParam())
       .pipe(
         filter(clientKey => !!clientKey),

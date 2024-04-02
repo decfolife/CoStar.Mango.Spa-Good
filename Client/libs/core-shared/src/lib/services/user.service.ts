@@ -77,7 +77,6 @@ export class UserService {
           isAutoProvisioned: this.parseBool(decodedJwt.isAutoProvisioned),
           isServiceAccount: this.parseBool(decodedJwt.isServiceAccount)
         };
-        this.setAuth(user);
 
         const res: LoginResponse = {
           user: user,

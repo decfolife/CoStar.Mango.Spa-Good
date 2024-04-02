@@ -47,11 +47,20 @@ export class OAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE_SUCCESS),
-        switchMap(_ => combineLatest(
-          [this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.authorizationCode$.pipe(take(1)), this.centralAuthFacade.openClientInNewTab$.pipe(take(1))])
+        switchMap(_ => combineLatest([
+          this.centralAuthFacade.redirectionUri$.pipe(take(1)), 
+          this.centralAuthFacade.authorizationCode$.pipe(take(1)), 
+          this.centralAuthFacade.openClientInNewTab$.pipe(take(1)),
+          this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))
+        ])
         ),
         filter(([redirectionUri, authorizationCode]) => !!redirectionUri && !!authorizationCode),
-        tap(([redirectionUri, authorizationCode, openClientInNewTab]) => {
+        tap(([redirectionUri, authorizationCode, openClientInNewTab, isClientSpecificLogin]) => {
+          if (isClientSpecificLogin) {
+            this.userService.purgeAuth()
+            this.centralAuthFacade.clearState()
+          }
+
           const url = UtilsClass.generateClientUrl(redirectionUri, authorizationCode)
           openClientInNewTab ? window.open(url, "_blank") : window.location.href = url
         }),

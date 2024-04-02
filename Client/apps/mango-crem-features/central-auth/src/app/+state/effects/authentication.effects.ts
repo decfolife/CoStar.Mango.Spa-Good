@@ -3,15 +3,16 @@ import { Router } from "@angular/router";
 import { UserService } from "@mango/core-shared";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { LoginResponse } from "libs/data-models/lib-data-models/src/lib/models/userAuth";
-import { of } from "rxjs";
-import { catchError, filter, map, switchMap } from "rxjs/operators";
+import { combineLatest, of } from "rxjs";
+import { catchError, filter, map, switchMap, take } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
+import { CentralAuthFacade } from "../facades";
 
 @Injectable()
 
 export class AuthenticationEffects {
 
-  constructor(private actions$: Actions, private userService: UserService, private router: Router) { }
+  constructor(private actions$: Actions, private userService: UserService, private router: Router, private centralAuthFacade: CentralAuthFacade) { }
 
   login$ = createEffect(
     () =>
@@ -30,10 +31,17 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOGIN_SUCCESS),
-        switchMap((action: { type: string, response: LoginResponse }) => of(
-          AppActions.setUser({ user: action.response.user }),
-          AppActions.setAccessToken({ accessToken: action.response.authToken })
-        ))
+        switchMap((action: { type: string, response: LoginResponse }) => combineLatest([of(action.response), this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))])),
+        switchMap(([response, isClientSpecificLogin]) => {
+          if (!isClientSpecificLogin) {
+            this.userService.setAuth(response.user)
+          }
+
+          return of(
+            AppActions.setUser({ user: response.user }),
+            AppActions.setAccessToken({ accessToken: response.authToken })
+          )
+        })
       )
   )
 
