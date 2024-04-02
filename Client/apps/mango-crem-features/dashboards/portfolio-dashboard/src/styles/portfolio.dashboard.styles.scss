@@ -99,14 +99,14 @@ portfolio-dashboard {
     padding: 0px;
     height: 16px;
 
-		div.mat-card-header-text {
+		div.mat-mdc-card-header-text {
 			margin: 0px;
 			display: flex;
 			flex-direction: column;
 			text-transform: capitalize !important;
 			font-size: 14px !important;
 
-		mat-card-title.mat-card-title {
+		mat-card-title.mat-mdc-card-title {
 				font-size: 16px;
 				line-height: 16px;
 				color: colors.$mediumDarkGray;
@@ -117,7 +117,7 @@ portfolio-dashboard {
 		}
   }
 
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-card-content {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-mdc-card-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -143,7 +143,7 @@ portfolio-dashboard {
   }
 
   mat-card.mat-mdc-card.costar-hero-metric-card
-  mat-card-content.mat-card-content
+  mat-card-content.mat-mdc-card-content
   .sidekick-value-wrapper
   .sidekick-value {
 		display: flex;
@@ -174,11 +174,11 @@ portfolio-dashboard {
     position: relative;
   }
 
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-footer.mat-mdc-card-footer {
     margin: 0px;
     height: 14px;
 
-		mat-card-subtitle.mat-card-subtitle {
+		mat-card-subtitle.mat-mdc-card-subtitle {
 			color: colors.$costarRichGray;
 			display: inline-block;
 			font-size: 14px;
@@ -199,8 +199,8 @@ portfolio-dashboard {
 }	
 
 
-#portfolio-dashboard crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent,
-.portfolio.dashboards-dragCardItems crem-card mat-card.cremCard mat-card-content.mat-card-content.cremCardContent {
+#portfolio-dashboard crem-card mat-card.cremCard mat-card-content.mat-mdc-card-content.cremCardContent,
+.portfolio.dashboards-dragCardItems crem-card mat-card.cremCard mat-card-content.mat-mdc-card-content.cremCardContent {
   height: 400px;
 }	
 

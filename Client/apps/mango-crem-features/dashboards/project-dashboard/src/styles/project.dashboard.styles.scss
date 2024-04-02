@@ -273,7 +273,7 @@ body {
 
 #projects-dashboard crem-metric {
 
-	mat-card.mat-card.costar-hero-metric-card {
+	mat-card.mat-mdc-card.costar-hero-metric-card {
 		border: 0;
 		display: inline-block;
 		margin-bottom: 0;
@@ -282,26 +282,26 @@ body {
 		height: 80px;
 	}
 
-  mat-card.mat-card {
+  mat-card.mat-mdc-card {
     border: $stdBorder;
     border-radius: 2px !important;
     box-shadow: none !important;
     padding: 0px !important;
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-mdc-card-header {
     border-bottom: 0px;
     padding: 0px;
     height: 16px;
 
-		div.mat-card-header-text {
+		div.mat-mdc-card-header-text {
 			margin: 0px;
 			display: flex;
 			flex-direction: column;
 			text-transform: capitalize !important;
 			font-size: 14px !important;
 
-		mat-card-title.mat-card-title {
+		mat-card-title.mat-mdc-card-title {
 				font-size: 16px;
 				line-height: 16px;
 				color: colors.$mediumDarkGray;
@@ -318,7 +318,7 @@ body {
 		}
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-mdc-card-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -349,8 +349,8 @@ body {
 		}
   }
 
-  mat-card.mat-card.costar-hero-metric-card
-  mat-card-content.mat-card-content
+  mat-card.mat-mdc-card.costar-hero-metric-card
+  mat-card-content.mat-mdc-card-content
   .sidekick-value-wrapper
   .sidekick-value {
 		display: flex;
@@ -387,11 +387,11 @@ body {
     position: relative;
   }
 
-	mat-card.mat-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
+	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-footer.mat-mdc-card-footer {
     margin: 0px;
     height: 14px;
 
-		mat-card-subtitle.mat-card-subtitle {
+		mat-card-subtitle.mat-mdc-card-subtitle {
 			color: colors.$mediumDarkGray;
 			display: inline-block;
 			font-size: 14px;
