@@ -147,7 +147,7 @@ export class AddEditMemberComponent implements OnInit {
     this.emailNotificationChecked = this.teamMember.emailNotifications;
     this.sharedChecked = this.teamMember.shared;
     this.selectedRole = this.teamMember.role;
-    this.selectedLevel = this.teamMember.accessLevel == 1? 'L1': this.teamMember.accessLevel == 2?'L2': this.teamMember.accessLevel == 3? 'L3': 'N/A' ;
+    this.selectedLevel = this.teamMember.accessLevel == 1? 'L1': this.teamMember.accessLevel == 2?'L2': this.teamMember.accessLevel == 3? 'L3': '' ;
     this.description = this.teamMember.description;
     this.emailId = this.teamMember.email;
     this.contactId = this.teamMember.contactID;
