@@ -25,16 +25,18 @@ export class MangoNavigationService {
   }
 
   redirectToCentralAuth(includeRedirectUri: boolean = true): void {
+    let clientKey = UtilitiesService.getClientKeyFromUrl()
+    let caUrl = `${environment.CAUrl}${clientKey}`
+
     if (!includeRedirectUri) {
-      let clientKey = UtilitiesService.getClientKeyFromUrl()
-      window.location.href = `${environment.CAUrl}${clientKey}`
+      window.location.href = caUrl
       return
     }
 
     const urlParts = this.routerLocation.path().split('?')
     const extraParamsIndex = urlParts.findIndex(urlPart => urlPart.includes(OAUTH_CLIENT_KEY_QUERY_PARAM) || urlPart.includes(OAUTH_CONTACT_ID_QUERY_PARAM))
     const redirectUri = urlParts.filter((urlPart, index) => index !== extraParamsIndex).join('?')
-    const url = `${environment.CAUrl}?${extraParamsIndex !== -1 ? `${urlParts[extraParamsIndex]}&` : ''}${OAUTH_REDIRECT_QUERY_PARAM}=${`${window.location.origin}/auth/validate?redirect_uri=${encodeURIComponent(redirectUri)}`}`
+    const url = `${caUrl}?${extraParamsIndex !== -1 ? `${urlParts[extraParamsIndex]}&` : ''}${OAUTH_REDIRECT_QUERY_PARAM}=${`${window.location.origin}/auth/validate?redirect_uri=${encodeURIComponent(redirectUri)}`}`
     window.location.href = url
   }
 
