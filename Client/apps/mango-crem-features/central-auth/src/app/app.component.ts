@@ -16,7 +16,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.centralAuthFacade.handleUserAlreadyLoggedIn()
     this.centralAuthFacade.appInit()
   }
 }
