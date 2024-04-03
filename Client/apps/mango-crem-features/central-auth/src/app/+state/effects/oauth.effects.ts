@@ -1,9 +1,8 @@
-import { noOpAction } from './../actions/actions';
 import { Injectable } from "@angular/core";
 import { UserService } from "@mango/core-shared";
 import { MultiClientLoginHttpRequest, OAUTH_AUTH_CODE_QUERY_PARAM } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { Observable, combineLatest, of, pipe } from "rxjs";
+import { Observable, combineLatest, of } from "rxjs";
 import { delay, filter, map, switchMap, take, tap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
@@ -32,7 +31,7 @@ export class OAuthEffects {
         filter(([client, redirectionUri]) => !!client),
         map(([client, redirectionUri, isClientSpecificLogin]) => {
           const newRedirectionUri = !redirectionUri 
-            ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx?mul=${isClientSpecificLogin ? 'false' : 'true'}` 
+            ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
             : decodeURIComponent(redirectionUri)
 
           this.centralAuthFacade.setSelectedContactId(0)
