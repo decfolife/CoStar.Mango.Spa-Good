@@ -1,6 +1,7 @@
 export * from './lib/lib-ui-elements.module';
 export * from './lib/loader';
 export * from './lib/screen-loader';
+export * from './lib/skeleton';
 export * from './lib/button';
 export * from './lib/card';
 export * from './lib/chip';

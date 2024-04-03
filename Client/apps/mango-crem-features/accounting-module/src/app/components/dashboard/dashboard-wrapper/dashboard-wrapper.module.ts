@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardWrapperComponent } from './dashboard-wrapper.component';
 import { DashboardModule } from '../accounting-dashboard.module';
-import { ButtonModule, CardModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
+import { ButtonModule, CardModule, DropdownModule, SkeletonModule } from '@mango/ui-shared/lib-ui-elements';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { Asc842QuarterlyDisclosuresComponent } from '../views/asc-842-quarterly-disclosures/asc-842-quarterly-disclosures.component';
 import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
@@ -43,6 +43,7 @@ import { IADCardComponent } from '../card/IADCard/iad-card.component';
     LoaderModule,
     FontAwesomeModule,
     CremPivotTableModule,
+    SkeletonModule,
   ],
   providers: [
     InAppDisclosureService

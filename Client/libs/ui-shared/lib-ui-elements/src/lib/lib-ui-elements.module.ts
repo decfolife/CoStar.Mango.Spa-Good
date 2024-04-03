@@ -10,6 +10,7 @@ import { SimpleGridModule } from './simple-grid';
 import { TooltipModule } from './tooltip';
 import { LoaderModule } from './loader';
 import { ScreenLoaderModule } from './screen-loader';
+import { SkeletonModule } from './skeleton';
 import { ModalModule } from './modal';
 import { HierarchyDropdownModule } from './hierarchy-dropdown';
 import { CremPivotTableModule } from './crem-pivot-table/crem-pivot-table.module';
@@ -28,6 +29,7 @@ import { CremPivotTableModule } from './crem-pivot-table/crem-pivot-table.module
     HeroMetricModule,
     IconModule,
     LoaderModule,
+    SkeletonModule,
     ScreenLoaderModule,
     SimpleGridModule,
     TooltipModule,

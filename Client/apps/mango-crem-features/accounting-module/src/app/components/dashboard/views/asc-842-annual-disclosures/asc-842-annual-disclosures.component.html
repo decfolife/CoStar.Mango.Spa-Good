@@ -14,8 +14,6 @@
                 [dataSource]="dataSources[config.index]"></mango-iad-card>
         </div>
     </div>
-    
 </div>
-<div *ngIf="loading">
-    <crem-loader></crem-loader>
-</div>
+
+<crem-skeleton *ngIf="loading" instances="2" type="card" />

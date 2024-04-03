@@ -59,6 +59,7 @@
     .wordmark {
       @include costar(font-size, h1);
       @include costar(color, primary);
+      overflow: hidden;
       font-weight: 100;
       line-height: 32px;
       border-left: 2px solid map-get($color, color, gray05);

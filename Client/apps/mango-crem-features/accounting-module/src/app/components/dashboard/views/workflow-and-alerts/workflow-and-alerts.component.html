@@ -4,6 +4,8 @@
       cdkDropListOrientation="vertical"
       (cdkDropListDropped)="cardMove($event)"
     >
+
+      <ng-container *ngIf="!cardJSONSchemaLoading">
       <div *ngFor="let config of cardData"
         class="categories-item"
         cdkDropListOrientation="horizontal"
@@ -30,7 +32,7 @@
             <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
           </svg>
         </div>
-  
+
         <mango-accounting-card *ngIf="!cardJSONSchemaLoading && config.cardJSONSchema.visible"
           [canSaveDefault]="canSaveDefault"
           [cardData]="config"
@@ -38,6 +40,13 @@
           (cardMove)="cardMove(event)"
           [pendoId]="config.cardPendoId"
         ></mango-accounting-card>
+
       </div>
+      </ng-container>
+
+
     </div>
-  </div>
+
+</div>
+
+<crem-skeleton *ngIf="cardJSONSchemaLoading" instances="2" type="card" />

@@ -1,0 +1,24 @@
+@use 'styles' as *;
+
+:host ::ng-deep{
+
+  // Card Skeleton
+  .skeleton-card {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    @include costar(margin, 4);
+    @include costar(padding, 3);
+    @include costar(border, gray05);
+    @include costar(background-color, light);
+    @include costar(border-radius, medium);
+    ngx-skeleton-loader {
+      .skeleton-loader {
+        @include costar(background-color, background);
+      }
+    }
+  }
+
+  // Metric Skeleton
+
+}

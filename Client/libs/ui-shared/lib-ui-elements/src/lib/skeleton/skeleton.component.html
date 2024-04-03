@@ -1,0 +1,30 @@
+<ng-content></ng-content>
+
+<div [class]="direction ? 'd-flex flex-' + direction : ''">
+  <ng-container *ngFor="let i of instancesList">
+    <ng-container [ngSwitch]="type">
+
+      <div class="skeleton-card" *ngSwitchCase="'card'">
+        <ngx-skeleton-loader
+          count="1"
+          [theme]="{height: '56px', width: '100%'}"
+          ariaLabel="Loading..."
+        ></ngx-skeleton-loader>
+        <ngx-skeleton-loader
+          count="5"
+          [theme]="{height: '32px', width: '100%'}"
+          ariaLabel="Loading..."
+        ></ngx-skeleton-loader>
+      </div>
+
+      <div class="skeleton-metric" *ngSwitchCase="'metric'">
+        <ngx-skeleton-loader [theme]="{height: '80px', width: '168px'}"></ngx-skeleton-loader>
+      </div>
+
+      <div *ngSwitchDefault>
+        <small>Please provide a type of skeleton, e.g. 'card'</small>
+      </div>
+
+    </ng-container>
+  </ng-container>
+</div>
