@@ -1,7 +1,7 @@
 import { HTTP_INTERCEPTORS, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
 import { Router } from "@angular/router";
-import { MangoErrorHandler } from "@mango/core-shared/lib-core-shared";
+import { JwtService, MangoErrorHandler, UtilitiesService } from "@mango/core-shared/lib-core-shared";
 import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
 import { Observable, throwError } from "rxjs";
 import { catchError, switchMap, take } from "rxjs/operators";
@@ -24,6 +24,10 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
     return this.injector.get(CentralAuthFacade)
   }
 
+  get jwtService(): JwtService {
+    return this.injector.get(JwtService)
+  }
+
   static forRoot(): ModuleWithProviders<CentralAuthHttpInterceptor> {
     return {
       ngModule: CentralAuthHttpInterceptor,
@@ -36,6 +40,13 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (UtilitiesService.isLocalEnvironment()) {
+      let token = this.jwtService.getToken()
+      const headers = this.generateRequestHeaders(token)
+      const request = req.clone({ setHeaders: headers })
+      return next.handle(request)
+    }
+
     return this.facade.accessToken$.pipe(
       take(1),
       switchMap(token => {

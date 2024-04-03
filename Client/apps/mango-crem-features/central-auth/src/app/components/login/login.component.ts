@@ -70,9 +70,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.loading$ = this.centralAuthFacade.loading$
   }
 
-
   ngOnInit(): void {
-    this.centralAuthFacade.handleUserAlreadyLoggedIn()
     this.subs.push(this.clientSpecificLoginHandler().subscribe())
   }
 

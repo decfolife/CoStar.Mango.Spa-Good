@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { UserService } from '@mango/core-shared';
+import { JwtService, UserService, UtilitiesService } from '@mango/core-shared';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
@@ -13,7 +13,8 @@ export class AuthGuard  {
   constructor(
     private userService: UserService,
     private centralAuthFacade: CentralAuthFacade,
-    private router: Router
+    private router: Router,
+    private jwtService: JwtService
   ) { }
 
   canActivate(
@@ -33,20 +34,29 @@ export class AuthGuard  {
       switchMap(accessToken => {
         if (accessToken) {
           return of(true)
-        } else {
-          return this.userService.getCurrentUserAccessToken().pipe(
-            map(accessToken => {
-              if (accessToken) {
-                this.centralAuthFacade.setAccessToken(accessToken)
-                return true
-              }
-            }),
-            catchError(error => {
-              this.router.navigate(['/'], { queryParamsHandling: 'merge' });
-              return of(false)
-            })
-          )
-        }
+        } 
+        
+        if (UtilitiesService.isLocalEnvironment()) {
+          let token = this.jwtService.getToken()
+          this.centralAuthFacade.setAccessToken(token)
+          if (token) return of(true)       
+
+          this.router.navigate(['/'], { queryParamsHandling: 'merge' });
+          return of(false)
+        } 
+        
+        return this.userService.getCurrentUserAccessToken().pipe(
+          map(accessToken => {
+            if (accessToken) {
+              this.centralAuthFacade.setAccessToken(accessToken)
+              return true
+            }
+          }),
+          catchError(error => {
+            this.router.navigate(['/'], { queryParamsHandling: 'merge' });
+            return of(false)
+          })
+        )     
       }),
     )
   }

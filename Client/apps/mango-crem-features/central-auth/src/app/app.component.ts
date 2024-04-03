@@ -9,7 +9,6 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-
   isLoading$: Observable<boolean>
   
   constructor(private centralAuthFacade: CentralAuthFacade, private activatedRoute: ActivatedRoute) {
@@ -17,6 +16,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.centralAuthFacade.handleUserAlreadyLoggedIn()
     this.centralAuthFacade.appInit()
   }
 }

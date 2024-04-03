@@ -36,8 +36,8 @@ export class AppEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.HANDLE_USER_ALREADY_LOGGED_IN),
-       switchMap(_ => combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.isClientSpecificLogin$])),
-        filter(([user, isClientSpecificLogin]) => !!user),
+        switchMap(_ => combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.isClientSpecificLogin$])),
+        filter(([user]) => !!user),
         tap(([user, isClientSpecificLogin]) => {
           if (isClientSpecificLogin) {
             this.centralAuthFacade.getUserClients()

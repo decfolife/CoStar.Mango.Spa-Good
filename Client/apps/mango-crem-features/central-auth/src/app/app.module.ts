@@ -9,7 +9,7 @@ import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { provideUserIdleConfig } from 'libs/core-shared/src/lib/services';
+import { JwtService, provideUserIdleConfig } from 'libs/core-shared/src/lib/services';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from '../environments/environment.dev';
 import { AuthenticationEffects } from './+state/effects/authentication.effects';
@@ -106,6 +106,7 @@ import { HttpEffects } from './+state/effects/http.effects';
     AuthGuard,
     UserService,
     StorageService,
+    JwtService,
     CentralAuthFacade
   ],
   bootstrap: [AppComponent],

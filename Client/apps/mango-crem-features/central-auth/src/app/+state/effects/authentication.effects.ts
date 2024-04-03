@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { UserService } from "@mango/core-shared";
+import { JwtService, UserService, UtilitiesService } from "@mango/core-shared";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { LoginResponse } from "libs/data-models/lib-data-models/src/lib/models/userAuth";
 import { combineLatest, of } from "rxjs";
@@ -11,8 +11,12 @@ import { CentralAuthFacade } from "../facades";
 @Injectable()
 
 export class AuthenticationEffects {
-
-  constructor(private actions$: Actions, private userService: UserService, private router: Router, private centralAuthFacade: CentralAuthFacade) { }
+  constructor(
+    private actions$: Actions, 
+    private userService: UserService, 
+    private jwtService: JwtService,
+    private centralAuthFacade: CentralAuthFacade,
+    private router: Router) { }
 
   login$ = createEffect(
     () =>
@@ -21,7 +25,7 @@ export class AuthenticationEffects {
         switchMap((action: { type: string, credentials: any }) => this.userService.login(action.credentials).pipe(
           filter(response => !!response),
           map(response => AppActions.loginSuccess({ response })),
-          catchError(_ => of(AppActions.loginError())
+            catchError(_ => of(AppActions.loginError())
           )),
         )
       )
@@ -35,6 +39,10 @@ export class AuthenticationEffects {
         switchMap(([response, isClientSpecificLogin]) => {
           if (!isClientSpecificLogin) {
             this.userService.setAuth(response.user)
+          }
+
+          if (UtilitiesService.isLocalEnvironment()) {
+            this.jwtService.saveToken(response.authToken)
           }
 
           return of(
