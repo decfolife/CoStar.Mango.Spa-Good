@@ -17,6 +17,7 @@ export class ValidateComponent implements OnInit, OnDestroy {
   constructor(private activatedRoute: ActivatedRoute, private facade: MangoAppFacade) { }
 
   ngOnInit(): void {
+    this.facade.setLoading(true)
     this.subs.push(this.activatedRoute.queryParams.pipe(
       first(queryParams => !!queryParams),
       map(params => [params.auth_code, params.source, params[OAUTH_REDIRECT_QUERY_PARAM]]),
@@ -26,6 +27,7 @@ export class ValidateComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.facade.setLoading(false)
     this.subs.forEach(s => s.unsubscribe)
   }
 }
