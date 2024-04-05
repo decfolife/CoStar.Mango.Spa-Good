@@ -34,7 +34,7 @@ export class SaveTeamTemplateComponent implements OnInit {
       (res:any ) => {
         if(!res || !res.success) {
           this.dialogRef.close();
-          if(res.clientErrorMessage != null && res.clientErrorMessage.startsWith('The team:') && res.clientErrorMessage.endsWith('already exists')) {
+          if(res.errorMessage != null && res.errorMessage.startsWith('The team:') && (res.errorMessage.indexOf('already exists')) > 0) {
             this.dialogService.alert('Team Name Duplicated', 
             'There is another team with the same name. Please re-name this team template or edit the existing team template as needed.', 'OK');
           }

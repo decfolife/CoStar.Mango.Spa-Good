@@ -69,7 +69,7 @@ export abstract class EndpointService {
   protected handleTaskApprovalError(operation) {
     return (error: any): Observable<any> => {
       console.error(operation, error);
-      return of({ status: error.status, statusText: error.statusText });
+      return of({ status: error.status, statusText: error.statusText, errorMessage: error.error.message });
     };
   }
 
@@ -123,6 +123,14 @@ export abstract class EndpointService {
       switchMap(httpHeaders => this.http.post(url, postBody, httpHeaders)),
       map(x => this.toObject(x) as any),
       catchError(this.handleError(functionName))
+    )
+  }
+
+  protected callHttpPostApprovalError(url: string, functionName: string, postBody: any): Observable<any> {
+    return this.getHttpHeaders().pipe(
+      switchMap(httpHeaders => this.http.post(url, postBody, httpHeaders)),
+      map(x => this.toObject(x) as any),
+      catchError(this.handleTaskApprovalError(functionName))
     )
   }
 

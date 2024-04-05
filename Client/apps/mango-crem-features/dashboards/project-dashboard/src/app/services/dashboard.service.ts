@@ -38,7 +38,7 @@ export class DashboardService  extends EndpointService{
     }, {
       text: 'On',
       value: [fieldName, '=', true],
-    }];  
+    }];
 
     return headerFilter;
   }
@@ -199,7 +199,7 @@ export class DashboardService  extends EndpointService{
 
   saveTeamAsTemplate(teamTemplateName: string, projectId: number) {
     const url = `${environment.appUrls.projects}createteamtemplate`;
-    return this.callHttpPost(url, 'createteamtemplate',  { teamTemplateName, projectId })
+    return this.callHttpPostApprovalError(url, 'createteamtemplate',  { teamTemplateName, projectId })
   }
 
   saveProjectManager(projectId: number, contactId: number) {
