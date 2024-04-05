@@ -175,7 +175,7 @@ export class ReportsSegmentComponent implements OnInit {
           portfolioID: data.data.portfolioID,
           name: data.data.name,
           archived: !data.data.active,
-          hideToastsOn: 'Accounting Dashboard',
+          hideToastsOn: 'Accounting Workflow and Alerts',
         }
       });
 
