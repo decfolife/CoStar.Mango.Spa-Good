@@ -30,9 +30,23 @@ export class OAuthEffects {
         switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1))])),
         filter(([client]) => !!client),
         map(([client, redirectionUri]) => {
-          const newRedirectionUri = !redirectionUri 
-            ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
-            : decodeURIComponent(redirectionUri)
+
+          // const newRedirectionUri = !redirectionUri 
+          //   ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
+          //   : decodeURIComponent(redirectionUri)
+
+          // TEMPORARY
+          let newRedirectionUri = ''
+          if (client.clientKey.toLowerCase() === 'retaildemo') {
+            newRedirectionUri = !redirectionUri 
+              ? `https://${client.clientKey}.test.corp.virtualpremise.com/v06/login.aspx?` 
+              : decodeURIComponent(redirectionUri)
+          } else {
+            newRedirectionUri = !redirectionUri 
+              ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
+              : decodeURIComponent(redirectionUri)
+          }
+          // TEMPORARY
 
           this.centralAuthFacade.setSelectedContactId(0)
           this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
