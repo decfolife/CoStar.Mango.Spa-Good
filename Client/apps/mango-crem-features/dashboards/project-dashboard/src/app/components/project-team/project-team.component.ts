@@ -42,9 +42,6 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   contactIds: number[] = [];
   searchText: string = "";
   autoExpand: boolean = false;
-  emailHeaderFilter: any;
-	shareHeaderFilter: any
-	accessLevelHeaderFilter: any
   count:number = 0;
   projectMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
                                 Please consider replacing this team member or updating their User record.`;
@@ -54,11 +51,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
               public toastr: ToastrService,
               private route: ActivatedRoute,
               private dialogService: MangoDialogService
-  ) {
-      this.emailHeaderFilter = dashboardService.returnOnOffHeaderFilters('emailNotifications');;
-      this.shareHeaderFilter = dashboardService.returnOnOffHeaderFilters('shared');;
-      this.accessLevelHeaderFilter = dashboardService.accessLevelHeaderFilter;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getClientPreferences();
@@ -144,6 +137,10 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   getSharedDisplayValue(rowData) {
     return rowData.shared ? 'On' : 'Off';
+  }
+
+  getAccessLevelDisplayValue(rowData) {
+    return rowData.accessLevel == 1 ? 'L1' : rowData.accessLevel == 2 ? 'L2': rowData.accessLevel == 3? 'L3': 'N/A'
   }
 
   importMembers() {

@@ -17,32 +17,6 @@ export class DashboardService  extends EndpointService{
     super(http, facade);
   }
 
-  accessLevelHeaderFilter: DxoHeaderFilterComponent['dataSource'] = [{
-    text: 'L1',
-    value: ['accessLevel', '=', 1]
-  }, {
-    text: 'L2',
-    value: ['accessLevel', '=', 2]
-  }, {
-    text: 'L3',
-    value: ['accessLevel', '=', 3]
-  }, {
-    text: 'N/A',
-    value: ['accessLevel', '=', 99]
-  }];  
-
-  returnOnOffHeaderFilters(fieldName: string): any {
-    let headerFilter: DxoHeaderFilterComponent['dataSource'] = [{
-      text: 'Off',
-      value: [fieldName, '=', false],
-    }, {
-      text: 'On',
-      value: [fieldName, '=', true],
-    }];
-
-    return headerFilter;
-  }
-
   getDashboardByIdWithChildrenQuery(dashboardId: number): Observable<any> {
     const url = `${environment.appUrls.dashboards}Dashboards/${dashboardId}`;
     return this.callHttpGet(url, 'getDashboardByIdWithChildrenQuery')

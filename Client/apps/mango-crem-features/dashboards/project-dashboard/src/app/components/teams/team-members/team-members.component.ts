@@ -36,8 +36,6 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	memberId : number;
 	showShareColumn = false;
 	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
-	emailHeaderFilter: any;
-	shareHeaderFilter: any
 	subs: Subscription[] = [];
 	teamMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
 														Please consider replacing this team member or updating their User record.`;
@@ -46,10 +44,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 
 	constructor(private dashboardService: DashboardService,
 							public toastr: ToastrService,
-							private dialogService: MangoDialogService) {
-								this.emailHeaderFilter = dashboardService.returnOnOffHeaderFilters('emailOn');
-								this.shareHeaderFilter = dashboardService.returnOnOffHeaderFilters('share');
-							}	
+							private dialogService: MangoDialogService) {}	
 
 	ngOnInit() {}
 

@@ -53,7 +53,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   constructor(private dashboardService: DashboardService, private router: Router,
     private exportToExcelService: ExportDevexDatagridService,
     private dialogService: MangoDialogService,
-    private dialog: MatDialog, private cardsService: CardsService) { }
+    private dialog: MatDialog, private cardsService: CardsService) {}
 
   ngOnInit(): void {
 
