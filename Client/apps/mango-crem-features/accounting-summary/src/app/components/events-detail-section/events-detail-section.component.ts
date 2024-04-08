@@ -149,7 +149,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   onGridContentReady(grid) {
     if (grid.component.totalCount() > 0) {
-      if (this.setInitialSelectedRow) {
+      if (this.setInitialSelectedRow || this.selectedRowKeys.length ===0) {
         this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
         this.setInitialSelectedRow = false;
       }
