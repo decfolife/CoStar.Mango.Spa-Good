@@ -38,6 +38,11 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       name: 'Other Information',
       index: 4
     },
+    {
+      id: 'LeaseLiabilityMaturityAnalysis',
+      name: 'Lease Liability Maturity Analysis',
+      index: 5
+    },
   ];
   public pivotCardData: any;
   public loading: boolean = true;
@@ -80,8 +85,54 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         this.setLeaseCostCardData(this.mergeArraysOfObjects(result.data[2],result.data[3]));
         this.setShortTermReportingExceptionsMetrics(result.data[4]);
         this.setOtherInformation(result.data[5]);
+        this.setMaturityAnalysis(result.data[6]);
         this.loading = false;
       });
+  }
+
+  public setMaturityAnalysis(data){ // copy/pasted function
+    this.pivotCardData = [];
+
+    data.forEach((item, i) => {
+      const total: number = item.ScheduledPaymentsReporting;
+
+      const items = [
+        {
+          Display: item.PeriodYear.toString(),
+          DisclosureClassificiation: item.ClassificationName,
+          data: item.ScheduledPaymentsReporting,
+        },
+        {
+          Display: item.PeriodYear.toString(),
+          DisclosureClassificiation: 'Total',
+          data: total,
+        },
+      ];
+
+      if(i === data.length - 1){
+        items.forEach( e => {
+          e.Display = 'Thereafter';
+        });
+      }
+
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+      });
+    });
+    // data[data.length - 1].PeriodYear = 'Total';
+
+    if (this.dataSources.length > 0) {
+      this.dataSources[5] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[5]
+      });
+    } else {
+      this.dataSources.push(new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[5]
+      }));
+    }
+    this.loading = false;
   }
 
   public setOtherInformation(data){ // copy/pasted function
@@ -507,6 +558,13 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
             config[2].format = {
               type: "fixedPoint",
               precision: this.currencyDecimalPrecision
+            };
+            break;
+          case 'ASC 842 Annual Disclosures Lease Liability Maturity Analysis':
+            config[0].width = 200;
+            config[2].format = {
+              type: "fixedPoint",
+              precision: this.currencyDecimalPrecision,
             };
             break;
         }

@@ -36,6 +36,12 @@ import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
           if (e.cell.columnPath[e.cell.columnPath.length - 1] === "Total"){
             e.cellElement.classList.add("total");
           }
+          if (e.cell.rowPath[e.cell.rowPath.length - 1] === "Thereafter"){
+            e.cellElement.classList.add("total");
+          }
+        }
+        if (e.cell.text === "Thereafter"){
+          e.cellElement.classList.add("total");
         }
       }
 
