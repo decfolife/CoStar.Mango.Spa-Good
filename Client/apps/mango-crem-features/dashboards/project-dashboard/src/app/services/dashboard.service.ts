@@ -215,6 +215,11 @@ export class DashboardService  extends EndpointService{
     this.errorNotify("An error occurred please contact the system administrator.");
   }
   
+  getComposeEmailInfo(projectId): Observable<any> {
+    const url = `${environment.appUrls.projects}getcomposeemailinfo/${projectId}`;
+    return this.callHttpGet(url, 'projectId');
+  }
+
   errorNotify(message: string) {
     this.notifyPopup(message, "error")
   }

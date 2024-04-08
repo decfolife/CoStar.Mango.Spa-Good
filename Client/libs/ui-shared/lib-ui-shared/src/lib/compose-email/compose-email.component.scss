@@ -1,0 +1,38 @@
+@use "styles" as *;
+
+.cem-noteType, .cem-to-members, .cem-body , .cem-include {
+  margin-bottom: 16px;
+
+  .cem-include-options-filePaths, .cem-include-options-unapprovedTasks {
+    margin-right: 16px;
+  }
+}
+
+.cem-noteType-label,  .cem-toMembers-label, .cem-body-label , .cem-include-label {
+  margin-bottom: 4px;
+}
+
+.cem-filesGrid-container {
+  border: 1px solid #C8C8C8;
+  border-radius: 2px;
+
+  .cem-filesGrid-uploadedBy {
+    color: $gray02;
+  }
+}
+
+.cem-footerContent {
+  display: flex;
+  .cem-footerleftControls {
+    font-size: small;
+    font-style: italic;
+  }
+
+  .cem-footerRightControls {
+    display: flex;
+  
+    & > .cem-btn {
+      margin-left: 8px;
+    }
+  }
+}

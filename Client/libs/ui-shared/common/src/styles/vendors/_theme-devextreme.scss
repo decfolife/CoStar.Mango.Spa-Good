@@ -73,3 +73,7 @@ dx-data-grid table.dx-datagrid-table {
     }
   }
 }  
+
+.dx-widget input, .dx-widget textarea {
+  @include costar(font-family, body);
+}

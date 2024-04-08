@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { MemberInfo, ProjectTeamMember, RemoveTeamMembers } from '@mango/data-models/lib-data-models';
+import { EmailNoteType, MemberInfo, ProjectTeamMember, ProjectsEmailInfo, RemoveTeamMembers } from '@mango/data-models/lib-data-models';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { Subscription, combineLatest } from 'rxjs';
@@ -15,6 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ImportTeamComponent } from './import-team/import-team.component';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { MemberDetailsComponent } from './member-details/member-details.component';
+import { ComposeEmailComponent } from '@mango/ui-shared/lib-ui-shared';
 
 
 @Component({
@@ -40,11 +41,15 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   projectsPrivateSetting: number;
   addTempUserSetting: number
   contactIds: number[] = [];
+  projectsEmailInfo: ProjectsEmailInfo = <ProjectsEmailInfo>{};
+  defaultNoteType: EmailNoteType = <EmailNoteType>{};
   searchText: string = "";
   autoExpand: boolean = false;
   count:number = 0;
   projectMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
                                 Please consider replacing this team member or updating their User record.`;
+  emailNote: string = `By including the unapproved tasks, each user will receive an individual email, 
+                              otherwise everyone will be Carbon Copied.`;                              
 
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
@@ -101,6 +106,35 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     });
 
     this.subs.push(dialogRef.afterClosed().subscribe());
+  }
+
+  composeEmail(e) {
+
+    this.subs.push(this.dashboardService.getComposeEmailInfo(this.projectId).subscribe(
+      (res:any) => {
+        if (res && res.success) {
+						this.projectsEmailInfo = res.data;
+            let obj = this.projectsEmailInfo.noteTypes.find(noteType => noteType.commonNoteType.toLocaleLowerCase().trim() == "email");
+            this.defaultNoteType = obj? obj : this.defaultNoteType;
+            let dialogRef = this.dialog.open(ComposeEmailComponent, {
+              width: '500px',
+              height: '700px',
+              panelClass: 'composeEmailModal',
+              data: {contacts: this.projectsEmailInfo.contacts, 
+                     noteTypes: this.projectsEmailInfo.noteTypes, 
+                     fileItems: this.projectsEmailInfo.fileItems,
+                     defaultNoteType: this.defaultNoteType,
+                     emailNote: this.emailNote
+                    },
+              disableClose: true
+            });
+        } else { 
+					let message = `Projects Email Info cound not fetched.`;
+					this.subs.push(this.dialogService.alert('Update Member', message, 'OK').subscribe());
+				}
+      }
+    ));
+
   }
 
   onSelectionChanged(e:any){

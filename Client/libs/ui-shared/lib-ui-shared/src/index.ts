@@ -11,3 +11,4 @@ export * from './lib/dashboard-filters';
 export * from './lib/shared-left-nav';
 export * from './lib/spa-breadcrumbs/display-breadcrumbs';
 export * from './lib/mango-dialog';
+export * from './lib/compose-email';

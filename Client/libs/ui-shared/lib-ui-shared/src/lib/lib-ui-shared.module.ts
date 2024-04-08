@@ -12,6 +12,7 @@ import { LibUiElementsModule } from '@mango/ui-shared/lib-ui-elements';
 import { EnvInfoChipModule } from './env-info-chip/env-info-chip.module';
 import { HeroMetricsContainerModule } from './hero-metrics-container';
 import { DashboardFiltersModule } from './dashboard-filters';
+import { ComposeEmailModule } from './compose-email';
 import { SharedLeftNavModule } from './shared-left-nav';
 import { ShadowFiltersContainerModule } from './shadow-filters-container';
 import { CostarSuiteHeaderModule } from './costar-suite-header/costar-suite-header.module';
@@ -35,6 +36,7 @@ import { MangoDialogModule } from './mango-dialog';
     ShadowFiltersContainerModule,
     SharedLeftNavModule,
     MangoDialogModule,
+    ComposeEmailModule,
     AddBuildingModalModule
   ],
   exports: [
@@ -52,6 +54,7 @@ import { MangoDialogModule } from './mango-dialog';
     ShadowFiltersContainerModule,
     SharedLeftNavModule,
     MangoDialogModule,
+    ComposeEmailModule,
     AddBuildingModalModule
   ],
 })

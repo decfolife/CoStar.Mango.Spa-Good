@@ -11,6 +11,7 @@
 	font-size: 22px;
 	padding: 8px 16px;
 	@include costar(background-color, light);
+  @include costar(border-bottom, gray05);
 	justify-content: space-between;
 
   .modalCloseButton {
@@ -41,6 +42,7 @@
 	display: flex;
 	padding: 16px;
 	flex-direction: row-reverse;
+  @include costar(border-top, gray05);
 
 	.footerRightControls {
 		display: flex;

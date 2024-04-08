@@ -890,3 +890,42 @@ body {
 }
 //*****  Teams Page and Project Teams Page Styles End *****//
 
+//**** Compose Email Modal CSS *******// <<<=== need to be moved to global SCSS file
+#composeEmailModalId {
+	.dx-checkbox-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    border: 1px solid colors.$darkGray;
+	}
+
+	.dx-texteditor.dx-editor-outlined.dx-state-focused, button:focus, .dx-state-focused .dx-checkbox-icon, .dx-comman-select .dx-checkbox.dx-state-focused {
+		outline: none;
+		box-shadow: 0 0 0 0.1rem colors.$primary;
+	}
+
+	.dx-texteditor.dx-editor-outlined {
+    border: 1px solid #C8C8C8; // <<== this one is applying
+    border-radius: 2px;
+	}
+
+	.dx-checkbox-text {
+    font-weight: 500;
+  }
+
+	dx-data-grid .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+		vertical-align: middle;
+		border-bottom: 1px solid #C8C8C8;
+	}
+
+	.fieldInvalid {
+		.label {
+			color: #DE0000;
+		}
+		#emailNoteTypeId, #cem-toMembersId {
+			dx-drop-down-box .dx-texteditor-container {
+				border: 1px solid #DE0000;
+			}
+		}
+	}
+}
