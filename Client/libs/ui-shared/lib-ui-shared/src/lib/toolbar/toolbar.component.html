@@ -12,7 +12,7 @@
     <ul class="modules nav nav-pills">
       <li class="nav-item" *ngFor="let link of moduleLinks" [ngClass]="activeLink === link.name ? link.name + ' active' : link.name">
         <a
-          [id]="'toolbar__' + link?.moduleID + '-' + link?.moduleDisplayName?.toLowerCase()?.replace(' ', '-')"
+          [id]="'toolbar__' + link?.moduleID"
           class="nav-link"
           [routerLink]="[link.spaurl || link.moduleHome]"
           [routerLinkActive]="['active']">

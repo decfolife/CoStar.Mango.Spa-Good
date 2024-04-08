@@ -1,6 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { UserService } from '@mango/core-shared';
-import { UserSite } from '@mango/data-models/lib-data-models';
 import { ToolbarModuleLink } from '@mango/data-models/lib-data-models';
 
 @Component({
@@ -11,8 +9,6 @@ import { ToolbarModuleLink } from '@mango/data-models/lib-data-models';
 export class ToolbarComponent implements OnInit {
   isCostarStyle: boolean = false;
   envPopoverVisible: boolean = false;
-  
-
   // chip items
   @Input() chipContent: string;
   @Input() popoverContent: string;
@@ -27,15 +23,8 @@ export class ToolbarComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-      // this.route.parent.url.subscribe((url) => {
-    //   if (url[0].path == 'costar') {
-    //     this.isCostarStyle = true;
-    //   }
-    // });
     this.isCostarStyle = false;
   }
-
-  toggleEnvironment() {}
 
   toggleEnvironmentPopover() {
     this.envPopoverVisible = !this.envPopoverVisible;
@@ -45,7 +34,6 @@ export class ToolbarComponent implements OnInit {
     let evt = new CustomEvent("ToogleBookmarkDrawer", {detail: "toggle"});
     window.dispatchEvent(evt);
   }
-
 }
 export interface ChipStyle {
   type: string;
