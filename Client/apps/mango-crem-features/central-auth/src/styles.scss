@@ -303,7 +303,6 @@ div.dx-button {
 .dx-popup-wrapper {
   .dx-overlay-content {
     border-radius: 2px;
-	padding: 20px;
 
     div.dx-popup-title {
       border-bottom: $stdBorder;
@@ -319,5 +318,12 @@ div.dx-button {
 #client-tooltip {
 	.dx-overlay-content, .dx-popup-content {
 		padding: 0;
+	}
+}
+
+// Dx popup for contact-records-popup component.
+#contacts-modal {
+	.dx-overlay-content {
+		padding: 20px;
 	}
 }

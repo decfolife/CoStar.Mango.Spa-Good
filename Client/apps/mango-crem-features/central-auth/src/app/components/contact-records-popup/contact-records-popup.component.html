@@ -1,4 +1,4 @@
-<dx-popup [height]="600" [width]="800" [showTitle]="false" [dragEnabled]="true" [closeOnOutsideClick]="false"
+<dx-popup [height]="600" [width]="800" [showTitle]="false" [dragEnabled]="true" [closeOnOutsideClick]="false" [wrapperAttr]="{ id: 'contacts-modal'}"
 	[showCloseButton]="false" [visible]="(visible$ | async)" [focusStateEnabled]="false">
 	<dxi-toolbar-item widget="dxButton" toolbar="bottom" location="after"
 		[options]="{text: 'Cancel', onClick: onCancelClick, elementAttr: {class: 'button-secondary'}}">
