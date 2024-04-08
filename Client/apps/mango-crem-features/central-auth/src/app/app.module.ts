@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { StorageService, UserService } from '@mango/core-shared';
 import { Environment, IDLE_TIMOUT_DELAY_SECONDS } from '@mango/data-models/lib-data-models';
-import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -26,6 +25,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { DxLoadPanelModule } from 'devextreme-angular';
 import { AppEffects } from './+state/effects/app.effects';
 import { HttpEffects } from './+state/effects/http.effects';
+import { RoleGuard } from './guards/role.guard';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,7 +42,7 @@ import { HttpEffects } from './+state/effects/http.effects';
       {
         path: 'customer-selection',
         component: CustomerSelectionPageComponent,
-        canActivate: [AuthGuard],
+        canActivate: [RoleGuard],
         title: 'Customer Selection - CoStar Real Estate Manger Secure Login'
       },
       {
@@ -104,6 +104,7 @@ import { HttpEffects } from './+state/effects/http.effects';
     { provide: Environment, useValue: environment },
     provideUserIdleConfig({ idle: 1, timeout: IDLE_TIMOUT_DELAY_SECONDS, ping: 2 }),
     AuthGuard,
+    RoleGuard,
     UserService,
     StorageService,
     JwtService,

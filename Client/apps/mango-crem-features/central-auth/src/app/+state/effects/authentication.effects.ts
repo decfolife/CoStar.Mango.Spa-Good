@@ -41,6 +41,13 @@ export class AuthenticationEffects {
             this.userService.setAuth(response.user)
           }
 
+          if (!response.user.hasMultipleSites) {
+            // Treat user as if they came in through customer specific login page
+            this.centralAuthFacade.setClientSpecificLogin(true)
+            this.centralAuthFacade.setSelectedClientKey(response.user.clientKey)
+            this.centralAuthFacade.setOpenClientInNewTab(false)
+          }
+
           if (UtilitiesService.isLocalEnvironment()) {
             this.jwtService.saveToken(response.authToken)
           }

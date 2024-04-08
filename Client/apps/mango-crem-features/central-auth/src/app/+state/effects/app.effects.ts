@@ -39,7 +39,8 @@ export class AppEffects {
         switchMap(_ => combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.isClientSpecificLogin$])),
         filter(([user]) => !!user),
         tap(([user, isClientSpecificLogin]) => {
-          if (isClientSpecificLogin) {
+          // If user is coming in through customer specific login page OR user doesn't have multiple sites
+          if (isClientSpecificLogin || !user.hasMultipleSites) {
             this.centralAuthFacade.getUserClients()
             this.centralAuthFacade.startAuthorizationWhenFullySelected()
             return

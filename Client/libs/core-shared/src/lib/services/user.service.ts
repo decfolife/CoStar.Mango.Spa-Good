@@ -183,6 +183,12 @@ export class UserService {
     return date;
   }
 
+  isAutoProvisioned(accessToken: string): boolean {
+    const decodedJwt = this.getDecodedAuthToken(accessToken);
+    const isAutoProvisioned = this.parseBool(decodedJwt.isAutoProvisioned)
+    return isAutoProvisioned
+  }
+
   parseBool(value: string): boolean {
     if (!value) return false;
     return value.toLowerCase() === 'true';

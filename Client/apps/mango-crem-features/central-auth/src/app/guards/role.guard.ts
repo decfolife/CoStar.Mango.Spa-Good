@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { JwtService, UserService, UtilitiesService } from '@mango/core-shared';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
 import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM, SHOW_MULTI_CONTACT_POPUP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
 
+// User must be authenticated and be auto-provisioned
 @Injectable()
-export class AuthGuard  {
+export class RoleGuard  {
   isInboundOn: boolean;
 
   constructor(
@@ -17,10 +18,7 @@ export class AuthGuard  {
     private jwtService: JwtService
   ) { }
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     const clientKey = route.queryParamMap.get('clientKey') || route.paramMap.get('clientKey') || route.queryParamMap.get(OAUTH_CLIENT_KEY_QUERY_PARAM)
     const redirectUri = route.queryParamMap.get(OAUTH_REDIRECT_QUERY_PARAM)
     const showMultiContactPopup = route.queryParamMap.get(SHOW_MULTI_CONTACT_POPUP_QUERY_PARAM)
@@ -33,6 +31,12 @@ export class AuthGuard  {
     return this.centralAuthFacade.accessToken$.pipe(
       switchMap(accessToken => {
         if (accessToken) {
+          const isAutoProvisioned = this.userService.isAutoProvisioned(accessToken)
+          if (!isAutoProvisioned) {
+            this.router.navigate(['/'])
+            return of(false)
+          }
+
           return of(true)
         } 
         
@@ -48,6 +52,12 @@ export class AuthGuard  {
         return this.userService.getCurrentUserAccessToken().pipe(
           map(accessToken => {
             if (accessToken) {
+              const isAutoProvisioned = this.userService.isAutoProvisioned(accessToken)
+              if (!isAutoProvisioned) {
+                this.router.navigate(['/'])
+                return false
+              } 
+
               this.centralAuthFacade.setAccessToken(accessToken)
               return true
             }
