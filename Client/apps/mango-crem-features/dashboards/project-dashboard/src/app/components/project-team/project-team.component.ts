@@ -27,6 +27,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   @ViewChild("ProjectTeamGrid") projectTeamGrid: DxDataGridComponent;
 
+  private selectClass = 'dx-selection';
   dataRetrieved: boolean = false;;
   projectTeam: ProjectTeamMember[];
   selectedTeamMembersData: RemoveTeamMembers = <RemoveTeamMembers>{};
@@ -139,6 +140,17 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   onSelectionChanged(e:any){
     if(e.selectedRowKeys.includes(this.managerContactId)) {
+      //remove highlight class for project manager row
+      let managerContactIdKey = e.selectedRowKeys.find(contactId => contactId === this.managerContactId);
+      let managerContactRowInedex = this.projectTeamGrid.instance.getRowIndexByKey(managerContactIdKey);
+      let rowElements = this.projectTeamGrid.instance.getRowElement(managerContactRowInedex);
+      rowElements.forEach(element => {
+        if(element.classList.contains(this.selectClass))
+          {
+            element.classList.remove(this.selectClass);
+          } 
+      });
+
       e.selectedRowKeys = e.selectedRowKeys.filter(contactId => contactId != this.managerContactId);
       e.selectedRowsData = e.selectedRowsData.filter(rowData => rowData.contactID != this.managerContactId);
     }
@@ -162,6 +174,13 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
         editor.option("visible", false);
       }
       htmlCellElement.style.pointerEvents = 'none';
+    }
+  }
+
+  onRowPrepared(e) {
+    //remove highlight class for project manager row
+    if(e.rowType !== 'header' && this.userAccessLevel == 1 && e.data.isManager) {
+      e.rowElement.classList.remove(this.selectClass);
     }
   }
 
