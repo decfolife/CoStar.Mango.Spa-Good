@@ -157,7 +157,7 @@
       <div class="aet-outstandingRoles" *ngIf="outstandingRoles.length">
         <h4 class="roleLabel label">Outstanding Roles</h4>
         <span class="outstandingRolesCount">{{outstandingRoles.length}} roles waiting to be assigned</span>
-        <crem-tooltip
+        <crem-tooltip class="outstandingRoles-tooltip"
           [externalId]="'outstandingRolesToolTipId'"
           [helpTextData]="outstandingRolesHelpText"
         ></crem-tooltip>
