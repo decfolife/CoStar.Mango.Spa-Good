@@ -10,8 +10,21 @@ fa-icon {
   color: black;
 }
 
+h3.label {
+  margin-bottom: 4px;
+}
+
+.aet-teamName {
+  margin-bottom: 20px;
+}
+
 #aet-members {
   margin-bottom: 40px;
+
+  dx-drop-down-box {
+    height: 35px;
+    border-radius: 4px;
+  }
 }
 
 #aet-selectedMembers {

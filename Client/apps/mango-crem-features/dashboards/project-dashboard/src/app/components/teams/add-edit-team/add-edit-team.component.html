@@ -6,8 +6,8 @@
 >
 <div modalContent id="addEditTeamModal-content">
   <div class="aet-teamName">
-    <h3>Team Name <span class="at-required" aria-label="required">*</span></h3>
-    <div class="aet-search">
+    <h3 class="label">Team Name <span class="at-required" aria-label="required">*</span></h3>
+    <div>
       <cs-text-field class="aet-textInput"
         type="text"
         formControlName="teamName"
@@ -20,7 +20,7 @@
     </div>
   </div>
   <div id="aet-members">
-    <h3>Members</h3>
+    <h3 class="label">Members</h3>
     <div id="container">
       <dx-drop-down-box 
           class="aet-membersDropDown"

@@ -55,6 +55,7 @@
 				[calculateCellValue]="getEmailonDisplayValue" editCellTemplate="emailToggleTemplate">
 			</dxi-column>
 			<dxi-column dataField="level" caption='Access Level' dataType="string" alignment="center" [setCellValue]="setLevelValue">
+				<dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
 			</dxi-column>
 			<dxi-column [visible]="showShareColumn" dataField="share" alignment="center" caption='Share' dataType="string" width="90"
 				[calculateCellValue]="getShareDisplayValue" editCellTemplate="sharedToggleTemplate">

@@ -185,6 +185,8 @@ export class AddEditTeamComponent implements OnInit {
     teamMember.level = "L1";
     teamMember.memberId= 0;
     teamMember.teamId = 0;
+    teamMember.allowLogOn = true;
+    teamMember.isActive = true;
     teamMember.share = this.data.projectsPrivateSetting === 1 || this.data.projectsPrivateSetting === 3;
 
     this.team.teamMembers.push(teamMember);
