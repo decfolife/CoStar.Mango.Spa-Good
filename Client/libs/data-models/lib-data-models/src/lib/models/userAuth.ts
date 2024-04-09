@@ -21,6 +21,7 @@ export interface Token {
     contactId?: string;
     clientKey?: string;
     isAutoProvisioned: string;
+    hasMultipleSites?: string;
     isServiceAccount?: string;
     token: string;
     exp: number;

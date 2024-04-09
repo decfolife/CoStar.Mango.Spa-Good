@@ -6,7 +6,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
 import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM, SHOW_MULTI_CONTACT_POPUP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
 
-// User must be authenticated and be auto-provisioned
+// User must be authenticated. User must be auto-provisioned OR have access to multiple sites
 @Injectable()
 export class RoleGuard  {
   isInboundOn: boolean;
@@ -31,8 +31,8 @@ export class RoleGuard  {
     return this.centralAuthFacade.accessToken$.pipe(
       switchMap(accessToken => {
         if (accessToken) {
-          const isAutoProvisioned = this.userService.isAutoProvisioned(accessToken)
-          if (!isAutoProvisioned) {
+          const hasAccess = this.isAutoProvisionedOrHasMultipleSites(accessToken)
+          if (!hasAccess) {
             this.router.navigate(['/'])
             return of(false)
           }
@@ -52,8 +52,8 @@ export class RoleGuard  {
         return this.userService.getCurrentUserAccessToken().pipe(
           map(accessToken => {
             if (accessToken) {
-              const isAutoProvisioned = this.userService.isAutoProvisioned(accessToken)
-              if (!isAutoProvisioned) {
+              const hasAccess = this.isAutoProvisionedOrHasMultipleSites(accessToken)
+              if (!hasAccess) {
                 this.router.navigate(['/'])
                 return false
               } 
@@ -69,5 +69,13 @@ export class RoleGuard  {
         )     
       }),
     )
+  }
+
+  isAutoProvisionedOrHasMultipleSites(accessToken: string) {
+    const decodedJwt = this.userService.getDecodedAuthToken(accessToken);
+    const isAutoProvisioned = this.userService.parseBool(decodedJwt.isAutoProvisioned);
+    const hasMultipleSites = this.userService.parseBool(decodedJwt.hasMultipleSites);
+
+    return isAutoProvisioned || hasMultipleSites
   }
 }
