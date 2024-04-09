@@ -90,10 +90,11 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       });
   }
 
-  public setMaturityAnalysis(data){ // copy/pasted function
+  public setMaturityAnalysis(data, years:number = 6){ // copy/pasted function
     this.pivotCardData = [];
+    const filteredData = this.filterByPeriodYear(data, this.reportingYear, this.reportingYear + years);
 
-    data.forEach((item, i) => {
+    filteredData.forEach((item, i) => {
       const total: number = item.ScheduledPaymentsReporting;
 
       const items = [
@@ -109,7 +110,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         },
       ];
 
-      if(i === data.length - 1){
+      if(i === filteredData.length - 1 || i === filteredData.length - 2){
         items.forEach( e => {
           e.Display = 'Thereafter';
         });
@@ -119,7 +120,6 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         this.pivotCardData.push(item)
       });
     });
-    // data[data.length - 1].PeriodYear = 'Total';
 
     if (this.dataSources.length > 0) {
       this.dataSources[5] = new PivotGridDataSource({
@@ -133,6 +133,10 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       }));
     }
     this.loading = false;
+  }
+
+  filterByPeriodYear(data: any, startYear: number, endYear: number):any {
+    return data.filter(item => item.PeriodYear >= startYear && item.PeriodYear <= endYear);
   }
 
   public setOtherInformation(data){ // copy/pasted function
