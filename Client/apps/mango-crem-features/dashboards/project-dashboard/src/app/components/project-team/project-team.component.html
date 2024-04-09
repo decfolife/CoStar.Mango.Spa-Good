@@ -107,7 +107,7 @@
 									(click)=" addOrEditMember(member.data.memberType.trim() == 'Team Member'? 'ETM' : 'ETU', member.data)">
 									Edit
 								</li>
-								<li mat-mdc-menu-item  class="ptm-remove" (click)="removeContactOrMember(member.data)">Remove</li>
+								<li mat-mdc-menu-item  class="ptm-remove" (click)="removeContactOrMember(member.data)"  *ngIf="!member.data.isManager">Remove</li>
 								<li mat-mdc-menu-item  class="ptm-makeManager" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
 							</ul>
 						</mat-menu>
