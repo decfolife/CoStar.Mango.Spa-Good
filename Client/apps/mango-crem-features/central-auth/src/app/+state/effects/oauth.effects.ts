@@ -37,14 +37,14 @@ export class OAuthEffects {
 
           // TEMPORARY
           let newRedirectionUri = ''
-          if (client.clientKey.toLowerCase() === 'retaildemo') {
+          if (environment.name === 'TEST' && client.clientKey.toLowerCase() === 'retaildemo') {
             newRedirectionUri = !redirectionUri 
               ? `https://${client.clientKey}.test.corp.virtualpremise.com/v06/login.aspx?` 
               : decodeURIComponent(redirectionUri)
           } else {
             newRedirectionUri = !redirectionUri 
-              ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
-              : decodeURIComponent(redirectionUri)
+            ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
+            : decodeURIComponent(redirectionUri)
           }
           // TEMPORARY
 
