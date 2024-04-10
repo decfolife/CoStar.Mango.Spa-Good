@@ -60,7 +60,8 @@ export class MapComponent implements OnInit {
       const listPageSessionValue = sessionStorage.getItem(listPageSessionKey);
       if(listPageSessionValue !== null){        
         const listPageObjectTypeSessions = JSON.parse(listPageSessionValue) as ListPageObjectTypeSession[];
-        const currentListView = JSON.parse(listPageObjectTypeSessions[0].currentListView).view;
+        const currentViewByObjectTypeId = listPageObjectTypeSessions.filter(x=>x.objectTypeId=this.objectTypeId).slice(-1);
+        const currentListView = JSON.parse(currentViewByObjectTypeId[0].currentListView).view;
         this.sortColumns = JSON.parse(currentListView).columns;  
       }     
     }
@@ -72,26 +73,19 @@ export class MapComponent implements OnInit {
 
     this.service.getMarkerList(request).subscribe(res => {
       //res.success = true;
-      // if (res && !res.success) {
-      //   this.showErrorPopup(res.clientErrorMessage);
-      //   this.markerList = [];
+      if ( (res === null) || (res.success!==null && !res.success)) {
+        this.showErrorPopup("Error Loading Map\n" + res.clientErrorMessage);
+        this.markerList = [];
 
-      //   return;
-      // }
-
-      if(res){
+        return;
+      }      
         this.markerList = res.data.mapMarkers;  
         if (res.data?.length === 0) {
           this.showErrorPopup('No map markers found.');
   
           return;
-        }
-  
-        this.loadMap();
-      }
-      else{
-        this.showErrorPopup("Error Loading Map");
-      }
+        }  
+        this.loadMap();      
     });
   }
 
@@ -104,40 +98,60 @@ export class MapComponent implements OnInit {
 
     const bounds = new google.maps.LatLngBounds();
 
-    const visibleSortColumns = this.sortColumns.filter(x=>x.visible === true);
-    visibleSortColumns.forEach(element => {
-      if(element.sortOrder){
-        this.sortFieldName = element.dataField;
-        this.sortListOrder = element.sortOrder;
-      }
-    });
+    const visibleSortColumns = this.sortColumns.filter(x=>x.visible === true && x.sortOrder);
+    //JSON.parse(currentListView).columns.filter(x=>x.visible===true&&x.sortOrder)
+    for (let i = 0; i < visibleSortColumns.length; i++) {
+      if (visibleSortColumns[i].sortOrder){
+        this.sortFieldName = visibleSortColumns[i].dataField;
+        this.sortListOrder = visibleSortColumns[i].sortOrder;
+        break;
+      }          
+  }
 
     this.markerList.sort((a,b)=>{
 
       switch (this.sortFieldName) {
+        case 'TransactionName':
+        case 'CompanyName':
+        case 'BuildingName':
+          {
+            if(this.sortListOrder === 'asc'){              
+              if(a.name.toLowerCase() < b.name.toLowerCase()) { return -1; } 
+              if(a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+            }
+            else if(this.sortListOrder === 'desc'){
+              if(a.name.toLowerCase() < b.name.toLowerCase()) { return 1; } 
+              if(a.name.toLowerCase() > b.name.toLowerCase()) { return -1; }
+            }
+            break;
+          }
         case 'BuildingAddress_1':
           {
             if(this.sortListOrder === 'asc'){
-              if(a.address1 < b.address1) { return -1; } 
-              if(a.address1 > b.address1) { return 1; }
+              if(a.address1.toLowerCase() < b.address1.toLowerCase()) { return -1; } 
+              if(a.address1.toLowerCase() > b.address1.toLowerCase()) { return 1; }
             }
             else if(this.sortListOrder === 'desc'){
-              if(a.address1 < b.address1) { return 1; } 
-              if(a.address1 > b.address1) { return -1; }
+              if(a.address1.toLowerCase() < b.address1.toLowerCase()) { return 1; } 
+              if(a.address1.toLowerCase() > b.address1.toLowerCase()) { return -1; }
             }
             break;
-          }          
+          }   
+        case 'TransactionLocation1':       
         case 'BuildingCountry':{
           if(this.sortListOrder === 'asc'){
-            if(a.country < b.country) return -1;  
-            if(a.country > b.country) return 1;                   
+            if(a.country.toLowerCase() < b.country.toLowerCase()) return -1;  
+            if(a.country.toLowerCase() > b.country.toLowerCase()) return 1;                   
           }
           else if(this.sortListOrder === 'desc'){
-            if(a.country < b.country) return 1;  
-            if(a.country > b.country) return -1;    ;
+            if(a.country.toLowerCase() < b.country.toLowerCase()) return 1;  
+            if(a.country.toLowerCase() > b.country.toLowerCase()) return -1;    ;
           }
           break;
         }
+        case 'Project_VP_ProjectID':
+        case 'NonVPLeaseID':
+        case 'LeaseAbstractID':
         case 'BuildingID':{
           if(this.sortListOrder === 'asc'){
             if(a.objectId < b.objectId) return -1;
@@ -148,36 +162,24 @@ export class MapComponent implements OnInit {
             if(a.objectId > b.objectId) return -1;                     
           }
           break;
-        }
-        case 'TenantHierarchy':{
-          if(this.sortListOrder === 'asc'){
-            if(a.name < b.name) return -1;
-            if(a.name > b.name) return 1;                     
-          }
-          else if(this.sortListOrder === 'desc'){
-            if(a.name < b.name) return 1;
-            if(a.name > b.name) return -1;                     
-          }
-          break;
-        }
+        }       
         case 'BuildingAddress_2':
         case 'BuildingCity':
         case 'BuildingState':
         case 'BuildingZipCode': {
             if(this.sortListOrder === 'asc'){
-              if(a.address2 < b.address2) return -1; 
-              if(a.address2 > b.address2) return 1;                    
+              if(a.address2.toLowerCase() < b.address2.toLowerCase()) return -1; 
+              if(a.address2.toLowerCase() > b.address2.toLowerCase()) return 1;                    
             }
             else if(this.sortListOrder === 'desc'){
-              if(a.address2 < b.address2) return 1; 
-              if(a.address2 > b.address2) return -1;   
+              if(a.address2.toLowerCase() < b.address2.toLowerCase()) return 1; 
+              if(a.address2.toLowerCase() > b.address2.toLowerCase()) return -1;   
             }
             break;
         }
         default:
-          return 0;          
-      }
-      return 0;
+          break;          
+      }      
     });
 
     this.markerList.forEach(marker => {
