@@ -7,7 +7,7 @@ const routes: Routes = [
     path: '',
     component: TeamsComponent,
     data: {
-      breadCrumb: { label: 'Teams Template', append: true, activeLink: 'Teams Template' }
+      breadCrumb: { label: 'Teams Templates', append: true, activeLink: 'Teams Templates' }
     },
   }];
 
