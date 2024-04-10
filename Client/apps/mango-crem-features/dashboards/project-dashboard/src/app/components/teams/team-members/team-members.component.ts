@@ -33,6 +33,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	memberUpdate: TeamMemUpdate;
 	emailNotify: boolean;
 	shareValue: boolean;
+	accessLevelValue: string;
 	memberId : number;
 	showShareColumn = false;
 	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
@@ -65,6 +66,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 	editRow(memberData: any) {
 		this.emailNotify = memberData.data.emailOn;
 		this.shareValue = memberData.data.share;
+		this.accessLevelValue = memberData.data.level;
 		this.memberId = memberData.data.memberId;
 		this.teamMembersGrid.instance.cancelEditData();
 		this.resetEditMode();
@@ -163,6 +165,11 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 		member.share = e.checked;
 		this.teamMembers.map(teamMember => teamMember.share = (teamMember.memberId == member.memberId? e.checked: teamMember.share));
 	}
+
+	accessLevelDropDownChange(e, member) {
+		member.level = e.value;
+		this.teamMembers.map(teamMember => teamMember.level = (teamMember.memberId == member.memberId? e.value: teamMember.level));
+	}
 	
 	cancelChanges(member) {
 		member.editMode = false;
@@ -184,6 +191,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 			if(isCancel && teamMember.memberId == this.memberId) {
 				teamMember.emailOn = this.emailNotify;
 				teamMember.share = this.shareValue;
+				teamMember.level = this.accessLevelValue;
 			} 
 		});
 	}

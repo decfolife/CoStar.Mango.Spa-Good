@@ -54,8 +54,7 @@
 			<dxi-column caption='Email Notifications' dataField="emailOn" alignment="center" dataType="string"
 				[calculateCellValue]="getEmailonDisplayValue" editCellTemplate="emailToggleTemplate">
 			</dxi-column>
-			<dxi-column dataField="level" caption='Access Level' dataType="string" alignment="center" [setCellValue]="setLevelValue">
-				<dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
+			<dxi-column dataField="level" caption='Access Level' dataType="string" alignment="center" editCellTemplate="accessLevelDropdownTemplate" [setCellValue]="setLevelValue">
 			</dxi-column>
 			<dxi-column [visible]="showShareColumn" dataField="share" alignment="center" caption='Share' dataType="string" width="90"
 				[calculateCellValue]="getShareDisplayValue" editCellTemplate="sharedToggleTemplate">
@@ -114,6 +113,19 @@
 					</mat-slide-toggle>
 				</div>
 			</div>
+			<div *dxTemplate="let member of 'accessLevelDropdownTemplate'">
+				<div class="accessLevelDropdown">
+					<dx-select-box
+						[dataSource]="memberInfo.levels"
+						[value]="member.data.level"
+						(onValueChanged)="accessLevelDropDownChange($event, member.data)"
+						valueExpr="level"
+						displayExpr="level"
+				>
+					</dx-select-box>
+				</div>	
+		</div>
+
 		</dx-data-grid>
 	</div>
 
