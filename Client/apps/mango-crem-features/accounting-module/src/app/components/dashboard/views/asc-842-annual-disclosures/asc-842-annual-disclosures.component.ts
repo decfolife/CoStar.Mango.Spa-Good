@@ -93,27 +93,38 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public setMaturityAnalysis(data, years:number = 6){ // copy/pasted function
     this.pivotCardData = [];
     const filteredData = this.filterByPeriodYear(data, this.reportingYear, this.reportingYear + years);
+    let items: any[];
 
     filteredData.forEach((item, i) => {
-      const total: number = item.ScheduledPaymentsReporting;
-
-      const items = [
-        {
-          Display: item.PeriodYear.toString(),
-          DisclosureClassificiation: item.ClassificationName,
-          data: item.ScheduledPaymentsReporting,
-        },
-        {
-          Display: item.PeriodYear.toString(),
-          DisclosureClassificiation: 'Total',
-          data: total,
-        },
-      ];
+      let total: number = item.ScheduledPaymentsReporting;
 
       if(i === filteredData.length - 1 || i === filteredData.length - 2){
-        items.forEach( e => {
-          e.Display = 'Thereafter';
-        });
+        total = item.RemainingPaymentsReporting;
+        items = [
+          {
+            Display: 'Thereafter',
+            DisclosureClassificiation: item.ClassificationName,
+            data: item.RemainingPaymentsReporting,
+          },
+          {
+            Display: 'Thereafter',
+            DisclosureClassificiation: 'Total',
+            data: total,
+          },
+        ];
+      } else {
+        items = [
+          {
+            Display: item.PeriodYear.toString(),
+            DisclosureClassificiation: item.ClassificationName,
+            data: item.ScheduledPaymentsReporting,
+          },
+          {
+            Display: item.PeriodYear.toString(),
+            DisclosureClassificiation: 'Total',
+            data: total,
+          },
+        ];
       }
 
       items.forEach((item) => {
