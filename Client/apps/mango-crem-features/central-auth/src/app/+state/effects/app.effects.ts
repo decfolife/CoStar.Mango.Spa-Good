@@ -38,17 +38,16 @@ export class AppEffects {
         ofType(AppActions.HANDLE_USER_ALREADY_LOGGED_IN),
         switchMap(_ => combineLatest([this.centralAuthFacade.user$, this.centralAuthFacade.isClientSpecificLogin$])),
         filter(([user]) => !!user),
-        tap(([user, isClientSpecificLogin]) => {
-          // If user is coming in through customer specific login page OR user doesn't have multiple sites
-          if (isClientSpecificLogin || !user.hasMultipleSites) {
-            this.centralAuthFacade.getUserClients()
-            this.centralAuthFacade.startAuthorizationWhenFullySelected()
-            return
-          }
-          
+        tap(([user, isClientSpecificLogin]) => {          
           if (user.isServiceAccount) {
             this.router.navigate(['service-account-configuration'])
           } else {
+            // If user is coming in through customer specific login page OR user doesn't have multiple sites
+            if (isClientSpecificLogin || !user.hasMultipleSites) {
+              this.centralAuthFacade.getUserClients()
+              this.centralAuthFacade.startAuthorizationWhenFullySelected()
+              return
+            }
             this.router.navigate(['customer-selection'], { queryParamsHandling: 'merge' })
           }
         })
