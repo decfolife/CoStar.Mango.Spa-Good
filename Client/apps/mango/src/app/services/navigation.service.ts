@@ -26,8 +26,8 @@ export class MangoNavigationService {
 
   redirectToCentralAuth(includeRedirectUri: boolean = true): void {
     let clientKey = UtilitiesService.getClientKeyFromUrl()
-    let caUrl = `${environment.CAUrl}${clientKey}`
-
+    let caUrl = UtilitiesService.isLocalEnvironment() ? environment.CAUrl : `${environment.CAUrl}${clientKey}`
+    
     if (!includeRedirectUri) {
       window.location.href = caUrl
       return

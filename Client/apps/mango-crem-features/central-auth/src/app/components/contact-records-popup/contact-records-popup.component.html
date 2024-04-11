@@ -11,7 +11,7 @@
 			<h4 class="client-key">{{  (selectedClient$ | async)?.clientKey.toUpperCase() }}</h4>
 		</div>
 		<p class="text-center">
-			Click a row below to log in as that user.  You may also set a Default to always log in as the selected user.  You can update the Default setting by clicking the User Badge and choosing "Change Contact" from the User Menu once logged in.
+			Click a row below to log in as that user.  You may also set a Default to always log in as the selected user.  You can update the Default setting by clicking the User Badge and choosing "Switch Contact" from the User Menu once logged in.
 		</p>
 		<div id="contact-list-grid">
 			<dx-data-grid id="gridContainer" [dataSource]="contactRecords$ | async" keyExpr="contactID"
