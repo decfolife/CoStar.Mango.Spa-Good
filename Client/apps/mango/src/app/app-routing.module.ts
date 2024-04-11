@@ -505,6 +505,8 @@ const routes: Routes = [
           },
         ]
       },
+
+      //FORMS
       {
         path: 'forms',
         loadChildren: () =>
@@ -512,6 +514,15 @@ const routes: Routes = [
             '@forms/mango-forms/mango-forms.module'
           ).then((mod) => mod.MangoFormsModule),
       },
+
+      //Costar Matching
+      {
+        path: 'costar-matching',
+        loadChildren: () =>
+          import(
+              '@costar-matching/app.module'
+          ).then((mod) => mod.AppModule),
+      }
 
       // Auto-generated components below
       // @!micro-component-generator: don't delete this line

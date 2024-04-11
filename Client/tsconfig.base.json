@@ -99,6 +99,9 @@
       "@user-maintenance/*": [
         "apps/mango-crem-features/user-maintenance/src/app/*"
       ],
+      "@costar-matching/*": [
+        "apps/mango-crem-features/costar-matching/src/app/*"
+      ],
       "cldr": ["node_modules/cldrjs/dist/cldr"],
       "cldr/*": ["node_modules/cldrjs/dist/cldr/*"],
       "exceljs": ["node_modules/exceljs/dist/exceljs.bare.min"],
