@@ -21,11 +21,11 @@
       </div>
 
       <div class="export-to-excel-button">
-        <crem-button 
+        <crem-button
           [id]="accountingSummaryService.getId(componentName,'exportToExcel','button')" 
           type="secondary"
           (click)="exportToExcel($event)" 
-          [disabled]="exportClicked"
+          [disabled]="exportClicked || isAccountingEventEmpty"
           [icon]="exportClicked? 'faSpinner':''"
           [iconPack]="exportClicked? 'solid':''"
           [iconAnimation]="exportClicked? 'spin':''">{{exportClicked ? 'Exporting to Excel':'Export to Excel'}}

@@ -1,7 +1,6 @@
 <section class="section-grid">
-	<mat-expansion-panel [expanded]="true"> 
-		<mat-expansion-panel-header aria-label="Accounting Events"> 
-		  <mat-panel-title class="header" > 
+	<crem-card [showCustomHeader]="true" >
+		<div customHeader class="card-header"> 
 			<div class="card-header">
 				<div class="card-title"
 					[id]="accountingSummaryService.getId(componentName,'card','title')">
@@ -20,7 +19,7 @@
 						[inputAttr]="{ 'aria-label': 'Accounting Event' }"
 						[showClearButton]="false"
 						[dataSource]="gridDataSource"
-						height="32px"
+						height="30px"
 						(click)="$event.stopPropagation();"
 						(keydown)="handleDropdownActivationKeys($event)"
 						(onOptionChanged)="onGridBoxOptionChanged($event)"
@@ -53,6 +52,7 @@
 					  </dx-drop-down-box>
 					</div>
 				</div>
+				</div>
 				<div class="more-menu">
 					<div class="more">
 						<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
@@ -64,10 +64,46 @@
 							</mat-menu>	 
 					</div>
 				</div>
+				<div class="grid-size">
+					<crem-button
+						btnStyle="basic"
+						color="secondary"
+						size="small"
+						class="icon-style"
+						icon="faExpand"
+						title="Show All Rows"
+						ariaLabel="Show All Rows"
+						*ngIf="showMaxRow" 
+						(click)="showMaxRows()">
+					</crem-button>
+	
+					<crem-button
+						btnStyle="basic"
+						size="small"
+						color="secondary"
+						class="icon-style"
+						icon="faSquare"
+						iconPack="regular"
+						title="Default View"
+						ariaLabel="Default View"
+						*ngIf="showDefaultRow" 
+						(click)="showDefaultRows()">
+					</crem-button>
+	
+					<crem-button
+						btnStyle="basic"
+						size="small"
+						class="icon-style"
+						color="secondary"
+						icon="faCompress"
+						title="Show Miniumum Rows"
+						ariaLabel="Show Miniumum Rows"
+						*ngIf="showMinRow" 
+						(click)="showMinRows()">
+					</crem-button>
+				</div>
 			</div>
-
-		  </mat-panel-title>
-		</mat-expansion-panel-header>
+			<div class="card-content">
 			<dx-data-grid
 				#EventsDataGrid
 				[id]="accountingSummaryService.getId(componentName ,'detail','section')"
@@ -80,7 +116,7 @@
 				[allowColumnReordering]="true"
 				[allowColumnResizing]="true"
 				columnResizingMode="widget"
-				[class]="customGridClass"
+				[height]="eventGridHeight"
 				[hoverStateEnabled]="true"
 				[(selectedRowKeys)]="selectedRowKeys"
 				[showRowLines]="true"
@@ -157,5 +193,6 @@
 
 				  </div>
 			</dx-data-grid>
-	</mat-expansion-panel> 
+		</div>
+	</crem-card>
 </section>

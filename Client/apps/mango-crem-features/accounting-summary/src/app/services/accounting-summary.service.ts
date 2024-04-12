@@ -22,6 +22,8 @@ export class AccountingSummaryService extends EndpointService {
   isLocked: boolean;
   isArchived: boolean;
   portolioSettings : PortfolioSettingsResponse;
+  headerRowHeight:number;
+  gridHeightPixelCorrection: number;
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -363,4 +365,34 @@ export class AccountingSummaryService extends EndpointService {
     window.URL.revokeObjectURL(url);
   }
 
+  setGridHeight(gridName: any, numberOfRows: any): string {
+    const gridHeaderRow: HTMLElement | null = gridName.instance.element().querySelector('.dx-datagrid-headers');
+    if (!gridHeaderRow) {
+      return '';
+    }
+    this.headerRowHeight = gridHeaderRow.clientHeight;
+    if (this.headerRowHeight < 36) {
+      this.gridHeightPixelCorrection = 5;
+    } else {
+      this.gridHeightPixelCorrection = 0;
+    }
+    const gridRowElement = gridName.instance.getRowElement(0);
+    if (gridRowElement && gridRowElement.length > 0) {
+      const rowHeight = gridRowElement[0].clientHeight;
+      return `${rowHeight * numberOfRows + this.gridHeightPixelCorrection + this.headerRowHeight}px`;
+    } else {
+      return '';
+    }
+  }
+
+  setDefaultGridHeight(gridName: any) {
+    const totalRowCount = gridName.instance.totalCount();
+    let customGridHeight: number | string;
+    if (totalRowCount >= 3) {
+      customGridHeight = this.setGridHeight(gridName, 3);
+    } else {
+      customGridHeight = this.setGridHeight(gridName, 'auto');
+    }
+    return customGridHeight;
+  }
 }

@@ -1,7 +1,8 @@
 <section class="section-grid">
-    <mat-expansion-panel [expanded]="true" (closed)="accountingSummaryService.delayGridPanelCollapseWhenFilterIsVisible()">
-        <mat-expansion-panel-header aria-label="Amortization Table">
-            <mat-panel-title class="header">
+    <crem-card [showCustomHeader]="true"
+    [customDropdownMenu]="true">
+    <div customHeader class="card-header"> 
+        <div class="card-header">
                 <div class="card-header">
                     <div class="card-title"
                     [id]="accountingSummaryService.getId(componentName,'card','title')">
@@ -20,10 +21,48 @@
                             </mat-menu>
                         </div>
                     </div>
+                    <div class="grid-size">
+                        <crem-button
+                            btnStyle="basic"
+                            color="secondary"
+                            size="small"
+                            class="icon-style"
+                            icon="faExpand"
+                            title="Show All Rows"
+                            ariaLabel="Show All Rows"
+                            *ngIf="showMaxRow" 
+                            (click)="showMaxRows()">
+                        </crem-button>
+        
+                        <crem-button
+                            btnStyle="basic"
+                            size="small"
+                            color="secondary"
+                            class="icon-style"
+                            icon="faSquare"
+                            iconPack="regular"
+                            title="Default View"
+                            ariaLabel="Default View"
+                            *ngIf="showDefaultRow" 
+                            (click)="showDefaultRows()">
+                        </crem-button>
+        
+                        <crem-button
+                            btnStyle="basic"
+                            size="small"
+                            class="icon-style"
+                            color="secondary"
+                            icon="faCompress"
+                            title="Show Miniumum Rows"
+                            ariaLabel="Show Miniumum Rows"
+                            *ngIf="showMinRow" 
+                            (click)="showMinRows()">
+                        </crem-button>
+                    </div>
                 </div>
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-
+            </div>
+        </div>
+        <div class="card-content">
         <dx-data-grid
             #AmortizationDataGrid
             [id]="accountingSummaryService.getId(componentName ,'detail','section')"
@@ -39,7 +78,7 @@
             [sorting]="false"
             [rowAlternationEnabled]="true"
             [summary]="summaryFields"
-            [class]="customGridClass"
+            [height]="amortizationGridHeight"
             noDataText="No Data"
             width='100%'
             (onOptionChanged)="onGridOptionChanged($event)"
@@ -91,8 +130,9 @@
                 <div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
             </div>
         </dx-data-grid>
-    </mat-expansion-panel>
 
+    </div>
+</crem-card>
     <!-- This is for the amortization grid -->
     <mango-je-retro-popup [amortizationGridRowClickEvent]="amortizationGridRowClickEvent" [eventScheduleData]="eventScheduleData" [gridColumnsForRetroPopup]="gridColumnsForRetroPopup" [rightsInfo]="rightsInfo" [wfStatusRights]="wfStatusRights"
     [userInfo]="userInfo" [classificationType]="classificationType" [amortizationProfileName]="amortizationProfileName" [newRetroEventJeStatus]="retroEventJeStatus" (jeRetroPopupClosedEvent)="onJeRetroPopupClosed($event)" (retroAdustmentGridRowClickEvent)="onRetroAdustmentGridRowClick($event)"></mango-je-retro-popup>

@@ -38,7 +38,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   modifiedDate: any;
   amortizationProfileName: string;
   classificationType: string;
-  isAccountingEventEmpty = false;
+  isAccountingEventEmpty: boolean;
   exportClicked = false;
 
   constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }

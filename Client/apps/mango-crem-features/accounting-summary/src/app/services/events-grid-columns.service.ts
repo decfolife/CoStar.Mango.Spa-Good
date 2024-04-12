@@ -143,7 +143,7 @@ export class EventsGridColumnsService {
 
 
     // leaseRecognitionCalendarID = 1 means that it is a standard calendar
-    if (portfolioSettings.leaseRecognitionCalendarID != 1) {
+    if (portfolioSettings?.leaseRecognitionCalendarID != 1) {
       columns.push({
         caption: 'Days In Term',
         dataField: 'daysInTerm',
@@ -190,13 +190,13 @@ export class EventsGridColumnsService {
         format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
       },
       {
-        caption: portfolioSettings.leaseRecognitionCalendarID != 1
+        caption: portfolioSettings?.leaseRecognitionCalendarID != 1
           ? 'Straight Line Expense Daily'
           : 'Straight Line Expense',
-        dataField: portfolioSettings.leaseRecognitionCalendarID != 1
+        dataField: portfolioSettings?.leaseRecognitionCalendarID != 1
           ? 'straightLineExpenseDaily'
           : 'straightLineExpense',
-        format: value => portfolioSettings.leaseRecognitionCalendarID != 1 ?
+        format: value => portfolioSettings?.leaseRecognitionCalendarID != 1 ?
           this.formattingService.formatNumber(+value, 14) :
           this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision),
         headerCellTemplate: 'amortizationHeader',
@@ -281,7 +281,7 @@ export class EventsGridColumnsService {
       case 2: // Finance 842
         columns = columns.concat(typeColumns);
 
-        if (portfolioSettings.functionalCurrencyEnabled) {
+        if (portfolioSettings?.functionalCurrencyEnabled) {
           this.addFunctionalBalanceColumns(columns, currencyInfo);
         } else {
           this.addBalanceColumns(columns, currencyInfo);
@@ -301,13 +301,13 @@ export class EventsGridColumnsService {
       case 3: // Operating 842
         columns = columns.concat(typeColumns);
 
-        if (portfolioSettings.functionalCurrencyEnabled) {
+        if (portfolioSettings?.functionalCurrencyEnabled) {
           this.addFunctionalBalanceColumns(columns, currencyInfo);
         } else {
           this.addBalanceColumns(columns, currencyInfo);
         }
 
-        if (portfolioSettings.functionalCurrencyEnabled) {
+        if (portfolioSettings?.functionalCurrencyEnabled) {
           columns.push({
             caption: 'Level Expense (' + currencyInfo.functionalCurrency + ')',
             dataField: 'functionalLevelExpense',
@@ -315,7 +315,8 @@ export class EventsGridColumnsService {
             cellTemplate: 'pointer',
             appendsCurrency: 'true',
             usesLocalFormat: 'false',
-            usesFunctionalFormat: 'false'
+            usesFunctionalFormat: 'true',
+            format: value => this.formattingService.localFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision)
           });
         } else {
           columns.push({
@@ -324,15 +325,16 @@ export class EventsGridColumnsService {
             headerCellTemplate: 'amortizationHeader',
             cellTemplate: 'pointer',
             appendsCurrency: 'true',
-            usesLocalFormat: 'false',
-            usesFunctionalFormat: 'false'
+            usesLocalFormat: 'true',
+            usesFunctionalFormat: 'false',
+            format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
           });
         }
         break;
       case 4: // IFRS 16
         columns = columns.concat(typeColumns);
 
-        if (portfolioSettings.functionalCurrencyEnabled) {
+        if (portfolioSettings?.functionalCurrencyEnabled) {
           this.addFunctionalBalanceColumns(columns, currencyInfo);
         } else {
           this.addBalanceColumns(columns, currencyInfo);

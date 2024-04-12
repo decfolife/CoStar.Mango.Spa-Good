@@ -31,7 +31,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   detailColumns = [];
   gridName = 'Events';
   componentName = "events-grid"
-  customGridClass = 'custom-grid';
+  eventGridHeight: string;
   classificationId: number;
   isLoading = false;
   selectedRowKeys: number[];
@@ -61,6 +61,9 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   classificationID: number;
   isAccountingEventEmpty = true;
   gridsState: any;
+  showMaxRow = true;
+  showDefaultRow = false;
+  showMinRow = false;
   resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText = 'This will clear all pending changes in the grid';
 
@@ -149,11 +152,11 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   onGridContentReady(grid) {
     if (grid.component.totalCount() > 0) {
+      this.eventGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.eventsDataGrid);
       if (this.setInitialSelectedRow || this.selectedRowKeys.length ===0) {
         this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
         this.setInitialSelectedRow = false;
       }
-
       const selectedRowIndex = grid.component.getRowIndexByKey(this.selectedRowKeys[0]);
       grid.component.selectRowsByIndexes([selectedRowIndex]);
 
@@ -605,6 +608,11 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       else if (!response.success) {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
+
+      else if (response.data.length === 0){
+        this.isAccountingEventEmpty = true;
+        this.emitDataChanged();
+      }
     }));
   }
 
@@ -633,5 +641,28 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   openMoreMenu(event: KeyboardEvent): void {
     event.stopPropagation();
+  }
+
+  showMaxRows() {
+    this.eventGridHeight = 'auto'
+    this.showMaxRow = false;
+    this.showDefaultRow = false;
+    this.showMinRow = true;
+  }
+
+  showDefaultRows() {
+    this.eventGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.eventsDataGrid);
+    this.showMaxRow = true;
+    this.showDefaultRow = false;
+    this.showMinRow = false;
+    this.eventsDataGrid.instance.refresh();
+  }
+
+  showMinRows() {
+    this.eventGridHeight = this.accountingSummaryService.setGridHeight(this.eventsDataGrid, 1);
+    this.showMaxRow = false;
+    this.showDefaultRow = true;
+    this.showMinRow = false;
+    this.eventsDataGrid.instance.refresh();
   }
 }

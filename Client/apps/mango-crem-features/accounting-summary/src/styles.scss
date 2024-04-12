@@ -5,31 +5,16 @@
 //**** bleeding into other components  ****//
 
 .accounting-summary-style-container {
-    .mat-expansion-panel-header-title {
-        display: flex;
-        flex-grow: 1;
-        flex-basis: 0;
-        margin-right: 16px;
-        align-items: center;
-        padding-top: 1em;
-    }
-
     .grid-cell-box-shadow {
         box-shadow: inset 0px 0px 0px 20px #b4cee9;
     }
+
     .header {
-        color: #1e3a6f;
+        color: #1B3A6E;
         font-weight: 500;
         line-height: 1.3em;
-        padding-top: 1em;
-    }
-
-    .mat-expansion-panel-header.mat-expanded {
-        height: 55px;
-    }
-
-    .mat-expansion-panel-header {
-        height: 60px;
+        margin-bottom: 1em;
+        padding: 0px;
     }
 
     .dx-header-row {
@@ -41,8 +26,9 @@
     button.btn.btn-default.moreButton {
         display: flex;
         align-items: center;
-        font-size: 16px;
+        font-size: 14px;
         color: #000;
+        height: 25px;
         cursor: pointer;
 
         mat-icon {
@@ -55,7 +41,7 @@
     }
 
     .section-grid {
-        padding: 10px 16px 0px 16px !important;
+        padding: 6px 16px 0px 16px;
     }
 
     #je-processing-info-popup-grid,
@@ -74,8 +60,9 @@
         white-space: normal;
         text-align: center;
         margin: 0px;
-        max-height: 42px;
+        max-height: 37px;
         font-size: 11px;
+        line-height: 13px;
     }
 
     .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[id^="dx-col-"] {
@@ -239,7 +226,7 @@
         font-size: 12px !important;
     }
 
- /* Fixes for Amortization Period Popup Tab Panel issues after enabling CSP. */
+ /* Fix for Amortization Period Popup Tab Panel issues after enabling CSP. */
     .dx-tab.dx-tab-selected .dx-tab-text {
         color: #FFF;
     }
@@ -262,13 +249,11 @@
 
     .card-header {
         display: flex;
-        justify-content: space-between;
-        align-items: left;
         width: 100%;
         padding: 0;
-        margin-bottom: 0;
         border-bottom: #fff;
         background-color: transparent;
+        align-items: baseline;
     }
 
     .card-title {
@@ -276,23 +261,44 @@
         margin: 5px 0 0 0;
         text-wrap: nowrap;
         padding-right: 10px;
+        font-size: 14px;
+        color: #1e3a6f;
+        font-weight: 500;
     }
 
     .event-selector {
         order: 2;
-        width: 70%;
-        margin-right: 10%;
+        width: 100%;
+        margin-left: 2%;
+        display:flex;
     }
 
     .more-menu {
         order: 3;
         padding-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        width: 95%;
+        padding-top: 0px;
+    }
+
+    .grid-size {
+        order: 4;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
     }
 
     #payments-grid-detail-section .dx-datagrid-header-panel,
     #events-grid-detail-section .dx-datagrid-header-panel,
     #amortization-grid-detail-section .dx-datagrid-header-panel {
         display: none;
+    }
+
+    #amortization-grid-detail-section .dx-datagrid-total-footer>.dx-datagrid-content {
+        padding-top: 2px;
+        padding-bottom: 2px;
     }
 
     #je-payment-info-popup-grid,
@@ -321,18 +327,63 @@
         .dx-datagrid-content .dx-datagrid-table .dx-header-row>td {
             cursor: default;
         }
+        .dx-datagrid-content .dx-datagrid-table .dx-row>td,
+        .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
+            padding:6px
+        }
 
         .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[aria-colindex="1"],
         .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[aria-label="Column #"] {
             cursor: pointer;
+        }
+   
+        .dx-datagrid {
+            color: #333;
+            line-height: 11px;
         }
     }
     
     #openLeaseAlertsPopupButton {
         height: 32px;
       }
-}
 
+    .dx-datagrid {
+        color: #333;
+        line-height: 12px;
+    }
+
+    .card-content {
+        padding: 0 16px 7px 16px;
+    }
+
+// Customize CREM Card to load more data on Accounting Summary Page
+    mat-card {
+        min-height: auto !important;
+    }
+
+    mat-card mat-card-header {
+        padding:5px !important;
+    }
+
+    mat-card mat-card-content {
+        border-top: unset !important;
+    }
+
+    .customHeader>div:first-child {
+        width: 100%;
+    }
+    
+    .customHeader {
+        width: 100%;
+        margin: 0px !important;
+    }
+
+    .icon-style {
+        button {
+            padding: unset !important;
+        }
+    } 
+}
 
 .dx-menu-base .dx-menu-item.dx-state-disabled {
     opacity: 1;

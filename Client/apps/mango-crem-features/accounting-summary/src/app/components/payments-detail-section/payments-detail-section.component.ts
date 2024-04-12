@@ -23,7 +23,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   isGridStateChanged = false;
   paymentsGridData;
   paymentsGridColumns = [];
-  paymentsGridClass = 'payments-grid-class';
+  paymentsGridHeight: string;
   gridName = 'Payments';
   isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
@@ -34,9 +34,12 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   initialState = {};
   private subscription = new Subscription();
   contentLoaded = false;
+  showMaxRow = true;
+  showDefaultRow = false;
+  showMinRow = false;
   resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText ='This will clear all pending changes in the grid';
-  
+
   constructor(public accountingSummaryService: AccountingSummaryService, private paymentsGridColumnService: PaymentsGridColumnsService) { 
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
@@ -110,8 +113,11 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
       this.contentLoaded = false;
   }
 
-  onGridContentReady(){
-    if(!this.contentLoaded){
+  onGridContentReady() {
+    if (this.paymentsDataGrid.instance.totalCount() > 0) {
+      this.paymentsGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.paymentsDataGrid);
+    }
+    if (!this.contentLoaded) {
       this.paymentsDataGrid.instance.state(this.initialState);
       this.contentLoaded = true;
     }
@@ -215,5 +221,26 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
   openMoreMenu(event: Event): void {
     event.stopPropagation();
+  }
+
+  showMaxRows() {
+    this.paymentsGridHeight = 'auto'
+    this.showMaxRow = false;
+    this.showDefaultRow = false;
+    this.showMinRow = true;
+  }
+
+  showDefaultRows() {
+    this.paymentsGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.paymentsDataGrid);
+    this.showMaxRow = true;
+    this.showDefaultRow = false;
+    this.showMinRow = false;
+  }
+
+  showMinRows() {
+    this.paymentsGridHeight = this.accountingSummaryService.setGridHeight(this.paymentsDataGrid, 1);
+    this.showMaxRow = false;
+    this.showDefaultRow = true;
+    this.showMinRow = false;
   }
 }

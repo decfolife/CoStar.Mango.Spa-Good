@@ -33,7 +33,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   gridName = 'Periods';
   isLoading = false;
   selectedRowKey: number[];
-  customGridClass = 'custom-grid';
+  amortizationGridHeight: string;
   isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
   expanded = true;
@@ -48,6 +48,9 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   retroEventJeStatus = "";
   private subscription = new Subscription();
   contentLoaded = false;
+  showMaxRow = true;
+  showDefaultRow = false;
+  showMinRow = false;
   resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText ='This will clear all pending changes in the grid';
 
@@ -157,6 +160,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   onGridContentReady() {
     if (!this.contentLoaded) {
+      this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid,15);
       this.amortizationDataGrid.instance.state(this.initialState);
       this.contentLoaded = true;
     }
@@ -412,5 +416,26 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     });
 
     this.gridColumnsForRetroPopup = resultColumnsArray;
+  }
+
+  showMaxRows() {
+    this.amortizationGridHeight = 'auto';
+    this.showMaxRow = false;
+    this.showDefaultRow = false;
+    this.showMinRow = true;
+  }
+
+  showDefaultRows() {
+    this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid,15);
+    this.showMaxRow = true;
+    this.showDefaultRow = false;
+    this.showMinRow = false;
+  }
+
+  showMinRows() {
+    this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid,11);
+    this.showMaxRow = false;
+    this.showDefaultRow = true;
+    this.showMinRow = false;
   }
 }

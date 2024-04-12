@@ -19,6 +19,7 @@ import { TransactionPopupComponent } from '../payments-detail-section/transactio
 import { JeProcessingInfoComponent } from '../amortization-detail-section/je-retro-popup/je-processing-info/je-processing-info.component';
 import { JePaymentInfoComponent } from '../amortization-detail-section/je-retro-popup/je-payment-info/je-payment-info.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { CardModule} from '@mango/ui-shared/lib-ui-elements';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -49,7 +50,8 @@ import { JeRetroPopupComponent } from '../amortization-detail-section/je-retro-p
 
   imports: [
     CommonModule,
-    MatExpansionModule ,
+    MatExpansionModule,
+    CardModule,
     IndexRoutingModule,
     IconModule,
     HttpClientModule,

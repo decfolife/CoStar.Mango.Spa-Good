@@ -1,96 +1,132 @@
 <section class="section-grid">
-	<mat-expansion-panel [expanded]="true" (closed)="accountingSummaryService.delayGridPanelCollapseWhenFilterIsVisible()"> 
-		<mat-expansion-panel-header aria-label="Payments Grid"> 
-			<mat-panel-title class="header"> 
-			<div class="card-header">
-				<div class="card-title"
-				[id]="accountingSummaryService.getId(componentName,'card','title')">
-				Payments {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
-				</div>
-				<div class="more-menu">
-					<div class="more">
-						<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
-						<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
-							<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
-							<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
-							<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="isGridStateChanged ? clearGridChanges() : resetGridPreferences()" [title]="isGridStateChanged ? clearBtnHoverText : resetBtnHoverText">{{isGridStateChanged ? 'Clear Changes' : 'Reset Preferences'}}</button>
-							<button [id]="accountingSummaryService.getId(componentName,'ExpertToExcel','button')" mat-menu-item (click)="exportToExcel()" title="Export to Excel">Export to Excel</button>
-						</mat-menu>
-						</div>
-				</div>
+	<crem-card [showCustomHeader]="true" fxFlexFill>
+		<div customHeader class="card-header">
+			<div class="card-title"
+			[id]="accountingSummaryService.getId(componentName,'card','title')">
+			Payments {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
 			</div>
+			<div class="more-menu">
+				<div class="more">
+					<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
+					<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
+						<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
+						<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
+						<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="isGridStateChanged ? clearGridChanges() : resetGridPreferences()" [title]="isGridStateChanged ? clearBtnHoverText : resetBtnHoverText">{{isGridStateChanged ? 'Clear Changes' : 'Reset Preferences'}}</button>
+						<button [id]="accountingSummaryService.getId(componentName,'ExpertToExcel','button')" mat-menu-item (click)="exportToExcel()" title="Export to Excel">Export to Excel</button>
+					</mat-menu>
+				</div>
 
-		  </mat-panel-title>
-		</mat-expansion-panel-header>
-			<dx-data-grid
-				#PaymentsDataGrid
-				[id]="accountingSummaryService.getId(componentName ,'detail','section')"
-				[dataSource]="paymentsGridData"
-        		keyExpr="leaseRecognitionScheduleEventID"
-				width='100%'
-				noDataText="No historical charge data"
-				[columnMinWidth]="25"
-				[columns]="paymentsGridColumns"
-				[showColumnLines]="true"
-				[allowColumnReordering]="true"
-				[allowColumnResizing]="true"
-				[rowAlternationEnabled]="true"
-				columnResizingMode="widget"
-				[hoverStateEnabled]="true"
-				[showRowLines]="true"
-				[showBorders]="true"
-				[class]="paymentsGridClass"
-				(onOptionChanged)="onGridOptionChanged($event)"
-				(onRowClick)="onRowClick($event)"
-				(onContentReady)="onGridContentReady()"
-				>
-				<dxo-paging
-                	[enabled]="false">
-            	</dxo-paging>				
+			</div>
+			<div class="grid-size">
+				<crem-button
+					btnStyle="basic"
+					color="secondary"
+					size="small"
+					class="icon-style"
+					icon="faExpand"
+					title="Show All Rows"
+					ariaLabel="Show All Rows"
+					*ngIf="showMaxRow" 
+					(click)="showMaxRows()">
+				</crem-button>
 
-				<dxo-state-storing
-					[enabled]="true"
-					type="custom"
-					storageKey="paymentsGridStateKey"
-					[customLoad]="loadState"
-					[customSave]="saveState">
-				</dxo-state-storing>
+				<crem-button
+					btnStyle="basic"
+					size="small"
+					color="secondary"
+					class="icon-style"
+					icon="faSquare"
+					iconPack="regular"
+					title="Default View"
+					ariaLabel="Default View"
+					*ngIf="showDefaultRow" 
+					(click)="showDefaultRows()">
+				</crem-button>
 
-				<dxo-scrolling
-					columnRenderingMode="virtual">
-				</dxo-scrolling>
-				
-				<dxo-selection
-					mode="single">
-				</dxo-selection>
+				<crem-button
+					btnStyle="basic"
+					size="small"
+					class="icon-style"
+					color="secondary"
+					icon="faCompress"
+					title="Show Miniumum Rows"
+					ariaLabel="Show Miniumum Rows"
+					*ngIf="showMinRow" 
+					(click)="showMinRows()">
+				</crem-button>
+			</div>
+	</div>
+	<div class="card-content">
+		<dx-data-grid
+			#PaymentsDataGrid
+			[id]="accountingSummaryService.getId(componentName ,'detail','section')"
+			[dataSource]="paymentsGridData"
+			keyExpr="leaseRecognitionScheduleEventID"
+			width='100%'
+			noDataText="No historical charge data"
+			[columnMinWidth]="25"
+			[columns]="paymentsGridColumns"
+			[showColumnLines]="true"
+			[allowColumnReordering]="true"
+			[allowColumnResizing]="true"
+			[rowAlternationEnabled]="true"
+			columnResizingMode="widget"
+			[hoverStateEnabled]="true"
+			[showRowLines]="true"
+			[showBorders]="true"
+			[height]="paymentsGridHeight"
+			(onOptionChanged)="onGridOptionChanged($event)"
+			(onRowClick)="onRowClick($event)"
+			(onContentReady)="onGridContentReady()"
+		>
+		<dxo-paging
+			[enabled]="false">
+		</dxo-paging>				
 
-				<dxo-column-chooser
-					[enabled]="true"
-					mode="select"
-					height="500"
-					width="400"> 
+		<dxo-state-storing
+			[enabled]="true"
+			type="custom"
+			storageKey="paymentsGridStateKey"
+			[customLoad]="loadState"
+			[customSave]="saveState">
+		</dxo-state-storing>
 
-					<dxo-search
-						[enabled]="true">
-					</dxo-search>
+		<dxo-scrolling
+			columnRenderingMode="virtual">
+		</dxo-scrolling>
+		
+		<dxo-selection
+			mode="single">
+		</dxo-selection>
 
-					<dxo-selection
-						allowSelectAll="true">
-					</dxo-selection>
-				</dxo-column-chooser>
-				
-				<div *dxTemplate="let info of 'amortizationHeader'">
-					<p title={{info.column.caption}} class="header-column-caption">
-						{{info.column.caption}}
-					</p>
-				  </div>
-				
-				  <div *dxTemplate="let cell of 'pointer'">
-					<div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
-				  </div>
+		<dxo-column-chooser
+			[enabled]="true"
+			mode="select"
+			height="500"
+			width="400"> 
 
-			</dx-data-grid>
-	</mat-expansion-panel> 
+			<dxo-search
+				[enabled]="true">
+			</dxo-search>
+
+			<dxo-selection
+				allowSelectAll="true">
+			</dxo-selection>
+		</dxo-column-chooser>
+		
+		<div *dxTemplate="let info of 'amortizationHeader'">
+			<p title={{info.column.caption}} class="header-column-caption">
+				{{info.column.caption}}
+			</p>
+		  </div>
+		
+		  <div *dxTemplate="let cell of 'pointer'">
+			<div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+		  </div>
+
+	</dx-data-grid>
+</div>
+</crem-card>
 </section>
 
 <mango-transaction-popup
