@@ -10,3 +10,4 @@ LICENSE
 .vscode
 dist
 .angular
+.nx

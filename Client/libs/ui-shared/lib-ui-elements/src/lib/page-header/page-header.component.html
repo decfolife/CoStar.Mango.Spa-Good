@@ -1,0 +1,28 @@
+<div class="page-header">
+  <div class="page-header__body">
+    <div class="body__page-title">
+      <crem-input-label [label]="pageTitle" [required]="false" [showInfo]="showTitleInfo">
+      </crem-input-label>
+    </div>
+    <div class="body__filters" >
+      <crem-button  *ngIf="showSearchButton" class="filters__search-button" color="secondary" icon="faSearch"></crem-button>
+
+      <ng-content *ngIf="customFilters" select="[filters]"></ng-content>
+    </div>
+  </div>
+
+  <div class="page-header__actions">
+    <div class="actions__custom" *ngIf="customActions">
+      <crem-icon class="actions__bookmark-button" *ngIf="showBookmarkButton" [icon]="'faStar'" [color]="'dark'" pack="regular"></crem-icon>
+      <crem-button class="actions__button" text="Filters" color="secondary" icon="faFilter" iconSize="xs"></crem-button>
+      <crem-button class="actions__button" text="Actions" color="secondary" icon="faCaretDown" iconPosition="right"></crem-button>
+      <crem-button class="actions__button" text="More" color="secondary" icon="faCaretDown" iconPosition="right"></crem-button>
+      <crem-button class="actions__button" *ngIf="primaryButtonText" [text]="primaryButtonText" color="primary" icon="faPlus" ></crem-button>
+    </div>
+    <div class="page-header__settings">
+      <ng-content *ngIf="customSettings" select="[settings]"></ng-content>
+      <crem-icon class="actions__cog-button" *ngIf="showSettingsButton" [icon]="'faGear'" [color]="'dark'"></crem-icon>
+    </div>
+  </div>
+
+</div>

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Meta, Story, moduleMetadata } from '@storybook/angular';
 import { DxButtonModule, DxPopoverModule, DxTemplateModule } from 'devextreme-angular';
-import { ChipComponent, ChipStyle } from './chip.component';
+import { ChipComponent } from './chip.component';
 
 interface ChipComponentStory extends ChipComponent {
   text: string
@@ -33,15 +33,13 @@ const Template: Story<ChipComponentStory> = (args: ChipComponentStory) => ({
   props: args
 });
 
-const chipStyle: ChipStyle = {
-  color: 'color-brand-red',
-  type:"primary"
-}
+
 export const Default = Template.bind({});
 Default.args = {
   id: "chip",
   width: null,
   chipContent: "Chip Content",
-  popoverContent: ["Popover content"],
-  chipStyle
+  popoverContent: "Popover content",
+  matTooltipContent: "Tooltip Content",
+  chipStatus: 'completeStatus'
 };

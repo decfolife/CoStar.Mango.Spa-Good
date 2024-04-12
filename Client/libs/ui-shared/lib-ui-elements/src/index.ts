@@ -14,3 +14,4 @@ export * from './lib/modal';
 export * from './lib/bookmarks';
 export * from './lib/dynamic-form';
 export * from './lib/text-box';
+export * from './lib/field-history';

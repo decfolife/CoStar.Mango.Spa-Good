@@ -6,26 +6,42 @@ import { Store, select } from '@ngrx/store';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 import * as AppActions from './app.actions';
 import * as AppSelectors from './app.selectors';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class MangoAppFacade {
 
-  loaded$ = this.store.pipe(select(AppSelectors.loaded));
-  currentSubApp$ = this.store.pipe(select(AppSelectors.currentSubApp));
-  authenticatedUser$ = this.store.pipe(select(AppSelectors.authenticatedUser));
-  accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
-  v06Auth$ = this.store.pipe(select(AppSelectors.v06Auth));
-  clientKey$ = this.store.pipe(select(AppSelectors.client));
-  userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
-  breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
-  userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
-  contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
-  globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
-  moduleId$ = this.store.pipe(select(AppSelectors.moduleId));
-  showSubLeftNav$ = this.store.pipe(select(AppSelectors.showSubLeftNav));
-  currentRenderFormDocumentParams$ = this.store.pipe(select(AppSelectors.currentRenderFormDocumentParams));
+  loaded$: Observable<boolean>
+  currentSubApp$: Observable<any>
+  authenticatedUser$: Observable<any>
+  accessToken$: Observable<any>
+  clientKey$: Observable<any>
+  userInfo$: Observable<any>
+  breadcrumbs$: Observable<any>
+  userClient$: Observable<any>
+  contactRecord$: Observable<any>
+  globalSession$: Observable<any>
+  moduleId$: Observable<any>
+  showSubLeftNav$: Observable<any>
+  currentRenderFormDocumentParams$: Observable<any>
+  v06Auth$:  Observable<any>
 
-  constructor(private store: Store) { }
+  constructor(private store: Store) {
+    this.loaded$ = this.store.pipe(select(AppSelectors.loaded));
+    this.currentSubApp$ = this.store.pipe(select(AppSelectors.currentSubApp));
+    this.authenticatedUser$ = this.store.pipe(select(AppSelectors.authenticatedUser));
+    this.accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
+    this.clientKey$ = this.store.pipe(select(AppSelectors.client));
+    this.userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
+    this.breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
+    this.userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
+    this.contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
+    this.globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
+    this.moduleId$ = this.store.pipe(select(AppSelectors.moduleId));
+    this.showSubLeftNav$ = this.store.pipe(select(AppSelectors.showSubLeftNav));
+    this.currentRenderFormDocumentParams$ = this.store.pipe(select(AppSelectors.currentRenderFormDocumentParams));
+    this.v06Auth$ = this.store.pipe(select(AppSelectors.v06Auth));
+  }
 
   init() {
     this.store.dispatch(AppActions.init());

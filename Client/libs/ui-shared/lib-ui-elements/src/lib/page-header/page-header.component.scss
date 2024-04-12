@@ -1,0 +1,64 @@
+@use "styles" as *;
+
+.page-header {
+  @include costar(background-color, light);
+  padding: 20px;
+  width: 1500px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+
+  &__body,
+  &__actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__settings {
+    margin-left: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+
+.body {
+  &__filters {
+    margin-left: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.filters {
+  &__search-button {
+    margin-right: 8px;
+  }
+}
+
+.actions {
+  &__custom {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  &__button {
+    margin-left: 8px;
+  }
+
+  &__bookmark-button {
+    margin-right: 8px;
+  }
+
+  &__cog-button {
+    margin-top: 3px;
+    margin-left: 15px;
+  }
+}

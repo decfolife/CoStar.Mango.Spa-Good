@@ -59,3 +59,5 @@ export * from './lib/models/global-session';
 export * from './lib/mock/central-auth.mock';
 export * from './lib/models/renderForm/renderFormHeaderData';
 export * from './lib/models/Reminder';
+export * from './lib/models/ui-components/button-group';
+export * from './lib/models/ui-components/field-history';

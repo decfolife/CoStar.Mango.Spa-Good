@@ -21,6 +21,14 @@ const config: StorybookConfig = {
     '../../lib-ui-elements/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: ['@storybook/addon-essentials', ...(rootMain.addons || [])],
+  previewHead: (head) => `
+  ${head}
+  <style>
+  .sbdocs-content {
+    max-width: 1500px !important
+  }
+  </style>
+  `
 };
 
 module.exports = config;
