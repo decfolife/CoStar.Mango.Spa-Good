@@ -21,7 +21,7 @@ class EnvironmentsCrem implements Environment {
     objectActions: ''
   };
   isRestful = true;
-  cremBaseUrl = 'https://[CLIENT].stage.corp.virtualpremise.com';
+  cremBaseUrl = 'https://[CLIENT].stage.costarremanager.com';
 }
 
 export const environment = new EnvironmentsCrem();

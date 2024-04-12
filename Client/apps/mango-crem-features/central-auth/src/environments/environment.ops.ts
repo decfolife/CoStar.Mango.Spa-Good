@@ -17,6 +17,7 @@ class EnvironmentsCrem {
     tasks: ''
   };
   isRestful: false;
+  cremBaseUrl = 'http://[CLIENT].ops.corp.virtualpremise.com/';
 }
 
 export const environment = new EnvironmentsCrem();

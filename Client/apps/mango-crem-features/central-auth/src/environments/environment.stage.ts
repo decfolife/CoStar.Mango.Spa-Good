@@ -16,7 +16,8 @@ class EnvironmentsCrem {
     projects: '',
     tasks: ''
   };
-  isRestful: false;
+  isRestful: true;
+  cremBaseUrl = 'http://[CLIENT].stage.costarremanager.com/';
 }
 
 export const environment = new EnvironmentsCrem();
