@@ -106,112 +106,112 @@ export class DashboardService  extends EndpointService {
   }
   
   getTeams(): Observable<any>  {
-    const url = `${this.projects}getteams`;
+    const url = `${this.projects}projects/getteams`;
     return this.callHttpGet(url,'getteams')
   }
 
   deleteTeamMembers(memberIds: number[]): Observable<any>  {
-    const url = `${this.projects}deleteteammembers`;
+    const url = `${this.projects}projects/deleteteammembers`;
     return this.callHttpPost(url,'deleteteammembers', memberIds)
   }
 
   getMembersList(search: string, all:boolean, pageSize: number, pageNumber: number) : Observable<any> {
-    const url = `${this.projects}getmemberslist`;
+    const url = `${this.projects}projects/getmemberslist`;
     return this.callHttpPost(url, 'getmemberslist', { search, all, pageSize, pageNumber })
   }
 
   getmemberinfo(): Observable<any> {
-    const url = `${this.projects}getmemberinfo`;
+    const url = `${this.projects}projects/getmemberinfo`;
     return this.callHttpGet(url, 'getmemberinfo')
   }
 
   updateTeamMember(memberupdate: TeamMemUpdate): Observable<any> {
-    const url = `${this.projects}updateteammember`;
+    const url = `${this.projects}projects/updateteammember`;
     return this.callHttpPost(url, 'updateteammember', memberupdate);
   }
 
   addTeam(team:Team): Observable<any> {
-    const url = `${this.projects}addteam`;
+    const url = `${this.projects}projects/addteam`;
     return this.callHttpPost(url, 'addteam', team);
   }
 
   importTeam(projectID: number, teamID: number, projectManagerSharedValue: boolean): Observable<any> {
-    const url = `${this.projects}importteam`;
+    const url = `${this.projects}projects/importteam`;
     return this.callHttpPost(url, 'importteam', { projectID, teamID, projectManagerSharedValue });
   }
 
   getModuleRights(objectType: number, securityType: number) {
-    const url = `${this.projects}getmodulerights`;
+    const url = `${this.projects}projects/getmodulerights`;
     return this.callHttpPost(url, 'getmodulerights', { objectType, securityType })
   }
 
   deleteTeams(teamIds: number[]) {
-    const url = `${this.projects}deleteteams`;
+    const url = `${this.projects}projects/deleteteams`;
     return this.callHttpPost(url, 'deleteteams',  teamIds)
   }
 
   getProjectTeams(projectId): Observable<any> {
-    const url = `${this.projects}getprojectteams/${projectId}`;
+    const url = `${this.projects}projects/getprojectteams/${projectId}`;
     return this.callHttpGet(url, 'getProjectTeams')
   }
 
   getClientPreference(clientPreferenceSetting): Observable<any> {
-    const url = `${this.projects}GetClientPreference/${clientPreferenceSetting}`;
+    const url = `${this.projects}projects/GetClientPreference/${clientPreferenceSetting}`;
     return this.callHttpGet(url, 'getClientPreference')
   }
 
   getProjectTaskList(projectId): Observable<any> {
-    const url = `${this.projects}getprojecttasklist/${projectId}`;
+    const url = `${this.projects}tasks/getprojecttasklist/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
   getOutstandingRolesforTask(projectId): Observable<any> {
-    const url = `${this.projects}getoutstandingrolesfortask/${projectId}`;
+    const url = `${this.projects}tasks/getoutstandingrolesfortask/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
   getProjectContactLevel(projectId): Observable<any> {
-    const url = `${this.projects}getprojectcontactlevel/${projectId}`;
+    const url = `${this.projects}projects/getprojectcontactlevel/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
   saveTeamAsTemplate(teamTemplateName: string, projectId: number) {
-    const url = `${this.projects}createteamtemplate`;
+    const url = `${this.projects}projects/createteamtemplate`;
     return this.callHttpPostApprovalError(url, 'createteamtemplate',  { teamTemplateName, projectId })
   }
 
   saveProjectManager(projectId: number, contactId: number) {
-    const url = `${this.projects}saveprojectmanager`;
+    const url = `${this.projects}projects/saveprojectmanager`;
     return this.callHttpPost(url,  'saveprojectmanager', { projectId, contactId });
   }
 
   removeTeamMembers(projMemberData ) {
-    const url = `${this.projects}removeteammembers`;
+    const url = `${this.projects}projects/removeteammembers`;
     return this.callHttpPost(url,  'removeteammembers',  projMemberData );
   }
 
   addContactsToTasksByRole(projectID: number) {
-    const url = `${this.projects}addcontactstotasksbyrole`;
+    const url = `${this.projects}tasks/addcontactstotasksbyrole`;
     return this.callHttpPost(url, 'addcontactstotasksbyrole', { projectID } );
   }
 
   updateProjectTeamMember(projectTeamMember: UpdateProjectTeamMember) {
-    const url = `${this.projects}updateprojectteammember`;
+    const url = `${this.projects}projects/updateprojectteammember`;
     return this.callHttpPost(url, 'updateprojectteammember', projectTeamMember);
   }
 
   addTemporaryUser(temporaryUser: UpdateTemporaryUser) {
-    const url = `${this.projects}addtemporaryuser`;
+    const url = `${this.projects}projects/addtemporaryuser`;
     return this.callHttpPost(url, 'addtemporaryuser', temporaryUser);
   }
 
   updateProjectContact(projectContact: UpdateContact) {
-    const url = `${this.projects}updateprojectcontact`;
+    const url = `${this.projects}projects/updateprojectcontact`;
     return this.callHttpPost(url, 'updateprojectcontact', projectContact);
   }
 
   assignTasks(memberTasks: AssignTasks) {
-    const url = `${this.projects}assigntasks`;
+    const url = `${this.projects}tasks/assigntasks`;
     return this.callHttpPost(url, 'assigntasks', memberTasks);
   }
 
@@ -220,7 +220,7 @@ export class DashboardService  extends EndpointService {
   }
   
   getComposeEmailInfo(projectId): Observable<any> {
-    const url = `${this.projects}getcomposeemailinfo/${projectId}`;
+    const url = `${this.projects}projects/getcomposeemailinfo/${projectId}`;
     return this.callHttpGet(url, 'projectId');
   }
 

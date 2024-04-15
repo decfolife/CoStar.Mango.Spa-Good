@@ -54,7 +54,7 @@ export class InAppDisclosureService extends EndpointService{
   }
 
   public getAccountingCriteriaSets() {
-    const url = `${this.accountingServiceUrl}/criteriasets`
+    const url = `${this.accountingServiceUrl}/accounting/criteriasets`
     return this.callHttpGet(url, 'getAccountingCriteriaSets');
   }
 
