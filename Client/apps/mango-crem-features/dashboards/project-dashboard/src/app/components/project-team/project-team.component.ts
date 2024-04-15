@@ -50,7 +50,9 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   projectMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
                                 Please consider replacing this team member or updating their User record.`;
   emailNote: string = `By including the unapproved tasks, each user will receive an individual email, 
-                              otherwise everyone will be Carbon Copied.`;                              
+                              otherwise everyone will be Carbon Copied.`;   
+  includeFilesText: string = `If File Paths is checked, selected file(s) will be included as path to the 
+                              application rather than an attachment(s).`;                                                     
 
   constructor(private dashboardService: DashboardService, 
               private dialog: MatDialog,
@@ -118,14 +120,16 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
             let obj = this.projectsEmailInfo.noteTypes.find(noteType => noteType.commonNoteType.toLocaleLowerCase().trim() == "email");
             this.defaultNoteType = obj? obj : this.defaultNoteType;
             let dialogRef = this.dialog.open(ComposeEmailComponent, {
-              width: '500px',
+              width: '520px',
               height: '700px',
               panelClass: 'composeEmailModal',
               data: {contacts: this.projectsEmailInfo.contacts, 
                      noteTypes: this.projectsEmailInfo.noteTypes, 
                      fileItems: this.projectsEmailInfo.fileItems,
                      defaultNoteType: this.defaultNoteType,
-                     emailNote: this.emailNote
+                     emailNote: this.emailNote,
+                     includeFileInfo: this.includeFilesText,
+                     callParentToSendEmail: this.sendEmail
                     },
               disableClose: true
             });
@@ -136,6 +140,10 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       }
     ));
 
+  }
+
+  sendEmail(data: any): Observable<any> {
+    return of('executed');
   }
 
   onSelectionChanged(e:any){

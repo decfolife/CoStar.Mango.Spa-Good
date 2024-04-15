@@ -12,6 +12,7 @@
     <h4 class="cem-noteType-label label">* Note Type</h4>
     <crem-dropdown
       id="emailNoteTypeId"
+      #NoteTypeDropdown
       dropDownContainerCustomClass="emailNoteType"
       [dataSource]="noteTypes"
       placeholder="Note Type"
@@ -20,8 +21,8 @@
       valueExpr='commonNoteTypeID'
       [initialSelectedValue]="selectedNoteType.commonNoteTypeID"
       (selectedItems)="noteTypeSelected($event)"
-      [required]= "'true'"             
-      [showDefaultValidationTooltip]="true"
+      [required]= "true"             
+      [showDefaultValidationTooltip]="false"
     >
     </crem-dropdown>
      <!--  do we need these two lines [required] and  [showDefaultValidationTooltip]-->
@@ -31,6 +32,7 @@
     <div id="cem-toMembers-container">
       <crem-dropdown
         id='cem-toMembersId'
+        #MembersDropdown
         dropDownContainerCustomClass="cem-toMembers-custClass"
         [showColumnHeader]='true'
         placeholder="Select Members"
@@ -41,8 +43,11 @@
         allowSearch='true'
         selectMode='multiple'
         [dataSource]="contacts"
+        [required]="true"
+        [showDefaultValidationTooltip]="false"
         useArrayOfKeys='true'
         getWholeObject='true'
+        (gridDropdownValueChanged)="memberValueChangedEvent($event)"
         (selectedItems)="selectedMembers($event)"
       ></crem-dropdown>
     </div>
@@ -61,7 +66,7 @@
   <div class="cem-include">
     <h4 class="cem-include-label">Include</h4>
     <div class="cem-include-options">             
-      <span class="cem-include-options-filePaths">
+      <span class="cem-include-options-filePaths" [title]="includeFileInfo">
         <dx-check-box
           class="cem-filePaths-checkbox"
           aria-label="Include File Paths"

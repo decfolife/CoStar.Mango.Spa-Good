@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, Inject, OnInit} from '@angular/core';
+import { Component, Inject, OnInit, ViewChild} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EmailContact, EmailFileItem, EmailNoteType } from '@mango/data-models/lib-data-models';
+import { DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @Component({
   selector: 'compose-email',
@@ -10,6 +11,9 @@ import { EmailContact, EmailFileItem, EmailNoteType } from '@mango/data-models/l
 })
 
 export class ComposeEmailComponent implements OnInit {
+
+  @ViewChild("NoteTypeDropdown") noteTypeDropdown: DropdownComponent;
+  @ViewChild("MembersDropdown") membersDropdown: DropdownComponent;
 
   modalTitle: string = 'Compose Email';
   emailNote: string;
@@ -29,6 +33,10 @@ export class ComposeEmailComponent implements OnInit {
   emailMessage: string = "";
   noteTypeValueInvalid: boolean = false;
   toMembersValueInvalid: boolean = false;
+  toMembersValueChanged: boolean = false;
+  noteTypeValueChanged: boolean = false;
+  executeSendFromParent: any;
+  includeFileInfo: string;
 
   fileIconList = [ // array of icon class list based on type
     { type: "pdf", icon: "faFilePdf" },
@@ -50,6 +58,8 @@ export class ComposeEmailComponent implements OnInit {
     this.contacts = this.data.contacts;
     this.fileItems = this.data.fileItems;
     this.selectedNoteType = this.data.defaultNoteType;
+    this.executeSendFromParent = this.data.callParentToSendEmail;
+    this.includeFileInfo = this.data.includeFileInfo;
     this.emailNote = this.data.emailNote? this.data.emailNote: "";
     if(this.fileItems.length) {
       this.fileItems.forEach(fileItem => {
@@ -77,10 +87,18 @@ export class ComposeEmailComponent implements OnInit {
 
   noteTypeSelected(e) {
     this.selectedNoteType = e[0];
+    this.noteTypeValueInvalid = false;
+  }
+
+  memberValueChangedEvent(e) {
+    this.toMembersValueChanged = e;
   }
 
   selectedMembers(e) {
     this.selectedToMembers = e;
+    if(this.toMembersValueChanged) {
+      this.toMembersValueInvalid = this.selectedToMembers.length? false: true;
+    }
   }
 
   getIconName(ext : string) : string { 
@@ -93,11 +111,17 @@ export class ComposeEmailComponent implements OnInit {
   }
 
   sendEmail() {
-    this.noteTypeValueInvalid = Object.keys(this.selectedNoteType).length ? false: true;
-    this.toMembersValueInvalid = this.selectedToMembers.length ? false: true;
-
+    this.noteTypeValueInvalid = !this.noteTypeDropdown.validate().isValid;
+    this.toMembersValueInvalid = !this.membersDropdown.validate().isValid;
+    if(this.noteTypeValueInvalid || this.toMembersValueInvalid) {
+      if(this.noteTypeValueInvalid) this.noteTypeDropdown.focusDropdown();
+      else this.membersDropdown.focusDropdown();
+    }
     if (this.noteTypeValueInvalid || this.toMembersValueInvalid) {
       return;
+    } else {
+      this.executeSendFromParent({name: 'testData'}).subscribe(res => {
+      });
     }
   }
 

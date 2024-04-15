@@ -89,6 +89,7 @@ export class DropdownComponent implements OnInit, OnChanges {
 
   @Output() selectedItems = new EventEmitter<any[]>();
   @Output() moreMenuItemClicked = new EventEmitter<any>();
+  @Output() gridDropdownValueChanged = new EventEmitter<boolean>();
   @ViewChild('dropdownTemplate', { static: false })
   dropdownTemplate: DxDataGridComponent;
   @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent
@@ -323,6 +324,7 @@ export class DropdownComponent implements OnInit, OnChanges {
           this.isDropDownBoxOpened = false;
         }
       }
+      this.gridDropdownValueChanged.emit(true);
       this.selectedItems.emit(selections);
     })
   }
@@ -388,13 +390,14 @@ export class DropdownComponent implements OnInit, OnChanges {
                       const dropdownText = childElment?.[1]?.innerHTML;
                       const elements = Array.from(childElment[0].children);
                       const checkboxElement = elements[0];
-                      const inputTag = checkboxElement.querySelector("input")
-                      checkboxElement.setAttribute("title", 'Checkbox for ' + dropdownText);
-                      checkboxElement.setAttribute("type", 'checkbox');
-                      checkboxElement.setAttribute("role", 'group');
-                      checkboxElement.setAttribute("aria-label", 'checkBox');
-                      checkboxElement.removeAttribute("aria-readonly");
-                      checkboxElement.removeAttribute("aria-checked");
+                      if (checkboxElement) {
+                        checkboxElement.setAttribute("title", 'Checkbox for ' + dropdownText);
+                        checkboxElement.setAttribute("type", 'checkbox');
+                        checkboxElement.setAttribute("role", 'group');
+                        checkboxElement.setAttribute("aria-label", 'checkBox');
+                        checkboxElement.removeAttribute("aria-readonly");
+                        checkboxElement.removeAttribute("aria-checked");
+                      }
                     }
                   } else {
                     childEl.setAttribute("title", childEl.innerHTML.replace(/<[^>]*>/g, ''));
@@ -492,6 +495,9 @@ export class DropdownComponent implements OnInit, OnChanges {
   public validate() {
     if (this.useSelectBox) {
       const validation = this.SelectBoxValidator.instance.validate();
+      return validation;
+    } else {
+      const validation = this.DropdownBoxValidator.instance.validate();
       return validation;
     }
   }
