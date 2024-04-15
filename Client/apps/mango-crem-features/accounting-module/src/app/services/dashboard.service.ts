@@ -91,12 +91,12 @@ export class DashboardService extends DataService {
     }
 
     public loadDashboardData(): Observable<ApiResponse> {
-        const route = `${this._baseUrlOverride}`;
-        return this.getHttpGetApiResponse(route, 'GetDashboardData', this.accountingServiceUrl + route)
+        const route = `${this.accountingServiceUrl}accounting`;
+        return this.getHttpGetApiResponse(route, 'GetDashboardData', route)
     }
 
     public getSecurityLevel(): Observable<ApiResponse> {
-        const route = `${this._baseUrlOverride}` + '/securitylevel';
-        return this.getHttpGetApiResponse(route, 'GetUserSecurityLevel', this.dashboardsUrl + 'accounting'  + route)
+        const route = `${this.dashboardsUrl}accounting/securitylevel`;
+        return this.getHttpGetApiResponse(route, 'GetUserSecurityLevel')
     }
 }
