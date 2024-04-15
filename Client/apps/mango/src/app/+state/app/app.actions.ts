@@ -33,6 +33,8 @@ export const GET_GLOBAL_SESSION_SUCCESS = '[Mango App] Get Global Session Succes
 export const UPDATE_GLOBAL_SESSION = '[Mango App] Update Global Session'
 export const UPDATE_GLOBAL_SESSION_SUCCESS = '[Mango App] Update Global Session Success'
 export const POPULATE_BREADCRUMBS_FROM_SESSION = '[Mango App] Populate Breadcrumbs From Session'
+export const GO_TO_EXTERNAL_URL = '[Mango App] Go To External URL'
+
 
 export const init = createAction(APP_INIT);
 export const localAuth = createAction(LOCAL_AUTH);
@@ -135,3 +137,6 @@ export const updateGlobalSession = createAction(UPDATE_GLOBAL_SESSION, props<{ s
 export const updateGlobalSessionSuccess = createAction(UPDATE_GLOBAL_SESSION_SUCCESS);
 
 export const populateBreadcrumbsFromSession = createAction(POPULATE_BREADCRUMBS_FROM_SESSION);
+
+
+export const goToExternalURL = createAction(GO_TO_EXTERNAL_URL, props<{ url: string }>());

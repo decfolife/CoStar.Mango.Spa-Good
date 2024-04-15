@@ -4,13 +4,14 @@ import { HeaderService } from '@mango/core-shared/lib-core-shared';
 import { DataService } from '@mango/core-shared';
 import { ContactRecord, MANGO_SPA_DEFAULT_PAGE, UserAuth } from '@mango/data-models/lib-data-models';
 import { Observable, of, Subscription } from 'rxjs';
-import { catchError, debounceTime, filter, map, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
 import { UntypedFormControl } from '@angular/forms';
 
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { MatDialog } from '@angular/material/dialog';
 import { EmulateUserPopupComponent } from './emulate-user-popup/emulate-user-popup.component';
 import { DateCalculatorComponent } from './date-calculator/date-calculator.component';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 
 export interface module {
   objectTypeTypeId: number;
@@ -41,8 +42,6 @@ export class HeaderComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private router: Router,
-    private route: ActivatedRoute,
-    private headerService: HeaderService,
     private dataService: DataService,
     private facade: MangoAppFacade
   ) { }
@@ -58,7 +57,6 @@ export class HeaderComponent implements OnInit {
     this.getSearchModules();
     this.subs.push(this.myControl.valueChanges
       .pipe(
-        //tap((data: string) => console.log("Data tapped: ", data)),  //leaving this comment, it helps for debugging
         debounceTime(250),
         switchMap(input => ((input && input.length > 2) ? this.getTypeAheadData(input, this.searchObjectId) : of([])))
       )
@@ -106,6 +104,16 @@ export class HeaderComponent implements OnInit {
     this.search();
   }
 
+  goToSwitchContact(): void {
+    this.subs.push(
+      this.facade.clientKey$.pipe(
+        filter(clientKey => !!clientKey),
+        tap(_ => this.facade.setLoading(true)),
+        tap(clientKey => this.facade.goToExternalURL(`${environment.CAUrl}/customer-selection?clientKey=${clientKey}&showMutliContactPopup=true`))
+      ).subscribe()
+    )
+  }
+
   moduleChange(e) {
     this.searchObjectId = e.value;
     this.search();
@@ -119,8 +127,8 @@ export class HeaderComponent implements OnInit {
     this.inputBlurred();
     let searchString;
 
-    if (this.myControl.value) { 
-      searchString = this.myControl.value.toLowerCase().trim(); 
+    if (this.myControl.value) {
+      searchString = this.myControl.value.toLowerCase().trim();
     }
 
     if (searchString) {

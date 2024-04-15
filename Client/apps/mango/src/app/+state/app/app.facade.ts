@@ -128,4 +128,8 @@ export class MangoAppFacade {
   updateGlobalSession(session?: V06GlobalSession): void {
     this.store.dispatch(AppActions.updateGlobalSession({ session }))
   }
+
+  goToExternalURL(url?: string): void {
+    this.store.dispatch(AppActions.goToExternalURL({ url }))
+  }
 }
