@@ -3,25 +3,10 @@ import { Environment } from '@mango/data-models/lib-data-models';
 class EnvironmentsCrem implements Environment {
   production = false;
   name = 'STAGE';
-  appUrls = {
-    accounting: '',
-    batchAccounting: '',
-    listpages: '',
-    financials: '',
-    dashboards: '',
-    identity: '',
-    authentication: '',
-    authorization: '',
-    taskApproval: '', // For local testing.
-    quickSearch: '',
-    userMaintenance:'',
-    formWizard:'',
-    projects:'',
-    tasks: '',
-    objectActions: ''
-  };
   isRestful = true;
   cremBaseUrl = 'https://[CLIENT].stage.costarremanager.com';
+  // Only needed for localhost. Otherwise use `${window.location.origin}/api`
+  baseApiUrl = 'http://api.stage.costarremanager.com:30080/';
 }
 
 export const environment = new EnvironmentsCrem();

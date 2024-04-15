@@ -2,11 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../../../../mango/src/environments/environment.local';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class ObjectMaintenanceService extends EndpointService {
+  objectMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.header)
+  
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
@@ -64,17 +67,17 @@ export class ObjectMaintenanceService extends EndpointService {
   }
 
   private getObjectTypeOptions() {
-    const url = `${environment.appUrls.objectMaintenance}objectmaintenance/objecttype`;
+    const url = `${this.objectMaintenanceUrl}objectmaintenance/objecttype`;
     return this.callHttpGet(url, 'GetObjectTypes')
   }
 
   private getPageData(objectTypeId: number) : any {
-    const url = `${environment.appUrls.objectMaintenance}objectmaintenance/${objectTypeId}`;
+    const url = `${this.objectMaintenanceUrl}objectmaintenance/${objectTypeId}`;
     return this.callHttpGet(url, 'GetFilteredObjectList')
   }
 
   private getFilteredPageData(objectTypeId: number, statusFilterVal: number) : any {
-    const url = `${environment.appUrls.objectMaintenance}objectmaintenance/${objectTypeId}/${statusFilterVal}`;
+    const url = `${this.objectMaintenanceUrl}objectmaintenance/${objectTypeId}/${statusFilterVal}`;
     return this.callHttpGet(url, 'GetFilteredObjectList')
   }
 }

@@ -61,11 +61,11 @@ export class FormItemService {
   public getUserPreferences(): Observable<any> {
     let route = "GetUserPreferences";
     if (!environment.isRestful) {
-      return this.getHttpPostApiResponse(route, 'GetUserPreferences', {}, environment.appUrls.dashboards + route)
+      return this.getHttpPostApiResponse(route, 'GetUserPreferences', {}, this.dashboards + route)
     } else {
       route = "Dashboards/" + route;
     }
-    return this.getHttpGetApiResponse(route, 'GetUserPreferences', {}, environment.appUrls.dashboards + route)
+    return this.getHttpGetApiResponse(route, 'GetUserPreferences', {}, this.dashboards + route)
   }
 
   public GetFormItemChangeHistoryWithParam(param: any): Observable<ApiResponse> {

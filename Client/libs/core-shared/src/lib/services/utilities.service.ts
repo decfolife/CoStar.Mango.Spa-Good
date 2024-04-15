@@ -44,6 +44,18 @@ export class UtilitiesService {
     return false;
   }
 
+  // Get the base url for all the APIs
+  // When running locally, this is the environment.baseApiUrl
+  // Otherwise, all API calls route through the MangoSPA web server
+  public static getBaseApiUrl(serviceName: string) {
+    if (this.isLocalEnvironment()) {
+      //return `http://localhost:3000/api/${serviceName}/api/`
+      return `${environment.baseApiUrl}${serviceName}/api/`
+    }
+
+    return `${window.location.origin}/api/${serviceName}/api/`
+  }
+
   public static getCremUrl(clientKey: string, env: string, token?: string) {
     let url: string;
 

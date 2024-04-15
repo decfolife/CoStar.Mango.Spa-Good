@@ -3,7 +3,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiResponse } from '@mango/data-models/lib-data-models';
+import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DashboardVm } from '../shared/models/dashboard-model';
 import { DataService } from './data.service'
@@ -11,31 +11,32 @@ import { environment } from 'apps/mango/src/environments/environment.local';
 import { MatDialog } from '@angular/material/dialog';
 import { GenericErrorComponent } from '../components/dashboard/modal/genericError/genericError.component';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { UtilitiesService } from '@mango/core-shared';
 
 @Injectable()
 export class DashboardService extends DataService {
-
+    dashboardsUrl: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
+    accountingServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.accountingService)
     private _baseUrlOverride = 'dashboards/';
     private _dashboardId: number;
-  private _currentCalendarId: number;
- private hasResponse = true;
+    private _currentCalendarId: number;
+    private hasResponse = true;
+
     constructor(protected http: HttpClient, dialog: MatDialog, facade: MangoAppFacade) {
         super(http, dialog, facade);
     }
 
     // VM Data
-    private _dashboardData = new BehaviorSubject<DashboardVm>(
-        {
-            calendarFilterData: [],
-            clientSite: '',
-            portfolioFilterData: [],
-            yearFilterData: [],
-            cardsMetaData: [],
-            selectedPortfolioIds: '',
-            selectedCalendarId: null,
-            selectedYear: ''
-        }
-    );
+    private _dashboardData = new BehaviorSubject<DashboardVm>({
+        calendarFilterData: [],
+        clientSite: '',
+        portfolioFilterData: [],
+        yearFilterData: [],
+        cardsMetaData: [],
+        selectedPortfolioIds: '',
+        selectedCalendarId: null,
+        selectedYear: ''
+    });
     DashboardData$ = this._dashboardData.asObservable();
     
     // Loading indicator that can be called by the service layer
@@ -50,7 +51,7 @@ export class DashboardService extends DataService {
 
     public onLoad(api: any){
         // It's assumed loading is TRUE at this point
-        if(api) {
+        if (api) {
             this._baseUrlOverride = '';
             this.configure(api);
         }
@@ -91,23 +92,11 @@ export class DashboardService extends DataService {
 
     public loadDashboardData(): Observable<ApiResponse> {
         const route = `${this._baseUrlOverride}`;
-        if (environment.isRestful) {
-            return this.getHttpGetApiResponse(route, 'GetDashboardData', environment.appUrls.accountingService + route)
-        }
-        const url = `LoadAccountingDashboard`;
-          return this.getHttpGetApiResponse(url, 'LoadAccountingDashboard', null, 
-            {
-                id: 0
-            }
-          )
+        return this.getHttpGetApiResponse(route, 'GetDashboardData', this.accountingServiceUrl + route)
     }
 
     public getSecurityLevel(): Observable<ApiResponse> {
         const route = `${this._baseUrlOverride}` + '/securitylevel';
-        if (environment.isRestful) {
-            return this.getHttpGetApiResponse(route, 'GetUserSecurityLevel', environment.appUrls.dashboards + 'accounting'  + route)
-        }
-        const url = 'GetUserSecurityLevel';
-          return this.getHttpGetApiResponse(url, 'GetUserSecurityLevel', null)
-      }
+        return this.getHttpGetApiResponse(route, 'GetUserSecurityLevel', this.dashboardsUrl + 'accounting'  + route)
+    }
 }

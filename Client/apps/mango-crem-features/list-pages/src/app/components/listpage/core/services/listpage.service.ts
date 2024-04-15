@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { MapDataRequest } from '../../shared/models/map-data-request';
 import {
@@ -13,10 +13,14 @@ import {
   ObjectSecurityRequest,
   SetDefaultListViewRequest,
 } from '../../shared/models';
+import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class ListPageService extends EndpointService {
-
+  listpages: string = UtilitiesService.getBaseApiUrl(Api.listpages)
+  formWizard: string = UtilitiesService.getBaseApiUrl(Api.formWizard)
+  financials: string = UtilitiesService.getBaseApiUrl(Api.financials)
+  
   // this function's endpoint will always go to the ListPage.aspx. This is used to get
   // properties that was passed in as input variables into the old version of the list
   // pages custom element
@@ -41,101 +45,101 @@ export class ListPageService extends EndpointService {
   }
 
   getGridData(request: GetGridDataRequest): Observable<ApiResponse> {
-    return this.callHttpPost(`${environment.appUrls.listpages}gridData`, 'getGridData', request)
+    return this.callHttpPost(`${this.listpages}listpage/gridData`, 'getGridData', request)
   }
 
   getListPageColumns(listPageId: number): Observable<ApiResponse> {
-    return this.callHttpGet(`${environment.appUrls.listpages + listPageId}/columnDefinitionList`, 'getListPageColumns')
+    return this.callHttpGet(`${this.listpages}listpage/${listPageId}/columnDefinitionList`, 'getListPageColumns')
   }
 
   updateListView(listView): Observable<ApiResponse> {
-    return this.callHttpPut(`${environment.appUrls.listpages}ListViewUpdate`, 'updateListView', listView)
+    return this.callHttpPut(`${this.listpages}listpage/ListViewUpdate`, 'updateListView', listView)
   }
 
   setDefaultListView(request: SetDefaultListViewRequest): Observable<ApiResponse> {
-    return this.callHttpPut(`${environment.appUrls.listpages}SetDefaultListView`, 'setDefaultListView', request)
+    return this.callHttpPut(`${this.listpages}listpage/SetDefaultListView`, 'setDefaultListView', request)
   }
 
   getClientPreferenceByField(Field: string): Observable<any> {
-    return this.callHttpGet(`${environment.appUrls.formWizard}FormWizards/GetClientPreferenceByField?Pref=${Field}`, 'getClientPreferenceByField')
+    return this.callHttpGet(`${this.formWizard}FormWizards/GetClientPreferenceByField?Pref=${Field}`, 'getClientPreferenceByField')
   }
 
   getListView(listView: ListView): Observable<ApiResponse> {
-    return this.callHttpGet(`${environment.appUrls.listpages}views/${listView.id}/${listView.listViewType}`, 'getListView')
+    return this.callHttpGet(`${this.listpages}listpage/views/${listView.id}/${listView.listViewType}`, 'getListView')
   }
 
   getListViewSelectorItems(request: GetViewDropdownDataRequest): Observable<ApiResponse> {
-    return this.callHttpGet(`${environment.appUrls.listpages}ListViewSelectorItems/${request.objectTypeId}`, 'getListViewSelectorItems')
+    return this.callHttpGet(`${this.listpages}listpage/ListViewSelectorItems/${request.objectTypeId}`, 'getListViewSelectorItems')
   }
 
   getAddWizards(objectTypeId: number, objectTypeTypeId: number): Observable<ApiResponse> {
-    return this.callHttpGet(`${environment.appUrls.listpages}addWizards/${objectTypeId}/${objectTypeTypeId}`, 'getAddWizards')
+    return this.callHttpGet(`${this.listpages}listpage/addWizards/${objectTypeId}/${objectTypeTypeId}`, 'getAddWizards')
   }
 
   getUserModuleRights(objectTypeIds: string): Observable<ApiResponse> {
-    return this.callHttpPost(`${environment.appUrls.listpages}GetUserModuleRights`, 'getUserModuleRights', { objectTypeIds })
+    return this.callHttpPost(`${this.listpages}listpage/GetUserModuleRights`, 'getUserModuleRights', { objectTypeIds })
   }
 
   getRedirectorLinkList(): Observable<ApiResponse> {
-    return this.callHttpGet(`${environment.appUrls.listpages}RedirectorLinkList`, 'getRedirectorLinkList')
+    return this.callHttpGet(`${this.listpages}listpage/RedirectorLinkList`, 'getRedirectorLinkList')
   }
 
   getObjectSecurity(request: ObjectSecurityRequest): Observable<ApiResponse> {
-    return this.callHttpPost(`${environment.appUrls.listpages}objectSecurity`, 'getObjectSecurity', request)
+    return this.callHttpPost(`${this.listpages}listpage/objectSecurity`, 'getObjectSecurity', request)
   }
 
   getDynamicSQL(request: GetGridDataRequest): Observable<ApiResponse> {
-    return this.callHttpPost(`${environment.appUrls.listpages}dynamicSQL`, 'getDynamicSQL', request)
+    return this.callHttpPost(`${this.listpages}listpage/dynamicSQL`, 'getDynamicSQL', request)
   }
 
   createUserListView(userView: ListView): Observable<number> {
-    return this.callHttpPost(`${environment.appUrls.listpages}views`, 'createUserListView', userView)
+    return this.callHttpPost(`${this.listpages}listpage/views`, 'createUserListView', userView)
   }
 
   deleteUserView(userViewId: number): Observable<ApiResponse> {
-    return this.callHttpDelete(`${environment.appUrls.listpages}views/${userViewId}`, 'deleteUserView')
+    return this.callHttpDelete(`${this.listpages}listpage/views/${userViewId}`, 'deleteUserView')
   }
 
   getMarkerList(request: MapDataRequest): Observable<ApiResponse> {
-    return this.callHttpPost(`${environment.appUrls.listpages}MarkerList`, 'getMarkerList', request)
+    return this.callHttpPost(`${this.listpages}listpage/MarkerList`, 'getMarkerList', request)
   }
 
   hideListView(request: HideListViewRequest): Observable<ApiResponse> {
-    return this.callHttpPost(`${environment.appUrls.listpages}HideListView`, 'hideListView', request)
+    return this.callHttpPost(`${this.listpages}listpage/HideListView`, 'hideListView', request)
   }
 
   getPortfolios() {
-    return this.callHttpGet(`${environment.appUrls.listpages}Portfolios`, 'getPortfolios')
+    return this.callHttpGet(`${this.listpages}listpage/Portfolios`, 'getPortfolios')
   }
 
   getGoogleMapAPIKey() {
-    const url = `${environment.appUrls.listpages}GoogleMapAPIKey`;
-    return this.callHttpGet(`${environment.appUrls.listpages}GoogleMapAPIKey`, 'getGoogleMapAPIKey')
+    const url = `${this.listpages}listpage/GoogleMapAPIKey`;
+    return this.callHttpGet(`${this.listpages}listpage/GoogleMapAPIKey`, 'getGoogleMapAPIKey')
   }
 
   getGoogleMappingChannel() {
-    return this.callHttpGet(`${environment.appUrls.listpages}GoogleMappingChannel`, 'getGoogleMappingChannel')
+    return this.callHttpGet(`${this.listpages}listpage/GoogleMappingChannel`, 'getGoogleMappingChannel')
   }
 
   getLeaseInfo(leaseAbstractID: number) {
-    return this.callHttpGet(`${environment.appUrls.financials}Lease/LeaseInfo/${leaseAbstractID}`, 'getLeaseInfo')
+    return this.callHttpGet(`${this.financials}Lease/LeaseInfo/${leaseAbstractID}`, 'getLeaseInfo')
   }
 
   postLeaseInfo(request: LeaseInfo) {
-    return this.callHttpPost(`${environment.appUrls.listpages}Lease/LeaseInfo`, 'postLeaseInfo', request)
+    return this.callHttpPost(`${this.listpages}listpage/Lease/LeaseInfo`, 'postLeaseInfo', request)
   }
 
   copyCharge(glEventID: number) {
-    const url = `${environment.appUrls.financials}Lease/CopyCharge`;
-    return this.callHttpPost(`${environment.appUrls.listpages}Lease/CopyCharge`, 'copyCharge', { glEventID })
+    const url = `${this.financials}Lease/CopyCharge`;
+    return this.callHttpPost(`${this.listpages}listpage/Lease/CopyCharge`, 'copyCharge', { glEventID })
   }
 
   deleteCharge(objectTypeTypeId, gLEventIdList: number[]) {
-    return this.callHttpPost(`${environment.appUrls.listpages}Lease/DeleteGLEvents`, 'deleteCharge', { objectTypeTypeId, gLEventIdList })
+    return this.callHttpPost(`${this.listpages}listpage/Lease/DeleteGLEvents`, 'deleteCharge', { objectTypeTypeId, gLEventIdList })
   }
 
   getGLEventInfo(leaseAbstractID: number, glEventID: number) {
-    return this.callHttpGet(`${environment.appUrls.financials}Lease/GLEventInfo/${leaseAbstractID}/${glEventID}`, 'getGLEventInfo')
+    return this.callHttpGet(`${this.financials}Lease/GLEventInfo/${leaseAbstractID}/${glEventID}`, 'getGLEventInfo')
   }
 
   protected handleError(operation = 'operation not provided') {

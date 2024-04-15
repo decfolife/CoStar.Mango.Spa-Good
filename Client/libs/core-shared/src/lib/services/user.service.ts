@@ -17,7 +17,8 @@ import {
   ServiceAccountChangeHistory,
   UpdateServiceAccountApiAccessRequest,
   UserAuth,
-  UpdateServiceAccountExpiresInDaysRequest
+  UpdateServiceAccountExpiresInDaysRequest,
+  Api
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { Observable, of } from 'rxjs';
@@ -32,6 +33,9 @@ import { UtilitiesService } from '@mango/core-shared';
 })
 export class UserService {
   spaServer: string = `${window.location.origin}/api`
+  identityUrl: string = UtilitiesService.getBaseApiUrl(Api.identity)
+  authenticationUrl: string = UtilitiesService.getBaseApiUrl(Api.authentication)
+  userMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance)
 
   constructor(
     private http: HttpClient,
@@ -48,11 +52,11 @@ export class UserService {
   }
 
   retrieveAuthorizationCode(redirectUri: string): Observable<OAuthAuthorizeHTTPResponse> {
-    return this.http.get<OAuthAuthorizeHTTPResponse>(`${this.env.appUrls.identity}/oauth/authorize?clientId=mango-spa&responseType=code&redirectUri=${redirectUri}`, { withCredentials: true })
+    return this.http.get<OAuthAuthorizeHTTPResponse>(`${this.identityUrl}/oauth/authorize?clientId=mango-spa&responseType=code&redirectUri=${redirectUri}`, { withCredentials: true })
   }
 
   retrieveJwt(authCode: string, source: string): Observable<OAuthTokenHTTPResponse> {
-    let baseUrl = UtilitiesService.isLocalEnvironment() ? this.env.appUrls.identity : this.spaServer;
+    let baseUrl = UtilitiesService.isLocalEnvironment() ? this.identityUrl : this.spaServer;
 
     const request = {
       grantType: "authorization_code",
@@ -66,7 +70,7 @@ export class UserService {
 
   login(credentials): Observable<LoginResponse> {
     this.purgeAuth();
-    return this.http.post(`${this.env.appUrls.identity}/auth/login`, credentials, { withCredentials: true }).pipe<any>(
+    return this.http.post(`${this.identityUrl}/auth/login`, credentials, { withCredentials: true }).pipe<any>(
       switchMap((response: any) => {
         const decodedJwt = this.getDecodedAuthToken(response.authToken);
         const user: UserAuth = {
@@ -89,12 +93,12 @@ export class UserService {
   }
 
   loginToClientSite(payload: MultiClientLoginHttpRequest): Observable<AuthHTTPResponse> {
-    return this.http.post<AuthHTTPResponse>(`${this.env.appUrls.identity}/auth/login/client`, payload, { withCredentials: true });
+    return this.http.post<AuthHTTPResponse>(`${this.identityUrl}/auth/login/client`, payload, { withCredentials: true });
   }
 
   // CA web app specific
   getCurrentUserAccessToken(): Observable<string> {
-    return this.http.get<string>(`${this.env.appUrls.identity}/auth/user/token`, { withCredentials: true });
+    return this.http.get<string>(`${this.identityUrl}/auth/user/token`, { withCredentials: true });
   }
 
   getCurrentCREMUserAccessToken(): Observable<string> {
@@ -104,7 +108,7 @@ export class UserService {
   // CA web app specific
   logout() {
     this.purgeAuth();
-    this.http.get(`${this.env.appUrls.identity}/auth/logout`, { withCredentials: true })
+    this.http.get(`${this.identityUrl}/auth/logout`, { withCredentials: true })
       .subscribe();
   }
 
@@ -115,32 +119,32 @@ export class UserService {
   }
 
   requestPasswordReset(request: RequestPasswordResetRequest): Observable<any> {
-    return this.http.post<any>(`${this.env.appUrls.identity}/password/forgot`, request)
+    return this.http.post<any>(`${this.identityUrl}/password/forgot`, request)
   }
 
   forceExpirePassword(request: RequestPasswordResetRequest): Observable<any> {
-    return this.http.post<any>(`${this.env.appUrls.authentication}password/forceexpire`, request)
+    return this.http.post<any>(`${this.authenticationUrl}password/forceexpire`, request)
   }
 
   resetPassword(credentials): Observable<boolean> {
-    let url = `${this.env.appUrls.identity}/password/reset`;
+    let url = `${this.identityUrl}/password/reset`;
     return this.http.post<boolean>(url, credentials)
   }
 
   validateTokenAndGetPasswordRequirements(resetToken: string): Observable<Password> {
-    return this.http.get<Password>(`${this.env.appUrls.identity}/password/requirements/${resetToken}`)
+    return this.http.get<Password>(`${this.identityUrl}/password/requirements/${resetToken}`)
   }
 
   getClientSitesByUser(userEmail: string): Observable<ClientSitesByUser> {
-    return this.http.get<ClientSitesByUser>(`${this.env.appUrls.identity}/user/clientsites/${userEmail}`, { withCredentials: true });
+    return this.http.get<ClientSitesByUser>(`${this.identityUrl}/user/clientsites/${userEmail}`, { withCredentials: true });
   }
 
   getRecentSitesForUser(userEmail: string): Observable<RecentUserSites> {
-    return this.http.get<RecentUserSites>(`${this.env.appUrls.identity}/user/recentsites/${userEmail}`, { withCredentials: true })
+    return this.http.get<RecentUserSites>(`${this.identityUrl}/user/recentsites/${userEmail}`, { withCredentials: true })
   }
 
   getContactRecords(userEmail: string, clientKey: string): Observable<GetContactRecordHTTPResponse> {
-    return this.http.get<GetContactRecordHTTPResponse>(`${this.env.appUrls.identity}/user/contactrecords/${userEmail}/${clientKey}`, { withCredentials: true });
+    return this.http.get<GetContactRecordHTTPResponse>(`${this.identityUrl}/user/contactrecords/${userEmail}/${clientKey}`, { withCredentials: true });
   }
 
   getContactRecord(email: string, contactId: number, clientKey: string): Observable<ContactRecord> {
@@ -151,22 +155,8 @@ export class UserService {
       'ClientKey': clientKey
     })
 
-    return this.http.get<ContactRecord>(`${this.env.appUrls.userMaintenance}usermaintenance/getuser/${email}?contactId=${contactId}`, { headers: headers })
+    return this.http.get<ContactRecord>(`${this.userMaintenanceUrl}usermaintenance/getuser/${email}?contactId=${contactId}`, { headers: headers })
   }
-
-  // parseContactRecordHttpObject(contactRecordHttpObject: ContactRecordHTTPObject): ContactRecord {
-  //   const { contactID, requireSSO, userRoleName, isDefaultLoginContact } = contactRecordHttpObject
-  //   const contactRecord: ContactRecord = {
-  //     contactID,
-  //     firstName: contactRecordHttpObject.contactFirstName,
-  //     lastName: contactRecordHttpObject.contactLastName,
-  //     requireSSO,
-  //     userName: contactRecordHttpObject.contactUserID,
-  //     userRoleName,
-  //     isDefaultLoginContact
-  //   }
-  //   return contactRecord
-  // }
 
   getDecodedAuthToken(token: string): Token {
     return jwt_decode<Token>(token);
@@ -195,7 +185,7 @@ export class UserService {
   }
 
   generateApiKey(): Observable<any> {
-    const url = `${this.env.appUrls.authentication}/serviceaccount/createapikey`;
+    const url = `${this.authenticationUrl}/serviceaccount/createapikey`;
     const body = {}
     return this.http.post(url, body).pipe<string>(
       tap((response: any) => {
@@ -205,18 +195,18 @@ export class UserService {
   }
 
   getServiceAccountInfo(): Observable<ServiceAccountInfo> {
-    return this.http.get<ServiceAccountInfo>(`${this.env.appUrls.authentication}/serviceaccount/accountinfo`)
+    return this.http.get<ServiceAccountInfo>(`${this.authenticationUrl}/serviceaccount/accountinfo`)
   }
 
   updateServiceAccountApiAccess(request: UpdateServiceAccountApiAccessRequest): Observable<boolean> {
-    return this.http.put<boolean>(`${this.env.appUrls.authentication}/serviceaccount/updateapiaccess`, request)
+    return this.http.put<boolean>(`${this.authenticationUrl}/serviceaccount/updateapiaccess`, request)
   }
 
   updateServiceAccountExpiresInDays(request: UpdateServiceAccountExpiresInDaysRequest): Observable<boolean> {
-    return this.http.put<boolean>(`${this.env.appUrls.authentication}/serviceaccount/expiresindays`, request)
+    return this.http.put<boolean>(`${this.authenticationUrl}/serviceaccount/expiresindays`, request)
   }
 
   getServiceAccountChangeHistory(): Observable<ServiceAccountChangeHistory[]> {
-    return this.http.get<ServiceAccountChangeHistory[]>(`${this.env.appUrls.authentication}/serviceaccount/accounthistory`)
+    return this.http.get<ServiceAccountChangeHistory[]>(`${this.authenticationUrl}/serviceaccount/accounthistory`)
   }
 }

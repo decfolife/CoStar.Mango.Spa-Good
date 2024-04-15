@@ -5,55 +5,59 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../mango/src/environments/environment.local';
 import { TaskApprovalDto } from '../models/task-approval';
 import { UserSelectedFilters } from '../models';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { AssignTasks, Team, TeamMemUpdate, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
+import { Api, AssignTasks, Team, TeamMemUpdate, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
 import notify from 'devextreme/ui/notify';
 import { DxoHeaderFilterComponent } from 'devextreme-angular/ui/nested/header-filter';
 
 @Injectable()
-export class DashboardService  extends EndpointService{
+export class DashboardService  extends EndpointService {
+  dashboards: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
+  projects: string = UtilitiesService.getBaseApiUrl(Api.projects)
+  taskApproval: string = UtilitiesService.getBaseApiUrl(Api.taskApproval)
+  
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getDashboardByIdWithChildrenQuery(dashboardId: number): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/${dashboardId}`;
+    const url = `${this.dashboards}Dashboards/${dashboardId}`;
     return this.callHttpGet(url, 'getDashboardByIdWithChildrenQuery')
   }
 
   getCardDataByElementType(dashboardId: number, elementTypeName: string, keyDate: string, selectedFilters: string): Observable<any> {
-    const url = `${environment.appUrls.dashboards}ProjectsCards/GetCardDataByElementType`;
+    const url = `${this.dashboards}ProjectsCards/GetCardDataByElementType`;
     return this.callHttpPost(url, 'getCardDataByElementType', { dashboardId, elementTypeName, keyDate, selectedFilters })
   }
 
   getAllProjectFilters(elementTypeNames: any[]): Observable<any> {
-    const url = `${environment.appUrls.dashboards}ProjectsFilters/GetAllProjectFilters`;
+    const url = `${this.dashboards}ProjectsFilters/GetAllProjectFilters`;
     return this.callHttpPost(url, 'GetAllProjectFilters',  elementTypeNames )
   }
 
   getFilterDataByElementType(dashboardId: number, elementTypeName: string): Observable<any> {
-    const url = `${environment.appUrls.dashboards}ProjectsFilters/GetProjectsFilterDataByElementType/${dashboardId}/${elementTypeName}`;
+    const url = `${this.dashboards}ProjectsFilters/GetProjectsFilterDataByElementType/${dashboardId}/${elementTypeName}`;
     return this.callHttpGet(url, 'getFilterDataByElementType')
   }
 
   getUserFilters(dashboardId): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/GetUserFilters/${dashboardId}`;
+    const url = `${this.dashboards}Dashboards/GetUserFilters/${dashboardId}`;
     return this.callHttpGet(url, 'getUserFilters')
   }
 
   postCacheSettings(dashboardId: number): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/ClearDashboardCache`;
+    const url = `${this.dashboards}Dashboards/ClearDashboardCache`;
     return this.callHttpPost(url, 'updateCacheSettings', dashboardId)
   }
   
   saveUserFilters(userSelectedFilters: UserSelectedFilters): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/SaveUserFilters`;
+    const url = `${this.dashboards}Dashboards/SaveUserFilters`;
     return this.callHttpPost(url, 'saveUserFilters',  userSelectedFilters)
   }
 
   postUserSettings(dashboardUserSettings: any[]): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/SaveUserSettings`;
+    const url = `${this.dashboards}Dashboards/SaveUserSettings`;
     return this.callHttpPost(url, 'updateUserSettings',  dashboardUserSettings)
   }
   
@@ -62,7 +66,7 @@ export class DashboardService  extends EndpointService{
   // We are not calling Mango service at this time so we don't need to check for isRestful.
   UpdateTaskApproval(taskData: TaskApprovalDto): Observable<any> {
     const btnAction = taskData.isApproval ? "Approve" : "Reject"; 
-    const url = `${environment.appUrls.taskApproval}?OID=${taskData.transactionId}&ShowPage=1&PMMID=${taskData.taskId}&cmdSubmit=${btnAction}`;
+    const url = `${this.taskApproval}?OID=${taskData.transactionId}&ShowPage=1&PMMID=${taskData.taskId}&cmdSubmit=${btnAction}`;
 
     return this.http.post(url, taskData, { observe: 'response', responseType: 'text'})
       .pipe(map(data => {
@@ -71,143 +75,143 @@ export class DashboardService  extends EndpointService{
   }
 
   getCardFilters(): Observable<any> {
-    const url = `${environment.appUrls.dashboards}ProjectsFilters/GetProjectsCardFilters`;
+    const url = `${this.dashboards}ProjectsFilters/GetProjectsCardFilters`;
     return this.callHttpGet(url, 'getCardFilters')
   }
 
   // This method will call CREM app web method to request file
   getActivityFeedFile(urlPath: string): Observable<any> {
-    const url = `${environment.appUrls.dashboards}GetActivityFeedCardFile`;
+    const url = `${this.dashboards}GetActivityFeedCardFile`;
     return this.callHttpPostByteArray(url, 'getActivityFeedFile', { urlPath });
   }
 
   DoesUserHaveProjectAddRights(): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/DoesUserHaveProjectAddRights`;
+    const url = `${this.dashboards}Dashboards/DoesUserHaveProjectAddRights`;
     return this.callHttpGet(url, 'DoesUserHaveProjectAddRights')
   }
 
   GetUserPreferences(): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/GetUserPreferences`;
+    const url = `${this.dashboards}Dashboards/GetUserPreferences`;
     return this.callHttpGet(url, 'GetUserPreferences')
   }
   
   getObjectTypeNames(objectTypeIds: number[]): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/GetObjectTypeNames`;
+    const url = `${this.dashboards}Dashboards/GetObjectTypeNames`;
     return this.callHttpPost(url, 'getObjectTypeNames',  { objectTypeIds })
   }
 
   getRecentActivities(durationInDays: number): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Projects/GetRecentActivities`;
+    const url = `${this.dashboards}Projects/GetRecentActivities`;
     return this.callHttpPost(url, 'getRecentActivities', durationInDays);
   }
   
   getTeams(): Observable<any>  {
-    const url = `${environment.appUrls.projects}getteams`;
+    const url = `${this.projects}getteams`;
     return this.callHttpGet(url,'getteams')
   }
 
   deleteTeamMembers(memberIds: number[]): Observable<any>  {
-    const url = `${environment.appUrls.projects}deleteteammembers`;
+    const url = `${this.projects}deleteteammembers`;
     return this.callHttpPost(url,'deleteteammembers', memberIds)
   }
 
   getMembersList(search: string, all:boolean, pageSize: number, pageNumber: number) : Observable<any> {
-    const url = `${environment.appUrls.projects}getmemberslist`;
+    const url = `${this.projects}getmemberslist`;
     return this.callHttpPost(url, 'getmemberslist', { search, all, pageSize, pageNumber })
   }
 
   getmemberinfo(): Observable<any> {
-    const url = `${environment.appUrls.projects}getmemberinfo`;
+    const url = `${this.projects}getmemberinfo`;
     return this.callHttpGet(url, 'getmemberinfo')
   }
 
   updateTeamMember(memberupdate: TeamMemUpdate): Observable<any> {
-    const url = `${environment.appUrls.projects}updateteammember`;
+    const url = `${this.projects}updateteammember`;
     return this.callHttpPost(url, 'updateteammember', memberupdate);
   }
 
   addTeam(team:Team): Observable<any> {
-    const url = `${environment.appUrls.projects}addteam`;
+    const url = `${this.projects}addteam`;
     return this.callHttpPost(url, 'addteam', team);
   }
 
   importTeam(projectID: number, teamID: number, projectManagerSharedValue: boolean): Observable<any> {
-    const url = `${environment.appUrls.projects}importteam`;
+    const url = `${this.projects}importteam`;
     return this.callHttpPost(url, 'importteam', { projectID, teamID, projectManagerSharedValue });
   }
 
   getModuleRights(objectType: number, securityType: number) {
-    const url = `${environment.appUrls.projects}getmodulerights`;
+    const url = `${this.projects}getmodulerights`;
     return this.callHttpPost(url, 'getmodulerights', { objectType, securityType })
   }
 
   deleteTeams(teamIds: number[]) {
-    const url = `${environment.appUrls.projects}deleteteams`;
+    const url = `${this.projects}deleteteams`;
     return this.callHttpPost(url, 'deleteteams',  teamIds)
   }
 
   getProjectTeams(projectId): Observable<any> {
-    const url = `${environment.appUrls.projects}getprojectteams/${projectId}`;
+    const url = `${this.projects}getprojectteams/${projectId}`;
     return this.callHttpGet(url, 'getProjectTeams')
   }
 
   getClientPreference(clientPreferenceSetting): Observable<any> {
-    const url = `${environment.appUrls.projects}GetClientPreference/${clientPreferenceSetting}`;
+    const url = `${this.projects}GetClientPreference/${clientPreferenceSetting}`;
     return this.callHttpGet(url, 'getClientPreference')
   }
 
   getProjectTaskList(projectId): Observable<any> {
-    const url = `${environment.appUrls.tasks}getprojecttasklist/${projectId}`;
+    const url = `${this.projects}getprojecttasklist/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
   getOutstandingRolesforTask(projectId): Observable<any> {
-    const url = `${environment.appUrls.tasks}getoutstandingrolesfortask/${projectId}`;
+    const url = `${this.projects}getoutstandingrolesfortask/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
   getProjectContactLevel(projectId): Observable<any> {
-    const url = `${environment.appUrls.projects}getprojectcontactlevel/${projectId}`;
+    const url = `${this.projects}getprojectcontactlevel/${projectId}`;
     return this.callHttpGet(url, 'projectId')
   }
 
   saveTeamAsTemplate(teamTemplateName: string, projectId: number) {
-    const url = `${environment.appUrls.projects}createteamtemplate`;
+    const url = `${this.projects}createteamtemplate`;
     return this.callHttpPostApprovalError(url, 'createteamtemplate',  { teamTemplateName, projectId })
   }
 
   saveProjectManager(projectId: number, contactId: number) {
-    const url = `${environment.appUrls.projects}saveprojectmanager`;
+    const url = `${this.projects}saveprojectmanager`;
     return this.callHttpPost(url,  'saveprojectmanager', { projectId, contactId });
   }
 
   removeTeamMembers(projMemberData ) {
-    const url = `${environment.appUrls.projects}removeteammembers`;
+    const url = `${this.projects}removeteammembers`;
     return this.callHttpPost(url,  'removeteammembers',  projMemberData );
   }
 
   addContactsToTasksByRole(projectID: number) {
-    const url = `${environment.appUrls.tasks}addcontactstotasksbyrole`;
+    const url = `${this.projects}addcontactstotasksbyrole`;
     return this.callHttpPost(url, 'addcontactstotasksbyrole', { projectID } );
   }
 
   updateProjectTeamMember(projectTeamMember: UpdateProjectTeamMember) {
-    const url = `${environment.appUrls.projects}updateprojectteammember`;
+    const url = `${this.projects}updateprojectteammember`;
     return this.callHttpPost(url, 'updateprojectteammember', projectTeamMember);
   }
 
   addTemporaryUser(temporaryUser: UpdateTemporaryUser) {
-    const url = `${environment.appUrls.projects}addtemporaryuser`;
+    const url = `${this.projects}addtemporaryuser`;
     return this.callHttpPost(url, 'addtemporaryuser', temporaryUser);
   }
 
   updateProjectContact(projectContact: UpdateContact) {
-    const url = `${environment.appUrls.projects}updateprojectcontact`;
+    const url = `${this.projects}updateprojectcontact`;
     return this.callHttpPost(url, 'updateprojectcontact', projectContact);
   }
 
   assignTasks(memberTasks: AssignTasks) {
-    const url = `${environment.appUrls.tasks}assigntasks`;
+    const url = `${this.projects}assigntasks`;
     return this.callHttpPost(url, 'assigntasks', memberTasks);
   }
 
@@ -216,7 +220,7 @@ export class DashboardService  extends EndpointService{
   }
   
   getComposeEmailInfo(projectId): Observable<any> {
-    const url = `${environment.appUrls.projects}getcomposeemailinfo/${projectId}`;
+    const url = `${this.projects}getcomposeemailinfo/${projectId}`;
     return this.callHttpGet(url, 'projectId');
   }
 

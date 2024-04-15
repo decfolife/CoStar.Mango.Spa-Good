@@ -2,18 +2,21 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { environment } from 'apps/mango/src/environments/environment.local';
 import { Observable } from 'rxjs';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Api } from '@mango/data-models/lib-data-models';
 
 
 @Injectable()
 export class RemindersService extends EndpointService {
+  objectActionsUrl: string = UtilitiesService.getBaseApiUrl(Api.objectActions)
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getRemindersList(oID: number, oTID: number): Observable<any> {
-    let url = `${environment.appUrls.objectActions}Reminders/GetReminders`;
+    let url = `${this.objectActionsUrl}Reminders/GetReminders`;
     const request = {
       objectid: oID,
       objectTypeId: oTID
@@ -22,7 +25,7 @@ export class RemindersService extends EndpointService {
   }
 
   getReminderEvents(oID: number, oTID: number): Observable<any> {
-    let url = `${environment.appUrls.objectActions}Reminders/GetReminderEvents`;
+    let url = `${this.objectActionsUrl}Reminders/GetReminderEvents`;
     const request = {
       objectid: oID,
       objectTypeId: oTID
@@ -31,7 +34,7 @@ export class RemindersService extends EndpointService {
   }
 
   getReminderById(ticklerId: number): Observable<any> {
-    let url = `${environment.appUrls.objectActions}Reminders/GetReminderById`;
+    let url = `${this.objectActionsUrl}Reminders/GetReminderById`;
     const request = {
       ticklerId: ticklerId
     };
@@ -39,7 +42,7 @@ export class RemindersService extends EndpointService {
   }
 
   getRecipientsContactsList(oID: number, oTID: number): Observable<any> {
-    let url = `${environment.appUrls.objectActions}Reminders/GetAvailableContacts`;
+    let url = `${this.objectActionsUrl}Reminders/GetAvailableContacts`;
     const request = {
       objectid: oID,
       objectTypeId: oTID
@@ -48,11 +51,11 @@ export class RemindersService extends EndpointService {
   }
 
   saveReminder(request: any): Observable<any> {
-    let url = `${environment.appUrls.objectActions}Reminders/SaveReminder`;
+    let url = `${this.objectActionsUrl}Reminders/SaveReminder`;
     return this.callHttpPost(url, 'SaveReminder', request);
   }
 
   deleteReminder(RID: number, oID: number , oTID: number): Observable<any>{
-    return this.callHttpDelete(`${environment.appUrls.objectActions}Reminders/DeleteReminder/${RID}/${oID}/${oTID}`, 'DeleteReminder');
+    return this.callHttpDelete(`${this.objectActionsUrl}Reminders/DeleteReminder/${RID}/${oID}/${oTID}`, 'DeleteReminder');
   }
 }

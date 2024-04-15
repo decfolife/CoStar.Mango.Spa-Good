@@ -6,14 +6,14 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { of, Observable, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../../../mango/src/environments/environment.local';
-import { ApiResponse } from '@mango/data-models/lib-data-models';
+import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
 import ArrayStore from 'devextreme/data/array_store';
 import DataSource from 'devextreme/data/data_source';
 import { ColumnArray, ColumnOverrideArray } from '../shared/models/dashboard-model';
 import { MatDialog } from '@angular/material/dialog';
 import { ColumnLimitComponent } from '../components/dashboard/modal/column-limit/column-limit.component';
 import { forkJoin } from 'rxjs';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 
@@ -22,7 +22,10 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 })
 
 export class DataService extends EndpointService {
+  dashboardsUrl: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
+  accountingServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.accountingService)
   private _urlOverride = 'dashboards/';
+  baseUrl = '';
   calendar: any;
   portfolios: any;
   segmentID: any;
@@ -46,7 +49,6 @@ export class DataService extends EndpointService {
       CAEnabled: 'false'
     })
   };
-  baseUrl = '';
 
   constructor(
     protected http: HttpClient,
@@ -97,7 +99,6 @@ export class DataService extends EndpointService {
   private _saveCardConfig = new BehaviorSubject<any>(null);
   saveCardConfig$ = this._saveCardConfig.asObservable();
 
-
   public async getDataSource(key) {
     return this.dataStore.load({ filter: ['dataSourceKey', '=', key] }).then(
       (data) => {
@@ -105,7 +106,6 @@ export class DataService extends EndpointService {
       }
     );
   }
-
 
   public saveCardConfig(mangoDashboardCardId, isSiteDefault, config): Observable<ApiResponse> {
     this._saveCardConfig.next(true);
@@ -129,7 +129,7 @@ export class DataService extends EndpointService {
       }
     }
 
-    return this.getHttpPostApiResponse(route, 'savecard', param, true, environment.appUrls.dashboards + route);
+    return this.getHttpPostApiResponse(route, 'savecard', param, true, this.dashboardsUrl + route);
   }
 
   public deleteUserConfig(mangoDashboardCardId): Observable<ApiResponse> {
@@ -147,7 +147,7 @@ export class DataService extends EndpointService {
     } else {
       route = 'accounting/' + route;
     }
-    return this.getHttpPostApiResponse(route, 'deletecard', restfulParam, true, environment.appUrls.dashboards + route);
+    return this.getHttpPostApiResponse(route, 'deletecard', restfulParam, true, this.dashboardsUrl + route);
   }
 
   public updateCardConfig(mangoDashboardCardId, isSiteDefault, config) {
@@ -161,7 +161,7 @@ export class DataService extends EndpointService {
         isSiteDefault: isSiteDefault,
         config: JSON.stringify(config)
       }
-      return this.getHttpPostApiResponse(route, 'updatecard', param, true, environment.appUrls.dashboards + route);
+      return this.getHttpPostApiResponse(route, 'updatecard', param, true, this.dashboardsUrl + route);
     } else {
       param = {
         request: {
@@ -240,7 +240,7 @@ export class DataService extends EndpointService {
         calendarId: calendar,
       }
     }
-    return this.getHttpPostApiResponse(route, 'AccountingDashboard', param, true, environment.appUrls.dashboards + route);
+    return this.getHttpPostApiResponse(route, 'AccountingDashboard', param, true, this.dashboardsUrl + route);
   }
 
   public columnLimitWarning(columns) {
@@ -621,7 +621,7 @@ export class DataService extends EndpointService {
     overrideBaseUrl: boolean = false,
     overrideLocalUrl): Observable<ApiResponse> {
     if (overrideBaseUrl) {
-      url = environment.appUrls.accountingService + url
+      url = this.accountingServiceUrl + url
     } else {
       url = this.baseUrl + url;
     }
@@ -644,7 +644,7 @@ export class DataService extends EndpointService {
     overrideBaseUrl: boolean = false,
     overrideLocalUrl): Observable<ApiResponse> {
     if (overrideBaseUrl) {
-      url = environment.appUrls.accountingService + url
+      url = this.accountingServiceUrl + url
     } else {
       url = this.baseUrl + url;
     }
@@ -666,7 +666,7 @@ export class DataService extends EndpointService {
     overrideLocalUrl
   ): Observable<ApiResponse> {
     if (overrideBaseUrl) {
-      url = environment.appUrls.accountingService + url
+      url = this.accountingServiceUrl + url
     } else {
       url = this.baseUrl + url;
     }

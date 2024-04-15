@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { ApiResponse, DataFieldRequest, DataSetRequest } from '../models';
+import { Api } from '@mango/data-models/lib-data-models';
+import { UtilitiesService } from '@mango/core-shared';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type HttpParamsObj = HttpParams | { [param: string]: any };
@@ -30,8 +30,8 @@ export class DataSetDictionaryService {
   };
 
   constructor(private http: HttpClient) {
-    this.apiUrl = environment.appUrls.dataSetDictionary;
-    this.reportsUrl = environment.appUrls.reports;
+    this.apiUrl = UtilitiesService.getBaseApiUrl(Api.dataSetDictionary)
+    this.reportsUrl = UtilitiesService.getBaseApiUrl(Api.reports)
 
     if (environment.isRestful) {
       this.apiUrl += 'reports/';

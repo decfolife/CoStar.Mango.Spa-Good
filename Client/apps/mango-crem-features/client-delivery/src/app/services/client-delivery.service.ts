@@ -3,18 +3,18 @@ import { Injectable, Optional } from '@angular/core';
 import { Observable, of,  } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../../mango/src/environments/environment.local';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { filter, switchMap } from 'rxjs/operators';
-import { CentralAuthHttpError } from '@mango/data-models/lib-data-models';
+import { Api, CentralAuthHttpError } from '@mango/data-models/lib-data-models';
 import { UserService } from '@mango/core-shared';
 import { ServiceAccount } from "../../../../../../libs/data-models/lib-data-models/src/lib/models/service-account/service-account";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ClientDeliveryService extends EndpointService 
-{
+export class ClientDeliveryService extends EndpointService {
+  authentication: string = UtilitiesService.getBaseApiUrl(Api.authentication)
   public isLoading = false;
   public isErrored = false;
   public requestHasBeenSent = false;
@@ -27,14 +27,14 @@ export class ClientDeliveryService extends EndpointService
   }
 
   updateServiceAccount(contactEmailAddress: string, contactID:number, contactActiveFlg: boolean): Observable<any> {    
-    const url = `${environment.appUrls.authentication}serviceaccount`;
+    const url = `${this.authentication}serviceaccount`;
     var reqbody = {"email": contactEmailAddress, "contactID": contactID, "isActive": contactActiveFlg };            
     return this.callHttpPut(url, 'UpdateServiceAccount', reqbody)
   }
 
   addServiceAccount(emailAddress: string): Observable<any> {  
      var reqbody = {"email": emailAddress};
-     const url = `${environment.appUrls.authentication}serviceaccount`;
+     const url = `${this.authentication}serviceaccount`;
      return this.callHttpPost(url, 'AddServiceAccount', reqbody)
   }
 

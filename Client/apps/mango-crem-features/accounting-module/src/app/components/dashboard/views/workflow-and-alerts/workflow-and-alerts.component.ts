@@ -13,6 +13,8 @@ import { ColumnArray, DropdownValue } from '../../../../shared/models/dashboard-
 import { DashboardService } from '../../../../services/dashboard.service';
 import { DataService } from '../../../../services/data.service';
 import { NgStateObject } from '../../../../shared/models/app-state.model';
+import { UtilitiesService } from '@mango/core-shared';
+import { Api } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'workflow-and-alerts',
@@ -20,6 +22,7 @@ import { NgStateObject } from '../../../../shared/models/app-state.model';
   styleUrls: ['./workflow-and-alerts.component.scss'],
 })
 export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
+  accountingServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.accountingService)
   title = 'Accounting Module';
   loading = true;
   env = environment.name.toUpperCase().trim() !== 'PROD'
@@ -111,7 +114,7 @@ export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.dashboardService.onLoad(environment.appUrls.accountingService).subscribe((successFlag) => {
+    this.dashboardService.onLoad(this.accountingServiceUrl).subscribe((successFlag) => {
       this.isInitialLoadSuccessful = successFlag;
     });
 

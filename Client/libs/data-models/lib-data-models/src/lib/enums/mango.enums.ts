@@ -24,3 +24,33 @@ export enum MangoSubApps {
     FORMS_MAINTENANCE = 'FORMS_MAINTENANCE',
     COSTAR_MATCHING = 'COSTAR_MATCHING'
 }
+
+export enum Api {
+    identity = 'identity',
+    authentication = 'authentication',
+    authorization = 'authorization',
+    accounting = 'accountmanagement',
+    batchAccounting = 'batchAccounting',
+    discountRateProfiles = 'accountingprofiles',
+    bookmarks = 'bookmarks',
+    listpages = 'listpages',
+    financials = 'financials',
+    dashboards = 'dashboards',
+    taskApproval = '',
+    reports = 'reports',
+    userMaintenance = 'userMaintenance',
+    portfolioMaintenance = 'portfolioMaintenance',
+    objectMaintenance = 'objectMaintenance',
+    groupMaintenance = 'groupMaintenance',
+    alerts = 'alerts',
+    accountingService = 'accountingDashboard',
+    leftNav = 'leftNav',
+    quickSearch = 'quickSearch',
+    user = 'userService',
+    formWizard = 'FormsEngine',
+    objectActions = 'objectActions',
+    header = 'header',
+    accountingSummary = 'accountingSummary',
+    dataSetDictionary = 'reports',
+    projects = 'projects'
+}

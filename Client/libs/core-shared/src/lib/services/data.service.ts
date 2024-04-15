@@ -4,17 +4,22 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable, of } from 'rxjs';
 import { environment } from '../../../../../apps/mango/src/environments/environment.local';
 import { EndpointService } from './endpoint.service';
+import { UtilitiesService } from '@mango/core-shared';
+import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 
-export class DataService extends EndpointService{
+export class DataService extends EndpointService {
+  quickSearchUrl: string = UtilitiesService.getBaseApiUrl(Api.quickSearch)
+  dashboardsUrl: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getPortfolioMetricDataByElementType(elementTypeName: string, unitOfMeasureId: number, selectedFilters: string, exchangeRateId: number): Observable<any> {
     return of(1);
-    //   const url = `${environment.appUrls.dashboards}PortfolioMetrics/GetMetricDataByElementType`;
+    //   const url = `${this.dashboards}PortfolioMetrics/GetMetricDataByElementType`;
     //   return this.callHttpPost(url, 'getMetricDataByElementType', { elementTypeName, unitOfMeasureId, selectedFilters, exchangeRateId })
   }
 
@@ -25,22 +30,22 @@ export class DataService extends EndpointService{
   }
 
   getQuickSearchModules() : Observable<any> {
-    const url = `${environment.appUrls.quickSearch}/quicksearch/getmodulevalues`;
+    const url = `${this.quickSearchUrl}/quicksearch/getmodulevalues`;
     return this.callHttpGet(url, 'getmodulevalues');
   }
 
   getTypeAheadResults(searchString: string, moduleId: number): Observable<any> {
-    const url = `${environment.appUrls.quickSearch}/quicksearch/gettypeaheadvalues/${searchString}/${moduleId}`;
+    const url = `${this.quickSearchUrl}/quicksearch/gettypeaheadvalues/${searchString}/${moduleId}`;
     return this.callHttpGet(url, 'gettypeaheadvalues');
   }
 
   fetchAllPortfolioMetrics(schemaMetrics: any, unitOfMeasureId: number, selectedFilters: string, exchangeRateId: number): Observable<any> {
-    const url = `${environment.appUrls.dashboards}PortfolioMetrics/GetAllPortfolioMetrics`;
+    const url = `${this.dashboardsUrl}PortfolioMetrics/GetAllPortfolioMetrics`;
     return this.callHttpPost(url, 'getAllPortfolioMetrics', { schemaMetrics, unitOfMeasureId, selectedFilters, exchangeRateId })
   }
 
   fetchAllProjectMetrics(schemaMetrics: any, selectedFilters: string): Observable<any> {
-    const url = `${environment.appUrls.dashboards}ProjectsMetrics/GetAllProjectMetrics`;
+    const url = `${this.dashboardsUrl}ProjectsMetrics/GetAllProjectMetrics`;
     return this.callHttpPost(url, 'getAllProjectMetrics', { schemaMetrics, selectedFilters })
   }
 }

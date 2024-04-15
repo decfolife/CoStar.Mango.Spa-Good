@@ -1,15 +1,18 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { environment } from '../../../../../mango/src/environments/environment.local';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 
 export class InAppDisclosureService extends EndpointService{
-
+  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports)
+  accountingServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.accountingService)
+  dashboardsUrl: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
   public dateFormat: string;
   private httpOptionsWithParams;
   private httpOptions;
@@ -34,33 +37,32 @@ export class InAppDisclosureService extends EndpointService{
       param = { includeArchived: includeArchived };
     }
 
-    const url = `${environment.appUrls.reports}ReportsSegments/Segments`;
+    const url = `${this.reportsUrl}ReportsSegments/Segments`;
     return this.callHttpGet(url, 'getSegments',  param);
   }
 
   public getIADCardData(dashboardID, segmentID, reportingYear, reportingCurrency) {
     let param = { dashboardID: dashboardID, segmentID : segmentID, reportingYear: reportingYear, reportingCurrencyISO: reportingCurrency };
-    const url = `${environment.appUrls.inAppDisclosure}IAD/IADCardData`;
+    const url = `${this.accountingServiceUrl}IAD/IADCardData`;
     return this.callHttpGet(url, 'getIADCardData',  param)  
   }
 
   public getIADCardConfigs(dashboardId: number): Observable<any> {
     const param = { dashboardId: dashboardId };
-    const url = `${environment.appUrls.inAppDisclosure}IAD/IADCardConfigs`;
+    const url = `${this.accountingServiceUrl}IAD/IADCardConfigs`;
     return this.callHttpGet(url, 'getIADCardData',  param);
   }
 
   public getAccountingCriteriaSets() {
-    const url = `${environment.appUrls.accountingService}/criteriasets`
+    const url = `${this.accountingServiceUrl}/criteriasets`
     return this.callHttpGet(url, 'getAccountingCriteriaSets');
   }
 
   public exportIADData(segmentID: number, reportingYear: number, reportingCurrencyISO: string, dashboardID: number) {
     const param = { segmentID: segmentID, reportingYear: reportingYear, reportingCurrencyISO: reportingCurrencyISO, dashboardID: dashboardID };
-    const url = `${environment.appUrls.inAppDisclosure}IAD/Export`;
+    const url = `${this.accountingServiceUrl}IAD/Export`;
     let headers: HttpHeaders;
     this.getHttpHeaders().subscribe((result) => {
-
       headers = new HttpHeaders({
         'Content-Type': 'application/octet-stream',
               'Accept': 'application/octet-stream',
@@ -75,20 +77,20 @@ export class InAppDisclosureService extends EndpointService{
   }
 
   getUserPreferences(): Observable<any> {
-    const url = `${environment.appUrls.dashboards}Dashboards/GetUserPreferences`;
+    const url = `${this.dashboardsUrl}Dashboards/GetUserPreferences`;
     return this.callHttpGet(url, 'getGetUserPreferences')
   }
 
   public getCurrencyDecimalPrecision(currencyISO) {
     let param = { currencyISO: currencyISO }
-    const url = `${environment.appUrls.inAppDisclosure}IAD/CurrencyPrecision`
+    const url = `${this.accountingServiceUrl}IAD/CurrencyPrecision`
 
     return this.callHttpGet(url, 'getCurrencyPrecision', param)
   }
 
   public SetDefault(segmentID: number, criteriaSetID: number) {
     const body = { SegmentID: segmentID, CriteriaSetID: criteriaSetID }
-    const url = `${environment.appUrls.reports}ReportsSegments/SetDefault`
+    const url = `${this.reportsUrl}ReportsSegments/SetDefault`
 
     return this.callHttpPost(url, 'setDefault', body)
   }
@@ -96,10 +98,10 @@ export class InAppDisclosureService extends EndpointService{
   public callHttpGet(url: string, functionName: string, httpOptionsParams?: any, httpOptionsHeaders?: any, responseType?: any): Observable<any> {
     return this.getHttpHeaders().pipe(
       switchMap(httpOptions => {
-        if(httpOptionsParams) {
+        if (httpOptionsParams) {
           httpOptions.params = httpOptionsParams;
         }
-        if(httpOptionsHeaders) {
+        if (httpOptionsHeaders) {
           httpOptions.headers = httpOptionsHeaders;
         }
         if (responseType) {
@@ -114,7 +116,7 @@ export class InAppDisclosureService extends EndpointService{
   }
 
   public toObject(value: any): any {
-    if(value instanceof HttpResponse) {
+    if (value instanceof HttpResponse) {
         let apiSuccess = value.status === 200;
         let cemsg = apiSuccess ? null : value.statusText
         return {

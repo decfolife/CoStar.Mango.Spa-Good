@@ -4,14 +4,16 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'apps/mango/src/environments/environment.local';
-import { ApiResponse } from '@mango/data-models/lib-data-models';
+import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
 import { of, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { UtilitiesService } from '@mango/core-shared';
 
 @Injectable()
 export class ArchiveActionService {
-
+  objectActions: string = UtilitiesService.getBaseApiUrl(Api.objectActions)
   baseUrl: string = '';
+  
   protected httpOptions: any = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -43,11 +45,11 @@ export class ArchiveActionService {
       ContactId: contactID
     };
     if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'CheckSystemUser', param, environment.appUrls.objectActions + route);
+      return this.getHttpGetApiResponse(route, 'CheckSystemUser', param, this.objectActions + route);
     } else {
       route = 'objectActions/' + route;
     }
-    return this.getHttpGetApiResponse(route, 'CheckSystemUser', param, environment.appUrls.objectActions + route);
+    return this.getHttpGetApiResponse(route, 'CheckSystemUser', param, this.objectActions + route);
   }
 
   public GetCompanyVendorsCustomers(companyID: number): Observable<ApiResponse> {
@@ -56,11 +58,11 @@ export class ArchiveActionService {
       CompanyID: companyID
     };
     if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'CompanyVendorsCustomers', param, environment.appUrls.objectActions + route);
+      return this.getHttpGetApiResponse(route, 'CompanyVendorsCustomers', param, this.objectActions + route);
     } else {
       route = 'objectActions/CompanyVendorsCustomers';
     }
-    return this.getHttpGetApiResponse(route, 'CompanyVendorsCustomers', param, environment.appUrls.objectActions + route);
+    return this.getHttpGetApiResponse(route, 'CompanyVendorsCustomers', param, this.objectActions + route);
   }
 
   public archiveContact(contactID: number): Observable<ApiResponse> {
@@ -89,11 +91,11 @@ export class ArchiveActionService {
       ContactId: contactID
     };
     if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'GetContactName', param, environment.appUrls.objectActions + route);
+      return this.getHttpGetApiResponse(route, 'GetContactName', param, this.objectActions + route);
     } else {
       route = 'objectActions/ContactName';
     }
-    return this.getHttpGetApiResponse(route, 'GetContactName', param, environment.appUrls.objectActions + route);
+    return this.getHttpGetApiResponse(route, 'GetContactName', param, this.objectActions + route);
   }
 
   public getBuildingsPremiseLeaseAssociations(leaseAbstractId, listType, isPremiseHidden = 0): Observable<ApiResponse> {
@@ -105,7 +107,7 @@ export class ArchiveActionService {
         IsPremiseHidden: isPremiseHidden,
         LeaseAbstractId: leaseAbstractId
       }
-      return this.getHttpGetApiResponse(route, 'GetBuildingsPremiseLeaseAssociations', param, environment.appUrls.objectActions + route);
+      return this.getHttpGetApiResponse(route, 'GetBuildingsPremiseLeaseAssociations', param, this.objectActions + route);
     } else {
       route = 'objectActions/' + route;
       param = {
@@ -114,55 +116,36 @@ export class ArchiveActionService {
         IsPremiseHidden: isPremiseHidden
       }
     }
-    return this.getHttpGetApiResponse(route, 'GetBuildingsPremiseLeaseAssociations', param, environment.appUrls.objectActions + route);
+    return this.getHttpGetApiResponse(route, 'GetBuildingsPremiseLeaseAssociations', param, this.objectActions + route);
   }
 
   public getBuildingPremiseArchiveData(buildingId, premiseId, listType, isPremiseHidden = 0): Observable<ApiResponse> {
     let route = 'GetBuildingPremiseArchiveData';
     let param;
-    if (!environment.isRestful) {
-      param = {
-        ListType: listType,
-        PremiseId: premiseId,
-        IsPremiseHidden: isPremiseHidden,
-        BuildingId: buildingId
-      }
-      
-      return this.getHttpGetApiResponse(route, 'GetBuildingPremiseArchiveData', param, environment.appUrls.objectActions + route);
-    } else {
-      route = 'objectActions/' + route;
-      param = {
-        BuildingId: buildingId,
-        PremiseId: premiseId,
-        ListType: listType,
-        IsPremiseHidden: isPremiseHidden
-      }
+
+    route = 'objectActions/' + route;
+    param = {
+      BuildingId: buildingId,
+      PremiseId: premiseId,
+      ListType: listType,
+      IsPremiseHidden: isPremiseHidden
     }
-    return this.getHttpGetApiResponse(route, 'GetBuildingPremiseArchiveData', param, environment.appUrls.objectActions + route);
+    
+    return this.getHttpGetApiResponse(route, 'GetBuildingPremiseArchiveData', param, this.objectActions + route);
   }
 
   public archiveBuildingPremiseLease(buildingId, premiseId, leaseId, isPremiseHidden): Observable<ApiResponse> {
     let route = 'ArchiveBuildingPremiseLease';
     let param;
-    if (!environment.isRestful) {
-      param = {
-        request: {
-          BuildingId: buildingId,
-          PremiseId: premiseId,
-          LeaseId: leaseId,
-          isPremiseHidden: isPremiseHidden
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'ArchiveBuildingPremiseLease', param);
-    } else {
-      route = 'objectActions/' + route;
-      param = {
-        BuildingId: buildingId,
-        PremiseId: premiseId,
-        LeaseId: leaseId,
-        isPremiseHidden: isPremiseHidden,
-      }
+
+    route = 'objectActions/' + route;
+    param = {
+      BuildingId: buildingId,
+      PremiseId: premiseId,
+      LeaseId: leaseId,
+      isPremiseHidden: isPremiseHidden,
     }
+    
     return this.getHttpPostApiResponse(route, 'GetBuildingsPremiseLeaseAssociations', param);
   }
 
@@ -199,7 +182,7 @@ export class ArchiveActionService {
     url: string,
     functionName: string,
     postBody: any): Observable<ApiResponse> {
-    url = environment.appUrls.objectActions + url
+    url = this.objectActions + url
 
     return this.http.post(url, postBody, this.httpOptions)
       .pipe(
@@ -215,7 +198,7 @@ export class ArchiveActionService {
     overrideBaseUrl: boolean = false,
     overrideLocalUrl): Observable<ApiResponse> {
     if (overrideBaseUrl) {
-      url = environment.appUrls.objectActions + url
+      url = this.objectActions + url
     } else {
       url = this.baseUrl + url;
     }
@@ -236,7 +219,7 @@ export class ArchiveActionService {
     overrideBaseUrl: boolean = false,
     overrideLocalUrl): Observable<ApiResponse> {
     if (overrideBaseUrl) {
-      url = environment.appUrls.objectActions + url
+      url = this.objectActions + url
     } else {
       url = this.baseUrl + url;
     }
@@ -272,17 +255,8 @@ export class ArchiveActionService {
       clientErrorMessage: ''
     };
 
-    if (environment.isRestful) {
-      result.success = value.success ? value.success : false;
-      result.data = (value.data || (!value.data && value.data === 0)) ? value.data : '{}';
-      result.clientErrorMessage = result.success ? '' : result.data;
-      return result;
-    }
-
-    const res = value?.d?.Result ? value.d.Result : value.d;
-    const data = JSON.parse(res);
-    result.success = data.success;
-    result.data = (data.data || (!data.data && data.data === 0)) ? data.data : '{}';
+    result.success = value.success ? value.success : false;
+    result.data = (value.data || (!value.data && value.data === 0)) ? value.data : '{}';
     result.clientErrorMessage = result.success ? '' : result.data;
     return result;
   }

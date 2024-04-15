@@ -18,6 +18,8 @@ using Microsoft.OpenApi.Models;
 using System.IO;
 using System.Collections.Generic;
 using MangoSPA.Services;
+using Yarp.ReverseProxy.Transforms;
+using System.Threading.Tasks;
 
 namespace MangoSPA;
 
@@ -44,6 +46,17 @@ public class Startup
 
         services.AddHealthChecks();
         services.AddHttpContextAccessor();
+
+        services.AddReverseProxy()
+            .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
+            .AddTransforms(builderContext =>
+            {
+                builderContext.AddRequestTransform(async transformContext =>
+                {
+                    var accessToken = transformContext.HttpContext.User.AccessToken();
+                    transformContext.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                });             
+            });
 
         AddSwagger(services);
         AddLogging(services);
@@ -143,6 +156,7 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapHealthChecks("/health");
+            endpoints.MapReverseProxy();
         });
 
         app.UseSerilogRequestLogging();

@@ -5,12 +5,14 @@ import { BookmarkGroup } from 'libs/data-models/lib-data-models/src/lib/models/b
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../../mango/src/environments/environment.local';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable({providedIn: 'root'})
 
 export class BookmarksService extends EndpointService {
+  bookmarksUrl: string = UtilitiesService.getBaseApiUrl(Api.bookmarks)
   //Reports = 7
   //Projects = 1
   //Store = 2
@@ -64,22 +66,22 @@ export class BookmarksService extends EndpointService {
   }
 
   getBookmarks(isbookmarks: boolean, isreports: boolean): Observable<any> {
-    const url = `${environment.appUrls.bookmarks}Bookmarks/GetBookmarksAndReportsData/${isbookmarks}/${isreports}`;
+    const url = `${this.bookmarksUrl}Bookmarks/GetBookmarksAndReportsData/${isbookmarks}/${isreports}`;
     return this.callHttpGet(url, 'getBookmarks')
   }
 
   getRedirectorLinkList(): Observable<any> {
-    const url = `${environment.appUrls.bookmarks}Bookmarks/GetRedirectorLinkList`;
+    const url = `${this.bookmarksUrl}Bookmarks/GetRedirectorLinkList`;
     return this.callHttpGet(url, 'getRedirectorLinkList')
   }
 
   getObjectTypeNames(objectTypeIds: number[]): Observable<any> {
-    const url = `${environment.appUrls.bookmarks}Bookmarks/GetObjectTypeNames`;
+    const url = `${this.bookmarksUrl}Bookmarks/GetObjectTypeNames`;
     return this.callHttpPost(url, 'getObjectTypeNames',  { objectTypeIds })
   }
 
   getUserPreferenceHidePremise(): Observable<any> {
-    const url = `${environment.appUrls.bookmarks}Bookmarks/GetUserPreferenceHidePremise`;
+    const url = `${this.bookmarksUrl}Bookmarks/GetUserPreferenceHidePremise`;
     return this.callHttpGet(url, 'getUserPreferenceHidePremise')
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
+import { Api } from '@mango/data-models/lib-data-models';
 import { environment } from 'apps/mango/src/environments/environment.local';
 
 export interface SharedUserViewRight {
@@ -12,20 +13,21 @@ export interface SharedUserViewRight {
 
 @Injectable()
 export class ShareViewPopupService extends EndpointService {
+  listpages: string = UtilitiesService.getBaseApiUrl(Api.listpages)
 
   getSharedUserViewRights(listViewId: number) {
-    return this.callHttpGet(`${environment.appUrls.listpages}SharedUserViewRights/${listViewId}`, 'getSharedUserViewRights')
+    return this.callHttpGet(`${this.listpages}listpage/SharedUserViewRights/${listViewId}`, 'getSharedUserViewRights')
   }
 
   getSharedUserViews(listViewId: number) {
-    return this.callHttpGet(`${environment.appUrls.listpages}SharedUserViews/${listViewId}`, 'getSharedUserViews')
+    return this.callHttpGet(`${this.listpages}listpage/SharedUserViews/${listViewId}`, 'getSharedUserViews')
   }
 
   createSharedUserViewRights(newRight: SharedUserViewRight) {
-    return this.callHttpPost(`${environment.appUrls.listpages}SharedUserViewRights`, 'createSharedUserViewRights', newRight)
+    return this.callHttpPost(`${this.listpages}listpage/SharedUserViewRights`, 'createSharedUserViewRights', newRight)
   }
 
   deleteSharedUserViewRights(right: SharedUserViewRight) {
-    return this.callHttpPost(`${environment.appUrls.listpages}DeleteSharedUserViewRight`, 'deleteSharedUserViewRights', right)
+    return this.callHttpPost(`${this.listpages}listpage/DeleteSharedUserViewRight`, 'deleteSharedUserViewRights', right)
   }
 }
