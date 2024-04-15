@@ -112,6 +112,7 @@
           "outputHashing": "none",
           "namedChunks": false,
           "extractLicenses": true,
+          "sourceMap": false,
           "vendorChunk": false,
           "fileReplacements": [
             {
