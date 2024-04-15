@@ -24,7 +24,6 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 export class DataService extends EndpointService {
   dashboardsUrl: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
   accountingServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.accountingService)
-  private _urlOverride = 'dashboards/';
   baseUrl = '';
   calendar: any;
   portfolios: any;
@@ -59,8 +58,6 @@ export class DataService extends EndpointService {
     this.getHttpHeaders().subscribe((result) => {
       this.httpOptions = result;
     })
-    // This url is used when not being overriden from the mango-root container
-    // this.baseUrl = [Accounting Service];
 
     this.dataStore = new ArrayStore({
       key: 'dataSourceKey',
@@ -109,69 +106,34 @@ export class DataService extends EndpointService {
 
   public saveCardConfig(mangoDashboardCardId, isSiteDefault, config): Observable<ApiResponse> {
     this._saveCardConfig.next(true);
-    let route = 'savecard';
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        request: {
-          mangoDashboardCardID: mangoDashboardCardId,
-          isSiteDefault: isSiteDefault,
-          config: JSON.stringify(config)
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'savecard', param, true, null);
-    } else {
-      route = 'accounting/' + route;
-      param = {
-        mangoDashboardCardID: mangoDashboardCardId,
-        isSiteDefault: isSiteDefault,
-        config: JSON.stringify(config)
-      }
-    }
+    const route = `${this.dashboardsUrl}accounting/savecard`;
 
-    return this.getHttpPostApiResponse(route, 'savecard', param, true, this.dashboardsUrl + route);
+    let param = {
+      mangoDashboardCardID: mangoDashboardCardId,
+      isSiteDefault: isSiteDefault,
+      config: JSON.stringify(config)
+    }
+    
+    return this.getHttpPostApiResponse(route, 'savecard', param);
   }
 
   public deleteUserConfig(mangoDashboardCardId): Observable<ApiResponse> {
     const restfulParam = {
       mangoDashboardCardID: mangoDashboardCardId
     };
-    let route = 'deletecard';
-    if (!environment.isRestful) {
-      const param = {
-        request: {
-          mangoDashboardCardID: mangoDashboardCardId
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'deletecard', param, true, null);
-    } else {
-      route = 'accounting/' + route;
-    }
-    return this.getHttpPostApiResponse(route, 'deletecard', restfulParam, true, this.dashboardsUrl + route);
+    const route = `${this.dashboardsUrl}accounting/deletecard`;
+    return this.getHttpPostApiResponse(route, 'deletecard', restfulParam);
   }
 
   public updateCardConfig(mangoDashboardCardId, isSiteDefault, config) {
     this._saveCardConfig.next(true);
-    let route = 'updatecard'
-    let param;
-    if (environment.isRestful) {
-      route = 'accounting/' + route;
-      param = {
-        mangoDashboardCardID: mangoDashboardCardId,
-        isSiteDefault: isSiteDefault,
-        config: JSON.stringify(config)
-      }
-      return this.getHttpPostApiResponse(route, 'updatecard', param, true, this.dashboardsUrl + route);
-    } else {
-      param = {
-        request: {
-          mangoDashboardCardID: mangoDashboardCardId,
-          isSiteDefault: isSiteDefault,
-          config: JSON.stringify(config)
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'updatecard', param, true, null);
+    const route = `${this.dashboardsUrl}accounting/updatecard`;
+    let param = {
+      mangoDashboardCardID: mangoDashboardCardId,
+      isSiteDefault: isSiteDefault,
+      config: JSON.stringify(config)
     }
+    return this.getHttpPostApiResponse(route, 'updatecard', param); 
   }
 
   public async updateColumnData(key, data) {
@@ -225,22 +187,14 @@ export class DataService extends EndpointService {
 
   public getDashboardFilterData(calendar): Observable<ApiResponse> {
     this._cardNeedUpdate.next({key: 'everything', needUpdate: true})
-    let route = 'accountingDashboard';
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        request: {
-          calendarId: calendar,
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'AccountingDashboard', param, true, null);
-    } else {
-      route = 'accounting/' + route;
-      param = {
-        calendarId: calendar,
-      }
+
+    const route = `${this.dashboardsUrl}accounting/accountingDashboard`;
+
+    let param = {
+      calendarId: calendar,
     }
-    return this.getHttpPostApiResponse(route, 'AccountingDashboard', param, true, this.dashboardsUrl + route);
+
+    return this.getHttpPostApiResponse(route, 'AccountingDashboard', param);
   }
 
   public columnLimitWarning(columns) {
@@ -486,27 +440,15 @@ export class DataService extends EndpointService {
     }
   }
 
-
-
   private getLeaseData(segmentID, columns): Observable<ApiResponse> {
-    let route = 'leases';
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        request: {
-          segmentID: segmentID,
-          Fields: (columns?.[0]?.columns)?.toString() || [].toString()
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'leases', param, true, null);
-    } else {
-      route = '/' + route;
-      param = {
-        segmentID: segmentID,
-        Fields: (columns?.[0]?.columns)?.toString() || [].toString()
-      }
+    const route = `${this.accountingServiceUrl}accounting/leases`;
+
+    let param = {
+      segmentID: segmentID,
+      Fields: (columns?.[0]?.columns)?.toString() || [].toString()
     }
-    return this.getHttpPostApiResponse(route, 'leases', param, true, null);
+    
+    return this.getHttpPostApiResponse(route, 'leases', param);
   }
 
   private getPeriodsData(portfolios, calendar, years, columns, pageNumber: number = 1): Observable<ApiResponse> {
@@ -517,30 +459,18 @@ export class DataService extends EndpointService {
         return column;
       }
     })
-    let route = 'periods';
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        request: {
-          portfolioIDs: portfolios,
-          calendarID: calendar,
-          Fields: newColumns.toString() || [].toString(),
-          Year: years,
-          PageNumber: pageNumber,
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'periods', param, true, null);
-    } else {
-      route = '/' + route;
-      param = {
-        portfolioIDs: portfolios,
-        calendarID: calendar,
-        Fields: newColumns.toString() || [].toString(),
-        Year: years,
-        PageNumber: pageNumber,
-      }
+
+    const route = `${this.accountingServiceUrl}periods`;
+
+    let param = {
+      portfolioIDs: portfolios,
+      calendarID: calendar,
+      Fields: newColumns.toString() || [].toString(),
+      Year: years,
+      PageNumber: pageNumber,
     }
-    return this.getHttpPostApiResponse(route, 'periods', param, true, null);
+  
+    return this.getHttpPostApiResponse(route, 'periods', param);
   }
 
   private getAlertsData(segmentID, columns): Observable<ApiResponse> {
@@ -551,24 +481,15 @@ export class DataService extends EndpointService {
         return column;
       }
     })
-    let route = 'alerts';
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        request: {
-          SegmentID: segmentID,
-          Fields: newColumns.toString() || [].toString(),
-        }
-      }
-      return this.getHttpPostApiResponse(route, 'alerts', param, true, null);
-    } else {
-      route = '/' + route;
-      param = {
-        SegmentID: segmentID,
-        Fields: newColumns.toString() || [].toString(),
-      }
+
+    const route = `${this.accountingServiceUrl}accounting/alerts`;
+
+    let param = {
+      SegmentID: segmentID,
+      Fields: newColumns.toString() || [].toString(),
     }
-    return this.getHttpPostApiResponse(route, 'alerts', param, true, null);
+    
+    return this.getHttpPostApiResponse(route, 'alerts', param);
   }
 
   private getDateFields(columns, key) {
@@ -577,15 +498,6 @@ export class DataService extends EndpointService {
       return allColumns[column] === 'Date'
     })
     return dateColumns;
-  }
-
-  // Use this call to set what the base URL should be.
-  protected setApiUrl(value: any) {
-    if (!value) {
-      // this.baseUrl = [Accounting Service];
-      return;
-    }
-    this.baseUrl = value;
   }
 
   protected setApiToken(authToken: any) {
@@ -598,15 +510,11 @@ export class DataService extends EndpointService {
   protected getHttpGetApiResponse(
     url: string,
     functionName: string,
-    overrideLocalUrl = null,
     httpOptionsParams?: HttpParams | { [param: string]: any }): Observable<ApiResponse> {
     if (httpOptionsParams) {
       this.httpOptions.params = httpOptionsParams;
     }
-    url = this.baseUrl + url;
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
+
     return this.http.get(url, this.httpOptions)
       .pipe(
         map(x => this.toApiResponse(x) as any),
@@ -617,19 +525,7 @@ export class DataService extends EndpointService {
   protected getHttpPostApiResponse(
     url: string,
     functionName: string,
-    postBody: any,
-    overrideBaseUrl: boolean = false,
-    overrideLocalUrl): Observable<ApiResponse> {
-    if (overrideBaseUrl) {
-      url = this.accountingServiceUrl + url
-    } else {
-      url = this.baseUrl + url;
-    }
-
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
-    // url = 'http://localhost:39187' + url;
+    postBody: any): Observable<ApiResponse> {
     return this.http.post(url, postBody, this.httpOptions)
       .pipe(
         map(x => this.toApiResponse(x) as any),
@@ -640,19 +536,8 @@ export class DataService extends EndpointService {
   protected getHttpPutApiResponse(
     url: string,
     functionName: string,
-    putBody: any,
-    overrideBaseUrl: boolean = false,
-    overrideLocalUrl): Observable<ApiResponse> {
-    if (overrideBaseUrl) {
-      url = this.accountingServiceUrl + url
-    } else {
-      url = this.baseUrl + url;
-    }
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
-    // url = 'http://localhost:39187' + url;
-    return this.http.put(url, putBody, this.httpOptions)
+    body: any): Observable<ApiResponse> {
+    return this.http.put(url, body, this.httpOptions)
       .pipe(
         map(x => this.toApiResponse(x) as any),
         catchError(this.handleApiResponseError(functionName))
@@ -661,19 +546,7 @@ export class DataService extends EndpointService {
 
   protected getHttpDeleteApiResponse(
     url: string,
-    functionName: string,
-    overrideBaseUrl: boolean = false,
-    overrideLocalUrl
-  ): Observable<ApiResponse> {
-    if (overrideBaseUrl) {
-      url = this.accountingServiceUrl + url
-    } else {
-      url = this.baseUrl + url;
-    }
-    if (overrideLocalUrl) {
-      url = overrideLocalUrl;
-    }
-    // url = 'http://localhost:39187' + url;
+    functionName: string): Observable<ApiResponse> {
     return this.http.delete(url, this.httpOptions)
       .pipe(
         map(x => this.toApiResponse(x) as any),

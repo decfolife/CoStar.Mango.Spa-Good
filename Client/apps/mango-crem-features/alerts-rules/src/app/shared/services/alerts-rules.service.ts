@@ -9,39 +9,39 @@ export class AlertsRulesService extends EndpointService {
   alertsUrl: string = UtilitiesService.getBaseApiUrl(Api.alerts)
 
   getUserModuleRights() {
-    return this.callHttpGet(`${this.alertsUrl}/GetUserModuleRights`, 'getUserModuleRights');
+    return this.callHttpGet(`${this.alertsUrl}alerts/GetUserModuleRights`, 'getUserModuleRights');
   }
 
   getAlertTypes() {
-    return this.callHttpGet(`${this.alertsUrl}/GetAlertTypes`, 'getAlertTypes');
+    return this.callHttpGet(`${this.alertsUrl}alerts/GetAlertTypes`, 'getAlertTypes');
   }
 
   getAlertRuleSeverities() {
     return this.callHttpGet(
-      `${this.alertsUrl}/GetAlertRuleSeverities`, 'getAlertRuleSeverities'
+      `${this.alertsUrl}alerts/GetAlertRuleSeverities`, 'getAlertRuleSeverities'
     );
   }
 
   getAlertRules(OTID: number) {
-      return this.callHttpGet(`${this.alertsUrl}/GetAlertRules/${OTID}`, 'getAlertRules');
+      return this.callHttpGet(`${this.alertsUrl}alerts/GetAlertRules/${OTID}`, 'getAlertRules');
   }
 
   updateAlertRules(rules: AlertRuleUpdate[]) {
       return this.callHttpPost(
-        `${this.alertsUrl}/UpdateAlertRules`, 'updateAlertRules', JSON.stringify(rules)
+        `${this.alertsUrl}alerts/UpdateAlertRules`, 'updateAlertRules', JSON.stringify(rules)
       );
   }
 
   getIsAlertDismissedReasonRequired(objectTypeId: number) {
       return this.callHttpGet(
-        `${this.alertsUrl}/IsAlertDismissedReasonRequired/ObjectType/${objectTypeId}`,
+        `${this.alertsUrl}alerts/IsAlertDismissedReasonRequired/ObjectType/${objectTypeId}`,
         'isDismissReasonRequired'
       );
   }
 
   toggleAlertDismissedReasonIsRequired(objectTypeId: number) {
       return this.callHttpGet(
-        `${this.alertsUrl}/ToggleAlertDismissedReasonIsRequired/ObjectType/${objectTypeId}`,
+        `${this.alertsUrl}alerts/ToggleAlertDismissedReasonIsRequired/ObjectType/${objectTypeId}`,
         'toggleReasonRequired'
       );
   }

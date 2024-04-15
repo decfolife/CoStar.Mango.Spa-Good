@@ -114,7 +114,7 @@ export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.dashboardService.onLoad(this.accountingServiceUrl).subscribe((successFlag) => {
+    this.dashboardService.onLoad().subscribe((successFlag) => {
       this.isInitialLoadSuccessful = successFlag;
     });
 

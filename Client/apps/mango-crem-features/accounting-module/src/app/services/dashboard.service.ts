@@ -17,7 +17,6 @@ import { UtilitiesService } from '@mango/core-shared';
 export class DashboardService extends DataService {
     dashboardsUrl: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
     accountingServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.accountingService)
-    private _baseUrlOverride = 'dashboards/';
     private _dashboardId: number;
     private _currentCalendarId: number;
     private hasResponse = true;
@@ -42,25 +41,10 @@ export class DashboardService extends DataService {
     // Loading indicator that can be called by the service layer
     private _loading = new BehaviorSubject<boolean>(true);
     isLoading$ = this._loading.asObservable();
-    
-    // Use this call to set what the base URL and other environment stuff
-    // TODO: Lock down and peer review
-    private configure(api: string) {
-        this.setApiUrl(api);
-  }
 
-    public onLoad(api: any){
+    public onLoad(){
         // It's assumed loading is TRUE at this point
-        if (api) {
-            this._baseUrlOverride = '';
-            this.configure(api);
-        }
 
-        // this.registerClient().subscribe(result => {
-        //     if (!result.success) {
-        //         this._loading.next(false);
-        //     }
-        //     this.setApiToken(result.data);
         this.loadDashboardData().subscribe(apiResponse => {
             if (apiResponse.success) {
                 this._dashboardData.next(apiResponse.data);
@@ -75,8 +59,8 @@ export class DashboardService extends DataService {
                 this._loading.next(false);
             }
         });   
+        
         return this._loading.asObservable();
-        // });
     }
 
     public onCalendarChange(calendarId: number) {
@@ -92,7 +76,7 @@ export class DashboardService extends DataService {
 
     public loadDashboardData(): Observable<ApiResponse> {
         const route = `${this.accountingServiceUrl}accounting`;
-        return this.getHttpGetApiResponse(route, 'GetDashboardData', route)
+        return this.getHttpGetApiResponse(route, 'GetDashboardData')
     }
 
     public getSecurityLevel(): Observable<ApiResponse> {

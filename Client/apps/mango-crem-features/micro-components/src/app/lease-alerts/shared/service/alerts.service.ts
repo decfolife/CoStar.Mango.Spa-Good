@@ -25,7 +25,7 @@ export class AlertsService extends EndpointService {
 
   getUserModuleRights() {
     return this.callHttpGet(
-      `${this.apiUrl}/GetUserModuleRights`,
+      `${this.apiUrl}alerts/GetUserModuleRights`,
       'getUserModuleRights'
     );
   }
@@ -45,26 +45,26 @@ export class AlertsService extends EndpointService {
   }
 
   getAlertTypes() {
-    return this.callHttpGet(`${this.apiUrl}/GetAlertTypes`, 'getAlertTypes');
+    return this.callHttpGet(`${this.apiUrl}alerts/GetAlertTypes`, 'getAlertTypes');
   }
 
   getAlertRuleSeverities() {
     return this.callHttpGet(
-      `${this.apiUrl}/GetAlertRuleSeverities`,
+      `${this.apiUrl}alerts/GetAlertRuleSeverities`,
       'getAlertRuleSeverities'
     );
   }
 
   getAlertRules() {
       return this.callHttpGet(
-        `${this.apiUrl}/GetAlertRules/${this.OBJECT_TYPE_ID}`,
+        `${this.apiUrl}alerts/GetAlertRules/${this.OBJECT_TYPE_ID}`,
         'getAlertRules'
       );
   }
 
   getUndismissedLeaseAlertsStats(leaseAbstractID: number) {
       return this.callHttpGet(
-        `${this.apiUrl}/GetUndismissedLeaseAlertsStats/LeaseAbstractID/${leaseAbstractID}`,
+        `${this.apiUrl}alerts/GetUndismissedLeaseAlertsStats/LeaseAbstractID/${leaseAbstractID}`,
         'getUndismissedLeaseAlertsStatsByLeaseAbstractID'
       );
   }
@@ -76,7 +76,7 @@ export class AlertsService extends EndpointService {
     leaseAlertFilter.pageNumber = pageNumber;
 
       return this.callHttpPost(
-        `${this.apiUrl}/SearchLeaseAlerts`,
+        `${this.apiUrl}alerts/SearchLeaseAlerts`,
         'searchLeaseAlerts',
         JSON.stringify(leaseAlertFilter)
       );
@@ -84,14 +84,14 @@ export class AlertsService extends EndpointService {
 
   runLeaseAlertRulesByLeaseAbstractID(leaseAbstractID: number) {
       return this.callHttpGet(
-        `${this.apiUrl}/RunLeaseAlertRules/LeaseAbstractID/${leaseAbstractID}`,
+        `${this.apiUrl}alerts/RunLeaseAlertRules/LeaseAbstractID/${leaseAbstractID}`,
         'runLeaseAlertRulesByLeaseAbstractID'
       );
   }
 
   toggleLeaseAlertsIsDismissed(leaseAlerts: LeaseAlertToggleDTO) {
       return this.callHttpPost(
-        `${this.apiUrl}/ToggleLeaseAlertsIsDismissed`,
+        `${this.apiUrl}alerts/ToggleLeaseAlertsIsDismissed`,
         'toggleLeaseAlertsIsDismissed',
         JSON.stringify(leaseAlerts)
       );
@@ -99,14 +99,14 @@ export class AlertsService extends EndpointService {
 
   getIsAlertDismissedReasonRequired() {
       return this.callHttpGet(
-        `${this.apiUrl}/IsAlertDismissedReasonRequired/ObjectType/${LEASE_OTID}`,
+        `${this.apiUrl}alerts/IsAlertDismissedReasonRequired/ObjectType/${LEASE_OTID}`,
         'isDismissReasonRequired'
       );
   }
 
   getAlertDismissReasons() {
       return this.callHttpGet(
-        `${this.apiUrl}/GetAlertDismissReasons/ObjectTypeID/${LEASE_OTID}`,
+        `${this.apiUrl}alerts/GetAlertDismissReasons/ObjectTypeID/${LEASE_OTID}`,
         'getAlertDismissReasons'
       );
   }
