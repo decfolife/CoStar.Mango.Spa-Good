@@ -79,11 +79,14 @@ export class TeamsComponent implements OnInit, OnDestroy {
     if(tFunc == "edit") {
       team=editTeam;
     }
+    const teamNames = this.teams.map(team => team.teamName.toLowerCase().trim());
+
     let dialogRef = this.dialog.open(AddEditTeamComponent, {
       height: '600px',
       width: '2000px',
       panelClass: 'addEditTeamModal',
-      data: { teamFunction: tFunc, memberInfo: this.memberInfo, team: team, projectsPrivateSetting: this.projectsPrivateSetting},
+      data: { teamFunction: tFunc, memberInfo: this.memberInfo, team: team, 
+              projectsPrivateSetting: this.projectsPrivateSetting, teamNames: teamNames},
       disableClose: true
     });
 

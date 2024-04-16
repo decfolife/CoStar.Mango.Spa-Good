@@ -31,6 +31,7 @@ export class AddEditTeamComponent implements OnInit {
   memberInfo: MemberInfo;
   selectedMemberIds: number[];
   selectedMembers: TeamMember[];
+  allTeamNames: string[] = [];
   searchMember: string;
   inputSubscription$;
   isDropDownBoxOpened = false;
@@ -62,6 +63,7 @@ export class AddEditTeamComponent implements OnInit {
 
 		this.showShareColumn = this.data.projectsPrivateSetting > 0 && this.data.projectsPrivateSetting <= 2;
     this.memberInfo  = this.data.memberInfo;
+    this.allTeamNames = this.data.teamNames;
     this.team = <Team>{};
     this.team.teamMembers = [];
     if(this.data.teamFunction == "add") {
@@ -221,8 +223,14 @@ export class AddEditTeamComponent implements OnInit {
 
   saveTeam() {
     this.saveBtnClicked = true;
-    if (!this.team.teamName.trim()) {
+    this.team.teamName = this.team.teamName.trim();
+    if (!this.team.teamName) {
       this.dialogService.alert('Team Name', 'Team Name is a required field.', 'OK').subscribe();
+      this.saveBtnClicked = false;
+      return;
+    } else if (this.allTeamNames.indexOf(this.team.teamName.toLowerCase()) > -1) {
+      this.dialogService.alert('Team Name Duplicated', 
+      'There is another team with the same name. Please re-name this team template or edit existing team template as needed.', 'OK').subscribe();
       this.saveBtnClicked = false;
       return;
     }
