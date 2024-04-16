@@ -19,6 +19,7 @@ export class NavbarComponent {
 
 
   logout(): void {
+    localStorage.setItem('logout-event', Math.random().toString())
     this.centralAuthFacade.logout()
   }
 }

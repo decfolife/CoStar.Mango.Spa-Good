@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CentralAuthFacade } from './+state/facades';
 import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'mango-root',
@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 export class AppComponent implements OnInit {
   isLoading$: Observable<boolean>
   
-  constructor(private centralAuthFacade: CentralAuthFacade, private activatedRoute: ActivatedRoute) {
+  constructor(private centralAuthFacade: CentralAuthFacade) {
     this.isLoading$ = this.centralAuthFacade.loading$
   }
 

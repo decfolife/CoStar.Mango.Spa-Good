@@ -27,7 +27,8 @@ export class AppEffects {
           AppActions.handleCustomQueryParams(),
           OAuthActions.setupOAuthRedirectionToClient(),
           AppActions.setupIdle(),
-          AppActions.setupLogoutWhenTimedOut()
+          AppActions.setupLogoutWhenTimedOut(),
+          AppActions.setupLogoutEventListener()
         ))
       )
   )
@@ -131,6 +132,25 @@ export class AppEffects {
       )
   )
 
+  setupLogoutEventListener$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.SETUP_LOGOUT_EVENT_LISTENER),
+        tap(_ => window.addEventListener('storage', this.logoutStorageEventListener.bind(this)))
+      ), { dispatch: false }
+  )
+
+  private logoutStorageEventListener(event: StorageEvent): void {
+    if (event.storageArea == localStorage && event?.key === 'logout-event') {
+      this.centralAuthFacade.logout()
+      this.removeEventListener()
+    }
+  }
+
+  private removeEventListener(): void {
+    window.removeEventListener("storage", this.logoutStorageEventListener.bind(this));
+  }
+
   handleCustomQueryParams$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -172,7 +192,6 @@ export class AppEffects {
         })
       )
   )
-
 
   getContactRecordsSuccess$ = createEffect(
     () =>
