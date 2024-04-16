@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { Api, ClientSettings, ClientSSOSettings, CremHttpResponse, CremHTTPResult } from '@mango/data-models/lib-data-models';
+import { Api, ClientSettings, ClientSSOSettings, CremHttpResponse, CremHTTPResult, IS_CA_STANDALONE_APP } from '@mango/data-models/lib-data-models';
 import { environment } from '../../../../../apps/mango/src/environments/environment.local';
 import { UtilitiesService } from '@mango/core-shared';
 
@@ -17,7 +17,8 @@ export class SettingsService {
     })
   };
 
-  identityUrl: string = UtilitiesService.getBaseApiUrl(Api.identity)
+  isCaStandAloneApp: boolean = inject(IS_CA_STANDALONE_APP);
+  identityUrl: string = UtilitiesService.getBaseApiUrl(Api.identity, this.isCaStandAloneApp)
 
   constructor(
     private _http: HttpClient
