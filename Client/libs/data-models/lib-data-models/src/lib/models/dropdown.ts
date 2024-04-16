@@ -1,4 +1,4 @@
 export interface Dropdown {
   displayKey: string;
-  valueKey: string;
+  valueKey: string | number;
 }

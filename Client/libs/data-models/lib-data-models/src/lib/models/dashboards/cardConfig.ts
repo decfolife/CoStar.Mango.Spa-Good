@@ -1,3 +1,5 @@
+import { Dropdown } from "@mango/data-models/lib-data-models"
+
 export interface FormatObject {
   type: string,
   precision: number,
@@ -83,4 +85,21 @@ export type CardConfig = {
   calculateSummaryValue?: Function,
   calculateCustomSummary?: Function,
   fieldTransform?: Partial<CardDataTransformer[]> | undefined,
+
+  // Dropdown Options for 'crem-card'
+  filterData?: Dropdown[],
+  customDropdownMenu?: boolean,
+  filterInitialValue?: Dropdown,
+  showFilterClearButton?: boolean,
+  dropdownPlaceholder?: string,
+  dropDisplay?: string,
+  dropValue?: string,
+
+  // Card Options for 'crem-card'
+  title?: string,
+  pendoTitleId?: string,
+  subtitle?: string,
+  // Search
+  searchLabel?: string,
+  searchPlaceholder?: string,
 }

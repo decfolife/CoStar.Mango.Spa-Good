@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable rxjs-angular/prefer-composition */
-
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
+import { CardConfig } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'asc-842-annual-disclosures',
@@ -13,7 +11,7 @@ import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
   styleUrls: ['./asc-842-annual-disclosures.component.scss'],
 })
 export class Asc842AnnualDisclosuresComponent implements OnInit {
-  public cardData: any = [{
+  public cardData: Partial<CardConfig>[] = [{
       id: 'LeaseCounts',
       name: 'Lease Counts',
       index: 0
@@ -41,7 +39,12 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     {
       id: 'LeaseLiabilityMaturityAnalysis',
       name: 'Lease Liability Maturity Analysis',
-      index: 5
+      index: 5,
+      filterData: [
+        {displayKey: '5 years', valueKey: 5},
+        {displayKey: '10 years', valueKey: 10}
+      ],
+      filterInitialValue: {displayKey: '5 years', valueKey: 5},
     },
   ];
   public pivotCardData: any;
@@ -51,6 +54,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public pendoId: string = "Asc842AnnualDisclosures"
   public fullWidth: boolean = true;
   private cardConfigs: string[];
+  IADCardData;
 
   public selectedCurrency = "usd";
   public currencyDecimalPrecision: number;
@@ -75,11 +79,16 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
 
   }
 
+  onSelectedFilter(e: Event){
+    this.setMaturityAnalysis(this.IADCardData.data[6], e['valueKey']);
+  }
+
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
     this.inAppDisclosureService.getIADCardData(4, this.selectedSegment, this.reportingYear, this.selectedCurrency)
       .subscribe((result) => {
+        this.IADCardData = result;
         this.setLeaseCountCardData(result.data[0])
         this.setROUAssetBalanceCardData(result.data[1])
         this.setLeaseCostCardData(this.mergeArraysOfObjects(result.data[2],result.data[3]));
@@ -93,6 +102,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public setMaturityAnalysis(data, years:number = 6){ // copy/pasted function
     this.pivotCardData = [];
     const filteredData = this.filterByPeriodYear(data, this.reportingYear, this.reportingYear + years);
+    years += 1; // Adding +1 for the 'Thereafter'
     let items: any[];
 
     filteredData.forEach((item, i) => {

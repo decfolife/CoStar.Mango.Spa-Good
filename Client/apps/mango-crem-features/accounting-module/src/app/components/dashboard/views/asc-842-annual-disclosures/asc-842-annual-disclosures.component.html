@@ -10,8 +10,10 @@
             fxLayout="row"
             >
             <mango-iad-card
-                [config]="config"
-                [dataSource]="dataSources[config.index]"></mango-iad-card>
+              [config]="config"
+              [dataSource]="dataSources[config.index]"
+              (selectedFilter)="onSelectedFilter($event)"
+            ></mango-iad-card>
         </div>
     </div>
 </div>

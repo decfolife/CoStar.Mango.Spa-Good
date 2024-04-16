@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Dropdown } from "@mango/data-models/lib-data-models";
 import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
 
 @Component({
@@ -12,7 +13,8 @@ import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
     @Input() config;
     @Input() dataSource;
     @Input() fieldConfig;
-    
+    @Output() selectedFilter = new EventEmitter<Dropdown>();
+
     public fullWidth: boolean = true;
 
     @ViewChild("PivotGrid") pivotGrid: DxPivotGridComponent;
@@ -57,4 +59,8 @@ import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
         })
       }
 
-  }
+      emitSelection(e: Dropdown) {
+        this.selectedFilter.emit(e[0])
+      }
+
+}

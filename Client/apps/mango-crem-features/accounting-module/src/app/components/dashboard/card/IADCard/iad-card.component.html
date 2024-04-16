@@ -23,8 +23,12 @@
         [showFilterClearButton]="false"
         [pendoTitleId]="config.id + 'Title'"
         [customDropdownMenu]="true"
+        [filterData]="config.filterData"
+        [filterInitialValue]="config.filterInitialValue"
+        (selectedFilter)="emitSelection($event)"
         fxFlexFill
     >
+    <!--  -->
         <ng-template #customDropdownMenu>
             <div class="card-header--right">
                 <button [id]="config.id + 'MoreOption'"
