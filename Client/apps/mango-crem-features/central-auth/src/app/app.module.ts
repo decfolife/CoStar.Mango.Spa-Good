@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { StorageService, UserService } from '@mango/core-shared';
-import { Environment, IDLE_TIMOUT_DELAY_SECONDS } from '@mango/data-models/lib-data-models';
+import { Environment, IDLE_TIMOUT_DELAY_SECONDS, IS_CA_STANDALONE_APP } from '@mango/data-models/lib-data-models';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -102,6 +102,7 @@ import { RoleGuard } from './guards/role.guard';
   ],
   providers: [
     { provide: Environment, useValue: environment },
+    { provide: IS_CA_STANDALONE_APP, useValue: true },
     provideUserIdleConfig({ idle: 1, timeout: IDLE_TIMOUT_DELAY_SECONDS, ping: 2 }),
     AuthGuard,
     RoleGuard,

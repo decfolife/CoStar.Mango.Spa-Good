@@ -1,23 +1,11 @@
 class EnvironmentsCrem {
   production = false;
   name = 'STAGE';
-  appUrls = {
-    identity: 'https://api.stage.costarremanager.com/identity/api',
-    authentication: '',
-    bookmarks: '/v06/WebServices/Mango/Bookmarks/Bookmarks.asmx/',
-    leftNav: '',
-    dashboards: '',
-    quickSearch: '',
-    userService: '',
-    userMaintenance: '',
-    taskApproval: '',
-    formWizard: '',
-    header: '',
-    projects: '',
-    tasks: ''
-  };
   isRestful: true;
   cremBaseUrl = 'http://[CLIENT].stage.costarremanager.com/';
+  CAUrl = 'https://login.stage.costarremanager.com/';
+  // Only needed for localhost. Otherwise use `${window.location.origin}/api`
+  baseApiUrl = 'http://api.stage.costarremanager.com:30080/';
 }
 
 export const environment = new EnvironmentsCrem();

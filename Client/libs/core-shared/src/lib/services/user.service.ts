@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AuthHTTPResponse,
   ClientSitesByUser,
@@ -18,7 +18,8 @@ import {
   UpdateServiceAccountApiAccessRequest,
   UserAuth,
   UpdateServiceAccountExpiresInDaysRequest,
-  Api
+  Api,
+  IS_CA_STANDALONE_APP
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { Observable, of } from 'rxjs';
@@ -32,15 +33,16 @@ import { UtilitiesService } from '@mango/core-shared';
   providedIn: 'root',
 })
 export class UserService {
+  isCaStandAloneApp: boolean = inject(IS_CA_STANDALONE_APP);
   spaServer: string = `${window.location.origin}/api`
-  identityUrl: string = UtilitiesService.getBaseApiUrl(Api.identity)
-  authenticationUrl: string = UtilitiesService.getBaseApiUrl(Api.authentication)
-  userMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance)
+  identityUrl: string = UtilitiesService.getBaseApiUrl(Api.identity, this.isCaStandAloneApp)
+  authenticationUrl: string = UtilitiesService.getBaseApiUrl(Api.authentication, this.isCaStandAloneApp)
+  userMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance, this.isCaStandAloneApp)
 
   constructor(
     private http: HttpClient,
     private _storageService: StorageService,
-    private env: Environment
+    private env: Environment,
   ) { }
 
   setAuth(user: UserAuth) {

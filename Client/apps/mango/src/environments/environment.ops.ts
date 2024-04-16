@@ -5,7 +5,7 @@ class EnvironmentsCrem implements Environment {
   name = 'OPS';
   isRestful = true;
   cremBaseUrl = 'http://[CLIENT].ops.corp.virtualpremise.com';
-  CAUrl = 'https://client.tsm.crem.aws.dshrp.com/';
+  CAUrl = 'http://login.ops.corp.virtualpremise.com:30080/';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
   baseApiUrl = 'http://mangospa.ops.corp.virtualpremise.com:30080/';
 }
