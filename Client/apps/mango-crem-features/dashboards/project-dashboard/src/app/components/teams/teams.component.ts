@@ -33,6 +33,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   searchText: string = "";
   teams: Team[];
   teamMembers: TeamMember[];
+  teamNames: string[] = [];
   memberInfo: MemberInfo;
   dataRetrieved: boolean = false;
   autoExpand: boolean = false;
@@ -76,17 +77,21 @@ export class TeamsComponent implements OnInit, OnDestroy {
 
   addOrEditTeam(tFunc: string, editTeam?:Team ) {
     let team = <Team>{};
+    this.teamNames=[];
     if(tFunc == "edit") {
       team=editTeam;
+      let tempTeams = this.teams.filter(tempTeam => tempTeam.teamId != team.teamId);
+      this.teamNames = tempTeams.map(team => team.teamName.toLowerCase().trim());
+    } else {
+      this.teamNames = this.teams.map(team => team.teamName.toLowerCase().trim());
     }
-    const teamNames = this.teams.map(team => team.teamName.toLowerCase().trim());
 
     let dialogRef = this.dialog.open(AddEditTeamComponent, {
       height: '600px',
       width: '2000px',
       panelClass: 'addEditTeamModal',
       data: { teamFunction: tFunc, memberInfo: this.memberInfo, team: team, 
-              projectsPrivateSetting: this.projectsPrivateSetting, teamNames: teamNames},
+              projectsPrivateSetting: this.projectsPrivateSetting, teamNames: this.teamNames},
       disableClose: true
     });
 
