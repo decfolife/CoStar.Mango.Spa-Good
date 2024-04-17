@@ -7,7 +7,7 @@ class EnvironmentsCrem implements Environment {
   cremBaseUrl = 'https://[CLIENT].stage.costarremanager.com';
   CAUrl = 'https://login.stage.costarremanager.com/';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
-  baseApiUrl = 'http://api.stage.costarremanager.com:30080/';
+  baseApiUrl = 'https://api.stage.costarremanager.com:30080/';
 }
 
 export const environment = new EnvironmentsCrem();
