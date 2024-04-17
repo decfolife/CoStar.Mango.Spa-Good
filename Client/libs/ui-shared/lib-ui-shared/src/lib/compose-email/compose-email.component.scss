@@ -12,6 +12,10 @@
   margin-bottom: 4px;
 }
 
+.cem-required-tag {
+  color: $danger;
+}
+
 .cem-filesGrid-container {
   border: 1px solid #C8C8C8;
   border-radius: 2px;
@@ -35,4 +39,44 @@
       margin-left: 8px;
     }
   }
+}
+
+//**** Compose Email Modal CSS *******// <<<=== These styles can be applied from a global file or from here using ng-deep
+::ng-deep #composeEmailModalId {
+	.dx-checkbox-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    border: 1px solid #3c3c3c;
+	}
+
+	.dx-texteditor.dx-editor-outlined.dx-state-focused, button:focus, .dx-state-focused .dx-checkbox-icon {
+		outline: none;
+		box-shadow: 0 0 0 0.1rem $primary-light;
+	}
+
+	.dx-texteditor.dx-editor-outlined {
+    border: 1px solid $gray04; 
+    border-radius: 2px;
+	}
+
+	.dx-checkbox-text {
+    font-weight: 500;
+  }
+
+	dx-data-grid .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+		vertical-align: middle;
+		border-bottom: 1px solid $gray04;
+	}
+
+	.fieldInvalid {
+		.label {
+			color: $danger;
+		}
+		#emailNoteTypeId, #cem-toMembersId {
+			dx-drop-down-box .dx-texteditor-container {
+				border: 1px solid $danger;
+			}
+		}
+	}
 }

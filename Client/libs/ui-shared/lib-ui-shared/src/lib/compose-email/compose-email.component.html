@@ -9,7 +9,7 @@
 >
 <div modalContent id="composeEmailModal-content">
   <div class="cem-noteType" [ngClass]="noteTypeValueInvalid ? 'fieldInvalid' : ''">
-    <h4 class="cem-noteType-label label">* Note Type</h4>
+    <h4 class="cem-noteType-label label">Note Type <span class="cem-required-tag">*</span></h4>
     <crem-dropdown
       id="emailNoteTypeId"
       #NoteTypeDropdown
@@ -28,7 +28,7 @@
      <!--  do we need these two lines [required] and  [showDefaultValidationTooltip]-->
   </div>
   <div class="cem-to-members" [ngClass]="toMembersValueInvalid ? 'fieldInvalid' : ''">
-    <h4 class="cem-toMembers-label label">* To</h4>
+    <h4 class="cem-toMembers-label label">To <span class="cem-required-tag">*</span></h4>
     <div id="cem-toMembers-container">
       <crem-dropdown
         id='cem-toMembersId'
@@ -87,7 +87,7 @@
     </div>
   </div>
   <div class="cem-filesGrid-container">
-    <dx-data-grid class="cem-fiesGrid"
+    <dx-data-grid class="cem-filesGrid"
       #CEMFilesGrid
       [dataSource]="fileItems"
       [showColumnLines]="false"
