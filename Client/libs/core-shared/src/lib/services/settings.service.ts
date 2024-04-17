@@ -25,7 +25,7 @@ export class SettingsService {
   ) { }
 
   getClientSsoSettings(clientKey: string): Observable<ClientSSOSettings> {
-    return this._http.get<ClientSSOSettings>(`${this.identityUrl}/settings/clientsso/${clientKey}`)
+    return this._http.get<ClientSSOSettings>(`${this.identityUrl}settings/clientsso/${clientKey}`)
   }
 
   getClientSettings(): Observable<ClientSettings> {
@@ -36,7 +36,7 @@ export class SettingsService {
 
   saveClientSettings(clientSettings: ClientSettings): Observable<CremHTTPResult> {
     const { headers } = this.httpOptions
-    return this._http.post<CremHttpResponse>(`${this.identityUrl}/UpdateSettings`,
+    return this._http.post<CremHttpResponse>(`${this.identityUrl}UpdateSettings`,
       { settings: clientSettings },
       { headers })
       .pipe(map(response => (response.d || {}).Result))
