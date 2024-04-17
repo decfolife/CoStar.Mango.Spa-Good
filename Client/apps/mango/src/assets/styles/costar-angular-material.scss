@@ -63,9 +63,9 @@ mat-form-field {
 					// padding: 0 0.1em 0 .75em;
 
 					div.mat-mdc-form-field-infix {
-						padding: 0.4em 0px;
+						padding: 0px !important;
 						border-top: 4px solid transparent;
-						height: 35px;
+						height: 30px;
 
 						span.mat-mdc-form-field-label-wrapper {
 							// top: $stdPadding * -3;
