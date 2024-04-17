@@ -55,14 +55,6 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 		}		
 	}
 
-	ngAfterViewInit() {
-    if(this.searchText) this.searchDataGrid();
-  }
-
-	searchDataGrid() {
-		this.teamMembersGrid.instance.searchByText(this.searchText);
-	}
-
 	editRow(memberData: any) {
 		this.emailNotify = memberData.data.emailOn;
 		this.shareValue = memberData.data.share;
@@ -73,7 +65,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 		this.teamMembersGrid.instance.editRow(memberData.rowIndex);
 		memberData.data.editMode = true;
 
-		this.subGridEditClickedEvent.emit({ memberData, membersGrid: this.teamMembersGrid, emailNotify: this.emailNotify, shareValue: this.shareValue});
+		this.subGridEditClickedEvent.emit({ memberData, membersGrid: this.teamMembersGrid, emailNotify: this.emailNotify, shareValue: this.shareValue, accessLevelValue: this.accessLevelValue});
 	}
 
 	saveMemberChanges(e:any, member: TeamMember) {

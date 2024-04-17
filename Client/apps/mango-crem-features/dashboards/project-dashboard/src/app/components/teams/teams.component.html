@@ -63,7 +63,7 @@
 			(onEditorPreparing)="onEditorPreparing($event)"
 			(onSelectionChanged)="onSelectionChanged($event)"
 			(onCellClick)="onCellClick($event)"
-			(onOptionChanged)="onOptionChanged($event)"
+			(onContentReady)="onContentReady($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
@@ -74,6 +74,11 @@
 				showCheckBoxesMode="always"
 				mode="multiple">
 			</dxo-selection>
+
+			<dxo-search-panel
+    		[text]="searchText"
+				[visible]="false"
+  		></dxo-search-panel>
 
 			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false" class="selectTeam">
@@ -86,6 +91,10 @@
 			<dxi-column dataField="createdBy" ></dxi-column>
 			<dxi-column dataField="createdDate" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
 			<dxi-column dataField="securityLevel" caption='Rights' ></dxi-column>
+
+			<!-- Used to keep master grid row open when the search text is found in the detail row -->
+			<dxi-column dataField="teamMembers" name="teamMemberMatchSearch" [visible]="false" [showInColumnChooser]="false" [calculateFilterExpression]="searchTeamMembersFilterExpression" ></dxi-column>
+
 			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
 				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">

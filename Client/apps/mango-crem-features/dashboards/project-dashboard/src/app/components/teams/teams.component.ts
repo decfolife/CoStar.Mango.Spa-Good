@@ -30,6 +30,8 @@ export class TeamsComponent implements OnInit, OnDestroy {
   @ViewChild(TeamMembersComponent) teamMembersComponent: TeamMembersComponent;
 
 	private subEditedMembersDataAndGridList: any [] = [];
+  headerFilterElements: any = null;
+
   searchText: string = "";
   teams: Team[];
   teamMembers: TeamMember[];
@@ -63,6 +65,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
     this.getProjectsPrivateSetting();
     this.getMemberInfo();
     this.subs.push(this.getTeamsData().subscribe());
+    this.cancelChangesForOutsideOfGridClick.bind(this);
   }
 
   initEditFlag(teams) {
@@ -76,6 +79,8 @@ export class TeamsComponent implements OnInit, OnDestroy {
   }
 
   addOrEditTeam(tFunc: string, editTeam?:Team ) {
+    this.cancelChangesForOutsideOfGridClick();
+
     let team = <Team>{};
     this.teamNames=[];
     if(tFunc == "edit") {
@@ -206,7 +211,6 @@ export class TeamsComponent implements OnInit, OnDestroy {
 
   searchDataGrid(data) {
     this.searchText = data;
-    this.teamsGrid.instance.searchByText(this.searchText);
   }
 
   searchBoxClick() {
@@ -225,6 +229,24 @@ export class TeamsComponent implements OnInit, OnDestroy {
       e.editorOptions.onInitialized = (e: InitializedEvent) => {
         if (e.component) this.selectAllCheckBox = e.component;
       };
+    }
+  }
+
+  onContentReady(e) {
+    let teamComp = this;  
+
+    //We have to add the event listerner every time because when the grid reloads it is removed
+    this.headerFilterElements = e.element.querySelectorAll(".dx-header-filter");
+
+    let i: number;
+    for (i = 0; i < this.headerFilterElements.length; ++i) {
+      let hfElement = this.headerFilterElements[i];
+
+      if(hfElement !== null){
+        hfElement.addEventListener("click", function (event) {  
+          teamComp.cancelChangesForOutsideOfGridClick()
+        });  
+      }
     }
   }
 
@@ -269,12 +291,6 @@ export class TeamsComponent implements OnInit, OnDestroy {
 
   onCellClick(e:any) {
     if(e.rowType === 'header' && e.columnIndex > 1) {
-      this.cancelChangesForOutsideOfGridClick();
-    }
-  }
-
-  onOptionChanged(e:any) {
-    if (e.name === "columns" && e.fullName.endsWith("filterValues")) {
       this.cancelChangesForOutsideOfGridClick();
     }
   }
@@ -413,12 +429,42 @@ export class TeamsComponent implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe);
   }
 
-	private cancelChangesForOutsideOfGridClick() {
+  searchTeamMembersFilterExpression(filterValue) {
+
+    return [function(rowData) {
+      let strFound = false;
+      //Fields to search in the details datasource in order to keep the master record from disappearing when a match
+      //is found in the detail grid but not the master grid
+      const propertyNameList = ['name', 'company', 'email', 'phoneNumber', 'role', 'level']
+     
+      for(var i = 0; i < rowData.teamMembers.length; i++) {
+        let tm = rowData.teamMembers[i]
+
+        for(var j = 0; j < propertyNameList.length; j++) {
+          let propertyName = propertyNameList[j];
+
+          if(!!tm[propertyName] && tm[propertyName].toString().toLowerCase().indexOf(filterValue.toLowerCase()) >= 0) {
+            strFound = true;
+            break;
+          }
+        }
+
+        if(strFound) {
+          break;
+        }
+      };
+  
+      return strFound;
+    }, "=", true]
+  }  
+
+  private cancelChangesForOutsideOfGridClick() {
 		this.subEditedMembersDataAndGridList.forEach(memDataAndGrid => {
 			memDataAndGrid.memberData.data.editMode = false;
 			memDataAndGrid.membersGrid.instance.cancelEditData();
       memDataAndGrid.memberData.data.emailOn = memDataAndGrid.emailNotify;
       memDataAndGrid.memberData.data.share = memDataAndGrid.shareValue;
+      memDataAndGrid.memberData.data.level = memDataAndGrid.accessLevelValue;
   });
 
 		this.subEditedMembersDataAndGridList = [];
