@@ -10,7 +10,7 @@ import { FieldHistoryDirective } from './field-history.directive';
 
 
 
-const meta: Meta<FieldHistoryComponent> = {
+const meta: Meta<any> = {
   component: FieldHistoryComponent,
   title: 'Organisms/Field History',
   decorators: [
@@ -30,11 +30,29 @@ const meta: Meta<FieldHistoryComponent> = {
     }),
   ],
   argTypes: {
-    /*helpTextID: ,
-    dateFormat: ,
-    dataSource: ,*/
 
-    /*pageTitle: {
+    dataSource: {
+      description: 'todo: complete the docs',
+      table: {
+        category: 'Inputs',
+        defaultValue: {
+          summary: null,
+        } 
+      }
+    },
+
+    "history-http-source": {
+      description: '<b>doc</b> the directive plx',
+      table: {
+        category: 'Directives',
+        defaultValue: {
+          summary: null,
+        } 
+      }
+    },
+
+
+    /* pageTitle: {
       description: 'The title of the header',
       table: {
         category: 'Inputs',
@@ -138,9 +156,9 @@ const meta: Meta<FieldHistoryComponent> = {
       table: {
         category: 'Methods',
       }
-    }*/
-  },
-};
+    }
+  },*/
+}};
 
 export default meta;
 
@@ -152,55 +170,57 @@ export const Default: Story = {
     visible: false,
     dateFormat: 'MM/dd/yyyy h:mm a',
     dataSource: {
-      fieldIdData: 'LeaseYears',
-      fieldTitleData: 'Lease Terms',
-      helpTextData: 'Edit the first lease year, if needed and then click generate to produce a regular lease year calendar for the term of the lease. The lease year does not affect the breakpoint schedule. If the lease year is more or less than a calendar year, you may have to calculate the breakpoint for that lease year using your preferred pro ration method.',
-      historyData: [{
+      helpTextPage: '',
+      helpTextSubject: 'Lease Terms',
+      helpTextName: 'LeaseYears',
+      helpTextText: 'Edit the first lease year, if needed and then click generate to produce a regular lease year calendar for the term of the lease. The lease year does not affect the breakpoint schedule. If the lease year is more or less than a calendar year, you may have to calculate the breakpoint for that lease year using your preferred pro ration method.',
+      helpTextImage: '',
+      helpTextHistory: [{
         id: 'gethelp',
-        date: '1/10/1994',
-        user: 'Barbara G',
-        field: 'Get Help',
-        value: 'This is helptext'
+        lastModified: '1/10/1994',
+        lastModifiedBy: 'Barbara G',
+        displayName: 'Get Help',
+        afterChange: 'This is helptext'
       }, {
         id: 'gothelp',
-        date: '1/10/2000',
-        user: 'Allen Q',
-        field: 'Got Help',
-        value: 'This was helptext'
+        lastModified: '1/10/2000',
+        lastModifiedBy: 'Allen Q',
+        displayName: 'Got Help',
+        afterChange: 'This was helptext'
       }, {
         id: 'willgethelp',
-        date: '1/10/2022',
-        user: 'Xavier S',
-        field: 'Will Get Help',
-        value: 'This will be helptext'
+        lastModified: '1/10/2022',
+        lastModifiedBy: 'Xavier S',
+        displayName: 'Will Get Help',
+        afterChange: 'This will be helptext'
       },
     {
       id: 'cantgethelp',
-      date: '1/10/2022',
-      user: 'Xavier S',
-      field: 'Cant Get Help',
-      value: 'This cant be helptext'
+      lastModified: '1/10/2022',
+      lastModifiedBy: 'Xavier S',
+      displayName: 'Cant Get Help',
+      afterChange: 'This cant be helptext'
     },
     {
       id: 'mightgethelp',
-      date: '1/10/2023',
-      user: 'Xavier S',
-      field: 'Might Get Help',
-      value: 'This might be helptext'
+      lastModified: '1/10/2023',
+      lastModifiedBy: 'Xavier S',
+      displayName: 'Might Get Help',
+      afterChange: 'This might be helptext'
     },
     {
       id: 'wantstogethelp',
-      date: '1/10/2024',
-      user: 'Xavier S',
-      field: 'Wants to Get Help',
-      value: 'This wants to be helptext'
+      lastModified: '1/10/2024',
+      lastModifiedBy: 'Xavier S',
+      displayName: 'Wants to Get Help',
+      afterChange: 'This wants to be helptext'
     },
     {
       id: 'needstogethelp',
-      date: '1/10/2025',
-      user: 'Xavier S',
-      field: 'Needs to Get Help',
-      value: 'This needs to be helptext'
+      lastModified: '1/10/2025',
+      lastModifiedBy: 'Xavier S',
+      displayName: 'Needs to Get Help',
+      afterChange: 'This needs to be helptext'
     }
   ]
     }
@@ -215,12 +235,7 @@ export const Default: Story = {
         [initialFocus]="null"
         [disabled]="false"
       ></crem-text-box>
-    <crem-field-history [history-http-source]="{
-      portfolioId: '',
-      OTID: '',
-      objectID: ''
-    }"
-     ${argsToTemplate(args)}></crem-field-history></div>
+    <crem-field-history ${argsToTemplate(args)}></crem-field-history></div>
     `
   })
 }

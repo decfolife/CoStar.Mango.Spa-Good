@@ -74,11 +74,16 @@
                                                 (onValueChanged)="onFormChange('policyName', $event)"
                                             >
                                             </dx-text-box>
-                                            <crem-tooltip
-                                                externalId='policyId'
-                                                helpTextData=""
-                                            >
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'PolicyName', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }" >
+                                            </crem-field-history>
+                                            
                                         </div>
                                     </dxi-item>
                                     <dxi-item dataField="amount" [editorOptions]="{ disabled: service.userRights !== 2 || this.isActive === false }">
@@ -90,11 +95,17 @@
                                                 (onValueChanged)="onFormChange('amount', $event)"
                                             >
                                             </dx-text-box>
-                                            <crem-tooltip
-                                                externalId='amount'
-                                                helpTextData=""
-                                            >
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'Amount', 
+                                                    fieldHistoryName: 'amount', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }" >
+                                            </crem-field-history>
+
                                         </div>
                                         <dxi-validation-rule type="required" message="Discount Rate is Required."></dxi-validation-rule>
                                         <dxi-validation-rule type="numeric" message="Discount Rate must be numeric."></dxi-validation-rule>
@@ -109,10 +120,16 @@
                                                 (onValueChanged)="onFormChange('profileAlias', $event)"
                                             >
                                             </dx-text-box>
-                                            <crem-tooltip
-                                                externalId="ProfileAlias"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'ProfileAlias', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                     </dxi-item>
 
@@ -127,10 +144,16 @@
                                                 (onValueChanged)="onFormChange('termRangeMinMonths', $event)"
                                             >
                                             </dx-text-box>
-                                            <crem-tooltip
-                                                externalId="MinMonths"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'MinMonths', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                         <dxi-validation-rule type="required" message="Minimum Months is Required."></dxi-validation-rule>
                                         <dxi-validation-rule type="numeric" message="Minimum Months must be numeric."></dxi-validation-rule>
@@ -147,10 +170,16 @@
                                                 (onValueChanged)="onFormChange('termRangeMaxMonths', $event)"
                                             >
                                             </dx-text-box>
-                                            <crem-tooltip
-                                                externalId="MaxMonths"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'MaxMonths', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                         <dxi-validation-rule type="required" message="Maximum Months is Required."></dxi-validation-rule>
                                         <dxi-validation-rule type="numeric" message="Maximum Months must be numeric."></dxi-validation-rule>
@@ -169,10 +198,16 @@
                                                 [displayFormat] = this.dateFormatterNoTime
                                             >
                                             </dx-date-box >
-                                            <crem-tooltip
-                                                externalId="DiscountRateEffectiveDate"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'DiscountRateEffectiveDate', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                         <dxi-validation-rule type="required" message="Effective Date is Required."></dxi-validation-rule>
                                         <dxi-validation-rule type="range" [min]="minDate" message="Effective Date must be greater than or equal to 1/1/1901"></dxi-validation-rule>
@@ -191,10 +226,16 @@
                                                 displayExpr="countryName"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="Country"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'Country', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                     </dxi-item>
                                     <dxi-item dataField="currency" caption="Currency" editorType="dxSelectBox"
@@ -211,10 +252,16 @@
                                                 displayExpr="targetCurrency"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="Currency"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'Currency', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                     </dxi-item>
                                     <dxi-item dataField="annualRateType" caption="Annual Rate Type" editorType="dxSelectBox"
@@ -231,10 +278,16 @@
                                                 displayExpr="Name"
                                             >
                                             </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="AnnualRateType"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'AnnualRateType', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                     </dxi-item>
                                     <dxi-item dataField="inUse" caption="In Use" editorType="dxCheckBox" [editorOptions]="{ disabled: true }">
@@ -245,10 +298,16 @@
                                                 (onValueChanged)="onFormChange('inUse', $event)"
                                             >
                                             </dx-check-box>
-                                            <crem-tooltip
-                                                externalId="InUse"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'InUse', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                     </dxi-item>
                                 </dxi-item>
@@ -283,10 +342,16 @@
                                                 (onValueChanged)="onFormChange('sourceImportId', $event)"
                                             >
                                             </dx-text-box>
-                                            <crem-tooltip
-                                                externalId="SourceImportID"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'SourceImportID', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                     </dxi-item>
                                     <dxi-item dataField="policyId" [editorOptions]="{ disabled: true }">
@@ -297,10 +362,16 @@
                                                 (onValueChanged)="onFormChange('policyId', $event)"
                                             >
                                             </dx-text-box>
-                                            <crem-tooltip
-                                                externalId="PolicyId"
-                                                helpTextData="">
-                                            </crem-tooltip>
+
+                                            <crem-field-history
+                                                [history-http-source]="{
+                                                    portfolioId: masterGroupID, 
+                                                    helpTextName: 'PolicyId', 
+                                                    objectTypeId: 125, 
+                                                    objectId: policyId 
+                                                }">
+                                            </crem-field-history>
+
                                         </div>
                                         <dxo-label text="Profile ID"></dxo-label>
                                     </dxi-item>

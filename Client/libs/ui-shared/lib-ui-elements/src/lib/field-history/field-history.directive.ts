@@ -1,28 +1,40 @@
-import { AfterViewInit, Directive, Input, OnInit } from "@angular/core";
+import { Directive, Input, OnDestroy, OnInit } from "@angular/core";
 import { FieldHistoryComponent } from "./field-history.component";
-import { FieldHistoryInput as FieldHistoryHttpSource } from "@mango/data-models/lib-data-models";
+import { FieldHistoryInput} from "@mango/data-models/lib-data-models";
+import { FieldHistoryService } from "../../../../../core-shared/src/lib/services/field-history.service";
+import { switchMap } from "rxjs/operators";
+import { Subscription } from 'rxjs';
 
 
 @Directive({
   standalone: true,
-  selector: 'crem-field-history[history-http-source]'
+  selector: 'crem-field-history[history-http-source]',
+  providers: [FieldHistoryService]
 })
-export class FieldHistoryDirective implements OnInit, AfterViewInit{
-  @Input('history-http-source') fieldHistoryParams: FieldHistoryHttpSource
+export class FieldHistoryDirective implements OnInit, OnDestroy{
+  @Input('history-http-source') fieldHistoryParams: FieldHistoryInput
+  private subscriptions = new Subscription()
 
-  constructor(private fieldHistoryComponent: FieldHistoryComponent) {
+
+  constructor(
+    private fieldHistoryComponent: FieldHistoryComponent,
+    private fieldHistoryService: FieldHistoryService,
+    ) {
 
   }
 
   ngOnInit(): void {
-    this.fieldHistoryComponent.onDisplay.subscribe(_ => {
-      console.log('on display triggered')
-    })
-    console.log(this.fieldHistoryParams)
+    this.subscriptions.add(
+      this.fieldHistoryComponent.onDisplay.pipe(
+        switchMap(_ => this.fieldHistoryService.getFieldHistory(this.fieldHistoryParams.portfolioId, this.fieldHistoryParams.helpTextName, this.fieldHistoryParams.fieldHistoryName, this.fieldHistoryParams.objectTypeId, this.fieldHistoryParams.objectId)
+        ),
+      ).subscribe((data: any) => {
+        this.fieldHistoryComponent.dataSource = data.data;
+      })
+    )
   }
 
-  ngAfterViewInit(): void {
-      console.log(this.fieldHistoryComponent)
-
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe()
   }
 }

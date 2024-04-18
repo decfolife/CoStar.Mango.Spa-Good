@@ -2,7 +2,7 @@
   class="dx-field"
 >
   <div class="iconWrapper dx-field-value-static">
-    <div [id]="dataSource.fieldIdData"
+    <div [id]="dataSource?.helpTextName"
       (click)="toggleVisible()"
     >
       <crem-icon
@@ -12,7 +12,7 @@
       ></crem-icon>
     </div>
 
-    <dx-popover [target]="'#' + dataSource.fieldIdData"
+    <dx-popover [target]="'#' + dataSource?.helpTextName"
       position="bottom"
       [width]="600"
       [(visible)]="visible"
@@ -32,24 +32,24 @@
       <div id="popoverWrapper"
         class="tooltipAppPopover"
       >
-        <div *ngIf="dataSource.fieldTitleData"
+        <div *ngIf="dataSource?.helpTextSubject"
           id="popoverWrapper"
-        ><div class="popoverTitle">{{ dataSource.fieldTitleData }}</div></div>
+        ><div class="popoverTitle">{{ dataSource?.helpTextSubject }}</div></div>
 
         <mat-tab-group disableRipple="true"
           animationDuration="1000ms"
         >
           <mat-tab label="Help Text">
-            <div class="mat-tab__help-text" *ngIf="dataSource.helpTextData">{{ dataSource.helpTextData }}</div>
+            <div class="mat-tab__help-text" *ngIf="dataSource?.helpTextText">{{ dataSource?.helpTextText }}</div>
 
-            <div class="mat-tab__help-text" *ngIf="dataSource.helpTextData === null || dataSource.helpTextData === undefined">
+            <div class="mat-tab__help-text" *ngIf="dataSource?.helpTextText === null || dataSource?.helpTextText === undefined">
               <p>No help text available.</p>
             </div>
           </mat-tab>
 
           <mat-tab label="History">
-            <div *ngIf="dataSource.historyData">
-              <dx-data-grid [dataSource]="dataSource.historyData"
+            <div *ngIf="dataSource?.helpTextHistory">
+              <dx-data-grid [dataSource]="dataSource?.helpTextHistory"
                 keyExpr="id"
                 [showColumnLines]="false"
                 [showRowLines]="false"
@@ -66,14 +66,16 @@
 
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-                <dxi-column dataField="value"></dxi-column>
+                <dxi-column dataField="afterChange"
+                  caption="Value"
+                ></dxi-column>
 
-                <dxi-column dataField="user"
+                <dxi-column dataField="lastModifiedBy"
                   caption="User"
                   [width]="140"
                 ></dxi-column>
 
-                <dxi-column dataField="date"
+                <dxi-column dataField="lastModified"
                   dataType="date"
                   caption="Date"
                   [width]="100"
@@ -83,7 +85,7 @@
             </div>
 
             <div id="noHistoryText"
-              *ngIf="dataSource.historyData === null || dataSource.historyData === undefined"
+              *ngIf="dataSource?.helpTextHistory === null || dataSource?.helpTextHistory === undefined"
             ><p>No change history to show.</p></div>
 
           </mat-tab>

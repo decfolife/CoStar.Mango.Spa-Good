@@ -1,20 +1,24 @@
 export interface HistoryEntry {
   id: string;
-  date: string;
-  user: string;
-  field: string;
-  value: string;
+  lastModified: string;
+  lastModifiedBy: string;
+  displayName: string;
+  afterChange: string;
 }
 
 export interface FieldHistoryDataSource {
-  helpTextData: string;
-  fieldIdData: string;
-  fieldTitleData: string;
-  historyData: HistoryEntry[]
+  helpTextPage: string;
+  helpTextSubject: string;
+  helpTextName: string;
+  helpTextText: string;
+  helpTextImage: string;
+  helpTextHistory: HistoryEntry[]
 }
 
 export interface FieldHistoryInput {
   portfolioId?: string;
-  OTID?: string;
-  objectID?: string;
+  helpTextName?: string;
+  fieldHistoryName?: string;
+  objectTypeId?: string;
+  objectId?: string;
 }

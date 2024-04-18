@@ -24,7 +24,7 @@ export class FieldHistoryComponent {
 
   @Input() helpTextID: string;
 
-  @Input() dataSource: FieldHistoryDataSource
+  @Input() dataSource: FieldHistoryDataSource;
 
   @Input() dateFormat: string = 'MM/dd/yyyy h:mm a';
 
