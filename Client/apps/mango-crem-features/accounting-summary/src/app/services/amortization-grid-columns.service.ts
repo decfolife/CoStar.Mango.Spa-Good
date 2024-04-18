@@ -1218,8 +1218,8 @@ export class AmortizationGridColumnsService {
       }
     ]);
 
-    if (!this.functionalCurrencyEnabled) {
-      this.operating842Columns[1].columns.push(
+    if (this.functionalCurrencyEnabled) {
+      this.operating842Columns[2].columns.push(
         {
           caption: 'Cumulative Level Expense',
           name: 'CumulativeLevelExpense',

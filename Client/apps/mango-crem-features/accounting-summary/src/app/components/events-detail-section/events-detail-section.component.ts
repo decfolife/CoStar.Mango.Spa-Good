@@ -147,15 +147,14 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.accountingSummaryService.errorNotify(eventDetailsResponse.clientErrorMessage);
       }
     }));
-
   }
 
   onGridContentReady(grid) {
     if (grid.component.totalCount() > 0) {
-      this.eventGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.eventsDataGrid);
       if (this.setInitialSelectedRow || this.selectedRowKeys.length ===0) {
         this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
         this.setInitialSelectedRow = false;
+        this.eventGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.eventsDataGrid);
       }
       const selectedRowIndex = grid.component.getRowIndexByKey(this.selectedRowKeys[0]);
       grid.component.selectRowsByIndexes([selectedRowIndex]);

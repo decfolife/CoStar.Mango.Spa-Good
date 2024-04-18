@@ -304,7 +304,7 @@ export class AccountingSummaryService extends EndpointService {
     if (totalRowCount >= 3) {
       customGridHeight = this.setGridHeight(gridName, 3);
     } else {
-      customGridHeight = this.setGridHeight(gridName, 'auto');
+      customGridHeight = 'auto';
     }
     return customGridHeight;
   }
