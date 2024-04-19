@@ -58,7 +58,10 @@
 
   <!-- Template: With Item's Menu -->
   <div class="item" *dxTemplate="let item of 'withMenu'">
-    <div class="item-name" [attr.title]="(item.name || item.displayValue || item.value || item[displayExpr]) + ' ' + item.secondaryText">
+    <div
+      class="item-name" [class]="item.itemClass ? item.itemClass : ''"
+      [attr.title]="(item.name || item.displayValue || item.value || item[displayExpr]) + ' ' + (item.secondaryText ? item.secondaryText : '') "
+    >
       <span class="item-title">{{ item.name || item.displayValue || item.value || item[displayExpr]}}</span>
       <span *ngIf="item.secondaryText" class="item-secondary">{{item.secondaryText}}</span><!-- Secondary Option Text, often used for the "(Default)" tag  -->
     </div>
@@ -83,7 +86,7 @@
               <!-- Menu Item -->
               <button *ngSwitchDefault
                 mat-menu-item
-                [class]="'mat-menu-child-button ' + (option.class ? option.class : '')"
+                [class]="'mat-menu-child-button ' + (option.class ? option.class : '') + (option.hide ? ' d-none' : '') "
                 (click)="option.action(); option.stopPropagation ? $event.stopPropagation() : null"
                 [disabled]="option.disabled ? option.disabled : false"
                 [title]="option.title ?? ''"

@@ -289,7 +289,7 @@ div[id$="dropdownContainer"] {
 }
 
 // Select More Menu
-::ng-deep {
+::ng-deep { // Encapsulation broken because overlay is at the body level
   .dx-item {
     crem-button {
       @include costar(transition, fast);
@@ -334,6 +334,7 @@ div[id$="dropdownContainer"] {
   }
 
   &-secondary {
+    @include costar(padding-left, 1);
     @include costar(color, gray03);
   }
 

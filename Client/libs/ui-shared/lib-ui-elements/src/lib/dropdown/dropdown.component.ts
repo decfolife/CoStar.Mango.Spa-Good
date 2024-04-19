@@ -7,25 +7,12 @@ import {
   OnChanges,
   OnInit,
   Output,
-  Pipe,
-  PipeTransform,
   SimpleChanges,
   TemplateRef,
   ViewChild,
-  ViewContainerRef,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormsModule,
-  NgForm,
-} from '@angular/forms';
 import { Dropdown } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent, DxDropDownBoxComponent, DxFormComponent, DxSelectBoxComponent, DxValidatorComponent } from 'devextreme-angular';
-import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { cremIcon } from '../icon/definitions/cremIcons';
 
 /**
  *
@@ -36,9 +23,9 @@ import { cremIcon } from '../icon/definitions/cremIcons';
  * @property {string} [valueKey] - 
  * @param {any[]} dataSource - Select options' dropdown
  * @param {string} id - Defines the HTML ID attribute
- * @param {string} [label] - 
+ * @param {string} [label] - The input field's Label
  * @param {boolean} [useSelectBox] - If true it uses 'dx-select-box', if false/undefined it will use 'dx-drop-down-box'
- * @param {any} [selectBoxValue] - 
+ * @param {any} [selectBoxValue] - The selected element shown in the input field
  * @param {string} [valueExpr] - 
  * @param {string} [keyExpr] - 
  * @param {string} [displayExpr] - 
@@ -132,7 +119,7 @@ export class DropdownComponent implements OnInit, OnChanges {
     | 'onLongTap'
     | 'always'
     | 'none' = 'none';
-  @Input() public dataSource: any[]; // TODO: This needs a proper data type to know what to provide to the component
+  @Input() public dataSource: Dropdown[] | any[]; // TODO: 'any' is being used while code is being cleaned and types standardize to use 'Dropdown' type instead for type safety
   @Input() public allowSearch?: boolean = false;
   @Input() containerized?: boolean;
   @Input() isDisabled = false as boolean;

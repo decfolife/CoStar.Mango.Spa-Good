@@ -158,7 +158,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               }
               //fetch criteriaSetID for each view;
               this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-              this.bySegmentMoreMenuOptions = this.prepareMoreMenu(r.data, this.itemMenuInnerOptions);
+              this.bySegmentMoreMenuOptions = this.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
               this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1)?.segmentID || this.accountingSegmentData?.[0].segmentID;
               this.appliedSegment = this.selectedSegment;
               this.loading = false;
@@ -175,9 +175,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           this.hasSegmentsAddRight = result.data.securityTypeID >= 3;
           this.hasSegmentsViewRight = result.data.securityTypeID >= 2;
         }
-  
       })
-    )
+    );
   }
 
   setDefaultSegment(segmentID: number, criteriaSetID: number): void{
@@ -200,15 +199,21 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   prepareSegmentDropdown(data: any): any { // Transform dropdown options data to be used by crem-dropdown
     const dropdownData = [];
+    let visibleToMeIndex: number;
 
-    data.map( e => {
+    data.map( (e,i) => {
       if( e.default === 1){ // If default is on, add a secondary text
         e['secondaryText'] = '(Default)';
       }
+      if( e.activeRecordsVisibleToMe && i != 0 ){ // get the activeRecordsVisibleToMe's Index
+        visibleToMeIndex = i;
+        e['itemClass'] = 'visible-to-me';
+      }
       dropdownData.push(e)
     });
+    visibleToMeIndex && dropdownData.unshift(dropdownData.splice(visibleToMeIndex,1)[0]); // Move default 'Visible to Me' to index 0, if visibleToMeIndex exists
 
-    return data;
+    return dropdownData;
   }
 
   /**
@@ -318,9 +323,9 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         }),
         tap( r => {
           this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-          this.bySegmentMoreMenuOptions = this.prepareMoreMenu(r.data, this.itemMenuInnerOptions);
+          this.bySegmentMoreMenuOptions = this.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
           if (refresh) {
-            this.selectedSegment = r.data.find(s => s.default === 1)?.segmentID || r.data[0].segmentID;
+            this.selectedSegment = this.accountingSegmentData.find(s => s.default === 1)?.segmentID || this.accountingSegmentData[0].segmentID;
             this.appliedSegment = this.selectedSegment;
           }
           this.selectedView = view;
@@ -487,11 +492,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
             position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
             maxWidth: '500px',
             closeOnClick: true,
-        })
+          });
         } else {
           //error
         }
-      })
+      });
     } else {
       this.reportsService.unarchiveSegment(request).subscribe((result) => {
         if (result) {
@@ -503,11 +508,29 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
             position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
             maxWidth: '500px',
             closeOnClick: true,
-        })
+          });
         } else {
           //error
         }
-      })
+      });
+    }
+    this.archiveActionForDefault(data);
+
+  }
+
+  /**
+   * Handles the archiving logic when a 'default' segment is archived
+   */
+  archiveActionForDefault(data:any){
+    if(data.default === 1){// If user archiving the default segment, then make 'Visible to me' the default
+      const visibleTomeSegmentId = this.accountingSegmentData.filter(e=>e.activeRecordsVisibleToMe)[0].segmentID;
+      console.log('visibleTomeSegmentId',visibleTomeSegmentId)
+      if(visibleTomeSegmentId){// If 'Visible to me' exists then make it the default
+        this.setDefaultSegment(visibleTomeSegmentId,data.criteriaSetID);
+      } else{ // If 'Visible to me' doesn't exists, select the first element of the list as default
+        this.setDefaultSegment(this.accountingSegmentData[0].segmentID,this.accountingSegmentData[0].criteriaSetID);
+      }
+      this.apply(); // Refresh cards view
     }
   }
 

@@ -25,18 +25,28 @@
   
 }
 
-::ng-deep{ // Dropdown created at the root level, breaking encapsulation for the sake of targeting
-  .accountingViewDropDown  { // Unique class name selector generated from ID passed down to crem-dropdown
+::ng-deep{ // The dropdown's overlay is at the body level, encapsulation needs to be broken for this element
+  // Dropdown's overlay when active/opened
+  .accountingYearDropDown {
+    > .dx-overlay-content {
+      min-width: 120px !important;
+    }
+  }
+  .accountingViewDropDown { // Unique class name selector generated from ID passed down to crem-dropdown
     > .dx-overlay-content {
       min-width: 350px !important;
     }
   }
-  .accountingSegmentDropdown,
-  .accountingYearDropDown {
+  .accountingSegmentDropDown {
     > .dx-overlay-content {
       min-width: 320px !important;
+
+      .dx-list-items .dx-item:has(.visible-to-me) {
+        @include costar(border-bottom, gray04);
+      }
     }
   }
+
 }
 
 .dashboard-toolbar-wrapper {
