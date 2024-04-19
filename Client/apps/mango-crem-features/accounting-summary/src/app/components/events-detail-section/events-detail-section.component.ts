@@ -650,18 +650,22 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   showDefaultRows() {
-    this.eventGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.eventsDataGrid);
+    if (this.eventsDataGrid.instance.totalCount() >= 3) {
+      this.eventGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.eventsDataGrid);
+      this.eventsDataGrid.instance.refresh();
+    }
     this.showMaxRow = true;
     this.showDefaultRow = false;
     this.showMinRow = false;
-    this.eventsDataGrid.instance.refresh();
   }
 
   showMinRows() {
-    this.eventGridHeight = this.accountingSummaryService.setGridHeight(this.eventsDataGrid, 1);
+    if (this.eventsDataGrid.instance.totalCount() >= 3) {
+      this.eventsDataGrid.instance.refresh();
+      this.eventGridHeight = this.accountingSummaryService.setGridHeight(this.eventsDataGrid, 1);
+    }
     this.showMaxRow = false;
     this.showDefaultRow = true;
     this.showMinRow = false;
-    this.eventsDataGrid.instance.refresh();
   }
 }

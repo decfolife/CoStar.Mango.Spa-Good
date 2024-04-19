@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountingSummaryService } from '../../services/accounting-summary.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute} from '@angular/router';
 import { LeaseInfoResponse } from '../../models/lease-info-response.modal';
 import { Subscription, combineLatest } from 'rxjs';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
@@ -41,7 +41,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   isAccountingEventEmpty: boolean;
   exportClicked = false;
 
-  constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router) { }
+  constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.getUserInfo();
@@ -104,7 +104,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
         queryParamObj[nameValue[0]] = nameValue[1];
       });
 
-      this.router.navigate(['addEvent'], { queryParams: queryParamObj });
+      this.router.navigate(['addEvent'], { relativeTo: this.activatedRoute, queryParams: queryParamObj });
     } else {
       this.router.navigate(['addEvent']);
     }

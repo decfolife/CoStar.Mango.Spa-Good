@@ -40,7 +40,6 @@ export class EventsGridColumnsService {
         allowReordering: false,
         allowResizing: false,
         width: 30,
-        alignment:'center',
         appendsCurrency: 'false',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false'
@@ -160,6 +159,8 @@ export class EventsGridColumnsService {
         dataField: 'periods',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
+        alignment: 'right',
+
         appendsCurrency: 'false',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false'
@@ -316,6 +317,7 @@ export class EventsGridColumnsService {
             appendsCurrency: 'true',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'true',
+            alignment: 'right',
             format: value => this.formattingService.localFormat(+value, currencyInfo.functionalCurrencyDecimalPrecision)
           });
         } else {
@@ -327,6 +329,7 @@ export class EventsGridColumnsService {
             appendsCurrency: 'true',
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',
+            alignment: 'right',
             format: value => this.formattingService.localFormat(+value, currencyInfo.localCurrencyDecimalPrecision)
           });
         }

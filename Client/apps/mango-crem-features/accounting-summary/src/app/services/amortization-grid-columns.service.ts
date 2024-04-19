@@ -42,7 +42,6 @@ export class AmortizationGridColumnsService {
             dataField: 'periodIndex',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             isParent: false,
@@ -54,7 +53,6 @@ export class AmortizationGridColumnsService {
             dataField: 'periodStart',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             dataType: 'date',
@@ -67,7 +65,6 @@ export class AmortizationGridColumnsService {
             dataField: 'periodEnd',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             dataType: 'date',
@@ -80,7 +77,6 @@ export class AmortizationGridColumnsService {
             dataField: 'year',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             isParent: false,
@@ -92,7 +88,6 @@ export class AmortizationGridColumnsService {
             dataField: 'quarter',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             isParent: false,
@@ -104,7 +99,6 @@ export class AmortizationGridColumnsService {
             dataField: 'period',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             isParent: false,
@@ -116,7 +110,6 @@ export class AmortizationGridColumnsService {
             dataField: 'actualDaysInPeriod',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             isParent: false,
@@ -128,7 +121,6 @@ export class AmortizationGridColumnsService {
             dataField: 'remainingTermInMonths',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             appendsCurrency: 'false',
             isParent: false,
@@ -140,7 +132,6 @@ export class AmortizationGridColumnsService {
             dataField: 'displayPeriod',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             appendsCurrency: 'false',
             isParent: false,
             band: 'Period Event',
@@ -151,7 +142,6 @@ export class AmortizationGridColumnsService {
             dataField: 'jeStatus',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             isParent: false,
             band: 'Period Event',
             headerCellTemplate: 'amortizationHeader',
@@ -161,7 +151,6 @@ export class AmortizationGridColumnsService {
             dataField: 'daysInFullPeriod',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             isParent: false,
             band: 'Period Event',
@@ -172,7 +161,6 @@ export class AmortizationGridColumnsService {
             dataField: 'periodEvent',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             isParent: false,
             band: 'Period Event',
@@ -194,7 +182,6 @@ export class AmortizationGridColumnsService {
             dataField: 'scheduleIndex',
             usesLocalFormat: 'false',
             usesFunctionalFormat: 'false',
-            alignment: 'center',
             visible: false,
             isParent: false,
             band: 'Period Event',
@@ -517,7 +504,6 @@ export class AmortizationGridColumnsService {
               usesFunctionalFormat: 'false',
               visible: false,
               appendsCurrency: 'false',
-              alignment: "center",
               headerCellTemplate: 'amortizationHeader',
               isParent: false,
               band: 'Local Asset',
@@ -1765,7 +1751,6 @@ export class AmortizationGridColumnsService {
         dataField: 'accountCode',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1774,7 +1759,6 @@ export class AmortizationGridColumnsService {
         dataField: 'accountSubCode',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1783,7 +1767,6 @@ export class AmortizationGridColumnsService {
         dataField: 'description',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'left',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1792,8 +1775,8 @@ export class AmortizationGridColumnsService {
         dataField: 'debitCredit',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
+        alignment: 'left',
         headerCellTemplate: 'amortizationHeader'
       }, {
         caption: 'Currency',
@@ -1801,8 +1784,8 @@ export class AmortizationGridColumnsService {
         dataField: 'currency',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
+        alignment: 'left',
         headerCellTemplate: 'amortizationHeader'
       }, {
         caption: 'Amount',
@@ -1810,7 +1793,6 @@ export class AmortizationGridColumnsService {
         dataField: 'amount',
         usesLocalFormat: 'true',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1820,7 +1802,6 @@ export class AmortizationGridColumnsService {
         visible: false,
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1845,7 +1826,6 @@ export class AmortizationGridColumnsService {
         dataField: 'segment1',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1854,7 +1834,6 @@ export class AmortizationGridColumnsService {
         dataField: 'segment2',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1863,7 +1842,6 @@ export class AmortizationGridColumnsService {
         dataField: 'segment3',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1872,7 +1850,6 @@ export class AmortizationGridColumnsService {
         dataField: 'segment4',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }, {
@@ -1881,7 +1858,6 @@ export class AmortizationGridColumnsService {
         dataField: 'costPercent',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        alignment: 'right',
         appendsCurrency: 'false',
         headerCellTemplate: 'amortizationHeader'
       }
@@ -1963,7 +1939,7 @@ export class AmortizationGridColumnsService {
         name: 'ActualAmountDueInPeriod',
         dataField: 'actualAmountDueInPeriod',
         visible: true,
-        alignment: 'left',
+        alignment: 'right',
         headerCellTemplate: 'amortizationHeader',
         appendsCurrency: 'true',
       }
