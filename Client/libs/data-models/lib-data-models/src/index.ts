@@ -34,6 +34,8 @@ export { UpdateServiceAccountApiAccessRequest, UpdateServiceAccountExpiresInDays
 export { ServiceAccount } from './lib/models/service-account/service-account';
 export { ServiceAccountHistory } from './lib/models/service-account/service-account-history';
 export { RenderFormHeaderData } from './lib/models/renderForm/renderFormHeaderData';
+export { CoStarProperty } from './lib/models/costar-matching/costar-property';
+export { BuildingInfo } from './lib/models/costar-matching/building-info';
 export * from './lib/enums/mango.enums';
 export * from './lib/models/errors';
 export * from './lib/models/central-auth/ui';

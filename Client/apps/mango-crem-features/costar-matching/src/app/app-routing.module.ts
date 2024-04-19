@@ -17,7 +17,7 @@ const routes: Routes = [
         './components/costar-integration/costar-property-details/costar-property-details.component'
       ).then((mod) => mod.CostarPropertyDetailsComponent),
   },
-  { path: '', redirectTo: '', pathMatch: 'full' },
+  { path: '', redirectTo: 'costar-property-lookup', pathMatch: 'full' },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 

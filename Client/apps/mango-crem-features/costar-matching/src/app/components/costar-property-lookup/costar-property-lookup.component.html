@@ -1,1 +1,57 @@
-<p>costar-property-lookup works!</p>
+<crem-card id="costar-matching" title="CoStar Property Association">
+  <div class="padding">
+    <div>
+      <crem-card id="costar-matching-building-info" title="Building Information">
+        <div class="grid-container">
+          <div class="label-item">Building Name </div>
+          <div class="value-item">{{buildingInfo.buildingName}}</div>
+          <div class="label-item">Property Address</div>
+          <div class="value-item">{{buildingInfo.buildingAddress_1}} {{buildingInfo.buildingAddress_2}}, {{buildingInfo.buildingCity}}, {{buildingInfo.buildingState}} {{buildingInfo.buildingZipCode}},  {{buildingInfo.buildingCountry}}</div>
+          <div class="label-item">Costar Property ID</div>
+          <div class="value-item">{{buildingInfo.coStarId}}</div>
+          <div class="label-item">Status</div>
+          <div class="value-item">{{buildingInfo.buildingActive ? 'Active' : 'Inactive'}}</div>
+        </div>       
+      </crem-card>
+    </div>
+    <div class="costar-matching-properties-container">
+      <crem-card id="costar-matching-match-property" title="Match Property">
+        <div class="search-container">
+          <cs-search
+            class="costar-matching-search"
+            [value] = "buildingInfo.buildingAddress_1"
+            (changed)="searchCostarProperties($event)">
+          </cs-search>
+        </div>
+        <div>
+          <dx-data-grid #grid
+            id="costar-matching-matched-properties" 
+            [dataSource]="properties"
+            [showBorders]="true" 
+            [hoverStateEnabled]="true"
+            [showRowLines]="true" 
+            [showColumnLines]="false"
+            (onSelectionChanged)="onSelectionChanged($event)">
+            <dxo-selection mode="multiple"></dxo-selection>
+            <dxi-column dataField="coStarId" caption="CoStar ID" alignment="left"></dxi-column>
+            <dxi-column dataField="address" caption="Property Address" alignment="left" dataType="date" format="MM/dd/yyyy hh:mm:ss a"></dxi-column>
+            <dxi-column dataField="propertyType" caption="Property Type" alignment="left"></dxi-column>
+            <dxi-column dataField="confidenceScore" caption="Confidence Score" alignment="left"></dxi-column>
+          </dx-data-grid>
+        </div>
+      </crem-card>
+      <div class="associatedPropertyInfo" *ngIf="grid.selectedRowKeys.length">
+        <div>Associate Property to</div>
+        <div class="propertyInfo">{{ grid.instance.getSelectedRowsData()[0].address }}</div>
+        <div class="confirm">  
+          <div></div>
+          <crem-button 
+            type="primary" 
+            id="costar-matching-confirm-button" 
+            (buttonClick)="saveCostarInfo($event)">Confirm
+          </crem-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</crem-card>
