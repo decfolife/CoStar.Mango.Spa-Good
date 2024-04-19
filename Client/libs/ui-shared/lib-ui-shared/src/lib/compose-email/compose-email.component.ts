@@ -85,6 +85,15 @@ export class ComposeEmailComponent implements OnInit {
     this.isDropDownBoxOpened = true;
   } 
 
+  onEditorPreparing(e) {
+    if (e.type == "selection" && e.parentType == "dataRow") {
+        e.editorOptions.elementAttr = {
+            id: "cem-fileSelections" + e.row.rowIndex,
+            title: ""
+        }
+    }
+}
+
   noteTypeSelected(e) {
     this.selectedNoteType = e[0];
     this.noteTypeValueInvalid = false;

@@ -94,14 +94,12 @@
       [hoverStateEnabled]="true"
       [rowAlternationEnabled]="true"
       [allowColumnResizing]="false"
+      (onEditorPreparing)="onEditorPreparing($event)"
       keyExpr="value"
       [width]="'100%'"
     >	
 
       <dxo-selection
-        class="cem-fileSelections1"
-        elementAttr="{class: 'cem-fileSelections2'}"
-        cssClass="cem-fileSelections3"
         selectAllMode="allPages"
         showCheckBoxesMode="always"
         mode="multiple">

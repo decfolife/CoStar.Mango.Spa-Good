@@ -376,9 +376,10 @@ export class DropdownComponent implements OnInit, OnChanges {
   setDropDownAttr(e) {
     // Add title attribute to all dropdown options
     if (!this.useSelectBox) {
-      const dropdownElement = document.getElementsByClassName("dx-row dx-data-row");
+      let dropdownOverLayContainer = document.querySelector('#crem-select-box');
+      const dropdownElement = dropdownOverLayContainer?.getElementsByClassName("dx-row dx-data-row");
       setTimeout(() => {
-        const arr = Array.from(dropdownElement);
+        const arr = dropdownElement? Array.from(dropdownElement): [];
         if (arr?.length) {
           arr.forEach((el) => {
             const childElment = Array.from(el.children);
