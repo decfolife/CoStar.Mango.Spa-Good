@@ -231,18 +231,14 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   showDefaultRows() {
-    if (this.paymentsDataGrid.instance.totalCount() >= 3) {
-      this.paymentsGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.paymentsDataGrid);
-    }
+    this.paymentsGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.paymentsDataGrid);
     this.showMaxRow = true;
     this.showDefaultRow = false;
     this.showMinRow = false;
   }
 
   showMinRows() {
-    if (this.paymentsDataGrid.instance.totalCount() >= 3) {
-      this.paymentsGridHeight = this.accountingSummaryService.setGridHeight(this.paymentsDataGrid, 1);
-    }
+    this.paymentsGridHeight = this.accountingSummaryService.setGridHeight(this.paymentsDataGrid, 1);
     this.showMaxRow = false;
     this.showDefaultRow = true;
     this.showMinRow = false;

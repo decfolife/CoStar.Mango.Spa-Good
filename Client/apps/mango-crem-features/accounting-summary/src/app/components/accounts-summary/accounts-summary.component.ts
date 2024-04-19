@@ -106,7 +106,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
 
       this.router.navigate(['addEvent'], { relativeTo: this.activatedRoute, queryParams: queryParamObj });
     } else {
-      this.router.navigate(['addEvent']);
+      this.router.navigate(['addEvent'], { relativeTo: this.activatedRoute});
     }
   }
 
