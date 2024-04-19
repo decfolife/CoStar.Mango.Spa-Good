@@ -8,7 +8,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TextBoxModule } from '../text-box';
 import { FieldHistoryDirective } from './field-history.directive';
 
-
+const FIELDHISTORY_MOCK = `
+<crem-field-history
+  [history-http-source]="{
+      portfolioId: masterGroupID, 
+      helpTextName: 'PolicyName', 
+      objectTypeId: 125, 
+      objectId: policyId 
+    }">
+</crem-field-history>`
 
 const meta: Meta<any> = {
   component: FieldHistoryComponent,
@@ -31,8 +39,38 @@ const meta: Meta<any> = {
   ],
   argTypes: {
 
+    visible: {
+      description: 'Toggles the visibility of the tip',
+      table: {
+        category: 'Inputs',
+        defaultValue: {
+          summary: false,
+        } 
+      }
+    },
+
+    helpTextID: {
+      description: 'Unique identifier for the helptext',
+      table: {
+        category: 'Inputs',
+        defaultValue: {
+          summary: null,
+        } 
+      }
+    },
+
+    dateFormat: {
+      description: 'Format of the displayed date',
+      table: {
+        category: 'Inputs',
+        defaultValue: {
+          summary: null,
+        } 
+      }
+    },
+
     dataSource: {
-      description: 'todo: complete the docs',
+      description: 'Can be hardcoded using a dataSource object to be displayed inside the `History` tab grid. ',
       table: {
         category: 'Inputs',
         defaultValue: {
@@ -42,125 +80,29 @@ const meta: Meta<any> = {
     },
 
     "history-http-source": {
-      description: '<b>doc</b> the directive plx',
+      name: 'history-http-source',
+      description: 'Custom directive that can be used for API calls to populate the dataSource from the database using the following paremeters: `portfolioId`, `helpTextName`, `objectTypeId`, `objectId` <br><br> `${FIELDHISTORY_MOCK}`',
       table: {
         category: 'Directives',
         defaultValue: {
           summary: null,
-        } 
+        }
       }
     },
 
+    toggleVisible: {
+      name: 'toggleVisible()',
+      type: 'function',
+      description: 'Dispatch an event of type `boolean` when field-hisotry icon is clicked.',
+      table: {
+        category: 'Methods',
+      }
+    },
 
-    /* pageTitle: {
-      description: 'The title of the header',
-      table: {
-        category: 'Inputs',
-        defaultValue: {
-          summary: 'EMPTY_STRING'
-        }
-      }
-    },
-    showTitleInfo: {
-      description: 'Show the info icon next to the title',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
-    },
-    primaryButtonText: {
-      description: 'The primary button text',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: 'EMPTY_STRING'
-        }
-      }
-    },
-    showSearchButton: {
-      description: 'Show the search button next to the title',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
-    },
-    showBookmarkButton: {
-      description: 'Show the bookmark button',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
-    },
-    showSettingsButton: {
-      description: 'Show the settings button',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
-    },
-    customActions: {
-      description: 'If `true` it displays the actions buttons',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
-    },
-    customFilters: {
-      description: 'If `true` it shows custom filters. The filters have to be added via a div having the `filters` tag.',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
-    },
-    customSettings: {
-      description: 'If `true` it shows custom settings. The settings have to be added via a div having the `settings` tag.',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
-    },
-    onSearchClick: {
-      name: 'onSearchClick()',
-      type: 'function',
-      description: 'Dispatch an event of type `string` containing the searched word when the search button is clicked',
-      table: {
-        category: 'Methods',
-      }
-    },
-    onBookmarkClick: {
-      name: 'onBookmarkClick()',
-      type: 'function',
-      description: 'Dispatch an event of type `Event` when bookmark button is clicked',
-      table: {
-        category: 'Methods',
-      }
-    },
-    onSettingsClick: {
-      name: 'onBookmarkClick()',
-      type: 'function',
-      description: 'Dispatch an event of type `Event` when settings button is clicked',
-      table: {
-        category: 'Methods',
-      }
-    }
-  },*/
 }};
 
 export default meta;
+
 
 type Story = StoryObj<FieldHistoryComponent>;
 
@@ -238,4 +180,5 @@ export const Default: Story = {
     <crem-field-history ${argsToTemplate(args)}></crem-field-history></div>
     `
   })
+  
 }
