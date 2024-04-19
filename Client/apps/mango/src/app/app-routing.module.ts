@@ -19,6 +19,7 @@ import { AppService } from './app.service';
 import { ValidateComponent } from './components/auth/validate/validate.component';
 import { CremComponent } from './components/crem-component';
 import { AuthGuard } from './services/guards/auth.guard';
+import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 
 const routes: Routes = [
   // LOGIN
@@ -125,10 +126,10 @@ const routes: Routes = [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           {
             path: 'dashboard', // Todo: Temporary component pointing to 404
-            loadChildren: () =>
-              import(
-                '@mangoSpa/src/app/components/not-found-page/not-found-page-routing.module'
-              ).then((mod) => mod.NotFoundPageRoutingModule),
+            children: [{
+              path: '',
+              component: NotFoundPageComponent
+            }],
             data: {
               moduleId: null,
               currentSubApp: null,
@@ -137,7 +138,7 @@ const routes: Routes = [
           },
         ]
       },
-      
+
       // PORTFOLIO
       {
         path: 'portfolio',
@@ -165,7 +166,7 @@ const routes: Routes = [
               moduleId: 1,
               objectTypeId: 3,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Buildings', append: true, activeLink: 'Buildings'}
+              breadCrumb: { label: 'Buildings', append: true, activeLink: 'Buildings' }
             },
           },
           {
@@ -501,7 +502,7 @@ const routes: Routes = [
               import(
                 '@forms/mango-forms/mango-forms.module'
               ).then((mod) => mod.MangoFormsModule),
-              data: {  currentSubApp: MangoSubApps.FORMS_MAINTENANCE, moduleId: 6, breadCrumb: { label: null, append: true } },
+            data: { currentSubApp: MangoSubApps.FORMS_MAINTENANCE, moduleId: 6, breadCrumb: { label: null, append: true } },
           },
         ]
       },
@@ -520,7 +521,7 @@ const routes: Routes = [
         path: 'costar-matching',
         loadChildren: () =>
           import(
-              '@costar-matching/app.module'
+            '@costar-matching/app.module'
           ).then((mod) => mod.AppModule),
       }
 
@@ -537,10 +538,10 @@ const routes: Routes = [
   {
     path: '**',
     component: CremComponent,
-    loadChildren: () =>
-      import(
-        '@mangoSpa/src/app/components/not-found-page/not-found-page-routing.module'
-      ).then((mod) => mod.NotFoundPageRoutingModule),
+    children: [{
+      path: '',
+      component: NotFoundPageComponent
+    }],
   },
 
 ];
@@ -584,10 +585,10 @@ export class AppRoutingModule {
       })
     );
   }
-  
-  raiseRenderFormShowPropertyHeader(){
+
+  raiseRenderFormShowPropertyHeader() {
     const renderFormHeaderData = new RenderFormHeaderData(false, null);
-    const evt = new CustomEvent("RenderFormShowPropertyHeader", {detail: renderFormHeaderData});
+    const evt = new CustomEvent("RenderFormShowPropertyHeader", { detail: renderFormHeaderData });
     window.dispatchEvent(evt);
   }
 
