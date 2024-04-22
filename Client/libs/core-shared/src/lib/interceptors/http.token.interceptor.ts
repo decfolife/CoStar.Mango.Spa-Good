@@ -21,7 +21,7 @@ export class HttpTokenInterceptor implements HttpInterceptor {
     if (UtilitiesService.isLocalEnvironment()) {
       let token = this.jwtService.getToken()
       const headers = this.generateRequestHeaders(token)
-      const request = req.clone({ setHeaders: headers, withCredentials: true })
+      const request = req.clone({ setHeaders: headers })
       return next.handle(request)
     }
 
