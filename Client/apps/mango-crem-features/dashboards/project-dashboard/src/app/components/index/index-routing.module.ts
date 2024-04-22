@@ -35,6 +35,16 @@ const routes: Routes = [
     },
   },
   {
+    path: 'project-tasks',
+    loadChildren: () =>
+      import(
+        '../project-tasks/project-tasks-routing.module'
+      ).then((mod) => mod.ProjectTasksRoutingModule),
+    data: {
+      breadCrumb: { label: 'Project-Tasks', append: false }
+    },
+  },
+  {
     path: '',
     component: IndexComponent,
     data: {

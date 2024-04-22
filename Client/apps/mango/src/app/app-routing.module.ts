@@ -103,6 +103,17 @@ const routes: Routes = [
               breadCrumb: { append: false }
             },
           },
+          {
+            path: 'project-tasks',
+            loadChildren: () =>
+              import(
+                '@project-dashboard/components/project-tasks/project-tasks.module'
+              ).then((mod) => mod.ProjectTasksModule),
+            data: {
+              currentSubApp: MangoSubApps.PROJECTS_DASHBOARD,
+              breadCrumb: { append: false }
+            },
+          },
 
           {
             path: 'project-team',
