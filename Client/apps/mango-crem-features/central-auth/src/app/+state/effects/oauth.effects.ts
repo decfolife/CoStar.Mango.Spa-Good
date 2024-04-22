@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { UserService } from "@mango/core-shared";
 import { MultiClientLoginHttpRequest, OAUTH_AUTH_CODE_QUERY_PARAM } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { Observable, combineLatest, of } from "rxjs";
-import { delay, filter, map, switchMap, take, tap } from "rxjs/operators";
+import { Observable, combineLatest, of, throwError } from "rxjs";
+import { catchError, delay, filter, finalize, map, switchMap, take, tap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
@@ -19,11 +19,32 @@ export class OAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.INIT_AUTHORIZATION),
-        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.selectedContactRecord$.pipe(take(1))])),
+        switchMap(_ => combineLatest(
+          [
+            this.centralAuthFacade.selectedClient$.pipe(take(1)), 
+            this.centralAuthFacade.selectedContactRecord$.pipe(take(1)),
+            this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))
+          ])
+        ),
         filter(([client, contactRecord]) => !!client && !!contactRecord),
-        map(([client, contactRecord]): MultiClientLoginHttpRequest => ({ clientKey: client.clientKey, contactID: contactRecord.contactID, contactRole: contactRecord.userRoleName })),
+        map(([client, contactRecord, isClientSpecificLogin]) => {
+          let request: MultiClientLoginHttpRequest = { clientKey: client.clientKey, contactID: contactRecord.contactID, contactRole: contactRecord.userRoleName }
+          return [request, isClientSpecificLogin]
+        }),
         tap(_ => this.centralAuthFacade.setLoading(true)),
-        switchMap(payload => this.userService.loginToClientSite(payload)),
+        switchMap(([payload, isClientSpecificLogin]: [MultiClientLoginHttpRequest, boolean]) => this.userService.loginToClientSite(payload).pipe(
+          catchError((e) => {
+            this.centralAuthFacade.setLoading(false);
+            
+            if (!isClientSpecificLogin) {
+              this.centralAuthFacade.purgeClientSelection()
+              this.centralAuthFacade.getUserClients()
+            }
+
+            this.centralAuthFacade.logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed();
+            return throwError(e)
+          })
+        )),
         tap(_ => this.centralAuthFacade.setLoading(false)),
         filter(response => !!response && !!response.authToken),
         tap(response => this.centralAuthFacade.setAccessToken(response.authToken)),
@@ -55,6 +76,19 @@ export class OAuthEffects {
       ) as Observable<any>
   )
 
+  // If user is coming in through client specific login page OR user doesn't have multiple sites AND
+  // the loginToClientSite() method failed, log them out.
+  logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.LOG_OUT_WHEN_CLIENT_SPECIFIC_LOGIN_AND_LOGIN_TO_CLIENT_FAILED),
+        switchMap(_ => combineLatest([this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1)), this.centralAuthFacade.user$.pipe(take(1))])),
+        filter(([isClientSpecificLogin, user]) => !!isClientSpecificLogin || !user.hasMultipleSites),
+        map(_ => {
+          return AppActions.logout()
+        })
+      )
+  )
 
   redirectToClient$ = createEffect(
     () =>

@@ -33,6 +33,7 @@ export class RoleGuard  {
         if (accessToken) {
           const hasAccess = this.isAutoProvisionedOrHasMultipleSites(accessToken)
           if (!hasAccess) {
+            this.centralAuthFacade.logout()
             this.router.navigate(['/'])
             return of(false)
           }
@@ -54,6 +55,7 @@ export class RoleGuard  {
             if (accessToken) {
               const hasAccess = this.isAutoProvisionedOrHasMultipleSites(accessToken)
               if (!hasAccess) {
+                this.centralAuthFacade.logout()
                 this.router.navigate(['/'])
                 return false
               } 
@@ -63,6 +65,7 @@ export class RoleGuard  {
             }
           }),
           catchError(error => {
+            this.centralAuthFacade.logout()
             this.router.navigate(['/'], { queryParamsHandling: 'merge' });
             return of(false)
           })

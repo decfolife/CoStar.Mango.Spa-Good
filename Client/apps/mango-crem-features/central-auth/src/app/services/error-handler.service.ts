@@ -1,6 +1,6 @@
 import { ErrorHandler, Injector, ModuleWithProviders, NgModule, NgZone } from "@angular/core"
 import { MangoErrorHandler } from "@mango/core-shared/lib-core-shared"
-import { CentralAuthError, CentralAuthHttpError, MangoError, MangoErrorTypes } from "@mango/data-models/lib-data-models"
+import { CentralAuthError, CentralAuthErrorCodes, CentralAuthHttpError, IGNORED_ERRORS, MangoError, MangoErrorTypes } from "@mango/data-models/lib-data-models"
 
 @NgModule()
 export class CentralAuthErrorHandler extends MangoErrorHandler<CentralAuthError> {
@@ -20,16 +20,16 @@ export class CentralAuthErrorHandler extends MangoErrorHandler<CentralAuthError>
   }
 
   handleError(error: any): void {
-    let err = error
     if (error.promise && error.rejection) {
-      err = err.rejection
+      error = error.rejection
     }
-    if (!(err instanceof CentralAuthHttpError)) {
-      if (err.errorType) {
-        this.zone.run(() => this.showErrorNotification(err.message, 'Error', err.errorType))
+
+    if (!(error instanceof CentralAuthHttpError)) {
+      if (error.errorCode && !IGNORED_ERRORS.includes(error.errorCode as CentralAuthErrorCodes)) {
+        this.zone.run(() => this.showErrorNotification(error.message, error.title ?? 'Error', MangoErrorTypes.FATAL))
       }
       else {
-        console.error(err)
+        console.error(error)
       }
     }
   }

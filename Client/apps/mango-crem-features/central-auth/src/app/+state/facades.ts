@@ -49,6 +49,10 @@ export class CentralAuthFacade {
     this.store.dispatch(AppActions.logout());
   }
 
+  logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed() {
+    this.store.dispatch(AppActions.logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed());
+  }
+
   setUser(user: UserAuth) {
     this.store.dispatch(AppActions.setUser({ user }));
   }

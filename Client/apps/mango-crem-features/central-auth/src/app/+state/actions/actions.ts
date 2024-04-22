@@ -1,4 +1,4 @@
-import { ClientSSOSettings, ClientSitesByUser, ContactRecord, MultiClientLoginHttpRequest, UserAuth, UserSite } from "@mango/data-models/lib-data-models";
+import { ClientSSOSettings, ClientSitesByUser, ContactRecord, UserAuth, UserSite } from "@mango/data-models/lib-data-models";
 import { createAction, props } from "@ngrx/store";
 import { LoginResponse } from "libs/data-models/lib-data-models/src/lib/models/userAuth";
 
@@ -33,6 +33,7 @@ export const GET_CLIENT_SSO_SETTINGS = '[UI] Get Client SSO Settings'
 export const GET_CLIENT_SSO_SETTINGS_SUCCESS = '[UI] Get Client SSO Settings Success'
 export const GET_CONTACT_RECORDS = '[UI] Get Contact Records'
 export const GET_CONTACT_RECORDS_SUCCESS = '[UI] Get Contact Records Success'
+export const LOG_OUT_WHEN_CLIENT_SPECIFIC_LOGIN_AND_LOGIN_TO_CLIENT_FAILED = '[UI] Log Out when client specific login and login to client failed'
 export const LOG_OUT = '[UI] Log Out'
 export const SET_ACCESS_TOKEN = '[UI] Set Access Token'
 export const PURGE_CLIENT_SELECTION = '[UI] Purge Client Selection'
@@ -57,6 +58,7 @@ export const handleCustomQueryParams = createAction(HANDLE_CUSTOM_QUERY_PARAMS);
 export const setupIdle = createAction(SETUP_IDLE);
 export const setupLogoutWhenTimedOut = createAction(SETUP_LOGOUT_WHEN_TIMED_OUT);
 export const setupLogoutEventListener = createAction(SETUP_LOGOUT_EVENT_LISTENER);
+export const logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed = createAction(LOG_OUT_WHEN_CLIENT_SPECIFIC_LOGIN_AND_LOGIN_TO_CLIENT_FAILED);
 export const logout = createAction(LOG_OUT);
 export const setUser = createAction(SET_USER, props<{ user: UserAuth }>());
 export const setSelectedClientKey = createAction(SET_SELECTED_CLIENT_KEY, props<{ clientKey: string }>());

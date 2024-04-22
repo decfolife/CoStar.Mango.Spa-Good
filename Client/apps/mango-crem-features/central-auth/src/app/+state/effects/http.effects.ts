@@ -3,7 +3,7 @@ import { SettingsService, UserService } from "@mango/core-shared";
 import { ContactRecord, ContactRecordHTTPObject } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { combineLatest, of } from "rxjs";
-import { catchError, filter, map, switchMap, take } from "rxjs/operators";
+import { catchError, filter, finalize, map, switchMap, take } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
@@ -32,7 +32,10 @@ export class HttpEffects {
         switchMap((action: { type: string, clientKey: string }) => combineLatest([of(action.clientKey), this.centralAuthFacade.user$.pipe(take(1))])),
         filter(([clientKey, user]) => !!clientKey && !!user),
         switchMap(([clientKey, user]) => this.userService.getContactRecords(user.email, clientKey)),
-        map(response => AppActions.getContactRecordsSuccess({ contactRecords: response.contactRecords.map(contactRecordMapper) }))
+        map(response => AppActions.getContactRecordsSuccess({ contactRecords: response.contactRecords.map(contactRecordMapper) })),
+        finalize(() => {
+          this.centralAuthFacade.setLoading(false);
+        })
       )
   )
 

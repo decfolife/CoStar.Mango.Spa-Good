@@ -26,6 +26,8 @@ export enum CentralAuthErrorCodes {
   CreateContactError = 'CREATE_CONTACT_ERROR'
 }
 
+export const IGNORED_ERRORS = [CentralAuthErrorCodes.ResetTokenExpired]
+
 export class CentralAuthHttpError extends MangoError {
   constructor (
     public override title: string,
