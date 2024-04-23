@@ -61,10 +61,9 @@ export class InitSetupEffects {
         ofType(AppActions.SETUP_USER_CONTACT_RECORD_CONFIG),
         switchMap(_ => this.facade.authenticatedUser$),
         filter(user => !!user),
-        switchMap(user => combineLatest([of(user), this.userService.getContactRecords(user.email, user.clientKey)])),
-        filter(([user, allContactRecords]) => !!user && !!allContactRecords),
-        map(([user, allContactRecords]) =>  {
-          return AppActions.setUserHasMultipleContactRecords({ hasMultipleContactRecords: allContactRecords.contactRecords.filter(c => c.contactID === user.contactId).length > 1 }) })
+        switchMap(user => this.userService.getContactRecords(user.email, user.clientKey)),
+        filter(allContactRecords => !!allContactRecords),
+        map(allContactRecords => AppActions.setUserHasMultipleContactRecords({ hasMultipleContactRecords: allContactRecords.contactRecords.length > 1 }))
       )
   )
 
