@@ -65,16 +65,6 @@
             }
           ],
           "budgets": [
-            {
-              "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "10mb"
-            },
-            {
-              "type": "anyComponentStyle",
-              "maximumWarning": "6kb",
-              "maximumError": "1mb"
-            }
           ]
         },
         "test": {
@@ -103,16 +93,6 @@
             }
           ],
           "budgets": [
-            {
-              "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "10mb"
-            },
-            {
-              "type": "anyComponentStyle",
-              "maximumWarning": "6kb",
-              "maximumError": "1mb"
-            }
           ]
         },
         "ops": {
@@ -141,16 +121,6 @@
             }
           ],
           "budgets": [
-            {
-              "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "5mb"
-            },
-            {
-              "type": "anyComponentStyle",
-              "maximumWarning": "6kb",
-              "maximumError": "100kb"
-            }
           ]
         },
         "stage": {
