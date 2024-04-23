@@ -21,6 +21,11 @@ export const SET_USER_INFO_ACTION = '[Mango App] Set User Info'
 export const SET_CLIENT_INFO_ACTION = '[Mango App] Set Client Info'
 export const SET_BREADCRUMBS = '[Mango App] Set Breadcrumbs'
 export const SET_CONTACT_RECORD = '[Mango App] Set Contact Record'
+
+export const SETUP_USER_CONTACT_RECORD_CONFIG = '[Mango App] Setup User Contact Records Config'
+
+export const SET_HAS_MULTIPLE_CONTACT_RECORDS = '[Mango App] Set User Has Multiple Contact Records'
+
 export const LOGOUT_ACTION = '[Mango App] Log Out'
 export const CLEAR_STATE = '[Mango App] Clear State'
 export const SET_MODULE_ID = '[Mango App] Set Module Id'
@@ -93,6 +98,16 @@ export const setClientKey = createAction(
 export const setContactRecord = createAction(
   SET_CONTACT_RECORD,
   props<{ contactRecord: ContactRecord }>()
+);
+
+
+export const setupUserContactRecordConfig = createAction(
+  SETUP_USER_CONTACT_RECORD_CONFIG,
+);
+
+export const setUserHasMultipleContactRecords = createAction(
+  SET_HAS_MULTIPLE_CONTACT_RECORDS,
+  props<{ hasMultipleContactRecords: boolean }>()
 );
 
 export const logout = createAction(

@@ -9,21 +9,22 @@ import * as AppSelectors from './app.selectors';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class MangoAppFacade {
+export class MangoAppFacade { 
 
   loaded$: Observable<boolean>
-  currentSubApp$: Observable<any>
-  authenticatedUser$: Observable<any>
-  accessToken$: Observable<any>
-  clientKey$: Observable<any>
-  userInfo$: Observable<any>
-  breadcrumbs$: Observable<any>
-  userClient$: Observable<any>
-  contactRecord$: Observable<any>
-  globalSession$: Observable<any>
-  moduleId$: Observable<any>
-  showSubLeftNav$: Observable<any>
-  currentRenderFormDocumentParams$: Observable<any>
+  currentSubApp$: Observable<MangoSubApps>
+  authenticatedUser$: Observable<UserAuth>
+  accessToken$: Observable<string>
+  clientKey$: Observable<string>
+  userInfo$: Observable<UserInfo>
+  breadcrumbs$: Observable<BreadCrumb[]>
+  userClient$: Observable<Client>
+  contactRecord$: Observable<ContactRecord>
+  userHasMultipleContactRecords$: Observable<boolean>
+  globalSession$: Observable<V06GlobalSession>
+  moduleId$: Observable<number>
+  showSubLeftNav$: Observable<boolean>
+  currentRenderFormDocumentParams$: Observable<string>
   v06Auth$:  Observable<any>
 
   constructor(private store: Store) {
@@ -36,6 +37,7 @@ export class MangoAppFacade {
     this.breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
     this.userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
     this.contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
+    this.userHasMultipleContactRecords$ = this.store.pipe(select(AppSelectors.userHasMultipleContactRecords));
     this.globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
     this.moduleId$ = this.store.pipe(select(AppSelectors.moduleId));
     this.showSubLeftNav$ = this.store.pipe(select(AppSelectors.showSubLeftNav));

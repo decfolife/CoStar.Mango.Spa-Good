@@ -4,7 +4,7 @@ import { SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { combineLatest, of } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { combineAll, filter, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
 import { ActivatedRoute } from '@angular/router';
@@ -18,7 +18,7 @@ export class InitSetupEffects {
     private actions$: Actions,
     private userService: UserService,
     private userInfoService: UserInfoService,
-    private navigationService: MangoNavigationService, 
+    private navigationService: MangoNavigationService,
     private facade: MangoAppFacade,
     private acitvatedRoute: ActivatedRoute
   ) { }
@@ -38,9 +38,10 @@ export class InitSetupEffects {
         switchMap(_ => of(
           AppActions.setupClientKey(),
           AppActions.setupContactRecord(),
+          AppActions.setupUserContactRecordConfig(),
           AppActions.redirectToV06ToFinalizeLogin()
         ))
-  ))
+      ))
 
   setupClientKey$ = createEffect(
     () =>
@@ -51,6 +52,19 @@ export class InitSetupEffects {
         map(user =>
           AppActions.setClientKey({ clientKey: user.clientKey })
         )
+      )
+  )
+
+  setupUserContactRecordConfig$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.SETUP_USER_CONTACT_RECORD_CONFIG),
+        switchMap(_ => this.facade.authenticatedUser$),
+        filter(user => !!user),
+        switchMap(user => combineLatest([of(user), this.userService.getContactRecords(user.email, user.clientKey)])),
+        filter(([user, allContactRecords]) => !!user && !!allContactRecords),
+        map(([user, allContactRecords]) =>  {
+          return AppActions.setUserHasMultipleContactRecords({ hasMultipleContactRecords: allContactRecords.contactRecords.filter(c => c.contactID === user.contactId).length > 1 }) })
       )
   )
 
@@ -85,13 +99,13 @@ export class InitSetupEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.REDIRECT_TO_V06_TO_FINALIZE_LOGIN),
-        switchMap(_ => this.facade.v06Auth$),      
-        filter(v06Auth => !!v06Auth),  
+        switchMap(_ => this.facade.v06Auth$),
+        filter(v06Auth => !!v06Auth),
         tap(v06Auth => {
           this.navigationService.redirectToV06Login(v06Auth.authCode)
         })
       ),
-      { dispatch: false }
+    { dispatch: false }
   )
 
   getModuleIdValue$ = createEffect(

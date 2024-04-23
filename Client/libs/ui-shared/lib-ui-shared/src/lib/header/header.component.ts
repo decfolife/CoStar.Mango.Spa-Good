@@ -31,6 +31,7 @@ export class HeaderComponent implements OnInit {
   searchObjectId: number = 99;
   currentUser$: Observable<UserAuth>;
   contactRecord$: Observable<ContactRecord>;
+  hasMultipleContactRecords$: Observable<boolean>
   filteredOptions;
   myControl = new UntypedFormControl();
   inputSubscription$;
@@ -48,6 +49,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser$ = this.facade.authenticatedUser$;
+    this.hasMultipleContactRecords$ = this.facade.userHasMultipleContactRecords$
     this.contactRecord$ = this.facade.contactRecord$;
     this.ImageUrl$ = this.facade.userClient$.pipe(
       filter(client => !!client),

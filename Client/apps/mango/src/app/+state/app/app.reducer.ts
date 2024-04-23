@@ -12,6 +12,7 @@ export interface State extends EntityState<MangoAppEntity> {
   currentSubApp: MangoSubApps,
   client: string,
   contactRecord: ContactRecord,
+  userHasMultipleContactRecords: boolean,
   authenticatedUser: UserAuth,
   accessToken: string,
   v06Auth: any,
@@ -35,6 +36,7 @@ export const initialState: State = appAdapter.getInitialState({
   client: null,
   currentSubApp: null,
   contactRecord: null,
+  userHasMultipleContactRecords: null,
   authenticatedUser: null,
   accessToken: null,
   v06Auth: null,
@@ -60,10 +62,11 @@ const appReducer = createReducer(
   on(AppActions.setClientKey, (state, { clientKey }) => ({ ...state, error: null, client: clientKey })),
   on(AppActions.setBreadcrumbs, (state, { breadcrumbs }) => ({ ...state, error: null, breadcrumbs })),
   on(AppActions.setContactRecord, (state, { contactRecord }) => ({ ...state, error: null, contactRecord })),
+  on(AppActions.setUserHasMultipleContactRecords, (state, { hasMultipleContactRecords }) => ({ ...state, error: null, userHasMultipleContactRecords: hasMultipleContactRecords })),
   on(AppActions.setModuleId, (state, { moduleId }) => ({ ...state, error: null, moduleId })),
   on(AppActions.setShowSubLetNav, (state, { show }) => ({ ...state, error: null, showSubLeftNav: show })),
   on(AppActions.setCurrentRenderFormDocumentParams, (state, { params }) => ({ ...state, error: null, currentRenderFormDocumentParams: params })),
-  on(AppActions.getGlobalSessionSuccess, (state, { session }) => ({ ...state, error: null, globalSession: session.data})),
+  on(AppActions.getGlobalSessionSuccess, (state, { session }) => ({ ...state, error: null, globalSession: session.data })),
   on(AppActions.clearState, () => ({ ...initialState })),
 );
 

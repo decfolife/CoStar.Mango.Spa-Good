@@ -53,6 +53,13 @@ export const contactRecord = createSelector(
   (state: State) => state.contactRecord
 );
 
+
+export const userHasMultipleContactRecords = createSelector(
+  getAppState,
+  (state: State) => state.userHasMultipleContactRecords
+);
+
+
 export const client = createSelector(
   getAppState,
   (state: State) => state.client

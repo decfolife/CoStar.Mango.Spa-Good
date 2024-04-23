@@ -88,6 +88,7 @@ export class AuthenticationEffects {
             AppActions.setAccessToken({ accessToken }),
             AppActions.setClientKey({ clientKey: user.clientKey }),
             AppActions.setContactRecord({ contactRecord }),
+            AppActions.setupUserContactRecordConfig(),
             AppActions.redirectToV06ToFinalizeLogin()
           )
         }),
