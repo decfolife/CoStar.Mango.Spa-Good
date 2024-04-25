@@ -21,12 +21,9 @@ export enum CentralAuthErrorCodes {
   ClientSiteNotFound = "CLIENT_SITE_NOT_FOUND",
   ClientSitesNotFound = "CLIENT_SITES_NOT_FOUND",
   ClientSiteAlreadyExists = "CLIENT_SITE_ALREADY_EXISTS",
-  ResetLinkExpired = 'RESET_LINK_EXPIRED',
   ResetTokenExpired = 'RESET_TOKEN_EXPIRED',
   CreateContactError = 'CREATE_CONTACT_ERROR'
 }
-
-export const IGNORED_ERRORS = [CentralAuthErrorCodes.ResetTokenExpired]
 
 export class CentralAuthHttpError extends MangoError {
   constructor (

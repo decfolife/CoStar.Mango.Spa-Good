@@ -2,7 +2,7 @@ import { HTTP_INTERCEPTORS, HttpErrorResponse, HttpEvent, HttpHandler, HttpInter
 import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
 import { Router } from "@angular/router";
 import { JwtService, MangoErrorHandler, UtilitiesService } from "@mango/core-shared/lib-core-shared";
-import { CentralAuthErrorCodes, CentralAuthHttpError, IGNORED_ERRORS, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
+import { CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, UNEXPECTED_ERROR_MESSAGE } from "@mango/data-models/lib-data-models";
 import { Observable, throwError } from "rxjs";
 import { catchError, finalize, switchMap, take } from "rxjs/operators";
 import { CentralAuthFacade } from "../+state/facades";

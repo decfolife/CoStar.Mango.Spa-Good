@@ -104,6 +104,8 @@ export class ResetPasswordComponent implements OnInit {
       (error: CentralAuthHttpError) => {
         this.isLoading = false;
         this.isErrored = true;
+
+        throw error
       }
     );
   };

@@ -40,11 +40,10 @@ export class PasswordResetRequestComponent implements OnInit {
             message: this.resetLinkExpiredMessage,
             title: 'Warning',
             errorType: MangoErrorTypes.WARNING,
-            errorCode: CentralAuthErrorCodes.ResetLinkExpired
+            errorCode: CentralAuthErrorCodes.ResetTokenExpired
           })
         }
-      }
-      );
+      });
   }
 
   createForm() {
