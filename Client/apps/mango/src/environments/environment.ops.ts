@@ -7,7 +7,7 @@ class EnvironmentsCrem implements Environment {
   cremBaseUrl = 'http://[CLIENT].ops.corp.virtualpremise.com';
   CAUrl = 'http://login.ops.corp.virtualpremise.com:30080/';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
-  baseApiUrl = 'http://mangospa.ops.corp.virtualpremise.com:30080/';
+  baseApiUrl = 'http://api.ops.corp.virtualpremise.com:30080/';
 }
 
 export const environment = new EnvironmentsCrem();
