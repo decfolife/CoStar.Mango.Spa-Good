@@ -28,8 +28,6 @@ public class Startup
     public IConfiguration Configuration { get; }
     public IWebHostEnvironment Environment { get; }
 
-    private const string _CorsPolicy = "mangospa-cors-policy";
-
     public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
         Configuration = configuration;
@@ -78,12 +76,20 @@ public class Startup
 
         services.AddCors(options =>
         {
-            options.AddPolicy(_CorsPolicy, builder =>
-                builder.SetIsOriginAllowed(_ => true)
-                        //.WithOrigins("http://localhost:63585")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
+            options.AddDefaultPolicy(policy =>
+            {
+                if (Environment.IsLocal())
+                    policy.SetIsOriginAllowed(_ => true);
+                else
+                {
+                    policy.WithOrigins("https://*.costarremanager.com", "http://*.corp.virtualpremise.com", "http://*.corp.virtualpremise.com:30080")
+                          .SetIsOriginAllowedToAllowWildcardSubdomains();
+                }
+
+                policy.AllowAnyMethod()
+                      .AllowAnyHeader()
+                      .AllowCredentials();
+            });
         });
 
         services.AddControllers();
@@ -148,7 +154,7 @@ public class Startup
         // *****
 
         app.UseRouting();
-        app.UseCors(_CorsPolicy);
+        app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
  
