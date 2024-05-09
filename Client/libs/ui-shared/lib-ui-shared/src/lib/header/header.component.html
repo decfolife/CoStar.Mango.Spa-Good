@@ -76,6 +76,7 @@
             (focus)= "inputBlurred()"
             (selectionChange)="moduleChange($event)"
             matNativeControl
+            aria-label="Search by Object Type"
           >
             <option
               *ngFor="let module of searchModules"
