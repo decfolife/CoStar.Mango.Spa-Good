@@ -153,6 +153,7 @@ public class Startup
         //}
         // *****
 
+        app.UseMiddleware<SecurityHeadersMiddleware>();
         app.UseRouting();
         app.UseCors();
         app.UseAuthentication();
