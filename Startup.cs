@@ -46,15 +46,15 @@ public class Startup
         services.AddHttpContextAccessor();
 
         services.AddReverseProxy()
-            .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
-            .AddTransforms(builderContext =>
-            {
-                builderContext.AddRequestTransform(async transformContext =>
+                .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
+                .AddTransforms(builderContext =>
                 {
-                    var accessToken = transformContext.HttpContext.User.AccessToken();
-                    transformContext.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                });             
-            });
+                    builderContext.AddRequestTransform(async transformContext =>
+                    {
+                        var accessToken = transformContext.HttpContext.User.AccessToken();
+                        transformContext.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    });             
+                });
 
         AddSwagger(services);
         AddLogging(services);
@@ -196,7 +196,7 @@ public class Startup
     {
         services.AddSwaggerGen(opts =>
         {
-            opts.SwaggerDoc("v1", new OpenApiInfo() { Title = "MangoSPA Server", Description = "Used to act as a Web server for Mango SPA and create authentication cookie.", Version = "v1" });
+            opts.SwaggerDoc("v1", new OpenApiInfo() { Title = "MangoSPA Server", Description = "Mango SPA backend (BFF).", Version = "v1" });
 
             string filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
             opts.IncludeXmlComments(filePath, true);

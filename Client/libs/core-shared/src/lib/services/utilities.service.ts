@@ -46,43 +46,22 @@ export class UtilitiesService {
 
   // Get the base url for all the APIs
   // When running locally, this is the environment.baseApiUrl
-  // Otherwise, all API calls route through the MangoSPA web server
-  public static getBaseApiUrl(serviceName: string, isCAapp: boolean = false) {
-    if (this.isLocalEnvironment() || isCAapp) {
-      //return `http://localhost:3000/api/${serviceName}/api/`
+  // Otherwise, all API calls route through the MangoSPA backend server (BFF)
+  public static getBaseApiUrl(serviceName: string) {
+    if (this.isLocalEnvironment()) {
       return `${environment.baseApiUrl}${serviceName}/api/`
     }
 
     return `/api/${serviceName}/api/`
-    //return `${window.location.origin}/api/${serviceName}/api/`
   }
 
-  public static getCremUrl(clientKey: string, env: string, token?: string) {
-    let url: string;
-
-    switch (env) {
-      case 'STAGE': {
-        url = `https://${clientKey}.${env}.costarremanager.com/v06/login.aspx`; 
-        break; 
-      }
-      case 'PROD': { 
-        url = `https://${clientKey}.costarremanager.com/v06/login.aspx`; 
-        break; 
-      }
-      case 'LOCAL': { 
-        url = `https://${clientKey}.${env}/v06/login.aspx`; 
-        break; 
-      }
-      default: {
-        url = `http://${clientKey}.${env}.corp.virtualpremise.com/v06/login.aspx`; 
-        break; 
-      }
+  // Get the base url for the CA backend server (aka Identity API)
+  // This function should ONLY be used by CA SPA app.
+  public static getCABackendBaseApiUrl() {
+    if (this.isLocalEnvironment()) {
+      return `${environment.CAUrl}api/`
     }
 
-    if (token) {
-      url += `?auth_code=${token}`;
-    }
-
-    return url;
+    return `/api/`
   }
 }

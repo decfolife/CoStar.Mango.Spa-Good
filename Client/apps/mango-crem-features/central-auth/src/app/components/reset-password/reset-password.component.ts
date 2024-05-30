@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { UserService } from '@mango/core-shared';
 import { CentralAuthHttpError, PasswordRequirements } from '@mango/data-models/lib-data-models';
 import { noWhitespaceValidator, passwordMatchValidator } from './password-validator';
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'reset-password',
@@ -32,7 +32,7 @@ export class ResetPasswordComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
-    private _userService: UserService,
+    private _authService: AuthService,
     private caErrorHandler: CentralAuthErrorHandler,
     private fb: UntypedFormBuilder
   ) { }
@@ -50,7 +50,7 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
-    this._userService.validateTokenAndGetPasswordRequirements(this.resetToken).subscribe(
+    this._authService.validateTokenAndGetPasswordRequirements(this.resetToken).subscribe(
       (response) => {
         this.passwordRequirements = response.passwordRequirements;
         this.userEmail = response.userEmail;
@@ -97,7 +97,7 @@ export class ResetPasswordComponent implements OnInit {
       confirmPassword: this.form.confirmPassword.value
     };
 
-    this._userService.resetPassword(credentials).subscribe(
+    this._authService.resetPassword(credentials).subscribe(
       (results) => {
         this._router.navigateByUrl('/');
       },

@@ -4,7 +4,7 @@ class EnvironmentsCrem implements Environment {
   production = false;
   name = 'OPS';
   isRestful = true;
-  cremBaseUrl = 'http://[CLIENT].ops.corp.virtualpremise.com';
+  cremBaseUrl = 'https://[CLIENT].ops.corp.virtualpremise.com';
   CAUrl = 'http://login.ops.corp.virtualpremise.com:30080/';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
   baseApiUrl = 'http://api.ops.corp.virtualpremise.com:30080/';

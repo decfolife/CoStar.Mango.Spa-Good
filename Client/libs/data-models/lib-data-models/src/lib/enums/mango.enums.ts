@@ -26,7 +26,6 @@ export enum MangoSubApps {
 }
 
 export enum Api {
-    identity = 'identity',
     authentication = 'authentication',
     authorization = 'authorization',
     accounting = 'accountmanagement',

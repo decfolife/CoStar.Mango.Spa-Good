@@ -1,19 +1,19 @@
 import { Injectable } from "@angular/core";
-import { UserService } from "@mango/core-shared";
 import { MultiClientLoginHttpRequest, OAUTH_AUTH_CODE_QUERY_PARAM } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Observable, combineLatest, of, throwError } from "rxjs";
-import { catchError, delay, filter, finalize, map, switchMap, take, tap } from "rxjs/operators";
+import { catchError, delay, filter, map, switchMap, take, tap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
 import { environment } from "../../../environments/environment.dev";
+import { AuthService } from "../../services/auth.service";
 
 @Injectable()
 
 export class OAuthEffects {
 
-  constructor(private actions$: Actions, private userService: UserService, private centralAuthFacade: CentralAuthFacade) { }
+  constructor(private actions$: Actions, private authService: AuthService, private centralAuthFacade: CentralAuthFacade) { }
 
   initAuthorization$ = createEffect(
     () =>
@@ -32,7 +32,7 @@ export class OAuthEffects {
           return [request, isClientSpecificLogin]
         }),
         tap(_ => this.centralAuthFacade.setLoading(true)),
-        switchMap(([payload, isClientSpecificLogin]: [MultiClientLoginHttpRequest, boolean]) => this.userService.loginToClientSite(payload).pipe(
+        switchMap(([payload, isClientSpecificLogin]: [MultiClientLoginHttpRequest, boolean]) => this.authService.loginToClientSite(payload).pipe(
           catchError((e) => {
             this.centralAuthFacade.setLoading(false);
             
@@ -52,22 +52,9 @@ export class OAuthEffects {
         filter(([client]) => !!client),
         map(([client, redirectionUri]) => {
 
-          // const newRedirectionUri = !redirectionUri 
-          //   ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
-          //   : decodeURIComponent(redirectionUri)
-
-          // TEMPORARY
-          let newRedirectionUri = ''
-          if (environment.name === 'TEST' && client.clientKey.toLowerCase() === 'retaildemo') {
-            newRedirectionUri = !redirectionUri 
-              ? `https://${client.clientKey}.test.corp.virtualpremise.com/v06/login.aspx?` 
-              : decodeURIComponent(redirectionUri)
-          } else {
-            newRedirectionUri = !redirectionUri 
+          const newRedirectionUri = !redirectionUri 
             ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
             : decodeURIComponent(redirectionUri)
-          }
-          // TEMPORARY
 
           this.centralAuthFacade.setSelectedContactId(0)
           this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
@@ -90,7 +77,20 @@ export class OAuthEffects {
       )
   )
 
-  redirectToClient$ = createEffect(
+  authorize$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(OAuthActions.AUTHORIZE),
+        switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.accessToken$.pipe(take(1))])),
+        filter(([redirectUri, accessToken]) => !!redirectUri && !!accessToken),
+        switchMap(([redirectUri, accessToken]) => this.authService.retrieveAuthorizationCode(redirectUri).pipe(
+          map(response => OAuthActions.authorizeSuccess({ authorizationCode: response.code })),
+          catchError(_ => of(OAuthActions.authorizeError()))
+        ))
+      )
+  )
+
+  authorizeSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE_SUCCESS),
@@ -104,7 +104,7 @@ export class OAuthEffects {
         filter(([redirectionUri, authorizationCode]) => !!redirectionUri && !!authorizationCode),
         tap(([redirectionUri, authorizationCode, openClientInNewTab, isClientSpecificLogin]) => {
           if (isClientSpecificLogin) {
-            this.userService.purgeAuth()
+            this.authService.purgeAuth()
             this.centralAuthFacade.clearState()
           }
 

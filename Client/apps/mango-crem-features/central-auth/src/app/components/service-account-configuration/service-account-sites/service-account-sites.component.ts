@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { UserService } from '@mango/core-shared';
 import { Subscription } from 'rxjs';
 import { UpdateServiceAccountApiAccessRequest} from '@mango/data-models/lib-data-models';
 import { ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CommonModule } from '@angular/common';
+import { ServiceAccountService } from '../../../services/service-account.service';
 
 @Component({
   standalone: true,
@@ -20,7 +20,7 @@ export class ServiceAccountSitesComponent implements OnDestroy {
 
   subs: Subscription[] = [];
 
-  constructor(private userService: UserService) {}
+  constructor(private serviceAccountService: ServiceAccountService) {}
 
   updateApiAccess(e: any, index: number) {
     const request: UpdateServiceAccountApiAccessRequest = {
@@ -42,7 +42,7 @@ export class ServiceAccountSitesComponent implements OnDestroy {
 
   private updateServiceAccountApiAccess(request : UpdateServiceAccountApiAccessRequest){
     this.subs.push (
-      this.userService.updateServiceAccountApiAccess(request)
+      this.serviceAccountService.updateServiceAccountApiAccess(request)
         .subscribe(result => {    
           if(result){        
             this.apiAccessUpdated.emit(result);

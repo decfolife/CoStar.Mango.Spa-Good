@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StorageService, UserService } from '@mango/core-shared';
+import { StorageService } from '@mango/core-shared';
 import { Environment, loginResponseMock } from '@mango/data-models/lib-data-models';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -13,9 +13,10 @@ import { environment } from '../../../environments/environment.dev';
 import * as AppActions from '../actions/actions';
 import { CentralAuthFacade } from '../facades';
 import { AuthenticationEffects } from './authentication.effects';
+import { AuthService } from '../../services/auth.service';
 
 describe('Authentication Effects', () => {
-  let userService: UserService;
+  let authService: AuthService;
   let authenticationEffects: AuthenticationEffects;
   let centralAuthFacade: CentralAuthFacade;
   let router: Router;
@@ -34,7 +35,7 @@ describe('Authentication Effects', () => {
         { provide: Environment, useValue: environment }
       ]
     });
-    userService = TestBed.inject(UserService);
+    authService = TestBed.inject(AuthService);
     centralAuthFacade = TestBed.inject(CentralAuthFacade);
     authenticationEffects = TestBed.inject(AuthenticationEffects);
     router = TestBed.inject(Router);
@@ -51,15 +52,15 @@ describe('Authentication Effects', () => {
     });
 
     it('should call userService.login method', (done) => {
-      jest.spyOn(userService, 'login').mockReturnValue(of({}) as any);
+      jest.spyOn(authService, 'login').mockReturnValue(of({}) as any);
       authenticationEffects.login$.subscribe(_ => {
-        expect(userService.login).toHaveBeenCalledTimes(1)
+        expect(authService.login).toHaveBeenCalledTimes(1)
         done()
       })
     })
 
     it('should dispatch loginSuccess when login success', (done) => {
-      jest.spyOn(userService, 'login').mockReturnValue(of({}) as any);
+      jest.spyOn(authService, 'login').mockReturnValue(of({}) as any);
       authenticationEffects.login$.subscribe(action => {
         expect(action).toEqual({
           type: AppActions.LOGIN_SUCCESS,
@@ -70,7 +71,7 @@ describe('Authentication Effects', () => {
     });
 
     it('should dispatch loginError when login error', (done) => {
-      jest.spyOn(userService, 'login').mockReturnValue(throwError(of({ status: 401 })))
+      jest.spyOn(authService, 'login').mockReturnValue(throwError(of({ status: 401 })))
       authenticationEffects.login$.subscribe(action => {
         expect(action).toEqual({
           type: AppActions.LOGIN_ERROR
@@ -123,9 +124,9 @@ describe('Authentication Effects', () => {
     });
 
     it('should call userService.logout()', (done) => {
-      jest.spyOn(userService, 'logout').mockReturnValue()
+      jest.spyOn(authService, 'logout').mockReturnValue()
       authenticationEffects.logout$.subscribe(_ => {
-        expect(userService.logout).toBeCalledTimes(1)
+        expect(authService.logout).toBeCalledTimes(1)
         done()
       })
     })

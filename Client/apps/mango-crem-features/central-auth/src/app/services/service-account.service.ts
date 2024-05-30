@@ -1,0 +1,49 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import {
+  Environment,
+  ServiceAccountInfo,
+  ServiceAccountChangeHistory,
+  UpdateServiceAccountApiAccessRequest,
+  UpdateServiceAccountExpiresInDaysRequest} from '@mango/data-models/lib-data-models';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { UtilitiesService } from '@mango/core-shared';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ServiceAccountService {
+  identityUrl: string = UtilitiesService.getCABackendBaseApiUrl()
+
+  constructor(
+    private http: HttpClient,
+    private env: Environment,
+  ) { }
+
+  generateApiKey(): Observable<any> {
+    const url = `${this.identityUrl}/serviceaccount/createapikey`;
+    const body = {}
+    return this.http.post(url, body).pipe<string>(
+      tap((response: any) => {
+        return response.data;
+      })
+    );
+  }
+
+  getServiceAccountInfo(): Observable<ServiceAccountInfo> {
+    return this.http.get<ServiceAccountInfo>(`${this.identityUrl}/serviceaccount/accountinfo`)
+  }
+
+  updateServiceAccountApiAccess(request: UpdateServiceAccountApiAccessRequest): Observable<boolean> {
+    return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/updateapiaccess`, request)
+  }
+
+  updateServiceAccountExpiresInDays(request: UpdateServiceAccountExpiresInDaysRequest): Observable<boolean> {
+    return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/expiresindays`, request)
+  }
+
+  getServiceAccountChangeHistory(): Observable<ServiceAccountChangeHistory[]> {
+    return this.http.get<ServiceAccountChangeHistory[]>(`${this.identityUrl}/serviceaccount/accounthistory`)
+  }
+}

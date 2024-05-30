@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter} from '@angular/core';
-import { UserService } from '@mango/core-shared';
 import { MatDialog} from '@angular/material/dialog';
 import { GenerateApiKeyConfirmationComponent } from '../generate-apikey-confirmation/generate-apikey-confirmation.component';
 import { CopyClipboardMessageComponent } from '../copy-clipboard-message/copy-clipboard-message.component';
@@ -8,6 +7,7 @@ import { ServiceAccountInfo } from '@mango/data-models/lib-data-models';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ServiceAccountService } from '../../../services/service-account.service';
 
 @Component({
   standalone: true,
@@ -22,7 +22,7 @@ export class ServiceAccountApiKeysComponent {
 
   subs: Subscription[] = [];
 
-  constructor(private userService: UserService, private dialog: MatDialog) {}
+  constructor(private serviceAccountService: ServiceAccountService, private dialog: MatDialog) {}
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe())
@@ -43,7 +43,7 @@ export class ServiceAccountApiKeysComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.subs.push(
-          this.userService.generateApiKey()     
+          this.serviceAccountService.generateApiKey()     
           .subscribe(result => {
             if (result) {     
               this.apiKeyUpdated.emit(result);     

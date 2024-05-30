@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '@mango/core-shared';
 import { CentralAuthError, CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes } from '@mango/data-models/lib-data-models';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'mango-password-reset-request',
@@ -25,7 +25,7 @@ export class PasswordResetRequestComponent implements OnInit {
   get form() { return this.resetPasswordRequestForm.controls; }
 
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router,
     private fb: UntypedFormBuilder,
     private route: ActivatedRoute
@@ -70,7 +70,7 @@ export class PasswordResetRequestComponent implements OnInit {
       email: this.resetPasswordRequestForm.controls.email.value
     };
 
-    this.userService.requestPasswordReset(request).subscribe(
+    this.authService.requestPasswordReset(request).subscribe(
       () => this.sendRequestSuccess(),
       (error) => this.sendRequestFailed(error)
     );

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { JwtService, UserService, UtilitiesService } from '@mango/core-shared';
+import { JwtService, UtilitiesService, parseBool } from '@mango/core-shared';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
 import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM, SHOW_MULTI_CONTACT_POPUP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
+import { AuthService } from '../services/auth.service';
 
 // User must be authenticated. User must be auto-provisioned OR have access to multiple sites
 @Injectable()
@@ -12,7 +13,7 @@ export class RoleGuard  {
   isInboundOn: boolean;
 
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     private centralAuthFacade: CentralAuthFacade,
     private router: Router,
     private jwtService: JwtService
@@ -50,7 +51,7 @@ export class RoleGuard  {
           return of(false)
         } 
         
-        return this.userService.getCurrentUserAccessToken().pipe(
+        return this.authService.getCurrentUserAccessToken().pipe(
           map(accessToken => {
             if (accessToken) {
               const hasAccess = this.isAutoProvisionedOrHasMultipleSites(accessToken)
@@ -75,9 +76,9 @@ export class RoleGuard  {
   }
 
   isAutoProvisionedOrHasMultipleSites(accessToken: string) {
-    const decodedJwt = this.userService.getDecodedAuthToken(accessToken);
-    const isAutoProvisioned = this.userService.parseBool(decodedJwt.isAutoProvisioned);
-    const hasMultipleSites = this.userService.parseBool(decodedJwt.hasMultipleSites);
+    const decodedJwt = this.authService.getDecodedAuthToken(accessToken);
+    const isAutoProvisioned = parseBool(decodedJwt.isAutoProvisioned);
+    const hasMultipleSites = parseBool(decodedJwt.hasMultipleSites);
 
     return isAutoProvisioned || hasMultipleSites
   }

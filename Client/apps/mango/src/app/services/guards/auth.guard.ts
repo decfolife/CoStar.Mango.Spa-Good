@@ -4,7 +4,7 @@ import { Observable, combineLatest, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { MangoAppFacade } from '../../+state/app/app.facade';
 import { MangoNavigationService } from '../navigation.service';
-import { JwtService, UserService, UtilitiesService } from '@mango/core-shared';
+import { JwtService, AuthService, UtilitiesService } from '@mango/core-shared';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
     private facade: MangoAppFacade, 
     private activatedRoute: ActivatedRoute, 
     private navigationService: MangoNavigationService, 
-    private userService: UserService,
+    private authService: AuthService,
     private jwtService: JwtService) { }
 
   canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
@@ -37,7 +37,7 @@ export class AuthGuard implements CanActivate {
           return of(false)
         } 
 
-        return this.userService.getCurrentCREMUserAccessToken().pipe(
+        return this.authService.getCurrentUserAccessToken().pipe(
           map(accessToken => {
             if (accessToken) {
               this.facade.setAccessToken(accessToken)

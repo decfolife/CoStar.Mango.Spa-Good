@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
-import { UserService } from '@mango/core-shared';
 import { ServiceAccountInfo, UpdateServiceAccountExpiresInDaysRequest } from '@mango/data-models/lib-data-models';
 import { Subscription } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
+import { ServiceAccountService } from '../../../services/service-account.service';
 
 @Component({
   standalone: true,
@@ -17,7 +17,7 @@ export class ServiceAccountApiKeyDurationComponent implements OnDestroy{
 
   subs: Subscription[] = [];
 
-  constructor(private userService: UserService) {}
+  constructor(private serviceAccountService: ServiceAccountService) {}
 
   saveExpiresInDays(days: string){
     const request: UpdateServiceAccountExpiresInDaysRequest = {
@@ -25,7 +25,7 @@ export class ServiceAccountApiKeyDurationComponent implements OnDestroy{
     };
 
     this.subs.push (
-      this.userService.updateServiceAccountExpiresInDays(request)
+      this.serviceAccountService.updateServiceAccountExpiresInDays(request)
       .subscribe(result => {    
           if(result){        
             this.apiKeyExpiresInDaysUpdated.emit(result);

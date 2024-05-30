@@ -1,14 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { Observable, of,  } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { environment } from '../../../../../mango/src/environments/environment.local';
-import { EndpointService, UtilitiesService } from '@mango/core-shared';
+import { AuthService, EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { filter, switchMap } from 'rxjs/operators';
 import { Api, CentralAuthHttpError } from '@mango/data-models/lib-data-models';
-import { UserService } from '@mango/core-shared';
-import { ServiceAccount } from "../../../../../../libs/data-models/lib-data-models/src/lib/models/service-account/service-account";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +15,7 @@ export class ClientDeliveryService extends EndpointService {
   public requestHasBeenSent = false;
 
   constructor(
-    private userService: UserService,
+    private authService: AuthService,
     protected http: HttpClient, @Optional() facade: MangoAppFacade)
   {
     super(http, facade);
@@ -47,7 +42,7 @@ export class ClientDeliveryService extends EndpointService {
 
     const request = { email: emailAddress, clientKey:cKey };
 
-    this.userService.forceExpirePassword(request).subscribe(
+    this.authService.forceExpirePassword(request).subscribe(
       () => this.sendRequestSuccess(),
       (error) => this.sendRequestFailed(error)
     );

@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { MatPasswordStrengthModule } from '@angular-material-extensions/password-strength';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import {
+  AuthService,
   HeaderService,
   LibCoreSharedModule,
   NotificationService,
@@ -99,6 +99,7 @@ import { contactRecord } from './+state/app/app.selectors';
     { provide: RUNNING_IN_MANGO_SPA, useValue: true },
     AppService,
     BookmarksService,
+    AuthService,
     UserService,
     NotificationService,
     StorageService,

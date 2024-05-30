@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { StorageService, UserService } from '@mango/core-shared';
+import { StorageService } from '@mango/core-shared';
 import { Environment, IDLE_TIMOUT_DELAY_SECONDS, IS_CA_STANDALONE_APP } from '@mango/data-models/lib-data-models';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -17,6 +17,7 @@ import * as fromApp from './+state/reducers';
 import { AppComponent } from './app.component';
 import { OAuthEffects } from './+state/effects/oauth.effects';
 import { LoginComponent } from './components/login/login.component';
+import { AuthService } from './services/auth.service';
 import { CentralAuthErrorHandler } from './services/error-handler.service';
 import { CentralAuthHttpInterceptor } from './services/http.interceptor';
 import { CustomerSelectionPageComponent } from './components/customer-selection-page/customer-selection-page.component';
@@ -26,6 +27,7 @@ import { DxLoadPanelModule } from 'devextreme-angular';
 import { AppEffects } from './+state/effects/app.effects';
 import { HttpEffects } from './+state/effects/http.effects';
 import { RoleGuard } from './guards/role.guard';
+import { ServiceAccountService } from './services/service-account.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -106,7 +108,8 @@ import { RoleGuard } from './guards/role.guard';
     provideUserIdleConfig({ idle: 1, timeout: IDLE_TIMOUT_DELAY_SECONDS, ping: 2 }),
     AuthGuard,
     RoleGuard,
-    UserService,
+    AuthService,
+    ServiceAccountService,
     StorageService,
     JwtService,
     CentralAuthFacade

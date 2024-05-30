@@ -2,7 +2,7 @@ class EnvironmentsCrem {
   production = false;
   name = 'DEV';
   isRestful: true;
-  cremBaseUrl = 'http://[CLIENT].dev.corp.virtualpremise.com/';
+  cremBaseUrl = 'https://[CLIENT].dev.corp.virtualpremise.com/';
   CAUrl = 'http://login.dev.corp.virtualpremise.com:30080/';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
   baseApiUrl = 'http://api.dev.corp.virtualpremise.com:30080/';

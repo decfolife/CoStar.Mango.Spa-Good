@@ -3,17 +3,13 @@ import { HttpEvent, HttpHandler, HttpRequest, HttpResponse, provideHttpClient } 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StorageService, UserService } from '@mango/core-shared';
 import { Environment } from '@mango/data-models/lib-data-models';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { AppEffects } from '../+state/effects/app.effects';
 import { CentralAuthFacade } from '../+state/facades';
 import { initialState } from '../+state/reducers';
 import { environment } from '../../environments/environment.dev';
 import { CentralAuthHttpInterceptor } from './http.interceptor';
-import * as AppSelectors from '../+state/selectors';
 import { Observable, of } from 'rxjs';
-import { Injector, ModuleWithProviders, NgModule } from "@angular/core";
 
 
 describe('HttpInterceptor', () => {

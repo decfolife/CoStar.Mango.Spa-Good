@@ -3,3 +3,11 @@ export interface ApiResponse {
     success: boolean;
     data: any;
   }
+
+  export interface ApiResult<T> { 
+    data: T;
+    succeeded: boolean;
+    message: string;
+    errorCode: string;
+    statusCode: string;
+}

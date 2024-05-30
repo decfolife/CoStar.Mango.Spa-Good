@@ -4,7 +4,7 @@ import { SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { combineLatest, of } from 'rxjs';
-import { combineAll, filter, map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
 import { ActivatedRoute } from '@angular/router';

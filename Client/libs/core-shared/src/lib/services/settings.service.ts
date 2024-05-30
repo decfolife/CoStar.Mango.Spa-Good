@@ -1,9 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { Api, ClientSettings, ClientSSOSettings, CremHttpResponse, CremHTTPResult, IS_CA_STANDALONE_APP } from '@mango/data-models/lib-data-models';
-import { environment } from '../../../../../apps/mango/src/environments/environment.local';
+import { map } from 'rxjs/operators';
+import { Api, ApiResult, ClientSettings, ClientSSOSettings, CremHttpResponse, CremHTTPResult } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
 
 @Injectable({
@@ -17,15 +16,15 @@ export class SettingsService {
     })
   };
 
-  isCaStandAloneApp: boolean = inject(IS_CA_STANDALONE_APP);
-  identityUrl: string = UtilitiesService.getBaseApiUrl(Api.identity, this.isCaStandAloneApp)
+  identityUrl: string = UtilitiesService.getCABackendBaseApiUrl()
+  authenticationUrl: string = UtilitiesService.getBaseApiUrl(Api.authentication)
 
   constructor(
     private _http: HttpClient
   ) { }
 
   getClientSsoSettings(clientKey: string): Observable<ClientSSOSettings> {
-    return this._http.get<ClientSSOSettings>(`${this.identityUrl}settings/clientsso/${clientKey}`)
+    return this._http.get<ClientSSOSettings>(`${this.identityUrl}settings/clientsso/${clientKey}`);
   }
 
   getClientSettings(): Observable<ClientSettings> {
@@ -36,7 +35,7 @@ export class SettingsService {
 
   saveClientSettings(clientSettings: ClientSettings): Observable<CremHTTPResult> {
     const { headers } = this.httpOptions
-    return this._http.post<CremHttpResponse>(`${this.identityUrl}UpdateSettings`,
+    return this._http.post<CremHttpResponse>(`${this.authenticationUrl}UpdateSettings`,
       { settings: clientSettings },
       { headers })
       .pipe(map(response => (response.d || {}).Result))
