@@ -664,34 +664,34 @@ dx-tab-panel.dx-tabpanel {
   // z-index: 2021 !important;
 // }
 
-#dateBoxPopupWrapper.dx-overlay-wrapper {
-  z-index: 2021 !important;
-}
+// #dateBoxPopupWrapper.dx-overlay-wrapper {
+//   z-index: 2021 !important;
+// }
 
 .dx-overlay-content.dx-inner-overlay.dx-resizable.dx-context-menu.dx-datagrid {
   z-index: 2021 !important;
 }
 
-.dx-overlay-wrapper.dx-header-filter-menu.dx-popup-wrapper {
-  z-index: 2021 !important;
-  .dx-overlay-content {
-    .dx-toolbar {
-      .dx-button {
-        padding: 8px !important;
-        .dx-button-content {
-          align-items: center;
-          display: flex;
-          justify-content: center;
-          .dx-button-text {
-            font-size: 14px !important;
-            font-weight: 400;
-            color: #333;
-          }
-        }
-      }
-    }
-  }
-}
+// .dx-overlay-wrapper.dx-header-filter-menu.dx-popup-wrapper {
+//   z-index: 2021 !important;
+//   .dx-overlay-content {
+//     .dx-toolbar {
+//       .dx-button {
+//         padding: 8px !important;
+//         .dx-button-content {
+//           align-items: center;
+//           display: flex;
+//           justify-content: center;
+//           .dx-button-text {
+//             font-size: 14px !important;
+//             font-weight: 400;
+//             color: #333;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
 crem-dropdown{
   dx-drop-down-box{
@@ -705,9 +705,9 @@ crem-dropdown{
   }
 }
 
-.dx-overlay-wrapper.dx-overlay-modal.dx-overlay-shader.dx-loadpanel-wrapper {
-  z-index: 2021 !important;
-}
+// .dx-overlay-wrapper.dx-overlay-modal.dx-overlay-shader.dx-loadpanel-wrapper {
+//   z-index: 2021 !important;
+// }
 
 .dx-overlay-wrapper.dx-header-filter-menu.dx-popup-wrapper {
   .dx-overlay-content {
