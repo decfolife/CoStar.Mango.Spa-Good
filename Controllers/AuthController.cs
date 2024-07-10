@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using MangoSPA;
 using MangoSPA.Models;
 using MangoSPA.Services;
 using System;
+using MangoSPA.Extensions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Mango.MangoSPA.Server.Controllers;
 
@@ -25,7 +26,7 @@ public class AuthController : ControllerBase
 
     /// <summary>
     /// Calls Identity API to get accessToken (JWT).
-    /// Then creates an authentication cookie to keep the user logged-in
+    /// Then logs the user in using an authentication cookie.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -74,53 +75,34 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Creates an authentication cookie to keep the user logged-in to CREM
+    /// Used for LOCAL testing only.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="accessToken"></param>
+    /// <param name="env"></param>
     /// <returns></returns>
-    //[HttpPost("login")] //api/auth/login      
-    //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    //public async Task<ActionResult> Login([FromBody] LoginRequest request)
-    //{
-    //    await HttpContext.SignOutAsync();
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [HttpPost("login")] //auth/login  
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<OAuthResponse>> Login(
+        [FromBody] string accessToken,
+        [FromServices] IWebHostEnvironment env)
+    {
+        if (!env.IsLocal())
+            return BadRequest("Only allowed in LOCAL.");
 
-    //    _logger.LogInformation("Login request started. Calling Identity API to get access token.");
+        await HttpContext.SignOutAsync();
 
-    //    var result = await _authService.Login(request);
-    //    if (result is null) return Unauthorized();
+        _logger.LogInformation("login request started.");
+        await _authService.CreateAuthenticationCookie(accessToken);
+        _logger.LogInformation("login request completed successfully.");
 
-    //    _logger.LogInformation("Login request successfully completed.");
-
-    //    return Ok(result);
-    //}
-
-    // Need Authorization on this endpoint. Just do Cookie Auth? maybe JWT auth too so v06 can call this endpoint using the JWT
-    /// <summary>
-    /// Creates an authentication cookie to keep the user logged-in to CREM
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    //[Authorize]
-    //[HttpPost("login/client")] //api/auth/login/client     
-    //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    //public async Task<ActionResult> LoginToClient([FromBody] LoginToClientRequest request)
-    //{
-    //    _logger.LogInformation("Login to client request started. Calling Identity API to get access token.");
-
-    //    var result = await _authService.LoginToClient(request);
-    //    if (result is null) return Unauthorized();
-
-    //    _logger.LogInformation("Login to client request successfully completed.");
-
-    //    return Ok(result);
-    //}
+        return Ok();
+    }
 
     /// <summary>
-    /// Get the current logged-in user JWT token
+    /// Get the current logged-in user.
     /// </summary>
     /// <returns></returns>
     [Authorize]
@@ -132,16 +114,11 @@ public class AuthController : ControllerBase
     {
         _logger.LogInformation("Fetching accessToken for logged-in user {Email}.", User.Email());
 
-        var token = User.AccessToken();
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            _logger.LogError("Logged in user {Email} does not have an access token (JWT).", User.Email());
-            return Unauthorized();
-        }
+        var user = User.ToAuthenticatedUser();
 
         _logger.LogInformation("Successfully fetched accessToken for logged-in user {Email}.", User.Email());
 
-        return Ok(token);
+        return Ok(user);
     }
 
     [HttpPost("logout")] //auth/logout   

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace MangoSPA;
+namespace MangoSPA.Extensions;
 
 public static class EnvironmentExtensions
 {

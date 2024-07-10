@@ -1,32 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using MangoSPA.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using static MangoSPA.Constants;
 
-namespace MangoSPA;
-
-/// <summary>
-/// The following classes were copied from the CentralAuth reporsitory > 'Shared' library project
-/// </summary>
-public class Constants
-{
-    public class ClaimType
-    {
-        public const string TrackingId = JwtRegisteredClaimNames.Jti;
-        public const string Email = JwtRegisteredClaimNames.Email;
-        public const string UserId = "userId";
-        public const string ContactId = "contactId";
-        public const string ContactRole = "contactRole";
-        public const string ClientKey = "clientKey";
-        public const string SecurityLevel = "securityLevel";
-        public const string IsAutoProvisioned = "isAutoProvisioned";
-        public const string AccessToken = "token";
-
-        // Indicates whether /login endpoint or /token endpoint was used to generate a JWT token
-        public const string IsInternal = "isInternal";
-    }
-}
+namespace MangoSPA.Extensions;
 
 public static class ClaimExtensions
 {
@@ -38,6 +16,9 @@ public static class ClaimExtensions
 
         return email;
     }
+
+    public static int UserId(this ClaimsPrincipal principal)
+        => int.TryParse(principal.FindFirst(ClaimType.UserId).Value, out int result) ? result : default;
 
     public static int ContactId(this ClaimsPrincipal principal)
         => int.TryParse(principal.FindFirst(ClaimType.ContactId).Value, out int result) ? result : default;
@@ -58,17 +39,30 @@ public static class ClaimExtensions
 
     public static bool IsSecurityLevel2(this ClaimsPrincipal principal)
     {
-        var securityLevel = SecurityLevel(principal);
+        var securityLevel = principal.SecurityLevel();
         return securityLevel == 2;
     }
 
     public static bool IsAdminOrSuperUserContact(this ClaimsPrincipal principal)
     {
-        var contactRole = ContactRole(principal)?.ToLower();
+        var contactRole = principal.ContactRole()?.ToLower();
         if (contactRole == "superuser" || contactRole == "admin")
             return true;
 
         return false;
+    }
+
+    public static AuthenticatedUser ToAuthenticatedUser(this ClaimsPrincipal principal)
+    {
+        return new AuthenticatedUser
+        {
+            UserId = principal.UserId(),
+            Email = principal.Email(),
+            ContactId = principal.ContactId(),
+            ClientKey = principal.ClientKey(),
+            IsAutoProvisioned = principal.IsAutoProvisioned(),
+            IsRemUser = principal.SecurityLevel() > -1
+        };
     }
 
     public static string FindClaim(this ClaimsPrincipal principal, string claimType)
@@ -76,4 +70,19 @@ public static class ClaimExtensions
 
     public static string FindClaim(this IEnumerable<Claim> claims, string claimType)
         => claims?.FirstOrDefault(x => x.Type == claimType)?.Value ?? string.Empty;
+
+    //public static string SessionId(this ClaimsPrincipal principal)
+    //{
+    //    var sessionIdentity = principal.Identities
+    //        .FirstOrDefault(x => x.AuthenticationType == "Session");
+
+    //    if (sessionIdentity is null) return null;
+
+    //    string sessionId = sessionIdentity.Claims
+    //        .FindClaim(ClaimType.SessionId)
+    //        .Split(AuthSesssionKeyPrefix)
+    //        .LastOrDefault();
+
+    //    return sessionId;
+    //}
 }

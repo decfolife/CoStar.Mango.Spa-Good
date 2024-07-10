@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using static MangoSPA.Constants;
 using System.Net.Http.Headers;
+using UAParser;
 
 namespace MangoSPA.Services;
 
@@ -82,11 +83,15 @@ public class AuthService : IAuthService
         var userIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-        await _httpContextAccessor.HttpContext.SignInAsync(userPrincipal,
-               new AuthenticationProperties
-               {
-                   IsPersistent = true
-               });
+        var authProps = new AuthenticationProperties { IsPersistent = true };
+
+        var uaParser = Parser.GetDefault();
+        ClientInfo c = uaParser.Parse(_httpContextAccessor.HttpContext.Request.Headers.UserAgent);
+
+        authProps.Items.Add("os", c.OS.Family);
+        authProps.Items.Add("browser", c.UA.Family);
+
+        await _httpContextAccessor.HttpContext.SignInAsync(userPrincipal, authProps);
     }
 
     //public async Task<LoginResponse> Login(LoginRequest request)

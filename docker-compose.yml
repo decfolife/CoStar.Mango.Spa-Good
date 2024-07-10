@@ -1,17 +1,17 @@
 version: '3.9'
 
 services:
-  mango-spa:
-    image: ${DOCKER_REGISTRY-}mango-spa
-    container_name: mango-spa
-    build:
-      context: Client
-      dockerfile: apps/mango/Dockerfile
-    environment:
-      - name=LOCAL
-    ports:
-      - 8084:8000
-    restart: "no"
+  # mango-spa:
+  #   image: ${DOCKER_REGISTRY-}mango-spa
+  #   container_name: mango-spa
+  #   build:
+  #     context: Client
+  #     dockerfile: apps/mango/Dockerfile
+  #   environment:
+  #     - name=LOCAL
+  #   ports:
+  #     - 8084:8000
+  #   restart: "no"
 
   # mango-spa-server:
   #   image: ${DOCKER_REGISTRY-}mango-spa-server
@@ -27,4 +27,17 @@ services:
   #   ports:
   #     - 8085:8000
   #   restart: "no"
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: mango-spa-redis
+    user: root
+    volumes:
+        - redis_data:/var/lib/redis/data
+    ports:
+        - '6379:6379'
+    restart: "no"
+
+volumes:
+  redis_data:
   

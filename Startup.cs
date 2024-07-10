@@ -3,13 +3,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net.Http.Headers;
 using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
-using System.Net;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog.Events;
 using Serilog;
@@ -19,7 +17,11 @@ using System.IO;
 using System.Collections.Generic;
 using MangoSPA.Services;
 using Yarp.ReverseProxy.Transforms;
-using System.Threading.Tasks;
+using StackExchange.Redis;
+using MangoSPA.Extensions;
+using Microsoft.AspNetCore.DataProtection;
+using MangoSPA.Middleware;
+using static MangoSPA.Constants;
 
 namespace MangoSPA;
 
@@ -44,6 +46,13 @@ public class Startup
 
         services.AddHealthChecks();
         services.AddHttpContextAccessor();
+        AddSwagger(services);
+        AddLogging(services);
+        AddAppSettings(services);
+        AddCache(services, Configuration);
+        AddAuth(services, Environment);
+        AddDataProtection(services);
+        AddServices(services);
 
         services.AddReverseProxy()
                 .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
@@ -56,11 +65,6 @@ public class Startup
                     });             
                 });
 
-        AddSwagger(services);
-        AddLogging(services);
-        AddAppSettings(services, Configuration);
-        AddAuth(services, Environment);
-
         // Needed if we want to serve mangoSPA using .NET web server.
         // Setup where the compiled version of our spa application will be, when in production. 
         //services.AddSpaStaticFiles(options =>
@@ -72,6 +76,9 @@ public class Startup
         {
             c.BaseAddress = new Uri(Configuration["ServicesUrls:IdentityApiUrl"]);
             c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var service = p.GetRequiredService<IRequestService>();
+
+            c.DefaultRequestHeaders.Add(Constants.Headers.TrackingId, service.TrackingId.ToString());
         });
 
         services.AddCors(options =>
@@ -111,7 +118,7 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
 
-            var isInK8s = config.GetSection("AppSettings").GetValue<bool>("IsInKubernetes");
+            var isInK8s = config.IsInKubernetes();
             if (isInK8s)
             {
                 app.UseSwagger(opt =>
@@ -186,10 +193,10 @@ public class Startup
         //});
     }
 
-    public void AddAppSettings(IServiceCollection services, IConfiguration config)
+    public void AddAppSettings(IServiceCollection services)
     {
-        services.Configure<AppSettings>(config.GetSection(AppSettings.Section));
-        services.Configure<ServiceUrlsOptions>(config.GetSection(ServiceUrlsOptions.Section));
+        services.Configure<AppSettings>(Configuration.GetSection(AppSettings.Section));
+        services.Configure<ServiceUrlsOptions>(Configuration.GetSection(ServiceUrlsOptions.Section));
     }
 
     public void AddSwagger(IServiceCollection services)
@@ -225,6 +232,7 @@ public class Startup
     public void AddAuth(IServiceCollection services, IWebHostEnvironment env)
     {
         services.AddScoped<IAuthService, AuthService>();
+        services.AddSingleton<ITicketStore, SessionStore>();
 
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opts =>
@@ -233,7 +241,8 @@ public class Startup
                     opts.Cookie.SameSite = env.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict;
                     opts.Cookie.SecurePolicy = env.IsLowerEnvs() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
                     opts.Cookie.HttpOnly = true;
-                    opts.ExpireTimeSpan = TimeSpan.FromMinutes(int.Parse(Configuration["Auth:CookieExpireInMinutes"]));
+                    opts.ExpireTimeSpan = TimeSpan.FromMinutes(Configuration.CookieExpirationInMinutes());
+
                     //opts.SlidingExpiration = true;
 
                     opts.Events = new CookieAuthenticationEvents
@@ -245,26 +254,97 @@ public class Startup
                         }
                     };
                 });
-      
-                //.AddOAuth("central-auth", o =>
-                //{
-                //    o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //    o.ClientId = "mango-spa";
-                //    o.ClientSecret = "mango-spa";
 
-                //    //o.AuthorizationEndpoint = "https://identity.dev.crem.aws.dshrp.com/api/oauth/authorize";
-                //    //o.TokenEndpoint = "https://identity.dev.crem.aws.dshrp.com/api/oauth/token";
-                //    o.AuthorizationEndpoint = "https://localhost:5001/api/oauth/authorize";
-                //    o.TokenEndpoint = "https://localhost:5001/api/oauth/token";
-                //    o.CallbackPath = "/oauth/custom-cb";
-                //    o.UsePkce = true;
+        services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
+             .Configure<ITicketStore>((options, store) =>
+             {
+                 // Enables storing authentication ticket server-side. Authentication cookie now only contains a session ID.
+                 options.SessionStore = store;
+             });
 
-                //    // Todo
-                //    o.Events.OnCreatingTicket = async ctx =>
-                //    {
+        services.AddAuthorization(opts =>
+        {
+            opts.AddPolicy("FullAccess", policy => policy.RequireClaim(ClaimType.SecurityLevel, "2"));
+        });
 
-                //    };
-                //});
+
+        /*
+         * NOTE:
+         * var token = await context.GetUserAccessTokenAsync();
+         * 
+             The method GetUserAccessTokenAsync() is an extension method coming from IdentityModel.AspNetCore. 
+             It refreshes the access token if it is expired before handing it back to the caller. 
+             As part of the refreshing logic the new access token is being saved in the user's authentication session.
+
+            This method will come in handy when we add the below code (OIDC as the default challenge scheme)
+            e.g. services.AddOpenIdConnect() instead of AddOAuth()
+         */
+
+
+        //.AddOAuth("central-auth", o =>
+        //{
+        //    o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        //    o.ClientId = "mango-spa";
+        //    o.ClientSecret = "mango-spa";
+
+        //    //o.AuthorizationEndpoint = "https://identity.dev.crem.aws.dshrp.com/api/oauth/authorize";
+        //    //o.TokenEndpoint = "https://identity.dev.crem.aws.dshrp.com/api/oauth/token";
+        //    o.AuthorizationEndpoint = "https://localhost:5001/api/oauth/authorize";
+        //    o.TokenEndpoint = "https://localhost:5001/api/oauth/token";
+        //    o.CallbackPath = "/oauth/custom-cb";
+        //    o.UsePkce = true;
+
+        //    // Todo
+        //    o.Events.OnCreatingTicket = async ctx =>
+        //    {
+
+        //    };
+        //});
+    }
+
+    public void AddServices(IServiceCollection services)
+    {
+        services.AddScoped<IRequestService>(provider =>
+        {
+            var httpContext = provider.GetRequiredService<IHttpContextAccessor>();
+            var trackingId = httpContext.GetHeaderValue<Guid>(Headers.TrackingId, Guid.NewGuid());
+            httpContext.SetHeaderValue(Headers.TrackingId, trackingId.ToString());
+
+            return new RequestService(trackingId);
+        });
+
+        services.AddScoped<ICacheService, CacheService>()
+                .AddScoped<ISessionService, SessionService>();
+    }
+
+    // Configure data protection to use the same key ring and app identifier persisted to Redis.
+    // Needed for production scenarios where we may have multiple instances of this app running
+    public void AddDataProtection(IServiceCollection services)
+    {
+        var builder = services.AddDataProtection()
+            .SetApplicationName("mangospa_bff");
+
+        if (Configuration.UseInMemoryCaching())
+            return;
+
+        var configOptions = Configuration.RedisConfigurationOptions();
+
+        var multiplexer = ConnectionMultiplexer.Connect(configOptions);
+        builder.PersistKeysToStackExchangeRedis(multiplexer, "dataprotection");     
+    }
+
+    public void AddCache(IServiceCollection services, IConfiguration config)
+    {
+        if (config.UseInMemoryCaching())
+        {
+            services.AddDistributedMemoryCache();
+            return;
+        }
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.ConfigurationOptions = Configuration.RedisConfigurationOptions();
+        });
     }
 }
 

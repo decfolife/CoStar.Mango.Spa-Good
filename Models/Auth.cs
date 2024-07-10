@@ -1,9 +1,12 @@
-﻿namespace MangoSPA.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public record LoginRequest(string Email, string Password, string ClientKey = "");
-public record LoginResponse(string AuthToken, string Email, bool HasMultipleSites, string ClientKey);
-public record LoginToClientRequest(string ClientKey, int ContactId, string ContactRole, bool? IsDefaultLoginContact, int DefaultLoginContactId);
-public record LoginToClientResponse(string AuthToken);
+namespace MangoSPA.Models;
+
+//public record LoginRequest(string Email, string Password, string ClientKey = "");
+//public record LoginResponse(string AuthToken, string Email, bool HasMultipleSites, string ClientKey);
+//public record LoginToClientRequest(string ClientKey, int ContactId, string ContactRole, bool? IsDefaultLoginContact, int DefaultLoginContactId);
+//public record LoginToClientResponse(string AuthToken);
 
 
 public record AccessTokenRequest
@@ -33,29 +36,29 @@ public record AccessTokenResponse
     public string TokenType { get; set; }
 }
 
-public class AuthorizeRequest
-{
-    // Required - Value must be 'code'
-    public string ResponseType { get; set; }
+//public class AuthorizeRequest
+//{
+//    // Required - Value must be 'code'
+//    public string ResponseType { get; set; }
 
-    // Required - Must be 'mango-spa' or 'crem'
-    public string ClientId { get; set; }
+//    // Required - Must be 'mango-spa' or 'crem'
+//    public string ClientId { get; set; }
 
-    // Required - Client generates this. The encrypted value of a code_verifier (PKCE).
-    public string CodeChallenge { get; set; }
+//    // Required - Client generates this. The encrypted value of a code_verifier (PKCE).
+//    public string CodeChallenge { get; set; }
 
-    // Optional - Client specifies this. The algorithm used to encrypt the code_verifier. Value must be 'S256' which is the default algorithm we are using currently.
-    public string CodeChallengMethod { get; set; }
+//    // Optional - Client specifies this. The algorithm used to encrypt the code_verifier. Value must be 'S256' which is the default algorithm we are using currently.
+//    public string CodeChallengMethod { get; set; }
 
-    // Required - Client Uri
-    public string RedirectUri { get; set; }
+//    // Required - Client Uri
+//    public string RedirectUri { get; set; }
 
-    // Optional
-    public string Scope { get; set; }
+//    // Optional
+//    public string Scope { get; set; }
 
-    // Optional
-    public string State { get; set; }
-}
+//    // Optional
+//    public string State { get; set; }
+//}
 
 public record AuthorizeResponse
 {
@@ -70,4 +73,32 @@ public record OAuthResponse
     public string AccessToken { get; set; }
     public string Code { get; set; }
     public string RedirectUri { get; set; }
+}
+
+// Current user
+public record AuthenticatedUser
+{
+    public int UserId { get; set; }
+    public string Email { get; set; }
+    public string ClientKey { get; set; }
+    public int ContactId { get; set; }
+    public bool IsAutoProvisioned { get; set; }
+    public bool IsRemUser { get; set; }
+}
+
+public record UserAuthSession
+{
+    public string SessionId { get; set; }
+    public AuthenticatedUser User { get; set; }
+    public DateTimeOffset? ExpiresUtc { get; set; }
+    public string OS { get; set; }
+    public string Browser { get; set; }
+
+    //public DateTimeOffset? LastActivity { get; set; }
+}
+
+public record AuthSessionResponse
+{
+    public int Total { get; set; }
+    public List<UserAuthSession> Data { get; set; }
 }
