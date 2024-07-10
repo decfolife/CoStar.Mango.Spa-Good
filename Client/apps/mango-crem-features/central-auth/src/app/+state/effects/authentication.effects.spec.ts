@@ -88,7 +88,7 @@ describe('Authentication Effects', () => {
       actions$ = of(AppActions.loginSuccess({ response: mockUserLoginResponse }))
     });
 
-    it('should dispatch setUser and setAccessToken', (done) => {
+    it('should dispatch setUser', (done) => {
       authenticationEffects.loginSuccess$.pipe(
         toArray()
       ).subscribe(actions => {
@@ -96,10 +96,6 @@ describe('Authentication Effects', () => {
         expect(actions[0]).toEqual({
           type: AppActions.SET_USER,
           user: mockUserLoginResponse.user
-        })
-        expect(actions[1]).toEqual({
-          type: AppActions.SET_ACCESS_TOKEN,
-          accessToken: mockUserLoginResponse.authToken
         })
         done()
       })

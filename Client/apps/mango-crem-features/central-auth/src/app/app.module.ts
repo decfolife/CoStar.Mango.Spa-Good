@@ -44,7 +44,7 @@ import { ServiceAccountService } from './services/service-account.service';
       {
         path: 'customer-selection',
         component: CustomerSelectionPageComponent,
-        canActivate: [RoleGuard],
+        canActivate: [AuthGuard],
         title: 'Customer Selection - CoStar Real Estate Manger Secure Login'
       },
       {

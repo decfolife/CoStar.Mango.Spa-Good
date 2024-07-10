@@ -8,6 +8,8 @@ import { catchError, filter, map, switchMap, take } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import { CentralAuthFacade } from "../facades";
 import { AuthService } from "../../services/auth.service";
+import { ToastrService } from "ngx-toastr";
+import { MangoErrorTypes, NOTIFICATION_ERROR_TYPES_MAP } from "@mango/data-models/lib-data-models";
 
 @Injectable()
 
@@ -15,7 +17,7 @@ export class AuthenticationEffects {
   constructor(
     private actions$: Actions, 
     private authService: AuthService, 
-    private jwtService: JwtService,
+    private notificationService: ToastrService,
     private centralAuthFacade: CentralAuthFacade,
     private router: Router) { }
 
@@ -26,7 +28,10 @@ export class AuthenticationEffects {
         switchMap((action: { type: string, credentials: any }) => this.authService.login(action.credentials).pipe(
           filter(response => !!response),
           map(response => AppActions.loginSuccess({ response })),
-            catchError(_ => of(AppActions.loginError())
+            catchError(error => {
+              this.notificationService[NOTIFICATION_ERROR_TYPES_MAP[MangoErrorTypes.FATAL]](error.message, error.title)
+              return of(AppActions.loginError())
+            }
           )),
         )
       )
@@ -36,26 +41,11 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOGIN_SUCCESS),
-        switchMap((action: { type: string, response: LoginResponse }) => combineLatest([of(action.response), this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))])),
-        switchMap(([response, isClientSpecificLogin]) => {
-          if (!isClientSpecificLogin) {
-            this.authService.setAuth(response.user)
-          }
-
-          if (!response.user.hasMultipleSites) {
-            // Treat user as if they came in through customer specific login page
-            this.centralAuthFacade.setClientSpecificLogin(true)
-            this.centralAuthFacade.setSelectedClientKey(response.user.clientKey)
-            this.centralAuthFacade.setOpenClientInNewTab(false)
-          }
-
-          if (UtilitiesService.isLocalEnvironment()) {
-            this.jwtService.saveToken(response.authToken)
-          }
+        switchMap((action: { type: string, response: LoginResponse }) => {
+          const user = action.response.user
 
           return of(
-            AppActions.setUser({ user: response.user }),
-            AppActions.setAccessToken({ accessToken: response.authToken })
+            AppActions.setUser({ user: user })
           )
         })
       )

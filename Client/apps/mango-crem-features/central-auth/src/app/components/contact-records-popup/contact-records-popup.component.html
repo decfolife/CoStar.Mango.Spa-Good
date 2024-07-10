@@ -31,7 +31,7 @@
 						<div class="dx-field-value">
 							<dx-check-box [name]="row?.data?.contactID"
 								(onValueChanged)="onDefaultCheckboxValueChanged($event, row.data)"
-								[value]="row.data.contactID === defaultContactRecordID">
+								[value]="row.data.isDefaultLoginContact">
 							</dx-check-box>
 						</div>
 					</div>

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { UserSite } from '@mango/data-models/lib-data-models';
 import { DxSelectBoxModule, DxTooltipModule } from 'devextreme-angular';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { CentralAuthFacade } from '../../+state/facades';
 import { ContactRecordsPopupComponent } from '../contact-records-popup/contact-records-popup.component';
@@ -21,7 +21,6 @@ export class CustomerSelectionPageComponent implements OnInit {
   isLoading$: Observable<boolean>
   recentClients$: Observable<UserSite[]>
   clientsDropdown$: Observable<string[]>
-  isVisible$: Observable<boolean>
   tooltipState: boolean[] = []
 
   constructor(private centralAuthFacade: CentralAuthFacade) {
@@ -31,9 +30,6 @@ export class CustomerSelectionPageComponent implements OnInit {
     this.clientsDropdown$ = this.clients$.pipe(
       filter(clients => !!clients),
       map(clients => clients.map(client => client.clientKey.toUpperCase())));
-    this.isVisible$ = combineLatest([this.centralAuthFacade.userClients$, this.centralAuthFacade.userContactRecords$, this.centralAuthFacade.selectedContactRecord$, this.centralAuthFacade.contactId$, this.centralAuthFacade.isClientSpecificLogin$]).pipe(
-      map(([clients, contactRecords, selectedContactRecord, selectedContactId, isClientSpecificLogin]) => !!clients && !contactRecords && !selectedContactRecord && !selectedContactId && !isClientSpecificLogin)
-    )
   }
 
   ngOnInit(): void {

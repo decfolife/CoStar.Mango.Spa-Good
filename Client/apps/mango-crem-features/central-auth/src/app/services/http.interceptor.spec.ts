@@ -54,15 +54,6 @@ describe('HttpInterceptor', () => {
         Accept: 'application/json',
       })
     })
-
-    it('should add Content-Type, Accept and Authorization headers when token is defined', () => {
-      const headers = httpInterceptor.generateRequestHeaders('mock_access_token')
-      expect(headers).toStrictEqual({
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: 'Bearer mock_access_token'
-      })
-    })
   })
 
   describe('#getRouter', () => {

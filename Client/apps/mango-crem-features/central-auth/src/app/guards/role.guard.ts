@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { JwtService, UtilitiesService, parseBool } from '@mango/core-shared';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
 import { OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM, SHOW_MULTI_CONTACT_POPUP_QUERY_PARAM } from '@mango/data-models/lib-data-models';
 import { AuthService } from '../services/auth.service';
+import { UserAuth } from '../models/userAuth';
 
 // User must be authenticated. User must be auto-provisioned OR have access to multiple sites
 @Injectable()
@@ -15,8 +15,7 @@ export class RoleGuard  {
   constructor(
     private authService: AuthService,
     private centralAuthFacade: CentralAuthFacade,
-    private router: Router,
-    private jwtService: JwtService
+    private router: Router
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
@@ -29,10 +28,10 @@ export class RoleGuard  {
     !!showMultiContactPopup ? this.centralAuthFacade.setIsSwitchContactRecord(true) : null;
     !!clientKey || !!redirectUri ? this.centralAuthFacade.setOpenClientInNewTab(false) : null;
 
-    return this.centralAuthFacade.accessToken$.pipe(
-      switchMap(accessToken => {
-        if (accessToken) {
-          const hasAccess = this.isAutoProvisionedOrHasMultipleSites(accessToken)
+    return this.centralAuthFacade.user$.pipe(
+      switchMap(user => {
+        if (user) {
+          const hasAccess = this.isAutoProvisionedOrHasMultipleSites(user)
           if (!hasAccess) {
             this.centralAuthFacade.logout()
             this.router.navigate(['/'])
@@ -42,26 +41,17 @@ export class RoleGuard  {
           return of(true)
         } 
         
-        if (UtilitiesService.isLocalEnvironment()) {
-          let token = this.jwtService.getToken()
-          this.centralAuthFacade.setAccessToken(token)
-          if (token) return of(true)       
-
-          this.router.navigate(['/'], { queryParamsHandling: 'merge' });
-          return of(false)
-        } 
-        
-        return this.authService.getCurrentUserAccessToken().pipe(
-          map(accessToken => {
-            if (accessToken) {
-              const hasAccess = this.isAutoProvisionedOrHasMultipleSites(accessToken)
+        return this.authService.getCurrentUser().pipe(
+          map(user => {
+            if (user) {
+              const hasAccess = this.isAutoProvisionedOrHasMultipleSites(user)
               if (!hasAccess) {
                 this.centralAuthFacade.logout()
                 this.router.navigate(['/'])
                 return false
               } 
 
-              this.centralAuthFacade.setAccessToken(accessToken)
+              this.centralAuthFacade.setUser(user)
               return true
             }
           }),
@@ -75,11 +65,7 @@ export class RoleGuard  {
     )
   }
 
-  isAutoProvisionedOrHasMultipleSites(accessToken: string) {
-    const decodedJwt = this.authService.getDecodedAuthToken(accessToken);
-    const isAutoProvisioned = parseBool(decodedJwt.isAutoProvisioned);
-    const hasMultipleSites = parseBool(decodedJwt.hasMultipleSites);
-
-    return isAutoProvisioned || hasMultipleSites
+  isAutoProvisionedOrHasMultipleSites(user: UserAuth) {
+    return user.isAutoProvisioned || user.hasMultipleSites
   }
 }

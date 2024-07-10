@@ -1,28 +1,39 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { DBkeys, SettingsService, StorageService } from "@mango/core-shared";
-import { CentralAuthError, CentralAuthErrorCodes, ContactRecord, MangoErrorTypes, OAUTH_LOGOUT_QUERY_PARAM, V06_LOGIN_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, UserAuth, OAUTH_REDIRECT_QUERY_PARAM } from "@mango/data-models/lib-data-models";
+import { CentralAuthError, CentralAuthErrorCodes, ContactRecord, MangoErrorTypes, V06_LOGIN_ERROR_MESSAGE, USER_LOGGED_OUT_ERROR_MESSAGE, OAUTH_REDIRECT_QUERY_PARAM } from "@mango/data-models/lib-data-models";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as dayjs from 'dayjs';
 import { UserIdleService } from "libs/core-shared/src/lib/services";
 import { combineLatest, of } from "rxjs";
-import { filter, first, map, switchMap, take, tap } from "rxjs/operators";
+import { catchError, filter, first, map, switchMap, take, tap } from "rxjs/operators";
 import * as AppActions from '../actions/actions';
 import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
+import { AuthService } from "../../services/auth.service";
+import { CentralAuthURLService } from "../../services/url.service";
 
 @Injectable()
 
 export class AppEffects {
 
-  constructor(private actions$: Actions, private centralAuthFacade: CentralAuthFacade, private router: Router, private settingsService: SettingsService, private acitvatedRoute: ActivatedRoute, private storageService: StorageService, private idleService: UserIdleService) { }
+  constructor(
+    private actions$: Actions, 
+    private centralAuthFacade: CentralAuthFacade, 
+    private router: Router, 
+    private authService: AuthService,
+    private settingsService: SettingsService, 
+    private acitvatedRoute: ActivatedRoute, 
+    private storageService: StorageService, 
+    private urlService: CentralAuthURLService,
+    private idleService: UserIdleService) { }
 
   appInit$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.APP_INIT),
         switchMap(_ => of(
-          AppActions.populateLoggedInUserData(),
+          AppActions.loadCurrentUser(),
           //AppActions.setupRouteAndQueryParams(),
           AppActions.handleCustomQueryParams(),
           OAuthActions.setupOAuthRedirectionToClient(),
@@ -45,8 +56,8 @@ export class AppEffects {
             return
           } 
 
-          // If user is coming in through customer specific login page OR user doesn't have multiple sites
-          if (isClientSpecificLogin || !user.hasMultipleSites) {
+          // If user is coming in through customer specific login page
+          if (isClientSpecificLogin) {
             this.centralAuthFacade.getUserClients()
             this.centralAuthFacade.startAuthorizationWhenFullySelected()
             return
@@ -57,13 +68,36 @@ export class AppEffects {
       ), { dispatch: false }
   )
 
+  loadCurrentUser$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.LOAD_CURRENT_USER),
+        switchMap(_ => this.authService.getCurrentUser().pipe(
+          filter(response => !!response),
+          map(user => {
+            this.centralAuthFacade.setUser(user)
+            return AppActions.setLoadCurrentUserComplete({loadCurrentUserComplete: true})
+          }),
+          catchError(_ => {
+            return of(
+              AppActions.setLoadCurrentUserComplete({loadCurrentUserComplete: true})
+            )
+          })
+        ))
+      )
+  );
+
   handleSSOClientLogin$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.HANDLE_SSO_CLIENT_LOGIN),
         switchMap(_ => this.centralAuthFacade.ssoSettings$),
         filter(ssoSettings => !!ssoSettings),
-        tap(ssoSettings => ssoSettings.forceSSO && ssoSettings.isSSOEnabled ? window.location.href = ssoSettings.ssoUri : null)
+        tap(ssoSettings => {
+          if (ssoSettings.isSSOEnabled && ssoSettings.forceSSO) {
+            window.location.href = ssoSettings.ssoUri
+          }
+        })
       ), { dispatch: false }
   )
 
@@ -76,7 +110,6 @@ export class AppEffects {
         })
       ), { dispatch: false }
   )
-
 
   /*setupRouteAndQueryParams$ = createEffect(
     () =>
@@ -187,36 +220,6 @@ export class AppEffects {
       ), { dispatch: false }
   )
 
-  populateLoggedInUserData$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.POPULATE_LOGGED_IN_USER_DATA),
-        map(_ => {
-          const user: UserAuth = this.storageService.getDataObject(DBkeys.USER_AUTH);
-          return user ? AppActions.setUser({ user }) : AppActions.noOpAction()
-        })
-      )
-  )
-
-  getContactRecordsSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.GET_CONTACT_RECORDS_SUCCESS),
-        map((action: { type: string, contactRecords: ContactRecord[] }) => action.contactRecords),
-        filter(contactRecords => !!contactRecords && contactRecords.length <= 1),
-        switchMap(contactRecord => combineLatest([of(contactRecord), this.centralAuthFacade.isSwitchContactRecord$.pipe(take(1))])),
-        switchMap(([contactRecord, isSwitchContactRecord]) => {
-          if (!!isSwitchContactRecord) {
-            return of(AppActions.noOpAction())
-          }
-          return contactRecord.length === 0 ?
-            of(AppActions.setSelectedContactID({ contactId: 0 }), AppActions.setContactRecord({ contactRecord: { contactID: 0 } }))
-            :
-            of(AppActions.setSelectedContactID({ contactId: contactRecord[0].contactID }))
-        })
-      )
-  )
-
   populateSelectedClientAndContactRecords$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -247,7 +250,19 @@ export class AppEffects {
         ofType(AppActions.START_AUTHORIZATION_WHEN_FULLY_SELECTED),
         switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$, this.centralAuthFacade.selectedContactRecord$])),
         filter(([client, contactRecord]) => !!client && !!contactRecord),
-        map(_ => OAuthActions.initAuthorization()),
+        switchMap(([client, contactRecord]) => {
+          if (client.isSSOEnabled && (client.forceSSO || contactRecord.requireSSO)) {
+            this.centralAuthFacade.setSelectedContactId(0)
+            window.open(client.ssoUri, "_blank");
+            
+            return of(
+              AppActions.purgeClientSelection(),
+              AppActions.getUserClients()
+            )
+          }
+
+          return of(OAuthActions.initAuthorization())
+        }),
       )
   )
 }

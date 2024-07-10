@@ -8,12 +8,16 @@ import * as OAuthActions from '../actions/oauth.actions';
 import { CentralAuthFacade } from "../facades";
 import { environment } from "../../../environments/environment.dev";
 import { AuthService } from "../../services/auth.service";
+import { ToastrService } from "ngx-toastr";
 
 @Injectable()
 
 export class OAuthEffects {
 
-  constructor(private actions$: Actions, private authService: AuthService, private centralAuthFacade: CentralAuthFacade) { }
+  constructor(
+    private actions$: Actions, 
+    private authService: AuthService, 
+    private centralAuthFacade: CentralAuthFacade) { }
 
   initAuthorization$ = createEffect(
     () =>
@@ -23,12 +27,21 @@ export class OAuthEffects {
           [
             this.centralAuthFacade.selectedClient$.pipe(take(1)), 
             this.centralAuthFacade.selectedContactRecord$.pipe(take(1)),
-            this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))
+            this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1)),
+            this.centralAuthFacade.selectedDefaultContactRecord$.pipe(take(1)),
           ])
         ),
         filter(([client, contactRecord]) => !!client && !!contactRecord),
-        map(([client, contactRecord, isClientSpecificLogin]) => {
-          let request: MultiClientLoginHttpRequest = { clientKey: client.clientKey, contactID: contactRecord.contactID, contactRole: contactRecord.userRoleName }
+        map(([client, contactRecord, isClientSpecificLogin, selectedDefaultContact]) => {
+          let request: MultiClientLoginHttpRequest = { 
+            clientKey: client.clientKey, 
+            contactID: contactRecord.contactID, 
+            contactRole: 
+            contactRecord.userRoleName ,
+            defaultLoginContactId: selectedDefaultContact?.defaultLoginContactId ?? 0,
+            isDefaultLoginContact: selectedDefaultContact?.isDefaultLoginContact ?? null
+          }
+          this.centralAuthFacade.setSelectedDefaultContactRecord(null)
           return [request, isClientSpecificLogin]
         }),
         tap(_ => this.centralAuthFacade.setLoading(true)),
@@ -47,30 +60,28 @@ export class OAuthEffects {
         )),
         tap(_ => this.centralAuthFacade.setLoading(false)),
         filter(response => !!response && !!response.authToken),
-        tap(response => this.centralAuthFacade.setAccessToken(response.authToken)),
-        switchMap(_ => combineLatest([this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1))])),
+        switchMap((response) => combineLatest([of(response.authToken), this.centralAuthFacade.selectedClient$.pipe(take(1)), this.centralAuthFacade.redirectionUri$.pipe(take(1))])),
         filter(([client]) => !!client),
-        map(([client, redirectionUri]) => {
-
+        map(([accessToken, client, redirectionUri]) => {
           const newRedirectionUri = !redirectionUri 
             ? `${environment.cremBaseUrl.replace('[CLIENT]', client.clientKey)}/v06/login.aspx` 
             : decodeURIComponent(redirectionUri)
 
           this.centralAuthFacade.setSelectedContactId(0)
           this.centralAuthFacade.setRedirectionUri(newRedirectionUri)
-          return OAuthActions.authorize()
+          return OAuthActions.authorize({ accessToken })
         }),
       ) as Observable<any>
   )
 
-  // If user is coming in through client specific login page OR user doesn't have multiple sites AND
+  // If user is coming in through client specific login page AND
   // the loginToClientSite() method failed, log them out.
   logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOG_OUT_WHEN_CLIENT_SPECIFIC_LOGIN_AND_LOGIN_TO_CLIENT_FAILED),
-        switchMap(_ => combineLatest([this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1)), this.centralAuthFacade.user$.pipe(take(1))])),
-        filter(([isClientSpecificLogin, user]) => !!isClientSpecificLogin || !user.hasMultipleSites),
+        switchMap(_ => combineLatest([this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1))])),
+        filter(([isClientSpecificLogin]) => !!isClientSpecificLogin),
         map(_ => {
           return AppActions.logout()
         })
@@ -81,9 +92,9 @@ export class OAuthEffects {
     () =>
       this.actions$.pipe(
         ofType(OAuthActions.AUTHORIZE),
-        switchMap(_ => combineLatest([this.centralAuthFacade.redirectionUri$.pipe(take(1)), this.centralAuthFacade.accessToken$.pipe(take(1))])),
-        filter(([redirectUri, accessToken]) => !!redirectUri && !!accessToken),
-        switchMap(([redirectUri, accessToken]) => this.authService.retrieveAuthorizationCode(redirectUri).pipe(
+        switchMap((action: { type: string, accessToken: string }) => combineLatest([of(action.accessToken), this.centralAuthFacade.redirectionUri$.pipe(take(1))])),
+        filter(([accessToken, redirectUri]) => !!accessToken && !!redirectUri),
+        switchMap(([accessToken, redirectUri]) => this.authService.retrieveAuthorizationCode(redirectUri, accessToken).pipe(
           map(response => OAuthActions.authorizeSuccess({ authorizationCode: response.code })),
           catchError(_ => of(OAuthActions.authorizeError()))
         ))

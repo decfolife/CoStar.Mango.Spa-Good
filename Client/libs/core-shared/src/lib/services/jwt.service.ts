@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { DBkeys } from '../utilities/db-keys';
 
+// This service should ONLY be used when running in LOCALHOST
+// Otherwise, we automatically use an authentication cookie with every request we send
 @Injectable()
 export class JwtService {
   constructor(

@@ -32,18 +32,18 @@ export class ServiceAccountService {
   }
 
   getServiceAccountInfo(): Observable<ServiceAccountInfo> {
-    return this.http.get<ServiceAccountInfo>(`${this.identityUrl}/serviceaccount/accountinfo`)
+    return this.http.get<ServiceAccountInfo>(`${this.identityUrl}serviceaccount/accountinfo`, { withCredentials: true })
   }
 
   updateServiceAccountApiAccess(request: UpdateServiceAccountApiAccessRequest): Observable<boolean> {
-    return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/updateapiaccess`, request)
+    return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/updateapiaccess`, request, { withCredentials: true })
   }
 
   updateServiceAccountExpiresInDays(request: UpdateServiceAccountExpiresInDaysRequest): Observable<boolean> {
-    return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/expiresindays`, request)
+    return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/expiresindays`, request, { withCredentials: true })
   }
 
   getServiceAccountChangeHistory(): Observable<ServiceAccountChangeHistory[]> {
-    return this.http.get<ServiceAccountChangeHistory[]>(`${this.identityUrl}/serviceaccount/accounthistory`)
+    return this.http.get<ServiceAccountChangeHistory[]>(`${this.identityUrl}/serviceaccount/accounthistory`, { withCredentials: true })
   }
 }

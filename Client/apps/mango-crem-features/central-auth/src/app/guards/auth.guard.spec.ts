@@ -1,10 +1,9 @@
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StorageService, UserService } from '@mango/core-shared';
+import { StorageService } from '@mango/core-shared';
 import { Environment, OAUTH_CLIENT_KEY_QUERY_PARAM, OAUTH_CONTACT_ID_QUERY_PARAM, OAUTH_REDIRECT_QUERY_PARAM } from '@mango/data-models/lib-data-models';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -16,10 +15,12 @@ import { initialState } from '../+state/reducers';
 import * as AppSelectors from '../+state/selectors';
 import { environment } from '../../environments/environment.dev';
 import { AuthGuard } from './auth.guard';
+import { AuthService } from '../services/auth.service';
+import { UserAuth } from '../models/userAuth';
 
 
 describe('AuthGuard', () => {
-  let userService: UserService;
+  let authService: AuthService;
   let authGuard: AuthGuard;
   let centralAuthFacade: CentralAuthFacade;
   let router: Router;
@@ -29,13 +30,15 @@ describe('AuthGuard', () => {
   let routerState: RouterStateSnapshot
   let lockedUrls = ['/customer-selection', '/service-account-configuration']
   let unlcokedUrls = ['/', 'reset-password', 'password-reset-request', 'citi']
+  let mockUser: UserAuth = { userId: 2, email: '', contactId: 2, clientKey: 'blank', isAutoProvisioned: true}
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       providers: [
         CentralAuthFacade,
         AppEffects,
-        UserService,
+        AuthService,
         StorageService,
         AuthGuard,
         provideHttpClient(),
@@ -45,7 +48,7 @@ describe('AuthGuard', () => {
         { provide: Environment, useValue: environment }
       ]
     });
-    userService = TestBed.inject(UserService);
+    authService = TestBed.inject(AuthService);
     centralAuthFacade = TestBed.inject(CentralAuthFacade);
     authGuard = TestBed.inject(AuthGuard);
     router = TestBed.inject(Router);
@@ -70,7 +73,7 @@ describe('AuthGuard', () => {
 
   describe('when the user is logged in', () => {
     beforeEach(() => {
-      state.overrideSelector(AppSelectors.accessToken, 'mock_access_token')
+      state.overrideSelector(AppSelectors.user, mockUser)
     });
 
     [...lockedUrls, ...unlcokedUrls].forEach((url) => {
@@ -81,7 +84,7 @@ describe('AuthGuard', () => {
         });
       });
 
-      describe('when getCurrentUserAccessToken the token', () => {
+      describe('when getCurrentUser', () => {
 
         [...lockedUrls, ...unlcokedUrls].forEach((url) => {
           it(`grants access for ${url}`, done => {
@@ -93,13 +96,13 @@ describe('AuthGuard', () => {
         })
 
         lockedUrls.forEach((lockedUrl) => {
-          it(`should set the access token`, done => {
-            state.overrideSelector(AppSelectors.accessToken, null)
-            jest.spyOn(userService, 'getCurrentUserAccessToken').mockReturnValue(of('mock_access_token'))
-            jest.spyOn(centralAuthFacade, 'setAccessToken').mockImplementation(() => null)
+          it(`should set the user`, done => {
+            state.overrideSelector(AppSelectors.user, null)
+            jest.spyOn(authService, 'getCurrentUser').mockReturnValue(of(mockUser))
+            jest.spyOn(centralAuthFacade, 'setUser').mockImplementation(() => null)
             authGuard.canActivate(mockRouteSnapshot, routerState).subscribe(isAccessGranted => {
-              expect(centralAuthFacade.setAccessToken).toBeCalledTimes(1)
-              expect(centralAuthFacade.setAccessToken).toBeCalledWith('mock_access_token')
+              expect(centralAuthFacade.setUser).toBeCalledTimes(1)
+              expect(centralAuthFacade.setUser).toBeCalledWith(mockUser)
               done()
             });
           });
@@ -111,11 +114,11 @@ describe('AuthGuard', () => {
 
   describe('when the user is logged out', () => {
     beforeEach(() => {
-      state.overrideSelector(AppSelectors.accessToken, null)
-      jest.spyOn(userService, 'getCurrentUserAccessToken').mockReturnValue(throwError(of({ status: 401 })))
+      state.overrideSelector(AppSelectors.user, null)
+      jest.spyOn(authService, 'getCurrentUser').mockReturnValue(throwError(of({ status: 401 })))
     });
 
-    describe('when getCurrentUserAccessToken returns 401', () => {
+    describe('when getCurrentUser returns 401', () => {
       lockedUrls.forEach((lockedUrl) => {
         it(`should rejects access for ${lockedUrl}`, done => {
           authGuard.canActivate(mockRouteSnapshot, routerState).subscribe(isAccessGranted => {
@@ -151,7 +154,7 @@ describe('AuthGuard', () => {
   describe('when query params and params are set', () => {
 
     beforeEach(() => {
-      state.overrideSelector(AppSelectors.accessToken, 'mock_access_token')
+      state.overrideSelector(AppSelectors.user, mockUser)
       jest.spyOn(centralAuthFacade, 'setSelectedClientKey').mockImplementation(() => null)
       jest.spyOn(centralAuthFacade, 'setRedirectionUri').mockImplementation(() => null)
       jest.spyOn(centralAuthFacade, 'setSelectedContactId').mockImplementation(() => null)

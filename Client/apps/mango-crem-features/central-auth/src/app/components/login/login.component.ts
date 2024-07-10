@@ -4,17 +4,17 @@ import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup,
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
-import { UserAuth } from '@mango/data-models/lib-data-models';
 import { TextFieldModule } from '@mango/ui-shared/cosmos';
 import { CardModule, IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { Observable, Subscription, combineLatest, of } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../../+state/facades';
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 import { CentralAuthURLService } from '../../services/url.service';
 import { noWhitespaceValidator } from '../reset-password/password-validator';
 import { ContactRecordsPopupComponent } from '../contact-records-popup/contact-records-popup.component';
-import { DBkeys, StorageService } from '@mango/core-shared';
+import { StorageService } from '@mango/core-shared';
+import { UserAuth } from '../../models/userAuth';
 
 @Component({
   selector: 'mango-login',
@@ -121,20 +121,21 @@ export class LoginComponent implements OnInit, OnDestroy {
   };
 
   clientSpecificLoginHandler(): Observable<any> {
-    let user = this.storageService.getDataObject(DBkeys.USER_AUTH)
-    if (user) {
-      // The user logged in via the general login page recently
-      return of(null)
-    }
-
-    return of(this.urlService.readClientSiteRouteParam())
-      .pipe(
-        filter(clientKey => !!clientKey),
-        tap(_ => this.centralAuthFacade.setClientSpecificLogin(true)),
-        tap(_ => this.centralAuthFacade.setOpenClientInNewTab(false)),
-        tap(clientKey => this.centralAuthFacade.setSelectedClientKey(clientKey)),
-        tap(clientKey => this.centralAuthFacade.getClientSSOSetings(clientKey)),
-      )
+    return combineLatest([this.centralAuthFacade.loadCurrentUserComplete$, of(this.urlService.readClientSiteRouteParam())]).pipe(
+      filter(([finishedLoadingUser, _]) => {
+        return finishedLoadingUser
+      }),
+      switchMap(([_, clientKey]) => combineLatest([of(clientKey), this.centralAuthFacade.user$.pipe(take(1))])),
+      // If the user is logged-in, then they must have logged in via the general login page recently, do nothing.
+      filter(([clientKey, user]) => {
+        return !!clientKey && !user
+      }),
+      tap(_ => this.centralAuthFacade.setClientSpecificLogin(true)),
+      tap(_ => this.centralAuthFacade.setOpenClientInNewTab(false)),
+      tap(([clientKey, _]) => this.centralAuthFacade.setSelectedClientKey(clientKey)),
+      tap(([clientKey, _]) => this.centralAuthFacade.getClientSSOSettings(clientKey)),
+      tap(_ => this.centralAuthFacade.handleSSOClientLogin())
+    )
   }
 
   ngOnDestroy(): void {

@@ -10,7 +10,7 @@ export interface UserAuth {
 }
 
 export interface LoginResponse {
-    user: UserAuth;
+    user: any;
     authToken: string;
 }
 

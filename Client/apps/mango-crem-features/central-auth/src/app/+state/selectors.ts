@@ -20,11 +20,6 @@ export const user = createSelector(
     (state: State) => state.user
 );
 
-export const accessToken = createSelector(
-    getAppState,
-    (state: State) => state.accessToken
-);
-
 export const userClients = createSelector(
     getAppState,
     (state: State) => state.userClients
@@ -53,6 +48,11 @@ export const contactRecord = createSelector(
 export const contactId = createSelector(
     getAppState,
     (state: State) => state.selectedContactId
+);
+
+export const selectedDefaultContactRecord = createSelector(
+    getAppState,
+    (state: State) => state.selectedDefaultContactRecord
 );
 
 export const isClientSpecificLogin = createSelector(
@@ -94,4 +94,9 @@ export const userContactRecords = createSelector(
 export const isSwitchContactRecord = createSelector(
     getAppState,
     (state: State) => state.isSwitchContactRecord
+);
+
+export const loadCurrentUserComplete = createSelector(
+    getAppState,
+    (state: State) => state.loadCurrentUserComplete
 );

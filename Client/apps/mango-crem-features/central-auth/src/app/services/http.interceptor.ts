@@ -43,17 +43,14 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
       const headers = this.generateRequestHeaders(token)
       const request = req.clone({ setHeaders: headers })
       return next.handle(request).pipe(
-        catchError(this.handleError),
-        // finalize(() => {
-        //   this.facade.setLoading(false);
-        // })
+        catchError(this.handleError)
       )
     }
 
-    return this.facade.accessToken$.pipe(
+    return this.facade.user$.pipe(
       take(1),
-      switchMap(token => {
-        const headers = this.generateRequestHeaders(token)
+      switchMap(user => {
+        const headers = this.generateRequestHeaders(null)
         const request = req.clone({ setHeaders: headers })
         return next.handle(request)
       }),
@@ -62,6 +59,15 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
       //   this.facade.setLoading(false);
       // })
     )
+  }
+
+  generateRequestHeaders(accessToken: string): any {
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    }
+    accessToken ? headers['Authorization'] = `Bearer ${accessToken}` : null
+    return headers
   }
 
   // Needs to be an arrow function otherwise injector does not work.
@@ -78,12 +84,19 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
 
     const caHttpError: CentralAuthHttpError = errorResponse.error?.traceId ? errorResponse.error : genericErrorObject
 
+    let isLoadCurrentUserRequest = errorResponse.url.includes('/api/auth/user')
+
+    // When the user is not logged-in, and we are fetching the current user on application startup,
+    // and we are on the login page, then dont show 401 error
+    if (this.isLoginPage() && isLoadCurrentUserRequest && caHttpError.status === 401) {
+      return
+    }
+
     if (caHttpError.status === 401) {
       caHttpError.title = 'Unauthorized'
-      caHttpError.message = caHttpError.message;
+      caHttpError.message = errorResponse.error.message;
       this.facade.logout()
       this.router.navigate(['/'])
-      this.showErrorNotification(caHttpError.message, caHttpError.title, MangoErrorTypes.FATAL)
     }
 
     if (caHttpError.errorCode === CentralAuthErrorCodes.ForceLogout) {
@@ -94,12 +107,14 @@ export class CentralAuthHttpInterceptor extends MangoErrorHandler<any> implement
     return throwError(caHttpError);
   }
 
-  generateRequestHeaders(accessToken: string): any {
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    }
-    accessToken ? headers['Authorization'] = `Bearer ${accessToken}` : null
-    return headers
+  // If login page OR client specific login page
+  isLoginPage(): boolean {
+    let isLoginPage = this.router.url === '/'
+
+    // If the current path does not match an existing route, we are probably on the client specific login page
+    // Cannot use snapshot.paramMap.get('clientKey'). Not available on initial load.
+    let isClientSpecificLogin = this.router.config.filter(x => x.path === this.router.url.split('/')[1]).length === 0
+
+    return isLoginPage || isClientSpecificLogin
   }
 }

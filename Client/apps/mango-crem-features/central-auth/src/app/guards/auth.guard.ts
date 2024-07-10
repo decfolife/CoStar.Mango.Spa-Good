@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { JwtService, UtilitiesService } from '@mango/core-shared';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CentralAuthFacade } from '../+state/facades';
@@ -14,8 +13,7 @@ export class AuthGuard  {
   constructor(
     private authService: AuthService,
     private centralAuthFacade: CentralAuthFacade,
-    private router: Router,
-    private jwtService: JwtService
+    private router: Router
   ) { }
 
   canActivate(
@@ -31,25 +29,16 @@ export class AuthGuard  {
     !!showMultiContactPopup ? this.centralAuthFacade.setIsSwitchContactRecord(true) : null;
     !!clientKey || !!redirectUri ? this.centralAuthFacade.setOpenClientInNewTab(false) : null;
 
-    return this.centralAuthFacade.accessToken$.pipe(
-      switchMap(accessToken => {
-        if (accessToken) {
+    return this.centralAuthFacade.user$.pipe(
+      switchMap(user => {
+        if (user) {
           return of(true)
         } 
         
-        if (UtilitiesService.isLocalEnvironment()) {
-          let token = this.jwtService.getToken()
-          this.centralAuthFacade.setAccessToken(token)
-          if (token) return of(true)       
-
-          this.router.navigate(['/'], { queryParamsHandling: 'merge' });
-          return of(false)
-        } 
-        
-        return this.authService.getCurrentUserAccessToken().pipe(
-          map(accessToken => {
-            if (accessToken) {
-              this.centralAuthFacade.setAccessToken(accessToken)
+        return this.authService.getCurrentUser().pipe(
+          map(user => {
+            if (user) {
+              this.centralAuthFacade.setUser(user)
               return true
             }
           }),

@@ -5,7 +5,7 @@ class EnvironmentsCrem implements Environment {
   name = 'LOCAL';
   isRestful = true;
   cremBaseUrl = 'retaildemo.local';
-  CAUrl = 'http://localhost:4200/';
+  CAUrl = 'http://localhost:5000/';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
   baseApiUrl = 'http://api.dev.corp.virtualpremise.com:30080/';
 }

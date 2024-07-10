@@ -65,7 +65,7 @@ describe('App Effects', () => {
       appEffects.appInit$.pipe(toArray()).subscribe(actions => {
         expect(actions).toHaveLength(5)
         expect(actions[0]).toEqual({
-          type: AppActions.POPULATE_LOGGED_IN_USER_DATA,
+          type: AppActions.LOAD_CURRENT_USER,
         })
         expect(actions[1]).toEqual({
           type: AppActions.HANDLE_CUSTOM_QUERY_PARAMS,
@@ -104,12 +104,12 @@ describe('App Effects', () => {
   describe('when POPULATE_LOGGED_IN_USER_DATA action is dispatched', () => {
 
     beforeEach(() => {
-      actions$ = of(AppActions.populateLoggedInUserData())
+      actions$ = of(AppActions.loadCurrentUser())
     });
 
     it('should dispatch setUser when the user is defined in the storage', done => {
       jest.spyOn(storageService, 'getDataObject').mockReturnValue(userMock)
-      appEffects.populateLoggedInUserData$.subscribe(action => {
+      appEffects.loadCurrentUser$.subscribe(action => {
         expect(action).toStrictEqual({
           type: AppActions.SET_USER,
           user: userMock
@@ -120,7 +120,7 @@ describe('App Effects', () => {
 
     it('should dispatch noOpAction when the user is undefined in the storage', done => {
       jest.spyOn(storageService, 'getDataObject').mockReturnValue(undefined)
-      appEffects.populateLoggedInUserData$.subscribe(action => {
+      appEffects.loadCurrentUser$.subscribe(action => {
         expect(action).toStrictEqual({
           type: AppActions.NO_OP_ACTION,
         })

@@ -1,10 +1,12 @@
 import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
 import { Action, createReducer, on } from '@ngrx/store';
 
-import { ClientSSOSettings, ContactRecord, UserAuth, UserSite } from '@mango/data-models/lib-data-models';
+import { ClientSSOSettings, ContactRecord, UserSite } from '@mango/data-models/lib-data-models';
 import * as AppActions from './actions/actions';
 import * as OAuthActions from './actions/oauth.actions';
 import { CentralAuthEntity } from './models';
+import { UserAuth } from '../models/userAuth';
+import { DefaultContactRecordSelection } from '../models/default-contact';
 
 export const CENTRAL_AUTH_FEATURE_KEY = 'central_auth';
 
@@ -12,7 +14,6 @@ export interface State extends EntityState<CentralAuthEntity> {
   loading: boolean,
   error: boolean,
   user: UserAuth,
-  accessToken: string,
   selectedContactId: number,
   selectedContactRecord: ContactRecord
   selectedClientKey: string,
@@ -20,13 +21,14 @@ export interface State extends EntityState<CentralAuthEntity> {
   openClientInNewTab: boolean,
   userClients: UserSite[],
   userContactRecords: ContactRecord[]
-  userDefaultContactRecordId: number,
+  selectedDefaultContactRecord: DefaultContactRecordSelection,
   ssoSettings: ClientSSOSettings,
   userRecentClients: UserSite[],
   isClientSpecificLogin: boolean,
   redirectionUri: string,
   authorizationCode: string
   isSwitchContactRecord: boolean
+  loadCurrentUserComplete: boolean
 }
 
 export interface CentralAuthPartialState {
@@ -39,7 +41,6 @@ export const initialState: State = appAdapter.getInitialState({
   loading: false,
   error: false,
   user: null,
-  accessToken: null,
   selectedContactRecord: null,
   selectedClientKey: null,
   selectedClient: null,
@@ -47,13 +48,14 @@ export const initialState: State = appAdapter.getInitialState({
   userClients: null,
   userRecentClients: null,
   userContactRecords: null,
-  userDefaultContactRecordId: null,
+  selectedDefaultContactRecord: null,
   ssoSettings: null,
   selectedContactId: null,
   isClientSpecificLogin: false,
   redirectionUri: null,
   authorizationCode: null,
-  isSwitchContactRecord: false
+  isSwitchContactRecord: false,
+  loadCurrentUserComplete: false
 });
 
 const appReducer = createReducer(
@@ -63,10 +65,11 @@ const appReducer = createReducer(
   on(AppActions.loginSuccess, (state) => ({ ...state, error: false, loading: false })),
   on(AppActions.loginError, (state) => ({ ...state, error: true, loading: false })),
   on(AppActions.setLoading, (state, { loading }) => ({ ...state, loading })),
+  on(AppActions.setLoadCurrentUserComplete, (state, { loadCurrentUserComplete }) => ({ ...state, loadCurrentUserComplete })),
   on(AppActions.setSelectedClientKey, (state, { clientKey }) => ({ ...state, selectedClientKey: clientKey })),
-  on(AppActions.setAccessToken, (state, { accessToken }) => ({ ...state, accessToken })),
   on(AppActions.setSelectedClient, (state, { client }) => ({ ...state, selectedClient: client })),
   on(AppActions.setSelectedContactID, (state, { contactId }) => ({ ...state, selectedContactId: contactId })),
+  on(AppActions.setDefaultContactRecord, (state, { defaultContact }) => ({ ...state, selectedDefaultContactRecord: defaultContact })),
   on(AppActions.setContactRecord, (state, { contactRecord }) => ({ ...state, selectedContactRecord: contactRecord })),
   on(AppActions.getUserClients, (state, _) => ({ ...state, error: false, loading: true })),
   on(AppActions.getUserClientsSuccess, (state, { clientSites }) => ({ ...state, error: false, loading: false, userClients: clientSites.userSites, userRecentClients: clientSites.recentUserSites })),
@@ -83,7 +86,7 @@ const appReducer = createReducer(
   on(AppActions.purgeClientSelection, (state) => ({
     ...state,
     userContactRecords: null,
-    userDefaultContactRecordId: null,
+    selectedDefaultContactRecordId: null,
     selectedClient: null,
     selectedClientKey: null,
     selectedContactRecord: null,
@@ -91,7 +94,7 @@ const appReducer = createReducer(
     openClientInNewTab: true,
     authorizationCode: null,
     redirectionUri: null,
-    isSwitchContactRecord: null
+    //isSwitchContactRecord: null
   })),
   on(AppActions.clearState, () => ({ ...initialState })),
 );

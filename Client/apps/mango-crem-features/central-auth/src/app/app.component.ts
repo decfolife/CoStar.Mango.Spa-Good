@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CentralAuthFacade } from './+state/facades';
 import { Observable } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'mango-root',

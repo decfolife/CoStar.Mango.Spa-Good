@@ -128,7 +128,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<string> AccessToken()
+    public ActionResult<AuthenticatedUser> GetCurrentUser()
     {
         _logger.LogInformation("Fetching accessToken for logged-in user {Email}.", User.Email());
 
