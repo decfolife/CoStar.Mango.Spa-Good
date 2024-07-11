@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MangoSPA.Services;
+﻿namespace MangoSPA.Services;
 
 public interface IRequestService
 {

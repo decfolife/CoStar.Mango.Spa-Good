@@ -1,13 +1,41 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System;
 using System.Text.Json.Serialization;
 
 namespace MangoSPA.Extensions;
 
 public static class CacheExtensions
 {
+    public static async Task<T> GetOrCreateAsync<T>(
+        this IDistributedCache cache,
+        string key,
+        Func<Task<T>> factory,
+        TimeSpan? absExpiration = null,
+        TimeSpan? slideExpiration = null)
+    {
+        var cachedData = await cache.GetStringAsync(key);
+        if (!string.IsNullOrWhiteSpace(cachedData))
+            return JsonSerializer.Deserialize<T>(cachedData);
+
+        var data = await factory();
+
+        var cacheOptions = new DistributedCacheEntryOptions
+        {
+            // Remove item from cache after duration
+            AbsoluteExpirationRelativeToNow = absExpiration ?? TimeSpan.FromDays(1),
+
+            // Remove item from cache if unsued for the duration
+            SlidingExpiration = slideExpiration
+        };
+
+        var settings = new JsonSerializerOptions().UseDefaultSettings();
+        string jsonData = JsonSerializer.Serialize(data, settings);
+
+        await cache.SetStringAsync(key, jsonData, cacheOptions);
+
+        return data;
+    }
+
     public static async Task<T> GetDataAsync<T>(this IDistributedCache cache, string key)
     {
         try

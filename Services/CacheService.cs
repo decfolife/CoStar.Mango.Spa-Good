@@ -2,9 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
 using System.Text.Json.Serialization;
 using MangoSPA.Extensions;
 
@@ -12,6 +9,12 @@ namespace MangoSPA.Services;
 
 public interface ICacheService
 {
+    Task<T> GetOrCreateAsync<T>(
+        string key,
+        Func<Task<T>> factory,
+        bool hasNoExpiration = false,
+        TimeSpan? absExpiration = null,
+        TimeSpan? slideExpiration = null);
     Task<byte[]> GetAsync(string key);
     Task SetAsync(string cacheKey, byte[] data, DistributedCacheEntryOptions options);
     Task<bool> RemoveAsync(string key, CancellationToken token = default);
@@ -42,6 +45,46 @@ public class CacheService : ICacheService
         _cache = cache;
         _logger = logger;
         _isCacheEnabled = config.EnableCaching();
+    }
+
+    public async Task<T> GetOrCreateAsync<T>(
+        string key, 
+        Func<Task<T>> factory,
+        bool hasNoExpiration = false,
+        TimeSpan? absExpiration = null,
+        TimeSpan? slideExpiration = null)
+    {
+        if (!_isCacheEnabled) return default;
+
+        try
+        {
+            var cachedData = await _cache.GetStringAsync(key);
+            if (!string.IsNullOrWhiteSpace(cachedData))
+                return JsonSerializer.Deserialize<T>(cachedData);
+
+            var data = await factory();
+
+            var cacheOptions = new DistributedCacheEntryOptions
+            {
+                // Remove item from cache after duration
+                AbsoluteExpirationRelativeToNow = absExpiration is null && hasNoExpiration ? null : TimeSpan.FromDays(1),
+
+                // Remove item from cache if unsued for the duration
+                SlidingExpiration = slideExpiration
+            };
+
+            var settings = new JsonSerializerOptions().UseDefaultSettings();
+            string jsonData = JsonSerializer.Serialize(data, settings);
+
+            await _cache.SetStringAsync(key, jsonData, cacheOptions);
+
+            return data;
+        }
+        catch (Exception)
+        {
+            _logger.LogWarning(ReachWarning);
+            return default;
+        }
     }
 
     public async Task<T> GetDataAsync<T>(string key)

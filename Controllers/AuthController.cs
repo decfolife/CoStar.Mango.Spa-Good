@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using MangoSPA.Models;
 using MangoSPA.Services;
-using System;
 using MangoSPA.Extensions;
 using Microsoft.AspNetCore.Hosting;
 

@@ -1,10 +1,6 @@
 ﻿using MangoSPA.Extensions;
 using MangoSPA.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MangoSPA.Services;
 
@@ -40,6 +36,8 @@ public class SessionService : ISessionService
                 var wasDeleted = sessions.Remove(sessionId);
                 if (wasDeleted)
                     await _cacheService.SetDataAsync(CacheKeys.AuthSesssionsKey, sessions, hasNoExpiration: true);
+
+                continue;
             }
 
             var user = ticket.Principal.ToAuthenticatedUser();
@@ -75,6 +73,8 @@ public class SessionService : ISessionService
                 var wasDeleted = sessions.Remove(sessionId);
                 if (wasDeleted)
                     await _cacheService.SetDataAsync(CacheKeys.AuthSesssionsKey, sessions, hasNoExpiration: true);
+
+                continue;
             }
 
             var user = ticket.Principal.ToAuthenticatedUser();
@@ -120,6 +120,8 @@ public class SessionService : ISessionService
                 var wasDeleted = sessions.Remove(sessionId);
                 if (wasDeleted)
                     await _cacheService.SetDataAsync(CacheKeys.AuthSesssionsKey, sessions, hasNoExpiration: true);
+
+                continue;
             }
 
             var user = ticket.Principal.ToAuthenticatedUser();

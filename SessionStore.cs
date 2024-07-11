@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using System.Threading.Tasks;
-using System;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using MangoSPA.Services;
-using System.Collections.Generic;
 using MangoSPA.Models;
 
 namespace MangoSPA;
