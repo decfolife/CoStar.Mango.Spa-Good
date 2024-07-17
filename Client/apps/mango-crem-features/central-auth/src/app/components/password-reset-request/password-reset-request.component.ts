@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CentralAuthError, CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes } from '@mango/data-models/lib-data-models';
+import { CentralAuthError, CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, NOTIFICATION_ERROR_TYPES_MAP } from '@mango/data-models/lib-data-models';
 import { AuthService } from '../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'mango-password-reset-request',
@@ -28,7 +29,8 @@ export class PasswordResetRequestComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private fb: UntypedFormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notificationService: ToastrService
   ) { }
 
   ngOnInit() {
@@ -36,12 +38,14 @@ export class PasswordResetRequestComponent implements OnInit {
     this.route.queryParams
       .subscribe(params => {
         if (this.toBoolean(params.expiredToken)) {
-          throw new CentralAuthError({
+          const error: CentralAuthError = {
             message: this.resetLinkExpiredMessage,
             title: 'Warning',
             errorType: MangoErrorTypes.WARNING,
             errorCode: CentralAuthErrorCodes.ResetTokenExpired
-          })
+          }
+
+          this.notificationService[NOTIFICATION_ERROR_TYPES_MAP[error.errorType]](error.message, error.title)
         }
       });
   }
