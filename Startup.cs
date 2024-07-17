@@ -87,7 +87,8 @@ public class Startup
                     policy.SetIsOriginAllowed(_ => true);
                 else
                 {
-                    policy.WithOrigins("https://*.costarremanager.com", "http://*.corp.virtualpremise.com", "http://*.corp.virtualpremise.com:30080")
+                    var origins = Configuration.GetSection("Auth:CorsOrigins").Get<string[]>();
+                    policy.WithOrigins(origins)
                           .SetIsOriginAllowedToAllowWildcardSubdomains();
                 }
 
@@ -123,7 +124,9 @@ public class Startup
                 {
                     opt.PreSerializeFilters.Add((swagger, request) =>
                     {
-                        var serverUrl = $"{request.Scheme}://{request.Host}/api";
+                        var scheme = request.Host.Port.ToString().Contains("443") ? "https" : "http";
+                        var serverUrl = $"{scheme}://{request.Host}/api";
+
                         swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
                     });
                 });
