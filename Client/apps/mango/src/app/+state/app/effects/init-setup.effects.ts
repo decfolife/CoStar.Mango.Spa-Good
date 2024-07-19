@@ -73,7 +73,7 @@ export class InitSetupEffects {
         ofType(AppActions.SETUP_CONTACT_RECORD),
         switchMap(_ => combineLatest([this.facade.authenticatedUser$, this.facade.contactRecord$])),
         filter(([user, contact]) => !!user && !contact),
-        switchMap(([user, contact]) => this.userService.getContactRecord(user.email, user.contactId, user.clientKey)),
+        switchMap(([user]) => this.userService.getContactRecord(user.contactId, user.clientKey)),
         filter(contactRecord => !!contactRecord),
         map(contactRecord =>
           AppActions.setContactRecord({ contactRecord })

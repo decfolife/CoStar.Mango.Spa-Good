@@ -74,7 +74,7 @@ export class AuthenticationEffects {
           this.authService.setAuth(user)
           this.storageService.savePermanentData(user.clientKey, DBkeys.CLIENT_KEY)
 
-          return combineLatest([of(user), of(action.response.accessToken), this.userService.getContactRecord(user.email, user.contactId, user.clientKey), of(action.redirectionUrl)])
+          return combineLatest([of(user), of(action.response.accessToken), this.userService.getContactRecord(user.contactId, user.clientKey), of(action.redirectionUrl)])
         }),
         map(([user, accessToken, contactRecord, redirectUrl]: [UserAuth, string, ContactRecord, string]) => {
           this.storageService.savePermanentData(contactRecord, DBkeys.CONTACT_RECORD)

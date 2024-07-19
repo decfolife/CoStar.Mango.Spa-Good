@@ -27,7 +27,7 @@ export class UserService {
       .pipe(map(x => x.data as GetContactRecordHTTPResponse))
   }
 
-  getContactRecord(email: string, contactId: number, clientKey: string): Observable<ContactRecord> {
+  getContactRecord(contactId: number, clientKey: string): Observable<ContactRecord> {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -35,6 +35,6 @@ export class UserService {
       'ClientKey': clientKey
     })
 
-    return this.http.get<ContactRecord>(`${this.userMaintenanceUrl}usermaintenance/getuser/${email}?contactId=${contactId}`, { headers: headers })
+    return this.http.get<ContactRecord>(`${this.userMaintenanceUrl}usermaintenance/getuser/${contactId}`, { headers: headers })
   }
 }
