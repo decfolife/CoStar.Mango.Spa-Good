@@ -1,6 +1,4 @@
 ﻿using MangoSPA.Models;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using static MangoSPA.Constants;
 
@@ -18,16 +16,17 @@ public static class ClaimExtensions
     }
 
     public static int UserId(this ClaimsPrincipal principal)
-        => int.TryParse(principal.FindFirst(ClaimType.UserId).Value, out int result) ? result : default;
+        => int.TryParse(principal.FindFirst(ClaimType.UserId)?.Value, out int result) ? result : default;
 
     public static int ContactId(this ClaimsPrincipal principal)
-        => int.TryParse(principal.FindFirst(ClaimType.ContactId).Value, out int result) ? result : default;
+        => int.TryParse(principal.FindFirst(ClaimType.ContactId)?.Value, out int result) ? result : default;
 
     public static string ContactRole(this ClaimsPrincipal principal)
         => principal.FindFirst(ClaimType.ContactRole)?.Value;
 
     public static string ClientKey(this ClaimsPrincipal principal)
         => principal.FindFirst(ClaimType.ClientKey)?.Value;
+
     public static int SecurityLevel(this ClaimsPrincipal principal)
         => int.TryParse(principal.FindFirst(ClaimType.SecurityLevel)?.Value, out int result) ? result : default;
 
