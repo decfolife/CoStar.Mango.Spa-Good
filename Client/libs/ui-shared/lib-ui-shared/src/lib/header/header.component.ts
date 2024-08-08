@@ -111,7 +111,7 @@ export class HeaderComponent implements OnInit {
       this.facade.clientKey$.pipe(
         filter(clientKey => !!clientKey),
         tap(_ => this.facade.setLoading(true)),
-        tap(clientKey => this.facade.goToExternalURL(`${environment.CAUrl}/customer-selection?clientKey=${clientKey}&showMutliContactPopup=true`))
+        tap(clientKey => this.facade.goToExternalURL(`${environment.CAUrl}/${clientKey}?clientKey=${clientKey}&showMutliContactPopup=true`))
       ).subscribe()
     )
   }
