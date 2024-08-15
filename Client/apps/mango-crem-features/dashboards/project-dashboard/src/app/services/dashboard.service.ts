@@ -2,20 +2,20 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from '../../../../../../mango/src/environments/environment.local';
 import { TaskApprovalDto } from '../models/task-approval';
 import { UserSelectedFilters } from '../models';
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Api, AssignTasks, Team, TeamMemUpdate, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
 import notify from 'devextreme/ui/notify';
-import { DxoHeaderFilterComponent } from 'devextreme-angular/ui/nested/header-filter';
+import { GetViewDropdownDataRequest, HideListViewRequest, ListView, SetDefaultListViewRequest } from '@list-pages/components/listpage/shared/models';
 
 @Injectable()
 export class DashboardService  extends EndpointService {
   dashboards: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
   projects: string = UtilitiesService.getBaseApiUrl(Api.projects)
   taskApproval: string = UtilitiesService.getBaseApiUrl(Api.taskApproval)
+  listpages: string = UtilitiesService.getBaseApiUrl(Api.listpages)
   
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -48,7 +48,7 @@ export class DashboardService  extends EndpointService {
 
   postCacheSettings(dashboardId: number): Observable<any> {
     const url = `${this.dashboards}Dashboards/ClearDashboardCache`;
-    return this.callHttpPost(url, 'updateCacheSettings', dashboardId)
+    return this.callHttpPost(url, 'postCacheSettings', dashboardId)
   }
   
   saveUserFilters(userSelectedFilters: UserSelectedFilters): Observable<any> {
@@ -58,7 +58,7 @@ export class DashboardService  extends EndpointService {
 
   postUserSettings(dashboardUserSettings: any[]): Observable<any> {
     const url = `${this.dashboards}Dashboards/SaveUserSettings`;
-    return this.callHttpPost(url, 'updateUserSettings',  dashboardUserSettings)
+    return this.callHttpPost(url, 'postUserSettings',  dashboardUserSettings)
   }
   
   // This method calls dashboard api to approve or reject task. If service is not restful, it will call
@@ -71,7 +71,7 @@ export class DashboardService  extends EndpointService {
     return this.http.post(url, taskData, { observe: 'response', responseType: 'text'})
       .pipe(map(data => {
         return data;
-      }), catchError(this.handleTaskApprovalError('UpdateTaskApproval')));
+      }), catchError(this.handleErrorReturnMessage('UpdateTaskApproval')));
   }
 
   getCardFilters(): Observable<any> {
@@ -107,17 +107,17 @@ export class DashboardService  extends EndpointService {
   
   getTeams(): Observable<any>  {
     const url = `${this.projects}projects/getteams`;
-    return this.callHttpGet(url,'getteams')
+    return this.callHttpGet(url,'getTeams')
   }
 
   deleteTeamMembers(memberIds: number[]): Observable<any>  {
     const url = `${this.projects}projects/deleteteammembers`;
-    return this.callHttpPost(url,'deleteteammembers', memberIds)
+    return this.callHttpPost(url,'deleteTeamMembers', memberIds)
   }
 
   getMembersList(search: string, all:boolean, pageSize: number, pageNumber: number) : Observable<any> {
     const url = `${this.projects}projects/getmemberslist`;
-    return this.callHttpPost(url, 'getmemberslist', { search, all, pageSize, pageNumber })
+    return this.callHttpPost(url, 'getMembersList', { search, all, pageSize, pageNumber })
   }
 
   getmemberinfo(): Observable<any> {
@@ -127,22 +127,22 @@ export class DashboardService  extends EndpointService {
 
   updateTeamMember(memberupdate: TeamMemUpdate): Observable<any> {
     const url = `${this.projects}projects/updateteammember`;
-    return this.callHttpPost(url, 'updateteammember', memberupdate);
+    return this.callHttpPost(url, 'updateTeamMember', memberupdate);
   }
 
   addTeam(team:Team): Observable<any> {
     const url = `${this.projects}projects/addteam`;
-    return this.callHttpPost(url, 'addteam', team);
+    return this.callHttpPost(url, 'addTeam', team);
   }
 
   importTeam(projectID: number, teamID: number, projectManagerSharedValue: boolean): Observable<any> {
     const url = `${this.projects}projects/importteam`;
-    return this.callHttpPost(url, 'importteam', { projectID, teamID, projectManagerSharedValue });
+    return this.callHttpPost(url, 'importTeam', { projectID, teamID, projectManagerSharedValue });
   }
 
   getModuleRights(objectType: number, securityType: number) {
     const url = `${this.projects}projects/getmodulerights`;
-    return this.callHttpPost(url, 'getmodulerights', { objectType, securityType })
+    return this.callHttpPost(url, 'getModuleRights', { objectType, securityType })
   }
 
   deleteTeams(teamIds: number[]) {
@@ -154,6 +154,57 @@ export class DashboardService  extends EndpointService {
     const url = `${this.projects}projects/getprojectteams/${projectId}`;
     return this.callHttpGet(url, 'getProjectTeams')
   }
+  
+  getProjectTaskSettings(projectId): Observable<any> {
+    const url = `${this.projects}projects/projecttaskssettings/${projectId}`;
+    return this.callHttpGet(url, 'projecttaskssettings')
+  }
+
+  getProjectTemplatePreview(projectId: number, templateId: number): Observable<any> {
+    const url = `${this.projects}projects/getProjectTemplatePreview/${projectId}/${templateId}`;
+    return this.callHttpGet(url, 'getProjectTemplatePreview')
+  }
+
+  getProjectTemplateList(): Observable<any> {
+    const url = `${this.projects}projects/getprojecttemplatelist`;
+    return this.callHttpGet(url, 'getprojecttemplatelist')
+  }
+
+  getProjectTemplateTaskList(templateId): Observable<any> {
+    const url = `${this.projects}/projecttemplates/getprojecttemplatetasklist/${templateId}`;
+    return this.callHttpGet(url, 'getprojecttemplatetasklist')
+  }
+
+  postCopyProject(copyProject): Observable<any> {
+    const url = `${this.projects}projects/copyProject`;
+    return this.callHttpPost(url, 'copyProject', copyProject);
+  }
+
+  appendTemplateToProject(projectId: number, templateId: number, applyTeam: boolean) {
+    const url = `${this.projects}projects/appendTemplateToProject`;
+    return this.callHttpPost(url, 'appendTemplateToProject', { projectId, templateId, applyTeam });
+  }
+
+  getProjectEmailPreferences(projectId): Observable<any> {
+    const url = `${this.projects}projects/projectemailpreferences/${projectId}`;
+    return this.callHttpGet(url, 'projectemailpreferences')
+  }
+
+  postProjectTaskSettings(projectSettings): Observable<any> {
+    const url = `${this.projects}projects/projecttaskssettings`;
+    return this.callHttpPost(url, 'projecttaskssettings', projectSettings);
+  }
+  
+  postProjectEmailPreferences(projectEmailPreferences): Observable<any> {
+    const url = `${this.projects}projects/projectemailpreferences`;
+    return this.callHttpPost(url, 'projectemailpreferences', projectEmailPreferences);
+  }
+
+  getTaskApprovalDetails(taskId): Observable<any> {
+    const url = `${this.projects}projects/gettaskapprovaldetails/${taskId}`;
+    return this.callHttpGet(url, 'gettaskapprovaldetails')
+  }
+
 
   getClientPreference(clientPreferenceSetting): Observable<any> {
     const url = `${this.projects}projects/GetClientPreference/${clientPreferenceSetting}`;
@@ -162,27 +213,77 @@ export class DashboardService  extends EndpointService {
 
   getProjectTaskList(projectId): Observable<any> {
     const url = `${this.projects}tasks/getprojecttasklist/${projectId}`;
-    return this.callHttpGet(url, 'projectId')
+    return this.callHttpGet(url, 'getProjectTaskList')
   }
 
   getOutstandingRolesforTask(projectId): Observable<any> {
     const url = `${this.projects}tasks/getoutstandingrolesfortask/${projectId}`;
-    return this.callHttpGet(url, 'projectId')
+    return this.callHttpGet(url, 'getOutstandingRolesforTask')
+  }
+
+  getTaskDetails(projectId, taskId): Observable<any> {
+    const url = `${this.projects}tasks/getTaskDetails/${projectId}/${taskId}`;
+    return this.callHttpGet(url, 'getTaskDetails')
+  }
+
+  getTaskCompletionDates(projectId, taskId): Observable<any> {
+    const url = `${this.projects}tasks/TaskCompletionDate/${projectId}/${taskId}`;
+    return this.callHttpGet(url, 'getTaskCompletionDates')
+  }
+
+  setTaskCompletionDates(projectId: number, taskId: number, isReset: number, isCompleteDate: number, userDate: Date, noteText: string) {
+    const url = `${this.projects}tasks/TaskCompletionDate`;
+    return this.callHttpPost(url,  'setTaskCompletionDates', { projectId, taskId, isReset, isCompleteDate, userDate, noteText });
+  }
+
+  getAllApprovers(projectId, taskId): Observable<any> {
+    const url = `${this.projects}tasks/getAllApprovers/${projectId}/${taskId}`;
+    return this.callHttpGet(url, 'getAllApprovers')
+  }
+
+  getWorkflowStatuses(): Observable<any> {
+    const url = `${this.projects}tasks/getWorkflows`;
+    return this.callHttpGet(url, 'getWorkflowStatuses');
+  }
+
+  getCommonNoteTypes(): Observable<any> {
+    const url = `${this.projects}tasks/commonNoteTypes`;
+    return this.callHttpGet(url, 'getCommonNoteTypes')
+  }
+
+  deleteTasks(tasksToDelete) {
+    const url = `${this.projects}tasks/deletetasks`;
+    return this.callHttpPost(url,  'deletetasks',  tasksToDelete );
+  }
+
+  createOrUpdateTask(taskToUpdate) {
+    const url = `${this.projects}tasks/createprojecttask`;
+    return this.callHttpPost(url,  'createProjectTask',  taskToUpdate );
   }
 
   getProjectContactLevel(projectId): Observable<any> {
     const url = `${this.projects}projects/getprojectcontactlevel/${projectId}`;
-    return this.callHttpGet(url, 'projectId')
+    return this.callHttpGet(url, 'getProjectContactLevel')
   }
 
   saveTeamAsTemplate(teamTemplateName: string, projectId: number) {
     const url = `${this.projects}projects/createteamtemplate`;
-    return this.callHttpPostApprovalError(url, 'createteamtemplate',  { teamTemplateName, projectId })
+    return this.callHttpPostWithErrorMessage(url, 'saveTeamAsTemplate',  { teamTemplateName, projectId })
   }
 
   saveProjectManager(projectId: number, contactId: number) {
     const url = `${this.projects}projects/saveprojectmanager`;
-    return this.callHttpPost(url,  'saveprojectmanager', { projectId, contactId });
+    return this.callHttpPost(url,  'saveProjectManager', { projectId, contactId });
+  }
+
+  saveNote(objectId: number, objectTypeId: number, commonNoteId: number, commonNoteTypeId: number, commonNote: string) {
+    const url = `${this.projects}tasks/saveNotes`;
+    return this.callHttpPost(url,  'saveNote', { objectId, objectTypeId, commonNoteId, commonNoteTypeId, commonNote });
+  }
+
+  saveAssignees(taskId: number, addAssigneesContactIds: number[], removeAssigneesContactIds: number[]) {
+    const url = `${this.projects}tasks/editApprovers`;
+    return this.callHttpPost(url,  'saveNote', { taskId, addApprovers: addAssigneesContactIds, removeApprovers: removeAssigneesContactIds });
   }
 
   removeTeamMembers(projMemberData ) {
@@ -192,17 +293,17 @@ export class DashboardService  extends EndpointService {
 
   addContactsToTasksByRole(projectID: number) {
     const url = `${this.projects}tasks/addcontactstotasksbyrole`;
-    return this.callHttpPost(url, 'addcontactstotasksbyrole', { projectID } );
+    return this.callHttpPost(url, 'addContactsToTasksByRole', { projectID } );
   }
 
   updateProjectTeamMember(projectTeamMember: UpdateProjectTeamMember) {
     const url = `${this.projects}projects/updateprojectteammember`;
-    return this.callHttpPost(url, 'updateprojectteammember', projectTeamMember);
+    return this.callHttpPost(url, 'updateProjectTeamMember', projectTeamMember);
   }
 
   addTemporaryUser(temporaryUser: UpdateTemporaryUser) {
     const url = `${this.projects}projects/addtemporaryuser`;
-    return this.callHttpPost(url, 'addtemporaryuser', temporaryUser);
+    return this.callHttpPostWithErrorMessage(url, 'addtemporaryuser', temporaryUser);
   }
 
   updateProjectContact(projectContact: UpdateContact) {
@@ -221,7 +322,35 @@ export class DashboardService  extends EndpointService {
   
   getComposeEmailInfo(projectId): Observable<any> {
     const url = `${this.projects}projects/getcomposeemailinfo/${projectId}`;
-    return this.callHttpGet(url, 'projectId');
+    return this.callHttpGet(url, 'getComposeEmailInfo');
+  }
+
+  getGridData(request: any): Observable<any> {
+    return this.callHttpPost(`${this.listpages}listpage/gridData`, 'getGridData', request)
+  }
+
+  getListViewSelectorItems(request: GetViewDropdownDataRequest): Observable<any> {
+    return this.callHttpGet(`${this.listpages}listpage/ListViewSelectorItems/${request.objectTypeId}`, 'getListViewSelectorItems')
+  }
+
+  createUserListView(userView: ListView): Observable<number> {
+    return this.callHttpPost(`${this.listpages}listpage/views`, 'createUserListView', userView);
+  }
+
+  deleteUserView(userViewId: number): Observable<any> {
+    return this.callHttpDelete(`${this.listpages}listpage/views/${userViewId}`, 'deleteUserView')
+  }
+
+  setDefaultListView(request: SetDefaultListViewRequest): Observable<any> {
+    return this.callHttpPut(`${this.listpages}listpage/SetDefaultListView`, 'setDefaultListView', request)
+  }
+
+  updateListView(listView): Observable<any> {
+    return this.callHttpPut(`${this.listpages}listpage/ListViewUpdate`, 'updateListView', listView)
+  }
+  
+  hideListView(request: HideListViewRequest): Observable<any> {
+    return this.callHttpPost(`${this.listpages}listpage/HideListView`, 'hideListView', request)
   }
 
   errorNotify(message: string) {

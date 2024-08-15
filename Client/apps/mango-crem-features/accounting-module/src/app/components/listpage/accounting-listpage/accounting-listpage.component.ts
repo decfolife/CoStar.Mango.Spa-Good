@@ -21,11 +21,9 @@ export class AccountingListpageComponent implements OnInit {
 
   ngOnInit(): void {
     this.listPageService.getGoogleMapAPIKey().subscribe(x => {
-      console.log(x)
       this.googleMapAPIKey = x.data.googleMapAPIKey;
       this.googleMapAPIKeyLoaded = true;
       this.listPageService.getGoogleMappingChannel().subscribe(x => {
-        console.log(x)
         this.googleMappingChannel = x.data.googleMappingChannel;
         this.googleMappingChannelLoaded = true;
         this.loadGoogleMapsAPIScript()

@@ -1,0 +1,20 @@
+<div class="dx-field">
+  <div class="iconWrapper dx-field-value-static">
+    <dx-popover [target]="'#' + targetId" [showEvent]="onMouseEvent" [hideEvent]="hideEvent" [position]="arrowPosition"
+      [width]="width" [height]="height" [showTitle]="true" [title]="getTitle" [showCloseButton]="showCloseButton"
+      [hideOnOutsideClick]="hideOnOutsideClick" (onShowing)="onShownHandler()" aria-modal="true" role="dialog"
+      [wrapperAttr]="{id: popoverId}">
+      <dxo-animation>
+        <dxo-show type="pop" [from]="{ scale: 0 }" [to]="{ scale: 1 }"></dxo-show>
+
+        <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
+      </dxo-animation>
+      <div id="popoverWrapper">
+        <div #toolTip id="toolTipData" tabindex="0" *ngIf="toolTipData">{{ toolTipData }}</div>
+        <div #toolTip id="toolTipNoData" tabindex="0" *ngIf="toolTipData === null || toolTipData === undefined">
+          <p>No help text available.</p>
+        </div>
+      </div>
+    </dx-popover>
+  </div>
+</div>

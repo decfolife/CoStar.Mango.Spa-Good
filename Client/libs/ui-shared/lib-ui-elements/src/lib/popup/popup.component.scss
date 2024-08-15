@@ -1,0 +1,49 @@
+@use 'styles' as *;
+
+.crem-popup {
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  &__body {
+    padding: 20px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(128, 128, 128, 0.417);
+    padding: 15px 20px;
+  }
+}
+
+.footer {
+  &__close-button {
+    margin-right: 8px;
+  }
+  &__apply-button {
+    margin-right: 8px;
+  }
+}
+
+::ng-deep #crem-popup {
+  .crem-popup {
+    .dx-popup-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0;
+    }
+
+    .dx-state-focused {
+      border: 1px solid #ddd !important;
+    }
+
+    .dx-popup-title {
+      @include costar(font-size, lead);
+    }
+  }
+}

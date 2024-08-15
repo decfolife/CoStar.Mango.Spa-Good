@@ -27,7 +27,8 @@ export class RenderFormHeaderComponent{
       tooltipData: 'Tooltip Data 1',
       sidekick: {
         metricValue: '0',
-        valueIndicator: 'neutral'
+        direction: 'neutral',
+        symbol: null
       },
       isActive: true,
       elementId: 1,
@@ -41,7 +42,8 @@ export class RenderFormHeaderComponent{
       tooltipData: 'Tooltip Data 2',
       sidekick: {
         metricValue: '912',
-        valueIndicator: 'negative-down'
+        direction: 'down',
+        symbol: 'negative'
       },
       isActive: true,
       elementId: 2,
@@ -55,7 +57,8 @@ export class RenderFormHeaderComponent{
       tooltipData: 'Tooltip Data 3',
       sidekick: {
         metricValue: '122',
-        valueIndicator: 'negative-up'
+        direction: 'up',
+        symbol: 'negative'
       },
       isActive: true,
       elementId: 3,
@@ -69,7 +72,8 @@ export class RenderFormHeaderComponent{
       tooltipData: 'Tooltip Data 4',
       sidekick: {
         metricValue: '75',
-        valueIndicator: 'positive-up'
+        direction: 'up',
+        symbol: 'positive'
       },
       isActive: true,
       elementId: 4,
@@ -83,7 +87,8 @@ export class RenderFormHeaderComponent{
       tooltipData: 'Tooltip Data 5',
       sidekick: {
         metricValue: '6',
-        valueIndicator: 'negative-down'
+        direction: 'down',
+        symbol: 'negative'
       },
       isActive: true,
       elementId: 5,
@@ -97,7 +102,8 @@ export class RenderFormHeaderComponent{
       tooltipData: 'Tooltip Data 6',
       sidekick: {
         metricValue: '4',
-        valueIndicator: 'negative-down'
+        direction: 'down',
+        symbol: 'negative'
       },
       isActive: true,
       elementId: 6,

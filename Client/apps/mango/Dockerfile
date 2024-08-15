@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY decorate-angular-cli.js ./
 RUN npm set strict-ssl false
-RUN CYPRESS_INSTALL_BINARY=0 npm ci --force
+RUN CYPRESS_INSTALL_BINARY=0 npm install --force
 COPY ./ /app/
 RUN echo "building environment=$COSTAR_ENVIRONMENT"
 RUN npx nx run mango:build --configuration=$COSTAR_ENVIRONMENT

@@ -1,9 +1,9 @@
-@use "../../../../../common/src/styles" as *;
+@use "styles" as *;
 
 label {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding-top: calc(0.175rem + 1px);
   padding-bottom: calc(0.175rem + 1px);
   margin-bottom: 0;

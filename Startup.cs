@@ -20,6 +20,7 @@ using MangoSPA.Extensions;
 using Microsoft.AspNetCore.DataProtection;
 using MangoSPA.Middleware;
 using static MangoSPA.Constants;
+using MangoSPA.Models;
 
 namespace MangoSPA;
 
@@ -52,13 +53,28 @@ public class Startup
         AddDataProtection(services);
         AddServices(services);
 
+        services.AddSession(options =>
+        {
+            options.Cookie.Name = "mango.info";
+            options.IdleTimeout = TimeSpan.FromMinutes(Configuration.CookieExpirationInMinutes());
+            options.Cookie.SameSite = Environment.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = Environment.IsLowerEnvs() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+            options.Cookie.HttpOnly = true;
+            // cannot be set
+            //options.Cookie.Expiration = TimeSpan.FromMinutes(Configuration.CookieExpirationInMinutes());
+            options.Cookie.IsEssential = true;
+        });
+
         services.AddReverseProxy()
                 .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
                 .AddTransforms(builderContext =>
                 {
                     builderContext.AddRequestTransform(async transformContext =>
                     {
-                        var accessToken = transformContext.HttpContext.User.AccessToken();
+                        var emulatedUser = await transformContext.HttpContext.Session.GetAsync<EmulatedUser>(SessionDataKeys.EmulateUserKey);
+
+                        string accessToken = emulatedUser?.AccessToken ?? transformContext.HttpContext.User.AccessToken();
+
                         transformContext.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     });             
                 });
@@ -166,7 +182,9 @@ public class Startup
         app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
- 
+
+        app.UseSession();
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
@@ -266,6 +284,7 @@ public class Startup
         services.AddAuthorization(opts =>
         {
             opts.AddPolicy("FullAccess", policy => policy.RequireClaim(ClaimType.SecurityLevel, "2"));
+            opts.AddPolicy("SuperUser", policy => policy.RequireClaim(ClaimType.ContactRole, "0", "SuperUser"));
         });
 
 

@@ -1,10 +1,12 @@
 import { Injectable, Optional } from '@angular/core';
+import { Observable} from 'rxjs';
+import { map } from 'rxjs/operators';
 import { EndpointService } from '../../../../../../libs/core-shared/src';
-import { environment } from '@mangoSpa/src/environments/environment.local';
+import { UtilitiesService } from '@mango/core-shared';
 import { HttpClient } from '@angular/common/http';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Observable, of} from 'rxjs';
-import { CoStarProperty, BuildingInfo } from '@mango/data-models/lib-data-models';
+import { Api, SecurityType, BuildingInfo, CoStarProperty } from '@mango/data-models/lib-data-models';
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,58 +16,42 @@ export class CostarMatchingService extends EndpointService
   public isLoading = false;
   public isErrored = false;
   public requestHasBeenSent = false;
+  costarMatchingUrl : string = UtilitiesService.getBaseApiUrl(Api.coStarMatch);
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getMatchedCostarProperty(request: any): Observable<CoStarProperty[]> {    
-    const costarProperties: CoStarProperty[] = [
-      {
-        coStarId: 100,
-        address: '333 Peachtree Rd, Atlanta, GA 30326',
-        propertyType: 'Building',
-        confidenceScore: 40,
-      },
-      {
-        coStarId: 101,
-        address: '400 Peachtree Rd, Atlanta, GA 30326',
-        propertyType: 'Lease',
-        confidenceScore: 20,
-      },
-      {
-        coStarId: 102,
-        address: '500 Peachtree Rd, Atlanta, GA 30326',
-        propertyType: 'Office',
-        confidenceScore: 0,
-      }
-    ];
-
-    return of(costarProperties);
-    // const url = `${environment.appUrls.costarMatch}properties/`;          
-    // return this.callHttpGet(url, 'matchall', request)
+    const url = `${this.costarMatchingUrl}properties/matched`;           
+    return this.callHttpPost(url, 'matchall', request).pipe(
+      map(x => x.data)
+    );
   }
 
-  getBuildingInfo(buildingID: number): Observable<any> {    
-    const buildingInfo: BuildingInfo = {
-      buildingId: 111,
-      coStarId: 222,
-      buildingActive: true,
-      buildingName: 'Phipps Plaza Heights',
-      buildingAddress_1: '3438 Main street',
-      buildingAddress_2: '',
-      buildingCity: 'Altanta',
-      buildingState: 'GA',
-      buildingZipCode: '30020',
-      buildingCountry: 'United States',
-    };
-    return of(buildingInfo);
-    // const clientKey = 'blank';
-    // const url = `${environment.appUrls.costarMatch}properties/buildinginformation/{buildingID}/{clientKey}`;          
-    // return this.callHttpGet(url, 'buildinginformation', buildingID)
+  getBuildingInfo(buildingID: number): Observable<BuildingInfo> {    
+    const url = `${this.costarMatchingUrl}buildings/${buildingID}`;     
+    return this.callHttpGet(url, 'buildings', buildingID).pipe(
+      map(x => x.data)
+    );
   }
 
-  saveCostarProperty(costarProperty: any) : Observable<any>{
-    return of(true);
+  getUserCoStarMatchingModuleRight(moduleRights: any): Observable<SecurityType> {
+    const url = `${this.costarMatchingUrl}pagesecurity/getmodulerights`;  
+    return this.callHttpPost(url,'pagesecurity',moduleRights).pipe(
+      map(x => x.data[0].maxSecurityTypeId as SecurityType)
+    );
+  }
+
+  getUserCoStarMatchingPageRight(navPageRights: any): Observable<boolean> {
+    const url = `${this.costarMatchingUrl}pagesecurity/getNavPageRights`;  
+    return this.callHttpPost(url,'pagesecurity',navPageRights).pipe(
+      map(x => x.data as boolean)
+    );
+  }
+
+  updateBuildingRecord(request: any) : Observable<any>{
+    const url = `${this.costarMatchingUrl}buildings/updatebuilding`;     
+    return this.callHttpPut(url, 'buildings', request);
   }
 }

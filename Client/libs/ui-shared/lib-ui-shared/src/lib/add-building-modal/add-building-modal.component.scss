@@ -1,5 +1,28 @@
 @use 'apps/mango/src/assets/styles/colors.scss' as colors;
-@use "../../../../common/src/styles" as *;
+@use 'styles' as *;
+
+#addBuildingModal-content{
+  .label {
+    margin-bottom: 2px;
+    margin-top: 2px;
+
+    .required-tag {
+      color: $danger;
+    }
+  }
+
+  .container {
+    padding: 8px 0 4px;
+  }
+
+ #aet-buildingInfo-container  {
+    display: flex;
+    gap: 8px;
+    .buildingInfo {
+      flex-basis: 50%;
+    }
+  }
+}
 
 ::ng-deep {
   .modalFooter {
@@ -11,4 +34,10 @@
       }
     }
   }
+}
+
+
+#new-building-form {
+  width: 100%;
+  display: unset;
 }

@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Meta, Story, moduleMetadata } from '@storybook/angular';
 import { DisplayBreadcrumbsComponent } from './display-breadcrumbs.component';
 import { BreadCrumb } from '@mango/data-models/lib-data-models';
+import { IconModule } from '@mango/ui-shared/lib-ui-elements';
 
 export default {
   title: 'Organisms/Breadcrumb',
   component: DisplayBreadcrumbsComponent,
   decorators: [
     moduleMetadata({
-      imports: [CommonModule],
+      imports: [CommonModule,IconModule],
     }),
   ],
 } as Meta<DisplayBreadcrumbsComponent>;

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DropdownComponent } from './dropdown.component';
+import { DropdownModule } from './dropdown.module';
 
 describe('DropdownComponent', () => {
   let component: DropdownComponent;
@@ -10,6 +11,7 @@ describe('DropdownComponent', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [DropdownComponent],
+        imports: [DropdownModule]
       }).compileComponents();
     })
   );

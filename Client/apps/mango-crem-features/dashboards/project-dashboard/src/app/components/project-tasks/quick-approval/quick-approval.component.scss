@@ -1,0 +1,21 @@
+.crem-quick-approval-data-grid .dx-field-value {
+  width: 100%;
+}
+:host
+  ::ng-deep
+  dx-data-grid
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td {
+  vertical-align: middle;
+}
+.margin {
+  margin-bottom: 0px;
+  margin-left: 5px;
+}
+::ng-deep #quickApprovalDatagrid {
+  td:has(div.dx-state-disabled) {
+    pointer-events: none;
+  }
+}

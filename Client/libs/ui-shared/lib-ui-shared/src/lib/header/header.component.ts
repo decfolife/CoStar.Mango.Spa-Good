@@ -1,9 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HeaderService } from '@mango/core-shared/lib-core-shared';
+import { Router } from '@angular/router';
 import { DataService } from '@mango/core-shared';
-import { ContactRecord, MANGO_SPA_DEFAULT_PAGE, UserAuth } from '@mango/data-models/lib-data-models';
-import { Observable, of, Subscription } from 'rxjs';
+import { ContactRecord, MANGO_SPA_DEFAULT_PAGE, ObjectType, UserAuth } from '@mango/data-models/lib-data-models';
+import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
 import { UntypedFormControl } from '@angular/forms';
 
@@ -29,16 +28,22 @@ export class HeaderComponent implements OnInit {
 
   productTitle: string = 'Real Estate Manager';
   searchObjectId: number = 99;
+  currentContactID: number = -1;
+  ContactObjectTypeTypeId: number = 500;
   currentUser$: Observable<UserAuth>;
   contactRecord$: Observable<ContactRecord>;
   hasMultipleContactRecords$: Observable<boolean>
+  isEmulatedUser$: Observable<boolean>
+  showEmulateUserOption$: Observable<boolean>
+  showStopEmulateUserOption$: Observable<boolean>
   filteredOptions;
   myControl = new UntypedFormControl();
   inputSubscription$;
   searchModules: module[];
   ImageUrl$: Observable<string>;
   private subs: Subscription[] = [];
-  private isDateCalcOpen: boolean = false
+  private isDateCalcOpen: boolean = false;
+  private redirectorLinks: any[] = null;
 
   constructor(
     public dialog: MatDialog,
@@ -51,10 +56,26 @@ export class HeaderComponent implements OnInit {
     this.currentUser$ = this.facade.authenticatedUser$;
     this.hasMultipleContactRecords$ = this.facade.userHasMultipleContactRecords$
     this.contactRecord$ = this.facade.contactRecord$;
-    this.ImageUrl$ = this.facade.userClient$.pipe(
+    this.isEmulatedUser$ = this.facade.isEmulatedUser$;
+
+    this.showEmulateUserOption$ = 
+      combineLatest([this.isEmulatedUser$, this.contactRecord$]).pipe(
+        map(([isEmulatedUser, contact]) => !isEmulatedUser && contact.userRole === 0 && !environment.production));
+
+    this.showStopEmulateUserOption$ = 
+        combineLatest([this.isEmulatedUser$, this.contactRecord$]).pipe(
+          map(([isEmulatedUser, contact]) => isEmulatedUser && contact.userRole === 0 && !environment.production));
+
+    this.ImageUrl$ = this.facade.clientInfo$.pipe(
       filter(client => !!client),
       map(client => `${client.imageBaseUrl}${client.logoUri}`)
     )
+
+    this.subs.push(
+      this.dataService.getRedirectorLinkList().subscribe(res => {
+        this.redirectorLinks = res.data;
+      })
+    );    
 
     this.getSearchModules();
     this.subs.push(this.myControl.valueChanges
@@ -67,6 +88,10 @@ export class HeaderComponent implements OnInit {
         (error => console.log("Error occurred while subscribing to typeahead data: ", error))
       )
     );
+  }
+
+  goToHomePage() {
+    this.router.navigate(['/'])
   }
 
   getSearchModules() {
@@ -117,7 +142,7 @@ export class HeaderComponent implements OnInit {
   }
 
   moduleChange(e) {
-    this.searchObjectId = e.value;
+    this.searchObjectId = e.target.value;
     this.search();
   }
 
@@ -142,12 +167,16 @@ export class HeaderComponent implements OnInit {
   }
 
   showEmulateUser() {
-    const dialogRef = this.dialog.open(EmulateUserPopupComponent, {
+    this.dialog.open(EmulateUserPopupComponent, {
       width: '800px',
       height: '528px',
       panelClass: 'emulate-user-dialog',
       disableClose: true
     });
+  }
+
+  stopEmulatingUser() {
+    this.facade.stopEmulatingUser()
   }
 
   public showDateCalculatorDialog(): void {
@@ -167,6 +196,31 @@ export class HeaderComponent implements OnInit {
       dialogRef.afterClosed().subscribe(() => {
         this.isDateCalcOpen = false;
       }));
+  }
+
+  redirectToContactRecord()
+  {
+     this.contactRecord$.subscribe(u => { 
+        this.currentContactID =  u.contactID; 
+        const currURL = this.findUrl(this.currentContactID,ObjectType.CONTACT,this.ContactObjectTypeTypeId);    
+        document.location.href = currURL;
+     })
+  }
+
+  findUrl(objectId: number, objectTypeId: number, objectTypeTypeId: number): string {
+    let found = this.redirectorLinks.find(
+      x => x.objectTypeId === objectTypeId && x.objectTypeTypeId === objectTypeTypeId
+    );
+  
+    found = found ?? this.redirectorLinks.find(x => x.objectTypeId === objectTypeId);
+  
+    let urlLink = found ? found.urlLink : 'not found'; 
+    urlLink = urlLink
+      .replace(/\[OID\]/, objectId)
+      .replace(/\[OTID\]/, objectTypeId)
+      .replace(/\[OTTID\]/, objectTypeTypeId);
+    
+    return urlLink;
   }
 
   ngOnDestroy() {

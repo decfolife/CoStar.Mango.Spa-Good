@@ -1,0 +1,23 @@
+@use 'styles' as *;
+
+.checkbox-wrapper {
+  display: flex;
+}
+
+.checkbox-label {
+  margin-left: 8px;
+  margin-bottom: -5px;
+
+  &.disabled {
+    @include costar(color, gray04);
+  }
+}
+
+:host ::ng-deep {
+  dx-check-box.dx-state-disabled {
+    .dx-checkbox-icon {
+      opacity: 1 !important;
+      background-color:  var(--costar-color-gray06);
+    }
+  }
+}

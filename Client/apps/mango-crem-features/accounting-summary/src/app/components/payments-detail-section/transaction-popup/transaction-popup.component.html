@@ -6,6 +6,7 @@
     [(visible)]="transactionPopupVisible"
     (onHidden)="onTransactionPopupHidden()"
     [hideOnOutsideClick]="true"
+    showCloseButton="false"
     [wrapperAttr]="{ class: 'accounting-summary-style-container' }">
     <div *dxTemplate="let data of 'content'">
         <dx-scroll-view height="40%">
@@ -132,7 +133,7 @@
                         Status:
                     </label>
                     <div class="input-popup">
-                        {{ transactionPopupData.glAccountProcessingStatus }}
+                        {{ transactionPopupData.processingStatus  }}
                     </div>
                 </div>
                 <div class="clearfix">

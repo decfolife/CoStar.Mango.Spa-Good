@@ -1,23 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
-import { Meta, Story, moduleMetadata } from '@storybook/angular';
-import { DxButtonModule, DxDataGridModule, DxDateBoxModule, DxDropDownBoxModule, DxFormModule, DxSelectBoxModule, DxTemplateModule, DxTextBoxModule, DxValidationSummaryModule, DxValidatorModule } from 'devextreme-angular';
-import { DropdownComponent } from './dropdown.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { Meta, Story, moduleMetadata } from '@storybook/angular';
+import { DxButtonModule, DxDataGridModule, DxDropDownBoxModule, DxFormModule, DxSelectBoxModule, DxTemplateModule, DxTextBoxModule, DxTooltipModule, DxValidationSummaryModule, DxValidatorModule } from 'devextreme-angular';
 import { ButtonModule } from '../button';
+import { IconModule } from '../icon';
+import { DropdownComponent } from './dropdown.component';
 
 interface DropdownComponentStory extends DropdownComponent {
   text: string
 }
 
 export default {
-  title: 'Components/Dropdown',
+  title: 'Components/Dropdown *',
   component: DropdownComponent,
   decorators: [
     moduleMetadata({
       imports: [
         CommonModule,
-        LibDataModelsModule,
         DxDropDownBoxModule,
         DxTextBoxModule,
         DxButtonModule,
@@ -29,33 +28,68 @@ export default {
         DxValidationSummaryModule,
         MatMenuModule,
         ButtonModule,
+        IconModule,
+        DxTooltipModule
       ],
     }),
   ],
-  parameters: {
-    docs: {
-      description: {
-        component: '',
-      },
-    },
-  },
 } as Meta<DropdownComponent>;
 
 const Template: Story<DropdownComponent> = (args: DropdownComponentStory) => ({
   props: args
 });
 
+/** Minimal configuration */
 export const Default = Template.bind({});
 Default.args = {
+  id: 'dropdown',
   initialSelectedValue: null,
   placeholder: 'Select an item...',
   label: 'Label',
   isSearchable: true,
-  selectMode: 'multiple',
+  selectMode: 'single',
   required: true,
   readOnly: false,
   allowSearch: true,
   dataSource: [
+    {
+      displayKey: "Apples",
+      valueKey: "Apples"
+    },
+    {
+      displayKey: "Oranges",
+      valueKey: "Oranges"
+    },
+    {
+      displayKey: "Lemons",
+      valueKey: "Lemons"
+    },
+    {
+      displayKey: "Pears",
+      valueKey: "Pears"
+    },
+    {
+      displayKey: "Pineapples",
+      valueKey: "Pineapples"
+    },
+  ]
+};
+
+/** This should primarily be used as part of the page header component. */
+export const WithLabel = Template.bind({});
+WithLabel.args = {
+  initialSelectedValue: 'Watermelon',
+  selectBoxValue: 'Watermelon',
+  label: "Segment is",
+  fieldTemplate: "withLabel",
+  placeholder: 'Select Segment',
+  allowSearch: true,
+  useSelectBox: true,
+  dataSource: [
+    {
+      displayKey: "Watermelon",
+      valueKey: "Watermelon"
+    },
     {
       displayKey: "Apples",
       valueKey: "Apples"

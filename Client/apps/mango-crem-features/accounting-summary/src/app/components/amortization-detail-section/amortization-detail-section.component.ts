@@ -24,6 +24,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;
   @Input() classificationID: number;
+  @Input() isAccountingEventEmpty: boolean;
 
   componentName = "amortization-grid"
   isGridStateChanged = false;
@@ -52,7 +53,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   showDefaultRow = false;
   showMinRow = false;
   resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
-  clearBtnHoverText ='This will clear all pending changes in the grid';
+  clearBtnHoverText = 'This will clear all pending changes in the grid';
 
   constructor(public accountingSummaryService: AccountingSummaryService, private columnService: AmortizationGridColumnsService, private formatService: FormattingService, private datePipe: DatePipe) {
     this.summaryFields = this.getSummaryFields();
@@ -114,7 +115,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   amortizationGridSetup(leaseRecognitionScheduleID: number) {
     const amortizationDetails = this.accountingSummaryService.getAmortizationDetails(leaseRecognitionScheduleID);
-      this.subscription.add(amortizationDetails.subscribe((amortizationDetailsResponse) => {
+    this.subscription.add(amortizationDetails.subscribe((amortizationDetailsResponse) => {
       if (amortizationDetailsResponse.success) {
         this.amortizationDataGrid.instance.option("noDataText", "");
         this.amortizationdetailsGridData = amortizationDetailsResponse.data;
@@ -127,7 +128,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
         this.amortizationDetailColumns = this.getAmortizationColumns(this.classificationID, this.eventScheduleData);
         this.getGridPreferences();
       } else if (!amortizationDetailsResponse.success) {
-        this.accountingSummaryService.errorNotify( amortizationDetailsResponse.clientErrorMessage);
+        this.accountingSummaryService.errorNotify(amortizationDetailsResponse.clientErrorMessage);
       }
     }));
   }
@@ -137,20 +138,21 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   }
 
   getGridPreferences() {
-    const state = JSON.parse(sessionStorage.getItem("amortizationGridStateKey"))
+    let state = JSON.parse(sessionStorage.getItem("amortizationGridStateKey"))
     // Filter the data
     const filteredData = this.gridState.filter(item => {
       return item.classificationID === this.classificationID && item.gridName === this.gridName;
     });
 
-    if (state !== null) {
-      state.columns = [];
-
-      filteredData.forEach((item) => {
-        const parsedColumns = JSON.parse(item.columnJson);
-        state.columns.push(...parsedColumns);
-      });
+    if (state === null) {
+      state = {}
     }
+
+    state.columns = [];
+    filteredData.forEach((item) => {
+      const parsedColumns = JSON.parse(item.columnJson);
+      state.columns.push(...parsedColumns);
+    });
 
     this.initialState = state;
     this.amortizationDataGrid.instance.state(state);
@@ -160,7 +162,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
 
   onGridContentReady() {
     if (!this.contentLoaded) {
-      this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid,15);
+      this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid, 15);
       this.amortizationDataGrid.instance.state(this.initialState);
       this.contentLoaded = true;
     }
@@ -180,7 +182,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     }));
   }
 
-  clearGridChanges(){
+  clearGridChanges() {
     this.isGridStateChanged = false;
     this.amortizationDataGrid.instance.state(this.initialState);
   }
@@ -377,7 +379,7 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
     return { totalItems };
   }
 
-  exportToExcel() {
+  sendToExcel() {
     const classificationType = this.classificationType;
     const amortizationProfileName = this.amortizationProfileName;
     const sheetname = this.accountingSummaryService.getLeaseAbstractId() + ' - ' + amortizationProfileName;
@@ -426,14 +428,14 @@ export class AmortizationDetailSectionComponent implements OnChanges, OnDestroy 
   }
 
   showDefaultRows() {
-    this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid,15);
+    this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid, 15);
     this.showMaxRow = true;
     this.showDefaultRow = false;
     this.showMinRow = false;
   }
 
   showMinRows() {
-    this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid,11);
+    this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(this.amortizationDataGrid, 11);
     this.showMaxRow = false;
     this.showDefaultRow = true;
     this.showMinRow = false;

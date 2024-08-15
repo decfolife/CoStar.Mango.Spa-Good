@@ -1,15 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
 
 @Component({
+  standalone: true,
+  imports: [ModalModule],
   selector: 'mango-update-service-account',
   templateUrl: './update-service-account.component.html',
   styleUrls: ['./update-service-account.component.scss'],
 })
 export class UpdateServiceAccountComponent implements OnInit {
-
-  // Assigning info to component variable for display. Can do directly to html, but prefer this way
-
   public closeButton = true;
   public cancel: string = "Cancel"
   public action: string;
@@ -26,11 +26,11 @@ export class UpdateServiceAccountComponent implements OnInit {
   ngOnInit() {
     this.action = (this.data.contactActive);
     this.user = (this.data.contactEmailAddress);
-    if(this.action) {
+    if (this.action) {
       this.editAction = "Deactivate"; 
       this.editActionTitle = "Deactivation"; 
     } 
-    else{
+    else {
       this.editAction = "Reactivate"; 
       this.editActionTitle = "Reactivation"; 
     }

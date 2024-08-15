@@ -1,0 +1,45 @@
+@use "../../../../../../../libs/ui-shared/common/src/styles/" as *; 
+
+.page-content{
+  @include costar(padding, 4);
+}
+
+.costar-matching-properties-container {
+  @include costar(margin-top, 4);
+}
+
+.search-container {
+  @include costar(padding, 4);
+  text-align: right;
+}
+
+.grid-container {
+  @include costar(padding-left, 4);
+  @include costar(padding-right, 4);
+}
+
+.associatedPropertyInfo {
+  @include costar(padding, 4);
+  .propertyInfo {
+    @include costar(background-color, gray06); 
+    @include costar(padding, 2);
+  }
+}
+
+.confirm {
+  @include costar(padding-top, 4);
+  width: 100%;
+  text-align: right;
+}
+
+.confirm-button {
+  display: inline-block;
+}
+
+.building-info-container {
+  width: 100%;
+}
+
+.no-access-content {
+  @include costar(padding, 4);
+}

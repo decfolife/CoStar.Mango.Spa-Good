@@ -27,6 +27,20 @@ const routes: Routes = [
           breadCrumb: { label: 'Add Event', append: true, activeLink: 'Accounting' }
         }
       },
+      {
+        path: 'editEvent',
+        component: AddEventComponent,
+        data: {
+          breadCrumb: { label: 'Edit Event', append: true, activeLink: 'Accounting' }
+        }
+      },
+      {
+        path: 'remeasureEvent',
+        component: AddEventComponent,
+        data: {
+          breadCrumb: { label: 'Remeasure Event', append: true, activeLink: 'Accounting' }
+        }
+      },
     ]
   }
 ];

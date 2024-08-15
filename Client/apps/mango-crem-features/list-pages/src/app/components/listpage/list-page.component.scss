@@ -1,5 +1,13 @@
 @use 'src/assets/styles/colors';
 
+::ng-deep .dx-datagrid-column-chooser {
+  &.dx-overlay-wrapper{
+    .dx-treeview-expander-icon-stub{
+      display: none;
+    }
+  }
+}
+
 :host ::ng-deep {
 
   /*

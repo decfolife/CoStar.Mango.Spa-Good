@@ -2,7 +2,10 @@ export interface PortfolioSettingsResponse {
     masterGroupID: number,
     leaseRecognitionCalendarID: number,
     calendarName: string,
-    isLessor: boolean,
+    calendarMinDate: Date,
+    calendarMaxDate: Date,
+    maxCalendarPeriod: number;
+    IisLessor: boolean,
     directEntryDiscountRateEnabled: boolean,
     functionalCurrencyEnabled: boolean,
     journalEntryProfileRequired: boolean,

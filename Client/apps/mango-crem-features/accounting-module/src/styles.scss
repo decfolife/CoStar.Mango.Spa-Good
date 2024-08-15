@@ -2,9 +2,7 @@
 @import "../../../mango/src/assets/styles/costar-angular-material.scss";
 @import "../../../mango/src/assets/styles/costar-dev-extreme.scss"; 
 @import "../../../mango/src/assets/styles/costar-mango.scss";
-// @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
-@import '~bootstrap/dist/css/bootstrap.min.css';
-// @import '~devexpress-gantt/dist/dx-gantt.css';
+// FIXME: The above should be moved to the project.json or removed altogether since is taken care by MangoSPA
 @import "./assets/dx.generic.custom-light.scss";
 @import "./assets/styles/accounting-module.scss";
 

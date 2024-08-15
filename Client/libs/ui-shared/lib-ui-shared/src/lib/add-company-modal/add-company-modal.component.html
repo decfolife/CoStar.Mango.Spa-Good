@@ -1,0 +1,135 @@
+<crem-modal
+	modalId="add_company_modal"
+	modalTitleId="add_company_modal_modalTitleId"
+	modalTitle="Add Company" 
+	closeIconVisible="true"
+	[customFooter]="true">
+
+	<div modalContent class="body-content">
+		<form crem-form
+			layout="vertical" 
+			[formGroup]="companyForm" 
+			class="add-company-form">
+
+			<!-- Company Name -->
+			<crem-form-item [id]="getId(componentName,'name','form-item')">
+				<crem-form-label
+					[id]="getId(componentName,'name','label')"
+					[required]="true">Company Name
+				</crem-form-label>
+				<crem-form-control>
+					<crem-input 
+						[id]="getId(componentName,'name','textbox')"
+						[showHint]="false"
+						[showLabel]="false"
+						[showInfo]="false" 
+						[inputType]="'text'" 
+						[required]="true" 
+						[value]="''" [name]="''"
+						[placeholder]="'Enter company name'" 
+						formControlName="companyName">
+					</crem-input>
+				</crem-form-control>
+			</crem-form-item>
+
+			<!-- Type -->
+			<crem-form-item [id]="getId(componentName,'type','form-item')">
+				<crem-form-label 
+					[id]="getId(componentName,'type','label')"
+					[required]="true">Type
+				</crem-form-label>
+
+				<crem-form-control>
+					<crem-dropdown 
+						#typeDropdown
+						[id]="getId(componentName,'type','dropdown')"
+						[dataSource]='typeDropdownItem'
+						[showClearButton]='true'
+						required="true"
+						[customRequireValidation]="false"
+						[showColumnHeader]='false'
+						displayExpr='ObjectTypeTypeName'
+						valueExpr='ObjectTypeTypeID' 
+						[selectBoxValue]="initialSelectedType"
+						[allowSearch]='true'
+						[useSelectBox]="true" 
+						hoverText="Select Type"
+						formControlName="typeList">
+					</crem-dropdown>
+				</crem-form-control>
+			</crem-form-item>
+
+			<!-- Primary Group -->
+			<crem-form-item [id]="getId(componentName,'group','form-item')">
+				<crem-form-label 
+					[id]="getId(componentName,'group','label')"
+					[required]="true">Primary Group
+				</crem-form-label>
+
+				<crem-form-control>
+					<crem-dropdown 
+						#primaryGroupDropdown
+						[id]="getId(componentName,'group','dropdown')"
+						[dataSource]='primaryGroupDropdownItem'
+						[showClearButton]='true'
+						required="true"
+						[customRequireValidation]="false"
+						[showColumnHeader]='false'
+						displayExpr='CompanyName'
+						valueExpr='CompanyID' 
+						[allowSearch]='true'
+						hoverText="Select Primary Group"
+						formControlName="primaryGroupList">
+					</crem-dropdown>
+				</crem-form-control>
+			</crem-form-item>	
+		</form>
+	</div>
+
+	<div modalFooter class="addCompanyFooter">
+		<crem-button
+			[id]="getId(componentName,'cancel','button')"
+			type="secondary"
+			(click)="close()">Cancel
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'save','button')"
+			type="secondary"
+			(click)="save($event)"
+			[disabled]="saveClicked"
+			[icon]="saveClicked? 'faSpinner':''"
+			[iconPack]="saveClicked? 'solid':''" 
+			[iconAnimation]="saveClicked? 'spin':''">
+			<span>
+				{{saveClicked ? 'Saving':'Save'}}
+			</span>
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'save-and-new','button')"
+			type="secondary"
+			(click)="saveAndNew($event)"
+			[disabled]="saveNewClicked"
+			[icon]="saveNewClicked? 'faSpinner':''"
+			[iconPack]="saveNewClicked? 'solid':''"
+			[iconAnimation]="saveNewClicked? 'spin':''">
+			<span>
+				{{saveNewClicked ? 'Saving':'Save & New'}}
+			</span>
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'Launch','button')"
+			type="primary"
+			(click)="launch($event)"
+			[disabled]="saveLaunchClicked"
+			[icon]="saveLaunchClicked? 'faSpinner':''"
+			[iconPack]="saveLaunchClicked? 'solid':''"
+			[iconAnimation]="saveLaunchClicked? 'spin':''">
+			<span>
+				{{saveLaunchClicked ? 'Saving':'Launch'}}
+			</span>
+		</crem-button>
+	</div>
+</crem-modal>

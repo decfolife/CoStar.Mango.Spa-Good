@@ -1,0 +1,36 @@
+@use 'styles' as *;
+
+.tmc-currentDate, .tmc-systemDate, .tmc-modifyDate-container, .tmc-reason {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  & #tmc-reasonId {
+    width: 233px;
+  }
+  .tmc-modifyDate-container{
+    justify-content: start;
+  }
+}
+
+.tmc-error {
+  @include costar(color, danger);
+}
+
+.tmc-tooltip {
+  top: -5px;
+  width: 10px;
+  margin-right: 37px;
+  position: relative;
+}
+
+.footerRightControls {
+  display: flex;
+
+  & > .tmc-btn {
+    margin-left: 8px;
+  }
+
+  .modalFooter {
+    @include costar(border-top, gray05);
+  }
+}

@@ -25,6 +25,7 @@ import { EnvironmentProviders, makeEnvironmentProviders } from "@angular/core";
 import { StorageService } from './storage.service';
 import { IDLE_TIMOUT_DELAY_SECONDS } from '@mango/data-models/lib-data-models';
 import { DBkeys } from '../utilities/db-keys';
+import { CookieService, UtilitiesService } from '@mango/core-shared';
 
 export class UserIdleConfig {
   /**
@@ -44,6 +45,10 @@ export class UserIdleConfig {
    * idle buffer timer count user's activity actions, in seconds.
    */
   idleSensitivity?: number;
+  /**
+   * Is it Mango SPA using this service
+   */
+  isMangoSpa?: boolean;
 }
 
 export function provideUserIdleConfig(config: UserIdleConfig): EnvironmentProviders {
@@ -58,13 +63,14 @@ export function provideUserIdleConfig(config: UserIdleConfig): EnvironmentProvid
 export class UserIdleService {
   ping$!: Observable<any>;
 
+  protected isMangoSpa: boolean = false
   protected activityEvents$!: Observable<any>;
-
   protected timerStart$ = new Subject<boolean>();
   protected idleDetected$ = new Subject<boolean>();
   protected timeout$ = new Subject<boolean>();
   protected idle$!: Observable<any>;
   protected timer$!: Observable<any>;
+  protected countDownTimer$ = new Subject<number>();
   protected idleMillisec = 600 * 1000;
   protected idleSensitivityMillisec = 1000;
   protected timeout = 300;
@@ -73,7 +79,6 @@ export class UserIdleService {
 
   protected isInactivityTimer = false;
   protected isIdleDetected = false;
-
   protected idleSubscription!: Subscription;
 
   constructor(@Optional() config: UserIdleConfig, private _ngZone: NgZone, private storageService: StorageService) {
@@ -119,8 +124,18 @@ export class UserIdleService {
                   this.activityEvents$,
                   timer(this.idleMillisec).pipe(
                     tap(() => {
-                      this.isInactivityTimer = true;
-                      this.timerStart$.next(true);
+                      if (this.isMangoSpa) {
+                        // Only start timer/show popup when both SPA and V06 are idle.
+                        if (this.isV06Idle()) {
+                          this.isInactivityTimer = true;
+                          this.timerStart$.next(true);
+                        }
+
+                        this.setMangoIdleCookieProperty(true)
+                      } else {
+                        this.isInactivityTimer = true;
+                        this.timerStart$.next(true);
+                      }
                     })
                   )
                 )
@@ -154,6 +169,10 @@ export class UserIdleService {
   resetTimer() {
     this.stopTimer();
     this.isTimeout = false;
+    
+    if (this.isMangoSpa) {
+      this.setMangoIdleCookieProperty(false)
+    }
   }
 
   onTimerStart(): Observable<number> {
@@ -163,8 +182,28 @@ export class UserIdleService {
     );
   }
 
+  onIdleStart(): Observable<boolean> {
+    return this.timerStart$.pipe(
+      distinctUntilChanged(),
+      filter(start => start === true),
+      map(() => true)
+    );
+  }
+
+  onIdleEnd(): Observable<boolean> {
+    return this.timerStart$.pipe(
+      distinctUntilChanged(),
+      filter(start => start === false),
+      map(() => true)
+    );
+  }
+
   onIdleStatusChanged(): Observable<boolean> {
     return this.idleDetected$.asObservable();
+  }
+
+  onTimeoutWarning(): Observable<number> {
+    return this.countDownTimer$;
   }
 
   onTimeout(): Observable<boolean> {
@@ -206,6 +245,9 @@ export class UserIdleService {
     if (config.timeout) {
       this.timeout = config.timeout;
     }
+    if (config.isMangoSpa) {
+      this.isMangoSpa = config.isMangoSpa
+    }
   }
 
   setCustomActivityEvents(customEvents: Observable<any>) {
@@ -219,15 +261,16 @@ export class UserIdleService {
 
   protected setupTimer(timeout: number) {
     this._ngZone.runOutsideAngular(() => {
-      this.timer$ = of(() => new Date()).pipe(
+      this.timer$ = of(() => timeout).pipe(
         map((fn) => fn()),
-        switchMap((startDate) =>
+        switchMap((countDown) =>
           interval(1000).pipe(
             map(() =>
-              Math.round((new Date().valueOf() - startDate.valueOf()) / 1000)
+              countDown--
             ),
             tap((elapsed) => {
-              if (elapsed >= timeout) {
+              this.countDownTimer$.next(elapsed)
+              if (elapsed <= 0) {
                 this.timeout$.next(true);
               }
             })
@@ -240,4 +283,31 @@ export class UserIdleService {
   protected setupPing(pingMillisec: number) {
     this.ping$ = interval(pingMillisec).pipe(filter(() => !this.isTimeout));
   }
+
+  // Shared info cookie used by both SPA and V06
+  protected isV06Idle(): boolean {
+    let clientKey = UtilitiesService.getClientKeyFromUrl()
+    let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
+
+    if (!sharedInfo) return true;
+
+    return sharedInfo.V06Idle
+  }
+
+  setMangoIdleCookieProperty(isMangoIdle: boolean): void {
+    let clientKey = UtilitiesService.getClientKeyFromUrl()
+    
+    let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
+    if (!sharedInfo) return
+
+    //if (sharedInfo.mangoIdle === isMangoIdle) return
+
+    sharedInfo.MangoIdle = isMangoIdle
+
+    // Always default this value to true. V06 is responsible for updating this value
+    sharedInfo.V06Idle = true
+
+    CookieService.setSharedInfoCookie(clientKey, sharedInfo)
+  }
+  // Shared info cookie used by both SPA and V06
 }

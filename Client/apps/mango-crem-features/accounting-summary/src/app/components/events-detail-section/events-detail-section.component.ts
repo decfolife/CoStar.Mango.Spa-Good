@@ -6,7 +6,8 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { DxDataGridComponent, DxDropDownBoxComponent } from 'devextreme-angular';
 import { trigger } from 'devextreme/events';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'mango-events-detail-section',
@@ -64,10 +65,11 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
   showMaxRow = true;
   showDefaultRow = false;
   showMinRow = false;
+  eventsGridData = [];
   resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText = 'This will clear all pending changes in the grid';
 
-  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private formatService: FormattingService, private ref: ChangeDetectorRef) {
+  constructor(public accountingSummaryService: AccountingSummaryService, private columnService: EventsGridColumnsService, private formatService: FormattingService, private ref: ChangeDetectorRef, private router: Router, private activatedRoute: ActivatedRoute) {
     this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
   }
 
@@ -151,7 +153,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   onGridContentReady(grid) {
     if (grid.component.totalCount() > 0) {
-      if (this.setInitialSelectedRow || this.selectedRowKeys.length ===0) {
+      if (this.setInitialSelectedRow || this.selectedRowKeys.length === 0) {
         this.selectedRowKeys = [this.publishedEvent.leaseRecognitionScheduleID];
         this.setInitialSelectedRow = false;
         this.eventGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.eventsDataGrid);
@@ -172,7 +174,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       }
       else if (response.success) {
         this.gridsState = response.data;
-        const state = JSON.parse(sessionStorage.getItem("eventsGridStateKey"))
+        let state = JSON.parse(sessionStorage.getItem("eventsGridStateKey"))
         // Filter the data
         const filteredData = response.data.filter(item => {
           return item.classificationID === this.classificationId && item.gridName === this.gridName;
@@ -180,15 +182,16 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
         this.selectedRowKeys = [this.publishedEvent?.leaseRecognitionScheduleID];
 
-        if (state !== null) {
-          state.columns = [];
-          state.selectedRowKeys = [this.publishedEvent?.leaseRecognitionScheduleID];
-
-          filteredData.forEach((item) => {
-            const parsedColumns = JSON.parse(item.columnJson);
-            state.columns.push(...parsedColumns);
-          });
+        if (state === null) {
+          state = {}
         }
+
+        state.columns = [];
+        state.selectedRowKeys = [this.publishedEvent?.leaseRecognitionScheduleID];
+        filteredData.forEach((item) => {
+          const parsedColumns = JSON.parse(item.columnJson);
+          state.columns.push(...parsedColumns);
+        });
 
         this.initialState = state;
         this.eventsDataGrid.instance.state(state);
@@ -285,7 +288,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     } else {
       gridDataRow.levelExpense = this.formatService.localFormat(gridDataRow.levelExpense, gridDataRow.localCurrencyDecimalPrecision);
     }
-    gridDataRow.periods = gridDataRow.periods.toFixed(2);
+    gridDataRow.periods = gridDataRow.termInPeriods.toFixed(2);
   }
 
   onCellClick(e) {
@@ -370,8 +373,12 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
       icon: 'fa fa-pencil fa-fw blueicon',
       visible: e.row.data.isPublished && this.showEditIcon && e.row.data.jeStatus === 'Scheduled',
       value: e.row.data.leaseRecognitionScheduleID,
+
       onItemClick: () => {
-        alert("Edit Clicked");
+        const queryParams = {
+          eventId: e.row.data.leaseRecognitionScheduleID
+        };
+        this.router.navigate(['editEvent'], { state: { data: e.row.data }, relativeTo: this.activatedRoute, queryParams: queryParams });
       }
     };
 
@@ -385,63 +392,63 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
           text: 'Renewal',
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Renewal', e.row.data);
+            this.navigateToRemeasureEvent(1, 'Renewal', e.row.data);
           }
         },
         {
           text: 'Data Correction',
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Data Correction', e.row.data);
+            this.navigateToRemeasureEvent(2, 'Data Correction', e.row.data);
           }
         },
         {
           text: 'Rent Review (IFRS)', visible: [4, 7].includes(this.classificationId),
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Rent Review (IFRS)', e.row.data);
+            this.navigateToRemeasureEvent(3, 'Rent Review (IFRS)', e.row.data);
           }
         },
         {
           text: 'CPI Cumulative Cap Reached', visible: [2, 3, 4, 7].includes(this.classificationId),
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('CPI Cumulative Cap Reached', e.row.data);
+            this.navigateToRemeasureEvent(4, 'CPI Cumulative Cap Reached', e.row.data);
           }
         },
         {
           text: 'Other',
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Other', e.row.data);
+            this.navigateToRemeasureEvent(5, 'Other', e.row.data);
           }
         },
         {
           text: 'Impairment', visible: [2, 3, 4, 7].includes(this.classificationId),
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Impairment', e.row.data);
+            this.navigateToRemeasureEvent(6, 'Impairment', e.row.data);
           }
         },
         {
           text: 'Partial Termination', visible: [2, 3, 4, 7].includes(this.classificationId),
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Partial Termination', e.row.data);
+            this.navigateToRemeasureEvent(7, 'Partial Termination', e.row.data);
           }
         },
         {
           text: 'Termination',
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Termination', e.row.data);
+            this.navigateToRemeasureEvent(8, 'Termination', e.row.data);
           }
         },
         {
           text: 'Full Termination', visible: [2, 3, 4].includes(this.classificationId),
           value: e.row.data.leaseRecognitionScheduleId,
           onItemClick: () => {
-            this.onItemClicked('Full Termination', e.row.data);
+            this.navigateToRemeasureEvent(9, 'Full Termination', e.row.data);
           }
         }]
     };
@@ -491,64 +498,15 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     e.items.push(scheduleId);
   }
 
-  onItemClicked(event: string, data) {
-    switch (event) {
-      case 'Edit': {
-        alert("Edit Clicked");
-        break;
-      }
-      case 'Delete': {
-        alert("Delete Clicked");
-        break;
-      }
-      case 'View Details': {
-        alert("View Details Clicked");
-        break;
-      }
-      case 'Renewal': {
-        alert("Renewal Clicked");
-        break;
-      }
-      case 'Data Correction': {
-        alert("Data Correction Clicked");
-        break;
-      }
-      case 'Rent Review (IFRS)': {
-        alert("Rent Review (IFRS) Clicked");
-        break;
-      }
-      case 'CPI Cumulative Cap Reached': {
-        alert("CPI Cumulative Cap Reached Clicked");
-        break;
-      }
-      case 'Other': {
-        alert("Other Clicked");
-        break;
-      }
-      case 'Impairment': {
-        alert("Impairment Clicked");
-        break;
-      }
-      case 'Partial Termination': {
-        alert("Partial Termination Clicked");
-        break;
-      }
-      case 'Termination': {
-        alert("Termination Clicked");
-        break;
-      }
-      case 'Full Termination': {
-        alert("Full Termination Clicked");
-        break;
-      }
-      case 'Run Report': {
-        alert("Run Report Clicked");
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+  navigateToRemeasureEvent(remeasureTypeId: number,measureEvent: string, rowData) {
+    const queryParams = {
+      remeasureTypeId: remeasureTypeId,
+      eventId: rowData.leaseRecognitionScheduleID
+    };
+    this.router.navigate(
+      ['remeasureEvent'],
+      { relativeTo: this.activatedRoute, state: { data: rowData, measureEvent: measureEvent }, queryParams: queryParams }
+    );
   }
 
   private setRights() {
@@ -558,7 +516,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
     this.userHasDeleteAccountingSchedulesModuleRight = this.rightsInfo?.userCanDeleteSchedule;
   }
 
-  exportToExcel() {
+  sendToExcel() {
     const classificationType = this.classificationType;
     const amortizationProfileName = this.amortizationProfileName;
     const componentName = 'Accounting Events';
@@ -608,7 +566,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }
 
-      else if (response.data.length === 0){
+      else if (response.data.length === 0) {
         this.isAccountingEventEmpty = true;
         this.emitDataChanged();
       }
@@ -617,7 +575,7 @@ export class EventsDetailSectionComponent implements OnChanges, OnDestroy {
 
   gridBox_displayExpr(item) {
     this.gridBoxValue = [item.masterScheduleID];
-    return item && `${item.classificationType} (${item.amortizationProfileName})`;
+    return item && `${item.classificationType} | ${item.amortizationProfileName} `;
   }
 
   private emitDataChanged() {

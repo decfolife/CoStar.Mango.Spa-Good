@@ -1,6 +1,6 @@
 <mango-accounting-dashboard *ngIf="!featureFlagEnabled"></mango-accounting-dashboard>
 
-<div *ngIf="featureFlagEnabled" class="dashboard-right-container">
+<div *ngIf="featureFlagEnabled">
 	<div class="dashboard-toolbar-wrapper">
 		<div class="controls-left">
 			<div class="dashboard-toolbar__item">
@@ -53,7 +53,6 @@
 					[showColumnHeader]='false'
 					displayExpr="name"
 					valueExpr="segmentID"
-					[allowSearch]='true'
 					[useSelectBox]="true"
 					[selectBoxValue]="selectedSegment"
 					hoverText="Select Segment"
@@ -61,6 +60,11 @@
 					(moreMenuItemClicked)="onMoreMenuItemClicked($event)"
 					[isDisabled]="loading"
           itemTemplate="withMenu"
+          fieldTemplate="withLabel"
+          label="Segment is"
+					[allowSearch]='true'
+          searchMode="contains"
+          searchExpr="name"
 				></crem-dropdown>
 			</div>
 
@@ -73,12 +77,18 @@
 
 		</div>
 		<div class="controls-right">
-      <crem-button id="accounting-dashboard__export"
-      [disabled]="loading"
-      type="secondary"
-      (buttonClick)="export()">
-				<fa-icon [icon]="faFileExport"></fa-icon>
-				Export
+      <crem-button
+        *ngIf="selectedView != 1"
+        id="accounting-dashboard__export"
+        [disabled]="loading || exportingReport"
+        type="secondary"
+        (buttonClick)="export()"
+        [icon]="exportingReport && 'faSpinner'"
+        [iconAnimation]="exportingReport && 'spin'"
+        [iconPack]="exportingReport && 'solid'"
+        [title]="exportingReport ? 'Report will be ready for download shortly.' : ''"
+      >
+				{{exportingReport ? 'Sending to Excel' : 'Send to Excel'}}
 			</crem-button>
       <crem-button
       type="secondary"
@@ -94,26 +104,38 @@
 
     <ng-container *ngIf="!loading; else loadingBlock">
       <div class="dashboard-content" *ngIf="selectedSegment !== undefined; else noData">
-        <workflow-and-alerts *ngIf="selectedView === 1" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
-        </workflow-and-alerts>
 
-        <asc-842-annual-disclosures *ngIf="selectedView === 2" [selectedSegment]="selectedSegment" [reportingYear]="selectedYear">
-        </asc-842-annual-disclosures>
+        <workflow-and-alerts
+          *ngIf="selectedView === 1"
+          [selectedSegment]="selectedSegment"
+          [reportingYear]="selectedYear"
+        />
 
-        <asc-842-quarterly-disclosures *ngIf="selectedView === 3">
-        </asc-842-quarterly-disclosures>
+        <asc-842-annual-disclosures
+          *ngIf="selectedView === 2"
+          [dashboardId]="'4'"
+          [selectedSegment]="selectedSegment"
+          [reportingYear]="selectedYear"
+        />
+
+        <asc-842-quarterly-disclosures
+          *ngIf="selectedView === 3"
+          [dashboardId]="'5'"
+          [selectedSegment]="selectedSegment"
+          [reportingYear]="selectedYear"
+        />
 
         <ifrs-16-annual-disclosures
           *ngIf="selectedView === 4"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
-        ></ifrs-16-annual-disclosures>
+        />
 
         <ifrs-16-quarterly-disclosures
           *ngIf="selectedView === 5"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
-        ></ifrs-16-quarterly-disclosures>
+        />
 
       </div>
 

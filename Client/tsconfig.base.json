@@ -15,6 +15,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
       "@accounting-accountmanagement/*": [
         "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/app/*"
@@ -34,6 +35,9 @@
       ],
       "@client-settings/*": [
         "apps/mango-crem-features/client-settings/src/app/*"
+      ],
+      "@costar-matching/*": [
+        "apps/mango-crem-features/costar-matching/src/app/*"
       ],
       "@data-set-dictionary/*": [
         "apps/mango-crem-features/data-set-dictionary/src/app/*"
@@ -98,9 +102,6 @@
       ],
       "@user-maintenance/*": [
         "apps/mango-crem-features/user-maintenance/src/app/*"
-      ],
-      "@costar-matching/*": [
-        "apps/mango-crem-features/costar-matching/src/app/*"
       ],
       "cldr": ["node_modules/cldrjs/dist/cldr"],
       "cldr/*": ["node_modules/cldrjs/dist/cldr/*"],

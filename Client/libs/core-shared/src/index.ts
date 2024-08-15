@@ -6,12 +6,15 @@ export * from './lib/services/jwt.service';
 export * from './lib/services/user.service';
 export * from './lib/services/data.service';
 export * from './lib/services/storage.service';
+export * from './lib/services/cookie.service';
 export * from './lib/services/utilities.service';
 export * from './lib/services/notification.service';
 export * from './lib/services/settings.service';
 export * from './lib/services/header.service';
 export * from './lib/services/error-handler.service';
 export * from './lib/services/export-datagrid.service';
+export * from './lib/services/list-page-services/crem-share-view-popup.service';
+export * from './lib/services/mango-dialog.service';
 
 export * from './lib/utilities/animations'
 export * from './lib/utilities/db-keys'

@@ -1,0 +1,267 @@
+@use 'styles' as *;
+#projectTasks-container {
+  height: 100%;
+  overflow: hidden;
+
+  .tasks-toolBar-wrapper {
+    width: 100% !important;
+    border-bottom: 1px solid #c5c5c5;
+    top: 0;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .controls-right,
+    .controls-left {
+      display: flex;
+      align-items: center;
+      & > div {
+        margin-left: 8px;
+      }
+    }
+    .controls-right {
+      margin-left: 20px;
+    }
+
+    crem-list-view-menu {
+      position: relative;
+    }
+  }
+
+  #pt-actionsBtn,
+  #pt-moreBtn {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #000;
+  }
+
+  .projectTasks-dataGrid-wrapper {
+    height: calc(100% - 48px);
+    font-size: 16px;
+
+    div.dx-treelist-header-panel {
+      display: none;
+    }
+  }
+
+  .rowActionsButton .mat-icon {
+    transform: translateY(7px);
+  }
+
+  .taskNameAttr {
+    color: $primary-light !important;
+  }
+
+  .pt-taskNameAttr {
+    color: $primary-light !important;
+    cursor: pointer;
+  }
+
+  .pt-taskStatus {
+    margin-right: 8px;
+    min-height: 40px;
+    height: 100%;
+    width: 6px;
+    border-radius: 4px;
+
+    &.tin-status-icon-red {
+      background-color: $danger;
+    }
+    &.tin-status-icon-green {
+      background-color: $success;
+    }
+    &.tin-status-icon-yellow {
+      background-color: $warning;
+    }
+    &.tin-status-icon-gray {
+      background-color: $gray03;
+    }
+    &.tin-status-icon-white {
+      background-color: $info-lightest;
+    }
+    &.tin-status-icon-lightGray {
+      background-color: $gray06;
+    }
+  }
+
+  #pt-clearFilterBtn {
+    display: flex;
+    align-items: center;
+  }
+  .badge {
+    background-color: $primary-light;
+    height: 16px;
+    width: 18px;
+    color: white;
+    border-radius: 50%;
+    margin-left: 2px;
+    align-self: center;
+  }
+  .pt-initialsContainer,
+  .pt-userGroupContainer {
+    position: relative;
+  }
+  .pt-assineeIntials {
+    width: 24px;
+    min-width: 24px;
+    height: 24px;
+    min-height: 24px;
+    border-radius: 50%;
+    color: white;
+    font-size: 10px;
+    line-height: 16px;
+    background-color: $primary-light;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 4px;
+    margin-left: 2px;
+  }
+  .pt-userGroupCount {
+    position: absolute;
+    min-height: 14px;
+    height: 14px;
+    min-width: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background-color: $primary-light;
+    color: white;
+    font-size: 9px;
+    top: 14px;
+    left: 14px;
+    border: 1px white solid;
+    text-align: center;
+  }
+
+  .pt-approvalStatus {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    border: 1px white solid;
+    border-radius: 50%;
+    z-index: 9;
+    &.appovedColor {
+      color: $success;
+    }
+    &.unApprovedColor {
+      color: $secondary;
+    }
+  }
+  .group-icon {
+    transform: scale(0.8) translate(-5px, -5px);
+  }
+
+  .wrapOption-column {
+    white-space: nowrap;
+  }
+}
+
+::ng-deep .projectTasks-dataGrid-wrapper {
+  div.dx-treelist-header-panel {
+    display: none;
+  }
+
+  .projectTasks-grid {
+    .roleHeaderFilterOption .dx-header-filter {
+      display: none;
+    }
+  }
+}
+
+::ng-deep #projectTasksSettingsPopup {
+  &.dx-popup-wrapper {
+    z-index: 999 !important;
+  }
+  .dx-popup-content.dx-popup-content-scrollable {
+    padding: 0;
+  }
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  .label {
+    font-weight: 450;
+  }
+
+  section {
+    margin-bottom: 16px;
+    &.pts-Details {
+      border-bottom: 1px solid #ddd;
+    }
+  }
+  .pts-projectName,
+  .pts-startAndDueDate__startDate,
+  .pts-startAndDueDate__dueDate {
+    display: flex;
+    flex-direction: column;
+
+    &__name {
+      font-size: 16px;
+    }
+  }
+
+  .dx-checkbox-icon {
+    border: 1px solid $gray01;
+  }
+
+  .pts-startAndDueDate,
+  .pts-toggles {
+    display: flex;
+    gap: 10px;
+
+    .pts-flexItem50 {
+      flex-basis: 50%;
+    }
+
+    .pts-flexItem23 {
+      flex-basis: 23%;
+    }
+
+    .pts-flexItem30 {
+      flex-basis: 30%;
+    }
+  }
+
+  .pts-emailPreferences {
+    > div {
+      margin-bottom: 16px;
+    }
+    .label {
+      padding-left: 8px;
+
+      &.subsection {
+        padding-left: 0;
+        margin-top: 24px;
+      }
+    }
+  }
+}
+
+.disabledOption {
+  color: $gray03;
+  cursor: -moz-not-allowed !important;
+  cursor: -webkit-not-allowed !important;
+  cursor: not-allowed !important;
+}
+
+.quick-approval {
+  &__custom-footer {
+    display: flex;
+    gap: 1em;
+
+    &__footer-text {
+      margin-bottom: 0px;
+      margin-top: 7px;
+      @include costar(color, gray03);
+    }
+  }
+}

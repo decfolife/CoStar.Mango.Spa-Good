@@ -1,296 +1,103 @@
 @use "styles" as *;
 
-crem-metric {
-  
-  mat-card.mat-card {
-    @include costar(border, gray04);
-    border-radius: 2px !important;
-    box-shadow: none !important;
-    padding: 0px !important;
-  }
+:host ::ng-deep .costar-hero-metric-card {
+  border: 0;
+  display: inline-block;
+  margin-bottom: 0;
+  margin-right: 30px;
+  min-width: max-content;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  padding: 5px;
 
-  mat-card.mat-card mat-card-header.mat-card-header div.mat-card-header-text {
-    margin: 0px;
-  }
-
-  mat-card.mat-card
-    mat-card-header.mat-card-header
-    div.mat-card-header-text
-    mat-card-title.mat-card-title {
-    @include costar(font-size, body);
-    @include costar(font-family, body);
-    @include costar(font-weight, light);
-    text-transform: capitalize !important;
-  }
-
-  mat-card.mat-card
-    mat-card-header.mat-card-header
-    div.mat-card-header-text
-    mat-card-subtitle.mat-card-subtitle.sub-metric {
-    font-size: $font-size-14;
-    @include costar(font-family, body);
-  }
-
-  mat-card.mat-card
-    mat-card-header.mat-card-header
-    mat-form-field.mat-form-field
-    div.mat-form-field-wrapper {
-    margin: 0px;
-    padding: 0px;
-  }
-
-  mat-card.mat-card
-    mat-card-header.mat-card-header
-    mat-form-field.mat-form-field
-    div.mat-form-field-wrapper
-    div.mat-form-field-flex
-    div.mat-form-field-infix
-    span.mat-form-field-label-wrapper {
-    top: 6px;
-    right: 124px;
-    left: auto;
-  }
-
-  mat-card.mat-card mat-card-content.mat-card-content {
-    @include costar (background, gray07);
-    @include costar(padding, 4);
-  }
-
-  mat-card.mat-card.costar-hero-metric-card mat-card-header.mat-card-header {
+  mat-card-header {
     border-bottom: 0px;
     padding: 0px;
     height: 16px;
+
+    mat-card-title {
+      @include costar(font-size, body);
+      line-height: 16px;
+      @include costar(color, gray03);
+      @include costar(font-weight, normal);
+      text-transform: capitalize !important;
+      margin: 0px 16px 0 0 !important;
+    }
+
+    .iconWrapper {
+      padding: 0px; 
+      width: 20px;
+      position: relative;
+      right: -7px;
+      top: -4px;
+      crem-icon {
+        position: relative;
+      }
+    }
   }
 
-  mat-card.mat-card.costar-hero-metric-card
-    mat-card-header.mat-card-header
-    div.mat-card-header-text {
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    @include costar(font-family, body);
-    text-transform: capitalize !important;
-    font-size: $font-size-14 !important;
-  }
-
-  mat-card.mat-card.costar-hero-metric-card mat-card-content.mat-card-content {
+  mat-card-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     padding: 0px;
     margin: 0;
-    @include costar(background, light);
+    @include costar(background-color, light);
 
-  }
-
-  mat-card.mat-card.costar-hero-metric-card
-    mat-card-content.mat-card-content
     .hero-value {
-    @include costar(color, dark);
-    @include costar(font-family, body);
-    @include costar(font-size, display-3);
-    line-height: 32px;
-    margin: 8px 0px;
-  }
+      @include costar(color, dark);
+			@include costar(font-size, display-3);
+			line-height: 32px;
+			margin: 8px 0px;
+    }
 
-  mat-card.mat-card.costar-hero-metric-card
-    mat-card-content.mat-card-content
     .sidekick-value-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-content: center;
-    @include costar(margin-left, 4);
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-content: center;
+      @include costar(margin-left, 4);
+
+      .sidekick-value {
+        display: flex;
+        align-items: center;
+        border-radius: 2px;
+        font-size: 14px;
+        text-align: center;
+        padding: 0 4px;
+        margin: 0px;
+        &.green {
+          @include costar(border, success);
+          background: transparent !important;
+          @include costar(color, success);
+        }
+        &.red {
+          @include costar(border, danger);
+          background: transparent !important;
+          @include costar(color, danger);
+        }
+        &.gray {
+          @include costar(border, gray02);
+          background: transparent !important;
+          @include costar(color, gray02);
+        }
+      }
+		}
   }
 
-  mat-card.mat-card.costar-hero-metric-card
-    mat-card-content.mat-card-content
-    .sidekick-value-wrapper
-    .sidekick-value {
-    border-radius: 2px;
-    font-size: $font-size-14;
-    @include costar(font-family, body);
-    text-align: center;
-    padding: 0 4px;
-    margin: 0px;
-    &.green {
-      @include costar(border, success, $important: true);
-      background: transparent !important;
-      @include costar(color, success, $important: true);
-    }
-    &.red {
-      @include costar (border, danger, $important: true);
-      background: transparent !important;
-      @include costar(color, danger, $important: true);
-    }
-    &.gray {
-      @include costar(border, gray03, $important: true);
-      background: transparent !important;
-      @include costar(color, gray03, $important: true);
-    }
-  }
-  crem-icon {
-    position: relative;
-    top: 4px;
-    left: 2px;
-  }
-
-  mat-card.mat-card.costar-hero-metric-card mat-card-footer.mat-card-footer {
+  mat-card-footer {
     margin: 0px;
     height: 14px;
-  }
-
-  mat-card.mat-card.hero {
-    width: 200px;
-    margin-bottom: 0px;
-    display: inline-block;
-  }
-
-  mat-card.mat-card.hero mat-card-header.mat-card-header {
-    border-bottom: 0px;
-  }
-
-  mat-card.mat-card.hero
-    mat-card-header.mat-card-header
-    div.mat-card-header-text {
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  mat-card.mat-card.hero
-    mat-card-header.mat-card-header
-    div.mat-card-header-text
-    mat-card-subtitle.mat-card-subtitle
-    span {
-    display: inline-block;
-    @include costar(margin-right, 4);
-  }
-
-  mat-card.mat-card.hero mat-card-header.mat-card-header fa-icon {
-    position: absolute;
-    @include costar(bottom, 4);
-    @include costar(right, 4);
-    @include costar(color, gray04);
-    cursor: pointer;
-  }
-
-  mat-card.mat-card.hero.object-hero {
-    border: 0px;
-    @include costar(border-left, gray04);
-
-    display: flex;
-    align-content: center;
-    align-items: center;
-  }
-
-  .mat-menu-item {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    cursor: pointer;
-    outline: none;
-    border: none;
-    -webkit-tap-highlight-color: transparent;
-    white-space: nowrap;
-    overflow: visible !important;
-    text-overflow: ellipsis;
-    display: block;
-    line-height: 18px !important;
-    height: 29px !important;
-    padding: 0 16px;
-    text-align: left;
-    text-decoration: none;
-    max-width: 100%;
-    width: fit-content !important;
-    position: relative;
-    @include costar(background, light, $important: true);
-    box-shadow: 1px 1px 3px !important;
-    border-radius: 2px !important;
-  }
-
-  button.mat-icon-button {
-    height: 18px;
-    background: none !important;
-    position: relative;
-    top: -3px;
-  }
-  .mat-card-header-text {
-    margin: 0 !important;
-  }
-
-  .dx-button {
-    box-shadow: none !important;
-    background: none !important;
-    border: none !important;
-  }
-  .dx-button .fa-icon {
-    @include costar(color, gray04);
-  }
-
-  mat-card.mat-card.costar-hero-metric-card
-    mat-card-footer.mat-card-footer
-    mat-card-subtitle.mat-card-subtitle {
-    @include costar(color, gray03);
-    display: inline-block;
-    @include costar(font-family, body, $important: true,);
-
-    font-size: $font-size-14;
-    line-height: 14px;
-    @include costar(font-weight, light);
-
-    margin: 0 !important;
-    text-transform: capitalize;
-  }
-  mat-card.mat-card
-    mat-card-header.mat-card-header
-    div.mat-card-header-text
-    mat-card-title.mat-card-title {
-    @include costar(font-size, body);
-    line-height: 16px;
-    @include costar(font-family, body);
-    @include costar(color, gray03);
-    @include costar(font-weight, light);
-    text-transform: capitalize !important;
-    margin: 0 16px 0 0 !important;
-  }
-
-  .sidekick-value {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .iconWrapper.dx-field-value-static {
-    width: 20px;
-    position: relative;
-    right: -7px;
-    top: -4px;
-  }
-
-  .dx-popup-content {
-    position: fixed;
-    top: -4px;
-  }
-  mat-card.mat-card
-    mat-card-header.mat-card-header
-    div.mat-card-header-text
-    mat-card-title.mat-card-title {
-    @include costar(font-size, body);
-    @include costar(font-family, body);
-    @include costar(color, gray03);
-    @include costar(font-weight, light);
-    text-transform: capitalize !important;
-    margin-bottom: 0px !important;
-  }
-  mat-card.mat-card.costar-hero-metric-card {
-    border: 0;
-    display: inline-block;
-    margin-bottom: 0;
-    margin-right: 30px;
-    min-width: max-content;
-    height: 80px;
+    mat-card-subtitle{
+      @include costar(color, gray03);
+			display: inline-block;
+			font-size: 14px;
+			line-height: 14px;
+      @include costar(font-weight, normal);
+			margin: 0!important;
+			text-transform: capitalize;
+    }
   }
 }
 

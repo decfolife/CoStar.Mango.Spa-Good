@@ -1,0 +1,25 @@
+@use "styles" as *;
+
+.residual-value-container {
+    display: flex;
+    gap: 40px;
+    @include costar(padding, 3);
+}
+
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.control {
+    @include costar(padding-bottom, 4);
+}
+
+.lessor-explicitly-exempts-lessee {
+    @include costar(padding-top, 1);
+}
+
+.residual-value-accordion {
+    @include costar(margin-top, 4);
+}

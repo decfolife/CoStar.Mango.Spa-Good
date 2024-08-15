@@ -5,7 +5,7 @@ $font: "Helvetica";
 $headerBarHeight: 50px;
 $mainNavWidth : 3.5rem;
 $toolbarHeight: 4.2em;
-$nav2Height: $headerBarHeight / 1.5;
+$nav2Height: calc($headerBarHeight / 1.5);
 $catalogAddHeight: 48px;
 $catalogWidth: 300px;
 $catalogWidthXL : 380px;

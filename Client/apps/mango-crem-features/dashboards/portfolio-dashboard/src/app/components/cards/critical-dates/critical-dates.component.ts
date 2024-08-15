@@ -1,10 +1,8 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { CardDetails } from '../../../models';
-import { PortfolioDashboardService } from '../../../services/portfolio-dashboard.service';
 import { PortfolioDataService } from '../../../services/portfolio-data.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Router } from '@angular/router';
-import { environment } from '../../../../../../../../mango/src/environments/environment.local';
 import { Subscription } from 'rxjs';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 
@@ -31,25 +29,19 @@ export class CriticalDatesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
       this.selectedFilters = data;
       this.getCardData();
     }));
   }
-  //portfolioRowClick
-  portfolioRowClick(e: any) {
-    if (environment.isRestful) {
-      this.router.navigate(
-        ['crem/forms/render-form'],
-        {
-          state: { data: { moduleId: 2 } },
-          queryParams: { fid: 312, oid: e.data.leaseAbstractID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID }
-        });
-    } else {
-      e["objectIdField"] = "leaseAbstractID"
-      this.rowClickEvent.emit(e);
-    }
+
+  portfolioRowClick(e: any) {   
+    this.router.navigate(
+      ['/v06/Forms/RenderForm.aspx'],
+      {
+        state: { data: { moduleId: 2 } },
+        queryParams: { oid: e.data.leaseAbstractID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID }
+      });
   }
 
   filter(e, cardId) {

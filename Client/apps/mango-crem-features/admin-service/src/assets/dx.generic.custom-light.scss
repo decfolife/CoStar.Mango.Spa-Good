@@ -141,7 +141,7 @@
   -webkit-touch-callout: none;
   outline: 0;
   -webkit-print-color-adjust: exact;
-  color-adjust: exact;
+  print-color-adjust: exact;
   color: #333;
   font-weight: 400;
   font-size: 14px;
@@ -2340,10 +2340,10 @@
 .dx-state-disabled.dx-popup-title .dx-closebutton .dx-button-text {
   opacity: .5;
 }
-.dx-popup-content {
-  -webkit-user-drag: none;
-  padding: 20px;
-}
+// .dx-popup-content {
+//   -webkit-user-drag: none;
+//   padding: 20px;
+// }
 .dx-popup-content > .dx-button {
   margin: 0 10px;
 }

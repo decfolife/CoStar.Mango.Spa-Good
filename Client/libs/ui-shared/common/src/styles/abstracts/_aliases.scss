@@ -13,7 +13,7 @@
     @include costar-alias-button($type);
   }
   @else {
-    @warn "ERR: costar-alias(#{$alias}) not found.";
+    @error "ERR: costar-alias(#{$alias}) not found.";
   }
 }
 
@@ -99,7 +99,7 @@
     @include costar(font-weight, display-3, $important: true);
   }
   @else {
-    @warn "ERR: costar-alias-text(#{$type}) not found. Verify that the #{$type} is correct in costar-alias() or costar-alias-text().";
+    @error "ERR: costar-alias-text(#{$type}) not found. Verify that the #{$type} is correct in costar-alias() or costar-alias-text().";
   }
 }
 
@@ -192,7 +192,7 @@
     }
   }
   @else {
-    @warn "ERR: costar-alias-button(#{$type}) not found. Verify that the #{$type} is correct in costar-alias() or costar-alias-button().";
+    @error "ERR: costar-alias-button(#{$type}) not found. Verify that the #{$type} is correct in costar-alias() or costar-alias-button().";
   }
 }
 
@@ -460,7 +460,7 @@
     }
   }
   @else {
-    @warn "ERR: costar-class-generator(#{$type}) not found.";
+    @error "ERR: costar-class-generator(#{$type}) not found.";
   }
 
 }

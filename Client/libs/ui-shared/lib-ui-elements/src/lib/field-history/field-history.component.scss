@@ -1,3 +1,20 @@
+@use "styles" as *;
+
 .mat-tab__help-text {
     padding: 16px; 
+}
+
+
+
+:host ::ng-deep .dx-field__icon--info {
+    &:focus-visible {
+        outline: none;
+        @include costar(box-shadow, primary )
+    }
+}
+
+:host ::ng-deep div.dx-field {
+    &:focus-visible {
+        outline: none;
+    }
 }

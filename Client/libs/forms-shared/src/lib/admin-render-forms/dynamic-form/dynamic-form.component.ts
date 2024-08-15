@@ -155,9 +155,9 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
     const combinedSubscription = combineLatest([
       formNameSubject,
       this.mangoAppFacade.breadcrumbs$.pipe(take(1)),
-    // eslint-disable-next-line rxjs-angular/prefer-composition
+      // eslint-disable-next-line rxjs-angular/prefer-composition
     ]).subscribe(
-      ([formNameFromSubscription, breadCrumbs]: [ string | null,  BreadCrumb[]  ]) => {
+      ([formNameFromSubscription, breadCrumbs]: [string | null, BreadCrumb[]]) => {
         if (breadCrumbs && breadCrumbs.length > 0 && formNameFromSubscription) {
           const updatedBreadcrumbs: BreadCrumb[] = [];
           let firstAdded = false;
@@ -182,7 +182,7 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
   }
 
   populateFirstBreadCrumb(): BreadCrumb {
-    switch(this.objectTypeId) {
+    switch (this.objectTypeId) {
       case 1:
         return this.createDefaultBreadCrumb('Projects', this.router.serializeUrl(this.router.createUrlTree(['crem', 'projects', 'projects'])), 'Tasks');
       case 3:
@@ -216,29 +216,29 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
   // this.logFormValidity(this.form);
   }
 
-  editClicked(){
+  editClicked() {
     this.editMode = !this.editMode;
-    if(this.editMode){
-       // get data for select dropdowns
-       this.populateFormItemDropdownSQLs();
+    if (this.editMode) {
+      // get data for select dropdowns
+      this.populateFormItemDropdownSQLs();
     }
   }
 
-  designModeClicked(){
+  designModeClicked() {
     this.router.navigate(['/crem/forms/admin-forms/dynamic-form'], {
       relativeTo: this.route,
-      queryParams: { FID: this.formId }, 
+      queryParams: { FID: this.formId },
       queryParamsHandling: 'merge'
     })
   }
 
   populateFormItemDropdownSQLs() {
     if (this.isRenderForm) {
-      
-    this.subs.add(
+
+      this.subs.add(
         this.dynamicFormsFacade.selectRenderFormData$.pipe(
           take(1),
-            filter(formData => formData !== null) // Filter out null values
+          filter(formData => formData !== null) // Filter out null values
         )
         .subscribe((formData) => {
             const fieldsWithSQLDropdowns = formData.filter(item => item.FormItemDropdownSource != null);
@@ -327,7 +327,7 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
   close() {
     this.goBack();
   }
-  cancel(){
+  cancel() {
     this.editMode = !this.editMode;
   }
   goBack() {

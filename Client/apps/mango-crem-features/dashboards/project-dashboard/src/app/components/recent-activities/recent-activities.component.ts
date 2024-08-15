@@ -109,23 +109,11 @@ export class RecentActivitiesComponent implements OnInit {
       return;
     }
 
-    if (environment.isRestful) {
-      this.router.navigate(
-        ['crem/forms/render-form'],
-        {
-          queryParams: { fid: 312, oid: e.data.transactionID ?? e.data.transactionId, otid: e.data.objectTypeId, ottid: e.data.objectTypeTypeId }
-        });
-    } else { 
-      const urlLink = `/Project/Tasks/View.asp?OID=${
-        e.data.transactionID ?? e.data.transactionId
-      }&OTID=${
-        e.data.objectTypeId
-      }&OTTID=${
-        e.data.objectTypeTypeId
-      }`;
-
-      document.location.href = urlLink;
-    }
+    this.router.navigate(
+      ['/v06/Forms/RenderForm.aspx'],
+      {
+        queryParams: { oid: e.data.transactionID ?? e.data.transactionId, otid: e.data.objectTypeId, ottid: e.data.objectTypeTypeId }
+      });
   }
 
   isActivityNoteAdded(cell: any){

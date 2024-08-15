@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardWrapperComponent } from './dashboard-wrapper.component';
 import { DashboardModule } from '../accounting-dashboard.module';
-import { ButtonModule, CardModule, DropdownModule, SkeletonModule } from '@mango/ui-shared/lib-ui-elements';
+import { ButtonModule, CardModule, DropdownModule, IconModule, SkeletonModule } from '@mango/ui-shared/lib-ui-elements';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { Asc842QuarterlyDisclosuresComponent } from '../views/asc-842-quarterly-disclosures/asc-842-quarterly-disclosures.component';
 import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
@@ -16,7 +16,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IADCardComponent } from '../card/IADCard/iad-card.component';
 
 @NgModule({
@@ -41,7 +40,7 @@ import { IADCardComponent } from '../card/IADCard/iad-card.component';
     MatIconModule,
     MatButtonModule,
     LoaderModule,
-    FontAwesomeModule,
+    IconModule,
     CremPivotTableModule,
     SkeletonModule,
   ],

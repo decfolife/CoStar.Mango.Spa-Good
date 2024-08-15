@@ -38,7 +38,7 @@ crem-simple-grid {
 									span.dx-header-filter {
 										@include costar(color, primary-lighter);
 										&.dx-header-filter-empty {
-											@include costar(color, primary-gray);
+											// @include costar(color, primary-gray); // FIXME: primary-gray is not part of the color pallette, this is not being rendered
 											opacity: 0.5;
 										}
 									}
@@ -83,7 +83,7 @@ crem-simple-grid {
 						&.dx-row-alt {
 							&:hover {
 								td {
-									@include costar(background-color, primary-gray);
+									// @include costar(background-color, primary-gray); // FIXME: primary-gray is not part of the color palette, this is not being rendered
 									@include costar(color, light);
 								}
 							}
@@ -225,7 +225,8 @@ crem-simple-grid {
 				}
 	
 				fa-icon {
-					padding-right: $stdPadding / 2;
+									padding-right: calc($stdPadding / 2);
+
 					position: relative;
 					top: -34px;
 				}

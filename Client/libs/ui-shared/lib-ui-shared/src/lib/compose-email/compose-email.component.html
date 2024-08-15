@@ -36,7 +36,7 @@
         dropDownContainerCustomClass="cem-toMembers-custClass"
         [showColumnHeader]='true'
         placeholder="Select Members"
-        displayExpr='contactName'
+        displayExpr='contactFullName'
         valueExpr="contactEmailAddress"
         showCheckBoxesMode='always'
         showClearButton='true'
@@ -97,6 +97,7 @@
       (onEditorPreparing)="onEditorPreparing($event)"
       keyExpr="value"
       [width]="'100%'"
+      (onContentReady)="adaAttrToGridTable($event)"
     >	
 
       <dxo-selection

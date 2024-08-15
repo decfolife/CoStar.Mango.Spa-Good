@@ -12,9 +12,9 @@
     <dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="showLoading" [showIndicator]="true"
 		[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
     <crem-vertical-stepper display="1" *ngIf="!loading && showSegment">
-      <dynamic-form #SegmentForm
+      <crem-dynamic-form #SegmentForm
         [config]="segmentConfig"
-        (onChangeEvent)="onChange($event)"
+        (changeEvent)="onChange($event)"
         idPrefix = "segmentForm"
         >
         <ng-template let-fieldData="fieldData">
@@ -43,7 +43,7 @@
                 <ng-template #customHeaderTemplate let-fieldData="data"> <!-- this template is utilizing the custom header for grouping -->
                   <div class="segment_custom" (click)="customButtonClicked('custom')">Custom</div>
                   <div class="segment_create_new" 
-                    [attr.title]="(!hasSegmentsAddRight) ? 'You do not have the necessary rights to create a segment.' : ''"
+                    [attr.title]="(!hasSegmentsAddRight) ? 'You have View rights to this segment. Ask your administrator to grant you Add rights to create a segment.' : ''"
                     [ngClass]="{'segment_create_new--disabled': !hasSegmentsAddRight}"
                     (click)="customButtonClicked('create New Segment')"
                   >Create New Segment</div>
@@ -56,7 +56,7 @@
             </div>
           </div>
         </ng-template>
-      </dynamic-form>
+      </crem-dynamic-form>
     </crem-vertical-stepper>
     <crem-vertical-stepper display="2" *ngIf="!loading" [showBorder]="false" [hideStepper]="!showSegment">
       <mango-criteria-form-report *ngIf="!loading && !segmentLoading" #CriteriaFormReport

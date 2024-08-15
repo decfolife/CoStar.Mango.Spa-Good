@@ -1,0 +1,14 @@
+@use 'styles' as *;
+
+label {
+  font-size: var(--costar-font-size-eyebrow);
+  margin-bottom: 0;
+  &.crem-form-item-required::after {
+    display: inline-block;
+    margin-left: 4px;
+    @include costar(color, danger);
+    font-size: var(--costar-font-size-body);
+    line-height: 1;
+    content: '*';
+  }
+}

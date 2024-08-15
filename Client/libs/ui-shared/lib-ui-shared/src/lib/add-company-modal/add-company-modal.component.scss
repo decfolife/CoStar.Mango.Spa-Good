@@ -1,0 +1,36 @@
+@use "styles" as *;
+
+:host ::ng-deep .modalFooter {
+  .addCompanyFooter{
+    display: flex;
+    crem-button {
+      padding: 4px;
+    }
+  }
+}
+
+.add-company-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  column-gap: 10px;
+}
+
+.add-company-form crem-input-label {
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+

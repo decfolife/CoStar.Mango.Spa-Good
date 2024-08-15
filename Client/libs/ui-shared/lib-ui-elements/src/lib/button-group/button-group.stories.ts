@@ -5,7 +5,7 @@ import { ButtonGroupComponent } from './button-group.component';
 
 
 const meta: Meta<ButtonGroupComponent> = {
-  title: 'Components/Button Group',
+  title: 'Components/Button Group *',
   component: ButtonGroupComponent,
   decorators: [
     moduleMetadata({

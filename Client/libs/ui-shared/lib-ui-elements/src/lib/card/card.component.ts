@@ -1,20 +1,16 @@
 import {
   Component,
-  ComponentRef,
   ContentChild,
   ElementRef,
   EventEmitter,
   Input,
   Output,
   TemplateRef,
-  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Dropdown } from '@mango/data-models/lib-data-models';
-
-import { Observable, Subscription } from 'rxjs';
 
 import { CardHeaderDirective } from './cardHeader.directive';
 
@@ -42,6 +38,7 @@ const DRAG_INDICATOR = `<svg xmlns="http://www.w3.org/2000/svg" id="drag_indicat
  * @param {string} [dropDisplay]:
  * @param {string} [dropValue]:
  * @param {string} dropdownPlaceholder:
+ * @param {boolean} [contentPadding]
  * @param {TemplateRef<any>} [customHeader]: Template reference for custom header.
  * @param {TemplateRef<any>} customDropdownMenuRef: Template reference for custom dropdown menu.
  * @param {boolean} [isExpanded=false]: Boolean indicating whether the card is expanded.
@@ -79,10 +76,13 @@ export class CardComponent {
   @Input() dropDisplay?: string;
   @Input() dropValue?: string;
   @Input() dropdownPlaceholder: string;
+  @Input() backgroundTransparent = false;
+  @Input() noBorder = false
+  @Input() contentPadding = false;
   @ContentChild(CardHeaderDirective, { read: TemplateRef }) customHeader?: TemplateRef<any>;
   @ContentChild('customDropdownMenu', {static: false}) customDropdownMenuRef: TemplateRef<any>
-  isExpanded: boolean = false;
-  legendVisible : boolean = true;
+  isExpanded = false;
+  legendVisible = true;
 
   @Output() selectedFilter = new EventEmitter<any[]>();
   @Output() expandDataGrid = new EventEmitter<any>();

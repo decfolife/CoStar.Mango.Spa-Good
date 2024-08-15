@@ -1,23 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SearchOption } from '@mango/data-models/lib-data-models';
 import { Meta, Story, moduleMetadata } from '@storybook/angular';
+import { IconModule } from '../icon';
 import { SearchComponent } from './search.component';
-
+import { InputComponent } from '../input';
 
 export default {
-  title: 'Components/Search',
+  title: 'Components/Search *',
   component: SearchComponent,
+  argTypes: {
+    searchOption: { control: 'radio', options: SearchOption },
+  },
   decorators: [
     moduleMetadata({
       imports: [
         BrowserAnimationsModule,
         CommonModule,
         MatInputModule,
-        MatIconModule,
         MatFormFieldModule,
+        IconModule,
+        InputComponent
       ],
     }),
   ]
@@ -29,11 +34,12 @@ const Template: Story<SearchComponent> = (args: SearchComponent) => ({
 
 export const Default = Template.bind({});
 Default.args = {
-  label: "Label",
-  placeholder: "Placeholder",
-  hint: "Hint",
-  showLabel: true,
+  showLabel: false,
+  label: "Please Input search text",
+  placeholder: "Search text",
+  required: false,
   disabled: false,
-  required: true,
-  optional: false,
+  showInfo: false,
+  debounceTime: 500,
+  searchOption: SearchOption.MAGNIFYING_GLASS,
 };

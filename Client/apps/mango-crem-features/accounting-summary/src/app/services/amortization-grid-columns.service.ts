@@ -195,7 +195,9 @@ export class AmortizationGridColumnsService {
             visible: false,
             isParent: false,
             band: 'Period Event',
-            headerCellTemplate: 'amortizationHeader'
+            headerCellTemplate: 'amortizationHeader',
+            cellTemplate: 'pointer',
+            calculateCellValue: rowData => rowData.isLiabilityMatured ? 'Yes' : 'No'
           }
         ]
       },
@@ -1204,34 +1206,6 @@ export class AmortizationGridColumnsService {
       }
     ]);
 
-    if (this.functionalCurrencyEnabled) {
-      this.operating842Columns[2].columns.push(
-        {
-          caption: 'Cumulative Level Expense',
-          name: 'CumulativeLevelExpense',
-          dataField: 'cumulativeLevelExpense',
-          usesLocalFormat: 'true',
-          usesFunctionalFormat: 'false',
-          visible: false,
-          appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader',
-          isParent: false,
-          band: 'Local Asset'
-        },
-        {
-          caption: 'Level Expense',
-          name: 'LevelExpense',
-          dataField: 'levelExpense',
-          usesLocalFormat: 'true',
-          usesFunctionalFormat: 'false',
-          appendsCurrency: 'false',
-          headerCellTemplate: 'amortizationHeader',
-          isParent: false,
-          band: 'Local Asset'
-        }
-      );
-    } 
-
     if (!this.functionalCurrencyEnabled) {
       this.operating842Columns[2].columns.push(
         {
@@ -1267,6 +1241,32 @@ export class AmortizationGridColumnsService {
           headerCellTemplate: 'amortizationHeader',
           isParent: false,
           band: 'Liability'
+        }
+      );
+
+      this.operating842Columns[1].columns.push(
+        {
+          caption: 'Cumulative Level Expense',
+          name: 'CumulativeLevelExpense',
+          dataField: 'cumulativeLevelExpense',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
+        },
+        {
+          caption: 'Level Expense',
+          name: 'LevelExpense',
+          dataField: 'levelExpense',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
         }
       );
     }
@@ -1307,6 +1307,32 @@ export class AmortizationGridColumnsService {
           band: 'Liability'
         }
       );
+      this.operating842Columns[2].columns.push(
+        {
+          caption: 'Cumulative Level Expense',
+          name: 'CumulativeLevelExpense',
+          dataField: 'cumulativeLevelExpense',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
+        },
+        {
+          caption: 'Level Expense',
+          name: 'LevelExpense',
+          dataField: 'levelExpense',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          appendsCurrency: 'false',
+          headerCellTemplate: 'amortizationHeader',
+          isParent: false,
+          band: 'Local Asset'
+        }
+      );
+
     }
     this.operating842Columns = this.operating842Columns.concat(this.commonEndingColumns);
   }

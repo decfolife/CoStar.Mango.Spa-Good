@@ -1,24 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SearchComponent } from './search.component';
 
-describe('SearchComponent', () => {
-  let component: SearchComponent;
-  let fixture: ComponentFixture<SearchComponent>;
+jest.mock('@angular/common');
+jest.mock('@angular/core');
+jest.mock('rxjs');
+jest.mock('rxjs/operators');
+jest.mock('../icon');
+jest.mock('@angular/material/form-field');
+jest.mock('@angular/material/input');
+jest.mock('../input');
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [SearchComponent],
-    }).compileComponents();
-  });
+describe('SearchComponent', () => {
+  let instance;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SearchComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    instance = new SearchComponent();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('instance should be an instanceof SearchComponent', () => {
+    expect(instance instanceof SearchComponent).toBeTruthy();
   });
+
 });

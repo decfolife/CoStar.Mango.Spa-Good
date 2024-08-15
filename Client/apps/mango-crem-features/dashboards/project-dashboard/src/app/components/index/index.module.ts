@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
+import { InputComponent, LoaderModule } from '@mango/ui-shared/lib-ui-elements';
 import { DashboardService } from '../../services/dashboard.service';
 import { CardsService } from '../../services/cards.service';
 import { CardsModule } from '../cards/cards.module';
@@ -18,7 +18,8 @@ import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
     LoaderModule,
     CardsModule,
     UserSettingsModule,
-    LibUiSharedModule
+    LibUiSharedModule,
+    InputComponent
   ],
   providers: [
     DashboardService,

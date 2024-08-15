@@ -8,6 +8,7 @@ module.exports = {
   features: {
     previewMdx2: true
   },
+  staticDirs: ["../../../../apps/mango/src"],
   webpackFinal: async config => {
     const tsPaths = new TsconfigPathsPlugin({
       configFile: './tsconfig.base.json'
@@ -21,6 +22,7 @@ module.exports = {
     return config;
   },
   docs: {
-    autodocs: true
+    autodocs: true,
+    defaultName: 'Docs',
   }
 };

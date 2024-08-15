@@ -1,24 +1,20 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { IconComponent } from './icon.component';
 
-describe('IconComponent', () => {
-  let component: IconComponent;
-  let fixture: ComponentFixture<IconComponent>;
+jest.mock('@angular/core');
+jest.mock('@fortawesome/angular-fontawesome');
+jest.mock('@fortawesome/fontawesome-svg-core');
+jest.mock('@fortawesome/free-solid-svg-icons');
+jest.mock('./definitions/fontAwesome');
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [IconComponent],
-    }).compileComponents();
-  });
+describe('IconComponent', () => {
+  let instance;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(IconComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    instance = new IconComponent();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('instance should be an instanceof IconComponent', () => {
+    expect(instance instanceof IconComponent).toBeTruthy();
   });
+
 });

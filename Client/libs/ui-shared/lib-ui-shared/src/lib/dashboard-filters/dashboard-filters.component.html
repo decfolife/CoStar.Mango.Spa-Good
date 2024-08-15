@@ -64,7 +64,7 @@
       class="dashboardsAddMenu"
     >
       <button *ngFor="let addObject of addObjects"
-        (click)="btnAddMenuItemClick(addObject); $event.preventDefault(); btnAddBuildingNewClick(addObject)"
+        (click)="btnAddMenuItemClick(addObject); $event.preventDefault(); btnAddBuildingNewClick(addObject); btnAddSupplierNewClick(addObject);btnAddEquipmentNewClick(addObject)"
         mat-menu-item
       >{{addObject.moduleDesc}}</button>
 

@@ -16,4 +16,5 @@ export interface ServiceAccountSite{
 export interface ServiceAccountEndpoint{
   endpoint: string;
   isActive: boolean;
+  isCommingSoon: boolean;
 }

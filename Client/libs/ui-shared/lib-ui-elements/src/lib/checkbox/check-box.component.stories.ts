@@ -1,14 +1,8 @@
-import { moduleMetadata, Story, Meta } from '@storybook/angular';
-import { CheckBoxComponent } from './check-box.component';
-import { solidIcons, regularIcons, cremIcons } from '../icon/definitions/fontAwesome';
 import { CommonModule } from '@angular/common';
 import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
+import { argsToTemplate, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
-import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
-
-interface CheckboxComponentStory extends CheckBoxComponent {
-  text: string
-}
+import { CheckBoxComponent } from './check-box.component';
 
 export default {
   title: 'Components/Checkbox',
@@ -18,26 +12,70 @@ export default {
       imports: [
         CommonModule,
         LibDataModelsModule,
-        DxCheckBoxModule,
+        CheckBoxComponent,
         DxValidatorModule
       ],
     }),
   ],
-  parameters: {
-    docs: {
-      description: {
-        component: '',
-      },
-    },
+ argTypes: {
+  checkBox: {
+    table: {
+      disable: true
+    }
   },
+  onChange: {
+    table: {
+      disable: true
+    }
+  },
+  onTouched: {
+    table: {
+      disable: true
+    }
+  },
+ }
 } as Meta<CheckBoxComponent>;
 
-const Template: Story<CheckboxComponentStory> = (args: CheckboxComponentStory) => ({
-  props: args
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  value: true,
-  disabled: false
-};
+type Story = StoryObj<CheckBoxComponent>;
+
+export const Default: Story = {
+  args: {
+    value: true,
+    disabled: false
+  },
+  render: (args: CheckBoxComponent) => ({
+    props: args,
+    template: `
+    <crem-check-box ${argsToTemplate(args)}>Checkbox</crem-check-box>
+    `
+  })
+}
+
+export const Disabled: Story = {
+  args: {
+    value: true,
+    disabled: true
+  },
+  render: (args: CheckBoxComponent) => ({
+    props: args,
+    template: `
+    <crem-check-box ${argsToTemplate(args)}>Disabled</crem-check-box>
+    `
+  })
+}
+
+export const Group: Story = {
+  args: {
+  },
+  render: (args: CheckBoxComponent) => ({
+    props: args,
+    template: `
+    <div style="display: flex; justify-content: space-around; width: 400px;">
+    <crem-check-box [value]="true">Checkbox 1</crem-check-box>
+    <crem-check-box [value]="false">Checkbox 2</crem-check-box>
+    <crem-check-box [value]="false">Checkbox 3</crem-check-box>
+    </div>
+    `
+  })
+}

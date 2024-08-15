@@ -43,3 +43,39 @@ export enum ClassificationType {
     IFRS16 = 4,
     OperatingLessor = 5
 }
+
+/**
+ * Classification Names for Financial Events/Schedules
+ *
+ * @export
+ * @enum {number}
+ */
+export enum ClassificationTypeName {
+  'Operating 840'= 0,
+  'Capital 840'= 1,
+  'Finance (ASC 842)'= 2,
+  'Operating (ASC 842)'= 3,
+  'IFRS 16'= 4,
+  'Operating (Lessor)'= 5,
+  'Sales Type (Lessor)'= 6,
+}
+
+/**
+ * Type Guard for 'ClassificationTypeName'
+ *
+ * @example
+ *   if (isClassificationTypeName(classificationName)) {
+ *  switch (classificationName) {
+ *    case 'Finance (ASC 842)':
+ *      console.log('Handling Finance (ASC 842)');
+ *      break;
+ *    default:
+ *      console.log('Unknown classification');
+ *  }
+ * @export
+ * @param {string} value
+ * @return {*}  {value is keyof typeof ClassificationTypeName}
+ */
+export function isClassificationTypeName(value: string): value is keyof typeof ClassificationTypeName {
+  return Object.keys(ClassificationTypeName).includes(value);
+}

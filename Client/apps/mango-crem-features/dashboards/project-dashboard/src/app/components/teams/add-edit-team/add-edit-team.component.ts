@@ -8,7 +8,7 @@ import { Team, TeamMember, contactMember, MemberInfo } from '@mango/data-models/
 import { faCirclePlus, faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ToastrService } from 'ngx-toastr';
-import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 
 @Component({
   selector: 'add-edit-Team-popup',

@@ -18,7 +18,6 @@ div.bounds {
     height: 80px;
     width: unset;
     margin: 16px 0px;
-    padding: 0 16px;
     div.metric-container {
       margin-right: 34px;
       margin-left: 0px;
@@ -26,23 +25,5 @@ div.bounds {
         margin-left: 0px;
       }
     }
-    svg {
-      width: 16px !important;
-      height: 16px !important;
-    }
-    .sidekick-value.gray {
-      border-radius: 2px;
-      font-size: 14px;
-      margin: 0;
-      padding: 2px 4px !important;
-      text-align: center;
-    }
-  }
-}
-
-crem-icon {
-  svg.icon-arrows-brand-up.icon-arrows-brand-up-dims {
-    width: 16px !important;
-    height: 16px !important;
   }
 }

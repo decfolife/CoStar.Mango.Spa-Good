@@ -227,7 +227,6 @@ export class PortfolioDataService {
                 if (res && res.data && res.data.length) {
                   for(var clientLink of res.data) {
                     if(clientLink.isActive === false) {
-                      console.log(clientLink)
                       var accountingLinks = results.data.accountingLinks;
                       accountingLinks.splice(accountingLinks.findIndex(link => link.name === clientLink.name), 1)
                     }

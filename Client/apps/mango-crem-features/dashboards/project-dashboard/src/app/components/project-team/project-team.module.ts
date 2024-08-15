@@ -11,7 +11,6 @@ import { DxDataGridModule, DxDropDownBoxModule, DxListModule, DxSelectBoxModule,
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MemberDetailsComponent } from './member-details/member-details.component';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
-import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
 import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
 import { ImportTeamComponent } from './import-team/import-team.component';
 
@@ -44,7 +43,7 @@ import { ImportTeamComponent } from './import-team/import-team.component';
     DxValidatorModule,
     DxValidationGroupModule
   ],
-  providers: [MangoDialogService],
+  providers: [],
   exports: [ProjectTeamComponent],
 })
 export class ProjectTeamModule { }

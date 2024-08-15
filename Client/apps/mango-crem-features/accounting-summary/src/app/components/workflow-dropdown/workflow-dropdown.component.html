@@ -1,37 +1,30 @@
 <div>
-  <input [id]="accountingSummaryService.getId(componentName,'empty','disabled-input')" [value]="inputStatusText" *ngIf="!isWorkflowDropdownVisible" type="text" disabled="true" aria-label="No workflow status change right">
-  <dx-select-box
+  <div *ngIf="!isWorkflowDropdownVisible">
+    <div 
+      [id]="accountingSummaryService.getId(componentName, 'empty', 'disabled-input')" 
+      class="workflow-status-div" 
+      aria-label="No workflow status change right"
+      contenteditable="false">
+      Workflow Status is <span class="workflow-status-text">{{ inputStatusText }}</span>
+    </div>
+  </div>
+  <crem-dropdown *ngIf="isWorkflowDropdownVisible" 
     [id]="accountingSummaryService.getId(componentName,'statuses','dropdown')"
-    [visible]="isWorkflowDropdownVisible"
-    [(value)]="dropdownStatusValue"
     valueExpr="workflowStatusId"
     displayExpr="workflowStatus"
-    [inputAttr]="{ 'aria-label': 'Workflow Status Dropdown' }"
     [showClearButton]="false"
     [dataSource]="dropdownDataSource"
-    [dropDownOptions]="{ wrapperAttr: { class: 'accounting-summary-style-container workflow-dropdown-list-container' } }"
     height="32px"
-    width="200px"
-    (onValueChanged)="onValueChanged($event)"
-    itemTemplate="item"
-  >
-    <div *dxTemplate="let itemData of 'item'" >
-      <div [id]="accountingSummaryService.getId(componentName,'status-item', itemData.workflowStatusId.toString())"
-      (mouseenter)="onMouseEnter($event, itemData)" (mouseleave)="onMouseLeave()"
-      >
-        {{itemData.workflowStatus}}
-      </div>
-    </div>
-  </dx-select-box>
-
-  <dx-tooltip
-    [visible]="isTooltipVisible" 
-	  [target]="toolTipTarget"
-  >
-    <div *dxTemplate="let data of 'content'">
-        {{ btnDisabledReason }}
-    </div>
-  </dx-tooltip>
+    width="290px"
+    emitWholeEvent="true"
+    showTooltip="true"
+		useSelectBox="true"
+    [allowSearch]='true'
+    [selectBoxValue]="dropdownStatusValue"
+		(selectedItems)="onValueChanged($event)"
+    fieldTemplate="withLabel"
+    label="Workflow Status is"
+	></crem-dropdown>
 
     <div #containerDiv class="work-flow-comments" *ngIf="this.commentsVisible"
         [id]="accountingSummaryService.getId(componentName,'comment','popup')" >
@@ -53,14 +46,16 @@
           [id]="accountingSummaryService.getId(componentName,'cancel','button')"
           type="secondary"
           (click)="cancelChanges()">
-          Cancel</crem-button>
+          Cancel
+        </crem-button>
 
         <crem-button
           [id]="accountingSummaryService.getId(componentName,'save','button')"
           type="primary"
           (click)="saveWorkFlowComment()"
           class="btn-primary-workflow-comments">
-          Save</crem-button>
+          Save
+        </crem-button>
+      </div>
     </div>
-
 </div>

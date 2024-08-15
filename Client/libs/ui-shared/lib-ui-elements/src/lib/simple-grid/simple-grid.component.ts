@@ -1,4 +1,14 @@
-import { Component, ComponentRef, ContentChild, Directive, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  Directive,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'regenerator-runtime/runtime';
 import * as ExcelJS from 'exceljs';
@@ -17,37 +27,34 @@ export class CustomTemplateDirective{
   templateUrl: './simple-grid.component.html',
   styleUrls: ['./simple-grid.component.scss']
 })
-export class SimpleGridComponent{
+export class SimpleGridComponent implements OnInit{
   @Input() id: string;
   @Input() dataSource: any[];
-  @Input() paging: boolean = true;
-  @Input() allowSorting: boolean = true;
+  @Input() paging = true;
+  @Input() allowSorting = true;
   @Input() grouping: DxDataGridComponent["grouping"];
   @Input() customColumns?: DxDataGridComponent["columns"];
   @Input() headerFilter: DxDataGridComponent["headerFilter"];
   @Input() buttonColumn?: boolean;
   @Input() allowColumnReordering?: boolean;
   @Input() customContentTemplate?: TemplateRef<any>
-  @Input() enableMasterDetails?: boolean = false
+  @Input() enableMasterDetails? = false
   @Input() columns: any[];
-  @Input() pageSize: number = 50;
+  @Input() pageSize = 50;
   @Input() customPageSize: number[] = [50, 100, 200, 500]
-  @Input() exportFileName: string = "Grid_Export"
+  @Input() exportFileName = "Grid_Export"
   @Input() gridHeight: string;
-  @Input() autoSetKeyExpr: boolean = false;
-  @Input() wordWrapEnabled: boolean = false;
+  @Input() autoSetKeyExpr = false;
+  @Input() wordWrapEnabled = false;
   @Input() filterValue: any = null;
-  @Input() noDataText: string = "No data";
-  @Input() showColumnLines: boolean = true;
-  @Input() showRowLines: boolean = true;;
+  @Input() noDataText = "No data";
+  @Input() showColumnLines = true;
+  @Input() showRowLines = true;;
   @Input() keyExpr?: any = null; //TODO: keyExpr originally an string, needs a better logic implementation when null. Error TS2322: Type 'null' is not assignable to type 'string | undefined'.
-  @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
-  @Output() onRowClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selectionChanged: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
   @ContentChild('masterDetail',{static: false}) bodyTemplateRef: TemplateRef<any>;
   @ViewChild("DataGrid") dataGrid: DxDataGridComponent;
-
-  constructor() {
-   }
 
    ngOnInit() {
     if (this.autoSetKeyExpr) {
@@ -90,8 +97,8 @@ export class SimpleGridComponent{
    }
 
    public onCellClicked(event: Event) {
-     if (this.onRowClick) {
-      this.onRowClick.emit(event);
+     if (this.rowClick) {
+      this.rowClick.emit(event);
      }
    }
 
@@ -100,7 +107,7 @@ export class SimpleGridComponent{
   }
 
   public onSelectionChange(event: Event) {
-    this.onSelectionChanged?.emit(event);
+    this.selectionChanged?.emit(event);
   }
 }
 

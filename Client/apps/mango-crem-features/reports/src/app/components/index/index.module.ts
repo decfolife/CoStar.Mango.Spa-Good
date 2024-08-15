@@ -1,22 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { ButtonModule, DropdownModule, DynamicFormModule, IconModule, LoaderModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
+import { ButtonModule, DropdownModule, DynamicFormModule, IconModule, InputComponent, ModalModule } from '@mango/ui-shared/lib-ui-elements';
 import { DxLoadPanelModule } from 'devextreme-angular';
+import { VerticalStepperModule } from 'libs/ui-shared/lib-ui-elements/src/lib/vertical-stepper/vertical-stepper.module';
+import { ReportsService } from '../../services/reports.service';
 import { SharedModule } from '../../shared/shared.module';
+import { CriteriaFormReportComponent } from '../criteria-form-report/criteria-form-report.component';
+import { CriteriaFormSegmentComponent } from '../criteria-form-segment/criteria-form-segment.component';
+import { CreateSegmentComponent } from '../modal/create-segment/create-segment.component';
+import { CriteriaReportComponent } from '../modal/criteria-report/criteria-report.component';
+import { DeleteReportComponent } from '../modal/delete-report/delete-report.component';
 import { ReportsHomeModule } from '../reports-home/reports-home.module';
+import { ReportsSegmentModule } from '../reports-segment/reports-segment.module';
 import { IndexRoutingModule } from './index-routing.module';
 import { IndexComponent } from './index.component';
-import { ReportsService } from '../../services/reports.service';
-import { MatDialogModule } from '@angular/material/dialog';
-import { DeleteReportComponent } from '../modal/delete-report/delete-report.component';
-import { CriteriaReportComponent } from '../modal/criteria-report/criteria-report.component';
-import { ReportsSegmentModule } from '../reports-segment/reports-segment.module';
-import { CreateSegmentComponent } from '../modal/create-segment/create-segment.component';
-import { TextBoxModule } from 'libs/ui-shared/lib-ui-elements/src/lib/text-box/text-box.module';
-import { CriteriaFormSegmentComponent } from '../criteria-form-segment/criteria-form-segment.component';
-import { CriteriaFormReportComponent } from '../criteria-form-report/criteria-form-report.component';
-import { VerticalStepperModule } from 'libs/ui-shared/lib-ui-elements/src/lib/vertical-stepper/vertical-stepper.module';
 
 @NgModule({
   declarations: [
@@ -34,7 +33,6 @@ import { VerticalStepperModule } from 'libs/ui-shared/lib-ui-elements/src/lib/ve
     SearchModule,
     DxLoadPanelModule,
     DropdownModule,
-    TextBoxModule,
     ReportsHomeModule,
     ReportsSegmentModule,
     MatDialogModule,
@@ -42,7 +40,8 @@ import { VerticalStepperModule } from 'libs/ui-shared/lib-ui-elements/src/lib/ve
     ModalModule,
     IconModule,
     VerticalStepperModule,
-    DynamicFormModule
+    DynamicFormModule,
+    InputComponent
   ],
   providers: [
     ReportsService

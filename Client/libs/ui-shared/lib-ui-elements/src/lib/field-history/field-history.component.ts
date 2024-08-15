@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FieldHistoryDataSource, FieldHistoryInput, HistoryEntry } from '@mango/data-models/lib-data-models';
+import { FieldHistoryDataSource } from '@mango/data-models/lib-data-models';
 import { DxDataGridModule, DxTemplateModule, DxBulletModule, DxPopoverModule } from 'devextreme-angular';
 import { MatTabsModule } from '@angular/material/tabs';
 import { IconModule } from '../icon';
@@ -20,23 +20,25 @@ import { IconModule } from '../icon';
   templateUrl: './field-history.component.html',
   styleUrls: ['./field-history.component.scss'],
 })
-export class FieldHistoryComponent {
+export class FieldHistoryComponent{
 
   @Input() helpTextID: string;
-
   @Input() dataSource: FieldHistoryDataSource;
+  @Input() dateFormat = 'MM/dd/yyyy h:mm a';
+  @Input() visible = false;
 
-  @Input() dateFormat: string = 'MM/dd/yyyy h:mm a';
+  @Output() display = new EventEmitter<boolean>()
 
-  @Input() visible: boolean = false;
-
-
-  @Output() onDisplay = new EventEmitter<boolean>()
+  @ViewChild('popoverTitle') popoverTitle: ElementRef<HTMLDivElement>;
 
   toggleVisible() {
     this.visible = !this.visible;
-    if (!!this.visible) {
-      this.onDisplay.emit(true)
+    if (this.visible) {
+      this.display.emit(true)
+      setTimeout(() => {
+          if (this.popoverTitle)
+            this.popoverTitle.nativeElement.focus();
+      }, 1000)
     }
   }
 }

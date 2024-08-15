@@ -21,7 +21,13 @@ export default {
     ],
   },
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
+  coverageReporters: ['text', 'text-summary'],
+  coverageThreshold: {
+    global: {
+      statements: 55,
+      branches: 22,
+      functions: 30,
+      lines: 54,
+    },
+  },
 };

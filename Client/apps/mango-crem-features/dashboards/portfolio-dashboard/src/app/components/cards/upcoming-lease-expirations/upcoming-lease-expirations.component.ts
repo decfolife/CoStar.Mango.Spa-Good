@@ -40,23 +40,17 @@ export class UpcomingLeaseExpirationsComponent implements OnInit, OnDestroy {
 
   rowClick(e: any) {
     if (e.event.target.className != 'dx-datagrid-group-closed' &&
-      e.event.target.className != 'dx-datagrid-group-opened' &&
-      e.rowType != 'detail') {
-      if (environment.isRestful) {
-        this.router.navigate(
-          ['crem/forms/render-form'],
-          {
-            queryParams: {
-              fid: 312, oid: e.data.leaseAbstractID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID
-            }
-          });
-      } else {
-        e["objectIdField"] = "leaseAbstractID"
-        this.rowClickEvent.emit(e);
-      }
+        e.event.target.className != 'dx-datagrid-group-opened' &&
+        e.rowType != 'detail') {
+      this.router.navigate(
+        ['/v06/Forms/RenderForm.aspx'],
+        {
+          queryParams: {
+            oid: e.data.leaseAbstractID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID
+          }
+        });
     }
   }
-
 
   getCardData() {
     this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(

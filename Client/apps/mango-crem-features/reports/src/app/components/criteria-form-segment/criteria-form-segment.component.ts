@@ -262,6 +262,9 @@ export class CriteriaFormSegmentComponent {
                             })
                         }
 
+                        if(!isDependent && item.criteriaDesc === "Portfolio")
+                          item.values.forEach((x) => defaultValueArray.push('' + x[valueKey]));
+
                         if(defaultValueArray[0] === '')
                         {
                             if(defaultValueArray?.[1] === '') {
@@ -303,6 +306,8 @@ export class CriteriaFormSegmentComponent {
                         if(!selectedIndex && noDefaultValues) {
                             selectedIndex = item.values?.[0]
                         }
+                        if(item.criteriaDesc === "Calendar")
+                          selectedIndex = item.values?.[0];
 
                         itemObject = { // Calendar Field *********************************
                             dataField: isDependent ? item.criteriaID : item.criteriaSourceFieldName,
@@ -325,7 +330,7 @@ export class CriteriaFormSegmentComponent {
                         if (this.defaultValues?.[item.criteriaID]) {
                             this.defaultValues[item.criteriaID] = [];
                         }
-                    }  
+                    }
 
                 } else if (item.criteriaControlType === "TEXTBOX" && item.criteriaDataType === "7") {
                     if (criteriaItem?.[index + 1]?.criteriaControlType === "TEXTBOX" && criteriaItem?.[index + 1]?.criteriaDataType === "7") {

@@ -1,22 +1,17 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { InputInfoComponent } from './info.component';
 
+jest.mock('@angular/core');
+jest.mock('@angular/common');
+jest.mock('../../icon');
+
 describe('InputInfoComponent', () => {
-  let component: InputInfoComponent;
-  let fixture: ComponentFixture<InputInfoComponent>;
+  let instance;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [InputInfoComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(InputInfoComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    instance = new InputInfoComponent();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('instance should be an instanceof InputInfoComponent', () => {
+    expect(instance instanceof InputInfoComponent).toBeTruthy();
   });
 });

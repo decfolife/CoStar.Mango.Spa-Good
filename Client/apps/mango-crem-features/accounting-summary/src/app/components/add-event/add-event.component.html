@@ -1,1 +1,64 @@
-<p>add-event works!</p>
+  <div class="accounting-summary-toolbar-wrapper">
+    <div class="controls-left">
+      <div class="add-edit-title">
+        <mango-accounts-summary-title></mango-accounts-summary-title>
+      </div>
+    </div>
+    <div class="controls-right">
+      <div [id]="accountingSummaryService.getId(componentName,'alerts','button')" class="alerts">
+        <mango-alerts-root [leaseAbstractId]="accountingSummaryService.getLeaseAbstractId()"></mango-alerts-root>
+      </div>
+      <div class="cancel-button">
+        <crem-button id="accountingSummaryService.getId(componentName,'cancel','button')" type="secondary"
+         (click)="location.back()">Cancel
+        </crem-button>
+      </div>
+      <div class="save-close-button">
+        <crem-button [id]="accountingSummaryService.getId(componentName,'save-close','button')" type="primary"
+          [disabled]="saveDisabled" >Save & Close
+        </crem-button>
+      </div>
+    </div>
+</div>
+
+<div class="add-events-body">
+  <mango-schedule-details
+    [commonDropdowns]="commonDropdowns"
+    [eventsGridData]="eventsGridData"
+    [pageMode]="pageMode"
+    [measureEvent]="measureEvent"
+    [portfolioSettings]="portfolioSettings"
+    [classificationSettings]="classificationSettings"
+    [accountingEventsData]="accountingEventsData"
+    [eventDateOptions]="eventDateOptions"
+    [userInfo]="userInfo"
+    (classificationChanged)="onClassificationChanged($event)"
+    (scheduleDetailsData)="scheduleDetailsDataChanged($event)">
+  </mango-schedule-details>
+
+  <mango-classification-tests
+    [accountingEventsData]="accountingEventsData"
+    [classificationId]="classificationId"
+    [pageMode]="pageMode">
+  </mango-classification-tests>
+  
+  <mango-residual-value
+    [accountingEventsData]="accountingEventsData"
+    [classificationId]="classificationId"
+    [pageMode]="pageMode"
+    [userInfo]="userInfo">
+  </mango-residual-value>
+
+  <mango-financial-card
+    [pageMode]="pageMode"
+    [measureEvent]="measureEvent"
+    [classificationId]="classificationId"
+    [portfolioSettings]="portfolioSettings"
+    [scheduleDetailsData] ="scheduleDetailsData"
+    [accountingEventsData]="accountingEventsData"
+    [amortizationProfiles]="amortizationProfiles"
+    [currencyList]="currencyList"
+    [userInfo]="userInfo">
+  </mango-financial-card>
+  
+</div>

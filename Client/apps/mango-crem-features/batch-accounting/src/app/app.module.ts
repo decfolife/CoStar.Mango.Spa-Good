@@ -24,11 +24,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ScreenLoaderModule } from '@mango/ui-shared/lib-ui-elements';
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
+// import { AppRoutingModule } from './app-routing.module';
 import { BatchEventListComponent } from './batch-event-list/batch-event-list.component';
 import { BatchLogsComponent } from './batch-logs/batch-logs.component';
-import { ConfigurationService } from './services/configuration.service';
-import { EndpointService } from './services/endpoint.service';
+// import { ConfigurationService } from './services/configuration.service';
+// import { EndpointService } from './services/endpoint.service';
 import { ParametersCardComponent } from './batch-event-list/parameters-card/parameters-card.component';
 import { ParametersGridComponent } from './batch-event-list/parameters-grid/parameters-grid.component';
 
@@ -40,9 +40,8 @@ import { ParametersGridComponent } from './batch-event-list/parameters-grid/para
     ParametersCardComponent,
     ParametersGridComponent,
   ],
-
   imports: [
-    AppRoutingModule,
+    // AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
     DevExtremeModule,
@@ -61,15 +60,13 @@ import { ParametersGridComponent } from './batch-event-list/parameters-grid/para
     MatStepperModule,
     ScreenLoaderModule,
   ],
-
-  providers: [
-    ConfigurationService,
-    {
-      provide: 'BASE_URL',
-      useFactory:  EndpointService.baseUrl
-    },
-  ],
-
+  // providers: [
+  //   ConfigurationService,
+  //   {
+  //     provide: 'BASE_URL',
+  //     useFactory:  EndpointService.baseUrl
+  //   },
+  // ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })

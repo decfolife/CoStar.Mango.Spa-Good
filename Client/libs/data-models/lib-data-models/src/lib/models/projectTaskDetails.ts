@@ -18,6 +18,11 @@ export interface ProjectTaskDetails {
   approvalStatus: string;
   projectID: number;
   noteCount: number;
-  taskStatus: string;
+  taskStatus: TaskStatus;
   fileCount: number;
 }
+
+interface TaskStatus {
+  color: string;
+  title: string;
+} 

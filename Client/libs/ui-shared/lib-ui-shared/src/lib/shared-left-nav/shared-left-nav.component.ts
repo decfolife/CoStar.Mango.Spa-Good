@@ -24,15 +24,21 @@ export class SharedLeftNavComponent implements OnChanges {
   @Output() navigateSpa: EventEmitter<SharedLeftNavLink> = new EventEmitter<SharedLeftNavLink>(null);
   @Output() toActiveLink: EventEmitter<string> = new EventEmitter();
 
-  isSubleftnav$: Observable<boolean> = this.facade.showSubLeftNav$
 
   constructor(private facade: MangoAppFacade) { }
+
+  isSubleftnav$: Observable<boolean> = this.facade.showSubLeftNav$
 
   ngOnChanges(changes: SimpleChanges) {
     for (let propName in changes) {
       if (propName.toLowerCase() === 'navigationlinks') {
         this.getCategorizeLinks();
         break;
+      }
+      else if (propName.toLowerCase() === 'activelink') {
+        const navLink : SharedLeftNavLink = this.navigationLinks.filter(x => x.name === changes.activeLink.currentValue)[0];
+        const id = 'left-nav__' + navLink?.moduleID + '-' + navLink?.dynamicName?.toLowerCase()?.replace(' ', '-');
+        document.getElementById(id).focus();
       }
     }
   }

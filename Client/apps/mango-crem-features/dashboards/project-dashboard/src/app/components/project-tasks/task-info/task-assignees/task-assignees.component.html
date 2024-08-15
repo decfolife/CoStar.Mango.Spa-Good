@@ -1,0 +1,48 @@
+<div class="task-assignees-counts-wrapper">
+  <section class="tac-count-section">
+    <div class="tac-count">
+      <div class="tac-count-val">{{ totalCount < 10 ? '0' + totalCount : totalCount }}</div>
+      <div class="tac-count-label">Assignees</div>
+    </div>
+    <div class="tac-count">
+      <div class="tac-count-val">{{ approvedCount < 10 ? '0' + approvedCount : approvedCount }}</div>
+      <div class="tac-count-label">Approved</div>
+    </div>
+    <div class="tac-count">
+      <div class="tac-count-val">{{ pendingCount < 10 ? '0' + pendingCount : pendingCount }}</div>
+      <div class="tac-count-label">Pending</div>
+    </div>
+    <div class="tac-count">
+      <div class="tac-count-val">{{ rejectedCount < 10 ? '0' + rejectedCount : rejectedCount }}</div>
+      <div class="tac-count-label">Rejected</div>
+    </div>
+  </section>
+</div>
+
+
+<div class="task-assignees-dataGrid-wrapper"> 
+  <dx-data-grid id="task-assignees-grid"
+    [showColumnLines]="false"
+    [showRowLines]="false"
+    [showBorders]="false"
+    [rowAlternationEnabled]="true"
+    [allowColumnResizing]="true"
+    columnResizingMode="widget"
+    [allowColumnReordering]="true"
+    [columnAutoWidth]="false"
+    [dataSource]="taskAssignees"
+    [hoverStateEnabled]="true"
+    keyExpr="projectMilestoneApprovalID"
+    [width]="'100%'"
+    [wordWrapEnabled]="true"
+  >
+    <dxo-load-panel
+      [enabled]="true">
+    </dxo-load-panel>
+
+    <dxi-column dataField="contactName" caption="Assignee"></dxi-column>
+    <dxi-column dataField="approvalStatus" caption="Progress"></dxi-column>
+    <dxi-column dataField="systemDate" caption="System Date" dataType="date" [format]="userDateFormat"></dxi-column>
+    <dxi-column dataField="userApprovalDate" caption="Modified Date" dataType="date" [format]="userDateFormat"></dxi-column>
+  </dx-data-grid>
+</div>

@@ -4,12 +4,13 @@ import { environment } from '@mangoSpa/src/environments/environment.local';
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import notify from 'devextreme/ui/notify';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { PortfolioSettingsResponse } from '@accounting-summary/models/portfolio-settings-response.modal';
 import { Api } from '@mango/data-models/lib-data-models';
+import { ClassificationTypeName } from "@mango/data-models/lib-data-models";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AccountingSummaryService extends EndpointService {
   private apiUrl: string;
   private leaseAbstractId: number
   private navPageId: number
-  titleLeaseInfoSubject = new Subject<any>();
+  titleLeaseInfoSubject : BehaviorSubject<any>;
   preferenceSavePendingMessage = " - You have unsaved preference changes.";
   isLocked: boolean;
   isArchived: boolean;
@@ -28,7 +29,9 @@ export class AccountingSummaryService extends EndpointService {
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
-    this.apiUrl = UtilitiesService.getBaseApiUrl(Api.accountingSummary)
+    this.apiUrl = UtilitiesService.getBaseApiUrl(Api.accountingSummary);
+    const storedTitle = JSON.parse(localStorage.getItem('titleLeaseInfo'));
+    this.titleLeaseInfoSubject = new BehaviorSubject<any>(storedTitle || {});
   }
 
   setLeaseAbstractId(leaseId: number) {
@@ -48,6 +51,22 @@ export class AccountingSummaryService extends EndpointService {
 
   getLeaseAbstractId(): number {
     return this.leaseAbstractId;
+  }
+
+  /**
+   * Returns the Classification Name from the corresponding enum given a ClassificationID
+   *
+   * @param {number} classificationID
+   * @return {*}  {(string | undefined)}
+   * @memberof AccountingSummaryService
+   */
+  getClassificationName(classificationID: number): string | undefined {
+    for (const key in ClassificationTypeName) {
+      if (ClassificationTypeName[key as keyof typeof ClassificationTypeName] === classificationID) {
+        return key;
+      }
+    }
+    return undefined;
   }
 
   getTitleInfoFromSubject(): Observable<any> {
@@ -168,10 +187,9 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   getId(componentName: string, uniqueName: string, elementType: string, componentType?: string) {
-    if (componentType != undefined)
-      return `${componentName}-${componentType}-${uniqueName}-${elementType}`
-    else
-      return `${componentName}-${uniqueName}-${elementType}`
+    return componentType
+      ? `${componentName}-${componentType}-${uniqueName}-${elementType}`
+      : `${componentName}-${uniqueName}-${elementType}`;
   }
 
   exportToExcel(component: any, filename: string, worksheetName: string): void {
@@ -184,7 +202,7 @@ export class AccountingSummaryService extends EndpointService {
     }).then(() => {
       worksheet.eachRow({ includeEmpty: true }, function (row, rowNumber) {
         row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
-          cell.alignment = { wrapText: true,  vertical: 'top', horizontal: 'center'};
+          cell.alignment = { wrapText: true,  vertical: 'top'};
         });
       });
   

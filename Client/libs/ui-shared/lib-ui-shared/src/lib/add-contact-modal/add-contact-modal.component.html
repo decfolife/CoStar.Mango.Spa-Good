@@ -1,0 +1,133 @@
+<crem-modal modalId="add_contact_modal" modalTitleId="add_contact_modal_modalTitleId" modalTitle="Add Contact"
+    closeIconVisible="true" [customFooter]="true">
+
+    <div modalContent class="body-content">
+        <form crem-form layout="vertical" [formGroup]="contactForm" class="add-contact-form">
+            <div class="form-group-two-columns">
+                <div class="two-columns-row">
+                    <crem-form-item>
+                        <crem-form-label [id]="getId(componentName,'firstname','label')" [required]="true">First Name
+                        </crem-form-label>
+                        <crem-form-control>
+                            <crem-input [id]="getId(componentName,'firstname','textbox')" [showHint]="false"
+                                [showLabel]="false" [showInfo]="false" [inputType]="'text'" [required]="true"
+                                [value]="''" [name]="''" [placeholder]="'Enter First name'" formControlName="firstName">
+                            </crem-input>
+                        </crem-form-control>
+                    </crem-form-item>
+                </div>
+                <div class="two-columns-row">
+                    <crem-form-item>
+                        <crem-form-label [id]="getId(componentName,'lastname','label')" [required]="true">Last Name:
+                        </crem-form-label>
+                        <crem-form-control>
+                            <crem-input [id]="getId(componentName,'lastname','textbox')" [showHint]="false"
+                                [showLabel]="false" [showInfo]="false" [inputType]="'text'" [required]="true"
+                                [value]="''" [name]="''" [placeholder]="'Enter Last name'" formControlName="lastName">
+                            </crem-input>
+                        </crem-form-control>
+                    </crem-form-item>
+                </div>
+            </div>
+
+
+            <div class="form-group-two-columns">
+                <div class="two-columns-row">
+                    <crem-form-item>
+                        <crem-form-label [id]="getId(componentName,'emailaddress','label')">Email Address
+                        </crem-form-label>
+                        <crem-form-control>
+                            <crem-input [id]="getId(componentName,'emailaddress','textbox')" [showHint]="false"
+                                [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''" [name]="''"
+                                [placeholder]="'Enter email address'" formControlName="emailAddress">
+                            </crem-input>
+                        </crem-form-control>
+                    </crem-form-item>
+                </div>
+                <div class="two-columns-row">
+                    <crem-form-item>
+                        <crem-form-label [id]="getId(componentName,'isPublic','label')">Public:
+                        </crem-form-label>
+                        <crem-form-control>
+                            <crem-dropdown #portfolioDropdown [id]="getId(componentName,'isPublic','dropdown')"  value='Yes'
+                                initialSelectedValue="Yes" [customRequireValidation]="false" hoverText="Select Public" formControlName="isPublic"
+                                [dataSource]="[{displayKey: 'Yes', valueKey: 'true'}, {displayKey: 'No', valueKey: 'false'}]">
+                            </crem-dropdown>
+                        </crem-form-control>
+                    </crem-form-item>
+                </div>
+            </div>
+            <crem-form-item [id]="getId(componentName,'company','form-item')">
+                <crem-form-label [id]="getId(componentName,'name','label')" [required]="true">Company
+                </crem-form-label>
+                <crem-form-control>
+                    <crem-dropdown #companyDropdown [id]="getId(componentName,'portfolio','dropdown')"
+                        [dataSource]='companyDropdownItem' [showClearButton]='true' required="true" value="CompanyID"
+                        [customRequireValidation]="false" [showColumnHeader]='false' displayExpr='CompanyName'
+                        valueExpr='CompanyID' [allowSearch]='true' hoverText="Select Portfolio"
+                        formControlName="companyName">
+                    </crem-dropdown>
+                </crem-form-control>
+            </crem-form-item>
+
+            <div class="form-group-two-columns">
+                <div class="two-columns-row">
+                    <crem-form-item>
+                        <crem-form-label [id]="getId(componentName,'group','label')">Group
+                        </crem-form-label>
+                        <crem-form-control>
+                            <crem-dropdown #contactGroupDropdown [id]="getId(componentName,'group','dropdown')"
+                                [initialSelectedValue]='contactGroupDefaultValue'
+                                [dataSource]='contactGroupDropdownItem' [showClearButton]='true'
+                                [showColumnHeader]='false' displayExpr='GroupName' value="GroupID" valueExpr='GroupID'
+                                [allowSearch]='true' hoverText="Select Template" formControlName="groupList">
+                            </crem-dropdown>
+                        </crem-form-control>
+                    </crem-form-item>
+                </div>
+                <div class="two-columns-row">
+                    <crem-form-item>
+                        <crem-form-label [id]="getId(componentName,'sub-group','label')">Sub-Group:
+                        </crem-form-label>
+                        <crem-form-control>
+                            <crem-dropdown #subGroupDropDropdown [id]="getId(componentName,'sub-group','dropdown')" initialSelectedValue="View"
+                                [dataSource]="[{displayKey: 'View', valueKey: 2}, {displayKey: 'Edit', valueKey: 4}, {displayKey: 'Delete', valueKey: 5}]"
+                                [showClearButton]='true' [showColumnHeader]='false'
+                                hoverText="Select Sub Group" formControlName="subGroupList">
+                            </crem-dropdown>
+                        </crem-form-control>
+                    </crem-form-item>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div modalFooter class="addContactFooter">
+        <crem-button [id]="getId(componentName,'cancel','button')" type="secondary" (click)="close()">Cancel
+        </crem-button>
+
+        <crem-button [id]="getId(componentName,'save','button')" type="secondary" (click)="save()"
+            [disabled]="saveClicked" [icon]="saveClicked? 'faSpinner':''" [iconPack]="saveClicked? 'solid':''"
+            [iconAnimation]="saveClicked? 'spin':''">
+            <span>
+                {{saveClicked ? 'Saving':'Save'}}
+            </span>
+        </crem-button>
+
+        <crem-button [id]="getId(componentName,'save-and-new','button')" type="secondary" (click)="saveAndNew()"
+            [disabled]="saveNewClicked" [icon]="saveNewClicked? 'faSpinner':''" [iconPack]="saveNewClicked? 'solid':''"
+            [iconAnimation]="saveNewClicked? 'spin':''">
+            <span>
+                {{saveNewClicked ? 'Saving':'Save & New'}}
+            </span>
+        </crem-button>
+
+        <crem-button [id]="getId(componentName,'launch','button')" type="primary" (click)="launch()"
+            [disabled]="saveLaunchClicked" [icon]="saveLaunchClicked? 'faSpinner':''"
+            [iconPack]="saveLaunchClicked? 'solid':''" [iconAnimation]="saveLaunchClicked? 'spin':''">
+            <span>
+                {{saveLaunchClicked ? 'Saving':'Launch'}}
+            </span>
+        </crem-button>
+    </div>
+</crem-modal>

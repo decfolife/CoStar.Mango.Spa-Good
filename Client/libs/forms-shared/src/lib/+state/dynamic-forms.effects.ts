@@ -9,6 +9,12 @@ import * as fromDynamicForms from './dynamic-forms.selectors';
 
 @Injectable()
 export class DynamicFormsEffects {
+  constructor(
+    private actions$: Actions,
+    private dynamicFormsService: DynamicFormsService,
+    private store: Store
+  ) {}
+
   loadForms$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DynamicFormsActions.initForms),
@@ -258,22 +264,22 @@ export class DynamicFormsEffects {
     );
 
   loadFormItemDropdowns$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(DynamicFormsActions.dynamicFormLoadFormItemDropdowns),
-    mergeMap(() =>
-      this.dynamicFormsService
-        .getFormItemDropdowns()
-        .pipe(
-          filter(formData => formData !== undefined),
-          map((result) =>
-            DynamicFormsActions.dynamicFormLoadFormItemDropdownsSuccess({formItemDropdowns: result.data})
-          ),
-          catchError((error) =>
-            of(
-              DynamicFormsActions.dynamicFormLoadFormItemDropdownsFailure({ error }))
+    this.actions$.pipe(
+      ofType(DynamicFormsActions.dynamicFormLoadFormItemDropdowns),
+      mergeMap(() =>
+        this.dynamicFormsService
+          .getFormItemDropdowns()
+          .pipe(
+            filter(formData => formData !== undefined),
+            map((result) =>
+              DynamicFormsActions.dynamicFormLoadFormItemDropdownsSuccess({formItemDropdowns: result.data})
+            ),
+            catchError((error) =>
+              of(
+                DynamicFormsActions.dynamicFormLoadFormItemDropdownsFailure({ error }))
             )
           )
-        )
+      )
     )
   );
 
@@ -339,11 +345,4 @@ export class DynamicFormsEffects {
       )
     )
   );
-
-
-  constructor(
-    private actions$: Actions,
-    private dynamicFormsService: DynamicFormsService,
-    private store: Store
-  ) {}
 }

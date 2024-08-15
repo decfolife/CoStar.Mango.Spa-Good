@@ -3,6 +3,9 @@ import { UntypedFormControl, Validators } from '@angular/forms';
 import {MatMenuTrigger} from '@angular/material/menu';
 
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-more-menu',
@@ -40,6 +43,8 @@ export class MoreMenuComponent {
 
   @ViewChild('listMenuTrigger') listMenuTrigger: MatMenuTrigger;
 
+  public isRemUser$: Observable<boolean> = of(false);
+
   faCaretDown = faCaretDown;
 
   nameFormControl = new UntypedFormControl('', [Validators.required]);
@@ -48,7 +53,14 @@ export class MoreMenuComponent {
     return this.nameFormControl.hasError(errorName);
   }
 
-  constructor() { }
+  constructor(private mangoAppFacade: MangoAppFacade) { }
+
+  ngOnInit(){
+    this.isRemUser$ = this.mangoAppFacade.authenticatedUser$.pipe(
+      filter(user => !!user), 
+      map(user => !!user.isRemUser)
+    );
+  }
 
   createNewListView() {
     if (this.nameFormControl.valid) {

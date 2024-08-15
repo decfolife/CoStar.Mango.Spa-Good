@@ -1,6 +1,6 @@
 import { Directive, Input, OnDestroy, OnInit } from "@angular/core";
 import { FieldHistoryComponent } from "./field-history.component";
-import { FieldHistoryInput} from "@mango/data-models/lib-data-models";
+import { FieldHistoryInput } from "@mango/data-models/lib-data-models";
 import { FieldHistoryService } from "../../../../../core-shared/src/lib/services/field-history.service";
 import { switchMap } from "rxjs/operators";
 import { Subscription } from 'rxjs';
@@ -24,9 +24,11 @@ export class FieldHistoryDirective implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
+    this.fieldHistoryComponent.helpTextID = this.fieldHistoryParams.helpTextName;
+
     this.subscriptions.add(
-      this.fieldHistoryComponent.onDisplay.pipe(
-        switchMap(_ => this.fieldHistoryService.getFieldHistory(this.fieldHistoryParams.portfolioId, this.fieldHistoryParams.helpTextName, this.fieldHistoryParams.fieldHistoryName, this.fieldHistoryParams.objectTypeId, this.fieldHistoryParams.objectId)
+      this.fieldHistoryComponent.display.pipe(
+        switchMap(() => this.fieldHistoryService.getFieldHistory(this.fieldHistoryParams.portfolioId, this.fieldHistoryParams.helpTextName, this.fieldHistoryParams.fieldHistoryName, this.fieldHistoryParams.objectTypeId, this.fieldHistoryParams.objectId)
         ),
       ).subscribe((data: any) => {
         this.fieldHistoryComponent.dataSource = data.data;

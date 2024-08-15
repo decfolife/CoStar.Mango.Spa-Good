@@ -10,7 +10,7 @@ export interface SharedLeftNavLink {
   category: string;
   sortOrder: number;
   linkUrl: string;
-  moduleId: number;
+  moduleID: number;
   isAuthorized: boolean;
   objectTypeID: number;
   dynamicName: string;

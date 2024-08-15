@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../../mango/src/environments/environment.local';
+import { Observable, of } from 'rxjs';
 import { Api } from '@mango/data-models/lib-data-models';
+import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 
 @Injectable()
 export class ProjectsDashboardLeftNavService extends EndpointService {
@@ -25,7 +25,7 @@ export class ProjectsDashboardLeftNavService extends EndpointService {
     return this.callHttpGet(url, 'DoesUserHaveManageTeamListsRights');
   }
 
-  getModuleNavigationLinks(moduleID: number): Observable<any> {
+  getModuleNavigationLinks(moduleID: number): Observable<SharedLeftNavLink[]> {
     const url = `${this.leftNav}LeftNav/GetModulesNavigationLinks/${moduleID}`;
     return this.callHttpGet(url, 'GetModulesNavigationLinks')
   }

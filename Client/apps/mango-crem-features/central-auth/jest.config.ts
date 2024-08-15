@@ -22,6 +22,5 @@ export default {
   },
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
   modulePathIgnorePatterns: ['environment.test.ts'],
-  collectCoverage: true,
   coverageReporters: ['text', 'text-summary'],
 };

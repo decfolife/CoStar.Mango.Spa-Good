@@ -1,6 +1,7 @@
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'mango-retrospective-adjustment-info',
@@ -8,6 +9,7 @@ import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/
   styleUrls: ['./retrospective-adjustment-info.component.scss'],
 })
 export class RetrospectiveAdjustmentInfoComponent {
+  @ViewChild("RetrospectiveAdjustment") retrospectiveAdjustment: DxDataGridComponent;
   @Input() retrospectiveAdjustmentPopupData: any;
   @Input() gridColumnsForRetroPopup: any[];
   @Input() classificationType: string;
@@ -37,7 +39,7 @@ export class RetrospectiveAdjustmentInfoComponent {
 
   exportToExcelFileName() {
     const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const fileName = this.amortizationProfileName + "-" + this.classificationType + "-Retro Adjustment Details_" + dateTimeStamp;
+    const fileName = this.amortizationProfileName + "-" + this.classificationType + "-Retro Adjustment Details_" + dateTimeStamp +'.xlsx';
     return fileName;
   }
 
@@ -47,8 +49,10 @@ export class RetrospectiveAdjustmentInfoComponent {
     }
   }
 
-  onExporting(event){
-    event.fileName = this.exportToExcelFileName()
+  onExporting(event) {
+    const fileName = this.exportToExcelFileName();
+    this.retrospectiveAdjustment.loadPanel.enabled = false;
+    this.accountingSummaryService.exportToExcel(this.retrospectiveAdjustment.instance, fileName, 'Sheet');
   }
 
   private getRetrospectiveAdjustmentGridColumns() {

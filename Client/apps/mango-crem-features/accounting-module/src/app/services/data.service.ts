@@ -556,7 +556,7 @@ export class DataService extends EndpointService {
 
   protected handleApiResponseError(operation = 'operation not provided') {
     return (error: any): Observable<any> => {
-      if (environment.isRestful && error) {
+      if (error) {
         return of({
           success: false,
           data: '',
@@ -575,18 +575,10 @@ export class DataService extends EndpointService {
       clientErrorMessage: ''
     };
 
-    if (environment.isRestful) {
-      result.success = value.success ? value.success : false;
-      result.data = (value.data || (!value.data && value.data === 0)) ? value.data : '{}';
-      result.clientErrorMessage = result.success ? '' : result.data;
-      return result;
-    }
-
-    const res = value?.d?.Result ? value.d.Result : value.d;
-    const data = JSON.parse(res);
-    result.success = data.success;
-    result.data = (data.data || (!data.data && data.data === 0)) ? data.data : '{}';
+    result.success = value.success ? value.success : false;
+    result.data = (value.data || (!value.data && value.data === 0)) ? value.data : '{}';
     result.clientErrorMessage = result.success ? '' : result.data;
+    
     return result;
   }
 }

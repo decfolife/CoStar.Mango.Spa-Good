@@ -14,14 +14,14 @@
     </div>
     <div tabindex="0" class="sidekick-value-wrapper" *ngIf="metric.sidekick">
       <div class="sidekick-value" [ngClass]="valColor">
-        <div [ngSwitch]="valDirection">
-          <div *ngSwitchCase="'arrows-brand-up'" class="arrows-brand-up">
+        <div [ngSwitch]="metric.sidekick?.direction">
+          <div *ngSwitchCase="'up'" class="arrows-brand-up">
             <crem-icon
               icon="faArrowUp">
             </crem-icon>
           </div>
 
-          <div *ngSwitchCase="'arrows-brand-down'" class="arrows-brand-down">
+          <div *ngSwitchCase="'down'" class="arrows-brand-down">
             <crem-icon
               icon="faArrowDown">
             </crem-icon>
@@ -38,13 +38,3 @@
     </mat-card-subtitle>
   </mat-card-footer>
 </mat-card>
-<!-- <dx-popover
-    [target]="'#'+tooltipId"
-    position="bottom"
-    [width]="400"
-    [withAnimationOptionsVisible]="withAnimationOptionsVisible"
->
-    <div class="hero-tooltip">
-        {{metric.popoverTooltip}}
-    </div>
-</dx-popover> -->

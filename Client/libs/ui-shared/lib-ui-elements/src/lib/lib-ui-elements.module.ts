@@ -14,6 +14,8 @@ import { SkeletonModule } from './skeleton';
 import { ModalModule } from './modal';
 import { HierarchyDropdownModule } from './hierarchy-dropdown';
 import { CremPivotTableModule } from './crem-pivot-table/crem-pivot-table.module';
+import { CompositeDropdownModule } from './composite-dropdown';
+import { AccordionModule } from './accordion';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { CremPivotTableModule } from './crem-pivot-table/crem-pivot-table.module
     TooltipModule,
     ModalModule,
     CremPivotTableModule,
+    CompositeDropdownModule,
+    AccordionModule
   ],
 })
 export class LibUiElementsModule {}

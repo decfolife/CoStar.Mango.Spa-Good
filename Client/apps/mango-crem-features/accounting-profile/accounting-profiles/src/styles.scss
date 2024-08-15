@@ -1,9 +1,3 @@
-/* You can add global styles to this file, and also import other style files */
-app-discount-rate-profiles,
-app-discount-rate-profiles-add-edit {
-  @import '@angular/material/prebuilt-themes/indigo-pink.css';
-}
-
 @import 'assets/styles/colors.scss';
 @import 'assets/styles/var.scss';
 
@@ -60,7 +54,7 @@ h5#discount-rate-profiles-h5.dbl-right-margin {
         min-width: 16px;
         border-radius: $stdPadding;
         border: $stdBorder;
-        padding: $stdPadding / 4;
+        padding: calc($stdPadding / 4);
         font-size: 12px;
         text-align: center;
         box-sizing: border-box;
@@ -152,7 +146,7 @@ h5#discount-rate-profiles-h5.dbl-right-margin {
 
     mat-form-field {
       &.mat-mdc-form-field {
-        height: $stdPadding * 4;
+        height: calc($stdPadding * 4);
 
         &.mat-form-field-appearance-outline {
           div.mat-form-field-wrapper {
@@ -188,7 +182,7 @@ mat-form-field.discount-rate__portfolio-dropdown {
             height: 35px;
 
             span.mat-form-field-label-wrapper {
-              top: $stdPadding * -3;
+              top: calc($stdPadding * -3);
               overflow: visible;
             }
 
@@ -239,7 +233,7 @@ mat-form-field.discount-rate__portfolio-dropdown {
       &.mat-form-field-can-float {
         &.mat-form-field-should-float {
           label.mat-form-field-label {
-            transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+            transform: translateY(calc($stdPadding * -3)) translateX(calc($stdPadding * -1));
             width: 100%;
 
             mat-label {
@@ -249,7 +243,7 @@ mat-form-field.discount-rate__portfolio-dropdown {
         }
 
         label.mat-form-field-label {
-          transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+          transform: translateY(calc($stdPadding * -3)) translateX(calc($stdPadding * -1));
           width: 100%;
 
           mat-label {
@@ -332,7 +326,7 @@ mat-form-field.discount-rate__portfolio-dropdown {
                   }
 
                   fa-icon {
-                    margin-left: 0.75 * $stdPadding;
+                    margin-left: calc(0.75 * $stdPadding);
                   }
                 }
               }
@@ -462,7 +456,7 @@ app-discount-rate-profiles-add-edit {
       overflow-y: auto;
 
       mat-card {
-        margin-bottom: $stdPadding * 3;
+        margin-bottom: calc($stdPadding * 3);
 
         mat-card-header.mat-mdc-card-header {
           .mat-card-header-text {
@@ -471,7 +465,7 @@ app-discount-rate-profiles-add-edit {
         }
 
         mat-card-content.mat-card-content {
-          padding-top: $stdPadding * 3;
+          padding-top: calc($stdPadding * 3);
 
           mat-form-field {
             width: 100%;
@@ -631,8 +625,8 @@ app-discount-rate-profiles-add-edit {
           background: white;
 
           .hero-value {
-            font-size: $stdPadding * 5;
-            line-height: $dblPadding * 3;
+            font-size: calc($stdPadding * 5);
+            line-height: calc($dblPadding * 3);
             color: #000000;
           }
 
@@ -649,8 +643,8 @@ app-discount-rate-profiles-add-edit {
               text-align: center;
               background: $costarGreen;
               color: #FFFFFF;
-              padding: $stdPadding/2 $dblPadding;
-              margin: $stdPadding/2 0px;
+              padding: calc($stdPadding / 2) $dblPadding;
+              margin: calc($stdPadding / 2) 0px;
             }
           }
         }
@@ -723,7 +717,7 @@ app-discount-rate-profiles-add-edit {
           align-items: center;
 
           mat-card-header.mat-mdc-card-header {
-            padding: 0px $stdPadding*3;
+            padding: 0px calc($stdPadding * 3);
 
             div.mat-card-header-text {
               mat-card-title.mat-card-title {

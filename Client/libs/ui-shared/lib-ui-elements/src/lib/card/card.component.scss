@@ -3,9 +3,9 @@
 :host::ng-deep {
 
   mat-card {
+    @include costar(box-shadow, none);
     @include costar(border, gray04);
     @include costar(padding, 0);
-    @include costar(box-shadow, none);
     min-height: 254px;
 
     mat-card-header {
@@ -16,7 +16,6 @@
       @include costar(padding, 4);
       @include costar(border-radius, medium);
       @include costar(color, gray01);
-      @include costar(background-color, light, $important: true);
       max-height: 58px;
       overflow: hidden;
 
@@ -35,7 +34,6 @@
 
     mat-card-content {
       @include costar(border-top, gray04);
-      @include costar(padding, 0, $important: true);
       overflow: auto;
       display: flex;
       justify-content: flex-start;
@@ -46,6 +44,22 @@
         width: 100% !important;
       }
     }
+  }
+
+  .cardHeader {
+    display: flex;
+    width: 100%;
+    place-content: space-between;
+  }
+
+  .customHeader {
+    display: flex;
+    justify-content: space-around;
+    align-items: center; 
+  }
+
+  .customHeader>div:first-child {
+    margin-right: 8px;
   }
 
 }
@@ -64,7 +78,6 @@ crem-card {
         padding: 0px !important;
         @include costar(border-bottom, gray04);
         @include costar(color, gray01);
-        @include costar(background-color, light, $important: true);
         justify-content: space-between !important;
         align-items: center;
         font-size: 18px;
@@ -109,26 +122,15 @@ crem-card {
 
   mat-card mat-card-header div.cardHeader div.mat-card-header-text{
     display: flex;
-    padding-top: 4px;
   }
 
-  // .cardHeader {
-  //   @include costar(border-bottom, gray04);
-  //   @include costar(color, gray01);
-  //   @include costar(background-color, light, $important: true);
-  //   padding: 4px 16px !important;
-  //   justify-content: space-between !important;
-  //   align-items: center;
-  //   line-height: 40px;
-  //   font-size: 18px;
-  //   font-weight: 400;
-  //   letter-spacing: 0;
-  //   margin: 0px !important;
-  //   height: 40px !important;
-  //   min-height: 40px !important;
-  //   max-height: 40px !important;
-  //   width: unset !important;
-  // }
+  .card__content--padding {
+    @include costar(padding, 3, $important: true);
+  }
+  
+  .card__content--no--padding {
+    @include costar(padding, 0, $important: true);
+  }
 
   .mat-mdc-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
     display: block;
@@ -165,12 +167,16 @@ crem-card {
 
   .counter {
     margin-right: 8px;
-    padding: 4px 8px;
+    padding: 4px 8px 5px 8px;
+    font-size: 14px;
     border-radius: 6px;
     @include costar(color, light);
     @include costar(background-color, gray01);
     @include costar(font-weight, normal);
     align-content: center;
+    +h2 {
+      padding-top: 3px;
+    }
   }
 
   .customHeader {
@@ -178,11 +184,6 @@ crem-card {
     justify-content: space-around;
     align-items: center;
   }
-
-
-.customHeader>div:first-child {
-  margin-right: 8px;
-}
 
 ::ng-deep {
 
@@ -227,7 +228,6 @@ crem-card .mat-mdc-card#projects_by_type_card .mat-card-content.mat-card-content
   padding: 0px !important;
   font-size: 14px;
   justify-content: flex-start !important;
-  @include costar(background-color, light);
   height: 280px !important;
   min-height: 280px !important;
   overflow: hidden;
@@ -248,7 +248,7 @@ crem-card .mat-mdc-card#projects_by_type_card .mat-card-content.mat-card-content
   max-width: 15vw;
 }
 
-.card {
+.cremCard {
   min-width: 25vw;
   @include costar(background-color, light);
 }
@@ -266,4 +266,12 @@ crem-card .mat-mdc-card.cremCard .mat-card-content.mat-card-content.cremCardCont
   height: fit-content;
   min-height: 100% !important;
   max-height: 100% !important;
+}
+
+.transparent {
+  background-color: transparent;
+}
+
+.noBorder {
+  border: none !important;
 }

@@ -1,11 +1,6 @@
-import { Component, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Template } from 'devextreme/core/templates/template';
+import { Component, Input } from '@angular/core';
 
 @Component({
-  /**
-   * Component Selector
-   */
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'crem-screen-loader',
   templateUrl: './screen-loader.component.html',
   styleUrls: ['./screen-loader.component.scss'],
@@ -14,20 +9,48 @@ import { Template } from 'devextreme/core/templates/template';
  * Creates a loading overlay based on the state manager (NgRx)
  * @class ScreenLoadingComponent
  * @implements {OnInit}
- * @param {boolean} loading: Show/hide the component using classes
- * @param {String} color: mode 'light' or 'dark'
- * @param {boolean} showLogo: show/hides the element
- * @param {String} tagline: Under the logo, company's subdivision or tagline
- * @param {string} text: shows under the tagline, it can be used to replace the spinner for text Eg. 'Loading...'
- * @param {boolean} showSpinner: show/hides the element
  */
 export class ScreenLoaderComponent {
 
+  /**
+   * Show/hide the component using classes
+   *
+   * @type {boolean}
+   * @memberof ScreenLoaderComponent
+   */
   @Input() loading: boolean;
+  /**
+   * mode 'light' or 'dark'
+   *
+   * @type {string}
+   * @memberof ScreenLoaderComponent
+   */
   @Input() color: string;
+  /**
+   * show/hides the element
+   *
+   * @memberof ScreenLoaderComponent
+   */
   @Input() showLogo = true;
+  /**
+   * Under the logo, company's subdivision or tagline
+   *
+   * @type {string}
+   * @memberof ScreenLoaderComponent
+   */
   @Input() tagline: string;
+  /**
+   * show/hides the graphic element
+   *
+   * @memberof ScreenLoaderComponent
+   */
   @Input() showSpinner = true;
+  /**
+   * shows under the tagline, it can be used to replace the spinner for text Eg. 'Loading...'
+   *
+   * @type {string}
+   * @memberof ScreenLoaderComponent
+   */
   @Input() text: string;
 
   public getCssClasses() {

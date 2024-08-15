@@ -69,6 +69,7 @@
 			(onSelectionChanged)="onSelectionChanged($event)"
 			(onCellPrepared)="onCellPrepared($event)"
 			(onRowPrepared)="onRowPrepared($event)"
+			(onFocusedCellChanging)="onFocusedCellChanging($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
@@ -98,19 +99,21 @@
 				[allowReordering]="false" [allowResizing]="false" [visible]="userAccessLevel == 1">
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate" id="{{'memberActionButton' + member.rowIndex}}">
-						<button aria-label="actions menu" class="btn btn-link memberActionsButton" 
-							(click)="$event.preventDefault()" [matMenuTriggerFor]="memberActionsMenu">
+						<button aria-label="actions menu" class="btn btn-link memberActionsButton rowActionsButton" 
+							(click)="$event.preventDefault()" #memberActionsMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="memberActionsMenu">
 							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
 						</button>
-		    			<mat-menu #memberActionsMenu="matMenu" class="projectMemberActionsMenu">
-							<ul role="menu">
-								<li mat-mdc-menu-item  class="ptm-edit" *ngIf="((member.data.memberType).toLowerCase().trim()) !== 'temporary contact' " 
-									(click)=" addOrEditMember(member.data.memberType.trim() == 'Team Member'? 'ETM' : 'ETU', member.data)">
-									Edit
-								</li>
-								<li mat-mdc-menu-item  class="ptm-remove" (click)="removeContactOrMember(member.data)"  *ngIf="!member.data.isManager">Remove</li>
-								<li mat-mdc-menu-item  class="ptm-makeManager" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">Make Team Manager</li>
-							</ul>
+						<mat-menu #memberActionsMenu="matMenu" class="projectMemberActionsMenu">
+							<button mat-menu-item class="ptm-edit" (keydown)="matMenuButtonKeyDown($event)" *ngIf="((member.data.memberType).toLowerCase().trim()) !== 'temporary contact' "
+											(click)=" addOrEditMember(member.data.memberType.trim() == 'Team Member'? 'ETM' : 'ETU', member.data)">
+								Edit
+							</button>
+							<button mat-menu-item class="ptm-remove" (keydown)="matMenuButtonKeyDown($event)" (click)="removeContactOrMember(member.data)" *ngIf="!member.data.isManager">
+								Remove
+							</button>
+							<button mat-menu-item class="ptm-makeManager" (keydown)="matMenuButtonKeyDown($event)" (click)="makeProjectManager(member.data.contactID)" *ngIf="(member.data.accessLevel == 1 && !member.data.isManager)">
+								Make Team Manager
+							</button>
 						</mat-menu>
 					</div>
 				</dxi-button>		    	

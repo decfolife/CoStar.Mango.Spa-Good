@@ -3,7 +3,7 @@
 		<div class="controls-left">
 			<h3 class="title"> Teams Templates </h3>
 			<div class="searchTeams">
-				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" (click)="searchBoxClick()"  class="searchTeams-input"></cs-search>
+				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchTextSubject.next($event)" (click)="searchBoxClick()"  class="searchTeams-input"></cs-search>
 			</div>
 		</div>
 		<div class="controls-right">
@@ -64,10 +64,28 @@
 			(onSelectionChanged)="onSelectionChanged($event)"
 			(onCellClick)="onCellClick($event)"
 			(onContentReady)="onContentReady($event)"
+			(onFocusedCellChanging)="onFocusedCellChanging($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>
-			<dxo-paging [enabled]="false"></dxo-paging>
+			<dxo-scrolling mode="virtual"></dxo-scrolling>
+
+			<dxo-load-panel
+        [enabled]="gridLoaderVisible">
+    	</dxo-load-panel>
+			
+			<dxo-paging 
+				[enabled]="true"
+				[pageSize]="25">
+			</dxo-paging>
+
+			<dxo-pager
+				[showPageSizeSelector]="true"
+				[showInfo]="true"
+				[allowedPageSizes]="[25, 50, 100, 'all']"
+				[visible]="true"
+				[showNavigationButtons]="true">
+			</dxo-pager>
 
 			<dxo-selection
 				selectAllMode="allPages"
@@ -99,17 +117,15 @@
 				[allowReordering]="false" [allowResizing]="false">
 				<dxi-button template="actionsMenuTemplate">
 					<div *dxTemplate="let team of 'actionsMenuTemplate'" class="actionsMenuTemplate" id="{{'teamActionButton' + team.rowIndex}}">
-						<button aria-label="actions menu" class="btn btn-link teamActionsButton" 
+						<button aria-label="actions menu" class="btn btn-link teamActionsButton rowActionsButton" 
 							[hidden]="!userModuleAddRights || team.data.securityLevel.toLowerCase().trim() == 'view'"
-							(click)="$event.preventDefault()" [matMenuTriggerFor]="teamActionsMenu">
+							(click)="$event.preventDefault()" #teamActionsMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="teamActionsMenu">
 							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
 						</button>
-		    			<mat-menu #teamActionsMenu="matMenu" class="teamActionsMenu">
-							<ul role="menu">
-								<li mat-mdc-menu-item (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit" class="tam-edit">Edit</li>
-								<li mat-mdc-menu-item (click)="deleteTeams(team.data, true)" *ngIf="team.data.canDelete" class="tam-delete">Delete</li>
-							</ul>
-						</mat-menu>
+		    			<mat-menu #teamActionsMenu="matMenu" tabindex="0" class="teamActionsMenu">
+							<button mat-menu-item (keydown)="matMenuButtonKeyDown($event)" (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit" class="tam-edit">Edit</button>
+							<button mat-menu-item (keydown)="matMenuButtonKeyDown($event)" (click)="deleteTeams(team.data, true)" *ngIf="team.data.canDelete" class="tam-delete">Delete</button>
+					</mat-menu>
 					</div>
 				</dxi-button>		    	
 			</dxi-column>

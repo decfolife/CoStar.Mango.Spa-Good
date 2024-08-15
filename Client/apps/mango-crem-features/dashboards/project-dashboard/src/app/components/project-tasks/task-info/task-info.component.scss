@@ -1,0 +1,155 @@
+@use 'styles' as *;
+
+.tin-section {
+  margin-top: 24px;
+}
+
+.tin-statusAndDates {
+  border: 1px solid $gray05;
+  display: flex;
+  height: 100px;
+  border-radius: 2px;
+
+  .tin-flexItem50 {
+    flex-basis: 50%;
+  }
+
+  .tin-status {
+    padding: 12px 8px 12px 2px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    border-right: 1px solid $gray05;
+    .tin-status-valLabel {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      .tin-status-val {
+        font-weight: 500;
+      }
+      .tin-status-label {
+        font-size: small;
+      }
+    }
+    .tin-status-bar {
+      height: 90px;
+      width: 8px;
+      border-radius: 4px;
+      &.tin-status-bar-red {
+        background-color: $danger;
+      }
+      &.tin-status-bar-green {
+        background-color: $success;
+      }
+      &.tin-status-bar-yellow {
+        background-color: $warning;
+      }
+      &.tin-status-bar-gray {
+        background-color: $gray03;
+      }
+      &.tin-status-bar-white {
+        background-color: $info-lightest;
+      }
+      &.tin-status-bar-lightGray {
+        background-color: $gray06;
+      }
+    }
+  }
+
+  .tin-dates {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .tin-dates-row {
+      flex-basis: 33.3%;
+    }
+
+    .tin-dates-row {
+      display: flex;
+      .date-col {
+        text-align: center;
+        flex-basis: 40%;
+        margin: auto;
+      }
+      .tin-left-label {
+        flex-basis: 20%;
+      }
+    }
+
+    .tin-dates-labels {
+      border-bottom: 1px solid $gray05;
+      font-weight: 500;
+    }
+  }
+
+}
+.tin-moreData {
+  display: flex;
+  justify-content: space-between;
+  .tin-moreData-col {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    .tin-moreData-val {
+      flex-basis: 50%;
+    }
+  }
+
+  .tin-moreData-val {
+    line-height: 21px;
+    font-weight: 500;
+  }
+  .tin-moreData-label {
+    line-height: 16px;
+  }
+}
+.tin-left-label, .tin-moreData-label, .tin-desc-label, .tin-predecessor-valStep {
+  font-size: small;
+  color: $gray03;
+}
+
+.tin-desc-val {
+  font-size: 14px;
+  line-height: 18px;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.tin-morePadding {
+  padding: 0 30px;
+}
+
+.tin-predecessor-label {
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.tin-predecessor-val {
+  display: flex;
+  gap: 16px;
+  line-height: 16px;
+  font-size: 14px;
+}
+
+.tin-flexItem10 {
+  flex-basis: 10%;
+  text-align: right;
+}
+
+::ng-deep #taskInfoModal-content {
+
+  height: 100%;
+  overflow-y: hidden;
+  crem-tab-item {
+    display: block;
+    height: calc(100% - 60px);
+    padding: 0;
+    margin-bottom: 20px;
+
+    .tab-content {
+      padding: 0;
+      height: 100%;
+    }
+  }
+} 

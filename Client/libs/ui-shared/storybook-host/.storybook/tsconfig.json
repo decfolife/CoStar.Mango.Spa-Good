@@ -1,10 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
   },
-
-  "exclude": ["../**/*.spec.ts"],
+  "exclude": [
+    "../**/*.spec.ts",
+    "../../**/*.spec.ts",
+    "../../cosmos",
+  ],
   "include": [
     /**
      * Libraries and components, tokens and documentation below
@@ -15,9 +19,8 @@
     "../../common/**/*.stories.ts",
     "../../common/**/*.stories.mdx",
     // Add ui-shared folders below, add same folders on main.js as well
-    "../../lib-ui-shared/**/*.stories.ts",
-    "../../lib-ui-shared/**/*.stories.mdx",
     "../../lib-ui-elements/**/*.stories.ts",
+    "../../lib-ui-elements/**/*.component.ts",
     "../../lib-ui-elements/**/*.stories.mdx",
     "*.js",
     "preview.ts",

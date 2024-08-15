@@ -1,5 +1,6 @@
 <div>
-  <dx-data-grid [id]="accountingSummaryService.getId(componentName,'popup','grid')"
+  <dx-data-grid #RetrospectiveAdjustment
+          [id]="accountingSummaryService.getId(componentName,'popup','grid')"
           [dataSource]="gridData"
           [columns]="gridColumns"
           [rowAlternationEnabled]="true"

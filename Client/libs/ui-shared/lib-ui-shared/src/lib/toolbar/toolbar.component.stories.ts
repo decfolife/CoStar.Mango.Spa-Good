@@ -17,7 +17,6 @@ export default {
         CommonModule, 
         RouterTestingModule,
         BookmarksModule,
-        MatToolbarModule,
         EnvInfoChipModule
       ],
     }),
@@ -84,6 +83,6 @@ const moduleLinks: ToolbarModuleLink[] = [
 export const Primary = Template.bind({});
 Primary.args = {
   chipContent: 'Blank - Dev',
-  popoverContent: ["Popober content"],
+  popoverContent: "Blank - Dev has never been restored in the last 90 days",
   moduleLinks,
 };

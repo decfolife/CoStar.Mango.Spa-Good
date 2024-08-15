@@ -1,8 +1,8 @@
-<dynamic-form *ngIf="!loading" #FormWizardDynamicForm
+<crem-dynamic-form *ngIf="!loading" #FormWizardDynamicForm
     [config]="formConfig"
-    (onChangeEvent)="onChange($event)"
+    (changeEvent)="onChange($event)"
     [dateFormat] = "dateFormat"
     idPrefix = "add_project_wizard"
     labelPosition="left"
     >
-</dynamic-form>
+</crem-dynamic-form>

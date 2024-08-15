@@ -1,0 +1,76 @@
+@use 'styles' as *;
+
+#addEditTaskModal-content {
+  .fieldInvalid {
+    color: #d9534f;
+  }
+
+  .label {
+    margin-bottom: 2px;
+    margin-top: 8px;
+
+    .aet-required-tag {
+      color: $danger;
+    }
+  }
+
+  .container {
+    padding: 4px 0;
+  }
+
+  .aet-not-applicable {
+    margin-left: 10px;
+  }
+
+  #aet-dates-container, #aet-rqrd-con-shrink-emlapp-container, #aet-daysToStart-duration-container, #aet-milestone-Wflow-complete-container, #aet-exempt-requiredApproval-container {
+    display: flex;
+    gap: 8px;
+    .aet-flexItem50 {
+      flex-basis: 50%;
+    }
+    .aet-flexItem40 {
+      flex-basis: 40%;
+    }
+  }
+  #aet-rqrd-con-shrink-emlapp-container {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+::ng-deep #addEditTaskModal-content {
+  #aet-description-container {
+    .dx-texteditor.dx-editor-outlined .dx-texteditor-input {
+      max-height: none;
+    }
+  }
+}
+
+.footerRightControls {
+  display: flex;
+
+  & > .aet-btn {
+    margin-left: 8px;
+  }
+
+  .modalFooter {
+    @include costar(border-top, gray05);
+  }
+}
+
+::ng-deep {
+  .aet-tooltip-approval-exempt, .aet-tooltip-required-approvals {
+    crem-icon {
+      position: relative;
+      top: 4px;
+      right: 7px;
+    }
+  }
+}
+
+.aet-label-tooltip {
+  display: flex;
+  .aet-approval-exemption-label, .aet-required-approvals-label {
+    margin-bottom: 0px;
+  }
+}

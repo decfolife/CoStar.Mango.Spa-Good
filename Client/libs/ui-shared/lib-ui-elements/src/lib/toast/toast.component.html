@@ -1,0 +1,29 @@
+<div
+  class="template-wrapper content"
+  [ngClass]="getToastBorderColor()"
+  [ngStyle]="getWrapperCSS()"
+  (click)="closeOnClick && close()"
+  *ngIf="visible"
+>
+  <div class="icon-container">
+    <div class="icon-wrapper" [ngClass]="getIconBgColorClasses()">
+      <crem-icon *ngIf="state=='info'" size="xl" pack="solid" icon="faCircleInfo"
+        [attr.aria-label]="state"></crem-icon>
+      <crem-icon *ngIf="state=='success'" size="xl" pack="solid" icon="faCircleCheck"
+        [attr.aria-label]="state"></crem-icon>
+      <crem-icon *ngIf="state=='warning'" size="xl" pack="solid" icon="faCircleExclamation"
+        [attr.aria-label]="state"></crem-icon>
+      <crem-icon *ngIf="state=='error'" size="xl" pack="solid" icon="faCircleXmark"
+        [attr.aria-label]="state"></crem-icon>
+    </div>
+  </div>
+  <div [ngClass]="{'message':true, 'no-header': messageHeader === '' || !messageHeader,}">
+    <div *ngIf="messageHeader" class="message-header">{{messageHeader}}</div>
+    <div *ngIf="!!showBody" class="message-content">{{message}}</div>
+    <div *ngIf="!!showBody" [innerHTML]="contentTemplate"></div>
+  </div>
+  <div class="close-button-wrapper" *ngIf="showCloseButton">
+    <crem-icon class="close-button" size="m" pack="crem" color="gray03" icon="cremXMark" (click)="close()"
+      [attr.aria-label]="'close-toast'"></crem-icon>
+  </div>
+</div>

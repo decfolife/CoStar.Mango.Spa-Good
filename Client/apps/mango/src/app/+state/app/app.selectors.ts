@@ -23,19 +23,34 @@ export const authenticatedUser = createSelector(
   (state: State) => state.authenticatedUser
 );
 
-export const accessToken = createSelector(
-  getAppState,
-  (state: State) => state.accessToken
-);
-
 export const v06Auth = createSelector(
   getAppState,
   (state: State) => state.v06Auth
 );
 
+export const adminFlags = createSelector(
+  getAppState,
+  (state: State) => state.adminFlags
+);
+
+export const redirectorLinks = createSelector(
+  getAppState,
+(state: State) => state.redirectorLinks
+)
+
 export const userInfo = createSelector(
   getAppState,
   (state: State) => state.userInfo
+);
+
+export const isEmulatedUser = createSelector(
+  getAppState,
+  (state: State) => state.isEmulatedUser
+);
+
+export const isEmulateUserInitiatedFromV06 = createSelector(
+  getAppState,
+  (state: State) => state.isEmulateUserInitiatedFromV06
 );
 
 export const breadcrumbs = createSelector(
@@ -53,12 +68,10 @@ export const contactRecord = createSelector(
   (state: State) => state.contactRecord
 );
 
-
 export const userHasMultipleContactRecords = createSelector(
   getAppState,
   (state: State) => state.userHasMultipleContactRecords
 );
-
 
 export const client = createSelector(
   getAppState,

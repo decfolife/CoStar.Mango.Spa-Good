@@ -1,0 +1,223 @@
+<crem-modal
+	modalId="add_equipment_modal"
+	modalTitleId="add_equipment_modal_modalTitleId"
+	modalTitle="Add Equipment Lease" 
+	closeIconVisible="true"
+	[customFooter]="true">
+
+	<div modalContent class="body-content">
+		<form crem-form
+			layout="vertical"
+			[formGroup]="equipmentForm"
+			class="add-equipment-form">
+			<crem-form-item
+				[id]="getId(componentName,'portfolio','form-item')">
+				<crem-form-label 
+				[id]="getId(componentName,'portfolio','label')"
+				[required]="true">Portfolio
+				</crem-form-label>
+
+				<crem-form-control>
+					<crem-dropdown
+					#portfolioDropdown
+					[id]="getId(componentName,'portfolio','dropdown')"
+					[dataSource]='portfolioDropdownItem'
+					[showClearButton]='true'
+					required="true"
+					[customRequireValidation]="false"
+					[showColumnHeader]='false'
+					displayExpr='CompanyName'
+					valueExpr='CompanyID' 
+					[allowSearch]='true' 
+					hoverText="Select Portfolio"
+					(selectedItems)="onPortFolioValueChanged($event)" 
+					formControlName="portfolioList">
+					</crem-dropdown>
+				</crem-form-control>				
+			</crem-form-item>
+
+			<crem-form-item [id]="getId(componentName,'supplier','form-item')">
+				<crem-form-label
+					[id]="getId(componentName,'supplier','label')"
+					[required]="true">Supplier
+				</crem-form-label>
+				<crem-form-control>
+					<crem-dropdown
+					#supplierDropdown
+					[id]="getId(componentName,'supplier','dropdown')"
+					[dataSource]='supplierDropdownItem'
+					[showClearButton]='true'
+					required="true"
+					[customRequireValidation]="false"
+					[showColumnHeader]='false'
+					displayExpr='ObjectName'
+					valueExpr='ObjectID' 
+					[allowSearch]='true' 
+					hoverText="Select Supplier"
+					formControlName="supplierList">
+					</crem-dropdown>
+				</crem-form-control>
+			</crem-form-item>
+
+			<crem-form-item [id]="getId(componentName,'legalentity','form-item')">
+				<crem-form-label
+					[id]="getId(componentName,'legalentity','label')"
+					[required]="true">Legal Entity
+				</crem-form-label>
+				<crem-form-control>
+					<crem-input
+					[id]="getId(componentName,'legalentity','textbox')"
+					[showHint]="false" 
+					[showLabel]="false" 
+					[showInfo]="false" 
+					[inputType]="'text'" 
+					[required]="true"
+					[value]="''" 
+					[name]="''"
+					[placeholder]="'Enter legal entity name'" 
+					formControlName="legalEntityName">
+					</crem-input>
+				</crem-form-control>				
+			</crem-form-item>
+
+			<crem-form-item [id]="getId(componentName,'template','form-item')">
+				<crem-form-label
+				[id]="getId(componentName,'template','label')"
+				[required]="true">Template
+				</crem-form-label>
+				<crem-form-control>
+					<crem-dropdown
+					#templateDropdown
+					[id]="getId(componentName,'template','dropdown')"
+					[dataSource]='templateDropdownItem'
+					[showClearButton]='true'
+					[showColumnHeader]='false'
+					displayExpr='ObjectTypeTypeName'
+					value="ObjectTypeTypeID"
+					valueExpr='ObjectTypeTypeID'
+					[required]="true"
+					[allowSearch]='true'
+					hoverText="Select Template"
+					[initialSelectedValue]="selectedTemplateID"
+					formControlName="templateList">
+					</crem-dropdown>
+				</crem-form-control>
+			</crem-form-item>
+
+			<div class="form-group-two-columns">
+				<div class="two-columns-row">
+					<crem-form-item [id]="getId(componentName,'beginDate','form-item')">
+						<crem-form-label
+						[id]="getId(componentName,'beginDate','label')"
+						[required]="true">Begin Date
+						</crem-form-label>
+						<crem-form-control>
+							<crem-date-picker #beginDatePicker tabindex="0"
+								[dateFormat]="dateFormat"
+								[showClearButton]="'true'"
+								[inputId]="'beginDate'"
+								[isRequired]="'true'"
+								[placeholderText]="'Select Date...'"
+								[showDefaultValidationTooltip]="false"
+								formControlName="beginDate"
+								>
+							</crem-date-picker>
+						</crem-form-control>				
+					</crem-form-item>
+				</div>
+				
+				<div class="two-columns-row">
+					<crem-form-item [id]="getId(componentName,'endDate','form-item')">
+						<crem-form-label
+						[id]="getId(componentName,'endDate','label')"
+						[required]="true">End Date
+						</crem-form-label>
+						<crem-form-control>
+							<crem-date-picker #endDatePicker tabindex="0"
+								[dateFormat]="dateFormat"
+								[showClearButton]="'true'"
+								[inputId]="'endDate'"
+								[isRequired]="'true'"
+								[placeholderText]="'Select Date...'"
+								[showDefaultValidationTooltip]="false"
+								formControlName="endDate"
+								>
+							</crem-date-picker>
+						</crem-form-control>				
+					</crem-form-item>
+				</div>	
+			</div>					
+
+			<crem-form-item [id]="getId(componentName,'currencytype','form-item')">
+				<crem-form-label
+					[id]="getId(componentName,'currencytype','label')"
+					[required]="true">Currency Type
+				</crem-form-label>
+				<crem-form-control>
+					<crem-dropdown
+						#currencyDropdown
+						[id]="getId(componentName,'currency-type','dropdown')"
+						[dataSource]='currencyDropdownItem'
+						[showClearButton]='true'
+						[showColumnHeader]='false'
+						displayExpr='TargetCurrencyDesc'
+						value="ExchangeRateID"
+						valueExpr='ExchangeRateID'
+						[required]="true"
+						[allowSearch]='true'
+						[initialSelectedValue]="selectedCurrency"
+						hoverText="Select Currency Type" 
+						formControlName="currencyTypeList">
+					</crem-dropdown>
+				</crem-form-control>
+			</crem-form-item>
+		</form>
+	</div>
+
+	<div modalFooter class="addEquipmentFooter">
+		<crem-button
+			[id]="getId(componentName,'cancel','button')"
+			type="secondary"
+			(click)="close()">Cancel
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'save','button')"
+			type="secondary"
+			(click)="save($event)" 
+			[disabled]="saveClicked"
+			[icon]="saveClicked? 'faSpinner':''"
+			[iconPack]="saveClicked? 'solid':''"
+			[iconAnimation]="saveClicked? 'spin':''">
+			  <span>
+				{{saveClicked ? 'Saving':'Save'}}
+			  </span>
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'save-and-new','button')"
+			type="secondary"
+			(click)="saveAndNew($event)" 
+			[disabled]="saveNewClicked"
+			[icon]="saveNewClicked? 'faSpinner':''"
+			[iconPack]="saveNewClicked? 'solid':''"
+			[iconAnimation]="saveNewClicked? 'spin':''">
+			<span>
+				{{saveNewClicked ? 'Saving':'Save & New'}}
+			</span>
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'launch','button')"
+			type="primary"
+			(click)="launchEquipmentLeaseRenderForm($event)"
+			[disabled]="saveLaunchClicked"
+			[icon]="saveLaunchClicked? 'faSpinner':''"
+			[iconPack]="saveLaunchClicked? 'solid':''"
+			[iconAnimation]="saveLaunchClicked? 'spin':''">
+			<span>
+				{{saveLaunchClicked ? 'Saving':'Launch'}}
+			</span>
+		</crem-button>
+	</div>
+</crem-modal>

@@ -1,0 +1,96 @@
+<div *ngIf="loader$ | async">
+    <crem-loader></crem-loader>
+  </div>
+  <div *ngIf="dataLoaded" class="crem-quick-approval-data-grid">
+    <dx-data-grid
+      #DataGrid
+      id="quickApprovalDatagrid"
+      [dataSource]="dataSource"
+      [remoteOperations]="false"
+      [allowColumnReordering]="true"
+      [rowAlternationEnabled]="true"
+      [showBorders]="false"
+      [width]="'100%'"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      (onSelectionChanged)="onSelectionChanged($event)"
+      (onEditorPreparing)="onEditorPreparing($event)"
+    >
+        <dxo-selection
+        mode="multiple"
+        [allowSelectAll]="false"
+        [showCheckBoxesMode]="'always'"
+      >
+      </dxo-selection>
+      <dxi-column
+        dataField="taskName"
+        caption="Task Name"
+        dataType="string"
+        alignment="left"
+      ></dxi-column>
+      <dxi-column
+        caption="Actual Start Date"
+        dataField="actualStartDate"
+        cellTemplate="actualDateCellTemplate"
+        alignment="left"
+      ></dxi-column>
+      <dxi-column
+        caption="Status"
+        dataField="approve"
+        dataType="string"
+      ></dxi-column>
+      <dxi-column
+        caption="Date"
+        dataField="date"
+        cellTemplate="dateCellTemplate"
+        alignment="left"
+      ></dxi-column>
+      <dxi-column
+        caption="Note"
+        dataField="note"
+        cellTemplate="notesCellTemplate"
+        alignment="left"
+      ></dxi-column>
+      <div *dxTemplate="let d of 'actualDateCellTemplate'">
+        <div class="dx-field-value" *ngIf="!d.data.actualStartDate || !d.data.actualStartDateExists">
+          <dx-date-box
+            type="date"
+            [useMaskBehavior]="true"
+            displayFormat="shortdate"
+            placeholder="Update start date"
+            [(value)]="d.data.actualStartDate"
+            [inputAttr]="{ 'aria-label': 'Date' }"
+          >
+          </dx-date-box>
+        </div>
+        <div *ngIf="d.data.actualStartDate && d.data.actualStartDateExists">
+          <p class="margin">{{ d.data.actualStartDate | date: 'MM/dd/yyyy' }}</p>
+        </div>
+      </div>
+      <div *dxTemplate="let d of 'dateCellTemplate'">
+        <div class="dx-field-value" *ngIf="!d.data.date || !d.data.dateExists">
+          <dx-date-box
+            type="date"
+            [(value)]="d.data.date"
+            [inputAttr]="{ 'aria-label': 'Date' }"
+          >
+          </dx-date-box>
+        </div>
+        <div *ngIf="d.data.date && d.data.dateExists">
+          <p class="margin">{{ d.data.date | date: 'MM/dd/yyyy' }}</p>
+        </div>
+      </div>
+      <div *dxTemplate="let d of 'notesCellTemplate'">
+        <div class="dx-field-value" *ngIf="d.data.note === '' || !d.data.noteExists">
+          <dx-text-box
+            [(value)]="d.data.note"
+            [inputAttr]="{ 'aria-label': 'Note' }"
+          ></dx-text-box>
+        </div>
+        <div *ngIf="d.data.note !== '' && d.data.noteExists">
+          <p class="margin">{{ d.data.note }}</p>
+        </div>
+      </div>
+    </dx-data-grid>
+  </div>
+  

@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DataService } from '@mango/core-shared';
+import { HttpClientModule } from '@angular/common/http'; 
 
+import { HeroMetricsContainerModule } from './hero-metrics-container.module';
 import { HeroMetricsContainerComponent } from './hero-metrics-container.component';
 
 describe('HeroMetricContainerComponent', () => {
@@ -8,7 +11,9 @@ describe('HeroMetricContainerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeroMetricsContainerComponent ]
+      declarations: [ HeroMetricsContainerComponent ],
+      imports: [ HeroMetricsContainerModule, HttpClientModule ],
+      providers: [ DataService ],
     })
     .compileComponents();
   });
@@ -22,4 +27,5 @@ describe('HeroMetricContainerComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
 });

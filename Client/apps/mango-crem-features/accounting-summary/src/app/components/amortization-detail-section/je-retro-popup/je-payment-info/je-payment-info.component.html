@@ -1,6 +1,7 @@
 
 <div *ngIf="jePaymentPopupData.length!== 0; else noDataContent" [ngClass]="{'popup-container': jePaymentPopupData}">
-  <dx-data-grid [id]="accountingSummaryService.getId(componentName,'popup','grid')"
+  <dx-data-grid #JePayment
+                [id]="accountingSummaryService.getId(componentName,'popup','grid')"
                 width="100%"
                 [dataSource]="jePaymentPopupData"
                 [columns]="jePaymentGridColumns"

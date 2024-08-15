@@ -129,9 +129,8 @@ export class ListPageService extends EndpointService {
     return this.callHttpPost(`${this.listpages}listpage/Lease/LeaseInfo`, 'postLeaseInfo', request)
   }
 
-  copyCharge(glEventID: number) {
-    const url = `${this.financials}Lease/CopyCharge`;
-    return this.callHttpPost(`${this.listpages}listpage/Lease/CopyCharge`, 'copyCharge', { glEventID })
+  copyCharge(glEventID: number) {        
+    return this.callHttpPost(`${this.financials}Lease/CopyCharge`, 'copyCharge', { glEventID })
   }
 
   deleteCharge(objectTypeTypeId, gLEventIdList: number[]) {

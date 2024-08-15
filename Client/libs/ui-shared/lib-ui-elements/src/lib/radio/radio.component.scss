@@ -1,0 +1,73 @@
+@use "styles" as *;
+
+$color2: $primary-light;
+
+.crem-radio {
+  margin: 0.5rem;
+
+  input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+
+    +.crem-radio-label {
+      cursor: pointer;
+      &:before {
+        content: '';
+        background: $background;
+        border-radius: 100%;
+        border: 1px solid darken($background, 25%);
+        display: inline-block;
+        width: 1.4em;
+        height: 1.4em;
+        position: relative;
+        margin-right: 0.8em;
+        vertical-align: top;
+        cursor: pointer;
+        text-align: center;
+        transition: all 250ms ease;
+      }
+
+      &.disabled {
+        color: $gray;
+        cursor: default;
+      }
+      margin-bottom: 0  !important;
+    }
+
+    &:checked {
+      +.crem-radio-label {
+        &:before {
+          background-color: $primary-light;
+          box-shadow: inset 0 0 0 4px $background;
+        }
+      }
+    }
+
+    &:focus {
+      +.crem-radio-label {
+        &:before {
+          outline: none;
+          border-color: $primary-light;
+        }
+      }
+    }
+
+    &:disabled {
+      +.crem-radio-label {
+        &:before {
+          box-shadow: inset 0 0 0 4px $background;
+          border-color: darken($background, 25%);
+          cursor: default;
+        }
+      }
+    }
+
+    +.crem-radio-label {
+      &:empty {
+        &:before {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}

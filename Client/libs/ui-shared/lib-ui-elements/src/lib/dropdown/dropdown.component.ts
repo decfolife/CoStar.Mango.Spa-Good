@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ContentChild,
   Directive,
@@ -11,6 +12,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Dropdown } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent, DxDropDownBoxComponent, DxFormComponent, DxSelectBoxComponent, DxValidatorComponent } from 'devextreme-angular';
 
@@ -18,54 +20,25 @@ import { DxDataGridComponent, DxDropDownBoxComponent, DxFormComponent, DxSelectB
  *
  * @export Dropdown Component
  * @class DropdownComponent
+ * @description More info: https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Widgets/dxSelectBox/
  * @implements {OnInit}
  * @implements {OnChanges}
- * @property {string} [valueKey] - 
- * @param {any[]} dataSource - Select options' dropdown
- * @param {string} id - Defines the HTML ID attribute
- * @param {string} [label] - The input field's Label
- * @param {boolean} [useSelectBox] - If true it uses 'dx-select-box', if false/undefined it will use 'dx-drop-down-box'
- * @param {any} [selectBoxValue] - The selected element shown in the input field
- * @param {string} [valueExpr] - 
- * @param {string} [keyExpr] - 
- * @param {string} [displayExpr] - 
- * @param {boolean} [isSearchable] - 
- * @param {any} [contentTemplate] - 
- * @param {string} [hoverText] - 
- * @param {boolean} [columnHeader] - 
- * @param {boolean} [showHeader] - 
- * @param {boolean} [showClearButton] - 
- * @param {'single' | 'multiple'} [selectMode] - 
- * @param {string} [dropdownHeaderDisplay] - 
- * @param {boolean} [showColumnHeader] - 
- * @param {boolean} [required] - 
- * @param {boolean} [isVisible] - 
- * @param {string} [dataField] - 
- * @param {boolean} [readOnly] - 
- * @param {boolean} [showRedBorder] - 
- * @param {boolean} [customRequireValidation] - 
- * @param {boolean} [grouped] - 
- * @param {boolean} [useArrayOfKeys] - 
- * @param {boolean} [getWholeObject] - 
- * @param {boolean} [useCustomGroupTemplate] - 
- * @param {any} [showCheckBoxesMode] - 
- * @param {boolean} [allowSearch] -
- * @param {boolean} isDisabled -
- * @param {'default' | 'withMenu'} [itemTemplate] - Use a different item template, make sure to pass any additional parameter that may be needed by the template
- * @param {string} dropDownContainerCustomClass -
- * @param {boolean} [showDefaultValidationTooltip] - Show/Hide DevExtreme default tooltip
- * @param {boolean} [containerized] - (DevExtreme) Specifies the container in which the UI Component is rendered, addressing issues related to dropdown container miscalculation on the y-axis. Read more at https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxPopup/Configuration/#container
  */
 @Component({
   selector: 'crem-dropdown',
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    multi: true,
+    useExisting: DropdownComponent
+  }]
 })
-export class DropdownComponent implements OnInit, OnChanges {
+export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, ControlValueAccessor {
   public data: any[];
   public value: string[];
-  public selections: {}[] = [];
-  public selectedObjects: {}[] = [];
+  public selections: any = [];
+  public selectedObjects: any = [];
   public wrapperAttr: any;
   public selectBoxWrapperAttr: any;
   public selectedDisplay: any[] = [];
@@ -73,27 +46,64 @@ export class DropdownComponent implements OnInit, OnChanges {
   public modalValueChanging = false as boolean;
   public loading = true as boolean;
   private clearButton: any;
+  private selectBoxOpenFlag = false;
 
   @Output() selectedItems = new EventEmitter<any[]>();
   @Output() moreMenuItemClicked = new EventEmitter<any>();
   @Output() gridDropdownValueChanged = new EventEmitter<boolean>();
   @ViewChild('dropdownTemplate', { static: false })
   dropdownTemplate: DxDataGridComponent;
-  @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent
-  @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent
-  @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent
+  @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent;
+  @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent;
+  @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
   @ViewChild("SelectBoxValidator", { static: false }) SelectBoxValidator: DxValidatorComponent
   @ViewChild("DropdownBoxValidator", { static: false }) DropdownBoxValidator: DxValidatorComponent
 
+  /**
+   * Defines the HTML ID attribute
+   *
+   * @type {string}
+   * @memberof DropdownComponent
+   */
   @Input() public id: string;
   @Input() public initialSelectedValue: any;
   @Input() public placeholder = 'Select...' as string;
+  /**
+   * Only used for fieldTemplate, will be rendered inside the input field
+   *
+   * @type {string}
+   * @memberof DropdownComponent
+   */
   @Input() public label?: string;
   public valueKey: string;
+  /**
+   * If true it uses 'dx-select-box', if false/undefined it will use 'dx-drop-down-box'
+   *
+   * @type {boolean}
+   * @memberof DropdownComponent
+   */
   @Input() public useSelectBox?: boolean = false;
+  /**
+   * The selected element shown in the input field
+   *
+   * @type {*}
+   * @memberof DropdownComponent
+   */
   @Input() public selectBoxValue?: any;
+  /**
+   * (DevExtreme) Specifies the name of the data source item field whose value is displayed by the widget.
+   *
+   * @type {string}
+   * @memberof DropdownComponent
+   */
   @Input() public valueExpr?: string = 'valueKey';
   @Input() keyExpr?: string = null;
+  /**
+   * (DevExtreme) Specifies the name of the data source item field whose value is displayed by the widget.s
+   *
+   * @type {string}
+   * @memberof DropdownComponent
+   */
   @Input() public displayExpr?: string = "displayKey";
   @Input() public isSearchable?: boolean;
   @Input() public contentTemplate?: any;
@@ -110,7 +120,15 @@ export class DropdownComponent implements OnInit, OnChanges {
   @Input() public readOnly?: boolean = false;
   @Input() public showRedBorder?: boolean = false;
   @Input() public customRequireValidation?: boolean = false;
+  /**
+   * Specifies whether data items should be grouped.
+   *
+   * @type {boolean}
+   * @memberof DropdownComponent
+   */
   @Input() public grouped?: boolean = false;
+  @Input() public emitWholeEvent?: boolean = false;
+  @Input() public showTooltip?: boolean = false;
   @Input() public useArrayOfKeys?: boolean = false;
   @Input() public getWholeObject?: boolean = false;
   @Input() public useCustomGroupTemplate?: boolean = false;
@@ -119,17 +137,104 @@ export class DropdownComponent implements OnInit, OnChanges {
     | 'onLongTap'
     | 'always'
     | 'none' = 'none';
+  /**
+   * Select options' dropdown
+   *
+   * @type {(Dropdown[] | any[])}
+   * @memberof DropdownComponent
+   */
   @Input() public dataSource: Dropdown[] | any[]; // TODO: 'any' is being used while code is being cleaned and types standardize to use 'Dropdown' type instead for type safety
+
+  /**
+   * It allows the search/type-ahead functionality. 
+   *
+   * @type {boolean}
+   * @memberof DropdownComponent
+   */
   @Input() public allowSearch?: boolean = false;
+  /**
+   * (DevExtreme) Specifies the container in which the UI Component is rendered, addressing issues related to dropdown container miscalculation on the y-axis. Read more at https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxPopup/Configuration/#container
+   *
+   * @type {boolean}
+   * @memberof DropdownComponent
+   */
   @Input() containerized?: boolean;
   @Input() isDisabled = false as boolean;
   @Input() dropDownContainerCustomClass: string;
+  /**
+   * Show/Hide DevExtreme default tooltip
+   *
+   * @type {boolean}
+   * @memberof DropdownComponent
+   */
   @Input() showDefaultValidationTooltip?: boolean = true;
-  @Input() itemTemplate?: 'default' | 'withMenu';
+  /**
+   * (DevExtreme) Use a different item template, make sure to pass any additional parameter that may be needed by the template
+   *
+   * @type {('defaultItem' | 'withMenu')}
+   * @memberof DropdownComponent
+   */
+  @Input() itemTemplate?: 'defaultItem' | 'withMenu';
+  /**
+   * (DevExtreme) Specifies a custom template for the text field. Must contain the TextBox UI component.
+   *
+   * @type {'withLabel'}
+   * @memberof DropdownComponent
+   */
+  @Input() fieldTemplate?: 'withLabel';
 
-  @ContentChild('customHeaderTemplate') customHeaderTemplate : TemplateRef<any>;
+  /**
+   * (DevExtreme) Specifies a comparison operation used to search UI component items.
+   * Searching works when inputting a plain data structure only.
+   * If you're using the 'contains' mode, make sure to define and pass the searchExpr
+   * 
+   * @url https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/SelectBox/Configure_Search_Parameters/
+   * @url https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxSelectBox/Configuration/#searchMode
+   * @memberof DropdownComponent
+   */
+  @Input() searchMode?: 'startswith' | 'contains' | 'equals' = 'contains';
+
+  /**
+   * (DevExtreme) Specifies the time delay, in milliseconds, after the last character has been typed in, before a search is executed.
+   * 
+   * @url https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxSelectBox/Configuration/#searchTimeout
+   * @type {number}
+   * @memberof DropdownComponent
+   */
+  @Input() searchTimeout: number;
+
+  /**
+   * (DevExtreme) Use the minSearchLength property to increase the number of characters that triggers the search.
+   * 
+   * @url https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/SelectBox/Configure_Search_Parameters/
+   * @type {number}
+   * @memberof DropdownComponent
+   */
+  @Input() minSearchLength = 1;
+
+  /**
+   * (DevExtreme) Specifies the name of a data source item field or an expression whose value is compared to the search criterion.
+   * Assign an array of field names to this property if you need to search several fields.
+   * 
+   * @url https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxSelectBox/Configuration/#searchExpr
+   * @type {number}
+   * @memberof DropdownComponent
+   */
+  @Input() searchExpr?: string | Array<string>;
+
+  isTooltipVisible = false;
+  isdisplayExprTooltipVisible = false;
+  displayExprTooltipText = '';
+  toolTipTarget = '';
+  btnDisabledReason = '';
+
+
+  @ContentChild('customHeaderTemplate') customHeaderTemplate: TemplateRef<any>;
   @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent;
   @ViewChild('dropDownBox', { static: false }) dropDownBox: any;
+
+  onChange = (value: string) => { }
+  onTouched = () => { }
 
   ngOnChanges(changes: SimpleChanges): void {
     const { previousValue, currentValue } = changes.dataSource || {}
@@ -153,46 +258,16 @@ export class DropdownComponent implements OnInit, OnChanges {
     this.selectedDisplay = [];
     this.selections = [];
 
-    if (this.selectMode == 'single') {
-      this.dataSource.forEach((data) => {
-        if (data?.[this.valueExpr] === this.initialSelectedValue) {
-          this.selectedDisplay.push(data?.[this.valueExpr]);
-          this.selections.push(data?.[this.keyExpr || this.valueExpr]);
-        }
-      });
-    } else if (this.selectMode == 'multiple') {
-      if (this.initialSelectedValue) {
-        this.dataSource.forEach((data) => {
-          if (this.initialSelectedValue.includes((data?.[this.valueExpr])?.toString())) {
-            this.selectedDisplay.push(data?.[this.valueExpr]);
-            if (!this.useArrayOfKeys) {
-              this.selections.push(data);
-            }
-            if (this.getWholeObject) {
-              this.selectedObjects.push(data);
-            }
-          }
-        });
-        if (this.useArrayOfKeys) {
-          this.selections = this.initialSelectedValue;
-        }
-      }
-
-      if (this.getWholeObject) {
-        this.selectedItems.emit(this.selectedObjects);
-      } else {
-        this.selectedItems.emit(this.selections);
-      }
-    }
-    this.setDropDownAttr(null);
+    this.setDropdownvalue(this.initialSelectedValue)
+    this.setDropDownAttr();
   }
 
   ngOnInit() {
     this.dropdownHeaderDisplay = this.dropdownHeaderDisplay || this.placeholder;
-    
-    if(this.containerized){ // If the ID is not present, a random ID is generated to render the dropdown inside the input field of the dropdown.
-      this.id = this.id ? this.id : 'rand-' + window.crypto.randomUUID();
-    }
+
+    // If the ID is not present, a random ID is generated to render the dropdown inside the input field of the dropdown.
+    // Random IDs are also used for selecting the right component among other instances
+    this.id = this.id ? this.id : this.getRandomID();
 
     this.wrapperAttr = {
       class: this.dropDownContainerCustomClass ? 'crem-select-box' + ' ' + this.dropDownContainerCustomClass : 'crem-select-box',
@@ -217,8 +292,30 @@ export class DropdownComponent implements OnInit, OnChanges {
     // this.adaAttributes();
   }
 
+  // TODO: Check if this function is beingused anywhere. If not remove it.
   getEle() {
-    var idEle = document.getElementById('dropdownContainer');
+    const idEle = document.getElementById('dropdownContainer');
+  }
+
+  onMouseLeave() {
+    this.isTooltipVisible = false;
+    this.isdisplayExprTooltipVisible = false;
+  }
+
+  onMouseEnter(e, itemData) {
+    if (this.showTooltip && itemData?.disabled) {
+      this.isTooltipVisible = itemData.disabled;
+      this.toolTipTarget = e.target;
+      this.btnDisabledReason = itemData.disabledReason;
+    }
+  }
+
+  onDisplayExprMouseEnter(e, itemData) {
+    if (itemData?.name?.length > 22) {
+      this.isdisplayExprTooltipVisible = true;
+      this.toolTipTarget = e.target;
+      this.displayExprTooltipText = itemData.name;
+    }
   }
 
   dropdownOnValueChanged($event) {
@@ -248,30 +345,37 @@ export class DropdownComponent implements OnInit, OnChanges {
         })
       }
 
-      if (!this.grouped && index !== -1) {
-        this.modalValueChanging = true;
-        this.selectedItems.emit([this.dataSource[index]]);
-        setTimeout(() => {
-          this.selectBox.instance.close();
-        })
-        setTimeout(() => {
-          this.modalValueChanging = false;
-        }, 400)
-      } else if (this.grouped && itemIndex !== -1) {
-        this.modalValueChanging = true;
-        this.selectedItems.emit([this.dataSource[groupIndex].items[itemIndex]]);
-        setTimeout(() => {
-          this.selectBox.instance.close();
-        })
-        setTimeout(() => {
-          this.modalValueChanging = false;
-        }, 400)
+      if (this.emitWholeEvent) {
+        this.selectedItems.emit($event);
       } else {
-        this.clearSelectBox();
-        this.selectedItems.emit([]);
-      }
-    }
 
+        if (!this.grouped && index !== -1) {
+          this.modalValueChanging = true;
+          this.selectedItems.emit([this.dataSource[index]]);
+          setTimeout(() => {
+            this.selectBox.instance.close();
+          })
+          setTimeout(() => {
+            this.modalValueChanging = false;
+          }, 400)
+        } else if (this.grouped && itemIndex !== -1) {
+          this.modalValueChanging = true;
+          this.selectedItems.emit([this.dataSource[groupIndex].items[itemIndex]]);
+          setTimeout(() => {
+            this.selectBox.instance.close();
+          })
+          setTimeout(() => {
+            this.modalValueChanging = false;
+          }, 400)
+        } else {
+          this.clearSelectBox();
+          this.selectedItems.emit([]);
+        }
+      }
+
+    }
+    this.onChange($event.value)
+    this.onTouched()
   }
 
   onCellClick(event) {
@@ -280,14 +384,14 @@ export class DropdownComponent implements OnInit, OnChanges {
     }
     if (event.rowType == 'header') {
       if (this.selectMode === 'multiple' && (!event.column.type || event.column.type !== 'selection')) {
-        if(this.dataGrid.instance.getSelectedRowKeys().length == this.dataGrid.instance.getDataSource().items().length) {
+        if (this.dataGrid.instance.getSelectedRowKeys().length == this.dataGrid.instance.getDataSource().items().length) {
           this.clearDropdown();
         } else {
           this.dataGrid.instance.selectAll();
         }
       }
-      let headerCheckboxContainer = event.component.$element().find('.dx-header-row .dx-checkbox-container');
-      let headerCheckboxAttr = event.component.$element().find('.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size').attr('aria-checked');
+      const headerCheckboxContainer = event.component.$element().find('.dx-header-row .dx-checkbox-container');
+      const headerCheckboxAttr = event.component.$element().find('.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size').attr('aria-checked');
       if (headerCheckboxAttr === 'true') {
         headerCheckboxContainer.attr('aria-live', 'polite');
         headerCheckboxContainer.attr('aria-label', 'All checkboxes are checked ');
@@ -302,7 +406,7 @@ export class DropdownComponent implements OnInit, OnChanges {
 
   getSelectedRowsData($event) {
     setTimeout(() => {
-      let selections = $event.selectedRowsData;
+      const selections = $event.selectedRowsData;
       if (!selections) {
         return;
       } else {
@@ -334,9 +438,40 @@ export class DropdownComponent implements OnInit, OnChanges {
     }
   }
 
-  setDropdownvalue(data) {
-    this.selectedDisplay = data.map((dropdown) => dropdown?.[this.valueExpr]);
-    this.selections = data;
+  setDropdownvalue(value: any) {
+    if (this.selectMode == 'single') {
+      this.dataSource?.forEach((data) => {
+        if (data?.[this.valueExpr] === value) {
+          this.selectedDisplay = [data?.[this.valueExpr]];
+          this.selections = [data?.[this.keyExpr || this.valueExpr]];
+        }
+      });
+    } else if (this.selectMode == 'multiple') {
+      if (value) {
+        this.dataSource?.forEach((data) => {
+          if (value.includes((data?.[this.valueExpr]))) {
+            this.selectedDisplay.push(data?.[this.valueExpr]);
+            if (!this.useArrayOfKeys) {
+              this.selections.push(data);
+            }
+            if (this.getWholeObject) {
+              this.selectedObjects.push(data);
+            }
+          }
+        });
+        if (this.useArrayOfKeys) {
+          this.selections = value;
+        }
+      }
+
+      if (this.getWholeObject) {
+        this.selectedItems.emit(this.selectedObjects);
+      } else {
+        this.selectedItems.emit(this.selections);
+      }
+    }
+    this.onChange(value)
+    this.onTouched()
   }
 
   focusDropdown() {
@@ -356,17 +491,48 @@ export class DropdownComponent implements OnInit, OnChanges {
   }
 
   openDropdown(e) {
-    this.setDropDownAttr(e);
-    this.setDropDownHeaderAttr(e);
+    this.setDropDownAttr();
+    this.setDropDownHeaderAttr();
   }
 
-  setDropDownAttr(e) {
+  getWithLabelValue(item): string {
+    if (!item) return '';
+    // FIXME: All these name checks is because we lack a better types for 'dataSource' and 'selectBoxValue'
+    const baseValue: string = item.name ?? item.displayValue ?? item.value ?? item.valueKey ?? item['displayExpr'];
+    return `${baseValue}`
+  }
+
+  /**
+   * It will try to find the right key used for the select value of the select box
+   * FIXME: All these name checks is because we lack a better types for 'dataSource' and 'selectBoxValue'
+   *
+   * @param {*} item
+   * @return {*}  {string}
+   * @memberof DropdownComponent
+   */
+  getWithLabelKey(item): string {
+    switch (true) {
+      case item.name:
+        return 'name';
+      case item.displayValue:
+        return 'displayValue';
+      case item.value:
+        return 'value';
+      case item.valueKey:
+        return 'valueKey';
+      default:
+      case item['displayExpr']:
+        return 'displayExpr';
+    }
+  }
+
+  setDropDownAttr() {
     // Add title attribute to all dropdown options
     if (!this.useSelectBox) {
-      let dropdownOverLayContainer = document.querySelector('#crem-select-box');
+      const dropdownOverLayContainer = document.querySelector('#crem-select-box');
       const dropdownElement = dropdownOverLayContainer?.getElementsByClassName("dx-row dx-data-row");
       setTimeout(() => {
-        const arr = dropdownElement? Array.from(dropdownElement): [];
+        const arr = dropdownElement ? Array.from(dropdownElement) : [];
         if (arr?.length) {
           arr.forEach((el) => {
             const childElment = Array.from(el.children);
@@ -449,7 +615,7 @@ export class DropdownComponent implements OnInit, OnChanges {
     }
   }
 
-  setDropDownHeaderAttr(e) {
+  setDropDownHeaderAttr() {
     // Add aria-label attribute to header dropdown options
     if (!this.useSelectBox) {
       const dropdownElement = document.getElementsByClassName("dx-row dx-header-row");
@@ -492,17 +658,17 @@ export class DropdownComponent implements OnInit, OnChanges {
 
   ADAattributes(e: any) {
     // Search for the span element with class dx-datagrid-nodata
-    let spanElement = e.component.$element().find('.dx-datagrid-nodata');
+    const spanElement = e.component.$element().find('.dx-datagrid-nodata');
     if (spanElement.length > 0) {
       spanElement.attr('role', 'alert');
       spanElement.attr('aria-live', 'polite');
     }
 
     // Check if e.element is a jQuery object:
-    let element = (e.element && e.element.jquery) ? e.element[0] : e.element;
+    const element = (e.element && e.element.jquery) ? e.element[0] : e.element;
 
     // Aria requirements for search icon in the drop down
-    let searchIcons = element.querySelectorAll(".dx-menu-item-has-icon");
+    const searchIcons = element.querySelectorAll(".dx-menu-item-has-icon");
     if (!searchIcons) {
       return;
     } else {
@@ -530,7 +696,7 @@ export class DropdownComponent implements OnInit, OnChanges {
         });
       });
 
-      let spanSearchInput = e.component.$element().find('.dx-texteditor-input');
+      const spanSearchInput = e.component.$element().find('.dx-texteditor-input');
       if (spanSearchInput.length > 0) {
         spanSearchInput.attr('aria-label', 'Search Filter Text');
       }
@@ -541,11 +707,22 @@ export class DropdownComponent implements OnInit, OnChanges {
     this.selectBox?.instance?.close();
   }
 
-  onKeyDown(event) {
+  onSelectBoxOpened(event) {
+    this.selectBoxOpenFlag = true;
+  }
+
+  onSelectBoxClosed(event) {
+    this.selectBoxOpenFlag = false;
+  }
+
+  onSelectBoxDropDownKeyUp(event) {
     const instanceToOpen = this.useSelectBox ? this.selectBox.instance : this.dropDown.instance;
+    const openSelectBox = this.useSelectBox && !this.selectBoxOpenFlag
     if (event?.event?.originalEvent?.key === " " || event?.event?.originalEvent?.key === "ArrowDown" || event?.event?.originalEvent?.key === "Enter") {
-      instanceToOpen.open();
-      event.event.preventDefault();
+      if(!this.useSelectBox || openSelectBox){
+        instanceToOpen.open();
+        event.event.preventDefault();
+      }
     }
     const iconClearElement = document.querySelector('.dx-icon-clear') as HTMLElement | null;
     if (iconClearElement) {
@@ -567,6 +744,56 @@ export class DropdownComponent implements OnInit, OnChanges {
     this.moreMenuItemClicked.emit(item);
   }
 
+  /**
+   * Selects the inner dx-text-box when using the withLabel field template.
+   *
+   * @memberof DropdownComponent
+   */
+  onClickSelectBox(): void {
+    document.getElementById(this.id)?.querySelector('input')?.select();
+    // this.selectBox.instance ? this.selectBox.instance.reset() : null
+  }
+
+  /**
+   * This reselects the previous value of the 'withLabel' select.
+   *
+   * @param e
+   * @memberof DropdownComponent
+   */
+  onValueChangedWithLabel(e: any, item: any): void {
+    if (!e.value && e.previousValue) {
+      this.selectBox.instance.option(this.getWithLabelKey(item), this.getWithLabelValue(item));
+    }
+  }
+
+  /**
+   * Generates a random ID used for various logic. If the ID will be used for testing, please provide an ID to the crem-dropdown component to prevent changing IDs.
+   *
+   * @return {*}  {string}
+   * @memberof DropdownComponent
+   */
+  getRandomID(): string {
+    return this.id ? this.id : 'rand-' + Math.random().toString(36).substring(2);
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled
+  }
+
+  writeValue(selection: any): void {
+    this.setDropdownvalue(selection)
+    if (!selection || selection && selection.length === 0) {
+      this.clearSelectBox()
+    }
+  }
 }
 @Directive({
   selector: 'dropdownButton',

@@ -5,6 +5,7 @@ import {
   ServiceAccountInfo,
   ServiceAccountChangeHistory,
   UpdateServiceAccountApiAccessRequest,
+  UpdateServiceAccountEndPointAccessRequest,
   UpdateServiceAccountExpiresInDaysRequest} from '@mango/data-models/lib-data-models';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -41,6 +42,10 @@ export class ServiceAccountService {
 
   updateServiceAccountExpiresInDays(request: UpdateServiceAccountExpiresInDaysRequest): Observable<boolean> {
     return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/expiresindays`, request, { withCredentials: true })
+  }
+
+  updateServiceAccountEndPointAccess(request: UpdateServiceAccountEndPointAccessRequest): Observable<boolean> {
+    return this.http.put<boolean>(`${this.identityUrl}/serviceaccount/updateendpointaccess`, request)
   }
 
   getServiceAccountChangeHistory(): Observable<ServiceAccountChangeHistory[]> {

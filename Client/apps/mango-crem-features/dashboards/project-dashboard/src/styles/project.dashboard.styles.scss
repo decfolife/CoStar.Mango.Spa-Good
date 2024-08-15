@@ -11,10 +11,11 @@ $font-size-14: 14px;
 $stdPadding: 8px;
 $dblPadding: 2 * $stdPadding;
 
-::-webkit-scrollbar{
-  width:5px;
-  height: 5px;
-}
+// This is removed because it was leaking into the CREM textarea component
+// ::-webkit-scrollbar{
+//   width:5px;
+//   height: 5px;
+// }
 
 /* Track */
 ::-webkit-scrollbar-track {
@@ -100,25 +101,8 @@ body {
     max-height: 600px;
 	}
 
-	crem-card mat-card.mat-card mat-card-header.mat-card-header .cardHeader {
-		height: 26px !important;
-    	border-bottom: none !important;
-	}
-
-	crem-card .cardHeader .customHeader {
-		height: 32px;
-		box-sizing: border-box;
-		align-items: center;
-
-		div div {
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-		}
-	}
-
 	crem-card mat-card#project_milestones_card cs-chip .dx-field-value-static {
-    padding: 4px 8px !important;
+    	padding: 4px 8px !important;
 	}
 
 	crem-card mat-card#project_milestones_card .chipContent {
@@ -220,14 +204,14 @@ body {
 	}	
 
 	.is-overdue {
-		color: colors.$color-brand-red;
+		color: $color-brand-red;
 		display: flex;
 		.mat-icon {
 			position: relative;
 			top: -2px;
 			right: -2px;
 			svg {
-				fill: colors.$color-brand-red;
+				fill: $color-brand-red;
 				width: 16px;
 			}
 		}
@@ -268,156 +252,6 @@ body {
 } //**** cards end ****//
 
 //************card end here ******************//
-
-//***** Metric Styles ******//
-
-#projects-dashboard crem-metric {
-
-	mat-card.mat-mdc-card.costar-hero-metric-card {
-		border: 0;
-		display: inline-block;
-		margin-bottom: 0;
-		margin-right: 30px;
-		min-width: max-content;
-		height: 80px;
-	}
-
-  mat-card.mat-mdc-card {
-    border: $stdBorder;
-    border-radius: 2px !important;
-    box-shadow: none !important;
-    padding: 0px !important;
-  }
-
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-mdc-card-header {
-    border-bottom: 0px;
-    padding: 0px;
-    height: 16px;
-
-		div.mat-mdc-card-header-text {
-			margin: 0px;
-			display: flex;
-			flex-direction: column;
-			text-transform: capitalize !important;
-			font-size: 14px !important;
-
-		mat-card-title.mat-mdc-card-title {
-				font-size: 16px;
-				line-height: 16px;
-				color: colors.$mediumDarkGray;
-				font-weight: 400;
-				text-transform: capitalize !important;
-				margin: 0px 16px 0 0 !important;
-				//Solves ADA: Text is clipped when resized, for metric hero value
-				overflow: auto;
-				&::-webkit-scrollbar{
-					display: none;
-				}
-				// End of ADA style fix
-			}
-		}
-  }
-
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-mdc-card-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0px;
-    margin: 0;
-    background: colors.$white;
-
-		.hero-value {
-			color: colors.$black;
-			font-size: 32px;
-			line-height: 32px;
-			margin: 8px 0px;
-			//Solves ADA: Text is clipped when resized, for metric titles
-			overflow: auto;
-			&::-webkit-scrollbar{
-				display: none;
-			}
-			// End of ADA style fix
-		}
-
-		.sidekick-value-wrapper {
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-start;
-			align-content: center;
-			margin-left: $dblPadding;
-		}
-  }
-
-  mat-card.mat-mdc-card.costar-hero-metric-card
-  mat-card-content.mat-mdc-card-content
-  .sidekick-value-wrapper
-  .sidekick-value {
-		display: flex;
-		align-items: center;
-		border-radius: 2px;
-		font-size: $font-size-14;
-		text-align: center;
-		padding: 0 4px;
-		margin: 0px;
-		//Solves ADA: Text is clipped when resized, for metric sidekick
-		overflow: auto;
-		&::-webkit-scrollbar{
-			display: none;
-		}
-		// End of ADA style fix
-		&.green {
-			border: 1px solid colors.$color-brand-green !important;
-			background: transparent !important;
-			color: colors.$color-brand-green !important;
-		}
-		&.red {
-			border: 1px solid colors.$color-brand-red !important;
-			background: transparent !important;
-			color: colors.$color-brand-red !important;
-		}
-		&.gray {
-			border: 1px solid colors.$color-neutral-dark !important;
-			background: transparent !important;
-			color: colors.$mediumDarkGray !important;
-		}
-	}
-
-	crem-icon {
-    position: relative;
-  }
-
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-footer.mat-mdc-card-footer {
-    margin: 0px;
-    height: 14px;
-
-		mat-card-subtitle.mat-mdc-card-subtitle {
-			color: colors.$mediumDarkGray;
-			display: inline-block;
-			font-size: 14px;
-			line-height: 14px;
-			font-weight: 400;
-			margin: 0!important;
-			text-transform: capitalize;
-			//Solves ADA: Text is clipped when resized, for metric subtitle
-			overflow: auto;
-			&::-webkit-scrollbar{
-				display: none;
-			}
-			// End of ADA style fix
-		}
-  }
-
-	.iconWrapper.dx-field-value-static {
-		padding: 0px; 
-    width: 20px;
-    position: relative;
-    right: -7px;
-    top: -4px;
-  }
-}	
-//**** Metric Styles End ****//
-
 
 .taskApprovalModal .modalContent, #addEditTeamModal .modalContent {
   overflow: hidden !important;
@@ -523,7 +357,7 @@ body {
 
 //*****  'Manage Teams'  and 'Project Team' Page Styles *****//
 .mat-mdc-menu-panel {
- &.teamsActionsMenu, &.teamsMoreMenu, &.projectTeamMoreMenu, &.projectTeamActionsMenu, &.projectTeamAddMenu {
+ &.teamsActionsMenu, &.teamsMoreMenu, &.projectTeamMoreMenu, &.projectTeamActionsMenu, &.projectTeamAddMenu, &.projectTasksActionsMenu, &.projecTasksMoreMenu {
 	  min-height: unset;
 	 .mat-mdc-menu-content {
 			padding: 0 !important;
@@ -544,16 +378,22 @@ body {
 	}
 }
 
-#teams-container, #projectTeam-container, #importTeamModal{
+#teams-container, #projectTeam-container, #importTeamModal, #projectTasks-container {
 	button.mat-menu-trigger.btn-link:focus, 
 	button.actionsButton:focus, 
 	button.moreButton:focus,
 	button.addButton:focus,
+	button.rowActionsButton:focus .mat-icon,
+	button.crem-list-view-button:focus,	
+	cs-search mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused,
 	.clearFilters button.btn-secondary:focus,
 	.searchProjectTeam .mat-form-field.mat-focused
 	{
 		outline: none;
 		box-shadow: 0 0 0 0.1rem colors.$primary;
+	}
+	cs-search mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused {
+		border: none;
 	}
 
 	.searchTeams-input, .searchProjectTeam-input {
@@ -647,7 +487,7 @@ body {
 	}
 }
 
-#addEditTeamModal, #addEditMemberModal, #saveTeamTemplateModal {
+#addEditTeamModal, #addEditMemberModal, #saveTeamTemplateModal, #addEditTasksModal, #taskInfoModal, #addTaskNoteModal {  
 	color: colors.$black;
 	.aet-textInput .mat-mdc-form-field {
 		width: 100%;
@@ -669,14 +509,14 @@ body {
 		}
 	}
 
-	.dx-texteditor.dx-editor-outlined .dx-texteditor-input {
-		padding-top: 8px;
+	textarea.dx-texteditor-input, input.dx-texteditor-input {
 		height: 32px;
 		max-height: 32px;
-		font: 400 16px;
+		font-weight: 400;
+		font-size: $font-size-16;
 		color: #000;
 	}	
-	
+
 	div.dx-placeholder {
 		font-size: 16px;
 		color: colors.$color-neutral-dark;
@@ -687,7 +527,7 @@ body {
 	}
 
 	.at-required {
-		color: colors.$color-brand-red;
+		color: $color-brand-red;
 	}
 	.modalFooter {
 		border-top: 1px solid colors.$stdBorderColor;
@@ -758,6 +598,12 @@ body {
 	.templateName-input {
 		width: 300px;
 	}
+
+	#addEditTaskModal-content {
+		dx-text-box.dx-invalid {
+			border-color: colors.$costarADAAlert;
+		}
+	}	
 }
 
 #aet-membersList {
@@ -788,15 +634,15 @@ body {
 }
 
 #teams-container .teams-grid, #aet-selectedMembers-container #addTeam-grid , #projectTeam-container .projectTeam-grid,
-#importTeamModal .import-teams-dataGrid-wrapper {
+#importTeamModal .import-teams-dataGrid-wrapper, #projectTasks-container .projectTasks-grid {
 	td {
 		text-align: center;
 		vertical-align: middle !important;
-		border-left: none;
 		padding: 3px 7px;
 		min-height: 47.33px;
 		height: 47.33px;
-		border-left: none !important;
+		border-left: none;
+		border-right: none;
 
 		&.wrapOption-column {
 			white-space: nowrap;
@@ -843,6 +689,159 @@ body {
 				border-bottom: none;
 			}
 		}
+	}
+}
+
+#addTaskNoteModal{
+	.div-noteTypeDropdown {
+		margin-bottom: 40px;
+	}
+
+  .dx-dropdownbox.dx-invalid div.dx-texteditor-container, .dx-textarea.dx-invalid {
+    border-color: #d9534f;
+  }
+
+	dx-text-area {
+		margin-bottom: 10px;
+		div.dx-texteditor-container {
+			align-items: unset;
+		}
+
+		textarea.dx-texteditor-input {
+			cursor: default;
+			max-height: unset;
+			height: 100%;
+		}
+	}
+
+	p {
+		font-size: $font-size-12;
+		text-align: right;
+	}
+}
+
+#addEditTaskAssigneesModal{
+	#add-edit-task-assignees-grid {
+		.dx-checkbox-icon {
+			width: 18px;
+			height: 18px;
+			border-radius: 2px;
+			border: 1px solid #3c3c3c;
+		}
+		td.dx-pointer-events-none {
+			border-left: 0;
+		}
+		.dx-datagrid-table.dx-datagrid-table-fixed{
+			td {
+					vertical-align: middle;
+			}
+		}
+	}
+}
+
+.task-assignees-dataGrid-wrapper, .add-edit-task-assignees-dataGrid-wrapper {
+	#task-assignees-grid, #add-edit-task-assignees-grid {
+		border: 1px solid colors.$lightBorderGray;
+		margin-top: 20px;
+		tr.dx-header-row {
+			background-color: white;
+			tr.dx-row.dx-data-row td {
+				border-bottom: none;
+			}
+		}
+
+		tr.dx-row.dx-data-row {
+			border-bottom: none;
+		}
+	}
+}
+
+.task-assignees-dataGrid-wrapper {
+	height: 92%;
+	#task-assignees-grid {
+		height: 91%;
+	}
+	.dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
+		height: 100%;
+		overflow-y: auto;
+	}
+}
+
+.task-files-dataGrid-wrapper {
+	#task-files-grid {
+		border: 1px solid colors.$lightBorderGray;
+		padding-top: 5px;
+		margin-top: 20px;
+		tr.dx-header-row {
+			background-color: white;
+			td {
+				border-bottom: none;
+			}
+		}
+
+		tr.dx-row.dx-data-row {
+			border-bottom: none;
+			td {
+					border-top: 1px solid colors.$lightBorderGray;
+			}
+		}
+	}
+}
+
+.task-notes-dataGrid-wrapper {
+	height: 100%;
+	#task-notes-grid {
+		height: 100%;
+		border: 1px solid colors.$lightBorderGray;
+		padding-top: 5px;
+		margin-top: 20px;
+		tr.dx-header-row {
+			background-color: white;
+			td {
+				border-bottom: none;
+			}
+			td[aria-colindex="1"] {
+				padding-left: 37px;
+			}
+		}
+
+		tr.dx-row.dx-data-row {
+			border-bottom: none;
+			td[aria-colindex="1"] {
+				padding-left: 37px;
+			}
+			td {
+					border-top: 1px solid colors.$lightBorderGray;
+			}
+		}
+
+		tr.dx-row.dx-master-detail-row {
+			border-top: none;
+		}
+
+		dx-text-area {
+			border-style: solid;
+			div.dx-texteditor-container{
+				align-items: unset;
+			}
+
+			textarea.dx-texteditor-input{
+				cursor: default;
+				font-size: $font-size-14;
+				max-height: unset;
+				height: 100%;
+			}
+		}
+
+		td.dx-cell-focus-disabled.dx-master-detail-cell {
+			padding: 2px 20px 12px 20px;
+			border-top: none;
+			border-bottom: none;
+		}
+	}
+	.dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
+		height: 100%;
+		overflow-y: auto;
 	}
 }
 
@@ -904,4 +903,55 @@ body {
     font-size: 16px;
   }
 }
+
+.aet-editTaskModal, .tin-taskInfoModal {
+  .modalHeader {
+    padding: 16px !important;
+  }
+
+	.modalCloseButton {
+    height: 24px;
+    transform: scale(1.3) translateY(3px);
+  }
+
+	.aet-editTask-headerContent, .tin-taskInfo-headerContent {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+		
+		#aet-selectTaskDropdownId, #tin-selectTaskDropdownId {
+			width: 100%;
+		}
+	}	
+}
 //*****  Teams Page and Project Teams Page Styles End *****//
+
+//**** Styles specific to Project Tasks Page ****//
+// .projectTasks-grid {
+
+// }
+.mat-mdc-menu-panel.projectMemberActionsMenu, .mat-mdc-menu-panel.teamActionsMenu, .mat-mdc-menu-panel.teamMemberActionsMenu {
+  .mat-mdc-menu-content > button {
+		display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+	  padding: 8px 16px;
+    line-height: 18px;
+		min-height: unset;
+    height: 34px;
+		width: 100%;
+		border: none;
+    background-color: $white;
+
+    &:hover {
+      background-color: #cae3fe;
+    }
+
+		&:focus {
+			border: 2px solid $costarLightBlue;
+			background-color: $white;
+		}
+	}
+}
+

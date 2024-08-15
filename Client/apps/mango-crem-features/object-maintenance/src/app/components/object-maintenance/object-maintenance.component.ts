@@ -7,6 +7,10 @@ import { exportDataGrid } from 'devextreme/excel_exporter';
 import { saveAs } from 'file-saver-es';
 import { ObjectMaintenanceService } from './object-maintenance.service';
 
+enum ObjectTypeId  {
+  Segments = 195
+};
+
 @Component({
   selector: 'object-maintenance',
   templateUrl: './object-maintenance.component.html',
@@ -54,6 +58,9 @@ export class ObjectMaintenanceComponent implements OnInit, OnDestroy {
         if (data) {
           this.gridData = data.data.gridData;
           this.filterGridData();
+          if(this.currentObjectTypeId === ObjectTypeId.Segments){
+            data.data.showTemplateColumn = true;
+          }
           this.buildGridColumns(data.data.showHiddenColumns, data.data.showTemplateColumn);
           this.setFilterDropdownItems(data.data.showArchiveOption);
         }
@@ -182,7 +189,7 @@ export class ObjectMaintenanceComponent implements OnInit, OnDestroy {
       },
       {
         dataField: "template",
-        caption: "Template",
+        caption: this.currentObjectTypeId === ObjectTypeId.Segments ? "Criteria Set Name" : "Template",
         alignment: null,
         visible: showTemplatecolumn,
         dataType: null

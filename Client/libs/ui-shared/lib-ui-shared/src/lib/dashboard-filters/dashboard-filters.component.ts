@@ -5,6 +5,10 @@ import * as dayjs from 'dayjs'
 import { MatDialog } from '@angular/material/dialog';
 import { AddFormWizardComponent } from '@micro-components/form-wizard/modal/add-form-wizard/add-form-wizard.component';
 import {AddBuildingModalComponent} from '../add-building-modal/add-building-modal.component'
+import { AddEquipmentModalComponent } from '@mango/ui-shared/lib-ui-shared';
+import { EQUIPMENT_WIZARD_OTID } from '@mango/data-models/lib-data-models';
+import { AddSupplierModalComponent } from '@mango/ui-shared/lib-ui-shared';
+import { SUPPLIER_WIZARD_OTID } from '@mango/data-models/lib-data-models';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -161,6 +165,39 @@ export class DashboardFiltersComponent implements OnInit,OnChanges {
   
         }
       });
+    }
+  }
+
+  public btnAddSupplierNewClick(addObject: any) {
+    if (addObject.moduleId === SUPPLIER_WIZARD_OTID) {
+      let dialogRef = this.dialog.open(AddSupplierModalComponent, {
+        disableClose: false,
+        height: '370px',
+        width: '700px',
+        maxWidth: '1100px',
+        data: {
+          objectTypeId: this.objectTypeId,
+          userId: this.userId
+        }
+      });
+      dialogRef.afterClosed();
+    }
+  }
+
+  public btnAddEquipmentNewClick(addObject) {
+    if(addObject.moduleId == EQUIPMENT_WIZARD_OTID) {
+      let dialogRef = this.dialog.open(AddEquipmentModalComponent, {
+        disableClose: true,
+        height: '600px',
+        width: '700px',
+        maxWidth: '1100px',
+        data: {
+          objectTypeId: this.objectTypeId,
+          userId: this.userId
+        }
+      });
+  
+      dialogRef.afterClosed();
     }
 
   }

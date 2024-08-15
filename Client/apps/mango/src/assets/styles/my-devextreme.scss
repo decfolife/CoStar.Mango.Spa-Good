@@ -236,7 +236,8 @@ dx-form {
 			}
 
 			fa-icon {
-				padding-right: $stdPadding / 2;
+								padding-right: calc($stdPadding / 2);
+
 				position: relative;
 				top: -34px;
 			}
@@ -319,7 +320,7 @@ dx-text-box {
 						height: $dblPadding;
 						background-size: $dblPadding $dblPadding;
 						font-size: 18px;
-						line-height: $stdPadding/2;
+						line-height: calc($stdPadding / 2);
 					}
 				}
 			}

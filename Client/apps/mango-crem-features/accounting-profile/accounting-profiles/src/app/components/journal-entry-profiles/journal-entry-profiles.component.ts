@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { BaseService } from '../../services/base.service';
 
 @Component({
   selector: 'app-journal-entry-profiles',
@@ -7,10 +8,17 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class JournalEntryProfilesComponent implements OnInit {
+  hasModuleRights = true;
+  
+  constructor(    
+    private baseService: BaseService
+  ) { }
 
-  constructor() { }
 
   ngOnInit(): void {
+    this.baseService.HasUserModuleRight().subscribe(response => {
+      this.hasModuleRights = response;
+    });
   }
 
 }

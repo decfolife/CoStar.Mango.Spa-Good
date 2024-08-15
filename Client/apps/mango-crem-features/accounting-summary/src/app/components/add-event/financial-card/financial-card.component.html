@@ -1,0 +1,383 @@
+<crem-card *ngIf="classificationId !== undefined"
+    [id]="accountingSummaryService.getId(componentName,'section','card')" 
+    [title]="title"
+    [subtitle]="subtitle">
+
+    <form [formGroup]="financialForm" class="financial-card-container">
+      <div class="composite-dropdowns-container amortization">
+        <div class="manual-entry__profileName" *ngIf="this.manualEntryVisible"
+        [id]="accountingSummaryService.getId(componentName,'manual-entry','popup')">
+        <crem-input [id]="accountingSummaryService.getId(componentName,'manual-entry','text')" [inputType]="'text'"
+            [showLabel]="true" [label]="'Profile Name: '" [labelPosition]="'top'" class="manual-entry__profileNameText"
+            [required]="true" formControlName="manualAmortizationProfileName"
+            placeholder="Enter a name please . . ."></crem-input>
+    
+        <div class="manual-entry__btn-container">
+            <crem-button [id]="accountingSummaryService.getId(componentName,'manual-entry-cancel','button')"
+                type="secondary" (click)="cancelChanges()">
+                Cancel
+            </crem-button>
+    
+            <crem-button [id]="accountingSummaryService.getId(componentName,'manual-entry-save','button')" type="primary"
+                class="manual-entry__btn--primary" (click)="saveAmortizationProfileName()">
+                Save
+            </crem-button>
+        </div>
+      </div>
+        
+        <!-- Amortization Composite Dropdown -->
+        <crem-composite-dropdown 
+                [id]="accountingSummaryService.getId(componentName,'amortization-composite','dropdown')"
+                [isOpen]="false" 
+                [showSubtitle]="true"
+                [isFormValid]="true" 
+                [closeOnOutsideClick]="false"
+                [Title]="'Amortization Profile'"
+                [SubTitle]="amortizationSubTitle">
+
+            <div class="form-items">
+              <div class="controls-container">
+                <crem-dropdown
+                    #amortizationProfileDropDown
+                    [id]="accountingSummaryService.getId(componentName,'amortization-profile','dropdown')"
+                    [placeholder]="'Select Amortization Profile'" 
+                    displayExpr="profileName"
+                    [dataSource]="amortizationProfileList"
+                    value="profileID"
+                    valueExpr="profileID"
+                    [initialSelectedValue]="amortizationInitialSelected"
+                    (selectedItems)="onAmortizationValueChanged($event)"
+                    formControlName="amortizationProfile"
+                    [containerized]="true"
+                  />
+              </div>
+                <div class="labels">
+                  <crem-input-label
+                      [id]="accountingSummaryService.getId(componentName,'amortization-charge','label')"
+                      label="Charge Type"
+                      [showInfo]="false">
+                  </crem-input-label>
+                </div>
+                <div class="controls-container">
+                  <crem-radio-group class="radio-group"
+                      [id]="accountingSummaryService.getId(componentName,'amortization-charge','radio-group')"
+                      [name]="'chargeType'" [disabled]="false" formControlName="chargeType">
+                      <crem-radio-field 
+                          [id]="accountingSummaryService.getId(componentName,'amortization-charge','expense-radio')"
+                          class="financials-form__controls__radio-button" 
+                          value="Expense">
+                          Expense
+                      </crem-radio-field>
+                      <crem-radio-field
+                          [id]="accountingSummaryService.getId(componentName,'amortization-charge','income-radio')"
+                          class="financials-form__controls__radio-button" 
+                          value="Income">
+                          Income
+                      </crem-radio-field>
+                  </crem-radio-group>
+                </div>
+
+                <div class="check-box__group">
+                    <crem-check-box class="financials-form__check-box"
+                        [id]="accountingSummaryService.getId(componentName,'amortization-override','check-box')"
+                        [value]="overrideCheckBoxValue"
+                        [disabled]="overrideCheckBoxDisabled"
+                        (changeEvent)="onChangeEvent($event)"
+                        >
+                    </crem-check-box>
+                    <p class="financials-form__controls--check-box__paragraph">Check box to override profiles selected in the grid below.</p>
+                </div>
+
+            </div>
+        </crem-composite-dropdown>
+
+        <!-- Currency Composite Dropdown -->
+        <crem-composite-dropdown [id]="accountingSummaryService.getId(componentName,'currency','composite-dropdown')"
+            isOpen="false"
+            showSubtitle="true"
+            [showFooter]="false"
+            isFormValid="true"
+            closeOnOutsideClick="true"
+            [Title]="'Currency'"
+            [SubTitle]="currencySubTitle"
+            FooterContent="">
+
+            <div class="form-items">
+              <div class="labels">
+                <crem-input-label
+                  [id]="accountingSummaryService.getId(componentName,'currency','label')"
+                  [label]="'Local Currency'"
+                  [showInfo]="false"
+                  [required]="false">
+                </crem-input-label>
+              </div>
+              <div class="controls-container">
+                <crem-dropdown
+                  [id]="accountingSummaryService.getId(componentName,'local-currency','dropdown')"
+                  [placeholder]="'Select Local Currency'" 
+                  displayExpr="name"
+                  [dataSource]="currencyList"
+                  valueExpr="id"
+                  [required]="true"
+                  [showClearButton]="true"
+                  [initialSelectedValue]='selectedLocalCurrency'
+                  (selectedItems)="onLocalCurrencySelection($event)"
+                  formControlName="localCurrency"
+                  [containerized]="true"
+                />
+              </div>
+
+              <div class="functional-currency" *ngIf="(showFunctionalCurrency) && (classificationId === 4 || classificationId === 3 || classificationId === 2)">
+
+                <div class="labels">
+                  <crem-input-label
+                    [id]="accountingSummaryService.getId(componentName,'funcational-currency','label')"
+                    [label]="'Funcational Currency'"
+                    [showInfo]="false"
+                    [required]="false">
+                  </crem-input-label>
+                </div>
+                <div class="controls-container">
+                  <crem-dropdown
+                    [id]="accountingSummaryService.getId(componentName,'funcational-currency','dropdown')"
+                    [placeholder]="'Select Funcational Currency'" 
+                    displayExpr="name"
+                    [dataSource]="currencyList"
+                    value="id"
+                    valueExpr="id"
+                    [showClearButton]="true"
+                    [initialSelectedValue]='selectedFunctionalCurrency'
+                    (selectedItems)="onFunctionalCurrencySelection($event)"
+                    formControlName="functionalCurrency"
+                    [containerized]="true"
+                  />
+                </div>
+
+                <div class="labels">
+                  <crem-check-box
+                    [value]="isCurrencyDirecEntryAllowed"
+                    [disabled]="isCurrencyDirecEntryDisabled"
+                    (changeEvent)="onCurrencyDirecEntryChange($event)"
+                    formControlName="financialCurrencyDirectEntry">
+                  </crem-check-box>
+                  <crem-input-label
+                    [id]="accountingSummaryService.getId(componentName,'direct-entry','label')"
+                    [label]="'Direct Entry'"
+                    [showInfo]="false">
+                  </crem-input-label>
+                  </div>
+
+                  <div class="labels">
+                    <crem-input-label
+                      [id]="accountingSummaryService.getId(componentName,'rate','label')"
+                      [label]="'Rate'"
+                      [showInfo]="false"
+                      [required]="false">
+                    </crem-input-label>
+                  </div>
+                  <div class="controls-container">
+                      <crem-input
+                        [id]="accountingSummaryService.getId(componentName, 'rate', 'Input')"
+                        [showLabel]="false"
+                        [labelPosition]="'top'"
+                        [label]="''"
+                        [inputType]="'number'"
+                        [value]="''"
+                        [placeholder]="''"
+                        [disallowNegative]="true"
+                        [disabled]="false"
+                        [required]="false"
+                        formControlName="currencyRate">
+                      </crem-input>
+                  </div>
+                  <span 
+                    [id]="accountingSummaryService.getId(componentName,'rate','hint-text')"
+                    class="hint-text">{{functionalCurrencyRateLookupResultMessage}}</span>
+            </div>
+          </div> 
+        </crem-composite-dropdown>
+
+        <!-- Discount Rate Composite Dropdown -->
+        <crem-composite-dropdown [id]="accountingSummaryService.getId(componentName,'discount-rate','composite-dropdown')"
+                isOpen="false"
+                showSubtitle="showSubtitle"
+                [showFooter]="false"
+                isFormValid="true"
+                [closeOnOutsideClick]="false"
+                [Title]="'Discount Rate'"
+                [SubTitle]="discountRateSubTitle"
+                FooterContent="">
+
+                    <div class="form-items">
+                      <div class="labels">
+                        <crem-input-label
+                          [id]="accountingSummaryService.getId(componentName,'discount-rate-profile','label')"
+                          [label]="'Discount Rate Profile'"
+                          [showInfo]="false"
+                          [required]="false">
+                        </crem-input-label>
+                      </div>
+                      <div class="controls-container">
+                        <crem-dropdown
+                          [id]="accountingSummaryService.getId(componentName,'discount-rate-profile','dropdown')"
+                          [placeholder]="discountRatePlaceHolder" 
+                          displayExpr="profileName"
+                          [dataSource]="discountRateOptions"
+                          value="profileID"
+                          valueExpr="profileID"
+                          [required]="true"
+                          [showClearButton]="true"
+                          [initialSelectedValue]='selectedDiscountRate'
+                          (selectedItems)="onDiscountRateChange($event)"
+                          formControlName="discountRateProfile"
+                          [containerized]="true"
+                        />
+                      </div>
+                      <span [id]="accountingSummaryService.getId(componentName,'effective-rate','hint-text')"
+                        class="hint-text">Effective Rate: {{effectiveRate}}</span>
+
+                        <div class="labels">
+                          <crem-input-label
+                            [id]="accountingSummaryService.getId(componentName,'annual-rate','label')"
+                            [label]="'Annual Rate'"
+                            [showInfo]="false"
+                            [required]="false">
+                          </crem-input-label>
+                        </div>
+                        <div class="controls-multi-column">
+                          <crem-input
+                            [id]="accountingSummaryService.getId(componentName, 'annual-rate', 'Input')"
+                            [showLabel]="false"
+                            [labelPosition]="'top'"
+                            [label]="''"
+                            [inputType]="'text'"
+                            [value]="''"
+                            [placeholder]="''"
+                            [disallowNegative]="true"
+                            [disabled]="false"
+                            [required]="false"
+                            formControlName="discountRate"
+                            class="annual-rate-input">
+                          </crem-input>
+                          <crem-dropdown
+                            [id]="accountingSummaryService.getId(componentName,'annual-rate','dropdown')"
+                            [placeholder]="''" 
+                            [dataSource]="[{displayKey: 'APR', valueKey: 1}, {displayKey: 'APY', valueKey: 2}]"
+                            [required]="true"
+                            [showClearButton]="false"
+                            [initialSelectedValue]='selectedAnnualRateType'
+                            formControlName="annualRateDropdown"
+                            [containerized]="true"
+                          />
+                        </div>
+                      <div *ngIf="classificationId === 2 || classificationId === 3 || classificationId === 4">
+                        <div class="labels">
+                          <crem-input-label
+                            [id]="accountingSummaryService.getId(componentName,'modification-impact-scope','label')"
+                            [label]="'Modification Impact Scope'"
+                            [showInfo]="false">
+                          </crem-input-label>
+                        </div>
+                        <div class="controls-container">
+                          <crem-toggle-slider
+                            [id]="accountingSummaryService.getId(componentName,'modification-impact-scope','toggle')"
+                            size="wide"
+                            checkedLabel="YES"
+                            uncheckedLabel="NO"
+                            [value]="modificationImpactScopeValue"
+                            formControlName="modificationImpactScope">
+                          </crem-toggle-slider>
+                        </div>
+                      </div>
+                    </div>
+        </crem-composite-dropdown>
+          
+        <!-- ROU Asset Obtained Composite Dropdown -->
+       <crem-composite-dropdown
+              *ngIf="classificationId === 2 || classificationId === 3 || classificationId === 4"
+               [id]="accountingSummaryService.getId(componentName,'ROU-assets-obtained','composite-dropdown')"
+               isOpen="false"
+               showSubtitle="showSubtitle"
+               [showFooter]="false"
+               isFormValid="true"
+               closeOnOutsideClick="true"
+               [Title]="'ROU Assets Obtained'"
+               [SubTitle]="ROUAssetsObtainedSubTitle"
+               FooterContent="">
+
+                   <div class="form-items">
+                     <div class="labels">
+                       <crem-input-label
+                         [id]="accountingSummaryService.getId(componentName,'method','label')"
+                         [label]="'Method'"
+                         [showInfo]="false"
+                         [required]="false">
+                       </crem-input-label>
+                     </div>
+                     <div class="controls-container">
+                       <crem-dropdown
+                         [id]="accountingSummaryService.getId(componentName,'method','dropdown')"
+                         [placeholder]="'Select Method'" 
+                         displayExpr="profileName"
+                         [required]="true"
+                         [showClearButton]="true"
+                         formControlName="ROUMethod"
+                        />
+                     </div>
+
+                       <div class="labels">
+                         <crem-input-label
+                           [id]="accountingSummaryService.getId(componentName,'amount','label')"
+                           [label]="'Amount'"
+                           [showInfo]="false"
+                           [required]="false">
+                         </crem-input-label>
+                       </div>
+                       <div class="controls-container">
+                         <crem-input
+                           [id]="accountingSummaryService.getId(componentName, 'amount', 'Input')"
+                           [showLabel]="false"
+                           [labelPosition]="'top'"
+                           [label]="''"
+                           [inputType]="'text'"
+                           [value]="''"
+                           [placeholder]="''"
+                           [disallowNegative]="true"
+                           [disabled]="false"
+                           [required]="false"
+                           formControlName="ROUAmount">
+                         </crem-input>
+                       </div>
+                       <div class="labels">
+                         <crem-input-label
+                           [id]="accountingSummaryService.getId(componentName,'modification-impact-scope','label')"
+                           [label]="'Action Date'"
+                           [showInfo]="false">
+                         </crem-input-label>
+                       </div>
+                       <div class="controls-container">
+                        <crem-date-picker
+                          [id]="accountingSummaryService.getId(componentName,'termEnd','date-picker')"
+                          [value]="termEndDate"
+                          [dateFormat]="dateFormat"
+                          [invalidDateMessage]="'Invalid date'"
+                          [showClearButton]="false"
+                          [isRequired]="false"
+                          formControlName="ROUActionDate">
+                      </crem-date-picker>
+                       </div>
+                   </div>
+       </crem-composite-dropdown>
+      </div>
+    </form>
+
+    <div class="financial-balance-cards">
+      <mango-balance-card
+        *ngIf="cards && cards.length > 0; else not_found"
+        [cards]="cards"
+        [configuration]="cardsConfiguration"
+        (valueChange)="updateFinancialBalanceCards($event)"
+      />
+      <ng-template #not_found><div class="color-gray03">No cards Available</div></ng-template>
+    </div>
+</crem-card>

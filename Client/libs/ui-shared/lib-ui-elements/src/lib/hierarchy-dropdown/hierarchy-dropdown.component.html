@@ -1,6 +1,5 @@
 <div class="dx-fieldset">
   <div class="dx-field">
-    <!-- <div *ngIf="label" class="dx-field-label">{{ label }}</div> -->
     <div class="dx-field-value">
      
       <dx-drop-down-box 
@@ -36,13 +35,14 @@
               selectByClick="true"
               (onSelectionChanged)="treeViewSelectionChanged($event)">
               
-              <div *dxTemplate="let item of 'item'">
-                  {{item[displayExpr]}}
+              <div *dxTemplate="let item of 'item'" class="tree-view__item">
+                  <div class="tree-view__item-content" [attr.title]="item[displayExpr]">
+                    {{item[displayExpr]}}
+                  </div>
               </div>
           </dx-tree-view>
         </div>
       </dx-drop-down-box>
-
 
     </div>
   </div>

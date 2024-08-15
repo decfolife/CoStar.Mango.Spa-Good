@@ -66,7 +66,7 @@ export abstract class EndpointService {
 
   // This method processing error response and passes status code and statue message back to calling method.
   // This is here so that when design is ready to display messages for user, we don't have to touch service code.
-  protected handleTaskApprovalError(operation) {
+  protected handleErrorReturnMessage(operation) {
     return (error: any): Observable<any> => {
       console.error(operation, error);
       return of({ status: error.status, statusText: error.statusText, errorMessage: error.error.message });
@@ -81,6 +81,14 @@ export abstract class EndpointService {
             data: value.data,
             clientErrorMessage: executionSuccessful ? null : value.title
         };
+    } else if(value != null && !value.hasOwnProperty('succeeded') && !value.hasOwnProperty('success') && !value.hasOwnProperty('clientErrorMessage')) {
+      return {
+        success: true,
+        data: value?.data
+          ? value.data
+          : value,
+        clientErrorMessage: null,
+      }
     } else {
         let apiSuccess = value?.succeeded ? value?.succeeded : value?.success ? value?.success : null;
         let cemsg = value?.message ? value?.message : value?.clientErrorMessage ? value?.clientErrorMessage : null
@@ -126,11 +134,11 @@ export abstract class EndpointService {
     )
   }
 
-  protected callHttpPostApprovalError(url: string, functionName: string, postBody: any): Observable<any> {
+  protected callHttpPostWithErrorMessage(url: string, functionName: string, postBody: any): Observable<any> {
     return this.getHttpHeaders().pipe(
       switchMap(httpHeaders => this.http.post(url, postBody, httpHeaders)),
       map(x => this.toObject(x) as any),
-      catchError(this.handleTaskApprovalError(functionName))
+      catchError(this.handleErrorReturnMessage(functionName))
     )
   }
 

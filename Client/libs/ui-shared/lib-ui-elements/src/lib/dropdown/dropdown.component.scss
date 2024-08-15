@@ -7,289 +7,134 @@
 
   dx-select-box,
   dx-drop-down-box {
-    .dx-texteditor-container{
+    width: 100%;
+    .dx-texteditor-container {
       @include costar(border, gray04);
       @include costar(border-radius, small);
       .dx-placeholder {
         line-height: 0px;
       }
     }
+
+    &.dx-state-focused {
+      outline: 2px solid black;
+    }
+
     &.dx-dropdowneditor-active {
-      .dx-texteditor-container{
+      .dx-texteditor-container {
         @include costar(border, primary-light);
+      }
+      // Field Template: With Label
+      &:has(.custom-with-label) {
+        .dx-selectbox-container {
+          @include costar(border, primary-light);
+        }
+        .search {
+          // Shows/Hides search icon when dropdown active
+          width: 16px !important;
+          @include costar(padding-left, 1);
+          @include costar(padding-right, 1);
+          crem-icon {
+            opacity: 1;
+          }
+        }
+      }
+    }
+    .custom-with-label {
+      display: flex;
+      flex-direction: row;
+      @include costar(padding-left, 2);
+      > span {
+        // Label Span
+        line-height: 32px;
+      }
+      .dx-texteditor-input {
+        font-weight: bold;
+        @include costar(padding-left, 1);
+      }
+      .dx-state-focused .dx-texteditor-input {
+        text-decoration: underline;
+      }
+      .dx-texteditor-empty .dx-texteditor-input {
+        // remove underline when placeholder present
+        @include costar(color, gray04);
+        caret-color: map-get($font, color, dark);
+        caret-color: var(--costar-color-dark);
+      }
+      .item-secondary {
+        @include costar(color, gray03);
+      }
+      dx-text-box {
+        // Don't align center or end when 'allowSearch' is true
+        display: inline-block;
+      }
+      .search {
+        display: flex;
+        align-items: center;
+        width: 0;
+        @include costar(color, gray03);
+        @include costar(transition, faster);
+        crem-icon {
+          // Separate transition to prevent flickering
+          opacity: 0;
+          @include costar(transition, normal);
+        }
+      }
+      .dx-placeholder::before {
+        padding-left: 5px; // todo: correct spacing from dx.light.css interfering with right alignment
+      }
+    }
+    &:has(.custom-with-label) {
+      .dx-selectbox-container {
+        @include costar(border, gray04);
+        @include costar(border-radius, small);
+      }
+      .dx-texteditor-container {
+        border: unset;
       }
     }
   }
-
-}
-
-crem-dropdown { // FIXME: This is not being applied in most cases, only works when encapsulation is broken and styles imported manually
-  .dx-dropdowneditor-icon:before {
-    left: 41%;
-  }
-  .dx-field {
-    display: flex !important;
-    flex-direction: row;
-  }
-  .dx-field-value {
-    min-width: 200px !important;
-  }
-  div.dropdown-field {
-    width: 252px;
-    font-family: $font-family-body;
-    font-size: $font-size-xl;
-    font-weight: $font-wt-normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: #3c3c3c;
-  }
-  crem-icon {
-    color: $color-neutral-darker;
-  }
-  dx-select-box {
-    .dx-texteditor-container {
-      .dx-texteditor-input-container {
-        input {
-          font-size: 16px !important;
-          border: none !important;
+  .dx-dropdowneditor {
+    // Caret Icon
+    .dx-dropdowneditor-icon {
+      &::before {
+        content: '';
+        padding: 3px;
+        width: 8px;
+        height: 8px;
+        top: 18px;
+        left: 22px;
+        border-style: solid;
+        display: inline-block;
+        border-width: 0px 2px 2px 0;
+        transform: rotate(45deg);
+        @include costar(color, gray03);
+        @include costar(transition, fast);
+      }
+    }
+    &.dx-dropdowneditor-active {
+      .dx-dropdowneditor-icon {
+        @include costar(background-color, gray05);
+        &::before {
+          transform: translateY(50%) rotate(calc(180deg + 45deg));
+          @include costar(color, primary-light);
         }
       }
     }
   }
-
-  .red_border {
-    border-color: rgba(217,83,79,.4) !important;
-  }
-
-  dx-select-box.dx-show-invalid-badge.dx-selectbox.dx-textbox.dx-texteditor::before {
-    border-width: 1px !important;
-    border-color: #ddd !important;
-    transform: none !important;
-  }
-  div.dropdown-field div.dropdown-field-label {
-    margin-bottom: 4px;
-  }
-
-  div.dropdown-field div.dropdown-field-value dx-select-box {
-    height: 32px;
-  }
-
-  div.dropdown-field
-    div.dropdown-field-value
-    dx-select-box
-    div.dx-dropdowneditor-input-wrapper:focus {
-    outline: none;
-  }
-
-  div.dropdown-field
-    div.dropdown-field-value
-    dx-select-box
-    div.dx-dropdowneditor-input-wrapper
-    div.dx-texteditor-container:focus {
-    outline: none;
-  }
-  .dx-texteditor.dx-editor-outlined {
-    background: #fff;
-    border-radius: 2px !important;
-    height: 32px;
-  }
-  dx-text-box {
-    height: 32px;
-    width: 252px;
-  }
-
-  div.dx-placeholder {
-    font-size: 16px !important;
-    font-weight: 400 !important;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    top: 0px !important;
-    font-family: Helvetica, system-ui, sans-serif !important;
-    @include costar(color, gray03); // color: $color-neutral-dark !important;
-  }
-
-  .dx-texteditor-container {
-    border-radius: 2px;
-    box-shadow: none;
-    background: #ffffff;
-    padding-left: 14px !important;
-  }
-
-  .dx-dropdowneditor-icon,
-  .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
-    border: none !important;
-    // @include costar(background-color, primary-light); // color: $costarBlue;
-    font: 24px/20px DXIcons;
-  }
-
-  div.dx-item.dx-list-item:hover {
-    @include costar(background-color, primary-lighter); // background-color: $costarLightBlue;
-  }
-
-  div.dx-item.dx-list-item.dx-list-item-selected {
-    @include costar(background-color, primary-light); // background-color: $costarBlue !important;
-    color: #ffffff !important;
-  }
-
-  .dx-rtl
-    .dx-texteditor.dx-editor-filled.dx-show-clear-button
-    .dx-texteditor-input,
-  .dx-rtl
-    .dx-texteditor.dx-editor-outlined.dx-show-clear-button
-    .dx-texteditor-input,
-  .dx-rtl.dx-texteditor.dx-editor-filled.dx-show-clear-button
-    .dx-texteditor-input,
-  .dx-rtl.dx-texteditor.dx-editor-outlined.dx-show-clear-button
-    .dx-texteditor-input,
-  .dx-texteditor.dx-editor-filled .dx-placeholder:before,
-  .dx-texteditor.dx-editor-filled .dx-texteditor-input,
-  .dx-texteditor.dx-editor-outlined .dx-placeholder:before,
-  .dx-texteditor.dx-editor-outlined .dx-texteditor-input {
-    @include costar(padding-top, 4); // padding-top: $stdPadding !important;
-    padding-left: -34px !important;
-    height: 32px !important;
-    max-height: 32px !important;
-  }
-  .dx-field {
-    margin: 0 0 10px;
-    display: flex !important;
-    flex-direction: row;
-    justify-content: flex-start;
-  }
-  .dx-field-value-static,
-  .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
-    width: fit-content;
-    max-width: 250px !important;
-  }
-  .dx-field-label {
-    color: #333;
-    cursor: default;
-    padding: 8px 15px 9px 0;
-    text-align: left;
-    display: flex !important;
-    flex-direction: row !important;
-    align-self: flex-start !important;
-  }
-  .icons {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    justify-content: center;
-  }
-  div.dx-texteditor-container {
-    padding-left: 0px !important;
-  }
-  svg.svg-inline--fa.fa-caret-up.fa-w-10 {
-    position: relative;
-    top: 2px;
-    @include costar(color, primary-light); // color: $costarBlue;
-  }
-
-  svg.svg-inline--fa.fa-caret-down.fa-w-10 {
-    position: relative;
-    top: -2px;
-    @include costar(color, primary-light); // color: $costarBlue;
-  }
-  .dx-fieldset {
-    margin: 0 !important;
-    padding: 0;
-  }
-  input.dx-texteditor-input {
-    font: 400 16px Helvetica, system-ui, sans-serif !important;
-    color: #000 !important;
-  }
-  .dx-field-label {
-    color: #333;
-    cursor: default;
-    padding: 8px 15px 9px 0;
-    text-align: left;
-    display: flex !important;
-    flex-direction: row !important;
-    font-size: 16px !important;
-    align-self: flex-start !important;
-  }
-  div.dx-texteditor-container {
-    max-height: 32px !important;
-    &:active,
-    &:focus-within,
-    &:focus {
-      box-shadow: 0 0 4px 0 $color-primary !important;
-    }
-  }
-  dx-drop-down-box {
-    max-height: 32px !important;
-    display: flex;
-    align-items: center;
-
-    .dx-dropdowneditor-input-wrapper {
-      -webkit-tap-highlight-color: transparent;
-      overflow: hidden;
-      height: 100%;
-      display: flex;
-      &:active,
-      &:focus-within,
-      &:focus {
-        box-shadow: 0 0 4px 0 $color-primary !important;
-      }
-    }
-    .dx-dropdowneditor-button.dx-state-active .dx-dropdowneditor-icon,
-    .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
-      background-color: transparent !important;
-      border-color: transparent;
-      color: #333;
-      opacity: 1;
-    }
-    div.dx-texteditor-container {
-      max-height: 32px !important;
-      display: flex !important;
-      align-items: center;
-    }
-  }
-}
-
-div[id$="dropdownContainer"] {
-  .dx-datagrid-content .dx-datagrid-table .dx-row > td:hover {
-    // background: $color-primary-lighter;
-  }
-  .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > td,
-  .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > tr > td,
-  .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > td,
-  .dx-datagrid-rowsview
-    .dx-selection.dx-row:not(.dx-row-focused):hover
-    > tr
-    > td {
-    // background-color: $color-primary-lighter;
-  }
-
-  tr.dx-row.dx-data-row.dx-column-lines.dx-selection {
-    font-size: 16px;
-    font-family: Helvetica, system-ui, sans-serif;
-  }
-
-  tr.dx-row.dx-data-row.dx-column-lines {
-    font-size: 16px;
-    font-family: Helvetica, system-ui, sans-serif;
-  }
-
-  .dx-datagrid-text-content.dx-text-content-alignment-left {
-    font-size: 16px;
-    font-family: Helvetica, system-ui, sans-serif;
-  }
-  .dx-popup-wrapper > .dx-overlay-content {
-    border-radius: 2px !important;
-  }
-
-  tr.dx-row.dx-datagrid-filter-row > .dx-command-select {
-    display: none;
-  }
 }
 
 // Select More Menu
-::ng-deep { // Encapsulation broken because overlay is at the body level
+::ng-deep {
+  // FIXME: The dropdown's overlay is at the body level, encapsulation needs to be broken for this element.
+  .dx-popup-content {
+    @include costar(padding, 0, $important: true);
+  }
+
+  .dx-popup-wrapper > .dx-overlay-content {
+    @include costar(border-radius, medium, $important: true);
+  }
+
   .dx-item {
     crem-button {
       @include costar(transition, fast);
@@ -300,11 +145,12 @@ div[id$="dropdownContainer"] {
         opacity: 1;
       }
     }
-    crem-button[aria-expanded="true"]{
+    crem-button[aria-expanded='true'] {
       opacity: 1;
     }
-    &.dx-state-active{ // Overrides DevExtreme's colors, to not react
-      background-color: rgba(0,0,0,.04) !important;
+    &.dx-state-active {
+      // Overrides DevExtreme's colors, to not react
+      background-color: rgba(0, 0, 0, 0.04) !important;
       color: #333 !important;
     }
   }
@@ -319,7 +165,8 @@ div[id$="dropdownContainer"] {
       line-height: 35px;
       border-bottom: 1px solid rgba(51, 51, 51, 0.15);
     }
-    hr { // Menu separator
+    hr {
+      // Menu separator
       margin: 0px;
     }
   }
@@ -334,7 +181,6 @@ div[id$="dropdownContainer"] {
   }
 
   &-secondary {
-    @include costar(padding-left, 1);
     @include costar(color, gray03);
   }
 
@@ -342,6 +188,7 @@ div[id$="dropdownContainer"] {
     display: flex;
     overflow: hidden;
     white-space: nowrap;
+    align-items: center;
     gap: 2px;
   }
 
@@ -358,30 +205,63 @@ div[id$="dropdownContainer"] {
       background-color: transparent;
     }
   }
-
 }
 
 // Breaking encapsulation to target root level components for Material and DevExtreme overlays
 // mat-menu (more menu) and dx-select-box (dropdown)
-::ng-deep{
+::ng-deep {
   mango-root {
     // cdk-overlay-container can be mat-menu dropdown or modal
     // generating z-index racing conditions in diff scenarios, an issue product of diff frameworks
-    &:not([aria-hidden="true"]){ // When Modal is not
-      ~ .dx-overlay-wrapper { // DevExtreme's Dropdown
+    &:not([aria-hidden='true']) {
+      // When Modal is not
+      ~ .dx-overlay-wrapper {
+        // DevExtreme's Dropdown
         z-index: 2022 !important;
       }
-      ~ .cdk-overlay-container { // Material UI More Menu
+      ~ .cdk-overlay-container {
+        // Material UI More Menu
         z-index: 2023 !important;
       }
     }
-    &[aria-hidden="true"]{ // When Modal is open: Make mat lower z-index than DevExtreme's 
-      ~ .dx-overlay-wrapper { // DevExtreme's Dropdown
+    &[aria-hidden='true'] {
+      // When Modal is open: Make mat lower z-index than DevExtreme's
+      ~ .dx-overlay-wrapper {
+        // DevExtreme's Dropdown
         z-index: 2023 !important;
       }
-      ~ .cdk-overlay-container { // Material UI More Menu
+      ~ .cdk-overlay-container {
+        // Material UI More Menu
         z-index: 2022 !important;
       }
     }
   }
+}
+
+div[id$='dropdownContainer'] {
+  tr.dx-row.dx-data-row.dx-column-lines.dx-selection {
+    font-size: 16px;
+  }
+  tr.dx-row.dx-data-row.dx-column-lines {
+    font-size: 16px;
+  }
+  .dx-datagrid-text-content.dx-text-content-alignment-left {
+    font-size: 16px;
+  }
+  .dx-popup-wrapper > .dx-overlay-content {
+    border-radius: 2px !important;
+  }
+  tr.dx-row.dx-datagrid-filter-row > .dx-command-select {
+    display: none;
+  }
+}
+
+::ng-deep {
+  // FIXME: The dropdown's overlay is at the body level, encapsulation needs to be broken for this element.
+  .dropdown-tooltip {
+    @include costar(padding, 3);
+  }
+}
+.disable-item {
+  pointer-events: all;
 }

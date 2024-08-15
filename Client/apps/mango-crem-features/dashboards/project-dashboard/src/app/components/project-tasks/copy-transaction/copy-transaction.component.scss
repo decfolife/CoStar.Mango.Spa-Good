@@ -1,0 +1,110 @@
+@use 'styles' as *;
+
+.ct-description {
+  padding-bottom: 20px;
+}
+
+h4 {
+  margin-bottom: 0;
+}
+
+.ct-projDetails-transPreview {
+  margin-top: 20px;
+  display: flex;
+  gap: 40px;
+  width: 100%;
+
+  .ct-bottomPadding {
+    padding-bottom: 20px;
+  }
+
+  section.ct-projDetails {
+    width: 100%;
+    flex-basis: 35%;
+
+    .ct-check-box {
+      padding: 8px 0 10px;
+      .ct-checkbox-subSection {
+        padding-left: 16px;
+        padding-bottom: 0;
+      }
+    }
+
+    .ct-toggleBox {
+      .toggleLabel {
+        padding-right: 16px;
+      }
+    }
+
+    .ct-required-tag {
+      color: $danger; 
+    }
+  
+  }
+
+
+  .ct-template-transPreview-container {
+    width: 100%;
+    flex-basis: 65%;
+
+    .ct-template-previewBtn {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+
+      #ct-previewBtn {
+        display: inline-flex;
+      }
+    }
+
+    .ct-template-container {
+      width: 100%;
+      flex-basis: 50%;
+    }
+
+  }
+
+  .ct-transPreviewGrid-container {
+    height: 480px;
+    width: 100%;
+    padding: 20px;
+    background: var(--Info-Lightest, #DCE8F4);
+
+    #ct-transPreviewGrid-Id {
+      border: 1px solid $gray04;
+    }
+  }
+}
+
+
+::ng-deep #copyTransactionPopupId {
+  .dx-popup-content.dx-popup-content-scrollable {
+    padding: 0px;
+  }
+
+  &.dx-popup-wrapper {
+    z-index: 999 !important;
+  } 
+
+  #ct-transPreviewGrid-Id {
+    .dx-datagrid td {
+      vertical-align: middle;
+    }
+  }
+
+  .dx-checkbox-icon {
+    border: 1px solid $gray01;
+  }
+
+  .dx-checkbox.dx-state-focused .dx-checkbox-icon {
+    border: 1px solid $costarBlue;
+  }
+}
+
+::ng-deep .ct-check-box {
+  crem-check-box {
+    label {
+      line-height: 1.3rem ;
+    }
+  }
+}

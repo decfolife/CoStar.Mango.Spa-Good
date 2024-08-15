@@ -1,5 +1,11 @@
 import { themes } from '@storybook/theming';
 
+// Compodoc documentation generation
+// documentation.json is build via 'nx run ui-shared-storybook-host:build-storybook'
+import { setCompodocJson } from '@storybook/addon-docs/angular';
+import * as docJson from '../libs/ui-shared/documentation.json';
+setCompodocJson(docJson);
+
 export const previewParameters = {
   options: {
     /*
@@ -9,20 +15,6 @@ export const previewParameters = {
     storySort: {
       method: 'alphabetical',
       order: [
-        'Components',
-        'Organisms',
-        'Pages',
-        'Introduction', ['Getting Started', 'For Developers', 'For Designers', 'FAQ'],
-        'Styling', [
-          'Getting Started',
-          'Single Properties',
-          'Multiple Properties',
-          'Utility Classes',
-          'Responsive Design',
-          'Color Palettes',
-          'Font Family'
-        ],
-        'Patterns',
       ],
       locales: 'en-US',
     },
@@ -39,6 +31,6 @@ export const previewParameters = {
    * Center
    * Source: https://storybook.js.org/docs/angular/configure/story-layout
    */
-  layout: 'centered',
+  layout: 'padded',
 
 };

@@ -8,7 +8,7 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class ObjectMaintenanceService extends EndpointService {
-  objectMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.header)
+  objectMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.objectMaintenance)
   
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);

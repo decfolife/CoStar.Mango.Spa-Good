@@ -42,7 +42,7 @@
     >
     </dxo-pager>
     <dxo-scrolling mode="standard"></dxo-scrolling>
-    <dxo-selection *ngIf="onSelectionChanged" mode="single"></dxo-selection>
+    <dxo-selection *ngIf="selectionChanged" mode="single"></dxo-selection>
     <dxo-header-filter [visible]="true"></dxo-header-filter>
     <dxo-master-detail [enabled]="true" template="detail" *ngIf="enableMasterDetails"></dxo-master-detail>
       <div *dxTemplate="let data of 'detail'">

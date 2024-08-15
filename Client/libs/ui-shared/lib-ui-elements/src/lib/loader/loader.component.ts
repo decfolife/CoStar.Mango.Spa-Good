@@ -1,5 +1,4 @@
-import { Component, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Template } from 'devextreme/core/templates/template';
+import { Component } from '@angular/core';
 
 @Component({
   /**
@@ -7,7 +6,7 @@ import { Template } from 'devextreme/core/templates/template';
    */
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'crem-loader',
-  template: `<div class="spinner-3"></div>`,
+  template: `<dx-load-indicator></dx-load-indicator>`,
   styleUrls: ['./loader.component.scss'],
 })
 export class LoaderComponent {}

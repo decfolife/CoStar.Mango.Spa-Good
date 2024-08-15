@@ -55,7 +55,6 @@ import {
 } from './shared/enums';
 import { DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
 import { ActivatedRoute, Router } from '@angular/router';
-import { environment } from '../../../../../../mango/src/environments/environment.local';
 import { MatDialog } from '@angular/material/dialog';
 import { AddFormWizardComponent } from '@micro-components/form-wizard/modal/add-form-wizard/add-form-wizard.component';
 import { TaskApprovalComponent } from '@project-dashboard/components/modal/task-approval/task-approval.component';
@@ -65,6 +64,10 @@ import { DxFormComponent } from 'devextreme-angular';
 import { formatDate } from '@angular/common';
 import CheckBox from 'devextreme/ui/check_box';
 import { ExportDevexDatagridService } from '@mango/core-shared';
+import { AddCompanyModalComponent } from '@mango/ui-shared/lib-ui-shared';
+import { AddContactModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-contact-modal/add-contact-modal.component';
+import { ObjectType, RequestType } from '@mango/data-models/lib-data-models';
+
 
 type VBBool = boolean | string;
 
@@ -422,10 +425,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
     return listView?.listViewType === ListViewType.CoStar;
   }
 
-  constructor(private activatedroute: ActivatedRoute, public service: ListPageService, 
-              public cdRef: ChangeDetectorRef, private exportToExcelService: ExportDevexDatagridService,
-              private dialog: MatDialog, private router: Router,
-              private renderer2: Renderer2) {
+  constructor(private activatedroute: ActivatedRoute, public service: ListPageService,
+    public cdRef: ChangeDetectorRef, private exportToExcelService: ExportDevexDatagridService,
+    private dialog: MatDialog, private router: Router,
+    private renderer2: Renderer2) {
     // initialize currentPortfolio to allow use it properties in [displayExpr] and [valueExpr] in crem-dropdown component    
     this.currentPortfolio = null;
     this.listViews = {} as any;
@@ -446,7 +449,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
       this.navigationButtonsObserver.disconnect();
     }
     if (this.pagingButtonsObserver) {
-        this.pagingButtonsObserver.disconnect();
+      this.pagingButtonsObserver.disconnect();
     }
   }
 
@@ -459,12 +462,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     //Set the objectTypeId from the value passed in the route instead of from the service if overrideInputSettings is true 
     //and if the isRestful flag is true
-    if (this.overrideInputSettings && environment.isRestful) {
+    if (this.overrideInputSettings) {
       this.activatedroute.data.subscribe(routeData => {
         this.objectTypeId = routeData.objectTypeId;
       });
     }
-
 
     this.service.getGoogleMapAPIKey().subscribe(x => {
       //console.log(x)
@@ -482,9 +484,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
       if (this.overrideInputSettings === true) {
         //if the isRestful flag is false then we need to set the objectTypeId
-        if (!environment.isRestful) {
-          this.objectTypeId = res.data.objectTypeId;
-        }
+        // isRestful should always be true
+        // if (!environment.isRestful) {
+        //   this.objectTypeId = res.data.objectTypeId;
+        // }
         this._intitialListPageRequestedId = res.data.listPage ?? 0;
         this._isSuperUser = res.data.isSuperUser;
         this._canEditNotes = res.data.canEditNotes;
@@ -539,16 +542,16 @@ export class ListPageComponent implements OnInit, OnDestroy {
       this.populateListViewMenu(true, true);
     });
   }
-  
+
   loadGoogleMapsAPIScript() {
-    const googleUrl = `https://maps.googleapis.com/maps/api/js?key=${ this.googleMapAPIKey }&channel=${ this.googleMappingChannel }`;    
+    const googleUrl = `https://maps.googleapis.com/maps/api/js?key=${this.googleMapAPIKey}&channel=${this.googleMappingChannel}`;
     const s = this.renderer2.createElement('script');
     s.type = 'text/javascript';
     s.src = googleUrl;
     s.async = true;
-    this.renderer2.appendChild(document.body, s);      
+    this.renderer2.appendChild(document.body, s);
   }
-    
+
   disposingNumOfIntervals() {
     this.setStoredRangeFormDataToDefaultValues();
     this.customDateSelected = false;
@@ -798,7 +801,6 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
 
   }
-
   gridRowClick(evt: any) {
     if (evt.rowType === 'group' || this.isButtonClick || this.approveRejectTask || this.actionsMenuClicked) {
       this.isButtonClick = false;
@@ -813,37 +815,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
     }
 
     this.dataGrid.instance.beginCustomLoading('Redirecting...');
-
-    let found = this.rowLinks.find(
-      x => x.objectTypeId === evt.data.OTID && x.objectTypeTypeId === evt.data.OTTID
-    );
-
-    found = found ?? this.rowLinks.find(x => x.objectTypeId === evt.data.OTID);
-
-    const urlLink = found ? found.urlLink : 'not found';
-
     this.saveStateToSession();
-
-    const isRenderFormPage = urlLink.includes('RenderForm.aspx')
-    const urlSplit = urlLink.split('?');
-    const queryParams = {};
-
-    if (urlSplit.length > 1) {
-      const params = urlSplit[1].split('&');
-      params.forEach(param => {
-        const [key, value] = param.split('=');
-        queryParams[key] = value
-          .replace(/\[OID\]/, evt.data.OID)
-          .replace(/\[OTID\]/, evt.data.OTID)
-          .replace(/\[OTTID\]/, evt.data.OTTID);
+    this.router.navigate(
+      ['/v06/Forms/RenderForm.aspx'],
+      {
+        queryParams: { oid: evt.data.OID, otid: evt.data.OTID, ottid: evt.data.OTTID }
       });
-    }
-    if (isRenderFormPage) {
-      this.router.navigate(['/crem/forms/render-form'], { queryParams });
-    }else{
-      this.router.navigate([urlSplit[0]], { queryParams });
-    }
- }
+  }
 
   gridInitialized(evt: any) {
     this.dataGrid.instance.beginCustomLoading('Initializing...');
@@ -1283,6 +1261,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.saveStateToSession();
   }
 
+  reLoadGrid(e: any) {
+    this.populateGrid();
+  }
+
   toggleListMap(viewMode: ListPageViewMode, saveToSession: boolean = true) {
     viewMode = viewMode ?? this.listPageViewMode;
 
@@ -1486,11 +1468,47 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.updateArchiveToggleValue();
   }
 
-  public btnAddItemNewClick() {
-    let dialogRef = this.dialog.open(AddFormWizardComponent, {
+  public btnAddItemNewClick(objectId) {
+
+    if (objectId === ObjectType.PROJECT) {
+      let dialogRef = this.dialog.open(AddFormWizardComponent, {
+        disableClose: true,
+        height: '81%',
+        width: '75%',
+        maxWidth: '1100px',
+        data: {
+          objectTypeId: this.objectTypeId,
+          userId: this.userId
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+
+        }
+      });
+    } else if (objectId === ObjectType.CONTACT) {
+      let dialogRef = this.dialog.open(AddContactModalComponent, {
+        disableClose: true,
+        height: '81%',
+        width: '75%',
+        maxWidth: '1100px',
+        data: {
+          objectTypeId: this.objectTypeId,
+          userId: this.userId
+        }
+      });
+      dialogRef.afterClosed().subscribe(() => {
+          this.populateGrid(true);
+      });
+    }
+  }
+
+  public btnAddCompany() {
+    let dialogRef = this.dialog.open(AddCompanyModalComponent, {
       disableClose: true,
-      height: '81%',
-      width: '75%',
+      height: '425px',
+      width: '700px',
       maxWidth: '1100px',
       data: {
         objectTypeId: this.objectTypeId,
@@ -1498,13 +1516,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-
-      }
-    });
+    dialogRef.afterClosed();
   }
-
   private updateArchiveToggleValue() {
     this.currentListView.archiveToggleValue = this.getArchiveToggleValue();
 
@@ -1758,8 +1771,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
         return null;
     }
   }
-  
-  getDataGridAllRows(){
+
+  getDataGridAllRows() {
     let grid: DataGrid | undefined = this.dataGrid?.instance;
     let filterExpr = grid?.getCombinedFilter(true);
     const dataSource = grid?.getDataSource();
@@ -1768,26 +1781,26 @@ export class ListPageComponent implements OnInit, OnDestroy {
     dataSource
       ?.store()
       .load({ filter: filterExpr, sort: loadOptions?.sort, group: loadOptions?.group })
-      .then((result: any) => { 
+      .then((result: any) => {
         allrows = result;
       });
-      return allrows;
+    return allrows;
   }
 
   private getVisibleFieldValuesFromGrid(fieldName: string): string[] {
 
     const result: string[] = [];
     const datagridAllRows = this.getDataGridAllRows();
-    datagridAllRows      
+    datagridAllRows
       .forEach((row) => {
-         if(row.hasOwnProperty('items') && Array.isArray(row.items)){
-            row.items.forEach((item) => {
-              result.push(item[fieldName]);
-              });
-         }
-         else{
+        if (row.hasOwnProperty('items') && Array.isArray(row.items)) {
+          row.items.forEach((item) => {
+            result.push(item[fieldName]);
+          });
+        }
+        else {
           result.push(row[fieldName]);
-         }
+        }
       });
 
     return result;
@@ -2491,20 +2504,20 @@ export class ListPageComponent implements OnInit, OnDestroy {
       masterGroupId: -1
     }
   }
-  
+
   adaAttr(e: any) {
     if (!e || !e.element) return;
     let buttons;
     if (e.element[0])
       buttons = e.element[0].querySelectorAll(".dx-selection");
-    else 
+    else
       buttons = e.element.querySelectorAll(".dx-selection");
-    
+
     buttons.forEach(button => {
       if (!button || !button.hasAttribute('aria-label') || !button.classList) return;
-        button.setAttribute('aria-current', 'page');
-    
-        this.pagingButtonsObserver = new MutationObserver(mutations => {
+      button.setAttribute('aria-current', 'page');
+
+      this.pagingButtonsObserver = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           if (!button.classList.contains('dx-selection')) {
             button.removeAttribute('aria-current');
@@ -2513,7 +2526,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
       this.pagingButtonsObserver.observe(button, { attributeFilter: ['class'] });
     });
-    
+
     //dx-navigate-button remove tabindex tabbing to disabled button
     const navigationButtons = e.element.querySelectorAll(".dx-navigate-button");
     navigationButtons.forEach(button => {
@@ -2544,25 +2557,25 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
 
-  adaAttrNoDataGrid(e:any) {
+  adaAttrNoDataGrid(e: any) {
     if (!e || !e.element) return;
-    
+
     let noDataEl;
     if (e.element[0])
       noDataEl = e.element[0].querySelector(".dx-empty");
-    else 
+    else
       noDataEl = e.element.querySelector(".dx-empty");
-      
+
     let spanChild = null;
 
     // Check if noDataEl exists
     if (noDataEl) {
-        spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
+      spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
     }
 
     // If either element is missing, exit the function
     if (!noDataEl || !spanChild) {
-        return;
+      return;
     }
 
     noDataEl.setAttribute("role", "row");

@@ -3,12 +3,10 @@ import { Component, ElementRef, Input, OnInit, QueryList, ViewChildren } from '@
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
-import { environment } from '../../../../../../../mango/src/environments/environment.local';
 import { CardDetails, MilestoneCardDetails, userSettings } from '../../models';
 import { CardsService } from '../../services/cards.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { CardContentDirective } from './cardContent.directive';
-
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'cards',
@@ -96,6 +94,7 @@ export class CardsComponent implements OnInit {
       if (currentIndex >= this.cards.length - 1) {
         return;
       }
+
       while (true) {
         if (this.cards[newIndex + 1].isActive == false) {
           newIndex += 1;
@@ -105,24 +104,26 @@ export class CardsComponent implements OnInit {
           break;
         }
       }
+
       moveItemInArray(this.cards, currentIndex, newIndex);
       this.activeCardElementId = card.elementId;
-
       const userSettingsData: userSettings[] = [];
-      this.cards.forEach((card, index) => {
-      userSettingsData[index] = this.cardsService.createUserSettingRec(card, index);
-    })
 
-    return this.dashboardService.postUserSettings(userSettingsData).subscribe(
-      (returnData: any) => (console.log("Returned results after card dragNDrop: ", returnData)),
-      (error: any) => console.log("Error occurred updating userSettings: ", error)
-    );
+      this.cards.forEach((card, index) => {
+        userSettingsData[index] = this.cardsService.createUserSettingRec(card, index);
+      })
+
+      return this.dashboardService.postUserSettings(userSettingsData).subscribe(
+        (returnData: any) => (console.log("Returned results after card dragNDrop: ", returnData)),
+        (error: any) => console.log("Error occurred updating userSettings: ", error)
+      );
     }
 
     if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
       if (currentIndex == 0) {
         return;
       }
+
       while (true) {
         
         if (this.cards[newIndex - 1].isActive == false) {
@@ -133,47 +134,36 @@ export class CardsComponent implements OnInit {
           break;
         }
       }
+
       moveItemInArray(this.cards, currentIndex, newIndex);
       this.activeCardElementId = card.elementId;
       const userSettingsData: userSettings[] = [];
-      this.cards.forEach((card, index) => {
-      userSettingsData[index] = this.cardsService.createUserSettingRec(card, index);
-    })
 
-    return this.dashboardService.postUserSettings(userSettingsData).subscribe(
-      (returnData: any) => (console.log("Returned results after card dragNDrop: ", returnData)),
-      (error: any) => console.log("Error occurred updating userSettings: ", error)
-    );
+      this.cards.forEach((card, index) => {
+        userSettingsData[index] = this.cardsService.createUserSettingRec(card, index);
+      })
+
+      return this.dashboardService.postUserSettings(userSettingsData).subscribe(
+        (returnData: any) => (console.log("Returned results after card dragNDrop: ", returnData)),
+        (error: any) => console.log("Error occurred updating userSettings: ", error)
+      );
     }
 
     if (event.code === "Enter" || event.code === "Space") {
       this.removeFocus();
     }
-
   }
 
   projectRowClick(e: any) {
     if (e.rowType === 'group' || e.event.target.localName == 'crem-button') {
       return;
     }
-
-    if (environment.isRestful) {
-      this.router.navigate(
-        ['crem/forms/render-form'],
-        {
-          queryParams: { fid: 312, oid: e.data.transactionID ?? e.data.transactionId, otid: e.data.objectTypeId, ottid: e.data.objectTypeTypeId }
-        });
-    } else {
-      const urlLink = `/Project/Tasks/View.asp?OID=${
-        e.data.transactionID ?? e.data.transactionId
-      }&OTID=${
-        e.data.objectTypeId
-      }&OTTID=${
-        e.data.objectTypeTypeId
-      }`;
-
-      document.location.href = urlLink;
-    }
+    
+    this.router.navigate(
+      ['/v06/Forms/RenderForm.aspx'],
+      {
+        queryParams: { oid: e.data.transactionID ?? e.data.transactionId, otid: e.data.objectTypeId, ottid: e.data.objectTypeTypeId }
+      });  
   }
 
   public getCards() {
@@ -181,5 +171,4 @@ export class CardsComponent implements OnInit {
       return this.cards.filter(card => card.isActive == true);
     }
   }
-
 }

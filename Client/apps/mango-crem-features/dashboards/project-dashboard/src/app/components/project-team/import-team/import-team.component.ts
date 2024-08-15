@@ -4,6 +4,7 @@ import { MemberInfo, Team } from '@mango/data-models/lib-data-models';
 import { ModalComponent } from '@mango/ui-shared/lib-ui-elements';
 import { CardsService } from '@project-dashboard/services/cards.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import dxCheckBox from 'devextreme/ui/check_box';
 import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
@@ -48,6 +49,13 @@ export class ImportTeamComponent {
 
   closeImportTeamDialog() {
     this.modalComponent.dialogRef.close('');
+  }
+
+  onCellPrepared(e) {
+    if(e.rowType !== 'header' && e.column.command == 'select') {
+      let htmlCellElement = e.cellElement;
+      htmlCellElement.setAttribute("id", "itt-teamId" + e.rowIndex);
+    }
   }
 
   onSelectionChanged(e:any) {

@@ -1,0 +1,39 @@
+@use "styles" as *;
+
+.tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+  @include costar(border-bottom, gray04);
+  @include costar(border-top, gray04);
+  @include costar(background-color, gray06);
+}
+
+.active {
+  border-bottom: 3px solid var(--costar-color-secondary) !important;
+}
+
+.tab-item {
+  &__link {
+    position: relative;
+
+    cursor: pointer;
+    padding: 11px 16px 8px 16px;
+    color: #000;
+    line-height: 17px;
+    @include costar(font-weight, medium);
+    @include costar(font-size, small);
+    border-bottom: 3px solid transparent;
+
+    &:hover {
+      background-color: #cfcbcb66;
+    }
+  }
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}

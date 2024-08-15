@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Meta, StoryObj, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, argsToTemplate, moduleMetadata } from '@storybook/angular';
 import { ButtonModule } from '../button';
 import { ButtonGroupComponent } from '../button-group/button-group.component';
 import { IconModule } from '../icon';
 import { InputLabelComponent } from '../input/label';
 import { PageHeaderComponent } from './page-header.component';
 import { DropdownModule } from '../dropdown';
-import { action } from '@storybook/addon-actions';
 
 const PORTFOLIO_FILTERS = `
 [
@@ -69,7 +68,7 @@ const SETTINGS_MOCK = `
 
 const meta: Meta<PageHeaderComponent> = {
   component: PageHeaderComponent,
-  title: 'Organisms/Page Header',
+  title: 'Organisms/Page Header *',
   decorators: [
     moduleMetadata({
       imports: [
@@ -164,7 +163,7 @@ const meta: Meta<PageHeaderComponent> = {
         }
       }
     },
-    onSearchClick: {
+    search: {
       name: 'onSearchClick()',
       type: 'function',
       description: 'Dispatch an event of type `string` containing the searched word when the search button is clicked',
@@ -172,7 +171,7 @@ const meta: Meta<PageHeaderComponent> = {
         category: 'Methods',
       }
     },
-    onBookmarkClick: {
+    bookmark: {
       name: 'onBookmarkClick()',
       type: 'function',
       description: 'Dispatch an event of type `Event` when bookmark button is clicked',
@@ -180,7 +179,7 @@ const meta: Meta<PageHeaderComponent> = {
         category: 'Methods',
       }
     },
-    onSettingsClick: {
+    settings: {
       name: 'onBookmarkClick()',
       type: 'function',
       description: 'Dispatch an event of type `Event` when settings button is clicked',

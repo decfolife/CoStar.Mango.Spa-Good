@@ -1,0 +1,71 @@
+<div id="crem-popup">
+  <dx-popup
+    [visible]="visible"
+    [showTitle]="!!title"
+    [height]="500"
+    [width]="500"
+    [wrapperAttr]="{ class: 'crem-popup', id: this.id }"
+    titleTemplate="title"
+    [width]="width"
+    [height]="height"
+    [resizeEnabled]="resizable"
+    [dragEnabled]="draggable"
+    [hideOnOutsideClick]="hideOnOutsideClick"
+  >
+    <div *dxTemplate="let data of 'title'">
+      <div class="crem-popup__title">
+        <crem-input-label
+          [label]="title"
+          [required]="false"
+          [showInfo]="showInfo"
+        ></crem-input-label>
+        <dx-button
+          *ngIf="showCloseButton"
+          stylingMode="text"
+          type="normal"
+          icon="close"
+          (click)="closePopup()"
+        >
+        </dx-button>
+      </div>
+    </div>
+    <div class="crem-popup__body" style="overflow-y: auto">
+      <ng-content select="[body]"></ng-content>
+    </div>
+    <div class="crem-popup__footer" *ngIf="customFooter">
+      <ng-content select="[footer]"></ng-content>
+    </div>
+    <div class="crem-popup__footer" *ngIf="!customFooter">
+      <crem-button
+        *ngIf="closeButtonText"
+        class="footer__close-button"
+        btnStyle="flat"
+        color="secondary"
+        [text]="closeButtonText"
+        (buttonClick)="onCloseClick()"
+        [id]="closeButtonId"
+        [disabled]="disableCloseButton"
+      ></crem-button>
+      <crem-button
+        *ngIf="applyButtonText"
+        class="footer__apply-button"
+        (buttonClick)="onApplyClick()"
+        btnStyle="flat"
+        color="primary"
+        [text]="applyButtonText"
+        [id]="applyButtonId"
+        [disabled]="disableSApplyButton"
+      ></crem-button>
+      <crem-button
+        *ngIf="saveButtonText"
+        class="footer__save-button"
+        (buttonClick)="onSaveClick()"
+        btnStyle="flat"
+        color="primary"
+        [text]="saveButtonText"
+        [id]="saveButtonId"
+        [disabled]="disableSaveButton"
+      ></crem-button>
+    </div>
+  </dx-popup>
+</div>

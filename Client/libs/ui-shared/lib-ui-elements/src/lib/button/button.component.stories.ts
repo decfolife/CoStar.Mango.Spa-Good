@@ -9,7 +9,7 @@ interface ButtonComponentStory extends ButtonComponent {
 }
 
 export default {
-  title: 'Components/Button',
+  title: 'Components/Button *',
   component: ButtonComponent,
   decorators: [
     moduleMetadata({
@@ -50,6 +50,7 @@ const Template: Story<ButtonComponentStory> = (args: ButtonComponentStory) => ({
 
 export const Default = Template.bind({});
 Default.args = {
+  id: 'button1',
   text: 'Button',
   btnStyle: 'flat',
   color: 'primary',
@@ -67,6 +68,7 @@ Default.args = {
 
 export const LoadingStatus = Template.bind({});
 LoadingStatus.args = {
+  id: 'button2',
   text: 'Button',
   btnStyle: 'flat',
   color: 'primary',
@@ -84,6 +86,7 @@ LoadingStatus.args = {
 
 export const CloseButton = Template.bind({});
 CloseButton.args = {
+  id: 'button3',
   btnStyle: 'basic',
   color: 'secondary',
   icon:  'cremXMark',

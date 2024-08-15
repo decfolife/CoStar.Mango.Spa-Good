@@ -1,21 +1,23 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 
-import { faFileExport } from '@fortawesome/free-solid-svg-icons';
-import notify from 'devextreme/ui/notify';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
 import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
+import { Asc842QuarterlyDisclosuresComponent } from '../views/asc-842-quarterly-disclosures/asc-842-quarterly-disclosures.component';
 import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
 import { switchMap, tap } from 'rxjs/operators';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
+import { ToastState } from '@mango/data-models/lib-data-models';
 import { CreateSegmentComponent } from '@reports/components/modal/create-segment/create-segment.component'
 
-import { selectBoxMenuItems, byItemMoreMenuOptions, moreMenuItem } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
+import { ModuleDropdownUtil } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/util/module.util';
+import { selectBoxMenuItems, byItemMoreMenuOptions } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
 import { ReportsService } from '@reports/services/reports.service';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 import hideToasts from "devextreme/ui/toast/hide_toasts";
 
 export interface DropdownSelection { // Todo: Move to type definition file
@@ -62,10 +64,15 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public criteriaSet: number;
   public workflowAlertsCriteriaSet: number;
   subs: Subscription[] = [];
-  faFileExport = faFileExport;
   public hasSegmentDeleteRight: boolean;
   public hasSegmentsAddRight: boolean;
   public hasSegmentsViewRight: boolean;
+  public isSegmentEdited: boolean =  false;
+  public editingSegment: number;
+  /**
+   * For the export button, changes the state of the button
+   */
+  public exportingReport: boolean = false;
 
   public moreMenuSegment: any;
 
@@ -77,6 +84,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   bySegmentMoreMenuOptions: byItemMoreMenuOptions;
 
   @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
+  @ViewChild(Asc842QuarterlyDisclosuresComponent) Asc842QuarterlyDisclosuresComponent;
   @ViewChild(WorkflowAndAlertsComponent) workflowAndAlertsComponent;
   @ViewChild(Ifrs16AnnualDisclosuresComponent) ifrs16AnnualDisclosuresComponent;
 
@@ -84,51 +92,88 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     private inAppDisclosureService: InAppDisclosureService,
     private reportsService: ReportsService,
     public dialog: MatDialog,
+    private toastService: CremToastService
   ) {
     this.itemMenuInnerOptions = [
       {
         type: 'menu',
         name: 'Make Default',
-        comparingValue: 'default',
         attribute: 'segmentID',
         action: () => this.setDefaultSegment(this.moreMenuSegment.segmentID, this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet),
         stopPropagation: true,
-        dataTransformer: [
+        transform: [
           {
-            condition: 1, disabled: true
-          }
-        ]
+            comparingKey: 'default',
+            operator: '=',
+            comparingValue: 1,
+            disabled: true,
+            title: 'This segment is already the default option.'
+          },
+        ],
       },
-      { type: 'separator' },
+      {
+        type: 'separator',
+      },
       {
         type: 'menu',
         name: 'Edit',
-        comparingValue: 'rights',
         attribute: 'segmentID',
         action: () => this.edit(this.moreMenuSegment),
         stopPropagation: false,
+        transform: [
+          {
+            comparingKey: 'activeRecordsVisibleToMe',
+            operator: '=',
+            comparingValue: true,
+            title: "This segment is automatically generated and includes all records accessible to you.",
+            disabled: true,
+          },
+          {
+            comparingKey: 'securityTypeID',
+            operator: '<',
+            comparingValue: 4,
+            name: 'View',
+          },
+          {
+            comparingKey: 'securityTypeID',
+            operator: '>=',
+            comparingValue: 4,
+            name: 'Edit',
+          },
+        ],
+        // deprecated option: 'dataTransformer' and 'comparingValue',  use the 'transform' option instead
+        comparingValue: 'rights',
         dataTransformer: [
           {condition: 'View', name: 'View'},
           {condition: 'Edit', name: 'Edit'},
           {condition: 'Delete', name: 'Edit'},
         ],
       },
-      { type: 'separator' },
+      {
+        type: 'separator',
+      },
       {
         type: 'menu',
         name: 'Archive',
-        comparingValue: 'rights',
         attribute: 'segmentID',
         action: () => this.archiveAction(this.moreMenuSegment),
         stopPropagation: false,
-        dataTransformer: [
-          // Possible Responses: 1 Restricted View | 2 View | 3 Add | 4 Edit | 5 delete | 6 Block
-          {condition: 'Restricted View', disabled: true, title:'You don\'t have rights', operator: '='},
-          {condition: 'View', disabled: true, title:'You don\'t have rights'},
-          {condition: 'Add', disabled: true, title:'You don\'t have rights'},
-          {condition: 'Edit', disabled: true, title:'You don\'t have rights'},
-          {condition: 'Delete', disabled: false,},
-          {condition: 'Block', disabled: false,},
+        // Possible Responses: 1 Restricted View | 2 View | 3 Add | 4 Edit | 5 delete | 6 Block
+        transform: [
+          {
+            comparingKey: 'securityTypeID',
+            operator: '=',
+            comparingValue: 4,
+            disabled: true,
+            title:'You have Edit rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.',
+          },
+            {
+              comparingKey: 'securityTypeID',
+              operator: '=',
+              comparingValue: 2,
+              disabled: true,
+              title:'You have View rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.',
+            },
         ],
       },
     ];
@@ -158,12 +203,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               }
               //fetch criteriaSetID for each view;
               this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-              this.bySegmentMoreMenuOptions = this.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
+              this.bySegmentMoreMenuOptions = ModuleDropdownUtil.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
               this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1)?.segmentID || this.accountingSegmentData?.[0].segmentID;
               this.appliedSegment = this.selectedSegment;
               this.loading = false;
             });
-
         this.subs.push(observableItem);
 
       }
@@ -171,6 +215,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     this.subs.push(
       this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
         if (result.data) {
+   
           this.hasSegmentDeleteRight = result.data.securityTypeID >= 5;
           this.hasSegmentsAddRight = result.data.securityTypeID >= 3;
           this.hasSegmentsViewRight = result.data.securityTypeID >= 2;
@@ -200,96 +245,18 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   prepareSegmentDropdown(data: any): any { // Transform dropdown options data to be used by crem-dropdown
     const dropdownData = [];
     let visibleToMeIndex: number;
-
     data.map( (e,i) => {
       if( e.default === 1){ // If default is on, add a secondary text
         e['secondaryText'] = '(Default)';
       }
-      if( e.activeRecordsVisibleToMe && i != 0 ){ // get the activeRecordsVisibleToMe's Index
+      if( e.activeRecordsVisibleToMe ){ // get the activeRecordsVisibleToMe's Index
         visibleToMeIndex = i;
-        e['itemClass'] = 'visible-to-me';
+        e['itemClass'] = 'visible-to-me'; // Add moreMenu class to segment 'Active records Visible to me'
       }
       dropdownData.push(e)
     });
     visibleToMeIndex && dropdownData.unshift(dropdownData.splice(visibleToMeIndex,1)[0]); // Move default 'Visible to Me' to index 0, if visibleToMeIndex exists
-
     return dropdownData;
-  }
-
-  /**
-   * Prepares more menu items for a given set of data.
-   * This method combines the 'moreMenuData' data and the 'itemMenu' object configuration creating an ellipsis/menu for each menu item.
-   *
-   * @method
-   * @param {any[]} moreMenuData - An array of data representing the main menu items. If it has a moreMenu.
-   * @param {selectBoxMenuItems} itemMenu - The select box menu items configuration.
-   * @returns {moreMenuItem[]} itemsWithMoreMenu - An array of main menu items with associated more menu options.
-   * @throws {Error} Will throw an error if there is an issue preparing the more menu items.
-   * @todo This function must be moved to the crem-dropdown shared component.
-   */
-  prepareMoreMenu(moreMenuData: any[], itemMenu: selectBoxMenuItems) {
-    const itemsWithMoreMenu = [];
-
-    moreMenuData.map( (menuItem) => {
-      const menuItems = [];
-      itemMenu.map( e => {
-        let newItem: Partial<moreMenuItem> = {};
-        newItem = this.prepareItemMoreMenu(e, menuItem[e.comparingValue] ?? undefined, menuItem[e.attribute] ?? undefined); // Transform more menu
-        menuItems.push(newItem); // Build Array of Menu Options
-      });
-
-      // Add Array of Menu Options to Segment Object
-      moreMenuData = menuItem;
-      moreMenuData['moreMenu'] = menuItems;
-      itemsWithMoreMenu.push(moreMenuData);
-
-    });
-
-    return itemsWithMoreMenu;
-  }
-
-  /**
-   * Prepare an Item for the 'crem-dropdown' More Menu
-   *
-   * @method
-   * @param {moreMenuItem} menuItem: Main element to be transformed
-   * @param {(string | number | boolean)} comparingValue: If compared with the condition provided as part of the menu item.
-   * @param {*} [attribute]: Adds an additional custom element to the menu item, this is the value of the attributeName.
-   * @param {string} [attributeName]: Name of the attribute, if non provided the attribute name will be 'attribute'.
-   * @return {*}  {moreMenuItem}: Returning Item for the more menu.
-   * @memberof DashboardWrapperComponent
-   * @todo This needs to be moved to the 'crem-dropdown' shared component.
-   */
-  prepareItemMoreMenu(menuItem: moreMenuItem, comparingValue?: string | number | boolean, attribute?: any, attributeName?: string): moreMenuItem {
-    const item = {...menuItem}
-    if(item.dataTransformer){
-      if (comparingValue) { // Only proceeds if there is something to compare with
-        const elementExists = item.dataTransformer.find( e => {
-          switch(e.operator) {
-            case '>=':
-              return e.condition >= comparingValue;
-            case '<=':
-              return e.condition <= comparingValue;
-            case '>':
-              return e.condition > comparingValue;
-            case '<':
-              return e.condition < comparingValue;
-            case '!=':
-              return e.condition != comparingValue;
-            case '=':
-            default:
-              return e.condition === comparingValue;
-          }
-        });
-        if(elementExists){
-          item.name = elementExists?.name ?? item.name;
-          item.title = elementExists?.title ?? item.title;
-          item.disabled = elementExists?.disabled ? elementExists?.disabled : item.disabled || false;
-        }
-        attribute && (item[ attributeName ?? 'attribute'] = attribute); // Adding custom attribute if exists
-      }
-    }
-    return item;
   }
 
   public onAccountingViewChange(data: DropdownSelection[]) {
@@ -323,10 +290,13 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         }),
         tap( r => {
           this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-          this.bySegmentMoreMenuOptions = this.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
-          if (refresh) {
+          this.bySegmentMoreMenuOptions = ModuleDropdownUtil.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
+          if (refresh && !this.isSegmentEdited) {
             this.selectedSegment = this.accountingSegmentData.find(s => s.default === 1)?.segmentID || this.accountingSegmentData[0].segmentID;
             this.appliedSegment = this.selectedSegment;
+          }
+          if (this.isSegmentEdited) {
+            this.selectedSegment = this.editingSegment;
           }
           this.selectedView = view;
           this.loading = false;
@@ -358,6 +328,10 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         this.asc842AnnualDisclosuresComponent.refreshCardData();
         break;
       }
+      case 3: {
+        this.Asc842QuarterlyDisclosuresComponent.refreshCardData();
+        break;
+      }
       case 4: {
         this.ifrs16AnnualDisclosuresComponent.updateCards();
         break;
@@ -367,60 +341,70 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   public export() {
-    notify({
-      message: 'Report will be exported shortly.',
-      type: 'success',
-      displayTime: 3000,
-      position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-      maxWidth: '500px',
-      closeOnClick: true,
-    });
-    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, "usd", this.selectedView + 2).subscribe((result) => {
-      if(result.data) {        
-        notify({
-          contentTemplate: function (e) {
-            let blob = new Blob([result.data.body], {type: 'application/octet-stream'});
-            let downloadURL = URL.createObjectURL(blob);
-            let div = document.createElement('div');
-            let a = document.createElement('a');
-            let span1 = document.createElement('span')
-            let span2 = document.createElement('span');
-            let beforeText = document.createTextNode("Report is ready for download, ");
-            let afterText = document.createTextNode(" to download report.");
-            span1.appendChild(beforeText);
-            span2.appendChild(afterText);
-            let linkText = document.createTextNode("click here");
-            div.appendChild(span1)
-            div.appendChild(a)
-            div.appendChild(span2)
-            a.appendChild(linkText);
-            a.href = downloadURL;
-            a.style.color = "white";
-            a.style.textDecoration = "underline";
-            a.onclick = () => { hideToasts(); };
-            let contentDisposition = result.data.headers.get('content-disposition') as String;
-            let fileName = contentDisposition.split(/[=;]/)[2];
-            a.download = fileName;
-            return div;
-          },
-          type: 'success',
-          displayTime: 999999999,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-          maxWidth: '500px',
-
-          closeOnClick: false,
-        })
-      } else {
-        notify({
-          message: 'Export failed.',
-          type: 'error',
-          displayTime: 5000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-          maxWidth: '500px',
-          closeOnClick: true,
-        })
+    this.exportingReport = true;
+    this.toastService.show(
+      "Report will be exported shortly.",
+      undefined,
+      ToastState.SUCCESS,
+      {
+        maxWidth: '360px',
+        duration: 3000,
       }
+    );
+
+    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, "usd", this.selectedView + 2).subscribe((result) => {
+      if(result.data) {
+        this.toastService.show(
+          undefined,
+          undefined,
+          ToastState.SUCCESS,
+          {
+            maxWidth: '500px',
+            duration: 999999999,
+            closeOnClick: true,
+          },
+          this.getDownloadContentTemplate(result.data),
+        );
+      } else {
+        this.toastService.show(
+          undefined,
+          'Export failed.',
+          ToastState.ERROR,
+          {
+            maxWidth: '500px',
+            duration: 5000,
+          },
+          this.getDownloadContentTemplate(result.data),
+        );
+      }
+      this.exportingReport = false;
     });
+  }
+
+  getDownloadContentTemplate(data): string {
+    const blob = new Blob([data.body], {type: 'application/octet-stream'});
+    const downloadURL = URL.createObjectURL(blob);
+    const div = document.createElement('div');
+    const a = document.createElement('a');
+    const span1 = document.createElement('span')
+    const span2 = document.createElement('span');
+    const beforeText = document.createTextNode("Report is ready for download, ");
+    const afterText = document.createTextNode(" to download report.");
+    span1.appendChild(beforeText);
+    span2.appendChild(afterText);
+    const linkText = document.createTextNode("click here");
+    div.appendChild(span1)
+    div.appendChild(a)
+    div.appendChild(span2)
+    a.appendChild(linkText);
+    a.href = downloadURL;
+    a.style.color = "white";
+    a.style.textDecoration = "underline";
+    a.onclick = () => { hideToasts(); };
+    const contentDisposition = data.headers.get('content-disposition') as string;
+    const fileName = contentDisposition.split(/[=;]/)[2];
+    a.download = fileName;
+    return div.outerHTML;
   }
 
   launchSettingsModal() {
@@ -453,12 +437,13 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           hideToastsOn: 'Accounting Workflow and Alerts',
         }
       });
-      const editingSegment = data.segmentID;
+      this. editingSegment = data.segmentID;
       dialogRef.afterClosed().subscribe((data) => {
-        if (editingSegment == this.appliedSegment) {
+        if (this. editingSegment == this.appliedSegment) {
           if (data === "refresh") {
             this.loading = true;
             this.getSegments(this.selectedView, true);
+            this.isSegmentEdited = true;
           } else if (data) {
             this.redirectDialog(data)
           }
@@ -485,14 +470,15 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           } else {
             this.getSegments(this.selectedView, false);
           }
-          notify({
-            message: 'Segment archived successfully.',
-            type: 'success',
-            displayTime: 5000,
-            position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-            maxWidth: '500px',
-            closeOnClick: true,
-          });
+          this.toastService.show(
+            'Segment archived successfully.',
+            undefined,
+            ToastState.SUCCESS,
+            {
+              maxWidth: '500px',
+              duration: 5000,
+            }
+          );
         } else {
           //error
         }
@@ -501,14 +487,15 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       this.reportsService.unarchiveSegment(request).subscribe((result) => {
         if (result) {
           this.getSegments(this.selectedView, false);
-          notify({
-            message: 'Segment unarchived successfully.',
-            type: 'success',
-            displayTime: 5000,
-            position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-            maxWidth: '500px',
-            closeOnClick: true,
-          });
+          this.toastService.show(
+            'Segment unarchived successfully.',
+            undefined,
+            ToastState.SUCCESS,
+            {
+              maxWidth: '500px',
+              duration: 5000,
+            }
+          );
         } else {
           //error
         }
@@ -524,7 +511,6 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   archiveActionForDefault(data:any){
     if(data.default === 1){// If user archiving the default segment, then make 'Visible to me' the default
       const visibleTomeSegmentId = this.accountingSegmentData.filter(e=>e.activeRecordsVisibleToMe)[0].segmentID;
-      console.log('visibleTomeSegmentId',visibleTomeSegmentId)
       if(visibleTomeSegmentId){// If 'Visible to me' exists then make it the default
         this.setDefaultSegment(visibleTomeSegmentId,data.criteriaSetID);
       } else{ // If 'Visible to me' doesn't exists, select the first element of the list as default
@@ -559,7 +545,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe)
+    this.subs.forEach(s => s.unsubscribe())
   }
 
 }

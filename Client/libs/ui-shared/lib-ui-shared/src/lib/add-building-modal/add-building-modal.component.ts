@@ -1,19 +1,16 @@
-import { combineLatest, forkJoin, of, Subscription } from 'rxjs';
-import notify from 'devextreme/ui/notify';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { DxFormComponent } from 'devextreme-angular';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { Component, EventEmitter, Inject, OnInit, Output, ViewChild, OnDestroy } from '@angular/core';
+import { InputComponent, DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
-import { filter, map, switchMap, tap } from 'rxjs/operators'
-
-//Constants
-const RENDER_SELECT_TEMPLATE_ID = 57;
-const RENDER_SELECT_HIERARCHY_ID = 10
-const RENDER_SELECT_SUBGROUP_ID = 9;
-const OTID = 3;
-
+import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import notify from 'devextreme/ui/notify';
+import { Observable, Subscription, combineLatest } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/operators';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
+import { ToastState, ObjectType, RequestType } from '@mango/data-models/lib-data-models';
+import { DataService } from '@mango/core-shared';
 
 @Component({
   selector: 'mango-add-building-modal',
@@ -22,54 +19,66 @@ const OTID = 3;
 })
 
 export class AddBuildingModalComponent implements OnInit, OnDestroy {
-  public contentVisible = true;
-  public countryDropdownItem: any = [];
-  public enableStateTextBox: boolean = false;
-  public hierarchyDropdownItem: any = [];
+  contentVisible = true;
+  countryDropdownItem: any = [];
+  enableStateTextBox: boolean = false;
+  hierarchyDropdownItem: any = [];
   private newBuildingSaved = false;
-  public loading = true;
-  public modalTitle: string;
-  public dynName: string;
-  public portfolioDropdownItem: any = [];
-  public stateDropdownItem: any = [];
-  public subGroupDropdownItem: any = [];
-  public templateDropdownItem: any = [];
-  public enableHierachyDropDown: any = [];
-  public enableSubGroupDropDown: any = [];
+  loading = true;
+  modalTitle: string;
+  dynName: string;
+  portfolioDropdownItem: any = [];
+  stateDropdownItem: any = [];
+  subGroupDropdownItem: any = [];
+  templateDropdownItem: any = [];
+  enableHierachyDropDown: any = [];
+  enableSubGroupDropDown: boolean = false;
+  enableStateDropDown: boolean = true;
   private subscriptions = new Subscription();
+  initialFocusElement: string;
+  saveClicked: boolean;
+  saveNewClicked: boolean;
+  saveLaunchClicked: boolean;
+  private redirectorLinks: any[] = null;
 
+  addBuildingFormGroup: FormGroup
 
   @Output() isLoading = new EventEmitter();
-  @ViewChild('addBuildingForm') addBuildingForm: DxFormComponent;
+  @ViewChild("BuildingName") buildingNameTextBox: InputComponent;
+  @ViewChild("buildingPortfolioId") buildingPortfolioIdDropdown: DropdownComponent;
+  @ViewChild("buildingTemplateId") buildingTemplateIdDropdown: DropdownComponent;
+  @ViewChild("buildingHierarchyId") buildingHierarchyIdDropdown: DropdownComponent;
+  @ViewChild("buildingCountryId") buildingCountryIdDropdown: DropdownComponent;
+  @ViewChild("buildingCountryId") buildingSubGroupIdIdDropdown: DropdownComponent;
 
   constructor(
     public dialogRef: MatDialogRef<AddBuildingModalComponent>,
     private formWizardService: FormWizardService,
     private dashboardService: DashboardService,
     private router: Router,
+    private dataService: DataService,
+    private toastService: CremToastService,
     @Inject(MAT_DIALOG_DATA) public data: {
       objectTypeName: string;
       objectTypeId: number;
     }
-
-  ) {
-    this.onCountryChanged = this.onCountryChanged.bind(this);
-    this.onPortFolioValueChanged = this.onPortFolioValueChanged.bind(this);
-  }
+  ) { }
 
   ngOnInit(): void {
-    this.subscriptions.add(
-      this.dialogRef.keydownEvents().subscribe((event) => {
-        if (event.key === "Escape") {
-          this.close();
-        }
-      })
-    );
-    this.getDropdownData();
+
+    this.setupAddBuildingForm()
+
+    this.subscriptions.add(this.loadDropdownData().subscribe())
+    this.subscriptions.add(this.loadClientHierarchy().subscribe())
+    this.subscriptions.add(this.loadPortfolioSubGroup().subscribe())
+    this.subscriptions.add(this.onPortfolioValueChange().subscribe())
+    this.subscriptions.add(this.onCountryValueChange().subscribe())
+    this.subscriptions.add(this.setupModalKeyboardClose().subscribe())
+
 
     if (!this.data.objectTypeName) {
       this.subscriptions.add(
-        this.dashboardService.getObjectTypeNames([3]).subscribe(
+        this.dashboardService.getObjectTypeNames([ObjectType.BUILDING]).subscribe(
           (result) => {
             this.data.objectTypeName = result?.data?.[0]?.objectTypeName;
             this.buildModalTitle();
@@ -80,105 +89,125 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
       this.buildModalTitle();
     }
 
-
-    this.subscriptions.add(
-      this.formWizardService.getClientPreferenceByField("ClientHierarchyLevel").subscribe(
-        (result) => {
-          const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
-          this.enableHierachyDropDown = mappedValues?.some(value => value.toLowerCase().includes('building') || value.toLowerCase().includes('both'));
-        }
-      )
-    )
-
-    this.subscriptions.add(this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").subscribe(
-      (result) => {
-        const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
-
-        // this checks the client site configuration to determine if the sub group dropdown should be required or not
-        this.enableSubGroupDropDown = mappedValues?.some(value => value.includes('1'));
-      }
-    ));
-  }
-
-  ngAfterViewInit(): void {
-    this.isLoading.emit(this.loading);
-  }
-
-  ngOnDestroy(): void {
-    //close all subscriptions in this component
-    this.subscriptions.unsubscribe();
-  }
-
-  public getDropdownData() {
-    this.subscriptions.add(
-      combineLatest([
-        this.formWizardService.getRenderSelect("United States", 17),
-        this.formWizardService.getRenderSelect("0", 16),
-        this.formWizardService.getRenderSelect("", 62),
-        this.formWizardService.getRenderSelect("United States", 17)
-      ]).pipe(
-        filter(([
-          templateDropdownItem,
-          countryDropdownItem,
-          portfolioDropdownItem,
-          stateDropDownItem
-        ]) => !!templateDropdownItem && !!countryDropdownItem && !!portfolioDropdownItem && !!stateDropDownItem),
-        tap(([
-          templateDropdownItem,
-          countryDropdownItem,
-          portfolioDropdownItem,
-          stateDropDownItem
-        ]) => {
-          this.countryDropdownItem = countryDropdownItem.data;
-          this.templateDropdownItem = templateDropdownItem.data.map(projectTemplateName => projectTemplateName.ProjectTemplateName);
-          this.portfolioDropdownItem = portfolioDropdownItem.data;
-          this.stateDropdownItem = stateDropDownItem.data;
-          this.loading = false;
-          this.focusFirstItem();
+    if (this.redirectorLinks === null) {
+      this.subscriptions.add(
+        this.dataService.getRedirectorLinkList().subscribe(res => {
+          this.redirectorLinks = res.data;
         })
-      ).subscribe())
-  }
-
-  onCountryChanged(e: any) {
-    if (e.value == 'United States') {
-      this.enableStateTextBox = false;
-    } else {
-      this.enableStateTextBox = true;
+      );
     }
   }
 
-  // this funciton dynamically builds the form title and the name label in the form
-  public buildModalTitle() {
-    this.modalTitle = "Create " + this.data.objectTypeName;
-    this.dynName = this.data.objectTypeName
+  ngAfterViewInit(): void {
+    this.buildingNameTextBox.focusTextBox();
+    this.isLoading.emit(this.loading);
   }
-  // end 
 
-  onPortFolioValueChanged(e: any) {
-    of(e.value).pipe(
-      filter(value => !!value),
-      switchMap(value =>
+  setupAddBuildingForm() {
+    this.addBuildingFormGroup = new FormGroup({
+      buildingName: new FormControl('', [Validators.required]),
+      buildingAddress: new FormControl(''),
+      buildingCity: new FormControl(''),
+      buildingState: new FormControl(''),
+      buildingZipCode: new FormControl(''),
+      selectedPortfolio: new FormControl('', [Validators.required]),
+      selectedTemplate: new FormControl('', [Validators.required]),
+      selectedHierarchy: new FormControl(''),
+      selectedCountry: new FormControl(''),
+      selectedSubGroup: new FormControl(''),
+      buildingStateInput: new FormControl(''),
+    })
+  }
+
+  setupModalKeyboardClose(): Observable<any> {
+    return this.dialogRef.keydownEvents().pipe(
+      filter(event => !!event && event.key === 'Escape'),
+      tap(_ => this.close())
+    )
+  }
+
+  loadDropdownData(): Observable<any> {
+    return combineLatest([
+      this.formWizardService.getRenderSelect("0", RequestType.COUNTRIES_ALL),
+      this.formWizardService.getRenderSelect("", RequestType.PORTFOLIO_LIST),
+      this.formWizardService.getRenderSelect("United States", RequestType.STATES_BY_COUNTRYNAME)
+    ]).pipe(
+      filter(([
+        countryDropdownItem,
+        portfolioDropdownItem,
+        stateDropDownItem
+      ]) => !!countryDropdownItem && !!portfolioDropdownItem && !!stateDropDownItem),
+      tap(([
+        countryDropdownItem,
+        portfolioDropdownItem,
+        stateDropDownItem
+      ]) => {
+        this.countryDropdownItem = countryDropdownItem.data;
+        this.portfolioDropdownItem = portfolioDropdownItem.data;
+        this.stateDropdownItem = stateDropDownItem.data;
+        this.loading = false;
+      })
+    )
+  }
+
+  loadClientHierarchy(): Observable<any> {
+    return this.formWizardService.getClientPreferenceByField("ClientHierarchyLevel").pipe(
+      tap(result => {
+        const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
+        this.enableHierachyDropDown = mappedValues?.some(value => value.toLowerCase().includes('building') || value.toLowerCase().includes('both'));
+      }
+      ))
+  }
+
+  loadPortfolioSubGroup(): Observable<any> {
+    return this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").pipe(
+      tap(result => {
+        const mappedValues = result.data.map(ClientSetupFieldValue => ClientSetupFieldValue.ClientSetupFieldValue);
+        this.enableSubGroupDropDown = mappedValues?.some(value => value.includes('1'));
+      }
+      ))
+  }
+
+  onCountryValueChange(): Observable<any> {
+    return this.addBuildingFormGroup.get('selectedCountry').valueChanges.pipe(
+      filter(country => !!country),
+      tap(country => {
+        this.enableStateDropDown = (country === "United States");
+      })
+    );
+  }
+
+  onPortfolioValueChange(): Observable<any> {
+    return this.addBuildingFormGroup.get('selectedPortfolio').valueChanges.pipe(
+      filter(companyID => !!companyID),
+      switchMap(companyID =>
         combineLatest([
-          this.formWizardService.getRenderSelect(value, RENDER_SELECT_TEMPLATE_ID).pipe(filter(v => !!v)),
-          this.formWizardService.getRenderSelect(value, RENDER_SELECT_HIERARCHY_ID).pipe(filter(v => !!v)),
-          this.formWizardService.getRenderSelect(value, RENDER_SELECT_SUBGROUP_ID).pipe(filter(v => !!v))
+          this.formWizardService.getRenderSelect(companyID, RequestType.TEMPLATE_ID).pipe(filter(v => !!v)),
+          this.formWizardService.getRenderSelect(companyID, RequestType.HIERARCHY_ID).pipe(filter(v => !!v)),
+          this.formWizardService.getRenderSelect(companyID, RequestType.SUBGROUP_ID).pipe(filter(v => !!v))
         ])
       ),
-      map(([templates, hierachies, subgroups]) => {
+      tap(([templates, hierachies, subgroups]) => {
         this.templateDropdownItem = templates.data;
         this.hierarchyDropdownItem = hierachies.data;
         this.subGroupDropdownItem = subgroups.data
       })
-    ).subscribe()
+    )
   }
 
-  public close() {
+
+  buildModalTitle() {
+    this.modalTitle = "Create " + this.data.objectTypeName;
+    this.dynName = this.data.objectTypeName
+  }
+
+  close() {
     if (!this.newBuildingSaved) {
       this.dialogRef.close();
     }
   }
 
-  public showMessage() {
+  showMessage() {
     notify({
       message: 'Building saved successfully.',
       type: 'success',
@@ -190,114 +219,120 @@ export class AddBuildingModalComponent implements OnInit, OnDestroy {
   }
 
   private getBuildingFromFormData() {
-    const formData = this.addBuildingForm.formData;
-    let building = {
-      buildingAddress: formData.buildingAddress,
-      buildingCity: formData.buildingCity,
-      buildingCountry: formData.buildingCountry,
-      buildingMasterGroupID: formData.portfolio,
-      buildingName: formData.buildingName,
-      buildingState: formData.buildingState,
-      buildingZipCode: formData.buildingZipCode,
-      objectTypeTypeID: formData.template,
-      portfolioSubGroupID: formData.tenantID,
-      tenantID: formData.hierarchy
+    const form = this.addBuildingFormGroup;
+    return {
+      buildingAddress: form.get('buildingAddress').value,
+      buildingCity: form.get('buildingCity').value,
+      buildingCountry: form.get('selectedCountry').value,
+      buildingMasterGroupID: form.get('selectedPortfolio').value,
+      buildingName: form.get('buildingName').value,
+      buildingState: form.get('buildingStateInput').value
+        ? form.get('buildingStateInput').value
+        : form.get('buildingState').value,
+      buildingZipCode: form.get('buildingZipCode').value,
+      objectTypeTypeID: form.get('selectedTemplate').value,
+      portfolioSubGroupID: form.get('selectedSubGroup').value,
+      tenantID: form.get('selectedHierarchy').value
+        ? Number(form.get('selectedHierarchy').value)
+        : null,
     };
-    return building;
   }
 
-  private focusFirstItem() {
-    setTimeout(() => {
-      let buildingNameInput = this.addBuildingForm.instance.getEditor('buildingName')
-      buildingNameInput.focus()
-    }, 200);
-  }
-
-  //button functions
-  public validateForm(e: any) {
-    this.addBuildingForm.instance.validate();
-  }
-
-  private handleAddBuildingResult(success: boolean, isSaveAndNew: boolean) {
-    if (success) {
-      this.showMessage();
-      if (isSaveAndNew) {
-        this.newBuildingSaved = true;
-        this.addBuildingForm.instance.resetValues();
-      } else {
-        setTimeout(() => {
+  save(e: any) {
+    if (this.addBuildingFormGroup.valid) {
+      this.saveClicked = true;
+      const building = this.getBuildingFromFormData();
+      this.subscriptions.add(this.formWizardService.addBuilding(building).subscribe((result) => {
+        if (result.data) {
+          this.toastService.show(
+            this.dynName + " created successfully",
+            '',
+            ToastState.SUCCESS,
+            {
+              maxWidth: "500px",
+              duration: 5000,
+            }
+          );
           this.dialogRef.close();
-          location.reload();
-        }, 1000);
-      }
-    }
-    this.loading = false;
-  }
-
-  public save(e: any) {
-    const isFormValid = this.addBuildingForm.instance.validate();
-    if (isFormValid.isValid) {
-      const building = this.getBuildingFromFormData();
-      this.loading = true;
-      this.subscriptions.add(this.formWizardService.addBuilding(building).subscribe((result) => {
-        this.handleAddBuildingResult(result.success, false);
+          this.saveClicked = false;
+        } else {
+          this.toastService.show("Save not successful", "Save failed.", ToastState.ERROR, {
+            position: 'bottom right',
+            maxWidth: '350px'
+          });
+        }
       }));
     }
   }
 
-  public saveAndNew(e: any) {
-    const isFormValid = this.addBuildingForm.instance.validate();
-    if (isFormValid.isValid) {
+  saveAndNew(e: any) {
+    if (this.addBuildingFormGroup.valid) {
       const building = this.getBuildingFromFormData();
-      this.loading = true;
+      this.saveNewClicked = true;
       this.subscriptions.add(this.formWizardService.addBuilding(building).subscribe((result) => {
-        this.handleAddBuildingResult(result.success, true);
+        if (result.success) {
+          this.toastService.show(this.dynName + " created successfully.", '', ToastState.SUCCESS, {
+            position: 'bottom right',
+            maxWidth: '350px'
+          });
+          this.saveNewClicked = false;
+          this.resetInputFields();
+        } else {
+          this.toastService.show('An error has occurred. Please try again.', '', ToastState.ERROR, {
+            position: 'bottom right',
+            maxWidth: '350px'
+          });
+        }
       }));
     }
   }
 
-  public launch(data: any) {
-    const isFormValid = this.addBuildingForm.instance.validate();
+  resetInputFields() {
+    this.addBuildingFormGroup.reset();
+    this.buildingPortfolioIdDropdown.clearSelectBox();
+    this.buildingTemplateIdDropdown.clearSelectBox();
+    this.buildingHierarchyIdDropdown.clearSelectBox();
+    this.buildingCountryIdDropdown.clearSelectBox();
+    this.buildingSubGroupIdIdDropdown.clearSelectBox();
+  }
 
-    if (isFormValid) {
+
+  launch(data: any) {
+    if (this.addBuildingFormGroup.valid) {
+      this.saveLaunchClicked = true;
       const formData = this.getBuildingFromFormData();
-      this.loading = true;
-
-      this.formWizardService.addBuilding(formData).pipe(
-        switchMap((addBuildingResult) => {
-          if (addBuildingResult.success) {
-            const buidlingID: number = addBuildingResult.data;
-
-            return forkJoin({
-              redirectorLinkResult: this.formWizardService.getRedirectorLink(OTID, formData.objectTypeTypeID),
-              buidlingID: of(buidlingID),
-            });
-          } else {
-            return of(null);
-          }
-        }),
-        switchMap((results) => {
-          if (results && results.redirectorLinkResult.success && results.redirectorLinkResult.data?.length > 0) {
-            const RDID = '';
-            const url =
-              results.redirectorLinkResult.data[0].BasePageUrl +
-              '&pgMode=' +
-              'Edit' +
-              '&OID=' +
-              results.buidlingID +
-              '&OTID=' +
-              OTID +
-              '&OTTID=' +
-              formData.objectTypeTypeID;
-            this.router.navigate([url]);
-            this.showMessage();
-            this.dialogRef.close(data);
-          }
-          return of(null);
-        })
-      ).subscribe(() => {
-        this.loading = false;
-      });
+      this.subscriptions.add(this.formWizardService.addBuilding(formData).subscribe((result) => {
+        if (result.success) {
+          this.saveLaunchClicked = false;
+          this.dialogRef.close();
+          const currURL = this.getRedirectorURL(result.data, ObjectType.BUILDING, formData.objectTypeTypeID);
+          this.router.navigateByUrl(currURL);
+        } else {
+          this.toastService.show('An error has occurred. Please try again.', '', ToastState.ERROR, {
+            position: 'bottom right',
+            maxWidth: '350px'
+          });
+        }
+      }));
     }
   }
+
+  getRedirectorURL(objectId: number, objectTypeId: number, objectTypeTypeId: number): string {
+    let getURL = this.redirectorLinks.find(
+      x => x.objectTypeId === objectTypeId && x.objectTypeTypeId === objectTypeTypeId
+    );
+    getURL = getURL ?? this.redirectorLinks.find(x => x.objectTypeId === objectTypeId);
+    let urlLink = getURL ? getURL.urlLink : 'not found';
+    urlLink = urlLink
+      .replace(/\[OID\]/, objectId)
+      .replace(/\[OTID\]/, objectTypeId)
+      .replace(/\[OTTID\]/, objectTypeTypeId);
+    return urlLink;
+  }
+
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
 }

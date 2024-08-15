@@ -44,11 +44,9 @@ export class ArchiveActionService {
     const param = {
       ContactId: contactID
     };
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'CheckSystemUser', param, this.objectActions + route);
-    } else {
-      route = 'objectActions/' + route;
-    }
+
+    route = 'objectActions/' + route;
+    
     return this.getHttpGetApiResponse(route, 'CheckSystemUser', param, this.objectActions + route);
   }
 
@@ -57,31 +55,24 @@ export class ArchiveActionService {
     const param = {
       CompanyID: companyID
     };
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'CompanyVendorsCustomers', param, this.objectActions + route);
-    } else {
-      route = 'objectActions/CompanyVendorsCustomers';
-    }
+
+    route = 'objectActions/CompanyVendorsCustomers';
+    
     return this.getHttpGetApiResponse(route, 'CompanyVendorsCustomers', param, this.objectActions + route);
   }
 
   public archiveContact(contactID: number): Observable<ApiResponse> {
     let route = 'ArchiveContact';
-    if (!environment.isRestful) {
-      return this.getHttpPostApiResponse(route + '?contactID=' + contactID, 'ArchiveContact' + contactID, { ContactID: contactID });
-    } else {
-      route = 'objectActions/' + route;
-    }
+
+    route = 'objectActions/' + route;
+
     return this.getHttpPostApiResponse(route + '?contactID=' + contactID, 'ArchiveContact' + contactID, {});
   }
 
   public archiveCompany(companyID: number): Observable<ApiResponse> {
     let route = 'ArchiveCompany';
-    if (!environment.isRestful) {
-      return this.getHttpPostApiResponse(route + '?companyID=' + companyID, 'ArchiveCopmany' + companyID, { CompanyID: companyID });
-    } else {
-      route = 'objectActions/' + route;
-    }
+    route = 'objectActions/' + route;
+    
     return this.getHttpPostApiResponse(route + '?companyID=' + companyID, 'ArchiveCopmany' + companyID, {});
   }
 
@@ -90,41 +81,30 @@ export class ArchiveActionService {
     const param = {
       ContactId: contactID
     };
-    if (!environment.isRestful) {
-      return this.getHttpGetApiResponse(route, 'GetContactName', param, this.objectActions + route);
-    } else {
-      route = 'objectActions/ContactName';
-    }
+
+    route = 'objectActions/ContactName';
+    
     return this.getHttpGetApiResponse(route, 'GetContactName', param, this.objectActions + route);
   }
 
   public getBuildingsPremiseLeaseAssociations(leaseAbstractId, listType, isPremiseHidden = 0): Observable<ApiResponse> {
     let route = 'GetBuildingsPremiseLeaseAssociations';
-    let param;
-    if (!environment.isRestful) {
-      param = {
-        ListType: listType,
-        IsPremiseHidden: isPremiseHidden,
-        LeaseAbstractId: leaseAbstractId
-      }
-      return this.getHttpGetApiResponse(route, 'GetBuildingsPremiseLeaseAssociations', param, this.objectActions + route);
-    } else {
-      route = 'objectActions/' + route;
-      param = {
-        LeaseAbstractId: leaseAbstractId,
-        ListType: listType,
-        IsPremiseHidden: isPremiseHidden
-      }
+
+    route = 'objectActions/' + route;
+    let param = {
+      LeaseAbstractId: leaseAbstractId,
+      ListType: listType,
+      IsPremiseHidden: isPremiseHidden
     }
+    
     return this.getHttpGetApiResponse(route, 'GetBuildingsPremiseLeaseAssociations', param, this.objectActions + route);
   }
 
   public getBuildingPremiseArchiveData(buildingId, premiseId, listType, isPremiseHidden = 0): Observable<ApiResponse> {
     let route = 'GetBuildingPremiseArchiveData';
-    let param;
 
     route = 'objectActions/' + route;
-    param = {
+    let param = {
       BuildingId: buildingId,
       PremiseId: premiseId,
       ListType: listType,
@@ -236,7 +216,7 @@ export class ArchiveActionService {
 
   protected handleApiResponseError(operation = 'operation not provided') {
     return (error: any): Observable<any> => {
-      if (environment.isRestful && error) {
+      if (error) {
         return of({
           success: false,
           data: '',

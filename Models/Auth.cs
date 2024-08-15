@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MangoSPA.Models;
+﻿namespace MangoSPA.Models;
 
 //public record LoginRequest(string Email, string Password, string ClientKey = "");
 //public record LoginResponse(string AuthToken, string Email, bool HasMultipleSites, string ClientKey);

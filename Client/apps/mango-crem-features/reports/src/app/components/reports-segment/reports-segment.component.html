@@ -50,7 +50,7 @@
 				</mat-menu>	 
 			</div>
 			<div class="controls-item">
-				<crem-button type="primary" [title]="(hasSegmentsAddRight ? 'Create Segment' : 'You do not have the necessary rights to create a segment.')"
+				<crem-button type="primary" [title]="(hasSegmentsAddRight ? 'Create Segment' : 'You have View rights for segments. Ask your administrator to grant you Add rights to create segments.')"
 					[disabled]="!hasSegmentsAddRight" (click)="hasSegmentsAddRight && createSegment(); $event.preventDefault()" >
 					<div id="CreateSegmentButton">Create Segment</div>
 				</crem-button>
@@ -73,6 +73,7 @@
 			(onCellClick)="onCellClicked($event)"
 			keyExpr="segmentID"
 			[wordWrapEnabled]="true"
+      (onCellPrepared)="onCellPrepared($event)"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-paging [pageSize]="50"></dxo-paging>
@@ -101,27 +102,56 @@
 				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
 			</dxi-column>
 
-
-
 			<dxi-column caption="Actions" type="buttons" width="65" [showInColumnChooser]="false" [allowReordering]="false" [fixed]="true">
 				<dxi-button template="moreMenuTemplate">
 					<div *dxTemplate="let data of 'moreMenuTemplate'">
-						
+
 						<button aria-label="more menu" class="btn btn-link" (click)="$event.preventDefault()" [matMenuTriggerFor]="expenseMoreMenu"><mat-icon role="none" aria-label="Actions Menu">more_horiz</mat-icon></button>
 		    			<mat-menu #expenseMoreMenu="matMenu" class="segments-actions">
 							<ul role="menu">
-								<li mat-menu-item *ngIf="data.data.active && (data.data.rights !== 'Delete' && data.data.rights !== 'Add' && data.data.rights !== 'Edit')" [disabled]="!hasSegmentsViewRight" 
-									(click)="edit(data)"> View
-								</li>
-								<li mat-menu-item *ngIf="data.data.active && (data.data.rights === 'Delete' || data.data.rights === 'Add' || data.data.rights === 'Edit')" 
-									(click)="edit(data)"> Edit
-								</li>
-								<li mat-menu-item *ngIf="data.data.active" [disabled]="!hasSegmentsAddRight" (click)="hasSegmentsAddRight && copy(data);">Copy</li>
-								<li mat-menu-item [disabled]="data.data.rights !== 'Delete'" (click)="data.data.rights === 'Delete' && archiveAction(data)">{{data.data.active ? "Archive" : "Unarchive"}}</li>
+                <ng-container [ngSwitch]="data.data.activeRecordsVisibleToMe">
+
+                  <ng-container *ngSwitchCase="true">
+                  <li mat-menu-item
+                    [disabled]="true"
+                    title="This segment is automatically generated and includes all records accessible to you."
+					[ngClass]="data.data.activeRecordsVisibleToMe? 'not-allowed': 'pointer'"
+                  >{{data.data.rights === 'Delete' || data.data.rights === 'Edit' ? 'Edit' : 'View'}}</li>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="false">
+                  <li mat-menu-item
+                    *ngIf="data.data.active && (
+                      data.data.rights === 'Delete' || 
+                      data.data.rights === 'Add' || 
+                      data.data.rights === 'Edit'|| 
+                      data.data.rights === 'View'
+                      )"
+                    (click)="edit(data)"
+                  > {{data.data.rights === 'Delete' || data.data.rights === 'Edit' ? 'Edit' : 'View'}} </li>
+                  </ng-container>
+
+                </ng-container>
+
+								<li mat-menu-item
+                  *ngIf="data.data.active"
+				  [attr.title]="getTitleTooltip(data, 'copy')"
+                  [disabled]="data.data.activeRecordsVisibleToMe || !hasSegmentsAddRight"
+                  (click)="hasSegmentsAddRight && copy(data);"
+				  [ngClass]="data.data.activeRecordsVisibleToMe || !hasSegmentsAddRight ? 'not-allowed' : 'pointer'"
+                > Copy </li>
+
+								<li mat-menu-item
+                  [disabled]="data.data.rights !== 'Delete'"
+                  (click)="data.data.rights === 'Delete' && archiveAction(data)"
+				  [attr.title]="getTitleTooltip(data, 'archive')"
+				  [ngClass]="data.data.rights !== 'Delete' ? 'not-allowed': 'pointer'"
+                >{{data.data.active ? "Archive" : "Unarchive"}}</li>
+
 							</ul>
 						</mat-menu>
 					</div>
-				</dxi-button>		    	
+				</dxi-button>
 			</dxi-column>
 		</dx-data-grid>
 		<crem-loader *ngIf="loading"></crem-loader>

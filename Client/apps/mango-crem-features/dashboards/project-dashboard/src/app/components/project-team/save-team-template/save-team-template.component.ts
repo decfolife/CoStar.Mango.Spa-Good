@@ -2,7 +2,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { ToastrService } from 'ngx-toastr';
 
@@ -53,7 +53,7 @@ export class SaveTeamTemplateComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.subs.forEach(s => s.unsubscribe);
+    this.subs.forEach(s => s.unsubscribe());
   }
 
 }

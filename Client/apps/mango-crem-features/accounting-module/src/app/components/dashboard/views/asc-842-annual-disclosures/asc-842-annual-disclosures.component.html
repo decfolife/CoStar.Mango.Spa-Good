@@ -12,7 +12,7 @@
             <mango-iad-card
               [config]="config"
               [dataSource]="dataSources[config.index]"
-              (selectedFilter)="onSelectedFilter($event)"
+              (selectedFilter)="onSelectedFilter($event, config)"
             ></mango-iad-card>
         </div>
     </div>

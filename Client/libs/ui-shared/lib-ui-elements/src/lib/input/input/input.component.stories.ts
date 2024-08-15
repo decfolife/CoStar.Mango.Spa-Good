@@ -25,14 +25,27 @@ export default {
     // HTML Attributes
     minLengthField: { control: 'number' },
     maxLengthField: { control: 'number' },
-  },
-  parameters: {
-    docs: {
-      description: {
-        component: '',
-      },
+    rows: { control: 'number' },
+    cols: { control: 'number' },
+    minNumber: {
+      cols: { control: 'number' },
+      description: 'The minimum value of the input (only when `inputType` is set to number)',
+      table: {
+        defaultValue: {
+          summary: Number.NEGATIVE_INFINITY,
+        }
+      }
     },
-  },
+    maxNumber: {
+      cols: { control: 'number' },
+      description: 'The maximum value of the input (only when `inputType` is set to number)',
+      table: {
+        defaultValue: {
+          summary: `+${Number.POSITIVE_INFINITY}`,
+        }
+      }
+    },
+  }
 } as Meta<InputComponent>;
 
 const Template: Story<InputComponent> = (args: InputComponent) => ({
@@ -42,10 +55,6 @@ const Template: Story<InputComponent> = (args: InputComponent) => ({
 export const Default = Template.bind({});
 
 Default.args = {
-
-  // General
-  state: undefined,
-
   // Label
   label: 'Label',
   value: '',
@@ -63,12 +72,9 @@ Default.args = {
 
   // Secondary Input Attributes
   name: '',
-  minLengthField: undefined,
-  maxLengthField: undefined,
+  rows: 4,
+  cols: 30,  
 
   // Additional & Styling
   labelPosition: 'top',
-  className: undefined,
-  id: undefined,
-
 };

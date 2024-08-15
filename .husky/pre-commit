@@ -1,0 +1,66 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+cd "$(dirname "$0")/../Client/"
+
+#########################################
+# ASCII Art Makes everything better
+#########################################
+echo '
+  /* +--------------------------------------------------------------------+ */
+  /* |                                                                    | */
+  /* |                         Precommit Checks                           | */
+  /* |     _____ ______   ________  ________   ________  ________         | */
+  /* |    |\   _ \  _   \|\   __  \|\   ___  \|\   ____\|\   __  \        | */
+  /* |    \ \  \\\__\ \  \ \  \|\  \ \  \\ \  \ \  \___|\ \  \|\  \       | */
+  /* |     \ \  \\|__| \  \ \   __  \ \  \\ \  \ \  \  __\ \  \\\  \      | */
+  /* |      \ \  \    \ \  \ \  \ \  \ \  \\ \  \ \  \|\  \ \  \\\  \     | */
+  /* |       \ \__\    \ \__\ \__\ \__\ \__\\ \__\ \_______\ \_______\    | */
+  /* |        \|__|     \|__|\|__|\|__|\|__| \|__|\|_______|\|_______|    | */
+  /* |                     COSTAR REAL ESTATE MANAGER                     | */
+  /* |                                                                    | */
+  /* +--------------------------------------------------------------------+ */
+  '
+
+#########################################
+# Prettier
+# src: https://prettier.io/docs/en/
+#########################################
+# npm run format
+
+#########################################
+# ESLint
+# src: https://eslint.org/docs/latest/
+#########################################
+# npm run lint
+
+#########################################
+# Tests
+#########################################
+# Shared Library
+# if git diff --exit-code --quiet HEAD -- libs/ui-shared; then
+#   echo -e "\033[32mNo files changed in ./libs/ui-shared folder. Skipping tests.\033[0m"
+# else
+#   echo -e '\033[34mChanges detected on ./libs/ui-shared, running tests\033[0m'
+#   npx nx run ui-shared:test
+# fi
+
+# MangoSPA
+# if  git diff --exit-code --quiet HEAD -- apps/; then
+#   echo -e "\033[32mNo files changed in ./apps folder. Skipping tests.\033[0m"
+# else
+#   echo -e '\033[34mChanges detected on ./apps, running tests\033[0m'
+#   npx nx run mango:test
+# fi
+
+# Test results
+# if [ -d "./dist/apps/mangospa-test-report/" ]; then
+#   echo -e "\033[32m✓ Tests results available at ./dist/apps/mangospa-test-report.\033[0m"
+# else
+#   echo "✗ Test results not found in /dist/apps/mangospa-test-report/. Please run the tests manually or try again."
+# fi
+
+#########################################
+# src: Testing Hooks Without Committing
+# src: https://typicode.github.io/husky/how-to.html#testing-hooks-without-committing
+#########################################
+# exit 1

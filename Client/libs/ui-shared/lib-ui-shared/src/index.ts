@@ -2,7 +2,6 @@ export * from './lib/lib-ui-shared.module';
 export * from './lib/env-info-chip';
 export * from './lib/header';
 export * from './lib/list-errors'
-export * from './lib/not-found'
 export * from './lib/toolbar'
 export * from './lib/crem-header'
 export * from './lib/costar-suite-header';
@@ -12,3 +11,8 @@ export * from './lib/shared-left-nav';
 export * from './lib/spa-breadcrumbs/display-breadcrumbs';
 export * from './lib/mango-dialog';
 export * from './lib/compose-email';
+export * from './lib/crem-list-views/crem-view-menu';
+export * from './lib/crem-list-views/crem-share-view-popup';
+export * from './lib/add-company-modal/add-company-modal.component';
+export * from './lib/add-supplier-modal/add-supplier-modal.component';
+export * from './lib/add-equipment-modal/add-equipment-modal.component';

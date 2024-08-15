@@ -1,21 +1,24 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { CommonModule, DatePipe } from '@angular/common';
+import { DxDataGridComponent, DxDataGridModule, DxCheckBoxModule } from 'devextreme-angular';
+import { exportDataGrid } from 'devextreme/excel_exporter';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule, MatDialog} from '@angular/material/dialog';
+import { Observable, Subscription, of } from 'rxjs';
+import { filter, map, switchMap, delay } from 'rxjs/operators';
 import 'regenerator-runtime/runtime';
 import * as ExcelJS from 'exceljs';
-import { exportDataGrid } from 'devextreme/excel_exporter';
-import { MatDialog } from '@angular/material/dialog';
-import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
-import {AddServiceAccountComponent} from '../add-service-account/add-service-account.component';
-import {ServiceAccountDetailsComponent} from '../service-account-details/service-account-details.component';
-import {UpdateServiceAccountComponent} from '../update-service-account/update-service-account.component';
-import { ClientDeliveryService } from '../../services/client-delivery.service';
 import { saveAs } from 'file-saver-es';
-import { DatePipe } from '@angular/common';
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import { AddServiceAccountComponent} from '../add-service-account/add-service-account.component';
+import { ServiceAccountDetailsComponent } from '../service-account-details/service-account-details.component';
+import { UpdateServiceAccountComponent } from '../update-service-account/update-service-account.component';
+import { ClientDeliveryService } from '../../services/client-delivery.service';
 import { UserMaintenanceService } from '../../../../../user-maintenance/src/app/components/user-maintenance/user-maintenance.service';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Observable, Subscription, of } from 'rxjs';
-import { filter, map, switchMap, delay, tap } from 'rxjs/operators';
 import { ServiceAccount } from '@mango/data-models/lib-data-models';
+import { ButtonModule, DropdownModule, ModalModule, SearchComponent } from '@mango/ui-shared/lib-ui-elements';
 
 enum Status  {
   active = "active",
@@ -23,6 +26,8 @@ enum Status  {
   all = "all"
 };
 @Component({
+  standalone: true,
+  imports: [CommonModule, ModalModule, SearchComponent, DxDataGridModule, DxCheckBoxModule, MatMenuModule, DropdownModule, ButtonModule, MatIconModule, MatDialogModule],
   selector: 'mango-service-accounts',
   templateUrl: './service-accounts.component.html',
   styleUrls: ['./service-accounts.component.scss'],

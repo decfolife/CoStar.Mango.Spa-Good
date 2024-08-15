@@ -65,8 +65,8 @@
             <div class="custom-col metric-label"><strong>Variance: </strong>{{ formattingService.localFormat(getDebitCreditTotal().debit - getDebitCreditTotal().credit, eventScheduleData.localCurrencyDecimalPrecision) }}</div>   
            
             <div class="custom-col metric-label"> <strong>Balanced: </strong>
-                <crem-icon *ngIf="jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md balanced-icon" icon="faCheckCircle"></crem-icon>
-                <crem-icon *ngIf="jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && !jeProcessingPopupData.journalEntries[0]?.isBalanced" class="fa-md not-balanced-icon" icon="faTimesCircle"></crem-icon>
+                <crem-icon *ngIf="(jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && jeProcessingPopupData.journalEntries[0]?.isBalanced)" class="fa-md balanced-icon" icon="faCheckCircle"></crem-icon>
+                <crem-icon *ngIf="(eventScheduleData.isReportingException !== true) && (jeProcessingPopupData?.journalEntries !== undefined && jeProcessingPopupData?.journalEntries !== null && !jeProcessingPopupData.journalEntries[0]?.isBalanced)" class="fa-md not-balanced-icon" icon="faTimesCircle"></crem-icon>
             </div>
 
             <div class="custom-col metric-label">{{calloutText}}</div>
@@ -94,7 +94,8 @@
             </dx-tooltip>
         </div>
         <div id="section-three" *ngIf="showJournalEntries">
-            <dx-data-grid [id]="accountingSummaryService.getId(componentName,'popup','grid')"
+            <dx-data-grid #JournalEntryProcessing
+                    [id]="accountingSummaryService.getId(componentName,'popup','grid')"
                     width="100%"
                     [dataSource]="jeProcessingPopupData.journalEntries"
                     [columns]="jeProcessingGridColumns"

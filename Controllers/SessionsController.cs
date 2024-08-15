@@ -1,8 +1,13 @@
-﻿using MangoSPA.Models;
+﻿using MangoSPA.Extensions;
+using MangoSPA.Models;
 using MangoSPA.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using System.Text.Json;
 
 namespace MangoSPA.Controllers;
 
@@ -93,6 +98,40 @@ public class SessionsController : ControllerBase
 
         return Ok();
     }
+
+    /// <summary>
+    /// Create shared info cookie to be shared amongst Mango SPA AND V06.
+    /// This method should not be needed once V06 is gone.
+    /// </summary>
+    /// <param name="idleTimeout"></param>
+    /// <param name="env"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    //[HttpPost("shared-info")] //sessions/shared-info/{idleTimeout}  
+    //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    //public ActionResult CreateSharedInfoCookie(
+    //    [FromQuery] int idleTimeout,
+    //    [FromServices] IWebHostEnvironment env, 
+    //    [FromServices] IConfiguration config)
+    //{
+    //    var clientKey = User.ClientKey();
+    //    var data = JsonSerializer.Serialize(new SharedInfo(idleTimeout));
+
+    //    HttpContext.Response.Cookies.Append(
+    //        $"{clientKey}.SharedInfo", data, 
+    //        new CookieOptions
+    //        {
+    //            //Domain = HttpContext.Request.Host.Value, // what is host value? do we need to use appSettings instead?
+    //            SameSite = env.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict,
+    //            Secure = true,
+    //            HttpOnly = false,
+    //            Expires = DateTimeOffset.UtcNow.AddMinutes(config.CookieExpirationInMinutes())
+    //        });
+
+    //    return Ok();
+    //}
 
     ///// <summary>
     ///// Get the current user session data.

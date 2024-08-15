@@ -1,8 +1,17 @@
-<div class="breadcrumb-container">
-	<span *ngFor="let breadcrumb of breadcrumbs; let last = last" class="mango-breadcrumbs">
-			<a (click)="breadcrumbClicked(breadcrumb)"  class="breadcrumb"> {{ breadcrumb.label }} </a>
-			<span *ngIf="!last" class="breadcrumb-deliminator">
-					<small> {{ delineator }} </small>
-			</span>
-  </span>
-</div>
+<nav class="breadcrumb-container" aria-label="Breadcrumbs">
+  <div *ngFor="let breadcrumb of breadcrumbs; let first = first; let last = last" class="mango-breadcrumbs">
+    <a
+      tabindex="0"
+      (click)="breadcrumbClicked(breadcrumb)"
+      [ngClass]="{'first': first, 'last': last, 'middle': !first && !last }"
+      class="breadcrumb cursor-pointer"
+      [attr.aria-label]="breadcrumb.label"
+    >
+      <crem-icon *ngIf="first" [icon]="'faHome'" [pack]="'solid'" [size]="'sm'" class="home"></crem-icon>
+      {{ breadcrumb.label }}
+    </a>
+    <span *ngIf="!last" class="breadcrumb-deliminator">
+      <crem-icon [icon]="'faChevronRight'" [pack]="'solid'" [size]="'2xs'"></crem-icon>
+    </span>
+  </div>
+</nav>

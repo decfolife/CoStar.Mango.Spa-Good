@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, DBkeys, JwtService, StorageService, UserService, UtilitiesService, parseBool } from '@mango/core-shared/lib-core-shared';
-import { ContactRecord, OAuthTokenHTTPResponse, UserAuth } from '@mango/data-models/lib-data-models';
+import { AuthService, JwtService, UtilitiesService, parseBool } from '@mango/core-shared/lib-core-shared';
+import { OAuthTokenHTTPResponse, UserAuth } from '@mango/data-models/lib-data-models';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { combineLatest, of } from 'rxjs';
@@ -13,24 +13,39 @@ import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.se
 
 @Injectable()
 export class AuthenticationEffects {
-  constructor(private actions$: Actions,
-    private storageService: StorageService,
+  constructor(
+    private actions$: Actions,
     private authService: AuthService,
-    private userService: UserService,
     private jwtService: JwtService,
     private navigationService: MangoNavigationService, 
     private router: Router,
     private facade: MangoAppFacade) { }
 
 
-  localAuth$ = createEffect(
+  loadCurrentUser$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AppActions.LOCAL_AUTH),
-        map(_ => this.storageService.getData(DBkeys.USER_AUTH)),
-        filter(authenticatedUser => !!authenticatedUser),
-        switchMap(authenticatedUser => of(AppActions.setAuthenticatedUser({ user: authenticatedUser }), AppActions.init()))
-      ),
+        ofType(AppActions.LOAD_CURRENT_USER),
+        switchMap(_ => {
+          const queryParams = new URLSearchParams(window.location.search);
+          return of(queryParams)
+        }),
+        filter(queryParams => {
+          // Prevent the loadCurrentUser effect from being run when we are in the middle of the login process
+          const isValidatePath = window.location.pathname ==='/auth/validate'
+          const containsAuthCode = queryParams.has('auth_code');
+          return !isValidatePath && !containsAuthCode
+        }),
+        switchMap(_ => this.authService.getCurrentUser().pipe(
+          filter(response => !!response),
+          map(user => {
+            return AppActions.setAuthenticatedUser({user})
+          }),
+          catchError(_ => {
+            return of(AppActions.noOpAction())
+          })
+        ))
+      )
   );
 
   oauthAuthentication$ = createEffect(
@@ -70,29 +85,16 @@ export class AuthenticationEffects {
             this.facade.setV06oauthAuth(action.response.code, action.redirectionUrl, user.clientKey)
           }
 
-          this.facade.setAccessToken(action.response.accessToken)
-          this.authService.setAuth(user)
-          this.storageService.savePermanentData(user.clientKey, DBkeys.CLIENT_KEY)
+          this.facade.setAuthenticatedUser(user);
 
-          return combineLatest([of(user), of(action.response.accessToken), this.userService.getContactRecord(user.contactId, user.clientKey), of(action.redirectionUrl)])
+          return combineLatest([of(action.redirectionUrl)])
         }),
-        map(([user, accessToken, contactRecord, redirectUrl]: [UserAuth, string, ContactRecord, string]) => {
-          this.storageService.savePermanentData(contactRecord, DBkeys.CONTACT_RECORD)
-          return [user, accessToken, contactRecord, redirectUrl]
-        }),
-        switchMap(([user, accessToken, contactRecord, redirectUrl]: [UserAuth, string, ContactRecord, string]) => {
+        switchMap(([redirectUrl]: [string]) => {
           let url = redirectUrl ? decodeURIComponent(redirectUrl) : '/'
           this.router.navigateByUrl(url)
           
-          return of(
-            AppActions.setAuthenticatedUser({ user }),
-            AppActions.setAccessToken({ accessToken }),
-            AppActions.setClientKey({ clientKey: user.clientKey }),
-            AppActions.setContactRecord({ contactRecord }),
-            AppActions.setupUserContactRecordConfig(),
-            AppActions.redirectToV06ToFinalizeLogin()
-          )
-        }),
+          return of(AppActions.init())
+        })
       ),
   );
 

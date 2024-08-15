@@ -1,10 +1,10 @@
 import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
+	Component,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output,
+	ViewChild,
 } from '@angular/core';
 import { DxTreeViewComponent } from 'devextreme-angular';
 
@@ -21,7 +21,7 @@ export class HierarchyDropdownComponent implements OnInit {
 	@Input() public initialSelectedValue: any;
 	@Input() public label?: string;
 	@Input() public dataSource: any[];
-	@Input() public placeholder: string = 'Select...';
+	@Input() public placeholder = 'Select...';
 	@Input() public valueExpr?: string = 'valueKey';
 	@Input() public displayExpr?: string = 'displayKey';
 	@Input() public parentIdExpr?: string = 'parentIdExpr';
@@ -31,7 +31,7 @@ export class HierarchyDropdownComponent implements OnInit {
 	@Input() dropDownContainerCustomClass: string;
   
 	selectedDisplay: string[];
-	public selections: {}[];
+	public selections: any;
 	public wrapperAttr: any;
 
 	ngOnInit() {
@@ -69,7 +69,7 @@ export class HierarchyDropdownComponent implements OnInit {
 			  }
 			});
 	   
-			let selectedItems = this.selections
+			const selectedItems = this.selections
             .map(node => {
 				return { displayKey: node[this.displayExpr], valueKey: node[this.valueExpr] };
 			});
@@ -87,7 +87,7 @@ export class HierarchyDropdownComponent implements OnInit {
 		this.selectedDisplay = treeView.getSelectedNodes()
             .map(node => node.itemData[this.valueExpr]);
 		
-        let selectedItems = treeView.getSelectedNodes()
+        const selectedItems = treeView.getSelectedNodes()
             .map(node => {
 				return { displayKey: node.itemData[this.displayExpr], valueKey: node.itemData[this.valueExpr] };
 			});

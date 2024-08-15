@@ -2,6 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "target": "es2015",
     "declaration": true,
     "declarationMap": true,
@@ -10,6 +12,7 @@
     "lib": ["dom", "es2018"]
   },
   "exclude": [
+    "../cosmos",
     "src/test-setup.ts",
     "src/**/*.spec.ts",
     "jest.config.ts",
@@ -17,5 +20,10 @@
     "**/*.stories.ts",
     "**/*.stories.js"
   ],
-  "include": ["src/**/*.ts"]
+  "include": [
+    "*.js",
+    "src/**/*.ts",
+    "../**/src/**/*.stories.ts",
+    "../**/src/**/*.component.ts",
+  ]
 }

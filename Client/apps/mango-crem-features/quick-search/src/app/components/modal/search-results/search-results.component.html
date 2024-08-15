@@ -16,6 +16,8 @@
       [loop]="false"
       [animationEnabled]="true"
       [swipeEnabled]="true"
+      (onTitleClick)="onTitleClick($event)"
+      (onItemRendered)="onItemRendered($event)"
       class="search-results-tab-panel"
       >
       <dxi-item  *ngFor="let object of searchResults" title="{{object.objectTypeType}}">
@@ -32,7 +34,8 @@
           [columnAutoWidth]="true"
           [columnMinWidth]="10"
           [wordWrapEnabled]="true"
-          (onContentReady)="contentReady($event)"	
+          (onContentReady)="contentReady($event)"
+          (onRowClick)="onRowClick($event)"	
         >
           <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
           <dxo-sorting mode="multiple"></dxo-sorting>

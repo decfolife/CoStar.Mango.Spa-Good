@@ -1,8 +1,6 @@
 @use "styles"as *;
 
 .dashboard-right-container {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   
   ::ng-deep{ // Apply right card and cards container spacing globally
@@ -46,7 +44,12 @@
       }
     }
   }
-
+  div.cdk-overlay-pane {
+        button[aria-disabled="true"] {
+          cursor: not-allowed;
+      }
+      
+    }
 }
 
 .dashboard-toolbar-wrapper {

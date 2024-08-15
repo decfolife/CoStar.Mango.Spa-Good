@@ -1,8 +1,9 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { AmortizationGridColumnsService } from '@accounting-summary/services/amortization-grid-columns.service';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'mango-je-payment-info',
@@ -11,6 +12,7 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
 })
 
 export class JePaymentInfoComponent {
+  @ViewChild("JePayment") jePayment: DxDataGridComponent;
   @Input() jePaymentPopupData: any;
   @Input() userInfo: UserInfoResponse;
   @Input() displayPeriodTitle: string;
@@ -31,8 +33,10 @@ export class JePaymentInfoComponent {
     this.jePaymentInfoGridSetup();
   }
 
-  onExporting(event){
-    event.fileName = this.exportToExcelFileName()
+  onExporting(event) {
+    const fileName = this.exportToExcelFileName();
+    this.jePayment.loadPanel.enabled = false;
+    this.accountingSummaryService.exportToExcel(this.jePayment.instance, fileName, 'Sheet');
   }
 
   jePaymentInfoGridSetup() {
@@ -119,7 +123,7 @@ export class JePaymentInfoComponent {
   exportToExcelFileName(): string {
     const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
-    const fileName = `Period_${formattedDisplayPeriodTitle}_Payment_Detail_${dateTimeStamp}`;
+    const fileName = `Period_${formattedDisplayPeriodTitle}_Payment_Detail_${dateTimeStamp}.xlsx`;
     return fileName;
   }
 }

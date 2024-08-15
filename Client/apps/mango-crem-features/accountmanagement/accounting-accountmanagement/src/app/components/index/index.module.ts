@@ -20,7 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DevExtremeModule, DxDataGridModule, DxFormModule, DxLoadPanelModule, DxSwitchModule, DxValidationGroupModule } from 'devextreme-angular';
-
+import { NoObjectsFoundComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [
@@ -50,7 +50,8 @@ import { DevExtremeModule, DxDataGridModule, DxFormModule, DxLoadPanelModule, Dx
     DxSwitchModule,
     DxValidationGroupModule,
     DevExtremeModule,
-    DxLoadPanelModule
+    DxLoadPanelModule,
+    NoObjectsFoundComponent
   ],
   providers: [
     SidenavService,

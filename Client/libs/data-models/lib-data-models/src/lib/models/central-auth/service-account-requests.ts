@@ -3,6 +3,11 @@ export interface UpdateServiceAccountApiAccessRequest{
   apiAccess: boolean;
 }
 
+export interface UpdateServiceAccountEndPointAccessRequest{
+  endPoint: string;
+  endPointAccess: boolean;
+}
+
 export interface UpdateServiceAccountExpiresInDaysRequest{
   serviceAccountExpiresInDays?: number;
 }

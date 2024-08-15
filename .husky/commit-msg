@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+cd "$(dirname "$0")/../Client/"
+
+#########################################
+# Commitlink
+# src: https://commitlint.js.org/
+#########################################
+# npx commitlint --edit $1
+
+#########################################
+# src: Testing Hooks Without Committing
+# src: https://typicode.github.io/husky/how-to.html#testing-hooks-without-committing
+#########################################
+# exit 1

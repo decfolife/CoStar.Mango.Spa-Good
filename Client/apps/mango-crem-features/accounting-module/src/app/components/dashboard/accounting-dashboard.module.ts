@@ -18,6 +18,7 @@ import {FormsModule} from '@angular/forms';
 import { ColumnLimitComponent } from './modal/column-limit/column-limit.component';
 import { GenericErrorComponent } from './modal/genericError/genericError.component';
 import { UserSettingsComponent } from './modal/user-settings/user-settings.component';
+import { ToastComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { UserSettingsComponent } from './modal/user-settings/user-settings.compo
     FormsModule,
     DragDropModule,
     ModalModule,
+    ToastComponent,
   ],
   providers: [
     DataService,

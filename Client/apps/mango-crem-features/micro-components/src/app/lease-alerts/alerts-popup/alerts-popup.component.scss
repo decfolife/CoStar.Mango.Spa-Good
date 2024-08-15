@@ -1,7 +1,9 @@
+@use 'styles' as *;
+
 #openLeaseAlertsPopupButton {
   // background-color: #d4d0c8;
-  border: 1px solid #a7a49f;
-  height: 34px;
+  @include costar(border, gray04);
+  height: 32px;
   margin: 0 3px;
   padding: 2px 8px;
 

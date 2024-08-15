@@ -12,10 +12,11 @@ $font-size-14: 14px;
 $stdPadding: 8px;
 $dblPadding: 2 * $stdPadding;
 
-::-webkit-scrollbar{
-  width:5px;
-  height: 5px;
-}
+// This is removed because it was leaking into the CREM textarea component
+// ::-webkit-scrollbar{
+//   width:5px;
+//   height: 5px;
+// }
 
 /* Track */
 ::-webkit-scrollbar-track {
@@ -72,133 +73,6 @@ portfolio-dashboard {
 
 //***** Card Styles ******//
 
-
-//***** Metric Styles ******//
-
-#portfolio-dashboard crem-metric {
-
-	font-family: $font-family-brand;
-	mat-card.mat-mdc-card.costar-hero-metric-card {
-		border: 0;
-		display: inline-block;
-		margin-bottom: 0;
-		margin-right: 30px;
-		min-width: max-content;
-		height: 80px;
-	}
-
-  mat-card.mat-mdc-card {
-    border: $stdBorder;
-    border-radius: 2px !important;
-    box-shadow: none !important;
-    padding: 0px !important;
-  }
-
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-header.mat-mdc-card-header {
-    border-bottom: 0px;
-    padding: 0px;
-    height: 16px;
-
-		div.mat-mdc-card-header-text {
-			margin: 0px;
-			display: flex;
-			flex-direction: column;
-			text-transform: capitalize !important;
-			font-size: 14px !important;
-
-		mat-card-title.mat-mdc-card-title {
-				font-size: 16px;
-				line-height: 16px;
-				color: colors.$mediumDarkGray;
-				font-weight: 400;
-				text-transform: capitalize !important;
-				margin: 0px 16px 0 0 !important;
-			}
-		}
-  }
-
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-content.mat-mdc-card-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0px;
-    margin: 0;
-    background: colors.$white;
-
-		.hero-value {
-			color: colors.$black;
-			font-size: 32px;
-			line-height: 32px;
-			margin: 8px 0px;
-		}
-
-		.sidekick-value-wrapper {
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-start;
-			align-content: center;
-			margin-left: $dblPadding;
-		}
-  }
-
-  mat-card.mat-mdc-card.costar-hero-metric-card
-  mat-card-content.mat-mdc-card-content
-  .sidekick-value-wrapper
-  .sidekick-value {
-		display: flex;
-		align-items: center;
-		border-radius: 2px;
-		font-size: $font-size-14;
-		text-align: center;
-		padding: 0 4px;
-		margin: 0px;
-		&.green {
-			border: 1px solid colors.$color-brand-green !important;
-			background: transparent !important;
-			color: colors.$color-brand-green !important;
-		}
-		&.red {
-			border: 1px solid colors.$color-brand-red !important;
-			background: transparent !important;
-			color: colors.$color-brand-red !important;
-		}
-		&.gray {
-			border: 1px solid colors.$color-neutral-dark !important;
-			background: transparent !important;
-			color: colors.$mediumDarkGray !important;
-		}
-	}
-	
-	crem-icon {
-    position: relative;
-  }
-
-	mat-card.mat-mdc-card.costar-hero-metric-card mat-card-footer.mat-mdc-card-footer {
-    margin: 0px;
-    height: 14px;
-
-		mat-card-subtitle.mat-mdc-card-subtitle {
-			color: colors.$costarRichGray;
-			display: inline-block;
-			font-size: 14px;
-			line-height: 14px;
-			font-weight: 400;
-			margin: 0!important;
-			text-transform: capitalize;
-		}
-  }
-
-	.iconWrapper.dx-field-value-static {
-		padding: 0px; 
-    width: 20px;
-    position: relative;
-    right: -7px;
-    top: -4px;
-  }
-}	
-
-
 #portfolio-dashboard crem-card mat-card.cremCard mat-card-content.mat-mdc-card-content.cremCardContent,
 .portfolio.dashboards-dragCardItems crem-card mat-card.cremCard mat-card-content.mat-mdc-card-content.cremCardContent {
   height: 400px;
@@ -207,17 +81,4 @@ portfolio-dashboard {
 #portfolio-dashboard crem-card mat-card .cardContent {
     height: 400px;
     max-height: 400px;
-}
-
-#portfolio-dashboard crem-card .cardHeader .customHeader,
-.dashboards-dragCardItems crem-card .cardHeader .customHeader {
-	height: 32px;
-	box-sizing: border-box;
-	align-items: center;
-
-	div div {
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-	}
 }

@@ -1,101 +1,157 @@
 <dx-load-panel shadingColor="rgba(255,255,255)" [visible]="loading" *ngIf="loading" [showIndicator]="true"
-	[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
+  [showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
 
 <crem-modal modalId="add_building_modal__add_modal" modalTitleId="add_building_modal__create_center"
-	[modalTitle]="modalTitle" closeIconVisible="true" [customFooter]="true">
-	<div modalContent class="body-content">
+  [modalTitle]="modalTitle" closeIconVisible="true" [customFooter]="true">
+  <div modalContent class="body-content">
+    <div modalContent id="addBuildingModal-content">
+      <form crem-form id="new-building-form" layout="vertical" [formGroup]="addBuildingFormGroup">
+        <crem-form-item id="aet-buildingName-container">
+          <crem-form-label [required]="true">{{dynName}} Name</crem-form-label>
+          <crem-form-control>
+            <crem-input #BuildingName  id="buildingName" [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'"
+              [required]="true" formControlName='buildingName' placeholder="Enter Building name"></crem-input>
+          </crem-form-control>
+        </crem-form-item>
+        <crem-form-item id="aet-Portfolio-container">
+          <crem-form-label [required]="true">Portfolio</crem-form-label>
+          <crem-form-control>
+            <crem-dropdown id="buildingPortfolioId" #buildingPortfolioId
+              dropDownContainerCustomClass="buildingPortfolioDropDown" [dataSource]='portfolioDropdownItem'
+              [showClearButton]='true' [required]="true" [customRequireValidation]="false" [showColumnHeader]='false'
+              displayExpr='CompanyName' valueExpr='CompanyID' [allowSearch]='true' [useSelectBox]="true"
+              hoverText="Select Portfolio" [isDisabled]="loading" [showDefaultValidationTooltip]="true"
+              formControlName="selectedPortfolio">
+            </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
 
-		<div class="section">
 
-			<dx-form #addBuildingForm id="form" validationGroup="centerForm" labelLocation="top">
+        <crem-form-item id="aet-template-container">
+          <crem-form-label [required]="true">Template</crem-form-label>
+          <crem-form-control>
+            <crem-dropdown id="buildingTemplateId" #buildingTemplateId
+              dropDownContainerCustomClass="buildingTemplateDropDown" [dataSource]='templateDropdownItem'
+              [showClearButton]='true' [showColumnHeader]='false' [required]="true" displayExpr='ObjectTypeTypeName'
+              valueExpr='ObjectTypeTypeID' [allowSearch]='true' [useSelectBox]="true" hoverText="Select Template"
+              [isDisabled]="loading" formControlName="selectedTemplate">
+            </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
 
-				<dxi-item itemType="group" cssClass="centerForm" [colCount]="1">
+        <crem-form-item id="aet-hierarchy-container">
+          <crem-form-label>Hierarchy</crem-form-label>
+          <crem-form-control>
+            <crem-dropdown id="buildingHierarchyId" #buildingHierarchyId
+              dropDownContainerCustomClass="buildingHierarchyDropDown" [dataSource]='hierarchyDropdownItem'
+              [showClearButton]='true' [showColumnHeader]='false' displayExpr='CompanyName' valueExpr='CompanyID'
+              [allowSearch]='true' [useSelectBox]="true" hoverText="Select Hierarchy" [isDisabled]="loading"
+              formControlName="selectedHierarchy">
+            </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
 
-					<dxi-item itemType="group">
+        <crem-form-item>
+          <crem-form-label>Country</crem-form-label>
+          <crem-form-control>
+            <crem-dropdown id="buildingCountryId" #buildingCountryId [dataSource]='countryDropdownItem'
+              [showClearButton]='true' [showColumnHeader]='false' displayExpr='Country' valueExpr='Country'
+              [allowSearch]='true' [useSelectBox]="true" hoverText="Select Country"
+              [initialSelectedValue]="'United States'" [selectBoxValue]="'United States'"
+              formControlName="selectedCountry">
+            </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
 
-						<dxi-item dataField="buildingName" id="centerNameId">
-							<dxo-label [text]="dynName +' Name'"></dxo-label>
-							<dxi-validation-rule type="required" message="You must enter a {{dynName}} Name.">
-							</dxi-validation-rule>
-						</dxi-item>
+        <crem-form-item>
+          <crem-form-label>{{dynName}} Address</crem-form-label>
+          <crem-form-control>
+            <crem-input id="buildingAddress" [showHint]="false" [showLabel]="false" [showInfo]="false"
+              [inputType]="'text'" [required]="false" formControlName='buildingAddress'
+              placeholder="Enter Building Address"></crem-input>
+          </crem-form-control>
+        </crem-form-item>
 
-						<dxi-item dataField="portfolio" editorType="dxSelectBox"
-							[editorOptions]="{ items: portfolioDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName',  onValueChanged:onPortFolioValueChanged}"
-							id="centerPortfolioID">
-							<dxi-validation-rule type="required"
-								message="You must select a Portfolio"></dxi-validation-rule>
-						</dxi-item>
+        <div id="aet-buildingInfo-container" class="container">
+          <div class="buildingInfo">
+            <crem-form-item>
+              <crem-form-label>City</crem-form-label>
+              <crem-form-control>
+                <crem-input id="buildingCity" [showHint]="false" [showLabel]="false" [showInfo]="false"
+                  [inputType]="'text'" formControlName='buildingCity' placeholder="Enter City"></crem-input>
+              </crem-form-control>
+            </crem-form-item>
+          </div>
 
-						<dxi-item dataField="template" editorType="dxSelectBox" id="centerTemplateId"
-							[editorOptions]="{ dataSource: templateDropdownItem, valueExpr: 'ObjectTypeTypeID', displayExpr: 'ObjectTypeTypeName' }">
-							<dxi-validation-rule type="required"
-								message="You must select a Template"></dxi-validation-rule>
-						</dxi-item>
+          <div class="buildingInfo">
+            <crem-form-item>
+              <crem-form-label>State/Province</crem-form-label>
+              <crem-form-control>
+                <crem-dropdown id="stateId" *ngIf="enableStateDropDown" [dataSource]='stateDropdownItem'
+                  [showClearButton]='true' [showColumnHeader]='false' displayExpr='State' valueExpr='State'
+                  [allowSearch]='true' [initialSelectedValue]="'AK'" [selectBoxValue]="'AK'" [useSelectBox]="true"
+                  hoverText="Select State" formControlName="buildingState">
+                </crem-dropdown>
 
-						<dxi-item [visible]="enableHierachyDropDown" dataField="hierarchy" editorType="dxSelectBox"
-							id="centerHierarchyId"
-							[editorOptions]="{ dataSource: hierarchyDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
-						</dxi-item>
+                <crem-input id="stateId" *ngIf="!enableStateDropDown" [showHint]="false" [showLabel]="false"
+                  [showInfo]="false" [inputType]="'text'" formControlName='buildingStateInput'
+                  placeholder="Enter State/Province"></crem-input>
+              </crem-form-control>
+            </crem-form-item>
+          </div>
 
-						<dxi-item dataField="buildingCountry" editorType="dxSelectBox" id="centerCountryId"
-							[editorOptions]="{ dataSource: countryDropdownItem, valueExpr: 'Country', displayExpr: 'Country', onValueChanged:onCountryChanged }">
-							<dxo-label text="Country"></dxo-label>
-						</dxi-item>
+          <div class="buildingInfo">
+            <crem-form-item>
+              <crem-form-label>Zip code</crem-form-label>
+              <crem-form-control>
+                <crem-input id="buildingZipCode" [showHint]="false" [showLabel]="false" [showInfo]="false"
+                  [inputType]="'text'" formControlName='buildingZipCode'
+                  placeholder="Enter Building Zip Code"></crem-input>
+              </crem-form-control>
+            </crem-form-item>
+          </div>
+        </div>
 
-						<dxi-item dataField="buildingAddress" id="centerAddressId">
-							<dxo-label text="Address"></dxo-label>
-						</dxi-item>
+        <crem-form-item>
+          <crem-form-label [required]="enableSubGroupDropDown">Sub Group</crem-form-label>
+          <crem-form-control>
+            <crem-dropdown id="buildingSubGroupId" #buildingSubGroupIdIdDropdown [dataSource]='subGroupDropdownItem'
+              [showClearButton]='true' [showColumnHeader]='false' displayExpr='CompanyName' valueExpr='CompanyID'
+              [allowSearch]='true' [required]="enableSubGroupDropDown" [useSelectBox]="true"
+              hoverText="Select Sub Group" formControlName="selectedSubGroup">
+            </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
+      </form>
+    </div>
+  </div>
 
-						<dxi-item itemType="group" cssClass="addressSubFields" [colCount]="3">
-							<dxi-item dataField="buildingCity" id="centerCityId">
-								<dxo-label text="City"></dxo-label>
-							</dxi-item>
+  <div modalFooter class="addBuildingFooter">
 
-							<dxi-item [visible]="!enableStateTextBox" dataField="buildingState" editorType="dxSelectBox"
-								[editorOptions]="{ dataSource: stateDropdownItem, valueExpr: 'State', displayExpr: 'State' }"
-								id="centerStateId">
-								<dxo-label text="State/Province"></dxo-label>
-							</dxi-item>
+    <crem-button type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
+      Cancel</crem-button>
 
-							<dxi-item [visible]="enableStateTextBox" dataField="State" id="centerStateId">
-								<dxo-label text="State/Province"></dxo-label>
-							</dxi-item>
+    <crem-button type="secondary" id="add_building_modal__save_btn" (click)="save($event)" [disabled]="saveClicked"
+      [icon]="saveClicked? 'faSpinner':''" [iconPack]="saveClicked? 'solid':''"
+      [iconAnimation]="saveClicked? 'spin':''">
+      <span>
+        {{saveClicked ? 'Saving':'Save'}}
+      </span></crem-button>
 
-							<dxi-item dataField="buildingZipCode" id="ceneterZipId">
-								<dxo-label text="Zip Code"></dxo-label>
-							</dxi-item>
-						</dxi-item>
+    <crem-button type="secondary" id="add_building_modal__savenew_btn" (click)="saveAndNew($event)"
+      [disabled]="saveNewClicked" [icon]="saveNewClicked? 'faSpinner':''" [iconPack]="saveNewClicked? 'solid':''"
+      [iconAnimation]="saveClicked? 'spin':''">
+      <span>
+        {{saveNewClicked ? 'Saving':'Save and New'}}
+      </span></crem-button>
 
-						<dxi-item dataField="Sub Group" editorType="dxSelectBox" id="centerSubGroupId"
-							[editorOptions]="{ dataSource: subGroupDropdownItem, valueExpr: 'CompanyID', displayExpr: 'CompanyName' }">
-							<dxi-validation-rule *ngIf="enableSubGroupDropDown" type="required"
-								message="You must select a Sub Group"></dxi-validation-rule>
-						</dxi-item>
+    <crem-button id="add_building_modal__launch_btn" type="primary" (click)="launch($event)"
+      [disabled]="saveLaunchClicked" [icon]="saveLaunchClicked? 'faSpinner':''"
+      [iconPack]="saveLaunchClicked? 'solid':''" [iconAnimation]="saveLaunchClicked? 'spin':''">
+      <span>
+        {{saveLaunchClicked ? 'Saving':'Launch'}}
+      </span>
+    </crem-button>
 
-					</dxi-item>
-
-				</dxi-item>
-
-			</dx-form>
-
-		</div>
-
-	</div>
-
-	<div modalFooter class="addBuildingFooter">
-
-		<crem-button type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
-			Cancel</crem-button>
-
-		<crem-button type="secondary" id="add_building_modal__save_btn" (click)="save($event)">
-			Save</crem-button>
-
-		<crem-button type="secondary" id="add_building_modal__savenew_btn" (click)="saveAndNew($event)">
-			Save and New</crem-button>
-
-		<crem-button type="primary" id="add_building_modal__launch_btn" (click)="launch($event)">
-			Launch
-		</crem-button>
-
-	</div>
+  </div>
 </crem-modal>

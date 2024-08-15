@@ -182,12 +182,12 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   }
 
   currencySelected(e, id) {
-    console.log(e);
+    // console.log(e);
     this.selectedCurrency = e[0].exchangeRateID;
   }
 
   unitOfMeasureSelected(e, id) {
-    console.log(e);
+    // console.log(e);
     this.selectedUnitOfMeasure = e[0].uomid;
   }
 

@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BreadCrumb, Client, ContactRecord, MangoSubApps, UserAuth, UserInfo, V06GlobalSession } from '@mango/data-models/lib-data-models';
-
+import { AdminFlags, BreadCrumb, Client, ContactRecord, MangoSubApps, RedirectorLink, UserAuth, UserInfo, V06GlobalSession } from '@mango/data-models/lib-data-models';
 import { Store, select } from '@ngrx/store';
-
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
 import * as AppActions from './app.actions';
 import * as AppSelectors from './app.selectors';
@@ -14,43 +12,49 @@ export class MangoAppFacade {
   loaded$: Observable<boolean>
   currentSubApp$: Observable<MangoSubApps>
   authenticatedUser$: Observable<UserAuth>
-  accessToken$: Observable<string>
-  clientKey$: Observable<string>
-  userInfo$: Observable<UserInfo>
-  breadcrumbs$: Observable<BreadCrumb[]>
-  userClient$: Observable<Client>
   contactRecord$: Observable<ContactRecord>
+  clientKey$: Observable<string>
+  clientInfo$: Observable<Client>
   userHasMultipleContactRecords$: Observable<boolean>
+  userInfo$: Observable<UserInfo>
+  isEmulatedUser$: Observable<boolean>
+  isEmulateUserInitiatedFromV06$: Observable<boolean>
+  breadcrumbs$: Observable<BreadCrumb[]>
   globalSession$: Observable<V06GlobalSession>
   moduleId$: Observable<number>
   showSubLeftNav$: Observable<boolean>
   currentRenderFormDocumentParams$: Observable<string>
   v06Auth$:  Observable<any>
+  adminFlags$:  Observable<AdminFlags>
+  redirectorLinks$: Observable<RedirectorLink[]>
 
   constructor(private store: Store) {
     this.loaded$ = this.store.pipe(select(AppSelectors.loaded));
     this.currentSubApp$ = this.store.pipe(select(AppSelectors.currentSubApp));
     this.authenticatedUser$ = this.store.pipe(select(AppSelectors.authenticatedUser));
-    this.accessToken$ = this.store.pipe(select(AppSelectors.accessToken));
-    this.clientKey$ = this.store.pipe(select(AppSelectors.client));
-    this.userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
-    this.breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
-    this.userClient$ = this.store.pipe(select(AppSelectors.clientInfo));
     this.contactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
+    this.clientKey$ = this.store.pipe(select(AppSelectors.client));
+    this.clientInfo$ = this.store.pipe(select(AppSelectors.clientInfo));
     this.userHasMultipleContactRecords$ = this.store.pipe(select(AppSelectors.userHasMultipleContactRecords));
+    this.userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
+    this.isEmulatedUser$ = this.store.pipe(select(AppSelectors.isEmulatedUser));
+    this.isEmulateUserInitiatedFromV06$ = this.store.pipe(select(AppSelectors.isEmulateUserInitiatedFromV06));
+    this.breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs))
     this.globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
     this.moduleId$ = this.store.pipe(select(AppSelectors.moduleId));
     this.showSubLeftNav$ = this.store.pipe(select(AppSelectors.showSubLeftNav));
     this.currentRenderFormDocumentParams$ = this.store.pipe(select(AppSelectors.currentRenderFormDocumentParams));
     this.v06Auth$ = this.store.pipe(select(AppSelectors.v06Auth));
+    this.adminFlags$ = this.store.pipe(select(AppSelectors.adminFlags));
+    this.redirectorLinks$ = this.store.pipe(select(AppSelectors.redirectorLinks));
   }
 
   init() {
     this.store.dispatch(AppActions.init());
   }
 
-  localAuth() {
-    this.store.dispatch(AppActions.localAuth());
+  loadCurrentUser() {
+    this.store.dispatch(AppActions.loadCurrentUser());
   }
 
   // If source=v06, that means we came from V06 and V06 is already logged in.
@@ -75,10 +79,6 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.setAuthenticatedUser({ user }))
   }
 
-  setAccessToken(accessToken: string) {
-    this.store.dispatch(AppActions.setAccessToken({ accessToken }));
-  }
-
   setUserInfo(userInfo: UserInfo): void {
     this.store.dispatch(AppActions.setUserInfo({ userInfo }))
   }
@@ -88,7 +88,7 @@ export class MangoAppFacade {
   }
 
   setClientInfo(clientInfo: Client): void {
-    this.store.dispatch(AppActions.setClientInfo({ clientInfo }))
+    this.store.dispatch(AppActions.setupClientSettingsSuccess({ clientInfo }))
   }
 
   setClientKey(clientKey: string): void {
@@ -99,8 +99,36 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.setContactRecord({ contactRecord }))
   }
 
+  setupContactRecord(): void {
+    this.store.dispatch(AppActions.setupContactRecord())
+  }
+
+  setEmulatedUser(contactId: number, initiatedFromV06: boolean = false): void {
+    this.store.dispatch(AppActions.setEmulatedUser({ contactId, initiatedFromV06 }))
+  }
+
+  setEmulatedUserContact(contactRecord: ContactRecord, initiatedFromV06: boolean = false): void {
+    this.store.dispatch(AppActions.setEmulatedUserSuccess({ contactRecord, initiatedFromV06 }))
+  }
+
+  stopEmulatingUser(initiatedFromV06: boolean = false): void {
+    this.store.dispatch(AppActions.stopEmulatingUser({ initiatedFromV06 }))
+  }
+
+  setupIdleTimeout(): void {
+    this.store.dispatch(AppActions.setupIdleTimeout())
+  }
+
+  logoutWhenTimedOut(): void {
+    this.store.dispatch(AppActions.logoutWhenTimedOut())
+  }
+
   setModuleId(moduleId: number): void {
     this.store.dispatch(AppActions.setModuleId({ moduleId }))
+  }
+
+  loadRedirectorLinks(): void {
+    this.store.dispatch(AppActions.loadRedirectorLinks())
   }
 
   showSubLeftNav(showSubLeftNav: boolean): void {

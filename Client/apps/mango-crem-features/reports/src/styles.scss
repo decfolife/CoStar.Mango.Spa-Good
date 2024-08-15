@@ -15,7 +15,9 @@ mango-group-user-history,
 mango-project-gantt-chart,
 reports-segment,
 mango-group-user-navigation-rights {
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss"; // FIXME: This shouldn't be defined like this, probably failing to import the crem-dropdown module somewhere
+  // FIXME: bad practice that breaks encapsulation and duplicates css
+  // FIXME: This is most probably result of not importing the shared component correctly or the SCSS selectors in the shared component
+    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
     @import "./assets/styles/reports.scss"; // FIXME: This shouldn't be defined like this
 }
 

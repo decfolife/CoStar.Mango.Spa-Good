@@ -10,16 +10,22 @@
   [visible]="isVisible"
   [showClearButton]="showClearButton"
   (onValueChanged)="dropdownOnValueChanged($event)"
-  (onKeyDown)="onKeyDown($event, cell)"
-  [searchEnabled]="allowSearch"
+  (onKeyUp)="onSelectBoxDropDownKeyUp($event)"
+  (onOpened)="onSelectBoxOpened($event)"
+  (onClosed)="onSelectBoxClosed($event)"
   [grouped]="grouped"
   [groupTemplate]="useCustomGroupTemplate ? 'selectBoxCustomGroupTemplate' : 'group'"
   [value]="selectBoxValue"
-  searchMode="startswith"
   [deferRendering]="false"
   [readOnly]="readOnly"
   (onOpened)="openDropdown($event)"
-  [itemTemplate]="itemTemplate ? itemTemplate: 'default'"
+  (click)="onClickSelectBox()"
+  [itemTemplate]="itemTemplate ? itemTemplate: 'defaultItem'"
+  [fieldTemplate]="fieldTemplate"
+  [searchEnabled]="allowSearch"
+  [searchMode]="searchMode"
+  [searchTimeout]="searchTimeout"
+  [searchExpr]="searchExpr"
   [inputAttr]="{ title: hoverText ? hoverText : placeholder, 'aria-controls': id, 'aria-label': hoverText ? hoverText : placeholder}"
 >
   <!-- Dropdown's header options -->
@@ -51,12 +57,39 @@
     [wrapperAttr]="selectBoxWrapperAttr"
   ></dxo-drop-down-options>
 
-  <!-- Template: Default -->
-  <ng-container *dxTemplate="let item of 'default'">
-    {{ item.name || item.displayValue || item.value || item[displayExpr]}}
+  <!-- Field Template: 'withLabel' -->
+  <div *dxTemplate="let item of 'withLabel'" class="custom-with-label">
+    <span *ngIf="label">{{label}}</span>
+    <div class="search">
+      <crem-icon
+        icon="faSearch"
+        pack='solid'
+        size='sm'
+        [hidden]="!allowSearch"
+      ></crem-icon>
+    </div>
+    <dx-text-box
+      (mouseenter)="onDisplayExprMouseEnter($event, item)"
+      (mouseleave)="onMouseLeave()"
+      (onValueChanged)="onValueChangedWithLabel($event, item)"
+      (onClosed)="onValueChangedWithLabel($event, item)"
+      [value]="getWithLabelValue(item)"
+      [searchEnabled]="allowSearch"
+      [inputAttr]="{ 'aria-label': hoverText ? hoverText : placeholder }"
+      [placeholder]="getWithLabelValue(item) ? getWithLabelValue(item) : hoverText"
+    ></dx-text-box>
+    <!-- Shows secondary text in the input field -->
+    <!-- <span *ngIf="item" class="item-secondary">{{item.secondaryText}}</span> --> 
+  </div>
+
+  <!-- Item Template: defaultItem -->
+  <ng-container *dxTemplate="let item of 'defaultItem'">
+    <div  [class.disable-item]="item?.disabled" id = "item-{{item?.workflowStatusId}}" (mouseenter)="onMouseEnter($event, item)" (mouseleave)="onMouseLeave()">
+        {{ item.name || item.displayValue || item.value || item[displayExpr]}}
+    </div >
   </ng-container>
 
-  <!-- Template: With Item's Menu -->
+  <!-- Item Template: With Item's Menu -->
   <div class="item" *dxTemplate="let item of 'withMenu'">
     <div
       class="item-name" [class]="item.itemClass ? item.itemClass : ''"
@@ -86,13 +119,14 @@
               <!-- Menu Item -->
               <button *ngSwitchDefault
                 mat-menu-item
-                [class]="'mat-menu-child-button ' + (option.class ? option.class : '') + (option.hide ? ' d-none' : '') "
+                [class]="'mat-menu-child-button ' + (option.class ? option.class : '')"
+                [hidden]="option.hide"
                 (click)="option.action(); option.stopPropagation ? $event.stopPropagation() : null"
                 [disabled]="option.disabled ? option.disabled : false"
                 [title]="option.title ?? ''"
               >{{option.name}}</button>
               <!-- Separator -->
-              <hr *ngSwitchCase="'separator'" />
+              <hr *ngSwitchCase="'separator'" [hidden]="option.hide" />
             </ng-container>
           </ng-container>
         </mat-menu>
@@ -104,6 +138,24 @@
   </div>
 
 </dx-select-box>
+
+<dx-tooltip
+  [visible]="isdisplayExprTooltipVisible" 
+  [target]="toolTipTarget"
+>
+  <div *dxTemplate="let data of 'content'" class="dropdown-tooltip">
+    {{displayExprTooltipText}}
+  </div>
+</dx-tooltip>
+
+<dx-tooltip
+  [visible]="showTooltip && isTooltipVisible" 
+  [target]="toolTipTarget"
+>
+  <div *dxTemplate="let data of 'content'" class="dropdown-tooltip">
+    {{btnDisabledReason}}
+  </div>
+</dx-tooltip>
 
 <dx-drop-down-box *ngIf="!useSelectBox" #dropDownBox
   [id]="id + '_box'"
@@ -120,7 +172,7 @@
   [visible]="isVisible"
   [showClearButton]="showClearButton"
   (onValueChanged)="dropdownOnValueChanged($event)"
-  (onKeyDown)="onKeyDown($event, cell)"
+  (onKeyUp)="onSelectBoxDropDownKeyUp($event)"
   [deferRendering]="false"
   (onOpened)="openDropdown($event)"
   [inputAttr]="{ title: placeholder, 'aria-controls': id + 'dropdownContainer', 'aria-label': placeholder}"

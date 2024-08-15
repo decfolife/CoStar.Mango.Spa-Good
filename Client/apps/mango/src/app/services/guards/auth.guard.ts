@@ -5,6 +5,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { MangoAppFacade } from '../../+state/app/app.facade';
 import { MangoNavigationService } from '../navigation.service';
 import { JwtService, AuthService, UtilitiesService } from '@mango/core-shared';
+import { UserAuth } from '@mango/data-models/lib-data-models';
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +20,13 @@ export class AuthGuard implements CanActivate {
     private jwtService: JwtService) { }
 
   canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.facade.accessToken$.pipe(
-      switchMap(accessToken => combineLatest([of(accessToken), this.activatedRoute.queryParams, this.activatedRoute.pathFromRoot])),
-      map(([accessToken, params, url]) => {
-        return [accessToken, params, url]
+    return this.facade.authenticatedUser$.pipe(
+      switchMap(user => combineLatest([of(user), this.activatedRoute.queryParams, this.activatedRoute.pathFromRoot])),
+      map(([user, params, url]: [UserAuth, Params, any]) => {
+        return [user, params, url]
       }),
-      switchMap(([accessToken, params, url]: [string, Params, string]) => {
-        if (!!accessToken || !!params.auth_code) {
+      switchMap(([user, params, url]: [UserAuth, Params, string]) => {
+        if (!!user || !!params.auth_code) {
           return of(true)
         } 
         
@@ -37,16 +38,15 @@ export class AuthGuard implements CanActivate {
           return of(false)
         } 
 
-        return this.authService.getCurrentUserAccessToken().pipe(
-          map(accessToken => {
-            if (accessToken) {
-              this.facade.setAccessToken(accessToken)
+        return this.authService.getCurrentUser().pipe(
+          map(user => {
+            if (user) {
+              this.facade.setAuthenticatedUser(user)
               return true
             }
           }),
           catchError(error => {
-            this.facade.logout()
-            this.navigationService.redirectToCentralAuth()
+            this.facade.logout(true)
             return of(false)
           })
         )

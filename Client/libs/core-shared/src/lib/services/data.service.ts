@@ -48,5 +48,10 @@ export class DataService extends EndpointService {
     const url = `${this.dashboardsUrl}ProjectsMetrics/GetAllProjectMetrics`;
     return this.callHttpPost(url, 'getAllProjectMetrics', { schemaMetrics, selectedFilters })
   }
+
+  getRedirectorLinkList(): Observable<any> {
+    const url = `${this.dashboardsUrl}dashboards/GetRedirectorLinkList`;
+    return this.callHttpGet(url, 'getRedirectorLinkList')
+  }
 }
 

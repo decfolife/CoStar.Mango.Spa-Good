@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { AssignTasks, MemberInfo, ProjectTaskDetails, ProjectTeamMember, TeamMember, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser, contactMember } from '@mango/data-models/lib-data-models';
-import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { CardsService } from '@project-dashboard/services/cards.service';
 import { DxValidationGroupComponent, DxValidatorComponent } from 'devextreme-angular';
 
@@ -49,6 +49,7 @@ export class AddEditMemberComponent implements OnInit {
   updateContactData: UpdateContact = <UpdateContact>{};
   memberTasks: AssignTasks = <AssignTasks>{};
   contactId: number;
+  projectsPrivateSetting: number;
   expirationType: string;
   expirationDate: Date  = null;
   reloadMainGrid: boolean = false;
@@ -79,8 +80,10 @@ export class AddEditMemberComponent implements OnInit {
   lastName: string = "";
   emailId: string = "";
   dropdownbox;
+  sharedToggleText = ""
   projectMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
                               Please consider replacing this team member or updating their User record.`;
+  private duplicateEmailMsg = "This email address is already in use.";
 
   
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>('')
@@ -102,11 +105,14 @@ export class AddEditMemberComponent implements OnInit {
     this.operation = this.data.operation;
     this.projectContactIds = this.data.contactIds;
     this.emailAddressList = this.data.emailAddressList;
+    this.projectsPrivateSetting = this.data.projectsPrivateSetting;
     this.memberInfo.roles = [];
     this.memberInfo.levels = [];
     this.memberTasks.contactID = 0;
     this.memberTasks.assignTasks = [];
 
+    this.sharedChecked = this.data.projectsPrivateSetting === 1 || this.data.projectsPrivateSetting === 3;
+    this.determineSharedToggleText();
 
     this.memberInfo.roles = Object.assign([], this.data.memberInfo.roles);
     this.memberInfo.levels = Object.assign([], this.data.memberInfo.levels);
@@ -146,6 +152,7 @@ export class AddEditMemberComponent implements OnInit {
     this.selectedMember = this.teamMember.teamMember;
     this.emailNotificationChecked = this.teamMember.emailNotifications;
     this.sharedChecked = this.teamMember.shared;
+    this.determineSharedToggleText();
     this.selectedRole = this.teamMember.role;
     this.selectedLevel = this.teamMember.accessLevel == 1? 'L1': this.teamMember.accessLevel == 2?'L2': this.teamMember.accessLevel == 3? 'L3': '' ;
     this.description = this.teamMember.description;
@@ -229,6 +236,7 @@ export class AddEditMemberComponent implements OnInit {
   sharedtoggle(e) {
     this.changesMade = true;
     this.sharedChecked = e.checked;
+    this.determineSharedToggleText();
   }
 
   descriptionValueChanged(e) {
@@ -308,7 +316,7 @@ export class AddEditMemberComponent implements OnInit {
 
   duplicateEmailAddressValidation(e) {
     if(this.operation=='ATU' || this.operation=='ETU'){
-      const foundIndex = this.emailAddressList.findIndex(ea => ea == e.value.trim());
+      const foundIndex = this.emailAddressList.findIndex(ea => ea.trim().toLowerCase() == e.value.trim().toLowerCase());
       return foundIndex < 0;
     }
 
@@ -388,8 +396,12 @@ export class AddEditMemberComponent implements OnInit {
           (updateType == 'save') && this.closeModal();
           this.operation = Operations.ETU;
         } else {
-          this.dialogService.alert('Add Temporary User', `There was an issue Adding Temporary User, Please try again later.`, 'OK');
-          (updateType == 'save') && this.closeModal();
+          if(res.errorMessage.startsWith("This email address cannot be used for a temporary user.")){
+            this.dialogService.alert('Validation Error(s)', this.duplicateEmailMsg, 'OK');
+          } else
+          {
+            this.dialogService.alert('Add Temporary User', `There was an issue Adding Temporary User, Please try again later.`, 'OK');
+          }
         }
       }  
     ));
@@ -514,7 +526,12 @@ export class AddEditMemberComponent implements OnInit {
   
   ngOnDestroy() {
     this.membersSearchInput$.unsubscribe();
-    this.subs.forEach(s => s.unsubscribe);
+    this.subs.forEach(s => s.unsubscribe());
+  }
+
+  private determineSharedToggleText() {
+    this.sharedToggleText = this.sharedChecked ? "If ON, any member of user’s primary group will be able to access this project." :
+      "If OFF, any member of user’s primary group will NOT be able to access this project."
   }
 
   private executeFieldValidation(validationResult: any) {
@@ -545,9 +562,9 @@ export class AddEditMemberComponent implements OnInit {
         }
       }
       else if(ruleBroken === "email") {
-        validationStrArray.push("The e-mail address is not in the correct format required for an e-mail address.")
+        validationStrArray.push("The email address is not in the correct format required for an email address.")
       } else {
-        validationStrArray.push("The e-mail address is already in use for a temporary user.");
+        validationStrArray.push(this.duplicateEmailMsg);
       }
     }
 

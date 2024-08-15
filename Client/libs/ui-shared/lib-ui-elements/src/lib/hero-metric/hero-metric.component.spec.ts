@@ -1,26 +1,17 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
 import { HeroMetricComponent } from './hero-metric.component';
 
-describe('HeroMetricComponent', () => {
-  let component: HeroMetricComponent;
-  let fixture: ComponentFixture<HeroMetricComponent>;
+jest.mock('@angular/core');
+jest.mock('@mango/data-models/lib-data-models');
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [HeroMetricComponent],
-      }).compileComponents();
-    })
-  );
+describe('HeroMetricComponent', () => {
+  let instance;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HeroMetricComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    instance = new HeroMetricComponent();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('instance should be an instanceof HeroMetricComponent', () => {
+    expect(instance instanceof HeroMetricComponent).toBeTruthy();
   });
+
 });

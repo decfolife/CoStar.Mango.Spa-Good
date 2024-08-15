@@ -552,8 +552,8 @@ mat-card.mat-mdc-card {
 					text-align: center;
 					background: $costarGreen;
 					color: #FFFFFF;
-					padding: $stdPadding/2 $dblPadding;
-					margin: $stdPadding/2 0px;
+					padding: calc($stdPadding / 2) $dblPadding;
+					margin: calc($stdPadding / 2) 0px;
 				}
 			}
 		}
@@ -647,10 +647,10 @@ button.left-nav-add-button {
 
 	fa-icon {
 		&:first-of-type {
-			margin-right: $stdPadding/2;
+			margin-right: calc($stdPadding / 2);
 		}
 		&:last-of-type {
-			margin-left: $stdPadding/2;
+			margin-left: calc($stdPadding / 2);
 		}
 	}	
 }
@@ -882,7 +882,7 @@ table.mat-table {
 
 					.comment-username {
 						h5 {
-							margin-bottom: $stdPadding/2;
+							margin-bottom: calc($stdPadding / 2);
 							font-size: 16px;
 							font-weight: 700;
 						}
@@ -893,7 +893,7 @@ table.mat-table {
 					margin-right: $stdPadding;
 
 					h6{
-						margin-bottom: $stdPadding/2;
+						margin-bottom: calc($stdPadding / 2);
 						font-size: 12px;
 						font-weight: 400;	
 					}
@@ -2291,7 +2291,7 @@ div.badge {
 	min-width: 16px;
 	border-radius: $stdPadding;
 	border: $stdBorder;
-	padding: $stdPadding / 4;
+	padding: calc($stdPadding / 4);
 	font-size: 12px;
 	text-align: center;
 	box-sizing: border-box;
@@ -2395,7 +2395,7 @@ app-badge {
 		min-width: 16px;
 		border-radius: $stdPadding;
 		border: $stdBorder;
-		padding: $stdPadding / 4;
+		padding: calc($stdPadding / 4);
 		font-size: 12px;
 		text-align: center;
 		box-sizing: border-box;
@@ -3193,8 +3193,8 @@ dashboard-hero-card {
 					text-align: center;
 					background: $costarGreen;
 					color: #FFFFFF;
-					padding: $stdPadding/2 $dblPadding;
-					margin: $stdPadding/2 0px;
+					padding: calc($stdPadding / 2) $dblPadding;
+					margin: calc($stdPadding / 2) 0px;
 				}
 			}
 		}

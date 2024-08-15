@@ -1,10 +1,9 @@
-import { Component, Input, OnInit, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
+import { combineLatest, Subject } from 'rxjs';
+import { filter, tap, takeUntil } from 'rxjs/operators';
 import { FormWizardService } from '../services/form-wizard.service';
-import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
 import { IForm } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/definitions';
-
-import { forkJoin } from 'rxjs';
-import { environment } from '@mangoSpa/src/environments/environment.local';
+import { Component, Input, OnInit, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
 
 interface ISaveObject {
   CompanyID?: number;
@@ -36,7 +35,7 @@ interface ISaveObject {
   templateUrl: './form-wizard.component.html',
   styleUrls: ['./form-wizard.component.scss']
 })
-export class FormWizardAppComponent implements OnInit {
+export class FormWizardAppComponent implements OnInit, OnDestroy {
   public formConfig: IForm;
   public formData: any = {};
   public typeDropdownItem: any = [];
@@ -51,6 +50,7 @@ export class FormWizardAppComponent implements OnInit {
   public leaseDropdownItem: any = [];
   public managerDropdownItem: any = [];
   public measurementsDropdownItem: any = [];
+  public buildingLeaseDefaultInfo: any = [];
   public currencyDropdownItem: any = [];
   public showInternalID: boolean;
   public loading = true;
@@ -60,7 +60,7 @@ export class FormWizardAppComponent implements OnInit {
   public linkBuildingsLeases: boolean = false;
   public defaultValues: any = {};
   public measureUnit: number;
-  public currency : number;
+  public currency: number;
   @Input() objectTypeName: string;
   @Input() objectTypeId: number;
   @Input() objectId: number;
@@ -69,6 +69,7 @@ export class FormWizardAppComponent implements OnInit {
 
   @ViewChild('FormWizardDynamicForm')
   dynamicForm: DynamicFormComponent;
+  private onDestroy$: Subject<void> = new Subject<void>();
 
   constructor(
     private formWizardService: FormWizardService
@@ -80,232 +81,211 @@ export class FormWizardAppComponent implements OnInit {
       }
       this.measureUnit = response?.data?.unitOfMeasureId;
       this.currency = response?.data?.currencyId;
+      this.userId = response?.data?.userId;
       this.getDropdownData();
     })
-  
+  }
 
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   public getDropdownData() {
-    let observableList;
+    const observableList = combineLatest([
+      this.formWizardService.getRenderSelect("1", 23),
+      this.formWizardService.getRenderSelect("0", 15),
+      this.formWizardService.getRenderSelect("", 18),
+      this.formWizardService.getRenderSelect("0", 16),
+      this.formWizardService.getRenderSelect("", 19),
+      this.formWizardService.getRenderSelect("", 21),
+      this.formWizardService.getRenderSelect("", 20),
+      this.formWizardService.getProjectWizardClientPreferences(),
+      this.formWizardService.getManagers(0),
+      this.formWizardService.getBuildingLeaseDefaultInfo(this.objectId, this.objectTypeId)
+    ]).pipe(takeUntil(this.onDestroy$),
+      tap(([typeDropdownItem, clientDropdownItem, templateDropdownItem, countryDropdownItem, teamDropdownItem, currencyDropdownItem,
+        measurementsDropdownItem, clientPreferences, managerDropdownItem, buildingLeaseDefaultInfo]) => {
+        this.typeDropdownItem = typeDropdownItem.data;
+        this.clientDropdownItem = clientDropdownItem.data;
+        this.templateDropdownItem = templateDropdownItem.data;
+        this.countryDropdownItem = countryDropdownItem.data;
+        this.teamDropdownItem = teamDropdownItem.data;
+        this.currencyDropdownItem = currencyDropdownItem.data;
+        this.measurementsDropdownItem = measurementsDropdownItem.data;
+        this.buildingLeaseDefaultInfo = buildingLeaseDefaultInfo?.data;
+        this.clientProjectsPrivate = clientPreferences.data?.[0]?.ClientSetupFieldValue === "2" ||
+          clientPreferences.data?.[0]?.ClientSetupFieldValue === "4";
+        this.hideClientProjectsPrivate = clientPreferences.data?.[0]?.ClientSetupFieldValue === "3" ||
+          clientPreferences.data?.[0]?.ClientSetupFieldValue === "4";
+        this.showInternalID = clientPreferences.data?.[5]?.ClientSetupFieldValue === "1";
+        this.defaultValues.calculateDates = clientPreferences.data?.[2]?.ClientSetupFieldValue === "1";
+        this.defaultValues.calculatedBy = clientPreferences.data?.[6]?.ClientSetupFieldValue === "1";
+        this.defaultValues.autoCalculate = clientPreferences.data?.[1]?.ClientSetupFieldValue === "1";
+        this.defaultValues.shiftTimeline = clientPreferences.data?.[4]?.ClientSetupFieldValue === "1";
+        this.linkBuildingsLeases = clientPreferences.data?.[3]?.ClientSetupFieldValue === "1";
 
-    if (this.objectTypeId === 3 || this.objectTypeId === 4) {
-      observableList = forkJoin({
-        typeDropdownItem: this.formWizardService.getRenderSelect("1", 23),
-        clientDropdownItem: this.formWizardService.getRenderSelect("0", 15),
-        templateDropdownItem: this.formWizardService.getRenderSelect("", 18),
-        countryDropdownItem: this.formWizardService.getRenderSelect("0", 16),
-        teamDropdownItem: this.formWizardService.getRenderSelect("", 19),
-        currencyDropdownItem: this.formWizardService.getRenderSelect("", 21),
-        measurementsDropdownItem:this.formWizardService.getRenderSelect("", 20),
-        clientPreferences: this.formWizardService.getProjectWizardClientPreferences(),
-        managerDropdownItem: this.formWizardService.getManagers(0),
-        buildingLeaseDefaultInfo: this.formWizardService.getBuildingLeaseDefaultInfo(this.objectId, this.objectTypeId)
-      });
-    } else {
-      observableList = forkJoin({
-        typeDropdownItem: this.formWizardService.getRenderSelect("1", 23),
-        clientDropdownItem: this.formWizardService.getRenderSelect("0", 15),
-        templateDropdownItem: this.formWizardService.getRenderSelect("", 18),
-        countryDropdownItem: this.formWizardService.getRenderSelect("0", 16),
-        teamDropdownItem: this.formWizardService.getRenderSelect("", 19),
-        currencyDropdownItem: this.formWizardService.getRenderSelect("", 21),
-        measurementsDropdownItem: this.formWizardService.getRenderSelect("", 20),
-        clientPreferences: this.formWizardService.getProjectWizardClientPreferences(),
-        managerDropdownItem: this.formWizardService.getManagers(0),
-      });
-    }
-    
+        this.defaultValues.currency = [];
+        this.defaultValues.measurements = [];
+        this.defaultValues.manager = [];
+        this.managerDropdownItem = [];
 
-    observableList.subscribe((data: any) => {
-      this.typeDropdownItem = data.typeDropdownItem.data;
-      this.clientDropdownItem = data.clientDropdownItem.data;
-      this.templateDropdownItem = data.templateDropdownItem.data;
-      this.countryDropdownItem = data.countryDropdownItem.data;
-      this.teamDropdownItem = data.teamDropdownItem.data;
-      this.currencyDropdownItem = data.currencyDropdownItem.data;
-      this.measurementsDropdownItem = data.measurementsDropdownItem.data;
-      if (environment.name === 'LOCAL') {
-        this.clientProjectsPrivate = false;
-        this.showInternalID = true;
-        this.defaultValues.calculateDates = true;
-        this.defaultValues.calculatedBy = true;
-        this.defaultValues.autoCalculate = true;
-        this.defaultValues.shiftTimeline = false;
-      } else {
-        this.clientProjectsPrivate = data.clientPreferences.data?.[0]?.ClientSetupFieldValue === "2"
-          || data.clientPreferences.data?.[0]?.ClientSetupFieldValue === "4";
-        this.hideClientProjectsPrivate = data.clientPreferences.data?.[0]?.ClientSetupFieldValue === "3"
-          || data.clientPreferences.data?.[0]?.ClientSetupFieldValue === "4";
-        this.showInternalID = data.clientPreferences.data?.[5]?.ClientSetupFieldValue === "1";
-        this.defaultValues.calculateDates = data.clientPreferences.data?.[2]?.ClientSetupFieldValue === "1";
-        this.defaultValues.calculatedBy = data.clientPreferences.data?.[6]?.ClientSetupFieldValue === "1";
-        this.defaultValues.autoCalculate = data.clientPreferences.data?.[1]?.ClientSetupFieldValue === "1";
-        this.defaultValues.shiftTimeline = data.clientPreferences.data?.[4]?.ClientSetupFieldValue === "1";
-        this.linkBuildingsLeases = data.clientPreferences.data?.[3]?.ClientSetupFieldValue === "1";
-      }
-      this.defaultValues.currency = [];
-      this.defaultValues.measurements = [];
-      this.defaultValues.manager = [];
-      this.managerDropdownItem = [];
-      if (this.currency !== null) {
-        const defaultCurrency = data.currencyDropdownItem.data.find(x => x?.ExchangeRateID == this.currency);
-        if (defaultCurrency) {
-          this.defaultValues.currency = [defaultCurrency];
+
+      }),
+      filter(() => this.currency !== null || this.measureUnit !== null || this.userId !== null),
+      tap(() => {
+        if (this.currency !== null) {
+          const defaultCurrency = this.currencyDropdownItem.find(x => x?.ExchangeRateID == this.currency);
+          if (defaultCurrency) {
+            this.defaultValues.currency = [defaultCurrency];
+          }
         }
-      }
 
-      if (this.measureUnit !== null) {
-        const defaultMeasureUnit = data.measurementsDropdownItem.data.find(x => x?.MeasureUnitsID == this.measureUnit);
-        if (defaultMeasureUnit) {
-          this.defaultValues.measurements = [defaultMeasureUnit];
+        if (this.measureUnit !== null) {
+          const defaultMeasureUnit = this.measurementsDropdownItem.find(x => x?.MeasureUnitsID == this.measureUnit);
+          if (defaultMeasureUnit) {
+            this.defaultValues.measurements = [defaultMeasureUnit];
+          }
         }
-        
-      }
-      
-      if (this.userId !== null) {
-        const defaultManager = data.managerDropdownItem.data.find(x => x?.ContactID == this.userId);
-        if (defaultManager) {
-          this.managerDropdownItem = [defaultManager];
-          this.defaultValues.manager = [defaultManager];
-        }
-      }
-      
-      this.teamDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "GroupName")});
 
-      if (this.objectTypeId === 3 || this.objectTypeId === 4) {
-        const defaultInfo = data.buildingLeaseDefaultInfo?.data?.[0];
-        if (defaultInfo) {
-          if (defaultInfo.Country) {
-            const defaultCountry = this.countryDropdownItem.find((country) => {
-              return country.Country === defaultInfo.Country
-            })
-  
-            if (defaultCountry) {
-              this.defaultValues.country = [defaultCountry];
-  
-              let country;
-              let noStateCountry
-              const isLocal = environment.name === "LOCAL";
-              const selectedCountry = this.defaultValues.country[0].Country;
-              if (selectedCountry) {
-                if (isLocal) {
-                  country = selectedCountry;
-                  noStateCountry = selectedCountry + "--";
-                } else {
+        if (this.userId !== null) {
+          const defaultManager = this.managerDropdownItem.find(x => x?.ContactID == this.userId);
+          if (defaultManager) {
+            this.managerDropdownItem = [defaultManager];
+            this.defaultValues.manager = [defaultManager];
+          }
+        }
+
+
+        this.teamDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "GroupName") });
+
+
+        if (this.objectTypeId === 3 || this.objectTypeId === 4) {
+          const defaultInfo = this.buildingLeaseDefaultInfo?.data?.[0];
+          let country;
+          let noStateCountry
+          if (defaultInfo) {
+            if (defaultInfo.Country) {
+              const defaultCountry = this.countryDropdownItem.find((country) => {
+                return country.Country === defaultInfo.Country
+              })
+
+              if (defaultCountry) {
+                this.defaultValues.country = [defaultCountry];
+
+                const selectedCountry = this.defaultValues.country[0].Country;
+                if (selectedCountry) {
                   country = '"' + selectedCountry + '"';
                   noStateCountry = '"' + selectedCountry + "--" + '"';
-                }
-  
-                this.formWizardService.getRenderSelect(country, 17).subscribe((stateData) => {
-                  this.stateProvinceDropdownItem = stateData.data;
-                  if (stateData?.data?.length === 0) {
-                    if (defaultInfo.Country) {
-                      this.defaultValues.stateProvince = defaultInfo.State;
-                    }
-                    
-                    this.formWizardService.getRenderSelect(noStateCountry, 73).subscribe((buildingData) => {
-                      this.buildingDropdownItem = buildingData.data;
-                      this.buildingDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "BuildingName")});
-                      const defaultBuilding = this.buildingDropdownItem.find((building) => {
-                        return building.BuildingID === defaultInfo.BuildingID
-                      })
-                      if (defaultBuilding) {
-                        this.defaultValues.building = [defaultBuilding]
-                        //set lease default
-                        const LeaseAbstractID = defaultInfo.LeaseAbstractID;
-                        if (LeaseAbstractID) {
-                          this.formWizardService.getRenderSelect(defaultInfo.BuildingID, 61).subscribe((data) => {
-                            this.leaseDropdownItem = data.data;
-                            this.leaseDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "LeaseName")});
-                            const defaultLease = this.leaseDropdownItem.find((lease) => {
-                              return lease.LeaseAbstractID === defaultInfo.LeaseAbstractID
-                            })
-                            if (defaultLease) {
-                              this.defaultValues.lease = [defaultLease]
-                            }
-                            this.buildFormConfig();
-                          })
-                        } else {
-                          this.formWizardService.getRenderSelect(defaultInfo.BuildingID, 61).subscribe((data) => {
-                            this.leaseDropdownItem = data.data;
-                            this.buildFormConfig();
-                          });
-                        }
-                      } else {
-                        this.buildFormConfig();
+
+                  this.formWizardService.getRenderSelect(country, 17).subscribe((stateData) => {
+                    this.stateProvinceDropdownItem = stateData.data;
+                    if (stateData?.data?.length === 0) {
+                      if (defaultInfo.Country) {
+                        this.defaultValues.stateProvince = defaultInfo.State;
                       }
-                    });                   
-                  } else {
-                    const defaultState = this.stateProvinceDropdownItem.find((state) => {
-                      return state.State === defaultInfo.State
-                    })
-                    
-                    if (defaultState) {
-                      this.defaultValues.stateProvince = [defaultState];
-  
-                      //set building default
-                      let countryState
-                      const countryName = defaultInfo.Country
-                      const stateName = defaultInfo.State                   
-    
-                      if (isLocal) {
-                        countryState = countryName + "--" + stateName;
-                      } else {
-                        countryState = '"' + countryName + "--" + stateName + '"'
-                      }
-                      this.formWizardService.getRenderSelect(countryState, 73).subscribe((data) => {
-                        this.buildingDropdownItem = data.data;
-                        this.buildingDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "BuildingName")});
+
+                      this.formWizardService.getRenderSelect(noStateCountry, 73).subscribe((buildingData) => {
+                        this.buildingDropdownItem = buildingData.data;
+                        this.buildingDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "BuildingName") });
                         const defaultBuilding = this.buildingDropdownItem.find((building) => {
-                          return building.BuildingID == defaultInfo.BuildingID
+                          return building.BuildingID === defaultInfo.BuildingID
                         })
-                        if (defaultBuilding){
+                        if (defaultBuilding) {
                           this.defaultValues.building = [defaultBuilding]
-                          //set lease default
+
                           const LeaseAbstractID = defaultInfo.LeaseAbstractID;
-    
-                          this.formWizardService.getRenderSelect(defaultInfo.BuildingID, 61).subscribe((data) => {
-                            this.leaseDropdownItem = data.data;
-                            this.leaseDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "LeaseName")});                       
-                            
-                            if (LeaseAbstractID) {
+                          if (LeaseAbstractID) {
+                            this.formWizardService.getRenderSelect(defaultInfo.BuildingID, 61).subscribe((data) => {
+                              this.leaseDropdownItem = data.data;
+                              this.leaseDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "LeaseName") });
                               const defaultLease = this.leaseDropdownItem.find((lease) => {
-                                return lease.LeaseAbstractID == defaultInfo.LeaseAbstractID
+                                return lease.LeaseAbstractID === defaultInfo.LeaseAbstractID
                               })
                               if (defaultLease) {
                                 this.defaultValues.lease = [defaultLease]
                               }
                               this.buildFormConfig();
-                            } else {
+                            })
+                          } else {
+                            this.formWizardService.getRenderSelect(defaultInfo.BuildingID, 61).subscribe((data) => {
+                              this.leaseDropdownItem = data.data;
                               this.buildFormConfig();
-                            }
-                          })
+                            });
+                          }
                         } else {
                           this.buildFormConfig();
                         }
-                        
-                      })
+                      });
                     } else {
-                      this.buildFormConfig();
+                      const defaultState = this.stateProvinceDropdownItem.find((state) => {
+                        return state.State === defaultInfo.State
+                      })
+
+                      if (defaultState) {
+                        this.defaultValues.stateProvince = [defaultState];
+
+                        let countryState
+                        const countryName = defaultInfo.Country
+                        const stateName = defaultInfo.State
+
+
+                        countryState = '"' + countryName + "--" + stateName + '"'
+
+                        this.formWizardService.getRenderSelect(countryState, 73).subscribe((data) => {
+                          this.buildingDropdownItem = data.data;
+                          this.buildingDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "BuildingName") });
+                          const defaultBuilding = this.buildingDropdownItem.find((building) => {
+                            return building.BuildingID == defaultInfo.BuildingID
+                          })
+                          if (defaultBuilding) {
+                            this.defaultValues.building = [defaultBuilding]
+                            const LeaseAbstractID = defaultInfo.LeaseAbstractID;
+
+                            this.formWizardService.getRenderSelect(defaultInfo.BuildingID, 61).subscribe((data) => {
+                              this.leaseDropdownItem = data.data;
+                              this.leaseDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "LeaseName") });
+
+                              if (LeaseAbstractID) {
+                                const defaultLease = this.leaseDropdownItem.find((lease) => {
+                                  return lease.LeaseAbstractID == defaultInfo.LeaseAbstractID
+                                })
+                                if (defaultLease) {
+                                  this.defaultValues.lease = [defaultLease]
+                                }
+                                this.buildFormConfig();
+                              } else {
+                                this.buildFormConfig();
+                              }
+                            })
+                          } else {
+                            this.buildFormConfig();
+                          }
+
+                        })
+                      } else {
+                        this.buildFormConfig();
+                      }
+
                     }
-                                      
-                  }
-                })
+                  })
+                } else {
+                  this.buildFormConfig();
+                }
               } else {
                 this.buildFormConfig();
               }
             } else {
               this.buildFormConfig();
             }
-          } else {
-            this.buildFormConfig();
           }
+        } else {
+          this.buildFormConfig();
         }
-      } else {
-        this.buildFormConfig();
-      }
-    });
+      })
+    );
+
+    observableList.subscribe();
   }
 
   public buildFormConfig() {
@@ -323,6 +303,7 @@ export class FormWizardAppComponent implements OnInit {
                   caption: "Name",
                   maxLengthMessage: "Character limit of 100 reached.",
                   maxLength: 100,
+                  value: '',
                   required: true,
                   disabled: false,
                   initialFocus: true
@@ -406,6 +387,7 @@ export class FormWizardAppComponent implements OnInit {
                   maxLengthMessage: "Character limit of 50 reached.",
                   maxLength: 50,
                   required: false,
+                  value: '',
                   disabled: false,
                   hidden: this.showInternalID !== true
                 },
@@ -460,7 +442,7 @@ export class FormWizardAppComponent implements OnInit {
                   dataSource: this.stateProvinceDropdownItem,
                   disabled: false,
                   combinationType: this.stateProvinceDropdownItem?.length > 0 ? 'dropdown' : 'text',
-                  value: this.defaultValues?.stateProvince,
+                  value: this.defaultValues?.stateProvince || '',
                   hoverText: "Select the state/province of the project",
                   defaultValue: this.defaultValues?.stateProvince
                 },
@@ -484,7 +466,7 @@ export class FormWizardAppComponent implements OnInit {
                   displayExpr: "LeaseName",
                   valueExpr: "LeaseAbstractID",
                   caption: "Link with lease?",
-                  hidden: !this.linkBuildingsLeases  && !(this.objectTypeId === 3 || this.objectTypeId === 4),
+                  hidden: !this.linkBuildingsLeases && !(this.objectTypeId === 3 || this.objectTypeId === 4),
                   dataSource: this.leaseDropdownItem,
                   disabled: false,
                   value: this.defaultValues?.lease,
@@ -521,7 +503,7 @@ export class FormWizardAppComponent implements OnInit {
                   required: true,
                   value: new Date(),
                   defaultValue: new Date()
-                  
+
                 },
                 {
                   dataField: "isPrivate",
@@ -595,7 +577,6 @@ export class FormWizardAppComponent implements OnInit {
 
   public onChange(config) {
     let selectedId
-    const isLocal = environment.name === "LOCAL";
     switch (config.dataField) {
       case "calculateDates":
         if (config.values[config.dataField]?.value === true) {
@@ -631,7 +612,7 @@ export class FormWizardAppComponent implements OnInit {
               config.values['taskTemplate'].dataSource = this.templateDropdownItem;
               config.values['taskTemplate'].disabled = false;
             })
-          this.setLoadingCondition(false);
+            this.setLoadingCondition(false);
           })
         } else {
           config.values['subtype'].dataSource = [];
@@ -643,13 +624,8 @@ export class FormWizardAppComponent implements OnInit {
         let country;
         let noStateCountry
         if (selectedId) {
-          if (isLocal) {
-            country = selectedId;
-            noStateCountry = selectedId + "--";
-          } else {
-            country = '"' + selectedId + '"';
-            noStateCountry = '"' + selectedId + "--" + '"';
-          }
+          country = '"' + selectedId + '"';
+          noStateCountry = '"' + selectedId + "--" + '"';
           this.setLoadingCondition(true);
           this.formWizardService.getRenderSelect(country, 17).subscribe((data) => {
             this.stateProvinceDropdownItem = data.data;
@@ -658,7 +634,7 @@ export class FormWizardAppComponent implements OnInit {
             if (data?.data?.length === 0) {
               this.formWizardService.getRenderSelect(noStateCountry, 73).subscribe((data) => {
                 this.buildingDropdownItem = data.data;
-                this.buildingDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "BuildingName")});
+                this.buildingDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "BuildingName") });
                 config.values['building'].dataSource = this.buildingDropdownItem;
                 this.setLoadingCondition(false);
               });
@@ -676,10 +652,10 @@ export class FormWizardAppComponent implements OnInit {
           config.values['building'].dataSource = [];
           config.values['lease'].dataSource = [];
         }
-        
+
         config.values['building'].value = [];
         config.values['lease'].value = [];
-        
+
         break;
       case "client":
         selectedId = config?.values?.client?.value?.[0]?.CompanyID;
@@ -699,22 +675,17 @@ export class FormWizardAppComponent implements OnInit {
         let countryState
         const countryName = config?.values?.country?.value?.[0]?.Country;
         const stateName = config?.values?.stateProvince?.value?.[0]?.State;
-        
+
         if (config.values['stateProvince'].combinationType === "text") {
           break;
         }
-        
+        countryState = '"' + countryName + "--" + stateName + '"'
 
-        if (isLocal) {
-          countryState = countryName + "--" + stateName;
-        } else {
-          countryState = '"' + countryName + "--" + stateName + '"'
-        }
         if (countryName && stateName) {
           this.setLoadingCondition(true);
           this.formWizardService.getRenderSelect(countryState, 73).subscribe((data) => {
             this.buildingDropdownItem = data.data;
-            this.buildingDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "BuildingName")});
+            this.buildingDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "BuildingName") });
             config.values['building'].dataSource = this.buildingDropdownItem;
             this.setLoadingCondition(false);
           })
@@ -729,7 +700,7 @@ export class FormWizardAppComponent implements OnInit {
           this.setLoadingCondition(true);
           this.formWizardService.getRenderSelect(selectedId, 61).subscribe((data) => {
             this.leaseDropdownItem = data.data;
-            this.leaseDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "LeaseName")});
+            this.leaseDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "LeaseName") });
             config.values['lease'].dataSource = this.leaseDropdownItem;
             this.setLoadingCondition(false);
           })
@@ -744,16 +715,16 @@ export class FormWizardAppComponent implements OnInit {
           this.setLoadingCondition(true);
           this.formWizardService.getManagers(selectedId).subscribe((data) => {
             this.managerDropdownItem = data.data;
-            this.managerDropdownItem.sort((a, b) => {return this.compareObjectByKey(a, b, "ContactName")});
+            this.managerDropdownItem.sort((a, b) => { return this.compareObjectByKey(a, b, "ContactName") });
             config.values['manager'].dataSource = this.managerDropdownItem;
             this.setLoadingCondition(false);
-          }) 
-          } else {
-            config.values['manager'].dataSource = [this.defaultValues.manager];
-            this.setLoadingCondition(false);
-          }
-          config.values['manager'].value = [];
-          break;
+          })
+        } else {
+          config.values['manager'].dataSource = [this.defaultValues.manager];
+          this.setLoadingCondition(false);
+        }
+        config.values['manager'].value = [];
+        break;
       default:
     }
     this.formData = config.values;
@@ -790,7 +761,7 @@ export class FormWizardAppComponent implements OnInit {
 
   public getSaveObject() {
     const saveObject: ISaveObject = {}
-    
+
     if (this.formData.name?.value) {
       saveObject.TaskName = this.formData.name?.value;
     }
@@ -844,7 +815,7 @@ export class FormWizardAppComponent implements OnInit {
         saveObject.State = this.formData.stateProvince?.value?.[0]?.State;
       }
     }
-    
+
 
     // need Building
     if (this.formData.building?.value?.[0]?.BuildingID) {
@@ -859,10 +830,10 @@ export class FormWizardAppComponent implements OnInit {
     if (this.formData.taskTemplate?.value?.[0]?.ProjectTemplateID) {
       saveObject.ProjectTemplateID = this.formData.taskTemplate?.value[0].ProjectTemplateID;
     }
-    
-    
+
+
     saveObject.StartDate = this.formData.taskStartDate?.value ? this.formData.taskStartDate.value.toJSON() : new Date(Date.now()).toJSON();
-    
+
 
     saveObject.CalcDays = !!this.formData.calculateDates?.value;
     saveObject.WorkDaysOnly = saveObject.CalcDays && !!this.formData.calculatedBy?.value;
@@ -876,7 +847,7 @@ export class FormWizardAppComponent implements OnInit {
   private compareObjectByKey(object1, object2, key) {
     let o1Name = object1?.[key]?.toLowerCase() || "";
     let o2Name = object2?.[key]?.toLowerCase() || "";
-    
+
     if (o1Name > o2Name) {
       return 1;
     } else if (o1Name < o2Name) {

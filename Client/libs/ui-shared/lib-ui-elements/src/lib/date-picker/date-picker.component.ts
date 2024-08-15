@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DxDateBoxComponent, DxValidatorComponent } from 'devextreme-angular';
 
 
@@ -12,34 +13,63 @@ import { DxDateBoxComponent, DxValidatorComponent } from 'devextreme-angular';
   selector: 'crem-date-picker',
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi:true,
+      useExisting: DatePickerComponent
+    }
+  ]
 })
-export class DatePickerComponent {
+export class DatePickerComponent implements ControlValueAccessor {
   @Input() value: string;
-  @Input() dateFormat: string = 'MM/dd/yyyy';
+  @Input() dateFormat = 'MM/dd/yyyy';
   @Input() invalidDateMessage: string;
-  @Input() useMaskBehavior: boolean = true;
-  @Input() showClearButton: boolean = false;
-  @Input() isRequired: boolean = false;
+  @Input() useMaskBehavior = true;
+  @Input() showClearButton = false;
+  @Input() isRequired = false;
   @Input() inputId: string;
   @Input() min: Date;
   @Input() max: Date;
   @Input() disabled: boolean;
+  @Input() placeholderText = "";
   @Input() showDefaultValidationTooltip?: boolean = true;
-  @Output() onChangeEvent = new EventEmitter();
+  @Output() changeEvent = new EventEmitter();
 
   @ViewChild("DateBoxValidator", { static: false }) dateBoxValidator: DxValidatorComponent
-  @ViewChild(DxDateBoxComponent) dateBox: DxDateBoxComponent;
+  @ViewChild(DxDateBoxComponent) datePickerComponent: DxDateBoxComponent;
 
-  public ngAfterViewInit(): void {
-    this.dateBox.disabled = this.disabled;
-  }
+  onChange = (value: string) => {}
+  onTouch = () => {}
 
-  public onValueChanged(event: Event) {
-    this.onChangeEvent?.emit(event);
+  public onValueChanged(event: any) {
+    this.onChange(event.value)
+    this.onTouch()
+    this.changeEvent?.emit(event);
   }
 
   public validate(): boolean {
     const isValid = this.dateBoxValidator?.instance?.validate()?.isValid;
     return isValid;
+  }
+
+  registerOnChange(fn: any): void {
+      this.onChange = fn
+  }
+
+  registerOnTouched(fn: any): void {
+      this.onTouch = fn
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+      this.disabled = isDisabled
+  }
+
+  writeValue(value: string): void {
+      this.value = value
+  }
+
+  focusDatePicker () {
+    this.datePickerComponent.instance.focus();
   }
 }

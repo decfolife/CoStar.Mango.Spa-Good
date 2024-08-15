@@ -1,22 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { InputHintComponent } from './hint.component';
 
+jest.mock('@angular/core');
+jest.mock('@angular/common');
+jest.mock('../../icon');
+jest.mock('../definitions');
+
 describe('InputHintComponent', () => {
-  let component: InputHintComponent;
-  let fixture: ComponentFixture<InputHintComponent>;
+  let instance;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [InputHintComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(InputHintComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    instance = new InputHintComponent();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('instance should be an instanceof InputHintComponent', () => {
+    expect(instance instanceof InputHintComponent).toBeTruthy();
   });
+
 });

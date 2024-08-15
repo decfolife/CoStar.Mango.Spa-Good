@@ -57,6 +57,7 @@ export class LeaseAlertsControlsComponent implements OnInit {
 
   sessionState = null;
   isLoadingData = false;
+  showLoading = false;
   isCollapseExpandAllEnabled = false;
   isAllExpanded = false;
 
@@ -191,6 +192,7 @@ export class LeaseAlertsControlsComponent implements OnInit {
   }
 
   refreshAlerts() {
+    this.showLoading = true;
     this.refreshingAlerts = true;
     this.service.runLeaseAlertRulesByLeaseAbstractID(this.leaseAbstractID).subscribe((res: ApiResponse) => {
       if (res.success) {
@@ -207,8 +209,8 @@ export class LeaseAlertsControlsComponent implements OnInit {
       });
 
       this.refreshCachedDate.emit();
-
       this.refreshingAlerts = false;
+      this.showLoading = false;
     }, () => {
       notify({
         message: 'There was an issue while refreshing alerts',

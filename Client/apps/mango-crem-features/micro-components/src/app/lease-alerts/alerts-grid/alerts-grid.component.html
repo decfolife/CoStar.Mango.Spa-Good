@@ -1,4 +1,5 @@
 <dx-data-grid #leaseAlertsGrid *ngIf="!isInitialLoading"
+  id="leaseAlertsGrid"
   class="list-page-data-grid"
   [dataSource]="gridData"
   keyExpr="leaseAlertID"
@@ -19,6 +20,7 @@
   (onContentReady)="contentReady($event)"
   (onRowClick)="redirectToLeaseAbstract($event)"
   (onCellPrepared)="setSelectionControlState($event)"
+  [loadPanel]="{ enabled: false }"
 >
   <dxo-filter-builder-popup [width]="600"
     [height]="600"
@@ -1301,6 +1303,16 @@
     ></dx-drop-down-button>
   </div>
 </dx-data-grid>
+
+<dx-load-panel
+  shadingColor="rgb(255, 255, 255);"
+  [position]="{ of: '#leaseAlertsGrid'}"
+  [visible]="showLoading"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="true" 
+  [hideOnOutsideClick]="false">
+</dx-load-panel>
 
 <dx-popup #dismissPopup
   title="Dismiss Reason"

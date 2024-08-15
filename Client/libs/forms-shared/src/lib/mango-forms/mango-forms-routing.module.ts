@@ -4,10 +4,11 @@ import { AdminRenderFormComponent } from '@forms/admin-render-forms/admin-render
 import { DynamicFormsListComponent } from '@forms/admin-render-forms/dynamic-form-list/dynamic-form-list.component';
 import { DynamicFormComponent } from '@forms/admin-render-forms/dynamic-form/dynamic-form.component';
 import { DynamicFormClearStateGuard } from './dynamic-form-clear-state.guard';
+import { RenderFormComponent } from '@forms/render-form/render-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'render-form', pathMatch: 'full' },
-  { path: 'render-form', component: DynamicFormComponent, canActivate: [DynamicFormClearStateGuard], data: { breadCrumb: {label: " ", append: true, activeLink: " " }}},
+  { path: 'render-form', component: RenderFormComponent, canActivate: [DynamicFormClearStateGuard], data: { breadCrumb: {label: " ", append: true, activeLink: " " }}},
   { path: 'admin-forms', component: AdminRenderFormComponent, data: { moduleId: 6, breadCrumb: {label: "Forms Maintenance", append: true} },
     children: [
       { path: '', redirectTo: 'list', pathMatch: 'full' },

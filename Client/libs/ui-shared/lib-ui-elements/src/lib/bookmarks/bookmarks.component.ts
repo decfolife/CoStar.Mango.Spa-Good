@@ -4,7 +4,6 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { BookmarkGroup } from '@mango/data-models/lib-data-models';
-import { environment } from 'apps/mango/src/environments/environment.local';
 
 @Component({
   selector: 'crem-bookmarks',
@@ -23,26 +22,17 @@ export class BookmarksComponent {
   }
 
   private goToBookmarkUrl(objectTypeId: number, bm: any) {
-    if (environment.isRestful) {
-      if (objectTypeId === 7) {
-        null;
-      } else {
-        this.router.navigate(['crem/forms/render-form'], {
-          queryParams: {
-            fid: 312,
-            oid: bm.objectID,
-            otid: bm.objectTypeID,
-            ottid: bm.objectTypeTypeID,
-          },
-        });
-      }
+    if (objectTypeId === 7) {
+      null;
     } else {
-      if (objectTypeId === 7) {
-        //Report
-        window.open(bm.path);
-      } else {
-        document.location.href = bm.path;
-      }
+      this.router.navigate(['crem/forms/render-form'], {
+        queryParams: {
+          fid: 312,
+          oid: bm.objectID,
+          otid: bm.objectTypeID,
+          ottid: bm.objectTypeTypeID,
+        },
+      });
     }
   }
 }

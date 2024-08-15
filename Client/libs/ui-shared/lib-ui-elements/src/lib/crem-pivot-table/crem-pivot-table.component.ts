@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from "@angular/core";
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { DxChartComponent, DxDataGridComponent, DxPivotGridComponent } from "devextreme-angular";
 import { exportPivotGrid } from "devextreme/excel_exporter";
 import 'regenerator-runtime/runtime';
 import { Workbook } from 'exceljs';
 import PivotGridDataSource from "devextreme/ui/pivot_grid/data_source";
-import { saveAs } from 'file-saver-es'
+import { saveAs } from 'file-saver-es';
 import DataSource from "devextreme/data/data_source";
 import * as ExcelJS from 'exceljs';
 
@@ -21,20 +21,20 @@ interface ISummationTypeConfig {
   templateUrl: "./crem-pivot-table.component.html",
   styleUrls: ["./crem-pivot-table.component.scss"]
 })
-export class CremPivotTableComponent implements OnInit {
+export class CremPivotTableComponent implements OnInit, AfterViewInit {
   @Input() config: any;
   @Input() dataGridKeyExpr: string;
   @Input() id: string;
   @Input() showRowGrandTotals = false;
   @Input() showColumnGrandTotals = false;
   @Input() allowDrillDown = false;
-  @Input() exportFileName: string = "Grid_Export"
+  @Input() exportFileName = "Grid_Export"
   @Input() showColumnChooser = false;
   @Input() chartVisible = true;
-  @Input() applyChangesMode: string = "instantly";
+  @Input() applyChangesMode = "instantly";
   @Input() summationTypeConfig: Partial<ISummationTypeConfig> = {};
   @Input() fieldModal: any;
-  @Output() onChangedCallback: EventEmitter<any> = new EventEmitter();
+  @Output() changeCallback: EventEmitter<any> = new EventEmitter();
   @ViewChild("PivotGrid") pivotGrid: DxPivotGridComponent;
   @ViewChild("PivotChart", { static: false }) pivotChart: DxChartComponent;
   @ViewChild('drillDownDataGrid') drillDownDataGrid: DxDataGridComponent;
@@ -43,10 +43,6 @@ export class CremPivotTableComponent implements OnInit {
   drillDownDataSource: any;
   popupVisible = false;
   drilldownColumns: string[];
-
-  constructor() {
-
-  }
 
   ngOnInit() {
     this.exportFileName = this.exportFileName || "Grid_Export";
@@ -129,9 +125,9 @@ export class CremPivotTableComponent implements OnInit {
   public onPivotCellClick(e) {
     if (e.area == 'data') {
       if (this.allowDrillDown) {
-        let columnAreaFields = this.pivotGridDataSource.getAreaFields("column", false)
-        let rowAreaFields = this.pivotGridDataSource.getAreaFields("row", false)
-        let dataAreaFields = this.pivotGridDataSource.getAreaFields("data", false)
+        const columnAreaFields = this.pivotGridDataSource.getAreaFields("column", false)
+        const rowAreaFields = this.pivotGridDataSource.getAreaFields("row", false)
+        const dataAreaFields = this.pivotGridDataSource.getAreaFields("data", false)
         const fields = [];
         columnAreaFields.forEach((column) => {
           if (!fields.includes(column.dataField)) {
@@ -183,7 +179,7 @@ export class CremPivotTableComponent implements OnInit {
   }
 
   public onChanged() {
-    this.onChangedCallback?.emit(this.pivotGridDataSource);
+    this.changeCallback?.emit(this.pivotGridDataSource);
   }
 
   public contextMenuPreparing(e) {

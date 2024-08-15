@@ -1,15 +1,14 @@
 <dx-popup
-*ngIf="jeProcessingPopupData"
-[id]="accountingSummaryService.getId(componentName ,'detail','section')"
-[(visible)]="jeRetroPopupVisible"
-(onHidden)="onJeRetroPopupHidden()"
-width="70%"
-[height]="popupHeight"
-[resizeEnabled]="true"
-[wrapperAttr]="{ class: 'accounting-summary-style-container' }"
-[title]="jePopupTile"
-[resizeEnabled]="false"
->    
+    *ngIf="jeProcessingPopupData"
+    [id]="accountingSummaryService.getId(componentName ,'detail','section')"
+    [(visible)]="jeRetroPopupVisible"
+    (onHidden)="onJeRetroPopupHidden()"
+    width="70%"
+    [height]="popupHeight"
+    [resizeEnabled]="true"
+    [wrapperAttr]="{ class: 'accounting-summary-style-container' }"
+    [title]="jePopupTile"
+    [resizeEnabled]="false">    
   <dx-tab-panel
       [id]="accountingSummaryService.getId(componentName ,'tabs','section')"
       [dataSource]="tabs"

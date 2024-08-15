@@ -49,9 +49,14 @@ import { CustomSerializer } from './utils/custom-route-serializer';
 import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 import { ValidateComponent } from './components/auth/validate/validate.component';
 import { contactRecord } from './+state/app/app.selectors';
+import { EmulateUserEffects } from './+state/app/effects/emulate-user.effects';
+import { IdleEffects } from './+state/app/effects/idle.effects';
+import { IdleTimeoutPopupComponent } from './components/idle-timeout-popup/idle-timeout-popup.component';
+import { RedirectorObjectData } from 'libs/data-models/lib-data-models/src/lib/models/redirectorLinks';
+import { CremPopupComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
-  declarations: [AppComponent, LoadingScreenComponent, ValidateComponent],
+  declarations: [AppComponent, LoadingScreenComponent, ValidateComponent, IdleTimeoutPopupComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -72,12 +77,15 @@ import { contactRecord } from './+state/app/app.selectors';
       InitSetupEffects,
       NavigationEffect,
       GlobalSessionEffects,
+      EmulateUserEffects,
+      IdleEffects
     ]),
     StoreDevtoolsModule.instrument(),
     HttpClientModule,
     HttpClientJsonpModule,
     AppRoutingModule,
     CremModule,
+    CremPopupComponent,
     LibUiSharedModule,
     LibCoreSharedModule,
     LibExternalLibrariesModule,
@@ -94,7 +102,6 @@ import { contactRecord } from './+state/app/app.selectors';
   ],
   providers: [
     { provide: Environment, useValue: environment },
-    // { provide: HTTP_INTERCEPTORS, useClass: CremHttpInterceptor, multi: true },
     { provide: IS_CA_STANDALONE_APP, useValue: false },
     { provide: RUNNING_IN_MANGO_SPA, useValue: true },
     AppService,
@@ -112,34 +119,85 @@ import { contactRecord } from './+state/app/app.selectors';
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(private router: Router, private facade: MangoAppFacade) {
+  constructor(private router: Router, private facade: MangoAppFacade, private mangoNavitationService: MangoNavigationService) {
     this.router.events
       .pipe(
         filter(
           (e: RouterEvent | any) =>
             e instanceof NavigationStart && e.url.includes('.asp')
         ),
-        switchMap((e) => combineLatest([of(e.url), this.facade.clientKey$, this.facade.contactRecord$])),
+        switchMap((e) =>  combineLatest([of(e.url), this.facade.clientKey$, this.facade.contactRecord$, this.facade.redirectorLinks$])),
         filter(([url, clientKey]) => !!url && !!clientKey && !!contactRecord),
-        map(([url, clientKey, contactRecord]) => {
-          if (url.includes('RenderForm')) {
-            const queryParams = url.split('?');
-            this.router.navigateByUrl(`/crem/forms/render-form?${queryParams[1]}`);
-          } else {
+        map(([url, clientKey, contactRecord, redirectorLinks]) => {
+          
+          if(redirectorLinks && (url.includes('RenderForm') || (url.includes('View.asp')))) {
+
+            const objectData: RedirectorObjectData = this.getObjectDataFromUrl(url);            
+
+            let found = redirectorLinks.find(x=>x.objectTypeId === objectData.objectTypeId && x.objectTypeTypeId === objectData.objectTypeTypeId);
+            //urlLink = found ? found.urlLink : 'not found';                 
+            let urlLink : any = found ? found.basePageUrl : 'not found';              
+            const redirectorLink = urlLink;
             const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
-              url.includes(subUrl)
+              redirectorLink.includes(subUrl)
             );
 
             let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey)
+            let v06RedirectorUrl = '';
 
+            if(redirectorLink.includes('?')){
+               v06RedirectorUrl = `${redirectorLink}&OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
+            }
+            else {
+              v06RedirectorUrl = `${redirectorLink}?OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
+            }
+            const newUrl = forceRelogin
+              ? `${environment.CAUrl}?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(v06RedirectorUrl)}`
+              : `${v06Url}${v06RedirectorUrl}`;
+              
+            if(newUrl.includes('.asp')) {
+              this.mangoNavitationService.navigateToUrl(newUrl);
+            }
+            else {
+              window.location.href = newUrl;
+            } 
+          }
+          else {
+            const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
+              url.includes(subUrl)
+            );            
+            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey)            
             const newUrl = forceRelogin
               ? `${environment.CAUrl}?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`
               : `${v06Url}${url}`;
-
+            
             window.location.href = newUrl;
           }
+                              
         })
       )
       .subscribe();
   }
+
+  getObjectDataFromUrl(url:string) : RedirectorObjectData {
+    let objectData:RedirectorObjectData={ objectId:0, objectTypeId:0, objectTypeTypeId:0 };    
+    let splitUrl = url.split('?');
+    if (splitUrl.length > 0) {            
+      const params = splitUrl[1].split('&');            
+      params.forEach(param=> {
+        const [key,value] = param.split('=');              
+        if(key.toUpperCase() == 'OID') {
+          objectData.objectId = +value;
+        }
+        if(key.toUpperCase() == 'OTID') {
+          objectData.objectTypeId = +value;
+        } 
+        if(key.toUpperCase() == 'OTTID') {
+          objectData.objectTypeTypeId = +value;
+        } 
+      })          
+    }
+    return objectData;
+  }
+
 }

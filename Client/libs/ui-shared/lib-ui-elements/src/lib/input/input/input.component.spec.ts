@@ -1,6 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormsModule } from '@angular/forms';
+import { InputHintComponent } from '../hint';
+import { InputLabelComponent } from '../label';
 import { InputComponent } from './input.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 describe('InputComponent', () => {
   let component: InputComponent;
@@ -8,7 +10,12 @@ describe('InputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InputComponent],
+      imports: [
+        InputComponent, 
+        InputLabelComponent,
+        InputHintComponent,
+        FormsModule
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InputComponent);

@@ -1,12 +1,17 @@
 import { Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import { ClientDeliveryService } from '../../services/client-delivery.service';
-import {ResetPasswordConfirmationComponent} from '../reset-password-confirmation/reset-password-confirmation.component';
-import { Observable, Subscription, of } from 'rxjs';
+import { DxDataGridModule} from 'devextreme-angular';
+import { Observable, Subscription } from 'rxjs';
 import { ServiceAccountHistory } from '@mango/data-models/lib-data-models';
+import { ModalModule, ButtonModule} from '@mango/ui-shared/lib-ui-elements';
+import { ClientDeliveryService } from '../../services/client-delivery.service';
+import { ResetPasswordConfirmationComponent } from '../reset-password-confirmation/reset-password-confirmation.component';
 import { UserMaintenanceService } from '../../../../../user-maintenance/src/app/components/user-maintenance/user-maintenance.service';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, ModalModule, ButtonModule, DxDataGridModule],
   selector: 'mango-service-account-details',
   templateUrl: './service-account-details.component.html',
   styleUrls: ['./service-account-details.component.scss'],

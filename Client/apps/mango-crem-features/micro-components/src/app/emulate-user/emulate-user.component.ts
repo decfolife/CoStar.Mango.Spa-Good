@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { SimpleGridComponent } from '@mango/ui-shared/lib-ui-elements';
 import { EmulateUserService } from '../services/emulate-user.service';
+import { ContactRecord } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-emulate-user',
@@ -8,19 +9,21 @@ import { EmulateUserService } from '../services/emulate-user.service';
   styleUrls: ['./emulate-user.component.scss']
 })
 export class EmulateUserAppComponent implements OnInit {
+
+  @Output() setEmulatedUserEvent = new EventEmitter<ContactRecord>();
+
   dataSource: any;
   columns: any;
   password: string;
   @ViewChild('SimpleGrid')
   simpleGrid: SimpleGridComponent;
 
-  @Input('is-central-authenticated') isCA: string
-
   constructor(
     private emulateUserService: EmulateUserService
   ) { }
+
   ngOnInit(): void {
-      this.emulateUserService.getEmulateUserList()
+    this.emulateUserService.getEmulateUserList()
       .subscribe(result => {
         this.dataSource = result.data;
       })
@@ -65,21 +68,7 @@ export class EmulateUserAppComponent implements OnInit {
     this.simpleGrid.searchDataGrid(data)
   }
 
-  public passwordChange(event) {
-    let passwordElement = <HTMLInputElement>document.getElementById("ctl00_ctl00_ContentPlaceHolder1_modalBoxBody_emulateTxtPassword");
-    setTimeout(() => {
-      if (passwordElement) {
-        passwordElement.value = event;
-      }
-    })
-  }
-
   public onSelectionChange(event) {
-    let selectedUser = <HTMLInputElement>document.getElementById("ctl00_ctl00_ContentPlaceHolder1_modalBoxBody_emulsteTxtUser");
-    setTimeout(() => {
-      if (selectedUser) {
-        selectedUser.value = event.selectedRowsData[0].contactID;
-      }
-    })
+    this.setEmulatedUserEvent.emit(event.selectedRowsData[0]);
   }   
 }

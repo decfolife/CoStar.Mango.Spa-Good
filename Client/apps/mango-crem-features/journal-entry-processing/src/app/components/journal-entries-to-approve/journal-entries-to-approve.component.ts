@@ -16,10 +16,12 @@ export class JournalEntriesToApproveComponent implements OnInit {
   }
 
   public dropdownChange(dropdown, event) {
-    console.log("dropdown changing")
+    // console.log("dropdown changing")
+    return;
   }
 
   public apply(event) {
-    console.log("button pressed")
+    // console.log("button pressed")
+    return;
   }
 }

@@ -1,0 +1,51 @@
+@use "styles" as *;
+
+::ng-deep {
+  .modalFooter {
+    .addContactFooter {
+      display: flex;
+      crem-button {
+        padding: 4px;
+      }
+    }
+  }
+}
+
+.add-contact-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  column-gap: 10px;
+}
+
+.form-group-two-columns {
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.add-contact-form crem-input-label {
+  font-weight: bold;
+}
+
+.two-columns-row {
+  flex-basis: 50%;
+}
+
+:host ::ng-deep .two-columns-row {
+  crem-form-item {
+    crem-form-label {
+      label {
+        display: flex;
+        flex-direction: row;
+        width: 150px;
+      }
+    }
+  }
+}

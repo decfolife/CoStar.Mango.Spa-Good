@@ -1,0 +1,85 @@
+@use "styles" as *;
+
+@mixin flex-column-direction {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin flex-row-direction {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 20px;
+}
+
+.details-container {
+    @include flex-column-direction;
+    @include costar(padding, 3);
+    @include costar(padding, 3);
+    width: 100%;
+}
+
+.details-section-controls {
+    @include flex-row-direction;
+    @include costar(padding-bottom, 2);
+    width: 100%;
+    justify-content: start;
+
+    & .controls {
+        & .controls-container {
+            @include flex-row-direction;
+            @include costar(margin-right, 3);
+
+            & crem-date-picker {
+                width: 130px;
+            }
+        }
+    }
+}
+
+.comments-section {
+    @include costar(padding-top, 3);
+}
+
+.terms-row {
+    @include flex-row-direction;
+    justify-content: space-between;
+}
+
+.term-hint {
+    @include flex-row-direction;
+    @include costar(padding-top, 2);
+    @include costar(padding-right, 3);
+    margin-left: auto;
+
+    & span {
+        @include costar(color, gray03);
+        @include costar(padding-top, 1);
+        @include costar(margin-right, 1);
+        font-size: 0.8rem;
+        text-wrap: nowrap;
+    }
+
+    & span:last-child {
+        @include costar(margin-right, 0);
+    }
+}
+
+.term-validation {
+    @include flex-row-direction;
+    @include costar(padding-top, 2);
+    @include costar(padding-right, 3);
+    margin-right: auto;
+}
+
+.terms-checkbox {
+    display: flex;
+    flex-direction: row;
+    column-gap: 5px;
+    text-wrap: nowrap;
+
+    & crem-input-label {
+        @include costar(color, danger);
+        font-size: 0.8rem;
+    }
+}

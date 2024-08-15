@@ -40,6 +40,8 @@ const LEASE_OTID = 4;
 export class AlertsGridComponent implements OnInit {
   @Input()
   userCanEdit = false;
+  @Input()
+  showLoading = false;
 
   @Input()
   isPopupView = false;
@@ -77,7 +79,6 @@ export class AlertsGridComponent implements OnInit {
   isInitialLoading = true;
   firstPageLoad = true;
   isLoadingData = false;
-
   isArchived = false;
   filterBuilderVisible = false;
   isDismissReasonRequired = true;

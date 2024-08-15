@@ -5,7 +5,7 @@ import { Canvas, Meta, Story } from '@storybook/addon-docs';
 # For Developers
 ---
 
-1. **Don't use global stylesheets to fix micro-componentsg**
+1. **Don't use global stylesheets to fix micro-components**
 
 Using global stylesheets collaborates to long stylesheets that are hard to read and understand, 
 therefore, hard to maintain. This is also considered to be part of component-based approach which is 
@@ -27,7 +27,7 @@ to support micro-components and shared-components.
 You can find ⁠examples of implementation here and in some of the shared components.
 
 If you are ready to start utilizing the shared library, you can proceed directly to the 
-[components](/story/components-getting-started--page) or [styling](/story/styling-getting-started--page) section.
+components or [styling](/docs/documentation-styling-getting-started--docs) section.
 
 If you are involved in creating new components or collaborating with Storybook and the shared library, please 
 continue reading for further instructions.
@@ -58,7 +58,7 @@ Before you begin, it is important to familiarize yourself with CoStar best pract
 and the general guidelines.
 
 Follow the Style guides and best practices
-- [**Learn to use the common library**](/story/styling-getting-started--page) for quickly styling components.
+- [**Learn to use the common library**](/docs/documentation-styling-getting-started--docs) for quickly styling components.
 - [**Frontend SCSS Architecture**](https://wiki.costargroup.com/x/bMWPLg): Architecture for building MangoSpa using industry's best practices (like 7-1 Pattern) in a common and scalable structure. This structure it's defined on `📁 ./libs/ui-shared/common`,
 - [**SCSS & CSS Style guide**](https://wiki.costargroup.com/x/pqaPLg): Provides consistency, scalability, and readability while fighting the natural progression of entropy in codebases, and in particular SCSS implementations. This applies to MangoSpa, `📁 ./libs/ui-shared/common` and any micro-component on `📁 ./apps/`.
 - [**TypeScript Style guide**](https://wiki.costargroup.com/x/TRd_MQ): This documentation covers aesthetic issues of formatting, code quality, and best practices conventions for TypeScript.
@@ -96,8 +96,8 @@ components in isolation. Because Storybook's stories (or components) span throug
 shared libraries, a single entry point for rendering is necessary.
 
 On your local environment:
-- **Serve Storybook**: `nx storybook ui-shared-storybook-host`
-- **Build Storybook**: `nx build-storybook ui-shared-storybook-host`
-- **Run unit tests**: `nx test ui-shared-storybook-host`
+- **Serve Storybook**: `npx nx run ui-shared-storybook-host:storybook`
+- **Build Storybook**: `npx nx run ui-shared-storybook-host:build-storybook `
+- **Run unit tests**: `npx nx run ui-shared:test `
 
 The other `./libs/ui-shared` libraries can be run individually using similar CLI commands.

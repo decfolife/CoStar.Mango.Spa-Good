@@ -1,9 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 @use './assets/styles/colors';
-@import '~bootstrap/dist/css/bootstrap.min.css';
-@import '~devextreme/dist/css/dx.common.css';
-@import '~devextreme/dist/css/dx.light.css';
-
 @import '~devexpress-gantt/dist/dx-gantt.css';
 @import './assets/styles/costar-bootstrap.scss';
 
@@ -14,7 +10,6 @@ body {
 
 body {
   margin: 0;
-  font-family: 'Helvetica, Arial', sans-serif;
 }
 
 
@@ -39,18 +34,6 @@ body {
   }
 }
 
-
-// mango-toolbar div#chip.secondary.costar {
-//   transform: translateX(-62px);
-// }
-
-// mat-toolbar.mat-toolbar {
-//   font-family: "Helvetica" !important;
-//   mat-toolbar-row {
-//     padding: 0px;
-//   }
-// }
-
 .crem-container mango-header {
   mat-toolbar.mat-toolbar.costar-rem-toolbar {
     height: 48px;
@@ -67,7 +50,6 @@ body {
 
 div.costar-site-toolbar-search  {
 
-  font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 16px;
    div.mat-mdc-form-field-infix {
     display: flex !important;
@@ -166,16 +148,6 @@ crem-bookmarks .mat-drawer-container {
   z-index: 999999999;
 }
 
-mango-toolbar.suite-user {
-  mat-toolbar-row.costar-top-menu, a.nav-link.active, a.nav-link {
-    background-color: colors.$bodyBackgroundGray !important;
-    font-family: "Arial";
-    color: black !important;
-  }
-  mat-toolbar-row.costar-top-menu {
-    border-bottom: 1px solid #BFBFBF;
-  }
-}
 
 crem-bookmarks.suite-user {
   #recentDrawer.mat-drawer {

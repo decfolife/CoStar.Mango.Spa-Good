@@ -128,17 +128,17 @@ button:focus:not(:focus-visible) {
 }
 
 /* Focusing the button with a keyboard will show a dashed black line. */
-a {
-  &:focus-visible,
-  &:focus {
-    outline: none;
-  }
-}
+// a {
+//   &:focus-visible,
+//   &:focus {
+//     outline: none;
+//   }
+// }
   
 /* Focusing the button with a mouse, touch, or stylus will show a subtle drop shadow. */
-a:focus:not(:focus-visible) {
-  outline: none;
-}
+// a:focus:not(:focus-visible) {
+//   outline: none;
+// }
 
 // 1. Browsers set a default `min-width: min-content;` on fieldsets,
 //    unlike e.g. `<div>`s, which have `min-width: 0;` by default.

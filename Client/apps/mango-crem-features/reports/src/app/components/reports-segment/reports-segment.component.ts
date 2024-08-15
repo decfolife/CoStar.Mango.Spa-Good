@@ -60,20 +60,23 @@ export class ReportsSegmentComponent implements OnInit {
       }
 
     })
-
-    
   }
 
   public onCellClicked(item): void {
-    if(item.column === undefined) {
-      return;
-    }
 
-    if (item.column.caption !== "Actions" && item !==undefined) 
-    {
+    if(item.data.activeRecordsVisibleToMe === true) return;
+
+    if(item.column === undefined) return;
+
+    if (item.column.caption !== "Actions" && item !==undefined) {
       this.edit(item);
     }
-    
+  }
+  
+  onCellPrepared(item: any): void{
+    if(item.data.activeRecordsVisibleToMe === true){
+      item.cellElement.title = "This segment is automatically generated and includes all records accessible to you.";
+    }
   }
 
   public setSegmentColumns() {
@@ -142,9 +145,6 @@ export class ReportsSegmentComponent implements OnInit {
       default:
         break;
     }
-    
-      
-
     this.filterData();
   }
 
@@ -342,6 +342,32 @@ export class ReportsSegmentComponent implements OnInit {
           this.redirectDialog(data);
         }
       });
+    }
+  }
+  getTitleTooltip(data: any, menuOption: string): string {
+    const { rights, activeRecordsVisibleToMe } = data.data;
+    switch (menuOption) {
+      case 'archive':
+        switch (rights) {
+          case 'Delete':
+            return '';
+          case 'View':
+            return 'You have View rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.';
+          default:
+            return 'You have Edit rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.';
+        }
+      
+      case 'copy':
+        if (activeRecordsVisibleToMe) {
+          return 'This segment is automatically generated and cannot be copied.';
+        } else if (!this.hasSegmentsAddRight) {
+          return 'You have View rights for segments. Ask your administrator to grant you Add rights to create segments.';
+        } else {
+          return 'This segment can be copied.';
+        }
+      
+      default:
+        return '';
     }
   }
 }

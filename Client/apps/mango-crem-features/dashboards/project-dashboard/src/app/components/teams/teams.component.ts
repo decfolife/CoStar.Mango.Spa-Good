@@ -14,10 +14,13 @@ import { saveAs } from 'file-saver-es';
 import { formatDate } from '@angular/common';
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { Observable, Subscription, of } from 'rxjs';
-import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, Subject, Subscription, of } from 'rxjs';
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { ExportDevexDatagridService } from '@mango/core-shared';
+import { trigger } from 'devextreme/events';
+import DataGrid from "devextreme/ui/data_grid";
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'teams',
@@ -26,8 +29,9 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
 })
 export class TeamsComponent implements OnInit, OnDestroy {
   @ViewChild("TeamsGrid") teamsGrid: DxDataGridComponent;
-  @ViewChild('SearchBox') searchBox: SearchComponent;
+  @ViewChild("SearchBox") searchBox: SearchComponent;
   @ViewChild(TeamMembersComponent) teamMembersComponent: TeamMembersComponent;
+  @ViewChild("teamActionsMenuTrigger") actionsMenuTrigger: MatMenuTrigger;
 
 	private subEditedMembersDataAndGridList: any [] = [];
   headerFilterElements: any = null;
@@ -39,8 +43,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   memberInfo: MemberInfo;
   dataRetrieved: boolean = false;
   autoExpand: boolean = false;
-  headerCheckBox: any;
-  headerHtmlCellElement: any;
+  gridLoaderVisible: boolean = false;
 
   selectAllCheckBox: dxCheckBox;
   teamSelected: boolean = false;
@@ -52,11 +55,22 @@ export class TeamsComponent implements OnInit, OnDestroy {
   userModuleAddRights: boolean;
   subs: Subscription[] = [];
   projectsPrivateSetting: number;
+  searchTextSubject = new Subject<string>();
+  showShareColumn = false;
 
   constructor(private dashboardService: DashboardService, private router: Router,
     private exportToExcelService: ExportDevexDatagridService,
     private dialogService: MangoDialogService,
-    private dialog: MatDialog, private cardsService: CardsService) {}
+    private dialog: MatDialog, private cardsService: CardsService) {
+      this.subs.push(
+        this.searchTextSubject.pipe(
+          debounceTime(500), 
+          distinctUntilChanged())
+          .subscribe(value => {
+            this.searchDataGrid(value);
+          })
+      );
+    }
 
   ngOnInit(): void {
 
@@ -248,6 +262,8 @@ export class TeamsComponent implements OnInit, OnDestroy {
         });  
       }
     }
+
+    this.gridLoaderVisible = true;
   }
 
   gridOnCellPrepared(e) {
@@ -352,9 +368,9 @@ export class TeamsComponent implements OnInit, OnDestroy {
     }
 
     let rowIndex = 1;
-    const mainCaptions = ["Team ID", "Name", "Members", "Modified By", "Modified Date", "Created By", "Created Date", "Rights"];
+    const teamCaptions = ["Team ID", "Name", "Members", "Modified By", "Modified Date", "Created By", "Created Date", "Rights"];
     let row = insertRow(rowIndex, 1);
-    mainCaptions.forEach((mainCaption, currentColumnIndex) => {
+    teamCaptions.forEach((mainCaption, currentColumnIndex) => {
       Object.assign(row.getCell(currentColumnIndex+1), {
         value: mainCaption,
         font: { bold: true }
@@ -366,9 +382,9 @@ export class TeamsComponent implements OnInit, OnDestroy {
       let row = insertRow(rowIndex, 1);
 
       let teamData = this.teams.find((item) => item.teamId === masterRows[i].data.teamId);
-      const mainColumns = ["teamId", "teamName", "members", "modifiedBy", "modifiedDate", "createdBy", "createdDate", "securityLevel"];
+      const teamColumns = ["teamId", "teamName", "members", "modifiedBy", "modifiedDate", "createdBy", "createdDate", "securityLevel"];
 
-      mainColumns.forEach((columnName, currentColumnIndex) => {
+      teamColumns.forEach((columnName, currentColumnIndex) => {
         Object.assign(row.getCell(currentColumnIndex+1), {
           value: teamData[columnName]
         });
@@ -380,13 +396,19 @@ export class TeamsComponent implements OnInit, OnDestroy {
         value: 'Team Members',
         font: { bold: true }
       });
-      worksheet.mergeCells(row.number, 1, row.number, 8);
+      let memberCaptions = [];
+      if (this.showShareColumn){
+        memberCaptions = ["Name", "Company", "Email", "Phone Number", "Role", "Email Notifications", "Access Level", "Share"];
+      }
+      else{
+        memberCaptions = ["Name", "Company", "Email", "Phone Number", "Role", "Email Notifications", "Access Level"];
+      }
+      worksheet.mergeCells(row.number, 1, row.number, memberCaptions.length+1);
       row.hidden = true;
 
       rowIndex++;
       row = insertRow(rowIndex, 2);
-      const captions = ["Name", "Company", "Email", "Phone Number", "Role", "Email Notifications", "Access Level"];
-      captions.forEach((caption, currentColumnIndex) => {
+      memberCaptions.forEach((caption, currentColumnIndex) => {
         Object.assign(row.getCell(currentColumnIndex+2), {
           value: caption,
           font: { bold: true },
@@ -395,12 +417,18 @@ export class TeamsComponent implements OnInit, OnDestroy {
       });
       row.hidden = true;
 
-      const columns = ["name", "company", "email", "phoneNumber", "role", "emailOn",  "level"];
+      let memberColumns = [];
+      if (this.showShareColumn){
+        memberColumns = ["name", "company", "email", "phoneNumber", "role", "emailOn",  "level", "share"];
+      }
+      else{
+        memberColumns = ["name", "company", "email", "phoneNumber", "role", "emailOn",  "level"];
+      }
       this.teams.filter((team) => team.teamId === teamData.teamId)[0].teamMembers.forEach((teamMember, index) => {
         rowIndex++;
         row = insertRow(rowIndex, 2);
         row.hidden = true;
-        columns.forEach((columnName, currentColumnIndex) => {
+        memberColumns.forEach((columnName, currentColumnIndex) => {
           Object.assign(row.getCell(currentColumnIndex+2), {
             value: teamMember[columnName],
             border: { bottom: borderStyle, left: borderStyle, right: borderStyle,top: borderStyle }
@@ -426,7 +454,36 @@ export class TeamsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe);
+    this.subs.forEach(s => s.unsubscribe());
+  }
+
+  onFocusedCellChanging(e) {
+    if (e.newColumnIndex === 0) {
+      const previousRow = e.cellElement[0].parentElement.previousSibling;
+      if (!previousRow) return;
+      if (previousRow.classList.contains('dx-master-detail-row')) {
+        e.cancel = true;
+        const $detailGrid = previousRow.querySelector('.dx-datagrid').parentElement;
+        const detailGrid = DataGrid.getInstance($detailGrid) as DataGrid;
+
+        trigger($detailGrid, 'focusout');
+
+        const firstHeaderElement = detailGrid.element().querySelector('.dx-header-row td[role="gridcell"] div.dx-widget.dx-checkbox.dx-select-checkbox');
+        (firstHeaderElement as HTMLElement).focus();
+      }
+    }
+  }
+
+  matMenuButtonKeyDown(e) {
+    if (e.key === 'Tab' || (e.key === 'Tab' && e.shiftKey)) {
+      if(e.currentTarget.nextElementSibling !== null) {
+        e.stopPropagation();
+      }
+      else {
+        e.preventDefault();
+        this.actionsMenuTrigger.closeMenu();
+      }
+    }
   }
 
   searchTeamMembersFilterExpression(filterValue) {
@@ -475,6 +532,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
       (res:any) => {
         if (res.success) {
           this.projectsPrivateSetting = Number(res.data);
+          this.showShareColumn = this.projectsPrivateSetting > 0 && this.projectsPrivateSetting <= 2;   
         }
       },
       (error: any) => console.log("Error occurred getting Projects Private Setting", error),

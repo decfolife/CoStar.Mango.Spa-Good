@@ -9,7 +9,11 @@ export class UtilitiesService {
     // return window.location.origin // better?
   }
 
-  public static getClientKeyFromUrl() {
+  public static getClientKeyFromUrl(localClientKey: string = 'blank') {
+    if (this.isLocalEnvironment()) {
+      return localClientKey
+    }
+
     return window.location.origin.split('.')[0].split('//')[1]
   }
 

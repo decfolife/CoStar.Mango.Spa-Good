@@ -5,7 +5,7 @@ export interface ProjectsEmailInfo {
 }
 
 export interface EmailContact {
-  contactName: string; 
+  contactFullName: string; 
   contactEmailAddress: string;
 }
 

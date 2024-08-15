@@ -3,18 +3,8 @@ import { Component, ContentChild, ElementRef, OnChanges, SimpleChanges, Input, O
 
 /**
  * Simple button, check Storybook for additional options
+ * <example-url>/?path=/docs/components-button--docs&full=1&shortcuts=false&singleStory=true</example-url>
  * @class ButtonComponent
- * @param {string} [textContent]: The button text
- * @param {string} [color]: 'primary', 'secondary', 'warning', 'danger'
- * @param {string} [size]: Besides the normal sizing, 'big' and 'small' are available.
- * @param {string} [ariaLabel]: For accessibility
- * @param {boolean} [disabled]: disables button
- * @param {string} [styles]: CSS styles
- * @param {string} [className]: CSS classes
- * @param {string} [icon]: By default uses FontAwesome, refer to the official docs E.g. 'faUser'
- * @param {string} [iconPosition]: Icon alignment, left or right.
- * @param {string} [iconClass]: Apply a class to the icon for further customization, check crem-icon available params
- * @param {string} [type]: Deprecated, use the color parameter instead
  */
 @Component({
   selector: 'crem-button',
@@ -23,20 +13,79 @@ import { Component, ContentChild, ElementRef, OnChanges, SimpleChanges, Input, O
 })
 export class ButtonComponent implements OnChanges {
 
+   /**
+   * The button id
+   * @param {string} [id]
+   */
+   @Input() id?: string;
+
+  /**
+   * The button text
+   * @param {string} [textContent]
+   */
   @Input() text?: string;
+
+  /**
+   * 'flat', 'basic', or 'stroked'
+   * @param {string} [btnStyle]
+   */
   @Input() btnStyle?: 'flat' | 'basic' | 'stroked';
+
+  /**
+   * 'primary', 'secondary', 'warning', or 'danger'
+   * @param {string} [color]
+   */
   @Input() color?: 'primary' | 'secondary' | 'warning' | 'danger';
+
+  /**
+   * Besides the normal sizing, 'big' and 'small' are available.
+   * 'small', 'medium', or 'big'
+   * @param {string} [size]
+   */
   @Input() size?: 'small' | 'medium' | 'big';
+
+  /**
+   * For accessibility
+   * @param {string} [ariaLabel]
+   */
   @Input() ariaLabel?: string;
+
+  /**
+   * Disables button
+   * @param {boolean} [disabled]
+   */
   @Input() disabled?: boolean | null = null;
+
+  /**
+   * CSS classes
+   * @param {string} [className]
+   */
   @Input() className?: string | null = null;
+
+  /**
+   * CSS styles
+   * @param {string} [styles]
+   */
   @Input() styles?: string;
   @ContentChild('childContent') childContentRef: ElementRef;
 
-  // Icon Configuration
+  /**
+   * By default uses FontAwesome, refer to the official docs E.g. 'faUser'
+   * @param {string} [icon]
+   */
   @Input() icon?: string;
+
   @Input() iconPack?: string;
+  /**
+   * Apply a class to the icon for further customization, check crem-icon available params
+   * @param {string} [iconClass]
+   */
   @Input() iconClass?: string | null = null;
+
+  /**
+   * Icon alignment, 'left' or 'right'
+   * @param {string} [iconPosition]
+   */
   @Input() iconPosition?: 'left' | 'right';
   @Input() iconColor?: string;
   @Input() iconRotate?: string;
@@ -49,10 +98,20 @@ export class ButtonComponent implements OnChanges {
   @Input() ariaHasPopUp?: boolean;
   @Input() ariaExpanded?: boolean;
 
-  // Backward compatibility, @deprecated
+  /**
+   * Deprecated, use the color parameter instead
+   * @param {string} [type]
+   * @deprecated Added for Backward compatibility on V06
+   * @ignore
+   */
   @Input() type?: 'primary' | 'secondary' | 'text';
 
-  // Output
+  // Other icon inputs...
+
+  /**
+   * Output
+   * @param {EventEmitter<void>} buttonClick
+   */
   @Output() buttonClick: EventEmitter<void> = new EventEmitter<void>();
 
   ngOnChanges(changes: SimpleChanges){
@@ -67,6 +126,10 @@ export class ButtonComponent implements OnChanges {
     }
   }
 
+  /**
+   * Get CSS classes
+   * @returns {object} CSS classes object
+   */
   public getCssClasses() {
     return {
       // Btn Style Type
@@ -89,6 +152,9 @@ export class ButtonComponent implements OnChanges {
     };
   }
 
+  /**
+   * Handle click event
+   */
   handleClick(){
     this.buttonClick.emit();
   }

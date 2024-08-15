@@ -1,9 +1,10 @@
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { AmortizationGridColumnsService } from '@accounting-summary/services/amortization-grid-columns.service';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { Subscription } from 'rxjs';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'mango-je-processing-info',
@@ -11,6 +12,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./je-processing-info.component.scss'],
 })
 export class JeProcessingInfoComponent {
+  @ViewChild("JournalEntryProcessing") journalEntryProcessing: DxDataGridComponent;
   @Input() jeProcessingPopupData: any;
   @Input() userInfo: UserInfoResponse;
   @Input() amortizationdetailsGridData: any;
@@ -63,7 +65,9 @@ export class JeProcessingInfoComponent {
   }
 
   onExporting(event) {
-    event.fileName = this.exportToExcelFileName()
+    const fileName = this.exportToExcelFileName();
+    this.journalEntryProcessing.loadPanel.enabled = false;
+    this.accountingSummaryService.exportToExcel(this.journalEntryProcessing.instance, fileName, 'Sheet');
   }
 
   private jeProcessingInfoGridSetup() {
@@ -137,6 +141,11 @@ export class JeProcessingInfoComponent {
             this.showActionButton = true;
             this.isButtonDisabled = true;
             this.disableBtnReason = 'You do not have rights to Approve';
+          }
+          else if (this.eventScheduleData.isReportingException) {
+            this.showActionButton = true;
+            this.isButtonDisabled = true;
+            this.disableBtnReason = 'This accounting event is a reporting exception, which is excluded from journal entry processing.';
           }
         }
 
@@ -275,7 +284,7 @@ export class JeProcessingInfoComponent {
   exportToExcelFileName(): string {
     const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
-    const fileName = `Period_${formattedDisplayPeriodTitle}_Journal Entry_${dateTimeStamp}`;
+    const fileName = `Period_${formattedDisplayPeriodTitle}_Journal Entry_${dateTimeStamp}.xlsx`;
     return fileName;
   }
 }

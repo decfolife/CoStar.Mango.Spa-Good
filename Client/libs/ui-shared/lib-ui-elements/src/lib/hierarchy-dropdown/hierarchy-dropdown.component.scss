@@ -3,3 +3,18 @@
 .dx-template-wrapper .dx-item-content .dx-treeview-item-content {
   @include costar(color, dark);
 }
+
+.select-box-dropdown-data-grid {
+  .tree-view {
+    &__item{
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    &__item-content {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+  }
+}

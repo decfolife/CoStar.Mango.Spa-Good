@@ -1,12 +1,14 @@
 <crem-button 
     [id]="accountingSummaryService.getId(componentName,'history','button')"
+    class="workflow-history-btn"
     ariaLabel="Workflow History"
-    title="Workflow History"
     type="secondary"
-    btnStyle="basic"
-    className="bg-transparent"
     (buttonClick)="showHistoryPopup($event)">
-    <crem-icon icon="faClockRotateLeft" class="workflow-history-icon"></crem-icon>
+    <div>
+        <span>
+            Workflow History
+        </span>
+    </div>
 </crem-button>
 
 <dx-popup

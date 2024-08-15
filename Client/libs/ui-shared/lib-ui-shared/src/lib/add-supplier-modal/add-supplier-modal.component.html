@@ -1,0 +1,155 @@
+<crem-modal
+	modalId="add_supplier_modal"
+	modalTitleId="add_supplier_modal_modalTitleId"
+	modalTitle="Add Supplier" 
+	closeIconVisible="true"
+	[customFooter]="true">
+
+	<div modalContent class="body-content">
+		<form crem-form
+			layout="vertical"
+			[formGroup]="supplierForm"
+			class="add-supplier-form">
+			<crem-form-item
+				[id]="getId(componentName,'portfolio','form-item')">
+				<crem-form-label [id]="getId(componentName,'portfolio','label')"
+				[required]="true">Portfolio
+				</crem-form-label>
+
+				<crem-form-control>
+					<crem-dropdown 
+						#portfolioDropdown
+						[id]="getId(componentName,'portfolio','dropdown')"
+						[dataSource]='portfolioDropdownItem'
+						[showClearButton]='true'
+						required="true"
+						[customRequireValidation]="false"
+						[showColumnHeader]='false'
+						displayExpr='CompanyName'
+						valueExpr='CompanyID'
+						[allowSearch]='true'
+						hoverText="Select Portfolio"
+						(selectedItems)="onPortFolioValueChanged($event)" 
+						formControlName="portfolioList">
+					</crem-dropdown>
+				</crem-form-control>
+			</crem-form-item>
+
+			<crem-form-item [id]="getId(componentName,'portfolio','form-item')">
+				<crem-form-label
+					[id]="getId(componentName,'name','label')"
+					[required]="true">Supplier Name
+				</crem-form-label>
+				<crem-form-control>
+					<crem-input 
+						[id]="getId(componentName,'name','textbox')"
+						[showHint]="false"
+						[showLabel]="false"
+						[showInfo]="false" 
+						[inputType]="'text'" 
+						[required]="true" 
+						[value]="''" [name]="''"
+						[placeholder]="'Enter supplier name'" 
+						formControlName="supplierName">
+					</crem-input>
+				</crem-form-control>
+			</crem-form-item>
+
+			<div class="form-group-two-columns">
+				<div class="two-columns-row">
+					<crem-form-item>
+						<crem-form-label
+							[id]="getId(componentName,'template','label')"
+							[required]="true">Template
+						</crem-form-label>
+						<crem-form-control>
+							<crem-dropdown #templateDropdown
+								[id]="getId(componentName,'template','dropdown')"
+								[dataSource]='templateDropdownItem'
+								[showClearButton]='true'
+								[showColumnHeader]='false'
+								displayExpr='ObjectTypeTypeName'
+								value="ObjectTypeTypeID"
+								valueExpr='ObjectTypeTypeID'
+								required="true" 
+								[allowSearch]='true'
+								hoverText="Select Template"
+								[initialSelectedValue]="selectedTemplateID"
+								formControlName="templateList">
+							</crem-dropdown>
+						</crem-form-control>
+					</crem-form-item>
+				</div>
+				<div class="two-columns-row">
+					<crem-form-item>
+						<crem-form-label 
+						[id]="getId(componentName,'sub-group','label')"
+						[required]="true">Sub-Group:
+						</crem-form-label>
+						<crem-form-control>
+							<crem-dropdown #subGroupDropDropdown 
+								[id]="getId(componentName,'sub-group','dropdown')"
+								[dataSource]='subGroupDropdownItem'
+								[showClearButton]='true'
+								[showColumnHeader]='false'
+								displayExpr='CompanyName'
+								valueExpr='CompanyID'
+								[allowSearch]='true'
+								[required]="isSubGroupRequired" 
+								hoverText="Select Sub Group"
+								formControlName="subGroupList">
+							</crem-dropdown>
+						</crem-form-control>
+					</crem-form-item>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div modalFooter class="addSupplierFooter">
+		<crem-button
+			[id]="getId(componentName,'cancel','button')"
+			type="secondary"
+			(click)="close()">Cancel
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'save','button')"
+			type="secondary"
+			(click)="save($event)"
+						[disabled]="saveClicked"
+			[icon]="saveClicked? 'faSpinner':''"
+			[iconPack]="saveClicked? 'solid':''" 
+			[iconAnimation]="saveClicked? 'spin':''">
+			<span>
+				{{saveClicked ? 'Saving':'Save'}}
+			</span>
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'save-and-new','button')"
+			type="secondary"
+			(click)="saveAndNew($event)" 
+			[disabled]="saveNewClicked"
+			[icon]="saveNewClicked? 'faSpinner':''"
+			[iconPack]="saveNewClicked? 'solid':''"
+			[iconAnimation]="saveNewClicked? 'spin':''">
+			<span>
+				{{saveNewClicked ? 'Saving':'Save & New'}}
+			</span>
+		</crem-button>
+
+		<crem-button
+			[id]="getId(componentName,'launch','button')"
+			type="primary"
+			(click)="launch($event)"
+			[disabled]="saveLaunchClicked"
+			[icon]="saveLaunchClicked? 'faSpinner':''"
+			[iconPack]="saveLaunchClicked? 'solid':''"
+			[iconAnimation]="saveLaunchClicked? 'spin':''">
+			<span>
+				{{saveLaunchClicked ? 'Saving':'Launch'}}
+			</span>
+		</crem-button>
+	</div>
+</crem-modal>

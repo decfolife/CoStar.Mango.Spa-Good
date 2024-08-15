@@ -8,7 +8,7 @@ describe('InputLabelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InputLabelComponent],
+      imports: [InputLabelComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InputLabelComponent);

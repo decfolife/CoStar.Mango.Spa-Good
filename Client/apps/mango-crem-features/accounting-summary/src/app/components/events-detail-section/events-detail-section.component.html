@@ -4,7 +4,8 @@
 			<div class="card-header">
 				<div class="card-title"
 					[id]="accountingSummaryService.getId(componentName,'card','title')">
-					Accounting Events {{isGridStateChanged ? preferenceSavePendingMessage : ''}}
+					Accounting Events 
+					<!-- {{isGridStateChanged ? preferenceSavePendingMessage : ''}} Removing this text for now as per discussion witn PO's-->
 				</div>
 				<div class="event-selector">
 					<input [id]="accountingSummaryService.getId(componentName,'empty','dropdown')" *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
@@ -55,12 +56,12 @@
 				</div>
 				<div class="more-menu">
 					<div class="more">
-						<button [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
+						<button [disabled]="isAccountingEventEmpty" [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
 							<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
 								<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
 								<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
 								<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="isGridStateChanged ? clearGridChanges() : resetGridPreferences()" [title]="isGridStateChanged ? clearBtnHoverText : resetBtnHoverText">{{isGridStateChanged ? 'Clear Changes' : 'Reset Preferences'}}</button>
-								<button [id]="accountingSummaryService.getId(componentName,'ExpertToExcel','button')" mat-menu-item (click)="exportToExcel()" title="Export to Excel">Export to Excel</button>
+								<button [id]="accountingSummaryService.getId(componentName,'sendToExcel','button')" mat-menu-item (click)="sendToExcel()" title="Send to Excel">Send to Excel</button>
 							</mat-menu>	 
 					</div>
 				</div>
@@ -73,7 +74,8 @@
 						icon="faExpand"
 						title="Show All Rows"
 						ariaLabel="Show All Rows"
-						*ngIf="showMaxRow" 
+						*ngIf="showMaxRow"
+						[disabled]="isAccountingEventEmpty" 
 						(click)="showMaxRows()">
 					</crem-button>
 	
@@ -87,6 +89,7 @@
 						title="Default View"
 						ariaLabel="Default View"
 						*ngIf="showDefaultRow" 
+						[disabled]="isAccountingEventEmpty"
 						(click)="showDefaultRows()">
 					</crem-button>
 	
@@ -98,7 +101,8 @@
 						icon="faCompress"
 						title="Show Miniumum Rows"
 						ariaLabel="Show Miniumum Rows"
-						*ngIf="showMinRow" 
+						*ngIf="showMinRow"
+						[disabled]="isAccountingEventEmpty" 
 						(click)="showMinRows()">
 					</crem-button>
 				</div>

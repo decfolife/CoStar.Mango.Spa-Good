@@ -8,7 +8,7 @@
   <div modalContent id="addEditMemberModal-content">
     <dx-validation-group #targetGroup>  
       <div class="aet-members" *ngIf="operation=='ATM' || operation=='ETM'">
-        <h4 class="nameLabel label info" [ngClass]="nameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">* Name</span>
+        <h4 class="nameLabel label info" [ngClass]="nameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">Name <span class="at-required" aria-label="required">*</span></span>
           <span class="aem-info" *ngIf="operation=='ETM' && (!teamMember.isActive || !teamMember.allowLogOn)">
             <crem-tooltip
               [externalId]="'aemToolTipId' + teamMember.contactID + teamMember.teamId"
@@ -65,7 +65,7 @@
         </div>
       </div>
       <div class="aet-name" *ngIf="operation=='ATU' || operation=='ETU' || operation=='AC'">
-        <h4 class="nameLabel label info" [ngClass]="firstNameFieldInvalid || lastNameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">* Name</span>
+        <h4 class="nameLabel label info" [ngClass]="firstNameFieldInvalid || lastNameFieldInvalid ? 'fieldInvalid' : ''"><span class="aem-nameLabel">Name <span class="at-required" aria-label="required">*</span></span>
           <span class="aem-info" *ngIf="operation=='ETU' && (!teamMember.isActive || !teamMember.allowLogOn)">
             <crem-tooltip
               [externalId]="'aemToolTipId' + teamMember.contactID + teamMember.teamId"
@@ -111,7 +111,7 @@
         </div>
       </div>
       <div class="aet-email" *ngIf="operation== Operations.ATU || operation=='ETU' || operation == Operations.AC">
-        <h4 class="nameLabel label" [ngClass]="emailAddressFieldInvalid ? 'fieldInvalid' : ''">* Email</h4>
+        <h4 class="nameLabel label" [ngClass]="emailAddressFieldInvalid ? 'fieldInvalid' : ''">Email <span class="at-required" aria-label="required">*</span></h4>
           <dx-text-box
             placeholder="Enter Email Address"
             [(value)]="emailId"
@@ -140,7 +140,7 @@
       <div class="aet-email-shared" *ngIf="operation !== Operations.AC">
         <div class="emailToggle">
           <mat-slide-toggle  [labelPosition]="labelPosition" [checked]="emailNotificationChecked" 
-            (change)="emailtoggle($event)" aria-label="Email Notication"
+            (change)="emailtoggle($event)" aria-label="Email Notification"
           >
             <h4 class="label">Email Notifications</h4>
           </mat-slide-toggle>
@@ -152,6 +152,9 @@
           >
             <h4 class="label">Shared</h4>
           </mat-slide-toggle>
+          <div>
+            <span class="sharedToggleHint">{{ sharedToggleText }}</span>
+          </div>
         </div>
       </div>
       <div class="aet-outstandingRoles" *ngIf="outstandingRoles.length">
@@ -163,7 +166,7 @@
         ></crem-tooltip>
       </div>
       <div class="aet-role">
-        <h4 class="roleLabel label" [ngClass]="roleFieldInvalid ? 'fieldInvalid' : ''">* Role</h4>
+        <h4 class="roleLabel label" [ngClass]="roleFieldInvalid ? 'fieldInvalid' : ''">Role <span class="at-required" aria-label="required">*</span></h4>
           <dx-select-box 
             class="aet-role-selectBox"
             placeholder="Assign Role"
@@ -184,7 +187,7 @@
       </dx-select-box>
       </div>
       <div class="aet-level" *ngIf="operation !== Operations.AC">
-        <h4 class="levelLabel label" [ngClass]="levelFieldInvalid ? 'fieldInvalid' : ''">* Level</h4>
+        <h4 class="levelLabel label" [ngClass]="levelFieldInvalid ? 'fieldInvalid' : ''">Level <span class="at-required" aria-label="required">*</span></h4>
         <dx-select-box 
           class="aet-level-selectBox"
           placeholder="Assign Level"
@@ -208,7 +211,7 @@
         </dx-select-box>
       </div>
       <div class="aet-expirationType" *ngIf="operation==Operations.ATU || operation==Operations.ETU">
-        <h4 class="expirationTypeLabel label" [ngClass]="expirationTypeFieldInvalid || expirationDateFieldInvalid ? 'fieldInvalid' : ''">* Expiration Type</h4>
+        <h4 class="expirationTypeLabel label" [ngClass]="expirationTypeFieldInvalid || expirationDateFieldInvalid ? 'fieldInvalid' : ''">Expiration Type <span class="at-required" aria-label="required">*</span></h4>
         <div class="aet-expirationTypeDate">
           <div class="expirationType">
             <dx-select-box 

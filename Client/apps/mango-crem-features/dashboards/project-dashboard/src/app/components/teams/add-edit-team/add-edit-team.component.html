@@ -128,7 +128,7 @@
             [allowReordering]="false" [allowResizing]="false">
             <dxi-button template="actionsMenuTemplate">
               <div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
-                <button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" 
+                <button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" id="{{'memberDelete' + member.rowIndex}}"
                   *ngIf="!member.data.editMode"
                   (click)="removeMember(member.data.contactId);$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu">
                   <fa-icon [icon]="faCircleMinus" ></fa-icon>

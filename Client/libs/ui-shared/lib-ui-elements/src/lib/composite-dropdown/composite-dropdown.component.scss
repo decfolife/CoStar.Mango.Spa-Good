@@ -1,0 +1,54 @@
+@use 'styles'as *;
+
+.composite-dropdown-container {
+    position: relative;
+    @include costar(margin, 2);
+    @include costar(z-index, dropdown)
+}
+
+mat-panel-title {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+.dropdown-title {
+    @include costar(font-size, h4);	
+}
+
+.dropdown-subtitle {
+    @include costar(color, gray03);
+     // @include costar(font-size, h6); // FIXME: font-size h6 is not part of the font sizes http://service2.dev.corp.virtualpremise.com:8091/?path=/docs/documentation-styling-single-properties--docs#font
+    @include costar(font-weight, normal);
+}
+
+mat-action-row {
+    align-items: center;
+    justify-content: center;
+    @include costar(padding, 3);
+    @include costar(color, gray01);	
+}
+
+mat-panel-description {
+    @include costar(margin-right, 0);
+    @include costar(padding-top, 2);
+    @include costar(color, gray01);	
+}
+
+mat-expansion-panel {
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+mat-expansion-panel-header {
+    height: 60px;
+}
+
+.content-padding {
+    @include costar(padding-bottom, 5);
+    padding-top: 35px;
+}

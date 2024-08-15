@@ -5,8 +5,6 @@ import { RouterModule } from '@angular/router';
 import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ListErrorsModule } from './list-errors/list-errors.module';
-import { NotFoundModule } from './not-found/not-found.module';
-import { ToolbarModule } from './toolbar/toolbar.module';
 import { CremHeaderModule } from './crem-header/crem-header.module';
 import { LibUiElementsModule } from '@mango/ui-shared/lib-ui-elements';
 import { EnvInfoChipModule } from './env-info-chip/env-info-chip.module';
@@ -17,11 +15,13 @@ import { SharedLeftNavModule } from './shared-left-nav';
 import { ShadowFiltersContainerModule } from './shadow-filters-container';
 import { CostarSuiteHeaderModule } from './costar-suite-header/costar-suite-header.module';
 import { AddBuildingModalModule } from './add-building-modal/add-building-modal.module';
+import { AddEquipmentModalComponent } from './add-equipment-modal/add-equipment-modal.component';
 import { MangoDialogModule } from './mango-dialog';
+import { AddSupplierModalComponent } from './add-supplier-modal/add-supplier-modal.component';
+import { AddCompanyModalComponent } from './add-company-modal/add-company-modal.component';
 
 @NgModule({
   declarations: [
-
   ],
   imports: [
     CommonModule,
@@ -37,15 +37,17 @@ import { MangoDialogModule } from './mango-dialog';
     SharedLeftNavModule,
     MangoDialogModule,
     ComposeEmailModule,
-    AddBuildingModalModule
+    AddBuildingModalModule,
+    AddSupplierModalComponent,
+    AddEquipmentModalComponent,
+    AddCompanyModalComponent
   ],
   exports: [
     FormsModule,
     ReactiveFormsModule,
     HeaderModule,
+    LibUiElementsModule,
     ListErrorsModule,
-    NotFoundModule,
-    ToolbarModule,
     CremHeaderModule,
     CostarSuiteHeaderModule,
     EnvInfoChipModule,

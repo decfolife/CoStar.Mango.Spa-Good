@@ -34,7 +34,7 @@ import { RemindersService } from "@reminders-list/shared/services/reminders.serv
 import { catchError, filter, map, switchMap, tap, debounceTime } from "rxjs/operators";
 import { ActivatedRoute } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
-import { MangoDialogService } from "@project-dashboard/services/mango-dialog.service";
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { Reminder } from "libs/data-models/lib-data-models/src/lib/models/Reminder";
 import { RemindersRecepient } from "libs/data-models/lib-data-models/src/lib/models/RemindersRecepient";
 import { RemindersFilteredRecepient } from "libs/data-models/lib-data-models/src/lib/models/RemindersFilteredRecepient";
@@ -201,6 +201,7 @@ export class AddReminderComponent implements OnInit {
   }
 
   saveReminder(e) {
+    if(this.addReminderForm.instance.validate().isValid){
     const reminderData = this.getSaveReminderData();
     this.loading = true;  
     this.saveBtnClicked = true;
@@ -226,6 +227,7 @@ export class AddReminderComponent implements OnInit {
         catchError(_ => this.dialogService.alert('Save Not Successful!', 'There was an issue with saving this team. Please review and try again later', 'OK'))
       ).subscribe();
     }
+  }
   }
 
   onCellClick(event) {
@@ -292,7 +294,6 @@ export class AddReminderComponent implements OnInit {
 
   private getSaveReminderData() {
     const formData = this.addReminderForm.formData;
-    if( this.addReminderForm.instance.validate()){
     let saveReminderData = {
       UserDefinedEvent: formData.userDefinedEvent,
       UserDefinedDate: formData.userDefinedDate,
@@ -306,7 +307,6 @@ export class AddReminderComponent implements OnInit {
       TicklerID : this.ticklerID 
     };
     return saveReminderData;
-  }
   }
 
   toggleList() {

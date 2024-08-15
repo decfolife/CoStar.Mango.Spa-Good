@@ -394,6 +394,7 @@ $shadow: (
   box-shadow:(
     // Primary Shadows
     primary: 0 0 0 0.3rem $primary-lighter,
+    primary-light: 0 0 0 0.1rem $primary-lighter,
     secondary: 0 0 0 0.3rem $secondary-lighter,
 
     // Neutral Shadows

@@ -17,7 +17,7 @@ export type InputType =
   'password'  |
   'checkbox'  |
   'select-box';
-export type LabelPosition = 'top' | 'inline';
+export type LabelPosition = 'top' | 'left-inline';
 
 // Hint
 export type HintType =
@@ -42,16 +42,13 @@ export const inputState: InputState[] = [
 ];
 export const labelPosition: LabelPosition[] = [
   'top',
-  'inline',
+  'left-inline',
 ];
 export const inputTypes: InputType[] = [
   'text',
   'textarea',
-  'date',
   'number',
   'password',
-  'checkbox',
-  'select-box',
 ];
 export const hintTypes: HintType[] = [
   'active',

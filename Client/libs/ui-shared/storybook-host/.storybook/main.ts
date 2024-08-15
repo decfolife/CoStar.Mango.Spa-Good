@@ -15,8 +15,6 @@ const config: StorybookConfig = {
     '../../common/**/*.stories.mdx',
     '../../common/**/*.stories.@(js|jsx|ts|tsx)',
     // Add ui-shared folders below, add same folders on tsconfig.json as well
-    '../../lib-ui-shared/**/*.stories.mdx',
-    '../../lib-ui-shared/**/*.stories.@(js|jsx|ts|tsx)',
     '../../lib-ui-elements/**/*.stories.mdx',
     '../../lib-ui-elements/**/*.stories.@(js|jsx|ts|tsx)',
   ],

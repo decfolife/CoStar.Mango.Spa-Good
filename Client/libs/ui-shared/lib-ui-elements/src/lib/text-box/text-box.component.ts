@@ -14,11 +14,14 @@ export class TextBoxComponent {
   @Input() maxLength: number;
   @Input() maxLengthMessage: string;
   @Input() initialFocus: boolean;
-  @Input() inputId: string;
+  @Input() inputId: string = "defaultTextBoxId";
   @Input() customRequireValidation: boolean = false;
   @Input() showRedBorder: boolean = false;
   @Input() disabled: boolean = false;
+  @Input() inputLabel: string = "Enter Value";
+  @Input() inputPlaceHolder: string = "";
   @Output() onChangeEvent = new EventEmitter();
+  @Output() onEnterKeyEvent = new EventEmitter();
   @Output() onInitalizedEvent = new EventEmitter();
   @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
   @ViewChild("TextBoxValidator", { static: false }) textBoxValidator: DxValidatorComponent
@@ -53,6 +56,25 @@ export class TextBoxComponent {
       this.trimming = false;
     } else {
       this.value = this.value?.trim();
+    }
+  }
+
+  focusTextBox() {
+    this.textBox.instance.focus();
+  }
+
+  reset() {
+    this.textBox.instance.reset();
+  }
+  
+  public onEnterKey(event) {
+    if (this.trimming) {
+      setTimeout(() => {
+        this.onEnterKeyEvent?.emit(event);
+        this.trimming = false;
+      })
+    } else {
+      this.onEnterKeyEvent?.emit(event);
     }
   }
 

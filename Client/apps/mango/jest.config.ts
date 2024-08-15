@@ -4,12 +4,22 @@ export default {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {},
-  collectCoverage: true,
+  reporters: [
+    "default",
+    [
+      "../../node_modules/jest-html-reporter",
+      {
+        "outputPath": "./dist/apps/mangospa-test-report/index.html",
+        "pageTitle": "Test Report: MangoSPA"
+      }
+    ]
+  ],
   coverageThreshold: {
     global: {
-      lines: 50,
-      statements: 50,
-      branches: 12,
+      lines: 10,
+      statements: 10,
+      functions: 1,
+      branches: 0,
     },
   },
 

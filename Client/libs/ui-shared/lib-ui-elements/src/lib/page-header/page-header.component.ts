@@ -22,16 +22,16 @@ import { DropdownModule } from '../dropdown';
 })
 export class PageHeaderComponent {
   @Input() pageTitle: string;
-  @Input() showTitleInfo: boolean = false;
+  @Input() showTitleInfo = false;
   @Input() primaryButtonText: string
-  @Input() showSearchButton: boolean = false
-  @Input() showBookmarkButton: boolean = false
-  @Input() showSettingsButton: boolean = false
-  @Input() customFilters: boolean = false
-  @Input() customActions: boolean = false
-  @Input() customSettings: boolean = false
+  @Input() showSearchButton = false
+  @Input() showBookmarkButton = false
+  @Input() showSettingsButton = false
+  @Input() customFilters = false
+  @Input() customActions = false
+  @Input() customSettings = false
 
-  @Output() onSearchClick = new EventEmitter<string>()
-  @Output() onBookmarkClick = new EventEmitter<Event>()
-  @Output() onSettingsClick = new EventEmitter<Event>()
+  @Output() search = new EventEmitter<string>()
+  @Output() bookmark = new EventEmitter<Event>()
+  @Output() settings = new EventEmitter<Event>()
 }

@@ -5,22 +5,12 @@ import { DxBulletModule, DxDataGridModule, DxPopoverModule, DxTemplateModule } f
 import { FieldHistoryComponent } from './field-history.component';
 import { IconModule } from '../icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TextBoxModule } from '../text-box';
 import { FieldHistoryDirective } from './field-history.directive';
-
-const FIELDHISTORY_MOCK = `
-<crem-field-history
-  [history-http-source]="{
-      portfolioId: masterGroupID, 
-      helpTextName: 'PolicyName', 
-      objectTypeId: 125, 
-      objectId: policyId 
-    }">
-</crem-field-history>`
+import { InputComponent } from '../input';
 
 const meta: Meta<any> = {
   component: FieldHistoryComponent,
-  title: 'Organisms/Field History',
+  title: 'Organisms/Field History *',
   decorators: [
     moduleMetadata({
       imports: [
@@ -32,7 +22,7 @@ const meta: Meta<any> = {
         DxPopoverModule,
         MatTabsModule,
         IconModule,
-        TextBoxModule,
+        InputComponent,
         FieldHistoryDirective
       ],
     }),
@@ -172,11 +162,7 @@ export const Default: Story = {
     props: args,
     template: `
     <div style="display: flex">
-      <crem-text-box
-        [value]="'Field Data'"
-        [initialFocus]="null"
-        [disabled]="false"
-      ></crem-text-box>
+    <crem-input   [inputType]="'text'" [value]="'Field Data'"></crem-input>
     <crem-field-history ${argsToTemplate(args)}></crem-field-history></div>
     `
   })

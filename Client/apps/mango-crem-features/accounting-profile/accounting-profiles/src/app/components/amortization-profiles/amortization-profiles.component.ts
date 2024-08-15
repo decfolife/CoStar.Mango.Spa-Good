@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { BaseService } from '../../services/base.service';
 
 @Component({
   selector: 'app-amortization-profiles',
@@ -7,10 +8,16 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   encapsulation: ViewEncapsulation.Emulated
 })
 export class AmortizationProfilesComponent implements OnInit {
+  hasModuleRights = true;
 
-  constructor() { }
+  constructor(    
+    private baseService: BaseService
+  ) { }
 
   ngOnInit(): void {
+    this.baseService.HasUserModuleRight().subscribe(response => {
+      this.hasModuleRights = response;
+    });
   }
 
 }

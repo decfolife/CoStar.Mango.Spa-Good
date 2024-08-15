@@ -1,6 +1,5 @@
-<dx-check-box 
-    [(value)]="value"
-    (onValueChanged)="onValueChanged($event)"
-    [elementAttr]="elementAttr"
->
-</dx-check-box>
+<div class="checkbox-wrapper">
+  <dx-check-box [(value)]="value" (onValueChanged)="onValueChanged($event)" [elementAttr]="elementAttr"
+    [disabled]="disabled"> </dx-check-box>
+  <label class="checkbox-label" [class.disabled]="disabled" (click)="onEnterKey()"><ng-content></ng-content></label>
+</div>

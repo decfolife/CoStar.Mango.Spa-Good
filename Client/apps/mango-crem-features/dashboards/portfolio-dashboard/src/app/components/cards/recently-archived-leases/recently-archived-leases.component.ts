@@ -41,16 +41,11 @@ export class RecentlyArchivedLeasesComponent implements OnInit, OnDestroy {
   }
 
   rowClick(e: any) {
-    if (environment.isRestful) {
-      this.router.navigate(
-        ['crem/forms/render-form'],
-        {
-          queryParams: { fid: 312, oid: e.data.systemLeaseID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID }
-        });
-    } else {
-      e["objectIdField"] = "systemLeaseID"
-      this.rowClickEvent.emit(e);
-    }
+    this.router.navigate(
+      ['/v06/Forms/RenderForm.aspx'],
+      {
+        queryParams: { oid: e.data.systemLeaseID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID }
+      });
   }
   
 

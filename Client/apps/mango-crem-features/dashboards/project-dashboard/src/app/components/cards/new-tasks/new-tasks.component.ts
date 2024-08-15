@@ -53,14 +53,11 @@ export class NewTasksComponent implements OnInit, OnDestroy {
   decorateText(e: any) {
     if (e.rowType == "data") {
       if ((new Date(e.data.taskCompletedDate).getFullYear()) >= 1920) {
-        if (environment.isRestful) {
-          e.rowElement.classList.add('tdtw-row-stike');  //this line executes on Mango
-        } else {
-          e.rowElement[0].classList.add('tdtw-row-stike');  //this line executes On CREM
-        }
+        e.rowElement.classList.add('tdtw-row-stike');  //this line executes on Mango
       }
     }
   }
+  
   filter(e, cardId) {
     this.card.filterInitialValue = e[0];
     this.cardsService.newTasksDropdown = e[0];

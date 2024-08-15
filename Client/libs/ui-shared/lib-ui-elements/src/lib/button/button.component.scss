@@ -5,6 +5,7 @@ button {
   @include costar(border-radius, small);
   @include costar(font-size, normal);
   @include costar(transition, fast);
+  @include costar(gap, 1);
 
   padding: 0.7rem;
   display: flex;

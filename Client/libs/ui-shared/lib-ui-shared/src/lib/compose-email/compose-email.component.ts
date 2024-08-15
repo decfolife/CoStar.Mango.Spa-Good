@@ -137,6 +137,11 @@ export class ComposeEmailComponent implements OnInit {
   toggleList() {
     this.isDropDownBoxOpened = !this.isDropDownBoxOpened;
   }
+
+  adaAttrToGridTable(e:any) {
+    let noDataEl = e.element.getElementsByTagName("tbody");
+    noDataEl[0]?.setAttribute("role", "table");
+  }
   
 }
 

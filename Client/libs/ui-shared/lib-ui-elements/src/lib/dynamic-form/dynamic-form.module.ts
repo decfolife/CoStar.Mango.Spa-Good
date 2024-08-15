@@ -1,22 +1,21 @@
-import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DynamicFormComponent } from './dynamic-form.component';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 import {
-  DxSelectBoxModule,
-  DxTextAreaModule,
   DxFormModule,
   DxListModule,
+  DxSelectBoxModule,
+  DxTextAreaModule,
   DxTextBoxModule,
-  DxValidatorModule,
   DxValidationSummaryModule,
-  DxCheckBoxModule
+  DxValidatorModule
 } from 'devextreme-angular';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InputComponent } from '../input';
 import { DatePickerModule } from '../date-picker';
-import { TextBoxModule } from '../text-box/text-box.module';
-import { ToggleSliderModule } from '../toggle-slider/toggle-slider.module';
-import { CheckBoxModule } from '../checkbox/check-box.module';
+import { ToggleSliderComponent } from '../toggle-slider/toggle-slider.component';
+import { DynamicFormComponent } from './dynamic-form.component';
+import { CheckBoxComponent } from '../checkbox';
 
 @NgModule({
   imports: [
@@ -28,12 +27,12 @@ import { CheckBoxModule } from '../checkbox/check-box.module';
     DxFormModule,
     DropdownModule,
     DatePickerModule,
-    TextBoxModule,
     DxValidatorModule,
     DxValidationSummaryModule,
     MatSlideToggleModule,
-    ToggleSliderModule,
-    CheckBoxModule
+    ToggleSliderComponent,
+    CheckBoxComponent,
+    InputComponent
   ],
   declarations: [
     DynamicFormComponent
@@ -43,4 +42,4 @@ import { CheckBoxModule } from '../checkbox/check-box.module';
     DynamicFormComponent
   ],
 })
-export class DynamicFormModule {}
+export class DynamicFormModule { }

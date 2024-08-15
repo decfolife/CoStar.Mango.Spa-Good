@@ -1,0 +1,152 @@
+@use "styles" as *;
+
+@mixin flex-column-direction {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin flex-row-direction {
+    display: flex;
+    flex-direction: row;
+}
+
+.financial-card-container {
+  z-index: 1;
+  position: relative;
+    @include costar(padding, 1);
+    @include flex-column-direction;
+    width: 100%;
+
+    & .composite-dropdowns-container {
+      width: 100%;
+      display: grid;
+      @include costar(gap, 2);
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    & .controls-container {
+        padding-bottom: 5px;
+        column-gap: 20px;
+    }
+
+    .hint-text {
+        @include costar(color, gray03);
+        @include costar(margin-right, 1);
+        font-size: 0.9rem;
+        text-wrap: nowrap;
+    }
+
+    .form-items {
+        @include flex-column-direction;
+        width: 100%;
+    }
+
+    .labels {
+        @include flex-row-direction;
+        align-items: center;
+        column-gap: 10px;
+        @include costar(padding-top, 4);
+        font-size: 16px;
+    }
+
+    .controls-multi-column {
+        display: flex;
+        justify-content: space-between;
+        column-gap: 20px;
+
+        > :first-child {
+            flex: 0 0 60%;
+        }
+
+        > :nth-child(2) {
+            flex: 0 0 35%;
+        }
+    }
+
+    .functional-currency {
+        .hint-text {
+            @include costar(padding-top, 1);
+            display: block;
+            text-align: right;
+        }
+    }
+}
+
+crem-composite-dropdown {
+    width: 100%;
+}
+
+:host ::ng-deep .annual-rate-input {
+    input {
+        height: 32px;
+    }
+}
+
+.radio-group {
+    @include costar(padding-top, 2);
+}
+
+.check-box__group {
+    display: flex;
+    @include costar(padding-top, 5);
+    column-gap: 10px;
+}
+
+.amortization {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+
+    .manual-entry {
+        &__profileName {
+            @include flex-column-direction;
+            width: 21%;
+            position: absolute;
+            top: 160%;
+            left: 2%;
+            z-index: 10;
+            @include costar(background-color, light);
+            @include costar(border-radius, big);
+            @include costar(border, primary-light);
+            @include costar(padding, 2);
+            @include costar(box-shadow, primary-light);
+            @include costar(gap, 2);
+        }
+
+        &__btn-container {
+            display: flex;
+            @include costar(gap, 4);
+        }
+    }
+}
+
+:host ::ng-deep{
+  mat-card {
+    &-content {
+      overflow: unset !important; // Allows the 'crem-composite-dropdown' to overflow outside the 'crem-card'
+    }
+  }
+  .mat-expansion-panel:not([class=mat-expanded]){
+    overflow: visible;
+    .mat-expansion-panel-header{
+      overflow: hidden;
+    }
+  }
+  .crem-composite-dropdown { // Allows crem-dropdown to overflow parent's component
+    mat-expansion-panel {
+      overflow: hidden;
+    }
+  }
+}
+
+.financial-balance-cards{
+  @include costar(padding, 2);
+
+  mango-balance-card{
+    display: flex;
+    @include costar(padding, 2);
+    @include costar(border-radius, medium);
+    @include costar(background-color, background);
+  }
+}

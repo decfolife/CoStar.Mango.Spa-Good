@@ -1,0 +1,44 @@
+@use 'styles'as *;
+
+.crem-accordion {
+    @include costar(padding, 0);
+}
+
+.accordion {
+    &-header {
+        @include costar(border, gray05); 
+        @include costar(background-color, light);
+        letter-spacing: 0.25px;
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+    &-title {
+        @include costar(padding, 4);
+        margin: 0px;
+
+        .accordion-subtitle {
+            @include costar(color, gray03);
+            font-weight: 200;
+            font-size: 14px;
+            display: inline-block;
+        }
+    }
+    &-icon { 
+        @include costar(padding, 3);
+        align-content: center;
+    }
+    &-body { 
+        @include costar(border-left, gray05);
+        @include costar(border-right, gray05);
+        @include costar(border-bottom, gray05);
+        @include costar(background-color, light);
+        @include costar(transition, fast);
+        &-collapsed {
+            height: 0;
+            visibility: hidden;
+            opacity: 0;
+        }
+    }
+    
+}

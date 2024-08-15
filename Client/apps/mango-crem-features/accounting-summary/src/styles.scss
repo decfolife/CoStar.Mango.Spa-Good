@@ -40,6 +40,11 @@
         box-shadow: 0 0 0 0.1rem #c8c8c8;
     }
 
+    button.btn.btn-default.moreButton:disabled {
+        cursor: not-allowed;
+        color: #000;
+    }
+
     .section-grid {
         padding: 6px 16px 0px 16px;
     }
@@ -47,7 +52,7 @@
     #je-processing-info-popup-grid,
     #je-processing-info-retro-popup-grid {
         width: 100% !important;
-        height: 190px !important;
+        height: 320px !important;
     }
 
     #je-payment-info-popup-grid,
@@ -94,15 +99,23 @@
 
         dx-select-box,
         input {
-            border: 1px solid #a7a49f;
+            border: 1px solid #C8C8C8;
             border-radius: 2px;
             margin-bottom: 0px;
         }
 
         .dx-texteditor-input {
             font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
-            border: 1px solid #a7a49f;
+            border: 0px;
             font-size: 15px;
+            padding-bottom: 2px;
+            font-weight: 700 !important;
+            padding-left: 0px;
+            width: 160px;
+        }
+
+        dx-select-box .custom-with-label .dx-texteditor-input{
+            padding-top: 0px;
         }
     }
 
@@ -257,14 +270,23 @@
     }
 
     .card-title {
+        display: flex;
+        flex-direction: row;
         order: 1;
         margin: 5px 0 0 0;
         text-wrap: nowrap;
+        white-space: nowrap;
         padding-right: 10px;
         font-size: 14px;
         color: #1e3a6f;
         font-weight: 500;
-    }
+      
+        &:first-child {
+          > span {
+            padding-left: 3px;
+          }
+        }
+      }
 
     .event-selector {
         order: 2;
@@ -279,7 +301,7 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        width: 95%;
+        width: 100%;
         padding-top: 0px;
     }
 
@@ -382,7 +404,23 @@
         button {
             padding: unset !important;
         }
-    } 
+    }     
+    
+    .dx-dropdowneditor-input-wrapper > .dx-texteditor-container > .dx-texteditor-input-container > input.dx-texteditor-input{
+        font-weight: 700 !important;
+    }
+
+    crem-card .btn-secondary.btn-icon-left.no-text.btn-flat {
+        border: unset;
+    }
+    
+    span.dx-datagrid-nodata {
+        padding: 10px;
+    }
+    #amortization-period-popup-tabs-section{
+        padding: 12px;;
+    }
+
 }
 
 .dx-menu-base .dx-menu-item.dx-state-disabled {

@@ -1,32 +1,43 @@
-<dx-date-box 
-    [(value)]="value" 
-    [displayFormat]="dateFormat"
-    [inputAttr]="{ id: inputId, 'aria-controls': 'dateBoxPopupWrapper', 'aria-label': 'Press Alt + ↓ / Alt + ↑ to Open/close the calendar.'}"
-    [invalidDateMessage]="invalidDateMessage || 'Value must be a date'"
-    (onValueChanged)="onValueChanged($event)"
-    [showClearButton]="showClearButton"
-    [useMaskBehavior]="useMaskBehavior"
-    [min]="min"
-    [max]="max"
-    >
-    <dxo-drop-down-options
-        [wrapperAttr]="{ id: 'dateBoxPopupWrapper' }"
-        >
-    </dxo-drop-down-options>
-    <dx-validator #DateBoxValidator>
-
-      <ng-container *ngIf="showDefaultValidationTooltip; then DefaultValidationTooltip else NoDefaultValidationTooltip"></ng-container>
-      <ng-template #DefaultValidationTooltip>
-        <dxi-validation-rule *ngIf="isRequired"
-            type="required"
-        ></dxi-validation-rule>
-      </ng-template>
-      <ng-template #NoDefaultValidationTooltip>
-        <dxi-validation-rule *ngIf="isRequired"
-            type="required"
-            [message]="''"
-        ></dxi-validation-rule>
-      </ng-template>
-
-    </dx-validator>
+<dx-date-box
+  class="date-box"
+  [(value)]="value"
+  [displayFormat]="dateFormat"
+  [inputAttr]="{
+    id: inputId,
+    'aria-controls': 'dateBoxPopupWrapper',
+    'aria-label': 'Press Alt + ↓ / Alt + ↑ to Open/close the calendar.'
+  }"
+  [invalidDateMessage]="invalidDateMessage || 'Value must be a date'"
+  (onValueChanged)="onValueChanged($event)"
+  [showClearButton]="showClearButton"
+  [useMaskBehavior]="useMaskBehavior"
+  [placeholder]="placeholderText"
+  [min]="min"
+  [max]="max"
+  [disabled]="disabled"
+>
+  <dxo-drop-down-options [wrapperAttr]="{ id: 'dateBoxPopupWrapper' }">
+  </dxo-drop-down-options>
+  <dx-validator #DateBoxValidator>
+    <ng-container
+      *ngIf="
+        showDefaultValidationTooltip;
+        then DefaultValidationTooltip;
+        else NoDefaultValidationTooltip
+      "
+    ></ng-container>
+    <ng-template #DefaultValidationTooltip>
+      <dxi-validation-rule
+        *ngIf="isRequired"
+        type="required"
+      ></dxi-validation-rule>
+    </ng-template>
+    <ng-template #NoDefaultValidationTooltip>
+      <dxi-validation-rule
+        *ngIf="isRequired"
+        type="required"
+        [message]="''"
+      ></dxi-validation-rule>
+    </ng-template>
+  </dx-validator>
 </dx-date-box>

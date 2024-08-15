@@ -1,0 +1,18 @@
+<crem-popup 
+    [id]="'idle-timeout-popup'"
+    [visible]="visible"
+    [title]="'Session Timeout'"
+    [height]="'180px'"
+    [width]="'400px'"
+    [showCloseButton]="false"
+    [customFooter]="true"
+>
+    <div body>
+        <span id="message">{{message}}</span>
+    </div>
+
+    <div footer class="idle-timeout__custom-footer">
+        <crem-button (buttonClick)="logout()" color="secondary" [id]="'logout-btn'">Logout</crem-button>
+        <crem-button (buttonClick)="continueWorking()" color="primary" [id]="'continue-btn'">Stay Connected</crem-button>
+    </div>
+</crem-popup>

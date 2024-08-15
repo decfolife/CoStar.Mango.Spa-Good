@@ -218,7 +218,8 @@ dx-form {
 			}
 
 			fa-icon {
-				padding-right: $stdPadding / 2;
+								padding-right: calc($stdPadding / 2);
+
 				position: relative;
 				top: -34px;
 			}

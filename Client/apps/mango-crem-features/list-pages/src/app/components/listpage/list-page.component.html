@@ -35,7 +35,7 @@
     </cs-search>
 
     <crem-dropdown
-      *ngIf="showPortfolioPicker"
+      *ngIf="showPortfolioPicker && ![1, 5, 9, 11, 193, 194, 196].includes(objectTypeId)"
       class="crem-dropdown-list-pages"
       [dataSource]="portfolios"
       [isDisabled]="!portfolioButtonEnabled || inDisabledUIState"
@@ -131,22 +131,30 @@
     ></app-more-menu>
 
     <app-add-new-menu
-      *ngIf="showAddButton && objectTypeId !== 1 && !this.isLeaseArchived && !this.isLeaseLocked"
+      *ngIf="showAddButton && objectTypeId !== 1 && objectTypeId !==11 && objectTypeId !== 5 && !this.isLeaseArchived && !this.isLeaseLocked"
       class="add-button"
       [enabled]="!inDisabledUIState"
       [OTTID]="urlOTTID"
       [isGLEvent]="isGLEvent"
       [editPages]="editPages"
+      (reLoadGrid)="reLoadGrid($event)"
       (navigateToEditPage) = "navigateToEditPage($event)"
     ></app-add-new-menu>
 
     <crem-button type="primary" class="add-button--new" id="add_project_wizard_listpage"
-      [disabled]="inDisabledUIState"
-      *ngIf="objectTypeId === 1 && editPages?.length === 1 && showAddButton"
-      (click)="btnAddItemNewClick(); $event.preventDefault()"
-    >
+    [disabled]="inDisabledUIState"
+    *ngIf="(objectTypeId === 1  && editPages?.length === 1) || (objectTypeId === 5) && showAddButton"
+    (click)="btnAddItemNewClick(objectTypeId); $event.preventDefault()">
       <fa-icon [icon]="faPlus" class="small-plus"></fa-icon>
       <span>Add</span>
+    </crem-button>
+
+    <crem-button type="primary" class="add-button--new" id="add_company_listpage"
+    [disabled]="inDisabledUIState"
+    *ngIf="objectTypeId === 11 && editPages?.length === 1 && showAddButton"
+    (click)="btnAddCompany(); $event.preventDefault()">
+    <fa-icon [icon]="faPlus" class="small-plus"></fa-icon>
+    <span>Add</span>
     </crem-button>
 
     <div class="toggle-wrapper">
@@ -158,6 +166,7 @@
         <mat-button-toggle [class.active]="listPageViewMode !== 'map' && !inDisabledUIState"
           (change)="toggleListMap('list')"
           [disabled]="inDisabledUIState"
+          *ngIf="objectTypeId !== 5 && objectTypeId !== 11"
           [checked]="listPageViewMode !== 'map' ? true : false "
         >
           <fa-icon [icon]="faList"></fa-icon>
@@ -166,6 +175,7 @@
 
         <mat-button-toggle [class.active]="listPageViewMode === 'map' && !inDisabledUIState"
           (change)="toggleListMap('map')"
+          *ngIf="objectTypeId !== 5 && objectTypeId !== 11"
           [disabled]="inDisabledUIState"
         >
           <fa-icon [icon]="faMap"></fa-icon>

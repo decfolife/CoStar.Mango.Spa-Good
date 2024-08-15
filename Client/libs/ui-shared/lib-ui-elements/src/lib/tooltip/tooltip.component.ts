@@ -18,7 +18,6 @@ export class TooltipComponent implements OnInit {
   disabled = false;
 
   withAnimationOptionsVisible: boolean;
-  constructor() {}
 
   ngOnInit() {
     this.tooltipId = this.externalId + 'Tooltip';
@@ -35,7 +34,7 @@ export class TooltipComponent implements OnInit {
   }
 
   // This method insures the screen reader readers the helptext
-  onShownHandler(e) {
+  onShownHandler() {
     this.helpText.nativeElement.focus();
   }
 }

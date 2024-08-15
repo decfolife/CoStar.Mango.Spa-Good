@@ -345,15 +345,11 @@ onKeydownMakeUnFavorite(event: KeyboardEvent, data: any) {
   }
 
   editReport(e) {
-    // console.log("Row data", e.data);
-
     let reportId = e.data.id;
     window.location.href = `/v06/Reporting/AdhocReporting/AdHocCreateEditReport.aspx?ReportID=${reportId}&hasRDL=true`;
   }
   
   shareReport(e) {
-    // console.log("Row data", e.data);
-
     let reportId = e.data.id;
     let canEdit = e.data.canEdit;
     let canDelete = e.data.canDelete;
@@ -374,8 +370,6 @@ onKeydownMakeUnFavorite(event: KeyboardEvent, data: any) {
   }
 
   assignReportTags(e) {
-    // console.log("Row data", e.data);
-
     let reportId = e.data.id;
     let reportType = e.data.type;
 
@@ -383,14 +377,11 @@ onKeydownMakeUnFavorite(event: KeyboardEvent, data: any) {
   }
 
   viewReportHistory(e) {
-    // console.log("Row data", e.data);
-    
     let reportId = e.data.id;
     window.location.href = `/v06/Reporting/AdhocReporting/AdHocReportHistory.aspx?ReportID=${reportId}&hasRDL=false`;
   }
 
   deleteReport(e) {
-    // console.log("Row data", e.data);
     let reportId = e.data.id;
     let reportName = e.data.reportName;
 

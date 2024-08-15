@@ -1,10 +1,5 @@
 export interface Sidekick {
   metricValue?: string;
-  valueIndicator?:
-    | 'positive-up'
-    | 'positive-down'
-    | 'neutral'
-    | 'negative-up'
-    | 'negative-down'
-    | null;
+  direction?: 'up' | 'down' | 'neutral'
+  symbol?: 'negative' | 'positive'
 }

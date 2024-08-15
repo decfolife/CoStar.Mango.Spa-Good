@@ -241,7 +241,7 @@ div.badge {
   min-width: 16px;
   border-radius: $stdPadding;
   border: $stdBorder;
-  padding: $stdPadding / 4;
+  padding: calc($stdPadding / 4);
   font-size: 12px;
   text-align: center;
   box-sizing: border-box;

@@ -1,1 +1,21 @@
-asc-842-quarterly-disclosures content
+<div *ngIf="!loading">
+  <div class="card-containers"
+      cdkDropList
+      cdkDropListOrientation="vertical"
+      (cdkDropListDropped)="cardMove($event)"
+  >
+      <div *ngFor="let config of cardData" class="categories-item"
+          cdkDropListOrientation="horizontal"
+          [cdkDropListData]="{ card: card, index: i }"
+          fxLayout="row"
+          >
+          <mango-iad-card
+            [config]="config"
+            [dataSource]="dataSources[config.index]"
+            (selectedFilter)="onSelectedFilter($event, config)"
+          ></mango-iad-card>
+      </div>
+  </div>
+</div>
+
+<crem-skeleton *ngIf="loading" instances="2" type="card" />

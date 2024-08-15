@@ -34,72 +34,39 @@ export class OpenWidgetHistoryModalComponent implements OnInit {
 
   public openModal() {
     let dialogRef;
-    if (environment.isRestful) {
-      if (this.historyType === 'grid') {
-        dialogRef = this.dialog.open(WidgetHistoryComponent, {
-          disableClose: true,
-          height: '70%',
-          width: '75%',
-          data: {
-            objectID: Number(this.objectId),
-            objectTypeID: Number(this.objectTypeId),
-            objectTypeTypeID: null,
-            formItemID: null,
-            relatedObjectID: null,
-            relatedObjectTypeID: null,
-            relationshipDefinitionID: null
-          }
-        });
-      } else if (this.historyType === 'widget') {
-        dialogRef = this.dialog.open(WidgetHistoryComponent, {
-          disableClose: true,
-          height: '70%',
-          width: '75%',
-          data: {
-            ObjectID: null,
-            ObjectTypeID: Number(this.objectTypeId),
-            ObjectTypeTypeID: Number(this.objectTypeTypeId),
-            FormItemID: null,
-            RelatedObjectID: Number(this.relatedObjectId),
-            RelatedObjectTypeID: Number(this.relatedObjectTypeId),
-            RelationshipDefinitionID: Number(this.relationshipDefinitionId),
-          }
-        });
-      }
-    } else {
-      if (this.historyType === 'grid') {
-        dialogRef = this.dialog.open(WidgetHistoryComponent, {
-          disableClose: true,
-          height: '70%',
-          width: '75%',
-          data: {
-            ObjectID: this.objectId?.toString(),
-            ObjectTypeID: this.objectTypeId?.toString(),
-            ObjectTypeTypeID: this.objectTypeTypeId?.toString(),
-            FormItemID: '',
-            RelatedObjectID: this.relatedObjectId?.toString(),
-            RelatedObjectTypeID: this.relatedObjectTypeId?.toString(),
-            RelationshipDefinitionID: this.relationshipDefinitionId?.toString(),
-          }
-        });
-      } else if (this.historyType === 'widget') {
-        dialogRef = this.dialog.open(WidgetHistoryComponent, {
-          disableClose: true,
-          height: '70%',
-          width: '75%',
-          data: {
-            ObjectID: '',
-            ObjectTypeID: this.objectTypeId?.toString(),
-            ObjectTypeTypeID: this.objectTypeTypeId?.toString(),
-            FormItemID: '',
-            RelatedObjectID: this.relatedObjectId?.toString(),
-            RelatedObjectTypeID: this.relatedObjectTypeId?.toString(),
-            RelationshipDefinitionID: this.relationshipDefinitionId?.toString(),
-          }
-        });
-      }
+
+    if (this.historyType === 'grid') {
+      dialogRef = this.dialog.open(WidgetHistoryComponent, {
+        disableClose: true,
+        height: '70%',
+        width: '75%',
+        data: {
+          objectID: Number(this.objectId),
+          objectTypeID: Number(this.objectTypeId),
+          objectTypeTypeID: null,
+          formItemID: null,
+          relatedObjectID: null,
+          relatedObjectTypeID: null,
+          relationshipDefinitionID: null
+        }
+      });
+    } else if (this.historyType === 'widget') {
+      dialogRef = this.dialog.open(WidgetHistoryComponent, {
+        disableClose: true,
+        height: '70%',
+        width: '75%',
+        data: {
+          ObjectID: null,
+          ObjectTypeID: Number(this.objectTypeId),
+          ObjectTypeTypeID: Number(this.objectTypeTypeId),
+          FormItemID: null,
+          RelatedObjectID: Number(this.relatedObjectId),
+          RelatedObjectTypeID: Number(this.relatedObjectTypeId),
+          RelationshipDefinitionID: Number(this.relationshipDefinitionId),
+        }
+      });
     }
-    
+  
     dialogRef?.afterClosed().subscribe(result => {
       if (result) {
 

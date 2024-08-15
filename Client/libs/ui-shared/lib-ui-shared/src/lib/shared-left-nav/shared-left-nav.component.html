@@ -1,4 +1,4 @@
-<mat-sidenav-container #sideNavContainer class="sharedLeftNav-container"
+<mat-sidenav-container *ngIf="navigationLinks.length > 0" #sideNavContainer class="sharedLeftNav-container"
   [ngClass]="{'sideNavExpand': expandNav, 'sideNavCollapse': !expandNav}">
   <mat-sidenav #sidenav opened="true" class="shared-left-nav" [autoFocus]="false"
     (opened)="leftNavOpened(sideNavContainer)">

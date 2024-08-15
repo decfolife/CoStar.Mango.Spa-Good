@@ -39,7 +39,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   amortizationProfileName: string;
   classificationType: string;
   isAccountingEventEmpty: boolean;
-  exportClicked = false;
+  sendToExcelClicked = false;
 
   constructor(private ref: ChangeDetectorRef, public accountingSummaryService: AccountingSummaryService, public router: Router, private activatedRoute: ActivatedRoute) { }
 
@@ -103,19 +103,16 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
         const nameValue = qp.split('=')
         queryParamObj[nameValue[0]] = nameValue[1];
       });
-
-      this.router.navigate(['addEvent'], { relativeTo: this.activatedRoute, queryParams: queryParamObj });
-    } else {
-      this.router.navigate(['addEvent'], { relativeTo: this.activatedRoute});
+      this.router.navigate(['addEvent'], { state: { data: this.leaseRecognitionScheduleID }, relativeTo: this.activatedRoute, queryParams: queryParamObj });
     }
   }
 
-  exportToExcel(event: any): void {
+  sendToExcel(event: any): void {
     event.preventDefault();
-    this.exportClicked = true;
+    this.sendToExcelClicked = true;
     const fileName = this.accountingSummaryService.getFileName('AccountingEventSummary');
     this.subscription.add(this.accountingSummaryService.exportAccountingEventSummaryReport(this.leaseRecognitionScheduleID, fileName).subscribe(response => {
-      this.exportClicked = false;
+      this.sendToExcelClicked = false;
       if (!response?.data) {
         this.accountingSummaryService.errorNotify('Downloading the Accounting Event Summary failed.');
       }
@@ -217,6 +214,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
           lockedReason: this.leaseInfoResponse.lockedReason
         }
 
+        localStorage.setItem('titleLeaseInfo', JSON.stringify(titleLeaseInfo));
         this.accountingSummaryService.titleLeaseInfoSubject.next(titleLeaseInfo);
 
         this.rightsInfo = {
@@ -259,6 +257,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       }
       else if (response.success) {
         this.accountingSummaryService.setPortfolioSettings(response.data);
+        localStorage.setItem('portfolioSettings', JSON.stringify(response.data));
       } else {
         this.accountingSummaryService.errorNotify(response.clientErrorMessage);
       }

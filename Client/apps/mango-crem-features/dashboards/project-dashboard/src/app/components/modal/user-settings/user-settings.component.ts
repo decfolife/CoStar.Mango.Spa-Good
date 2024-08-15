@@ -111,7 +111,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     }
 
     return this.dashboardService.postUserSettings(userSettingsData).subscribe(
-      // (returnData: any) => (console.log("Returned results after User Settings Change: ", returnData)),
       (returnData: any) => (returnData),
       (error: any) => console.log("Error occurred updating userSettings: ", error)
     );

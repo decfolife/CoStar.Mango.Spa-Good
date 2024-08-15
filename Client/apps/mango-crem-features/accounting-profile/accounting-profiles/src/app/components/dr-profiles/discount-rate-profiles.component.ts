@@ -39,9 +39,11 @@ export class DiscountRateProfilesComponent implements OnInit {
   annualRateTypes = [{ Id: 1, Name: 'APR' }, { Id: 2, Name: 'APY' }];
   customOperations: any[];
   loadingVisible = true;
+  displayContent = false;
   showArchived = false;
   dateFormat = 'MM/dd/yyyy';
   dateTimeFormat = 'MM/dd/yyyy HH:mm';
+  hasModuleRights = true;
 
   @ViewChild('DataGrid') dataGrid: DxDataGridComponent;
 
@@ -64,34 +66,39 @@ export class DiscountRateProfilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.baseService.getUserRights().subscribe((result) => {
-      this.service.userRights = Number(result);
-    });
-
-    this.activeRoute.paramMap.subscribe((params) => {
-      this.masterGroupID = +params.get('masterGroupId');
-    });
-
-    if (this.portfolioService.portfolios === undefined
-        || this.portfolioService.portfolios.length === 0) {
-      this.portfolioService.getPortfolios().subscribe((result) => {
-        this.portfolioService.portfolios = result.data;
-        if (this.portfolioService.selectedPortfolio === undefined
-            || this.portfolioService.selectedPortfolio === null) {
-          const filter = this.portfolioService.portfolios.filter(
-            (obj) => obj.masterGroupID === this.portfolioService.selectedPortfolioId
-          );
-
-          this.portfolioService.selectedPortfolioId = this.masterGroupID;
-          this.portfolioService.selectedPortfolio = filter[0];
+    this.baseService.HasUserModuleRight().subscribe(response => {
+        this.hasModuleRights = response;
+        if (this.hasModuleRights) {
+          this.baseService.getUserRights().subscribe((result) => {
+            this.service.userRights = Number(result);
+          });
+      
+          this.activeRoute.paramMap.subscribe((params) => {
+            this.masterGroupID = +params.get('masterGroupId');
+          });
+      
+          if (this.portfolioService.portfolios === undefined
+              || this.portfolioService.portfolios.length === 0) {
+            this.portfolioService.getPortfolios().subscribe((result) => {
+              this.portfolioService.portfolios = result.data;
+              if (this.portfolioService.selectedPortfolio === undefined
+                  || this.portfolioService.selectedPortfolio === null) {
+                const filter = this.portfolioService.portfolios.filter(
+                  (obj) => obj.masterGroupID === this.portfolioService.selectedPortfolioId
+                );
+      
+                this.portfolioService.selectedPortfolioId = this.masterGroupID;
+                this.portfolioService.selectedPortfolio = filter[0];
+              }
+            });
+          }
+      
+          if (this.service.isEuroDateFormat) {
+            this.dateFormat = 'dd.MM.yyyy';
+            this.dateTimeFormat = 'dd.MM.yyyy HH:mm';
+          }
         }
-      });
-    }
-
-    if (this.service.isEuroDateFormat) {
-      this.dateFormat = 'dd.MM.yyyy';
-      this.dateTimeFormat = 'dd.MM.yyyy HH:mm';
-    }
+    });
   }
 
   populateDiscountRateProfiles(masterGroupID: number): void {
@@ -100,6 +107,7 @@ export class DiscountRateProfilesComponent implements OnInit {
       .subscribe((result) => {
         this.profiles = result.data;
         this.loadingVisible = false;
+        this.displayContent = true;
       });
   }
 

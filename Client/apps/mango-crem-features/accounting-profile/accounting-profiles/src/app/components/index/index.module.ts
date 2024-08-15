@@ -38,7 +38,7 @@ import { IndexComponent } from './index.component';
 import { DiscountRateService } from '../../services/discount-rate.service';
 import { PortfolioDropdownService } from '../../services/portfolio-dropdown.service';
 import { BaseService } from '../../services/base.service';
-import { FieldHistoryComponent, FieldHistoryDirective, IconModule } from '@mango/ui-shared/lib-ui-elements';
+import { FieldHistoryComponent, FieldHistoryDirective, IconModule, NoObjectsFoundComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [
@@ -47,7 +47,7 @@ import { FieldHistoryComponent, FieldHistoryDirective, IconModule } from '@mango
     JournalEntryProfilesComponent,
     DiscountRateProfilesComponent,
     DiscountRateProfilesAddEditComponent,
-    PortfolioDropdownComponent,
+    PortfolioDropdownComponent
   ],
   imports: [
     CommonModule,
@@ -72,7 +72,8 @@ import { FieldHistoryComponent, FieldHistoryDirective, IconModule } from '@mango
     DxLoadPanelModule,
     IconModule,
     FieldHistoryComponent,
-    FieldHistoryDirective
+    FieldHistoryDirective,
+    NoObjectsFoundComponent
   ],
   providers: [
     ConfigurationService,

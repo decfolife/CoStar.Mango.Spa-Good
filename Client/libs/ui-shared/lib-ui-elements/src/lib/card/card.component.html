@@ -1,5 +1,5 @@
-<mat-card [id]="id" class="cremCard">
-  <mat-card-header class="better-card-header">
+<mat-card [id]="id" class="cremCard" [class.transparent]="backgroundTransparent" [class.noBorder]="noBorder">
+  <mat-card-header>
     <div class="cardHeader">
       <div class="mat-card-header-text">
         <div *ngIf="counter > 0" class="counter">{{ counter }}</div>
@@ -29,7 +29,7 @@
             [matMenuTriggerFor]="cardMenu"
             (click)="$event.preventDefault()"
             aria-label="More Options">
-            <mat-icon aria-label="More Menu">more_horiz</mat-icon>
+            <crem-icon icon="faEllipsisH" size="lg"></crem-icon>
           </button>
           <mat-menu #cardMenu="matMenu" class="dashboardsMoreOptions">
             <button *ngIf="moreOptions.displayExpandOption" mat-menu-item (click)="toggleExpanded()"><span
@@ -46,26 +46,11 @@
           [ngTemplateOutlet]="customDropdownMenuRef"
         >
         </ng-container>
-          
-        <!-- <div cdkDragHandle>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            id="drag_indicator"
-            height="24"
-            viewBox="2 0 16 16"
-            width="16"
-          >
-            <path d="M0 0h24v24H0V0z" fill="none" />
-            <path
-              d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-            />
-          </svg>
-        </div> -->
       </div>
     </div>
     <ng-content select="'[cta-section]'"></ng-content>
   </mat-card-header>
-  <mat-card-content class="cremCardContent" tabindex="0">
+  <mat-card-content class="cremCardContent" [ngClass]="contentPadding == true ? 'card__content--padding' : 'card__content--no--padding'" tabindex="0">
     <ng-content></ng-content>
   </mat-card-content>
 </mat-card>

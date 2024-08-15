@@ -1,7 +1,7 @@
 
-<dynamic-form *ngIf="!loading && isReportCriteriaSet" #PortfolioForm
+<crem-dynamic-form *ngIf="!loading && isReportCriteriaSet" #PortfolioForm
   [config]="portfolioConfig"
-  (onChangeEvent)="onDropdownChange($event)"
+  (changeEvent)="onDropdownChange($event)"
   [idPrefix] = "idPrefix"
   >
   <ng-template let-fieldData="fieldData">
@@ -31,19 +31,21 @@
       </crem-dropdown>
     </div>
   </ng-template>
-</dynamic-form>
-<dynamic-form *ngIf="!dependentCriteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #DependentCriteriaDynamicForm
+</crem-dynamic-form>
+<!-- Calendar Field -->
+<crem-dynamic-form *ngIf="!dependentCriteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #DependentCriteriaDynamicForm
   [config]="dependentCriteriaConfig"
-  (onChangeEvent)="onDependentChange($event)"
+  (changeEvent)="onDependentChange($event)"
   (isLoading)="onDependentLoading($event)"
   [idPrefix] = "idPrefix"
   [readOnly] = "readOnly"
   [showDefaultValidationTooltip]="true"
-></dynamic-form>
-<dynamic-form *ngIf="!criteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #CriteriaDynamicForm
+></crem-dynamic-form>
+<!-- Portfolio Field -->
+<crem-dynamic-form *ngIf="!criteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #CriteriaDynamicForm
   [config]="criteriaConfig"
-  (onChangeEvent)="onChange($event)"
+  (changeEvent)="onChange($event)"
   [idPrefix] = "idPrefix"
   [readOnly] = "readOnly"
   [showDefaultValidationTooltip]="true"
-></dynamic-form>
+></crem-dynamic-form>

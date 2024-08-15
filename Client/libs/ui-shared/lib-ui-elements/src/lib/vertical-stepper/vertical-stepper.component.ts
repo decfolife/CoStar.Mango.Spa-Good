@@ -9,10 +9,7 @@ import { Component, Input } from '@angular/core';
 export class VerticalStepperComponent {
 
   @Input() display: string;
-  @Input() showBorder: boolean = true;
-  @Input() hideStepper: boolean = false;
-
-
-  constructor() { }
-
+  @Input() showBorder = true;
+  @Input() hideStepper = false;
+  
 }

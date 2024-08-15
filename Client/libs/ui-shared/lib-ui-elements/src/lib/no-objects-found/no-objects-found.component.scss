@@ -1,0 +1,42 @@
+@use "styles" as *;
+
+.not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 320px;
+    height: 290px;
+    padding: 20px;
+
+    &__content-wrapper {
+        width: 254px;
+        height: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    &__title {
+        @include costar-alias(header, lead);
+        @include costar(font-size, body);
+        @include costar(font-weight, medium);
+        line-height: 20px;
+    }
+
+    &__subtitle {
+        @include costar-alias(header, small);
+        @include costar(font-size, body);
+        @include costar(font-weight, small);
+        line-height: 18px;
+    }
+
+    &__image {
+        gap: 10px;
+        width: 280px;
+        height: 200px;
+    }
+}

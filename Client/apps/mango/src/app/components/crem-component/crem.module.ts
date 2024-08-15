@@ -7,7 +7,7 @@ import { BookmarksModule, FieldHistoryComponent, FieldHistoryDirective, LibUiEle
 import { RouterModule } from '@angular/router';
 import { searchResultsModule } from 'apps/mango-crem-features/quick-search/src/app/components/modal/search-results/search-results.module';
 import { HeaderModule } from 'libs/ui-shared/lib-ui-shared/src/lib/header';
-import { ToolbarModule } from 'libs/ui-shared/lib-ui-shared/src/lib/toolbar';
+import { ToolbarComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/toolbar';
 import { SharedLeftNavModule } from 'libs/ui-shared/lib-ui-shared/src/lib/shared-left-nav';
 import {BreadcrumbsComponent} from '../breadcrumbs/breadcrumbs.component'
 import { CostarSuiteHeaderModule } from 'libs/ui-shared/lib-ui-shared/src/lib/costar-suite-header/costar-suite-header.module';
@@ -23,7 +23,7 @@ import { RenderFormHeaderComponent } from '@forms/render-form-header/render-form
     LibDataModelsModule,
     HeaderModule,
     CostarSuiteHeaderModule,
-    ToolbarModule,
+    ToolbarComponent,
     BookmarksModule,
     searchResultsModule,
     DisplayBreadcrumbsModule,

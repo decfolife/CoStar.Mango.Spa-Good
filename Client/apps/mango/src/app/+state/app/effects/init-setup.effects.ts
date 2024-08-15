@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserInfoService, UserService } from '@mango/core-shared/lib-core-shared';
+import { parseBool, SettingsService, UserService } from '@mango/core-shared/lib-core-shared';
 import { SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
@@ -10,36 +10,32 @@ import { MangoAppFacade } from '../app.facade';
 import { ActivatedRoute } from '@angular/router';
 import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
 
-
 @Injectable()
 export class InitSetupEffects {
 
   constructor(
     private actions$: Actions,
     private userService: UserService,
-    private userInfoService: UserInfoService,
     private navigationService: MangoNavigationService,
     private facade: MangoAppFacade,
-    private acitvatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private settingsService: SettingsService
   ) { }
 
   initSetup$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.APP_INIT),
-        switchMap(_ => this.acitvatedRoute.queryParamMap),
-        map(queryParamsMap => [queryParamsMap.get('logout')]),
-        tap(([logout]) => {
-          // When logging out of V06, V06 will redirect to SPA with a query param to logout
-          if (logout === 'true') {
-            this.facade.logout()
-          }
-        }),
         switchMap(_ => of(
+          AppActions.loadCurrentUser(),
           AppActions.setupClientKey(),
           AppActions.setupContactRecord(),
           AppActions.setupUserContactRecordConfig(),
-          AppActions.redirectToV06ToFinalizeLogin()
+          AppActions.redirectToV06ToFinalizeLogin(),
+          AppActions.handleCustomQueryParams(),
+          AppActions.setAdminFlags(),         
+          AppActions.isEmulatingUser(),
+          AppActions.setupClientSettings()
         ))
       ))
 
@@ -55,15 +51,40 @@ export class InitSetupEffects {
       )
   )
 
+  setAdminFlags$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.SET_ADMIN_FLAGS),
+        switchMap(_ => this.facade.clientKey$),
+        filter(clientKey => !!clientKey),
+        switchMap(clientKey => this.settingsService.getAdminFlags(clientKey)),
+        filter(flags => !!flags),
+        map(flags =>
+          AppActions.setAdminFlagsSuccess({ flags })
+        )
+    )
+  )
+
+  loadRedirectorLinks$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.LOAD_REDIRECTOR_LINKS),
+        switchMap(_=>this.facade.clientKey$),
+        filter(clientKey => !!clientKey),
+        switchMap(clientKey => this.settingsService.getRedirectorLinks(clientKey)), 
+        filter(links => !!links),       
+        map(links => AppActions.loadRedirectorLinksSuccess({ redirectorLinks: links}))
+      )
+  )
+  
   setupUserContactRecordConfig$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(AppActions.SETUP_USER_CONTACT_RECORD_CONFIG),
         switchMap(_ => this.facade.authenticatedUser$),
         filter(user => !!user),
-        switchMap(user => this.userService.getContactRecords(user.email, user.clientKey)),
-        filter(allContactRecords => !!allContactRecords),
-        map(allContactRecords => AppActions.setUserHasMultipleContactRecords({ hasMultipleContactRecords: allContactRecords.contactRecords.length > 1 }))
+        switchMap(user => this.userService.hasMultipleContactRecords(user.email, user.contactId, user.clientKey)),
+        map(hasMultipleContactRecords => AppActions.setUserHasMultipleContactRecords({ hasMultipleContactRecords }))
       )
   )
 
@@ -77,18 +98,6 @@ export class InitSetupEffects {
         filter(contactRecord => !!contactRecord),
         map(contactRecord =>
           AppActions.setContactRecord({ contactRecord })
-        )
-      )
-  )
-
-  setupUserInfo$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AppActions.SETUP_USER_INFO),
-        switchMap(_ => this.userInfoService.getUserLoginInfo()),
-        filter(userInfo => userInfo && userInfo.success),
-        switchMap(userInfo =>
-          of(AppActions.setUserInfo({ userInfo: userInfo.data }), AppActions.setClientInfo({ clientInfo: userInfo.data.client }))
         )
       )
   )
@@ -107,6 +116,20 @@ export class InitSetupEffects {
     { dispatch: false }
   )
 
+  setupClientSettings$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.SETUP_CLIENT_SETTINGS),
+        switchMap(_ => combineLatest([this.facade.authenticatedUser$, this.facade.clientKey$])),
+        filter(([user, clientKey]) => !!user && !!clientKey),
+        switchMap(([user, clientKey]) => this.settingsService.getClientSettingsForUser(clientKey, user.contactId)),
+        filter(clientSettings => !!clientSettings),
+        map(clientSettings =>
+          AppActions.setupClientSettingsSuccess({ clientInfo: clientSettings })
+        )
+    )
+  )
+
   getModuleIdValue$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -117,7 +140,34 @@ export class InitSetupEffects {
         ) : of(
           AppActions.setShowSubLetNav({ show: false }),
           AppActions.setModuleId({ moduleId: r.payload.routerState.root.data.moduleId })
-        )
         ))
+      )
   );
+
+  handleCustomQueryParams$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.HANDLE_CUSTOM_QUERY_PARAMS),
+        switchMap(_ => this.activatedRoute.queryParamMap),
+        map(queryParamsMap => [
+          queryParamsMap.get('logout'),
+          queryParamsMap.get('cid'), 
+          queryParamsMap.get('emu'), 
+        ]),
+        tap(([logout, contactId, emulateUser]) => {
+          // When logging out of V06, V06 will redirect to SPA with a query param to logout
+          if (logout === 'true') {
+            this.facade.logout()
+            return
+          } 
+          
+          // When emulate user is initiated/terminated in V06, V06 will redirect to SPA with query params
+          if (parseBool(emulateUser) && contactId) {
+            this.facade.setEmulatedUser(parseInt(contactId), true)
+          } else if (emulateUser === 'false') {
+            this.facade.stopEmulatingUser(true)
+          }
+        })
+      ), { dispatch: false }
+  )
 }

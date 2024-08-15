@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "nrwl.angular-console",
+    "deque-systems.vscode-axe-linter",
+    "dbaeumer.vscode-eslint",
+    "oouo-diogo-perdigao.docthis"
+  ]
+}

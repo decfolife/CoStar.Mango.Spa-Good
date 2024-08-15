@@ -1,0 +1,21 @@
+@use 'styles' as *;
+
+.master-grid {
+  ::ng-deep {
+    .dx-command-select {
+      width: 40px !important;
+      min-width: 40px !important;
+    }
+    .dx-datagrid-headers {
+      @include costar(color, primary-light);
+      @include costar(font-size, normal);
+      font-weight: 600;
+    }
+    .dx-master-detail-row {
+      .dx-master-detail-cell {
+        @include costar(background-color, gray06);
+        padding: 10px 25px 15px 25px;
+      }
+    }
+  }
+}

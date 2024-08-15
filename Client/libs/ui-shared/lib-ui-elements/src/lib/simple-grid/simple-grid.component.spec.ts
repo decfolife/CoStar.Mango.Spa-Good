@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
+import { SimpleGridModule } from './simple-grid.module';
 import { SimpleGridComponent } from './simple-grid.component';
 
 describe('SimpleGridComponent', () => {
@@ -8,7 +9,8 @@ describe('SimpleGridComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ SimpleGridComponent ]
+      declarations: [ SimpleGridComponent ],
+      imports: [ SimpleGridModule ],
     })
     .compileComponents();
   }));

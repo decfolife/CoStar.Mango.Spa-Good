@@ -1,0 +1,37 @@
+@use 'styles' as *;
+
+form {
+  width: 600px;
+}
+
+:host {
+  display: flex;
+  justify-content: center;
+}
+
+.demo-box {
+  position: relative;
+  width: 800px;
+  border-radius: 0 0 2px 2px;
+  transition: background-color .4s;
+  border: 1px solid rgba(0, 0, 0, .06);
+  margin-top: 20px;
+  margin-bottom: 40px;
+  @include costar(background-color, light); 
+  &-title {
+    @include costar(background-color, light); 
+    position: absolute;
+    top: -14px;
+    margin-left: 16px;
+    padding: 1px 8px;
+    @include costar(color, gray03); 
+    border-radius: 2px 2px 0 0;
+    transition: background-color .4s;
+  }
+
+  &-content {
+    padding: 30px ;
+    display: flex;
+    justify-content: center;
+  }
+}

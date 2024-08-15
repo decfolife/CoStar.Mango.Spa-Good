@@ -1,42 +1,51 @@
-import { ChangeDetectorRef, Component, ContentChild, EventEmitter, Input, OnInit, Output, QueryList, TemplateRef, ViewChild, ViewChildren } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ContentChild,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChildren,
+} from "@angular/core";
 
 import { DxFormComponent } from "devextreme-angular/ui/form";
 import { DatePickerComponent } from "../date-picker/date-picker.component";
 import { DropdownComponent } from "../dropdown/dropdown.component";
-import { TextBoxComponent } from "../text-box/text-box.component";
 import { ToggleSliderComponent } from "../toggle-slider/toggle-slider.component";
 
 import { IForm } from "./definitions";
+import { InputComponent } from "../input";
 
 @Component({
-  selector: "dynamic-form",
+  selector: "crem-dynamic-form",
   templateUrl: "./dynamic-form.component.html",
   styleUrls: ["./dynamic-form.component.scss"]
 })
 
-export class DynamicFormComponent implements OnInit {
+export class DynamicFormComponent implements OnInit, AfterViewInit {
   @Input() config: IForm;
   @Input() configKey: any = {};
   @Input() initialFocusElement: string;
   @Input() dateFormat: string;
-  @Input() idPrefix: string = "";
+  @Input() idPrefix = "";
   @Input() labelPosition: "top" | "left" | "right" = "top"
   @Input() readOnly: boolean;
-  @Output() onChangeEvent = new EventEmitter();
+  @Output() changeEvent = new EventEmitter();
   @Output() isLoading = new EventEmitter();
 
   @ViewChildren(DxFormComponent) form: QueryList<DxFormComponent>;
   @ViewChildren('CremDropdown') cremDropdown: QueryList<DropdownComponent>;
   @ViewChildren('CremDatePicker') cremDatePicker: QueryList<DatePickerComponent>;
-  @ViewChildren('CremTextBox') cremTextBox: QueryList<TextBoxComponent>;
+  @ViewChildren('CremTextBox') cremTextBox: QueryList<InputComponent>;
   @ViewChildren('CremToggleSlider') cremToggleSlider: QueryList<ToggleSliderComponent>;
   @ContentChild(TemplateRef) templateRef : TemplateRef<any>;
+  
   public formValid = true;
   public loading = true;
-  public dropdownFocusing: boolean = false;
-
-  constructor(private changeDetectorRef: ChangeDetectorRef) {
-  }
+  public dropdownFocusing = false;
 
   ngOnInit() {
     this.idPrefix = this.idPrefix ? this.idPrefix + "__" : ""
@@ -98,7 +107,7 @@ export class DynamicFormComponent implements OnInit {
       } else if (changeType === "date" && event) {
         this.configKey[dataField].value = event.value;
       } else if (changeType === "text" && event) {
-        this.configKey[dataField].value = event.value;
+        this.configKey[dataField].value = event;
       } else if (changeType === "checkbox" && event) {
         this.configKey[dataField].value = event.value;
       } else if (changeType === "toFromDate1" && event) {
@@ -107,11 +116,11 @@ export class DynamicFormComponent implements OnInit {
         this.configKey[dataField].value2 = event.value;
       }
       
-      if (this.onChangeEvent) {
+      if (this.changeEvent) {
         const data = {} as any;
         data.values = this.configKey;
         data.dataField = dataField
-        this.onChangeEvent.emit(data);
+        this.changeEvent.emit(data);
       }
     }
   }

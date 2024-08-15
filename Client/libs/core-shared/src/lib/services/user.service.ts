@@ -1,30 +1,24 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  ContactRecord,
-  Environment,
-  GetContactRecordHTTPResponse,
-  Api,
-  ApiResult} from '@mango/data-models/lib-data-models';
+import { ContactRecord, Api } from '@mango/data-models/lib-data-models';
 import { Observable } from 'rxjs';
 import { UtilitiesService } from '@mango/core-shared';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  authenticationUrl: string = UtilitiesService.getBaseApiUrl(Api.authentication)
   userMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance)
 
-  constructor(
-    private http: HttpClient,
-    private env: Environment,
-  ) { }
+  constructor(private http: HttpClient) { }
 
-  getContactRecords(userEmail: string, clientKey: string): Observable<GetContactRecordHTTPResponse> {
-    return this.http.get<ApiResult<GetContactRecordHTTPResponse>>(`${this.authenticationUrl}user/contactrecords/${userEmail}/${clientKey}`, { withCredentials: true })
-      .pipe(map(x => x.data as GetContactRecordHTTPResponse))
+  getContactRecords(email: string, contactId: number, clientKey: string): Observable<ContactRecord[]> {
+    let headers = new HttpHeaders({
+      'UserId': contactId,
+      'ClientKey': clientKey
+    })
+
+    return this.http.get<ContactRecord[]>(`${this.userMaintenanceUrl}usermaintenance/getusers/${email}`, { headers: headers })
   }
 
   getContactRecord(contactId: number, clientKey: string): Observable<ContactRecord> {
@@ -36,5 +30,14 @@ export class UserService {
     })
 
     return this.http.get<ContactRecord>(`${this.userMaintenanceUrl}usermaintenance/getuser/${contactId}`, { headers: headers })
+  }
+
+  hasMultipleContactRecords(email: string, contactId: number, clientKey: string): Observable<boolean> {
+    let headers = new HttpHeaders({
+      'UserId': contactId,
+      'ClientKey': clientKey
+    })
+
+    return this.http.get<boolean>(`${this.userMaintenanceUrl}usermaintenance/hasmultipleusers/${email}`, { headers: headers })
   }
 }

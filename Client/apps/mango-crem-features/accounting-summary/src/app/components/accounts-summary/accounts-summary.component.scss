@@ -16,6 +16,8 @@
     position: sticky;
 	top: 0;
     z-index: 11;
+    flex-wrap: wrap;
+    row-gap: 15px;
 
     .controls-left {
         align-items: center;
@@ -29,6 +31,7 @@
         display: flex;
         align-items: flex-start;
         flex-wrap: wrap;
+        row-gap: 15px;
     }
 
     .controls-right>* {
@@ -40,7 +43,7 @@
     order: 6;
 }
 
-.export-to-excel-button {
+.send-to-excel-button {
     order: 5;
 }
 
@@ -65,4 +68,5 @@
     font-size: 12px;
     color: #373737;
     cursor: pointer;
+    text-align: center;
 }

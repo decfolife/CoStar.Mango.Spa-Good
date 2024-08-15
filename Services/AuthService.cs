@@ -10,6 +10,7 @@ using System.Security.Claims;
 using static MangoSPA.Constants;
 using System.Net.Http.Headers;
 using UAParser;
+using MangoSPA.Extensions;
 
 namespace MangoSPA.Services;
 
@@ -18,6 +19,7 @@ public interface IAuthService
     Task<AccessTokenResponse> OAuthToken(AccessTokenRequest request);
     Task<AuthorizeResponse> OAuthAuthorize(string accessToken, string redirectUri);
     Task CreateAuthenticationCookie(string accessToken);
+    Task<string> GetAccessTokenForEmulatedUser(EmulateUserRequest request);
     //Task<LoginResponse> Login(LoginRequest request);
     //Task<LoginToClientResponse> LoginToClient(LoginToClientRequest request);
 }
@@ -90,6 +92,24 @@ public class AuthService : IAuthService
         authProps.Items.Add("browser", c.UA.Family);
 
         await _httpContextAccessor.HttpContext.SignInAsync(userPrincipal, authProps);
+    }
+
+    public async Task<string> GetAccessTokenForEmulatedUser(EmulateUserRequest request)
+    {
+        var client = _clientFactory.CreateClient("identity-api");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _httpContextAccessor.HttpContext.User.AccessToken());
+
+        var response = await client.PostAsJsonAsync("auth/emulate-user", request);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            _logger.LogError("AccessToken request failed for emulated user. {StatusCode} {Error}", response.IsSuccessStatusCode, error);
+            return null;
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<AccessTokenDto>();
+
+        return result.AuthToken;
     }
 
     //public async Task<LoginResponse> Login(LoginRequest request)

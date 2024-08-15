@@ -2,16 +2,15 @@ import { Component, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ReportsService } from '@reports/services/reports.service';
 import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
-import notify from 'devextreme/ui/notify';
 import { CriteriaFormSegmentComponent } from '@reports/components/criteria-form-segment/criteria-form-segment.component';
-import { TextBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/text-box/text-box.component';
-// import { CriteriaReportComponent } from '../criteria-report/criteria-report.component';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
+import { ToastState } from '@mango/data-models/lib-data-models';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 
 @Component({
-  selector: 'mango-create-segment',
-  templateUrl: './create-segment.component.html',
-  styleUrls: ['./create-segment.component.scss']
+    selector: 'mango-create-segment',
+    templateUrl: './create-segment.component.html',
+    styleUrls: ['./create-segment.component.scss']
 })
 export class CreateSegmentComponent {
     public segmentConfig: any;
@@ -46,12 +45,12 @@ export class CreateSegmentComponent {
     public hasObjectEditRight: boolean;
     public hasObjectViewRight: boolean;
     public hasObjectDeleteRight: boolean;
+    isSaveAndNew: boolean;
     currentCriteriaName: string;
 
     @ViewChild('CriteriaForm') criteriaForm: CriteriaFormSegmentComponent;
     @ViewChild('CriteriaSetForm') CriteriaSetForm: DynamicFormComponent;
-    @ViewChild('CremTextBox') segmentNameTextbox: TextBoxComponent;
-    
+
     constructor(
         private reportsService: ReportsService,
         private dialog: MatDialog,
@@ -67,24 +66,25 @@ export class CreateSegmentComponent {
             active: boolean;
             archived: boolean;
             hideToastsOn: string;
-        }
+        },
+        private toastService: CremToastService,
     ) { }
 
     ngOnInit(): void {
         this.dialogRef.keydownEvents().subscribe((event) => {
             if (event.key === "Escape") {
-              this.cancelDialog(event);
+                this.cancelDialog(event);
             }
         })
         this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
-            if(result.data) {
+            if (result.data) {
                 this.hasEditRight = result.data.securityTypeID >= 3;
                 this.hasViewRight = result.data.securityTypeID >= 2;
             }
         })
         if (this.data.segmentID) {
             this.reportsService.getSegmentsRights(this.data.segmentID, 2).subscribe((result) => {
-                if(result.data) {
+                if (result.data) {
                     this.hasObjectDeleteRight = result.data.securityTypeID >= 5;
                     this.hasObjectEditRight = result.data.securityTypeID >= 3;
                     this.hasObjectViewRight = result.data.securityTypeID >= 2;
@@ -119,7 +119,7 @@ export class CreateSegmentComponent {
             if (this.data.archived) {
                 this.modalTitle = "Archived Segment"
                 this.idPrefix = "ArchivedSegment";
-            } else if (this.data.openReportAction === "copy" || this.data.openReportAction === "saveAs"){
+            } else if (this.data.openReportAction === "copy" || this.data.openReportAction === "saveAs") {
                 this.modalTitle = "Create Segment";
                 this.hintMessageText = "Copying saved segment \"" + this.data.redirectData.segmentName + "\".";
             }
@@ -147,8 +147,8 @@ export class CreateSegmentComponent {
                             this.defaultValues[item.criteriaID] = item.varcharData;
                             emptyItem.VarCharData = null;
                         }
-                        this.emptySaveObject.push(emptyItem)       
-                              
+                        this.emptySaveObject.push(emptyItem)
+
                     })
 
                     if (this.data.criteriaSetID) {
@@ -189,26 +189,26 @@ export class CreateSegmentComponent {
         this.segmentConfig = {
             section: [
                 {
-                sectionId: "create_segment",
-                showBottomBorder: true,
-                hideBorder: true,
-                colCount: 2,
-                formObjects: [
-                    {
-                    sectionItems: [
+                    sectionId: "create_segment",
+                    showBottomBorder: true,
+                    hideBorder: true,
+                    colCount: 2,
+                    formObjects: [
                         {
-                        dataField: "segmentName",
-                        fieldType: "custom",
-                        caption: "Segment Name",
-                        required: true,
-                        customRequireValidation: true,
-                        disabled: false,
-                        value: this.data.name ? this.data.name : "",
-                        initialFocus: true
-                        },
-                    ],
-                    }
-                ]
+                            sectionItems: [
+                                {
+                                    dataField: "segmentName",
+                                    fieldType: "custom",
+                                    caption: "Segment Name",
+                                    required: true,
+                                    customRequireValidation: true,
+                                    disabled: false,
+                                    value: this.data.name ? this.data.name : "",
+                                    initialFocus: true
+                                },
+                            ],
+                        }
+                    ]
                 }
             ]
         };
@@ -218,7 +218,7 @@ export class CreateSegmentComponent {
                 return object?.['criteriaSetID'] == this.data.criteriaSetID;
             })
 
-            this.onCriteriaDropdownChange([{criteriaSetID: this.data.criteriaSetID}])
+            this.onCriteriaDropdownChange([{ criteriaSetID: this.data.criteriaSetID }])
         }
 
         this.criteriaSetConfig = {
@@ -230,22 +230,22 @@ export class CreateSegmentComponent {
                     colCount: 2,
                     formObjects: [
                         {
-                        sectionItems: [
-                            {
-                            dataField: "criteriaSet",
-                            fieldType: "custom",
-                            caption: "Criteria Set",
-                            required: true,
-                            disabled: (this.data.openReportAction === 'edit') || (this.data.redirectData?.source === 'editsegment'),
-                            customRequireValidation: true,
-                            displayExpr: "name",
-                            valueExpr: "criteriaSetID",
-                            dataSource: this.reportsData,
-                            selectMode: "single",
-                            hoverText: "Select the criteria set of the project",
-                            value: (this.data.criteriaSetID && selectedCriteria) ? [selectedCriteria] : []
-                            },
-                        ],
+                            sectionItems: [
+                                {
+                                    dataField: "criteriaSet",
+                                    fieldType: "custom",
+                                    caption: "Criteria Set",
+                                    required: true,
+                                    disabled: (this.data.openReportAction === 'edit') || (this.data.redirectData?.source === 'editsegment'),
+                                    customRequireValidation: true,
+                                    displayExpr: "name",
+                                    valueExpr: "criteriaSetID",
+                                    dataSource: this.reportsData,
+                                    selectMode: "single",
+                                    hoverText: "Select the criteria set of the project",
+                                    value: (this.data.criteriaSetID && selectedCriteria) ? [selectedCriteria] : []
+                                },
+                            ],
                         }
                     ]
                 }
@@ -260,13 +260,13 @@ export class CreateSegmentComponent {
                     colCount: 2,
                     formObjects: [
                         {
-                        sectionItems: [
-                            {
-                                fieldType: "empty",
-                                caption: "Select Criteria",
-                                customClass: "disabled",
-                            },
-                        ],
+                            sectionItems: [
+                                {
+                                    fieldType: "empty",
+                                    caption: "Select Criteria",
+                                    customClass: "disabled",
+                                },
+                            ],
                         }
                     ]
                 }
@@ -274,22 +274,22 @@ export class CreateSegmentComponent {
         };
     }
 
-    public onSegmentTextChange(event) {
-        if (event.value && event.value.length <= 100 && (this.data.openReportAction === "copy" || this.data.openReportAction === "saveAs")) {
+    public onSegmentTextChange(segmentName) {
+        if (segmentName && segmentName.length <= 100 && (this.data.openReportAction === "copy" || this.data.openReportAction === "saveAs")) {
             this.segmentLengthValid = true;
             this.hasSegmentNameInput = true;
             this.duplicateSegmentName = false;
             this.segmentNameValid = true;
             this.warningHint = false;
             this.hintMessageText = "Copying saved segment \"" + this.data.redirectData.segmentName + "\".";
-        }  else if (event.value && event.value.length <= 100) {
+        } else if (segmentName && segmentName.length <= 100) {
             this.segmentLengthValid = true;
             this.hasSegmentNameInput = true;
             this.duplicateSegmentName = false;
             this.segmentNameValid = true;
             this.warningHint = false;
             this.hintMessageText = "The segment name is the label given for the selected criteria below."
-        }  else if (event.value.length > 100){
+        } else if (segmentName.length > 100) {
             this.segmentLengthValid = false;
             this.hasSegmentNameInput = true;
             this.duplicateSegmentName = false;
@@ -305,7 +305,7 @@ export class CreateSegmentComponent {
             this.hintMessageText = "A segment name is required."
         }
         this.textboxHasBeenModified = true;
-        this.segmentName = event.value;
+        this.segmentName = segmentName;
     }
 
     public onFormItemChange(data) {
@@ -328,10 +328,10 @@ export class CreateSegmentComponent {
     public onCriteriaDropdownChange(event) {
         if (this.data.openReportAction !== "edit" && this.data.redirectData?.source !== "editsegment") {
             setTimeout(() => {
-                this.selectedCriteriaId = null;
+                this.selectedCriteriaId = undefined;
                 this.CriteriaSetForm?.onChange(event, 'dropdown', 'criteriaSet')
             })
-    
+
             setTimeout(() => {
                 if (event?.length) {
                     this.showloading = true;
@@ -339,17 +339,16 @@ export class CreateSegmentComponent {
                     this.selectedCriteriaId = event[0].criteriaSetID;
                     this.selectedReportCriteriaSet = this.reportsData.find((x) => x.criteriaSetID == this.selectedCriteriaId).isReportCriteriaSet
                 }
+                this.currentCriteriaName = this.reportsData.find((x) => x.criteriaSetID == this.selectedCriteriaId).name
             })
         }
-        this.currentCriteriaName = this.reportsData.find((x) => x.criteriaSetID == this.selectedCriteriaId).name
     }
 
     public saveAsClicked(event) {
         this.criteriaSetModified = true;
         this.textboxHasBeenModified = true;
-        this.segmentNameTextbox.trim();
         this.segmentName = this.segmentName.trim();
-        this.onSegmentTextChange({value: this.segmentName})
+        this.onSegmentTextChange(this.segmentName)
         if (!this.loading) {
             if (!(!this.selectedCriteriaId || !this.isItemSelected || !this.segmentLengthValid || !this.hasSegmentNameInput)) {
                 const config = this.criteriaForm?.criteriaDynamicForm?.getConfig();
@@ -360,17 +359,17 @@ export class CreateSegmentComponent {
                 if (this.isItemSelected) {
                     newSegmentConfig["PortfolioID"] = this.criteriaForm.selectedPortfolio
                 }
-    
+
                 if (config) {
                     saveObject = this.criteriaForm.getSaveObject(config, saveObject, false);
                 }
                 if (depConfig) {
                     depSaveObject = this.criteriaForm?.getSaveObject(depConfig, depSaveObject, true);
                 }
-    
+
                 saveObject.forEach((x, index) => {
                     if (config[x.FieldName]) {
-                        
+
                         if (config[x.FieldName].fieldType !== "toFromDate") {
                             newSegmentConfig[config[x.FieldName]?.data.criteriaID] = Object.values(x)[1];
                         } else {
@@ -415,15 +414,14 @@ export class CreateSegmentComponent {
                 this.showNotifyMessage("noSelectedCriteria");
             }
         }
-        
+
     }
 
     public saveSegment(event, isSaveAndNew) {
         this.criteriaSetModified = true;
         this.textboxHasBeenModified = true;
-        this.segmentNameTextbox.trim();
         this.segmentName = this.segmentName?.trim();
-        this.onSegmentTextChange({value: this.segmentName})
+        this.onSegmentTextChange(this.segmentName)
         if (!this.loading && (this.hasEditRight || (this.data.openReportAction === "edit" && this.hasObjectEditRight))) {
             if (!(!this.selectedCriteriaId || !this.isItemSelected || !this.segmentLengthValid || !this.hasSegmentNameInput)) {
 
@@ -444,13 +442,13 @@ export class CreateSegmentComponent {
                             })
                             saveObject = this.criteriaForm.getSaveSegmentObject(dependentConfig, saveObject);
                         }
-                        
+
                         const config = this.criteriaForm.criteriaDynamicForm?.getConfig();
                         if (config) {
                             Object.values(config).forEach((item: any) => {
                                 if (item.required && (((item.value == null && (!item.value1 || !item.value2)) || item.value?.length === 0 || item.value1?.length === 0 || item.value2?.length === 0))) {
                                     requiredFieldMissing = true;
-                                } else if (item.value.length !== 0) {
+                                } else if (item.value?.length !== 0) {
                                     nonDependentItemSelected = true;
                                 }
                             })
@@ -466,7 +464,7 @@ export class CreateSegmentComponent {
                                         saveItem['segmentFieldID'] = segmentFieldID
                                     }
                                 })
-    
+
                                 saveObject = this.buildEmptySaveObject(saveObject);
                             }
                             if (!(this.data.openReportAction === "edit")) {
@@ -480,7 +478,7 @@ export class CreateSegmentComponent {
                                 Active: true,
                                 PortfolioID: this.criteriaForm.selectedPortfolio
                             }
-    
+
                             if (!requiredFieldMissing) {
                                 this.showloading = true;
                                 this.reportsService.saveSegments(request).subscribe((result) => {
@@ -488,30 +486,34 @@ export class CreateSegmentComponent {
                                     if (result?.data === -2) {
                                         this.setInvalidName();
                                     } else {
-                                        notify({
-                                            message: 'Segment saved successfully.',
-                                            type: 'success',
-                                            displayTime: 5000,
-                                            position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-                                            maxWidth: '500px',
-                                            closeOnClick: true,
-                                        })
+                                        this.toastService.show(
+                                            'Segment saved successfully.',
+                                            undefined,
+                                            ToastState.SUCCESS,
+                                            {
+                                                maxWidth: '500px',
+                                                duration: 3000,
+                                                closeOnClick: true,
+                                            },
+                                        );
                                         if (isSaveAndNew) {
                                             this.saveAndNewClicked = true;
                                             this.loading = true;
-                                            this.selectedCriteriaId = null;
-                                            this.criteriaSetModified = false;
-                                            this.isItemSelected = false;
-                                            this.segmentLengthValid = true;
-                                            this.hasSegmentNameInput = false;
-                                            this.segmentName = "";
-                                            this.defaultValues = null;
-                                            this.data.config = null;
-                                            this.data.criteriaSetID = null;
-                                            this.data.redirectData = null;
+                                            this.selectedCriteriaId = undefined; // Resets Criteria ID
+                                            this.selectedReportCriteriaSet = undefined;
+                                            this.criteriaSetModified = false; // Resets criteria set input validation
+                                            // this.isItemSelected = false;
+                                            // this.segmentLengthValid = true;
+                                            // this.hasSegmentNameInput = false;
+                                            this.segmentName = undefined;
+                                            // this.defaultValues = undefined;
+                                            this.data.config = undefined;
+                                            this.data.criteriaSetID = undefined;
+                                            this.data.redirectData = null; // Makes criteria set selectable
                                             this.data.openReportAction = "create";
                                             this.idPrefix = "CreateSegment";
                                             this.hintMessageText = "The segment name is the label given for the selected criteria below.";
+                                            this.criteriaForm?.criteriaDynamicForm.clearForm();
                                             this.setformConfig(null);
                                             setTimeout(() => {
                                                 this.loading = false;
@@ -526,14 +528,14 @@ export class CreateSegmentComponent {
                                                 if (this.isItemSelected) {
                                                     newSegmentConfig["PortfolioID"] = this.criteriaForm.selectedPortfolio
                                                 }
-            
+
                                                 if (config) {
                                                     saveObject = this.criteriaForm.getSaveObject(config, saveObject, false);
                                                 }
                                                 if (depConfig) {
                                                     depSaveObject = this.criteriaForm?.getSaveObject(depConfig, depSaveObject, true);
                                                 }
-            
+
                                                 saveObject.forEach(x => {
                                                     if (config[x.FieldName]) {
                                                         newSegmentConfig[config[x.FieldName]?.data.criteriaID] = Object.values(x)[1]
@@ -567,18 +569,20 @@ export class CreateSegmentComponent {
                                     }
                                 })
                             } else {
-                              if(this.data.hideToastsOn === this.currentCriteriaName) {
-                                // Do nothing
-                              } else {
-                                notify({
-                                    message: 'Required Field Missing.',
-                                    type: 'error',
-                                    displayTime: 5000,
-                                    position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-                                    maxWidth: '500px',
-                                    closeOnClick: true,
-                                })
-                              }
+                                if (this.data.hideToastsOn === this.currentCriteriaName) {
+                                    // Do nothing
+                                } else {
+                                    this.toastService.show(
+                                        'Required Field Missing.',
+                                        undefined,
+                                        ToastState.ERROR,
+                                        {
+                                            maxWidth: '500px',
+                                            duration: 5000,
+                                            closeOnClick: true,
+                                        }
+                                    );
+                                }
                             }
                         }
                     })
@@ -587,7 +591,7 @@ export class CreateSegmentComponent {
                 this.showNotifyMessage("noSelectedCriteria");
             }
         }
-        
+
     }
 
     public unarchiveSegment(event) {
@@ -595,18 +599,20 @@ export class CreateSegmentComponent {
         this.showloading = true;
         this.reportsService.unarchiveSegment(request).subscribe((result) => {
             this.showloading = false;
-            if(result) {
+            if (result) {
                 this.data.archived = false;
                 this.modalTitle = "Edit Segment"
                 this.idPrefix = "EditSegment";
-                notify({
-                    message: 'Segment unarchived successfully.',
-                    type: 'success',
-                    displayTime: 5000,
-                    position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-                    maxWidth: '500px',
-                    closeOnClick: true,
-                })
+                this.toastService.show(
+                    'Segment unarchived successfully.',
+                    undefined,
+                    ToastState.SUCCESS,
+                    {
+                        maxWidth: '500px',
+                        duration: 5000,
+                        closeOnClick: true,
+                    }
+                );
                 this.dialogRef.close('refresh');
             }
         });
@@ -614,17 +620,19 @@ export class CreateSegmentComponent {
 
     public showNotifyMessage(messageType) {
         if (messageType === "noSelectedCriteria") {
-          if(this.data.hideToastsOn === this.currentCriteriaName){
-            return
-          }
-          notify({
-              message: 'At least one criteria selection is required.',
-              type: 'error',
-              displayTime: 5000,
-              position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-              maxWidth: '500px',
-              closeOnClick: true,
-          })
+            if (this.data.hideToastsOn === this.currentCriteriaName) {
+                return
+            }
+            this.toastService.show(
+                'At least one criteria selection is required.',
+                undefined,
+                ToastState.ERROR,
+                {
+                    maxWidth: '500px',
+                    duration: 5000,
+                    closeOnClick: true,
+                }
+            );
         }
     }
 
@@ -652,7 +660,7 @@ export class CreateSegmentComponent {
     }
 
     public cancelDialog(event) {
-        if(this.saveAndNewClicked) {
+        if (this.saveAndNewClicked) {
             this.dialogRef.close("refresh");
         } else {
             this.dialogRef.close();

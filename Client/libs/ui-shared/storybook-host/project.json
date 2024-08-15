@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/ui-shared/storybook-host/src",
-  "prefix": "mango",
+  "prefix": "crem",
   "targets": {
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
@@ -24,26 +24,13 @@
           "node_modules/devexpress-gantt/dist/dx-gantt.css",
           "node_modules/ngx-toastr/toastr.css",
           "apps/mango/src/styles.scss",
-          "apps/mango-crem-features/list-pages/src/styles.scss",
-          "apps/mango-crem-features/user-maintenance/src/styles.scss",
-          "apps/mango-crem-features/batch-accounting/src/styles.scss",
-          "apps/mango-crem-features/accounting-summary/src/styles.scss",
-          "apps/mango-crem-features/portfolio-maintenance/src/styles.scss",
-          "apps/mango-crem-features/object-maintenance/src/styles.scss",
-          "apps/mango-crem-features/dashboards/portfolio-dashboard/src/styles.scss",
-          "apps/mango-crem-features/dashboards/project-dashboard/src/styles.scss",
-          "apps/mango-crem-features/accounting-profile/accounting-profiles/src/styles.scss",
-          "apps/mango-crem-features/reports/src/styles.scss",
-          "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/styles.scss",
-          "apps/mango-crem-features/group-maintenance/src/styles.scss",
-          "apps/mango-crem-features/accounting-module/src/styles.scss",
-          "apps/mango-crem-features/journal-entry-processing/src/styles.scss",
           "libs/ui-shared/common/src/styles/_index.scss"
         ],
         "port": 4400,
         "configDir": "libs/ui-shared/storybook-host/.storybook",
         "browserTarget": "ui-shared-storybook-host:build-storybook",
-        "compodoc": false
+        "compodoc": true,
+        "compodocArgs": ["-e", "json", "-d", "libs/ui-shared"]
       },
       "configurations": {
         "ci": {
@@ -71,26 +58,13 @@
           "node_modules/devexpress-gantt/dist/dx-gantt.css",
           "node_modules/ngx-toastr/toastr.css",
           "apps/mango/src/styles.scss",
-          "apps/mango-crem-features/list-pages/src/styles.scss",
-          "apps/mango-crem-features/user-maintenance/src/styles.scss",
-          "apps/mango-crem-features/batch-accounting/src/styles.scss",
-          "apps/mango-crem-features/accounting-summary/src/styles.scss",
-          "apps/mango-crem-features/portfolio-maintenance/src/styles.scss",
-          "apps/mango-crem-features/object-maintenance/src/styles.scss",
-          "apps/mango-crem-features/dashboards/portfolio-dashboard/src/styles.scss",
-          "apps/mango-crem-features/dashboards/project-dashboard/src/styles.scss",
-          "apps/mango-crem-features/accounting-profile/accounting-profiles/src/styles.scss",
-          "apps/mango-crem-features/reports/src/styles.scss",
-          "apps/mango-crem-features/accountmanagement/accounting-accountmanagement/src/styles.scss",
-          "apps/mango-crem-features/group-maintenance/src/styles.scss",
-          "apps/mango-crem-features/accounting-module/src/styles.scss",
-          "apps/mango-crem-features/journal-entry-processing/src/styles.scss",
           "libs/ui-shared/common/src/styles/_index.scss"
         ],
         "outputDir": "dist/storybook/ui-shared-storybook-host",
         "configDir": "libs/ui-shared/storybook-host/.storybook",
         "browserTarget": "ui-shared-storybook-host:build-storybook",
-        "compodoc": false
+        "compodoc": true,
+        "compodocArgs": ["-e", "json", "-d", "libs/ui-shared"]
       },
       "configurations": {
         "ci": {
@@ -101,7 +75,6 @@
   },
   "tags": [],
   "implicitDependencies": [
-    "ui-shared-lib-ui-shared",
     "ui-shared-lib-ui-elements",
     "ui-shared-common"
   ]

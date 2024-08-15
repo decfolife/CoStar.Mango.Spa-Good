@@ -1,0 +1,50 @@
+<dx-data-grid
+  class="master-grid"
+  #masterGrid
+  [keyExpr]="keyExpr"
+  [columnAutoWidth]="columnAutoWidth"
+  [rowAlternationEnabled]="rowAlternationEnabled"
+  [showRowLines]="showRowLines"
+  [showColumnLines]="showColumnLines"
+  [allowColumnReordering]="allowColumnReordering"
+  [repaintChangesOnly]="true"
+  [dataSource]="content.data"
+  (onSelectionChanged)="selectionChangedHandler($event)"
+  (onContentReady)="onContentReady()"
+>
+  <dxo-paging [pageSize]="defaultPageSize"> </dxo-paging>
+  <dxo-pager
+    [visible]="true"
+    [allowedPageSizes]="allowedPageSizes"
+    [showPageSizeSelector]="showPageSizeSelector"
+    [showInfo]="showPageInfo"
+    [showNavigationButtons]="showNavButtons"
+  >
+  </dxo-pager>
+  <dxo-master-detail [enabled]="true" [template]="'details'">
+  </dxo-master-detail>
+  <dxo-selection
+    mode="multiple"
+    [allowSelectAll]="false"
+    [showCheckBoxesMode]="'always'"
+  >
+  </dxo-selection>
+  <div *dxTemplate="let detail of 'details'">
+    <div class="master-detail-caption"></div>
+    {{ detail.watch.getter }}
+    <dx-data-grid
+      #detailGrid
+      [rowAlternationEnabled]="rowAlternationEnabled"
+      [repaintChangesOnly]="true"
+      [dataSource]="detail.data.childData"
+      [columnAutoWidth]="true"
+      [showRowLines]="true"
+      [showColumnLines]="false"
+      [allowColumnReordering]="true"
+      (onInitialized)="detailGridInitialized($event, detail.key)"
+    >
+      <dxo-selection mode="multiple" [showCheckBoxesMode]="'always'">
+      </dxo-selection>
+    </dx-data-grid>
+  </div>
+</dx-data-grid>

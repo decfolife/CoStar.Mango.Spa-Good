@@ -39,6 +39,7 @@
 // Define global micro-elements (Eg. buttons, forms, icons, loaders, etc.) that for different
 // reasons are not part of a particular Angular component.
 @forward './components/buttons';
+@forward './components/forms';
 
 // ==========================================================================
 // LAYOUT - General configuration of the page layout

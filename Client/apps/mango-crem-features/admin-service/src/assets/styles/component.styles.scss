@@ -432,7 +432,7 @@ $font: "Helvetica";
 $headerBarHeight: 50px;
 $mainNavWidth : 3.5rem;
 $toolbarHeight: 4.2em;
-$nav2Height: $headerBarHeight / 1.5;
+$nav2Height: calc($headerBarHeight / 1.5);
 $catalogAddHeight: 48px;
 $catalogWidth: 300px;
 $catalogWidthXL : 380px;
@@ -2285,11 +2285,11 @@ dx-data-grid {
 }
 }
 
-div.dx-popup-content {
-  -webkit-user-drag: none;
-  padding: 0px ;
-   padding: 16px !important;
-}
+// div.dx-popup-content {
+//   -webkit-user-drag: none;
+//   padding: 0px ;
+//    padding: 16px !important;
+// }
 
 .tooltipAppPopover dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row:hover {
   cursor: default;

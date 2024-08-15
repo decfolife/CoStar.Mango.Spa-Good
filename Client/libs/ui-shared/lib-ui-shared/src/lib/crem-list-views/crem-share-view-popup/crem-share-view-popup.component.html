@@ -1,0 +1,193 @@
+<div class="cremShareViewModal">
+  <dx-popup #rightsPopup
+    [wrapperAttr]="{ id: 'cremShareViewPopup' }"
+    [showTitle]="true"
+    title="{{ title }}"
+    [(visible)]="popupVisible"
+    [closeOnOutsideClick]="false"
+    (onHiding)="hidePopup($event)"
+    width="50%"
+    height="50%"
+  >
+    <div *ngIf="isDeleteConfirm" class="p-4">
+      Deleting this view will remove it for the listed Users and Groups.
+      Are you sure you want to delete this view?
+    </div>
+
+    <div *ngIf="hasDuplicates" class="p-4">
+      Please remove any duplicate Group or User assignments above before saving.
+    </div>
+
+    <dx-popup
+      [wrapperAttr]="{ id: 'unSavedChangesSharePopup' }"
+      [width]="unSavedChangesPopupOptions.width"
+      height="auto"
+      [showTitle]="true"
+      title="{{ unSavedChangesPopupOptions.popupTitle }}"
+      [dragEnabled]="unSavedChangesPopupOptions.dragEnabled"
+      [closeOnOutsideClick]="true"
+      [(visible)]="unSavedChangesPopupOptions.popupVisible"
+      position="{ my: 'center', at: 'center', of: window }"
+    >
+    <div id="divUnsavedChangedPopup">{{ unSavedChangesPopupOptions.popupMessage }}</div>
+
+    <dxi-toolbar-item location="after"
+      toolbar="bottom"
+      widget="dxButton"
+      [visible]="unSavedChangesPopupOptions.cancelButtonOptions !== null"
+      [options]="{
+        text: unSavedChangesPopupOptions.cancelButtonOptions?.text,
+        onClick: unSavedChangesPopupOptions.cancelButtonOptions?.onClick
+      }"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item location="after"
+      toolbar="bottom"
+      widget="dxButton"
+      [visible]="unSavedChangesPopupOptions.actionButtonOptions !== null"
+      [options]="{
+        text: unSavedChangesPopupOptions.actionButtonOptions?.text,
+        onClick: unSavedChangesPopupOptions.actionButtonOptions?.onClick,
+        type: 'default'
+      }"
+    ></dxi-toolbar-item>
+  </dx-popup>
+
+    <dx-data-grid #rightsGrid
+      class="sharing-datagrid"
+      height="{{ isDeleteConfirm ? 'calc(100% - 52px)' : '100%' }}"
+      [dataSource]="sharingData"
+      keyExpr="sharedWithEntityId"
+      [showBorders]="false"
+      [showRowLines]="true"
+      [showColumnLines]="false"
+      [rowAlternationEnabled]="true"
+      [hoverStateEnabled]="true"
+      (onCellPrepared)="cellPrepared($event)"
+      (onRowInserting)="addSharing($event)"
+      (onRowUpdating)="updateSharing($event)"
+      (onRowRemoving)="removeSharing($event)"
+      (onEditCanceled)="editCanceled()"
+      (onEditingStart)="editingStart($event)"
+      (onEditorPreparing)="editorPreparing($event)"
+      (onToolbarPreparing)="toolbarPreparing($event)"
+    >
+      <dxo-editing mode="batch"
+        [allowDeleting]="allowDeleting"
+        [allowUpdating]="allowEdit"
+        [useIcons]="true"
+      ></dxo-editing>
+
+      <dxo-header-filter [visible]="true"
+      ></dxo-header-filter>
+
+      <dxi-column caption="Type"
+        dataField="sharedWithEntityType"
+        [calculateDisplayValue]="'typeDisplayName'"
+        [editorOptions]="{ searchEnabled: false }"
+        [headerFilter]="{ dataSource: entityTypeLookup }"
+        [width]="128"
+        [setCellValue]="setTypeValue"
+      >
+        <dxo-lookup [dataSource]="entityTypeLookup"
+          displayExpr="text"
+          valueExpr="value"
+        ></dxo-lookup>
+
+        <dxi-validation-rule type="required"></dxi-validation-rule>
+      </dxi-column>
+
+      <dxi-column caption="Name"
+        dataField="sharedWithEntityId"
+        [calculateDisplayValue]="'sharedWithName'"
+        [headerFilter]="{ dataSource: gridNamesLookup }"
+        [editorOptions]="{onInitialized: onEditDropdownInitialized}"
+      >
+        <dxo-lookup [dataSource]="getUsersOrGroups"
+          displayExpr="sharedWithName"
+          valueExpr="sharedWithEntityId"
+        ></dxo-lookup>
+
+        <dxi-validation-rule type="required"></dxi-validation-rule>
+      </dxi-column>
+
+      <dxi-column caption="Rights"
+        dataField="securityType"
+        [calculateDisplayValue]="'rightsDisplayName'"
+        [headerFilter]="{ dataSource: rightsTypeLookup }"
+        [width]="128"
+      >
+        <dxo-lookup [dataSource]="getRightsTypes"
+          displayExpr="text"
+          valueExpr="value"
+        ></dxo-lookup>
+
+        <dxi-validation-rule type="required"></dxi-validation-rule>
+      </dxi-column>
+    </dx-data-grid>
+
+    <dxi-toolbar-item widget="dxButton"
+      [visible]="!isDeleteConfirm"
+      [options]="{
+        text: 'Cancel',
+        onClick: cancelButtonClicked
+      }"
+      location="after"
+      toolbar="bottom"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item widget="dxButton"
+      [visible]="!isDeleteConfirm"
+      [disabled]="!hasChanges"
+      [options]="{
+        text: 'Undo',
+        onClick: undoButtonClicked
+      }"
+      location="after"
+      toolbar="bottom"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item widget="dxButton"
+      [visible]="!isDeleteConfirm"
+      [disabled]="!hasChanges"
+      [options]="{
+        text: 'Apply',
+        onClick: applyButtonClicked
+      }"
+      location="after"
+      toolbar="bottom"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item widget="dxButton"
+      [visible]="!isDeleteConfirm"
+      [options]="{
+        text: 'Save &amp; Close',
+        onClick: saveButtonClicked,
+        type: 'default'
+      }"
+      location="after"
+      toolbar="bottom"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item widget="dxButton"
+      [visible]="isDeleteConfirm"
+      [options]="{
+        text: 'Cancel',
+        onClick: cancelButtonClicked
+      }"
+      location="after"
+      toolbar="bottom"
+    ></dxi-toolbar-item>
+
+    <dxi-toolbar-item widget="dxButton"
+      [visible]="isDeleteConfirm"
+      [options]="{
+        text: 'Delete',
+        type: 'default',
+        onClick: deleteButtonClicked
+      }"
+      location="after"
+      toolbar="bottom"
+    ></dxi-toolbar-item>
+  </dx-popup>
+</div>

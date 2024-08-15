@@ -1,21 +1,23 @@
-import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { EmailNoteType, MemberInfo, ProjectTeamMember, ProjectsEmailInfo, RemoveTeamMembers } from '@mango/data-models/lib-data-models';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { Subscription, combineLatest } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { of } from 'rxjs/internal/observable/of';
 import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
 import { SaveTeamTemplateComponent } from './save-team-template/save-team-template.component';
-import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
+import dxCheckBox from 'devextreme/ui/check_box';
 import { ToastrService } from 'ngx-toastr';
 import { ImportTeamComponent } from './import-team/import-team.component';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { MemberDetailsComponent } from './member-details/member-details.component';
 import { ComposeEmailComponent } from '@mango/ui-shared/lib-ui-shared';
+import { trigger } from 'devextreme/events';
+import DataGrid from "devextreme/ui/data_grid";
+import { MatMenuTrigger } from '@angular/material/menu';
 
 
 @Component({
@@ -26,6 +28,7 @@ import { ComposeEmailComponent } from '@mango/ui-shared/lib-ui-shared';
 export class ProjectTeamComponent implements OnInit, OnDestroy {
 
   @ViewChild("ProjectTeamGrid") projectTeamGrid: DxDataGridComponent;
+  @ViewChild("memberActionsMenuTrigger") actionsMenuTrigger: MatMenuTrigger;
 
   private selectClass = 'dx-selection';
   dataRetrieved: boolean = false;;
@@ -89,7 +92,8 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       height: height,
       width: '500px',
       panelClass: 'addEditMemberModal',
-      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation, teamMember: member, contactIds: this.contactIds, emailAddressList},
+      data: { memberInfo: this.memberInfo, projectId: this.projectId, operation:operation, teamMember: member, 
+              contactIds: this.contactIds, projectsPrivateSetting: this.projectsPrivateSetting, emailAddressList},
       disableClose: true
     });
 
@@ -134,8 +138,8 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
               disableClose: true
             });
         } else { 
-					let message = `Projects Email Info cound not fetched.`;
-					this.subs.push(this.dialogService.alert('Update Member', message, 'OK').subscribe());
+					let message = `Projects Email Info could not be fetched.`;
+					this.subs.push(this.dialogService.alert('Error getting Project Email Info', message, 'OK').subscribe());
 				}
       }
     ));
@@ -174,21 +178,54 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
   onCellPrepared(e) {
-    if(e.rowType !== 'header' && e.column.command == 'select' && this.userAccessLevel == 1 && e.data.isManager) {
-      this.managerContactId = e.data.contactID;
-      let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
-      var editor = dxCheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));
-      if(editor) {
-        editor.option("visible", false);
+    if(e.rowType !== 'header' && e.column.command == 'select') {
+      let htmlCellElement = e.cellElement;
+      htmlCellElement.setAttribute("id", "ptm-memberId" + e.rowIndex);
+
+      if (this.userAccessLevel == 1 && e.data.isManager) {
+        this.managerContactId = e.data.contactID;
+        var editor = dxCheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));
+        if(editor) {
+          editor.option("visible", false);
+        }
+        htmlCellElement.style.pointerEvents = 'none';
       }
-      htmlCellElement.style.pointerEvents = 'none';
     }
   }
 
   onRowPrepared(e) {
     //remove highlight class for project manager row
-    if(e.rowType !== 'header' && this.userAccessLevel == 1 && e.data.isManager) {
+    if(e?.rowType !== 'header' && this.userAccessLevel == 1 && e.data?.isManager) {
       e.rowElement.classList.remove(this.selectClass);
+    }
+  }
+
+  onFocusedCellChanging(e) {
+    if (e.newColumnIndex === 0) {
+      const previousRow = e.cellElement[0].parentElement.previousSibling;
+      if (!previousRow) return;
+      if (previousRow.classList.contains('dx-master-detail-row')) {
+        e.cancel = true;
+        const $detailGrid = previousRow.querySelector('.dx-datagrid').parentElement;
+        const detailGrid = DataGrid.getInstance($detailGrid) as DataGrid;
+  
+        trigger($detailGrid, 'focusout');
+
+        const firstHeaderElement = detailGrid.element().querySelector('.dx-header-row td[role="columnheader"]');
+        (firstHeaderElement as HTMLElement).focus();
+      }
+    } 
+  }
+
+  matMenuButtonKeyDown(e) {
+    if (e.key === 'Tab' || (e.key === 'Tab' && e.shiftKey)) {
+      if (e.currentTarget.nextElementSibling !== null) {
+        e.stopPropagation();
+      }
+      else {
+        e.preventDefault();
+        this.actionsMenuTrigger.closeMenu();
+      }
     }
   }
 
@@ -248,7 +285,6 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
         } else {
           this.subs.push(this.getProjectTeam(this.projectId).subscribe());
         }
-        this.memberInfo = res.data;
       },
       (error: any) => this.displayMessage(),
       () => {}
@@ -335,7 +371,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
 	ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe);
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   private getClientPreferences() {

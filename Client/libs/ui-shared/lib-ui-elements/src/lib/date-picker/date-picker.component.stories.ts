@@ -9,7 +9,7 @@ interface DatepickerComponentStory extends DatePickerComponent {
 }
 
 export default {
-  title: 'Components/DatePicker',
+  title: 'Components/DatePicker *',
   component: DatePickerComponent,
   decorators: [
     moduleMetadata({

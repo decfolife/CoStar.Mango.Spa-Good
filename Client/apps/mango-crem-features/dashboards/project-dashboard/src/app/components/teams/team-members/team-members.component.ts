@@ -5,8 +5,9 @@ import { DashboardService } from '@project-dashboard/services/dashboard.service'
 import CheckBox from 'devextreme/ui/check_box';
 import { filter, switchMap } from 'rxjs/operators';
 import { Subscription, of } from 'rxjs';
-import { MangoDialogService } from '@project-dashboard/services/mango-dialog.service';
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { ToastrService } from 'ngx-toastr';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'team-members',
@@ -42,6 +43,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 														Please consider replacing this team member or updating their User record.`;
 
 	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
+  @ViewChild("teamActionsMenuTrigger") actionsMenuTrigger: MatMenuTrigger;
 
 	constructor(private dashboardService: DashboardService,
 							public toastr: ToastrService,
@@ -54,6 +56,18 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 			this.showShareColumn = changes.projectsPrivateSetting.currentValue <= 2;
 		}		
 	}
+
+	matMenuButtonKeyDown(e) {
+    if (e.key === 'Tab' || (e.key === 'Tab' && e.shiftKey)) {
+      if(e.currentTarget.nextElementSibling !== null) {
+        e.stopPropagation();
+      }
+      else {
+        e.preventDefault();
+        this.actionsMenuTrigger.closeMenu();
+      }
+    }
+  }
 
 	editRow(memberData: any) {
 		this.emailNotify = memberData.data.emailOn;
@@ -215,7 +229,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 	ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe);
+    this.subs.forEach(s => s.unsubscribe());
   }
 
 }

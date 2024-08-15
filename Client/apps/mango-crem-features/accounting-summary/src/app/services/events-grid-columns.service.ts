@@ -109,14 +109,14 @@ export class EventsGridColumnsService {
       },
       {
         caption: 'Term (Years)',
-        dataField: 'term',
+        dataField: 'termInYears',
         alignment: 'right',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         appendsCurrency: 'false',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-        calculateCellValue: rowData => (Math.round(rowData.term * 10000) / 10000).toFixed(2)
+        calculateCellValue: rowData => (Math.round(rowData.termInYears * 10000) / 10000).toFixed(2)
       },
       {
         caption: 'Payment Timing',
@@ -145,7 +145,7 @@ export class EventsGridColumnsService {
     if (portfolioSettings?.leaseRecognitionCalendarID != 1) {
       columns.push({
         caption: 'Days In Term',
-        dataField: 'daysInTerm',
+        dataField: 'termInDays',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         appendsCurrency: 'false',
@@ -156,7 +156,7 @@ export class EventsGridColumnsService {
     } else {
       columns.push({
         caption: '# of Periods',
-        dataField: 'periods',
+        dataField: 'termInPeriods',
         headerCellTemplate: 'amortizationHeader',
         cellTemplate: 'pointer',
         alignment: 'right',

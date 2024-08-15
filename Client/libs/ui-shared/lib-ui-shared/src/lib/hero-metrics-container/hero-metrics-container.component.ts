@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { DataService } from '@mango/core-shared';
-import { Metric } from '@mango/data-models/lib-data-models';
+import { Metric, Sidekick } from '@mango/data-models/lib-data-models';
 import { Observable, of } from 'rxjs';
 
 @Component({
@@ -15,11 +15,6 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
   @Input() unitOfMeasureId?: number;
   @Input() exchangeRateId?: number;
   @Input() moduleId: number;
-
-
-  public metrics: Metric[];
-  public metric: any;
-  public metricObjects: any;
 
   constructor(private dataService: DataService) { }
 
@@ -113,9 +108,7 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
   }
 
   updateMetricInList(metric: any) {
-    //Find the schema from the metric and update the metric. 
-    //let metricIndex = this.schemaMetrics.findIndex(sm => sm.elementType.elementTypeName === metric.elementType.elementTypeName);
-    //this.getMetric(this.schemaMetrics[metricIndex])
+    
   }
 
   private getMetric(schemaMetric: any) {
@@ -141,7 +134,7 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
   }
 
   private createMetricDetail(metric:any, data: any): Metric {
-    let sidekickValue = null;
+    let sidekickValue: Sidekick = null;
 
     //Set the values that do not depend on the data because the data could be null
     let metricDetail: Metric = {
@@ -153,9 +146,11 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
 
     if (data !== null) {
       if (data.sidekick !== null) {
+        const [symbol, direction] = (data.sidekick || {valueIndicator: ''}).valueIndicator.split('-')
         sidekickValue = {
           metricValue: data.sidekick.metricValue,
-          valueIndicator: data.sidekick.valueIndicator,
+          symbol, 
+          direction
         };
       }
 

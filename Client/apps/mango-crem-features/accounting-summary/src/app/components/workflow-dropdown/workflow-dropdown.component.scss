@@ -1,24 +1,40 @@
-input{
-    font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
-    border: 1px solid #a7a49f;
-    font-size: 15px;
-    color: black;
-    height: 33px;
-    background-color: white;
-    padding: 7px 9px 8px 9px;
+@use "styles" as *;
+
+.workflow-status-div {
+  @include costar(border, gray04);
+  padding: 5px 9px 9px;
+  height: 32px;
+  background-color: white;
+  width: 100%;
+  min-width: 220px;
+  box-sizing: border-box;
+  align-content: center;
 }
 
-.workflow-comments{
-    padding: 15px;
-  }
+.workflow-status-text {
+  font-weight: 700;
+}
+
+.workflow-comments {
+  padding: 15px;
+}
 
 .btn-primary-workflow-comments {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
+  margin-left: 10px;
+  margin-right: 10px;
+}
 
 .workflow-btns-container {
-    margin-top: 20px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+dx-select-box,
+dx-drop-down-box {
+  .custom-with-label {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    @include costar(padding-left, 2);
   }
+}

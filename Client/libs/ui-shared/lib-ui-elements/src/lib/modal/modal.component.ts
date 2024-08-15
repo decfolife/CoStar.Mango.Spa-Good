@@ -19,16 +19,19 @@ export class ModalComponent  {
   @Input() modalTitleId: string;
   @Input() closeIconVisible: boolean;
   @Input() primaryFooterButtonText: string;
-  @Input() primaryFooterButtonEnabledDisabled: boolean = false;
+  @Input() primaryFooterButtonEnabledDisabled = false;
   @Input() closeOrCancelButtonText: string;
-  @Input() showTooltip: boolean = false;
-  @Input() tooltipText: string = '';
+  @Input() showTooltip = false;
+  @Input() tooltipText = '';
   @Input() modalId: string;
-  @Input() customFooter: boolean = false;
-  @Input() closeDialogResult: string = '';
+  @Input() customHeader = false;
+  @Input() customFooter = false;
+  @Input() closeDialogResult: any = '';
   @Input() className?: string = '';
+  @Input() dragPosition: any = { x: 0, y: 0 };
   @Output() primaryButtonAction = new EventEmitter<any>();
   @Output() closeButtonAction = new EventEmitter<any>();
+  @Output() dragEndAction = new EventEmitter<any>();
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<ModalComponent>,
@@ -45,4 +48,7 @@ export class ModalComponent  {
     this.primaryButtonAction.emit();
   }
 
+  public dragEndEvent(e) {
+    this.dragEndAction.emit(e);
+  }
 }

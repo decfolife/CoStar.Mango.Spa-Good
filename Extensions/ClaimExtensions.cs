@@ -1,4 +1,5 @@
-﻿using MangoSPA.Models;
+﻿using MangoSPA.Enums;
+using MangoSPA.Models;
 using System.Security.Claims;
 using static MangoSPA.Constants;
 
@@ -47,6 +48,23 @@ public static class ClaimExtensions
         var contactRole = principal.ContactRole()?.ToLower();
         if (contactRole == "superuser" || contactRole == "admin")
             return true;
+
+        return false;
+    }
+
+    public static bool IsSuperUserContact(this ClaimsPrincipal principal)
+    {
+        var contactRole = principal.ContactRole()?.ToLower();
+        if (int.TryParse(contactRole, out int role))
+        {
+            if (role == (int)UserRoleType.SuperUser || role == (int)UserRoleType.Admin)
+                return true;
+        } 
+        else
+        {
+            if (contactRole == "superuser" || contactRole == "admin")
+                return true;
+        }
 
         return false;
     }

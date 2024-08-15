@@ -1,0 +1,115 @@
+@use "styles" as *;
+
+.toggle-slider {
+  position: relative;
+  display: inline-block;
+  height: 22px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:focus+.toggle-slider__slider {
+      @include costar(box-shadow, primary-light);
+    }
+
+    &.checked {
+      +.toggle-slider__slider:not(.disabled) {
+        @include costar(background-color, primary-light);
+
+      }
+
+      +.toggle-slider__slider.regular:before {
+        -webkit-transform: translateX(18px);
+        -ms-transform: translateX(18px);
+        transform: translateX(18px);
+      }
+
+      +.toggle-slider__slider.wide:before {
+        -webkit-transform: translateX(33px);
+        -ms-transform: translateX(33px);
+        transform: translateX(33px);
+      }
+
+      +.toggle-slider__slider.extra-wide:before {
+        -webkit-transform: translateX(55px);
+        -ms-transform: translateX(55px);
+        transform: translateX(55px);
+      }
+
+      +.toggle-slider__slider.ultra-wide:before {
+        -webkit-transform: translateX(75px);
+        -ms-transform: translateX(75px);
+        transform: translateX(75px);
+      }
+    }
+  }
+}
+
+.toggle-slider__slider {
+  display: flex;
+  border-radius: 34px;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @include costar(background-color, gray03);
+  -webkit-transition: .4s;
+  transition: .4s;
+  
+  &.disabled {
+    @include costar(background-color, gray05);
+    cursor: unset;
+  }
+
+  &:before {
+    position: absolute;
+    border-radius: 50%;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 4px;
+    bottom: 4px;
+    @include costar(background-color, light);
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+}
+
+.slider-label {
+  position: absolute;
+  @include costar(color, light);
+  @include costar(font-size, small);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 100%;
+
+  &__unchecked {
+    right: 0px;
+  }
+
+  &__checked {
+    left: 2px;
+  }
+}
+
+.regular {
+  width: 40px;
+}
+
+.wide {
+  width: 55px;
+}
+
+.extra-wide {
+  width: 80px;
+}
+
+.ultra-wide {
+  width: 100px;
+}

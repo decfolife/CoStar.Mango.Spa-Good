@@ -40,6 +40,7 @@ export class AccountingSettingsComponent implements OnInit {
   PortfolioClassificationConfigurationLoaded = false;
   portfolioSettingsSave = false;
   classificationConfigurationSave = false;
+  hasModuleRights = true;
 
   tooltipEnv: string;
   constructor(public service: AccountingSettingsService,
@@ -49,10 +50,15 @@ export class AccountingSettingsComponent implements OnInit {
               ) {
               }
   ngOnInit(): void {
-    this.service.portfolioSettings = new PortfolioSettings(0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 'Direct Entry', '', 1);
-    this.isFrameless = document.getElementById('IsFrameless')?.innerText !== 'NonFramelessUser';
-    this.populateAccountingCalendars();
-    this.populateUserRights();
+    this.baseService.HasUserModuleRight().subscribe(response => {
+      this.hasModuleRights = response;
+      if (this.hasModuleRights){
+        this.service.portfolioSettings = new PortfolioSettings(0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 'Direct Entry', '', 1);
+        this.isFrameless = document.getElementById('IsFrameless')?.innerText !== 'NonFramelessUser';
+        this.populateAccountingCalendars();
+        this.populateUserRights();
+      }
+    });
   }
 
   populateUserRights() {

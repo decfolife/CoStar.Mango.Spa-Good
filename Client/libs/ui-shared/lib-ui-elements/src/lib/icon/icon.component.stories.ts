@@ -13,20 +13,16 @@ import {
 import { IconComponent } from './icon.component';
 
 export default {
-  title: 'Components/Icon',
+  title: 'Components/Icon *',
   component: IconComponent,
   argTypes: {
     pack: {
-      control: {
-        type: 'select',
-        options: [ 'crem', 'solid', 'regular' ],
-      },
+      control: 'select',
+      options: [ 'crem', 'solid', 'regular' ],
     },
     icon: {
-      control: {
-        type: 'select',
-        options: [ ...cremIcons, ...regularIcons, ...solidIcons],
-      },
+      control: 'select',
+      options: [ ...cremIcons, ...regularIcons, ...solidIcons],
     },
     color: { control: 'radio', options: colorOptions },
     rotate: { control:  'select', options: rotateOptions },
@@ -61,8 +57,8 @@ Default.args = {
   pull: undefined,
 };
 
-export const customCremIcon = Template.bind({});
-customCremIcon.args = {
+export const CustomCremIcon = Template.bind({});
+CustomCremIcon.args = {
   icon: 'cremEllipsis',
   pack: 'crem',
   color: undefined,

@@ -1,5 +1,10 @@
-<div [id]="'chip'+id" [style.max-width]="'200px'" [matTooltip]="matTooltipContent"
-  [matTooltipClass]="'milestone_tooltip'" class="dx-field">
+<div
+  [id]="'chip' + id"
+  [style.max-width]="'200px'"
+  [matTooltip]="matTooltipContent"
+  [matTooltipClass]="'milestone_tooltip'"
+  class="dx-field"
+>
   <div class="dx-field-value-static">
     <div class="primary chip" [ngClass]="chipColor">
       <ng-content select="'[chipContent]'"></ng-content>

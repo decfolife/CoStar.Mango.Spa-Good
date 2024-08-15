@@ -1,47 +1,26 @@
-<mat-toolbar
-  [class.costar-unified-top-menu]="!isCostarStyle"
-  [class.costar-unified-second-menu]="isCostarStyle"
->
-  <mat-toolbar-row
-    class="main-menu"
-    [class.costar-top-menu]="!isCostarStyle"
-    [class.costar-second-menu]="isCostarStyle"
-  >
+<div class="crem-toolbar__wrapper" [class.costar-unified-top-menu]="!isCostarStyle"
+  [class.costar-unified-second-menu]="isCostarStyle" [class.costar-top-menu]="!isCostarStyle"
+  [class.costar-second-menu]="isCostarStyle">
+  <ul class="crem-toolbar__modules crem-toolbar__nav">
+    <li class="nav-item" *ngFor="let link of moduleLinks"
+      [ngClass]="activeLink === link.name ? link.name + ' active' : link.name">
+      <a [id]="'toolbar__' + link?.moduleID" class="nav-link" [routerLink]="[link.spaurl || link.moduleHome]"
+        [routerLinkActive]="['active']">
+        <span>{{link.moduleDisplayName}}</span>
+      </a>
+    </li>
+  </ul>
 
-    <!-- Main navigation Links -->
-    <ul class="modules nav nav-pills">
-      <li class="nav-item" *ngFor="let link of moduleLinks" [ngClass]="activeLink === link.name ? link.name + ' active' : link.name">
-        <a
-          [id]="'toolbar__' + link?.moduleID"
-          class="nav-link"
-          [routerLink]="[link.spaurl || link.moduleHome]"
-          [routerLinkActive]="['active']">
-            <span>{{link.moduleDisplayName}}</span>
-        </a>
-      </li>
-    </ul>
+  <div class="crem-toolbar__environment">
+    <crem-env-info-chip *ngIf="popoverContent" id="cremChip" [chipStyle]=" {
+      type: 'secondary',
+      color: 'costar',
+    }" [chipContent]="chipContent" [popoverContent]="popoverContent"></crem-env-info-chip>
+  </div>
 
-    <!-- CREM Environment Chip -->
-    <div class="environment">
-      <crem-env-info-chip *ngIf="popoverContent"
-        [id]="id"
-        [chipStyle]="chipStyle"
-        [chipContent]="chipContent"
-        [popoverContent]="popoverContent"
-      ></crem-env-info-chip>
-    </div>
-
-    <!-- Bookmark Link -->
-    <ul class="bookmark nav nav-pills">
-      <li class="nav-item">
-        <a
-          class="nav-link clickable"
-          (click)="raiseToggleBookmarkDrawerEvent()"
-        >Bookmarks</a>
-      </li>
-      <li>
-      </li>
-    </ul>
-
-  </mat-toolbar-row>
-</mat-toolbar>
+  <ul class="crem-toolbar__bookmarks crem-toolbar__nav">
+    <li class="nav-item">
+      <a class="nav-link clickable" (click)="raiseToggleBookmarkDrawerEvent()">Bookmarks</a>
+    </li>
+  </ul>
+</div>

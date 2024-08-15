@@ -1,19 +1,34 @@
-@use "./libs/ui-shared/common/src/styles" as *;
+@use "styles" as *;
 
 .breadcrumb-container {
-    width: 100%;
-    height: 31px;
-    @include costar(border-bottom, gray04);
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
 
-    .mango-breadcrumbs {
-        .breadcrumb {
-					display: inline;
-					font-size: 8pt;
-					text-decoration: underline;
-					cursor: pointer;
-					padding: 8px 10px 0px 10px;
-					background-color: transparent;
-          @include costar(color, primary);
-        }
+  @include costar(gap, 1);
+  @include costar(padding-left, 3);
+  @include costar(border-bottom, gray04);
+
+  .mango-breadcrumbs {
+    .breadcrumb {
+      display: inline;
+      background-color: transparent;
+      @include costar(font-size, small);
+      @include costar(padding, 1);
+      &.first{
+        @include costar(color, primary-light);
+      }
+      &.middle{
+        @include costar(color, primary-light);
+      }
+      &.last{
+        font-weight: bold;
+        @include costar(color, gray02);
+      }
     }
+    .breadcrumb-deliminator {
+      @include costar(color, gray03);
+    }
+  }
 }

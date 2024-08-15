@@ -25,6 +25,9 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# ui-shared
+/libs/**/documentation.json
+
 # Misc
 /.angular/cache
 /.sass-cache

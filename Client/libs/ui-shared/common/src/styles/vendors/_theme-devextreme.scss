@@ -81,3 +81,8 @@ dx-data-grid table.dx-datagrid-table {
 .dx-widget.dx-checkbox.dx-select-checkbox:focus div.dx-checkbox-container {
   box-shadow: 0 0 0 0.1rem $primary-light;
 }
+
+// Input Text
+.dx-texteditor-input {
+  min-height: 30px;
+}

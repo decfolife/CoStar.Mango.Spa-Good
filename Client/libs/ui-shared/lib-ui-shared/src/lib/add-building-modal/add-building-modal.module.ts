@@ -1,22 +1,23 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { ButtonModule, CremFormsModule, DropdownModule, InputComponent, ModalModule } from '@mango/ui-shared/lib-ui-elements';
 import { AddBuildingModalComponent } from './add-building-modal.component';
-import { ButtonModule, ModalModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 
+import { ReactiveFormsModule } from '@angular/forms';
 import {
   DxButtonModule,
-  DxSelectBoxModule,
-  DxTextAreaModule,
   DxDateBoxModule,
   DxFormModule,
   DxLoadPanelModule,
+  DxSelectBoxModule,
+  DxTextAreaModule,
 } from 'devextreme-angular';
 
 @NgModule({
   imports: [
     CommonModule,
     ButtonModule,
+    ReactiveFormsModule,
     DxSelectBoxModule,
     DxTextAreaModule,
     DxDateBoxModule,
@@ -24,7 +25,9 @@ import {
     ModalModule,
     DxLoadPanelModule,
     DropdownModule,
-    DxButtonModule
+    DxButtonModule,
+    InputComponent,
+    CremFormsModule
   ],
   declarations: [AddBuildingModalComponent],
 })

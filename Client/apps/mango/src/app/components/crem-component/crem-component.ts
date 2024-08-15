@@ -22,7 +22,7 @@ import {Renderer2} from '@angular/core';
   // entryComponents: [RenderFormHeaderComponent] // @deprecated in Angular@16 https://stackoverflow.com/questions/77057726/entrycomponents-substitution-in-angular-16
 })
 export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
-   @ViewChild('cremBookmark', { static: false }) cremBookmarkComponent: BookmarksComponent;
+  @ViewChild('cremBookmark', { static: false }) cremBookmarkComponent: BookmarksComponent;
   @ViewChild('appModule') appModule: ElementRef<HTMLDivElement>; 
   
   navigationLinks: any = [];
@@ -69,8 +69,9 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
 
           if (!!showSubLeftNav) {
             return this.leftNavService.getModuleNavigationLinksForRenderForm(url);
-          } else if (moduleId == 6) {
-            return this.leftNavService.getAdminModulesNavigationLinks(moduleId);
+          // Story 140258: Commented out the following block, uncomment it in the future when needed.
+          // } else if (moduleId == 6) {
+          //   return this.leftNavService.getAdminModulesNavigationLinks(moduleId);
           } else {
             return this.leftNavService.getModuleNavigationLinks(moduleId);;
           }
@@ -104,9 +105,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     }))
   }
 
-  
-
-  private getDatabaseRestoreInfo(){
+  private getDatabaseRestoreInfo() {
     this.subs.add(this.headerService.getDBLastRestore().subscribe({
       next: (res: any) => this.popoverContent = res.data
     }))
@@ -211,6 +210,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   onResize(event: Event) {
     this.updateHeight(); 
   }
+  
   private showRenderFormHeader(event: CustomEvent) {
     if (event.detail instanceof RenderFormHeaderData) {
         this.renderFormHeaderData = event.detail;

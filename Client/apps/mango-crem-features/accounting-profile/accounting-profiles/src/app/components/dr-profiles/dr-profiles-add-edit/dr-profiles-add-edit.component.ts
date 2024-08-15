@@ -256,8 +256,8 @@ export class DiscountRateProfilesAddEditComponent implements OnInit, AfterViewIn
   }
 
   deleteProfile() {
-    console.log('Delete Me!');
-    console.log(this.formData.policyId);
+    // console.log(this.formData.policyId);
+    return
   }
 
   validateDiscountRate(): boolean {

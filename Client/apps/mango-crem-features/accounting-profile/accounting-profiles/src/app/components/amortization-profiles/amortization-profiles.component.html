@@ -1,1 +1,10 @@
-<p>amortization-profiles works!</p>
+<div *ngIf="hasModuleRights else noAccessContent">
+</div>
+<ng-template #noAccessContent>
+  <div class="no-access-content">
+    <crem-no-objects-found
+        [title]="'No access to the Amortization Profiles'"
+        [subtitle]="'You do not currently have access to this page, please contact your Admin'"
+    ></crem-no-objects-found>
+  </div>
+</ng-template>

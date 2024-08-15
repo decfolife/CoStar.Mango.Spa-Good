@@ -1,395 +1,403 @@
+<div *ngIf="hasModuleRights else noAccessContent">
+    <div class="mat-drawer-container" [hidden]="loading">
+        <div class="mat-drawer-content oflow-x-hidden">
 
-<div class="mat-drawer-container" [hidden]="loading">
-    <div class="mat-drawer-content oflow-x-hidden">
-
-        <div class="dynamic-form">
-            <div class="dynamic-form-controls-wrapper"
-            [ngClass]="{
-                'dynamic-form-controls-wrapper--legacy': !isFrameless
-            }"
-        >
-            <div class="controls-left">
-                <h5 class="dbl-right-margin">Accounting Settings</h5>
-                <app-portfolio-dropdown
-                    (masterGroupID)="getPortfolioSettings($event)"
-                    [disabled]="portfolioSettingsSave || classificationConfigurationSave">
-                </app-portfolio-dropdown>
-            </div>
-            <div
+            <div class="dynamic-form">
+                <div class="dynamic-form-controls-wrapper"
                 [ngClass]="{
-                    'controls-right': isFrameless,
-                    'controls-right--legacy': !isFrameless
+                    'dynamic-form-controls-wrapper--legacy': !isFrameless
                 }"
             >
-                <button *ngIf="baseService.userRights === 2" id="saveBtn" class="btn btn-primary" (click)="saveSettings()" [disabled]="portfolioSettingsSave || classificationConfigurationSave">Save</button>
+                <div class="controls-left">
+                    <h5 class="dbl-right-margin">Accounting Settings</h5>
+                    <app-portfolio-dropdown
+                        (masterGroupID)="getPortfolioSettings($event)"
+                        [disabled]="portfolioSettingsSave || classificationConfigurationSave">
+                    </app-portfolio-dropdown>
+                </div>
+                <div
+                    [ngClass]="{
+                        'controls-right': isFrameless,
+                        'controls-right--legacy': !isFrameless
+                    }"
+                >
+                    <button *ngIf="baseService.userRights === 2" id="saveBtn" class="btn btn-primary" (click)="saveSettings()" [disabled]="portfolioSettingsSave || classificationConfigurationSave">Save</button>
+                </div>
             </div>
-        </div>
 
-            <div class="dynamic-form-content">
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>Accounting Settings</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="no-padding">
+                <div class="dynamic-form-content">
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>Accounting Settings</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content class="no-padding">
 
 
-                        <div class="widget-container">
-                            <dx-form id="form"
-                                [(formData)]="service.portfolioSettings"
-                                [showColonAfterLabel]="false"
-                                labelLocation="left"
-                                minColWidth="50%"
-                                colCount="1"
-                                width="100%">
+                            <div class="widget-container">
+                                <dx-form id="form"
+                                    [(formData)]="service.portfolioSettings"
+                                    [showColonAfterLabel]="false"
+                                    labelLocation="left"
+                                    minColWidth="50%"
+                                    colCount="1"
+                                    width="100%">
 
-                                <dxi-item itemType="group" [colCount]="2">
+                                    <dxi-item itemType="group" [colCount]="2">
 
-                                    <dxi-item dataField="leaseRecognitionCalendarID" [label]="{text: 'Accounting Calendar'}" editorType="dxSelectBox"
-                                        [editorOptions]="{ disabled: baseService.userRights !== 2 || service.isCalendarInUse === true, dataSource: this.accountingCalendars, valueExpr: 'leaseRecognitionCalendarID', displayExpr: 'calendarName', onvaluechanged: leaseRecognitionCalendarChanged() }">
-                                        <dxo-label text="Accounting Calendar"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="AccountingCalendarID"
-                                                [dataSource]="accountingCalendars"
-                                                [value]="service.portfolioSettings.leaseRecognitionCalendarID"
-                                                [disabled]="baseService.userRights !== 2 || service.isCalendarInUse === true"
-                                                (onValueChanged)="dropDownChange('leaseRecognitionCalendarID', $event)"
-                                                valueExpr="leaseRecognitionCalendarID"
-                                                displayExpr="calendarName"
+                                        <dxi-item dataField="leaseRecognitionCalendarID" [label]="{text: 'Accounting Calendar'}" editorType="dxSelectBox"
+                                            [editorOptions]="{ disabled: baseService.userRights !== 2 || service.isCalendarInUse === true, dataSource: this.accountingCalendars, valueExpr: 'leaseRecognitionCalendarID', displayExpr: 'calendarName', onvaluechanged: leaseRecognitionCalendarChanged() }">
+                                            <dxo-label text="Accounting Calendar"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="AccountingCalendarID"
+                                                    [dataSource]="accountingCalendars"
+                                                    [value]="service.portfolioSettings.leaseRecognitionCalendarID"
+                                                    [disabled]="baseService.userRights !== 2 || service.isCalendarInUse === true"
+                                                    (onValueChanged)="dropDownChange('leaseRecognitionCalendarID', $event)"
+                                                    valueExpr="leaseRecognitionCalendarID"
+                                                    displayExpr="calendarName"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="AccountingCalendar"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="amortizationMethodType" [label]="{text: 'Amortization Method'}" editorType="dxSelectBox"
+                                            [editorOptions]="{ disabled: baseService.userRights !== 2 || service.isCalendarInUse === true, dataSource: this.amortizationMethodTypes, valueExpr: 'Id', displayExpr: 'Name' }"
                                             >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="AccountingCalendar"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
+                                            <dxo-label text="Amortization Method"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="AmortizationMethodID"
+                                                    [dataSource]="amortizationMethodTypes"
+                                                    [value]="service.portfolioSettings.amortizationMethodType"
+                                                    [disabled]="baseService.userRights !== 2 || service.isCalendarInUse === true"
+                                                    (onValueChanged)="dropDownChange('amortizationMethodType', $event)"
+                                                    valueExpr="Id"
+                                                    displayExpr="Name"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="AmortizationMethod"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
 
-                                    <dxi-item dataField="amortizationMethodType" [label]="{text: 'Amortization Method'}" editorType="dxSelectBox"
-                                        [editorOptions]="{ disabled: baseService.userRights !== 2 || service.isCalendarInUse === true, dataSource: this.amortizationMethodTypes, valueExpr: 'Id', displayExpr: 'Name' }"
+                                        <dxi-item dataField="defaultPaymentTimingType" [label]="{text: 'Default Payment Timing'}" editorType="dxSelectBox"
+                                            [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.defaultPaymentTimingTypes, valueExpr: 'Id', displayExpr: 'Name' }"
                                         >
-                                        <dxo-label text="Amortization Method"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="AmortizationMethodID"
-                                                [dataSource]="amortizationMethodTypes"
-                                                [value]="service.portfolioSettings.amortizationMethodType"
-                                                [disabled]="baseService.userRights !== 2 || service.isCalendarInUse === true"
-                                                (onValueChanged)="dropDownChange('amortizationMethodType', $event)"
-                                                valueExpr="Id"
-                                                displayExpr="Name"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="AmortizationMethod"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
+                                            <dxo-label text="Default Payment Timing"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="DefaultPaymentTimingID"
+                                                    [dataSource]="defaultPaymentTimingTypes"
+                                                    [value]="service.portfolioSettings.defaultPaymentTimingType"
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    (onValueChanged)="dropDownChange('defaultPaymentTimingType', $event)"
+                                                    valueExpr="Id"
+                                                    displayExpr="Name"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="DefaultPaymentTiming"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
 
-                                    <dxi-item dataField="defaultPaymentTimingType" [label]="{text: 'Default Payment Timing'}" editorType="dxSelectBox"
-                                        [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.defaultPaymentTimingTypes, valueExpr: 'Id', displayExpr: 'Name' }"
-                                    >
-                                        <dxo-label text="Default Payment Timing"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="DefaultPaymentTimingID"
-                                                [dataSource]="defaultPaymentTimingTypes"
-                                                [value]="service.portfolioSettings.defaultPaymentTimingType"
-                                                [disabled]="baseService.userRights !== 2"
-                                                (onValueChanged)="dropDownChange('defaultPaymentTimingType', $event)"
-                                                valueExpr="Id"
-                                                displayExpr="Name"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="DefaultPaymentTiming"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
+                                        <dxi-item dataField="journalEntryProfileRequired" [label]="{text: 'Require Journal Entry Profile'}">
+                                            <div *dxTemplate class="toggle">
+                                                <mat-slide-toggle [ngClass]="{
+                                                    'no-toggle': disableToggleAnimation
+                                                    }"
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    [(ngModel)]="service.portfolioSettings.journalEntryProfileRequired">
+                                                </mat-slide-toggle>
+                                                <crem-tooltip
+                                                    externalId="JournalEntryProfile"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
 
-                                    <dxi-item dataField="journalEntryProfileRequired" [label]="{text: 'Require Journal Entry Profile'}">
-                                        <div *dxTemplate class="toggle">
-                                            <mat-slide-toggle [ngClass]="{
-                                                'no-toggle': disableToggleAnimation
-                                                }"
+                                        <dxi-item dataField="defaultCompoundFrequencyType" [label]="{text: 'Default Compound Frequency'}" editorType="dxSelectBox"
+                                            [editorOptions]="{ disabled: baseService.userRights !== 2 || service.portfolioSettings.leaseRecognitionCalendarID !== 1, dataSource: this.defaultCompoundFrequencyTypes, valueExpr: 'Id', displayExpr: 'Name' }"
+                                        >
+                                            <dxo-label text="Default Compound Frequency"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="DefaultCompoundFrequencyID"
+                                                    [dataSource]="defaultCompoundFrequencyTypes"
+                                                    [value]="service.portfolioSettings.defaultCompoundFrequencyType"
+                                                    [disabled]="baseService.userRights !== 2 || service.portfolioSettings.leaseRecognitionCalendarID !== 1"
+                                                    (onValueChanged)="dropDownChange('defaultCompoundFrequencyType', $event)"
+                                                    valueExpr="Id"
+                                                    displayExpr="Name"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="DefaultCompoundFrequency"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+                                    </dxi-item>
+                                </dx-form>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>Discount Rates</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content class="no-padding">
+                            <div class="widget-container">
+                                <dx-form id="form"
+                                    [(formData)]="service.portfolioSettings"
+                                    [showColonAfterLabel]="false"
+                                    labelLocation="left"
+                                    minColWidth="50%"
+                                    colCount="1"
+                                    width="100%">
+
+                                    <dxi-item itemType="group" [colCount]="2">
+
+                                        <dxi-item dataField="discountRateMatching" [label]="{text: 'Discount Rate Matching'}">
+                                            <div *dxTemplate class="toggle">
+                                                <mat-slide-toggle [ngClass]="{
+                                                    'no-toggle': disableToggleAnimation
+                                                    }"
                                                 [disabled]="baseService.userRights !== 2"
-                                                [(ngModel)]="service.portfolioSettings.journalEntryProfileRequired">
+                                                [(ngModel)]="service.portfolioSettings.discountRateMatching">
                                             </mat-slide-toggle>
-                                            <crem-tooltip
-                                                externalId="JournalEntryProfile"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
+                                                <crem-tooltip
+                                                    externalId="DiscountRateMatching"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="directEntryDiscountRateEnabled" [label]="{text: 'Allow Direct Entry Discount Rate'}">
+                                            <div *dxTemplate class="toggle">
+                                                <mat-slide-toggle [ngClass]="{
+                                                    'no-toggle': disableToggleAnimation
+                                                    }"
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    [(ngModel)]="service.portfolioSettings.directEntryDiscountRateEnabled">
+                                                </mat-slide-toggle>
+                                                <crem-tooltip
+                                                    externalId="DirectEntryDiscountRate"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="minMonthsOperator" [label]="{text: 'Min Months Operator'}" editorType="dxSelectBox"
+                                            [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.minMonthsOperators, valueExpr: 'Id', displayExpr: 'Name' }"
+                                        >
+                                            <dxo-label text="Min Months Operator"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="MinMonthsOperatorID"
+                                                    [dataSource]="minMonthsOperators"
+                                                    [value]="service.portfolioSettings.minMonthsOperator"
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    (onValueChanged)="dropDownChange('minMonthsOperator', $event)"
+                                                    valueExpr="Id"
+                                                    displayExpr="Name"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="MinMonthsOperator"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="defaultAnnualRateType" [label]="{text: 'Default Annual Rate Type'}" editorType="dxSelectBox"
+                                            [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.defaultAnnualRateTypes, valueExpr: 'Id', displayExpr: 'Name' }"
+                                        >
+                                            <dxo-label text="Default Annual Rate Type"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="DefaultAnnualRateTypeID"
+                                                    [dataSource]="defaultAnnualRateTypes"
+                                                    [value]="service.portfolioSettings.defaultAnnualRateType"
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    (onValueChanged)="dropDownChange('defaultAnnualRateType', $event)"
+                                                    valueExpr="Id"
+                                                    displayExpr="Name"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="DefaultAnnualRateType"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item dataField="maxMonthsOperator" [label]="{text: 'Max Months Operator'}" editorType="dxSelectBox"
+                                            [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.maxMonthsOperators, valueExpr: 'Id', displayExpr: 'Name' }"
+                                        >
+                                            <dxo-label text="Max Months Operator"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="MaxMonthsOperatorID"
+                                                    [dataSource]="maxMonthsOperators"
+                                                    [value]="service.portfolioSettings.maxMonthsOperator"
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    (onValueChanged)="dropDownChange('maxMonthsOperator', $event)"
+                                                    valueExpr="Id"
+                                                    displayExpr="Name"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="MaxMonthsOperator"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
                                     </dxi-item>
+                                </dx-form>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
 
-                                    <dxi-item dataField="defaultCompoundFrequencyType" [label]="{text: 'Default Compound Frequency'}" editorType="dxSelectBox"
-                                        [editorOptions]="{ disabled: baseService.userRights !== 2 || service.portfolioSettings.leaseRecognitionCalendarID !== 1, dataSource: this.defaultCompoundFrequencyTypes, valueExpr: 'Id', displayExpr: 'Name' }"
-                                    >
-                                        <dxo-label text="Default Compound Frequency"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="DefaultCompoundFrequencyID"
-                                                [dataSource]="defaultCompoundFrequencyTypes"
-                                                [value]="service.portfolioSettings.defaultCompoundFrequencyType"
-                                                [disabled]="baseService.userRights !== 2 || service.portfolioSettings.leaseRecognitionCalendarID !== 1"
-                                                (onValueChanged)="dropDownChange('defaultCompoundFrequencyType', $event)"
-                                                valueExpr="Id"
-                                                displayExpr="Name"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="DefaultCompoundFrequency"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>Functional Currency</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content class="no-padding">
+                            <div class="widget-container">
+                                <dx-form id="form"
+                                    [(formData)]="service.portfolioSettings"
+                                    [showColonAfterLabel]="false"
+                                    labelLocation="left"
+                                    minColWidth="50%"
+                                    colCount="1"
+                                    width="100%">
+
+                                    <dxi-item itemType="group" [colCount]="2">
+
+                                        <dxi-item>
+                                            <dxo-label text="Functional Currency"></dxo-label>
+                                            <div *dxTemplate class="toggle">
+                                                <mat-slide-toggle
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    [(ngModel)]="service.portfolioSettings.functionalCurrencyEnabled">
+                                                </mat-slide-toggle>
+                                                <crem-tooltip
+                                                    externalId="FunctionalCurrency"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item>
+                                            <dxo-label text="Allow Direct Entry Functional Currency Rate"></dxo-label>
+                                            <div *dxTemplate class="toggle">
+                                                <mat-slide-toggle
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    [(ngModel)]="service.portfolioSettings.directEntryFunctionalCurrencyRateEnabled"
+                                                    (change)="functionalCurrencyRateDirectEntryChanged()">
+                                                </mat-slide-toggle>
+                                                <crem-tooltip
+                                                    externalId="DirectEntryFunctionalCurrencyRateEnabled"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item>
+                                            <dxo-label text="Functional Currency Rateset"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="FunctionalCurrencyRatesetsID"
+                                                    [dataSource]="functionalCurrencyRatesets"
+                                                    [value]="service.portfolioSettings.functionalCurrencyRateset"
+                                                    [disabled]="baseService.userRights !== 2"
+                                                    valueExpr="Name"
+                                                    displayExpr="Name"
+                                                    [(ngModel)]="service.portfolioSettings.functionalCurrencyRateset"
+                                                    (onValueChanged)="functionalCurrencyRatesetChanged()"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="FunctionalCurrencyRatesets"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
+                                        <dxi-item>
+                                            <dxo-label text="Functional Currency Period"></dxo-label>
+                                            <div *dxTemplate>
+                                                <dx-select-box id="FunctionalCurrencyPeriodsID"
+                                                    [dataSource]="functionalCurrencyPeriods"
+                                                    [value]="service.portfolioSettings.functionalCurrencyPeriod"
+                                                    [disabled]="service.portfolioSettings.functionalCurrencyRateset === 'Direct Entry' || baseService.userRights !== 2"
+                                                    [(ngModel)]="service.portfolioSettings.functionalCurrencyPeriod"
+                                                    valueExpr="Name"
+                                                    displayExpr="Name"
+                                                >
+                                                </dx-select-box>
+                                                <crem-tooltip
+                                                    externalId="FunctionalCurrencyPeriods"
+                                                    helpTextData="">
+                                                </crem-tooltip>
+                                            </div>
+                                        </dxi-item>
+
                                     </dxi-item>
-                                </dxi-item>
-                            </dx-form>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
+                                </dx-form>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
 
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>Discount Rates</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="no-padding">
-                        <div class="widget-container">
-                            <dx-form id="form"
-                                [(formData)]="service.portfolioSettings"
-                                [showColonAfterLabel]="false"
-                                labelLocation="left"
-                                minColWidth="50%"
-                                colCount="1"
-                                width="100%">
+                    <mat-card>
+                        <mat-card-header>
+                            <mat-card-title>Classifications &amp; Measure Event Default Values</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content *ngIf='this.dropDownService.classificationConfiguration.length > 0' class="no-padding">
 
-                                <dxi-item itemType="group" [colCount]="2">
+                            <dx-tab-panel
+                                #tabPanel
+                                [selectedIndex]="0"
+                                [loop]="false"
+                                [animationEnabled]="true"
+                                [swipeEnabled]="true"
+                                [showNavButtons]="true">
 
-                                    <dxi-item dataField="discountRateMatching" [label]="{text: 'Discount Rate Matching'}">
-                                        <div *dxTemplate class="toggle">
-                                            <mat-slide-toggle [ngClass]="{
-                                                'no-toggle': disableToggleAnimation
-                                                }"
-                                            [disabled]="baseService.userRights !== 2"
-                                            [(ngModel)]="service.portfolioSettings.discountRateMatching">
-                                        </mat-slide-toggle>
-                                            <crem-tooltip
-                                                externalId="DiscountRateMatching"
-                                                helpTextData="">
-                                            </crem-tooltip>
+                                <dxi-item *ngFor="let classification of classificationTypes" [title]="classification.classificationName">
+
+                                    <div class="custom-data-grid-toolbar">
+                                        <div class="grid-controls-left">
+                                            <mat-slide-toggle [(ngModel)]="classification.isActive" [disabled]="true">Active</mat-slide-toggle>
                                         </div>
-                                    </dxi-item>
-
-                                    <dxi-item dataField="directEntryDiscountRateEnabled" [label]="{text: 'Allow Direct Entry Discount Rate'}">
-                                        <div *dxTemplate class="toggle">
-                                            <mat-slide-toggle [ngClass]="{
-                                                'no-toggle': disableToggleAnimation
-                                                }"
-                                                [disabled]="baseService.userRights !== 2"
-                                                [(ngModel)]="service.portfolioSettings.directEntryDiscountRateEnabled">
-                                            </mat-slide-toggle>
-                                            <crem-tooltip
-                                                externalId="DirectEntryDiscountRate"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-
-                                    <dxi-item dataField="minMonthsOperator" [label]="{text: 'Min Months Operator'}" editorType="dxSelectBox"
-                                        [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.minMonthsOperators, valueExpr: 'Id', displayExpr: 'Name' }"
-                                    >
-                                        <dxo-label text="Min Months Operator"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="MinMonthsOperatorID"
-                                                [dataSource]="minMonthsOperators"
-                                                [value]="service.portfolioSettings.minMonthsOperator"
-                                                [disabled]="baseService.userRights !== 2"
-                                                (onValueChanged)="dropDownChange('minMonthsOperator', $event)"
-                                                valueExpr="Id"
-                                                displayExpr="Name"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="MinMonthsOperator"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-
-                                    <dxi-item dataField="defaultAnnualRateType" [label]="{text: 'Default Annual Rate Type'}" editorType="dxSelectBox"
-                                        [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.defaultAnnualRateTypes, valueExpr: 'Id', displayExpr: 'Name' }"
-                                    >
-                                        <dxo-label text="Default Annual Rate Type"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="DefaultAnnualRateTypeID"
-                                                [dataSource]="defaultAnnualRateTypes"
-                                                [value]="service.portfolioSettings.defaultAnnualRateType"
-                                                [disabled]="baseService.userRights !== 2"
-                                                (onValueChanged)="dropDownChange('defaultAnnualRateType', $event)"
-                                                valueExpr="Id"
-                                                displayExpr="Name"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="DefaultAnnualRateType"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-
-                                    <dxi-item dataField="maxMonthsOperator" [label]="{text: 'Max Months Operator'}" editorType="dxSelectBox"
-                                        [editorOptions]="{ disabled: baseService.userRights !== 2, dataSource: this.maxMonthsOperators, valueExpr: 'Id', displayExpr: 'Name' }"
-                                    >
-                                        <dxo-label text="Max Months Operator"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="MaxMonthsOperatorID"
-                                                [dataSource]="maxMonthsOperators"
-                                                [value]="service.portfolioSettings.maxMonthsOperator"
-                                                [disabled]="baseService.userRights !== 2"
-                                                (onValueChanged)="dropDownChange('maxMonthsOperator', $event)"
-                                                valueExpr="Id"
-                                                displayExpr="Name"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="MaxMonthsOperator"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-                                </dxi-item>
-                            </dx-form>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>Functional Currency</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content class="no-padding">
-                        <div class="widget-container">
-                            <dx-form id="form"
-                                [(formData)]="service.portfolioSettings"
-                                [showColonAfterLabel]="false"
-                                labelLocation="left"
-                                minColWidth="50%"
-                                colCount="1"
-                                width="100%">
-
-                                <dxi-item itemType="group" [colCount]="2">
-
-                                    <dxi-item>
-                                        <dxo-label text="Functional Currency"></dxo-label>
-                                        <div *dxTemplate class="toggle">
-                                            <mat-slide-toggle
-                                                [disabled]="baseService.userRights !== 2"
-                                                [(ngModel)]="service.portfolioSettings.functionalCurrencyEnabled">
-                                            </mat-slide-toggle>
-                                            <crem-tooltip
-                                                externalId="FunctionalCurrency"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-
-                                    <dxi-item>
-                                        <dxo-label text="Allow Direct Entry Functional Currency Rate"></dxo-label>
-                                        <div *dxTemplate class="toggle">
-                                            <mat-slide-toggle
-                                                [disabled]="baseService.userRights !== 2"
-                                                [(ngModel)]="service.portfolioSettings.directEntryFunctionalCurrencyRateEnabled"
-                                                (change)="functionalCurrencyRateDirectEntryChanged()">
-                                            </mat-slide-toggle>
-                                            <crem-tooltip
-                                                externalId="DirectEntryFunctionalCurrencyRateEnabled"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-
-                                    <dxi-item>
-                                        <dxo-label text="Functional Currency Rateset"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="FunctionalCurrencyRatesetsID"
-                                                [dataSource]="functionalCurrencyRatesets"
-                                                [value]="service.portfolioSettings.functionalCurrencyRateset"
-                                                [disabled]="baseService.userRights !== 2"
-                                                valueExpr="Name"
-                                                displayExpr="Name"
-                                                [(ngModel)]="service.portfolioSettings.functionalCurrencyRateset"
-                                                (onValueChanged)="functionalCurrencyRatesetChanged()"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="FunctionalCurrencyRatesets"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-
-                                    <dxi-item>
-                                        <dxo-label text="Functional Currency Period"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box id="FunctionalCurrencyPeriodsID"
-                                                [dataSource]="functionalCurrencyPeriods"
-                                                [value]="service.portfolioSettings.functionalCurrencyPeriod"
-                                                [disabled]="service.portfolioSettings.functionalCurrencyRateset === 'Direct Entry' || baseService.userRights !== 2"
-                                                [(ngModel)]="service.portfolioSettings.functionalCurrencyPeriod"
-                                                valueExpr="Name"
-                                                displayExpr="Name"
-                                            >
-                                            </dx-select-box>
-                                            <crem-tooltip
-                                                externalId="FunctionalCurrencyPeriods"
-                                                helpTextData="">
-                                            </crem-tooltip>
-                                        </div>
-                                    </dxi-item>
-
-                                </dxi-item>
-                            </dx-form>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>Classifications &amp; Measure Event Default Values</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content *ngIf='this.dropDownService.classificationConfiguration.length > 0' class="no-padding">
-
-                        <dx-tab-panel
-                            #tabPanel
-                            [selectedIndex]="0"
-                            [loop]="false"
-                            [animationEnabled]="true"
-                            [swipeEnabled]="true"
-                            [showNavButtons]="true">
-
-                            <dxi-item *ngFor="let classification of classificationTypes" [title]="classification.classificationName">
-
-                                <div class="custom-data-grid-toolbar">
-                                    <div class="grid-controls-left">
-                                        <mat-slide-toggle [(ngModel)]="classification.isActive" [disabled]="true">Active</mat-slide-toggle>
                                     </div>
-                                </div>
 
-                                <app-measure-event-settings
-                                    [dropDownValues]="dropDownValues"
-                                    [classificationID]="classification.classificationID">
-                                </app-measure-event-settings>
-                            </dxi-item>
+                                    <app-measure-event-settings
+                                        [dropDownValues]="dropDownValues"
+                                        [classificationID]="classification.classificationID">
+                                    </app-measure-event-settings>
+                                </dxi-item>
 
-                        </dx-tab-panel>
-                    </mat-card-content>
-                </mat-card>
+                            </dx-tab-panel>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
             </div>
 
         </div>
 
     </div>
-
 </div>
-
+<ng-template #noAccessContent>
+    <div class="no-access-content">
+      <crem-no-objects-found
+          [title]="'No access to the Accounting Settings'"
+          [subtitle]="'You do not currently have access to this page, please contact your Admin'"
+      ></crem-no-objects-found>
+    </div>
+  </ng-template>
 <dx-load-panel
     #loadPanel
     shadingColor="rgba(0,0,0,0.4)"

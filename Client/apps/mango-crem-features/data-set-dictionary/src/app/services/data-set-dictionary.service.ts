@@ -33,10 +33,8 @@ export class DataSetDictionaryService {
     this.apiUrl = UtilitiesService.getBaseApiUrl(Api.dataSetDictionary)
     this.reportsUrl = UtilitiesService.getBaseApiUrl(Api.reports)
 
-    if (environment.isRestful) {
-      this.apiUrl += 'reports/';
-      this.reportsUrl += 'reports/';
-    }
+    this.apiUrl += 'reports/';
+    this.reportsUrl += 'reports/';
   }
 
   getReportingIntervalSettings() {
@@ -59,56 +57,27 @@ export class DataSetDictionaryService {
 
   getDataFieldsByDataSet(dataSetId: number) {
     const url = `${this.apiUrl}GetDataFieldsByDataSet`;
-
-    if (environment.isRestful) {
-      return this.callHttpGet(url + `/${dataSetId}`, 'getDataFieldsByDataSet');
-    }
-
-    return this.callHttpGet(url, 'getDataFieldsByDataSet', { dataSetId: dataSetId });
+    return this.callHttpGet(url + `/${dataSetId}`, 'getDataFieldsByDataSet');
   }
 
   getDataSetsByDataField(dataFieldId: number) {
     const url = `${this.apiUrl}GetDataSetsByDataField`;
-
-    if (environment.isRestful) {
-      return this.callHttpGet(url + `/${dataFieldId}`, 'getDataSetsByDataField');
-    }
-
-    return this.callHttpGet(url, 'getDataSetsByDataField', { dataFieldId: dataFieldId });
+    return this.callHttpGet(url + `/${dataFieldId}`, 'getDataSetsByDataField');
   }
 
   getDataTypeFormatList(dataTypeId: number) {
     const url = `${this.apiUrl}GetDataTypeFormatList`;
-
-    if (environment.isRestful) {
-      return this.callHttpGet(url + `/${dataTypeId}`, 'getDataTypeFormatList');
-    }
-
-    return this.callHttpGet(url, 'getDataTypeFormatList', { dataTypeId: dataTypeId });
+    return this.callHttpGet(url + `/${dataTypeId}`, 'getDataTypeFormatList');
   }
 
   updateDataSet(request: DataSetRequest) {
     const url = `${this.apiUrl}UpdateDataSet`;
-
-    if (environment.isRestful) {
-      return this.callHttpPost(url, 'updateDataSet', JSON.stringify(request))
-    }
-
-    return this.callHttpPost(
-      url, 'updateDataSet', `{ request: ${JSON.stringify(request)} }`
-    );
+    return this.callHttpPost(url, 'updateDataSet', JSON.stringify(request))
   }
 
   updateDataField(request: DataFieldRequest) {
     const url = `${this.apiUrl}UpdateDataField`;
-
-    if (environment.isRestful) {
-      return this.callHttpPost(url, 'updateDataField', JSON.stringify(request))
-    }
-
-    return this.callHttpPost(
-      url, 'updateDataField', `{ request: ${JSON.stringify(request)} }`
-    );
+    return this.callHttpPost(url, 'updateDataField', JSON.stringify(request))
   }
 
   protected callHttpGet(url: string, logName: string, httpOptionsParams?: HttpParamsObj) {

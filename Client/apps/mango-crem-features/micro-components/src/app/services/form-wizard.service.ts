@@ -34,13 +34,19 @@ export class FormWizardService extends EndpointService {
   }
 
   public getRedirectorLink(OTID: number, OTTID: number): Observable<any> {
-    let url = `${this.formWizardUrl}Dashboards/GetRedirectorLink`;  
+    let url = `${this.formWizardUrl}FormWizards/GetRedirectorLink`;  
     return this.callHttpGet(url, 'GetRedirectorLink', { OTID: OTID, OTTID: OTTID})
   }
 
   public getBuildingLeaseDefaultInfo(OID: number, OTID: number): Observable<any> {
     let url = `${this.formWizardUrl}FormWizards/GetBuildingLeaseDefaultInfo`;
     return this.callHttpGet(url, 'GetBuildingLeaseDefaultInfo', { ObjectID: OID, ObjectTypeID: OTID })
+  }
+
+  public addContact(contactRequest: any): Observable<any> {
+    let url = `${this.formWizardUrl}FormWizards/AddContact`;
+    let param = contactRequest;
+    return this.callHttpPost(url, 'AddContact', param)
   }
 
   public addTransaction(transaction: any): Observable<any> {
@@ -55,6 +61,18 @@ export class FormWizardService extends EndpointService {
     let param = building;
 
     return this.callHttpPost(url, 'AddBuilding', param)
+  }
+  
+  public addSupplier(supplier: any): Observable<any> {
+    const url = `${this.formWizardUrl}FormWizards/AddSupplier`;
+    return this.callHttpPost(url, 'AddSupplier', supplier);
+  }
+
+  public addEquipment(equipment: any): Observable<any> {
+    let url = `${this.formWizardUrl}FormWizards/AddEquipment`;
+    let param = equipment;
+
+    return this.callHttpPost(url, 'AddEquipment', param)
   }
 
   public getManagers(teamId: number): Observable<any> {
@@ -74,5 +92,17 @@ export class FormWizardService extends EndpointService {
   public getProjectWizardClientPreferences(): Observable<any> {
     let url = `${this.formWizardUrl}FormWizards/GetProjectWizardClientPreferences`;
     return this.callHttpGet(url, 'FormWizards/GetProjectWizardClientPreferences')
+  }
+
+  public getAllUserGroups(): Observable<any> {
+    let url = `${this.formWizardUrl}FormWizards/GetAllUserGroups`;
+    return this.callHttpGet(url, 'FormWizards/GetAllUserGroups')
+  }
+
+  public addCompany(company: any): Observable<any> {
+    let url = `${this.formWizardUrl}FormWizards/AddCompany`;
+    let param = company;
+ 
+    return this.callHttpPost(url, 'AddCompany', param)
   }
 }

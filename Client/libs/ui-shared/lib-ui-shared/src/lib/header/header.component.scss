@@ -52,6 +52,8 @@
       width: 143px;
       height: 40px;
       margin-top: -4px; // Corrects vertical positioning
+      cursor: pointer;
+
       &.phone {
         display: none;
       }
@@ -350,6 +352,7 @@
     ul {
       &.details { // Use details only for options without links
         @include costar(padding-bottom, 2);
+        @include costar(padding-top, 2);
         @include costar(border-bottom, gray03);
         li {
           display: flex;

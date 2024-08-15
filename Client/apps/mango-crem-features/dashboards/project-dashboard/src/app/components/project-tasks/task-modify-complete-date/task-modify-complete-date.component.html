@@ -1,0 +1,52 @@
+<crem-modal
+  [class]="'tmc-modifyCompleteDate'"
+  [modalTitle] = "modalTitle"
+  [closeIconVisible] = "'true'"
+  [closeDialogResult]="'true'"
+  [modalId] = "'tmc-modifyCompleteDateId'"
+  [customFooter]="'true'"
+>
+<div modalContent>
+<div class="tmc-currentDate" >
+  <div class="tmc-currentDate-label">Current Date:</div>
+  <div class="tmc-currentDate-val">{{(taskCompletionDates.systemDate ? taskCompletionDates.userDate < taskCompletionDates.systemDate ? taskCompletionDates.userDate : taskCompletionDates.systemDate : taskCompletionDates.userDate ) | date: dateFormat}}</div>
+</div>
+
+<div class="tmc-systemDate">
+  <div class="tmc-systemDate-label">System Date:</div>
+  <div>{{taskCompletionDates.userDate != null && taskCompletionDates.systemDate == null ? 'Overridden' : (taskCompletionDates.systemDate | date: dateFormat)}}</div>
+</div>
+
+  <div class="tmc-modifyDate-container">
+    <div class="tmc-modifyDate-label label">Modified Date:</div>
+    <crem-tooltip class="tmc-tooltip"
+      [externalId]="'tmc-tooltipId'"
+      [helpTextData]="'Enter a date for when the task was completed. Modifying this date will create a note in the project notes log.'"
+    >
+    </crem-tooltip>
+    <crem-date-picker 
+      [(value)]="modifiedDate"
+      [dateFormat]="dateFormat"
+      [showClearButton]="'true'"
+      [inputId]="'tmc-modifyDateId'"
+      [placeholderText]="'Select Date...'"
+      (changeEvent)="onModifyCompleteDateChange($event)"
+    >
+   </crem-date-picker>
+  </div>
+  <div class="tmc-reason">
+    <div class="label" >Reason: </div>
+    <textarea aria-label="Reason" (input)="onReasonValueChanged($event)" [value]="reasonText" cols="38" rows="2"> </textarea>
+  </div>
+  <div class="tmc-error">
+    {{errorMessage}}
+  </div>
+</div>
+  <div modalFooter class="modifyCompleteDate-footerContent">
+    <div id="buttonTemplate" class="footerRightControls">
+      <crem-button  type="secondary" class="cancelChanges tmc-btn" (click)="closeModal()"> Cancel </crem-button>
+      <crem-button  type="secondary" class="resetChanges tmc-btn" (click)="resetTaskCompletionDates();"> Reset </crem-button>
+      <crem-button  type="primary" class="saveChanges tmc-btn" (click)="saveTaskCompletionDates();"> Save </crem-button>
+    </div>
+  </div>
+</crem-modal>

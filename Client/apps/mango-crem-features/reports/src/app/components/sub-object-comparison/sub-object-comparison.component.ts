@@ -12,14 +12,12 @@ import {
   faCaretDown,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
-import { jsPDF } from "jspdf";
-import autoTable from 'jspdf-autotable';
 import { ProjectGanttChartService } from '../project-gantt-chart/project-gantt-chart.service';
 import { SharedService } from '../../shared/services/shared.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { interval, Subscription } from 'rxjs';
 import notify from 'devextreme/ui/notify';
+import { UtilitiesService } from '@mango/core-shared';
 
 @Component({
   selector: 'mango-sub-object-comparison',
@@ -63,12 +61,11 @@ export class SubObjectComparisonComponent implements OnInit {
     private route: ActivatedRoute,
   ) {
     this.widgetId = +this.route.snapshot.paramMap.get('widgetId');
-
   }
 
   ngOnInit(): void {
     // /221/45/3819,3856,3868
-    this.clientKey = this.getClientKeyFromUrl();
+    this.clientKey = UtilitiesService.getClientKeyFromUrl();
     this.formId = +this.route.snapshot.paramMap.get('formId');
     this.childObjectTypeId = +this.route.snapshot.paramMap.get('childObjectTypeId');
     this.parentObjectId = +this.route.snapshot.paramMap.get('parentObjectId');
@@ -87,13 +84,6 @@ export class SubObjectComparisonComponent implements OnInit {
           })
 
       })
-  }
-
-  public getClientKeyFromUrl(): string {
-    const currentEnvironment = window.location.origin;
-    const path = currentEnvironment?.split("//")[1];
-    const clientKey = path?.split(".")[0];
-    return clientKey;
   }
 
   public displayColumnChooser() {

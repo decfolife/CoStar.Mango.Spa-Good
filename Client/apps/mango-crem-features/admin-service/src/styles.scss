@@ -1,11 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
 @import "../../../mango/src/assets/styles/costar-angular-material.scss";
 @import "../../../mango/src/assets/styles/costar-dev-extreme.scss";
 @import "../../../mango/src/assets/styles/costar-mango.scss";
+// FIXME: bad practice that breaks encapsulation and duplicates css
+// FIXME: This is most probably result of not importing the shared component correctly or the SCSS selectors in the shared component
 @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
 @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss";
-@import '~bootstrap/dist/css/bootstrap.min.css';
-// @import '~devexpress-gantt/dist/dx-gantt.css';
+// FIXME: The above should be moved to the project.json or removed altogether since is taken care by MangoSPA
 @import "assets/styles/my-bootstrap.scss";
 @import "./assets/dx.generic.custom-light.scss";
 @import "./assets/styles/admin-service.scss";

@@ -1,3 +1,4 @@
+import { OnInit } from '@angular/core';
 import { Component, Input } from '@angular/core';
 
 @Component({
@@ -5,26 +6,28 @@ import { Component, Input } from '@angular/core';
   templateUrl: './chip.component.html',
   styleUrls: ['./chip.component.scss']
 })
-export class ChipComponent {
-  withAnimationOptionsVisible: boolean;
+export class ChipComponent implements OnInit {
 
   @Input() id: any;
-  maxWidth?: string;
   @Input() chipContent: string;
   @Input() matTooltipContent?: string;
-  matTooltipClass: string;
   @Input() chipStatus: string;
+
+  withAnimationOptionsVisible: boolean;
+  maxWidth?: string;
+  matTooltipClass: string;
   chipColor: string;
+
   constructor() {
     this.withAnimationOptionsVisible = false;
-
   }
+
+  
   toggleAnimationOptions() {
     this.withAnimationOptionsVisible = !this.withAnimationOptionsVisible;
   }
 
   ngOnInit() {
-
     switch(this.chipStatus) {
       case 'costar':
         this.chipColor = 'color-brand-primary';
@@ -45,7 +48,5 @@ export class ChipComponent {
         this.chipColor = 'color-brand-yellow';
         break;
     }
-    
   }
-
 }

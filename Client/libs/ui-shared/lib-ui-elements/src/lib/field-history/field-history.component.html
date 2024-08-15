@@ -1,19 +1,25 @@
-<div [id]="helpTextID"
+<div
   class="dx-field"
->
+  >
   <div class="iconWrapper dx-field-value-static">
-    <div [id]="dataSource?.helpTextName"
+    <crem-icon
+      [id]="helpTextID"
+      class="dx-field__icon dx-field__icon--info"
+      icon="cremInfo"
+      fill="#C8C8C8"
+      pack="crem"
+      tabindex="0"
+      aria-label="Click to view help text and history"
+      role="img"
       (click)="toggleVisible()"
-    >
-      <crem-icon
-        icon="cremInfo"
-        fill="#C8C8C8"
-        pack="crem"
-      ></crem-icon>
-    </div>
+      (keydown.enter)="toggleVisible()"
+      (keydown.space)="toggleVisible(); $event.preventDefault()"
+    ></crem-icon>
 
-    <dx-popover [target]="'#' + dataSource?.helpTextName"
+    <dx-popover [target]="'#' + helpTextID" *ngIf="dataSource"
       position="bottom"
+      role="tooltip"
+      aria-label="Pop-up with help text and history tabs"
       [width]="600"
       [(visible)]="visible"
     >
@@ -31,15 +37,17 @@
 
       <div id="popoverWrapper"
         class="tooltipAppPopover"
+        aria-live="assertive"
       >
         <div *ngIf="dataSource?.helpTextSubject"
           id="popoverWrapper"
-        ><div class="popoverTitle">{{ dataSource?.helpTextSubject }}</div></div>
+        ><div class="popoverTitle" #popoverTitle tabindex="0"  (keydown.escape)="toggleVisible()"
+        >{{ dataSource?.helpTextSubject }}</div></div>
 
         <mat-tab-group disableRipple="true"
           animationDuration="1000ms"
         >
-          <mat-tab label="Help Text">
+          <mat-tab tabindex="0" [attr.id]="'helpTextTitle'" label="Help Text">
             <div class="mat-tab__help-text" *ngIf="dataSource?.helpTextText">{{ dataSource?.helpTextText }}</div>
 
             <div class="mat-tab__help-text" *ngIf="dataSource?.helpTextText === null || dataSource?.helpTextText === undefined">
@@ -47,7 +55,7 @@
             </div>
           </mat-tab>
 
-          <mat-tab label="History">
+          <mat-tab tabindex="0" [attr.id]="'helpTextHistory'" label="History">
             <div *ngIf="dataSource?.helpTextHistory">
               <dx-data-grid [dataSource]="dataSource?.helpTextHistory"
                 keyExpr="id"

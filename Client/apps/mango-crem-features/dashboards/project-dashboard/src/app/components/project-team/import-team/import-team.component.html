@@ -32,6 +32,7 @@
           [filterSyncEnabled]="true"
           [wordWrapEnabled]="true"
           (onSelectionChanged)="onSelectionChanged($event)"
+          (onCellPrepared)="onCellPrepared($event)"
         >
           <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
           <dxo-sorting mode="multiple"></dxo-sorting>

@@ -9,11 +9,11 @@
   >
   <div modalContent>
     <span class="userMsg">{{userMessage}}</span>
-    <mango-emulate-user></mango-emulate-user>
+    <mango-emulate-user (setEmulatedUserEvent)="setEmulatedUser($event)"></mango-emulate-user>
   </div>
   <div modalFooter class="footer-content">
 		<div id="buttonTemplate" class="footerRightControls">
-      <crem-button *ngIf="primaryFooterButtonText" type="primary" (click)="emulateUserEvent()"> {{primaryFooterButtonText}} </crem-button>
+      <crem-button *ngIf="primaryFooterButtonText" type="primary" (click)="emulateUser()"> {{primaryFooterButtonText}} </crem-button>
 			<crem-button *ngIf="closeOrCancelButtonText" type="secondary" id="close-btn" (click)="closeDialog()">{{closeOrCancelButtonText}}</crem-button>
 		</div>
 	</div>

@@ -41,8 +41,16 @@ import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
           if (e.cell.rowPath[e.cell.rowPath.length - 1] === "Thereafter"){
             e.cellElement.classList.add("total");
           }
+          if (e.cell.rowPath[e.cell.rowPath.length - 1] === "Total Undiscounted Lease Liability" ||
+              e.cell.rowPath[e.cell.rowPath.length - 1] === "Total Discounted Lease Liability"){
+            e.cellElement.classList.add("total");
+          }
         }
         if (e.cell.text === "Thereafter"){
+          e.cellElement.classList.add("total");
+        }
+        if (e.cell.text === "Total Undiscounted Lease Liability" ||
+            e.cell.text === "Total Discounted Lease Liability"){
           e.cellElement.classList.add("total");
         }
       }

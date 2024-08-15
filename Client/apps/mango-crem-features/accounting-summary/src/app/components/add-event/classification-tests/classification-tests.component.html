@@ -1,0 +1,203 @@
+<crem-accordion 
+  *ngIf="classificationId !== 4 && classificationId !== undefined"
+  [title]="'Classification Tests'"
+  [subTitle]="subtitle"
+  [contentPadding]="true"
+  [id]="accountingSummaryService.getId(componentName, 'section', 'accordion')"
+  class="classification-tests">
+
+  <form 
+      [formGroup]="classificationTestForm"
+      *ngIf="this.classificationId !== null"
+      class="classification-tests__form">
+    <fieldset class="classification-tests__form__controls">
+      <ng-container *ngIf="this.classificationId === 0 || this.classificationId === 1">
+        <ol class="classification-tests__form__list--ordered">
+          <ng-container *ngTemplateOutlet="commonTests"></ng-container>
+        </ol>
+      </ng-container>
+
+      <ng-container *ngIf="this.classificationId === 2 || this.classificationId === 3">
+        <ol class="classification-tests__form__list--ordered">
+          <ng-container *ngTemplateOutlet="commonTests"></ng-container>
+
+          <!-- 5 -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'test', '5')">
+            <label class="classification-tests__form__list__item__label">
+              The underlying asset 
+              <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.test5" />
+               of a specialized nature.
+            </label>
+          </li>
+        </ol>
+      </ng-container>
+
+      <ng-container *ngIf="this.classificationId === 5">
+        <ol class="classification-tests__form__list--ordered">
+          <!-- Lessor 1 -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'lessor-test', '1')">
+            <label class="classification-tests__form__list__item__label">
+              The lease 
+              <crem-toggle-slider class="classification-tests__form__list__item--slider--does__not" size='ultra-wide' checkedLabel='DOES' uncheckedLabel='DOES NOT' [value]="this.testLessor1" />
+               transfer ownership of the underlying asset to the lesse by the end term.
+            </label>
+          </li>
+
+          <!-- Lessor 2 -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'lessor-test', '2')">
+            <label class="classification-tests__form__list__item__label">
+              The lease 
+              <crem-toggle-slider class="classification-tests__form__list__item--slider--does__not" size='ultra-wide' checkedLabel='DOES' uncheckedLabel='DOES NOT' [value]="this.testLessor2" />
+               grant the lessee an option to purchase the underlying asset that the lessee is reasonably certain to exercise.
+            </label>
+          </li>
+
+          <!-- Lessor 3 -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'lessor-test', '3')">
+            <label class="classification-tests__form__list__item__label">
+              The lease term 
+              <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.testLessor3" />
+               for a major part of the remaining economic life of the underlying asset.
+            </label>
+          </li>
+
+          <!-- lessor 4  -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'lessor-test', '4')">
+            <label class="classification-tests__form__list__item__label">
+              The present value of the sum of (1) lease payments and (2) any lessee residual value guarantee
+              <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.testLessor4" />
+              equal to or exceeding substantially all of the underlying asset's fair value.
+            </label>
+          </li>
+
+          <!-- Lessor 5 -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'lessor-test', '5')">
+            <label class="classification-tests__form__list__item__label">
+              The underlying asset
+              <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.testLessor5" />
+              of such a specialized nature that it is expected to have no alternative use to the lessor at the end of the lease term.
+            </label>
+          </li>
+
+          <!-- Lessor 6 -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'lessor-test', '6')">
+            <label class="classification-tests__form__list__item__label">
+              The present value of the sum of (1) lease payments and (2) any residual value guarantee from the lessee or a third party unrelated to the lessor
+              <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.testLessor6" />
+              equal to or exceeding substantially all of the underlying asset's fair value.
+            </label>
+          </li>
+
+          <!-- Lessor 7 -->
+          <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'lessor-test', '7')">
+            <label class="classification-tests__form__list__item__label">
+              It
+              <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.testLessor7" />
+              probable that the lessor will collect the lease payments plus any amount necessary to satisfy a residual value guarantee.
+            </label>
+          </li>
+        </ol>
+      </ng-container>
+      
+      <!-- template -->
+      <ng-template #commonTests>
+
+        <!-- 1 -->
+        <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'test', '1')">
+          <label class="classification-tests__form__list__item__label">
+            Ownership
+            <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.test1" />
+            transferred at end of lease term.
+          </label>
+        </li>
+
+        <!-- 2 -->
+        <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'test', '2')">
+          <label class="classification-tests__form__list__item__label">
+            There
+            <crem-toggle-slider class="classification-tests__form__list__item--slider" size='extra-wide' checkedLabel='IS' uncheckedLabel='IS NOT' [value]="this.test2" />
+            a bargain purchase option.
+          </label>
+        </li>
+
+        <!-- 3 do we need calc engine for economic life-->
+        <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'test', '3')">
+          <label class="classification-tests__form__list__item__label">
+            The lease term of {{ this.test3 !== null ? this.test3 : '0.00' }}%  ({{this.remainingTermYears}} / {{this.economicLifeYears}}) is
+            {{ this.isTrue ? '' : 'not' }} 75% or greater of the remaining economic life of the leased asset.
+          </label>
+        </li>
+        
+        <!-- 4-->
+        <li class="classification-tests__form__list__item" [id]="accountingSummaryService.getId(componentName, 'test', '4')">
+          <p>
+            The NPV of the lease payments and guaranteed residual value of
+            {{this.test4}}% [({{this.presentValue}} + {{this.rvGuaranteedByLessee}}) / {{this.fairMarketValue}}] is {{this.test4 < 90 ? 'not' : '' }} 90% or greater of the Fair Value of the asset.
+          </p>
+        </li>
+      </ng-template>
+    </fieldset>
+
+    <fieldset class="classification-tests__form__controls">
+      <ul class="classification-tests__form__list--unordered">
+        <li class="classification-tests__form__list__item side">
+          <crem-input
+            [id]="accountingSummaryService.getId(componentName, 'Remaining-Economic-Life', 'Input')"
+            class="classification-tests__form__list__item__label"
+            [showLabel]="true"
+            [label]="'Remaining Economic Life'"
+            [labelPosition]="'top'"
+            [inputType]="'number'"
+            [value]="this.economicLifeYears"
+            [placeholder]="'In Years'"
+            [required]="false"
+            [rows]="4"
+            [cols]="30"
+            [disallowNegative]="true"
+            [showHint]="false"
+            [showInfo]="false"
+            formControlName="remainingEconomicLife">
+          </crem-input>
+        </li>
+        
+        <li class="classification-tests__form__list__item side">
+          <crem-input
+            [id]="accountingSummaryService.getId(componentName, 'Fair-Market-Value', 'Input')"
+            class="classification-tests__form__list__item__label"
+            [showLabel]="true"
+            [label]="'Fair Market Value'"
+            [labelPosition]="'top'"
+            [inputType]="'number'"
+            [value]="this.fairMarketValue"
+            [placeholder]="''"
+            [required]="false"
+            [rows]="4"
+            [cols]="30"
+            [disallowNegative]="true"
+            [showHint]="false"
+            formControlName="fairMarketValue">
+          </crem-input>
+        </li>
+
+        <li class="classification-tests__form__list__item side" *ngIf="isfairMarketHasValue">
+          <crem-input
+            [id]="accountingSummaryService.getId(componentName, 'Implicit-Interest-Rate', 'Input')"
+            class="classification-tests__form__list__item__label"
+            [showLabel]="true"
+            [labelPosition]="'top'"
+            [label]="'Implicit Interest Rate'"
+            [inputType]="'text'"
+            [value]="implicitInterestRate"
+            [placeholder]="'Implicit Interest Rate'"
+            [disallowNegative]="true"
+            disabled="true"
+            [required]="false"
+            formControlName="implicitInterestRate">
+          </crem-input>
+        </li>
+      </ul>
+    </fieldset>
+  </form>
+
+
+</crem-accordion>

@@ -1,9 +1,8 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HttpTokenInterceptor } from './interceptors/http.token.interceptor';
-
-import {LibDataModelsModule} from '@mango/data-models/lib-data-models'
+import { HttpAuthInterceptor } from './interceptors/http.auth.interceptor';
+import { LibDataModelsModule } from '@mango/data-models/lib-data-models'
 
 import {
   JwtService,
@@ -17,7 +16,7 @@ import { SanitizeHtmlPipe } from './pipes';
 @NgModule({
   imports: [CommonModule, LibDataModelsModule],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
     StorageService,
     UserService,
     JwtService,

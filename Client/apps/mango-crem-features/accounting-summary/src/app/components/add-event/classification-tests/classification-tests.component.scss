@@ -1,0 +1,27 @@
+@use "styles" as *;
+
+.classification-tests__form {
+    display: flex;
+    flex-direction: row;
+    &__controls {
+        flex: 50%;
+    }
+    &__legend {
+        @include costar(font-size, normal);
+    }
+    &__list {
+        &--unordered {
+            list-style: none;
+        }
+    }
+    &__list__item__label {
+        display: flow;
+        padding-right: 20px;
+    }
+    &__list__item{
+        padding-top: 10px;
+        &.side {
+            padding-bottom: 20px;
+        }
+    }
+}

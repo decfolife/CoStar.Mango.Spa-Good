@@ -1,18 +1,25 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { NgModule, Injector, CUSTOM_ELEMENTS_SCHEMA, DoBootstrap } from '@angular/core';
+import {
+  NgModule,
+  Injector,
+  CUSTOM_ELEMENTS_SCHEMA,
+  DoBootstrap,
+} from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AccountingSummaryService } from './services/accounting-summary.service';
 import { createCustomElement } from '@angular/elements';
+import { BalanceCardsComponent } from './components/add-event/financial-card/balance-cards/balance-cards.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, BalanceCardsComponent],
 
   imports: [
-    BrowserAnimationsModule, 
+    CommonModule,
+    BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
   ],
@@ -22,8 +29,8 @@ import { createCustomElement } from '@angular/elements';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
-export class AppModule implements DoBootstrap{
-  constructor(private injector: Injector) { }
+export class AppModule implements DoBootstrap {
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
     const el = createCustomElement(AppComponent, { injector: this.injector });

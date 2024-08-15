@@ -7,7 +7,7 @@
   >Skip to Main Content</a>
 
   <div class="brand">
-    <a href="/" tabindex="0" title="Go to home page" aria-label="Go to home page" role="link">
+    <a (click)="goToHomePage()" tabindex="0" title="Go to home page" aria-label="Go to home page" role="link">
       <img
         class="glyph"
         runat="server"
@@ -74,7 +74,7 @@
             panelClass="mqs-selectPanel"
             (click)="$event.stopPropagation()"
             (focus)= "inputBlurred()"
-            (selectionChange)="moduleChange($event)"
+            (change)="moduleChange($event)"
             matNativeControl
             aria-label="Search by Object Type"
           >
@@ -153,20 +153,24 @@
             </span>
           </li>
           <li>
-            <span tabindex="0" [attr.aria-label]="'Email:' + (currentUser$ | async)?.email">
-              <em>{{ (currentUser$ | async)?.email }}</em>
+            <span tabindex="0" [attr.aria-label]="'Email:' + (contactRecord$ | async)?.email">
+              <em>{{ (contactRecord$ | async)?.email }}</em>
             </span>
           </li>
-        </ul>
-        <ul>
-          <li><a aria-label="Your current profile" mat-menu-item>Profile: Default</a></li>
+          <li>
+            <span tabindex="0" [attr.aria-label]="'Your current profile:'">
+              <em>Profile: Default</em>
+            </span>
+          </li>
         </ul>
         <!-- User Options -->
         <ul>
           <li><a mat-menu-item aria-label="My Preferences">My Preferences</a></li>
-          <li><a mat-menu-item aria-label="My Contact Record">My Contact Record</a></li>
+          <li><a mat-menu-item role="button" aria-label="My Contact Record"  (keydown.enter)="redirectToContactRecord()" (click)="redirectToContactRecord()">My Contact Record</a></li>
           <li><a mat-menu-item role="button" aria-label="Date Calculator" (keydown.enter)="showDateCalculatorDialog()" (click)="showDateCalculatorDialog(); $event.preventDefault()">Date Calculator</a></li>
           <li><a mat-menu-item aria-label="Environments">Environments</a></li>
+          <li><a mat-menu-item *ngIf="(showEmulateUserOption$ | async)" aria-label="Emulate User" (click)="showEmulateUser()">Emulate User</a></li>
+          <li><a mat-menu-item *ngIf="(showStopEmulateUserOption$ | async)" aria-label="Stop Emulating User" (click)="stopEmulatingUser()">Stop Emulating User</a></li>
           <li><a mat-menu-item *ngIf="(hasMultipleContactRecords$ | async)" aria-label="Switch Contact" (click)="goToSwitchContact()">Switch Contact</a></li>
           <li><a mat-menu-item aria-label="Logout" (click)="logout()">Logout</a></li>
         </ul>

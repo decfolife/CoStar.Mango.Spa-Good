@@ -51,5 +51,7 @@ export enum Api {
     header = 'header',
     accountingSummary = 'accountingSummary',
     dataSetDictionary = 'reports',
-    projects = 'projects'
+    projects = 'projects',
+    coStarMatch='coStarMatch',
+    settings = 'settings'
 }

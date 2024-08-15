@@ -29,18 +29,8 @@ import { environment } from '../../../../../../apps/mango/src/environments/envir
 /**
  * Icon
  * @class IconComponent
- * @param {string} icon: Provide the name of the FontAwesome icon E.g. 'faStar'
- * @param {string} [library='fontAwesome']: The default icon library 'local' is the legacy version for v06
- * @param {string} [pack='solid']: If using FontAwesome provide the already installed package type, E.g. 'solid' or 'regular'
- * @param {string} [rotate]: fontAwesome rotation
- * @param {string} [flip]: fontAwesome flip
- * @param {string} [animation]: fontAwesome animation
- * @param {string} [size]: fontAwesome sizing
- * @param {string} [pull]: fontAwesome pull
- * @param {string} [color]: Use the standard colors (primary|secondary|danger|error|warning|info|dark|light)
+ * <example-url>/?path=/docs/components-icon--docs&full=1&shortcuts=false&singleStory=true</example-url>
  * @see {@link https://github.com/FortAwesome/angular-fontawesome/blob/0.12.1/docs/usage/features.md} for further information about Angular FontAwesome
- * @param {string} [string]: Deprecated, use with 'local' library
- * @param {string} [fill]: Deprecated, use with 'local' library
  */
 @Component({
   selector: 'crem-icon',
@@ -50,26 +40,104 @@ import { environment } from '../../../../../../apps/mango/src/environments/envir
 export class IconComponent implements OnChanges, OnInit {
   @ViewChild('faIconHost', {static: false, read: ViewContainerRef}) iconContainer: ViewContainerRef;
 
-  // Package
+  /**
+   * Provide the name of the FontAwesome icon E.g. 'faStar'
+   *
+   * @type {string}
+   * @memberof IconComponent
+   */
   @Input() icon: string;
+
+  /**
+   * The default icon library 'local' is the legacy version for v06
+   *
+   * @type {('fontAwesome' | 'local')}
+   * @memberof IconComponent
+   */
   @Input() library?: 'fontAwesome' | 'local';
+
+  /**
+   * If using FontAwesome provide the already installed package type, E.g. 'solid' or 'regular'.
+   * Where 'crem' corresponds to the custom made icons, and 'solid' or 'regular' corresponds to the packages provided by FontAwesome
+   *
+   * @type {('crem' | 'solid' | 'regular' | IconStyle)}
+   * @memberof IconComponent
+   */
   @Input() pack?: 'crem' | 'solid' | 'regular' | IconStyle;
-  // FontAwesome Options
+
+  /**
+   * fontAwesome's rotation parameter
+   *
+   * @type {RotateProp}
+   * @memberof IconComponent
+   */
   @Input() rotate?: RotateProp;
+
+  /**
+   * fontAwesome's flip parameter
+   *
+   * @type {FlipProp}
+   * @memberof IconComponent
+   */
   @Input() flip?: FlipProp;
+
+  /**
+   * fontAwesome's animation parameter
+   *
+   * @type {AnimationProp}
+   * @memberof IconComponent
+   */
   @Input() animation?: AnimationProp;
+
+  /**
+   * fontAwesome's size parameter
+   *
+   * @type {SizeProp}
+   * @memberof IconComponent
+   */
   @Input() size?: SizeProp;
+
+  /**
+   * fontAwesome's pull parameter
+   *
+   * @type {PullProp}
+   * @memberof IconComponent
+   */
   @Input() pull?: PullProp;
-  // Styling
+
+  /**
+   * Use the standard colors names from the 'common' library
+   *
+   * @type {colorProp}
+   * @memberof IconComponent
+   */
   @Input() color?: colorProp;
   // Internal
   faIcon: IconDefinition | IconPack | IconPrefix; // For assigning the fa-icon during dynamic import
 
-  /** @deprecated when @library is 'local' */
+  /**
+   * Deprecated, use with 'local' library
+   *
+   * @ignore
+   * @deprecated when @library is 'local'
+   */
   @Input() fill?: string = '#000';
+
+  /**
+   * Deprecated, use with 'local' library
+   *
+   * @ignore
+   * @deprecated when @library is 'local'
+   */
   @Input() transform?: string;
   iconClass: string[];
   iconPath: string;
+
+  /**
+   *
+   * @ignore
+   * @memberof IconComponent
+   */
   envPath = '../../../../../../apps/mango/src/environments/environment.local';
   iconCat: string;
   iconArray: string[];
@@ -109,26 +177,26 @@ export class IconComponent implements OnChanges, OnInit {
       case (this.library === 'fontAwesome' && this.pack === 'crem'):
         import('./definitions/cremIcons')
         .then( icon => {
-          this.faIcon = icon[this.icon as keyof typeof icon];
+          this.faIcon = icon[this.icon as keyof typeof icon] as IconDefinition;
           this.createIcon(this.faIcon);
-        }).catch( e => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
+        }).catch( () => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
       break;
 
       case (this.library === 'fontAwesome' && this.pack === 'solid'):
       default:
         import('@fortawesome/free-solid-svg-icons')
         .then( icon => {
-          this.faIcon = icon[this.icon as keyof typeof icon];
+          this.faIcon = icon[this.icon as keyof typeof icon] as IconDefinition;
           this.createIcon(this.faIcon);
-        }).catch( e => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
+        }).catch( () => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
       break;
 
       case (this.library === 'fontAwesome' && this.pack === 'regular'):
         import('@fortawesome/free-regular-svg-icons')
         .then( icon => {
-          this.faIcon = icon[this.icon as keyof typeof icon];
+          this.faIcon = icon[this.icon as keyof typeof icon] as IconDefinition;
           this.createIcon(this.faIcon);
-        }).catch( e => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
+        }).catch( () => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
       break;
     }
   }

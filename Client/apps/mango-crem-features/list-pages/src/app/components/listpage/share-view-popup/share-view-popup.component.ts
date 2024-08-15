@@ -181,7 +181,9 @@ export class ShareViewPopupComponent {
         }
 
         return false;
-      }
+      },
+      paginate: true,
+      pageSize: 100
     };
   };
 

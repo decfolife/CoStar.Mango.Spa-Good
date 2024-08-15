@@ -28,7 +28,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     },
     {
       id: 'ShortTermReportingExceptionsMetrics',
-      name: 'Short Term Reporting Exceptions Metrics',
+      name: 'Reporting Exceptions Cost',
       index: 3
     },
     {
@@ -38,8 +38,23 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     },
     {
       id: 'LeaseLiabilityMaturityAnalysis',
-      name: 'Lease Liability Maturity Analysis',
+      name: 'Liability Maturity',
       index: 5,
+      filterData: [
+        {displayKey: '5 years', valueKey: 5},
+        {displayKey: '10 years', valueKey: 10}
+      ],
+      filterInitialValue: {displayKey: '5 years', valueKey: 5},
+    },
+    {
+      id: 'ReconciliationOfLeaseLiabilities',
+      name: 'Reconciliation of Lease Liabilities',
+      index: 6,
+    },
+    {
+      id: 'FutureCommitments',
+      name: 'Future Commitments',
+      index: 7,
       filterData: [
         {displayKey: '5 years', valueKey: 5},
         {displayKey: '10 years', valueKey: 10}
@@ -59,6 +74,7 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   public selectedCurrency = "usd";
   public currencyDecimalPrecision: number;
   
+  @Input() dashboardId: number;
   @Input() selectedSegment: number;
   @Input() reportingYear: number;
 
@@ -79,15 +95,35 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
 
   }
 
-  onSelectedFilter(e: Event){
-    this.setMaturityAnalysis(this.IADCardData.data[6], e['valueKey']);
+  onSelectedFilter(e: Event, config){
+    switch(config.id){
+      case 'LeaseLiabilityMaturityAnalysis':
+        this.setMaturityAnalysis(this.IADCardData.data[6], e['valueKey']);
+        break;
+      case 'FutureCommitments':
+        this.setFutureCommitments(this.IADCardData.data[8], e['valueKey']);
+        break;
+    }
   }
 
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
-    this.inAppDisclosureService.getIADCardData(4, this.selectedSegment, this.reportingYear, this.selectedCurrency)
+    this.inAppDisclosureService.getIADCardData(this.dashboardId, this.selectedSegment, this.reportingYear, this.selectedCurrency)
       .subscribe((result) => {
+        result.data.forEach(item => {
+          item.forEach(data => {
+            if (data.ClassificationName && data.ClassificationName.includes("ASC 842")) {
+              data.ClassificationName = data.ClassificationName.replace("(ASC 842)", "");
+            }
+  
+            if (data.DisclosureClassification && data.DisclosureClassification.includes("842")) {
+              data.DisclosureClassification = data.DisclosureClassification.replace("842", "");
+            }
+
+          });
+        });
+
         this.IADCardData = result;
         this.setLeaseCountCardData(result.data[0])
         this.setROUAssetBalanceCardData(result.data[1])
@@ -95,14 +131,150 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
         this.setShortTermReportingExceptionsMetrics(result.data[4]);
         this.setOtherInformation(result.data[5]);
         this.setMaturityAnalysis(result.data[6]);
+        this.setReconciliationOfLeaseLiabilities(result.data[7]);
+        this.setFutureCommitments(result.data[8]);
         this.loading = false;
       });
   }
 
-  public setMaturityAnalysis(data, years:number = 6){ // copy/pasted function
+  public setFutureCommitments(data:any, years?: number) {
     this.pivotCardData = [];
+    years = !years ? 6 : years + 1;
     const filteredData = this.filterByPeriodYear(data, this.reportingYear, this.reportingYear + years);
-    years += 1; // Adding +1 for the 'Thereafter'
+
+    let items: any[];
+
+    filteredData.forEach((item, i) => {
+      let total = item.ScheduledPaymentsReporting;
+      if(i === filteredData.length - 1){
+        total = item.RemainingPaymentsReporting;
+        items = [
+          {
+            Display: 'Thereafter',
+            DisclosureClassificiation: item.ClassificationName,
+            data: item.RemainingPaymentsReporting,
+          },
+          {
+            Display: 'Thereafter',
+            DisclosureClassificiation: 'Total',
+            data: total,
+          },
+        ];
+      } else {
+        items = [
+          {
+            Display: item.PeriodYear.toString(),
+            DisclosureClassificiation: item.ClassificationName,
+            data: item.ScheduledPaymentsReporting,
+          },
+          {
+            Display: item.PeriodYear.toString(),
+            DisclosureClassificiation: 'Total',
+            data: total,
+          },
+        ];
+      }
+
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+      });
+    });
+
+    if (this.dataSources.length > 0) {
+      this.dataSources[7] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[7]
+      });
+    } else {
+      this.dataSources.push(new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[7]
+      }));
+    }
+    this.loading = false;
+  }
+
+  public setReconciliationOfLeaseLiabilities(data){
+    this.pivotCardData = [];
+
+    data.forEach((item) => {
+      const items = [
+        {
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Weighted-average Remaining Lease Term',
+          data: item.WeightedAverageMonthsRemaining,
+        },
+        {
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Weighted-average Discount Rate',
+          data: item.WeightedAverageDiscountRate,
+        },
+        {
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Total Undiscounted Lease Liability',
+          data: item.TotalUndiscountedLeaseLiability,
+        },
+        {
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Imputed Interest',
+          data: item.ImputedInterest,
+        },
+        {
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Total Discounted Lease Liability',
+          data: item.TotalDiscountedLeaseLiability,
+        },
+        {
+          DisclosureClassificiation: 'Total',
+          Display: 'Weighted-average Remaining Lease Term',
+          data: item.WeightedAverageMonthsRemaining,
+        },
+        {
+          DisclosureClassificiation: 'Total',
+          Display: 'Weighted-average Discount Rate',
+          data: item.WeightedAverageDiscountRate,
+        },
+        {
+          DisclosureClassificiation: 'Total',
+          Display: 'Total Undiscounted Lease Liability',
+          data: item.TotalUndiscountedLeaseLiability,
+        },
+        {
+          DisclosureClassificiation: 'Total',
+          Display: 'Imputed Interest',
+          data: item.ImputedInterest,
+        },
+        {
+          DisclosureClassificiation: 'Total',
+          Display: 'Total Discounted Lease Liability',
+          data: item.TotalDiscountedLeaseLiability,
+        },
+      ]
+
+      items.forEach((item) => {
+        this.pivotCardData.push(item)
+      });
+    });
+
+    if (this.dataSources.length > 0) {
+      this.dataSources[6] = new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[6]
+      });
+    } else {
+      this.dataSources.push(new PivotGridDataSource({
+        store: this.pivotCardData,
+        fields: this.fieldConfigs[6]
+      }));
+    }
+    this.loading = false;
+  }
+
+  public setMaturityAnalysis(data, years?:number){ // copy/pasted function
+    this.pivotCardData = [];
+    years = !years ? 6 : years + 1;
+    const filteredData = this.filterByPeriodYear(data, this.reportingYear, this.reportingYear + years);
+
     let items: any[];
 
     filteredData.forEach((item, i) => {
@@ -198,22 +370,22 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
           data: item.ROUAssetsObtainedInExchangeForNewOperatingLiabilities,
         },
         {
-          Display: 'Weight-Average Remaining Lease Term - Finance Leases',
+          Display: 'Weighted-Average Remaining Lease Term - Finance Leases',
           PeriodYear: item.PeriodYear,
           data: item.WeightedAverageMonthsRemainingFinance,
         },
         {
-          Display: 'Weight-Average Remaining Lease Term - Operating Leases',
+          Display: 'Weighted-Average Remaining Lease Term - Operating Leases',
           PeriodYear: item.PeriodYear,
           data: item.WeightedAverageMonthsRemainingOperating,
         },
         {
-          Display: 'Weight-Average Discount Rate - Finance Leases',
+          Display: 'Weighted-Average Discount Rate - Finance Leases',
           PeriodYear: item.PeriodYear,
           data: item.WeightedAverageDiscountRateFinance,
         },
         {
-          Display: 'Weight-Average Discount Rate - Operating Leases',
+          Display: 'Weighted-Average Discount Rate - Operating Leases',
           PeriodYear: item.PeriodYear,
           data: item.WeightedAverageDiscountRateOperating,
         },
@@ -242,60 +414,53 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     this.pivotCardData = [];
 
     data.forEach((item) => {
-      let items = [
-        { 
-          DisclosureClassification:  item.DisclosureClassification,
-          LeaseTemplate: item.LeaseTemplate,
+      const disclosureName = item.DisclosureClassification.trim();
+      const items = [
+        {
+          DisclosureClassification: disclosureName,
           Display: "Opening Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.OpeningCount,
         },
-        { 
-          DisclosureClassification:  item.DisclosureClassification,
-          LeaseTemplate: item.LeaseTemplate,
+        {
+          DisclosureClassification: disclosureName,
           Display: " - Lease Added",
           PeriodYear: item.PeriodYear,
           data: item.AddedCount,
         },
-        { 
-          DisclosureClassification:  item.DisclosureClassification,
-          LeaseTemplate: item.LeaseTemplate,
+        {
+          DisclosureClassification: disclosureName,
           Display: " - Leases Expired/Cancelled",
           PeriodYear: item.PeriodYear,
           data: item.EndedCount,
         },
-        { 
-          DisclosureClassification:  item.DisclosureClassification,
-          LeaseTemplate: item.LeaseTemplate,
+        {
+          DisclosureClassification: disclosureName,
           Display: "Closing Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
         },
-        { 
+        {
           DisclosureClassification:  "Total",
-          LeaseTemplate: item.LeaseTemplate,
           Display: "Opening Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.OpeningCount,
         },
-        { 
+        {
           DisclosureClassification:  "Total",
-          LeaseTemplate: item.LeaseTemplate,
           Display: " - Lease Added",
           PeriodYear: item.PeriodYear,
           data: item.AddedCount,
         },
-        { 
+        {
           DisclosureClassification:  "Total",
-          LeaseTemplate: item.LeaseTemplate,
           Display: " - Leases Expired/Cancelled",
           PeriodYear: item.PeriodYear,
           data: item.EndedCount,
           dataType: 'number',
         },
-        { 
+        {
           DisclosureClassification:  "Total",
-          LeaseTemplate: item.LeaseTemplate,
           Display: "Closing Lease Count",
           PeriodYear: item.PeriodYear,
           data: item.ClosingCount,
@@ -519,31 +684,49 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   mergeArraysOfObjects(data1: {[key: string]: any}[], data2: {[key: string]: any}[]): Array<object>{
     const hashMap = new Map(
       data2.map( item => {
-        return [`${item.LeaseTemplate}-${item.DueByYear}`, item]
+        return [`${item.DueByYear}`, item]
       })
     );
     const mergedArray = data1.map( item => {
-      const key = `${item.LeaseTemplate}-${item.PeriodYear}`;
+      const key = `${item.PeriodYear}`;
       const itemToMerge = hashMap.get(key);
       if(itemToMerge && typeof itemToMerge === 'object'){
         return { ...item, ...itemToMerge };
       }
     });
-    return mergedArray;
+    if(mergedArray.length > 0){
+      return mergedArray;
+    }
+    if (data2.length > 0){
+      return data2;
+    } else {
+      return data1;
+    }
   }
 
   public setFieldConfigs() {
-    this.inAppDisclosureService.getIADCardConfigs(4).subscribe((result) => {
+    this.inAppDisclosureService.getIADCardConfigs(this.dashboardId).subscribe((result) => {
       result.data.forEach((card) => {
         let config = JSON.parse(card.CardJSONSchema);
         config[0].sortingMethod = this.rowSort;
         config[2].sortingMethod = this.disclosureClassificationSort;
-
         switch(card.Title){
+          case 'ASC 842 Annual Disclosures Lease Counts':
+            config[config.length - 1].calculateSummaryValue = function(summaryCell) {
+              if (summaryCell.field('column')?.dataField === 'PeriodYear') {
+                return summaryCell.value() / 2;
+              } else {
+                return summaryCell.value();
+              }
+            }
+            break;
           case 'ASC 842 Annual Disclosures':
             config[4].format = ",###";
             config[config.length - 1].calculateSummaryValue = function(summaryCell) {
-              if (summaryCell.field('column')?.dataField === 'LeaseTemplate' || summaryCell.field('column')?.dataField === 'PeriodYear') {
+              if (
+                summaryCell.field('column')?.dataField === 'LeaseTemplate' || 
+                summaryCell.field('column')?.dataField === 'PeriodYear'
+              ) {
                 return summaryCell.value() / 2;
               } else {
                 return summaryCell.value();
@@ -586,6 +769,21 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
             };
             break;
           case 'ASC 842 Annual Disclosures Lease Liability Maturity Analysis':
+            config[0].width = 200;
+            config[2].format = {
+              type: "fixedPoint",
+              precision: this.currencyDecimalPrecision,
+            };
+            break;
+          case 'ASC 842 Annual Disclosures Lease Liability Reconciliation':
+            config[0].width = 200;
+            config[2].format = {
+              type: "fixedPoint",
+              precision: this.currencyDecimalPrecision,
+            };
+            config[config.length - 1].summaryType = 'sum';
+            break;
+          case 'ASC 842 Annual Disclosures Future Commitments':
             config[0].width = 200;
             config[2].format = {
               type: "fixedPoint",

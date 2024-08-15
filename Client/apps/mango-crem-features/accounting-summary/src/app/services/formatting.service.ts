@@ -175,6 +175,28 @@ export class FormattingService {
   }
 
   /**
+   * Transforms a localFormat string containing a number back to the corresponding number type.
+   * If the number is enclosed in parentheses, it indicates a negative number.
+   * This is meant to be used with localFormat strings.
+   *
+   * @param {string} str - The string containing the number to be transformed.
+   * @returns {number} - The corresponding number, negative if enclosed in parentheses.
+   */
+  transformLocalFormatToNumber(input: string | number): number {
+    if (typeof input === 'number') {
+      return input;
+    }
+    let str = input as string;
+    str = str.replace(/,/g, ''); // Remove commas (thousand separators)
+
+    if (str.startsWith('(') && str.endsWith(')')) {
+      return -parseFloat(str.slice(1, -1));
+    } else {
+      return parseFloat(str);
+    }
+  }
+
+  /**
    * Adds '%' to discount rate for display.
    * @param value The number to be formatted.
    * @returns String formatted number

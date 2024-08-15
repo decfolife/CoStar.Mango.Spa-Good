@@ -1,0 +1,51 @@
+import { Canvas, Meta, Story } from '@storybook/addon-docs';
+
+<Meta title="Documentation/Compodocs"/>
+
+# Compodocs: Automatic Storybook and Code Documentation
+---
+
+Compodoc simplifies the process of documenting Angular (and Storybook) projects, making it easier for developers to maintain and share their codebases effectively.
+
+When integrated with Storybook, Compodoc allows for the automatic generation of documentation based on the components and stories defined within Storybook. This documentation includes details about component properties, methods, inputs, outputs, and more, providing developers with a clear understanding of how each component behaves and how it can be used.
+
+The [Compodocs](https://compodoc.app/) documentation is automatically built alongside Storybook. JsDoc is precisely utilized for this purpose. These JsDocs are injected into Storybook via the 'documentation.json' file.
+
+<strong>Check the <a href="/compodocs" target="_blank">Shared Library Documenation (Compodoc)</a></strong> for detailed insights into the code of the shared library.
+
+<br/>
+
+## JsDocs are not being reflected inside Storybook
+
+Update Storybook's `documentation.json` by building storybook locally `nx run ui-shared-storybook-host:build-storybook` to update the `documentation.json` file
+to correctly reflect the jsdoc changes. Make sure to commit the `documentation.json` file.
+
+More information at [Storybook - Description](https://storybook.js.org/docs/api/doc-block-description).
+
+## How to integrate Storybook inside Compodocs
+Embed Storybook stories via jsdocs for live examples:
+1. Identify your story URL: /?path=/docs/documentation-getting-started--docs
+2. Append the parameter '&full=1&shortcuts=false&singleStory=true', e.g. '/?path=/docs/documentation-getting-started--docs&full=1&shortcuts=false&singleStory=true'. [More information](https://storybook.js.org/docs/sharing/embed)
+3. Include the JSDOC in your.component.ts using one or more `<example-url>...</example-url>`. E.g. `<example-url>/?path=/docs/documentation-getting-started--docs&full=1&shortcuts=false&singleStory=true</example-url>`
+
+
+```
+...
+
+/**
+ * Icon
+ * @class IconComponent
+ * <example-url>/?path=/docs/components-icon--docs&full=1&shortcuts=false&singleStory=true</example-url>
+ * @see {@link https://github.com/FortAwesome/angular-fontawesome/blob/0.12.1/docs/usage/features.md} for further information about Angular FontAwesome
+ */
+@Component({
+  selector: 'crem-icon',
+  templateUrl: './icon.component.html',
+  styleUrls: ['./icon.component.scss'],
+})
+
+...
+
+```
+
+More Information at [Compodocs guides](https://compodoc.app/guides/live-example-tab.html).

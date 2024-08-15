@@ -7,6 +7,7 @@ using MangoSPA.Models;
 using MangoSPA.Services;
 using MangoSPA.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using System.Text.Json;
 
 namespace Mango.MangoSPA.Server.Controllers;
 
@@ -15,11 +16,16 @@ public class AuthController : ControllerBase
 {
     readonly IAuthService _authService;
     readonly ILogger<AuthController> _logger;
+    readonly IWebHostEnvironment _env;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService, 
+        ILogger<AuthController> logger,
+        IWebHostEnvironment env)
     {
         _authService = authService;
         _logger = logger;
+        _env = env;
     }
 
     /// <summary>
@@ -34,6 +40,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<OAuthResponse>> AccessToken([FromBody] AccessTokenRequest request)
     {
+        await HttpContext.SignOutAsync();
         _logger.LogInformation("AccessToken request started. Calling Identity API to get access token.");
 
         var tokenResponse = await _authService.OAuthToken(request);
@@ -93,7 +100,21 @@ public class AuthController : ControllerBase
         await HttpContext.SignOutAsync();
 
         _logger.LogInformation("login request started.");
+
         await _authService.CreateAuthenticationCookie(accessToken);
+
+        // Mimic V06 creating the shared info cookie
+        HttpContext.Response.Cookies.Append(
+            $"blank.SharedInfo", JsonSerializer.Serialize(new SharedInfo(2)),
+            new CookieOptions
+            {
+                //Domain = HttpContext.Request.Host.Value, // what is host value? do we need to use appSettings instead?
+                SameSite = env.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict,
+                Secure = true,
+                HttpOnly = false,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(480)
+            });
+
         _logger.LogInformation("login request completed successfully.");
 
         return Ok();
@@ -104,17 +125,17 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [Authorize]
-    [HttpGet("user/token")] //auth/user/token
+    [HttpGet("user")] //auth/user
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<AuthenticatedUser> GetCurrentUser()
     {
-        _logger.LogInformation("Fetching accessToken for logged-in user {Email}.", User.Email());
+        _logger.LogInformation("Fetching current logged-in user {Email}.", User.Email());
 
         var user = User.ToAuthenticatedUser();
 
-        _logger.LogInformation("Successfully fetched accessToken for logged-in user {Email}.", User.Email());
+        _logger.LogInformation("Successfully fetched current logged-in user {Email}.", User.Email());
 
         return Ok(user);
     }
@@ -125,7 +146,64 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
+        HttpContext.Session.Clear();
+
+        foreach (var cookie in Request.Cookies.Keys)
+            Response.Cookies.Delete(cookie);
+
         return Ok();
-        //return LocalRedirect(Url.Content("~/"));
+    }
+
+    [Authorize]
+    [HttpPost("emulate-user")] //auth/emulate-user  
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> EmulateUser([FromBody] EmulateUserRequest request)
+    {
+        if (!User.IsSuperUserContact())
+        {
+            _logger.LogError("Only a super user can emulate a user. {ContactId} | {Role}", User.ContactId(), User.ContactRole());
+            return StatusCode(StatusCodes.Status403Forbidden);
+        }
+
+        if (_env.IsProd())
+        {
+            _logger.LogError("Emulate user is not allowed in PROD.");
+            return StatusCode(StatusCodes.Status403Forbidden);
+        }
+
+        var accessToken = await _authService.GetAccessTokenForEmulatedUser(request);
+        if (string.IsNullOrWhiteSpace(accessToken))
+            return BadRequest();
+
+        var emulatedUser = new EmulatedUser(request.ContactId, accessToken);
+        await HttpContext.Session.SetAsync(SessionDataKeys.EmulateUserKey, emulatedUser);
+
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpGet("emulate-user")] //auth/emulate-user  
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<EmulateUserResponse>> GetEmulatedUser()
+    {
+        var sessionData = await HttpContext.Session.GetAsync<EmulatedUser>(SessionDataKeys.EmulateUserKey);
+        if (sessionData is null) return Ok(new EmulateUserResponse(0, false));
+
+        return Ok(new EmulateUserResponse(sessionData.ContactId, sessionData.IsEmulatedUser));
+    }
+
+    [Authorize]
+    [HttpDelete("emulate-user")] //auth/emulate-user  
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> StopEmulatingUser()
+    {
+        await HttpContext.Session.RemoveAsync(SessionDataKeys.EmulateUserKey);
+        return Ok();
     }
 }

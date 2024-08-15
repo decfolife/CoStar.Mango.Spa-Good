@@ -19,12 +19,9 @@ export class WorkflowDropdownComponent {
 
   componentName = 'workflow-component';
   isWorkflowDropdownVisible = false;
-  isTooltipVisible = false;
   dropdownDataSource: any[];
   dropdownStatusValue: number;
   inputStatusText = "";
-	toolTipTarget: any;
-  btnDisabledReason: string;
   isCommentsEnabled: boolean;
   isCommentsRequired: boolean;
   commentsVisible = false;
@@ -40,7 +37,6 @@ export class WorkflowDropdownComponent {
   divOpened = false;
   divElement: any;
   private initialMouseDownTarget: HTMLElement;
-
 
   constructor(protected facade: MangoAppFacade, public accountingSummaryService: AccountingSummaryService) {
     if (this.facade) {
@@ -72,6 +68,7 @@ export class WorkflowDropdownComponent {
       this.workflowSettings = this.workflowStatusInfo.settings;
       this.isCommentsEnabled= this.workflowStatusInfo.settings.isCommentsEnabled;
       this.isCommentsRequired= this.workflowStatusInfo.settings.isCommentsRequired;
+      this.workflowStatusInfo.name= this.workflowStatusInfo.workflowStatus;
       
       this.dropdownDataSource = [];
       if(this.workflowStatusInfo.options.length > 0) {
@@ -113,16 +110,6 @@ export class WorkflowDropdownComponent {
       this.commentText = '';
     }
     this.commentsVisible = false;
-  }
-
-  onMouseLeave(){
-    this.isTooltipVisible = false;
-  }
-
-  onMouseEnter(e, itemData){
-    this.isTooltipVisible = itemData.disabled;
-    this.toolTipTarget = e.target;
-    this.btnDisabledReason = itemData.disabledReason;
   }
 
   saveWorkflowStatus(workflowStatusId: number, comment: string) { 
@@ -195,7 +182,8 @@ export class WorkflowDropdownComponent {
         "workflowStatus": opt.workflowStatus,
         "statusOrder": opt.statusOrder,
         "disabled": itemDisabled,
-        "disabledReason": itemDisabledReason
+        "disabledReason": itemDisabledReason,
+        "name": opt.workflowStatus
       }
 
       return dataElement;
@@ -225,7 +213,7 @@ export class WorkflowDropdownComponent {
     this.divElement = document.getElementById('workflow-component-comment-popup');
     if (this.divElement) {
       this.divOpened = true;
-      this.commentTextArea.nativeElement.focus();
+      this.commentTextArea?.nativeElement.focus();
     }
   }
 

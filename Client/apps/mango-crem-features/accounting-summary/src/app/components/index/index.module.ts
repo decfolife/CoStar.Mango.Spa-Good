@@ -1,13 +1,13 @@
-import { CommonModule,DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { NgModule } from '@angular/core';
 
 import { AccountsSummaryComponent } from '@accounting-summary/components/accounts-summary/accounts-summary.component';
 import { TitleComponent } from '@accounting-summary/components/title/title.component';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
-import { ButtonModule, DropdownModule, IconModule } from '@mango/ui-shared/lib-ui-elements';
+import { ButtonModule, DatePickerModule, DropdownModule, IconModule, ToggleSliderComponent, InputComponent, AccordionModule } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
-import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule, DxSelectBoxModule, DxTemplateModule, DxTabPanelModule} from 'devextreme-angular';
+import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule, DxSelectBoxModule, DxTemplateModule, DxTabPanelModule } from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
 import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
 import { IndexComponent } from './index.component';
@@ -19,8 +19,8 @@ import { TransactionPopupComponent } from '../payments-detail-section/transactio
 import { JeProcessingInfoComponent } from '../amortization-detail-section/je-retro-popup/je-processing-info/je-processing-info.component';
 import { JePaymentInfoComponent } from '../amortization-detail-section/je-retro-popup/je-payment-info/je-payment-info.component';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { CardModule} from '@mango/ui-shared/lib-ui-elements';
-import { FormsModule } from '@angular/forms';
+import { CardModule } from '@mango/ui-shared/lib-ui-elements';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
@@ -29,6 +29,12 @@ import { WorkflowHistoryPopupComponent } from '../workflow-history-popup/workflo
 import { TimelineModule } from 'primeng/timeline';
 import { RetrospectiveAdjustmentInfoComponent } from '../amortization-detail-section/je-retro-popup/retrospective-adjustment-info/retrospective-adjustment-info.component';
 import { JeRetroPopupComponent } from '../amortization-detail-section/je-retro-popup/je-retro-popup.component';
+import { ScheduleDetailsComponent } from '../add-event/schedule-details/schedule-details.component';
+import { ClassificationTestsComponent } from '../add-event/classification-tests/classification-tests.component';
+import { InputLabelComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/input';
+import { ResidualValueComponent } from '../add-event/residual-value/residual-value.component';
+import { FinancialCardComponent } from '../add-event/financial-card/financial-card.component';
+import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkbox';
 
 @NgModule({
   declarations: [
@@ -45,7 +51,8 @@ import { JeRetroPopupComponent } from '../amortization-detail-section/je-retro-p
     JeProcessingInfoComponent,
     JePaymentInfoComponent,
     WorkflowHistoryPopupComponent,
-    RetrospectiveAdjustmentInfoComponent
+    RetrospectiveAdjustmentInfoComponent,
+    ScheduleDetailsComponent
   ],
 
   imports: [
@@ -69,8 +76,18 @@ import { JeRetroPopupComponent } from '../amortization-detail-section/je-retro-p
     FormsModule,
     DxTabPanelModule,
     DxTemplateModule,
-    TimelineModule
-    ],
+    TimelineModule,
+    InputLabelComponent,
+    DatePickerModule,
+    CheckBoxComponent,
+    ReactiveFormsModule,
+    InputComponent,
+    ToggleSliderComponent,
+    ClassificationTestsComponent,
+    FinancialCardComponent,
+    AccordionModule,
+    ResidualValueComponent
+  ],
 
   providers: [AccountingSummaryService, FormattingService, DatePipe],
 
