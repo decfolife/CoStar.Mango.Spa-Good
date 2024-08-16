@@ -62,10 +62,6 @@ export class HeaderComponent implements OnInit {
       combineLatest([this.isEmulatedUser$, this.contactRecord$]).pipe(
         map(([isEmulatedUser, contact]) => !isEmulatedUser && contact.userRole === 0 && !environment.production));
 
-    this.showStopEmulateUserOption$ = 
-        combineLatest([this.isEmulatedUser$, this.contactRecord$]).pipe(
-          map(([isEmulatedUser, contact]) => isEmulatedUser && contact.userRole === 0 && !environment.production));
-
     this.ImageUrl$ = this.facade.clientInfo$.pipe(
       filter(client => !!client),
       map(client => `${client.imageBaseUrl}${client.logoUri}`)

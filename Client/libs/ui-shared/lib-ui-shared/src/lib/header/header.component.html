@@ -170,7 +170,7 @@
           <li><a mat-menu-item role="button" aria-label="Date Calculator" (keydown.enter)="showDateCalculatorDialog()" (click)="showDateCalculatorDialog(); $event.preventDefault()">Date Calculator</a></li>
           <li><a mat-menu-item aria-label="Environments">Environments</a></li>
           <li><a mat-menu-item *ngIf="(showEmulateUserOption$ | async)" aria-label="Emulate User" (click)="showEmulateUser()">Emulate User</a></li>
-          <li><a mat-menu-item *ngIf="(showStopEmulateUserOption$ | async)" aria-label="Stop Emulating User" (click)="stopEmulatingUser()">Stop Emulating User</a></li>
+          <li><a mat-menu-item *ngIf="(isEmulatedUser$ | async)" aria-label="Stop Emulating User" (click)="stopEmulatingUser()">Stop Emulating User</a></li>
           <li><a mat-menu-item *ngIf="(hasMultipleContactRecords$ | async)" aria-label="Switch Contact" (click)="goToSwitchContact()">Switch Contact</a></li>
           <li><a mat-menu-item aria-label="Logout" (click)="logout()">Logout</a></li>
         </ul>
