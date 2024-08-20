@@ -33,14 +33,17 @@ export class HeaderComponent implements OnInit {
   currentUser$: Observable<UserAuth>;
   contactRecord$: Observable<ContactRecord>;
   hasMultipleContactRecords$: Observable<boolean>
+  hasMultipleProfiles$: Observable<boolean>
   isEmulatedUser$: Observable<boolean>
   showEmulateUserOption$: Observable<boolean>
-  showStopEmulateUserOption$: Observable<boolean>
+  showSwitchContactOption$: Observable<boolean>
+  showSwitchProfilesOption$: Observable<boolean>
   filteredOptions;
   myControl = new UntypedFormControl();
   inputSubscription$;
   searchModules: module[];
   ImageUrl$: Observable<string>;
+  currentProfile: string = "Default";
   private subs: Subscription[] = [];
   private isDateCalcOpen: boolean = false;
   private redirectorLinks: any[] = null;
@@ -61,6 +64,14 @@ export class HeaderComponent implements OnInit {
     this.showEmulateUserOption$ = 
       combineLatest([this.isEmulatedUser$, this.contactRecord$]).pipe(
         map(([isEmulatedUser, contact]) => !isEmulatedUser && contact.userRole === 0 && !environment.production));
+
+    this.showSwitchContactOption$ = 
+        combineLatest([this.hasMultipleContactRecords$, this.isEmulatedUser$]).pipe(
+          map(([hasMultipleContactRecords, isEmulatedUser]) => hasMultipleContactRecords && !isEmulatedUser));
+
+    this.showSwitchProfilesOption$ = 
+        combineLatest([this.hasMultipleProfiles$, this.isEmulatedUser$]).pipe(
+          map(([hasMultipleProfiles, isEmulatedUser]) => hasMultipleProfiles && !isEmulatedUser));
 
     this.ImageUrl$ = this.facade.clientInfo$.pipe(
       filter(client => !!client),
@@ -135,6 +146,9 @@ export class HeaderComponent implements OnInit {
         tap(clientKey => this.facade.goToExternalURL(`${environment.CAUrl}/${clientKey}?clientKey=${clientKey}&showMutliContactPopup=true`))
       ).subscribe()
     )
+  }
+
+  goToSwitchProfiles(): void {
   }
 
   moduleChange(e) {

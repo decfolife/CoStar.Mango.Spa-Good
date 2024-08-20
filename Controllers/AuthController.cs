@@ -41,6 +41,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<OAuthResponse>> AccessToken([FromBody] AccessTokenRequest request)
     {
         await HttpContext.SignOutAsync();
+        HttpContext.Session.Clear();
         _logger.LogInformation("AccessToken request started. Calling Identity API to get access token.");
 
         var tokenResponse = await _authService.OAuthToken(request);
@@ -98,6 +99,7 @@ public class AuthController : ControllerBase
             return BadRequest("Only allowed in LOCAL.");
 
         await HttpContext.SignOutAsync();
+        HttpContext.Session.Clear();
 
         _logger.LogInformation("login request started.");
 
