@@ -25,12 +25,16 @@ export class SettingsService {
   ) { }
 
   getClientSsoSettings(clientKey: string): Observable<ClientSSOSettings> {
-    return this._http.get<ClientSSOSettings>(`${this.identityUrl}settings/clientsso/${clientKey}`);
+    return this._http.get<ApiResult<ClientSSOSettings>>(`${this.identityUrl}settings/clientsso/${clientKey}`)
+      .pipe(map(x => x.data));
   }
 
-  getClientSettings(): Observable<ClientSettings> {
+  getClientSettings(clientKey: string): Observable<ClientSettings> {
     // This function to be refactored when Client Settings page is added to MangoSPA
-    //return this.clientKey$.pipe(switchMap(clientKey => this._http.get<ClientSettings>(`${environment.appUrls.identity}/settings/${clientKey}`)));
+    // return this._http.get<ApiResult<ClientSettings>>(`${this.identityUrl}settings/${clientKey}`)
+    //   .pipe(
+    //     map(x => x.data)
+    //   );
     return of()
   }
 

@@ -11,11 +11,12 @@ import {
   RecentUserSites,
   RequestPasswordResetRequest,
   Token,
-  IS_CA_STANDALONE_APP
+  IS_CA_STANDALONE_APP,
+  ApiResult
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { Observable, of, throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { LoginResponse } from 'libs/data-models/lib-data-models/src/lib/models/userAuth';
 import { JwtService, StorageService, UtilitiesService, parseBool } from '@mango/core-shared';
 import { UserAuth } from '../models/userAuth';
@@ -144,7 +145,8 @@ export class AuthService {
   }
 
   requestPasswordReset(request: RequestPasswordResetRequest): Observable<any> {
-    return this.http.post<any>(`${this.identityUrl}password/forgot`, request)
+    return this.http.post<ApiResult<any>>(`${this.identityUrl}password/forgot`, request)
+      .pipe(map(x => x.data));
   }
 
   resetPassword(credentials): Observable<boolean> {
@@ -153,27 +155,31 @@ export class AuthService {
   }
 
   validateTokenAndGetPasswordRequirements(resetToken: string): Observable<Password> {
-    return this.http.get<Password>(`${this.identityUrl}password/requirements/${resetToken}`)
+    return this.http.get<ApiResult<Password>>(`${this.identityUrl}password/requirements?resetToken=${resetToken}`)
+      .pipe(map(x => x.data));
   }
 
   getClientSitesByUser(userEmail: string): Observable<ClientSitesByUser> {
-    return this.http.get<ClientSitesByUser>(`${this.identityUrl}user/clientsites/${userEmail}`, 
-    { 
-      headers: this.header,
-      withCredentials: true 
-    });
+    return this.http.get<ApiResult<ClientSitesByUser>>(`${this.identityUrl}user/clientsites/${userEmail}`, 
+      { 
+        headers: this.header,
+        withCredentials: true 
+      })
+      .pipe(map(x => x.data));
   }
 
   getRecentSitesForUser(userEmail: string): Observable<RecentUserSites> {
-    return this.http.get<RecentUserSites>(`${this.identityUrl}user/recentsites/${userEmail}`, { withCredentials: true })
+    return this.http.get<ApiResult<RecentUserSites>>(`${this.identityUrl}user/recentsites/${userEmail}`, { withCredentials: true })
+      .pipe(map(x => x.data));
   }
 
   getContactRecords(userEmail: string, clientKey: string): Observable<GetContactRecordHTTPResponse> {
-    return this.http.get<GetContactRecordHTTPResponse>(`${this.identityUrl}user/contactrecords/${userEmail}/${clientKey}`, 
-    { 
-      headers: this.header,
-      withCredentials: true 
-    });
+    return this.http.get<ApiResult<GetContactRecordHTTPResponse>>(`${this.identityUrl}user/contactrecords/${userEmail}/${clientKey}`, 
+      { 
+        headers: this.header,
+        withCredentials: true 
+      })
+      .pipe(map(x => x.data));
   }
 
   getDecodedAuthToken(token: string): Token {
