@@ -45,8 +45,10 @@ public static class ClaimExtensions
 
     public static bool IsAdminOrSuperUserContact(this ClaimsPrincipal principal)
     {
-        var contactRole = principal.ContactRole()?.ToLower();
-        if (contactRole == "superuser" || contactRole == "admin")
+        var isAdminUser = principal.IsAdminUserContact();
+        var isSuperUser = principal.IsSuperUserContact();
+
+        if (isSuperUser || isAdminUser)
             return true;
 
         return false;
@@ -57,14 +59,27 @@ public static class ClaimExtensions
         var contactRole = principal.ContactRole()?.ToLower();
         if (int.TryParse(contactRole, out int role))
         {
-            if (role == (int)UserRoleType.SuperUser || role == (int)UserRoleType.Admin)
+            if (role == (int)UserRoleType.SuperUser)
                 return true;
         } 
-        else
+
+        if (contactRole == "superuser")
+            return true;
+
+        return false;
+    }
+
+    public static bool IsAdminUserContact(this ClaimsPrincipal principal)
+    {
+        var contactRole = principal.ContactRole()?.ToLower();
+        if (int.TryParse(contactRole, out int role))
         {
-            if (contactRole == "superuser" || contactRole == "admin")
+            if (role == (int)UserRoleType.Admin)
                 return true;
         }
+
+        if (contactRole == "admin")
+            return true;
 
         return false;
     }
