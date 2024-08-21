@@ -1,12 +1,26 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MangoFormsRoutingModule } from './mango-forms-routing.module';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import * as fromApp from '../+state/dynamic-forms.reducer';
 import { DynamicFormsEffects } from '../+state/dynamic-forms.effects';
+import { environment } from '@mangoSpa/src/environments/environment.local';
+
+
+const DEV_MODULES = [];
+
+if (!environment.production) {
+  DEV_MODULES.push(
+    StoreDevtoolsModule.instrument({
+      name: 'MangoSPA',
+      maxAge: 25,
+      autoPause: true,
+    })
+  );
+}
 
 @NgModule({
   declarations: [],
@@ -19,7 +33,7 @@ import { DynamicFormsEffects } from '../+state/dynamic-forms.effects';
       fromApp.dynamicFormsReducer
     ),
     EffectsModule.forFeature([DynamicFormsEffects]),
-    StoreDevtoolsModule.instrument(),
+    ...DEV_MODULES
   ],
 })
 export class MangoFormsModule {}

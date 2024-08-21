@@ -55,6 +55,20 @@ import { IdleTimeoutPopupComponent } from './components/idle-timeout-popup/idle-
 import { RedirectorObjectData } from 'libs/data-models/lib-data-models/src/lib/models/redirectorLinks';
 import { CremPopupComponent } from '@mango/ui-shared/lib-ui-elements';
 
+const DEV_MODULES = [];
+
+// Wtih StoreDevToolsModule the flag `logOnly` could be used to disable it in stage and higher environments, but for some reason it's not working so this is a work around
+if (!environment.production) {
+  DEV_MODULES.push(
+    StoreDevtoolsModule.instrument({
+      name: 'MangoSPA',
+      maxAge: 25,
+      autoPause: true,
+    })
+  );
+}
+
+
 @NgModule({
   declarations: [AppComponent, LoadingScreenComponent, ValidateComponent, IdleTimeoutPopupComponent],
   imports: [
@@ -80,7 +94,7 @@ import { CremPopupComponent } from '@mango/ui-shared/lib-ui-elements';
       EmulateUserEffects,
       IdleEffects
     ]),
-    StoreDevtoolsModule.instrument(),
+    ...DEV_MODULES,
     HttpClientModule,
     HttpClientJsonpModule,
     AppRoutingModule,

@@ -1,5 +1,5 @@
 class EnvironmentsCrem {
-  production = false;
+  production = true;
   name = 'STAGE';
   isRestful: true;
   cremBaseUrl = 'https://[CLIENT].stage.costarremanager.com/';

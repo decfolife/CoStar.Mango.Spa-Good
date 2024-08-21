@@ -1,7 +1,7 @@
 import { Environment } from '@mango/data-models/lib-data-models';
 
 class EnvironmentsCrem implements Environment {
-  production = false;
+  production = true;
   name = 'STAGE';
   isRestful = true;
   cremBaseUrl = 'https://[CLIENT].stage.costarremanager.com';

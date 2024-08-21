@@ -29,6 +29,20 @@ import { HttpEffects } from './+state/effects/http.effects';
 import { RoleGuard } from './guards/role.guard';
 import { ServiceAccountService } from './services/service-account.service';
 
+const DEV_MODULES = [];
+
+// Wtih StoreDevToolsModule the flag `logOnly` could be used to disable it in stage and higher environments, but for some reason it's not working so this is a work around
+
+if (!environment.production) {
+  DEV_MODULES.push(
+    StoreDevtoolsModule.instrument({
+      name: 'CentralAuth',
+      maxAge: 25,
+      autoPause: true,
+    })
+  );
+}
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -89,7 +103,7 @@ import { ServiceAccountService } from './services/service-account.service';
     EffectsModule.forRoot([]),
     StoreModule.forFeature(fromApp.CENTRAL_AUTH_FEATURE_KEY, fromApp.reducer),
     EffectsModule.forFeature([AppEffects, HttpEffects, AuthenticationEffects, OAuthEffects]),
-    StoreDevtoolsModule.instrument(),
+    ...DEV_MODULES,
     ToastrModule.forRoot({
       timeOut: 8000,
       positionClass: 'toast-bottom-center',
@@ -112,7 +126,7 @@ import { ServiceAccountService } from './services/service-account.service';
     ServiceAccountService,
     StorageService,
     JwtService,
-    CentralAuthFacade
+    CentralAuthFacade,
   ],
   bootstrap: [AppComponent],
 })
