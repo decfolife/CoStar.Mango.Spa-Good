@@ -1,0 +1,12 @@
+<crem-modal
+  modalTitle="Error Occured"
+  [closeIconVisible]="true"
+  primaryFooterButtonText="Close"
+  (primaryButtonAction)="close()"
+>
+  <div modalContent class="genericError-modal__content">
+    <div>
+      {{ data }}
+    </div>
+  </div>
+</crem-modal>

@@ -13,5 +13,6 @@ export interface GlobalSessionHttpObject {
 export interface SharedInfo {
     ClientIdleTimeout: number,
     MangoIdle: boolean,
-    V06Idle: boolean
+    V06Idle: boolean,
+    ProfileName: string
 }

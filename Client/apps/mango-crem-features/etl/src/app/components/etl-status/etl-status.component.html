@@ -1,0 +1,73 @@
+<div class="status-right-container">
+  <div class="status-toolBar-wrapper">
+    <div class="controls-left">
+      <h1 class="title">Queue Status</h1>
+      <div class="search">
+        <cs-search
+          #SearchBox
+          [placeholder]="'Search...'"
+          (changed)="searchDataGrid($event)"
+        ></cs-search>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-dataGrid-wrapper">
+    <crem-loader *ngIf="isLoading"></crem-loader>
+    <dx-data-grid
+      *ngIf="!isLoading"
+      #StatusDataGrid
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      columnResizingMode="widget"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [dataSource]="statuses"
+      keyExpr="queuePosition"
+      [wordWrapEnabled]="true"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-paging [pageSize]="100"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[100, 200, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      >
+      </dxo-pager>
+      <dxo-load-panel
+        [enabled]="true"
+        shadingColor="rgba(255,255,255,1.0)"
+        [showIndicator]="true"
+        [showPane]="true"
+        [shading]="true"
+      >
+      </dxo-load-panel>
+      <dxi-column
+        dataField="queuePosition"
+        alignment="left"
+        caption="Queue Position"
+        [allowHiding]="false"
+      ></dxi-column>
+      <dxi-column dataField="status" caption="Status"></dxi-column>
+      <dxi-column dataField="server" caption="Server"></dxi-column>
+      <dxi-column dataField="client" caption="DB"></dxi-column>
+      <dxi-column dataField="fileName" caption="File"></dxi-column>
+      <dxi-column dataField="templateType" caption="Template Type"></dxi-column>
+      <dxi-column dataField="records" caption="Record Count"></dxi-column>
+      <dxi-column
+        dataField="queueDate"
+        caption="Created"
+        dataType="datetime"
+        [format]="etlService.dateFormat"
+      ></dxi-column>
+    </dx-data-grid>
+  </div>
+</div>

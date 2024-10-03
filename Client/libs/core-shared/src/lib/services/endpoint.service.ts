@@ -8,8 +8,8 @@ import { environment } from '../../../../../apps/mango/src/environments/environm
 @Injectable()
 export abstract class EndpointService {
   private static logged = false;
-  userId$: Observable<number> = new Observable<number>(null)
-  clientKey$: Observable<string> = new Observable<string>(null)
+  userId$: Observable<number> = new Observable<number>(null);
+  clientKey$: Observable<string> = new Observable<string>(null);
 
   constructor(protected http: HttpClient, protected facade: MangoAppFacade) {
     if (environment.name !== 'PROD' && !EndpointService.logged) {
@@ -17,8 +17,13 @@ export abstract class EndpointService {
     }
 
     if (this.facade) {
-      this.userId$ = this.facade.contactRecord$.pipe(filter(contactRecord => !!contactRecord), switchMap(contactRecord => of(contactRecord.contactID)))
-      this.clientKey$ = this.facade.clientKey$.pipe(switchMap(clientKey => of(clientKey)))
+      this.userId$ = this.facade.contactRecord$.pipe(
+        filter((contactRecord) => !!contactRecord),
+        switchMap((contactRecord) => of(contactRecord.contactID))
+      );
+      this.clientKey$ = this.facade.clientKey$.pipe(
+        switchMap((clientKey) => of(clientKey))
+      );
     }
   }
 
@@ -26,29 +31,27 @@ export abstract class EndpointService {
     if (this.facade) {
       return combineLatest([this.userId$, this.clientKey$]).pipe(
         filter(([userId, clientKey]) => !!userId && !!clientKey),
-        switchMap(([userId, clientKey]) => of(
-          {
+        switchMap(([userId, clientKey]) =>
+          of({
             headers: new HttpHeaders({
               'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'UserId': userId ? userId.toString() : '2',
-              'ClientKey': clientKey || 'RETAILDEMO',
-              UseQueryOptimization: '1'
-            })
-          }
-        ))
-      );
-    }
-    else {
-      return of(
-        {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'UserId': '2',
-            'ClientKey': 'RETAILDEMO'
+              Accept: 'application/json',
+              UserId: userId ? userId.toString() : '2',
+              ClientKey: clientKey || 'RETAILDEMO',
+              UseQueryOptimization: '1',
+            }),
           })
-        });
+        )
+      );
+    } else {
+      return of({
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          UserId: '2',
+          ClientKey: 'RETAILDEMO',
+        }),
+      });
     }
   }
 
@@ -56,8 +59,33 @@ export abstract class EndpointService {
     return (error: any): Observable<any> => {
       console.error(operation, error);
 
-      if (error.status === 404 && error.url.toLowerCase().indexOf('griddata') >= 0) {
+      if (
+        error.status === 404 &&
+        error.url.toLowerCase().indexOf('griddata') >= 0
+      ) {
         return of({ status: error.status });
+      }
+
+      if (error.status === 401) {
+        if (operation === 'GetForm') {
+          return of({
+            success: error.error.success,
+            data: error.error.data,
+            clientErrorMessage: error.error.clientErrorMessage,
+            statusCode: error.status,
+          });
+        }
+      }
+
+      if (error.status === 400) {
+        if (operation === 'GetFormItemWidgetByWidgetId') {
+          return of({
+            success: error.error.success,
+            data: error.error.data,
+            clientErrorMessage: error.error.clientErrorMessage,
+            statusCode: error.status,
+          });
+        }
       }
 
       return of(null);
@@ -69,39 +97,61 @@ export abstract class EndpointService {
   protected handleErrorReturnMessage(operation) {
     return (error: any): Observable<any> => {
       console.error(operation, error);
-      return of({ status: error.status, statusText: error.statusText, errorMessage: error.error.message });
+      return of({
+        status: error.status,
+        statusText: error.statusText,
+        errorMessage: error.error.message,
+      });
     };
   }
 
   protected toObject(value: any): any {
     if (value != null && value.hasOwnProperty('status')) {
-        const executionSuccessful = value.status === 200 ? true : false;
-        return {
-            success: executionSuccessful,
-            data: value.data,
-            clientErrorMessage: executionSuccessful ? null : value.title
-        };
-    } else if(value != null && !value.hasOwnProperty('succeeded') && !value.hasOwnProperty('success') && !value.hasOwnProperty('clientErrorMessage')) {
+      const executionSuccessful = value.status === 200 ? true : false;
+      return {
+        success: executionSuccessful,
+        data: value.data,
+        statusCode: value?.statusCode,
+        clientErrorMessage: executionSuccessful ? null : value.title,
+      };
+    } else if (
+      value != null &&
+      !value.hasOwnProperty('succeeded') &&
+      !value.hasOwnProperty('success') &&
+      !value.hasOwnProperty('clientErrorMessage')
+    ) {
       return {
         success: true,
-        data: value?.data
-          ? value.data
-          : value,
+        data: value?.data ? value.data : value,
+        statusCode: value?.statusCode,
         clientErrorMessage: null,
-      }
+      };
     } else {
-        let apiSuccess = value?.succeeded ? value?.succeeded : value?.success ? value?.success : null;
-        let cemsg = value?.message ? value?.message : value?.clientErrorMessage ? value?.clientErrorMessage : null
-        return {
-            success: apiSuccess,
-            data: value?.hasOwnProperty('data') ? value.data : value,
-            clientErrorMessage: cemsg
-        }
+      let apiSuccess = value?.succeeded
+        ? value?.succeeded
+        : value?.success
+        ? value?.success
+        : null;
+      let cemsg = value?.message
+        ? value?.message
+        : value?.clientErrorMessage
+        ? value?.clientErrorMessage
+        : null;
+      return {
+        success: apiSuccess,
+        data: value?.hasOwnProperty('data') ? value.data : value,
+        statusCode: value?.hasOwnProperty('statusCode')
+          ? value.statusCode
+          : value,
+        clientErrorMessage: cemsg,
+      };
     }
   }
 
   protected byteArrayFromResponse(response: any) {
-    let data = response.d.hasOwnProperty('Result') ? response.d.Result : response.d;
+    let data = response.d.hasOwnProperty('Result')
+      ? response.d.Result
+      : response.d;
 
     var binary_string = window.atob(data);
     var len = binary_string.length;
@@ -113,67 +163,108 @@ export abstract class EndpointService {
     return bytes.buffer;
   }
 
-  protected callHttpGet(url: string, functionName: string, httpOptionsParams?: any): Observable<any> {
+  protected callHttpGet(
+    url: string,
+    functionName: string,
+    httpOptionsParams?: any
+  ): Observable<any> {
     return this.getHttpHeaders().pipe(
-      switchMap(httpOptions => { 
+      switchMap((httpOptions) => {
         if (httpOptionsParams) {
-          httpOptions.params = httpOptionsParams
+          httpOptions.params = httpOptionsParams;
         }
-        return this.http.get(url, httpOptions) 
+        return this.http.get(url, httpOptions);
       }),
-      map(x => this.toObject(x) as any),
+      map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
-    )
+    );
   }
 
-  protected callHttpPost(url: string, functionName: string, postBody: any): Observable<any> {
+  protected callHttpGetWithErrorMessage(
+    url: string,
+    functionName: string,
+    httpOptionsParams?: any
+  ): Observable<any> {
     return this.getHttpHeaders().pipe(
-      switchMap(httpHeaders => this.http.post(url, postBody, httpHeaders)),
-      map(x => this.toObject(x) as any),
-      catchError(this.handleError(functionName))
-    )
-  }
-
-  protected callHttpPostWithErrorMessage(url: string, functionName: string, postBody: any): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap(httpHeaders => this.http.post(url, postBody, httpHeaders)),
-      map(x => this.toObject(x) as any),
+      switchMap((httpOptions) => {
+        if (httpOptionsParams) {
+          httpOptions.params = httpOptionsParams;
+        }
+        return this.http.get(url, httpOptions);
+      }),
+      map((x) => this.toObject(x) as any),
       catchError(this.handleErrorReturnMessage(functionName))
-    )
+    );
   }
 
-  protected callHttpPostWithBlobResponse(url: string, functionName: string, postBody: any): Observable<any> {
+  protected callHttpPost(
+    url: string,
+    functionName: string,
+    postBody: any
+  ): Observable<any> {
     return this.getHttpHeaders().pipe(
-      switchMap(httpHeaders => {
+      switchMap((httpHeaders) => this.http.post(url, postBody, httpHeaders)),
+      map((x) => this.toObject(x) as any),
+      catchError(this.handleError(functionName))
+    );
+  }
+
+  protected callHttpPostWithErrorMessage(
+    url: string,
+    functionName: string,
+    postBody: any
+  ): Observable<any> {
+    return this.getHttpHeaders().pipe(
+      switchMap((httpHeaders) => this.http.post(url, postBody, httpHeaders)),
+      map((x) => this.toObject(x) as any),
+      catchError(this.handleErrorReturnMessage(functionName))
+    );
+  }
+
+  protected callHttpPostWithBlobResponse(
+    url: string,
+    functionName: string,
+    postBody: any
+  ): Observable<any> {
+    return this.getHttpHeaders().pipe(
+      switchMap((httpHeaders) => {
         httpHeaders.responseType = 'blob' as 'json';
-        return this.http.post(url, postBody, httpHeaders)
+        return this.http.post(url, postBody, httpHeaders);
       }),
-      map(x => this.toObject(x) as any),
+      map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
-    )
+    );
   }
 
-  protected callHttpPut(url: string, functionName: string, postBody: any): Observable<any> {
+  protected callHttpPut(
+    url: string,
+    functionName: string,
+    postBody: any
+  ): Observable<any> {
     return this.getHttpHeaders().pipe(
-      switchMap(httpHeaders => this.http.put(url, postBody, httpHeaders)),
-      map(x => this.toObject(x) as any),
+      switchMap((httpHeaders) => this.http.put(url, postBody, httpHeaders)),
+      map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
-    )
+    );
   }
 
   protected callHttpDelete(url: string, functionName: string): Observable<any> {
     return this.getHttpHeaders().pipe(
-      switchMap(httpHeaders => this.http.delete(url, httpHeaders)),
-      map(x => this.toObject(x) as any),
+      switchMap((httpHeaders) => this.http.delete(url, httpHeaders)),
+      map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
-    )
+    );
   }
 
-  protected callHttpPostByteArray(url: string, functionName: string, postBody: any): Observable<any> {
+  protected callHttpPostByteArray(
+    url: string,
+    functionName: string,
+    postBody: any
+  ): Observable<any> {
     return this.getHttpHeaders().pipe(
-      switchMap(httpHeaders => this.http.post(url, postBody, httpHeaders)),
-      map(x => this.byteArrayFromResponse(x) as any),
+      switchMap((httpHeaders) => this.http.post(url, postBody, httpHeaders)),
+      map((x) => this.byteArrayFromResponse(x) as any),
       catchError(this.handleError(functionName))
-    )
+    );
   }
 }

@@ -81,6 +81,7 @@ export type CardConfig = {
   index: number,
   format?: FormatObject,
   sortingOrder?: SortingOrder,
+	showFieldChooser?: boolean,
   sortingMethod?: Function,
   calculateSummaryValue?: Function,
   calculateCustomSummary?: Function,

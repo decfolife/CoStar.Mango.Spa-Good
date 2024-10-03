@@ -1,25 +1,24 @@
-@use '../../../../../mango/src/assets/styles/colors.scss' as colors;
+@use 'styles' as *;
 
 :host{
 
   .loading-screen {
-    z-index: 1000;
+    z-index: 5000001; // Over Pendo
     display: flex;
-    -webkit-transition: opacity 0.3s;
-    transition: all 0.3s;
     flex-direction: column;
     justify-content: center;
+    @include costar(transition, fast);
 
     &.light{
-      background-color: colors.$white;
-      color: colors.$black;
+      @include costar(background-color, light);
+      @include costar(color, dark);
       .logo {
         background-image: url('../../../assets/images/logos/logo-color.svg');
       }
     }
     &.dark{
-      background-color: colors.$color-dark-blue;
-      color: colors.$white;
+      @include costar(background-color, primary);
+      @include costar(color, light);
       .logo {
         background-image: url('../../../assets/images/logos/logo-white.svg');
       }

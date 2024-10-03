@@ -49,3 +49,12 @@
     }
   }
 }
+
+:host ::ng-deep #add_contact_modal button.btn-close.btn-none.modalCloseButton:focus{
+  outline: none;
+  box-shadow: 0 0 0 0.1rem $primary-lighter;
+}
+
+:host ::ng-deep .modalContent {
+  overflow: hidden !important; 
+  }

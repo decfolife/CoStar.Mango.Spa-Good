@@ -7,7 +7,7 @@ export const pendoId = "IFRSAnnualDisclosures" as string;
 export const cardData: CardConfig[] = [ // todo: exception handling when data coming from API doesn't match parameters provided
   {
     index: 0,
-    id: 'LeaseCounts',
+    id: 'IFRS16-Annual-LeaseCounts',
     name: 'Lease Counts',
     format: {
       type: 'fixedPoint',
@@ -81,7 +81,7 @@ export const cardData: CardConfig[] = [ // todo: exception handling when data co
   },
   {
     index: 1,
-    id: 'AssetBalance',
+    id: 'IFRS16-Annual-AssetBalance',
     name: 'Assets and Liabilities Balances',
     format:  {
       type: 'fixedPoint',

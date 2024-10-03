@@ -1,8 +1,8 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
-import { Component, OnInit, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 
 import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
 import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
@@ -18,11 +18,17 @@ import { ModuleDropdownUtil } from 'libs/ui-shared/lib-ui-elements/src/lib/dropd
 import { selectBoxMenuItems, byItemMoreMenuOptions } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
 import { ReportsService } from '@reports/services/reports.service';
 import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
-import hideToasts from "devextreme/ui/toast/hide_toasts";
+import { UserService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+
 
 export interface DropdownSelection { // Todo: Move to type definition file
   display: string,
   id: number,
+}
+export interface AccountingViewData {
+	id: number;
+	displayValue: string;
 }
 
 @Component({
@@ -32,7 +38,7 @@ export interface DropdownSelection { // Todo: Move to type definition file
 })
 export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public featureFlagEnabled = false as boolean;
-  public accountingViewData: any[] = [
+  public accountingViewData: AccountingViewData[] = [
     {
       id: 1,
       displayValue: "Workflow and Alerts"
@@ -67,12 +73,14 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public hasSegmentDeleteRight: boolean;
   public hasSegmentsAddRight: boolean;
   public hasSegmentsViewRight: boolean;
-  public isSegmentEdited: boolean =  false;
+  public isSegmentEdited =  false as boolean;
   public editingSegment: number;
+  public selectedCurrency: string;
+
   /**
    * For the export button, changes the state of the button
    */
-  public exportingReport: boolean = false;
+  public exportingReport = false as boolean;
 
   public moreMenuSegment: any;
 
@@ -91,6 +99,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   constructor(
     private inAppDisclosureService: InAppDisclosureService,
     private reportsService: ReportsService,
+    private userService: UserService,
+    private facade: MangoAppFacade,
     public dialog: MatDialog,
     private toastService: CremToastService
   ) {
@@ -215,19 +225,25 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     this.subs.push(
       this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
         if (result.data) {
-   
           this.hasSegmentDeleteRight = result.data.securityTypeID >= 5;
           this.hasSegmentsAddRight = result.data.securityTypeID >= 3;
           this.hasSegmentsViewRight = result.data.securityTypeID >= 2;
         }
       })
     );
+
+    this.subs.push(
+      this.facade.contactRecord$.subscribe((record) => {
+        const selectedCurrencyID = record.preferences?.contactCurrency;
+        this.userService.currencyMappingTable$.subscribe((currencyMappingTable) => {
+          this.selectedCurrency = currencyMappingTable.filter((currency) => currency.currencyID === selectedCurrencyID)[0].currencyISO;
+        })
+      })
+    )
   }
 
   setDefaultSegment(segmentID: number, criteriaSetID: number): void{
-    let setDefault$: Subscription;
-
-    setDefault$ = this.inAppDisclosureService.SetDefault(segmentID, criteriaSetID)
+    const setDefault$: Subscription = this.inAppDisclosureService.SetDefault(segmentID, criteriaSetID)
       .subscribe(
         result => {
           if (result.data != -1) {
@@ -343,7 +359,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public export() {
     this.exportingReport = true;
     this.toastService.show(
-      "Report will be exported shortly.",
+      "Report will be emailed to you shortly.",
       undefined,
       ToastState.SUCCESS,
       {
@@ -351,64 +367,15 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         duration: 3000,
       }
     );
-
-    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, "usd", this.selectedView + 2).subscribe((result) => {
-      if(result.data) {
-        this.toastService.show(
-          undefined,
-          undefined,
-          ToastState.SUCCESS,
-          {
-            maxWidth: '500px',
-            duration: 999999999,
-            closeOnClick: true,
-          },
-          this.getDownloadContentTemplate(result.data),
-        );
-      } else {
-        this.toastService.show(
-          undefined,
-          'Export failed.',
-          ToastState.ERROR,
-          {
-            maxWidth: '500px',
-            duration: 5000,
-          },
-          this.getDownloadContentTemplate(result.data),
-        );
-      }
-      this.exportingReport = false;
-    });
-  }
-
-  getDownloadContentTemplate(data): string {
-    const blob = new Blob([data.body], {type: 'application/octet-stream'});
-    const downloadURL = URL.createObjectURL(blob);
-    const div = document.createElement('div');
-    const a = document.createElement('a');
-    const span1 = document.createElement('span')
-    const span2 = document.createElement('span');
-    const beforeText = document.createTextNode("Report is ready for download, ");
-    const afterText = document.createTextNode(" to download report.");
-    span1.appendChild(beforeText);
-    span2.appendChild(afterText);
-    const linkText = document.createTextNode("click here");
-    div.appendChild(span1)
-    div.appendChild(a)
-    div.appendChild(span2)
-    a.appendChild(linkText);
-    a.href = downloadURL;
-    a.style.color = "white";
-    a.style.textDecoration = "underline";
-    a.onclick = () => { hideToasts(); };
-    const contentDisposition = data.headers.get('content-disposition') as string;
-    const fileName = contentDisposition.split(/[=;]/)[2];
-    a.download = fileName;
-    return div.outerHTML;
+    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, this.selectedCurrency, this.selectedView + 2)
+			.subscribe(
+				error => console.error(error),
+			);
+		timer(180000).subscribe( () => this.exportingReport = false );
   }
 
   launchSettingsModal() {
-    const dialogRef = this.dialog.open(UserSettingsComponent, {
+    this.dialog.open(UserSettingsComponent, {
        width: '600px',
        height: '570px',
        panelClass: 'user-settings-dialog',
@@ -418,6 +385,24 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
        }
     });
   }
+
+	/**
+	 * Get view Name
+	 *
+	 * @param {number} viewID
+	 * @param {boolean} [safeName=false as boolean]
+	 * @return {*}  {string}
+	 * @memberof DashboardWrapperComponent
+	 */
+	getViewName(viewID: number, safeName = false as boolean): string{
+		if(!safeName){
+			return this.accountingViewData.find( e => e.id === viewID ).displayValue;
+		}
+		return this.accountingViewData.find( e => e.id === viewID ).displayValue
+			.trim()                           // Removes leading and trailing spaces
+			.replace(/\s+/g, '-')             // Replaces inner spaces with hyphens (or remove `.replace` to eliminate spaces)
+			.replace(/[^a-zA-Z0-9-]/g, '');   // Removes non-alphanumeric characters except hyphens
+	}
 
   public edit(data) {
     if (this.hasSegmentsAddRight || this.hasSegmentsViewRight) {
@@ -460,7 +445,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   public archiveAction(data) {
-    let request = { "SegmentID": data.segmentID }
+    const request: { SegmentID: any } = { "SegmentID": data.segmentID }
     if (data.active) {
       this.reportsService.archiveSegment(request).subscribe((result) => {
         if (result) {

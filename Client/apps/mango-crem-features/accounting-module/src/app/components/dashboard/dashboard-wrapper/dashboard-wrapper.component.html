@@ -5,7 +5,7 @@
 		<div class="controls-left">
 			<div class="dashboard-toolbar__item">
 				<crem-dropdown
-					id="AccountingViewDropdown"
+					[id]="'AccountingViewDropdown-'+getViewName(selectedView, true)"
 					dropDownContainerCustomClass="accountingViewDropDown"
 					[dataSource]='accountingViewData'
 					placeholder='Select View' 
@@ -25,7 +25,7 @@
 
 			<div class="dashboard-toolbar__item">
 				<crem-dropdown *ngIf="selectedView !== 1"
-					id="AccountingYearDropdown"
+					[id]="'AccountingYearDropdown'"
 					dropDownContainerCustomClass="accountingYearDropDown"
 					[dataSource]='accountingYearData'
 					placeholder='Select Year' 
@@ -45,7 +45,7 @@
 
 			<div class="dashboard-toolbar__item">
 				<crem-dropdown
-					id="AccountingSegmentDropdown"
+					[id]="'AccountingSegmentDropdown'"
 					dropDownContainerCustomClass="accountingSegmentDropDown"
 					[dataSource]='accountingSegmentData'
 					placeholder='Select Segment' 
@@ -68,7 +68,8 @@
 				></crem-dropdown>
 			</div>
 
-			<crem-button id="accounting-dashboard__dropdown--apply"
+			<crem-button
+				[id]="'AccountingButtonApply'"
 				[disabled]="loading"
 				type="secondary"
 				(buttonClick)="apply($event)">
@@ -77,26 +78,28 @@
 
 		</div>
 		<div class="controls-right">
-      <crem-button
-        *ngIf="selectedView != 1"
-        id="accounting-dashboard__export"
-        [disabled]="loading || exportingReport"
-        type="secondary"
-        (buttonClick)="export()"
-        [icon]="exportingReport && 'faSpinner'"
-        [iconAnimation]="exportingReport && 'spin'"
-        [iconPack]="exportingReport && 'solid'"
-        [title]="exportingReport ? 'Report will be ready for download shortly.' : ''"
-      >
+			<span *ngIf="selectedView !== 1" class="currency-label" [id]="AccountingDashboardCurrencyLabel">Reporting Currency in <div class="currency-iso">{{selectedCurrency}}</div></span>
+			<crem-button
+			*ngIf="selectedView !== 1"
+			[id]="'AccountingButtonExport'"
+			[disabled]="loading || exportingReport"
+			type="secondary"
+			(buttonClick)="export()"
+			[icon]="exportingReport && 'faSpinner'"
+			[iconAnimation]="exportingReport && 'spin'"
+			[iconPack]="exportingReport && 'solid'"
+			[title]="exportingReport ? 'Report will be emailed to you shortly.' : ''"
+			>
 				{{exportingReport ? 'Sending to Excel' : 'Send to Excel'}}
 			</crem-button>
-      <crem-button
-      type="secondary"
-      ariaLabel="Dashboard Settings"
-      icon="faCog"
-      [disabled]="loading"
-      (click)="launchSettingsModal(); $event.preventDefault();"
-      ></crem-button>
+      		<crem-button
+				[id]="'AccountingButtonDashboardSettings'"
+				type="secondary"
+				ariaLabel="Dashboard Settings"
+				icon="faCog"
+				[disabled]="loading"
+				(click)="launchSettingsModal(); $event.preventDefault();"
+      		></crem-button>
 		</div>
 	</div>
 
@@ -116,6 +119,7 @@
           [dashboardId]="'4'"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
+		  [selectedCurrency]="selectedCurrency"
         />
 
         <asc-842-quarterly-disclosures
@@ -123,18 +127,21 @@
           [dashboardId]="'5'"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
+		  [selectedCurrency]="selectedCurrency"
         />
 
         <ifrs-16-annual-disclosures
           *ngIf="selectedView === 4"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
+		  [selectedCurrency]="selectedCurrency"
         />
 
         <ifrs-16-quarterly-disclosures
           *ngIf="selectedView === 5"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
+		  [selectedCurrency]="selectedCurrency"
         />
 
       </div>

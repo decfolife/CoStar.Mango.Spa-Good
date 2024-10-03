@@ -21,6 +21,7 @@
 			(onContentReady)="setAttributes($event)"
 			(onKeyDown)="onKeyDown($event)"
 			(onSelectionChanged)="onSelectionChanged($event)"
+			[focusedRowEnabled]="true"
 		>
 			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 			<dxo-sorting mode="multiple"></dxo-sorting>

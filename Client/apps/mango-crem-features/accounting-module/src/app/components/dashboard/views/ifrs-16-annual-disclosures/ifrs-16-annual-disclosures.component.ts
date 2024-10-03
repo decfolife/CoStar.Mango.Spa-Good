@@ -21,7 +21,7 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
   // Currency precision goes into the field
   // Data goes into the store
   public loading = true as boolean;
-  public selectedCurrency: string;
+  @Input() selectedCurrency;
   public decimalPrecision: number | null;
 
   private observableList$;
@@ -45,7 +45,6 @@ export class Ifrs16AnnualDisclosuresComponent implements OnInit, OnDestroy {
     this.pendoId = pendoId;
     this.dashboardId = dashboardId;
     this.cardData = cardData;
-    this.selectedCurrency = 'usd';
     this.pivotDataSources = [];
   }
 

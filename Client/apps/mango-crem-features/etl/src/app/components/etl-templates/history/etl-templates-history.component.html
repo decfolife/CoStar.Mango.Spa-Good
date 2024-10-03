@@ -1,0 +1,108 @@
+<div class="templates-edit-history-container">
+  <div class="templates-edit-history-toolBar-wrapper">
+    <div class="controls-left">
+      <h1 class="title">
+        Import Template : {{ templateDetails?.templateName }}
+      </h1>
+    </div>
+    <div class="controls-right">
+      <div class="more">
+        <crem-button type="secondary" (click)="onSendToExcel(); $event.preventDefault()">
+          <span>Export to Excel</span>
+        </crem-button>
+      </div>
+      <div class="more">
+        <crem-button
+          type="secondary"
+          (click)="expandAll(); $event.preventDefault()"
+        >
+          <span>{{ areGroupsExpanded ? 'Collapse All' : 'Expand All' }}</span>
+        </crem-button>
+      </div>
+    </div>
+  </div>
+  <div class="templates-edit-history-dataGrid-wrapper">
+    <crem-loader *ngIf="isLoading"></crem-loader>
+    <dx-data-grid
+      *ngIf="!isLoading"
+      #TemplateHistoryDataGrid
+      [dataSource]="templateHistoryData"
+      keyExpr="id"
+      [filterRow]="{ visible: true, applyFilter: 'auto' }"
+      [groupPanel]="{ visible: true }"
+      [headerFilter]="{ visible: true }"
+      [grouping]="{ autoExpandAll: false }"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-paging [pageSize]="50"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[50, 100, 200, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      >
+      </dxo-pager>
+      <dxo-load-panel
+        [enabled]="true"
+        shadingColor="rgba(255,255,255,1.0)"
+        [showIndicator]="true"
+        [showPane]="true"
+        [shading]="true"
+      >
+      </dxo-load-panel>
+
+      <dxi-column dataField="id" caption="ID" [visible]="false"></dxi-column>
+      <dxi-column dataField="displayName" caption="Field">
+        <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
+      </dxi-column>
+      <dxi-column
+        dataField="beforeChange"
+        caption="Before"
+        cellTemplate="before"
+      >
+        <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
+        <div *dxTemplate="let cell of 'before'">
+          {{ cell.data.beforeChangeDisplay ?? cell.data.beforeChange ?? '' }}
+        </div>
+      </dxi-column>
+      <dxi-column dataField="afterChange" caption="After" cellTemplate="after">
+        <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
+        <div *dxTemplate="let cell of 'after'">
+          {{ cell.data.afterChangeDisplay ?? cell.data.afterChange ?? '' }}
+        </div>
+      </dxi-column>
+      <dxi-column
+        dataField="actions"
+        caption="Description"
+        cellTemplate="action"
+      >
+        <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
+        <div *dxTemplate="let cell of 'action'">
+          {{ actionDesc(cell.data.actions) }}
+        </div>
+      </dxi-column>
+      <dxi-column dataField="modifiedBy" caption="Modified By">
+        <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
+      </dxi-column>
+      <!-- <dxi-column dataField="lastModified" caption="Modified Date" dataType="datetime" [format]="etlService.dateFormat">
+                <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
+            </dxi-column> -->
+
+      <dxi-column
+        dataField="lastModified"
+        caption="Modified Date"
+        dataType="datetime"
+        [groupIndex]="0"
+        [sortOrder]="'desc'"
+        [showWhenGrouped]="true"
+        [format]="etlService.dateFormat"
+      >
+        <dxo-header-filter [allowSearch]="true"></dxo-header-filter>
+      </dxi-column>
+    </dx-data-grid>
+  </div>
+</div>

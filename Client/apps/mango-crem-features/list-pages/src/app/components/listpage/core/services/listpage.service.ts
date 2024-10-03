@@ -92,7 +92,7 @@ export class ListPageService extends EndpointService {
     return this.callHttpPost(`${this.listpages}listpage/dynamicSQL`, 'getDynamicSQL', request)
   }
 
-  createUserListView(userView: ListView): Observable<number> {
+  createUserListView(userView: ListView): Observable<ApiResponse> {
     return this.callHttpPost(`${this.listpages}listpage/views`, 'createUserListView', userView)
   }
 

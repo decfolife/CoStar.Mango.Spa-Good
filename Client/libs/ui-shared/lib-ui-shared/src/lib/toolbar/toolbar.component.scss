@@ -2,8 +2,6 @@
 
 .crem-toolbar {
   &__nav {
-    display: flex;
-    flex-wrap: wrap;
     padding-left: 0;
     padding-bottom: 0;
     list-style: none;
@@ -13,24 +11,31 @@
   &__wrapper {
     height: 36px;
     min-height: 36px;
+    display: grid;
+    overflow-x: auto;
+    overflow-y: hidden;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr fit-content(120px) 120px;
     @include costar(font-weight, normal);
     @include costar(font-size, navigation);
     @include costar(background-color, primary);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
 
     .nav-link {
-      height: auto;
+      height: 100%;
+      display: flex;
       padding: 0 1rem;
       @include costar(transition, fast);
+
+      span {
+        display: flex;
+        align-items: center;
+      }
 
       &.active {
         background-color: transparent;
         @include costar(color, light);
 
         span {
-          display: flex;
           border-radius: unset;
           border-bottom: 3px solid map-get($color, color, secondary);
           border-bottom: 3px solid var(--costar-color-secondary);
@@ -47,11 +52,21 @@
 
   &__modules {
     gap: 1rem;
+    .nav-item {
+      height: 100%;
+    }
   }
 
   &__modules, &__environment, &__bookmarks {
+    height: 36px;
     display: flex;
-      align-items: center;
-      justify-content: flex-end;
+    align-items: center;
+    justify-content: flex-start;
   }
+
+}
+
+// 'crem-chip' fix
+:host ::ng-deep crem-env-info-chip .dx-field-value-static {
+  width: 100% !important;
 }

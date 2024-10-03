@@ -5,6 +5,7 @@ import { environment } from '../../../../../../mango/src/environments/environmen
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { ServiceAccount } from "../../../../../../../libs/data-models/lib-data-models/src/lib/models/service-account/service-account";
+import { LatestSyncInfo } from "../../../../../../../libs/data-models/lib-data-models/src/lib/models/service-account/latest-sync-info.interface";
 import { ServiceAccountHistory } from "../../../../../../../libs/data-models/lib-data-models/src/lib/models/service-account/service-account-history";
 import { map } from 'rxjs/operators';
 import { Api } from '@mango/data-models/lib-data-models';
@@ -41,6 +42,14 @@ export class UserMaintenanceService extends EndpointService {
   syncOnPremToAWS(): Observable<any> {    
     const url = `${this.userMaintenanceUrl}ServiceAccount/SyncOnPremToAWS`;
     return this.callHttpPost(url, 'SyncOnPremToAWS', {})
+
+  }
+
+  getLatestSyncInfo(): Observable<LatestSyncInfo> {    
+    const url = `${this.userMaintenanceUrl}ServiceAccount/latestsyncinfo`;
+    return this.callHttpGet(url, 'LastSyncInfo', {}).pipe(
+      map(x => x.data as LatestSyncInfo)
+    );
   }
 
   getServiceAccounts(): Observable<ServiceAccount[]> {       

@@ -1352,6 +1352,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
     };
 
     this.service.createUserListView(userListView).subscribe(newListViewId => {
+      const { data: id } = newListViewId;
       const request: GetViewDropdownDataRequest = {
         objectTypeId: this.objectTypeId,
         isSuperUser: this._isSuperUser,
@@ -1364,11 +1365,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
           + this.listViews.myListViews.length
           + this.listViews.sharedListViews.length;
 
-        const newListView = this.listViews.myListViews
-          .find(x => x.id == new Number(newListViewId));
-
+          const newListView = this.listViews.myListViews.find((x) => x.id == id);
+          
         this.currentListView = newListView;
-
         this.configCurrentListView(true, false);
       });
     });
@@ -1490,8 +1489,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
     } else if (objectId === ObjectType.CONTACT) {
       let dialogRef = this.dialog.open(AddContactModalComponent, {
         disableClose: true,
-        height: '81%',
-        width: '75%',
+        height: '440px',
+        width: '700px',
         maxWidth: '1100px',
         data: {
           objectTypeId: this.objectTypeId,
@@ -1552,49 +1551,66 @@ export class ListPageComponent implements OnInit, OnDestroy {
           : ArchiveToggleValue.ActiveAndArchived;
   }
 
-  private configCurrentListView(refreshGrid: boolean, useSessionState: boolean = false, overrideDefaultListPage = false) {
+  private configCurrentListView(
+    refreshGrid: boolean, 
+    useSessionState: boolean = false, 
+    overrideDefaultListPage = false
+  ) {
+
     if (useSessionState) {
       this.currentListView = this.safeGetFromSession(SessionVariables.CurrentListView);
       this.unmodifiedOriginalListView = this.safeGetFromSession(SessionVariables.UnmodifiedOriginalCurrentListView);
     }
 
-    let defaultListView = this.listViews?.coStarListViews?.find(x => x.isDefault)
-      ? this.listViews?.coStarListViews?.find(x => x.isDefault)
-      : this.listViews?.myListViews?.find(x => x.isDefault)
-        ? this.listViews?.myListViews?.find(x => x.isDefault)
-        : this.listViews?.sharedListViews?.find(x => x.isDefault)
-          ? this.listViews?.sharedListViews?.find(x => x.isDefault)
-          : this.listViews?.coStarListViews[0]
-            ? this.listViews?.coStarListViews[0]
-            : this.listViews?.myListViews[0]
-              ? this.listViews?.myListViews[0]
-              : this.listViews?.sharedListViews[0]
-                ? this.listViews?.sharedListViews[0]
-                : this.listViews?.hiddenListViews[0];
+    const viewResolutionSequence = [
+      this.listViews?.coStarListViews?.find((x) => x.isDefault),
+      this.listViews?.myListViews?.find((x) => x.isDefault),
+      this.listViews?.sharedListViews?.find((x) => x.isDefault),
+      this.listViews?.coStarListViews?.[0],
+      this.listViews?.myListViews?.[0],
+      this.listViews?.sharedListViews?.[0],
+      this.listViews?.hiddenListViews?.[0],
+    ];
 
     if (overrideDefaultListPage) {
-      defaultListView = this.listViews?.coStarListViews?.find(x => x.listPageId === this._intitialListPageRequestedId) ?? this.createInvalidListView();
+      const overrideView =
+        this.listViews?.coStarListViews?.find(
+          (x) => x.listPageId === this._intitialListPageRequestedId
+        )
+      // unshift view to the front of the list sources
+      viewResolutionSequence.unshift(
+        overrideView,
+        this.createInvalidListView()
+      );
+
+      // clear the requested list page id
       this._intitialListPageRequestedId = -1;
     }
 
-    this.currentListView = this.currentListView ?? defaultListView;
-    this.originalViewObject = JSON.parse(defaultListView.view, this.parseIsoDateStrToDate);
+    // viewResolutionSequence is in order of importance so we can stop at the first non-null view
+    let selectedListView = viewResolutionSequence.find((view) => !!view);
 
+    this.currentListView = this.currentListView ?? selectedListView;
+    this.originalViewObject = JSON.parse(
+      selectedListView.view,
+      this.parseIsoDateStrToDate
+    );
 
-    const isInCoStarListViews =
-      this.listViews.coStarListViews.find(x => x.id === this.currentListView.id);
-    const isInUserListViews =
-      this.listViews.myListViews.find(x => x.id === this.currentListView.id);
-    const isInSharedListViews =
-      this.listViews.sharedListViews.find(x => x.id === this.currentListView.id);
-    const isInHiddenListViews =
-      this.listViews.hiddenListViews.find(x => x.id === this.currentListView.id);
-
-    if (!(isInCoStarListViews || isInUserListViews || isInSharedListViews || isInHiddenListViews)) {
+    const listViewSources = [
+      this.listViews.coStarListViews,
+      this.listViews.myListViews,
+      this.listViews.sharedListViews,
+      this.listViews.hiddenListViews,
+    ];
+    
+    const isInListViews = listViewSources.map(viewGroup => viewGroup.some(x => x.id === this.currentListView.id));
+    
+    // the view is no longer available, show error popup and use the default view
+    if (!(isInListViews)) {
       this.showErrorPopup('This list view is no longer available.');
-      if (this.currentListView !== defaultListView) {
+      if (this.currentListView !== selectedListView) {
         this.isCurrentViewRemoved = true;
-        this.currentListView = defaultListView;
+        this.currentListView = selectedListView;
       } else {
         return;
       }
@@ -1607,16 +1623,19 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.searchText = viewDataObject.searchText;
     this.dataGrid.instance.searchByText(this.searchText);
 
-    this.currentPortfolio = useSessionState
-      ? this.safeGetFromSession(SessionVariables.Portfolio)
-      : this.portfolios.find(x => x.masterGroupId === this.currentListView.masterGroupId) ?? null;
+
+    // even if we have session state, that doesnt mean there will be an entry for the current view, look in the porfolio list instead of returning null prematurely
+    // try to get current portfolio from sequence of sources
+    this.currentPortfolio = this.safeGetFromSession(SessionVariables.Portfolio) || this.portfolios.find(x => x.masterGroupId === this.currentListView.masterGroupId) || null
+
 
     const isHiddenListView = this.listViews.hiddenListViews
       .some(x => x.id === this.currentListView.id);
     const isMyListView = this.listViews.myListViews
       .some(x => x.id === this.currentListView.id);
 
-    this.showSave = !this.isCoStarListView(this.currentListView) &&
+    this.showSave =
+      !this.isCoStarListView(this.currentListView) &&
       (isMyListView ||
         ((listView.isSharedWithMe || isHiddenListView) &&
           (listView.securityType !== SecurityType.RestrictedView &&
@@ -1707,8 +1726,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
     if (session !== null) {
       listPageObjectTypeSessions = JSON.parse(session);
       let index = listPageObjectTypeSessions.findIndex(x => x.objectTypeId === this.objectTypeId);
+      // remove the current list page session if it exists 
       if (index >= 0)
-        listPageObjectTypeSessions.splice(index, 1);
+        listPageObjectTypeSessions.splice(index, 1); 
     }
 
     //Add the session item back for the current object type
@@ -2558,28 +2578,17 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
 
   adaAttrNoDataGrid(e: any) {
-    if (!e || !e.element) return;
+    // Select the header row elements
+    const dxGridwithTables = e.component.$element().find('.dx-datagrid-scrollable-simulated.dx-datagrid-content.dx-datagrid-scroll-container');
 
-    let noDataEl;
-    if (e.element[0])
-      noDataEl = e.element[0].querySelector(".dx-empty");
-    else
-      noDataEl = e.element.querySelector(".dx-empty");
-
-    let spanChild = null;
-
-    // Check if noDataEl exists
-    if (noDataEl) {
-      spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
+    // Function to set role attribute
+    if (dxGridwithTables && dxGridwithTables.length > 0) {
+      dxGridwithTables.each((index: number, element: any) => {
+        if (element) {
+          element.setAttribute('role', 'grid');
+        }
+      });
     }
-
-    // If either element is missing, exit the function
-    if (!noDataEl || !spanChild) {
-      return;
-    }
-
-    noDataEl.setAttribute("role", "row");
-    spanChild.setAttribute("role", "gridcell");
   }
 
 }

@@ -5,27 +5,27 @@
         <mango-header  (quickSearchEvent)="quickSearch($event)"></mango-header>
         <costar-header *ngIf="userAppType === 1"></costar-header>
 
-        <mango-toolbar [chipContent]="(chipContent$ | async)" [ngClass]="{'suite-user':(userAppType == 1)}"
+        <mango-toolbar [chipContent]="(chipContent$ | async)" [ngClass]="{'suite-user':(userAppType === 1)}"
           [popoverContent]="popoverContent" [moduleLinks]="toolbarModuleLinks">
         </mango-toolbar>
 
         <display-breadcrumbs [breadcrumbs]="(facade.breadcrumbs$ | async)" (navigateToBreadcrumb)="navigateToBreadcrumb($event)"></display-breadcrumbs>
-        
+
         <div class="render-form-header" *ngIf="showRenderFormPropertyHeader" >
-          <mango-render-form-header  
+          <mango-render-form-header 
               #renderFormHeader
-              [data]="renderFormHeaderData">
-            </mango-render-form-header>
+              [data]="renderFormHeaderData"
+          ></mango-render-form-header>
         </div>
-        
-        <crem-bookmarks [ngClass]="{'suite-user':(userAppType == 1)}"
+
+        <crem-bookmarks [ngClass]="{'suite-user':(userAppType === 1)}"
           #cremBookmark
           [bookmarkGroups]="bookmarkGroups"
           [useRouterOutletTag]="false"
         ></crem-bookmarks>
-        
+
       </div>
-      <div class="application-module"  [ngClass]="{'suite-user':(userAppType == 1)}" #appModule>
+      <div class="application-module"  [ngClass]="{'suite-user':(userAppType === 1)}" #appModule>
         <aside class="module-leftNav">
           <shared-left-nav
             [navigationLinks]="navigationLinks"
@@ -33,10 +33,9 @@
             (navigateSpa)="handleSpaNavigation($event)"
             (toActiveLink)="getActiveLink($event)"
             *ngIf="navLinksFetched"
-          >
-          </shared-left-nav>
+          ></shared-left-nav>
         </aside>
-        <main id='main-content' class="module-content" tabindex="-1">
+        <main id='main-content' class="module-content scroll-container vertical" tabindex="-1">
           <router-outlet class="mainContent-outlet"></router-outlet>
         </main>
       </div>

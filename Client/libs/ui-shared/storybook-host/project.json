@@ -24,7 +24,8 @@
           "node_modules/devexpress-gantt/dist/dx-gantt.css",
           "node_modules/ngx-toastr/toastr.css",
           "apps/mango/src/styles.scss",
-          "libs/ui-shared/common/src/styles/_index.scss"
+          "libs/ui-shared/common/src/styles/_index.scss",
+          "libs/ui-shared/common/src/lib/design-system-utils/utils.scss"
         ],
         "port": 4400,
         "configDir": "libs/ui-shared/storybook-host/.storybook",
@@ -58,7 +59,8 @@
           "node_modules/devexpress-gantt/dist/dx-gantt.css",
           "node_modules/ngx-toastr/toastr.css",
           "apps/mango/src/styles.scss",
-          "libs/ui-shared/common/src/styles/_index.scss"
+          "libs/ui-shared/common/src/styles/_index.scss",
+          "libs/ui-shared/common/src/lib/design-system-utils/utils.scss"
         ],
         "outputDir": "dist/storybook/ui-shared-storybook-host",
         "configDir": "libs/ui-shared/storybook-host/.storybook",

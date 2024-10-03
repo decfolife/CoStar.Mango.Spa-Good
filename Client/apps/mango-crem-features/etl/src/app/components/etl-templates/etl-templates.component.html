@@ -1,0 +1,155 @@
+<div class="templates-container">
+  <div class="templates-toolBar-wrapper">
+    <div class="controls-left">
+      <h1 class="title">Templates</h1>
+      <div class="search">
+        <cs-search
+          #SearchBox
+          [placeholder]="'Search...'"
+          (changed)="searchDataGrid($event)"
+        ></cs-search>
+      </div>
+    </div>
+    <div class="controls-right">
+      <div>
+        <crem-button
+          type="secondary"
+          [id]="etlService.getId(componentName, 'import-data', 'button')"
+        >
+          <span id="importData">Import Data</span>
+        </crem-button>
+      </div>
+      <div class="more">
+        <crem-button
+          type="secondary"
+          [id]="etlService.getId(componentName, 'exportExcel', 'button')"
+          (click)="onSendToExcel(); $event.preventDefault()"
+        >
+          <span id="exportToExcel">Export to Excel</span>
+        </crem-button>
+      </div>
+      <div *ngIf="hasEditRights" class="newTemplate">
+        <crem-button
+          type="primary"
+          [id]="etlService.getId(componentName, 'new-template', 'button')"
+          (click)="newTemplate(); $event.preventDefault()"
+        >
+          <span id="newTemplate">New Template</span>
+        </crem-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="templates-dataGrid-wrapper">
+    <crem-loader *ngIf="isLoading"></crem-loader>
+    <dx-data-grid
+      *ngIf="!isLoading"
+      #TemplatesDataGrid
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      columnResizingMode="widget"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [dataSource]="templates"
+      keyExpr="templateId"
+      [wordWrapEnabled]="true"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-paging [pageSize]="100"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[100, 200, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      >
+      </dxo-pager>
+      <dxo-load-panel
+        [enabled]="true"
+        shadingColor="rgba(255,255,255,1.0)"
+        [showIndicator]="true"
+        [showPane]="true"
+        [shading]="true"
+      >
+      </dxo-load-panel>
+      <dxi-column
+        dataField="templateId"
+        alignment="left"
+        caption="Template ID"
+        [allowHiding]="false"
+        [sortOrder]="'desc'"
+      ></dxi-column>
+      <dxi-column dataField="templateName" caption="Template Name"></dxi-column>
+      <dxi-column dataField="formName" caption="Form"></dxi-column>
+      <dxi-column dataField="objectType" caption="Object Type"></dxi-column>
+      <dxi-column
+        dataField="objectTypeTemplate"
+        caption="Object Type Template"
+      ></dxi-column>
+      <dxi-column dataField="keyField" caption="Key Field"></dxi-column>
+      <dxi-column dataField="parentObject" caption="Parent Object"></dxi-column>
+      <dxi-column
+        dataField="parentLookupValue"
+        caption="Parent Lookup Value"
+      ></dxi-column>
+      <dxi-column dataField="userID" caption="Modified By"></dxi-column>
+      <dxi-column
+        dataField="modifiedDate"
+        caption="Modified Date"
+        dataType="datetime"
+        [format]="etlService.dateFormat"
+        width="200"
+      >
+      </dxi-column>
+
+      <dxi-column
+        caption="Actions"
+        type="buttons"
+        width="65"
+        [showInColumnChooser]="false"
+        [allowReordering]="false"
+        [allowHiding]="false"
+      >
+        <dxi-button template="moreMenuTemplate">
+          <div *dxTemplate="let data of 'moreMenuTemplate'">
+            <button
+              aria-label="more menu"
+              class="btn btn-link"
+              (click)="$event.preventDefault()"
+              [matMenuTriggerFor]="templatesMoreMenu"
+            >
+              <mat-icon aria-label="Actions Menu">more_horiz</mat-icon>
+            </button>
+            <mat-menu #templatesMoreMenu="matMenu" class="templates-actions">
+              <ul role="menu">
+                <li
+                  *ngIf="hasEditRights"
+                  mat-menu-item
+                  (keydown.space)="editTemplate(data)"
+                  (keydown.enter)="editTemplate(data)"
+                  (click)="editTemplate(data); $event.preventDefault()"
+                >
+                  Edit
+                </li>
+                <li
+                  mat-menu-item
+                  (keydown.space)="downloadTemplate(data)"
+                  (keydown.enter)="downloadTemplate(data)"
+                  (click)="downloadTemplate(data)"
+                >
+                  Download
+                </li>
+              </ul>
+            </mat-menu>
+          </div>
+        </dxi-button>
+      </dxi-column>
+    </dx-data-grid>
+  </div>
+</div>

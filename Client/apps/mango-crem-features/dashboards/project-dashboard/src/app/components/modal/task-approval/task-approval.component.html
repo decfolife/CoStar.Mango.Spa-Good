@@ -6,6 +6,7 @@
 	[primaryFooterButtonEnabledDisabled]="footerButtonDisabled"
 	(primaryButtonAction)="actionButton()">
 	<div modalContent class="body-content">
+		
 		<textarea class="notes" placeholder="Enter note..." [(ngModel)]="taskNote" (ngModelChange)="onNotesTextChange($event)" ></textarea>
 	</div>
 </crem-modal>

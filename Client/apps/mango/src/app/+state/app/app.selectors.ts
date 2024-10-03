@@ -73,6 +73,11 @@ export const userHasMultipleContactRecords = createSelector(
   (state: State) => state.userHasMultipleContactRecords
 );
 
+export const userHasSecurityProfiles = createSelector(
+  getAppState,
+  (state: State) => state.userHasSecurityProfiles
+);
+
 export const client = createSelector(
   getAppState,
   (state: State) => state.client

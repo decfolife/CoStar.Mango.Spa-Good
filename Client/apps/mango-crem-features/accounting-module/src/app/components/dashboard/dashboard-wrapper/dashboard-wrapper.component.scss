@@ -110,6 +110,16 @@
       font-size: 12px;
       margin-right: 4px;
     }
+
+    .currency-label {
+      display:flex;
+      font-size: 16px;
+
+      .currency-iso {
+        font-weight: bold;
+        margin-left: 4px;
+      }
+    }
   }
 }
 

@@ -16,6 +16,7 @@ export class MangoAppFacade {
   clientKey$: Observable<string>
   clientInfo$: Observable<Client>
   userHasMultipleContactRecords$: Observable<boolean>
+  userHasMultipleProfiles$: Observable<boolean>
   userInfo$: Observable<UserInfo>
   isEmulatedUser$: Observable<boolean>
   isEmulateUserInitiatedFromV06$: Observable<boolean>
@@ -36,6 +37,7 @@ export class MangoAppFacade {
     this.clientKey$ = this.store.pipe(select(AppSelectors.client));
     this.clientInfo$ = this.store.pipe(select(AppSelectors.clientInfo));
     this.userHasMultipleContactRecords$ = this.store.pipe(select(AppSelectors.userHasMultipleContactRecords));
+    this.userHasMultipleProfiles$ = this.store.pipe(select(AppSelectors.userHasSecurityProfiles));
     this.userInfo$ = this.store.pipe(select(AppSelectors.userInfo));
     this.isEmulatedUser$ = this.store.pipe(select(AppSelectors.isEmulatedUser));
     this.isEmulateUserInitiatedFromV06$ = this.store.pipe(select(AppSelectors.isEmulateUserInitiatedFromV06));

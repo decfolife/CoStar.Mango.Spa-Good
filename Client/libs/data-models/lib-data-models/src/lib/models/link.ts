@@ -6,6 +6,7 @@ export interface Link {
 }
 
 export interface SharedLeftNavLink {
+  id?: number;
   name: string;
   category: string;
   sortOrder: number;
@@ -16,6 +17,6 @@ export interface SharedLeftNavLink {
   dynamicName: string;
   usesNgRouting: boolean;
   spaUrl: string;
-  spaQueryParameters?: string,
-  isCommon?: boolean
+  spaQueryParameters?: string;
+  isCommon?: boolean;
 }

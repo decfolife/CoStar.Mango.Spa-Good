@@ -44,6 +44,9 @@ export { CoStarProperty } from './lib/models/costar-matching/costar-property';
 export { BuildingInfo } from './lib/models/costar-matching/building-info';
 export { Description } from './lib/models/ui-components/description';
 export { UserModuleRight } from './lib/models/user-module-right';
+export { CurrencyMapping } from './lib/models/currencymapping';
+
+export { SharedLeftNavLink } from './lib/models/link';
 export * from './lib/enums/mango.enums';
 export * from './lib/enums/object-types.enum';
 export * from './lib/enums/render-select-request-types.enum';
@@ -83,3 +86,5 @@ export * from './lib/models/ui-components/button-group';
 export * from './lib/models/ui-components/field-history';
 export * from './lib/models/ui-components/toast.model';
 export * from './lib/enums/client-prefernece.enums';
+export * from './lib/models/etl/template';
+export * from './lib/models/link';

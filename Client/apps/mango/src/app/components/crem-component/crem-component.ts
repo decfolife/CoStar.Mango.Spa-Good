@@ -1,8 +1,22 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HeaderService } from '@mango/core-shared';
-import { BookmarkGroup, BreadCrumb, RenderFormHeaderData, ToolbarModuleLink } from '@mango/data-models/lib-data-models';
+import {
+  BookmarkGroup,
+  BreadCrumb,
+  MangoSubApps,
+  RenderFormHeaderData,
+  ToolbarModuleLink,
+} from '@mango/data-models/lib-data-models';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { searchResultsComponent } from '@quick-search/components/modal/search-results/search-results.component';
 import { environment } from 'apps/mango/src/environments/environment.local';
@@ -34,6 +48,7 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   activeLink: string = null;
   crumbActiveLink: string = null;
   private subs: Subscription = new Subscription();
+  public searchResultsDialogRef: MatDialogRef<any> | null = null; 
 
   public headerDefaultHeight: number;
   public showRenderFormPropertyHeader: boolean;
@@ -63,25 +78,46 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
 
   loadLeftNavLinks() {
     this.subs.add(
-      combineLatest([this.facade.showSubLeftNav$, this.facade.moduleId$, this.facade.currentRenderFormDocumentParams$]).pipe(
-        tap(_ => this.navLinksFetched = false),
-        switchMap(([showSubLeftNav, moduleId, url]) => {
+      combineLatest([
+        this.facade.showSubLeftNav$,
+        this.facade.moduleId$,
+        this.facade.currentRenderFormDocumentParams$,
+        this.facade.currentSubApp$,
+      ])
+        .pipe(
+          tap(() => (this.navLinksFetched = false)),
+          switchMap(([showSubLeftNav, moduleId, url, currentSubApp]) => {
+            let serviceCall$;
+            if (showSubLeftNav) {
+              serviceCall$ =
+                this.leftNavService.getModuleNavigationLinksForRenderForm(url);
+            } else if (moduleId === 6 && currentSubApp !== MangoSubApps.ADMIN) {
+              serviceCall$ =
+                currentSubApp === MangoSubApps.ETL
+                  ? this.leftNavService.getETLModulesNavigationLinks()
+                  : this.leftNavService.getAdminModulesNavigationLinks(
+                      moduleId
+                    );
+            } else {
+              serviceCall$ =
+                this.leftNavService.getModuleNavigationLinks(moduleId);
+            }
 
-          if (!!showSubLeftNav) {
-            return this.leftNavService.getModuleNavigationLinksForRenderForm(url);
-          // Story 140258: Commented out the following block, uncomment it in the future when needed.
-          // } else if (moduleId == 6) {
-          //   return this.leftNavService.getAdminModulesNavigationLinks(moduleId);
-          } else {
-            return this.leftNavService.getModuleNavigationLinks(moduleId);;
-          }
-        }),
-        tap(response => {
-            this.navLinksFetched = true;
+            return serviceCall$.pipe(
+              map((response) => ({ response, moduleId, currentSubApp }))
+            );
+          }),
+          tap(({ response, moduleId, currentSubApp }) => {
+            this.navLinksFetched = !(
+              moduleId === 6 && currentSubApp === MangoSubApps.ADMIN
+            );
             this.navigationLinks = response.data;
-            this.activeLink = this.crumbActiveLink || (this.navigationLinks[0] || { name: null }).name;
-        })
-      ).subscribe())
+            this.activeLink =
+              this.crumbActiveLink || this.navigationLinks[0]?.name || null;
+          })
+        )
+        .subscribe()
+    );
   }
 
   ngAfterViewInit(): void {
@@ -96,6 +132,11 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
       
     );
 
+    window.addEventListener(
+      'SetCustomLeftNavItems',
+      this.setCustomLeftNavItems.bind(this)
+    );
+
     this.updateHeight();
   }
 
@@ -103,6 +144,12 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     this.subs.add(this.headerService.getUserModules().subscribe({
       next: (res: any) => this.toolbarModuleLinks = res.data
     }))
+  }
+
+  private setCustomLeftNavItems(event: CustomEvent) {
+    setTimeout(() => {
+      this.navigationLinks = event.detail;
+    });
   }
 
   private getDatabaseRestoreInfo() {
@@ -124,16 +171,33 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cremBookmarkComponent.toggleBookmarkDrawer();
   }
 
-  quickSearch(e) {
-    this.dialog.open(searchResultsComponent, {
+  quickSearch(event: any) {
+    if (this.searchResultsDialogRef) {
+      this.searchResultsDialogRef.close();
+      this.searchResultsDialogRef.afterClosed().subscribe(() => {
+        this.openSearchModal(event);
+      });
+    } else {
+      this.openSearchModal(event);
+    }
+  }
+
+  openSearchModal(event: any) {
+    this.searchResultsDialogRef = this.dialog.open(searchResultsComponent, {
+      hasBackdrop: false,
       width: '100%',
       height: 'calc(100% - 100px)',
       maxWidth: '90vw',
       panelClass: 'mqs-search-results',
       data: {
-        searchString: e.searchStr, searchObjectId: e.searchObjId
+        searchString: event.searchStr,
+        searchObjectId: event.searchObjId,
       },
       disableClose: true
+    });
+
+    this.searchResultsDialogRef.afterClosed().subscribe(() => {
+      this.searchResultsDialogRef = null;
     });
   }
 

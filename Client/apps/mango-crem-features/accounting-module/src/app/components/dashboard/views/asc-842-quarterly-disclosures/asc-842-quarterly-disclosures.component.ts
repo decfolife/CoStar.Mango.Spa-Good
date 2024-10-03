@@ -11,90 +11,91 @@ import { CardConfig } from '@mango/data-models/lib-data-models';
   styleUrls: ['./asc-842-quarterly-disclosures.component.scss'],
 })
 export class Asc842QuarterlyDisclosuresComponent implements OnInit {
-  public cardData: Partial<CardConfig>[] = [{
-      id: 'LeaseCounts',
+  public cardData: Partial<CardConfig>[] = [
+    {
+      id: 'ASC842-Quarterly-LeaseCounts',
       name: 'Lease Counts',
-      index: 0
+      index: 0,
     },
     {
-      id: 'AssetBalance',
+      id: 'ASC842-Quarterly-AssetBalance',
       name: 'Assets and Liabilities Balances',
-      index: 1
+      showFieldChooser: true,
+      index: 1,
     },
     {
-      id: 'LeaseCosts',
+      id: 'ASC842-Quarterly-LeaseCosts',
       name: 'Lease Cost',
-      index: 2
+      index: 2,
     },
     {
-      id: 'ShortTermReportingExceptionsMetrics',
+      id: 'ASC842-Quarterly-ShortTermReportingExceptionsMetrics',
       name: 'Reporting Exceptions Cost',
-      index: 3
+      index: 3,
     },
     {
-      id: 'OtherInformation',
+      id: 'ASC842-Quarterly-OtherInformation',
       name: 'Other Information',
-      index: 4
+      index: 4,
     },
     {
-      id: 'LeaseLiabilityMaturityAnalysis',
+      id: 'ASC842-Quarterly-LeaseLiabilityMaturityAnalysis',
       name: 'Liability Maturity',
       index: 5,
       filterData: [
-        {displayKey: '5 years', valueKey: 5},
-        {displayKey: '10 years', valueKey: 10}
+        { displayKey: '5 years', valueKey: 5 },
+        { displayKey: '10 years', valueKey: 10 },
       ],
-      filterInitialValue: {displayKey: '5 years', valueKey: 5},
+      filterInitialValue: { displayKey: '5 years', valueKey: 5 },
     },
     {
-      id: 'ReconciliationOfLeaseLiabilities',
+      id: 'ASC842-Quarterly-ReconciliationOfLeaseLiabilities',
       name: 'Reconciliation of Lease Liabilities',
       index: 6,
     },
     {
-      id: 'FutureCommitments',
+      id: 'ASC842-Quarterly-FutureCommitments',
       name: 'Future Commitments',
       index: 7,
       filterData: [
-        {displayKey: '5 years', valueKey: 5},
-        {displayKey: '10 years', valueKey: 10}
+        { displayKey: '5 years', valueKey: 5 },
+        { displayKey: '10 years', valueKey: 10 },
       ],
-      filterInitialValue: {displayKey: '5 years', valueKey: 5},
+      filterInitialValue: { displayKey: '5 years', valueKey: 5 },
     },
   ];
   public pivotCardData: any;
   public loading = true as boolean;
   public fieldConfigs: any;
   public dataSources: any;
-  public pendoId = "Asc842QuarterlyDisclosures" as string;
+  public pendoId = 'Asc842QuarterlyDisclosures' as string;
   public fullWidth = true as boolean;
   IADCardData;
 
-  public selectedCurrency = "usd";
+  @Input() selectedCurrency;
   public currencyDecimalPrecision: number;
 
   @Input() dashboardId: number;
   @Input() selectedSegment: number;
   @Input() reportingYear: number;
 
-  @ViewChild("PivotGrid") pivotGrid: DxPivotGridComponent;
+  @ViewChild('PivotGrid') pivotGrid: DxPivotGridComponent;
 
-  constructor(
-    private inAppDisclosureService: InAppDisclosureService
-  ) {}
+  constructor(private inAppDisclosureService: InAppDisclosureService) {}
 
   ngOnInit() {
     this.dataSources = [];
     this.fieldConfigs = [];
-    this.inAppDisclosureService.getCurrencyDecimalPrecision(this.selectedCurrency)
+    this.inAppDisclosureService
+      .getCurrencyDecimalPrecision(this.selectedCurrency)
       .subscribe((result) => {
         this.currencyDecimalPrecision = result?.data?.DecimalPrecision;
         this.refreshCardData();
       });
   }
 
-  onSelectedFilter(e: Event, config){
-    switch(config.id){
+  onSelectedFilter(e: Event, config) {
+    switch (config.id) {
       case 'LeaseLiabilityMaturityAnalysis':
         this.setMaturityAnalysis(this.IADCardData.data[6], e['valueKey']);
         break;
@@ -107,25 +108,42 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
   public refreshCardData() {
     this.loading = true;
     this.setFieldConfigs();
-    this.inAppDisclosureService.getIADCardData(this.dashboardId, this.selectedSegment, this.reportingYear, this.selectedCurrency)
+    this.inAppDisclosureService
+      .getIADCardData(
+        this.dashboardId,
+        this.selectedSegment,
+        this.reportingYear,
+        this.selectedCurrency
+      )
       .subscribe((result) => {
-        result.data.forEach(item => {
-          item.forEach(data => {
-            if (data.ClassificationName && data.ClassificationName.includes("ASC 842")) {
-              data.ClassificationName = data.ClassificationName.replace("(ASC 842)", "");
+        result.data.forEach((item) => {
+          item.forEach((data) => {
+            if (
+              data.ClassificationName &&
+              data.ClassificationName.includes('ASC 842')
+            ) {
+              data.ClassificationName = data.ClassificationName.replace(
+                '(ASC 842)',
+                ''
+              );
             }
 
-            if (data.DisclosureClassification && data.DisclosureClassification.includes("842")) {
-              data.DisclosureClassification = data.DisclosureClassification.replace("842", "");
+            if (
+              data.DisclosureClassification &&
+              data.DisclosureClassification.includes('842')
+            ) {
+              data.DisclosureClassification =
+                data.DisclosureClassification.replace('842', '');
             }
-
           });
         });
 
         this.IADCardData = result;
-        this.setLeaseCountCardData(result.data[0])
-        this.setROUAssetBalanceCardData(result.data[1])
-        this.setLeaseCostCardData(this.mergeArraysOfObjects(result.data[2],result.data[3]));
+        this.setLeaseCountCardData(result.data[0]);
+        this.setROUAssetBalanceCardData(result.data[1]);
+        this.setLeaseCostCardData(
+          this.mergeArraysOfObjects(result.data[2], result.data[3])
+        );
         this.setShortTermReportingExceptionsMetrics(result.data[4]);
         this.setOtherInformation(result.data[5]);
         this.setMaturityAnalysis(result.data[6]);
@@ -142,59 +160,59 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       const items = [
         {
           DisclosureClassificiation: disclosureName,
-          Display: "Opening Lease Count",
+          Display: 'Opening Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.OpeningCount,
         },
         {
           DisclosureClassificiation: disclosureName,
-          Display: " - Lease Added",
+          Display: ' - Lease Added',
           PeriodQuarter: item.PeriodQuarter,
           data: item.AddedCount,
         },
         {
           DisclosureClassificiation: disclosureName,
-          Display: " - Leases Expired/Cancelled",
+          Display: ' - Leases Expired/Cancelled',
           PeriodQuarter: item.PeriodQuarter,
           data: item.EndedCount,
         },
         {
           DisclosureClassificiation: disclosureName,
-          Display: "Closing Lease Count",
+          Display: 'Closing Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ClosingCount,
         },
         {
-          DisclosureClassificiation: "Total",
-          Display: "Opening Lease Count",
+          DisclosureClassificiation: 'Total',
+          Display: 'Opening Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.OpeningCount,
         },
         {
-          DisclosureClassificiation: "Total",
-          Display: " - Lease Added",
+          DisclosureClassificiation: 'Total',
+          Display: ' - Lease Added',
           PeriodQuarter: item.PeriodQuarter,
           data: item.AddedCount,
         },
         {
-          DisclosureClassificiation: "Total",
-          Display: " - Leases Expired/Cancelled",
+          DisclosureClassificiation: 'Total',
+          Display: ' - Leases Expired/Cancelled',
           PeriodQuarter: item.PeriodQuarter,
           data: item.EndedCount,
           dataType: 'number',
         },
         {
-          DisclosureClassificiation: "Total",
-          Display: "Closing Lease Count",
+          DisclosureClassificiation: 'Total',
+          Display: 'Closing Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ClosingCount,
           dataType: 'number',
-        }
+        },
       ];
 
       items.forEach((item) => {
         this.pivotCardData.push(item);
-      })
+      });
     });
 
     if (this.dataSources.length > 0) {
@@ -203,10 +221,12 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
         fields: this.fieldConfigs[0],
       });
     } else {
-      this.dataSources.push(new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[0],
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[0],
+        })
+      );
     }
     this.loading = false;
   }
@@ -221,60 +241,59 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       }
       const items = [
         {
-          DisclosureClassificiation:  item.ClassificationName,
-          Display: "ROU Asset Balance",
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'ROU Asset Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.AssetBalanceClosingReporting,
         },
         {
-          DisclosureClassificiation:  item.ClassificationName,
-          Display: "Short Term Liability Balance",
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Short Term Liability Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ShortTermLiabilityClosingReporting,
         },
         {
-          DisclosureClassificiation:  item.ClassificationName,
-          Display: "Long Term Liability Balance",
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Long Term Liability Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.LongTermLiabilityClosingReporting,
         },
         {
-          DisclosureClassificiation:  item.ClassificationName,
-          Display: "Total Liability Balance",
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Total Liability Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.LiabilityBalanceClosingReporting,
         },
         {
-          DisclosureClassificiation:  "Total",
-          Display: "ROU Asset Balance",
+          DisclosureClassificiation: 'Total',
+          Display: 'ROU Asset Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.AssetBalanceClosingReporting,
         },
         {
-          DisclosureClassificiation:  "Total",
-          Display: "Short Term Liability Balance",
+          DisclosureClassificiation: 'Total',
+          Display: 'Short Term Liability Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ShortTermLiabilityClosingReporting,
         },
         {
-          DisclosureClassificiation:  "Total",
-          Display: "Long Term Liability Balance",
+          DisclosureClassificiation: 'Total',
+          Display: 'Long Term Liability Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.LongTermLiabilityClosingReporting,
         },
         {
-          DisclosureClassificiation:  "Total",
-          Display: "Total Liability Balance",
+          DisclosureClassificiation: 'Total',
+          Display: 'Total Liability Balance',
           PeriodQuarter: item.PeriodQuarter,
           data: item.LiabilityBalanceClosingReporting,
-        }
-
-      ]
+        },
+      ];
 
       items.forEach((item) => {
         this.pivotCardData.push(item);
-      })
-    })
+      });
+    });
 
     if (this.dataSources.length > 1) {
       this.dataSources[1] = new PivotGridDataSource({
@@ -282,24 +301,30 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
         fields: this.fieldConfigs[1],
       });
     } else {
-      this.dataSources.push( new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[1],
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[1],
+        })
+      );
     }
     this.loading = false;
   }
 
-  public setFutureCommitments(data:any, years?: number) {
+  public setFutureCommitments(data: any, years?: number) {
     this.pivotCardData = [];
     years = !years ? 6 : years + 1;
-    const filteredData = this.filterByPeriodYear(data, this.reportingYear, this.reportingYear + years);
+    const filteredData = this.filterByPeriodYear(
+      data,
+      this.reportingYear,
+      this.reportingYear + years
+    );
 
     let items: any[];
 
     filteredData.forEach((item, i) => {
       let total = item.ScheduledPaymentsReporting;
-      if(i === filteredData.length - 1){
+      if (i === filteredData.length - 1) {
         total = item.RemainingPaymentsReporting;
         items = [
           {
@@ -329,25 +354,27 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       }
 
       items.forEach((item) => {
-        this.pivotCardData.push(item)
+        this.pivotCardData.push(item);
       });
     });
 
     if (this.dataSources.length > 0) {
       this.dataSources[7] = new PivotGridDataSource({
         store: this.pivotCardData,
-        fields: this.fieldConfigs[7]
+        fields: this.fieldConfigs[7],
       });
     } else {
-      this.dataSources.push(new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[7]
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[7],
+        })
+      );
     }
     this.loading = false;
   }
 
-  public setReconciliationOfLeaseLiabilities(data){
+  public setReconciliationOfLeaseLiabilities(data) {
     this.pivotCardData = [];
 
     data.forEach((item) => {
@@ -402,38 +429,44 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
           Display: 'Total Discounted Lease Liability',
           data: item.TotalDiscountedLeaseLiability,
         },
-      ]
+      ];
 
       items.forEach((item) => {
-        this.pivotCardData.push(item)
+        this.pivotCardData.push(item);
       });
     });
 
     if (this.dataSources.length > 0) {
       this.dataSources[6] = new PivotGridDataSource({
         store: this.pivotCardData,
-        fields: this.fieldConfigs[6]
+        fields: this.fieldConfigs[6],
       });
     } else {
-      this.dataSources.push(new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[6]
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[6],
+        })
+      );
     }
     this.loading = false;
   }
 
-  public setMaturityAnalysis(data, years?:number){
+  public setMaturityAnalysis(data, years?: number) {
     this.pivotCardData = [];
     years = !years ? 6 : years + 1;
-    const filteredData = this.filterByPeriodYear(data, this.reportingYear, this.reportingYear + years);
+    const filteredData = this.filterByPeriodYear(
+      data,
+      this.reportingYear,
+      this.reportingYear + years
+    );
 
     let items: any[];
 
     filteredData.forEach((item, i) => {
       let total: number = item.ScheduledPaymentsReporting;
 
-      if(i === filteredData.length - 1 || i === filteredData.length - 2){
+      if (i === filteredData.length - 1 || i === filteredData.length - 2) {
         total = item.RemainingPaymentsReporting;
         items = [
           {
@@ -463,37 +496,43 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       }
 
       items.forEach((item) => {
-        this.pivotCardData.push(item)
+        this.pivotCardData.push(item);
       });
     });
 
     if (this.dataSources.length > 0) {
       this.dataSources[5] = new PivotGridDataSource({
         store: this.pivotCardData,
-        fields: this.fieldConfigs[5]
+        fields: this.fieldConfigs[5],
       });
     } else {
-      this.dataSources.push(new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[5]
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[5],
+        })
+      );
     }
     this.loading = false;
   }
 
-  filterByPeriodYear(data: any, startYear: number, endYear: number):any {
-    return data.filter(item => item.PeriodYear >= startYear && item.PeriodYear <= endYear);
+  filterByPeriodYear(data: any, startYear: number, endYear: number): any {
+    return data.filter(
+      (item) => item.PeriodYear >= startYear && item.PeriodYear <= endYear
+    );
   }
 
-  public setOtherInformation(data){
+  public setOtherInformation(data) {
     this.pivotCardData = [];
     data.forEach((item) => {
-      const cashFlowTotal = item.OperatingCashFlowsFromFinanceLeases +
-                            item.OperatingCashFlowsFromOperatingLeases +
-                            item.FinancingCashFlowsFromFinanceLeases;
+      const cashFlowTotal =
+        item.OperatingCashFlowsFromFinanceLeases +
+        item.OperatingCashFlowsFromOperatingLeases +
+        item.FinancingCashFlowsFromFinanceLeases;
       const items = [
         {
-          Display: 'Cash Paid for Amounts Included In Measurement of Liabilities',
+          Display:
+            'Cash Paid for Amounts Included In Measurement of Liabilities',
           PeriodQuarter: item.PeriodQuarter,
           data: cashFlowTotal,
         },
@@ -513,12 +552,14 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
           data: item.FinancingCashFlowsFromFinanceLeases,
         },
         {
-          Display: 'ROU Assets Obtained In Exchange For New Finance Liabilities',
+          Display:
+            'ROU Assets Obtained In Exchange For New Finance Liabilities',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ROUAssetsObtainedInExchangeForNewFinanceLiabilities,
         },
         {
-          Display: 'ROU Assets Obtained In Exchange For New Operating Liabilities',
+          Display:
+            'ROU Assets Obtained In Exchange For New Operating Liabilities',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ROUAssetsObtainedInExchangeForNewOperatingLiabilities,
         },
@@ -542,46 +583,48 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
           PeriodQuarter: item.PeriodQuarter,
           data: item.WeightedAverageDiscountRateOperating,
         },
-      ]
+      ];
 
       items.forEach((item) => {
-        this.pivotCardData.push(item)
-      })
+        this.pivotCardData.push(item);
+      });
     });
 
     if (this.dataSources.length > 0) {
       this.dataSources[4] = new PivotGridDataSource({
         store: this.pivotCardData,
-        fields: this.fieldConfigs[4]
+        fields: this.fieldConfigs[4],
       });
     } else {
-      this.dataSources.push(new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[4]
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[4],
+        })
+      );
     }
     this.loading = false;
   }
 
-  public setShortTermReportingExceptionsMetrics(data){
+  public setShortTermReportingExceptionsMetrics(data) {
     this.pivotCardData = [];
     data.forEach((item) => {
       const items = [
         {
-          Display: "ST Lease & Reporting Exceptions Cost - Cash Basis",
+          Display: 'ST Lease & Reporting Exceptions Cost - Cash Basis',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ShortTermLeaseAndReportingExceptionCostCashBasisReporting,
         },
         {
-          Display: "- ST Lease & Reporting Exceptions Cost - SL Accrual Basis",
+          Display: '- ST Lease & Reporting Exceptions Cost - SL Accrual Basis',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ShortTermLeaseAndReportingExceptionCostAccrualBasisReporting,
         },
       ];
       items.forEach((item) => {
         this.pivotCardData.push(item);
-      })
-    })
+      });
+    });
 
     if (this.dataSources.length > 1) {
       this.dataSources[3] = new PivotGridDataSource({
@@ -589,26 +632,29 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
         fields: this.fieldConfigs[3],
       });
     } else {
-      this.dataSources.push( new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[3],
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[3],
+        })
+      );
     }
     this.loading = false;
   }
 
-  public setLeaseCostCardData(data){
+  public setLeaseCostCardData(data) {
     this.pivotCardData = [];
 
     data.forEach((item) => {
-      const total = item.FinanceLeaseCostReporting +
-                    item.AssetAmortizationReporting +
-                    item.LeaseLiabilityInterestReporting +
-                    item.OperatingLeaseCostReporting +
-                    item.ShortTermLeaseAndReportingExceptionCostReporting +
-                    item.VariableLeaseCostReporting +
-                    item.VariableLeaseCostOfIndexedPaymentsReporting +
-                    item.SubleaseIncome;
+      const total =
+        item.FinanceLeaseCostReporting +
+        item.AssetAmortizationReporting +
+        item.LeaseLiabilityInterestReporting +
+        item.OperatingLeaseCostReporting +
+        item.ShortTermLeaseAndReportingExceptionCostReporting +
+        item.VariableLeaseCostReporting +
+        item.VariableLeaseCostOfIndexedPaymentsReporting +
+        item.SubleaseIncome;
       const items = [
         {
           Display: 'Finance Lease Cost',
@@ -655,11 +701,11 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
           PeriodQuarter: item.PeriodQuarter,
           data: total,
         },
-      ]
+      ];
 
       items.forEach((item) => {
-        this.pivotCardData.push(item)
-      })
+        this.pivotCardData.push(item);
+      });
     });
 
     if (this.dataSources.length > 0) {
@@ -668,163 +714,187 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
         fields: this.fieldConfigs[2],
       });
     } else {
-      this.dataSources.push(new PivotGridDataSource({
-        store: this.pivotCardData,
-        fields: this.fieldConfigs[2],
-      }));
+      this.dataSources.push(
+        new PivotGridDataSource({
+          store: this.pivotCardData,
+          fields: this.fieldConfigs[2],
+        })
+      );
     }
     this.loading = false;
   }
 
-  mergeArraysOfObjects(data1: {[key: string]: any}[], data2: {[key: string]: any}[]): Array<object>{
+  mergeArraysOfObjects(
+    data1: { [key: string]: any }[],
+    data2: { [key: string]: any }[]
+  ): Array<object> {
+    if (data1.length === 0 && data2.length === 0) {
+      return [];
+    }
+    if (data1.length === 0) {
+      return data2;
+    }
+    if (data2.length === 0) {
+      return data1;
+    }
+
     const hashMap = new Map(
-      data2.map( item => {
+      data2.map((item) => {
         return [`${item.DueByQuarter}`, item];
       })
     );
-    const mergedArray = data1.map( item => {
+    const mergedArray = data1.map((item) => {
       const key = item.PeriodQuarter;
       const itemToMerge = hashMap.get(key);
-      if(itemToMerge && typeof itemToMerge === 'object'){
+      if (itemToMerge && typeof itemToMerge === 'object') {
         return { ...item, ...itemToMerge };
       }
+      return item; 
     });
-    if(mergedArray.length > 0){
       return mergedArray;
-    }
-    if (data2.length > 0){
-      return data2;
-    } else {
-      return data1;
-    }
   }
 
   public setFieldConfigs() {
-    this.inAppDisclosureService.getIADCardConfigs(this.dashboardId).subscribe((result) => {
-      result.data.forEach((card) => {
-        let config = JSON.parse(card.CardJSONSchema);
-        config[0].sortingMethod = this.rowSort;
-        config[2].sortingMethod = this.disclosureClassificationSort;
+    this.inAppDisclosureService
+      .getIADCardConfigs(this.dashboardId)
+      .subscribe((result) => {
+        result.data.forEach((card) => {
+          let config = JSON.parse(card.CardJSONSchema);
+          config[0].sortingMethod = this.rowSort;
+          config[2].sortingMethod = this.disclosureClassificationSort;
 
-        switch(card.Title){
-          case "ASC 842 Quarterly Disclosures Lease Counts":
-            config[config.length - 1].calculateSummaryValue = function(summaryCell) {
-              if (summaryCell.field('column')?.dataField === 'PeriodQuarter') {
-                return summaryCell.value() / 2;
-              } else {
-                return summaryCell.value();
-              }
-            }
-            break;
-          case 'ASC 842 Quarterly Disclosures ROU Asset Balance':
-            config[0].width = 134.469;
-            config[3].format = {
-              type: "fixedPoint",
-              precision: this.currencyDecimalPrecision
-            }
-            config[config.length - 1].calculateSummaryValue = function(summaryCell) {
-              if (summaryCell.field('column')?.dataField === 'PeriodQuarter') {
-                return summaryCell.value() / 2;
-              } else {
-                return summaryCell.value();
-              }
-            }
-            break;
-          case "ASC 842 Quarterly Disclosures Lease Cost":
-            config[0].width = 180;
-            config[2].format = {
-              type: "fixedPoint",
-              precision: this.currencyDecimalPrecision
-            };
-            break;
-          case "ASC 842 Quarterly Disclosures Reporting Exceptions Cost":
-            config[0].width = 200;
-            config[2].format = {
-              type: "fixedPoint",
-              precision: this.currencyDecimalPrecision
-            }
-            break;
-          case 'ASC 842 Quarterly Disclosures Other Information':
-            config[0].width = 200;
-            config[2].format = {
-              type: "fixedPoint",
-              precision: this.currencyDecimalPrecision
-            };
-            break;
-          case 'ASC 842 Quarterly Disclosures Lease Liability Maturity Analysis':
-            config[0].width = 200;
-            config[2].format = {
-              type: "fixedPoint",
-              precision: this.currencyDecimalPrecision,
-            };
-            break;
-          case 'ASC 842 Quarterly Disclosures Lease Liability Reconciliation':
-            config[0].width = 200;
-            config[2].format = {
-              type: "fixedPoint",
-              precision: this.currencyDecimalPrecision,
-            };
-            config[config.length - 1].summaryType = 'sum';
-            break;
-          case 'ASC 842 Quarterly Disclosures Future Commitments':
-            config[0].width = 200;
-            config[2].format = {
-              type: "fixedPoint",
-              precision: this.currencyDecimalPrecision,
-            };
-            break;
-        }
-
-        config[config.length - 1].calculateCustomSummary = (options) => {
-          switch(options.summaryProcess) {
-            case "start":
-              options.totalValue = 0;
+          switch (card.Title) {
+            case 'ASC 842 Quarterly Disclosures Lease Counts':
+              config[config.length - 1].calculateSummaryValue = function (
+                summaryCell
+              ) {
+                if (
+                  summaryCell.field('column')?.dataField === 'PeriodQuarter'
+                ) {
+                  return summaryCell.value() / 2;
+                } else {
+                  return summaryCell.value();
+                }
+              };
               break;
-            case "calculate":
-              options.totalValue += options.value;
+            case 'ASC 842 Quarterly Disclosures ROU Asset Balance':
+              config[0].width = 134.469;
+              config[3].format = {
+                type: 'fixedPoint',
+                precision: this.currencyDecimalPrecision,
+              };
+              config[config.length - 1].calculateSummaryValue = function (
+                summaryCell
+              ) {
+                if (
+                  summaryCell.field('column')?.dataField === 'PeriodQuarter'
+                ) {
+                  return summaryCell.value() / 2;
+                } else {
+                  return summaryCell.value();
+                }
+              };
               break;
-            case "finalize":
-              options.totalValue = options.totalValue.toFixed(this.currencyDecimalPrecision);
+            case 'ASC 842 Quarterly Disclosures Lease Cost':
+              config[0].width = 180;
+              config[2].format = {
+                type: 'fixedPoint',
+                precision: this.currencyDecimalPrecision,
+              };
+              break;
+            case 'ASC 842 Quarterly Disclosures Reporting Exceptions Cost':
+              config[0].width = 200;
+              config[2].format = {
+                type: 'fixedPoint',
+                precision: this.currencyDecimalPrecision,
+              };
+              break;
+            case 'ASC 842 Quarterly Disclosures Other Information':
+              config[0].width = 200;
+              config[2].format = {
+                type: 'fixedPoint',
+                precision: this.currencyDecimalPrecision,
+              };
+              break;
+            case 'ASC 842 Quarterly Disclosures Lease Liability Maturity Analysis':
+              config[0].width = 200;
+              config[2].format = {
+                type: 'fixedPoint',
+                precision: this.currencyDecimalPrecision,
+              };
+              break;
+            case 'ASC 842 Quarterly Disclosures Lease Liability Reconciliation':
+              config[0].width = 200;
+              config[2].format = {
+                type: 'fixedPoint',
+                precision: this.currencyDecimalPrecision,
+              };
+              config[config.length - 1].summaryType = 'sum';
+              break;
+            case 'ASC 842 Quarterly Disclosures Future Commitments':
+              config[0].width = 200;
+              config[2].format = {
+                type: 'fixedPoint',
+                precision: this.currencyDecimalPrecision,
+              };
               break;
           }
-        }
-        this.fieldConfigs.push(config);
-      })
-    })
+
+          config[config.length - 1].calculateCustomSummary = (options) => {
+            switch (options.summaryProcess) {
+              case 'start':
+                options.totalValue = 0;
+                break;
+              case 'calculate':
+                options.totalValue += options.value;
+                break;
+              case 'finalize':
+                options.totalValue = options.totalValue.toFixed(
+                  this.currencyDecimalPrecision
+                );
+                break;
+            }
+          };
+          this.fieldConfigs.push(config);
+        });
+      });
   }
 
   public rowSort(a, b) {
     const rowSortOrderObject = {
-      "Opening Lease Count": 1,
-      " - Lease Added": 2,
-      " - Leases Expired/Cancelled": 3,
-      "Closing Lease Count": 4
-    }
+      'Opening Lease Count': 1,
+      ' - Lease Added': 2,
+      ' - Leases Expired/Cancelled': 3,
+      'Closing Lease Count': 4,
+    };
 
-    if (rowSortOrderObject?.[a.value] > rowSortOrderObject?.[b.value])
-      return 1;
+    if (rowSortOrderObject?.[a.value] > rowSortOrderObject?.[b.value]) return 1;
     if (rowSortOrderObject?.[b.value] > rowSortOrderObject?.[a.value])
       return -1;
-    else
-      return 0;
+    else return 0;
   }
 
   public disclosureClassificationSort(a, b) {
     const disclosureClassificationSortOrderObject = {
-      "Mixed": 1,
-      "Finance": 2,
-      "Finance 842": 2.5,
-      "Operating": 3,
-      "Operating 842": 3.5,
-      "Total": 4
-    }
+      Mixed: 1,
+      Finance: 2,
+      'Finance 842': 2.5,
+      Operating: 3,
+      'Operating 842': 3.5,
+      Total: 4,
+    };
 
-    if (disclosureClassificationSortOrderObject?.[a.value] > disclosureClassificationSortOrderObject?.[b.value])
+    if (
+      disclosureClassificationSortOrderObject?.[a.value] >
+      disclosureClassificationSortOrderObject?.[b.value]
+    )
       return 1;
-    if (disclosureClassificationSortOrderObject?.[b.value] > disclosureClassificationSortOrderObject?.[a.value])
+    if (
+      disclosureClassificationSortOrderObject?.[b.value] >
+      disclosureClassificationSortOrderObject?.[a.value]
+    )
       return -1;
-    else
-      return 0;
+    else return 0;
   }
 
   public contextMenuPreparing(e) {
@@ -832,51 +902,51 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
     const sourceField = e.field;
 
     if (sourceField && sourceField.dataType === 'number') {
-        let numberType = "number";
+      let numberType = 'number';
 
-        const setSummaryType = function (args) {
-          let format;
-          if (numberType === "currency") {
-            if (args.itemData.value === "total") {
-              format = ",###";
-            } else if (args.itemData.value === "sum") {
-              format = ",##0.00"
-            }
-          } else {
-            if (args.itemData.value === "total") {
-              format = ",###";
-            } else if (args.itemData.value === "sum") {
-              format = ",###.##"
-            }
+      const setSummaryType = function (args) {
+        let format;
+        if (numberType === 'currency') {
+          if (args.itemData.value === 'total') {
+            format = ',###';
+          } else if (args.itemData.value === 'sum') {
+            format = ',##0.00';
           }
-
-          if (format) {
-            dataSource.field(sourceField.index, {
-              summaryType: args.itemData.value,
-              format: format
-            });
-          } else {
-            dataSource.field(sourceField.index, {
-              summaryType: args.itemData.value,
-            });
+        } else {
+          if (args.itemData.value === 'total') {
+            format = ',###';
+          } else if (args.itemData.value === 'sum') {
+            format = ',###.##';
           }
+        }
 
-          dataSource.load();
-        };
-        const menuItems = [];
-
-        e.items.push({ text: 'Summary Type', items: menuItems });
-
-        for (const summaryType of ['Sum', 'Total']) {
-          const summaryTypeValue = summaryType.toLowerCase();
-
-          menuItems.push({
-            text: summaryType,
-            value: summaryType.toLowerCase(),
-            onItemClick: setSummaryType,
-            selected: e.field.summaryType === summaryTypeValue,
+        if (format) {
+          dataSource.field(sourceField.index, {
+            summaryType: args.itemData.value,
+            format: format,
+          });
+        } else {
+          dataSource.field(sourceField.index, {
+            summaryType: args.itemData.value,
           });
         }
+
+        dataSource.load();
+      };
+      const menuItems = [];
+
+      e.items.push({ text: 'Summary Type', items: menuItems });
+
+      for (const summaryType of ['Sum', 'Total']) {
+        const summaryTypeValue = summaryType.toLowerCase();
+
+        menuItems.push({
+          text: summaryType,
+          value: summaryType.toLowerCase(),
+          onItemClick: setSummaryType,
+          selected: e.field.summaryType === summaryTypeValue,
+        });
+      }
     }
   }
 
@@ -893,8 +963,6 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
     this.pivotGrid?.instance.updateDimensions();
     setTimeout(() => {
       this.pivotGrid?.instance.updateDimensions();
-    })
+    });
   }
-
-
 }

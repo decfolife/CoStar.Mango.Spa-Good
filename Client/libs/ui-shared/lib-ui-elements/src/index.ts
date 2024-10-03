@@ -32,3 +32,4 @@ export * from './lib/tabs';
 export * from './lib/form';
 export * from './lib/input'
 export * from './lib/checkbox'
+export * from './lib/popover';

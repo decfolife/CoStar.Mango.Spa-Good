@@ -261,9 +261,8 @@ export class CriteriaFormSegmentComponent {
                                 defaultValueArray.push('' + x[valueKey])
                             })
                         }
-
-                        if(!isDependent && item.criteriaDesc === "Portfolio")
-                          item.values.forEach((x) => defaultValueArray.push('' + x[valueKey]));
+                        // if(!isDependent && item.criteriaDesc === "Portfolio")
+                        //   item.values.forEach((x) => defaultValueArray.push('' + x[valueKey]));
 
                         if(defaultValueArray[0] === '')
                         {
@@ -307,7 +306,6 @@ export class CriteriaFormSegmentComponent {
                             selectedIndex = item.values?.[0]
                         }
                         if(item.criteriaDesc === "Calendar")
-                          selectedIndex = item.values?.[0];
 
                         itemObject = { // Calendar Field *********************************
                             dataField: isDependent ? item.criteriaID : item.criteriaSourceFieldName,

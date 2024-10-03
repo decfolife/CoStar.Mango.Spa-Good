@@ -6,17 +6,17 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
 import * as dayjs from 'dayjs';
-import { UserIdleService } from 'libs/core-shared/src/lib/services';
 import { MatDialog } from '@angular/material/dialog';
+import { DEFAULT_INTERRUPTSOURCES, Idle } from '@ng-idle/core';
 
 @Injectable()
 export class IdleEffects {
     constructor(
         private actions$: Actions,
         private facade: MangoAppFacade,
-        private idleService: UserIdleService,
         private storageService: StorageService, 
         public dialog: MatDialog,
+        private idle: Idle
     ) { }
 
     setupIdleTimeout$ = createEffect(
@@ -25,7 +25,7 @@ export class IdleEffects {
             ofType(AppActions.SETUP_IDLE_TIMEOUT),
             switchMap(_ => combineLatest([this.facade.authenticatedUser$, this.facade.clientKey$, this.facade.clientInfo$])),
             filter(([user, clientKey, clientInfo]) => !!user && !!clientKey && !!clientInfo),
-            tap(([_, clientKey, clientInfo]) => {
+            map(([_, clientKey, clientInfo]) => {
               const sharedInfo = CookieService.getSharedInfoCookie(clientKey)
 
               if (sharedInfo && sharedInfo.ClientIdleTimeout === 0) {
@@ -36,28 +36,17 @@ export class IdleEffects {
               }
 
               let idleMinutes = sharedInfo ? sharedInfo.ClientIdleTimeout : clientInfo.clientIdleTimeOut
-    
-              this.idleService.setConfigValues({
-                idle: (idleMinutes - 1) * 60,
-                timeout: 60,
-                isMangoSpa: true
-              })
+
+              this.idle.setIdle((idleMinutes - 1) * 60);
+              this.idle.setTimeout(60);
+              this.idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
 
               // V06 sets mangoIdle = true by default. 
               // When in SPA, need to set to false by default.
-              this.idleService.setMangoIdleCookieProperty(false)
+              CookieService.setMangoIdleCookieProperty(false)
+              this.idle.watch()
               
-              document.onmousemove = _ => this.idleService.resetTimer()
-              document.onkeydown = _ => this.idleService.resetTimer()
-              this.idleService.startWatching()
-            }),
-            switchMap(_ => this.idleService.onTimerStart()),
-            switchMap(_ => this.idleService.onTimeout()),
-            map(_ => {
-              this.idleService.stopWatching()
-              document.onmousemove = null
-              document.onkeydown = null
-              return AppActions.logout({ logoutV06: true })
+              return AppActions.noOpAction()
             })
           )
     )

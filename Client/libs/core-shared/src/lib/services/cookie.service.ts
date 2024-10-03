@@ -81,4 +81,31 @@ export class CookieService {
 
         document.cookie = `${cookieName}=${data}; domain=${domain}; expires=${expires};path=/;${sameSite};Secure`;
     }
+
+    // Shared info cookie used by both SPA and V06
+    public static isV06Idle(): boolean {
+        let clientKey = UtilitiesService.getClientKeyFromUrl()
+        let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
+
+        if (!sharedInfo) return true;
+
+        return sharedInfo.V06Idle
+    }
+
+    public static setMangoIdleCookieProperty(isMangoIdle: boolean): void {
+        let clientKey = UtilitiesService.getClientKeyFromUrl()
+        
+        let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
+        if (!sharedInfo) return
+
+        //if (sharedInfo.mangoIdle === isMangoIdle) return
+
+        sharedInfo.MangoIdle = isMangoIdle
+
+        // Always default this value to true. V06 is responsible for updating this value
+        sharedInfo.V06Idle = true
+
+        CookieService.setSharedInfoCookie(clientKey, sharedInfo)
+    }
+    // Shared info cookie used by both SPA and V06
 }

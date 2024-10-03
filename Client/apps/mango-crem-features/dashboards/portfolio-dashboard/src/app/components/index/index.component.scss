@@ -1,12 +1,13 @@
+@use 'styles' as *;
 
-div#portfolio-filters {
+#portfolio-filters {
 	width: 100% !important;
-	position: -webkit-sticky !important;
-	position: sticky !important;
+	position: -webkit-sticky;
+	position: sticky;
 	top: 0;
-  
+
 	crem-button button {
-		margin-left: 0 !important;
+		margin-left: 0;
 	}
 }
 
@@ -14,8 +15,9 @@ div#portfolio-filters {
 	padding: 16px;
 	color: maroon;
 	font-weight: bold;
-}  
+}
 
-div#portfolio-metrics {
-	height: 112px;;
+#portfolio-metrics {
+	position: relative;
+	height: 112px;
 }

@@ -4,7 +4,7 @@ import { SUB_LEFT_NEV_PAGES_URLS } from '@mango/data-models/lib-data-models';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ROUTER_NAVIGATED, RouterNavigatedAction } from '@ngrx/router-store';
 import { combineLatest, of } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
 import { ActivatedRoute } from '@angular/router';
@@ -26,17 +26,19 @@ export class InitSetupEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.APP_INIT),
-        switchMap(_ => of(
+        mergeMap(_ => [
           AppActions.loadCurrentUser(),
           AppActions.setupClientKey(),
           AppActions.setupContactRecord(),
           AppActions.setupUserContactRecordConfig(),
           AppActions.redirectToV06ToFinalizeLogin(),
           AppActions.handleCustomQueryParams(),
-          AppActions.setAdminFlags(),         
+          AppActions.setAdminFlags(),  
+          AppActions.setUserHasSecurityProfiles(),       
           AppActions.isEmulatingUser(),
           AppActions.setupClientSettings()
-        ))
+        ]
+        )
       ))
 
   setupClientKey$ = createEffect(
@@ -85,6 +87,18 @@ export class InitSetupEffects {
         filter(user => !!user),
         switchMap(user => this.userService.hasMultipleContactRecords(user.email, user.contactId, user.clientKey)),
         map(hasMultipleContactRecords => AppActions.setUserHasMultipleContactRecords({ hasMultipleContactRecords }))
+      )
+  )
+
+
+  setupUserContactProfiles$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AppActions.SET_HAS_SECURITY_PROFILES),
+        switchMap(_ => this.facade.authenticatedUser$),
+        filter(user => !!user),
+        switchMap(_  => this.userService.hasSecurityProfiles()),
+        map(hasSecurityProfiles => AppActions.setUserHasSecurityProfilesSuccess({ hasSecurityProfiles }))
       )
   )
 

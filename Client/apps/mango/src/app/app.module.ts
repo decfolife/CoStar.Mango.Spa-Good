@@ -54,6 +54,7 @@ import { IdleEffects } from './+state/app/effects/idle.effects';
 import { IdleTimeoutPopupComponent } from './components/idle-timeout-popup/idle-timeout-popup.component';
 import { RedirectorObjectData } from 'libs/data-models/lib-data-models/src/lib/models/redirectorLinks';
 import { CremPopupComponent } from '@mango/ui-shared/lib-ui-elements';
+import { NgIdleKeepaliveModule, provideNgIdleKeepalive } from '@ng-idle/keepalive';
 
 const DEV_MODULES = [];
 
@@ -113,6 +114,7 @@ if (!environment.production) {
       closeButton: true,
     }),
     MatPasswordStrengthModule.forRoot(),
+    NgIdleKeepaliveModule.forRoot()
   ],
   providers: [
     { provide: Environment, useValue: environment },
@@ -128,7 +130,7 @@ if (!environment.production) {
     CentralAuthErrorHandler,
     MangoAppFacade,
     HeaderService,
-    MangoNavigationService,
+    MangoNavigationService
   ],
   bootstrap: [AppComponent],
 })

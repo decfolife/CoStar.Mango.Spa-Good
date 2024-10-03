@@ -1,3 +1,5 @@
+@use "styles" as *;
+
 .modalContent {
 	font-size: 14px;
  .mat-tab-label {
@@ -101,3 +103,8 @@
 	height: 16px;
 }
 
+:host ::ng-deep {
+	.modalContent {
+		@include costar(padding, 0, $important: true);
+	}
+}

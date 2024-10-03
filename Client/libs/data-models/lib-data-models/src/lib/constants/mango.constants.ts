@@ -10,7 +10,7 @@ export const CREM_FORCE_RELOGIN_URLS = []
 
 export const BREADCUMBS_LENGTH = 5
 
-export const SUB_LEFT_NEV_PAGES_URLS = ['render-form', '/crem/portfolio/expenses', '/crem/accounting/summary', '/crem/projects/project-team', '/crem/projects/project-tasks', 'crem/costar-matching', '/crem/reminders']
+export const SUB_LEFT_NEV_PAGES_URLS = ['render-form', '/crem/portfolio/expenses', '/crem/accounting/summary', '/crem/projects/project-team', '/crem/projects/project-tasks', 'crem/costar-matching', '/crem/reminders', 'crem/accounting-history']
 
 //Constants for Lease Equipment Wizard
 export const EQUIPMENT_RENDER_SELECT_TEMPLATE_ID = 131;

@@ -8,8 +8,8 @@ import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/mode
 
 @Injectable()
 export class ProjectsDashboardLeftNavService extends EndpointService {
-  dashboards: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
-  leftNav: string = UtilitiesService.getBaseApiUrl(Api.leftNav)
+  dashboards: string = UtilitiesService.getBaseApiUrl(Api.dashboards);
+  leftNav: string = UtilitiesService.getBaseApiUrl(Api.leftNav); //'http://localhost:5802/api/';
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -50,5 +50,10 @@ export class ProjectsDashboardLeftNavService extends EndpointService {
   getAdminModulesNavigationLinks(moduleID: number): Observable<any> {
     const url = `${this.leftNav}LeftNav/GetAdminModulesNavigationLinks/${moduleID}`;
     return this.callHttpGet(url, 'GetAdminModulesNavigationLinks')
+  }
+
+  getETLModulesNavigationLinks(): Observable<any> {
+    const url = `${this.leftNav}LeftNav/GetETLModulesNavigationLinks`;
+    return this.callHttpGet(url, 'GetETLModulesNavigationLinks');
   }
 }

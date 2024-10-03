@@ -34,6 +34,24 @@ export class SharedLeftNavComponent implements OnChanges {
       if (propName.toLowerCase() === 'navigationlinks') {
         this.getCategorizeLinks();
         break;
+      } else if (propName.toLowerCase() === 'activelink') {
+        const navLink: SharedLeftNavLink | undefined =
+          this.navigationLinks?.filter(
+            (x) => x.name === changes.activeLink.currentValue
+          )[0];
+        if (navLink && navLink.moduleID && navLink.dynamicName) {
+          const id =
+            'left-nav__' +
+            navLink.moduleID +
+            '-' +
+            navLink.dynamicName.toLowerCase().replace(' ', '-');
+
+          const element = document.getElementById(id);
+
+          if (element) {
+            element.focus();
+          }
+        }
       }
       else if (propName.toLowerCase() === 'activelink') {
         const navLink : SharedLeftNavLink = this.navigationLinks.filter(x => x.name === changes.activeLink.currentValue)[0];

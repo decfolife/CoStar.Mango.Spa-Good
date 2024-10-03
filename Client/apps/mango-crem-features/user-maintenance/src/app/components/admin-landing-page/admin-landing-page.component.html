@@ -1,45 +1,24 @@
-<div class="center" style="margin-top: 20px">
+<div class="center landing-page-wrapper">
   <h2>Administration development in progress...</h2>
-  <br />
   <a target="_blank" [href]="externalCremLink">Open page in CREM</a>
   <br />
   <br />
-  <section>
-   
-     <div class="well">
-         <h3>Modules/Pages that currently live in MangoSpa</h3>
-        <ul>
-        <li>User Maintenance</li>
-        <li>Group Maintenance</li>
-        <li>Portfolio Maintenance</li>
-        <li>Object Maintenance</li>
-        </ul>
+  <div *ngIf="!isLoading">
+    <div *ngFor="let category of getCategories()" class="category-container">
+      <h2 class="category-title underline">{{ category }}</h2>
+      <div class="card-container">
+        <div *ngFor="let item of groupedData[category]" class="card-item">
+          <mat-card class="mat-mdc-card" (click)="cardClicked(item)">
+            <mat-card-content class="mat-card-content">
+              <mat-card-subtitle class="mat-card-subtitle">{{
+                item.name
+              }}</mat-card-subtitle>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
+
+  <crem-loader *ngIf="isLoading"></crem-loader>
 </div>
-
-<!--
-<table>
-    <tr>
-        <td><button routerLink="user-maintenance">User Maintenance</button></td>
-        <td><button routerLink="group-maintenance">Group Maintenance</button></td>
-        <td><button routerLink="portfolio-maintenance">Portfolio Maintenance</button></td>
-        <td><button routerLink="object-maintenance">Object Maintenance</button></td>
-    </tr>
-
-    <tr>
-        <td><button (click)="archiveBuilding($event)">Archive Building</button></td>
-        <td><button (click)="archiveLease($event)">Archive Lease</button></td>
-    </tr>
-
-    <div>
-        <mango-object-actions #ObjectActions
-            [objectName]="objectName"
-            [objectTypeId]="objectTypeId"
-            [objectId]="objectId"
-            [objectTypeTypeId]="objectTypeTypeId"
-            [hiddenPremise]="hiddenPremise">
-        </mango-object-actions>
-    </div>
-</table>
--->

@@ -1,0 +1,90 @@
+<div class="imports-right-container">
+  <div class="imports-toolBar-wrapper">
+    <div class="controls-left">
+      <h1 class="title">Imports</h1>
+      <div class="search">
+        <cs-search
+          #SearchBox
+          [placeholder]="'Search...'"
+          (changed)="searchDataGrid($event)"
+        ></cs-search>
+      </div>
+    </div>
+    <div class="controls-right">
+      <div class="more">
+        <crem-button type="secondary">
+          <span id="exportToExcel">Export to Excel</span>
+        </crem-button>
+      </div>
+      <div class="importData">
+        <crem-button type="primary">
+          <span id="importData">Import Data</span>
+        </crem-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="imports-dataGrid-wrapper">
+    <crem-loader *ngIf="isLoading"></crem-loader>
+    <dx-data-grid
+      *ngIf="!isLoading"
+      #ImportsDataGrid
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      columnResizingMode="widget"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [dataSource]="imports"
+      keyExpr="queueId"
+      [wordWrapEnabled]="true"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-paging [pageSize]="100"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[100, 200, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      >
+      </dxo-pager>
+      <dxo-load-panel
+        [enabled]="true"
+        shadingColor="rgba(255,255,255,1.0)"
+        [showIndicator]="true"
+        [showPane]="true"
+        [shading]="true"
+      >
+      </dxo-load-panel>
+      <dxi-column
+        dataField="queueId"
+        alignment="left"
+        caption="ID"
+        [allowHiding]="false"
+        [sortOrder]="'desc'"
+      ></dxi-column>
+      <dxi-column dataField="templateName" caption="Template Name"></dxi-column>
+      <dxi-column dataField="objectType" caption="Object Type"></dxi-column>
+      <dxi-column dataField="portfolio" caption="Portfolio"></dxi-column>
+      <dxi-column dataField="etlStatus" caption="Status"></dxi-column>
+      <dxi-column
+        dataField="recordCount"
+        caption="Records Processed"
+      ></dxi-column>
+      <dxi-column dataField="templatePath" caption="Source File"></dxi-column>
+      <dxi-column dataField="createdBy" caption="Uploaded By"></dxi-column>
+      <dxi-column
+        dataField="createdDate"
+        caption="Uploaded Date"
+        dataType="datetime"
+        [format]="etlService.dateFormat"
+      ></dxi-column>
+    </dx-data-grid>
+  </div>
+</div>

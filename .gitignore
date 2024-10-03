@@ -231,3 +231,5 @@ _Pvt_Extensions
 .fake/
 package-lock.json
 .vscode/settings.json
+Client/.vscode/launch.json
+Client/.vscode/settings.json

@@ -50,7 +50,7 @@
     </div>
     <ng-content select="'[cta-section]'"></ng-content>
   </mat-card-header>
-  <mat-card-content class="cremCardContent" [ngClass]="contentPadding == true ? 'card__content--padding' : 'card__content--no--padding'" tabindex="0">
+  <mat-card-content class="cremCardContent" [ngClass]="contentPadding === true ? 'card__content--padding' : 'card__content--no--padding'" tabindex="0">
     <ng-content></ng-content>
   </mat-card-content>
 </mat-card>

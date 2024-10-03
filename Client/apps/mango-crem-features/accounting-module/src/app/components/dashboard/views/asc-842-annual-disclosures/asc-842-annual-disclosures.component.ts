@@ -12,32 +12,33 @@ import { CardConfig } from '@mango/data-models/lib-data-models';
 })
 export class Asc842AnnualDisclosuresComponent implements OnInit {
   public cardData: Partial<CardConfig>[] = [{
-      id: 'LeaseCounts',
+      id: 'ASC842-Annual-LeaseCounts',
       name: 'Lease Counts',
       index: 0
     },
     {
-      id: 'AssetBalance',
+      id: 'ASC842-Annual-AssetBalance',
       name: 'Assets and Liabilities Balances',
+			showFieldChooser: true,
       index: 1
     },
     {
-      id: 'LeaseCosts',
+      id: 'ASC842-Annual-LeaseCosts',
       name: 'Lease Cost',
       index: 2
     },
     {
-      id: 'ShortTermReportingExceptionsMetrics',
+      id: 'ASC842-Annual-ShortTermReportingExceptionsMetrics',
       name: 'Reporting Exceptions Cost',
       index: 3
     },
     {
-      id: 'OtherInformation',
+      id: 'ASC842-Annual-OtherInformation',
       name: 'Other Information',
       index: 4
     },
     {
-      id: 'LeaseLiabilityMaturityAnalysis',
+      id: 'ASC842-Annual-LeaseLiabilityMaturityAnalysis',
       name: 'Liability Maturity',
       index: 5,
       filterData: [
@@ -47,12 +48,12 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
       filterInitialValue: {displayKey: '5 years', valueKey: 5},
     },
     {
-      id: 'ReconciliationOfLeaseLiabilities',
+      id: 'ASC842-Annual-ReconciliationOfLeaseLiabilities',
       name: 'Reconciliation of Lease Liabilities',
       index: 6,
     },
     {
-      id: 'FutureCommitments',
+      id: 'ASC842-Annual-FutureCommitments',
       name: 'Future Commitments',
       index: 7,
       filterData: [
@@ -71,12 +72,13 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
   private cardConfigs: string[];
   IADCardData;
 
-  public selectedCurrency = "usd";
   public currencyDecimalPrecision: number;
   
   @Input() dashboardId: number;
   @Input() selectedSegment: number;
   @Input() reportingYear: number;
+  @Input() selectedCurrency;
+
 
   @ViewChild("PivotGrid") pivotGrid: DxPivotGridComponent;
  
@@ -681,27 +683,38 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     this.loading = false;
   }
 
-  mergeArraysOfObjects(data1: {[key: string]: any}[], data2: {[key: string]: any}[]): Array<object>{
-    const hashMap = new Map(
-      data2.map( item => {
-        return [`${item.DueByYear}`, item]
-      })
-    );
-    const mergedArray = data1.map( item => {
-      const key = `${item.PeriodYear}`;
-      const itemToMerge = hashMap.get(key);
-      if(itemToMerge && typeof itemToMerge === 'object'){
-        return { ...item, ...itemToMerge };
-      }
-    });
-    if(mergedArray.length > 0){
-      return mergedArray;
+  mergeArraysOfObjects(
+    data1: { [key: string]: any }[], 
+    data2: { [key: string]: any }[]
+  ): Array<object> {
+
+
+    if (data1.length === 0 && data2.length === 0) {
+      return [];
     }
-    if (data2.length > 0){
+    if (data1.length === 0) {
       return data2;
-    } else {
+    }
+    if (data2.length === 0) {
       return data1;
     }
+  
+    // Create a hashMap from data2
+    const hashMap = new Map(
+      data2.map(item => [`${item.DueByYear}`, item])
+    );
+  
+    // Merge data1 with data2 based on the hashMap
+    const mergedArray = data1.map(item => {
+      const key = `${item.PeriodYear}`;
+      const itemToMerge = hashMap.get(key);
+      if (itemToMerge && typeof itemToMerge === 'object') {
+        return { ...item, ...itemToMerge };
+      }
+      return item; // Ensure that the item is returned even if no merge occurs
+    });
+  
+    return mergedArray;
   }
 
   public setFieldConfigs() {
@@ -747,14 +760,14 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
               }
             }
             break;
-          case 'ASC 842 Annual Disclosures Short Term Reporting Exceptions Cost':
+          case 'ASC 842 Annual Disclosures Reporting Exceptions Cost':
             config[0].width = 200;
             config[2].format = {
               type: "fixedPoint",
               precision: this.currencyDecimalPrecision
             }
             break;
-          case 'ASC 842 Annual Lease Costs':
+          case 'ASC 842 Annual Disclosures Lease Cost':
             config[0].width = 180;
             config[2].format = {
               type: "fixedPoint",

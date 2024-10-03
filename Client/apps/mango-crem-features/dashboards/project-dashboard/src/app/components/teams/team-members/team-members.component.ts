@@ -8,6 +8,7 @@ import { Subscription, of } from 'rxjs';
 import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatMenuTrigger } from '@angular/material/menu';
+import dxSelectBox from 'devextreme/ui/select_box';
 
 @Component({
   selector: 'team-members',
@@ -202,9 +203,36 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 		});
 	}
 
-	onKeyDown(e){
-		if (e.event.keyCode == 13)
-        e.handled = true;
+  onKeyDown(event) {
+    if (event.event.keyCode == 13 || event.event.keyCode == 32)
+      event.handled = true;
+
+    if (event.event.key === 'Enter' || event.event.key === ' ') {
+      const gridInstance = this.teamMembersGrid.instance;
+      const focusedColumn = gridInstance.option('focusedColumnIndex');
+      const focusedIndex = gridInstance.option('focusedRowIndex');
+      if (focusedColumn !== undefined && focusedIndex !== -1) {
+        const datafield =
+          gridInstance.getVisibleColumns()[focusedColumn]?.dataField;
+        if (datafield === 'role' || datafield === 'level') {
+          const srcElement = gridInstance.getCellElement(
+            focusedIndex,
+            datafield
+          );
+          if (srcElement) {
+            const selectBoxInstance = dxSelectBox.getInstance(
+              srcElement.querySelector('.dx-selectbox')
+            ) as dxSelectBox;
+            if (selectBoxInstance) {
+              const isOpened = selectBoxInstance.option('opened');
+              isOpened ? selectBoxInstance.close() : selectBoxInstance.open();
+              selectBoxInstance.focus();
+            }
+          }
+          event.event.preventDefault();
+        }
+      }
+    }
   }
 
 	gridOnCellPrepared(e) { 

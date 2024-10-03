@@ -25,7 +25,7 @@ import { EnvironmentProviders, makeEnvironmentProviders } from "@angular/core";
 import { StorageService } from './storage.service';
 import { IDLE_TIMOUT_DELAY_SECONDS } from '@mango/data-models/lib-data-models';
 import { DBkeys } from '../utilities/db-keys';
-import { CookieService, UtilitiesService } from '@mango/core-shared';
+import { CookieService } from '@mango/core-shared';
 
 export class UserIdleConfig {
   /**
@@ -57,6 +57,12 @@ export function provideUserIdleConfig(config: UserIdleConfig): EnvironmentProvid
   ])
 }
 
+/**
+ * This service works but does not handle the scenario where you have multiple tabs within the same browser
+ * Most modern browsers throttle or pause JavaScript execution in background tabs to conserve system resources. This throttling affects timers and RxJS observables,
+ * 
+ * To get around this, we can introduce web workers here OR just use the popular ng-idle lib.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -126,12 +132,12 @@ export class UserIdleService {
                     tap(() => {
                       if (this.isMangoSpa) {
                         // Only start timer/show popup when both SPA and V06 are idle.
-                        if (this.isV06Idle()) {
+                        if (CookieService.isV06Idle()) {
                           this.isInactivityTimer = true;
                           this.timerStart$.next(true);
                         }
 
-                        this.setMangoIdleCookieProperty(true)
+                        CookieService.setMangoIdleCookieProperty(true)
                       } else {
                         this.isInactivityTimer = true;
                         this.timerStart$.next(true);
@@ -171,7 +177,7 @@ export class UserIdleService {
     this.isTimeout = false;
     
     if (this.isMangoSpa) {
-      this.setMangoIdleCookieProperty(false)
+      CookieService.setMangoIdleCookieProperty(false)
     }
   }
 
@@ -283,31 +289,4 @@ export class UserIdleService {
   protected setupPing(pingMillisec: number) {
     this.ping$ = interval(pingMillisec).pipe(filter(() => !this.isTimeout));
   }
-
-  // Shared info cookie used by both SPA and V06
-  protected isV06Idle(): boolean {
-    let clientKey = UtilitiesService.getClientKeyFromUrl()
-    let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
-
-    if (!sharedInfo) return true;
-
-    return sharedInfo.V06Idle
-  }
-
-  setMangoIdleCookieProperty(isMangoIdle: boolean): void {
-    let clientKey = UtilitiesService.getClientKeyFromUrl()
-    
-    let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
-    if (!sharedInfo) return
-
-    //if (sharedInfo.mangoIdle === isMangoIdle) return
-
-    sharedInfo.MangoIdle = isMangoIdle
-
-    // Always default this value to true. V06 is responsible for updating this value
-    sharedInfo.V06Idle = true
-
-    CookieService.setSharedInfoCookie(clientKey, sharedInfo)
-  }
-  // Shared info cookie used by both SPA and V06
 }

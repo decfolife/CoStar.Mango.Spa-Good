@@ -1,4 +1,12 @@
-import { AfterViewInit, EventEmitter, HostBinding, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnChanges,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 /* eslint-disable @angular-eslint/component-selector */
 import { CommonModule } from '@angular/common';
@@ -7,7 +15,11 @@ import { Component, ElementRef, SimpleChanges } from '@angular/core';
 import { InputHintComponent } from '../hint';
 import { InputLabelComponent } from '../label';
 
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 
 import { InputState, InputType, LabelPosition } from '../definitions';
 
@@ -20,23 +32,20 @@ import { InputState, InputType, LabelPosition } from '../definitions';
 @Component({
   selector: 'crem-input',
   standalone: true,
-  imports: [
-    CommonModule,
-    InputLabelComponent,
-    InputHintComponent,
-    FormsModule
-  ],
+  imports: [CommonModule, InputLabelComponent, InputHintComponent, FormsModule],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    multi: true,
-    useExisting: InputComponent
-  }]
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: InputComponent,
+    },
+  ],
 })
-export class InputComponent implements OnChanges, AfterViewInit, ControlValueAccessor {
-
-
+export class InputComponent
+  implements OnChanges, AfterViewInit, ControlValueAccessor
+{
   @Input() state?: InputState;
   @Input() showHint?: boolean;
   @Input() showLabel?: boolean;
@@ -49,8 +58,10 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
   @Input() label?: string;
   @Input() labelPosition?: LabelPosition;
 
+
   // Input Component
   @Input() inputType?: InputType;
+  @Input() dataKey:string;
   @Input() id?: string;
   @Input() value?: string = '';
   @Input() name?: string;
@@ -63,14 +74,17 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
   @Input() cols?: number;
   @Input() disabled?: boolean;
   @Input() readOnly?: boolean;
-  @Input() minNumber?: number = Number.NEGATIVE_INFINITY
-  @Input() maxNumber?: number = Number.POSITIVE_INFINITY
+  @Input() minNumber?: number = Number.NEGATIVE_INFINITY;
+  @Input() maxNumber?: number = Number.POSITIVE_INFINITY;
   @Input() disallowNegative?: boolean;
 
   // Hint Component
   @Input() hintText?: string;
 
-  @Output() valueChange: EventEmitter<string> = new EventEmitter<string>()
+
+  @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
+
+  @Output() onBlurChange: EventEmitter<string> = new EventEmitter<string>()
 
   touched = false;
 
@@ -78,21 +92,21 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
   @HostBinding('class') classes = '';
 
   @ViewChild('textarea') textarea: ElementRef<HTMLTextAreaElement>;
-
-  /**
-       * @ignore
-       */
-  onChange = (value: string) => { }
+  @ViewChild('input')  input: ElementRef<HTMLInputElement>;
 
   /**
    * @ignore
    */
-  onTouched = () => { }
+  onChange = (value: string) => {};
 
-  @Output() onEnterKeyEvent: EventEmitter<any> = new EventEmitter<any>()
+  /**
+   * @ignore
+   */
+  onTouched = () => {};
 
-  constructor(private el: ElementRef) {
-  }
+  @Output() enterKeyEvent: EventEmitter<any> = new EventEmitter<any>();
+
+  constructor(private el: ElementRef) {}
 
   ngAfterViewInit() {
     this.adjustTextareaHeight();
@@ -120,31 +134,31 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
    * @ignore
    */
   registerOnChange(fn: any): void {
-    this.onChange = fn
+    this.onChange = fn;
   }
 
   /**
    * @ignore
    */
   registerOnTouched(fn: any): void {
-    this.onTouched = fn
+    this.onTouched = fn;
   }
 
   /**
    * @ignore
    */
   writeValue(value: string): void {
-    this.value = value
-    this.markAsTouched()
-    this.valueChange.emit(this.value)
-    this.onChange(this.value)
+    this.value = value;
+    this.markAsTouched();
+    this.valueChange.emit(this.value);
+    this.onChange(this.value);
   }
 
   /**
    * @ignore
    */
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled
+    this.disabled = isDisabled;
   }
 
   /**
@@ -157,47 +171,57 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
     }
   }
 
-
   /**
    * @ignore
    */
   getCssClasses() {
     return {
       'read-only': this.state === 'read-only' || this.readOnly,
-      'disabled': this.state === 'disabled' || this.disabled,
-      'warning': this.state === 'warning',
-      'error': this.state === 'error',
-      'success': this.state === 'success'
+      disabled: this.state === 'disabled' || this.disabled,
+      warning: this.state === 'warning',
+      error: this.state === 'error',
+      success: this.state === 'success',
     };
   }
 
   /**
-   * 
+   *
    * @ignore
    */
   validate(): boolean {
     if (this.required && (!this.value || this.value == '')) {
-      return false
+      return false;
     }
-    if (this.maxLengthField && !!this.value && this.value.length > this.maxLengthField) {
-      return false
+    if (
+      this.maxLengthField &&
+      !!this.value &&
+      this.value.length > this.maxLengthField
+    ) {
+      return false;
     }
-    if (this.minLengthField && !!this.value && this.value.length < this.minLengthField) {
-      return false
+    if (
+      this.minLengthField &&
+      !!this.value &&
+      this.value.length < this.minLengthField
+    ) {
+      return false;
     }
-    return true
+    if (this.value && !/\S/.test(this.value)) {
+      return false;
+    }
+    return true;
   }
 
   /**
-   * 
+   *
    * @ignore
    * This method is for backward compatibility support
    */
   reset() {
-    this.value = ''
-    this.markAsTouched()
-    this.valueChange.emit(this.value)
-    this.onChange(this.value)
+    this.value = '';
+    this.markAsTouched();
+    this.valueChange.emit(this.value);
+    this.onChange(this.value);
   }
 
   adjustTextareaHeight() {
@@ -207,7 +231,7 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
         textareaElement.style.height = '';
         textareaElement.style.height = `${textareaElement.scrollHeight + 3}px`;
       } else {
-        textareaElement.style.overflowY = 'scroll'
+        textareaElement.style.overflowY = 'scroll';
       }
     }
   }
@@ -216,7 +240,23 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
    * @ignore
    */
   onInputChange(event) {
-    let value = event.target.value;
+    const value = this.formatInput(event);
+    this.markAsTouched()
+    this.valueChange.emit(value)
+    this.onChange(value)
+  }
+
+  /**
+   * @ignore
+   */
+  onBlur(event) {
+    const value = this.formatInput(event);
+    this.markAsTouched()
+    this.onBlurChange.emit(value)
+  }
+
+  private formatInput(event): any {
+    let value = event.target.value.trim();
     if (this.inputType === 'number' && this.disallowNegative) {
       const regex = /^(?!0\d)\d*\.?\d{0,4}$/;
       const key = event.data;
@@ -236,23 +276,32 @@ export class InputComponent implements OnChanges, AfterViewInit, ControlValueAcc
         event.target.value = value;
       }
     }
-    this.markAsTouched()
-    this.valueChange.emit(value)
-    this.onChange(value)
+
+    return value;
   }
 
   /**
    * @ignore
    * This method is defined in subsequent classes
    */
+  focusInputBox() {
+    if(this.input && this.input.nativeElement) {
+        const el = this.input.nativeElement;
+        el.focus();
+  
+  
+  }
+}
   focusTextBox() {
-    const input = this.el.nativeElement.querySelector('input')
+    const input =
+      this.el.nativeElement.querySelector('input') ||
+      this.el.nativeElement.querySelector('textarea');
     if (input) {
-      input.focus()
+      input.focus();
     }
   }
 
   onEnter(event) {
-    this.onEnterKeyEvent.emit(event)
+    this.enterKeyEvent.emit(event);
   }
 }

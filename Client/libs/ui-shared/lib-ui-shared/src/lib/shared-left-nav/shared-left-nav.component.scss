@@ -1,4 +1,4 @@
-@use "../../../../../../apps/mango/src/assets/styles/colors";
+@use 'styles' as *;
 
 .regularNavItems {
   margin-bottom: 60px;
@@ -13,9 +13,8 @@
     height: 100%;
     font-size: 14px;
     overflow-x: hidden;
-    border-right: 1px solid colors.$gray;
-    background-color: colors.$bodyBackgroundGray;
-    font-family: Roboto, "Helvetica Neue", sans-serif !important;
+    @include costar(border-right, gray04);
+    @include costar(background-color, background);
 
     &.mat-sidenav-container {
 
@@ -31,7 +30,6 @@
         .mat-drawer-inner-container {
           width: 100%;
           min-width: var(--sidebar-width);
-          // transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
           .sidenavTop {
             width: 100%;
             min-width: var(--sidebar-width);
@@ -79,8 +77,8 @@
         }
         &:focus{
           outline: 5px auto -webkit-focus-ring-color;
-          outline-offset: -2px; 
-          background-color: colors.$gray5;
+          outline-offset: -2px;
+          @include costar(background-color, gray05);
         }
         .navCollExp {
           width: 100%;
@@ -90,14 +88,14 @@
           border: unset;
           cursor: pointer;
           text-align: right;
-          border-top: 1px solid colors.$lightGray;
+          @include costar(border-top, gray04);
           &:focus-visible{
             outline: none;
           }
           &:focus{
             outline: 5px auto -webkit-focus-ring-color;
-            outline-offset: -2px; 
-            background-color: colors.$gray5;
+            outline-offset: -2px;
+            @include costar(background-color, gray05);
           }
           mat-icon {
             font-size: 32px;
@@ -119,7 +117,7 @@
         position: relative;
         flex-direction: column;
         justify-content: space-between;
-        background-color: colors.$bodyBackgroundGray;
+        @include costar(background-color, background);
       }
 
     }
@@ -132,11 +130,13 @@
         padding-top: 8px;
         overflow-x: hidden;
         > li {
+          @include costar(transition, fast);
+          @include costar(background-color, background);
           &:hover {
-            background-color: colors.$lightGray;
+            @include costar(background-color, gray06);
           }
           > a {
-            color: colors.$black !important;
+            @include costar(color, dark);
             list-style: none;
             text-decoration: none !important;
             display: flex;
@@ -148,14 +148,14 @@
               font-weight: bold;
               text-decoration: none;
               span {
-                border-bottom: 3px solid colors.$costarAlert;
+                border-bottom: 3px solid map-get($color, color, danger);
               }
             }
             &:visited {
               font-weight: bold;
               text-decoration: none;
               span {
-                border-bottom: 3px solid colors.$costarAlert;
+                border-bottom: 3px solid map-get($color, color, danger);
               }
             }
             &:active {
@@ -163,14 +163,14 @@
               text-decoration: none;
               box-sizing: unset !important;
               span {
-                border-bottom: 3px solid colors.$costarAlert;
+                border-bottom: 3px solid map-get($color, color, danger);
               }
             }
             &:focus{
               // TODO: <a> tags allow focus without providing a tabindex attribute. We need to figure out why we're having to give a hacky tabindex
-              outline: 5px auto -webkit-focus-ring-color;// TODO: Remove important once fully migrated to MangoSpa
-              outline-offset: -2px; 
-              background-color: colors.$gray5;
+              outline: 5px auto -webkit-focus-ring-color;
+              outline-offset: -2px;
+              @include costar(background-color, gray05);
             }
           }
 
@@ -183,43 +183,44 @@
     mat-expansion-panel {
       box-shadow: none;
       border-radius: 0px;
-      background-color: colors.$bodyBackgroundGray;
+      @include costar(background-color, background);
 
       .mat-expansion-panel-header {
         padding: 0 16px;
-        height: 40px !important; // TODO: Remove important once fully migrated to MangoSpa
+        height: 40px !important;
         &-title,
         &-description { // Adjust vertical spacing to avoid line break
           margin-right: 6px;
         }
         &:focus{
-          outline: 5px auto -webkit-focus-ring-color;// TODO: Remove important once fully migrated to MangoSpa
+          outline: 5px auto -webkit-focus-ring-color;
           outline-offset: -2px;
-          background-color: colors.$gray5;
+          @include costar(background-color, gray05);
         }
       }
       .mat-expansion-panel-body {
-        padding: 0 0px 16px 0 !important; // TODO: Remove important once fully migrated to MangoSpa
+        padding: 0 0px 16px 0;
         ul {
           padding-inline-start: 0;
           > li {
             > a {
               min-height: 36px;
               display: flex;
-              align-items: center;
               width: 100%;
               cursor: pointer;
-              padding: 5px 16px 5px 30px !important; // TODO: Remove important once fully migrated to MangoSpa
-              color: colors.$black !important; // TODO: Remove important once fully migrated to MangoSpa
-              text-decoration: none !important; // TODO: Remove important once fully migrated to MangoSpa
+              align-items: center;
+              text-decoration: none;
+              padding: 5px 16px 5px 30px;
+              @include costar(color, dark);
+              @include costar(transition, fast);
               &:hover {
-                background-color: colors.$lightGray;
+                @include costar(background-color, gray06);
               }
               &:focus{
                 // TODO: <a> tags allow focus without providing a tabindex attribute. We need to figure out why we're having to give a hacky tabindex
-                outline: 5px auto -webkit-focus-ring-color;// TODO: Remove important once fully migrated to MangoSpa
+                outline: 5px auto -webkit-focus-ring-color;
                 outline-offset: -2px;
-                background-color: colors.$gray5;
+                @include costar(background-color, gray06);
               }
             }
           }

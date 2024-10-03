@@ -2,6 +2,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TaskApprovalDto } from '../../../models/task-approval';
+
 import { DashboardService } from '../../../services/dashboard.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -62,6 +63,7 @@ export class TaskApprovalComponent implements OnInit {
       isApproval: (this.data.actionName  === "Approve") ? 1 : 0,
       notes: "RE: " + this.data.selectedTask.taskNumber + ") " + this.data.selectedTask.taskName + " " + arText + " - " + this.taskNote
     }
+
     this.dashboardserice.UpdateTaskApproval(taskData)
     .subscribe(Response => {
       if (Response.status === 200) {

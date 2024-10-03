@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ContactRecord, Api } from '@mango/data-models/lib-data-models';
+import { ContactRecord, Api, CurrencyMapping } from '@mango/data-models/lib-data-models';
 import { Observable } from 'rxjs';
 import { UtilitiesService } from '@mango/core-shared';
 
@@ -10,7 +10,11 @@ import { UtilitiesService } from '@mango/core-shared';
 export class UserService {
   userMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance)
 
-  constructor(private http: HttpClient) { }
+  currencyMappingTable$: Observable<CurrencyMapping[]>;
+
+  constructor(private http: HttpClient) { 
+    this.currencyMappingTable$ = this.getCurrencyMappings();
+  }
 
   getContactRecords(email: string, contactId: number, clientKey: string): Observable<ContactRecord[]> {
     let headers = new HttpHeaders({
@@ -39,5 +43,13 @@ export class UserService {
     })
 
     return this.http.get<boolean>(`${this.userMaintenanceUrl}usermaintenance/hasmultipleusers/${email}`, { headers: headers })
+  }
+  
+  hasSecurityProfiles(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.userMaintenanceUrl}usermaintenance/hassecurityprofiles`)
+  }
+
+  getCurrencyMappings() {
+    return this.http.get<CurrencyMapping[]>(`${this.userMaintenanceUrl}usermaintenance/getcurrencymappings`)
   }
 }

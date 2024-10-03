@@ -6,6 +6,7 @@ import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { catchError, debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
 import { UntypedFormControl } from '@angular/forms';
 
+import { CookieService } from '@mango/core-shared/lib-core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { MatDialog } from '@angular/material/dialog';
 import { EmulateUserPopupComponent } from './emulate-user-popup/emulate-user-popup.component';
@@ -58,8 +59,10 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.currentUser$ = this.facade.authenticatedUser$;
     this.hasMultipleContactRecords$ = this.facade.userHasMultipleContactRecords$
+    this.hasMultipleProfiles$ = this.facade.userHasMultipleProfiles$
     this.contactRecord$ = this.facade.contactRecord$;
     this.isEmulatedUser$ = this.facade.isEmulatedUser$;
+    this.facade.clientKey$.subscribe(clientKey => this.currentProfile = CookieService.getSharedInfoCookie(clientKey).ProfileName);
 
     this.showEmulateUserOption$ = 
       combineLatest([this.isEmulatedUser$, this.contactRecord$]).pipe(
@@ -149,6 +152,13 @@ export class HeaderComponent implements OnInit {
   }
 
   goToSwitchProfiles(): void {
+    this.subs.push(
+      this.facade.clientKey$.pipe(
+        filter(clientKey => !!clientKey),
+        tap(_ => this.facade.setLoading(true)),
+        tap(clientKey => this.facade.goToExternalURL(`${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/ProfileSelector.aspx?p=2`))
+      ).subscribe()
+    )
   }
 
   moduleChange(e) {

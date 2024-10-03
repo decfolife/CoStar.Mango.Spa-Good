@@ -5,7 +5,6 @@
 /// Please use the common library following the related documentation for the
 /// frontend SCSS architecture
 /// -----------------------------------------------------------------------------
-
 @use 'colors';
 $card-dropDown-height: 24px;
 
@@ -14,7 +13,16 @@ $card-dropDown-height: 24px;
   background-color: colors.$bodyBackgroundGray;
 }
 
-#projects-dashboard div.project-filters,
+#portfolio-filters{
+	z-index: 10;
+}
+
+#portfolio-cards {
+	position: relative;
+	z-index: 9;
+}
+
+#projects-dashboard .project-filters,
 #portfolio-dashboard #portfolio-filters,
 .user-settings-dialog #currencyUOMSettings {
 

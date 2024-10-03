@@ -58,27 +58,27 @@ export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
   public cardConfigs: any = {
     22: {
       sortOrder: 1,
-      cardId: 'AccountingWorkflowStatus',
+      cardId: 'Workflow-Alerts-Status',
       dataGridKeyExpr: 'gridIndex'
     },
     23: {
       sortOrder: 2,
-      cardId: 'JournalEntryCountbyProcessingStatus',
+      cardId: 'Workflow-Alerts-JournalEntryCountbyProcessingStatus',
       dataGridKeyExpr: 'gridIndex'
     },
     24: {
       sortOrder: 3,
-      cardId: 'PeriodEventCount',
+      cardId: 'Workflow-Alerts-PeriodEventCount',
       dataGridKeyExpr: 'gridIndex'
     },
     25: {
       sortOrder: 4,
-      cardId: 'LeaseAlerts',
+      cardId: 'Workflow-Alerts-LeaseAlerts2', // todo: this card seems to be duplicated
       dataGridKeyExpr: 'gridIndex'
     },
     26: {
       sortOrder: 4,
-      cardId: 'LeaseAlerts',
+      cardId: 'Workflow-Alerts-LeaseAlerts',
       dataGridKeyExpr: 'gridIndex'
     },
   };

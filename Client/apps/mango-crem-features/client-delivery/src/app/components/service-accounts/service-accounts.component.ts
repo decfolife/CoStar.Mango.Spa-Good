@@ -19,6 +19,8 @@ import { UserMaintenanceService } from '../../../../../user-maintenance/src/app/
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { ServiceAccount } from '@mango/data-models/lib-data-models';
 import { ButtonModule, DropdownModule, ModalModule, SearchComponent } from '@mango/ui-shared/lib-ui-elements';
+import { LatestSyncInfo } from 'libs/data-models/lib-data-models/src/lib/models/service-account/latest-sync-info.interface';
+import { CremPopoverComponent } from '@mango/ui-shared/lib-ui-elements';
 
 enum Status  {
   active = "active",
@@ -27,7 +29,7 @@ enum Status  {
 };
 @Component({
   standalone: true,
-  imports: [CommonModule, ModalModule, SearchComponent, DxDataGridModule, DxCheckBoxModule, MatMenuModule, DropdownModule, ButtonModule, MatIconModule, MatDialogModule],
+  imports: [CommonModule, ModalModule, SearchComponent, DxDataGridModule, DxCheckBoxModule, MatMenuModule, DropdownModule, ButtonModule, MatIconModule, MatDialogModule, CremPopoverComponent],
   selector: 'mango-service-accounts',
   templateUrl: './service-accounts.component.html',
   styleUrls: ['./service-accounts.component.scss'],
@@ -37,6 +39,7 @@ export class ServiceAccountsComponent implements OnDestroy {
   public serviceAccountsData$: Observable<ServiceAccount[]>;
   public isRemUser$: Observable<boolean> = of(false);
   public syncMessage$: Observable<string> = of('');
+  public latestSyncInfo$: Observable<string>;
 
   public dropdownFieldData: any = [
     { "value": "active", "display": "Active"},
@@ -106,6 +109,11 @@ export class ServiceAccountsComponent implements OnDestroy {
     }
   }
 
+
+  ngOnInit(): void {
+    this.latestSyncInfo()
+  }
+
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe())
   }
@@ -148,7 +156,7 @@ export class ServiceAccountsComponent implements OnDestroy {
 
   syncOnPremToAWS(templateRef){
     this.syncMessage$ = of('Processing....  Please wait for result.');
-    this.dialog.open(templateRef, {width: '300px', disableClose: true});
+    let dialogRef = this.dialog.open(templateRef, {width: '300px', disableClose: true});
 
       this.subs.push (
         this.userMaintenanceService.syncOnPremToAWS().pipe(
@@ -156,6 +164,22 @@ export class ServiceAccountsComponent implements OnDestroy {
         ).subscribe (
         )
       );
+
+      this.subs.push(
+        dialogRef.afterClosed().subscribe(
+          result => {
+            this.latestSyncInfo();
+          }
+        )
+      );
+  }
+
+  latestSyncInfo(){
+    this.subs.push(
+      this.userMaintenanceService.getLatestSyncInfo().pipe(
+        switchMap(result => this.latestSyncInfo$ = of(`Sync Data Executed on ${result.lastSyncDate} by ${result.contactFirstName} ${result.contactLastName} `))
+      ).subscribe ()
+    );
   }
 
   exportGrids(): void {

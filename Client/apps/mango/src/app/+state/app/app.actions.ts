@@ -22,6 +22,8 @@ export const SET_BREADCRUMBS = '[Mango App] Set Breadcrumbs'
 export const SET_CONTACT_RECORD = '[Mango App] Set Contact Record'
 export const SETUP_USER_CONTACT_RECORD_CONFIG = '[Mango App] Setup User Contact Records Config'
 export const SET_HAS_MULTIPLE_CONTACT_RECORDS = '[Mango App] Set User Has Multiple Contact Records'
+export const SET_HAS_SECURITY_PROFILES = '[Mango App] Set User Has Security Profiles'
+export const SET_HAS_SECURITY_PROFILES_SUCCESS = '[Mango App] Set User Has Security Profiles Success'
 export const SET_EMULATED_USER = '[Mango App] Set Emulated User'
 export const SET_EMULATED_USER_SUCCESS = '[Mango App] Set Emulated User Success'
 export const STOP_EMULATING_USER = '[Mango App] Stop Emulating User'
@@ -112,6 +114,12 @@ export const setupUserContactRecordConfig = createAction(
 export const setUserHasMultipleContactRecords = createAction(
   SET_HAS_MULTIPLE_CONTACT_RECORDS,
   props<{ hasMultipleContactRecords: boolean }>()
+);
+
+export const setUserHasSecurityProfiles = createAction( SET_HAS_SECURITY_PROFILES );
+export const setUserHasSecurityProfilesSuccess = createAction(
+  SET_HAS_SECURITY_PROFILES_SUCCESS,
+  props<{ hasSecurityProfiles: boolean }>()
 );
 
 export const setEmulatedUserSuccess = createAction(

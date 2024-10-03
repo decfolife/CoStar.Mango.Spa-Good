@@ -17,3 +17,7 @@ button.userOptionsMenuBtn:focus{
 :host ::ng-deep .not-clickable > .dx-template-wrapper > a {  
     cursor: pointer !important;  
 }
+
+.button__add {
+    margin-right: 8px;
+}

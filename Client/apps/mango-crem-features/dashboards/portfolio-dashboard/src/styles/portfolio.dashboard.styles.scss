@@ -76,6 +76,7 @@ portfolio-dashboard {
 #portfolio-dashboard crem-card mat-card.cremCard mat-card-content.mat-mdc-card-content.cremCardContent,
 .portfolio.dashboards-dragCardItems crem-card mat-card.cremCard mat-card-content.mat-mdc-card-content.cremCardContent {
   height: 400px;
+	overflow: hidden;
 }	
 
 #portfolio-dashboard crem-card mat-card .cardContent {

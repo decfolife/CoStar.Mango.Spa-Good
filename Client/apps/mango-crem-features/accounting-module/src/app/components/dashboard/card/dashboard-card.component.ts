@@ -24,7 +24,6 @@ interface ISummationTypeConfig {
   showDataFields: boolean;
   showFilterFields: boolean;
 }
-
 @Component({
   selector: 'mango-accounting-card',
   templateUrl: './dashboard-card.component.html',

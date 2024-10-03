@@ -1,14 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
+import { GetViewDropdownDataRequest, HideListViewRequest, ListView, SetDefaultListViewRequest } from '@list-pages/components/listpage/shared/models';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
+import { Api, AssignTasks, Team, TeamMemUpdate, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import notify from 'devextreme/ui/notify';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { TaskApprovalDto } from '../models/task-approval';
 import { UserSelectedFilters } from '../models';
-import { EndpointService, UtilitiesService } from '@mango/core-shared';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Api, AssignTasks, Team, TeamMemUpdate, UpdateContact, UpdateProjectTeamMember, UpdateTemporaryUser } from '@mango/data-models/lib-data-models';
-import notify from 'devextreme/ui/notify';
-import { GetViewDropdownDataRequest, HideListViewRequest, ListView, SetDefaultListViewRequest } from '@list-pages/components/listpage/shared/models';
+import { TaskApprovalDto } from '../models/task-approval';
+
 
 @Injectable()
 export class DashboardService  extends EndpointService {
@@ -60,15 +61,15 @@ export class DashboardService  extends EndpointService {
     const url = `${this.dashboards}Dashboards/SaveUserSettings`;
     return this.callHttpPost(url, 'postUserSettings',  dashboardUserSettings)
   }
-  
+
   // This method calls dashboard api to approve or reject task. If service is not restful, it will call
   // CREM app web method which will call Mango Dashboard service api
   // We are not calling Mango service at this time so we don't need to check for isRestful.
   UpdateTaskApproval(taskData: TaskApprovalDto): Observable<any> {
-    const btnAction = taskData.isApproval ? "Approve" : "Reject"; 
+    const btnAction = taskData.isApproval ? "Approve" : "Reject";
     const url = `${this.taskApproval}?OID=${taskData.transactionId}&ShowPage=1&PMMID=${taskData.taskId}&cmdSubmit=${btnAction}`;
 
-    return this.http.post(url, taskData, { observe: 'response', responseType: 'text'})
+    return this.http.post(url, taskData, { observe: 'response', responseType: 'text' })
       .pipe(map(data => {
         return data;
       }), catchError(this.handleErrorReturnMessage('UpdateTaskApproval')));

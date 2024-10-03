@@ -46,4 +46,8 @@ export interface ContactRecord {
 
 export interface ContactPreferences {
     contactDatesEU: boolean;
+    contactConsolidatedEmails: boolean;
+    contactCurrency: number;
+    contactMeasurements: number;
+    contactHomePage: string
 }

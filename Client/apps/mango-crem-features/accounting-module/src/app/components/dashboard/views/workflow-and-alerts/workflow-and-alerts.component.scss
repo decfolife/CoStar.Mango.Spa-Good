@@ -4,7 +4,6 @@
   &__pageTitle {
     font-size: 20px;
     font-weight: 500;
-    font-family: Helvetica, sans-serif;
   }
 }
 
@@ -21,19 +20,19 @@
 }
 
 mat-card-header.mat-mdc-card-header {
-  background: white;
+	@include costar(background-color, light);
   height: 24px;
 }
 
 .accounting-dashboard-page-data-grid-wrapper {
-  background-color: $background;
+	@include costar(background-color, background);
   height: auto;
   display: flex;
   flex-wrap: wrap;
 }
 
-div.accounting-dashboard-page-controls-wrapper {
-  background-color: $background;
+.accounting-dashboard-page-controls-wrapper {
+  @include costar(background-color, background);
   display: flex;
   flex-direction: row;
   justify-content: space-between;

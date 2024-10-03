@@ -1,0 +1,447 @@
+<div class="templates-edit-container">
+  <ngx-skeleton-loader
+    *ngIf="isLoading"
+    class="crem-button-shadow"
+    [theme]="{ height: '100px', width: '100%' }"
+  ></ngx-skeleton-loader>
+  <form
+    *ngIf="!isLoading"
+    crem-form
+    [formGroup]="templateForm"
+    layout="horizontal"
+  >
+    <div>
+      <div class="templates-edit-toolBar-wrapper">
+        <div class="controls-left">
+          <h1
+            class="title"
+            [id]="etlService.getId(componentName, 'import-template', 'title')"
+          >
+            Import Template : {{ templateDetails?.templateName }}
+          </h1>
+        </div>
+        <div class="controls-right">
+          <div class="more">
+            <crem-button
+              type="secondary"
+              [disabled]="!dataRetrieved"
+              [id]="etlService.getId(componentName, 'sendToExcel', 'button')"
+              (click)="onSendToExcel(); $event.preventDefault()"
+            >
+              <span>Export to Excel</span>
+            </crem-button>
+          </div>
+          <div class="more">
+            <crem-button
+              type="secondary"
+              (click)="onCancel(); $event.preventDefault()"
+              [id]="etlService.getId(componentName, 'cancel', 'button')"
+            >
+              <span>Cancel</span>
+            </crem-button>
+          </div>
+          <div class="more" *ngIf="!templateForm.get('isLocked').value">
+            <crem-button
+              type="secondary"
+              [disabled]="
+                !templateForm.valid || templateForm.pristine || !dataRetrieved || isSaving
+              "
+              [id]="etlService.getId(componentName, 'apply', 'button')"
+              (click)="onSave(true); $event.preventDefault()"
+            >
+              <span>Apply</span>
+            </crem-button>
+          </div>
+          <div class="saveTemplate" *ngIf="!templateForm.get('isLocked').value">
+            <crem-button
+              type="primary"
+              [disabled]="
+                !templateForm.valid || templateForm.pristine || !dataRetrieved || isSaving
+              "
+              [id]="etlService.getId(componentName, 'save', 'button')"
+              (click)="onSave(false); $event.preventDefault()"
+            >
+              <span>Save</span>
+            </crem-button>
+          </div>
+        </div>
+      </div>
+
+      <mat-card>
+        <div class="form-container">
+          <div class="left-column">
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label [required]="true"
+                  >Import Template Name</crem-form-label
+                >
+                <crem-form-control>
+                  <crem-input
+                    [showHint]="false"
+                    [showLabel]="false"
+                    [showInfo]="false"
+                    [inputType]="'text'"
+                    [name]="''"
+                    [id]="
+                      etlService.getId(componentName, 'template-name', 'input')
+                    "
+                    [placeholder]="'Enter Template Name'"
+                    [required]="true"
+                    formControlName="templateName"
+                  ></crem-input>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="template-name-error">
+              <div
+                *ngIf="templateForm.get('templateName').hasError('nameTaken')"
+              >
+                The template name already exists. Please choose a unique name.
+              </div>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label>Import Template Type</crem-form-label>
+                <crem-form-control>
+                  <dx-select-box
+                    [id]="
+                      etlService.getId(componentName, 'template-type', 'input')
+                    "
+                    [dataSource]="templateTypes"
+                    valueExpr="id"
+                    displayExpr="name"
+                    formControlName="templateTypeId"
+                  >
+                  </dx-select-box>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label [required]="isFormIdRequired"
+                  >Form</crem-form-label
+                >
+                <crem-form-control>
+                  <dx-select-box
+                    [id]="etlService.getId(componentName, 'form', 'input')"
+                    [dataSource]="forms"
+                    valueExpr="formID"
+                    displayExpr="formName"
+                    formControlName="formId"
+                  >
+                  </dx-select-box>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label>Object Type</crem-form-label>
+                <crem-form-control>
+                  <label
+                    [id]="'object-type-data'"
+                    [id]="
+                      etlService.getId(componentName, 'object-type', 'label')
+                    "
+                    >{{ templateDetails.objectType }}</label
+                  >
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label>Object Type Template</crem-form-label>
+                <crem-form-control>
+                  <dx-select-box
+                    [id]="
+                      etlService.getId(
+                        componentName,
+                        'object-type-template',
+                        'input'
+                      )
+                    "
+                    [dataSource]="objectTypeTemplates"
+                    valueExpr="id"
+                    displayExpr="name"
+                    formControlName="objectTypeTypeId"
+                  >
+                  </dx-select-box>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label [required]="true">Key Field</crem-form-label>
+                <crem-form-control>
+                  <dx-select-box
+                    *ngIf="!isKeyFieldLoading"
+                    [id]="etlService.getId(componentName, 'keyfield', 'input')"
+                    [dataSource]="keyFields"
+                    valueExpr="dataValueField"
+                    displayExpr="dataTextField"
+                    formControlName="keyField"
+                    #keyFieldSelectBox
+                  >
+                  </dx-select-box>
+                  <ngx-skeleton-loader
+                    *ngIf="isKeyFieldLoading"
+                    [theme]="{ height: '30px', width: '100%' }"
+                  ></ngx-skeleton-loader>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+          </div>
+          <div class="right-column">
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label>Parent Object</crem-form-label>
+                <crem-form-control
+                  *ngIf="templateForm.get('templateTypeId').value !== 3"
+                >
+                  <label [id]="'parent-object-data'">{{
+                    templateForm.get('parentObjectText').value
+                  }}</label>
+                </crem-form-control>
+                <crem-form-control
+                  *ngIf="templateForm.get('templateTypeId').value === 3"
+                >
+                  <dx-select-box
+                    [id]="
+                      etlService.getId(
+                        componentName,
+                        'parent-object-dropdown',
+                        'input'
+                      )
+                    "
+                    [dataSource]="parentObjects"
+                    valueExpr="objectTypeId"
+                    displayExpr="dataColumn"
+                    formControlName="parentObjectTypeId"
+                  >
+                  </dx-select-box>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label>Parent Lookup Value</crem-form-label>
+                <crem-form-control>
+                  <dx-select-box
+                    [id]="
+                      etlService.getId(
+                        componentName,
+                        'parent-object-lookup-value',
+                        'input'
+                      )
+                    "
+                    [dataSource]="parentLookups"
+                    valueExpr="dataColumn"
+                    displayExpr="dataColumn"
+                    formControlName="parentLookupValue"
+                  >
+                  </dx-select-box>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div *ngIf="templateForm.get('templateTypeId').value === 8">
+              <div class="form-field">
+                <crem-form-item>
+                  <crem-form-label>Import for Accounting</crem-form-label>
+                  <crem-form-control>
+                    <crem-check-box
+                      [id]="
+                        etlService.getId(
+                          componentName,
+                          'import-rates-for-accounting',
+                          'input'
+                        )
+                      "
+                      formControlName="isImportForAccounting"
+                    ></crem-check-box>
+                  </crem-form-control>
+                </crem-form-item>
+              </div>
+              <div class="form-field">
+                <crem-form-item>
+                  <crem-form-label
+                    >Import for Financials Module</crem-form-label
+                  >
+                  <crem-form-control>
+                    <crem-check-box
+                      [id]="
+                        etlService.getId(
+                          componentName,
+                          'import-rates-for-financials',
+                          'input'
+                        )
+                      "
+                      formControlName="isImportForFinancials"
+                    ></crem-check-box>
+                  </crem-form-control>
+                </crem-form-item>
+              </div>
+            </div>
+            <div class="form-field" [hidden]="!isUpdateOnlyVisible">
+              <crem-form-item>
+                <crem-form-label>Updates Only</crem-form-label>
+                <crem-form-control>
+                  <crem-check-box
+                    [id]="
+                      etlService.getId(componentName, 'updates-only', 'input')
+                    "
+                    formControlName="updateOnly"
+                    (changeEvent)="onUpdateOnlyChanged($event)"
+                  ></crem-check-box>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <crem-form-label>Read Only</crem-form-label>
+                <crem-form-control>
+                  <crem-check-box
+                    [id]="etlService.getId(componentName, 'read-only', 'input')"
+                    formControlName="isReadOnly"
+                  ></crem-check-box>
+                </crem-form-control>
+              </crem-form-item>
+            </div>
+            <div class="form-field">
+              <crem-form-item>
+                <div *ngIf="templateDetails?.setReadOnlyBy">
+                  <crem-form-label
+                    >Set to Read Only by
+                    {{ templateDetails?.setReadOnlyByContactName }} on
+                    {{
+                      templateDetails?.modifiedDate | date: 'M/d/yyyy h:mm:ss a'
+                    }}</crem-form-label
+                  >
+                </div>
+              </crem-form-item>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </form>
+
+  <div class="templates-edit-dataGrid-wrapper">
+    <ngx-skeleton-loader
+      *ngIf="!dataRetrieved"
+      class="crem-button-shadow"
+      [theme]="{ height: '100px', width: '100%' }"
+    ></ngx-skeleton-loader>
+    <dx-data-grid
+      *ngIf="dataRetrieved"
+      #DataGrid
+      [id]="etlService.getId(componentName, 'grid-results', 'grid')"
+      [dataSource]="gridData"
+      [columns]="columns"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      columnResizingMode="widget"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [wordWrapEnabled]="true"
+    >
+      <dxo-paging [pageSize]="200"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[200, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      ></dxo-pager>
+      <dxo-load-panel
+        [enabled]="true"
+        shadingColor="rgba(255,255,255,1.0)"
+        [showIndicator]="true"
+        [showPane]="true"
+        [shading]="true"
+      ></dxo-load-panel>
+
+      <dxi-column
+        [allowEditing]="false"
+        [visible]="isIncludedColumnVisible"
+        dataField="included"
+        caption="Include"
+        width="100"
+        cellTemplate="checkBoxTemplate"
+        alignment="center"
+        [allowSorting]="false"
+        [allowReordering]="false"
+        [allowResizing]="false"
+        headerCellTemplate="headerCheckBoxTemplate"
+      >
+      </dxi-column>
+
+      <dxi-column
+        dataField="required"
+        caption="Required"
+        width="125"
+      ></dxi-column>
+      <dxi-column
+        dataField="formItemId"
+        caption="Form Item ID"
+        width="125"
+      ></dxi-column>
+      <dxi-column
+        dataField="displayLabel"
+        caption="Display Label"
+        width="350"
+      ></dxi-column>
+      <dxi-column
+        dataField="controlType"
+        caption="Control Type"
+        width="125"
+      ></dxi-column>
+      <dxi-column
+        dataField="dataType"
+        caption="Data Type"
+        width="125"
+      ></dxi-column>
+      <dxi-column
+        dataField="helpText"
+        caption="Help Text"
+        [cellTemplate]="'helpTextTemplate'"
+      ></dxi-column>
+
+      <!-- Helptext template -->
+      <div *dxTemplate="let cellData of 'helpTextTemplate'">
+        <div [innerHTML]="multiLineRowCellText(cellData.data.helpText)"></div>
+      </div>
+
+      <!-- Checkbox template -->
+      <div *dxTemplate="let cellData of 'checkBoxTemplate'">
+        <div class="centered-checkbox">
+          <crem-check-box
+            [disabled]="templateDetails.isLocked || !templateDetails.canEdit"
+            *ngIf="!cellData.data.hideCheckbox"
+            [value]="cellData.value"
+            (changeEvent)="onCheckboxValueChanged(cellData.rowIndex, $event)"
+          >
+          </crem-check-box>
+        </div>
+      </div>
+
+      <!-- Header checkbox template -->
+      <div *dxTemplate="let headerData of 'headerCheckBoxTemplate'">
+        <div
+          class="dx-datagrid-text-content dx-text-content-alignment-left"
+          role="presentation"
+        >
+          Include
+        </div>
+        <div class="centered-checkbox">
+          <dx-check-box
+            [disabled]="templateDetails.isLocked || !templateDetails.canEdit"
+            [(value)]="selectAllChecked"
+            (onValueChanged)="onSelectAllChanged($event)"
+          ></dx-check-box>
+        </div>
+      </div>
+    </dx-data-grid>
+  </div>
+</div>

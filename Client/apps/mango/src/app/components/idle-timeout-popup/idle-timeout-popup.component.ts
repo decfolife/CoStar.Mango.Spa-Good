@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { UserIdleService } from 'libs/core-shared/src/lib/services';
+import { DEFAULT_INTERRUPTSOURCES, Idle } from '@ng-idle/core';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -19,15 +19,13 @@ export class IdleTimeoutPopupComponent implements OnInit {
 
   constructor(
     private facade: MangoAppFacade,
-    private idleService: UserIdleService,
+    private idle: Idle
     ) { }
 
   ngOnInit(): void {
     this.subs.push(
-      this.idleService.onTimeoutWarning().subscribe((timer) => {
-        if (timer) {
-          this.message = `Your session will expire in ${timer} seconds.`
-        }
+      this.idle.onTimeoutWarning.subscribe((secondsLeft: number) => {
+        this.message = `Your session will expire in ${secondsLeft} seconds.`
       })
     )
   }
@@ -37,11 +35,13 @@ export class IdleTimeoutPopupComponent implements OnInit {
   }
 
   continueWorking() {
-    this.idleService.resetTimer();
+    this.idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
+    this.idle.watch()
     this.close.emit('close');
   }
 
   logout() {
+    this.idle.stop()
     this.close.emit('close');
     this.facade.logout(true)
   }

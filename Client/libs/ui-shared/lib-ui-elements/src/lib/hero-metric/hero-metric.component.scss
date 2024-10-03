@@ -68,9 +68,9 @@
         padding: 0 4px;
         margin: 0px;
         &.green {
-          @include costar(border, success);
+          border: solid  var(--costar-color-success) 1px;
           background: transparent !important;
-          @include costar(color, success);
+          color: var(--costar-color-success) !important;
         }
         &.red {
           @include costar(border, danger);

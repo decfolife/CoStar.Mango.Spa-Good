@@ -1,3 +1,5 @@
+@use 'styles' as *;
+
 crem-tooltip {
   div.dx-field {
     color: #333;
@@ -11,17 +13,16 @@ crem-tooltip {
     width: 16px;
     max-height: 16px;
   }
-  .dx-field-value-static {
+
+  .dx-field-value-static  {
     padding: 0px !important;
   }
-  div#popoverWrapper {
-    position: fixed;
-    top: -10px;
-    width: 300px;
-    padding: 4px;
+}
+
+ div#popoverWrapper {
+    @include costar(padding, 2);
     box-shadow: 1px 1px 2px #808080;
     border-radius: 2px;
     z-index: 2500;
     background: white;
   }
-}

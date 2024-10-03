@@ -293,6 +293,18 @@ const routes: Routes = [
               breadCrumb: { append: false }
             },
           },
+          {
+            path: 'accounting-history',
+            loadChildren: () =>
+              import(
+                '@accounting-history/app.module'
+              ).then((mod) => mod.AppModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.ACCOUNTING_DASHBOARD,
+              breadCrumb: { label: 'Accounting History', append: false, activeLink: 'Accounting' }
+            },
+          },
           // Accounting Settings
           {
             path: 'settings',
@@ -515,7 +527,17 @@ const routes: Routes = [
               ).then((mod) => mod.MangoFormsModule),
             data: { currentSubApp: MangoSubApps.FORMS_MAINTENANCE, moduleId: 6, breadCrumb: { label: null, append: true } },
           },
-        ]
+          {
+            path: 'etl',
+            loadChildren: () =>
+              import('@etl/app.module').then((mod) => mod.AppModule),
+            data: {
+              currentSubApp: MangoSubApps.ETL,
+              moduleId: 6,
+              breadCrumb: { label: 'ETL', append: true, activeLink: 'ETL' },
+            },
+          },
+        ],
       },
 
       //FORMS
@@ -534,7 +556,7 @@ const routes: Routes = [
           import(
             '@costar-matching/app.module'
           ).then((mod) => mod.AppModule),
-      }
+      },
 
       // Auto-generated components below
       // @!micro-component-generator: don't delete this line

@@ -2,8 +2,7 @@
   [class.costar-unified-second-menu]="isCostarStyle" [class.costar-top-menu]="!isCostarStyle"
   [class.costar-second-menu]="isCostarStyle">
   <ul class="crem-toolbar__modules crem-toolbar__nav">
-    <li class="nav-item" *ngFor="let link of moduleLinks"
-      [ngClass]="activeLink === link.name ? link.name + ' active' : link.name">
+    <li class="nav-item" *ngFor="let link of moduleLinks">
       <a [id]="'toolbar__' + link?.moduleID" class="nav-link" [routerLink]="[link.spaurl || link.moduleHome]"
         [routerLinkActive]="['active']">
         <span>{{link.moduleDisplayName}}</span>

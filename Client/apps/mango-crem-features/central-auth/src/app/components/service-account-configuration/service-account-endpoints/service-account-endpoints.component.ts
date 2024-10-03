@@ -24,7 +24,7 @@ export class ServiceAccountEndpointsComponent implements OnDestroy {
 
   ngOnInit() {
     this.endpoints.forEach(element => {
-      if(element.endpoint != 'Projects' && element.endpoint != 'Portfolio'){
+      if(element.endpoint != 'Transactions' && element.endpoint != 'Portfolio'){
         element.isCommingSoon = true;
       }
     });

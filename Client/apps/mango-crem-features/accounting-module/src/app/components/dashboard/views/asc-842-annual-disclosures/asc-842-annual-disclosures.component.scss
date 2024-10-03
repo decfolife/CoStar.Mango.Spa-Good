@@ -1,4 +1,4 @@
-:ng-deep {
+:host ::ng-deep {
   .card-containers {
     .categories-item {
       .card-drag-handle {
@@ -7,4 +7,9 @@
       }
     }
   }
+
+	// Hides Field Chooser button for all the Cards except #ASC842-Annual-AssetBalanceCard
+	.dx-pivotgrid .dx-area-description-cell .dx-pivotgrid-toolbar .dx-button {
+		display: none;
+	}
 }

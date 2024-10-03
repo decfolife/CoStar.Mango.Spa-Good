@@ -28,6 +28,9 @@
       ],
       "@accounting-summary/*": [
         "apps/mango-crem-features/accounting-summary/src/app/*"
+      ], 
+      "@accounting-history/*": [
+        "apps/mango-crem-features/accounting-history/src/app/*"
       ],
       "@alerts-rules/*": ["apps/mango-crem-features/alerts-rules/src/app/*"],
       "@batch-accounting/*": [
@@ -103,6 +106,8 @@
       "@user-maintenance/*": [
         "apps/mango-crem-features/user-maintenance/src/app/*"
       ],
+      "@ledgers/*": ["apps/mango-crem-features/ledgers/src/app/*"],
+      "@etl/*": ["apps/mango-crem-features/etl/src/app/*"],
       "cldr": ["node_modules/cldrjs/dist/cldr"],
       "cldr/*": ["node_modules/cldrjs/dist/cldr/*"],
       "exceljs": ["node_modules/exceljs/dist/exceljs.bare.min"],

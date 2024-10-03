@@ -8,8 +8,9 @@ import { MangoAppFacade } from './+state/app/app.facade';
 import { SettingsService } from '@mango/core-shared/lib-core-shared';
 import { environment } from '../environments/environment.local';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { UserIdleService } from 'libs/core-shared/src/lib/services';
+import { CookieService } from 'libs/core-shared/src/lib/services';
 import { MatDialog } from '@angular/material/dialog';
+import { Idle } from '@ng-idle/core';
 
 @Component({
   selector: 'mango-root',
@@ -28,9 +29,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private leftNavService: ProjectsDashboardLeftNavService,
     private facade: MangoAppFacade,
-    private idleService: UserIdleService,
     public dialog: MatDialog,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private idle: Idle
   ) {
     this.subs.add(this.notificationService
       .getNotification()
@@ -50,12 +51,27 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setupIdle() {
     this.facade.setupIdleTimeout()
-    this.facade.logoutWhenTimedOut()
 
-    this.idleService.onIdleStart().subscribe(_ => {
-        document.onmousemove = null
-        document.onkeydown = null
+    this.idle.onIdleStart.subscribe(() => {
+      CookieService.setMangoIdleCookieProperty(true)
+
+      // Only start timer/show popup when both SPA and V06 are idle.
+      if (CookieService.isV06Idle()) {
+        this.idle.clearInterrupts()
         this.showIdleTimeoutPopup = true
+      } else {
+        this.idle.watch() // reset idle timer
+      }
+    });
+
+    this.idle.onIdleEnd.subscribe(() => {
+      this.showIdleTimeoutPopup = false
+      CookieService.setMangoIdleCookieProperty(false)
+    });
+
+    this.idle.onTimeout.subscribe(() => {
+      this.showIdleTimeoutPopup = false
+      this.facade.logout(true)
     });
   }
 

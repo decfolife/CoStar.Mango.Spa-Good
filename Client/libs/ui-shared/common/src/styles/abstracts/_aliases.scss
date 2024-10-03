@@ -464,3 +464,56 @@
   }
 
 }
+
+//------------------------------------------------
+//--- Custom Scrollbar
+//------------------------------------------------
+@mixin costar-scrollbar(
+  $thumb-color: map-get($color, color, gray03),
+  $thumb-color-opacity: 0.7,
+  $track-color:  transparent,
+  $width: 8px,
+  $orientation: vertical,
+) {
+  $thumb-color-with-opacity: rgba($thumb-color, $thumb-color-opacity);
+
+  @if $orientation == vertical {
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      width: $width;
+      @include costar(transition, fast);
+    }
+    &::-ms-scrollbar {
+      width: $width;
+      @include costar(transition, fast);
+    }
+  }
+  @else if $orientation == horizontal {
+    overflow-x: scroll;
+    &::-webkit-scrollbar {
+      height: $width;
+      @include costar(transition, fast);
+    }
+    &::-ms-scrollbar {
+      height: $width;
+      @include costar(transition, fast);
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $thumb-color-with-opacity;
+    border-radius: 10px;
+    border: 2px solid $track-color;
+  }
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: $thumb-color-with-opacity $track-color;
+
+  /* IE10+ and Edge (Legacy) */
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}

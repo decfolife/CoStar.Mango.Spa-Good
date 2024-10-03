@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { Dropdown } from "@mango/data-models/lib-data-models";
 import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
 
@@ -7,20 +7,16 @@ import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
     templateUrl: './iad-card.component.html',
     styleUrls: ['./iad-card.component.scss'],
   })
-
-  export class IADCardComponent implements OnInit {
+  export class IADCardComponent {
 
     @Input() config;
     @Input() dataSource;
     @Input() fieldConfig;
     @Output() selectedFilter = new EventEmitter<Dropdown>();
 
-    public fullWidth: boolean = true;
+    public fullWidth = true as boolean;
 
     @ViewChild("PivotGrid") pivotGrid: DxPivotGridComponent;
-
-    ngOnInit(): void {
-    }
 
     public onCellPrepared(e) {
         if (e.area === "data" && e.cell.text === "") {
@@ -59,6 +55,10 @@ import { DxPivotGridComponent } from "devextreme-angular/ui/pivot-grid";
         this.fullWidth = !this.fullWidth;
         this.updateDimention();
       }
+
+  public showColumnChooser() {
+		this.pivotGrid.instance.getFieldChooserPopup().show();
+  }
 
       public updateDimention() {
         this.pivotGrid?.instance.updateDimensions();
