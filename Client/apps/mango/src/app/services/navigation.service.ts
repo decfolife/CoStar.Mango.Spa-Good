@@ -95,18 +95,6 @@ export class MangoNavigationService {
     window.location.href = url;
   }
 
-  redirectToV06(path: string, params: URLSearchParams): void {
-    let clientKey = UtilitiesService.getClientKeyFromUrl()
-    let url = `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}/v06/${path}?${params.toString()}`
-
-    if (UtilitiesService.isLocalEnvironment()) {
-      console.log(`Faking a redirect to V06 URL: ${url}`)
-      return
-    }
-
-    window.location.href = url
-  }
-
   extractValue(data, key) {
     const rx = new RegExp(key + '=(.*?)\\s+(&|?)');
     const values = rx.exec(data); // or: data.match(rx);
