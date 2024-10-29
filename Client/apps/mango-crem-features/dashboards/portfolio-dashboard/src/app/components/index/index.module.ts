@@ -10,8 +10,6 @@ import { PortfolioDashboardService } from '../../services/portfolio-dashboard.se
 import { UserSettingsModule } from '../modal/user-settings/user-settings.module';
 import { PortfolioDataService } from '../../services/portfolio-data.service';
 
-
-
 @NgModule({
   declarations: [IndexComponent],
   imports: [
@@ -21,11 +19,8 @@ import { PortfolioDataService } from '../../services/portfolio-data.service';
     CardsModule,
     UserSettingsModule,
     LibUiSharedModule,
-    LibUiElementsModule
+    LibUiElementsModule,
   ],
-  providers: [
-    PortfolioDashboardService,
-    PortfolioDataService
-  ],
+  providers: [PortfolioDashboardService, PortfolioDataService],
 })
 export class IndexModule {}

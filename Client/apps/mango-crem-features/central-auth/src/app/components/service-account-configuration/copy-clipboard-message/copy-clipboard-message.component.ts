@@ -1,19 +1,19 @@
-import { Component, Inject} from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
 import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   standalone: true,
-  imports:[ModalModule, MatDialogModule],
+  imports: [ModalModule, MatDialogModule],
   selector: 'mango-copy-clipboard-message',
   templateUrl: 'copy-clipboard-message.component.html',
   styleUrls: ['copy-clipboard-message.component.scss'],
 })
 export class CopyClipboardMessageComponent {
-  public apiKey: string = "";
-  public value: string = "";
-  public info: string = "";
+  public apiKey: string = '';
+  public value: string = '';
+  public info: string = '';
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
@@ -22,17 +22,17 @@ export class CopyClipboardMessageComponent {
   }
 
   copyClipboard() {
-    if (window.location.protocol == "https:") {
+    if (window.location.protocol == 'https:') {
       navigator.clipboard.writeText(this.apiKey);
     } else {
-      const textarea = document.createElement("textarea");
+      const textarea = document.createElement('textarea');
       textarea.textContent = this.apiKey;
       document.body.appendChild(textarea);
       textarea.select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       document.body.removeChild(textarea);
     }
 
-    this.info = "Copied to clipboard";
+    this.info = 'Copied to clipboard';
   }
 }

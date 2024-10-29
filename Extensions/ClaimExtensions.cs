@@ -19,6 +19,25 @@ public static class ClaimExtensions
     public static int UserId(this ClaimsPrincipal principal)
         => int.TryParse(principal.FindFirst(ClaimType.UserId)?.Value, out int result) ? result : default;
 
+    public static string Role(this ClaimsPrincipal principal)
+    {
+        var role = principal.Claims?
+            .FirstOrDefault(x => x.Type == ClaimTypes.Role || x.Type == ClaimType.Role)
+            ?.Value ?? string.Empty;
+
+        return role;
+    }
+
+    public static bool IsAdmin(this ClaimsPrincipal principal)
+    {
+        var role = principal.Role();
+
+        if (role == Constants.Role.Admin)
+            return true;
+
+        return false;
+    }
+
     public static int ContactId(this ClaimsPrincipal principal)
         => int.TryParse(principal.FindFirst(ClaimType.ContactId)?.Value, out int result) ? result : default;
 
@@ -61,9 +80,10 @@ public static class ClaimExtensions
         {
             if (role == (int)UserRoleType.SuperUser)
                 return true;
-        } 
+        }
 
-        if (contactRole == "superuser")
+        var superUser = nameof(UserRoleType.SuperUser).ToLower();
+        if (contactRole == superUser)
             return true;
 
         return false;
@@ -78,7 +98,8 @@ public static class ClaimExtensions
                 return true;
         }
 
-        if (contactRole == "admin")
+        var admin = nameof(UserRoleType.Admin).ToLower();
+        if (contactRole == admin)
             return true;
 
         return false;
@@ -90,8 +111,10 @@ public static class ClaimExtensions
         {
             UserId = principal.UserId(),
             Email = principal.Email(),
-            ContactId = principal.ContactId(),
+            Role = principal.Role(),
             ClientKey = principal.ClientKey(),
+            ContactId = principal.ContactId(),
+            ContactRole = principal.ContactRole(),
             IsAutoProvisioned = principal.IsAutoProvisioned(),
             IsRemUser = principal.SecurityLevel() > -1
         };

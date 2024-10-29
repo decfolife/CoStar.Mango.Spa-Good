@@ -1,0 +1,117 @@
+<crem-modal
+  [class]=""
+  [modalTitle]="modalTitle"
+  [primaryFooterButtonText]="'Save'"
+  [closeOrCancelButtonText]="'Cancel'"
+  [closeIconVisible]="closeButton"
+  [closeDialogResult]="'true'"
+  [modalId]="modalId"
+  [customFooter]="'true'"
+  [customHeader]="'true'"
+>
+  <div modalHeader class="headerContent">
+    <h2 class="modal-title">{{ modalTitle }}</h2>
+    <button
+      (click)="closeModal()"
+      class="btn-close btn-none modalCloseButton"
+      color="secondary"
+      aria-label="Close"
+      id="reorder-tasks-close-button"
+    >
+      <mat-icon class="closeIcon">close</mat-icon>
+    </button>
+  </div>
+  <div modalContent id="addEditTaskModal-content">
+    <div class="tree-view-panel-container">
+      <div class="tree-view-panel">
+        <div class="drive-header">
+          <div class="dx-treeview-item-content">
+            <span>Current Sequence</span>
+          </div>
+        </div>
+        <dx-tree-view
+          #treeviewCurrentTaskSequence
+          id="treeviewCurrentTaskSequence"
+          [displayExpr]="formatTaskName"
+          [keyExpr]="'id'"
+          [dataStructure]="'plain'"
+          [parentIdExpr]="'parentId'"
+          [expandNodesRecursive]="true"
+          [dataSource]="currentTaskSequence"
+          [height]="gridSizing.height"
+        >
+        </dx-tree-view>
+      </div>
+      <div class="tree-view-panel">
+        <div class="drive-header">
+          <div class="dx-treeview-item-content">
+            <span>New Sequence</span>
+          </div>
+        </div>
+        <dx-sortable
+          filter=".dx-treeview-item"
+          [allowDropInsideItem]="true"
+          [allowReordering]="true"
+          [data]="newTaskSequence"
+          (onDragChange)="onDragChange($event)"
+          (onDragEnd)="onDragEnd($event)"
+        >
+          <dx-tree-view
+            #treeviewNewTaskSequence
+            id="treeviewNewTaskSequence"
+            itemTemplate="taskTemplate"
+            [keyExpr]="'id'"
+            [dataStructure]="'plain'"
+            [parentIdExpr]="'parentId'"
+            [expandNodesRecursive]="true"
+            [dataSource]="newTaskSequence"
+            [height]="gridSizing.height"
+          >
+            <div
+              *dxTemplate="let file of 'taskTemplate'"
+              [ngClass]="{ 'task-moved': file.isMoved }"
+            >
+              {{ file.path }})&nbsp;{{ file.name }}
+            </div>
+          </dx-tree-view>
+        </dx-sortable>
+      </div>
+    </div>
+  </div>
+  <div modalFooter>
+    <div class="footerRightControls">
+      <crem-button
+        id="reorder-tasks-reset-button"
+        [hidden]="!hasChanges"
+        type="secondary"
+        (click)="resetForm()"
+      >
+        Reset
+      </crem-button>
+      <crem-button
+        id="reorder-tasks-cancel-button"
+        type="secondary"
+        class="cancelChanges aet-btn"
+        (click)="closeModal()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        id="reorder-tasks-apply-button"
+        [hidden]="!hasChanges"
+        type="secondary"
+        (click)="beginUpdate('apply')"
+      >
+        Apply
+      </crem-button>
+      <crem-button
+        id="reorder-tasks-save-button"
+        [hidden]="!hasChanges"
+        type="primary"
+        (click)="beginUpdate('save')"
+      >
+        Save
+      </crem-button>
+    </div>
+  </div>
+</crem-modal>

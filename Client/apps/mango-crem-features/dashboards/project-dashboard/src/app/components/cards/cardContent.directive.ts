@@ -3,7 +3,7 @@ import {
   Injectable,
   Input,
   TemplateRef,
-  ViewContainerRef
+  ViewContainerRef,
 } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })

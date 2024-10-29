@@ -6,52 +6,70 @@
   </div>
 
   <div class="controls-right">
-    <button *ngIf="settingsData?.financialReportingEnabled && settingsData?.isImpactReportVisible"
+    <button
+      *ngIf="
+        settingsData?.financialReportingEnabled &&
+        settingsData?.isImpactReportVisible
+      "
       title="Contains a list of ad hoc reports impacted by the enablement of Financial Reporting"
-      [id]="getId('download-impact-report','button')"
+      [id]="getId('download-impact-report', 'button')"
       class="btn btn-default"
       [disabled]="isSaving"
       (click)="migrationImpactReport()"
-    >Download Impact Report</button>
+    >
+      Download Impact Report
+    </button>
 
-    <button *ngIf="isSuperUser && settingsData?.financialReportingEnabled"
-      [id]="getId('refresh-financial-data','button')"
+    <button
+      *ngIf="isSuperUser && settingsData?.financialReportingEnabled"
+      [id]="getId('refresh-financial-data', 'button')"
       class="btn btn-default"
       [disabled]="!canRefresh || isViewOnly || isSaving"
       (click)="refreshFinancialData()"
-    >Refresh Financial Data</button>
+    >
+      Refresh Financial Data
+    </button>
 
-    <button *ngIf="settingsData?.financialReportingEnabled"
-      [id]="getId('save','button')"
+    <button
+      *ngIf="settingsData?.financialReportingEnabled"
+      [id]="getId('save', 'button')"
       class="btn btn-primary"
       [disabled]="noChanges || isViewOnly || isSaving"
       (click)="isPopupVisible = true"
-    >Save</button>
+    >
+      Save
+    </button>
   </div>
 </div>
 
 <div class="settings-page-cards-wrapper">
-  <div *ngIf="settingsData?.financialReportingEnabled else showEnableUIOrSkeleton">
-    <mango-intervals-card [intervalsData]="intervalsData"
+  <div
+    *ngIf="settingsData?.financialReportingEnabled; else showEnableUIOrSkeleton"
+  >
+    <mango-intervals-card
+      [intervalsData]="intervalsData"
       [settingsData]="settingsData"
       [currencies]="currencies"
       [isViewOnly]="isViewOnly"
       (changed)="noChanges = false"
     ></mango-intervals-card>
 
-    <mango-field-assignments-card [settingsData]="settingsData"
+    <mango-field-assignments-card
+      [settingsData]="settingsData"
       [isViewOnly]="isViewOnly"
       (changed)="noChanges = false"
     ></mango-field-assignments-card>
   </div>
 
   <ng-template #showEnableUIOrSkeleton>
-    <ngx-skeleton-loader *ngIf="!settingsData"
+    <ngx-skeleton-loader
+      *ngIf="!settingsData"
       class="crem-button-shadow"
-      [theme]="{height: '125px', width: '100%'}"
+      [theme]="{ height: '125px', width: '100%' }"
     ></ngx-skeleton-loader>
 
-    <mango-enable-financial-reporting-card *ngIf="settingsData"
+    <mango-enable-financial-reporting-card
+      *ngIf="settingsData"
       [deadlineDate]="deadlineDate"
       [isViewOnly]="isViewOnly"
       [hasCustomConfigurations]="settingsData.hasCustomConfigurations"
@@ -62,7 +80,7 @@
   </ng-template>
 </div>
 
-<dx-popup 
+<dx-popup
   [width]="520"
   [height]="265"
   [showTitle]="true"
@@ -71,57 +89,59 @@
   [closeOnOutsideClick]="false"
   [(visible)]="isPopupVisible"
 >
-  <div *dxTemplate="let data of 'title'" >
-    <h5 class="danger pop-up-title"> 
-      <crem-icon 
-        [id]="getId('exclamation','icon','pop-up')"
-        pack="solid" 
-        icon="faExclamationCircle" 
-        color="danger"> 
-    </crem-icon>  
-    Updating Financial Reporting Settings
-    <dx-button 
-      [id]="getId('close','button','pop-up')"
-      icon="close" 
-      class="close-btn" 
-      (click)="isPopupVisible = false"
-    ></dx-button>
+  <div *dxTemplate="let data of 'title'">
+    <h5 class="danger pop-up-title">
+      <crem-icon
+        [id]="getId('exclamation', 'icon', 'pop-up')"
+        pack="solid"
+        icon="faExclamationCircle"
+        color="danger"
+      >
+      </crem-icon>
+      Updating Financial Reporting Settings
+      <dx-button
+        [id]="getId('close', 'button', 'pop-up')"
+        icon="close"
+        class="close-btn"
+        (click)="isPopupVisible = false"
+      ></dx-button>
     </h5>
   </div>
 
   <div class="dbl-padding">
-    Updating Financial Reporting Settings and clicking <strong>Save</strong> may impact the existing ad hoc reports using any of these fields; 
-    some fields may get dropped and need to be added again after the update. <br> Are you sure you want to proceed?
-    <br><br> Click <strong>Learn More</strong> for additional details.
+    Updating Financial Reporting Settings and clicking <strong>Save</strong> may
+    impact the existing ad hoc reports using any of these fields; some fields
+    may get dropped and need to be added again after the update. <br />
+    Are you sure you want to proceed? <br /><br />
+    Click <strong>Learn More</strong> for additional details.
   </div>
 
-  <dxi-toolbar-item toolbar="bottom"
-    location="before">
-    <button 
-      [id]="getId('learn-more','button','pop-up')" 
+  <dxi-toolbar-item toolbar="bottom" location="before">
+    <button
+      [id]="getId('learn-more', 'button', 'pop-up')"
       class="btn btn-default"
-      (click)="learnMore()">
+      (click)="learnMore()"
+    >
       Learn More
     </button>
   </dxi-toolbar-item>
 
-  <dxi-toolbar-item toolbar="bottom"
-    location="after">
-    <button 
-      [id]="getId('cancel','button','pop-up')"  
+  <dxi-toolbar-item toolbar="bottom" location="after">
+    <button
+      [id]="getId('cancel', 'button', 'pop-up')"
       class="btn btn-default"
-      (click)="cancel()">
+      (click)="cancel()"
+    >
       Cancel
     </button>
   </dxi-toolbar-item>
 
-  <dxi-toolbar-item toolbar="bottom"
-    location="after"
-  >
-    <button 
-      [id]="getId('save','button','pop-up')"
+  <dxi-toolbar-item toolbar="bottom" location="after">
+    <button
+      [id]="getId('save', 'button', 'pop-up')"
       class="btn btn-danger"
-      (click)="saveChanges()">
+      (click)="saveChanges()"
+    >
       Yes, Save
     </button>
   </dxi-toolbar-item>

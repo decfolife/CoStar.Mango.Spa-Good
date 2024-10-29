@@ -1,0 +1,98 @@
+<crem-modal
+  modalId="taskApproveOrRejectModal"
+  modalTitleId="add_supplier_modal_modalTitleId"
+  [modalTitle]="headerTaskName"
+  closeIconVisible="true"
+  [customFooter]="'true'"
+>
+  <div modalContent class="body-content">
+    <form
+      crem-form
+      layout="vertical"
+      [formGroup]="taskApproveRejectForm"
+      class="task-approveOrReject-form"
+    >
+      <ng-container *ngIf="taskAction == 'Approve'">
+        <crem-form-item>
+          <crem-form-label class="tar-label"
+            >Actual Start Date:
+          </crem-form-label>
+          <crem-form-control class="flexItem50">
+            <crem-date-picker
+              #ActualStartDatePicker
+              [id]="'tar-actualStartDateId'"
+              [dateFormat]="dateFormat"
+              [isRequired]="isActualStarDateRequired"
+              [showClearButton]="true"
+              [max]="currentDate"
+              [showDefaultValidationTooltip]="false"
+              formControlName="actualStartDate"
+              (changeEvent)="onActualStartDateChange($event)"
+            >
+            </crem-date-picker>
+          </crem-form-control>
+        </crem-form-item>
+
+        <crem-form-item>
+          <crem-form-label class="tar-label">Approval Date: </crem-form-label>
+          <crem-form-control class="flexItem50">
+            <crem-date-picker
+              #ApprovalDatePicker
+              [id]="'tar-approvalDateId'"
+              [dateFormat]="dateFormat"
+              [isRequired]="'true'"
+              [showClearButton]="true"
+              [max]="currentDate"
+              [showDefaultValidationTooltip]="false"
+              formControlName="approvalDate"
+              (changeEvent)="onApprovalDateChange($event)"
+            >
+            </crem-date-picker>
+          </crem-form-control>
+        </crem-form-item>
+      </ng-container>
+      <crem-form-item [id]="'tar-notesId'">
+        <crem-form-control>
+          <crem-input
+            #NotesInput
+            [id]="'tar-notesInputId'"
+            [showHint]="false"
+            [showLabel]="false"
+            [showInfo]="false"
+            [inputType]="'textarea'"
+            [required]="true"
+            [value]="''"
+            [name]="''"
+            [placeholder]="'Enter Notes...'"
+            formControlName="notes"
+          >
+          </crem-input>
+        </crem-form-control>
+      </crem-form-item>
+    </form>
+  </div>
+
+  <div modalFooter class="footerContent">
+    <div id="msgTemplate" class="footerLeftControls">
+      <span *ngIf="isNotesFieldRequired" class="tar-helpText">
+        Notes are required to complete this action.
+      </span>
+    </div>
+    <div id="buttonTemplate" class="footerRightControls">
+      <crem-button
+        type="secondary"
+        class="cancelChanges tar-btn"
+        (click)="closeModal()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        type="primary"
+        class="applyChanges tar-btn"
+        (click)="approveOrRejectTaskValidate()"
+      >
+        {{ taskAction }}
+      </crem-button>
+    </div>
+  </div>
+</crem-modal>

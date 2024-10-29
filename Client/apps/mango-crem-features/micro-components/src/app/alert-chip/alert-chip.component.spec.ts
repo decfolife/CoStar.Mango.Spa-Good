@@ -8,9 +8,8 @@ describe('AlertChipComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AlertChipComponent ]
-    })
-    .compileComponents();
+      declarations: [AlertChipComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

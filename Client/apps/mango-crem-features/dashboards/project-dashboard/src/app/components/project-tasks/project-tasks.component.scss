@@ -168,6 +168,15 @@
   div.dx-treelist-header-panel {
     display: none;
   }
+  table.dx-treelist-table {
+    tr.dx-row.dx-data-row,
+    tr.dx-row.dx-data-row.dx-row-alt {
+      td.pt-taskColumnLink {
+        cursor: pointer;
+        color: $primary-light !important;
+      }
+    }
+  }
 
   .projectTasks-grid {
     .roleHeaderFilterOption .dx-header-filter {
@@ -182,6 +191,7 @@
   }
   .dx-popup-content.dx-popup-content-scrollable {
     padding: 0;
+    height: 84.5% !important;
   }
 
   h4 {
@@ -207,10 +217,6 @@
     &__name {
       font-size: 16px;
     }
-  }
-
-  .dx-checkbox-icon {
-    border: 1px solid $gray01;
   }
 
   .pts-startAndDueDate,
@@ -243,6 +249,16 @@
         margin-top: 24px;
       }
     }
+
+    .checkbox-description {
+      padding-left: 8px;
+    }
+  }
+
+  .crem-popup__footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
 }
 
@@ -261,6 +277,34 @@
     &__footer-text {
       margin-bottom: 0px;
       margin-top: 7px;
+      @include costar(color, gray03);
+    }
+  }
+}
+
+::ng-deep #quickApprovalPopupId {
+  .dx-popup-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .crem-popup__body {
+    overflow-y: hidden;
+  }
+
+  &.dx-popup-wrapper {
+    z-index: 999 !important;
+  }
+}
+
+.pt-userApprovalStatusBtns-container {
+  .pt-approveRejectBtn,
+  .pt-notAssignedBtn,
+  .pt-completeDateBtn {
+    color: $primary-light;
+
+    &.disabledOption {
       @include costar(color, gray03);
     }
   }

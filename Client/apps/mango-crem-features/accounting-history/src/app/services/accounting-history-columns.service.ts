@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccountingHistoryColumnsService {
-
-  constructor() { }
+  constructor() {}
 
   getAccountingHistoryColumns(dateFormat: string) {
     const columns = [
@@ -13,7 +12,7 @@ export class AccountingHistoryColumnsService {
         caption: 'History Type',
         name: 'GroupBy',
         dataField: 'groupBy',
-        groupIndex: "0",
+        groupIndex: '0',
       },
       {
         caption: 'Action',
@@ -46,15 +45,14 @@ export class AccountingHistoryColumnsService {
         dataField: 'lastModified',
         dataType: 'date',
         format: dateFormat,
-        sortIndex: "0",
-        sortOrder: "desc",
+        sortIndex: '0',
+        sortOrder: 'desc',
       },
       {
         caption: 'Last Modified By',
         name: 'LastModifiedBy',
         dataField: 'lastModifiedBy',
-      }
-
+      },
     ];
     return columns;
   }

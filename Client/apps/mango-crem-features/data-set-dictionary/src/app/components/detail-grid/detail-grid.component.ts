@@ -1,16 +1,27 @@
 /* eslint-disable rxjs-angular/prefer-composition */
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import notify from 'devextreme/ui/notify';
 
 import { DataSetDictionaryService } from '../../services/data-set-dictionary.service';
-import { ColumnAlignment, DataField, DataFieldRequest, DataSet } from '../../models';
+import {
+  ColumnAlignment,
+  DataField,
+  DataFieldRequest,
+  DataSet,
+} from '../../models';
 
 @Component({
   selector: 'mango-data-set-detail-grid',
   templateUrl: './detail-grid.component.html',
-  styleUrls: ['./detail-grid.component.scss']
+  styleUrls: ['./detail-grid.component.scss'],
 })
 export class DetailGridComponent implements OnInit, AfterViewInit {
   @Input()
@@ -25,11 +36,7 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
   gridData: DataField[] = [];
   categories = [];
 
-  alignments = [
-    { key: 'Right' },
-    { key: 'Left' },
-    { key: 'Center' },
-  ];
+  alignments = [{ key: 'Right' }, { key: 'Left' }, { key: 'Center' }];
 
   fieldWidths = [
     { key: 50 },
@@ -49,13 +56,17 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
   constructor(private service: DataSetDictionaryService) {}
 
   ngOnInit() {
-    this.service.getDataFieldsByDataSet(this.dataSet.id).subscribe(res => {
+    this.service.getDataFieldsByDataSet(this.dataSet.id).subscribe((res) => {
       if (!res.succeeded) {
         notify({
           type: 'error',
           message: res.message,
           displayTime: 3000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
           maxWidth: '400px',
           closeOnClick: true,
         });
@@ -72,7 +83,7 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
     this.dataFieldGrid?.instance?.beginCustomLoading('Loading...');
   }
 
-  updateDataFieldFormat(dropdownValueChangeEvent, dxTemplate){
+  updateDataFieldFormat(dropdownValueChangeEvent, dxTemplate) {
     dxTemplate.setValue(dropdownValueChangeEvent.value);
   }
 
@@ -82,10 +93,10 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.dataFieldGrid.instance.beginCustomLoading("Saving");
+    this.dataFieldGrid.instance.beginCustomLoading('Saving');
 
     const key = e.changes[0].key;
-    const data: DataField = this.gridData.find(x => x.dataFieldID === key);
+    const data: DataField = this.gridData.find((x) => x.dataFieldID === key);
 
     let format = data.defaultFormatForReports;
     let columnAlignment = data.dataFieldAlignment;
@@ -94,7 +105,10 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
     let fieldDescription = data.dataFieldDescription;
 
     if (JSON.stringify(e.changes[0].data).includes('defaultFormatForReports')) {
-      if (e.changes[0].data.defaultFormatForReports === null || typeof e.changes[0].data.defaultFormatForReports !== 'object') {
+      if (
+        e.changes[0].data.defaultFormatForReports === null ||
+        typeof e.changes[0].data.defaultFormatForReports !== 'object'
+      ) {
         format = e.changes[0].data.defaultFormatForReports;
       }
     }
@@ -106,8 +120,7 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
     if (JSON.stringify(e.changes[0].data).includes('columnWidth')) {
       columnWidth = e.changes[0].data.columnWidth;
 
-      if (JSON.stringify(columnWidth) === '{}')
-        columnWidth = null;
+      if (JSON.stringify(columnWidth) === '{}') columnWidth = null;
     }
 
     if (JSON.stringify(e.changes[0].data).includes('dataFieldName')) {
@@ -145,7 +158,7 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
 
     e.cancel = true;
 
-    this.service.updateDataField(request).subscribe(res => {
+    this.service.updateDataField(request).subscribe((res) => {
       if (res.succeeded) {
         data.defaultFormatForReports = format;
         data.dataFieldAlignment = columnAlignment;
@@ -172,7 +185,7 @@ export class DetailGridComponent implements OnInit, AfterViewInit {
   onInfoButtonClicked(df: DataField) {
     this.popupDataSets = [];
 
-    this.service.getDataSetsByDataField(df.dataFieldID).subscribe(res => {
+    this.service.getDataSetsByDataField(df.dataFieldID).subscribe((res) => {
       if (!res.succeeded) {
         return;
       }

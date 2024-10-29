@@ -1,11 +1,12 @@
 <div class="dropcards">
   <div class="cardTypes" role="application">
-    <div class="card-containers"
-    cdkDropList
-    cdkDropListOrientation="vertical"
-    (cdkDropListDropped)="drop($event)"
-    role="list"
-  >
+    <div
+      class="card-containers"
+      cdkDropList
+      cdkDropListOrientation="vertical"
+      (cdkDropListDropped)="drop($event)"
+      role="list"
+    >
       <div
         class="categories-item projects dashboards-dragCardItems"
         (cdkDropListDropped)="drop($event)"
@@ -17,98 +18,124 @@
         cdkDragHandle
         cdkDrag
         (keydown)="cardKeyDown($event, card.id)"
-        [ngClass]="{'width100': ((card.id=='activity_feed_card') || 
-                                 (card.id=='project_milestones_card'))}"
-                                         role="listitem"
+        [ngClass]="{
+          width100:
+            card.id == 'activity_feed_card' ||
+            card.id == 'project_milestones_card'
+        }"
+        role="listitem"
         aria-label="Use arrow keys to reorder card"
         tabindex="0"
         #cardsList
       >
-        <ngx-skeleton-loader *ngIf="!card.dispCard" class="crem-button-shadow"  [theme]="{ width: '100%'}"></ngx-skeleton-loader>
-        <div cdkDragHandle class="card-drag-handle"  [ngClass]="{'dispCardNone': !card.dispCard}" tabindex="-1" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" class="drag_handle" height="24px" viewBox="0 0 24 24" width="24px" fill="#606060"><path d="M0 0h24v24H0z" fill="none"/><path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z"/></svg>
-        </div>
-        <div class="switchCard" [ngSwitch]="card.id" 
-           [ngClass]="{'mile-stone-div': card.id=='project_milestones_card',
-                       'dispCardNone': !card.dispCard
-                      }"
+        <ngx-skeleton-loader
+          *ngIf="!card.dispCard"
+          class="crem-button-shadow"
+          [theme]="{ width: '100%' }"
+        ></ngx-skeleton-loader>
+        <div
+          cdkDragHandle
+          class="card-drag-handle"
+          [ngClass]="{ dispCardNone: !card.dispCard }"
+          tabindex="-1"
+          aria-hidden="true"
         >
-
-            <div *ngSwitchCase="'tasks_due_soon_card'">
-              <tasks-due-soon-card 
-                [card]="card"
-                [objectType]="objectType"
-                (rowClickEvent)="projectRowClick($event)">
-              </tasks-due-soon-card>
-            </div>
-
-            <div id="projects_by_type_container" *ngSwitchCase="'projects_by_type_card'">
-              <projects-by-type-card
-                [card]="card"
-                [objectType]="objectType"
-              >  
-              </projects-by-type-card>
-            </div>
-            
-            <div *ngSwitchCase="'new_tasks_card'">
-              <new-tasks-card
-                [card]="card"
-                [objectType]="objectType"
-                (rowClickEvent)="projectRowClick($event)"
-              >
-              </new-tasks-card>
-            </div>
-
-            <div *ngSwitchCase="'tasks_due_this_week_card'">
-              <tasks-due-this-week-card
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="drag_handle"
+            height="24px"
+            viewBox="0 0 24 24"
+            width="24px"
+            fill="#606060"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
+          </svg>
+        </div>
+        <div
+          class="switchCard"
+          [ngSwitch]="card.id"
+          [ngClass]="{
+            'mile-stone-div': card.id == 'project_milestones_card',
+            dispCardNone: !card.dispCard
+          }"
+        >
+          <div *ngSwitchCase="'tasks_due_soon_card'">
+            <tasks-due-soon-card
               [card]="card"
               [objectType]="objectType"
               (rowClickEvent)="projectRowClick($event)"
-              >
-              </tasks-due-this-week-card>
-            </div>
+            >
+            </tasks-due-soon-card>
+          </div>
 
-            <div *ngSwitchCase="'overdue_projects_card'">
-              <overdue-projects-card
-                [card]="card"
-                [objectType]="objectType"
-                (rowClickEvent)="projectRowClick($event)"
-              >
-              </overdue-projects-card>
-            </div>
+          <div
+            id="projects_by_type_container"
+            *ngSwitchCase="'projects_by_type_card'"
+          >
+            <projects-by-type-card [card]="card" [objectType]="objectType">
+            </projects-by-type-card>
+          </div>
 
-            <div *ngSwitchCase="'overdue_tasks_card'">
-              <overdue-tasks-card
-                [card]="card"
-                [objectType]="objectType"
-                (rowClickEvent)="projectRowClick($event)"
-              ></overdue-tasks-card>
-            </div>
-
-            <div *ngSwitchCase="'new_projects_card'">
-              <new-projects-card
+          <div *ngSwitchCase="'new_tasks_card'">
+            <new-tasks-card
               [card]="card"
               [objectType]="objectType"
               (rowClickEvent)="projectRowClick($event)"
-              >
-              </new-projects-card>
-            </div>
+            >
+            </new-tasks-card>
+          </div>
 
-            <div *ngSwitchCase="'activity_feed_card'">
-              <activity-feed-card
-                [card]="card"
-                [objectType]="objectType"
-                (rowClickEvent)="projectRowClick($event)" 
-              ></activity-feed-card>
-            </div>
+          <div *ngSwitchCase="'tasks_due_this_week_card'">
+            <tasks-due-this-week-card
+              [card]="card"
+              [objectType]="objectType"
+              (rowClickEvent)="projectRowClick($event)"
+            >
+            </tasks-due-this-week-card>
+          </div>
 
-            <div *ngSwitchCase="'project_milestones_card'">
-              <project-milestones-card
-                [card]="card"
-                [objectType]="objectType"
-                (rowClickEvent)="projectRowClick($event)" 
-              ></project-milestones-card>
-            </div>
+          <div *ngSwitchCase="'overdue_projects_card'">
+            <overdue-projects-card
+              [card]="card"
+              [objectType]="objectType"
+              (rowClickEvent)="projectRowClick($event)"
+            >
+            </overdue-projects-card>
+          </div>
+
+          <div *ngSwitchCase="'overdue_tasks_card'">
+            <overdue-tasks-card
+              [card]="card"
+              [objectType]="objectType"
+              (rowClickEvent)="projectRowClick($event)"
+            ></overdue-tasks-card>
+          </div>
+
+          <div *ngSwitchCase="'new_projects_card'">
+            <new-projects-card
+              [card]="card"
+              [objectType]="objectType"
+              (rowClickEvent)="projectRowClick($event)"
+            >
+            </new-projects-card>
+          </div>
+
+          <div *ngSwitchCase="'activity_feed_card'">
+            <activity-feed-card
+              [card]="card"
+              [objectType]="objectType"
+              (rowClickEvent)="projectRowClick($event)"
+            ></activity-feed-card>
+          </div>
+
+          <div *ngSwitchCase="'project_milestones_card'">
+            <project-milestones-card
+              [card]="card"
+              [objectType]="objectType"
+              (rowClickEvent)="projectRowClick($event)"
+            ></project-milestones-card>
+          </div>
         </div>
       </div>
     </div>

@@ -1,20 +1,22 @@
-@use "styles" as *;
-
-.mat-tab__help-text {
-    padding: 16px; 
-}
-
-
+@use 'styles' as *;
 
 :host ::ng-deep .dx-field__icon--info {
-    &:focus-visible {
-        outline: none;
-        @include costar(box-shadow, primary )
-    }
+  &:focus-visible {
+    outline: none;
+    @include costar(box-shadow, primary);
+  }
+}
+
+.popoverTitle {
+  @include costar(margin, 1);
 }
 
 :host ::ng-deep div.dx-field {
-    &:focus-visible {
-        outline: none;
-    }
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+::ng-deep .field-history-popover .dx-popup-content {
+  padding: 0;
 }

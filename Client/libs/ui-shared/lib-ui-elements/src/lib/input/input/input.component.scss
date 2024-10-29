@@ -1,4 +1,4 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 :host {
   width: 100%;
@@ -37,7 +37,8 @@
     }
   }
 
-  input, textarea{
+  input,
+  textarea {
     outline: 0;
     width: 100%;
     font-size: 1rem;
@@ -47,14 +48,14 @@
     @include costar(border, gray05);
     @include costar(transition, fast);
     @include costar(border-radius, medium);
-    &:focus{
+    &:focus {
       @include costar(color, dark);
       @include costar(border, primary-lightest);
       @include costar(box-shadow, primary-light);
     }
 
     &.disabled {
-      &:focus{
+      &:focus {
         box-shadow: unset;
         cursor: not-allowed;
         @include costar(border, gray05);
@@ -64,7 +65,7 @@
     &.read-only {
       @include costar(border, gray06);
       @include costar(background-color, gray06);
-      &:focus{
+      &:focus {
         border: none;
         box-shadow: unset;
         cursor: default;
@@ -74,32 +75,30 @@
 
     &.warning {
       @include costar(border, warning);
-      &:focus{
+      &:focus {
         @include costar(box-shadow, warning);
       }
     }
 
-    &.error {
+    &.error,
+    &.noFormErrorStatus {
       @include costar(border, danger);
-      &:focus{
+      &:focus {
         @include costar(box-shadow, danger);
       }
     }
 
     &.success {
       @include costar(border, success);
-      &:focus{
+      &:focus {
         @include costar(box-shadow, success);
       }
     }
-
   }
 
-  textarea { 
+  textarea {
     min-height: 50px;
     resize: vertical;
     overflow: hidden;
   }
 }
-
-

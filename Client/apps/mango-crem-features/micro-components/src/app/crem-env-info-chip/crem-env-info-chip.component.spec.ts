@@ -8,9 +8,8 @@ describe('CremEnvInfoChipAppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CremEnvInfoChipAppComponent ]
-    })
-    .compileComponents();
+      declarations: [CremEnvInfoChipAppComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

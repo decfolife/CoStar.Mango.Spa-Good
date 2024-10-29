@@ -3,4 +3,4 @@ module.exports = {
     chunkLoadingGlobal: 'microComponentschunkLoadingGlobal',
     library: 'microComponents',
   },
-}
+};

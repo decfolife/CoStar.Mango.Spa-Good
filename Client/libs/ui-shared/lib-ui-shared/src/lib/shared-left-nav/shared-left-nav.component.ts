@@ -1,12 +1,15 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import { NavLinksByCategory } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
+import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
 import { Observable } from 'rxjs';
-
-export interface NavLinksByCategory {
-  category: string;
-  children: SharedLeftNavLink[];
-}
 
 @Component({
   selector: 'shared-left-nav',
@@ -15,22 +18,22 @@ export interface NavLinksByCategory {
 })
 export class SharedLeftNavComponent implements OnChanges {
   @Input() navigationLinks: SharedLeftNavLink[];
-  regularLeftNavItems: NavLinksByCategory[] = [];
-  commonLeftNavItems: NavLinksByCategory[] = []
-
-  expandNav: boolean = true;
-
   @Input() activeLink: string = null;
-  @Output() navigateSpa: EventEmitter<SharedLeftNavLink> = new EventEmitter<SharedLeftNavLink>(null);
+
+  @Output() navigateSpa: EventEmitter<SharedLeftNavLink> =
+    new EventEmitter<SharedLeftNavLink>(null);
   @Output() toActiveLink: EventEmitter<string> = new EventEmitter();
 
+  isSubleftnav$: Observable<boolean> = this.facade.showSubLeftNav$;
 
-  constructor(private facade: MangoAppFacade) { }
+  regularLeftNavItems: NavLinksByCategory[] = [];
+  commonLeftNavItems: NavLinksByCategory[] = [];
+  expandNav = true;
 
-  isSubleftnav$: Observable<boolean> = this.facade.showSubLeftNav$
+  constructor(private facade: MangoAppFacade) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    for (let propName in changes) {
+    for (const propName in changes) {
       if (propName.toLowerCase() === 'navigationlinks') {
         this.getCategorizeLinks();
         break;
@@ -53,53 +56,73 @@ export class SharedLeftNavComponent implements OnChanges {
           }
         }
       }
-      else if (propName.toLowerCase() === 'activelink') {
-        const navLink : SharedLeftNavLink = this.navigationLinks.filter(x => x.name === changes.activeLink.currentValue)[0];
-        const id = 'left-nav__' + navLink?.moduleID + '-' + navLink?.dynamicName?.toLowerCase()?.replace(' ', '-');
-        document.getElementById(id).focus();
-      }
     }
   }
 
   getCategorizeLinks() {
-    this.regularLeftNavItems = this.categorizeNavLinks(this.navigationLinks.filter(navlink => !navlink.isCommon))
-    this.commonLeftNavItems = this.categorizeNavLinks(this.navigationLinks.filter(navLink => !!navLink.isCommon))
+    this.regularLeftNavItems = this.categorizeNavLinks(
+      this.navigationLinks.filter((navlink) => !navlink.isCommon)
+    );
+    this.commonLeftNavItems = this.categorizeNavLinks(
+      this.navigationLinks.filter((navLink) => !!navLink.isCommon)
+    );
   }
 
   categorizeNavLinks(navLinks: SharedLeftNavLink[]): NavLinksByCategory[] {
     return navLinks.reduce((acc: NavLinksByCategory[], currentNavLink) => {
       if (!currentNavLink.category) {
-        acc.push({ category: currentNavLink.category, children: [currentNavLink]})
+        acc.push({
+          category: currentNavLink.category,
+          children: [currentNavLink],
+        });
       } else {
-        const existingNavLinkItem = acc.find(navLink => navLink.category === currentNavLink.category)
-        existingNavLinkItem ? existingNavLinkItem.children.push(currentNavLink) : acc.push({ category: currentNavLink.category, children: [currentNavLink]})
+        const existingNavLinkItem = acc.find(
+          (navLink) => navLink.category === currentNavLink.category
+        );
+        existingNavLinkItem
+          ? existingNavLinkItem.children.push(currentNavLink)
+          : acc.push({
+              category: currentNavLink.category,
+              children: [currentNavLink],
+            });
       }
-      return acc
-    }, [])
+      return acc;
+    }, []);
   }
-
 
   sidenavtoggle() {
     if (this.expandNav) {
-      document.getElementsByClassName('sharedLeftNav-container')[0].classList.remove('expandNavBar');
-      document.getElementsByClassName('sharedLeftNav-container')[0].classList.add('collapseNavBar');
+      document
+        .getElementsByClassName('sharedLeftNav-container')[0]
+        .classList.remove('expandNavBar');
+      document
+        .getElementsByClassName('sharedLeftNav-container')[0]
+        .classList.add('collapseNavBar');
     } else {
-      document.getElementsByClassName('sharedLeftNav-container')[0].classList.remove('collapseNavBar');
-      document.getElementsByClassName('sharedLeftNav-container')[0].classList.add('expandNavBar');
+      document
+        .getElementsByClassName('sharedLeftNav-container')[0]
+        .classList.remove('collapseNavBar');
+      document
+        .getElementsByClassName('sharedLeftNav-container')[0]
+        .classList.add('expandNavBar');
     }
 
-    this.expandNav = !(this.expandNav);
-
+    this.expandNav = !this.expandNav;
   }
 
-  onNavLinkClick(navLink: SharedLeftNavLink, event: any) {
+  onNavLinkClick(navLink: SharedLeftNavLink) {
     this.activeLink = navLink.name;
     this.toActiveLink.emit(this.activeLink);
-    this.navigateSpa.emit(navLink)
+    this.navigateSpa.emit(navLink);
   }
 
   leftNavOpened(e) {
-    if (!e || !e._element || !e._element.nativeElement || !e._element.nativeElement.children)
+    if (
+      !e ||
+      !e._element ||
+      !e._element.nativeElement ||
+      !e._element.nativeElement.children
+    )
       return;
 
     e._element.nativeElement.children[1].removeAttribute('tabindex');

@@ -10,9 +10,7 @@ import { ExchangeRateSetsComponent } from './exchange-rate-sets.component';
 import { ExchangeRateSetsService } from './exchange-rate-sets.service';
 
 @NgModule({
-  declarations: [
-    ExchangeRateSetsComponent
-  ],
+  declarations: [ExchangeRateSetsComponent],
 
   imports: [
     CommonModule,
@@ -26,20 +24,17 @@ import { ExchangeRateSetsService } from './exchange-rate-sets.service';
         path: '',
         data: { pageTitle: 'Rate Sets' },
         component: ExchangeRateSetsComponent,
-        resolve: { resolvedData: PortfolioListResolver }
+        resolve: { resolvedData: PortfolioListResolver },
       },
       {
         path: ':portfolioId',
         data: { pageTitle: 'Rate Sets' },
         component: ExchangeRateSetsComponent,
-        resolve: { resolvedData: PortfolioListResolver }
-      }
-    ])
+        resolve: { resolvedData: PortfolioListResolver },
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    DatePipe,
-    ExchangeRateSetsService
-  ]
+  providers: [DatePipe, ExchangeRateSetsService],
 })
-export class ExchangeRateSetsReportModule { }
+export class ExchangeRateSetsReportModule {}

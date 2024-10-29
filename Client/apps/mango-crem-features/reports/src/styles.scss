@@ -1,9 +1,10 @@
 body {
-    margin: 0px;
+  margin: 0px;
 }
 
-.main, .main-page {
-    height: 100%;
+.main,
+.main-page {
+  height: 100%;
 }
 
 mango-reports,
@@ -17,24 +18,24 @@ reports-segment,
 mango-group-user-navigation-rights {
   // FIXME: bad practice that breaks encapsulation and duplicates css
   // FIXME: This is most probably result of not importing the shared component correctly or the SCSS selectors in the shared component
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
-    @import "./assets/styles/reports.scss"; // FIXME: This shouldn't be defined like this
+  @import '../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss';
+  @import './assets/styles/reports.scss'; // FIXME: This shouldn't be defined like this
 }
 
 reports-segment {
-    mat-button-toggle-group {
-        margin-left: 8px;
+  mat-button-toggle-group {
+    margin-left: 8px;
 
-        .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
-            line-height: 32px !important;
-        }
+    .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+      line-height: 32px !important;
     }
+  }
 }
 
 .dx-overlay-wrapper.dx-popup-wrapper.reportsDropDown .dx-overlay-content {
-	min-width: 320px !important;
+  min-width: 320px !important;
 }
 
 .dx-overlay-content.dx-popup-normal.dx-resizable.dx-popup-flex-height.reportsDropDown {
-    min-width: 320px !important;
+  min-width: 320px !important;
 }

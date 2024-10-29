@@ -16,6 +16,7 @@
         [selectMode]="filter.selectMode"
         [dataSource]="filter.dataSource"
         [initialSelectedValue]="filter.selectedValues"
+        [containerized]="false"
       ></crem-hierarchy-dropdown>
 
       <crem-dropdown *ngIf="filter.placeHolderText != 'Hierarchy'"
@@ -33,6 +34,7 @@
         [initialSelectedValue]="filter.selectedValues"
         [useArrayOfKeys]="true"
         [getWholeObject]="true"
+        [containerized]="false"
       ></crem-dropdown>
     </div>
 

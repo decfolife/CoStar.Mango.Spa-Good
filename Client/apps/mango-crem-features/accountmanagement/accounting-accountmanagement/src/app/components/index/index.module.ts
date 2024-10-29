@@ -19,7 +19,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { DevExtremeModule, DxDataGridModule, DxFormModule, DxLoadPanelModule, DxSwitchModule, DxValidationGroupModule } from 'devextreme-angular';
+import {
+  DevExtremeModule,
+  DxDataGridModule,
+  DxFormModule,
+  DxLoadPanelModule,
+  DxSwitchModule,
+  DxValidationGroupModule,
+} from 'devextreme-angular';
 import { NoObjectsFoundComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
@@ -51,10 +58,8 @@ import { NoObjectsFoundComponent } from '@mango/ui-shared/lib-ui-elements';
     DxValidationGroupModule,
     DevExtremeModule,
     DxLoadPanelModule,
-    NoObjectsFoundComponent
+    NoObjectsFoundComponent,
   ],
-  providers: [
-    SidenavService,
-  ],
+  providers: [SidenavService],
 })
 export class IndexModule {}

@@ -1,28 +1,57 @@
 <div class="page-header">
   <div class="page-header__body">
-    <div class="body__page-title">
-      <crem-input-label [label]="pageTitle" [required]="false" [showInfo]="showTitleInfo">
+    <div class="body__tab-title">
+      <crem-input-label [label]="tabTitle" [name]="pageTitle">
       </crem-input-label>
     </div>
-    <div class="body__filters" >
-      <crem-button  *ngIf="showSearchButton" class="filters__search-button" color="secondary" icon="faSearch"></crem-button>
-
+    <div class="body__page-title">
+      <crem-input-label
+        [label]="pageTitle"
+        [name]="pageTitle"
+        [required]="false"
+      >
+      </crem-input-label>
+    </div>
+    <div class="body__filters">
       <ng-content *ngIf="customFilters" select="[filters]"></ng-content>
     </div>
   </div>
-
+  <div *ngIf="(statusPill | json) !== '{}'" class="page-header__status-pill">
+    <crem-pill [text]="statusPill.text" [type]="statusPill.type"></crem-pill>
+  </div>
   <div class="page-header__actions">
     <div class="actions__custom" *ngIf="customActions">
-      <crem-icon class="actions__bookmark-button" *ngIf="showBookmarkButton" [icon]="'faStar'" [color]="'dark'" pack="regular"></crem-icon>
-      <crem-button class="actions__button" text="Filters" color="secondary" icon="faFilter" iconSize="xs"></crem-button>
-      <crem-button class="actions__button" text="Actions" color="secondary" icon="faCaretDown" iconPosition="right"></crem-button>
-      <crem-button class="actions__button" text="More" color="secondary" icon="faCaretDown" iconPosition="right"></crem-button>
-      <crem-button class="actions__button" *ngIf="primaryButtonText" [text]="primaryButtonText" color="primary" icon="faPlus" ></crem-button>
+      <ng-content select="[actions]"></ng-content>
     </div>
     <div class="page-header__settings">
+      <div
+        *ngIf="showListOrMapViewButtons"
+        class="page-header__settings__list-map-view"
+      >
+        <crem-button
+          *ngIf="listView"
+          [type]="'secondary'"
+          [btnStyle]="'basic'"
+          [icon]="'faList'"
+          (buttonClick)="showListOrMapView('list-view')"
+        >
+        </crem-button>
+        <crem-button
+          *ngIf="!listView"
+          [type]="'secondary'"
+          [btnStyle]="'basic'"
+          [icon]="'faMap'"
+          (buttonClick)="showListOrMapView('map-view')"
+        >
+        </crem-button>
+      </div>
       <ng-content *ngIf="customSettings" select="[settings]"></ng-content>
-      <crem-icon class="actions__cog-button" *ngIf="showSettingsButton" [icon]="'faGear'" [color]="'dark'"></crem-icon>
+      <crem-icon
+        class="actions__cog-button"
+        *ngIf="showSettingsButton"
+        [icon]="'faGear'"
+        [color]="'dark'"
+      ></crem-icon>
     </div>
   </div>
-
 </div>

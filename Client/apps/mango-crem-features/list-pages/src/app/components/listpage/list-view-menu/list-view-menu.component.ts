@@ -1,23 +1,27 @@
-import { Component, Input, Output, EventEmitter, ViewChild, HostListener } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  HostListener,
+} from '@angular/core';
 
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
   faCaretDown,
   faEllipsisH,
-  faCheck
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 
-import {
-  ListView,
-  ViewDropDownData,
-} from '../shared/models';
+import { ListView, ViewDropDownData } from '../shared/models';
 
 @Component({
   selector: 'app-list-view-menu',
   templateUrl: './list-view-menu.component.html',
-  styleUrls: ['./list-view-menu.component.scss']
+  styleUrls: ['./list-view-menu.component.scss'],
 })
-export class ListViewMenuComponent  {
+export class ListViewMenuComponent {
   @ViewChild(MatMenuTrigger) viewMenuTrigger: MatMenuTrigger;
 
   @Input()
@@ -51,7 +55,7 @@ export class ListViewMenuComponent  {
 
   hoverViewId: number;
 
-  constructor() { }
+  constructor() {}
 
   ShowMenu = false;
 

@@ -13,9 +13,14 @@ describe('Login Component', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [CentralAuthErrorHandler, CentralAuthFacade, provideStore(), provideRouter([]), provideAnimations()]
-    })
-      .compileComponents();
+      providers: [
+        CentralAuthErrorHandler,
+        CentralAuthFacade,
+        provideStore(),
+        provideRouter([]),
+        provideAnimations(),
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

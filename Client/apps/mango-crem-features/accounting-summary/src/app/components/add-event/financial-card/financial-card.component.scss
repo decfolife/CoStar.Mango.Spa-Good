@@ -1,149 +1,170 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 @mixin flex-column-direction {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 @mixin flex-row-direction {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .financial-card-container {
   z-index: 1;
   position: relative;
-    @include costar(padding, 1);
+  @include costar(padding, 1);
+  @include flex-column-direction;
+  width: 100%;
+
+  & .composite-dropdowns-container {
+    width: 100%;
+    display: grid;
+    position: relative;
+    @include costar(gap, 2);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+    .errorMessage {
+      font-size: 13px;
+      color: $danger;
+    }
+
+    // This prevents overlapping and ensures that the first cards
+    // are not behind the last cards.
+    #financials-amortization-composite-dropdown {
+      z-index: 4;
+    }
+    #financials-currency-composite-dropdown {
+      z-index: 3;
+    }
+    #financials-discount-rate-composite-dropdown {
+      z-index: 2;
+    }
+    #financials-ROU-assets-obtained-composite-dropdown {
+      z-index: 1;
+    }
+  }
+
+  & .controls-container {
+    padding-bottom: 5px;
+    column-gap: 20px;
+  }
+
+  .hint-text {
+    @include costar(color, gray03);
+    @include costar(margin-right, 1);
+    font-size: 0.9rem;
+    text-wrap: nowrap;
+  }
+
+  .form-items {
     @include flex-column-direction;
     width: 100%;
+  }
 
-    & .composite-dropdowns-container {
-      width: 100%;
-      display: grid;
-      @include costar(gap, 2);
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  .labels {
+    @include flex-row-direction;
+    align-items: center;
+    column-gap: 10px;
+    @include costar(padding-top, 4);
+    font-size: 16px;
+  }
+
+  .controls-multi-column {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    > :first-child {
+      flex: 0 0 60%;
     }
 
-    & .controls-container {
-        padding-bottom: 5px;
-        column-gap: 20px;
+    > :nth-child(2) {
+      flex: 0 0 35%;
     }
 
-    .hint-text {
-        @include costar(color, gray03);
-        @include costar(margin-right, 1);
-        font-size: 0.9rem;
-        text-wrap: nowrap;
+    > :nth-child(3) {
+      flex: 0 0 100%;
+      @include costar(padding-top, 2);
+      display: block;
     }
-
-    .form-items {
-        @include flex-column-direction;
-        width: 100%;
-    }
-
-    .labels {
-        @include flex-row-direction;
-        align-items: center;
-        column-gap: 10px;
-        @include costar(padding-top, 4);
-        font-size: 16px;
-    }
-
-    .controls-multi-column {
-        display: flex;
-        justify-content: space-between;
-        column-gap: 20px;
-
-        > :first-child {
-            flex: 0 0 60%;
-        }
-
-        > :nth-child(2) {
-            flex: 0 0 35%;
-        }
-    }
-
-    .functional-currency {
-        .hint-text {
-            @include costar(padding-top, 1);
-            display: block;
-            text-align: right;
-        }
-    }
+  }
 }
 
 crem-composite-dropdown {
-    width: 100%;
+  width: 100%;
 }
 
 :host ::ng-deep .annual-rate-input {
-    input {
-        height: 32px;
-    }
+  input {
+    height: 32px;
+  }
 }
 
 .radio-group {
-    @include costar(padding-top, 2);
+  @include costar(padding-top, 2);
 }
 
 .check-box__group {
-    display: flex;
-    @include costar(padding-top, 5);
-    column-gap: 10px;
+  @include flex-row-direction;
+  align-items: center;
+  @include costar(padding-top, 5);
+  column-gap: 10px;
+}
+
+.financials-form__check-box {
+  @include costar(padding-bottom, 3);
 }
 
 .amortization {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  position: relative;
 
-    .manual-entry {
-        &__profileName {
-            @include flex-column-direction;
-            width: 21%;
-            position: absolute;
-            top: 160%;
-            left: 2%;
-            z-index: 10;
-            @include costar(background-color, light);
-            @include costar(border-radius, big);
-            @include costar(border, primary-light);
-            @include costar(padding, 2);
-            @include costar(box-shadow, primary-light);
-            @include costar(gap, 2);
-        }
-
-        &__btn-container {
-            display: flex;
-            @include costar(gap, 4);
-        }
+  .manual-entry {
+    &__profileName {
+      @include flex-column-direction;
+      width: 21%;
+      position: absolute;
+      top: 160%;
+      left: 2%;
+      z-index: 10;
+      @include costar(background-color, light);
+      @include costar(border-radius, big);
+      @include costar(border, primary-light);
+      @include costar(padding, 2);
+      @include costar(box-shadow, primary-light);
+      @include costar(gap, 2);
     }
-}
 
-:host ::ng-deep{
-  mat-card {
-    &-content {
-      overflow: unset !important; // Allows the 'crem-composite-dropdown' to overflow outside the 'crem-card'
+    &__btn-container {
+      display: flex;
+      @include costar(gap, 4);
     }
   }
-  .mat-expansion-panel:not([class=mat-expanded]){
+}
+
+:host ::ng-deep {
+  mat-card-content {
+    overflow: visible !important; // Allows the 'crem-composite-dropdown' to overflow outside the 'crem-card'
+  }
+  .mat-expansion-panel.mat-expanded {
     overflow: visible;
-    .mat-expansion-panel-header{
+    .mat-expansion-panel-header {
       overflow: hidden;
     }
   }
-  .crem-composite-dropdown { // Allows crem-dropdown to overflow parent's component
-    mat-expansion-panel {
-      overflow: hidden;
-    }
+  .mat-expansion-panel:not([class*='mat-expanded']) {
+    // Allows crem-dropdown to overflow parent's component
+    overflow: hidden;
   }
 }
 
-.financial-balance-cards{
+.financial-balance-cards {
   @include costar(padding, 2);
 
-  mango-balance-card{
+  mango-balance-card {
     display: flex;
     @include costar(padding, 2);
     @include costar(border-radius, medium);

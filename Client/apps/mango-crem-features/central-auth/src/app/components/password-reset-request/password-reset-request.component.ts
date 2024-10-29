@@ -1,7 +1,17 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CentralAuthError, CentralAuthErrorCodes, CentralAuthHttpError, MangoErrorTypes, NOTIFICATION_ERROR_TYPES_MAP } from '@mango/data-models/lib-data-models';
+import {
+  CentralAuthError,
+  CentralAuthErrorCodes,
+  CentralAuthHttpError,
+  MangoErrorTypes,
+  NOTIFICATION_ERROR_TYPES_MAP,
+} from '@mango/data-models/lib-data-models';
 import { AuthService } from '../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -19,11 +29,16 @@ export class PasswordResetRequestComponent implements OnInit {
   public isValidEmail = true;
   public requestHasBeenSent = false;
 
-  private readonly emailSentInstructions = 'If the email address was valid, then an email will be sent from support@costarremanager.com with a link to reset your password.';
-  private readonly resetPasswordRequestInstructions = 'Enter your email address and we\'ll send a link to change your password.';
-  private readonly resetLinkExpiredMessage = 'Your reset link has expired. Please enter your email address and submit a new request.';
+  private readonly emailSentInstructions =
+    'If the email address was valid, then an email will be sent from support@costarremanager.com with a link to reset your password.';
+  private readonly resetPasswordRequestInstructions =
+    "Enter your email address and we'll send a link to change your password.";
+  private readonly resetLinkExpiredMessage =
+    'Your reset link has expired. Please enter your email address and submit a new request.';
 
-  get form() { return this.resetPasswordRequestForm.controls; }
+  get form() {
+    return this.resetPasswordRequestForm.controls;
+  }
 
   constructor(
     private authService: AuthService,
@@ -31,28 +46,30 @@ export class PasswordResetRequestComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private route: ActivatedRoute,
     private notificationService: ToastrService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.createForm();
-    this.route.queryParams
-      .subscribe(params => {
-        if (this.toBoolean(params.expiredToken)) {
-          const error: CentralAuthError = {
-            message: this.resetLinkExpiredMessage,
-            title: 'Warning',
-            errorType: MangoErrorTypes.WARNING,
-            errorCode: CentralAuthErrorCodes.ResetTokenExpired
-          }
+    this.route.queryParams.subscribe((params) => {
+      if (this.toBoolean(params.expiredToken)) {
+        const error: CentralAuthError = {
+          message: this.resetLinkExpiredMessage,
+          title: 'Warning',
+          errorType: MangoErrorTypes.WARNING,
+          errorCode: CentralAuthErrorCodes.ResetTokenExpired,
+        };
 
-          this.notificationService[NOTIFICATION_ERROR_TYPES_MAP[error.errorType]](error.message, error.title)
-        }
-      });
+        this.notificationService[NOTIFICATION_ERROR_TYPES_MAP[error.errorType]](
+          error.message,
+          error.title
+        );
+      }
+    });
   }
 
   createForm() {
     this.resetPasswordRequestForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
@@ -71,7 +88,7 @@ export class PasswordResetRequestComponent implements OnInit {
     }
 
     const request = {
-      email: this.resetPasswordRequestForm.controls.email.value
+      email: this.resetPasswordRequestForm.controls.email.value,
     };
 
     this.authService.requestPasswordReset(request).subscribe(
@@ -81,7 +98,9 @@ export class PasswordResetRequestComponent implements OnInit {
   };
 
   public getInstructions(): string {
-    return (this.requestHasBeenSent) ? this.emailSentInstructions : this.resetPasswordRequestInstructions;
+    return this.requestHasBeenSent
+      ? this.emailSentInstructions
+      : this.resetPasswordRequestInstructions;
   }
 
   private sendRequestSuccess() {
@@ -99,8 +118,10 @@ export class PasswordResetRequestComponent implements OnInit {
   private validateForm(): boolean {
     this.isValidEmail = true;
 
-    if (this.resetPasswordRequestForm.get('email').hasError('required') ||
-      this.resetPasswordRequestForm.get('email').hasError('email')) {
+    if (
+      this.resetPasswordRequestForm.get('email').hasError('required') ||
+      this.resetPasswordRequestForm.get('email').hasError('email')
+    ) {
       this.isValidEmail = false;
     }
 
@@ -110,8 +131,11 @@ export class PasswordResetRequestComponent implements OnInit {
   getEmailErrorMsg = () => {
     if (this.form.email.errors?.required && this.form.email.touched) {
       return 'Email is required';
-    }
-    else if (!this.isValidEmail && this.form.email.touched && !this.form.email.errors?.required) {
+    } else if (
+      !this.isValidEmail &&
+      this.form.email.touched &&
+      !this.form.email.errors?.required
+    ) {
       return 'Email is not valid';
     }
   };
@@ -123,6 +147,10 @@ export class PasswordResetRequestComponent implements OnInit {
   private toBoolean(value: string): boolean {
     if (!value) return false;
 
-    return value.toUpperCase() == 'TRUE' || value.toUpperCase() == 'YES' || value == '1';
+    return (
+      value.toUpperCase() == 'TRUE' ||
+      value.toUpperCase() == 'YES' ||
+      value == '1'
+    );
   }
 }

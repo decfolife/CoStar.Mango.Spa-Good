@@ -1,5 +1,12 @@
 import { SaveTaskTemplatePayload } from './../../../models/interfaces/save-tasks-template.interface';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { InputComponent } from '@mango/ui-shared/lib-ui-elements';
@@ -13,7 +20,7 @@ import { SaveTasksTemplateService } from '@project-dashboard/services/save-tasks
   templateUrl: './save-tasks-template.component.html',
   styleUrls: ['./save-tasks-template.component.scss'],
 })
-export class CremSaveTasksTemplateComponent implements OnInit {
+export class CremSaveTasksTemplateComponent implements OnInit, OnDestroy {
   @Input() projectId: number;
 
   @Output() saveComplete = new EventEmitter<boolean>();
@@ -36,13 +43,14 @@ export class CremSaveTasksTemplateComponent implements OnInit {
   }
 
   saveTasksTemplateSaveListener(): void {
-    this.subs.push;
-    this.saveTasksTemplateService.saveTasksTemplateSaveClick$.subscribe(
-      (saveClicked) => {
-        if (saveClicked) {
-          this.saveTasksTemplate();
+    this.subs.push(
+      this.saveTasksTemplateService.saveTasksTemplateSaveClick$.subscribe(
+        (saveClicked) => {
+          if (saveClicked) {
+            this.saveTasksTemplate();
+          }
         }
-      }
+      )
     );
   }
 
@@ -50,7 +58,7 @@ export class CremSaveTasksTemplateComponent implements OnInit {
     this.loader$.next(true);
 
     const payload: SaveTaskTemplatePayload = {
-      teamTemplateName: this.value,
+      templateName: this.value,
       projectID: this.projectId,
     };
 
@@ -72,5 +80,9 @@ export class CremSaveTasksTemplateComponent implements OnInit {
         }
       )
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }

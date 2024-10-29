@@ -8,9 +8,8 @@ describe('ShareViewPopupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShareViewPopupComponent ]
-    })
-    .compileComponents();
+      declarations: [ShareViewPopupComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

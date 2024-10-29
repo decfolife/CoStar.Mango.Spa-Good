@@ -2,6 +2,6 @@ export interface userSettings {
   dashboardId: number;
   elementId: number;
   elementTypeId: number;
-  isActive:	boolean;
+  isActive: boolean;
   elementOrder: number;
 }

@@ -1,146 +1,250 @@
 <section class="section-grid">
-    <crem-card [showCustomHeader]="true"
-    [customDropdownMenu]="true">
-    <div customHeader class="card-header"> 
+  <crem-card [showCustomHeader]="true" [customDropdownMenu]="true">
+    <div customHeader class="card-header">
+      <div class="card-header">
         <div class="card-header">
-                <div class="card-header">
-                    <div class="card-title"
-                    [id]="accountingSummaryService.getId(componentName,'card','title')">
-                    Amortization Table <span *ngIf="!isAccountingEventEmpty"> | {{classificationType}} | {{amortizationProfileName}} </span> 
-                    <!-- {{isGridStateChanged ? preferenceSavePendingMessage : ''}} Removing this text for now as per discussion witn PO's-->
-                    </div>
-                    <div class="more-menu">
-                     <div class="more">
-                            <button [id]="accountingSummaryService.getId(componentName,'more','button')"class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" type="button" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)" [disabled]="isAccountingEventEmpty">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
-                            <mat-menu #moreMenu="matMenu" class="moreMatMenu">
-                                <button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>
-                                <button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
-                                <button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="isGridStateChanged ? clearGridChanges() : resetGridPreferences()" [title]="isGridStateChanged ? clearBtnHoverText : resetBtnHoverText">{{isGridStateChanged ? 'Clear Changes' : 'Reset Preferences'}}</button>
-                                <button [id]="accountingSummaryService.getId(componentName,'sendToExcel','button')" mat-menu-item (click)="sendToExcel()" title="Send to Excel">Send to Excel</button>
-                            </mat-menu>
-                        </div>
-                    </div>
-                    <div class="grid-size">
-                        <crem-button
-                            btnStyle="basic"
-                            color="secondary"
-                            size="small"
-                            class="icon-style"
-                            icon="faExpand"
-                            title="Show All Rows"
-                            ariaLabel="Show All Rows"
-                            *ngIf="showMaxRow"
-                            [disabled]="isAccountingEventEmpty"
-                            (click)="showMaxRows()">
-                        </crem-button>
-        
-                        <crem-button
-                            btnStyle="basic"
-                            size="small"
-                            color="secondary"
-                            class="icon-style"
-                            icon="faSquare"
-                            iconPack="regular"
-                            title="Default View"
-                            ariaLabel="Default View"
-                            *ngIf="showDefaultRow" 
-                            [disabled]="isAccountingEventEmpty"
-                            (click)="showDefaultRows()">
-                        </crem-button>
-        
-                        <crem-button
-                            btnStyle="basic"
-                            size="small"
-                            class="icon-style"
-                            color="secondary"
-                            icon="faCompress"
-                            title="Show Miniumum Rows"
-                            ariaLabel="Show Miniumum Rows"
-                            *ngIf="showMinRow" 
-                            [disabled]="isAccountingEventEmpty"
-                            (click)="showMinRows()">
-                        </crem-button>
-                    </div>
-                </div>
+          <div
+            class="card-title"
+            [id]="
+              accountingSummaryService.getId(componentName, 'card', 'title')
+            "
+          >
+            Amortization Table
+            <span *ngIf="!isAccountingEventEmpty">
+              | {{ classificationType }} | {{ amortizationProfileName }}
+            </span>
+            <!-- {{isGridStateChanged ? preferenceSavePendingMessage : ''}} Removing this text for now as per discussion witn PO's-->
+          </div>
+          <div class="more-menu">
+            <div class="more">
+              <button
+                [id]="
+                  accountingSummaryService.getId(
+                    componentName,
+                    'more',
+                    'button'
+                  )
+                "
+                class="btn btn-default moreButton"
+                [matMenuTriggerFor]="moreMenu"
+                type="button"
+                (click)="openMoreMenu($event)"
+                (keydown)="openMoreMenu($event)"
+                [disabled]="isAccountingEventEmpty"
+              >
+                More
+                <mat-icon
+                  [id]="
+                    accountingSummaryService.getId(
+                      componentName,
+                      'more',
+                      'icon'
+                    )
+                  "
+                  >arrow_drop_down</mat-icon
+                >
+              </button>
+              <mat-menu #moreMenu="matMenu" class="moreMatMenu">
+                <button
+                  [id]="
+                    accountingSummaryService.getId(
+                      componentName,
+                      'column-chooser',
+                      'button'
+                    )
+                  "
+                  mat-menu-item
+                  (click)="showColumnChooser()"
+                >
+                  Column Chooser
+                </button>
+                <button
+                  [id]="
+                    accountingSummaryService.getId(
+                      componentName,
+                      'save',
+                      'button'
+                    )
+                  "
+                  mat-menu-item
+                  (click)="saveGridPreferences()"
+                >
+                  Save Preferences
+                </button>
+                <button
+                  [id]="
+                    accountingSummaryService.getId(
+                      componentName,
+                      'reset',
+                      'button'
+                    )
+                  "
+                  mat-menu-item
+                  (click)="
+                    isGridStateChanged
+                      ? clearGridChanges()
+                      : resetGridPreferences()
+                  "
+                  [title]="
+                    isGridStateChanged ? clearBtnHoverText : resetBtnHoverText
+                  "
+                >
+                  {{
+                    isGridStateChanged ? 'Clear Changes' : 'Reset Preferences'
+                  }}
+                </button>
+                <button
+                  [id]="
+                    accountingSummaryService.getId(
+                      componentName,
+                      'sendToExcel',
+                      'button'
+                    )
+                  "
+                  mat-menu-item
+                  (click)="sendToExcel()"
+                  title="Send to Excel"
+                >
+                  Send to Excel
+                </button>
+              </mat-menu>
             </div>
+          </div>
+          <div class="grid-size">
+            <crem-button
+              btnStyle="basic"
+              color="secondary"
+              size="small"
+              class="icon-style"
+              icon="faExpand"
+              title="Show All Rows"
+              ariaLabel="Show All Rows"
+              *ngIf="showMaxRow"
+              [disabled]="isAccountingEventEmpty"
+              (click)="showMaxRows()"
+            >
+            </crem-button>
+
+            <crem-button
+              btnStyle="basic"
+              size="small"
+              color="secondary"
+              class="icon-style"
+              icon="faSquare"
+              iconPack="regular"
+              title="Default View"
+              ariaLabel="Default View"
+              *ngIf="showDefaultRow"
+              [disabled]="isAccountingEventEmpty"
+              (click)="showDefaultRows()"
+            >
+            </crem-button>
+
+            <crem-button
+              btnStyle="basic"
+              size="small"
+              class="icon-style"
+              color="secondary"
+              icon="faCompress"
+              title="Show Minimum Rows"
+              ariaLabel="Show Minimum Rows"
+              *ngIf="showMinRow"
+              [disabled]="isAccountingEventEmpty"
+              (click)="showMinRows()"
+            >
+            </crem-button>
+          </div>
         </div>
-        <div class="card-content">
-        <dx-data-grid
-            #AmortizationDataGrid
-            [id]="accountingSummaryService.getId(componentName ,'detail','section')"
-            [dataSource]="amortizationdetailsGridData"
-            [columns]="amortizationDetailColumns"
-            [showColumnLines]="true"           
-            [allowColumnReordering]="true"
-            [allowColumnResizing]="true"
-            [columnAutoWidth]="true"
-            [columnResizingMode]="'widget'"
-            [showRowLines]="true"
-            [showBorders]="true"
-            [sorting]="false"
-            [rowAlternationEnabled]="true"
-            [summary]="summaryFields"
-            [height]="amortizationGridHeight"
-            noDataText="No Data"
-            width='100%'
-            (onOptionChanged)="onGridOptionChanged($event)"
-            (onRowClick)="onGridRowClick($event)"
-            (onContentReady)="onGridContentReady()">
-
-            <dxo-paging
-                [enabled]="false">
-            </dxo-paging>
-
-            <dxo-state-storing
-                [enabled]="true"
-                type="custom"
-                storageKey="amortizationGridStateKey"
-                [customLoad]="loadState"
-                [customSave]="saveState">
-            </dxo-state-storing>
-
-            <dxo-scrolling
-                columnRenderingMode="virtual">
-            </dxo-scrolling>
-            <dxo-selection
-                mode="single">
-            </dxo-selection>
-
-            <dxo-column-chooser
-                [enabled]="true"
-                mode="select"
-                height="500"
-                width="400"> 
-                
-                <dxo-search
-                    [enabled]="true">
-                </dxo-search>
-
-                <dxo-selection
-                    allowSelectAll="true">
-                </dxo-selection>
-            </dxo-column-chooser>
-        
-            <div *dxTemplate="let info of 'amortizationHeader'">
-                <p title={{info.column.caption}}
-                    class="header-column-caption">
-                    {{info.column.caption}}
-                </p>
-            </div>
-
-            <div *dxTemplate="let cell of 'pointer'">
-                <div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
-            </div>
-        </dx-data-grid>
-
+      </div>
     </div>
-</crem-card>
-    <!-- This is for the amortization grid -->
-    <mango-je-retro-popup [amortizationGridRowClickEvent]="amortizationGridRowClickEvent" [eventScheduleData]="eventScheduleData" [gridColumnsForRetroPopup]="gridColumnsForRetroPopup" [rightsInfo]="rightsInfo" [wfStatusRights]="wfStatusRights"
-    [userInfo]="userInfo" [classificationType]="classificationType" [amortizationProfileName]="amortizationProfileName" [newRetroEventJeStatus]="retroEventJeStatus" (jeRetroPopupClosedEvent)="onJeRetroPopupClosed($event)" (retroAdustmentGridRowClickEvent)="onRetroAdustmentGridRowClick($event)"></mango-je-retro-popup>
+    <div class="card-content">
+      <dx-data-grid
+        #AmortizationDataGrid
+        [id]="
+          accountingSummaryService.getId(componentName, 'detail', 'section')
+        "
+        [dataSource]="amortizationdetailsGridData"
+        [columns]="amortizationDetailColumns"
+        [showColumnLines]="true"
+        [allowColumnReordering]="true"
+        [allowColumnResizing]="true"
+        [columnAutoWidth]="true"
+        [columnResizingMode]="'widget'"
+        [showRowLines]="true"
+        [showBorders]="true"
+        [sorting]="false"
+        [rowAlternationEnabled]="true"
+        [summary]="summaryFields"
+        [height]="amortizationGridHeight"
+        noDataText="No Data"
+        width="100%"
+        (onOptionChanged)="onGridOptionChanged($event)"
+        (onRowClick)="onGridRowClick($event)"
+        (onContentReady)="onGridContentReady()"
+      >
+        <dxo-paging [enabled]="false"> </dxo-paging>
 
-    <!-- This is for the retro adjustments grid.  This is called from the mango-je-retro-popup for the amortization grid.  -->
-    <mango-je-retro-popup [amortizationGridRowClickEvent]="retroAdustmentGridRowClickEvent" [eventScheduleData]="eventScheduleData" [gridColumnsForRetroPopup]="gridColumnsForRetroPopup" [rightsInfo]="rightsInfo" [wfStatusRights]="wfStatusRights"
-    [userInfo]="userInfo" [classificationType]="classificationType" [amortizationProfileName]="amortizationProfileName" [isPopupForRetroGridClick]="true" (jeRetroPopupClosedEvent)="onUpdateRetroEventJeStatus($event)"></mango-je-retro-popup>
+        <dxo-state-storing
+          [enabled]="true"
+          type="custom"
+          storageKey="amortizationGridStateKey"
+          [customLoad]="loadState"
+          [customSave]="saveState"
+        >
+        </dxo-state-storing>
 
+        <dxo-scrolling columnRenderingMode="virtual"> </dxo-scrolling>
+        <dxo-selection mode="single"> </dxo-selection>
+
+        <dxo-column-chooser
+          [enabled]="true"
+          mode="select"
+          height="500"
+          width="400"
+        >
+          <dxo-search [enabled]="true"> </dxo-search>
+
+          <dxo-selection allowSelectAll="true"> </dxo-selection>
+        </dxo-column-chooser>
+
+        <div *dxTemplate="let info of 'amortizationHeader'">
+          <p title="{{ info.column.caption }}" class="header-column-caption">
+            {{ info.column.caption }}
+          </p>
+        </div>
+
+        <div *dxTemplate="let cell of 'pointer'">
+          <div class="pointer" title="{{ cell.text }}">{{ cell.text }}</div>
+        </div>
+      </dx-data-grid>
+    </div>
+  </crem-card>
+  <!-- This is for the amortization grid -->
+  <mango-je-retro-popup
+    [amortizationGridRowClickEvent]="amortizationGridRowClickEvent"
+    [eventScheduleData]="eventScheduleData"
+    [gridColumnsForRetroPopup]="gridColumnsForRetroPopup"
+    [rightsInfo]="rightsInfo"
+    [wfStatusRights]="wfStatusRights"
+    [userInfo]="userInfo"
+    [classificationType]="classificationType"
+    [amortizationProfileName]="amortizationProfileName"
+    [newRetroEventJeStatus]="retroEventJeStatus"
+    (jeRetroPopupClosedEvent)="onJeRetroPopupClosed($event)"
+    (retroAdustmentGridRowClickEvent)="onRetroAdustmentGridRowClick($event)"
+  ></mango-je-retro-popup>
+
+  <!-- This is for the retro adjustments grid.  This is called from the mango-je-retro-popup for the amortization grid.  -->
+  <mango-je-retro-popup
+    [amortizationGridRowClickEvent]="retroAdustmentGridRowClickEvent"
+    [eventScheduleData]="eventScheduleData"
+    [gridColumnsForRetroPopup]="gridColumnsForRetroPopup"
+    [rightsInfo]="rightsInfo"
+    [wfStatusRights]="wfStatusRights"
+    [userInfo]="userInfo"
+    [classificationType]="classificationType"
+    [amortizationProfileName]="amortizationProfileName"
+    [isPopupForRetroGridClick]="true"
+    (jeRetroPopupClosedEvent)="onUpdateRetroEventJeStatus($event)"
+  ></mango-je-retro-popup>
 </section>

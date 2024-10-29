@@ -1,24 +1,22 @@
 <mat-card class="field-assignments-card">
-  <mat-card-title>
-    Financial Reporting Field Assignments
-  </mat-card-title>
+  <mat-card-title> Financial Reporting Field Assignments </mat-card-title>
 
   <mat-card-content>
     <div class="container-fluid" *ngIf="settingsData">
       <div class="row">
         <div class="col-6">
           <div class="row">
-            <div id="expenseLabel" class="col-5">
-              Expense
-            </div>
+            <div id="expenseLabel" class="col-5">Expense</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignExpense"
+              <mat-slide-toggle
+                aria-label="Expense"
+                [(ngModel)]="settingsData.assignExpense"
                 id="expenseToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignExpense"
                 helpTextData=""
               ></crem-tooltip>
@@ -28,17 +26,17 @@
 
         <div class="col-6">
           <div class="row">
-            <div id="relativeRangesLabel" class="col-5">
-              Relative Ranges
-            </div>
+            <div id="relativeRangesLabel" class="col-5">Relative Ranges</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignRelativeRanges"
+              <mat-slide-toggle
+                aria-label="Relative Ranges"
+                [(ngModel)]="settingsData.assignRelativeRanges"
                 id="relativeRangesToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignRelativeRanges"
                 helpTextData=""
               ></crem-tooltip>
@@ -50,17 +48,17 @@
       <div class="row">
         <div class="col-6">
           <div class="row">
-            <div id="incomeLabel" class="col-5">
-              Income
-            </div>
+            <div id="incomeLabel" class="col-5">Income</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignIncome"
+              <mat-slide-toggle
+                aria-label="Income"
+                [(ngModel)]="settingsData.assignIncome"
                 id="incomeToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignIncome"
                 helpTextData=""
               ></crem-tooltip>
@@ -70,17 +68,17 @@
 
         <div class="col-6">
           <div class="row">
-            <div id="yearlyRangesLabel" class="col-5">
-              Yearly Ranges
-            </div>
+            <div id="yearlyRangesLabel" class="col-5">Yearly Ranges</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignYearlyRanges"
+              <mat-slide-toggle
+                aria-label="Yearly Ranges"
+                [(ngModel)]="settingsData.assignYearlyRanges"
                 id="yearlyRangesToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignYearlyRanges"
                 helpTextData=""
               ></crem-tooltip>
@@ -97,12 +95,14 @@
             </div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignReportingCurrency"
+              <mat-slide-toggle
+                aria-label="Reporting Currency"
+                [(ngModel)]="settingsData.assignReportingCurrency"
                 id="reportingCurrencyToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignReportingCurrency"
                 helpTextData=""
               ></crem-tooltip>
@@ -112,17 +112,17 @@
 
         <div class="col-6">
           <div class="row">
-            <div id="monthlyRangesLabel" class="col-5">
-              Monthly Ranges
-            </div>
+            <div id="monthlyRangesLabel" class="col-5">Monthly Ranges</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignMonthlyRanges"
+              <mat-slide-toggle
+                aria-label="Monthly Ranges"
+                [(ngModel)]="settingsData.assignMonthlyRanges"
                 id="monthlyRangesToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignMonthlyRanges"
                 helpTextData=""
               ></crem-tooltip>
@@ -134,38 +134,37 @@
       <div class="row">
         <div class="col-6">
           <div class="row">
-            <div id="leaseCurrencyLabel" class="col-5">
-              Lease Currency
-            </div>
+            <div id="leaseCurrencyLabel" class="col-5">Lease Currency</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignLeaseCurrency"
+              <mat-slide-toggle
+                aria-label="Lease Currency"
+                [(ngModel)]="settingsData.assignLeaseCurrency"
                 id="leaseCurrencyToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignLeaseCurrency"
                 helpTextData=""
               ></crem-tooltip>
             </div>
-
           </div>
         </div>
 
         <div class="col-6">
           <div class="row">
-            <div id="totalAmountsLabel" class="col-5">
-              Total Amounts
-            </div>
+            <div id="totalAmountsLabel" class="col-5">Total Amounts</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignAbsoluteRanges"
+              <mat-slide-toggle
+                aria-label="Total Amounts"
+                [(ngModel)]="settingsData.assignAbsoluteRanges"
                 id="totalAmountsToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignAbsoluteRanges"
                 helpTextData=""
               ></crem-tooltip>
@@ -177,17 +176,17 @@
       <div class="row">
         <div class="col-6">
           <div class="row">
-            <div id="groupByLeaseLabel" class="col-5">
-              Group By Lease
-            </div>
+            <div id="groupByLeaseLabel" class="col-5">Group By Lease</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignGroupByLease"
+              <mat-slide-toggle
+                aria-label="Group By Lease"
+                [(ngModel)]="settingsData.assignGroupByLease"
                 id="groupByLeaseToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignGroupByLease"
                 helpTextData=""
               ></crem-tooltip>
@@ -204,12 +203,14 @@
             </div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignGroupByGLCategory"
+              <mat-slide-toggle
+                aria-label="Group By GL Category"
+                [(ngModel)]="settingsData.assignGroupByGLCategory"
                 id="groupByGLCategoryToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignGroupByGLCategory"
                 helpTextData=""
               ></crem-tooltip>
@@ -221,17 +222,17 @@
       <div class="row">
         <div class="col-6">
           <div class="row">
-            <div id="groupByAccountLabel" class="col-5">
-              Group By Account
-            </div>
+            <div id="groupByAccountLabel" class="col-5">Group By Account</div>
 
             <div class="col-7">
-              <mat-slide-toggle [(ngModel)]="settingsData.assignGroupByAccount"
+              <mat-slide-toggle
+                aria-label="Group By Account"
+                [(ngModel)]="settingsData.assignGroupByAccount"
                 id="groupByAccountToggle"
                 [disabled]="isViewOnly"
                 (change)="changed.emit()"
               ></mat-slide-toggle>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="AssignGroupByAccount"
                 helpTextData=""
               ></crem-tooltip>
@@ -239,7 +240,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </mat-card-content>
 </mat-card>

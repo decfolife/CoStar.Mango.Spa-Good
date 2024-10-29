@@ -15,16 +15,18 @@ export class ArchiveActionService extends EndpointService {
   public checkSystemUser(contactID: number): Observable<ApiResponse> {
     let url = `${environment.appUrls.objectActions}objectActions/CheckSystemUser`;
     const param = {
-      ContactId: contactID
+      ContactId: contactID,
     };
 
     return this.callHttpGet(url, 'CheckSystemUser', param);
   }
 
-  public GetCompanyVendorsCustomers(companyID: number): Observable<ApiResponse> {
+  public GetCompanyVendorsCustomers(
+    companyID: number
+  ): Observable<ApiResponse> {
     let url = `${environment.appUrls.objectActions}objectActions/CompanyVendorsCustomers`;
     const param = {
-      CompanyID: companyID
+      CompanyID: companyID,
     };
     return this.callHttpGet(url, 'CompanyVendorsCustomers', param);
   }
@@ -42,44 +44,62 @@ export class ArchiveActionService extends EndpointService {
   public getContactName(contactID: number): Observable<ApiResponse> {
     let url = `${environment.appUrls.objectActions}objectActions/ContactName`;
     const param = {
-      ContactId: contactID
+      ContactId: contactID,
     };
 
     return this.callHttpGet(url, 'GetContactName', param);
   }
 
-  public getBuildingsPremiseLeaseAssociations(leaseAbstractId, listType, isPremiseHidden = 0): Observable<ApiResponse> {
+  public getBuildingsPremiseLeaseAssociations(
+    leaseAbstractId,
+    listType,
+    isPremiseHidden = 0
+  ): Observable<ApiResponse> {
     let url = `${environment.appUrls.objectActions}objectActions/GetBuildingsPremiseLeaseAssociations`;
     let param = {
       LeaseAbstractId: leaseAbstractId,
       ListType: listType,
-      IsPremiseHidden: isPremiseHidden
-    }
- 
+      IsPremiseHidden: isPremiseHidden,
+    };
+
     return this.callHttpGet(url, 'GetBuildingsPremiseLeaseAssociations', param);
   }
 
-  public getBuildingPremiseArchiveData(buildingId, premiseId, listType, isPremiseHidden = 0): Observable<ApiResponse> {
+  public getBuildingPremiseArchiveData(
+    buildingId,
+    premiseId,
+    listType,
+    isPremiseHidden = 0
+  ): Observable<ApiResponse> {
     let url = `${environment.appUrls.objectActions}objectActions/GetBuildingPremiseArchiveData`;
     let param = {
       BuildingId: buildingId,
       PremiseId: premiseId,
       ListType: listType,
-      IsPremiseHidden: isPremiseHidden
-    }
-  
+      IsPremiseHidden: isPremiseHidden,
+    };
+
     return this.callHttpGet(url, 'GetBuildingPremiseArchiveData', param);
   }
 
-  public archiveBuildingPremiseLease(buildingId, premiseId, leaseId, isPremiseHidden): Observable<ApiResponse> {
+  public archiveBuildingPremiseLease(
+    buildingId,
+    premiseId,
+    leaseId,
+    isPremiseHidden
+  ): Observable<ApiResponse> {
     let url = `${environment.appUrls.objectActions}objectActions/ArchiveBuildingPremiseLease`;
     let param = {
       BuildingId: buildingId,
       PremiseId: premiseId,
       LeaseId: leaseId,
       isPremiseHidden: isPremiseHidden,
-    }
-    
-    return this.callHttpPost(url, 'GetBuildingsPremiseLeaseAssociations', param);
+    };
+
+    return this.callHttpPost(
+      url,
+      'GetBuildingsPremiseLeaseAssociations',
+      param
+    );
   }
 }

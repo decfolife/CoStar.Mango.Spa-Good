@@ -1,41 +1,62 @@
 <crem-modal
-  [class]="editTask? 'aet-editTaskModal' : 'aet-addTaskModal'"
-  [modalTitle] = "modalTitle"
+  [class]="editTask ? 'aet-editTaskModal' : 'aet-addTaskModal'"
+  [modalTitle]="modalTitle"
   [primaryFooterButtonText]="'Save'"
   [closeOrCancelButtonText]="'Cancel'"
-  [closeIconVisible] = "closeButton"
+  [closeIconVisible]="closeButton"
   [closeDialogResult]="'true'"
-  [modalId] = "modalId"
-  [customHeader]="editTask"
+  [modalId]="modalId"
+  [customHeader]="true"
   [customFooter]="'true'"
 >
   <div modalHeader class="aet-editTask-headerContent">
-    <crem-dropdown
-      id="aet-selectTaskDropdownId"
-      dropDownContainerCustomClass='aet-taskListDropDown'
-      [dataSource]="projectCurrentTasks"
-      [showClearButton]='false'
-      [showColumnHeader]='false'
-      displayExpr='displayVal'
-      valueExpr='taskId'
-      [allowSearch]='true'
-      [useSelectBox]="true"
-      [selectBoxValue]='taskId'
-      [hoverText]='selectedTaskName'
-      (selectedItems)="onSelectedTaskChanged($event)"
-    >
-    </crem-dropdown>
-    <button
-      (click)="closeModal()"
-      class="btn-close btn-none modalCloseButton"
-      color="secondary"
-      aria-label="Close"
-      id="aet-closeModalBtn"
-    ><mat-icon class="closeIcon">close</mat-icon></button>
+    <div class="aet-addTaskHeader" *ngIf="!editTask; else editTaskTemplate">
+      <h2 class="modalTitle">{{ modalTitle }}</h2>
+      <button
+        (click)="closeModal()"
+        class="btn-close btn-none modalCloseButton"
+        color="secondary"
+        aria-label="Close"
+        id="aet-closeModalBtnId"
+      >
+        <mat-icon class="closeIcon">close</mat-icon>
+      </button>
+    </div>
+    <ng-template #editTaskTemplate>
+      <crem-dropdown
+        id="aet-selectTaskDropdownId"
+        dropDownContainerCustomClass="aet-taskListDropDown"
+        [dataSource]="projectCurrentTasks"
+        [showClearButton]="false"
+        [showColumnHeader]="false"
+        displayExpr="displayVal"
+        valueExpr="taskId"
+        [allowSearch]="true"
+        [useSelectBox]="true"
+        [selectBoxValue]="taskId"
+        [hoverText]="selectedTaskName"
+        (selectedItems)="onSelectedTaskChanged($event)"
+      >
+      </crem-dropdown>
+      <button
+        (click)="closeModal()"
+        class="btn-close btn-none modalCloseButton"
+        color="secondary"
+        aria-label="Close"
+        id="aet-closeModalBtn"
+      >
+        <mat-icon class="closeIcon">close</mat-icon>
+      </button>
+    </ng-template>
   </div>
   <div modalContent id="addEditTaskModal-content">
-    <div id="aet-taskName-container"  class="container">
-      <h4 class="aet-taskName-label label" [ngClass]="taskNameFieldInvalid ? 'fieldInvalid' : ''">Task Name<span class="aet-required-tag">*</span></h4>
+    <div id="aet-taskName-container" class="container">
+      <h4
+        class="aet-taskName-label label"
+        [ngClass]="taskNameFieldInvalid ? 'fieldInvalid' : ''"
+      >
+        Task Name<span class="aet-required-tag">*</span>
+      </h4>
       <crem-input
         #TaskNameTextBox
         [state]="'active'"
@@ -49,14 +70,23 @@
         [placeholder]="'Enter task name'"
         (valueChange)="onTaskNameChanged($event)"
       ></crem-input>
-
-    </div>  
+    </div>
     <div id="aet-dates-container" class="container">
       <div id="aet-targetStartDate-container" class="aet-flexItem50">
-        <h4 class="aet-targetStartDate-label label" [ngClass]="taskTargetStartDateFieldInvalid ? 'fieldInvalid' : ''">Target Start Date<span class="aet-required-tag" *ngIf="!projectTaskSettings.calculateDates">*</span></h4>
-        <crem-date-picker #TargetStartDatePicker
+        <h4
+          class="aet-targetStartDate-label label"
+          [ngClass]="taskTargetStartDateFieldInvalid ? 'fieldInvalid' : ''"
+        >
+          Target Start Date<span
+            class="aet-required-tag"
+            *ngIf="!projectTaskSettings.calculateDates"
+            >*</span
+          >
+        </h4>
+        <crem-date-picker
+          #TargetStartDatePicker
           [(value)]="targetStartDate"
-          [dateFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy' "
+          [dateFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'"
           [showClearButton]="'true'"
           [inputId]="'aet-targetStartDate'"
           [placeholderText]="'Select Date...'"
@@ -65,13 +95,23 @@
           [isRequired]="!projectTaskSettings.calculateDates"
           [showDefaultValidationTooltip]="false"
         >
-       </crem-date-picker>
+        </crem-date-picker>
       </div>
       <div id="aet-targetEndDate-container" class="aet-flexItem50">
-        <h4 class="aet-targetEndDate-label label" [ngClass]="taskTargetEndDateFieldInvalid ? 'fieldInvalid' : ''">Target End Date<span class="aet-required-tag" *ngIf="!projectTaskSettings.calculateDates">*</span></h4>
-        <crem-date-picker #TargetEndDatePicker
+        <h4
+          class="aet-targetEndDate-label label"
+          [ngClass]="taskTargetEndDateFieldInvalid ? 'fieldInvalid' : ''"
+        >
+          Target End Date<span
+            class="aet-required-tag"
+            *ngIf="!projectTaskSettings.calculateDates"
+            >*</span
+          >
+        </h4>
+        <crem-date-picker
+          #TargetEndDatePicker
           [(value)]="targetEndDate"
-          [dateFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy' "
+          [dateFormat]="isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'"
           [showClearButton]="'true'"
           [inputId]="'aet-targetEndDate'"
           [placeholderText]="'Select Date...'"
@@ -82,40 +122,57 @@
         >
         </crem-date-picker>
       </div>
-    </div> 
+    </div>
     <div id="aet-daysToStart-duration-container" class="container">
       <div id="aet-daysToStart-container" class="aet-flexItem50">
         <h4 class="aet-daysToStart-label label">Days to Start</h4>
-        <ng-template [ngIf]="taskIndexOrder !== 1 || projectTaskSettings.calculateDates" [ngIfElse]="NotApplicableSpan">
-          <crem-number-box 
+        <ng-template
+          [ngIf]="projectTaskSettings.calculateDates"
+          [ngIfElse]="NotApplicableSpan"
+        >
+          <crem-number-box
             [value]="taskDaysToStart"
             [initialFocus]="null"
             [inputId]="'aet-taskDaysToStartId'"
             [numberFormat]="'0,###'"
             [inputLabel]="'Enter days to start'"
             [inputPlaceHolder]="'Enter days to start'"
-            [disabled]="projectTaskSettings.calculateDates && projectTaskSettings.autoCalculate"
+            [disabled]="projectTaskSettings.autoCalculate"
             (valueChange)="onNumberValueChanged($event, 'taskDaysToStart')"
           ></crem-number-box>
         </ng-template>
       </div>
       <div id="aet-duration-container" class="aet-flexItem50">
         <h4 class="aet-duration-label label">Duration</h4>
-        <crem-number-box 
-          [value]="taskDuration"
-          [initialFocus]="null"
-          [inputId]="'aet-taskDurationId'"
-          [numberFormat]="'0,###'"
-          [inputLabel]="'Expected # of days to complete'"
-          [inputPlaceHolder]="'# of days to complete'"
-          (valueChange)="onNumberValueChanged($event, 'taskDuration')"
-        ></crem-number-box>
+        <ng-template
+          [ngIf]="projectTaskSettings.calculateDates"
+          [ngIfElse]="NotApplicableSpan"
+        >
+          <crem-number-box
+            [value]="taskDuration"
+            [initialFocus]="null"
+            [inputId]="'aet-taskDurationId'"
+            [numberFormat]="'0,###'"
+            [inputLabel]="'Expected # of days to complete'"
+            [inputPlaceHolder]="'# of days to complete'"
+            [disabled]="
+              projectTaskSettings.autoCalculate &&
+              editTask &&
+              taskSubTasksCount &&
+              taskSubTasksCount >= 1
+            "
+            (valueChange)="onNumberValueChanged($event, 'taskDuration')"
+          ></crem-number-box>
+        </ng-template>
       </div>
     </div>
-    <div id="aet-milestone-Wflow-complete-container" class="container" >
-      <div id="aet-milestone-container"  class="aet-flexItem40">
+    <div id="aet-milestone-Wflow-complete-container" class="container">
+      <div id="aet-milestone-container" class="aet-flexItem40">
         <h4 class="aet-milestone-label label">Milestone</h4>
-        <ng-template [ngIf]="taskIndexOrder !== 1 && taskParentId <= 0 && !addSubTask" [ngIfElse]="NotApplicableSpan">
+        <ng-template
+          [ngIf]="(!addSubTask && !editTask) || (editTask && taskParentId == 0)"
+          [ngIfElse]="NotApplicableSpan"
+        >
           <crem-toggle-slider
             [value]="taskMilestone"
             [disabled]="false"
@@ -129,26 +186,26 @@
       </div>
       <div id="aet-workFlowStatus-container" *ngIf="taskMilestone">
         <h4 class="aet-workFlowStatus-label label">Workflow Status</h4>
-				<crem-dropdown
-					id="workFlowStatusDropdownId"
-					dropDownContainerCustomClass="workFlowStatusDropDown"
-					[dataSource]='taskWorkFlows'
-					[showClearButton]='true'
-					[showColumnHeader]='false'
-					displayExpr="workflowName"
-					valueExpr="workflowStatusID"
-					[allowSearch]='true'
-					[useSelectBox]="true"
-					[selectBoxValue]="taskWorkflowStatusID"
-					hoverText="Select Workflow Status"
-					(selectedItems)="onWorkFlowStatusChanged($event)"
-					[isDisabled]="loading"
-				>
-				</crem-dropdown>
+        <crem-dropdown
+          id="workFlowStatusDropdownId"
+          dropDownContainerCustomClass="workFlowStatusDropDown"
+          [dataSource]="taskWorkFlows"
+          [showClearButton]="true"
+          [showColumnHeader]="false"
+          displayExpr="workflowName"
+          valueExpr="workflowStatusID"
+          [allowSearch]="true"
+          [useSelectBox]="true"
+          [selectBoxValue]="taskWorkflowStatusID"
+          hoverText="Select Workflow Status"
+          (selectedItems)="onWorkFlowStatusChanged($event)"
+          [isDisabled]="loading"
+        >
+        </crem-dropdown>
       </div>
       <div id="aet-complete-container" *ngIf="taskMilestone">
         <h4 class="aet-complete-label label">% Complete</h4>
-        <crem-number-box 
+        <crem-number-box
           [value]="taskPercentCompletion"
           [initialFocus]="null"
           [inputId]="'aet-taskPercentCompletionId'"
@@ -174,7 +231,16 @@
       </div>
       <div id="aet-concurrent-container">
         <h4 class="aet-concurrent-label label">Concurrent</h4>
-      <ng-template [ngIf]="taskIndexOrder !== 1 && (taskSelectedPredecessors === undefined || taskSelectedPredecessors.length <= 0)" [ngIfElse]="NotApplicableSpan">
+        <ng-template
+          [ngIf]="
+            (!addSubTask && !editTask) ||
+            (editTask &&
+              taskParentId == 0 &&
+              (taskSelectedPredecessors === undefined ||
+                taskSelectedPredecessors.length <= 0))
+          "
+          [ngIfElse]="NotApplicableSpan"
+        >
           <crem-toggle-slider
             [value]="taskConcurrent"
             [disabled]="false"
@@ -188,20 +254,38 @@
       </div>
       <div id="aet-shrinkable-container">
         <h4 class="aet-shrinkable-label label">Shrinkable</h4>
-        <crem-toggle-slider
-          [value]="taskShrinkable"
-          [disabled]="!projectTaskSettings.calculateDates || !projectTaskSettings.autoCalculate || projectTaskSettings.shiftTimeline || (taskSubTasksCount && taskSubTasksCount > 0)"
-          checkedLabel="Yes"
-          uncheckedLabel="No"
-          [size]="'wide'"
-          ariaLabel="Shrinkable Toggle"
-          (selectionChange)="onToggleChanged($event, 'taskShrinkable')"
-        ></crem-toggle-slider>
+        <ng-template
+          [ngIf]="
+            projectTaskSettings.calculateDates &&
+            projectTaskSettings.autoCalculate &&
+            (!editTask ||
+              (editTask &&
+                ((taskParentId == 0 &&
+                  taskSubTasksCount <= 0 &&
+                  (taskSelectedPredecessors === undefined ||
+                    taskSelectedPredecessors.length <= 0)) ||
+                  taskParentId !== 0)))
+          "
+          [ngIfElse]="NotApplicableSpan"
+        >
+          <crem-toggle-slider
+            [value]="taskShrinkable"
+            [disabled]="false"
+            checkedLabel="Yes"
+            uncheckedLabel="No"
+            [size]="'wide'"
+            ariaLabel="Shrinkable Toggle"
+            (selectionChange)="onToggleChanged($event, 'taskShrinkable')"
+          ></crem-toggle-slider>
+        </ng-template>
       </div>
-      <div id="aet-emailApproval-container" *ngIf="((editTask && taskParentId ==0) || (!editTask && !addSubTask))">
+      <div
+        id="aet-emailApproval-container"
+        *ngIf="(editTask && taskParentId == 0) || (!editTask && !addSubTask)"
+      >
         <h4 class="aet-emailApproval-label label">Email Approvals</h4>
         <crem-toggle-slider
-          [value]="clientEmailPreference==1?true:false"
+          [value]="clientEmailPreference == 1 ? true : false"
           [disabled]="false"
           checkedLabel="Yes"
           uncheckedLabel="No"
@@ -210,14 +294,18 @@
           (selectionChange)="onToggleChanged($event, 'clientEmailPreference')"
         ></crem-toggle-slider>
       </div>
-    </div> 
+    </div>
     <div id="aet-exempt-requiredApproval-container" class="container">
       <div id="aet-approval-exempt-container" class="aet-flexItem50">
         <div class="aet-label-tooltip">
-          <h4 class="aet-approval-exemption-label">Approval Exemption</h4>
-          <crem-tooltip id="aet-approval-exemption-tooltipId" class="aet-tooltip-approval-exempt"
+          <h4 class="aet-approval-exemption-label label">Approval Exemption</h4>
+          <crem-tooltip
+            id="aet-approvalExemptionTooltipId"
+            class="aet-tooltip-approval-exempt"
             [externalId]="'aet-approval-exemption-tooltipId'"
-            [helpTextData]="'Select YES if you want to specify how many approvals are needed in order to complete task if multiple assignees have been added.'"
+            [helpTextData]="
+              'Select YES if you want to specify how many approvals are needed in order to complete task if multiple assignees have been added.'
+            "
           >
           </crem-tooltip>
         </div>
@@ -233,69 +321,79 @@
       </div>
       <div id="aet-required-approvals-container" *ngIf="taskApprovalExempt">
         <div class="aet-label-tooltip">
-          <h4 class="aet-required-approvals-label"># of Required Approvals</h4>
-          <crem-tooltip id="aet-required-approvals-tooltipId" class="aet-tooltip-required-approvals"
+          <h4 class="aet-required-approvals-label label">
+            # of Required Approvals
+          </h4>
+          <crem-tooltip
+            id="aet-requiredApprovalsTooltipId"
+            class="aet-tooltip-required-approvals"
             [externalId]="'aet-required-approvals-tooltipId'"
-            [helpTextData]="'Select to total number of approvals needed in order to mark the task as Complete.'"
+            [helpTextData]="
+              'Select to total number of approvals needed in order to mark the task as Complete.'
+            "
           >
           </crem-tooltip>
         </div>
-				<crem-dropdown
-					id="requiredApproversId"
-					dropDownContainerCustomClass="requiredApproversDropDown"
-					[dataSource]='requiredApproversList'
-					[showClearButton]='false'
-					[showColumnHeader]='false'
-					displayExpr="displayValue"
-					valueExpr="id"
-					[allowSearch]='true'
-					[useSelectBox]="true"
-					[selectBoxValue]="taskRequiredApprovals"
-					hoverText="Select to total number of approvals needed in order to mark the task as Complete."
+        <crem-dropdown
+          id="requiredApproversId"
+          dropDownContainerCustomClass="requiredApproversDropDown"
+          [dataSource]="requiredApproversList"
+          [showClearButton]="false"
+          [showColumnHeader]="false"
+          displayExpr="displayValue"
+          valueExpr="id"
+          [allowSearch]="true"
+          [useSelectBox]="true"
+          [selectBoxValue]="taskRequiredApprovals"
+          hoverText="Select to total number of approvals needed in order to mark the task as Complete."
           (selectedItems)="onRequiredApprovalNumberChanged($event)"
-					[isDisabled]="loading"
-				>
-				</crem-dropdown>
+          [isDisabled]="loading"
+        >
+        </crem-dropdown>
       </div>
     </div>
-    <div id="aet-role-container"  class="container">
+    <div id="aet-role-container" class="container">
       <h4 class="aet-role-label label">Role</h4>
       <crem-dropdown
-        id='aet-roleDropdownId'
+        id="aet-roleDropdownId"
         #RolesDropdown
         dropDownContainerCustomClass="aet-roles-custClass"
-        [showColumnHeader]='true'
+        [showColumnHeader]="true"
         placeholder="Add multiple roles to this task"
-        displayExpr='role'
+        displayExpr="role"
         valueExpr="role"
-        showCheckBoxesMode='always'
-        showClearButton='true'
-        allowSearch='true'
-        selectMode='multiple'
+        showCheckBoxesMode="always"
+        showClearButton="true"
+        allowSearch="true"
+        selectMode="multiple"
         [dataSource]="availableRoles"
-        useArrayOfKeys='true'
-        getWholeObject='true'
+        useArrayOfKeys="true"
+        getWholeObject="true"
         [initialSelectedValue]="taskAssignedRoles"
         (selectedItems)="roleSelection($event)"
       ></crem-dropdown>
     </div>
-    <div id="aet-predecessor-container"  class="container" *ngIf="taskIndexOrder > 1 || !editTask">
+    <div
+      id="aet-predecessor-container"
+      class="container"
+      *ngIf="taskIndexOrder > 1 || !editTask"
+    >
       <h4 class="aet-predecessor-label label">Predecessor</h4>
       <crem-dropdown
-        id='aet-predecessorDropdownId'
+        id="aet-predecessorDropdownId"
         #PredecessorDropdown
         dropDownContainerCustomClass="aet-predecessor-custClass"
         placeholder="Select one or more tasks as predecessors"
-        [showColumnHeader]='true'
-        displayExpr='projectMilestoneStepFullAndName'
+        [showColumnHeader]="true"
+        displayExpr="projectMilestoneStepFullAndName"
         valueExpr="projectMilestoneID"
-        showCheckBoxesMode='always'
-        showClearButton='true'
-        allowSearch='true'
-        selectMode='multiple'
+        showCheckBoxesMode="always"
+        showClearButton="true"
+        allowSearch="true"
+        selectMode="multiple"
         [dataSource]="availablePredecessors"
-        useArrayOfKeys='true'
-        getWholeObject='true'
+        useArrayOfKeys="true"
+        getWholeObject="true"
         [initialSelectedValue]="taskSelectedPredecessors"
         (selectedItems)="predecessorSelection($event)"
       ></crem-dropdown>
@@ -307,7 +405,10 @@
         [minHeight]="32"
         [maxHeight]="100"
         [autoResizeEnabled]="true"
-        [inputAttr]="{ 'aria-label': 'Add-Edit task description', 'id': 'aet-description' }"
+        [inputAttr]="{
+          'aria-label': 'Add-Edit task description',
+          id: 'aet-description'
+        }"
       >
       </dx-text-area>
     </div>
@@ -318,9 +419,27 @@
   </div>
   <div modalFooter class="addEditTaskModal-footerContent">
     <div id="buttonTemplate" class="footerRightControls">
-      <crem-button  type="secondary" class="cancelChanges aet-btn" (click)="closeModal()"> Cancel </crem-button>
-      <crem-button  type="secondary" class="saveChanges aet-btn" (click)="validateAndSaveTask('save')"> Save </crem-button>
-      <crem-button  type="primary" class="applyChanges aem-btn" (click)="validateAndSaveTask('apply')"> Apply </crem-button>
+      <crem-button
+        type="secondary"
+        class="cancelChanges aet-btn"
+        (click)="closeModal()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        type="secondary"
+        class="saveChanges aet-btn"
+        (click)="validateAndSaveTask('save')"
+      >
+        Save
+      </crem-button>
+      <crem-button
+        type="primary"
+        class="applyChanges aem-btn"
+        (click)="validateAndSaveTask('apply')"
+      >
+        Apply
+      </crem-button>
     </div>
   </div>
 </crem-modal>

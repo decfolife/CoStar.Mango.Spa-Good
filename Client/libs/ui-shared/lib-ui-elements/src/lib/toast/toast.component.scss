@@ -88,7 +88,7 @@
     @include costar(font-size, body);
     display: flex;
     line-height: 1.2;
-    line-break: anywhere;
+    line-break: strict;
   }
 
   &.no-header {
@@ -101,7 +101,7 @@
     @include costar(font-size, small);
     display: flex;
     line-height: 1.2;
-    line-break: anywhere;
+    line-break: strict;
   }
 }
 

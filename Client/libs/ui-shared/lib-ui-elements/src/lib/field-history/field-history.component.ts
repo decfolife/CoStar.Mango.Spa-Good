@@ -2,8 +2,8 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 import { CommonModule } from '@angular/common';
 import { FieldHistoryDataSource } from '@mango/data-models/lib-data-models';
 import { DxDataGridModule, DxTemplateModule, DxBulletModule, DxPopoverModule } from 'devextreme-angular';
-import { MatTabsModule } from '@angular/material/tabs';
 import { IconModule } from '../icon';
+import { CremTabItemComponent, CremTabsComponent } from '../tabs';
 
 @Component({
   selector: 'crem-field-history',
@@ -14,7 +14,8 @@ import { IconModule } from '../icon';
     DxTemplateModule,
     DxBulletModule,
     DxPopoverModule,
-    MatTabsModule,
+    CremTabsComponent,
+    CremTabItemComponent,
     IconModule
   ],
   templateUrl: './field-history.component.html',
@@ -30,6 +31,7 @@ export class FieldHistoryComponent{
   @Output() display = new EventEmitter<boolean>()
 
   @ViewChild('popoverTitle') popoverTitle: ElementRef<HTMLDivElement>;
+  activeTabIndex = 0;
 
   toggleVisible() {
     this.visible = !this.visible;
@@ -41,4 +43,9 @@ export class FieldHistoryComponent{
       }, 1000)
     }
   }
+
+  onTabChanged(e){
+    this.activeTabIndex = e;
+  }
+
 }

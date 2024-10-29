@@ -7,12 +7,13 @@ const routes: Routes = [
     path: '',
     component: ProjectTasksComponent,
     data: {
-      breadCrumb: { label: 'Project-Tasks', append: true, activeLink: 'Tasks' }
+      breadCrumb: { label: 'Project-Tasks', append: true, activeLink: 'Tasks' },
     },
-  }];
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ProjectTasksRoutingModule { }
+export class ProjectTasksRoutingModule {}

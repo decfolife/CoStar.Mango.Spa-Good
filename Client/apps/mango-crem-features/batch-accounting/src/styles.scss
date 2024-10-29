@@ -12,7 +12,7 @@ body {
 
 body {
   margin: 0;
-  font-family: "Helvetica, Arial", sans-serif;
+  font-family: 'Helvetica, Arial', sans-serif;
 }
 
 .divMainContent {
@@ -40,13 +40,12 @@ div.list-page {
     font-size: 14px;
     border-bottom: $stdBorder;
 
-    &>div {
+    & > div {
       display: flex;
       align-items: center;
       z-index: 500;
 
       &.controls-left {
-
         mat-form-field.mat-form-field,
         button.btn,
         dx-text-box,
@@ -65,7 +64,6 @@ div.list-page {
       }
 
       &.controls-right {
-
         mat-form-field.mat-form-field,
         button.btn,
         mat-button-toggle-group {
@@ -139,13 +137,12 @@ div.dynamic-form {
     border-bottom: $stdBorder;
     font-size: 14px;
 
-    &>div {
+    & > div {
       display: flex;
       align-items: center;
       z-index: 500;
 
       &.controls-left {
-
         mat-form-field.mat-form-field,
         button.btn {
           margin-right: $dblPadding;
@@ -162,7 +159,6 @@ div.dynamic-form {
       }
 
       &.controls-right {
-
         mat-form-field.mat-form-field,
         button.btn {
           margin-left: $dblPadding;

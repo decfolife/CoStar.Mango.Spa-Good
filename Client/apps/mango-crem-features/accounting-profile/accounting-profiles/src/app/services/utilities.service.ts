@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
 
 import {
-  addDays, addMonths, addYears,
-  subDays, subMonths, subYears,
-  getYear, getMonth, getDay,
+  addDays,
+  addMonths,
+  addYears,
+  subDays,
+  subMonths,
+  subYears,
+  getYear,
+  getMonth,
+  getDay,
 } from 'date-fns';
 
 @Injectable()
@@ -190,11 +196,13 @@ export class UtilitiesService {
         hasValue: false,
 
         calculateFilterExpression(_: any, field: any) {
-          return [[
-            (rowData: any) => getYear(new Date(rowData[field.dataField])),
-            '=',
-            getYear(subYears(new Date(), 1)),
-          ]];
+          return [
+            [
+              (rowData: any) => getYear(new Date(rowData[field.dataField])),
+              '=',
+              getYear(subYears(new Date(), 1)),
+            ],
+          ];
         },
       },
 
@@ -206,11 +214,13 @@ export class UtilitiesService {
         hasValue: false,
 
         calculateFilterExpression(_: any, field: any) {
-          return [[
-            (rowData: any) => getYear(new Date(rowData[field.dataField])),
-            '=',
-            getYear(new Date()),
-          ]];
+          return [
+            [
+              (rowData: any) => getYear(new Date(rowData[field.dataField])),
+              '=',
+              getYear(new Date()),
+            ],
+          ];
         },
       },
 
@@ -222,11 +232,13 @@ export class UtilitiesService {
         hasValue: false,
 
         calculateFilterExpression(_: any, field: any) {
-          return [[
-            (rowData: any) => getYear(new Date(rowData[field.dataField])),
-            '=',
-            getYear(addYears(new Date(), 1)),
-          ]];
+          return [
+            [
+              (rowData: any) => getYear(new Date(rowData[field.dataField])),
+              '=',
+              getYear(addYears(new Date(), 1)),
+            ],
+          ];
         },
       },
 
@@ -239,9 +251,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [
@@ -269,9 +279,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [
@@ -299,9 +307,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [
@@ -329,9 +335,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [
@@ -359,9 +363,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [
@@ -389,9 +391,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [
@@ -419,9 +419,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [
@@ -449,9 +447,7 @@ export class UtilitiesService {
 
         calculateFilterExpression(_: any, field: any) {
           return [
-            [
-              (rowData: any) => rowData[field.dataField] !== null,
-            ],
+            [(rowData: any) => rowData[field.dataField] !== null],
 
             'and',
             [

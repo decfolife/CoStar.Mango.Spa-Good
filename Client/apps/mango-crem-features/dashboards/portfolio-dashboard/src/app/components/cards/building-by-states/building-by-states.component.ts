@@ -1,15 +1,22 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { DxChartComponent } from 'devextreme-angular';
 import { CardDetails } from '../../../models';
 import { PortfolioDashboardService } from '../../../services/portfolio-dashboard.service';
 import { PortfolioDataService } from '../../../services/portfolio-data.service';
 import { Subscription } from 'rxjs';
 
-
 @Component({
   selector: 'building-by-state-card',
   templateUrl: './building-by-states.component.html',
-  styleUrls: ['./building-by-states.component.scss']
+  styleUrls: ['./building-by-states.component.scss'],
 })
 export class BuildingByStatesComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
@@ -20,36 +27,36 @@ export class BuildingByStatesComponent implements OnInit, OnDestroy {
   public isGridExpanded: boolean = false;
   public checked: boolean = true;
   public legendVisible: boolean = true;
-  @ViewChild("BuildingByStatesChart") chart: DxChartComponent;
-  subs: Subscription[] = []
+  @ViewChild('BuildingByStatesChart') chart: DxChartComponent;
+  subs: Subscription[] = [];
 
   constructor(
     private portfolioDashboardService: PortfolioDashboardService,
-    private portfolioDataService: PortfolioDataService,
-  ) {
-  }
+    private portfolioDataService: PortfolioDataService
+  ) {}
 
   ngOnInit(): void {
-
-    this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.portfolioDataService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
-
   getCardData() {
-    this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-      }
-    ));
+    this.subs.push(
+      this.portfolioDataService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+        })
+    );
   }
 
   exportAllChartData(e: any) {
     this.chart.instance.exportTo('BuildingByStatesChart', 'png');
   }
-
 
   customizeLabel(arg) {
     return `${arg.argumentText}:<br>${arg.valueText} (${arg.percentText})`;
@@ -59,8 +66,7 @@ export class BuildingByStatesComponent implements OnInit, OnDestroy {
     let label = point.getLabel();
     if (point.isHovered()) {
       label.show();
-    }
-    else {
+    } else {
       label.hide();
     }
   }
@@ -69,11 +75,10 @@ export class BuildingByStatesComponent implements OnInit, OnDestroy {
   }
   hideLabels(e: any) {
     let series = this.chart.instance.getSeriesByPos(0);
-    series.getAllPoints().forEach(itm => itm.getLabel().hide());
+    series.getAllPoints().forEach((itm) => itm.getLabel().hide());
   }
 
   toggleLegendChart(e: any) {
-
     this.checked = !this.checked;
   }
   onLegendClick(e) {
@@ -87,7 +92,6 @@ export class BuildingByStatesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
-
 }

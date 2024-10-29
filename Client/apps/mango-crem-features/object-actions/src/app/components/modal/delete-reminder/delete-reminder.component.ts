@@ -7,19 +7,18 @@ import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
   standalone: true,
   templateUrl: './delete-reminder.component.html',
   styleUrls: ['./delete-reminder.component.scss'],
-  imports: [
-  ModalModule]
+  imports: [ModalModule],
 })
 export class DeleteReminderComponent implements OnInit {
-  constructor(public dialogRef: MatDialogRef<DeleteReminderComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { }
+  constructor(
+    public dialogRef: MatDialogRef<DeleteReminderComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   yesDelete() {
-    this.close("Yes");
+    this.close('Yes');
   }
 
   public close(data: any) {

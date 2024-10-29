@@ -6,22 +6,29 @@ import { BookmarksComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/bookm
 @Component({
   selector: 'mango-bookmarks',
   templateUrl: './bookmarks.component.html',
-  styleUrls: ['./bookmarks.component.scss']
+  styleUrls: ['./bookmarks.component.scss'],
 })
 export class BookmarksAppComponent implements AfterViewInit {
-  @ViewChild('cremBookmark', { static: true }) cremBookmarkComponent: BookmarksComponent;
+  @ViewChild('cremBookmark', { static: true })
+  cremBookmarkComponent: BookmarksComponent;
 
   bookmarkGroups: BookmarkGroup[] = null;
 
-  constructor(private bookmarksService: BookmarksService) { }
+  constructor(private bookmarksService: BookmarksService) {}
 
   ngAfterViewInit(): void {
-     window.addEventListener("ToogleBookmarkDrawer", this.openCloseBookmarkDrawer.bind(this));
+    window.addEventListener(
+      'ToogleBookmarkDrawer',
+      this.openCloseBookmarkDrawer.bind(this)
+    );
   }
 
-   private openCloseBookmarkDrawer(){
-    if(!this.cremBookmarkComponent.recentDrawer.opened && this.bookmarkGroups === null) {
-      this.bookmarksService.createBookmarkList().subscribe(res => {
+  private openCloseBookmarkDrawer() {
+    if (
+      !this.cremBookmarkComponent.recentDrawer.opened &&
+      this.bookmarkGroups === null
+    ) {
+      this.bookmarksService.createBookmarkList().subscribe((res) => {
         this.bookmarkGroups = res;
       });
     }

@@ -1,3 +1,3 @@
 export interface AWSReport {
-    content: string;
-  }
+  content: string;
+}

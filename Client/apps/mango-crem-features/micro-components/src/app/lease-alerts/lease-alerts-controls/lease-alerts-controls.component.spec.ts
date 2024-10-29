@@ -8,9 +8,8 @@ describe('LeaseAlertsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LeaseAlertsControlsComponent ]
-    })
-    .compileComponents();
+      declarations: [LeaseAlertsControlsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -2,15 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReportsHomeComponent } from './reports-home.component';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { DropdownModule, ButtonModule, LoaderModule, IconModule } from '@mango/ui-shared/lib-ui-elements'
+import {
+  DropdownModule,
+  ButtonModule,
+  LoaderModule,
+  IconModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { MatIconModule } from '@angular/material/icon';
 import { DxDataGridModule } from 'devextreme-angular';
 import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
-  declarations: [
-    ReportsHomeComponent
-  ],
+  declarations: [ReportsHomeComponent],
   imports: [
     CommonModule,
     SearchModule,
@@ -20,8 +23,8 @@ import { MatMenuModule } from '@angular/material/menu';
     DxDataGridModule,
     MatMenuModule,
     LoaderModule,
-    IconModule
+    IconModule,
   ],
   exports: [ReportsHomeComponent],
 })
-export class ReportsHomeModule { }
+export class ReportsHomeModule {}

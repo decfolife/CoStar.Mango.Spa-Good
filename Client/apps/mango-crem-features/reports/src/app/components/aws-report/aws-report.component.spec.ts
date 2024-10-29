@@ -8,9 +8,8 @@ describe('AWSReportComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AWSReportComponent ]
-    })
-    .compileComponents();
+      declarations: [AWSReportComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

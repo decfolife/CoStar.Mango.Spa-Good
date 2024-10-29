@@ -1,46 +1,61 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
-import { Observable, of,  } from 'rxjs';
-import { AuthService, EndpointService, UtilitiesService } from '@mango/core-shared';
+import { Observable, of } from 'rxjs';
+import {
+  AuthService,
+  EndpointService,
+  UtilitiesService,
+} from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Api, CentralAuthHttpError } from '@mango/data-models/lib-data-models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ClientDeliveryService extends EndpointService {
-  authentication: string = UtilitiesService.getBaseApiUrl(Api.authentication)
+  authentication: string = UtilitiesService.getBaseApiUrl(Api.authentication);
   public isLoading = false;
   public isErrored = false;
   public requestHasBeenSent = false;
 
   constructor(
     private authService: AuthService,
-    protected http: HttpClient, @Optional() facade: MangoAppFacade)
-  {
+    protected http: HttpClient,
+    @Optional() facade: MangoAppFacade
+  ) {
     super(http, facade);
   }
 
-  updateServiceAccount(contactEmailAddress: string, contactID:number, contactActiveFlg: boolean): Observable<any> {    
+  updateServiceAccount(
+    contactEmailAddress: string,
+    contactID: number,
+    contactActiveFlg: boolean
+  ): Observable<any> {
     const url = `${this.authentication}serviceaccount`;
-    var reqbody = {"email": contactEmailAddress, "contactID": contactID, "isActive": contactActiveFlg };            
-    return this.callHttpPut(url, 'UpdateServiceAccount', reqbody)
+    var reqbody = {
+      email: contactEmailAddress,
+      contactID: contactID,
+      isActive: contactActiveFlg,
+    };
+    return this.callHttpPut(url, 'UpdateServiceAccount', reqbody);
   }
 
-  addServiceAccount(emailAddress: string): Observable<any> {  
-     var reqbody = {"email": emailAddress};
-     const url = `${this.authentication}serviceaccount`;
-     return this.callHttpPost(url, 'AddServiceAccount', reqbody)
+  addServiceAccount(emailAddress: string): Observable<any> {
+    var reqbody = { email: emailAddress };
+    const url = `${this.authentication}serviceaccount`;
+    return this.callHttpPost(url, 'AddServiceAccount', reqbody);
   }
 
   resetPassword(emailAddress: string): Observable<any> {
     // //TODO: Integrate API call
     // const url = `${environment.appUrls.clientDelivery}ResetPassword/${emailAddress}`;
     // return this.callHttpPost(url, 'ResetPassword', {emailAddress})
-    let cKey : string;    
-    this.clientKey$.subscribe(clientKey=>{ cKey = clientKey; });
+    let cKey: string;
+    this.facade.clientKey$.subscribe((clientKey) => {
+      cKey = clientKey;
+    });
 
-    const request = { email: emailAddress, clientKey:cKey };
+    const request = { email: emailAddress, clientKey: cKey };
 
     this.authService.forceExpirePassword(request).subscribe(
       () => this.sendRequestSuccess(),

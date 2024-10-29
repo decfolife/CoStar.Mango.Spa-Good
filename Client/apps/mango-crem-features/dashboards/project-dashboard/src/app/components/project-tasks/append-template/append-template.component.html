@@ -1,32 +1,42 @@
 <crem-modal
-  [modalTitle] = "modalTitle"
+  [modalTitle]="modalTitle"
   closeOrCancelButtonText="Cancel"
   primaryFooterButtonText="Save"
-  [closeIconVisible] = "true"
+  [closeIconVisible]="true"
   [closeDialogResult]="appendTemplateResult"
-  [modalId] = "modalId"
-	(primaryButtonAction)="saveAppendTemplate()"
+  [modalId]="modalId"
+  (primaryButtonAction)="saveAppendTemplate()"
 >
   <div modalContent id="appendTemplateModal-content">
-    <span class="apt-normaltext"> Select a task template to add additional tasks to the current project.</span>
+    <span class="apt-normaltext">
+      Select a task template to add additional tasks to the current
+      project.</span
+    >
     <div class="apt-main-modal-layout">
       <div class="apt-left-window-layout">
         <div class="apt-choose-task-template-group">
-          <h4 class="nameLabel label info" [ngClass]="projectTemplateFieldInvalid ? 'fieldInvalid' : ''"><span class="apt-nameLabel">Choose Task Template <span class="apt-required" aria-label="required">*</span></span>
+          <h4
+            class="nameLabel label info"
+            [ngClass]="projectTemplateFieldInvalid ? 'fieldInvalid' : ''"
+          >
+            <span class="apt-nameLabel"
+              >Choose Task Template
+              <span class="apt-required" aria-label="required">*</span></span
+            >
           </h4>
           <crem-dropdown
             #ProjectTemplateDropdown
             id="apt-selectProjectTemplateDropdownId"
-            dropDownContainerCustomClass='apt-choose-project-template-selectBox'
+            dropDownContainerCustomClass="apt-choose-project-template-selectBox"
             [dataSource]="projectTemplates"
             [placeholder]="'Select...'"
-            [showClearButton]='false'
-            [showColumnHeader]='false'
+            [showClearButton]="false"
+            [showColumnHeader]="false"
             [showDefaultValidationTooltip]="false"
             [required]="true"
-            displayExpr='projectTemplateName'
-            valueExpr='projectTemplateID'
-            [allowSearch]='true'
+            displayExpr="projectTemplateName"
+            valueExpr="projectTemplateID"
+            [allowSearch]="true"
             [useSelectBox]="true"
             (selectedItems)="onSelectedProjectTemplate($event)"
           >
@@ -43,15 +53,23 @@
           <span> Apply Team to Task</span>
         </div>
       </div>
-  
+
       <div class="apt-right-window-layout">
         <div class="apt-view-project-preview-button-group">
-          <h4 class="nameLabel label info"><span class="apt-nameLabel">Template Preview</span>
+          <h4 class="nameLabel label info">
+            <span class="apt-nameLabel">Template Preview</span>
           </h4>
-          <crem-button type="secondary" id="apt-view-project-preview-button" [disabled]="projectTemplateSelectedCheck()" (click)="showOrHideViewProjectPreview()">{{ previewVisible ? "Close Preview" : "Preview" }}</crem-button>
+          <crem-button
+            type="secondary"
+            id="apt-view-project-preview-button"
+            [disabled]="projectTemplateSelectedCheck()"
+            (click)="showOrHideViewProjectPreview()"
+            >{{ previewVisible ? 'Close Preview' : 'Preview' }}</crem-button
+          >
         </div>
         <div class="apt-transPreviewGrid-group" *ngIf="previewVisible">
-          <dx-data-grid id="apt-transPreviewGrid-id"
+          <dx-data-grid
+            id="apt-transPreviewGrid-id"
             [showColumnLines]="false"
             [showRowLines]="false"
             [showBorders]="false"
@@ -67,28 +85,57 @@
             [wordWrapEnabled]="true"
             (onContentReady)="adaAttrToGridTable($event)"
           >
-          <dxo-load-panel
-            [enabled]="true">
-          </dxo-load-panel>
-          <dxo-sorting mode="none"></dxo-sorting>
-    
-          <dxi-column dataField="projectTemplateMilestoneStepFull" caption="Step"></dxi-column>
-          <dxi-column dataField="projectTemplateMilestoneName" caption="Task Name" width="140"></dxi-column>
-          <dxi-column dataField="projectTemplateMilestoneDaysToStart" caption="DTS" alignment="center"></dxi-column>
-          <dxi-column dataField="projectTemplateMilestoneDaysToComplete" caption="Duration" alignment="center"></dxi-column>
-          <dxi-column dataField="projectTemplateMilestoneRequired" caption="Required" [cellTemplate]="'requiredTemplate'"></dxi-column>
-          <dxi-column dataField="isMileMark" caption="Milestone" [cellTemplate]="'milestoneTemplate'"></dxi-column>
-          <dxi-column dataField="isConcurrent" caption="Concurrent" [cellTemplate]="'concurrentTemplate'"></dxi-column>
-          <dxi-column dataField="predecessors" caption="Predecessor" alignment="center"></dxi-column>
-          <div *dxTemplate="let cell of 'requiredTemplate'">
-            <div> {{cell.value == true ? 'Yes' :'No'}} </div>		
-          </div>
-          <div *dxTemplate="let cell of 'milestoneTemplate'">
-            <div> {{cell.value == true ? 'Yes' :'No'}} </div>		
-          </div>
-          <div *dxTemplate="let cell of 'concurrentTemplate'">
-            <div> {{cell.value == true ? 'Yes' :'No'}} </div>		
-          </div>
+            <dxo-load-panel [enabled]="true"> </dxo-load-panel>
+            <dxo-sorting mode="none"></dxo-sorting>
+
+            <dxi-column
+              dataField="projectTemplateMilestoneStepFull"
+              caption="Step"
+            ></dxi-column>
+            <dxi-column
+              dataField="projectTemplateMilestoneName"
+              caption="Task Name"
+              width="140"
+            ></dxi-column>
+            <dxi-column
+              dataField="projectTemplateMilestoneDaysToStart"
+              caption="DTS"
+              alignment="center"
+            ></dxi-column>
+            <dxi-column
+              dataField="projectTemplateMilestoneDaysToComplete"
+              caption="Duration"
+              alignment="center"
+            ></dxi-column>
+            <dxi-column
+              dataField="projectTemplateMilestoneRequired"
+              caption="Required"
+              [cellTemplate]="'requiredTemplate'"
+            ></dxi-column>
+            <dxi-column
+              dataField="isMileMark"
+              caption="Milestone"
+              [cellTemplate]="'milestoneTemplate'"
+            ></dxi-column>
+            <dxi-column
+              dataField="isConcurrent"
+              caption="Concurrent"
+              [cellTemplate]="'concurrentTemplate'"
+            ></dxi-column>
+            <dxi-column
+              dataField="predecessors"
+              caption="Predecessor"
+              alignment="center"
+            ></dxi-column>
+            <div *dxTemplate="let cell of 'requiredTemplate'">
+              <div>{{ cell.value == true ? 'Yes' : 'No' }}</div>
+            </div>
+            <div *dxTemplate="let cell of 'milestoneTemplate'">
+              <div>{{ cell.value == true ? 'Yes' : 'No' }}</div>
+            </div>
+            <div *dxTemplate="let cell of 'concurrentTemplate'">
+              <div>{{ cell.value == true ? 'Yes' : 'No' }}</div>
+            </div>
           </dx-data-grid>
         </div>
       </div>

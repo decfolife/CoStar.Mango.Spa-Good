@@ -1,48 +1,110 @@
 <crem-loader *ngIf="!dataRetrieved"></crem-loader>
 <div id="leaseOptions" *ngIf="dataRetrieved">
-	<dx-data-grid #leaseOptionssGrid
-		[dataSource]="leaseOptions"
-		keyExpr="gridIndex"
-		[showBorders]="true"
-		[showColumnLines]="false"
-		[showRowLines]="false"
-		[rowAlternationEnabled]="true" 
-		[allowColumnResizing]="true"
-		[allowColumnReordering]="true"
-		(onRowClick)="detailRowClick($event)"
-		rowTemplate="optionTemplate"
-		>    
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-			<dxo-sorting mode="multiple"></dxo-sorting>
+  <dx-data-grid
+    #leaseOptionssGrid
+    [dataSource]="leaseOptions"
+    keyExpr="gridIndex"
+    [showBorders]="true"
+    [showColumnLines]="false"
+    [showRowLines]="false"
+    [rowAlternationEnabled]="true"
+    [allowColumnResizing]="true"
+    [allowColumnReordering]="true"
+    (onRowClick)="detailRowClick($event)"
+    rowTemplate="optionTemplate"
+  >
+    <dxo-header-filter
+      [visible]="true"
+      [allowSearch]="true"
+    ></dxo-header-filter>
+    <dxo-sorting mode="multiple"></dxo-sorting>
 
-			<dxi-column dataField="optionType" sortOrder="asc" [sortIndex]="0"></dxi-column>    
-			<dxi-column dataField="optionBeginDate" dataType="date"  caption="Begin" sortOrder="asc" [sortIndex]="1"></dxi-column>
-			<dxi-column dataField="optionEndDate" dataType="date" caption="End"></dxi-column>
-			<dxi-column dataField="optionStatus" caption="Status"></dxi-column>    
-			<dxi-column dataField="noticeBeginDate" dataType="date" caption="Notice Begin"></dxi-column>
-			<dxi-column dataField="noticeEndDate" dataType="date" caption="Notice End"></dxi-column>
-			<dxi-column dataField="reminderDate" dataType="date" caption="Reminder"></dxi-column>
-			<dxi-column dataField="actionTaken" caption="Action Taken"></dxi-column>    
-			<dxi-column dataField="actionDate" dataType="date" caption="Action Date"></dxi-column>
+    <dxi-column
+      dataField="optionType"
+      sortOrder="asc"
+      [sortIndex]="0"
+    ></dxi-column>
+    <dxi-column
+      dataField="optionBeginDate"
+      dataType="date"
+      caption="Begin"
+      sortOrder="asc"
+      [sortIndex]="1"
+    ></dxi-column>
+    <dxi-column
+      dataField="optionEndDate"
+      dataType="date"
+      caption="End"
+    ></dxi-column>
+    <dxi-column dataField="optionStatus" caption="Status"></dxi-column>
+    <dxi-column
+      dataField="noticeBeginDate"
+      dataType="date"
+      caption="Notice Begin"
+    ></dxi-column>
+    <dxi-column
+      dataField="noticeEndDate"
+      dataType="date"
+      caption="Notice End"
+    ></dxi-column>
+    <dxi-column
+      dataField="reminderDate"
+      dataType="date"
+      caption="Reminder"
+    ></dxi-column>
+    <dxi-column dataField="actionTaken" caption="Action Taken"></dxi-column>
+    <dxi-column
+      dataField="actionDate"
+      dataType="date"
+      caption="Action Date"
+    ></dxi-column>
 
-			<tbody class="dx-row" [ngClass]="{'dx-row-alt': option.rowIndex % 2}" *dxTemplate="let option of 'optionTemplate'" >
-					<tr class="main-row">    
-							<td>{{option.data.optionType}}</td>
-							<td>{{option.data.optionBeginDate | date: portfolioDataService.dateFormat }}</td>
-							<td>{{option.data.optionEndDate | date: portfolioDataService.dateFormat }}</td>
-							<td>{{option.data.optionStatus}}</td>
-							<td>{{option.data.noticeBeginDate | date: portfolioDataService.dateFormat}}</td>
-							<td>{{option.data.noticeEndDate | date: portfolioDataService.dateFormat}}</td>
-							<td>{{option.data.reminderDate | date: portfolioDataService.dateFormat}}</td>            
-							<td>{{option.data.actionTaken}}</td>
-							<td>{{option.data.actionDate | date: portfolioDataService.dateFormat}}</td>            
-					</tr>
-					<tr class="description-row">
-							<td colspan="9"><div><b>Description:  </b>{{option.data.optionDescription}}</div></td>
-					</tr>
-					<tr class="description-row">
-							<td colspan="9"><div><b>Action Note:  </b>{{option.data.actionNotes}}</div></td>
-					</tr>
-			</tbody>
-	</dx-data-grid>
-</div>	
+    <tbody
+      class="dx-row"
+      [ngClass]="{ 'dx-row-alt': option.rowIndex % 2 }"
+      *dxTemplate="let option of 'optionTemplate'"
+    >
+      <tr class="main-row">
+        <td>{{ option.data.optionType }}</td>
+        <td>
+          {{
+            option.data.optionBeginDate | date: portfolioDataService.dateFormat
+          }}
+        </td>
+        <td>
+          {{
+            option.data.optionEndDate | date: portfolioDataService.dateFormat
+          }}
+        </td>
+        <td>{{ option.data.optionStatus }}</td>
+        <td>
+          {{
+            option.data.noticeBeginDate | date: portfolioDataService.dateFormat
+          }}
+        </td>
+        <td>
+          {{
+            option.data.noticeEndDate | date: portfolioDataService.dateFormat
+          }}
+        </td>
+        <td>
+          {{ option.data.reminderDate | date: portfolioDataService.dateFormat }}
+        </td>
+        <td>{{ option.data.actionTaken }}</td>
+        <td>
+          {{ option.data.actionDate | date: portfolioDataService.dateFormat }}
+        </td>
+      </tr>
+      <tr class="description-row">
+        <td colspan="9">
+          <div><b>Description: </b>{{ option.data.optionDescription }}</div>
+        </td>
+      </tr>
+      <tr class="description-row">
+        <td colspan="9">
+          <div><b>Action Note: </b>{{ option.data.actionNotes }}</div>
+        </td>
+      </tr>
+    </tbody>
+  </dx-data-grid>
+</div>

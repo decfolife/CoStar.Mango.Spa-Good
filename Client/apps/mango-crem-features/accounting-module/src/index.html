@@ -1,51 +1,47 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
+  <head>
+    <base href="/" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+      body,
+      form {
+        height: 100%;
+        /*Height 100% or the outer box (divMainBox) will not expand */
+      }
+    </style>
+    <!-- Header Bar Ascx -->
+    <!-- Header Content -->
+  </head>
 
-<head>
-  <base href="/">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style type="text/css">
-    body, form {
-      height: 100%;
-      /*Height 100% or the outer box (divMainBox) will not expand */
-    }
-  </style>
-  <!-- Header Bar Ascx -->
-  <!-- Header Content -->
-</head>
+  <body>
+    <form id="form1" runat="server">
+      <!-- Begin ContentPlaceHolder1 -->
+      <div class="remWrapper h-100 overflow-hidden">
+        <div class="lmenuwrap topHeaderContainer">
+          <div id="pageTitle" class="topPageTitle">
+            <!-- Content Title -->
+          </div>
 
-<body>
-  <form id="form1" runat="server">
-    <!-- Begin ContentPlaceHolder1 -->
-    <div class="remWrapper h-100 overflow-hidden">
-      <div class="lmenuwrap topHeaderContainer">
-
-        <div id="pageTitle" class="topPageTitle">
-          <!-- Content Title -->
+          <div id="buttons" class="tdsButtons">
+            <!-- Content buttons -->
+          </div>
         </div>
-    
-        <div id="buttons" class="tdsButtons">
-          <!-- Content buttons -->
+
+        <div class="divMainContent" id="divMainContent">
+          <div class="divMainContentInner">
+            <!-- <mango-accounting-root page="" api=""></mango-accounting-root> -->
+            <mango-accounting-root
+              page=""
+              api="http://localhost:39187/api/"
+            ></mango-accounting-root>
+          </div>
         </div>
-    
       </div>
-    
-      <div class="divMainContent" id="divMainContent">
-            
-        <div class="divMainContentInner">
+    </form>
 
-          <!-- <mango-accounting-root page="" api=""></mango-accounting-root> -->
-          <mango-accounting-root page="" api="http://localhost:39187/api/"></mango-accounting-root>
-        </div>
-
-      </div>
-
-    </div>
-  </form>
-
-  <!-- <script type="text/javascript" src="/v06/Mango/Microcomponents/micro-components.js"></script> -->
-</body>
-
+    <!-- <script type="text/javascript" src="/v06/Mango/Microcomponents/micro-components.js"></script> -->
+  </body>
 </html>

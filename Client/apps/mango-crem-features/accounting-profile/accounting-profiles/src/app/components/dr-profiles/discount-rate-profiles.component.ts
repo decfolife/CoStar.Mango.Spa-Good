@@ -8,7 +8,11 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/prefer-default-export */
 import {
-  Component, OnInit, ViewChild, Input, ViewEncapsulation
+  Component,
+  OnInit,
+  ViewChild,
+  Input,
+  ViewEncapsulation,
 } from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
@@ -27,7 +31,7 @@ import { exportDataGrid } from 'devextreme/excel_exporter';
   selector: 'app-discount-rate-profiles',
   templateUrl: './discount-rate-profiles.component.html',
   styleUrls: ['./discount-rate-profiles.component.scss'],
-  encapsulation: ViewEncapsulation.Emulated
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class DiscountRateProfilesComponent implements OnInit {
   filterBuilderVisible = false;
@@ -36,7 +40,10 @@ export class DiscountRateProfilesComponent implements OnInit {
   masterGroupID: number;
   profiles: DiscountRateProfile[];
   searchText: string = null;
-  annualRateTypes = [{ Id: 1, Name: 'APR' }, { Id: 2, Name: 'APY' }];
+  annualRateTypes = [
+    { Id: 1, Name: 'APR' },
+    { Id: 2, Name: 'APY' },
+  ];
   customOperations: any[];
   loadingVisible = true;
   displayContent = false;
@@ -50,11 +57,13 @@ export class DiscountRateProfilesComponent implements OnInit {
   faPlus = faPlus;
   faCaretDown = faCaretDown;
 
-  constructor(public service: DiscountRateService,
+  constructor(
+    public service: DiscountRateService,
     private portfolioService: PortfolioDropdownService,
     private baseService: BaseService,
     public activeRoute: ActivatedRoute,
-    public router: Router) {
+    public router: Router
+  ) {
     this.customOperations = UtilitiesService.getCustomFilterOperation();
     const isEuroElement = document.getElementById('IsEuroDateFormat');
 
@@ -62,48 +71,56 @@ export class DiscountRateProfilesComponent implements OnInit {
       return;
     }
 
-    this.service.isEuroDateFormat = isEuroElement.innerHTML.toLowerCase() === 'true';
+    this.service.isEuroDateFormat =
+      isEuroElement.innerHTML.toLowerCase() === 'true';
   }
 
   ngOnInit(): void {
-    this.baseService.HasUserModuleRight().subscribe(response => {
-        this.hasModuleRights = response;
-        if (this.hasModuleRights) {
-          this.baseService.getUserRights().subscribe((result) => {
-            this.service.userRights = Number(result);
+    this.baseService.HasUserModuleRight().subscribe((response) => {
+      this.hasModuleRights = response;
+      if (this.hasModuleRights) {
+        this.baseService.getUserRights().subscribe((result) => {
+          this.service.userRights = Number(result);
+        });
+
+        this.activeRoute.paramMap.subscribe((params) => {
+          this.masterGroupID = +params.get('masterGroupId');
+        });
+
+        if (
+          this.portfolioService.portfolios === undefined ||
+          this.portfolioService.portfolios.length === 0
+        ) {
+          this.portfolioService.getPortfolios().subscribe((result) => {
+            this.portfolioService.portfolios = result.data;
+            if (
+              this.portfolioService.selectedPortfolio === undefined ||
+              this.portfolioService.selectedPortfolio === null
+            ) {
+              const filter = this.portfolioService.portfolios.filter(
+                (obj) =>
+                  obj.masterGroupID ===
+                  this.portfolioService.selectedPortfolioId
+              );
+
+              this.portfolioService.selectedPortfolioId = this.masterGroupID;
+              this.portfolioService.selectedPortfolio = filter[0];
+            }
           });
-      
-          this.activeRoute.paramMap.subscribe((params) => {
-            this.masterGroupID = +params.get('masterGroupId');
-          });
-      
-          if (this.portfolioService.portfolios === undefined
-              || this.portfolioService.portfolios.length === 0) {
-            this.portfolioService.getPortfolios().subscribe((result) => {
-              this.portfolioService.portfolios = result.data;
-              if (this.portfolioService.selectedPortfolio === undefined
-                  || this.portfolioService.selectedPortfolio === null) {
-                const filter = this.portfolioService.portfolios.filter(
-                  (obj) => obj.masterGroupID === this.portfolioService.selectedPortfolioId
-                );
-      
-                this.portfolioService.selectedPortfolioId = this.masterGroupID;
-                this.portfolioService.selectedPortfolio = filter[0];
-              }
-            });
-          }
-      
-          if (this.service.isEuroDateFormat) {
-            this.dateFormat = 'dd.MM.yyyy';
-            this.dateTimeFormat = 'dd.MM.yyyy HH:mm';
-          }
         }
+
+        if (this.service.isEuroDateFormat) {
+          this.dateFormat = 'dd.MM.yyyy';
+          this.dateTimeFormat = 'dd.MM.yyyy HH:mm';
+        }
+      }
     });
   }
 
   populateDiscountRateProfiles(masterGroupID: number): void {
     this.loadingVisible = true;
-    this.service.getDiscountRateProfiles(masterGroupID ?? this.masterGroupID)
+    this.service
+      .getDiscountRateProfiles(masterGroupID ?? this.masterGroupID)
       .subscribe((result) => {
         this.profiles = result.data;
         this.loadingVisible = false;
@@ -112,7 +129,14 @@ export class DiscountRateProfilesComponent implements OnInit {
   }
 
   navigateToObject(e): void {
-    this.router.navigate(['discountrateprofiles/edit', this.portfolioService.selectedPortfolioId, e.key], { relativeTo: this.activeRoute.parent, queryParamsHandling: 'merge' });
+    this.router.navigate(
+      [
+        'discountrateprofiles/edit',
+        this.portfolioService.selectedPortfolioId,
+        e.key,
+      ],
+      { relativeTo: this.activeRoute.parent, queryParamsHandling: 'merge' }
+    );
   }
 
   searchDataGrid(data): void {
@@ -132,18 +156,20 @@ export class DiscountRateProfilesComponent implements OnInit {
           if (this.checkForInclusiveFilter(filters, isSearchByText) === 1) {
             this.appliedFilterCount = 1;
           } else {
-            this.appliedFilterCount = Math.floor((filters[2].length / 2)) + 1;
+            this.appliedFilterCount = Math.floor(filters[2].length / 2) + 1;
           }
-        } else if (this.checkForInclusiveFilter(filters, isSearchByText) === 1) {
+        } else if (
+          this.checkForInclusiveFilter(filters, isSearchByText) === 1
+        ) {
           this.appliedFilterCount = 1;
         } else {
-          this.appliedFilterCount = Math.floor((filters[2].length / 2)) + 1;
+          this.appliedFilterCount = Math.floor(filters[2].length / 2) + 1;
         }
       } else if (Array.isArray(filters[0])) {
         if (this.checkForInclusiveFilter(filters, isSearchByText) === 1) {
           this.appliedFilterCount = 1;
         } else {
-          this.appliedFilterCount = Math.floor((filters.length / 2)) + 1;
+          this.appliedFilterCount = Math.floor(filters.length / 2) + 1;
         }
       } else {
         this.appliedFilterCount = 1;
@@ -217,7 +243,10 @@ export class DiscountRateProfilesComponent implements OnInit {
       worksheet: worksheet,
     }).then(() => {
       workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
-        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CoStar_DiscountRateProfiles.xlsx');
+        saveAs(
+          new Blob([buffer], { type: 'application/octet-stream' }),
+          'CoStar_DiscountRateProfiles.xlsx'
+        );
       });
     });
   }
@@ -227,7 +256,10 @@ export class DiscountRateProfilesComponent implements OnInit {
   }
 
   public addDiscountRateProfile(e) {
-    this.router.navigate(['discountrateprofiles/add', this.portfolioService.selectedPortfolioId], { relativeTo: this.activeRoute.parent, queryParamsHandling: 'merge' });
+    this.router.navigate(
+      ['discountrateprofiles/add', this.portfolioService.selectedPortfolioId],
+      { relativeTo: this.activeRoute.parent, queryParamsHandling: 'merge' }
+    );
   }
 
   public toggleArchiveFilter(e: MatSlideToggleChange): void {

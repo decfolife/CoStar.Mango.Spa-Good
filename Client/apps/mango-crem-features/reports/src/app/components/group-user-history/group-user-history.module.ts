@@ -5,7 +5,16 @@ import { SharedModule } from '../../shared/shared.module';
 import { GroupUserHistoryComponent } from './group-user-history.component';
 import { GroupUserHistoryService } from './group-user-history.service';
 import { UserPreferencesResolver } from '../../shared/resolvers/user-preferences-resolver.service';
-import { DxDataGridModule, DxDropDownBoxModule, DxDateBoxModule, DxFormModule, DxTabPanelModule, DxLoadPanelModule, DxPopupModule, DxValidatorModule } from 'devextreme-angular';
+import {
+  DxDataGridModule,
+  DxDropDownBoxModule,
+  DxDateBoxModule,
+  DxFormModule,
+  DxTabPanelModule,
+  DxLoadPanelModule,
+  DxPopupModule,
+  DxValidatorModule,
+} from 'devextreme-angular';
 import { ButtonModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import { GroupUserNavigationRightsService } from '../group-user-navigation-rights/group-user-navigation-rights.service';
@@ -13,9 +22,7 @@ import { UserListResolver } from '../../shared/resolvers/user-list-resolver.serv
 import { GroupListResolver } from '../../shared/resolvers/group-list-resolver.service';
 
 @NgModule({
-  declarations: [
-    GroupUserHistoryComponent
-  ],
+  declarations: [GroupUserHistoryComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -35,15 +42,19 @@ import { GroupListResolver } from '../../shared/resolvers/group-list-resolver.se
         path: '',
         data: { pageTitle: 'Group and User History' },
         component: GroupUserHistoryComponent,
-        resolve: {  userList: UserListResolver, groupList: GroupListResolver, userPreferences: UserPreferencesResolver }
-      }
-    ])
+        resolve: {
+          userList: UserListResolver,
+          groupList: GroupListResolver,
+          userPreferences: UserPreferencesResolver,
+        },
+      },
+    ]),
   ],
   exports: [RouterModule],
   providers: [
     DatePipe,
     GroupUserHistoryService,
     GroupUserNavigationRightsService,
-  ]
+  ],
 })
-export class GroupUserHistoryModule { }
+export class GroupUserHistoryModule {}

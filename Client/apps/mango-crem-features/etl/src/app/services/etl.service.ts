@@ -179,16 +179,16 @@ export class ETLService extends EndpointService {
     httpOptionsParams?: any,
     options?: { responseType: 'blob' }
   ): Observable<Blob> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpOptions) => {
-        if (httpOptionsParams) {
-          httpOptions.params = httpOptionsParams;
-        }
-        if (options) {
-          httpOptions = { ...httpOptions, ...options };
-        }
-        return this.http.get(url, httpOptions);
-      }),
+    var httpOptions = this.getHttpHeaders();
+    if (httpOptionsParams) {
+      httpOptions.params = httpOptionsParams;
+    }
+    if (options) {
+      httpOptions = { ...httpOptions, ...options };
+    }
+
+    return this.http.get(url, httpOptions).pipe(
+      map((x) => x),
       catchError(this.handleErrorReturnMessage(functionName))
     );
   }

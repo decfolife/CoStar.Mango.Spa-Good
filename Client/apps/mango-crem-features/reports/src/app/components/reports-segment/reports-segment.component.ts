@@ -10,20 +10,18 @@ import { Workbook, ValueType } from 'exceljs';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { saveAs } from 'file-saver-es';
 
-
 @Component({
   selector: 'reports-segment',
   templateUrl: './reports-segment.component.html',
-  styleUrls: ['./reports-segment.component.scss']
+  styleUrls: ['./reports-segment.component.scss'],
 })
 export class ReportsSegmentComponent implements OnInit {
-
   public showFavorites: boolean = false;
-  public searchText: string = "";
+  public searchText: string = '';
   public segmentData: any = [];
   public segmentFilteredData: any = [];
   public columns: any = [];
-  public dateFormat: string = "MM/dd/yyyy HH:mm:ss";
+  public dateFormat: string = 'MM/dd/yyyy HH:mm:ss';
   public loading: boolean = true;
   public hasSegmentsAddRight: boolean = false;
   public hasSegmentsViewRight: boolean = false;
@@ -31,26 +29,26 @@ export class ReportsSegmentComponent implements OnInit {
   public showActiveSegments: boolean = true;
   public showArchivedSegments: boolean = false;
   public showAllSegments: boolean = false;
-  public currentDataFilter: string = "Active";
+  public currentDataFilter: string = 'Active';
   public segmentsToggleTooltipVisible: boolean = false;
-  public segmentToggleTooltipText: string = "Showing only active segments";
+  public segmentToggleTooltipText: string = 'Showing only active segments';
 
-  @ViewChild("SegmentsDataGrid") segmentDataGrid: DxDataGridComponent;
+  @ViewChild('SegmentsDataGrid') segmentDataGrid: DxDataGridComponent;
   @ViewChild('SearchBox') searchBox: SearchComponent;
 
   constructor(
-		private reportsService: ReportsService,
+    private reportsService: ReportsService,
     private dialog: MatDialog
-	) { }
+  ) {}
 
   ngOnInit(): void {
     this.reportsService.getUserPreferences().subscribe((result) => {
       if (result?.data?.isDatesEU) {
-        this.dateFormat = "dd.MM.yyyy HH:mm:ss"
+        this.dateFormat = 'dd.MM.yyyy HH:mm:ss';
       }
       this.getSegments();
       this.setSegmentColumns();
-    })
+    });
 
     this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
       if (result.data) {
@@ -58,89 +56,82 @@ export class ReportsSegmentComponent implements OnInit {
         this.hasSegmentsAddRight = result.data.securityTypeID >= 3;
         this.hasSegmentsViewRight = result.data.securityTypeID >= 2;
       }
-
-    })
+    });
   }
 
   public onCellClicked(item): void {
+    if (item.data.activeRecordsVisibleToMe === true) return;
 
-    if(item.data.activeRecordsVisibleToMe === true) return;
+    if (item.column === undefined) return;
 
-    if(item.column === undefined) return;
-
-    if (item.column.caption !== "Actions" && item !==undefined) {
+    if (item.column.caption !== 'Actions' && item !== undefined) {
       this.edit(item);
     }
   }
-  
-  onCellPrepared(item: any): void{
-    if(item.data.activeRecordsVisibleToMe === true){
-      item.cellElement.title = "This segment is automatically generated and includes all records accessible to you.";
+
+  onCellPrepared(item: any): void {
+    if (item.data.activeRecordsVisibleToMe === true) {
+      item.cellElement.title =
+        'This segment is automatically generated and includes all records accessible to you.';
     }
   }
 
   public setSegmentColumns() {
     this.columns = [
-      {	dataField: "name",
-				dataType: "string",
-				caption: "Segment Name",
-			},
-      {	dataField: "segmentID",
-				alignment: "left",
-				dataType: "number",
-				caption: "Segment ID",
-			},
-			{	dataField: "criteriaSetName",
-				dataType: "string",
-				caption: "Criteria Set",
-			},
+      { dataField: 'name', dataType: 'string', caption: 'Segment Name' },
       {
-        dataField: "criteriaSetID",
-        dataType: "number",
-        alignment: "left",
-        caption: "Criteria Set ID",
-        visible: false
+        dataField: 'segmentID',
+        alignment: 'left',
+        dataType: 'number',
+        caption: 'Segment ID',
       },
-      {	dataField: "shared",
-        caption: "Shared",
-				dataType: "string"
-			},
-      {	dataField: "created",
-        caption: "Created",
-				dataType: "date",
-        format: this.dateFormat
-			},
-      {	dataField: "createdBy",
-        caption: "Created By",
-				dataType: "string"
-			},
-      {	dataField: "lastModified",
-        caption: "Modified",
-				dataType: "date",
-        format: this.dateFormat
-			},
-      {	dataField: "lastModifiedBy",
-        caption: "Modified By",
-				dataType: "string"
-			},
-      {	dataField: "rights",
-        caption: "Rights ",
-				dataType: "string"
-			},
-		];
+      {
+        dataField: 'criteriaSetName',
+        dataType: 'string',
+        caption: 'Criteria Set',
+      },
+      {
+        dataField: 'criteriaSetID',
+        dataType: 'number',
+        alignment: 'left',
+        caption: 'Criteria Set ID',
+        visible: false,
+      },
+      { dataField: 'shared', caption: 'Shared', dataType: 'string' },
+      {
+        dataField: 'created',
+        caption: 'Created',
+        dataType: 'date',
+        format: this.dateFormat,
+      },
+      { dataField: 'createdBy', caption: 'Created By', dataType: 'string' },
+      {
+        dataField: 'lastModified',
+        caption: 'Modified',
+        dataType: 'date',
+        format: this.dateFormat,
+      },
+      {
+        dataField: 'lastModifiedBy',
+        caption: 'Modified By',
+        dataType: 'string',
+      },
+      { dataField: 'rights', caption: 'Rights ', dataType: 'string' },
+    ];
   }
 
   public segmentsToggleChanged(event) {
     this.currentDataFilter = event.value;
     switch (event.value) {
-      case "Active":
-        this.segmentToggleTooltipText = "Showing only active segments";
+      case 'Active':
+        this.segmentToggleTooltipText = 'Showing only active segments';
         break;
-      case "Archived":
-        this.segmentToggleTooltipText = "Showing only archived segments";
+      case 'Archived':
+        this.segmentToggleTooltipText = 'Showing only archived segments';
         break;
-      case "All":
-        this.segmentToggleTooltipText = "Showing both active and archived segments";
+      case 'All':
+        this.segmentToggleTooltipText =
+          'Showing both active and archived segments';
         break;
       default:
         break;
@@ -152,7 +143,7 @@ export class ReportsSegmentComponent implements OnInit {
     e.stopPropagation();
     this.segmentDataGrid.instance.clearFilter();
     this.segmentDataGrid.instance.clearSorting();
-    this.searchText = "";
+    this.searchText = '';
     this.searchBox.handleClear();
   }
 
@@ -169,24 +160,23 @@ export class ReportsSegmentComponent implements OnInit {
         maxHeight: LargeModal.MaxHeight,
         disableClose: true,
         data: {
-          openReportAction: "edit",
+          openReportAction: 'edit',
           segmentID: data.data.segmentID,
           criteriaSetID: data.data.criteriaSetID,
           portfolioID: data.data.portfolioID,
           name: data.data.name,
           archived: !data.data.active,
           hideToastsOn: 'Accounting Workflow and Alerts',
-        }
+        },
       });
 
       dialogRef.afterClosed().subscribe((data) => {
-        if (data === "refresh") {
+        if (data === 'refresh') {
           this.getSegments();
         } else if (data) {
-          this.redirectDialog(data)
+          this.redirectDialog(data);
         }
       });
-
     }
   }
 
@@ -202,15 +192,15 @@ export class ReportsSegmentComponent implements OnInit {
         criteriaSetID: data.data.criteriaSetID,
         portfolioID: data.data.portfolioID,
         redirectData: {
-          source: "editsegment",
-          segmentName: data.data.name
+          source: 'editsegment',
+          segmentName: data.data.name,
         },
-        openReportAction: "copy",
+        openReportAction: 'copy',
         archived: !data.data.active,
-      }
+      },
     });
     dialogRef.afterClosed().subscribe((data) => {
-      if (data === "refresh") {
+      if (data === 'refresh') {
         this.getSegments();
       } else if (data) {
         this.redirectDialog(data);
@@ -220,7 +210,7 @@ export class ReportsSegmentComponent implements OnInit {
 
   public archiveAction(data) {
     this.loading = true;
-    let request = { "SegmentID": data.data.segmentID }
+    let request = { SegmentID: data.data.segmentID };
     if (data.data.active) {
       this.reportsService.archiveSegment(request).subscribe((result) => {
         if (result) {
@@ -229,15 +219,19 @@ export class ReportsSegmentComponent implements OnInit {
             message: 'Segment archived successfully.',
             type: 'success',
             displayTime: 5000,
-            position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+            position: {
+              my: 'bottom right',
+              at: 'bottom right',
+              offset: '-16 -16',
+            },
             maxWidth: '500px',
             closeOnClick: true,
-        })
+          });
         } else {
           //error
           this.loading = false;
         }
-      })
+      });
     } else {
       this.reportsService.unarchiveSegment(request).subscribe((result) => {
         if (result) {
@@ -246,22 +240,26 @@ export class ReportsSegmentComponent implements OnInit {
             message: 'Segment unarchived successfully.',
             type: 'success',
             displayTime: 5000,
-            position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+            position: {
+              my: 'bottom right',
+              at: 'bottom right',
+              offset: '-16 -16',
+            },
             maxWidth: '500px',
             closeOnClick: true,
-        })
+          });
         } else {
           //error
           this.loading = false;
         }
-      })
+      });
     }
   }
 
   public redirectDialog(config: any) {
-    const redirectRef = this.dialog.open(CreateSegmentComponent, config)
+    const redirectRef = this.dialog.open(CreateSegmentComponent, config);
     redirectRef.afterClosed().subscribe((data) => {
-      if (data === "refresh") {
+      if (data === 'refresh') {
         this.getSegments();
       } else if (data) {
         this.redirectDialog(config);
@@ -282,36 +280,40 @@ export class ReportsSegmentComponent implements OnInit {
     const workbook = new Workbook();
     exportDataGrid({
       component: this.segmentDataGrid.instance,
-      worksheet: workbook.addWorksheet('Segments List Page')
-    }).then(function() {
+      worksheet: workbook.addWorksheet('Segments List Page'),
+    }).then(function () {
       workbook.worksheets[0].columns.forEach((column) => {
         let maxLength = 0;
-        column["eachCell"]({ includeEmpty: true }, (cell) => {
-          const columnLength = cell.value ? cell.value.toString().length + 3 : 10;
+        column['eachCell']({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value
+            ? cell.value.toString().length + 3
+            : 10;
           if (cell.type === ValueType.Date) {
-              maxLength = 20;
-          }
-          else if (columnLength > maxLength) {
-              maxLength = columnLength + 3;
+            maxLength = 20;
+          } else if (columnLength > maxLength) {
+            maxLength = columnLength + 3;
           }
         });
         column.width = maxLength < 10 ? 10 : maxLength;
       });
-      workbook.xlsx.writeBuffer().then(function(buffer: BlobPart) {
-        saveAs(new Blob([buffer], { type:'application/octet-stream'}), 'CoStar_SegmentsListPage.xlsx')
+      workbook.xlsx.writeBuffer().then(function (buffer: BlobPart) {
+        saveAs(
+          new Blob([buffer], { type: 'application/octet-stream' }),
+          'CoStar_SegmentsListPage.xlsx'
+        );
       });
     });
   }
 
   public filterData() {
-    if (this.currentDataFilter === "Active") {
+    if (this.currentDataFilter === 'Active') {
       this.segmentFilteredData = this.segmentData.filter((item) => {
         return item.active === true;
-      })
-    } else if (this.currentDataFilter === "Archived") {
+      });
+    } else if (this.currentDataFilter === 'Archived') {
       this.segmentFilteredData = this.segmentData.filter((item) => {
         return item.active === false;
-      })
+      });
     } else {
       this.segmentFilteredData = this.segmentData;
     }
@@ -319,8 +321,8 @@ export class ReportsSegmentComponent implements OnInit {
 
   public searchDataGrid(data) {
     this.searchText = data;
-		this.segmentDataGrid.instance.searchByText(data);
-	}
+    this.segmentDataGrid.instance.searchByText(data);
+  }
 
   public createSegment() {
     if (this.hasSegmentsAddRight) {
@@ -331,12 +333,12 @@ export class ReportsSegmentComponent implements OnInit {
         maxHeight: LargeModal.MaxHeight,
         disableClose: true,
         data: {
-          archived: false
-        }
+          archived: false,
+        },
       });
 
       dialogRef.afterClosed().subscribe((data) => {
-        if (data === "refresh") {
+        if (data === 'refresh') {
           this.getSegments();
         } else if (data) {
           this.redirectDialog(data);
@@ -356,7 +358,7 @@ export class ReportsSegmentComponent implements OnInit {
           default:
             return 'You have Edit rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.';
         }
-      
+
       case 'copy':
         if (activeRecordsVisibleToMe) {
           return 'This segment is automatically generated and cannot be copied.';
@@ -365,7 +367,7 @@ export class ReportsSegmentComponent implements OnInit {
         } else {
           return 'This segment can be copied.';
         }
-      
+
       default:
         return '';
     }

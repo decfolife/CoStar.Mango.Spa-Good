@@ -8,9 +8,8 @@ describe('AmortizationDetailSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AmortizationDetailSectionComponent ]
-    })
-    .compileComponents();
+      declarations: [AmortizationDetailSectionComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AmortizationDetailSectionComponent);
     component = fixture.componentInstance;

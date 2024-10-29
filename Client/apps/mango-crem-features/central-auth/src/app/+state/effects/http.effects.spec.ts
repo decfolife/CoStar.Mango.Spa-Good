@@ -1,6 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { SettingsService, StorageService, UserService } from '@mango/core-shared';
+import {
+  SettingsService,
+  StorageService,
+  UserService,
+} from '@mango/core-shared';
 import { Environment } from '@mango/data-models/lib-data-models';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
@@ -17,7 +21,7 @@ describe('Http Effects', () => {
   let centralAuthFacade: CentralAuthFacade;
   let settingsService: SettingsService;
   let actions$ = new Observable<Action>();
-  const initialState = {}
+  const initialState = {};
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -30,8 +34,8 @@ describe('Http Effects', () => {
         StorageService,
         provideMockActions(() => actions$),
         provideMockStore({ initialState }),
-        { provide: Environment, useValue: environment }
-      ]
+        { provide: Environment, useValue: environment },
+      ],
     });
     userService = TestBed.inject(UserService);
     centralAuthFacade = TestBed.inject(CentralAuthFacade);
@@ -44,27 +48,33 @@ describe('Http Effects', () => {
   });
 
   describe('when GET_CLIENT_SSO_SETTINGS action is dispatched', () => {
-    const mockClientSSOSettingsResponse = { forceSSO: true, isSSOEnabled: true, ssoUri: 'https://client-sso-url.com' }
+    const mockClientSSOSettingsResponse = {
+      forceSSO: true,
+      isSSOEnabled: true,
+      ssoUri: 'https://client-sso-url.com',
+    };
     beforeEach(() => {
-      actions$ = of(AppActions.getClientSSOSettings({ clientKey: 'blank' }))
-      jest.spyOn(settingsService, 'getClientSsoSettings').mockReturnValue(of(mockClientSSOSettingsResponse))
+      actions$ = of(AppActions.getClientSSOSettings({ clientKey: 'blank' }));
+      jest
+        .spyOn(settingsService, 'getClientSsoSettings')
+        .mockReturnValue(of(mockClientSSOSettingsResponse));
     });
 
-    it('it should call getClientSsoSettings', done => {
-      httpEffects.getClientSSSOSettings$.subscribe(_ => {
-        expect(settingsService.getClientSsoSettings).toBeCalledTimes(1)
-        done()
-      })
-    })
+    it('it should call getClientSsoSettings', (done) => {
+      httpEffects.getClientSSSOSettings$.subscribe((_) => {
+        expect(settingsService.getClientSsoSettings).toBeCalledTimes(1);
+        done();
+      });
+    });
 
-    it('it should dispatch getClientSSOSettingsSuccess', done => {
-      httpEffects.getClientSSSOSettings$.subscribe(action => {
+    it('it should dispatch getClientSSOSettingsSuccess', (done) => {
+      httpEffects.getClientSSSOSettings$.subscribe((action) => {
         expect(action).toEqual({
           type: AppActions.GET_CLIENT_SSO_SETTINGS_SUCCESS,
-          ssoSettings: mockClientSSOSettingsResponse
-        })
-        done()
-      })
-    })
-  })
-})
+          ssoSettings: mockClientSSOSettingsResponse,
+        });
+        done();
+      });
+    });
+  });
+});

@@ -1,5 +1,20 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
-import { MemberInfo, TeamKeys, TeamMemUpdate, TeamMember } from '@mango/data-models/lib-data-models';
+import {
+  Component,
+  OnInit,
+  Input,
+  ViewChild,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  MemberInfo,
+  TeamKeys,
+  TeamMemUpdate,
+  TeamMember,
+} from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import CheckBox from 'devextreme/ui/check_box';
@@ -13,198 +28,273 @@ import dxSelectBox from 'devextreme/ui/select_box';
 @Component({
   selector: 'team-members',
   templateUrl: './team-members.component.html',
-  styleUrls: ['./team-members.component.scss']
+  styleUrls: ['./team-members.component.scss'],
 })
 export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
-
-	@Input() teamMembers : TeamMember[];
-	@Input() searchText: string;
-	@Input() rights: string;
-	@Input() userModuleAddRights: boolean;
-	@Input() projectsPrivateSetting: boolean;
-	@Input() memberInfo: MemberInfo; 
-	@Input() teamMemberCount: number;
-	@Output() selectedMembersEvent: EventEmitter<any> = new EventEmitter();
-	@Output() unSelectedMembersEvent: EventEmitter<any> = new EventEmitter();
-	@Output() selectedTeamandMembersEvent: EventEmitter<any> = new EventEmitter();
-	@Output() getLatestTeamsDataEvent: EventEmitter<any> = new EventEmitter();
+  @Input() teamMembers: TeamMember[];
+  @Input() searchText: string;
+  @Input() rights: string;
+  @Input() userModuleAddRights: boolean;
+  @Input() projectsPrivateSetting: boolean;
+  @Input() memberInfo: MemberInfo;
+  @Input() teamMemberCount: number;
+  @Output() selectedMembersEvent: EventEmitter<any> = new EventEmitter();
+  @Output() unSelectedMembersEvent: EventEmitter<any> = new EventEmitter();
+  @Output() selectedTeamandMembersEvent: EventEmitter<any> = new EventEmitter();
+  @Output() getLatestTeamsDataEvent: EventEmitter<any> = new EventEmitter();
+  @Output() saveCompleted: EventEmitter<{ memberId: number; teamId: number }> =
+    new EventEmitter();
   @Output() subGridEditClickedEvent: EventEmitter<any> = new EventEmitter();
 
-	public dataRetrieved: boolean = false;
-	memberIds: number[];
-	memberUpdate: TeamMemUpdate;
-	emailNotify: boolean;
-	shareValue: boolean;
-	accessLevelValue: string;
-	memberId : number;
-	showShareColumn = false;
-	selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
-	subs: Subscription[] = [];
-	teamMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
+  public dataRetrieved: boolean = false;
+  memberIds: number[];
+  memberUpdate: TeamMemUpdate;
+  emailNotify: boolean;
+  shareValue: boolean;
+  accessLevelValue: number;
+  memberId: number;
+  showShareColumn = false;
+  selectedTeamandMembersData: TeamKeys = <TeamKeys>{};
+  subs: Subscription[] = [];
+  teamMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
 														Please consider replacing this team member or updating their User record.`;
 
-	@ViewChild("TeamMembersGrid") teamMembersGrid: DxDataGridComponent;
-  @ViewChild("teamActionsMenuTrigger") actionsMenuTrigger: MatMenuTrigger;
+  @ViewChild('TeamMembersGrid') teamMembersGrid: DxDataGridComponent;
+  @ViewChild('teamActionsMenuTrigger') actionsMenuTrigger: MatMenuTrigger;
 
-	constructor(private dashboardService: DashboardService,
-							public toastr: ToastrService,
-							private dialogService: MangoDialogService) {}	
+  constructor(
+    private dashboardService: DashboardService,
+    public toastr: ToastrService,
+    private dialogService: MangoDialogService
+  ) {}
 
-	ngOnInit() {}
+  ngOnInit() {}
 
-	ngOnChanges(changes: SimpleChanges): void {
-		if(!!changes.projectsPrivateSetting && changes.projectsPrivateSetting.currentValue > 0) {
-			this.showShareColumn = changes.projectsPrivateSetting.currentValue <= 2;
-		}		
-	}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      !!changes.projectsPrivateSetting &&
+      changes.projectsPrivateSetting.currentValue > 0
+    ) {
+      this.showShareColumn = changes.projectsPrivateSetting.currentValue <= 2;
+    }
+  }
 
-	matMenuButtonKeyDown(e) {
+  matMenuButtonKeyDown(e) {
     if (e.key === 'Tab' || (e.key === 'Tab' && e.shiftKey)) {
-      if(e.currentTarget.nextElementSibling !== null) {
+      if (e.currentTarget.nextElementSibling !== null) {
         e.stopPropagation();
-      }
-      else {
+      } else {
         e.preventDefault();
         this.actionsMenuTrigger.closeMenu();
       }
     }
   }
 
-	editRow(memberData: any) {
-		this.emailNotify = memberData.data.emailOn;
-		this.shareValue = memberData.data.share;
-		this.accessLevelValue = memberData.data.level;
-		this.memberId = memberData.data.memberId;
-		this.teamMembersGrid.instance.cancelEditData();
-		this.resetEditMode();
-		this.teamMembersGrid.instance.editRow(memberData.rowIndex);
-		memberData.data.editMode = true;
+  onEditorPreparing(e) {
+    if (e.parentType === 'dataRow' && e.dataField === 'level') {
+      e.editorOptions.dataSource = {
+        store: {
+          type: 'array',
+          data: this.memberInfo.levels,
+        },
+        postProcess: function (data) {
+          let newData = data.map((level) => {
+            if (level.value == 99) {
+              level.visible = false;
+            }
 
-		this.subGridEditClickedEvent.emit({ memberData, membersGrid: this.teamMembersGrid, emailNotify: this.emailNotify, shareValue: this.shareValue, accessLevelValue: this.accessLevelValue});
-	}
+            return level;
+          });
+          return newData;
+        },
+      };
+    }
+  }
 
-	saveMemberChanges(e:any, member: TeamMember) {
+  editRow(memberData: any) {
+    this.emailNotify = memberData.data.emailOn;
+    this.shareValue = memberData.data.share;
+    this.accessLevelValue = memberData.data.level;
+    this.memberId = memberData.data.memberId;
+    this.teamMembersGrid.instance.cancelEditData();
+    this.resetEditMode();
+    this.teamMembersGrid.instance.editRow(memberData.rowIndex);
+    memberData.data.editMode = true;
 
-		this.memberUpdate = {
-			teamId: member.teamId,
-			contactId: member.contactId,
-			emailOn: member.emailOn,
-			role: member.role,
-			level: member.level.charAt(1),
-			share: member.share,
-		}
+    this.subGridEditClickedEvent.emit({
+      memberData,
+      membersGrid: this.teamMembersGrid,
+      emailNotify: this.emailNotify,
+      shareValue: this.shareValue,
+      accessLevelValue: this.accessLevelValue,
+    });
+  }
 
-		this.subs.push(this.dashboardService.updateTeamMember(this.memberUpdate).subscribe(
-      (res:any) => {
-        if (res.success) {
-						this.teamMembersGrid.instance.saveEditData();
-        } else { 
-					let message = `Team Member could not be updated. Please review and try again later.`;
-					this.subs.push(this.dialogService.alert('Update Member', message, 'OK').subscribe());
-					this.teamMembersGrid.instance.cancelEditData();
-				}
-				member.editMode = false;
-				this.resetEditMode();
+  saveMemberChanges(e: any, member: TeamMember) {
+    this.memberUpdate = {
+      teamId: member.teamId,
+      contactId: member.contactId,
+      emailOn: member.emailOn,
+      role: member.role,
+      level: member.level,
+      share: member.share,
+    };
+
+    this.subs.push(
+      this.dashboardService
+        .updateTeamMember(this.memberUpdate)
+        .subscribe((res: any) => {
+          if (res.success) {
+            this.teamMembersGrid.instance.saveEditData();
+          } else {
+            let message = `Team Member could not be updated. Please review and try again later.`;
+            this.subs.push(
+              this.dialogService
+                .alert('Update Member', message, 'OK')
+                .subscribe()
+            );
+            this.teamMembersGrid.instance.cancelEditData();
+          }
+          member.editMode = false;
+          this.resetEditMode();
+
+          const { memberId, teamId } = member;
+          this.saveCompleted.emit({ memberId, teamId });
+        })
+    );
+  }
+
+  removeTeamMember(member: TeamMember) {
+    this.memberIds = [];
+    this.memberIds.push(member.memberId);
+
+    if (this.teamMemberCount == 1) {
+      let message =
+        'Team Member Removal can not be done. At least one team member must be assigned to the team.';
+      this.subs.push(
+        this.dialogService
+          .alert('Team Member Removal', message, 'OK')
+          .subscribe()
+      );
+    } else {
+      let confirmText = `Do you want to Remove the member "${member.name}" ?`;
+      this.subs.push(
+        this.dialogService
+          .confirm('Remove Team Member', confirmText, 'Confirm', 'Cancel')
+          .pipe(
+            filter((confirmed) => !!confirmed),
+            switchMap((_) =>
+              this.dashboardService.deleteTeamMembers(this.memberIds)
+            ),
+            switchMap((res) => {
+              if (res.success) {
+                this.memberIds = [];
+                this.getLatestTeamsDataEvent.emit();
+              }
+              return res.success
+                ? of(
+                    this.toastr.info(
+                      'Selected Member(s) successfully removed.',
+                      '',
+                      {
+                        positionClass: 'toast-bottom-right',
+                        timeOut: 3000,
+                        closeButton: false,
+                        progressBar: false,
+                      }
+                    )
+                  )
+                : this.dialogService.alert(
+                    'Removal unsuccessful!',
+                    'Team Member could not be deleted. Please review and try again later.',
+                    'OK'
+                  );
+            })
+          )
+          .subscribe()
+      );
+    }
+  }
+
+  onSelectionChanged(e: any) {
+    if (e.currentSelectedRowKeys.length) {
+      this.selectedMembersEvent.emit(e.currentSelectedRowKeys);
+      if (this.selectedTeamandMembersData.teamId) {
+        this.selectedTeamandMembersData.memberIds =
+          this.selectedTeamandMembersData.memberIds.concat(
+            e.currentSelectedRowKeys
+          );
+      } else {
+        this.selectedTeamandMembersData.teamId = e.selectedRowsData[0].teamId;
+        this.selectedTeamandMembersData.memberIds = e.currentSelectedRowKeys;
       }
+    }
 
-    ));
-
-	}
-
-	removeTeamMember(member: TeamMember) {
-		this.memberIds = [];
-		this.memberIds.push(member.memberId);
-
-		if (this.teamMemberCount == 1) {
-			let message = 'Team Member Removal can not be done. At least one team member must be assigned to the team.';
-			this.subs.push(this.dialogService.alert('Team Member Removal', message, 'OK').subscribe());
-		} else {
-			let confirmText = `Do you want to Remove the member "${member.name}" ?`;
-			this.subs.push(this.dialogService.confirm('Remove Team Member', confirmText, 'Confirm', 'Cancel').pipe(
-				filter(confirmed => !!confirmed),
-				switchMap(_ => this.dashboardService.deleteTeamMembers(this.memberIds)),
-				switchMap(res => {
-					if (res.success) {
-						this.memberIds = [];
-						this.getLatestTeamsDataEvent.emit();
-					}
-					return res.success ? of(this.toastr.info("Selected Member(s) successfully removed.", "", { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) 
-					: this.dialogService.alert('Removal unsuccessful!', 'Team Member could not be deleted. Please review and try again later.', 'OK');
-				})
-			).subscribe());
-		}	
-
-	}
-
-	onSelectionChanged(e:any) {
-		if(e.currentSelectedRowKeys.length) {
-			this.selectedMembersEvent.emit(e.currentSelectedRowKeys);
-			if(this.selectedTeamandMembersData.teamId) {
-				this.selectedTeamandMembersData.memberIds = this.selectedTeamandMembersData.memberIds.concat(e.currentSelectedRowKeys);
-			} else {
-				this.selectedTeamandMembersData.teamId = e.selectedRowsData[0].teamId;
-				this.selectedTeamandMembersData.memberIds = e.currentSelectedRowKeys;
-			}
-		}
-
-		if(e.currentDeselectedRowKeys.length) {
-		  this.unSelectedMembersEvent.emit(e.currentDeselectedRowKeys);
-				this.selectedTeamandMembersData.memberIds = 
-					this.selectedTeamandMembersData.memberIds.filter(item => !(e.currentDeselectedRowKeys).includes(item));
-		}	
-		this.selectedTeamandMembersEvent.emit(this.selectedTeamandMembersData);
-	}
-
-	setRoleValue(newData, value: string, currentRowData) {
-		(this as any).defaultSetCellValue(newData, value);
+    if (e.currentDeselectedRowKeys.length) {
+      this.unSelectedMembersEvent.emit(e.currentDeselectedRowKeys);
+      this.selectedTeamandMembersData.memberIds =
+        this.selectedTeamandMembersData.memberIds.filter(
+          (item) => !e.currentDeselectedRowKeys.includes(item)
+        );
+    }
+    this.selectedTeamandMembersEvent.emit(this.selectedTeamandMembersData);
   }
 
-	setLevelValue(newData, value: string, currentRowData) {
-		newData.level = value;
+  setRoleValue(newData, value: string, currentRowData) {
+    (this as any).defaultSetCellValue(newData, value);
   }
 
-	emailtoggle(e, member) {
-		member.emailOn = e.checked;
-		this.teamMembers.map(teamMember => teamMember.emailOn = (teamMember.memberId == member.memberId? e.checked: teamMember.emailOn));
-	}
-	
-	sharedtoggle(e, member) {
-		member.share = e.checked;
-		this.teamMembers.map(teamMember => teamMember.share = (teamMember.memberId == member.memberId? e.checked: teamMember.share));
-	}
+  setLevelValue(newData, value: string, currentRowData) {
+    newData.level = value;
+  }
 
-	accessLevelDropDownChange(e, member) {
-		member.level = e.value;
-		this.teamMembers.map(teamMember => teamMember.level = (teamMember.memberId == member.memberId? e.value: teamMember.level));
-	}
-	
-	cancelChanges(member) {
-		member.editMode = false;
-		this.teamMembersGrid.instance.cancelEditData();
-		this.resetEditMode(true);
-	}
+  emailtoggle(e, member) {
+    member.emailOn = e.checked;
+    this.teamMembers.map(
+      (teamMember) =>
+        (teamMember.emailOn =
+          teamMember.memberId == member.memberId
+            ? e.checked
+            : teamMember.emailOn)
+    );
+  }
 
-	getShareDisplayValue(rowData){
-		return rowData.share ? 'On' : 'Off'
-	}
+  sharedtoggle(e, member) {
+    member.share = e.checked;
+    this.teamMembers.map(
+      (teamMember) =>
+        (teamMember.share =
+          teamMember.memberId == member.memberId ? e.checked : teamMember.share)
+    );
+  }
 
-	getEmailonDisplayValue(rowData) {
-		return rowData.emailOn ? 'On' : 'Off';
-	}
+  cancelChanges(member) {
+    member.editMode = false;
+    this.teamMembersGrid.instance.cancelEditData();
+    this.resetEditMode(true);
+  }
 
-	resetEditMode(isCancel?: boolean) {
-		this.teamMembers.forEach(teamMember => { 
-			teamMember.editMode = false;
-			if(isCancel && teamMember.memberId == this.memberId) {
-				teamMember.emailOn = this.emailNotify;
-				teamMember.share = this.shareValue;
-				teamMember.level = this.accessLevelValue;
-			} 
-		});
-	}
+  getShareDisplayValue(rowData) {
+    return rowData.share ? 'On' : 'Off';
+  }
+
+  getEmailonDisplayValue(rowData) {
+    return rowData.emailOn ? 'On' : 'Off';
+  }
+
+  resetEditMode(isCancel?: boolean) {
+    this.teamMembers.forEach((teamMember) => {
+      teamMember.editMode = false;
+      if (isCancel && teamMember.memberId == this.memberId) {
+        teamMember.emailOn = this.emailNotify;
+        teamMember.share = this.shareValue;
+        teamMember.level = this.accessLevelValue;
+      }
+    });
+  }
 
   onKeyDown(event) {
-    if (event.event.keyCode == 13 || event.event.keyCode == 32)
+    if (event.event.keyCode === 13 || event.event.keyCode === 32)
       event.handled = true;
 
     if (event.event.key === 'Enter' || event.event.key === ' ') {
@@ -227,37 +317,46 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
               const isOpened = selectBoxInstance.option('opened');
               isOpened ? selectBoxInstance.close() : selectBoxInstance.open();
               selectBoxInstance.focus();
+              event.event.preventDefault();
             }
           }
-          event.event.preventDefault();
         }
       }
     }
   }
+  gridOnCellPrepared(e) {
+    if (
+      e.column.command == 'select' &&
+      (!this.userModuleAddRights ||
+        this.rights.toLocaleLowerCase().trim() == 'view')
+    ) {
+      let htmlCellElement =
+        e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+      var editor = CheckBox.getInstance(
+        htmlCellElement.querySelector('.dx-select-checkbox')
+      );
+      if (editor) {
+        e.rowType == 'header'
+          ? editor.option('disabled', true)
+          : editor.option('visible', false);
+      }
+      htmlCellElement.style.pointerEvents = 'none';
+    }
+  }
 
-	gridOnCellPrepared(e) { 
-		if(e.column.command == 'select' && (!this.userModuleAddRights || this.rights.toLocaleLowerCase().trim()=="view")) {
-			let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];   
-			var editor = CheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));  
-			if(editor) {
-				e.rowType == 'header' ? editor.option("disabled", true) : editor.option("visible", false);
-			}  
-			htmlCellElement.style.pointerEvents = 'none'; 
-		} 
-	}
-
-	setAttributes(e) {  
+  setAttributes(e) {
     setTimeout(() => {
-      const inputElements = Array.from(document.getElementsByClassName('dx-texteditor-input'));
-      inputElements?.forEach(ele => {
+      const inputElements = Array.from(
+        document.getElementsByClassName('dx-texteditor-input')
+      );
+      inputElements?.forEach((ele) => {
         ele.setAttribute('aria-label', 'select option');
-				ele.setAttribute('name', 'selectionOption');
-      })
-    })
+        ele.setAttribute('name', 'selectionOption');
+      });
+    });
   }
 
-	ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe());
+  ngOnDestroy(): void {
+    this.subs.forEach((s) => s.unsubscribe());
   }
-
 }

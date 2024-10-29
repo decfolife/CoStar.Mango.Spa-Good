@@ -10,7 +10,18 @@ export class ExchangeRate {
   lastModified: Date;
   lastModifiedBy: string;
 
-  constructor(portfolio, rateSets, effectiveDate, baseCurrency, targetCurrency, isCurrent, rate, period, lastModified, lastModifiedBy) {
+  constructor(
+    portfolio,
+    rateSets,
+    effectiveDate,
+    baseCurrency,
+    targetCurrency,
+    isCurrent,
+    rate,
+    period,
+    lastModified,
+    lastModifiedBy
+  ) {
     this.portfolio = portfolio;
     this.rateSets = rateSets;
     this.effectiveDate = effectiveDate;
@@ -28,4 +39,3 @@ export interface ExchangeRateSetDataRequest {
   portfolioId: number;
   periods: string;
 }
-

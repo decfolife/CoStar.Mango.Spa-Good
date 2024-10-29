@@ -6,9 +6,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { AWSReportService } from './aws-report.service';
 
 @NgModule({
-  declarations: [
-    AWSReportComponent
-  ],
+  declarations: [AWSReportComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -16,13 +14,11 @@ import { AWSReportService } from './aws-report.service';
       {
         path: '',
         data: { pageTitle: 'AWS Report' },
-        component: AWSReportComponent
-      }
-    ])
+        component: AWSReportComponent,
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    AWSReportService
-  ]
+  providers: [AWSReportService],
 })
-export class AWSReportModule { }
+export class AWSReportModule {}

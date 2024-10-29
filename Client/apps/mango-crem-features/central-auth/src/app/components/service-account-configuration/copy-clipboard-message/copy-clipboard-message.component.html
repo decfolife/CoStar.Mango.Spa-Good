@@ -1,22 +1,24 @@
-<crem-modal class="client-delivery-modal"
-	modalId = "copyClipboardMessageComponentModalId"
-	modalTitle="API Key" 
-	closeIconVisible="" 
-	primaryFooterButtonText="Copy"
-	closeOrCancelButtonText="Close" 
-	(primaryButtonAction)="copyClipboard()"
-	>
-	<div modalContent class="account-modal-content">
-		<div class="sub">
-			<span>Please copy this key and save it somewhere safe.</span>
-		</div>
-		<div class="msg">
-			<span>For security reasons, we cannot show it to you again.</span>
-		</div>
-		<div class="apikey">
-			<span><b>{{apiKey}}</b></span>
-		</div>
-		<span>{{info}}</span>
-	</div>
+<crem-modal
+  class="client-delivery-modal"
+  modalId="copyClipboardMessageComponentModalId"
+  modalTitle="API Key"
+  closeIconVisible=""
+  primaryFooterButtonText="Copy"
+  closeOrCancelButtonText="Close"
+  (primaryButtonAction)="copyClipboard()"
+>
+  <div modalContent class="account-modal-content">
+    <div class="sub">
+      <span>Please copy this key and save it somewhere safe.</span>
+    </div>
+    <div class="msg">
+      <span>For security reasons, we cannot show it to you again.</span>
+    </div>
+    <div class="apikey">
+      <span
+        ><b>{{ apiKey }}</b></span
+      >
+    </div>
+    <span>{{ info }}</span>
+  </div>
 </crem-modal>
-

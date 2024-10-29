@@ -1,19 +1,21 @@
-@use "styles" as *;
+@use 'styles' as *;
 
-crem-icon{
-    cursor: pointer;
+crem-icon {
+  cursor: pointer;
 }
 
 .first-row-div {
   margin: 0px 5px 5px 0px;
 }
 
-.second-row-div,.third-row-div {
+.second-row-div,
+.third-row-div {
   margin-left: 10px;
   margin-bottom: 15px;
-}  
+}
 
-.second-row-div>dx-scroll-view,.third-row-div>dx-scroll-view {
+.second-row-div > dx-scroll-view,
+.third-row-div > dx-scroll-view {
   @include costar(font-size, small);
   @include costar(padding, 2);
 }
@@ -33,7 +35,7 @@ crem-icon{
   height: 100%;
   width: 100%;
 
-  &>p {
+  & > p {
     @include costar(font-size, h2);
     margin: 0;
     position: absolute;
@@ -61,7 +63,7 @@ crem-icon{
     justify-content: flex-end;
   }
 
-  .popup-title-icon-div>*{
+  .popup-title-icon-div > * {
     padding-right: 8px;
   }
 }

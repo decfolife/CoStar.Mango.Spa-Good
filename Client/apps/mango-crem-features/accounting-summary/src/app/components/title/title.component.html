@@ -1,28 +1,32 @@
 <div class="title">
-  <div class="leaseName"
-    [id]="accountingSummaryService.getId(componentName ,'title','section')">
+  <div
+    class="leaseName"
+    [id]="accountingSummaryService.getId(componentName, 'title', 'section')"
+  >
     Lease: {{ leaseName }}
   </div>
   <div class="info-icon">
-    <crem-icon 
-      [id]="accountingSummaryService.getId(componentName ,'info','icon')"
-      pack="solid" 
-      icon="faCircleInfo" 
+    <crem-icon
+      [id]="accountingSummaryService.getId(componentName, 'info', 'icon')"
+      pack="solid"
+      icon="faCircleInfo"
       color="dark"
-      (click)="showObjectInfoPopup()"> 
+      (click)="showObjectInfoPopup()"
+    >
     </crem-icon>
   </div>
   <div
     *ngIf="isLocked"
-    [id]="accountingSummaryService.getId(componentName ,'lock','click')"
+    [id]="accountingSummaryService.getId(componentName, 'lock', 'click')"
     class="lock-notice-pill"
     (click)="showTooltip = !showTooltip"
-    >
+  >
     <div class="lock-icon">
-      <crem-icon 
-        [id]="accountingSummaryService.getId(componentName ,'lock','icon')"
-        pack="solid" 
-        icon="faLock"> 
+      <crem-icon
+        [id]="accountingSummaryService.getId(componentName, 'lock', 'icon')"
+        pack="solid"
+        icon="faLock"
+      >
       </crem-icon>
     </div>
     &nbsp;Locked
@@ -30,24 +34,35 @@
 
   <div *ngIf="isArchived" class="archive-notice-pill">
     <div>
-      <crem-icon class="lock-icon"
-        [id]="accountingSummaryService.getId(componentName ,'archive','icon')"
-        pack="solid" 
-        icon="faLock"> 
+      <crem-icon
+        class="lock-icon"
+        [id]="accountingSummaryService.getId(componentName, 'archive', 'icon')"
+        pack="solid"
+        icon="faLock"
+      >
       </crem-icon>
     </div>
     &nbsp;Archived
   </div>
 
-  <dx-tooltip 
-    [id]="accountingSummaryService.getId(componentName ,'lock','tooltip')"
+  <dx-tooltip
+    [id]="accountingSummaryService.getId(componentName, 'lock', 'tooltip')"
     target="#accounting-summary-lease-lock-click"
     [visible]="showTooltip"
     (onHiding)="showTooltip = !showTooltip"
+  >
+    <div
+      [id]="accountingSummaryService.getId(componentName, 'content', 'tooltip')"
+      *dxTemplate="let data of 'content'"
+      class="content-class"
     >
-    <div [id] ="accountingSummaryService.getId(componentName ,'content','tooltip')" *dxTemplate="let data of 'content'" class="content-class">
       {{ lockedReason }}
-      <p><i>Locked records cannot be edited. Records will be unlocked when the batch has completed processing or has been canceled.</i></p>
+      <p>
+        <i
+          >Locked records cannot be edited. Records will be unlocked when the
+          batch has completed processing or has been canceled.</i
+        >
+      </p>
     </div>
   </dx-tooltip>
 </div>

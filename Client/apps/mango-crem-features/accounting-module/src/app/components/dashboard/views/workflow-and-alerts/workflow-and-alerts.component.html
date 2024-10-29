@@ -1,12 +1,13 @@
 <div class="accounting-dashboard-page-data-grid-wrapper">
-    <div class="card-containers"
-      cdkDropList
-      cdkDropListOrientation="vertical"
-      (cdkDropListDropped)="cardMove($event)"
-    >
-
-      <ng-container *ngIf="!cardJSONSchemaLoading">
-      <div *ngFor="let config of cardData"
+  <div
+    class="card-containers"
+    cdkDropList
+    cdkDropListOrientation="vertical"
+    (cdkDropListDropped)="cardMove($event)"
+  >
+    <ng-container *ngIf="!cardJSONSchemaLoading">
+      <div
+        *ngFor="let config of cardData"
         class="categories-item"
         cdkDropListOrientation="horizontal"
         [cdkDropListData]="{ card: card, index: i }"
@@ -16,12 +17,14 @@
         [class.col-md-12]="config.cardJSONSchema.fullWidth"
         [class.cdk-visually-hidden]="!config.cardJSONSchema.visible"
       >
-        <div cdkDragHandle
+        <div
+          cdkDragHandle
           class="card-drag-handle"
           *ngIf="config && config.cardJSONSchema.visible"
-          id="{{config.cardPendoId + '--drag_drop'}}"
+          id="{{ config.cardPendoId + '--drag_drop' }}"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             class="drag_handle"
             height="24px"
             viewBox="0 0 24 24"
@@ -33,19 +36,21 @@
           </svg>
         </div>
 
-        <mango-accounting-card *ngIf="!cardJSONSchemaLoading && config.cardJSONSchema.visible"
+        <mango-accounting-card
+          *ngIf="!cardJSONSchemaLoading && config.cardJSONSchema.visible"
           [canSaveDefault]="canSaveDefault"
           [cardData]="config"
           [dsExportFileName]="exportDataSourceFileName"
           (cardMove)="cardMove(event)"
           [pendoId]="config.cardPendoId"
         ></mango-accounting-card>
-
       </div>
-      </ng-container>
-
-    </div>
-
+    </ng-container>
+  </div>
 </div>
 
-<crem-skeleton *ngIf="cardJSONSchemaLoading" instances="2" type="card" />
+<crem-skeleton
+  *ngIf="cardJSONSchemaLoading"
+  instances="2"
+  type="card"
+></crem-skeleton>

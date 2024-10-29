@@ -16,7 +16,7 @@ describe('ParametersGridComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ParametersGridComponent ],
+      declarations: [ParametersGridComponent],
       imports: [
         HttpClientTestingModule,
         RouterTestingModule,
@@ -41,24 +41,26 @@ describe('ParametersGridComponent', () => {
     expect(component.isValid).toBeFalsy();
     (component as any)._isValid = true;
     expect(component.isValid).toBeTruthy();
-  })
+  });
 
   it('should implement ngOnInit', () => {
     expect(component).toHaveProperty('ngOnInit');
     expect(component.ngOnInit).toBeInstanceOf(Function);
 
     const popPCCOSpy = spyOn(
-      component as any, 'populatePortfolioClassificationConfigurationOptions'
+      component as any,
+      'populatePortfolioClassificationConfigurationOptions'
     );
     const popPSPCCSpy = spyOn(
-      component as any, 'populatePortfolioSettingsAndPortfolioClassificationConfiguration'
+      component as any,
+      'populatePortfolioSettingsAndPortfolioClassificationConfiguration'
     );
     const setDGGEOSpy = spyOn(component as any, 'setDefaultGridEditorOptions');
 
     component.parametersData = {
       gridLoaded: true,
       gridOverrides: null,
-      gridData: []
+      gridData: [],
     } as any;
 
     component.ngOnInit();
@@ -71,7 +73,9 @@ describe('ParametersGridComponent', () => {
   });
 
   it('should get classification name', () => {
-    component.classificationTypes = [{ classificationID: 1, classificationType: 'test' }];
+    component.classificationTypes = [
+      { classificationID: 1, classificationType: 'test' },
+    ];
 
     const type = component.getClassificationName(1);
 
@@ -99,13 +103,17 @@ describe('ParametersGridComponent', () => {
 
     component.availableDataGrid = {
       instance: {
-        beginCustomLoading: () => { customLoadingBegin = true; },
-        endCustomLoading: () => { customLoadingEnd = true; }
-      }
+        beginCustomLoading: () => {
+          customLoadingBegin = true;
+        },
+        endCustomLoading: () => {
+          customLoadingEnd = true;
+        },
+      },
     } as any;
 
     component.portfolioClassificationConfiguration = [
-      { remeasureTypeName: 'test', classificationID: 1 }
+      { remeasureTypeName: 'test', classificationID: 1 },
     ] as any[];
     component.classificationTypes = [{ classificationID: 1 }] as any[];
 
@@ -123,7 +131,9 @@ describe('ParametersGridComponent', () => {
     expect(component.discountRateReadOnly).toBeFalsy();
 
     (component as any).remeasureParameters = [{}];
-    component.checkFullTermination({ remeasureTypeName: 'Full Termination' } as any);
+    component.checkFullTermination({
+      remeasureTypeName: 'Full Termination',
+    } as any);
 
     expect(component.beginDateReadOnly).toBeTruthy();
     expect(component.discountRateReadOnly).toBeTruthy();
@@ -147,7 +157,7 @@ describe('ParametersGridComponent', () => {
     const evt = {
       dataField: 'beginValueExpr',
       editorOptions: {},
-      row: { data: {} }
+      row: { data: {} },
     };
 
     component.onEditorPreparing(evt);
@@ -172,7 +182,7 @@ describe('ParametersGridComponent', () => {
     evt.dataField = 'journalEntryProfileID';
     (evt.row.data as any).classificationID = 1;
     component.portfolioClassificationConfigurationOptions = {
-      journalEntryProfiles: [{ leaseRecognitionType: 1 }]
+      journalEntryProfiles: [{ leaseRecognitionType: 1 }],
     };
 
     component.onEditorPreparing(evt);
@@ -184,8 +194,10 @@ describe('ParametersGridComponent', () => {
     const mockGrid = {
       instance: {
         hasEditData: () => true,
-        saveEditData: () => { saveCalled = true; }
-      }
+        saveEditData: () => {
+          saveCalled = true;
+        },
+      },
     } as any;
 
     component.availableDataGrid = mockGrid;
@@ -202,7 +214,9 @@ describe('ParametersGridComponent', () => {
     component.form = {
       instance: { validate: () => ({ isValid: true }) },
     } as any;
-    component.parameterOverrideRequired = { discountRateOverride: false } as any;
+    component.parameterOverrideRequired = {
+      discountRateOverride: false,
+    } as any;
 
     component.updateValidity();
     expect(component.isValid).toBeTruthy();
@@ -213,7 +227,7 @@ describe('ParametersGridComponent', () => {
       annualRateOverride: true,
       annualRateTypeOverride: true,
       paymentTimingOverride: true,
-      discountRateOverride: true
+      discountRateOverride: true,
     } as any;
 
     component.annualRateValueChanged({ value: true });
@@ -239,9 +253,11 @@ describe('ParametersGridComponent', () => {
 
     component.parameterOverrides = {
       annualRateOverride: 1,
-      annualRateTypeOverride: 'APY'
+      annualRateTypeOverride: 'APY',
     } as any;
-    component.parameterOverrideRequired = { discountRateOverride: false } as any;
+    component.parameterOverrideRequired = {
+      discountRateOverride: false,
+    } as any;
     component.updateDiscountRate({ value: true });
 
     expect(validSpy).toHaveBeenCalled();
@@ -250,12 +266,12 @@ describe('ParametersGridComponent', () => {
 
   it('should validate JE profiles', () => {
     component.portfolioClassificationConfigurationOptions = {
-      journalEntryProfiles: [{ journalEntryProfileID: 1 }]
+      journalEntryProfiles: [{ journalEntryProfileID: 1 }],
     };
     component.availableDataGrid = {
       instance: {
-        getDataSource: () => ({ items: () => [{ journalEntryOption: '' }] })
-      }
+        getDataSource: () => ({ items: () => [{ journalEntryOption: '' }] }),
+      },
     } as any;
 
     component.validateJEProfiles();
@@ -266,7 +282,7 @@ describe('ParametersGridComponent', () => {
     expect(valid).toBeTruthy();
 
     component.portfolioClassificationConfigurationOptions = {
-      journalEntryProfiles: [{ profileName: 'test', profileID: 1 }]
+      journalEntryProfiles: [{ profileName: 'test', profileID: 1 }],
     };
     const obj = { data: {}, value: 1 };
     valid = component.validateJEProfile(obj);
@@ -284,37 +300,49 @@ describe('ParametersGridComponent', () => {
 
   it('should validate begin date entries', () => {
     expect(component.validateBeginDate({ value: null })).toBeTruthy();
-    component.parameterOverrides = { accountingTermEndDateOverride: null } as any;
+    component.parameterOverrides = {
+      accountingTermEndDateOverride: null,
+    } as any;
     expect(component.validateBeginDate({ value: new Date() })).toBeTruthy();
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    component.parameterOverrides = { accountingTermEndDateOverride: tomorrow } as any;
+    component.parameterOverrides = {
+      accountingTermEndDateOverride: tomorrow,
+    } as any;
     expect(component.validateBeginDate({ value: new Date() })).toBeTruthy();
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
-    component.parameterOverrides = { accountingTermEndDateOverride: yesterday } as any;
+    component.parameterOverrides = {
+      accountingTermEndDateOverride: yesterday,
+    } as any;
     expect(component.validateBeginDate({ value: new Date() })).toBeFalsy();
   });
 
   it('should validate end date entries', () => {
     expect(component.validateEndDate({ value: null })).toBeTruthy();
-    component.parameterOverrides = { accountingTermBeginDateOverride: null } as any;
+    component.parameterOverrides = {
+      accountingTermBeginDateOverride: null,
+    } as any;
     expect(component.validateEndDate({ value: new Date() })).toBeTruthy();
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
-    component.parameterOverrides = { accountingTermBeginDateOverride: yesterday } as any;
+    component.parameterOverrides = {
+      accountingTermBeginDateOverride: yesterday,
+    } as any;
     expect(component.validateEndDate({ value: new Date() })).toBeTruthy();
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    component.parameterOverrides = { accountingTermBeginDateOverride: tomorrow } as any;
+    component.parameterOverrides = {
+      accountingTermBeginDateOverride: tomorrow,
+    } as any;
     expect(component.validateEndDate({ value: new Date() })).toBeFalsy();
   });
 
@@ -327,7 +355,9 @@ describe('ParametersGridComponent', () => {
     expect(component.validateDiscountRateOverride()).toBeFalsy();
 
     component.parameterOverrides = {
-      annualRateOverride: 1, annualRateTypeOverride: '', paymentTimingOverride: ''
+      annualRateOverride: 1,
+      annualRateTypeOverride: '',
+      paymentTimingOverride: '',
     } as any;
   });
 
@@ -343,18 +373,26 @@ describe('ParametersGridComponent', () => {
             { commentsOption: 'Direct Entry' },
             { discountRateProfile: 'Direct Entry' },
             { manualAdjustmentOption: 'Direct Entry' },
-          ]
-        })
-      }
+          ],
+        }),
+      },
     } as any;
 
     (component as any).parameterChange();
 
-    expect(component.parameterOverrideRequired.accountingTermBeginDateOverride).toBeTruthy();
-    expect(component.parameterOverrideRequired.accountingTermEndDateOverride).toBeTruthy();
+    expect(
+      component.parameterOverrideRequired.accountingTermBeginDateOverride
+    ).toBeTruthy();
+    expect(
+      component.parameterOverrideRequired.accountingTermEndDateOverride
+    ).toBeTruthy();
     expect(component.parameterOverrideRequired.commentsOverride).toBeTruthy();
-    expect(component.parameterOverrideRequired.discountRateOverride).toBeTruthy();
-    expect(component.parameterOverrideRequired.manualAssetAdjustmentOverride).toBeTruthy();
+    expect(
+      component.parameterOverrideRequired.discountRateOverride
+    ).toBeTruthy();
+    expect(
+      component.parameterOverrideRequired.manualAssetAdjustmentOverride
+    ).toBeTruthy();
   });
 
   it('should populate portfolio classification config options', () => {
@@ -374,9 +412,14 @@ describe('ParametersGridComponent', () => {
 
   it('should populate portfolio settings and portfolio classification config options', () => {
     component.masterGroupID = 1;
-    const mockData = { item1: {
-      defaultAnnualRateType: 1, directEntryDiscountRateEnabled: true, discountRateMatching: true,
-    }, item2: {} };
+    const mockData = {
+      item1: {
+        defaultAnnualRateType: 1,
+        directEntryDiscountRateEnabled: true,
+        discountRateMatching: true,
+      },
+      item2: {},
+    };
 
     const settingsSpy = spyOn(
       component.batchParametersService,
@@ -387,7 +430,9 @@ describe('ParametersGridComponent', () => {
       'getPortfolioClassificationConfiguration'
     ).and.callFake(serviceMock([{ discountRateProfile: 1 }]));
 
-    (component as any).populatePortfolioSettingsAndPortfolioClassificationConfiguration();
+    (
+      component as any
+    ).populatePortfolioSettingsAndPortfolioClassificationConfiguration();
 
     expect(settingsSpy).toHaveBeenCalledWith(1);
     expect(configSpy).toHaveBeenCalledWith(1);

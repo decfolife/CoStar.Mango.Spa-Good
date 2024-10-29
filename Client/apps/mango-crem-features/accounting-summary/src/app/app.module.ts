@@ -13,9 +13,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AccountingSummaryService } from './services/accounting-summary.service';
 import { createCustomElement } from '@angular/elements';
 import { BalanceCardsComponent } from './components/add-event/financial-card/balance-cards/balance-cards.component';
+import { StorageService } from '@mango/core-shared';
+import { DeleteHistoricScheduleComponent } from './components/accounts-summary/delete-historic-schedule/delete-historic-schedule.component';
 
 @NgModule({
-  declarations: [AppComponent, BalanceCardsComponent],
+  declarations: [
+    AppComponent,
+    BalanceCardsComponent,
+    DeleteHistoricScheduleComponent,
+  ],
 
   imports: [
     CommonModule,
@@ -24,7 +30,7 @@ import { BalanceCardsComponent } from './components/add-event/financial-card/bal
     AppRoutingModule,
   ],
 
-  providers: [AccountingSummaryService],
+  providers: [AccountingSummaryService, StorageService],
 
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],

@@ -10,3 +10,5 @@ export * from './milestones-card-details';
 export * from './userSettings';
 export * from './task-approval';
 export * from './userSelectedFilters';
+export * from './interfaces/index';
+export * from './tasks';

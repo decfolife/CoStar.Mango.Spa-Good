@@ -4,8 +4,7 @@ import { NgModule } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IndexModule } from 'apps/mango-crem-features/list-pages/src/app/components/index.module.hosted';
 import { ModuleLeftNavAppComponent } from 'apps/mango-crem-features/micro-components/src/app/module-left-nav/module-left-nav.component';
-import { ProjectsDashboardLeftNavService } from 
-  'apps/mango-crem-features/micro-components/src/app/services/projects-dashboard-left-nav.service';
+import { ProjectsDashboardLeftNavService } from 'apps/mango-crem-features/micro-components/src/app/services/projects-dashboard-left-nav.service';
 import { SharedLeftNavModule } from 'libs/ui-shared/lib-ui-shared/src/lib/shared-left-nav';
 import { AppComponent } from '../../app.component';
 import { DashboardModule } from '../../components/dashboard/accounting-dashboard.module';
@@ -15,11 +14,7 @@ import { DashboardWrapperModule } from '../dashboard/dashboard-wrapper/dashboard
 import { ReportsService } from '@reports/services/reports.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    IndexComponent,
-    ModuleLeftNavAppComponent,
-  ],
+  declarations: [AppComponent, IndexComponent, ModuleLeftNavAppComponent],
 
   imports: [
     CommonModule,
@@ -29,11 +24,9 @@ import { ReportsService } from '@reports/services/reports.service';
     SharedLeftNavModule,
     DashboardModule,
     DashboardWrapperModule,
-    IndexModule
+    IndexModule,
   ],
 
-  providers: [ ProjectsDashboardLeftNavService, ReportsService ]
+  providers: [ProjectsDashboardLeftNavService, ReportsService],
 })
-
 export class IndexMainModule {}
-

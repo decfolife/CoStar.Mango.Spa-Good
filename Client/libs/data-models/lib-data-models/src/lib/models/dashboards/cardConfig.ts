@@ -1,8 +1,27 @@
-import { Dropdown } from "@mango/data-models/lib-data-models"
+import { Dropdown } from '@mango/data-models/lib-data-models';
+
+/**
+ * Defines all the configuration needed for a Disclosure Dashboard
+ *
+ * @export
+ * @interface DashboardConfig
+ */
+export interface DashboardConfig {
+  dashboardId: number;
+  pendoId: string;
+  localCardConfig: CardConfig[];
+}
+
+export interface CardRequest {
+  viewConfiguration: DashboardConfig;
+  selectedSegment: number;
+  reportingYear: number;
+  selectedCurrency?: string;
+}
 
 export interface FormatObject {
-  type: string,
-  precision: number,
+  type: string;
+  precision: number;
 }
 
 // Type guard: Checks if the given object is a Format Type
@@ -12,7 +31,10 @@ export function isFormatObject(obj: any): obj is FormatObject {
 
 // Sorting Object used to defined order of rows in a table
 export interface SortingOrder {
-  [key: string]: number,
+  [key: string]: number;
+}
+export interface ColumnSortingOrder {
+  [key: string]: number;
 }
 
 /**
@@ -33,17 +55,28 @@ export interface SortingOrder {
  * @interface FieldConfig
  */
 export type CardDataItem = {
-  AddedCount?: number | string,
-  closingCount?: number | string,
-  DisclosureClassification?: string | 'Total',
-  EndedCount?: number | string,
-  LeaseTemplate?: string,
-  OpeningCount?: number | string,
-  Display?: string,
-  PeriodYear?: number | string,
-  dataType?: number | string,
-  data: any,
-}
+  AddedCount?: number | string;
+  closingCount?: number | string;
+  DisclosureClassification?: string | 'Total';
+  EndedCount?: number | string;
+  LeaseTemplate?: string;
+  OpeningCount?: number | string;
+  Display?: string;
+  PeriodYear?: number | string;
+  dataType?: number | string;
+  data: any;
+  modify?: CardDataItemModify;
+};
+
+export type CardDataItemModify = {
+  replace: string;
+  indexes: 'first' | 'last' | number;
+  compareWith: string;
+  compareWithX?: string;
+  offset: number;
+  caption?: string;
+  newData?: string | number;
+};
 
 /**
  * Represents the configuration for a field in a data set.
@@ -58,6 +91,9 @@ export type CardDataItem = {
  * Where 'DisclosureClassification' is the PivotTable parameter
  * and 'DisclosureClassification' corresponds to the variable to
  * be used from the API response
+ *
+ * @see https://js.devexpress.com/Angular/Documentation/ApiReference/Data_Layer/PivotGridDataSource/Configuration/fields/
+ *
  * @typedef {Object} CardDataTransformer
  */
 export type CardDataTransformer = CardDataItem & object;
@@ -65,42 +101,161 @@ export type CardDataTransformer = CardDataItem & object;
 /**
  * Represents the configuration for a field in a data set.
  * @typedef {Object} CardConfig
- * @property {string} id - .
- * @property {string} name - .
- * @property {number} index - The index or position of the Card.
- * @property {string | FormatObject} [format] - Optional formatting information for the field.
- * @property {SortingOrder} [sortingOrder] - Optional sorting order for the field.
- * @property {Function} [sortingMethod] - Optional sorting method function for the field.
- * @property {Function} [calculateSummaryValue] - "Specifies a custom post-processing function for summary values."
- * @property {Function} [calculateCustomSummary] - Optional function for custom summary calculation.
- * @property {CardDataItem} [fieldTransform] - Optional add how the data coming from the API is going to be used on the grid
  */
 export type CardConfig = {
-  id: string,
-  name: string,
-  index: number,
-  format?: FormatObject,
-  sortingOrder?: SortingOrder,
-	showFieldChooser?: boolean,
-  sortingMethod?: Function,
-  calculateSummaryValue?: Function,
-  calculateCustomSummary?: Function,
-  fieldTransform?: Partial<CardDataTransformer[]> | undefined,
+  /**
+   * HTML element ID
+   *
+   * @type {string}
+   */
+  id: string;
+
+  /**
+   * Card Name
+   *
+   * @type {string}
+   */
+  name: string;
+
+  /**
+   * The position of the Card.
+   *
+   * @type {number}
+   */
+  index: number;
+
+  /**
+   * Optional formatting information for the field.
+   *
+   * @type {FormatObject}
+   */
+  format?: FormatObject;
+
+  /**
+   * Width of the first column displaying the rows
+   *
+   * @type {number}
+   */
+  width?: number;
+
+  /**
+   * When needed to combine with another IADCardData, the selected index will be removed
+   * and not be used as a separated dashboard card. Please check the `inAppDisclosureService.getIADCardData`
+   * to review the response's indexes.
+   *
+   * @type {number}
+   */
+  combineWithIndex?: number;
+
+  /**
+   * Optional sorting order for the field.
+   *
+   * @type {SortingOrder}
+   */
+  sortingOrder?: SortingOrder;
+  columnSortingOrder?: ColumnSortingOrder;
+
+  showFieldChooser?: boolean;
+
+  /**
+   * Optional sorting method function for the field.
+   *
+   * @type {Function}
+   */
+  sortingMethod?: Function;
+
+  /**
+   * Specifies a custom post-processing function for summary values.
+   * When using please set `summaryType` to `custom`
+   * @see https://js.devexpress.com/Angular/Demos/WidgetsGallery/Demo/DataGrid/CustomSummaries/MaterialBlueLight/
+   * @type {Function}
+   */
+  calculateSummaryValue?: Function;
+
+  /**
+   * Specifies how to aggregate data for the total summary item.
+   * Default Value: 'count' when the parameter is not provided.
+   *
+   * @see https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxDataGrid/Configuration/summary/totalItems/#summaryType
+   * @type {('sum' | 'min' | 'max' | 'avg' | 'count' | 'custom' | null)}
+   */
+  summaryType?: 'sum' | 'min' | 'max' | 'avg' | 'count' | 'custom' | null;
+
+  /**
+   * Optional function for custom summary calculation.
+   *
+   * @type {Function}
+   */
+  calculateCustomSummary?: Function;
+
+  /**
+   * How the incoming API data is going to be used on the grid
+   *
+   * @type {(Partial<CardDataTransformer[]> | undefined)}
+   */
+  fieldTransform?: Partial<CardDataTransformer[]> | undefined;
+
+  allowSortingBySummary?: boolean;
+  allowFiltering?: boolean;
+  showBorders?: boolean;
+  showRowGrandTotals?: boolean;
+  showColumnGrandTotals?: boolean;
+  showRowTotals?: boolean;
+  showColumnTotals?: boolean;
+
+  mergeBy?: string;
+
+  /**
+   * Strings that can be changed or localized in the PivotGrid UI component.
+   *
+   * @see https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxPivotGrid/Configuration/texts/
+   * @type {object}
+   */
+  texts?: PivotGridTexts;
 
   // Dropdown Options for 'crem-card'
-  filterData?: Dropdown[],
-  customDropdownMenu?: boolean,
-  filterInitialValue?: Dropdown,
-  showFilterClearButton?: boolean,
-  dropdownPlaceholder?: string,
-  dropDisplay?: string,
-  dropValue?: string,
+  filterData?: Dropdown[];
+
+  /**
+   * filterBy is used with filterData, where filterBy is the key to use
+   * from localCardConfig to compare against.
+   *
+   * @type {number}
+   */
+  filterBy?: string;
+
+  customDropdownMenu?: boolean;
+  filterInitialValue?: Dropdown;
+  showFilterClearButton?: boolean;
+  dropdownPlaceholder?: string;
+  dropDisplay?: string;
+  dropValue?: string;
 
   // Card Options for 'crem-card'
-  title?: string,
-  pendoTitleId?: string,
-  subtitle?: string,
+  title?: string;
+  pendoTitleId?: string;
+  subtitle?: string;
   // Search
-  searchLabel?: string,
-  searchPlaceholder?: string,
+  searchLabel?: string;
+  searchPlaceholder?: string;
+};
+
+/**
+ * Strings that can be changed or localized in the PivotGrid UI component.
+ *
+ * @see https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxPivotGrid/Configuration/texts/
+ * @interface pivotGridTexts
+ */
+interface PivotGridTexts {
+  collapseAll?: string;
+  dataNotAvailable?: string;
+  expandAll?: string;
+  exportToExcel?: string;
+  grandTotal?: string;
+  noData?: string;
+  removeAllSorting?: string;
+  showFieldChooser?: string;
+  sortColumnBySummary?: string;
+  sortRowBySummary?: string;
+  total?: string;
 }

@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { CardDetails } from '../../../models';
 import { CardsService } from '../../../services/cards.service';
@@ -11,53 +19,61 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
 @Component({
   selector: 'new-tasks-card',
   templateUrl: './new-tasks.component.html',
-  styleUrls: ['./new-tasks.component.scss']
+  styleUrls: ['./new-tasks.component.scss'],
 })
 export class NewTasksComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
-  private selectedFilters : string;
+  private selectedFilters: string;
   @Output() rowClickEvent = new EventEmitter<any>();
   @Input() objectType: string;
-  @ViewChild("NewTasksGrid") dataGrid: DxDataGridComponent;
+  @ViewChild('NewTasksGrid') dataGrid: DxDataGridComponent;
 
   public keyDate: string;
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
   constructor(
     private cardsService: CardsService,
     private exportToExcelService: ExportDevexDatagridService,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.subs.push(this.cardsService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.cardsService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
-  customizeTaskAddedText(cellInfo){
-    let valueToReturn = (cellInfo.valueText === '01/01/1901' || cellInfo.valueText === '01.01.1901' ? "N/A" : cellInfo.valueText);
+  customizeTaskAddedText(cellInfo) {
+    let valueToReturn =
+      cellInfo.valueText === '01/01/1901' || cellInfo.valueText === '01.01.1901'
+        ? 'N/A'
+        : cellInfo.valueText;
     return valueToReturn;
   }
 
   rowClick(e: any) {
     this.rowClickEvent.emit(e);
   }
-  
+
   exportAllGridData() {
-   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "New_Tasks");
+    this.exportToExcelService.exportToExcel(
+      this.dataGrid.instance,
+      'New_Tasks'
+    );
   }
 
   // decorating rows for completed tasks
   decorateText(e: any) {
-    if (e.rowType == "data") {
-      if ((new Date(e.data.taskCompletedDate).getFullYear()) >= 1920) {
-        e.rowElement.classList.add('tdtw-row-stike');  //this line executes on Mango
+    if (e.rowType == 'data') {
+      if (new Date(e.data.taskCompletedDate).getFullYear() >= 1920) {
+        e.rowElement.classList.add('tdtw-row-stike'); //this line executes on Mango
       }
     }
   }
-  
+
   filter(e, cardId) {
     this.card.filterInitialValue = e[0];
     this.cardsService.newTasksDropdown = e[0];
@@ -65,18 +81,20 @@ export class NewTasksComponent implements OnInit, OnDestroy {
   }
 
   getCardData() {
-    this.subs.push(this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-      }
-    ));
+    this.subs.push(
+      this.cardsService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+        })
+    );
   }
 
-  getProjectName(){
+  getProjectName() {
     return this.objectType + ' Name';
   }
 
-  getProjectType(){
+  getProjectType() {
     return this.objectType + ' Type';
   }
 
@@ -85,34 +103,34 @@ export class NewTasksComponent implements OnInit, OnDestroy {
       height: '240px',
       width: '600px',
       panelClass: 'taskApprovalModal',
-      data: {selectedTask, actionName}
+      data: { selectedTask, actionName },
     });
-    dialogRef.afterClosed().subscribe(result => {
-        if (result === "Approve") {
-          this.getCardData();
-        }
-      });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'Approve') {
+        this.getCardData();
+      }
+    });
   }
-  
-  adaAttrNoDataGrid(e:any) {
-    let noDataEl = e.element.querySelector(".dx-empty");
+
+  adaAttrNoDataGrid(e: any) {
+    let noDataEl = e.element.querySelector('.dx-empty');
     let spanChild = null;
 
     // Check if noDataEl exists
     if (noDataEl) {
-        spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
+      spanChild = noDataEl.querySelector('.dx-datagrid-nodata');
     }
 
     // If either element is missing, exit the function
     if (!noDataEl || !spanChild) {
-        return;
+      return;
     }
 
-    noDataEl.setAttribute("role", "row");
-    spanChild.setAttribute("role", "gridcell");
+    noDataEl.setAttribute('role', 'row');
+    spanChild.setAttribute('role', 'gridcell');
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

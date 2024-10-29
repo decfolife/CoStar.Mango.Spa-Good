@@ -8,9 +8,8 @@ describe('AmortizationProfilesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ AmortizationProfilesComponent ]
-    })
-    .compileComponents();
+      declarations: [AmortizationProfilesComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

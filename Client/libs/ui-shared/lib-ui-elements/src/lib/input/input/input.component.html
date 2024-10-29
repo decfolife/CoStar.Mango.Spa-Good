@@ -3,19 +3,19 @@
 
 <div class="input-container">
 
-  <input *ngIf="inputType === 'text'" type="text" [ngClass]="getCssClasses()" [class]="className" [id]="id"
+  <input #input *ngIf="inputType === 'text'" type="text" [ngClass]="getCssClasses()" [class]="className" [id]="id"
     [(ngModel)]="value" [name]="name" [placeholder]="placeholder" [required]="required" [disabled]="disabled"
     [readonly]="readOnly" [attr.minLength]="minLengthField" [attr.maxLength]="maxLengthField"
-    (input)="onInputChange($event)" (keydown.enter)="onEnter($event)">
+    (input)="onInputChange($event)" (blur)="onBlur($event)" (keydown.enter)="onEnter($event)">
 
   <input *ngIf="inputType === 'number'" type="number" [ngClass]="getCssClasses()" [class]="className" [id]="id"
     [(ngModel)]="value" [name]="name" [placeholder]="placeholder" [required]="required" [disabled]="disabled"
-    [readonly]="readOnly" [attr.min]="minNumber" [attr.max]="maxNumber" (input)="onInputChange($event)" (keydown.enter)="onEnter($event)"
+    [readonly]="readOnly" [attr.min]="minNumber" [attr.max]="maxNumber" (input)="onInputChange($event)" (blur)="onBlur($event)" (keydown.enter)="onEnter($event)"
     >
 
   <input *ngIf="inputType === 'password'" type="password" [ngClass]="getCssClasses()" [class]="className" [id]="id"
     [(ngModel)]="value" [name]="name" [placeholder]="placeholder" [required]="required" [disabled]="disabled"
-    [readonly]="readOnly" (input)="onInputChange($event)" (keydown.enter)="onEnter($event)">
+    [readonly]="readOnly" (input)="onInputChange($event)" (blur)="onBlur($event)" (keydown.enter)="onEnter($event)">
 
 
   <textarea #textarea (input)="adjustTextareaHeight(); onInputChange($event)" *ngIf="inputType === 'textarea'"

@@ -1,205 +1,325 @@
 <section class="section-grid">
-	<crem-card [showCustomHeader]="true" >
-		<div customHeader class="card-header"> 
-			<div class="card-header">
-				<div class="card-title"
-					[id]="accountingSummaryService.getId(componentName,'card','title')">
-					Accounting Events 
-					<!-- {{isGridStateChanged ? preferenceSavePendingMessage : ''}} Removing this text for now as per discussion witn PO's-->
-				</div>
-				<div class="event-selector">
-					<input [id]="accountingSummaryService.getId(componentName,'empty','dropdown')" *ngIf="isAccountingEventEmpty" class="no-data-text-box" type="text" disabled="true" placeholder="No Accounting Events to Display">
-					<div *ngIf="!isAccountingEventEmpty" class="events-dropdown">
-					  <dx-drop-down-box #EventSelectorDropdown
-						[id]="accountingSummaryService.getId(componentName,'events-selector','dropdown')"
-						[(value)]="gridBoxValue"
-						[(opened)]="isGridBoxOpened"
-						valueExpr="masterScheduleID"
-						[deferRendering]="false"
-						[displayExpr]="gridBox_displayExpr"
-						[inputAttr]="{ 'aria-label': 'Accounting Event' }"
-						[showClearButton]="false"
-						[dataSource]="gridDataSource"
-						height="30px"
-						(click)="$event.stopPropagation();"
-						(keydown)="handleDropdownActivationKeys($event)"
-						(onOptionChanged)="onGridBoxOptionChanged($event)"
-						(onValueChanged)="onValueChanged($event)"
-						>
-						<div *dxTemplate="let data of 'content'">
-						  <dx-data-grid
-							[id]="accountingSummaryService.getId(componentName,'events','grid','dropdown')"
-							[dataSource]="gridDataSource"
-							keyExpr="masterScheduleID"
-							[hoverStateEnabled]="true"
-							[(selectedRowKeys)]="gridBoxValue"
-						  >
-						  <dxi-column dataField="classificationType" caption="Classification"></dxi-column>
-						  <dxi-column dataField="amortizationProfileName" caption="Amortization Profile"></dxi-column>
-							<dxo-selection mode="single"></dxo-selection>
-							<dxo-filter-row [visible]="true"></dxo-filter-row>
-							<dxo-paging [enabled]="pagingEnabled" [pageSize]="5"></dxo-paging>
-							<dxo-pager
-							  [visible]="pagingEnabled"
-							  [allowedPageSizes]="allowedPageSizes"
-							  [displayMode]="full"
-							  [showPageSizeSelector]="false"
-							  [showInfo]="true"
-							  [showNavigationButtons]="true"
-							>
-							</dxo-pager>
-						  </dx-data-grid>
-						</div>
-					  </dx-drop-down-box>
-					</div>
-				</div>
-				</div>
-				<div class="more-menu">
-					<div class="more">
-						<button [disabled]="isAccountingEventEmpty" [id]="accountingSummaryService.getId(componentName,'more','button')" class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="openMoreMenu($event)" (keydown)="openMoreMenu($event)">More <mat-icon [id]="accountingSummaryService.getId(componentName,'more','icon')">arrow_drop_down</mat-icon></button>
-							<mat-menu #moreMenu="matMenu" class="moreMatMenu">				
-								<button [id]="accountingSummaryService.getId(componentName,'column-chooser','button')" mat-menu-item (click)="showColumnChooser()">Column Chooser</button>      
-								<button [id]="accountingSummaryService.getId(componentName,'save','button')" mat-menu-item (click)="saveGridPreferences()">Save Preferences</button>
-								<button [id]="accountingSummaryService.getId(componentName,'reset','button')" mat-menu-item (click)="isGridStateChanged ? clearGridChanges() : resetGridPreferences()" [title]="isGridStateChanged ? clearBtnHoverText : resetBtnHoverText">{{isGridStateChanged ? 'Clear Changes' : 'Reset Preferences'}}</button>
-								<button [id]="accountingSummaryService.getId(componentName,'sendToExcel','button')" mat-menu-item (click)="sendToExcel()" title="Send to Excel">Send to Excel</button>
-							</mat-menu>	 
-					</div>
-				</div>
-				<div class="grid-size">
-					<crem-button
-						btnStyle="basic"
-						color="secondary"
-						size="small"
-						class="icon-style"
-						icon="faExpand"
-						title="Show All Rows"
-						ariaLabel="Show All Rows"
-						*ngIf="showMaxRow"
-						[disabled]="isAccountingEventEmpty" 
-						(click)="showMaxRows()">
-					</crem-button>
-	
-					<crem-button
-						btnStyle="basic"
-						size="small"
-						color="secondary"
-						class="icon-style"
-						icon="faSquare"
-						iconPack="regular"
-						title="Default View"
-						ariaLabel="Default View"
-						*ngIf="showDefaultRow" 
-						[disabled]="isAccountingEventEmpty"
-						(click)="showDefaultRows()">
-					</crem-button>
-	
-					<crem-button
-						btnStyle="basic"
-						size="small"
-						class="icon-style"
-						color="secondary"
-						icon="faCompress"
-						title="Show Miniumum Rows"
-						ariaLabel="Show Miniumum Rows"
-						*ngIf="showMinRow"
-						[disabled]="isAccountingEventEmpty" 
-						(click)="showMinRows()">
-					</crem-button>
-				</div>
-			</div>
-			<div class="card-content">
-			<dx-data-grid
-				#EventsDataGrid
-				[id]="accountingSummaryService.getId(componentName ,'detail','section')"
-				[dataSource]="detailsGridData"
-        		keyExpr="leaseRecognitionScheduleID"
-				width='100%'
-				[columnMinWidth]="25"
-				[columns]="detailColumns"
-				[showColumnLines]="true"
-				[allowColumnReordering]="true"
-				[allowColumnResizing]="true"
-				columnResizingMode="widget"
-				[height]="eventGridHeight"
-				[hoverStateEnabled]="true"
-				[(selectedRowKeys)]="selectedRowKeys"
-				[showRowLines]="true"
-				[showBorders]="true"
-				[remoteOperations]="true"
-				(onOptionChanged)="onGridOptionChanged($event)"
-				(onCellClick)="onCellClick($event)"
-				(onRowClick)="onRowClick($event)"
-				(onContextMenuPreparing)="onContextMenuPreparing($event)"
-				(onContentReady)="onGridContentReady($event)"
-				>
-				<dxo-paging
-					[enabled]="false">
-				</dxo-paging>	
-				<dxo-state-storing
-					[enabled]="true"
-					type="custom"
-					storageKey="eventsGridStateKey"
-					[customLoad]="loadState"
-					[customSave]="saveState">
-				</dxo-state-storing>
+  <crem-card [showCustomHeader]="true">
+    <div customHeader class="card-header">
+      <div class="card-header">
+        <div
+          class="card-title"
+          [id]="accountingSummaryService.getId(componentName, 'card', 'title')"
+        >
+          Accounting Events
+          <!-- {{isGridStateChanged ? preferenceSavePendingMessage : ''}} Removing this text for now as per discussion witn PO's-->
+        </div>
+        <div class="event-selector">
+          <input
+            [id]="
+              accountingSummaryService.getId(componentName, 'empty', 'dropdown')
+            "
+            *ngIf="isAccountingEventEmpty"
+            class="no-data-text-box"
+            type="text"
+            disabled="true"
+            placeholder="No Accounting Events to Display"
+          />
+          <div *ngIf="!isAccountingEventEmpty" class="events-dropdown">
+            <dx-drop-down-box
+              #EventSelectorDropdown
+              [id]="
+                accountingSummaryService.getId(
+                  componentName,
+                  'events-selector',
+                  'dropdown'
+                )
+              "
+              [(value)]="gridBoxValue"
+              [(opened)]="isGridBoxOpened"
+              valueExpr="masterScheduleID"
+              [deferRendering]="false"
+              [displayExpr]="gridBox_displayExpr"
+              [inputAttr]="{ 'aria-label': 'Accounting Event' }"
+              [showClearButton]="false"
+              [dataSource]="gridDataSource"
+              height="30px"
+              (click)="$event.stopPropagation()"
+              (keydown)="handleDropdownActivationKeys($event)"
+              (onOptionChanged)="onGridBoxOptionChanged($event)"
+              (onValueChanged)="onValueChanged($event)"
+            >
+              <div *dxTemplate="let data of 'content'">
+                <dx-data-grid
+                  [id]="
+                    accountingSummaryService.getId(
+                      componentName,
+                      'events',
+                      'grid',
+                      'dropdown'
+                    )
+                  "
+                  [dataSource]="gridDataSource"
+                  keyExpr="masterScheduleID"
+                  [hoverStateEnabled]="true"
+                  [(selectedRowKeys)]="gridBoxValue"
+                >
+                  <dxi-column
+                    dataField="classificationType"
+                    caption="Classification"
+                  ></dxi-column>
+                  <dxi-column
+                    dataField="amortizationProfileName"
+                    caption="Amortization Profile"
+                  ></dxi-column>
+                  <dxo-selection mode="single"></dxo-selection>
+                  <dxo-filter-row [visible]="true"></dxo-filter-row>
+                  <dxo-paging
+                    [enabled]="pagingEnabled"
+                    [pageSize]="5"
+                  ></dxo-paging>
+                  <dxo-pager
+                    [visible]="pagingEnabled"
+                    [allowedPageSizes]="allowedPageSizes"
+                    [displayMode]="full"
+                    [showPageSizeSelector]="false"
+                    [showInfo]="true"
+                    [showNavigationButtons]="true"
+                  >
+                  </dxo-pager>
+                </dx-data-grid>
+              </div>
+            </dx-drop-down-box>
+          </div>
+        </div>
+      </div>
+      <div class="more-menu">
+        <div class="more">
+          <button
+            [disabled]="isAccountingEventEmpty"
+            [id]="
+              accountingSummaryService.getId(componentName, 'more', 'button')
+            "
+            class="btn btn-default moreButton"
+            [matMenuTriggerFor]="moreMenu"
+            (click)="openMoreMenu($event)"
+            (keydown)="openMoreMenu($event)"
+          >
+            More
+            <mat-icon
+              [id]="
+                accountingSummaryService.getId(componentName, 'more', 'icon')
+              "
+              >arrow_drop_down</mat-icon
+            >
+          </button>
+          <mat-menu #moreMenu="matMenu" class="moreMatMenu">
+            <button
+              [id]="
+                accountingSummaryService.getId(
+                  componentName,
+                  'column-chooser',
+                  'button'
+                )
+              "
+              mat-menu-item
+              (click)="showColumnChooser()"
+            >
+              Column Chooser
+            </button>
+            <button
+              [id]="
+                accountingSummaryService.getId(componentName, 'save', 'button')
+              "
+              mat-menu-item
+              (click)="saveGridPreferences()"
+            >
+              Save Preferences
+            </button>
+            <button
+              [id]="
+                accountingSummaryService.getId(componentName, 'reset', 'button')
+              "
+              mat-menu-item
+              (click)="
+                isGridStateChanged ? clearGridChanges() : resetGridPreferences()
+              "
+              [title]="
+                isGridStateChanged ? clearBtnHoverText : resetBtnHoverText
+              "
+            >
+              {{ isGridStateChanged ? 'Clear Changes' : 'Reset Preferences' }}
+            </button>
+            <button
+              [id]="
+                accountingSummaryService.getId(
+                  componentName,
+                  'sendToExcel',
+                  'button'
+                )
+              "
+              mat-menu-item
+              (click)="sendToExcel()"
+              title="Send to Excel"
+            >
+              Send to Excel
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+      <div class="grid-size">
+        <crem-button
+          btnStyle="basic"
+          color="secondary"
+          size="small"
+          class="icon-style"
+          icon="faExpand"
+          title="Show All Rows"
+          ariaLabel="Show All Rows"
+          *ngIf="showMaxRow"
+          [disabled]="isAccountingEventEmpty"
+          (click)="showMaxRows()"
+        >
+        </crem-button>
 
-				<dxo-column-fixing
-					[enabled]="true">
-				</dxo-column-fixing>
+        <crem-button
+          btnStyle="basic"
+          size="small"
+          color="secondary"
+          class="icon-style"
+          icon="faSquare"
+          iconPack="regular"
+          title="Default View"
+          ariaLabel="Default View"
+          *ngIf="showDefaultRow"
+          [disabled]="isAccountingEventEmpty"
+          (click)="showDefaultRows()"
+        >
+        </crem-button>
 
-				<dxo-scrolling
-					columnRenderingMode="virtual">
-				</dxo-scrolling>
+        <crem-button
+          btnStyle="basic"
+          size="small"
+          class="icon-style"
+          color="secondary"
+          icon="faCompress"
+          title="Show Minimum Rows"
+          ariaLabel="Show Minimum Rows"
+          *ngIf="showMinRow"
+          [disabled]="isAccountingEventEmpty"
+          (click)="showMinRows()"
+        >
+        </crem-button>
+      </div>
+    </div>
+    <div class="card-content">
+      <dx-data-grid
+        #EventsDataGrid
+        [id]="
+          accountingSummaryService.getId(componentName, 'detail', 'section')
+        "
+        [dataSource]="detailsGridData"
+        keyExpr="leaseRecognitionScheduleID"
+        width="100%"
+        [columnMinWidth]="25"
+        [columns]="detailColumns"
+        [showColumnLines]="true"
+        [allowColumnReordering]="true"
+        [allowColumnResizing]="true"
+        columnResizingMode="widget"
+        [height]="eventGridHeight"
+        [hoverStateEnabled]="true"
+        [(selectedRowKeys)]="selectedRowKeys"
+        [showRowLines]="true"
+        [showBorders]="true"
+        [remoteOperations]="true"
+        (onOptionChanged)="onGridOptionChanged($event)"
+        (onCellClick)="onCellClick($event)"
+        (onRowClick)="onRowClick($event)"
+        (onContextMenuPreparing)="onContextMenuPreparing($event)"
+        (onContentReady)="onGridContentReady($event)"
+      >
+        <dxo-paging [enabled]="false"> </dxo-paging>
+        <dxo-state-storing
+          [enabled]="true"
+          type="custom"
+          storageKey="eventsGridStateKey"
+          [customLoad]="loadState"
+          [customSave]="saveState"
+        >
+        </dxo-state-storing>
 
-				<dxo-selection
-					mode="single">
-				</dxo-selection>
+        <dxo-column-fixing [enabled]="true"> </dxo-column-fixing>
 
-				<dxo-column-chooser
-					[enabled]="true"
-					mode="select"
-					height="500"
-					width="400">
+        <dxo-scrolling columnRenderingMode="virtual"> </dxo-scrolling>
 
-					<dxo-search
-						[enabled]="true">
-					</dxo-search>
+        <dxo-selection mode="single"> </dxo-selection>
 
-					<dxo-selection
-						allowSelectAll="true">
-					</dxo-selection>
-				</dxo-column-chooser>
-				<div *dxTemplate="let info of 'amortizationHeader'">
-					<p title={{info.column.caption}}
-						class="header-column-caption">
-					  {{info.column.caption}}
-					</p>    
-				  </div>
-				
-				  <div *dxTemplate="let cell of 'pointer'">
-					<div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
-				  </div>
+        <dxo-column-chooser
+          [enabled]="true"
+          mode="select"
+          height="500"
+          width="400"
+        >
+          <dxo-search [enabled]="true"> </dxo-search>
 
-				  <div *dxTemplate="let cell of 'clickable'">
-					<div *ngIf="cell.data.hasHistoricalCharges && cell.data.measureEvent!=='Full Termination'" class="pointer" title={{cell.text}}>
-						<a [id]="accountingSummaryService.getId(componentName,'present-value','link')" href="#" (click)="presentValueExcel($event, cell.data)" class="link-class">{{ cell.text }}</a>
-					</div>
-					<div *ngIf="!cell.data.hasHistoricalCharges || cell.data.measureEvent==='Full Termination'" class="pointer" title={{cell.text}}>{{ cell.text }}</div>
-				</div>
-				
-				  <div *dxTemplate="let data of 'actionsTemplate'" #actionTemplate>
-					<div class="actions-icon">
-					<crem-icon  
-						[id]="accountingSummaryService.getId(componentName,'action','icon')"
-						pack="solid" 
-						icon="faEllipsisH" 
-						color="primary"
-						size="lg"> 
-						</crem-icon>
-					</div> 
+          <dxo-selection allowSelectAll="true"> </dxo-selection>
+        </dxo-column-chooser>
+        <div *dxTemplate="let info of 'accountingEventHeader'">
+          <p title="{{ info.column.caption }}" class="header-column-caption">
+            {{ info.column.caption }}
+          </p>
+        </div>
 
-				  </div>
-			</dx-data-grid>
-		</div>
-	</crem-card>
+        <div *dxTemplate="let cell of 'pointer'">
+          <div class="pointer" title="{{ cell.text }}">{{ cell.text }}</div>
+        </div>
+
+        <div *dxTemplate="let cell of 'clickable'">
+          <div
+            *ngIf="
+              cell.data.hasHistoricalCharges &&
+              cell.data.measureEvent !== 'Full Termination'
+            "
+            class="pointer"
+            title="{{ cell.text }}"
+          >
+            <a
+              [id]="
+                accountingSummaryService.getId(
+                  componentName,
+                  'present-value',
+                  'link'
+                )
+              "
+              href="#"
+              (click)="presentValueExcel($event, cell.data)"
+              class="link-class"
+              >{{ cell.text }}</a
+            >
+          </div>
+          <div
+            *ngIf="
+              !cell.data.hasHistoricalCharges ||
+              cell.data.measureEvent === 'Full Termination'
+            "
+            class="pointer"
+            title="{{ cell.text }}"
+          >
+            {{ cell.text }}
+          </div>
+        </div>
+
+        <div *dxTemplate="let data of 'actionsTemplate'" #actionTemplate>
+          <div class="actions-icon">
+            <crem-icon
+              [id]="
+                accountingSummaryService.getId(componentName, 'action', 'icon')
+              "
+              pack="solid"
+              icon="faEllipsisH"
+              color="primary"
+              size="lg"
+            >
+            </crem-icon>
+          </div>
+        </div>
+      </dx-data-grid>
+    </div>
+  </crem-card>
 </section>

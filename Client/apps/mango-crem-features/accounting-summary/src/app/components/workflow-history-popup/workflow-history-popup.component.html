@@ -1,124 +1,152 @@
-<crem-button 
-    [id]="accountingSummaryService.getId(componentName,'history','button')"
-    class="workflow-history-btn"
-    ariaLabel="Workflow History"
-    type="secondary"
-    (buttonClick)="showHistoryPopup($event)">
-    <div>
-        <span>
-            Workflow History
-        </span>
-    </div>
+<crem-button
+  [id]="accountingSummaryService.getId(componentName, 'history', 'button')"
+  class="workflow-history-btn"
+  ariaLabel="Workflow History"
+  type="secondary"
+  (buttonClick)="showHistoryPopup($event)"
+>
+  <div>
+    <span> Workflow History </span>
+  </div>
 </crem-button>
 
 <dx-popup
-#WorkflowHistoryPopup 
-[id]="accountingSummaryService.getId(componentName,'data','popup')"
-[(visible)]="workflowHistoryPopVisible"
-[height]="500"
-[width]="900"
-[showCloseButton]="false"
-[resizeEnabled]="!isFullscreen"
-[dragEnabled]="!isFullscreen"
-[fullScreen]="isFullscreen"
-[contentTemplate]="currentTemplate"
-titleTemplate="title-item"
-[wrapperAttr]="{ class: 'accounting-summary-style-container workflow-history-popup-container' }"
-(onContentReady)="determineScrollViewHeight($event)"
-(onHiding)="onPopupHiddenEvent($event)"
-> 
-    <div *dxTemplate="let data of 'title-item'">
-        <div  class="popup-title-div">
-            <div class="popup-title-text-div">
-                Workflow Change History
-            </div>
-            <div class="popup-title-icon-div">
-                <crem-button
-				    [id]="accountingSummaryService.getId(componentName ,'export-to-excel','button')"
-                    (click)="exportToExcel()"
-                    btnStyle="basic"
-                    title="Export Workflow Status History to Excel"
-                    ariaLabel="Export Workflow Status History to Excel"
-                    type="secondary">
-                    <crem-icon class="fa-lg fa-regular" icon="faFileExcel" pack="regular"></crem-icon>
-                </crem-button>
-                <crem-button
-                    [id]="accountingSummaryService.getId(componentName ,'full-screen','button')"
-                    (click)="isFullscreen = true"
-                    *ngIf="!isFullscreen"
-                    btnStyle="basic"
-                    title="Full Screen"
-                    ariaLabel="Full Screen"
-                    type="secondary">
-                    <crem-icon class="fa-lg" icon="faExpand"></crem-icon>
-                </crem-button>
-                <crem-button 
-                    [id]="accountingSummaryService.getId(componentName ,'exit-full-screen','button')"
-                    (click)="isFullscreen = false"
-                    *ngIf="isFullscreen"
-                    btnStyle="basic"
-                    title="Exit Full Screen"
-                    ariaLabel="Exit Full Screen"
-                    type="secondary">
-                    <crem-icon class="fa-lg" icon="faCompress"></crem-icon>
-                </crem-button>
-                <crem-button
-                    [id]="accountingSummaryService.getId(componentName ,'close','button')"
-                    (click)="hideHistoryPopup($event)"
-                    btnStyle="basic"
-                    title="Close"
-                    ariaLabel="Close"
-                    type="secondary">
-                    <crem-icon class="fa-lg" icon="faX"></crem-icon>
-                </crem-button>
-            </div>
-        </div>
-    </div>
-
-    <div *dxTemplate="let data of 'noDataTemplate'" class="no-data-div"><p>No Data</p></div>
-
-    <div *dxTemplate="let data of 'dataTemplate'">
-        <dx-scroll-view
-        #PopupMainScrollView
-        height="100%"
-        width="100%"
+  #WorkflowHistoryPopup
+  [id]="accountingSummaryService.getId(componentName, 'data', 'popup')"
+  [(visible)]="workflowHistoryPopVisible"
+  [height]="500"
+  [width]="900"
+  [showCloseButton]="false"
+  [resizeEnabled]="!isFullscreen"
+  [dragEnabled]="!isFullscreen"
+  [fullScreen]="isFullscreen"
+  [contentTemplate]="currentTemplate"
+  titleTemplate="title-item"
+  [wrapperAttr]="{
+    class: 'accounting-summary-style-container workflow-history-popup-container'
+  }"
+  (onContentReady)="determineScrollViewHeight($event)"
+  (onHiding)="onPopupHiddenEvent($event)"
+>
+  <div *dxTemplate="let data of 'title-item'">
+    <div class="popup-title-div">
+      <div class="popup-title-text-div">Workflow Change History</div>
+      <div class="popup-title-icon-div">
+        <crem-button
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'export-to-excel',
+              'button'
+            )
+          "
+          (click)="exportToExcel()"
+          btnStyle="basic"
+          title="Export Workflow Status History to Excel"
+          ariaLabel="Export Workflow Status History to Excel"
+          type="secondary"
         >
-            <p-timeline [value]="historyEvents" align="left">
-                <ng-template pTemplate="content" let-event>
-                    <div class="first-row-div">
-                        <span class="status-pill border-pill">{{ event.workflowStatus }}</span>
-                    </div>
-                    <div class="second-row-div">Description:
-                        <dx-scroll-view
-                        *ngIf="event.description !== null && event.description !== ''"
-                        height="85px"
-                        width="95%"
-                        showScrollbar="always"
-                        (onInitialized)="onScrollViewInitialized($event)"
-                        >
-                            {{ event.description }}
-                        </dx-scroll-view>
-                    </div>
-                    <div class="third-row-div">Comment:
-                        <dx-scroll-view
-                        *ngIf="event.comment !== null && event.comment !== ''"
-                        height="85px"
-                        width="95%"
-                        showScrollbar="always"
-                        (onInitialized)="onScrollViewInitialized($event)"
-                        >
-                        <div [innerHTML]="formatComment(event.comment)"></div>
-                        </dx-scroll-view>
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="opposite" let-event>
-                    {{ event.modifiedDate | date: dateFormat }}
-                    <div class="workflow-history-username">
-                        {{ event.modifiedByName }}
-                    </div>
-    
-                </ng-template>
-            </p-timeline>
-        </dx-scroll-view>        
+          <crem-icon
+            class="fa-lg fa-regular"
+            icon="faFileExcel"
+            pack="regular"
+          ></crem-icon>
+        </crem-button>
+        <crem-button
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'full-screen',
+              'button'
+            )
+          "
+          (click)="isFullscreen = true"
+          *ngIf="!isFullscreen"
+          btnStyle="basic"
+          title="Full Screen"
+          ariaLabel="Full Screen"
+          type="secondary"
+        >
+          <crem-icon class="fa-lg" icon="faExpand"></crem-icon>
+        </crem-button>
+        <crem-button
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'exit-full-screen',
+              'button'
+            )
+          "
+          (click)="isFullscreen = false"
+          *ngIf="isFullscreen"
+          btnStyle="basic"
+          title="Exit Full Screen"
+          ariaLabel="Exit Full Screen"
+          type="secondary"
+        >
+          <crem-icon class="fa-lg" icon="faCompress"></crem-icon>
+        </crem-button>
+        <crem-button
+          [id]="
+            accountingSummaryService.getId(componentName, 'close', 'button')
+          "
+          (click)="hideHistoryPopup($event)"
+          btnStyle="basic"
+          title="Close"
+          ariaLabel="Close"
+          type="secondary"
+        >
+          <crem-icon class="fa-lg" icon="faX"></crem-icon>
+        </crem-button>
+      </div>
     </div>
-</dx-popup> 
+  </div>
+
+  <div *dxTemplate="let data of 'noDataTemplate'" class="no-data-div">
+    <p>No Data</p>
+  </div>
+
+  <div *dxTemplate="let data of 'dataTemplate'">
+    <dx-scroll-view #PopupMainScrollView height="100%" width="100%">
+      <p-timeline [value]="historyEvents" align="left">
+        <ng-template pTemplate="content" let-event>
+          <div class="first-row-div">
+            <span class="status-pill border-pill">{{
+              event.workflowStatus
+            }}</span>
+          </div>
+          <div class="second-row-div">
+            Description:
+            <dx-scroll-view
+              *ngIf="event.description !== null && event.description !== ''"
+              height="85px"
+              width="95%"
+              showScrollbar="always"
+              (onInitialized)="onScrollViewInitialized($event)"
+            >
+              {{ event.description }}
+            </dx-scroll-view>
+          </div>
+          <div class="third-row-div">
+            Comment:
+            <dx-scroll-view
+              *ngIf="event.comment !== null && event.comment !== ''"
+              height="85px"
+              width="95%"
+              showScrollbar="always"
+              (onInitialized)="onScrollViewInitialized($event)"
+            >
+              <div [innerHTML]="formatComment(event.comment)"></div>
+            </dx-scroll-view>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="opposite" let-event>
+          {{ event.modifiedDate | date: dateFormat }}
+          <div class="workflow-history-username">
+            {{ event.modifiedByName }}
+          </div>
+        </ng-template>
+      </p-timeline>
+    </dx-scroll-view>
+  </div>
+</dx-popup>

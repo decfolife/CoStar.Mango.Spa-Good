@@ -1,11 +1,12 @@
-<crem-modal 
-	modalTitle="Delete Report?" 
-	closeIconVisible="true" 
-	primaryFooterButtonText="Yes"
-	closeOrCancelButtonText="No"
-	(primaryButtonAction)="yesDelete()">
-	<div modalContent class="body-content"> 
-        <div>Are you sure you want to delete this report?</div>
-		<div class="font-weight-bold">{{ data.reportName }}</div>
-    </div>
+<crem-modal
+  modalTitle="Delete Report?"
+  closeIconVisible="true"
+  primaryFooterButtonText="Yes"
+  closeOrCancelButtonText="No"
+  (primaryButtonAction)="yesDelete()"
+>
+  <div modalContent class="body-content">
+    <div>Are you sure you want to delete this report?</div>
+    <div class="font-weight-bold">{{ data.reportName }}</div>
+  </div>
 </crem-modal>

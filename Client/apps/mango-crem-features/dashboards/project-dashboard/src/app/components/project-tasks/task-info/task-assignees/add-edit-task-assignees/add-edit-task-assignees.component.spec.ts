@@ -8,7 +8,7 @@ describe('AddEditTaskAssigneesComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddEditTaskAssigneesComponent]
+      declarations: [AddEditTaskAssigneesComponent],
     });
     fixture = TestBed.createComponent(AddEditTaskAssigneesComponent);
     component = fixture.componentInstance;

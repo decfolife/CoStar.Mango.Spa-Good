@@ -1,5 +1,25 @@
 @use 'styles' as *;
 
+.aet-editTask-headerContent {
+  width: 100%;
+  .aet-addTaskHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    #aet-closeModalBtnId .closeIcon {
+      transform: scale(1.3) translateY(3px);
+    }
+
+    .modalTitle {
+      margin: 0;
+      line-height: 1.5;
+      font-size: 1.25rem;
+      color: var(--costar-color-dark, #000);
+    }
+  }
+}
+
 #addEditTaskModal-content {
   .fieldInvalid {
     color: #d9534f;
@@ -22,7 +42,11 @@
     margin-left: 10px;
   }
 
-  #aet-dates-container, #aet-rqrd-con-shrink-emlapp-container, #aet-daysToStart-duration-container, #aet-milestone-Wflow-complete-container, #aet-exempt-requiredApproval-container {
+  #aet-dates-container,
+  #aet-rqrd-con-shrink-emlapp-container,
+  #aet-daysToStart-duration-container,
+  #aet-milestone-Wflow-complete-container,
+  #aet-exempt-requiredApproval-container {
     display: flex;
     gap: 8px;
     .aet-flexItem50 {
@@ -59,18 +83,29 @@
 }
 
 ::ng-deep {
-  .aet-tooltip-approval-exempt, .aet-tooltip-required-approvals {
+  .aet-tooltip-approval-exempt,
+  .aet-tooltip-required-approvals {
     crem-icon {
       position: relative;
       top: 4px;
       right: 7px;
     }
   }
+
+  #aet-requiredApprovalsTooltipId,
+  div#aet-required-approvals-tooltipIdTooltip.dx-field,
+  #aet-approvalExemptionTooltipId,
+  div#aet-approval-exemption-tooltipIdTooltip.dx-field {
+    height: 24px;
+    min-height: 24px;
+    @include costar(margin-top, 1);
+  }
 }
 
 .aet-label-tooltip {
   display: flex;
-  .aet-approval-exemption-label, .aet-required-approvals-label {
+  .aet-approval-exemption-label,
+  .aet-required-approvals-label {
     margin-bottom: 0px;
   }
 }

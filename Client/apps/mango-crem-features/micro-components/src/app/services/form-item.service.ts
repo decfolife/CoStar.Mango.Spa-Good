@@ -12,8 +12,8 @@ import { UtilitiesService } from '@mango/core-shared';
 @Injectable()
 export class FormItemService {
   baseUrl: string = '';
-  objectActions: string = UtilitiesService.getBaseApiUrl(Api.objectActions)
-  dashboards: string = UtilitiesService.getBaseApiUrl(Api.dashboards)
+  objectActions: string = UtilitiesService.getBaseApiUrl(Api.objectActions);
+  dashboards: string = UtilitiesService.getBaseApiUrl(Api.dashboards);
 
   protected httpOptions: any = {
     headers: new HttpHeaders({
@@ -21,8 +21,8 @@ export class FormItemService {
       Accept: 'application/json',
       UserId: '2',
       ClientKey: 'RETAILDEMO',
-      CAEnabled: 'false'
-    })
+      CAEnabled: 'false',
+    }),
   };
 
   protected httpOptionsWithParams: any = {
@@ -31,17 +31,21 @@ export class FormItemService {
       Accept: 'application/json',
       UserId: '2',
       ClientKey: 'RETAILDEMO',
-      CAEnabled: 'false'
-    })
+      CAEnabled: 'false',
+    }),
   };
 
-  constructor(
-    protected http: HttpClient
-  ) {
-  }
+  constructor(protected http: HttpClient) {}
 
-  public GetFormItemChangeHistory(formItemID: number, objectID: number, objectTypeID: number, relatedObjectID: number, relatedObjectTypeID: number, 
-                                  relationshipDefinitionID: number, objectTypeTypeID: number): Observable<ApiResponse> {
+  public GetFormItemChangeHistory(
+    formItemID: number,
+    objectID: number,
+    objectTypeID: number,
+    relatedObjectID: number,
+    relatedObjectTypeID: number,
+    relationshipDefinitionID: number,
+    objectTypeTypeID: number
+  ): Observable<ApiResponse> {
     const param = {
       FormItemID: formItemID,
       ObjectID: objectID,
@@ -49,22 +53,39 @@ export class FormItemService {
       RelatedObjectID: relatedObjectID,
       RelatedObjectTypeID: relatedObjectTypeID,
       RelationshipDefinitionID: relationshipDefinitionID,
-      ObjectTypeTypeID: objectTypeTypeID
+      ObjectTypeTypeID: objectTypeTypeID,
     };
 
     let route = 'ObjectActions/GetFormItemChangeHistory';
-    
-    return this.getHttpGetApiResponse(route, 'GetFormItemChangeHistory', param, this.objectActions + route);
+
+    return this.getHttpGetApiResponse(
+      route,
+      'GetFormItemChangeHistory',
+      param,
+      this.objectActions + route
+    );
   }
 
   public getUserPreferences(): Observable<any> {
-    let route = "Dashboards/GetUserPreferences";
-    return this.getHttpGetApiResponse(route, 'GetUserPreferences', {}, this.dashboards + route)
+    let route = 'Dashboards/GetUserPreferences';
+    return this.getHttpGetApiResponse(
+      route,
+      'GetUserPreferences',
+      {},
+      this.dashboards + route
+    );
   }
 
-  public GetFormItemChangeHistoryWithParam(param: any): Observable<ApiResponse> {
-    let route = 'ObjectActions/GetFormItemChangeHistory'; 
-    return this.getHttpGetApiResponse(route, 'GetFormItemChangeHistory', param, this.objectActions + route);
+  public GetFormItemChangeHistoryWithParam(
+    param: any
+  ): Observable<ApiResponse> {
+    let route = 'ObjectActions/GetFormItemChangeHistory';
+    return this.getHttpGetApiResponse(
+      route,
+      'GetFormItemChangeHistory',
+      param,
+      this.objectActions + route
+    );
   }
 
   // ApiResponse calls //
@@ -72,7 +93,8 @@ export class FormItemService {
     url: string,
     functionName: string,
     httpOptionsParams?: HttpParams | { [param: string]: any },
-    overrideLocalUrl = null): Observable<ApiResponse> {
+    overrideLocalUrl = null
+  ): Observable<ApiResponse> {
     if (httpOptionsParams) {
       this.httpOptionsWithParams.params = httpOptionsParams;
     }
@@ -81,15 +103,13 @@ export class FormItemService {
       url = overrideLocalUrl;
     }
     if (httpOptionsParams) {
-      return this.http.get(url, this.httpOptionsWithParams)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
+      return this.http.get(url, this.httpOptionsWithParams).pipe(
+        map((x) => this.toApiResponse(x) as any),
         catchError(this.handleApiResponseError(functionName))
       );
-    } else { 
-      return this.http.get(url, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
+    } else {
+      return this.http.get(url, this.httpOptions).pipe(
+        map((x) => this.toApiResponse(x) as any),
         catchError(this.handleApiResponseError(functionName))
       );
     }
@@ -99,18 +119,18 @@ export class FormItemService {
     url: string,
     functionName: string,
     postBody: any,
-    overrideLocalUrl): Observable<ApiResponse> {
+    overrideLocalUrl
+  ): Observable<ApiResponse> {
     if (overrideLocalUrl) {
       url = overrideLocalUrl;
     } else {
-      url = this.objectActions + url
+      url = this.objectActions + url;
     }
 
-    return this.http.post(url, postBody, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
+    return this.http.post(url, postBody, this.httpOptions).pipe(
+      map((x) => this.toApiResponse(x) as any),
+      catchError(this.handleApiResponseError(functionName))
+    );
   }
 
   protected getHttpPutApiResponse(
@@ -118,9 +138,10 @@ export class FormItemService {
     functionName: string,
     putBody: any,
     overrideBaseUrl: boolean = false,
-    overrideLocalUrl): Observable<ApiResponse> {
+    overrideLocalUrl
+  ): Observable<ApiResponse> {
     if (overrideBaseUrl) {
-      url = this.objectActions + url
+      url = this.objectActions + url;
     } else {
       url = this.baseUrl + url;
     }
@@ -128,20 +149,20 @@ export class FormItemService {
       url = overrideLocalUrl;
     }
     // url = 'http://localhost:39187' + url;
-    return this.http.put(url, putBody, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
+    return this.http.put(url, putBody, this.httpOptions).pipe(
+      map((x) => this.toApiResponse(x) as any),
+      catchError(this.handleApiResponseError(functionName))
+    );
   }
 
   protected getHttpDeleteApiResponse(
     url: string,
     functionName: string,
     overrideBaseUrl: boolean = false,
-    overrideLocalUrl): Observable<ApiResponse> {
+    overrideLocalUrl
+  ): Observable<ApiResponse> {
     if (overrideBaseUrl) {
-      url = this.objectActions + url
+      url = this.objectActions + url;
     } else {
       url = this.baseUrl + url;
     }
@@ -149,11 +170,10 @@ export class FormItemService {
       url = overrideLocalUrl;
     }
     // url = 'http://localhost:39187' + url;
-    return this.http.delete(url, this.httpOptions)
-      .pipe(
-        map(x => this.toApiResponse(x) as any),
-        catchError(this.handleApiResponseError(functionName))
-      );
+    return this.http.delete(url, this.httpOptions).pipe(
+      map((x) => this.toApiResponse(x) as any),
+      catchError(this.handleApiResponseError(functionName))
+    );
   }
 
   protected handleApiResponseError(operation = 'operation not provided') {
@@ -162,7 +182,8 @@ export class FormItemService {
         return of({
           success: false,
           data: '',
-          clientErrorMessage: error?.error?.clientErrorMessage || error.statusText
+          clientErrorMessage:
+            error?.error?.clientErrorMessage || error.statusText,
         });
       }
       return of(null);
@@ -170,15 +191,15 @@ export class FormItemService {
   }
 
   protected toApiResponse(value: any): ApiResponse {
-    const result: ApiResponse =
-    {
+    const result: ApiResponse = {
       success: false,
       data: '{}',
-      clientErrorMessage: ''
+      clientErrorMessage: '',
     };
 
     result.success = value.success ? value.success : false;
-    result.data = (value.data || (!value.data && value.data === 0)) ? value.data : '{}';
+    result.data =
+      value.data || (!value.data && value.data === 0) ? value.data : '{}';
     result.clientErrorMessage = result.success ? '' : result.data;
 
     return result;

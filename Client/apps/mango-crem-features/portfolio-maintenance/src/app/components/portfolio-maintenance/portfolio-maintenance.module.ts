@@ -4,11 +4,22 @@ import { RouterModule } from '@angular/router';
 import { PortfolioMaintenanceComponent } from './portfolio-maintenance.component';
 import { PortfolioMaintenanceService } from './portfolio-maintenance.service';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { DxCheckBoxModule, DxDataGridModule, DxLoadPanelModule, DxTemplateModule, DxTooltipModule, DxTreeListModule } from 'devextreme-angular';
+import {
+  DxCheckBoxModule,
+  DxDataGridModule,
+  DxLoadPanelModule,
+  DxTemplateModule,
+  DxTooltipModule,
+  DxTreeListModule,
+} from 'devextreme-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ButtonModule, DropdownModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  ButtonModule,
+  DropdownModule,
+  ModalModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { MatDialogModule } from '@angular/material/dialog';
 import { HierarchyDeletionComponent } from '../index/modal/user-deletion/hierarchy-deletion.component';
 import { ViewGroupContactsComponent } from './modals/view-group-contacts/view-group-contacts.component';
@@ -39,15 +50,15 @@ import { ViewGroupContactsComponent } from './modals/view-group-contacts/view-gr
     RouterModule.forChild([
       {
         path: '',
-        data: { pageTitle: 'Portfolios', breadCrumb: { label: 'Portfolio Maintenance', append: true }},
+        data: {
+          pageTitle: 'Portfolios',
+          breadCrumb: { label: 'Portfolio Maintenance', append: true },
+        },
         component: PortfolioMaintenanceComponent,
-      }
-    ])
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    PortfolioMaintenanceService,
-    DatePipe
-  ]
+  providers: [PortfolioMaintenanceService, DatePipe],
 })
-export class PortfolioMaintenanceModule { }
+export class PortfolioMaintenanceModule {}

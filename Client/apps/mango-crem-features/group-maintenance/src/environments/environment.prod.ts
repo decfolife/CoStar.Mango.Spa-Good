@@ -2,7 +2,8 @@ class EnvironmentsCrem {
   production = false;
   name = 'PROD';
   appUrls = {
-    groupMaintenance: '/v06/WebServices/Mango/GroupMaintenance/GroupMaintenance.asmx/'
+    groupMaintenance:
+      '/v06/WebServices/Mango/GroupMaintenance/GroupMaintenance.asmx/',
   };
   isRestful: false;
 }

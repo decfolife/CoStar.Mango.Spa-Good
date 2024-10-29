@@ -26,7 +26,7 @@ import { DxCheckBoxComponent, DxCheckBoxModule, DxValidatorModule } from 'devext
 
 export class CheckBoxComponent implements ControlValueAccessor, AfterViewInit {
 
-  @Input() value: boolean = false;
+  @Input() value = false;
   @Input() elementAttr: string;
   @Input() disabled = false;
   @Output() changeEvent = new EventEmitter();

@@ -3,11 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { WidgetHistoryComponent } from './modal/widget-history.component';
 
-
 @Component({
   selector: 'mango-open-widget-history-modal',
   templateUrl: './open-widget-history-modal.component.html',
-  styleUrls: ['./open-widget-history-modal.component.scss']
+  styleUrls: ['./open-widget-history-modal.component.scss'],
 })
 export class OpenWidgetHistoryModalComponent implements OnInit {
   @Input() objectTypeId: number;
@@ -19,14 +18,9 @@ export class OpenWidgetHistoryModalComponent implements OnInit {
   @Input() relationshipDefinitionId: number;
   @Input() historyType: string;
 
-  constructor(
-    private dialog: MatDialog,
-  ) {
+  constructor(private dialog: MatDialog) {}
 
-   }
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   public openButtonClicked() {
     this.openModal();
@@ -47,8 +41,8 @@ export class OpenWidgetHistoryModalComponent implements OnInit {
           formItemID: null,
           relatedObjectID: null,
           relatedObjectTypeID: null,
-          relationshipDefinitionID: null
-        }
+          relationshipDefinitionID: null,
+        },
       });
     } else if (this.historyType === 'widget') {
       dialogRef = this.dialog.open(WidgetHistoryComponent, {
@@ -63,13 +57,12 @@ export class OpenWidgetHistoryModalComponent implements OnInit {
           RelatedObjectID: Number(this.relatedObjectId),
           RelatedObjectTypeID: Number(this.relatedObjectTypeId),
           RelationshipDefinitionID: Number(this.relationshipDefinitionId),
-        }
+        },
       });
     }
-  
-    dialogRef?.afterClosed().subscribe(result => {
-      if (result) {
 
+    dialogRef?.afterClosed().subscribe((result) => {
+      if (result) {
       }
     });
   }

@@ -1,5 +1,12 @@
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
-import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { AmortizationGridColumnsService } from '@accounting-summary/services/amortization-grid-columns.service';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
@@ -12,7 +19,8 @@ import { DxDataGridComponent } from 'devextreme-angular';
   styleUrls: ['./je-processing-info.component.scss'],
 })
 export class JeProcessingInfoComponent {
-  @ViewChild("JournalEntryProcessing") journalEntryProcessing: DxDataGridComponent;
+  @ViewChild('JournalEntryProcessing')
+  journalEntryProcessing: DxDataGridComponent;
   @Input() jeProcessingPopupData: any;
   @Input() userInfo: UserInfoResponse;
   @Input() amortizationdetailsGridData: any;
@@ -26,7 +34,7 @@ export class JeProcessingInfoComponent {
 
   jeProcessingGridColumns = [];
   showJournalEntries = false;
-  componentName = "je-processing-info";
+  componentName = 'je-processing-info';
   isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
   displayNoDataText = 'Loading Data...';
@@ -39,19 +47,26 @@ export class JeProcessingInfoComponent {
   disableBtnReason = '';
   showNoJeProfileSelected = false;
   actionsButtonId = '';
-  private subscription = new Subscription;
+  private subscription = new Subscription();
   isLocked = false;
   isArchived = false;
 
-  constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, public jeProcessingGridColumnsService: AmortizationGridColumnsService) {
-  }
+  constructor(
+    public accountingSummaryService: AccountingSummaryService,
+    public formattingService: FormattingService,
+    public jeProcessingGridColumnsService: AmortizationGridColumnsService
+  ) {}
 
   ngOnInit() {
     if (this.isPopupForRetroGridClick) {
-      this.componentName = this.componentName + "-retro"
+      this.componentName = this.componentName + '-retro';
     }
 
-    this.actionsButtonId = this.accountingSummaryService.getId(this.componentName, 'ActionsButton', 'button');
+    this.actionsButtonId = this.accountingSummaryService.getId(
+      this.componentName,
+      'ActionsButton',
+      'button'
+    );
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -67,7 +82,11 @@ export class JeProcessingInfoComponent {
   onExporting(event) {
     const fileName = this.exportToExcelFileName();
     this.journalEntryProcessing.loadPanel.enabled = false;
-    this.accountingSummaryService.exportToExcel(this.journalEntryProcessing.instance, fileName, 'Sheet');
+    this.accountingSummaryService.exportToExcel(
+      this.journalEntryProcessing.instance,
+      fileName,
+      'Sheet'
+    );
   }
 
   private jeProcessingInfoGridSetup() {
@@ -75,14 +94,19 @@ export class JeProcessingInfoComponent {
     if (this.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }
-    this.jeProcessingGridColumns = this.jeProcessingGridColumnsService.getJournalEntryGridColumns();
+    this.jeProcessingGridColumns =
+      this.jeProcessingGridColumnsService.getJournalEntryGridColumns();
 
-    this.jeProcessingGridColumns.forEach(col => {
+    this.jeProcessingGridColumns.forEach((col) => {
       if (col.usesLocalFormat === 'true') {
-        col.format = value => this.formattingService.localFormat(+value, this.eventScheduleData.localCurrencyDecimalPrecision);
+        col.format = (value) =>
+          this.formattingService.localFormat(
+            +value,
+            this.eventScheduleData.localCurrencyDecimalPrecision
+          );
       }
       if (col.caption === 'Cost %') {
-        col.format = value => this.formattingService.localFormat(+value, 4);
+        col.format = (value) => this.formattingService.localFormat(+value, 4);
       }
     });
     return this.jeProcessingGridColumns;
@@ -103,16 +127,22 @@ export class JeProcessingInfoComponent {
     this.isLocked = this.accountingSummaryService.getIsLocked();
     if (this.isLocked) {
       this.isButtonDisabled = true;
-      this.disableBtnReason = 'This action cannot take place because the lease is Locked';
+      this.disableBtnReason =
+        'This action cannot take place because the lease is Locked';
     }
 
     this.isArchived = this.accountingSummaryService.getIsArchived();
     if (this.isArchived) {
       this.isButtonDisabled = true;
-      this.disableBtnReason = 'This action cannot take place because the lease is Archived';
+      this.disableBtnReason =
+        'This action cannot take place because the lease is Archived';
     }
 
-    if ((this.jeProcessingPopupData.journalEntryProfileName === null || this.jeProcessingPopupData.journalEntryProfileName === undefined) && this.jeProcessingPopupData.jeStatus === 'Scheduled') {
+    if (
+      (this.jeProcessingPopupData.journalEntryProfileName === null ||
+        this.jeProcessingPopupData.journalEntryProfileName === undefined) &&
+      this.jeProcessingPopupData.jeStatus === 'Scheduled'
+    ) {
       this.showNoJeProfileSelected = true;
       this.showActionButton = false;
       this.showJournalEntries = false;
@@ -122,38 +152,41 @@ export class JeProcessingInfoComponent {
 
     switch (this.jeProcessingPopupData.jeStatus) {
       case 'Scheduled':
+        if (!this.showNoJeProfileSelected) {
+          this.toggleCallout(true);
+          this.calloutText = 'Journal Entry Preview:';
+          this.changeButtonText = 'Approve';
+          this.showJournalEntries = true;
+          this.showActionButton = true;
+          this.notifyHeight(true);
 
-        if(!this.showNoJeProfileSelected){
-        this.toggleCallout(true);
-        this.calloutText = 'Journal Entry Preview:';
-        this.changeButtonText = 'Approve';
-        this.showJournalEntries = true;
-        this.showActionButton = true;
-        this.notifyHeight(true);
-        
-        if (!this.isLocked && !this.isArchived) {
-          this.isButtonDisabled = false;
+          if (!this.isLocked && !this.isArchived) {
+            this.isButtonDisabled = false;
 
-          if (!this.wfStatusRights.wfStatusallowJEApproval) {
-            this.isButtonDisabled = true;
-            this.disableBtnReason = 'Workflow status does not allow JE approval'
-          } else if (!this.rightsInfo.canApproveJE) {
-            this.showActionButton = true;
-            this.isButtonDisabled = true;
-            this.disableBtnReason = 'You do not have rights to Approve';
+            if (!this.wfStatusRights.wfStatusallowJEApproval) {
+              this.isButtonDisabled = true;
+              this.disableBtnReason =
+                'Workflow status does not allow JE approval';
+            } else if (!this.rightsInfo.canApproveJE) {
+              this.showActionButton = true;
+              this.isButtonDisabled = true;
+              this.disableBtnReason = 'You do not have rights to Approve';
+            } else if (this.eventScheduleData.isReportingException) {
+              this.showActionButton = true;
+              this.isButtonDisabled = true;
+              this.disableBtnReason =
+                'This accounting event is a reporting exception, which is excluded from journal entry processing.';
+            }
           }
-          else if (this.eventScheduleData.isReportingException) {
-            this.showActionButton = true;
-            this.isButtonDisabled = true;
-            this.disableBtnReason = 'This accounting event is a reporting exception, which is excluded from journal entry processing.';
+
+          if (
+            this.jeProcessingPopupData.journalEntries === null ||
+            this.jeProcessingPopupData.journalEntries.length === 0
+          ) {
+            this.notifyHeight(false);
+            this.showJournalEntries = false;
           }
         }
-
-        if (this.jeProcessingPopupData.journalEntries === null || this.jeProcessingPopupData.journalEntries.length === 0) {
-          this.notifyHeight(false);
-          this.showJournalEntries = false;
-        }
-      }
         break;
 
       case 'Approved':
@@ -161,7 +194,7 @@ export class JeProcessingInfoComponent {
         this.notifyHeight(true);
         this.showJournalEntries = true;
         this.showActionButton = true;
-        
+
         if (!this.isLocked && !this.isArchived) {
           this.isButtonDisabled = false;
 
@@ -170,10 +203,13 @@ export class JeProcessingInfoComponent {
             this.disableBtnReason = 'You do not have rights to Unapprove';
           }
         }
-          if (this.jeProcessingPopupData.journalEntries === null || this.jeProcessingPopupData.journalEntries.length === 0) {
-            this.notifyHeight(false);
-            this.showJournalEntries = false;
-          }
+        if (
+          this.jeProcessingPopupData.journalEntries === null ||
+          this.jeProcessingPopupData.journalEntries.length === 0
+        ) {
+          this.notifyHeight(false);
+          this.showJournalEntries = false;
+        }
 
         break;
 
@@ -192,7 +228,10 @@ export class JeProcessingInfoComponent {
           }
         }
 
-        if (this.jeProcessingPopupData.journalEntries === null || this.jeProcessingPopupData.journalEntries.length === 0) {
+        if (
+          this.jeProcessingPopupData.journalEntries === null ||
+          this.jeProcessingPopupData.journalEntries.length === 0
+        ) {
           this.notifyHeight(false);
           this.showJournalEntries = false;
         }
@@ -202,68 +241,90 @@ export class JeProcessingInfoComponent {
 
   getDebitCreditTotal(): { debit: number; credit: number } {
     const journalEntries = this.jeProcessingPopupData.journalEntries || [];
-    return journalEntries.reduce((accumulator, entry) => {
-      if (entry.debitCredit === 'C') {
-        accumulator.credit += entry.amount;
-      } else if (entry.debitCredit === 'D') {
-        accumulator.debit += entry.amount;
-      }
-      return accumulator;
-    }, { debit: 0, credit: 0 });
+    return journalEntries.reduce(
+      (accumulator, entry) => {
+        if (entry.debitCredit === 'C') {
+          accumulator.credit += entry.amount;
+        } else if (entry.debitCredit === 'D') {
+          accumulator.debit += entry.amount;
+        }
+        return accumulator;
+      },
+      { debit: 0, credit: 0 }
+    );
   }
 
   toggleCallout(show: boolean) {
-    this.calloutClass = (show) ? 'calloutPanel' : '';
-    this.calloutText = (show) ? 'Journal Entry Preview' : '';
+    this.calloutClass = show ? 'calloutPanel' : '';
+    this.calloutText = show ? 'Journal Entry Preview' : '';
   }
 
   actionButton() {
     switch (this.changeButtonText) {
       case 'Approve':
-        if (this.rightsInfo.canApproveJE && this.wfStatusRights.wfStatusallowJEApproval) {
-          this.saveJournalEntryProcess(this.jeProcessingPopupData.leaseRecognitionPeriodID, this.changeButtonText)
+        if (
+          this.rightsInfo.canApproveJE &&
+          this.wfStatusRights.wfStatusallowJEApproval
+        ) {
+          this.saveJournalEntryProcess(
+            this.jeProcessingPopupData.leaseRecognitionPeriodID,
+            this.changeButtonText
+          );
         }
         break;
 
       case 'Unapprove':
         if (this.rightsInfo.canUnapproveJE) {
-          this.saveJournalEntryProcess(this.jeProcessingPopupData.leaseRecognitionPeriodID, this.changeButtonText)
+          this.saveJournalEntryProcess(
+            this.jeProcessingPopupData.leaseRecognitionPeriodID,
+            this.changeButtonText
+          );
         }
         break;
 
       case 'Unexport':
         if (this.rightsInfo.canUnexportJE) {
-          this.saveJournalEntryProcess(this.jeProcessingPopupData.leaseRecognitionPeriodID, this.changeButtonText)
+          this.saveJournalEntryProcess(
+            this.jeProcessingPopupData.leaseRecognitionPeriodID,
+            this.changeButtonText
+          );
         }
         break;
     }
   }
 
   saveJournalEntryProcess(periodID: number, actions: string) {
-    this.subscription.add(this.accountingSummaryService.journalEntryProcess(periodID, actions).subscribe(
-      (jeProcessResponse: any) => {
-        if (jeProcessResponse === null) {
-          this.accountingSummaryService.displayContactSystemAdminMessage();
-        } else if (jeProcessResponse.success) {
-          switch (this.changeButtonText) {
-            case 'Approve':
-              this.accountingSummaryService.successNotify('Approved Successfully');
-              break;
+    this.subscription.add(
+      this.accountingSummaryService
+        .journalEntryProcess(periodID, actions)
+        .subscribe((jeProcessResponse: any) => {
+          if (jeProcessResponse === null) {
+            this.accountingSummaryService.displayContactSystemAdminMessage();
+          } else if (jeProcessResponse.success) {
+            switch (this.changeButtonText) {
+              case 'Approve':
+                this.accountingSummaryService.successNotify(
+                  'Approved Successfully'
+                );
+                break;
 
-            case 'Unapprove':
-              this.accountingSummaryService.successNotify('Unapproved Successfully');
-              break;
+              case 'Unapprove':
+                this.accountingSummaryService.successNotify(
+                  'Unapproved Successfully'
+                );
+                break;
 
-            case 'Unexport':
-              this.accountingSummaryService.successNotify('Unexported Successfully');
-              break;
+              case 'Unexport':
+                this.accountingSummaryService.successNotify(
+                  'Unexported Successfully'
+                );
+                break;
+            }
+            this.jeActionTaken.emit();
+          } else {
+            this.accountingSummaryService.errorNotify('Process Failed');
           }
-          this.jeActionTaken.emit();
-        }
-        else {
-          this.accountingSummaryService.errorNotify('Process Failed');
-        }
-      })
+        })
     );
   }
 
@@ -282,8 +343,18 @@ export class JeProcessingInfoComponent {
   }
 
   exportToExcelFileName(): string {
-    const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(/[\s-]/g, '');
+    const dateTimeStamp = new Date().toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    const formattedDisplayPeriodTitle = this.displayPeriodTitle.replace(
+      /[\s-]/g,
+      ''
+    );
     const fileName = `Period_${formattedDisplayPeriodTitle}_Journal Entry_${dateTimeStamp}.xlsx`;
     return fileName;
   }

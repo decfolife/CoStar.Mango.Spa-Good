@@ -5,7 +5,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
-import { DxButtonModule, DxPopupModule, DxSelectBoxModule, DxTextBoxModule, DxLoadPanelModule, DxTextAreaModule } from 'devextreme-angular';
+import {
+  DxButtonModule,
+  DxPopupModule,
+  DxSelectBoxModule,
+  DxTextBoxModule,
+  DxLoadPanelModule,
+  DxTextAreaModule,
+} from 'devextreme-angular';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 import { LibUiElementsModule } from 'libs/ui-shared/lib-ui-elements/src/lib/lib-ui-elements.module';
@@ -42,8 +49,7 @@ import { SettingsPageComponent } from '../settings-page/settings-page.component'
     MatSlideToggleModule,
     NgxSkeletonLoaderModule,
     DxTextAreaModule,
-
   ],
   providers: [FinancialReportingSettingsService, DatePipe],
 })
-export class IndexModule { }
+export class IndexModule {}

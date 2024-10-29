@@ -3,7 +3,8 @@
     <div class="controls-left">
       <h5 class="dbl-right-margin" *ngIf="!isPopupView">Lease Alerts</h5>
 
-      <dx-text-box class="alerts__search"
+      <dx-text-box
+        class="alerts__search"
         [(value)]="searchText"
         mode="search"
         placeholder="Search..."
@@ -28,7 +29,8 @@
     </div>
 
     <div class="controls-right">
-      <dx-switch [value]="showDismissed"
+      <dx-switch
+        [value]="showDismissed"
         switchedOffText="Hide Dismissed"
         switchedOnText="Show Dismissed"
         (onValueChanged)="setIsDismissedFilter($event.value)"
@@ -45,20 +47,21 @@
           [disabled]="isLoadingData"
           id="leaseAlertsLeaseStatusFilterToggle"
         >
-          <mat-button-toggle value="active"
-            [(checked)]="showActiveLeases"
-          >Active</mat-button-toggle>
+          <mat-button-toggle value="active" [(checked)]="showActiveLeases"
+            >Active</mat-button-toggle
+          >
 
-          <mat-button-toggle value="archived"
-            [(checked)]="showArchivedLeases"
-          >Archived</mat-button-toggle>
+          <mat-button-toggle value="archived" [(checked)]="showArchivedLeases"
+            >Archived</mat-button-toggle
+          >
 
-          <mat-button-toggle value="all"
-            [(checked)]="showAllLeases"
-          >All</mat-button-toggle>
+          <mat-button-toggle value="all" [(checked)]="showAllLeases"
+            >All</mat-button-toggle
+          >
         </mat-button-toggle-group>
 
-        <dx-tooltip target="#leaseAlertsLeaseStatusFilterToggle"
+        <dx-tooltip
+          target="#leaseAlertsLeaseStatusFilterToggle"
           [(visible)]="leaseStatusTooltipVisible"
           [hideOnOutsideClick]="false"
         >
@@ -68,23 +71,34 @@
         </dx-tooltip>
       </div>
 
-      <button class="btn btn-default"
+      <button
+        class="btn btn-default"
         (click)="showFilterBuilder()"
         id="leaseAlertsFilterBuilderButton"
-      >Filters
-        <div *ngIf="appliedFilterCount > 0 && !showClearFilters"
+      >
+        Filters
+        <div
+          *ngIf="appliedFilterCount > 0 && !showClearFilters"
           class="badge primary costar std-left-margin"
           (mouseover)="toggleClearFilters()"
-        >{{ appliedFilterCount }}</div>
+        >
+          {{ appliedFilterCount }}
+        </div>
 
-        <div *ngIf="appliedFilterCount > 0 && showClearFilters"
+        <div
+          *ngIf="appliedFilterCount > 0 && showClearFilters"
           class="badge primary costar std-left-margin underline"
           (mouseout)="toggleClearFilters()"
           (click)="clearGridFilters($event)"
-        >Clear {{ appliedFilterCount }} Filter{{ appliedFilterCount === 1 ? '' : 's' }}</div>
+        >
+          Clear {{ appliedFilterCount }} Filter{{
+            appliedFilterCount === 1 ? '' : 's'
+          }}
+        </div>
       </button>
 
-      <button class="btn btn-default"
+      <button
+        class="btn btn-default"
         [matMenuTriggerFor]="moreMenu"
         id="leaseAlertsMoreMenuButton"
       >
@@ -92,43 +106,59 @@
       </button>
 
       <mat-menu #moreMenu="matMenu" class="alerts-more-menu">
-        <button mat-menu-item
+        <button
+          mat-menu-item
           (click)="showColumnChooser()"
           [disabled]="isLoadingData"
           id="columnChooserButton"
-        >Column Chooser</button>
+        >
+          Column Chooser
+        </button>
 
-        <button mat-menu-item
+        <button
+          mat-menu-item
           [disabled]="isExporting"
           (click)="exportDataGrid()"
           id="exportButton"
-        >Export</button>
+        >
+          Export
+        </button>
 
-        <button mat-menu-item
+        <button
+          mat-menu-item
           *ngIf="isCollapseExpandAllEnabled"
           (click)="collapseExpandAll()"
           id="collapseExpandAllButton"
-        >{{ getCollapseExpandAllText() }}</button>
+        >
+          {{ getCollapseExpandAllText() }}
+        </button>
       </mat-menu>
 
-      <button class="btn btn-default"
+      <button
+        class="btn btn-default"
         *ngIf="isPopupView"
         (click)="refreshAlerts()"
         [disabled]="refreshingAlerts"
         id="refreshAlertsButton"
-      >{{ getRefreshButtonText() }}</button>
+      >
+        {{ getRefreshButtonText() }}
+      </button>
 
-      <button class="btn btn-primary"
+      <button
+        class="btn btn-primary"
         *ngIf="userHasAddRights && !(isPopupView && isArchived)"
         [disabled]="toggleButtonDisabled || isLoadingData"
         (click)="toggleSelected()"
         id="updateSelectedButton"
-      >Update Selected</button>
+      >
+        Update Selected
+      </button>
     </div>
   </div>
 
   <div class="list-page-data-grid-wrapper">
-    <mango-alerts-grid #alertsGrid
+    <mango-alerts-grid
+      #alertsGrid
       [userCanEdit]="userHasAddRights"
       [isPopupView]="isPopupView"
       [leaseAbstractID]="leaseAbstractID"

@@ -1,69 +1,74 @@
 <div [class.col-md-6]="!fullWidth" [class.col-md-12]="fullWidth" cdkDrag>
+  <div cdkDragHandle class="card-drag-handle" [id]="config.id + 'DragDrop'">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="drag_handle"
+      height="24px"
+      viewBox="0 0 24 24"
+      width="24px"
+      fill="#BFBFBF"
+    >
+      <path d="M0 0h24v24H0z" fill="none" />
+      <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
+    </svg>
+  </div>
 
-	<div cdkDragHandle class="card-drag-handle" [id]="config.id + 'DragDrop'">
-		<svg xmlns="http://www.w3.org/2000/svg" class="drag_handle" height="24px" viewBox="0 0 24 24" width="24px"
-			fill="#BFBFBF">
-			<path d="M0 0h24v24H0z" fill="none" />
-			<path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
-		</svg>
-	</div>
+  <crem-card
+    [id]="config.id + 'Card'"
+    [title]="config.name"
+    [showFilterClearButton]="false"
+    [pendoTitleId]="config.id + 'Title'"
+    [customDropdownMenu]="true"
+    [filterData]="config.filterData"
+    [filterInitialValue]="config.filterInitialValue"
+    (selectedFilter)="emitSelection($event)"
+    fxFlexFill
+  >
+    <ng-template #customDropdownMenu>
+      <div class="card-header--right">
+        <button
+          [id]="config.id + 'MoreOption'"
+          class="btn btn-default btn-sm moreOptionsBtn"
+          [matMenuTriggerFor]="cardMenu"
+          (click)="$event.preventDefault()"
+          [attr.aria-label]="'More Options'"
+        >
+          <mat-icon [attr.aria-label]="'More Options'">more_horiz</mat-icon>
+        </button>
 
-	<crem-card
-		[id]="config.id + 'Card'"
-		[title]="config.name"
-		[showFilterClearButton]="false"
-		[pendoTitleId]="config.id + 'Title'"
-		[customDropdownMenu]="true"
-		[filterData]="config.filterData"
-		[filterInitialValue]="config.filterInitialValue"
-		(selectedFilter)="emitSelection($event)"
-		fxFlexFill
-	>
+        <mat-menu #cardMenu="matMenu">
+          <button mat-menu-item (click)="toggleCardWidth(config.id)">
+            Toggle Full Width
+          </button>
 
-		<ng-template #customDropdownMenu>
-			<div class="card-header--right">
-				<button
-					[id]="config.id + 'MoreOption'"
-					class="btn btn-default btn-sm moreOptionsBtn"
-					[matMenuTriggerFor]="cardMenu"
-					(click)="$event.preventDefault()"
-					[attr.aria-label]="'More Options'"
-				>
-					<mat-icon [attr.aria-label]="'More Options'">more_horiz</mat-icon>
-				</button>
+          <button
+            mat-menu-item
+            *ngIf="config.showFieldChooser"
+            (click)="showColumnChooser()"
+          >
+            Field Chooser
+          </button>
+        </mat-menu>
+      </div>
+    </ng-template>
 
-				<mat-menu #cardMenu="matMenu">
-					<button
-						mat-menu-item
-						(click)="toggleCardWidth(config.id)"
-					>Toggle Full Width</button>
-
-					<button
-						mat-menu-item
-						*ngIf="config.showFieldChooser"
-						(click)="showColumnChooser()"
-					>Field Chooser</button>
-				</mat-menu>
-
-			</div>
-		</ng-template>
-
-		<div class="cardContent scroll-container vertical" fxflexFill>
-			<dx-pivot-grid
-				#PivotGrid
-				[allowSortingBySummary]="true"
-				[allowFiltering]="true"
-				[showBorders]="true"
-				[showRowGrandTotals]="false"
-				[showColumnGrandTotals]="false"
-				[showRowTotals]="false"
-				[showColumnTotals]="false"
-				[dataSource]="dataSource"
-				(onCellPrepared)="onCellPrepared($event)"
-			>
-				<dxo-field-chooser [enabled]="true" />
-				<dxo-texts total="Total" />
-			</dx-pivot-grid>
-		</div>
-	</crem-card>
+    <div class="cardContent scroll-container vertical" fxflexFill>
+      <dx-pivot-grid
+        #PivotGrid
+        [allowSortingBySummary]="config.allowSortingBySummary ?? true"
+        [allowFiltering]="config.allowFiltering ?? true"
+        [showBorders]="config.showBorders ?? true"
+        [showRowGrandTotals]="config.showRowGrandTotals ?? false"
+        [showColumnGrandTotals]="config.showColumnGrandTotals ?? false"
+        [showRowTotals]="config.showRowTotals ?? false"
+        [showColumnTotals]="config.showColumnTotals ?? false"
+        [dataSource]="dataSource"
+        (onCellPrepared)="onCellPrepared($event)"
+        [texts]="config.texts"
+      >
+        <dxo-field-chooser [enabled]="true"></dxo-field-chooser>
+        <dxo-texts total="Total"></dxo-texts>
+      </dx-pivot-grid>
+    </div>
+  </crem-card>
 </div>

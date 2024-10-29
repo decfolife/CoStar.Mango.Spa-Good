@@ -5,7 +5,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   standalone: true,
-  imports:[ModalModule, MatDialogModule],
+  imports: [ModalModule, MatDialogModule],
   selector: 'mango-generate-apikey-confirmation',
   templateUrl: 'generate-apikey-confirmation.component.html',
   styleUrls: ['generate-apikey-confirmation.component.scss'],
@@ -17,8 +17,8 @@ export class GenerateApiKeyConfirmationComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<GenerateApiKeyConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { 
-  }
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit() {
     this.msg = this.data.msg;
@@ -29,5 +29,4 @@ export class GenerateApiKeyConfirmationComponent implements OnInit {
   yes() {
     this.dialogRef.close(true);
   }
-
 }

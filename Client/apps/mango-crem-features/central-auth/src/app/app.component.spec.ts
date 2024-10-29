@@ -19,10 +19,9 @@ describe('App Component', () => {
         CentralAuthFacade,
         provideMockStore(),
         provideRouter([]),
-        provideAnimations()
-      ]
-    })
-      .compileComponents();
+        provideAnimations(),
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

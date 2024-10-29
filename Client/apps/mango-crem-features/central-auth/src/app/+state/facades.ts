@@ -1,43 +1,58 @@
-import { Injectable } from "@angular/core";
-import { ContactRecord, UserSite } from "@mango/data-models/lib-data-models";
-import { Store, select } from "@ngrx/store";
+import { Injectable } from '@angular/core';
+import { ContactRecord, UserSite } from '@mango/data-models/lib-data-models';
+import { Store, select } from '@ngrx/store';
 import * as AppActions from './actions/actions';
 import * as OAuthActions from './actions/oauth.actions';
 import * as AppSelectors from './selectors';
-import { UserAuth } from "../models/userAuth";
-import { DefaultContactRecordSelection } from "../models/default-contact";
+import { UserAuth } from '../models/userAuth';
+import { DefaultContactRecordSelection } from '../models/default-contact';
 
 @Injectable()
 export class CentralAuthFacade {
-
   loading$ = this.store.pipe(select(AppSelectors.loading));
   error$ = this.store.pipe(select(AppSelectors.error));
   user$ = this.store.pipe(select(AppSelectors.user));
-  isUserAuthenticated$ = this.store.pipe(select(AppSelectors.isUserAuthenticated));
+  isUserAuthenticated$ = this.store.pipe(
+    select(AppSelectors.isUserAuthenticated)
+  );
   authorizationCode$ = this.store.pipe(select(AppSelectors.authorizationCode));
   redirectionUri$ = this.store.pipe(select(AppSelectors.redirectionUri));
-  isClientSpecificLogin$ = this.store.pipe(select(AppSelectors.isClientSpecificLogin));
+  isClientSpecificLogin$ = this.store.pipe(
+    select(AppSelectors.isClientSpecificLogin)
+  );
   userClients$ = this.store.pipe(select(AppSelectors.userClients));
   userRecentClients$ = this.store.pipe(select(AppSelectors.userRecentClients));
   selectedClientKey$ = this.store.pipe(select(AppSelectors.selectedClientKey));
   selectedClient$ = this.store.pipe(select(AppSelectors.selectedClient));
   contactId$ = this.store.pipe(select(AppSelectors.contactId));
   selectedContactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
-  selectedDefaultContactRecord$ = this.store.pipe(select(AppSelectors.selectedDefaultContactRecord));
+  selectedDefaultContactRecord$ = this.store.pipe(
+    select(AppSelectors.selectedDefaultContactRecord)
+  );
   ssoSettings$ = this.store.pipe(select(AppSelectors.ssoSettings));
-  userContactRecords$ = this.store.pipe(select(AppSelectors.userContactRecords));
-  openClientInNewTab$ = this.store.pipe(select(AppSelectors.openClientInNewTab));
-  isSwitchContactRecord$ = this.store.pipe(select(AppSelectors.isSwitchContactRecord));
-  loadCurrentUserComplete$ = this.store.pipe(select(AppSelectors.loadCurrentUserComplete));
+  userContactRecords$ = this.store.pipe(
+    select(AppSelectors.userContactRecords)
+  );
+  openClientInNewTab$ = this.store.pipe(
+    select(AppSelectors.openClientInNewTab)
+  );
+  isSwitchContactRecord$ = this.store.pipe(
+    select(AppSelectors.isSwitchContactRecord)
+  );
+  loadCurrentUserComplete$ = this.store.pipe(
+    select(AppSelectors.loadCurrentUserComplete)
+  );
 
-  constructor(private store: Store) { }
+  constructor(private store: Store) {}
 
   appInit() {
     this.store.dispatch(AppActions.init());
   }
 
   setLoadCurrentUserComplete(loadCurrentUserComplete: boolean) {
-    this.store.dispatch(AppActions.setLoadCurrentUserComplete({ loadCurrentUserComplete }));
+    this.store.dispatch(
+      AppActions.setLoadCurrentUserComplete({ loadCurrentUserComplete })
+    );
   }
 
   initAuthorization() {
@@ -57,7 +72,9 @@ export class CentralAuthFacade {
   }
 
   logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed() {
-    this.store.dispatch(AppActions.logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed());
+    this.store.dispatch(
+      AppActions.logoutWhenIsClientSpecificLoginAndloginToClientSiteFailed()
+    );
   }
 
   setUser(user: UserAuth) {
@@ -65,11 +82,15 @@ export class CentralAuthFacade {
   }
 
   setOpenClientInNewTab(openClientInNewTab: boolean) {
-    this.store.dispatch(AppActions.setOpenClientInNewTab({ openClientInNewTab }));
+    this.store.dispatch(
+      AppActions.setOpenClientInNewTab({ openClientInNewTab })
+    );
   }
-  
+
   setIsSwitchContactRecord(isSwitchContactRecord: boolean) {
-    this.store.dispatch(AppActions.setIsSwitchContactRecord({ isSwitchContactRecord }));
+    this.store.dispatch(
+      AppActions.setIsSwitchContactRecord({ isSwitchContactRecord })
+    );
   }
 
   getUserClients() {
@@ -79,7 +100,7 @@ export class CentralAuthFacade {
   getContactRecords(clientKey: string) {
     this.store.dispatch(AppActions.getContactRecords({ clientKey }));
   }
-  
+
   handleUserAlreadyLoggedIn() {
     this.store.dispatch(AppActions.handleUserAlreadyLoggedIn());
   }
@@ -97,7 +118,9 @@ export class CentralAuthFacade {
   }
 
   setClientSpecificLogin(isClientSpecific: boolean) {
-    this.store.dispatch(AppActions.setClientSpecificLogin({ isClientSpecific }));
+    this.store.dispatch(
+      AppActions.setClientSpecificLogin({ isClientSpecific })
+    );
   }
 
   setSelectedClientKey(clientKey: string) {
@@ -116,8 +139,14 @@ export class CentralAuthFacade {
     this.store.dispatch(AppActions.setContactRecord({ contactRecord }));
   }
 
-  setSelectedDefaultContactRecord(defaultContactSelection: DefaultContactRecordSelection) {
-    this.store.dispatch(AppActions.setDefaultContactRecord({ defaultContact: defaultContactSelection }));
+  setSelectedDefaultContactRecord(
+    defaultContactSelection: DefaultContactRecordSelection
+  ) {
+    this.store.dispatch(
+      AppActions.setDefaultContactRecord({
+        defaultContact: defaultContactSelection,
+      })
+    );
   }
 
   setRedirectionUri(redirectionUri: string) {
@@ -129,7 +158,7 @@ export class CentralAuthFacade {
   }
 
   authorize(accessToken: string) {
-    this.store.dispatch(OAuthActions.authorize({accessToken}));
+    this.store.dispatch(OAuthActions.authorize({ accessToken }));
   }
 
   clearState() {

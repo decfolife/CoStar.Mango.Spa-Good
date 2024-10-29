@@ -1,4 +1,4 @@
-export interface  CreateProjectTask {
+export interface CreateProjectTask {
   taskID: number;
   projectID: number;
   parentID: number;
@@ -7,7 +7,7 @@ export interface  CreateProjectTask {
   calc: number;
   autoCalc: number;
   isChild: number;
-  useEmailApprovals: number;
+  useEmailApprovals: boolean;
   name: string;
   description: string;
   required: boolean;
@@ -23,4 +23,4 @@ export interface  CreateProjectTask {
   roles: string[];
   approvalExempt: boolean;
   requiredApprovers: number;
-}  
+}

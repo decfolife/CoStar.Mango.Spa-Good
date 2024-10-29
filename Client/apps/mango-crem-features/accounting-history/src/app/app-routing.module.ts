@@ -9,9 +9,9 @@ const routes: Routes = [
       import(
         './components/accounting-history/accounting-history.component'
       ).then((mod) => mod.AccountingHistoryComponent),
-      data: {
-        breadCrumb: { label: 'History', append: true, activeLink: 'History' }
-      }
+    data: {
+      breadCrumb: { label: 'History', append: true, activeLink: 'History' },
+    },
   },
   { path: '', redirectTo: 'accounting-history', pathMatch: 'full' },
   { path: '**', redirectTo: '', pathMatch: 'full' },
@@ -19,6 +19,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

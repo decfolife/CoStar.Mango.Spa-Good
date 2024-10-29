@@ -8,9 +8,8 @@ describe('DataFieldFormatEditorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DataFieldFormatEditorComponent ]
-    })
-    .compileComponents();
+      declarations: [DataFieldFormatEditorComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

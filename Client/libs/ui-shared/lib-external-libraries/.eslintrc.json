@@ -1,6 +1,6 @@
 {
   "extends": ["../../../.eslintrc.js"],
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": ["!**/*", "*.spec.ts"],
   "overrides": [
     {
       "files": ["*.ts"],
@@ -12,11 +12,15 @@
         "project": ["libs/ui-shared/lib-external-libraries/tsconfig.*?.json"]
       },
       "rules": {
+        "@angular-eslint/no-output-native": "warn", // TODO: Check whether to turn rule off or fix.
+        "@angular-eslint/no-output-on-prefix": "warn", // TODO: Check whether to turn rule off or fix.
+        "@angular-eslint/no-host-metadata-property": "warn",
+        "@typescript-eslint/no-empty-function": "warn",
+        "@typescript-eslint/no-explicit-any": "warn",
         "@angular-eslint/directive-selector": [
           "error",
           {
             "type": "attribute",
-            "prefix": "mango",
             "style": "camelCase"
           }
         ],
@@ -24,7 +28,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "mango",
+            "prefix": "crem",
             "style": "kebab-case"
           }
         ]

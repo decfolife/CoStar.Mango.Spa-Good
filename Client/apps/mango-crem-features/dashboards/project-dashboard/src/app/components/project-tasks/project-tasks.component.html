@@ -1,22 +1,26 @@
 <div id="projectTasks-container">
   <div *ngIf="showQuickApprovalPopup">
     <crem-popup
-      [id]="'id'"
+      [id]="'quickApprovalPopupId'"
       [visible]="showQuickApprovalPopup"
-      [title]="'Quick approval'"
-      [height]="'600px'"
-      [width]="'1200px'"
+      [title]="'Quick Approval'"
+      [height]="'800px'"
+      [width]="'90vw'"
       [draggable]="true"
       [resizable]="true"
       [showCloseButton]="true"
       [hideOnOutsideClick]="false"
       [customFooter]="true"
+      (close)="onQuickApprovalClose()"
     >
       <div body>
         <crem-quick-approval
+          [isNotesFieldRequired]="isNotesFieldRequired"
           [projectId]="projectId"
-          (saveComplete)="quickApprovalSaved($event)"
-          (pendingTaskApprovalCount)="setSaveButtonText($event)"
+          [dateFormat]="dateFormat"
+          (hasChanges)="handleQuickApprovalHasChanges($event)"
+          (pendingTaskApprovalCount)="setApproveButtonText($event)"
+          (refreshTasksGrid)="refreshTasksGrid()"
         ></crem-quick-approval>
       </div>
       <div footer class="quick-approval__custom-footer">
@@ -36,11 +40,21 @@
         ></crem-button>
         <crem-button
           class="footer__save-button"
-          (buttonClick)="onQuickApprovalSave()"
+          (buttonClick)="onSaveTasksClick()"
+          btnStyle="flat"
+          color="secondary"
+          [text]="saveButtonText"
+          [hidden]="!saveButtonText"
+          [id]="'save-button'"
+        ></crem-button>
+        <crem-button
+          class="footer__approve-button"
+          (buttonClick)="onApproveTasksClick()"
           btnStyle="flat"
           color="primary"
           [text]="approveButtonText"
-          [id]="'save-button'"
+          [disabled]="quickApprovalApproveDisabled"
+          [id]="'approve-button'"
         ></crem-button>
       </div>
     </crem-popup>
@@ -51,7 +65,7 @@
       [id]="'id'"
       [visible]="showSaveTasksAsTemplatePopup"
       [title]="'Save As Task Template'"
-      [height]="'240px'"
+      [height]="'190px'"
       [width]="'600px'"
       [draggable]="true"
       [resizable]="true"
@@ -75,7 +89,11 @@
 
   <div class="tasks-toolBar-wrapper">
     <div class="controls-left">
-      <h3 class="title">Analysis: USA-IL-Chicago Renewal</h3>
+      <h3 class="title">
+        <crem-current-object-text
+          [data$]="currentObject"
+        ></crem-current-object-text>
+      </h3>
       <div class="listViews">
         <crem-list-view-menu
           [currentListViewName]="currentListViewName"
@@ -130,6 +148,10 @@
             class="actnBtn-copyTransaction"
             id="pt-copyTransaction"
             (click)="copyTransactionTemplate()"
+            [disabled]="isProxyApproverForOneTask"
+            [hidden]="
+              checkUserLevelRequirement(availableActions.COPY_TRANSACTION)
+            "
           >
             <span>Copy Transaction</span>
           </button>
@@ -139,6 +161,9 @@
             class="actnBtn-quickApproval"
             id="pt-quickApproval"
             (click)="openQuickApprovalPopup()"
+            [hidden]="
+              checkUserLevelRequirement(availableActions.QUICK_APPROVAL)
+            "
           >
             <span>Quick Approval</span>
           </button>
@@ -148,6 +173,9 @@
             class="actnBtn-taskDtlSettings"
             id="pt-taskDtlSettings"
             (click)="showTaskDetailSettings()"
+            [hidden]="
+              checkUserLevelRequirement(availableActions.TASK_DETAILS_SETTINGS)
+            "
           >
             <span>Task Detail Settings</span>
           </button>
@@ -156,8 +184,8 @@
             mat-menu-item
             class="actnBtn-deleteTasks"
             id="pt-deleteTasks"
-            *ngIf="userAccessLevel == 1"
-            [disabled]="!allSelectedRowKeys.length"
+            [disabled]="!allSelectedRowKeys.length || userAccessLevel !== 1"
+            [hidden]="checkUserLevelRequirement(availableActions.DELETE_TASKS)"
             (click)="deleteSelectedTasks()"
           >
             <span>Delete Selected Tasks</span>
@@ -168,6 +196,10 @@
             class="actnBtn-appendTemplate"
             id="pt-appendTemplate"
             (click)="showAppendTemplateDialog()"
+            [disabled]="isProxyApproverForOneTask"
+            [hidden]="
+              checkUserLevelRequirement(availableActions.APPEND_TEMPLATE)
+            "
           >
             <span>Append Template to Transaction</span>
           </button>
@@ -176,8 +208,20 @@
             mat-menu-item
             id="pt-saveTasksAsTemplate"
             (click)="showSaveAsTasksTemplateDialog()"
+            [disabled]="isProxyApproverForOneTask"
+            [hidden]="
+              checkUserLevelRequirement(availableActions.SAVE_TASKS_AS_TEMPLATE)
+            "
           >
             <span>Save Tasks As Template</span>
+          </button>
+          <button
+            mat-menu-item
+            id="pt-reorderTasksBtn"
+            [hidden]="checkUserLevelRequirement(availableActions.REORDER_TASKS)"
+            (click)="openReorderTasks()"
+          >
+            <span>Reorder Tasks</span>
           </button>
         </mat-menu>
       </div>
@@ -228,7 +272,7 @@
               [maxLengthField]="50"
               [required]="true"
               (click)="$event.stopPropagation()"
-              (onEnterKeyEvent)="onEnterKeyHit($event, 'enter')"
+              (enterKeyEvent)="onEnterKeyHit($event, 'enter')"
             ></crem-input>
           </mat-menu>
           <button
@@ -264,7 +308,12 @@
           >
             <span>Column Chooser</span>
           </button>
-          <button mat-menu-item class="moreBtn-exportBtn" id="pt-exportBtn">
+          <button
+            mat-menu-item
+            class="moreBtn-exportBtn"
+            id="pt-exportBtn"
+            (click)="excelExportClick()"
+          >
             <span>Export</span>
           </button>
         </mat-menu>
@@ -275,7 +324,7 @@
           color="primary"
           text="Add"
           id="pt-addTaskBtn"
-          (click)="$event.preventDefault()"
+          (click)="addOrEditTask(0, false, 0, 0, 0)"
         ></crem-button>
       </div>
     </div>
@@ -307,7 +356,9 @@
       (onCellClick)="displayTaskDetail($event)"
       [(selectedRowKeys)]="allSelectedRowKeys"
       (onSelectionChanged)="onTasksSelectionChanged($event)"
-      (onContentReady)="tasksContentReady($event)"
+      (onContentReady)="
+        tasksContentReady($event); adaAttr(); adaAttrTreeList($event)
+      "
     >
       <dxo-header-filter
         [visible]="true"
@@ -373,7 +424,6 @@
       <dxi-column
         dataField="ProjectMilestoneName"
         caption="Task Name"
-        [title]="ProjectMilestoneName"
         [width]="200"
         [cellTemplate]="'taskNameTemplate'"
         [fixed]="true"
@@ -437,7 +487,7 @@
         caption="Assignees"
         [cellTemplate]="'assigneesTemplate'"
         [width]="120"
-        cssClass="wrapOption-column"
+        cssClass="pt-taskColumnLink"
         [calculateCellValue]="calcApproversCellValue"
         [calculateFilterExpression]="calcFilterExpression"
       >
@@ -449,18 +499,38 @@
         dataField="NotesCount"
         caption="Note Count"
         alignment="center"
+        cssClass="pt-taskColumnLink"
         [allowFiltering]="false"
       ></dxi-column>
       <dxi-column
         dataField="FilesCount"
         caption="File Count"
         alignment="center"
+        cssClass="pt-taskColumnLink"
         [allowFiltering]="false"
       ></dxi-column>
       <dxi-column
         dataField="ApprovalStatus"
         caption="Approval"
         [cellTemplate]="'approvalTemplate'"
+      ></dxi-column>
+      <dxi-column
+        dataField="RequiredApprovers"
+        caption="# of Required Approvers"
+        alignment="center"
+      ></dxi-column>
+      <dxi-column
+        dataField="ApprovalExempt"
+        caption="Approval Exemption"
+        alignment="center"
+      ></dxi-column>
+      <dxi-column
+        dataField="UserApprovalStatus"
+        [cellTemplate]="'userApprovalStatusTemplate'"
+        [allowFiltering]="false"
+        [allowSorting]="false"
+        [width]="122"
+        alignment="center"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneDaysToComplete"
@@ -596,6 +666,10 @@
                 <li
                   mat-mdc-menu-item
                   id="{{ 'ptm-addTask' + task.rowIndex }}"
+                  [ngClass]="{
+                    disabledOption:
+                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                  }"
                   (click)="
                     addOrEditTask(
                       task.data.IndexOrder,
@@ -611,6 +685,10 @@
                 <li
                   mat-mdc-menu-item
                   id="{{ 'ptm-addSubTask' + task.rowIndex }}"
+                  [ngClass]="{
+                    disabledOption:
+                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                  }"
                   (click)="
                     addSubTask(
                       task.data.IndexOrder,
@@ -626,6 +704,10 @@
                 <li
                   mat-mdc-menu-item
                   id="{{ 'ptm-editTask' + task.rowIndex }}"
+                  [ngClass]="{
+                    disabledOption:
+                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                  }"
                   (click)="
                     addOrEditTask(
                       task.data.IndexOrder,
@@ -646,7 +728,8 @@
                   [ngClass]="{
                     disabledOption:
                       allSelectedRowKeys.length ||
-                      hasSubTasks(task.data.ProjectMilestoneID)
+                      hasSubTasks(task.data.ProjectMilestoneID) ||
+                      task.data.IsProxyUser === 1
                   }"
                   [title]="allSelectedRowKeys.length ? deleteBtnTitle : ''"
                   (click)="deleteSelectedTasks(task.data.ProjectMilestoneID)"
@@ -656,13 +739,89 @@
                 <li
                   mat-mdc-menu-item
                   id="{{ 'ptm-assignApprover' + task.rowIndex }}"
+                  [ngClass]="{
+                    disabledOption:
+                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                  }"
+                  (click)="addOrEditAssignees(task.data)"
                 >
                   Assign Approver
                 </li>
                 <li
+                  [ngClass]="{
+                    disabledOption:
+                      task.data.UserApprovalStatus.trim() ==
+                        taskUserApprovalStatus.NOT_ASSIGNED ||
+                      task.data.UserApprovalStatus.trim() ==
+                        taskUserApprovalStatus.COMPLETED ||
+                      task.data.UserApprovalStatus.trim() ==
+                        taskUserApprovalStatus.APPROVED ||
+                      task.data.ApprovalPredecessors ||
+                      task.data.ApprovalSubTasks
+                  }"
+                  mat-mdc-menu-item
+                  id="{{ 'ptm-approveTask' + task.rowIndex }}"
+                  (click)="
+                    approveOrRejectTask(
+                      task.data,
+                      taskUserApprovalStatus.APPROVE
+                    )
+                  "
+                >
+                  Approve
+                </li>
+                <li
+                  [ngClass]="{
+                    disabledOption:
+                      task.data.UserApprovalStatus.trim() ==
+                        taskUserApprovalStatus.NOT_ASSIGNED ||
+                      task.data.UserApprovalStatus.trim() ==
+                        taskUserApprovalStatus.APPROVE
+                  }"
+                  mat-mdc-menu-item
+                  id="{{ 'ptm-rejectTask' + task.rowIndex }}"
+                  (click)="
+                    approveOrRejectTask(
+                      task.data,
+                      taskUserApprovalStatus.REJECT
+                    )
+                  "
+                >
+                  Reject
+                </li>
+                <li
+                  mat-mdc-menu-item
+                  id="{{ 'ptm-addNotes' + task.rowIndex }}"
+                  (click)="openAddNotesPopup(task.data)"
+                >
+                  Add Note(s)
+                </li>
+                <li
+                  mat-mdc-menu-item
+                  id="{{ 'ptm-uploadFiles' + task.rowIndex }}"
+                  (click)="openUploadFilesPopup(task)"
+                >
+                  Upload File(s)
+                </li>
+                <li
                   mat-mdc-menu-item
                   id="{{ 'ptm-overrideComDate' + task.rowIndex }}"
-                  (click)="modifyCompleteDate(task.data.ProjectMilestoneID)"
+                  [ngClass]="{
+                    disabledOption:
+                      (userAccessLevel !== 1 &&
+                        task.data.UserApprovalStatus.trim() ==
+                          taskUserApprovalStatus.NOT_ASSIGNED) ||
+                      (task.data.IsProxyUser === 1 &&
+                        task.data.UserApprovalStatus.trim() ==
+                          taskUserApprovalStatus.NOT_ASSIGNED)
+                  }"
+                  (click)="
+                    modifyCompleteDate(
+                      task.data.ProjectMilestoneID,
+                      task.data.IsProxyUser,
+                      task.data.UserApprovalStatus
+                    )
+                  "
                 >
                   Modify Complete Date
                 </li>
@@ -683,7 +842,15 @@
         *dxTemplate="let cell of 'taskNameTemplate'"
         class="pt-taskNameTemplate"
       >
-        <div class="pt-taskNameAttr" id="{{ 'ptm-taskName' + cell.rowIndex }}">
+        <div
+          class="pt-taskNameAttr"
+          id="{{ 'ptm-taskName' + cell.rowIndex }}"
+          [title]="
+            cell.data.ProjectMilestoneDescription
+              ? cell.data.ProjectMilestoneDescription
+              : ''
+          "
+        >
           {{ cell.value }}
         </div>
       </div>
@@ -694,7 +861,10 @@
           [title]="cell.data.TaskStatus[0].Title"
         ></div>
       </div>
-      <div *dxTemplate="let cell of 'assigneesTemplate'">
+      <div
+        *dxTemplate="let cell of 'assigneesTemplate'"
+        [id]="'pt-assigneesId' + cell.rowIndex"
+      >
         <ng-container *ngFor="let assignee of cell.data.Approvers; index as i">
           <span class="pt-initialsContainer" *ngIf="i < 3"
             ><span [title]="assignee.FullName" class="pt-assineeIntials">{{
@@ -732,6 +902,89 @@
       <div *dxTemplate="let cell of 'approvalTemplate'">
         <div class="pr-approvalTem">{{ cell.value }}</div>
       </div>
+      <div
+        *dxTemplate="let cell of 'userApprovalStatusTemplate'"
+        [id]="'pt-userApprovalStatusId' + cell.rowIndex"
+      >
+        <div
+          *ngIf="cell.value.trim() == taskUserApprovalStatus.NOT_ASSIGNED"
+          class="pt-userApprovalStatusBtns-container"
+        >
+          <span
+            type="button"
+            id="{{ 'pt-assignApproverBtn' + cell.rowIndex }}"
+            (click)="addOrEditAssignees(cell.data)"
+            class="pt-notAssignedBtn"
+            [ngClass]="{ disabledOption: userAccessLevel !== 1 }"
+          >
+            {{ cell.value }}
+          </span>
+        </div>
+        <div *ngIf="cell.value.trim() == taskUserApprovalStatus.APPROVED">
+          {{ cell.value }}
+        </div>
+        <div
+          *ngIf="
+            cell.value.trim() == taskUserApprovalStatus.APPROVE_REJECT ||
+            cell.value.trim() == taskUserApprovalStatus.APPROVE
+          "
+          class="pt-userApprovalStatusBtns-container"
+        >
+          <span
+            [ngClass]="{
+              disabledOption:
+                cell.data.ApprovalPredecessors || cell.data.ApprovalSubTasks
+            }"
+            type="button"
+            [title]="
+              getApprovalBtnTitleText(
+                cell.data.ApprovalPredecessors,
+                cell.data.ApprovalSubTasks
+              )
+            "
+            id="{{ 'pt-approveBtn' + cell.rowIndex }}"
+            class="pt-approveRejectBtn"
+            (click)="
+              approveOrRejectTask(cell.data, taskUserApprovalStatus.APPROVE)
+            "
+            >Approve</span
+          >
+          <span
+            class="separator"
+            *ngIf="cell.value.trim() == taskUserApprovalStatus.APPROVE_REJECT"
+            >&nbsp; | &nbsp;</span
+          >
+          <span
+            type="button"
+            id="{{ 'pt-rejectBtn' + cell.rowIndex }}"
+            class="pt-approveRejectBtn"
+            (click)="
+              approveOrRejectTask(cell.data, taskUserApprovalStatus.REJECT)
+            "
+            *ngIf="cell.value.trim() == taskUserApprovalStatus.APPROVE_REJECT"
+            >Reject
+          </span>
+        </div>
+        <div
+          *ngIf="cell.value.trim() == taskUserApprovalStatus.COMPLETED"
+          class="pt-userApprovalStatusBtns-container"
+        >
+          <span
+            type="button"
+            id="{{ 'pt-modifyCompleteBtn' + cell.rowIndex }}"
+            class="pt-completeDateBtn"
+            (click)="
+              modifyCompleteDate(
+                cell.data.ProjectMilestoneID,
+                cell.data.IsProxyUser,
+                cell.data.UserApprovalStatus
+              )
+            "
+          >
+            {{ cell.value }}</span
+          >
+        </div>
+      </div>
     </dx-tree-list>
 
     <crem-share-view-popup
@@ -754,6 +1007,12 @@
   [height]="800"
   [width]="520"
   [showCloseButton]="true"
+  [saveButtonText]="'Save'"
+  [closeButtonText]="'Cancel'"
+  [applyButtonText]="'Apply'"
+  [disableSaveButton]="userAccessLevel !== 1"
+  [disableSApplyButton]="userAccessLevel !== 1"
+  [disableCloseButton]="userAccessLevel !== 1"
   (apply)="applyOrSaveTaskSettings('apply')"
   (save)="applyOrSaveTaskSettings('save')"
   (close)="taskSettingsOnClose($event)"
@@ -780,6 +1039,7 @@
             [isRequired]="'true'"
             [placeholderText]="'Select Date...'"
             [showDefaultValidationTooltip]="false"
+            [disabled]="userAccessLevel !== 1"
             (changeEvent)="onStartOrDueDateChange($event, 'startDate')"
           >
           </crem-date-picker>
@@ -792,7 +1052,7 @@
             [dateFormat]="dateFormat"
             [showClearButton]="'true'"
             [inputId]="'pts-dueDate'"
-            [disabled]="projectTaskSettings.calculateDates"
+            [disabled]="userAccessLevel !== 1"
             [placeholderText]="'Select Date...'"
             (changeEvent)="onStartOrDueDateChange($event, 'dueDate')"
           >
@@ -807,7 +1067,7 @@
               [id]="'pts-calculateDate'"
               [size]="'wide'"
               [value]="projectTaskSettings.calculateDates"
-              [disabled]="false"
+              [disabled]="userAccessLevel !== 1"
               [ariaLabel]="'calculate dates'"
               checkedLabel="Yes"
               uncheckedLabel="No"
@@ -824,7 +1084,7 @@
               [id]="'pts-calcBy'"
               [size]="'extra-wide'"
               [value]="projectTaskSettings.calculatedBy"
-              [disabled]="false"
+              [disabled]="userAccessLevel !== 1"
               [ariaLabel]="'calculated by'"
               (selectionChange)="
                 projSettingToggleChanged($event, 'calculatedBy')
@@ -841,7 +1101,7 @@
               [id]="'pts-calculateDate'"
               [size]="'wide'"
               [value]="projectTaskSettings.autoCalculate"
-              [disabled]="false"
+              [disabled]="userAccessLevel !== 1"
               [ariaLabel]="'auto calculate'"
               checkedLabel="On"
               uncheckedLabel="Off"
@@ -863,7 +1123,7 @@
               [id]="'pts-shiftTimeline'"
               [value]="projectTaskSettings.shiftTimeline"
               [size]="'wide'"
-              [disabled]="false"
+              [disabled]="userAccessLevel !== 1"
               [ariaLabel]="'shift timeline'"
               (selectionChange)="
                 projSettingToggleChanged($event, 'shiftTimeline')
@@ -885,7 +1145,7 @@
               [id]="'pts-reqTaskApproval'"
               [size]="'wide'"
               [value]="projectTaskSettings.projectRequiredTaskNotes"
-              [disabled]="false"
+              [disabled]="userAccessLevel !== 1"
               [ariaLabel]="'require task approval'"
               checkedLabel="Yes"
               uncheckedLabel="No"
@@ -910,36 +1170,46 @@
             id: 'pts-selectAllEmailPref',
             'aria-label': 'Select All Email Preferences'
           }"
-          [disabled]="false"
+          [disabled]="userAccessLevel !== 1"
           (changeEvent)="selectAllEmailPreferences($event)"
-        ></crem-check-box>
-        <span class="label">Select All</span>
+          ><span class="label">Select All</span>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.transactionAutoEmail"
           [elementAttr]="{ id: 'pts-autoEmails', 'aria-label': 'Auto Email' }"
-          [disabled]="false"
+          [disabled]="userAccessLevel !== 1"
           (changeEvent)="emailOptionChanged($event, 'transactionAutoEmail')"
-        ></crem-check-box>
-        <span class="label">Auto Emails</span>
-        <div>
-          When Auto Emails are enabled, team members who have set their email
-          preferences to OFF on the project team setup page will not receive
-          emails.
-        </div>
+        >
+          <div>
+            <span class="label">Auto Emails</span>
+            <div class="checkbox-description">
+              When Auto Emails are enabled, team members who have set their
+              email preferences to OFF on the project team setup page will not
+              receive emails.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.emailOnFileUpload"
           [elementAttr]="{ id: 'pts-fileUpload', 'aria-label': 'File Upload' }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailOnFileUpload')"
-        ></crem-check-box>
-        <span class="label">File Upload</span>
-        <div>Send an email to the team when files are uploaded.</div>
+        >
+          <div>
+            <span class="label">File Upload</span>
+            <div class="checkbox-description">
+              Send an email to the team when files are uploaded.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div class="label subsection">Notify by Email based on Task Status.</div>
       <div>
@@ -947,15 +1217,20 @@
           [value]="projectEmailPreferences.emailOnApproval"
           [elementAttr]="{ id: 'pts-approval', 'aria-label': 'Approval' }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailOnApproval')"
-        ></crem-check-box>
-        <span class="label">Approval</span>
-        <div>
-          When a task is approved or rejected, the system sends an email to
-          other approvers assigned to that task.
-        </div>
+        >
+          <div>
+            <span class="label">Approval</span>
+            <div class="checkbox-description">
+              When a task is approved or rejected, the system sends an email to
+              other approvers assigned to that task.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
@@ -965,29 +1240,39 @@
             'aria-label': 'Milestone Approval'
           }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailOnMilestoneApproval')"
-        ></crem-check-box>
-        <span class="label">Milestone Approval</span>
-        <div>
-          Will send approval emails for tasks designated as milestones, even if
-          the 'On Approval' checkbox is unchecked.
-        </div>
+        >
+          <div>
+            <span class="label">Milestone Approval</span>
+            <div class="checkbox-description">
+              Will send approval emails for tasks designated as milestones, even
+              if the 'On Approval' checkbox is unchecked.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.emailOnCompletion"
           [elementAttr]="{ id: 'pts-completion', 'aria-label': 'Completion' }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailOnCompletion')"
-        ></crem-check-box>
-        <span class="label">Completion</span>
-        <div>
-          Automated emails to notify approvers assigned to the next task.
-        </div>
+        >
+          <div>
+            <span class="label">Completion</span>
+            <div class="checkbox-description">
+              Automated emails to notify approvers assigned to the next task.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
@@ -997,17 +1282,22 @@
             'aria-label': 'Milestone Completion'
           }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="
             emailOptionChanged($event, 'emailMilestoneCompletionCCTeam')
           "
-        ></crem-check-box>
-        <span class="label">Milestone Completion</span>
-        <div>
-          This will send an email to the team when tasks marked as Milestones
-          are completed.
-        </div>
+        >
+          <div>
+            <span class="label">Milestone Completion</span>
+            <div class="checkbox-description">
+              This will send an email to the team when tasks marked as
+              Milestones are completed.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
@@ -1017,15 +1307,20 @@
             'aria-label': 'Follow Default Order'
           }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailFollowSteps')"
-        ></crem-check-box>
-        <span class="label">Follow Default Order</span>
-        <div>
-          This will send the On Completion email only to approvers of the next
-          sequential task.
-        </div>
+        >
+          <div>
+            <span class="label">Follow Default Order</span>
+            <div class="checkbox-description">
+              This will send the On Completion email only to approvers of the
+              next sequential task.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
@@ -1035,15 +1330,20 @@
             'aria-label': 'Follow Predecessor'
           }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailFollowDependencies')"
-        ></crem-check-box>
-        <span class="label">Follow Predecessor</span>
-        <div>
-          Upon completion, email approvers assigned to the tasks that depend on
-          the approved task completion and next task.
-        </div>
+        >
+          <div>
+            <span class="label">Follow Predecessor</span>
+            <div class="checkbox-description">
+              Upon completion, email approvers assigned to the tasks that depend
+              on the approved task completion and next task.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
@@ -1053,12 +1353,17 @@
             'aria-label': 'Overdue Emails'
           }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailOverdue')"
-        ></crem-check-box>
-        <span class="label">Overdue Emails</span>
-        <div>Receive overdue emails.</div>
+        >
+          <div>
+            <span class="label">Overdue Emails</span>
+            <div class="checkbox-description">Receive overdue emails.</div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
@@ -1068,12 +1373,19 @@
             'aria-label': 'Overdue Emails'
           }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailOnStart')"
-        ></crem-check-box>
-        <span class="label">On Start Emails</span>
-        <div>This will send an email on the start day of a task.</div>
+        >
+          <div>
+            <span class="label">On Start Emails</span>
+            <div class="checkbox-description">
+              This will send an email on the start day of a task.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div class="label subsection">In the Notification Include:</div>
       <div>
@@ -1081,65 +1393,86 @@
           [value]="projectEmailPreferences.emailIncludeMinors"
           [elementAttr]="{ id: 'pts-subTasks', 'aria-label': 'Subtasks' }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailIncludeMinors')"
-        ></crem-check-box>
-        <span class="label">SubTasks</span>
-        <div>
-          Select this for the emails preferences selected above to apply for
-          subtasks.
-        </div>
+        >
+          <div>
+            <span class="label">SubTasks</span>
+            <div class="checkbox-description">
+              Select this for the emails preferences selected above to apply for
+              subtasks.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.emailCopyTeam"
           [elementAttr]="{ id: 'pts-team', 'aria-label': 'Copy Team' }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailCopyTeam')"
-        ></crem-check-box>
-        <span class="label">Team</span>
-        <div>Any email will copy all of the users on the team.</div>
+        >
+          <div>
+            <span class="label">Team</span>
+            <div class="checkbox-description">
+              Any email will copy all of the users on the team.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.emailCopyApprover"
           [elementAttr]="{ id: 'pts-approver', 'aria-label': 'Approver' }"
           [disabled]="
-            projectEmailPreferences.transactionAutoEmail == false ? true : false
+            projectEmailPreferences.transactionAutoEmail == false
+              ? true
+              : false || userAccessLevel !== 1
           "
           (changeEvent)="emailOptionChanged($event, 'emailCopyApprover')"
-        ></crem-check-box>
-        <span class="label">Approver</span>
-        <div>Any email will copy the person sending it.</div>
+        >
+          <div>
+            <span class="label">Approver</span>
+            <div class="checkbox-description">
+              Any email will copy the person sending it.
+            </div>
+          </div>
+        </crem-check-box>
       </div>
     </section>
   </div>
 </crem-popup>
+<!-- //*************** Task Settings Popup Ends ******************// -->
 
-<!-- Copy Transaction Popup -->
+<!--**** Copy Transaction Popup ****-->
 <crem-popup
   #CopyTransactionPopup
   [id]="'copyTransactionPopupId'"
   [visible]="copyTransactionVisible"
   [title]="'Copy Transaction'"
-  [applyButtonText]="'Copy'"
+  [applyButtonText]="ctApplyButtonText"
   [saveButtonText]="ctSaveButtonText"
   [draggable]="'true'"
   [height]="800"
   [width]="1040"
   [showCloseButton]="true"
   (apply)="applyOrSaveCopyTransaction('Copy')"
-  (save)="applyOrSaveCopyTransaction('Go')"
+  (save)="navigateToNewProject(this.newProjectId)"
   (close)="applyOrSaveCopyTransaction('Close')"
 >
   <div body>
     <copy-transaction-popup-content
       #copyTransactionComponent
       [projectId]="projectId"
-      (copySuccessfulEvent)="copyProjectEvent($event)"
+      (copyCompletedEvent)="handleCopyCompleted($event)"
+      (notifyHasChanges)="handleCopyTransactionFormChanged($event)"
     >
     </copy-transaction-popup-content>
   </div>

@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable rxjs-angular/prefer-composition */
 
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 import notify from 'devextreme/ui/notify';
@@ -71,7 +78,7 @@ export class DashboardCardComponent implements OnInit {
   ) {
     this.summationTypeConfig = {
       showSummationTypeConfig: false,
-      showDataFields: true
+      showDataFields: true,
     };
   }
 
@@ -79,17 +86,18 @@ export class DashboardCardComponent implements OnInit {
     this.fieldModal = ColumnArray[this.cardData.cardJSONSchema.apiEndPoint];
     this.config = this.cardData.cardJSONSchema;
 
-    this.mangoDashboardCardId = this.cardData.cardSource === 'mangodashboard'
-      ? this.cardData.id
-      : this.cardData.mangoDashboardCardId;
+    this.mangoDashboardCardId =
+      this.cardData.cardSource === 'mangodashboard'
+        ? this.cardData.id
+        : this.cardData.mangoDashboardCardId;
 
-    this.dataService.cardNeedUpdate$.subscribe(item => {
+    this.dataService.cardNeedUpdate$.subscribe((item) => {
       if (item.key === this.config.apiEndPoint || item.key === 'everything') {
         this.needUpdate = item.needUpdate;
       }
     });
 
-    this.dataService.dashboardDataUpdateKey$.subscribe(updateObj => {
+    this.dataService.dashboardDataUpdateKey$.subscribe((updateObj) => {
       if (updateObj && updateObj.key === this.config.apiEndPoint) {
         this.setCardData(updateObj);
       }
@@ -106,7 +114,7 @@ export class DashboardCardComponent implements OnInit {
       this.gridData = data?.['0']?.['data'];
 
       if (this.config.cardType === 'pivot') {
-        this.config.pivotDataSource.store = data?.['0']?.['data']
+        this.config.pivotDataSource.store = data?.['0']?.['data'];
 
         setTimeout(() => {
           const state = this.cremPivotTable.getPivotDataSource();
@@ -138,7 +146,7 @@ export class DashboardCardComponent implements OnInit {
                   case 'Exported':
                     return 1;
                 }
-              }
+              };
             }
 
             if (!uniquefields.includes(field.dataField)) {
@@ -153,18 +161,18 @@ export class DashboardCardComponent implements OnInit {
                 field.dataType = 'boolean';
                 field.format = ',###';
               } else if (allColumns[field.dataField] === 'currency') {
-                field.dataType = 'number'
-                field.format = ',##0.00'
+                field.dataType = 'number';
+                field.format = ',##0.00';
 
                 if (field.summaryType !== 'sum') {
-                  field.format = ',###'
+                  field.format = ',###';
                 }
               } else if (allColumns[field.dataField] === 'Date') {
-                field.dataType = 'date'
-                field.format = ',###'
+                field.dataType = 'date';
+                field.format = ',###';
               } else {
-                field.dataType = 'string'
-                field.format = ',###'
+                field.dataType = 'string';
+                field.format = ',###';
               }
 
               this.config.pivotDataSource.fields.push(field);
@@ -172,8 +180,7 @@ export class DashboardCardComponent implements OnInit {
             }
           });
           this.cremPivotTable.refreshData();
-        })
-
+        });
       } else if (this.config.cardType === 'grid') {
         this.config.pivotDataSource = data?.['0']?.['data'];
       }
@@ -182,16 +189,18 @@ export class DashboardCardComponent implements OnInit {
   }
 
   public showColumnChooser() {
-    this.cremPivotTable.showFieldChooser()
+    this.cremPivotTable.showFieldChooser();
   }
 
   toggleGrandTotal(totalType: string) {
     if (totalType == 'row') {
-      this.cremPivotTable.showRowGrandTotals = !this.cremPivotTable.showRowGrandTotals;
+      this.cremPivotTable.showRowGrandTotals =
+        !this.cremPivotTable.showRowGrandTotals;
       return;
     }
 
-    this.cremPivotTable.showColumnGrandTotals = !this.cremPivotTable.showColumnGrandTotals;
+    this.cremPivotTable.showColumnGrandTotals =
+      !this.cremPivotTable.showColumnGrandTotals;
   }
 
   public async saveUserConfig(saveAsDefault) {
@@ -202,35 +211,50 @@ export class DashboardCardComponent implements OnInit {
     configToSave.enableChart = configToSave.enableChart ?? true;
     configToSave.pivotDataSource.store = null;
 
-    configToSave.showColumnGrandTotals = this.cremPivotTable.showColumnGrandTotals;
+    configToSave.showColumnGrandTotals =
+      this.cremPivotTable.showColumnGrandTotals;
     configToSave.showRowGrandTotals = this.cremPivotTable.showRowGrandTotals;
 
     if (!saveAsDefault) {
-      if (this.cardData.cardSource === 'mangodashboard' || this.cardData.isSiteDefault) {
+      if (
+        this.cardData.cardSource === 'mangodashboard' ||
+        this.cardData.isSiteDefault
+      ) {
         //save new card
-        this.dataService.saveCardConfig(this.mangoDashboardCardId, false, configToSave).subscribe(() => {
-          this.cardData.cardSource = 'clientdashboard';
-          this.cardData.isSiteDefault = false;
-          this.cardData.mangoDashboardCardId = this.mangoDashboardCardId;
-        });
-      } else if (this.cardData.cardSource === 'clientdashboard' && !this.cardData.isSiteDefault) {
+        this.dataService
+          .saveCardConfig(this.mangoDashboardCardId, false, configToSave)
+          .subscribe(() => {
+            this.cardData.cardSource = 'clientdashboard';
+            this.cardData.isSiteDefault = false;
+            this.cardData.mangoDashboardCardId = this.mangoDashboardCardId;
+          });
+      } else if (
+        this.cardData.cardSource === 'clientdashboard' &&
+        !this.cardData.isSiteDefault
+      ) {
         //update card
-        this.dataService.updateCardConfig(this.mangoDashboardCardId, false, configToSave).subscribe(() => {
-          this.cardData.cardSource = 'clientdashboard';
-          this.cardData.isSiteDefault = false;
-        });
+        this.dataService
+          .updateCardConfig(this.mangoDashboardCardId, false, configToSave)
+          .subscribe(() => {
+            this.cardData.cardSource = 'clientdashboard';
+            this.cardData.isSiteDefault = false;
+          });
       }
     } else {
-      this.dataService.saveCardConfig(this.mangoDashboardCardId, true, configToSave).subscribe(apiResponse => {
-        if (apiResponse.clientErrorMessage === 'Card already exists.') {
-          this.dataService.updateCardConfig(this.mangoDashboardCardId, true, configToSave).subscribe();
-        } else {
-          if (this.cardData.cardSource === 'mangodashboard') {
-            this.cardData.cardSource = 'clientdashboard';
-            this.cardData.mangoDashboardCardId = this.mangoDashboardCardId;
+      this.dataService
+        .saveCardConfig(this.mangoDashboardCardId, true, configToSave)
+        .subscribe((apiResponse) => {
+          if (apiResponse.clientErrorMessage === 'Card already exists.') {
+            this.dataService
+              .updateCardConfig(this.mangoDashboardCardId, true, configToSave)
+              .subscribe();
+          } else {
+            if (this.cardData.cardSource === 'mangodashboard') {
+              this.cardData.cardSource = 'clientdashboard';
+              this.cardData.mangoDashboardCardId = this.mangoDashboardCardId;
+            }
           }
-        }
-      });
+        });
     }
   }
 
@@ -238,7 +262,7 @@ export class DashboardCardComponent implements OnInit {
     try {
       this.cremPivotTable.exportToExcel(); // Current version doesn't has callback, no way to know if was a success
       this.exportNotification('success');
-    } catch{
+    } catch {
       this.exportNotification('error');
     }
   }
@@ -249,34 +273,43 @@ export class DashboardCardComponent implements OnInit {
       load: () => this.config.pivotDataSource.store,
       // onChanged: _ => this.exportNotification('success'),
       // onLoadError: _ => this.exportNotification('error'),
-    })
+    });
     setTimeout(() => {
       this.simpleGrid.exportGrid();
     }, 100);
   }
 
-  exportNotification(type: 'success' | 'error' , message?: string){
-    switch(type) {
+  exportNotification(type: 'success' | 'error', message?: string) {
+    switch (type) {
       case 'success': {
         notify({
           message: message ?? 'Report will be exported shortly.',
           type: 'success',
           displayTime: 95000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
           maxWidth: '500px',
           closeOnClick: false,
-        })
+        });
         break;
       }
       case 'error': {
         notify({
-          message: message ?? 'Error encountered during export. Please try again.',
+          message:
+            message ?? 'Error encountered during export. Please try again.',
           type: 'error',
           displayTime: 5000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
           maxWidth: '500px',
           closeOnClick: true,
-        })
+        });
         break;
       }
     }
@@ -284,7 +317,7 @@ export class DashboardCardComponent implements OnInit {
 
   public toggleCardWidth() {
     this.config.fullWidth = !this.config.fullWidth;
-    this.cremPivotTable.updateDimention();
+    this.cremPivotTable.updateDimension();
   }
 
   public applyDashboardFilters() {
@@ -301,7 +334,8 @@ export class DashboardCardComponent implements OnInit {
   }
 
   public toggleSummartyTypeDisplay() {
-    this.summationTypeConfig.showSummationTypeConfig = !this.summationTypeConfig.showSummationTypeConfig;
+    this.summationTypeConfig.showSummationTypeConfig =
+      !this.summationTypeConfig.showSummationTypeConfig;
   }
 
   public onPivotChangeCallback(dataSource) {
@@ -335,14 +369,18 @@ export class DashboardCardComponent implements OnInit {
       }
     });
 
-    if (JSON.stringify(this.currentFields) !== JSON.stringify(fields) && this.currentFields && !this.isFirstLoad) {
+    if (
+      JSON.stringify(this.currentFields) !== JSON.stringify(fields) &&
+      this.currentFields &&
+      !this.isFirstLoad
+    ) {
       this.currentFields = fields;
       this.needUpdate = true;
       this.currentFields = fields;
 
       this.dataService.updateColumnData(this.config.apiEndPoint, {
         dataSourceKey: this.config.apiEndPoint,
-        columns: fields
+        columns: fields,
       });
     } else if (!this.currentFields) {
       this.isFirstLoad = false;
@@ -354,15 +392,20 @@ export class DashboardCardComponent implements OnInit {
     this.dialog.open(ColumnLimitComponent, {
       width: '600px',
       panelClass: 'columnLimitModal',
-      data: { columns }
+      data: { columns },
     });
   }
 
   public useDefaultSetting() {
-    if (!this.cardData.isSiteDefault && this.cardData.cardSource === 'clientdashboard') {
-      this.dataService.deleteUserConfig(this.cardData.mangoDashboardCardId).subscribe(() => {
-        this.resetConfigColumns();
-      });
+    if (
+      !this.cardData.isSiteDefault &&
+      this.cardData.cardSource === 'clientdashboard'
+    ) {
+      this.dataService
+        .deleteUserConfig(this.cardData.mangoDashboardCardId)
+        .subscribe(() => {
+          this.resetConfigColumns();
+        });
     } else {
       this.resetConfigColumns();
     }
@@ -376,11 +419,11 @@ export class DashboardCardComponent implements OnInit {
             card.isSiteDefault === true &&
             card.mangoDashboardCardId === this.cardData.mangoDashboardCardId) ||
           (card.cardSource === 'mangodashboard' &&
-            (this.cardData.cardSource === 'clientdashboard' &&
-            card.id === this.cardData.mangoDashboardCardId)) ||
+            this.cardData.cardSource === 'clientdashboard' &&
+            card.id === this.cardData.mangoDashboardCardId) ||
           (card.cardSource === 'mangodashboard' &&
-            (this.cardData.cardSource === 'mangodashboard' &&
-            card.id === this.cardData.id))
+            this.cardData.cardSource === 'mangodashboard' &&
+            card.id === this.cardData.id)
         );
       });
 
@@ -399,7 +442,7 @@ export class DashboardCardComponent implements OnInit {
         for (const [key, value] of Object.entries(allColumns)) {
           const column = {
             dataField: key,
-            dataType: ''
+            dataType: '',
           };
 
           if (value === 'number') {
@@ -425,14 +468,24 @@ export class DashboardCardComponent implements OnInit {
               columnDictionaryByKey[this.config.apiEndPoint] = [];
             }
 
-            if (!columnDictionaryByKey[this.config.apiEndPoint].includes(item.dataField)) {
-              columnDictionaryByKey[this.config.apiEndPoint].push(item.dataField);
+            if (
+              !columnDictionaryByKey[this.config.apiEndPoint].includes(
+                item.dataField
+              )
+            ) {
+              columnDictionaryByKey[this.config.apiEndPoint].push(
+                item.dataField
+              );
             }
           }
         });
 
         pivotFields.forEach((field) => {
-          if (!columnDictionaryByKey[this.config.apiEndPoint].includes(field.dataField)) {
+          if (
+            !columnDictionaryByKey[this.config.apiEndPoint].includes(
+              field.dataField
+            )
+          ) {
             this.config.pivotDataSource.fields.push(field);
           }
         });

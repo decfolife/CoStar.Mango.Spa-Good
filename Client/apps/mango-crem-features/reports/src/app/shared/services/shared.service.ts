@@ -8,30 +8,29 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class SharedService extends EndpointService {
-  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports)
-  
+  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports);
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getReportUserList(): Observable<any> {
     const url = `${this.reportsUrl}Reports/GetReportUserList`;
-    return this.callHttpGet(url, 'getReportUserList')
+    return this.callHttpGet(url, 'getReportUserList');
   }
 
   getReportGroupList(): Observable<any> {
     const url = `${this.reportsUrl}Reports/GetReportGroupList`;
-    return this.callHttpGet(url, 'getReportGroupList')
+    return this.callHttpGet(url, 'getReportGroupList');
   }
 
   getPortfolioList(): Observable<any> {
     const url = `${this.reportsUrl}Reports/GetPortfolios`;
-    return this.callHttpGet(url, 'getPortfolioList')
+    return this.callHttpGet(url, 'getPortfolioList');
   }
 
   getUserPreferences(): Observable<any> {
     const url = `${this.reportsUrl}Reports/GetUserPreferences`;
-    return this.callHttpGet(url, 'getUserPreferences')
+    return this.callHttpGet(url, 'getUserPreferences');
   }
 }
-

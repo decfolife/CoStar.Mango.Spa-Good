@@ -1,4 +1,10 @@
 <router-outlet></router-outlet>
-<dx-load-panel shadingColor="rgba(0,0,0,0.4)" [visible]="(isLoading$ | async)"
-    [showIndicator]="true" [showPane]="true" [shading]="true" [closeOnOutsideClick]="false">
+<dx-load-panel
+  shadingColor="rgba(0,0,0,0.4)"
+  [visible]="isLoading$ | async"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="true"
+  [closeOnOutsideClick]="false"
+>
 </dx-load-panel>

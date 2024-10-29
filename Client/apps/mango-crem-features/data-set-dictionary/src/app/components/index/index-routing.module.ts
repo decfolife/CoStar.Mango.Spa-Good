@@ -7,12 +7,17 @@ const routes: Routes = [
     path: '',
     component: IndexComponent,
     data: {
-      breadCrumb: { label: 'Data Set Dictionary', append: true, activeLink: 'Data Set Dictionary' }
-    }
-  }];
+      breadCrumb: {
+        label: 'Data Set Dictionary',
+        append: true,
+        activeLink: 'Data Set Dictionary',
+      },
+    },
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class IndexRoutingModule { }
+export class IndexRoutingModule {}

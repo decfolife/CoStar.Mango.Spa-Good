@@ -1,4 +1,4 @@
 export interface UserPreferences {
-    userId: number;
-    dateFormat: string;
+  userId: number;
+  dateFormat: string;
 }

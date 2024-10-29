@@ -1,0 +1,29 @@
+::ng-deep .taskApprovalOrRejectModal {
+  .modalFooter {
+    display: block !important;
+  }
+  .footerContent {
+    display: flex;
+    justify-content: space-between;
+    div#buttonTemplate.footerRightControls {
+      display: flex;
+
+      crem-button {
+        margin-left: 8px;
+      }
+    }
+  }
+
+  .crem-form .crem-form-item {
+    .tar-label {
+      font-weight: 500;
+    }
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .flexItem50 {
+      flex-basis: 50%;
+    }
+  }
+}

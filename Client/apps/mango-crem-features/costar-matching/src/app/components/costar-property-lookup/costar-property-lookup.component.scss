@@ -1,6 +1,6 @@
-@use "../../../../../../../libs/ui-shared/common/src/styles/" as *; 
+@use '../../../../../../../libs/ui-shared/common/src/styles/' as *;
 
-.page-content{
+.page-content {
   @include costar(padding, 4);
 }
 
@@ -21,7 +21,7 @@
 .associatedPropertyInfo {
   @include costar(padding, 4);
   .propertyInfo {
-    @include costar(background-color, gray06); 
+    @include costar(background-color, gray06);
     @include costar(padding, 2);
   }
 }
@@ -38,6 +38,64 @@
 
 .building-info-container {
   width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.building-info {
+  width: 45%;
+}
+
+.building-space {
+  width: 55%;
+}
+
+.verify-address-container {
+  width: 100%;
+  @include costar(padding, 4);
+}
+
+.verify-address-button-container {
+  padding-left: 100px;
+}
+
+.no-matched-msg {
+  padding-left: 100px;
+  @include costar(padding-top, 4);
+}
+
+.cleanse-address-container {
+  width: 80%;
+  height: 300px;
+  @include costar(padding, 6);
+  display: flex;
+  flex-direction: row;
+}
+
+.content-container {
+  width: 60%;
+}
+
+.address-alignment-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.left-column {
+  width: 50%;
+}
+
+.right-column {
+  width: 50%;
+}
+
+.map-container {
+  width: 60%;
+}
+
+.label {
+  @include costar(font-weight, bold);
 }
 
 .no-access-content {

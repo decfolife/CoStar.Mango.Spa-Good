@@ -15,6 +15,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    // "composite": true,
     "types": ["jest", "node"],
     "paths": {
       "@accounting-accountmanagement/*": [
@@ -28,7 +29,7 @@
       ],
       "@accounting-summary/*": [
         "apps/mango-crem-features/accounting-summary/src/app/*"
-      ], 
+      ],
       "@accounting-history/*": [
         "apps/mango-crem-features/accounting-history/src/app/*"
       ],

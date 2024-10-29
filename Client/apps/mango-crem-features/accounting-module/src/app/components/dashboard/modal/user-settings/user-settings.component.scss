@@ -1,4 +1,4 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 // User Settings Modal Dialog
 ::ng-deep crem-modal {
@@ -44,5 +44,4 @@
   .modalContent {
     @include costar(padding, 0, $important: true);
   }
-
 }

@@ -1,0 +1,90 @@
+@use 'styles' as *;
+
+@mixin flex-column-direction {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-row-direction {
+  display: flex;
+  flex-direction: row;
+}
+
+.schedule-transactions-container {
+  @include flex-column-direction;
+  @include costar(padding, 0);
+  @include costar(padding-bottom, 6);
+  @include costar(margin, 0);
+
+  .glevent-information {
+    @include flex-row-direction;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .schedule-transctions-column {
+    @include flex-column-direction;
+    flex: 1;
+    column-gap: 50px;
+  }
+
+  .schedule-container {
+    @include flex-row-direction;
+    @include costar(padding-bottom, 2);
+    @include costar(padding-right, 2);
+    justify-content: space-between;
+  }
+
+  .label {
+    justify-content: start;
+    flex-basis: 50%;
+  }
+
+  .data {
+    justify-content: end;
+    font-weight: 500;
+    flex-basis: 50%;
+  }
+
+  .glevent-note-row {
+    @include flex-column-direction;
+
+    .glevent-note-lable {
+      @include costar(padding-top, 1);
+      @include costar(padding-bottom, 2);
+    }
+  }
+}
+
+.custom-data-grid {
+  max-height: 40vh;
+}
+
+.transactions-grid {
+  @include costar(padding-top, 4);
+}
+
+::ng-deep #schedule-transactions-grid-section {
+  td:has(div.dx-state-disabled) {
+    pointer-events: none;
+
+    .dx-checkbox-icon {
+      opacity: 1 !important;
+      background-color: var(--costar-color-gray06);
+    }
+  }
+
+  .header-column-caption {
+    margin: 7px;
+  }
+
+  .dx-header-row {
+    @include costar(background-color, light);
+  }
+
+  tr.dx-row.dx-data-row {
+    td {
+      cursor: default;
+    }
+  }
+}

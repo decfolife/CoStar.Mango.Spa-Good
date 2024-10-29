@@ -11,8 +11,12 @@ export class AppComponent {
   constructor(private elementRef: ElementRef) {}
 
   onOutletLoaded(component) {
-    const navPageId = Number(this.elementRef.nativeElement.getAttribute('navPageId'));
-    const leaseAbstractId = Number(this.elementRef.nativeElement.getAttribute('leaseAbstractId'));
+    const navPageId = Number(
+      this.elementRef.nativeElement.getAttribute('navPageId')
+    );
+    const leaseAbstractId = Number(
+      this.elementRef.nativeElement.getAttribute('leaseAbstractId')
+    );
     component.navPageId = navPageId;
     component.leaseAbstractId = leaseAbstractId;
   }

@@ -14,8 +14,8 @@ export class ResetPasswordConfirmationComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ResetPasswordConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { 
-  }
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit() {
     this.emailAddress = this.data;
@@ -24,5 +24,4 @@ export class ResetPasswordConfirmationComponent {
   resetPasswordConfirmation() {
     this.dialogRef.close(this.data);
   }
-
 }

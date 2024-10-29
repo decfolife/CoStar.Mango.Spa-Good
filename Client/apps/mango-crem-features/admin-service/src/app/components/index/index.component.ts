@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, Event, NavigationStart, NavigationEnd, NavigationError, NavigationCancel } from '@angular/router';
+import {
+  Router,
+  Event,
+  NavigationStart,
+  NavigationEnd,
+  NavigationError,
+  NavigationCancel,
+} from '@angular/router';
 import { environment } from '../../../../../../mango/src/environments/environment.local';
 
 @Component({
@@ -8,18 +15,17 @@ import { environment } from '../../../../../../mango/src/environments/environmen
   styleUrls: ['./index.component.scss'],
 })
 export class IndexComponent implements OnInit {
-
   title = 'mango-crem-features-reports';
   loading = true;
   env = environment.name;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.router.initialNavigation(); // Manually triggering initial navigation for @angular/elements
     this.router.events.subscribe((routerEvent: Event) => {
       this.checkRouterEvent(routerEvent);
-    })
+    });
   }
 
   checkRouterEvent(routerEvent: Event): void {
@@ -27,11 +33,12 @@ export class IndexComponent implements OnInit {
       this.loading = true;
     }
 
-    if (routerEvent instanceof NavigationEnd ||
+    if (
+      routerEvent instanceof NavigationEnd ||
       routerEvent instanceof NavigationCancel ||
-      routerEvent instanceof NavigationError) {
+      routerEvent instanceof NavigationError
+    ) {
       this.loading = false;
     }
   }
-
 }

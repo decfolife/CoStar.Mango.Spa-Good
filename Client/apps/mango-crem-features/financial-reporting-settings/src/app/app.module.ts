@@ -8,11 +8,7 @@ import { AppRoutingModule } from './app.routing.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule
-  ],
+  imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],

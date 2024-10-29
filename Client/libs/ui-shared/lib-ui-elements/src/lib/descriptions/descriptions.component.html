@@ -1,6 +1,6 @@
 <div class="grid-container">
   <div *ngFor="let item of items">
-    <div class="desc-title">{{item.key}}</div>
-    <div class="desc-value">{{item.value}}</div>
+    <div class="desc-title">{{ item.key }}</div>
+    <div class="desc-value" [title]="item.hoverText">{{ item.value }}</div>
   </div>
 </div>

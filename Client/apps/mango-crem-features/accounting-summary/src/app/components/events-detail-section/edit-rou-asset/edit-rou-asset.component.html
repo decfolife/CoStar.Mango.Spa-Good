@@ -1,0 +1,159 @@
+<crem-modal
+  modalId="edit-rou-asset-obtained_modal"
+  modalTitleId="edit-rou-asset-obtained-modaltitle"
+  modalTitle="Edit ROU Asset Obtained"
+  closeIconVisible="true"
+  [customFooter]="true"
+>
+  <div modalContent class="body-content">
+    <form
+      crem-form
+      layout="vertical"
+      [formGroup]="editROUAssetForm"
+      class="edit-rou-asset-form"
+    >
+      <crem-form-item
+        [id]="
+          accountingSummaryService.getId(componentName, 'method', 'form-item')
+        "
+      >
+        <crem-form-label
+          [id]="
+            accountingSummaryService.getId(componentName, 'method', 'label')
+          "
+          [required]="true"
+          >Method
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-dropdown
+            [id]="
+              accountingSummaryService.getId(
+                componentName,
+                'method',
+                'dropdown'
+              )
+            "
+            [showClearButton]="false"
+            [dataSource]="rouAssetMethods"
+            displayExpr="name"
+            valueExpr="id"
+            [required]="true"
+            [initialSelectedValue]="selectedROUMethod"
+            (selectedItems)="onRouAssetMethodChange($event)"
+            [containerized]="false"
+            formControlName="RouAssetMethod"
+          >
+          </crem-dropdown>
+        </crem-form-control>
+      </crem-form-item>
+
+      <crem-form-item
+        [id]="
+          accountingSummaryService.getId(componentName, 'amount', 'form-item')
+        "
+      >
+        <crem-form-label
+          [id]="
+            accountingSummaryService.getId(componentName, 'amount', 'label')
+          "
+          [required]="true"
+          [for]="'edit-rou-asset-amount-textbox'"
+          >Amount
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-input
+            [id]="
+              accountingSummaryService.getId(componentName, 'amount', 'textbox')
+            "
+            [showHint]="false"
+            [showLabel]="false"
+            [showInfo]="false"
+            [inputType]="'number'"
+            [required]="true"
+            [value]="''"
+            [name]="''"
+            [placeholder]="''"
+            formControlName="ROUAssetAmount"
+          >
+          </crem-input>
+        </crem-form-control>
+      </crem-form-item>
+
+      <crem-form-item
+        [id]="
+          accountingSummaryService.getId(
+            componentName,
+            'obtained-date',
+            'form-item'
+          )
+        "
+      >
+        <crem-form-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'obtained-date',
+              'label'
+            )
+          "
+          [required]="true"
+          >Obtained Date
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-date-picker
+            [id]="
+              accountingSummaryService.getId(
+                componentName,
+                'obtained-date',
+                'datepicker'
+              )
+            "
+            [value]=""
+            [useMaskBehavior]="false"
+            [dateFormat]="dateFormat"
+            [invalidDateMessage]="'Invalid date'"
+            [showClearButton]="false"
+            [isRequired]="true"
+            [disabled]="'false'"
+            formControlName="ROUAssetObtainedDate"
+          >
+          </crem-date-picker>
+        </crem-form-control>
+      </crem-form-item>
+    </form>
+  </div>
+
+  <div modalFooter class="edit-rout-asset-footer">
+    <crem-button
+      [id]="accountingSummaryService.getId(componentName, 'save', 'button')"
+      type="primary"
+      [disabled]="isSaveDisabled"
+      (click)="saveRouAssetObtained()"
+      (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()"
+    >
+      Save
+    </crem-button>
+
+    <crem-button
+      [id]="accountingSummaryService.getId(componentName, 'cancel', 'button')"
+      type="secondary"
+      (click)="closeModal($event)"
+    >
+      Cancel
+    </crem-button>
+
+    <dx-tooltip
+      [id]="accountingSummaryService.getId(componentName, 'save', 'tooltip')"
+      target="#edit-rou-asset-save-button"
+      [visible]="isTooltipVisible"
+    >
+      <div *dxTemplate="let data of 'content'">
+        {{ disabledButtonReason }}
+      </div>
+    </dx-tooltip>
+  </div>
+</crem-modal>

@@ -4,8 +4,9 @@
 @use 'lib-ui-elements/src/lib/tooltip/tooltip.component';
 
 body {
-    &.client-settings, #admin-page-wrapper {
-        background-color: colors.$bodyBackgroundGray;
-        font-family: devExtreme.$font-family;
-    }
+  &.client-settings,
+  #admin-page-wrapper {
+    background-color: colors.$bodyBackgroundGray;
+    font-family: devExtreme.$font-family;
+  }
 }

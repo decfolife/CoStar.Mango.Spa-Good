@@ -1,12 +1,16 @@
 <crem-modal
-  [modalTitle] = "modalTitle"
-  [closeIconVisible] = "closeButton"
-  [closeOrCancelButtonText] = "secondaryFooterButtonText"
-  [modalId] = "modalId"
+  [modalTitle]="modalTitle"
+  [closeIconVisible]="closeButton"
+  [closeOrCancelButtonText]="secondaryFooterButtonText"
+  [modalId]="modalId"
   className="newModal"
 >
   <div modalContent>
-    <mat-tab-group disableRipple="true" animationDuration="1000ms" dynamicHeight="true">
+    <mat-tab-group
+      disableRipple="true"
+      animationDuration="1000ms"
+      dynamicHeight="true"
+    >
       <mat-tab class="tab-settings" label="Cards">
         <span>Placeholder</span>
       </mat-tab>

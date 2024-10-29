@@ -1,0 +1,15 @@
+<div
+  class="pill-container"
+  [ngClass]="{
+    success: type === 'success',
+    'success-filled': type === 'success-filled',
+    warning: type === 'warning',
+    'warning-filled': type === 'warning-filled',
+    danger: type === 'danger',
+    'danger-filled': type === 'danger-filled',
+    basic: type === 'basic',
+    disabled: type === 'disabled',
+  }"
+>
+  {{ text }}
+</div>

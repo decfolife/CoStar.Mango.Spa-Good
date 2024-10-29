@@ -7,31 +7,31 @@
 // }
 
 :host ::ng-deep .readOnly tr.dx-row.dx-data-row:hover {
-    cursor: default !important;
+  cursor: default !important;
 }
-  
+
 :host ::ng-deep .readOnly tr.dx-row.dx-data-row.dx-row-alt:hover {
-    cursor: default !important;
+  cursor: default !important;
 }
 
 :host ::ng-deep .readOnly tr.dx-row.dx-data-row.dx-row-alt > td:hover {
-    cursor: default !important;
+  cursor: default !important;
 }
 
 :host ::ng-deep .mat-mdc-form-field-infix {
-	display: flex !important;
+  display: flex !important;
 }
 
 .report-page {
-    overflow: auto !important;
+  overflow: auto !important;
 }
-  
+
 .report-page-data-grid-wrapper {
-    height: 100%;
+  height: 100%;
 }
 
 .button {
-    &__apply {
-        padding-right: 8px;
-    }
+  &__apply {
+    padding-right: 8px;
+  }
 }

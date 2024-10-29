@@ -3,6 +3,7 @@ import {
   Component,
   ContentChild,
   Directive,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -14,7 +15,13 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Dropdown } from '@mango/data-models/lib-data-models';
-import { DxDataGridComponent, DxDropDownBoxComponent, DxFormComponent, DxSelectBoxComponent, DxValidatorComponent } from 'devextreme-angular';
+import {
+  DxDataGridComponent,
+  DxDropDownBoxComponent,
+  DxFormComponent,
+  DxSelectBoxComponent,
+  DxValidatorComponent,
+} from 'devextreme-angular';
 
 /**
  *
@@ -28,13 +35,17 @@ import { DxDataGridComponent, DxDropDownBoxComponent, DxFormComponent, DxSelectB
   selector: 'crem-dropdown',
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    multi: true,
-    useExisting: DropdownComponent
-  }]
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: DropdownComponent,
+    },
+  ],
 })
-export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, ControlValueAccessor {
+export class DropdownComponent
+  implements OnInit, OnChanges, AfterViewInit, ControlValueAccessor
+{
   public data: any[];
   public value: string[];
   public selections: any = [];
@@ -56,8 +67,10 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent;
   @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent;
   @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-  @ViewChild("SelectBoxValidator", { static: false }) SelectBoxValidator: DxValidatorComponent
-  @ViewChild("DropdownBoxValidator", { static: false }) DropdownBoxValidator: DxValidatorComponent
+  @ViewChild('SelectBoxValidator', { static: false })
+  SelectBoxValidator: DxValidatorComponent;
+  @ViewChild('DropdownBoxValidator', { static: false })
+  DropdownBoxValidator: DxValidatorComponent;
 
   /**
    * Defines the HTML ID attribute
@@ -104,7 +117,7 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
    * @type {string}
    * @memberof DropdownComponent
    */
-  @Input() public displayExpr?: string = "displayKey";
+  @Input() public displayExpr?: string = 'displayKey';
   @Input() public isSearchable?: boolean;
   @Input() public contentTemplate?: any;
   @Input() public hoverText?: string;
@@ -140,13 +153,13 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   /**
    * Select options' dropdown
    *
-   * @type {(Dropdown[] | any[])}
+   * @type {(any)}
    * @memberof DropdownComponent
    */
-  @Input() public dataSource: Dropdown[] | any[]; // TODO: 'any' is being used while code is being cleaned and types standardize to use 'Dropdown' type instead for type safety
+  @Input() public dataSource: any; // TODO: 'any' is being used while code is being cleaned and types standardize to use 'Dropdown' type instead for type safety
 
   /**
-   * It allows the search/type-ahead functionality. 
+   * It allows the search/type-ahead functionality.
    *
    * @type {boolean}
    * @memberof DropdownComponent
@@ -158,8 +171,8 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
    * @type {boolean}
    * @memberof DropdownComponent
    */
-  @Input() containerized?: boolean;
-  @Input() isDisabled = false as boolean;
+  @Input() containerized = true;
+  @Input() isDisabled = false;
   @Input() dropDownContainerCustomClass: string;
   /**
    * Show/Hide DevExtreme default tooltip
@@ -187,7 +200,7 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
    * (DevExtreme) Specifies a comparison operation used to search UI component items.
    * Searching works when inputting a plain data structure only.
    * If you're using the 'contains' mode, make sure to define and pass the searchExpr
-   * 
+   *
    * @url https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/SelectBox/Configure_Search_Parameters/
    * @url https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxSelectBox/Configuration/#searchMode
    * @memberof DropdownComponent
@@ -196,7 +209,7 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
 
   /**
    * (DevExtreme) Specifies the time delay, in milliseconds, after the last character has been typed in, before a search is executed.
-   * 
+   *
    * @url https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxSelectBox/Configuration/#searchTimeout
    * @type {number}
    * @memberof DropdownComponent
@@ -205,7 +218,7 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
 
   /**
    * (DevExtreme) Use the minSearchLength property to increase the number of characters that triggers the search.
-   * 
+   *
    * @url https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/SelectBox/Configure_Search_Parameters/
    * @type {number}
    * @memberof DropdownComponent
@@ -215,7 +228,7 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   /**
    * (DevExtreme) Specifies the name of a data source item field or an expression whose value is compared to the search criterion.
    * Assign an array of field names to this property if you need to search several fields.
-   * 
+   *
    * @url https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxSelectBox/Configuration/#searchExpr
    * @type {number}
    * @memberof DropdownComponent
@@ -228,23 +241,30 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   toolTipTarget = '';
   btnDisabledReason = '';
 
-
   @ContentChild('customHeaderTemplate') customHeaderTemplate: TemplateRef<any>;
   @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent;
   @ViewChild('dropDownBox', { static: false }) dropDownBox: any;
 
-  onChange = (value: string) => { }
-  onTouched = () => { }
+  constructor(private elementRef: ElementRef) {}
+
+  onChange = (value: string) => {};
+  onTouched = () => {};
 
   ngOnChanges(changes: SimpleChanges): void {
-    const { previousValue, currentValue } = changes.dataSource || {}
-    if (previousValue !== currentValue && currentValue && currentValue.length > 0) {
-      this.initializeDropdown()
+    const { previousValue, currentValue } = changes.dataSource || {};
+    if (
+      previousValue !== currentValue &&
+      currentValue &&
+      currentValue.length > 0
+    ) {
+      this.initializeDropdown();
     }
   }
 
   ngAfterViewInit() {
-    this.clearButton = document.querySelector('.dx-icon-clear') as HTMLElement | null;
+    this.clearButton = document.querySelector(
+      '.dx-icon-clear'
+    ) as HTMLElement | null;
     if (this.clearButton) {
       this.clearButton.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
@@ -258,11 +278,13 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
     this.selectedDisplay = [];
     this.selections = [];
 
-    this.setDropdownvalue(this.initialSelectedValue)
+    this.setDropdownvalue(this.initialSelectedValue);
     this.setDropDownAttr();
   }
 
   ngOnInit() {
+    this.elementRef.nativeElement.id = this.id;
+
     this.dropdownHeaderDisplay = this.dropdownHeaderDisplay || this.placeholder;
 
     // If the ID is not present, a random ID is generated to render the dropdown inside the input field of the dropdown.
@@ -270,13 +292,17 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
     this.id = this.id ? this.id : this.getRandomID();
 
     this.wrapperAttr = {
-      class: this.dropDownContainerCustomClass ? 'crem-select-box' + ' ' + this.dropDownContainerCustomClass : 'crem-select-box',
-      id: 'crem-select-box'
-    }
+      class: this.dropDownContainerCustomClass
+        ? 'crem-select-box' + ' ' + this.dropDownContainerCustomClass
+        : 'crem-select-box',
+      id: 'crem-select-box',
+    };
     this.selectBoxWrapperAttr = {
       id: 'crem-select-box',
-      class: this.dropDownContainerCustomClass ? 'crem-select-box' + ' ' + this.dropDownContainerCustomClass : 'crem-select-box'
-    }
+      class: this.dropDownContainerCustomClass
+        ? 'crem-select-box' + ' ' + this.dropDownContainerCustomClass
+        : 'crem-select-box',
+    };
 
     if (
       this.initialSelectedValue === null ||
@@ -322,87 +348,114 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
     //If the value is null that means that the dropdown has been cleared of the selected value.
     //We want to emit this back to let the parent component know that the dropdown was cleared.
     if ($event.value === null && !this.useSelectBox) {
-      this.dataGrid.instance ? this.dataGrid.instance.clearSelection() : null
+      this.dataGrid.instance ? this.dataGrid.instance.clearSelection() : null;
       this.selectedItems.emit([]);
     } else if (this.useSelectBox) {
       let index = -1;
       let itemIndex = -1;
       let groupIndex = -1;
       if (this.grouped) {
-        this.dataSource?.forEach((group, gIndex) => {
-          const tempItemIndex = group.items?.findIndex((data) => {
-            return data?.[this.valueExpr] === $event?.value
-          })
+        (this.dataSource?._items || this.dataSource || []).forEach(
+          (group, gIndex) => {
+            const tempItemIndex = group.items?.findIndex((data) => {
+              return data?.[this.valueExpr] === $event?.value;
+            });
 
-          if (tempItemIndex !== -1) {
-            groupIndex = gIndex;
-            itemIndex = tempItemIndex;
+            if (tempItemIndex !== -1) {
+              groupIndex = gIndex;
+              itemIndex = tempItemIndex;
+            }
           }
-        });
+        );
       } else {
-        index = this.dataSource?.findIndex((data) => {
-          return data?.[this.valueExpr] === $event?.value
-        })
+        index = (this.dataSource?._items || this.dataSource || []).findIndex(
+          (data) => {
+            return data?.[this.valueExpr] === $event?.value;
+          }
+        );
       }
 
       if (this.emitWholeEvent) {
         this.selectedItems.emit($event);
       } else {
-
         if (!this.grouped && index !== -1) {
           this.modalValueChanging = true;
-          this.selectedItems.emit([this.dataSource[index]]);
+          this.selectedItems.emit([
+            (this.dataSource?._items || this.dataSource || [])[index],
+          ]);
           setTimeout(() => {
             this.selectBox.instance.close();
-          })
+          });
           setTimeout(() => {
             this.modalValueChanging = false;
-          }, 400)
+          }, 400);
         } else if (this.grouped && itemIndex !== -1) {
           this.modalValueChanging = true;
-          this.selectedItems.emit([this.dataSource[groupIndex].items[itemIndex]]);
+          this.selectedItems.emit([
+            (this.dataSource?._items || this.dataSource || [])[groupIndex]
+              .items[itemIndex],
+          ]);
           setTimeout(() => {
             this.selectBox.instance.close();
-          })
+          });
           setTimeout(() => {
             this.modalValueChanging = false;
-          }, 400)
+          }, 400);
         } else {
           this.clearSelectBox();
           this.selectedItems.emit([]);
         }
       }
-
     }
-    this.onChange($event.value)
-    this.onTouched()
+    this.onChange($event.value);
+    this.onTouched();
   }
 
   onCellClick(event) {
-    if (this.selectMode === 'multiple' && (!event.column.type || event.column.type !== 'selection')) {
+    if (
+      this.selectMode === 'multiple' &&
+      (!event.column.type || event.column.type !== 'selection')
+    ) {
       this.dataGrid.instance.selectRows([event.key], true);
     }
     if (event.rowType == 'header') {
-      if (this.selectMode === 'multiple' && (!event.column.type || event.column.type !== 'selection')) {
-        if (this.dataGrid.instance.getSelectedRowKeys().length == this.dataGrid.instance.getDataSource().items().length) {
+      if (
+        this.selectMode === 'multiple' &&
+        (!event.column.type || event.column.type !== 'selection')
+      ) {
+        if (
+          this.dataGrid.instance.getSelectedRowKeys().length ==
+          this.dataGrid.instance.getDataSource().items().length
+        ) {
           this.clearDropdown();
         } else {
           this.dataGrid.instance.selectAll();
         }
       }
-      const headerCheckboxContainer = event.component.$element().find('.dx-header-row .dx-checkbox-container');
-      const headerCheckboxAttr = event.component.$element().find('.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size').attr('aria-checked');
+      const headerCheckboxContainer = event.component
+        .$element()
+        .find('.dx-header-row .dx-checkbox-container');
+      const headerCheckboxAttr = event.component
+        .$element()
+        .find(
+          '.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size'
+        )
+        .attr('aria-checked');
       if (headerCheckboxAttr === 'true') {
         headerCheckboxContainer.attr('aria-live', 'polite');
-        headerCheckboxContainer.attr('aria-label', 'All checkboxes are checked ');
+        headerCheckboxContainer.attr(
+          'aria-label',
+          'All checkboxes are checked '
+        );
       } else {
         headerCheckboxContainer.attr('aria-live', 'polite');
-        headerCheckboxContainer.attr('aria-label', 'All checkboxes are un-checked');
+        headerCheckboxContainer.attr(
+          'aria-label',
+          'All checkboxes are un-checked'
+        );
       }
-
     }
   }
-
 
   getSelectedRowsData($event) {
     setTimeout(() => {
@@ -411,36 +464,38 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
         return;
       } else {
         this.selectedDisplay = selections.map((data) => data?.[this.valueExpr]);
-        if (this.selectMode == "single" && this.selectedDisplay.length) {
+        if (this.selectMode == 'single' && this.selectedDisplay.length) {
           this.isDropDownBoxOpened = false;
         }
       }
       this.gridDropdownValueChanged.emit(true);
       this.selectedItems.emit(selections);
-    })
+    });
   }
-
 
   clearSelectBox() {
     this.selectedDisplay = [];
-    this.selectBox?.instance ? this.selectBox.instance.reset() : null
+    this.selectBox?.instance ? this.selectBox.instance.reset() : null;
   }
 
   clearDropdown() {
     this.selectedDisplay = [];
-    this.dataGrid.instance ? this.dataGrid.instance.clearSelection() : null
+    this.dataGrid.instance ? this.dataGrid.instance.clearSelection() : null;
   }
 
   onKeyUp(event) {
     const targetElement = event.target as HTMLElement;
     if (targetElement) {
-      targetElement.setAttribute('aria-label', 'Search Filter For - ' + event.target.value + ' applied');
+      targetElement.setAttribute(
+        'aria-label',
+        'Search Filter For - ' + event.target.value + ' applied'
+      );
     }
   }
 
   setDropdownvalue(value: any) {
     if (this.selectMode == 'single') {
-      this.dataSource?.forEach((data) => {
+      (this.dataSource?._items || this.dataSource || []).forEach((data) => {
         if (data?.[this.valueExpr] === value) {
           this.selectedDisplay = [data?.[this.valueExpr]];
           this.selections = [data?.[this.keyExpr || this.valueExpr]];
@@ -448,8 +503,11 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
       });
     } else if (this.selectMode == 'multiple') {
       if (value) {
-        this.dataSource?.forEach((data) => {
-          if (value.includes((data?.[this.valueExpr]))) {
+        (this.dataSource?._items || this.dataSource || []).forEach((data) => {
+          if (
+            value.includes(data?.[this.valueExpr]?.toString()) ||
+            value.includes(data?.[this.valueExpr])
+          ) {
             this.selectedDisplay.push(data?.[this.valueExpr]);
             if (!this.useArrayOfKeys) {
               this.selections.push(data);
@@ -470,8 +528,8 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
         this.selectedItems.emit(this.selections);
       }
     }
-    this.onChange(value)
-    this.onTouched()
+    this.onChange(value);
+    this.onTouched();
   }
 
   focusDropdown() {
@@ -498,8 +556,13 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   getWithLabelValue(item): string {
     if (!item) return '';
     // FIXME: All these name checks is because we lack a better types for 'dataSource' and 'selectBoxValue'
-    const baseValue: string = item.name ?? item.displayValue ?? item.value ?? item.valueKey ?? item['displayExpr'];
-    return `${baseValue}`
+    const baseValue: string =
+      item.name ??
+      item.displayValue ??
+      item.value ??
+      item.valueKey ??
+      item['displayExpr'];
+    return `${baseValue}`;
   }
 
   /**
@@ -529,8 +592,10 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   setDropDownAttr() {
     // Add title attribute to all dropdown options
     if (!this.useSelectBox) {
-      const dropdownOverLayContainer = document.querySelector('#crem-select-box');
-      const dropdownElement = dropdownOverLayContainer?.getElementsByClassName("dx-row dx-data-row");
+      const dropdownOverLayContainer =
+        document.querySelector('#crem-select-box');
+      const dropdownElement =
+        dropdownOverLayContainer?.getElementsByClassName('dx-row dx-data-row');
       setTimeout(() => {
         const arr = dropdownElement ? Array.from(dropdownElement) : [];
         if (arr?.length) {
@@ -539,42 +604,55 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
             if (childElment.length) {
               childElment.forEach((childEl) => {
                 if (childEl.innerHTML.length > 0) {
-                  if (childEl?.classList?.contains("dx-command-select")) {
+                  if (childEl?.classList?.contains('dx-command-select')) {
                     if (childElment?.[1]) {
                       const dropdownText = childElment?.[1]?.innerHTML;
                       const elements = Array.from(childElment[0].children);
                       const checkboxElement = elements[0];
                       if (checkboxElement) {
-                        checkboxElement.setAttribute("title", 'Checkbox for ' + dropdownText);
-                        checkboxElement.setAttribute("type", 'checkbox');
-                        checkboxElement.setAttribute("role", 'group');
-                        checkboxElement.setAttribute("aria-label", 'checkBox');
-                        checkboxElement.removeAttribute("aria-readonly");
-                        checkboxElement.removeAttribute("aria-checked");
+                        checkboxElement.setAttribute(
+                          'title',
+                          'Checkbox for ' + dropdownText
+                        );
+                        checkboxElement.setAttribute('type', 'checkbox');
+                        checkboxElement.setAttribute('role', 'group');
+                        checkboxElement.setAttribute('aria-label', 'checkBox');
+                        checkboxElement.removeAttribute('aria-readonly');
+                        checkboxElement.removeAttribute('aria-checked');
                       }
                     }
                   } else {
-                    childEl.setAttribute("title", childEl.innerHTML.replace(/<[^>]*>/g, ''));
+                    childEl.setAttribute(
+                      'title',
+                      childEl.innerHTML.replace(/<[^>]*>/g, '')
+                    );
                   }
                 }
               });
             }
           });
         }
-      }, 100)
+      }, 100);
 
-      const searchIconElement = document.getElementsByClassName("dx-item dx-menu-item dx-menu-item-has-icon dx-menu-item-has-submenu");
+      const searchIconElement = document.getElementsByClassName(
+        'dx-item dx-menu-item dx-menu-item-has-icon dx-menu-item-has-submenu'
+      );
       setTimeout(() => {
         const iconArr = Array.from(searchIconElement);
         if (iconArr?.length) {
           iconArr.forEach((iconEl) => {
-            iconEl.setAttribute("title", 'search');
-          })
+            iconEl.setAttribute('title', 'search');
+          });
         }
       });
 
-      if (this.showCheckBoxesMode === 'always' && this.selectMode === 'multiple') {
-        const collection = document.getElementsByClassName("dx-datagrid-filter-row");
+      if (
+        this.showCheckBoxesMode === 'always' &&
+        this.selectMode === 'multiple'
+      ) {
+        const collection = document.getElementsByClassName(
+          'dx-datagrid-filter-row'
+        );
         setTimeout(() => {
           const arr = Array.from(collection);
           if (arr.length) {
@@ -582,53 +660,83 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
               const childElment = Array.from(el.children);
               if (childElment.length) {
                 childElment.forEach((childEl) => {
-                  if (childEl.className == "dx-editor-cell") {
-                    childEl.setAttribute("colSpan", "2");
+                  if (childEl.className == 'dx-editor-cell') {
+                    childEl.setAttribute('colSpan', '2');
                   }
                 });
               }
             });
           }
-        }, 100)
+        }, 100);
       }
     } else {
       //add title to all selectbox options
-      const selectBoxPopupElement = document.getElementsByClassName("crem-select-box");
+
+      const selectBoxPopupElement =
+        document.getElementsByClassName('crem-select-box');
+      const selectDisabledElement =
+        document.getElementsByClassName('dx-state-disabled');
       setTimeout(() => {
-        const selectBoxPopupElementarr = Array.from(selectBoxPopupElement)
+        const selectBoxPopupElementarr = Array.from(selectBoxPopupElement);
+        const selectDisabledElementarr = Array.from(selectDisabledElement);
         if (selectBoxPopupElementarr.length) {
           selectBoxPopupElementarr.forEach((element) => {
-            const selectBoxElement = element.getElementsByClassName("dx-list-item-content")
+            const selectBoxElement = element.getElementsByClassName(
+              'dx-list-item-content'
+            );
             setTimeout(() => {
-              const arr = Array.from(selectBoxElement)
+              const arr = Array.from(selectBoxElement);
               if (arr.length) {
                 arr.forEach((el) => {
                   if (el?.innerHTML?.length > 0) {
-                    el.setAttribute("title", el.innerHTML.replace(/<[^>]*>/g, ''));
+                    el.setAttribute(
+                      'title',
+                      el.innerHTML.replace(/<[^>]*>/g, '')
+                    );
                   }
-                })
+                });
               }
-            }, 100)
-          })
+            }, 100);
+          });
         }
-      }, 100)
+        if (selectDisabledElementarr.length) {
+          selectDisabledElementarr.forEach((disabled) => {
+            const disabledTitles = disabled.getElementsByClassName(
+              'dx-list-item-content'
+            );
+            setTimeout(() => {
+              const disArr = Array.from(disabledTitles);
+              if (disArr.length) {
+                disArr.forEach((el) => {
+                  el.setAttribute('title', '');
+                });
+              }
+            }, 100);
+          });
+        }
+      }, 100);
     }
   }
 
   setDropDownHeaderAttr() {
     // Add aria-label attribute to header dropdown options
     if (!this.useSelectBox) {
-      const dropdownElement = document.getElementsByClassName("dx-row dx-header-row");
+      const dropdownElement = document.getElementsByClassName(
+        'dx-row dx-header-row'
+      );
       setTimeout(() => {
         const arr = Array.from(dropdownElement);
         if (arr?.length) {
           arr.forEach((el) => {
             const childElment = Array.from(el.children);
-            if (childElment.length && childElment[0]?.classList?.contains("dx-command-select")) {
+            if (
+              childElment.length &&
+              childElment[0]?.classList?.contains('dx-command-select')
+            ) {
               if (childElment?.[1]) {
                 const checkboxElement = childElment[0].children[0];
-                const inputTag = checkboxElement.querySelector("input");
-                checkboxElement.setAttribute("aria-label", 'Select All');
+                const inputTag = checkboxElement.querySelector('input');
+                checkboxElement.setAttribute('aria-label', 'Select All');
               }
             }
           });
@@ -639,10 +747,10 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
 
   resetSelections() {
     if (this.dropDown) {
-      this.dropDown.instance.reset()
+      this.dropDown.instance.reset();
     }
     if (this.dataGrid) {
-      this.dataGrid.instance.clearFilter()
+      this.dataGrid.instance.clearFilter();
     }
   }
 
@@ -665,14 +773,14 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
     }
 
     // Check if e.element is a jQuery object:
-    const element = (e.element && e.element.jquery) ? e.element[0] : e.element;
+    const element = e.element && e.element.jquery ? e.element[0] : e.element;
 
     // Aria requirements for search icon in the drop down
-    const searchIcons = element.querySelectorAll(".dx-menu-item-has-icon");
+    const searchIcons = element.querySelectorAll('.dx-menu-item-has-icon');
     if (!searchIcons) {
       return;
     } else {
-      searchIcons.forEach(searchIcon => {
+      searchIcons.forEach((searchIcon) => {
         if (!searchIcon) return;
 
         // Remove the aria-haspopup attribute
@@ -696,7 +804,9 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
         });
       });
 
-      const spanSearchInput = e.component.$element().find('.dx-texteditor-input');
+      const spanSearchInput = e.component
+        .$element()
+        .find('.dx-texteditor-input');
       if (spanSearchInput.length > 0) {
         spanSearchInput.attr('aria-label', 'Search Filter Text');
       }
@@ -716,15 +826,23 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   }
 
   onSelectBoxDropDownKeyUp(event) {
-    const instanceToOpen = this.useSelectBox ? this.selectBox.instance : this.dropDown.instance;
-    const openSelectBox = this.useSelectBox && !this.selectBoxOpenFlag
-    if (event?.event?.originalEvent?.key === " " || event?.event?.originalEvent?.key === "ArrowDown" || event?.event?.originalEvent?.key === "Enter") {
-      if(!this.useSelectBox || openSelectBox){
+    const instanceToOpen = this.useSelectBox
+      ? this.selectBox.instance
+      : this.dropDown.instance;
+    const openSelectBox = this.useSelectBox && !this.selectBoxOpenFlag;
+    if (
+      event?.event?.originalEvent?.key === ' ' ||
+      event?.event?.originalEvent?.key === 'ArrowDown' ||
+      event?.event?.originalEvent?.key === 'Enter'
+    ) {
+      if (!this.useSelectBox || openSelectBox) {
         instanceToOpen.open();
         event.event.preventDefault();
       }
     }
-    const iconClearElement = document.querySelector('.dx-icon-clear') as HTMLElement | null;
+    const iconClearElement = document.querySelector(
+      '.dx-icon-clear'
+    ) as HTMLElement | null;
     if (iconClearElement) {
       iconClearElement.setAttribute('tabindex', '0');
       iconClearElement.setAttribute('role', 'button');
@@ -733,8 +851,12 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
   }
 
   onGridKeyDown(event: any) {
-    if (event?.event?.key === "Escape") {
-      if (this.dropDown && this.dropDown.instance && typeof this.dropDown.instance.close === 'function') {
+    if (event?.event?.key === 'Escape') {
+      if (
+        this.dropDown &&
+        this.dropDown.instance &&
+        typeof this.dropDown.instance.close === 'function'
+      ) {
         this.dropDown.instance.close();
       }
     }
@@ -762,7 +884,10 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
    */
   onValueChangedWithLabel(e: any, item: any): void {
     if (!e.value && e.previousValue) {
-      this.selectBox.instance.option(this.getWithLabelKey(item), this.getWithLabelValue(item));
+      this.selectBox.instance.option(
+        this.getWithLabelKey(item),
+        this.getWithLabelValue(item)
+      );
     }
   }
 
@@ -773,35 +898,36 @@ export class DropdownComponent implements OnInit, OnChanges, AfterViewInit, Cont
    * @memberof DropdownComponent
    */
   getRandomID(): string {
-    return this.id ? this.id : 'rand-' + Math.random().toString(36).substring(2);
+    return this.id
+      ? this.id
+      : 'rand-' + Math.random().toString(36).substring(2);
   }
 
   registerOnChange(fn: any): void {
-    this.onChange = fn
+    this.onChange = fn;
   }
 
   registerOnTouched(fn: any): void {
-    this.onTouched = fn
+    this.onTouched = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled
+    this.isDisabled = isDisabled;
   }
 
   writeValue(selection: any): void {
-    this.setDropdownvalue(selection)
-    if (!selection || selection && selection.length === 0) {
-      this.clearSelectBox()
+    this.setDropdownvalue(selection);
+    if (!selection || (selection && selection.length === 0)) {
+      this.clearSelectBox();
     }
   }
 }
 @Directive({
   selector: 'dropdownButton',
 })
-export class DropDownButtonDirective { }
+export class DropDownButtonDirective {}
 
 @Directive({
   selector: 'dropdownTemplate',
 })
-export class DropdownTemplateDirective { }
-
+export class DropdownTemplateDirective {}

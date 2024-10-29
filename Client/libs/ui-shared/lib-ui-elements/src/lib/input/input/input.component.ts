@@ -58,10 +58,9 @@ export class InputComponent
   @Input() label?: string;
   @Input() labelPosition?: LabelPosition;
 
-
   // Input Component
   @Input() inputType?: InputType;
-  @Input() dataKey:string;
+  @Input() dataKey: string;
   @Input() id?: string;
   @Input() value?: string = '';
   @Input() name?: string;
@@ -81,10 +80,9 @@ export class InputComponent
   // Hint Component
   @Input() hintText?: string;
 
-
   @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
 
-  @Output() onBlurChange: EventEmitter<string> = new EventEmitter<string>()
+  @Output() onBlurChange: EventEmitter<string> = new EventEmitter<string>();
 
   touched = false;
 
@@ -92,7 +90,7 @@ export class InputComponent
   @HostBinding('class') classes = '';
 
   @ViewChild('textarea') textarea: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('input')  input: ElementRef<HTMLInputElement>;
+  @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
   /**
    * @ignore
@@ -113,17 +111,14 @@ export class InputComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['state']?.currentValue === undefined) {
-      this.state = 'active';
-    }
-    if (changes['className']?.currentValue === undefined) {
-      this.className = '';
-    }
-    if (changes['state']?.currentValue === 'read-only') {
+    if (changes['state'] && changes['state']?.currentValue === 'read-only') {
       this.readOnly = true;
       this.required = false; // Hide required symbol when editing disabled
     }
-    if (changes['disabled']?.currentValue === 'disabled') {
+    if (
+      changes['disabled'] &&
+      changes['disabled']?.currentValue === 'disabled'
+    ) {
       this.disabled = true;
       this.required = false; // Hide required symbol when editing disabled
     }
@@ -241,9 +236,9 @@ export class InputComponent
    */
   onInputChange(event) {
     const value = this.formatInput(event);
-    this.markAsTouched()
-    this.valueChange.emit(value)
-    this.onChange(value)
+    this.markAsTouched();
+    this.valueChange.emit(value);
+    this.onChange(value);
   }
 
   /**
@@ -251,8 +246,8 @@ export class InputComponent
    */
   onBlur(event) {
     const value = this.formatInput(event);
-    this.markAsTouched()
-    this.onBlurChange.emit(value)
+    this.markAsTouched();
+    this.onBlurChange.emit(value);
   }
 
   private formatInput(event): any {
@@ -285,13 +280,11 @@ export class InputComponent
    * This method is defined in subsequent classes
    */
   focusInputBox() {
-    if(this.input && this.input.nativeElement) {
-        const el = this.input.nativeElement;
-        el.focus();
-  
-  
+    if (this.input && this.input.nativeElement) {
+      const el = this.input.nativeElement;
+      el.focus();
+    }
   }
-}
   focusTextBox() {
     const input =
       this.el.nativeElement.querySelector('input') ||

@@ -1,15 +1,20 @@
 <div>
   <div *ngIf="!isWorkflowDropdownVisible">
-    <div 
-      [id]="accountingSummaryService.getId(componentName, 'empty', 'disabled-input')" 
-      class="workflow-status-div" 
+    <div
+      [id]="
+        accountingSummaryService.getId(componentName, 'empty', 'disabled-input')
+      "
+      class="workflow-status-div"
       aria-label="No workflow status change right"
-      contenteditable="false">
-      Workflow Status is <span class="workflow-status-text">{{ inputStatusText }}</span>
+      contenteditable="false"
+    >
+      Workflow Status is
+      <span class="workflow-status-text">{{ inputStatusText }}</span>
     </div>
   </div>
-  <crem-dropdown *ngIf="isWorkflowDropdownVisible" 
-    [id]="accountingSummaryService.getId(componentName,'statuses','dropdown')"
+  <crem-dropdown
+    *ngIf="isWorkflowDropdownVisible"
+    [id]="accountingSummaryService.getId(componentName, 'statuses', 'dropdown')"
     valueExpr="workflowStatusId"
     displayExpr="workflowStatus"
     [showClearButton]="false"
@@ -18,44 +23,50 @@
     width="290px"
     emitWholeEvent="true"
     showTooltip="true"
-		useSelectBox="true"
-    [allowSearch]='true'
+    useSelectBox="true"
+    [allowSearch]="true"
     [selectBoxValue]="dropdownStatusValue"
-		(selectedItems)="onValueChanged($event)"
+    (selectedItems)="onValueChanged($event)"
     fieldTemplate="withLabel"
     label="Workflow Status is"
-	></crem-dropdown>
+  ></crem-dropdown>
 
-    <div #containerDiv class="work-flow-comments" *ngIf="this.commentsVisible"
-        [id]="accountingSummaryService.getId(componentName,'comment','popup')" >
-      <p class="work-flow-comment-label">Change Workflow Status</p>
+  <div
+    #containerDiv
+    class="work-flow-comments"
+    *ngIf="this.commentsVisible"
+    [id]="accountingSummaryService.getId(componentName, 'comment', 'popup')"
+  >
+    <p class="work-flow-comment-label">Change Workflow Status</p>
 
-      <textarea
-        #commentTextArea
-        [id]="accountingSummaryService.getId(componentName,'status','textarea')"
-        autofocus
-        class="work-flow-commentText"
-        placeholder="Enter a comment"
-        [required]="isCommentsRequired"
-        [(ngModel)]="commentText"
-        placeholder="Enter a comment {{isCommentsRequired ? '(required)' : ''}}"
-      ></textarea>
-      
-      <div class="workflow-btns-container">
-        <crem-button
-          [id]="accountingSummaryService.getId(componentName,'cancel','button')"
-          type="secondary"
-          (click)="cancelChanges()">
-          Cancel
-        </crem-button>
+    <textarea
+      #commentTextArea
+      [id]="accountingSummaryService.getId(componentName, 'status', 'textarea')"
+      autofocus
+      class="work-flow-commentText"
+      placeholder="Enter a comment"
+      [required]="isCommentsRequired"
+      [(ngModel)]="commentText"
+      placeholder="Enter a comment {{ isCommentsRequired ? '(required)' : '' }}"
+    ></textarea>
 
-        <crem-button
-          [id]="accountingSummaryService.getId(componentName,'save','button')"
-          type="primary"
-          (click)="saveWorkFlowComment()"
-          class="btn-primary-workflow-comments">
-          Save
-        </crem-button>
-      </div>
+    <div class="workflow-btns-container">
+      <crem-button
+        [id]="accountingSummaryService.getId(componentName, 'cancel', 'button')"
+        type="secondary"
+        (click)="cancelChanges()"
+      >
+        Cancel
+      </crem-button>
+
+      <crem-button
+        [id]="accountingSummaryService.getId(componentName, 'save', 'button')"
+        type="primary"
+        (click)="saveWorkFlowComment()"
+        class="btn-primary-workflow-comments"
+      >
+        Save
+      </crem-button>
     </div>
+  </div>
 </div>

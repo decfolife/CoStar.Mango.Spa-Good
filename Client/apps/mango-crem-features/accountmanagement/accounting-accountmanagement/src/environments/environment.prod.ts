@@ -2,7 +2,7 @@ class EnvironmentsCrem {
   production = false;
   name = 'PROD';
   appUrls = {
-    accounting: null
+    accounting: null,
   };
   isRestful = false;
 }

@@ -4,7 +4,11 @@ import { RouterModule } from '@angular/router';
 import { UserMaintenanceComponent } from './user-maintenance.component';
 import { UserMaintenanceService } from './user-maintenance.service';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { ButtonModule, DropdownModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  ButtonModule,
+  DropdownModule,
+  ModalModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { DxDataGridModule, DxLoadPanelModule } from 'devextreme-angular';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,10 +17,7 @@ import { UserDeletionComponent } from '../index/modal/user-deletion/user-deletio
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [
-    UserMaintenanceComponent,
-    UserDeletionComponent
-  ],
+  declarations: [UserMaintenanceComponent, UserDeletionComponent],
 
   imports: [
     CommonModule,
@@ -33,15 +34,15 @@ import { MatDialogModule } from '@angular/material/dialog';
     RouterModule.forChild([
       {
         path: '',
-        data: { pageTitle: 'Users', breadCrumb: { append: true, label: 'User Maintenance' } },
+        data: {
+          pageTitle: 'Users',
+          breadCrumb: { append: true, label: 'User Maintenance' },
+        },
         component: UserMaintenanceComponent,
-      }
-    ])
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    UserMaintenanceService,
-    DatePipe
-  ]
+  providers: [UserMaintenanceService, DatePipe],
 })
-export class UserMaintenanceModule { }
+export class UserMaintenanceModule {}

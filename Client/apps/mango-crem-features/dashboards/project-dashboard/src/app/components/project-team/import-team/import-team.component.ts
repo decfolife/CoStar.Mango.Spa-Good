@@ -12,30 +12,32 @@ import { Subscription } from 'rxjs/internal/Subscription';
   templateUrl: './import-team.component.html',
   styleUrls: ['./import-team.component.scss'],
 })
-
 export class ImportTeamComponent {
   @ViewChild(ModalComponent) modalComponent: ModalComponent;
 
   private subscription = new Subscription();
-  private currentSelectedTeamId: number = null
+  private currentSelectedTeamId: number = null;
   dataRetrieved: boolean = true;
   memberInfo: MemberInfo;
   managerSharedValue: boolean;
   importTeams: Team[] = [];
-	showShareColumn = false;
+  showShareColumn = false;
   importButtonDisabled = true;
   textForTooltip: string = null;
 
-  constructor(private dashboardService: DashboardService, 
+  constructor(
+    private dashboardService: DashboardService,
     public cardsService: CardsService,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-  }
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit() {
-		this.showShareColumn = this.data.projectsPrivateSetting > 0 && this.data.projectsPrivateSetting <= 2;
-    this.textForTooltip = "If the Project Manager does not have group share turned on, these share rights will default to OFF once imported."
-    this.memberInfo  = this.data.memberInfo;
-    this.managerSharedValue = this.data.managerSharedValue;
+    this.showShareColumn =
+      this.data.projectsPrivateSetting > 0 &&
+      this.data.projectsPrivateSetting <= 2;
+    this.textForTooltip =
+      'If the Project Manager does not have group share turned on, these share rights will default to OFF once imported.';
+    this.memberInfo = this.data.memberInfo;
     this.getImportTeams();
   }
 
@@ -45,71 +47,82 @@ export class ImportTeamComponent {
 
   importTeamFromTemplate() {
     this.importTeam();
-  }  
+  }
 
   closeImportTeamDialog() {
     this.modalComponent.dialogRef.close('');
   }
 
   onCellPrepared(e) {
-    if(e.rowType !== 'header' && e.column.command == 'select') {
+    if (e.rowType !== 'header' && e.column.command == 'select') {
       let htmlCellElement = e.cellElement;
-      htmlCellElement.setAttribute("id", "itt-teamId" + e.rowIndex);
+      htmlCellElement.setAttribute('id', 'itt-teamId' + e.rowIndex);
     }
   }
 
-  onSelectionChanged(e:any) {
+  onSelectionChanged(e: any) {
     const deselectRowKeys: number[] = [];
     const dataGrid = e.component;
 
-    if(e.selectedRowsData.length === 0){
+    if (e.selectedRowsData.length === 0) {
       this.currentSelectedTeamId = null;
-    }
-    else if(e.selectedRowsData.length == 1){
+    } else if (e.selectedRowsData.length == 1) {
       this.currentSelectedTeamId = e.selectedRowsData[0].teamId;
-    }
-    else if(e.selectedRowsData.length > 1){
+    } else if (e.selectedRowsData.length > 1) {
       deselectRowKeys.push(this.currentSelectedTeamId);
       dataGrid.deselectRows(deselectRowKeys);
     }
 
-    this.importButtonDisabled = this.currentSelectedTeamId === null || this.currentSelectedTeamId < 0;
+    this.importButtonDisabled =
+      this.currentSelectedTeamId === null || this.currentSelectedTeamId < 0;
   }
 
   private getImportTeams() {
     this.dataRetrieved = false;
-    this.subscription.add(this.dashboardService.getTeams().subscribe(res => {
-      if (res === null) {
-        this.dashboardService.displayContactSystemAdminMessage();
-      }
-      else if (res.success) {
-        this.importTeams = res.data;
-      } else {
-        this.dashboardService.errorNotify(res.clientErrorMessage);
-      }    
+    this.subscription.add(
+      this.dashboardService.getTeams().subscribe((res) => {
+        if (res === null) {
+          this.dashboardService.displayContactSystemAdminMessage();
+        } else if (res.success) {
+          this.importTeams = res.data;
+        } else {
+          this.dashboardService.errorNotify(res.clientErrorMessage);
+        }
 
-      this.dataRetrieved = true;
-    }))
+        this.dataRetrieved = true;
+      })
+    );
   }
 
   private importTeam() {
-    if(this.data.projectId === undefined || this.data.projectId <= 0) {
+    if (this.data.projectId === undefined || this.data.projectId <= 0) {
       this.dashboardService.displayContactSystemAdminMessage();
       return;
     }
 
-    this.subscription.add(this.dashboardService.importTeam(this.data.projectId, this.currentSelectedTeamId, this.managerSharedValue).subscribe(res => {
-      if (res === null) {
-        this.modalComponent.dialogRef.close('');
-        this.dashboardService.displayContactSystemAdminMessage();
-      }
-      else if (res.success) {
-        this.modalComponent.dialogRef.close('true');
-        this.dashboardService.successNotify('Teams template has successfully imported to project.')
-      } else {
-        this.modalComponent.dialogRef.close('');
-        this.dashboardService.errorNotify(res.clientErrorMessage);
-      }    
-    }))
+    this.subscription.add(
+      this.dashboardService
+        .importTeam(this.data.projectId, this.currentSelectedTeamId)
+        .subscribe((res) => {
+          if (res === null) {
+            this.modalComponent.dialogRef.close('');
+            this.dashboardService.displayContactSystemAdminMessage();
+          } else if (res.success && res.data) {
+            this.modalComponent.dialogRef.close('true');
+            this.dashboardService.successNotify(
+              'Teams template has successfully imported to project.'
+            );
+          } else {
+            this.modalComponent.dialogRef.close('');
+            if (!res.data) {
+              this.dashboardService.errorNotify(
+                'Teams template was not imported to project. Please contact the system administrator.'
+              );
+            } else {
+              this.dashboardService.errorNotify(res.clientErrorMessage);
+            }
+          }
+        })
+    );
   }
 }

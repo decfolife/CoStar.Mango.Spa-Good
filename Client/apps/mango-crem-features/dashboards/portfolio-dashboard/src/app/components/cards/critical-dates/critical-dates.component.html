@@ -1,70 +1,68 @@
 <crem-card
-[id]="card.gridData.id"
-[title]="card.title"
-[subtitle]="card.subtitle"
-[counter]="card.counter"
-[filterData]="card.filterData"
-[filterInitialValue]="card.filterInitialValue"
-[showFilterClearButton]="false"
-dropValue="Value"
-dropDisplay="Display"
-[moreOptions]="card.moreOptions"
-[showCustomHeader]="true"
-(selectedFilter)="filter($event, card.id)"
-(expandDataGrid)="expandAllGridData($event)"
-(exportDataGrid)="exportAllGridData()"
-	
-fxFlexFill
-
+  [id]="card.gridData.id"
+  [title]="card.title"
+  [subtitle]="card.subtitle"
+  [counter]="card.counter"
+  [filterData]="card.filterData"
+  [filterInitialValue]="card.filterInitialValue"
+  [showFilterClearButton]="false"
+  dropValue="Value"
+  dropDisplay="Display"
+  [moreOptions]="card.moreOptions"
+  [showCustomHeader]="true"
+  (selectedFilter)="filter($event, card.id)"
+  (expandDataGrid)="expandAllGridData($event)"
+  (exportDataGrid)="exportAllGridData()"
+  fxFlexFill
 >
-	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
-		<dx-data-grid 
-		 #CriticalDatesDataGrid
-		  [id]="card.gridData.id + 'grid'"
-			[dataSource]="card.gridData.dataSource"
-			keyExpr="gridIndex"
-			[showColumnLines]="false"
-			[showRowLines]="false"
-			[showBorders]="false"
-			[rowAlternationEnabled]="true" 							
-			[allowColumnResizing]="true"
-			[allowColumnReordering]="true"
-			[columnAutoWidth]="false"
-			[wordWrapEnabled]="true"
-			(onRowClick)="portfolioRowClick($event)"
-		>
-		
-			<dxo-scrolling mode="virtual"></dxo-scrolling>
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-			<dxo-grouping #expand [autoExpandAll]="isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
-			<dxi-column dataField="clientLeaseID"
-			caption="Client Lease ID"
-			
-			></dxi-column>
-			<dxi-column dataField="propertyName"
-			caption="Property Name"></dxi-column>
-			<dxi-column dataField="buildingAddress"
-			caption="Address"></dxi-column>
-			<dxi-column dataField="buildingCity"
-			caption="City"></dxi-column>
-			<dxi-column dataField="buildingState"
-			caption="State"></dxi-column>
-			<dxi-column dataField="buildingCountry"
-			caption="Country"></dxi-column>
-			<dxi-column dataField="leaseStatus"></dxi-column>
-			<dxi-column dataField="accountType"></dxi-column>
-			<dxi-column dataField="buildingType"
-			caption="Building Type"></dxi-column>
-			<dxi-column dataField="rentableArea" dataType="number">
-			<dxo-format type="fixedPoint" [precision]="0"></dxo-format>
-			</dxi-column>
-			<dxi-column dataField="criticalDateType"
-			caption="Type"></dxi-column>
-			<dxi-column dataField="criticalDate" 
-
-			[format]="portfolioDataService.dateFormat"
-			dataType="date" alignment="right"></dxi-column>	
-			
-		</dx-data-grid>
-	</div>
+  <div class="cardContent" fxflexFill *ngIf="card.dispCard">
+    <dx-data-grid
+      #CriticalDatesDataGrid
+      [id]="card.gridData.id + 'grid'"
+      [dataSource]="card.gridData.dataSource"
+      keyExpr="gridIndex"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [wordWrapEnabled]="true"
+      (onRowClick)="portfolioRowClick($event)"
+    >
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-grouping
+        #expand
+        [autoExpandAll]="isExpanded"
+        [contextMenuEnabled]="true"
+      ></dxo-grouping>
+      <dxi-column
+        dataField="clientLeaseID"
+        caption="Client Lease ID"
+      ></dxi-column>
+      <dxi-column dataField="propertyName" caption="Property Name"></dxi-column>
+      <dxi-column dataField="buildingAddress" caption="Address"></dxi-column>
+      <dxi-column dataField="buildingCity" caption="City"></dxi-column>
+      <dxi-column dataField="buildingState" caption="State"></dxi-column>
+      <dxi-column dataField="buildingCountry" caption="Country"></dxi-column>
+      <dxi-column dataField="leaseStatus"></dxi-column>
+      <dxi-column dataField="accountType"></dxi-column>
+      <dxi-column dataField="buildingType" caption="Building Type"></dxi-column>
+      <dxi-column dataField="rentableArea" dataType="number">
+        <dxo-format type="fixedPoint" [precision]="0"></dxo-format>
+      </dxi-column>
+      <dxi-column dataField="criticalDateType" caption="Type"></dxi-column>
+      <dxi-column
+        dataField="criticalDate"
+        [format]="portfolioDataService.dateFormat"
+        dataType="date"
+        alignment="right"
+      ></dxi-column>
+    </dx-data-grid>
+  </div>
 </crem-card>

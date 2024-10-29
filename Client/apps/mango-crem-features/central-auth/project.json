@@ -64,8 +64,7 @@
               "with": "apps/mango-crem-features/central-auth/src/environments/environment.dev.ts"
             }
           ],
-          "budgets": [
-          ]
+          "budgets": []
         },
         "test": {
           "optimization": {
@@ -92,8 +91,7 @@
               "with": "apps/mango-crem-features/central-auth/src/environments/environment.test.ts"
             }
           ],
-          "budgets": [
-          ]
+          "budgets": []
         },
         "ops": {
           "optimization": {
@@ -120,8 +118,7 @@
               "with": "apps/mango-crem-features/central-auth/src/environments/environment.ops.ts"
             }
           ],
-          "budgets": [
-          ]
+          "budgets": []
         },
         "stage": {
           "optimization": {
@@ -148,8 +145,7 @@
               "with": "apps/mango-crem-features/central-auth/src/environments/environment.stage.ts"
             }
           ],
-          "budgets": [
-          ]
+          "budgets": []
         },
         "prod": {
           "optimization": {
@@ -176,8 +172,7 @@
               "with": "apps/mango-crem-features/central-auth/src/environments/environment.prod.ts"
             }
           ],
-          "budgets": [
-          ]
+          "budgets": []
         }
       }
     },

@@ -12,12 +12,15 @@ export class IndexComponent implements OnInit {
 
   @Input() navPageId: number;
 
-  constructor(private accountingSummaryService: AccountingSummaryService, private route: ActivatedRoute) { }
+  constructor(
+    private accountingSummaryService: AccountingSummaryService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.navPageId = Number(this.route.snapshot.queryParamMap.get('navpageid'));
     this.leaseAbstractId = Number(this.route.snapshot.queryParamMap.get('oid'));
-    
+
     this.accountingSummaryService.setNavPageId(this.navPageId);
     this.accountingSummaryService.setLeaseAbstractId(this.leaseAbstractId);
   }

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /* Core (dx.module-core.js) */
 /* eslint-disable import/no-commonjs */
@@ -27,18 +27,15 @@ require('devextreme/events/pointer');
 require('devextreme/events/swipe');
 require('devextreme/events/transform');
 
-
 /* Data (dx.module-core.js) */
 
 DevExpress.data = require('devextreme/bundles/modules/data');
 
-
 /* UI core (dx.module-core.js) */
 
-const ui = DevExpress.ui = require('devextreme/bundles/modules/ui');
+const ui = (DevExpress.ui = require('devextreme/bundles/modules/ui'));
 
 ui.themes = require('devextreme/ui/themes');
-
 
 /* Base widgets (dx.module-widgets-base.js) */
 
@@ -72,5 +69,5 @@ ui.dxToolbar = require('devextreme/ui/toolbar');
 ui.dxTooltip = require('devextreme/ui/tooltip');
 ui.dxSortable = require('devextreme/ui/sortable');
 
-const viz = DevExpress.viz = require('devextreme/bundles/modules/viz');
+const viz = (DevExpress.viz = require('devextreme/bundles/modules/viz'));
 viz.dxBullet = require('devextreme/viz/bullet');

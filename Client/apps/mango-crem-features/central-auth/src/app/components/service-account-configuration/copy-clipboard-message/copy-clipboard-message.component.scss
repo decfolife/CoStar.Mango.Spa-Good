@@ -1,26 +1,25 @@
-@use "../../../../../../../../libs/ui-shared/common/src/styles/" as *;
+@use '../../../../../../../../libs/ui-shared/common/src/styles/' as *;
 
-.msg{
-    @include costar(color, danger);
-    font-weight: bold;
-    text-align: center;
+.msg {
+  @include costar(color, danger);
+  font-weight: bold;
+  text-align: center;
 }
 
-.apikey{
-    font-size: large;
-    font-weight: bold;
-    padding-bottom: 10px;
-    padding-top: 50px;
-    text-align: center;
+.apikey {
+  font-size: large;
+  font-weight: bold;
+  padding-bottom: 10px;
+  padding-top: 50px;
+  text-align: center;
 }
 
-.sub{
-    text-align: center;
+.sub {
+  text-align: center;
 }
 
 :host ::ng-deep {
-    .modalHeader {
-        justify-content: center !important;
-    }
+  .modalHeader {
+    justify-content: center !important;
+  }
 }
-

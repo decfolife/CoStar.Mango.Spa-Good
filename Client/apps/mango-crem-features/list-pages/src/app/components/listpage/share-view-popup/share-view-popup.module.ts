@@ -7,12 +7,7 @@ import { ShareViewPopupComponent } from './share-view-popup.component';
 
 @NgModule({
   declarations: [ShareViewPopupComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    LibUiSharedModule,
-    FormsModule,   
-  ],
+  imports: [CommonModule, ReactiveFormsModule, LibUiSharedModule, FormsModule],
   exports: [ShareViewPopupComponent],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

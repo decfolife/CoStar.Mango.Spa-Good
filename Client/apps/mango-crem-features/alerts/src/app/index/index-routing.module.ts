@@ -8,13 +8,17 @@ const routes: Routes = [
     component: IndexComponent,
     data: {
       moduleId: 9,
-      breadCrumb: { label: 'Lease Alerts', append: true , activeLink: 'Lease Alerts'}
-    }
-  }
+      breadCrumb: {
+        label: 'Lease Alerts',
+        append: true,
+        activeLink: 'Lease Alerts',
+      },
+    },
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class IndexRoutingModule { }
+export class IndexRoutingModule {}

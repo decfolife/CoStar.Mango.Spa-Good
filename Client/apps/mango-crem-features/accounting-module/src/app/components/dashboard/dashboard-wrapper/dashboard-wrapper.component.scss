@@ -1,9 +1,10 @@
-@use "styles"as *;
+@use 'styles' as *;
 
 .dashboard-right-container {
   height: 100%;
-  
-  ::ng-deep{ // Apply right card and cards container spacing globally
+
+  ::ng-deep {
+    // Apply right card and cards container spacing globally
     .card-containers {
       @include costar(padding-top, 4);
       .categories-item {
@@ -20,36 +21,14 @@
       height: calc(100vh - 50px);
     }
   }
-  
 }
 
-::ng-deep{ // The dropdown's overlay is at the body level, encapsulation needs to be broken for this element
-  // Dropdown's overlay when active/opened
-  .accountingYearDropDown {
-    > .dx-overlay-content {
-      min-width: 120px !important;
-    }
-  }
-  .accountingViewDropDown { // Unique class name selector generated from ID passed down to crem-dropdown
-    > .dx-overlay-content {
-      min-width: 350px !important;
-    }
-  }
-  .accountingSegmentDropDown {
-    > .dx-overlay-content {
-      min-width: 320px !important;
-
-      .dx-list-items .dx-item:has(.visible-to-me) {
-        @include costar(border-bottom, gray04);
-      }
-    }
-  }
+::ng-deep {
   div.cdk-overlay-pane {
-        button[aria-disabled="true"] {
-          cursor: not-allowed;
-      }
-      
+    button[aria-disabled='true'] {
+      cursor: not-allowed;
     }
+  }
 }
 
 .dashboard-toolbar-wrapper {
@@ -112,32 +91,30 @@
     }
 
     .currency-label {
-      display:flex;
       font-size: 16px;
-
-      .currency-iso {
-        font-weight: bold;
-        margin-left: 4px;
-      }
+      line-height: 1.1rem;
+      text-align: right;
     }
   }
 }
 
-.dashboard-toolbar {
-  &__item {
-    margin-right: 8px;
+::ng-deep {
+  // Input
+  .dashboard-toolbar {
+    &__item {
+      margin-right: 8px;
+      crem-dropdown {
+        [id^='AccountingViewDropdown'] {
+          width: 245px;
+        }
 
-    crem-dropdown {
-      ::ng-deep #AccountingViewDropdown {
-        width: 275px;
-      }
+        [id^='AccountingYearDropdown'] {
+          width: 85px;
+        }
 
-      ::ng-deep #AccountingYearDropdown {
-        width: 85px;
-      }
-
-      ::ng-deep #AccountingSegmentDropdown {
-        width: 350px;
+        [id^='AccountingSegmentDropdown'] {
+          width: 350px;
+        }
       }
     }
   }

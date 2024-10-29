@@ -1,8 +1,8 @@
 export interface SubObjectComparisonDataRequest {
-  formId: number,
+  formId: number;
   objectTypeId: number;
-  formSectionGRoupID: number,
-  returnFormat: number,
-  objectIds: string,
+  formSectionGRoupID: number;
+  returnFormat: number;
+  objectIds: string;
   widgetId: number;
 }

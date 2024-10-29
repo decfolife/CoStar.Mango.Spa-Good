@@ -5,9 +5,28 @@ import { NgModule } from '@angular/core';
 import { AccountsSummaryComponent } from '@accounting-summary/components/accounts-summary/accounts-summary.component';
 import { TitleComponent } from '@accounting-summary/components/title/title.component';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
-import { ButtonModule, DatePickerModule, DropdownModule, IconModule, ToggleSliderComponent, InputComponent, AccordionModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  ButtonModule,
+  DatePickerModule,
+  DropdownModule,
+  IconModule,
+  ToggleSliderComponent,
+  InputComponent,
+  AccordionModule,
+  ModalModule,
+  CremPopupComponent,
+} from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
-import { DxDataGridModule, DxDropDownBoxModule, DxTooltipModule, DxPopupModule, DxScrollViewModule, DxSelectBoxModule, DxTemplateModule, DxTabPanelModule } from 'devextreme-angular';
+import {
+  DxDataGridModule,
+  DxDropDownBoxModule,
+  DxTooltipModule,
+  DxPopupModule,
+  DxScrollViewModule,
+  DxSelectBoxModule,
+  DxTemplateModule,
+  DxTabPanelModule,
+} from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
 import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
 import { IndexComponent } from './index.component';
@@ -35,6 +54,13 @@ import { InputLabelComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/inpu
 import { ResidualValueComponent } from '../add-event/residual-value/residual-value.component';
 import { FinancialCardComponent } from '../add-event/financial-card/financial-card.component';
 import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkbox';
+import { PaymentsGridComponent } from '../add-event/payments-grid/payments-grid.component';
+import { ScheduleTransactionsPopupComponent } from '../add-event/payments-grid/schedule-transactions-popup/schedule-transactions-popup.component';
+import { AddEditOtherChargeModalComponent } from '../add-event/add-edit-other-charge-modal/add-edit-other-charge-modal.component';
+import { EditRouAssetComponent } from '../events-detail-section/edit-rou-asset/edit-rou-asset.component';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
 
 @NgModule({
   declarations: [
@@ -52,7 +78,7 @@ import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkb
     JePaymentInfoComponent,
     WorkflowHistoryPopupComponent,
     RetrospectiveAdjustmentInfoComponent,
-    ScheduleDetailsComponent
+    ScheduleDetailsComponent,
   ],
 
   imports: [
@@ -86,10 +112,22 @@ import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkb
     ClassificationTestsComponent,
     FinancialCardComponent,
     AccordionModule,
-    ResidualValueComponent
+    ResidualValueComponent,
+    PaymentsGridComponent,
+    AddEditOtherChargeModalComponent,
+    ScheduleTransactionsPopupComponent,
+    EditRouAssetComponent,
+    ModalModule,
+    ToastModule,
+    CremPopupComponent,
   ],
 
-  providers: [AccountingSummaryService, FormattingService, DatePipe],
-
+  providers: [
+    AccountingSummaryService,
+    FormattingService,
+    DatePipe,
+    AddEditScheduleService,
+    MessageService,
+  ],
 })
-export class IndexModule { }
+export class IndexModule {}

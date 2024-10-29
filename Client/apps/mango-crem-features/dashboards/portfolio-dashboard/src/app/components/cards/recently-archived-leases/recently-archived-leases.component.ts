@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { CardDetails } from '../../../models';
 import { PortfolioDashboardService } from '../../../services/portfolio-dashboard.service';
@@ -11,43 +19,43 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
 @Component({
   selector: 'recently-archived-leases-card',
   templateUrl: './recently-archived-leases.component.html',
-  styleUrls: ['./recently-archived-leases.component.scss']
+  styleUrls: ['./recently-archived-leases.component.scss'],
 })
-
 export class RecentlyArchivedLeasesComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
-  private selectedFilters : string;
+  private selectedFilters: string;
   @Output() cardDropEvent = new EventEmitter<any>();
   @Output() rowClickEvent = new EventEmitter<any>();
 
   public isGridExpanded: boolean = false;
-  @ViewChild("RecentlyArchivedLeasesGrid") dataGrid: DxDataGridComponent;
+  @ViewChild('RecentlyArchivedLeasesGrid') dataGrid: DxDataGridComponent;
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
   constructor(
     private router: Router,
     private exportToExcelService: ExportDevexDatagridService,
-		private portfolioDashboardService: PortfolioDashboardService,
-        private portfolioDataService: PortfolioDataService,
-  ) {
-     }
+    private portfolioDashboardService: PortfolioDashboardService,
+    private portfolioDataService: PortfolioDataService
+  ) {}
 
   ngOnInit(): void {
-
-    this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.portfolioDataService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
   rowClick(e: any) {
-    this.router.navigate(
-      ['/v06/Forms/RenderForm.aspx'],
-      {
-        queryParams: { oid: e.data.systemLeaseID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID }
-      });
+    this.router.navigate(['/v06/Forms/RenderForm.aspx'], {
+      queryParams: {
+        oid: e.data.systemLeaseID,
+        otid: e.data.objectTypeID,
+        ottid: e.data.objectTypeTypeID,
+      },
+    });
   }
-  
 
   filter(e, cardId) {
     this.card.filterInitialValue = e[0];
@@ -56,11 +64,13 @@ export class RecentlyArchivedLeasesComponent implements OnInit, OnDestroy {
   }
 
   getCardData() {
-    this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-      }
-    ));
+    this.subs.push(
+      this.portfolioDataService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+        })
+    );
   }
 
   expandAllGridData(e: any) {
@@ -68,11 +78,13 @@ export class RecentlyArchivedLeasesComponent implements OnInit, OnDestroy {
   }
 
   exportAllGridData() {
-   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Recently_Archived_Leases");
+    this.exportToExcelService.exportToExcel(
+      this.dataGrid.instance,
+      'Recently_Archived_Leases'
+    );
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }
-

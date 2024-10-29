@@ -11,7 +11,7 @@ import { switchMap } from 'rxjs/operators';
 @Component({
   selector: 'app-client-settings-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+  styleUrls: ['./admin.component.scss'],
 })
 export class AdminComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
@@ -26,9 +26,11 @@ export class AdminComponent implements OnInit, OnDestroy {
   ssoSettingsForm: UntypedFormGroup;
 
   // convenience getter for easy access to form fields
-  get form() { return this.ssoSettingsForm.controls; }
+  get form() {
+    return this.ssoSettingsForm.controls;
+  }
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
 
   constructor(
     private _route: ActivatedRoute,
@@ -42,7 +44,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true
+    this.isLoading = true;
     this.passwordLength = this.minPasswordLength;
     this.passwordExpireDays = this.minPasswordExpireDays;
     this.createForm();
@@ -61,52 +63,66 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   getClientSettings() {
-    this.isLoading = true
-    this.subs.push(this._settingsService.getClientSettings().subscribe(
-      (result) => {
-        this.isLoading = false
-        this.passwordLength = result.PasswordMinLength;
-        this.passwordExpireDays = result.PasswordExpiresInDays;
-        this.form.isSSOEnabled.setValue(result.IsSSOEnabled);
-        this.form.ssoStageUri.setValue(result.SSOStageUri);
-        this.form.ssoProdUri.setValue(result.SSOProdUri);
-        this.form.ssoStageLogoutUri.setValue(result.SSOStageLogoutUri);
-        this.form.ssoProdLogoutUri.setValue(result.SSOProdLogoutUri);
-        this.form.forceSSO.setValue(result.ForceSSO);
-      },
-      () => {
-        this.isErrored = true;
-      }
-    ));
+    this.isLoading = true;
+    this.subs.push(
+      this._settingsService.getClientSettings().subscribe(
+        (result) => {
+          this.isLoading = false;
+          this.passwordLength = result.PasswordMinLength;
+          this.passwordExpireDays = result.PasswordExpiresInDays;
+          this.form.isSSOEnabled.setValue(result.IsSSOEnabled);
+          this.form.ssoStageUri.setValue(result.SSOStageUri);
+          this.form.ssoProdUri.setValue(result.SSOProdUri);
+          this.form.ssoStageLogoutUri.setValue(result.SSOStageLogoutUri);
+          this.form.ssoProdLogoutUri.setValue(result.SSOProdLogoutUri);
+          this.form.forceSSO.setValue(result.ForceSSO);
+        },
+        () => {
+          this.isErrored = true;
+        }
+      )
+    );
   }
 
   launchSSOsite(uri: string) {
-    window.open(uri, "_blank");
+    window.open(uri, '_blank');
   }
 
   saveSettings(): void {
-    const formData: ClientSettings = this.buildClientSettingsPayload()
-    this.isLoading = true
-    this.subs.push(this._settingsService.clientKey$.pipe(
-      switchMap(clientKey => {
-        formData['clientKey'] = clientKey
-        return this._settingsService.saveClientSettings(formData)
-      })
-    ).subscribe(response => {
-      this.isLoading = false
-      if (response.StatusCode === 200) {
-        this._toastr.success("Settings saved successfully")
-      }
-    }, (_ => {
-      this.isLoading = false
-    })))
+    const formData: ClientSettings = this.buildClientSettingsPayload();
+    this.isLoading = true;
+    this.subs.push(
+      this._settingsService.clientKey$
+        .pipe(
+          switchMap((clientKey) => {
+            formData['clientKey'] = clientKey;
+            return this._settingsService.saveClientSettings(formData);
+          })
+        )
+        .subscribe(
+          (response) => {
+            this.isLoading = false;
+            if (response.StatusCode === 200) {
+              this._toastr.success('Settings saved successfully');
+            }
+          },
+          (_) => {
+            this.isLoading = false;
+          }
+        )
+    );
   }
 
   buildClientSettingsPayload(): ClientSettings {
-    return { ...this.ssoSettingsForm.value, passwordMinLength: this.passwordLength, passwordExpiresInDays: this.passwordExpireDays, isActive: true }
+    return {
+      ...this.ssoSettingsForm.value,
+      passwordMinLength: this.passwordLength,
+      passwordExpiresInDays: this.passwordExpireDays,
+      isActive: true,
+    };
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

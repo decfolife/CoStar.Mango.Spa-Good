@@ -8,23 +8,22 @@
 }
 
 .card-drag-handle {
-    cursor: move;
-    position: absolute;
-    top: 16px !important; // todo: Only this card's drag handle is misaligned compared to the other dashboards.
-    right: 16px !important;
-    z-index: 10;
+  cursor: move;
+  position: absolute;
+  top: 16px !important; // todo: Only this card's drag handle is misaligned compared to the other dashboards.
+  right: 16px !important;
+  z-index: 10;
 
-    svg.drag_handle {
-      overflow: hidden;
-      vertical-align: middle;
-      width: 24px;
-      height: 24px;
-    }
+  svg.drag_handle {
+    overflow: hidden;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
   }
+}
 
 :host ::ng-deep {
   .dx-pivotgrid {
-
     .dx-area-column-cell {
       .dx-pivotgrid-horizontal-headers {
         td > span {
@@ -45,17 +44,17 @@
 
     // Style Totals
     // Table Main Data/Body
-    .total, .dx-total {
+    .total,
+    .dx-total {
       @include costar(background-color, background);
     }
-    &#AssetBalanceCardGrid { // Apply last row styling only to Asset Balance Grid/Table
+    &#AssetBalanceCardGrid {
+      // Apply last row styling only to Asset Balance Grid/Table
       .dx-bottom-row {
         table tbody tr:last-child {
           @include costar(background-color, background);
         }
       }
     }
-
   }
-
 }

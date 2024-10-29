@@ -5,17 +5,19 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { faArchive, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArchive,
+  faExclamationTriangle,
+} from '@fortawesome/free-solid-svg-icons';
 import { ArchiveActionService } from '@micro-components/object-actions/services/archive-action.service';
 import { SharedService } from '@micro-components/object-actions/services/shared.service';
 
 @Component({
   selector: 'mango-archive-action',
   templateUrl: './archive-lease.component.html',
-  styleUrls: ['./archive-lease.component.scss']
+  styleUrls: ['./archive-lease.component.scss'],
 })
 export class ArchiveLeaseComponent implements OnInit {
-
   public buildingData: any = [];
   public leaseData: any = [];
   public selectedLeaseData: any = [];
@@ -49,10 +51,11 @@ export class ArchiveLeaseComponent implements OnInit {
   public buildingTemplate: string;
   public premiseTemplate: string;
   public dateFormat: string = 'MM/dd/yyyy';
-  public prefix: string = 'building-lease-archive-'
+  public prefix: string = 'building-lease-archive-';
 
   @ViewChild('DataGrid', { static: false }) dataGrid: DxDataGridComponent;
-  @ViewChild('BuildingDataGrid', { static: false }) buildingDataGrid: DxDataGridComponent;
+  @ViewChild('BuildingDataGrid', { static: false })
+  buildingDataGrid: DxDataGridComponent;
 
   faArchive = faArchive;
   faExclamationTriangle = faExclamationTriangle;
@@ -61,16 +64,23 @@ export class ArchiveLeaseComponent implements OnInit {
     public dialogRef: MatDialogRef<ArchiveLeaseComponent>,
     public service: ArchiveActionService,
     public sharedService: SharedService,
-    @Inject(MAT_DIALOG_DATA) public data: {archiveType: string, OID: number, OTTID: number, hiddenPremise: number}) { }
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      archiveType: string;
+      OID: number;
+      OTTID: number;
+      hiddenPremise: number;
+    }
+  ) {}
 
   ngOnInit(): void {
     this.archiveType = this.data.archiveType;
     this.sharedService.getUserPreferences().subscribe((response) => {
       if (response?.data?.dateFormat) {
-        this.dateFormat = response.data.dateFormat
+        this.dateFormat = response.data.dateFormat;
         this.getGridData();
       }
-    })
+    });
   }
 
   yesDelete() {
@@ -81,7 +91,7 @@ export class ArchiveLeaseComponent implements OnInit {
     this.dialogRef.close(data);
     if (this.archivedSuccess) {
       const url = window.location.href;
-      window.location.href = url.replace('&pgMode=Edit', '');;
+      window.location.href = url.replace('&pgMode=Edit', '');
     }
   }
 
@@ -97,72 +107,107 @@ export class ArchiveLeaseComponent implements OnInit {
 
   public getGridData() {
     if (this.archiveType === 'Lease') {
-      this.service.getBuildingsPremiseLeaseAssociations(this.data.OID, 0, this.data.hiddenPremise)
-      .subscribe(result => {
-        this.selectedLeaseData = JSON.parse(JSON.stringify(result.data));
-        this.buildingData = result.data;
-        if (this.selectedLeaseData.length) {
-          this.objectTypeTypeName = this.buildingData[0].LeaseTemplate;
-          this.buildingTemplate = this.buildingData[0].BuildingTemplate;
-          this.buildModalTitle();
-        }
-        
-        this.dataSoftValidation(this.buildingData, 'buildingData');
-          this.service.getBuildingPremiseArchiveData(Number(result.data?.[0]?.BuildingID), 0, 2, this.data.hiddenPremise)
-          .subscribe(result => {
-            this.leaseData = result.data;
-            if (this.leaseData.length) {
-              this.premiseTemplate = this.leaseData[0].PremiseTemplate;
-            }
-            
-            this.dataSoftValidation(this.leaseData, 'leaseData');
-            this.archiveValidation();
-            this.sortLeaseData();
-            this.setGridData();
-        })
-      })
+      this.service
+        .getBuildingsPremiseLeaseAssociations(
+          this.data.OID,
+          0,
+          this.data.hiddenPremise
+        )
+        .subscribe((result) => {
+          this.selectedLeaseData = JSON.parse(JSON.stringify(result.data));
+          this.buildingData = result.data;
+          if (this.selectedLeaseData.length) {
+            this.objectTypeTypeName = this.buildingData[0].LeaseTemplate;
+            this.buildingTemplate = this.buildingData[0].BuildingTemplate;
+            this.buildModalTitle();
+          }
+
+          this.dataSoftValidation(this.buildingData, 'buildingData');
+          this.service
+            .getBuildingPremiseArchiveData(
+              Number(result.data?.[0]?.BuildingID),
+              0,
+              2,
+              this.data.hiddenPremise
+            )
+            .subscribe((result) => {
+              this.leaseData = result.data;
+              if (this.leaseData.length) {
+                this.premiseTemplate = this.leaseData[0].PremiseTemplate;
+              }
+
+              this.dataSoftValidation(this.leaseData, 'leaseData');
+              this.archiveValidation();
+              this.sortLeaseData();
+              this.setGridData();
+            });
+        });
     } else if (this.archiveType === 'Premise') {
-      this.service.getBuildingPremiseArchiveData(0, this.data.OID, 5, this.data.hiddenPremise)
-      .subscribe(result => {
-        this.buildingData = result.data;
-        if (this.buildingData.length) {
-          this.objectTypeTypeName = this.buildingData[0].BuildingTemplate;
-          this.buildingTemplate = this.buildingData[0].BuildingTemplate;
-          this.buildModalTitle();
-        }
-        this.service.getBuildingPremiseArchiveData(0, this.data.OID, 4, this.data.hiddenPremise)
-        .subscribe(result => {
-          this.leaseData = result.data;
-          if (this.leaseData.length) {
-            this.premiseTemplate = this.leaseData[0].PremiseTemplate;
+      this.service
+        .getBuildingPremiseArchiveData(
+          0,
+          this.data.OID,
+          5,
+          this.data.hiddenPremise
+        )
+        .subscribe((result) => {
+          this.buildingData = result.data;
+          if (this.buildingData.length) {
+            this.objectTypeTypeName = this.buildingData[0].BuildingTemplate;
+            this.buildingTemplate = this.buildingData[0].BuildingTemplate;
+            this.buildModalTitle();
           }
-          this.dataSoftValidation(result.data, 'leaseData');
-          this.archiveValidation();
-          this.sortLeaseData();
-          this.setGridData();
+          this.service
+            .getBuildingPremiseArchiveData(
+              0,
+              this.data.OID,
+              4,
+              this.data.hiddenPremise
+            )
+            .subscribe((result) => {
+              this.leaseData = result.data;
+              if (this.leaseData.length) {
+                this.premiseTemplate = this.leaseData[0].PremiseTemplate;
+              }
+              this.dataSoftValidation(result.data, 'leaseData');
+              this.archiveValidation();
+              this.sortLeaseData();
+              this.setGridData();
+            });
         });
-      });
     } else {
-      this.service.getBuildingPremiseArchiveData(this.data.OID, 0, 1, this.data.hiddenPremise)
-      .subscribe(result => {
-        this.buildingData = result.data;
-        if (this.buildingData.length) {
-          this.objectTypeTypeName = this.buildingData[0].BuildingTemplate;
-          this.buildingTemplate = this.buildingData[0].BuildingTemplate;
-          this.buildModalTitle();
-        }
-        this.service.getBuildingPremiseArchiveData(this.data.OID, 0, 2, this.data.hiddenPremise)
-        .subscribe(result => {
-          this.leaseData = result.data;
-          if (this.leaseData.length) {
-            this.premiseTemplate = this.leaseData[0].PremiseTemplate;
+      this.service
+        .getBuildingPremiseArchiveData(
+          this.data.OID,
+          0,
+          1,
+          this.data.hiddenPremise
+        )
+        .subscribe((result) => {
+          this.buildingData = result.data;
+          if (this.buildingData.length) {
+            this.objectTypeTypeName = this.buildingData[0].BuildingTemplate;
+            this.buildingTemplate = this.buildingData[0].BuildingTemplate;
+            this.buildModalTitle();
           }
-          this.dataSoftValidation(result.data, 'leaseData');
-          this.archiveValidation();
-          this.sortLeaseData();
-          this.setGridData();
+          this.service
+            .getBuildingPremiseArchiveData(
+              this.data.OID,
+              0,
+              2,
+              this.data.hiddenPremise
+            )
+            .subscribe((result) => {
+              this.leaseData = result.data;
+              if (this.leaseData.length) {
+                this.premiseTemplate = this.leaseData[0].PremiseTemplate;
+              }
+              this.dataSoftValidation(result.data, 'leaseData');
+              this.archiveValidation();
+              this.sortLeaseData();
+              this.setGridData();
+            });
         });
-      });
     }
   }
 
@@ -182,15 +227,17 @@ export class ArchiveLeaseComponent implements OnInit {
           if (dataType === 'leaseData') {
             this.inProcessCount = this.inProcessCount + 1;
           } else {
-            this.defaultLeaseInProcessCountCount = this.defaultLeaseInProcessCountCount + 1;
+            this.defaultLeaseInProcessCountCount =
+              this.defaultLeaseInProcessCountCount + 1;
           }
         }
 
-        if (item.ScheduledEvents > 0 ) {
+        if (item.ScheduledEvents > 0) {
           if (dataType === 'leaseData') {
             this.scheduledCount = this.scheduledCount + 1;
           } else {
-            this.defaultLeaseScheduledCount = this.defaultLeaseScheduledCount + 1;
+            this.defaultLeaseScheduledCount =
+              this.defaultLeaseScheduledCount + 1;
           }
         }
       });
@@ -200,20 +247,19 @@ export class ArchiveLeaseComponent implements OnInit {
 
   public hasScheduledValidation() {
     // set condition for scheduled checkbox
-    this.hasScheduled = (
-      (this.archiveType === 'Lease' && 
-        ((this.buildingSelected && this.scheduledCount > 0) || (!this.buildingSelected && this.defaultLeaseScheduledCount > 0))
-      ) 
-        ||
-      ((this.archiveType === 'Building' || this.archiveType === 'Premise') && this.scheduledCount > 0)
-    );
+    this.hasScheduled =
+      (this.archiveType === 'Lease' &&
+        ((this.buildingSelected && this.scheduledCount > 0) ||
+          (!this.buildingSelected && this.defaultLeaseScheduledCount > 0))) ||
+      ((this.archiveType === 'Building' || this.archiveType === 'Premise') &&
+        this.scheduledCount > 0);
   }
 
   public closeDialog() {
     this.dialogRef.close('');
     if (this.archivedSuccess) {
       const url = window.location.href;
-      window.location.href = url.replace('&pgMode=Edit', '');;
+      window.location.href = url.replace('&pgMode=Edit', '');
     }
   }
 
@@ -249,50 +295,61 @@ export class ArchiveLeaseComponent implements OnInit {
         premiseId = this.buildingData?.[0]?.BuildingID || 0;
       }
 
-      this.service.archiveBuildingPremiseLease(buildingId, premiseId, leaseId, this.data.hiddenPremise)
-      .subscribe(result => {
-        this.archived = true;
-        if (result.success && result?.data?.length === 0) {
-          this.archivedSuccess = true;
-        } else {
-          if (result?.data?.length) {
-            result.data.forEach((item) => {
-              const errorItem = this.leaseData.find((leaseData) => {
-                return leaseData.LeaseAbstractID === item.leaseAbstractID;
-              })
-              const defaultErrorItem = this.selectedLeaseData.find((selectedLeaseData) => {
-                return selectedLeaseData.LeaseAbstractID === item.leaseAbstractID;
-              })
-              if (errorItem) {
-                if (!errorItem.Reason || errorItem.Reason === item.reason) {
-                  errorItem.Reason = item.reason;
-                } else {
-
+      this.service
+        .archiveBuildingPremiseLease(
+          buildingId,
+          premiseId,
+          leaseId,
+          this.data.hiddenPremise
+        )
+        .subscribe((result) => {
+          this.archived = true;
+          if (result.success && result?.data?.length === 0) {
+            this.archivedSuccess = true;
+          } else {
+            if (result?.data?.length) {
+              result.data.forEach((item) => {
+                const errorItem = this.leaseData.find((leaseData) => {
+                  return leaseData.LeaseAbstractID === item.leaseAbstractID;
+                });
+                const defaultErrorItem = this.selectedLeaseData.find(
+                  (selectedLeaseData) => {
+                    return (
+                      selectedLeaseData.LeaseAbstractID === item.leaseAbstractID
+                    );
+                  }
+                );
+                if (errorItem) {
+                  if (!errorItem.Reason || errorItem.Reason === item.reason) {
+                    errorItem.Reason = item.reason;
+                  } else {
                     this.leaseData.push(JSON.parse(JSON.stringify(errorItem)));
-                    this.leaseData[this.leaseData.length - 1].Reason = item.reason
-
-                }
-              }
-              if (defaultErrorItem) {
-                if (!defaultErrorItem.Reason) {
-                  defaultErrorItem.Reason = JSON.parse(JSON.stringify(item.reason));
-                } else {
-                  if (!defaultErrorItem.Reason.includes(item.reason)) {
-                    defaultErrorItem.Reason = defaultErrorItem.Reason + ', ' + item.reason;
+                    this.leaseData[this.leaseData.length - 1].Reason =
+                      item.reason;
                   }
                 }
-              }
-            })
+                if (defaultErrorItem) {
+                  if (!defaultErrorItem.Reason) {
+                    defaultErrorItem.Reason = JSON.parse(
+                      JSON.stringify(item.reason)
+                    );
+                  } else {
+                    if (!defaultErrorItem.Reason.includes(item.reason)) {
+                      defaultErrorItem.Reason =
+                        defaultErrorItem.Reason + ', ' + item.reason;
+                    }
+                  }
+                }
+              });
+            }
           }
-        }
 
-        this.sortLeaseData();
-        this.setGridcolumns();
-      });
+          this.sortLeaseData();
+          this.setGridcolumns();
+        });
     } else {
       this.dialogRef.close();
     }
-
   }
 
   public sortLeaseData() {
@@ -307,7 +364,10 @@ export class ArchiveLeaseComponent implements OnInit {
       return 0;
     });
 
-    if ((this.hasScheduled && !this.archived) || (this.archived && !this.archivedSuccess)) {
+    if (
+      (this.hasScheduled && !this.archived) ||
+      (this.archived && !this.archivedSuccess)
+    ) {
       if (!this.archived) {
         //sort if soft reason exists
         this.leaseData.sort((a, b) => {
@@ -345,24 +405,21 @@ export class ArchiveLeaseComponent implements OnInit {
   public onEditorPreparing(e) {
     if (this.archiveType !== 'Lease' || this.archived) {
       if (e.command === 'select') {
-        if ((e.parentType === 'dataRow' && e.row)) {
+        if (e.parentType === 'dataRow' && e.row) {
           e.editorOptions.disabled = true;
           e.editorOptions.onValueChanged = (e) => {
             if (!e.event) {
               return;
-          }
+            }
             e.event.preventDefault();
-          }
+          };
         } else if (e.parentType === 'headerRow') {
           e.editorOptions.disabled = true;
           e.editorOptions.onValueChanged = (e) => {
-  
             if (!e.event) {
-             
               return;
             }
-
-          }
+          };
         }
       }
     }
@@ -370,50 +427,44 @@ export class ArchiveLeaseComponent implements OnInit {
 
   public onMasterDetailsEditorPreparing(e) {
     if (e.command === 'select') {
-      if ((e.parentType === 'dataRow' && e.row)) {
+      if (e.parentType === 'dataRow' && e.row) {
         e.editorOptions.disabled = true;
         e.editorOptions.onValueChanged = (e) => {
           if (!e.event) {
             return;
-        }
+          }
           e.event.preventDefault();
-        }
+        };
       } else if (e.parentType === 'headerRow') {
         e.editorOptions.disabled = true;
         e.editorOptions.onValueChanged = (e) => {
-
           if (!e.event) {
-           
             return;
           }
-        }
+        };
       }
     }
   }
 
   public onleaseDefaultEditorPreparing(e) {
     if (e.command === 'select') {
-      if ((e.parentType === 'dataRow' && e.row)) {
+      if (e.parentType === 'dataRow' && e.row) {
         e.editorOptions.disabled = true;
         e.editorOptions.onValueChanged = (e) => {
           if (!e.event) {
-
             return;
-        }
+          }
           e.event.preventDefault();
-        }
+        };
       } else if (e.parentType === 'headerRow') {
         e.editorOptions.disabled = true;
         e.editorOptions.onValueChanged = (e) => {
-
           if (!e.event) {
-
             return;
           }
 
-          
           e.event.preventDefault();
-        }
+        };
       }
     }
   }
@@ -422,14 +473,16 @@ export class ArchiveLeaseComponent implements OnInit {
     if (!this.checkBoxUpdating) {
       this.checkBoxUpdating = true;
       if (e.currentDeselectedRowKeys.length) {
-        e.component.selectRows(e.selectedRowKeys.concat(e.currentDeselectedRowKeys[0]));
+        e.component.selectRows(
+          e.selectedRowKeys.concat(e.currentDeselectedRowKeys[0])
+        );
       } else if (e.currentSelectedRowKeys.length) {
         e.component.deselectRows(e.currentSelectedRowKeys[0]);
       }
     }
     setTimeout(() => {
       this.checkBoxUpdating = false;
-    })
+    });
   }
 
   public onSelectionChanged(e) {
@@ -437,33 +490,35 @@ export class ArchiveLeaseComponent implements OnInit {
       if (!this.checkBoxUpdating) {
         this.checkBoxUpdating = true;
         if (e.currentDeselectedRowKeys.length) {
-          e.component.selectRows(e.selectedRowKeys.concat(e.currentDeselectedRowKeys[0]));
+          e.component.selectRows(
+            e.selectedRowKeys.concat(e.currentDeselectedRowKeys[0])
+          );
         } else if (e.currentSelectedRowKeys.length) {
           e.component.deselectRows(e.currentSelectedRowKeys[0]);
         }
       }
       setTimeout(() => {
         this.checkBoxUpdating = false;
-      })
+      });
     } else {
       this.checkBoxUpdating = true;
       if (e.currentSelectedRowKeys.length) {
         const keyArray = this.leaseData.map((item) => {
           return item.LeaseAbstractID;
-        })
+        });
         this.dataGrid.selectedRowKeys = keyArray;
         this.leaseSelectedRow = [];
         this.leaseData.forEach((item) => {
           this.leaseSelectedRow.push(item.LeaseAbstractID);
-        })
+        });
       } else {
         this.dataGrid.selectedRowKeys = [this.selectedLeaseData[0]];
         this.leaseSelectedRow = [];
-          this.leaseSelectedRow.push(this.selectedLeaseData[0].LeaseAbstractID)
+        this.leaseSelectedRow.push(this.selectedLeaseData[0].LeaseAbstractID);
       }
       setTimeout(() => {
         this.checkBoxUpdating = false;
-      })
+      });
 
       if (e.selectedRowKeys?.length) {
         this.buildingSelected = true;
@@ -484,7 +539,9 @@ export class ArchiveLeaseComponent implements OnInit {
       this.checkBoxUpdating = true;
       if (e.currentDeselectedRowKeys.length) {
         // e.component.selectRows(e.currentDeselectedRowKeys[0]);
-        e.component.selectRows(e.selectedRowKeys.concat(e.currentDeselectedRowKeys[0]));
+        e.component.selectRows(
+          e.selectedRowKeys.concat(e.currentDeselectedRowKeys[0])
+        );
         this.masterDetailsCheckbox = e;
       } else if (e.currentSelectedRowKeys.length) {
         e.component.deselectRows(e.currentSelectedRowKeys[0]);
@@ -493,7 +550,7 @@ export class ArchiveLeaseComponent implements OnInit {
     }
     setTimeout(() => {
       this.checkBoxUpdating = false;
-    })
+    });
   }
 
   private buildModalTitle() {
@@ -501,12 +558,17 @@ export class ArchiveLeaseComponent implements OnInit {
   }
 
   private setGridData() {
-    this.noAssociatedLeaseBuildingText = 'This ' + this.buildingTemplate?.toLowerCase() + ' has no associated leases.'
+    this.noAssociatedLeaseBuildingText =
+      'This ' +
+      this.buildingTemplate?.toLowerCase() +
+      ' has no associated leases.';
     if (this.data.archiveType === 'Lease') {
       this.leaseSelectedRow = [];
-      this.leaseSelectedRow.push(this.selectedLeaseData[0].LeaseAbstractID)
+      this.leaseSelectedRow.push(this.selectedLeaseData[0].LeaseAbstractID);
       this.leaseDefaultSelectedRow = [];
-      this.leaseDefaultSelectedRow.push(this.selectedLeaseData[0].LeaseAbstractID);
+      this.leaseDefaultSelectedRow.push(
+        this.selectedLeaseData[0].LeaseAbstractID
+      );
     } else {
       this.buildingDefaultSelectedRow = [];
       this.leaseSelectedRow = [];
@@ -514,8 +576,8 @@ export class ArchiveLeaseComponent implements OnInit {
         this.buildingDefaultSelectedRow.push(item.BuildingID);
       });
       this.leaseData.forEach((item) => {
-        this.leaseSelectedRow.push(item.LeaseAbstractID)
-      })
+        this.leaseSelectedRow.push(item.LeaseAbstractID);
+      });
     }
     this.setGridcolumns();
   }
@@ -524,13 +586,13 @@ export class ArchiveLeaseComponent implements OnInit {
     this.subLeaseGridColumns = [
       {
         dataField: 'LeaseTemplate',
-        caption: 'Template'
+        caption: 'Template',
       },
       {
         dataField: 'LeaseAbstractID',
         caption: 'ID',
-        alignment : 'left',
-				dataType : 'number',
+        alignment: 'left',
+        dataType: 'number',
       },
       {
         dataField: 'TenantLegalName',
@@ -545,29 +607,29 @@ export class ArchiveLeaseComponent implements OnInit {
         dataField: 'ExpirationDate',
         caption: 'Expiration Date',
         dataType: 'date',
-        format: this.dateFormat
+        format: this.dateFormat,
       },
       {
         dataField: 'Reason',
         caption: 'Reason',
-        visible: (this.archived && !this.archivedSuccess),
+        visible: this.archived && !this.archivedSuccess,
       },
       {
         dataField: 'SoftReason',
         caption: 'Reason',
-        visible: (this.hasScheduled && !this.archived),
-      }
-    ]
+        visible: this.hasScheduled && !this.archived,
+      },
+    ];
     this.leaseGridColumns = [
       {
         dataField: 'LeaseTemplate',
-        caption: 'Template'
+        caption: 'Template',
       },
       {
         dataField: 'LeaseAbstractID',
         caption: 'ID',
-        alignment : 'left',
-				dataType : 'number',
+        alignment: 'left',
+        dataType: 'number',
       },
       {
         dataField: 'TenantLegalName',
@@ -577,30 +639,30 @@ export class ArchiveLeaseComponent implements OnInit {
         dataField: 'ExpirationDate',
         caption: 'Expiration Date',
         dataType: 'date',
-        format: this.dateFormat
+        format: this.dateFormat,
       },
       {
         dataField: 'Reason',
         caption: 'Reason',
-        visible: this.archived && !this.archivedSuccess
-      }
-    ]
+        visible: this.archived && !this.archivedSuccess,
+      },
+    ];
     this.buildingGridColumns = [
       {
         dataField: 'BuildingTemplate',
-        caption: 'Template'
+        caption: 'Template',
       },
       {
         dataField: 'BuildingID',
         caption: 'ID',
-        alignment : 'left',
-				dataType : 'number',
+        alignment: 'left',
+        dataType: 'number',
       },
       {
         dataField: 'BuildingName',
-        caption: 'Name'
-      }
-    ]
+        caption: 'Name',
+      },
+    ];
 
     const needArchive = this.getValidationStatus();
     if (!needArchive || this.archived) {
@@ -620,6 +682,6 @@ export class ArchiveLeaseComponent implements OnInit {
         needArchive = true;
       }
     }
-    return needArchive
+    return needArchive;
   }
 }

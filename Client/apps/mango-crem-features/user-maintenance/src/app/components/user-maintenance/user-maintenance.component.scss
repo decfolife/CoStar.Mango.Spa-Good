@@ -1,23 +1,23 @@
 .userMaintenace {
-    &__pageTitle {
-        font-size: 20px;
-        font-weight: 500;
-        font-family: Helvetica, sans-serif;
-    }
+  &__pageTitle {
+    font-size: 20px;
+    font-weight: 500;
+    font-family: Helvetica, sans-serif;
+  }
 }
 
-button.userOptionsMenuBtn:focus{
-    box-shadow: 0 0 0 0.1rem #779ede;
+button.userOptionsMenuBtn:focus {
+  box-shadow: 0 0 0 0.1rem #779ede;
 }
 
-:host ::ng-deep .not-clickable {  
-    cursor: default !important;  
+:host ::ng-deep .not-clickable {
+  cursor: default !important;
 }
 
-:host ::ng-deep .not-clickable > .dx-template-wrapper > a {  
-    cursor: pointer !important;  
+:host ::ng-deep .not-clickable > .dx-template-wrapper > a {
+  cursor: pointer !important;
 }
 
 .button__add {
-    margin-right: 8px;
+  margin-right: 8px;
 }

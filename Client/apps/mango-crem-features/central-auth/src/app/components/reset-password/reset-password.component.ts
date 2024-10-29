@@ -1,16 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { CentralAuthHttpError, PasswordRequirements } from '@mango/data-models/lib-data-models';
-import { noWhitespaceValidator, passwordMatchValidator } from './password-validator';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import {
+  CentralAuthHttpError,
+  PasswordRequirements,
+} from '@mango/data-models/lib-data-models';
+import {
+  noWhitespaceValidator,
+  passwordMatchValidator,
+} from './password-validator';
 import { CentralAuthErrorHandler } from '../../services/error-handler.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'reset-password',
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss']
+  styleUrls: ['./reset-password.component.scss'],
 })
 export class ResetPasswordComponent implements OnInit {
   isLoading: boolean = false;
@@ -27,7 +37,9 @@ export class ResetPasswordComponent implements OnInit {
   public resetToken: string;
 
   // convenience getter for easy access to form fields
-  get form() { return this.resetPasswordForm.controls; }
+  get form() {
+    return this.resetPasswordForm.controls;
+  }
 
   constructor(
     private _route: ActivatedRoute,
@@ -35,10 +47,10 @@ export class ResetPasswordComponent implements OnInit {
     private _authService: AuthService,
     private caErrorHandler: CentralAuthErrorHandler,
     private fb: UntypedFormBuilder
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.validateResetToken()
+    this.validateResetToken();
     this.createForm();
   }
 
@@ -50,35 +62,41 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
-    this._authService.validateTokenAndGetPasswordRequirements(this.resetToken).subscribe(
-      (response) => {
-        this.passwordRequirements = response.passwordRequirements;
-        this.userEmail = response.userEmail;
-      },
-      (error: CentralAuthHttpError) => {
-        this._router.navigateByUrl('/password-reset-request?expiredToken=true');
-      }
-    )
+    this._authService
+      .validateTokenAndGetPasswordRequirements(this.resetToken)
+      .subscribe(
+        (response) => {
+          this.passwordRequirements = response.passwordRequirements;
+          this.userEmail = response.userEmail;
+        },
+        (error: CentralAuthHttpError) => {
+          this._router.navigateByUrl(
+            '/password-reset-request?expiredToken=true'
+          );
+        }
+      );
   }
 
   onStrengthChanged(strength: number) {
     if (strength === 100) {
       this.isValidPassword = true;
-    }
-    else {
+    } else {
       this.isValidPassword = false;
     }
   }
 
   createForm() {
-    this.resetPasswordForm = this.fb.group({
-      password: ['', [Validators.required, noWhitespaceValidator]],
-      confirmPassword: ['', Validators.required],
-    }, { validator: passwordMatchValidator });
+    this.resetPasswordForm = this.fb.group(
+      {
+        password: ['', [Validators.required, noWhitespaceValidator]],
+        confirmPassword: ['', Validators.required],
+      },
+      { validator: passwordMatchValidator }
+    );
   }
 
   resetPassword = () => {
-    this.caErrorHandler.clearNotification()
+    this.caErrorHandler.clearNotification();
     this.isLoading = true;
     this.form.password.markAsTouched();
     this.form.confirmPassword.markAsTouched();
@@ -94,7 +112,7 @@ export class ResetPasswordComponent implements OnInit {
       email: this.userEmail,
       resetToken: this.resetToken,
       password: this.form.password.value,
-      confirmPassword: this.form.confirmPassword.value
+      confirmPassword: this.form.confirmPassword.value,
     };
 
     this._authService.resetPassword(credentials).subscribe(
@@ -105,7 +123,7 @@ export class ResetPasswordComponent implements OnInit {
         this.isLoading = false;
         this.isErrored = true;
 
-        throw error
+        throw error;
       }
     );
   };
@@ -129,18 +147,26 @@ export class ResetPasswordComponent implements OnInit {
   getPasswordErrorMsg = () => {
     if (this.form.password.errors?.required && this.form.password.touched) {
       return 'Password is required';
-    }
-    else if (!this.isValidPassword && this.form.password.touched && !this.form.password.errors?.required) {
+    } else if (
+      !this.isValidPassword &&
+      this.form.password.touched &&
+      !this.form.password.errors?.required
+    ) {
       return 'Password is not valid';
     }
   };
 
   getConfirmPasswordErrorMsg = () => {
     if (this.form.confirmPassword.touched) {
-      if (this.resetPasswordForm.errors?.passwordMismatch && this.isValidPassword) {
+      if (
+        this.resetPasswordForm.errors?.passwordMismatch &&
+        this.isValidPassword
+      ) {
         return "Passwords don't match";
-      }
-      else if (this.form.confirmPassword.errors?.required && !this.isValidPassword) {
+      } else if (
+        this.form.confirmPassword.errors?.required &&
+        !this.isValidPassword
+      ) {
         return 'Confirm password is required';
       }
     }
@@ -149,26 +175,27 @@ export class ResetPasswordComponent implements OnInit {
   private validateForm(): boolean {
     var isValid = true;
 
-    if (this.form.password.errors?.required && this.form.confirmPassword.errors?.required) {
+    if (
+      this.form.password.errors?.required &&
+      this.form.confirmPassword.errors?.required
+    ) {
       isValid = false;
       this.isValidPassword = false;
-    }
-    else if (this.form.password.errors?.required) {
+    } else if (this.form.password.errors?.required) {
       isValid = false;
       this.isValidPassword = false;
-    }
-    else if (this.form.password.errors?.whitespace) {
-      isValid = false
-      this.isValidPassword = false
-    }
-    else if (this.form.confirmPassword.errors?.required) {
-      isValid = false;
-    }
-    else if (!this.isValidPassword) {
+    } else if (this.form.password.errors?.whitespace) {
       isValid = false;
       this.isValidPassword = false;
-    }
-    else if (this.resetPasswordForm.controls.password.value != this.resetPasswordForm.controls.confirmPassword.value) {
+    } else if (this.form.confirmPassword.errors?.required) {
+      isValid = false;
+    } else if (!this.isValidPassword) {
+      isValid = false;
+      this.isValidPassword = false;
+    } else if (
+      this.resetPasswordForm.controls.password.value !=
+      this.resetPasswordForm.controls.confirmPassword.value
+    ) {
       isValid = false;
     }
 

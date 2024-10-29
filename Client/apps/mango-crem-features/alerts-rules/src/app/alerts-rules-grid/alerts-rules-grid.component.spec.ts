@@ -8,9 +8,8 @@ describe('AlertsRulesGridComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AlertsRulesGridComponent ]
-    })
-    .compileComponents();
+      declarations: [AlertsRulesGridComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

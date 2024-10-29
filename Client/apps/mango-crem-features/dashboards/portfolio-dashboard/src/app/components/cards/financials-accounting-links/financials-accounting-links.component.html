@@ -1,34 +1,40 @@
 <crem-card
-[id]="card.gridData.id"
-[title]="card.title"
-[subtitle]="card.subtitle"
-[filterData]="null"
-[filterInitialValue]="null"
-[showFilterClearButton]="false"
-[showCustomHeader]="false" 
+  [id]="card.gridData.id"
+  [title]="card.title"
+  [subtitle]="card.subtitle"
+  [filterData]="null"
+  [filterInitialValue]="null"
+  [showFilterClearButton]="false"
+  [showCustomHeader]="false"
 >
-
-	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
-		<div class="financialsAndAccountingLinks">
-
-			<div class="financials">
-				<h4>Financials</h4>
-				<ul>
-					<li *ngFor="let financeLink of card.gridData.dataSource.financialLinks">
-						<a [href]="returnFinancialsUrlLink(financeLink.linkUrl)">{{financeLink.name}}</a>
-					</li>
-				</ul>
-			</div>
-			<div class="Accounting">
-				<h4>Accounting</h4>
-				<ul>
-					<li *ngFor="let accountingLink of card.gridData.dataSource.accountingLinks">
-						<a href="../../../{{accountingLink.linkUrl}}">{{accountingLink.name}}</a>
-					</li>
-				</ul>
-			</div>
-
-		</div>
-	</div>
-
+  <div class="cardContent" fxflexFill *ngIf="card.dispCard">
+    <div class="financialsAndAccountingLinks">
+      <div class="financials">
+        <h4>Financials</h4>
+        <ul>
+          <li
+            *ngFor="let financeLink of card.gridData.dataSource.financialLinks"
+          >
+            <a [href]="returnFinancialsUrlLink(financeLink.linkUrl)">{{
+              financeLink.name
+            }}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="Accounting">
+        <h4>Accounting</h4>
+        <ul>
+          <li
+            *ngFor="
+              let accountingLink of card.gridData.dataSource.accountingLinks
+            "
+          >
+            <a href="../../../{{ accountingLink.linkUrl }}">{{
+              accountingLink.name
+            }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </crem-card>

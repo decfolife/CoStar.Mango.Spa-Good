@@ -253,7 +253,6 @@
         left: -15px;
       }
     }
-
   }
 
   // TODO: Simplify grid columns and other values once fully migrated to MangoSpa
@@ -374,5 +373,37 @@
       }
     }
 
+  }
+}
+
+::ng-deep {
+
+  ._pendo-resource-center-badge-container{
+    box-shadow: none !important;
+  }
+
+  .pendo-resource-center-badge-notification-bubble {
+      position: absolute;
+      border-radius: 100px !important;
+      line-height: 0px !important;
+      height: 9px !important;
+      box-sizing: content-box;
+      background-color: rgb(239, 108, 0);
+      top: 0px !important;
+      right: 26px !important;
+      padding: 4px 7px !important;
+      margin-left: -35px;
+      margin-top: 8px;
+  }
+
+  .pendo-notification-bubble-unread-count {
+      font-weight: 400;
+      font-family: inherit;
+      height: 100%;
+      margin-left: -2px !important;
+      line-height: 9px !important;
+      vertical-align: middle;
+      color: rgb(255, 255, 255);
+      white-space: pre-wrap;
   }
 }

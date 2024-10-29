@@ -4,28 +4,31 @@ import { environment } from '@mangoSpa/src/environments/environment.local';
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import notify from 'devextreme/ui/notify';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { PortfolioSettingsResponse } from '@accounting-summary/models/portfolio-settings-response.modal';
 import { Api } from '@mango/data-models/lib-data-models';
-import { ClassificationTypeName } from "@mango/data-models/lib-data-models";
+import { ClassificationTypeName } from '@mango/data-models/lib-data-models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccountingSummaryService extends EndpointService {
   private apiUrl: string;
-  private leaseAbstractId: number
-  private navPageId: number
-  titleLeaseInfoSubject : BehaviorSubject<any>;
-  preferenceSavePendingMessage = " - You have unsaved preference changes.";
+  private leaseAbstractId: number;
+  private navPageId: number;
+  titleLeaseInfoSubject: BehaviorSubject<any>;
+  preferenceSavePendingMessage = ' - You have unsaved preference changes.';
   isLocked: boolean;
   isArchived: boolean;
-  portolioSettings : PortfolioSettingsResponse;
-  headerRowHeight:number;
+  portolioSettings: PortfolioSettingsResponse;
+  headerRowHeight: number;
   gridHeightPixelCorrection: number;
+
+  private newCreatedSchedule = new Subject<void>();
+  selectNewScheduleData$ = this.newCreatedSchedule;
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -34,17 +37,26 @@ export class AccountingSummaryService extends EndpointService {
     this.titleLeaseInfoSubject = new BehaviorSubject<any>(storedTitle || {});
   }
 
+  selectNewSchedule(data) {
+    this.newCreatedSchedule.next(data);
+  }
+
   setLeaseAbstractId(leaseId: number) {
     this.leaseAbstractId = leaseId;
 
     if (this.leaseAbstractId > 0) {
-      localStorage.setItem("accSumLeaseAbstractId", this.leaseAbstractId.toString());
+      localStorage.setItem(
+        'accSumLeaseAbstractId',
+        this.leaseAbstractId.toString()
+      );
     } else {
-      const storedLeaseAbstractId = Number(localStorage.getItem("accSumLeaseAbstractId"));
+      const storedLeaseAbstractId = Number(
+        localStorage.getItem('accSumLeaseAbstractId')
+      );
 
       //if stored lease abstract id is a number.  It should always be one but extra check will not hurt
       if (!isNaN(storedLeaseAbstractId)) {
-        this.leaseAbstractId = storedLeaseAbstractId
+        this.leaseAbstractId = storedLeaseAbstractId;
       }
     }
   }
@@ -62,7 +74,10 @@ export class AccountingSummaryService extends EndpointService {
    */
   getClassificationName(classificationID: number): string | undefined {
     for (const key in ClassificationTypeName) {
-      if (ClassificationTypeName[key as keyof typeof ClassificationTypeName] === classificationID) {
+      if (
+        ClassificationTypeName[key as keyof typeof ClassificationTypeName] ===
+        classificationID
+      ) {
         return key;
       }
     }
@@ -74,25 +89,27 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   delayGridPanelCollapseWhenFilterIsVisible() {
-    const filterObject = document.querySelector("[aria-label='Filter options']:not(.dx-state-invisible)");
-    if(filterObject !== null){
-      const delay = 400
+    const filterObject = document.querySelector(
+      "[aria-label='Filter options']:not(.dx-state-invisible)"
+    );
+    if (filterObject !== null) {
+      const delay = 400;
       const start = new Date().getTime();
       while (new Date().getTime() < start + delay);
-    } 
+    }
   }
 
   setNavPageId(navPageId: number) {
     this.navPageId = navPageId;
 
     if (this.navPageId > 0) {
-      localStorage.setItem("accSumNavPageId", this.navPageId.toString());
+      localStorage.setItem('accSumNavPageId', this.navPageId.toString());
     } else {
-      const storedNavPageId = Number(localStorage.getItem("accSumNavPageId"));
+      const storedNavPageId = Number(localStorage.getItem('accSumNavPageId'));
 
       //if stored navigation page id is a number.  It should always be one but extra check will not hurt
       if (!isNaN(storedNavPageId)) {
-        this.navPageId = storedNavPageId
+        this.navPageId = storedNavPageId;
       }
     }
   }
@@ -102,91 +119,176 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   getLeaseInfo() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetLeaseInformation/lease/${this.leaseAbstractId}`, 'getLeaseInfo');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetLeaseInformation/lease/${this.leaseAbstractId}`,
+      'getLeaseInfo'
+    );
   }
 
   getAccountingEvents() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingEventsSelector/lease/${this.leaseAbstractId}`, 'getAccountingEvents');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetAccountingEventsSelector/lease/${this.leaseAbstractId}`,
+      'getAccountingEvents'
+    );
   }
 
   getUserInformation() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetUserInformation`, 'getUserInformation');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetUserInformation`,
+      'getUserInformation'
+    );
   }
 
   getUserNavPageRight() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetUserNavPageRight/navPage/${this.navPageId}`, 'getUserNavPageRight');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetUserNavPageRight/navPage/${this.navPageId}`,
+      'getUserNavPageRight'
+    );
   }
 
   getAccountingSummaryRights() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingSummaryRights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`, 'getAccountingSummaryRights');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetAccountingSummaryRights/navPage/${this.navPageId}/lease/${this.leaseAbstractId}`,
+      'getAccountingSummaryRights'
+    );
   }
 
   getWorkflowStatusInformation() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetWorkflowStatusInformation/lease/${this.leaseAbstractId}`, 'getWorkflowStatusInformation');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetWorkflowStatusInformation/lease/${this.leaseAbstractId}`,
+      'getWorkflowStatusInformation'
+    );
   }
 
   getWorkflowStatusHistory() {
-      return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetWorkflowStatusHistory/lease/${this.leaseAbstractId}`, 'getWorkflowStatusHistory');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetWorkflowStatusHistory/lease/${this.leaseAbstractId}`,
+      'getWorkflowStatusHistory'
+    );
   }
 
   getEventDetails(masterScheduleId: number) {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetAccountingEvents/masterschedule/${masterScheduleId}`, 'getEventDetails');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetAccountingEvents/masterschedule/${masterScheduleId}`,
+      'getEventDetails'
+    );
   }
 
   getPaymentDetails(leaseRecognitionScheduleId: number) {
-    return this.callHttpGet(`${this.apiUrl}Payments/GetHistoricalPayments/schedule/${leaseRecognitionScheduleId}`, 'getPaymentDetails');
+    return this.callHttpGet(
+      `${this.apiUrl}Payments/GetHistoricalPayments/schedule/${leaseRecognitionScheduleId}`,
+      'getPaymentDetails'
+    );
   }
 
   getPaymentPopupData(leaseRecognitonScheduleEventId: number) {
-    return this.callHttpGet(`${this.apiUrl}Payments/GetHistoricalTransactions/scheduleevent/${leaseRecognitonScheduleEventId}`, 'getPaymentPopupData');
+    return this.callHttpGet(
+      `${this.apiUrl}Payments/GetHistoricalTransactions/scheduleevent/${leaseRecognitonScheduleEventId}`,
+      'getPaymentPopupData'
+    );
+  }
+
+  getOtherCharge(glEventId: number) {
+    return this.callHttpGet(
+      `${this.apiUrl}Payments/getothercharge/${glEventId}`,
+      'getOtherCharge'
+    );
   }
 
   getJeProcessingPopupData(leaseRecognitionPeriodID: number) {
-    return this.callHttpGet(`${this.apiUrl}AmortizationPeriods/getjournalentryprocessing/period/${leaseRecognitionPeriodID}`, 'getJeProcessingPopupData');
+    return this.callHttpGet(
+      `${this.apiUrl}AmortizationPeriods/getjournalentryprocessing/period/${leaseRecognitionPeriodID}`,
+      'getJeProcessingPopupData'
+    );
   }
 
   getJePaymentPopupData(leaseRecognitionPeriodID: number) {
-    return this.callHttpGet(`${this.apiUrl}AmortizationPeriods/GetPeriodPayments/period/${leaseRecognitionPeriodID}`, 'getJePaymentPopupData');
+    return this.callHttpGet(
+      `${this.apiUrl}AmortizationPeriods/GetPeriodPayments/period/${leaseRecognitionPeriodID}`,
+      'getJePaymentPopupData'
+    );
   }
 
   getPortfolioSettings() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetPortfolioSettings/lease/${this.leaseAbstractId}`, 'getPortfolioSettings');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetPortfolioSettings/lease/${this.leaseAbstractId}`,
+      'getPortfolioSettings'
+    );
   }
 
   getGridPreferences() {
-    return this.callHttpGet(`${this.apiUrl}AccountingSummary/GetGridStates/lease/${this.leaseAbstractId}`, 'getGridStates');
+    return this.callHttpGet(
+      `${this.apiUrl}AccountingSummary/GetGridStates/lease/${this.leaseAbstractId}`,
+      'getGridStates'
+    );
   }
 
-  journalEntryProcess(periodID: number, actions: string){
-    return this.callHttpPost(`${this.apiUrl}AmortizationPeriods/JournalEntryAction`, 'journalEntryProcess',
-    JSON.stringify({ PeriodId: periodID, Action: actions }));
+  journalEntryProcess(periodID: number, actions: string) {
+    return this.callHttpPost(
+      `${this.apiUrl}AmortizationPeriods/JournalEntryAction`,
+      'journalEntryProcess',
+      JSON.stringify({ PeriodId: periodID, Action: actions })
+    );
   }
 
-  updateWorkflowStatus(workflowStatusId: number, comment: string){
-    return this.callHttpPost(`${this.apiUrl}AccountingSummary/UpdateWorkflowStatus`, 'updateWorkflowStatus',
-    JSON.stringify({ leaseAbstractID: this.leaseAbstractId, workflowStatusID: workflowStatusId, comment: comment }));
+  updateWorkflowStatus(workflowStatusId: number, comment: string) {
+    return this.callHttpPost(
+      `${this.apiUrl}AccountingSummary/UpdateWorkflowStatus`,
+      'updateWorkflowStatus',
+      JSON.stringify({
+        leaseAbstractID: this.leaseAbstractId,
+        workflowStatusID: workflowStatusId,
+        comment: comment,
+      })
+    );
   }
 
   exportPresentValueFile(scheduleId: number, fileName: string) {
-    return this.callHttpPostWithBlobResponse(`${this.apiUrl}AccountingEvents/ExportPresentValueFile`, 'exportPresentValueFile',
-      JSON.stringify({ ScheduleId: scheduleId, FileName: fileName}));
+    return this.callHttpPostWithBlobResponse(
+      `${this.apiUrl}AccountingEvents/ExportPresentValueFile`,
+      'exportPresentValueFile',
+      JSON.stringify({ ScheduleId: scheduleId, FileName: fileName })
+    );
   }
- 
+
   saveGridPreferences(classificationId: number, gridName: string, columnJson) {
-      return this.callHttpPost(`${this.apiUrl}AccountingSummary/UpdateGridStates`, 'saveGridPreferences',
-        JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName, columnJson: columnJson }));
+    return this.callHttpPost(
+      `${this.apiUrl}AccountingSummary/UpdateGridStates`,
+      'saveGridPreferences',
+      JSON.stringify({
+        leaseAbstractID: this.leaseAbstractId,
+        classificationID: classificationId,
+        gridName: gridName,
+        columnJson: columnJson,
+      })
+    );
   }
 
   resetGridPreferences(classificationId: number, gridName: string) {
-      return this.callHttpPost(`${this.apiUrl}AccountingSummary/ResetGridState`, 'resetGridState',
-        JSON.stringify({ leaseAbstractID: this.leaseAbstractId, classificationID: classificationId, gridName: gridName }));
+    return this.callHttpPost(
+      `${this.apiUrl}AccountingSummary/ResetGridState`,
+      'resetGridState',
+      JSON.stringify({
+        leaseAbstractID: this.leaseAbstractId,
+        classificationID: classificationId,
+        gridName: gridName,
+      })
+    );
   }
 
   getAmortizationDetails(leaseRecognitionScheduleID: number) {
-        return this.callHttpGet(`${this.apiUrl}AmortizationPeriods/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`, 'getAmortizationDetails');
+    return this.callHttpGet(
+      `${this.apiUrl}AmortizationPeriods/GetAmortizationPeriods/Schedule/${leaseRecognitionScheduleID}`,
+      'getAmortizationDetails'
+    );
   }
 
-  getId(componentName: string, uniqueName: string, elementType: string, componentType?: string) {
+  getId(
+    componentName: string,
+    uniqueName: string,
+    elementType: string,
+    componentType?: string
+  ) {
     return componentType
       ? `${componentName}-${componentType}-${uniqueName}-${elementType}`
       : `${componentName}-${uniqueName}-${elementType}`;
@@ -195,25 +297,34 @@ export class AccountingSummaryService extends EndpointService {
   exportToExcel(component: any, filename: string, worksheetName: string): void {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(worksheetName);
-  
+
     exportDataGrid({
       component: component,
       worksheet: worksheet,
     }).then(() => {
       worksheet.eachRow({ includeEmpty: true }, function (row, rowNumber) {
         row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
-          cell.alignment = { wrapText: true,  vertical: 'top'};
+          cell.alignment = { wrapText: true, vertical: 'top' };
         });
       });
-  
+
       workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
-        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+        saveAs(
+          new Blob([buffer], { type: 'application/octet-stream' }),
+          filename
+        );
       });
     });
   }
 
-  generateFileName(classificationType: string, amortizationProfileName: string, componentName?: string): string {
-    return `${this.getLeaseAbstractId()} ${componentName ? '- ' + componentName + ' -' : '-'} ${classificationType} - ${amortizationProfileName} - ${this.getTimeStamp().toLocaleString()}.xlsx`;
+  generateFileName(
+    classificationType: string,
+    amortizationProfileName: string,
+    componentName?: string
+  ): string {
+    return `${this.getLeaseAbstractId()} ${
+      componentName ? '- ' + componentName + ' -' : '-'
+    } ${classificationType} - ${amortizationProfileName} - ${this.getTimeStamp().toLocaleString()}.xlsx`;
   }
 
   getTimeStamp() {
@@ -233,25 +344,27 @@ export class AccountingSummaryService extends EndpointService {
     return `${componentName}_${timeStamp}${env}.xlsx`;
   }
 
-  displayContactSystemAdminMessage(){
-    this.errorNotify("An error occurred please contact the system administrator.");
+  displayContactSystemAdminMessage() {
+    this.errorNotify(
+      'An error occurred please contact the system administrator.'
+    );
   }
-  
+
   errorNotify(message: string) {
-    this.notifyPopup(message, "error")
+    this.notifyPopup(message, 'error');
   }
 
   successNotify(message: string) {
-    this.notifyPopup(message, "success")
+    this.notifyPopup(message, 'success');
   }
 
-  private notifyPopup(message: string, messageType: string){
+  private notifyPopup(message: string, messageType: string) {
     notify({
       message: message,
       type: messageType,
       displayTime: 5000,
       position: { at: 'right bottom', my: 'right bottom', offset: '-16 -16' },
-      maxWidth: "400px",
+      maxWidth: '400px',
       closeOnClick: true,
     });
   }
@@ -272,20 +385,28 @@ export class AccountingSummaryService extends EndpointService {
     return this.isArchived;
   }
 
-  setPortfolioSettings(portfolioSettings: PortfolioSettingsResponse){
-    this.portolioSettings= portfolioSettings;
+  getSavedPortfolioSettings() {
+    return JSON.parse(
+      localStorage.getItem('portfolioSettings') || '{}'
+    ) as PortfolioSettingsResponse;
   }
 
-  getSavedPortfolioSettings(){
-    return this.portolioSettings;
+  exportAccountingEventSummaryReport(scheduleId, fileName: string) {
+    return this.callHttpPostWithBlobResponse(
+      `${this.apiUrl}AccountingSummary/ExportAccountingEventSummaryReport`,
+      'exportAccountingEventSummaryReport',
+      JSON.stringify({ scheduleList: [scheduleId], FileName: fileName })
+    );
   }
 
-  exportAccountingEventSummaryReport(scheduleId, fileName: string){
-      return this.callHttpPostWithBlobResponse(`${this.apiUrl}AccountingSummary/ExportAccountingEventSummaryReport`, 'exportAccountingEventSummaryReport',
-        JSON.stringify({ scheduleList: [scheduleId], FileName: fileName}));
+  deleteAccountingEvent(scheduleId: number) {
+    return this.callHttpDelete(
+      `${this.apiUrl}accountingevents/deleteaccountingevent/${scheduleId}`,
+      'deleteAccountingEvent'
+    );
   }
 
-  downloadExcel(data: Blob, fileName: string){
+  downloadExcel(data: Blob, fileName: string) {
     const url = window.URL.createObjectURL(data);
     const link = document.createElement('a');
     link.href = url;
@@ -296,8 +417,18 @@ export class AccountingSummaryService extends EndpointService {
     window.URL.revokeObjectURL(url);
   }
 
+  clearGrid(grid: any, noData: string) {
+    grid.instance.option('columns', []);
+    grid.instance.option('dataSource', []);
+    grid.instance.state(null);
+    grid.instance.option('noDataText', noData);
+    grid.instance.refresh();
+  }
+
   setGridHeight(gridName: any, numberOfRows: any): string {
-    const gridHeaderRow: HTMLElement | null = gridName.instance.element().querySelector('.dx-datagrid-headers');
+    const gridHeaderRow: HTMLElement | null = gridName.instance
+      .element()
+      .querySelector('.dx-datagrid-headers');
     if (!gridHeaderRow) {
       return '';
     }
@@ -310,7 +441,11 @@ export class AccountingSummaryService extends EndpointService {
     const gridRowElement = gridName.instance.getRowElement(0);
     if (gridRowElement && gridRowElement.length > 0) {
       const rowHeight = gridRowElement[0].clientHeight;
-      return `${rowHeight * numberOfRows + this.gridHeightPixelCorrection + this.headerRowHeight}px`;
+      return `${
+        rowHeight * numberOfRows +
+        this.gridHeightPixelCorrection +
+        this.headerRowHeight
+      }px`;
     } else {
       return '';
     }

@@ -10,7 +10,7 @@ describe('BatchEventListService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [HttpClient]
+      providers: [HttpClient],
     });
 
     service = TestBed.inject(BatchEventListService);

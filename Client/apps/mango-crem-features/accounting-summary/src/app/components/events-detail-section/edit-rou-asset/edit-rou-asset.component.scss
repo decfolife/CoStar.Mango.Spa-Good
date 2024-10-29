@@ -1,0 +1,36 @@
+@use 'styles' as *;
+
+:host ::ng-deep .modalFooter {
+  .edit-rout-asset-footer {
+    display: flex;
+    flex-direction: row-reverse;
+
+    crem-button {
+      @include costar(padding, 1);
+    }
+  }
+}
+
+.edit-rou-asset-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  column-gap: 10px;
+}
+
+.edit-rou-asset-form crem-input-label {
+  font-weight: bold;
+}
+
+.dx-template-wrapper {
+  @include costar(padding, 3);
+}
+
+::ng-deep #edit-rou-asset-amount-textbox {
+  @include costar(font-size, small);
+  @include costar(color, gray01);
+}

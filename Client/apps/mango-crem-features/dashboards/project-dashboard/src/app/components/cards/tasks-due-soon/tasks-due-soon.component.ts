@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Observable, Subscription } from 'rxjs';
@@ -10,14 +18,14 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
 @Component({
   selector: 'tasks-due-soon-card',
   templateUrl: './tasks-due-soon.component.html',
-  styleUrls: ['./tasks-due-soon.component.scss']
+  styleUrls: ['./tasks-due-soon.component.scss'],
 })
 export class TasksDueSoonComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
   @Output() cardDropEvent = new EventEmitter<any>();
   @Output() rowClickEvent = new EventEmitter<any>();
   @Input() objectType: string;
-  @ViewChild("TasksDueSoonGrid") dataGrid: DxDataGridComponent;
+  @ViewChild('TasksDueSoonGrid') dataGrid: DxDataGridComponent;
 
   private selectedFilters: string = null;
 
@@ -25,18 +33,20 @@ export class TasksDueSoonComponent implements OnInit, OnDestroy {
   filStr$: Observable<string>;
   filterStr: string;
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
   constructor(
     private cardsService: CardsService,
     private exportToExcelService: ExportDevexDatagridService,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.subs.push(this.cardsService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.cardsService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
   rowClick(e: any) {
@@ -44,7 +54,10 @@ export class TasksDueSoonComponent implements OnInit, OnDestroy {
   }
 
   exportAllGridData() {
-   this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Tasks_Due_Soon");
+    this.exportToExcelService.exportToExcel(
+      this.dataGrid.instance,
+      'Tasks_Due_Soon'
+    );
   }
 
   approve(selectedTask, actionName) {
@@ -52,21 +65,23 @@ export class TasksDueSoonComponent implements OnInit, OnDestroy {
       height: '240px',
       width: '600px',
       panelClass: 'taskApprovalModal',
-      data: { selectedTask, actionName }
+      data: { selectedTask, actionName },
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === "Approve") {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'Approve') {
         this.getCardData();
       }
     });
   }
 
   getCardData() {
-    this.subs.push(this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-      }
-    ));
+    this.subs.push(
+      this.cardsService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+        })
+    );
   }
 
   getProjectName() {
@@ -76,26 +91,26 @@ export class TasksDueSoonComponent implements OnInit, OnDestroy {
   getProjectType() {
     return this.objectType + ' Type';
   }
-  
-  adaAttrNoDataGrid(e:any) {
-    let noDataEl = e.element.querySelector(".dx-empty");
+
+  adaAttrNoDataGrid(e: any) {
+    let noDataEl = e.element.querySelector('.dx-empty');
     let spanChild = null;
 
     // Check if noDataEl exists
     if (noDataEl) {
-        spanChild = noDataEl.querySelector(".dx-datagrid-nodata");
+      spanChild = noDataEl.querySelector('.dx-datagrid-nodata');
     }
 
     // If either element is missing, exit the function
     if (!noDataEl || !spanChild) {
-        return;
+      return;
     }
 
-    noDataEl.setAttribute("role", "row");
-    spanChild.setAttribute("role", "gridcell");
+    noDataEl.setAttribute('role', 'row');
+    spanChild.setAttribute('role', 'gridcell');
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

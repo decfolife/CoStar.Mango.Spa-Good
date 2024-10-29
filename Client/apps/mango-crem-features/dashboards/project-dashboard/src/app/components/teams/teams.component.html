@@ -1,153 +1,277 @@
 <div id="teams-container">
-	<div class="teams-toolBar-wrapper">
-		<div class="controls-left">
-			<h3 class="title"> Teams Templates </h3>
-			<div class="searchTeams">
-				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchTextSubject.next($event)" (click)="searchBoxClick()"  class="searchTeams-input"></cs-search>
-			</div>
-		</div>
-		<div class="controls-right">
-			<div class="clearFilters">
-				<crem-button type="secondary" class="clearFilters-btn">
-					<span id="clearFilters" (click)="clearAllFilters(); $event.preventDefault();">Clear Filters</span>
-				</crem-button>
-			</div>
-			<div class="actions">
-				<button class="btn btn-default actionsButton" [matMenuTriggerFor]="actionsMenu" [disabled]="!userModuleAddRights"
-				 (click)="$event.preventDefault()">Actions <mat-icon aria-label="Actions Menu">arrow_drop_down</mat-icon>
-				</button>
-				<mat-menu #actionsMenu="matMenu" class="teamsActionsMenu">				
-					<button mat-menu-item class="teamsActionsMenu-delBtn" [disabled]="!teamSelected" (click)="deleteTeams()">
-						Delete Team(s)
-					</button>      
-					<button mat-menu-item class="teamsActionsMenu-remBtn" [disabled]="!selectedMemberIds.length"
-						(click)="removeMembers()" >Remove Member(s)
-					</button>                  
-				</mat-menu>	 
-			</div>
+  <div class="teams-toolBar-wrapper">
+    <div class="controls-left">
+      <h3 class="title">Teams Templates</h3>
+      <div class="searchTeams">
+        <cs-search
+          #SearchBox
+          [placeholder]="'Search...'"
+          (changed)="searchTextSubject.next($event)"
+          (click)="searchBoxClick()"
+          class="searchTeams-input"
+        ></cs-search>
+      </div>
+    </div>
+    <div class="controls-right">
+      <div class="clearFilters">
+        <crem-button type="secondary" class="clearFilters-btn">
+          <span id="clearFilters" (click)="clearAllFilters($event)">
+            Clear Filters
+          </span>
+          <div
+            class="badge"
+            *ngIf="activeFilterCount$ | async as activeFilterCount"
+            [hidden]="activeFilterCount === 0"
+          >
+            {{ activeFilterCount }}
+          </div>
+        </crem-button>
+      </div>
+      <div class="actions">
+        <button
+          class="btn btn-default actionsButton"
+          [matMenuTriggerFor]="actionsMenu"
+          [disabled]="!userModuleAddRights"
+          (click)="$event.preventDefault()"
+        >
+          Actions <mat-icon aria-label="Actions Menu">arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #actionsMenu="matMenu" class="teamsActionsMenu">
+          <button
+            mat-menu-item
+            class="teamsActionsMenu-delBtn"
+            [disabled]="!teamSelected"
+            (click)="deleteTeams()"
+          >
+            Delete Team(s)
+          </button>
+          <button
+            mat-menu-item
+            class="teamsActionsMenu-remBtn"
+            [disabled]="!selectedMemberIds.length"
+            (click)="removeMembers()"
+          >
+            Remove Member(s)
+          </button>
+        </mat-menu>
+      </div>
 
-			<div class="more">
-				<button class="btn btn-default moreButton" [matMenuTriggerFor]="moreMenu" (click)="$event.preventDefault()">More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon></button>
-				<mat-menu #moreMenu="matMenu" class="teamsMoreMenu">				
-					<button mat-menu-item (click)="toggleExpand()" class="moreButton-expCollBtn"><span >Expand All/Collapse All</span></button>      
-					<button mat-menu-item (click)="exportToFile()" class="moreButton-exportBtn">Export</button>                   
-				</mat-menu>	 
-			</div>
-			<div class="addTeams" *ngIf="userModuleAddRights">
-				<crem-button type="primary" (click)="addOrEditTeam('add'); $event.preventDefault()" class="addTeams-Btn" >
-					<span id="addTeam">Add</span>
-				</crem-button>
-			</div>
-		</div>
-	</div>
+      <div class="more">
+        <button
+          class="btn btn-default moreButton"
+          [matMenuTriggerFor]="moreMenu"
+          (click)="$event.preventDefault()"
+        >
+          More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #moreMenu="matMenu" class="teamsMoreMenu">
+          <button
+            mat-menu-item
+            (click)="toggleExpand()"
+            class="moreButton-expCollBtn"
+          >
+            <span>Expand All/Collapse All</span>
+          </button>
+          <button
+            mat-menu-item
+            (click)="exportToFile()"
+            class="moreButton-exportBtn"
+          >
+            Export
+          </button>
+        </mat-menu>
+      </div>
+      <div class="addTeams" *ngIf="userModuleAddRights">
+        <crem-button
+          type="primary"
+          (click)="addOrEditTeam('add'); $event.preventDefault()"
+          class="addTeams-Btn"
+        >
+          <span id="addTeam">Add</span>
+        </crem-button>
+      </div>
+    </div>
+  </div>
 
-	<div class="teams-dataGrid-wrapper"> 
-		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
-		<dx-data-grid *ngIf="dataRetrieved" class="teams-grid"
-			#TeamsGrid
-			[showColumnLines]="false"
-			[showRowLines]="false"
-			[showBorders]="false"
-			[rowAlternationEnabled]="true"
-			[allowColumnResizing]="true"
-			columnResizingMode="widget"
-			[allowColumnReordering]="true"
-			[columnAutoWidth]="false"
-			[dataSource]="teams"
-			[hoverStateEnabled]="true"
-			keyExpr="teamId"
-			[width]="'100%'"
-			[filterSyncEnabled]="true"
-			[wordWrapEnabled]="true"
-			(onCellPrepared)="gridOnCellPrepared($event)"
-			(onEditorPreparing)="onEditorPreparing($event)"
-			(onSelectionChanged)="onSelectionChanged($event)"
-			(onCellClick)="onCellClick($event)"
-			(onContentReady)="onContentReady($event)"
-			(onFocusedCellChanging)="onFocusedCellChanging($event)"
-		>
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-			<dxo-sorting mode="multiple"></dxo-sorting>
-			<dxo-scrolling mode="virtual"></dxo-scrolling>
+  <div class="teams-dataGrid-wrapper">
+    <crem-loader *ngIf="!dataRetrieved"></crem-loader>
+    <dx-data-grid
+      *ngIf="dataRetrieved"
+      class="teams-grid"
+      #TeamsGrid
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      columnResizingMode="widget"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [dataSource]="teams"
+      [hoverStateEnabled]="true"
+      keyExpr="teamId"
+      [width]="'100%'"
+      [filterSyncEnabled]="true"
+      [wordWrapEnabled]="true"
+      (onCellPrepared)="gridOnCellPrepared($event)"
+      (onEditorPreparing)="onEditorPreparing($event)"
+      (onSelectionChanged)="onSelectionChanged($event)"
+      (onOptionChanged)="onOptionChanged($event)"
+      (onCellClick)="onCellClick($event)"
+      (onContentReady)="onContentReady($event)"
+      (onFocusedCellChanging)="onFocusedCellChanging($event)"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-			<dxo-load-panel
-        [enabled]="gridLoaderVisible">
-    	</dxo-load-panel>
-			
-			<dxo-paging 
-				[enabled]="true"
-				[pageSize]="25">
-			</dxo-paging>
+      <dxo-load-panel [enabled]="gridLoaderVisible"> </dxo-load-panel>
 
-			<dxo-pager
-				[showPageSizeSelector]="true"
-				[showInfo]="true"
-				[allowedPageSizes]="[25, 50, 100, 'all']"
-				[visible]="true"
-				[showNavigationButtons]="true">
-			</dxo-pager>
+      <dxo-paging [enabled]="true" [pageSize]="25"> </dxo-paging>
 
-			<dxo-selection
-				selectAllMode="allPages"
-				showCheckBoxesMode="always"
-				mode="multiple">
-			</dxo-selection>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [showInfo]="true"
+        [allowedPageSizes]="[25, 50, 100, 'all']"
+        [visible]="true"
+        [showNavigationButtons]="true"
+      >
+      </dxo-pager>
 
-			<dxo-search-panel
-    		[text]="searchText"
-				[visible]="false"
-  		></dxo-search-panel>
+      <dxo-selection
+        selectAllMode="allPages"
+        showCheckBoxesMode="always"
+        mode="multiple"
+      >
+      </dxo-selection>
 
-			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
-				[allowReordering]="false" [allowResizing]="false" class="selectTeam">
-			</dxi-column>
-			<dxi-column dataField="teamId" caption="Team ID" alignment="center"></dxi-column>
-			<dxi-column dataField="teamName" caption="Name"></dxi-column>
-			<dxi-column dataField="members" alignment="center"></dxi-column>
-			<dxi-column dataField="modifiedBy" ></dxi-column>
-			<dxi-column dataField="modifiedDate" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
-			<dxi-column dataField="createdBy" ></dxi-column>
-			<dxi-column dataField="createdDate" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
-			<dxi-column dataField="securityLevel" caption='Rights' ></dxi-column>
+      <dxo-search-panel
+        [text]="searchText"
+        [visible]="false"
+      ></dxo-search-panel>
 
-			<!-- Used to keep master grid row open when the search text is found in the detail row -->
-			<dxi-column dataField="teamMembers" name="teamMemberMatchSearch" [visible]="false" [showInColumnChooser]="false" [calculateFilterExpression]="searchTeamMembersFilterExpression" ></dxi-column>
+      <dxi-column
+        type="selection"
+        [width]="40"
+        [fixed]="true"
+        fixedPosition="left"
+        [allowSorting]="false"
+        [allowReordering]="false"
+        [allowResizing]="false"
+        class="selectTeam"
+      >
+      </dxi-column>
+      <dxi-column
+        dataField="teamId"
+        caption="Team ID"
+        alignment="center"
+      ></dxi-column>
+      <dxi-column dataField="teamName" caption="Name"></dxi-column>
+      <dxi-column dataField="members" alignment="center"></dxi-column>
+      <dxi-column dataField="modifiedBy"></dxi-column>
+      <dxi-column
+        dataField="modifiedDate"
+        dataType="date"
+        [format]="cardsService.dateFormat"
+      ></dxi-column>
+      <dxi-column dataField="createdBy"></dxi-column>
+      <dxi-column
+        dataField="createdDate"
+        dataType="date"
+        [format]="cardsService.dateFormat"
+      ></dxi-column>
+      <dxi-column dataField="securityLevel" caption="Rights"></dxi-column>
 
-			<dxi-column type="buttons" width="60" [fixed]="true" fixedPosition="right" [allowSorting]="false"
-				[allowReordering]="false" [allowResizing]="false">
-				<dxi-button template="actionsMenuTemplate">
-					<div *dxTemplate="let team of 'actionsMenuTemplate'" class="actionsMenuTemplate" id="{{'teamActionButton' + team.rowIndex}}">
-						<button aria-label="actions menu" class="btn btn-link teamActionsButton rowActionsButton" 
-							[hidden]="!userModuleAddRights || team.data.securityLevel.toLowerCase().trim() == 'view'"
-							(click)="$event.preventDefault()" #teamActionsMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="teamActionsMenu">
-							<mat-icon aria-label="Actions Menu">more_vert</mat-icon>
-						</button>
-		    			<mat-menu #teamActionsMenu="matMenu" tabindex="0" class="teamActionsMenu">
-							<button mat-menu-item (keydown)="matMenuButtonKeyDown($event)" (click)="addOrEditTeam('edit', team.data)" *ngIf="team.data.canEdit" class="tam-edit">Edit</button>
-							<button mat-menu-item (keydown)="matMenuButtonKeyDown($event)" (click)="deleteTeams(team.data, true)" *ngIf="team.data.canDelete" class="tam-delete">Delete</button>
-					</mat-menu>
-					</div>
-				</dxi-button>		    	
-			</dxi-column>
-			<dxo-master-detail [enabled]="true" [autoExpandAll]="autoExpand" template="teamDetails"></dxo-master-detail>
-			<div *dxTemplate="let team of 'teamDetails'">
-				<team-members [searchText]="searchText" 
-						[rights]="team.data.securityLevel" 
-						[userModuleAddRights]="userModuleAddRights"
-						[projectsPrivateSetting]="projectsPrivateSetting"
-						[teamMembers]="team.data.teamMembers"
-						[memberInfo]="memberInfo"
-						[teamMemberCount]="team.data.members"
-						(selectedMembersEvent)="selectedMembers($event)"
-						(unSelectedMembersEvent)="unSelectedMembers($event)"
-						(selectedTeamandMembersEvent)="selectedTeamandMembers($event)"
-						(getLatestTeamsDataEvent)="getLatestData()"
-						(subGridEditClickedEvent)="subGridEditClicked($event)"
-				>
-				</team-members>
-			</div>
+      <!-- Used to keep master grid row open when the search text is found in the detail row -->
+      <dxi-column
+        dataField="teamMembers"
+        name="teamMemberMatchSearch"
+        [visible]="false"
+        [showInColumnChooser]="false"
+        [calculateFilterExpression]="searchTeamMembersFilterExpression"
+      ></dxi-column>
 
-		</dx-data-grid>
-	</div>
-
+      <dxi-column
+        type="buttons"
+        width="60"
+        [fixed]="true"
+        fixedPosition="right"
+        [allowSorting]="false"
+        [allowReordering]="false"
+        [allowResizing]="false"
+      >
+        <dxi-button template="actionsMenuTemplate">
+          <div
+            *dxTemplate="let team of 'actionsMenuTemplate'"
+            class="actionsMenuTemplate"
+            id="{{ 'teamActionButton' + team.rowIndex }}"
+          >
+            <button
+              aria-label="actions menu"
+              class="btn btn-link teamActionsButton rowActionsButton"
+              [hidden]="
+                !userModuleAddRights ||
+                team.data.securityLevel.toLowerCase().trim() == 'view'
+              "
+              (click)="$event.preventDefault()"
+              #teamActionsMenuTrigger="matMenuTrigger"
+              [matMenuTriggerFor]="teamActionsMenu"
+            >
+              <mat-icon aria-label="Actions Menu">more_vert</mat-icon>
+            </button>
+            <mat-menu
+              #teamActionsMenu="matMenu"
+              tabindex="0"
+              class="teamActionsMenu"
+            >
+              <button
+                mat-menu-item
+                (keydown)="matMenuButtonKeyDown($event)"
+                (click)="addOrEditTeam('edit', team.data)"
+                *ngIf="team.data.canEdit"
+                class="tam-edit"
+              >
+                Edit
+              </button>
+              <button
+                mat-menu-item
+                (keydown)="matMenuButtonKeyDown($event)"
+                (click)="deleteTeams(team.data, true)"
+                *ngIf="team.data.canDelete"
+                class="tam-delete"
+              >
+                Delete
+              </button>
+            </mat-menu>
+          </div>
+        </dxi-button>
+      </dxi-column>
+      <dxo-master-detail
+        [enabled]="true"
+        [autoExpandAll]="autoExpand"
+        template="teamDetails"
+      ></dxo-master-detail>
+      <div *dxTemplate="let team of 'teamDetails'">
+        <team-members
+          [searchText]="searchText"
+          [rights]="team.data.securityLevel"
+          [userModuleAddRights]="userModuleAddRights"
+          [projectsPrivateSetting]="projectsPrivateSetting"
+          [teamMembers]="team.data.teamMembers"
+          [memberInfo]="memberInfo"
+          [teamMemberCount]="team.data.members"
+          (selectedMembersEvent)="selectedMembers($event)"
+          (unSelectedMembersEvent)="unSelectedMembers($event)"
+          (selectedTeamandMembersEvent)="selectedTeamandMembers($event)"
+          (getLatestTeamsDataEvent)="getLatestData()"
+          (subGridEditClickedEvent)="subGridEditClicked($event)"
+          (saveCompleted)="saveCompleted($event)"
+        >
+        </team-members>
+      </div>
+    </dx-data-grid>
+  </div>
 </div>

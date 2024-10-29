@@ -1,20 +1,21 @@
 <mat-horizontal-stepper linear #RemeasureStepper>
-  <mat-step
-    id="ba-acct-events-step"
-    completed="false"
-  >
+  <mat-step id="ba-acct-events-step" completed="false">
     <ng-template matStepLabel>
       <span id="ba-acct-events">Accounting Events</span>
     </ng-template>
 
-    <div class="list-page h-100"
-    >
-      <crem-screen-loader [color]="'light'" [loading]="showLoader" [showLogo]="false" [showSpinner]="true"></crem-screen-loader>
+    <div class="list-page h-100">
+      <crem-screen-loader
+        [color]="'light'"
+        [loading]="showLoader"
+        [showLogo]="false"
+        [showSpinner]="true"
+      ></crem-screen-loader>
 
       <div class="list-page-controls-wrapper">
-
         <div class="controls-left">
-          <dx-select-box class="batch-event__dropdown"
+          <dx-select-box
+            class="batch-event__dropdown"
             [dataSource]="portfolios"
             [(value)]="selectedPortfolio"
             (onSelectionChanged)="onPortfolioChange()"
@@ -25,7 +26,8 @@
             [elementAttr]="{ id: 'ba-select-portfolio' }"
           ></dx-select-box>
 
-          <dx-select-box class="batch-event__dropdown"
+          <dx-select-box
+            class="batch-event__dropdown"
             [dataSource]="workflowStatuses"
             [elementAttr]="{ id: 'ba-select-workflow-status' }"
             [showClearButton]="true"
@@ -37,7 +39,8 @@
 
           <div class="dx-field">
             <div class="dx-field-value">
-              <dx-drop-down-box class="list-view-dropdown"
+              <dx-drop-down-box
+                class="list-view-dropdown"
                 [dataSource]="listViewDisplayDataSource"
                 [elementAttr]="{ id: 'ba-select-list-view' }"
                 [showClearButton]="true"
@@ -48,7 +51,8 @@
                 (onValueChanged)="onListViewValueChanged($event)"
               >
                 <div *dxTemplate="let data of 'content'">
-                  <dx-tree-view id="simple-treeview"
+                  <dx-tree-view
+                    id="simple-treeview"
                     #ListViewTree
                     [items]="listViewDataSource"
                     [selectByClick]="true"
@@ -59,32 +63,41 @@
                   ></dx-tree-view>
                 </div>
               </dx-drop-down-box>
-
             </div>
           </div>
         </div>
 
         <div class="controls-right">
-          <div *ngIf="gridDataFiltered !== null && gridColumns !== null"
+          <div
+            *ngIf="gridDataFiltered !== null && gridColumns !== null"
             class="d-flex"
           >
-            <button class="btn btn-primary-outline"
+            <button
+              class="btn btn-primary-outline"
               id="ba-filters"
               (click)="filterBuilderVisible = true"
-            >Filters
-              <div *ngIf="availableAppliedFilterCount > 0 && !showClearFilters"
+            >
+              Filters
+              <div
+                *ngIf="availableAppliedFilterCount > 0 && !showClearFilters"
                 class="badge primary costar std-left-margin"
                 (mouseover)="availableToggleClearFilters()"
-              >{{ availableAppliedFilterCount }}</div>
+              >
+                {{ availableAppliedFilterCount }}
+              </div>
 
-              <div *ngIf="availableAppliedFilterCount > 0 && showClearFilters"
+              <div
+                *ngIf="availableAppliedFilterCount > 0 && showClearFilters"
                 class="badge primary costar std-left-margin underline"
                 (mouseout)="availableToggleClearFilters()"
                 (click)="availableClearGridFilters($event)"
-              >Clear {{ availableAppliedFilterCount }} Filters</div>
+              >
+                Clear {{ availableAppliedFilterCount }} Filters
+              </div>
             </button>
 
-            <dx-text-box class="search-box"
+            <dx-text-box
+              class="search-box"
               [elementAttr]="{ id: 'ba-search' }"
               [(value)]="availableSearchText"
               mode="search"
@@ -94,48 +107,58 @@
               (onValueChanged)="availableSearchDataGrid($event)"
             ></dx-text-box>
 
-            <button class="btn btn-primary-outline"
+            <button
+              class="btn btn-primary-outline"
               id="ba-menu-more"
               [matMenuTriggerFor]="moreMenu"
-            >More
+            >
+              More
               <fa-icon [icon]="faCaretDown"></fa-icon>
             </button>
 
             <mat-menu #moreMenu="matMenu">
-              <button mat-menu-item
+              <button
+                mat-menu-item
                 *ngIf="isSuperUser"
                 (click)="showDynamicSQL()"
-              >Show Query</button>
+              >
+                Show Query
+              </button>
 
-              <button mat-menu-item
-                (click)="displayColumnChooser()"
-              >Column Chooser</button>
+              <button mat-menu-item (click)="displayColumnChooser()">
+                Column Chooser
+              </button>
 
-              <button mat-menu-item
-                (click)="exportDataGrid()"
-              >Export</button>
+              <button mat-menu-item (click)="exportDataGrid()">Export</button>
             </mat-menu>
           </div>
 
-          <button class="btn btn-default"
+          <button
+            class="btn btn-default"
             id="ba-cancel"
             (click)="router.navigateByUrl('/')"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
 
-          <button class="btn btn-primary"
+          <button
+            class="btn btn-primary"
             id="ba-next-1"
             (click)="parametersStep(RemeasureStepper)"
             [disabled]="!availableDataGrid?.selectedRowKeys?.length"
-          >Next</button>
+          >
+            Next
+          </button>
         </div>
       </div>
 
       <div class="list-page-data-grid-wrapper h-100">
-        <div class="no-portfolio-selected"
-          *ngIf="!readyForGrid"
-        >Select a Portfolio, Workflow Status, and View</div>
+        <div class="no-portfolio-selected" *ngIf="!readyForGrid">
+          Select a Portfolio, Workflow Status, and View
+        </div>
 
-        <dx-load-panel shadingColor="rgba(255,255,255,0.2)"
+        <dx-load-panel
+          shadingColor="rgba(255,255,255,0.2)"
           [(visible)]="loading"
           [showIndicator]="true"
           [showPane]="true"
@@ -143,7 +166,10 @@
           [closeOnOutsideClick]="false"
         ></dx-load-panel>
 
-        <dx-data-grid *ngIf="readyForGrid && gridDataFiltered !== null && gridColumns !== null"
+        <dx-data-grid
+          *ngIf="
+            readyForGrid && gridDataFiltered !== null && gridColumns !== null
+          "
           class="list-page-data-grid"
           #AvailableDataGrid
           [dataSource]="gridDataFiltered"
@@ -159,7 +185,8 @@
           (onSelectionChanged)="onGridSelectionChanged($event)"
           [wordWrapEnabled]="true"
         >
-          <dxo-pager [showPageSizeSelector]="true"
+          <dxo-pager
+            [showPageSizeSelector]="true"
             [allowedPageSizes]="[25, 50, 100, 500]"
             [showInfo]="true"
           ></dxo-pager>
@@ -168,7 +195,8 @@
 
           <dxo-header-filter [visible]="true"></dxo-header-filter>
 
-          <dxo-grouping #expand
+          <dxo-grouping
+            #expand
             [autoExpandAll]="true"
             [contextMenuEnabled]="true"
           ></dxo-grouping>
@@ -180,12 +208,14 @@
             ></dxi-group-item>
           </dxo-summary>
 
-          <dxo-selection selectAllMode="allPages"
+          <dxo-selection
+            selectAllMode="allPages"
             showCheckBoxesMode="onClick"
             mode="multiple"
           ></dxo-selection>
 
-          <dxo-filter-builder-popup [width]="600"
+          <dxo-filter-builder-popup
+            [width]="600"
             [height]="600"
             [(visible)]="filterBuilderVisible"
           ></dxo-filter-builder-popup>
@@ -194,11 +224,13 @@
             [fields]="sortedFilterFields"
           ></dxo-filter-builder>
 
-          <dxo-column-chooser [enabled]="false"
+          <dxo-column-chooser
+            [enabled]="false"
             [allowSearch]="true"
           ></dxo-column-chooser>
 
-          <dxi-column *ngFor="let column of gridColumns"
+          <dxi-column
+            *ngFor="let column of gridColumns"
             [dataField]="column.dataField"
             [caption]="column.caption"
             [dataType]="column.dataType"
@@ -210,43 +242,51 @@
             [sortOrder]="column.sortOrder"
             [showInColumnChooser]="column.showInColumnChooser"
           >
-            <dxo-format *ngIf="column.dataType === 'number' && column.precision >= 0"
+            <dxo-format
+              *ngIf="column.dataType === 'number' && column.precision >= 0"
               type="fixedPoint"
               [precision]="column.precision"
             ></dxo-format>
           </dxi-column>
 
           <dxo-summary [calculateCustomSummary]="calculateSelectedRow">
-            <dxi-total-item name="Total"
+            <dxi-total-item
+              name="Total"
               summaryType="count"
               displayFormat="Total: {0}"
-              [showInColumn]="visibleColumns && visibleColumns[2] && visibleColumns[2].dataField"
+              [showInColumn]="
+                visibleColumns &&
+                visibleColumns[2] &&
+                visibleColumns[2].dataField
+              "
             ></dxi-total-item>
 
-            <dxi-total-item name="SelectedRowsSummary"
+            <dxi-total-item
+              name="SelectedRowsSummary"
               summaryType="custom"
               displayFormat="Selected Events: {0}"
-              [showInColumn]="visibleColumns && visibleColumns[3] && visibleColumns[3].dataField"
+              [showInColumn]="
+                visibleColumns &&
+                visibleColumns[3] &&
+                visibleColumns[3].dataField
+              "
             ></dxi-total-item>
           </dxo-summary>
-
         </dx-data-grid>
       </div>
 
-      <dx-popup [showTitle]="true"
+      <dx-popup
+        [showTitle]="true"
         title="Query"
         [maxHeight]="'60%'"
         [maxWidth]="'60%'"
         [(visible)]="sqlPopupVisible"
       >
         <div *dxTemplate="let data of 'content'">
-          <dx-scroll-view height="100%"
-            width="100%"
-            direction="both"
-          >
-            <pre id="dynamic-sql"
-              class="overflow-unset"
-            >{{ formattedSql }}</pre>
+          <dx-scroll-view height="100%" width="100%" direction="both">
+            <pre id="dynamic-sql" class="overflow-unset">{{
+              formattedSql
+            }}</pre>
           </dx-scroll-view>
         </div>
 
@@ -292,35 +332,47 @@
           <div class="controls-left"></div>
 
           <div class="controls-right">
-            <div class="chip costar secondary"
-              id="ba-selected-1"
-            >
-              {{ selectedCount }} Selected Record{{ selectedCount === 1 ? '' : 's' }}
+            <div class="chip costar secondary" id="ba-selected-1">
+              {{ selectedCount }} Selected Record{{
+                selectedCount === 1 ? '' : 's'
+              }}
             </div>
 
-            <button class="btn btn-default"
+            <button
+              class="btn btn-default"
               id="ba-prev-1"
               (click)="logStep(RemeasureStepper)"
-            >Previous</button>
+            >
+              Previous
+            </button>
 
-            <button class="btn btn-primary"
+            <button
+              class="btn btn-primary"
               id="ba-next-2"
               (click)="confirmationStep(RemeasureStepper)"
-              [disabled]="!parametersCard?.isValid || !parametersGrid?.isValid || !directEntryIsValid()"
-            >Next</button>
+              [disabled]="
+                !parametersCard?.isValid ||
+                !parametersGrid?.isValid ||
+                !directEntryIsValid()
+              "
+            >
+              Next
+            </button>
           </div>
         </div>
 
         <div class="dynamic-form-content">
           <div class="row">
             <div class="col-md-12">
-              <mango-parameters-card #ParametersCard
+              <mango-parameters-card
+                #ParametersCard
                 [parametersData]="parametersData"
                 [scheduleObject]="scheduleObject"
                 (selectedMeasureEventChange)="onMeasureEventChange($event)"
               ></mango-parameters-card>
 
-              <mango-parameters-grid #ParametersGrid
+              <mango-parameters-grid
+                #ParametersGrid
                 *ngIf="parametersData.workflowStatuses"
                 [classificationTypes]="selectedClassificationTypes"
                 [masterGroupID]="selectedPortfolio"
@@ -329,7 +381,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </ng-container>
   </mat-step>
@@ -345,27 +396,34 @@
           <div class="controls-left"></div>
 
           <div class="controls-right">
-            <div class="chip costar secondary"
-              id="ba-selected-2"
-            >
-              {{ selectedCount }} Selected Record{{ selectedCount === 1 ? '' : 's' }}
+            <div class="chip costar secondary" id="ba-selected-2">
+              {{ selectedCount }} Selected Record{{
+                selectedCount === 1 ? '' : 's'
+              }}
             </div>
 
-            <button class="btn btn-default"
+            <button
+              class="btn btn-default"
               id="ba-prev-2"
               [disabled]="batchQueueing"
               (click)="parametersStep(RemeasureStepper)"
-            >Previous</button>
+            >
+              Previous
+            </button>
 
             <div class="btn-group">
-              <button type="button"
+              <button
+                type="button"
                 id="ba-queue-for-val"
                 class="btn btn-primary d-flex ml-4 border-top-left-small border-bottom-left-small"
                 [disabled]="batchQueueing"
                 (click)="queueBatch(false)"
-              >Queue for validation</button>
+              >
+                Queue for validation
+              </button>
 
-              <button type="button"
+              <button
+                type="button"
                 class="btn btn-primary dropdown-toggle dropdown-toggle-split ml-0 border-top-right-small border-bottom-right-small"
                 [disabled]="batchQueueing"
                 [matMenuTriggerFor]="dropdownMenuOne"
@@ -373,16 +431,19 @@
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
 
-              <mat-menu #dropdownMenuOne="matMenu"
+              <mat-menu
+                #dropdownMenuOne="matMenu"
                 class="remeasure_validation matMenuSize"
               >
-                <button mat-menu-item
+                <button
+                  mat-menu-item
                   id="ba-queue-for-val-proc"
                   (click)="queueBatch(true)"
                   [disabled]="batchQueueing"
-                >Queue for validation and process</button>
+                >
+                  Queue for validation and process
+                </button>
               </mat-menu>
-
             </div>
           </div>
         </div>
@@ -390,13 +451,15 @@
         <div class="dynamic-form-content">
           <div class="row">
             <div class="col-md-12">
-              <mango-parameters-card #ConfirmationCard
+              <mango-parameters-card
+                #ConfirmationCard
                 [parametersData]="parametersData"
                 [isReadOnly]="true"
                 [scheduleObject]="scheduleObject"
               ></mango-parameters-card>
 
-              <mango-parameters-grid #ConfirmationGrid
+              <mango-parameters-grid
+                #ConfirmationGrid
                 *ngIf="parametersData.workflowStatuses"
                 [isReadOnly]="true"
                 [classificationTypes]="selectedClassificationTypes"
@@ -406,7 +469,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </ng-container>
   </mat-step>

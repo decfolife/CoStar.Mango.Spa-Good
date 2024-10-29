@@ -1,29 +1,29 @@
 <crem-modal
   [class]="'tin-taskInfoModal'"
-  [modalTitle] = "modalTitle"
+  [modalTitle]="modalTitle"
   [primaryFooterButtonText]="primaryButtonCaption"
   [closeOrCancelButtonText]="cancelButtonText"
-  [closeIconVisible] = "true"
+  [closeIconVisible]="true"
   [closeDialogResult]="taskInfoChanged"
   [customHeader]="true"
-  [modalId] = "modalId"
+  [customFooter]="true"
+  [modalId]="modalId"
   [dragPosition]="dragPosition"
-  (primaryButtonAction)="executeActionForTab()"
   (dragEndAction)="getDragPosition($event)"
 >
   <div modalHeader class="tin-taskInfo-headerContent">
     <crem-dropdown
       id="tin-selectTaskDropdownId"
-      dropDownContainerCustomClass='tin-taskListDropDown'
+      dropDownContainerCustomClass="tin-taskListDropDown"
       [dataSource]="projectCurrentTasks"
-      [showClearButton]='false'
-      [showColumnHeader]='false'
-      displayExpr='displayVal'
-      valueExpr='taskId'
-      [allowSearch]='true'
+      [showClearButton]="false"
+      [showColumnHeader]="false"
+      displayExpr="displayVal"
+      valueExpr="taskId"
+      [allowSearch]="true"
       [useSelectBox]="true"
-      [selectBoxValue]='taskId'
-      [hoverText]='selectedTaskName'
+      [selectBoxValue]="taskId"
+      [hoverText]="selectedTaskName"
       (selectedItems)="onSelectedTaskChanged($event)"
     >
     </crem-dropdown>
@@ -33,122 +33,186 @@
       color="secondary"
       aria-label="Close"
       id="tin-closeModalBtn"
-    ><mat-icon class="closeIcon">close</mat-icon></button>
+    >
+      <mat-icon class="closeIcon">close</mat-icon>
+    </button>
   </div>
   <div modalContent id="taskInfoModal-content">
     <crem-tabs
       [id]="'tin-taskInfo-tabPabel'"
-      [selectedTabIndex]="0"
+      [selectedTabIndex]="selectedTabIndex"
       (selectedTabChange)="onTabChanged($event)"
     >
       <crem-tab-item title="Details" id="tin-details-tab">
         <section class="tin-statusAndDates tin-section tin-flex">
           <div class="tin-status tin-flexItem50">
-            <div class="tin-status-bar" [ngClass]="tinStatusBarColor" [title]="taskInfoData.taskInfo.taskStatus.title"></div>
+            <div
+              class="tin-status-bar"
+              [ngClass]="tinStatusBarColor"
+              [title]="taskInfoData.taskInfo.taskStatus.title"
+            ></div>
             <div class="tin-status-valLabel">
-              <div class="tin-status-val">{{taskStatusVal}}</div>
+              <div class="tin-status-val">{{ taskStatusVal }}</div>
               <div class="tin-status-label">Status</div>
             </div>
           </div>
           <div class="tin-dates">
             <div class="tin-dates-labels tin-dates-row">
-              <div class="tin-left-label date-col">
-              
-              </div>
-              <div class="tin-date-start date-col">
-                Start Date
-              </div>
-              <div class="tin-date-start date-col">
-                End Date
-              </div>
+              <div class="tin-left-label date-col"></div>
+              <div class="tin-date-start date-col">Start Date</div>
+              <div class="tin-date-start date-col">End Date</div>
             </div>
             <div class="tin-dates-target tin-dates-row">
-              <div class="tin-left-label date-col">
-                Target
-              </div>
+              <div class="tin-left-label date-col">Target</div>
               <div class="tin-target-start date-col">
-                {{formatTheDate(this.taskInfoData.taskInfo.projectMilestoneStartDate)}}
+                {{
+                  formatTheDate(
+                    this.taskInfoData.taskInfo.projectMilestoneStartDate
+                  )
+                }}
               </div>
               <div class="tin-target-end date-col">
-                {{formatTheDate(taskInfoData.taskInfo.projectMilestoneEndDate)}}
+                {{
+                  formatTheDate(taskInfoData.taskInfo.projectMilestoneEndDate)
+                }}
               </div>
             </div>
             <div class="tin-actual-dates tin-dates-row">
-              <div class="tin-left-label date-col">
-                Actual
-              </div>
+              <div class="tin-left-label date-col">Actual</div>
               <div class="tin-actual-start date-col">
-                {{formatTheDate(taskInfoData.taskInfo.actualStartDate)}}
+                {{ formatTheDate(taskInfoData.taskInfo.actualStartDate) }}
               </div>
               <div class="tin-actual-end date-col">
-                {{taskInfoData.taskInfo.projectMilestoneUserCompletedDate ? formatTheDate(taskInfoData.taskInfo.projectMilestoneUserCompletedDate) : formatTheDate(taskInfoData.taskInfo.projectMilestoneCompletedDate)}}
+                {{
+                  taskInfoData.taskInfo.projectMilestoneUserCompletedDate
+                    ? formatTheDate(
+                        taskInfoData.taskInfo.projectMilestoneUserCompletedDate
+                      )
+                    : formatTheDate(
+                        taskInfoData.taskInfo.projectMilestoneCompletedDate
+                      )
+                }}
               </div>
             </div>
           </div>
         </section>
         <section class="tin-moreData tin-section">
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.projectMilestoneRequired? 'Yes' : 'No'}}</div>
+            <div class="tin-moreData-val">
+              {{
+                taskInfoData.taskInfo.projectMilestoneRequired ? 'Yes' : 'No'
+              }}
+            </div>
             <div class="tin-moreData-label">Required</div>
           </div>
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.isConcurrent? 'Yes' : 'No'}}</div>
+            <div class="tin-moreData-val">
+              {{ taskInfoData.taskInfo.isConcurrent ? 'Yes' : 'No' }}
+            </div>
             <div class="tin-moreData-label">Concurrent</div>
           </div>
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.isShrinkable? 'Yes' : 'No'}}</div>
+            <div class="tin-moreData-val">
+              {{ taskInfoData.taskInfo.isShrinkable ? 'Yes' : 'No' }}
+            </div>
             <div class="tin-moreData-label">Shrinkable</div>
           </div>
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.useEmailApprovals? 'Yes' : 'No'}}</div>
+            <div class="tin-moreData-val">
+              {{ taskInfoData.taskInfo.useEmailApprovals ? 'Yes' : 'No' }}
+            </div>
             <div class="tin-moreData-label">Email Approval</div>
           </div>
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.projectMilestoneDaysToComplete}}</div>
+            <div class="tin-moreData-val">
+              {{ taskInfoData.taskInfo.projectMilestoneDaysToComplete }}
+            </div>
             <div class="tin-moreData-label">Duration</div>
           </div>
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.projectMilestoneDaysToStart}}</div>
+            <div class="tin-moreData-val">
+              {{ taskInfoData.taskInfo.projectMilestoneDaysToStart }}
+            </div>
             <div class="tin-moreData-label">Days To Start</div>
           </div>
         </section>
         <section class="tin-description tin-section">
           <div class="tin-desc-label">Description</div>
-          <div class="tin-desc-val">{{taskInfoData.taskInfo.projectMilestoneDescription}}</div>
+          <div class="tin-desc-val">
+            {{ taskInfoData.taskInfo.projectMilestoneDescription }}
+          </div>
         </section>
         <section class="tin-moreData tin-section tin-morePadding">
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.isMileMark? 'Yes' : 'No'}}</div>
+            <div class="tin-moreData-val">
+              {{ taskInfoData.taskInfo.isMileMark ? 'Yes' : 'No' }}
+            </div>
             <div class="tin-moreData-label">Milestone</div>
           </div>
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.workflowName ? taskInfoData.taskInfo.workflowName : 'N/A'}}</div>
+            <div class="tin-moreData-val">
+              {{
+                taskInfoData.taskInfo.workflowName
+                  ? taskInfoData.taskInfo.workflowName
+                  : 'N/A'
+              }}
+            </div>
             <div class="tin-moreData-label">Workflow Status</div>
           </div>
           <div class="tin-moreData-col">
-            <div class="tin-moreData-val">{{taskInfoData.taskInfo.percentComplete}}%</div>
+            <div class="tin-moreData-val">
+              {{ taskInfoData.taskInfo.percentComplete }}%
+            </div>
             <div class="tin-moreData-label">Percentage Completion</div>
           </div>
         </section>
-        <!-- <section class="tin-predecessors tin-section">
+        <section class="tin-predecessors tin-section">
           <div class="tin-predecessor-label">Predecessor</div>
-          <ng-container *ngFor="let predecessor of taskInfoData.predecessors">
-            <div class="tin-predecessor-val">
-              <div class="tin-predecessor-valStep tin-flexItem10">{{predecessor.projectMilestoneStepFull}} </div>
-              <div class="tin-predecessor-valName">{{predecessor.projectMilestoneName}}</div>
-            </div>
-          </ng-container>
-        </section> -->
+          <div class="task-predecessors">
+            <ng-container
+              *ngFor="
+                let predecessor of taskInfoData.taskInfo.existingPredecessors
+              "
+            >
+              <div class="tin-predecessor-val">
+                <div class="tin-predecessor-valStep tin-flexItem10">
+                  {{ predecessor.projectMilestoneStepFull }}
+                </div>
+                <div class="tin-predecessor-valName">
+                  {{ predecessor.projectMilestoneName }}
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </section>
       </crem-tab-item>
       <crem-tab-item title="Assignees" id="tin-approvals-tab">
-        <mango-task-assignees [taskAssignees]="taskInfoData.approvers" [userDateFormat]="dateFormat"></mango-task-assignees>
+        <mango-task-assignees
+          [taskAssignees]="taskInfoData.approvers"
+          [userDateFormat]="dateFormat"
+        ></mango-task-assignees>
       </crem-tab-item>
       <crem-tab-item title="Notes" id="tin-notes-tab">
-        <mango-task-notes [taskNotes]="taskInfoData.notes" [userDateFormat]="dateFormat" [clickedSubject]="notesTabClickedSubject"></mango-task-notes>
+        <mango-task-notes
+          [taskNotes]="taskInfoData.notes"
+          [userDateFormat]="dateFormat"
+          [clickedSubject]="notesTabClickedSubject"
+        ></mango-task-notes>
       </crem-tab-item>
       <crem-tab-item title="Files" id="tin-files-tab">
-        <mango-task-files [taskFiles]="taskInfoData.files" [userDateFormat]="dateFormat"></mango-task-files>
+        <mango-task-files
+          [taskFiles]="taskInfoData.files"
+          [userDateFormat]="dateFormat"
+        ></mango-task-files>
       </crem-tab-item>
     </crem-tabs>
+  </div>
+  <div modalFooter class="footer-content">
+    <crem-button
+      type="primary"
+      (click)="executeActionForTab()"
+      [hidden]="isEditDisabled()"
+      >{{ primaryButtonCaption }}</crem-button
+    >
   </div>
 </crem-modal>

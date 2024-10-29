@@ -1,5 +1,5 @@
-@use "apps/mango/src/assets/styles/colors.scss" as colors;
-@use 'styles' as *; 
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+@use 'styles' as *;
 
 .aet-memberData {
   pointer-events: none;
@@ -9,12 +9,12 @@
 fa-icon {
   height: 20px;
   width: 20px;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   color: black;
-  &:focus{
+  &:focus {
     outline: none;
     box-shadow: 0 0 0 0.1rem;
-    @include costar(box-shadow, gray04)
+    @include costar(box-shadow, gray04);
   }
 }
 
@@ -44,7 +44,7 @@ fa-icon {
       transform: translateY(3px);
     }
 
-    crem-button[ng-reflect-disabled="true"] {
+    crem-button[ng-reflect-disabled='true'] {
       fa-icon {
         color: lightgray;
       }
@@ -65,26 +65,26 @@ fa-icon {
 }
 
 #aer-membersList {
-	height: 200px;
-	.dx-list-item {
-		border-top: none;
-		color: black;
-		.dx-list-item-content {
-			padding: 4px;
-		}
-	}
-	.aet-itemDisabled {
-		pointer-events: none;
-		color: colors.$darkGray;
-		cursor: default;
-		fa-icon {
-			color: lightgray;
-		}
-	}
-	fa-icon{
-		margin-right: 8px;
-		transform: translateY(2px);
-	}
+  height: 200px;
+  .dx-list-item {
+    border-top: none;
+    color: black;
+    .dx-list-item-content {
+      padding: 4px;
+    }
+  }
+  .aet-itemDisabled {
+    pointer-events: none;
+    color: colors.$darkGray;
+    cursor: default;
+    fa-icon {
+      color: lightgray;
+    }
+  }
+  fa-icon {
+    margin-right: 8px;
+    transform: translateY(2px);
+  }
 }
 
 .aet-itemDisabled {
@@ -110,18 +110,18 @@ fa-icon {
   }
 }
 
-#addEditReminderModal button.btn-close.btn-none.modalCloseButton:focus{
+#addEditReminderModal button.btn-close.btn-none.modalCloseButton:focus {
   outline: none;
   box-shadow: 0 0 0 0.1rem $primary-lighter;
 }
 
-  #addEditReminderModal .dx-checkbox-container:focus {
+#addEditReminderModal .dx-checkbox-container:focus {
   outline: none;
-  @include costar(box-shadow, primary-light)
+  @include costar(box-shadow, primary-light);
 }
 
-.btn.btn-link.teamMemberActionsButton:focus{
+.btn.btn-link.teamMemberActionsButton:focus {
   outline: none;
   box-shadow: 0 0 0 0.1rem;
-  @include costar(box-shadow, primary-light)
+  @include costar(box-shadow, primary-light);
 }

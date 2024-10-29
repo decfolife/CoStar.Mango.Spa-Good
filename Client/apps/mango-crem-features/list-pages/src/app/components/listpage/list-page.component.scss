@@ -1,15 +1,14 @@
 @use 'src/assets/styles/colors';
 
 ::ng-deep .dx-datagrid-column-chooser {
-  &.dx-overlay-wrapper{
-    .dx-treeview-expander-icon-stub{
+  &.dx-overlay-wrapper {
+    .dx-treeview-expander-icon-stub {
       display: none;
     }
   }
 }
 
 :host ::ng-deep {
-
   /*
    * Actions Container
    */
@@ -35,7 +34,6 @@
       }
 
       app-list-view-menu {
-
         .svg-inline--fa.fa-caret-down {
           height: 1rem;
           transform: translateY(-3px);
@@ -59,12 +57,12 @@
           border-radius: 0 !important;
           margin-right: 8px !important;
           &:focus {
-            border: 1px solid colors.$costarBlue
+            border: 1px solid colors.$costarBlue;
           }
         }
 
         .dx-icon:before {
-          content: "";
+          content: '';
         }
 
         .dx-placeholder {
@@ -81,7 +79,7 @@
 
       .disabledToolButton {
         fa-icon {
-          color: rgba(0, 0, 0, .26);
+          color: rgba(0, 0, 0, 0.26);
         }
       }
 
@@ -96,13 +94,13 @@
       .toggle-wrapper {
         display: inline-block;
         position: relative;
-        
-        mat-button-toggle-group{
-          mat-button-toggle{
+
+        mat-button-toggle-group {
+          mat-button-toggle {
             background-color: colors.$bodyBackgroundGray;
-            button{
+            button {
               background-color: colors.$bodyBackgroundGray;
-              &:focus{
+              &:focus {
                 border: 1px solid colors.$color-brand-primary !important;
                 outline: 0;
               }
@@ -118,7 +116,7 @@
 
         &[disabled] {
           .badge {
-            background-color: rgba(0, 0, 0, .26) !important;
+            background-color: rgba(0, 0, 0, 0.26) !important;
           }
         }
 
@@ -191,7 +189,6 @@
             }
           }
         }
-
       }
     }
 
@@ -213,10 +210,8 @@
         color: colors.$white !important;
         background-color: colors.$costarBlue !important;
         border-radius: 2px;
-        transition: color .15s ease-in-out,
-          background-color .15s ease-in-out,
-          border-color .15s ease-in-out,
-          box-shadow .15s ease-in-out;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
         fa-icon {
           color: colors.$white;
@@ -236,14 +231,12 @@
       color: colors.$costarBlue !important;
       height: 32px;
       padding: 0 8px;
-      transition: color .15s ease-in-out,
-        background-color .15s ease-in-out,
-        border-color .15s ease-in-out,
-        box-shadow .15s ease-in-out;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
       &[disabled] {
-        border-color: rgba(0, 0, 0, .26) !important;
-        color: rgba(0, 0, 0, .26) !important;
+        border-color: rgba(0, 0, 0, 0.26) !important;
+        color: rgba(0, 0, 0, 0.26) !important;
       }
 
       &:hover:not([disabled]) {
@@ -287,23 +280,23 @@
 
       &:hover {
         background-color: colors.$white;
-        border-color: rgba(51, 122, 183, .4);
+        border-color: rgba(51, 122, 183, 0.4);
       }
     }
 
     .portfolio {
-      border: 1px solid rgba(0, 0, 0, .12);
+      border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 2px !important;
       height: 32px;
 
       &:hover {
-        border-color: rgba(51, 122, 183, .4);
+        border-color: rgba(51, 122, 183, 0.4);
       }
 
       &.mat-stroked-button {
         width: 200px;
 
-        &[aria-expanded="true"] {
+        &[aria-expanded='true'] {
           fa-icon {
             background-color: #b3b3b3;
           }
@@ -363,7 +356,7 @@
 
       .mat-form-field-outline {
         background-color: colors.$white;
-        border-color: rgba(0, 0, 0, .12);
+        border-color: rgba(0, 0, 0, 0.12);
       }
 
       .mat-mdc-form-field-infix {
@@ -392,7 +385,9 @@
       // font-family: "Helvetica Neue", "Segoe UI", Helvetica, Verdana, sans-serif;
     }
 
-    .mat-button-toggle-group-appearance-standard .mat-button-toggle+.mat-button-toggle {
+    .mat-button-toggle-group-appearance-standard
+      .mat-button-toggle
+      + .mat-button-toggle {
       border: 0;
     }
 
@@ -437,7 +432,6 @@
         line-height: inherit;
       }
     }
-
   }
   // END Actions Container
 
@@ -456,7 +450,7 @@
 
           .dx-header-filter {
             &.dx-header-filter-empty {
-              color: hsla(0, 0%, 58.4%, .5);
+              color: hsla(0, 0%, 58.4%, 0.5);
             }
 
             color: colors.$costarMediumBlue;
@@ -465,7 +459,7 @@
 
         .dx-datagrid {
           td {
-            &:focus{
+            &:focus {
               border: 1px solid colors.$color-brand-primary !important;
               outline: 0;
             }
@@ -482,19 +476,20 @@
                 text-align: left;
               }
             }
-            td.dx-command-select, td.dx-command-edit {
+            td.dx-command-select,
+            td.dx-command-edit {
               text-align: center !important;
-            } 
+            }
           }
 
-          .dx-row>td {
-            border-style: none !important; 
-            font-family: "Helvetica Neue", "Segoe UI", Helvetica, Verdana, sans-serif;
+          .dx-row > td {
+            border-style: none !important;
+            font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana,
+              sans-serif;
             font-size: 14px;
             white-space: normal;
             width: auto !important;
           }
-
         }
 
         .dx-datagrid-search-text {
@@ -502,7 +497,6 @@
           background-color: #ffff37;
           vertical-align: baseline;
         }
-
 
         .dx-row.dx-data-row {
           &.dx-state-hover {
@@ -521,14 +515,13 @@
             }
           }
 
-
           div#buttonTemplate {
             display: flex;
             justify-content: center;
             span.separator {
               transform: translateY(11px);
             }
-          
+
             button {
               background: transparent !important;
               color: #055094 !important;
@@ -539,7 +532,7 @@
           div.actionTemplate.dx-template-wrapper {
             text-align: center;
             display: flex;
-            flex-direction:column;
+            flex-direction: column;
           }
 
           button.actionTemplateButton {
@@ -570,7 +563,6 @@
         }
 
         .dx-pages {
-
           .dx-info,
           .dx-page-indexes {
             display: inline-block !important;
@@ -580,7 +572,6 @@
         .dx-navigate-button {
           color: colors.$costarBlue;
         }
-
       }
 
       .grid-map-container {
@@ -589,43 +580,42 @@
     }
 
     .grid-link {
-        background-color: transparent;
-        color: colors.$costarBlue;
-        cursor: pointer;
-        font-weight: normal;
-        line-height: inherit;
-        margin: 0;
-        padding: 0;
-        white-space: normal;
-        height: 100%;
-        text-align: left;
-        letter-spacing: normal;
-        border: 0px;
-    
-        &:focus,
-        &:active {
-            outline: 0;
-        }
-      }
+      background-color: transparent;
+      color: colors.$costarBlue;
+      cursor: pointer;
+      font-weight: normal;
+      line-height: inherit;
+      margin: 0;
+      padding: 0;
+      white-space: normal;
+      height: 100%;
+      text-align: left;
+      letter-spacing: normal;
+      border: 0px;
 
-      .show-carriage-returns {
-        white-space: pre-wrap;
-        color: colors.$costarBlue; 
+      &:focus,
+      &:active {
+        outline: 0;
       }
     }
+
+    .show-carriage-returns {
+      white-space: pre-wrap;
+      color: colors.$costarBlue;
+    }
+  }
   // END List Grid Wrapper
 
-
-    div.dx-datagrid.dx-gridbase-container{
-      div.dx-datagrid-pager.dx-state-focused {
-        div.dx-button-disable.dx-navigate-button{
-          &:focus{
-            outline:none !important;
-            outline-offset: none !important;
-          }
+  div.dx-datagrid.dx-gridbase-container {
+    div.dx-datagrid-pager.dx-state-focused {
+      div.dx-button-disable.dx-navigate-button {
+        &:focus {
+          outline: none !important;
+          outline-offset: none !important;
         }
       }
     }
+  }
 
   .mat-typography {
     .dx-popup-wrapper {
@@ -653,7 +643,7 @@
     .dx-datagrid-content-fixed .dx-datagrid-table .dx-col-fixed {
       background-color: inherit;
     }
-    .dx-data-row:not(.dx-row-alt)>td {
+    .dx-data-row:not(.dx-row-alt) > td {
       background-color: colors.$white;
     }
   }
@@ -670,7 +660,6 @@
     &.dx-datagrid-column-chooser-mode-drag .dx-popup-content {
       padding: 0 16px 16px !important;
     }
-
   }
 
   // crem dropdown menu
@@ -700,7 +689,6 @@
   }
 
   .dx-texteditor-container {
-
     .dxtexteditor-input {
       padding: 0px 0px 0px 34px !important;
       border-radius: 4px;
@@ -710,7 +698,7 @@
   .mat-slide-toggle {
     &.mat-checked {
       .mat-slide-toggle-bar {
-        background-color: rgba(5, 89, 179, .54) !important;
+        background-color: rgba(5, 89, 179, 0.54) !important;
       }
 
       .mat-ripple-element,

@@ -1,128 +1,118 @@
 <crem-card
-[id]="card.gridData.id"
-[title]="card.title"
-[subtitle]="card.subtitle"
-[counter]="card.counter"
-[filterData]="null"
-[filterInitialValue]="null"
-[showFilterClearButton]="false"
-[moreOptions]="card.moreOptions"
-[showCustomHeader]="true"
-(expandDataGrid)="expandAllGridData($event)"
-(exportDataGrid)="exportAllGridData()"
-fxFlexFill
-
+  [id]="card.gridData.id"
+  [title]="card.title"
+  [subtitle]="card.subtitle"
+  [counter]="card.counter"
+  [filterData]="null"
+  [filterInitialValue]="null"
+  [showFilterClearButton]="false"
+  [moreOptions]="card.moreOptions"
+  [showCustomHeader]="true"
+  (expandDataGrid)="expandAllGridData($event)"
+  (exportDataGrid)="exportAllGridData()"
+  fxFlexFill
 >
-	<div class="cardContent" fxflexFill *ngIf="card.dispCard">
-		<dx-data-grid
-				#UpcomingExpirationsGrid
-				[id]="card.gridData.id + 'grid'"
-				[showColumnLines]="false"
-				[showRowLines]="false"
-				[showBorders]="false"
-				[rowAlternationEnabled]="true"
-				[allowColumnResizing]="true"
-				[allowColumnReordering]="true"
-				[columnAutoWidth]="false"
-				[dataSource]="card.gridData.dataSource"
-				keyExpr="gridIndex"
-				(onRowClick)="rowClick($event)"
-				[masterDetail]="{ enabled: true, template: 'detail' }"
-				[wordWrapEnabled]="true"
-		>
-				<dxo-scrolling mode="virtual"></dxo-scrolling>
-				<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-				<dxo-pager [visible]="false"></dxo-pager>
-				<dxo-scrolling mode="virtual"></dxo-scrolling>
-				<dxo-grouping #expand [autoExpandAll]="card.moreOptions.isExpanded" [contextMenuEnabled]="true"></dxo-grouping>
+  <div class="cardContent" fxflexFill *ngIf="card.dispCard">
+    <dx-data-grid
+      #UpcomingExpirationsGrid
+      [id]="card.gridData.id + 'grid'"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [dataSource]="card.gridData.dataSource"
+      keyExpr="gridIndex"
+      (onRowClick)="rowClick($event)"
+      [masterDetail]="{ enabled: true, template: 'detail' }"
+      [wordWrapEnabled]="true"
+    >
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-pager [visible]="false"></dxo-pager>
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-grouping
+        #expand
+        [autoExpandAll]="card.moreOptions.isExpanded"
+        [contextMenuEnabled]="true"
+      ></dxo-grouping>
 
-				<dxi-column
-					dataField="quarter"
-					alignment="left"
-					[groupIndex]="0">
-				</dxi-column>
-				<dxi-column
-					dataField="clientLeaseID"
-					alignment="left">
-				</dxi-column>
-				<dxi-column
-					dataField="propertyName"
-					alignment="left"
-					width="240">
-				</dxi-column>
-				<dxi-column
-					dataField="buildingAddress"
-					caption="Address"
-					alignment="left">
-				</dxi-column>
-				<dxi-column
-					dataField="city"
-					alignment="left">
-				</dxi-column>
-				<dxi-column
-					dataField="state"
-					width="70"
-					alignment="left">
-				</dxi-column>
-				<dxi-column
-					dataField="expirationDate"
-					[format]="portfolioDataService.dateFormat"
-					caption="Expiration"
-					dataType="date">
-				</dxi-column>
-				<dxi-column
-					dataField="rentableArea"
-					alignment="right"
-					dataType=number>
-					<dxo-format type="fixedPoint" [precision]="0"></dxo-format>
-				</dxi-column>
-				<dxi-column
-				    caption="Annualized Rent"
-					dataField="annualRent"
-					width="180"
-					alignment="right"
-					dataType=number
-					>
-					<dxo-format type="fixedPoint" [precision]="0"></dxo-format>
-				</dxi-column>
-				<dxi-column
-					dataField="accountType"
-					alignment="center">
-				</dxi-column>
-				<dxi-column
-					dataField="leaseStatus"
-					alignment="left">
-				</dxi-column>
-				<dxo-summary>
-					<dxi-group-item
-							column="expirationDate"
-							[format]="portfolioDataService.dateFormat"
-							summaryType="count"
-							displayFormat="{0} expirations"
-							[showInGroupFooter]="false"
-							[alignByColumn]="true">
-					</dxi-group-item>
-					<dxi-group-item
-							column="rentableArea"
-							summaryType="sum"
-							valueFormat="fixedPoint"
-							[showInGroupFooter]="false"
-							[alignByColumn]="true">
-					</dxi-group-item>
-					<dxi-group-item
-							column="annualRent"
-							summaryType="sum"
-							dataType="number"
-							[showInGroupFooter]="false"
-							[alignByColumn]="true">
-
-						<dxo-value-format type="fixedPoint" [precision]="2" ></dxo-value-format>	
-					</dxi-group-item>
-			</dxo-summary>
-			<div *dxTemplate="let lease of 'detail'">
-				<h3>Lease Options</h3>   
-				<expiring-leases-options-grid [leaseId]="lease.data.leaseAbstractID"></expiring-leases-options-grid>   		        
-			</div>
-		</dx-data-grid>
-	</div>
+      <dxi-column dataField="quarter" alignment="left" [groupIndex]="0">
+      </dxi-column>
+      <dxi-column dataField="clientLeaseID" alignment="left"> </dxi-column>
+      <dxi-column dataField="propertyName" alignment="left" width="240">
+      </dxi-column>
+      <dxi-column
+        dataField="buildingAddress"
+        caption="Address"
+        alignment="left"
+      >
+      </dxi-column>
+      <dxi-column dataField="city" alignment="left"> </dxi-column>
+      <dxi-column dataField="state" width="70" alignment="left"> </dxi-column>
+      <dxi-column
+        dataField="expirationDate"
+        [format]="portfolioDataService.dateFormat"
+        caption="Expiration"
+        dataType="date"
+      >
+      </dxi-column>
+      <dxi-column dataField="rentableArea" alignment="right" dataType="number">
+        <dxo-format type="fixedPoint" [precision]="0"></dxo-format>
+      </dxi-column>
+      <dxi-column
+        caption="Annualized Rent"
+        dataField="annualRent"
+        width="180"
+        alignment="right"
+        dataType="number"
+      >
+        <dxo-format type="fixedPoint" [precision]="0"></dxo-format>
+      </dxi-column>
+      <dxi-column dataField="accountType" alignment="center"> </dxi-column>
+      <dxi-column dataField="leaseStatus" alignment="left"> </dxi-column>
+      <dxo-summary>
+        <dxi-group-item
+          column="expirationDate"
+          [format]="portfolioDataService.dateFormat"
+          summaryType="count"
+          displayFormat="{0} expirations"
+          [showInGroupFooter]="false"
+          [alignByColumn]="true"
+        >
+        </dxi-group-item>
+        <dxi-group-item
+          column="rentableArea"
+          summaryType="sum"
+          valueFormat="fixedPoint"
+          [showInGroupFooter]="false"
+          [alignByColumn]="true"
+        >
+        </dxi-group-item>
+        <dxi-group-item
+          column="annualRent"
+          summaryType="sum"
+          dataType="number"
+          [showInGroupFooter]="false"
+          [alignByColumn]="true"
+        >
+          <dxo-value-format
+            type="fixedPoint"
+            [precision]="2"
+          ></dxo-value-format>
+        </dxi-group-item>
+      </dxo-summary>
+      <div *dxTemplate="let lease of 'detail'">
+        <h3>Lease Options</h3>
+        <expiring-leases-options-grid
+          [leaseId]="lease.data.leaseAbstractID"
+        ></expiring-leases-options-grid>
+      </div>
+    </dx-data-grid>
+  </div>
 </crem-card>

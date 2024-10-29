@@ -5,7 +5,7 @@ import { SettingsData } from '../../models';
 @Component({
   selector: 'mango-field-assignments-card',
   templateUrl: './field-assignments-card.component.html',
-  styleUrls: ['./field-assignments-card.component.scss']
+  styleUrls: ['./field-assignments-card.component.scss'],
 })
 export class FieldAssignmentsCardComponent {
   @Input()

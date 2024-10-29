@@ -1,50 +1,53 @@
 @import '../../../../../../../../mango/src/assets//styles/colors.scss';
 
 .modal-content-wrapper {
-    height: 100% !important;
+  height: 100% !important;
 }
 
 .modal-content {
-    &__text {
-        display: flex;
-        color: $costarAlert;
-        height: 24px;
-    }
+  &__text {
+    display: flex;
+    color: $costarAlert;
+    height: 24px;
+  }
 
-    &__grid {
-        display: flex;
-        height: calc(100% - 24px);
-    }
+  &__grid {
+    display: flex;
+    height: calc(100% - 24px);
+  }
 }
 
-
 .footerRightControls {
-	display: flex;
+  display: flex;
 }
 
 .modalContent {
-	font-size: 14px !important;
-	padding: 0px 24px;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,Liberation Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+  font-size: 14px !important;
+  padding: 0px 24px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
 
 .modalHeader {
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,Liberation Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
-	padding: 24px 24px 8px !important;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  padding: 24px 24px 8px !important;
 }
 
 .modalFooter {
-	padding: 24px !important;
+  padding: 24px !important;
 }
 
 .mat-dialog-container {
-	padding: 0px !important;
+  padding: 0px !important;
 }
 
 .modalHeader > .close-icon {
-	transform: translateY(-4px) scale(1.5) !important;
+  transform: translateY(-4px) scale(1.5) !important;
 }
 
 .view-contact-modal {
-	height: 800px !important;
+  height: 800px !important;
 }

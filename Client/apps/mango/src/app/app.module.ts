@@ -16,8 +16,6 @@ import {
   CREM_FORCE_RELOGIN_URLS,
   Environment,
   IS_CA_STANDALONE_APP,
-  OAUTH_CLIENT_KEY_QUERY_PARAM,
-  OAUTH_CONTACT_ID_QUERY_PARAM,
   OAUTH_REDIRECT_QUERY_PARAM,
   RUNNING_IN_MANGO_SPA,
 } from '@mango/data-models/lib-data-models';
@@ -52,9 +50,13 @@ import { contactRecord } from './+state/app/app.selectors';
 import { EmulateUserEffects } from './+state/app/effects/emulate-user.effects';
 import { IdleEffects } from './+state/app/effects/idle.effects';
 import { IdleTimeoutPopupComponent } from './components/idle-timeout-popup/idle-timeout-popup.component';
-import { RedirectorObjectData } from 'libs/data-models/lib-data-models/src/lib/models/redirectorLinks';
+import { RedirectorObjectData } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
 import { CremPopupComponent } from '@mango/ui-shared/lib-ui-elements';
-import { NgIdleKeepaliveModule, provideNgIdleKeepalive } from '@ng-idle/keepalive';
+import {
+  NgIdleKeepaliveModule,
+  provideNgIdleKeepalive,
+} from '@ng-idle/keepalive';
+import { CurrentProjectIdMonitorService } from './services/current-project-monitor.service';
 
 const DEV_MODULES = [];
 
@@ -69,9 +71,13 @@ if (!environment.production) {
   );
 }
 
-
 @NgModule({
-  declarations: [AppComponent, LoadingScreenComponent, ValidateComponent, IdleTimeoutPopupComponent],
+  declarations: [
+    AppComponent,
+    LoadingScreenComponent,
+    ValidateComponent,
+    IdleTimeoutPopupComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -93,7 +99,7 @@ if (!environment.production) {
       NavigationEffect,
       GlobalSessionEffects,
       EmulateUserEffects,
-      IdleEffects
+      IdleEffects,
     ]),
     ...DEV_MODULES,
     HttpClientModule,
@@ -114,7 +120,7 @@ if (!environment.production) {
       closeButton: true,
     }),
     MatPasswordStrengthModule.forRoot(),
-    NgIdleKeepaliveModule.forRoot()
+    NgIdleKeepaliveModule.forRoot(),
   ],
   providers: [
     { provide: Environment, useValue: environment },
@@ -130,90 +136,116 @@ if (!environment.production) {
     CentralAuthErrorHandler,
     MangoAppFacade,
     HeaderService,
-    MangoNavigationService
+    MangoNavigationService,
+    CurrentProjectIdMonitorService,
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(private router: Router, private facade: MangoAppFacade, private mangoNavitationService: MangoNavigationService) {
+  constructor(
+    private router: Router,
+    private facade: MangoAppFacade,
+    private mangoNavitationService: MangoNavigationService,
+    private projectIdMonitor: CurrentProjectIdMonitorService
+  ) {
     this.router.events
       .pipe(
         filter(
           (e: RouterEvent | any) =>
             e instanceof NavigationStart && e.url.includes('.asp')
         ),
-        switchMap((e) =>  combineLatest([of(e.url), this.facade.clientKey$, this.facade.contactRecord$, this.facade.redirectorLinks$])),
+        switchMap((e) =>
+          combineLatest([
+            of(e.url),
+            this.facade.clientKey$,
+            this.facade.contactRecord$,
+            this.facade.redirectorLinks$,
+          ])
+        ),
         filter(([url, clientKey]) => !!url && !!clientKey && !!contactRecord),
         map(([url, clientKey, contactRecord, redirectorLinks]) => {
-          
-          if(redirectorLinks && (url.includes('RenderForm') || (url.includes('View.asp')))) {
+          if (
+            redirectorLinks &&
+            (url.includes('RenderForm') || url.includes('View.asp'))
+          ) {
+            const objectData: RedirectorObjectData =
+              this.getObjectDataFromUrl(url);
 
-            const objectData: RedirectorObjectData = this.getObjectDataFromUrl(url);            
-
-            let found = redirectorLinks.find(x=>x.objectTypeId === objectData.objectTypeId && x.objectTypeTypeId === objectData.objectTypeTypeId);
-            //urlLink = found ? found.urlLink : 'not found';                 
-            let urlLink : any = found ? found.basePageUrl : 'not found';              
+            let found = redirectorLinks.find(
+              (x) =>
+                x.objectTypeId === objectData.objectTypeId &&
+                x.objectTypeTypeId === objectData.objectTypeTypeId
+            );
+            //urlLink = found ? found.urlLink : 'not found';
+            let urlLink: any = found ? found.basePageUrl : 'not found';
             const redirectorLink = urlLink;
             const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
               redirectorLink.includes(subUrl)
             );
 
-            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey)
+            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey);
             let v06RedirectorUrl = '';
 
-            if(redirectorLink.includes('?')){
-               v06RedirectorUrl = `${redirectorLink}&OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
-            }
-            else {
+            if (redirectorLink.includes('?')) {
+              v06RedirectorUrl = `${redirectorLink}&OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
+            } else {
               v06RedirectorUrl = `${redirectorLink}?OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
             }
             const newUrl = forceRelogin
-              ? `${environment.CAUrl}?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(v06RedirectorUrl)}`
+              ? `${
+                  environment.CAUrl
+                }?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(
+                  v06RedirectorUrl
+                )}`
               : `${v06Url}${v06RedirectorUrl}`;
-              
-            if(newUrl.includes('.asp')) {
+
+            if (newUrl.includes('.asp')) {
               this.mangoNavitationService.navigateToUrl(newUrl);
-            }
-            else {
+            } else {
               window.location.href = newUrl;
-            } 
-          }
-          else {
+            }
+          } else {
             const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
               url.includes(subUrl)
-            );            
-            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey)            
+            );
+            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey);
             const newUrl = forceRelogin
-              ? `${environment.CAUrl}?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(url)}`
+              ? `${
+                  environment.CAUrl
+                }?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(
+                  url
+                )}`
               : `${v06Url}${url}`;
-            
+
             window.location.href = newUrl;
           }
-                              
         })
       )
       .subscribe();
   }
 
-  getObjectDataFromUrl(url:string) : RedirectorObjectData {
-    let objectData:RedirectorObjectData={ objectId:0, objectTypeId:0, objectTypeTypeId:0 };    
+  getObjectDataFromUrl(url: string): RedirectorObjectData {
+    let objectData: RedirectorObjectData = {
+      objectId: 0,
+      objectTypeId: 0,
+      objectTypeTypeId: 0,
+    };
     let splitUrl = url.split('?');
-    if (splitUrl.length > 0) {            
-      const params = splitUrl[1].split('&');            
-      params.forEach(param=> {
-        const [key,value] = param.split('=');              
-        if(key.toUpperCase() == 'OID') {
+    if (splitUrl.length > 0) {
+      const params = splitUrl[1].split('&');
+      params.forEach((param) => {
+        const [key, value] = param.split('=');
+        if (key.toUpperCase() == 'OID') {
           objectData.objectId = +value;
         }
-        if(key.toUpperCase() == 'OTID') {
+        if (key.toUpperCase() == 'OTID') {
           objectData.objectTypeId = +value;
-        } 
-        if(key.toUpperCase() == 'OTTID') {
+        }
+        if (key.toUpperCase() == 'OTTID') {
           objectData.objectTypeTypeId = +value;
-        } 
-      })          
+        }
+      });
     }
     return objectData;
   }
-
 }

@@ -1,5 +1,5 @@
-<div *ngIf="userHasPageAccess else noPageAccessContent">
-  <div *ngIf="userHasViewRights else noAccessFlgContent">
+<div *ngIf="userHasPageAccess; else noPageAccessContent">
+  <div *ngIf="userHasViewRights; else noAccessFlgContent">
     <div *ngIf="buildingInfo">
       <crem-page-header
         pageTitle="CoStar Property Association"
@@ -7,9 +7,83 @@
       ></crem-page-header>
 
       <div class="page-content">
-        <crem-card id="costar-matching-building-info" title="Building Information">
+        <crem-card
+          id="costar-matching-building-info"
+          title="Building Information"
+        >
           <div class="building-info-container">
-            <crem-descriptions [items]="propertyDescriptions"></crem-descriptions>
+            <div class="building-info">
+              <crem-descriptions
+                [items]="propertyDescriptions"
+              ></crem-descriptions>
+            </div>
+            <div class="building-space"></div>
+          </div>
+          <div class="verify-address-container">
+            <div class="verify-address-button-container">
+              <crem-button
+                [id]="'verify-address-button'"
+                [text]="'Verify Address'"
+                [btnStyle]="'flat'"
+                [color]="'primary'"
+                [size]="'medium'"
+                [ariaLabel]="'validate-address'"
+                [disabled]="false"
+                [className]="''"
+                [styles]="'width:200px'"
+                (buttonClick)="verifyAddress()"
+              ></crem-button>
+            </div>
+            <div class="no-matched-msg" *ngIf="showNoMatchedMsg">
+              {{ noMatchedMsg }}
+            </div>
+            <div *ngIf="cleanseAddress" class="cleanse-address-container">
+              <div class="content-container">
+                <div>
+                  <span class="label">Street Address </span>
+                  <span
+                    >{{ cleanseAddress.streetNumber }}
+                    {{ cleanseAddress.streetName }}
+                    {{ cleanseAddress.streetType }}</span
+                  >
+                </div>
+                <div class="address-alignment-container">
+                  <div class="left-column">
+                    <div>
+                      <span class="label">City </span>
+                      <span>{{ cleanseAddress.city }}</span>
+                    </div>
+                    <div>
+                      <span class="label">Zip Code </span>
+                      <span>{{ cleanseAddress.postcode }}</span>
+                    </div>
+                    <div>
+                      <span class="label">Latitude </span>
+                      <span>{{ cleanseAddress.latitude }}</span>
+                    </div>
+                  </div>
+                  <div class="right-column">
+                    <div>
+                      <span class="label">State </span>
+                      <span>{{ cleanseAddress.state }}</span>
+                    </div>
+                    <div>
+                      <span class="label">Country </span>
+                      <span>{{ cleanseAddress.countryCode }}</span>
+                    </div>
+                    <div>
+                      <span class="label">Longitude </span>
+                      <span>{{ cleanseAddress.longitude }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="map-container">
+                <google-map height="100%" width="100%" [options]="options">
+                  <map-marker [position]="marker.position"></map-marker>
+                </google-map>
+              </div>
+            </div>
           </div>
         </crem-card>
         <div class="costar-matching-properties-container">
@@ -23,34 +97,64 @@
                 [showInfo]="false"
                 [value]="buildingInfo.buildingAddress_1"
                 [debounceTime]="500"
-                (changed)="searchCostarProperties($event)">
+                (changed)="searchCostarProperties($event)"
+              >
               </crem-search>
             </div>
             <div class="grid-container">
-              <dx-data-grid #PropertiesGrid
-                id="costar-matching-matched-properties" 
+              <dx-data-grid
+                #PropertiesGrid
+                id="costar-matching-matched-properties"
                 [dataSource]="properties"
-                [showBorders]="true" 
+                [showBorders]="true"
                 [hoverStateEnabled]="true"
-                [showRowLines]="true" 
+                [showRowLines]="true"
                 [showColumnLines]="false"
                 (onKeyDown)="onGridCellKeyDown($event)"
-                (onSelectionChanged)="onSelectionChanged($event)">
+                (onSelectionChanged)="onSelectionChanged($event)"
+              >
                 <dxo-selection mode="multiple"></dxo-selection>
-                <dxi-column dataField="coStarID" caption="CoStar ID" alignment="left"></dxi-column>
-                <dxi-column dataField="coStarAddress" caption="Property Address" alignment="left" dataType="date" format="MM/dd/yyyy hh:mm:ss a"></dxi-column>
-                <dxi-column dataField="propertyType" caption="Property Type" alignment="left"></dxi-column>
-                <dxi-column dataField="confidenceScore" caption="Confidence Score" alignment="left"></dxi-column>
+                <dxi-column
+                  dataField="coStarID"
+                  caption="CoStar ID"
+                  alignment="left"
+                ></dxi-column>
+                <dxi-column
+                  dataField="coStarAddress"
+                  caption="Property Address"
+                  alignment="left"
+                  dataType="date"
+                  format="MM/dd/yyyy hh:mm:ss a"
+                ></dxi-column>
+                <dxi-column
+                  dataField="propertyType"
+                  caption="Property Type"
+                  alignment="left"
+                ></dxi-column>
+                <dxi-column
+                  dataField="confidenceScore"
+                  caption="Confidence Score"
+                  alignment="left"
+                ></dxi-column>
               </dx-data-grid>
             </div>
-            <div class="associatedPropertyInfo" *ngIf="PropertiesGrid.selectedRowKeys.length && userHasAddRights">
+            <div
+              class="associatedPropertyInfo"
+              *ngIf="PropertiesGrid.selectedRowKeys.length && userHasAddRights"
+            >
               <div>Associate Property to</div>
-              <div class="propertyInfo">{{ PropertiesGrid.instance.getSelectedRowsData()[0].coStarAddress }}</div>
-              <div class="confirm">  
-                <crem-button class="confirm-button"
-                  type="primary" 
-                  id="costar-matching-confirm-button" 
-                  (buttonClick)="saveCostarInfo()">Confirm
+              <div class="propertyInfo">
+                {{
+                  PropertiesGrid.instance.getSelectedRowsData()[0].coStarAddress
+                }}
+              </div>
+              <div class="confirm">
+                <crem-button
+                  class="confirm-button"
+                  type="primary"
+                  id="costar-matching-confirm-button"
+                  (buttonClick)="saveCostarInfo()"
+                  >Confirm
                 </crem-button>
               </div>
             </div>
@@ -64,8 +168,10 @@
 <ng-template #noAccessFlgContent>
   <div class="page-content">
     <crem-no-objects-found
-        [title]="'No access to the CoStar Matching'"
-        [subtitle]="'You do not currently have access to this page, please contact your Admin'"
+      [title]="'No access to the CoStar Matching'"
+      [subtitle]="
+        'You do not currently have access to this page, please contact your Admin'
+      "
     ></crem-no-objects-found>
   </div>
 </ng-template>
@@ -73,6 +179,8 @@
 <ng-template #noPageAccessContent>
   <div class="page-content">
     <p>401 Unauthorized</p>
-    <p>You do not currently have access to this page, please contact your Admin.</p>
+    <p>
+      You do not currently have access to this page, please contact your Admin.
+    </p>
   </div>
 </ng-template>

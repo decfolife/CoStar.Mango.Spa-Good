@@ -3,12 +3,19 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { StorageService } from '@mango/core-shared';
-import { Environment, IDLE_TIMOUT_DELAY_SECONDS, IS_CA_STANDALONE_APP } from '@mango/data-models/lib-data-models';
+import { CurrentObjectService, StorageService } from '@mango/core-shared';
+import {
+  Environment,
+  IDLE_TIMOUT_DELAY_SECONDS,
+  IS_CA_STANDALONE_APP,
+} from '@mango/data-models/lib-data-models';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { JwtService, provideUserIdleConfig } from 'libs/core-shared/src/lib/services';
+import {
+  JwtService,
+  provideUserIdleConfig,
+} from 'libs/core-shared/src/lib/services';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from '../environments/environment.dev';
 import { AuthenticationEffects } from './+state/effects/authentication.effects';
@@ -53,39 +60,41 @@ if (!environment.production) {
       {
         path: '',
         component: LoginComponent,
-        title: 'CoStar Real Estate Manger Secure Login'
+        title: 'CoStar Real Estate Manger Secure Login',
       },
       {
         path: 'customer-selection',
         component: CustomerSelectionPageComponent,
         canActivate: [AuthGuard],
-        title: 'Customer Selection - CoStar Real Estate Manger Secure Login'
+        title: 'Customer Selection - CoStar Real Estate Manger Secure Login',
       },
       {
         path: 'service-account-configuration',
         component: ServiceAccountConfigurationComponent,
         canActivate: [AuthGuard],
-        title: 'Service Account Configuration - CoStar Real Estate Manger Secure Login'
+        title:
+          'Service Account Configuration - CoStar Real Estate Manger Secure Login',
       },
       {
         path: 'reset-password',
         loadChildren: () =>
           import('./components/reset-password/reset-password.module').then(
-            (mod) => mod.ResetPasswordModule),
-        title: 'Reset Password - CoStar Real Estate Manger Secure Login'
+            (mod) => mod.ResetPasswordModule
+          ),
+        title: 'Reset Password - CoStar Real Estate Manger Secure Login',
       },
       {
         path: 'password-reset-request',
         loadChildren: () =>
-          import('./components/password-reset-request/password-reset-request.module').then(
-            (mod) => mod.PasswordResetRequestModule
-          ),
-          title: 'Reset Password - CoStar Real Estate Manger Secure Login'
+          import(
+            './components/password-reset-request/password-reset-request.module'
+          ).then((mod) => mod.PasswordResetRequestModule),
+        title: 'Reset Password - CoStar Real Estate Manger Secure Login',
       },
       {
         path: ':clientKey',
         component: LoginComponent,
-        title: 'CoStar Real Estate Manger Secure Login'
+        title: 'CoStar Real Estate Manger Secure Login',
       },
       { path: '', redirectTo: '', pathMatch: 'full' },
       { path: '**', redirectTo: '', pathMatch: 'full' },
@@ -102,7 +111,12 @@ if (!environment.production) {
     ),
     EffectsModule.forRoot([]),
     StoreModule.forFeature(fromApp.CENTRAL_AUTH_FEATURE_KEY, fromApp.reducer),
-    EffectsModule.forFeature([AppEffects, HttpEffects, AuthenticationEffects, OAuthEffects]),
+    EffectsModule.forFeature([
+      AppEffects,
+      HttpEffects,
+      AuthenticationEffects,
+      OAuthEffects,
+    ]),
     ...DEV_MODULES,
     ToastrModule.forRoot({
       timeOut: 8000,
@@ -114,20 +128,25 @@ if (!environment.production) {
     }),
     CentralAuthErrorHandler.forRoot(),
     CentralAuthHttpInterceptor.forRoot(),
-    DxLoadPanelModule
+    DxLoadPanelModule,
   ],
   providers: [
     { provide: Environment, useValue: environment },
     { provide: IS_CA_STANDALONE_APP, useValue: true },
-    provideUserIdleConfig({ idle: 1, timeout: IDLE_TIMOUT_DELAY_SECONDS, ping: 2 }),
+    provideUserIdleConfig({
+      idle: 1,
+      timeout: IDLE_TIMOUT_DELAY_SECONDS,
+      ping: 2,
+    }),
     AuthGuard,
     RoleGuard,
     AuthService,
     ServiceAccountService,
     StorageService,
     JwtService,
+    CurrentObjectService,
     CentralAuthFacade,
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

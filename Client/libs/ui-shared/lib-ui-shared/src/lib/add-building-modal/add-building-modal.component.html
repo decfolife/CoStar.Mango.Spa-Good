@@ -1,40 +1,90 @@
-<dx-load-panel shadingColor="rgba(255,255,255)" [visible]="loading" *ngIf="loading" [showIndicator]="true"
-  [showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
+<dx-load-panel
+  shadingColor="rgba(255,255,255)"
+  [visible]="loading"
+  *ngIf="loading"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="true"
+  [closeOnOutsideClick]="false"
+></dx-load-panel>
 
-<crem-modal modalId="add_building_modal__add_modal" modalTitleId="add_building_modal__create_center"
-  [modalTitle]="modalTitle" closeIconVisible="true" [customFooter]="true">
+<crem-modal
+  modalId="add_building_modal__add_modal"
+  modalTitleId="add_building_modal__create_center"
+  [modalTitle]="modalTitle"
+  closeIconVisible="true"
+  [customFooter]="true"
+>
   <div modalContent class="body-content">
     <div modalContent id="addBuildingModal-content">
-      <form crem-form id="new-building-form" layout="vertical" [formGroup]="addBuildingFormGroup">
+      <form
+        crem-form
+        id="new-building-form"
+        layout="vertical"
+        [formGroup]="addBuildingFormGroup"
+      >
         <crem-form-item id="aet-buildingName-container">
-          <crem-form-label [required]="true">{{dynName}} Name</crem-form-label>
+          <crem-form-label [required]="true"
+            >{{ dynName }} Name</crem-form-label
+          >
           <crem-form-control>
-            <crem-input #BuildingName  id="buildingName" [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'"
-              [required]="true" formControlName='buildingName' placeholder="Enter Building name"></crem-input>
+            <crem-input
+              #BuildingName
+              id="buildingName"
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [required]="true"
+              formControlName="buildingName"
+              placeholder="Enter Building name"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
         <crem-form-item id="aet-Portfolio-container">
           <crem-form-label [required]="true">Portfolio</crem-form-label>
           <crem-form-control>
-            <crem-dropdown id="buildingPortfolioId" #buildingPortfolioId
-              dropDownContainerCustomClass="buildingPortfolioDropDown" [dataSource]='portfolioDropdownItem'
-              [showClearButton]='true' [required]="true" [customRequireValidation]="false" [showColumnHeader]='false'
-              displayExpr='CompanyName' valueExpr='CompanyID' [allowSearch]='true' [useSelectBox]="true"
-              hoverText="Select Portfolio" [isDisabled]="loading" [showDefaultValidationTooltip]="true"
-              formControlName="selectedPortfolio">
+            <crem-dropdown
+              id="buildingPortfolioId"
+              #buildingPortfolioId
+              dropDownContainerCustomClass="buildingPortfolioDropDown"
+              [dataSource]="portfolioDropdownItem"
+              [showClearButton]="true"
+              [required]="true"
+              [customRequireValidation]="false"
+              [showColumnHeader]="false"
+              displayExpr="companyName"
+              valueExpr="companyID"
+              [allowSearch]="true"
+              [useSelectBox]="true"
+              hoverText="Select Portfolio"
+              [isDisabled]="loading"
+              [showDefaultValidationTooltip]="true"
+              formControlName="selectedPortfolio"
+            >
             </crem-dropdown>
           </crem-form-control>
         </crem-form-item>
 
-
         <crem-form-item id="aet-template-container">
           <crem-form-label [required]="true">Template</crem-form-label>
           <crem-form-control>
-            <crem-dropdown id="buildingTemplateId" #buildingTemplateId
-              dropDownContainerCustomClass="buildingTemplateDropDown" [dataSource]='templateDropdownItem'
-              [showClearButton]='true' [showColumnHeader]='false' [required]="true" displayExpr='ObjectTypeTypeName'
-              valueExpr='ObjectTypeTypeID' [allowSearch]='true' [useSelectBox]="true" hoverText="Select Template"
-              [isDisabled]="loading" formControlName="selectedTemplate">
+            <crem-dropdown
+              id="buildingTemplateId"
+              #buildingTemplateId
+              dropDownContainerCustomClass="buildingTemplateDropDown"
+              [dataSource]="templateDropdownItem"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              [required]="true"
+              displayExpr="objectTypeTypeName"
+              valueExpr="objectTypeTypeID"
+              [allowSearch]="true"
+              [useSelectBox]="true"
+              hoverText="Select Template"
+              [isDisabled]="loading"
+              formControlName="selectedTemplate"
+            >
             </crem-dropdown>
           </crem-form-control>
         </crem-form-item>
@@ -42,11 +92,21 @@
         <crem-form-item id="aet-hierarchy-container">
           <crem-form-label>Hierarchy</crem-form-label>
           <crem-form-control>
-            <crem-dropdown id="buildingHierarchyId" #buildingHierarchyId
-              dropDownContainerCustomClass="buildingHierarchyDropDown" [dataSource]='hierarchyDropdownItem'
-              [showClearButton]='true' [showColumnHeader]='false' displayExpr='CompanyName' valueExpr='CompanyID'
-              [allowSearch]='true' [useSelectBox]="true" hoverText="Select Hierarchy" [isDisabled]="loading"
-              formControlName="selectedHierarchy">
+            <crem-dropdown
+              id="buildingHierarchyId"
+              #buildingHierarchyId
+              dropDownContainerCustomClass="buildingHierarchyDropDown"
+              [dataSource]="hierarchyDropdownItem"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="companyName"
+              valueExpr="companyID"
+              [allowSearch]="true"
+              [useSelectBox]="true"
+              hoverText="Select Hierarchy"
+              [isDisabled]="loading"
+              formControlName="selectedHierarchy"
+            >
             </crem-dropdown>
           </crem-form-control>
         </crem-form-item>
@@ -54,21 +114,38 @@
         <crem-form-item>
           <crem-form-label>Country</crem-form-label>
           <crem-form-control>
-            <crem-dropdown id="buildingCountryId" #buildingCountryId [dataSource]='countryDropdownItem'
-              [showClearButton]='true' [showColumnHeader]='false' displayExpr='Country' valueExpr='Country'
-              [allowSearch]='true' [useSelectBox]="true" hoverText="Select Country"
-              [initialSelectedValue]="'United States'" [selectBoxValue]="'United States'"
-              formControlName="selectedCountry">
+            <crem-dropdown
+              id="buildingCountryId"
+              #buildingCountryId
+              [dataSource]="countryDropdownItem"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="country"
+              valueExpr="country"
+              [allowSearch]="true"
+              [useSelectBox]="true"
+              hoverText="Select Country"
+              [initialSelectedValue]="'United States'"
+              [selectBoxValue]="'United States'"
+              formControlName="selectedCountry"
+            >
             </crem-dropdown>
           </crem-form-control>
         </crem-form-item>
 
         <crem-form-item>
-          <crem-form-label>{{dynName}} Address</crem-form-label>
+          <crem-form-label>{{ dynName }} Address</crem-form-label>
           <crem-form-control>
-            <crem-input id="buildingAddress" [showHint]="false" [showLabel]="false" [showInfo]="false"
-              [inputType]="'text'" [required]="false" formControlName='buildingAddress'
-              placeholder="Enter Building Address"></crem-input>
+            <crem-input
+              id="buildingAddress"
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [required]="false"
+              formControlName="buildingAddress"
+              placeholder="Enter Building Address"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
@@ -77,8 +154,15 @@
             <crem-form-item>
               <crem-form-label>City</crem-form-label>
               <crem-form-control>
-                <crem-input id="buildingCity" [showHint]="false" [showLabel]="false" [showInfo]="false"
-                  [inputType]="'text'" formControlName='buildingCity' placeholder="Enter City"></crem-input>
+                <crem-input
+                  id="buildingCity"
+                  [showHint]="false"
+                  [showLabel]="false"
+                  [showInfo]="false"
+                  [inputType]="'text'"
+                  formControlName="buildingCity"
+                  placeholder="Enter City"
+                ></crem-input>
               </crem-form-control>
             </crem-form-item>
           </div>
@@ -87,15 +171,31 @@
             <crem-form-item>
               <crem-form-label>State/Province</crem-form-label>
               <crem-form-control>
-                <crem-dropdown id="stateId" *ngIf="enableStateDropDown" [dataSource]='stateDropdownItem'
-                  [showClearButton]='true' [showColumnHeader]='false' displayExpr='State' valueExpr='State'
-                  [allowSearch]='true' [useSelectBox]="true"
-                  hoverText="Select State" formControlName="buildingState">
+                <crem-dropdown
+                  id="stateId"
+                  *ngIf="enableStateDropDown"
+                  [dataSource]="stateDropdownItem"
+                  [showClearButton]="true"
+                  [showColumnHeader]="false"
+                  displayExpr="state"
+                  valueExpr="state"
+                  [allowSearch]="true"
+                  [useSelectBox]="true"
+                  hoverText="Select State"
+                  formControlName="buildingState"
+                >
                 </crem-dropdown>
 
-                <crem-input id="stateId" *ngIf="!enableStateDropDown" [showHint]="false" [showLabel]="false"
-                  [showInfo]="false" [inputType]="'text'" formControlName='buildingStateInput'
-                  placeholder="Enter State/Province"></crem-input>
+                <crem-input
+                  id="stateId"
+                  *ngIf="!enableStateDropDown"
+                  [showHint]="false"
+                  [showLabel]="false"
+                  [showInfo]="false"
+                  [inputType]="'text'"
+                  formControlName="buildingStateInput"
+                  placeholder="Enter State/Province"
+                ></crem-input>
               </crem-form-control>
             </crem-form-item>
           </div>
@@ -104,21 +204,39 @@
             <crem-form-item>
               <crem-form-label>Zip code</crem-form-label>
               <crem-form-control>
-                <crem-input id="buildingZipCode" [showHint]="false" [showLabel]="false" [showInfo]="false"
-                  [inputType]="'text'" formControlName='buildingZipCode'
-                  placeholder="Enter Building Zip Code"></crem-input>
+                <crem-input
+                  id="buildingZipCode"
+                  [showHint]="false"
+                  [showLabel]="false"
+                  [showInfo]="false"
+                  [inputType]="'text'"
+                  formControlName="buildingZipCode"
+                  placeholder="Enter Building Zip Code"
+                ></crem-input>
               </crem-form-control>
             </crem-form-item>
           </div>
         </div>
 
         <crem-form-item>
-          <crem-form-label [required]="enableSubGroupDropDown">Sub Group</crem-form-label>
+          <crem-form-label [required]="enableSubGroupDropDown"
+            >Sub Group</crem-form-label
+          >
           <crem-form-control>
-            <crem-dropdown id="buildingSubGroupId" #buildingSubGroupIdIdDropdown [dataSource]='subGroupDropdownItem'
-              [showClearButton]='true' [showColumnHeader]='false' displayExpr='CompanyName' valueExpr='CompanyID'
-              [allowSearch]='true' [required]="enableSubGroupDropDown" [useSelectBox]="true"
-              hoverText="Select Sub Group" formControlName="selectedSubGroup">
+            <crem-dropdown
+              id="buildingSubGroupId"
+              #buildingSubGroupIdIdDropdown
+              [dataSource]="subGroupDropdownItem"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="companyName"
+              valueExpr="companyID"
+              [allowSearch]="true"
+              [required]="enableSubGroupDropDown"
+              [useSelectBox]="true"
+              hoverText="Select Sub Group"
+              formControlName="selectedSubGroup"
+            >
             </crem-dropdown>
           </crem-form-control>
         </crem-form-item>
@@ -127,31 +245,54 @@
   </div>
 
   <div modalFooter class="addBuildingFooter">
+    <crem-button
+      type="secondary"
+      id="add_building_modal__cancel_btn"
+      (click)="close()"
+    >
+      Cancel</crem-button
+    >
 
-    <crem-button type="secondary" id="add_building_modal__cancel_btn" (click)="close()">
-      Cancel</crem-button>
-
-    <crem-button type="secondary" id="add_building_modal__save_btn" (click)="save($event)" [disabled]="saveClicked"
-      [icon]="saveClicked? 'faSpinner':''" [iconPack]="saveClicked? 'solid':''"
-      [iconAnimation]="saveClicked? 'spin':''">
+    <crem-button
+      type="secondary"
+      id="add_building_modal__save_btn"
+      (click)="save()"
+      [disabled]="saveClicked"
+      [icon]="saveClicked ? 'faSpinner' : ''"
+      [iconPack]="saveClicked ? 'solid' : ''"
+      [iconAnimation]="saveClicked ? 'spin' : ''"
+    >
       <span>
-        {{saveClicked ? 'Saving':'Save'}}
-      </span></crem-button>
+        {{ saveClicked ? 'Saving' : 'Save' }}
+      </span></crem-button
+    >
 
-    <crem-button type="secondary" id="add_building_modal__savenew_btn" (click)="saveAndNew($event)"
-      [disabled]="saveNewClicked" [icon]="saveNewClicked? 'faSpinner':''" [iconPack]="saveNewClicked? 'solid':''"
-      [iconAnimation]="saveClicked? 'spin':''">
+    <crem-button
+      type="secondary"
+      id="add_building_modal__savenew_btn"
+      (click)="saveAndNew()"
+      [disabled]="saveNewClicked"
+      [icon]="saveNewClicked ? 'faSpinner' : ''"
+      [iconPack]="saveNewClicked ? 'solid' : ''"
+      [iconAnimation]="saveClicked ? 'spin' : ''"
+    >
       <span>
-        {{saveNewClicked ? 'Saving':'Save and New'}}
-      </span></crem-button>
+        {{ saveNewClicked ? 'Saving' : 'Save and New' }}
+      </span></crem-button
+    >
 
-    <crem-button id="add_building_modal__launch_btn" type="primary" (click)="launch($event)"
-      [disabled]="saveLaunchClicked" [icon]="saveLaunchClicked? 'faSpinner':''"
-      [iconPack]="saveLaunchClicked? 'solid':''" [iconAnimation]="saveLaunchClicked? 'spin':''">
+    <crem-button
+      id="add_building_modal__launch_btn"
+      type="primary"
+      (click)="launch()"
+      [disabled]="saveLaunchClicked"
+      [icon]="saveLaunchClicked ? 'faSpinner' : ''"
+      [iconPack]="saveLaunchClicked ? 'solid' : ''"
+      [iconAnimation]="saveLaunchClicked ? 'spin' : ''"
+    >
       <span>
-        {{saveLaunchClicked ? 'Saving':'Launch'}}
+        {{ saveLaunchClicked ? 'Saving' : 'Launch' }}
       </span>
     </crem-button>
-
   </div>
 </crem-modal>

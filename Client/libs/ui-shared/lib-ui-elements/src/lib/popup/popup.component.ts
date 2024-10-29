@@ -34,7 +34,8 @@ export class CremPopupComponent {
   @Input() resizable = false;
   @Input() showCloseButton = true;
   @Input() hideOnOutsideClick = false;
-  @Input() customFooter: boolean;
+  @Input() customFooter = false;
+  @Input() showFooter = true;
   @Input() disableSaveButton = false;
   @Input() disableSApplyButton = false;
   @Input() disableCloseButton = false;
@@ -45,6 +46,10 @@ export class CremPopupComponent {
 
   closePopup(): void {
     this.visible = false;
+    this.close.emit('close');
+  }
+
+  onHidden(): void {
     this.close.emit('close');
   }
 

@@ -85,4 +85,4 @@ import { ROUTES } from './index.routes';
   ],
   providers: [ExportDevexDatagridService],
 })
-export class IndexModule { }
+export class IndexModule {}

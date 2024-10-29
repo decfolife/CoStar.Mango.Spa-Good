@@ -1,11 +1,11 @@
 div {
-    display: flex;
+  display: flex;
 }
 
 .genericError-modal {
-    &__content {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 0 24px;
-    }
+  &__content {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 24px;
+  }
 }

@@ -1,0 +1,102 @@
+<crem-modal
+  id="upload-files-modal"
+  modalTitle="Upload Task Files"
+  [primaryFooterButtonText]="'Close'"
+  [closeIconVisible]="true"
+  [customHeader]="false"
+  (primaryButtonAction)="onClose()"
+>
+  <div modalContent id="upload-files-modal__content">
+    <div class="task-files">
+      <input
+        type="file"
+        class="task-files__file-input"
+        (change)="filesSelected($event)"
+        #fileUpload
+        multiple
+        [accept]="allowedFileExtensions"
+      />
+      <div class="task-files__description">
+        Click on the ellipsis on a Folder to see options to add a New Folder or
+        Attach Files.
+      </div>
+      <crem-loader *ngIf="!(folders$ | async).length"></crem-loader>
+      <div class="task-files__view">
+        <div class="task-files__file-manager">
+          <dx-file-manager
+            id="files-upload-file-manager"
+            #fileManager
+            height="400px"
+            [fileSystemProvider]="parsedFolders"
+            (onToolbarItemClick)="onMenuOrToolbarClick($event)"
+            (onContextMenuItemClick)="onMenuOrToolbarClick($event)"
+            [toolbar]="toolbarSettings"
+            selectionMode="single"
+            (onSelectionChanged)="selectionChanged($event)"
+            (onCurrentDirectoryChanged)="onDirectoryChanged($event)"
+            (onContextMenuShowing)="onContextMenuShowing($event)"
+            rootFolderName="Main"
+            [width]="(selectedFiles$ | async)?.length > 0 ? '700px' : '960px'"
+            *ngIf="!!parsedFolders"
+          >
+            <dxo-permissions
+              [create]="true"
+              [copy]="false"
+              [move]="false"
+              [delete]="true"
+              [rename]="false"
+              [upload]="true"
+              [download]="false"
+            >
+            </dxo-permissions>
+            <dxo-item-view [showFolders]="true" [showParentFolder]="false">
+              <dxo-details>
+                <dxi-column
+                  dataField="thumbnail"
+                  caption=""
+                  calculateSortValue="isDirectory"
+                  width="36"
+                ></dxi-column>
+                <dxi-column
+                  dataField="name"
+                  width="300"
+                  [hidingPriority]="1"
+                  [showFolders]="true"
+                  cssClass="crem-file-manager-row"
+                ></dxi-column>
+                <dxi-column
+                  caption="Description"
+                  dataField="description"
+                  cssClass="crem-file-manager-row"
+                  [hidingPriority]="0"
+                ></dxi-column>
+              </dxo-details>
+            </dxo-item-view>
+
+            <dxo-context-menu>
+              <dxi-item
+                [text]="FILE_ACTIONS.NEW_FOLDER"
+                name="add_folder"
+              ></dxi-item>
+              <dxi-item
+                [text]="FILE_ACTIONS.ATTACH_FILES"
+                name="upload_files"
+              ></dxi-item>
+            </dxo-context-menu>
+          </dx-file-manager>
+        </div>
+
+        <div class="task-files__files-list">
+          <crem-upload-file-list
+            *ngIf="(selectedFiles$ | async)?.length > 0"
+            (onUploadClick)="uploadFiles()"
+          ></crem-upload-file-list>
+        </div>
+
+        <crem-add-folder-popup
+          (onFolderCreated)="onFolderCreated($event)"
+        ></crem-add-folder-popup>
+      </div>
+    </div>
+  </div>
+</crem-modal>

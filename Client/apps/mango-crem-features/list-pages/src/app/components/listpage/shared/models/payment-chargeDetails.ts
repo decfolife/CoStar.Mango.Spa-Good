@@ -5,7 +5,7 @@ export interface ChargeDetails {
   currency: string;
   startDate: string;
   endDate: string;
-  area: number;    //double on the backend;
+  area: number; //double on the backend;
   isProrated: boolean;
   prorationType: string;
   firstPaymentDate: string;
@@ -17,7 +17,7 @@ export interface ChargeDetails {
   recognitionCategoryIFRS: string;
   processingStatus: string;
   createdDate: string;
-  createdByID: number;    //int on the backend
+  createdByID: number; //int on the backend
   createdBy: string;
   modifiedDate: string;
   modifiedByID: number;

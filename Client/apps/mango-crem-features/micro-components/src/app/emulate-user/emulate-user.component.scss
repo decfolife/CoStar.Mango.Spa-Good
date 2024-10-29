@@ -1,5 +1,4 @@
-@use "styles" as *;
-
+@use 'styles' as *;
 
 .emulate-user {
   display: flex;
@@ -8,60 +7,71 @@
 
   input.search__input.mat-mdc-input-element {
     margin-top: 0px !important;
-    margin-right:28px;
+    margin-right: 28px;
   }
 
   svg#brand-search {
-      padding-top: 6px;
+    padding-top: 6px;
   }
 
   // todo: This is not being applied
   cs-text-field {
-    mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-outline>* {
+    mat-form-field.mat-form-field.mat-form-field-appearance-outline
+      div.mat-form-field-wrapper
+      div.mat-form-field-flex
+      div.mat-form-field-outline
+      > * {
       @include costar(background-color, light);
-        border: none !important ;
-        outline: 0 !important;
-        display:none !important;
+      border: none !important ;
+      outline: 0 !important;
+      display: none !important;
     }
-    mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-mdc-form-field-infix {
-        padding: 0px !important;
-        overflow: visible !important;
-        height: 32px !important;
-        @include costar(border, gray04);
-        @include costar(background-color, light);
-        margin-top: 0px !important;
-        padding-left: 8px !important;
-        font-size: 16px !important;
-        min-width: 200px !important;
-    
-        input:focus {
-            border: none !important;
-        }
+    mat-form-field.mat-form-field.mat-form-field-appearance-outline
+      div.mat-form-field-wrapper
+      div.mat-form-field-flex
+      div.mat-mdc-form-field-infix {
+      padding: 0px !important;
+      overflow: visible !important;
+      height: 32px !important;
+      @include costar(border, gray04);
+      @include costar(background-color, light);
+      margin-top: 0px !important;
+      padding-left: 8px !important;
+      font-size: 16px !important;
+      min-width: 200px !important;
+
+      input:focus {
+        border: none !important;
+      }
     }
 
-    mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper div.mat-form-field-flex div.mat-form-field-outline >* {
-        @include costar(background-color, light);
-        border: none !important;
-        display: none !important
+    mat-form-field.mat-form-field.mat-form-field-appearance-outline
+      div.mat-form-field-wrapper
+      div.mat-form-field-flex
+      div.mat-form-field-outline
+      > * {
+      @include costar(background-color, light);
+      border: none !important;
+      display: none !important;
     }
 
     mat-form-field {
-        &.mat-mdc-form-field {
-            line-height: 21px;
-            &.mat-form-field-appearance-outline {
-                div.mat-form-field-wrapper {
-                    margin: 0px;
-                    padding: 0 0 8px 0;
-                    div.mat-form-field-flex {
-                      padding: 0px;
-                      div.mat-mdc-form-field-infix {
-                          display: flex;
-                      }
-                      div.mat-form-field-suffix {
-                          right: 22px;
-                          top: 0px !important;
-                          align-self: center;
-                      }
+      &.mat-mdc-form-field {
+        line-height: 21px;
+        &.mat-form-field-appearance-outline {
+          div.mat-form-field-wrapper {
+            margin: 0px;
+            padding: 0 0 8px 0;
+            div.mat-form-field-flex {
+              padding: 0px;
+              div.mat-mdc-form-field-infix {
+                display: flex;
+              }
+              div.mat-form-field-suffix {
+                right: 22px;
+                top: 0px !important;
+                align-self: center;
+              }
             }
           }
         }
@@ -69,6 +79,6 @@
     }
   }
   .emulate-user__password-field {
-      margin-top: 12px;
+    margin-top: 12px;
   }
 }

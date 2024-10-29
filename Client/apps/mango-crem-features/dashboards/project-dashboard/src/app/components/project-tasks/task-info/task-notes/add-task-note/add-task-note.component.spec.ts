@@ -8,7 +8,7 @@ describe('AddTaskNoteComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddTaskNoteComponent]
+      declarations: [AddTaskNoteComponent],
     });
     fixture = TestBed.createComponent(AddTaskNoteComponent);
     component = fixture.componentInstance;

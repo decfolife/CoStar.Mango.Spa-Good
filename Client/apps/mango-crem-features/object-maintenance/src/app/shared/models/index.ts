@@ -1,1 +1,1 @@
-export * from './resolved-data.model'
+export * from './resolved-data.model';

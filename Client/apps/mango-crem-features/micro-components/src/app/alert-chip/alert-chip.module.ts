@@ -4,15 +4,8 @@ import { AlertChipComponent } from './alert-chip.component';
 import { EnvInfoChipModule } from '@mango/ui-shared/lib-ui-shared';
 
 @NgModule({
-  declarations: [
-    AlertChipComponent
-  ],
-  imports: [
-    CommonModule,
-    EnvInfoChipModule
-  ],
-  exports: [
-    AlertChipComponent
-  ]
+  declarations: [AlertChipComponent],
+  imports: [CommonModule, EnvInfoChipModule],
+  exports: [AlertChipComponent],
 })
-export class AlertChipModule { }
+export class AlertChipModule {}

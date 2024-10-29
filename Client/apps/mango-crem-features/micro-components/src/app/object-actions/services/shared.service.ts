@@ -8,15 +8,14 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class SharedService extends EndpointService {
-  objectActions: string = UtilitiesService.getBaseApiUrl(Api.objectActions)
-  
+  objectActions: string = UtilitiesService.getBaseApiUrl(Api.objectActions);
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getUserPreferences(): Observable<any> {
     const url = `${this.objectActions}ObjectActions/GetUserPreferences`;
-    return this.callHttpGet(url, 'getUserPreferences')
+    return this.callHttpGet(url, 'getUserPreferences');
   }
 }
-

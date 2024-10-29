@@ -11,12 +11,16 @@ import { AppComponent } from './app.component';
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [AppComponent],
-  imports: [BrowserModule, BrowserAnimationsModule, HttpClientModule, FontAwesomeModule],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    FontAwesomeModule,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {
-
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
     const el = createCustomElement(AppComponent, { injector: this.injector });

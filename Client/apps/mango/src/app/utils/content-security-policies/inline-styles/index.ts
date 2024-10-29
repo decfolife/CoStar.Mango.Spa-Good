@@ -22,7 +22,7 @@ import { CustomMediaMatcher } from './media-matcher';
   providers: [
     { provide: 'cspMetaSelector', useValue: 'meta[name="CSP-NONCE"]' },
     { provide: ɵDomSharedStylesHost, useClass: CustomDomSharedStylesHost },
-    { provide: MediaMatcher, useClass: CustomMediaMatcher},
+    { provide: MediaMatcher, useClass: CustomMediaMatcher },
   ],
 })
 export class CSPModuleInlineStyles {}

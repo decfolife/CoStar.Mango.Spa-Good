@@ -1,23 +1,23 @@
 @use 'styles' as *;
 
 #portfolio-filters {
-	width: 100% !important;
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
+  width: 100% !important;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
 
-	crem-button button {
-		margin-left: 0;
-	}
+  crem-button button {
+    margin-left: 0;
+  }
 }
 
 .message {
-	padding: 16px;
-	color: maroon;
-	font-weight: bold;
+  padding: 16px;
+  color: maroon;
+  font-weight: bold;
 }
 
 #portfolio-metrics {
-	position: relative;
-	height: 112px;
+  position: relative;
+  height: 112px;
 }

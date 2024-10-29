@@ -8,13 +8,13 @@ import { Observable } from 'rxjs';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  isLoading$: Observable<boolean>
-  
+  isLoading$: Observable<boolean>;
+
   constructor(private centralAuthFacade: CentralAuthFacade) {
-    this.isLoading$ = this.centralAuthFacade.loading$
+    this.isLoading$ = this.centralAuthFacade.loading$;
   }
 
   ngOnInit(): void {
-    this.centralAuthFacade.appInit()
+    this.centralAuthFacade.appInit();
   }
 }

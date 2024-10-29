@@ -7,9 +7,10 @@
 .checkbox-label {
   margin-left: 8px;
   margin-bottom: -5px;
+  @include costar(color, gray02);
 
   &.disabled {
-    @include costar(color, gray04);
+    @include costar(color, gray03);
   }
 }
 
@@ -17,7 +18,18 @@
   dx-check-box.dx-state-disabled {
     .dx-checkbox-icon {
       opacity: 1 !important;
-      background-color:  var(--costar-color-gray06);
+      @include costar(border, gray03);
+      @include costar(background-color, gray06);
+      @include costar(border-radius, medium);
+    }
+  }
+}
+
+:host ::ng-deep {
+  dx-check-box {
+    .dx-checkbox-icon {
+      @include costar(border-radius, medium);
+      @include costar(border, gray02);
     }
   }
 }

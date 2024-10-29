@@ -8,31 +8,43 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
 @Component({
   selector: 'mango-transaction-popup',
   templateUrl: './transaction-popup.component.html',
-  styleUrls: ['./transaction-popup.component.scss']
+  styleUrls: ['./transaction-popup.component.scss'],
 })
 export class TransactionPopupComponent {
-
-  @ViewChild("transactionPopupGrid") transactionPopupGrid: DxDataGridComponent;
+  @ViewChild('transactionPopupGrid') transactionPopupGrid: DxDataGridComponent;
   @Input() transactionPopupVisible: boolean;
   @Input() transactionPopupData: any;
   @Input() userInfo: UserInfoResponse;
   @Input() eventScheduleData: any;
 
-  componentName = "transaction"
+  componentName = 'transaction';
   transactionGridColumns = [];
   isEuroDateFormat = false;
   dateFormat = 'MM/dd/yyyy';
   summaryFields: any = {};
 
-  baseAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.chargeCurrencyDecimalPrecision);
-  targetAmountFormatter = (value: any) => this.formattingService.localFormat(+value, this.transactionPopupData.scheduleCurrencyDecimalPrecision);
-  
-  constructor(public accountingSummaryService: AccountingSummaryService, public formattingService: FormattingService, private transactionPopupGridColumnsService: TransactionPopupGridColumnsService) {
+  baseAmountFormatter = (value: any) =>
+    this.formattingService.localFormat(
+      +value,
+      this.transactionPopupData.chargeCurrencyDecimalPrecision
+    );
+  targetAmountFormatter = (value: any) =>
+    this.formattingService.localFormat(
+      +value,
+      this.transactionPopupData.scheduleCurrencyDecimalPrecision
+    );
 
-  }
+  constructor(
+    public accountingSummaryService: AccountingSummaryService,
+    public formattingService: FormattingService,
+    private transactionPopupGridColumnsService: TransactionPopupGridColumnsService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['transactionPopupData'] && !changes['transactionPopupData'].firstChange) {
+    if (
+      changes['transactionPopupData'] &&
+      !changes['transactionPopupData'].firstChange
+    ) {
       this.transactionPopupGridSetup();
       this.transactionPopupVisible = true;
     }
@@ -43,7 +55,7 @@ export class TransactionPopupComponent {
     if (this.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }
-    
+
     const scheduleEventBeginDate = new Date(this.eventScheduleData.beginDate);
     const scheduleEventEndDate = new Date(this.eventScheduleData.endDate);
     const scheduleincludeFromFirst = this.eventScheduleData.includeFromFirst;
@@ -51,14 +63,21 @@ export class TransactionPopupComponent {
     if (scheduleincludeFromFirst) {
       scheduleEventBeginDate.setDate(1); // Set the day of the month to 1
     }
-    
-      for (const transaction of this.transactionPopupData.transactions) {
-        const dueByDate = new Date(transaction.dueBy);
-        if (dueByDate < scheduleEventBeginDate || dueByDate > scheduleEventEndDate) {
-          transaction.targetAmount = 0;
-        }
+
+    for (const transaction of this.transactionPopupData.transactions) {
+      const dueByDate = new Date(transaction.dueBy);
+      if (
+        dueByDate < scheduleEventBeginDate ||
+        dueByDate > scheduleEventEndDate
+      ) {
+        transaction.targetAmount = 0;
       }
-      this.transactionGridColumns = this.transactionPopupGridColumnsService.getTransactionPopupGridColumns(this.transactionPopupData, this.dateFormat);
+    }
+    this.transactionGridColumns =
+      this.transactionPopupGridColumnsService.getTransactionPopupGridColumns(
+        this.transactionPopupData,
+        this.dateFormat
+      );
   }
 
   onTransactionPopupHidden() {
@@ -88,6 +107,3 @@ export class TransactionPopupComponent {
     }
   }
 }
-
-
-

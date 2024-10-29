@@ -17,12 +17,12 @@ describe('BatchLogsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BatchLogsComponent ],
+      declarations: [BatchLogsComponent],
       imports: [
         HttpClientTestingModule,
         RouterTestingModule,
         DevExtremeModule,
-        DxDataGridModule
+        DxDataGridModule,
       ],
     }).compileComponents();
   });
@@ -62,10 +62,17 @@ describe('BatchLogsComponent', () => {
   it('should implement ngAfterViewInit', () => {
     expect(component).toHaveProperty('ngAfterViewInit');
 
-    const spy = spyOn((component as any).batchEventService, 'getListViews')
-      .and.returnValue(of({
-        coStarListViews: [], hiddenListViews: [], myListViews: [], sharedListViews: []
-      }));
+    const spy = spyOn(
+      (component as any).batchEventService,
+      'getListViews'
+    ).and.returnValue(
+      of({
+        coStarListViews: [],
+        hiddenListViews: [],
+        myListViews: [],
+        sharedListViews: [],
+      })
+    );
 
     component.ngAfterViewInit();
 
@@ -75,14 +82,16 @@ describe('BatchLogsComponent', () => {
   it('should populate the grid', async () => {
     expect(component).toHaveProperty('populateBatchLogsAndParameters');
 
-    const spy = spyOn(component.service, 'getBatchLogsAndParameters')
-      .and.returnValue(of({ errors: [] }));
+    const spy = spyOn(
+      component.service,
+      'getBatchLogsAndParameters'
+    ).and.returnValue(of({ errors: [] }));
 
     component.populateBatchLogsAndParameters();
 
-    spy.and.returnValue(of([
-      { listOfLeaseIDs: '1', listOfScheduleIDs: '1,2' }
-    ]));
+    spy.and.returnValue(
+      of([{ listOfLeaseIDs: '1', listOfScheduleIDs: '1,2' }])
+    );
 
     component.populateBatchLogsAndParameters();
 
@@ -112,17 +121,13 @@ describe('BatchLogsComponent', () => {
       'Canceled',
       'Error',
       'Reversed',
-    ].forEach(status => {
+    ].forEach((status) => {
       data.batchStatus = status;
 
       expect(component.menuButtonVisible('download', data)).toBeTruthy();
     });
 
-    [
-      'Queued for Validation',
-      'Validating',
-      'Processing',
-    ].forEach(status => {
+    ['Queued for Validation', 'Validating', 'Processing'].forEach((status) => {
       data.batchStatus = status;
 
       expect(component.menuButtonVisible('download', data)).toBeFalsy();
@@ -133,7 +138,7 @@ describe('BatchLogsComponent', () => {
     component.service.userRights = 2;
     const data = {
       batchStatus: 'Validation Complete',
-      validationSuccessTotal: 1
+      validationSuccessTotal: 1,
     };
 
     expect(component.menuButtonVisible('process', data)).toBeTruthy();
@@ -149,7 +154,7 @@ describe('BatchLogsComponent', () => {
       'Queued for Validation',
       'Validation Complete',
       'Queued for Processing',
-    ].forEach(status => {
+    ].forEach((status) => {
       data.batchStatus = status;
 
       expect(component.menuButtonVisible('cancel', data)).toBeTruthy();
@@ -163,11 +168,11 @@ describe('BatchLogsComponent', () => {
       'Canceled',
       'Error',
       'Reversed',
-    ].forEach(status => {
+    ].forEach((status) => {
       data.batchStatus = status;
 
       expect(component.menuButtonVisible('cancel', data)).toBeFalsy();
-    })
+    });
   });
 
   it('should display a reverse button by batch status', () => {
@@ -176,10 +181,7 @@ describe('BatchLogsComponent', () => {
 
     expect(component.menuButtonVisible('', data)).toBeFalsy();
 
-    [
-      'Complete',
-      'Complete with Error',
-    ].forEach(status => {
+    ['Complete', 'Complete with Error'].forEach((status) => {
       data.batchStatus = status;
 
       expect(component.menuButtonVisible('reverse', data)).toBeTruthy();
@@ -194,7 +196,7 @@ describe('BatchLogsComponent', () => {
       'Canceled',
       'Error',
       'Reversed',
-    ].forEach(status => {
+    ].forEach((status) => {
       data.batchStatus = status;
 
       expect(component.menuButtonVisible('reverse', data)).toBeFalsy();
@@ -202,27 +204,31 @@ describe('BatchLogsComponent', () => {
   });
 
   it('should map menu callbacks to methods', () => {
-    const exportSpy = spyOn((component as any), 'exportExcel');
+    const exportSpy = spyOn(component as any, 'exportExcel');
     component.actionMenuCallback('download', {});
     expect(exportSpy.calls.count()).toEqual(1);
 
-    const processSpy = spyOn((component as any), 'queueForProcessing');
+    const processSpy = spyOn(component as any, 'queueForProcessing');
     component.actionMenuCallback('process', {});
     expect(processSpy.calls.count()).toEqual(1);
 
-    const cancelSpy = spyOn((component as any), 'cancelModalToggle');
+    const cancelSpy = spyOn(component as any, 'cancelModalToggle');
     component.actionMenuCallback('cancel', {});
     expect(cancelSpy.calls.count()).toEqual(1);
 
-    const reverseSpy = spyOn((component as any), 'reverseBatch');
+    const reverseSpy = spyOn(component as any, 'reverseBatch');
     component.actionMenuCallback('reverse', {});
     expect(reverseSpy.calls.count()).toEqual(1);
   });
 
   it('should queue a batch', () => {
     const callResults = [true, false];
-    const queueSpy = spyOn(component.service, 'queueForProcessing')
-      .and.callFake((batchId) => { return { subscribe: (fn) => fn(callResults[batchId]) } });
+    const queueSpy = spyOn(
+      component.service,
+      'queueForProcessing'
+    ).and.callFake((batchId) => {
+      return { subscribe: (fn) => fn(callResults[batchId]) };
+    });
 
     component.actionMenuCallback('process', { id: 0 });
     component.actionMenuCallback('process', { id: 1 });
@@ -232,8 +238,11 @@ describe('BatchLogsComponent', () => {
 
   it('should reverse a batch', () => {
     const callResults = [true, false];
-    const reverseSpy = spyOn(component.service, 'reverseBatch')
-      .and.callFake(batchId => { return { subscribe: fn => fn(callResults[batchId]) }; });
+    const reverseSpy = spyOn(component.service, 'reverseBatch').and.callFake(
+      (batchId) => {
+        return { subscribe: (fn) => fn(callResults[batchId]) };
+      }
+    );
 
     component.actionMenuCallback('reverse', { id: 0 });
     component.actionMenuCallback('reverse', { id: 1 });
@@ -243,13 +252,17 @@ describe('BatchLogsComponent', () => {
 
   it('should export batch logs to Excel', () => {
     const batchMock = { isAutoProcess: false };
-    const batchSpy = spyOn(component.service, 'getBatchById')
-      .and.callFake(() => { return { subscribe: fn => fn(batchMock) }; });
+    const batchSpy = spyOn(component.service, 'getBatchById').and.callFake(
+      () => {
+        return { subscribe: (fn) => fn(batchMock) };
+      }
+    );
 
     (component as any).listViews = [{ id: 1 }];
     component.actionMenuCallback('download', {
-      userViewID: 1, validationStarted: '2022-01-01',
-      accountingBatchEvents: [{}]
+      userViewID: 1,
+      validationStarted: '2022-01-01',
+      accountingBatchEvents: [{}],
     });
 
     expect(batchSpy).toHaveBeenCalled();
@@ -261,9 +274,13 @@ describe('BatchLogsComponent', () => {
 
     (component.dataGrid as any) = {
       instance: {
-        showColumnChooser: () => { showColumnChooserCalled = true },
-        searchByText: () => { searchByTextCalled = true },
-      }
+        showColumnChooser: () => {
+          showColumnChooserCalled = true;
+        },
+        searchByText: () => {
+          searchByTextCalled = true;
+        },
+      },
     };
 
     component.showColumnChooser();
@@ -273,7 +290,7 @@ describe('BatchLogsComponent', () => {
     expect(searchByTextCalled).toBeTruthy();
   });
 
-  it ('should display the filter builder', () => {
+  it('should display the filter builder', () => {
     expect(component.filterBuilderVisible).toBeFalsy();
     component.showFilterBuilder();
     expect(component.filterBuilderVisible).toBeTruthy();
@@ -282,8 +299,8 @@ describe('BatchLogsComponent', () => {
   it('calculates applied filter counts', () => {
     const mock = {
       instance: {
-        getCombinedFilter: () => (['', '', ''])
-      }
+        getCombinedFilter: () => ['', '', ''],
+      },
     };
 
     (component.dataGrid as any) = mock;
@@ -291,12 +308,8 @@ describe('BatchLogsComponent', () => {
     component.calculateAppliedFilterCount();
     expect(component.appliedFilterCount).toEqual(1);
 
-    mock.instance.getCombinedFilter = () => ([
-      '', '',
-      [
-        ['2', '', ''], 'or', ['', '', ''], 'or', ['', '', '']
-      ]
-    ]) as any;
+    mock.instance.getCombinedFilter = () =>
+      ['', '', [['2', '', ''], 'or', ['', '', ''], 'or', ['', '', '']]] as any;
 
     component.searchText = 'test';
     component.calculateAppliedFilterCount();
@@ -305,10 +318,10 @@ describe('BatchLogsComponent', () => {
 
   it('should handle grid cell prepared events', () => {
     type cellEvt = {
-      rowType: string,
-      column: any,
-      data: any,
-      cellElement: any
+      rowType: string;
+      column: any;
+      data: any;
+      cellElement: any;
     };
 
     const evt: cellEvt = { rowType: '', column: {}, data: {}, cellElement: {} };
@@ -342,9 +355,17 @@ describe('BatchLogsComponent', () => {
     let stopPropagationCalled = false;
     let clearFilterCalled = false;
 
-    const evtMock = { stopPropagation: () => { stopPropagationCalled = true; } };
+    const evtMock = {
+      stopPropagation: () => {
+        stopPropagationCalled = true;
+      },
+    };
     const gridMock = {
-      instance: { clearFilter: () => { clearFilterCalled = true; } }
+      instance: {
+        clearFilter: () => {
+          clearFilterCalled = true;
+        },
+      },
     };
 
     (component.dataGrid as any) = gridMock;
@@ -362,16 +383,22 @@ describe('BatchLogsComponent', () => {
     expect(component.cancelModalVisible).toBeTruthy();
   });
 
-  it('should navigate to add a new batch', inject([Router], (router: Router) => {
-    const spy = spyOn(router, 'navigate').and.stub();
+  it('should navigate to add a new batch', inject(
+    [Router],
+    (router: Router) => {
+      const spy = spyOn(router, 'navigate').and.stub();
 
-    component.addNewBatch();
-    expect(spy).toHaveBeenCalledWith(['batcheventlist'], { queryParamsHandling: 'merge' });
-  }));
+      component.addNewBatch();
+      expect(spy).toHaveBeenCalledWith(['batcheventlist'], {
+        queryParamsHandling: 'merge',
+      });
+    }
+  ));
 
   it('should cancel a batch', () => {
-    const spySuccess = spyOn(component.service, 'cancelBatch')
-      .and.callFake(() => of({ isCancelled: true }));
+    const spySuccess = spyOn(component.service, 'cancelBatch').and.callFake(
+      () => of({ isCancelled: true })
+    );
 
     component.cancelModalVisible = true;
     (component as any).hoveredRowBatchId = 1;
@@ -381,8 +408,9 @@ describe('BatchLogsComponent', () => {
     expect(component.cancelModalVisible).toBeFalsy();
     expect(spySuccess).toHaveBeenCalledWith(1);
 
-    const spyFail = spySuccess
-      .and.callFake(() => of({ isCancelled: false, errorMessage: 'err' }));
+    const spyFail = spySuccess.and.callFake(() =>
+      of({ isCancelled: false, errorMessage: 'err' })
+    );
 
     component.cancelModalVisible = true;
     (component as any).hoveredRowBatchId = 2;
@@ -422,9 +450,9 @@ describe('BatchLogsComponent', () => {
             comments: 'comments',
             manualAssetAdjustment: 0,
             manualAdjustmentDirectEntry: null,
-          }
-        ]
-      }
+          },
+        ],
+      },
     };
 
     component.baseService.dateFormat = 'MM/dd/yyyy';

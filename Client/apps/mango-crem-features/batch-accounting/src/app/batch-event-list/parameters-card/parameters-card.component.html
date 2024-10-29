@@ -5,13 +5,15 @@
 
   <mat-card-content class="no-padding">
     <div class="dbl-padding">
-      <dx-form *ngIf="isReadOnly"
+      <dx-form
+        *ngIf="isReadOnly"
         [colCount]="1"
         [showColonAfterLabel]="false"
         class="mb-4"
       >
         <dxi-item [class]="'own-row'">
-          <dxo-label text="Portfolio:
+          <dxo-label
+            text="Portfolio:
             {{ scheduleObject?.SelectedPortfolio.portfolioName }} |
             Original Workflow Step:
             {{ scheduleObject?.SelectedWorkflowStatus.workflowStatus }} |
@@ -20,13 +22,15 @@
         </dxi-item>
       </dx-form>
 
-      <dx-form #ParametersForm
+      <dx-form
+        #ParametersForm
         [colCount]="2"
         labelLocation="left"
         [showColonAfterLabel]="false"
         [formData]="parametersData"
       >
-        <dxi-item editorType="dxSelectBox"
+        <dxi-item
+          editorType="dxSelectBox"
           dataField="cardMeasureEvent"
           [editorOptions]="{
             items: measureEvents,
@@ -40,13 +44,15 @@
           }"
           [label]="{ text: 'Measure Event' }"
         >
-          <dxi-validation-rule type="required"
+          <dxi-validation-rule
+            type="required"
             *ngIf="!isReadOnly"
             message="Measure Event is Required."
           ></dxi-validation-rule>
         </dxi-item>
 
-        <dxi-item editorType="dxSelectBox"
+        <dxi-item
+          editorType="dxSelectBox"
           dataField="cardNextWorkflowStatus"
           [editorOptions]="{
             items: nextWorkflowStatuses,
@@ -59,13 +65,15 @@
           }"
           [label]="{ text: 'Next Workflow Status' }"
         >
-          <dxi-validation-rule type="required"
+          <dxi-validation-rule
+            type="required"
             *ngIf="!isReadOnly"
             message="Next Workflow Status is Required."
           ></dxi-validation-rule>
         </dxi-item>
 
-        <dxi-item *ngIf="parametersData.workflowSettings?.isCommentsEnabled"
+        <dxi-item
+          *ngIf="parametersData.workflowSettings?.isCommentsEnabled"
           editorType="dxTextBox"
           dataField="cardWorkflowComment"
           [editorOptions]="{
@@ -74,12 +82,14 @@
           }"
           [label]="{ text: 'Next Workflow Comment' }"
         >
-          <dxi-validation-rule type="required"
+          <dxi-validation-rule
+            type="required"
             message="Next Workflow Comment is Required."
-            *ngIf="parametersData.workflowSettings.isCommentsRequired && !isReadOnly"
+            *ngIf="
+              parametersData.workflowSettings.isCommentsRequired && !isReadOnly
+            "
           ></dxi-validation-rule>
         </dxi-item>
-
       </dx-form>
     </div>
   </mat-card-content>

@@ -1,4 +1,4 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 .workflow-status-div {
   @include costar(border, gray04);

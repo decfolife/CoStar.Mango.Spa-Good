@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Api, ApiResult, ClientSettings, ClientSSOSettings, CremHttpResponse, CremHTTPResult, AdminFlags, Client, RedirectorLink } from '@mango/data-models/lib-data-models';
+import { Api, ApiResult, ClientSettings, ClientSSOSettings, CremHttpResponse, CremHTTPResult, AdminFlags, Client, RedirectorLink, PendoClientInfo } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
 
 @Injectable({
@@ -36,6 +36,10 @@ export class SettingsService {
     //     map(x => x.data)
     //   );
     return of()
+  }
+
+  getClientPendoSettings(clientKey: string,contactId: number): Observable<PendoClientInfo> {
+    return this._http.get<PendoClientInfo>(`${this.settingsUrl}settings/${clientKey}/pendouser/${contactId}`);
   }
 
   saveClientSettings(clientSettings: ClientSettings): Observable<CremHTTPResult> {

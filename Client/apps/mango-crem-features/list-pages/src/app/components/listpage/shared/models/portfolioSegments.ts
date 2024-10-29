@@ -3,4 +3,3 @@ export interface PortfolioSegments {
   segmentLabel: string;
   segmentCount: number;
 }
-  

@@ -25,8 +25,7 @@ export class CremEnvInfoChipAppComponent implements OnInit {
     // this.popoverContent = ['Backup File Name: E:RetailDemo_BackupsFULL_DEV_VP_RETAILDEMO_V05_20200930_020000.sqb','Database Restore Date: 2020-09-30 11:17:54',' Database Backup Date: 2020-09-30 02:00:50 ']
   }
 
-  ngOnInit(): void { }
-  
+  ngOnInit(): void {}
 }
 
 export interface ChipStyle {

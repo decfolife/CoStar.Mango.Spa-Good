@@ -9,16 +9,12 @@ import { BaseService } from '../../services/base.service';
 })
 export class JournalEntryProfilesComponent implements OnInit {
   hasModuleRights = true;
-  
-  constructor(    
-    private baseService: BaseService
-  ) { }
 
+  constructor(private baseService: BaseService) {}
 
   ngOnInit(): void {
-    this.baseService.HasUserModuleRight().subscribe(response => {
+    this.baseService.HasUserModuleRight().subscribe((response) => {
       this.hasModuleRights = response;
     });
   }
-
 }

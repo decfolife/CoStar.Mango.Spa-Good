@@ -34,6 +34,7 @@ export class DatePickerComponent implements ControlValueAccessor {
   @Input() disabled: boolean;
   @Input() placeholderText = "";
   @Input() showDefaultValidationTooltip?: boolean = true;
+  @Input() dataKey:string;
   @Output() changeEvent = new EventEmitter();
 
   @ViewChild("DateBoxValidator", { static: false }) dateBoxValidator: DxValidatorComponent

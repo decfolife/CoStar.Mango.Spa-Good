@@ -1,4 +1,4 @@
 export interface UserSelectedFilters {
-    dashboardId: number;
-    filterValues: string;
+  dashboardId: number;
+  filterValues: string;
 }

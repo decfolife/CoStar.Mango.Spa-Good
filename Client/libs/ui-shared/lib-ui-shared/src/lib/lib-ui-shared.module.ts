@@ -19,10 +19,11 @@ import { AddEquipmentModalComponent } from './add-equipment-modal/add-equipment-
 import { MangoDialogModule } from './mango-dialog';
 import { AddSupplierModalComponent } from './add-supplier-modal/add-supplier-modal.component';
 import { AddCompanyModalComponent } from './add-company-modal/add-company-modal.component';
+import { AddLeaseModalModule } from './add-lease-modal/add-lease-modal.module';
+import { CremCurrentObjectTextModule } from './crem-current-object-text/crem-current-object-text.module';
 
 @NgModule({
-  declarations: [
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     FormsModule,
@@ -40,7 +41,8 @@ import { AddCompanyModalComponent } from './add-company-modal/add-company-modal.
     AddBuildingModalModule,
     AddSupplierModalComponent,
     AddEquipmentModalComponent,
-    AddCompanyModalComponent
+    AddCompanyModalComponent,
+    AddLeaseModalModule,
   ],
   exports: [
     FormsModule,
@@ -49,6 +51,7 @@ import { AddCompanyModalComponent } from './add-company-modal/add-company-modal.
     LibUiElementsModule,
     ListErrorsModule,
     CremHeaderModule,
+    CremCurrentObjectTextModule,
     CostarSuiteHeaderModule,
     EnvInfoChipModule,
     DashboardFiltersModule,
@@ -57,7 +60,8 @@ import { AddCompanyModalComponent } from './add-company-modal/add-company-modal.
     SharedLeftNavModule,
     MangoDialogModule,
     ComposeEmailModule,
-    AddBuildingModalModule
+    AddBuildingModalModule,
+    AddLeaseModalModule,
   ],
 })
 export class LibUiSharedModule {}

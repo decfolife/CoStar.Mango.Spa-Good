@@ -14,8 +14,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IconModule } from '@mango/ui-shared/lib-ui-elements'
+import { IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { EmulateUserPopupModule } from './emulate-user-popup/emulate-user-popup.module';
+import { InputComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [HeaderComponent],
@@ -36,8 +37,9 @@ import { EmulateUserPopupModule } from './emulate-user-popup/emulate-user-popup.
     MatAutocompleteModule,
     FormsModule,
     ReactiveFormsModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    InputComponent,
   ],
-  exports: [HeaderComponent]
+  exports: [HeaderComponent],
 })
-export class HeaderModule { }
+export class HeaderModule {}

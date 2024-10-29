@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ListPageService } from '../core/services/listpage.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { EditPage } from '../shared/models/edit-page';
 import { MatDialog } from '@angular/material/dialog';
 import { AddBuildingModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-building-modal/add-building-modal.component';
@@ -10,12 +10,13 @@ import { AddSupplierModalComponent } from '@mango/ui-shared/lib-ui-shared';
 import { SUPPLIER_WIZARD_OTID } from '@mango/data-models/lib-data-models';
 import { AddEquipmentModalComponent } from '@mango/ui-shared/lib-ui-shared';
 import { EQUIPMENT_WIZARD_OTID } from '@mango/data-models/lib-data-models';
+import { AddLeaseModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-lease-modal/add-lease-modal.component';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'app-add-new-menu',
   templateUrl: './add-new-menu.component.html',
-  styleUrls: ['./add-new-menu.component.scss']
+  styleUrls: ['./add-new-menu.component.scss'],
 })
 export class AddNewMenuComponent implements OnInit {
   private _editPages: EditPage[] = [];
@@ -27,11 +28,14 @@ export class AddNewMenuComponent implements OnInit {
   @Input() enabled: boolean;
   @Input() isGLEvent: boolean;
   @Input() OTTID: number;
+  @Input() id: '';
   @Input()
   set editPages(editPages: EditPage[]) {
     this.onEditPagesChanged(editPages);
   }
-  get editPages(): EditPage[] { return this._editPages; }
+  get editPages(): EditPage[] {
+    return this._editPages;
+  }
 
   @Output()
   navigateToEditPage = new EventEmitter<EditPage>();
@@ -40,7 +44,13 @@ export class AddNewMenuComponent implements OnInit {
 
   faPlus = faPlus;
 
-  constructor(private sanitizer: DomSanitizer, public service: ListPageService, private route: ActivatedRoute, private dialog: MatDialog,private router: Router) { }
+  constructor(
+    private sanitizer: DomSanitizer,
+    public service: ListPageService,
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private router: Router
+  ) {}
 
   onEditPagesChanged(editPages: EditPage[]) {
     if (editPages === null) {
@@ -51,7 +61,7 @@ export class AddNewMenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getModuleRights()
+    this.getModuleRights();
     this.objectTypeId = this.route.snapshot.data.objectTypeId;
   }
 
@@ -81,7 +91,6 @@ export class AddNewMenuComponent implements OnInit {
   }
 
   addButtonClickSingleForMatMenu() {
-
     if (this.navigationPages.length !== 1) {
       return;
     }
@@ -101,28 +110,26 @@ export class AddNewMenuComponent implements OnInit {
   }
 
   private navRouterUrl(htmlLink: string) {
-
-    let htmlurl = htmlLink.replace('GoToPage(\'','').replace('\');','');
+    let htmlurl = htmlLink.replace("GoToPage('", '').replace("');", '');
 
     let splitHtmlUrl = htmlurl.split('?');
     const queryParams = {};
-    if(splitHtmlUrl.length > 1) {
+    if (splitHtmlUrl.length > 1) {
       const params = splitHtmlUrl[1].split('&');
-      params.forEach(element => {
+      params.forEach((element) => {
         const [key, value] = element.split('=');
         queryParams[key] = value;
       });
     }
-   // console.log(splitHtmlUrl[0]);
-   // console.log(queryParams);
-   this.router.navigate([splitHtmlUrl[0]], { queryParams: queryParams } );
-    
+    // console.log(splitHtmlUrl[0]);
+    // console.log(queryParams);
+    this.router.navigate([splitHtmlUrl[0]], { queryParams: queryParams });
   }
 
-  private ensureJavaScript(htmlLink: string) {    
-     return htmlLink.startsWith('javascript:')
+  private ensureJavaScript(htmlLink: string) {
+    return htmlLink.startsWith('javascript:')
       ? htmlLink
-      : `javascript:${htmlLink}`; 
+      : `javascript:${htmlLink}`;
   }
   //** we are getting module rights only for below object types*/
   //** Building (OTID = 3)
@@ -132,75 +139,93 @@ export class AddNewMenuComponent implements OnInit {
   //** Premise/Store (OTID = 2)
   //** Financials (OTID = 182)
   getModuleRights() {
-    const objectIds = "3,4,174,175";  //calls module rights api for these ObjectTypeId's
+    const objectIds = '3,4,174,175'; //calls module rights api for these ObjectTypeId's
     this.service.getUserModuleRights(objectIds).subscribe(
       (res: any) => {
-        this.addButtonObjects = res.data.filter(v => v.hasAddRights);
+        this.addButtonObjects = res.data.filter((v) => v.hasAddRights);
       },
-      (error: any) => console.log('Error occurred getting addMenu items: ', error)
+      (error: any) =>
+        console.log('Error occurred getting addMenu items: ', error)
     );
   }
 
   getNavigationLink(objectTypeId: number) {
-
     if (objectTypeId == 3) {
       this.showAddBuildingPopup();
+    }
+
+    if (objectTypeId == 4) {
+      this.showAddLeasePopup();
     }
 
     if (objectTypeId === SUPPLIER_WIZARD_OTID) {
       this.showAddSupplierPopup();
     }
-  
+
     if (objectTypeId == EQUIPMENT_WIZARD_OTID) {
       this.showAddEquipmentPopup();
     }
- 
-}
+  }
 
-showAddSupplierPopup(): void {
-  const dialogRef = this.dialog.open(AddSupplierModalComponent, {
-    disableClose: true,
-    height: '370px',
-    width: '700px',
-    maxWidth: '1100px',
-    data: {
-      objectTypeId: this.objectTypeId,
-    }
-  }); 
-  dialogRef.afterClosed();
-}
-
-showAddEquipmentPopup() {
-  let dialogRef = this.dialog.open(AddEquipmentModalComponent, {
-    disableClose: true,
-    height: '600px',
-    width: '700px',
-    maxWidth: '1100px',
-    data: {
-      objectTypeId: this.objectTypeId,
-      userId: 2
-    }
-  });
-
-  dialogRef.afterClosed();
-}
-
-showAddBuildingPopup() {
-      let dialogRef = this.dialog.open(AddBuildingModalComponent, {
-        disableClose: true,
-        height: '81%',
-        width: '75%',
-        maxWidth: '1100px',
-        data: {
-          objectTypeId: this.objectTypeId,
-          userId: 2
-        }
-      });
-  
-    dialogRef.afterClosed().subscribe(result => {
-        this.reLoadGrid.emit(true);
+  showAddSupplierPopup(): void {
+    const dialogRef = this.dialog.open(AddSupplierModalComponent, {
+      disableClose: true,
+      height: '390px',
+      width: '700px',
+      maxWidth: '1100px',
+      data: {
+        objectTypeId: this.objectTypeId,
+      },
     });
-}
+    dialogRef.afterClosed();
+  }
 
-}
+  showAddEquipmentPopup() {
+    let dialogRef = this.dialog.open(AddEquipmentModalComponent, {
+      disableClose: true,
+      height: '600px',
+      width: '700px',
+      maxWidth: '1100px',
+      data: {
+        objectTypeId: this.objectTypeId,
+        userId: 2,
+      },
+    });
 
+    dialogRef.afterClosed();
+  }
+
+  showAddBuildingPopup() {
+    let dialogRef = this.dialog.open(AddBuildingModalComponent, {
+      disableClose: true,
+      height: '81%',
+      width: '75%',
+      maxWidth: '1100px',
+      data: {
+        objectTypeId: this.objectTypeId,
+        userId: 2,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.reLoadGrid.emit(true);
+    });
+  }
+
+  showAddLeasePopup() {
+    let dialogRef = this.dialog.open(AddLeaseModalComponent, {
+      disableClose: true,
+      height: '81%',
+      width: '75%',
+      maxWidth: '1100px',
+      data: {
+        objectTypeId: this.objectTypeId,
+        userId: 2,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.reLoadGrid.emit(true);
+    });
+  }
+}

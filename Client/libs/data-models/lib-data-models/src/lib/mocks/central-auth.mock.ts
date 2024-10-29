@@ -1,6 +1,6 @@
-import { ContactRecord } from "../models/central-auth/contact-record";
-import { UserSite } from "../models/user-site";
-import { LoginResponse, UserAuth } from "../models/userAuth";
+import { ContactRecord } from '../models/central-auth/contact-record';
+import { UserSite } from '../models/user-site.interface';
+import { LoginResponse, UserAuth } from '../models/user-auth.interface';
 
 export const userMock: UserAuth = {
   userId: 123,
@@ -9,14 +9,13 @@ export const userMock: UserAuth = {
   isAutoProvisioned: true,
   contactId: 123,
   hasMultipleSites: false,
-  isServiceAccount: true
-}
-
+  isServiceAccount: true,
+};
 
 export const loginResponseMock: LoginResponse = {
   authToken: 'MOCK_AUTH_TOKEN',
-  user: userMock
-}
+  user: userMock,
+};
 
 export const mockClientBlank: UserSite = {
   clientKey: 'blank',
@@ -25,8 +24,8 @@ export const mockClientBlank: UserSite = {
   isActive: true,
   isSSOEnabled: false,
   requireSSO: false,
-  ssoUri: ''
-}
+  ssoUri: '',
+};
 
 export const mockClientRetaildemo: UserSite = {
   clientKey: 'retaildemo',
@@ -35,14 +34,17 @@ export const mockClientRetaildemo: UserSite = {
   isActive: true,
   isSSOEnabled: false,
   requireSSO: false,
-  ssoUri: ''
-}
+  ssoUri: '',
+};
 
-export const mockUserClients: UserSite[] = [mockClientBlank, mockClientRetaildemo]
+export const mockUserClients: UserSite[] = [
+  mockClientBlank,
+  mockClientRetaildemo,
+];
 
 export const mockContactRecord: ContactRecord = {
   contactID: 123,
   firstName: 'First Name 1',
   lastName: 'Last Name 1',
-  userName: 'mock-user'
-}
+  userName: 'mock-user',
+};

@@ -1,9 +1,18 @@
-<mat-card [id]="id" class="cremCard" [class.transparent]="backgroundTransparent" [class.noBorder]="noBorder">
+<mat-card
+  [id]="id"
+  class="cremCard"
+  [class.transparent]="backgroundTransparent"
+  [class.noBorder]="noBorder"
+>
   <mat-card-header>
     <div class="cardHeader">
       <div class="mat-card-header-text">
         <div *ngIf="counter > 0" class="counter">{{ counter }}</div>
-        <h2 mat-card-title id="{{pendoTitleId ? pendoTitleId : ''}}" tabindex="0">
+        <h2
+          mat-card-title
+          id="{{ pendoTitleId ? pendoTitleId : '' }}"
+          tabindex="0"
+        >
           {{ title }} <span class="subtitle">{{ subtitle }}</span>
         </h2>
       </div>
@@ -21,28 +30,54 @@
             (selectedItems)="selected($event)"
             selectionMode="single"
             [placeholder]="filterInitialValue.displayKey"
+            [containerized]="false"
           ></crem-dropdown>
-        </div>  
+        </div>
         <div *cardHeader="moreOptions ? true : false">
-          <button class="btn btn-default btn-sm moreOptionsBtn"
-            type='button'
+          <button
+            class="btn btn-default btn-sm moreOptionsBtn"
+            type="button"
             [matMenuTriggerFor]="cardMenu"
             (click)="$event.preventDefault()"
-            aria-label="More Options">
+            aria-label="More Options"
+          >
             <crem-icon icon="faEllipsisH" size="lg"></crem-icon>
           </button>
           <mat-menu #cardMenu="matMenu" class="dashboardsMoreOptions">
-            <button *ngIf="moreOptions.displayExpandOption" mat-menu-item (click)="toggleExpanded()"><span
-                *ngIf="moreOptions.isExpanded">Collapse All</span><span *ngIf="!moreOptions.isExpanded">Expand All</span></button>
-            <button *ngIf="moreOptions.export" mat-menu-item (click)="exportGridData()">Export</button>
-            <button *ngIf="moreOptions.hideLabels" mat-menu-item (click)="hideGridLabels()">Hide Labels</button>
-            <button *ngIf="moreOptions.hideLegend" mat-menu-item (click)="toggleLegend()">
+            <button
+              *ngIf="moreOptions.displayExpandOption"
+              mat-menu-item
+              (click)="toggleExpanded()"
+            >
+              <span *ngIf="moreOptions.isExpanded">Collapse All</span
+              ><span *ngIf="!moreOptions.isExpanded">Expand All</span>
+            </button>
+            <button
+              *ngIf="moreOptions.export"
+              mat-menu-item
+              (click)="exportGridData()"
+            >
+              Export
+            </button>
+            <button
+              *ngIf="moreOptions.hideLabels"
+              mat-menu-item
+              (click)="hideGridLabels()"
+            >
+              Hide Labels
+            </button>
+            <button
+              *ngIf="moreOptions.hideLegend"
+              mat-menu-item
+              (click)="toggleLegend()"
+            >
               <ng-container *ngIf="legendVisible">Hide Legend</ng-container>
               <ng-container *ngIf="!legendVisible">Show Legend</ng-container>
             </button>
           </mat-menu>
         </div>
-        <ng-container *ngIf="customDropdownMenu"
+        <ng-container
+          *ngIf="customDropdownMenu"
           [ngTemplateOutlet]="customDropdownMenuRef"
         >
         </ng-container>
@@ -50,7 +85,15 @@
     </div>
     <ng-content select="'[cta-section]'"></ng-content>
   </mat-card-header>
-  <mat-card-content class="cremCardContent" [ngClass]="contentPadding === true ? 'card__content--padding' : 'card__content--no--padding'" tabindex="0">
+  <mat-card-content
+    class="cremCardContent"
+    [ngClass]="
+      contentPadding === true
+        ? 'card__content--padding'
+        : 'card__content--no--padding'
+    "
+    tabindex="0"
+  >
     <ng-content></ng-content>
   </mat-card-content>
 </mat-card>

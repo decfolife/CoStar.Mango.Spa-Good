@@ -44,7 +44,10 @@
             <crem-button
               type="secondary"
               [disabled]="
-                !templateForm.valid || templateForm.pristine || !dataRetrieved || isSaving
+                !templateForm.valid ||
+                templateForm.pristine ||
+                !dataRetrieved ||
+                isSaving
               "
               [id]="etlService.getId(componentName, 'apply', 'button')"
               (click)="onSave(true); $event.preventDefault()"
@@ -56,7 +59,10 @@
             <crem-button
               type="primary"
               [disabled]="
-                !templateForm.valid || templateForm.pristine || !dataRetrieved || isSaving
+                !templateForm.valid ||
+                templateForm.pristine ||
+                !dataRetrieved ||
+                isSaving
               "
               [id]="etlService.getId(componentName, 'save', 'button')"
               (click)="onSave(false); $event.preventDefault()"

@@ -1,0 +1,51 @@
+@use 'styles' as *;
+
+.payments-grid-container {
+  display: flex;
+  gap: 40px;
+  @include costar(padding, 3);
+}
+
+.card-header {
+  @include costar(padding, 0);
+}
+
+::ng-deep #schedule-payments-section-card {
+  .cardHeader {
+    align-items: center;
+  }
+
+  .customHeader {
+    margin: 0px;
+  }
+}
+
+.custom-data-grid {
+  max-height: auto;
+}
+
+::ng-deep #schedule-payments-grid-section {
+  td:has(div.dx-state-disabled) {
+    pointer-events: none;
+    .dx-checkbox-icon {
+      opacity: 1 !important;
+      @include costar(background-color, gray06);
+    }
+  }
+
+  .header-column-caption {
+    margin: 7px;
+  }
+
+  .dx-datagrid-checkbox-size {
+    @include costar(margin-top, 0);
+  }
+
+  .dx-header-row {
+    @include costar(background-color, light);
+  }
+
+  .dx-checkbox-indeterminate {
+    display: inline-flex;
+  }
+}

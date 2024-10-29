@@ -18,10 +18,9 @@ describe('Customer Selection Component', () => {
         CentralAuthFacade,
         provideMockStore(),
         provideRouter([]),
-        provideAnimations()
-      ]
-    })
-      .compileComponents();
+        provideAnimations(),
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

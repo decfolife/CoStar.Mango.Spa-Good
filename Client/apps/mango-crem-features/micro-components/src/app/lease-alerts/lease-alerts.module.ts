@@ -49,14 +49,15 @@ import { AlertsService } from './shared/service/alerts.service';
     MatMenuModule,
     MatSlideToggleModule,
   ],
-  providers: [ AlertsService ]
+  providers: [AlertsService],
 })
 export class LeaseAlertsModule {
-
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
-    const el = createCustomElement(LeaseAlertsComponent, { injector: this.injector });
+    const el = createCustomElement(LeaseAlertsComponent, {
+      injector: this.injector,
+    });
 
     customElements.define('mango-alerts-root', el);
   }

@@ -8,23 +8,19 @@ import { SharedModule } from './shared/shared.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-    ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        SharedModule.forRoot(),
-        AppRoutingModule,
-        FontAwesomeModule,
-    ],
-    providers: [],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    SharedModule.forRoot(),
+    AppRoutingModule,
+    FontAwesomeModule,
+  ],
+  providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [AppComponent],
 })
-
 export class AppModule {
-
   constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
@@ -34,4 +30,3 @@ export class AppModule {
     customElements.define('ngce-group-maintenance', el);
   }
 }
-

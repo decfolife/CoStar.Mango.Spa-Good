@@ -10,15 +10,15 @@ import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [IndexComponent],
   imports: [
-    CommonModule, 
-    AdminModule, 
-    IndexRoutingModule, 
+    CommonModule,
+    AdminModule,
+    IndexRoutingModule,
     LibUiSharedModule,
     ToastrModule.forRoot({
       timeOut: 8000,
       positionClass: 'toast-top-right',
       progressBar: true,
-      closeButton: false
+      closeButton: false,
     }),
   ],
   providers: [],

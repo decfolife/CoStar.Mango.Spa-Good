@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-
 export class AppComponent implements OnInit {
   @Input() userid: number;
   title = 'mango-crem-features-dashboards-project-dashboard';
@@ -15,7 +14,6 @@ export class AppComponent implements OnInit {
   constructor(private router: Router) {}
   ngOnInit() {
     this.router.initialNavigation(); // Manually triggering initial navigation for @angular/elements
-
   }
 
   onOutletLoaded(component) {

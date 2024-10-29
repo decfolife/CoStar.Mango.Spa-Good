@@ -1,30 +1,34 @@
 <div class="ct-description">
-  The Copy Transaction function creates a new project that copies all of the selected items from the source project. 
-  The Copy Transaction function differs from adding a project from a template in that a template need not exist, 
-  and the Copy Transaction function may cover more than just tasks and team members.
+  The Copy Transaction function creates a new project that copies all of the
+  selected items from the source project. The Copy Transaction function differs
+  from adding a project from a template in that a template need not exist, and
+  the Copy Transaction function may cover more than just tasks and team members.
 </div>
 
 <section class="ct-projDetails-transPreview">
   <section class="ct-projDetails flexItem40">
     <div class="ct-projName-container ct-bottomPadding">
-      <h4 class="ct-projName-label label">New Project Name<span class="ct-required-tag">*</span></h4>
+      <h4 class="ct-projName-label label">
+        New Project Name<span class="ct-required-tag">*</span>
+      </h4>
       <crem-input
-      #ProjectNameTextBox
-      [state]="'active'"
-      [showHint]="false"
-      [showLabel]="false"
-      [showInfo]="false"
-      [inputType]="'text'"
-      [(value)]="projectName"
-      [id]="'ct-projectNameId'"
-      [placeholder]="'Enter Project Name'"
-      [required]="true"
-    ></crem-input>
-    </div>    
+        #ProjectNameTextBox
+        [state]="'active'"
+        [showHint]="false"
+        [showLabel]="false"
+        [showInfo]="false"
+        [inputType]="'text'"
+        [(value)]="projectName"
+        [id]="'ct-projectNameId'"
+        [placeholder]="'Enter Project Name'"
+        [required]="true"
+        (valueChange)="onProjectNameChange($event)"
+      ></crem-input>
+    </div>
 
     <div class="ct-toggleBox ct-bottomPadding">
       <span class="toggleLabel">Calculate Dates</span>
-        <crem-toggle-slider
+      <crem-toggle-slider
         [id]="'ct-calculateDates'"
         [size]="'wide'"
         [value]="calculateDates"
@@ -38,7 +42,7 @@
 
     <div class="ct-toggleBox ct-bottomPadding">
       <span class="toggleLabel">Days Calculated By</span>
-        <crem-toggle-slider
+      <crem-toggle-slider
         [id]="'ct-daysCalculatedBy'"
         [size]="'ultra-wide'"
         [value]="daysCalculatedBy"
@@ -51,91 +55,128 @@
     </div>
 
     <div class="ct-groupCheckbox-container">
-      <h4 class="ct-groupCheckbox-label label">OR  Select from Existing</h4>
+      <h4 class="ct-groupCheckbox-label label">OR Select from Existing</h4>
       <div class="ct-check-box">
         <crem-check-box
           [value]="selectTasks"
           [elementAttr]="{ id: 'ct-Tasks', 'aria-label': 'Select Tasks' }"
           [disabled]="disableOption"
           (changeEvent)="OnCheckboxChangeEvent($event, 'selectTasks')"
-        >Tasks</crem-check-box>
+          >Tasks</crem-check-box
+        >
         <div class="ct-check-box ct-checkbox-subSection">
           <crem-check-box
             [value]="selectApprovers"
-            [elementAttr]="{ id: 'ct-Approvers', 'aria-label': 'Select Approvers' }"
+            [elementAttr]="{
+              id: 'ct-Approvers',
+              'aria-label': 'Select Approvers'
+            }"
             [disabled]="disableOption"
             (changeEvent)="OnCheckboxChangeEvent($event, 'selectApprovers')"
-          >Approvers</crem-check-box>
+            >Approvers</crem-check-box
+          >
         </div>
         <div class="ct-check-box ct-checkbox-subSection">
           <crem-check-box
             [value]="selectTaskNotes"
-            [elementAttr]="{ id: 'ct-TaskNotes', 'aria-label': 'Select Task Notes' }"
+            [elementAttr]="{
+              id: 'ct-TaskNotes',
+              'aria-label': 'Select Task Notes'
+            }"
             [disabled]="disableOption"
             (changeEvent)="OnCheckboxChangeEvent($event, 'selectTaskNotes')"
-          >Task Notes</crem-check-box>
+            >Task Notes</crem-check-box
+          >
         </div>
         <div class="ct-check-box ct-checkbox-subSection">
           <crem-check-box
             [value]="selectTaskFiles"
-            [elementAttr]="{ id: 'ct-TaskFiles', 'aria-label': 'Select Task Files' }"
+            [elementAttr]="{
+              id: 'ct-TaskFiles',
+              'aria-label': 'Select Task Files'
+            }"
             [disabled]="disableOption"
             (changeEvent)="OnCheckboxChangeEvent($event, 'selectTaskFiles')"
-          >Task Files</crem-check-box>
+            >Task Files</crem-check-box
+          >
         </div>
       </div>
-      
+
       <div class="ct-check-box">
         <crem-check-box
           [value]="selectTeamMembers"
-          [elementAttr]="{ id: 'ct-TeamMembers', 'aria-label': 'Select Team Members' }"
+          [elementAttr]="{
+            id: 'ct-TeamMembers',
+            'aria-label': 'Select Team Members'
+          }"
           [disabled]="false"
           (changeEvent)="OnCheckboxChangeEvent($event, 'selectTeamMembers')"
-        >Team Members</crem-check-box>
+          >Team Members</crem-check-box
+        >
       </div>
 
       <div class="ct-check-box">
         <crem-check-box
           [value]="selectProjectFolders"
-          [elementAttr]="{ id: 'ct-ProjectFolders', 'aria-label': 'Select Project Folders' }"
+          [elementAttr]="{
+            id: 'ct-ProjectFolders',
+            'aria-label': 'Select Project Folders'
+          }"
           [disabled]="false"
           (changeEvent)="OnCheckboxChangeEvent($event, 'selectProjectFolders')"
-        >Project Folders</crem-check-box>
+          >Project Folders</crem-check-box
+        >
         <div class="ct-check-box ct-checkbox-subSection">
           <crem-check-box
             [value]="selectProjectFiles"
-            [elementAttr]="{ id: 'ct-ProjectFiles', 'aria-label': 'Select Project Files' }"
+            [elementAttr]="{
+              id: 'ct-ProjectFiles',
+              'aria-label': 'Select Project Files'
+            }"
             [disabled]="false"
             (changeEvent)="OnCheckboxChangeEvent($event, 'selectProjectFiles')"
-          >Project Files</crem-check-box>
+            >Project Files</crem-check-box
+          >
         </div>
       </div>
 
       <div class="ct-check-box">
         <crem-check-box
           [value]="selectProjectNotes"
-          [elementAttr]="{ id: 'ct-ProjectNotes', 'aria-label': 'Select Project Notes' }"
+          [elementAttr]="{
+            id: 'ct-ProjectNotes',
+            'aria-label': 'Select Project Notes'
+          }"
           [disabled]="false"
           (changeEvent)="OnCheckboxChangeEvent($event, 'selectProjectNotes')"
-        >Project Notes</crem-check-box>
+          >Project Notes</crem-check-box
+        >
       </div>
 
       <div class="ct-check-box">
         <crem-check-box
           [value]="selectPreferences"
-          [elementAttr]="{ id: 'ct-Preferences', 'aria-label': 'Select Preferences' }"
+          [elementAttr]="{
+            id: 'ct-Preferences',
+            'aria-label': 'Select Preferences'
+          }"
           [disabled]="false"
           (changeEvent)="OnCheckboxChangeEvent($event, 'selectPreferences')"
-        >Preferences</crem-check-box>
+          >Preferences</crem-check-box
+        >
       </div>
 
       <div class="ct-check-box">
         <crem-check-box
           [value]="selectReminders"
-          [elementAttr]="{ id: 'ct-Reminders', 'aria-label': 'Select Reminders' }"
+          [elementAttr]="{
+            id: 'ct-Reminders',
+            'aria-label': 'Select Reminders'
+          }"
           [disabled]="false"
           (changeEvent)="OnCheckboxChangeEvent($event, 'selectReminders')"
-        >Reminders</crem-check-box>
+          >Reminders</crem-check-box
+        >
       </div>
     </div>
   </section>
@@ -145,26 +186,32 @@
         <h4 class="ct-template-label label">Use New Template</h4>
         <crem-dropdown
           id="ct-selectTemplateDropdownId"
-          dropDownContainerCustomClass='ct-templateListDropDown'
+          dropDownContainerCustomClass="ct-templateListDropDown"
           [dataSource]="projectTemplatesList"
-          [showClearButton]='false'
-          [showColumnHeader]='false'
-          displayExpr='projectTemplateName'
-          valueExpr='projectTemplateID'
-          [allowSearch]='true'
+          [showClearButton]="false"
+          [showColumnHeader]="false"
+          displayExpr="projectTemplateName"
+          valueExpr="projectTemplateID"
+          [allowSearch]="true"
           [useSelectBox]="true"
-          [hoverText]='selectedTemplateName'
+          [hoverText]="selectedTemplateName"
           (selectedItems)="onSelectedTemplateChanged($event)"
         >
         </crem-dropdown>
       </div>
       <div class="ct-bottomPadding">
         <h4 class="ct-preview-label label">Template Preview</h4>
-        <crem-button type="secondary" (click)="transPreviewClicked()" id="ct-previewBtn">{{buttonText}}</crem-button>
+        <crem-button
+          type="secondary"
+          (click)="transPreviewClicked()"
+          id="ct-previewBtn"
+          >{{ buttonText }}</crem-button
+        >
       </div>
     </div>
     <div class="ct-transPreviewGrid-container" *ngIf="displayPreview">
-      <dx-data-grid id="ct-transPreviewGrid-Id"
+      <dx-data-grid
+        id="ct-transPreviewGrid-Id"
         [showColumnLines]="false"
         [showRowLines]="false"
         [showBorders]="false"
@@ -180,29 +227,58 @@
         [wordWrapEnabled]="true"
         (onContentReady)="adaAttrToGridTable($event)"
       >
-      <dxo-load-panel
-        [enabled]="true">
-      </dxo-load-panel>
-      <dxo-sorting mode="none"></dxo-sorting>
+        <dxo-load-panel [enabled]="true"> </dxo-load-panel>
+        <dxo-sorting mode="none"></dxo-sorting>
 
-      <dxi-column dataField="projectTemplateMilestoneStepFull" caption="Step #"></dxi-column>
-      <dxi-column dataField="projectTemplateMilestoneName" caption="Task Name" width="140"></dxi-column>
-      <dxi-column dataField="projectTemplateMilestoneDaysToStart" caption="DTS" alignment="center"></dxi-column>
-      <dxi-column dataField="projectTemplateMilestoneDaysToComplete" caption="Duration" alignment="center"></dxi-column>
-      <dxi-column dataField="projectTemplateMilestoneRequired" caption="Required" [cellTemplate]="'requiredTemplate'"></dxi-column>
-      <dxi-column dataField="isMileMark" caption="Milestone" [cellTemplate]="'milestoneTemplate'"></dxi-column>
-      <dxi-column dataField="isConcurrent" caption="Concurrent" [cellTemplate]="'concurrentTemplate'"></dxi-column>
-      <dxi-column dataField="predecessors" caption="Predecessor" alignment="center"></dxi-column>
-      <div *dxTemplate="let cell of 'requiredTemplate'">
-        <div> {{cell.value == true ? 'Yes' :'No'}} </div>		
-      </div>
-      <div *dxTemplate="let cell of 'milestoneTemplate'">
-        <div> {{cell.value == true ? 'Yes' :'No'}} </div>		
-      </div>
-      <div *dxTemplate="let cell of 'concurrentTemplate'">
-        <div> {{cell.value == true ? 'Yes' :'No'}} </div>		
-      </div>
-    </dx-data-grid>
+        <dxi-column
+          dataField="projectTemplateMilestoneStepFull"
+          caption="Step #"
+        ></dxi-column>
+        <dxi-column
+          dataField="projectTemplateMilestoneName"
+          caption="Task Name"
+          width="140"
+        ></dxi-column>
+        <dxi-column
+          dataField="projectTemplateMilestoneDaysToStart"
+          caption="DTS"
+          alignment="center"
+        ></dxi-column>
+        <dxi-column
+          dataField="projectTemplateMilestoneDaysToComplete"
+          caption="Duration"
+          alignment="center"
+        ></dxi-column>
+        <dxi-column
+          dataField="projectTemplateMilestoneRequired"
+          caption="Required"
+          [cellTemplate]="'requiredTemplate'"
+        ></dxi-column>
+        <dxi-column
+          dataField="isMileMark"
+          caption="Milestone"
+          [cellTemplate]="'milestoneTemplate'"
+        ></dxi-column>
+        <dxi-column
+          dataField="isConcurrent"
+          caption="Concurrent"
+          [cellTemplate]="'concurrentTemplate'"
+        ></dxi-column>
+        <dxi-column
+          dataField="predecessors"
+          caption="Predecessor"
+          alignment="center"
+        ></dxi-column>
+        <div *dxTemplate="let cell of 'requiredTemplate'">
+          <div>{{ cell.value == true ? 'Yes' : 'No' }}</div>
+        </div>
+        <div *dxTemplate="let cell of 'milestoneTemplate'">
+          <div>{{ cell.value == true ? 'Yes' : 'No' }}</div>
+        </div>
+        <div *dxTemplate="let cell of 'concurrentTemplate'">
+          <div>{{ cell.value == true ? 'Yes' : 'No' }}</div>
+        </div>
+      </dx-data-grid>
     </div>
   </section>
 </section>

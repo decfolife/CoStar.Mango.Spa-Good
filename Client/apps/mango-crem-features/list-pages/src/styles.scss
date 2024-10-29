@@ -7,7 +7,8 @@
  * TODO: Remove after CREM becomes MangoSpa
  **/
 body {
-  > .pageMainMasterWrapper { // Only applies on CREM
+  > .pageMainMasterWrapper {
+    // Only applies on CREM
 
     #divMainContent {
       top: -8px !important;
@@ -15,29 +16,54 @@ body {
         padding: 0 !important;
       }
     }
-    
-    input[type=text]:focus, input[type=text]:active, input[type=file]:focus,
-    input[type=file]:active, input[type=password]:focus, input[type=password]:active,
-    input[type=tel]:focus, input[type=tel]:active, input[type=search]:focus,
-    input[type=search]:active, select:focus, select:active, textarea:focus, textarea:active {
+
+    input[type='text']:focus,
+    input[type='text']:active,
+    input[type='file']:focus,
+    input[type='file']:active,
+    input[type='password']:focus,
+    input[type='password']:active,
+    input[type='tel']:focus,
+    input[type='tel']:active,
+    input[type='search']:focus,
+    input[type='search']:active,
+    select:focus,
+    select:active,
+    textarea:focus,
+    textarea:active {
       border: none !important;
       box-shadow: none !important;
     }
 
     .actions-container {
-      input[type=text]:focus, input[type=text]:active, input[type=file]:focus,
-      input[type=file]:active, input[type=password]:focus, input[type=password]:active,
-      input[type=tel]:focus, input[type=tel]:active, input[type=search]:focus,
-      input[type=search]:active, select:focus, select:active, textarea:focus, textarea:active {
+      input[type='text']:focus,
+      input[type='text']:active,
+      input[type='file']:focus,
+      input[type='file']:active,
+      input[type='password']:focus,
+      input[type='password']:active,
+      input[type='tel']:focus,
+      input[type='tel']:active,
+      input[type='search']:focus,
+      input[type='search']:active,
+      select:focus,
+      select:active,
+      textarea:focus,
+      textarea:active {
         border: none !important;
         box-shadow: none !important;
       }
     }
 
-    .mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button,
-    .mat-flat-button, .mat-fab, .mat-mini-fab {
+    .mat-button,
+    .mat-raised-button,
+    .mat-icon-button,
+    .mat-stroked-button,
+    .mat-flat-button,
+    .mat-fab,
+    .mat-mini-fab {
       border-radius: 2px !important;
-      font-family: "Helvetica Neue","Segoe UI",Helvetica,Verdana,sans-serif !important;
+      font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif !important;
       font-size: 14px !important;
     }
 
@@ -77,9 +103,7 @@ body {
         margin: 10px 0px 10px 0px;
       }
     }
-
   }
-
 }
 
 div.paymentDetailsModal {
@@ -90,7 +114,7 @@ div.paymentDetailsModal {
   height: 100%;
   .modalHeader {
     padding: 8px 16px !important;
-    background-color:  colors.$costarDarkBlue !important;
+    background-color: colors.$costarDarkBlue !important;
     color: white;
   }
   div.modalContent {
@@ -99,7 +123,7 @@ div.paymentDetailsModal {
   }
 
   .pmntDtls-bottom mat-tab-group {
-    div.mat-tab-label .mdc-tab__text-label{
+    div.mat-tab-label .mdc-tab__text-label {
       color: colors.$darkerGray;
     }
     div.tab-data {
@@ -119,43 +143,52 @@ div.paymentDetailsModal {
         }
         .mat-tab-label:focus {
           border: 1px solid colors.$costarDarkBlue;
-        }  
+        }
       }
       mat-ink-bar.mat-ink-bar {
         display: none;
       }
     }
-  }  
+  }
 
   dx-data-grid {
-    &#paymentProcessingGrid, &#paymentHistoryGrid, &#chargeAllocationsGrid {
+    &#paymentProcessingGrid,
+    &#paymentHistoryGrid,
+    &#chargeAllocationsGrid {
       height: 100%;
       tr.dx-row.dx-header-row {
         background-color: colors.$color-dark-blue !important;
         color: white !important;
       }
-      tr.dx-row.dx-group-row, .dx-datagrid-group-closed::before, .dx-datagrid-group-opened::before {
+      tr.dx-row.dx-group-row,
+      .dx-datagrid-group-closed::before,
+      .dx-datagrid-group-opened::before {
         color: black;
       }
       tr.dx-row.dx-group-row:focus {
         border: 1px solid transparent;
       }
-      
     }
 
-    div.dx-datagrid-headers div.dx-datagrid-content table tbody tr.dx-header-row td div.dx-column-indicators 
-    span.dx-header-filter.dx-header-filter-empty {
+    div.dx-datagrid-headers
+      div.dx-datagrid-content
+      table
+      tbody
+      tr.dx-header-row
+      td
+      div.dx-column-indicators
+      span.dx-header-filter.dx-header-filter-empty {
       color: white;
     }
   }
 }
 
 #rangeDateForm {
-  .dx-item-content.dx-box-item-content.dx-box-flex.dx-box.dx-widget { 
+  .dx-item-content.dx-box-item-content.dx-box-flex.dx-box.dx-widget {
     align-items: start;
     flex-grow: unset;
     gap: 8px;
-   .dx-item.dx-box-item:first-child {
+    .dx-item.dx-box-item:first-child {
       width: 60px;
       max-width: 60px;
     }
@@ -163,16 +196,17 @@ div.paymentDetailsModal {
       width: 100px;
       max-width: 100px;
     }
-    .dx-item.dx-box-item:nth-last-child(-n+2) {  //** last two children **//
+    .dx-item.dx-box-item:nth-last-child(-n + 2) {
+      //** last two children **//
       width: 138px;
       max-width: 138px;
     }
-  }  
+  }
   .dx-layout-manager {
     .dx-field-item:not(.dx-first-col) {
       padding: 0px;
     }
-  }  
+  }
 }
 
 app-action-menu crem-button.disabledAction {
@@ -184,9 +218,10 @@ app-action-menu crem-button.disabledAction {
 }
 
 div.menu-section.btns-right crem-button {
-  button.button-secondary:focus, button.button-primary:focus {
+  button.button-secondary:focus,
+  button.button-primary:focus {
     border: 1px solid black;
-  }   
+  }
 }
 
 .list-page-data-grid {
@@ -213,16 +248,23 @@ div.menu-section.btns-right crem-button {
   }
 }
 
-.cdk-overlay-container .cdk-overlay-pane .mat-mdc-menu-panel .mat-mdc-menu-content .view-list-item-flex .view-list-item.dbl-left-margin button:focus {
+.cdk-overlay-container
+  .cdk-overlay-pane
+  .mat-mdc-menu-panel
+  .mat-mdc-menu-content
+  .view-list-item-flex
+  .view-list-item.dbl-left-margin
+  button:focus {
   border: 1px solid transparent;
 }
 
-.mat-mdc-menu-item[disabled], mat-slide-toggle.mat-disabled {
+.mat-mdc-menu-item[disabled],
+mat-slide-toggle.mat-disabled {
   color: colors.$costarRichGray !important;
 }
 
 .mat-slide-toggle-content {
-  font-family: Roboto,Helvetica Neue,sans-serif;
+  font-family: Roboto, Helvetica Neue, sans-serif;
   font-size: 14px;
 }
 
@@ -230,13 +272,17 @@ app-list-page {
   button.button-primary:disabled {
     color: colors.$costarRichGray !important;
   }
-} 
+}
 
-button.mat-mdc-menu-item, button.mat-mdc-menu-item mat-slide-toggle label.mat-slide-toggle-label {
+button.mat-mdc-menu-item,
+button.mat-mdc-menu-item mat-slide-toggle label.mat-slide-toggle-label {
   font-weight: 500 !important;
 }
 
-button.mat-mdc-menu-item[disabled="true"] mat-slide-toggle label.mat-slide-toggle-label, button.mat-mdc-menu-item[disabled="true"] {
+button.mat-mdc-menu-item[disabled='true']
+  mat-slide-toggle
+  label.mat-slide-toggle-label,
+button.mat-mdc-menu-item[disabled='true'] {
   font-weight: 400 !important;
 }
 
@@ -245,15 +291,17 @@ button.actionTemplateButton[disabled] {
   pointer-events: none;
 }
 
-.list-page-data-grid-wrapper.financeListPages, .pmntDtls-bottom div.dx-scrollable-wrapper {
+.list-page-data-grid-wrapper.financeListPages,
+.pmntDtls-bottom div.dx-scrollable-wrapper {
   tr.dx-row {
-    &.dx-data-row, &.dx-group-row {
+    &.dx-data-row,
+    &.dx-group-row {
       td {
         padding: 3px 7px;
         border-bottom: 1px solid lightgray;
       }
       border-bottom: 1px solid lightgray;
-      line-height: 12px
+      line-height: 12px;
     }
-  }    
+  }
 }

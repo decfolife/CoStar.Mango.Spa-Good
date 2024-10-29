@@ -1,0 +1,49 @@
+<crem-card
+  id="files-list__card"
+  title="Selected files"
+  [subtitle]="null"
+  [filterData]="null"
+  [filterInitialValue]="null"
+  [showFilterClearButton]="false"
+  fxFlexFill
+>
+  <dx-list
+    [dataSource]="selectedFilesDatasource$ | async"
+    selectionMode="single"
+    height="unset"
+    [allowItemDeleting]="true"
+    itemDeleteMode="static"
+    itemTemplate="filesListTemplate"
+    [showSelectionControls]="true"
+    (onItemDeleting)="onFileDeleting($event)"
+    [selectByClick]="false"
+  >
+    <div *dxTemplate="let file of 'filesListTemplate'">
+      <span class="files-list__file-name"> {{ file.name }}</span>
+    </div>
+  </dx-list>
+  <div class="files-list__actions">
+    <div class="files-list__stats">
+      <span class="file-stats__nb-files"
+        ><b>{{ (filesStats$ | async).nbFiles }} </b>files</span
+      >
+      <b>|</b>
+      <span class="file-stats__size"
+        ><b>{{ (filesStats$ | async).size | number: '1.2-2' }} </b>KB</span
+      >
+    </div>
+    <crem-button
+      type="submit"
+      [id]="'button1'"
+      [text]="(uploadFilesInProgres$ | async) ? 'Uploading...' : 'Upload files'"
+      [btnStyle]="'flat'"
+      [color]="'primary'"
+      [size]="'medium'"
+      [disabled]="!(uploadFilesReady$ | async)"
+      (buttonClick)="uploadFiles()"
+      [icon]="(uploadFilesInProgres$ | async) ? 'faSpinner' : null"
+      [disabled]="uploadFilesInProgres$ | async"
+      [iconAnimation]="'spin'"
+    ></crem-button>
+  </div>
+</crem-card>

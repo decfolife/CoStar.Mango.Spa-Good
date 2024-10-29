@@ -31,19 +31,23 @@
     padding: 6px 0px 0px 16px;
   }
 
-  .mdc-tab-indicator__content.mdc-tab-indicator__content--underline, .mat-mdc-tab.mdc-tab--active:focus .mdc-tab-indicator__content--underline, .mat-mdc-tab.mdc-tab--active:hover .mdc-tab-indicator__content--underline {
+  .mdc-tab-indicator__content.mdc-tab-indicator__content--underline,
+  .mat-mdc-tab.mdc-tab--active:focus .mdc-tab-indicator__content--underline,
+  .mat-mdc-tab.mdc-tab--active:hover .mdc-tab-indicator__content--underline {
     background-color: $costarDarkOrange;
     border-color: $costarDarkOrange;
     height: 3px;
   }
 
-  .mat-mdc-tab, .mat-mdc-tab:hover, .mat-mdc-tab.cdk-mouse-focused {
+  .mat-mdc-tab,
+  .mat-mdc-tab:hover,
+  .mat-mdc-tab.cdk-mouse-focused {
     height: 36px;
     width: auto !important;
     min-width: auto !important;
     padding: 0 16px;
     flex-grow: unset !important;
-    opacity: .6 !important;
+    opacity: 0.6 !important;
     .mdc-tab__text-label {
       line-height: 17px;
       color: $black;
@@ -54,8 +58,6 @@
   .mat-mdc-tab.mat-mdc-focus-indicator.mdc-tab-indicator--active {
     opacity: 1 !important;
   }
-
-
 }
 
 .user-settings-dialog div#\'buttonTemplate\' {
@@ -103,7 +105,7 @@ dx-drop-down-button.btn.btn-default:hover {
     padding: 7px 5px;
     align-content: center !important;
   }
-  
+
   #titlebarleft {
     display: flex !important;
     flex-direction: row !important;
@@ -113,13 +115,13 @@ dx-drop-down-button.btn.btn-default:hover {
     font-size: 13px !important;
     font-family: Helvetica, sans-serif !important;
   }
-  
+
   .titlebarleft {
     background: none !important;
     font-size: 13px !important;
     font-family: Helvetica, sans-serif !important;
   }
-  
+
   .titlebarright {
     width: 55%;
     display: flex;
@@ -155,7 +157,7 @@ dx-drop-down-button.btn.btn-default:hover {
   }
 
   label {
-    font: normal normal 12px Helvetica,Arial,sans-serif;
+    font: normal normal 12px Helvetica, Arial, sans-serif;
     width: unset !important;
   }
 

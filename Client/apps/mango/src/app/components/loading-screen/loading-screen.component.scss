@@ -1,7 +1,6 @@
 @use 'styles' as *;
 
-:host{
-
+:host {
   .loading-screen {
     z-index: 5000001; // Over Pendo
     display: flex;
@@ -9,14 +8,14 @@
     justify-content: center;
     @include costar(transition, fast);
 
-    &.light{
+    &.light {
       @include costar(background-color, light);
       @include costar(color, dark);
       .logo {
         background-image: url('../../../assets/images/logos/logo-color.svg');
       }
     }
-    &.dark{
+    &.dark {
       @include costar(background-color, primary);
       @include costar(color, light);
       .logo {
@@ -47,7 +46,5 @@
       justify-content: center;
       align-items: center;
     }
-
   }
-
 }

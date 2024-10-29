@@ -2,10 +2,10 @@
 
 ::ng-deep {
   .dx-datagrid-content
-  .dx-datagrid-table
-  .dx-row
-  .dx-command-edit.dx-command-edit-with-icons
-  .dx-link {
+    .dx-datagrid-table
+    .dx-row
+    .dx-command-edit.dx-command-edit-with-icons
+    .dx-link {
     text-decoration: none !important;
   }
 
@@ -14,17 +14,16 @@
   }
 
   .dx-row {
-    font: 14px "Helvetica Neue", "Segoe UI", Helvetica, Verdana, sans-serif !important;
+    font: 14px 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif !important;
   }
 
   .dx-popup-title.dx-toolbar {
-      padding-left: 16px !important;
-      padding-right: 16px !important;
-      height: 48px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    height: 48px !important;
   }
 
-  .dx-popup-title.dx-toolbar
-  .dx-toolbar-item:last-child {
+  .dx-popup-title.dx-toolbar .dx-toolbar-item:last-child {
     font-size: 20px !important;
   }
 
@@ -37,8 +36,7 @@
     max-width: 90% !important;
   }
 
-  .dx-toolbar-label
-  .dx-toolbar-item-content {
+  .dx-toolbar-label .dx-toolbar-item-content {
     overflow: visible;
 
     & > div {
@@ -110,7 +108,7 @@
   .dx-header-row {
     .dx-header-filter {
       &.dx-header-filter-empty {
-        color: hsla(0, 0%, 58.4%, .5);
+        color: hsla(0, 0%, 58.4%, 0.5);
       }
 
       color: colors.$costarMediumBlue;
@@ -122,21 +120,24 @@
       background-color: #cae3fe;
       cursor: pointer;
 
-      &:not(.dx-selection):not(.dx-row-modified):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused) .dx-link {
+      &:not(.dx-selection):not(.dx-row-modified):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row)
+        > td:not(.dx-focused)
+        .dx-link {
         color: #337ab7;
       }
     }
   }
 
   #divUnsavedChangedPopup {
-    padding:16px;
+    padding: 16px;
   }
 
   .highlight {
-    color: #FF0000 !important;
+    color: #ff0000 !important;
   }
 
-  .sharing-datagrid .dx-header-row, .list-page-data-grid .dx-header-row {
+  .sharing-datagrid .dx-header-row,
+  .list-page-data-grid .dx-header-row {
     background-color: colors.$lightGray;
     color: colors.$costarBlue;
     font-weight: bold !important;

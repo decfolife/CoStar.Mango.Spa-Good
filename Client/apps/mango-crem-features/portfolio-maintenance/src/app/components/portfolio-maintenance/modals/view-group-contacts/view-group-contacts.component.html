@@ -1,52 +1,54 @@
 <crem-modal
-	modalTitle="Group Contact Preview" 
-	[closeIconVisible]="true" 
-	closeOrCancelButtonText="Close" 
-	>
-	<div modalContent class="modal-content-wrapper">
-		<div class="modal-content__text">
-			* - Group is Primary Group
-		</div>
+  modalTitle="Group Contact Preview"
+  [closeIconVisible]="true"
+  closeOrCancelButtonText="Close"
+>
+  <div modalContent class="modal-content-wrapper">
+    <div class="modal-content__text">* - Group is Primary Group</div>
 
-		<dx-data-grid
-			class="modal-content__grid"
-			#DataGrid
-			[dataSource]="contacts"
-			keyExpr="contactId"
-			[showColumnLines]="false"
-			[showRowLines]="false"
-			[showBorders]="false"
-			[rowAlternationEnabled]="true" 
-			[allowColumnResizing]="true"
-			[allowColumnReordering]="true"
-			[columnAutoWidth]="true"
-			[filterSyncEnabled]="true"
-			[columnMinWidth]="10"
-		>
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
-			<dxo-sorting mode="multiple"></dxo-sorting>
-			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
-			<dxo-paging [pageSize]="50"></dxo-paging>
-		    <dxo-pager 
-		        [showPageSizeSelector]="true"
-		        [allowedPageSizes]="[50, 100, 200, 500]"
-		        [showInfo]="true"
-                [showNavigationButtons]="true"
-                [visible]="true"
-			>
-			</dxo-pager>
-			<dxi-column *ngFor="let col of columns" 
-				[dataField]="col.dataField" 
-				[alignment]="col.alignment"
-                [visible]="col.visible"
-				[dataType]="col.dataType"
-				[format]="col.format"
-				[caption]="col.caption"
-				[fixed]="col.fixed"
-				[allowEditing]="col.allowEditing"
-				[cellTemplate]="col.cellTemplate"
-				>
-			</dxi-column>	
-		</dx-data-grid>
-	</div>
+    <dx-data-grid
+      class="modal-content__grid"
+      #DataGrid
+      [dataSource]="contacts"
+      keyExpr="contactId"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="true"
+      [filterSyncEnabled]="true"
+      [columnMinWidth]="10"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+      <dxo-paging [pageSize]="50"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[50, 100, 200, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      >
+      </dxo-pager>
+      <dxi-column
+        *ngFor="let col of columns"
+        [dataField]="col.dataField"
+        [alignment]="col.alignment"
+        [visible]="col.visible"
+        [dataType]="col.dataType"
+        [format]="col.format"
+        [caption]="col.caption"
+        [fixed]="col.fixed"
+        [allowEditing]="col.allowEditing"
+        [cellTemplate]="col.cellTemplate"
+      >
+      </dxi-column>
+    </dx-data-grid>
+  </div>
 </crem-modal>

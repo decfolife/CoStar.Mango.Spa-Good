@@ -21,7 +21,7 @@ interface IDropdownOptions {
 @Component({
   selector: 'mango-parameters-grid',
   templateUrl: './parameters-grid.component.html',
-  styleUrls: ['./parameters-grid.component.scss']
+  styleUrls: ['./parameters-grid.component.scss'],
 })
 export class ParametersGridComponent implements OnInit {
   discountRateOptions: IDropdownOptions[];
@@ -81,8 +81,10 @@ export class ParametersGridComponent implements OnInit {
   }
 
   get annualRateText(): string {
-    return  `${this.parameterOverrides?.annualRateOverride ?? ''}% ` +
-      `${this.parameterOverrides?.annualRateTypeOverride ?? ''}`;
+    return (
+      `${this.parameterOverrides?.annualRateOverride ?? ''}% ` +
+      `${this.parameterOverrides?.annualRateTypeOverride ?? ''}`
+    );
   }
 
   constructor(
@@ -99,7 +101,7 @@ export class ParametersGridComponent implements OnInit {
       manualAssetAdjustmentOverride: null,
       paymentTimingOverride: null,
     };
-   }
+  }
 
   ngOnInit(): void {
     this.populatePortfolioClassificationConfigurationOptions();
@@ -114,8 +116,9 @@ export class ParametersGridComponent implements OnInit {
   }
 
   getClassificationName(classificationId: number): string {
-    const classification = this.classificationTypes
-      .find(x => x.classificationID === classificationId);
+    const classification = this.classificationTypes.find(
+      (x) => x.classificationID === classificationId
+    );
 
     return classification?.classificationType;
   }
@@ -139,8 +142,8 @@ export class ParametersGridComponent implements OnInit {
 
       //This is needed when a user clicks the previous button on the confirmation screen so that
       //the correct values are loaded in the Classification Parameters dropdowns
-      if(this.parametersData.cardMeasureEvent.remeasureTypeName){
-        this.checkFullTermination(this.parametersData.cardMeasureEvent)
+      if (this.parametersData.cardMeasureEvent.remeasureTypeName) {
+        this.checkFullTermination(this.parametersData.cardMeasureEvent);
       }
 
       return;
@@ -149,10 +152,15 @@ export class ParametersGridComponent implements OnInit {
     this.availableDataGrid?.instance.beginCustomLoading('Loading...');
 
     this.remeasureParameters = this.portfolioClassificationConfiguration
-      .filter(itm => {
-        return itm.remeasureTypeName === measureEventType.remeasureTypeName &&
-          this.classificationTypes?.find(x => x.classificationID === itm.classificationID);
-      }).map(item => {
+      .filter((itm) => {
+        return (
+          itm.remeasureTypeName === measureEventType.remeasureTypeName &&
+          this.classificationTypes?.find(
+            (x) => x.classificationID === itm.classificationID
+          )
+        );
+      })
+      .map((item) => {
         if (item.journalEntryOption === 'Direct Entry') {
           item.journalEntryProfileID = -1;
         }
@@ -169,7 +177,8 @@ export class ParametersGridComponent implements OnInit {
   }
 
   checkFullTermination(measureEventType: MeasureEvent) {
-    const isFullTermination = measureEventType.remeasureTypeName === 'Full Termination';
+    const isFullTermination =
+      measureEventType.remeasureTypeName === 'Full Termination';
 
     this.beginDateReadOnly = isFullTermination;
     this.discountRateReadOnly = isFullTermination;
@@ -180,8 +189,8 @@ export class ParametersGridComponent implements OnInit {
 
       this.parameterOverrides.annualRateOverride = '0';
 
-      this.remeasureParameters.forEach(item => {
-        const anyItem = (item as any)
+      this.remeasureParameters.forEach((item) => {
+        const anyItem = item as any;
 
         anyItem.manualAdjustmentOption = 'No Adjustment';
         anyItem.discountRateProfile = 'Not Applicable';
@@ -206,7 +215,7 @@ export class ParametersGridComponent implements OnInit {
           if (+evt.row.data.beginDateFormItemID === -1) {
             evt.row.data.beginDateFormItemID = null;
           }
-        }
+        };
         break;
 
       case 'endValueExpr':
@@ -220,26 +229,28 @@ export class ParametersGridComponent implements OnInit {
           if (+evt.row.data.endDateFormItemID === -1) {
             evt.row.data.endDateFormItemID = null;
           }
-        }
+        };
         break;
 
       case 'journalEntryProfileID': {
         const leaseRecType = evt.row.data.classificationID;
-        const filtered = this.portfolioClassificationConfigurationOptions
-          .journalEntryProfiles
-          .filter(x => x.leaseRecognitionType === leaseRecType)
+        const filtered =
+          this.portfolioClassificationConfigurationOptions.journalEntryProfiles.filter(
+            (x) => x.leaseRecognitionType === leaseRecType
+          );
 
         evt.editorOptions.dataSource = [
           {
             profileName: 'Select a Profile...',
             profileID: -1,
-            leaseRecognitionType: null
-          }, {
+            leaseRecognitionType: null,
+          },
+          {
             profileName: 'Prior Value',
             profileID: null,
-            leaseRecognitionType: null
+            leaseRecognitionType: null,
           },
-          ...filtered
+          ...filtered,
         ];
         break;
       }
@@ -278,7 +289,7 @@ export class ParametersGridComponent implements OnInit {
     this.parameterOverrides.annualRateTypeOverride = null;
     this.parameterOverrides.paymentTimingOverride = null;
     this.parameterOverrides.discountRateOverride = null;
-  }
+  };
 
   updateDiscountRate = (evt) => {
     if (evt.value === null) {
@@ -290,19 +301,22 @@ export class ParametersGridComponent implements OnInit {
     this.parameterOverrides.discountRateOverride = this.isValid
       ? this.annualRateText
       : null;
-  }
+  };
 
   validateJEProfiles() {
     let isValid = true;
 
-    this.availableDataGrid?.instance.getDataSource()?.items()
-      .forEach(item => {
-        item.journalEntryOption = this.portfolioClassificationConfigurationOptions
-          ?.journalEntryProfiles
-          .find(x => x.profileID === item.journalEntryProfileID)?.profileName;
+    this.availableDataGrid?.instance
+      .getDataSource()
+      ?.items()
+      .forEach((item) => {
+        item.journalEntryOption =
+          this.portfolioClassificationConfigurationOptions?.journalEntryProfiles.find(
+            (x) => x.profileID === item.journalEntryProfileID
+          )?.profileName;
 
         if (item.journalEntryProfileID < 0) isValid = false;
-    });
+      });
 
     return isValid;
   }
@@ -310,13 +324,15 @@ export class ParametersGridComponent implements OnInit {
   validateJEProfile = (obj: any) => {
     if (!obj.data) return obj.value >= 0;
 
-    const profile = this.portfolioClassificationConfigurationOptions
-      ?.journalEntryProfiles.find(x => x.profileID === obj.value);
+    const profile =
+      this.portfolioClassificationConfigurationOptions?.journalEntryProfiles.find(
+        (x) => x.profileID === obj.value
+      );
 
     obj.data.journalEntryOption = profile.profileName;
 
     return profile.profileID === null || profile.profileID >= 0;
-  }
+  };
 
   validateRateRange = (obj: any) => {
     if (obj.value === null || obj.value === undefined) return false;
@@ -326,11 +342,15 @@ export class ParametersGridComponent implements OnInit {
     const parts = obj.value.toPrecision().split('.');
 
     if (parts.length > 1) {
-      return parts[0].length <= 4 && parts[1].length <= 14 && obj.value.toPrecision().length <= 18;
+      return (
+        parts[0].length <= 4 &&
+        parts[1].length <= 14 &&
+        obj.value.toPrecision().length <= 18
+      );
     }
 
     return true;
-  }
+  };
 
   validateBeginDate = (obj: any) => {
     if (!obj.value || !this.parameterOverrides.accountingTermEndDateOverride) {
@@ -338,37 +358,48 @@ export class ParametersGridComponent implements OnInit {
     }
 
     const beginDate = new Date(obj.value);
-    const endDate = new Date(this.parameterOverrides.accountingTermEndDateOverride);
+    const endDate = new Date(
+      this.parameterOverrides.accountingTermEndDateOverride
+    );
 
     return beginDate <= endDate;
-  }
+  };
 
   validateEndDate = (obj: any) => {
-    if (!obj.value || !this.parameterOverrides.accountingTermBeginDateOverride) {
+    if (
+      !obj.value ||
+      !this.parameterOverrides.accountingTermBeginDateOverride
+    ) {
       return true;
     }
 
-    const beginDate = new Date(this.parameterOverrides.accountingTermBeginDateOverride);
+    const beginDate = new Date(
+      this.parameterOverrides.accountingTermBeginDateOverride
+    );
     const endDate = new Date(obj.value);
 
     return beginDate <= endDate;
-  }
+  };
 
   validateDiscountRateOverride = (): boolean => {
     if (!this.parameterOverrideRequired.discountRateOverride) {
       return true;
     }
 
-    const hasAnnualRate = this.parameterOverrides.annualRateOverride !== null &&
+    const hasAnnualRate =
+      this.parameterOverrides.annualRateOverride !== null &&
       this.parameterOverrides.annualRateOverride !== undefined;
 
-    const isValid = (hasAnnualRate &&
-      this.validateRateRange({ value: this.parameterOverrides.annualRateOverride }) &&
+    const isValid =
+      hasAnnualRate &&
+      this.validateRateRange({
+        value: this.parameterOverrides.annualRateOverride,
+      }) &&
       !!this.parameterOverrides.annualRateTypeOverride &&
-      !!this.parameterOverrides.paymentTimingOverride);
+      !!this.parameterOverrides.paymentTimingOverride;
 
     return isValid;
-  }
+  };
 
   private parameterChange = () => {
     const dataItems = this.availableDataGrid?.instance.getDataSource()?.items();
@@ -377,28 +408,28 @@ export class ParametersGridComponent implements OnInit {
       return;
     }
 
-    this.parameterOverrideRequired.accountingTermBeginDateOverride = dataItems
-      .some((data) => {
+    this.parameterOverrideRequired.accountingTermBeginDateOverride =
+      dataItems.some((data) => {
         return data.beginValueExpr === 'OptionID: 2 FormItemID: -1';
       });
 
-    this.parameterOverrideRequired.accountingTermEndDateOverride = dataItems
-      .some((data) => {
+    this.parameterOverrideRequired.accountingTermEndDateOverride =
+      dataItems.some((data) => {
         return data.endValueExpr === 'OptionID: 2 FormItemID: -1';
       });
 
-    this.parameterOverrideRequired.commentsOverride = dataItems
-      .some((data) => {
-        return data.commentsOption === 'Direct Entry';
-      });
+    this.parameterOverrideRequired.commentsOverride = dataItems.some((data) => {
+      return data.commentsOption === 'Direct Entry';
+    });
 
-    this.parameterOverrideRequired.discountRateOverride = dataItems
-      .some((data) => {
+    this.parameterOverrideRequired.discountRateOverride = dataItems.some(
+      (data) => {
         return data.discountRateProfile === 'Direct Entry';
-      });
+      }
+    );
 
-    this.parameterOverrideRequired.manualAssetAdjustmentOverride = dataItems
-      .some((data) => {
+    this.parameterOverrideRequired.manualAssetAdjustmentOverride =
+      dataItems.some((data) => {
         return data.manualAdjustmentOption === 'Direct Entry';
       });
 
@@ -409,13 +440,15 @@ export class ParametersGridComponent implements OnInit {
 
   private filterDiscountRateOptions() {
     if (!this.portfolioSettings?.discountRateMatching) {
-      this.discountRateOptions = this.discountRateOptions
-        .filter(x => x.id !== 'Use Best Match');
+      this.discountRateOptions = this.discountRateOptions.filter(
+        (x) => x.id !== 'Use Best Match'
+      );
     }
 
     if (!this.portfolioSettings?.directEntryDiscountRateEnabled) {
-      this.discountRateOptions = this.discountRateOptions
-        .filter(x => x.id !== 'Direct Entry');
+      this.discountRateOptions = this.discountRateOptions.filter(
+        (x) => x.id !== 'Direct Entry'
+      );
     }
   }
 
@@ -453,21 +486,21 @@ export class ParametersGridComponent implements OnInit {
 
     this.batchParametersService
       .getPortfolioClassificationConfigurationOptions(this.masterGroupID)
-      .subscribe(result => {
+      .subscribe((result) => {
         this.portfolioClassificationConfigurationOptions = result.data;
 
-        this.portfolioClassificationConfigurationOptions
-          ?.journalEntryProfiles?.unshift(
+        this.portfolioClassificationConfigurationOptions?.journalEntryProfiles?.unshift(
           {
             profileName: 'Select a Profile...',
             profileID: -1,
-            leaseRecognitionType: null
-          }, {
+            leaseRecognitionType: null,
+          },
+          {
             profileName: 'Prior Value',
             profileID: null,
-            leaseRecognitionType: null
+            leaseRecognitionType: null,
           }
-          );
+        );
 
         this.setMeasurementSettingsByMeasureEvent(this.measureEventType);
       });
@@ -478,13 +511,15 @@ export class ParametersGridComponent implements OnInit {
       return;
     }
 
-    this.batchParametersService.getPortfolioSettings(this.masterGroupID)
-      .subscribe(result => {
+    this.batchParametersService
+      .getPortfolioSettings(this.masterGroupID)
+      .subscribe((result) => {
         this.portfolioSettings = result?.data.item1;
 
         if (this.portfolioSettings?.defaultAnnualRateType) {
-          this.parameterOverrides.annualRateTypeOverride =
-            ['', 'APR', 'APY'][this.portfolioSettings.defaultAnnualRateType];
+          this.parameterOverrides.annualRateTypeOverride = ['', 'APR', 'APY'][
+            this.portfolioSettings.defaultAnnualRateType
+          ];
         }
 
         this.populatePortfolioClassificationConfiguration();
@@ -494,7 +529,7 @@ export class ParametersGridComponent implements OnInit {
   private populatePortfolioClassificationConfiguration(): void {
     this.batchParametersService
       .getPortfolioClassificationConfiguration(this.masterGroupID)
-      .subscribe(result => {
+      .subscribe((result) => {
         let discountRateProfile = 'Prior Discount Rate';
 
         if (this.portfolioSettings?.directEntryDiscountRateEnabled) {
@@ -514,5 +549,4 @@ export class ParametersGridComponent implements OnInit {
         this.setMeasurementSettingsByMeasureEvent(this.measureEventType);
       });
   }
-
 }

@@ -1,10 +1,10 @@
-@use "libs/ui-shared/common/src/styles" as *;
+@use 'libs/ui-shared/common/src/styles' as *;
 
 .form {
-    &__section-item {
-        display: flex;
-        flex-direction: column;
-    }
+  &__section-item {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .textbox_subtext {
@@ -14,10 +14,10 @@
   &--warning {
     font-size: 12px;
     @include costar(color, danger);
-}
+  }
 
-&--success {
+  &--success {
     font-size: 12px;
     @include costar(color, success);
-}
+  }
 }

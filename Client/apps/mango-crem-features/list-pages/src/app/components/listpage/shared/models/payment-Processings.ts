@@ -1,6 +1,6 @@
 export interface PaymentProcessings {
   dueByYear: number;
-  dueBy: Date;    //DateTime on backend
+  dueBy: Date; //DateTime on backend
   gLScheduledTransactionID: number;
   scheduledAmount: string;
   approvedDate: string;
@@ -11,4 +11,3 @@ export interface PaymentProcessings {
   exportedByID?: number;
   exportedBy: string;
 }
-  

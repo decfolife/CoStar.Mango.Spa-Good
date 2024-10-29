@@ -1,0 +1,76 @@
+<crem-card
+  [id]="accountingSummaryService.getId(componentName, 'section', 'card')"
+  [showCustomHeader]="true"
+  [title]="title"
+  [subtitle]="subtitle"
+>
+  <div customHeader class="card-header">
+    <crem-button
+      *ngIf="pageMode !== 'Add Event'"
+      [id]="
+        accountingSummaryService.getId(
+          componentName,
+          'add-other-charges',
+          'button'
+        )
+      "
+      [text]="'Add Other Charges'"
+      [btnStyle]="'flat'"
+      [color]="'primary'"
+      [size]="'medium'"
+      [ariaLabel]="'Add Other Charges'"
+      [disabled]="isPaymentsGridLoading"
+      (buttonClick)="addOtherCharges()"
+    >
+    </crem-button>
+  </div>
+  <div class="payments-grid-container">
+    <dx-data-grid
+      #schedulePaymentsGrid
+      [id]="accountingSummaryService.getId(componentName, 'grid', 'section')"
+      [dataSource]="schedulePaymentsData"
+      [columns]="scheduelPaymentsGridColumns"
+      [showColumnLines]="true"
+      [allowColumnReordering]="true"
+      [allowColumnResizing]="true"
+      [wordWrapEnabled]="true"
+      [columnAutoWidth]="false"
+      [showRowLines]="true"
+      [showBorders]="true"
+      [rowAlternationEnabled]="true"
+      noDataText="No Data"
+      class="custom-data-grid"
+      [loadPanel]="{ enabled: true }"
+      (onRowClick)="onRowClick($event)"
+      (onContentReady)="onPaymentGridContentReady($event)"
+      (onEditorPreparing)="onEditorPreparing($event)"
+      (onSelectionChanged)="onSelectionChange($event)"
+    >
+      <dxo-paging [enabled]="false"> </dxo-paging>
+      <dxo-header-filter [visible]="true"></dxo-header-filter>
+      <dxo-selection
+        mode="multiple"
+        allowSelectAll="true"
+        [recursive]="true"
+        showCheckBoxesMode="always"
+      >
+      </dxo-selection>
+
+      <div *dxTemplate="let info of 'paymentsGridHeader'">
+        <p title="{{ info.column.caption }}" class="header-column-caption">
+          {{ info.column.caption }}
+        </p>
+      </div>
+
+      <div *dxTemplate="let cell of 'pointer'">
+        <div class="pointer" title="{{ cell.text }}">{{ cell.text }}</div>
+      </div>
+    </dx-data-grid>
+  </div>
+</crem-card>
+
+<mango-schedule-transactions-popup
+  [scheduledPaymentGridData]="scheduledPaymentGridData"
+  [schedulePayments]="schedulePayments"
+>
+</mango-schedule-transactions-popup>

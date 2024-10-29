@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter} from '@angular/core';
-import { MatDialog} from '@angular/material/dialog';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { GenerateApiKeyConfirmationComponent } from '../generate-apikey-confirmation/generate-apikey-confirmation.component';
 import { CopyClipboardMessageComponent } from '../copy-clipboard-message/copy-clipboard-message.component';
 import { Subscription } from 'rxjs';
@@ -17,47 +17,50 @@ import { ServiceAccountService } from '../../../services/service-account.service
   styleUrls: ['./service-account-api-keys.component.scss'],
 })
 export class ServiceAccountApiKeysComponent {
-  @Input() serviceAccountInfo: ServiceAccountInfo
+  @Input() serviceAccountInfo: ServiceAccountInfo;
   @Output() apiKeyUpdated = new EventEmitter<boolean>();
 
   subs: Subscription[] = [];
 
-  constructor(private serviceAccountService: ServiceAccountService, private dialog: MatDialog) {}
+  constructor(
+    private serviceAccountService: ServiceAccountService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 
-  generateApiKey(){
+  generateApiKey() {
     let dialogRef = this.dialog.open(GenerateApiKeyConfirmationComponent, {
       width: '600px',
       panelClass: 'client-delivery-modal',
       data: {
-        msg: "This will generate a new API Key and replace the existing one. Are you sure you want to continue?",
-        confirmButtonText: "Yes",
-        title: "Generate API Key Confirmation"
+        msg: 'This will generate a new API Key and replace the existing one. Are you sure you want to continue?',
+        confirmButtonText: 'Yes',
+        title: 'Generate API Key Confirmation',
       },
-      disableClose: true
+      disableClose: true,
     });
-    
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.subs.push(
-          this.serviceAccountService.generateApiKey()     
-          .subscribe(result => {
-            if (result) {     
-              this.apiKeyUpdated.emit(result);     
+          this.serviceAccountService.generateApiKey().subscribe((result) => {
+            if (result) {
+              this.apiKeyUpdated.emit(result);
               this.dialog.open(CopyClipboardMessageComponent, {
                 width: '650px',
                 height: '350px',
                 panelClass: 'client-delivery-modal',
                 data: {
-                  apikey: result.data
+                  apikey: result.data,
                 },
-                disableClose: true
+                disableClose: true,
               });
             }
-          }));
+          })
+        );
       }
     });
   }

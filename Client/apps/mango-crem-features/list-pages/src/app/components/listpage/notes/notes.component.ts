@@ -32,7 +32,7 @@ const MAX_CHARS_IN_NOTE = 7000;
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss']
+  styleUrls: ['./notes.component.scss'],
 })
 export class NotesComponent implements OnInit, OnChanges {
   noteTypes: NoteType[] = [];
@@ -54,22 +54,22 @@ export class NotesComponent implements OnInit, OnChanges {
   @Output() noteSaved = new EventEmitter<CommonNote>();
 
   @ViewChild('newNotePopup') popup: DxPopupComponent;
-  @ViewChild(DropdownComponent) noteTypeDropdown: DropdownComponent
+  @ViewChild(DropdownComponent) noteTypeDropdown: DropdownComponent;
 
   constructor(private service: NotesService) {
     this.initValues();
   }
 
   ngOnInit() {
-    this.service.getNoteTypes().subscribe(res => {
+    this.service.getNoteTypes().subscribe((res) => {
       const data = res.data.noteTypes;
 
       data.forEach((noteType: any) => {
         this.noteTypes.push({
           id: noteType.commonNoteTypeId,
-          name: noteType.commonNoteType
+          name: noteType.commonNoteType,
         });
-      })
+      });
     });
   }
 
@@ -79,7 +79,12 @@ export class NotesComponent implements OnInit, OnChanges {
     }
 
     if (changes.noteData?.currentValue !== changes.noteData?.previousValue) {
-      this.service.getNotes(this.noteData.OID, this.noteData.OTID, this.noteData.CommonNoteTypeID)
+      this.service
+        .getNotes(
+          this.noteData.OID,
+          this.noteData.OTID,
+          this.noteData.CommonNoteTypeID
+        )
         .subscribe((res: any) => {
           this.previousNotes = [];
           this.allPreviousNotes = [];
@@ -88,15 +93,20 @@ export class NotesComponent implements OnInit, OnChanges {
               author: item.creator,
               text: this.convertCarriageReturnsToBR(item.note),
               timestamp: new Date(item.commonNoteDateCreated),
-              noteType: { id: item.commonNoteTypeId, name: item.commonNoteType }
+              noteType: {
+                id: item.commonNoteTypeId,
+                name: item.commonNoteType,
+              },
             });
             this.allPreviousNotes.push({
               author: item.creator,
               text: this.convertCarriageReturnsToBR(item.note),
               timestamp: new Date(item.commonNoteDateCreated),
-              noteType: { id: item.commonNoteTypeId, name: item.commonNoteType }
+              noteType: {
+                id: item.commonNoteTypeId,
+                name: item.commonNoteType,
+              },
             });
-
           });
         });
     }
@@ -115,24 +125,25 @@ export class NotesComponent implements OnInit, OnChanges {
     }
 
     //Copy here because this.newNote is bound to the html and we don't want
-    //<br>'s to magically show up in the bound text area. Copy it, convert all CR/LF's to <br>s and 
+    //<br>'s to magically show up in the bound text area. Copy it, convert all CR/LF's to <br>s and
     //save the copy to DB
     const noteToSave: Note = {
       author: this.newNote.author,
       text: this.convertBRToCarriageReturns(this.newNote.text),
       timestamp: this.newNote.timestamp,
-      noteType: this.newNote.noteType
+      noteType: this.newNote.noteType,
     };
 
-    this.service.createNote(this.noteData, noteToSave)
-      .subscribe(res => {
+    this.service.createNote(this.noteData, noteToSave).subscribe(
+      (res) => {
         this.noteSaved.emit(res.data);
         this.popup.instance.hide();
       },
 
-        () => {
-          this.disabled = false;
-        });
+      () => {
+        this.disabled = false;
+      }
+    );
   }
 
   calculateCharactersRemaining(evt: any) {
@@ -149,7 +160,7 @@ export class NotesComponent implements OnInit, OnChanges {
   }
 
   onHide() {
-    this.noteTypeDropdown.resetSelections()
+    this.noteTypeDropdown.resetSelections();
     this.showPopupChange.emit(false);
   }
 
@@ -164,7 +175,7 @@ export class NotesComponent implements OnInit, OnChanges {
       author: null,
       text: '',
       timestamp: null,
-      noteType: null
+      noteType: null,
     };
 
     this.remainingChars = MAX_CHARS_IN_NOTE;
@@ -179,13 +190,12 @@ export class NotesComponent implements OnInit, OnChanges {
 
   noteTypesSelected(noteTypes: NoteType[]): void {
     if (noteTypes) {
-      const selectedNoteType: NoteType = noteTypes[0]
-      this.newNote.noteType = selectedNoteType
+      const selectedNoteType: NoteType = noteTypes[0];
+      this.newNote.noteType = selectedNoteType;
     }
   }
 
   onShowing(event): void {
-    event.component._$content.addClass('notes-popup-wrapper')
+    event.component._$content.addClass('notes-popup-wrapper');
   }
 }
-

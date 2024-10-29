@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { CremComponent } from './crem-component';
 import { BookmarksService } from '@micro-components/services/bookmarks.service';
@@ -14,13 +14,14 @@ describe('CremComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CremComponent],
-      imports: [
-        HttpClientTestingModule,
-        MatDialogModule
+      imports: [HttpClientTestingModule, MatDialogModule],
+      providers: [
+        ProjectsDashboardLeftNavService,
+        BookmarksService,
+        MangoAppFacade,
+        provideMockStore(),
       ],
-      providers: [ProjectsDashboardLeftNavService, BookmarksService, MangoAppFacade, provideMockStore()]
-    })
-      .compileComponents();
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -30,9 +31,8 @@ describe('CremComponent', () => {
   });
 
   test.skip('CremComponent test is failing, needs revision', () => {
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    it('should create', () => {
+      expect(component).toBeTruthy();
+    });
   });
-  });
-
 });

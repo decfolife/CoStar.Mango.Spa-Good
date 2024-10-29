@@ -17,7 +17,7 @@ const LEASE_OTID = 4;
 @Component({
   selector: 'mango-alerts-rules',
   templateUrl: './alerts-rules.component.html',
-  styleUrls: ['./alerts-rules.component.scss']
+  styleUrls: ['./alerts-rules.component.scss'],
 })
 export class AlertsRulesComponent implements OnInit {
   @ViewChild('rulesGrid')
@@ -36,10 +36,10 @@ export class AlertsRulesComponent implements OnInit {
   appliedFilterCount = 0;
   showClearFilters = false;
 
-  constructor(private service: AlertsRulesService) { }
+  constructor(private service: AlertsRulesService) {}
 
   ngOnInit() {
-    this.service.getUserModuleRights().subscribe(res => {
+    this.service.getUserModuleRights().subscribe((res) => {
       const rights = res.data.find(
         (x: ModuleRight) => x.moduleId === LEASE_ALERT_RULES_MODULE_ID
       ) as ModuleRight;
@@ -52,36 +52,49 @@ export class AlertsRulesComponent implements OnInit {
       this.userHasAddRights = rights.hasAddRights;
     });
 
-    this.service.getIsAlertDismissedReasonRequired(LEASE_OTID).subscribe(res => {
-      this.dismissReasonRequired = (res.data as unknown as boolean);
-    });
+    this.service
+      .getIsAlertDismissedReasonRequired(LEASE_OTID)
+      .subscribe((res) => {
+        this.dismissReasonRequired = res.data as unknown as boolean;
+      });
   }
 
   updateDismissReasonSetting() {
     this.rulesGrid.setIsLoading(true);
-    this.service.toggleAlertDismissedReasonIsRequired(LEASE_OTID).subscribe(res => {
-      notify({
-        message: res.succeeded
-          ? 'Dismiss Reason setting saved.'
-          : 'Error saving setting.',
-        type: res.succeeded ? 'success' : 'error',
-        displayTime: 3000,
-        position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
-      this.rulesGrid.setIsLoading(false);
-    }, () => {
-      notify({
-        message: 'There was an error processing your change.',
-        type: 'error',
-        displayTime: 3000,
-        position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
-      this.rulesGrid.setIsLoading(false);
-    });
+    this.service.toggleAlertDismissedReasonIsRequired(LEASE_OTID).subscribe(
+      (res) => {
+        notify({
+          message: res.succeeded
+            ? 'Dismiss Reason setting saved.'
+            : 'Error saving setting.',
+          type: res.succeeded ? 'success' : 'error',
+          displayTime: 3000,
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
+          maxWidth: '400px',
+          closeOnClick: true,
+        });
+        this.rulesGrid.setIsLoading(false);
+      },
+      () => {
+        notify({
+          message: 'There was an error processing your change.',
+          type: 'error',
+          displayTime: 3000,
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
+          maxWidth: '400px',
+          closeOnClick: true,
+        });
+        this.rulesGrid.setIsLoading(false);
+      }
+    );
   }
 
   searchDataGrid() {
@@ -113,23 +126,30 @@ export class AlertsRulesComponent implements OnInit {
     exportDataGrid({
       component: this.rulesGrid.rulesGrid.instance,
       worksheet: alertRulesWorksheet,
-    }).then(() => {
-      const descriptions = this.rulesGrid.gridData.map(x => x.description);
-      descriptions.unshift('Rule Description');
+    })
+      .then(() => {
+        const descriptions = this.rulesGrid.gridData.map((x) => x.description);
+        descriptions.unshift('Rule Description');
 
-      alertRulesWorksheet.spliceColumns(3, 0, descriptions);
-      alertRulesWorksheet.getCell('C1').style = alertRulesWorksheet.getCell('A1').style;
+        alertRulesWorksheet.spliceColumns(3, 0, descriptions);
+        alertRulesWorksheet.getCell('C1').style =
+          alertRulesWorksheet.getCell('A1').style;
 
-      alertRulesWorksheet.getColumn('B').width = 80;
-      alertRulesWorksheet.getColumn('C').width = 100;
+        alertRulesWorksheet.getColumn('B').width = 80;
+        alertRulesWorksheet.getColumn('C').width = 100;
 
-      workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
-        saveAs(new Blob([ buffer ], { type: 'application/octet-stream' }),
-          'Alert Rules.xlsx');
+        workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
+          saveAs(
+            new Blob([buffer], { type: 'application/octet-stream' }),
+            'Alert Rules.xlsx'
+          );
+        });
+
+        this.isExporting = false;
+      })
+      .catch(() => {
+        this.isExporting = false;
       });
-
-      this.isExporting = false;
-    }).catch(() => { this.isExporting = false; });
   }
 
   updateFilterCount(newCount: number) {

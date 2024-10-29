@@ -2,8 +2,9 @@ class EnvironmentsCrem {
   production = false;
   name = 'PROD';
   appUrls = {
-    portfolioMaintenance: '/v06/WebServices/Mango/PortfolioMaintenance/PortfolioMaintenance.asmx/'
-};
+    portfolioMaintenance:
+      '/v06/WebServices/Mango/PortfolioMaintenance/PortfolioMaintenance.asmx/',
+  };
   isRestful: false;
 }
 

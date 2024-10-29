@@ -8,49 +8,59 @@ import { JwtService, AuthService, UtilitiesService } from '@mango/core-shared';
 import { UserAuth } from '@mango/data-models/lib-data-models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-
   constructor(
-    private facade: MangoAppFacade, 
-    private activatedRoute: ActivatedRoute, 
-    private navigationService: MangoNavigationService, 
+    private facade: MangoAppFacade,
+    private activatedRoute: ActivatedRoute,
+    private navigationService: MangoNavigationService,
     private authService: AuthService,
-    private jwtService: JwtService) { }
+    private jwtService: JwtService
+  ) {}
 
-  canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  canActivate():
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
     return this.facade.authenticatedUser$.pipe(
-      switchMap(user => combineLatest([of(user), this.activatedRoute.queryParams, this.activatedRoute.pathFromRoot])),
+      switchMap((user) =>
+        combineLatest([
+          of(user),
+          this.activatedRoute.queryParams,
+          this.activatedRoute.pathFromRoot,
+        ])
+      ),
       map(([user, params, url]: [UserAuth, Params, any]) => {
-        return [user, params, url]
+        return [user, params, url];
       }),
       switchMap(([user, params, url]: [UserAuth, Params, string]) => {
         if (!!user || !!params.auth_code) {
-          return of(true)
-        } 
-        
-        if (UtilitiesService.isLocalEnvironment()) {
-          let token = this.jwtService.getToken()
-          if (token) return of(true)       
+          return of(true);
+        }
 
-          this.navigationService.redirectToCentralAuth()
-          return of(false)
-        } 
+        if (UtilitiesService.isLocalEnvironment()) {
+          let token = this.jwtService.getToken();
+          if (token) return of(true);
+
+          this.navigationService.redirectToCentralAuth();
+          return of(false);
+        }
 
         return this.authService.getCurrentUser().pipe(
-          map(user => {
+          map((user) => {
             if (user) {
-              this.facade.setAuthenticatedUser(user)
-              return true
+              this.facade.setAuthenticatedUser(user);
+              return true;
             }
           }),
-          catchError(error => {
-            this.facade.logout(true)
-            return of(false)
+          catchError((error) => {
+            this.facade.logout(true);
+            return of(false);
           })
-        )
+        );
       })
-    )
+    );
   }
 }

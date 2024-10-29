@@ -7,27 +7,23 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 import { ConfigurationService } from './services/configuration.service';
 
-
-
-
-
 @NgModule({
-    declarations: [AppComponent],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        LibUiElementsModule
-    ],
-    providers: [
-        ConfigurationService,
-        {
-            provide: 'BASE_URL',
-            useFactory: ConfigurationService.baseUrl,
-        },
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    LibUiElementsModule,
+  ],
+  providers: [
+    ConfigurationService,
+    {
+      provide: 'BASE_URL',
+      useFactory: ConfigurationService.baseUrl,
+    },
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(private injector: Injector) {}

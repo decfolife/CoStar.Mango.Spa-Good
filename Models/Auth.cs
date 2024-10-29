@@ -77,8 +77,10 @@ public record AuthenticatedUser
 {
     public int UserId { get; set; }
     public string Email { get; set; }
+    public string Role { get; set; }
     public string ClientKey { get; set; }
     public int ContactId { get; set; }
+    public string ContactRole { get; set; }
     public bool IsAutoProvisioned { get; set; }
     public bool IsRemUser { get; set; }
 }

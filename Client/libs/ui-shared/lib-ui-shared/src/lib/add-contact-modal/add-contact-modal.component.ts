@@ -26,12 +26,19 @@ import {
   ToastState,
   ObjectTypeTypeID,
   VALIDATION_ERROR,
+  RegexPatterns,
+  CONTACT_WIZARD_MESSAGES,
 } from '@mango/data-models/lib-data-models';
 import { CommonModule } from '@angular/common';
 import { Toast } from 'ngx-toastr';
 import { DataService } from '@mango/core-shared';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
+import DataSource from 'devextreme/data/data_source';
+
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxSelectBoxComponent } from 'devextreme-angular';
+import CustomStore from 'devextreme/data/custom_store';
 
 @Component({
   selector: 'crem-add-contact-modal-component',
@@ -49,6 +56,7 @@ import { filter, tap } from 'rxjs/operators';
     Toast,
     FormsModule,
     CremFormsModule,
+    DxSelectBoxModule,
   ],
   styleUrls: ['./add-contact-modal.component.scss'],
 })
@@ -68,16 +76,16 @@ export class AddContactModalComponent {
   saveNewClicked: boolean = false;
   saveLaunchClicked: boolean = false;
   disableButton: boolean = false;
+  companyDataSource: any;
+  searchTimeoutOption = 600;
+  contactGroupDefaultValue: any;
 
-  public companyDropdownItem: any[];
   public contactGroupDropdownItem: any[];
   private subscriptions = new Subscription();
   private subs: Subscription[] = [];
   public subGroupDropdownItem: any[];
   selectedPortfolio: any[];
   private redirectorLinks: any[] = null;
-
-  contactGroupDefaultValue: any;
 
   constructor(
     public dialogRef: MatDialogRef<AddContactModalComponent>,
@@ -92,9 +100,21 @@ export class AddContactModalComponent {
       objectTypeName: string;
       objectTypeId: number;
     }
-  ) {}
+  ) {
+    this.initCompanyDataSource();
+  }
 
   ngOnInit(): void {
+    this.initializeForm();
+    this.loadDropdownData().subscribe();
+    this.fetchRedirectorLinks();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
+  private initializeForm(): void {
     this.contactForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -104,8 +124,9 @@ export class AddContactModalComponent {
       companyName: ['', Validators.required],
       groupList: ['', Validators.required],
     });
+  }
 
-    this.subscriptions.add(this.loadDropdownData().subscribe());
+  private fetchRedirectorLinks(): void {
     if (this.redirectorLinks === null) {
       this.subs.push(
         this.dataService.getRedirectorLinkList().subscribe((res) => {
@@ -115,29 +136,73 @@ export class AddContactModalComponent {
     }
   }
 
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+  initCompanyDataSource() {
+    this.companyDataSource = new DataSource({
+      load: async (loadOptions) => {
+        try {
+          const params = {
+            page: loadOptions.skip / loadOptions.take + 1 || 1,
+            pageSize: loadOptions.take || 100,
+            searchValue: loadOptions.searchValue || '',
+          };
+
+          var result = await this.formWizardService
+            .getRenderSelect(
+              params.searchValue,
+              RequestType.CONTACT_COMPANY_LIST,
+              '',
+              '',
+              '',
+              '',
+              params.page,
+              params.pageSize
+            )
+            .toPromise();
+
+          if (!result.success) {
+            console.log(result.clientErrorMessage);
+            this.toastService.show(
+              'An error has occurred. Please try again.',
+              'Error',
+              ToastState.ERROR,
+              {
+                position: 'top right',
+                maxWidth: '350px',
+              }
+            );
+            return { data: [], totalCount: 0 };
+          }
+
+          return {
+            data: result.data.items,
+            totalCount: result.data.totalItems,
+          };
+        } catch (error) {
+          this.toastService.show(
+            'An error has occurred. Please try again.',
+            'Error',
+            ToastState.ERROR,
+            {
+              position: 'top right',
+              maxWidth: '350px',
+            }
+          );
+          return { data: [], totalCount: 0 };
+        }
+      },
+      paginate: true,
+      pageSize: 100,
+    });
   }
 
   loadDropdownData(): Observable<any> {
-    return combineLatest([
-      this.formWizardService.getAllUserGroups(),
-      this.formWizardService.getRenderSelect(
-        0,
-        RequestType.CONTACT_COMPANY_LIST
-      ),
-    ]).pipe(
-      filter(
-        ([contactGroupDropdownItem, companyDropdownItem]) =>
-          !!contactGroupDropdownItem && !!companyDropdownItem
-      ),
-      tap(([contactGroupDropdownItem, companyDropdownItem]) => {
+    return combineLatest([this.formWizardService.getAllUserGroups()]).pipe(
+      filter(([contactGroupDropdownItem]) => !!contactGroupDropdownItem),
+      tap(([contactGroupDropdownItem]) => {
         this.contactGroupDropdownItem = contactGroupDropdownItem.data;
-        this.companyDropdownItem = companyDropdownItem.data;
       })
     );
   }
-  
 
   setButtonStates(activeButton: string): void {
     this.saveClicked = activeButton === 'save';
@@ -146,107 +211,41 @@ export class AddContactModalComponent {
     this.disableButton = true;
   }
 
-  public save() {
+  private handleContactRequest(actionType: 'save' | 'saveNew' | 'launch') {
+    if (!this.contactForm.valid) {
+      this.showErrorToast(VALIDATION_ERROR);
+    }
     if (this.contactForm.valid) {
-      this.setButtonStates('save');
-      this.saveClicked = true;
+      this.setButtonStates(actionType);
       const contactRequest = this.getContactData();
-      this.validateEmailAddress(contactRequest.emailAddress)
-        ? this.subscriptions.add(
-            this.formWizardService
-              .addContact(contactRequest)
-              .subscribe((result) => {
-                if (result) {
-                  this.toastService.show(
-                    'Contact created successfully.',
-                    '',
-                    ToastState.SUCCESS,
-                    {
-                      position: 'bottom right',
-                      maxWidth: '350px',
-                    }
-                  );
+
+      if (!this.validateEmailAddress(contactRequest.emailAddress)) {
+        this.resetSaveState(actionType);
+        return;
+      }
+
+      this.subscriptions.add(
+        this.formWizardService
+          .addContact(contactRequest)
+          .subscribe((result) => {
+            if (result.success) {
+              this.toastService.show(
+                CONTACT_WIZARD_MESSAGES.CONTACT_WIZARD_SAVE_SUCCESS,
+                '',
+                ToastState.SUCCESS,
+                {
+                  position: 'bottom right',
+                  maxWidth: '350px',
+                }
+              );
+
+              this.resetSaveState(actionType);
+
+              switch (actionType) {
+                case 'save':
                   this.dialogRef.close();
-                  this.saveClicked = false;
-                } else {
-                  this.toastService.show(
-                    'An error has occurred. Please try again.',
-                    '',
-                    ToastState.ERROR,
-                    {
-                      position: 'bottom right',
-                      maxWidth: '350px',
-                    }
-                  );
-                }
-              })
-          )
-        : (this.saveClicked = false);
-    } else {
-      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
-        position: 'bottom right',
-        maxWidth: '375px',
-      });
-    }
-  }
-
-  public saveAndNew() {
-    if (this.contactForm.valid) {
-      this.setButtonStates('saveNew');
-      this.saveNewClicked = true;
-      const contactRequest = this.getContactData();
-      this.validateEmailAddress(contactRequest.emailAddress)
-        ? this.subscriptions.add(
-            this.formWizardService
-              .addContact(contactRequest)
-              .subscribe((result) => {
-                if (result.success) {
-                  this.toastService.show(
-                    'Contact created successfully.',
-                    '',
-                    ToastState.SUCCESS,
-                    {
-                      position: 'bottom right',
-                      maxWidth: '350px',
-                    }
-                  );
-                  this.saveNewClicked = false;
-                  this.disableButton = false;
-                  this.resetPopupSelection();
-                } else {
-                  this.toastService.show(
-                    'An error has occurred. Please try again.',
-                    '',
-                    ToastState.ERROR,
-                    {
-                      position: 'bottom right',
-                      maxWidth: '350px',
-                    }
-                  );
-                }
-              })
-          )
-        : (this.saveNewClicked = false);
-    } else {
-      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
-        position: 'bottom right',
-        maxWidth: '375px',
-      });
-    }
-  }
-
-  public launch() {
-    if (this.contactForm.valid) {
-      this.setButtonStates('launch');
-      this.saveLaunchClicked = true;
-      const contactRequest = this.getContactData();
-      this.validateEmailAddress(contactRequest.emailAddress)
-        ? this.subscriptions.add(
-            this.formWizardService
-              .addContact(contactRequest)
-              .subscribe((result) => {
-                if (result.success) {
-                  this.saveLaunchClicked = false;
+                  break;
+                case 'launch':
                   this.dialogRef.close();
                   const currURL = this.getRedirectorURL(
                     result.data,
@@ -254,26 +253,53 @@ export class AddContactModalComponent {
                     ObjectTypeTypeID.CONTACT_OTTID
                   );
                   this.router.navigateByUrl(currURL);
-                } else {
-                  this.toastService.show(
-                    'An error has occurred. Please try again.',
-                    '',
-                    ToastState.ERROR,
-                    {
-                      position: 'bottom right',
-                      maxWidth: '350px',
-                    }
-                  );
-                }
-              })
-          )
-        : (this.saveLaunchClicked = false);
-    } else {
-      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
-        position: 'bottom right',
-        maxWidth: '375px',
-      });
+                  break;
+                case 'saveNew':
+                  this.resetPopupSelection();
+                  break;
+              }
+            } else {
+              this.showErrorToast();
+            }
+          })
+      );
     }
+  }
+
+  private resetSaveState(actionType: 'save' | 'saveNew' | 'launch') {
+    switch (actionType) {
+      case 'save':
+        this.saveClicked = false;
+        break;
+      case 'saveNew':
+        this.saveNewClicked = false;
+        this.disableButton = false;
+        break;
+      case 'launch':
+        this.saveLaunchClicked = false;
+        break;
+    }
+  }
+
+  private showErrorToast(
+    message: string = CONTACT_WIZARD_MESSAGES.CONTACT_WIZARD_ERROR_MSG
+  ) {
+    this.toastService.show(message, '', ToastState.ERROR, {
+      position: 'bottom right',
+      maxWidth: '350px',
+    });
+  }
+
+  public save() {
+    this.handleContactRequest('save');
+  }
+
+  public saveAndNew() {
+    this.handleContactRequest('saveNew');
+  }
+
+  public launch() {
+    this.handleContactRequest('launch');
   }
 
   getContactData() {
@@ -281,7 +307,8 @@ export class AddContactModalComponent {
       firstName: this.contactForm.get('firstName').value,
       lastName: this.contactForm.get('lastName').value,
       emailAddress: this.contactForm.get('emailAddress').value,
-      ContactPublic: this.contactForm.get('isPublic').value ==="true" ? true: false,
+      ContactPublic:
+        this.contactForm.get('isPublic').value === 'true' ? true : false,
       CompanyID: this.contactForm.get('companyName').value,
       ContactGroup: this.contactForm.get('groupList').value,
       GroupSecurityLevel: this.contactForm.get('groupRightList').value,
@@ -290,27 +317,27 @@ export class AddContactModalComponent {
     return contact;
   }
 
-  validateEmailAddress(emailAddress: string) {
-    if (emailAddress != '') {
-      let regexp = new RegExp(
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-      if (regexp.test(emailAddress) === false) {
-        this.toastService.show(
-          'Please enter a valid email address.',
-          '',
-          ToastState.ERROR,
-          {
-            position: 'bottom right',
-            maxWidth: '350px',
-          }
-        );
-        this.saveClicked = false;
-        this.disableButton = false
-        return false;
-      }
+  validateEmailAddress(emailAddress: string): boolean {
+    const isValidEmail =
+      emailAddress.trim() !== '' &&
+      RegexPatterns.ValidEmailAddress.test(emailAddress);
+    if (isValidEmail) {
+      return true;
     }
-    return true;
+    if (!isValidEmail) {
+      this.toastService.show(
+        CONTACT_WIZARD_MESSAGES.INVALID_Email_Address,
+        '',
+        ToastState.ERROR,
+        {
+          position: 'bottom right',
+          maxWidth: '350px',
+        }
+      );
+      this.saveClicked = false;
+      this.disableButton = false;
+      return false;
+    }
   }
 
   public close() {
@@ -346,9 +373,11 @@ export class AddContactModalComponent {
         x.objectTypeId === objectTypeId &&
         x.objectTypeTypeId === objectTypeTypeId
     );
+
     getURL =
       getURL ??
       this.redirectorLinks.find((x) => x.objectTypeId === objectTypeId);
+
     let urlLink = getURL ? getURL.urlLink : 'not found';
     urlLink = urlLink
       .replace(/\[OID\]/, objectId)

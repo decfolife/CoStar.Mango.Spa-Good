@@ -11,6 +11,7 @@ export class TooltipComponent implements OnInit {
   tooltipId: string;
   @Input() helpTextData: string;
   @Input() externalId: string;
+  @Input() helpTextDataIsHtml: boolean = false;
   color = 'gray';
   type = 'text';
   @ViewChild('helpText') helpText!: ElementRef;
@@ -33,8 +34,10 @@ export class TooltipComponent implements OnInit {
     this.withAnimationOptionsVisible = !this.withAnimationOptionsVisible;
   }
 
-  // This method insures the screen reader readers the helptext
+  // This method insures the screen reader reads the helptext
   onShownHandler() {
-    this.helpText.nativeElement.focus();
+    if(!!this.helpText){
+      this.helpText.nativeElement.focus();
+    }
   }
 }

@@ -51,8 +51,6 @@ export class CremViewMenuComponent  {
 
   hoverViewId: number;
 
-  constructor() { }
-
   ShowMenu = false;
 
   mouseOverView(id: number) {

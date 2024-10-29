@@ -1,5 +1,10 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import {
+  CommonModule,
+  CurrencyPipe,
+  DatePipe,
+  DecimalPipe,
+} from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DxDataGridModule, DxLoadPanelModule } from 'devextreme-angular';
 import { SharedModule } from '../../shared/shared.module';
@@ -18,7 +23,7 @@ import { PlaintextToHtmlPipe } from '../../pipe/plaintext-to-html.pipe';
   declarations: [
     SubObjectComparisonComponent,
     SafeHtmlPipe,
-    PlaintextToHtmlPipe
+    PlaintextToHtmlPipe,
   ],
 
   imports: [
@@ -35,14 +40,14 @@ import { PlaintextToHtmlPipe } from '../../pipe/plaintext-to-html.pipe';
       {
         path: '',
         data: { pageTitle: 'Sub Object Comparison' },
-        component: SubObjectComparisonComponent
+        component: SubObjectComparisonComponent,
       },
       {
         path: ':formId/:childObjectTypeId/:parentObjectId/:parentObjectTypeId/:widgetId',
         data: { pageTitle: 'Sub Object Comparison' },
-        component: SubObjectComparisonComponent
-      }
-    ])
+        component: SubObjectComparisonComponent,
+      },
+    ]),
   ],
   exports: [RouterModule],
   providers: [
@@ -52,6 +57,6 @@ import { PlaintextToHtmlPipe } from '../../pipe/plaintext-to-html.pipe';
     SubObjectComparisonService,
     ProjectGanttChartService,
     SharedService,
-  ]
+  ],
 })
-export class SubObjectComparisonModule { }
+export class SubObjectComparisonModule {}

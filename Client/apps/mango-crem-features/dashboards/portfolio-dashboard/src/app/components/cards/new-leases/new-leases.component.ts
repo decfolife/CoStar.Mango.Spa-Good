@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { CardDetails } from '../../../models';
@@ -10,9 +18,8 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
 @Component({
   selector: 'new-leases-card',
   templateUrl: './new-leases.component.html',
-  styleUrls: ['./new-leases.component.scss']
+  styleUrls: ['./new-leases.component.scss'],
 })
-
 export class NewLeasesComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
   private selectedFilters: string;
@@ -20,26 +27,30 @@ export class NewLeasesComponent implements OnInit, OnDestroy {
   @Output() rowClickEvent = new EventEmitter<any>();
 
   public isGridExpanded: boolean = false;
-  @ViewChild("NewLeasesGrid") dataGrid: DxDataGridComponent;
-  subs: Subscription[] = []
+  @ViewChild('NewLeasesGrid') dataGrid: DxDataGridComponent;
+  subs: Subscription[] = [];
   constructor(
     private router: Router,
     private exportToExcelService: ExportDevexDatagridService,
     private portfolioDataService: PortfolioDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.portfolioDataService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
   rowClick(e: any) {
-  this.router.navigate(
-    ['/v06/Forms/RenderForm.aspx'],
-    {
-      queryParams: { oid: e.data.systemLeaseID, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID }
+    this.router.navigate(['/v06/Forms/RenderForm.aspx'], {
+      queryParams: {
+        oid: e.data.systemLeaseID,
+        otid: e.data.objectTypeID,
+        ottid: e.data.objectTypeTypeID,
+      },
     });
   }
 
@@ -50,11 +61,13 @@ export class NewLeasesComponent implements OnInit, OnDestroy {
   }
 
   getCardData() {
-    this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-      }
-    ));
+    this.subs.push(
+      this.portfolioDataService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+        })
+    );
   }
 
   expandAllGridData(e: any) {
@@ -62,11 +75,13 @@ export class NewLeasesComponent implements OnInit, OnDestroy {
   }
 
   exportAllGridData() {
-    this.exportToExcelService.exportToExcel(this.dataGrid.instance, "New_Leases");
+    this.exportToExcelService.exportToExcel(
+      this.dataGrid.instance,
+      'New_Leases'
+    );
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }
-

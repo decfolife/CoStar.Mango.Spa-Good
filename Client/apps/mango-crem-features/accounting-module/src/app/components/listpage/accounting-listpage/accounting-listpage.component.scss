@@ -1,11 +1,12 @@
-@import "../../../../variables.scss";
+@import '../../../../variables.scss';
 
 .shared-left-nav li.listItem.List.Page a Span {
-    font-weight: bold;
-    border-bottom: 3px solid $color-brand-accent;
+  font-weight: bold;
+  border-bottom: 3px solid $color-brand-accent;
 }
 
-::ng-deep {// TODO: Remove once we get rid of V06
+::ng-deep {
+  // TODO: Remove once we get rid of V06
   .mainWrapper {
     app-list-page {
       position: absolute;

@@ -1,62 +1,71 @@
 <dx-load-panel
   [closeOnOutsideClick]="false"
   [visible]="isGLEvent && isChargeAction"
-  message="Loading...">
+  message="Loading..."
+>
 </dx-load-panel>
 
 <ng-container *ngIf="editPages?.length > 1 && enabled; else multiButton">
-  <crem-button
-    type="primary"
-    [matMenuTriggerFor]="addNewMenu"
-  >
-    <fa-icon class="small-plus" [icon]="faPlus" title="click to see the add options"></fa-icon>
+  <crem-button type="primary" [matMenuTriggerFor]="addNewMenu">
+    <fa-icon
+      class="small-plus"
+      [icon]="faPlus"
+      title="click to see the add options"
+    ></fa-icon>
     Add
   </crem-button>
 
   <mat-menu #addNewMenu="matMenu">
-    <button mat-menu-item *ngFor="let editPage of editPages"
-    (click)="addButtonClick(editPage)"
-    >{{ editPage.displayText }}</button>
+    <button
+      mat-menu-item
+      *ngFor="let editPage of editPages"
+      (click)="addButtonClick(editPage)"
+    >
+      {{ editPage.displayText }}
+    </button>
   </mat-menu>
 </ng-container>
 
-<ng-template #multiButton >
-   <!-- container only displays on specific list pages that has ObjectTypeId 2,3,4 -->
-  <ng-container *ngIf="objectTypeId == '2' || objectTypeId == '3' || objectTypeId == '4'">
-  <crem-button
-    [disabled] = "!enabled"
-    [matMenuTriggerFor]="addMenu"
-    type="primary"
-    class='{{ (enabled) ? "" : "disabledMenuButton" }}'
-    *ngIf="addButtonObjects?.length > 0"
-    
+<ng-template #multiButton>
+  <!-- container only displays on specific list pages that has ObjectTypeId 2,3,4 -->
+  <ng-container
+    *ngIf="objectTypeId == '2' || objectTypeId == '3' || objectTypeId == '4'"
   >
-    <fa-icon class="small-plus" [icon]="faPlus"></fa-icon>
-    Add
-  </crem-button>
-  
-  <mat-menu #addMenu="matMenu"
-      class="dashboardsAddMenu"
+    <crem-button
+      [disabled]="!enabled"
+      [matMenuTriggerFor]="addMenu"
+      type="primary"
+      class="{{ enabled ? '' : 'disabledMenuButton' }}"
+      *ngIf="addButtonObjects?.length > 0"
     >
-      <button *ngFor="let item of addButtonObjects"
+      <fa-icon class="small-plus" [icon]="faPlus"></fa-icon>
+      Add
+    </crem-button>
+
+    <mat-menu #addMenu="matMenu" class="dashboardsAddMenu">
+      <button
+        *ngFor="let item of addButtonObjects"
         mat-menu-item
-        (click)="getNavigationLink(item.moduleId);$event.preventDefault();"
-      >{{item.moduleDesc}}</button>
-      
+        (click)="getNavigationLink(item.moduleId); $event.preventDefault()"
+      >
+        {{ item.moduleDesc }}
+      </button>
     </mat-menu>
-  </ng-container> 
+  </ng-container>
   <!-- container only displays on specific list pages other than has ObjectTypeId 2,3,4 -->
-  <ng-container  *ngIf="objectTypeId != '2' && objectTypeId != '3' && objectTypeId != '4'">    
-    <crem-button 
-    [disabled] = "!enabled"
-    type="primary"
-    class='{{ (enabled) ? "" : "disabledMenuButton" }}'
-    *ngIf="editPages?.length === 1"
-    (click)="addButtonClickSingle()"
+  <ng-container
+    *ngIf="objectTypeId != '2' && objectTypeId != '3' && objectTypeId != '4'"
   >
-    <fa-icon class="small-plus" [icon]="faPlus"></fa-icon>
-    Add
-  </crem-button>
+    <crem-button
+      [disabled]="!enabled"
+      type="primary"
+      [id]="id"
+      class="{{ enabled ? '' : 'disabledMenuButton' }}"
+      *ngIf="editPages?.length === 1"
+      (click)="addButtonClickSingle()"
+    >
+      <fa-icon class="small-plus" [icon]="faPlus"></fa-icon>
+      Add
+    </crem-button>
   </ng-container>
 </ng-template>
-

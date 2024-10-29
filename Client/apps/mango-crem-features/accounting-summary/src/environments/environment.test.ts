@@ -2,7 +2,8 @@ class EnvironmentsCrem {
   production = false;
   name = 'TEST';
   appUrls = {
-    accountingSummary: '/v06/WebServices/Mango/AccountingSummary/AccountingSummary.asmx/',
+    accountingSummary:
+      '/v06/WebServices/Mango/AccountingSummary/AccountingSummary.asmx/',
     dashboards: '/v06/WebServices/Mango/Dashboards/Project.asmx/',
     listpages: '/v06/WebServices/Mango/ListPages/Project.asmx/',
     alertsRules: '/v06/WebServices/Mango/Alerts/Alerts.asmx',
@@ -11,10 +12,10 @@ class EnvironmentsCrem {
     userService: '',
     quickSearch: '',
     header: '',
-    identity: ''
+    identity: '',
   };
 
-  isRestful = false
+  isRestful = false;
 }
 
 export const environment = new EnvironmentsCrem();

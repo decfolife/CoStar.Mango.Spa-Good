@@ -32,10 +32,10 @@
     <div class="crem-popup__body">
       <ng-content select="[body]"></ng-content>
     </div>
-    <div class="crem-popup__footer" *ngIf="customFooter">
+    <div class="crem-popup__footer" *ngIf="customFooter && showFooter">
       <ng-content select="[footer]"></ng-content>
     </div>
-    <div class="crem-popup__footer" *ngIf="!customFooter">
+    <div class="crem-popup__footer" *ngIf="!customFooter && showFooter">
       <crem-button
         *ngIf="closeButtonText"
         class="footer__close-button"

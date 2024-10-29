@@ -1,0 +1,43 @@
+<div class="split-button">
+  <div class="split-button-container">
+    <crem-button
+      class="split-button-container__main-button"
+      [text]="text"
+      [color]="color"
+      [btnStyle]="btnStyle"
+      [size]="'medium'"
+      [disabled]="disabled"
+    ></crem-button>
+    <crem-button
+      class="split-button-container__caret-button"
+      [icon]="icon"
+      [color]="color"
+      [btnStyle]="btnStyle"
+      [size]="'medium'"
+      [disabled]="disabled"
+      [attr.aria-expanded]="dropDownOpen"
+      aria-haspopup="true"
+      aria-label="Show Options"
+      (click)="toggleDropdown($event)"
+    ></crem-button>
+  </div>
+  <div
+    class="split-button__dropdown"
+    *ngIf="dropDownOpen"
+    role="menu"
+    [ngClass]="{
+    right: dropdownPosition === 'left',
+    left: dropdownPosition === 'right',
+  }"
+  >
+    <div
+      class="split-button__dropdown__dropdown-item"
+      *ngFor="let option of options"
+      (click)="onOptionSelect($event)"
+      role="menuitem"
+      [attr.tabindex]="0"
+    >
+      {{ option }}
+    </div>
+  </div>
+</div>

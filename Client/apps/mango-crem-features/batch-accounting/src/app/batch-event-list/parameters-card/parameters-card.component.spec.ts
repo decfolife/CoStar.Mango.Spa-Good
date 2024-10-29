@@ -21,18 +21,14 @@ describe('ParametersCardComponent', () => {
     grid: null,
     gridData: null,
     gridOverrides: null,
-    gridLoaded: false
-  }
+    gridLoaded: false,
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ParametersCardComponent ],
-      imports: [
-        MatCardModule,
-        DevExtremeModule
-      ]
-    })
-    .compileComponents();
+      declarations: [ParametersCardComponent],
+      imports: [MatCardModule, DevExtremeModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -50,30 +46,39 @@ describe('ParametersCardComponent', () => {
     expect(component.isValid).toBeFalsy();
     component.form = null;
     expect(component.isValid).toBeTruthy();
-  })
+  });
 
-  it('should handle measure event changes', async done => {
-    component.selectedMeasureEventChange.subscribe(val => {
+  it('should handle measure event changes', async (done) => {
+    component.selectedMeasureEventChange.subscribe((val) => {
       expect(val).toEqual('test');
       done();
     });
 
-    component.measureEventChanged({ value: 'test' })
+    component.measureEventChanged({ value: 'test' });
   });
 
   it('should filter the next workflow status dropdown options', () => {
-    component.scheduleObject= { SelectedWorkflowStatus: { statusOrder: 0 } } as any;
-    component.parametersData.workflowSettings = { isIncrementOneLevelEnforced: false } as any;
+    component.scheduleObject = {
+      SelectedWorkflowStatus: { statusOrder: 0 },
+    } as any;
+    component.parametersData.workflowSettings = {
+      isIncrementOneLevelEnforced: false,
+    } as any;
     component.parametersData.workflowStatuses = [
       { statusOrder: 0, userHasRights: false, allUsersHaveRights: true } as any,
       { statusOrder: 2, userHasRights: false, allUsersHaveRights: true } as any,
-      { statusOrder: 1, userHasRights: false, allUsersHaveRights: false } as any
+      {
+        statusOrder: 1,
+        userHasRights: false,
+        allUsersHaveRights: false,
+      } as any,
     ];
 
     (component as any).filterNextWorkflowStatusDropdown();
     expect(component.nextWorkflowStatuses.length).toEqual(2);
 
-    component.parametersData.workflowSettings.isIncrementOneLevelEnforced = true;
+    component.parametersData.workflowSettings.isIncrementOneLevelEnforced =
+      true;
     (component as any).filterNextWorkflowStatusDropdown();
     expect(component.nextWorkflowStatuses.length).toEqual(2);
   });

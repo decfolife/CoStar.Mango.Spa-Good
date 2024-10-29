@@ -2,10 +2,16 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { UtilitiesService } from './utilities.service';
 
-@Injectable()
 /**
  * Provides an wrapper for accessing the web storage API and synchronizing session storage across tabs/windows.
+ * @example
+ * this.storageService.saveSyncedSessionData({test:'test'},'accounting-summary');
+ * this.storageService.getData('accounting-summary'); -> {test:'test'},
+ * @export
+ * @class StorageService
  */
+@Injectable()
+
 export class StorageService {
   public static readonly DBKEY_USER_DATA = 'user_data';
   private static readonly DBKEY_SYNC_KEYS = 'sync_keys';
@@ -24,7 +30,7 @@ export class StorageService {
     'clearAllSessionsStorage',
   ];
 
-  // save/update seesion data
+  // save/update session data
   public saveSyncedSessionData(
     data: any,
     key = StorageService.DBKEY_USER_DATA

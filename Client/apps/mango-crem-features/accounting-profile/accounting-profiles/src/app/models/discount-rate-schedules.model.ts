@@ -5,19 +5,19 @@
 
 // Amortizations Associated with Discount Rate Profile
 export class DiscountRateAssociatedSchedules {
-    scheduled: number;
-    historical: number;
-    inProcess: number;
-    remeasures: number;
+  scheduled: number;
+  historical: number;
+  inProcess: number;
+  remeasures: number;
 
-    constructor(scheduled, historical, inProcess, remeasures) {
-        this.scheduled = scheduled;
-        this.historical = historical;
-        this.inProcess = inProcess;
-        this.remeasures = remeasures;
-    }
+  constructor(scheduled, historical, inProcess, remeasures) {
+    this.scheduled = scheduled;
+    this.historical = historical;
+    this.inProcess = inProcess;
+    this.remeasures = remeasures;
+  }
 
-    total() {
-        return this.scheduled + this.historical + this.inProcess + this.remeasures;
-    }
+  total() {
+    return this.scheduled + this.historical + this.inProcess + this.remeasures;
+  }
 }

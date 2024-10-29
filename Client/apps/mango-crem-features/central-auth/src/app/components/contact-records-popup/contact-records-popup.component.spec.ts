@@ -18,10 +18,9 @@ describe('Contact Record Component', () => {
         CentralAuthFacade,
         provideMockStore(),
         provideRouter([]),
-        provideAnimations()
-      ]
-    })
-      .compileComponents();
+        provideAnimations(),
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

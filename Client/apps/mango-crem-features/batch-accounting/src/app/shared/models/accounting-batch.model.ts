@@ -1,4 +1,3 @@
-
 import { BatchParameter } from './batch-parameter.model';
 
 export enum BatchStatus {
@@ -10,7 +9,7 @@ export enum BatchStatus {
   Processing,
   Complete,
   CompleteWithError,
-  Error
+  Error,
 }
 
 export class AccountingBatch {
@@ -39,12 +38,23 @@ export class AccountingBatch {
 
   batchParameter: BatchParameter;
 
-  constructor(masterGroupId: number, batchStatus: BatchStatus,
-    createdBy: number, createdOn: Date, lastModifiedBy: number, lastModified: Date,
-    isAutoProcess: boolean, validationStarted: Date, validationEnded: Date,
-    processStarted: Date, processEnded: Date, validationSuccessTotal: number,
-    validationFailureTotal: number, processingSuccessTotal: number,
-    processingFailureTotal: number, batchParameter: BatchParameter
+  constructor(
+    masterGroupId: number,
+    batchStatus: BatchStatus,
+    createdBy: number,
+    createdOn: Date,
+    lastModifiedBy: number,
+    lastModified: Date,
+    isAutoProcess: boolean,
+    validationStarted: Date,
+    validationEnded: Date,
+    processStarted: Date,
+    processEnded: Date,
+    validationSuccessTotal: number,
+    validationFailureTotal: number,
+    processingSuccessTotal: number,
+    processingFailureTotal: number,
+    batchParameter: BatchParameter
   ) {
     this.masterGroupId = masterGroupId;
     this.batchStatus = batchStatus;

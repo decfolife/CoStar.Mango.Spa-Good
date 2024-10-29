@@ -1,47 +1,53 @@
 @use 'apps/mango/src/assets/styles/colors.scss' as colors;
 
-
 .body-content {
-    padding: 0 24px;
-    font-size: 14px !important;
+  padding: 0 24px;
+  font-size: 14px !important;
 }
 
 .modalContent {
-    overflow-y: auto !important;
+  overflow-y: auto !important;
 }
 
 .footerRightControls {
-    display: flex;
-    margin-left: auto;
-    align-items: center;
-    crem-button {
-        padding: 8px 0px 8px 8px;
-    }
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  crem-button {
+    padding: 8px 0px 8px 8px;
+  }
 }
 ::ng-deep {
-    mango-add-form-wizard {
-        .footer-content {
-            crem-button {
-                button {
-                    margin: 0px !important;
-                }
-                
-                button:focus, button:focus-within {
-                    outline-color: #000000 !important;
-                    outline-style: solid !important;
-                    outline-width: thin !important;
-                }
-                button:focus-visible {
-                    outline-color: #000000 !important;
-                    outline-style: solid !important;
-                    outline-width: thin !important;
-                }
-            }
+  mango-add-form-wizard {
+    .footer-content {
+      crem-button {
+        button {
+          margin: 0px !important;
         }
 
-        .dx-scrollable-wrapper{
-            max-height: 24vh;
+        button:focus,
+        button:focus-within {
+          outline-color: #000000 !important;
+          outline-style: solid !important;
+          outline-width: thin !important;
         }
+        button:focus-visible {
+          outline-color: #000000 !important;
+          outline-style: solid !important;
+          outline-width: thin !important;
+        }
+      }
     }
+
+    .dx-scrollable-wrapper {
+      max-height: 24vh;
+    }
+  }
 }
 
+::ng-deep #add_project_wizard__add_modal {
+  crem-dropdown {
+    display: block;
+    height: 100%;
+  }
+}

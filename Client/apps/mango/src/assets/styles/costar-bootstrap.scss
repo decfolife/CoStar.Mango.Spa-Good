@@ -9,167 +9,174 @@
 @import 'colors.scss';
 @import 'var.scss';
 
-button, .btn, .btn-sm, .card, .modal-content, .form-control, .input-group-addon {
-	// border-radius: 2px !important; // TODO: Removed this, interfering with the rest of the app
-	font-size: 14px;
-	font-family: $font;
-	font-weight: normal;
-	font-stretch: normal;
-	font-style: normal;
-	line-height: 0.86;
-	letter-spacing: normal;
-	text-align: center;
-	padding: $stdPadding;		
+button,
+.btn,
+.btn-sm,
+.card,
+.modal-content,
+.form-control,
+.input-group-addon {
+  // border-radius: 2px !important; // TODO: Removed this, interfering with the rest of the app
+  font-size: 14px;
+  font-family: $font;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 0.86;
+  letter-spacing: normal;
+  text-align: center;
+  padding: $stdPadding;
 }
 
 .card-header:first-child {
-	border-radius: 0px;
+  border-radius: 0px;
 }
 
-button, dx-drop-down-button {
-	height: $stdPadding * 4;
+button,
+dx-drop-down-button {
+  height: $stdPadding * 4;
 
-	&.btn {		
+  &.btn {
+    &:focus {
+      box-shadow: none;
+    }
 
-		&:focus {
-			box-shadow: none;
-		}
+    &.btn-link {
+      color: $primary;
+      padding: 0px;
+      height: auto;
 
-		&.btn-link {
-			color: $primary;
-			padding: 0px;
-			height: auto;
-			
-			&:hover {
-				color: darken($primary, 5%);
-			}
-		}
-		
-		&.btn-primary {
-			background-color: $primary;
-			border-color: $primary;
-			&:hover, &:focus {
-				background-color: darken($primary, 5%);
-				border-color: darken($primary, 10%);
+      &:hover {
+        color: darken($primary, 5%);
+      }
+    }
 
-				&:disabled {
-					cursor: not-allowed;
-					background-color: $primary;
-					border-color: darken($primary, 5%);
-				}
-			}
-		}		
+    &.btn-primary {
+      background-color: $primary;
+      border-color: $primary;
+      &:hover,
+      &:focus {
+        background-color: darken($primary, 5%);
+        border-color: darken($primary, 10%);
 
-		&.btn-default {
-			background-color: white;
-			border-color: $borderColor;
-			color: $costarRichGray;
-			&:hover {
-				background-color: #E6E6E6;
-				border-color: #ADADAD;
+        &:disabled {
+          cursor: not-allowed;
+          background-color: $primary;
+          border-color: darken($primary, 5%);
+        }
+      }
+    }
 
-				&:disabled {
-					background-color: white;
-					border-color: $borderColor;
-					color: $costarRichGray;
-				}
-			}
-		}
+    &.btn-default {
+      background-color: white;
+      border-color: $borderColor;
+      color: $costarRichGray;
+      &:hover {
+        background-color: #e6e6e6;
+        border-color: #adadad;
 
-		&.btn-success {
-			background-color: $success;
-			border-color: darken($success, 5%);
-			&:hover {
-				background-color: darken($success, 5%);
-				border-color: darken($success, 10%);
+        &:disabled {
+          background-color: white;
+          border-color: $borderColor;
+          color: $costarRichGray;
+        }
+      }
+    }
 
-				&:disabled {
-					background-color: $success;
-					border-color: darken($success, 5%);
-				}
-			}
-		}
-		
-		&.btn-warning {
-			background-color: $warning;
-			border-color: darken($warning, 5%);
-			&:hover {
-				background-color: darken($warning, 5%);
-				border-color: darken($warning, 10%);
+    &.btn-success {
+      background-color: $success;
+      border-color: darken($success, 5%);
+      &:hover {
+        background-color: darken($success, 5%);
+        border-color: darken($success, 10%);
 
-				&:disabled {
-					background-color: $warning;
-					border-color: darken($warning, 5%);
-				}
-			}
-		}
-		
-		&.btn-danger {
-			background-color: $danger;
-			border-color: darken($danger, 5%);
-			&:hover {
-				background-color: darken($danger, 5%);
-				border-color: darken($danger, 10%);
+        &:disabled {
+          background-color: $success;
+          border-color: darken($success, 5%);
+        }
+      }
+    }
 
-				&:disabled {
-					background-color: $danger;
-					border-color: darken($danger, 5%);
-				}
-			}
-		}
+    &.btn-warning {
+      background-color: $warning;
+      border-color: darken($warning, 5%);
+      &:hover {
+        background-color: darken($warning, 5%);
+        border-color: darken($warning, 10%);
 
-		&.btn-primary-outline {
-			background-color: white;
-			color: $primary;
-			border-color: $primary;
-			&:hover {
-				background-color: $primary;
-				color: white;
+        &:disabled {
+          background-color: $warning;
+          border-color: darken($warning, 5%);
+        }
+      }
+    }
 
-				i.dx-icon {
-					color: white;				
-				}
+    &.btn-danger {
+      background-color: $danger;
+      border-color: darken($danger, 5%);
+      &:hover {
+        background-color: darken($danger, 5%);
+        border-color: darken($danger, 10%);
 
-				&:disabled {
-					background-color: white;
-					color: $primary;
-					border-color: $primary;
-				}
-			}
+        &:disabled {
+          background-color: $danger;
+          border-color: darken($danger, 5%);
+        }
+      }
+    }
 
-			i.dx-icon {
-				color: $primary;				
-			}
-		}		
+    &.btn-primary-outline {
+      background-color: white;
+      color: $primary;
+      border-color: $primary;
+      &:hover {
+        background-color: $primary;
+        color: white;
 
-		&.btn-success-outline {
-			background-color: white;
-			color: $success;
-			border-color: $success;
-			&:hover {
-				background-color: $success;
-				color: white;
-			}
-		}
-		
-		&.btn-warning-outline {
-			background-color: white;
-			color: $warning;
-			border-color: $warning;
-			&:hover {
-				background-color: $warning;
-				color: white;
-			}
-		}
-		
-		&.btn-danger-outline {
-			background-color: white;
-			color: $danger;
-			border-color: $danger;
-			&:hover {
-				background-color: $danger;
-				color: white;
-			}
-		}
-	}
+        i.dx-icon {
+          color: white;
+        }
+
+        &:disabled {
+          background-color: white;
+          color: $primary;
+          border-color: $primary;
+        }
+      }
+
+      i.dx-icon {
+        color: $primary;
+      }
+    }
+
+    &.btn-success-outline {
+      background-color: white;
+      color: $success;
+      border-color: $success;
+      &:hover {
+        background-color: $success;
+        color: white;
+      }
+    }
+
+    &.btn-warning-outline {
+      background-color: white;
+      color: $warning;
+      border-color: $warning;
+      &:hover {
+        background-color: $warning;
+        color: white;
+      }
+    }
+
+    &.btn-danger-outline {
+      background-color: white;
+      color: $danger;
+      border-color: $danger;
+      &:hover {
+        background-color: $danger;
+        color: white;
+      }
+    }
+  }
 }

@@ -47,6 +47,11 @@
     "build:prod:microcomponent-central-auth": "ng build mango-crem-features-central-auth --configuration=prod && node build-element.js central-auth"
   },
   "private": true,
+  "lint-staged": {
+    "**/*.{scss,js,ts,html,json}": [
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@angular-devkit/core": "16.2.12",
     "@angular-material-extensions/password-strength": "^16.0.0",
@@ -104,6 +109,7 @@
     "jspdf": "^2.4.0",
     "jspdf-autotable": "^3.5.20",
     "jwt-decode": "^3.1.2",
+    "lint-staged": "^15.2.10",
     "lodash": "^4.17.21",
     "ngx-date-fns": "^10.0.1",
     "ngx-skeleton-loader": "^7.0.0",

@@ -4,13 +4,13 @@ $stdPadding: 8px;
 $dblPadding: 2 * $stdPadding;
 
 .customer-selection-wrapper {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;	
-	flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-grow: 1;
 
-	mat-card {
-		width: 580px;
+  mat-card {
+    width: 580px;
     border: 1px solid #c2c2c2;
     border-radius: 2px !important;
     box-shadow: none !important;
@@ -19,13 +19,13 @@ $dblPadding: 2 * $stdPadding;
     display: block;
     position: relative;
     background: #fff;
-    color: rgba(0,0,0,.87);
+    color: rgba(0, 0, 0, 0.87);
     font-family: Helvetica !important;
 
-		mat-card-header {
-			justify-content: center;
-			padding: 24px 24px 0px 24px;
-			border-bottom: none;
+    mat-card-header {
+      justify-content: center;
+      padding: 24px 24px 0px 24px;
+      border-bottom: none;
       box-sizing: border-box;
       color: #3c3c3c;
       align-items: center;
@@ -34,22 +34,22 @@ $dblPadding: 2 * $stdPadding;
       flex-direction: row;
 
       mat-card-title {
-          font-weight: 200;
-          font-size: 22px;
-          line-height: 24px;
-          display: inline-block;
-          margin-right: unset;
+        font-weight: 200;
+        font-size: 22px;
+        line-height: 24px;
+        display: inline-block;
+        margin-right: unset;
       }
-		}
+    }
 
-		mat-card-content {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			padding: 2 * $dblPadding;			
-		}		
-	}
+    mat-card-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2 * $dblPadding;
+    }
+  }
 }
 
 .card-deck-container {
@@ -75,7 +75,7 @@ $dblPadding: 2 * $stdPadding;
     .mat-mdc-card-header .mat-mdc-card-title {
       font-size: 0.875rem;
       text-align: center;
-      max-width: 100px; 
+      max-width: 100px;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
@@ -92,6 +92,6 @@ $dblPadding: 2 * $stdPadding;
 }
 
 #company-logo {
-    text-align: center;
-    margin-bottom: 10px;
+  text-align: center;
+  margin-bottom: 10px;
 }

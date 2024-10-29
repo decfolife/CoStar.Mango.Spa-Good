@@ -1,17 +1,12 @@
-﻿using MangoSPA.Extensions;
-using MangoSPA.Models;
+﻿using MangoSPA.Models;
 using MangoSPA.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.Configuration;
-using System.Text.Json;
 
 namespace MangoSPA.Controllers;
 
-[Authorize]
+[Authorize(Policy = "FullAccess")]
 [Route("[controller]")]
 public class SessionsController : ControllerBase
 {
@@ -26,7 +21,6 @@ public class SessionsController : ControllerBase
     /// Fetch all active sessions.
     /// </summary>
     /// <returns></returns>
-    [Authorize(Policy = "FullAccess")]
     [HttpGet] //sessions
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -44,7 +38,6 @@ public class SessionsController : ControllerBase
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
-    [Authorize(Policy = "FullAccess")]
     [HttpGet("user")] //sessions/user
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -65,7 +58,6 @@ public class SessionsController : ControllerBase
     /// </summary>
     /// <param name="sessionId"></param>
     /// <returns></returns>
-    [Authorize(Policy = "FullAccess")]
     [HttpDelete] //sessions
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -84,7 +76,6 @@ public class SessionsController : ControllerBase
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
-    [Authorize(Policy = "FullAccess")]
     [HttpDelete("user")] //sessions/user
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]

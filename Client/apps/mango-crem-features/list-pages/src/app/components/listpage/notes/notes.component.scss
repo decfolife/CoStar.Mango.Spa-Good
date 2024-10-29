@@ -2,7 +2,7 @@
 
 :host ::ng-deep {
   h6 {
-    font: 500 16px "Helvetica Neue","Segoe UI",Helvetica,Verdana,sans-serif !important;
+    font: 500 16px 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif !important;
 
     .clickable {
       color: colors.$costarBlue;
@@ -23,7 +23,7 @@
 
   .dx-texteditor {
     .dx-texteditor-input {
-      font: 14px "Helvetica Neue","Segoe UI",Helvetica,Verdana,sans-serif !important;
+      font: 14px 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif !important;
     }
 
     &.dx-editor-outlined {
@@ -38,10 +38,8 @@
   .dx-popup-wrapper {
     .dx-popup-normal.dx-popup-draggable {
       border-radius: 2px;
-      padding: 0 24px 24px 24px;
     }
   }
-
   .dx-dropdowneditor-icon {
     color: colors.$costarBlue;
   }
@@ -57,14 +55,14 @@
 
     .popup-content {
       height: 100%;
-      display: flex; 
+      display: flex;
       flex-direction: column;
       .previous-notes {
         margin-bottom: 16px;
         padding-top: 16px;
         flex-grow: 1;
         display: flex;
-        flex-direction:column;
+        flex-direction: column;
         .note-header {
           strong {
             font-weight: 800;
@@ -85,7 +83,6 @@
     .popup-footer {
       text-align: right;
 
-
       .dx-button {
         border-radius: 2px;
         font-family: Helvetica;
@@ -93,7 +90,7 @@
         margin-left: 16px;
         padding: 2px 0;
         text-align: center;
-        transition: all .25s;
+        transition: all 0.25s;
 
         &.primary {
           background-color: colors.$costarBlue;
@@ -106,7 +103,6 @@
         }
       }
     }
-
   }
 }
 
@@ -117,5 +113,5 @@
 }
 
 #previous-note-scroll {
-  padding-right: 15px
+  padding-right: 15px;
 }

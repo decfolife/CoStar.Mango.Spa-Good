@@ -1,58 +1,72 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 @mixin controls-display {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    row-gap: 15px;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  row-gap: 15px;
 }
 
 .accounting-summary-toolbar-wrapper {
+  @include controls-display;
+  @include costar(background-color, background);
+  @include costar(border-bottom, gray04);
+  @include costar(padding, 1);
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 11;
+
+  .controls-left {
     @include controls-display;
-    @include costar(background-color, background);
-    @include costar(border-bottom, gray04);
-    @include costar(padding, 1);
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 11;
+  }
 
-    .controls-left {
-        @include controls-display;
-    }
+  .controls-right {
+    @include controls-display;
+    @include costar(margin-right, 3);
+  }
 
-    .controls-right {
-        @include controls-display;
-        @include costar(margin-right, 3);
-    }
+  .controls-right > * {
+    @include costar(margin-left, 2);
+  }
+}
 
-    .controls-right>* {
-        @include costar(margin-left, 2);
-    }
+.apply-button {
+  order: 6;
 }
 
 .save-close-button {
-    order: 4;
+  order: 5;
+}
+
+.calculate-button {
+  order: 4;
 }
 
 .cancel-button {
-    order: 3;
+  order: 3;
 }
 
 .alerts {
-    order: 2;
+  order: 2;
 }
 
 .add-edit-title {
-    order: 1;
-    width: 100%;
+  order: 1;
+  width: 100%;
 }
 
 .add-events-body {
-    display: flex;
-    flex-direction: column;
-    @include costar(gap, 3);
-    @include costar(padding, 3);
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  @include costar(gap, 3);
+  @include costar(padding, 3);
+  width: 100%;
+}
+
+:host::ng-deep {
+  mat-card mat-card-content {
+    overflow: unset !important;
+  }
 }

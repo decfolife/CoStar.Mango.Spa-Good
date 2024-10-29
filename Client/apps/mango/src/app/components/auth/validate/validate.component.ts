@@ -11,23 +11,35 @@ import { filter, first, map } from 'rxjs/operators';
   styleUrls: ['./validate.component.scss'],
 })
 export class ValidateComponent implements OnInit, OnDestroy {
+  subs: Subscription[] = [];
 
-  subs: Subscription[] = []
-
-  constructor(private activatedRoute: ActivatedRoute, private facade: MangoAppFacade) { }
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private facade: MangoAppFacade
+  ) {}
 
   ngOnInit(): void {
-    this.facade.setLoading(true)
-    this.subs.push(this.activatedRoute.queryParams.pipe(
-      first(queryParams => !!queryParams),
-      map(params => [params.auth_code, params.source, params[OAUTH_REDIRECT_QUERY_PARAM]]),
-      filter(([authCode, source, redirectionUri]) => !!authCode),
-      map(([authCode, source, redirectionUri]) => this.facade.oauthAuth(authCode, redirectionUri, source))
-    ).subscribe())
+    this.facade.setLoading(true);
+    this.subs.push(
+      this.activatedRoute.queryParams
+        .pipe(
+          first((queryParams) => !!queryParams),
+          map((params) => [
+            params.auth_code,
+            params.source,
+            params[OAUTH_REDIRECT_QUERY_PARAM],
+          ]),
+          filter(([authCode, source, redirectionUri]) => !!authCode),
+          map(([authCode, source, redirectionUri]) =>
+            this.facade.oauthAuth(authCode, redirectionUri, source)
+          )
+        )
+        .subscribe()
+    );
   }
 
   ngOnDestroy(): void {
-    this.facade.setLoading(false)
-    this.subs.forEach(s => s.unsubscribe)
+    this.facade.setLoading(false);
+    this.subs.forEach((s) => s.unsubscribe);
   }
 }

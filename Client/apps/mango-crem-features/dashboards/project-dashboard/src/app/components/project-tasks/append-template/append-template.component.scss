@@ -9,12 +9,11 @@
     display: flex;
     margin-top: 50px;
     gap: 5%;
-
   }
 
   .apt-required {
-		color: $color-brand-red;
-	}
+    color: $color-brand-red;
+  }
 
   .apt-normaltext {
     font-size: 14px;
@@ -36,8 +35,8 @@
       margin-top: 20px;
       width: 100%;
       padding: 20px;
-      background: var(--Info-Lightest, #DCE8F4);
-  
+      background: var(--Info-Lightest, #dce8f4);
+
       #apt-transPreviewGrid-id {
         border: 1px solid $gray04;
       }

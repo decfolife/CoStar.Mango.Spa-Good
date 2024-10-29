@@ -1,5 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
@@ -11,7 +14,7 @@ describe('BaseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [HttpClient]
+      providers: [HttpClient],
     });
 
     service = TestBed.inject(BaseService);
@@ -30,22 +33,28 @@ describe('BaseService', () => {
 
     expect(service.userRights).toEqual(0);
     expect(service.dateFormatWithTime).toEqual('MM/dd/yyyy hh:mm a');
-    expect(service.dateFormat).toEqual( 'MM/dd/yyyy');
+    expect(service.dateFormat).toEqual('MM/dd/yyyy');
 
     expect(service.dateFormatter).toHaveProperty('type');
-    expect(service.dateFormatter.type).toEqual( 'MM/dd/yyyy')
+    expect(service.dateFormatter.type).toEqual('MM/dd/yyyy');
 
     expect(service.dateFormatter).toHaveProperty('parser');
-    expect(service.dateFormatter.parser('12/31/2021')).toEqual(new Date('12/31/2021'));
-    expect(service.dateFormatter.parser('31.12.2021')).toEqual(new Date('12/31/2021'));
+    expect(service.dateFormatter.parser('12/31/2021')).toEqual(
+      new Date('12/31/2021')
+    );
+    expect(service.dateFormatter.parser('31.12.2021')).toEqual(
+      new Date('12/31/2021')
+    );
   });
 
   it('should get user rights', () => {
-    service.getUserRights().subscribe(res => {
+    service.getUserRights().subscribe((res) => {
       expect(res).toEqual(2);
     });
 
-    const req = httpMock.expectOne('http://localhost:45381/api/Base/GetUserRights');
+    const req = httpMock.expectOne(
+      'http://localhost:45381/api/Base/GetUserRights'
+    );
     expect(req.request.method).toBe('GET');
 
     req.flush(2);
@@ -53,11 +62,13 @@ describe('BaseService', () => {
   });
 
   it('should get portfolios', () => {
-    service.getPortfolios().subscribe(res => {
+    service.getPortfolios().subscribe((res) => {
       expect(res).toBe('Portfolio');
     });
 
-    const req = httpMock.expectOne('http://localhost:45381/api/Base/GetPortfolios');
+    const req = httpMock.expectOne(
+      'http://localhost:45381/api/Base/GetPortfolios'
+    );
     expect(req.request.method).toBe('GET');
 
     req.flush('Protfolio');

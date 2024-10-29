@@ -1,4 +1,5 @@
-<button type="button"
+<button
+  type="button"
   [disabled]="!enabled"
   class="list-view-button"
   (click)="toggleMenu()"
@@ -7,13 +8,22 @@
   (keydown.escape)="closeMenu()"
 >
   <span title="{{ currentListViewName }}">{{ currentListViewName }}</span>
-  <fa-icon [icon]="faCaretDown" title="click to see the list of views"></fa-icon>
+  <fa-icon
+    [icon]="faCaretDown"
+    title="click to see the list of views"
+  ></fa-icon>
 </button>
 
-<mat-accordion class="listPageViews" *ngIf="ShowMenu" class="mat-accordion"  (keydown.escape)="closeMenu()">
-    <mat-list class="limit-width mat-list">
-    <mat-expansion-panel #CoStarQueriesPanel
-      class="mat-expansion-panel"     
+<mat-accordion
+  class="listPageViews"
+  *ngIf="ShowMenu"
+  class="mat-accordion"
+  (keydown.escape)="closeMenu()"
+>
+  <mat-list class="limit-width mat-list">
+    <mat-expansion-panel
+      #CoStarQueriesPanel
+      class="mat-expansion-panel"
       [class.open]="CoStarQueriesPanel.expanded"
       [expanded]="false"
       (click)="$event.stopPropagation()"
@@ -22,139 +32,198 @@
         <mat-panel-title>CoStar List Views</mat-panel-title>
       </mat-expansion-panel-header>
 
-      <dx-scroll-view        
-        [showScrollbar]="true"
-      >
-      <div class="scroll-view-content">
-
-        <mat-list-item *ngFor="let listView of listViews?.coStarListViews"
-          (click)="currentListViewClick(listView)"
-          (mouseover)="mouseOverView(listView.id)"
-        >
-          <div class="view-list-item-flex">
-            <button title="{{ listView.name }}">{{ listView.name }}</button>
-            <span *ngIf="listView.isDefault"
-              class="dbl-left-margin gray"
-            >(Default)</span>
-
-            <span class="dbl-left-margin view-list-item">
-              <button [matMenuTriggerFor]="costarViewMoreMenu"
-                (click)="$event.stopPropagation(); $event.preventDefault()"
+      <dx-scroll-view [showScrollbar]="true">
+        <div class="scroll-view-content">
+          <mat-list-item
+            *ngFor="let listView of listViews?.coStarListViews"
+            (click)="currentListViewClick(listView)"
+            (mouseover)="mouseOverView(listView.id)"
+          >
+            <div class="view-list-item-flex">
+              <button title="{{ listView.name }}">{{ listView.name }}</button>
+              <span *ngIf="listView.isDefault" class="dbl-left-margin gray"
+                >(Default)</span
               >
-                <fa-icon [icon]="faEllipsisH" title="click to see the options"                 
-                ></fa-icon>
-              </button>
 
-              <mat-menu #costarViewMoreMenu="matMenu">
-                <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
-                (click)="setDefaultListView.next(listView); $event.stopPropagation()"
-                >Make Default</button>
+              <span class="dbl-left-margin view-list-item">
+                <button
+                  [matMenuTriggerFor]="costarViewMoreMenu"
+                  (click)="$event.stopPropagation(); $event.preventDefault()"
+                >
+                  <fa-icon
+                    [icon]="faEllipsisH"
+                    title="click to see the options"
+                  ></fa-icon>
+                </button>
 
-                <button mat-menu-item
-                  *ngIf="listView.isDefault" class="mat-menu-child-button"
-                  (click)="clearDefault.next(listView); $event.stopPropagation()"
-                >Clear Default</button>
+                <mat-menu #costarViewMoreMenu="matMenu">
+                  <button
+                    mat-menu-item
+                    *ngIf="!listView.isDefault"
+                    class="mat-menu-child-button"
+                    (click)="
+                      setDefaultListView.next(listView);
+                      $event.stopPropagation()
+                    "
+                  >
+                    Make Default
+                  </button>
 
-                <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
-                  (click)="hideListView.next(listView); $event.stopPropagation()"
-                >Hide</button>
-              </mat-menu>
-            </span>
-          </div>
+                  <button
+                    mat-menu-item
+                    *ngIf="listView.isDefault"
+                    class="mat-menu-child-button"
+                    (click)="
+                      clearDefault.next(listView); $event.stopPropagation()
+                    "
+                  >
+                    Clear Default
+                  </button>
 
-        </mat-list-item>
-      </div>
+                  <button
+                    mat-menu-item
+                    *ngIf="!listView.isDefault"
+                    class="mat-menu-child-button"
+                    (click)="
+                      hideListView.next(listView); $event.stopPropagation()
+                    "
+                  >
+                    Hide
+                  </button>
+                </mat-menu>
+              </span>
+            </div>
+          </mat-list-item>
+        </div>
       </dx-scroll-view>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #MyQueriesPanel
+    <mat-expansion-panel
+      #MyQueriesPanel
       class="mat-elevation-z0"
       [class.open]="MyQueriesPanel.expanded"
       [expanded]="false"
-      (click)="$event.stopPropagation()"      
-    >  
-    <mat-expansion-panel-header>
-      <mat-panel-title>My List Views</mat-panel-title>
-    </mat-expansion-panel-header>
-
-    <dx-scroll-view
-      [showScrollbar]="true"
+      (click)="$event.stopPropagation()"
     >
-    <div class="scroll-view-content">
+      <mat-expansion-panel-header>
+        <mat-panel-title>My List Views</mat-panel-title>
+      </mat-expansion-panel-header>
 
-      <mat-list-item *ngFor="let listView of listViews?.myListViews"
-        (click)="currentListViewClick(listView)"
-        (mouseover)="mouseOverView(listView.id)"
-      > 
-        <div class="view-list-item-flex">
-          <button title="{{ listView.name }}">{{ listView.name }}</button>
-          <span *ngIf="listView.isDefault"
-            class="dbl-left-margin gray"
-          >(Default)</span>
-
-          <span class="dbl-left-margin view-list-item">
-            <button [matMenuTriggerFor]="myViewMoreMenu"
-              (click)="$event.stopPropagation()"
-            >
-              <fa-icon [icon]="faEllipsisH" title="click to see the options"
-              ></fa-icon>
-            </button>
-
-            <mat-menu #myViewMoreMenu="matMenu">
-              <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
-              (click)="setDefaultListView.next(listView); $event.stopPropagation()"
-              >Make Default</button>
-
-              <button mat-menu-item *ngIf="listView.isDefault" class="mat-menu-child-button"
-                (click)="clearDefault.next(listView); $event.stopPropagation()"
-              >Clear Default</button>
-
-              <button mat-menu-item
-                *ngIf="showShare" class="mat-menu-child-button"
-                (click)="shareListView.next(listView)"
+      <dx-scroll-view [showScrollbar]="true">
+        <div class="scroll-view-content">
+          <mat-list-item
+            *ngFor="let listView of listViews?.myListViews"
+            (click)="currentListViewClick(listView)"
+            (mouseover)="mouseOverView(listView.id)"
+          >
+            <div class="view-list-item-flex">
+              <button title="{{ listView.name }}">{{ listView.name }}</button>
+              <span *ngIf="listView.isDefault" class="dbl-left-margin gray"
+                >(Default)</span
               >
-                {{ listView.isSharedWithOthers ? "Sharing" : "Share" }}
-                <fa-icon *ngIf="listView.isSharedWithOthers"
-                  [icon]="faCheck"
-                  class="sharing-check"
-                ></fa-icon>
-              </button>
 
-              <button mat-menu-item *ngIf="!listView.isDefault" class="mat-menu-child-button"
-                (click)="hideListView.next(listView); $event.stopPropagation()"
-              >Hide</button>
-
-              <button mat-menu-item
-                *ngIf="!listView.isDefault" class="mat-menu-child-button"
-                (click)="deleteListView.next(listView)"
-              >Delete</button>
-
-              <button mat-menu-item
-                [matMenuTriggerFor]="infoMenu" class="mat-menu-child-button"
-                (click)="$event.stopPropagation()"
-              >Info</button>
-
-              <mat-menu #infoMenu="matMenu">
-                <mat-menu-item class="info-menu"
+              <span class="dbl-left-margin view-list-item">
+                <button
+                  [matMenuTriggerFor]="myViewMoreMenu"
                   (click)="$event.stopPropagation()"
                 >
-                  <ul class="info-menu-ul">
-                    <li>({{ listView.id }}) {{ listView.name }}</li>
-                    <li>View Dataset: {{ listView.datasetName }}</li>
-                    <li>Last Modified Date: {{ listView.lastModifiedDate }}</li>
-                  </ul>
-                </mat-menu-item>
-              </mat-menu>
+                  <fa-icon
+                    [icon]="faEllipsisH"
+                    title="click to see the options"
+                  ></fa-icon>
+                </button>
 
-            </mat-menu>
-          </span>
+                <mat-menu #myViewMoreMenu="matMenu">
+                  <button
+                    mat-menu-item
+                    *ngIf="!listView.isDefault"
+                    class="mat-menu-child-button"
+                    (click)="
+                      setDefaultListView.next(listView);
+                      $event.stopPropagation()
+                    "
+                  >
+                    Make Default
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="listView.isDefault"
+                    class="mat-menu-child-button"
+                    (click)="
+                      clearDefault.next(listView); $event.stopPropagation()
+                    "
+                  >
+                    Clear Default
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="showShare"
+                    class="mat-menu-child-button"
+                    (click)="shareListView.next(listView)"
+                  >
+                    {{ listView.isSharedWithOthers ? 'Sharing' : 'Share' }}
+                    <fa-icon
+                      *ngIf="listView.isSharedWithOthers"
+                      [icon]="faCheck"
+                      class="sharing-check"
+                    ></fa-icon>
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="!listView.isDefault"
+                    class="mat-menu-child-button"
+                    (click)="
+                      hideListView.next(listView); $event.stopPropagation()
+                    "
+                  >
+                    Hide
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="!listView.isDefault"
+                    class="mat-menu-child-button"
+                    (click)="deleteListView.next(listView)"
+                  >
+                    Delete
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    [matMenuTriggerFor]="infoMenu"
+                    class="mat-menu-child-button"
+                    (click)="$event.stopPropagation()"
+                  >
+                    Info
+                  </button>
+
+                  <mat-menu #infoMenu="matMenu">
+                    <mat-menu-item
+                      class="info-menu"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <ul class="info-menu-ul">
+                        <li>({{ listView.id }}) {{ listView.name }}</li>
+                        <li>View Dataset: {{ listView.datasetName }}</li>
+                        <li>
+                          Last Modified Date: {{ listView.lastModifiedDate }}
+                        </li>
+                      </ul>
+                    </mat-menu-item>
+                  </mat-menu>
+                </mat-menu>
+              </span>
+            </div>
+          </mat-list-item>
         </div>
-      </mat-list-item>
-    </div>
-    </dx-scroll-view>
+      </dx-scroll-view>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #SharedQueriesPanel
+    <mat-expansion-panel
+      #SharedQueriesPanel
       class="mat-elevation-z0"
       [class.open]="SharedQueriesPanel.expanded"
       [expanded]="false"
@@ -164,79 +233,113 @@
         <mat-panel-title>Shared With Me</mat-panel-title>
       </mat-expansion-panel-header>
 
-      <dx-scroll-view
-        [showScrollbar]="true"
-      >
-      <div class="scroll-view-content">
+      <dx-scroll-view [showScrollbar]="true">
+        <div class="scroll-view-content">
+          <mat-list-item
+            *ngFor="let listView of listViews?.sharedListViews"
+            (click)="currentListViewClick(listView)"
+            (mouseover)="mouseOverView(listView.id)"
+          >
+            <div class="view-list-item-flex">
+              <button title="{{ listView.name }}">{{ listView.name }}</button>
 
-        <mat-list-item *ngFor="let listView of listViews?.sharedListViews"
-          (click)="currentListViewClick(listView)"
-          (mouseover)="mouseOverView(listView.id)"
-        >
-          <div class="view-list-item-flex">
-            <button title="{{ listView.name }}">{{ listView.name }}</button>
-
-            <span *ngIf="listView.isDefault"
-              class="dbl-left-margin gray"
-            >(Default)</span>
-
-            <span class="dbl-left-margin view-list-item">
-              <button [matMenuTriggerFor]="myViewMoreMenu"
-                (click)="$event.stopPropagation()"
+              <span *ngIf="listView.isDefault" class="dbl-left-margin gray"
+                >(Default)</span
               >
-                <fa-icon [icon]="faEllipsisH" title="click to see the options"
-                ></fa-icon>
-              </button>
 
-              <mat-menu #myViewMoreMenu="matMenu">
-                <button mat-menu-item *ngIf="!listView.isDefault"
-                  (click)="setDefaultListView.next(listView); $event.stopPropagation()"
-                >Make Default</button>
-
-                <button mat-menu-item *ngIf="listView.isDefault"
-                  (click)="clearDefault.next(listView); $event.stopPropagation()"
-                >Clear Default</button>
-
-                <button mat-menu-item *ngIf="listView.securityType > 3"
-                  (click)="shareListView.next(listView)"
-                >Share</button>
-
-                <button mat-menu-item *ngIf="!listView.isDefault"
-                  (click)="hideListView.next(listView); $event.stopPropagation()"
-                >Hide</button>
-
-                <button mat-menu-item *ngIf="listView.securityType > 4"
-                  (click)="deleteListView.next(listView)"
-                >Delete</button>
-
-                <button mat-menu-item
-                  [matMenuTriggerFor]="infoMenu"
+              <span class="dbl-left-margin view-list-item">
+                <button
+                  [matMenuTriggerFor]="myViewMoreMenu"
                   (click)="$event.stopPropagation()"
-                >Info</button>
+                >
+                  <fa-icon
+                    [icon]="faEllipsisH"
+                    title="click to see the options"
+                  ></fa-icon>
+                </button>
 
-                <mat-menu #infoMenu="matMenu">
-                  <mat-menu-item class="info-menu"
+                <mat-menu #myViewMoreMenu="matMenu">
+                  <button
+                    mat-menu-item
+                    *ngIf="!listView.isDefault"
+                    (click)="
+                      setDefaultListView.next(listView);
+                      $event.stopPropagation()
+                    "
+                  >
+                    Make Default
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="listView.isDefault"
+                    (click)="
+                      clearDefault.next(listView); $event.stopPropagation()
+                    "
+                  >
+                    Clear Default
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="listView.securityType > 3"
+                    (click)="shareListView.next(listView)"
+                  >
+                    Share
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="!listView.isDefault"
+                    (click)="
+                      hideListView.next(listView); $event.stopPropagation()
+                    "
+                  >
+                    Hide
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    *ngIf="listView.securityType > 4"
+                    (click)="deleteListView.next(listView)"
+                  >
+                    Delete
+                  </button>
+
+                  <button
+                    mat-menu-item
+                    [matMenuTriggerFor]="infoMenu"
                     (click)="$event.stopPropagation()"
                   >
-                    <ul class="info-menu-ul">
-                      <li>({{ listView.id }}) {{ listView.name }}</li>
-                      <li>Created By: {{ listView.createdBy }}</li>
-                      <li>Created Date: {{ listView.createdDate }}</li>
-                      <li>View Dataset: {{ listView.datasetName }}</li>
-                      <li>Last Modified Date: {{ listView.lastModifiedDate }}</li>
-                    </ul>
-                  </mat-menu-item>
-                </mat-menu>
+                    Info
+                  </button>
 
-              </mat-menu>
-            </span>
-          </div>
-        </mat-list-item>
-      </div>
+                  <mat-menu #infoMenu="matMenu">
+                    <mat-menu-item
+                      class="info-menu"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <ul class="info-menu-ul">
+                        <li>({{ listView.id }}) {{ listView.name }}</li>
+                        <li>Created By: {{ listView.createdBy }}</li>
+                        <li>Created Date: {{ listView.createdDate }}</li>
+                        <li>View Dataset: {{ listView.datasetName }}</li>
+                        <li>
+                          Last Modified Date: {{ listView.lastModifiedDate }}
+                        </li>
+                      </ul>
+                    </mat-menu-item>
+                  </mat-menu>
+                </mat-menu>
+              </span>
+            </div>
+          </mat-list-item>
+        </div>
       </dx-scroll-view>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #HiddenQueriesPanel
+    <mat-expansion-panel
+      #HiddenQueriesPanel
       class="mat-elevation-z0"
       [class.open]="HiddenQueriesPanel.expanded"
       [expanded]="false"
@@ -245,28 +348,30 @@
       <mat-expansion-panel-header>
         <mat-panel-title>Hidden List Views</mat-panel-title>
       </mat-expansion-panel-header>
-      
-      <dx-scroll-view
-        [showScrollbar]="true"
-      >
-      <div class="scroll-view-content">
 
-        <mat-list-item *ngFor="let listView of listViews?.hiddenListViews"
-          (click)="currentListViewClick(listView)"
-          (mouseover)="mouseOverView(listView.id)"
-        >
-          <div class="view-list-item-flex">
-            <button title="{{ listView.name }}">{{listView.name}}</button>
+      <dx-scroll-view [showScrollbar]="true">
+        <div class="scroll-view-content">
+          <mat-list-item
+            *ngFor="let listView of listViews?.hiddenListViews"
+            (click)="currentListViewClick(listView)"
+            (mouseover)="mouseOverView(listView.id)"
+          >
+            <div class="view-list-item-flex">
+              <button title="{{ listView.name }}">{{ listView.name }}</button>
 
-            <span class="dbl-left-margin view-list-item">
-              <button (click)="showListView.next(listView); $event.stopPropagation()">
-                Show
-              </button>
-            </span>
-          </div>
-        </mat-list-item>
-      </div>
-    </dx-scroll-view>
+              <span class="dbl-left-margin view-list-item">
+                <button
+                  (click)="
+                    showListView.next(listView); $event.stopPropagation()
+                  "
+                >
+                  Show
+                </button>
+              </span>
+            </div>
+          </mat-list-item>
+        </div>
+      </dx-scroll-view>
     </mat-expansion-panel>
   </mat-list>
 </mat-accordion>

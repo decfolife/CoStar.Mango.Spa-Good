@@ -1,7 +1,14 @@
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { PaymentsGridColumnsService } from '@accounting-summary/services/payments-grid-columns.service';
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Subscription } from 'rxjs';
 
@@ -11,7 +18,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./payments-detail-section.component.scss'],
 })
 export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
-  @ViewChild("PaymentsDataGrid") paymentsDataGrid: DxDataGridComponent;
+  @ViewChild('PaymentsDataGrid') paymentsDataGrid: DxDataGridComponent;
   @Input() eventScheduleData: any;
   @Input() gridState: any;
   @Input() classificationID: number;
@@ -20,7 +27,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   @Input() amortizationProfileName: string;
   @Input() isAccountingEventEmpty: boolean;
 
-  componentName = "payments-grid"
+  componentName = 'payments-grid';
   isGridStateChanged = false;
   paymentsGridData;
   paymentsGridColumns = [];
@@ -38,22 +45,38 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   showMaxRow = true;
   showDefaultRow = false;
   showMinRow = false;
-  resetBtnHoverText = 'This will delete any saved preferences, taking you back the CoStar default columns';
+  resetBtnHoverText =
+    'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText = 'This will clear all pending changes in the grid';
 
-  constructor(public accountingSummaryService: AccountingSummaryService, private paymentsGridColumnService: PaymentsGridColumnsService) {
-    this.preferenceSavePendingMessage = accountingSummaryService.preferenceSavePendingMessage;
+  constructor(
+    public accountingSummaryService: AccountingSummaryService,
+    private paymentsGridColumnService: PaymentsGridColumnsService
+  ) {
+    this.preferenceSavePendingMessage =
+      accountingSummaryService.preferenceSavePendingMessage;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.eventScheduleData && this.gridState && this.eventScheduleData.leaseRecognitionScheduleID !== undefined && this.classificationID !== undefined &&
-      (this.amortizationProfileName === this.eventScheduleData?.amortizationProfileName) &&
-      (
-        // The first time loading or the value in the dropdown changed
-        !changes.eventScheduleData ||
+    if (changes.isAccountingEventEmpty) {
+      this.accountingSummaryService.clearGrid(
+        this.paymentsDataGrid,
+        'No Payment Data'
+      );
+      return;
+    }
+    if (
+      this.eventScheduleData &&
+      this.gridState &&
+      this.eventScheduleData.leaseRecognitionScheduleID !== undefined &&
+      this.classificationID !== undefined &&
+      this.amortizationProfileName ===
+        this.eventScheduleData?.amortizationProfileName &&
+      // The first time loading or the value in the dropdown changed
+      (!changes.eventScheduleData ||
         !changes.eventScheduleData.previousValue ||
-        (changes.eventScheduleData.previousValue.leaseRecognitionScheduleID !== this.eventScheduleData.leaseRecognitionScheduleID)
-      )
+        changes.eventScheduleData.previousValue.leaseRecognitionScheduleID !==
+          this.eventScheduleData.leaseRecognitionScheduleID)
     ) {
       this.isGridStateChanged = false;
       this.paymentsGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
@@ -69,39 +92,50 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   private paymentsGridSetup(scheduleEventId: number) {
-    const paymentDetails = this.accountingSummaryService.getPaymentDetails(scheduleEventId);
-    this.subscription.add(paymentDetails.subscribe(res => {
-      const paymentDetailsResponse = res;
+    const paymentDetails =
+      this.accountingSummaryService.getPaymentDetails(scheduleEventId);
+    this.subscription.add(
+      paymentDetails.subscribe((res) => {
+        const paymentDetailsResponse = res;
 
-      if (paymentDetailsResponse === null) {
-        this.paymentsDataGrid.instance.state(null);
-        this.accountingSummaryService.displayContactSystemAdminMessage();
-      }
-      else if (paymentDetailsResponse.success) {
-        this.paymentsDataGrid.instance.option("noDataText", "");
-        this.paymentsGridData = paymentDetailsResponse.data;
-        this.isEuroDateFormat = this.userInfo?.useDateEU;
-        if (this.isEuroDateFormat) {
-          this.dateFormat = 'dd.MM.yyyy';
+        if (paymentDetailsResponse === null) {
+          this.paymentsDataGrid.instance.state(null);
+          this.accountingSummaryService.displayContactSystemAdminMessage();
+        } else if (paymentDetailsResponse.success) {
+          this.paymentsDataGrid.instance.option('noDataText', '');
+          this.paymentsGridData = paymentDetailsResponse.data;
+          this.isEuroDateFormat = this.userInfo?.useDateEU;
+          if (this.isEuroDateFormat) {
+            this.dateFormat = 'dd.MM.yyyy';
+          }
+
+          this.paymentsGridColumns =
+            this.paymentsGridColumnService.getPaymentGridColumns(
+              this.paymentsGridData,
+              this.dateFormat
+            );
+          this.getGridPreferences();
+        } else if (!paymentDetailsResponse.success) {
+          this.accountingSummaryService.errorNotify(
+            paymentDetailsResponse.clientErrorMessage
+          );
         }
-
-        this.paymentsGridColumns = this.paymentsGridColumnService.getPaymentGridColumns(this.paymentsGridData, this.dateFormat);
-        this.getGridPreferences();
-      } else if (!paymentDetailsResponse.success) {
-        this.accountingSummaryService.errorNotify(paymentDetailsResponse.clientErrorMessage);
-      }
-    }));
+      })
+    );
   }
 
   getGridPreferences() {
-    let state = JSON.parse(sessionStorage.getItem("paymentsGridStateKey"))
+    let state = JSON.parse(sessionStorage.getItem('paymentsGridStateKey'));
     // Filter the data
-    const filteredData = this.gridState.filter(item => {
-      return item.classificationID === this.classificationID && item.gridName === this.gridName;
+    const filteredData = this.gridState.filter((item) => {
+      return (
+        item.classificationID === this.classificationID &&
+        item.gridName === this.gridName
+      );
     });
 
     if (state === null) {
-      state = {}
+      state = {};
     }
 
     state.columns = [];
@@ -111,13 +145,16 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     });
 
     this.initialState = state;
-    sessionStorage.setItem("paymentsGridStateKey", JSON.stringify(state));
+    sessionStorage.setItem('paymentsGridStateKey', JSON.stringify(state));
     this.contentLoaded = false;
   }
 
   onGridContentReady() {
     if (this.paymentsDataGrid.instance.totalCount() > 0) {
-      this.paymentsGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.paymentsDataGrid);
+      this.paymentsGridHeight =
+        this.accountingSummaryService.setDefaultGridHeight(
+          this.paymentsDataGrid
+        );
     }
     if (!this.contentLoaded) {
       this.paymentsDataGrid.instance.state(this.initialState);
@@ -126,17 +163,24 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   resetGridPreferences() {
-    this.subscription.add(this.accountingSummaryService.resetGridPreferences(this.classificationID, this.gridName).subscribe(response => {
-      if (response === null) {
-        this.accountingSummaryService.displayContactSystemAdminMessage();
-      }
-      else if (response.success) {
-        this.paymentsDataGrid.instance.state({});
-        this.accountingSummaryService.successNotify('Value Reset Successfully');
-      } else {
-        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
-      }
-    }));
+    this.subscription.add(
+      this.accountingSummaryService
+        .resetGridPreferences(this.classificationID, this.gridName)
+        .subscribe((response) => {
+          if (response === null) {
+            this.accountingSummaryService.displayContactSystemAdminMessage();
+          } else if (response.success) {
+            this.paymentsDataGrid.instance.state({});
+            this.accountingSummaryService.successNotify(
+              'Value Reset Successfully'
+            );
+          } else {
+            this.accountingSummaryService.errorNotify(
+              response.clientErrorMessage
+            );
+          }
+        })
+    );
   }
 
   clearGridChanges() {
@@ -147,35 +191,51 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   saveGridPreferences() {
     this.isGridStateChanged = false;
     const newState = this.paymentsDataGrid.instance.state();
-    sessionStorage.setItem("paymentsGridStateKey", JSON.stringify(newState));
+    sessionStorage.setItem('paymentsGridStateKey', JSON.stringify(newState));
     const columnsState = this.paymentsDataGrid.instance.state().columns;
     for (let index = 0; index < columnsState.length; index++) {
-      columnsState[index].appendsCurrency = this.paymentsDataGrid.instance.columnOption(index, 'appendsCurrency');
-      columnsState[index].caption = this.paymentsDataGrid.instance.columnOption(index, 'caption');
-      columnsState[index].usesLocalFormat = this.paymentsDataGrid.instance.columnOption(index, 'usesLocalFormat');
-      columnsState[index].usesFunctionalFormat = this.paymentsDataGrid.instance.columnOption(index, 'usesFunctionalFormat');
+      columnsState[index].appendsCurrency =
+        this.paymentsDataGrid.instance.columnOption(index, 'appendsCurrency');
+      columnsState[index].caption = this.paymentsDataGrid.instance.columnOption(
+        index,
+        'caption'
+      );
+      columnsState[index].usesLocalFormat =
+        this.paymentsDataGrid.instance.columnOption(index, 'usesLocalFormat');
+      columnsState[index].usesFunctionalFormat =
+        this.paymentsDataGrid.instance.columnOption(
+          index,
+          'usesFunctionalFormat'
+        );
       columnsState[index].headerCellTemplate = 'amortizationHeader';
     }
     const columns = JSON.stringify(columnsState);
-    this.subscription.add(this.accountingSummaryService.saveGridPreferences(this.classificationID, this.gridName, columns).subscribe(response => {
-      if (response === null) {
-        this.accountingSummaryService.displayContactSystemAdminMessage();
-      }
-      else if (response.success) {
-        this.initialState = newState;
-        this.accountingSummaryService.successNotify(response.clientErrorMessage);
-      } else {
-        this.accountingSummaryService.errorNotify(response.clientErrorMessage);
-      }
-    }));
+    this.subscription.add(
+      this.accountingSummaryService
+        .saveGridPreferences(this.classificationID, this.gridName, columns)
+        .subscribe((response) => {
+          if (response === null) {
+            this.accountingSummaryService.displayContactSystemAdminMessage();
+          } else if (response.success) {
+            this.initialState = newState;
+            this.accountingSummaryService.successNotify(
+              response.clientErrorMessage
+            );
+          } else {
+            this.accountingSummaryService.errorNotify(
+              response.clientErrorMessage
+            );
+          }
+        })
+    );
   }
 
   loadState() {
-    return JSON.parse(sessionStorage.getItem("paymentsGridStateKey"));
+    return JSON.parse(sessionStorage.getItem('paymentsGridStateKey'));
   }
 
   saveState(state) {
-    sessionStorage.setItem("paymentsGridStateKey", JSON.stringify(state));
+    sessionStorage.setItem('paymentsGridStateKey', JSON.stringify(state));
   }
 
   onGridOptionChanged(event) {
@@ -189,18 +249,20 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     this.paymentsDataGrid.instance.showColumnChooser();
   }
 
-
   private getTransactionPopupData(scheduleEventId: number) {
-    const historicalTransactionDetails = this.accountingSummaryService.getPaymentPopupData(scheduleEventId);
+    const historicalTransactionDetails =
+      this.accountingSummaryService.getPaymentPopupData(scheduleEventId);
 
-    this.subscription.add(historicalTransactionDetails.subscribe(
-      (res) => {
+    this.subscription.add(
+      historicalTransactionDetails.subscribe((res) => {
         const historicalTransactionDetailsResponse = res;
 
         if (historicalTransactionDetailsResponse === null) {
           this.accountingSummaryService.displayContactSystemAdminMessage();
         } else if (!historicalTransactionDetailsResponse.success) {
-          this.accountingSummaryService.errorNotify(historicalTransactionDetailsResponse.clientErrorMessage);
+          this.accountingSummaryService.errorNotify(
+            historicalTransactionDetailsResponse.clientErrorMessage
+          );
         } else {
           this.transactionPopupData = historicalTransactionDetailsResponse.data;
           this.isEuroDateFormat = this.userInfo?.useDateEU;
@@ -208,17 +270,28 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
             this.dateFormat = 'dd.MM.yyyy';
           }
         }
-      },
-    ));
+      })
+    );
   }
 
   sendToExcel() {
     const classificationType = this.classificationType;
     const amortizationProfileName = this.amortizationProfileName;
     const componentName = 'Payments';
-    const sheetname = this.accountingSummaryService.getLeaseAbstractId() + ' - ' + amortizationProfileName;
-    const filename = this.accountingSummaryService.generateFileName(classificationType, amortizationProfileName, componentName);
-    this.accountingSummaryService.exportToExcel(this.paymentsDataGrid.instance, filename, sheetname);
+    const sheetname =
+      this.accountingSummaryService.getLeaseAbstractId() +
+      ' - ' +
+      amortizationProfileName;
+    const filename = this.accountingSummaryService.generateFileName(
+      classificationType,
+      amortizationProfileName,
+      componentName
+    );
+    this.accountingSummaryService.exportToExcel(
+      this.paymentsDataGrid.instance,
+      filename,
+      sheetname
+    );
   }
 
   openMoreMenu(event: Event): void {
@@ -226,21 +299,25 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   showMaxRows() {
-    this.paymentsGridHeight = 'auto'
+    this.paymentsGridHeight = 'auto';
     this.showMaxRow = false;
     this.showDefaultRow = false;
     this.showMinRow = true;
   }
 
   showDefaultRows() {
-    this.paymentsGridHeight = this.accountingSummaryService.setDefaultGridHeight(this.paymentsDataGrid);
+    this.paymentsGridHeight =
+      this.accountingSummaryService.setDefaultGridHeight(this.paymentsDataGrid);
     this.showMaxRow = true;
     this.showDefaultRow = false;
     this.showMinRow = false;
   }
 
   showMinRows() {
-    this.paymentsGridHeight = this.accountingSummaryService.setGridHeight(this.paymentsDataGrid, 1);
+    this.paymentsGridHeight = this.accountingSummaryService.setGridHeight(
+      this.paymentsDataGrid,
+      1
+    );
     this.showMaxRow = false;
     this.showDefaultRow = true;
     this.showMinRow = false;

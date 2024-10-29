@@ -6,10 +6,9 @@ import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Api } from '@mango/data-models/lib-data-models';
 
-
 @Injectable()
 export class RemindersService extends EndpointService {
-  objectActionsUrl: string = UtilitiesService.getBaseApiUrl(Api.objectActions)
+  objectActionsUrl: string = UtilitiesService.getBaseApiUrl(Api.objectActions);
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -19,7 +18,7 @@ export class RemindersService extends EndpointService {
     let url = `${this.objectActionsUrl}Reminders/GetReminders`;
     const request = {
       objectid: oID,
-      objectTypeId: oTID
+      objectTypeId: oTID,
     };
     return this.callHttpGet(url, 'GetReminders', request);
   }
@@ -28,7 +27,7 @@ export class RemindersService extends EndpointService {
     let url = `${this.objectActionsUrl}Reminders/GetReminderEvents`;
     const request = {
       objectid: oID,
-      objectTypeId: oTID
+      objectTypeId: oTID,
     };
     return this.callHttpGet(url, 'GetReminderEvents', request);
   }
@@ -36,7 +35,7 @@ export class RemindersService extends EndpointService {
   getReminderById(ticklerId: number): Observable<any> {
     let url = `${this.objectActionsUrl}Reminders/GetReminderById`;
     const request = {
-      ticklerId: ticklerId
+      ticklerId: ticklerId,
     };
     return this.callHttpGet(url, 'GetReminderById', request);
   }
@@ -45,7 +44,7 @@ export class RemindersService extends EndpointService {
     let url = `${this.objectActionsUrl}Reminders/GetAvailableContacts`;
     const request = {
       objectid: oID,
-      objectTypeId: oTID
+      objectTypeId: oTID,
     };
     return this.callHttpGet(url, 'GetAvailableContacts', request);
   }
@@ -55,7 +54,10 @@ export class RemindersService extends EndpointService {
     return this.callHttpPost(url, 'SaveReminder', request);
   }
 
-  deleteReminder(RID: number, oID: number , oTID: number): Observable<any>{
-    return this.callHttpDelete(`${this.objectActionsUrl}Reminders/DeleteReminder/${RID}/${oID}/${oTID}`, 'DeleteReminder');
+  deleteReminder(RID: number, oID: number, oTID: number): Observable<any> {
+    return this.callHttpDelete(
+      `${this.objectActionsUrl}Reminders/DeleteReminder/${RID}/${oID}/${oTID}`,
+      'DeleteReminder'
+    );
   }
 }

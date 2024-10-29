@@ -1,0 +1,127 @@
+<div class="export-history-toolbar">
+  <div class="export-history-header">
+    <h3 class="title">{{ pageName }}</h3>
+    <crem-search
+      [showLabel]="false"
+      [label]="'Please Input search text'"
+      [placeholder]="'Search...'"
+      [required]="false"
+      [disabled]="false"
+      [showInfo]="false"
+      [debounceTime]="500"
+      [searchOption]="'typing'"
+      (changed)="changed($event)"
+    ></crem-search>
+  </div>
+
+  <div class="actions-container">
+    <crem-button
+      text="Clear Filters"
+      btnStyle="flat"
+      color="secondary"
+      (buttonClick)="clearFilters()"
+    >
+    </crem-button>
+
+    <crem-button
+      text="Filters"
+      btnStyle="flat"
+      color="secondary"
+      (buttonClick)="onShowClick($event)"
+    >
+    </crem-button>
+
+    <crem-button
+      id="export-history-export-to-excel-button"
+      [color]="'primary'"
+      [ariaLabel]="sendToExcelClicked ? 'Sending to Excel' : 'Send to Excel'"
+      [disabled]="showLoading || sendToExcelClicked"
+      (click)="sendToExcel($event)"
+      [icon]="sendToExcelClicked ? 'faSpinner' : ''"
+      [iconPack]="sendToExcelClicked ? 'solid' : ''"
+      [iconAnimation]="sendToExcelClicked ? 'spin' : ''"
+    >
+      <div>
+        <span>
+          {{ sendToExcelClicked ? 'Sending to Excel' : 'Send to Excel' }}
+        </span>
+      </div>
+    </crem-button>
+  </div>
+</div>
+
+<div class="grid" id="export-history-grid">
+  <dx-data-grid
+    #ExportHistoryGrid
+    id="export-history-grid-section"
+    [dataSource]="exportHistory"
+    [columns]="exportHistoryColumns"
+    [allowColumnReordering]="true"
+    [width]="'100%'"
+    [showBorders]="true"
+    [remoteOperations]="true"
+    [loadPanel]="{ enabled: false }"
+    [filterValue]="gridFilterValue"
+    [wordWrapEnabled]="true"
+    [rowAlternationEnabled]="true"
+    [allowColumnResizing]="true"
+    [columnAutoWidth]="true"
+    [columnResizingMode]="columnResizingMode"
+    [showColumnLines]="false"
+    [hoverStateEnabled]="true"
+    (onContentReady)="adaAttrNoDataGrid($event)"
+  >
+    <dxo-header-filter [visible]="true"></dxo-header-filter>
+
+    <dxo-paging [pageSize]="100"></dxo-paging>
+
+    <dxo-grouping
+      [autoExpandAll]="true"
+      [contextMenuEnabled]="true"
+    ></dxo-grouping>
+
+    <dxo-pager
+      [showPageSizeSelector]="true"
+      [allowedPageSizes]="[50, 100, 200, 500]"
+      [showInfo]="true"
+      [showNavigationButtons]="true"
+      [visible]="true"
+    >
+    </dxo-pager>
+  </dx-data-grid>
+
+  <dx-load-panel
+    shadingColor="rgba(255,255,255,0.2)"
+    [position]="{ of: '#export-history-grid' }"
+    [visible]="showLoading"
+    [showIndicator]="true"
+    [showPane]="true"
+    [shading]="true"
+    [hideOnOutsideClick]="false"
+  >
+  </dx-load-panel>
+</div>
+
+<crem-popup
+  [id]="'filterBuilder'"
+  [visible]="showFilterBuilderPopUp"
+  [title]="'Filter Builder'"
+  [width]="600"
+  [height]="600"
+  [draggable]="true"
+  [resizable]="true"
+  [showFooter]="true"
+  (close)="close($event)"
+  (onShowClick)="onShowClick($event)"
+  [showCloseButton]="true"
+  [applyButtonText]="'Apply Filter'"
+  [closeButtonText]="'Close'"
+  (apply)="apply($event)"
+  (close)="close($event)"
+>
+  <div body class="grid-container">
+    <dx-filter-builder [fields]="exportHistoryColumns" [(value)]="filter">
+    </dx-filter-builder>
+    <div class="dx-clearfix"></div>
+  </div>
+</crem-popup>

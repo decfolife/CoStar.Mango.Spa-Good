@@ -2,71 +2,85 @@ import { Injectable } from '@angular/core';
 import { FormattingService } from './formatting.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TransactionPopupGridColumnsService {
-
-  constructor(private formattingService: FormattingService) { }
+  constructor(private formattingService: FormattingService) {}
 
   getTransactionPopupGridColumns(currencyInfo, dateFormat: string) {
-    
     const columns = [];
     columns.push(
       {
         caption: 'Due By',
         name: 'DueBy',
         dataField: 'dueBy',
-        dataType:'date',
+        dataType: 'date',
         format: dateFormat,
-        sortIndex:"0",
-        sortOrder:"asc",
-        headerCellTemplate: 'amortizationHeader', 
+        width: 110,
+        sortIndex: '0',
+        sortOrder: 'asc',
+        headerCellTemplate: 'paymentsGridHeader',
         cellTemplate: 'pointer',
-        alignment:'left'
+        alignment: 'left',
       },
       {
-        caption: 'Base (' + currencyInfo.chargeCurrency + ')',
+        caption: 'Payment Amount (' + currencyInfo.chargeCurrency + ')',
         name: 'BaseAmount',
         dataField: 'baseAmount',
-        headerCellTemplate:'amortizationHeader',
+        headerCellTemplate: 'paymentsGridHeader',
         cellTemplate: 'pointer',
-        format: value => this.formattingService.localFormat(+value, currencyInfo.chargeCurrencyDecimalPrecision),
-        alignment:'right'
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.chargeCurrencyDecimalPrecision
+          ),
+        alignment: 'right',
       },
       {
-        caption: 'Target (' + currencyInfo.scheduleCurrency + ': ' + currencyInfo.conversionRate.toFixed(currencyInfo.scheduleCurrencyDecimalPrecision) + ')',
+        caption:
+          'Accounting Event Amount (' +
+          currencyInfo.scheduleCurrency +
+          ': ' +
+          currencyInfo.conversionRate.toFixed(
+            currencyInfo.scheduleCurrencyDecimalPrecision
+          ) +
+          ')',
         name: 'TargetAmount',
         dataField: 'targetAmount',
-        headerCellTemplate:'amortizationHeader',
+        headerCellTemplate: 'paymentsGridHeader',
         cellTemplate: 'pointer',
-        format: value => this.formattingService.localFormat(+value, currencyInfo.scheduleCurrencyDecimalPrecision),
-        alignment:'right'
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.scheduleCurrencyDecimalPrecision
+          ),
+        alignment: 'right',
       },
       {
         caption: 'End Date',
         name: 'TransactionEndDate',
         dataField: 'transactionEndDate',
-        dataType:'date',
+        dataType: 'date',
         format: dateFormat,
-        headerCellTemplate: 'amortizationHeader',
+        headerCellTemplate: 'paymentsGridHeader',
         cellTemplate: 'pointer',
-        alignment:'left'
+        alignment: 'left',
       },
       {
         caption: 'Processing Status',
         name: 'ProcessingStatus',
         dataField: 'processingStatus',
-        headerCellTemplate: 'amortizationHeader', 
+        headerCellTemplate: 'paymentsGridHeader',
         cellTemplate: 'pointer',
-        alignment:'left'
+        alignment: 'left',
       },
       {
         caption: 'System Scheduled Transaction ID',
-        name: 'TransactionID', 
+        name: 'TransactionID',
         dataField: 'transactionID',
-        headerCellTemplate: 'amortizationHeader',
+        headerCellTemplate: 'paymentsGridHeader',
         cellTemplate: 'pointer',
-        alignment:'right'
+        alignment: 'right',
       }
     );
     return columns;

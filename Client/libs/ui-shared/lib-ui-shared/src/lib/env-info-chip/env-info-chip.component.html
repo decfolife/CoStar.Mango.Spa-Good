@@ -1,37 +1,55 @@
 <div class="env-info-chip dx-field">
   <div class="dx-field-value-static">
-
-    <button mat-stroked-button
+    <button
+      mat-stroked-button
       [id]="id"
       type="button"
       [ngClass]="['btn-env', chipStyle.type, chipStyle.color]"
-      [attr.aria-describedby]="withAnimationOptionsVisible ? 'restore'+ id : 'null' "
+      [attr.aria-describedby]="
+        withAnimationOptionsVisible ? 'restore' + id : 'null'
+      "
       aria-haspopup="true"
       [attr.aria-expanded]="withAnimationOptionsVisible"
       [innerHTML]="chipContent | uppercase"
-      (click)="withPopup ? toggleAnimationOptions($event) : null"
-      (blur)="withAnimationOptionsVisible ? toggleAnimationOptions($event) : !withAnimationOptionsVisible"
-      [ngStyle]="{cursor: withPopup ? 'pointer' : null}"
+      (click)="withPopup ? toggleAnimationOptions() : null"
+      (blur)="
+        withAnimationOptionsVisible
+          ? toggleAnimationOptions()
+          : !withAnimationOptionsVisible
+      "
+      [ngStyle]="{ cursor: withPopup ? 'pointer' : null }"
     >
-        {{ chipContent }}
-      <div class="chip-action" (click)="handleAction()" *ngIf="actionText"> {{ actionText }} </div>
+      {{ chipContent }}
+      <div class="chip-action" (click)="handleAction()" *ngIf="actionText">
+        {{ actionText }}
+      </div>
       <div class="close-chip" *ngIf="closable" (click)="closeChip()"></div>
     </button>
 
-    <dx-popover 
-      [id]="'chip-'+id" 
-      [target]='"#"+ id '
-      position="bottom" 
+    <dx-popover
+      [id]="'chip-' + id"
+      [target]="'#' + id"
+      position="bottom"
       [(visible)]="withAnimationOptionsVisible"
-      role="tooltip">
+      role="tooltip"
+    >
       <dxo-animation>
-        <dxo-show type="pop" [from]="{ scale: 0 }" [to]="{ scale: 1 }"></dxo-show>
+        <dxo-show
+          type="pop"
+          [from]="{ scale: 0 }"
+          [to]="{ scale: 1 }"
+        ></dxo-show>
         <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
       </dxo-animation>
-      <p class="restore" [id]="'restore'+ id" *ngFor="let content of parsedPopoverContent" [attr.aria-hidden]="!withAnimationOptionsVisible" [attr.aria-live]="withAnimationOptionsVisible ? 'assertive' : 'off'">
-        {{content}}
+      <p
+        class="restore"
+        [id]="'restore' + id"
+        *ngFor="let content of parsedPopoverContent"
+        [attr.aria-hidden]="!withAnimationOptionsVisible"
+        [attr.aria-live]="withAnimationOptionsVisible ? 'assertive' : 'off'"
+      >
+        {{ content }}
       </p>
     </dx-popover>
- 
   </div>
 </div>

@@ -4,33 +4,44 @@
   [customFooter]="true"
   [modalId]="'Archive' + data.archiveType + 'ConfirmationModal'"
   modalTitleId="archive_company_contact_modal_title"
-	[primaryFooterButtonText]="primaryFooterButtonText"
+  [primaryFooterButtonText]="primaryFooterButtonText"
   [closeOrCancelButtonText]="closeOrCancelButtonText"
-	(primaryButtonAction)="archive()"
+  (primaryButtonAction)="archive()"
   className="newModal"
 >
-	<div modalContent class="body-content">
-		<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" [showIndicator]="true"
-			[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
-		<div *ngIf="!loading">
-			Are you sure that you want to archive <span class="object-name">{{objectName}}</span>?
-		</div>
-	</div>
-	<div modalFooter class="footer-content">
-		<div id="'buttonTemplate'" class="footerRightControls">
-			<crem-button *ngIf="closeOrCancelButtonText" id="close-btn" 
-				type="secondary"
-				(click)="closeDialog()"
-			>
-				{{closeOrCancelButtonText}}
-			</crem-button>
-			<crem-button *ngIf="primaryFooterButtonText"
-				[disabled]="loading"
-				type="primary"
-				(click)="archive($event)"
-				> 
-				{{primaryFooterButtonText}} 
-			</crem-button>
-		</div>
-	</div>
+  <div modalContent class="body-content">
+    <dx-load-panel
+      shadingColor="rgba(255,255,255,0.2)"
+      [visible]="loading"
+      [showIndicator]="true"
+      [showPane]="true"
+      [shading]="true"
+      [closeOnOutsideClick]="false"
+    ></dx-load-panel>
+    <div *ngIf="!loading">
+      Are you sure that you want to archive
+      <span class="object-name">{{ objectName }}</span
+      >?
+    </div>
+  </div>
+  <div modalFooter class="footer-content">
+    <div id="'buttonTemplate'" class="footerRightControls">
+      <crem-button
+        *ngIf="closeOrCancelButtonText"
+        id="close-btn"
+        type="secondary"
+        (click)="closeDialog()"
+      >
+        {{ closeOrCancelButtonText }}
+      </crem-button>
+      <crem-button
+        *ngIf="primaryFooterButtonText"
+        [disabled]="loading"
+        type="primary"
+        (click)="archive($event)"
+      >
+        {{ primaryFooterButtonText }}
+      </crem-button>
+    </div>
+  </div>
 </crem-modal>

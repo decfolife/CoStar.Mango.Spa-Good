@@ -1,27 +1,97 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 .classification-tests__form {
+  display: flex;
+  flex-direction: row;
+  &__controls {
+    flex: 50%;
+  }
+  &__legend {
+    @include costar(font-size, normal);
+  }
+  &__list {
+    &--unordered {
+      list-style: none;
+    }
+  }
+  &__list__item__label {
+    display: flow;
+    padding-right: 20px;
+    width: 100%;
+  }
+  &__list__item {
+    padding-top: 10px;
+    &.side {
+      padding-bottom: 20px;
+    }
+
+    .ct-li-div {
+      display: flex;
+      justify-content: space-between;
+      div {
+        width: 80px;
+      }
+    }
+  }
+
+  .ct-bold-text {
+    font-weight: bold;
+  }
+
+  .ct-sub-text {
+    color: #757575;
+    font-size: 13px;
+  }
+
+  .ct-testResults-horizontal-line {
+    border-bottom: 2px solid #dcdcdc;
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .ct-testResults-div {
     display: flex;
-    flex-direction: row;
-    &__controls {
-        flex: 50%;
+    justify-content: flex-end;
+  }
+
+  .results-text-div {
+    padding-top: 8px;
+    margin-right: 10px;
+  }
+
+  .result-match-div {
+    width: fit-content;
+    height: 38px;
+    padding: 6px 8px 0px 8px;
+    border-radius: 3px;
+
+    &.match-incomplete {
+      border: 2px solid $gray04;
+      background-color: #ededed;
     }
-    &__legend {
-        @include costar(font-size, normal);
+
+    &.match-success {
+      border: 2px solid $success;
+      background-color: #ebfae2;
     }
-    &__list {
-        &--unordered {
-            list-style: none;
-        }
+
+    &.match-fail {
+      border: 2px solid $warning;
+      background-color: #ffda80;
     }
-    &__list__item__label {
-        display: flow;
-        padding-right: 20px;
+
+    .result-match-success-icon {
+      color: $success;
+      margin-right: 6px;
     }
-    &__list__item{
-        padding-top: 10px;
-        &.side {
-            padding-bottom: 20px;
-        }
+
+    .result-match-fail-icon {
+      color: $warning;
+      margin-right: 6px;
     }
+  }
+
+  .results-reason-text-div {
+    float: right;
+  }
 }

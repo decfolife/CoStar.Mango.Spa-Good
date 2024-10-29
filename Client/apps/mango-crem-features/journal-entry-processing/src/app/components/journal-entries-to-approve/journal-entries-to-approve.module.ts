@@ -3,7 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { DxDataGridModule, DxLoadPanelModule, DxTemplateModule, DxTooltipModule, DxTreeListModule } from 'devextreme-angular';
+import {
+  DxDataGridModule,
+  DxLoadPanelModule,
+  DxTemplateModule,
+  DxTooltipModule,
+  DxTreeListModule,
+} from 'devextreme-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -12,9 +18,7 @@ import { JournalEntriesToApproveComponent } from './journal-entries-to-approve.c
 import { JournalEntriesToApproveService } from './journal-entries-to-approve.service';
 
 @NgModule({
-  declarations: [
-    JournalEntriesToApproveComponent,
-  ],
+  declarations: [JournalEntriesToApproveComponent],
 
   imports: [
     CommonModule,
@@ -32,12 +36,10 @@ import { JournalEntriesToApproveService } from './journal-entries-to-approve.ser
       {
         path: '',
         component: JournalEntriesToApproveComponent,
-      }
-    ])
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    JournalEntriesToApproveService,
-  ]
+  providers: [JournalEntriesToApproveService],
 })
-export class JournalEntriesToApproveModule { }
+export class JournalEntriesToApproveModule {}

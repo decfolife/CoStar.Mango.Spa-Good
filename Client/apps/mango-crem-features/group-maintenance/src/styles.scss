@@ -1,8 +1,8 @@
 group-maintenance {
-    // FIXME: bad practice that breaks encapsulation and duplicates css
-    // FIXME: This is most probably result of not importing the shared component correctly or the SCSS selectors in the shared component
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss";
+  // FIXME: bad practice that breaks encapsulation and duplicates css
+  // FIXME: This is most probably result of not importing the shared component correctly or the SCSS selectors in the shared component
+  @import '../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss';
+  @import '../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss';
 
-    @import "./assets/styles/group-maintenance.scss";
+  @import './assets/styles/group-maintenance.scss';
 }

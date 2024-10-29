@@ -11,7 +11,10 @@ import {
   RouterModule,
   Routes,
 } from '@angular/router';
-import { MangoSubApps, RenderFormHeaderData } from '@mango/data-models/lib-data-models';
+import {
+  MangoSubApps,
+  RenderFormHeaderData,
+} from '@mango/data-models/lib-data-models';
 import { Observable, Subscription, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { MangoAppFacade } from './+state/app/app.facade';
@@ -25,17 +28,21 @@ const routes: Routes = [
   // LOGIN
   {
     path: 'auth/validate',
-    component: ValidateComponent
+    component: ValidateComponent,
   },
 
   // START PAGE
   {
     path: 'start-page',
     loadChildren: () =>
-      import(
-        '@start-page/components/index/index.module'
-      ).then((mod) => mod.IndexModule),
-    data: { currentSubApp: MangoSubApps.START_PAGE, moduleId: null, breadCrumb: { label: 'Start Page', append: false } },
+      import('@start-page/components/index/index.module').then(
+        (mod) => mod.IndexModule
+      ),
+    data: {
+      currentSubApp: MangoSubApps.START_PAGE,
+      moduleId: null,
+      breadCrumb: { label: 'Start Page', append: false },
+    },
   },
 
   // MAIN APP
@@ -50,57 +57,72 @@ const routes: Routes = [
 
       {
         path: 'projects',
-        data: { moduleId: 2, breadCrumb: { label: 'Projects', append: true, activeLink: 'Projects' } },
+        data: {
+          moduleId: 2,
+          breadCrumb: {
+            label: 'Projects',
+            append: true,
+            activeLink: 'Projects',
+          },
+        },
         children: [
           {
             path: '',
             loadChildren: () =>
-              import(
-                '@project-dashboard/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@project-dashboard/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               currentSubApp: MangoSubApps.PROJECTS_DASHBOARD,
               moduleId: 2,
-              breadCrumb: { label: 'Projects Dashboard', append: false, activeLink: 'Dashboard' }
+              breadCrumb: {
+                label: 'Projects Dashboard',
+                append: false,
+                activeLink: 'Dashboard',
+              },
             },
           },
           {
             path: 'tasks',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 2,
               objectTypeId: 9,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Tasks', append: true, activeLink: 'Tasks' }
+              breadCrumb: { label: 'Tasks', append: true, activeLink: 'Tasks' },
             },
           },
           {
             path: 'projects',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 2,
               objectTypeId: 1,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Projects', append: true, activeLink: 'Projects' }
+              breadCrumb: {
+                label: 'Projects',
+                append: true,
+                activeLink: 'Projects',
+              },
             },
           },
 
           {
             path: 'teams',
             loadChildren: () =>
-              import(
-                '@project-dashboard/components/teams/teams.module'
-              ).then((mod) => mod.TeamsModule),
+              import('@project-dashboard/components/teams/teams.module').then(
+                (mod) => mod.TeamsModule
+              ),
             data: {
               moduleId: 2,
               objectTypeId: null,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
@@ -111,7 +133,7 @@ const routes: Routes = [
               ).then((mod) => mod.ProjectTasksModule),
             data: {
               currentSubApp: MangoSubApps.PROJECTS_DASHBOARD,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
 
@@ -123,10 +145,10 @@ const routes: Routes = [
               ).then((mod) => mod.ProjectTeamModule),
             data: {
               currentSubApp: MangoSubApps.PROJECTS_DASHBOARD,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
-        ]
+        ],
       },
 
       // STRATEGY
@@ -137,89 +159,128 @@ const routes: Routes = [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           {
             path: 'dashboard', // Todo: Temporary component pointing to 404
-            children: [{
-              path: '',
-              component: NotFoundPageComponent
-            }],
+            children: [
+              {
+                path: '',
+                component: NotFoundPageComponent,
+              },
+            ],
             data: {
               moduleId: null,
               currentSubApp: null,
-              breadCrumb: { label: 'Strategy Dashboard', append: false, activeLink: 'Dashboard' }
+              breadCrumb: {
+                label: 'Strategy Dashboard',
+                append: false,
+                activeLink: 'Dashboard',
+              },
             },
           },
-        ]
+        ],
       },
 
       // PORTFOLIO
       {
         path: 'portfolio',
-        data: { moduleId: 1, breadCrumb: { label: 'Portfolio', append: true, activeLink: 'Portfolio' } },
+        data: {
+          moduleId: 1,
+          breadCrumb: {
+            label: 'Portfolio',
+            append: true,
+            activeLink: 'Portfolio',
+          },
+        },
         children: [
           {
             path: '',
             loadChildren: () =>
-              import(
-                '@portfolio-dashboard/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@portfolio-dashboard/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 1,
               currentSubApp: MangoSubApps.PORTFOLIO_DASHBOARD,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'buildings',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 1,
               objectTypeId: 3,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Buildings', append: true, activeLink: 'Buildings' }
+              breadCrumb: {
+                label: 'Buildings',
+                append: true,
+                activeLink: 'Buildings',
+              },
             },
           },
           {
             path: 'leases',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 1,
               objectTypeId: 4,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Leases', append: true, activeLink: 'Leases' }
+              breadCrumb: {
+                label: 'Leases',
+                append: true,
+                activeLink: 'Leases',
+              },
             },
           },
           {
             path: 'revenues',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 1,
               objectTypeId: 194,
               currentSubApp: MangoSubApps.REVENUES,
-              breadCrumb: { label: 'Revenues', append: true, activeLink: 'Revenues' }
+              breadCrumb: {
+                label: 'Revenues',
+                append: true,
+                activeLink: 'Revenues',
+              },
             },
           },
           {
             path: 'expenses',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 1,
               objectTypeId: 193,
               currentSubApp: MangoSubApps.EXPENSES,
-              breadCrumb: { label: 'Expenses', append: true, activeLink: 'Expenses' }
+              breadCrumb: {
+                label: 'Expenses',
+                append: true,
+                activeLink: 'Expenses',
+              },
             },
           },
-        ]
+          {
+            path: 'ledgers',
+            loadChildren: () =>
+              import('@ledgers/app.module').then((mod) => mod.AppModule),
+            data: {
+              moduleId: 1,
+              currentSubApp: MangoSubApps.LEDGERS_EXPORT_HISTORY,
+              breadCrumb: { append: false },
+            },
+          },
+        ],
       },
 
       // ACCOUNTING PATH
@@ -229,10 +290,20 @@ const routes: Routes = [
           moduleId: 9,
           breadCrumb: {
             append: true,
-            label: 'Accounting'
-          }
+            label: 'Accounting',
+          },
         },
         children: [
+          {
+            path: 'ledgers',
+            loadChildren: () =>
+              import('@ledgers/app.module').then((mod) => mod.AppModule),
+            data: {
+              moduleId: 9,
+              currentSubApp: MangoSubApps.LEDGERS_EXPORT_HISTORY,
+              breadCrumb: { append: false },
+            },
+          },
           {
             path: 'events',
             loadChildren: () =>
@@ -242,67 +313,71 @@ const routes: Routes = [
             data: {
               moduleId: 9,
               objectTypeId: null,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           // Alerts
           {
             path: 'lease-alerts',
             loadChildren: () =>
-              import(
-                '@lease-alerts/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@lease-alerts/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 9,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'alerts-rules',
             loadChildren: () =>
-              import(
-                '@alerts-rules/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@alerts-rules/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.ALERT_RULES,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'batch-accounting',
             loadChildren: () =>
-              import(
-                '@batch-accounting/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@batch-accounting/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'summary',
             loadChildren: () =>
-              import(
-                '@accounting-summary/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@accounting-summary/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.BATCH_ACCOUNTING,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'accounting-history',
             loadChildren: () =>
-              import(
-                '@accounting-history/app.module'
-              ).then((mod) => mod.AppModule),
+              import('@accounting-history/app.module').then(
+                (mod) => mod.AppModule
+              ),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.ACCOUNTING_DASHBOARD,
-              breadCrumb: { label: 'Accounting History', append: false, activeLink: 'Accounting' }
+              breadCrumb: {
+                label: 'Accounting History',
+                append: false,
+                activeLink: 'Accounting',
+              },
             },
           },
           // Accounting Settings
@@ -315,33 +390,34 @@ const routes: Routes = [
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.LEASE_ALERTS,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'discountrateprofiles',
             loadChildren: () =>
-              import(
-                '@accounting-profile/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@accounting-profile/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.ACCOUNTING_PROFILE,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
-            path: '', loadChildren: () =>
+            path: '',
+            loadChildren: () =>
               import(
                 '@accounting-dashboard/components/index/index.module'
               ).then((mod) => mod.IndexMainModule),
             data: {
               moduleId: 9,
               currentSubApp: MangoSubApps.ACCOUNT_MANAGEMENT,
-              breadCrumb: { append: false }
-            }
+              breadCrumb: { append: false },
+            },
           },
-        ]
+        ],
       },
 
       // CONTACTS
@@ -353,59 +429,70 @@ const routes: Routes = [
           {
             path: 'companies-list',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 3,
               objectTypeId: 11,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Companies', append: true, activeLink: 'Companies' }
+              breadCrumb: {
+                label: 'Companies',
+                append: true,
+                activeLink: 'Companies',
+              },
             },
           },
           {
             path: 'contacts-list',
             loadChildren: () =>
-              import(
-                '@list-pages/components/index.module.hosted'
-              ).then((mod) => mod.IndexModule),
+              import('@list-pages/components/index.module.hosted').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               moduleId: 3,
               objectTypeId: 5,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Contacts', append: true, activeLink: 'Contacts' }
+              breadCrumb: {
+                label: 'Contacts',
+                append: true,
+                activeLink: 'Contacts',
+              },
             },
           },
-        ]
+        ],
       },
 
       // REPORTS
       {
         path: 'reports',
-        data: { moduleId: 4, breadCrumb: { label: 'Reports', append: true, activeLink: 'Reports' } },
+        data: {
+          moduleId: 4,
+          breadCrumb: { label: 'Reports', append: true, activeLink: 'Reports' },
+        },
         children: [
           {
             path: '',
             loadChildren: () =>
-              import(
-                '@reports/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@reports/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               currentSubApp: MangoSubApps.REPORTS,
               moduleId: 4,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'data-set-dictionary',
             loadChildren: () =>
-              import(
-                '@data-set-dictionary/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@data-set-dictionary/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               currentSubApp: MangoSubApps.REPORTS,
               moduleId: 4,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
@@ -417,10 +504,10 @@ const routes: Routes = [
             data: {
               currentSubApp: MangoSubApps.REPORTS,
               moduleId: 4,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
-          }
-        ]
+          },
+        ],
       },
 
       // REMINDERS
@@ -436,16 +523,19 @@ const routes: Routes = [
               ).then((mod) => mod.RemindersListComponent),
             data: {
               moduleId: null,
-              breadCrumb: { append: true }
+              breadCrumb: { append: true },
             },
-          }
-        ]
+          },
+        ],
       },
 
       // ADMIN
       {
         path: 'admin',
-        data: { moduleId: 6, breadCrumb: { label: 'Admin', append: true, activeLink: 'Admin' } },
+        data: {
+          moduleId: 6,
+          breadCrumb: { label: 'Admin', append: true, activeLink: 'Admin' },
+        },
         children: [
           {
             path: '',
@@ -456,55 +546,55 @@ const routes: Routes = [
             data: {
               moduleId: 6,
               currentSubApp: MangoSubApps.ADMIN,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'user-maintenance',
             loadChildren: () =>
-              import(
-                '@user-maintenance/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@user-maintenance/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               currentSubApp: MangoSubApps.USER_MAINTENANCE,
               moduleId: 6,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'service-accounts',
             loadChildren: () =>
-              import(
-                '@service-accounts/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@service-accounts/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               currentSubApp: MangoSubApps.SERVICE_ACCOUNTS,
               moduleId: 6,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'group-maintenance',
             loadChildren: () =>
-              import(
-                '@group-maintenance/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@group-maintenance/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               currentSubApp: MangoSubApps.GROUP_MAINTENANCE,
               moduleId: 6,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'object-maintenance',
             loadChildren: () =>
-              import(
-                '@object-maintenance/components/index/index.module'
-              ).then((mod) => mod.IndexModule),
+              import('@object-maintenance/components/index/index.module').then(
+                (mod) => mod.IndexModule
+              ),
             data: {
               currentSubApp: MangoSubApps.OBJECT_MAINTENANCE,
               moduleId: 6,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
@@ -516,16 +606,20 @@ const routes: Routes = [
             data: {
               currentSubApp: MangoSubApps.PORTFOLIO_MAINTENANCE,
               moduleId: 6,
-              breadCrumb: { append: false }
+              breadCrumb: { append: false },
             },
           },
           {
             path: 'forms-maintenance',
             loadChildren: () =>
-              import(
-                '@forms/mango-forms/mango-forms.module'
-              ).then((mod) => mod.MangoFormsModule),
-            data: { currentSubApp: MangoSubApps.FORMS_MAINTENANCE, moduleId: 6, breadCrumb: { label: null, append: true } },
+              import('@forms/mango-forms/mango-forms.module').then(
+                (mod) => mod.MangoFormsModule
+              ),
+            data: {
+              currentSubApp: MangoSubApps.FORMS_MAINTENANCE,
+              moduleId: 6,
+              breadCrumb: { label: null, append: true },
+            },
           },
           {
             path: 'etl',
@@ -544,25 +638,27 @@ const routes: Routes = [
       {
         path: 'forms',
         loadChildren: () =>
-          import(
-            '@forms/mango-forms/mango-forms.module'
-          ).then((mod) => mod.MangoFormsModule),
+          import('@forms/mango-forms/mango-forms.module').then(
+            (mod) => mod.MangoFormsModule
+          ),
       },
 
       //Costar Matching
       {
         path: 'costar-matching',
         loadChildren: () =>
-          import(
-            '@costar-matching/app.module'
-          ).then((mod) => mod.AppModule),
+          import('@costar-matching/app.module').then((mod) => mod.AppModule),
+      },
+      {
+        path: 'accounting-history',
+        loadChildren: () =>
+          import('@accounting-history/app.module').then((mod) => mod.AppModule),
       },
 
       // Auto-generated components below
       // @!micro-component-generator: don't delete this line
-    ]
+    ],
   },
-
 
   // Redirect to Login
   { path: '', redirectTo: 'crem', pathMatch: 'full' },
@@ -571,39 +667,42 @@ const routes: Routes = [
   {
     path: '**',
     component: CremComponent,
-    children: [{
-      path: '',
-      component: NotFoundPageComponent
-    }],
+    children: [
+      {
+        path: '',
+        component: NotFoundPageComponent,
+      },
+    ],
   },
-
 ];
-
 
 const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
   anchorScrolling: 'enabled',
   onSameUrlNavigation: 'reload',
   scrollOffset: [0, 50],
-}
+};
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {
-
-  subs: Subscription = new Subscription()
+  subs: Subscription = new Subscription();
   constructor(
     private facade: MangoAppFacade,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private appService: AppService,
+    private appService: AppService
   ) {
-    this.subs.add(this.router.events.subscribe(this.navigationInterceptor.bind(this)))
-    this.subs.add(this.getCurrentSubApp().subscribe((currentSubApp) =>
-      this.facade.loadSubApp(currentSubApp)
-    ))
+    this.subs.add(
+      this.router.events.subscribe(this.navigationInterceptor.bind(this))
+    );
+    this.subs.add(
+      this.getCurrentSubApp().subscribe((currentSubApp) =>
+        this.facade.loadSubApp(currentSubApp)
+      )
+    );
   }
 
   getCurrentSubApp(): Observable<MangoSubApps> {
@@ -621,7 +720,9 @@ export class AppRoutingModule {
 
   raiseRenderFormShowPropertyHeader() {
     const renderFormHeaderData = new RenderFormHeaderData(false, null);
-    const evt = new CustomEvent("RenderFormShowPropertyHeader", { detail: renderFormHeaderData });
+    const evt = new CustomEvent('RenderFormShowPropertyHeader', {
+      detail: renderFormHeaderData,
+    });
     window.dispatchEvent(evt);
   }
 
@@ -639,5 +740,4 @@ export class AppRoutingModule {
       this.facade.setLoading(false);
     }
   }
-
 }

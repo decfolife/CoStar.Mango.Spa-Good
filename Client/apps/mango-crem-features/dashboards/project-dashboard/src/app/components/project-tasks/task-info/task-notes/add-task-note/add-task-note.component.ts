@@ -7,19 +7,18 @@ import { Observable, Subscription, of } from 'rxjs';
 import { DxValidatorComponent } from 'devextreme-angular';
 import { switchMap } from 'rxjs/operators';
 
-
-
 @Component({
   selector: 'mango-add-task-note',
   templateUrl: './add-task-note.component.html',
-  styleUrls: ['./add-task-note.component.scss']
+  styleUrls: ['./add-task-note.component.scss'],
 })
 export class AddTaskNoteComponent {
-  @ViewChild("NoteTypeDropdown") cremDropdown: DropdownComponent
-  @ViewChild('NoteBodyValidator', { static: false }) noteBodyValidator: DxValidatorComponent;
+  @ViewChild('NoteTypeDropdown') cremDropdown: DropdownComponent;
+  @ViewChild('NoteBodyValidator', { static: false })
+  noteBodyValidator: DxValidatorComponent;
 
-  modalTitle = "Add Task Note";
-  modalId: string = "addTaskNoteModal";
+  modalTitle = 'Add Task Note';
+  modalId: string = 'addTaskNoteModal';
   subs: Subscription[] = [];
   noteTypesList: any[] = [];
   selectedNoteTypeId: number;
@@ -28,18 +27,20 @@ export class AddTaskNoteComponent {
   maxCommonNoteTextLength = 7000;
   newNoteSaved = false;
   noteTypeDropdownInValid = false;
-  noteBodyTextAreaInValid = false
+  noteBodyTextAreaInValid = false;
   dragPosition: any;
   addTaskNoteResult: any;
   private taskId: number;
 
-  constructor(private dashboardService: DashboardService,
+  constructor(
+    private dashboardService: DashboardService,
     private dialogService: MangoDialogService,
     public dialogRef: MatDialogRef<AddTaskNoteComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-      this.taskId = data.taskId;
-      this.dragPosition = data.dragPosition
- }
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.taskId = data.taskId;
+    this.dragPosition = data.dragPosition;
+  }
 
   ngOnInit() {
     this.updateAddTaskNoteResult();
@@ -48,7 +49,7 @@ export class AddTaskNoteComponent {
   }
 
   ngOnDestroy() {
-    this.subs.forEach(s => s.unsubscribe());
+    this.subs.forEach((s) => s.unsubscribe());
   }
 
   closeModal() {
@@ -61,8 +62,11 @@ export class AddTaskNoteComponent {
   }
 
   setCharacterCountText() {
-    let textLength = this.commonNoteText === undefined ? 0 : this.commonNoteText.length 
-    this.characterCountText = `${this.maxCommonNoteTextLength - textLength} characters remaining`
+    let textLength =
+      this.commonNoteText === undefined ? 0 : this.commonNoteText.length;
+    this.characterCountText = `${
+      this.maxCommonNoteTextLength - textLength
+    } characters remaining`;
   }
 
   saveNote() {
@@ -71,32 +75,54 @@ export class AddTaskNoteComponent {
     let noteBodyValidationResult = this.noteBodyValidator.instance.validate();
     this.noteBodyTextAreaInValid = !noteBodyValidationResult.isValid;
 
-    if(this.noteTypeDropdownInValid || this.noteBodyTextAreaInValid) {
-      this.dialogService.alert('Validation Error(s)', "You have left at least one required field empty.\r\n\r\nPlease update and try again.", 'OK');
+    if (this.noteTypeDropdownInValid || this.noteBodyTextAreaInValid) {
+      this.dialogService.alert(
+        'Validation Error(s)',
+        'You have left at least one required field empty.\r\n\r\nPlease update and try again.',
+        'OK'
+      );
       return;
     }
 
     const taskObjectTypeId = 9;
 
-    this.subs.push(this.dashboardService.saveNote(this.taskId, taskObjectTypeId, 0, this.selectedNoteTypeId, this.commonNoteText).pipe(
-      switchMap(saveRes => {
-        let alertClosedOnSuccess: Observable<boolean> = of(false);
+    this.subs.push(
+      this.dashboardService
+        .saveNote(
+          this.taskId,
+          taskObjectTypeId,
+          0,
+          this.selectedNoteTypeId,
+          this.commonNoteText
+        )
+        .pipe(
+          switchMap((saveRes) => {
+            let alertClosedOnSuccess: Observable<boolean> = of(false);
 
-        if(!!saveRes && saveRes.success && saveRes.data > 0) {
-          this.newNoteSaved = true;
-          this.updateAddTaskNoteResult();
-          alertClosedOnSuccess = this.dialogService.alert('Save Note', 'The note was saved successfully.', 'OK');
-        }
-        else {
-          this.dialogService.alert('Save Note Error', 'There was an issue with saving the note. Please contact the system administrator.', 'OK');
-        }
-        return alertClosedOnSuccess;
-      })
-    ).subscribe(res => {
-      if(!!res && res) {
-        this.closeModal();
-      }
-    }));
+            if (!!saveRes && saveRes.success && saveRes.data > 0) {
+              this.newNoteSaved = true;
+              this.updateAddTaskNoteResult();
+              alertClosedOnSuccess = this.dialogService.alert(
+                'Save Note',
+                'The note was saved successfully.',
+                'OK'
+              );
+            } else {
+              this.dialogService.alert(
+                'Save Note Error',
+                'There was an issue with saving the note. Please contact the system administrator.',
+                'OK'
+              );
+            }
+            return alertClosedOnSuccess;
+          })
+        )
+        .subscribe((res) => {
+          if (!!res && res) {
+            this.closeModal();
+          }
+        })
+    );
   }
 
   onSelectedNoteTypeChanged(e) {
@@ -109,21 +135,28 @@ export class AddTaskNoteComponent {
   }
 
   private updateAddTaskNoteResult() {
-    this.addTaskNoteResult = { saveSuccessful: this.newNoteSaved, newDragPosition: this.dragPosition };
-  }   
-
+    this.addTaskNoteResult = {
+      saveSuccessful: this.newNoteSaved,
+      newDragPosition: this.dragPosition,
+    };
+  }
 
   private getCommonNoteTypes() {
-    this.subs.push(this.dashboardService.getCommonNoteTypes().subscribe(res => {
-      if(!!res && res.success) {
-        this.noteTypesList = res.data;
-        if(this.noteTypesList.length > 0) {
-          this.selectedNoteTypeId = this.noteTypesList[0].commonNoteTypeID;
+    this.subs.push(
+      this.dashboardService.getCommonNoteTypes().subscribe((res) => {
+        if (!!res && res.success) {
+          this.noteTypesList = res.data;
+          if (this.noteTypesList.length > 0) {
+            this.selectedNoteTypeId = this.noteTypesList[0].commonNoteTypeID;
+          }
+        } else {
+          this.dialogService.alert(
+            'Get Common Note Types Error',
+            'There was an issue with getting the common note types. Please contact the system administrator.',
+            'OK'
+          );
         }
-      }
-      else {
-        this.dialogService.alert('Get Common Note Types Error', 'There was an issue with getting the common note types. Please contact the system administrator.', 'OK');
-      }
-    }));
+      })
+    );
   }
 }

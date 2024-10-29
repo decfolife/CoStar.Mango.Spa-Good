@@ -4,95 +4,159 @@
 <div class="accounting-summary-style-container">
   <div class="accounting-summary-toolbar-wrapper">
     <div class="controls-left">
-      <div class="accounting-summary-title"><mango-accounts-summary-title></mango-accounts-summary-title></div>
+      <div class="accounting-summary-title">
+        <mango-accounts-summary-title></mango-accounts-summary-title>
+      </div>
     </div>
 
     <div class="controls-right">
-
-      <div [id]="accountingSummaryService.getId(componentName,'alerts','button')" class="alerts">
-        <mango-alerts-root [leaseAbstractId]="returnLeaseAbstractId()"></mango-alerts-root>
-      </div> 
+      <div
+        [id]="accountingSummaryService.getId(componentName, 'alerts', 'button')"
+        class="alerts"
+      >
+        <mango-alerts-root
+          [leaseAbstractId]="returnLeaseAbstractId()"
+        ></mango-alerts-root>
+      </div>
 
       <div class="workflow-dropdown-div">
-        <mango-workflow-dropdown [leaseIsLocked]="isLocked" [leaseIsArchived]="isArchived" [rightsInfo]="rightsInfo" [workflowStatusInfo]="workflowStatusInfo"
+        <mango-workflow-dropdown
+          [leaseIsLocked]="isLocked"
+          [leaseIsArchived]="isArchived"
+          [rightsInfo]="rightsInfo"
+          [workflowStatusInfo]="workflowStatusInfo"
           [modifiedById]="modifiedByID"
-          (workflowStatusSavedEvent)="onWorkflowStatusSaved($event)">
+          (workflowStatusSavedEvent)="onWorkflowStatusSaved($event)"
+        >
         </mango-workflow-dropdown>
-        <div *ngIf="modifiedDate || modifiedByName" class="work-flow-change-info"
-          [id]="accountingSummaryService.getId(componentName,'modifiedBy','details')"
+        <div
+          *ngIf="modifiedDate || modifiedByName"
+          class="work-flow-change-info"
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'modifiedBy',
+              'details'
+            )
+          "
+        >
+          Modified by
+          <span
+            *ngIf="modifiedByName.length > 20; else elseBlock"
+            (mouseenter)="onChangeByTooltipMouseOver()"
+            (mouseleave)="onChangeByTooltipMouseLeave()"
+            >{{ modifiedByName | slice: 0:20 }}...</span
           >
-          Modified by 
-          <span *ngIf="modifiedByName.length > 20; else elseBlock" (mouseenter)="onChangeByTooltipMouseOver()" (mouseleave)="onChangeByTooltipMouseLeave()">{{ modifiedByName | slice: 0:20 }}...</span>
           <ng-template #elseBlock>{{ modifiedByName }} </ng-template>
-          on {{ modifiedDate | date: userInfo?.useDateEU !== undefined && userInfo?.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy'}}
+          on
+          {{
+            modifiedDate
+              | date
+                : (userInfo?.useDateEU !== undefined && userInfo?.useDateEU
+                    ? 'dd.MM.yyyy'
+                    : 'MM/dd/yyyy')
+          }}
 
-          <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
-            target="#accounting-summary-modifiedBy-details" [visible]="isChangeByTooltipVisible">
+          <dx-tooltip
+            [id]="
+              accountingSummaryService.getId(componentName, 'add', 'tooltip')
+            "
+            target="#accounting-summary-modifiedBy-details"
+            [visible]="isChangeByTooltipVisible"
+          >
             <div *dxTemplate="let data of 'content'">
-              Modified by {{ modifiedByName + ' ' + 'on ' + (modifiedDate | date: (userInfo?.useDateEU !== undefined &&
-              userInfo?.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy')) }}
+              Modified by
+              {{
+                modifiedByName +
+                  ' ' +
+                  'on ' +
+                  (modifiedDate
+                    | date
+                      : (userInfo?.useDateEU !== undefined &&
+                        userInfo?.useDateEU
+                          ? 'dd.MM.yyyy'
+                          : 'MM/dd/yyyy'))
+              }}
             </div>
           </dx-tooltip>
         </div>
-    </div>
-
-    <div class="workflow-history-popup-div">
-      <mango-workflow-history-popup [userInfo]="userInfo"
-        [workflowStatusHistory]="workflowStatusHistory"></mango-workflow-history-popup>
-    </div>  
-
-    <div class="send-to-excel-button">
-      <crem-button
-        [id]="accountingSummaryService.getId(componentName,'sendToExcel','button')" 
-        type="secondary"
-        (click)="sendToExcel($event)" 
-        [disabled]="sendToExcelClicked || isAccountingEventEmpty"
-        [icon]="sendToExcelClicked? 'faSpinner':''"
-        [iconPack]="sendToExcelClicked? 'solid':''"
-        [iconAnimation]="sendToExcelClicked? 'spin':''">
-        <div>
-          <span>
-            {{sendToExcelClicked ? 'Sending to Excel':'Send to Excel'}}
-          </span>
       </div>
-      </crem-button>
-    </div>
-      
-    <div class="add-button">
-      <crem-button [id]="accountingSummaryService.getId(componentName,'add','button')" type="primary"
-        (click)="addEvent($event)" [disabled]="isAddButtonDisabled" (mouseenter)="onMouseEnter()"
-        (mouseleave)="onMouseLeave()">Add
-      </crem-button>
-      <dx-tooltip [id]="accountingSummaryService.getId(componentName,'add','tooltip')"
-        target="#accounting-summary-add-button" [visible]="isTooltipVisible">
-        <div *dxTemplate="let data of 'content'">
-          {{ disableBtnReason }}
-        </div>
-      </dx-tooltip>
-    </div>
-    
+
+      <div class="workflow-history-popup-div">
+        <mango-workflow-history-popup
+          [userInfo]="userInfo"
+          [workflowStatusHistory]="workflowStatusHistory"
+        ></mango-workflow-history-popup>
+      </div>
+
+      <div class="send-to-excel-button">
+        <crem-button
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'sendToExcel',
+              'button'
+            )
+          "
+          type="secondary"
+          (click)="sendToExcel($event)"
+          [disabled]="sendToExcelClicked || isAccountingEventEmpty"
+          [icon]="sendToExcelClicked ? 'faSpinner' : ''"
+          [iconPack]="sendToExcelClicked ? 'solid' : ''"
+          [iconAnimation]="sendToExcelClicked ? 'spin' : ''"
+        >
+          <div>
+            <span>
+              {{ sendToExcelClicked ? 'Sending to Excel' : 'Send to Excel' }}
+            </span>
+          </div>
+        </crem-button>
+      </div>
+
+      <div class="add-button">
+        <crem-button
+          [id]="accountingSummaryService.getId(componentName, 'add', 'button')"
+          type="primary"
+          (click)="addEvent($event)"
+          [disabled]="isAddButtonDisabled"
+          (mouseenter)="onMouseEnter()"
+          (mouseleave)="onMouseLeave()"
+          >Add
+        </crem-button>
+        <dx-tooltip
+          [id]="accountingSummaryService.getId(componentName, 'add', 'tooltip')"
+          target="#accounting-summary-add-button"
+          [visible]="isTooltipVisible"
+        >
+          <div *dxTemplate="let data of 'content'">
+            {{ disableBtnReason }}
+          </div>
+        </dx-tooltip>
+      </div>
     </div>
   </div>
 
   <div>
     <mango-events-detail-section
       [leaseIsLocked]="isLocked"
-      [leaseIsArchived]="isArchived" 
+      [leaseIsArchived]="isArchived"
       [rightsInfo]="rightsInfo"
       [userInfo]="userInfo"
       [wfStatusRights]="wfStatusRights"
       (eventScheduleSelectedEvent)="setLeaseRecognitionScheduleID($event)"
-      (dataChanged)="onDataChanged($event)">
+      (dataChanged)="onDataChanged($event)"
+    >
     </mango-events-detail-section>
 
     <mango-payments-detail-section
       [classificationID]="classificationID"
       [eventScheduleData]="eventSchedule"
       [gridState]="gridState"
-      [userInfo]="userInfo" 
+      [userInfo]="userInfo"
       [amortizationProfileName]="amortizationProfileName"
       [classificationType]="classificationType"
-      [isAccountingEventEmpty]="isAccountingEventEmpty">
+      [isAccountingEventEmpty]="isAccountingEventEmpty"
+    >
     </mango-payments-detail-section>
 
     <mango-amortization-detail-section
@@ -104,7 +168,8 @@
       [wfStatusRights]="wfStatusRights"
       [amortizationProfileName]="amortizationProfileName"
       [classificationType]="classificationType"
-      [isAccountingEventEmpty]="isAccountingEventEmpty">
+      [isAccountingEventEmpty]="isAccountingEventEmpty"
+    >
     </mango-amortization-detail-section>
   </div>
 </div>

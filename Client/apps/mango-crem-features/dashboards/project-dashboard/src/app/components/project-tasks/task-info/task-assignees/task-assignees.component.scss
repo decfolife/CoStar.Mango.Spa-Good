@@ -1,16 +1,16 @@
-.task-assignees-counts-wrapper{
+.task-assignees-counts-wrapper {
   .tac-count-section {
     margin-top: 5px;
     display: flex;
     height: 85px;
     justify-content: space-around;
-  
+
     .tac-count {
       padding: 20px 8px 12px;
       display: flex;
       align-items: center;
       flex-direction: column;
-  
+
       .tac-count-val {
         font-size: 22px;
         font-weight: 500;

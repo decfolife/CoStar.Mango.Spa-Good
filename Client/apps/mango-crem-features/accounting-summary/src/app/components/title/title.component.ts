@@ -8,25 +8,27 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./title.component.scss'],
 })
 export class TitleComponent implements OnInit, OnDestroy {
-
   leaseName: string;
   componentName = 'accounting-summary-lease';
   showTooltip = false;
-  isLocked  = false;
+  isLocked = false;
   isArchived = false;
   lockedReason: string;
   private subscription = new Subscription();
 
-
-  constructor(public accountingSummaryService: AccountingSummaryService) { }
+  constructor(public accountingSummaryService: AccountingSummaryService) {}
 
   ngOnInit(): void {
-    this.subscription.add(this.accountingSummaryService.getTitleInfoFromSubject().subscribe(titleInfo => {
-      this.leaseName = titleInfo.leaseName;
-      this.isLocked = titleInfo.isLocked;
-      this.isArchived = titleInfo.isArchived;
-      this.lockedReason = titleInfo.lockedReason;
-    }));
+    this.subscription.add(
+      this.accountingSummaryService
+        .getTitleInfoFromSubject()
+        .subscribe((titleInfo) => {
+          this.leaseName = titleInfo.leaseName;
+          this.isLocked = titleInfo.isLocked;
+          this.isArchived = titleInfo.isArchived;
+          this.lockedReason = titleInfo.lockedReason;
+        })
+    );
   }
 
   ngOnDestroy() {
@@ -34,7 +36,6 @@ export class TitleComponent implements OnInit, OnDestroy {
   }
 
   showObjectInfoPopup() {
-    alert("will open object information");
+    alert('will open object information');
   }
-
 }

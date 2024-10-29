@@ -9,23 +9,30 @@ import { InputType } from '@mango/ui-shared/lib-ui-elements/src/lib/input/defini
  * @property {string} [className] - The optional class name for the data element. Useful for styling the wrapper of the label and input/text.
  */
 type DataElement = {
-  label: string,
-  name?: string,
-  value?: number | string,
-  inputType?: InputType,
-  disabled?: boolean,
-  formControlName?: string,
-  className?: string,
-  initialSelectedValue?: {
-    displayKey: string | number;
-    valueKey: string | number;
-  } | string | number,
+  label: string;
+  name?: string;
+  value?: number | string;
+  placeholder?: number | string;
+  inputType?: InputType;
+  disabled?: boolean;
+  required?: boolean;
+  formControlName?: string;
+  className?: string;
+  initialSelectedValue?:
+    | {
+        displayKey: string | number;
+        valueKey: string | number;
+      }
+    | string
+    | number;
   dataSource?: Array<{
     displayKey: string | number;
     valueKey: string | number;
-  }>,
-  initialSelectedValue?: '',
-}
+  }>;
+  initialSelectedValue?: '';
+  precision?: number;
+  currencyName?: string;
+};
 
 type DataElements = DataElement[];
 
@@ -43,17 +50,17 @@ type DataElements = DataElement[];
  * @property {DataElement[]} [elements] - The optional array of data elements associated with the card.
  */
 export type BalanceCardType = {
-  cardTitle: string,
-  cardSubtitle?: string,
-  description?: string,
-  value: number | string,
-  valueSuffix?: string,
-  valueLink?: string,
-  valueTarget?: 'self' | 'blank',
-  className?: string,
-  id?: string,
-  elements?: DataElements,
-}
+  cardTitle: string;
+  cardSubtitle?: string;
+  description?: string;
+  value: number | string;
+  valueSuffix?: string;
+  valueLink?: string;
+  valueTarget?: 'self' | 'blank';
+  className?: string;
+  id?: string;
+  elements?: DataElements;
+};
 
 /**
  * @typedef {Object} CardsConfiguration
@@ -63,8 +70,8 @@ export type BalanceCardType = {
  * @property {number} [maxWidth] - Optional. The maximum width of the cards. Example: 'repeat(auto-fit, minmax(200px, 1fr))'.
  */
 export type CardsConfiguration = {
-  gap?: number,
-  direction?: 'column' | 'row',
-  repeat?: 'auto-fit' | 'auto-fill',
-  maxWidth?: number,
-}
+  gap?: number;
+  direction?: 'column' | 'row';
+  repeat?: 'auto-fit' | 'auto-fill';
+  maxWidth?: number;
+};

@@ -7,7 +7,6 @@ import { StartPageService } from '../../services/data.service';
 import { IndexRoutingModule } from './index-routing.module';
 import { IndexComponent } from './index.component';
 
-
 @NgModule({
   declarations: [IndexComponent],
   imports: [
@@ -16,10 +15,8 @@ import { IndexComponent } from './index.component';
     MatCardModule,
     DropdownModule,
     ButtonModule,
-    CremHeaderModule
+    CremHeaderModule,
   ],
-  providers: [
-    StartPageService,
-  ],
+  providers: [StartPageService],
 })
 export class IndexModule {}

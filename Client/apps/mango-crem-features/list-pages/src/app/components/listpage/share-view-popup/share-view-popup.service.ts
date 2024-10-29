@@ -13,21 +13,35 @@ export interface SharedUserViewRight {
 
 @Injectable()
 export class ShareViewPopupService extends EndpointService {
-  listpages: string = UtilitiesService.getBaseApiUrl(Api.listpages)
+  listpages: string = UtilitiesService.getBaseApiUrl(Api.listpages);
 
   getSharedUserViewRights(listViewId: number) {
-    return this.callHttpGet(`${this.listpages}listpage/SharedUserViewRights/${listViewId}`, 'getSharedUserViewRights')
+    return this.callHttpGet(
+      `${this.listpages}listpage/SharedUserViewRights/${listViewId}`,
+      'getSharedUserViewRights'
+    );
   }
 
   getSharedUserViews(listViewId: number) {
-    return this.callHttpGet(`${this.listpages}listpage/SharedUserViews/${listViewId}`, 'getSharedUserViews')
+    return this.callHttpGet(
+      `${this.listpages}listpage/SharedUserViews/${listViewId}`,
+      'getSharedUserViews'
+    );
   }
 
   createSharedUserViewRights(newRight: SharedUserViewRight) {
-    return this.callHttpPost(`${this.listpages}listpage/SharedUserViewRights`, 'createSharedUserViewRights', newRight)
+    return this.callHttpPost(
+      `${this.listpages}listpage/SharedUserViewRights`,
+      'createSharedUserViewRights',
+      newRight
+    );
   }
 
   deleteSharedUserViewRights(right: SharedUserViewRight) {
-    return this.callHttpPost(`${this.listpages}listpage/DeleteSharedUserViewRight`, 'deleteSharedUserViewRights', right)
+    return this.callHttpPost(
+      `${this.listpages}listpage/DeleteSharedUserViewRight`,
+      'deleteSharedUserViewRights',
+      right
+    );
   }
 }

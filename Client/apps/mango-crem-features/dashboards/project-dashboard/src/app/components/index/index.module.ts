@@ -9,7 +9,6 @@ import { IndexRoutingModule } from './index-routing.module';
 import { IndexComponent } from './index.component';
 import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
 
-
 @NgModule({
   declarations: [IndexComponent],
   imports: [
@@ -19,11 +18,8 @@ import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
     CardsModule,
     UserSettingsModule,
     LibUiSharedModule,
-    InputComponent
+    InputComponent,
   ],
-  providers: [
-    DashboardService,
-    CardsService,
-  ],
+  providers: [DashboardService, CardsService],
 })
 export class IndexModule {}

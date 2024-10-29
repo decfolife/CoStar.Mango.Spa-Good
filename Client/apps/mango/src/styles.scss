@@ -12,15 +12,14 @@ body {
   margin: 0;
 }
 
-
 // *******************************************************************************
 // * Page transition
 .router-transitions {
   opacity: 1;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 
   body.app-loading & {
-    opacity: .75;
+    opacity: 0.75;
   }
 }
 
@@ -44,14 +43,13 @@ body {
     display: flex;
     justify-content: space-between;
     height: 48px;
-    background: #FFFFFF;
+    background: #ffffff;
   }
 }
 
-div.costar-site-toolbar-search  {
-
+div.costar-site-toolbar-search {
   font-size: 16px;
-   div.mat-mdc-form-field-infix {
+  div.mat-mdc-form-field-infix {
     display: flex !important;
     justify-content: space-between;
   }
@@ -63,14 +61,12 @@ div.costar-site-toolbar-search  {
   div.mat-form-field-wrapper {
     padding-bottom: 0px;
 
-    div.mat-form-field-flex  {
+    div.mat-form-field-flex {
       width: 400px;
       padding: 0 8px 0 0;
     }
   }
-  
 }
-
 
 .mat-select-panel.mqs-selectPanel {
   transform: translateY(30px) translateX(8px) !important;
@@ -98,10 +94,9 @@ div.costar-site-toolbar-search  {
 
 .mat-select.mqs-objects {
   span.mat-select-placeholder {
-    color: rgba(0,0,0,0.87);
+    color: rgba(0, 0, 0, 0.87);
   }
 }
-
 
 //**** Left Navigation Styles ****//
 .sharedLeftNav-container {
@@ -132,7 +127,6 @@ div.costar-site-toolbar-search  {
         margin-bottom: 2px;
       }
     }
-
   }
 
   div.sidenavTop.hideLinks {
@@ -147,7 +141,6 @@ div.costar-site-toolbar-search  {
 crem-bookmarks .mat-drawer-container {
   z-index: 999999999;
 }
-
 
 crem-bookmarks.suite-user {
   #recentDrawer.mat-drawer {
@@ -166,47 +159,46 @@ crem-bookmarks.suite-user {
 //** temp styles end **//
 
 //**** list page styles ****//
-app-list-page  .list-page-data-grid-wrapper {
+app-list-page .list-page-data-grid-wrapper {
   height: calc(100% - 50px) !important;
 }
-
 
 #projects-dashboard div.project-filters {
   z-index: 999 !important;
 }
 
-
 //**** quick search results ****//
 .qsr-objectData {
-	.dx-header-row {
-		background-color: colors.$color-dark-blue;
-		color: white;
+  .dx-header-row {
+    background-color: colors.$color-dark-blue;
+    color: white;
 
-		td { 
-			border: 1px Solid colors.$color-gray-shade;
-		}	
-	}
+    td {
+      border: 1px Solid colors.$color-gray-shade;
+    }
+  }
 
   table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-row-alt td {
-    background: colors.$offWhite
+    background: colors.$offWhite;
   }
 }
 
 crem-modal.qsr-modal {
   div.modalContent {
-	  overflow: hidden;
+    overflow: hidden;
   }
 
-	div.qsr-modalContent {
-		height: 100%;
-	}
+  div.qsr-modalContent {
+    height: 100%;
+  }
   .modalFooter {
     border-top: 1px solid #ddd;
-  } 
-  
-  dx-data-grid .dx-header-row > td > .dx-datagrid-text-content, .dx-datagrid-content .dx-datagrid-table .dx-row > td {
-		font-size: 12px !important;
-	}
+  }
+
+  dx-data-grid .dx-header-row > td > .dx-datagrid-text-content,
+  .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+    font-size: 12px !important;
+  }
 }
 
 // //**** Styles for Emulate User Modal on MangoSPA //
@@ -253,7 +245,7 @@ crem-modal.qsr-modal {
 //     dx-data-grid {
 //       overflow: auto;
 //       height: 300px;
-//     }  
+//     }
 //   }
 
 //   cs-text-field mat-form-field.mat-form-field.mat-form-field-appearance-outline div.mat-form-field-wrapper {

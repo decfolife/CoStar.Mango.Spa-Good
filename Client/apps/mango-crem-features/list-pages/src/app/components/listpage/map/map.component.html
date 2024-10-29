@@ -1,12 +1,10 @@
-<mat-progress-bar *ngIf="!markerList"
-  mode="indeterminate"
-></mat-progress-bar>
+<mat-progress-bar *ngIf="!markerList" mode="indeterminate"></mat-progress-bar>
 
 <dx-popup
   [width]="300"
   [height]="250"
   [showTitle]="true"
-  title= {{popupInfo.popupTitle}}
+  title="{{ popupInfo.popupTitle }}"
   [dragEnabled]="false"
   [closeOnOutsideClick]="true"
   [(visible)]="popupInfo.popupVisible"
@@ -17,22 +15,19 @@
 </dx-popup>
 
 <mat-sidenav-container class="map-container">
-  <mat-sidenav #sidenav
-    mode="side"
-    opened
-    class="map-sidenav"
-  >
-    <mat-card class="marker-card"
-      *ngFor="let m of markerList"
-    >
+  <mat-sidenav #sidenav mode="side" opened class="map-sidenav">
+    <mat-card class="marker-card" *ngFor="let m of markerList">
       <mat-card-header>
         <mat-card-subtitle>
-          <div class="title-name"
+          <div
+            class="title-name"
             #tooltip="matTooltip"
             *ngIf="m.name"
             [matTooltip]="getStringFromHtml(m.name)"
             matTooltipPosition="below"
-          >{{ getStringFromHtml(m.name) }}</div>
+          >
+            {{ getStringFromHtml(m.name) }}
+          </div>
 
           <div [innerHTML]="getMarkerContent(m, false)"></div>
 
@@ -45,13 +40,15 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <google-map height="100%"
+    <google-map
+      height="100%"
       width="100%"
       [zoom]="zoom"
       [center]="center"
       [options]="options"
     >
-      <map-marker #markerElem="mapMarker"
+      <map-marker
+        #markerElem="mapMarker"
         *ngFor="let marker of markers"
         [position]="marker.position"
         [title]="marker.title"
@@ -63,6 +60,5 @@
         <div [innerHTML]="infoContent"></div>
       </map-info-window>
     </google-map>
-
   </mat-sidenav-content>
 </mat-sidenav-container>

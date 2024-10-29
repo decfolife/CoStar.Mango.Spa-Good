@@ -9,7 +9,7 @@ import {
   DevExtremeModule,
   DxDataGridModule,
   DxFormModule,
-  DxPopupModule
+  DxPopupModule,
 } from 'devextreme-angular';
 
 import { AlertsRulesGridComponent } from './alerts-rules-grid/alerts-rules-grid.component';
@@ -18,11 +18,7 @@ import { AppComponent } from './app.component';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AlertsRulesComponent,
-    AlertsRulesGridComponent,
-  ],
+  declarations: [AppComponent, AlertsRulesComponent, AlertsRulesGridComponent],
   imports: [
     CommonModule,
     DevExtremeModule,
@@ -37,5 +33,4 @@ import { CommonModule } from '@angular/common';
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

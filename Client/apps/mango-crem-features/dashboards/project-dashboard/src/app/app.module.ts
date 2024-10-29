@@ -12,22 +12,22 @@ import { RecentActivitiesModule } from './components/recent-activities/recent-ac
 import { DashboardService } from './services/dashboard.service';
 
 @NgModule({
-    declarations: [AppComponent],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        LibUiElementsModule,
-        RecentActivitiesModule,
-        ToastrModule.forRoot({
-            timeOut: 6000,
-            progressBar: true,
-            closeButton: true
-        })
-    ],
-    providers: [DashboardService, FormWizardService],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: []
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    LibUiElementsModule,
+    RecentActivitiesModule,
+    ToastrModule.forRoot({
+      timeOut: 6000,
+      progressBar: true,
+      closeButton: true,
+    }),
+  ],
+  providers: [DashboardService, FormWizardService],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [],
 })
 export class AppModule {
   constructor(private injector: Injector) {}
@@ -37,9 +37,13 @@ export class AppModule {
       injector: this.injector,
     });
     customElements.define('ngce-project-dashboard', el);
-  
-    customElements.get('ngce-recent-activities') || customElements.define('ngce-recent-activities',
-    createCustomElement(RecentActivitiesComponent, { injector: this.injector }));
-    
+
+    customElements.get('ngce-recent-activities') ||
+      customElements.define(
+        'ngce-recent-activities',
+        createCustomElement(RecentActivitiesComponent, {
+          injector: this.injector,
+        })
+      );
   }
 }

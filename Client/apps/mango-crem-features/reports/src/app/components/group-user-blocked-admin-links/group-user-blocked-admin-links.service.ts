@@ -8,15 +8,14 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class GroupUserBlockedAdminLinksService extends EndpointService {
-  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports)
-  
+  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports);
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getBlockedAdminLinkData(): Observable<any> {
     const url = `${this.reportsUrl}Reports/GetBlockedAdminLinkData`;
-    return this.callHttpGet(url, 'getBlockedAdminLinkData')
+    return this.callHttpGet(url, 'getBlockedAdminLinkData');
   }
 }
-

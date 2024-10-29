@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from '@mangoSpa/src/environments/environment.local';
 import { ApiResponse, DataFieldRequest, DataSetRequest } from '../models';
 import { Api } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
@@ -10,8 +9,8 @@ import { UtilitiesService } from '@mango/core-shared';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type HttpParamsObj = HttpParams | { [param: string]: any };
 type HeadersObj = {
-  headers: HttpHeaders,
-  params?: HttpParamsObj
+  headers: HttpHeaders;
+  params?: HttpParamsObj;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -25,13 +24,13 @@ export class DataSetDictionaryService {
       Accept: 'application/json',
       UserId: '2',
       ClientKey: 'BLANK',
-      CAEnabled: 'false'
-    })
+      CAEnabled: 'false',
+    }),
   };
 
   constructor(private http: HttpClient) {
-    this.apiUrl = UtilitiesService.getBaseApiUrl(Api.dataSetDictionary)
-    this.reportsUrl = UtilitiesService.getBaseApiUrl(Api.reports)
+    this.apiUrl = UtilitiesService.getBaseApiUrl(Api.dataSetDictionary);
+    this.reportsUrl = UtilitiesService.getBaseApiUrl(Api.reports);
 
     this.apiUrl += 'reports/';
     this.reportsUrl += 'reports/';
@@ -72,28 +71,32 @@ export class DataSetDictionaryService {
 
   updateDataSet(request: DataSetRequest) {
     const url = `${this.apiUrl}UpdateDataSet`;
-    return this.callHttpPost(url, 'updateDataSet', JSON.stringify(request))
+    return this.callHttpPost(url, 'updateDataSet', JSON.stringify(request));
   }
 
   updateDataField(request: DataFieldRequest) {
     const url = `${this.apiUrl}UpdateDataField`;
-    return this.callHttpPost(url, 'updateDataField', JSON.stringify(request))
+    return this.callHttpPost(url, 'updateDataField', JSON.stringify(request));
   }
 
-  protected callHttpGet(url: string, logName: string, httpOptionsParams?: HttpParamsObj) {
+  protected callHttpGet(
+    url: string,
+    logName: string,
+    httpOptionsParams?: HttpParamsObj
+  ) {
     if (httpOptionsParams) {
       this.httpOptions.params = httpOptionsParams;
     }
 
     return this.http.get(url, this.httpOptions).pipe(
-      map(x => this.toApiResponse(x)),
+      map((x) => this.toApiResponse(x)),
       catchError(this.handleError(logName))
     );
   }
 
   protected callHttpPost(url: string, logName: string, postBody: string) {
     return this.http.post(url, postBody, this.httpOptions).pipe(
-      map(x => this.toApiResponse(x)),
+      map((x) => this.toApiResponse(x)),
       catchError(this.handleError(logName))
     );
   }
@@ -106,7 +109,7 @@ export class DataSetDictionaryService {
       return of({
         succeeded: false,
         message: error.statusText,
-        data: []
+        data: [],
       });
     };
   }
@@ -122,7 +125,7 @@ export class DataSetDictionaryService {
       : val;
 
     const data = Object.prototype.hasOwnProperty.call(res, 'data')
-      ? (res.data instanceof String)
+      ? res.data instanceof String
         ? JSON.parse(res.data)
         : res.data
       : res;
@@ -132,7 +135,7 @@ export class DataSetDictionaryService {
       message: res.message ?? '',
       data: Object.prototype.hasOwnProperty.call(data, 'data')
         ? data.data
-        : data
-    }
+        : data,
+    };
   }
 }

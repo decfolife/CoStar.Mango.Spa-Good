@@ -7,10 +7,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-
   constructor(private router: Router) {}
   ngOnInit() {
     this.router.initialNavigation(); // Manually triggering initial navigation for @angular/elements
-
   }
 }

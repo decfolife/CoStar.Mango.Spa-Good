@@ -1,5 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
-import { DomSanitizer } from "@angular/platform-browser";
+import { Component, ElementRef, Input, OnChanges, OnInit } from '@angular/core';
 
 export interface EnvInfoChip {
   env: string;
@@ -10,26 +9,33 @@ export interface EnvInfoChipStyle {
   type: string;
   color: string;
 }
-export enum Type { 'primary', 'secondary', 'tertiary' };
-export enum Color { 'costar', 'error' };
+export enum Type {
+  'primary',
+  'secondary',
+  'tertiary',
+}
+export enum Color {
+  'costar',
+  'error',
+}
 
 @Component({
   selector: 'crem-env-info-chip',
   templateUrl: './env-info-chip.component.html',
-  styleUrls: ['./env-info-chip.component.scss']
+  styleUrls: ['./env-info-chip.component.scss'],
 })
 export class EnvInfoChipComponent implements OnInit, OnChanges {
-  withAnimationOptionsVisible: boolean;
   @Input() id: any;
   @Input() width: string;
   @Input() chipContent: string;
   @Input() popoverContent: string;
   @Input() chipStyle: EnvInfoChipStyle;
-  @Input() withPopup: boolean = true;
+  @Input() withPopup = true;
   @Input() actionText: string;
   @Input() actionHandlerWindowFunction: string;
-  @Input() closable: boolean = false;
+  @Input() closable = false;
 
+  withAnimationOptionsVisible: boolean;
   parsedPopoverContent: string[];
 
   constructor(private elementRef: ElementRef) {
@@ -37,27 +43,27 @@ export class EnvInfoChipComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    if(this.popoverContent !== undefined){
-        this.parsedPopoverContent =  this.popoverContent.split("&#10;");
-      }
+    if (this.popoverContent) {
+      this.parsedPopoverContent = this.popoverContent.split('&#10;');
+    }
   }
 
   ngOnInit(): void {
     this.chipStyle = {
       type: 'secondary',
       color: 'costar',
-    }
+    };
   }
 
-  toggleAnimationOptions($event): void {
+  toggleAnimationOptions(): void {
     this.withAnimationOptionsVisible = !this.withAnimationOptionsVisible;
   }
 
   handleAction(): void {
-    (window[this.actionHandlerWindowFunction] || function () { })()
+    (window[this.actionHandlerWindowFunction] || function () {})();
   }
 
   closeChip() {
-    this.elementRef.nativeElement.remove()
+    this.elementRef.nativeElement.remove();
   }
 }

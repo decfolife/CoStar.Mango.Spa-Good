@@ -6,7 +6,7 @@ fa-icon {
 }
 
 #addEditTaskAssigneesModal-content {
-  .add-edit-task-assignees-buttons-wrapper{
+  .add-edit-task-assignees-buttons-wrapper {
     display: flex;
     justify-content: space-between;
 
@@ -21,7 +21,7 @@ fa-icon {
         transform: translateY(3px);
       }
       .aeta-removeIcon {
-        transform: scale(.8);
+        transform: scale(0.8);
       }
     }
   }

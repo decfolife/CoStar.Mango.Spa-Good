@@ -8,25 +8,27 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class ProjectGanttChartService extends EndpointService {
-    reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports)
-    
-    constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
-        super(http, facade);
-    }
+  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports);
 
-    getProject(projectId: number): Observable<any> {
-        const url = `${this.reportsUrl}Reports/GetProject/${projectId}`;
-        return this.callHttpGet(url, 'getProject')
-    }
+  constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
+    super(http, facade);
+  }
 
-    getGanttChartData(projectId: number): Observable<any> {
-        const url = `${this.reportsUrl}Reports/GetProjectGanttChartData/${projectId}`;
-        return this.callHttpGet(url, 'getGanttChartData')
-    }
+  getProject(projectId: number): Observable<any> {
+    const url = `${this.reportsUrl}Reports/GetProject/${projectId}`;
+    return this.callHttpGet(url, 'getProject');
+  }
 
-    getObjectNameAndType(objectId: number, objectTypeId: number): Observable<any> {
-        const url = `${this.reportsUrl}Reports/GetObjectNameAndType/${objectId}/${objectTypeId}`;
-        return this.callHttpGet(url, 'getObjectNameAndType')
-    }
+  getGanttChartData(projectId: number): Observable<any> {
+    const url = `${this.reportsUrl}Reports/GetProjectGanttChartData/${projectId}`;
+    return this.callHttpGet(url, 'getGanttChartData');
+  }
+
+  getObjectNameAndType(
+    objectId: number,
+    objectTypeId: number
+  ): Observable<any> {
+    const url = `${this.reportsUrl}Reports/GetObjectNameAndType/${objectId}/${objectTypeId}`;
+    return this.callHttpGet(url, 'getObjectNameAndType');
+  }
 }
-

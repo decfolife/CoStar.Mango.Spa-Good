@@ -10,31 +10,31 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
-    declarations: [AppComponent],
-    /**
-     * IMPORTANT: in order to minimize the DevExtreme bundle file, if you add a new DevExtreme module to this library you have to add it too in the file `list-page.dx.config.js` then follow the next steps:
-     * - Generate the new DevExtreme file `list-page.dx.js` following the steps in this link: https://js.devexpress.com/Documentation/Guide/Common/Modularity/Create_a_Custom_Bundle/
-     * - Copy the generated file to CREM under this path `include\devExtreme_21_1_5\js\list-page.dx.js`
-     */
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        DateFnsModule.forRoot(),
-        LibUiElementsModule,
-        ToastrModule.forRoot({
-            timeOut: 6000,
-            progressBar: true,
-            closeButton: true
-        }),
-        FontAwesomeModule
-    ],
-    providers: [],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent],
+  /**
+   * IMPORTANT: in order to minimize the DevExtreme bundle file, if you add a new DevExtreme module to this library you have to add it too in the file `list-page.dx.config.js` then follow the next steps:
+   * - Generate the new DevExtreme file `list-page.dx.js` following the steps in this link: https://js.devexpress.com/Documentation/Guide/Common/Modularity/Create_a_Custom_Bundle/
+   * - Copy the generated file to CREM under this path `include\devExtreme_21_1_5\js\list-page.dx.js`
+   */
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    DateFnsModule.forRoot(),
+    LibUiElementsModule,
+    ToastrModule.forRoot({
+      timeOut: 6000,
+      progressBar: true,
+      closeButton: true,
+    }),
+    FontAwesomeModule,
+  ],
+  providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
     const el = createCustomElement(AppComponent, {

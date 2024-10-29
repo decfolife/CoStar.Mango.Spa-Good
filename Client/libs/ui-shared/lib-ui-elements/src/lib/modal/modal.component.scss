@@ -1,18 +1,18 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 .cremModal {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .modalHeader {
-	display: flex;
-	font-size: 22px;
-	padding: 8px 16px;
-	@include costar(background-color, light);
+  display: flex;
+  font-size: 22px;
+  padding: 8px 16px;
+  @include costar(background-color, light);
   @include costar(border-bottom, gray05);
-	justify-content: space-between;
+  justify-content: space-between;
 
   .modalCloseButton {
     border: none;
@@ -23,47 +23,46 @@
 }
 
 .modal-title {
-	line-height: 1.5;
-	@include costar(font-size, h2);
-	@include costar(color, dark);
+  line-height: 1.5;
+  @include costar(font-size, h2);
+  @include costar(color, dark);
 }
 
 .modalContent {
-	flex: 1;
-	overflow: auto;
-	@include costar(padding, 4);
+  flex: 1;
+  overflow: auto;
+  @include costar(padding, 4);
 }
 
 .close-icon {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .modalFooter {
-	display: flex;
-	padding: 16px;
-	flex-direction: row-reverse;
+  display: flex;
+  padding: 16px;
+  flex-direction: row-reverse;
   @include costar(border-top, gray05);
 
-	.footerRightControls {
-		display: flex;
-		margin-left: auto;
-	}
+  .footerRightControls {
+    display: flex;
+    margin-left: auto;
+  }
 }
 
 #close-btn {
-	margin-right: 8px;
+  margin-right: 8px;
 }
 
 div.cdk-drag.cdk-drag-handle.modalHeader {
-	cursor: move;
+  cursor: move;
 }
-
 
 // New Design according to design system,
 // To apply this styling pass the className 'newModal'
 // If you're styling this shared component from your micro-component, please remove your CSS from there
 // once you're ready to fully migrate to this style, this to improve consistency across the app
-.cremModal.newModal{
+.cremModal.newModal {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -92,7 +91,6 @@ div.cdk-drag.cdk-drag-handle.modalHeader {
       line-height: unset;
       margin: 0;
     }
-
   }
 
   .modalContent {
@@ -118,7 +116,6 @@ div.cdk-drag.cdk-drag-handle.modalHeader {
         margin-right: 8px;
       }
     }
-
   }
 
   #close-btn {
@@ -128,5 +125,9 @@ div.cdk-drag.cdk-drag-handle.modalHeader {
   .close-icon {
     cursor: pointer;
   }
+}
 
+::ng-deep .mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  resize: both;
+  overflow-y: hidden;
 }

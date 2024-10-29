@@ -6,7 +6,7 @@ import { DataSetDictionaryService } from '../../services/data-set-dictionary.ser
 @Component({
   selector: 'mango-data-field-format-editor',
   templateUrl: './data-field-format-editor.component.html',
-  styleUrls: ['./data-field-format-editor.component.scss']
+  styleUrls: ['./data-field-format-editor.component.scss'],
 })
 export class DataFieldFormatEditorComponent implements OnInit {
   @Input()
@@ -31,14 +31,15 @@ export class DataFieldFormatEditorComponent implements OnInit {
   constructor(private service: DataSetDictionaryService) {}
 
   ngOnInit(): void {
-    this.service.getDataTypeFormatList(this.dataTypeId).subscribe(res => {
+    this.service.getDataTypeFormatList(this.dataTypeId).subscribe((res) => {
       if (!res.succeeded) {
         return;
       }
 
       this.showEditor = true;
 
-      this.dropDownOptions = res.data.map(x => x.dataTypeFormatString)
+      this.dropDownOptions = res.data
+        .map((x) => x.dataTypeFormatString)
         .sort((a: string, b: string) => a.localeCompare(b));
 
       if (this.dropDownOptions.length === 1 && this.dropDownOptions[0] === '') {

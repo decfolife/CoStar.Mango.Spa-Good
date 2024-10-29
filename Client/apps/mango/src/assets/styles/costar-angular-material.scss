@@ -5,210 +5,208 @@
 /// Please use the common library following the related documentation for the
 /// frontend SCSS architecture
 /// -----------------------------------------------------------------------------
-/// 
+///
 @import 'colors.scss';
 @import 'var.scss';
 @import 'mat-icons';
 /* TODO: Deprecated, use crem-icon instead*/
 
-
 .title {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .mat-dialog-container {
-	padding: 0 !important;
+  padding: 0 !important;
 }
 
 .mdc-switch:enabled .mdc-switch__track::before {
-	background-color: rgba(0, 0, 0, .38) !important;
+  background-color: rgba(0, 0, 0, 0.38) !important;
 }
 
 .mdc-switch:enabled .mdc-switch__track::after {
-	background-color: rgba(119, 184, 0, 0.54) !important;
+  background-color: rgba(119, 184, 0, 0.54) !important;
 }
 
 .mdc-switch.mdc-switch--selected:enabled .mdc-switch__handle::after {
-	background-color: #017B30 !important;
+  background-color: #017b30 !important;
 }
 
 .mdc-switch.mdc-switch--unselected:enabled .mdc-switch__handle::after {
-	background-color: #fafafa !important;
+  background-color: #fafafa !important;
 }
 
 .mdc-switch__icons {
-	display: none;
+  display: none;
 }
 
 .mdc-label {
-	margin-bottom: 0px !important;
+  margin-bottom: 0px !important;
 }
 
 .mat-mdc-menu-item span {
-	font-size: 14px !important;
+  font-size: 14px !important;
 }
 
 mat-form-field {
-	div.mat-mdc-form-field-subscript-wrapper {
-		display: none;
-	}
+  div.mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 
-	&.mat-mdc-form-field {
-		&.mat-form-field-appearance-outline {
-			div.mat-mdc-text-field-wrapper {
-				margin: 0;
+  &.mat-mdc-form-field {
+    &.mat-form-field-appearance-outline {
+      div.mat-mdc-text-field-wrapper {
+        margin: 0;
 
-				div.mat-mdc-form-field-flex {
-					// padding: 0 0.1em 0 .75em;
+        div.mat-mdc-form-field-flex {
+          // padding: 0 0.1em 0 .75em;
 
-					div.mat-mdc-form-field-infix {
-						padding: 0px !important;
-						border-top: 4px solid transparent;
-						height: 30px;
+          div.mat-mdc-form-field-infix {
+            padding: 0px !important;
+            border-top: 4px solid transparent;
+            height: 30px;
 
-						span.mat-mdc-form-field-label-wrapper {
-							// top: $stdPadding * -3;
-							overflow: visible;
-						}
+            span.mat-mdc-form-field-label-wrapper {
+              // top: $stdPadding * -3;
+              overflow: visible;
+            }
 
-						mat-select.mat-select {
-							div.mat-select-trigger {
-								div.mat-select-arrow-wrapper {
-									transform: none;
-								}
-							}
-						}
+            mat-select.mat-select {
+              div.mat-select-trigger {
+                div.mat-select-arrow-wrapper {
+                  transform: none;
+                }
+              }
+            }
 
-						input::placeholder {}
-					}
+            input::placeholder {
+            }
+          }
 
-					div.mdc-notched-outline {
-						div.mdc-notched-outline__trailing {
-							border-width: 2px;
-							border-color: $stdBorderGray;
-							border-top-right-radius: 2px;
-							border-bottom-right-radius: 2px;
+          div.mdc-notched-outline {
+            div.mdc-notched-outline__trailing {
+              border-width: 2px;
+              border-color: $stdBorderGray;
+              border-top-right-radius: 2px;
+              border-bottom-right-radius: 2px;
+            }
 
-						}
+            div.mdc-notched-outline__leading {
+              border-width: 2px;
+              border-color: $stdBorderGray;
+              border-top-left-radius: 2px;
+              border-bottom-left-radius: 2px;
+            }
 
-						div.mdc-notched-outline__leading {
-							border-width: 2px;
-							border-color: $stdBorderGray;
-							border-top-left-radius: 2px;
-							border-bottom-left-radius: 2px;
-						}
+            div.mdc-notched-outline__notch {
+              border-width: 80px;
+              border-color: $stdBorderGray;
+            }
+          }
 
-						div.mdc-notched-outline__notch {
-							border-width: 80px;
-							border-color: $stdBorderGray;
-						}
-					}
+          div.mat-mdc-form-field-suffix {
+            mat-datepicker-toggle.mat-date-picker-toggle {
+              button.mat-icon-button {
+                height: 28px;
+                width: 28px;
+                top: 3px;
+              }
+            }
+          }
+        }
+      }
 
-					div.mat-mdc-form-field-suffix {
-						mat-datepicker-toggle.mat-date-picker-toggle {
-							button.mat-icon-button {
-								height: 28px;
-								width: 28px;
-								top: 3px;
-							}
-						}
-					}
-				}
-			}
+      &.mat-mdc-form-field-can-float {
+        &.mat-mdc-form-field-should-float {
+          label.mat-mdc-form-field-label {
+            transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+            width: 100%;
 
-			&.mat-mdc-form-field-can-float {
-				&.mat-mdc-form-field-should-float {
-					label.mat-mdc-form-field-label {
-						transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
-						width: 100%;
+            mat-label {
+              font-size: 14px;
+            }
+          }
+        }
 
-						mat-label {
-							font-size: 14px;
-						}
-					}
-				}
+        label.mat-mdc-form-field-label {
+          transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+          width: 100%;
 
-				label.mat-mdc-form-field-label {
-					transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
-					width: 100%;
+          mat-label {
+            font-size: 14px;
+          }
+        }
+      }
 
-					mat-label {
-						font-size: 14px;
-					}
-				}
-			}
+      &.clause-text {
+        div.mat-mdc-text-field-wrapper {
+          div.mat-mdc-form-field-flex {
+            div.mat-mdc-form-field-infix {
+              height: auto;
+            }
+          }
+        }
+      }
+    }
 
-			&.clause-text {
-				div.mat-mdc-text-field-wrapper {
-					div.mat-mdc-form-field-flex {
-						div.mat-mdc-form-field-infix {
-							height: auto;
-						}
-					}
-				}
-			}
-		}
+    div.mat-mdc-text-field-wrapper {
+      div.mat-mdc-form-field-flex {
+        div.mat-mdc-form-field-suffix {
+          mat-icon.mat-icon {
+            fa-icon {
+              font-size: 20px;
+              color: $iconGrayDisabled;
+              position: absolute;
+            }
+          }
+        }
 
-		div.mat-mdc-text-field-wrapper {
-			div.mat-mdc-form-field-flex {
-				div.mat-mdc-form-field-suffix {
-					mat-icon.mat-icon {
-						fa-icon {
-							font-size: 20px;
-							color: $iconGrayDisabled;
-							position: absolute;
-						}
-					}
-				}
+        div.mat-mdc-form-field-prefix {
+          top: 6px;
+        }
+      }
+    }
 
-				div.mat-mdc-form-field-prefix {
-					top: 6px;
-				}
-			}
-		}
-
-		&.read-only {
-			div.mat-mdc-text-field-wrapper {
-				div.mat-mdc-form-field-flex {
-					div.mat-mdc-form-field-outline {
-						background: inherit;
-					}
-				}
-			}
-		}
-
-	}
+    &.read-only {
+      div.mat-mdc-text-field-wrapper {
+        div.mat-mdc-form-field-flex {
+          div.mat-mdc-form-field-outline {
+            background: inherit;
+          }
+        }
+      }
+    }
+  }
 }
 
 .mat-mdc-menu-panel {
-	.mat-mdc-menu-content {
-		font-size: 14px;
-		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-		line-height: 1.429;
+  .mat-mdc-menu-content {
+    font-size: 14px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.429;
 
-		&>ul {
-			margin: 0px;
-			padding: 0px;
-			list-style-type: none;
+    & > ul {
+      margin: 0px;
+      padding: 0px;
+      list-style-type: none;
 
-			&>li {
-				display: flex;
-				flex-direction: row;
-				justify-content: space-between;
-				padding: 8px 16px;
-				cursor: pointer;
-				line-height: 18px;
-				height: auto;
+      & > li {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 8px 16px;
+        cursor: pointer;
+        line-height: 18px;
+        height: auto;
 
-				&:hover {
-					background-color: $costarLightBlue;
-				}
-			}
-		}
+        &:hover {
+          background-color: $costarLightBlue;
+        }
+      }
+    }
 
-		&>button {
-			margin: 0px;
-		}
-	}
+    & > button {
+      margin: 0px;
+    }
+  }
 }

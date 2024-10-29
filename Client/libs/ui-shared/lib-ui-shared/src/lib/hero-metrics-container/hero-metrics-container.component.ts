@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { DataService } from '@mango/core-shared';
 import { Metric, Sidekick } from '@mango/data-models/lib-data-models';
 import { Observable, of } from 'rxjs';
@@ -6,24 +6,21 @@ import { Observable, of } from 'rxjs';
 @Component({
   selector: 'crem-metric-container',
   templateUrl: './hero-metrics-container.component.html',
-  styleUrls: ['./hero-metrics-container.component.scss']
+  styleUrls: ['./hero-metrics-container.component.scss'],
 })
-
-export class HeroMetricsContainerComponent implements OnInit, OnChanges {
+export class HeroMetricsContainerComponent implements OnChanges {
   @Input() schemaMetrics: any[];
   @Input() filterString: string;
   @Input() unitOfMeasureId?: number;
   @Input() exchangeRateId?: number;
   @Input() moduleId: number;
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService) {}
 
-  ngOnInit(): void {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.schemaMetrics.forEach(metric => {
+  ngOnChanges(): void {
+    this.schemaMetrics.forEach((metric) => {
       metric.dispMetric = false;
-      if(metric.metricDetail) {
+      if (metric.metricDetail) {
         delete metric.metricDetail;
       }
     });
@@ -32,8 +29,8 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
   }
 
   getAllMetricDetails() {
-    this.schemaMetrics.forEach(schemaMetric => {
-      this.getMetric(schemaMetric)
+    this.schemaMetrics.forEach((schemaMetric) => {
+      this.getMetric(schemaMetric);
     });
   }
 
@@ -48,13 +45,23 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
         )
         .subscribe(
           (res: any) => {
-            let metricDataList = res !== null ? res.data.data : null;
-            
+            const metricDataList = res !== null ? res.data.data : null;
+
             this.schemaMetrics.forEach((schemaMetric) => {
-              let metricData = metricDataList.find(md => md.elementTypeName === schemaMetric.elementType.elementTypeName);
-              if (metricData !== undefined && metricData !== null && metricData !== '')
-              {
-                schemaMetric.metricDetail = this.createMetricDetail(schemaMetric, metricData.data);
+              const metricData = metricDataList.find(
+                (md) =>
+                  md.elementTypeName ===
+                  schemaMetric.elementType.elementTypeName
+              );
+              if (
+                metricData !== undefined &&
+                metricData !== null &&
+                metricData !== ''
+              ) {
+                schemaMetric.metricDetail = this.createMetricDetail(
+                  schemaMetric,
+                  metricData.data
+                );
                 schemaMetric.dispMetric = true;
               }
             });
@@ -73,71 +80,99 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
           () => {}
         );
 
-        if (this.moduleId == 2)
-        return this.dataService
-          .fetchAllProjectMetrics(
-            this.schemaMetrics,
-            this.filterString
-          )
-          .subscribe(
-            (res: any) => {
-              let metricDataList = res !== null ? res.data.data : null;
-              
-              this.schemaMetrics.forEach((schemaMetric) => {
-                let metricData = metricDataList.find(md => md.elementTypeName === schemaMetric.elementType.elementTypeName);
-                if (metricData !== undefined && metricData !== null && metricData !== '')
-                {
-                  schemaMetric.metricDetail = this.createMetricDetail(schemaMetric, metricData.data);
-                  schemaMetric.dispMetric = true;
-                }
-              });
-            },
-            (error: any) =>
-              console.log(
-                `Error occurred getting ${
-                  this.moduleId == 1
-                    ? 'Portfolio '
-                    : this.moduleId == 2
-                    ? 'Project '
-                    : ''
-                }Metrics: `,
-                error
-              ),
-            () => {}
-          );
+    if (this.moduleId == 2)
+      return this.dataService
+        .fetchAllProjectMetrics(this.schemaMetrics, this.filterString)
+        .subscribe(
+          (res: any) => {
+            const metricDataList = res !== null ? res.data.data : null;
+
+            this.schemaMetrics.forEach((schemaMetric) => {
+              const metricData = metricDataList.find(
+                (md) =>
+                  md.elementTypeName ===
+                  schemaMetric.elementType.elementTypeName
+              );
+              if (
+                metricData !== undefined &&
+                metricData !== null &&
+                metricData !== ''
+              ) {
+                schemaMetric.metricDetail = this.createMetricDetail(
+                  schemaMetric,
+                  metricData.data
+                );
+                schemaMetric.dispMetric = true;
+              }
+            });
+          },
+          (error: any) =>
+            console.log(
+              `Error occurred getting ${
+                this.moduleId == 1
+                  ? 'Portfolio '
+                  : this.moduleId == 2
+                  ? 'Project '
+                  : ''
+              }Metrics: `,
+              error
+            ),
+          () => {}
+        );
   }
 
-  updateMetricInList(metric: any) {
-    
-  }
+  updateMetricInList(metric: any) {}
 
   private getMetric(schemaMetric: any) {
-    let metricData: Observable<any> = schemaMetric.isActive ? this.getMetricData(schemaMetric) : of(null);
+    const metricData: Observable<any> = schemaMetric.isActive
+      ? this.getMetricData(schemaMetric)
+      : of(null);
 
     metricData.subscribe(
-      (res:any) => {
-        let metricDetailData = res !== null ? res.data.data : null;
-        
-        schemaMetric.metricDetail = this.createMetricDetail(schemaMetric, metricDetailData);
+      (res: any) => {
+        const metricDetailData = res !== null ? res.data.data : null;
+
+        schemaMetric.metricDetail = this.createMetricDetail(
+          schemaMetric,
+          metricDetailData
+        );
         schemaMetric.dispMetric = schemaMetric.isActive;
       },
-      (error: any) => console.log(`Error occurred getting ${this.moduleId == 1 ? "Portfolio " : this.moduleId == 2 ? "Project " : ""}Metrics: `, error),
+      (error: any) =>
+        console.log(
+          `Error occurred getting ${
+            this.moduleId == 1
+              ? 'Portfolio '
+              : this.moduleId == 2
+              ? 'Project '
+              : ''
+          }Metrics: `,
+          error
+        ),
       () => {}
     );
   }
 
-  private getMetricData(schemaMetric: any): Observable<any>{
+  private getMetricData(schemaMetric: any): Observable<any> {
     if (this.moduleId == 1)
-      return this.dataService.getPortfolioMetricDataByElementType(schemaMetric.elementType.elementTypeName, this.unitOfMeasureId, this.filterString, this.exchangeRateId )
-    else if (this.moduleId == 2) 
-      return this.dataService.getProjectMetricDataByElementType(schemaMetric.elementType.elementTypeName, this.filterString)
+      return this.dataService.getPortfolioMetricDataByElementType(
+        schemaMetric.elementType.elementTypeName,
+        this.unitOfMeasureId,
+        this.filterString,
+        this.exchangeRateId
+      );
+    else if (this.moduleId == 2)
+      return this.dataService.getProjectMetricDataByElementType(
+        schemaMetric.elementType.elementTypeName,
+        this.filterString
+      );
   }
 
-  private createMetricDetail(metric:any, data: any): Metric {
+  private createMetricDetail(metric: any, data: any): Metric {
     let sidekickValue: Sidekick = null;
 
     //Set the values that do not depend on the data because the data could be null
-    let metricDetail: Metric = {
+    const metricDetail: Metric = {
       id: metric.elementType.elementTypeName,
       isActive: metric.isActive,
       elementId: metric.id,
@@ -146,11 +181,13 @@ export class HeroMetricsContainerComponent implements OnInit, OnChanges {
 
     if (data !== null) {
       if (data.sidekick !== null) {
-        const [symbol, direction] = (data.sidekick || {valueIndicator: ''}).valueIndicator.split('-')
+        const [symbol, direction] = (
+          data.sidekick || { valueIndicator: '' }
+        ).valueIndicator.split('-');
         sidekickValue = {
           metricValue: data.sidekick.metricValue,
-          symbol, 
-          direction
+          symbol,
+          direction,
         };
       }
 

@@ -1,12 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import {
-  APP_FEATURE_KEY,
-  State
-} from './app.reducer';
+import { APP_FEATURE_KEY, State } from './app.reducer';
 
-export const getAppState = createFeatureSelector<State>(
-  APP_FEATURE_KEY
-);
+export const getAppState = createFeatureSelector<State>(APP_FEATURE_KEY);
 
 export const currentSubApp = createSelector(
   getAppState,
@@ -35,8 +30,8 @@ export const adminFlags = createSelector(
 
 export const redirectorLinks = createSelector(
   getAppState,
-(state: State) => state.redirectorLinks
-)
+  (state: State) => state.redirectorLinks
+);
 
 export const userInfo = createSelector(
   getAppState,
@@ -56,7 +51,7 @@ export const isEmulateUserInitiatedFromV06 = createSelector(
 export const breadcrumbs = createSelector(
   getAppState,
   (state: State) => state.breadcrumbs
-)
+);
 
 export const clientInfo = createSelector(
   getAppState,
@@ -101,4 +96,9 @@ export const showSubLeftNav = createSelector(
 export const currentRenderFormDocumentParams = createSelector(
   getAppState,
   (state: State) => state.currentRenderFormDocumentParams
+);
+
+export const currentProjectId = createSelector(
+  getAppState,
+  (state: State) => state.currentProjectId
 );

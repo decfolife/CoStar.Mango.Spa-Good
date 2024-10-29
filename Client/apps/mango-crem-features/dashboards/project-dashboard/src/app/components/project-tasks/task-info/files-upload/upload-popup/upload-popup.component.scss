@@ -1,0 +1,83 @@
+@use 'styles' as *;
+
+.task-files {
+  &__view {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__files-list {
+    padding-left: 8px;
+    flex: 1 1 auto;
+    max-width: 300px;
+  }
+
+  &__details {
+    width: 50%;
+  }
+
+  &__details {
+    padding-left: 10px;
+  }
+
+  &__file-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  &__no-data {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__description {
+    margin-bottom: 10px;
+  }
+}
+
+.file-item {
+  &__action {
+    width: 20px;
+  }
+}
+
+::ng-deep {
+  .task-files__view dx-file-manager {
+    border-radius: 4px !important;
+
+    .dx-filemanager-toolbar {
+      display: none;
+    }
+
+    .dx-drawer-panel-content:first-of-type {
+      width: 320px !important;
+      max-width: 320px !important;
+    }
+  }
+
+  .dx-filemanager .dx-filemanager-container {
+    border-top: none;
+  }
+
+  .crem-file-manager-row {
+    .dx-filemanager-file-actions-button {
+      display: none;
+    }
+  }
+
+  .task-files__files-list {
+    .cremCard {
+      min-width: unset !important;
+    }
+  }
+}

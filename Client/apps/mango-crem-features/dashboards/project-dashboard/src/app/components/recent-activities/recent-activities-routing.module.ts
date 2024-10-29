@@ -7,12 +7,17 @@ const routes: Routes = [
     path: '',
     component: RecentActivitiesComponent,
     data: {
-      breadCrumb: { label: 'Recent Activities', append: true, activeLink: 'Recent Activities' }
+      breadCrumb: {
+        label: 'Recent Activities',
+        append: true,
+        activeLink: 'Recent Activities',
+      },
     },
-  }];
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class RecentActivitiesRoutingModule { }
+export class RecentActivitiesRoutingModule {}

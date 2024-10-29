@@ -6,21 +6,22 @@ class EnvironmentsCrem {
     alerts: '/v06/WebServices/Mango/Alerts/Alerts.asmx',
     bookmarks: '/v06/WebServices/Mango/Bookmarks/Bookmarks.asmx/',
     dashboards: '/v06/WebServices/Mango/Dashboards/Project.asmx/',
-    listpages:  '/v06/WebServices/Mango/ListPages/Project.asmx/',
+    listpages: '/v06/WebServices/Mango/ListPages/Project.asmx/',
     portfolio: '/v06/WebServices/Mango/Dashboards/Portfolio.asmx/',
     leftNav: '/v06/WebServices/Mango/LeftNav/LeftNav.asmx/',
-    userMaintenance: '/v06/WebServices/Mango/UserMaintenance/UserMaintenance.asmx/',
+    userMaintenance:
+      '/v06/WebServices/Mango/UserMaintenance/UserMaintenance.asmx/',
     formWizard: '/v06/WebServices/Mango/FormsEngine/FormsEngine.asmx/',
     taskApproval: '',
     authenticate: '',
     quickSearch: '',
     userService: '',
     objectActions: '/v06/WebServices/Mango/ObjectActions/ObjectActions.asmx/',
-    header: 'http://service2.dev.corp.virtualpremise.com:8090/Header/api/'
+    header: 'http://service2.dev.corp.virtualpremise.com:8090/Header/api/',
   };
   isRestful: false;
   CAUrl = 'https://client.dev.crem.aws.dshrp.com/';
-  mangoSpaUrl = 'http://service2.dev.corp.virtualpremise.com:8097/'
+  mangoSpaUrl = 'http://service2.dev.corp.virtualpremise.com:8097/';
 }
 
 export const environment = new EnvironmentsCrem();

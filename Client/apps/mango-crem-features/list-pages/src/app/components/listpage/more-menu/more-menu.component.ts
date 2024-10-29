@@ -1,6 +1,12 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+} from '@angular/core';
 import { UntypedFormControl, Validators } from '@angular/forms';
-import {MatMenuTrigger} from '@angular/material/menu';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
@@ -10,13 +16,12 @@ import { filter, map } from 'rxjs/operators';
 @Component({
   selector: 'app-more-menu',
   templateUrl: './more-menu.component.html',
-  styleUrls: ['./more-menu.component.scss']
+  styleUrls: ['./more-menu.component.scss'],
 })
 export class MoreMenuComponent {
-
   @Input() showMoreMenu: boolean;
   @Input() showColumnChooser: boolean;
-  @Input() isExpanded:boolean;
+  @Input() isExpanded: boolean;
   @Input() isSuperUser: boolean;
   @Input() isCoStarListView: boolean;
   @Input() showSaveAs: boolean;
@@ -49,16 +54,16 @@ export class MoreMenuComponent {
 
   nameFormControl = new UntypedFormControl('', [Validators.required]);
 
-  public hasError = (errorName: string) =>{
+  public hasError = (errorName: string) => {
     return this.nameFormControl.hasError(errorName);
-  }
+  };
 
-  constructor(private mangoAppFacade: MangoAppFacade) { }
+  constructor(private mangoAppFacade: MangoAppFacade) {}
 
-  ngOnInit(){
+  ngOnInit() {
     this.isRemUser$ = this.mangoAppFacade.authenticatedUser$.pipe(
-      filter(user => !!user), 
-      map(user => !!user.isRemUser)
+      filter((user) => !!user),
+      map((user) => !!user.isRemUser)
     );
   }
 

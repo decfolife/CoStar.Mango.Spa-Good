@@ -1,130 +1,272 @@
 <div class="report-page">
-    <div class="report-page-controls-wrapper">
-        <div class="controls-left">
-            <h1 class="dbl-right-margin" style="display:flex; font-size: 14px;"> 
-                {{objectType}}:&nbsp; {{pageTitle}}
-            </h1>
-            <cs-search #SearchBox class="report-search" (changed)="searchDataGrid($event)" (keyup)="onKeyUpEvent($event)"  [disabled]="loading || !valid">
-            </cs-search>
-            <crem-button class="button__apply" type="secondary" (click)="displayColumnChooser()" [disabled]="loading || !valid">Comparison Filter
-            </crem-button>
-        </div>
-        <div class="controls-right">
-            <button color="primary" mat-stroked-button [matMenuTriggerFor]="menu" [disabled]="loading || !valid">
-                Export
-                <fa-icon [icon]="faCaretDown"></fa-icon>
-            </button>
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="exportExcel()">Export to Excel</button>
-                <button mat-menu-item (click)="exportpdf()">Export to PDF</button>
-            </mat-menu>
-            <!-- <crem-button class="button__apply" type="primary" (click)="exportExcel()">Export
+  <div class="report-page-controls-wrapper">
+    <div class="controls-left">
+      <h1 class="dbl-right-margin" style="display: flex; font-size: 14px">
+        {{ objectType }}:&nbsp; {{ pageTitle }}
+      </h1>
+      <cs-search
+        #SearchBox
+        class="report-search"
+        (changed)="searchDataGrid($event)"
+        (keyup)="onKeyUpEvent($event)"
+        [disabled]="loading || !valid"
+      >
+      </cs-search>
+      <crem-button
+        class="button__apply"
+        type="secondary"
+        (click)="displayColumnChooser()"
+        [disabled]="loading || !valid"
+        >Comparison Filter
+      </crem-button>
+    </div>
+    <div class="controls-right">
+      <button
+        color="primary"
+        mat-stroked-button
+        [matMenuTriggerFor]="menu"
+        [disabled]="loading || !valid"
+      >
+        Export
+        <fa-icon [icon]="faCaretDown"></fa-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="exportExcel()">Export to Excel</button>
+        <button mat-menu-item (click)="exportpdf()">Export to PDF</button>
+      </mat-menu>
+      <!-- <crem-button class="button__apply" type="primary" (click)="exportExcel()">Export
             </crem-button> -->
+    </div>
+  </div>
+
+  <div class="report-page-data-grid-wrapper" id="DataGridWrapper">
+    <dx-data-grid
+      class="readOnly"
+      #DataGrid
+      [dataSource]="data"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      *ngIf="!loading && valid"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="true"
+      [filterSyncEnabled]="true"
+      [paging]="false"
+      keyExpr="DataTypeId"
+      [columnMinWidth]="10"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-grouping
+        #expand
+        [autoExpandAll]="true"
+        [contextMenuEnabled]="false"
+      ></dxo-grouping>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+      <dxo-column-chooser
+        [allowSearch]="true"
+        mode="select"
+        title="Comparison Filter"
+      >
+      </dxo-column-chooser>
+      <dxi-column
+        *ngFor="let col of columns"
+        [dataField]="col.dataField"
+        [alignment]="col.alignment"
+        [visible]="col.visible"
+        [groupIndex]="col.groupIndex"
+        [DataTypeId]="col.DataTypeId"
+        [caption]="col.caption"
+        [showInColumnChooser]="col.showInColumnChooser"
+        [allowHeaderFiltering]="col.allowHeaderFiltering"
+        [fixed]="col.fixed"
+        [allowEditing]="col.allowEditing"
+        [cellTemplate]="col.cellTemplate"
+        [calculateGroupValue]="col.calculateGroupValue"
+        [customizeText]="col.customizeText"
+      >
+        <dxo-format
+          *ngIf="col.DataTypeId == 'number' && col.precision >= 0"
+          type="fixedPoint"
+          [precision]="col.precision"
+        ></dxo-format>
+      </dxi-column>
+      <div *dxTemplate="let data of 'customTemplate'">
+        <div *ngIf="data.data.DataTypeId === '7'">
+          {{ data.data[data.column.dataField] | date: dateFormat }}
         </div>
-    </div>
 
-    <div class="report-page-data-grid-wrapper" id="DataGridWrapper">
-        <dx-data-grid class="readOnly" #DataGrid [dataSource]="data" [showColumnLines]="false" [showRowLines]="false" *ngIf="!loading && valid"
-            [showBorders]="false" [rowAlternationEnabled]="true" [allowColumnResizing]="true"
-            [allowColumnReordering]="true" [columnAutoWidth]="true" [filterSyncEnabled]="true" [paging]="false" keyExpr="DataTypeId"
-            [columnMinWidth]="10">
-            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-            <dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="false"></dxo-grouping>
-            <dxo-sorting mode="multiple"></dxo-sorting>
-            <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
-            <dxo-column-chooser [allowSearch]="true" mode="select" title="Comparison Filter">
-            </dxo-column-chooser>
-            <dxi-column *ngFor="let col of columns" [dataField]="col.dataField" [alignment]="col.alignment"
-                [visible]="col.visible" [groupIndex]="col.groupIndex" [DataTypeId]="col.DataTypeId" [caption]="col.caption"
-                [showInColumnChooser]="col.showInColumnChooser" [allowHeaderFiltering]="col.allowHeaderFiltering"
-                [fixed]="col.fixed" [allowEditing]="col.allowEditing" [cellTemplate]="col.cellTemplate"
-                [calculateGroupValue]="col.calculateGroupValue" [customizeText]="col.customizeText">
-                <dxo-format *ngIf="col.DataTypeId == 'number' && col.precision >= 0 " type="fixedPoint"
-                    [precision]="col.precision"></dxo-format>
-            </dxi-column>
-            <div *dxTemplate="let data of 'customTemplate'">
-                <div *ngIf="data.data.DataTypeId === '7'">
-                    {{ data.data[data.column.dataField] | date: dateFormat }}
-                </div>
+        <div *ngIf="data.data.DataTypeId === '6'">
+          <div *ngIf="data.data[data.column.dataField]">
+            {{ data.data[data.column.dataField] | currency: 'USD':'symbol' }}
+          </div>
+        </div>
 
-                <div *ngIf="data.data.DataTypeId === '6'">
-                    <div *ngIf="data.data[data.column.dataField]">
-                        {{ data.data[data.column.dataField] | currency:'USD':'symbol'}}
-                    </div>
-                </div>
+        <div
+          *ngIf="
+            ((data.data.DataTypeId === '5' || data.data.DataTypeId === '206') &&
+              data.data.FormItemTypeId === '2') ||
+            (data.data.DataTypeId === '5' && data.data.FormItemTypeId === '9')
+          "
+        >
+          <div *ngIf="data.data[data.column.dataField] !== ''">
+            {{ data.data[data.column.dataField] | number: '1.2-2':'en-US' }}
+          </div>
+        </div>
 
-                <div *ngIf="((data.data.DataTypeId === '5' || data.data.DataTypeId === '206') && data.data.FormItemTypeId === '2') || (data.data.DataTypeId === '5' && data.data.FormItemTypeId === '9')">
-                    <div *ngIf="data.data[data.column.dataField] !== ''">
-                        {{ data.data[data.column.dataField] | number:'1.2-2':'en-US' }}
-                    </div>
-                </div>
+        <div
+          *ngIf="
+            data.data.DataTypeId === '3' && data.data.FormItemTypeId === '2'
+          "
+        >
+          <div
+            *ngIf="
+              data.data[data.column.dataField] &&
+              data.data[data.column.dataField] !== ''
+            "
+          >
+            {{ data.data[data.column.dataField] | number: '1.0':'en-US' }}
+          </div>
+        </div>
 
-                <div *ngIf="data.data.DataTypeId === '3' && data.data.FormItemTypeId === '2'">
-                    <div *ngIf="data.data[data.column.dataField] && data.data[data.column.dataField] !== ''">
-                        {{ data.data[data.column.dataField] | number:'1.0':'en-US' }}
-                    </div>
-                </div>
+        <div *ngIf="data.data.FormItemTypeId === '3'">
+          <div
+            [innerHTML]="
+              data.data[data.column.dataField] | convertPlaintextToHtml
+            "
+          ></div>
+        </div>
+        <div
+          class="iframe-template"
+          *ngIf="
+            data.data.DataTypeId === '200' &&
+            data.data.FormItemTypeId === '9' &&
+            data.data[data.column.dataField]
+          "
+        >
+          <div
+            class="iframe-template__iframe"
+            [innerHTML]="data.data[data.column.dataField] | safeHtml: 'html'"
+            id="{{ data.column.dataField }}"
+          ></div>
 
-                <div *ngIf="(data.data.FormItemTypeId === '3')">
-                    <div [innerHTML]="data.data[data.column.dataField] | convertPlaintextToHtml">
+          <div
+            *ngIf="
+              googleMapImageObject[data.column.dataField] ===
+              'Map Not Available'
+            "
+          >
+            Map Not Available
+          </div>
 
-                    </div>
-                </div>
-                <div class="iframe-template" *ngIf="(data.data.DataTypeId === '200' && data.data.FormItemTypeId === '9') && data.data[data.column.dataField]">
-                    <div class="iframe-template__iframe" [innerHTML]="data.data[data.column.dataField] | safeHtml: 'html'" id="{{data.column.dataField}}">
+          <div *ngIf="!googleMapImageObject[data.column.dataField]">
+            Loading...
+          </div>
 
-                    </div>
+          <div
+            *ngIf="
+              googleMapImageObject[data.column.dataField] &&
+              googleMapImageObject[data.column.dataField] !==
+                'Map Not Available'
+            "
+          >
+            <img
+              width="300"
+              crossorigin="Anonymous"
+              (error)="onMapImageLoad(data.column.dataField)"
+              (load)="onMapImageLoad(data.column.dataField)"
+              src="{{ googleMapImageObject[data.column.dataField] }}"
+            />
+          </div>
+        </div>
 
-                    <div *ngIf="googleMapImageObject[data.column.dataField] === 'Map Not Available'">
-                        Map Not Available
-                    </div>
+        <div *ngIf="data.data.FormItemTypeId === '16'">
+          <a href="mailto:{{ data.data[data.column.dataField] }}">
+            {{ data.data[data.column.dataField] }}
+          </a>
+        </div>
 
-                    <div *ngIf="!googleMapImageObject[data.column.dataField]">
-                        Loading...
-                    </div>
+        <div
+          *ngIf="
+            (data.data.FormItemTypeId === '17' ||
+              data.data.FormItemTypeId === '6') &&
+            data.data[data.column.dataField] &&
+            !(
+              imgLoaded &&
+              imgLoaded[data.column.dataField] &&
+              imgLoaded[data.column.dataField][
+                data.data[data.column.dataField]
+              ] &&
+              imgLoaded[data.column.dataField][data.data[data.column.dataField]]
+                .isError
+            )
+          "
+        >
+          <img
+            width="300"
+            crossorigin="Anonymous"
+            (error)="
+              onImageLoad(
+                data.column.dataField,
+                data.data[data.column.dataField],
+                true
+              )
+            "
+            (load)="
+              onImageLoad(
+                data.column.dataField,
+                data.data[data.column.dataField],
+                false
+              )
+            "
+            src="{{ data.data[data.column.dataField] }}"
+          />
+        </div>
 
-                    <div *ngIf="googleMapImageObject[data.column.dataField] && googleMapImageObject[data.column.dataField] !== 'Map Not Available'" >
-                        <img width="300" crossorigin="Anonymous" (error)="onMapImageLoad(data.column.dataField)" (load)="onMapImageLoad(data.column.dataField)" src="{{googleMapImageObject[data.column.dataField]}}">
-                    </div>
-                    
-                </div>
+        <div *ngIf="data.data.FormItemTypeId === '21'">
+          <a href="{{ data.data[data.column.dataField] }}">{{
+            data.data[data.column.dataField]
+          }}</a>
+        </div>
 
-                <div *ngIf="data.data.FormItemTypeId === '16'">
-                    <a href="mailto:{{data.data[data.column.dataField]}}"> {{data.data[data.column.dataField]}} </a>
-                </div>
-
-                <div *ngIf="(data.data.FormItemTypeId === '17' || data.data.FormItemTypeId === '6') && data.data[data.column.dataField] && !(imgLoaded && imgLoaded[data.column.dataField] && imgLoaded[data.column.dataField][data.data[data.column.dataField]] && imgLoaded[data.column.dataField][data.data[data.column.dataField]].isError)">
-                    <img width="300" crossorigin="Anonymous" (error)="onImageLoad(data.column.dataField, data.data[data.column.dataField], true)" (load)="onImageLoad(data.column.dataField, data.data[data.column.dataField], false)"
-                        src="{{data.data[data.column.dataField]}}"
-                    >
-
-                </div>
-
-                <div *ngIf="data.data.FormItemTypeId === '21'">
-                    <a href="{{data.data[data.column.dataField]}}">{{data.data[data.column.dataField]}}</a>
-                </div>
-
-                <div *ngIf="
-                data.data.FormItemTypeId !== '6' && 
-                data.data.DataTypeId !== '7' &&
-                data.data.FormItemTypeId !== '16'&&
-                data.data.FormItemTypeId !== '17' &&
-                data.data.FormItemTypeId !== '21' &&
-                data.data.DataTypeId !== '6' &&
-                !((data.data.DataTypeId === '3' || data.data.DataTypeId === '5' || data.data.DataTypeId === '206') && data.data.FormItemTypeId === '2') &&
-                !((data.data.FormItemTypeId === '3') || (data.data.DataTypeId === '200' && data.data.FormItemTypeId === '9')) &&
-                !(data.data.DataTypeId === '5' && data.data.FormItemTypeId === '9')
-                ">
-                    {{data.data[data.column.dataField]}}
-                </div>
-            </div>
-        </dx-data-grid>
-        <dx-load-panel shadingColor="rgba(255,255,255,0.2)"
-            [(visible)]="loading"
-            [showIndicator]="true"
-            [showPane]="true"
-            [shading]="true"
-            [closeOnOutsideClick]="false"
-        ></dx-load-panel>
-    </div>
+        <div
+          *ngIf="
+            data.data.FormItemTypeId !== '6' &&
+            data.data.DataTypeId !== '7' &&
+            data.data.FormItemTypeId !== '16' &&
+            data.data.FormItemTypeId !== '17' &&
+            data.data.FormItemTypeId !== '21' &&
+            data.data.DataTypeId !== '6' &&
+            !(
+              (data.data.DataTypeId === '3' ||
+                data.data.DataTypeId === '5' ||
+                data.data.DataTypeId === '206') &&
+              data.data.FormItemTypeId === '2'
+            ) &&
+            !(
+              data.data.FormItemTypeId === '3' ||
+              (data.data.DataTypeId === '200' &&
+                data.data.FormItemTypeId === '9')
+            ) &&
+            !(data.data.DataTypeId === '5' && data.data.FormItemTypeId === '9')
+          "
+        >
+          {{ data.data[data.column.dataField] }}
+        </div>
+      </div>
+    </dx-data-grid>
+    <dx-load-panel
+      shadingColor="rgba(255,255,255,0.2)"
+      [(visible)]="loading"
+      [showIndicator]="true"
+      [showPane]="true"
+      [shading]="true"
+      [closeOnOutsideClick]="false"
+    ></dx-load-panel>
+  </div>
 </div>

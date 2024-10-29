@@ -10,7 +10,7 @@ describe('BatchLogsService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [HttpClient]
+      providers: [HttpClient],
     });
 
     service = TestBed.inject(BatchLogsService);

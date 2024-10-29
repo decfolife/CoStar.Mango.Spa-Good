@@ -13,7 +13,12 @@ import {
   SelectedFilter,
 } from '@mango/data-models/lib-data-models';
 import { HeroMetricsContainerComponent } from '@mango/ui-shared/lib-ui-shared';
-import { CardDetails, FilterDetail, MilestoneCardDetails, UserSelectedFilters } from '../../models';
+import {
+  CardDetails,
+  FilterDetail,
+  MilestoneCardDetails,
+  UserSelectedFilters,
+} from '../../models';
 import { CardsService } from '../../services/cards.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { CardsComponent } from '../cards/cards.component';
@@ -47,21 +52,21 @@ export class IndexComponent implements OnInit, OnInit {
   projectsMilestoneCard: MilestoneCardDetails;
   filterDetails: FilterDetail[];
   dashboardCardFiltersData: Dropdown[] = null;
-  public objectType: string = "Project";
+  public objectType: string = 'Project';
   public dashboardId: number = 1;
   @ViewChild(CardsComponent) cardsComponent: CardsComponent;
-  @ViewChild(HeroMetricsContainerComponent) heroMetricsContainerComponent: HeroMetricsContainerComponent;
+  @ViewChild(HeroMetricsContainerComponent)
+  heroMetricsContainerComponent: HeroMetricsContainerComponent;
   public readonly objectTypeIds: number[] = [1];
   isDateEU: boolean = false;
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
   constructor(
     private vcref: ViewContainerRef,
     private cfr: ComponentFactoryResolver,
     private cardsService: CardsService,
     private dashboardService: DashboardService,
     public dialog: MatDialog
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.isVisible = true;
@@ -76,11 +81,9 @@ export class IndexComponent implements OnInit, OnInit {
   }
 
   doesUserHaveProjectAddRights() {
-    this.dashboardService.DoesUserHaveProjectAddRights().subscribe(
-      (result) => {
-        this.showAddButton = result.data;
-      }
-    );
+    this.dashboardService.DoesUserHaveProjectAddRights().subscribe((result) => {
+      this.showAddButton = result.data;
+    });
   }
 
   btnAddClick() {
@@ -90,18 +93,19 @@ export class IndexComponent implements OnInit, OnInit {
   populateDashboardSchema() {
     this.dashboardService.getDashboardByIdWithChildrenQuery(1).subscribe(
       (res: any) => {
-
         this.cachingEnabled = res.data.cachingEnabled;
         let filters = res.data.filters;
         let cards = res.data.cards;
         let metrics = res.data.metrics;
         let id = res.data.id;
 
-
         // Get user selected filters first. Then fetch filter and metric data.
         this.dashboardService.getUserFilters(this.dashboardId).subscribe(
           (userSelectedFiltersResult: any) => {
-            if (userSelectedFiltersResult.data != null || userSelectedFiltersResult.data != undefined) {
+            if (
+              userSelectedFiltersResult.data != null ||
+              userSelectedFiltersResult.data != undefined
+            ) {
               this.filterString = userSelectedFiltersResult.data.filterValues;
             }
 
@@ -125,20 +129,20 @@ export class IndexComponent implements OnInit, OnInit {
             //************************** Cards Data ***************************/
             if (cards) {
               this.getCardFiltersandReadyCards(cards);
-            }
-            else {
+            } else {
               this.cardsAvailable = false;
               this.cardsLoadingDone = true;
             }
-
           },
-          (error: any) => console.log("Error occurred getting User Filters Data: ", error),
-          () => { }
+          (error: any) =>
+            console.log('Error occurred getting User Filters Data: ', error),
+          () => {}
         );
       },
 
-      (error: any) => console.log("Error occurred getting schema data: ", error),
-      () => { }
+      (error: any) =>
+        console.log('Error occurred getting schema data: ', error),
+      () => {}
     );
   }
 
@@ -149,7 +153,7 @@ export class IndexComponent implements OnInit, OnInit {
     var selectedFiltersArr = userSelectedfilters.split('|');
     let userSelectedFilters = [];
 
-    selectedFiltersArr.forEach(selectedFilter => {
+    selectedFiltersArr.forEach((selectedFilter) => {
       userSelectedFilters.push(selectedFilter);
     });
 
@@ -159,67 +163,74 @@ export class IndexComponent implements OnInit, OnInit {
   public saveUserFilters(userSelectedFilters: string) {
     let userSelectedFiltersDto: UserSelectedFilters = {
       dashboardId: this.dashboardId,
-      filterValues: userSelectedFilters
+      filterValues: userSelectedFilters,
     };
 
     this.dashboardService.saveUserFilters(userSelectedFiltersDto).subscribe(
-      (res: any) => {
-
-      },
-      (error: any) => console.log("Error occurred getting User Filters Data: ", error),
-      () => { }
+      (res: any) => {},
+      (error: any) =>
+        console.log('Error occurred getting User Filters Data: ', error),
+      () => {}
     );
-
   }
 
   public getFilterData(filters, userSelectedFilterValues) {
-    let userSelectedfiltersArr = this.processUserSelectedFilters(userSelectedFilterValues);
+    let userSelectedfiltersArr = this.processUserSelectedFilters(
+      userSelectedFilterValues
+    );
 
     // this.subs.push(this.cardsService.generateFilterDetailList(filters, userSelectedfiltersArr).subscribe(
     //   (data: any) => {
-    //     if (data) { 
+    //     if (data) {
     //       this.filterDetails = data
     //     }
-    //     else  { 
-    //       this.filtersAvailable = false; 
+    //     else  {
+    //       this.filtersAvailable = false;
     //     }
     //     this.filtersLoadingDone= true;
     //   }
     // )
-    this.subs.push(this.cardsService.fetchAllProjectFilters(filters, userSelectedfiltersArr).subscribe(
-      (data: any) => {
-        if (data) {
-          this.filterDetails = data
-        }
-        else {
-          this.filtersAvailable = false;
-        }
-        this.filtersLoadingDone = true;
-      }
-    ))
+    this.subs.push(
+      this.cardsService
+        .fetchAllProjectFilters(filters, userSelectedfiltersArr)
+        .subscribe((data: any) => {
+          if (data) {
+            this.filterDetails = data;
+          } else {
+            this.filtersAvailable = false;
+          }
+          this.filtersLoadingDone = true;
+        })
+    );
   }
 
   public getCardFiltersandReadyCards(cards) {
     //this.cards =this.subs.push(this.cardsService. generateCardDetails(cards);
 
-    this.subs.push(this.dashboardService.getCardFilters().subscribe(res => {
-      if (res.data) {
-        //this.dashboardCardFiltersData = res.data;
+    this.subs.push(
+      this.dashboardService.getCardFilters().subscribe((res) => {
+        if (res.data) {
+          //this.dashboardCardFiltersData = res.data;
 
-        this.dashboardCardFiltersData = [];
-        res.data.forEach(cardFilter => {
-          let dropdownData: Dropdown = {
-            displayKey: cardFilter.display,
-            valueKey: cardFilter.value,
-          };
-          this.dashboardCardFiltersData.push(dropdownData);
-        });
+          this.dashboardCardFiltersData = [];
+          res.data.forEach((cardFilter) => {
+            let dropdownData: Dropdown = {
+              displayKey: cardFilter.display,
+              valueKey: cardFilter.value,
+            };
+            this.dashboardCardFiltersData.push(dropdownData);
+          });
 
-        this.cards = this.cardsService.generateCardDetails(cards, this.dashboardCardFiltersData, this.filterString);
-      }
+          this.cards = this.cardsService.generateCardDetails(
+            cards,
+            this.dashboardCardFiltersData,
+            this.filterString
+          );
+        }
 
-      this.cardsLoadingDone = true;
-    }));
+        this.cardsLoadingDone = true;
+      })
+    );
   }
 
   selected(e) {
@@ -252,8 +263,8 @@ export class IndexComponent implements OnInit, OnInit {
       filtersWithValues.forEach((sel) => {
         filtersArray.push(
           sel.elementTypeName +
-          '=' +
-          sel.dropdown.map((dd) => dd.valueKey).join('!@!')
+            '=' +
+            sel.dropdown.map((dd) => dd.valueKey).join('!@!')
         );
       });
 
@@ -265,7 +276,7 @@ export class IndexComponent implements OnInit, OnInit {
   }
 
   applyFilter() {
-    this.cards.forEach(card => card.dispCard = false);
+    this.cards.forEach((card) => (card.dispCard = false));
     this.metricsAvailable = false;
     const selectedFilters: string = this.createFilterString();
     this.cardsComponent.sendFilterString(selectedFilters);
@@ -276,13 +287,12 @@ export class IndexComponent implements OnInit, OnInit {
     this.dashboardService.postCacheSettings(this.dashboardId).subscribe(
       (res: any) => {
         if (res.success) {
-
         }
-      }, (error: any) => {
+      },
+      (error: any) => {
         console.log('Error occurred while clearing cache', error);
       }
     );
-
   }
   displaySettings() {
     let updateMetricDetailSubscription = null;
@@ -291,45 +301,54 @@ export class IndexComponent implements OnInit, OnInit {
       width: '600px',
       height: '570px',
       panelClass: 'user-settings-dialog',
-      data: { filters: this.filterDetails, metrics: this.schemaMetrics, cards: this.cards, objectType: this.objectType },
-      disableClose: true
+      data: {
+        filters: this.filterDetails,
+        metrics: this.schemaMetrics,
+        cards: this.cards,
+        objectType: this.objectType,
+      },
+      disableClose: true,
     });
 
-    updateMetricDetailSubscription = dialogRef.componentInstance.updateMetricDetailEvent.subscribe((metric) => {
-      this.heroMetricsContainerComponent.updateMetricInList(metric);
-    });
+    updateMetricDetailSubscription =
+      dialogRef.componentInstance.updateMetricDetailEvent.subscribe(
+        (metric) => {
+          this.heroMetricsContainerComponent.updateMetricInList(metric);
+        }
+      );
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (updateMetricDetailSubscription !== null)
         updateMetricDetailSubscription.unsubscribe();
-    }
-    );
+    });
   }
 
   getUserPreferences() {
-    this.dashboardService.GetUserPreferences().subscribe(
-      (res: any) => {
-        if (res.success) {
-          this.cardsService.setUserDateFormat(res.data.isDatesEU);
-          this.isDateEU = res.data.isDatesEU;
-        }
+    this.dashboardService.GetUserPreferences().subscribe((res: any) => {
+      if (res.success) {
+        this.cardsService.setUserDateFormat(res.data.isDatesEU);
+        this.isDateEU = res.data.isDatesEU;
       }
-    );
+    });
   }
 
   getObjectType() {
-    this.dashboardService.getObjectTypeNames(this.objectTypeIds).subscribe(
-      (res: any) => {
-        this.objectType = res.data.find(t => t.objectTypeId === 1).objectTypeName;
-      }
-    );
+    this.dashboardService
+      .getObjectTypeNames(this.objectTypeIds)
+      .subscribe((res: any) => {
+        this.objectType = res.data.find(
+          (t) => t.objectTypeId === 1
+        ).objectTypeName;
+      });
   }
 
   clearCacheClicked() {
-    this.dashboardService.postCacheSettings(this.dashboardId).subscribe(() => this.populateDashboardSchema);
+    this.dashboardService
+      .postCacheSettings(this.dashboardId)
+      .subscribe(() => this.populateDashboardSchema);
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

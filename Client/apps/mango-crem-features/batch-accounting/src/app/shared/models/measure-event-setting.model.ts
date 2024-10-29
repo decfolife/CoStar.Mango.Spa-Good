@@ -1,7 +1,7 @@
 export class MeasureEvent {
   remeasureTypeId: number;
   remeasureTypeName: string;
-};
+}
 
 export class MeasureEventSetting {
   id: number;
@@ -18,7 +18,8 @@ export class MeasureEventSetting {
   comments: string;
   nextWorkflowStatus: string;
 
-  constructor(id: number,
+  constructor(
+    id: number,
     portfolio: string,
     measureEvent: MeasureEvent,
     classificationType: string,

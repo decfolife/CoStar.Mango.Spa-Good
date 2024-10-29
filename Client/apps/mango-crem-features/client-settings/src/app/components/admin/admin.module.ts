@@ -4,13 +4,21 @@ import { CommonModule } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
-import { CardModule, LibUiElementsModule, TooltipModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  CardModule,
+  LibUiElementsModule,
+  TooltipModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { IconModule, TextFieldModule } from '@mango/ui-shared/cosmos';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { DxNumberBoxModule, DxLoadPanelModule, DxTextAreaModule } from 'devextreme-angular';
+import {
+  DxNumberBoxModule,
+  DxLoadPanelModule,
+  DxTextAreaModule,
+} from 'devextreme-angular';
 
 @NgModule({
   declarations: [AdminComponent],
@@ -30,7 +38,7 @@ import { DxNumberBoxModule, DxLoadPanelModule, DxTextAreaModule } from 'devextre
     TooltipModule,
     MatSlideToggleModule,
     DxNumberBoxModule,
-    DxTextAreaModule
+    DxTextAreaModule,
   ],
   exports: [AdminComponent],
   providers: [],

@@ -1,5 +1,14 @@
 /* eslint-disable @angular-eslint/component-selector */
-import { Component, ContentChild, ElementRef, OnChanges, SimpleChanges, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  ElementRef,
+  OnChanges,
+  SimpleChanges,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 
 /**
  * Simple button, check Storybook for additional options
@@ -12,12 +21,11 @@ import { Component, ContentChild, ElementRef, OnChanges, SimpleChanges, Input, O
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent implements OnChanges {
-
-   /**
+  /**
    * The button id
    * @param {string} [id]
    */
-   @Input() id?: string;
+  @Input() id?: string;
 
   /**
    * The button text
@@ -99,6 +107,14 @@ export class ButtonComponent implements OnChanges {
   @Input() ariaExpanded?: boolean;
 
   /**
+   * Prevent text from taking multiple lines
+   *
+   * @type {boolean}
+   * @memberof ButtonComponent
+   */
+  @Input() noWrap?: boolean;
+
+  /**
    * Deprecated, use the color parameter instead
    * @param {string} [type]
    * @deprecated Added for Backward compatibility on V06
@@ -114,7 +130,7 @@ export class ButtonComponent implements OnChanges {
    */
   @Output() buttonClick: EventEmitter<void> = new EventEmitter<void>();
 
-  ngOnChanges(changes: SimpleChanges){
+  ngOnChanges(changes: SimpleChanges) {
     if (changes['btnStyle']?.currentValue === undefined) {
       this.btnStyle = 'flat';
     }
@@ -149,14 +165,15 @@ export class ButtonComponent implements OnChanges {
       'btn-icon-right': this.iconPosition === 'right',
       // Text
       'no-text': this.text === undefined || this.text === '',
+      // Text Wrap
+      'text-nowrap': this.noWrap ?? false,
     };
   }
 
   /**
    * Handle click event
    */
-  handleClick(){
+  handleClick() {
     this.buttonClick.emit();
   }
-
 }

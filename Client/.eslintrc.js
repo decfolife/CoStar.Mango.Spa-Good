@@ -26,12 +26,16 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx'],
       extends: ['plugin:@nx/typescript'],
-      rules: {},
+      rules: {
+        'no-console': ['error', { allow: ['warn', 'error'] }],
+      },
     },
     {
       files: ['*.js', '*.jsx'],
       extends: ['plugin:@nx/javascript'],
-      rules: {},
+      rules: {
+        'no-console': ['error', { allow: ['warn', 'error'] }],
+      },
     },
   ],
   extends: ['plugin:storybook/recommended'],

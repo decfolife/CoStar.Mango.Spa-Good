@@ -1,6 +1,6 @@
-import { Dropdown } from "@mango/data-models/lib-data-models";
-import { ChartData } from "./chartData";
-import { GridData } from "./grid-data";
+import { Dropdown } from '@mango/data-models/lib-data-models';
+import { ChartData } from './chartData';
+import { GridData } from './grid-data';
 
 export interface CardDetails {
   title: string;

@@ -8,8 +8,8 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppComponent ],
-      imports: [ RouterTestingModule ]
+      declarations: [AppComponent],
+      imports: [RouterTestingModule],
     }).compileComponents();
   });
 
@@ -26,5 +26,5 @@ describe('AppComponent', () => {
   it('should provide a title', () => {
     expect(component).toHaveProperty('title');
     expect(component.title).toEqual('BatchAccounting');
-  })
+  });
 });

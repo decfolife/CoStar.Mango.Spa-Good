@@ -10,31 +10,40 @@
 
 $stdPadding: 8px;
 
-.drop-down-box__grid>.dx-datagrid.dx-gridbase-container>.dx-datagrid-rowsview.dx-datagrid-nowrap>.dx-datagrid-content {
-  &>table.dx-datagrid-table.dx-datagrid-table-fixed>tbody>tr>td:first-child {
+.drop-down-box__grid
+  > .dx-datagrid.dx-gridbase-container
+  > .dx-datagrid-rowsview.dx-datagrid-nowrap
+  > .dx-datagrid-content {
+  &
+    > table.dx-datagrid-table.dx-datagrid-table-fixed
+    > tbody
+    > tr
+    > td:first-child {
     cursor: pointer;
   }
 
-  &>.dx-datagrid-focus-overlay {
+  & > .dx-datagrid-focus-overlay {
     display: none;
   }
 }
 
-.dx-datagrid-content .dx-datagrid-table .dx-row>td,
-.dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
+.dx-datagrid-content .dx-datagrid-table .dx-row > td,
+.dx-datagrid-content .dx-datagrid-table .dx-row > tr > td {
   font-size: 14px !important;
   border-right: none !important;
 }
 
 table.dx-datagrid-table {
   tbody {
-    tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
-      &.dx-state-hover, &.dx-state-hover.dx-selection {
-        color: colors.$textGray  !important;
-        background: colors.$hoverBlue  !important;
+    tr.dx-row.dx-data-row,
+    tr.dx-row.dx-data-row.dx-row-alt {
+      &.dx-state-hover,
+      &.dx-state-hover.dx-selection {
+        color: colors.$textGray !important;
+        background: colors.$hoverBlue !important;
         cursor: pointer;
         td:hover {
-          background: colors.$color-brand-primary-light  !important;
+          background: colors.$color-brand-primary-light !important;
         }
       }
     }
@@ -46,7 +55,7 @@ table.dx-datagrid-table {
       }
       &.dx-selection {
         td {
-          background: colors.$color-brand-primary-light  !important;
+          background: colors.$color-brand-primary-light !important;
           color: black;
         }
       }
@@ -99,17 +108,17 @@ dx-tree-list {
     tbody {
       tr.dx-row.dx-data-row {
         &:hover {
-          background: colors.$hoverBlue  !important;
+          background: colors.$hoverBlue !important;
           cursor: default;
         }
 
         &.dx-row-alt {
           &:hover {
-            background: colors.$hoverBlue  !important;
+            background: colors.$hoverBlue !important;
             cursor: default;
 
             td {
-              background: colors.$hoverBlue  !important;
+              background: colors.$hoverBlue !important;
               cursor: default;
             }
           }
@@ -120,7 +129,6 @@ dx-tree-list {
         }
 
         &.dx-selection {
-
           &:hover {
             background: colors.$costarLightBlue;
             color: white;
@@ -129,7 +137,7 @@ dx-tree-list {
           &.dx-row-alt {
             &:hover {
               td {
-                background: colors.$costarLightBlue  !important;
+                background: colors.$costarLightBlue !important;
                 color: white;
               }
             }
@@ -150,12 +158,12 @@ dx-tree-list {
     }
   }
 
-  .dx-header-row>td>.dx-treelist-text-content {
+  .dx-header-row > td > .dx-treelist-text-content {
     text-align: center;
   }
 
-  .dx-treelist .dx-row-alt>td,
-  .dx-treelist .dx-row-alt>tr>td {
+  .dx-treelist .dx-row-alt > td,
+  .dx-treelist .dx-row-alt > tr > td {
     background-color: colors.$offWhite;
   }
 
@@ -189,7 +197,11 @@ dx-tree-list {
   }
 }
 
-dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-master-detail-row td.dx-master-detail-cell {
+dx-data-grid
+  table.dx-datagrid-table
+  tbody
+  tr.dx-row.dx-master-detail-row
+  td.dx-master-detail-cell {
   padding: 16px;
 }
 
@@ -197,8 +209,8 @@ tr.dx-row.dx-datagrid-filter-row input.dx-texteditor-input {
   font-size: 14px !important;
 }
 
-.dx-popup-wrapper>.dx-overlay-content {
-  border: 1px solid colors.$color-neutral-medium  !important;
+.dx-popup-wrapper > .dx-overlay-content {
+  border: 1px solid colors.$color-neutral-medium !important;
   background: #fff;
   // box-shadow: none !important;
   border-radius: 2px !important;
@@ -209,10 +221,9 @@ tr.dx-row.dx-datagrid-filter-row input.dx-texteditor-input {
   padding-left: 32px !important;
 }
 
-div[id$="dropdownContainer"] {
-
-  .dx-datagrid-content .dx-datagrid-table .dx-row>td,
-  .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
+div[id$='dropdownContainer'] {
+  .dx-datagrid-content .dx-datagrid-table .dx-row > td,
+  .dx-datagrid-content .dx-datagrid-table .dx-row > tr > td {
     font-size: 16px !important;
   }
 
@@ -235,7 +246,6 @@ div[id$="dropdownContainer"] {
                     color: black !important;
                   }
                 }
-
               }
 
               tr.dx-row.dx-datagrid-filter-row {
@@ -262,7 +272,7 @@ div[id$="dropdownContainer"] {
             }
 
             tbody:hover {
-              background-color: #E3F3FC !important;
+              background-color: #e3f3fc !important;
             }
           }
         }
@@ -295,7 +305,6 @@ div[id$="dropdownContainer"] {
   max-width: 40px !important;
 }
 
-
 dx-data-grid {
   div.dx-datagrid-headers {
     background-color: colors.$lightGray;
@@ -310,7 +319,7 @@ dx-data-grid {
 
           tr.dx-header-row {
             td {
-              &:focus{
+              &:focus {
                 outline: #3068a1 solid 2px !important;
               }
               div.dx-column-indicators {
@@ -320,7 +329,7 @@ dx-data-grid {
                   &.dx-header-filter-empty {
                     color: rgba(149, 149, 149, 0.5);
                   }
-                  &:focus{
+                  &:focus {
                     outline: #3068a1 solid 2px !important;
                   }
                 }
@@ -334,13 +343,15 @@ dx-data-grid {
 
   table.dx-datagrid-table {
     tbody {
-      tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
-        &.dx-state-hover, &.dx-state-hover.dx-selection {
-          color: colors.$textGray  !important;
-          background: colors.$hoverBlue  !important;
+      tr.dx-row.dx-data-row,
+      tr.dx-row.dx-data-row.dx-row-alt {
+        &.dx-state-hover,
+        &.dx-state-hover.dx-selection {
+          color: colors.$textGray !important;
+          background: colors.$hoverBlue !important;
           cursor: pointer;
           td:hover {
-            background: colors.$color-brand-primary-light  !important;
+            background: colors.$color-brand-primary-light !important;
           }
         }
       }
@@ -368,12 +379,12 @@ dx-data-grid {
     }
   }
 
-  .dx-header-row>td>.dx-datagrid-text-content {
+  .dx-header-row > td > .dx-datagrid-text-content {
     text-align: center;
   }
 
-  .dx-datagrid .dx-row-alt>td,
-  .dx-datagrid .dx-row-alt>tr>td {
+  .dx-datagrid .dx-row-alt > td,
+  .dx-datagrid .dx-row-alt > tr > td {
     background-color: colors.$offWhite;
   }
 
@@ -407,11 +418,10 @@ dx-data-grid {
   }
 
   //Solves ADA: Text is clipped when resized, for 'No Data' text in with cards
-  .dx-datagrid.dx-gridbase-container{
-    span.dx-datagrid-nodata{
+  .dx-datagrid.dx-gridbase-container {
+    span.dx-datagrid-nodata {
       overflow: auto;
       color: colors.$textGray;
-      
     }
   }
   // End of ADA style fix
@@ -451,17 +461,19 @@ dx-data-grid {
 
   table.dx-datagrid-table {
     tbody {
-      tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
-        &.dx-state-hover, &.dx-state-hover.dx-selection {
-          color: colors.$textGray  !important;
-          background: colors.$hoverBlue  !important;
+      tr.dx-row.dx-data-row,
+      tr.dx-row.dx-data-row.dx-row-alt {
+        &.dx-state-hover,
+        &.dx-state-hover.dx-selection {
+          color: colors.$textGray !important;
+          background: colors.$hoverBlue !important;
           cursor: pointer;
           td:hover {
-            background: colors.$color-brand-primary-light  !important;
+            background: colors.$color-brand-primary-light !important;
           }
         }
       }
-      
+
       tr.dx-row.dx-data-row {
         &.dx-row-alt {
           td {
@@ -484,12 +496,12 @@ dx-data-grid {
     }
   }
 
-  .dx-header-row>td>.dx-datagrid-text-content {
+  .dx-header-row > td > .dx-datagrid-text-content {
     text-align: center;
   }
 
-  .dx-datagrid .dx-row-alt>td,
-  .dx-datagrid .dx-row-alt>tr>td {
+  .dx-datagrid .dx-row-alt > td,
+  .dx-datagrid .dx-row-alt > tr > td {
     background-color: colors.$offWhite;
   }
 
@@ -536,101 +548,100 @@ dx-data-grid {
   }
 }
 
-.dx-tabpanel.dx-state-focused>.dx-tabpanel-tabs .dx-tabs-stretched .dx-tab:not(.dx-tab-selected):last-of-type {
+.dx-tabpanel.dx-state-focused
+  > .dx-tabpanel-tabs
+  .dx-tabs-stretched
+  .dx-tab:not(.dx-tab-selected):last-of-type {
   box-shadow: none !important;
 }
 
 dx-tab-panel.dx-tabpanel {
-
-	div.dx-tabpanel-tabs {
+  div.dx-tabpanel-tabs {
     background: colors.$backgroundGray;
-    .dx-tabs-expanded .dx-tab:not(.dx-tab-selected):first-of-type, 
+    .dx-tabs-expanded .dx-tab:not(.dx-tab-selected):first-of-type,
     .dx-tabs-expanded .dx-tab:not(.dx-tab-selected):last-of-type,
     .dx-tabs-stretched .dx-tab:not(.dx-tab-selected):last-of-type {
       box-shadow: none;
     }
-    
-		div.dx-tabs {
-			border: none;
-			box-shadow: none;
-			height: 36px;
-			border-bottom: 1px solid colors.$stdBorderGray;
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			align-content: center;
 
-			div.dx-tabs-wrapper {
-				display: flex;
-				div.dx-tab {
-					box-shadow: none;
-					padding: 0px 16px;
-					width: auto;
+    div.dx-tabs {
+      border: none;
+      box-shadow: none;
+      height: 36px;
+      border-bottom: 1px solid colors.$stdBorderGray;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-content: center;
 
-					&.dx-state-hover {
-						background-color: colors.$backgroundGray;
-					}
+      div.dx-tabs-wrapper {
+        display: flex;
+        div.dx-tab {
+          box-shadow: none;
+          padding: 0px 16px;
+          width: auto;
 
-					&.dx-tab-selected {
-						box-shadow: none;
-						background-color: colors.$backgroundGray;
-		    			
-		    			div.dx-tab-content {
-		    				border-bottom: 3px solid colors.$costarDarkOrange;							    	
-			    			font-weight: bold;
-		    			}						    			
-					}
+          &.dx-state-hover {
+            background-color: colors.$backgroundGray;
+          }
 
-					div.dx-tab-content {
-						height: 36px;
-						padding: 8px 0px;
+          &.dx-tab-selected {
+            box-shadow: none;
+            background-color: colors.$backgroundGray;
 
-						span.dx-tab-text {
-							line-height: 17px;
-							vertical-align: unset;
-						}
-					}
-				}
-			}
+            div.dx-tab-content {
+              border-bottom: 3px solid colors.$costarDarkOrange;
+              font-weight: bold;
+            }
+          }
 
+          div.dx-tab-content {
+            height: 36px;
+            padding: 8px 0px;
 
-		}
-	}
+            span.dx-tab-text {
+              line-height: 17px;
+              vertical-align: unset;
+            }
+          }
+        }
+      }
+    }
+  }
 
-	&.dx-state-focused {
-		div.dx-tabpanel-tabs {
-			div.dx-tabs {
-				box-shadow: none;
-			}
+  &.dx-state-focused {
+    div.dx-tabpanel-tabs {
+      div.dx-tabs {
+        box-shadow: none;
+      }
 
-			div.dx-tabs-expanded {
-				div.dx-tab:not(.dx-tab-selected):first-of-type {
-					box-shadow: none;
-				}
-			}
-		}
-	}
+      div.dx-tabs-expanded {
+        div.dx-tab:not(.dx-tab-selected):first-of-type {
+          box-shadow: none;
+        }
+      }
+    }
+  }
 
-	div.dx-tabpanel-container {
-		div.dx-multiview-wrapper {
-			border: none;
-		}
-	}
+  div.dx-tabpanel-container {
+    div.dx-multiview-wrapper {
+      border: none;
+    }
+  }
 }
 
 // #crem-select-box.dx-overlay-wrapper {
-  // z-index: 2021 !important;
+// z-index: 2021 !important;
 // }
 
 .dx-overlay-content.dx-inner-overlay.dx-resizable.dx-context-menu.dx-datagrid {
   z-index: 2021 !important;
 }
 
-
-crem-dropdown{
-  dx-drop-down-box{
+crem-dropdown {
+  dx-drop-down-box {
     input.dx-texteditor-input {
-      &:focus{
+      &:focus {
         border: 1px solid colors.$color-brand-primary !important;
         background-color: colors.$white;
         outline: 0;
@@ -660,7 +671,7 @@ crem-dropdown{
 //         margin-left: 0px !important;
 //       }
 //     }
-//   } 
+//   }
 // }
 
 // .dx-overlay-wrapper.dx-popup-wrapper .dx-overlay-content div.dx-popup-content {

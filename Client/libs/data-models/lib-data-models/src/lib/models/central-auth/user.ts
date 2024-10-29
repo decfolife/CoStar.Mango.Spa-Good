@@ -1,4 +1,4 @@
-import { UserSite } from "../user-site";
+import { UserSite } from '../user-site.interface';
 
 export interface User {
   statusCode: number;

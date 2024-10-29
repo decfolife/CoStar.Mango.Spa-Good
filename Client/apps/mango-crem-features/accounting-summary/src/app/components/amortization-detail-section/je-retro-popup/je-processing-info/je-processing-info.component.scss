@@ -1,142 +1,141 @@
 .clearfix {
-    width: 100%;
-    float: left;
+  width: 100%;
+  float: left;
 }
 
 .label-popup {
-    width: 43%;
-    text-align: left;
-    float: left;
+  width: 43%;
+  text-align: left;
+  float: left;
 }
 
 .value-popup {
-    width: 56%;
-    float: right;
+  width: 56%;
+  float: right;
 }
 
 #section-one {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    padding: 15px 5px 0px 5px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding: 15px 5px 0px 5px;
 }
 
-#section-one>div {
-    height: 120px;
-    border: 1px;
-    text-align: left;
+#section-one > div {
+  height: 120px;
+  border: 1px;
+  text-align: left;
 }
 
 #section-two {
-    display: flex;
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    height: 60px;
-    border: solid 1px #d6d6d6;
-    border-radius: 4px;
-    padding: 0px 0px 0px 30px;
-    margin: 5px 0px;
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  height: 60px;
+  border: solid 1px #d6d6d6;
+  border-radius: 4px;
+  padding: 0px 0px 0px 30px;
+  margin: 5px 0px;
 }
 
-
 #section-three {
-    height: auto;
-    border: 2px;
-    text-align: left;
+  height: auto;
+  border: 2px;
+  text-align: left;
 }
 
 .pointer {
-    cursor: pointer;
-    font-size: 11px;
+  cursor: pointer;
+  font-size: 11px;
 }
 
 .header-column-caption {
-    white-space: normal;
-    text-align: center;
-    margin: 0px;
-    max-height: 42px;
-    font-size: 12px;
+  white-space: normal;
+  text-align: center;
+  margin: 0px;
+  max-height: 42px;
+  font-size: 12px;
 }
 
 .dx-datagrid-content {
-    cursor: pointer;
-    font-size: 11px !important;
+  cursor: pointer;
+  font-size: 11px !important;
 }
 
 .dx-tab-text {
-    font-size: 14px !important;
+  font-size: 14px !important;
 }
 
 .show-jounal-entry-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .custom-col {
-    box-sizing: border-box;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    padding: 10px;
-    text-align: center;
-    width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 10px;
+  text-align: center;
+  width: 100%;
 }
 
 .balanced-icon,
 .not-balanced-icon {
-    font-size: 20px;
-    vertical-align: middle;
+  font-size: 20px;
+  vertical-align: middle;
 }
 
 .balanced-icon {
-    color: #008000;
+  color: #008000;
 }
 
 .not-balanced-icon {
-    color: #c31703;
+  color: #c31703;
 }
 
 .metric-label {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .metric-label strong {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
-.calloutPanel{
-    background-color: rgb(247, 247, 165);
+.calloutPanel {
+  background-color: rgb(247, 247, 165);
 }
 
 .actions-button {
-    font-size: 14px;
-    cursor: pointer;
-    padding: 0 25px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0 25px;
 }
 
 .actions-button.disabled {
-    cursor: pointer !important;
+  cursor: pointer !important;
 }
 
 .container {
-    float: left;
-    width: 33%;
+  float: left;
+  width: 33%;
 }
 
 .no-je-profile-selected {
-    background-color: #FBFBFB;
-    border: solid 1px #dcdcdc;
-    font-size: 1rem;
-    margin: 20px auto auto auto;
-    padding: 10px;
-    text-align: center;
-    width: 270px;
+  background-color: #fbfbfb;
+  border: solid 1px #dcdcdc;
+  font-size: 1rem;
+  margin: 20px auto auto auto;
+  padding: 10px;
+  text-align: center;
+  width: 270px;
 }
 
 .je-primary-button {
-    opacity: 1;
+  opacity: 1;
 }
 
 .dx-template-wrapper {
-    padding: 12px;
+  padding: 12px;
 }

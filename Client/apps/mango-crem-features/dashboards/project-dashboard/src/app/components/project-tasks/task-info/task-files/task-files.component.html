@@ -1,14 +1,17 @@
 <div class="task-files-counts-wrapper">
   <section class="tac-count-section">
     <div class="tac-count">
-      <div class="tac-count-val">{{ filesCount < 10 ? '0' + filesCount : filesCount }}</div>
+      <div class="tac-count-val">
+        {{ filesCount < 10 ? '0' + filesCount : filesCount }}
+      </div>
       <div class="tac-count-label">Files Uploaded</div>
     </div>
   </section>
 </div>
 
-<div class="task-files-dataGrid-wrapper"> 
-  <dx-data-grid id="task-files-grid"
+<div class="task-files-dataGrid-wrapper">
+  <dx-data-grid
+    id="task-files-grid"
     [dataSource]="taskFiles"
     [showColumnLines]="false"
     [showRowLines]="false"
@@ -22,23 +25,38 @@
     keyExpr="fileID"
     [width]="'100%'"
     [wordWrapEnabled]="true"
-  >	
-    <dxo-load-panel
-      [enabled]="true">
-    </dxo-load-panel>
+  >
+    <dxo-load-panel [enabled]="true"> </dxo-load-panel>
 
-    <dxi-column dataField="fileName" caption='File Name' [cellTemplate]="'fileNameTemplate'"></dxi-column>
-    <dxi-column dataField="uploadedOn" [cellTemplate]="'uploadedOnTemplate'"> </dxi-column>
+    <dxi-column
+      dataField="fileName"
+      caption="File Name"
+      [cellTemplate]="'fileNameTemplate'"
+    ></dxi-column>
+    <dxi-column dataField="uploadedOn" [cellTemplate]="'uploadedOnTemplate'">
+    </dxi-column>
 
     <div *dxTemplate="let fileItem of 'fileNameTemplate'">
       <div class="cem-filesGrid-fileName">
-        <crem-icon class="fa-lg fa-regular" icon="{{fileItem.data.icon}}" pack="regular"></crem-icon>
-        {{fileItem.data.fileName}}
+        <crem-icon
+          class="fa-lg fa-regular"
+          icon="{{ fileItem.data.icon }}"
+          pack="regular"
+        ></crem-icon>
+        {{ fileItem.data.fileName }}
       </div>
     </div>
     <div *dxTemplate="let fileItem of 'uploadedOnTemplate'">
-      <div class="cem-filesGrid-fileName" >{{fileItem.data.dateUploaded | date:isUserDatesEU ? 'dd.MM.yyyy hh:mm:ss a' : 'MM/dd/yyyy hh:mm:ss a'}}</div>
-      <div class="cem-filesGrid-uploadedBy">{{fileItem.data.fullName}}</div>
-  </div>
+      <div class="cem-filesGrid-fileName">
+        {{
+          fileItem.data.dateUploaded
+            | date
+              : (isUserDatesEU
+                  ? 'dd.MM.yyyy hh:mm:ss a'
+                  : 'MM/dd/yyyy hh:mm:ss a')
+        }}
+      </div>
+      <div class="cem-filesGrid-uploadedBy">{{ fileItem.data.fullName }}</div>
+    </div>
   </dx-data-grid>
 </div>

@@ -1,46 +1,54 @@
 <div>
-  <dx-data-grid #RetrospectiveAdjustment
-          [id]="accountingSummaryService.getId(componentName,'popup','grid')"
-          [dataSource]="gridData"
-          [columns]="gridColumns"
-          [rowAlternationEnabled]="true"
-          [columnResizingMode]="'widget'"
-          [showColumnLines]="true"
-          [showRowLines]="true"
-          [showBorders]="true"
-          [allowColumnResizing]="true"
-          [allowColumnReordering]="true"
-          [wordWrapEnabled]="false"
-          [columnMinWidth]="80"
-          [columnAutoWidth]="false"
-          (onCellClick)="onRetroAmortizationCellClick($event)"
-          (onExporting)="onExporting($event)"
-          [loadPanel]="{ enabled: true,
-              shading: true,
-              visible: true,
-              shadingColor: 'rgba(0, 0, 0, 0.4)'}">
-          <dxo-scrolling
-              mode="virtual">
-          </dxo-scrolling>
-          
-          <dxo-export [enabled]="true"></dxo-export>
+  <dx-data-grid
+    #RetrospectiveAdjustment
+    [id]="accountingSummaryService.getId(componentName, 'popup', 'grid')"
+    [dataSource]="gridData"
+    [columns]="gridColumns"
+    [rowAlternationEnabled]="true"
+    [columnResizingMode]="'widget'"
+    [showColumnLines]="true"
+    [showRowLines]="true"
+    [showBorders]="true"
+    [allowColumnResizing]="true"
+    [allowColumnReordering]="true"
+    [wordWrapEnabled]="false"
+    [columnMinWidth]="80"
+    [columnAutoWidth]="false"
+    (onCellClick)="onRetroAmortizationCellClick($event)"
+    (onExporting)="onExporting($event)"
+    [loadPanel]="{
+      enabled: true,
+      shading: true,
+      visible: true,
+      shadingColor: 'rgba(0, 0, 0, 0.4)'
+    }"
+  >
+    <dxo-scrolling mode="virtual"> </dxo-scrolling>
 
-          <div *dxTemplate="let info of 'amortizationHeader'">
-              <p title={{info.column.caption}}
-                  class="header-column-caption">
-                  {{info.column.caption}}
-              </p>
-          </div>
+    <dxo-export [enabled]="true"></dxo-export>
 
-          <div *dxTemplate="let cell of 'pointer'">
-            <div title={{cell.text}}>{{ cell.text }}</div>
-          </div>
-          
-          <div *dxTemplate="let cell of 'clickableLink'">
-            <div class="pointer" title={{cell.text}}>
-                <a [id]="accountingSummaryService.getId(componentName,'je-status','link')" href="#" (click)="$event.preventDefault()" class="link-class">{{ cell.text }}</a>
-            </div>
-          </div>
-  
-      </dx-data-grid>
+    <div *dxTemplate="let info of 'amortizationHeader'">
+      <p title="{{ info.column.caption }}" class="header-column-caption">
+        {{ info.column.caption }}
+      </p>
+    </div>
+
+    <div *dxTemplate="let cell of 'pointer'">
+      <div title="{{ cell.text }}">{{ cell.text }}</div>
+    </div>
+
+    <div *dxTemplate="let cell of 'clickableLink'">
+      <div class="pointer" title="{{ cell.text }}">
+        <a
+          [id]="
+            accountingSummaryService.getId(componentName, 'je-status', 'link')
+          "
+          href="#"
+          (click)="$event.preventDefault()"
+          class="link-class"
+          >{{ cell.text }}</a
+        >
+      </div>
+    </div>
+  </dx-data-grid>
 </div>

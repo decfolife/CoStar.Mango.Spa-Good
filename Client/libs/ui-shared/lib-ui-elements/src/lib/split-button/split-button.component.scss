@@ -1,0 +1,52 @@
+@use 'styles' as *;
+
+.split-button {
+  position: relative;
+  display: inline-block;
+
+  &__dropdown {
+    position: absolute;
+    top: 100%;
+    min-width: 150px;
+    width: max-content;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-top: 4px;
+    z-index: 1000;
+    border: 1px solid #e9ecef;
+    @include costar(background-color, light);
+
+    &__dropdown-item {
+      padding: 4px 8px;
+      cursor: pointer;
+      color: #211529;
+      font-size: 14px;
+    }
+
+    &__dropdown-item:hover {
+      @include costar(background-color, background);
+    }
+  }
+}
+
+.split-button-container {
+  display: inline-flex;
+  align-items: stretch;
+
+  &__main-button {
+    pointer-events: none;
+  }
+
+  &__caret-button {
+    padding-left: 1px;
+    cursor: pointer;
+  }
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}

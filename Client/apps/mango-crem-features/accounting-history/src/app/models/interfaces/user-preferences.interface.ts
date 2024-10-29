@@ -1,6 +1,6 @@
 export interface UserPreferences {
-    firstName: string;
-    lastName: string;
-    isDatesEU: boolean;
-    userId: number;
+  firstName: string;
+  lastName: string;
+  isDatesEU: boolean;
+  userId: number;
 }

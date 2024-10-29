@@ -1,8 +1,13 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { DxDataGridComponent, DxPopupComponent } from 'devextreme-angular';
 
-import { off, on } from 'devextreme/events';
-import ArrayStore from "devextreme/data/array_store";
+import ArrayStore from 'devextreme/data/array_store';
 import { ListView } from '@list-pages/components/listpage/shared/models/list-view';
 import { SecurityType } from '@list-pages/components/listpage/shared/enums';
 import { CremShareViewPopupService } from 'libs/core-shared/src/lib/services/list-page-services/crem-share-view-popup.service';
@@ -11,12 +16,12 @@ import { CremShareViewPopupService } from 'libs/core-shared/src/lib/services/lis
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'crem-share-view-popup',
   templateUrl: './crem-share-view-popup.component.html',
-  styleUrls: ['./crem-share-view-popup.component.scss']
+  styleUrls: ['./crem-share-view-popup.component.scss'],
 })
 export class CremShareViewPopupComponent {
   private _listView: ListView;
 
-  private rowToEditData: any
+  private rowToEditData: any;
 
   @Input() isSuperUser = false;
 
@@ -73,15 +78,20 @@ export class CremShareViewPopupComponent {
 
   unSavedChangesPopupOptions = {
     popupVisible: false,
-    popupMessage: 'You have unsaved changes. Are you sure you want to close without saving?',
+    popupMessage:
+      'You have unsaved changes. Are you sure you want to close without saving?',
     popupTitle: 'Unsaved Changes',
     cancelButtonOptions: {
-      onClick: () => { this.unsavedChangesPopupOnCancelClicked(); },
-      text: "Cancel"
+      onClick: () => {
+        this.unsavedChangesPopupOnCancelClicked();
+      },
+      text: 'Cancel',
     },
     actionButtonOptions: {
-      onClick : () => { this.unsavedChangesPopupOnOKClicked(); },
-      text: "OK"
+      onClick: () => {
+        this.unsavedChangesPopupOnOKClicked();
+      },
+      text: 'OK',
     },
     dragEnabled: false,
     width: '450',
@@ -94,7 +104,9 @@ export class CremShareViewPopupComponent {
     this.hadChanges = this.hasChanges;
     this.hasChanges = false;
 
-    this.rightsPopup.instance.hide().then(_ => { this.closing.next(); });
+    this.rightsPopup.instance.hide().then(() => {
+      this.closing.next();
+    });
   };
 
   deleteButtonClicked = () => {
@@ -114,45 +126,61 @@ export class CremShareViewPopupComponent {
 
   applyButtonClicked = () => {
     const duplicateRows = this.getDuplicateRowIndexes();
-    
-    if (duplicateRows.length > 1)
-    {
-        this.hasDuplicates = true;
-  
-        setTimeout(() => {
-          duplicateRows.forEach(x => {    
-            (this.rightsGrid.instance.getRowElement(x)[0] as HTMLTableRowElement).classList.add('highlight');
-          }) 
-        }, 10);  
-    }
-    else {
+
+    if (duplicateRows.length > 1) {
+      this.hasDuplicates = true;
+
+      setTimeout(() => {
+        duplicateRows.forEach((x) => {
+          (
+            this.rightsGrid.instance.getRowElement(x)[0] as HTMLTableRowElement
+          ).classList.add('highlight');
+        });
+      }, 10);
+    } else {
       this.hasChanges = false;
       this.rightsGrid.instance.saveEditData();
     }
   };
 
   getDuplicateRowIndexes = () => {
-    const deletedRowsHtmlElements : any =  Array.from(document.getElementsByClassName('dx-row-removed'));
+    const deletedRowsHtmlElements: any = Array.from(
+      document.getElementsByClassName('dx-row-removed')
+    );
 
     // Compare all the visible rows except rows marked as deleted to find duplicate rows based on sharedWithEntityType and sharedWithEntityId
-    var comparedRows  = this.rightsGrid.instance.getVisibleRows().filter(function(v){
-      return deletedRowsHtmlElements.filter(function(d){
-          return (d as HTMLTableRowElement).rowIndex === v.rowIndex;
-      }).length == 0
+    const comparedRows = this.rightsGrid.instance
+      .getVisibleRows()
+      .filter(function (v) {
+        return (
+          deletedRowsHtmlElements.filter(function (d) {
+            return (d as HTMLTableRowElement).rowIndex === v.rowIndex;
+          }).length == 0
+        );
+      });
+
+    const complaredRows = comparedRows.map((x) => {
+      return {
+        rowIndex: x.rowIndex,
+        compareString: JSON.stringify({
+          sharedWithEntityType: x.data.sharedWithEntityType ?? '',
+          sharedWithEntityId: x.data.sharedWithEntityId ?? '',
+        }),
+      };
     });
 
-    const complaredRows = comparedRows.map((x) => {return { rowIndex: x.rowIndex, compareString: JSON.stringify({sharedWithEntityType: x.data.sharedWithEntityType ?? '', sharedWithEntityId: x.data.sharedWithEntityId ?? ''})}});
-
     const compareStrings = complaredRows
-      .map(x => x['compareString'])
+      .map((x) => x['compareString'])
       .map((x, i, final) => final.indexOf(x) !== i && i)
-      .filter(y => complaredRows[y])
-      .map(x => complaredRows[x]["compareString"]);
+      .filter((y) => complaredRows[y])
+      .map((x) => complaredRows[x]['compareString']);
 
-    return complaredRows.filter(x => compareStrings.includes(x.compareString)).map(y => y.rowIndex);
+    return complaredRows
+      .filter((x) => compareStrings.includes(x.compareString))
+      .map((y) => y.rowIndex);
   };
 
-  saveButtonClicked = (e: Event) => {
+  saveButtonClicked = () => {
     this.applyButtonClicked();
     this.cancelButtonClicked();
   };
@@ -165,12 +193,13 @@ export class CremShareViewPopupComponent {
     return {
       store: new ArrayStore({
         data: this.usersAndGroups,
-        key: "sharedWithEntityId"
+        key: 'sharedWithEntityId',
       }),
       filter: (item: any) => {
         if (item.sharedWithEntityType === options?.data.sharedWithEntityType) {
-          const found = this.sharingData
-            .find(x => x.sharedWithEntityId === item.sharedWithEntityId)
+          const found = this.sharingData.find(
+            (x) => x.sharedWithEntityId === item.sharedWithEntityId
+          );
 
           if (found && !options?.isEditing) {
             return false;
@@ -182,7 +211,7 @@ export class CremShareViewPopupComponent {
         return false;
       },
       paginate: true,
-      pageSize: 100
+      pageSize: 100,
     };
   };
 
@@ -191,8 +220,8 @@ export class CremShareViewPopupComponent {
       store: this.rightsTypeLookup,
 
       filter: (item: any) => {
-        const canAssignDelete = this.allowDelete &&
-          this.listView.securityType >= SecurityType.Delete;
+        const canAssignDelete =
+          this.allowDelete && this.listView.securityType >= SecurityType.Delete;
 
         if (item.text === 'Delete' && !canAssignDelete) {
           return false;
@@ -200,7 +229,7 @@ export class CremShareViewPopupComponent {
 
         return true;
       },
-    }
+    };
   };
 
   allowDeleting = (event: any) => {
@@ -220,21 +249,25 @@ export class CremShareViewPopupComponent {
   constructor(private service: CremShareViewPopupService) {
     this.sharingData = [];
     this.usersAndGroups = [];
-    this.onEditDropdownInitialized = this.onEditDropdownInitialized.bind(this)
+    this.onEditDropdownInitialized = this.onEditDropdownInitialized.bind(this);
   }
 
   toolbarPreparing(event: any) {
     event.toolbarOptions.items = this.allowEdit
-      ? [{
-        location: 'after',
-        name: 'addButton',
-        cssClass: 'custom-add',
-        options: {
-          text: 'Add',
-          onClick: () => { this.rightsGrid.instance.addRow(); }         
-        },
-        widget: 'dxButton'
-      }]
+      ? [
+          {
+            location: 'after',
+            name: 'addButton',
+            cssClass: 'custom-add',
+            options: {
+              text: 'Add',
+              onClick: () => {
+                this.rightsGrid.instance.addRow();
+              },
+            },
+            widget: 'dxButton',
+          },
+        ]
       : [];
   }
 
@@ -242,38 +275,47 @@ export class CremShareViewPopupComponent {
     if (event.rowType !== 'data' || event.column.command !== 'edit') {
       return;
     }
-    
-    const deleteLink =  typeof event.cellElement.querySelector !== "undefined" 
-      ? event.cellElement.querySelector('.dx-link-delete')
-      : (event.cellElement.find('.dx-link-delete') || [null])[0]
-    
+
+    const deleteLink =
+      typeof event.cellElement.querySelector !== 'undefined'
+        ? event.cellElement.querySelector('.dx-link-delete')
+        : (event.cellElement.find('.dx-link-delete') || [null])[0];
+
     if (deleteLink) {
-      deleteLink.addEventListener("click", (event: any) => {
+      deleteLink.addEventListener('click', (event: any) => {
         this.hasChanges = true;
 
-        const duplicateRows = this.getDuplicateRowIndexes().filter(x => x !== event.srcElement.closest("tr").rowIndex);
-        
-        if (duplicateRows.length > 1)
-        {
+        const duplicateRows = this.getDuplicateRowIndexes().filter(
+          (x) => x !== event.srcElement.closest('tr').rowIndex
+        );
+
+        if (duplicateRows.length > 1) {
           this.hasDuplicates = true;
-          duplicateRows.forEach(x => {    
-            (this.rightsGrid.instance.getRowElement(x)[0] as HTMLTableRowElement).classList.add('highlight');
-          })      
-        }
-        else {
+          duplicateRows.forEach((x) => {
+            (
+              this.rightsGrid.instance.getRowElement(
+                x
+              )[0] as HTMLTableRowElement
+            ).classList.add('highlight');
+          });
+        } else {
           this.hasDuplicates = false;
-          duplicateRows.forEach(x => {    
-            (this.rightsGrid.instance.getRowElement(x)[0] as HTMLTableRowElement).classList.remove('highlight');
-          }) 
+          duplicateRows.forEach((x) => {
+            (
+              this.rightsGrid.instance.getRowElement(
+                x
+              )[0] as HTMLTableRowElement
+            ).classList.remove('highlight');
+          });
         }
-      })
+      });
     }
   }
 
   editingStart(event: any) {
     this.hasChanges = true;
-    
-    this.rowToEditData = event.data
+
+    this.rowToEditData = event.data;
 
     if (event.data.isOwner) {
       event.cancel = true;
@@ -306,8 +348,9 @@ export class CremShareViewPopupComponent {
   addSharing(event: any) {
     const data = this.formatSharingData(event.data);
 
-    this.service.createSharedUserViewRights(data)
-      .subscribe(() => { this.reloadGrid(); });
+    this.service.createSharedUserViewRights(data).subscribe(() => {
+      this.reloadGrid();
+    });
   }
 
   updateSharing(event: any) {
@@ -315,46 +358,49 @@ export class CremShareViewPopupComponent {
     const data = Object.assign(formatted, event.newData);
 
     this.rightsGrid.instance.beginCustomLoading('Loading...');
-    this.rightsGrid.disabled = true
+    this.rightsGrid.disabled = true;
     this.service.deleteSharedUserViewRights(event.key).subscribe(() => {
-      this.service.createSharedUserViewRights(data)
-        .subscribe(() => { this.reloadGrid(); });
+      this.service.createSharedUserViewRights(data).subscribe(() => {
+        this.reloadGrid();
+      });
     });
   }
 
   removeSharing(event: any) {
-    this.service.deleteSharedUserViewRights(event.data)
-      .subscribe(() => { this.reloadGrid(); });
+    this.service.deleteSharedUserViewRights(event.data).subscribe(() => {
+      this.reloadGrid();
+    });
   }
 
   reloadGrid() {
     this.loadGridData();
-    this.resetEditing(); 
+    this.resetEditing();
   }
 
   loadGridData() {
     this.rightsGrid.instance.beginCustomLoading('Loading...');
-    this.rightsGrid.disabled = true
+    this.rightsGrid.disabled = true;
     this.hasDuplicates = false;
-    
-    this.service.getSharedUserViewRights(this.listView.id)
-      .subscribe(res => {
-        this.processViewRights(res)
-        this.loadUsersAndGroups();
-      });
 
+    this.service.getSharedUserViewRights(this.listView.id).subscribe((res) => {
+      this.processViewRights(res);
+      this.loadUsersAndGroups();
+    });
   }
 
   loadUsersAndGroups() {
-    this.service.getSharedUserViews(this.listView.id)
-      .subscribe(response => {
-        const sharedUserViews = response.data.sharedUserViews
-        this.usersAndGroups = sharedUserViews.sort((a, b) => a?.sharedWithName?.toLowerCase() > b?.sharedWithName?.toLowerCase() ? 1 : -1);
+    this.service.getSharedUserViews(this.listView.id).subscribe((response) => {
+      const sharedUserViews = response.data.sharedUserViews;
+      this.usersAndGroups = sharedUserViews.sort((a, b) =>
+        a?.sharedWithName?.toLowerCase() > b?.sharedWithName?.toLowerCase()
+          ? 1
+          : -1
+      );
 
-        this.checkRights();
-        this.rightsGrid.instance.endCustomLoading();
-        this.rightsGrid.disabled = false
-      });
+      this.checkRights();
+      this.rightsGrid.instance.endCustomLoading();
+      this.rightsGrid.disabled = false;
+    });
   }
 
   showPopup(isDeleteConfirm = false) {
@@ -367,7 +413,7 @@ export class CremShareViewPopupComponent {
 
   hidePopup(event: any) {
     if (!this.rightsGrid.instance.hasEditData()) {
-      this.closing.next()
+      this.closing.next();
       return;
     }
 
@@ -376,7 +422,7 @@ export class CremShareViewPopupComponent {
     this.unSavedChangesPopupOptions.popupVisible = true;
   }
 
-  unsavedChangesPopupOnCancelClicked(){
+  unsavedChangesPopupOnCancelClicked() {
     this.hasChanges = this.hadChanges;
     this.unSavedChangesPopupOptions.popupVisible = false;
   }
@@ -391,69 +437,72 @@ export class CremShareViewPopupComponent {
   }
 
   private checkRights() {
-    this.allowDelete = !this.isDeleteConfirm &&
+    this.allowDelete =
+      !this.isDeleteConfirm &&
       this.listView?.securityType === SecurityType.Delete;
 
-    this.allowEdit = !this.isDeleteConfirm &&
+    this.allowEdit =
+      !this.isDeleteConfirm &&
       (this.listView?.securityType === SecurityType.Edit ||
         this.listView?.securityType === SecurityType.Delete);
   }
 
   private resetEditing() {
-    this.service.getSharedUserViewRights(this.listView.id)
-      .subscribe(res => this.processViewRights(res));
+    this.service
+      .getSharedUserViewRights(this.listView.id)
+      .subscribe((res) => this.processViewRights(res));
   }
 
   private processViewRights(res: any) {
-    this.sharingData = res.success
-      ? res.data.sharedUserViewRights
-      : [];
+    this.sharingData = res.success ? res.data.sharedUserViewRights : [];
 
-    this.sharingData.find(x => x.isOwner).sharedWithName += ' (Owner)';
+    this.sharingData.find((x) => x.isOwner).sharedWithName += ' (Owner)';
 
-    this.sharingData.forEach(x => {
+    this.sharingData.forEach((x) => {
       x.rightsDisplayName = SecurityType[x.securityType];
 
-      x.typeDisplayName = this.entityTypeLookup
-        .find(y => y.value === x.sharedWithEntityType).text;
+      x.typeDisplayName = this.entityTypeLookup.find(
+        (y) => y.value === x.sharedWithEntityType
+      ).text;
     });
 
     this.sharingData.sort((a, b) => {
-      return a.isOwner
-        ? -1
-        : b.isOwner
-          ? 1
-          : 0;
+      return a.isOwner ? -1 : b.isOwner ? 1 : 0;
     });
 
-    this.gridNamesLookup = this.sharingData.map(x => {
+    this.gridNamesLookup = this.sharingData.map((x) => {
       return {
         value: x.sharedWithEntityId,
-        text: x.sharedWithName
+        text: x.sharedWithName,
       };
     });
-    this.rightsGrid.instance.repaint()
+    this.rightsGrid.instance.repaint();
   }
 
   private formatSharingData(data: any) {
-    let newData = Object.assign({}, data);
+    const newData = Object.assign({}, data);
 
     delete newData.__KEY__;
 
     newData.userListViewId = this.listView.id;
 
-    newData.sharedWithName = this.usersAndGroups
-      .find(x => x.sharedWithEntityId === newData.sharedWithEntityId)
-      .sharedWithName;
+    newData.sharedWithName = this.usersAndGroups.find(
+      (x) => x.sharedWithEntityId === newData.sharedWithEntityId
+    ).sharedWithName;
 
     return newData;
   }
 
   onEditDropdownInitialized(event) {
-    const dataSource = event.component.getDataSource()
-    const store = dataSource.store()
-    this.sharingData.forEach(item => {
-      store.update(item.sharedWithEntityId, {...item, disabled: true}).done(_ => { dataSource.reload()}).fail(console.log)
-    })
+    const dataSource = event.component.getDataSource();
+    const store = dataSource.store();
+    this.sharingData.forEach((item) => {
+      store
+        .update(item.sharedWithEntityId, { ...item, disabled: true })
+        .done(() => {
+          dataSource.reload();
+        })
+        .fail(console.log);
+    });
   }
 }

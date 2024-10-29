@@ -1,20 +1,25 @@
-
-<dx-data-grid class="memberDetails-grid"
-	#MemberDetailsGrid
-	[dataSource]="projectMemberData"
-	[hoverStateEnabled]="true"
-	keyExpr="contactID"
-	[width]="'100%'"
->	
-	<dxo-sorting mode="none"> </dxo-sorting>
-	<dxi-column dataField="company"> </dxi-column>
-	<dxi-column dataField="email"> </dxi-column>
-	<dxi-column dataField="phone"> </dxi-column>
-	<dxi-column caption="Task Overview" dataField [cellTemplate]="'taskOverviewTemplate'"> </dxi-column>
-	<dxi-column cssClass="md-description" dataField="description"> </dxi-column>
-	<div *dxTemplate="let cell of 'taskOverviewTemplate'">
-		<ng-container *ngFor="let task of cell.data.taskStatusCounts">
-			<div class="taskDetails-content" >{{task.count}} {{task.status}}</div>
-		</ng-container>
-	</div>
+<dx-data-grid
+  class="memberDetails-grid"
+  #MemberDetailsGrid
+  [dataSource]="projectMemberData"
+  [hoverStateEnabled]="true"
+  keyExpr="contactID"
+  [width]="'100%'"
+>
+  <dxo-sorting mode="none"> </dxo-sorting>
+  <dxi-column dataField="company"> </dxi-column>
+  <dxi-column dataField="email"> </dxi-column>
+  <dxi-column dataField="phone"> </dxi-column>
+  <dxi-column
+    caption="Task Overview"
+    dataField
+    [cellTemplate]="'taskOverviewTemplate'"
+  >
+  </dxi-column>
+  <dxi-column cssClass="md-description" dataField="description"> </dxi-column>
+  <div *dxTemplate="let cell of 'taskOverviewTemplate'">
+    <ng-container *ngFor="let task of cell.data.taskStatusCounts">
+      <div class="taskDetails-content">{{ task.count }} {{ task.status }}</div>
+    </ng-container>
+  </div>
 </dx-data-grid>

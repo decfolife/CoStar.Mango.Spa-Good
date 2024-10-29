@@ -8,19 +8,22 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
 import { ProjectGanttChartService } from './project-gantt-chart.service';
-import { Task } from './project-gantt-chart.model'
+import { Task } from './project-gantt-chart.model';
 import { ResolvedData } from '../../shared/models';
 
 @Component({
   selector: 'mango-project-gantt-chart',
   templateUrl: './project-gantt-chart.component.html',
-  styleUrls: ['./project-gantt-chart.component.scss']
+  styleUrls: ['./project-gantt-chart.component.scss'],
 })
 export class ProjectGanttChartComponent implements OnInit {
   projectResolved: ResolvedData = this.route.snapshot.data['project'];
-  pageTitle = this.projectResolved?.data?.name || this.route.snapshot.data['pageTitle'];
-  projectId: number = +this.route.snapshot.paramMap.get('projectId') || undefined;
-  userPreferencesResolved: ResolvedData = this.route.snapshot.data['userPreferences'];
+  pageTitle =
+    this.projectResolved?.data?.name || this.route.snapshot.data['pageTitle'];
+  projectId: number =
+    +this.route.snapshot.paramMap.get('projectId') || undefined;
+  userPreferencesResolved: ResolvedData =
+    this.route.snapshot.data['userPreferences'];
   objectTypeID: number;
   objectType: string;
 
@@ -28,10 +31,11 @@ export class ProjectGanttChartComponent implements OnInit {
   dateFormat: string;
 
   @ViewChild('GanttChart') ganttChart: DxGanttComponent;
-  constructor(public service: ProjectGanttChartService,
+  constructor(
+    public service: ProjectGanttChartService,
     private datepipe: DatePipe,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const userPreferences = this.userPreferencesResolved.data || {};
@@ -39,12 +43,14 @@ export class ProjectGanttChartComponent implements OnInit {
     this.objectTypeID = +this.route.snapshot.queryParamMap.get('OTID');
     this.dateFormat = userPreferences?.dateFormat || 'MM/dd/yyyy';
 
-    this.service.getObjectNameAndType(this.projectId, this.objectTypeID).subscribe(result => {
-      this.objectType = result.data.objectType;
-      this.pageTitle = result.data.objectName;
-    });
+    this.service
+      .getObjectNameAndType(this.projectId, this.objectTypeID)
+      .subscribe((result) => {
+        this.objectType = result.data.objectType;
+        this.pageTitle = result.data.objectName;
+      });
 
-    this.service.getGanttChartData(this.projectId).subscribe(result => {
+    this.service.getGanttChartData(this.projectId).subscribe((result) => {
       this.buildGanttTree(result.data);
     });
   }
@@ -65,7 +71,9 @@ export class ProjectGanttChartComponent implements OnInit {
 
   public exportToPDF() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const icon: any = document.getElementsByClassName('dx-icon dx-gantt-i dx-gantt-i-expand');
+    const icon: any = document.getElementsByClassName(
+      'dx-icon dx-gantt-i dx-gantt-i-expand'
+    );
 
     if (icon && icon[0]) {
       icon[0].click();
@@ -79,15 +87,15 @@ export class ProjectGanttChartComponent implements OnInit {
 
       if (this.ganttChartData.length) {
         minDate = this.ganttChartData[0].targetStartDate;
-        maxDate = this.ganttChartData[0].targetCompleteDate
+        maxDate = this.ganttChartData[0].targetCompleteDate;
 
         this.ganttChartData.forEach((data) => {
           if (data.targetStartDate < minDate) {
-            minDate = data.targetStartDate
+            minDate = data.targetStartDate;
           }
 
           if (data.targetCompleteDate > maxDate) {
-            maxDate = data.targetCompleteDate
+            maxDate = data.targetCompleteDate;
           }
         });
       }
@@ -95,7 +103,7 @@ export class ProjectGanttChartComponent implements OnInit {
       const dateRange = {
         startDate: minDate,
         endDate: maxDate,
-      }
+      };
 
       const currentDate = this.getCurrentDate();
 
@@ -110,9 +118,9 @@ export class ProjectGanttChartComponent implements OnInit {
           top: 40,
           left: 10,
           bottom: 10,
-          right: 10
-        }
-      }).then(doc => {
+          right: 10,
+        },
+      }).then((doc) => {
         doc.setTextColor(0, 0, 0);
         doc.setPage(1);
         doc.text(this.pageTitle, 10, 22);
@@ -128,7 +136,7 @@ export class ProjectGanttChartComponent implements OnInit {
       if (lastIndex !== -1) {
         const parentStep = item.step.slice(0, lastIndex);
         const parentItem = data.find((parentItem) => {
-          return parentItem.step === parentStep
+          return parentItem.step === parentStep;
         });
 
         item.parentId = parentItem.taskId;

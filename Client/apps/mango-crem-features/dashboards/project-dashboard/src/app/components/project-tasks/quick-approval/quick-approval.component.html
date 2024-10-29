@@ -1,96 +1,175 @@
 <div *ngIf="loader$ | async">
-    <crem-loader></crem-loader>
-  </div>
-  <div *ngIf="dataLoaded" class="crem-quick-approval-data-grid">
-    <dx-data-grid
-      #DataGrid
-      id="quickApprovalDatagrid"
-      [dataSource]="dataSource"
-      [remoteOperations]="false"
-      [allowColumnReordering]="true"
-      [rowAlternationEnabled]="true"
-      [showBorders]="false"
-      [width]="'100%'"
-      [showColumnLines]="false"
-      [showRowLines]="false"
-      (onSelectionChanged)="onSelectionChanged($event)"
-      (onEditorPreparing)="onEditorPreparing($event)"
+  <crem-loader></crem-loader>
+</div>
+
+<div *ngIf="dataLoaded" class="crem-quick-approval-data-grid">
+  <dx-data-grid
+    #DataGrid
+    id="quickApprovalDatagrid"
+    [dataSource]="dataSource"
+    [remoteOperations]="false"
+    [allowColumnReordering]="true"
+    [rowAlternationEnabled]="true"
+    (onFocusedCellChanged)="onFocusedCellChanged($event)"
+    [showBorders]="false"
+    [editing]="{ mode: 'batch' }"
+    [width]="'100%'"
+    [showColumnLines]="false"
+    [showRowLines]="false"
+    keyExpr="projectMilestoneApprovalID"
+    (onSelectionChanged)="onSelectionChanged($event)"
+    (onEditorPreparing)="onEditorPreparing($event)"
+  >
+    <dxo-selection
+      mode="multiple"
+      [allowSelectAll]="true"
+      [showCheckBoxesMode]="'always'"
     >
-        <dxo-selection
-        mode="multiple"
-        [allowSelectAll]="false"
-        [showCheckBoxesMode]="'always'"
+    </dxo-selection>
+
+    <dxo-sorting mode="none"></dxo-sorting>
+    <dxo-paging [enabled]="false"></dxo-paging>
+
+    <dxi-column
+      cssClass="wrapOption-column"
+      dataField="taskName"
+      caption="Task Name"
+      dataType="string"
+      alignment="left"
+    ></dxi-column>
+
+    <dxi-column
+      caption="Actual Start Date"
+      dataField="actualStartDate"
+      cellTemplate="actualDateCellTemplate"
+      alignment="left"
+      [setCellValue]="setActualStartDate"
+      [width]="200"
+    >
+    </dxi-column>
+
+    <dxi-column
+      caption="Status"
+      dataField="approve"
+      cellTemplate="statusCellTemplate"
+      dataType="string"
+    ></dxi-column>
+
+    <dxi-column
+      cssClass="wrapOption-column"
+      caption="Approval Date"
+      dataField="date"
+      cellTemplate="dateCellTemplate"
+      alignment="left"
+      [width]="200"
+    ></dxi-column>
+
+    <dxi-column
+      caption="Note"
+      dataField="note"
+      cellTemplate="notesCellTemplate"
+      alignment="left"
+    ></dxi-column>
+
+    <div *dxTemplate="let row of 'actualDateCellTemplate'">
+      <div
+        class="dx-field-value"
+        *ngIf="
+          !row.data.actualStartDate ||
+          !row.data.actualStartDateExists ||
+          row.data.approve !== 'Approved'
+        "
       >
-      </dxo-selection>
-      <dxi-column
-        dataField="taskName"
-        caption="Task Name"
-        dataType="string"
-        alignment="left"
-      ></dxi-column>
-      <dxi-column
-        caption="Actual Start Date"
-        dataField="actualStartDate"
-        cellTemplate="actualDateCellTemplate"
-        alignment="left"
-      ></dxi-column>
-      <dxi-column
-        caption="Status"
-        dataField="approve"
-        dataType="string"
-      ></dxi-column>
-      <dxi-column
-        caption="Date"
-        dataField="date"
-        cellTemplate="dateCellTemplate"
-        alignment="left"
-      ></dxi-column>
-      <dxi-column
-        caption="Note"
-        dataField="note"
-        cellTemplate="notesCellTemplate"
-        alignment="left"
-      ></dxi-column>
-      <div *dxTemplate="let d of 'actualDateCellTemplate'">
-        <div class="dx-field-value" *ngIf="!d.data.actualStartDate || !d.data.actualStartDateExists">
-          <dx-date-box
-            type="date"
-            [useMaskBehavior]="true"
-            displayFormat="shortdate"
-            placeholder="Update start date"
-            [(value)]="d.data.actualStartDate"
-            [inputAttr]="{ 'aria-label': 'Date' }"
+        <crem-date-picker
+          #startDatePicker
+          [value]="row.data.actualStartDate"
+          [dateFormat]="dateFormat"
+          [max]="currentDate"
+          [disabled]="row.data.approve === 'Approved'"
+          [isRequired]="requireActualStartDate"
+          [showClearButton]="'true'"
+          [placeholderText]="'Update Start Date'"
+          [dataKey]="row.data.projectMilestoneApprovalID"
+          [useMaskBehavior]="false"
+          (changeEvent)="onValueChanged(row, $event)"
+        >
+        </crem-date-picker>
+      </div>
+      <div
+        *ngIf="
+          row.data.actualStartDate &&
+          row.data.actualStartDateExists &&
+          row.data.approve === 'Approved'
+        "
+      >
+        <p class="margin">
+          {{ row.data.actualStartDate | date: dateFormat }}
+        </p>
+      </div>
+    </div>
+
+    <div *dxTemplate="let row of 'statusCellTemplate'">
+      <div *ngIf="row.data.blockApproval" class="qa-taskStatus">
+        {{ row.data.blockApproval }}
+      </div>
+      <div *ngIf="!row.data.blockApproval" class="qa-taskStatus">
+        <span>{{ row.value }}</span>
+        <span
+          *ngIf="row.data.isProxy && row.data.approve == 'Approve'"
+          class="qp-proxyMsg"
+        >
+          - as proxy for {{ row.data.contactName }}
+        </span>
+      </div>
+    </div>
+
+    <div *dxTemplate="let row of 'dateCellTemplate'">
+      <ng-container *ngIf="!row.data.blockApproval">
+        <div
+          class="dx-field-value"
+          *ngIf="!row.data.date || !row.data.dateExists"
+        >
+          <crem-date-picker
+            [value]="row.data.date"
+            [dateFormat]="dateFormat"
+            [disabled]="row.data.isRowSelected === false"
+            [showClearButton]="'true'"
+            [placeholderText]="'Update Approval Date'"
+            [dataKey]="row.data.projectMilestoneApprovalID"
+            [useMaskBehavior]="false"
+            (changeEvent)="onValueChanged(row, $event)"
           >
-          </dx-date-box>
+          </crem-date-picker>
         </div>
-        <div *ngIf="d.data.actualStartDate && d.data.actualStartDateExists">
-          <p class="margin">{{ d.data.actualStartDate | date: 'MM/dd/yyyy' }}</p>
+        <div *ngIf="row.data.date && row.data.dateExists">
+          <p class="margin">{{ row.data.date | date: dateFormat }}</p>
         </div>
-      </div>
-      <div *dxTemplate="let d of 'dateCellTemplate'">
-        <div class="dx-field-value" *ngIf="!d.data.date || !d.data.dateExists">
-          <dx-date-box
-            type="date"
-            [(value)]="d.data.date"
-            [inputAttr]="{ 'aria-label': 'Date' }"
+      </ng-container>
+    </div>
+
+    <div *dxTemplate="let row of 'notesCellTemplate'">
+      <ng-container *ngIf="!row.data.blockApproval">
+        <div
+          class="dx-field-value"
+          *ngIf="row.data.note === '' || !row.data.noteExists"
+        >
+          <crem-input
+            #notesInput
+            [inputType]="'text'"
+            [required]="isNotesFieldRequired"
+            [value]="row.data.note"
+            [dataKey]="row.data.projectMilestoneApprovalID"
+            (valueChange)="onValueChanged(row, $event)"
+            [disabled]="
+              row.data.approve === 'Approved' || !row.data.isRowSelected
+            "
           >
-          </dx-date-box>
+          </crem-input>
         </div>
-        <div *ngIf="d.data.date && d.data.dateExists">
-          <p class="margin">{{ d.data.date | date: 'MM/dd/yyyy' }}</p>
+        <div *ngIf="row.data.note !== '' && row.data.noteExists">
+          <p class="margin">{{ row.data.note }}</p>
         </div>
-      </div>
-      <div *dxTemplate="let d of 'notesCellTemplate'">
-        <div class="dx-field-value" *ngIf="d.data.note === '' || !d.data.noteExists">
-          <dx-text-box
-            [(value)]="d.data.note"
-            [inputAttr]="{ 'aria-label': 'Note' }"
-          ></dx-text-box>
-        </div>
-        <div *ngIf="d.data.note !== '' && d.data.noteExists">
-          <p class="margin">{{ d.data.note }}</p>
-        </div>
-      </div>
-    </dx-data-grid>
-  </div>
-  
+      </ng-container>
+    </div>
+  </dx-data-grid>
+</div>

@@ -1,24 +1,32 @@
 <crem-modal
-	modalId="WidgetHistoryModal" 
-	modalTitleId="WidgetHistoryModalTitle" 
-	modalTitle="History Details" 
-	closeIconVisible="true" 
-	[customFooter]="false" 
-	(closeButtonAction)="close($event)"
-	>
-	<div modalContent class="body-content">
-		<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" [showIndicator]="true"
-		[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
-		<crem-simple-grid #SimpleGrid *ngIf="!loading"
-			[dataSource]="widgetHistory"
-			[autoSetKeyExpr]="true"
-			[columns]="columns"
-			[wordWrapEnabled]="true"
-			[showColumnLines]="false"
-			noDataText="No history data for this widget at this time."
-			[showRowLines]="false"
-			[filterValue]="filterValue"
-		>
-		</crem-simple-grid>
-	</div>
+  modalId="WidgetHistoryModal"
+  modalTitleId="WidgetHistoryModalTitle"
+  modalTitle="History Details"
+  closeIconVisible="true"
+  [customFooter]="false"
+  (closeButtonAction)="close($event)"
+>
+  <div modalContent class="body-content">
+    <dx-load-panel
+      shadingColor="rgba(255,255,255,0.2)"
+      [visible]="loading"
+      [showIndicator]="true"
+      [showPane]="true"
+      [shading]="true"
+      [closeOnOutsideClick]="false"
+    ></dx-load-panel>
+    <crem-simple-grid
+      #SimpleGrid
+      *ngIf="!loading"
+      [dataSource]="widgetHistory"
+      [autoSetKeyExpr]="true"
+      [columns]="columns"
+      [wordWrapEnabled]="true"
+      [showColumnLines]="false"
+      noDataText="No history data for this widget at this time."
+      [showRowLines]="false"
+      [filterValue]="filterValue"
+    >
+    </crem-simple-grid>
+  </div>
 </crem-modal>

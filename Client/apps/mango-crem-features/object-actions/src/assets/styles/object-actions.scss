@@ -1,323 +1,330 @@
-@import "../../../../../mango/src/assets/styles/colors.scss";
-@import "../../../../../mango/src/assets/styles/var.scss";
+@import '../../../../../mango/src/assets/styles/colors.scss';
+@import '../../../../../mango/src/assets/styles/var.scss';
 
 //button styles
-button, .btn, .btn-sm, .card, .modal-content, .form-control, .input-group-addon {
-	border-radius: 2px !important;
-	font-size: 14px;
-	font-family: $font;
-	font-weight: normal;
-	font-stretch: normal;
-	font-style: normal;
-	line-height: 0.86;
-	letter-spacing: normal;
-	text-align: center;
-	padding: $stdPadding;		
+button,
+.btn,
+.btn-sm,
+.card,
+.modal-content,
+.form-control,
+.input-group-addon {
+  border-radius: 2px !important;
+  font-size: 14px;
+  font-family: $font;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 0.86;
+  letter-spacing: normal;
+  text-align: center;
+  padding: $stdPadding;
 }
 
-button, dx-drop-down-button {
-	height: $stdPadding * 4;
+button,
+dx-drop-down-button {
+  height: $stdPadding * 4;
 
-	&.btn {		
+  &.btn {
+    &:focus {
+      box-shadow: none;
+    }
 
-		&:focus {
-			box-shadow: none;
-		}
+    &.btn-link {
+      color: $primary;
+      padding: 0px;
+      height: auto;
 
-		&.btn-link {
-			color: $primary;
-			padding: 0px;
-			height: auto;
-			
-			&:hover {
-				color: darken($primary, 5%);
-			}			
-		}
-		
-		&.btn-primary {
-			background-color: $primary;
-			border-color: $primary;
-			&:hover {
-				background-color: darken($primary, 5%);
-				border-color: darken($primary, 10%);
+      &:hover {
+        color: darken($primary, 5%);
+      }
+    }
 
-				&:disabled {
-					cursor: not-allowed;
-					background-color: $primary;
-					border-color: darken($primary, 5%);
-				}
-			}
-		}		
+    &.btn-primary {
+      background-color: $primary;
+      border-color: $primary;
+      &:hover {
+        background-color: darken($primary, 5%);
+        border-color: darken($primary, 10%);
 
-		&.btn-default {
-			background-color: white;
-			border-color: $borderColor;
-			color: $costarRichGray;
-			&:hover {
-				background-color: #E6E6E6;
-				border-color: #ADADAD;
+        &:disabled {
+          cursor: not-allowed;
+          background-color: $primary;
+          border-color: darken($primary, 5%);
+        }
+      }
+    }
 
-				&:disabled {
-					background-color: white;
-					border-color: $borderColor;
-					color: $costarRichGray;
-				}
-			}
-		}
+    &.btn-default {
+      background-color: white;
+      border-color: $borderColor;
+      color: $costarRichGray;
+      &:hover {
+        background-color: #e6e6e6;
+        border-color: #adadad;
 
-		&.btn-success {
-			background-color: $success;
-			border-color: darken($success, 5%);
-			&:hover {
-				background-color: darken($success, 5%);
-				border-color: darken($success, 10%);
+        &:disabled {
+          background-color: white;
+          border-color: $borderColor;
+          color: $costarRichGray;
+        }
+      }
+    }
 
-				&:disabled {
-					background-color: $success;
-					border-color: darken($success, 5%);
-				}
-			}
-		}
-		
-		&.btn-warning {
-			background-color: $warning;
-			border-color: darken($warning, 5%);
-			&:hover {
-				background-color: darken($warning, 5%);
-				border-color: darken($warning, 10%);
+    &.btn-success {
+      background-color: $success;
+      border-color: darken($success, 5%);
+      &:hover {
+        background-color: darken($success, 5%);
+        border-color: darken($success, 10%);
 
-				&:disabled {
-					background-color: $warning;
-					border-color: darken($warning, 5%);
-				}
-			}
-		}
-		
-		&.btn-danger {
-			background-color: $danger;
-			border-color: darken($danger, 5%);
-			&:hover {
-				background-color: darken($danger, 5%);
-				border-color: darken($danger, 10%);
+        &:disabled {
+          background-color: $success;
+          border-color: darken($success, 5%);
+        }
+      }
+    }
 
-				&:disabled {
-					background-color: $danger;
-					border-color: darken($danger, 5%);
-				}
-			}
-		}
+    &.btn-warning {
+      background-color: $warning;
+      border-color: darken($warning, 5%);
+      &:hover {
+        background-color: darken($warning, 5%);
+        border-color: darken($warning, 10%);
 
-		&.btn-primary-outline {
-			background-color: white;
-			color: $primary;
-			border-color: $primary;
-			&:hover {
-				background-color: $primary;
-				color: white;
+        &:disabled {
+          background-color: $warning;
+          border-color: darken($warning, 5%);
+        }
+      }
+    }
 
-				i.dx-icon {
-					color: white;				
-				}
+    &.btn-danger {
+      background-color: $danger;
+      border-color: darken($danger, 5%);
+      &:hover {
+        background-color: darken($danger, 5%);
+        border-color: darken($danger, 10%);
 
-				&:disabled {
-					background-color: white;
-					color: $primary;
-					border-color: $primary;
-				}
-			}
+        &:disabled {
+          background-color: $danger;
+          border-color: darken($danger, 5%);
+        }
+      }
+    }
 
-			i.dx-icon {
-				color: $primary;				
-			}
-		}		
+    &.btn-primary-outline {
+      background-color: white;
+      color: $primary;
+      border-color: $primary;
+      &:hover {
+        background-color: $primary;
+        color: white;
 
-		&.btn-success-outline {
-			background-color: white;
-			color: $success;
-			border-color: $success;
-			&:hover {
-				background-color: $success;
-				color: white;
-			}
-		}
-		
-		&.btn-warning-outline {
-			background-color: white;
-			color: $warning;
-			border-color: $warning;
-			&:hover {
-				background-color: $warning;
-				color: white;
-			}
-		}
-		
-		&.btn-danger-outline {
-			background-color: white;
-			color: $danger;
-			border-color: $danger;
-			&:hover {
-				background-color: $danger;
-				color: white;
-			}
-		}
-	}
+        i.dx-icon {
+          color: white;
+        }
+
+        &:disabled {
+          background-color: white;
+          color: $primary;
+          border-color: $primary;
+        }
+      }
+
+      i.dx-icon {
+        color: $primary;
+      }
+    }
+
+    &.btn-success-outline {
+      background-color: white;
+      color: $success;
+      border-color: $success;
+      &:hover {
+        background-color: $success;
+        color: white;
+      }
+    }
+
+    &.btn-warning-outline {
+      background-color: white;
+      color: $warning;
+      border-color: $warning;
+      &:hover {
+        background-color: $warning;
+        color: white;
+      }
+    }
+
+    &.btn-danger-outline {
+      background-color: white;
+      color: $danger;
+      border-color: $danger;
+      &:hover {
+        background-color: $danger;
+        color: white;
+      }
+    }
+  }
 }
 
 //button styles end
 
 .mat-card-header-text {
-    margin: 0px !important;
+  margin: 0px !important;
 }
 
 .cardHeader {
-    display: flex;
-    width: 100%;
-    place-content: space-between;
+  display: flex;
+  width: 100%;
+  place-content: space-between;
 }
 
 .mat-card-title {
-    margin: 0px !important;
+  margin: 0px !important;
 }
 
 mango-accounting-dashboard {
-    display:flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 div#divMainContent {
+  height: 100% !important;
+  .divMainContentInner {
     height: 100% !important;
-    .divMainContentInner {
-        height: 100% !important;
-    }
+  }
 }
-  
 
 html {
-	overflow: hidden;
-    height: 100%;
+  overflow: hidden;
+  height: 100%;
 }
-
 
 .dx-datagrid-content .dx-datagrid-table .dx-row .dx-command-select {
-	width: 40px !important;
-	min-width: 40px !important;
-	max-width: 40px !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
 }
 
-.dx-overlay-wrapper.dx-popup-wrapper.dx-dropdowneditor-overlay .dx-overlay-content {
-    min-width: 320px!important;
+.dx-overlay-wrapper.dx-popup-wrapper.dx-dropdowneditor-overlay
+  .dx-overlay-content {
+  min-width: 320px !important;
 }
 
 .dx-checkbox {
-    display: inline-block;
-    cursor: pointer;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .dx-datagrid-checkbox-size .dx-checkbox-icon {
-    height: 18px;
-    width: 18px;
+  height: 18px;
+  width: 18px;
 }
 
-.dx-dropdowneditor-input-wrapper > .dx-texteditor-container > .dx-texteditor-input-container > input.dx-texteditor-input {
-    border: none !important;
+.dx-dropdowneditor-input-wrapper
+  > .dx-texteditor-container
+  > .dx-texteditor-input-container
+  > input.dx-texteditor-input {
+  border: none !important;
 }
 
 #dropdownContainer {
-    dx-data-grid.drop-down-box__grid.dx-widget.dx-visibility-change-handler {
-        .dx-datagrid.dx-gridbase-container {
-            .dx-datagrid-headers.dx-datagrid-nowrap {
-                .dx-datagrid-scrollable-simulated.dx-datagrid-content.dx-datagrid-scroll-container {
-                    table.dx-datagrid-table.dx-datagrid-table-fixed {
-                        tbody {
-                            background-color: white !important;
-                            tr.dx-row.dx-header-row {
-                                td#dx-col-1 {
-                                    .dx-datagrid-text-content.dx-text-content-alignment-left {
-                                        font-family: Helvetica, sans-serif !important;
-                                        font-size: 14px !important;
-                                        font-weight: 400 !important;
-                                        color: black !important;
-                                    }
-                                }
+  dx-data-grid.drop-down-box__grid.dx-widget.dx-visibility-change-handler {
+    .dx-datagrid.dx-gridbase-container {
+      .dx-datagrid-headers.dx-datagrid-nowrap {
+        .dx-datagrid-scrollable-simulated.dx-datagrid-content.dx-datagrid-scroll-container {
+          table.dx-datagrid-table.dx-datagrid-table-fixed {
+            tbody {
+              background-color: white !important;
+              tr.dx-row.dx-header-row {
+                td#dx-col-1 {
+                  .dx-datagrid-text-content.dx-text-content-alignment-left {
+                    font-family: Helvetica, sans-serif !important;
+                    font-size: 14px !important;
+                    font-weight: 400 !important;
+                    color: black !important;
+                  }
+                }
 
-								.dx-datagrid-action {
-									outline: none !important;
-								}
-                                
+                .dx-datagrid-action {
+                  outline: none !important;
+                }
+              }
+              tr.dx-row.dx-datagrid-filter-row {
+                td.dx-editor-cell {
+                  .dx-editor-with-menu {
+                    .dx-editor-container {
+                      .dx-textbox {
+                        .dx-texteditor-container {
+                          .dx-texteditor-input-container {
+                            input {
+                              height: 33px !important;
+                              padding: 0 0 0 32px !important;
                             }
-                            tr.dx-row.dx-datagrid-filter-row {
-                                td.dx-editor-cell {
-                                    .dx-editor-with-menu {
-                                        .dx-editor-container {
-                                            .dx-textbox {
-                                                .dx-texteditor-container {
-                                                    .dx-texteditor-input-container {
-                                                        input {
-                                                            height: 33px !important;
-                                                            padding: 0 0 0 32px !important;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } 
-                        tbody:hover {
-                            background-color: #E3F3FC !important;
+                          }
                         }
-                    } 
-                } 
-            } 
-        } 
-    } 
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            tbody:hover {
+              background-color: #e3f3fc !important;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 .shared-left-nav li.listItem.active a Span {
-    font-weight: bold;
-    border-bottom: 3px solid $color-brand-accent;
+  font-weight: bold;
+  border-bottom: 3px solid $color-brand-accent;
 }
 
 .leftnavPanel {
-    border-bottom: none !important;
+  border-bottom: none !important;
 }
 
 .dx-button.sql-button {
-    border: 1px solid $color-brand-primary !important; // I hate global styles
-    border-radius: 2px !important;
-    color: $color-brand-primary !important;
-    font-weight: bold !important;
-  
-    &:hover {
-      background-color: $color-brand-primary !important;
-      border-color: $color-brand-primary !important;
-      color: $color-neutral-white !important;
-    }
+  border: 1px solid $color-brand-primary !important; // I hate global styles
+  border-radius: 2px !important;
+  color: $color-brand-primary !important;
+  font-weight: bold !important;
+
+  &:hover {
+    background-color: $color-brand-primary !important;
+    border-color: $color-brand-primary !important;
+    color: $color-neutral-white !important;
+  }
 }
 
 .dx-button-content {
-    padding: 0px !important;
+  padding: 0px !important;
 }
 
 .dx-button-default {
-    .dx-button-content {
-        padding: 8px !important;
-        color: white;
-    }
+  .dx-button-content {
+    padding: 8px !important;
+    color: white;
+  }
 }
 
 .dx-overlay-wrapper.dx-popup-wrapper.dashboardsDropDown .dx-overlay-content {
-	min-width: 320px !important;
+  min-width: 320px !important;
 }
 
 .dx-texteditor-buttons-container {
-	.dx-dropdowneditor-button {
-		.dx-button-content {
-			.dx-dropdowneditor-icon {
-				border: none;
-			}
-		}
-	}
+  .dx-dropdowneditor-button {
+    .dx-button-content {
+      .dx-dropdowneditor-icon {
+        border: none;
+      }
+    }
+  }
 }

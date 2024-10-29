@@ -1,13 +1,21 @@
-import { CommonModule } from "@angular/common";
-import { Component, Input, OnInit } from "@angular/core";
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { debounceTime, tap } from "rxjs/operators";
-import { ButtonModule } from "../button";
-import { DatePickerModule } from "../date-picker";
-import { DropdownModule } from "../dropdown";
-import { InputComponent } from "../input";
-import { CremFormsModule } from "./forms.module";
-
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { debounceTime, tap } from 'rxjs/operators';
+import { ButtonModule } from '../button';
+import { DatePickerModule } from '../date-picker';
+import { DropdownModule } from '../dropdown';
+import { InputComponent } from '../input';
+import { CremFormsModule } from './forms.module';
+import { CheckBoxComponent } from '../checkbox';
+import { CremRadioComponent, CremRadioGroupComponent } from '../radio';
+import { ToggleSliderComponent } from '../toggle-slider';
 
 /**
  * For a detailed examples on how to use Crem Forms, check the file libs\ui-shared\lib-ui-elements\src\lib\form\forms.demo.component.ts
@@ -24,21 +32,24 @@ import { CremFormsModule } from "./forms.module";
     InputComponent,
     ButtonModule,
     DropdownModule,
-    DatePickerModule
+    DatePickerModule,
+    CheckBoxComponent,
+    CremRadioComponent,
+    CremRadioGroupComponent,
+    ToggleSliderComponent,
   ],
   templateUrl: './forms.demo.component.html',
   styleUrls: ['./forms.demo.component.scss'],
 })
 export class CremFormsDemoComponent implements OnInit {
+  /**
+   * @ignore
+   */
+  @Input() formExample: string;
 
   /**
-  * @ignore
-  */
-  @Input() formExample: string
-
-  /**
-  * @ignore
-  */
+   * @ignore
+   */
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required]),
     password: new FormControl(''),
@@ -47,71 +58,81 @@ export class CremFormsDemoComponent implements OnInit {
     dateOfBirth: new FormControl('01/01/2024'),
     country: new FormControl(''),
     phoneNumber: new FormControl(''),
-  })
-
-  /**
-  * @ignore
-  */
-  layoutFormInline = new FormGroup({
-    fieldA: new FormControl('', [Validators.required]),
-    fieldB: new FormControl('', [Validators.required]),
-  })
-
-  /**
-  * @ignore
-  */
-  layoutFormVertical = new FormGroup({
-    fieldA: new FormControl('', [Validators.required]),
-    fieldB: new FormControl('', [Validators.required]),
-  })
-
-  /**
-  * @ignore
-  */
-  layoutFormHorizontal = new FormGroup({
-    fieldA: new FormControl('', [Validators.required]),
-    fieldB: new FormControl('', [Validators.required]),
-  })
-
-  /**
-  * @ignore
-  */
-  labelAlignmentFormLeft = new FormGroup({
-    username: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required]),
-  })
-
-  /**
-  * @ignore
-  */
-  labelAlignmentFormRight = new FormGroup({
-    username: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required]),
-  })
-
+  });
 
   /**
    * @ignore
-  */
+   */
+  layoutFormInline = new FormGroup({
+    fieldA: new FormControl('', [Validators.required]),
+    fieldB: new FormControl('', [Validators.required]),
+  });
+
+  /**
+   * @ignore
+   */
+  layoutFormVertical = new FormGroup({
+    fieldA: new FormControl('', [Validators.required]),
+    fieldB: new FormControl('', [Validators.required]),
+  });
+
+  /**
+   * @ignore
+   */
+  layoutFormHorizontal = new FormGroup({
+    fieldA: new FormControl('', [Validators.required]),
+    fieldB: new FormControl('', [Validators.required]),
+  });
+
+  /**
+   * @ignore
+   */
+  labelAlignmentFormLeft = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required]),
+  });
+
+  /**
+   * @ignore
+   */
+  labelAlignmentFormRight = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required]),
+  });
+
+  /**
+   * @ignore
+   */
+  errorsForm = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required]),
+  });
+
+  /**
+   * @ignore
+   */
   ngOnInit(): void {
-    this.registerForm.valueChanges.pipe(
-      debounceTime(300),
-      tap(change => {
-        console.log('**********************')
-        console.log('New change to the form', change)
-        console.log('Current form status', this.registerForm.status)
-        console.log('Is form valid?', this.registerForm.valid)
-      })).subscribe()
+    this.registerForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap((change) => {
+          console.log('**********************');
+          console.log('New change to the form', change);
+          console.log('Current form status', this.registerForm.status);
+          console.log('Is form valid?', this.registerForm.valid);
+        })
+      )
+      .subscribe();
   }
 
   /**
-  * @ignore
-  */
+   * @ignore
+   */
   registerFormSubmit() {
     if (!this.registerForm.valid) {
-      console.log('Submission failed: the form is invalid')
+      console.log('Submission failed: the form is invalid');
     } else {
-      console.log('The form has been submitted')
+      console.log('The form has been submitted');
     }
   }
 }

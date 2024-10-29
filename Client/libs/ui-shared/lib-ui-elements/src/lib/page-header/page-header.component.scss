@@ -1,4 +1,4 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 .page-header {
   @include costar(background-color, light);
@@ -6,7 +6,8 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 
   &__body,
   &__actions {
@@ -17,18 +18,35 @@
   }
 
   &__settings {
-    margin-left: 15px;
+    margin-left: 10px;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
+
+    &__list-map-view {
+      width: 30px;
+    }
+  }
+
+  &__status-pill {
+    margin-top: 7px;
   }
 }
 
 .body {
-  
-  &__page-title  {
-    @include costar(font-size, h1, $important: true);
+  &__tab-title {
+    @include costar(font-size, h3, $important: true);
+    // @include costar(font-weight, 'normal', $important: true);
+    font-weight: 500;
+    color: #6f6f6f;
+    margin-right: 10px;
+  }
+
+  &__page-title {
+    @include costar(font-size, h2, $important: true);
+    // @include costar(font-weight, 'normal', $important: true);
+    font-weight: 500;
   }
 
   &__filters {
@@ -46,24 +64,20 @@
   }
 }
 
-.actions {
-  &__custom {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  &__button {
-    margin-left: 8px;
-  }
+::ng-deep .body__page-title > crem-input-label > label > span {
+  white-space: nowrap;
+  width: 10em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  &__bookmark-button {
-    margin-right: 8px;
-  }
-
-  &__cog-button {
-    margin-top: 3px;
-    margin-left: 15px;
+::ng-deep
+  .page-header__settings__list-map-view
+  > crem-button
+  > button
+  > crem-icon {
+  @include costar(color, primary-light);
+  &:hover {
+    @include costar(color, primary-lighter);
   }
 }

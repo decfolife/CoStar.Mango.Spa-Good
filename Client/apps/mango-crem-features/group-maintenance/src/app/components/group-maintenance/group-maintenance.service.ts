@@ -8,7 +8,9 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class GroupMaintenanceService extends EndpointService {
-  groupMaintenance: string = UtilitiesService.getBaseApiUrl(Api.groupMaintenance)
+  groupMaintenance: string = UtilitiesService.getBaseApiUrl(
+    Api.groupMaintenance
+  );
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
@@ -16,11 +18,11 @@ export class GroupMaintenanceService extends EndpointService {
 
   getGroupList(): Observable<any> {
     const url = `${this.groupMaintenance}GroupMaintenance/GetGroupList`;
-    return this.callHttpGet(url, 'GetGroupList')
+    return this.callHttpGet(url, 'GetGroupList');
   }
 
   getHasAdminLinkRights(): Observable<any> {
     const url = `${this.groupMaintenance}GroupMaintenance/GetHasAdminLinkRights`;
-    return this.callHttpGet(url, 'GetHasAdminLinkRights') 
+    return this.callHttpGet(url, 'GetHasAdminLinkRights');
   }
 }

@@ -1,0 +1,245 @@
+<crem-popup
+  *ngIf="scheduleTransactionData"
+  [id]="accountingSummaryService.getId(componentName, 'popup', 'section')"
+  [visible]="showScheduleTransaction"
+  [title]="'Scheduled Transactions'"
+  [height]="'auto'"
+  [width]="'60%'"
+  [draggable]="true"
+  [resizable]="true"
+  [showCloseButton]="true"
+  [hideOnOutsideClick]="false"
+  (close)="closePopup()"
+  [customFooter]="false"
+  [showFooter]="false"
+>
+  <div body class="schedule-transactions-container">
+    <div class="glevent-information">
+      <div class="schedule-transctions-column">
+        <div class="schedule-container">
+          <div class="label">Event Name:</div>
+          <div class="data">{{ scheduleTransactionData.glEventName }}</div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Payment Frequency:</div>
+          <div class="data">{{ scheduleTransactionData.paymentFrequency }}</div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Recurring Amount:</div>
+          <div class="data">
+            {{
+              formattingService.localFormat(
+                +scheduleTransactionData.recurringAmount,
+                scheduleTransactionData.chargeCurrencyDecimalPrecision
+              ) +
+                ' ' +
+                scheduleTransactionData.chargeCurrency
+            }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Event Period:</div>
+          <div class="data">
+            {{ scheduleTransactionData.eventBeginDate | date: dateFormat }}
+            <span *ngIf="scheduleTransactionData.eventEndDate !== null">
+              -
+            </span>
+            {{ scheduleTransactionData.eventEndDate | date: dateFormat }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Area:</div>
+          <div class="data">
+            {{ scheduleTransactionData.units }}
+            {{ scheduleTransactionData.measureArea }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Vendor:</div>
+          <div class="data">{{ scheduleTransactionData.vendorName }}</div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Prorated:</div>
+          <div class="data">
+            {{
+              scheduleTransactionData.isProrated
+                ? 'Yes' + ': ' + scheduleTransactionData.prorationName
+                : isProrated
+            }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">First Recurring Payment Date:</div>
+          <div class="data">
+            {{ scheduleTransactionData.firstRecurringDate | date: dateFormat }}
+          </div>
+        </div>
+      </div>
+
+      <div class="schedule-transctions-column">
+        <div class="schedule-container">
+          <div class="label">Account Name:</div>
+          <div class="data">{{ scheduleTransactionData.glAccountName }}</div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Account Code:</div>
+          <div class="data">{{ scheduleTransactionData.glAccountCode }}</div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Account Category:</div>
+          <div class="data">{{ scheduleTransactionData.glCategoryName }}</div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Recognition Category GAAP:</div>
+          <div class="data">
+            {{ scheduleTransactionData.glAccountPolicyTypeName }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Recognition Category IFRS:</div>
+          <div class="data">
+            {{ scheduleTransactionData.ifrsglAccountPolicyTypeName }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Status:</div>
+          <div class="data">{{ scheduleTransactionData.processingStatus }}</div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Created:</div>
+          <div class="data">
+            {{ scheduleTransactionData.createdDate | date: dateFormat }} By
+            {{ scheduleTransactionData.createdByName }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">Modified:</div>
+          <div class="data">
+            {{ scheduleTransactionData.lastModifiedDate | date: dateFormat }} By
+            {{ scheduleTransactionData.lastModifiedByName }}
+          </div>
+        </div>
+        <div class="schedule-container">
+          <div class="label">System Event ID:</div>
+          <div class="data">{{ scheduleTransactionData.glEventID }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="glevent-note-row">
+      <div class="glevent-note-lable">Notes:</div>
+      <crem-input
+        [id]="
+          accountingSummaryService.getId(
+            componentName,
+            'glevent-notes',
+            'input'
+          )
+        "
+        [showLabel]="false"
+        [inputType]="'textarea'"
+        [rows]="2"
+        [disabled]="true"
+        [value]="glEventNotes"
+        aria-label="GLEvent Notes"
+        role="textbox"
+      >
+      </crem-input>
+    </div>
+
+    <div class="transactions-grid">
+      <dx-data-grid
+        #scheduleTransactionGrid
+        [id]="accountingSummaryService.getId(componentName, 'grid', 'section')"
+        [dataSource]="scheduleTransactionData.transactions"
+        [columns]="scheduleTransactionColumns"
+        [showColumnLines]="true"
+        [allowColumnReordering]="true"
+        [allowColumnResizing]="true"
+        [wordWrapEnabled]="true"
+        [columnAutoWidth]="true"
+        [showRowLines]="true"
+        [showBorders]="true"
+        [rowAlternationEnabled]="true"
+        noDataText="No Data"
+        class="custom-data-grid"
+        [loadPanel]="{ enabled: true }"
+        (onEditorPreparing)="onEditorPreparing($event)"
+        (onContentReady)="onContentReady($event)"
+      >
+        <dxo-paging [enabled]="false"> </dxo-paging>
+
+        <dxo-selection
+          mode="multiple"
+          allowSelectAll="false"
+          [recursive]="true"
+          showCheckBoxesMode="always"
+        >
+        </dxo-selection>
+
+        <dxo-summary [calculateCustomSummary]="customSummaryCalculation">
+          <dxi-total-item
+            alignment="right"
+            name="TotalsLabel"
+            summaryType="custom"
+            showInColumn="DueBy"
+            displayFormat="Total Amount:"
+          >
+          </dxi-total-item>
+
+          <dxi-total-item
+            alignment="right"
+            name="CountLabel"
+            summaryType="custom"
+            showInColumn="DueBy"
+            displayFormat="Count:"
+          >
+          </dxi-total-item>
+
+          <dxi-total-item
+            alignment="right"
+            name="baseAmountTotal"
+            summaryType="custom"
+            showInColumn="baseAmount"
+            [displayFormat]="baseAmountFormatter"
+          >
+          </dxi-total-item>
+
+          <dxi-total-item
+            alignment="right"
+            name="targetAmountTotal"
+            summaryType="custom"
+            showInColumn="targetAmount"
+            [displayFormat]="targetAmountFormatter"
+          >
+          </dxi-total-item>
+
+          <dxi-total-item
+            alignment="right"
+            name="baseAmountCount"
+            summaryType="custom"
+            showInColumn="baseAmount"
+          >
+          </dxi-total-item>
+
+          <dxi-total-item
+            alignment="right"
+            name="targetAmountCount"
+            summaryType="custom"
+            showInColumn="targetAmount"
+          >
+          </dxi-total-item>
+        </dxo-summary>
+
+        <div *dxTemplate="let info of 'paymentsGridHeader'">
+          <p title="{{ info.column.caption }}" class="header-column-caption">
+            {{ info.column.caption }}
+          </p>
+        </div>
+
+        <div *dxTemplate="let cell of 'pointer'">
+          <div class="pointer" title="{{ cell.text }}">{{ cell.text }}</div>
+        </div>
+      </dx-data-grid>
+    </div>
+  </div>
+</crem-popup>

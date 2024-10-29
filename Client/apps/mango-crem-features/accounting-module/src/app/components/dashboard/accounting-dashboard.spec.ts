@@ -11,11 +11,10 @@ describe('AccountingDashboardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ AccountingDashboardComponent ],
+      declarations: [AccountingDashboardComponent],
       imports: [DashboardModule],
-      providers: [ DashboardService, HttpClient, HttpHandler ] 
-    })
-    .compileComponents();
+      providers: [DashboardService, HttpClient, HttpHandler],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

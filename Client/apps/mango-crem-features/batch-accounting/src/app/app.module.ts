@@ -7,7 +7,7 @@ import { createCustomElement } from '@angular/elements';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatStepperModule  } from '@angular/material/stepper';
+import { MatStepperModule } from '@angular/material/stepper';
 
 import {
   DevExtremeModule,
@@ -68,10 +68,10 @@ import { ParametersGridComponent } from './batch-event-list/parameters-grid/para
   //   },
   // ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
     const el = createCustomElement(AppComponent, { injector: this.injector });

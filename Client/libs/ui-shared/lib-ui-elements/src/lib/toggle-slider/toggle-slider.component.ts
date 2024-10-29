@@ -14,57 +14,70 @@ import { filter, tap } from 'rxjs/operators';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => ToggleSliderComponent),
-      multi: true
-    }
+      multi: true,
+    },
   ],
 })
-
 export class ToggleSliderComponent implements OnInit, ControlValueAccessor {
-
   @Input() value: boolean;
-  @Input() id: string
+  @Input() id: string;
   @Input() disabled: boolean;
-  @Input() size: 'regular' | 'wide' | 'extra-wide' | 'ultra-wide' = 'regular'
-  @Input() checkedLabel = ''
-  @Input() uncheckedLabel = ''
-  @Input() ariaLabel: string
-  @Output() selectionChange: EventEmitter<{ checked: boolean }> = new EventEmitter<{ checked: boolean }>();
-
-
-  /**
-   * @ignore
-   */
-  onChange = (value: boolean) => { }
+  @Input() size: 'regular' | 'wide' | 'extra-wide' | 'ultra-wide' = 'regular';
+  @Input() checkedLabel = '';
+  @Input() uncheckedLabel = '';
+  @Input() ariaLabel: string;
+  @Output() selectionChange: EventEmitter<{ checked: boolean }> =
+    new EventEmitter<{ checked: boolean }>();
 
   /**
    * @ignore
    */
-  onTouched = () => { }
+  onChange = (value: boolean) => {};
 
   /**
    * @ignore
    */
-  subs: Subscription[] = []
+  onTouched = () => {};
 
-  constructor(private host: ElementRef<HTMLElement>) { }
+  /**
+   * @ignore
+   */
+  subs: Subscription[] = [];
+
+  constructor(private host: ElementRef<HTMLElement>) {}
 
   /**
    * @ignore
    */
   ngOnInit(): void {
-    this.subs.push(fromEvent(this.host.nativeElement, 'click')
-      .pipe(tap(event => event.preventDefault()),
-        filter(() => !this.disabled),
-        tap(() => {
-          this.value = !this.value
-          this.selectionChange.emit({
-            checked: this.value
+    this.subs.push(
+      fromEvent(this.host.nativeElement, 'click')
+        .pipe(
+          tap((event) => event.preventDefault()),
+          filter(() => !this.disabled),
+          tap(() => {
+            this.value = !this.value;
+            this.selectionChange.emit({
+              checked: this.value,
+            });
+            this.onChange(this.value);
+            this.onTouched();
           })
-          this.onChange(this.value)
-          this.onTouched()
-        })
-      ).subscribe()
-    )
+        )
+        .subscribe()
+    );
+
+    this.subs.push(
+      fromEvent<KeyboardEvent>(this.host.nativeElement, 'keydown')
+        .pipe(
+          filter(() => !this.disabled),
+          filter((event) => event.key === 'Enter'),
+          tap(() => {
+            this.onEnter();
+          })
+        )
+        .subscribe()
+    );
   }
 
   /**
@@ -72,50 +85,52 @@ export class ToggleSliderComponent implements OnInit, ControlValueAccessor {
    */
   onValueChanged(event) {
     this.selectionChange.emit(event);
-    this.onChange(this.value)
-    this.onTouched()
+    this.onChange(this.value);
+    this.onTouched();
   }
 
   /**
    * @ignore
    */
   focus(value) {
-    this.host.nativeElement.focus()
+    this.host.nativeElement.focus();
   }
 
   /**
    * @ignore
    */
-  onEnter() {
+  onEnter(): void {
     this.value = !this.value;
-    this.selectionChange.emit({ checked: this.value })
+    this.selectionChange.emit({ checked: this.value });
+    this.onChange(this.value);
+    this.onTouched();
   }
 
   /**
    * @ignore
    */
   registerOnChange(fn: any): void {
-    this.onChange = fn
+    this.onChange = fn;
   }
 
   /**
    * @ignore
    */
   registerOnTouched(fn: any): void {
-    this.onTouched = fn
+    this.onTouched = fn;
   }
 
   /**
    * @ignore
    */
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled
+    this.disabled = isDisabled;
   }
 
   /**
    * @ignore
    */
   writeValue(value: boolean): void {
-    this.value = value
+    this.value = value;
   }
 }

@@ -177,6 +177,16 @@ const meta: Meta<CremPopupComponent> = {
         },
       },
     },
+    showFooter: {
+      description: 'Specifies whether to hide the popup component footer',
+      control: 'boolean',
+      table: {
+        category: 'Inputs',
+        defaultValue: {
+          summary: false,
+        },
+      },
+    },
     close: {
       description: 'Emitted when the close button is clicked',
       table: {
@@ -220,6 +230,7 @@ export const Default: Story = {
     resizable: true,
     showCloseButton: true,
     hideOnOutsideClick: false,
+    showFooter: true,
   },
   render: (args: CremPopupComponent, ctx: any) => {
     const [_, updateArgs] = useArgs();

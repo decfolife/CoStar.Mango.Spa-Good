@@ -7,8 +7,12 @@ const routes: Routes = [
     path: '',
     component: AccountingSettingsComponent,
     data: {
-      breadCrumb: { label: 'Settings', append: true, activeLink: 'Accounting Settings' }
-    }
+      breadCrumb: {
+        label: 'Settings',
+        append: true,
+        activeLink: 'Accounting Settings',
+      },
+    },
   },
 ];
 
@@ -16,4 +20,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class IndexRoutingModule { }
+export class IndexRoutingModule {}

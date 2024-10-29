@@ -28,13 +28,13 @@
             required="true"
             [customRequireValidation]="false"
             [showColumnHeader]="false"
-            displayExpr="CompanyName"
-            valueExpr="CompanyID"
+            displayExpr="companyName"
+            valueExpr="companyID"
             [allowSearch]="true"
             hoverText="Select Portfolio"
             (selectedItems)="onPortfolioValueChange($event)"
             formControlName="portfolioList"
-            [containerized]='false'
+            [containerized]="false"
           >
           </crem-dropdown>
         </crem-form-control>
@@ -55,12 +55,12 @@
             required="true"
             [customRequireValidation]="false"
             [showColumnHeader]="false"
-            displayExpr="ObjectName"
-            valueExpr="ObjectID"
+            displayExpr="objectName"
+            valueExpr="objectID"
             [allowSearch]="true"
             hoverText="Select Supplier"
             formControlName="supplierList"
-            [containerized]='false'
+            [containerized]="false"
           >
           </crem-dropdown>
         </crem-form-control>
@@ -102,15 +102,15 @@
             [dataSource]="templateDropdownItem"
             [showClearButton]="true"
             [showColumnHeader]="false"
-            displayExpr="ObjectTypeTypeName"
-            value="ObjectTypeTypeID"
-            valueExpr="ObjectTypeTypeID"
+            displayExpr="objectTypeTypeName"
+            value="objectTypeTypeID"
+            valueExpr="objectTypeTypeID"
             [required]="true"
             [allowSearch]="true"
             hoverText="Select Template"
             [initialSelectedValue]="selectedTemplateID"
             formControlName="templateList"
-            [containerized]='false'
+            [containerized]="false"
           >
           </crem-dropdown>
         </crem-form-control>
@@ -179,14 +179,14 @@
             [dataSource]="currencyDropdownItem"
             [showClearButton]="true"
             [showColumnHeader]="false"
-            displayExpr="TargetCurrencyDesc"
-            valueExpr="ExchangeRateID"
+            displayExpr="targetCurrencyDesc"
+            valueExpr="exchangeRateID"
             [required]="true"
             [allowSearch]="true"
             [initialSelectedValue]="selectedCurrency"
             hoverText="Select Currency Type"
             formControlName="currencyTypeList"
-            [containerized]='false'
+            [containerized]="false"
           >
           </crem-dropdown>
         </crem-form-control>

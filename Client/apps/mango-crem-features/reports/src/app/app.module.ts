@@ -7,23 +7,19 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-    ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        SharedModule.forRoot(),
-        AppRoutingModule,
-    ],
-    providers: [],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    SharedModule.forRoot(),
+    AppRoutingModule,
+  ],
+  providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [AppComponent],
 })
-
 export class AppModule {
-
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
     const el = createCustomElement(AppComponent, {
@@ -32,4 +28,3 @@ export class AppModule {
     customElements.define('ngce-reports', el);
   }
 }
-

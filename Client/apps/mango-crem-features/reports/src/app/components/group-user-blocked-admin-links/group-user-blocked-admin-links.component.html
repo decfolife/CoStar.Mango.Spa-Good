@@ -1,68 +1,91 @@
 <div class="report-page">
-	<div class="report-page-controls-wrapper">
-		<div class="controls-left">
-			<h5 class="reports__page-title dbl-right-margin">Group and User Blocked Admin Links</h5>	
-			<cs-search  class="report-search" (changed)="searchDataGrid($event)"></cs-search>
-		</div>
-		<div class="controls-right">
-			<crem-button type="primary" [disabled]="!blockedAdminLinkData" (click)="exportGrids()">Export</crem-button>
-		</div>
-
-	</div>
-	<div class="report-page-data-grid-wrapper">
-		<dx-data-grid *ngIf="columns"
-			class="report-page-data-grid"
-			#DataGrid
-			[dataSource]="blockedAdminLinkData"
-			keyExpr="id"
-			[showColumnLines]="false"
-			[showRowLines]="false"
-			[showBorders]="false"
-			[rowAlternationEnabled]="true" 
-			[allowColumnResizing]="true"
-			[allowColumnReordering]="true"
-			[columnAutoWidth]="true"
-			[filterSyncEnabled]="true"
-			[columnMinWidth]="10"	
-		>
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
-			<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
-			<dxo-sorting mode="multiple"></dxo-sorting>
-			<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
-			<dxo-column-chooser [allowSearch]="true" mode="select">
-			</dxo-column-chooser>
-			<dxo-paging [pageSize]="100"></dxo-paging>
-		    <dxo-pager 
-		        [showPageSizeSelector]="true"
-		        [allowedPageSizes]="[50, 100, 200, 500]"
-		        [showInfo]="true"
-                [showNavigationButtons]="true"
-                [visible]="true"
-			>
-			</dxo-pager>
-			<dxi-column *ngFor="let col of columns" 
-				[dataField]="col.dataField" 
-				[alignment]="col.alignment"
-                [visible]="col.visible"
-                [groupIndex]="col.groupIndex"
-				[dataType]="col.dataType"
-				[caption]="col.caption"
-				[fixed]="col.fixed"
-				[allowEditing]="col.allowEditing"
-                [cellTemplate]="col.cellTemplate"
-                [format]="col.format"
-				>
-				<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
-            </dxi-column>
-		</dx-data-grid>
-	</div>
+  <div class="report-page-controls-wrapper">
+    <div class="controls-left">
+      <h5 class="reports__page-title dbl-right-margin">
+        Group and User Blocked Admin Links
+      </h5>
+      <cs-search
+        class="report-search"
+        (changed)="searchDataGrid($event)"
+      ></cs-search>
+    </div>
+    <div class="controls-right">
+      <crem-button
+        type="primary"
+        [disabled]="!blockedAdminLinkData"
+        (click)="exportGrids()"
+        >Export</crem-button
+      >
+    </div>
+  </div>
+  <div class="report-page-data-grid-wrapper">
+    <dx-data-grid
+      *ngIf="columns"
+      class="report-page-data-grid"
+      #DataGrid
+      [dataSource]="blockedAdminLinkData"
+      keyExpr="id"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="true"
+      [filterSyncEnabled]="true"
+      [columnMinWidth]="10"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-grouping
+        #expand
+        [autoExpandAll]="true"
+        [contextMenuEnabled]="true"
+      ></dxo-grouping>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+      <dxo-column-chooser [allowSearch]="true" mode="select">
+      </dxo-column-chooser>
+      <dxo-paging [pageSize]="100"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[50, 100, 200, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      >
+      </dxo-pager>
+      <dxi-column
+        *ngFor="let col of columns"
+        [dataField]="col.dataField"
+        [alignment]="col.alignment"
+        [visible]="col.visible"
+        [groupIndex]="col.groupIndex"
+        [dataType]="col.dataType"
+        [caption]="col.caption"
+        [fixed]="col.fixed"
+        [allowEditing]="col.allowEditing"
+        [cellTemplate]="col.cellTemplate"
+        [format]="col.format"
+      >
+        <dxo-format
+          *ngIf="col.dataType == 'number' && col.precision >= 0"
+          type="fixedPoint"
+          [precision]="col.precision"
+        ></dxo-format>
+      </dxi-column>
+    </dx-data-grid>
+  </div>
 </div>
 
-<dx-data-grid class="readOnly d-none"
-    #FilterDataGrid
-    [dataSource]="[]"
-    [columnAutoWidth]="true"
-    [filterSyncEnabled]="true"
-    [columnMinWidth]="10"	
+<dx-data-grid
+  class="readOnly d-none"
+  #FilterDataGrid
+  [dataSource]="[]"
+  [columnAutoWidth]="true"
+  [filterSyncEnabled]="true"
+  [columnMinWidth]="10"
 >
 </dx-data-grid>

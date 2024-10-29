@@ -529,38 +529,50 @@ export class CriteriaFormReportComponent {
         if (typeof config[item].value1 === 'string') {
           let localDate = new Date(config[item].value1);
           let utcDate = new Date(
-            Date.UTC(
-              localDate.getFullYear(),
-              localDate.getMonth(),
-              localDate.getDate(),
-              0,
-              0,
-              0,
-              0
-            )
+            localDate.getFullYear(),
+            localDate.getMonth(),
+            localDate.getDate(),
+            0,
+            0,
+            0,
+            0
           );
           config[item].value1 = utcDate;
         } else if (config[item].value1) {
-          let date = config[item].value1
-          config[item].value1 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+          let date = config[item].value1;
+          config[item].value1 = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            0,
+            0,
+            0,
+            0
+          );
         }
         if (typeof config[item].value2 === 'string') {
           let localDate = new Date(config[item].value2);
           let utcDate = new Date(
-            Date.UTC(
-              localDate.getFullYear(),
-              localDate.getMonth(),
-              localDate.getDate(),
-              0,
-              0,
-              0,
-              0
-            )
+            localDate.getFullYear(),
+            localDate.getMonth(),
+            localDate.getDate(),
+            0,
+            0,
+            0,
+            0
           );
           config[item].value2 = utcDate;
         } else if (config[item].value2) {
-          let date = config[item].value2
-          config[item].value2 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+          let date = config[item].value2;
+          config[item].value2 = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            0,
+            0,
+            0,
+            0
+          );
         }
         if (!isDependent) {
           saveItem1 = {
@@ -728,32 +740,50 @@ export class CriteriaFormReportComponent {
         if (typeof config[item].value1 === 'string') {
           let localDate = new Date(config[item].value1);
           let utcDate = new Date(
-            Date.UTC(
-              localDate.getFullYear(),
-              localDate.getMonth(),
-              localDate.getDate(),
-              0, 0, 0, 0
-            )
+            localDate.getFullYear(),
+            localDate.getMonth(),
+            localDate.getDate(),
+            0,
+            0,
+            0,
+            0
           );
           config[item].value1 = utcDate;
         } else if (config[item].value1) {
-          let date = config[item].value1
-          config[item].value1 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+          let date = config[item].value1;
+          config[item].value1 = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            0,
+            0,
+            0,
+            0
+          );
         }
         if (typeof config[item].value2 === 'string') {
           let localDate = new Date(config[item].value2);
           let utcDate = new Date(
-            Date.UTC(
-              localDate.getFullYear(),
-              localDate.getMonth(),
-              localDate.getDate(),
-              0, 0, 0, 0
-            )
+            localDate.getFullYear(),
+            localDate.getMonth(),
+            localDate.getDate(),
+            0,
+            0,
+            0,
+            0
           );
           config[item].value2 = utcDate;
         } else if (config[item].value2) {
-          let date = config[item].value2
-          config[item].value2 = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+          let date = config[item].value2;
+          config[item].value2 = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            0,
+            0,
+            0,
+            0
+          );
         }
         saveItem1 = {
           CriteriaID: config[item].data.criteriaID1,
@@ -770,17 +800,26 @@ export class CriteriaFormReportComponent {
         if (typeof config[item].value === 'string') {
           let localDate = new Date(config[item].value);
           let utcDate = new Date(
-            Date.UTC(
-              localDate.getFullYear(),
-              localDate.getMonth(),
-              localDate.getDate(),
-              0, 0, 0, 0
-            )
+            localDate.getFullYear(),
+            localDate.getMonth(),
+            localDate.getDate(),
+            0,
+            0,
+            0,
+            0
           );
           config[item].value = utcDate;
         } else if (config[item].value) {
-          let date = config[item].value
-          config[item].value = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0))
+          let date = config[item].value;
+          config[item].value = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            0,
+            0,
+            0,
+            0
+          );
         }
         let saveItem = {
           CriteriaID: config[item].data.criteriaID,

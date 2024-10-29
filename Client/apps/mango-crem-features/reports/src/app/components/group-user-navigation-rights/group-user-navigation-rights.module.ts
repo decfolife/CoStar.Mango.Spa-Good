@@ -12,9 +12,7 @@ import { ButtonModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 
 @NgModule({
-  declarations: [
-    GroupUserNavigationRightsComponent
-  ],
+  declarations: [GroupUserNavigationRightsComponent],
 
   imports: [
     CommonModule,
@@ -29,40 +27,57 @@ import { SearchModule } from '@mango/ui-shared/cosmos';
         path: '',
         data: { pageTitle: 'Group and User Navigation Rights' },
         component: GroupUserNavigationRightsComponent,
-        resolve: { userList: UserListResolver, groupList: GroupListResolver, moduleList: ModuleListResolver }
+        resolve: {
+          userList: UserListResolver,
+          groupList: GroupListResolver,
+          moduleList: ModuleListResolver,
+        },
       },
       {
         path: 'user/:userId',
         data: { pageTitle: 'Group and User Navigation Rights' },
         component: GroupUserNavigationRightsComponent,
-        resolve: { userList: UserListResolver, groupList: GroupListResolver, moduleList: ModuleListResolver }
+        resolve: {
+          userList: UserListResolver,
+          groupList: GroupListResolver,
+          moduleList: ModuleListResolver,
+        },
       },
       {
         path: 'user/:userId/module/:moduleId',
         data: { pageTitle: 'Group and User Navigation Rights' },
         component: GroupUserNavigationRightsComponent,
-        resolve: { userList: UserListResolver, groupList: GroupListResolver, moduleList: ModuleListResolver }
+        resolve: {
+          userList: UserListResolver,
+          groupList: GroupListResolver,
+          moduleList: ModuleListResolver,
+        },
       },
       {
         path: 'group/:groupId',
         data: { pageTitle: 'Group and User Navigation Rights' },
         component: GroupUserNavigationRightsComponent,
-        resolve: { userList: UserListResolver, groupList: GroupListResolver, moduleList: ModuleListResolver }
+        resolve: {
+          userList: UserListResolver,
+          groupList: GroupListResolver,
+          moduleList: ModuleListResolver,
+        },
       },
       {
         path: 'group/:groupId/module/:moduleId',
         data: { pageTitle: 'Group and User Navigation Rights' },
         component: GroupUserNavigationRightsComponent,
-        resolve: { userList: UserListResolver, groupList: GroupListResolver, moduleList: ModuleListResolver }
-      }
-    ])
+        resolve: {
+          userList: UserListResolver,
+          groupList: GroupListResolver,
+          moduleList: ModuleListResolver,
+        },
+      },
+    ]),
   ],
 
   exports: [RouterModule],
 
-  providers: [
-    DatePipe,
-    GroupUserNavigationRightsService
-  ]
+  providers: [DatePipe, GroupUserNavigationRightsService],
 })
-export class GroupUserNavigationRightsModule { }
+export class GroupUserNavigationRightsModule {}

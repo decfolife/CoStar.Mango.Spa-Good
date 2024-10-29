@@ -10,9 +10,7 @@ import { DxGanttModule } from 'devextreme-angular';
 import { ProjectResolver } from './project-resolver.service';
 
 @NgModule({
-  declarations: [
-    ProjectGanttChartComponent
-  ],
+  declarations: [ProjectGanttChartComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -22,20 +20,20 @@ import { ProjectResolver } from './project-resolver.service';
       {
         path: '',
         data: { pageTitle: 'Gantt Chart - Project' },
-        component: ProjectGanttChartComponent
+        component: ProjectGanttChartComponent,
       },
       {
         path: ':projectId',
         data: { pageTitle: 'Gantt Chart - Project' },
         component: ProjectGanttChartComponent,
-        resolve: { project: ProjectResolver, userPreferences: UserPreferencesResolver }
-      }
-    ])
+        resolve: {
+          project: ProjectResolver,
+          userPreferences: UserPreferencesResolver,
+        },
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    DatePipe,
-    ProjectGanttChartService
-  ]
+  providers: [DatePipe, ProjectGanttChartService],
 })
-export class ProjectGanttChartModule { }
+export class ProjectGanttChartModule {}

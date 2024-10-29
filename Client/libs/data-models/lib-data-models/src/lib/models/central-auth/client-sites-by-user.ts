@@ -1,6 +1,6 @@
-import { UserSite } from "../user-site";
+import { UserSite } from '../user-site.interface';
 
 export interface ClientSitesByUser {
-    userSites: UserSite[];
-    recentUserSites: UserSite[];
+  userSites: UserSite[];
+  recentUserSites: UserSite[];
 }

@@ -7,7 +7,7 @@ export interface RouterStateUrl {
     data: any;
     params: any;
     queryParams: any;
-  }
+  };
 }
 
 export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
@@ -20,19 +20,17 @@ export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
 
     //Get the url this way because if we try to read it directly like we do with the other fields
     //an error is thrown because the url is in segments.
-    const {
-      url,
-    } = routerState;
+    const { url } = routerState;
 
     // Only return an object including the URL, params and query params
     // instead of the entire snapshot
-    return { 
-      url, 
+    return {
+      url,
       root: {
-        data: route.data, 
-        params: route.params, 
-        queryParams: route.queryParams 
-      }
+        data: route.data,
+        params: route.params,
+        queryParams: route.queryParams,
+      },
     };
   }
 }

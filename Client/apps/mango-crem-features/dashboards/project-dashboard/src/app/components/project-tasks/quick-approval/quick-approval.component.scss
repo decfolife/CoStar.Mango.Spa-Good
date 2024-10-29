@@ -1,5 +1,10 @@
-.crem-quick-approval-data-grid .dx-field-value {
-  width: 100%;
+@use 'styles' as *;
+
+.crem-quick-approval-data-grid {
+  height: 634px;
+  .dx-field-value {
+    width: 100%;
+  }
 }
 :host
   ::ng-deep
@@ -17,5 +22,16 @@
 ::ng-deep #quickApprovalDatagrid {
   td:has(div.dx-state-disabled) {
     pointer-events: none;
+    .dx-state-disabled {
+      visibility: hidden;
+    }
+  }
+
+  .qa-taskStatus,
+  .wrapOption-column {
+    white-space: pre-wrap;
+    & .qp-proxyMsg {
+      font-style: italic;
+    }
   }
 }

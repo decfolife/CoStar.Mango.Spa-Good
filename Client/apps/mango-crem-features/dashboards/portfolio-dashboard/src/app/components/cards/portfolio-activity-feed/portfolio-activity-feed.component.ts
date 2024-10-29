@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { CardDetails } from '../../../models';
 import { PortfolioDataService } from '../../../services/portfolio-data.service';
@@ -12,7 +20,7 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
 @Component({
   selector: 'portfolio-activity-feed-card',
   templateUrl: './portfolio-activity-feed.component.html',
-  styleUrls: ['./portfolio-activity-feed.component.scss']
+  styleUrls: ['./portfolio-activity-feed.component.scss'],
 })
 export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
@@ -21,29 +29,33 @@ export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
   @Output() rowClickEvent = new EventEmitter<any>();
 
   public isGridExpanded: boolean = false;
-  @ViewChild("ActivityFeedGrid") dataGrid: DxDataGridComponent;
+  @ViewChild('ActivityFeedGrid') dataGrid: DxDataGridComponent;
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
   constructor(
     private router: Router,
     private exportToExcelService: ExportDevexDatagridService,
     private portfolioDashboardService: PortfolioDashboardService,
     private portfolioDataService: PortfolioDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.portfolioDataService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
   rowClick(e: any) {
-    this.router.navigate(
-      ['/v06/Forms/RenderForm.aspx'],
-      {
-        queryParams: { oid: e.data.objectId, otid: e.data.objectTypeID, ottid: e.data.objectTypeTypeID }
-      });
+    this.router.navigate(['/v06/Forms/RenderForm.aspx'], {
+      queryParams: {
+        oid: e.data.objectId,
+        otid: e.data.objectTypeID,
+        ottid: e.data.objectTypeTypeID,
+      },
+    });
   }
 
   filter(e, cardId) {
@@ -52,11 +64,13 @@ export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
   }
 
   getCardData() {
-    this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-      }
-    ));
+    this.subs.push(
+      this.portfolioDataService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+        })
+    );
   }
 
   expandAllGridData(e: any) {
@@ -64,7 +78,10 @@ export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
   }
 
   exportAllGridData() {
-    this.exportToExcelService.exportToExcel(this.dataGrid.instance, "Portfolio_Activity_Feed");
+    this.exportToExcelService.exportToExcel(
+      this.dataGrid.instance,
+      'Portfolio_Activity_Feed'
+    );
   }
 
   isActivityNoteAdded(cell: any) {
@@ -81,14 +98,23 @@ export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
   }
 
   downloadfile(fileInformation: any): boolean {
-    this.subs.push(this.portfolioDashboardService.getActivityFeedFile(fileInformation.data.theLink).subscribe((response: any) => {
-      let blob: any = new Blob([response], { type: "application/octet-stream" });
-      fileSaver.saveAs(blob, fileInformation.data.description);
-    }, (error: any) => console.log('Error downloading the file', error)))
+    this.subs.push(
+      this.portfolioDashboardService
+        .getActivityFeedFile(fileInformation.data.theLink)
+        .subscribe(
+          (response: any) => {
+            let blob: any = new Blob([response], {
+              type: 'application/octet-stream',
+            });
+            fileSaver.saveAs(blob, fileInformation.data.description);
+          },
+          (error: any) => console.log('Error downloading the file', error)
+        )
+    );
     return false;
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

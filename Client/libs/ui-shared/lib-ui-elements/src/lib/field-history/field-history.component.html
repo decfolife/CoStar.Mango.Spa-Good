@@ -1,6 +1,4 @@
-<div
-  class="dx-field"
-  >
+<div class="dx-field">
   <div class="iconWrapper dx-field-value-static">
     <crem-icon
       [id]="helpTextID"
@@ -16,48 +14,64 @@
       (keydown.space)="toggleVisible(); $event.preventDefault()"
     ></crem-icon>
 
-    <dx-popover [target]="'#' + helpTextID" *ngIf="dataSource"
+    <dx-popover
+      [target]="'#' + helpTextID"
+      *ngIf="dataSource"
       position="bottom"
       role="tooltip"
       aria-label="Pop-up with help text and history tabs"
       [width]="600"
       [(visible)]="visible"
+      [wrapperAttr]="{ class: 'field-history-popover' }"
     >
       <dxo-animation>
-        <dxo-show type="pop"
+        <dxo-show
+          type="pop"
           [from]="{ scale: 0 }"
           [to]="{ scale: 1 }"
         ></dxo-show>
 
-        <dxo-hide type="fade"
-          [from]="1"
-          [to]="0"
-        ></dxo-hide>
+        <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
       </dxo-animation>
 
-      <div id="popoverWrapper"
-        class="tooltipAppPopover"
-        aria-live="assertive"
-      >
-        <div *ngIf="dataSource?.helpTextSubject"
-          id="popoverWrapper"
-        ><div class="popoverTitle" #popoverTitle tabindex="0"  (keydown.escape)="toggleVisible()"
-        >{{ dataSource?.helpTextSubject }}</div></div>
-
-        <mat-tab-group disableRipple="true"
-          animationDuration="1000ms"
+      <div id="popoverWrapper" class="tooltipAppPopover" aria-live="assertive">
+        <div *ngIf="dataSource?.helpTextSubject">
+          <div
+            class="popoverTitle"
+            #popoverTitle
+            tabindex="0"
+            (keydown.escape)="toggleVisible()"
+          >
+            {{ dataSource?.helpTextSubject }}
+          </div>
+        </div>
+        <crem-tabs
+          [id]="'field-history-tabPanel'"
+          [selectedTabIndex]="0"
+          (selectedTabChange)="onTabChanged($event)"
         >
-          <mat-tab tabindex="0" [attr.id]="'helpTextTitle'" label="Help Text">
-            <div class="mat-tab__help-text" *ngIf="dataSource?.helpTextText">{{ dataSource?.helpTextText }}</div>
+          <crem-tab-item
+            title="{{ dataSource?.helpTextName }}"
+            id="helpTextTab"
+          >
+            <div class="mat-tab__help-text" *ngIf="dataSource?.helpTextText">
+              {{ dataSource?.helpTextText }}
+            </div>
 
-            <div class="mat-tab__help-text" *ngIf="dataSource?.helpTextText === null || dataSource?.helpTextText === undefined">
+            <div
+              class="mat-tab__help-text"
+              *ngIf="
+                dataSource?.helpTextText === null ||
+                dataSource?.helpTextText === undefined
+              "
+            >
               <p>No help text available.</p>
             </div>
-          </mat-tab>
-
-          <mat-tab tabindex="0" [attr.id]="'helpTextHistory'" label="History">
+          </crem-tab-item>
+          <crem-tab-item title="History" id="HistoryTab">
             <div *ngIf="dataSource?.helpTextHistory">
-              <dx-data-grid [dataSource]="dataSource?.helpTextHistory"
+              <dx-data-grid
+                [dataSource]="dataSource?.helpTextHistory"
                 keyExpr="id"
                 [showColumnLines]="false"
                 [showRowLines]="false"
@@ -74,16 +88,19 @@
 
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-                <dxi-column dataField="afterChange"
+                <dxi-column
+                  dataField="afterChange"
                   caption="Value"
                 ></dxi-column>
 
-                <dxi-column dataField="lastModifiedBy"
+                <dxi-column
+                  dataField="lastModifiedBy"
                   caption="User"
                   [width]="140"
                 ></dxi-column>
 
-                <dxi-column dataField="lastModified"
+                <dxi-column
+                  dataField="lastModified"
                   dataType="date"
                   caption="Date"
                   [width]="100"
@@ -92,12 +109,17 @@
               </dx-data-grid>
             </div>
 
-            <div id="noHistoryText"
-              *ngIf="dataSource?.helpTextHistory === null || dataSource?.helpTextHistory === undefined"
-            ><p>No change history to show.</p></div>
-
-          </mat-tab>
-        </mat-tab-group>
+            <div
+              id="noHistoryText"
+              *ngIf="
+                dataSource?.helpTextHistory === null ||
+                dataSource?.helpTextHistory === undefined
+              "
+            >
+              <p>No change history to show.</p>
+            </div>
+          </crem-tab-item>
+        </crem-tabs>
       </div>
     </dx-popover>
   </div>

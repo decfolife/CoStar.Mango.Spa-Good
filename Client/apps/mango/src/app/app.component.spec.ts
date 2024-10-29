@@ -13,17 +13,26 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [AppComponent, LoadingScreenComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule, ToastrModule.forRoot()],
-      providers: [ToastrService, NotificationService, ProjectsDashboardLeftNavService, MangoAppFacade, provideMockStore()]
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,
+        ToastrModule.forRoot(),
+      ],
+      providers: [
+        ToastrService,
+        NotificationService,
+        ProjectsDashboardLeftNavService,
+        MangoAppFacade,
+        provideMockStore(),
+      ],
     }).compileComponents();
   });
 
   test.skip('AppComponent test is failing, needs revision', () => {
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    it('should create the app', () => {
+      const fixture = TestBed.createComponent(AppComponent);
+      const app = fixture.componentInstance;
+      expect(app).toBeTruthy();
+    });
   });
-  });
-
 });

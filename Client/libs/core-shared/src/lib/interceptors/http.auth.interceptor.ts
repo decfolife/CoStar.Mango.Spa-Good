@@ -1,15 +1,16 @@
-import { JwtService, UtilitiesService } from '@mango/core-shared/lib-core-shared';
-import { Injectable } from '@angular/core';
 import {
+  HttpErrorResponse,
   HttpEvent,
-  HttpInterceptor,
   HttpHandler,
-  HttpRequest,
-  HttpErrorResponse
+  HttpHeaders,
+  HttpInterceptor,
+  HttpRequest
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { JwtService, UtilitiesService } from '@mango/core-shared/lib-core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
@@ -21,7 +22,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     if (UtilitiesService.isLocalEnvironment()) {
       let token = this.jwtService.getToken()
-      const headers = this.generateRequestHeaders(token)
+      const headers = this.generateRequestHeaders(token, req.headers)
       const request = req.clone({ setHeaders: headers })
       return next.handle(request).pipe(
         catchError(this.handleError)
@@ -31,7 +32,7 @@ export class HttpAuthInterceptor implements HttpInterceptor {
     return this.facade.authenticatedUser$.pipe(
       take(1),
       switchMap(user => {
-        const headers = this.generateRequestHeaders(null)
+        const headers = this.generateRequestHeaders(null, req.headers)
         const request = req.clone({ setHeaders: headers, withCredentials: true })
         return next.handle(request)
       }),
@@ -39,19 +40,24 @@ export class HttpAuthInterceptor implements HttpInterceptor {
     )
   }
 
-  generateRequestHeaders(accessToken: string): any {
+  generateRequestHeaders(accessToken: string, reqHeaders: HttpHeaders): any {
     const headers = {
       'source-app': 'crem-mango',
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
     }
+
+    if (!reqHeaders.has('enctype')) {
+      headers['Content-Type'] = 'application/json'
+      headers['Accept'] = 'application/json'
+    }
+
     accessToken ? headers['Authorization'] = `Bearer ${accessToken}` : null
+    
     return headers
   }
 
   // Needs to be an arrow function otherwise injector does not work.
   handleError = (errorResponse: HttpErrorResponse) => {
-    if (UtilitiesService.isLocalEnvironment()) { 
+    if (UtilitiesService.isLocalEnvironment()) {
       if (errorResponse.status === 401 || errorResponse.status === 0) {
         this.facade.logout(true)
       }

@@ -9,21 +9,26 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class ExchangeRateSetsService extends EndpointService {
-  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports)
-  
+  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports);
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getPeriodList(masterGroupId: number): Observable<any> {
     const url = `${this.reportsUrl}Reports/GetPeriodList/${masterGroupId}`;
-    return this.callHttpGet(url, 'getPeriodList')
+    return this.callHttpGet(url, 'getPeriodList');
   }
 
-  getExchangeRateSetData(masterGroupId: number, selectedPeriods: number[]): Observable<any> {
-    const request: ExchangeRateSetDataRequest = { portfolioId: masterGroupId, periods: selectedPeriods.toString() }
+  getExchangeRateSetData(
+    masterGroupId: number,
+    selectedPeriods: number[]
+  ): Observable<any> {
+    const request: ExchangeRateSetDataRequest = {
+      portfolioId: masterGroupId,
+      periods: selectedPeriods.toString(),
+    };
     const url = `${this.reportsUrl}Reports/GetExchangeRateSetData`;
     return this.callHttpPost(url, 'getExchangeRateSetData', request);
   }
 }
-

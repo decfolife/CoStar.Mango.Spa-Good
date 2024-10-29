@@ -8,7 +8,7 @@ import { FinancialReportingSettingsService } from '../../services/financial-repo
 @Component({
   selector: 'mango-enable-financial-reporting-card',
   templateUrl: './enable-financial-reporting-card.component.html',
-  styleUrls: ['./enable-financial-reporting-card.component.scss']
+  styleUrls: ['./enable-financial-reporting-card.component.scss'],
 })
 export class EnableFinancialReportingCardComponent {
   @Input()
@@ -31,41 +31,45 @@ export class EnableFinancialReportingCardComponent {
   showConfirm = false;
   buttonDisabled = false;
   gridColumns = [
-      {	dataField : "name",
-				alignment : "left",
-				dataType : "string",
-				caption : "Name",
-			},
-			{	dataField : "usedInExtract",
-        alignment : "center",
-        dataType : "string",
-				caption : "Used In Extract",
-			},
-			{	dataField : "extractName",
-        alignment : "left",
-        caption : "Extract Name",
-				dataType : "string",
-			},
-			{	dataField : "destinationTableName",
-        alignment : "left",
-        caption : "Destination Table Name",
-				dataType : "string"
-			},
-			{	dataField : "impactToSchemaOutput",
-        alignment : "center",
-        caption : "Impact To Schema Output",
-				dataType : "string",
-			},
-		];
+    {
+      dataField: 'name',
+      alignment: 'left',
+      dataType: 'string',
+      caption: 'Name',
+    },
+    {
+      dataField: 'usedInExtract',
+      alignment: 'center',
+      dataType: 'string',
+      caption: 'Used In Extract',
+    },
+    {
+      dataField: 'extractName',
+      alignment: 'left',
+      caption: 'Extract Name',
+      dataType: 'string',
+    },
+    {
+      dataField: 'destinationTableName',
+      alignment: 'left',
+      caption: 'Destination Table Name',
+      dataType: 'string',
+    },
+    {
+      dataField: 'impactToSchemaOutput',
+      alignment: 'center',
+      caption: 'Impact To Schema Output',
+      dataType: 'string',
+    },
+  ];
 
+  constructor(private service: FinancialReportingSettingsService) {}
 
-
-  constructor(private service: FinancialReportingSettingsService) { }
-
-  onConfirmClick = () => { // Must be => function for proper `this` context
+  onConfirmClick = () => {
+    // Must be => function for proper `this` context
     this.buttonDisabled = true;
 
-    this.service.enableFinancialReporting().subscribe(res => {
+    this.service.enableFinancialReporting().subscribe((res) => {
       if (!res.succeeded) {
         this.showNotify(res.message, true);
 
@@ -75,7 +79,7 @@ export class EnableFinancialReportingCardComponent {
       this.enabledChanged.emit(true);
       this.showNotify(res.message);
     });
-  }
+  };
 
   private showNotify(message: string, isError = false) {
     notify({

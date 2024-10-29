@@ -1,18 +1,22 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule, DatePipe } from '@angular/common';
 import {
   ButtonModule,
   ModalModule,
   DropdownModule,
-} from "@mango/ui-shared/lib-ui-elements";
-import { SearchModule } from "@mango/ui-shared/cosmos";
-import { DxDataGridModule, DxListModule } from "devextreme-angular";
+} from '@mango/ui-shared/lib-ui-elements';
+import { SearchModule } from '@mango/ui-shared/cosmos';
+import {
+  DxDataGridComponent,
+  DxDataGridModule,
+  DxListModule,
+} from 'devextreme-angular';
 import {
   DxFormModule,
   DxFormComponent,
   DxDropDownBoxModule,
-} from "devextreme-angular";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { SharedModule } from "../../shared/shared.module";
+} from 'devextreme-angular';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { SharedModule } from '../../shared/shared.module';
 import {
   Component,
   EventEmitter,
@@ -20,31 +24,35 @@ import {
   OnInit,
   Output,
   ViewChild,
-  OnDestroy, ChangeDetectorRef,ViewEncapsulation
-} from "@angular/core";
-import { faCirclePlus, faCircleMinus } from "@fortawesome/free-solid-svg-icons";
+  ChangeDetectorRef,
+  ViewEncapsulation,
+} from '@angular/core';
+import { faCirclePlus, faCircleMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { combineLatest, of, Subscription, BehaviorSubject } from 'rxjs';
+import { RemindersService } from '@reminders-list/shared/services/reminders.service';
 import {
-  combineLatest,
-  of,
-  Subscription,
-  BehaviorSubject,
-} from "rxjs";
-import { RemindersService } from "@reminders-list/shared/services/reminders.service";
-import { catchError, filter, map, switchMap, tap, debounceTime } from "rxjs/operators";
-import { ActivatedRoute } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
+  catchError,
+  filter,
+  map,
+  switchMap,
+  tap,
+  debounceTime,
+} from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
-import { Reminder } from "libs/data-models/lib-data-models/src/lib/models/Reminder";
-import { RemindersRecepient } from "libs/data-models/lib-data-models/src/lib/models/RemindersRecepient";
-import { RemindersFilteredRecepient } from "libs/data-models/lib-data-models/src/lib/models/RemindersFilteredRecepient";
-import { DxDataGridComponent } from 'devextreme-angular';
+import { Reminder } from 'libs/data-models/lib-data-models/src/lib/models/reminder.interface';
+import {
+  RemindersFilteredRecepient,
+  RemindersRecepient,
+} from '@mango/data-models/lib-data-models';
 
 @Component({
-  selector: "add-reminder",
+  selector: 'add-reminder',
   standalone: true,
-  templateUrl: "./add-reminder.component.html",
-  styleUrls: ["./add-reminder.component.scss"],
+  templateUrl: './add-reminder.component.html',
+  styleUrls: ['./add-reminder.component.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
@@ -57,7 +65,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
     DxFormModule,
     DxDropDownBoxModule,
     DxListModule,
-    FontAwesomeModule
+    FontAwesomeModule,
   ],
   providers: [DatePipe, RemindersService],
 })
@@ -71,7 +79,7 @@ export class AddReminderComponent implements OnInit {
   isDropDownBoxOpened = false;
   recipientsList: any;
   selectedRecipients: any;
-  noDataText: string = "No recipients added yet. Please add recipients.";
+  noDataText: string = 'No recipients added yet. Please add recipients.';
   maxDate: number = 0;
   selectedMembers: any = [];
   remindersRecepient: RemindersRecepient[];
@@ -97,36 +105,39 @@ export class AddReminderComponent implements OnInit {
   ticklerID: number;
   saveBtnClicked: boolean = false;
 
-
   membersSearchInput$: BehaviorSubject<string> = new BehaviorSubject<string>(
-    ""
+    ''
   );
 
   @Output() isLoading = new EventEmitter();
-  @ViewChild("addReminderForm") addReminderForm: DxFormComponent;
-  @ViewChild("SelectedRecipientsGrid") selectedRecipientsGrid: DxDataGridComponent;
+  @ViewChild('addReminderForm') addReminderForm: DxFormComponent;
+  @ViewChild('SelectedRecipientsGrid')
+  selectedRecipientsGrid: DxDataGridComponent;
 
   constructor(
     private remindersService: RemindersService,
     private route: ActivatedRoute,
     public toastr: ToastrService,
     public dialogRef: MatDialogRef<AddReminderComponent>,
-    private dialogService: MangoDialogService, private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogService: MangoDialogService,
+    private cdr: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.onPlGroupValueChanged = this.onPlGroupValueChanged.bind(this);
-    this.otid = Number(this.route.snapshot.queryParamMap.get("otid"));
-    this.oid = Number(this.route.snapshot.queryParamMap.get("oid"));
+    this.otid = Number(this.route.snapshot.queryParamMap.get('otid'));
+    this.oid = Number(this.route.snapshot.queryParamMap.get('oid'));
   }
   ngOnInit(): void {
     this.getDropdownData();
     this.remindersInfo = <Reminder>{};
     this.remindersInfo.remindersRecepient = [];
-    if (this.data.teamFunction == "add") {
-      this.modalTitle = "Add Reminder"
+    if (this.data.teamFunction == 'add') {
+      this.modalTitle = 'Add Reminder';
     } else {
-      const { data: { data: gridData } } = this.data
-      this.modalTitle = "Edit Reminder";
+      const {
+        data: { data: gridData },
+      } = this.data;
+      this.modalTitle = 'Edit Reminder';
       this.emailMessage = gridData.TicklerMessage;
       this.defaultSelectedValue = gridData.TicklerTypeID;
       this.tickleFrequency = gridData.TicklerFrequency;
@@ -138,37 +149,52 @@ export class AddReminderComponent implements OnInit {
         contactId: gridData.ContactID,
         contactNameEmail: gridData.DisplayName,
         companyName: gridData.CompanyName,
-        contactEmailAddress: gridData.contactEmailAddress
+        contactEmailAddress: gridData.contactEmailAddress,
       };
       this.remindersInfo.remindersRecepient.push(newRecipient);
-
     }
-    this.membersSearchInput$.pipe(
-      debounceTime(250),
-      switchMap(inputValue => {
-        if (inputValue.length !== 1) {
-          return this.remindersService.getRecipientsContactsList(this.oid, this.otid).pipe(
-            map(filteredremindersRecepient => {
-              return filteredremindersRecepient.data.filter(ci => {
-                return !inputValue || 
-                  ci.CompanyName.toLowerCase().includes(inputValue.toLowerCase()) ||
-                  ci.TeamMember.toLowerCase().includes(inputValue.toLowerCase()) ||
-                  ci.contactEmailAddress.toLowerCase().includes(inputValue.toLowerCase());
-              }).map(recipient => ({
-                contactId: recipient.ContactID,
-                contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
-                companyName: recipient.CompanyName,
-                contactEmailAddress: recipient.contactEmailAddress
-              }));
-            })
-          );
-        } else {
-          return of([]);
-        }
-      })
-    ).subscribe(filteredData => {
-      this.filteredremindersRecepient = filteredData;
-    });
+    this.membersSearchInput$
+      .pipe(
+        debounceTime(250),
+        switchMap((inputValue) => {
+          if (inputValue.length !== 1) {
+            return this.remindersService
+              .getRecipientsContactsList(this.oid, this.otid)
+              .pipe(
+                map((filteredremindersRecepient) => {
+                  return filteredremindersRecepient.data
+                    .filter((ci) => {
+                      return (
+                        !inputValue ||
+                        ci.CompanyName.toLowerCase().includes(
+                          inputValue.toLowerCase()
+                        ) ||
+                        ci.TeamMember.toLowerCase().includes(
+                          inputValue.toLowerCase()
+                        ) ||
+                        ci.contactEmailAddress
+                          .toLowerCase()
+                          .includes(inputValue.toLowerCase())
+                      );
+                    })
+                    .map((recipient) => ({
+                      contactId: recipient.ContactID,
+                      contactNameEmail: recipient.ContactNameEmail
+                        ? recipient.ContactNameEmail
+                        : recipient.TeamMember || null,
+                      companyName: recipient.CompanyName,
+                      contactEmailAddress: recipient.contactEmailAddress,
+                    }));
+                })
+              );
+          } else {
+            return of([]);
+          }
+        })
+      )
+      .subscribe((filteredData) => {
+        this.filteredremindersRecepient = filteredData;
+      });
   }
 
   public getDropdownData() {
@@ -187,59 +213,96 @@ export class AddReminderComponent implements OnInit {
             this.filteredremindersRecepient = recipientsContactsList.data.map(
               (recipient) => ({
                 contactId: recipient.ContactID,
-                contactNameEmail: recipient.ContactNameEmail ? recipient.ContactNameEmail : recipient.TeamMember || null,
+                contactNameEmail: recipient.ContactNameEmail
+                  ? recipient.ContactNameEmail
+                  : recipient.TeamMember || null,
                 companyName: recipient.CompanyName,
-                contactEmailAddress: recipient.contactEmailAddress
+                contactEmailAddress: recipient.contactEmailAddress,
               })
-            )
+            );
             this.loading = false;
           })
         )
         .subscribe()
     );
-
   }
 
   saveReminder(e) {
-    if(this.addReminderForm.instance.validate().isValid){
-    const reminderData = this.getSaveReminderData();
-    this.loading = true;  
-    this.saveBtnClicked = true;
-    if(this.remindersInfo.remindersRecepient.length == 0 ){
-      this.dialogService.alert('Recipient Name', 'Recipient field is a required field.', 'OK').subscribe();
-      this.saveBtnClicked = false;
-      return;
-    }
-    for (const recipient of this.remindersInfo.remindersRecepient) {
-      reminderData.ContactID = recipient.contactId;
-      if(reminderData.TickleTypeId !=1){
-        reminderData.UserDefinedDate =null; 
-        reminderData.UserDefinedEvent =null;
+    if (this.addReminderForm.instance.validate().isValid) {
+      const reminderData = this.getSaveReminderData();
+      this.loading = true;
+      this.saveBtnClicked = true;
+      if (this.remindersInfo.remindersRecepient.length == 0) {
+        this.dialogService
+          .alert('Recipient Name', 'Recipient field is a required field.', 'OK')
+          .subscribe();
+        this.saveBtnClicked = false;
+        return;
       }
-      this.remindersService.saveReminder(reminderData).pipe(
-        switchMap(res => {
-          if (res.success) {
-            this.dialogRef.close('true');
-          }
-          return res.success ? of(this.toastr.info("Reminder Saved Successfully", "",
-            { positionClass: 'toast-bottom-right', timeOut: 3000, closeButton: false, progressBar: false })) : this.dialogService.alert('Save unsuccessful!', 'There was an issue with saving this reminder. Please review and try again later', 'OK');
-        }),
-        catchError(_ => this.dialogService.alert('Save Not Successful!', 'There was an issue with saving this team. Please review and try again later', 'OK'))
-      ).subscribe();
+      for (const recipient of this.remindersInfo.remindersRecepient) {
+        reminderData.ContactID = recipient.contactId;
+        if (reminderData.TickleTypeId != 1) {
+          reminderData.UserDefinedDate = null;
+          reminderData.UserDefinedEvent = null;
+        }
+        this.remindersService
+          .saveReminder(reminderData)
+          .pipe(
+            switchMap((res) => {
+              if (res.success) {
+                this.dialogRef.close('true');
+              }
+              return res.success
+                ? of(
+                    this.toastr.info('Reminder Saved Successfully', '', {
+                      positionClass: 'toast-bottom-right',
+                      timeOut: 3000,
+                      closeButton: false,
+                      progressBar: false,
+                    })
+                  )
+                : this.dialogService.alert(
+                    'Save unsuccessful!',
+                    'There was an issue with saving this reminder. Please review and try again later',
+                    'OK'
+                  );
+            }),
+            catchError((_) =>
+              this.dialogService.alert(
+                'Save Not Successful!',
+                'There was an issue with saving this team. Please review and try again later',
+                'OK'
+              )
+            )
+          )
+          .subscribe();
+      }
     }
-  }
   }
 
   onCellClick(event) {
     if (event.rowType == 'header') {
-      let headerCheckboxContainer = event.component.$element().find('.dx-header-row .dx-checkbox-container');
-      let headerCheckboxAttr = event.component.$element().find('.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size').attr('aria-checked');
+      let headerCheckboxContainer = event.component
+        .$element()
+        .find('.dx-header-row .dx-checkbox-container');
+      let headerCheckboxAttr = event.component
+        .$element()
+        .find(
+          '.dx-widget.dx-checkbox.dx-select-checkbox.dx-datagrid-checkbox-size'
+        )
+        .attr('aria-checked');
       if (headerCheckboxAttr === 'true') {
         headerCheckboxContainer.attr('aria-live', 'polite');
-        headerCheckboxContainer.attr('aria-label', 'All checkboxes are checked ');
+        headerCheckboxContainer.attr(
+          'aria-label',
+          'All checkboxes are checked '
+        );
       } else {
         headerCheckboxContainer.attr('aria-live', 'polite');
-        headerCheckboxContainer.attr('aria-label', 'All checkboxes are un-checked');
+        headerCheckboxContainer.attr(
+          'aria-label',
+          'All checkboxes are un-checked'
+        );
       }
     }
   }
@@ -258,20 +321,23 @@ export class AddReminderComponent implements OnInit {
 
   onItemClicked(e) {
     const listItem = e.itemElement as HTMLElement;
-    if (e.event.code === 'Enter' && listItem.classList.contains('aet-itemDisabled')) {
-        return false;
+    if (
+      e.event.code === 'Enter' &&
+      listItem.classList.contains('aet-itemDisabled')
+    ) {
+      return false;
     } else {
-        const remindersRecepient = {
-            contactId: e.itemData.contactId,
-            contactNameEmail: e.itemData.contactNameEmail,
-            companyName: e.itemData.companyName,
-            contactEmailAddress: e.itemData.contactEmailAddress
-        };
-        this.remindersInfo.remindersRecepient.push(remindersRecepient);
-        this.changesMade = true;
-        this.setListItemAttributes(e);
+      const remindersRecepient = {
+        contactId: e.itemData.contactId,
+        contactNameEmail: e.itemData.contactNameEmail,
+        companyName: e.itemData.companyName,
+        contactEmailAddress: e.itemData.contactEmailAddress,
+      };
+      this.remindersInfo.remindersRecepient.push(remindersRecepient);
+      this.changesMade = true;
+      this.setListItemAttributes(e);
     }
-}
+  }
 
   onItemRendered(e) {
     if (
@@ -288,8 +354,8 @@ export class AddReminderComponent implements OnInit {
 
   setListItemAttributes(e) {
     const listItem = e.itemElement as HTMLElement;
-    listItem.style.pointerEvents = "none";
-    listItem.classList.add("aet-itemDisabled");
+    listItem.style.pointerEvents = 'none';
+    listItem.classList.add('aet-itemDisabled');
   }
 
   private getSaveReminderData() {
@@ -304,7 +370,7 @@ export class AddReminderComponent implements OnInit {
       ObjectID: this.oid,
       ObjectTypeID: this.otid,
       TickleTypeId: formData.reminderEvent,
-      TicklerID : this.ticklerID 
+      TicklerID: this.ticklerID,
     };
     return saveReminderData;
   }
@@ -314,13 +380,13 @@ export class AddReminderComponent implements OnInit {
   }
 
   removeMembers() {
-    let confirmText = "Do you want to Remove the members ?\n\n";
+    let confirmText = 'Do you want to Remove the members ?\n\n';
     this.selectedMembers.forEach((member) => {
-      confirmText += member.contactNameEmail + "\n";
+      confirmText += member.contactNameEmail + '\n';
     });
 
     this.dialogService
-      .confirm("Remove Members", confirmText, "Confirm", "Cancel")
+      .confirm('Remove Members', confirmText, 'Confirm', 'Cancel')
       .pipe(
         filter((confirmed) => !!confirmed),
         switchMap((_) => {
@@ -342,7 +408,11 @@ export class AddReminderComponent implements OnInit {
   }
 
   editorPreparing(e) {
-    if (e.parentType === 'dataRow' && ((e.dataField == 'role') || (e.dataField == 'level')) && e.changesMade) {
+    if (
+      e.parentType === 'dataRow' &&
+      (e.dataField == 'role' || e.dataField == 'level') &&
+      e.changesMade
+    ) {
       this.changesMade = true;
     }
   }
@@ -357,9 +427,9 @@ export class AddReminderComponent implements OnInit {
   }
 
   setAttributes(e) {
-      if(this.initLoad) {
-        this.selectedRecipientsGrid.instance.refresh();
-        this.initLoad = false;
+    if (this.initLoad) {
+      this.selectedRecipientsGrid.instance.refresh();
+      this.initLoad = false;
     }
   }
 
@@ -367,22 +437,22 @@ export class AddReminderComponent implements OnInit {
     if (this.changesMade) {
       this.dialogService
         .confirm(
-          "Changes Made!",
-          "Changes you made have not been saved. Would you like to continue editing or leave ?",
-          "Continue",
-          "Leave"
+          'Changes Made!',
+          'Changes you made have not been saved. Would you like to continue editing or leave ?',
+          'Continue',
+          'Leave'
         )
         .pipe(
           switchMap((res) => {
             if (!res) {
-              this.dialogRef.close("");
+              this.dialogRef.close('');
             }
             return of();
           })
         )
         .subscribe();
     } else {
-      this.dialogRef.close("");
+      this.dialogRef.close('');
     }
   }
 
@@ -396,23 +466,40 @@ export class AddReminderComponent implements OnInit {
   }
 
   onPlGroupValueChanged(e: any) {
-    this.defaultSelectedValue = e.component?.option("value");
-    this.selectedReminderEventId = e.component?.option("text");
+    this.defaultSelectedValue = e.component?.option('value');
+    this.selectedReminderEventId = e.component?.option('text');
   }
 
   shouldShowUserDefinedEvent(): boolean {
-    if(this.selectedReminderEventId === "User Defined"){
+    if (this.selectedReminderEventId === 'User Defined') {
       return true;
     }
-    if( this.userDefinedEvent !=" " && this.defaultSelectedValue === 1){
+    if (this.userDefinedEvent != ' ' && this.defaultSelectedValue === 1) {
       return true;
+    }
+  }
+
+  adaAttrNoDataGrid(e: any) {
+    // Select the header row elements
+    const dxGridwithTables = e.component
+      .$element()
+      .find(
+        '.dx-datagrid-scrollable-simulated.dx-datagrid-content.dx-datagrid-scroll-container'
+      );
+
+    // Function to set role attribute
+    if (dxGridwithTables && dxGridwithTables.length > 0) {
+      dxGridwithTables.each((index: number, element: any) => {
+        if (element) {
+          element.setAttribute('role', 'grid');
+        }
+      });
     }
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-      this.membersSearchInput$.unsubscribe();
-      this.subscriptions.unsubscribe();
-    
+    this.membersSearchInput$.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 }

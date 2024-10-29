@@ -9,4 +9,3 @@ export class SharedService extends EndpointService {
     super(http, facade);
   }
 }
-

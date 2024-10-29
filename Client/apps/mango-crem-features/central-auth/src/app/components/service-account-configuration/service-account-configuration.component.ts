@@ -13,25 +13,37 @@ import { ServiceAccountService } from '../../services/service-account.service';
 
 @Component({
   standalone: true,
-  imports: [NavbarModule, CommonModule, ServiceAccountApiKeysComponent, ServiceAccountApiKeyDurationComponent, ServiceAccountSitesComponent, ServiceAccountEndpointsComponent, ServiceAccountHistoryComponent],
+  imports: [
+    NavbarModule,
+    CommonModule,
+    ServiceAccountApiKeysComponent,
+    ServiceAccountApiKeyDurationComponent,
+    ServiceAccountSitesComponent,
+    ServiceAccountEndpointsComponent,
+    ServiceAccountHistoryComponent,
+  ],
   selector: 'mango-service-account-configuration',
   templateUrl: './service-account-configuration.component.html',
   styleUrls: ['./service-account-configuration.component.scss'],
 })
 export class ServiceAccountConfigurationComponent {
   public serviceAccountInfo$: Observable<ServiceAccountInfo>;
-  public serviceAccountChangeHistories$: Observable<ServiceAccountChangeHistory[]>;
+  public serviceAccountChangeHistories$: Observable<
+    ServiceAccountChangeHistory[]
+  >;
 
-  constructor(private serviceAccountService: ServiceAccountService) {     
-      this.getServiceAccountData();
-    }
+  constructor(private serviceAccountService: ServiceAccountService) {
+    this.getServiceAccountData();
+  }
 
   serviceAccountUpdated() {
     this.getServiceAccountData();
   }
 
   private getServiceAccountData() {
-    this.serviceAccountInfo$ = this.serviceAccountService.getServiceAccountInfo();
-    this.serviceAccountChangeHistories$ = this.serviceAccountService.getServiceAccountChangeHistory();
+    this.serviceAccountInfo$ =
+      this.serviceAccountService.getServiceAccountInfo();
+    this.serviceAccountChangeHistories$ =
+      this.serviceAccountService.getServiceAccountChangeHistory();
   }
 }

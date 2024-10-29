@@ -10,7 +10,7 @@
 /* eslint-disable import/prefer-default-export */
 
 export class Currency {
-    exchangeRateID: number;
-    targetCurrency: string;
-    targetCurrencyDesc: string;
+  exchangeRateID: number;
+  targetCurrency: string;
+  targetCurrencyDesc: string;
 }

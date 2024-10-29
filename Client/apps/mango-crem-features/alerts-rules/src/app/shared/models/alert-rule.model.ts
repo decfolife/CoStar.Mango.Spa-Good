@@ -15,9 +15,19 @@ export class AlertRule {
 
   lastRunTime: Date | null;
 
-  constructor(id: number, legacyID: number, OTID: number, name: string,
-    desc: string, code: string, typeID: number, severityID: number,
-    dismissable: boolean, active: boolean, sql: string, lastRun: Date
+  constructor(
+    id: number,
+    legacyID: number,
+    OTID: number,
+    name: string,
+    desc: string,
+    code: string,
+    typeID: number,
+    severityID: number,
+    dismissable: boolean,
+    active: boolean,
+    sql: string,
+    lastRun: Date
   ) {
     this.alertRuleID = id;
     this.legacyExceptionID = legacyID;

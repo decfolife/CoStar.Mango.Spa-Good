@@ -1,27 +1,39 @@
 <div id="default-start-page">
-    <crem-header></crem-header>
-    <div class="default-start-page-wrapper mt-5">
-        <mat-card>
-            <mat-card-content>
-                    <mat-card-title>Welcome! We see you haven't set a start page yet.</mat-card-title>
-                    <p class="instructions">Please choose a start page</p>
-                    <div class="client-select-wrapper">
-                        <div class="button-control">
-                            <div class="individual-buttons" *ngFor="let module of modulesList">
-                                <crem-button type="secondary"><span id="textContent" (click)="startPageSelected(module); $event.preventDefault();">{{module.pageName}}</span></crem-button>
-                            </div>
-                        </div>
-                        <div class="OR-select-wrapper">
-                            <hr>
-                            <div class="label-Style">OR</div>
-                            <hr>
-                        </div>
-                        <crem-dropdown *ngIf="startPagesList != null" displayExpr='pageName' valueExpr='pagePath'
-                            [dataSource]='startPagesList'
-                            (selectedItems)="startPageSelected($event[0])">
-                        </crem-dropdown>
-                    </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
+  <crem-header></crem-header>
+  <div class="default-start-page-wrapper mt-5">
+    <mat-card>
+      <mat-card-content>
+        <mat-card-title
+          >Welcome! We see you haven't set a start page yet.</mat-card-title
+        >
+        <p class="instructions">Please choose a start page</p>
+        <div class="client-select-wrapper">
+          <div class="button-control">
+            <div class="individual-buttons" *ngFor="let module of modulesList">
+              <crem-button type="secondary"
+                ><span
+                  id="textContent"
+                  (click)="startPageSelected(module); $event.preventDefault()"
+                  >{{ module.pageName }}</span
+                ></crem-button
+              >
+            </div>
+          </div>
+          <div class="OR-select-wrapper">
+            <hr />
+            <div class="label-Style">OR</div>
+            <hr />
+          </div>
+          <crem-dropdown
+            *ngIf="startPagesList != null"
+            displayExpr="pageName"
+            valueExpr="pagePath"
+            [dataSource]="startPagesList"
+            (selectedItems)="startPageSelected($event[0])"
+          >
+          </crem-dropdown>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

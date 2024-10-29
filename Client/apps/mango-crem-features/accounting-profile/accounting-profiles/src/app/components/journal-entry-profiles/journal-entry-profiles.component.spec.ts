@@ -8,9 +8,8 @@ describe('JournalEntryProfilesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ JournalEntryProfilesComponent ]
-    })
-    .compileComponents();
+      declarations: [JournalEntryProfilesComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

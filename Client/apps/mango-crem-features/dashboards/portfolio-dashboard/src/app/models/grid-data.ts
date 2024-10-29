@@ -1,4 +1,4 @@
-import { ButtonColumn } from "@project-dashboard/models";
+import { ButtonColumn } from '@project-dashboard/models';
 
 export interface GridData {
   dataSource: any[];

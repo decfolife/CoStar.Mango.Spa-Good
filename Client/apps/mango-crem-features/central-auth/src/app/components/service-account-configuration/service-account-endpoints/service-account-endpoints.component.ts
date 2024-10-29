@@ -1,4 +1,10 @@
-import { Component, Input, EventEmitter, OnDestroy, Output } from '@angular/core';
+import {
+  Component,
+  Input,
+  EventEmitter,
+  OnDestroy,
+  Output,
+} from '@angular/core';
 import { ServiceAccountEndpoint } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -23,42 +29,47 @@ export class ServiceAccountEndpointsComponent implements OnDestroy {
   constructor(private serviceAccountService: ServiceAccountService) {}
 
   ngOnInit() {
-    this.endpoints.forEach(element => {
-      if(element.endpoint != 'Transactions' && element.endpoint != 'Portfolio'){
+    this.endpoints.forEach((element) => {
+      if (
+        element.endpoint != 'Transactions' &&
+        element.endpoint != 'Portfolio'
+      ) {
         element.isCommingSoon = true;
       }
     });
   }
 
-  updateEndPointAccess(e:any, index: number){
+  updateEndPointAccess(e: any, index: number) {
     const request: UpdateServiceAccountEndPointAccessRequest = {
-      endPoint : this.endpoints[index].endpoint,
-      endPointAccess : e.checked
+      endPoint: this.endpoints[index].endpoint,
+      endPointAccess: e.checked,
     };
     this.updateServiceAccountEndPointAccess(request);
   }
 
   updateEndPointAccessADA(e: any, index: number) {
     const request: UpdateServiceAccountEndPointAccessRequest = {
-      endPoint : this.endpoints[index].endpoint,
-      endPointAccess : !e.srcElement.checked
+      endPoint: this.endpoints[index].endpoint,
+      endPointAccess: !e.srcElement.checked,
     };
     this.updateServiceAccountEndPointAccess(request);
   }
 
-  private updateServiceAccountEndPointAccess(request: UpdateServiceAccountEndPointAccessRequest) {
+  private updateServiceAccountEndPointAccess(
+    request: UpdateServiceAccountEndPointAccessRequest
+  ) {
     this.subs.push(
-      this.serviceAccountService.updateServiceAccountEndPointAccess(request)
-      .subscribe(result => {
-        if(result) {
-          this.endPointAccessUpdated.emit(result);
-        }
-      })
+      this.serviceAccountService
+        .updateServiceAccountEndPointAccess(request)
+        .subscribe((result) => {
+          if (result) {
+            this.endPointAccessUpdated.emit(result);
+          }
+        })
     );
   }
 
   ngOnDestroy(): void {
-      this.subs.forEach(s=>s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }
-

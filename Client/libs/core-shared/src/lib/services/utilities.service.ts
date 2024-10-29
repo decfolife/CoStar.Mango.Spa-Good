@@ -11,10 +11,10 @@ export class UtilitiesService {
 
   public static getClientKeyFromUrl(localClientKey: string = 'blank') {
     if (this.isLocalEnvironment()) {
-      return localClientKey
+      return localClientKey;
     }
 
-    return window.location.origin.split('.')[0].split('//')[1]
+    return window.location.origin.split('.')[0].split('//')[1];
   }
 
   // Parse string to json format
@@ -41,7 +41,10 @@ export class UtilitiesService {
   }
 
   public static isLocalEnvironment() {
-    if (environment.name === 'LOCAL' || window.location.origin.includes('localhost')) {
+    if (
+      environment.name === 'LOCAL' ||
+      window.location.origin.includes('localhost')
+    ) {
       return true;
     }
 
@@ -51,21 +54,24 @@ export class UtilitiesService {
   // Get the base url for all the APIs
   // When running locally, this is the environment.baseApiUrl
   // Otherwise, all API calls route through the MangoSPA backend server (BFF)
-  public static getBaseApiUrl(serviceName: string) {
+  public static getBaseApiUrl(serviceName: string, localApiUrl: string = null) {
     if (this.isLocalEnvironment()) {
-      return `${environment.baseApiUrl}${serviceName}/api/`
+      if (localApiUrl) {
+        return `${localApiUrl}/api/`;
+      }
+      return `${environment.baseApiUrl}${serviceName}/api/`;
     }
 
-    return `/api/${serviceName}/api/`
+    return `/api/${serviceName}/api/`;
   }
 
   // Get the base url for the CA backend server (aka Identity API)
   // This function should ONLY be used by CA SPA app.
   public static getCABackendBaseApiUrl() {
     if (this.isLocalEnvironment()) {
-      return `${environment.CAUrl}api/`
+      return `${environment.CAUrl}api/`;
     }
 
-    return `/api/`
+    return `/api/`;
   }
 }

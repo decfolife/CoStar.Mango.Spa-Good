@@ -3,56 +3,111 @@
     <div class="demo-box-title">Demo Registration Form</div>
     <div class="demo-box-content">
       <div class="form-wrapper">
-        <form crem-form [formGroup]="registerForm" layout='horizontal'>
-
+        <form crem-form [formGroup]="registerForm" layout="horizontal">
           <crem-form-item>
             <crem-form-label [required]="true">Full Name</crem-form-label>
             <crem-form-control>
-              <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-                [name]="''" [placeholder]="'Full Name'" [required]="false" formControlName='fullName'></crem-input>
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'text'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'Full Name'"
+                [required]="false"
+                formControlName="fullName"
+              ></crem-input>
             </crem-form-control>
           </crem-form-item>
 
           <crem-form-item>
             <crem-form-label [required]="true">Email</crem-form-label>
             <crem-form-control>
-              <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-                [name]="''" [placeholder]="'Email'" [required]="false" formControlName='email'></crem-input>
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'text'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'Email'"
+                [required]="false"
+                formControlName="email"
+              ></crem-input>
             </crem-form-control>
           </crem-form-item>
 
           <crem-form-item>
             <crem-form-label>Password</crem-form-label>
             <crem-form-control>
-              <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'password'"
-                [value]="''" [name]="''" [placeholder]="'******'" [required]="false"
-                formControlName='password'></crem-input>
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'password'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'******'"
+                [required]="false"
+                formControlName="password"
+              ></crem-input>
             </crem-form-control>
           </crem-form-item>
 
           <crem-form-item>
             <crem-form-label>Confirm Password</crem-form-label>
-            <crem-form-control hint="The confirmation has to match the password entered">
-              <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'password'"
-                [value]="''" [name]="''" [placeholder]="'******'" [required]="false"
-                formControlName='confirmPassword'></crem-input>
+            <crem-form-control
+              hint="The confirmation has to match the password entered"
+            >
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'password'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'******'"
+                [required]="false"
+                formControlName="confirmPassword"
+              ></crem-input>
             </crem-form-control>
           </crem-form-item>
 
           <crem-form-item>
             <crem-form-label>Phone Number</crem-form-label>
             <crem-form-control>
-              <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-                [name]="''" [placeholder]="'+1 (404) 000 0000'" [required]="false" formControlName='phoneNumber'></crem-input>
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'text'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'+1 (404) 000 0000'"
+                [required]="false"
+                formControlName="phoneNumber"
+              ></crem-input>
             </crem-form-control>
           </crem-form-item>
 
           <crem-form-item>
             <crem-form-label>Date of birth</crem-form-label>
             <crem-form-control>
-              <crem-date-picker value="01/01/2024" [dateFormat]="'MM/dd/yyyy'" [invalidDateMessage]="'Invalid date'"
-                [useMaskBehavior]="false" [showClearButton]="true" [isRequired]="false" [inputId]="'date-picker'"
-                [min]="null" [max]="null" [disabled]="false" [showDefaultValidationTooltip]="true" formControlName="dateOfBirth"></crem-date-picker>
+              <crem-date-picker
+                value="01/01/2024"
+                [dateFormat]="'MM/dd/yyyy'"
+                [invalidDateMessage]="'Invalid date'"
+                [useMaskBehavior]="false"
+                [showClearButton]="true"
+                [isRequired]="false"
+                [inputId]="'date-picker'"
+                [min]="null"
+                [max]="null"
+                [disabled]="false"
+                [showDefaultValidationTooltip]="true"
+                formControlName="dateOfBirth"
+              ></crem-date-picker>
             </crem-form-control>
           </crem-form-item>
 
@@ -60,29 +115,68 @@
             <crem-form-label>Country</crem-form-label>
             <crem-form-control>
               <crem-dropdown
-              [id]="'dropdown'"
-              [initialSelectedValue]="null"
-              [placeholder]="'Select a country...'"
-              [label]="'Label'"
-              [isSearchable]="true"
-              [selectMode]="'single'"
-              [required]="false"
-              [readOnly]="false"
-              formControlName="country"
-              [dataSource]="[{displayKey: 'United States', valueKey: 'United States'}, {displayKey: 'Canada', valueKey: 'Canada'}, {displayKey: 'France', valueKey: 'France'}, {displayKey: 'China', valueKey: 'China'}, {displayKey: 'Mexico', valueKey: 'Mexico'}]"
-              [allowSearch]="true"
-            ></crem-dropdown>
+                [id]="'dropdown'"
+                [initialSelectedValue]="null"
+                [placeholder]="'Select a country...'"
+                [label]="'Label'"
+                [isSearchable]="true"
+                [selectMode]="'single'"
+                [required]="false"
+                [readOnly]="false"
+                formControlName="country"
+                [dataSource]="[
+                  { displayKey: 'United States', valueKey: 'United States' },
+                  { displayKey: 'Canada', valueKey: 'Canada' },
+                  { displayKey: 'France', valueKey: 'France' },
+                  { displayKey: 'China', valueKey: 'China' },
+                  { displayKey: 'Mexico', valueKey: 'Mexico' }
+                ]"
+                [allowSearch]="true"
+              ></crem-dropdown>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Checkbox</crem-form-label>
+            <crem-form-control>
+              <crem-check-box [value]="true"> Checkbox 1 </crem-check-box>
+              <crem-check-box [value]="true"> Checkbox 2 </crem-check-box>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Radio </crem-form-label>
+            <crem-form-control>
+              <crem-radio-group name="test-radio">
+                <crem-radio-field value="atlanta">Atlanta</crem-radio-field>
+                <crem-radio-field value="new york">New York</crem-radio-field>
+                <crem-radio-field value="austin">Austin</crem-radio-field>
+              </crem-radio-group>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Toggle Slider</crem-form-label>
+            <crem-form-control>
+              <div>
+                <crem-toggle-slider [value]="false"></crem-toggle-slider>
+              </div>
             </crem-form-control>
           </crem-form-item>
 
           <crem-form-item>
             <crem-form-control>
-              <crem-button type="submit" [id]="'button1'" [text]="'Register'" [btnStyle]="'flat'" [color]="'primary'"
-                [size]="'medium'" (buttonClick)="registerFormSubmit()"></crem-button>
+              <crem-button
+                type="submit"
+                [id]="'button1'"
+                [text]="'Register'"
+                [btnStyle]="'flat'"
+                [color]="'primary'"
+                [size]="'medium'"
+                (buttonClick)="registerFormSubmit()"
+              ></crem-button>
             </crem-form-control>
           </crem-form-item>
-
-
         </form>
       </div>
     </div>
@@ -93,26 +187,49 @@
   <div class="demo-box">
     <div class="demo-box-title">Vertical</div>
     <div class="demo-box-content">
-      <form crem-form [formGroup]="layoutFormVertical" layout='vertical' >
+      <form crem-form [formGroup]="layoutFormVertical" layout="vertical">
         <crem-form-item>
-          <crem-form-label [required]="true" >Field A</crem-form-label>
+          <crem-form-label [required]="true">Field A</crem-form-label>
           <crem-form-control hint="Please enter Field A">
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'input placeholder'" [required]="false" formControlName='fieldA'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'input placeholder'"
+              [required]="false"
+              formControlName="fieldA"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
         <crem-form-item>
-          <crem-form-label >Field B</crem-form-label>
+          <crem-form-label>Field B</crem-form-label>
           <crem-form-control hint="Please enter Field B">
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'input placeholder'" [required]="false" formControlName='fieldB'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'input placeholder'"
+              [required]="false"
+              formControlName="fieldB"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
         <crem-form-item>
           <crem-form-control>
-            <crem-button [id]="'button1'" [text]="'Submit'" [btnStyle]="'flat'" [color]="'primary'"
-              [size]="'medium'"></crem-button>
+            <crem-button
+              [id]="'button1'"
+              [text]="'Submit'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              [size]="'medium'"
+            ></crem-button>
           </crem-form-control>
         </crem-form-item>
       </form>
@@ -121,26 +238,49 @@
   <div class="demo-box">
     <div class="demo-box-title">Horizontal</div>
     <div class="demo-box-content">
-      <form crem-form [formGroup]="layoutFormHorizontal" layout='horizontal'>
+      <form crem-form [formGroup]="layoutFormHorizontal" layout="horizontal">
         <crem-form-item>
-          <crem-form-label [required]="true" >Field A</crem-form-label>
+          <crem-form-label [required]="true">Field A</crem-form-label>
           <crem-form-control hint="Please enter Field A">
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'input placeholder'" [required]="false" formControlName='fieldA'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'input placeholder'"
+              [required]="false"
+              formControlName="fieldA"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
         <crem-form-item>
-          <crem-form-label >Field B</crem-form-label>
+          <crem-form-label>Field B</crem-form-label>
           <crem-form-control hint="Please enter Field B">
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'input placeholder'" [required]="false" formControlName='fieldB'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'input placeholder'"
+              [required]="false"
+              formControlName="fieldB"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
         <crem-form-item>
           <crem-form-control>
-            <crem-button [id]="'button1'" [text]="'Submit'" [btnStyle]="'flat'" [color]="'primary'"
-              [size]="'medium'"></crem-button>
+            <crem-button
+              [id]="'button1'"
+              [text]="'Submit'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              [size]="'medium'"
+            ></crem-button>
           </crem-form-control>
         </crem-form-item>
       </form>
@@ -149,26 +289,49 @@
   <div class="demo-box">
     <div class="demo-box-title">Inline</div>
     <div class="demo-box-content">
-      <form crem-form [formGroup]="layoutFormInline" layout='inline' >
+      <form crem-form [formGroup]="layoutFormInline" layout="inline">
         <crem-form-item>
           <crem-form-label [required]="true">Field A</crem-form-label>
           <crem-form-control>
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'placeholder'" [required]="false" formControlName='fieldA'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'placeholder'"
+              [required]="false"
+              formControlName="fieldA"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
         <crem-form-item>
           <crem-form-label>Field B</crem-form-label>
           <crem-form-control>
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'placeholder'" [required]="false" formControlName='fieldB'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'placeholder'"
+              [required]="false"
+              formControlName="fieldB"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
         <crem-form-item>
           <crem-form-control>
-            <crem-button [id]="'button1'" [text]="'Submit'" [btnStyle]="'flat'" [color]="'primary'"
-              [size]="'medium'"></crem-button>
+            <crem-button
+              [id]="'button1'"
+              [text]="'Submit'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              [size]="'medium'"
+            ></crem-button>
           </crem-form-control>
         </crem-form-item>
       </form>
@@ -180,28 +343,54 @@
   <div class="demo-box">
     <div class="demo-box-title">Left</div>
     <div class="demo-box-content">
-      <form crem-form [formGroup]="labelAlignmentFormLeft" layout='horizontal' labelAlignment='left'>
+      <form
+        crem-form
+        [formGroup]="labelAlignmentFormLeft"
+        layout="horizontal"
+        labelAlignment="left"
+      >
         <crem-form-item>
           <crem-form-label>Full name</crem-form-label>
           <crem-form-control>
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'Please type your name'" [required]="false"
-              formControlName='username'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'Please type your name'"
+              [required]="false"
+              formControlName="username"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
         <crem-form-item>
           <crem-form-label>Email</crem-form-label>
           <crem-form-control>
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'Please type your email'" [required]="false"
-              formControlName='email'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'Please type your email'"
+              [required]="false"
+              formControlName="email"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
         <crem-form-item>
           <crem-form-control>
-            <crem-button [id]="'button1'" [text]="'Submit'" [btnStyle]="'flat'" [color]="'primary'"
-              [size]="'medium'"></crem-button>
+            <crem-button
+              [id]="'button1'"
+              [text]="'Submit'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              [size]="'medium'"
+            ></crem-button>
           </crem-form-control>
         </crem-form-item>
       </form>
@@ -211,31 +400,309 @@
   <div class="demo-box">
     <div class="demo-box-title">Right</div>
     <div class="demo-box-content">
-      <form crem-form [formGroup]="labelAlignmentFormRight" layout='horizontal' labelAlignment='right'>
+      <form
+        crem-form
+        [formGroup]="labelAlignmentFormRight"
+        layout="horizontal"
+        labelAlignment="right"
+      >
         <crem-form-item>
           <crem-form-label>Full name</crem-form-label>
           <crem-form-control>
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'Please type your name'" [required]="false"
-              formControlName='username'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'Please type your name'"
+              [required]="false"
+              formControlName="username"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
         <crem-form-item>
           <crem-form-label>Email</crem-form-label>
           <crem-form-control>
-            <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [inputType]="'text'" [value]="''"
-              [name]="''" [placeholder]="'Please type your email'" [required]="false"
-              formControlName='email'></crem-input>
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'Please type your email'"
+              [required]="false"
+              formControlName="email"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
         <crem-form-item>
           <crem-form-control>
-            <crem-button [id]="'button1'" [text]="'Submit'" [btnStyle]="'flat'" [color]="'primary'"
-              [size]="'medium'"></crem-button>
+            <crem-button
+              [id]="'button1'"
+              [text]="'Submit'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              [size]="'medium'"
+            ></crem-button>
           </crem-form-control>
         </crem-form-item>
       </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="formExample === 'errors'">
+  <div class="demo-box">
+    <div class="demo-box-title">Errors</div>
+    <div class="demo-box-content">
+      <form crem-form [formGroup]="errorsForm">
+        <crem-form-item>
+          <crem-form-label>Email</crem-form-label>
+          <crem-form-control
+            status="error"
+            errorMessage="The email entered is not valid."
+          >
+            <crem-input
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [value]="''"
+              [name]="''"
+              [placeholder]="'email@costargroup.com'"
+              [required]="false"
+              formControlName="username"
+            ></crem-input>
+          </crem-form-control>
+        </crem-form-item>
+
+        <crem-form-item>
+          <crem-form-label>Date</crem-form-label>
+          <crem-form-control
+            status="warning"
+            warningMessage="You've entered a date past the deadline."
+          >
+            <crem-date-picker
+              value="01/01/2024"
+              [dateFormat]="'MM/dd/yyyy'"
+              [invalidDateMessage]="'Invalid date'"
+              [useMaskBehavior]="false"
+              [showClearButton]="true"
+              [isRequired]="false"
+              [inputId]="'date-picker'"
+              [min]="null"
+              [max]="null"
+              [disabled]="false"
+              [showDefaultValidationTooltip]="true"
+              formControlName="dateOfBirth"
+            ></crem-date-picker>
+          </crem-form-control>
+        </crem-form-item>
+        <crem-form-item>
+          <crem-form-control>
+            <crem-button
+              [id]="'button1'"
+              [text]="'Submit'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              [size]="'medium'"
+            ></crem-button>
+          </crem-form-control>
+        </crem-form-item>
+      </form>
+    </div>
+  </div>
+  <div class="demo-box">
+    <div class="demo-box-title">Example</div>
+    <div class="demo-box-content">
+      <div class="form-wrapper">
+        <form crem-form [formGroup]="registerForm" layout="horizontal">
+          <crem-form-item>
+            <crem-form-label [required]="true">Full Name</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'text'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'Full Name'"
+                [required]="false"
+                formControlName="fullName"
+              ></crem-input>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label [required]="true">Email</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'text'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'Email'"
+                [required]="false"
+                formControlName="email"
+              ></crem-input>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Password</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'password'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'******'"
+                [required]="false"
+                formControlName="password"
+              ></crem-input>
+            </crem-form-control>
+          </crem-form-item>
+          <crem-form-item>
+            <crem-form-label>Phone Number</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <crem-input
+                [showHint]="false"
+                [showLabel]="false"
+                [showInfo]="false"
+                [inputType]="'text'"
+                [value]="''"
+                [name]="''"
+                [placeholder]="'+1 (404) 000 0000'"
+                [required]="false"
+                formControlName="phoneNumber"
+              ></crem-input>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Date of birth</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <crem-date-picker
+                value="01/01/2024"
+                [dateFormat]="'MM/dd/yyyy'"
+                [invalidDateMessage]="'Invalid date'"
+                [useMaskBehavior]="false"
+                [showClearButton]="true"
+                [isRequired]="false"
+                [inputId]="'date-picker'"
+                [min]="null"
+                [max]="null"
+                [disabled]="false"
+                [showDefaultValidationTooltip]="true"
+                formControlName="dateOfBirth"
+              ></crem-date-picker>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Country</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              [status]="'error'"
+            >
+              <crem-dropdown
+                [id]="'dropdown'"
+                [initialSelectedValue]="null"
+                [placeholder]="'Select a country...'"
+                [label]="'Label'"
+                [isSearchable]="true"
+                [selectMode]="'single'"
+                [required]="false"
+                [readOnly]="false"
+                formControlName="country"
+                [dataSource]="[
+                  { displayKey: 'United States', valueKey: 'United States' },
+                  { displayKey: 'Canada', valueKey: 'Canada' },
+                  { displayKey: 'France', valueKey: 'France' },
+                  { displayKey: 'China', valueKey: 'China' },
+                  { displayKey: 'Mexico', valueKey: 'Mexico' }
+                ]"
+                [allowSearch]="true"
+              ></crem-dropdown>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Checkbox</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <crem-check-box [value]="true"> Checkbox 1 </crem-check-box>
+              <crem-check-box [value]="true"> Checkbox 2 </crem-check-box>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Radio </crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <crem-radio-group name="test-radio">
+                <crem-radio-field value="atlanta">Atlanta</crem-radio-field>
+                <crem-radio-field value="new york">New York</crem-radio-field>
+                <crem-radio-field value="austin">Austin</crem-radio-field>
+              </crem-radio-group>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-label>Toggle Slider</crem-form-label>
+            <crem-form-control
+              errorMessage="This is an error message"
+              status="error"
+            >
+              <div>
+                <crem-toggle-slider [value]="false"></crem-toggle-slider>
+              </div>
+            </crem-form-control>
+          </crem-form-item>
+
+          <crem-form-item>
+            <crem-form-control>
+              <crem-button
+                type="submit"
+                [id]="'button1'"
+                [text]="'Register'"
+                [btnStyle]="'flat'"
+                [color]="'primary'"
+                [size]="'medium'"
+                (buttonClick)="registerFormSubmit()"
+              ></crem-button>
+            </crem-form-control>
+          </crem-form-item>
+        </form>
+      </div>
     </div>
   </div>
 </div>

@@ -7,7 +7,7 @@ import { DataSetDictionaryService } from '../../services/data-set-dictionary.ser
 @Component({
   selector: 'mango-data-sets',
   templateUrl: './data-sets.component.html',
-  styleUrls: ['./data-sets.component.scss']
+  styleUrls: ['./data-sets.component.scss'],
 })
 export class DataSetsComponent implements OnInit {
   @ViewChild('dataSetGrid')
@@ -22,8 +22,8 @@ export class DataSetsComponent implements OnInit {
   constructor(private service: DataSetDictionaryService) {}
 
   ngOnInit(): void {
-    this.service.getUserModuleRights().subscribe(res => {
-      const rights = res.data.find(x => x.moduleId === 192);
+    this.service.getUserModuleRights().subscribe((res) => {
+      const rights = res.data.find((x) => x.moduleId === 192);
 
       this.hasAddRights = rights?.hasAddRights ?? false;
       this.rightsLoaded = true;

@@ -56,7 +56,7 @@ app-accounting-settings {
           font-size: 18px;
           display: inline-block;
           margin-right: $stdPadding;
-          font-family: "Helvetica";
+          font-family: 'Helvetica';
         }
 
         mat-card-subtitle.mat-card-subtitle {
@@ -99,13 +99,12 @@ app-accounting-settings {
 
   mat-form-field {
     &.mat-mdc-form-field {
-
       &.mat-form-field-appearance-outline {
         div.mat-form-field-wrapper {
           margin: $stdPadding 0 $dblPadding 0;
 
           div.mat-form-field-flex {
-            padding: 0 0.1em 0 .75em;
+            padding: 0 0.1em 0 0.75em;
 
             div.mat-mdc-form-field-infix {
               padding: 0.4em 0px;
@@ -164,7 +163,8 @@ app-accounting-settings {
         &.mat-form-field-can-float {
           &.mat-form-field-should-float {
             label.mat-form-field-label {
-              transform: translateY($stdPadding * -3) translateX($stdPadding * -1);
+              transform: translateY($stdPadding * -3)
+                translateX($stdPadding * -1);
               width: 100%;
 
               mat-label {
@@ -243,7 +243,6 @@ app-accounting-settings {
       }
 
       &.label-on-top {
-
         dx-text-box,
         dx-date-box,
         dx-select-box {
@@ -251,7 +250,7 @@ app-accounting-settings {
         }
 
         fa-icon {
-          				padding-right: calc($stdPadding / 2);
+          padding-right: calc($stdPadding / 2);
 
           position: relative;
           top: -34px;
@@ -289,13 +288,12 @@ app-accounting-settings {
       border-bottom: $stdBorder;
       font-size: 14px;
 
-      &>div {
+      & > div {
         display: flex;
         align-items: center;
         z-index: 500;
 
         &.controls-left {
-
           mat-form-field.mat-form-field,
           button.btn {
             margin-right: $dblPadding;
@@ -312,7 +310,6 @@ app-accounting-settings {
         }
 
         &.controls-right {
-
           mat-form-field.mat-form-field,
           button.btn {
             margin-left: $dblPadding;
@@ -364,4 +361,3 @@ app-accounting-settings {
     }
   }
 }
-

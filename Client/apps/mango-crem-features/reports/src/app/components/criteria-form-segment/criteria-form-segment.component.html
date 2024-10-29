@@ -1,31 +1,54 @@
-
-<crem-dynamic-form *ngIf="!loading && isReportCriteriaSet" #PortfolioForm
+<crem-dynamic-form
+  *ngIf="!loading && isReportCriteriaSet"
+  #PortfolioForm
   [config]="portfolioConfig"
   (changeEvent)="onDropdownChange($event)"
-  [idPrefix] = "idPrefix"
-  >
+  [idPrefix]="idPrefix"
+>
   <ng-template let-fieldData="fieldData">
     <div class="form__section-item">
-      <crem-dropdown *ngIf="portfolioConfig.section[0].formObjects[0].sectionItems[0] && !loading" #SegmentPortfolioDropdown
-        [isDisabled]='fieldData?.disabled || (!fieldData?.required && !fieldData?.dataSource?.length) || readOnly'
+      <crem-dropdown
+        *ngIf="
+          portfolioConfig.section[0].formObjects[0].sectionItems[0] && !loading
+        "
+        #SegmentPortfolioDropdown
+        [isDisabled]="
+          fieldData?.disabled ||
+          (!fieldData?.required && !fieldData?.dataSource?.length) ||
+          readOnly
+        "
         dropDownContainerCustomClass="dynamicFormDropDown"
-        [dataSource]='fieldData.dataSource'
-        [placeholder]='fieldData.placeholder || "Select..."'
-        [showClearButton]='true'
-        [showColumnHeader]='false'
+        [dataSource]="fieldData.dataSource"
+        [placeholder]="fieldData.placeholder || 'Select...'"
+        [showClearButton]="true"
+        [showColumnHeader]="false"
         [required]="fieldData.required"
         [displayExpr]="fieldData.displayExpr || 'value'"
         [valueExpr]="fieldData.valueExpr || 'value'"
         [isVisible]="!fieldData.hidden"
         [customRequireValidation]="fieldData.customRequireValidation"
-        [showRedBorder]="!portfolioConfig.section[0].formObjects[0].sectionItems[0].value?.length && portfolioSelectionModified"
-        [selectBoxValue]="(portfolioConfig.section[0].formObjects[0].sectionItems[0].value?.length && portfolioConfig.section[0].formObjects[0].sectionItems[0].valueExpr) ? 
-        portfolioConfig.section[0].formObjects[0].sectionItems[0].value[0][portfolioConfig.section[0].formObjects[0].sectionItems[0].valueExpr] : []"
+        [showRedBorder]="
+          !portfolioConfig.section[0].formObjects[0].sectionItems[0].value
+            ?.length && portfolioSelectionModified
+        "
+        [selectBoxValue]="
+          portfolioConfig.section[0].formObjects[0].sectionItems[0].value
+            ?.length &&
+          portfolioConfig.section[0].formObjects[0].sectionItems[0].valueExpr
+            ? portfolioConfig.section[0].formObjects[0].sectionItems[0]
+                .value[0][
+                portfolioConfig.section[0].formObjects[0].sectionItems[0]
+                  .valueExpr
+              ]
+            : []
+        "
         [dataField]="fieldData.dataField"
-        [allowSearch]='true'
+        [allowSearch]="true"
         [useSelectBox]="true"
         [hoverText]="fieldData.hoverText || fieldData.caption"
-        (selectedItems)="portfolioForm?.onChange($event,'dropdown', 'PortfolioID')"
+        (selectedItems)="
+          portfolioForm?.onChange($event, 'dropdown', 'PortfolioID')
+        "
         [showDefaultValidationTooltip]="true"
       >
       </crem-dropdown>
@@ -33,19 +56,25 @@
   </ng-template>
 </crem-dynamic-form>
 <!-- Calendar Field -->
-<crem-dynamic-form *ngIf="!dependentCriteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #DependentCriteriaDynamicForm
+<crem-dynamic-form
+  *ngIf="
+    !dependentCriteriaLoading && (selectedPortfolio || !isReportCriteriaSet)
+  "
+  #DependentCriteriaDynamicForm
   [config]="dependentCriteriaConfig"
   (changeEvent)="onDependentChange($event)"
   (isLoading)="onDependentLoading($event)"
-  [idPrefix] = "idPrefix"
-  [readOnly] = "readOnly"
+  [idPrefix]="idPrefix"
+  [readOnly]="readOnly"
   [showDefaultValidationTooltip]="true"
 ></crem-dynamic-form>
 <!-- Portfolio Field -->
-<crem-dynamic-form *ngIf="!criteriaLoading && (selectedPortfolio || !isReportCriteriaSet)" #CriteriaDynamicForm
+<crem-dynamic-form
+  *ngIf="!criteriaLoading && (selectedPortfolio || !isReportCriteriaSet)"
+  #CriteriaDynamicForm
   [config]="criteriaConfig"
   (changeEvent)="onChange($event)"
-  [idPrefix] = "idPrefix"
-  [readOnly] = "readOnly"
+  [idPrefix]="idPrefix"
+  [readOnly]="readOnly"
   [showDefaultValidationTooltip]="true"
 ></crem-dynamic-form>

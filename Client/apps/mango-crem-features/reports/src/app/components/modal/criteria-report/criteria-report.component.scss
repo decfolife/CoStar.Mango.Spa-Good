@@ -1,99 +1,102 @@
-@use "libs/ui-shared/common/src/styles" as *;
+@use 'libs/ui-shared/common/src/styles' as *;
 
 .body-content {
-    padding: 0 24px;
-    font-size: 14px !important;
+  padding: 0 24px;
+  font-size: 14px !important;
 }
 
 .modalContent {
-    overflow-y: auto !important;
+  overflow-y: auto !important;
 }
 
 .footerRightControls {
-    display: flex;
-    margin-left: auto;
-    align-items: center;
-    crem-button {
-        padding: 8px 0px 8px 8px;
-    }
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  crem-button {
+    padding: 8px 0px 8px 8px;
+  }
 }
 
 .form {
-    &__section-item {
-        display: flex;
-        flex-direction: column;
-    }
+  &__section-item {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .textbox_subtext {
-    min-height: 16px;
+  min-height: 16px;
+  font-size: 12px;
+  @include costar(color, gray03);
+
+  &--warning {
     font-size: 12px;
-    @include costar(color, gray03);
+    @include costar(color, danger);
+  }
 
-    &--warning {
-        font-size: 12px;
-        @include costar(color, danger);
-    }
+  &--success {
+    font-size: 12px;
+    @include costar(color, success);
+  }
 
-    &--success {
-        font-size: 12px;
-        @include costar(color, success);
-    }
-
-    &.hidden {
-        background-color: red;
-    }
+  &.hidden {
+    background-color: red;
+  }
 }
 
-dynamic-form, mango-criteria-form-report {
-    width: 100%;
+dynamic-form,
+mango-criteria-form-report {
+  width: 100%;
 }
 
 ::ng-deep {
-    .footer-content {
-        crem-button {
-            button {
-                margin: 0px !important;
-            }
+  .footer-content {
+    crem-button {
+      button {
+        margin: 0px !important;
+      }
 
-            button:focus, button:focus-within {
-                outline-color: #000000 !important;
-                outline-style: solid !important;
-                outline-width: thin !important;
-            }
-            button:focus-visible {
-                outline-color: #000000 !important;
-                outline-style: solid !important;
-                outline-width: thin !important;
-            }
-        }
+      button:focus,
+      button:focus-within {
+        outline-color: #000000 !important;
+        outline-style: solid !important;
+        outline-width: thin !important;
+      }
+      button:focus-visible {
+        outline-color: #000000 !important;
+        outline-style: solid !important;
+        outline-width: thin !important;
+      }
     }
+  }
 
-    .criteria_report_custom_header_segments {
-        .dx-list-group-header {
-            padding: 0px;
-            .segment_custom, .segment_create_new {
-                width: 100%;
-                height: 32px;
-                display: flex;
-                align-items:center;
-                cursor: pointer;
-                font-weight: 400;
-                padding: 8px;
+  .criteria_report_custom_header_segments {
+    .dx-list-group-header {
+      padding: 0px;
+      .segment_custom,
+      .segment_create_new {
+        width: 100%;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 400;
+        padding: 8px;
 
-                &:hover {
-                    background-color: rgba(0,0,0,.04);
-                }
-
-                &--disabled {
-                    background-color: unset;
-                    cursor: not-allowed;
-                    opacity: .6;
-                    &:hover {
-                        background-color: unset;
-                    }
-                }
-            }
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.04);
         }
+
+        &--disabled {
+          background-color: unset;
+          cursor: not-allowed;
+          opacity: 0.6;
+          &:hover {
+            background-color: unset;
+          }
+        }
+      }
     }
+  }
 }

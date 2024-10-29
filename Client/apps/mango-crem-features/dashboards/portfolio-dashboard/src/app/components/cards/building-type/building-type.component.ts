@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { DxChartComponent } from 'devextreme-angular';
 import { CardDetails } from '../../../models';
 import { PortfolioDashboardService } from '../../../services/portfolio-dashboard.service';
@@ -8,7 +16,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'building-type-card',
   templateUrl: './building-type.component.html',
-  styleUrls: ['./building-type.component.scss']
+  styleUrls: ['./building-type.component.scss'],
 })
 export class BuildingTypeComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
@@ -19,30 +27,31 @@ export class BuildingTypeComponent implements OnInit, OnDestroy {
   public legendVisible: boolean = true;
   public isGridExpanded: boolean = false;
   public checked: boolean = true;
-  @ViewChild("BuildingTypeChart") chart: DxChartComponent;
+  @ViewChild('BuildingTypeChart') chart: DxChartComponent;
 
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
   constructor(
     private portfolioDashboardService: PortfolioDashboardService,
-    private portfolioDataService: PortfolioDataService,
-  ) {
-  }
+    private portfolioDataService: PortfolioDataService
+  ) {}
 
   ngOnInit(): void {
-
-    this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.portfolioDataService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
-
   getCardData() {
-    this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-      }
-    ));
+    this.subs.push(
+      this.portfolioDataService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+        })
+    );
   }
 
   exportAllChartData(e: any) {
@@ -57,8 +66,7 @@ export class BuildingTypeComponent implements OnInit, OnDestroy {
     let label = point.getLabel();
     if (point.isHovered()) {
       label.show();
-    }
-    else {
+    } else {
       label.hide();
     }
   }
@@ -67,11 +75,10 @@ export class BuildingTypeComponent implements OnInit, OnDestroy {
   }
   hideLabels(e: any) {
     let series = this.chart.instance.getSeriesByPos(0);
-    series.getAllPoints().forEach(itm => itm.getLabel().hide());
+    series.getAllPoints().forEach((itm) => itm.getLabel().hide());
   }
 
   toggleLegendChart(e: any) {
-
     this.checked = !this.checked;
   }
   onLegendClick(e) {
@@ -87,7 +94,6 @@ export class BuildingTypeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }
-

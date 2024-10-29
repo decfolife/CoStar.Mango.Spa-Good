@@ -1,5 +1,12 @@
 /* eslint-disable rxjs-angular/prefer-composition */
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import notify from 'devextreme/ui/notify';
@@ -12,7 +19,7 @@ import { DataSetDictionaryService } from '../../services/data-set-dictionary.ser
 @Component({
   selector: 'mango-data-set-grid',
   templateUrl: './data-set-grid.component.html',
-  styleUrls: ['./data-set-grid.component.scss']
+  styleUrls: ['./data-set-grid.component.scss'],
 })
 export class DataSetGridComponent implements OnInit {
   @Input()
@@ -37,7 +44,7 @@ export class DataSetGridComponent implements OnInit {
   constructor(private service: DataSetDictionaryService) {}
 
   ngOnInit(): void {
-    this.service.getReportingIntervalSettings().subscribe(res => {
+    this.service.getReportingIntervalSettings().subscribe((res) => {
       if (!res.succeeded) {
         return;
       }
@@ -45,13 +52,17 @@ export class DataSetGridComponent implements OnInit {
       this.isFinReportingEnabled = res.data.financialReportingEnabled;
     });
 
-    this.service.getDataSets().subscribe(res => {
+    this.service.getDataSets().subscribe((res) => {
       if (!res.succeeded) {
         notify({
           type: 'error',
           message: res.message,
           displayTime: 3000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
           maxWidth: '400px',
           closeOnClick: true,
         });
@@ -72,19 +83,24 @@ export class DataSetGridComponent implements OnInit {
   // for those event handlers.
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  exportToExcel = (e: any) => { // This needs to be a => function for proper `this` context (thanks DevExtreme)
+  exportToExcel = (e: any) => {
+    // This needs to be a => function for proper `this` context (thanks DevExtreme)
     const rowData: DataSet = e.row.data;
 
     const workbook = new Workbook();
     const dataFieldWorksheet = workbook.addWorksheet('Data Fields');
 
-    this.service.getDataFieldsByDataSet(rowData.id).subscribe(res => {
+    this.service.getDataFieldsByDataSet(rowData.id).subscribe((res) => {
       if (!res.succeeded) {
         notify({
           type: 'error',
           message: 'There was an error sending to Excel.',
           displayTime: 3000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
           maxWidth: '400px',
           closeOnClick: true,
         });
@@ -94,7 +110,7 @@ export class DataSetGridComponent implements OnInit {
 
       dataFieldWorksheet.columns = [
         { header: 'Field ID' },
-        { header: 'Field Name'},
+        { header: 'Field Name' },
         { header: 'Category' },
         { header: 'Data Type' },
         { header: 'Field Width' },
@@ -107,31 +123,42 @@ export class DataSetGridComponent implements OnInit {
 
       res.data.forEach((df: DataField) => {
         dataFieldWorksheet.addRow([
-          df.dataFieldID, df.dataFieldName, df.categoryName, df.dataTypeLabel,
-          df.columnWidth, df.defaultFormatForReports, df.dataFieldDescription,
-          df.dataFieldAlignment, df.formItemID, df.formItemLabel
+          df.dataFieldID,
+          df.dataFieldName,
+          df.categoryName,
+          df.dataTypeLabel,
+          df.columnWidth,
+          df.defaultFormatForReports,
+          df.dataFieldDescription,
+          df.dataFieldAlignment,
+          df.formItemID,
+          df.formItemLabel,
         ]);
       });
 
-      dataFieldWorksheet.getRow(1).eachCell(cell => {
+      dataFieldWorksheet.getRow(1).eachCell((cell) => {
         cell.font = { bold: true };
       });
 
-      dataFieldWorksheet.columns.forEach(col => {
+      dataFieldWorksheet.columns.forEach((col) => {
         col.width = col.header.length < 12 ? 12 : col.header.length;
       });
 
       workbook.xlsx.writeBuffer().then((buffer) => {
-        saveAs(new Blob([ buffer ], { type: 'application/octet-stream' }),
-          `${rowData.name} Data Fields.xlsx`);
+        saveAs(
+          new Blob([buffer], { type: 'application/octet-stream' }),
+          `${rowData.name} Data Fields.xlsx`
+        );
       });
     });
-  }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onEditorPreparing(e: any) {
-    if (e.dataField === 'assignFinancialFields' &&
-        (!e.row.data.isFinancialFieldsAssignable || !this.hasAddRights)) {
+    if (
+      e.dataField === 'assignFinancialFields' &&
+      (!e.row.data.isFinancialFieldsAssignable || !this.hasAddRights)
+    ) {
       e.cancel = true;
     }
 
@@ -144,14 +171,14 @@ export class DataSetGridComponent implements OnInit {
       return;
     }
 
-    this.dataSetGrid.instance.beginCustomLoading("Saving");
+    this.dataSetGrid.instance.beginCustomLoading('Saving');
 
     const key = e.changes[0].key;
-    const data: DataSet = this.gridData.find(x => x.id === key);
-    
+    const data: DataSet = this.gridData.find((x) => x.id === key);
+
     let description = data.description;
     let assignFinancialFields = data.assignFinancialFields;
-  
+
     if (JSON.stringify(e.changes[0].data).includes('description')) {
       description = e.changes[0].data.description;
     }
@@ -163,12 +190,12 @@ export class DataSetGridComponent implements OnInit {
     const request: DataSetRequest = {
       id: data.id,
       description: description,
-      assignFinancialFields: assignFinancialFields
+      assignFinancialFields: assignFinancialFields,
     };
 
     e.cancel = true;
 
-    this.service.updateDataSet(request).subscribe(res => {
+    this.service.updateDataSet(request).subscribe((res) => {
       if (res.succeeded) {
         data.description = description;
         data.assignFinancialFields = assignFinancialFields;
@@ -196,17 +223,27 @@ export class DataSetGridComponent implements OnInit {
   }
 
   onCellPrepared(e: any) {
-    if(e.rowType === 'data' && e.column.caption === 'Assign Financial Fields'){
-      const commandCell = e.cellElement;  
-      const checkboxArray = commandCell.querySelectorAll(".dx-checkbox");
-      if(checkboxArray.length > 0)
-      {
+    if (
+      e.rowType === 'data' &&
+      e.column.caption === 'Assign Financial Fields'
+    ) {
+      const commandCell = e.cellElement;
+      const checkboxArray = commandCell.querySelectorAll('.dx-checkbox');
+      if (checkboxArray.length > 0) {
         const checkboxElement = checkboxArray[0];
         this.assignFinancialFieldCheckboxCounter++;
-        checkboxElement.setAttribute('id', 'assignFinancialFieldCheckbox' + this.assignFinancialFieldCheckboxCounter);
-        checkboxElement.setAttribute('aria-label', 'assignFinancialFieldCheckbox' + this.assignFinancialFieldCheckboxCounter);
+        checkboxElement.setAttribute(
+          'id',
+          'assignFinancialFieldCheckbox' +
+            this.assignFinancialFieldCheckboxCounter
+        );
+        checkboxElement.setAttribute(
+          'aria-label',
+          'assignFinancialFieldCheckbox' +
+            this.assignFinancialFieldCheckboxCounter
+        );
       }
-    }      
+    }
   }
 
   // This recursively counts the applied filters taking into account the unusual
@@ -218,7 +255,7 @@ export class DataSetGridComponent implements OnInit {
       return 0;
     }
 
-    const hasArrays = filter.find(x => Array.isArray(x));
+    const hasArrays = filter.find((x) => Array.isArray(x));
     let filterCount = 0;
 
     if (!hasArrays) {

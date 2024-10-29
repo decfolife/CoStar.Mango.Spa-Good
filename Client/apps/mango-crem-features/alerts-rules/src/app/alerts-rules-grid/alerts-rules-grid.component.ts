@@ -24,13 +24,13 @@ import {
 import { AlertsRulesService } from '../shared/services/alerts-rules.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FilterObj = { text: string, value: any };
-type NameValuePair = { value: number; name: string; };
+type FilterObj = { text: string; value: any };
+type NameValuePair = { value: number; name: string };
 
 @Component({
   selector: 'mango-alerts-rules-grid',
   templateUrl: './alerts-rules-grid.component.html',
-  styleUrls: ['./alerts-rules-grid.component.scss']
+  styleUrls: ['./alerts-rules-grid.component.scss'],
 })
 export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
   @Input()
@@ -59,11 +59,16 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
 
   severityFilterOptions: FilterObj[];
   alertFilterOptions: FilterObj[];
-  boolFilterOptions: FilterObj[] = [{
-    text: 'True', value: true
-  }, {
-    text: 'False', value: false
-  }];
+  boolFilterOptions: FilterObj[] = [
+    {
+      text: 'True',
+      value: true,
+    },
+    {
+      text: 'False',
+      value: false,
+    },
+  ];
 
   private alertTypes: AlertType[];
   private alertRuleSeverities: AlertRuleSeverity[];
@@ -71,7 +76,10 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
   private changedAlertRules: AlertRule[] = [];
   private ruleMadeInactive: boolean;
 
-  constructor(private location: Location,  private rulesService: AlertsRulesService) { }
+  constructor(
+    private location: Location,
+    private rulesService: AlertsRulesService
+  ) {}
 
   ngAfterViewInit() {
     this.rulesGrid.instance.beginCustomLoading('Loading...');
@@ -83,13 +91,15 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
     this.rulesService.getAlertTypes().subscribe((res: ApiResponse) => {
       this.alertTypes = res.data as AlertType[];
 
-      this.rulesService.getAlertRuleSeverities().subscribe((res: ApiResponse) => {
-        this.alertRuleSeverities = res.data as AlertRuleSeverity[];
+      this.rulesService
+        .getAlertRuleSeverities()
+        .subscribe((res: ApiResponse) => {
+          this.alertRuleSeverities = res.data as AlertRuleSeverity[];
 
-        this.setIsLoading(true);
-        this.setDefaultFilters();
-        this.loadAlertRules();
-      });
+          this.setIsLoading(true);
+          this.setDefaultFilters();
+          this.loadAlertRules();
+        });
     });
   }
 
@@ -117,7 +127,7 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
   }
 
   getAlertType(alertTypeID: number): string {
-    return this.alertTypes.find(x => x.alertTypeID === alertTypeID).alertType;
+    return this.alertTypes.find((x) => x.alertTypeID === alertTypeID).alertType;
   }
 
   setIsLoading(isCurrentlyLoading: boolean) {
@@ -128,7 +138,7 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
   async saveChanges() {
     const changes = this.changedAlertRules.slice();
 
-    if (changes.find(x => x.isActive === false) && this.ruleMadeInactive) {
+    if (changes.find((x) => x.isActive === false) && this.ruleMadeInactive) {
       const decision = await this.confirmInactiveChange();
 
       if (!decision) {
@@ -138,7 +148,7 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
 
     this.setIsLoading(true);
 
-    const ruleUpdates = changes.map(x => {
+    const ruleUpdates = changes.map((x) => {
       return {
         AlertRuleID: x.alertRuleID,
         AlertRuleSeverityID: x.alertRuleSeverityID,
@@ -147,7 +157,7 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
       };
     }) as AlertRuleUpdate[];
 
-    this.rulesService.updateAlertRules(ruleUpdates).subscribe(res => {
+    this.rulesService.updateAlertRules(ruleUpdates).subscribe((res) => {
       this.loadAlertRules();
 
       notify({
@@ -174,15 +184,18 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
 
       title: 'Confirm Changes?',
 
-      buttons: [{
-        elementAttr: { class: 'btn btn-primary' },
-        text: 'Confirm',
-        onClick: () => true
-      }, {
-        elementAttr: { class: 'btn' },
-        text: 'Cancel',
-        onClick: () => false
-      }]
+      buttons: [
+        {
+          elementAttr: { class: 'btn btn-primary' },
+          text: 'Confirm',
+          onClick: () => true,
+        },
+        {
+          elementAttr: { class: 'btn' },
+          text: 'Cancel',
+          onClick: () => false,
+        },
+      ],
     });
 
     const choice = await confirmDialog.show();
@@ -199,7 +212,7 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
       return 0;
     }
 
-    const hasArrays = filter.find(x => Array.isArray(x));
+    const hasArrays = filter.find((x) => Array.isArray(x));
     let filterCount = 0;
 
     if (!hasArrays) {
@@ -218,22 +231,30 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
   private loadAlertRules() {
     this.rulesGrid.instance.beginCustomLoading('Loading...');
 
-    this.rulesService.getAlertRules(this.currentObjectTypeId).subscribe((res: ApiResponse) => {
-      this.alertRules = res.data as AlertRule[];
+    this.rulesService
+      .getAlertRules(this.currentObjectTypeId)
+      .subscribe((res: ApiResponse) => {
+        this.alertRules = res.data as AlertRule[];
 
-      this.loadFilterOptions();
-      this.buildGridDataSource();
+        this.loadFilterOptions();
+        this.buildGridDataSource();
 
-      this.rulesGrid?.instance.endCustomLoading();
-      this.dirtyStateChanged.emit(false);
-      this.changedAlertRules = [];
-      this.ruleMadeInactive = false;
-    });
+        this.rulesGrid?.instance.endCustomLoading();
+        this.dirtyStateChanged.emit(false);
+        this.changedAlertRules = [];
+        this.ruleMadeInactive = false;
+      });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private updateAlertRuleChanges(propertyName: string, value: any, data: AlertRule) {
-    const changedIdx = this.changedAlertRules.findIndex(x => x.alertRuleID === data.alertRuleID);
+  private updateAlertRuleChanges(
+    propertyName: string,
+    value: any,
+    data: AlertRule
+  ) {
+    const changedIdx = this.changedAlertRules.findIndex(
+      (x) => x.alertRuleID === data.alertRuleID
+    );
     const isInChangesArray = changedIdx >= 0;
 
     const changedRule = isInChangesArray
@@ -253,17 +274,17 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
   }
 
   private loadFilterOptions() {
-    this.severityFilterOptions = this.alertRuleSeverities?.map(x => {
+    this.severityFilterOptions = this.alertRuleSeverities?.map((x) => {
       return {
         text: x.ruleSeverityName,
-        value: ['alertRuleSeverityID', '=', x.alertRuleSeverityID]
+        value: ['alertRuleSeverityID', '=', x.alertRuleSeverityID],
       };
     });
 
-    this.alertFilterOptions = this.alertTypes?.map(x => {
+    this.alertFilterOptions = this.alertTypes?.map((x) => {
       return {
         text: x.alertType,
-        value: ['alertTypeID', '=', x.alertTypeID]
+        value: ['alertTypeID', '=', x.alertTypeID],
       };
     });
   }
@@ -275,20 +296,22 @@ export class AlertsRulesGridComponent implements AfterViewInit, OnInit {
 
     this.gridData = this.alertRules.slice();
 
-    this.severitySelections = this.alertRuleSeverities?.map(x => ({
+    this.severitySelections = this.alertRuleSeverities?.map((x) => ({
       value: x.alertRuleSeverityID,
-      name: x.ruleSeverityName
+      name: x.ruleSeverityName,
     }));
 
-    this.alertTypeSelections = this.alertTypes?.map(x => ({
+    this.alertTypeSelections = this.alertTypes?.map((x) => ({
       value: x.alertTypeID,
-      name: x.alertType
+      name: x.alertType,
     }));
   }
 
   private getOTID() {
-    const OTIDpart = this.location.path().split('&')
-      .find(x => x.toLowerCase().includes('objecttypeid'));
+    const OTIDpart = this.location
+      .path()
+      .split('&')
+      .find((x) => x.toLowerCase().includes('objecttypeid'));
 
     return OTIDpart ? +OTIDpart.split('=')[1] : 4;
   }

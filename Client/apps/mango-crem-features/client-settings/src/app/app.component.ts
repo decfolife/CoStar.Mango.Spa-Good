@@ -10,13 +10,15 @@ import { SettingsService } from '@mango/core-shared/lib-core-shared';
 export class AppComponent implements OnInit {
   title = 'mango-client-settings';
 
-  @Input('client-key') clientKey: string
-  constructor(private router: Router, private settingsService: SettingsService) {
-  }
+  @Input('client-key') clientKey: string;
+  constructor(
+    private router: Router,
+    private settingsService: SettingsService
+  ) {}
 
   ngOnInit() {
     // Manually triggering initial navigation for @angular/elements
-    this.router.initialNavigation(); 
-    this.settingsService.clientKey$.next(this.clientKey)
+    this.router.initialNavigation();
+    this.settingsService.clientKey$.next(this.clientKey);
   }
 }

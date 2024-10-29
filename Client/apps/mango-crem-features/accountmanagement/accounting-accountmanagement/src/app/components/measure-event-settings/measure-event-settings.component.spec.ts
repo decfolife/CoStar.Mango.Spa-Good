@@ -8,9 +8,8 @@ describe('MeasureEventSettingsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MeasureEventSettingsComponent ]
-    })
-    .compileComponents();
+      declarations: [MeasureEventSettingsComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

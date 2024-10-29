@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { DashboardCardComponent } from './card/dashboard-card.component';
 import { DxLoadPanelModule } from 'devextreme-angular';
-import { ButtonModule, CardModule, DropdownModule, ModalModule, SimpleGridModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  ButtonModule,
+  CardModule,
+  DropdownModule,
+  ModalModule,
+  SimpleGridModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +20,7 @@ import { CremPivotTableModule } from 'libs/ui-shared/lib-ui-elements/src/lib/cre
 import { DataService } from '../../services/data.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ColumnLimitComponent } from './modal/column-limit/column-limit.component';
 import { GenericErrorComponent } from './modal/genericError/genericError.component';
 import { UserSettingsComponent } from './modal/user-settings/user-settings.component';
@@ -48,10 +54,7 @@ import { ToastComponent } from '@mango/ui-shared/lib-ui-elements';
     ModalModule,
     ToastComponent,
   ],
-  providers: [
-    DataService,
-    DashboardService,
-  ],
-  exports: [DashboardCardComponent]
+  providers: [DataService, DashboardService],
+  exports: [DashboardCardComponent],
 })
 export class DashboardModule {}

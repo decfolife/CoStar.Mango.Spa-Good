@@ -25,7 +25,7 @@ import { DxPopoverModule } from 'devextreme-angular';
     MatButtonModule,
     FormsModule,
     DxPopoverModule,
-    MatPasswordStrengthModule
+    MatPasswordStrengthModule,
   ],
   exports: [ResetPasswordComponent],
   providers: [],

@@ -1,4 +1,5 @@
-<crem-card [id]="pendoId + '--card'"
+<crem-card
+  [id]="pendoId + '--card'"
   [title]="config.title"
   [showFilterClearButton]="false"
   [pendoTitleId]="pendoId + '--title'"
@@ -7,15 +8,17 @@
 >
   <ng-template #customDropdownMenu>
     <div class="card-header--right">
-      <fa-icon class="chart-toggle"
-        id="{{pendoId + '--chart'}}"
+      <fa-icon
+        class="chart-toggle"
+        id="{{ pendoId + '--chart' }}"
         (click)="toggleChartButton()"
         [ngClass]="{ 'chart-toggle__visible': !chartVisible }"
         [icon]="faChartBar"
         title="Chart"
       ></fa-icon>
 
-      <button id="{{pendoId + '--moreOption'}}"
+      <button
+        id="{{ pendoId + '--moreOption' }}"
         class="btn btn-default btn-sm moreOptionsBtn"
         [matMenuTriggerFor]="cardMenu"
         (click)="$event.preventDefault()"
@@ -25,54 +28,54 @@
       </button>
 
       <mat-menu #cardMenu="matMenu">
-        <button mat-menu-item
-          (click)="exportGrid()"
-        >Export Pivot Grid</button>
+        <button mat-menu-item (click)="exportGrid()">Export Pivot Grid</button>
 
-        <button mat-menu-item
-          (click)="exportDatasource()"
-        >Export Datasource</button>
+        <button mat-menu-item (click)="exportDatasource()">
+          Export Datasource
+        </button>
 
-        <button mat-menu-item
-          (click)="toggleCardWidth()"
-        >Toggle Full Width</button>
+        <button mat-menu-item (click)="toggleCardWidth()">
+          Toggle Full Width
+        </button>
 
-        <button mat-menu-item
-          (click)="showColumnChooser()"
-        >Field Chooser</button>
+        <button mat-menu-item (click)="showColumnChooser()">
+          Field Chooser
+        </button>
 
         <button mat-menu-item>
           <mat-slide-toggle
             [checked]="cremPivotTable?.showRowGrandTotals"
             (change)="toggleGrandTotal('row')"
-          >Show Row Grand Total</mat-slide-toggle>
+            >Show Row Grand Total</mat-slide-toggle
+          >
         </button>
 
         <button mat-menu-item>
           <mat-slide-toggle
             [checked]="cremPivotTable?.showColumnGrandTotals"
             (change)="toggleGrandTotal('column')"
-          >Show Column Grand Total</mat-slide-toggle>
+            >Show Column Grand Total</mat-slide-toggle
+          >
         </button>
 
-        <button mat-menu-item
-          (click)="useDefaultSetting()"
-        >Reset</button>
+        <button mat-menu-item (click)="useDefaultSetting()">Reset</button>
 
-        <button mat-menu-item
+        <button
+          mat-menu-item
           (click)="saveUserConfig(true)"
           *ngIf="canSaveDefault"
-        >Save as Default</button>
+        >
+          Save as Default
+        </button>
 
-        <button mat-menu-item
-          (click)="saveUserConfig(false)"
-        >Save</button>
+        <button mat-menu-item (click)="saveUserConfig(false)">Save</button>
       </mat-menu>
     </div>
   </ng-template>
 
   <div class="cardContent scroll-container vertical" fxflexFill>
-    <crem-pivot-table #CremPivotTable
+    <crem-pivot-table
+      #CremPivotTable
       *ngIf="config.cardType === 'pivot'"
       [id]="config.id"
       [config]="config.pivotDataSource"
@@ -88,17 +91,18 @@
       [chartVisible]="chartVisible"
     ></crem-pivot-table>
 
-    <crem-simple-grid *ngIf="config.cardType === 'grid'"
+    <crem-simple-grid
+      *ngIf="config.cardType === 'grid'"
       [id]="config.id"
       [dataSource]="config.pivotDataSource"
       [keyExpr]="config.dataGridKeyExpr"
     ></crem-simple-grid>
   </div>
-
 </crem-card>
 
 <div class="position-fixed visibility-hidden">
-  <crem-simple-grid #SimpleGrid
+  <crem-simple-grid
+    #SimpleGrid
     [dataSource]="exportData"
     [exportFileName]="this.exportDataSourceFileName"
   ></crem-simple-grid>

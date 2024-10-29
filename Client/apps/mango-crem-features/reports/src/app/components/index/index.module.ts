@@ -2,7 +2,14 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { ButtonModule, DropdownModule, DynamicFormModule, IconModule, InputComponent, ModalModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  ButtonModule,
+  DropdownModule,
+  DynamicFormModule,
+  IconModule,
+  InputComponent,
+  ModalModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { DxLoadPanelModule } from 'devextreme-angular';
 import { VerticalStepperModule } from 'libs/ui-shared/lib-ui-elements/src/lib/vertical-stepper/vertical-stepper.module';
 import { ReportsService } from '../../services/reports.service';
@@ -24,7 +31,7 @@ import { IndexComponent } from './index.component';
     CriteriaReportComponent,
     CreateSegmentComponent,
     CriteriaFormSegmentComponent,
-    CriteriaFormReportComponent
+    CriteriaFormReportComponent,
   ],
   imports: [
     CommonModule,
@@ -41,10 +48,8 @@ import { IndexComponent } from './index.component';
     IconModule,
     VerticalStepperModule,
     DynamicFormModule,
-    InputComponent
+    InputComponent,
   ],
-  providers: [
-    ReportsService
-  ],
+  providers: [ReportsService],
 })
 export class IndexModule {}

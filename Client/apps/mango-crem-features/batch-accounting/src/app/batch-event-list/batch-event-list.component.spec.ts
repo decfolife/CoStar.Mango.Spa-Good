@@ -21,13 +21,13 @@ describe('BatchEventListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BatchEventListComponent ],
+      declarations: [BatchEventListComponent],
       imports: [
         HttpClientTestingModule,
         RouterTestingModule,
         DevExtremeModule,
         MatStepperModule,
-        NoopAnimationsModule
+        NoopAnimationsModule,
       ],
     }).compileComponents();
   });
@@ -59,7 +59,7 @@ describe('BatchEventListComponent', () => {
     expect(component.selectedCount).toEqual(0);
     component.availableDataGrid = {} as any;
     expect(component.selectedCount).toEqual(0);
-    component.availableDataGrid = { selectedRowKeys: [1,2,3] } as any;
+    component.availableDataGrid = { selectedRowKeys: [1, 2, 3] } as any;
     expect(component.selectedCount).toEqual(3);
   });
 
@@ -76,8 +76,10 @@ describe('BatchEventListComponent', () => {
   });
 
   it('should populate measure events', () => {
-    const remeasureTypesSpy = spyOn((component as any).batchParametersService, 'getRemeasureTypes')
-      .and.callFake(serviceMock(['one type']));
+    const remeasureTypesSpy = spyOn(
+      (component as any).batchParametersService,
+      'getRemeasureTypes'
+    ).and.callFake(serviceMock(['one type']));
 
     component.populateMeasureEvents();
     expect(remeasureTypesSpy).toHaveBeenCalled();
@@ -85,8 +87,10 @@ describe('BatchEventListComponent', () => {
   });
 
   it('should populate portfolios', () => {
-    const portfoliosSpy = spyOn(component.baseService, 'getPortfolios')
-      .and.callFake(serviceMock(['one portfolio']));
+    const portfoliosSpy = spyOn(
+      component.baseService,
+      'getPortfolios'
+    ).and.callFake(serviceMock(['one portfolio']));
 
     component.populatePortfolios();
     expect(portfoliosSpy).toHaveBeenCalled();
@@ -97,30 +101,44 @@ describe('BatchEventListComponent', () => {
     const mockData = {
       item1: [
         { allowScheduleEdit: true, statusOrder: 1 },
-        { allowScheduleEdit: true, statusOrder: 0 }
+        { allowScheduleEdit: true, statusOrder: 0 },
       ],
       item2: { isCommentsEnabled: true },
     };
-    const wfStatusSpy = spyOn(component.batchEventListService, 'getWorkflowStatuses')
-      .and.callFake(serviceMock(mockData));
+    const wfStatusSpy = spyOn(
+      component.batchEventListService,
+      'getWorkflowStatuses'
+    ).and.callFake(serviceMock(mockData));
 
     component.populateWorkflowStatuses();
     expect(wfStatusSpy).toHaveBeenCalled();
     expect(component.parametersData.workflowStatuses.length).toEqual(2);
-    expect(component.parametersData.workflowSettings.isCommentsEnabled).toBeTruthy();
+    expect(
+      component.parametersData.workflowSettings.isCommentsEnabled
+    ).toBeTruthy();
   });
 
   it('should populate list views', () => {
     let mockData: any = null;
-    const listViewSpy = spyOn(component.batchEventListService, 'getListViews')
-      .and.callFake(serviceMock(mockData));
+    const listViewSpy = spyOn(
+      component.batchEventListService,
+      'getListViews'
+    ).and.callFake(serviceMock(mockData));
 
     component.populateListViews();
 
     mockData = {
       coStarListViews: [
-        { id: 1, listPageId: 1, view: '{ "filterValue": ["", "", "2022-01-01"]}' },
-        { id: 2, listPageId: 1, view: '{ "filterValue": ["", "", ["", "", "2022-01-01"]] }' },
+        {
+          id: 1,
+          listPageId: 1,
+          view: '{ "filterValue": ["", "", "2022-01-01"]}',
+        },
+        {
+          id: 2,
+          listPageId: 1,
+          view: '{ "filterValue": ["", "", ["", "", "2022-01-01"]] }',
+        },
       ],
       hiddenListViews: [],
       myListViews: [],
@@ -137,7 +155,9 @@ describe('BatchEventListComponent', () => {
   it('should copy SQL to the clipboard', () => {
     let commandCalled = '';
 
-    (document as any).execCommand = (command) => { commandCalled = command; };
+    (document as any).execCommand = (command) => {
+      commandCalled = command;
+    };
 
     component.copyToClipboard();
     expect(commandCalled).toEqual('copy');
@@ -151,8 +171,10 @@ describe('BatchEventListComponent', () => {
 
   it('should show dynamic SQL', () => {
     const mockData = { success: false, data: '' };
-    const sqlSpy = spyOn(component.batchEventListService, 'getDynamicSQL')
-      .and.callFake(serviceMock(mockData));
+    const sqlSpy = spyOn(
+      component.batchEventListService,
+      'getDynamicSQL'
+    ).and.callFake(serviceMock(mockData));
 
     component.selectedView = { id: 1, listViewType: 2 } as any;
     component.selectedViewWorkflowStatus = { workflowStatus: '' } as any;
@@ -174,7 +196,13 @@ describe('BatchEventListComponent', () => {
   it('should handle grid selection changes', () => {
     let refreshCalled = false;
     const rowData = {
-      component: { instance: () => ({ refresh: () => { refreshCalled = true; } }) }
+      component: {
+        instance: () => ({
+          refresh: () => {
+            refreshCalled = true;
+          },
+        }),
+      },
     };
 
     component.onGridSelectionChanged(rowData);
@@ -182,7 +210,12 @@ describe('BatchEventListComponent', () => {
   });
 
   it('should calculate selected row values', () => {
-    const opts = { name: '', summaryProcess: '', component: {}, totalValue: null };
+    const opts = {
+      name: '',
+      summaryProcess: '',
+      component: {},
+      totalValue: null,
+    };
 
     component.calculateSelectedRow(opts);
     expect(opts.totalValue).toBeNull();
@@ -196,7 +229,7 @@ describe('BatchEventListComponent', () => {
     expect(opts.totalValue).toEqual(0);
 
     opts.summaryProcess = 'calculate';
-    opts.component = { getSelectedRowKeys: () => ['',''] }
+    opts.component = { getSelectedRowKeys: () => ['', ''] };
     component.calculateSelectedRow(opts);
     expect(opts.totalValue).toEqual(2);
   });
@@ -204,7 +237,11 @@ describe('BatchEventListComponent', () => {
   it('should export the data grid', () => {
     let exportCalled = false;
     component.availableDataGrid = {
-      instance: { exportToExcel: () => { exportCalled = true; } }
+      instance: {
+        exportToExcel: () => {
+          exportCalled = true;
+        },
+      },
     } as any;
 
     component.exportDataGrid();
@@ -214,7 +251,11 @@ describe('BatchEventListComponent', () => {
   it('should search the data grid', () => {
     let searchCalled = false;
     component.availableDataGrid = {
-      instance: { searchByText: () => { searchCalled = true; } }
+      instance: {
+        searchByText: () => {
+          searchCalled = true;
+        },
+      },
     } as any;
 
     component.availableSearchDataGrid({ value: 'test' });
@@ -227,7 +268,7 @@ describe('BatchEventListComponent', () => {
         getVisibleColumns: () => [{}, {}, { dataField: '' }, { dataField: '' }],
         columnOption: () => {},
         getCombinedFilter: () => [],
-      }
+      },
     } as any;
 
     component.userFilterApplied = false;
@@ -238,10 +279,18 @@ describe('BatchEventListComponent', () => {
   it('should clear grid filters', () => {
     let stopCalled = false;
     let clearCalled = false;
-    const e = { stopPropagation: () => { stopCalled = true; } };
+    const e = {
+      stopPropagation: () => {
+        stopCalled = true;
+      },
+    };
 
     component.availableDataGrid = {
-      instance: { clearFilter: () => { clearCalled = true; } }
+      instance: {
+        clearFilter: () => {
+          clearCalled = true;
+        },
+      },
     } as any;
 
     component.availableClearGridFilters(e);
@@ -257,14 +306,14 @@ describe('BatchEventListComponent', () => {
   });
 
   it('should handle portfolio change', () => {
-    const reloadSpy = spyOn((component as any), 'reloadGrid');
+    const reloadSpy = spyOn(component as any, 'reloadGrid');
 
     component.onPortfolioChange();
     expect(reloadSpy).toHaveBeenCalled();
   });
 
   it('should handle workflow change', () => {
-    const reloadSpy = spyOn((component as any), 'reloadGrid');
+    const reloadSpy = spyOn(component as any, 'reloadGrid');
 
     component.onWorkflowChanged();
     expect(reloadSpy).toHaveBeenCalled();
@@ -293,7 +342,7 @@ describe('BatchEventListComponent', () => {
     component.onListViewTreeClick(e);
     expect(component.isListViewDropdownOpened).toBeFalsy();
 
-    const reloadSpy = spyOn((component as any), 'reloadGrid');
+    const reloadSpy = spyOn(component as any, 'reloadGrid');
     component.listViewDisplayDataSource = [{ id: 1, name: 'test' }];
     e.component.getSelectedNodes = () => [{ itemData: { id: 1 } }];
 
@@ -318,8 +367,8 @@ describe('BatchEventListComponent', () => {
 
   it('should handle going to the log step', () => {
     const stepper: any = { selected: { completed: true }, selectedIndex: 1 };
-    const gridSpy = spyOn((component as any), 'setGridValues');
-    const paramSpy = spyOn((component as any), 'resetParametersData');
+    const gridSpy = spyOn(component as any, 'setGridValues');
+    const paramSpy = spyOn(component as any, 'resetParametersData');
 
     component.currentStep = 1;
     component.logStep(stepper);
@@ -333,7 +382,7 @@ describe('BatchEventListComponent', () => {
 
   it('should handle going to the parameters step', () => {
     const stepper: any = { selected: { completed: false }, selectedIndex: 2 };
-    const bsoSpy = spyOn((component as any), 'buildScheduleObject');
+    const bsoSpy = spyOn(component as any, 'buildScheduleObject');
 
     component.parametersGrid = { checkFullTermination: () => {} } as any;
 
@@ -367,7 +416,7 @@ describe('BatchEventListComponent', () => {
 
   it('should handle going to the confirmation step', () => {
     const stepper: any = { selected: { completed: false }, selectedIndex: 1 };
-    const gridSpy = spyOn((component as any), 'setGridValues');
+    const gridSpy = spyOn(component as any, 'setGridValues');
 
     component.currentStep = 1;
     component.confirmationStep(stepper);
@@ -381,17 +430,23 @@ describe('BatchEventListComponent', () => {
   it('should handle measure event change', () => {
     let funcCalled = false;
     component.parametersGrid = {
-      setMeasurementSettingsByMeasureEvent: () => { funcCalled = true; }
+      setMeasurementSettingsByMeasureEvent: () => {
+        funcCalled = true;
+      },
     } as any;
 
     component.onMeasureEventChange({} as any);
     expect(funcCalled).toBeTruthy();
   });
 
-  it('should display column chooser', async done => {
+  it('should display column chooser', async (done) => {
     let showCalled = false;
     component.availableDataGrid = {
-      instance: { showColumnChooser: () => { showCalled = true; } }
+      instance: {
+        showColumnChooser: () => {
+          showCalled = true;
+        },
+      },
     } as any;
 
     component.displayColumnChooser();
@@ -411,8 +466,8 @@ describe('BatchEventListComponent', () => {
     component.availableDataGrid = {
       instance: {
         getVisibleColumns: () => [{ dataField: '' }],
-        state: () => {}
-      }
+        state: () => {},
+      },
     } as any;
 
     component.columnChooserClosed();
@@ -450,19 +505,23 @@ describe('BatchEventListComponent', () => {
       },
     } as any;
 
-    const batchSpy = spyOn(component.batchEventListService, 'queueBatch')
-      .and.callFake(serviceMock(true));
+    const batchSpy = spyOn(
+      component.batchEventListService,
+      'queueBatch'
+    ).and.callFake(serviceMock(true));
 
     component.queueBatch(false);
     expect(batchSpy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith(['batchlogs'], { queryParamsHandling: 'merge' });
+    expect(spy).toHaveBeenCalledWith(['batchlogs'], {
+      queryParamsHandling: 'merge',
+    });
   }));
 
   it('should set grid values', () => {
     component.parametersData.gridLoaded = false;
     component.parametersGrid = {
       gridData: [],
-      parameterOverrides: {}
+      parameterOverrides: {},
     } as any;
 
     (component as any).setGridValues();
@@ -471,8 +530,10 @@ describe('BatchEventListComponent', () => {
   });
 
   it('should load grid data', () => {
-    const gridSpy = spyOn(component.batchEventListService, 'getGridData')
-      .and.callFake(serviceMock({ data: [] }));
+    const gridSpy = spyOn(
+      component.batchEventListService,
+      'getGridData'
+    ).and.callFake(serviceMock({ data: [] }));
 
     component.selectedViewWorkflowStatus = { workflowStatus: 1 } as any;
     component.selectedView = { view: '{}' } as any;
@@ -483,15 +544,17 @@ describe('BatchEventListComponent', () => {
 
   it('should get grid columns', () => {
     const data = {
-      columnDefinitions: [{ dataField: 'some thing'}]
+      columnDefinitions: [{ dataField: 'some thing' }],
     };
-    const colSpy = spyOn(component.batchEventListService, 'getColumnDefinitionList')
-      .and.callFake(serviceMock(data));
+    const colSpy = spyOn(
+      component.batchEventListService,
+      'getColumnDefinitionList'
+    ).and.callFake(serviceMock(data));
     const json = JSON.stringify({ columns: [{ dataField: 'some thing' }] });
 
     (component as any).lastListPageId = 1;
 
-    (component as any).getGridColumns(1,json);
+    (component as any).getGridColumns(1, json);
     expect(colSpy).toHaveBeenCalledTimes(0);
 
     (component as any).getGridColumns(1, json, true);
@@ -504,8 +567,8 @@ describe('BatchEventListComponent', () => {
     component.selectedViewWorkflowStatus = {} as any;
     component.selectedView = { listViewType: 1 } as any;
 
-    const spy = spyOn((component as any), 'getGridColumns');
-    const loadSpy = spyOn((component as any), 'loadGridData');
+    const spy = spyOn(component as any, 'getGridColumns');
+    const loadSpy = spyOn(component as any, 'loadGridData');
 
     (component as any).reloadGrid(true);
     expect(spy).toHaveBeenCalled();
@@ -518,12 +581,10 @@ describe('BatchEventListComponent', () => {
     component.selectedViewWorkflowStatus = { workflowStatus: 1 } as any;
     component.selectedView = { listViewType: 1 } as any;
 
-    component.portfolios = [
-      { masterGroupID: 1, calendarID: 2 }
-    ] as any[];
+    component.portfolios = [{ masterGroupID: 1, calendarID: 2 }] as any[];
 
     component.gridData = [
-      { Lease_AccountingWorkflowStatus: 1, ClassificationID: 1 }
+      { Lease_AccountingWorkflowStatus: 1, ClassificationID: 1 },
     ];
 
     (component as any).filterGridData();
@@ -537,9 +598,14 @@ describe('BatchEventListComponent', () => {
     component.selectedView = { listViewType: 1 } as any;
 
     component.portfolios = [{ masterGroupId: 1 }] as any[];
-    component.batchSchedules = [{
-      OID: 1, ClassificationID: 1, ClassificationType: 1, LeaseRecognitionScheduleID: 1
-    }];
+    component.batchSchedules = [
+      {
+        OID: 1,
+        ClassificationID: 1,
+        ClassificationType: 1,
+        LeaseRecognitionScheduleID: 1,
+      },
+    ];
 
     (component as any).buildScheduleObject();
     expect(component.classificationTypes.length).toEqual(1);

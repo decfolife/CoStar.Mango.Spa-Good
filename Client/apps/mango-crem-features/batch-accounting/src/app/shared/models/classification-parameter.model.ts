@@ -75,6 +75,6 @@ export class ClassificationParameters {
       return;
     }
 
-    date.setMinutes(date.getMinutes() + (date.getTimezoneOffset() * -1))
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset() * -1);
   }
 }

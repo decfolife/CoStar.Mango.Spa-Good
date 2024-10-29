@@ -1,0 +1,90 @@
+@use 'styles' as *;
+
+.export-history-toolbar {
+  @include costar(background-color, background);
+  @include costar(border-bottom, gray04);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  @include costar(padding-top, 2);
+  @include costar(padding-bottom, 2);
+  @include costar(padding-left, 4);
+  @include costar(padding-right, 4);
+  height: 48px;
+  font-size: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 11;
+  row-gap: 15px;
+  .export-history-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+
+    .title {
+      margin-bottom: 0px;
+    }
+
+    crem-search {
+      max-width: 190px;
+    }
+  }
+}
+
+.grid {
+  height: calc(100% - 50px);
+}
+
+.actions-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto;
+}
+
+::ng-deep #export-history-grid-section {
+  table.dx-datagrid-table {
+    tbody {
+      tr.dx-row.dx-data-row {
+        &:hover {
+          cursor: default;
+
+          td {
+            cursor: default;
+          }
+        }
+      }
+    }
+  }
+
+  .dx-datagrid-group-panel .dx-group-panel-item {
+    @include costar(color, dark);
+    font-weight: 500;
+  }
+
+  .dx-datagrid-header-panel .dx-toolbar {
+    @include costar(margin-bottom, 2);
+    @include costar(margin-top, 2);
+    @include costar(padding-left, 2);
+  }
+
+  a {
+    @include costar(color, primary-light);
+  }
+}
+
+:host ::ng-deep {
+  .dx-datagrid-drag-header {
+    height: auto !important;
+    width: auto !important;
+    white-space: nowrap !important;
+    min-height: 150px !important;
+    max-height: 300px !important;
+    overflow: hidden;
+  }
+}

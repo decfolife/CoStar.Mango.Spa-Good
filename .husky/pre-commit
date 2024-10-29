@@ -25,7 +25,8 @@ echo '
 # Prettier
 # src: https://prettier.io/docs/en/
 #########################################
-# npm run format
+echo 'Formatting staged files with Prettier...'
+npx lint-staged
 
 #########################################
 # ESLint

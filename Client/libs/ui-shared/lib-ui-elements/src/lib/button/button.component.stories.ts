@@ -1,11 +1,15 @@
 import { moduleMetadata, Story, Meta } from '@storybook/angular';
 import { ButtonComponent } from './button.component';
-import { solidIcons, regularIcons, cremIcons } from '../icon/definitions/fontAwesome';
+import {
+  solidIcons,
+  regularIcons,
+  cremIcons,
+} from '../icon/definitions/fontAwesome';
 import { CommonModule } from '@angular/common';
 import { IconModule } from '../icon';
 
 interface ButtonComponentStory extends ButtonComponent {
-  text: string
+  text: string;
 }
 
 export default {
@@ -13,19 +17,22 @@ export default {
   component: ButtonComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        CommonModule,
-        IconModule,
-      ],
+      imports: [CommonModule, IconModule],
     }),
   ],
   argTypes: {
-    btnStyle: { control: 'radio', options: [ 'flat', 'basic', 'stroked' ] },
-    color: { control: 'radio', options: ['primary', 'secondary', 'warning', 'danger'] },
+    btnStyle: { control: 'radio', options: ['flat', 'basic', 'stroked'] },
+    color: {
+      control: 'radio',
+      options: ['primary', 'secondary', 'warning', 'danger'],
+    },
     size: { control: 'radio', options: ['small', 'medium', 'big'] },
     iconPosition: { control: 'radio', options: ['left', 'right'] },
-    icon: { control: 'select', options: [ ...cremIcons, ...regularIcons, ...solidIcons], },
-    iconPack: { control: 'text', },
+    icon: {
+      control: 'select',
+      options: [...cremIcons, ...regularIcons, ...solidIcons],
+    },
+    iconPack: { control: 'text' },
     iconColor: { control: 'text' },
     iconRotate: { control: 'text' },
     iconFlip: { control: 'text' },
@@ -34,6 +41,7 @@ export default {
     iconPull: { control: 'text' },
     iconFill: { control: 'text' },
     iconTransform: { control: 'text' },
+    noWrap: { control: 'boolean' },
   },
   parameters: {
     docs: {
@@ -63,8 +71,8 @@ Default.args = {
   icon: undefined,
   iconPack: undefined,
   iconPosition: undefined,
+  noWrap: false,
 };
-
 
 export const LoadingStatus = Template.bind({});
 LoadingStatus.args = {
@@ -78,7 +86,7 @@ LoadingStatus.args = {
   className: '',
   styles: '',
   // Icon Configuration
-  icon:  'faSpinner',
+  icon: 'faSpinner',
   iconPosition: undefined,
   iconPack: 'solid',
   iconAnimation: 'spin',
@@ -89,6 +97,6 @@ CloseButton.args = {
   id: 'button3',
   btnStyle: 'basic',
   color: 'secondary',
-  icon:  'cremXMark',
+  icon: 'cremXMark',
   iconPack: 'crem',
 };

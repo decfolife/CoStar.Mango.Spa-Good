@@ -1,4 +1,12 @@
 @use 'colors';
+:host {
+  .ellipsis {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
 #addEditMemberModal-content {
   .label {
     margin-bottom: 2px;
@@ -11,8 +19,10 @@
 
   .aet-email-shared {
     width: 100%;
+    display: flex;
 
-    .emailToggle, .sharedToggle {
+    .emailToggle,
+    .sharedToggle {
       width: 100%;
       margin-top: 12px;
 
@@ -20,8 +30,13 @@
         font-size: 14px;
       }
 
+      .aet-toggle {
+        margin-left: 8px;
+      }
+
       h4.label {
         transform: translateY(-3px);
+        display: inline;
       }
     }
   }
@@ -39,7 +54,9 @@
     }
   }
 
-  .assgnedTasksHdr, .aet-firstLastName, .aet-expirationTypeDate {
+  .assgnedTasksHdr,
+  .aet-firstLastName,
+  .aet-expirationTypeDate {
     display: flex;
     justify-content: space-between;
   }
@@ -76,14 +93,19 @@
     }
   }
 
-  .aet-firstLastName, .aet-expirationTypeDate {
+  .aet-firstLastName,
+  .aet-expirationTypeDate {
     width: 100%;
 
-    .firstName, .lastName, .expirationType, .expirationDate {
-      width: 100%
+    .firstName,
+    .lastName,
+    .expirationType,
+    .expirationDate {
+      width: 100%;
     }
 
-    .lastName, .expirationDate {
+    .lastName,
+    .expirationDate {
       margin-left: 8px;
     }
   }
@@ -104,14 +126,12 @@
     .outstandingRolesCount {
       font-size: 14px;
       margin: 8px 0 2px 20px;
-    }
-
-    .outstandingRoles-tooltip {
-      margin-top: 11px;
+      cursor: pointer;
     }
   }
 
-  .dx-selectbox.dx-invalid, .dx-textbox.dx-invalid {
+  .dx-selectbox.dx-invalid,
+  .dx-textbox.dx-invalid {
     border-color: #d9534f;
   }
 
@@ -120,25 +140,33 @@
   }
 }
 
-.footerRightControls {
+.addEditTeamModal-footerContent {
   display: flex;
-
-  & > .aem-btn {
-    margin-left: 8px;
+  justify-content: space-between;
+  .footerLeftControls {
+    font-size: small;
   }
 
-  .modalFooter {
-    border-top: 1px solid colors.$borderColor;
+  .footerRightControls {
+    display: flex;
+
+    & > .aem-btn {
+      margin-left: 8px;
+    }
+
+    .modalFooter {
+      border-top: 1px solid colors.$borderColor;
+    }
   }
 }
 
-.aet-members  .aet-membersDropDown {
+.aet-members .aet-membersDropDown {
   input.dx-texteditor-input {
     font-size: 16px;
   }
 }
 
-.levelTemplate  {
+.levelTemplate {
   .levelDesc {
     margin-left: 8px;
   }

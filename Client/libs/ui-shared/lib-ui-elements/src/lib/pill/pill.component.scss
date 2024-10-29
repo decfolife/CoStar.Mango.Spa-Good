@@ -1,0 +1,59 @@
+@use 'styles' as *;
+
+.pill-container {
+  display: inline-block;
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 0px 10px;
+  font-size: 14px;
+  max-width: 100%;
+  @include costar(font-family, body);
+}
+
+.success {
+  @include costar(color, success);
+  @include costar(background-color, light);
+  @include costar(border-color, success);
+}
+
+.success-filled {
+  @include costar(color, success);
+  background-color: #ebfae2;
+  @include costar(border-color, success);
+}
+
+.warning {
+  @include costar(color, warning-darker, $important: true);
+  @include costar(background-color, light);
+  @include costar(border-color, warning);
+}
+
+.warning-filled {
+  @include costar(color, warning-darker);
+  @include costar(background-color, warning-lightest);
+  @include costar(border-color, warning);
+}
+
+.danger {
+  @include costar(color, danger-darker);
+  @include costar(background-color, light);
+  @include costar(border-color, danger);
+}
+
+.danger-filled {
+  @include costar(color, danger-darker);
+  background-color: #facfcf;
+  @include costar(border-color, danger);
+}
+
+.basic {
+  @include costar(color, succprimary-lightess);
+  @include costar(background-color, light);
+  @include costar(border-color, primary-light);
+}
+
+.disabled {
+  @include costar(color, gray02);
+  @include costar(background-color, light);
+  @include costar(border-color, gray04);
+}

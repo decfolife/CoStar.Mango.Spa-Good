@@ -1,11 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { AccountingHistoryService } from '@accounting-history/services/accounting-history.service'
+import { AccountingHistoryService } from '@accounting-history/services/accounting-history.service';
 import { AccountingHistoryColumnsService } from '../../services/accounting-history-columns.service';
-import { CremToastService, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  CremToastService,
+  DropdownModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { ToastState } from '@mango/data-models/lib-data-models';
-import { DevExtremeModule, DxDataGridComponent, DxLoadPanelModule } from 'devextreme-angular';
+import {
+  DevExtremeModule,
+  DxDataGridComponent,
+  DxLoadPanelModule,
+} from 'devextreme-angular';
 import { ButtonModule } from '../../../../../../../libs/ui-shared/lib-ui-elements/src';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import * as ExcelJS from 'exceljs';
@@ -14,17 +21,22 @@ import { UserPreferences } from '../../models/interfaces/user-preferences.interf
 import { UserPortfolios } from '../../models/interfaces/user-portfolios.interface';
 import { AccountingHistory } from '../../models/interfaces/accounting-history.interface';
 
-
 @Component({
   selector: 'mango-accounting-history',
   standalone: true,
-  imports: [CommonModule, DropdownModule, DevExtremeModule, ButtonModule, DxLoadPanelModule],
+  imports: [
+    CommonModule,
+    DropdownModule,
+    DevExtremeModule,
+    ButtonModule,
+    DxLoadPanelModule,
+  ],
   templateUrl: './accounting-history.component.html',
-  styleUrls: ['./accounting-history.component.scss']
+  styleUrls: ['./accounting-history.component.scss'],
 })
-
 export class AccountingHistoryComponent implements OnInit {
-  @ViewChild("AccountingHistoryGrid") accountingHistoryGrid: DxDataGridComponent;
+  @ViewChild('AccountingHistoryGrid')
+  accountingHistoryGrid: DxDataGridComponent;
 
   userPreferences: UserPreferences;
   userPortfolios: UserPortfolios;
@@ -32,17 +44,17 @@ export class AccountingHistoryComponent implements OnInit {
   portfolioID: number;
   workSheet: string;
   dateFormat = 'MM/dd/yyyy';
-  accountingHistoryColumns: any[] = []; 
+  accountingHistoryColumns: any[] = [];
   showLoading: boolean = true;
   sendToExcelClicked = false;
 
-  public subscription = new Subscription;
+  public subscription = new Subscription();
 
   constructor(
     public accountingHistoryService: AccountingHistoryService,
     public accountingHistoryColumnsService: AccountingHistoryColumnsService,
-    private toastService: CremToastService) {
-  }
+    private toastService: CremToastService
+  ) {}
 
   ngOnInit(): void {
     this.getUserInfo();
@@ -57,7 +69,14 @@ export class AccountingHistoryComponent implements OnInit {
   }
 
   sendToExcelFileName(): string {
-    const dateTimeStamp = new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const dateTimeStamp = new Date().toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
     const fileName = `Accounting_History_${dateTimeStamp}.xlsx`;
     return fileName;
   }
@@ -79,7 +98,10 @@ export class AccountingHistoryComponent implements OnInit {
       });
 
       workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
-        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName);
+        saveAs(
+          new Blob([buffer], { type: 'application/octet-stream' }),
+          fileName
+        );
       });
     });
     setTimeout(() => {
@@ -88,38 +110,64 @@ export class AccountingHistoryComponent implements OnInit {
   }
 
   getUserInfo() {
-    this.subscription.add(this.accountingHistoryService.getUserPreferences().subscribe(response => {
-      if (response.success) {
-        this.userPreferences = response.data;
-        this.dateFormat = response.data.isDatesEU ? 'dd.MM.yyyy hh:mm:ss a' : 'MM/dd/yyyy hh:mm:ss a';
-      }
-      else if (response === null) {
-        this.toastService.show(response.clientErrorMessage, 'Error', ToastState.ERROR)
-      }
-    }));
+    this.subscription.add(
+      this.accountingHistoryService
+        .getUserPreferences()
+        .subscribe((response) => {
+          if (response.success) {
+            this.userPreferences = response.data;
+            this.dateFormat = response.data.isDatesEU
+              ? 'dd.MM.yyyy hh:mm:ss a'
+              : 'MM/dd/yyyy hh:mm:ss a';
+          } else if (response === null) {
+            this.toastService.show(
+              response.clientErrorMessage,
+              'Error',
+              ToastState.ERROR
+            );
+          }
+        })
+    );
   }
 
   getUserPortfolios() {
-    this.subscription.add(this.accountingHistoryService.getUserPortfolios().subscribe(response => {
-      if (response.success) {
-        this.userPortfolios = response.data;
-      }
-      else if (response === null) {
-        this.toastService.show(response.clientErrorMessage, 'Error', ToastState.ERROR)
-      }
-    }));
+    this.subscription.add(
+      this.accountingHistoryService
+        .getUserPortfolios()
+        .subscribe((response) => {
+          if (response.success) {
+            this.userPortfolios = response.data;
+          } else if (response === null) {
+            this.toastService.show(
+              response.clientErrorMessage,
+              'Error',
+              ToastState.ERROR
+            );
+          }
+        })
+    );
   }
 
   getAccountingHistory(portfolioID) {
-    this.subscription.add(this.accountingHistoryService.getAccountingHistory(portfolioID).subscribe(response => {
-      if (response.success) {
-        this.accountingHistory = response.data;
-        this.accountingHistoryColumns = this.accountingHistoryColumnsService.getAccountingHistoryColumns(this.dateFormat);
-        this.showLoading = false;
-      }
-      else if (response === null) {
-        this.toastService.show(response.clientErrorMessage, 'Error', ToastState.ERROR)
-      }
-    }));
+    this.subscription.add(
+      this.accountingHistoryService
+        .getAccountingHistory(portfolioID)
+        .subscribe((response) => {
+          if (response.success) {
+            this.accountingHistory = response.data;
+            this.accountingHistoryColumns =
+              this.accountingHistoryColumnsService.getAccountingHistoryColumns(
+                this.dateFormat
+              );
+            this.showLoading = false;
+          } else if (response === null) {
+            this.toastService.show(
+              response.clientErrorMessage,
+              'Error',
+              ToastState.ERROR
+            );
+          }
+        })
+    );
   }
 }

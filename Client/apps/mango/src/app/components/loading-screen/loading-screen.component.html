@@ -1,7 +1,7 @@
 <div *ngIf="loading" [ngClass]="getCssClasses()" aria-label="Loading App">
   <div *ngIf="showLogo" class="logo"></div>
-  <div *ngIf="tagline" class="tagline">{{tagline}}</div>
-  <div *ngIf="text" class="text">{{text}}</div>
+  <div *ngIf="tagline" class="tagline">{{ tagline }}</div>
+  <div *ngIf="text" class="text">{{ text }}</div>
   <div *ngIf="showSpinner" class="spinner">
     <mat-spinner></mat-spinner>
   </div>

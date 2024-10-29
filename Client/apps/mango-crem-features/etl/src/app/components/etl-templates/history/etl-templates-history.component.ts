@@ -42,10 +42,11 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
   ],
   templateUrl: './etl-templates-history.component.html',
   styleUrls: ['./etl-templates-history.component.scss'],
-  providers: [ExportDevexDatagridService]
+  providers: [ExportDevexDatagridService],
 })
 export class EtlTemplatesHistoryComponent implements OnInit, OnDestroy {
-  @ViewChild('TemplateHistoryDataGrid') templateHistoryDataGrid: DxDataGridComponent;
+  @ViewChild('TemplateHistoryDataGrid')
+  templateHistoryDataGrid: DxDataGridComponent;
   private subs: Subscription = new Subscription();
   templateDetails: ITemplate;
   templateId: number;
@@ -134,11 +135,11 @@ export class EtlTemplatesHistoryComponent implements OnInit, OnDestroy {
   expandAll() {
     if (this.templateHistoryDataGrid) {
       if (this.areGroupsExpanded) {
-        this.templateHistoryDataGrid.instance.collapseAll(); 
+        this.templateHistoryDataGrid.instance.collapseAll();
       } else {
-        this.templateHistoryDataGrid.instance.expandAll(); 
+        this.templateHistoryDataGrid.instance.expandAll();
       }
-      this.areGroupsExpanded = !this.areGroupsExpanded; 
+      this.areGroupsExpanded = !this.areGroupsExpanded;
     }
   }
 

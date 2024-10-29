@@ -1,4 +1,12 @@
-import { Component, ContentChild, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ContentChild,
+  Input,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { Subscription } from 'rxjs';
 import { CardDetails } from '../../../models';
@@ -23,17 +31,17 @@ export class ProjectsByTypeComponent implements OnInit, OnDestroy {
 
   cardTitleOnly: String;
 
-  subs: Subscription[] = []
-  constructor(
-    private cardsService: CardsService,
-  ) { }
+  subs: Subscription[] = [];
+  constructor(private cardsService: CardsService) {}
 
   ngOnInit(): void {
     this.cardTitleOnly = this.card.title.replace(' by Type', '');
-    this.subs.push(this.cardsService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.cardsService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
   renderChart() {
@@ -54,17 +62,20 @@ export class ProjectsByTypeComponent implements OnInit, OnDestroy {
 
   getCardData() {
     this.displayChart = false;
-    this.subs.push(this.cardsService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        ;
-        this.card.dispCard = true;
-        setTimeout(() => { this.displayChart = true; }, 0);
-        this.renderChart();
-      }
-    ));
+    this.subs.push(
+      this.cardsService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+          setTimeout(() => {
+            this.displayChart = true;
+          }, 0);
+          this.renderChart();
+        })
+    );
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

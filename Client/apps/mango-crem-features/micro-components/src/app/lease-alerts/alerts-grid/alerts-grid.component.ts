@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DxPopupComponent } from 'devextreme-angular';
@@ -28,14 +35,14 @@ type RedirectorLink = {
 
 type RedirectorLinks = {
   redirectorLinks: RedirectorLink[];
-}
+};
 
 const LEASE_OTID = 4;
 
 @Component({
   selector: 'mango-alerts-grid',
   templateUrl: './alerts-grid.component.html',
-  styleUrls: ['./alerts-grid.component.scss']
+  styleUrls: ['./alerts-grid.component.scss'],
 })
 export class AlertsGridComponent implements OnInit {
   @Input()
@@ -114,7 +121,11 @@ export class AlertsGridComponent implements OnInit {
           message: 'Dismiss reason is required.',
           type: 'error',
           displayTime: 3000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
           maxWidth: '400px',
           closeOnClick: true,
         });
@@ -122,24 +133,35 @@ export class AlertsGridComponent implements OnInit {
         return;
       }
 
-      this.toggleAlert(this.customMessageAlert, { itemData: this.dismissReasonText });
+      this.toggleAlert(this.customMessageAlert, {
+        itemData: this.dismissReasonText,
+      });
 
       this.showDismissPopup = false;
-    }
+    },
   };
 
   dismissToggleButtonOptions = {
     text: 'Dismiss',
     elementAttr: { class: 'btn btn-primary' },
     onClick: () => {
-      const isCustomWithoutText = this.dismissToggleReasonIsCustom && this.dismissToggleReasonText.length === 0;
+      const isCustomWithoutText =
+        this.dismissToggleReasonIsCustom &&
+        this.dismissToggleReasonText.length === 0;
 
-      if ((isCustomWithoutText || this.selectedDismissToggleReason === '') && this.isDismissReasonRequired) {
+      if (
+        (isCustomWithoutText || this.selectedDismissToggleReason === '') &&
+        this.isDismissReasonRequired
+      ) {
         notify({
           message: 'Dismiss reason is required.',
           type: 'error',
           displayTime: 3000,
-          position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
           maxWidth: '400px',
           closeOnClick: true,
         });
@@ -150,7 +172,7 @@ export class AlertsGridComponent implements OnInit {
       this.toggleSelectedAlerts(true);
 
       this.showDismissTogglePopup = false;
-    }
+    },
   };
 
   cancelButtonOptions = {
@@ -161,7 +183,7 @@ export class AlertsGridComponent implements OnInit {
       this.showDismissTogglePopup = false;
       this.dismissReasonText = '';
       this.dismissToggleReasonText = '';
-    }
+    },
   };
 
   selectedColumnsCopy: SelectedColumns;
@@ -394,10 +416,10 @@ export class AlertsGridComponent implements OnInit {
       amortizationMethodID: false,
       amortizationMethod: false,
       accountingEventCachedDate: false,
-    }
+    },
   };
 
-  constructor(private alertsService: AlertsService) { }
+  constructor(private alertsService: AlertsService) {}
 
   ngOnInit(): void {
     if (this.isPopupView) {
@@ -413,21 +435,24 @@ export class AlertsGridComponent implements OnInit {
 
     this.currentLeaseStatusFilter = this.isPopupView ? 'all' : 'active';
 
-    const configuration = JSON.parse(sessionStorage.getItem('leaseAlertsListPageSessionState'));
+    const configuration = JSON.parse(
+      sessionStorage.getItem('leaseAlertsListPageSessionState')
+    );
 
     if (this.alertsService.isEuroDateFormat) {
       this.dateFormat = 'dd.MM.yyyy';
     }
 
     this.alertsService.getRedirectorLinkList().subscribe((res: ApiResponse) => {
-      this.leaseLinks = (res.data as RedirectorLinks).redirectorLinks
-        ?.filter(x => x.objectTypeId === LEASE_OTID);
+      this.leaseLinks = (res.data as RedirectorLinks).redirectorLinks?.filter(
+        (x) => x.objectTypeId === LEASE_OTID
+      );
     });
 
-    this.alertsService.getIsAlertDismissedReasonRequired().subscribe(res => {
-      this.isDismissReasonRequired = (res.data as boolean);
+    this.alertsService.getIsAlertDismissedReasonRequired().subscribe((res) => {
+      this.isDismissReasonRequired = res.data as boolean;
 
-      this.alertsService.getAlertDismissReasons().subscribe(res => {
+      this.alertsService.getAlertDismissReasons().subscribe((res) => {
         this.dismissReasons = res.data as string[];
         this.dismissReasons.sort((a, b) => a.localeCompare(b));
         this.dismissReasons.push(this.customReasonString);
@@ -445,11 +470,16 @@ export class AlertsGridComponent implements OnInit {
   }
 
   redirectToLeaseAbstract(evt) {
-    if (this.isPopupView || evt.event.originalEvent.currentTarget.localName !== 'table') {
+    if (
+      this.isPopupView ||
+      evt.event.originalEvent.currentTarget.localName !== 'table'
+    ) {
       return;
     }
 
-    const link = this.leaseLinks?.find(x => x.objectTypeTypeId === evt.data.objectTypeTypeID);
+    const link = this.leaseLinks?.find(
+      (x) => x.objectTypeTypeId === evt.data.objectTypeTypeID
+    );
 
     if (!link) {
       return;
@@ -457,8 +487,10 @@ export class AlertsGridComponent implements OnInit {
 
     this.leaseAlertsGrid.instance.beginCustomLoading('Redirecting...');
 
-    const url = link.urlLink.replace('[OID]', evt.data.leaseAbstractID)
-      .replace('[OTID]', `${LEASE_OTID}`).replace('[OTTID]', evt.data.objectTypeTypeID);
+    const url = link.urlLink
+      .replace('[OID]', evt.data.leaseAbstractID)
+      .replace('[OTID]', `${LEASE_OTID}`)
+      .replace('[OTTID]', evt.data.objectTypeTypeID);
 
     document.location.href = url;
   }
@@ -487,7 +519,7 @@ export class AlertsGridComponent implements OnInit {
   toggleSelectedAlerts(reasonGiven = false) {
     const alerts = this.leaseAlertsGrid.instance.getSelectedRowsData();
 
-    if (alerts.find(x => !x.isDismissed) && !reasonGiven) {
+    if (alerts.find((x) => !x.isDismissed) && !reasonGiven) {
       this.showDismissTogglePopup = true;
 
       return;
@@ -495,7 +527,9 @@ export class AlertsGridComponent implements OnInit {
 
     this.setIsLoading(true);
 
-    this.toggleLeaseAlerts(alerts.map((alert: LeaseAlert) => alert.leaseAlertID));
+    this.toggleLeaseAlerts(
+      alerts.map((alert: LeaseAlert) => alert.leaseAlertID)
+    );
   }
 
   searchGrid(text: string) {
@@ -512,10 +546,13 @@ export class AlertsGridComponent implements OnInit {
     }
 
     setTimeout(() => {
-      const choosers = document.getElementsByClassName('dx-datagrid-column-chooser');
+      const choosers = document.getElementsByClassName(
+        'dx-datagrid-column-chooser'
+      );
 
       for (let i = 0; i < choosers.length; i++) {
-        const closeButton = choosers[i].getElementsByClassName('dx-closebutton')[0];
+        const closeButton =
+          choosers[i].getElementsByClassName('dx-closebutton')[0];
 
         if (closeButton && !this.hasListener) {
           closeButton.addEventListener('click', () => {
@@ -541,12 +578,13 @@ export class AlertsGridComponent implements OnInit {
     const selectedRows = e.selectedRowsData as LeaseAlert[];
     const selectedKeysLength = e.currentSelectedRowKeys.length;
 
-    const invalidSelections = selectedRows.filter(alert => {
-      return (!this.isAlertDismissable(alert));
+    const invalidSelections = selectedRows.filter((alert) => {
+      return !this.isAlertDismissable(alert);
     });
 
     if (
-      selectedKeysLength && selectedKeysLength !== 1 &&
+      selectedKeysLength &&
+      selectedKeysLength !== 1 &&
       selectedKeysLength !== e.component.instance().totalCount() &&
       e.currentDeselectedRowKeys.length === 0
     ) {
@@ -574,7 +612,8 @@ export class AlertsGridComponent implements OnInit {
 
   dismissToggleReasonChanged(evt) {
     this.selectedDismissToggleReason = evt.addedItems[0];
-    this.dismissToggleReasonIsCustom = evt.addedItems[0] === this.customReasonString;
+    this.dismissToggleReasonIsCustom =
+      evt.addedItems[0] === this.customReasonString;
     this.isDismissToggleDropdownOpen = false;
   }
 
@@ -586,17 +625,20 @@ export class AlertsGridComponent implements OnInit {
         currentSearch: this.currentSearch,
         currentLeaseStatusFilter: this.currentLeaseStatusFilter,
         showDismissed: this.isDismissed,
-        isAllExpanded: this.isAllExpanded
+        isAllExpanded: this.isAllExpanded,
       };
 
-      sessionStorage.setItem('leaseAlertsListPageSessionState', JSON.stringify(sessionState));
+      sessionStorage.setItem(
+        'leaseAlertsListPageSessionState',
+        JSON.stringify(sessionState)
+      );
     }
 
     this.setIsLoading(false);
   }
 
   isAlertDismissable(alert: LeaseAlert) {
-    return (alert.isDismissable && alert.leaseActive && !alert.isLocked);
+    return alert.isDismissable && alert.leaseActive && !alert.isLocked;
   }
 
   setSelectionControlState(evt) {
@@ -604,7 +646,9 @@ export class AlertsGridComponent implements OnInit {
       const data = evt.data as LeaseAlert;
 
       if (!this.isAlertDismissable(data)) {
-        const instance = CheckBox.getInstance(evt.cellElement.querySelector('.dx-select-checkbox'));
+        const instance = CheckBox.getInstance(
+          evt.cellElement.querySelector('.dx-select-checkbox')
+        );
 
         instance.option('disabled', true);
         events.off(evt.cellElement);
@@ -641,7 +685,7 @@ export class AlertsGridComponent implements OnInit {
     const columns = contentReadyEvent?.component?.getVisibleColumns();
 
     if (columns) {
-      const columnGroups = columns.find(col => col.groupIndex !== undefined);
+      const columnGroups = columns.find((col) => col.groupIndex !== undefined);
 
       hasActiveColumnGrouping = !!columnGroups;
     }
@@ -649,7 +693,7 @@ export class AlertsGridComponent implements OnInit {
     const rows = contentReadyEvent?.component?.getVisibleRows();
 
     if (rows) {
-      const rowGroups = rows.find(row => row.groupIndex !== undefined);
+      const rowGroups = rows.find((row) => row.groupIndex !== undefined);
 
       hasActiveRowGrouping = rowGroups?.length > 0;
     }
@@ -681,13 +725,14 @@ export class AlertsGridComponent implements OnInit {
       leaseAbstractId: this.leaseAbstractID,
       masterGroupId: this.currentPortfolio?.masterGroupId,
       alertRuleId: null,
-      isLeaseActive: this.currentLeaseStatusFilter === 'active'
-        ? true
-        : this.currentLeaseStatusFilter === 'archived'
+      isLeaseActive:
+        this.currentLeaseStatusFilter === 'active'
+          ? true
+          : this.currentLeaseStatusFilter === 'archived'
           ? false
           : null,
       selectedColumns: this.selectedColumns,
-      isDismissed: this.isDismissed
+      isDismissed: this.isDismissed,
     };
 
     this.leaseAlerts = [];
@@ -695,30 +740,49 @@ export class AlertsGridComponent implements OnInit {
   }
 
   private getLeaseAlerts(leaseAlertFilter: LeaseAlertFilter): void {
-    setTimeout(() => { this.leaseAlertsGrid?.instance?.beginCustomLoading('Loading...'); }, 10);
+    setTimeout(() => {
+      this.leaseAlertsGrid?.instance?.beginCustomLoading('Loading...');
+    }, 10);
 
-    this.alertsService.filterLeaseAlerts(leaseAlertFilter).subscribe((res: ApiResponse) => {
-      const leaseAlerts = res.data.leaseAlerts as LeaseAlert[];
-      const totalCount = res.data.totalCount;
+    this.alertsService.filterLeaseAlerts(leaseAlertFilter).subscribe(
+      (res: ApiResponse) => {
+        const leaseAlerts = res.data.leaseAlerts as LeaseAlert[];
+        const totalCount = res.data.totalCount;
 
-      this.leaseAlerts.push(...leaseAlerts);
+        this.leaseAlerts.push(...leaseAlerts);
 
-      if (this.leaseAlerts.length < totalCount && leaseAlerts.length > 0) {
-        const totalPagesRequired = Math.ceil(totalCount / leaseAlerts.length);
+        if (this.leaseAlerts.length < totalCount && leaseAlerts.length > 0) {
+          const totalPagesRequired = Math.ceil(totalCount / leaseAlerts.length);
 
-        this.recurseGetAllPages(totalCount, totalPagesRequired, 2, leaseAlertFilter);
+          this.recurseGetAllPages(
+            totalCount,
+            totalPagesRequired,
+            2,
+            leaseAlertFilter
+          );
+        }
+
+        if (this.leaseAlerts.length === totalCount) {
+          this.loadFinishedDataAndShowGrid();
+        }
+      },
+      () => {
+        this.getLeaseAlertsErrorOccured();
       }
-
-      if (this.leaseAlerts.length === totalCount) {
-        this.loadFinishedDataAndShowGrid();
-      }
-    }, () => {
-      this.getLeaseAlertsErrorOccured();
-    });
+    );
   }
 
-  private recurseGetAllPages(totalCount: number, totalPages: number, firstPageNumber: number, leaseAlertFilter: LeaseAlertFilter) {
-    this.leaseAlertsGrid?.instance?.beginCustomLoading('Loading... (' + Math.ceil(((firstPageNumber - 1) / totalPages) * 100) + '%)');
+  private recurseGetAllPages(
+    totalCount: number,
+    totalPages: number,
+    firstPageNumber: number,
+    leaseAlertFilter: LeaseAlertFilter
+  ) {
+    this.leaseAlertsGrid?.instance?.beginCustomLoading(
+      'Loading... (' +
+        Math.ceil(((firstPageNumber - 1) / totalPages) * 100) +
+        '%)'
+    );
 
     const secondPageNumber = firstPageNumber + 1;
     const thirdPageNumber = secondPageNumber + 1;
@@ -728,38 +792,66 @@ export class AlertsGridComponent implements OnInit {
     let pageThreeReturn;
 
     if (firstPageNumber === totalPages) {
-      pageOneReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
-        pageTwoReturn = of({ data: { leaseAlerts: [] } }),
-        pageThreeReturn = of({ data: { leaseAlerts: [] } })
+      (pageOneReturn = this.alertsService.filterLeaseAlerts(
+        leaseAlertFilter,
+        firstPageNumber
+      )),
+        (pageTwoReturn = of({ data: { leaseAlerts: [] } })),
+        (pageThreeReturn = of({ data: { leaseAlerts: [] } }));
     }
 
     if (secondPageNumber === totalPages) {
-      pageOneReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
-        pageTwoReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, secondPageNumber),
-        pageThreeReturn = of({ data: { leaseAlerts: [] } })
+      (pageOneReturn = this.alertsService.filterLeaseAlerts(
+        leaseAlertFilter,
+        firstPageNumber
+      )),
+        (pageTwoReturn = this.alertsService.filterLeaseAlerts(
+          leaseAlertFilter,
+          secondPageNumber
+        )),
+        (pageThreeReturn = of({ data: { leaseAlerts: [] } }));
     }
 
     if (thirdPageNumber <= totalPages) {
-      pageOneReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, firstPageNumber),
-        pageTwoReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, secondPageNumber),
-        pageThreeReturn = this.alertsService.filterLeaseAlerts(leaseAlertFilter, thirdPageNumber)
+      (pageOneReturn = this.alertsService.filterLeaseAlerts(
+        leaseAlertFilter,
+        firstPageNumber
+      )),
+        (pageTwoReturn = this.alertsService.filterLeaseAlerts(
+          leaseAlertFilter,
+          secondPageNumber
+        )),
+        (pageThreeReturn = this.alertsService.filterLeaseAlerts(
+          leaseAlertFilter,
+          thirdPageNumber
+        ));
     }
 
-    this.subscription.add(combineLatest([pageOneReturn, pageTwoReturn, pageThreeReturn]).subscribe((res: any) => {
-      this.leaseAlerts.push(...res[0].data.leaseAlerts as LeaseAlert[]);
-      this.leaseAlerts.push(...res[1].data.leaseAlerts as LeaseAlert[]);
-      this.leaseAlerts.push(...res[2].data.leaseAlerts as LeaseAlert[]);
+    this.subscription.add(
+      combineLatest([pageOneReturn, pageTwoReturn, pageThreeReturn]).subscribe(
+        (res: any) => {
+          this.leaseAlerts.push(...(res[0].data.leaseAlerts as LeaseAlert[]));
+          this.leaseAlerts.push(...(res[1].data.leaseAlerts as LeaseAlert[]));
+          this.leaseAlerts.push(...(res[2].data.leaseAlerts as LeaseAlert[]));
 
-      if (thirdPageNumber < totalPages) {
-        return this.recurseGetAllPages(totalCount, totalPages, thirdPageNumber + 1, leaseAlertFilter);
-      }
+          if (thirdPageNumber < totalPages) {
+            return this.recurseGetAllPages(
+              totalCount,
+              totalPages,
+              thirdPageNumber + 1,
+              leaseAlertFilter
+            );
+          }
 
-      if (thirdPageNumber >= totalPages) {
-        this.loadFinishedDataAndShowGrid();
-      }
-    }, () => {
-      this.getLeaseAlertsErrorOccured();
-    }));
+          if (thirdPageNumber >= totalPages) {
+            this.loadFinishedDataAndShowGrid();
+          }
+        },
+        () => {
+          this.getLeaseAlertsErrorOccured();
+        }
+      )
+    );
   }
 
   private getLeaseAlertsErrorOccured() {
@@ -771,7 +863,7 @@ export class AlertsGridComponent implements OnInit {
       displayTime: 5000,
       position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
       maxWidth: '400px',
-      closeOnClick: true
+      closeOnClick: true,
     });
   }
 
@@ -783,7 +875,9 @@ export class AlertsGridComponent implements OnInit {
     if (this.firstPageLoad) {
       this.isInitialLoading = true;
       // This timeout is required to use devextreme's function to load preferences from session state
-      setTimeout(() => { this.isInitialLoading = false; }, 10);
+      setTimeout(() => {
+        this.isInitialLoading = false;
+      }, 10);
       this.firstPageLoad = false;
     }
 
@@ -795,11 +889,11 @@ export class AlertsGridComponent implements OnInit {
       return;
     }
 
-    this.leaseAlerts.forEach(alert => {
-      Object.keys(alert).forEach(key => {
+    this.leaseAlerts.forEach((alert) => {
+      Object.keys(alert).forEach((key) => {
         if (key.indexOf('Date') >= 0 || key === 'modified') {
           try {
-            const date = new Date(alert[key])
+            const date = new Date(alert[key]);
             date.setHours(0, 0, 0, 0);
 
             alert[key] = date;
@@ -813,14 +907,17 @@ export class AlertsGridComponent implements OnInit {
     this.gridData = this.leaseAlerts.slice();
     this.leaseAlertsGrid?.instance?.endCustomLoading();
 
-    this.isArchived = undefined === this.gridData.find(x => x.leaseActive);
+    this.isArchived = undefined === this.gridData.find((x) => x.leaseActive);
     this.archivedOnlyChanged.emit(this.isArchived);
   }
 
   private sortFilterFields() {
-    const sorted = this.leaseAlertsGrid.instance.option('columns')
+    const sorted = this.leaseAlertsGrid.instance
+      .option('columns')
       .filter((x: Column) => !!x.caption)
-      .sort((a: Column, b: Column) => a.caption.toLowerCase().localeCompare(b.caption.toLowerCase()))
+      .sort((a: Column, b: Column) =>
+        a.caption.toLowerCase().localeCompare(b.caption.toLowerCase())
+      )
       .map((c: Column) => {
         const { caption, dataField, dataType } = c;
 
@@ -833,36 +930,50 @@ export class AlertsGridComponent implements OnInit {
   private toggleLeaseAlerts(ids: number[]) {
     const dto: LeaseAlertToggleDTO = {
       alerts: ids,
-      dismissReason: ''
+      dismissReason: '',
     };
 
-    dto.dismissReason = this.selectedDismissToggleReason === this.customReasonString
-      ? this.dismissToggleReasonText
-      : this.selectedDismissToggleReason;
+    dto.dismissReason =
+      this.selectedDismissToggleReason === this.customReasonString
+        ? this.dismissToggleReasonText
+        : this.selectedDismissToggleReason;
 
-    this.alertsService.toggleLeaseAlertsIsDismissed(dto).subscribe((res: ApiResponse) => {
-      notify({
-        message: `Lease alert update ${res.success ? 'successful' : 'failed'}.`,
-        type: res.success ? 'success' : 'error',
-        displayTime: 3000,
-        position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
+    this.alertsService.toggleLeaseAlertsIsDismissed(dto).subscribe(
+      (res: ApiResponse) => {
+        notify({
+          message: `Lease alert update ${
+            res.success ? 'successful' : 'failed'
+          }.`,
+          type: res.success ? 'success' : 'error',
+          displayTime: 3000,
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
+          maxWidth: '400px',
+          closeOnClick: true,
+        });
 
-      this.resetLeaseAlerts();
-    }, () => {
-      notify({
-        message: 'There was an error processing lease alert changes.',
-        type: 'error',
-        displayTime: 3000,
-        position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
+        this.resetLeaseAlerts();
+      },
+      () => {
+        notify({
+          message: 'There was an error processing lease alert changes.',
+          type: 'error',
+          displayTime: 3000,
+          position: {
+            my: 'bottom right',
+            at: 'bottom right',
+            offset: '-16 -16',
+          },
+          maxWidth: '400px',
+          closeOnClick: true,
+        });
 
-      this.resetLeaseAlerts();
-    });
+        this.resetLeaseAlerts();
+      }
+    );
   }
 
   // This recursively counts the applied filters taking into account the unusual
@@ -874,7 +985,7 @@ export class AlertsGridComponent implements OnInit {
       return 0;
     }
 
-    const hasArrays = filter.find(x => Array.isArray(x));
+    const hasArrays = filter.find((x) => Array.isArray(x));
     let filterCount = 0;
 
     if (!hasArrays) {

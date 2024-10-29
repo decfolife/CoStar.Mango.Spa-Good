@@ -11,10 +11,10 @@ class EnvironmentsCrem {
     userService: '',
     quickSearch: '',
     header: '',
-    identity: ''
+    identity: '',
   };
-  
-  isRestful = false
+
+  isRestful = false;
 }
 
 export const environment = new EnvironmentsCrem();

@@ -1,0 +1,44 @@
+@use 'styles' as *;
+
+.headerContent {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+:host ::ng-deep {
+  .dx-treeview-item {
+    border: 1px dotted;
+    border-right: none;
+  }
+}
+
+.tree-view-panel-container {
+  display: flex;
+  vertical-align: top;
+}
+
+.tree-view-panel {
+  font-size: 115%;
+  font-weight: bold;
+  border-right: 1px solid rgba(165, 165, 165, 0.4);
+  height: 100%;
+  flex: 1; /* Ensure each .tree-view-panel element shares space equally */
+  margin: 5px;
+}
+
+.footerRightControls {
+  display: flex;
+
+  .modalFooter {
+    @include costar(border-top, gray05);
+  }
+
+  & > crem-button {
+    margin-left: 8px;
+  }
+}
+.task-moved {
+  background-color: yellow;
+}

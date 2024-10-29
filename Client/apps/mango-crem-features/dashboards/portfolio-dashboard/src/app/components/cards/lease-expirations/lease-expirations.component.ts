@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { DxChartComponent } from 'devextreme-angular';
 import { CardDetails } from '../../../models';
 import { PortfolioDataService } from '../../../services/portfolio-data.service';
@@ -7,7 +15,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'lease-expirations-card',
   templateUrl: './lease-expirations.component.html',
-  styleUrls: ['./lease-expirations.component.scss']
+  styleUrls: ['./lease-expirations.component.scss'],
 })
 export class LeaseExpirationsComponent implements OnInit, OnDestroy {
   @Input() card: CardDetails;
@@ -16,26 +24,29 @@ export class LeaseExpirationsComponent implements OnInit, OnDestroy {
   @Output() rowClickEvent = new EventEmitter<any>();
 
   @ViewChild('LeaseExpirationsChart') chartComponent: DxChartComponent;
-  subs: Subscription[] = []
+  subs: Subscription[] = [];
 
-  constructor(private portfolioDataService: PortfolioDataService) { }
+  constructor(private portfolioDataService: PortfolioDataService) {}
 
   ngOnInit(): void {
-    this.subs.push(this.portfolioDataService.filterString$.subscribe(data => {
-      this.selectedFilters = data;
-      this.getCardData();
-    }));
+    this.subs.push(
+      this.portfolioDataService.filterString$.subscribe((data) => {
+        this.selectedFilters = data;
+        this.getCardData();
+      })
+    );
   }
 
   getCardData() {
-    this.subs.push(this.portfolioDataService.getCardDetails(this.card, this.selectedFilters).subscribe(
-      (data: any) => {
-        this.card.dispCard = true;
-        this.renderChart();
-      }
-    ));
+    this.subs.push(
+      this.portfolioDataService
+        .getCardDetails(this.card, this.selectedFilters)
+        .subscribe((data: any) => {
+          this.card.dispCard = true;
+          this.renderChart();
+        })
+    );
   }
-
 
   renderChart() {
     if (this.chartComponent !== undefined) {
@@ -65,6 +76,6 @@ export class LeaseExpirationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

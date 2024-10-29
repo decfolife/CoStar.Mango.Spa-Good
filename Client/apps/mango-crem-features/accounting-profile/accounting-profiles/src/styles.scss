@@ -1,7 +1,6 @@
 @import 'assets/styles/colors.scss';
 @import 'assets/styles/var.scss';
 
-
 h5#discount-rate-profiles-h5.dbl-right-margin {
   font-family: Helvetica, sans-serif;
   font-size: 16px !important;
@@ -23,8 +22,10 @@ h5#discount-rate-profiles-h5.dbl-right-margin {
 .discount-rate {
   margin-bottom: 8px;
 
-  &__portfolio-dropdown>.mat-form-field-wrapper.ng-tns-c41-21>.mat-form-field-flex.ng-tns-c41-21 {
-    padding: 0 .1em 0 .75em !important;
+  &__portfolio-dropdown
+    > .mat-form-field-wrapper.ng-tns-c41-21
+    > .mat-form-field-flex.ng-tns-c41-21 {
+    padding: 0 0.1em 0 0.75em !important;
   }
 }
 
@@ -44,7 +45,7 @@ h5#discount-rate-profiles-h5.dbl-right-margin {
     font-size: 14px;
     border-bottom: $stdBorder;
 
-    &>div {
+    & > div {
       display: flex;
       align-items: center;
       z-index: 500;
@@ -101,7 +102,6 @@ h5#discount-rate-profiles-h5.dbl-right-margin {
       }
 
       &.controls-left {
-
         mat-form-field.mat-form-field,
         button.btn,
         dx-text-box,
@@ -120,18 +120,16 @@ h5#discount-rate-profiles-h5.dbl-right-margin {
 
         .dx-texteditor-input:focus {
           border: 0px solid #2e71b7 !important;
-          background: #FFF !important;
+          background: #fff !important;
           outline: 0;
         }
 
         .dx-texteditor-input:disabled {
           color: #333 !important;
         }
-
       }
 
       &.controls-right {
-
         mat-form-field.mat-form-field,
         button.btn,
         mat-button-toggle-group {
@@ -168,13 +166,12 @@ h5#discount-rate-profiles-h5.dbl-right-margin {
 
 mat-form-field.discount-rate__portfolio-dropdown {
   &.mat-mdc-form-field {
-
     &.mat-form-field-appearance-outline {
       div.mat-form-field-wrapper {
         margin: $stdPadding 0 $dblPadding 0;
 
         div.mat-form-field-flex {
-          padding: 0 0.1em 0 .75em;
+          padding: 0 0.1em 0 0.75em;
 
           div.mat-mdc-form-field-infix {
             padding: 0.4em 0px;
@@ -233,7 +230,8 @@ mat-form-field.discount-rate__portfolio-dropdown {
       &.mat-form-field-can-float {
         &.mat-form-field-should-float {
           label.mat-form-field-label {
-            transform: translateY(calc($stdPadding * -3)) translateX(calc($stdPadding * -1));
+            transform: translateY(calc($stdPadding * -3))
+              translateX(calc($stdPadding * -1));
             width: 100%;
 
             mat-label {
@@ -243,7 +241,8 @@ mat-form-field.discount-rate__portfolio-dropdown {
         }
 
         label.mat-form-field-label {
-          transform: translateY(calc($stdPadding * -3)) translateX(calc($stdPadding * -1));
+          transform: translateY(calc($stdPadding * -3))
+            translateX(calc($stdPadding * -1));
           width: 100%;
 
           mat-label {
@@ -379,7 +378,6 @@ mat-form-field.discount-rate__portfolio-dropdown {
             div.mat-form-field-outline-gap {
               border-radius: 0px !important;
               border-color: $stdBorderGray;
-
             }
           }
 
@@ -416,13 +414,12 @@ app-discount-rate-profiles-add-edit {
       // margin-bottom: $dblPadding;
       font-size: 14px;
 
-      &>div {
+      & > div {
         display: flex;
         align-items: center;
         z-index: 500;
 
         &.controls-left {
-
           mat-form-field.mat-form-field,
           button.btn {
             margin-right: $dblPadding;
@@ -439,7 +436,6 @@ app-discount-rate-profiles-add-edit {
         }
 
         &.controls-right {
-
           mat-form-field.mat-form-field,
           button.btn {
             margin-left: $dblPadding;
@@ -563,7 +559,8 @@ app-discount-rate-profiles-add-edit {
                   right: 124px;
                   left: auto;
 
-                  label.mat-form-field-label {}
+                  label.mat-form-field-label {
+                  }
                 }
               }
             }
@@ -583,7 +580,7 @@ app-discount-rate-profiles-add-edit {
         display: inline-block;
         height: 93px;
         margin: $dblPadding $stdPadding $dblPadding 0px;
-        padding: 0px $stdPadding*3 0px $dblPadding  !important;
+        padding: 0px $stdPadding * 3 0px $dblPadding !important;
 
         &:last-of-type {
           border-right: $stdBorder;
@@ -601,7 +598,7 @@ app-discount-rate-profiles-add-edit {
             mat-card-title.mat-card-title {
               height: $dblPadding;
               font-size: 13px;
-              font-family: "Helvetica";
+              font-family: 'Helvetica';
               font-weight: 300;
               letter-spacing: 0.25px;
               line-height: $dblPadding;
@@ -642,7 +639,7 @@ app-discount-rate-profiles-add-edit {
               font-size: 16px;
               text-align: center;
               background: $costarGreen;
-              color: #FFFFFF;
+              color: #ffffff;
               padding: calc($stdPadding / 2) $dblPadding;
               margin: calc($stdPadding / 2) 0px;
             }
@@ -737,7 +734,9 @@ app-discount-rate-profiles-add-edit {
   .dx-field-item-content {
     .dx-template-wrapper {
       display: flex;
-      dx-text-box, dx-select-box, dx-date-box {
+      dx-text-box,
+      dx-select-box,
+      dx-date-box {
         width: 100%;
       }
     }

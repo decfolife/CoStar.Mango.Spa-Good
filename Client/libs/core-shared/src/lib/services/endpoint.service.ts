@@ -1,58 +1,26 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Observable, combineLatest, of } from 'rxjs';
-import { catchError, filter, map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../../apps/mango/src/environments/environment.local';
 
 @Injectable()
 export abstract class EndpointService {
   private static logged = false;
-  userId$: Observable<number> = new Observable<number>(null);
-  clientKey$: Observable<string> = new Observable<string>(null);
 
   constructor(protected http: HttpClient, protected facade: MangoAppFacade) {
     if (environment.name !== 'PROD' && !EndpointService.logged) {
       EndpointService.logged = true;
     }
-
-    if (this.facade) {
-      this.userId$ = this.facade.contactRecord$.pipe(
-        filter((contactRecord) => !!contactRecord),
-        switchMap((contactRecord) => of(contactRecord.contactID))
-      );
-      this.clientKey$ = this.facade.clientKey$.pipe(
-        switchMap((clientKey) => of(clientKey))
-      );
-    }
   }
 
-  protected getHttpHeaders(): Observable<any> {
-    if (this.facade) {
-      return combineLatest([this.userId$, this.clientKey$]).pipe(
-        filter(([userId, clientKey]) => !!userId && !!clientKey),
-        switchMap(([userId, clientKey]) =>
-          of({
-            headers: new HttpHeaders({
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              UserId: userId ? userId.toString() : '2',
-              ClientKey: clientKey || 'RETAILDEMO',
-              UseQueryOptimization: '1',
-            }),
-          })
-        )
-      );
-    } else {
-      return of({
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          UserId: '2',
-          ClientKey: 'RETAILDEMO',
-        }),
-      });
-    }
+  protected getHttpHeaders(): any {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      UseQueryOptimization: '1',
+    });
   }
 
   protected handleError(operation = 'operation not provided') {
@@ -168,13 +136,12 @@ export abstract class EndpointService {
     functionName: string,
     httpOptionsParams?: any
   ): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpOptions) => {
-        if (httpOptionsParams) {
-          httpOptions.params = httpOptionsParams;
-        }
-        return this.http.get(url, httpOptions);
-      }),
+    let httpOptions = this.getHttpHeaders();
+    if (httpOptionsParams) {
+      httpOptions.params = httpOptionsParams;
+    }
+
+    return this.http.get(url, httpOptions).pipe(
       map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
     );
@@ -185,13 +152,12 @@ export abstract class EndpointService {
     functionName: string,
     httpOptionsParams?: any
   ): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpOptions) => {
-        if (httpOptionsParams) {
-          httpOptions.params = httpOptionsParams;
-        }
-        return this.http.get(url, httpOptions);
-      }),
+    let httpOptions = this.getHttpHeaders();
+    if (httpOptionsParams) {
+      httpOptions.params = httpOptionsParams;
+    }
+
+    return this.http.get(url, httpOptions).pipe(
       map((x) => this.toObject(x) as any),
       catchError(this.handleErrorReturnMessage(functionName))
     );
@@ -202,8 +168,9 @@ export abstract class EndpointService {
     functionName: string,
     postBody: any
   ): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpHeaders) => this.http.post(url, postBody, httpHeaders)),
+    let httpHeaders = this.getHttpHeaders();
+
+    return this.http.post(url, postBody, httpHeaders).pipe(
       map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
     );
@@ -214,8 +181,9 @@ export abstract class EndpointService {
     functionName: string,
     postBody: any
   ): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpHeaders) => this.http.post(url, postBody, httpHeaders)),
+    let httpHeaders = this.getHttpHeaders();
+
+    return this.http.post(url, postBody, httpHeaders).pipe(
       map((x) => this.toObject(x) as any),
       catchError(this.handleErrorReturnMessage(functionName))
     );
@@ -226,13 +194,24 @@ export abstract class EndpointService {
     functionName: string,
     postBody: any
   ): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpHeaders) => {
-        httpHeaders.responseType = 'blob' as 'json';
-        return this.http.post(url, postBody, httpHeaders);
-      }),
+    let httpHeaders = this.getHttpHeaders();
+    httpHeaders.responseType = 'blob' as 'json';
+
+    return this.http.post(url, postBody, httpHeaders).pipe(
       map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
+    );
+  }
+
+  protected callHttpPutWithErrorMessage(
+    url: string,
+    functionName: string,
+    postBody: any
+  ): Observable<any> {
+    return of(this.getHttpHeaders()).pipe(
+      switchMap((httpHeaders) => this.http.put(url, postBody, httpHeaders)),
+      map((x) => this.toObject(x) as any),
+      catchError(this.handleErrorReturnMessage(functionName))
     );
   }
 
@@ -241,16 +220,18 @@ export abstract class EndpointService {
     functionName: string,
     postBody: any
   ): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpHeaders) => this.http.put(url, postBody, httpHeaders)),
+    let httpHeaders = this.getHttpHeaders();
+
+    return this.http.put(url, postBody, httpHeaders).pipe(
       map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
     );
   }
 
   protected callHttpDelete(url: string, functionName: string): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpHeaders) => this.http.delete(url, httpHeaders)),
+    let httpHeaders = this.getHttpHeaders();
+
+    return this.http.delete(url, httpHeaders).pipe(
       map((x) => this.toObject(x) as any),
       catchError(this.handleError(functionName))
     );
@@ -261,8 +242,9 @@ export abstract class EndpointService {
     functionName: string,
     postBody: any
   ): Observable<any> {
-    return this.getHttpHeaders().pipe(
-      switchMap((httpHeaders) => this.http.post(url, postBody, httpHeaders)),
+    let httpHeaders = this.getHttpHeaders();
+
+    return this.http.post(url, postBody, httpHeaders).pipe(
       map((x) => this.byteArrayFromResponse(x) as any),
       catchError(this.handleError(functionName))
     );

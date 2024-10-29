@@ -8,7 +8,7 @@ describe('AddContactModalComponentComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddContactModalComponent]
+      declarations: [AddContactModalComponent],
     });
     fixture = TestBed.createComponent(AddContactModalComponent);
     component = fixture.componentInstance;

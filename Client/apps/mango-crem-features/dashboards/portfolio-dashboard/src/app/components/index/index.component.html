@@ -1,8 +1,11 @@
-<div  id="portfolio-dashboard">
+<div id="portfolio-dashboard">
   <div id="portfolio-filters">
-    <shadow-filters-container *ngIf="!filtersLoadingDone"></shadow-filters-container>
+    <shadow-filters-container
+      *ngIf="!filtersLoadingDone"
+    ></shadow-filters-container>
 
-    <dashboard-filters *ngIf="filtersLoadingDone && filtersAvailable"
+    <dashboard-filters
+      *ngIf="filtersLoadingDone && filtersAvailable"
       [showAddButton]="showAddButton"
       [cachingEnabled]="cachingEnabled"
       [filters]="filterDetails"
@@ -17,33 +20,35 @@
       (enterBillClicked)="enterBillClicked()"
     ></dashboard-filters>
 
-    <div class="message"
-      *ngIf="filtersLoadingDone && !filtersAvailable"
-    >Filters Data not available at the time... please try again later</div>
+    <div class="message" *ngIf="filtersLoadingDone && !filtersAvailable">
+      Filters Data not available at the time... please try again later
+    </div>
   </div>
 
   <div id="portfolio-metrics">
-    <crem-metric-container  *ngIf="metricsAvailable"
+    <crem-metric-container
+      *ngIf="metricsAvailable"
       [schemaMetrics]="schemaMetrics"
       [filterString]="filterString"
       [unitOfMeasureId]="unitOfMeasureId"
       [exchangeRateId]="exchangeRateId"
-      [moduleId]=1
+      [moduleId]="1"
     ></crem-metric-container>
 
-    <div class="message"
-      *ngIf="!metricsAvailable && metricsLoadingDone"
-    >Metrics Data not available at the time... please try again later</div>
+    <div class="message" *ngIf="!metricsAvailable && metricsLoadingDone">
+      Metrics Data not available at the time... please try again later
+    </div>
   </div>
 
   <div id="portfolio-cards">
-    <cards *ngIf="cardsLoadingDone && cardsAvailable"
+    <cards
+      *ngIf="cardsLoadingDone && cardsAvailable"
       [cards]="cards"
-      [displayFinanceCard] = "showFinanceCard"
+      [displayFinanceCard]="showFinanceCard"
     ></cards>
 
-    <div class="message"
-      *ngIf="cardsLoadingDone && !cardsAvailable"
-    >Cards Data not available at the time... please try again later</div>
+    <div class="message" *ngIf="cardsLoadingDone && !cardsAvailable">
+      Cards Data not available at the time... please try again later
+    </div>
   </div>
 </div>

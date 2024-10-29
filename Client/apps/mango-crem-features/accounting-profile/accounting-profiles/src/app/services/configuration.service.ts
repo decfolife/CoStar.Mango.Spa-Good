@@ -6,6 +6,6 @@ import { Api } from '@mango/data-models/lib-data-models';
 @Injectable()
 export class ConfigurationService {
   static baseUrl(): string {
-    return UtilitiesService.getBaseApiUrl(Api.discountRateProfiles)
+    return UtilitiesService.getBaseApiUrl(Api.discountRateProfiles);
   }
 }

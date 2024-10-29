@@ -23,14 +23,15 @@ describe('Password Reset Component', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PasswordResetRequestComponent],
-      imports: [HttpClientTestingModule,
+      imports: [
+        HttpClientTestingModule,
         ReactiveFormsModule,
         CardModule,
         TextFieldModule,
         MatButtonModule,
         IconModule,
         MatCardModule,
-        DxTextBoxModule
+        DxTextBoxModule,
       ],
       providers: [
         CentralAuthErrorHandler,
@@ -38,10 +39,9 @@ describe('Password Reset Component', () => {
         StorageService,
         provideRouter([]),
         provideAnimations(),
-        { provide: Environment, useValue: environment }
-      ]
-    })
-      .compileComponents();
+        { provide: Environment, useValue: environment },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

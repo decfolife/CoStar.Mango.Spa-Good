@@ -1,225 +1,311 @@
 <div class="container-fluid mt-2">
-    <div id="admin-page-wrapper">
-
-        <!-- Password Settings -->
-        <div>
-            <crem-card id="password-settings" title="Password Settings" [showCustomHeader]="true">
-                <div cta-section>
-                    <crem-button
-                        type="primary" (click)="saveSettings()">
-                        Save
-                    </crem-button>
-                </div>
-                <div class="password-settings-content content mb-5 mt-2">
-                    <div class="row col-md-12">
-
-                        <!-- Minimum Password Length -->
-                        <div class="col-md-6">
-                            <div class="row mt-2 settings-form">
-                                <div class="label-wrapper">
-                                    <label>Minimum Password Length</label>
-                                </div>
-                                <div class="input-wrapper">
-                                    <dx-number-box id="password-length" [(ngModel)]="passwordLength" [value]="12"
-                                        [min]="12" [max]="200" [showSpinButtons]="true">
-                                    </dx-number-box>
-                                    <div class="help-text">Between 12 and 200 characters</div>
-                                </div>
-                                <crem-tooltip [externalId]="'min-passwordlength-tooltip'"
-                                    [helpTextData]="'Set the minimum character length of all user passwords.'">
-                                </crem-tooltip>
-                            </div>
-                        </div>
-
-                        <!-- Password Expiration -->
-                        <div class="col-md-6">
-                          <div class="row mt-2 settings-form">
-                                <div class="label-wrapper">
-                                  <label>Password Expiration</label>
-                                </div>
-                                <div class="input-wrapper">
-                                    <dx-number-box id="password-expire-days" [(ngModel)]="passwordExpireDays"
-                                        [value]="1" [min]="1" [max]="90" [showSpinButtons]="true">
-                                    </dx-number-box>
-                                    <div class="help-text">Between 1 and 90 days</div>
-                                </div>
-                                <crem-tooltip [externalId]="'password-expiredays-tooltip'"
-                                    [helpTextData]="'Set the number of days that a password is valid before forcing a reset.'">
-                                </crem-tooltip>
-                            </div>
-                        </div>
-
-                        <!-- Password Format -->
-                        <div class="col-md-6">
-
-                            <div class="row settings-form">
-                                <div class="label-wrapper">
-                                    <label>Password Format</label>
-                                </div>
-                                <div class="input-wrapper">
-                                    <div class="help-text">
-                                    <ul class="password-help-text-list">
-                                        <li>1 Upper Case</li>
-                                        <li>1 Lower Case</li>
-                                        <li>1 Special Character</li>
-                                        <li>1 Number</li>
-                                    </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row settings-form">
-                                <div class="label-wrapper">
-                                    <label>Password History</label>
-                                </div>
-                                <div class="input-wrapper">
-                                    <div class="help-text">Cannot use same password within 365-Day period</div>
-                                </div>
-                            </div>
-
-                            <div class="row settings-form">
-                                <div class="label-wrapper">
-                                    <label>Temporary Lockout</label>
-                                </div>
-                                <div class="input-wrapper">
-                                    <div class="help-text">Temporarily Revoke Login after 5 Attempts</div>
-                                </div>
-                            </div>
-                        
-                        </div>
-                    </div>
-                </div>
-            </crem-card>
+  <div id="admin-page-wrapper">
+    <!-- Password Settings -->
+    <div>
+      <crem-card
+        id="password-settings"
+        title="Password Settings"
+        [showCustomHeader]="true"
+      >
+        <div cta-section>
+          <crem-button type="primary" (click)="saveSettings()">
+            Save
+          </crem-button>
         </div>
-        <!-- End Password Settings -->
-
-        <!-- Single Sing-On Settings -->
-        <div class="mt-5">
-            <crem-card id="sso-settings" title="Single Sign-On Settings">
-                <div class="sso-settings-content content mb-5 mt-2">
-                    <form id="form" [formGroup]="ssoSettingsForm">
-
-                        <!-- SSO Enable -->
-                        <div class="row col-md-12 mb-4">
-                            <div class="col-6">
-                                <div class="row mt-2">
-                                    <label class="col-form-label col-sm-2 pl-0">SSO Enable</label>
-                                    <div class="pl-3">
-                                        <mat-slide-toggle class="col-form-label password-settings-toggle" color="primary"
-                                            formControlName="isSSOEnabled">
-                                        </mat-slide-toggle>
-                                    </div>
-                                    <crem-tooltip class="col-form-label pl-3" [externalId]="'sso-enable-tooltip'"
-                                                        [helpTextData]="'Enables Single Sign On. *Note: A license must be purchased in order for this to work and the company to company connection must be set up.'">
-                                    </crem-tooltip>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row col-md-12">
-                            <div class="col">
-
-                                <!-- SSO Stage URI -->
-                                <div class="row mt-2">
-                                    <label class="col-form-label col-sm-2 pl-0">SSO Stage URI</label>
-                                    <div class="col-sm-8 uri-wrapper">
-                                        <dx-text-area [maxLength]="1000" valueChangeEvent="keyup"
-                                            formControlName="ssoStageUri">
-                                        </dx-text-area>
-                                        <div class="btn btn-link" *ngIf="form.ssoStageUri.value"
-                                            (click)="launchSSOsite(form.ssoStageUri.value)">
-                                            Launch
-                                        </div>
-                                    </div>
-                                    <crem-tooltip class="col-form-label" [externalId]="'sso-stageuri-tooltip'"
-                                                        [helpTextData]="'URL that starts the SSO process for STAGE site only.'">
-                                    </crem-tooltip>
-                                </div>
-                                <!-- SSO Stage Logout URI -->
-                                <div class="row mt-1">
-                                    <label class="col-form-label col-sm-2 pl-0">SSO Stage Logout URI</label>
-                                    <div class="col-sm-8">
-                                        <dx-text-area [maxLength]="1000" valueChangeEvent="keyup"
-                                            formControlName="ssoStageLogoutUri">
-                                        </dx-text-area>
-                                        <div class="btn btn-link" *ngIf="form.ssoStageLogoutUri.value"
-                                            (click)="launchSSOsite(form.ssoStageLogoutUri.value)">
-                                            Launch
-                                        </div>
-                                    </div>
-                                    <crem-tooltip
-                                                        [externalId]="'sso-stagelogouturi-tooltip'"
-                                                        [helpTextData]="'This is the URL that will load when users log out of the application in STAGE only.'">
-                                    </crem-tooltip>
-                                </div>
-
-                            </div>
-
-                            <div class="col">
-
-                                <!-- SSO Prod URI -->
-                                <div class="row mt-2">
-                                    <label class="col-form-label col-sm-2 pl-0">SSO Prod URI</label>
-                                    <div class="col-sm-8 uri-wrapper">
-                                        <dx-text-area [maxLength]="1000" valueChangeEvent="keyup"
-                                            formControlName="ssoProdUri">
-                                        </dx-text-area>
-                                        <div class="btn btn-link" *ngIf="form.ssoProdUri.value"
-                                            (click)="launchSSOsite(form.ssoProdUri.value)">
-                                            Launch
-                                        </div>
-                                    </div>
-                                    <crem-tooltip [externalId]="'sso-produri-tooltip'"
-                                                        [helpTextData]="'URL that starts the SSO process for PROD site only.'">
-                                    </crem-tooltip>
-                                </div>
-
-                                <!-- SSO Prod Logout URI -->
-                                <div class="row mt-1">
-                                    <label class="col-form-label col-sm-2 pl-0">SSO Prod Logout URI</label>
-                                    <div class="col-sm-8 mb-3">
-                                        <dx-text-area [maxLength]="1000" valueChangeEvent="keyup"
-                                            formControlName="ssoProdLogoutUri">
-                                        </dx-text-area>
-                                        <div class="btn btn-link" *ngIf="form.ssoProdLogoutUri.value"
-                                            (click)="launchSSOsite(form.ssoProdLogoutUri.value)">
-                                            Launch
-                                        </div>
-                                    </div>
-                                    <crem-tooltip
-                                                        [externalId]="'sso-prodlogouturi-tooltip'"
-                                                        [helpTextData]="'This is the URL that will load when users log out of the application in PROD only.'">
-                                    </crem-tooltip>
-                                </div>
-
-                            </div>
-
-                        </div>
-                        <div class="row col-md-12 mb-3">
-                            <div class="col-6">
-                                <!-- Redirect to SSO -->
-                                <div class="row mt-2">
-                                    <label class="col-form-label col-sm-2 pl-0">Redirect to SSO</label>
-                                    <div class="pl-3">
-                                        <mat-slide-toggle class="col-form-label password-settings-toggle" color="primary"
-                                            formControlName="forceSSO">
-                                        </mat-slide-toggle>
-                                    </div>
-                                    <crem-tooltip class="pl-3" [externalId]="'sso-redirect-tooltip'"
-                                                        [helpTextData]="'Toggling this on will prevent any user from ever getting to the client specific login page and will automatically forward them to the SSO URI provided in the text boxes above.'">
-                                    </crem-tooltip>
-                                </div>
-
-                            </div>
-                        </div>
-                    </form>
+        <div class="password-settings-content content mb-5 mt-2">
+          <div class="row col-md-12">
+            <!-- Minimum Password Length -->
+            <div class="col-md-6">
+              <div class="row mt-2 settings-form">
+                <div class="label-wrapper">
+                  <label>Minimum Password Length</label>
                 </div>
-            </crem-card>
-        </div>
-        <!-- End Single Sing-On Settings -->
+                <div class="input-wrapper">
+                  <dx-number-box
+                    id="password-length"
+                    [(ngModel)]="passwordLength"
+                    [value]="12"
+                    [min]="12"
+                    [max]="200"
+                    [showSpinButtons]="true"
+                  >
+                  </dx-number-box>
+                  <div class="help-text">Between 12 and 200 characters</div>
+                </div>
+                <crem-tooltip
+                  [externalId]="'min-passwordlength-tooltip'"
+                  [helpTextData]="
+                    'Set the minimum character length of all user passwords.'
+                  "
+                >
+                </crem-tooltip>
+              </div>
+            </div>
 
+            <!-- Password Expiration -->
+            <div class="col-md-6">
+              <div class="row mt-2 settings-form">
+                <div class="label-wrapper">
+                  <label>Password Expiration</label>
+                </div>
+                <div class="input-wrapper">
+                  <dx-number-box
+                    id="password-expire-days"
+                    [(ngModel)]="passwordExpireDays"
+                    [value]="1"
+                    [min]="1"
+                    [max]="90"
+                    [showSpinButtons]="true"
+                  >
+                  </dx-number-box>
+                  <div class="help-text">Between 1 and 90 days</div>
+                </div>
+                <crem-tooltip
+                  [externalId]="'password-expiredays-tooltip'"
+                  [helpTextData]="
+                    'Set the number of days that a password is valid before forcing a reset.'
+                  "
+                >
+                </crem-tooltip>
+              </div>
+            </div>
+
+            <!-- Password Format -->
+            <div class="col-md-6">
+              <div class="row settings-form">
+                <div class="label-wrapper">
+                  <label>Password Format</label>
+                </div>
+                <div class="input-wrapper">
+                  <div class="help-text">
+                    <ul class="password-help-text-list">
+                      <li>1 Upper Case</li>
+                      <li>1 Lower Case</li>
+                      <li>1 Special Character</li>
+                      <li>1 Number</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row settings-form">
+                <div class="label-wrapper">
+                  <label>Password History</label>
+                </div>
+                <div class="input-wrapper">
+                  <div class="help-text">
+                    Cannot use same password within 365-Day period
+                  </div>
+                </div>
+              </div>
+
+              <div class="row settings-form">
+                <div class="label-wrapper">
+                  <label>Temporary Lockout</label>
+                </div>
+                <div class="input-wrapper">
+                  <div class="help-text">
+                    Temporarily Revoke Login after 5 Attempts
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </crem-card>
     </div>
+    <!-- End Password Settings -->
+
+    <!-- Single Sing-On Settings -->
+    <div class="mt-5">
+      <crem-card id="sso-settings" title="Single Sign-On Settings">
+        <div class="sso-settings-content content mb-5 mt-2">
+          <form id="form" [formGroup]="ssoSettingsForm">
+            <!-- SSO Enable -->
+            <div class="row col-md-12 mb-4">
+              <div class="col-6">
+                <div class="row mt-2">
+                  <label class="col-form-label col-sm-2 pl-0">SSO Enable</label>
+                  <div class="pl-3">
+                    <mat-slide-toggle
+                      class="col-form-label password-settings-toggle"
+                      color="primary"
+                      formControlName="isSSOEnabled"
+                    >
+                    </mat-slide-toggle>
+                  </div>
+                  <crem-tooltip
+                    class="col-form-label pl-3"
+                    [externalId]="'sso-enable-tooltip'"
+                    [helpTextData]="
+                      'Enables Single Sign On. *Note: A license must be purchased in order for this to work and the company to company connection must be set up.'
+                    "
+                  >
+                  </crem-tooltip>
+                </div>
+              </div>
+            </div>
+
+            <div class="row col-md-12">
+              <div class="col">
+                <!-- SSO Stage URI -->
+                <div class="row mt-2">
+                  <label class="col-form-label col-sm-2 pl-0"
+                    >SSO Stage URI</label
+                  >
+                  <div class="col-sm-8 uri-wrapper">
+                    <dx-text-area
+                      [maxLength]="1000"
+                      valueChangeEvent="keyup"
+                      formControlName="ssoStageUri"
+                    >
+                    </dx-text-area>
+                    <div
+                      class="btn btn-link"
+                      *ngIf="form.ssoStageUri.value"
+                      (click)="launchSSOsite(form.ssoStageUri.value)"
+                    >
+                      Launch
+                    </div>
+                  </div>
+                  <crem-tooltip
+                    class="col-form-label"
+                    [externalId]="'sso-stageuri-tooltip'"
+                    [helpTextData]="
+                      'URL that starts the SSO process for STAGE site only.'
+                    "
+                  >
+                  </crem-tooltip>
+                </div>
+                <!-- SSO Stage Logout URI -->
+                <div class="row mt-1">
+                  <label class="col-form-label col-sm-2 pl-0"
+                    >SSO Stage Logout URI</label
+                  >
+                  <div class="col-sm-8">
+                    <dx-text-area
+                      [maxLength]="1000"
+                      valueChangeEvent="keyup"
+                      formControlName="ssoStageLogoutUri"
+                    >
+                    </dx-text-area>
+                    <div
+                      class="btn btn-link"
+                      *ngIf="form.ssoStageLogoutUri.value"
+                      (click)="launchSSOsite(form.ssoStageLogoutUri.value)"
+                    >
+                      Launch
+                    </div>
+                  </div>
+                  <crem-tooltip
+                    [externalId]="'sso-stagelogouturi-tooltip'"
+                    [helpTextData]="
+                      'This is the URL that will load when users log out of the application in STAGE only.'
+                    "
+                  >
+                  </crem-tooltip>
+                </div>
+              </div>
+
+              <div class="col">
+                <!-- SSO Prod URI -->
+                <div class="row mt-2">
+                  <label class="col-form-label col-sm-2 pl-0"
+                    >SSO Prod URI</label
+                  >
+                  <div class="col-sm-8 uri-wrapper">
+                    <dx-text-area
+                      [maxLength]="1000"
+                      valueChangeEvent="keyup"
+                      formControlName="ssoProdUri"
+                    >
+                    </dx-text-area>
+                    <div
+                      class="btn btn-link"
+                      *ngIf="form.ssoProdUri.value"
+                      (click)="launchSSOsite(form.ssoProdUri.value)"
+                    >
+                      Launch
+                    </div>
+                  </div>
+                  <crem-tooltip
+                    [externalId]="'sso-produri-tooltip'"
+                    [helpTextData]="
+                      'URL that starts the SSO process for PROD site only.'
+                    "
+                  >
+                  </crem-tooltip>
+                </div>
+
+                <!-- SSO Prod Logout URI -->
+                <div class="row mt-1">
+                  <label class="col-form-label col-sm-2 pl-0"
+                    >SSO Prod Logout URI</label
+                  >
+                  <div class="col-sm-8 mb-3">
+                    <dx-text-area
+                      [maxLength]="1000"
+                      valueChangeEvent="keyup"
+                      formControlName="ssoProdLogoutUri"
+                    >
+                    </dx-text-area>
+                    <div
+                      class="btn btn-link"
+                      *ngIf="form.ssoProdLogoutUri.value"
+                      (click)="launchSSOsite(form.ssoProdLogoutUri.value)"
+                    >
+                      Launch
+                    </div>
+                  </div>
+                  <crem-tooltip
+                    [externalId]="'sso-prodlogouturi-tooltip'"
+                    [helpTextData]="
+                      'This is the URL that will load when users log out of the application in PROD only.'
+                    "
+                  >
+                  </crem-tooltip>
+                </div>
+              </div>
+            </div>
+            <div class="row col-md-12 mb-3">
+              <div class="col-6">
+                <!-- Redirect to SSO -->
+                <div class="row mt-2">
+                  <label class="col-form-label col-sm-2 pl-0"
+                    >Redirect to SSO</label
+                  >
+                  <div class="pl-3">
+                    <mat-slide-toggle
+                      class="col-form-label password-settings-toggle"
+                      color="primary"
+                      formControlName="forceSSO"
+                    >
+                    </mat-slide-toggle>
+                  </div>
+                  <crem-tooltip
+                    class="pl-3"
+                    [externalId]="'sso-redirect-tooltip'"
+                    [helpTextData]="
+                      'Toggling this on will prevent any user from ever getting to the client specific login page and will automatically forward them to the SSO URI provided in the text boxes above.'
+                    "
+                  >
+                  </crem-tooltip>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </crem-card>
+    </div>
+    <!-- End Single Sing-On Settings -->
+  </div>
 </div>
-<dx-load-panel shadingColor="rgba(0,0,0,0.4)" [(visible)]="isLoading"
-    [showIndicator]="true" [showPane]="true" [shading]="true" [closeOnOutsideClick]="false">
+<dx-load-panel
+  shadingColor="rgba(0,0,0,0.4)"
+  [(visible)]="isLoading"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="true"
+  [closeOnOutsideClick]="false"
+>
 </dx-load-panel>

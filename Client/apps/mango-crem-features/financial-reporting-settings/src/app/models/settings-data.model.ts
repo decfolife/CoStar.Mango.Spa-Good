@@ -15,7 +15,7 @@ export class SettingsData {
   fiscalYearAsEndMonth = false;
   financialReportingEnabled = false;
   isImpactReportVisible = false;
-  isSuperUser = false
+  isSuperUser = false;
   hasCustomConfigurations = false;
   customConfigurations = null;
 }

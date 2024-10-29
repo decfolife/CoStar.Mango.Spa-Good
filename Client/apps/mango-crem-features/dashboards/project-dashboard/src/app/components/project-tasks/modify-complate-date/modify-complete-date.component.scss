@@ -1,0 +1,107 @@
+@use 'styles' as *;
+
+.tmcd-headerContent {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  #tmcd-closeModalBtnId .closeIcon {
+    transform: scale(1.3) translateY(3px);
+  }
+
+  .modalTitle {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 1.25rem;
+    color: var(--costar-color-dark, #000);
+  }
+}
+
+.tmcd-bodyContent {
+  .tmcd-row {
+    display: flex;
+    gap: 50px;
+    .tmcd-label {
+      flex-basis: 220px;
+      &.label {
+        flex-basis: 120px;
+      }
+    }
+  }
+
+  .tmcd-modifyDate-container {
+    margin-bottom: 16px;
+
+    .tmcd-modifyDateRow.tmcd-row {
+      margin-bottom: 4px;
+    }
+
+    .tmcd-modifyDate-helpText {
+      font-size: small;
+    }
+
+    .tmcd-tooltip {
+      display: inline-flex;
+      height: 10px;
+      width: 10px;
+      transform: translate(-18px, -24px);
+    }
+  }
+
+  .tmcd-mb10 {
+    margin-bottom: 10px;
+  }
+
+  .tmcd-mb4 {
+    margin-bottom: 4px;
+  }
+
+  .tmcd-required {
+    color: $color-brand-red;
+  }
+}
+
+.footerRightControls {
+  display: flex;
+  align-items: center;
+
+  & > .reason-required-text {
+    font-size: 0.95rem;
+    font-style: italic;
+  }
+
+  & > .tmcd-btn {
+    margin-left: 8px;
+  }
+
+  .modalFooter {
+    @include costar(border-top, gray05);
+  }
+}
+
+::ng-deep .modifyCompleteDateModal {
+  .tmcd-bodyContent.body-content {
+    #tmcd-modifyCompleteDateId dx-date-box {
+      width: 200px;
+    }
+
+    .tmcd-reasonInputComponent {
+      width: 350px;
+    }
+  }
+
+  div.modalFooter {
+    display: block;
+
+    .footerContent {
+      display: flex;
+      justify-content: space-between;
+
+      .footerLeftControls {
+        font-size: small;
+        font-style: italic;
+        color: $danger;
+      }
+    }
+  }
+}

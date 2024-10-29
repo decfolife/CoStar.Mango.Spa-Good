@@ -223,6 +223,9 @@
         // Material UI More Menu
         z-index: 2023 !important;
       }
+      ~ .crem-popup {
+        z-index: 2021 !important;
+      }
     }
     &[aria-hidden='true'] {
       // When Modal is open: Make mat lower z-index than DevExtreme's
@@ -264,4 +267,10 @@ div[id$='dropdownContainer'] {
 }
 .disable-item {
   pointer-events: all;
+}
+
+:host ::ng-deep .dx-popup-wrapper > .dx-overlay-content {
+  position: absolute;
+  top: 100% !important;
+  transform: none !important;
 }

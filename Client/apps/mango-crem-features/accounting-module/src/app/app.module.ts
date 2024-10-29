@@ -11,10 +11,9 @@ import { DashboardModule } from './components/dashboard/accounting-dashboard.mod
 import { CommonModule } from '@angular/common';
 import { IndexComponent } from './components/index/index.component';
 import { ModuleLeftNavAppComponent } from 'apps/mango-crem-features/micro-components/src/app/module-left-nav/module-left-nav.component';
-import { ProjectsDashboardLeftNavService } 
-  from 'apps/mango-crem-features/micro-components/src/app/services/projects-dashboard-left-nav.service';
+import { ProjectsDashboardLeftNavService } from 'apps/mango-crem-features/micro-components/src/app/services/projects-dashboard-left-nav.service';
 import { AccountingListpageComponent } from './components/listpage/accounting-listpage/accounting-listpage.component';
-import { IndexModule } from 'apps/mango-crem-features/list-pages/src/app/components/index.module.hosted'
+import { IndexModule } from 'apps/mango-crem-features/list-pages/src/app/components/index.module.hosted';
 import { DashboardWrapperModule } from './components/dashboard/dashboard-wrapper/dashboard-wrapper.module';
 
 @NgModule({
@@ -35,16 +34,14 @@ import { DashboardWrapperModule } from './components/dashboard/dashboard-wrapper
     SharedLeftNavModule,
     DashboardModule,
     DashboardWrapperModule,
-    IndexModule
+    IndexModule,
   ],
 
-  providers: [ ProjectsDashboardLeftNavService ],
+  providers: [ProjectsDashboardLeftNavService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
-
 export class AppModule {
-
   constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
@@ -54,4 +51,3 @@ export class AppModule {
     customElements.define('ngce-accounting', el);
   }
 }
-

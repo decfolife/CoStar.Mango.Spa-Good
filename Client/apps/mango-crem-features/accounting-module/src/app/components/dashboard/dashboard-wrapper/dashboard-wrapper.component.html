@@ -1,156 +1,176 @@
-<mango-accounting-dashboard *ngIf="!featureFlagEnabled"></mango-accounting-dashboard>
+<mango-accounting-dashboard
+  *ngIf="!featureFlagEnabled"
+></mango-accounting-dashboard>
 
 <div *ngIf="featureFlagEnabled">
-	<div class="dashboard-toolbar-wrapper">
-		<div class="controls-left">
-			<div class="dashboard-toolbar__item">
-				<crem-dropdown
-					[id]="'AccountingViewDropdown-'+getViewName(selectedView, true)"
-					dropDownContainerCustomClass="accountingViewDropDown"
-					[dataSource]='accountingViewData'
-					placeholder='Select View' 
-					[showClearButton]='false'
-					[showColumnHeader]='false'
-					displayExpr="displayValue"
-					valueExpr="id"
-					[allowSearch]='true'
-					[useSelectBox]="true"
-					[selectBoxValue]="selectedView"
-					hoverText="Select View"
-					(selectedItems)="onAccountingViewChange($event)"
-					[isDisabled]="loading"
-				>
-				</crem-dropdown>
-			</div>
+  <div class="dashboard-toolbar-wrapper">
+    <div class="controls-left">
+      <div class="dashboard-toolbar__item">
+        <crem-dropdown
+          [id]="'AccountingViewDropdown-' + getViewName(selectedView, true)"
+          dropDownContainerCustomClass="accountingViewDropDown"
+          [dataSource]="accountingViewData"
+          placeholder="Select View"
+          [showClearButton]="false"
+          [showColumnHeader]="false"
+          displayExpr="displayValue"
+          valueExpr="id"
+          [allowSearch]="true"
+          [useSelectBox]="true"
+          [selectBoxValue]="selectedView"
+          hoverText="Select View"
+          (selectedItems)="onAccountingViewChange($event)"
+          [isDisabled]="loading"
+          [containerized]="false"
+        >
+        </crem-dropdown>
+      </div>
 
-			<div class="dashboard-toolbar__item">
-				<crem-dropdown *ngIf="selectedView !== 1"
-					[id]="'AccountingYearDropdown'"
-					dropDownContainerCustomClass="accountingYearDropDown"
-					[dataSource]='accountingYearData'
-					placeholder='Select Year' 
-					[showClearButton]='false'
-					[showColumnHeader]='false'
-					displayExpr="value"
-					valueExpr="value"
-					[allowSearch]='true'
-					[useSelectBox]="true"
-					[selectBoxValue]="selectedYear"
-					hoverText="Select Year"
-					(selectedItems)="onAccountingYearChange($event)"
-					[isDisabled]="loading"
-				>
-				</crem-dropdown>
-			</div>
+      <div class="dashboard-toolbar__item">
+        <crem-dropdown
+          *ngIf="selectedView !== 1"
+          [id]="'AccountingYearDropdown'"
+          dropDownContainerCustomClass="accountingYearDropDown"
+          [dataSource]="accountingYearData"
+          placeholder="Select Year"
+          [showClearButton]="false"
+          [showColumnHeader]="false"
+          displayExpr="value"
+          valueExpr="value"
+          [allowSearch]="true"
+          [useSelectBox]="true"
+          [selectBoxValue]="selectedYear"
+          hoverText="Select Year"
+          (selectedItems)="onAccountingYearChange($event)"
+          [isDisabled]="loading"
+          [containerized]="false"
+        >
+        </crem-dropdown>
+      </div>
 
-			<div class="dashboard-toolbar__item">
-				<crem-dropdown
-					[id]="'AccountingSegmentDropdown'"
-					dropDownContainerCustomClass="accountingSegmentDropDown"
-					[dataSource]='accountingSegmentData'
-					placeholder='Select Segment' 
-					[showClearButton]='false'
-					[showColumnHeader]='false'
-					displayExpr="name"
-					valueExpr="segmentID"
-					[useSelectBox]="true"
-					[selectBoxValue]="selectedSegment"
-					hoverText="Select Segment"
-					(selectedItems)="onAccountingSegmentChange($event)"
-					(moreMenuItemClicked)="onMoreMenuItemClicked($event)"
-					[isDisabled]="loading"
+      <div class="dashboard-toolbar__item">
+        <crem-dropdown
+          [id]="'AccountingSegmentDropdown'"
+          dropDownContainerCustomClass="accountingSegmentDropDown"
+          [dataSource]="accountingSegmentData"
+          placeholder="Select Segment"
+          [showClearButton]="false"
+          [showColumnHeader]="false"
+          displayExpr="name"
+          valueExpr="segmentID"
+          [useSelectBox]="true"
+          [selectBoxValue]="selectedSegment"
+          hoverText="Select Segment"
+          (selectedItems)="onAccountingSegmentChange($event)"
+          (moreMenuItemClicked)="onMoreMenuItemClicked($event)"
+          [isDisabled]="loading"
+          [containerized]="false"
           itemTemplate="withMenu"
           fieldTemplate="withLabel"
           label="Segment is"
-					[allowSearch]='true'
+          [allowSearch]="true"
           searchMode="contains"
           searchExpr="name"
-				></crem-dropdown>
-			</div>
+        ></crem-dropdown>
+      </div>
 
-			<crem-button
-				[id]="'AccountingButtonApply'"
-				[disabled]="loading"
-				type="secondary"
-				(buttonClick)="apply($event)">
-				Apply
-			</crem-button>
+      <crem-button
+        [id]="'AccountingButtonApply'"
+        [disabled]="loading"
+        type="secondary"
+        (buttonClick)="apply($event)"
+      >
+        Apply
+      </crem-button>
+    </div>
+    <div class="controls-right">
+      <div
+        *ngIf="selectedView !== 1"
+        class="currency-label"
+        [id]="AccountingDashboardCurrencyLabel"
+      >
+        Reporting Currency in
+        <strong class="currency-iso">{{ selectedCurrency }}</strong>
+      </div>
+      <crem-button
+        *ngIf="selectedView !== 1"
+        [id]="'AccountingButtonExport'"
+        [disabled]="loading || exportingReport"
+        type="secondary"
+        (buttonClick)="export()"
+        [icon]="exportingReport && 'faSpinner'"
+        [iconAnimation]="exportingReport && 'spin'"
+        [iconPack]="exportingReport && 'solid'"
+        [title]="
+          exportingReport ? 'Report will be emailed to you shortly.' : ''
+        "
+        [ariaLabel]="exportingReport ? 'Sending to Excel' : 'Send to Excel'"
+        noWrap="true"
+      >
+        {{ exportingReport ? 'Sending to Excel' : 'Send to Excel' }}
+      </crem-button>
+      <crem-button
+        [id]="'AccountingButtonDashboardSettings'"
+        type="secondary"
+        ariaLabel="Dashboard Settings"
+        icon="faCog"
+        [disabled]="loading"
+        [hidden]="true"
+        (click)="launchSettingsModal(); $event.preventDefault()"
+      ></crem-button>
+    </div>
+  </div>
 
-		</div>
-		<div class="controls-right">
-			<span *ngIf="selectedView !== 1" class="currency-label" [id]="AccountingDashboardCurrencyLabel">Reporting Currency in <div class="currency-iso">{{selectedCurrency}}</div></span>
-			<crem-button
-			*ngIf="selectedView !== 1"
-			[id]="'AccountingButtonExport'"
-			[disabled]="loading || exportingReport"
-			type="secondary"
-			(buttonClick)="export()"
-			[icon]="exportingReport && 'faSpinner'"
-			[iconAnimation]="exportingReport && 'spin'"
-			[iconPack]="exportingReport && 'solid'"
-			[title]="exportingReport ? 'Report will be emailed to you shortly.' : ''"
-			>
-				{{exportingReport ? 'Sending to Excel' : 'Send to Excel'}}
-			</crem-button>
-      		<crem-button
-				[id]="'AccountingButtonDashboardSettings'"
-				type="secondary"
-				ariaLabel="Dashboard Settings"
-				icon="faCog"
-				[disabled]="loading"
-				(click)="launchSettingsModal(); $event.preventDefault();"
-      		></crem-button>
-		</div>
-	</div>
-
-	<div class="dashboard-content-wrapper">
-
+  <div class="dashboard-content-wrapper">
     <ng-container *ngIf="!loading; else loadingBlock">
-      <div class="dashboard-content" *ngIf="selectedSegment !== undefined; else noData">
-
+      <div
+        class="dashboard-content"
+        *ngIf="selectedSegment !== undefined; else noData"
+      >
         <workflow-and-alerts
           *ngIf="selectedView === 1"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
-        />
+        ></workflow-and-alerts>
 
         <asc-842-annual-disclosures
           *ngIf="selectedView === 2"
           [dashboardId]="'4'"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
-		  [selectedCurrency]="selectedCurrency"
-        />
+          [selectedCurrency]="selectedCurrency"
+        ></asc-842-annual-disclosures>
 
         <asc-842-quarterly-disclosures
           *ngIf="selectedView === 3"
           [dashboardId]="'5'"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
-		  [selectedCurrency]="selectedCurrency"
-        />
+          [selectedCurrency]="selectedCurrency"
+        ></asc-842-quarterly-disclosures>
 
-        <ifrs-16-annual-disclosures
-          *ngIf="selectedView === 4"
-          [selectedSegment]="selectedSegment"
-          [reportingYear]="selectedYear"
-		  [selectedCurrency]="selectedCurrency"
-        />
+        <ifrs-16-annual-disclosures *ngIf="selectedView === 4">
+          <mango-disclosure-dashboard-view
+            [viewConfiguration]="viewConfiguration"
+            [selectedSegment]="selectedSegment"
+            [reportingYear]="selectedYear"
+            [selectedCurrency]="selectedCurrency"
+          ></mango-disclosure-dashboard-view>
+        </ifrs-16-annual-disclosures>
 
-        <ifrs-16-quarterly-disclosures
-          *ngIf="selectedView === 5"
-          [selectedSegment]="selectedSegment"
-          [reportingYear]="selectedYear"
-		  [selectedCurrency]="selectedCurrency"
-        />
-
+        <ifrs-16-quarterly-disclosures *ngIf="selectedView === 5">
+          <mango-disclosure-dashboard-view
+            [viewConfiguration]="viewConfiguration"
+            [selectedSegment]="selectedSegment"
+            [reportingYear]="selectedYear"
+            [selectedCurrency]="selectedCurrency"
+          ></mango-disclosure-dashboard-view>
+        </ifrs-16-quarterly-disclosures>
       </div>
 
       <ng-template #noData>
         <div class="no-data">No segments have been found to load data.</div>
       </ng-template>
     </ng-container>
-
-	</div>
-
+  </div>
 </div>

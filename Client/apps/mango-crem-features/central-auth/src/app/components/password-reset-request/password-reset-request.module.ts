@@ -20,12 +20,11 @@ import { PasswordResetRequestRoutingModule } from './password-reset-request-rout
     FormsModule,
     ReactiveFormsModule,
     DxTextBoxModule,
-    LibUiSharedModule
+    LibUiSharedModule,
   ],
   exports: [PasswordResetRequestComponent],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [PasswordResetRequestComponent],
 })
-export class PasswordResetRequestModule {
-}
+export class PasswordResetRequestModule {}

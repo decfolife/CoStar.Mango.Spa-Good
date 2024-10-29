@@ -1,4 +1,4 @@
 export interface SaveTaskTemplatePayload {
-  teamTemplateName: string;
+  templateName: string;
   projectID: number;
 }

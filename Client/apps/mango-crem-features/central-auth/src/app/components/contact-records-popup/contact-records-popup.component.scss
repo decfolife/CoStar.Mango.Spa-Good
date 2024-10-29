@@ -14,18 +14,23 @@
     display: flex;
   }
 
-  .dx-data-row.dx-state-hover .default-contact-record-column:not([role="columnheader"]) {
+  .dx-data-row.dx-state-hover
+    .default-contact-record-column:not([role='columnheader']) {
     background-color: white !important;
     cursor: default;
   }
 
-  dx-data-grid table.dx-datagrid-table tbody tr.dx-row.dx-data-row.dx-selection td.default-contact-record-column {
+  dx-data-grid
+    table.dx-datagrid-table
+    tbody
+    tr.dx-row.dx-data-row.dx-selection
+    td.default-contact-record-column {
     background-color: white !important;
   }
 
   .dx-button.button-primary {
     background: #0559b3 !important;
-    color: #FFFFFF !important;
+    color: #ffffff !important;
     border: none !important;
 
     &:hover {
@@ -34,12 +39,12 @@
   }
 
   .dx-button.button-secondary {
-    background: #FFFFFF !important;
+    background: #ffffff !important;
     border: 1px solid #c8c8c8 !important;
     color: #000000 !important;
 
     &:hover {
-      background: #FFFFFF !important;
+      background: #ffffff !important;
       color: #808080 !important;
       border-color: #c8c8c8 !important;
     }

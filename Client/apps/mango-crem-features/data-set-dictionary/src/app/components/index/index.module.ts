@@ -9,7 +9,7 @@ import {
   DxPopupModule,
   DxScrollViewModule,
   DxSelectBoxModule,
-  DxTextBoxModule
+  DxTextBoxModule,
 } from 'devextreme-angular';
 
 import { IndexRoutingModule } from './index-routing.module';

@@ -4,7 +4,7 @@ import {
   BatchStatus,
   ClassificationParameters,
   MeasureEvent,
-  MeasureEventSetting
+  MeasureEventSetting,
 } from '.';
 
 describe('models', () => {
@@ -15,8 +15,22 @@ describe('models', () => {
 
     beforeEach(() => {
       accountingBatch = new AccountingBatch(
-        1, BatchStatus.QueuedForValidation, 2, now, 1, now, false, null, null,
-        null, null, null, null, null, null, batchParam
+        1,
+        BatchStatus.QueuedForValidation,
+        2,
+        now,
+        1,
+        now,
+        false,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        batchParam
       );
     });
 
@@ -27,7 +41,9 @@ describe('models', () => {
 
     it('should have batchStatus', () => {
       expect(accountingBatch).toHaveProperty('batchStatus');
-      expect(accountingBatch.batchStatus).toEqual(BatchStatus.QueuedForValidation);
+      expect(accountingBatch.batchStatus).toEqual(
+        BatchStatus.QueuedForValidation
+      );
     });
 
     it('should have createdBy', () => {
@@ -107,8 +123,23 @@ describe('models', () => {
 
     beforeEach(() => {
       classParam = new ClassificationParameters(
-        1, 1, null, now, 1, null, now, '', null, null, null, null, '', '',
-        null, '', ''
+        1,
+        1,
+        null,
+        now,
+        1,
+        null,
+        now,
+        '',
+        null,
+        null,
+        null,
+        null,
+        '',
+        '',
+        null,
+        '',
+        ''
       );
     });
 
@@ -205,12 +236,27 @@ describe('models', () => {
   });
 
   describe('MeasureEventSetting', () => {
-    const measureEvent: MeasureEvent = { remeasureTypeId: 1, remeasureTypeName: '' };
+    const measureEvent: MeasureEvent = {
+      remeasureTypeId: 1,
+      remeasureTypeName: '',
+    };
     let measureEventSetting: MeasureEventSetting;
 
     beforeEach(() => {
-      measureEventSetting =
-        new MeasureEventSetting(1,'', measureEvent,'', '', '', '', '', '', '', '', '');
+      measureEventSetting = new MeasureEventSetting(
+        1,
+        '',
+        measureEvent,
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
+      );
     });
 
     it('should have id', () => {

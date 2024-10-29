@@ -1,11 +1,25 @@
-<div class="toggle-slider" [class]="size" [class.disabled]="disabled" >
-  <input [attr.id]="id" [class.checked]="value" type="checkbox" [checked]="value" (change)="onValueChanged($event)"  [attr.aria-label]="ariaLabel" [disabled]="disabled">
-  <span class="toggle-slider__slider" [class]="size" [class.disabled]="disabled" [attr.aria-label]="ariaLabel">
+<div class="toggle-slider" [class]="size" [class.disabled]="disabled">
+  <input
+    [attr.id]="id"
+    role="switch"
+    [class.checked]="value"
+    type="checkbox"
+    [checked]="value"
+    [attr.aria-checked]="value"
+    (change)="onValueChanged($event)"
+    [attr.aria-label]="ariaLabel"
+    [disabled]="disabled"
+  />
+  <span
+    class="toggle-slider__slider"
+    [class]="size"
+    [class.disabled]="disabled"
+  >
     <span class="slider-label slider-label__checked" *ngIf="value">
-      {{checkedLabel}}
+      {{ checkedLabel }}
     </span>
     <span class="slider-label slider-label__unchecked" *ngIf="!value">
-      {{uncheckedLabel}}
+      {{ uncheckedLabel }}
     </span>
   </span>
 </div>

@@ -1,4 +1,4 @@
-import { ListPageViewMode } from "../enums";
+import { ListPageViewMode } from '../enums';
 
 export interface ListPageSession {
   listPageObjectTypeSessions: ListPageObjectTypeSession[];

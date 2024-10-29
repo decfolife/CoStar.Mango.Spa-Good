@@ -4,16 +4,22 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [{
-  path: '',
-  component: AppComponent,
-  data: {
-    breadCrumb: { label: 'Alert Rules', append: true, activeLink: 'Alert Rules' }
-  }
-}]
+const routes: Routes = [
+  {
+    path: '',
+    component: AppComponent,
+    data: {
+      breadCrumb: {
+        label: 'Alert Rules',
+        append: true,
+        activeLink: 'Alert Rules',
+      },
+    },
+  },
+];
 
 @NgModule({
-  imports: [CommonModule, AppModule, RouterModule.forChild(routes) ],
-  exports: [ RouterModule ],
+  imports: [CommonModule, AppModule, RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class IndexRoutingModule { }
+export class IndexRoutingModule {}

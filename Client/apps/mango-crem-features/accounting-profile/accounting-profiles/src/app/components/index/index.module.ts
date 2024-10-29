@@ -22,7 +22,13 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 
 import {
-  DxDataGridModule, DxFormComponent, DxFormModule, DxSwitchModule, DevExtremeModule, DxValidationGroupModule, DxLoadPanelModule,
+  DxDataGridModule,
+  DxFormComponent,
+  DxFormModule,
+  DxSwitchModule,
+  DevExtremeModule,
+  DxValidationGroupModule,
+  DxLoadPanelModule,
 } from 'devextreme-angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ConfigurationService } from '../../services/configuration.service';
@@ -38,7 +44,12 @@ import { IndexComponent } from './index.component';
 import { DiscountRateService } from '../../services/discount-rate.service';
 import { PortfolioDropdownService } from '../../services/portfolio-dropdown.service';
 import { BaseService } from '../../services/base.service';
-import { FieldHistoryComponent, FieldHistoryDirective, IconModule, NoObjectsFoundComponent } from '@mango/ui-shared/lib-ui-elements';
+import {
+  FieldHistoryComponent,
+  FieldHistoryDirective,
+  IconModule,
+  NoObjectsFoundComponent,
+} from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [
@@ -47,7 +58,7 @@ import { FieldHistoryComponent, FieldHistoryDirective, IconModule, NoObjectsFoun
     JournalEntryProfilesComponent,
     DiscountRateProfilesComponent,
     DiscountRateProfilesAddEditComponent,
-    PortfolioDropdownComponent
+    PortfolioDropdownComponent,
   ],
   imports: [
     CommonModule,
@@ -73,7 +84,7 @@ import { FieldHistoryComponent, FieldHistoryDirective, IconModule, NoObjectsFoun
     IconModule,
     FieldHistoryComponent,
     FieldHistoryDirective,
-    NoObjectsFoundComponent
+    NoObjectsFoundComponent,
   ],
   providers: [
     ConfigurationService,
@@ -83,7 +94,7 @@ import { FieldHistoryComponent, FieldHistoryDirective, IconModule, NoObjectsFoun
     },
     DiscountRateService,
     PortfolioDropdownService,
-    BaseService
+    BaseService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [IndexComponent],

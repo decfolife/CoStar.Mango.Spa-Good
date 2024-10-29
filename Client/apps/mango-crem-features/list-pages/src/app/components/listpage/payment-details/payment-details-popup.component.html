@@ -1,84 +1,95 @@
-  <crem-modal
-    [modalTitle] = "modalTitle"
-    [closeIconVisible] = "closeButton"
-    [modalId] = "modalId"
-    className="newModal"
-  >
+<crem-modal
+  [modalTitle]="modalTitle"
+  [closeIconVisible]="closeButton"
+  [modalId]="modalId"
+  className="newModal"
+>
   <div modalContent>
     <div class="paymentDetails">
-
       <div class="pmntDtls-top">
         <div class="pmntDtls-top-left table-data">
           <div class="row-data">
-            <div class="text-label"> Payment Name: </div>
-            <div class="value"> {{chargeDetails.paymentName}} </div>
+            <div class="text-label">Payment Name:</div>
+            <div class="value">{{ chargeDetails.paymentName }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Payment Frequency: </div>
-            <div class="value"> {{chargeDetails.paymentFrequency}} </div>
+            <div class="text-label">Payment Frequency:</div>
+            <div class="value">{{ chargeDetails.paymentFrequency }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Amount: </div>
-            <div class="value"> {{chargeDetails.amount}} {{chargeDetails.currency}} </div>
+            <div class="text-label">Amount:</div>
+            <div class="value">
+              {{ chargeDetails.amount }} {{ chargeDetails.currency }}
+            </div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Payment Period: </div>
-            <div class="value"> {{chargeDetails.startDate}} - {{chargeDetails.endDate}} </div>
+            <div class="text-label">Payment Period:</div>
+            <div class="value">
+              {{ chargeDetails.startDate }} - {{ chargeDetails.endDate }}
+            </div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Proration Type: </div>
-            <div class="value"> {{chargeDetails.prorationType}} </div>
+            <div class="text-label">Proration Type:</div>
+            <div class="value">{{ chargeDetails.prorationType }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> First Payment Date: </div>
-            <div class="value"> {{chargeDetails.firstPaymentDate}} </div>
+            <div class="text-label">First Payment Date:</div>
+            <div class="value">{{ chargeDetails.firstPaymentDate }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Status: </div>
-            <div class="value"> {{chargeDetails.processingStatus}} </div>
+            <div class="text-label">Status:</div>
+            <div class="value">{{ chargeDetails.processingStatus }}</div>
           </div>
         </div>
         <div class="pmntDtls-top-right table-data">
           <div class="row-data">
-            <div class="text-label"> Account Name: </div>
-            <div class="value"> {{chargeDetails.glAccountName}} </div>
+            <div class="text-label">Account Name:</div>
+            <div class="value">{{ chargeDetails.glAccountName }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Account Category: </div>
-            <div class="value"> {{chargeDetails.glCategory}} </div>
+            <div class="text-label">Account Category:</div>
+            <div class="value">{{ chargeDetails.glCategory }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> {{vendorOrCustomer}} Name: </div>  
-            <div class="value"> {{chargeDetails.vendorDisplay}} </div>
+            <div class="text-label">{{ vendorOrCustomer }} Name:</div>
+            <div class="value">{{ chargeDetails.vendorDisplay }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Created: </div>
-            <div class="value"> {{chargeDetails.createdDate}} by {{chargeDetails.createdBy}}</div>
+            <div class="text-label">Created:</div>
+            <div class="value">
+              {{ chargeDetails.createdDate }} by {{ chargeDetails.createdBy }}
+            </div>
           </div>
           <div class="row-data">
-            <div class="text-label"> Modified: </div>
-            <div class="value"> {{chargeDetails.modifiedDate}} by {{chargeDetails.modifiedBy}}</div>
+            <div class="text-label">Modified:</div>
+            <div class="value">
+              {{ chargeDetails.modifiedDate }} by {{ chargeDetails.modifiedBy }}
+            </div>
           </div>
           <div class="row-data">
-            <div class="text-label"> GL Event ID: </div>
-            <div class="value"> {{chargeDetails.glEventID}} </div>
+            <div class="text-label">GL Event ID:</div>
+            <div class="value">{{ chargeDetails.glEventID }}</div>
           </div>
           <div class="row-data">
-            <div class="text-label"> GL Source Import ID: </div>
-            <div class="value"> {{chargeDetails.glEventSourceImportID}} </div>
+            <div class="text-label">GL Source Import ID:</div>
+            <div class="value">{{ chargeDetails.glEventSourceImportID }}</div>
           </div>
         </div>
       </div>
 
       <div class="pmntDtls-center">
         <div class="notes">
-          <div class="text-label"> Notes: </div>
-          <div class="value"> {{chargeDetails.glEventNotes}} </div>
+          <div class="text-label">Notes:</div>
+          <div class="value">{{ chargeDetails.glEventNotes }}</div>
         </div>
       </div>
 
       <div class="pmntDtls-bottom">
-        <mat-tab-group disableRipple="true" animationDuration="1000ms" dynamicHeight="false">
+        <mat-tab-group
+          disableRipple="true"
+          animationDuration="1000ms"
+          dynamicHeight="false"
+        >
           <mat-tab label="Payment Processing" class="pymtDtls-tab">
             <ng-template matTabContent>
               <div class="tab-data">
@@ -95,11 +106,17 @@
                   [dataSource]="paymentDetails.paymentProcessings"
                   [wordWrapEnabled]="true"
                 >
-                  <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>	
+                  <dxo-header-filter
+                    [visible]="true"
+                    [allowSearch]="true"
+                  ></dxo-header-filter>
                   <dxo-search-panel [visible]="false"></dxo-search-panel>
                   <dxo-pager [visible]="false"></dxo-pager>
                   <dxo-scrolling mode="virtual"></dxo-scrolling>
-                  <dxo-grouping [autoExpandAll]="false" [contextMenuEnabled]="false"></dxo-grouping>
+                  <dxo-grouping
+                    [autoExpandAll]="false"
+                    [contextMenuEnabled]="false"
+                  ></dxo-grouping>
                   <dxi-column
                     dataField="dueByYear"
                     dataType="number"
@@ -149,18 +166,18 @@
                     dataField="exportedBy"
                     alignment="right"
                   ></dxi-column>
-                    <dxi-column
+                  <dxi-column
                     dataField="glScheduledTransactionID"
                     caption="GL Scheduled Transaction ID"
                     dataType="number"
                     alignment="left"
                   ></dxi-column>
-                  <div *dxTemplate="let data of 'groupCellTemplate'">  
-                    {{data.key}}  
-                  </div> 
+                  <div *dxTemplate="let data of 'groupCellTemplate'">
+                    {{ data.key }}
+                  </div>
                 </dx-data-grid>
               </div>
-            </ng-template>  
+            </ng-template>
           </mat-tab>
           <mat-tab label="Change History" class="pymtDtls-tab">
             <ng-template matTabContent>
@@ -178,7 +195,10 @@
                   [dataSource]="paymentDetails.paymentHistoryItems"
                   [wordWrapEnabled]="true"
                 >
-                  <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>	
+                  <dxo-header-filter
+                    [visible]="true"
+                    [allowSearch]="true"
+                  ></dxo-header-filter>
                   <dxo-search-panel [visible]="false"></dxo-search-panel>
                   <dxo-pager [visible]="false"></dxo-pager>
                   <dxo-scrolling mode="virtual"></dxo-scrolling>
@@ -194,10 +214,7 @@
                     alignment="left"
                     [width]="184"
                   ></dxi-column>
-                  <dxi-column
-                    dataField="user"
-                    alignment="left"
-                  ></dxi-column>
+                  <dxi-column dataField="user" alignment="left"></dxi-column>
                   <dxi-column
                     dataField="description"
                     alignment="left"
@@ -212,7 +229,7 @@
                   ></dxi-column>
                 </dx-data-grid>
               </div>
-            </ng-template>  
+            </ng-template>
           </mat-tab>
           <mat-tab label="Allocations" class="pymtDtls-tab">
             <ng-template matTabContent>
@@ -227,34 +244,28 @@
                   [allowColumnResizing]="true"
                   [allowColumnReordering]="true"
                   [columnAutoWidth]="false"
-                  [dataSource]="paymentDetails.chargeAllocations"          
+                  [dataSource]="paymentDetails.chargeAllocations"
                   [wordWrapEnabled]="true"
                 >
-                  <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>	
+                  <dxo-header-filter
+                    [visible]="true"
+                    [allowSearch]="true"
+                  ></dxo-header-filter>
                   <dxo-search-panel [visible]="false"></dxo-search-panel>
                   <dxo-pager [visible]="false"></dxo-pager>
                   <dxo-scrolling mode="virtual"></dxo-scrolling>
-                  <dxi-column  *ngFor="let segment of paymentDetails.portfolioSegments"
+                  <dxi-column
+                    *ngFor="let segment of paymentDetails.portfolioSegments"
                     [dataField]="segment.segmentLabel"
                   ></dxi-column>
-                  <dxi-column
-                    dataField="costPercent"
-                  ></dxi-column>
-                  <dxi-column
-                    dataField="spacePercent"
-                  ></dxi-column>
-                  <dxi-column
-                    dataField="headCount"
-                  ></dxi-column>
-                  <dxi-column
-                    dataField="status"
-                  ></dxi-column>
-                  <dxi-column
-                    dataField="useType"
-                  ></dxi-column>
+                  <dxi-column dataField="costPercent"></dxi-column>
+                  <dxi-column dataField="spacePercent"></dxi-column>
+                  <dxi-column dataField="headCount"></dxi-column>
+                  <dxi-column dataField="status"></dxi-column>
+                  <dxi-column dataField="useType"></dxi-column>
                 </dx-data-grid>
               </div>
-            </ng-template>  
+            </ng-template>
           </mat-tab>
         </mat-tab-group>
       </div>

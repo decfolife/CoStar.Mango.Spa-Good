@@ -19,7 +19,7 @@ export interface ScheduleObject {
 
 export interface ClassificationType {
   classificationID: number;
-  classificationType: string
+  classificationType: string;
 }
 
 export interface ParametersData {
@@ -36,7 +36,7 @@ export interface ParametersData {
   gridData: any;
   gridOverrides: ParameterOverrides | null;
   gridLoaded: boolean;
-};
+}
 
 export interface ParameterOverrides {
   accountingTermBeginDateOverride: Date | null;
@@ -47,4 +47,4 @@ export interface ParameterOverrides {
   annualRateTypeOverride: string | null;
   manualAssetAdjustmentOverride: string | null;
   paymentTimingOverride: string | null;
-};
+}

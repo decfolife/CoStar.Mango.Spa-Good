@@ -31,7 +31,8 @@
         <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
       </dxo-animation>
       <div id="popoverWrapper">
-        <div #helpText id="helpText" tabindex="0" *ngIf="helpTextData" >{{ helpTextData }}</div>
+        <div #helpText id="helpText" tabindex="0" *ngIf="helpTextData && !helpTextDataIsHtml" >{{ helpTextData }}</div>
+        <div #helpText id="helpText" tabindex="0" *ngIf="helpTextData&& helpTextDataIsHtml" [innerHTML]="helpTextData"></div>
         <div #helpText id="helpText" tabindex="0" *ngIf="helpTextData === null || helpTextData === undefined">
           <p>No help text available.</p>
         </div>

@@ -1,22 +1,27 @@
 .crem-form {
-
   display: flex;
 
   .crem-form-item {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+
+    &-status {
+      font-size: var(--costar-font-size-small);
+      padding-bottom: 2px;
+      min-height: 22px;
+      &__error {
+        color: var(--costar-color-danger-light);
+      }
+      &__warning {
+        color: var(--costar-color-secondary-light);
+      }
+    }
   }
 
   &-horizontal,
   &-vertical {
     flex-direction: column;
-
-    .crem-form-item {
-      padding-top: 8px;
-      padding-bottom: 8px;
-    }
-
 
     crem-form-label {
       width: 25%;
@@ -28,7 +33,6 @@
     .crem-form-item-control {
       width: 65%;
     }
-
 
     crem-form-label {
       margin-top: 4px;
@@ -49,19 +53,10 @@
     flex-direction: row;
 
     .crem-form-item {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
-
-    .crem-form-item-control {
-      width: 70%;
-    }
-
-    crem-form-label {
-      width: 30%;
+      padding-left: 8px;
+      padding-right: 8px;
       display: flex;
-      align-items: center;
-
+      flex-direction: column;
     }
   }
 
@@ -77,5 +72,22 @@
   color: var(--costar-color-gray03);
   font-size: var(--costar-font-size-small);
   line-height: 1.5715;
-  transition: color .3s cubic-bezier(.215, .61, .355, 1);
+  transition: color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.control-status {
+  &__error {
+    input,
+    dx-date-box,
+    dx-drop-down-box .dx-texteditor-container {
+      border-color: var(--costar-color-danger-light) !important;
+    }
+  }
+  &__warning {
+    input,
+    dx-date-box,
+    dx-drop-down-box .dx-texteditor-container {
+      border-color: var(--costar-color-secondary-light) !important;
+    }
+  }
 }

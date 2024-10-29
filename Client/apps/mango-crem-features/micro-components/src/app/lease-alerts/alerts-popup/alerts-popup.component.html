@@ -5,7 +5,8 @@
   id="openLeaseAlertsPopupButton"
 ></dx-button>
 
-<dx-popup [wrapperAttr]="{ id: 'leaseAlertsPopup' }"
+<dx-popup
+  [wrapperAttr]="{ id: 'leaseAlertsPopup' }"
   [width]="'75%'"
   [height]="'75%'"
   [showTitle]="true"
@@ -23,7 +24,8 @@
     class="popup-footer-text"
   ></dxi-toolbar-item>
 
-  <mango-alerts-lease-alerts-controls [isPopupView]="true"
+  <mango-alerts-lease-alerts-controls
+    [isPopupView]="true"
     [leaseAbstractID]="leaseAbstractID"
     (refreshCachedDate)="refreshButton()"
   ></mango-alerts-lease-alerts-controls>

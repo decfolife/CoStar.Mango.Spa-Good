@@ -8,9 +8,8 @@ describe('DiscountRateProfilesAddEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ DiscountRateProfilesAddEditComponent ]
-    })
-    .compileComponents();
+      declarations: [DiscountRateProfilesAddEditComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -13,14 +13,14 @@ const LEASE_OTID = 4;
 
 @Injectable({ providedIn: 'root' })
 export class AlertsService extends EndpointService {
-  listpagesUrl: string = UtilitiesService.getBaseApiUrl(Api.listpages)
+  listpagesUrl: string = UtilitiesService.getBaseApiUrl(Api.listpages);
   isEuroDateFormat = false;
   private apiUrl: string;
   private readonly OBJECT_TYPE_ID = 4;
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
-    this.apiUrl = UtilitiesService.getBaseApiUrl(Api.alerts)
+    this.apiUrl = UtilitiesService.getBaseApiUrl(Api.alerts);
   }
 
   getUserModuleRights() {
@@ -31,21 +31,24 @@ export class AlertsService extends EndpointService {
   }
 
   getPortfolios() {
-      return this.callHttpGet(
-        `${this.listpagesUrl}listpage/portfolios`,
-        'getPortfolios'
-      );
+    return this.callHttpGet(
+      `${this.listpagesUrl}listpage/portfolios`,
+      'getPortfolios'
+    );
   }
 
   getRedirectorLinkList() {
-      return this.callHttpGet(
-        `${this.listpagesUrl}listpage/RedirectorLinkList`,
-        'redirectorLinkList'
-      );
+    return this.callHttpGet(
+      `${this.listpagesUrl}listpage/RedirectorLinkList`,
+      'redirectorLinkList'
+    );
   }
 
   getAlertTypes() {
-    return this.callHttpGet(`${this.apiUrl}alerts/GetAlertTypes`, 'getAlertTypes');
+    return this.callHttpGet(
+      `${this.apiUrl}alerts/GetAlertTypes`,
+      'getAlertTypes'
+    );
   }
 
   getAlertRuleSeverities() {
@@ -56,17 +59,17 @@ export class AlertsService extends EndpointService {
   }
 
   getAlertRules() {
-      return this.callHttpGet(
-        `${this.apiUrl}alerts/GetAlertRules/${this.OBJECT_TYPE_ID}`,
-        'getAlertRules'
-      );
+    return this.callHttpGet(
+      `${this.apiUrl}alerts/GetAlertRules/${this.OBJECT_TYPE_ID}`,
+      'getAlertRules'
+    );
   }
 
   getUndismissedLeaseAlertsStats(leaseAbstractID: number) {
-      return this.callHttpGet(
-        `${this.apiUrl}alerts/GetUndismissedLeaseAlertsStats/LeaseAbstractID/${leaseAbstractID}`,
-        'getUndismissedLeaseAlertsStatsByLeaseAbstractID'
-      );
+    return this.callHttpGet(
+      `${this.apiUrl}alerts/GetUndismissedLeaseAlertsStats/LeaseAbstractID/${leaseAbstractID}`,
+      'getUndismissedLeaseAlertsStatsByLeaseAbstractID'
+    );
   }
 
   filterLeaseAlerts(
@@ -75,39 +78,39 @@ export class AlertsService extends EndpointService {
   ) {
     leaseAlertFilter.pageNumber = pageNumber;
 
-      return this.callHttpPost(
-        `${this.apiUrl}alerts/SearchLeaseAlerts`,
-        'searchLeaseAlerts',
-        JSON.stringify(leaseAlertFilter)
-      );
+    return this.callHttpPost(
+      `${this.apiUrl}alerts/SearchLeaseAlerts`,
+      'searchLeaseAlerts',
+      JSON.stringify(leaseAlertFilter)
+    );
   }
 
   runLeaseAlertRulesByLeaseAbstractID(leaseAbstractID: number) {
-      return this.callHttpGet(
-        `${this.apiUrl}alerts/RunLeaseAlertRules/LeaseAbstractID/${leaseAbstractID}`,
-        'runLeaseAlertRulesByLeaseAbstractID'
-      );
+    return this.callHttpGet(
+      `${this.apiUrl}alerts/RunLeaseAlertRules/LeaseAbstractID/${leaseAbstractID}`,
+      'runLeaseAlertRulesByLeaseAbstractID'
+    );
   }
 
   toggleLeaseAlertsIsDismissed(leaseAlerts: LeaseAlertToggleDTO) {
-      return this.callHttpPost(
-        `${this.apiUrl}alerts/ToggleLeaseAlertsIsDismissed`,
-        'toggleLeaseAlertsIsDismissed',
-        JSON.stringify(leaseAlerts)
-      );
+    return this.callHttpPost(
+      `${this.apiUrl}alerts/ToggleLeaseAlertsIsDismissed`,
+      'toggleLeaseAlertsIsDismissed',
+      JSON.stringify(leaseAlerts)
+    );
   }
 
   getIsAlertDismissedReasonRequired() {
-      return this.callHttpGet(
-        `${this.apiUrl}alerts/IsAlertDismissedReasonRequired/ObjectType/${LEASE_OTID}`,
-        'isDismissReasonRequired'
-      );
+    return this.callHttpGet(
+      `${this.apiUrl}alerts/IsAlertDismissedReasonRequired/ObjectType/${LEASE_OTID}`,
+      'isDismissReasonRequired'
+    );
   }
 
   getAlertDismissReasons() {
-      return this.callHttpGet(
-        `${this.apiUrl}alerts/GetAlertDismissReasons/ObjectTypeID/${LEASE_OTID}`,
-        'getAlertDismissReasons'
-      );
+    return this.callHttpGet(
+      `${this.apiUrl}alerts/GetAlertDismissReasons/ObjectTypeID/${LEASE_OTID}`,
+      'getAlertDismissReasons'
+    );
   }
 }

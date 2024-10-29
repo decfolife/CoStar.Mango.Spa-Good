@@ -1,41 +1,46 @@
 <crem-card
-[id]="card.id"
-[title]="card.title"
-[subtitle]="card.subtitle"
-[filterData]="null"
-[filterInitialValue]="null"
-[showFilterClearButton]="false"
-[moreOptions]="card.moreOptions"
-(exportDataGrid)="exportAllGridData($event)"
+  [id]="card.id"
+  [title]="card.title"
+  [subtitle]="card.subtitle"
+  [filterData]="null"
+  [filterInitialValue]="null"
+  [showFilterClearButton]="false"
+  [moreOptions]="card.moreOptions"
+  (exportDataGrid)="exportAllGridData($event)"
 >
-
-  <div class="cardContent"  fxflexFill *ngIf="card.dispCard">
+  <div class="cardContent" fxflexFill *ngIf="card.dispCard">
     <dx-chart
       #ProjectsByTypeChart
       [id]="card.id + 'chart'"
       [dataSource]="card.chartData.dataSource"
       *ngIf="displayChart"
-      [attr.aria-label]="card.title + ' - This card provides a bar graph representation of ' + cardTitleOnly + ' by ' + cardTitleOnly + ' Type. Hovering over each bar will show the count of that ' + cardTitleOnly + ' Type.'"
+      [attr.aria-label]="
+        card.title +
+        ' - This card provides a bar graph representation of ' +
+        cardTitleOnly +
+        ' by ' +
+        cardTitleOnly +
+        ' Type. Hovering over each bar will show the count of that ' +
+        cardTitleOnly +
+        ' Type.'
+      "
       role="figure"
       tabindex="0"
     >
-      <dxo-size
-        [height]="244">
-      </dxo-size>
+      <dxo-size [height]="244"> </dxo-size>
       <dxi-series
         argumentField="projectType"
         valueField="projectTypeCount"
         name="Project Types"
         [type]="card.chartData.type"
         color="#EC4A08"
-
       ></dxi-series>
       <dxo-legend [visible]="false"></dxo-legend>
       <dxo-tooltip [enabled]="true" [contentTemplate]="'tooltip'">
       </dxo-tooltip>
       <div *dxTemplate="let tooltip of 'tooltip'">
         <span> {{ tooltip.point.data.projectType }}</span
-        ><span> {{objectType}} Count: </span
+        ><span> {{ objectType }} Count: </span
         ><span>
           {{ tooltip.point.data.projectTypeCount }}
         </span>

@@ -1,56 +1,90 @@
-<dx-data-grid class="list-page-data-grid"
-	#DataGrid
-	[dataSource]="data"
-  	keyExpr="configurationID"
-	[showColumnLines]="false"
-	[showRowLines]="false"
-	[showBorders]="false"
-	[rowAlternationEnabled]="true"
-	[allowColumnResizing]="true"
-	[allowColumnReordering]="true"
-	[columnAutoWidth]="true"
-	(onToolbarPreparing)="onToolbarPreparing($event)"
-	[disabled]="baseService.userRights !== 2">
-
-	<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
-	<dxo-editing mode="batch"
-		[allowUpdating]="true"
-		[selectTextOnEditStart]="true"
-		[(changes)]="changes"
-		>
-	</dxo-editing>
-	<dxo-scrolling mode="virtual"></dxo-scrolling>
-	<dxi-column dataField="configurationID" [visible]="false"></dxi-column>
-	<dxi-column dataField="remeasureTypeID" [visible]="false"></dxi-column>
-	<dxi-column dataField="remeasureTypeName" [fixed]="true" [allowEditing]="false" caption="Measure Event"></dxi-column>
-	<dxi-column dataField="accountingTermBeginDate">
-		<dxo-lookup [dataSource]="filterBeginDateOptions"
-			displayExpr="methodDisplay"
-			valueExpr="beginValueExpr">
-		</dxo-lookup>
-	</dxi-column>
-	<dxi-column dataField="accountingTermEndDate">
-		<dxo-lookup [dataSource]="filterEndDateOptions"
-			displayExpr="methodDisplay"
-			valueExpr="endValueExpr">
-		</dxo-lookup>
-	</dxi-column>
-	<dxi-column dataField="journalEntryOption" caption="Journal Entry Profile">
-		<dxo-lookup [dataSource]="filterJounalEntryProfiles"
-			displayExpr="profileName"
-			valueExpr="profileName">
-		</dxo-lookup>
-	</dxi-column>
-	<dxi-column dataField="manualAdjustmentOption" caption="Manual Asset Adjustment">
-		<dxo-lookup [dataSource]="filterDefaultManualAdjustmentOptions"
-			displayExpr="methodDisplay"
-			valueExpr="methodID">
-		</dxo-lookup>
-	</dxi-column>
-	<dxi-column dataField="commentsOption" caption="Comments">
-		<dxo-lookup [dataSource]="filterCommentsOptions"
-			displayExpr="methodDisplay"
-			valueExpr="methodID">
-		</dxo-lookup>
-	</dxi-column>
+<dx-data-grid
+  class="list-page-data-grid"
+  #DataGrid
+  [dataSource]="data"
+  keyExpr="configurationID"
+  [showColumnLines]="false"
+  [showRowLines]="false"
+  [showBorders]="false"
+  [rowAlternationEnabled]="true"
+  [allowColumnResizing]="true"
+  [allowColumnReordering]="true"
+  [columnAutoWidth]="true"
+  (onToolbarPreparing)="onToolbarPreparing($event)"
+  [disabled]="baseService.userRights !== 2"
+>
+  <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+  <dxo-editing
+    mode="batch"
+    [allowUpdating]="true"
+    [selectTextOnEditStart]="true"
+    [(changes)]="changes"
+  >
+  </dxo-editing>
+  <dxo-scrolling mode="virtual"></dxo-scrolling>
+  <dxi-column dataField="configurationID" [visible]="false"></dxi-column>
+  <dxi-column dataField="remeasureTypeID" [visible]="false"></dxi-column>
+  <dxi-column
+    dataField="remeasureTypeName"
+    [fixed]="true"
+    [allowEditing]="false"
+    caption="Measure Event"
+  ></dxi-column>
+  <dxi-column dataField="accountingTermBeginDate">
+    <dxo-lookup
+      [dataSource]="filterBeginDateOptions"
+      displayExpr="methodDisplay"
+      valueExpr="beginValueExpr"
+    >
+    </dxo-lookup>
+  </dxi-column>
+  <dxi-column dataField="accountingTermEndDate">
+    <dxo-lookup
+      [dataSource]="filterEndDateOptions"
+      displayExpr="methodDisplay"
+      valueExpr="endValueExpr"
+    >
+    </dxo-lookup>
+  </dxi-column>
+  <dxi-column dataField="journalEntryOption" caption="Journal Entry Profile">
+    <dxo-lookup
+      [dataSource]="filterJounalEntryProfiles"
+      displayExpr="profileName"
+      valueExpr="profileName"
+    >
+    </dxo-lookup>
+  </dxi-column>
+  <dxi-column
+    dataField="manualAdjustmentOption"
+    caption="Manual Asset Adjustment"
+  >
+    <dxo-lookup
+      [dataSource]="filterDefaultManualAdjustmentOptions"
+      displayExpr="methodDisplay"
+      valueExpr="methodID"
+    >
+    </dxo-lookup>
+  </dxi-column>
+  <dxi-column
+    dataField="rouAssetMethodID"
+    caption="ROU Assets Obtained Method"
+    *ngIf="
+      classificationID === 2 || classificationID === 3 || classificationID === 4
+    "
+  >
+    <dxo-lookup
+      [dataSource]="filterROUAssetObtainedOptions"
+      displayExpr="name"
+      valueExpr="id"
+    >
+    </dxo-lookup>
+  </dxi-column>
+  <dxi-column dataField="commentsOption" caption="Comments">
+    <dxo-lookup
+      [dataSource]="filterCommentsOptions"
+      displayExpr="methodDisplay"
+      valueExpr="methodID"
+    >
+    </dxo-lookup>
+  </dxi-column>
 </dx-data-grid>

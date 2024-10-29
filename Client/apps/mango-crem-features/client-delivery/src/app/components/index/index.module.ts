@@ -1,4 +1,4 @@
-import { NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ClientDeliveryService } from '../../services/client-delivery.service';
@@ -7,14 +7,8 @@ import { IndexRoutingModule } from '../index/index-routing.module';
 
 @NgModule({
   declarations: [],
-  imports: [
-    IndexRoutingModule
-  ],
+  imports: [IndexRoutingModule],
   exports: [RouterModule],
-  providers: [
-    ClientDeliveryService,
-    UserMaintenanceService,
-    DatePipe
-  ],
+  providers: [ClientDeliveryService, UserMaintenanceService, DatePipe],
 })
-export class IndexModule { }
+export class IndexModule {}

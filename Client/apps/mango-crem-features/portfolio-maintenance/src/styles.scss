@@ -1,11 +1,11 @@
 .portfolio-maintenance-deletion-modal {
-    @import "./app/components/portfolio-maintenance/modals/view-group-contacts/view-group-contacts.component.scss";
+  @import './app/components/portfolio-maintenance/modals/view-group-contacts/view-group-contacts.component.scss';
 }
 
 portfolio-maintenance {
-    /* You can add global styles to this file, and also import other style files */
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss";
+  /* You can add global styles to this file, and also import other style files */
+  @import '../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss';
+  @import '../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss';
 
-    @import "./assets/styles/portfolio-maintenance.scss";
+  @import './assets/styles/portfolio-maintenance.scss';
 }

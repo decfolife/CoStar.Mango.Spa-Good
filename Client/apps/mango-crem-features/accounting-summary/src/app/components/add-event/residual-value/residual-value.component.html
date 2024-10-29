@@ -1,171 +1,241 @@
-<crem-accordion 
-    [id]="accountingSummaryService.getId(componentName, 'section', 'accordion')"
-    [title]="'Residual Value '"
-    [subTitle]="estimatedSubText"
-    [contentPadding]="true"
-    class="residual-value-accordion"
-    *ngIf="classificationId !== 0 && classificationId !== 5 && classificationId !== undefined && classificationId !==''"
-    [isOpen]="!isAccordionOpen">
+<crem-accordion
+  [id]="accountingSummaryService.getId(componentName, 'section', 'accordion')"
+  [title]="'Residual Value '"
+  [subTitle]="estimatedSubText"
+  [contentPadding]="true"
+  class="residual-value-accordion"
+  [isOpen]="isAccordionOpen"
+>
+  <form class="residual-value-container" [formGroup]="residualValueForm">
+    <div class="column">
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Estimated-Residual-Value',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'Estimated Residual Value'"
+          [inputType]="'number'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [disabled]="false"
+          [required]="false"
+          formControlName="estimatedResidualValue"
+        >
+        </crem-input>
+      </div>
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Guaranteed-Amount',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'Guaranteed Amount Reflected in Payments'"
+          [inputType]="'number'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [disabled]="false"
+          [required]="false"
+          formControlName="guaranteedAmountReflected"
+        >
+        </crem-input>
+      </div>
 
-    <form class="residual-value-container" [formGroup]="residualValueForm">
-        <div class="column">
-            <div class="control">
-                <crem-input
-                  [id]="accountingSummaryService.getId(componentName, 'Estimated-Residual-Value', 'Input')"
-                  [showLabel]="true"
-                  [labelPosition]="'top'"
-                  [label]="'Estimated Residual Value'"
-                  [inputType]="'number'"
-                  [value]="''"
-                  [placeholder]="''"
-                  [disallowNegative]="true"
-                  [disabled]="false"
-                  [required]="false"
-                  formControlName="estimatedResidualValue">
-                </crem-input>
-            </div>
-            <div class="control">
-                <crem-input
-                  [id]="accountingSummaryService.getId(componentName, 'Guaranteed-Amount', 'Input')"
-                  [showLabel]="true"
-                  [labelPosition]="'top'"
-                  [label]="'Guaranteed Amount Reflected in Payments'"
-                  [inputType]="'number'"
-                  [value]="''"
-                  [placeholder]="''"
-                  [disallowNegative]="true"
-                  [disabled]="false"
-                  [required]="false"
-                  formControlName="guaranteedAmountReflected">
-                </crem-input>
-            </div>
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-Guaranteed',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'RV Guaranteed'"
+          [inputType]="'number'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [disabled]="false"
+          [required]="false"
+          formControlName="rvGuaranteed"
+        >
+        </crem-input>
+      </div>
 
-            <div class="control">
-                <crem-input
-                  [id]="accountingSummaryService.getId(componentName, 'RV-Guaranteed', 'Input')"
-                  [showLabel]="true"
-                  [labelPosition]="'top'"
-                  [label]="'RV Guaranteed'"
-                  [inputType]="'number'"
-                  [value]="''"
-                  [placeholder]="''"
-                  [disallowNegative]="true"
-                  [disabled]="false"
-                  [required]="false"
-                  formControlName="rvGuaranteed">
-                </crem-input>
-            </div>
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-Guaranteed-by-3rd-Party',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'RV Guaranteed by 3rd Party'"
+          [inputType]="'number'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [disabled]="false"
+          [required]="false"
+          formControlName="rvGuaranteedBy3rdParty"
+        >
+        </crem-input>
+      </div>
 
-            <div class="control">
-                <crem-input
-                  [id]="accountingSummaryService.getId(componentName, 'RV-Guaranteed-by-3rd-Party', 'Input')"
-                  [showLabel]="true"
-                  [labelPosition]="'top'"
-                  [label]="'RV Guaranteed by 3rd Party'"
-                  [inputType]="'number'"
-                  [value]="''"
-                  [placeholder]="''"
-                  [disallowNegative]="true"
-                  [disabled]="false"
-                  [required]="false"
-                  formControlName="rvGuaranteedBy3rdParty">
-                </crem-input>
-            </div>
+      <div class="control">
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Lessor-Explicitly-Exempts-Lessee',
+              'label'
+            )
+          "
+          [label]="'Lessor Explicitly Exempts Lessee'"
+          [showInfo]="false"
+        >
+        </crem-input-label>
 
-            <div class="control">
-              <crem-input-label
-                  [id]="accountingSummaryService.getId(componentName,'Lessor-Explicitly-Exempts-Lessee','label')"
-                  [label]="'Lessor Explicitly Exempts Lessee'"
-                  [showInfo]="false">
-              </crem-input-label>
-            
-              <div class="lessor-explicitly-exempts-lessee">
-                <crem-toggle-slider
-                  size="wide"
-                  checkedLabel="YES"
-                  uncheckedLabel="NO"
-                  [value]="''"
-                  formControlName="lessorExplicitlyExemptsLessee">
-                </crem-toggle-slider>
-              </div>
-            </div>
+        <div class="lessor-explicitly-exempts-lessee">
+          <crem-toggle-slider
+            size="wide"
+            checkedLabel="YES"
+            uncheckedLabel="NO"
+            [value]="''"
+            formControlName="lessorExplicitlyExemptsLessee"
+          >
+          </crem-toggle-slider>
         </div>
-        <div class="column">
-          <div class="control">
-            <crem-input
-              [id]="accountingSummaryService.getId(componentName, 'RV-Guaranteed-by-Lessee', 'Input')"
-              [showLabel]="true"
-              [labelPosition]="'top'"
-              [label]="'RV Guaranteed by Lessee'"
-              [inputType]="'text'"
-              [value]="''"
-              [placeholder]="''"
-              [disallowNegative]="true"
-              [disabled]="true"
-              [required]="false"
-              formControlName="rvGuaranteedByLessee">
-            </crem-input>
-          </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-Guaranteed-by-Lessee',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'RV Guaranteed by Lessee'"
+          [inputType]="'text'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [disabled]="true"
+          [required]="false"
+          formControlName="rvGuaranteedByLessee"
+        >
+        </crem-input>
+      </div>
 
-          <div class="control">
-            <crem-input
-              [id]="accountingSummaryService.getId(componentName, 'Amount-Probable-Being-Owed-by-Lessee', 'Input')"
-              [showLabel]="true"
-              [labelPosition]="'top'"
-              [label]="'Amount Probable of Being Owed by Lessee'"
-              [inputType]="'text'"
-              [value]="''"
-              [placeholder]="''"
-              [disallowNegative]="true"
-              [required]="false"
-              formControlName="amountProbableBeingOwedByLessee">
-            </crem-input>
-          </div>
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Amount-Probable-Being-Owed-by-Lessee',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'Amount Probable of Being Owed by Lessee'"
+          [inputType]="'text'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [required]="false"
+          formControlName="amountProbableBeingOwedByLessee"
+        >
+        </crem-input>
+      </div>
 
-          <div class="control">
-            <crem-input
-              [id]="accountingSummaryService.getId(componentName, 'Unguaranteed-Residual-Value', 'Input')"
-              [showLabel]="true"
-              [labelPosition]="'top'"
-              [label]="'Unguaranteed Residual Value'"
-              [inputType]="'text'"
-              [value]="''"
-              [placeholder]="''"
-              [disallowNegative]="true"
-              [required]="false"
-              formControlName="unguaranteedResidualValue">
-            </crem-input>
-          </div>
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Unguaranteed-Residual-Value',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'Unguaranteed Residual Value'"
+          [inputType]="'text'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [required]="false"
+          formControlName="unguaranteedResidualValue"
+        >
+        </crem-input>
+      </div>
 
-          <div class="control">
-            <crem-input
-              [id]="accountingSummaryService.getId(componentName, 'Amount-Not-Reflected-PV-Payments', 'Input')"
-              [showLabel]="true"
-              [labelPosition]="'top'"
-              [label]="'Amount Not Reflected in PV of Payments'"
-              [inputType]="'text'"
-              [value]="''"
-              [placeholder]="''"
-              [disallowNegative]="true"
-              [required]="false"
-              formControlName="amountNotReflectedPVPayments">
-            </crem-input>
-          </div>
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Amount-Not-Reflected-PV-Payments',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'Amount Not Reflected in PV of Payments'"
+          [inputType]="'text'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [required]="false"
+          formControlName="amountNotReflectedPVPayments"
+        >
+        </crem-input>
+      </div>
 
-          <div class="control">
-            <crem-input
-              [id]="accountingSummaryService.getId(componentName, 'PV-Amount-Not-Reflected-in-Payments', 'Input')"
-              [showLabel]="true"
-              [labelPosition]="'top'"
-              [label]="'PV of Amount Not Reflected in Payments'"
-              [inputType]="'text'"
-              [value]="''"
-              [placeholder]="''"
-              [disallowNegative]="true"
-              [required]="false"
-              formControlName="pvAmountNotReflectedInPayments">
-            </crem-input>
-          </div>
-        </div>
-    </form>
+      <div class="control">
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'PV-Amount-Not-Reflected-in-Payments',
+              'Input'
+            )
+          "
+          [showLabel]="true"
+          [labelPosition]="'top'"
+          [label]="'PV of Amount Not Reflected in Payments'"
+          [inputType]="'text'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [required]="false"
+          formControlName="pvAmountNotReflectedInPayments"
+        >
+        </crem-input>
+      </div>
+    </div>
+  </form>
 </crem-accordion>

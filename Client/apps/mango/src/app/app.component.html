@@ -2,9 +2,14 @@
   <!-- Page content -->
   <div class="main">
     <router-outlet>
-      <mango-loading-screen [color]="'light'" [loading]="(loaded$ | async) === false"></mango-loading-screen>
-      <idle-timeout-popup [visible]="showIdleTimeoutPopup" (close)="idlePopupOnClose()"></idle-timeout-popup>
+      <mango-loading-screen
+        [color]="'light'"
+        [loading]="(loaded$ | async) === false"
+      ></mango-loading-screen>
+      <idle-timeout-popup
+        [visible]="showIdleTimeoutPopup"
+        (close)="idlePopupOnClose()"
+      ></idle-timeout-popup>
     </router-outlet>
   </div>
 </div>
-

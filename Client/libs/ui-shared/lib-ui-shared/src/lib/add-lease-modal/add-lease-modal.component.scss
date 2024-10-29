@@ -1,0 +1,50 @@
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+@use 'styles' as *;
+
+#addLeaseModal-content {
+  .label {
+    margin-bottom: 2px;
+    margin-top: 2px;
+
+    .required-tag {
+      color: $danger;
+    }
+  }
+
+  .container {
+    padding: 8px 0 4px;
+  }
+
+  #aet-leaseInfo-container {
+    display: flex;
+    gap: 8px;
+    .leaseInfo {
+      flex-basis: 50%;
+    }
+  }
+}
+
+::ng-deep #addEditTaskModal-content {
+  #aet-description-container {
+    .dx-texteditor.dx-editor-outlined .dx-texteditor-input {
+      max-height: none;
+    }
+  }
+}
+
+::ng-deep {
+  .modalFooter {
+    .addLeaseFooter {
+      display: flex;
+
+      crem-button {
+        padding: 8px;
+      }
+    }
+  }
+}
+
+#new-lease-form {
+  width: 100%;
+  display: unset;
+}

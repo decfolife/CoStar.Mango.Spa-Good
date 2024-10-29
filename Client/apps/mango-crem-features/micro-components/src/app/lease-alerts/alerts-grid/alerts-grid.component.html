@@ -1,4 +1,6 @@
-<dx-data-grid #leaseAlertsGrid *ngIf="!isInitialLoading"
+<dx-data-grid
+  #leaseAlertsGrid
+  *ngIf="!isInitialLoading"
   id="leaseAlertsGrid"
   class="list-page-data-grid"
   [dataSource]="gridData"
@@ -22,22 +24,18 @@
   (onCellPrepared)="setSelectionControlState($event)"
   [loadPanel]="{ enabled: false }"
 >
-  <dxo-filter-builder-popup [width]="600"
+  <dxo-filter-builder-popup
+    [width]="600"
     [height]="600"
     [(visible)]="filterBuilderVisible"
   ></dxo-filter-builder-popup>
 
-  <dxo-column-chooser
-    [sortOrder]="'asc'"
-    [width]="400"
-    [height]="500"
-  >
-    <dxo-search
-      [enabled]="true">
-    </dxo-search>
-</dxo-column-chooser>
+  <dxo-column-chooser [sortOrder]="'asc'" [width]="400" [height]="500">
+    <dxo-search [enabled]="true"> </dxo-search>
+  </dxo-column-chooser>
 
-  <dxo-selection *ngIf="!(isPopupView && isArchived)"
+  <dxo-selection
+    *ngIf="!(isPopupView && isArchived)"
     [mode]="userCanEdit ? 'multiple' : 'none'"
     [showCheckBoxesMode]="'always'"
     [selectAllMode]="'allPages'"
@@ -45,8 +43,9 @@
 
   <dxo-paging [pageSize]="25"></dxo-paging>
 
-  <dxo-pager [visible]="true"
-    [allowedPageSizes]="[25,50,100]"
+  <dxo-pager
+    [visible]="true"
+    [allowedPageSizes]="[25, 50, 100]"
     [showInfo]="true"
     [showNavigationButtons]="true"
     [showPageSizeSelector]="true"
@@ -56,1224 +55,1849 @@
 
   <dxo-sorting mode="multiple"></dxo-sorting>
 
-  <dxo-grouping [contextMenuEnabled]="true"
+  <dxo-grouping
+    [contextMenuEnabled]="true"
     expandMode="rowClick"
     [autoExpandAll]="isAllExpanded"
   ></dxo-grouping>
 
   <dxo-summary>
-    <dxi-group-item summaryType="count"
-      displayFormat="{0}"></dxi-group-item>
+    <dxi-group-item summaryType="count" displayFormat="{0}"></dxi-group-item>
   </dxo-summary>
 
-  <dxo-state-storing [enabled]="true"
+  <dxo-state-storing
+    [enabled]="true"
     type="sessionStorage"
     storageKey="leaseAlertsGridState"
     *ngIf="!isPopupView"
   ></dxo-state-storing>
 
-  <dxi-column dataField="leaseAlertID"
+  <dxi-column
+    dataField="leaseAlertID"
     caption="Lease Alert ID"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.leaseAlertID"
   ></dxi-column>
 
-  <dxi-column dataField="leaseAbstractID"
+  <dxi-column
+    dataField="leaseAbstractID"
     caption="System Lease ID"
     [sortIndex]="2"
     sortOrder="asc"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.leaseAbstractID"
   ></dxi-column>
 
-  <dxi-column dataField="clientLeaseID"
+  <dxi-column
+    dataField="clientLeaseID"
     caption="Client Lease ID"
     [sortIndex]="1"
     sortOrder="asc"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.clientLeaseID"
   ></dxi-column>
 
-  <dxi-column dataField="alertRuleID"
+  <dxi-column
+    dataField="alertRuleID"
     caption="Rule ID"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.alertRuleID"
   ></dxi-column>
 
-  <dxi-column dataField="ruleCode"
+  <dxi-column
+    dataField="ruleCode"
     caption="Rule Code"
     [sortIndex]="4"
     sortOrder="asc"
     [(visible)]="selectedColumns.selectedAlertRuleColumns.ruleCode"
   ></dxi-column>
 
-  <dxi-column dataField="ruleName"
+  <dxi-column
+    dataField="ruleName"
     caption="Rule Name"
     [(visible)]="selectedColumns.selectedAlertRuleColumns.ruleName"
   ></dxi-column>
 
-  <dxi-column dataField="ruleDescription"
+  <dxi-column
+    dataField="ruleDescription"
     caption="Rule Description"
     [(visible)]="selectedColumns.selectedAlertRuleColumns.ruleDescription"
   ></dxi-column>
 
-  <dxi-column dataField="ruleSeverityName"
+  <dxi-column
+    dataField="ruleSeverityName"
     caption="Severity Level"
     [sortIndex]="3"
     sortOrder="asc"
     [(visible)]="selectedColumns.selectedAlertRuleColumns.ruleSeverityName"
   ></dxi-column>
 
-  <dxi-column dataField="alertType"
+  <dxi-column
+    dataField="alertType"
     caption="Alert Type"
     [(visible)]="selectedColumns.selectedAlertRuleColumns.alertType"
   ></dxi-column>
 
-  <dxi-column dataField="portfolio"
+  <dxi-column
+    dataField="portfolio"
     caption="Portfolio"
     [sortIndex]="0"
     sortOrder="asc"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.portfolio"
   ></dxi-column>
 
-  <dxi-column dataField="alertInformation"
+  <dxi-column
+    dataField="alertInformation"
     caption="Alert Info"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.alertInformation"
   ></dxi-column>
 
-  <dxi-column dataField="alertRecommendedAction"
+  <dxi-column
+    dataField="alertRecommendedAction"
     caption="Recommended Action"
-    [(visible)]="selectedColumns.selectedLeaseAlertColumns.alertRecommendedAction"
+    [(visible)]="
+      selectedColumns.selectedLeaseAlertColumns.alertRecommendedAction
+    "
   ></dxi-column>
 
-  <dxi-column dataField="isDismissed"
+  <dxi-column
+    dataField="isDismissed"
     caption="Is Dismissed"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.isDismissed"
     [allowFiltering]="false"
   ></dxi-column>
 
-  <dxi-column dataField="glEventID"
+  <dxi-column
+    dataField="glEventID"
     caption="GL Event ID"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.glEventID"
   ></dxi-column>
 
-  <dxi-column dataField="glEventSource"
+  <dxi-column
+    dataField="glEventSource"
     caption="GL Event Source"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.glEventSource"
   ></dxi-column>
 
-  <dxi-column dataField="leaseRecognitionScheduleID"
+  <dxi-column
+    dataField="leaseRecognitionScheduleID"
     caption="Lease Recognition Schedule ID"
-    [(visible)]="selectedColumns.selectedLeaseAlertColumns.leaseRecognitionScheduleID"
+    [(visible)]="
+      selectedColumns.selectedLeaseAlertColumns.leaseRecognitionScheduleID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseRecognitionPeriodID"
+  <dxi-column
+    dataField="leaseRecognitionPeriodID"
     caption="Lease Recognition Period ID"
-    [(visible)]="selectedColumns.selectedLeaseAlertColumns.leaseRecognitionPeriodID"
+    [(visible)]="
+      selectedColumns.selectedLeaseAlertColumns.leaseRecognitionPeriodID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="createdDate"
+  <dxi-column
+    dataField="createdDate"
     caption="Lease Alert Created Date"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.createdDate"
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="alertExpectedValue"
+  <dxi-column
+    dataField="alertExpectedValue"
     caption="Expected Value"
     [format]="{ type: 'fixedPoint', precision: 2 }"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.alertExpectedValue"
   ></dxi-column>
 
-  <dxi-column dataField="alertActualValue"
+  <dxi-column
+    dataField="alertActualValue"
     caption="Actual Value"
     [format]="{ type: 'fixedPoint', precision: 2 }"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.alertActualValue"
   ></dxi-column>
 
-  <dxi-column dataField="modified"
+  <dxi-column
+    dataField="modified"
     caption="Lease Alert Modified Date"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.modified"
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="modifiedBy"
+  <dxi-column
+    dataField="modifiedBy"
     caption="Lease Alert Modified By"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.modifiedBy"
   ></dxi-column>
 
-  <dxi-column dataField="dismissReason"
+  <dxi-column
+    dataField="dismissReason"
     caption="Dismiss Reason"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.dismissReason"
   ></dxi-column>
 
-  <dxi-column dataField="leaseActive"
+  <dxi-column
+    dataField="leaseActive"
     caption="Lease Active"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseActive"
   ></dxi-column>
 
-  <dxi-column dataField="isLocked"
+  <dxi-column
+    dataField="isLocked"
     caption="Lease Locked"
     [(visible)]="selectedColumns.selectedLeaseAlertColumns.isLocked"
   ></dxi-column>
 
-  <dxi-column dataField="buildingStatus"
+  <dxi-column
+    dataField="buildingStatus"
     caption="Building Status"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingStatus"
   ></dxi-column>
 
-  <dxi-column dataField="systemLeaseStatus"
+  <dxi-column
+    dataField="systemLeaseStatus"
     caption="System Lease Status"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.systemLeaseStatus"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.systemLeaseStatus
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingArchivedDate"
+  <dxi-column
+    dataField="buildingArchivedDate"
     caption="Building Archived Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingArchivedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingArchivedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="buildingCreatedDate"
+  <dxi-column
+    dataField="buildingCreatedDate"
     caption="Building Created Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingCreatedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingCreatedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="reportingLeaseCachedDate"
+  <dxi-column
+    dataField="reportingLeaseCachedDate"
     caption="Reporting Lease Cached Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.reportingLeaseCachedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.reportingLeaseCachedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="currentCommencementDate"
+  <dxi-column
+    dataField="currentCommencementDate"
     caption="Current Commencement Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.currentCommencementDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.currentCommencementDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="currentExpirationDate"
+  <dxi-column
+    dataField="currentExpirationDate"
     caption="Current Expiration Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.currentExpirationDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.currentExpirationDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="leaseArchivedDate"
+  <dxi-column
+    dataField="leaseArchivedDate"
     caption="Lease Archived Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseArchivedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseArchivedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="leaseCreatedDate"
+  <dxi-column
+    dataField="leaseCreatedDate"
     caption="Lease Created Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseCreatedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseCreatedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="leaseModifiedDate"
+  <dxi-column
+    dataField="leaseModifiedDate"
     caption="Lease Modified Date"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseModifiedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseModifiedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkFlowStatusID"
+  <dxi-column
+    dataField="accountingWorkFlowStatusID"
     caption="Accounting Workflow Status ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.accountingWorkFlowStatusID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.accountingWorkFlowStatusID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkFlowStatusStep"
+  <dxi-column
+    dataField="accountingWorkFlowStatusStep"
     caption="Accounting Workflow Status Step"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.accountingWorkFlowStatusStep"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns
+        .accountingWorkFlowStatusStep
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingArchivedByID"
+  <dxi-column
+    dataField="buildingArchivedByID"
     caption="Building Archived By ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingArchivedByID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingArchivedByID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingHierarchyID"
+  <dxi-column
+    dataField="buildingHierarchyID"
     caption="Building Hierarchy ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingHierarchyID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingHierarchyID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingID"
+  <dxi-column
+    dataField="buildingID"
     caption="Building ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingID"
   ></dxi-column>
 
-  <dxi-column dataField="buildingObjectTypeTypeID"
+  <dxi-column
+    dataField="buildingObjectTypeTypeID"
     caption="Building Object Type Type ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingObjectTypeTypeID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingObjectTypeTypeID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingRentableArea"
+  <dxi-column
+    dataField="buildingRentableArea"
     caption="Building Rentable Area"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingRentableArea"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingRentableArea
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingSF"
+  <dxi-column
+    dataField="buildingSF"
     caption="Building SF"
     [format]="{ type: 'fixedPoint', precision: 2 }"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingSF"
   ></dxi-column>
 
-  <dxi-column dataField="buildingSM"
+  <dxi-column
+    dataField="buildingSM"
     caption="Building SM"
     [format]="{ type: 'fixedPoint', precision: 2 }"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingSM"
   ></dxi-column>
 
-  <dxi-column dataField="buildingTemplateBillingTypeID"
+  <dxi-column
+    dataField="buildingTemplateBillingTypeID"
     caption="Building Template Billing Type ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingTemplateBillingTypeID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns
+        .buildingTemplateBillingTypeID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingTypeID"
+  <dxi-column
+    dataField="buildingTypeID"
     caption="Building Type ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingTypeID"
   ></dxi-column>
 
-  <dxi-column dataField="calendarID"
+  <dxi-column
+    dataField="calendarID"
     caption="Calendar ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.calendarID"
   ></dxi-column>
 
-  <dxi-column dataField="hierarchy1ID"
+  <dxi-column
+    dataField="hierarchy1ID"
     caption="Hierarchy 1 ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.hierarchy1ID"
   ></dxi-column>
 
-  <dxi-column dataField="hierarchy2ID"
+  <dxi-column
+    dataField="hierarchy2ID"
     caption="Hierarchy 2 ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.hierarchy2ID"
   ></dxi-column>
 
-  <dxi-column dataField="hierarchy3ID"
+  <dxi-column
+    dataField="hierarchy3ID"
     caption="Hierarchy 3 ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.hierarchy3ID"
   ></dxi-column>
 
-  <dxi-column dataField="hierarchy4ID"
+  <dxi-column
+    dataField="hierarchy4ID"
     caption="Hierarchy 4 ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.hierarchy4ID"
   ></dxi-column>
 
-  <dxi-column dataField="hierarchy5ID"
+  <dxi-column
+    dataField="hierarchy5ID"
     caption="Hierarchy 5 ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.hierarchy5ID"
   ></dxi-column>
 
-  <dxi-column dataField="leaseArchivedByID"
+  <dxi-column
+    dataField="leaseArchivedByID"
     caption="Lease Archived By ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseArchivedByID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseArchivedByID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseCurrencyID"
+  <dxi-column
+    dataField="leaseCurrencyID"
     caption="Lease Currency ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseCurrencyID"
   ></dxi-column>
 
-  <dxi-column dataField="leaseHierarchyID"
+  <dxi-column
+    dataField="leaseHierarchyID"
     caption="Lease Hierarchy ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseHierarchyID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseHierarchyID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseRentableArea"
+  <dxi-column
+    dataField="leaseRentableArea"
     caption="Lease Rentable Area"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseRentableArea"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseRentableArea
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseSF"
+  <dxi-column
+    dataField="leaseSF"
     caption="Lease SF"
     [format]="{ type: 'fixedPoint', precision: 2 }"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseSF"
   ></dxi-column>
 
-  <dxi-column dataField="leaseSM"
+  <dxi-column
+    dataField="leaseSM"
     caption="Lease SM"
     [format]="{ type: 'fixedPoint', precision: 2 }"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseSM"
   ></dxi-column>
 
-  <dxi-column dataField="leaseStatusID"
+  <dxi-column
+    dataField="leaseStatusID"
     caption="Lease Status ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseStatusID"
   ></dxi-column>
 
-  <dxi-column dataField="leaseTemplateBillingTypeID"
+  <dxi-column
+    dataField="leaseTemplateBillingTypeID"
     caption="Lease Template Billing Type ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseTemplateBillingTypeID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseTemplateBillingTypeID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseTenantHierarchyID"
+  <dxi-column
+    dataField="leaseTenantHierarchyID"
     caption="Lease Tenant Hierarchy ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseTenantHierarchyID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseTenantHierarchyID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="measureUnitsID"
+  <dxi-column
+    dataField="measureUnitsID"
     caption="Measure Units ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.measureUnitsID"
   ></dxi-column>
 
-  <dxi-column dataField="objectTypeTypeID"
+  <dxi-column
+    dataField="objectTypeTypeID"
     caption="Object Type Type ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.objectTypeTypeID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.objectTypeTypeID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="portfolioID"
+  <dxi-column
+    dataField="portfolioID"
     caption="Portfolio ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.portfolioID"
   ></dxi-column>
 
-  <dxi-column dataField="premiseID"
+  <dxi-column
+    dataField="premiseID"
     caption="Premise ID"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.premiseID"
   ></dxi-column>
 
-  <dxi-column dataField="remainingLeaseTerminYears"
+  <dxi-column
+    dataField="remainingLeaseTerminYears"
     caption="Remaining Lease Term in Years"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.remainingLeaseTerminYears"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.remainingLeaseTerminYears
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingType"
+  <dxi-column
+    dataField="accountingType"
     caption="Accounting Type"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.accountingType"
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkFlowStatus"
+  <dxi-column
+    dataField="accountingWorkFlowStatus"
     caption="Accounting Workflow Status"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.accountingWorkFlowStatus"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.accountingWorkFlowStatus
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkFlowStatusDisplay"
+  <dxi-column
+    dataField="accountingWorkFlowStatusDisplay"
     caption="Accounting Workflow Status Display"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.accountingWorkFlowStatusDisplay"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns
+        .accountingWorkFlowStatusDisplay
+    "
   ></dxi-column>
 
-  <dxi-column dataField="address1"
+  <dxi-column
+    dataField="address1"
     caption="Address 1"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.address1"
   ></dxi-column>
 
-  <dxi-column dataField="address2"
+  <dxi-column
+    dataField="address2"
     caption="Address 2"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.address2"
   ></dxi-column>
 
-  <dxi-column dataField="buildingArchivedBy"
+  <dxi-column
+    dataField="buildingArchivedBy"
     caption="Building Archived By"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingArchivedBy"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingArchivedBy
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingMeasureUnits"
+  <dxi-column
+    dataField="buildingMeasureUnits"
     caption="Building Measure Units"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingMeasureUnits"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingMeasureUnits
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingName"
+  <dxi-column
+    dataField="buildingName"
     caption="Building Name"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingName"
   ></dxi-column>
 
-  <dxi-column dataField="buildingSourceImportID"
+  <dxi-column
+    dataField="buildingSourceImportID"
     caption="Building Source Import ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingSourceImportID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingSourceImportID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingTemplate"
+  <dxi-column
+    dataField="buildingTemplate"
     caption="Building Template"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingTemplate"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingTemplate
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingTemplateBillingType"
+  <dxi-column
+    dataField="buildingTemplateBillingType"
     caption="Building Template Billing Type"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingTemplateBillingType"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.buildingTemplateBillingType
+    "
   ></dxi-column>
 
-  <dxi-column dataField="buildingType"
+  <dxi-column
+    dataField="buildingType"
     caption="Building Type"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.buildingType"
   ></dxi-column>
 
-  <dxi-column dataField="calendar"
+  <dxi-column
+    dataField="calendar"
     caption="Calendar"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.calendar"
   ></dxi-column>
 
-  <dxi-column dataField="city"
+  <dxi-column
+    dataField="city"
     caption="City"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.city"
   ></dxi-column>
 
-  <dxi-column dataField="country"
+  <dxi-column
+    dataField="country"
     caption="Country"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.country"
   ></dxi-column>
 
-  <dxi-column dataField="hierarchy"
+  <dxi-column
+    dataField="hierarchy"
     caption="Hierarchy"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.hierarchy"
   ></dxi-column>
 
-  <dxi-column dataField="landLordName"
+  <dxi-column
+    dataField="landLordName"
     caption="Landlord Name"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.landLordName"
   ></dxi-column>
 
-  <dxi-column dataField="leaseAllocationDisplay1"
+  <dxi-column
+    dataField="leaseAllocationDisplay1"
     caption="Lease Allocation Display 1"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseAllocationDisplay1"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseAllocationDisplay1
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseAllocationDisplay2"
+  <dxi-column
+    dataField="leaseAllocationDisplay2"
     caption="Lease Allocation Display 2"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseAllocationDisplay2"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseAllocationDisplay2
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseAllocationDisplayString"
+  <dxi-column
+    dataField="leaseAllocationDisplayString"
     caption="Lease Allocation Display String"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseAllocationDisplayString"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns
+        .leaseAllocationDisplayString
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseAllocationDisplayString2"
+  <dxi-column
+    dataField="leaseAllocationDisplayString2"
     caption="Lease Allocation Display String 2"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseAllocationDisplayString2"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns
+        .leaseAllocationDisplayString2
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseArchivedBy"
+  <dxi-column
+    dataField="leaseArchivedBy"
     caption="Lease Archived By"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseArchivedBy"
   ></dxi-column>
 
-  <dxi-column dataField="leaseCurrencyISO"
+  <dxi-column
+    dataField="leaseCurrencyISO"
     caption="Lease Currency ISO"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseCurrencyISO"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseCurrencyISO
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseDisplayString"
+  <dxi-column
+    dataField="leaseDisplayString"
     caption="Lease Display String"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseDisplayString"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseDisplayString
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaselabel"
+  <dxi-column
+    dataField="leaselabel"
     caption="Lease Label"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaselabel"
   ></dxi-column>
 
-  <dxi-column dataField="leaseMeasureUnits"
+  <dxi-column
+    dataField="leaseMeasureUnits"
     caption="Lease Measure Units"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseMeasureUnits"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseMeasureUnits
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseName"
+  <dxi-column
+    dataField="leaseName"
     caption="Lease Name"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseName"
   ></dxi-column>
 
-  <dxi-column dataField="leaseSourceImportID"
+  <dxi-column
+    dataField="leaseSourceImportID"
     caption="Lease Source Import ID"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseSourceImportID"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseSourceImportID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="leaseStatus"
+  <dxi-column
+    dataField="leaseStatus"
     caption="Lease Status"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseStatus"
   ></dxi-column>
 
-  <dxi-column dataField="leaseTemplate"
+  <dxi-column
+    dataField="leaseTemplate"
     caption="Lease Template"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseTemplate"
   ></dxi-column>
 
-  <dxi-column dataField="leaseTemplateBillingType"
+  <dxi-column
+    dataField="leaseTemplateBillingType"
     caption="Lease Template Billing Type"
-    [(visible)]="selectedColumns.selectedReportingLeasesColumns.leaseTemplateBillingType"
+    [(visible)]="
+      selectedColumns.selectedReportingLeasesColumns.leaseTemplateBillingType
+    "
   ></dxi-column>
 
-  <dxi-column dataField="ownershipType"
+  <dxi-column
+    dataField="ownershipType"
     caption="Ownership Type"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.ownershipType"
   ></dxi-column>
 
-  <dxi-column dataField="stateName"
+  <dxi-column
+    dataField="stateName"
     caption="State Name"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.stateName"
   ></dxi-column>
 
-  <dxi-column dataField="tenantLegalName"
+  <dxi-column
+    dataField="tenantLegalName"
     caption="Tenant Legal Name"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.tenantLegalName"
   ></dxi-column>
 
-  <dxi-column dataField="zipCode"
+  <dxi-column
+    dataField="zipCode"
     caption="Zip Code"
     [(visible)]="selectedColumns.selectedReportingLeasesColumns.zipCode"
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventIsActive"
+  <dxi-column
+    dataField="accountingEventIsActive"
     caption="Accounting Event Is Active"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventIsActive"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventIsActive
+    "
   ></dxi-column>
 
-  <dxi-column dataField="includeChargesDueOnFirst"
+  <dxi-column
+    dataField="includeChargesDueOnFirst"
     caption="Include Charges Due on First"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.includeChargesDueOnFirst"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .includeChargesDueOnFirst
+    "
   ></dxi-column>
 
-  <dxi-column dataField="isImpaired"
+  <dxi-column
+    dataField="isImpaired"
     caption="Is Impaired"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.isImpaired"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.isImpaired
+    "
   ></dxi-column>
 
-  <dxi-column dataField="isPublished"
+  <dxi-column
+    dataField="isPublished"
     caption="Is Published"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.isPublished"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.isPublished
+    "
   ></dxi-column>
 
-  <dxi-column dataField="isRetroactiveRemeasure"
+  <dxi-column
+    dataField="isRetroactiveRemeasure"
     caption="Is Retroactive Remeasure"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.isRetroactiveRemeasure"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .isRetroactiveRemeasure
+    "
   ></dxi-column>
 
-  <dxi-column dataField="isRetroEvent"
+  <dxi-column
+    dataField="isRetroEvent"
     caption="Is Retro Event"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.isRetroEvent"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.isRetroEvent
+    "
   ></dxi-column>
 
-  <dxi-column dataField="modificationImpactsScope"
+  <dxi-column
+    dataField="modificationImpactsScope"
     caption="Modification Impacts Scope"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.modificationImpactsScope"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .modificationImpactsScope
+    "
   ></dxi-column>
 
-  <dxi-column dataField="overrideAmortizationProfile"
+  <dxi-column
+    dataField="overrideAmortizationProfile"
     caption="Override Amortization Profile"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.overrideAmortizationProfile"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .overrideAmortizationProfile
+    "
   ></dxi-column>
 
-  <dxi-column dataField="reportingException"
+  <dxi-column
+    dataField="reportingException"
     caption="Reporting Exception"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.reportingException"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .reportingException
+    "
   ></dxi-column>
 
-  <dxi-column dataField="testResultMatchesClassification"
+  <dxi-column
+    dataField="testResultMatchesClassification"
     caption="Test Result Matches Classification"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.testResultMatchesClassification"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .testResultMatchesClassification
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test1OwnerTransfer"
+  <dxi-column
+    dataField="test1OwnerTransfer"
     caption="Test 1 Owner Transfer"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test1OwnerTransfer"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .test1OwnerTransfer
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test1Result"
+  <dxi-column
+    dataField="test1Result"
     caption="Test 1 Result"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test1Result"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.test1Result
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test2BargianPurchase"
+  <dxi-column
+    dataField="test2BargianPurchase"
     caption="Test 2 Bargain Purchase"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test2BargianPurchase"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .test2BargianPurchase
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test2Result"
+  <dxi-column
+    dataField="test2Result"
     caption="Test 2 Result"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test2Result"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.test2Result
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test3Result"
+  <dxi-column
+    dataField="test3Result"
     caption="Test 3 Result"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test3Result"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.test3Result
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test4Result"
+  <dxi-column
+    dataField="test4Result"
     caption="Test 4 Result"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test4Result"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.test4Result
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test5Result"
+  <dxi-column
+    dataField="test5Result"
     caption="Test 5 Result"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test5Result"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.test5Result
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventBeginDate"
+  <dxi-column
+    dataField="accountingEventBeginDate"
     caption="Accounting Event Begin Date"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventBeginDate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventBeginDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventCachedDate"
+  <dxi-column
+    dataField="accountingEventCachedDate"
     caption="Accounting Event Cached Date"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventCachedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventCachedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventCreated"
+  <dxi-column
+    dataField="accountingEventCreated"
     caption="Accounting Event Created"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventCreated"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventCreated
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventEndDate"
+  <dxi-column
+    dataField="accountingEventEndDate"
     caption="Accounting Event End Date"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventEndDate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventEndDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventModified"
+  <dxi-column
+    dataField="accountingEventModified"
     caption="Accounting Event Modified"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventModified"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventModified
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkflowStatusModified"
+  <dxi-column
+    dataField="accountingWorkflowStatusModified"
     caption="Accounting Workflow Status Modified"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingWorkflowStatusModified"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingWorkflowStatusModified
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="maxChargeEndDate"
+  <dxi-column
+    dataField="maxChargeEndDate"
     caption="Max Charge End Date"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.maxChargeEndDate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.maxChargeEndDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="minChargeBeginDate"
+  <dxi-column
+    dataField="minChargeBeginDate"
     caption="Min Charge Begin Date"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.minChargeBeginDate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .minChargeBeginDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="rouAssetAddedDate"
+  <dxi-column
+    dataField="rouAssetAddedDate"
     caption="ROU Asset Added Date"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.ROUAssetAddedDate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.ROUAssetAddedDate
+    "
     dataType="date"
     [format]="dateFormat"
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventBeginningAssetBalance"
+  <dxi-column
+    dataField="accountingEventBeginningAssetBalance"
     caption="Accounting Event Beginning Asset Balance"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventBeginningAssetBalance"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventBeginningAssetBalance
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventBeginningAssetBalanceFunctional"
+  <dxi-column
+    dataField="accountingEventBeginningAssetBalanceFunctional"
     caption="Accounting Event Beginning Asset Balance Functional"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventBeginningAssetBalanceFunctional"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventBeginningAssetBalanceFunctional
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventBeginningLiabilityBalance"
+  <dxi-column
+    dataField="accountingEventBeginningLiabilityBalance"
     caption="Accounting Event Beginning Liability Balance"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventBeginningLiabilityBalance"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventBeginningLiabilityBalance
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventCreatedByID"
+  <dxi-column
+    dataField="accountingEventCreatedByID"
     caption="Accounting Event Created By ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventCreatedByID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventCreatedByID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventID"
+  <dxi-column
+    dataField="accountingEventID"
     caption="Accounting Event ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.accountingEventID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventModifiedByID"
+  <dxi-column
+    dataField="accountingEventModifiedByID"
     caption="Accounting Event Modified By ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventModifiedByID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventModifiedByID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingSourceImportID"
+  <dxi-column
+    dataField="accountingSourceImportID"
     caption="Accounting Source Import ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingSourceImportID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingSourceImportID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingTermDaysInTerm"
+  <dxi-column
+    dataField="accountingTermDaysInTerm"
     caption="Accounting Term Days In Term"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingTermDaysInTerm"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingTermDaysInTerm
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingTermNumberOfMonths"
+  <dxi-column
+    dataField="accountingTermNumberOfMonths"
     caption="Accounting Term Number of Months"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingTermNumberOfMonths"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingTermNumberOfMonths
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingTermNumberOfPeriods"
+  <dxi-column
+    dataField="accountingTermNumberOfPeriods"
     caption="Accounting Term Number of Periods"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingTermNumberOfPeriods"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingTermNumberOfPeriods
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingTermYear"
+  <dxi-column
+    dataField="accountingTermYear"
     caption="Accounting Term Year"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingTermYear"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingTermYear
+    "
   ></dxi-column>
 
-  <dxi-column dataField="adjustmentGainLoss"
+  <dxi-column
+    dataField="adjustmentGainLoss"
     caption="Adjustment Gain/Loss"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.adjustmentGainLoss"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .adjustmentGainLoss
+    "
   ></dxi-column>
 
-  <dxi-column dataField="adjustmentGainLossFunctional"
+  <dxi-column
+    dataField="adjustmentGainLossFunctional"
     caption="Adjustment Gain/Loss Functional"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.adjustmentGainLossFunctional"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .adjustmentGainLossFunctional
+    "
   ></dxi-column>
 
-  <dxi-column dataField="amortizationMethodID"
+  <dxi-column
+    dataField="amortizationMethodID"
     caption="Amortization Method ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.amortizationMethodID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .amortizationMethodID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="amortizationProfileID"
+  <dxi-column
+    dataField="amortizationProfileID"
     caption="Amortization Profile ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.amortizationProfileID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .amortizationProfileID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="amountNotReflectedInPVofPayments"
+  <dxi-column
+    dataField="amountNotReflectedInPVofPayments"
     caption="Amount not Reflected In PV of Payments"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.amountNotReflectedInPVofPayments"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .amountNotReflectedInPVofPayments
+    "
   ></dxi-column>
 
-  <dxi-column dataField="amountProbableofBeingOwedbyLessee"
+  <dxi-column
+    dataField="amountProbableofBeingOwedbyLessee"
     caption="Amount Probable of Being Owed by Lessee"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.amountProbableofBeingOwedbyLessee"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .amountProbableofBeingOwedbyLessee
+    "
   ></dxi-column>
 
-  <dxi-column dataField="annualRateTypeID"
+  <dxi-column
+    dataField="annualRateTypeID"
     caption="Annual Rate Type ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.annualRateTypeID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.annualRateTypeID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="assetAdjustment"
+  <dxi-column
+    dataField="assetAdjustment"
     caption="Asset Adjustment"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.assetAdjustment"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.assetAdjustment
+    "
   ></dxi-column>
 
-  <dxi-column dataField="assetAdjustmentFunctional"
+  <dxi-column
+    dataField="assetAdjustmentFunctional"
     caption="Asset Adjustment Functional"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.assetAdjustmentFunctional"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .assetAdjustmentFunctional
+    "
   ></dxi-column>
 
-  <dxi-column dataField="assetAmortization"
+  <dxi-column
+    dataField="assetAmortization"
     caption="Asset Amortization"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.assetAmortization"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.assetAmortization
+    "
   ></dxi-column>
 
-  <dxi-column dataField="chargeTypeFactor"
+  <dxi-column
+    dataField="chargeTypeFactor"
     caption="Charge Type Factor"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.chargeTypeFactor"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.chargeTypeFactor
+    "
   ></dxi-column>
 
-  <dxi-column dataField="classificationID"
+  <dxi-column
+    dataField="classificationID"
     caption="Classification ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.classificationID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.classificationID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="directCostsTotal"
+  <dxi-column
+    dataField="directCostsTotal"
     caption="Direct Costs Total"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.directCostsTotal"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.directCostsTotal
+    "
   ></dxi-column>
 
-  <dxi-column dataField="directCostsTotalFunctional"
+  <dxi-column
+    dataField="directCostsTotalFunctional"
     caption="Direct Costs Total Functional"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.directCostsTotalFunctional"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .directCostsTotalFunctional
+    "
   ></dxi-column>
 
-  <dxi-column dataField="discountRate"
+  <dxi-column
+    dataField="discountRate"
     caption="Discount Rate"
     [format]="{ type: 'percent', precision: 5 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.discountRate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.discountRate
+    "
   ></dxi-column>
 
-  <dxi-column dataField="discountRateProfileID"
+  <dxi-column
+    dataField="discountRateProfileID"
     caption="Discount Rate Profile ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.discountRateProfileID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .discountRateProfileID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="effectiveRate"
+  <dxi-column
+    dataField="effectiveRate"
     caption="Effective Rate"
     [format]="{ type: 'percent', precision: 5 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.effectiveRate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.effectiveRate
+    "
   ></dxi-column>
 
-  <dxi-column dataField="estimatedResidualValue"
+  <dxi-column
+    dataField="estimatedResidualValue"
     caption="Estimated Residual Value"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.estimatedResidualValue"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .estimatedResidualValue
+    "
   ></dxi-column>
 
-  <dxi-column dataField="fmv"
+  <dxi-column
+    dataField="fmv"
     caption="FMV"
     [format]="{ type: 'fixedPoint', precision: 2 }"
     [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.FMV"
   ></dxi-column>
 
-  <dxi-column dataField="functionalCurrencyDecimalPrecision"
+  <dxi-column
+    dataField="functionalCurrencyDecimalPrecision"
     caption="Functional Currency Decimal Precision"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.functionalCurrencyDecimalPrecision"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .functionalCurrencyDecimalPrecision
+    "
   ></dxi-column>
 
-  <dxi-column dataField="functionalCurrencyID"
+  <dxi-column
+    dataField="functionalCurrencyID"
     caption="Functional Currency ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.functionalCurrencyID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .functionalCurrencyID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="functionalCurrencyRate"
+  <dxi-column
+    dataField="functionalCurrencyRate"
     caption="Functional Currency Rate"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.functionalCurrencyRate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .functionalCurrencyRate
+    "
   ></dxi-column>
 
-  <dxi-column dataField="guaranteedAmountReflectedInPayments"
+  <dxi-column
+    dataField="guaranteedAmountReflectedInPayments"
     caption="Guaranteed Amount Reflected in Payments"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.guaranteedAmountReflectedInPayments"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .guaranteedAmountReflectedInPayments
+    "
   ></dxi-column>
 
-  <dxi-column dataField="implicitRate"
+  <dxi-column
+    dataField="implicitRate"
     caption="Implicit Rate"
     [format]="{ type: 'percent', precision: 5 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.implicitRate"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.implicitRate
+    "
   ></dxi-column>
 
-  <dxi-column dataField="journalEntryProfileID"
+  <dxi-column
+    dataField="journalEntryProfileID"
     caption="Journal Entry Profile ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.journalEntryProfileID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .journalEntryProfileID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="levelExpense"
+  <dxi-column
+    dataField="levelExpense"
     caption="Level Expense"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.levelExpense"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.levelExpense
+    "
   ></dxi-column>
 
-  <dxi-column dataField="levelExpenseFunctional"
+  <dxi-column
+    dataField="levelExpenseFunctional"
     caption="Level Expense Functional"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.levelExpenseFunctional"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .levelExpenseFunctional
+    "
   ></dxi-column>
 
-  <dxi-column dataField="liabilityAdjustment"
+  <dxi-column
+    dataField="liabilityAdjustment"
     caption="Liability Adjustment"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.liabilityAdjustment"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .liabilityAdjustment
+    "
   ></dxi-column>
 
-  <dxi-column dataField="localCurrencyDecimalPrecision"
+  <dxi-column
+    dataField="localCurrencyDecimalPrecision"
     caption="Local Currency Decimal Precision"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.localCurrencyDecimalPrecision"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .localCurrencyDecimalPrecision
+    "
   ></dxi-column>
 
-  <dxi-column dataField="localCurrencyID"
+  <dxi-column
+    dataField="localCurrencyID"
     caption="Local Currency ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.localCurrencyID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.localCurrencyID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="manualAdjustment"
+  <dxi-column
+    dataField="manualAdjustment"
     caption="Manual Adjustment"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.manualAdjustment"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.manualAdjustment
+    "
   ></dxi-column>
 
-  <dxi-column dataField="masterAccountingEventID"
+  <dxi-column
+    dataField="masterAccountingEventID"
     caption="Master Accounting Event ID"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.masterAccountingEventID"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .masterAccountingEventID
+    "
   ></dxi-column>
 
-  <dxi-column dataField="numberOfChargeStreams"
+  <dxi-column
+    dataField="numberOfChargeStreams"
     caption="Number of Charge Streams"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.numberOfChargeStreams"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .numberOfChargeStreams
+    "
   ></dxi-column>
 
-  <dxi-column dataField="presentValue"
+  <dxi-column
+    dataField="presentValue"
     caption="Present Value"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.presentValue"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.presentValue
+    "
   ></dxi-column>
 
-  <dxi-column dataField="previousAssetBalance"
+  <dxi-column
+    dataField="previousAssetBalance"
     caption="Previous Asset Balance"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.previousAssetBalance"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .previousAssetBalance
+    "
   ></dxi-column>
 
-  <dxi-column dataField="previousLiabilityBalance"
+  <dxi-column
+    dataField="previousLiabilityBalance"
     caption="Previous Liability Balance"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.previousLiabilityBalance"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .previousLiabilityBalance
+    "
   ></dxi-column>
 
-  <dxi-column dataField="pVofAmountNotReflectedInPayments"
+  <dxi-column
+    dataField="pVofAmountNotReflectedInPayments"
     caption="PV of Amount not Reflected in Payments"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.PVofAmountNotReflectedInPayments"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .PVofAmountNotReflectedInPayments
+    "
   ></dxi-column>
 
-  <dxi-column dataField="remainingEconomicLife"
+  <dxi-column
+    dataField="remainingEconomicLife"
     caption="Remaining Economic Life"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.remainingEconomicLife"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .remainingEconomicLife
+    "
   ></dxi-column>
 
-  <dxi-column dataField="rvGuaranteed"
+  <dxi-column
+    dataField="rvGuaranteed"
     caption="RV Guaranteed"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.RVGuaranteed"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.RVGuaranteed
+    "
   ></dxi-column>
 
-  <dxi-column dataField="rvGuaranteedBy3rdParty"
+  <dxi-column
+    dataField="rvGuaranteedBy3rdParty"
     caption="RV Guaranteed by 3rd Party"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.RVGuaranteedBy3rdParty"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .RVGuaranteedBy3rdParty
+    "
   ></dxi-column>
 
-  <dxi-column dataField="rvGuaranteedByLessee"
+  <dxi-column
+    dataField="rvGuaranteedByLessee"
     caption="RV Guaranteed by Lessee"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.RVGuaranteedByLessee"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .RVGuaranteedByLessee
+    "
   ></dxi-column>
 
-  <dxi-column dataField="scheduleIndex"
+  <dxi-column
+    dataField="scheduleIndex"
     caption="Schedule Index"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.scheduleIndex"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.scheduleIndex
+    "
   ></dxi-column>
 
-  <dxi-column dataField="straightLineExpense"
+  <dxi-column
+    dataField="straightLineExpense"
     caption="Straight Line Expense"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.straightLineExpense"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .straightLineExpense
+    "
   ></dxi-column>
 
-  <dxi-column dataField="straightLineExpenseDaily"
+  <dxi-column
+    dataField="straightLineExpenseDaily"
     caption="Straight Line Expense Daily"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.straightLineExpenseDaily"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .straightLineExpenseDaily
+    "
   ></dxi-column>
 
-  <dxi-column dataField="straightLineIncome"
+  <dxi-column
+    dataField="straightLineIncome"
     caption="Straight Line Income"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.straightLineIncome"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .straightLineIncome
+    "
   ></dxi-column>
 
-  <dxi-column dataField="straightLineIncomeDaily"
+  <dxi-column
+    dataField="straightLineIncomeDaily"
     caption="Straight Line Income Daily"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.straightLineIncomeDaily"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .straightLineIncomeDaily
+    "
   ></dxi-column>
 
-  <dxi-column dataField="straightLineOpeningBalance"
+  <dxi-column
+    dataField="straightLineOpeningBalance"
     caption="Straight Line Opening Balance"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.straightLineOpeningBalance"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .straightLineOpeningBalance
+    "
   ></dxi-column>
 
-  <dxi-column dataField="systemAssetAdjustment"
+  <dxi-column
+    dataField="systemAssetAdjustment"
     caption="System Asset Adjustment"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.systemAssetAdjustment"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .systemAssetAdjustment
+    "
   ></dxi-column>
 
-  <dxi-column dataField="targetAmountInPeriodGLAccounts"
+  <dxi-column
+    dataField="targetAmountInPeriodGLAccounts"
     caption="Target Amount in Period GL Accounts"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.targetAmountInPeriodGLAccounts"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .targetAmountInPeriodGLAccounts
+    "
   ></dxi-column>
 
-  <dxi-column dataField="targetAmountInPeriodOptions"
+  <dxi-column
+    dataField="targetAmountInPeriodOptions"
     caption="Target Amount in Period Options"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.targetAmountInPeriodOptions"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .targetAmountInPeriodOptions
+    "
   ></dxi-column>
 
-  <dxi-column dataField="targetAmountInPeriodOtherCharges"
+  <dxi-column
+    dataField="targetAmountInPeriodOtherCharges"
     caption="Target Amount in Period Other Charges"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.targetAmountInPeriodOtherCharges"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .targetAmountInPeriodOtherCharges
+    "
   ></dxi-column>
 
-  <dxi-column dataField="terminationFee"
+  <dxi-column
+    dataField="terminationFee"
     caption="Termination Fee"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.terminationFee"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.terminationFee
+    "
   ></dxi-column>
 
-  <dxi-column dataField="terminationFeeFunctional"
+  <dxi-column
+    dataField="terminationFeeFunctional"
     caption="Termination Fee Functional"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.terminationFeeFunctional"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .terminationFeeFunctional
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test3EconomicLifeYearsPercent"
+  <dxi-column
+    dataField="test3EconomicLifeYearsPercent"
     caption="Test 3 Economic Life Years Percent"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test3EconomicLifeYearsPercent"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .test3EconomicLifeYearsPercent
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test4AssetValueVsPaymentsPercent"
+  <dxi-column
+    dataField="test4AssetValueVsPaymentsPercent"
     caption="Test 4 Asset Value Vs Payments Percent"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test4AssetValueVsPaymentsPercent"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .test4AssetValueVsPaymentsPercent
+    "
   ></dxi-column>
 
-  <dxi-column dataField="totalUndiscountedAmount"
+  <dxi-column
+    dataField="totalUndiscountedAmount"
     caption="Total Undiscounted Amount"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.totalUndiscountedAmount"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .totalUndiscountedAmount
+    "
   ></dxi-column>
 
-  <dxi-column dataField="unguaranteedResidualValue"
+  <dxi-column
+    dataField="unguaranteedResidualValue"
     caption="Unguaranteed Residual Value"
     [format]="{ type: 'fixedPoint', precision: 2 }"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.unguaranteedResidualValue"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .unguaranteedResidualValue
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingComments"
+  <dxi-column
+    dataField="accountingComments"
     caption="Accounting Comments"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingComments"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingComments
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventCreatedBy"
+  <dxi-column
+    dataField="accountingEventCreatedBy"
     caption="Accounting Event Created By"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventCreatedBy"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventCreatedBy
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventJEProcessingStatus"
+  <dxi-column
+    dataField="accountingEventJEProcessingStatus"
     caption="Accounting Event JE Processing Status"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventJEProcessingStatus"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventJEProcessingStatus
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingEventModifiedBy"
+  <dxi-column
+    dataField="accountingEventModifiedBy"
     caption="Accounting Event Modified By"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingEventModifiedBy"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingEventModifiedBy
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkflowStatusBeforeValue"
+  <dxi-column
+    dataField="accountingWorkflowStatusBeforeValue"
     caption="Accounting Workflow Status Before Value"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingWorkflowStatusBeforeValue"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingWorkflowStatusBeforeValue
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkflowStatusModifiedBy"
+  <dxi-column
+    dataField="accountingWorkflowStatusModifiedBy"
     caption="Accounting Workflow Status Modified By"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingWorkflowStatusModifiedBy"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingWorkflowStatusModifiedBy
+    "
   ></dxi-column>
 
-  <dxi-column dataField="accountingWorkflowStatusModifiedDescription"
+  <dxi-column
+    dataField="accountingWorkflowStatusModifiedDescription"
     caption="Accounting Workflow Status Modified Description"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.accountingWorkflowStatusModifiedDescription"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .accountingWorkflowStatusModifiedDescription
+    "
   ></dxi-column>
 
-  <dxi-column dataField="amortizationMethod"
+  <dxi-column
+    dataField="amortizationMethod"
     caption="Amortization Method"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.amortizationMethod"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .amortizationMethod
+    "
   ></dxi-column>
 
-  <dxi-column dataField="amortizationProfileName"
+  <dxi-column
+    dataField="amortizationProfileName"
     caption="Amortization Profile Name"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.amortizationProfileName"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .amortizationProfileName
+    "
   ></dxi-column>
 
-  <dxi-column dataField="annualRateType"
+  <dxi-column
+    dataField="annualRateType"
     caption="Annual Rate Type"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.annualRateType"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.annualRateType
+    "
   ></dxi-column>
 
-  <dxi-column dataField="chargeType"
+  <dxi-column
+    dataField="chargeType"
     caption="Charge Type"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.chargeType"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.chargeType
+    "
   ></dxi-column>
 
-  <dxi-column dataField="classificationName"
+  <dxi-column
+    dataField="classificationName"
     caption="Classification Name"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.classificationName"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .classificationName
+    "
   ></dxi-column>
 
-  <dxi-column dataField="compoundFrequency"
+  <dxi-column
+    dataField="compoundFrequency"
     caption="Compound Frequency"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.compoundFrequency"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.compoundFrequency
+    "
   ></dxi-column>
 
-  <dxi-column dataField="discountRateProfile"
+  <dxi-column
+    dataField="discountRateProfile"
     caption="Discount Rate Profile"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.discountRateProfile"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .discountRateProfile
+    "
   ></dxi-column>
 
-  <dxi-column dataField="exceptionReason"
+  <dxi-column
+    dataField="exceptionReason"
     caption="Exception Reason"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.exceptionReason"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.exceptionReason
+    "
   ></dxi-column>
 
-  <dxi-column dataField="functionalCurrency"
+  <dxi-column
+    dataField="functionalCurrency"
     caption="Functional Currency"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.functionalCurrency"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .functionalCurrency
+    "
   ></dxi-column>
 
-  <dxi-column dataField="journalEntryProfile"
+  <dxi-column
+    dataField="journalEntryProfile"
     caption="Journal Entry Profile"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.journalEntryProfile"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .journalEntryProfile
+    "
   ></dxi-column>
 
-  <dxi-column dataField="lessorExplicitlyExemptsLessee"
+  <dxi-column
+    dataField="lessorExplicitlyExemptsLessee"
     caption="Lessor Explicitly Exempts Lessee"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.lessorExplicitlyExemptsLessee"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .lessorExplicitlyExemptsLessee
+    "
   ></dxi-column>
 
-  <dxi-column dataField="localCurrency"
+  <dxi-column
+    dataField="localCurrency"
     caption="Local Currency"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.localCurrency"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.localCurrency
+    "
   ></dxi-column>
 
-  <dxi-column dataField="measureEvent"
+  <dxi-column
+    dataField="measureEvent"
     caption="Measure Event"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.measureEvent"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.measureEvent
+    "
   ></dxi-column>
 
-  <dxi-column dataField="paymentTiming"
+  <dxi-column
+    dataField="paymentTiming"
     caption="Payment Timing"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.paymentTiming"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.paymentTiming
+    "
   ></dxi-column>
 
-  <dxi-column dataField="testResult"
+  <dxi-column
+    dataField="testResult"
     caption="Test Result"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.testResult"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.testResult
+    "
   ></dxi-column>
 
-  <dxi-column dataField="testResultReason"
+  <dxi-column
+    dataField="testResultReason"
     caption="Test Result Reason"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.testResultReason"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns.testResultReason
+    "
   ></dxi-column>
 
-  <dxi-column dataField="test5IsAssetSpecializedNature"
+  <dxi-column
+    dataField="test5IsAssetSpecializedNature"
     caption="Test 5 is Asset Specialized Nature"
-    [(visible)]="selectedColumns.selectedReportingAccountingEventsColumns.test5IsAssetSpecializedNature"
+    [(visible)]="
+      selectedColumns.selectedReportingAccountingEventsColumns
+        .test5IsAssetSpecializedNature
+    "
   ></dxi-column>
 
-  <dxi-column cellTemplate="dismissButtonTemplate"
+  <dxi-column
+    cellTemplate="dismissButtonTemplate"
     *ngIf="userCanEdit && !(isPopupView && isArchived)"
     [showInColumnChooser]="false"
     [fixed]="true"
@@ -1284,14 +1908,21 @@
   ></dxi-column>
 
   <div *dxTemplate="let d of 'dismissButtonTemplate'">
-    <button *ngIf="d.data.isDismissed"
+    <button
+      *ngIf="d.data.isDismissed"
       class="btn btn-primary-alerts-grid lease-alerts-undismiss-button w-100"
       (click)="toggleAlert(d.data); $event.stopPropagation()"
       [disabled]="isLoadingData"
-    >Un-Dismiss</button>
+    >
+      Un-Dismiss
+    </button>
 
-    <dx-drop-down-button *ngIf="!d.data.isDismissed"
-      [elementAttr]="{ class: 'btn btn-primary-alerts-grid add-hint color-light border-none w-100' }"
+    <dx-drop-down-button
+      *ngIf="!d.data.isDismissed"
+      [elementAttr]="{
+        class:
+          'btn btn-primary-alerts-grid add-hint color-light border-none w-100'
+      }"
       text="Dismiss"
       [hint]="getButtonDisabledReason(d.data)"
       [disabled]="isLoadingData || !isAlertDismissable(d.data)"
@@ -1306,15 +1937,17 @@
 
 <dx-load-panel
   shadingColor="rgb(255, 255, 255);"
-  [position]="{ of: '#leaseAlertsGrid'}"
+  [position]="{ of: '#leaseAlertsGrid' }"
   [visible]="showLoading"
   [showIndicator]="true"
   [showPane]="true"
-  [shading]="true" 
-  [hideOnOutsideClick]="false">
+  [shading]="true"
+  [hideOnOutsideClick]="false"
+>
 </dx-load-panel>
 
-<dx-popup #dismissPopup
+<dx-popup
+  #dismissPopup
   title="Dismiss Reason"
   [hideOnOutsideClick]="false"
   [dragEnabled]="false"
@@ -1323,14 +1956,16 @@
   [height]="300"
   [(visible)]="showDismissPopup"
 >
-  <dxi-toolbar-item widget="dxButton"
+  <dxi-toolbar-item
+    widget="dxButton"
     class="btn btn-primary-alerts-grid"
     toolbar="bottom"
     location="after"
     [options]="dismissButtonOptions"
   ></dxi-toolbar-item>
 
-  <dxi-toolbar-item widget="dxButton"
+  <dxi-toolbar-item
+    widget="dxButton"
     class="btn"
     toolbar="bottom"
     location="after"
@@ -1338,13 +1973,15 @@
   ></dxi-toolbar-item>
 
   <div *dxTemplate="let data of 'content'">
-    <dx-text-area [(value)]="dismissReasonText"
+    <dx-text-area
+      [(value)]="dismissReasonText"
       class="w-100 h-100"
     ></dx-text-area>
   </div>
 </dx-popup>
 
-<dx-popup #dismissTogglePopup
+<dx-popup
+  #dismissTogglePopup
   title="Dismiss Reason"
   [hideOnOutsideClick]="false"
   [dragEnabled]="false"
@@ -1353,32 +1990,37 @@
   [height]="300"
   [(visible)]="showDismissTogglePopup"
 >
-  <dxi-toolbar-item widget="dxButton"
+  <dxi-toolbar-item
+    widget="dxButton"
     toolbar="bottom"
     location="after"
     [options]="dismissToggleButtonOptions"
   ></dxi-toolbar-item>
 
-  <dxi-toolbar-item widget="dxButton"
+  <dxi-toolbar-item
+    widget="dxButton"
     toolbar="bottom"
     location="after"
     [options]="cancelButtonOptions"
   ></dxi-toolbar-item>
 
   <div *dxTemplate="let data of 'content'">
-    <dx-drop-down-box placeholder="Select Dismiss Reason"
+    <dx-drop-down-box
+      placeholder="Select Dismiss Reason"
       [dataSource]="dismissReasons"
       [(value)]="selectedDismissToggleReason"
       [(opened)]="isDismissToggleDropdownOpen"
     >
-      <dx-list [dataSource]="dismissReasons"
+      <dx-list
+        [dataSource]="dismissReasons"
         selectionMode="single"
         [(selectedItemKeys)]="selectedKeys"
         (onSelectionChanged)="dismissToggleReasonChanged($event)"
       ></dx-list>
     </dx-drop-down-box>
 
-    <dx-text-area [(value)]="dismissToggleReasonText"
+    <dx-text-area
+      [(value)]="dismissToggleReasonText"
       *ngIf="dismissToggleReasonIsCustom"
       class="custom-dx-text-area w-100"
     ></dx-text-area>

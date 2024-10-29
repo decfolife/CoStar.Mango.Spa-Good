@@ -1,97 +1,151 @@
 <div class="recentActivities-container">
-	<div class="recentActivities-toolBar-wrapper">
-		<div class="controls-left">
-			<div class="title"> Recent Activities </div>
-			<div class="searchActivities">
-				<cs-search #SearchBox [placeholder]="'Search...'" (changed)="searchDataGrid($event)" ></cs-search>
-			</div>
-		</div>
-		<div class="controls-right">
-			<div class="filterActivities">
-				<crem-button type="secondary">
-					<span id="filter" (click)="filterBuilderVisible = true; $event.preventDefault();">Filter</span>
-				</crem-button>
-			</div>
-			<div class="clearActivities">
-				<crem-button type="secondary">
-					<span id="clearFilters" (click)="clearAllFilters(); $event.preventDefault();">Clear Filters</span>
-				</crem-button>
-			</div>
-			<div class="exportActivities">
-				<crem-button type="primary" (click)="exportDataGrid(); $event.preventDefault()" >
-					<span id="createReport">Export</span>
-				</crem-button>
-			</div>
-		</div>
-	</div>
+  <div class="recentActivities-toolBar-wrapper">
+    <div class="controls-left">
+      <div class="title">Recent Activities</div>
+      <div class="searchActivities">
+        <cs-search
+          #SearchBox
+          [placeholder]="'Search...'"
+          (changed)="searchDataGrid($event)"
+        ></cs-search>
+      </div>
+    </div>
+    <div class="controls-right">
+      <div class="filterActivities">
+        <crem-button type="secondary">
+          <span
+            id="filter"
+            (click)="filterBuilderVisible = true; $event.preventDefault()"
+            >Filter</span
+          >
+        </crem-button>
+      </div>
+      <div class="clearActivities">
+        <crem-button type="secondary">
+          <span
+            id="clearFilters"
+            (click)="clearAllFilters(); $event.preventDefault()"
+            >Clear Filters</span
+          >
+        </crem-button>
+      </div>
+      <div class="exportActivities">
+        <crem-button
+          type="primary"
+          (click)="exportDataGrid(); $event.preventDefault()"
+        >
+          <span id="createReport">Export</span>
+        </crem-button>
+      </div>
+    </div>
+  </div>
 
-	<div class="recentActivities-dataGrid-wrapper"> 
-		<crem-loader *ngIf="!dataRetrieved"></crem-loader>
-		<dx-data-grid *ngIf="dataRetrieved"
-			#RecentActivitiesGrid
-			[showColumnLines]="false"
-			[showRowLines]="false"
-			[showBorders]="false"
-			[rowAlternationEnabled]="true"
-			[allowColumnResizing]="true"
-			columnResizingMode="widget"
-			[allowColumnReordering]="true"
-			[columnAutoWidth]="false"
-			[dataSource]="recentActivitiesData"
-			keyExpr="gridIndex"
-			[filterSyncEnabled]="true"
-			[wordWrapEnabled]="true"
-			(onCellPrepared)="cellPrepared($event)"
-			(onRowClick)="activityRowClick($event)"
-		>
-			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-			<dxo-search-panel [visible]="false"  [highlightCaseSensitive]="true"></dxo-search-panel>
-			<dxo-sorting mode="multiple"></dxo-sorting>
-			<dxo-paging [pageSize]="50"></dxo-paging>
-			<dxo-pager 
-					[showPageSizeSelector]="true"
-					[allowedPageSizes]="[25, 50, 100]"
-					[showInfo]="true"
-					[showNavigationButtons]="true"
-					[visible]="true">
-			</dxo-pager>
+  <div class="recentActivities-dataGrid-wrapper">
+    <crem-loader *ngIf="!dataRetrieved"></crem-loader>
+    <dx-data-grid
+      *ngIf="dataRetrieved"
+      #RecentActivitiesGrid
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      columnResizingMode="widget"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [dataSource]="recentActivitiesData"
+      keyExpr="gridIndex"
+      [filterSyncEnabled]="true"
+      [wordWrapEnabled]="true"
+      (onCellPrepared)="cellPrepared($event)"
+      (onRowClick)="activityRowClick($event)"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-search-panel
+        [visible]="false"
+        [highlightCaseSensitive]="true"
+      ></dxo-search-panel>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-paging [pageSize]="50"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[25, 50, 100]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        [visible]="true"
+      >
+      </dxo-pager>
 
-			<dxo-filter-builder-popup [width]="600"
-				[height]="600"
-				[(visible)]="filterBuilderVisible">
-			</dxo-filter-builder-popup>
+      <dxo-filter-builder-popup
+        [width]="600"
+        [height]="600"
+        [(visible)]="filterBuilderVisible"
+      >
+      </dxo-filter-builder-popup>
 
-			<dxo-state-storing
-				[enabled]="true"
-				type="custom"
-				[storageKey]="recentActivitiesGridStateKey"
-				[customLoad]="loadState"
-				[customSave]="saveState">
-			</dxo-state-storing>
+      <dxo-state-storing
+        [enabled]="true"
+        type="custom"
+        [storageKey]="recentActivitiesGridStateKey"
+        [customLoad]="loadState"
+        [customSave]="saveState"
+      >
+      </dxo-state-storing>
 
-			<dxo-load-panel [enabled]="true"
-				shadingColor="rgba(255,255,255,1.0)"
-				[showIndicator]="true"
-				[showPane]="true"
-				[shading]="true">
-			</dxo-load-panel>
+      <dxo-load-panel
+        [enabled]="true"
+        shadingColor="rgba(255,255,255,1.0)"
+        [showIndicator]="true"
+        [showPane]="true"
+        [shading]="true"
+      >
+      </dxo-load-panel>
 
-			<dxi-column dataField="projectName" [caption]="getProjectNameLabel()"></dxi-column>
-			<dxi-column dataField="manager" ></dxi-column>
-			<dxi-column dataField="type" ></dxi-column>
-			<dxi-column dataField="projectDue" dataType="date"  [caption]="getProjectDueLabel()" [format]="cardsService.dateFormat"></dxi-column>
-			<dxi-column dataField="activity" ></dxi-column>
-			<dxi-column dataField="activityType" ></dxi-column>
-			<dxi-column dataField="description" cellTemplate = "descriptionCellTemplate" [minWidth]= "250"></dxi-column>
-			<dxi-column dataField="user" ></dxi-column>
-			<dxi-column dataField="createdDate" caption="Date" dataType="date" [format]="cardsService.dateFormat"></dxi-column>
-			<div *dxTemplate="let cell of 'descriptionCellTemplate'">
-				<a [href]='getDescriptionCellLink(cell)' *ngIf='isActivityNoteAdded(cell)'>{{cell.value}}</a>
-				<a href="" (click)='downloadfile(cell)' *ngIf='isActivityFileUpload(cell)'>{{cell.value}}</a>
-				<span *ngIf='!isActivityNoteAdded(cell) && !isActivityFileUpload'>{{cell.value}}</span>
-			</div>
-
-		</dx-data-grid>
-	</div>
-
+      <dxi-column
+        dataField="projectName"
+        [caption]="getProjectNameLabel()"
+      ></dxi-column>
+      <dxi-column dataField="manager"></dxi-column>
+      <dxi-column dataField="type"></dxi-column>
+      <dxi-column
+        dataField="projectDue"
+        dataType="date"
+        [caption]="getProjectDueLabel()"
+        [format]="cardsService.dateFormat"
+      ></dxi-column>
+      <dxi-column dataField="activity"></dxi-column>
+      <dxi-column dataField="activityType"></dxi-column>
+      <dxi-column
+        dataField="description"
+        cellTemplate="descriptionCellTemplate"
+        [minWidth]="250"
+      ></dxi-column>
+      <dxi-column dataField="user"></dxi-column>
+      <dxi-column
+        dataField="createdDate"
+        caption="Date"
+        dataType="date"
+        [format]="cardsService.dateFormat"
+      ></dxi-column>
+      <div *dxTemplate="let cell of 'descriptionCellTemplate'">
+        <a
+          [href]="getDescriptionCellLink(cell)"
+          *ngIf="isActivityNoteAdded(cell)"
+          >{{ cell.value }}</a
+        >
+        <a
+          href=""
+          (click)="downloadfile(cell)"
+          *ngIf="isActivityFileUpload(cell)"
+          >{{ cell.value }}</a
+        >
+        <span *ngIf="!isActivityNoteAdded(cell) && !isActivityFileUpload">{{
+          cell.value
+        }}</span>
+      </div>
+    </dx-data-grid>
+  </div>
 </div>

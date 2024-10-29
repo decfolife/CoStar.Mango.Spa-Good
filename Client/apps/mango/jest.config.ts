@@ -5,14 +5,14 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {},
   reporters: [
-    "default",
+    'default',
     [
-      "../../node_modules/jest-html-reporter",
+      '../../node_modules/jest-html-reporter',
       {
-        "outputPath": "./dist/apps/mangospa-test-report/index.html",
-        "pageTitle": "Test Report: MangoSPA"
-      }
-    ]
+        outputPath: './dist/apps/mangospa-test-report/index.html',
+        pageTitle: 'Test Report: MangoSPA',
+      },
+    ],
   ],
   coverageThreshold: {
     global: {

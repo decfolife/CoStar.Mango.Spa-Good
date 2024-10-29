@@ -8,9 +8,8 @@ describe('CostarPropertyLookupComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CostarPropertyLookupComponent ]
-    })
-    .compileComponents();
+      declarations: [CostarPropertyLookupComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CostarPropertyLookupComponent);
     component = fixture.componentInstance;

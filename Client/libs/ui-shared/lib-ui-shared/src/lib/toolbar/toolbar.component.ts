@@ -10,18 +10,15 @@ import { EnvInfoChipModule } from '../env-info-chip';
   templateUrl: './toolbar.component.html',
   standalone: true,
   imports: [CommonModule, RouterModule, EnvInfoChipModule, BookmarksModule],
-  styleUrls: ['./toolbar.component.scss']
+  styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent implements OnInit {
-  isCostarStyle: boolean = false;
-  envPopoverVisible: boolean = false;
+  isCostarStyle = false;
+  envPopoverVisible = false;
 
   @Input() chipContent: string;
   @Input() popoverContent: string;
   @Input() moduleLinks: ToolbarModuleLink[];
-
-
-  constructor() { }
 
   ngOnInit(): void {
     this.isCostarStyle = false;
@@ -31,8 +28,8 @@ export class ToolbarComponent implements OnInit {
     this.envPopoverVisible = !this.envPopoverVisible;
   }
 
-  raiseToggleBookmarkDrawerEvent(){
-    let evt = new CustomEvent("ToogleBookmarkDrawer", {detail: "toggle"});
+  raiseToggleBookmarkDrawerEvent() {
+    const evt = new CustomEvent('ToogleBookmarkDrawer', { detail: 'toggle' });
     window.dispatchEvent(evt);
   }
 }

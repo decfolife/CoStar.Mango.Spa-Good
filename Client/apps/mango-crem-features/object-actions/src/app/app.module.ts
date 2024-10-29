@@ -32,7 +32,7 @@ import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
   bootstrap: [],
 })
 export class AppModule implements DoBootstrap {
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   ngDoBootstrap() {
     customElements.define(

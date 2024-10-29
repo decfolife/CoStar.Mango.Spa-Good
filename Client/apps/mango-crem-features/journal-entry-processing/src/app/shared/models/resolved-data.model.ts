@@ -1,4 +1,4 @@
 export interface ResolvedData {
-    data: any;
-    error?: any;
+  data: any;
+  error?: any;
 }

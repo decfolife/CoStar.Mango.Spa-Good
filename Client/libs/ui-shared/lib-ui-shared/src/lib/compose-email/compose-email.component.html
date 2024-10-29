@@ -1,59 +1,69 @@
 <crem-modal
-  [modalTitle] = "modalTitle"
-  closeIconVisible = "true"
+  [modalTitle]="modalTitle"
+  closeIconVisible="true"
   primaryFooterButtonText="Send"
   closeOrCancelButtonText="Cancel"
   (primaryButtonAction)="sendEmail()"
   [customFooter]="true"
-  [modalId] = "modalId"
+  [modalId]="modalId"
 >
-<div modalContent id="composeEmailModal-content">
-  <div class="cem-noteType" [ngClass]="noteTypeValueInvalid ? 'fieldInvalid' : ''">
-    <h4 class="cem-noteType-label label">Note Type <span class="cem-required-tag">*</span></h4>
-    <crem-dropdown
-      id="emailNoteTypeId"
-      #NoteTypeDropdown
-      dropDownContainerCustomClass="emailNoteType"
-      [dataSource]="noteTypes"
-      placeholder="Note Type"
-      [showClearButton]='false'
-      displayExpr='commonNoteType'
-      valueExpr='commonNoteTypeID'
-      [initialSelectedValue]="selectedNoteType.commonNoteTypeID"
-      (selectedItems)="noteTypeSelected($event)"
-      [required]= "true"             
-      [showDefaultValidationTooltip]="false"
+  <div modalContent id="composeEmailModal-content">
+    <div
+      class="cem-noteType"
+      [ngClass]="noteTypeValueInvalid ? 'fieldInvalid' : ''"
     >
-    </crem-dropdown>
-     <!--  do we need these two lines [required] and  [showDefaultValidationTooltip]-->
-  </div>
-  <div class="cem-to-members" [ngClass]="toMembersValueInvalid ? 'fieldInvalid' : ''">
-    <h4 class="cem-toMembers-label label">To <span class="cem-required-tag">*</span></h4>
-    <div id="cem-toMembers-container">
+      <h4 class="cem-noteType-label label">
+        Note Type <span class="cem-required-tag">*</span>
+      </h4>
       <crem-dropdown
-        id='cem-toMembersId'
-        #MembersDropdown
-        dropDownContainerCustomClass="cem-toMembers-custClass"
-        [showColumnHeader]='true'
-        placeholder="Select Members"
-        displayExpr='contactFullName'
-        valueExpr="contactEmailAddress"
-        showCheckBoxesMode='always'
-        showClearButton='true'
-        allowSearch='true'
-        selectMode='multiple'
-        [dataSource]="contacts"
+        id="emailNoteTypeId"
+        #NoteTypeDropdown
+        dropDownContainerCustomClass="emailNoteType"
+        [dataSource]="noteTypes"
+        placeholder="Note Type"
+        [showClearButton]="false"
+        displayExpr="commonNoteType"
+        valueExpr="commonNoteTypeID"
+        [initialSelectedValue]="selectedNoteType.commonNoteTypeID"
+        (selectedItems)="noteTypeSelected($event)"
         [required]="true"
         [showDefaultValidationTooltip]="false"
-        useArrayOfKeys='true'
-        getWholeObject='true'
-        (gridDropdownValueChanged)="memberValueChangedEvent($event)"
-        (selectedItems)="selectedMembers($event)"
-      ></crem-dropdown>
+      >
+      </crem-dropdown>
+      <!--  do we need these two lines [required] and  [showDefaultValidationTooltip]-->
     </div>
-  </div>
-  <div class="cem-body">
-    <h4 class="cem-body-label">Body</h4>
+    <div
+      class="cem-to-members"
+      [ngClass]="toMembersValueInvalid ? 'fieldInvalid' : ''"
+    >
+      <h4 class="cem-toMembers-label label">
+        To <span class="cem-required-tag">*</span>
+      </h4>
+      <div id="cem-toMembers-container">
+        <crem-dropdown
+          id="cem-toMembersId"
+          #MembersDropdown
+          dropDownContainerCustomClass="cem-toMembers-custClass"
+          [showColumnHeader]="true"
+          placeholder="Select Members"
+          displayExpr="contactFullName"
+          valueExpr="contactId"
+          showCheckBoxesMode="always"
+          showClearButton="true"
+          allowSearch="true"
+          selectMode="multiple"
+          [dataSource]="contacts"
+          [required]="true"
+          [showDefaultValidationTooltip]="false"
+          useArrayOfKeys="true"
+          getWholeObject="true"
+          (gridDropdownValueChanged)="memberValueChangedEvent($event)"
+          (selectedItems)="selectedMembers($event)"
+        ></crem-dropdown>
+      </div>
+    </div>
+    <div class="cem-body">
+      <h4 class="cem-body-label">Body</h4>
       <dx-text-area
         [(value)]="emailMessage"
         [minHeight]="100"
@@ -62,70 +72,107 @@
         [inputAttr]="{ 'aria-label': 'Email Message Body' }"
       >
       </dx-text-area>
-  </div>
-  <div class="cem-include">
-    <h4 class="cem-include-label">Include</h4>
-    <div class="cem-include-options">             
-      <span class="cem-include-options-filePaths" [title]="includeFileInfo">
-        <dx-check-box
-          class="cem-filePaths-checkbox"
-          aria-label="Include File Paths"
-          text="File Paths"
-          [(value)]="filePathsChecked"
-          [elementAttr]="{ 'class': 'filePathsCheckbox' }"
-        ></dx-check-box>
-      </span>
-      <span class="cem-include-options-unapprovedTasks">
-        <dx-check-box
-          class="cem-unapprovedTasks-checkbox"
-          aria-label="Include Unapproved Tasks"
-          text="Unapproved Tasks"
-          [(value)]="unapprovedTasksChecked"
-          [elementAttr]="{ 'class': 'unapprovedTasksCheckbox' }"
-        ></dx-check-box>
-      </span>
+    </div>
+    <div class="cem-include">
+      <h4 class="cem-include-label">Include</h4>
+      <div class="cem-include-options">
+        <span class="cem-include-options-filePaths" [title]="includeFileInfo">
+          <dx-check-box
+            class="cem-filePaths-checkbox"
+            aria-label="Include File Paths"
+            text="File Paths"
+            [(value)]="filePathsChecked"
+            [elementAttr]="{ class: 'filePathsCheckbox' }"
+          ></dx-check-box>
+        </span>
+        <span class="cem-include-options-unapprovedTasks">
+          <dx-check-box
+            class="cem-unapprovedTasks-checkbox"
+            aria-label="Include Unapproved Tasks"
+            text="Unapproved Tasks"
+            [(value)]="unapprovedTasksChecked"
+            [elementAttr]="{ class: 'unapprovedTasksCheckbox' }"
+          ></dx-check-box>
+        </span>
+      </div>
+    </div>
+    <div class="cem-filesGrid-container">
+      <dx-data-grid
+        class="cem-filesGrid"
+        #CEMFilesGrid
+        [dataSource]="fileItems"
+        [showColumnLines]="false"
+        [hoverStateEnabled]="true"
+        [rowAlternationEnabled]="true"
+        [allowColumnResizing]="false"
+        (onEditorPreparing)="onEditorPreparing($event)"
+        keyExpr="value"
+        [width]="'100%'"
+        (onContentReady)="adaAttrToGridTable($event)"
+      >
+        <dxo-selection
+          selectAllMode="allPages"
+          showCheckBoxesMode="always"
+          mode="multiple"
+        >
+        </dxo-selection>
+
+        <dxi-column
+          dataField="text"
+          caption="File Name"
+          [cellTemplate]="'fileNameTemplate'"
+        >
+        </dxi-column>
+        <dxi-column
+          dataField="uploadedOn"
+          [cellTemplate]="'uploadedOnTemplate'"
+        >
+        </dxi-column>
+        <div *dxTemplate="let fileItem of 'fileNameTemplate'">
+          <div class="cem-filesGrid-fileName">
+            <crem-icon
+              class="fa-lg fa-regular"
+              icon="{{ fileItem.data.icon }}"
+              pack="regular"
+            ></crem-icon>
+            {{ fileItem.data.text }}
+          </div>
+        </div>
+        <div *dxTemplate="let fileItem of 'uploadedOnTemplate'">
+          <div class="cem-filesGrid-fileName">
+            {{ fileItem.data.uploadedOn }}
+          </div>
+          <div class="cem-filesGrid-uploadedBy">
+            {{ fileItem.data.createdBy }}
+          </div>
+        </div>
+      </dx-data-grid>
     </div>
   </div>
-  <div class="cem-filesGrid-container">
-    <dx-data-grid class="cem-filesGrid"
-      #CEMFilesGrid
-      [dataSource]="fileItems"
-      [showColumnLines]="false"
-      [hoverStateEnabled]="true"
-      [rowAlternationEnabled]="true"
-      [allowColumnResizing]="false"
-      (onEditorPreparing)="onEditorPreparing($event)"
-      keyExpr="value"
-      [width]="'100%'"
-      (onContentReady)="adaAttrToGridTable($event)"
-    >	
-
-      <dxo-selection
-        selectAllMode="allPages"
-        showCheckBoxesMode="always"
-        mode="multiple">
-      </dxo-selection>
-
-      <dxi-column dataField="text" caption="File Name" [cellTemplate]="'fileNameTemplate'"> </dxi-column>
-      <dxi-column dataField="uploadedOn" [cellTemplate]="'uploadedOnTemplate'"> </dxi-column>
-      <div *dxTemplate="let fileItem of 'fileNameTemplate'">
-        <div class="cem-filesGrid-fileName">
-          <crem-icon class="fa-lg fa-regular" icon="{{fileItem.data.icon}}" pack="regular"></crem-icon>
-          {{fileItem.data.text}}
-        </div>
-      </div>
-      <div *dxTemplate="let fileItem of 'uploadedOnTemplate'">
-          <div class="cem-filesGrid-fileName" >{{fileItem.data.uploadedOn}}</div>
-          <div class="cem-filesGrid-uploadedBy">{{fileItem.data.createdBy}}</div>
-      </div>
-    </dx-data-grid>
+  <div modalFooter class="cem-footerContent">
+    <div
+      id="buttonTemplate"
+      class="cem-footerleftControls"
+      *ngIf="unapprovedTasksChecked"
+    >
+      {{ emailNote }}
+    </div>
+    <div id="buttonTemplate" class="cem-footerRightControls">
+      <crem-button
+        type="secondary"
+        class="cem-footer-cancelBtn cem-btn"
+        id="close-btn"
+        (click)="closeModal()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        type="primary"
+        class="cem-footer-sendBtn cem-btn"
+        (click)="sendEmail()"
+      >
+        Send
+      </crem-button>
+    </div>
   </div>
-</div>
-<div modalFooter class="cem-footerContent">
-  <div id="buttonTemplate" class="cem-footerleftControls" *ngIf="unapprovedTasksChecked">{{emailNote}}</div>
-  <div id="buttonTemplate" class="cem-footerRightControls">
-    <crem-button  type="secondary" class="cem-footer-cancelBtn cem-btn" id="close-btn" (click)="closeModal()"> Cancel </crem-button>
-		<crem-button  type="primary" class="cem-footer-sendBtn cem-btn" (click)="sendEmail()"> Send </crem-button>
-  </div>
-</div>
 </crem-modal>

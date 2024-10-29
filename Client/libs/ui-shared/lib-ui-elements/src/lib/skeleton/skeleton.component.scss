@@ -1,13 +1,13 @@
 @use 'styles' as *;
 
-:host ::ng-deep{
-
+:host ::ng-deep {
   // Card Skeleton
   .skeleton-card {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
     @include costar(margin, 4);
+    @include costar(margin-bottom, 0);
     @include costar(padding, 3);
     @include costar(border, gray05);
     @include costar(background-color, light);
@@ -17,8 +17,10 @@
         @include costar(background-color, background);
       }
     }
+    &:last-child {
+      @include costar(margin-bottom, 4);
+    }
   }
 
   // Metric Skeleton
-
 }

@@ -1,42 +1,43 @@
 // TODO: Move the imports to project.json
-@import "../../../mango/src/assets/styles/costar-angular-material.scss";
-@import "../../../mango/src/assets/styles/costar-dev-extreme.scss"; 
-@import "../../../mango/src/assets/styles/costar-mango.scss";
+@import '../../../mango/src/assets/styles/costar-angular-material.scss';
+@import '../../../mango/src/assets/styles/costar-dev-extreme.scss';
+@import '../../../mango/src/assets/styles/costar-mango.scss';
 // FIXME: The above should be moved to the project.json or removed altogether since is taken care by MangoSPA
-@import "./assets/dx.generic.custom-light.scss";
-@import "./assets/styles/accounting-module.scss";
+@import './assets/dx.generic.custom-light.scss';
+@import './assets/styles/accounting-module.scss';
 
 $color-brand-accent: #ec4a08;
 
-mango-accounting-dashboard, mango-accounting-listpage {
-    // Global Styles for the Accounting Module Ng Application
-    .divMainContentInner {
-        top: 0 !important;
-        height: auto !important;
-        overflow: hidden !important;
-    }
+mango-accounting-dashboard,
+mango-accounting-listpage {
+  // Global Styles for the Accounting Module Ng Application
+  .divMainContentInner {
+    top: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
 
-    .mainWrapper {
-        height: 100% !important;
-        display: flex !important;
-        flex-direction: row !important;
-        width:100VW !important
-    }
+  .mainWrapper {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100vw !important;
+  }
 }
 
 .drilldown-datagrid {
-    height: 100% !important;
-    width: 100% !important;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 .shared-left-nav li.listItem.active {
-    #left-nav__9-dashboard span {
-        font-weight: bold;
-        border-bottom: 3px solid $color-brand-accent;
-    }
+  #left-nav__9-dashboard span {
+    font-weight: bold;
+    border-bottom: 3px solid $color-brand-accent;
+  }
 
-    #left-nav__9-accounting-events span {
-        font-weight: bold;
-        border-bottom: 3px solid $color-brand-accent;  
-    }
+  #left-nav__9-accounting-events span {
+    font-weight: bold;
+    border-bottom: 3px solid $color-brand-accent;
+  }
 }

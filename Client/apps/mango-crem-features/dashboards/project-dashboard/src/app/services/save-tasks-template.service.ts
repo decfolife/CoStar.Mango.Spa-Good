@@ -11,7 +11,7 @@ export class SaveTasksTemplateService {
 
   projects: string = UtilitiesService.getBaseApiUrl(Api.projects);
 
-  baseSaveTasksTemplateUrl = `${this.projects}projects/createteamtemplate`;
+  baseSaveTasksTemplateUrl = `${this.projects}projects/saveprojectastemplate`;
 
   constructor(private http: HttpClient) {}
 

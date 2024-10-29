@@ -9,4 +9,6 @@ export interface BuildingInfo {
   buildingState?: string;
   buildingZipCode?: string;
   buildingCountry?: string;
+  countryCode?: string;
+  unMatchedComments?: string;
 }

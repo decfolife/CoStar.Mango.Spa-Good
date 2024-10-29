@@ -14,18 +14,13 @@ describe('Navbar Component', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [NavbarComponent],
-      imports: [
-        HttpClientTestingModule,
-        MatMenuModule,
-        FontAwesomeModule
-      ],
+      imports: [HttpClientTestingModule, MatMenuModule, FontAwesomeModule],
       providers: [
         CentralAuthErrorHandler,
         CentralAuthFacade,
-        provideMockStore()
-      ]
-    })
-      .compileComponents();
+        provideMockStore(),
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

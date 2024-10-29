@@ -1,105 +1,122 @@
-
-<div *ngIf="jePaymentPopupData.length!== 0; else noDataContent" [ngClass]="{'popup-container': jePaymentPopupData}">
-  <dx-data-grid #JePayment
-                [id]="accountingSummaryService.getId(componentName,'popup','grid')"
-                width="100%"
-                [dataSource]="jePaymentPopupData"
-                [columns]="jePaymentGridColumns"
-                [rowAlternationEnabled]="true"
-                [columnResizingMode]="'widget'"
-                [showColumnLines]="true"
-                [showRowLines]="true"
-                [showBorders]="true"
-                [allowColumnResizing]="true"
-                [wordWrapEnabled]="false"
-                [columnMinWidth]="15"
-                [columnAutoWidth]="false"
-                (onExporting)="onExporting($event)"
-                [loadPanel]="{ enabled: true,
-            shading: true,
-            visible: true,
-            shadingColor: 'rgba(0, 0, 0, 0.4)'}">
-
+<div
+  *ngIf="jePaymentPopupData.length !== 0; else noDataContent"
+  [ngClass]="{ 'popup-container': jePaymentPopupData }"
+>
+  <dx-data-grid
+    #JePayment
+    [id]="accountingSummaryService.getId(componentName, 'popup', 'grid')"
+    width="100%"
+    [dataSource]="jePaymentPopupData"
+    [columns]="jePaymentGridColumns"
+    [rowAlternationEnabled]="true"
+    [columnResizingMode]="'widget'"
+    [showColumnLines]="true"
+    [showRowLines]="true"
+    [showBorders]="true"
+    [allowColumnResizing]="true"
+    [wordWrapEnabled]="false"
+    [columnMinWidth]="15"
+    [columnAutoWidth]="false"
+    (onExporting)="onExporting($event)"
+    [loadPanel]="{
+      enabled: true,
+      shading: true,
+      visible: true,
+      shadingColor: 'rgba(0, 0, 0, 0.4)'
+    }"
+  >
     <dxo-summary [calculateCustomSummary]="customSummaryCalculation">
-      <dxi-total-item alignment="right"
-                      name="SumInPaymentCurrency"
-                      summaryType="custom"
-                      showInColumn="currency"
-                      displayFormat="Sum in Payment Currency:">
+      <dxi-total-item
+        alignment="right"
+        name="SumInPaymentCurrency"
+        summaryType="custom"
+        showInColumn="currency"
+        displayFormat="Sum in Payment Currency:"
+      >
       </dxi-total-item>
 
-      <dxi-total-item alignment="right"
-                      name="SumInEventCurrency"
-                      summaryType="custom"
-                      showInColumn="currency"
-                      [displayFormat]="getFormattedDisplay('summaryRow')">
+      <dxi-total-item
+        alignment="right"
+        name="SumInEventCurrency"
+        summaryType="custom"
+        showInColumn="currency"
+        [displayFormat]="getFormattedDisplay('summaryRow')"
+      >
       </dxi-total-item>
 
-      <dxi-total-item alignment="right"
-                      name="chargeAmount"
-                      summaryType="custom"
-                      showInColumn="chargeAmount"
-                      [displayFormat]="chargeAmountFormatter">
+      <dxi-total-item
+        alignment="right"
+        name="chargeAmount"
+        summaryType="custom"
+        showInColumn="chargeAmount"
+        [displayFormat]="chargeAmountFormatter"
+      >
       </dxi-total-item>
 
-      <dxi-total-item alignment="right"
-                      name="directCosts"
-                      summaryType="custom"
-                      showInColumn="directCosts"
-                      [displayFormat]="chargeAmountFormatter">
+      <dxi-total-item
+        alignment="right"
+        name="directCosts"
+        summaryType="custom"
+        showInColumn="directCosts"
+        [displayFormat]="chargeAmountFormatter"
+      >
       </dxi-total-item>
 
-      <dxi-total-item alignment="right"
-                      name="sumDirectCostsAmountDueInPeriod"
-                      summaryType="custom"
-                      showInColumn="directCosts"
-                      [displayFormat]="scheduleAmountFormatter">
+      <dxi-total-item
+        alignment="right"
+        name="sumDirectCostsAmountDueInPeriod"
+        summaryType="custom"
+        showInColumn="directCosts"
+        [displayFormat]="scheduleAmountFormatter"
+      >
       </dxi-total-item>
 
-      <dxi-total-item alignment="right"
-                      name="terminationFees"
-                      summaryType="custom"
-                      showInColumn="terminationFees"
-                      [displayFormat]="chargeAmountFormatter">
+      <dxi-total-item
+        alignment="right"
+        name="terminationFees"
+        summaryType="custom"
+        showInColumn="terminationFees"
+        [displayFormat]="chargeAmountFormatter"
+      >
       </dxi-total-item>
 
-      <dxi-total-item alignment="right"
-                      name="sumTerminationFeesAmountDueInPeriod"
-                      summaryType="custom"
-                      showInColumn="terminationFees"
-                      [displayFormat]="scheduleAmountFormatter">
+      <dxi-total-item
+        alignment="right"
+        name="sumTerminationFeesAmountDueInPeriod"
+        summaryType="custom"
+        showInColumn="terminationFees"
+        [displayFormat]="scheduleAmountFormatter"
+      >
       </dxi-total-item>
 
-      <dxi-total-item alignment="right"
-                      name="actualAmountDueInPeriod"
-                      summaryType="custom"
-                      showInColumn="chargeAmount"
-                      [displayFormat]="scheduleAmountFormatter">
+      <dxi-total-item
+        alignment="right"
+        name="actualAmountDueInPeriod"
+        summaryType="custom"
+        showInColumn="chargeAmount"
+        [displayFormat]="scheduleAmountFormatter"
+      >
       </dxi-total-item>
     </dxo-summary>
 
-    <dxo-scrolling mode="virtual">
-    </dxo-scrolling>
+    <dxo-scrolling mode="virtual"> </dxo-scrolling>
 
     <dxo-export [enabled]="true"></dxo-export>
-    
-    <dxo-sorting mode="none">
-    </dxo-sorting>
+
+    <dxo-sorting mode="none"> </dxo-sorting>
 
     <div *dxTemplate="let info of 'amortizationHeader'">
-      <p title={{info.column.caption}} class="header-column-caption">
-        {{info.column.caption}}
+      <p title="{{ info.column.caption }}" class="header-column-caption">
+        {{ info.column.caption }}
       </p>
     </div>
 
     <div *dxTemplate="let cell of 'pointer'">
-      <div class="pointer" title={{cell.text}}>{{ cell.text }}</div>
+      <div class="pointer" title="{{ cell.text }}">{{ cell.text }}</div>
     </div>
   </dx-data-grid>
 </div>
 
 <ng-template #noDataContent class="popup-container">
-  <div class="no-data-container">
-    No data to display.
-  </div>
+  <div class="no-data-container">No data to display.</div>
 </ng-template>

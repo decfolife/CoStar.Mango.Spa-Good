@@ -1,7 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
-import { EntityType, IdNamePair, ResolvedData } from '../../shared/models/index';
+import {
+  EntityType,
+  IdNamePair,
+  ResolvedData,
+} from '../../shared/models/index';
 import 'regenerator-runtime/runtime';
 import * as ExcelJS from 'exceljs';
 import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -14,16 +18,17 @@ import { SharedService } from '../../shared/services/shared.service';
 @Component({
   selector: 'mango-group-user-module-rights',
   templateUrl: './group-user-module-rights.component.html',
-  styleUrls: ['./group-user-module-rights.component.scss']
+  styleUrls: ['./group-user-module-rights.component.scss'],
 })
-
 export class GroupUserModuleRightsComponent implements OnInit {
   public pageTitle = this.route.snapshot.data['pageTitle'];
-  public moduleListResolved: ResolvedData = this.route.snapshot.data['moduleList'];
+  public moduleListResolved: ResolvedData =
+    this.route.snapshot.data['moduleList'];
   public userListResolved: ResolvedData = this.route.snapshot.data['userList'];
-  public groupListResolved: ResolvedData = this.route.snapshot.data['groupList'];
+  public groupListResolved: ResolvedData =
+    this.route.snapshot.data['groupList'];
 
-  dateFormat: string = "MM/dd/yyyy";
+  dateFormat: string = 'MM/dd/yyyy';
 
   userData: Array<any>;
   groupData: Array<any>;
@@ -45,7 +50,8 @@ export class GroupUserModuleRightsComponent implements OnInit {
   @ViewChild(DxTreeViewComponent) treeView;
   @ViewChild('UserDataGrid') userDataGrid: DxDataGridComponent;
   @ViewChild('GroupDataGrid') groupDataGrid: DxDataGridComponent;
-  @ViewChild('ModuleDescriptionGrid') moduleDescriptionGrid: DxDataGridComponent;
+  @ViewChild('ModuleDescriptionGrid')
+  moduleDescriptionGrid: DxDataGridComponent;
   @ViewChild('FilterDataGrid') filterDataGrid: DxDataGridComponent;
   @ViewChild('SearchBox') searchBox: SearchComponent;
 
@@ -56,7 +62,8 @@ export class GroupUserModuleRightsComponent implements OnInit {
     public groupUserModuleRightsService: GroupUserModuleRightsService,
     private datepipe: DatePipe,
     private sharedService: SharedService,
-    private route: ActivatedRoute,) { }
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.moduleList = this.moduleListResolved.data;
@@ -64,50 +71,51 @@ export class GroupUserModuleRightsComponent implements OnInit {
     this.groupList = this.groupListResolved.data;
     this.errorMessage = this.moduleListResolved.error;
 
-    this.sharedService.getUserPreferences()
-    .subscribe(result => {
+    this.sharedService.getUserPreferences().subscribe((result) => {
       const userPreferences = result.data || {};
-      this.dateFormat = userPreferences?.dateFormat || "MM/dd/yyyy"
+      this.dateFormat = userPreferences?.dateFormat || 'MM/dd/yyyy';
     });
 
     this.getGroupAndUserModuleRights();
 
     this.dropdownData = {
       items: this.moduleList,
-      valueExpr: "id",
-      displayExpr: "name",
-      placeholder: "Module",
-      controlType: "dropdown",
+      valueExpr: 'id',
+      displayExpr: 'name',
+      placeholder: 'Module',
+      controlType: 'dropdown',
       visible: true,
-      selectMode: "multiple",
+      selectMode: 'multiple',
       showColumnHeader: true,
       showSearchRow: true,
       allowClear: true,
-    }
+    };
   }
 
   public onCellPrepared(e) {
-    if (e.rowType === "data") {
-      const header = e.column.dataField === 'name' || e.column.dataField === 'securityLevel' || e.column.dataField === 'company' || e.column.dataField === 'primaryGroup';
+    if (e.rowType === 'data') {
+      const header =
+        e.column.dataField === 'name' ||
+        e.column.dataField === 'securityLevel' ||
+        e.column.dataField === 'company' ||
+        e.column.dataField === 'primaryGroup';
       if (!header) {
-        if (e.data[e.column.dataField] === "Add" && !header) {
+        if (e.data[e.column.dataField] === 'Add' && !header) {
           // e.cellElement.style.backgroundColor = "#dff0d8"
-          e.cellElement.classList.add("bg-success-lightest");
+          e.cellElement.classList.add('bg-success-lightest');
         }
-  
-        if (e.data[e.column.dataField] === "Delete" && !header) {
+
+        if (e.data[e.column.dataField] === 'Delete' && !header) {
           // e.cellElement.style.backgroundColor = "#f2dede"
-          e.cellElement.classList.add("bg-danger-lightest");
+          e.cellElement.classList.add('bg-danger-lightest');
         }
-  
-        if (e.data[e.column.dataField] === "View" && !header) {
+
+        if (e.data[e.column.dataField] === 'View' && !header) {
           // e.cellElement.style.backgroundColor = "#d9edf7"
-          e.cellElement.classList.add("bg-info-lightest");
+          e.cellElement.classList.add('bg-info-lightest');
         }
       }
-
     }
-
   }
 
   public moduleDropdownChange(e) {
@@ -118,103 +126,97 @@ export class GroupUserModuleRightsComponent implements OnInit {
       this.groupData = null;
       this.isApplied = false;
     }
-
   }
 
   public setColumnContent() {
     this.userColumns = [
       {
-        dataField: "id",
+        dataField: 'id',
         alignment: null,
         visible: true,
-        dataType: "number"
+        dataType: 'number',
       },
       {
-        dataField: "name",
+        dataField: 'name',
         alignment: null,
         visible: true,
-        dataType: "string"
+        dataType: 'string',
       },
       {
-        dataField: "securityLevel",
+        dataField: 'securityLevel',
         alignment: null,
         visible: true,
-        dataType: "string"
+        dataType: 'string',
       },
       {
-        dataField: "company",
+        dataField: 'company',
         alignment: null,
         visible: true,
-        dataType: "string"
+        dataType: 'string',
       },
       {
-        dataField: "primaryGroup",
+        dataField: 'primaryGroup',
         alignment: null,
         visible: true,
-        dataType: "string"
-      }
+        dataType: 'string',
+      },
     ];
 
     this.groupColumns = [
       {
-        dataField: "id",
+        dataField: 'id',
         alignment: null,
         visible: true,
-        dataType: "number"
+        dataType: 'number',
       },
       {
-        dataField: "name",
+        dataField: 'name',
         alignment: null,
         visible: true,
-        dataType: "string"
-      }
-
+        dataType: 'string',
+      },
     ];
 
     this.selectedModuleNames.forEach((module) => {
-      this.userColumns.push(
-        {
-          dataField: module.id.toString(),
-          alignment: null,
-          caption: module.name,
-          visible: true,
-          dataType: "string"
-        }
-      );
-      this.groupColumns.push(
-        {
-          dataField: module.id.toString(),
-          caption: module.name,
-          alignment: null,
-          visible: true,
-          dataType: "string"
-        }
-      )
-    })
+      this.userColumns.push({
+        dataField: module.id.toString(),
+        alignment: null,
+        caption: module.name,
+        visible: true,
+        dataType: 'string',
+      });
+      this.groupColumns.push({
+        dataField: module.id.toString(),
+        caption: module.name,
+        alignment: null,
+        visible: true,
+        dataType: 'string',
+      });
+    });
 
     this.moduleDescriptionColumns = [
       {
-        dataField: "moduleDisplayName",
-        caption:"Module",
+        dataField: 'moduleDisplayName',
+        caption: 'Module',
         alignment: null,
         visible: true,
-        dataType: "string"
+        dataType: 'string',
       },
       {
-        dataField: "objectTypeName",
-        caption: "Object",
+        dataField: 'objectTypeName',
+        caption: 'Object',
         alignment: null,
         visible: true,
-        dataType: "string"
+        dataType: 'string',
       },
       {
-        dataField: "description",
-        caption: "Help Text",
+        dataField: 'description',
+        caption: 'Help Text',
         alignment: null,
         visible: true,
-        dataType: "string"
-      }
-    ]
+        dataType: 'string',
+      },
+    ];
 
     this.isApplied = true;
   }
@@ -245,22 +247,19 @@ export class GroupUserModuleRightsComponent implements OnInit {
   }
 
   public apply() {
-    this.tabs = []
+    this.tabs = [];
     if (this.selectedUsers?.length) {
-      this.tabs.push(
-        { "title": "User Rights", "template": "userRights" }
-      );
-    }
-    
-    if (this.selectedGroups?.length) {
-      this.tabs.push(
-        { "title": "Group Rights", "template": "groupRights" }
-      );
+      this.tabs.push({ title: 'User Rights', template: 'userRights' });
     }
 
-    this.tabs.push(
-      { "title": "Module Description", "template": "moduleDescription" }
-    );
+    if (this.selectedGroups?.length) {
+      this.tabs.push({ title: 'Group Rights', template: 'groupRights' });
+    }
+
+    this.tabs.push({
+      title: 'Module Description',
+      template: 'moduleDescription',
+    });
 
     this.setColumnContent();
     this.dataGridLoading = true;
@@ -280,42 +279,45 @@ export class GroupUserModuleRightsComponent implements OnInit {
       selectedUsers.push(user.id);
     });
 
-    this.groupUserModuleRightsService.getModuleRightData(selectedUsers, selectedGroups, selectedModules)
-    .subscribe(result => {
-      const moduleData = result.data;
-      this.userData = [];
-      this.groupData = [];
-      moduleData.forEach((data) => {
-        if (data.entityTypeId === EntityType.User) {
-          const index = this.userData.findIndex((item) => {
-            return item.id === data.id
-          });
-          if (index !== -1) {
-            this.userData[index][data.moduleID] = data.securityType
+    this.groupUserModuleRightsService
+      .getModuleRightData(selectedUsers, selectedGroups, selectedModules)
+      .subscribe((result) => {
+        const moduleData = result.data;
+        this.userData = [];
+        this.groupData = [];
+        moduleData.forEach((data) => {
+          if (data.entityTypeId === EntityType.User) {
+            const index = this.userData.findIndex((item) => {
+              return item.id === data.id;
+            });
+            if (index !== -1) {
+              this.userData[index][data.moduleID] = data.securityType;
+            } else {
+              this.userData.push(data);
+              this.userData[this.userData.length - 1][data.moduleID] =
+                data.securityType;
+            }
           } else {
-            this.userData.push(data);
-            this.userData[this.userData.length - 1][data.moduleID] = data.securityType;
+            const index = this.groupData.findIndex((item) => {
+              return item.id === data.id;
+            });
+            if (index !== -1) {
+              this.groupData[index][data.moduleID] = data.securityType;
+            } else {
+              this.groupData.push(data);
+              this.groupData[this.groupData.length - 1][data.moduleID] =
+                data.securityType;
+            }
           }
-        } else {
-          const index = this.groupData.findIndex((item) => {
-            return item.id === data.id
-          });
-          if (index !== -1) {
-            this.groupData[index][data.moduleID] = data.securityType
-          } else {
-            this.groupData.push(data);
-            this.groupData[this.groupData.length - 1][data.moduleID] = data.securityType;
-          }
-        }
-        
-      })
-      this.dataGridLoading = false;
-    });
+        });
+        this.dataGridLoading = false;
+      });
 
-    this.groupUserModuleRightsService.getModuleDescriptionData([], [], selectedModules)
-    .subscribe(result => {
-      this.moduleDescriptionData = result.data;
-    });
+    this.groupUserModuleRightsService
+      .getModuleDescriptionData([], [], selectedModules)
+      .subscribe((result) => {
+        this.moduleDescriptionData = result.data;
+      });
   }
 
   public exportGrids(e) {
@@ -325,60 +327,131 @@ export class GroupUserModuleRightsComponent implements OnInit {
     if (this.selectedUsers?.length) {
       usersSheet = workbook.addWorksheet('Users');
       usersSheet.getRow(2).getCell(2).value = 'Users';
-      usersSheet.getRow(2).getCell(2).font = { bold: true, size: 16, underline: 'double' };
+      usersSheet.getRow(2).getCell(2).font = {
+        bold: true,
+        size: 16,
+        underline: 'double',
+      };
     }
 
     if (this.selectedGroups?.length) {
       groupsSheet = workbook.addWorksheet('Groups');
       groupsSheet.getRow(2).getCell(2).value = 'Groups';
-      groupsSheet.getRow(2).getCell(2).font = { bold: true, size: 16, underline: 'double' };
+      groupsSheet.getRow(2).getCell(2).font = {
+        bold: true,
+        size: 16,
+        underline: 'double',
+      };
     }
     const moduleDescriptionSheet = workbook.addWorksheet('Module Description');
     const filterSheet = workbook.addWorksheet('Filters');
 
-
-
     moduleDescriptionSheet.getRow(2).getCell(2).value = 'Module Description';
-    moduleDescriptionSheet.getRow(2).getCell(2).font = { bold: true, size: 16, underline: 'double' };
+    moduleDescriptionSheet.getRow(2).getCell(2).font = {
+      bold: true,
+      size: 16,
+      underline: 'double',
+    };
 
     const setBackground = (gridCell, excelCell) => {
       if (gridCell.rowType === 'header') {
-        excelCell.font.color = { argb: '00558E' }
-        excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'd2d2d2' }, bgColor: { argb: 'd2d2d2' } };
+        excelCell.font.color = { argb: '00558E' };
+        excelCell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'd2d2d2' },
+          bgColor: { argb: 'd2d2d2' },
+        };
       }
 
-      const header = gridCell?.column?.dataField === 'name' || gridCell?.column?.dataField === 'securityLevel' || gridCell?.column?.dataField === 'company' || gridCell?.column?.dataField === 'primaryGroup';
+      const header =
+        gridCell?.column?.dataField === 'name' ||
+        gridCell?.column?.dataField === 'securityLevel' ||
+        gridCell?.column?.dataField === 'company' ||
+        gridCell?.column?.dataField === 'primaryGroup';
       if (gridCell.rowType === 'data' && !header) {
-        if (gridCell?.data && gridCell?.data[gridCell?.column.dataField] === "Add") {
-          excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'dff0d8' }, bgColor: { argb: 'dff0d8' } };
+        if (
+          gridCell?.data &&
+          gridCell?.data[gridCell?.column.dataField] === 'Add'
+        ) {
+          excelCell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'dff0d8' },
+            bgColor: { argb: 'dff0d8' },
+          };
         }
-        if (gridCell?.data && gridCell?.data[gridCell?.column.dataField] === "View") {
-          excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'd9edf7' }, bgColor: { argb: 'd9edf7' } };
+        if (
+          gridCell?.data &&
+          gridCell?.data[gridCell?.column.dataField] === 'View'
+        ) {
+          excelCell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'd9edf7' },
+            bgColor: { argb: 'd9edf7' },
+          };
         }
-        if (gridCell?.data && gridCell?.data[gridCell?.column.dataField] === "Delete") {
-          excelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'f2dede' }, bgColor: { argb: 'f2dede' } };
+        if (
+          gridCell?.data &&
+          gridCell?.data[gridCell?.column.dataField] === 'Delete'
+        ) {
+          excelCell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'f2dede' },
+            bgColor: { argb: 'f2dede' },
+          };
         }
       }
-    }
+    };
 
     const userFilter = this.selectedUsers.map((user) => {
       return user.name;
-    })
+    });
     const groupFilter = this.selectedGroups.map((group) => {
       return group.name;
-    })
-    
+    });
+
     filterSheet.getRow(2).getCell(2).value = 'Filters';
-    filterSheet.getRow(2).getCell(2).font = { bold: true, size: 16, underline: 'double' };
+    filterSheet.getRow(2).getCell(2).font = {
+      bold: true,
+      size: 16,
+      underline: 'double',
+    };
     filterSheet.getRow(4).getCell(2).value = 'Users';
-    filterSheet.getRow(4).getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'd2d2d2' }, bgColor: { argb: 'd2d2d2' } };
-    filterSheet.getRow(4).getCell(2).font = { bold: true, color: {argb: '00558E'} };
+    filterSheet.getRow(4).getCell(2).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd2d2d2' },
+      bgColor: { argb: 'd2d2d2' },
+    };
+    filterSheet.getRow(4).getCell(2).font = {
+      bold: true,
+      color: { argb: '00558E' },
+    };
     filterSheet.getRow(4).getCell(3).value = 'Security Group';
-    filterSheet.getRow(4).getCell(3).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'd2d2d2' }, bgColor: { argb: 'd2d2d2' } };
-    filterSheet.getRow(4).getCell(3).font = { bold: true, color: {argb: '00558E'} };
+    filterSheet.getRow(4).getCell(3).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd2d2d2' },
+      bgColor: { argb: 'd2d2d2' },
+    };
+    filterSheet.getRow(4).getCell(3).font = {
+      bold: true,
+      color: { argb: '00558E' },
+    };
     filterSheet.getRow(4).getCell(4).value = 'Module';
-    filterSheet.getRow(4).getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'd2d2d2' }, bgColor: { argb: 'd2d2d2' } };
-    filterSheet.getRow(4).getCell(4).font = { bold: true, color: {argb: '00558E'} };
+    filterSheet.getRow(4).getCell(4).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'd2d2d2' },
+      bgColor: { argb: 'd2d2d2' },
+    };
+    filterSheet.getRow(4).getCell(4).font = {
+      bold: true,
+      color: { argb: '00558E' },
+    };
     let userRow = 0;
     let groupRow = 0;
     let moduleRow = 0;
@@ -390,24 +463,24 @@ export class GroupUserModuleRightsComponent implements OnInit {
       userRow++;
       filterSheet.getRow(4 + userRow).getCell(2).value = user;
       if (userRowWidth < user.length) {
-        userRowWidth = user.length
+        userRowWidth = user.length;
       }
-    })
+    });
     groupFilter.forEach((group) => {
       groupRow++;
       filterSheet.getRow(4 + groupRow).getCell(3).value = group;
       if (groupRowWidth < group.length) {
-        groupRowWidth = group.length
+        groupRowWidth = group.length;
       }
-    })
+    });
 
     this.selectedModuleNames.forEach((module) => {
       moduleRow++;
       filterSheet.getRow(4 + moduleRow).getCell(4).value = module.name;
       if (moduleRowWidth < module.name.length) {
-        moduleRowWidth = module.name.length
+        moduleRowWidth = module.name.length;
       }
-    })
+    });
 
     //autosize the width base on content
     filterSheet.columns[1].width = userRowWidth + 2;
@@ -420,74 +493,86 @@ export class GroupUserModuleRightsComponent implements OnInit {
         component: this.userDataGrid.instance,
         topLeftCell: { row: 4, column: 2 },
         customizeCell: ({ gridCell, excelCell }) => {
-          setBackground(gridCell, excelCell)
-        }
-      }).then(() => {
-        if (this.selectedGroups?.length) {
+          setBackground(gridCell, excelCell);
+        },
+      })
+        .then(() => {
+          if (this.selectedGroups?.length) {
+            return exportDataGrid({
+              worksheet: groupsSheet,
+              component: this.groupDataGrid.instance,
+              topLeftCell: { row: 4, column: 2 },
+              customizeCell: ({ gridCell, excelCell }) => {
+                setBackground(gridCell, excelCell);
+              },
+            });
+          }
+          return;
+        })
+        .then(() => {
           return exportDataGrid({
-            worksheet: groupsSheet,
-            component: this.groupDataGrid.instance,
+            worksheet: moduleDescriptionSheet,
+            component: this.moduleDescriptionGrid?.instance,
             topLeftCell: { row: 4, column: 2 },
             customizeCell: ({ gridCell, excelCell }) => {
-              setBackground(gridCell, excelCell)
-            }
+              setBackground(gridCell, excelCell);
+            },
           });
-        }
-        return;
-      }).then(() => {
-        return exportDataGrid({
-          worksheet: moduleDescriptionSheet,
-          component: this.moduleDescriptionGrid?.instance,
-          topLeftCell: { row: 4, column: 2 },
-          customizeCell: ({ gridCell, excelCell }) => {
-            setBackground(gridCell, excelCell)
-          }
+        })
+        .then(() => {
+          return exportDataGrid({
+            worksheet: filterSheet,
+            component: this.filterDataGrid?.instance,
+            topLeftCell: { row: 4, column: 2 },
+          });
+        })
+        .then(() => {
+          const date = this.getCurrentDate();
+          workbook.xlsx.writeBuffer().then((buffer) => {
+            saveAs(
+              new Blob([buffer], { type: 'application/octet-stream' }),
+              'Group and User Module Rights - ' + date + '.xlsx'
+            );
+          });
         });
-      }).then(() => {
-        return exportDataGrid({
-          worksheet: filterSheet,
-          component: this.filterDataGrid?.instance,
-          topLeftCell: { row: 4, column: 2 }
-        });
-      }).then(() => {
-        const date = this.getCurrentDate();
-        workbook.xlsx.writeBuffer().then((buffer) => {
-          saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Group and User Module Rights - ' + date +'.xlsx');
-        });
-      });
     } else {
       exportDataGrid({
         worksheet: groupsSheet,
         component: this.groupDataGrid.instance,
         topLeftCell: { row: 4, column: 2 },
         customizeCell: ({ gridCell, excelCell }) => {
-          setBackground(gridCell, excelCell)
-        }
-      }).then(() => {
-        return exportDataGrid({
-          worksheet: moduleDescriptionSheet,
-          component: this.moduleDescriptionGrid?.instance,
-          topLeftCell: { row: 4, column: 2 },
-          customizeCell: ({ gridCell, excelCell }) => {
-            setBackground(gridCell, excelCell)
-          }
+          setBackground(gridCell, excelCell);
+        },
+      })
+        .then(() => {
+          return exportDataGrid({
+            worksheet: moduleDescriptionSheet,
+            component: this.moduleDescriptionGrid?.instance,
+            topLeftCell: { row: 4, column: 2 },
+            customizeCell: ({ gridCell, excelCell }) => {
+              setBackground(gridCell, excelCell);
+            },
+          });
+        })
+        .then(() => {
+          return exportDataGrid({
+            worksheet: filterSheet,
+            component: this.filterDataGrid?.instance,
+            topLeftCell: { row: 4, column: 2 },
+          });
+        })
+        .then(() => {
+          const date = this.getCurrentDate();
+          workbook.xlsx.writeBuffer().then((buffer) => {
+            saveAs(
+              new Blob([buffer], { type: 'application/octet-stream' }),
+              'Group and User Module Rights - ' + date + '.xlsx'
+            );
+          });
         });
-      }).then(() => {
-        return exportDataGrid({
-          worksheet: filterSheet,
-          component: this.filterDataGrid?.instance,
-          topLeftCell: { row: 4, column: 2 }
-        });
-      }).then(() => {
-        const date = this.getCurrentDate();
-        workbook.xlsx.writeBuffer().then((buffer) => {
-          saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Group and User Module Rights - ' + date +'.xlsx');
-        });
-      });
     }
-    
   }
-  
+
   private getCurrentDate(): string {
     const date = new Date();
     return this.datepipe.transform(date, this.dateFormat);

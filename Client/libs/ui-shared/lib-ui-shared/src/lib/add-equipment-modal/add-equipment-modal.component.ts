@@ -34,7 +34,6 @@ import {
   ModalModule,
 } from '@mango/ui-shared/lib-ui-elements';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
-import { Toast } from 'ngx-toastr';
 import { Subscription, combineLatest, of } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -51,7 +50,6 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
     LibUiElementsModule,
     InputComponent,
     ReactiveFormsModule,
-    Toast,
     CremFormsModule,
     DatePickerModule,
   ],
@@ -199,7 +197,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   }
 
   onPortfolioValueChange(e: any) {
-    this.selectedPortfolio = e[0].CompanyID;
+    this.selectedPortfolio = e[0].companyID;
     of(this.selectedPortfolio)
       .pipe(
         filter((value) => !!value),
@@ -221,14 +219,14 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
             this.templateDropdownItem.length > 0
           ) {
             this.selectedTemplateID =
-              this.templateDropdownItem[0].ObjectTypeTypeID;
+              this.templateDropdownItem[0].objectTypeTypeID;
           }
 
           if (
             this.supplierDropdownItem &&
             this.supplierDropdownItem.length > 0
           ) {
-            this.selectedSupplierID = this.supplierDropdownItem[0].ObjectID;
+            this.selectedSupplierID = this.supplierDropdownItem[0].objectID;
           }
         })
       )

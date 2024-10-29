@@ -1,37 +1,37 @@
 div {
-    display: flex;
-    flex-wrap: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 .user-name {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .modal-body-column {
+  display: flex;
+  flex-direction: column;
+  &__content {
     display: flex;
-    flex-direction: column;
-    &__content {
-        display: flex;
-        flex-direction: row;
-    }
+    flex-direction: row;
+  }
 }
 
 .modal-body-row {
+  display: flex;
+  flex-direction: row;
+  &__content {
     display: flex;
     flex-direction: row;
-    &__content {
-        display: flex;
-        flex-direction: row;
-    }
+  }
 }
 
 .hierarchy-modal-content {
-    padding-top: 8px;
-    &__checkbox {
-        padding-right: 8px;
-    }
+  padding-top: 8px;
+  &__checkbox {
+    padding-right: 8px;
+  }
 }
 
 .bold-text {
-    font-weight: 600;
+  font-weight: 600;
 }

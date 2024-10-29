@@ -1,0 +1,72 @@
+<crem-popup
+  [id]="'add-folder-modal'"
+  [visible]="addFolderPopupVisible$ | async"
+  [title]="'Add Folder'"
+  [showInfo]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [showCloseButton]="true"
+  [hideOnOutsideClick]="false"
+  width="500px"
+  applyButtonText="Add"
+  saveButtonText=""
+  closeButtonText="Cancel"
+  (close)="closeAddFolderPopup()"
+  (apply)="createFolder()"
+  [disableSApplyButton]="createFolderForm.invalid"
+>
+  <form
+    crem-form
+    #newFolderForm="ngForm"
+    [formGroup]="createFolderForm"
+    layout="vertical"
+    body
+  >
+    <crem-form-item>
+      <crem-form-label [required]="true">Folder name</crem-form-label>
+      <crem-form-control
+        [status]="
+          folderName.invalid && (folderName.dirty || folderName.touched)
+            ? 'error'
+            : null
+        "
+        errorMessage="This field is required"
+      >
+        <crem-input
+          [showHint]="false"
+          [showLabel]="false"
+          [showInfo]="false"
+          [inputType]="'text'"
+          [placeholder]="'Folder name'"
+          [required]="false"
+          formControlName="folderName"
+          [maxLengthField]="100"
+          id="new-folder-name"
+        ></crem-input>
+      </crem-form-control>
+    </crem-form-item>
+    <crem-form-item>
+      <crem-form-label [required]="false">Description</crem-form-label>
+      <crem-form-control
+        [status]="
+          description.invalid && (description.dirty || description.touched)
+            ? 'error'
+            : null
+        "
+        errorMessage="This field is required"
+      >
+        <crem-input
+          [showHint]="false"
+          [showLabel]="false"
+          [showInfo]="false"
+          [inputType]="'text'"
+          [placeholder]="'Description'"
+          [required]="false"
+          formControlName="description"
+          [maxLengthField]="300"
+          id="new-folder-description"
+        ></crem-input>
+      </crem-form-control>
+    </crem-form-item>
+  </form>
+</crem-popup>

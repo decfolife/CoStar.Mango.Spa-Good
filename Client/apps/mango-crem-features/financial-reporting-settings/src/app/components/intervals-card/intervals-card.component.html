@@ -2,27 +2,29 @@
   <mat-card-title>
     Financial Reporting Interval Settings
 
-    <span class="updated-text"
+    <span
+      class="updated-text"
       *ngIf="intervalsData?.lastSuccessfulIntervalUpdate"
-    >Intervals Last Updated: {{ formattedIntervalsUpdate }}</span>
+      >Intervals Last Updated: {{ formattedIntervalsUpdate }}</span
+    >
   </mat-card-title>
 
   <mat-card-content>
-    <ngx-skeleton-loader *ngIf="!intervalsData"
+    <ngx-skeleton-loader
+      *ngIf="!intervalsData"
       class="crem-button-shadow"
-      [theme]="{height: '125px', width: '100%'}"
+      [theme]="{ height: '125px', width: '100%' }"
     ></ngx-skeleton-loader>
 
     <div class="container-fluid" *ngIf="intervalsData">
       <div class="row">
         <div class="col-6">
           <div class="row">
-            <div class="col-5">
-              Monthly Fields Years Back
-            </div>
+            <div class="col-5">Monthly Fields Years Back</div>
 
             <div class="col-3">
               <dx-text-box
+                [inputAttr]="{ 'aria-label': 'Monthly Fields Years Back' }"
                 [value]="intervalsData.monthlyFieldsYearsBack"
                 [disabled]="true"
               ></dx-text-box>
@@ -32,12 +34,11 @@
 
         <div class="col-6">
           <div class="row">
-            <div class="col-5">
-              Annual Fields Years Back
-            </div>
+            <div class="col-5">Annual Fields Years Back</div>
 
             <div class="col-3">
               <dx-text-box
+                [inputAttr]="{ 'aria-label': 'Annual Fields Years Back' }"
                 [value]="intervalsData.annualFieldsYearsBack"
                 [disabled]="true"
               ></dx-text-box>
@@ -49,12 +50,11 @@
       <div class="row">
         <div class="col-6">
           <div class="row">
-            <div class="col-5">
-              Monthly Fields Years Forward
-            </div>
+            <div class="col-5">Monthly Fields Years Forward</div>
 
             <div class="col-3">
               <dx-text-box
+                [inputAttr]="{ 'aria-label': 'Monthly Fields Years Forward' }"
                 [value]="intervalsData.monthlyFieldsYearsForward"
                 [disabled]="true"
               ></dx-text-box>
@@ -64,12 +64,11 @@
 
         <div class="col-6">
           <div class="row">
-            <div class="col-5">
-              Annual Fields Years Forward
-            </div>
+            <div class="col-5">Annual Fields Years Forward</div>
 
             <div class="col-3">
               <dx-text-box
+                [inputAttr]="{ 'aria-label': 'Annual Fields Years Forward' }"
                 [value]="intervalsData.annualFieldsYearsForward"
                 [disabled]="true"
               ></dx-text-box>
@@ -88,9 +87,7 @@
         </div>
       </div>
 
-      <div class="row"
-        *ngIf="settingsData.fiscalYearEndMonth !== 12"
-      >
+      <div class="row" *ngIf="settingsData.fiscalYearEndMonth !== 12">
         <div class="col-6 italic"></div>
 
         <div class="col-6 italic">
@@ -106,7 +103,8 @@
             </div>
 
             <div class="col-7">
-              <dx-select-box [dataSource]="currencies"
+              <dx-select-box
+                [dataSource]="currencies"
                 id="reportingCurrencyIsoDropdown"
                 [disabled]="isViewOnly"
                 [(value)]="settingsData.reportingCurrencyID"
@@ -115,7 +113,7 @@
                 displayExpr="currencyISO"
                 width="80px"
               ></dx-select-box>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="ReportingCurrencyID"
                 helpTextData=""
               ></crem-tooltip>
@@ -130,7 +128,8 @@
             </div>
 
             <div class="col-7">
-              <dx-select-box [dataSource]="endMonthOptions"
+              <dx-select-box
+                [dataSource]="endMonthOptions"
                 id="fiscalYearEndMonthDropdown"
                 [disabled]="isViewOnly"
                 [(value)]="settingsData.fiscalYearEndMonth"
@@ -139,7 +138,7 @@
                 displayExpr="key"
                 width="200px"
               ></dx-select-box>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="FiscalYearEndMonth"
                 helpTextData=""
               ></crem-tooltip>
@@ -158,16 +157,19 @@
             </div>
 
             <div class="col-7">
-              <dx-select-box [dataSource]="fiscalYearDefinitionOptions"
+              <dx-select-box
+                [dataSource]="fiscalYearDefinitionOptions"
                 id="fiscalYearDefinitionDropdown"
-                [disabled]="isViewOnly || settingsData.fiscalYearEndMonth === 12"
+                [disabled]="
+                  isViewOnly || settingsData.fiscalYearEndMonth === 12
+                "
                 [(value)]="settingsData.fiscalYearAsEndMonth"
                 (onFocusIn)="updateFYText(); changed.emit()"
                 valueExpr="value"
                 displayExpr="key"
                 width="200px"
               ></dx-select-box>
-              <crem-tooltip 
+              <crem-tooltip
                 helptextName="FiscalYearAsEndMonth"
                 helpTextData=""
               ></crem-tooltip>
@@ -181,18 +183,18 @@
 
         <div class="col-6">
           <div class="row">
-            <div class="col-5">
-            </div>
+            <div class="col-5"></div>
 
-            <div class="col-7 italic"
-              *ngIf="settingsData.fiscalYearEndMonth !== 12">
+            <div
+              class="col-7 italic"
+              *ngIf="settingsData.fiscalYearEndMonth !== 12"
+            >
               FY {{ currentFiscalYear }}:
               {{ fiscalYearText }}
             </div>
           </div>
         </div>
       </div>
-
     </div>
   </mat-card-content>
 </mat-card>

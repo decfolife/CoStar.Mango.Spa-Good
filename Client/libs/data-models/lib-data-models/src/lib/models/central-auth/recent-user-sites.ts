@@ -1,5 +1,5 @@
-import { UserSite } from "../user-site";
+import { UserSite } from '../user-site.interface';
 
 export interface RecentUserSites {
-    recentUserSites: UserSite[];
+  recentUserSites: UserSite[];
 }

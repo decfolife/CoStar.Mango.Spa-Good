@@ -10,8 +10,8 @@
 /* eslint-disable import/prefer-default-export */
 
 export class PortfolioSettings {
-    masterGroupID: number;
-    defaultAnnualRateType: number;
-    minMonthsOperator?: number;
-    maxMonthsOperator?: number;
+  masterGroupID: number;
+  defaultAnnualRateType: number;
+  minMonthsOperator?: number;
+  maxMonthsOperator?: number;
 }

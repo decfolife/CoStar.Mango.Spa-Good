@@ -1,0 +1,146 @@
+<crem-modal
+  modalId="tmcd-taskModifyCompleteDate"
+  modalTitleId="modifyCompleteDateTitleId"
+  [modalTitle]="modalHeader"
+  closeIconVisible="true"
+  [customFooter]="true"
+  [customHeader]="true"
+>
+  <div modalHeader class="tmcd-headerContent">
+    <h2 class="modalTitle">{{ modalHeader }}</h2>
+    <button
+      (click)="closeModal()"
+      class="btn-close btn-none modalCloseButton"
+      color="secondary"
+      aria-label="Close"
+      id="tmcd-closeModalBtnId"
+    >
+      <mat-icon class="closeIcon">close</mat-icon>
+    </button>
+  </div>
+
+  <div modalContent class="tmcd-bodyContent body-content">
+    <div class="tmcd-currentDate tmcd-row tmcd-mb10">
+      <div class="tmcd-currentDate-label tmcd-label">Current Date:</div>
+      <div class="tmcd-currentDate-val">
+        {{
+          taskUserDate
+            ? (taskUserDate | date: dateFormat)
+            : taskSystemDate
+            ? (taskSystemDate | date: dateFormat)
+            : 'N/A'
+        }}
+      </div>
+    </div>
+
+    <div class="tmcd-systemDate tmcd-row tmcd-mb10">
+      <div class="tmcd-currentDate-label tmcd-label">System Date:</div>
+      <div class="tmcd-currentDate-val">
+        {{
+          taskSystemDate
+            ? (taskSystemDate | date: dateFormat)
+            : taskUserDate
+            ? 'Overridden'
+            : 'N/A'
+        }}
+      </div>
+    </div>
+
+    <div class="tmcd-modifyDate-container tmcd-mb10">
+      <div class="tmcd-modifyDateRow tmcd-row tmcd-row-mb4">
+        <div class="tmcd-modifyDate-label tmcd-label">
+          Modified Complete Date:
+          <span
+            class="tmcd-required"
+            *ngIf="isDateRequired"
+            aria-label="required"
+            >*</span
+          >
+          <crem-tooltip
+            class="tmcd-tooltip"
+            [externalId]="'tmcd-tooltipId'"
+            [helpTextData]="
+              'Enter a date for when the task was completed. Modifying this date will create a note in the project notes.'
+            "
+          >
+          </crem-tooltip>
+        </div>
+        <crem-date-picker
+          #CompleteDatePicker
+          id="tmcd-modifyCompleteDateId"
+          [value]="taskUserDate"
+          [dateFormat]="dateFormat"
+          [max]="taskSystemDate ? taskSystemDate : currentDate"
+          [isRequired]="isDateRequired"
+          [showClearButton]="'true'"
+          [inputId]="'tmcd-modifyDateId'"
+          [placeholderText]="'Select Date...'"
+          [useMaskBehavior]="false"
+          (changeEvent)="onModifyCompleteDate($event)"
+        >
+        </crem-date-picker>
+      </div>
+      <div class="tmcd-modifyDate-helpText">{{ helpText }}</div>
+    </div>
+
+    <div class="tmcd-reasonForChange tmcd-row tmcd-mb4">
+      <label class="tmcd-reason-label tmcd-label label" for="tmcd-reasonInputId"
+        >Reason:
+        <span
+          *ngIf="isNotesFieldRequired"
+          class="tmcd-required"
+          aria-label="required"
+          >*</span
+        >
+      </label>
+      <crem-input
+        #ReasonInput
+        class="tmcd-reasonInputComponent"
+        [className]="tmcdNotesStatus"
+        [id]="'tmcd-reasonInputId'"
+        [showHint]="false"
+        [showLabel]="false"
+        [showInfo]="false"
+        [inputType]="'textarea'"
+        [required]="isNotesFieldRequired"
+        [(value)]="reasonText"
+        (valueChange)="onReasonChanged($event)"
+        [name]="''"
+      >
+      </crem-input>
+    </div>
+  </div>
+
+  <div modalFooter class="footerContent">
+    <div class="footerLeftControls">{{ errorMsg }}</div>
+    <div id="buttonTemplate" class="footerRightControls">
+      <div class="reason-required-text" *ngIf="isNotesFieldRequired">
+        Reason required to complete this action.
+      </div>
+      <crem-button
+        type="secondary"
+        id="tmcd-cancelBtnId"
+        class="cancelChanges tmcd-btn"
+        (click)="closeModal()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        type="secondary"
+        id="tmcd-resetBtnId"
+        class="resetChanges tmcd-btn"
+        (click)="resetDate()"
+      >
+        Reset
+      </crem-button>
+      <crem-button
+        type="primary"
+        id="tmcd-saveBtnId"
+        class="saveChanges tmcd-btn"
+        (click)="saveDate()"
+      >
+        Save
+      </crem-button>
+    </div>
+  </div>
+</crem-modal>

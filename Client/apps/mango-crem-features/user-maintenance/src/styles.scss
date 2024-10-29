@@ -1,15 +1,14 @@
 .user-maintenance-deletion-modal {
-    @import "./app/components/index/modal/user-deletion/user-deletion.component.scss";
+  @import './app/components/index/modal/user-deletion/user-deletion.component.scss';
 }
 
 user-maintenance {
-    // FIXME: bad practice that breaks encapsulation and duplicates css
-    // FIXME: This is most probably result of not importing the shared component correctly or the SCSS selectors in the shared component
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss";
-    @import "../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss";
+  // FIXME: bad practice that breaks encapsulation and duplicates css
+  // FIXME: This is most probably result of not importing the shared component correctly or the SCSS selectors in the shared component
+  @import '../../../../libs/ui-shared/lib-ui-elements/src/lib/dropdown/dropdown.component.scss';
+  @import '../../../../libs/ui-shared/lib-ui-elements/src/lib/modal/modal.component.scss';
 
-    // @import '~devexpress-gantt/dist/dx-gantt.css';
+  // @import '~devexpress-gantt/dist/dx-gantt.css';
 
-
-    @import "./assets/styles/user-maintenance.scss";
+  @import './assets/styles/user-maintenance.scss';
 }

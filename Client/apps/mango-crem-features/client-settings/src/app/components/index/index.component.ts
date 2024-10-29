@@ -6,6 +6,4 @@ import { Component, ViewEncapsulation } from '@angular/core';
   styleUrls: ['./index.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class IndexComponent {
-
-}
+export class IndexComponent {}

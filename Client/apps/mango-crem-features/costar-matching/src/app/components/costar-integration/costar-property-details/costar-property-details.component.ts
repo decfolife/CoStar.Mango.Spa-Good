@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   standalone: true,
   selector: 'app-costar-property-details',
   templateUrl: './costar-property-details.component.html',
-  styleUrls: ['./costar-property-details.component.css']
+  styleUrls: ['./costar-property-details.component.css'],
 })
-export class CostarPropertyDetailsComponent {
-
-}
+export class CostarPropertyDetailsComponent {}

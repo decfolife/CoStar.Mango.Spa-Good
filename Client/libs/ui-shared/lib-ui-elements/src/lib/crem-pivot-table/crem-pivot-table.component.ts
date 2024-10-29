@@ -1,11 +1,23 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { DxChartComponent, DxDataGridComponent, DxPivotGridComponent } from "devextreme-angular";
-import { exportPivotGrid } from "devextreme/excel_exporter";
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import {
+  DxChartComponent,
+  DxDataGridComponent,
+  DxPivotGridComponent,
+} from 'devextreme-angular';
+import { exportPivotGrid } from 'devextreme/excel_exporter';
 import 'regenerator-runtime/runtime';
 import { Workbook } from 'exceljs';
-import PivotGridDataSource from "devextreme/ui/pivot_grid/data_source";
+import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 import { saveAs } from 'file-saver-es';
-import DataSource from "devextreme/data/data_source";
+import DataSource from 'devextreme/data/data_source';
 import * as ExcelJS from 'exceljs';
 
 interface ISummationTypeConfig {
@@ -17,9 +29,9 @@ interface ISummationTypeConfig {
 }
 
 @Component({
-  selector: "crem-pivot-table",
-  templateUrl: "./crem-pivot-table.component.html",
-  styleUrls: ["./crem-pivot-table.component.scss"]
+  selector: 'crem-pivot-table',
+  templateUrl: './crem-pivot-table.component.html',
+  styleUrls: ['./crem-pivot-table.component.scss'],
 })
 export class CremPivotTableComponent implements OnInit, AfterViewInit {
   @Input() config: any;
@@ -28,15 +40,15 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
   @Input() showRowGrandTotals = false;
   @Input() showColumnGrandTotals = false;
   @Input() allowDrillDown = false;
-  @Input() exportFileName = "Grid_Export"
+  @Input() exportFileName = 'Grid_Export';
   @Input() showColumnChooser = false;
   @Input() chartVisible = true;
-  @Input() applyChangesMode = "instantly";
+  @Input() applyChangesMode = 'instantly';
   @Input() summationTypeConfig: Partial<ISummationTypeConfig> = {};
   @Input() fieldModal: any;
   @Output() changeCallback: EventEmitter<any> = new EventEmitter();
-  @ViewChild("PivotGrid") pivotGrid: DxPivotGridComponent;
-  @ViewChild("PivotChart", { static: false }) pivotChart: DxChartComponent;
+  @ViewChild('PivotGrid') pivotGrid: DxPivotGridComponent;
+  @ViewChild('PivotChart', { static: false }) pivotChart: DxChartComponent;
   @ViewChild('drillDownDataGrid') drillDownDataGrid: DxDataGridComponent;
 
   pivotGridDataSource: PivotGridDataSource;
@@ -45,22 +57,20 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
   drilldownColumns: string[];
 
   ngOnInit() {
-    this.exportFileName = this.exportFileName || "Grid_Export";
+    this.exportFileName = this.exportFileName || 'Grid_Export';
     this.showRowGrandTotals = this.showRowGrandTotals || false;
     this.showColumnGrandTotals = this.showColumnGrandTotals || false;
     this.allowDrillDown = this.allowDrillDown || false;
-    this.applyChangesMode = this.applyChangesMode || "instantly";
+    this.applyChangesMode = this.applyChangesMode || 'instantly';
 
     if (this.config && !this.config.onChanged) {
       this.config.onChanged = () => {
         setTimeout(() => {
           this.onChanged();
-        })
+        });
       };
     }
-    this.pivotGridDataSource = new PivotGridDataSource(
-      this.config
-    );
+    this.pivotGridDataSource = new PivotGridDataSource(this.config);
   }
 
   ngAfterViewInit() {
@@ -71,19 +81,17 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
     this.config.onChanged = () => {
       setTimeout(() => {
         this.onChanged();
-      })
+      });
     };
-    this.pivotGridDataSource = new PivotGridDataSource(
-      this.config
-    );
+    this.pivotGridDataSource = new PivotGridDataSource(this.config);
   }
 
   public getAreaFields(area) {
-    return this.pivotGridDataSource.getAreaFields(area, false)
+    return this.pivotGridDataSource.getAreaFields(area, false);
   }
 
   public getPivotDataSource() {
-    return this.pivotGridDataSource.state()
+    return this.pivotGridDataSource.state();
   }
 
   public getPivotTableById() {
@@ -102,7 +110,10 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
       worksheet: worksheet,
     }).then(() => {
       workbook.xlsx.writeBuffer().then((buffer: BlobPart) => {
-        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), this.exportFileName + '.xlsx');
+        saveAs(
+          new Blob([buffer], { type: 'application/octet-stream' }),
+          this.exportFileName + '.xlsx'
+        );
       });
     });
   }
@@ -116,7 +127,10 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
       worksheet,
     }).then(() => {
       workbook.xlsx.writeBuffer().then((buffer) => {
-        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), this.exportFileName + '.xlsx');
+        saveAs(
+          new Blob([buffer], { type: 'application/octet-stream' }),
+          this.exportFileName + '.xlsx'
+        );
       });
     });
     e.cancel = true;
@@ -125,32 +139,42 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
   public onPivotCellClick(e) {
     if (e.area == 'data') {
       if (this.allowDrillDown) {
-        const columnAreaFields = this.pivotGridDataSource.getAreaFields("column", false)
-        const rowAreaFields = this.pivotGridDataSource.getAreaFields("row", false)
-        const dataAreaFields = this.pivotGridDataSource.getAreaFields("data", false)
+        const columnAreaFields = this.pivotGridDataSource.getAreaFields(
+          'column',
+          false
+        );
+        const rowAreaFields = this.pivotGridDataSource.getAreaFields(
+          'row',
+          false
+        );
+        const dataAreaFields = this.pivotGridDataSource.getAreaFields(
+          'data',
+          false
+        );
         const fields = [];
         columnAreaFields.forEach((column) => {
           if (!fields.includes(column.dataField)) {
             fields.push(column.dataField);
           }
-        })
+        });
 
         rowAreaFields.forEach((row) => {
           if (!fields.includes(row.dataField)) {
             fields.push(row.dataField);
           }
-        })
+        });
 
         dataAreaFields.forEach((data) => {
           if (!fields.includes(data.dataField)) {
             fields.push(data.dataField);
           }
-        })
+        });
         this.drilldownColumns = fields;
         this.drillDownDataSource = new DataSource({
           key: this.dataGridKeyExpr,
-          load: () => this.pivotGridDataSource.createDrillDownDataSource(e.cell).load()
-        })
+          load: () =>
+            this.pivotGridDataSource.createDrillDownDataSource(e.cell).load(),
+        });
         this.popupVisible = true;
       }
     }
@@ -160,13 +184,12 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
     this.drillDownDataGrid.instance.updateDimensions();
   }
 
-  public updateDimention() {
+  public updateDimension() {
     this.pivotGrid?.instance.updateDimensions();
     setTimeout(() => {
       this.pivotChart?.instance.render();
       this.pivotGrid?.instance.updateDimensions();
-    })
-
+    });
   }
 
   public refreshPivotChartData() {
@@ -175,7 +198,7 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
         dataFieldsDisplayMode: 'splitPanes',
         alternateDataFields: false,
       });
-    })
+    });
   }
 
   public onChanged() {
@@ -188,38 +211,37 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
 
     if (sourceField) {
       if (sourceField.dataType === 'number') {
-        let numberType = "number";
+        let numberType = 'number';
         const fieldModal = this.fieldModal;
         const setSummaryType = function (args) {
           if (fieldModal) {
             numberType = fieldModal[sourceField.dataField];
           }
           let format;
-          if (numberType === "currency") {
-            if (args.itemData.value === "total") {
-              format = ",###";
-            } else if (args.itemData.value === "sum") {
-              format = ",##0.00"
+          if (numberType === 'currency') {
+            if (args.itemData.value === 'total') {
+              format = ',###';
+            } else if (args.itemData.value === 'sum') {
+              format = ',##0.00';
             }
           } else {
-            if (args.itemData.value === "total") {
-              format = ",###";
-            } else if (args.itemData.value === "sum") {
-              format = ",###.##"
+            if (args.itemData.value === 'total') {
+              format = ',###';
+            } else if (args.itemData.value === 'sum') {
+              format = ',###.##';
             }
           }
 
           if (format) {
             dataSource.field(sourceField.index, {
               summaryType: args.itemData.value,
-              format: format
+              format: format,
             });
           } else {
             dataSource.field(sourceField.index, {
               summaryType: args.itemData.value,
             });
           }
-
 
           dataSource.load();
         };
@@ -244,20 +266,23 @@ export class CremPivotTableComponent implements OnInit, AfterViewInit {
   // This function populates aria-label in pivot grid horizontal headers and checkboxes
   public adaAttributes(e) {
     setTimeout(() => {
-      e.element.querySelector(".dx-treeview-node-container")?.setAttribute("aria-label", "Pivot Grid Headers");
-      const gridCheckBox = document.getElementsByClassName("dx-widget dx-checkbox");
+      e.element
+        .querySelector('.dx-treeview-node-container')
+        ?.setAttribute('aria-label', 'Pivot Grid Headers');
+      const gridCheckBox = document.getElementsByClassName(
+        'dx-widget dx-checkbox'
+      );
       const arr = Array.from(gridCheckBox);
       if (arr?.length) {
         arr.forEach((el) => {
           const checkBoxArr = [el];
           if (checkBoxArr.length) {
             checkBoxArr.forEach((childEl) => {
-              childEl.setAttribute('aria-label', "checkbox");
+              childEl.setAttribute('aria-label', 'checkbox');
             });
-          };
+          }
         });
-      };
+      }
     });
-  };
-
+  }
 }

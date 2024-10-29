@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { DropdownModule, ButtonModule, LoaderModule } from '@mango/ui-shared/lib-ui-elements'
+import {
+  DropdownModule,
+  ButtonModule,
+  LoaderModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { MatIconModule } from '@angular/material/icon';
 import { DxDataGridModule } from 'devextreme-angular';
 import { MatMenuModule } from '@angular/material/menu';
@@ -12,9 +16,7 @@ import { CardsService } from '@project-dashboard/services/cards.service';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @NgModule({
-  declarations: [
-    RecentActivitiesComponent
-  ],
+  declarations: [RecentActivitiesComponent],
   imports: [
     CommonModule,
     RecentActivitiesRoutingModule,
@@ -24,9 +26,9 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
     MatIconModule,
     DxDataGridModule,
     MatMenuModule,
-    LoaderModule
+    LoaderModule,
   ],
   providers: [DashboardService, CardsService, ExportDevexDatagridService],
   exports: [RecentActivitiesComponent],
 })
-export class RecentActivitiesModule { }
+export class RecentActivitiesModule {}

@@ -8,14 +8,14 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class AWSReportService extends EndpointService {
-  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports)
-  
+  reportsUrl: string = UtilitiesService.getBaseApiUrl(Api.reports);
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   getAWSReportData(reportName: string): Observable<any> {
-      const url = `${this.reportsUrl}Reports/GetAWSReportData/` + reportName;
-      return this.callHttpGet(url, 'GetAWSReportData');   
+    const url = `${this.reportsUrl}Reports/GetAWSReportData/` + reportName;
+    return this.callHttpGet(url, 'GetAWSReportData');
   }
 }

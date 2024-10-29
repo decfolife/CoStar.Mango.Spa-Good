@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'mango-quick-search',
@@ -6,10 +6,7 @@ import { Component, OnInit} from '@angular/core';
   styleUrls: ['./index.component.scss'],
 })
 export class IndexComponent implements OnInit {
- 
-
   constructor() {}
 
   ngOnInit(): void {}
-
 }

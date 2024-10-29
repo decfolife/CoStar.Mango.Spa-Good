@@ -11,14 +11,12 @@ export class SharedService extends EndpointService {
     super(http, facade);
   }
 
-//   getUserPreferences(): Observable<any> {
-//     if (environment.isRestful) {
-//       const url = `${environment.appUrls.reports}Reports/GetUserPreferences`;
-//       return this.callHttpGet(url, 'getUserPreferences')
-//     }
-//     const url = `${environment.appUrls.reports}GetUserPreferences`;
-//     return this.callHttpPost(url, 'getUserPreferences', {})
-//   }
-
+  //   getUserPreferences(): Observable<any> {
+  //     if (environment.isRestful) {
+  //       const url = `${environment.appUrls.reports}Reports/GetUserPreferences`;
+  //       return this.callHttpGet(url, 'getUserPreferences')
+  //     }
+  //     const url = `${environment.appUrls.reports}GetUserPreferences`;
+  //     return this.callHttpPost(url, 'getUserPreferences', {})
+  //   }
 }
-

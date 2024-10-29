@@ -1,79 +1,89 @@
 #projectTeam-container {
-	height: 100%;
-	overflow: hidden;
+  height: 100%;
+  overflow: hidden;
 
-	.teams-toolBar-wrapper {
-		width: 100% !important;
-		border-bottom: 1px solid #c5c5c5;
-		position: sticky !important;
-		top: 0;
-		padding: 8px 16px;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	
-		.title {
-			font-size: 20px;
-			font-weight: 500;
-			margin: 0;
-		}
-		
-		.controls-right, .controls-left {
-			display: flex;
-			align-items: center;
-		}
-		.controls-right {
-			margin-left: 20px;
-		}
-	}
+  .teams-toolBar-wrapper {
+    width: 100% !important;
+    border-bottom: 1px solid #c5c5c5;
+    position: sticky !important;
+    top: 0;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-	.searchTeams, .filterTeams, .addTeams, .clearTeams, .searchProjectTeam {
-		margin-left: 8px;
-	}
-	
-	.projectTeam-dataGrid-wrapper, .import-teams-dataGrid-wrapper {
+    .title {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .controls-right,
+    .controls-left {
+      display: flex;
+      align-items: center;
+    }
+    .controls-right {
+      margin-left: 20px;
+    }
+  }
+
+  .searchTeams,
+  .filterTeams,
+  .addTeams,
+  .clearTeams,
+  .searchProjectTeam {
+    margin-left: 8px;
+  }
+
+  .projectTeam-dataGrid-wrapper,
+  .import-teams-dataGrid-wrapper {
     height: calc(100% - 48px);
     font-size: 16px;
 
-		.mat-slide-toggle {
-			opacity: .38;
-		}
+    .mat-slide-toggle {
+      opacity: 0.38;
+    }
 
-		.ptm-teamMemberTemplate.dx-template-wrapper {
-			align-items: center;
-			display: flex;
-		}
-	}
+    .ptm-teamMemberTemplate.dx-template-wrapper {
+      align-items: center;
+      display: flex;
+    }
+  }
 
-	.controls-right {
-		#filterIcon {
-			height: 20px;
-		}
-		.more, .actions, .addOptions{
-			margin-left: 8px;
+  .controls-right {
+    #filterIcon {
+      height: 20px;
+    }
+    .more,
+    .actions,
+    .addOptions {
+      margin-left: 8px;
 
-			&.hideActions, &.hideAdd {
-				display: none;
-			}
-		}
+      &.hideActions,
+      &.hideAdd {
+        display: none;
+      }
+    }
 
-		button.btn.btn-default {
-			&.moreButton, &.actionsButton {
-				display: flex;
-				align-items: center;
-				font-size: 16px;
-				color: #000;
-			}
-		}
-	}
+    button.btn.btn-default {
+      &.moreButton,
+      &.actionsButton {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: #000;
+      }
+    }
+  }
 
-	.dx-data-grid td.dx-command-edit {
-		height: 34px !important;
-	} 
+  .dx-data-grid td.dx-command-edit {
+    height: 34px !important;
+  }
 
-	crem-loader {
-		position: relative;
-		top: 40%;
-		left: 45%;
-	}
+  crem-loader {
+    position: relative;
+    top: 40%;
+    left: 45%;
+  }
 }

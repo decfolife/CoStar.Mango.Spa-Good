@@ -1,39 +1,38 @@
 // $costarBlue: #1E3A6F;
 // $costarMediumBlue: #2D71AA;
-$costarLightBlue: #59BADB;
-$costarOrange: #CF7800;
-$costarRichGray: #63666A;
-$costarRichLightGray: #B1B3B0;
+$costarLightBlue: #59badb;
+$costarOrange: #cf7800;
+$costarRichGray: #63666a;
+$costarRichLightGray: #b1b3b0;
 $textGray: #333333;
-$navGray: #E6E6E6;
-
+$navGray: #e6e6e6;
 
 /* Random colors from Apple days */
-$dark : #373737;
-$light: #EDEDEB;
-$med: rgb(210,210,210);
-$purple: #934BDF;
-$navy: #4A5BDD;
-$orange: #FAA62F;
-$rust: #A05A5E;
-$turquoise: #5E9F96;
-$red : #FF605E;
-$blue: #79BDE8;
-$green: #66B360;
+$dark: #373737;
+$light: #ededeb;
+$med: rgb(210, 210, 210);
+$purple: #934bdf;
+$navy: #4a5bdd;
+$orange: #faa62f;
+$rust: #a05a5e;
+$turquoise: #5e9f96;
+$red: #ff605e;
+$blue: #79bde8;
+$green: #66b360;
 $anotherGreen: #51bc6a;
-$yellow: rgb(253,248,102);
+$yellow: rgb(253, 248, 102);
 
 // CoStar Colors v2
 $costarDarkBlue: #033871;
 $costarBlue: #0559b3;
 $costarMediumBlue: #88b5e5;
 $costarLightBlue: #cae3fe;
-$costarLightOrange: #F68338;
-$costarDarkOrange: #EC4A08;
-$costarGreen: #77B800;
-$costarRed: #D30515;
-$bodyBackgroundGray: #F5F5F5;
-$sunset: #EC4A08;
+$costarLightOrange: #f68338;
+$costarDarkOrange: #ec4a08;
+$costarGreen: #77b800;
+$costarRed: #d30515;
+$bodyBackgroundGray: #f5f5f5;
+$sunset: #ec4a08;
 
 $white: #ffffff;
 $offWhite: #f8f8f8;
@@ -46,39 +45,35 @@ $black: #000000;
 $costarError: #ffbfbe;
 $costarAlert: #ec4a08;
 
-
-
-
 $stdTextGray: $darkGray;
-$lightTextGray: #7F7F83;
+$lightTextGray: #7f7f83;
 $stdTextBlue: $costarMediumBlue;
-$lightBorderGray: rgb(231,231,231);
-$stdBorderGray: #C5C5C5;
-$darkBorderGray: rgb(186,186,186);
-$cardBodyBackgroundGray: rgb(252,252,252);
+$lightBorderGray: rgb(231, 231, 231);
+$stdBorderGray: #c5c5c5;
+$darkBorderGray: rgb(186, 186, 186);
+$cardBodyBackgroundGray: rgb(252, 252, 252);
 $iconGray: $lightTextGray;
 $iconGrayDisabled: lightGray;
 
-
 /*$success : #51bc6a;*/
 $success: $costarGreen;
-$primary : $costarBlue;
+$primary: $costarBlue;
 $secondary: $costarLightBlue;
-$warning : $costarLightOrange;
-$danger : $costarRed;
+$warning: $costarLightOrange;
+$danger: $costarRed;
 
 // $hoverBlue : lighten($costarLightBlue, 30%);
-$hoverBlue : $costarLightBlue;
+$hoverBlue: $costarLightBlue;
 $borderColor: $lightGray;
 
 /* CoStar Web App Standards (work in progress) */
 
 $backgroundGray: $bodyBackgroundGray;
-$gray1: rgb(57,57,57);
-$gray2: rgb(65,65,65);
-$gray3: rgb(133,133,133);
-$gray4: rgb(200,200,200);
-$gray5: rgb(220,220,220);
+$gray1: rgb(57, 57, 57);
+$gray2: rgb(65, 65, 65);
+$gray3: rgb(133, 133, 133);
+$gray4: rgb(200, 200, 200);
+$gray5: rgb(220, 220, 220);
 $gray6: rgb(237, 237, 237);
 
 $stdBorderColor: $stdBorderGray;

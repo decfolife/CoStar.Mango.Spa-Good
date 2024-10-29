@@ -9,15 +9,17 @@ const routes: Routes = [
     children: [
       {
         path: 'budget-category',
-        loadChildren: () => import('../budget-category/budget-category.module')
-          .then(m => m.BudgetCategoriesModule)
-      }
-    ]
-  }
+        loadChildren: () =>
+          import('../budget-category/budget-category.module').then(
+            (m) => m.BudgetCategoriesModule
+          ),
+      },
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class IndexRoutingModule { }
+export class IndexRoutingModule {}

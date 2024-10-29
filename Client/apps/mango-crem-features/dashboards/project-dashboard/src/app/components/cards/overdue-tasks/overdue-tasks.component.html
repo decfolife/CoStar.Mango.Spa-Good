@@ -1,68 +1,64 @@
 <crem-card
-[id]="card.gridData.id"
-[title]="card.title"
-[subtitle]="card.subtitle"
-[counter]="card.counter"
-[filterData]="null"
-[filterInitialValue]="null"
-[showFilterClearButton]="false"
-[moreOptions]="card.moreOptions"
-(exportDataGrid)="exportAllGridData()"
-fxFlexFill
-
+  [id]="card.gridData.id"
+  [title]="card.title"
+  [subtitle]="card.subtitle"
+  [counter]="card.counter"
+  [filterData]="null"
+  [filterInitialValue]="null"
+  [showFilterClearButton]="false"
+  [moreOptions]="card.moreOptions"
+  (exportDataGrid)="exportAllGridData()"
+  fxFlexFill
 >
-	<div class="cardContent" fxflexFill *ngIf="card.dispCard">	
-		<dx-data-grid
-				#OverdueTasksGrid
-				[id]="card.gridData.id + 'grid'"
-				[showColumnLines]="false"
-				[showRowLines]="false"
-				[showBorders]="false"
-				[rowAlternationEnabled]="true"
-				[allowColumnResizing]="true"
-				[allowColumnReordering]="true"
-				[columnAutoWidth]="false"
-				[dataSource]="card.gridData.dataSource"
-				keyExpr="gridIndex"
-				(onRowClick)="rowClick($event)"
-				[wordWrapEnabled]="true"
-				(onContentReady)="adaAttrNoDataGrid($event)"
-		>
-				<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-				<dxo-search-panel [visible]="false"></dxo-search-panel>
-				<dxo-pager [visible]="false"></dxo-pager>
-				<dxo-scrolling mode="virtual"></dxo-scrolling>	
-				<dxi-column
-				dataField="step"
-				alignment="left"
-				[width]="60"
-				[allowHeaderFiltering]="false">
-				</dxi-column>
-				<dxi-column
-				dataField="taskName"
-				alignment="left"
-				></dxi-column>
-				<dxi-column
-				dataField="dueDate"
-				dataType="date"
-				alignment="left"
-				[format]="cardsService.dateFormat"
-				></dxi-column>
-				<dxi-column
-				dataField="assignee"
-				alignment="left"
-				></dxi-column>
-				<dxi-column
-				dataField="projectName"
-				[caption]="getProjectName()"
-				alignment="left"
-				></dxi-column>
-				<dxi-column
-				dataField="projectType"
-				[caption]="getProjectType()"
-				alignment="left"
-				></dxi-column>
-
-		</dx-data-grid>
-	</div>
+  <div class="cardContent" fxflexFill *ngIf="card.dispCard">
+    <dx-data-grid
+      #OverdueTasksGrid
+      [id]="card.gridData.id + 'grid'"
+      [showColumnLines]="false"
+      [showRowLines]="false"
+      [showBorders]="false"
+      [rowAlternationEnabled]="true"
+      [allowColumnResizing]="true"
+      [allowColumnReordering]="true"
+      [columnAutoWidth]="false"
+      [dataSource]="card.gridData.dataSource"
+      keyExpr="gridIndex"
+      (onRowClick)="rowClick($event)"
+      [wordWrapEnabled]="true"
+      (onContentReady)="adaAttrNoDataGrid($event)"
+    >
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-search-panel [visible]="false"></dxo-search-panel>
+      <dxo-pager [visible]="false"></dxo-pager>
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxi-column
+        dataField="step"
+        alignment="left"
+        [width]="60"
+        [allowHeaderFiltering]="false"
+      >
+      </dxi-column>
+      <dxi-column dataField="taskName" alignment="left"></dxi-column>
+      <dxi-column
+        dataField="dueDate"
+        dataType="date"
+        alignment="left"
+        [format]="cardsService.dateFormat"
+      ></dxi-column>
+      <dxi-column dataField="assignee" alignment="left"></dxi-column>
+      <dxi-column
+        dataField="projectName"
+        [caption]="getProjectName()"
+        alignment="left"
+      ></dxi-column>
+      <dxi-column
+        dataField="projectType"
+        [caption]="getProjectType()"
+        alignment="left"
+      ></dxi-column>
+    </dx-data-grid>
+  </div>
 </crem-card>

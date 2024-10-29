@@ -15,7 +15,7 @@ export class MangoDialogComponent implements OnInit {
   dialogType: string;
   secondaryBtnText: string;
   primaryBtnText: string;
-  public modalId: string = "sharedMangoDialog";
+  public modalId = "sharedMangoDialog";
 
   constructor(
     public dialogRef: MatDialogRef<MangoDialogComponent>,

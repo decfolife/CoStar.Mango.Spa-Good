@@ -1,12 +1,7 @@
-import {
-  APPROVE_BUTTON_TEXT,
-  PROJECT_REQUIRE_TASK_NOTES,
-  QUICK_APPROVAL_FOOTER_TEXT,
-} from './../../models/constants/quick-approval-constants';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   faCircleCheck,
   faCircleXmark,
@@ -19,15 +14,18 @@ import {
   SetDefaultListViewRequest,
   ViewDropDownData,
 } from '@list-pages/components/listpage/shared/models';
+import { CurrentObjectService } from '@mango/core-shared';
 import {
   CLIENT_PREFERENCE,
   ContactRecord,
+  CurrentObjectInfo,
   MemberInfo,
   PostProjectEmailPreferences,
   PostProjectTaskSettings,
   ProjectEmailPreferences,
   ProjectTaskDetails,
   ProjectTaskDropdownInfo,
+  ProjectTaskInfo,
   ProjectTaskSettings,
 } from '@mango/data-models/lib-data-models';
 import {
@@ -35,23 +33,35 @@ import {
   InputComponent,
 } from '@mango/ui-shared/lib-ui-elements';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { TaskUserApprovalStatus } from '@project-dashboard/models/enums/task-user-approval-enums';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { SaveTasksTemplateService } from '@project-dashboard/services/save-tasks-template.service';
+import { ProjectTaskTreeExportUtility } from '@project-dashboard/utilities/project-task-tree-export.utility';
 import { DxTreeListComponent } from 'devextreme-angular';
+import dxCheckBox from 'devextreme/ui/check_box';
 import { Column } from 'devextreme/ui/data_grid';
 import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { CremPopupComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/popup';
 import { CremShareViewPopupComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/crem-list-views/crem-share-view-popup/crem-share-view-popup.component';
-import { Subscription, combineLatest, of } from 'rxjs';
+import { combineLatest, EMPTY, of, Subscription } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { concatMap, filter, first, map, switchMap, tap } from 'rxjs/operators';
+import { TaskApproveOrRejectComponent } from '../modal/task-approve-or-reject/task-approve-or-reject.component';
+import {
+  APPROVE_BUTTON_TEXT,
+  PROJECT_REQUIRE_TASK_NOTES,
+  QUICK_APPROVAL_FOOTER_TEXT,
+} from '../../models/constants/project-tasks-constants';
 import { AddEditTaskComponent } from './add-edit-tasks/add-edit-task.component';
-import { CopyTransactionComponent } from './copy-transaction/copy-transaction.component';
-import { TaskInfoComponent } from './task-info/task-info.component';
-import { TaskModifyCompleteDateComponent } from './task-modify-complete-date/task-modify-complete-date.component';
-import dxCheckBox from 'devextreme/ui/check_box';
 import { AppendTemplateComponent } from './append-template/append-template.component';
-import { QuickApprovalService } from '@project-dashboard/services/quick-approval.service';
-import { SaveTasksTemplateService } from '@project-dashboard/services/save-tasks-template.service';
+import { CopyTransactionComponent } from './copy-transaction/copy-transaction.component';
+import { ModifyCompleteDateComponent } from './modify-complate-date/modify-complete-date.component';
+import { CremQuickApprovalComponent } from './quick-approval/quick-approval.component';
+import { AddEditTaskAssigneesComponent } from './task-info/task-assignees/add-edit-task-assignees/add-edit-task-assignees.component';
+import { TaskInfoComponent } from './task-info/task-info.component';
+import { AddTaskNoteComponent } from './task-info/task-notes/add-task-note/add-task-note.component';
+import { RequiredNotesFlagService } from '@project-dashboard/services/required-notes-flag.service';
+import { ReorderTaskModal } from './reorder-tasks-modal/reorder-tasks-modal.component';
 
 @Component({
   selector: 'project-tasks',
@@ -60,11 +70,13 @@ import { SaveTasksTemplateService } from '@project-dashboard/services/save-tasks
 })
 export class ProjectTasksComponent implements OnInit, OnDestroy {
   @ViewChild('ProjectTasksGrid') projectTasksGrid: DxTreeListComponent;
-  @ViewChild('StartDatePicker') taskSettingStartDate: DatePickerComponent;
+  @ViewChild('StartDatePicker') startDatePicker: DatePickerComponent;
+  @ViewChild('DueDatePicker') dueDatePicker: DatePickerComponent;
   @ViewChild('CopyTransactionPopup') copyTransactionPopup: CremPopupComponent;
 
   subs: Subscription[] = [];
   projectId: number;
+  taskInfoData: ProjectTaskInfo = <ProjectTaskInfo>{};
   projectCurrentTasks: ProjectTaskDropdownInfo[];
   memberInfo: MemberInfo = <MemberInfo>{};
   projectTaskList: ProjectTaskDetails[] = [];
@@ -75,6 +87,8 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   searchText: string = '';
   rowId: number = 0;
   isUserDatesEU: boolean = true;
+  isOneTaskShrinkable: boolean = false;
+  isProxyApproverForOneTask: boolean = false;
   taskStatusColor: string = '';
   inputViewName: string = '';
   currentListView: ListView = null;
@@ -97,12 +111,24 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   deleteTaskIds: number[] = [];
   deleteBtnTitle: string =
     'Use the Delete Selected Tasks option via the Actions menu to delete tasks that have been selected';
+  modifyApprovalDateBtnTitle: string =
+    'Approval Date can be modified once approval has been done.';
+  approvalBtnTitle: string =
+    'require approval. Once completed this task will be available for approval.';
+  dragPosition: any = { x: 0, y: 0 };
   showQuickApprovalPopup = false;
   approveButtonText = '';
+  saveButtonText = 'Save';
   quickApprovalFooterText = '';
+  quickApprovalApproveDisabled = true;
+  quickApprovalSaveDisabled = true;
   showSaveTasksAsTemplatePopup = false;
   disableTasksTemplateSaveButton = true;
+  taskUserApprovalStatus;
+  workFlowOttid: number;
 
+  private originalStartDate: string = '';
+  private originalDueDate: string = '';
   private currentUserInfo$: Observable<ContactRecord>;
 
   //***for views
@@ -119,7 +145,17 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   isSuperUser: boolean = false;
   sessionView: ListView;
   expandedRowKeys: number[];
+  isNotesFieldRequired: boolean = true;
   // ****/
+  public readonly availableActions = {
+    COPY_TRANSACTION: [1],
+    QUICK_APPROVAL: [1, 2, 3],
+    TASK_DETAILS_SETTINGS: undefined,
+    DELETE_TASKS: [1],
+    SAVE_TASKS_AS_TEMPLATE: [1],
+    APPEND_TEMPLATE: [1],
+    REORDER_TASKS: [1],
+  };
 
   //** Task Settings related data **/
   projectTaskSettings: ProjectTaskSettings = <ProjectTaskSettings>{};
@@ -136,11 +172,13 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   taskSettingsTitle: string = 'Task Settings';
   selectAllEmailPref: boolean = false;
   taskSettingsChangesMade: boolean = false;
+  newProjectId?: number = null;
 
   //**** **/
   //** Copy Transaction related data **/
   copyTransactionVisible: boolean = false;
   ctSaveButtonText: string = null;
+  ctApplyButtonText: string = 'Copy';
 
   //**** **/
 
@@ -152,20 +190,28 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   taskDetailsSettingsPopup: CremPopupComponent;
   @ViewChild('copyTransactionComponent')
   copyTransactionComponent: CopyTransactionComponent;
+  @ViewChild(CremQuickApprovalComponent)
+  quickApprovalComponent!: CremQuickApprovalComponent;
+  currentObject: Observable<CurrentObjectInfo> = null;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private dialog: MatDialog,
     private dashboardService: DashboardService,
+    private requiredNotesFlagService: RequiredNotesFlagService,
     private dialogService: MangoDialogService,
     private facade: MangoAppFacade,
-    private quickApprovalService: QuickApprovalService,
-    private saveTasksTemplateService: SaveTasksTemplateService
+    private saveTasksTemplateService: SaveTasksTemplateService,
+    private currentObjectService: CurrentObjectService,
+    private reorderTasksModal: ReorderTaskModal
   ) {
     this.saveState = this.saveState.bind(this);
   }
 
   ngOnInit(): void {
+    this.taskUserApprovalStatus = TaskUserApprovalStatus;
+
     this.getMemberInfo();
     this.subs.push(
       this.route.queryParams
@@ -173,11 +219,16 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
           filter((params) => !!params && !!params.oid),
           tap((params) => {
             this.projectId = parseInt(params.oid);
+            this.workFlowOttid = parseInt(params.ottid)
+              ? parseInt(params.ottid)
+              : 0;
             this.getProjectContactLevel(this.projectId);
           })
         )
         .subscribe()
     );
+
+    this.getNotesRequiredFlag();
 
     this.sessionView = sessionStorage.getItem('projectTasksSessionView')
       ? JSON.parse(sessionStorage.getItem('projectTasksSessionView'))
@@ -185,6 +236,8 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.getListViews();
 
     this.currentUserInfo$ = this.facade.contactRecord$;
+    this.currentObject =
+      this.currentObjectService.getCurentObjectNameAndType$();
     this.subs.push(
       this.currentUserInfo$.subscribe((contact) => {
         this.isUserDatesEU = contact.preferences.contactDatesEU;
@@ -300,7 +353,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.disableCheckboxes(this.allDisabledRowKeys);
   }
 
-  deleteSelectedTasks(taskId) {
+  deleteSelectedTasks(taskId?: number) {
     this.deleteTaskIds = [];
     if (taskId) {
       if (this.allSelectedRowKeys.length || this.hasSubTasks(taskId)) {
@@ -355,13 +408,48 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     );
   }
 
-  modifyCompleteDate(taskId?: number) {
-    this.selectedTaskId = taskId;
-    let dialogRef = this.dialog.open(TaskModifyCompleteDateComponent, {
-      height: '320px',
-      width: '450px',
-      panelClass: 'modifyCompleteDateModal',
-      data: { projectId: this.projectId, taskId: this.selectedTaskId },
+  addOrEditAssignees(task) {
+    if (this.userAccessLevel !== 1) {
+      return;
+    }
+
+    this.subs.push(
+      this.dashboardService
+        .getTaskDetails(this.projectId, task.ProjectMilestoneID)
+        .pipe(
+          switchMap((res) => {
+            if (!!res && res.success) {
+              this.taskInfoData = res.data;
+              this.openEditAssinees(task, this.taskInfoData.approvers);
+            } else {
+              this.dialogService.alert(
+                'Get Task Approvers',
+                'There was an issue with getting task info. Please contact the system administrator.',
+                'OK'
+              );
+            }
+            return EMPTY;
+          })
+        )
+        .subscribe()
+    );
+  }
+
+  openEditAssinees(task, taskApprovers) {
+    let dialogHeight = '800px';
+    let dialogWidth = '500px';
+
+    let dialogRef = this.dialog.open(AddEditTaskAssigneesComponent, {
+      height: dialogHeight,
+      width: dialogWidth,
+      panelClass: 'aea-addOrEditAssginees',
+      data: {
+        projectId: this.projectId,
+        taskId: task.ProjectMilestoneID,
+        taskAssignees: taskApprovers,
+        userDateFormat: this.dateFormat,
+        dragPosition: this.dragPosition,
+      },
       disableClose: true,
     });
 
@@ -369,7 +457,91 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
       dialogRef
         .afterClosed()
         .pipe(filter((reload) => !!reload))
-        .subscribe()
+        .subscribe((reload) => {
+          if (reload.saveSuccessful) {
+            this.getGridData();
+          }
+        })
+    );
+  }
+
+  openReorderTasks() {
+    const orderableTasks = this.gridData.map(
+      ({
+        ProjectMilestoneParentID: parentId,
+        ProjectMilestoneID: taskId,
+        ProjectMilestoneStep: ordinal,
+        ProjectMilestoneName: name,
+      }) => ({
+        taskId,
+        parentId,
+        ordinal,
+        name,
+      })
+    );
+    this.reorderTasksModal
+      .open({
+        data: {
+          projectID: this.projectId,
+          orderableTasks,
+        },
+      })
+      .afterClosed()
+      .subscribe((_) => {
+        this.getGridData();
+      });
+  }
+
+  getNotesRequiredFlag() {
+    this.subs.push(
+      this.requiredNotesFlagService
+        .getRequiredNotesFlag(this.projectId)
+        .subscribe(
+          (notesRequiredFlag) => {
+            this.isNotesFieldRequired = notesRequiredFlag;
+          },
+          (error) => {
+            this.isNotesFieldRequired = true;
+          },
+          () => {}
+        )
+    );
+  }
+
+  modifyCompleteDate(taskId, isProxyUser, userApprovalStatus) {
+    if (
+      this.userAccessLevel !== 1 &&
+      userApprovalStatus.trim() == this.taskUserApprovalStatus.NOT_ASSIGNED
+    ) {
+      return;
+    }
+
+    let dialogRef = this.dialog.open(ModifyCompleteDateComponent, {
+      height: '350px',
+      width: '500px',
+      maxWidth: '800px',
+      maxHeight: '600px',
+      panelClass: 'modifyCompleteDateModal',
+      data: {
+        projectId: this.projectId,
+        taskId: taskId,
+        isCompleteDate: 1,
+        isProxyUser: isProxyUser,
+        dateFormat: this.dateFormat,
+        notesRequired: this.isNotesFieldRequired,
+      },
+      disableClose: true,
+    });
+
+    this.subs.push(
+      dialogRef
+        .afterClosed()
+        .pipe(filter((reload) => !!reload))
+        .subscribe((reload) => {
+          if (reload) {
+            this.getGridData();
+          }
+        })
     );
   }
 
@@ -381,6 +553,10 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     taskStep?: number,
     taskSubTasksCount?: number
   ) {
+    if (this.userAccessLevel !== 1) {
+      return;
+    }
+
     this.openAddEditTaskDialog(
       taskIndexOrder,
       editTask,
@@ -399,6 +575,10 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     taskStep?: number,
     taskSubTasksCount?: number
   ) {
+    if (this.userAccessLevel !== 1) {
+      return;
+    }
+
     this.openAddEditTaskDialog(
       taskIndexOrder,
       false,
@@ -445,6 +625,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
               taskStep: taskStep,
               taskSubTasksCount: taskSubTasksCount,
               taskIndexOrder: taskIndexOrder,
+              workFlowOttid: this.workFlowOttid,
             },
             disableClose: true,
           });
@@ -488,14 +669,64 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     );
   }
 
+  openAddNotesPopup(taskData) {
+    this.selectedTaskId = taskData.ProjectMilestoneID;
+    let dialogRef = this.dialog.open(AddTaskNoteComponent, {
+      height: '800px',
+      width: '500px',
+      panelClass: 'addTaskNotesModal',
+      data: { taskId: this.selectedTaskId, dragPosition: this.dragPosition },
+      disableClose: true,
+    });
+
+    this.subs.push(
+      dialogRef
+        .afterClosed()
+        .pipe(filter((addTaskNoteResult) => !!addTaskNoteResult))
+        .subscribe((addTaskNoteResult) => {
+          if (addTaskNoteResult.saveSuccessful) {
+            this.getGridData();
+          }
+        })
+    );
+  }
+
+  openUploadFilesPopup(e): void {
+    const selectedTabIndex = 3; // upload files tab
+    this.showTaskInfoModal(
+      e.data.ProjectMilestoneID,
+      e.data.ProjectMilestoneParentID,
+      e.data.ProjectMilestoneStep,
+      e.data.IndexOrder,
+      e.data.TaskSubTasksCount,
+      selectedTabIndex
+    );
+  }
+
   displayTaskDetail(e) {
-    if (e.rowType == 'data' && e.column.dataField == 'ProjectMilestoneName') {
+    if (
+      e.rowType == 'data' &&
+      (e.column.dataField == 'ProjectMilestoneName' ||
+        e.column.dataField == 'Approvers' ||
+        e.column.dataField == 'FilesCount' ||
+        e.column.dataField == 'NotesCount')
+    ) {
+      let colName = e.column.dataField;
+      const selectedTabIndex =
+        colName == 'ProjectMilestoneName'
+          ? 0
+          : colName == 'Approvers'
+          ? 1
+          : colName == 'FilesCount'
+          ? 3
+          : 2;
       this.showTaskInfoModal(
         e.data.ProjectMilestoneID,
         e.data.ProjectMilestoneParentID,
         e.data.ProjectMilestoneStep,
         e.data.IndexOrder,
-        e.data.TaskSubTasksCount
+        e.data.TaskSubTasksCount,
+        selectedTabIndex
       );
     }
   }
@@ -526,6 +757,26 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
       let htmlCellElement = e.cellElement;
       htmlCellElement.setAttribute('id', 'ptm-taskId' + e.rowIndex);
     }
+
+    if (this.userAccessLevel !== 1 && e.column.name == 'selection') {
+      if (e.rowType == 'header') {
+        this.disableHeaderCheckbox(e);
+      } else {
+        this.disableCheckboxes([e.data.ProjectMilestoneID]);
+      }
+    }
+  }
+
+  disableHeaderCheckbox(e) {
+    let htmlCellElement =
+      e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+    var editor = dxCheckBox.getInstance(
+      htmlCellElement.querySelector('.dx-select-checkbox')
+    );
+    if (editor) {
+      editor.option('disabled', true);
+    }
+    htmlCellElement.style.pointerEvents = 'none';
   }
 
   getRestOfApprovers(Approvers) {
@@ -543,11 +794,9 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     taskParentId: number,
     taskStep: number,
     taskIndexOrder: number,
-    taskSubTasksCount: number
+    taskSubTasksCount: number,
+    selectedTabIndex: number = 0
   ) {
-    console.log(
-      `taskDetail before: taskID: ${taskId}, parentId: ${taskParentId}, step: ${taskStep}`
-    );
     this.selectedTaskId = taskId;
     this.getCurrentProjectTasks();
     let dialogRef = this.dialog.open(TaskInfoComponent, {
@@ -562,6 +811,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
         taskIndexOrder,
         taskSubTasksCount,
         projectCurrentTasks: this.projectCurrentTasks,
+        selectedTabIndex,
       },
       disableClose: true,
     });
@@ -575,9 +825,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
             this.getGridData();
           }
           if (toDo.showEditTask && toDo.taskDetails) {
-            console.log(
-              `taskDetail before: taskID: ${toDo.taskDetails.taskId}, parentId: ${toDo.taskDetails.taskParentId}, step: ${toDo.taskDetails.taskStep}`
-            );
             this.addOrEditTask(
               toDo.taskDetails.taskIndexOrder,
               true,
@@ -695,6 +942,18 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     );
   }
 
+  excelExportClick() {
+    this.subs.push(
+      this.currentObject
+        .pipe(first())
+        .subscribe(({ objectName, objectType }) =>
+          new ProjectTaskTreeExportUtility(this.projectTasksGrid).download(
+            `${objectType}_${objectName}`
+          )
+        )
+    );
+  }
+
   private getGridData() {
     let gridDataObservable = this.returnGridDataObservable();
     this.subs.push(gridDataObservable.subscribe());
@@ -708,12 +967,15 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
       gridStateOverride: '',
       tempArchiveToggleValue: 3,
       OID: this.projectId,
-      Oids: [1, 1],
+      Oids: [this.userAccessLevel],
       InClauses: ['(0)'],
     };
 
     return this.dashboardService.getGridData(gridDataRequest).pipe(
       map((res: any) => {
+        this.isOneTaskShrinkable = false;
+        this.isProxyApproverForOneTask = false;
+
         if (res) {
           this.availablePredecessors = [];
           this.predValues = [];
@@ -745,6 +1007,12 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
                 }
               });
             }
+            if (task.IsShrinkable === 'Yes') {
+              this.isOneTaskShrinkable = true;
+            }
+            if (task.IsProxyUser === 1) {
+              this.isProxyApproverForOneTask = true;
+            }
           });
           if (this.approversValues.length) {
             this.buildApproversFilterSource();
@@ -752,7 +1020,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
           if (this.predValues.length) {
             this.buildPredecessorFilterSource();
           }
-
           let savedState = sessionStorage.getItem('projectTasksGridState');
           this.activeViewId = this.currentListView.id;
           this.isExpandAll = sessionStorage.getItem('projectTasksGridExpand')
@@ -1156,6 +1423,23 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
           } else if (projSettings.success && projEmailPreferences.success) {
             this.projectTaskSettings = projSettings.data;
             this.projectEmailPreferences = projEmailPreferences.data;
+
+            this.originalStartDate = new Date(
+              this.projectTaskSettings.startDate
+            ).toDateString();
+            this.originalStartDate =
+              this.originalStartDate === 'Invalid Date'
+                ? ''
+                : this.originalStartDate;
+
+            this.originalDueDate = new Date(
+              this.projectTaskSettings.dueDate
+            ).toDateString();
+            this.originalDueDate =
+              this.originalDueDate === 'Invalid Date'
+                ? ''
+                : this.originalDueDate;
+
             this.checkAllemailOptionsSelected();
 
             this.settingsVisible = true;
@@ -1252,11 +1536,166 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     }
     this.taskSettingsChangesMade = true;
     this.projectTaskSettings[setting] = e.value;
+
+    this.checkDateChangeForUserAlert(e.value, setting);
+  }
+
+  private checkDateChangeForUserAlert(
+    datePickerNewValue,
+    datePickerChangedName: string
+  ) {
+    let showCanNotChangeBothDatesAlert = false;
+    let determineDates = false;
+    datePickerNewValue = new Date(datePickerNewValue).toDateString();
+
+    if (datePickerChangedName === 'startDate') {
+      if (
+        new Date(this.dueDatePicker.value).toDateString() !==
+        this.originalDueDate
+      ) {
+        showCanNotChangeBothDatesAlert = true;
+      } else {
+        if (
+          datePickerNewValue !== '' &&
+          datePickerNewValue !== this.originalStartDate
+        ) {
+          determineDates = true;
+        }
+      }
+    } else {
+      if (
+        new Date(this.startDatePicker.value).toDateString() !==
+        this.originalStartDate
+      ) {
+        showCanNotChangeBothDatesAlert = true;
+      } else {
+        if (
+          datePickerNewValue !== '' &&
+          datePickerNewValue !== this.originalDueDate
+        ) {
+          determineDates = true;
+        }
+      }
+    }
+
+    if (showCanNotChangeBothDatesAlert) {
+      this.dialogService.alert(
+        'Information',
+        'You cannot change both the Start and Due dates.',
+        'Close'
+      );
+
+      this.resetDates(datePickerChangedName);
+
+      return;
+    }
+
+    if (determineDates) {
+      this.determineAutoCalcDates(datePickerNewValue, datePickerChangedName);
+    }
+  }
+
+  private determineAutoCalcDates(
+    datePickerNewValue: string,
+    datePickerChangedName: string
+  ) {
+    let newDate: Date = null;
+    let originalDate: Date = null;
+    let dateTypeText = null;
+
+    newDate = new Date(datePickerNewValue);
+
+    if (
+      datePickerChangedName === 'startDate' &&
+      this.originalStartDate !== ''
+    ) {
+      originalDate = new Date(this.originalStartDate);
+      dateTypeText = 'end';
+    } else if (
+      datePickerChangedName === 'dueDate' &&
+      this.originalDueDate !== ''
+    ) {
+      originalDate = new Date(this.originalDueDate);
+      dateTypeText = 'start';
+    }
+
+    if (
+      this.isOneTaskShrinkable &&
+      this.projectTaskSettings.autoCalculate &&
+      this.projectTaskSettings.shiftTimeline
+    ) {
+      const dialogCloseEvent = this.dialogService.confirm(
+        'Information',
+        `Click OK to allow the ${dateTypeText} date to shift.\r\nClick Cancel to lock the ${dateTypeText} date and shrink the project to the max ${this.projectTaskSettings.shrinkableCount} days.`,
+        'OK',
+        'Close'
+      );
+
+      dialogCloseEvent.subscribe((res) => {
+        if (!res) {
+          var numdays: number = this.dateDiffByDays(
+            originalDate,
+            newDate,
+            this.projectTaskSettings.calculatedBy
+          );
+          numdays = numdays < 0 ? Math.abs(numdays) : numdays;
+          if (numdays > this.projectTaskSettings.shrinkableCount) {
+            this.dialogService.alert(
+              'Information',
+              `You entered ${numdays} days but only have ${this.projectTaskSettings.shrinkableCount} days available.`,
+              'Close'
+            );
+
+            this.resetDates(datePickerChangedName);
+          }
+        }
+      });
+    }
+  }
+
+  private resetDates(datePickerChangedName: string) {
+    if (datePickerChangedName === 'startDate') {
+      this.projectTaskSettings[datePickerChangedName] = new Date(
+        this.originalStartDate
+      );
+    } else {
+      this.projectTaskSettings[datePickerChangedName] = new Date(
+        this.originalDueDate
+      );
+    }
+  }
+
+  private dateDiffByDays(
+    startDate: Date,
+    endDate: Date,
+    excludeWeekEnds: boolean
+  ): number {
+    var count = 0;
+    var target = new Date(
+      Math.min(new Date(startDate).getTime(), new Date(endDate).getTime())
+    );
+    var end = new Date(
+      Math.max(new Date(startDate).getTime(), new Date(endDate).getTime())
+    );
+    while (target < end) {
+      if (!excludeWeekEnds) {
+        count++;
+      } else {
+        let targetDay = target.getDay();
+
+        if (0 < targetDay && targetDay < 6) count++;
+      }
+
+      target.setDate(target.getDate() + 1);
+    }
+
+    return count;
   }
 
   projSettingToggleChanged(e, setting) {
     this.taskSettingsChangesMade = true;
     this.projectTaskSettings[setting] = e.checked;
+    // this.determineTogglesInfoText();
   }
 
   selectAllEmailPreferences(e) {
@@ -1288,7 +1727,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
 
   applyOrSaveTaskSettings(oper) {
     if (!this.projectTaskSettings.startDate) {
-      this.taskSettingStartDate.focusDatePicker();
+      this.startDatePicker.focusDatePicker();
       return;
     }
 
@@ -1353,6 +1792,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
               'Close'
             );
           } else if (pps.success && ppep.success) {
+            this.getNotesRequiredFlag();
           } else {
             this.dialogService.alert(
               'Information',
@@ -1391,8 +1831,31 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     }
   }
 
-  copyProjectEvent(e) {
-    this.ctSaveButtonText = e ? 'Go' : null;
+  handleCopyTransactionFormChanged(hasChanges: boolean) {
+    this.ctApplyButtonText = hasChanges ? 'Copy' : null;
+    this.ctSaveButtonText = hasChanges ? null : 'Go';
+  }
+
+  handleCopyCompleted({ newProjectId }) {
+    this.newProjectId = newProjectId;
+    this.ctSaveButtonText = !!newProjectId ? 'Go' : null;
+    this.ctApplyButtonText = !!newProjectId ? null : 'Copy';
+    this.copyTransactionComponent.resetPopup();
+  }
+
+  navigateToNewProject(oid: number) {
+    this.route.queryParams.pipe(first()).subscribe((params) => {
+      const updatedParams = { ...params, oid };
+      this.copyTransactionPopup.close.emit(true);
+      const urlTree = this.router.createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: updatedParams,
+        queryParamsHandling: 'merge',
+      });
+
+      const newUrl = this.router.serializeUrl(urlTree);
+      window.location.href = newUrl; // This will reload the whole page
+    });
   }
 
   private getProjectTaskSettingsObservable() {
@@ -1413,33 +1876,41 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   }
 
   openQuickApprovalPopup() {
-    this.subs.push(
-      this.dashboardService
-        .getClientPreference(PROJECT_REQUIRE_TASK_NOTES)
-        .subscribe((res) => {
-          if (res.data === CLIENT_PREFERENCE.REQUIRED) {
-            this.quickApprovalFooterText = QUICK_APPROVAL_FOOTER_TEXT;
-          }
-          this.approveButtonText = APPROVE_BUTTON_TEXT;
-          this.showQuickApprovalPopup = !this.showQuickApprovalPopup;
-        })
-    );
-  }
-  setSaveButtonText(count: number): void {
-    if (count !== 0)
-      this.approveButtonText = `${APPROVE_BUTTON_TEXT} (${count})`;
-    else this.approveButtonText = APPROVE_BUTTON_TEXT;
-  }
-  onQuickApprovalSave(): void {
-    this.quickApprovalService.quickApprovalSaveClick$.next(true);
-  }
-  onQuickApprovalClose(): void {
+    if (this.isNotesFieldRequired) {
+      this.quickApprovalFooterText = QUICK_APPROVAL_FOOTER_TEXT;
+    }
+    this.approveButtonText = APPROVE_BUTTON_TEXT;
     this.showQuickApprovalPopup = !this.showQuickApprovalPopup;
   }
-  quickApprovalSaved(saveCompleted: boolean): void {
-    if (saveCompleted) {
-      this.showQuickApprovalPopup = !this.showQuickApprovalPopup;
+
+  setApproveButtonText(count: number): void {
+    if (count !== 0) {
+      this.approveButtonText = `${APPROVE_BUTTON_TEXT} (${count})`;
+      this.quickApprovalApproveDisabled = false;
+    } else {
+      this.approveButtonText = APPROVE_BUTTON_TEXT;
+      this.quickApprovalApproveDisabled = true;
     }
+  }
+
+  onApproveTasksClick(): void {
+    this.quickApprovalComponent.approveTasks();
+  }
+
+  refreshTasksGrid(): void {
+    this.getGridData();
+  }
+
+  onSaveTasksClick(): void {
+    this.quickApprovalComponent.saveChanges();
+  }
+
+  handleQuickApprovalHasChanges(hasChanges: boolean) {
+    this.saveButtonText = hasChanges ? 'Apply' : null;
+  }
+
+  onQuickApprovalClose(): void {
+    this.showQuickApprovalPopup = !this.showQuickApprovalPopup;
   }
 
   showSaveAsTasksTemplateDialog(): void {
@@ -1463,6 +1934,98 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   tasksTemplateSaved(saveCompleted: boolean): void {
     if (saveCompleted) {
       this.showSaveTasksAsTemplatePopup = !this.showSaveTasksAsTemplatePopup;
+    }
+  }
+
+  approveOrRejectTask(taskData, action) {
+    if (action != 'Approve' && action != 'Reject') {
+      return;
+    } else if (
+      action == 'Approve' &&
+      (taskData.ApprovalPredecessors ||
+        taskData.ApprovalSubTasks ||
+        taskData.UserApprovalStatus.trim() ==
+          this.taskUserApprovalStatus.APPROVED ||
+        taskData.UserApprovalStatus.trim() ==
+          this.taskUserApprovalStatus.COMPLETED ||
+        taskData.UserApprovalStatus.trim() ==
+          this.taskUserApprovalStatus.NOT_ASSIGNED)
+    ) {
+      return;
+    } else if (
+      action == 'Reject' &&
+      (taskData.UserApprovalStatus.trim() ==
+        this.taskUserApprovalStatus.NOT_ASSIGNED ||
+        taskData.UserApprovalStatus.trim() ==
+          this.taskUserApprovalStatus.APPROVE)
+    ) {
+      return;
+    }
+
+    let popupHeight = action == 'Approve' ? '340px' : '220px';
+    let dialogRef = this.dialog.open(TaskApproveOrRejectComponent, {
+      height: popupHeight,
+      width: '600px',
+      panelClass: 'taskApprovalOrRejectModal',
+      data: {
+        taskData: taskData,
+        action: action,
+        dateFormat: this.dateFormat,
+        notesRequired: this.isNotesFieldRequired,
+      },
+      disableClose: true,
+    });
+    this.subs.push(
+      dialogRef
+        .afterClosed()
+        .pipe(filter((reload) => !!reload))
+        .subscribe((reload) => {
+          if (reload) {
+            this.getGridData();
+          }
+        })
+    );
+  }
+
+  getApprovalBtnTitleText(approvalPredecessors, approvalSubTasks) {
+    if (approvalPredecessors && approvalSubTasks) {
+      return `Tasks ${approvalPredecessors}, ${approvalSubTasks} ${this.approvalBtnTitle}`;
+    } else if (approvalPredecessors) {
+      return `Predecessor(s) ${approvalPredecessors} ${this.approvalBtnTitle}`;
+    } else if (approvalSubTasks) {
+      return `Subtask(s) ${approvalSubTasks} ${this.approvalBtnTitle}`;
+    } else {
+      return '';
+    }
+  }
+
+  checkUserLevelRequirement(requiredLevels: Array<number>): boolean {
+    if (!requiredLevels) {
+      return false;
+    }
+    return requiredLevels.indexOf(this.userAccessLevel) === -1;
+  }
+
+  adaAttr() {
+    const headerCheckbox = this.projectTasksGrid.instance
+      .element()
+      .querySelector('.selectTask.dx-cell-focus-disabled');
+    if (headerCheckbox) {
+      headerCheckbox.removeAttribute('aria-sort');
+    }
+  }
+
+  adaAttrTreeList(e: any) {
+    const dxTreeListithTables = e.component
+      .$element()
+      .find('.dx-treelist-headers.dx-bordered-top-view');
+    if (dxTreeListithTables && dxTreeListithTables.length > 0) {
+      for (let i = 0; i < dxTreeListithTables.length; i++) {
+        const element = dxTreeListithTables[i];
+        if (element) {
+          element.setAttribute('role', 'grid');
+        }
+      }
     }
   }
 

@@ -8,7 +8,7 @@ describe('ResidualValueComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ResidualValueComponent]
+      declarations: [ResidualValueComponent],
     });
     fixture = TestBed.createComponent(ResidualValueComponent);
     component = fixture.componentInstance;

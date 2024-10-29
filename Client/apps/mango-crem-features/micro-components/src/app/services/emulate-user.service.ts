@@ -8,14 +8,14 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class EmulateUserService extends EndpointService {
-  userMaintenance: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance)
+  userMaintenance: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance);
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
-      super(http, facade);
+    super(http, facade);
   }
 
   public getEmulateUserList(): Observable<any> {
     const url = `${this.userMaintenance}UserMaintenance/GetEmulatedUserList`;
-    return this.callHttpGet(url, 'GetEmulatedUserList')
-  }   
+    return this.callHttpGet(url, 'GetEmulatedUserList');
+  }
 }

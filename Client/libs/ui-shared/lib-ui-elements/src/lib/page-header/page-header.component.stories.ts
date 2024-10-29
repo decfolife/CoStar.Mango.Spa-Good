@@ -1,11 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Meta, StoryObj, argsToTemplate, moduleMetadata } from '@storybook/angular';
+import {
+  Meta,
+  StoryObj,
+  argsToTemplate,
+  moduleMetadata,
+} from '@storybook/angular';
 import { ButtonModule } from '../button';
 import { ButtonGroupComponent } from '../button-group/button-group.component';
 import { IconModule } from '../icon';
 import { InputLabelComponent } from '../input/label';
 import { PageHeaderComponent } from './page-header.component';
 import { DropdownModule } from '../dropdown';
+import { InputComponent } from '../input/input/input.component';
+import { Pill } from '@mango/data-models/lib-data-models';
 
 const PORTFOLIO_FILTERS = `
 [
@@ -15,56 +22,87 @@ const PORTFOLIO_FILTERS = `
   { displayKey: 'Portfolio 4', valueKey: 'Portfolio 4' },
   { displayKey: 'Portfolio 5', valueKey: 'Portfolio 5' }
 ]
-`
-
-const YEARS_FILTERS = `
-[
-  { displayKey: '2024', valueKey: '2024' },
-  { displayKey: '2023', valueKey: '2023' },
-  { displayKey: '2022', valueKey: '2022' },
-  { displayKey: '2021', valueKey: '2021' },
-  { displayKey: '2020', valueKey: '2020' }
-]
-`
+`;
 
 const FILTERS_MOCK = `
 <div filters style="display: flex; flex-direction: row;">
-<crem-dropdown style="margin-right: 8px"
-  [placeholder]="'Portfolio'"
-  [isSearchable]="true"
-  [selectMode]="'single'"
-  [dataSource]="${PORTFOLIO_FILTERS}"
-  [allowSearch]="true">
+  <crem-dropdown style="margin-right: 8px;"
+    [placeholder]="'Portfolio'"
+    [isSearchable]="true"
+    [selectMode]="'single'"
+    [dataSource]="${PORTFOLIO_FILTERS}"
+    [allowSearch]="true">
   </crem-dropdown>
 
-  <crem-dropdown style="margin-right: 8px" [placeholder]="'Year'"
-  [isSearchable]="true"
-  [selectMode]="'single'"
-  [dataSource]="${YEARS_FILTERS}"
-  [allowSearch]="true">
-  </crem-dropdown>
+  <crem-input style="width: 190px;"
+    [inputType]="'text'"
+    [placeholder]="'Folder name'"
+  ></crem-input>
+</div>
+`;
 
-  <crem-button text="Apply" color="secondary"></crem-button>
-</div>`
+const ACTIONS_MOCK = `
+ <div actions style="display: flex; gap: 8px;">
+        <crem-icon
+        style="margin-top: 6px;"
+          *ngIf="showBookmarkButton"
+          [icon]="'faStar'"
+          [color]="'dark'"
+          pack="regular"
+        ></crem-icon>
+        <crem-button-group
+          [stylingMode]="'outlined'"
+          [items]="[
+          {
+            text: 'Active',
+            value: 'active',
+          },
+          {
+            text: 'Archived',
+            value: 'archived',
+          },
+          {
+            text: 'All',
+            value: 'all',
+          },
+        ]"
+        ></crem-button-group>
+        <crem-button
+          text="Alerts"
+          color="secondary"
+        ></crem-button>
+        <crem-button
+          text="Filters"
+          color="secondary"
+          icon="faFilter"
+          iconSize="xs"
+        ></crem-button>
+        <crem-button
+          text="More"
+          color="secondary"
+          icon="faCaretDown"
+          iconPosition="right"
+          (buttonClick)="someFunction()"
+        ></crem-button>
+        <crem-button
+          *ngIf="primaryButtonText"
+          [text]="primaryButtonText"
+          color="primary"
+          icon="faPlus"
+        ></crem-button>
+      </div>
+`;
 
 const SETTINGS_MOCK = `
-<div settings>
-    <crem-button-group [items]="[
-      {
-        value: 'list-view',
-        icon: 'bulletlist'
-      },
-      {
-        value: 'board-view',
-        icon: 'columnfield'
-      },
-      {
-        value: 'cal-view',
-        icon: 'event'
-      },
-    ]"></crem-button-group>
+<div settings style="display: flex;">
+    <crem-button
+        [type]="'secondary'"
+        [btnStyle]="'basic'"
+        [icon]="' '"
+      >
+      </crem-button>
   </div>
-`
+`;
 
 const meta: Meta<PageHeaderComponent> = {
   component: PageHeaderComponent,
@@ -77,116 +115,113 @@ const meta: Meta<PageHeaderComponent> = {
         ButtonModule,
         IconModule,
         ButtonGroupComponent,
-        DropdownModule
+        DropdownModule,
+        InputComponent,
       ],
     }),
   ],
   argTypes: {
+    tabTitle: {
+      description: 'The title of the current Tab',
+      table: {
+        category: 'Inputs',
+        defaultValue: {
+          summary: 'EMPTY_STRING',
+        },
+      },
+    },
     pageTitle: {
       description: 'The title of the header',
       table: {
         category: 'Inputs',
         defaultValue: {
-          summary: 'EMPTY_STRING'
-        }
-      }
-    },
-    showTitleInfo: {
-      description: 'Show the info icon next to the title',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
+          summary: 'EMPTY_STRING',
+        },
+      },
     },
     primaryButtonText: {
       description: 'The primary button text',
       table: {
-         category: 'Inputs',
+        category: 'Inputs',
         defaultValue: {
-          summary: 'EMPTY_STRING'
-        }
-      }
-    },
-    showSearchButton: {
-      description: 'Show the search button next to the title',
-      table: {
-         category: 'Inputs',
-        defaultValue: {
-          summary: false
-        }
-      }
+          summary: 'EMPTY_STRING',
+        },
+      },
     },
     showBookmarkButton: {
       description: 'Show the bookmark button',
       table: {
-         category: 'Inputs',
+        category: 'Inputs',
         defaultValue: {
-          summary: false
-        }
-      }
+          summary: false,
+        },
+      },
     },
     showSettingsButton: {
       description: 'Show the settings button',
       table: {
-         category: 'Inputs',
+        category: 'Inputs',
         defaultValue: {
-          summary: false
-        }
-      }
+          summary: false,
+        },
+      },
     },
     customActions: {
       description: 'If `true` it displays the actions buttons',
       table: {
-         category: 'Inputs',
+        category: 'Inputs',
         defaultValue: {
-          summary: false
-        }
-      }
+          summary: false,
+        },
+      },
     },
     customFilters: {
-      description: 'If `true` it shows custom filters. The filters have to be added via a div having the `filters` tag.',
+      description:
+        'If `true` it shows custom filters. The filters have to be added via a div having the `filters` tag.',
       table: {
-         category: 'Inputs',
+        category: 'Inputs',
         defaultValue: {
-          summary: false
-        }
-      }
+          summary: false,
+        },
+      },
     },
     customSettings: {
-      description: 'If `true` it shows custom settings. The settings have to be added via a div having the `settings` tag.',
+      description:
+        'If `true` it shows custom settings. The settings have to be added via a div having the `settings` tag.',
       table: {
-         category: 'Inputs',
+        category: 'Inputs',
         defaultValue: {
-          summary: false
-        }
-      }
+          summary: false,
+        },
+      },
     },
     search: {
       name: 'onSearchClick()',
       type: 'function',
-      description: 'Dispatch an event of type `string` containing the searched word when the search button is clicked',
+      description:
+        'Dispatch an event of type `string` containing the searched word when the search button is clicked',
       table: {
         category: 'Methods',
-      }
+      },
     },
     bookmark: {
       name: 'onBookmarkClick()',
       type: 'function',
-      description: 'Dispatch an event of type `Event` when bookmark button is clicked',
+      description:
+        'Dispatch an event of type `Event` when bookmark button is clicked',
       table: {
         category: 'Methods',
-      }
+      },
     },
     settings: {
       name: 'onBookmarkClick()',
       type: 'function',
-      description: 'Dispatch an event of type `Event` when settings button is clicked',
+      description:
+        'Dispatch an event of type `Event` when settings button is clicked',
       table: {
         category: 'Methods',
-      }
-    }
+      },
+    },
   },
 };
 
@@ -196,22 +231,27 @@ type Story = StoryObj<PageHeaderComponent>;
 
 export const Default: Story = {
   args: {
-    pageTitle: 'Building Details',
-    showTitleInfo: true,
+    tabTitle: 'Lease',
+    pageTitle: 'Building Details Building Details Building Details',
     primaryButtonText: 'Add',
-    showSearchButton: true,
     showBookmarkButton: true,
     showSettingsButton: true,
+    showListOrMapViewButtons: true,
     customActions: true,
     customFilters: true,
     customSettings: true,
+    statusPill: {
+      text: 'Archived',
+      type: Pill.DANGER_FILLED,
+    },
   },
   render: (args: PageHeaderComponent) => ({
     props: args,
     template: `
     <crem-page-header ${argsToTemplate(args)}>
       ${FILTERS_MOCK}
+      ${ACTIONS_MOCK}
       ${SETTINGS_MOCK}
-    </crem-page-header>`
-  })
-}
+    </crem-page-header>`,
+  }),
+};

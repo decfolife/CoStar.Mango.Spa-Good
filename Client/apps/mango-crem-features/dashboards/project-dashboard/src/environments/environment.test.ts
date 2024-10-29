@@ -10,9 +10,10 @@ class EnvironmentsCrem {
     quickSearch: '',
     userService: '',
     header: '',
-    userMaintenance: '/v06/WebServices/Mango/UserMaintenance/UserMaintenance.asmx/',
+    userMaintenance:
+      '/v06/WebServices/Mango/UserMaintenance/UserMaintenance.asmx/',
     formWizard: '/v06/WebServices/Mango/FormsEngine/FormsEngine.asmx/',
-    objectActions: '/v06/WebServices/Mango/ObjectActions/ObjectActions.asmx/'
+    objectActions: '/v06/WebServices/Mango/ObjectActions/ObjectActions.asmx/',
   };
   isRestful: false;
 }

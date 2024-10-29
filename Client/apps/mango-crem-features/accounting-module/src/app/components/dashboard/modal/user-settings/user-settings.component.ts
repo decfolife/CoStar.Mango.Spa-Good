@@ -6,15 +6,14 @@ import { userSettings } from '@accounting-dashboard/shared/models';
 @Component({
   selector: 'mango-user-settings',
   templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.scss']
+  styleUrls: ['./user-settings.component.scss'],
 })
 export class UserSettingsComponent implements OnInit {
-
   @Output() changeSettingsEvent = new EventEmitter<any>();
   @Output() updateMetricDetailEvent = new EventEmitter<any>();
 
   metrics: any[];
-  cardUserSettingsData: userSettings[] = []
+  cardUserSettingsData: userSettings[] = [];
   public DialogData: any;
   public modalTitle: string = 'Accounting Dashboard Settings';
   public closeButton = true;
@@ -39,9 +38,11 @@ export class UserSettingsComponent implements OnInit {
     public dialogRef: MatDialogRef<UserSettingsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.modalTitle = data && data.modalTitle ? data.modalTitle + ' Settings' : 'Accounting Dashboard Settings';
+    this.modalTitle =
+      data && data.modalTitle
+        ? data.modalTitle + ' Settings'
+        : 'Accounting Dashboard Settings';
   }
 
   ngOnInit(): void {}
-
 }

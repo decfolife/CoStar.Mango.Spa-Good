@@ -51,7 +51,7 @@ div.chip {
 
 .no-portfolio-selected {
   align-items: center;
-  color: #B1B3B0;
+  color: #b1b3b0;
   display: flex;
   font-size: 28px;
   height: 100%;
@@ -62,12 +62,12 @@ div.chip {
   ::ng-deep {
     .mat-horizontal-stepper-content {
       flex-direction: column;
-      height:100%;
+      height: 100%;
     }
 
     .mat-mdc-menu-panel {
-      background-color: #0559B3;
-      border-color: #0559B3;
+      background-color: #0559b3;
+      border-color: #0559b3;
       color: white;
       min-height: 0px !important;
     }
@@ -99,11 +99,11 @@ div.chip {
 }
 
 [hidden] {
-  display:none;
+  display: none;
 }
 
-:host::ng-deep{
+:host::ng-deep {
   .matMenuSize {
-    min-height:0px;
+    min-height: 0px;
   }
 }

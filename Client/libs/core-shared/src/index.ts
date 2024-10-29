@@ -15,9 +15,11 @@ export * from './lib/services/error-handler.service';
 export * from './lib/services/export-datagrid.service';
 export * from './lib/services/list-page-services/crem-share-view-popup.service';
 export * from './lib/services/mango-dialog.service';
+export * from './lib/services/current-object.service';
 
-export * from './lib/utilities/animations'
-export * from './lib/utilities/db-keys'
-export * from './lib/utilities/utils'
+export * from './lib/utilities/animations';
+export * from './lib/utilities/db-keys';
+export * from './lib/utilities/utils';
+export * from './lib/utilities/tree-list-helpers';
 export * from './lib/pipes';
-export { Guid } from './lib/guid'
+export { Guid } from './lib/guid';

@@ -11,7 +11,7 @@ export class CookieService {
     public static readonly EXPIRES_PROPERTY = 'expires';
 
     public static get(name: string): string {
-        const cookies = document.cookie.split(';')
+        const cookies = document.cookie.split(';').map(item => item.trim())
 
         for (let i = 0; i < cookies.length; i++) {
             const [key, value] = cookies[i].split('=');

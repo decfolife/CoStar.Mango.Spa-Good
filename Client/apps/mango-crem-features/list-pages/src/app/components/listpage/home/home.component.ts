@@ -7,11 +7,9 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
+  constructor(private router: Router) {}
 
-  constructor(
-    private router: Router){}
-
-  goToListpage(){
+  goToListpage() {
     this.router.navigate(['/listpage']);
   }
 }

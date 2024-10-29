@@ -51,7 +51,85 @@ Default.args = {
   required: true,
   readOnly: false,
   allowSearch: true,
+  containerized: true,
   dataSource: [
+    {
+      displayKey: "Apples",
+      valueKey: "Apples"
+    },
+    {
+      displayKey: "Oranges",
+      valueKey: "Oranges"
+    },
+    {
+      displayKey: "Lemons",
+      valueKey: "Lemons"
+    },
+    {
+      displayKey: "Pears",
+      valueKey: "Pears"
+    },
+    {
+      displayKey: "Pineapples",
+      valueKey: "Pineapples"
+    },
+  ]
+};
+
+/** This should primarily be used as part of the page header component. */
+export const WithLabel = Template.bind({});
+WithLabel.args = {
+  initialSelectedValue: 'Watermelon',
+  selectBoxValue: 'Watermelon',
+  label: "Segment is",
+  fieldTemplate: "withLabel",
+  placeholder: 'Select Segment',
+  allowSearch: true,
+  containerized: true,
+  useSelectBox: true,
+  dataSource: [
+    {
+      displayKey: "Watermelon",
+      valueKey: "Watermelon"
+    },
+    {
+      displayKey: "Apples",
+      valueKey: "Apples"
+    },
+    {
+      displayKey: "Oranges",
+      valueKey: "Oranges"
+    },
+    {
+      displayKey: "Lemons",
+      valueKey: "Lemons"
+    },
+    {
+      displayKey: "Pears",
+      valueKey: "Pears"
+    },
+    {
+      displayKey: "Pineapples",
+      valueKey: "Pineapples"
+    },
+  ]
+};
+
+/** This should primarily be used as part of the page header component. */
+export const WithLabel = Template.bind({});
+WithLabel.args = {
+  initialSelectedValue: 'Watermelon',
+  selectBoxValue: 'Watermelon',
+  label: "Segment is",
+  fieldTemplate: "withLabel",
+  placeholder: 'Select Segment',
+  allowSearch: true,
+  useSelectBox: true,
+  dataSource: [
+    {
+      displayKey: "Watermelon",
+      valueKey: "Watermelon"
+    },
     {
       displayKey: "Apples",
       valueKey: "Apples"

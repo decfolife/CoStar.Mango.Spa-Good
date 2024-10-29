@@ -6,15 +6,17 @@ import { DashboardWrapperComponent } from '../dashboard/dashboard-wrapper/dashbo
 
 const routes: Routes = [
   {
-    path: 'accountingevents', component: AccountingListpageComponent,
+    path: 'accountingevents',
+    component: AccountingListpageComponent,
     data: {
-      breadCrumb: { label: 'Events', append: true, activeLink: 'Events' }
+      breadCrumb: { label: 'Events', append: true, activeLink: 'Events' },
     },
   },
   {
-    path: 'dashboard', component: DashboardWrapperComponent,
+    path: 'dashboard',
+    component: DashboardWrapperComponent,
     data: {
-      breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' }
+      breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' },
     },
   },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -25,4 +27,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [CanActivateGuard],
 })
-export class IndexRoutingModule { }
+export class IndexRoutingModule {}

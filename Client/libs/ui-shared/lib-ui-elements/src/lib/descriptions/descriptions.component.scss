@@ -3,7 +3,7 @@
   > div {
     width: 100%;
     display: grid;
-    grid-template-columns: 10% 90%;
+    grid-template-columns: 40% 60%;
     @include costar(gap, 2);
   }
   @include costar(padding, 4);

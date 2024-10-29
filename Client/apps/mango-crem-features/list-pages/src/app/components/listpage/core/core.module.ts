@@ -11,10 +11,7 @@ import { ListPageService } from './services/listpage.service';
   imports: [CommonModule, RouterModule, HttpClientModule],
   exports: [RouterModule, HttpClientModule],
   declarations: [],
-  providers: [
-    UtilitiesService,
-    ListPageService,
-  ]
+  providers: [UtilitiesService, ListPageService],
 })
 export class CoreModule extends EnsureModuleLoadedOnceGuard {
   constructor(@Optional() @SkipSelf() parentModule: CoreModule) {

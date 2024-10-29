@@ -1,13 +1,18 @@
 <div class="emulate-user">
-	<cs-search #SearchBox class="user-maintenance-search"
-		(changed)="searchDataGrid($event)">
-	</cs-search>
-	<crem-simple-grid #SimpleGrid
-		[dataSource]="dataSource"
-		keyExpr="contactID"
-		[columns]="columns"
-		[paging]="false"
-		gridHeight="310px"
-		(selectionChanged)="onSelectionChange($event)">
-	</crem-simple-grid>
+  <cs-search
+    #SearchBox
+    class="user-maintenance-search"
+    (changed)="searchDataGrid($event)"
+  >
+  </cs-search>
+  <crem-simple-grid
+    #SimpleGrid
+    [dataSource]="dataSource"
+    keyExpr="contactID"
+    [columns]="columns"
+    [paging]="false"
+    gridHeight="310px"
+    (selectionChanged)="onSelectionChange($event)"
+  >
+  </crem-simple-grid>
 </div>

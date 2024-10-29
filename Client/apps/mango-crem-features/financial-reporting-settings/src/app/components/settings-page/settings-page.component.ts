@@ -17,7 +17,7 @@ interface DontTouch {
 @Component({
   selector: 'mango-settings-page',
   templateUrl: './settings-page.component.html',
-  styleUrls: ['./settings-page.component.scss']
+  styleUrls: ['./settings-page.component.scss'],
 })
 export class SettingsPageComponent implements OnInit {
   intervalsData: IntervalsData;
@@ -38,14 +38,17 @@ export class SettingsPageComponent implements OnInit {
   deadlineDate = '';
   private subscription = new Subscription();
 
-  constructor(private settingsService: FinancialReportingSettingsService, private datePipe: DatePipe) { }
+  constructor(
+    private settingsService: FinancialReportingSettingsService,
+    private datePipe: DatePipe
+  ) {}
 
   ngOnInit(): void {
     this.getUserInfo();
-    const suDiv = document.getElementById('IsSuperUser')
+    const suDiv = document.getElementById('IsSuperUser');
     this.isSuperUser = suDiv?.innerText === 'true';
 
-    this.settingsService.getUserRights().subscribe(res => {
+    this.settingsService.getUserRights().subscribe((res) => {
       if (!res.success) {
         this.showNotification(res.clientErrorMessage, true);
 
@@ -57,7 +60,7 @@ export class SettingsPageComponent implements OnInit {
 
     this.loadSettingsAndData();
 
-    this.settingsService.getCurrencyList().subscribe(res => {
+    this.settingsService.getCurrencyList().subscribe((res) => {
       if (!res.success) {
         this.showNotification(res.clientErrorMessage, true);
 
@@ -86,15 +89,21 @@ export class SettingsPageComponent implements OnInit {
   }
 
   learnMore() {
-    window.open("https://costarmanager.my.site.com/help/s/article/Financial-Reporting");
+    window.open(
+      'https://costarmanager.my.site.com/help/s/article/Financial-Reporting'
+    );
     this.isPopupVisible = false;
   }
 
   migrationImpactReport() {
-    this.settingsService.migrationImpactReport().subscribe(result => {
+    this.settingsService.migrationImpactReport().subscribe((result) => {
       const data: ImpactReportResponse[] = result.data;
       if (result.success) {
-        this.settingsService.generateExcel(data, this.filename, this.dateFormat);
+        this.settingsService.generateExcel(
+          data,
+          this.filename,
+          this.dateFormat
+        );
         this.showNotification(result.clientErrorMessage, !result.success);
       } else {
         this.showNotification(result.clientErrorMessage, !result.success);
@@ -102,11 +111,10 @@ export class SettingsPageComponent implements OnInit {
     });
   }
 
-
   refreshFinancialData() {
     this.canRefresh = false;
 
-    this.settingsService.refreshFinancialData().subscribe(res => {
+    this.settingsService.refreshFinancialData().subscribe((res) => {
       this.canRefresh = true;
 
       this.loadSettingsAndData();
@@ -125,30 +133,32 @@ export class SettingsPageComponent implements OnInit {
       ...this.unchangedFields,
     };
 
-    this.settingsService.saveFinancialReportingSettings(saveData).subscribe(res => {
-      if (!res.success) {
+    this.settingsService
+      .saveFinancialReportingSettings(saveData)
+      .subscribe((res) => {
+        if (!res.success) {
+          this.isSaving = false;
+          this.showNotification(res.clientErrorMessage, true);
+
+          return;
+        }
+
+        this.showNotification(res.clientErrorMessage);
+
+        this.intervalsData.lastSuccessfulIntervalUpdate =
+          res.data.lastSuccessfulIntervalUpdate === null
+            ? null
+            : new Date(res.data.lastSuccessfulIntervalUpdate);
+
+        this.loadObjectFromData(this.settingsData, res.data);
+        this.loadObjectFromData(this.intervalsData, res.data);
+
         this.isSaving = false;
-        this.showNotification(res.clientErrorMessage, true);
-
-        return;
-      }
-
-      this.showNotification(res.clientErrorMessage);
-
-      this.intervalsData.lastSuccessfulIntervalUpdate =
-        res.data.lastSuccessfulIntervalUpdate === null
-          ? null
-          : new Date(res.data.lastSuccessfulIntervalUpdate);
-
-      this.loadObjectFromData(this.settingsData, res.data);
-      this.loadObjectFromData(this.intervalsData, res.data);
-
-      this.isSaving = false;
-    });
+      });
   }
 
   private loadSettingsAndData() {
-    this.settingsService.getFinancialReportingSettings().subscribe(res => {
+    this.settingsService.getFinancialReportingSettings().subscribe((res) => {
       if (!res.success) {
         this.showNotification(res.clientErrorMessage, true);
 
@@ -173,7 +183,7 @@ export class SettingsPageComponent implements OnInit {
       this.loadObjectFromData(this.intervalsData, res.data);
       this.loadObjectFromData(this.settingsData, res.data);
 
-      if(this.settingsData.customConfigurations == null)
+      if (this.settingsData.customConfigurations == null)
         this.settingsData.customConfigurations = [];
     });
   }
@@ -190,14 +200,16 @@ export class SettingsPageComponent implements OnInit {
   }
 
   private loadObjectFromData(obj, data) {
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       if (key !== 'lastSuccessfulIntervalUpdate') {
         obj[key] = data[key];
 
-        if(key === 'customConfigurations' && obj[key] !== null){
-          obj[key].forEach(element => {
-            element.usedInExtract = element.usedInExtract ? 'Yes' : 'No'
-            element.impactToSchemaOutput = element.impactToSchemaOutput ? 'Yes' : 'No'
+        if (key === 'customConfigurations' && obj[key] !== null) {
+          obj[key].forEach((element) => {
+            element.usedInExtract = element.usedInExtract ? 'Yes' : 'No';
+            element.impactToSchemaOutput = element.impactToSchemaOutput
+              ? 'Yes'
+              : 'No';
           });
         }
       }
@@ -206,17 +218,18 @@ export class SettingsPageComponent implements OnInit {
 
   getId(uniqueName: string, elementType: string, componentType?: string) {
     if (componentType != undefined)
-      return `${this.componentName}-${componentType}-${uniqueName}-${elementType}`
-    else
-      return `${this.componentName}-${uniqueName}-${elementType}`
+      return `${this.componentName}-${componentType}-${uniqueName}-${elementType}`;
+    else return `${this.componentName}-${uniqueName}-${elementType}`;
   }
 
   getUserInfo() {
-    this.subscription.add(this.settingsService.getUserInformation().subscribe(res => {
-      if (res.data) {
-        this.dateFormat = res.data.dateFormat;
-      }
-    }));
+    this.subscription.add(
+      this.settingsService.getUserInformation().subscribe((res) => {
+        if (res.data) {
+          this.dateFormat = res.data.dateFormat;
+        }
+      })
+    );
   }
 
   formatDate(date: Date | null): string | null {

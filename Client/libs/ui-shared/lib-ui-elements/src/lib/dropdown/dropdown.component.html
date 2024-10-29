@@ -1,7 +1,8 @@
-<dx-select-box *ngIf="useSelectBox && !loading"
-  [id]="id"
+<dx-select-box
+  *ngIf="useSelectBox && !loading"
+  [id]="id + '_select-box'"
   [(opened)]="isDropDownBoxOpened"
-  [ngClass]="{red_border: showRedBorder}"
+  [ngClass]="{ red_border: showRedBorder }"
   [placeholder]="placeholder"
   [dataSource]="dataSource"
   [valueExpr]="valueExpr"
@@ -14,38 +15,53 @@
   (onOpened)="onSelectBoxOpened($event)"
   (onClosed)="onSelectBoxClosed($event)"
   [grouped]="grouped"
-  [groupTemplate]="useCustomGroupTemplate ? 'selectBoxCustomGroupTemplate' : 'group'"
+  [groupTemplate]="
+    useCustomGroupTemplate ? 'selectBoxCustomGroupTemplate' : 'group'
+  "
   [value]="selectBoxValue"
   [deferRendering]="false"
   [readOnly]="readOnly"
   (onOpened)="openDropdown($event)"
   (click)="onClickSelectBox()"
-  [itemTemplate]="itemTemplate ? itemTemplate: 'defaultItem'"
+  [itemTemplate]="itemTemplate ? itemTemplate : 'defaultItem'"
   [fieldTemplate]="fieldTemplate"
   [searchEnabled]="allowSearch"
   [searchMode]="searchMode"
   [searchTimeout]="searchTimeout"
   [searchExpr]="searchExpr"
-  [inputAttr]="{ title: hoverText ? hoverText : placeholder, 'aria-controls': id, 'aria-label': hoverText ? hoverText : placeholder}"
+  [inputAttr]="{
+    title: hoverText ? hoverText : placeholder,
+    'aria-controls': id + '_select-box',
+    'aria-label': hoverText ? hoverText : placeholder
+  }"
 >
   <!-- Dropdown's header options -->
   <div *dxTemplate="let data of 'selectBoxCustomGroupTemplate'">
-    <ng-template  *ngTemplateOutlet="customHeaderTemplate; context: { fieldData : data }"
+    <ng-template
+      *ngTemplateOutlet="customHeaderTemplate; context: { fieldData: data }"
     ></ng-template>
   </div>
 
   <!-- Validators -->
   <dx-validator #SelectBoxValidator>
-    <ng-container *ngIf="showDefaultValidationTooltip; then DefaultValidationTooltip else NoDefaultValidationTooltip"></ng-container>
+    <ng-container
+      *ngIf="
+        showDefaultValidationTooltip;
+        then DefaultValidationTooltip;
+        else NoDefaultValidationTooltip
+      "
+    ></ng-container>
     <ng-template #DefaultValidationTooltip>
-      <dxi-validation-rule *ngIf="required && !customRequireValidation"
-          type="required"
+      <dxi-validation-rule
+        *ngIf="required && !customRequireValidation"
+        type="required"
       ></dxi-validation-rule>
     </ng-template>
     <ng-template #NoDefaultValidationTooltip>
-      <dxi-validation-rule *ngIf="required && !customRequireValidation"
-          type="required"
-          [message]="''"
+      <dxi-validation-rule
+        *ngIf="required && !customRequireValidation"
+        type="required"
+        [message]="''"
       ></dxi-validation-rule>
     </ng-template>
   </dx-validator>
@@ -59,12 +75,12 @@
 
   <!-- Field Template: 'withLabel' -->
   <div *dxTemplate="let item of 'withLabel'" class="custom-with-label">
-    <span *ngIf="label">{{label}}</span>
+    <span *ngIf="label">{{ label }}</span>
     <div class="search">
       <crem-icon
         icon="faSearch"
-        pack='solid'
-        size='sm'
+        pack="solid"
+        size="sm"
         [hidden]="!allowSearch"
       ></crem-icon>
     </div>
@@ -76,27 +92,44 @@
       [value]="getWithLabelValue(item)"
       [searchEnabled]="allowSearch"
       [inputAttr]="{ 'aria-label': hoverText ? hoverText : placeholder }"
-      [placeholder]="getWithLabelValue(item) ? getWithLabelValue(item) : hoverText"
+      [placeholder]="
+        getWithLabelValue(item) ? getWithLabelValue(item) : hoverText
+      "
     ></dx-text-box>
     <!-- Shows secondary text in the input field -->
-    <!-- <span *ngIf="item" class="item-secondary">{{item.secondaryText}}</span> --> 
+    <!-- <span *ngIf="item" class="item-secondary">{{item.secondaryText}}</span> -->
   </div>
 
   <!-- Item Template: defaultItem -->
   <ng-container *dxTemplate="let item of 'defaultItem'">
-    <div  [class.disable-item]="item?.disabled" id = "item-{{item?.workflowStatusId}}" (mouseenter)="onMouseEnter($event, item)" (mouseleave)="onMouseLeave()">
-        {{ item.name || item.displayValue || item.value || item[displayExpr]}}
-    </div >
+    <div
+      [class.disable-item]="item?.disabled"
+      id="item-{{ item?.workflowStatusId }}"
+      (mouseenter)="onMouseEnter($event, item)"
+      (mouseleave)="onMouseLeave()"
+    >
+      {{ item.name || item.displayValue || item.value || item[displayExpr] }}
+    </div>
   </ng-container>
 
   <!-- Item Template: With Item's Menu -->
   <div class="item" *dxTemplate="let item of 'withMenu'">
     <div
-      class="item-name" [class]="item.itemClass ? item.itemClass : ''"
-      [attr.title]="(item.name || item.displayValue || item.value || item[displayExpr]) + ' ' + (item.secondaryText ? item.secondaryText : '') "
+      class="item-name"
+      [class]="item.itemClass ? item.itemClass : ''"
+      [attr.title]="
+        (item.name || item.displayValue || item.value || item[displayExpr]) +
+        ' ' +
+        (item.secondaryText ? item.secondaryText : '')
+      "
     >
-      <span class="item-title">{{ item.name || item.displayValue || item.value || item[displayExpr]}}</span>
-      <span *ngIf="item.secondaryText" class="item-secondary">{{item.secondaryText}}</span><!-- Secondary Option Text, often used for the "(Default)" tag  -->
+      <span class="item-title">{{
+        item.name || item.displayValue || item.value || item[displayExpr]
+      }}</span>
+      <span *ngIf="item.secondaryText" class="item-secondary">{{
+        item.secondaryText
+      }}</span
+      ><!-- Secondary Option Text, often used for the "(Default)" tag  -->
     </div>
     <!-- More Menu -->
     <ng-container *ngIf="item.moreMenu">
@@ -108,7 +141,11 @@
           className="icon"
           icon="faEllipsisH"
           iconPack="solid"
-          (click)="$event.stopPropagation(); $event.preventDefault(); moreMenuDropdownClick(item)"
+          (click)="
+            $event.stopPropagation();
+            $event.preventDefault();
+            moreMenuDropdownClick(item)
+          "
           [matMenuTriggerFor]="ItemViewMore"
         ></crem-button>
 
@@ -117,14 +154,22 @@
           <ng-container *ngFor="let option of item.moreMenu">
             <ng-container [ngSwitch]="option.type">
               <!-- Menu Item -->
-              <button *ngSwitchDefault
+              <button
+                *ngSwitchDefault
                 mat-menu-item
-                [class]="'mat-menu-child-button ' + (option.class ? option.class : '')"
+                [class]="
+                  'mat-menu-child-button ' + (option.class ? option.class : '')
+                "
                 [hidden]="option.hide"
-                (click)="option.action(); option.stopPropagation ? $event.stopPropagation() : null"
+                (click)="
+                  option.action();
+                  option.stopPropagation ? $event.stopPropagation() : null
+                "
                 [disabled]="option.disabled ? option.disabled : false"
                 [title]="option.title ?? ''"
-              >{{option.name}}</button>
+              >
+                {{ option.name }}
+              </button>
               <!-- Separator -->
               <hr *ngSwitchCase="'separator'" [hidden]="option.hide" />
             </ng-container>
@@ -134,33 +179,30 @@
       </div>
     </ng-container>
     <!-- End More Menu -->
-
   </div>
-
 </dx-select-box>
 
-<dx-tooltip
-  [visible]="isdisplayExprTooltipVisible" 
-  [target]="toolTipTarget"
->
+<dx-tooltip [visible]="isdisplayExprTooltipVisible" [target]="toolTipTarget">
   <div *dxTemplate="let data of 'content'" class="dropdown-tooltip">
-    {{displayExprTooltipText}}
+    {{ displayExprTooltipText }}
   </div>
 </dx-tooltip>
 
 <dx-tooltip
-  [visible]="showTooltip && isTooltipVisible" 
+  [visible]="showTooltip && isTooltipVisible"
   [target]="toolTipTarget"
 >
   <div *dxTemplate="let data of 'content'" class="dropdown-tooltip">
-    {{btnDisabledReason}}
+    {{ btnDisabledReason }}
   </div>
 </dx-tooltip>
 
-<dx-drop-down-box *ngIf="!useSelectBox" #dropDownBox
+<dx-drop-down-box
+  *ngIf="!useSelectBox"
+  #dropDownBox
   [id]="id + '_box'"
   [(opened)]="isDropDownBoxOpened"
-  [ngClass]="{red_border: showRedBorder}"
+  [ngClass]="{ red_border: showRedBorder }"
   [placeholder]="placeholder"
   [dataSource]="dataSource"
   [value]="selectedDisplay"
@@ -175,20 +217,32 @@
   (onKeyUp)="onSelectBoxDropDownKeyUp($event)"
   [deferRendering]="false"
   (onOpened)="openDropdown($event)"
-  [inputAttr]="{ title: placeholder, 'aria-controls': id + 'dropdownContainer', 'aria-label': placeholder}"
+  [inputAttr]="{
+    title: placeholder,
+    'aria-controls': id + 'dropdownContainer',
+    'aria-label': placeholder
+  }"
 >
   <!-- Validators -->
   <dx-validator #DropdownBoxValidator>
-    <ng-container *ngIf="showDefaultValidationTooltip; then DefaultValidationTooltip else NoDefaultValidationTooltip"></ng-container>
+    <ng-container
+      *ngIf="
+        showDefaultValidationTooltip;
+        then DefaultValidationTooltip;
+        else NoDefaultValidationTooltip
+      "
+    ></ng-container>
     <ng-template #DefaultValidationTooltip>
-      <dxi-validation-rule *ngIf="required && !customRequireValidation"
-          type="required"
+      <dxi-validation-rule
+        *ngIf="required && !customRequireValidation"
+        type="required"
       ></dxi-validation-rule>
     </ng-template>
     <ng-template #NoDefaultValidationTooltip>
-      <dxi-validation-rule *ngIf="required && !customRequireValidation"
-          type="required"
-          [message]="''"
+      <dxi-validation-rule
+        *ngIf="required && !customRequireValidation"
+        type="required"
+        [message]="''"
       ></dxi-validation-rule>
     </ng-template>
   </dx-validator>
@@ -201,14 +255,14 @@
   ></dxo-drop-down-options>
 
   <!-- Dropdown's Options -->
-  <div [id]="id + 'dropdownContainer'"
+  <div
+    [id]="id + 'dropdownContainer'"
     *dxTemplate="let data of 'dropdownTemplate'"
   >
     <fieldset>
-      <legend hidden=true>
-        Drop Down
-      </legend>
-      <dx-data-grid class="drop-down-box__grid"
+      <legend hidden="true">Drop Down</legend>
+      <dx-data-grid
+        class="drop-down-box__grid"
         dropdownTemplate
         [dataSource]="dataSource"
         [columns]="displayExpr"
@@ -218,7 +272,7 @@
         (onKeyDown)="onGridKeyDown($event, cell)"
         (onSelectionChanged)="getSelectedRowsData($event)"
         [scrolling]="{ mode: 'standard' }"
-        [elementAttr]="{ style: 'max-height: 345px;'}"
+        [elementAttr]="{ style: 'max-height: 345px;' }"
         [paging]="false"
         [keyExpr]="keyExpr || valueExpr"
         (onContentReady)="ADAattributes($event)"
@@ -231,12 +285,9 @@
           [showCheckBoxesMode]="showCheckBoxesMode"
           selectAllMode="allPages"
         ></dxo-selection>
-        <dxi-column
-          [dataField]="displayExpr"
-          [caption]="dropdownHeaderDisplay">
+        <dxi-column [dataField]="displayExpr" [caption]="dropdownHeaderDisplay">
         </dxi-column>
       </dx-data-grid>
     </fieldset>
   </div>
-
 </dx-drop-down-box>

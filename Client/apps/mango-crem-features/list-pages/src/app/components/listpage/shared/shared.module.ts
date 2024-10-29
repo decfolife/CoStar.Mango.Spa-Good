@@ -3,15 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-  ],
-  exports: [
-    CommonModule,
-    FormsModule,
-  ],
-  declarations: [
-  ],
+  imports: [CommonModule, FormsModule],
+  exports: [CommonModule, FormsModule],
+  declarations: [],
 })
-export class SharedModule { }
+export class SharedModule {}

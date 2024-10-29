@@ -1,24 +1,73 @@
-  <div class="accounting-summary-toolbar-wrapper">
-    <div class="controls-left">
-      <div class="add-edit-title">
-        <mango-accounts-summary-title></mango-accounts-summary-title>
-      </div>
+<div class="accounting-summary-toolbar-wrapper">
+  <div class="controls-left">
+    <div class="add-edit-title">
+      <mango-accounts-summary-title></mango-accounts-summary-title>
     </div>
-    <div class="controls-right">
-      <div [id]="accountingSummaryService.getId(componentName,'alerts','button')" class="alerts">
-        <mango-alerts-root [leaseAbstractId]="accountingSummaryService.getLeaseAbstractId()"></mango-alerts-root>
-      </div>
-      <div class="cancel-button">
-        <crem-button id="accountingSummaryService.getId(componentName,'cancel','button')" type="secondary"
-         (click)="location.back()">Cancel
-        </crem-button>
-      </div>
-      <div class="save-close-button">
-        <crem-button [id]="accountingSummaryService.getId(componentName,'save-close','button')" type="primary"
-          [disabled]="saveDisabled" >Save & Close
-        </crem-button>
-      </div>
+  </div>
+  <div class="controls-right">
+    <div
+      [id]="accountingSummaryService.getId(componentName, 'alerts', 'button')"
+      class="alerts"
+    >
+      <mango-alerts-root
+        [leaseAbstractId]="accountingSummaryService.getLeaseAbstractId()"
+      ></mango-alerts-root>
     </div>
+    <div class="cancel-button">
+      <crem-button
+        [id]="accountingSummaryService.getId(componentName, 'cancel', 'button')"
+        type="secondary"
+        (click)="navigateToAccountingSummaryPage()"
+      >
+        Cancel
+      </crem-button>
+    </div>
+    <div class="calculate-button">
+      <crem-button
+        [id]="
+          accountingSummaryService.getId(
+            componentName,
+            'calculate-value',
+            'button'
+          )
+        "
+        type="primary"
+        [disabled]="isCalculateValuesDisabled"
+        (click)="calculateValues()"
+        >Calculate Values
+      </crem-button>
+    </div>
+
+    <div class="save-close-button">
+      <crem-button
+        [id]="
+          accountingSummaryService.getId(componentName, 'save-close', 'button')
+        "
+        type="primary"
+        [disabled]="isSaveDisabled"
+        [icon]="isSaveAndCloseClicked ? 'faSpinner' : ''"
+        [iconPack]="isSaveAndCloseClicked ? 'solid' : ''"
+        [iconAnimation]="isSaveAndCloseClicked ? 'spin' : ''"
+        (click)="saveAndClose()"
+      >
+        {{ isSaveAndCloseClicked ? 'Saving...' : 'Save & Close' }}
+      </crem-button>
+    </div>
+
+    <div class="apply-button">
+      <crem-button
+        [id]="accountingSummaryService.getId(componentName, 'apply', 'button')"
+        type="secondary"
+        [disabled]="isApplyDisabled"
+        [icon]="isApplyClicked ? 'faSpinner' : ''"
+        [iconPack]="isApplyClicked ? 'solid' : ''"
+        [iconAnimation]="isApplyClicked ? 'spin' : ''"
+        (click)="applyChanges()"
+      >
+        {{ isApplyClicked ? 'Saving...' : 'Apply' }}
+      </crem-button>
+    </div>
+  </div>
 </div>
 
 <div class="add-events-body">
@@ -27,38 +76,47 @@
     [eventsGridData]="eventsGridData"
     [pageMode]="pageMode"
     [measureEvent]="measureEvent"
-    [portfolioSettings]="portfolioSettings"
     [classificationSettings]="classificationSettings"
     [accountingEventsData]="accountingEventsData"
     [eventDateOptions]="eventDateOptions"
     [userInfo]="userInfo"
     (classificationChanged)="onClassificationChanged($event)"
-    (scheduleDetailsData)="scheduleDetailsDataChanged($event)">
+    (scheduleDetailsData)="scheduleDetailsDataChanged($event)"
+  >
   </mango-schedule-details>
 
   <mango-classification-tests
     [accountingEventsData]="accountingEventsData"
     [classificationId]="classificationId"
-    [pageMode]="pageMode">
-  </mango-classification-tests>
-  
-  <mango-residual-value
-    [accountingEventsData]="accountingEventsData"
-    [classificationId]="classificationId"
     [pageMode]="pageMode"
-    [userInfo]="userInfo">
+  >
+  </mango-classification-tests>
+
+  <mango-residual-value
+    *ngIf="classificationId && classificationId !== 0 && classificationId !== 5"
+    [accountingEventsData]="accountingEventsData"
+    [pageMode]="pageMode"
+  >
   </mango-residual-value>
 
   <mango-financial-card
+    *ngIf="classificationId !== null && classificationId !== undefined"
     [pageMode]="pageMode"
     [measureEvent]="measureEvent"
     [classificationId]="classificationId"
     [portfolioSettings]="portfolioSettings"
-    [scheduleDetailsData] ="scheduleDetailsData"
+    [classificationSettings]="classificationSettings"
+    [scheduleDetailsData]="scheduleDetailsData"
     [accountingEventsData]="accountingEventsData"
     [amortizationProfiles]="amortizationProfiles"
     [currencyList]="currencyList"
-    [userInfo]="userInfo">
-  </mango-financial-card>
-  
+    [rouAssetMethodsList]="rouAssetMethodsList"
+    [userInfo]="userInfo"
+  ></mango-financial-card>
+
+  <mango-payments-grid
+    *ngIf="classificationId !== null && classificationId !== undefined"
+  >
+  </mango-payments-grid>
 </div>
+<p-toast position="bottom-right" preventOpenDuplicates="true"></p-toast>

@@ -7,11 +7,11 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 
 @NgModule({
-    declarations: [AppComponent],
-    imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule],
-    providers: [],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent],
+  imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule],
+  providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(private injector: Injector) {}

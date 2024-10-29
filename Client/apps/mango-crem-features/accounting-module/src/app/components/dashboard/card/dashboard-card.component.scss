@@ -1,79 +1,79 @@
-@import "../../../../../../../mango/src/assets/styles/colors.scss";
-@import "../../../../../../../mango/src/assets/styles/var.scss";
+@import '../../../../../../../mango/src/assets/styles/colors.scss';
+@import '../../../../../../../mango/src/assets/styles/var.scss';
 
 :host ::ng-deep .not-clickable {
-    cursor: default !important;
+  cursor: default !important;
 }
 
-:host ::ng-deep .not-clickable>.dx-template-wrapper>a {
-    cursor: pointer !important;
+:host ::ng-deep .not-clickable > .dx-template-wrapper > a {
+  cursor: pointer !important;
 }
 
 .mat-icon svg {
-    fill: $color-brand-red;
-    width: 16px;
+  fill: $color-brand-red;
+  width: 16px;
 }
 
 .example-custom-placeholder {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 mat-card-header.mat-mdc-card-header {
-    background: white;
+  background: white;
 }
 
 .chart-toggle {
-    font-size: 24px;
-    padding: 0px 8px;
-    color: #0559B3;
-    cursor: pointer;
-    &:hover {
-        color: #669BD1;
-    }
+  font-size: 24px;
+  padding: 0px 8px;
+  color: #0559b3;
+  cursor: pointer;
+  &:hover {
+    color: #669bd1;
+  }
 
-    &__visible {
-        color: #BFBFBF;
-        &:hover {
-            color: #669BD1;
-        }
+  &__visible {
+    color: #bfbfbf;
+    &:hover {
+      color: #669bd1;
     }
+  }
 }
 
 .card-header--right {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    height: 24px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 24px;
 }
 
 button.mat-menu-trigger.btn.btn-default.btn-sm.moreOptionsBtn {
-    display: flex;
-    align-items: center;
-    height: 24px;
-    &:focus{
-        outline: 5px auto -webkit-focus-ring-color;
-        background-color: $gray5;
-    }
+  display: flex;
+  align-items: center;
+  height: 24px;
+  &:focus {
+    outline: 5px auto -webkit-focus-ring-color;
+    background-color: $gray5;
+  }
 }
 
 div.cardContent {
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 600px !important;
-    padding: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 600px !important;
+  padding: 8px;
 }
 
 .dashboard-card {
-    &__loader-wrapper {
-        display:flex;
-        height:100%;
-        width:100%;
-        position: absolute;
-        align-items: center;
-        justify-content: center;
-        top: 0px;
-        left: 0px;
-    }
+  &__loader-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    top: 0px;
+    left: 0px;
+  }
 }
 
 .dashboard-card-overlay-content {

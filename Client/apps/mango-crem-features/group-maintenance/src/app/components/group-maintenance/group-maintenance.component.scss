@@ -1,15 +1,15 @@
 .groupMaintenace {
-    &__pageTitle {
-        font-size: 20px;
-        font-weight: 500;
-        font-family: Helvetica, sans-serif;
-    }
+  &__pageTitle {
+    font-size: 20px;
+    font-weight: 500;
+    font-family: Helvetica, sans-serif;
+  }
 }
 
 .group-maintenance__button-padding {
-    padding-right: 8px;
+  padding-right: 8px;
 }
 
 tr.dx-row.dx-data-row.dx-column-lines:hover {
-    cursor: pointer !important;
+  cursor: pointer !important;
 }

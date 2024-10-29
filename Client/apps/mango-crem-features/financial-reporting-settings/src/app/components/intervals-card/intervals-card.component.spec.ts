@@ -8,9 +8,8 @@ describe('IntervalsCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ IntervalsCardComponent ]
-    })
-    .compileComponents();
+      declarations: [IntervalsCardComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

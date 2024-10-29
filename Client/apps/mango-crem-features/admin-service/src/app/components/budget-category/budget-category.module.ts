@@ -4,19 +4,20 @@ import { RouterModule } from '@angular/router';
 import { BudgetCategoryComponent } from './budget-category.component';
 import { BudgetCategoryService } from './budget-category.service';
 import { SearchModule } from '@mango/ui-shared/cosmos';
-import { ButtonModule, DropdownModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  ButtonModule,
+  DropdownModule,
+  ModalModule,
+} from '@mango/ui-shared/lib-ui-elements';
 import { DxDataGridModule, DxLoadPanelModule } from 'devextreme-angular';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UserDeletionComponent } from '../index/modal/user-deletion/user-deletion.component';
-import {  MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [
-    BudgetCategoryComponent,
-    UserDeletionComponent
-  ],
+  declarations: [BudgetCategoryComponent, UserDeletionComponent],
 
   imports: [
     CommonModule,
@@ -35,13 +36,10 @@ import {  MatDialogModule } from '@angular/material/dialog';
         path: '',
         data: { pageTitle: 'Budget Category' },
         component: BudgetCategoryComponent,
-      }
-    ])
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    BudgetCategoryService,
-    DatePipe
-  ]
+  providers: [BudgetCategoryService, DatePipe],
 })
-export class BudgetCategoriesModule { }
+export class BudgetCategoriesModule {}

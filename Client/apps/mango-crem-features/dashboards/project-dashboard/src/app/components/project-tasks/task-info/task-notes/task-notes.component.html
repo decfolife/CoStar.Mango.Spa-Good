@@ -1,5 +1,6 @@
-<div class="task-notes-dataGrid-wrapper"> 
-  <dx-data-grid id="task-notes-grid"
+<div class="task-notes-dataGrid-wrapper">
+  <dx-data-grid
+    id="task-notes-grid"
     [showColumnLines]="false"
     [showRowLines]="false"
     [showBorders]="false"
@@ -16,24 +17,38 @@
     [wordWrapEnabled]="true"
     (onContentReady)="onContentReady($event)"
   >
-    <dxo-scrolling [useNative]="false" [showScrollbar]="'always'" ></dxo-scrolling>
-    
-    <dxo-load-panel
-      [enabled]="true">
-    </dxo-load-panel>
+    <dxo-scrolling
+      [useNative]="false"
+      [showScrollbar]="'always'"
+    ></dxo-scrolling>
 
-    <dxi-column dataField="creator" caption='Created By'></dxi-column>
-    <dxi-column dataField="commonNoteDateCreated" caption='Created On' dataType="date" [format]="userDateFormat"></dxi-column>
-    <dxi-column dataField="commonNoteType" caption='Type'></dxi-column>
+    <dxo-load-panel [enabled]="true"> </dxo-load-panel>
 
-    <dxo-master-detail [enabled]="false" [autoExpandAll]="true" template="noteDetails"></dxo-master-detail>
+    <dxi-column dataField="creator" caption="Created By"></dxi-column>
+    <dxi-column
+      dataField="commonNoteDateCreated"
+      caption="Created On"
+      dataType="date"
+      [format]="userDateFormat"
+    ></dxi-column>
+    <dxi-column dataField="commonNoteType" caption="Type"></dxi-column>
+
+    <dxo-master-detail
+      [enabled]="false"
+      [autoExpandAll]="true"
+      template="noteDetails"
+    ></dxo-master-detail>
     <div *dxTemplate="let noteDetail of 'noteDetails'">
       <div class="container">
-        <dx-text-area class="taskNoteTextArea"
+        <dx-text-area
+          class="taskNoteTextArea"
           [value]="noteDetail.data.commonNote"
           [height]="'100px'"
           [readOnly]="true"
-          [inputAttr]="{ 'aria-label': 'Task Note Text', 'id': 'task-note-text-area' }"
+          [inputAttr]="{
+            'aria-label': 'Task Note Text',
+            id: 'task-note-text-area'
+          }"
           (onInitialized)="onInitializedTextArea($event)"
         >
         </dx-text-area>

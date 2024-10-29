@@ -1,199 +1,258 @@
-
 <div class="report-page">
-	<div class="report-page-controls-wrapper">
-		<div class="controls-left">
-			<h5 class="reports__page-title dbl-right-margin">{{ pageTitle }}</h5>
-			<cs-search #SearchBox class="report-search"
-                (changed)="searchDataGrid($event)"
-                [disabled]="!(isApplied && userRightHistoryData && groupRightHistoryData)"
-                debounceTime="500"
-                >
-            </cs-search>
-			<div class="reports__dropdown-container">
-				<div class="report-dropdown">
-					<crem-dropdown
-						[dataSource]='userList'
-						allowSearch='true'
-						placeholder='Users'
-						[showColumnHeader]='true'
-						displayExpr='name'
-						valueExpr='id'
-						(selectedItems)="userDropdownChange($event)"
-						dropDownContainerCustomClass="reportsDropDown"
-						showCheckBoxesMode='always'
-						selectMode='multiple'
-					></crem-dropdown>
-				</div>
-	
-				<div class="report-dropdown">
-					<crem-dropdown
-						[dataSource]='groupList'
-						allowSearch='true'
-						placeholder='Groups'
-						[showColumnHeader]='true'
-						displayExpr='name'
-						valueExpr='id'
-						(selectedItems)="groupDropdownChange($event)"
-						showCheckBoxesMode='always'
-						dropDownContainerCustomClass="reportsDropDown"
-						selectMode='multiple'
-					></crem-dropdown>
-				</div>
-				<div class="dropdown-box">
-					<dx-drop-down-box 
-						(onOpened)="addClassToDropdownBox($event)"
-						placeholder="{{periodFrom | date: dateFormat }} To {{periodTo | date: dateFormat }}">   
-						<div *dxTemplate="let data of 'content'" class="dbl-padding reports-dropdown-box">
-							<dx-form>
-								<dxi-item editorType="dxDateBox" #PeriodFrom
-									[editorOptions]="{
-										value: periodFrom,
-										displayFormat: dateFormat,
-										type:'date',
-										pickerType:'calendar',
-										useMaskBehavior: true,
-										onValueChanged: onPeriodFromChange
-	
-									}"
-									[label]="{ text: 'Period From' }"
-								>
-									<dxi-validation-rule
-										type="custom"
-										[validationCallback]="validatePeriodFrom"
-										[reevaluate]="true"
-										message="selected date must be before Period To date"
-									></dxi-validation-rule>
-								</dxi-item>
-								<dxi-item editorType="dxDateBox" #PeriodTo
-									[editorOptions]="{
-										value: periodTo,
-										displayFormat: dateFormat,
-										type:'date',
-										pickerType:'calendar',
-										useMaskBehavior: true,
-										onValueChanged: onPeriodToChange
-	
-									}"
-									[label]="{ text: 'Period To' }"
-								>
-									<dxi-validation-rule
-										type="custom"
-										[validationCallback]="validatePeriodTo" 
-										[reevaluate]="true"
-										message="selected date must be after Period From date"
-									></dxi-validation-rule>
-								</dxi-item>
-							</dx-form>
-						</div>
-					</dx-drop-down-box>
-				</div>
-			</div>
-			
-            <crem-button class="button__apply" type="secondary" [disabled]="!(periodTo && periodFrom && isPeriodFromValid && isPeriodToValid) || !(selectedUsers?.length || selectedGroups?.length)" (click)="apply()">Apply</crem-button>
-		</div>
-		<div class="controls-right">
-			<crem-button type="primary" [disabled]="!(isApplied && userRightHistoryData && groupRightHistoryData) || exporting" (click)="exportGrids()">Export</crem-button>
-		</div>
-
-	</div>
-
-	<dx-tab-panel *ngIf="isApplied"
-        [dataSource]="tabs"
-        [deferRendering]="false"
-        [selectedIndex]=0>  
-        <div *dxTemplate="let company of 'userHistory'">  
-            <div class="report-page-data-grid-wrapper">
-                <dx-data-grid *ngIf="(isApplied && userRightHistoryData)"
-					#UserDataGrid 
-					[dataSource]="userRightHistoryData"
-					keyExpr="id"
-					>
-					<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
-					<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
-					<dxo-sorting mode="multiple"></dxo-sorting>
-					<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
-					<dxo-column-chooser [allowSearch]="true" mode="select">
-					</dxo-column-chooser>
-					<dxo-paging [pageSize]="100"></dxo-paging>
-					<dxo-pager 
-						[showPageSizeSelector]="true"
-						[allowedPageSizes]="[50, 100, 200, 500]"
-						[showInfo]="true"
-						[showNavigationButtons]="true"
-						[visible]="true"
-					>
-					</dxo-pager>
-					<dxi-column *ngFor="let col of userColumns" 
-						[dataField]="col.dataField" 
-						[alignment]="col.alignment"
-						[visible]="col.visible"
-						[groupIndex]="col.groupIndex"
-						[dataType]="col.dataType"
-						[caption]="col.caption"
-						[fixed]="col.fixed"
-						[allowEditing]="col.allowEditing"
-						[cellTemplate]="col.cellTemplate"
-						[format]="col.format"
-						[calculateCellValue]="col.calculateCellValue">
-						<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
-					</dxi-column>
-				</dx-data-grid>
-            </div>
-        </div>  
-        <div *dxTemplate="let company of 'groupHistory'">  
-            <div class="report-page-data-grid-wrapper">
-                <dx-data-grid *ngIf="(isApplied && groupRightHistoryData)"
-					#GroupDataGrid 
-					[dataSource]="groupRightHistoryData"
-					keyExpr="id">
-
-					<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>    
-					<dxo-grouping #expand [autoExpandAll]="true" [contextMenuEnabled]="true"></dxo-grouping>
-					<dxo-sorting mode="multiple"></dxo-sorting>
-					<dxo-column-fixing [enabled]="true"></dxo-column-fixing>
-					<dxo-column-chooser [allowSearch]="true" mode="select">
-					</dxo-column-chooser>
-					<dxo-paging [pageSize]="100"></dxo-paging>
-					<dxo-pager 
-						[showPageSizeSelector]="true"
-						[allowedPageSizes]="[50, 100, 200, 500]"
-						[showInfo]="true"
-						[showNavigationButtons]="true"
-						[visible]="true"
-					>
-					</dxo-pager>
-					<dxi-column *ngFor="let col of groupColumns" 
-						[dataField]="col.dataField" 
-						[alignment]="col.alignment"
-						[visible]="col.visible"
-						[groupIndex]="col.groupIndex"
-						[dataType]="col.dataType"
-						[caption]="col.caption"
-						[fixed]="col.fixed"
-						[allowEditing]="col.allowEditing"
-						[format]="col.format"
-						[cellTemplate]="col.cellTemplate"
-						[calculateCellValue]="col.calculateCellValue">
-						<dxo-format *ngIf="col.dataType == 'number' && col.precision >= 0 " type="fixedPoint" [precision]="col.precision"></dxo-format>
-					</dxi-column>
-				</dx-data-grid>
-            </div>
+  <div class="report-page-controls-wrapper">
+    <div class="controls-left">
+      <h5 class="reports__page-title dbl-right-margin">{{ pageTitle }}</h5>
+      <cs-search
+        #SearchBox
+        class="report-search"
+        (changed)="searchDataGrid($event)"
+        [disabled]="
+          !(isApplied && userRightHistoryData && groupRightHistoryData)
+        "
+        debounceTime="500"
+      >
+      </cs-search>
+      <div class="reports__dropdown-container">
+        <div class="report-dropdown">
+          <crem-dropdown
+            [dataSource]="userList"
+            allowSearch="true"
+            placeholder="Users"
+            [showColumnHeader]="true"
+            displayExpr="name"
+            valueExpr="id"
+            (selectedItems)="userDropdownChange($event)"
+            dropDownContainerCustomClass="reportsDropDown"
+            showCheckBoxesMode="always"
+            selectMode="multiple"
+          ></crem-dropdown>
         </div>
-    </dx-tab-panel>
-    <dx-load-panel shadingColor="rgba(255,255,255,0.2)"
-        [(visible)]="!(userRightHistoryData && groupRightHistoryData) && isApplied"
-        [showIndicator]="true"
-        [showPane]="true"
-        [shading]="true"
-        [closeOnOutsideClick]="false"
-    ></dx-load-panel>
+
+        <div class="report-dropdown">
+          <crem-dropdown
+            [dataSource]="groupList"
+            allowSearch="true"
+            placeholder="Groups"
+            [showColumnHeader]="true"
+            displayExpr="name"
+            valueExpr="id"
+            (selectedItems)="groupDropdownChange($event)"
+            showCheckBoxesMode="always"
+            dropDownContainerCustomClass="reportsDropDown"
+            selectMode="multiple"
+          ></crem-dropdown>
+        </div>
+        <div class="dropdown-box">
+          <dx-drop-down-box
+            (onOpened)="addClassToDropdownBox($event)"
+            placeholder="{{ periodFrom | date: dateFormat }} To {{
+              periodTo | date: dateFormat
+            }}"
+          >
+            <div
+              *dxTemplate="let data of 'content'"
+              class="dbl-padding reports-dropdown-box"
+            >
+              <dx-form>
+                <dxi-item
+                  editorType="dxDateBox"
+                  #PeriodFrom
+                  [editorOptions]="{
+                    value: periodFrom,
+                    displayFormat: dateFormat,
+                    type: 'date',
+                    pickerType: 'calendar',
+                    useMaskBehavior: true,
+                    onValueChanged: onPeriodFromChange
+                  }"
+                  [label]="{ text: 'Period From' }"
+                >
+                  <dxi-validation-rule
+                    type="custom"
+                    [validationCallback]="validatePeriodFrom"
+                    [reevaluate]="true"
+                    message="selected date must be before Period To date"
+                  ></dxi-validation-rule>
+                </dxi-item>
+                <dxi-item
+                  editorType="dxDateBox"
+                  #PeriodTo
+                  [editorOptions]="{
+                    value: periodTo,
+                    displayFormat: dateFormat,
+                    type: 'date',
+                    pickerType: 'calendar',
+                    useMaskBehavior: true,
+                    onValueChanged: onPeriodToChange
+                  }"
+                  [label]="{ text: 'Period To' }"
+                >
+                  <dxi-validation-rule
+                    type="custom"
+                    [validationCallback]="validatePeriodTo"
+                    [reevaluate]="true"
+                    message="selected date must be after Period From date"
+                  ></dxi-validation-rule>
+                </dxi-item>
+              </dx-form>
+            </div>
+          </dx-drop-down-box>
+        </div>
+      </div>
+
+      <crem-button
+        class="button__apply"
+        type="secondary"
+        [disabled]="
+          !(periodTo && periodFrom && isPeriodFromValid && isPeriodToValid) ||
+          !(selectedUsers?.length || selectedGroups?.length)
+        "
+        (click)="apply()"
+        >Apply</crem-button
+      >
+    </div>
+    <div class="controls-right">
+      <crem-button
+        type="primary"
+        [disabled]="
+          !(isApplied && userRightHistoryData && groupRightHistoryData) ||
+          exporting
+        "
+        (click)="exportGrids()"
+        >Export</crem-button
+      >
+    </div>
+  </div>
+
+  <dx-tab-panel
+    *ngIf="isApplied"
+    [dataSource]="tabs"
+    [deferRendering]="false"
+    [selectedIndex]="0"
+  >
+    <div *dxTemplate="let company of 'userHistory'">
+      <div class="report-page-data-grid-wrapper">
+        <dx-data-grid
+          *ngIf="isApplied && userRightHistoryData"
+          #UserDataGrid
+          [dataSource]="userRightHistoryData"
+          keyExpr="id"
+        >
+          <dxo-header-filter
+            [visible]="true"
+            [allowSearch]="true"
+          ></dxo-header-filter>
+          <dxo-grouping
+            #expand
+            [autoExpandAll]="true"
+            [contextMenuEnabled]="true"
+          ></dxo-grouping>
+          <dxo-sorting mode="multiple"></dxo-sorting>
+          <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+          <dxo-column-chooser [allowSearch]="true" mode="select">
+          </dxo-column-chooser>
+          <dxo-paging [pageSize]="100"></dxo-paging>
+          <dxo-pager
+            [showPageSizeSelector]="true"
+            [allowedPageSizes]="[50, 100, 200, 500]"
+            [showInfo]="true"
+            [showNavigationButtons]="true"
+            [visible]="true"
+          >
+          </dxo-pager>
+          <dxi-column
+            *ngFor="let col of userColumns"
+            [dataField]="col.dataField"
+            [alignment]="col.alignment"
+            [visible]="col.visible"
+            [groupIndex]="col.groupIndex"
+            [dataType]="col.dataType"
+            [caption]="col.caption"
+            [fixed]="col.fixed"
+            [allowEditing]="col.allowEditing"
+            [cellTemplate]="col.cellTemplate"
+            [format]="col.format"
+            [calculateCellValue]="col.calculateCellValue"
+          >
+            <dxo-format
+              *ngIf="col.dataType == 'number' && col.precision >= 0"
+              type="fixedPoint"
+              [precision]="col.precision"
+            ></dxo-format>
+          </dxi-column>
+        </dx-data-grid>
+      </div>
+    </div>
+    <div *dxTemplate="let company of 'groupHistory'">
+      <div class="report-page-data-grid-wrapper">
+        <dx-data-grid
+          *ngIf="isApplied && groupRightHistoryData"
+          #GroupDataGrid
+          [dataSource]="groupRightHistoryData"
+          keyExpr="id"
+        >
+          <dxo-header-filter
+            [visible]="true"
+            [allowSearch]="true"
+          ></dxo-header-filter>
+          <dxo-grouping
+            #expand
+            [autoExpandAll]="true"
+            [contextMenuEnabled]="true"
+          ></dxo-grouping>
+          <dxo-sorting mode="multiple"></dxo-sorting>
+          <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+          <dxo-column-chooser [allowSearch]="true" mode="select">
+          </dxo-column-chooser>
+          <dxo-paging [pageSize]="100"></dxo-paging>
+          <dxo-pager
+            [showPageSizeSelector]="true"
+            [allowedPageSizes]="[50, 100, 200, 500]"
+            [showInfo]="true"
+            [showNavigationButtons]="true"
+            [visible]="true"
+          >
+          </dxo-pager>
+          <dxi-column
+            *ngFor="let col of groupColumns"
+            [dataField]="col.dataField"
+            [alignment]="col.alignment"
+            [visible]="col.visible"
+            [groupIndex]="col.groupIndex"
+            [dataType]="col.dataType"
+            [caption]="col.caption"
+            [fixed]="col.fixed"
+            [allowEditing]="col.allowEditing"
+            [format]="col.format"
+            [cellTemplate]="col.cellTemplate"
+            [calculateCellValue]="col.calculateCellValue"
+          >
+            <dxo-format
+              *ngIf="col.dataType == 'number' && col.precision >= 0"
+              type="fixedPoint"
+              [precision]="col.precision"
+            ></dxo-format>
+          </dxi-column>
+        </dx-data-grid>
+      </div>
+    </div>
+  </dx-tab-panel>
+  <dx-load-panel
+    shadingColor="rgba(255,255,255,0.2)"
+    [(visible)]="!(userRightHistoryData && groupRightHistoryData) && isApplied"
+    [showIndicator]="true"
+    [showPane]="true"
+    [shading]="true"
+    [closeOnOutsideClick]="false"
+  ></dx-load-panel>
 </div>
 
-<dx-data-grid class="readOnly d-none"
-    #FilterDataGrid
-    [dataSource]="[]"
-    [columnAutoWidth]="true"
-    [filterSyncEnabled]="true"
-    [columnMinWidth]="10"	
+<dx-data-grid
+  class="readOnly d-none"
+  #FilterDataGrid
+  [dataSource]="[]"
+  [columnAutoWidth]="true"
+  [filterSyncEnabled]="true"
+  [columnMinWidth]="10"
 >
 </dx-data-grid>

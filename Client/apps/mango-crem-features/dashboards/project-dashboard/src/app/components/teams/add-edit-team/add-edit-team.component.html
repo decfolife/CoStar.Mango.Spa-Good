@@ -1,31 +1,38 @@
 <crem-modal
-  [modalTitle] = "modalTitle"
+  [modalTitle]="modalTitle"
   [customFooter]="true"
-  [closeIconVisible] = "closeButton"
-  [modalId] = "modalId"
+  [closeIconVisible]="closeButton"
+  [modalId]="modalId"
 >
-<div modalContent id="addEditTeamModal-content">
-  <div class="aet-teamName">
-    <h3 class="label">Team Name <span class="at-required" aria-label="required">*</span></h3>
-    <div>
-      <cs-text-field class="aet-textInput"
-        type="text"
-        formControlName="teamName"
-        [textValue]="team.teamName"
-        [placeholder]="'Team Name'"
-        [required]="true"
-        (onChange)="teamNameChange($event)"
-        required>
-      </cs-text-field>
+  <div modalContent id="addEditTeamModal-content">
+    <div class="aet-teamName">
+      <h3 class="label">
+        Team Name <span class="at-required" aria-label="required">*</span>
+      </h3>
+      <div>
+        <crem-input
+          #TeamNameTextBox
+          class="aet-textInput"
+          [state]="'active'"
+          [showHint]="false"
+          [showLabel]="false"
+          [showInfo]="false"
+          [inputType]="'text'"
+          [value]="team.teamName"
+          id="aet-teamNameInputId"
+          [required]="true"
+          [placeholder]="'Team Name'"
+          (valueChange)="teamNameChange($event)"
+        ></crem-input>
+      </div>
     </div>
-  </div>
-  <div id="aet-members">
-    <h3 class="label">Members</h3>
-    <div id="container">
-      <dx-drop-down-box 
+    <div id="aet-members">
+      <h3 class="label">Members</h3>
+      <div id="container">
+        <dx-drop-down-box
           class="aet-membersDropDown"
           placeholder="Start typing to search for additional users."
-          [(opened)]="isDropDownBoxOpened" 
+          [(opened)]="isDropDownBoxOpened"
           (onInput)="searchTeamMembers($event.event.target.value)"
           (onEnterKey)="toggleList()"
           (onClick)="focusOnDropDownInput($event)"
@@ -33,141 +40,264 @@
           (onOpened)="focusOnDropDownInput($event)"
           [acceptCustomValue]="true"
           [openOnFieldClick]="false"
-          [inputAttr]="{'aria-label': 'Enter Matching Criteria', 'name': 'selectionCriteria'}"
-      >
-          <dx-list 
-              #SelectionMembersList
-              id="aet-membersList"
-              [dataSource]="filteredMembers" 
-              itemTemplate="membersListTemplate"
-              [activeStateEnabled]="false" 
-              [elementAttr]="{'aria-label': 'List of Members to Select'}"
-              (onItemClick)="onItemClicked($event)"
-              (onItemRendered)="onItemRendered($event)"
-
+          [inputAttr]="{
+            'aria-label': 'Enter Matching Criteria',
+            name: 'selectionCriteria'
+          }"
+        >
+          <dx-list
+            #SelectionMembersList
+            id="aet-membersList"
+            [dataSource]="filteredMembers"
+            itemTemplate="membersListTemplate"
+            [activeStateEnabled]="false"
+            [elementAttr]="{ 'aria-label': 'List of Members to Select' }"
+            (onItemClick)="onItemClicked($event)"
+            (onItemRendered)="onItemRendered($event)"
           >
-            <div *dxTemplate="let member of 'membersListTemplate'"  >
+            <div *dxTemplate="let member of 'membersListTemplate'">
               <div aria-label="click to add a member to the team">
-                <span class="aet-addPlusIcon"><mat-icon>add_circle</mat-icon></span>
+                <span class="aet-addPlusIcon"
+                  ><mat-icon>add_circle</mat-icon></span
+                >
                 <span class="aet-memberData">
-                  <span class=aet-memberName>{{member.Name}}</span>
-                  <span class="aet-company"> - {{member.Company}}</span>
-                  <span class="aet-email"> - {{member.Email}}</span>
+                  <span class="aet-memberName">{{ member.Name }}</span>
+                  <span class="aet-company"> - {{ member.Company }}</span>
+                  <span class="aet-email"> - {{ member.Email }}</span>
                 </span>
-              </div>  
+              </div>
             </div>
           </dx-list>
-      </dx-drop-down-box>
+        </dx-drop-down-box>
+      </div>
     </div>
-  </div>
-  <div id="aet-selectedMembers">
-    <div id="aet-remove-members">
-      <crem-button type="secondary" (click)="removeMembers(); $event.preventDefault();" [disabled]="removeDisabled" class="aet-removeSelected">
-        <fa-icon [icon]="faCircleMinus" class="aet-removeIcon"></fa-icon>
-        <span class="aet-removeText" >Remove</span>
-      </crem-button>
-    </div>
-    <div id="aet-selectedMembers-container">
-      <div class="aet-selectedMembers-dataGrid-wrapper"> 
-        <dx-data-grid class="aet-selectedMembers-data-grid" id="addTeam-grid"
-          #SelectedMembersGrid
-          [showColumnLines]="false"
-          [showRowLines]="false"
-          [showBorders]="false"
-          [rowAlternationEnabled]="true"
-          [allowColumnResizing]="true"
-          [noDataText]="noDataText"
-          columnResizingMode="widget"
-          [allowColumnReordering]="true"
-          [columnAutoWidth]="false"
-          [dataSource]="team.teamMembers"
-          keyExpr="contactId"
-          [width]="'100%'"
-          [wordWrapEnabled]="true"
-          (onContentReady)="setAttributes($event)"
-          (onSelectionChanged)="onMemberSelectionChanged($event)"
-          (onEditorPreparing)="editorPreparing($event)"
+    <div id="aet-selectedMembers">
+      <div id="aet-remove-members">
+        <crem-button
+          type="secondary"
+          (click)="removeMembers(); $event.preventDefault()"
+          [disabled]="removeDisabled"
+          class="aet-removeSelected"
         >
-          <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-          <dxo-sorting mode="multiple"></dxo-sorting> 
-          <dxo-paging [enabled]="false"></dxo-paging>
-
-          <dxo-selection 
-            selectAllMode="allPages"
-            showCheckBoxesMode="always"
-            mode="multiple">
-          </dxo-selection>
-
-          <dxo-editing
-            mode="cell"
-            [allowUpdating]="true"
-            [allowDeleting]="true"
-            [allowAdding]="false"
+          <fa-icon [icon]="faCircleMinus" class="aet-removeIcon"></fa-icon>
+          <span class="aet-removeText">Remove</span>
+        </crem-button>
+      </div>
+      <div id="aet-selectedMembers-container">
+        <div class="aet-selectedMembers-dataGrid-wrapper">
+          <dx-data-grid
+            class="aet-selectedMembers-data-grid"
+            id="addTeam-grid"
+            #SelectedMembersGrid
+            [showColumnLines]="false"
+            [showRowLines]="false"
+            [showBorders]="false"
+            [rowAlternationEnabled]="true"
+            [allowColumnResizing]="true"
+            [focusedRowEnabled]="true"
+            [noDataText]="noDataText"
+            columnResizingMode="widget"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="false"
+            [dataSource]="team.teamMembers"
+            keyExpr="contactId"
+            (onKeyDown)="onKeyDown($event)"
+            [width]="'100%'"
+            [wordWrapEnabled]="true"
+            (onContentReady)="setAttributes($event); adaAttrNoDataGrid($event)"
+            (onSelectionChanged)="onMemberSelectionChanged($event)"
+            (onEditorPreparing)="editorPreparing($event)"
           >
-          </dxo-editing>
+            <dxo-header-filter
+              [visible]="true"
+              [allowSearch]="true"
+            ></dxo-header-filter>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [enabled]="false"></dxo-paging>
 
-          <dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
-            [allowReordering]="false" [allowResizing]="false">
-          </dxi-column>
-          <dxi-column dataField="name" [allowEditing]="false" dataType="string" cellTemplate="teamMemberNameTemplate"></dxi-column>
-          <dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
-          <dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
-          <dxi-column dataField="phoneNumber" [allowEditing]="false" dataType="string"></dxi-column>
-          <dxi-column dataField="role" dataType="string" aria-label="role" showEditorAlways="true" [setCellValue]="setRoleValue">
-            <dxo-lookup [dataSource]="memberInfo.roles" aria-label="role" valueExpr="role" displayExpr="role"></dxo-lookup>
-          </dxi-column>
-          <dxi-column caption='Email Notifications' alignment="center" [cellTemplate]="'toggleTemplate'">
-          </dxi-column>
-          <dxi-column dataField="level" caption='Access Level' dataType="string" showEditorAlways="true" [setCellValue]="setLevelValue">
-            <dxo-lookup [dataSource]="memberInfo.levels" valueExpr="level" displayExpr="level"></dxo-lookup>
-          </dxi-column>
-          <dxi-column [visible]="showShareColumn" alignment="center" caption='Share' width="90"
-            [cellTemplate]="'sharedToggleTemplate'">
-          </dxi-column>
-          <dxi-column caption="" type="buttons" width="40" [fixed]="true" fixedPosition="right" [allowSorting]="false"
-            [allowReordering]="false" [allowResizing]="false">
-            <dxi-button template="actionsMenuTemplate">
-              <div *dxTemplate="let member of 'actionsMenuTemplate'" class="actionsMenuTemplate">
-                <button aria-label="actions menu" class="btn btn-link teamMemberActionsButton" id="{{'memberDelete' + member.rowIndex}}"
-                  *ngIf="!member.data.editMode"
-                  (click)="removeMember(member.data.contactId);$event.preventDefault()" [matMenuTriggerFor]="teamMemberActionsMenu">
-                  <fa-icon [icon]="faCircleMinus" ></fa-icon>
-                </button>
+            <dxo-selection
+              selectAllMode="allPages"
+              showCheckBoxesMode="always"
+              mode="multiple"
+            >
+            </dxo-selection>
+
+            <dxo-editing
+              mode="cell"
+              [allowUpdating]="true"
+              [allowDeleting]="true"
+              [allowAdding]="false"
+            >
+            </dxo-editing>
+
+            <dxi-column
+              type="selection"
+              [width]="40"
+              [fixed]="true"
+              fixedPosition="left"
+              [allowSorting]="false"
+              [allowReordering]="false"
+              [allowResizing]="false"
+            >
+            </dxi-column>
+            <dxi-column
+              dataField="name"
+              [allowEditing]="false"
+              dataType="string"
+              cellTemplate="teamMemberNameTemplate"
+            ></dxi-column>
+            <dxi-column
+              dataField="company"
+              [allowEditing]="false"
+              dataType="string"
+            ></dxi-column>
+            <dxi-column
+              dataField="email"
+              [allowEditing]="false"
+              dataType="string"
+            ></dxi-column>
+            <dxi-column
+              dataField="phoneNumber"
+              [allowEditing]="false"
+              dataType="string"
+            ></dxi-column>
+            <dxi-column
+              dataField="role"
+              dataType="string"
+              aria-label="role"
+              showEditorAlways="true"
+              [setCellValue]="setRoleValue"
+            >
+              <dxo-lookup
+                [dataSource]="memberInfo.roles"
+                aria-label="role"
+                valueExpr="role"
+                displayExpr="role"
+              ></dxo-lookup>
+            </dxi-column>
+            <dxi-column
+              caption="Email Notifications"
+              alignment="center"
+              [cellTemplate]="'toggleTemplate'"
+            >
+            </dxi-column>
+            <dxi-column
+              dataField="level"
+              caption="Access Level"
+              alignment="center"
+              dataType="string"
+              showEditorAlways="true"
+              [setCellValue]="setLevelValue"
+            >
+              <dxo-lookup
+                [dataSource]="memberInfo.levels"
+                valueExpr="value"
+                displayExpr="level"
+              ></dxo-lookup>
+            </dxi-column>
+            <dxi-column
+              [visible]="showShareColumn"
+              alignment="center"
+              caption="Share"
+              width="90"
+              [cellTemplate]="'sharedToggleTemplate'"
+            >
+            </dxi-column>
+            <dxi-column
+              caption=""
+              type="buttons"
+              width="40"
+              [fixed]="true"
+              fixedPosition="right"
+              [allowSorting]="false"
+              [allowReordering]="false"
+              [allowResizing]="false"
+            >
+              <dxi-button template="actionsMenuTemplate">
+                <div
+                  *dxTemplate="let member of 'actionsMenuTemplate'"
+                  class="actionsMenuTemplate"
+                >
+                  <button
+                    aria-label="actions menu"
+                    class="btn btn-link teamMemberActionsButton"
+                    id="{{ 'memberDelete' + member.rowIndex }}"
+                    *ngIf="!member.data.editMode"
+                    (click)="
+                      removeMember(member.data.contactId);
+                      $event.preventDefault()
+                    "
+                    [matMenuTriggerFor]="teamMemberActionsMenu"
+                  >
+                    <fa-icon [icon]="faCircleMinus"></fa-icon>
+                  </button>
+                </div>
+              </dxi-button>
+            </dxi-column>
+            <div
+              *dxTemplate="let member of 'teamMemberNameTemplate'"
+              class="ptm-teamMemberTemplate"
+            >
+              <div class="aet-memberNameAndInfo">
+                <span class="aet-memberName"> {{ member.data.name }}</span>
+                <span
+                  class="aet-info"
+                  *ngIf="!member.data.isActive || !member.data.allowLogOn"
+                >
+                  <crem-tooltip
+                    [externalId]="
+                      'aetToolTipId' +
+                      member.data.contactId +
+                      member.data.teamId
+                    "
+                    [helpTextData]="teamMemberInfo"
+                  ></crem-tooltip>
+                </span>
               </div>
-            </dxi-button>		    	
-          </dxi-column>
-          <div *dxTemplate="let member of 'teamMemberNameTemplate'" class="ptm-teamMemberTemplate" >
-            <div class="aet-memberNameAndInfo">
-              <span class="aet-memberName"> {{member.data.name}}</span>
-              <span class="aet-info" *ngIf="!member.data.isActive || !member.data.allowLogOn">
-                <crem-tooltip
-                  [externalId]="'aetToolTipId' + member.data.contactId + member.data.teamId"
-                  [helpTextData]="teamMemberInfo"
-                ></crem-tooltip>
-              </span>	
             </div>
-          </div>
-          <div *dxTemplate="let member of 'toggleTemplate'" >
-            <div class="emailToggle">
-              <mat-slide-toggle [checked]="member.data.emailOn"  (change)="emailtoggle(member.data, $event)" aria-label="Email Notication">
-              </mat-slide-toggle>
-            </div>		
-          </div>
-          <div *dxTemplate="let member of 'sharedToggleTemplate'" >
-            <div class="sharedToggle">
-              <mat-slide-toggle  [checked]="member.data.share" (change)="sharedtoggle(member.data, $event)" aria-label="Shared">
-              </mat-slide-toggle>
+            <div *dxTemplate="let member of 'toggleTemplate'">
+              <div class="emailToggle">
+                <crem-toggle-slider
+                  id="aet-emailTgle-slider"
+                  [value]="member.data.emailOn"
+                  checkedLabel="On"
+                  uncheckedLabel="Off"
+                  [size]="'wide'"
+                  ariaLabel="Email Notication"
+                  (selectionChange)="emailtoggle(member.data, $event)"
+                ></crem-toggle-slider>
+              </div>
             </div>
-          </div>
-            </dx-data-grid>
+            <div *dxTemplate="let member of 'sharedToggleTemplate'">
+              <div class="sharedToggle">
+                <crem-toggle-slider
+                  id="aet-sharedTgle-slider"
+                  [value]="member.data.share"
+                  checkedLabel="On"
+                  uncheckedLabel="Off"
+                  [size]="'wide'"
+                  ariaLabel="Shared"
+                  (selectionChange)="sharedtoggle(member.data, $event)"
+                ></crem-toggle-slider>
+              </div>
+            </div>
+          </dx-data-grid>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div modalFooter class="addEditTeamModal-footerContent">
-  <div id="buttonTemplate" class="footerRightControls">
-    <crem-button  type="secondary" id="close-btn" (click)="cancelChanges()"> Cancel </crem-button>
-		<crem-button  [disabled]="saveBtnClicked" type="primary" (click)="saveTeam()"> Save </crem-button>
+  <div modalFooter class="addEditTeamModal-footerContent">
+    <div id="buttonTemplate" class="footerRightControls">
+      <crem-button type="secondary" id="close-btn" (click)="cancelChanges()">
+        Cancel
+      </crem-button>
+      <crem-button
+        [disabled]="saveBtnClicked"
+        type="primary"
+        (click)="saveTeam()"
+      >
+        Save
+      </crem-button>
+    </div>
   </div>
-</div>
 </crem-modal>

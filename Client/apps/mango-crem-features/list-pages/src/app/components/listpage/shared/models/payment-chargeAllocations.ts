@@ -10,10 +10,9 @@ export interface ChargeAllocations {
   gLAllocationName3: string;
   gLAllocationsID4: number;
   gLAllocationName4: string;
-  costPercent: number;   //decimal on the backend
-  spacePercent: number;   //decimal on the weekend
-  headCount: number;  //decimal on the backend;
+  costPercent: number; //decimal on the backend
+  spacePercent: number; //decimal on the weekend
+  headCount: number; //decimal on the backend;
   status: string;
   useType: string;
 }
-  

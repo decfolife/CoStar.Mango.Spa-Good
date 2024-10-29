@@ -9,9 +9,7 @@ import { SearchModule } from '@mango/ui-shared/cosmos';
 import { ButtonModule } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
-  declarations: [
-    GroupUserBlockedAdminLinksComponent
-  ],
+  declarations: [GroupUserBlockedAdminLinksComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -22,14 +20,11 @@ import { ButtonModule } from '@mango/ui-shared/lib-ui-elements';
       {
         path: '',
         data: { pageTitle: 'Group and User Blocked Admin Links' },
-        component: GroupUserBlockedAdminLinksComponent
-      }
-    ])
+        component: GroupUserBlockedAdminLinksComponent,
+      },
+    ]),
   ],
   exports: [RouterModule],
-  providers: [
-    DatePipe,
-    GroupUserBlockedAdminLinksService
-  ]
+  providers: [DatePipe, GroupUserBlockedAdminLinksService],
 })
-export class GroupUserBlockedAdminLinksModule { }
+export class GroupUserBlockedAdminLinksModule {}

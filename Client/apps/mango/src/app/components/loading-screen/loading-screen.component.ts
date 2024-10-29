@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 @Component({
   selector: 'mango-loading-screen',
   templateUrl: './loading-screen.component.html',
-  styleUrls: ['./loading-screen.component.scss']
+  styleUrls: ['./loading-screen.component.scss'],
 })
 
 /**
@@ -17,14 +17,12 @@ import { Component, Input, OnInit } from '@angular/core';
  * @param {boolean} showSpinner: show/hides the element
  */
 export class LoadingScreenComponent {
-
   @Input() loading: boolean;
   @Input() color: string;
   @Input() showLogo = true;
   @Input() tagline: string;
   @Input() showSpinner = true;
   @Input() text: string;
-
 
   public getCssClasses() {
     return {
@@ -34,6 +32,6 @@ export class LoadingScreenComponent {
       dark: this.color === 'dark',
       loading: this.loading === false,
       loaded: this.loading === true,
-    }
+    };
   }
 }

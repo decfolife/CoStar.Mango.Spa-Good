@@ -1,4 +1,4 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 label {
   display: flex;
@@ -17,7 +17,8 @@ label {
   }
 
   // Prevent Superscripts and Subscripts from Affecting Line-Height
-  sup, sub {
+  sup,
+  sub {
     @include costar(color, danger);
     top: -0.4em;
     position: relative;

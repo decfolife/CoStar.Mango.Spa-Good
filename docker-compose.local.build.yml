@@ -6,7 +6,7 @@ services:
     image: nginx:latest
     container_name: mango-app
     ports:
-      - 8000:8000
+      - 4200:8000
     volumes:
       - ./Client/config/nginx-spa.conf:/etc/nginx/nginx.conf:ro
       - ./Client/dist/apps/mango:/usr/share/nginx/html

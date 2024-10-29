@@ -8,9 +8,8 @@ describe('ListViewMenuComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ListViewMenuComponent ]
-    })
-    .compileComponents();
+      declarations: [ListViewMenuComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

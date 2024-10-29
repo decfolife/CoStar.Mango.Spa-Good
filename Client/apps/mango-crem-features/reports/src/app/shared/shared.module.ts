@@ -7,11 +7,8 @@ import { UserListResolver } from './resolvers/user-list-resolver.service';
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule],
 })
-
 export class SharedModule {
   static forRoot(): ModuleWithProviders<SharedModule> {
     return {
@@ -20,8 +17,8 @@ export class SharedModule {
         SharedService,
         UserListResolver,
         GroupListResolver,
-        PortfolioListResolver
-      ]
+        PortfolioListResolver,
+      ],
     };
   }
 }

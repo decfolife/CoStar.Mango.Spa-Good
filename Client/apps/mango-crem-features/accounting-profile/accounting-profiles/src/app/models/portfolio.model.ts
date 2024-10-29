@@ -10,8 +10,8 @@
 /* eslint-disable import/prefer-default-export */
 
 export class Portfolio {
-    companyID: number;
-    companyName: string;
-    masterGroupID: number;
-    companyHierarchyLevels: number;
+  companyID: number;
+  companyName: string;
+  masterGroupID: number;
+  companyHierarchyLevels: number;
 }

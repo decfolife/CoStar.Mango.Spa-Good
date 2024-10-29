@@ -1,13 +1,19 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+} from '@angular/core';
 
 import notify from 'devextreme/ui/notify';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import 'regenerator-runtime/runtime';
 import { Buffer, Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
-import {
-  faCaretDown
-} from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 import { AlertsService } from '../shared/service/alerts.service';
 import { AlertsGridComponent } from '../alerts-grid/alerts-grid.component';
@@ -18,7 +24,7 @@ const LEASE_ALERTS_MODULE_ID = 186;
 @Component({
   selector: 'mango-alerts-lease-alerts-controls',
   templateUrl: './lease-alerts-controls.component.html',
-  styleUrls: ['./lease-alerts-controls.component.scss']
+  styleUrls: ['./lease-alerts-controls.component.scss'],
 })
 export class LeaseAlertsControlsComponent implements OnInit {
   @Input()
@@ -63,15 +69,19 @@ export class LeaseAlertsControlsComponent implements OnInit {
 
   faCaretDown = faCaretDown;
 
-  constructor(private service: AlertsService) { }
+  constructor(
+    private service: AlertsService,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
+    this.cdRef.detectChanges();
     this.showActiveLeases = !this.isPopupView;
     this.showArchivedLeases = false;
     this.showAllLeases = this.isPopupView;
     this.currentLeaseStatusFilter = this.isPopupView ? 'all' : 'active';
 
-    this.service.getUserModuleRights().subscribe(res => {
+    this.service.getUserModuleRights().subscribe((res) => {
       const rights = (res.data as ModuleRight[]).find(
         (x: ModuleRight) => x.moduleId === LEASE_ALERTS_MODULE_ID
       );
@@ -84,28 +94,33 @@ export class LeaseAlertsControlsComponent implements OnInit {
     });
 
     const dateFormatElement = document.getElementById('isEuropeanDateFormat');
-    this.service.isEuroDateFormat = (dateFormatElement?.innerText === 'true');
+    this.service.isEuroDateFormat = dateFormatElement?.innerText === 'true';
 
     if (this.isPopupView) {
       return;
     }
 
-    this.service.getPortfolios().subscribe(res => {
+    this.service.getPortfolios().subscribe((res) => {
       this.portfolios = res.data.portfolios as Portfolio[];
     });
 
     this.sessionState = this.loadSessionState();
 
     if (this.sessionState !== null && !this.isPopupView) {
-      this.currentLeaseStatusFilter = this.sessionState.currentLeaseStatusFilter;
-      this.showActiveLeases = this.sessionState.currentLeaseStatusFilter === 'active';
-      this.showArchivedLeases = this.sessionState.currentLeaseStatusFilter === 'archived';
+      this.currentLeaseStatusFilter =
+        this.sessionState.currentLeaseStatusFilter;
+      this.showActiveLeases =
+        this.sessionState.currentLeaseStatusFilter === 'active';
+      this.showArchivedLeases =
+        this.sessionState.currentLeaseStatusFilter === 'archived';
       this.showAllLeases = this.sessionState.currentLeaseStatusFilter === 'all';
 
       this.searchText = this.sessionState.currentSearch;
       this.currentPortfolio = this.sessionState.currentPortfolio;
       this.showDismissed = this.sessionState.showDismissed;
       this.isAllExpanded = this.sessionState.isAllExpanded;
+
+      this.cdRef.detectChanges();
     }
   }
 
@@ -125,9 +140,12 @@ export class LeaseAlertsControlsComponent implements OnInit {
     this.currentLeaseStatusFilter = evt.value;
 
     this.leaseStatusTooltipVisible = false;
-    setTimeout(() => this.leaseStatusTooltipVisible = true, 10);
+    setTimeout(() => (this.leaseStatusTooltipVisible = true), 10);
 
-    this.alertsGrid.filterLeases(this.currentPortfolio, this.currentLeaseStatusFilter);
+    this.alertsGrid.filterLeases(
+      this.currentPortfolio,
+      this.currentLeaseStatusFilter
+    );
   }
 
   gridSelectionChanged(numberSelected: number) {
@@ -141,7 +159,10 @@ export class LeaseAlertsControlsComponent implements OnInit {
   portfolioChanged(portfolio: Portfolio) {
     this.currentPortfolio = portfolio;
 
-    this.alertsGrid.filterLeases(this.currentPortfolio, this.currentLeaseStatusFilter);
+    this.alertsGrid.filterLeases(
+      this.currentPortfolio,
+      this.currentLeaseStatusFilter
+    );
   }
 
   showFilterBuilder() {
@@ -173,14 +194,20 @@ export class LeaseAlertsControlsComponent implements OnInit {
     exportDataGrid({
       component: this.alertsGrid.leaseAlertsGrid.instance,
       worksheet: leaseAlertWorksheet,
-    }).then(() => {
-      workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
-        saveAs(new Blob([ buffer ], { type: 'application/octet-stream' }),
-          'Lease Alerts.xlsx');
-      });
+    })
+      .then(() => {
+        workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
+          saveAs(
+            new Blob([buffer], { type: 'application/octet-stream' }),
+            'Lease Alerts.xlsx'
+          );
+        });
 
-      this.isExporting = false;
-    }).catch(() => { this.isExporting = false; });
+        this.isExporting = false;
+      })
+      .catch(() => {
+        this.isExporting = false;
+      });
   }
 
   toggleSelected() {
@@ -194,35 +221,53 @@ export class LeaseAlertsControlsComponent implements OnInit {
   refreshAlerts() {
     this.showLoading = true;
     this.refreshingAlerts = true;
-    this.service.runLeaseAlertRulesByLeaseAbstractID(this.leaseAbstractID).subscribe((res: ApiResponse) => {
-      if (res.success) {
-        this.alertsGrid.filterLeases(this.alertsGrid.currentPortfolio, this.currentLeaseStatusFilter);
-      }
+    this.service
+      .runLeaseAlertRulesByLeaseAbstractID(this.leaseAbstractID)
+      .subscribe(
+        (res: ApiResponse) => {
+          if (res.success) {
+            this.alertsGrid.filterLeases(
+              this.alertsGrid.currentPortfolio,
+              this.currentLeaseStatusFilter
+            );
+          }
 
-      notify({
-        message: res.success ? 'Alerts successfully refreshed' : 'There was an issue while refreshing alerts',
-        type: res.success ? 'success' : 'error',
-        displayTime: 3000,
-        position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
+          notify({
+            message: res.success
+              ? 'Alerts successfully refreshed'
+              : 'There was an issue while refreshing alerts',
+            type: res.success ? 'success' : 'error',
+            displayTime: 3000,
+            position: {
+              my: 'bottom right',
+              at: 'bottom right',
+              offset: '-16 -16',
+            },
+            maxWidth: '400px',
+            closeOnClick: true,
+          });
 
-      this.refreshCachedDate.emit();
-      this.refreshingAlerts = false;
-      this.showLoading = false;
-    }, () => {
-      notify({
-        message: 'There was an issue while refreshing alerts',
-        type: 'error',
-        displayTime: 3000,
-        position: { my: 'bottom right', at: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
+          this.refreshCachedDate.emit();
+          this.refreshingAlerts = false;
+          this.showLoading = false;
+        },
+        () => {
+          notify({
+            message: 'There was an issue while refreshing alerts',
+            type: 'error',
+            displayTime: 3000,
+            position: {
+              my: 'bottom right',
+              at: 'bottom right',
+              offset: '-16 -16',
+            },
+            maxWidth: '400px',
+            closeOnClick: true,
+          });
 
-      this.refreshingAlerts = false;
-    });
+          this.refreshingAlerts = false;
+        }
+      );
   }
 
   getRefreshButtonText(): string {
@@ -231,7 +276,10 @@ export class LeaseAlertsControlsComponent implements OnInit {
 
   setIsDismissedFilter(isDismissed: boolean) {
     this.alertsGrid.isDismissed = isDismissed;
-    this.alertsGrid.filterLeases(this.currentPortfolio, this.currentLeaseStatusFilter);
+    this.alertsGrid.filterLeases(
+      this.currentPortfolio,
+      this.currentLeaseStatusFilter
+    );
   }
 
   collapseExpandAll() {
@@ -248,6 +296,8 @@ export class LeaseAlertsControlsComponent implements OnInit {
   }
 
   private loadSessionState() {
-    return JSON.parse(sessionStorage.getItem('leaseAlertsListPageSessionState'));
+    return JSON.parse(
+      sessionStorage.getItem('leaseAlertsListPageSessionState')
+    );
   }
 }

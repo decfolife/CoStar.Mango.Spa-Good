@@ -1,4 +1,4 @@
 export interface DefaultContactRecordSelection {
-    defaultLoginContactId: number
-    isDefaultLoginContact?: boolean
+  defaultLoginContactId: number;
+  isDefaultLoginContact?: boolean;
 }

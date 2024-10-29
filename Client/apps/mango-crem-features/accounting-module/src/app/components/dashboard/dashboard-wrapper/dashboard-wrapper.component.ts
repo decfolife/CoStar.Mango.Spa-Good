@@ -8,27 +8,33 @@ import { UserSettingsComponent } from '../modal/user-settings/user-settings.comp
 import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
 import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
 import { Asc842QuarterlyDisclosuresComponent } from '../views/asc-842-quarterly-disclosures/asc-842-quarterly-disclosures.component';
-import { Ifrs16AnnualDisclosuresComponent } from '../views/ifrs-16-annual-disclosures/ifrs-16-annual-disclosures.component';
+import { MangoDisclosureViewComponent } from '../views/disclosure-dashboard-view/disclosure-dashboard-view.component';
 import { switchMap, tap } from 'rxjs/operators';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
-import { ToastState } from '@mango/data-models/lib-data-models';
-import { CreateSegmentComponent } from '@reports/components/modal/create-segment/create-segment.component'
+import {
+  DashboardConfig,
+  ToastState,
+} from '@mango/data-models/lib-data-models';
+import { CreateSegmentComponent } from '@reports/components/modal/create-segment/create-segment.component';
 
 import { ModuleDropdownUtil } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/util/module.util';
-import { selectBoxMenuItems, byItemMoreMenuOptions } from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
+import {
+  selectBoxMenuItems,
+  byItemMoreMenuOptions,
+} from 'libs/ui-shared/lib-ui-elements/src/lib/dropdown/definitions';
 import { ReportsService } from '@reports/services/reports.service';
 import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 import { UserService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
-
-export interface DropdownSelection { // Todo: Move to type definition file
-  display: string,
-  id: number,
+export interface DropdownSelection {
+  // Todo: Move to type definition file
+  display: string;
+  id: number;
 }
 export interface AccountingViewData {
-	id: number;
-	displayValue: string;
+  id: number;
+  displayValue: string;
 }
 
 @Component({
@@ -41,24 +47,24 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public accountingViewData: AccountingViewData[] = [
     {
       id: 1,
-      displayValue: "Workflow and Alerts"
+      displayValue: 'Workflow and Alerts',
     },
     {
       id: 2,
-      displayValue: "ASC 842 Annual Disclosures"
+      displayValue: 'ASC 842 Annual Disclosures',
     },
     {
       id: 3,
-      displayValue: "ASC 842 Quarterly Disclosures"
+      displayValue: 'ASC 842 Quarterly Disclosures',
     },
     {
       id: 4,
-      displayValue: "IFRS 16 Annual Disclosures"
+      displayValue: 'IFRS 16 Annual Disclosures',
     },
     {
       id: 5,
-      displayValue: "IFRS 16 Quarterly Disclosures"
-    }
+      displayValue: 'IFRS 16 Quarterly Disclosures',
+    },
   ];
   public accountingYearData: any[] = [];
   public accountingSegmentData: any[] = [];
@@ -73,7 +79,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public hasSegmentDeleteRight: boolean;
   public hasSegmentsAddRight: boolean;
   public hasSegmentsViewRight: boolean;
-  public isSegmentEdited =  false as boolean;
+  public isSegmentEdited = false as boolean;
   public editingSegment: number;
   public selectedCurrency: string;
 
@@ -92,9 +98,13 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   bySegmentMoreMenuOptions: byItemMoreMenuOptions;
 
   @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
-  @ViewChild(Asc842QuarterlyDisclosuresComponent) Asc842QuarterlyDisclosuresComponent;
+  @ViewChild(Asc842QuarterlyDisclosuresComponent)
+  Asc842QuarterlyDisclosuresComponent;
   @ViewChild(WorkflowAndAlertsComponent) workflowAndAlertsComponent;
-  @ViewChild(Ifrs16AnnualDisclosuresComponent) ifrs16AnnualDisclosuresComponent;
+
+  viewConfiguration: DashboardConfig;
+  @ViewChild(MangoDisclosureViewComponent) MangoDisclosureIFRSAnnually;
+  @ViewChild(MangoDisclosureViewComponent) MangoDisclosureIFRSQuarterly;
 
   constructor(
     private inAppDisclosureService: InAppDisclosureService,
@@ -105,11 +115,18 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     private toastService: CremToastService
   ) {
     this.itemMenuInnerOptions = [
+      // todo: This needs to be moved to a conf file
       {
         type: 'menu',
         name: 'Make Default',
         attribute: 'segmentID',
-        action: () => this.setDefaultSegment(this.moreMenuSegment.segmentID, this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet),
+        action: () =>
+          this.setDefaultSegment(
+            this.moreMenuSegment.segmentID,
+            this.selectedView == 1
+              ? this.workflowAlertsCriteriaSet
+              : this.criteriaSet
+          ),
         stopPropagation: true,
         transform: [
           {
@@ -117,7 +134,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
             operator: '=',
             comparingValue: 1,
             disabled: true,
-            title: 'This segment is already the default option.'
+            title: 'This segment is already the default option.',
           },
         ],
       },
@@ -135,7 +152,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
             comparingKey: 'activeRecordsVisibleToMe',
             operator: '=',
             comparingValue: true,
-            title: "This segment is automatically generated and includes all records accessible to you.",
+            title:
+              'This segment is automatically generated and includes all records accessible to you.',
             disabled: true,
           },
           {
@@ -154,9 +172,9 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         // deprecated option: 'dataTransformer' and 'comparingValue',  use the 'transform' option instead
         comparingValue: 'rights',
         dataTransformer: [
-          {condition: 'View', name: 'View'},
-          {condition: 'Edit', name: 'Edit'},
-          {condition: 'Delete', name: 'Edit'},
+          { condition: 'View', name: 'View' },
+          { condition: 'Edit', name: 'Edit' },
+          { condition: 'Delete', name: 'Edit' },
         ],
       },
       {
@@ -175,15 +193,17 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
             operator: '=',
             comparingValue: 4,
             disabled: true,
-            title:'You have Edit rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.',
+            title:
+              'You have Edit rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.',
           },
-            {
-              comparingKey: 'securityTypeID',
-              operator: '=',
-              comparingValue: 2,
-              disabled: true,
-              title:'You have View rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.',
-            },
+          {
+            comparingKey: 'securityTypeID',
+            operator: '=',
+            comparingValue: 2,
+            disabled: true,
+            title:
+              'You have View rights to this segment. Ask your administrator to grant you Delete rights to archive this segment.',
+          },
         ],
       },
     ];
@@ -192,36 +212,49 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.selectedYear = new Date().getFullYear();
     this.featureFlagEnabled = true;
-    this.subs.push( // todo: this sequence of subscriptions needs to be inside a pipe or a forkjoin
-      this.inAppDisclosureService.getAccountingCriteriaSets().subscribe((result) => {
-        this.criteriaSet = result.data[0].CriteriaSetID;
+    this.subs.push(
+      // todo: this sequence of subscriptions needs to be inside a pipe or a forkjoin
+      this.inAppDisclosureService
+        .getAccountingCriteriaSets()
+        .subscribe((result) => {
+          this.criteriaSet = result.data[0].CriteriaSetID;
 
-        if(result.data.length <= 1 ) {
-          this.loading = false;
-          return;
-        }
+          if (result.data.length <= 1) {
+            this.loading = false;
+            return;
+          }
 
-        this.workflowAlertsCriteriaSet = result.data[1].CriteriaSetID;
-        const observableItem =
-          this.inAppDisclosureService.getSegments(this.selectedView == 1 ? this.workflowAlertsCriteriaSet: this.criteriaSet, false)
-            .subscribe( (r) => {
+          this.workflowAlertsCriteriaSet = result.data[1].CriteriaSetID;
+          const observableItem = this.inAppDisclosureService
+            .getSegments(
+              this.selectedView == 1
+                ? this.workflowAlertsCriteriaSet
+                : this.criteriaSet,
+              false
+            )
+            .subscribe((r) => {
               this.accountingYearData = [];
-              for(let i = 10; i > -11; i--) {
+              for (let i = 10; i > -11; i--) {
                 this.accountingYearData.push({
-                  value: this.selectedYear + i
+                  value: this.selectedYear + i,
                 });
               }
               //fetch criteriaSetID for each view;
               this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-              this.bySegmentMoreMenuOptions = ModuleDropdownUtil.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
-              this.selectedSegment = this.accountingSegmentData?.find(s => s.default === 1)?.segmentID || this.accountingSegmentData?.[0].segmentID;
+              this.bySegmentMoreMenuOptions =
+                ModuleDropdownUtil.prepareMoreMenu(
+                  this.accountingSegmentData,
+                  this.itemMenuInnerOptions
+                );
+              this.selectedSegment =
+                this.accountingSegmentData?.find((s) => s.default === 1)
+                  ?.segmentID || this.accountingSegmentData?.[0].segmentID;
               this.appliedSegment = this.selectedSegment;
               this.loading = false;
             });
-        this.subs.push(observableItem);
-
-      }
-    ));
+          this.subs.push(observableItem);
+        })
+    );
     this.subs.push(
       this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
         if (result.data) {
@@ -235,54 +268,75 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     this.subs.push(
       this.facade.contactRecord$.subscribe((record) => {
         const selectedCurrencyID = record.preferences?.contactCurrency;
-        this.userService.currencyMappingTable$.subscribe((currencyMappingTable) => {
-          this.selectedCurrency = currencyMappingTable.filter((currency) => currency.currencyID === selectedCurrencyID)[0].currencyISO;
-        })
+        this.userService.currencyMappingTable$.subscribe(
+          (currencyMappingTable) => {
+            this.selectedCurrency = currencyMappingTable.filter(
+              (currency) => currency.currencyID === selectedCurrencyID
+            )[0].currencyISO;
+          }
+        );
       })
-    )
+    );
   }
 
-  setDefaultSegment(segmentID: number, criteriaSetID: number): void{
-    const setDefault$: Subscription = this.inAppDisclosureService.SetDefault(segmentID, criteriaSetID)
+  setDefaultSegment(segmentID: number, criteriaSetID: number): void {
+    const setDefault$: Subscription = this.inAppDisclosureService
+      .SetDefault(segmentID, criteriaSetID)
       .subscribe(
-        result => {
+        (result) => {
           if (result.data != -1) {
             this.getSegments(this.selectedView, false); //refresh
           } else {
             console.error('Failed setting the default segment', result.data);
           }
         },
-        error => console.error(error),
+        (error) => console.error(error)
       );
 
     this.subs.push(setDefault$);
   }
 
-  prepareSegmentDropdown(data: any): any { // Transform dropdown options data to be used by crem-dropdown
+  prepareSegmentDropdown(data: any): any {
+    // Transform dropdown options data to be used by crem-dropdown
     const dropdownData = [];
     let visibleToMeIndex: number;
-    data.map( (e,i) => {
-      if( e.default === 1){ // If default is on, add a secondary text
+    data.map((e, i) => {
+      if (e.default === 1) {
+        // If default is on, add a secondary text
         e['secondaryText'] = '(Default)';
       }
-      if( e.activeRecordsVisibleToMe ){ // get the activeRecordsVisibleToMe's Index
+      if (e.activeRecordsVisibleToMe) {
+        // get the activeRecordsVisibleToMe's Index
         visibleToMeIndex = i;
         e['itemClass'] = 'visible-to-me'; // Add moreMenu class to segment 'Active records Visible to me'
       }
-      dropdownData.push(e)
+      dropdownData.push(e);
     });
-    visibleToMeIndex && dropdownData.unshift(dropdownData.splice(visibleToMeIndex,1)[0]); // Move default 'Visible to Me' to index 0, if visibleToMeIndex exists
+    visibleToMeIndex &&
+      dropdownData.unshift(dropdownData.splice(visibleToMeIndex, 1)[0]); // Move default 'Visible to Me' to index 0, if visibleToMeIndex exists
     return dropdownData;
   }
 
-  public onAccountingViewChange(data: DropdownSelection[]) {
-    switch(data[0].id) {
+  async onAccountingViewChange(data: DropdownSelection[]) {
+    this.exportingReport = false;
+    switch (data[0].id) {
       default:
       case 1:
       case 2:
       case 3:
       case 4: {
+        const { dashboardIFRSAnnually } = await import(
+          '@accounting-dashboard/shared/configurations/dashboard-view'
+        );
+        this.viewConfiguration = dashboardIFRSAnnually;
         this.getSegments(data[0].id, true);
+        break;
+      }
+      case 5: {
+        const { dashboardIFRSQuarterly } = await import(
+          '@accounting-dashboard/shared/configurations/dashboard-view'
+        );
+        this.viewConfiguration = dashboardIFRSQuarterly;
         break;
       }
     }
@@ -291,10 +345,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public getSegments(view: number, refresh: boolean) {
     this.accountingSegmentData = [];
 
-    this.inAppDisclosureService.getAccountingCriteriaSets()
+    this.inAppDisclosureService
+      .getAccountingCriteriaSets()
       .pipe(
-        switchMap( r => {
-          switch(view){
+        switchMap((r) => {
+          switch (view) {
             case 1: // Workflow and Alerts
               this.criteriaSet = r.data[1].CriteriaSetID;
               break;
@@ -302,13 +357,21 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               this.criteriaSet = r.data[0].CriteriaSetID;
               break;
           }
-          return this.inAppDisclosureService.getSegments(this.criteriaSet, false);
+          return this.inAppDisclosureService.getSegments(
+            this.criteriaSet,
+            false
+          );
         }),
-        tap( r => {
+        tap((r) => {
           this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-          this.bySegmentMoreMenuOptions = ModuleDropdownUtil.prepareMoreMenu(this.accountingSegmentData, this.itemMenuInnerOptions);
+          this.bySegmentMoreMenuOptions = ModuleDropdownUtil.prepareMoreMenu(
+            this.accountingSegmentData,
+            this.itemMenuInnerOptions
+          );
           if (refresh && !this.isSegmentEdited) {
-            this.selectedSegment = this.accountingSegmentData.find(s => s.default === 1)?.segmentID || this.accountingSegmentData[0].segmentID;
+            this.selectedSegment =
+              this.accountingSegmentData.find((s) => s.default === 1)
+                ?.segmentID || this.accountingSegmentData[0].segmentID;
             this.appliedSegment = this.selectedSegment;
           }
           if (this.isSegmentEdited) {
@@ -317,8 +380,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
           this.selectedView = view;
           this.loading = false;
         })
-      ).subscribe();
-
+      )
+      .subscribe();
   }
 
   public onAccountingYearChange(data) {
@@ -334,7 +397,8 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   public apply() {
-    switch(this.selectedView){
+    this.exportingReport = false;
+    switch (this.selectedView) {
       default:
       case 1: {
         this.workflowAndAlertsComponent.refreshCardData();
@@ -349,7 +413,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         break;
       }
       case 4: {
-        this.ifrs16AnnualDisclosuresComponent.updateCards();
+        this.MangoDisclosureIFRSAnnually.refreshCards();
+        break;
+      }
+      case 5: {
+        this.MangoDisclosureIFRSQuarterly.refreshCards();
         break;
       }
     }
@@ -359,7 +427,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public export() {
     this.exportingReport = true;
     this.toastService.show(
-      "Report will be emailed to you shortly.",
+      'Report will be emailed to you shortly.',
       undefined,
       ToastState.SUCCESS,
       {
@@ -367,42 +435,49 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         duration: 3000,
       }
     );
-    this.inAppDisclosureService.exportIADData(this.selectedSegment, this.selectedYear, this.selectedCurrency, this.selectedView + 2)
-			.subscribe(
-				error => console.error(error),
-			);
-		timer(180000).subscribe( () => this.exportingReport = false );
+    this.inAppDisclosureService
+      .exportIADData(
+        this.selectedSegment,
+        this.selectedYear,
+        this.selectedCurrency,
+        this.selectedView + 2
+      )
+      .subscribe((error) => console.error(error));
+    timer(180000).subscribe(() => (this.exportingReport = false));
   }
 
   launchSettingsModal() {
     this.dialog.open(UserSettingsComponent, {
-       width: '600px',
-       height: '570px',
-       panelClass: 'user-settings-dialog',
-       disableClose: true,
-       data: {
-        modalTitle: this.accountingViewData.find(obj => obj.id === this.selectedView).displayValue,
-       }
+      width: '600px',
+      height: '570px',
+      panelClass: 'user-settings-dialog',
+      disableClose: true,
+      data: {
+        modalTitle: this.accountingViewData.find(
+          (obj) => obj.id === this.selectedView
+        ).displayValue,
+      },
     });
   }
 
-	/**
-	 * Get view Name
-	 *
-	 * @param {number} viewID
-	 * @param {boolean} [safeName=false as boolean]
-	 * @return {*}  {string}
-	 * @memberof DashboardWrapperComponent
-	 */
-	getViewName(viewID: number, safeName = false as boolean): string{
-		if(!safeName){
-			return this.accountingViewData.find( e => e.id === viewID ).displayValue;
-		}
-		return this.accountingViewData.find( e => e.id === viewID ).displayValue
-			.trim()                           // Removes leading and trailing spaces
-			.replace(/\s+/g, '-')             // Replaces inner spaces with hyphens (or remove `.replace` to eliminate spaces)
-			.replace(/[^a-zA-Z0-9-]/g, '');   // Removes non-alphanumeric characters except hyphens
-	}
+  /**
+   * Get view Name
+   *
+   * @param {number} viewID
+   * @param {boolean} [safeName=false as boolean]
+   * @return {*}  {string}
+   * @memberof DashboardWrapperComponent
+   */
+  getViewName(viewID: number, safeName = false as boolean): string {
+    if (!safeName) {
+      return this.accountingViewData.find((e) => e.id === viewID).displayValue;
+    }
+    return this.accountingViewData
+      .find((e) => e.id === viewID)
+      .displayValue.trim() // Removes leading and trailing spaces
+      .replace(/\s+/g, '-') // Replaces inner spaces with hyphens (or remove `.replace` to eliminate spaces)
+      .replace(/[^a-zA-Z0-9-]/g, ''); // Removes non-alphanumeric characters except hyphens
+  }
 
   public edit(data) {
     if (this.hasSegmentsAddRight || this.hasSegmentsViewRight) {
@@ -413,39 +488,39 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         maxHeight: LargeModal.MaxHeight,
         disableClose: true,
         data: {
-          openReportAction: "edit",
+          openReportAction: 'edit',
           segmentID: data.segmentID,
           criteriaSetID: data.criteriaSetID,
           portfolioID: data.portfolioID,
           name: data.name,
           archived: !data.active,
           hideToastsOn: 'Accounting Workflow and Alerts',
-        }
+        },
       });
-      this. editingSegment = data.segmentID;
+      this.editingSegment = data.segmentID;
       dialogRef.afterClosed().subscribe((data) => {
-        if (this. editingSegment == this.appliedSegment) {
-          if (data === "refresh") {
+        if (this.editingSegment == this.appliedSegment) {
+          if (data === 'refresh') {
             this.loading = true;
             this.getSegments(this.selectedView, true);
             this.isSegmentEdited = true;
+            this.exportingReport = false;
           } else if (data) {
-            this.redirectDialog(data)
+            this.redirectDialog(data);
           }
         } else {
-          if (data === "refresh") {
+          if (data === 'refresh') {
             this.getSegments(this.selectedView, false);
           } else if (data) {
-            this.redirectDialog(data)
+            this.redirectDialog(data);
           }
         }
       });
-
     }
   }
 
   public archiveAction(data) {
-    const request: { SegmentID: any } = { "SegmentID": data.segmentID }
+    const request: { SegmentID: any } = { SegmentID: data.segmentID };
     if (data.active) {
       this.reportsService.archiveSegment(request).subscribe((result) => {
         if (result) {
@@ -487,39 +562,46 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       });
     }
     this.archiveActionForDefault(data);
-
   }
 
   /**
    * Handles the archiving logic when a 'default' segment is archived
    */
-  archiveActionForDefault(data:any){
-    if(data.default === 1){// If user archiving the default segment, then make 'Visible to me' the default
-      const visibleTomeSegmentId = this.accountingSegmentData.filter(e=>e.activeRecordsVisibleToMe)[0].segmentID;
-      if(visibleTomeSegmentId){// If 'Visible to me' exists then make it the default
-        this.setDefaultSegment(visibleTomeSegmentId,data.criteriaSetID);
-      } else{ // If 'Visible to me' doesn't exists, select the first element of the list as default
-        this.setDefaultSegment(this.accountingSegmentData[0].segmentID,this.accountingSegmentData[0].criteriaSetID);
+  archiveActionForDefault(data: any) {
+    if (data.default === 1) {
+      // If user archiving the default segment, then make 'Visible to me' the default
+      const visibleTomeSegmentId = this.accountingSegmentData.filter(
+        (e) => e.activeRecordsVisibleToMe
+      )[0].segmentID;
+      if (visibleTomeSegmentId) {
+        // If 'Visible to me' exists then make it the default
+        this.setDefaultSegment(visibleTomeSegmentId, data.criteriaSetID);
+      } else {
+        // If 'Visible to me' doesn't exists, select the first element of the list as default
+        this.setDefaultSegment(
+          this.accountingSegmentData[0].segmentID,
+          this.accountingSegmentData[0].criteriaSetID
+        );
       }
       this.apply(); // Refresh cards view
     }
   }
 
   public redirectDialog(config: any) {
-    const redirectRef = this.dialog.open(CreateSegmentComponent, config)
+    const redirectRef = this.dialog.open(CreateSegmentComponent, config);
     redirectRef.afterClosed().subscribe((data) => {
       if (config.data.segmentID == this.appliedSegment) {
-        if (data === "refresh") {
+        if (data === 'refresh') {
           this.loading = true;
           this.getSegments(this.selectedView, true);
         } else if (data) {
-          this.redirectDialog(config)
+          this.redirectDialog(config);
         }
       } else {
-        if (data === "refresh") {
+        if (data === 'refresh') {
           this.getSegments(this.selectedView, false);
         } else if (data) {
-          this.redirectDialog(config)
+          this.redirectDialog(config);
         }
       }
     });
@@ -530,7 +612,6 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
-
 }

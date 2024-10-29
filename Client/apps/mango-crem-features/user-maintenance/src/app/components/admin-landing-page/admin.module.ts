@@ -25,7 +25,6 @@ import { MatDivider, MatDividerModule } from '@angular/material/divider';
     DevExpressModule,
     SharedModule.forRoot(),
   ],
-  providers: [
-  ],
+  providers: [],
 })
 export class AdminModule {}

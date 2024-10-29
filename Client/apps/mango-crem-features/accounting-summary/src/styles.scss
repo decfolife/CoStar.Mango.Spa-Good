@@ -1,438 +1,464 @@
-@import "primeng/resources/themes/saga-blue/theme.css";
-@import "primeng/resources/primeng.css";
+@import 'primeng/resources/themes/saga-blue/theme.css';
+@import 'primeng/resources/primeng.css';
 
 //**** All styles should go inside of accounting-summary-style-container to prevent styles from   ****//
 //**** bleeding into other components  ****//
 
 .accounting-summary-style-container {
-    .grid-cell-box-shadow {
-        box-shadow: inset 0px 0px 0px 20px #b4cee9;
+  .grid-cell-box-shadow {
+    box-shadow: inset 0px 0px 0px 20px #b4cee9;
+  }
+
+  .header {
+    color: #1b3a6e;
+    font-weight: 500;
+    line-height: 1.3em;
+    margin-bottom: 1em;
+    padding: 0px;
+  }
+
+  .dx-header-row {
+    background-color: rgb(36, 90, 136) !important;
+    color: rgb(255, 255, 255);
+    font-weight: bold !important;
+  }
+
+  button.btn.btn-default.moreButton {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #000;
+    height: 25px;
+    cursor: pointer;
+
+    mat-icon {
+      transform: translateY(2px);
+    }
+  }
+
+  button.btn.btn-default.moreButton:focus {
+    box-shadow: 0 0 0 0.1rem #c8c8c8;
+  }
+
+  button.btn.btn-default.moreButton:disabled {
+    cursor: not-allowed;
+    color: #000;
+  }
+
+  .section-grid {
+    padding: 6px 16px 0px 16px;
+  }
+
+  #je-processing-info-popup-grid,
+  #je-processing-info-retro-popup-grid {
+    width: 100% !important;
+    height: 320px !important;
+  }
+
+  #je-payment-info-popup-grid,
+  #retrospective_adjustment-info-popup-grid {
+    width: 100% !important;
+    height: 395px !important;
+  }
+
+  .header-column-caption {
+    white-space: normal;
+    text-align: center;
+    margin: 0px;
+    max-height: 37px;
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  .dx-datagrid-content .dx-datagrid-table .dx-header-row > td[id^='dx-col-'] {
+    font-size: 11px !important;
+  }
+
+  .dx-header-filter {
+    color: #eeeeee !important;
+  }
+
+  .dx-column-indicators {
+    float: right !important;
+  }
+
+  .dx-popup-content
+    .dx-template-wrapper
+    dx-data-grid#transaction-popup-section {
+    height: 60% !important;
+  }
+
+  .dx-datagrid-summary-item {
+    white-space: nowrap !important;
+  }
+
+  .dx-overlay-content.dx-popup-normal.dx-resizable {
+    min-width: unset !important;
+  }
+
+  .workflow-dropdown-div {
+    dx-select-box,
+    input {
+      border: 1px solid #c8c8c8;
+      border-radius: 2px;
+      margin-bottom: 0px;
     }
 
-    .header {
-        color: #1B3A6E;
-        font-weight: 500;
-        line-height: 1.3em;
-        margin-bottom: 1em;
-        padding: 0px;
+    .dx-texteditor-input {
+      font-family: 'Helvetica Neue', 'Segoe UI', helvetica, verdana, sans-serif !important;
+      border: 0px;
+      font-size: 15px;
+      padding-bottom: 2px;
+      font-weight: 700 !important;
+      padding-left: 0px;
+      width: 160px;
     }
 
-    .dx-header-row {
-        background-color: rgb(36, 90, 136) !important;
-        color: rgb(255, 255, 255);
-        font-weight: bold !important;
+    dx-select-box .custom-with-label .dx-texteditor-input {
+      padding-top: 0px;
+    }
+  }
+
+  &.workflow-dropdown-list-container {
+    .dx-list-item.dx-state-disabled {
+      pointer-events: auto;
     }
 
-    button.btn.btn-default.moreButton {
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-        color: #000;
-        height: 25px;
-        cursor: pointer;
-
-        mat-icon {
-            transform: translateY(2px);
-        }
+    .dx-list-item.dx-list-item-selected {
+      background-color: #e3f3fc;
     }
 
-    button.btn.btn-default.moreButton:focus {
-        box-shadow: 0 0 0 0.1rem #c8c8c8;
+    &.dx-overlay-wrapper.dx-popup-wrapper
+      > .dx-overlay-content.dx-popup-normal
+      > .dx-popup-content {
+      padding: unset !important;
+    }
+  }
+
+  &.workflow-history-popup-container {
+    .p-timeline-event-opposite {
+      text-align: left;
+      flex: unset;
+      width: 225px;
     }
 
-    button.btn.btn-default.moreButton:disabled {
-        cursor: not-allowed;
-        color: #000;
+    .dx-overlay-content.dx-popup-normal.dx-popup-draggable.dx-resizable {
+      padding: 0px;
     }
 
-    .section-grid {
-        padding: 6px 16px 0px 16px;
+    .dx-overlay-content.dx-popup-fullscreen > .dx-popup-content {
+      padding: 16px !important;
     }
 
-    #je-processing-info-popup-grid,
-    #je-processing-info-retro-popup-grid {
-        width: 100% !important;
-        height: 320px !important;
+    #workflow-history-component-main-scrollview
+      > .dx-scrollable-wrapper
+      > .dx-scrollable-container
+      > .dx-scrollable-content {
+      margin-top: 5px;
     }
 
-    #je-payment-info-popup-grid,
-    #retrospective_adjustment-info-popup-grid {
-        width: 100% !important;
-        height: 395px !important;
+    .second-row-div
+      .dx-scrollable-wrapper
+      > .dx-scrollable-container
+      > .dx-scrollable-content,
+    .third-row-div
+      .dx-scrollable-wrapper
+      > .dx-scrollable-container
+      > .dx-scrollable-content {
+      padding-right: 20px;
     }
 
-    .header-column-caption {
-        white-space: normal;
-        text-align: center;
-        margin: 0px;
-        max-height: 37px;
-        font-size: 11px;
-        line-height: 13px;
+    .dx-template-wrapper.dx-popup-title {
+      padding-right: 6px;
     }
 
-    .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[id^="dx-col-"] {
-        font-size: 11px !important;
+    .popup-title-icon-div crem-icon > span > fa-icon > svg {
+      vertical-align: 0px;
     }
+  }
 
-    .dx-header-filter {
-        color: #eeeeee !important;
+  #openLeaseAlertsPopupButton {
+    border-radius: 2px;
+  }
 
+  .adjust-text {
+    color: gray;
+  }
+
+  .work-flow-comments {
+    position: absolute;
+    z-index: 10;
+    min-width: 350px;
+    background: #ffffff;
+    border-radius: 0.4em;
+    border: solid 1px #b6b6b6;
+    color: #000;
+    padding: 5px;
+    text-align: left;
+    max-width: calc(100% - 20px);
+    overflow: auto;
+    resize: vertical;
+    min-height: 200px;
+    max-height: 75vh;
+    padding-bottom: 10px;
+  }
+
+  .work-flow-commentText {
+    font-family: 'Helvetica Neue', 'Segoe UI', helvetica, verdana, sans-serif !important;
+    position: relative;
+    display: block;
+    width: 95% !important;
+    min-height: 78px;
+    height: calc(100% - 108px);
+    margin: 5px auto;
+    resize: none;
+  }
+
+  .work-flow-comment-label {
+    margin: 0 7.25px;
+    padding: 10px 0 5px 0px;
+  }
+
+  /* Amortization Period Popup Tab Panel */
+
+  div.dx-tabs {
+    height: 40px !important;
+    justify-content: left !important;
+  }
+
+  div.dx-tab-content {
+    border-bottom: 0px solid !important;
+  }
+
+  .dx-tab-selected {
+    background-color: #2d71aa !important;
+    color: #fff !important;
+  }
+
+  .dx-tabpanel > .dx-tabpanel-tabs .dx-tab.dx-tab-active .dx-tab-content,
+  .dx-tabpanel > .dx-tabpanel-tabs .dx-tab.dx-tab-selected .dx-tab-content {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .dx-tabpanel > .dx-tabpanel-tabs .dx-tabs .dx-tab .dx-tab-content {
+    font-size: 14px;
+  }
+
+  .dx-datagrid-content .dx-datagrid-table .dx-row > td,
+  .dx-datagrid-content .dx-datagrid-table .dx-row > tr > td {
+    font-size: 12px !important;
+  }
+
+  /* Fix for Amortization Period Popup Tab Panel issues after enabling CSP. */
+  .dx-tab.dx-tab-selected .dx-tab-text {
+    color: #fff;
+  }
+
+  dx-tab-panel.dx-tabpanel div.dx-tabpanel-tabs div.dx-tabs {
+    border: none;
+  }
+
+  .dx-tabpanel-tabs-position-left .dx-tabs .dx-tabs-scrollable::after {
+    border: 1px solid #dcdcdc;
+  }
+
+  .dx-tabs-vertical .dx-tabs-wrapper {
+    flex-direction: row;
+  }
+
+  .dx-tabs-wrapper {
+    border: none;
+  }
+
+  .card-header {
+    display: flex;
+    width: 100%;
+    padding: 0;
+    border-bottom: #fff;
+    background-color: transparent;
+    align-items: baseline;
+  }
+
+  .card-title {
+    display: flex;
+    flex-direction: row;
+    order: 1;
+    margin: 5px 0 0 0;
+    text-wrap: nowrap;
+    white-space: nowrap;
+    padding-right: 10px;
+    font-size: 14px;
+    color: #1e3a6f;
+    font-weight: 500;
+
+    &:first-child {
+      > span {
+        padding-left: 3px;
+      }
     }
+  }
 
-    .dx-column-indicators {
-        float: right !important;
-    }
+  .event-selector {
+    order: 2;
+    width: 100%;
+    margin-left: 2%;
+    display: flex;
+  }
 
-    .dx-popup-content .dx-template-wrapper dx-data-grid#transaction-popup-section {
-        height: 60% !important;
-    }
+  .more-menu {
+    order: 3;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    padding-top: 0px;
+  }
 
-    .dx-datagrid-summary-item {
-        white-space: nowrap !important;
-    }
+  .grid-size {
+    order: 4;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
 
-    .dx-overlay-content.dx-popup-normal.dx-resizable {
-        min-width: unset !important;
-    }
+  #payments-grid-detail-section .dx-datagrid-header-panel,
+  #events-grid-detail-section .dx-datagrid-header-panel,
+  #amortization-grid-detail-section .dx-datagrid-header-panel {
+    display: none;
+  }
 
-    .workflow-dropdown-div {
+  #amortization-grid-detail-section
+    .dx-datagrid-total-footer
+    > .dx-datagrid-content {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
 
-        dx-select-box,
-        input {
-            border: 1px solid #C8C8C8;
-            border-radius: 2px;
-            margin-bottom: 0px;
-        }
+  #je-payment-info-popup-grid,
+  #je-processing-info-popup-grid,
+  #retrospective_adjustment-info-popup-grid,
+  #transaction-popup-section {
+    table.dx-datagrid-table {
+      tbody {
+        tr.dx-row.dx-data-row {
+          &.dx-row-alt {
+            &:hover {
+              cursor: default;
 
-        .dx-texteditor-input {
-            font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
-            border: 0px;
-            font-size: 15px;
-            padding-bottom: 2px;
-            font-weight: 700 !important;
-            padding-left: 0px;
-            width: 160px;
-        }
-
-        dx-select-box .custom-with-label .dx-texteditor-input{
-            padding-top: 0px;
-        }
-    }
-
-    &.workflow-dropdown-list-container {
-        .dx-list-item.dx-state-disabled {
-            pointer-events: auto;
-        }
-
-        .dx-list-item.dx-list-item-selected {
-            background-color: #e3f3fc;
-        }
-
-        &.dx-overlay-wrapper.dx-popup-wrapper>.dx-overlay-content.dx-popup-normal>.dx-popup-content {
-            padding: unset !important;
-        }
-    }
-
-    &.workflow-history-popup-container {
-        .p-timeline-event-opposite {
-            text-align: left;
-            flex: unset;
-            width: 225px;
-        }
-
-        .dx-overlay-content.dx-popup-normal.dx-popup-draggable.dx-resizable {
-            padding: 0px;
-        }
-
-        .dx-overlay-content.dx-popup-fullscreen>.dx-popup-content {
-            padding: 16px !important;
-        }
-
-        #workflow-history-component-main-scrollview>.dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content {
-            margin-top: 5px;
-        }
-
-        .second-row-div .dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content,
-        .third-row-div .dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content {
-            padding-right: 20px;
-        }
-
-        .dx-template-wrapper.dx-popup-title {
-            padding-right: 6px;
-        }
-
-        .popup-title-icon-div crem-icon>span>fa-icon>svg {
-            vertical-align: 0px;
-        }
-    }
-
-    #openLeaseAlertsPopupButton {
-        border-radius: 2px;
-    }
-
-    .adjust-text {
-        color: gray;
-    }
-
-    .work-flow-comments {
-        position: absolute;
-        z-index: 10;
-        min-width: 350px;
-        background: #ffffff;
-        border-radius: 0.4em;
-        border: solid 1px #b6b6b6;
-        color: #000;
-        padding: 5px;
-        text-align: left;
-        max-width: calc(100% - 20px);
-        overflow: auto;
-        resize: vertical;
-        min-height: 200px;
-        max-height: 75vh;
-        padding-bottom: 10px;
-    }
-
-    .work-flow-commentText {
-        font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif !important;
-        position: relative;
-        display: block;
-        width: 95% !important;
-        min-height: 78px;
-        height: calc( 100% - 108px);
-        margin: 5px auto;
-        resize:none;
-    }
-
-    .work-flow-comment-label {
-        margin: 0 7.25px;
-        padding: 10px 0 5px 0px;
-    }
-
- /* Amortization Period Popup Tab Panel */
- 
-    div.dx-tabs {
-        height: 40px !important;
-        justify-content: left !important;
-    }
-
-    div.dx-tab-content {
-        border-bottom: 0px solid !important;
-    }
-
-    .dx-tab-selected {
-        background-color: #2d71aa !important;
-        color: #fff !important;
-    }
-
-    .dx-tabpanel>.dx-tabpanel-tabs .dx-tab.dx-tab-active .dx-tab-content,
-    .dx-tabpanel>.dx-tabpanel-tabs .dx-tab.dx-tab-selected .dx-tab-content {
-        color: #fff;
-        font-size: 14px;
-    }
-
-    .dx-tabpanel>.dx-tabpanel-tabs .dx-tabs .dx-tab .dx-tab-content {
-        font-size: 14px;
-    }
-
-    .dx-datagrid-content .dx-datagrid-table .dx-row>td,
-    .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
-        font-size: 12px !important;
-    }
-
- /* Fix for Amortization Period Popup Tab Panel issues after enabling CSP. */
-    .dx-tab.dx-tab-selected .dx-tab-text {
-        color: #FFF;
-    }
-    
-    dx-tab-panel.dx-tabpanel div.dx-tabpanel-tabs div.dx-tabs {
-        border: none;
-    }
-    
-    .dx-tabpanel-tabs-position-left .dx-tabs .dx-tabs-scrollable::after {
-        border: 1px solid #dcdcdc;
-    }
-
-    .dx-tabs-vertical .dx-tabs-wrapper {
-        flex-direction: row;
-    }
-
-    .dx-tabs-wrapper {
-        border: none;
-    }
-
-    .card-header {
-        display: flex;
-        width: 100%;
-        padding: 0;
-        border-bottom: #fff;
-        background-color: transparent;
-        align-items: baseline;
-    }
-
-    .card-title {
-        display: flex;
-        flex-direction: row;
-        order: 1;
-        margin: 5px 0 0 0;
-        text-wrap: nowrap;
-        white-space: nowrap;
-        padding-right: 10px;
-        font-size: 14px;
-        color: #1e3a6f;
-        font-weight: 500;
-      
-        &:first-child {
-          > span {
-            padding-left: 3px;
+              td {
+                cursor: default;
+              }
+            }
           }
         }
       }
+    }
+  }
 
-    .event-selector {
-        order: 2;
-        width: 100%;
-        margin-left: 2%;
-        display:flex;
+  // Changing cursor icon of non-clickable columns to default and clickable to pointer
+  #events-grid-detail-section {
+    .dx-datagrid-content .dx-datagrid-table .dx-header-row > td {
+      cursor: default;
+    }
+    .dx-datagrid-content .dx-datagrid-table .dx-row > td,
+    .dx-datagrid-content .dx-datagrid-table .dx-row > tr > td {
+      padding: 6px;
     }
 
-    .more-menu {
-        order: 3;
-        padding-right: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        width: 100%;
-        padding-top: 0px;
+    .dx-datagrid-content
+      .dx-datagrid-table
+      .dx-header-row
+      > td[aria-colindex='1'],
+    .dx-datagrid-content
+      .dx-datagrid-table
+      .dx-header-row
+      > td[aria-label='Column #'] {
+      cursor: pointer;
     }
-
-    .grid-size {
-        order: 4;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-    }
-
-    #payments-grid-detail-section .dx-datagrid-header-panel,
-    #events-grid-detail-section .dx-datagrid-header-panel,
-    #amortization-grid-detail-section .dx-datagrid-header-panel {
-        display: none;
-    }
-
-    #amortization-grid-detail-section .dx-datagrid-total-footer>.dx-datagrid-content {
-        padding-top: 2px;
-        padding-bottom: 2px;
-    }
-
-    #je-payment-info-popup-grid,
-    #je-processing-info-popup-grid,
-    #retrospective_adjustment-info-popup-grid,
-    #transaction-popup-section {
-        table.dx-datagrid-table {
-            tbody {
-                tr.dx-row.dx-data-row {
-                    &.dx-row-alt {
-                        &:hover {
-                            cursor: default;
-
-                            td {
-                                cursor: default;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Changing cursor icon of non-clickable columns to default and clickable to pointer
-    #events-grid-detail-section {
-        .dx-datagrid-content .dx-datagrid-table .dx-header-row>td {
-            cursor: default;
-        }
-        .dx-datagrid-content .dx-datagrid-table .dx-row>td,
-        .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td {
-            padding:6px
-        }
-
-        .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[aria-colindex="1"],
-        .dx-datagrid-content .dx-datagrid-table .dx-header-row>td[aria-label="Column #"] {
-            cursor: pointer;
-        }
-   
-        .dx-datagrid {
-            color: #333;
-            line-height: 11px;
-        }
-    }
-    
-    #openLeaseAlertsPopupButton {
-        height: 32px;
-      }
 
     .dx-datagrid {
-        color: #333;
-        line-height: 12px;
+      color: #333;
+      line-height: 11px;
     }
+  }
 
-    .card-content {
-        padding: 0 16px 7px 16px;
-    }
+  #openLeaseAlertsPopupButton {
+    height: 32px;
+  }
 
-// Customize CREM Card to load more data on Accounting Summary Page
-    mat-card {
-        min-height: auto !important;
-    }
+  .dx-datagrid {
+    color: #333;
+    line-height: 12px;
+  }
 
-    mat-card mat-card-header {
-        padding:5px !important;
-    }
+  .card-content {
+    padding: 0 16px 7px 16px;
+  }
 
-    mat-card mat-card-content {
-        border-top: unset !important;
-    }
+  // Customize CREM Card to load more data on Accounting Summary Page
+  mat-card {
+    min-height: auto !important;
+  }
 
-    .customHeader>div:first-child {
-        width: 100%;
-    }
-    
-    .customHeader {
-        width: 100%;
-        margin: 0px !important;
-    }
+  mat-card mat-card-header {
+    padding: 5px !important;
+  }
 
-    .icon-style {
-        button {
-            padding: unset !important;
-        }
-    }     
-    
-    .dx-dropdowneditor-input-wrapper > .dx-texteditor-container > .dx-texteditor-input-container > input.dx-texteditor-input{
-        font-weight: 700 !important;
-    }
+  mat-card mat-card-content {
+    border-top: unset !important;
+  }
 
-    crem-card .btn-secondary.btn-icon-left.no-text.btn-flat {
-        border: unset;
-    }
-    
-    span.dx-datagrid-nodata {
-        padding: 10px;
-    }
-    #amortization-period-popup-tabs-section{
-        padding: 12px;;
-    }
+  .customHeader > div:first-child {
+    width: 100%;
+  }
 
+  .customHeader {
+    width: 100%;
+    margin: 0px !important;
+  }
+
+  .icon-style {
+    button {
+      padding: unset !important;
+    }
+  }
+
+  .dx-dropdowneditor-input-wrapper
+    > .dx-texteditor-container
+    > .dx-texteditor-input-container
+    > input.dx-texteditor-input {
+    font-weight: 700 !important;
+  }
+
+  crem-card .btn-secondary.btn-icon-left.no-text.btn-flat {
+    border: unset;
+  }
+
+  span.dx-datagrid-nodata {
+    padding: 10px;
+  }
+  #amortization-period-popup-tabs-section {
+    padding: 12px;
+  }
 }
 
 .dx-menu-base .dx-menu-item.dx-state-disabled {
-    opacity: 1;
+  opacity: 1;
 }
 
-    // Change Events grid action menu cursor icon of clickable items.
+// Change Events grid action menu cursor icon of clickable items.
 .dx-menu-base .dx-menu-item {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-    // Events grid action menu cursor icon of Non-clickable items.
+// Events grid action menu cursor icon of Non-clickable items.
 .dx-menu-base .dx-menu-items-container {
-    cursor: default;
+  cursor: default;
+}
+
+.p-toast .p-toast-message .p-toast-message-content {
+  text-align: left;
+  line-height: 20px;
 }

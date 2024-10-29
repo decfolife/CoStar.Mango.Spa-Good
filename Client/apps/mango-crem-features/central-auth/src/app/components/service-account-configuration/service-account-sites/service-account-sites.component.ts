@@ -1,6 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
-import { UpdateServiceAccountApiAccessRequest} from '@mango/data-models/lib-data-models';
+import { UpdateServiceAccountApiAccessRequest } from '@mango/data-models/lib-data-models';
 import { ServiceAccountSite } from 'libs/data-models/lib-data-models/src/lib/models/central-auth/service-account-info';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -25,7 +31,7 @@ export class ServiceAccountSitesComponent implements OnDestroy {
   updateApiAccess(e: any, index: number) {
     const request: UpdateServiceAccountApiAccessRequest = {
       clientKey: this.sites[index].clientKey,
-      apiAccess: e.checked
+      apiAccess: e.checked,
     };
 
     this.updateServiceAccountApiAccess(request);
@@ -34,24 +40,27 @@ export class ServiceAccountSitesComponent implements OnDestroy {
   updateApiAccessADA(e: any, index: number) {
     const request: UpdateServiceAccountApiAccessRequest = {
       clientKey: this.sites[index].clientKey,
-      apiAccess: !e.srcElement.checked
+      apiAccess: !e.srcElement.checked,
     };
 
     this.updateServiceAccountApiAccess(request);
   }
 
-  private updateServiceAccountApiAccess(request : UpdateServiceAccountApiAccessRequest){
-    this.subs.push (
-      this.serviceAccountService.updateServiceAccountApiAccess(request)
-        .subscribe(result => {    
-          if(result){        
+  private updateServiceAccountApiAccess(
+    request: UpdateServiceAccountApiAccessRequest
+  ) {
+    this.subs.push(
+      this.serviceAccountService
+        .updateServiceAccountApiAccess(request)
+        .subscribe((result) => {
+          if (result) {
             this.apiAccessUpdated.emit(result);
           }
-      })
+        })
     );
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(s => s.unsubscribe())
+    this.subs.forEach((s) => s.unsubscribe());
   }
 }

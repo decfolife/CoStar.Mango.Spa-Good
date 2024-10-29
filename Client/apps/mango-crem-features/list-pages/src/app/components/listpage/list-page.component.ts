@@ -51,7 +51,7 @@ import {
   SecurityType,
   SessionVariables,
   ObjectTypeIds,
-  ArchiveToggleValue
+  ArchiveToggleValue,
 } from './shared/enums';
 import { DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -67,7 +67,6 @@ import { ExportDevexDatagridService } from '@mango/core-shared';
 import { AddCompanyModalComponent } from '@mango/ui-shared/lib-ui-shared';
 import { AddContactModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-contact-modal/add-contact-modal.component';
 import { ObjectType, RequestType } from '@mango/data-models/lib-data-models';
-
 
 type VBBool = boolean | string;
 
@@ -88,15 +87,21 @@ type VBBool = boolean | string;
         // NOTE: This internal function will be called numerous times per any column related event
         // Sometimes the col1Model and col2Model can be undefined
         getChooserColumns: function (loadAllColumns: any) {
-          const filterFields = JSON.parse(sessionStorage.getItem(SessionVariables.DisplayOrderFilterFields));
+          const filterFields = JSON.parse(
+            sessionStorage.getItem(SessionVariables.DisplayOrderFilterFields)
+          );
           const result = this.callBase(loadAllColumns);
 
           result.sort(function (col1: any, col2: any) {
             if (filterFields === null)
               return col1.caption?.localeCompare(col2.caption);
 
-            const col1Model = filterFields.filter((x: any) => x.dataField === col1.dataField)[0];
-            const col2Model = filterFields.filter((x: any) => x.dataField === col2.dataField)[0];
+            const col1Model = filterFields.filter(
+              (x: any) => x.dataField === col1.dataField
+            )[0];
+            const col2Model = filterFields.filter(
+              (x: any) => x.dataField === col2.dataField
+            )[0];
 
             if (col1Model === undefined || col2Model === undefined)
               return col1.caption?.localeCompare(col2.caption);
@@ -105,17 +110,17 @@ type VBBool = boolean | string;
           });
 
           return result;
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 });
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'app-list-page',
   templateUrl: './list-page.component.html',
-  styleUrls: ['./list-page.component.scss']
+  styleUrls: ['./list-page.component.scss'],
 })
 export class ListPageComponent implements OnInit, OnDestroy {
   @Input() oIds = '';
@@ -125,13 +130,12 @@ export class ListPageComponent implements OnInit, OnDestroy {
   @Input() set initialListPageRequestedId(value: number) {
     this._intitialListPageRequestedId = value;
   }
-  @Input() keyExpr = null
+  @Input() keyExpr = null;
 
   @ViewChild('DataGrid', { static: true }) dataGrid: DxDataGridComponent;
   @ViewChild('shareListViewPopup') shareListViewPopup: ShareViewPopupComponent;
-  @ViewChild(DropdownComponent) cremDropdownComponent: DropdownComponent
+  @ViewChild(DropdownComponent) cremDropdownComponent: DropdownComponent;
   @ViewChild('RangeDateForm', { static: false }) rangeDateForm: DxFormComponent;
-
 
   public googleMapAPIKey: any;
   public googleMappingChannel: any;
@@ -144,7 +148,6 @@ export class ListPageComponent implements OnInit, OnDestroy {
   rangeDateFilterFields: any[];
   customDateSelected: boolean = false;
   dateColumnSelected: boolean = false;
-
 
   listViews: ViewDropDownData;
   activeListViewCount: number;
@@ -280,7 +283,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
   public initializingApplication = true;
   private isCurrentViewRemoved = false;
 
-  private asBool = (value: VBBool) => (value?.toString().toLowerCase() === 'true');
+  private asBool = (value: VBBool) =>
+    value?.toString().toLowerCase() === 'true';
 
   private listPageSessionKey: string = 'ListPageState';
   private isViewChanged = false;
@@ -293,143 +297,181 @@ export class ListPageComponent implements OnInit, OnDestroy {
   set isSuperUser(value: VBBool) {
     this._isSuperUser = this.asBool(value);
   }
-  get isSuperUser(): VBBool { return this._isSuperUser; }
+  get isSuperUser(): VBBool {
+    return this._isSuperUser;
+  }
 
   @Input()
   set canEditNotes(value: VBBool) {
     this._canEditNotes = this.asBool(value);
   }
-  get canEditNotes(): VBBool { return this._canEditNotes; }
+  get canEditNotes(): VBBool {
+    return this._canEditNotes;
+  }
 
   @Input()
   set showPortfolioPicker(value: VBBool) {
     this._showPortfolioPicker = this.asBool(value);
   }
-  get showPortfolioPicker(): VBBool { return this._showPortfolioPicker; }
+  get showPortfolioPicker(): VBBool {
+    return this._showPortfolioPicker;
+  }
 
   @Input()
   set showListViewSelector(value: VBBool) {
     this._showListViewSelector = this.asBool(value);
   }
-  get showListViewSelector(): VBBool { return this._showListViewSelector; }
+  get showListViewSelector(): VBBool {
+    return this._showListViewSelector;
+  }
 
   @Input()
   set showListMapToggle(value: VBBool) {
     this._showListMapToggle = this.asBool(value);
   }
-  get showListMapToggle(): VBBool { return this._showListMapToggle; }
+  get showListMapToggle(): VBBool {
+    return this._showListMapToggle;
+  }
 
   @Input()
   set showFilterButton(value: VBBool) {
     this._showFilterButton = this.asBool(value);
   }
-  get showFilterButton(): VBBool { return this._showFilterButton; }
+  get showFilterButton(): VBBool {
+    return this._showFilterButton;
+  }
 
   @Input()
   set showSearch(value: VBBool) {
     this._showSearch = this.asBool(value);
   }
-  get showSearch(): VBBool { return this._showSearch; }
+  get showSearch(): VBBool {
+    return this._showSearch;
+  }
 
   @Input()
   set showMoreMenu(value: VBBool) {
     this._showMoreMenu = this.asBool(value);
   }
-  get showMoreMenu(): VBBool { return this._showMoreMenu; }
+  get showMoreMenu(): VBBool {
+    return this._showMoreMenu;
+  }
 
   @Input()
   set showSaveAs(value: VBBool) {
     this._showSaveAs = this.asBool(value);
   }
-  get showSaveAs(): VBBool { return this._showSaveAs; }
+  get showSaveAs(): VBBool {
+    return this._showSaveAs;
+  }
 
   @Input()
   set showSave(value: VBBool) {
     this._showSave = this.asBool(value);
   }
-  get showSave(): VBBool { return this._showSave; }
+  get showSave(): VBBool {
+    return this._showSave;
+  }
 
   @Input()
   set showShare(value: VBBool) {
     this._showShare = this.asBool(value);
   }
-  get showShare(): VBBool { return this._showShare; }
+  get showShare(): VBBool {
+    return this._showShare;
+  }
 
   @Input()
   set showExpandCollapse(value: VBBool) {
     this._showExpandCollapse = this.asBool(value);
   }
-  get showExpandCollapse(): VBBool { return this._showExpandCollapse; }
+  get showExpandCollapse(): VBBool {
+    return this._showExpandCollapse;
+  }
 
   @Input()
   set showColumnChooser(value: VBBool) {
     this._showColumnChooser = this.asBool(value);
   }
-  get showColumnChooser(): VBBool { return this._showColumnChooser; }
+  get showColumnChooser(): VBBool {
+    return this._showColumnChooser;
+  }
 
   @Input()
   set showExport(value: VBBool) {
     this._showExport = this.asBool(value);
   }
-  get showExport(): VBBool { return this._showExport; }
+  get showExport(): VBBool {
+    return this._showExport;
+  }
 
   @Input()
   set showCaching(value: VBBool) {
     this._showCaching = this.asBool(value);
   }
-  get showCaching(): VBBool { return this._showCaching; }
+  get showCaching(): VBBool {
+    return this._showCaching;
+  }
 
   @Input()
   set showAddButton(value: VBBool) {
     this._showAddButton = this.asBool(value);
   }
-  get showAddButton(): VBBool { return this._showAddButton; }
+  get showAddButton(): VBBool {
+    return this._showAddButton;
+  }
 
   @Input()
   set showDeleteButton(value: VBBool) {
     this._showDeleteButton = this.asBool(value);
   }
-  get showDeleteButton(): VBBool { return this._showDeleteButton; }
-
+  get showDeleteButton(): VBBool {
+    return this._showDeleteButton;
+  }
 
   @Input()
   set showHeaderFilter(value: VBBool) {
     this._showHeaderFilter = this.asBool(value);
   }
-  get showHeaderFilter(): VBBool { return this._showHeaderFilter; }
-
-
+  get showHeaderFilter(): VBBool {
+    return this._showHeaderFilter;
+  }
 
   // Fat-arrow function for proper `this` context
   customizeColumns = (columns: any[]) => {
-    columns.forEach(col => {
+    columns.forEach((col) => {
       if (col.dataType !== 'string') {
         return;
       }
 
       const maxLength = this.gridData.reduce((len, d) => {
-        const dLen = d[col.dataField]?.length
+        const dLen = d[col.dataField]?.length;
 
         return Math.min(len, dLen);
       }, 0);
 
-      if (maxLength <= (col.dataField?.length + 20)) {
+      if (maxLength <= col.dataField?.length + 20) {
         return;
       }
 
-      return (col?.width) ? col.width : '400px';
+      return col?.width ? col.width : '400px';
     });
   };
 
   isCoStarListView = (listView: ListView) => {
     return listView?.listViewType === ListViewType.CoStar;
-  }
+  };
 
-  constructor(private activatedroute: ActivatedRoute, public service: ListPageService,
-    public cdRef: ChangeDetectorRef, private exportToExcelService: ExportDevexDatagridService,
-    private dialog: MatDialog, private router: Router,
-    private renderer2: Renderer2) {
-    // initialize currentPortfolio to allow use it properties in [displayExpr] and [valueExpr] in crem-dropdown component    
+  constructor(
+    private activatedroute: ActivatedRoute,
+    public service: ListPageService,
+    public cdRef: ChangeDetectorRef,
+    private exportToExcelService: ExportDevexDatagridService,
+    private dialog: MatDialog,
+    private router: Router,
+    private renderer2: Renderer2
+  ) {
+    // initialize currentPortfolio to allow use it properties in [displayExpr] and [valueExpr] in crem-dropdown component
     this.currentPortfolio = null;
     this.listViews = {} as any;
     this.customOperations = UtilitiesService.getCustomFilterOperation();
@@ -441,7 +483,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     window.onbeforeunload = () => {
       this.saveStateToSession();
-    }
+    };
   }
 
   ngOnDestroy() {
@@ -455,33 +497,36 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const urlParams = new URLSearchParams(window.location.search);
-    const upperCaseParams = {}
-    urlParams.forEach((value, key) => upperCaseParams[key.toUpperCase()] = value)
-    this.urlOID = upperCaseParams['OID'] ? parseInt(upperCaseParams['OID']) : null;
+    const upperCaseParams = {};
+    urlParams.forEach(
+      (value, key) => (upperCaseParams[key.toUpperCase()] = value)
+    );
+    this.urlOID = upperCaseParams['OID']
+      ? parseInt(upperCaseParams['OID'])
+      : null;
     this.urlOTTID = parseInt(upperCaseParams['OTTID'] || '0');
 
-    //Set the objectTypeId from the value passed in the route instead of from the service if overrideInputSettings is true 
+    //Set the objectTypeId from the value passed in the route instead of from the service if overrideInputSettings is true
     //and if the isRestful flag is true
     if (this.overrideInputSettings) {
-      this.activatedroute.data.subscribe(routeData => {
+      this.activatedroute.data.subscribe((routeData) => {
         this.objectTypeId = routeData.objectTypeId;
       });
     }
 
-    this.service.getGoogleMapAPIKey().subscribe(x => {
+    this.service.getGoogleMapAPIKey().subscribe((x) => {
       //console.log(x)
       this.googleMapAPIKey = x.data.googleMapAPIKey;
       this.googleMapAPIKeyLoaded = true;
-      this.service.getGoogleMappingChannel().subscribe(x => {
+      this.service.getGoogleMappingChannel().subscribe((x) => {
         //console.log(x)
         this.googleMappingChannel = x.data.googleMappingChannel;
         this.googleMappingChannelLoaded = true;
-        this.loadGoogleMapsAPIScript()
-      })
+        this.loadGoogleMapsAPIScript();
+      });
     });
 
     this.service.getListPageProperties().subscribe((res: ApiResponse) => {
-
       if (this.overrideInputSettings === true) {
         //if the isRestful flag is false then we need to set the objectTypeId
         // isRestful should always be true
@@ -505,14 +550,16 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
 
       this.isGLEvent = this.checkGLEvent(this.objectTypeId);
-      this.service.getAddWizards(this.objectTypeId, this.urlOTTID)
-        .subscribe(result => {
+      this.service
+        .getAddWizards(this.objectTypeId, this.urlOTTID)
+        .subscribe((result) => {
           let tempEditPages = [];
           if (result.data && result.data.addWizards) {
             tempEditPages = result.data.addWizards;
-          }
-          else {
-            console.log(`Response from addWizards API is either empty or invalid`);
+          } else {
+            console.log(
+              `Response from addWizards API is either empty or invalid`
+            );
           }
           if (this.isGLEvent) {
             this.archivedLabel = 'deleted';
@@ -528,14 +575,19 @@ export class ListPageComponent implements OnInit, OnDestroy {
         const OID = params[0].split('=')[1];
         const OTID = params[1].split('=')[1];
         const NotetypeId = params[2].split('=')[1];
-        const CommonNoteTypeID = (NotetypeId === '2' || NotetypeId === '13') ? NotetypeId : 0
+        const CommonNoteTypeID =
+          NotetypeId === '2' || NotetypeId === '13' ? NotetypeId : 0;
 
         this.noteData = { OID, OTID, CommonNoteTypeID };
         this.showNotes = true;
       };
 
       if (sessionStorage.getItem(this.listPageSessionKey) === null) {
-        this.populateListViewMenu(true, false, this._intitialListPageRequestedId > 0);
+        this.populateListViewMenu(
+          true,
+          false,
+          this._intitialListPageRequestedId > 0
+        );
         return;
       }
 
@@ -560,17 +612,20 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   setPrefDateFormatForFilter() {
-    if (this.userPrefDateFormatForFilter === undefined || this.userPrefDateFormatForFilter === null) {
+    if (
+      this.userPrefDateFormatForFilter === undefined ||
+      this.userPrefDateFormatForFilter === null
+    ) {
       if (this.userPrefDateFormat !== undefined)
-        this.userPrefDateFormatForFilter = this.userPrefDateFormat
+        this.userPrefDateFormatForFilter = this.userPrefDateFormat;
       else {
         const isEuroElement = document.getElementById('IsEuroDateFormat');
-        let isEuroDateFormat = isEuroElement !== null && isEuroElement.innerHTML.toLowerCase() === 'true';
+        let isEuroDateFormat =
+          isEuroElement !== null &&
+          isEuroElement.innerHTML.toLowerCase() === 'true';
 
-        if (isEuroDateFormat)
-          this.userPrefDateFormatForFilter = "dd.MM.yyyy";
-        else
-          this.userPrefDateFormatForFilter = "MM/dd/yyyy";
+        if (isEuroDateFormat) this.userPrefDateFormatForFilter = 'dd.MM.yyyy';
+        else this.userPrefDateFormatForFilter = 'MM/dd/yyyy';
       }
     }
   }
@@ -580,14 +635,17 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     let isEmptyObject = JSON.stringify(this.rangeDateForm.formData) === '{}';
 
-    if (isEmptyObject)
-      return undefined;
+    if (isEmptyObject) return undefined;
 
     let setIntervalToSingular = false;
     let rangeDateFilterStrArray: any = [];
 
-    this.rangeDateFilterFields.forEach(ff => {
-      if (this.rangeDateForm.formData.hasOwnProperty(ff.fieldName) && ff.fieldName !== 'customDate' && ff.fieldName !== 'dateColumn') {
+    this.rangeDateFilterFields.forEach((ff) => {
+      if (
+        this.rangeDateForm.formData.hasOwnProperty(ff.fieldName) &&
+        ff.fieldName !== 'customDate' &&
+        ff.fieldName !== 'dateColumn'
+      ) {
         let displayStr = this.rangeDateForm.formData[ff.fieldName];
 
         if (ff.fieldName === 'numOfIntervals' && displayStr === 1) {
@@ -597,27 +655,35 @@ export class ListPageComponent implements OnInit, OnDestroy {
         if (ff.fieldName === 'intervalType' || ff.fieldName === 'beforeAfter') {
           displayStr = displayStr.toLowerCase();
           if (ff.fieldName === 'intervalType' && setIntervalToSingular)
-            displayStr = displayStr.slice(0, displayStr.length - 1);;
+            displayStr = displayStr.slice(0, displayStr.length - 1);
         }
 
         if (ff.fieldName === 'selectDate' && displayStr !== 'Today') {
           if (displayStr === 'Date Field') {
             //Using a date column
-            displayStr = this.rangeDateForm.formData['dateColumn']
-          }
-          else {
+            displayStr = this.rangeDateForm.formData['dateColumn'];
+          } else {
             //Using a custom date
-            let customDateStr = this.rangeDateForm.formData['customDate'] === undefined ? '' : this.rangeDateForm.formData['customDate'];
+            let customDateStr =
+              this.rangeDateForm.formData['customDate'] === undefined
+                ? ''
+                : this.rangeDateForm.formData['customDate'];
             if (customDateStr !== '' && customDateStr instanceof Date) {
-              let localStr = this.userPrefDateFormatForFilter.indexOf('.') ? 'en-EU' : 'en-US';
-              displayStr = formatDate(this.rangeDateForm.formData['customDate'], this.userPrefDateFormatForFilter, localStr)
+              let localStr = this.userPrefDateFormatForFilter.indexOf('.')
+                ? 'en-EU'
+                : 'en-US';
+              displayStr = formatDate(
+                this.rangeDateForm.formData['customDate'],
+                this.userPrefDateFormatForFilter,
+                localStr
+              );
             }
           }
         }
 
         rangeDateFilterStrArray.push(displayStr);
       }
-    })
+    });
 
     let displayStr = `${rangeDateFilterStrArray.join(' ')}`;
 
@@ -629,15 +695,18 @@ export class ListPageComponent implements OnInit, OnDestroy {
     //in other places in the code.  There probably is a better solution but I could
     //not find one at the time.
     this.storedFilterBuilderTemplate = filterBuilderTemplate;
-    let rangeFilterText = filterBuilderTemplate.value
+    let rangeFilterText = filterBuilderTemplate.value;
 
     //This means that this is a new filter so we set storedRangeFormData to the default values
     if (rangeFilterText === null) {
       return;
     }
 
-    let parseRangeFilterReturnObj = UtilitiesService.parseRangeFilterDateStr(rangeFilterText);
-    this.filteredDateGridColumns = this.dateGridColumns.filter(dgc => dgc !== this.storedFilterBuilderTemplate.field.caption);
+    let parseRangeFilterReturnObj =
+      UtilitiesService.parseRangeFilterDateStr(rangeFilterText);
+    this.filteredDateGridColumns = this.dateGridColumns.filter(
+      (dgc) => dgc !== this.storedFilterBuilderTemplate.field.caption
+    );
 
     //Set customDateSelected and dateColumnSelected flags if they are true
     if (parseRangeFilterReturnObj.customDateSelected)
@@ -660,29 +729,43 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     if (dataFieldName == 'numOfIntervals') {
       value = Number(value);
-      let defaultValue = this.rangeDateFilterFields.find(ff => ff.fieldName === dataFieldName).defaultValue;
+      let defaultValue = this.rangeDateFilterFields.find(
+        (ff) => ff.fieldName === dataFieldName
+      ).defaultValue;
 
       if (value < defaultValue) {
         value = defaultValue;
       }
-    }
-    else if (dataFieldName == 'selectDate') {
+    } else if (dataFieldName == 'selectDate') {
       this.customDateSelected = false;
       this.dateColumnSelected = false;
 
       if (value === 'Date Field') {
         this.dateColumnSelected = true;
-        if (this.rangeDateForm.formData['dateColumn'] === null || this.rangeDateForm.formData['dateColumn'] === undefined) {
-          let foundFilterField = this.rangeDateFilterFields.find(ff => ff.fieldName == 'dateColumn');
+        if (
+          this.rangeDateForm.formData['dateColumn'] === null ||
+          this.rangeDateForm.formData['dateColumn'] === undefined
+        ) {
+          let foundFilterField = this.rangeDateFilterFields.find(
+            (ff) => ff.fieldName == 'dateColumn'
+          );
 
-          this.filteredDateGridColumns = this.dateGridColumns.filter(dgc => dgc !== this.storedFilterBuilderTemplate.field.caption);
-          foundFilterField.defaultValue = this.filteredDateGridColumns.length > 0 ? this.filteredDateGridColumns[0] : null;
-          this.rangeDateForm.formData['dateColumn'] = foundFilterField.defaultValue;
+          this.filteredDateGridColumns = this.dateGridColumns.filter(
+            (dgc) => dgc !== this.storedFilterBuilderTemplate.field.caption
+          );
+          foundFilterField.defaultValue =
+            this.filteredDateGridColumns.length > 0
+              ? this.filteredDateGridColumns[0]
+              : null;
+          this.rangeDateForm.formData['dateColumn'] =
+            foundFilterField.defaultValue;
         }
-      }
-      else if (value === 'Direct Entry') {
+      } else if (value === 'Direct Entry') {
         this.customDateSelected = true;
-        if (this.rangeDateForm.formData['customDate'] === null || this.rangeDateForm.formData['customDate'] === undefined)
+        if (
+          this.rangeDateForm.formData['customDate'] === null ||
+          this.rangeDateForm.formData['customDate'] === undefined
+        )
           this.rangeDateForm.formData['customDate'] = new Date();
       }
     }
@@ -696,7 +779,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   setStoredRangeFormDataToDefaultValues() {
     this.storedRangeFormData = {};
 
-    this.rangeDateFilterFields.forEach(ff => {
+    this.rangeDateFilterFields.forEach((ff) => {
       this.storedRangeFormData[ff.fieldName] = ff.defaultValue;
     });
   }
@@ -704,33 +787,41 @@ export class ListPageComponent implements OnInit, OnDestroy {
   fillDateGridColumns() {
     this.dateGridColumns = [];
 
-    this.columns.forEach(col => {
-      if (col.dataType === 'date')
-        this.dateGridColumns.push(col.caption);
+    this.columns.forEach((col) => {
+      if (col.dataType === 'date') this.dateGridColumns.push(col.caption);
     });
   }
 
   checkGLEvent(objectTypeId: number): boolean {
-    return objectTypeId == ObjectTypeIds.Expense || objectTypeId == ObjectTypeIds.Revenue;
+    return (
+      objectTypeId == ObjectTypeIds.Expense ||
+      objectTypeId == ObjectTypeIds.Revenue
+    );
   }
 
   getCellTemplate(column) {
     if (column.urlLink !== '') {
       return 'linkTemplate';
-    } else if (column.dataField == 'CustomAction' && this.objectTypeId == ObjectTypeIds.Tasks) {
+    } else if (
+      column.dataField == 'CustomAction' &&
+      this.objectTypeId == ObjectTypeIds.Tasks
+    ) {
       return 'tasksActionTemplate';
     } else if (column.dataField == 'CustomAction' && this.isGLEvent) {
-      return 'leasePaymentsActionTemplate'
+      return 'leasePaymentsActionTemplate';
     } else {
       return '';
     }
   }
 
   public onGridSelectionChanged(e) {
-    var notActiveKeys = e.selectedRowKeys.filter(srk => srk.IsActive === 'Deleted');
+    var notActiveKeys = e.selectedRowKeys.filter(
+      (srk) => srk.IsActive === 'Deleted'
+    );
 
     //Set numberOfItemsSelectedLessThanTwo to the selected rows minus the ones that are not active
-    this.numberOfItemsSelectedLessThanTwo = e.selectedRowKeys.length - notActiveKeys.length < 2
+    this.numberOfItemsSelectedLessThanTwo =
+      e.selectedRowKeys.length - notActiveKeys.length < 2;
   }
 
   actionsClicked() {
@@ -741,21 +832,23 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.approveRejectTask = true;
     let selectedTask = {
       taskName: task.TaskName,
-      projectRequiredTaskNotes: task.projectRequiredTaskNotes == '1' ? true : false,
+      projectRequiredTaskNotes:
+        task.projectRequiredTaskNotes == '1' ? true : false,
       taskID: task.taskID,
+      approvalID: task.ApprovalID,
       transactionID: task.OID,
-      taskNumber: task.TaskStepNumber
-    }
+      taskNumber: task.TaskStepNumber,
+    };
 
     let dialogRef = this.dialog.open(TaskApprovalComponent, {
       scrollStrategy: new NoopScrollStrategy(),
       height: '240px',
       width: '600px',
       panelClass: 'taskApprovalModal',
-      data: { selectedTask, actionName }
+      data: { selectedTask, actionName },
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === "Approve") {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'Approve') {
         this.saveStateToSession();
         this.populateGrid(true);
       }
@@ -763,46 +856,54 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   showPaymentDetails(glEventData) {
-
     this.getDateFormat();
 
-    if (this.modalIsOpen) { return; }
+    if (this.modalIsOpen) {
+      return;
+    }
     this.modalIsOpen = true;
     this.isChargeAction = true;
-    this.service.getGLEventInfo(glEventData.OID, glEventData.GLEventID).subscribe(res => {
-      this.isChargeAction = false;
-      if (!res.data) {
-        this.modalIsOpen = false;
-        console.log("GLEventInfo - no data fetched");
-        return;
-      }
-      if (res.data) {
-        this.paymentDetails = res.data;
+    this.service
+      .getGLEventInfo(glEventData.OID, glEventData.GLEventID)
+      .subscribe(
+        (res) => {
+          this.isChargeAction = false;
+          if (!res.data) {
+            this.modalIsOpen = false;
+            console.log('GLEventInfo - no data fetched');
+            return;
+          }
+          if (res.data) {
+            this.paymentDetails = res.data;
 
-        let dialogRef = this.dialog.open(PaymentDetailsPopupComponent, {
-          height: '780px',
-          panelClass: 'paymentDetailsModal',
-          data: {
-            paymentDetails: this.paymentDetails,
-            dateFormat: this.userPrefDateFormat,
-            vendorORCustomer: this.vendorOrCustomer
-          },
-          disableClose: true
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          this.modalIsOpen = false;
-        });
-
-      }
-    },
-      error => {
-        this.isChargeAction = false;
-        console.log("Error fetching GLEvent Info data");
-      });
-
+            let dialogRef = this.dialog.open(PaymentDetailsPopupComponent, {
+              height: '780px',
+              panelClass: 'paymentDetailsModal',
+              data: {
+                paymentDetails: this.paymentDetails,
+                dateFormat: this.userPrefDateFormat,
+                vendorORCustomer: this.vendorOrCustomer,
+              },
+              disableClose: true,
+            });
+            dialogRef.afterClosed().subscribe((result) => {
+              this.modalIsOpen = false;
+            });
+          }
+        },
+        (error) => {
+          this.isChargeAction = false;
+          console.log('Error fetching GLEvent Info data');
+        }
+      );
   }
   gridRowClick(evt: any) {
-    if (evt.rowType === 'group' || this.isButtonClick || this.approveRejectTask || this.actionsMenuClicked) {
+    if (
+      evt.rowType === 'group' ||
+      this.isButtonClick ||
+      this.approveRejectTask ||
+      this.actionsMenuClicked
+    ) {
       this.isButtonClick = false;
       this.approveRejectTask = false;
       this.actionsMenuClicked = false;
@@ -816,28 +917,32 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     this.dataGrid.instance.beginCustomLoading('Redirecting...');
     this.saveStateToSession();
-    this.router.navigate(
-      ['/v06/Forms/RenderForm.aspx'],
-      {
-        queryParams: { oid: evt.data.OID, otid: evt.data.OTID, ottid: evt.data.OTTID }
-      });
+    this.router.navigate(['/v06/Forms/RenderForm.aspx'], {
+      queryParams: {
+        oid: evt.data.OID,
+        otid: evt.data.OTID,
+        ottid: evt.data.OTTID,
+      },
+    });
   }
 
   gridInitialized(evt: any) {
     this.dataGrid.instance.beginCustomLoading('Initializing...');
-    return
+    return;
   }
 
   checkBoxAttributes(e: any) {
-    const checkBox = document.getElementsByClassName("dx-checkbox");
+    const checkBox = document.getElementsByClassName('dx-checkbox');
     const checkBoxarr = Array.from(checkBox);
-    checkBoxarr.forEach(element => {
-      element.setAttribute("title", "CheckBox")
+    checkBoxarr.forEach((element) => {
+      element.setAttribute('title', 'CheckBox');
     });
 
-    if (this.isGLEvent && (this.isLeaseArchived || this.isLeaseLocked || !this._showAddButton)) {
-      if (!(!this.headerCheckBox))
-        this.headerCheckBox.option("disabled", true);
+    if (
+      this.isGLEvent &&
+      (this.isLeaseArchived || this.isLeaseLocked || !this._showAddButton)
+    ) {
+      if (!!this.headerCheckBox) this.headerCheckBox.option('disabled', true);
       if (this.headerHtmlCellElement) {
         this.headerHtmlCellElement.style.pointerEvents = 'none';
       }
@@ -863,7 +968,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   getTemplateLink(evt: any): CellNav {
-    const col = this.columns.find(x => x.dataField === evt.column.dataField);
+    const col = this.columns.find((x) => x.dataField === evt.column.dataField);
 
     if (!col?.urlLink || this.currentListView === null) {
       return;
@@ -884,14 +989,14 @@ export class ListPageComponent implements OnInit, OnDestroy {
       urlLink: col.urlLink,
       useDefaultObjectFields: col.useDefaultObjectFields,
 
-      relationshipDefinitionId: this.currentListView.relationshipDefinitionId
+      relationshipDefinitionId: this.currentListView.relationshipDefinitionId,
     };
 
     if (cellNav.fieldType === FieldType.PopupWindow) {
       if (this.canEditNotes as boolean) {
         const regex = /\[([a-zA-Z]+)\]/gm;
 
-        cellNav.urlLink.match(regex)?.forEach(match => {
+        cellNav.urlLink.match(regex)?.forEach((match) => {
           const prop = match.replace('[', '').replace(']', '');
 
           cellNav.urlLink = cellNav.urlLink.replace(`${match}`, evt.data[prop]);
@@ -907,7 +1012,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
       .replace(/\[BasePageUrl\]/, '')
       .split('&');
 
-    redirectorIdFields.forEach(field => {
+    redirectorIdFields.forEach((field) => {
       cellNav.objectIdField = field.startsWith('OID=')
         ? field.replace('OID=', '').replace('[', '').replace(']', '')
         : cellNav.objectIdField;
@@ -921,14 +1026,16 @@ export class ListPageComponent implements OnInit, OnDestroy {
         : cellNav.objectTypeTypeIdField;
     });
 
-    if (!evt.data[cellNav.objectIdField] ||
+    if (
+      !evt.data[cellNav.objectIdField] ||
       !evt.data[cellNav.objectTypeIdField] ||
-      !evt.data[cellNav.objectTypeTypeIdField]) {
+      !evt.data[cellNav.objectTypeTypeIdField]
+    ) {
       return;
     }
 
     cellNav.objectId = evt.data[cellNav.objectIdField];
-    cellNav.objectTypeId = 193;//evt.data[cellNav.objectTypeIdField];
+    cellNav.objectTypeId = 193; //evt.data[cellNav.objectTypeIdField];
     cellNav.objectTypeTypeId = evt.data[cellNav.objectTypeTypeIdField];
 
     const rdid = cellNav.relationshipDefinitionId
@@ -937,22 +1044,25 @@ export class ListPageComponent implements OnInit, OnDestroy {
     cellNav.urlLink = cellNav.urlLink.replace('[RDID]', rdid);
 
     if (cellNav.fieldType === FieldType.Redirector) {
-      const found = this.rowLinks
-        .find(x => x.objectTypeId === cellNav.objectTypeId &&
-          x.objectTypeTypeId === cellNav.objectTypeTypeId);
+      const found = this.rowLinks.find(
+        (x) =>
+          x.objectTypeId === cellNav.objectTypeId &&
+          x.objectTypeTypeId === cellNav.objectTypeTypeId
+      );
 
       if (!found) {
         return;
       }
 
-      const basePageUrl = found.basePageUrl.indexOf('?') === -1
-        ? found.basePageUrl + '?'
-        : found.basePageUrl + '&';
+      const basePageUrl =
+        found.basePageUrl.indexOf('?') === -1
+          ? found.basePageUrl + '?'
+          : found.basePageUrl + '&';
 
       cellNav.urlLink = cellNav.urlLink.replace(/\[BasePageUrl\]/, basePageUrl);
       const regex = /\[([a-zA-Z]+)\]/gm;
 
-      cellNav.urlLink.match(regex)?.forEach(match => {
+      cellNav.urlLink.match(regex)?.forEach((match) => {
         const prop = match.replace('[', '').replace(']', '');
         cellNav.urlLink = cellNav.urlLink.replace(`${match}`, evt.data[prop]);
       });
@@ -961,7 +1071,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
     if (cellNav.fieldType === FieldType.Custom) {
       const regex = /\[([a-zA-Z]+)\]/gm;
 
-      cellNav.urlLink.match(regex)?.forEach(match => {
+      cellNav.urlLink.match(regex)?.forEach((match) => {
         const prop = match.replace('[', '').replace(']', '');
         cellNav.urlLink = cellNav.urlLink.replace(`${match}`, evt.data[prop]);
       });
@@ -975,7 +1085,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   updateRowNote(latestNote: CommonNote) {
-    const update = this.gridData.find(x => x === this.clickedCellData.data);
+    const update = this.gridData.find((x) => x === this.clickedCellData.data);
     const key = this.clickedCellData.column.dataField;
     const dataType = this.clickedCellData.column.dataType;
 
@@ -1020,32 +1130,42 @@ export class ListPageComponent implements OnInit, OnDestroy {
       objectId: cellNav.objectId,
       objectTypeId: cellNav.objectTypeId,
       objectTypeTypeId: cellNav.objectTypeTypeId,
-      securityTypeId: cellNav.securityTypeId
+      securityTypeId: cellNav.securityTypeId,
     };
 
-    this.service.getObjectSecurity(secRequest).subscribe(res => {
+    this.service.getObjectSecurity(secRequest).subscribe((res) => {
       const data = res.data;
 
-      if (!data.securityTypeId || data.securityTypeId === 1 || data.securityTypeId === 6) {
-        this.showInformationPopup('You do not have permission to access this item.');
+      if (
+        !data.securityTypeId ||
+        data.securityTypeId === 1 ||
+        data.securityTypeId === 6
+      ) {
+        this.showInformationPopup(
+          'You do not have permission to access this item.'
+        );
 
         return;
       }
 
-      if (cellNav.objectId !== data.objectId ||
+      if (
+        cellNav.objectId !== data.objectId ||
         cellNav.objectTypeId !== data.objectTypeId ||
         cellNav.objectTypeTypeId !== data.objectTypeTypeId
       ) {
         cellNav.urlLink = cellNav.urlLink.replace(
-          'OID=' + cellNav.objectId.toString(), 'OID=' + data.objectId.toString()
+          'OID=' + cellNav.objectId.toString(),
+          'OID=' + data.objectId.toString()
         );
 
         cellNav.urlLink = cellNav.urlLink.replace(
-          'OTID=' + cellNav.objectTypeId.toString(), 'OTID=' + data.objectId.toString()
+          'OTID=' + cellNav.objectTypeId.toString(),
+          'OTID=' + data.objectId.toString()
         );
 
         cellNav.urlLink = cellNav.urlLink.replace(
-          'OTTID=' + cellNav.objectTypeTypeId.toString(), 'OID=' + data.objectId.toString()
+          'OTTID=' + cellNav.objectTypeTypeId.toString(),
+          'OID=' + data.objectId.toString()
         );
       }
 
@@ -1065,7 +1185,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.showMap = false;
     this.currentListView = selectedListView;
 
-    this.populateListViewMenu(true, false)
+    this.populateListViewMenu(true, false);
   }
 
   setDefaultListView(listView: ListView) {
@@ -1088,7 +1208,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
       this.showCustomPopup(
         'Unsaved Changes',
         'There are unsaved changes to the current view. Please be sure to ' +
-        'save the latest changes before attempting to share this List View.'
+          'save the latest changes before attempting to share this List View.'
       );
 
       return;
@@ -1138,7 +1258,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const isActiveListView = data.listViewType === this.currentListView.listViewType &&
+    const isActiveListView =
+      data.listViewType === this.currentListView.listViewType &&
       data.id === this.currentListView.id;
 
     this.service.deleteUserView(data.id).subscribe(() => {
@@ -1149,7 +1270,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.populateListViewMenu(false, true)
+      this.populateListViewMenu(false, true);
     });
   }
 
@@ -1236,7 +1357,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   onFilterPopupVisibleChange(isOpening: boolean) {
     if (isOpening) {
       this.fillDateGridColumns();
-      this.setStoredRangeFormDataToDefaultValues()
+      this.setStoredRangeFormDataToDefaultValues();
       return;
     }
 
@@ -1247,11 +1368,16 @@ export class ListPageComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const fieldsInFilter: string[] = this.getFilterFieldsFromFilter(this.dataGrid.filterValue);
+      const fieldsInFilter: string[] = this.getFilterFieldsFromFilter(
+        this.dataGrid.filterValue
+      );
 
-      if (!this.doesLeftArrayIncludeRight(
-        this.includedDataFieldsFromLastGridReload, fieldsInFilter
-      )) {
+      if (
+        !this.doesLeftArrayIncludeRight(
+          this.includedDataFieldsFromLastGridReload,
+          fieldsInFilter
+        )
+      ) {
         this.populateGrid(true);
       }
     }, 1000);
@@ -1300,14 +1426,19 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   showDynamicSQL() {
-    this.service.getDynamicSQL(this.lastGridDataRequest).subscribe(res => {
+    this.service.getDynamicSQL(this.lastGridDataRequest).subscribe((res) => {
       const leftRegEx = new RegExp('\\[\\s', 'g');
       const rightRegEx = new RegExp('\\s\\]', 'g');
       if (!res.success) {
-        this.showErrorPopup("An error occurred while generating the sql for this view. Please see the error logs for futher details.");
+        this.showErrorPopup(
+          'An error occurred while generating the sql for this view. Please see the error logs for futher details.'
+        );
         return;
       }
-      this.formattedSql = format(res.data, { language: 'tsql', uppercase: true })
+      this.formattedSql = format(res.data, {
+        language: 'tsql',
+        uppercase: true,
+      })
         .replace(leftRegEx, '[')
         .replace(rightRegEx, ']');
 
@@ -1329,7 +1460,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   closeSqlPopup = () => {
     this.sqlPopupVisible = false;
-  }
+  };
 
   createListView(name: string) {
     if (name.length > 50) {
@@ -1348,25 +1479,26 @@ export class ListPageComponent implements OnInit, OnDestroy {
       view: JSON.stringify(this.dataGrid.instance.state()),
       isExpandAllSelected: this.isExpanded,
       archiveToggleValue: this.currentListView.archiveToggleValue,
-      masterGroupId: this.currentPortfolio?.masterGroupId ?? null
+      masterGroupId: this.currentPortfolio?.masterGroupId ?? null,
     };
 
-    this.service.createUserListView(userListView).subscribe(newListViewId => {
+    this.service.createUserListView(userListView).subscribe((newListViewId) => {
       const { data: id } = newListViewId;
       const request: GetViewDropdownDataRequest = {
         objectTypeId: this.objectTypeId,
         isSuperUser: this._isSuperUser,
       };
 
-      this.service.getListViewSelectorItems(request).subscribe(result => {
+      this.service.getListViewSelectorItems(request).subscribe((result) => {
         this.listViews = result.data;
 
-        this.activeListViewCount = this.listViews.coStarListViews.length
-          + this.listViews.myListViews.length
-          + this.listViews.sharedListViews.length;
+        this.activeListViewCount =
+          this.listViews.coStarListViews.length +
+          this.listViews.myListViews.length +
+          this.listViews.sharedListViews.length;
 
-          const newListView = this.listViews.myListViews.find((x) => x.id == id);
-          
+        const newListView = this.listViews.myListViews.find((x) => x.id == id);
+
         this.currentListView = newListView;
         this.configCurrentListView(true, false);
       });
@@ -1379,7 +1511,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
     gridState.searchText = null;
     this.currentListView.view = JSON.stringify(gridState);
     this.currentListView.isExpandAllSelected = this.isExpanded;
-    this.currentListView.masterGroupId = this.currentPortfolio?.masterGroupId ?? null;
+    this.currentListView.masterGroupId =
+      this.currentPortfolio?.masterGroupId ?? null;
     this.currentListView.archiveToggleValue = this.getArchiveToggleValue();
     this.setUnmodifiedOriginalListView();
 
@@ -1389,20 +1522,20 @@ export class ListPageComponent implements OnInit, OnDestroy {
       view: this.currentListView.view,
       archiveToggleValue: this.currentListView.archiveToggleValue,
       isExpandAllSelected: this.currentListView.isExpandAllSelected,
-      masterGroupId: this.currentListView.masterGroupId
+      masterGroupId: this.currentListView.masterGroupId,
     };
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    this.service.updateListView(dto).subscribe(() => { });
+    this.service.updateListView(dto).subscribe(() => {});
   }
 
   resetListView() {
-    this.service.getListView(this.currentListView).subscribe(result => {
+    this.service.getListView(this.currentListView).subscribe((result) => {
       this.currentListView = result.data;
 
       this.configCurrentListView(true, false);
 
-      this.dataGrid.instance.clearFilter()
+      this.dataGrid.instance.clearFilter();
 
       if (this.cremDropdownComponent) {
         this.cremDropdownComponent.clearDropdown();
@@ -1427,10 +1560,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.dataGrid.instance.showColumnChooser();
 
     setTimeout(() => {
-      const choosers = document.getElementsByClassName('dx-datagrid-column-chooser');
+      const choosers = document.getElementsByClassName(
+        'dx-datagrid-column-chooser'
+      );
 
       for (let i = 0; i < choosers.length; i++) {
-        const closeButton = choosers[i].getElementsByClassName('dx-closebutton')[0];
+        const closeButton =
+          choosers[i].getElementsByClassName('dx-closebutton')[0];
 
         if (closeButton && !this.hasListener) {
           closeButton.addEventListener('click', () => {
@@ -1444,9 +1580,12 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   columnChooserClosed() {
-    if (!this.doesLeftArrayIncludeRight(this.includedDataFieldsFromLastGridReload,
-      this.dataGrid.instance.getVisibleColumns().map(item => item.dataField)
-    ) || this.gridData?.length === 0
+    if (
+      !this.doesLeftArrayIncludeRight(
+        this.includedDataFieldsFromLastGridReload,
+        this.dataGrid.instance.getVisibleColumns().map((item) => item.dataField)
+      ) ||
+      this.gridData?.length === 0
     ) {
       this.saveStateToSession();
       this.populateGrid(true);
@@ -1454,7 +1593,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   exportExcel() {
-    this.exportToExcelService.exportToExcel(this.dataGrid.instance, this.currentListViewName);
+    this.exportToExcelService.exportToExcel(
+      this.dataGrid.instance,
+      this.currentListViewName
+    );
   }
 
   toggleShowActive(includeActive: boolean) {
@@ -1468,7 +1610,6 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   public btnAddItemNewClick(objectId) {
-
     if (objectId === ObjectType.PROJECT) {
       let dialogRef = this.dialog.open(AddFormWizardComponent, {
         disableClose: true,
@@ -1477,14 +1618,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
         maxWidth: '1100px',
         data: {
           objectTypeId: this.objectTypeId,
-          userId: this.userId
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-
-        }
+          userId: this.userId,
+        },
       });
     } else if (objectId === ObjectType.CONTACT) {
       let dialogRef = this.dialog.open(AddContactModalComponent, {
@@ -1494,11 +1629,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
         maxWidth: '1100px',
         data: {
           objectTypeId: this.objectTypeId,
-          userId: this.userId
-        }
+          userId: this.userId,
+        },
       });
       dialogRef.afterClosed().subscribe(() => {
-          this.populateGrid(true);
+        this.populateGrid(true);
       });
     }
   }
@@ -1506,13 +1641,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
   public btnAddCompany() {
     let dialogRef = this.dialog.open(AddCompanyModalComponent, {
       disableClose: true,
-      height: '425px',
+      height: '390px',
       width: '700px',
       maxWidth: '1100px',
       data: {
         objectTypeId: this.objectTypeId,
-        userId: this.userId
-      }
+        userId: this.userId,
+      },
     });
 
     dialogRef.afterClosed();
@@ -1521,20 +1656,24 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.currentListView.archiveToggleValue = this.getArchiveToggleValue();
 
     this.archiveToggleHint =
-      this.currentListView.archiveToggleValue === ArchiveToggleValue.ActiveAndArchived
+      this.currentListView.archiveToggleValue ===
+      ArchiveToggleValue.ActiveAndArchived
         ? `(Showing both active and ${this.archivedLabel} records)`
-        : this.currentListView.archiveToggleValue === ArchiveToggleValue.ActiveOnly
-          ? `(Showing active records only)`
-          : this.currentListView.archiveToggleValue === ArchiveToggleValue.ArchivedOnly
-            ? `(Showing ${this.archivedLabel} records only)`
-            : `(Showing neither active nor ${this.archivedLabel} records)`;
+        : this.currentListView.archiveToggleValue ===
+          ArchiveToggleValue.ActiveOnly
+        ? `(Showing active records only)`
+        : this.currentListView.archiveToggleValue ===
+          ArchiveToggleValue.ArchivedOnly
+        ? `(Showing ${this.archivedLabel} records only)`
+        : `(Showing neither active nor ${this.archivedLabel} records)`;
 
     this.saveStateToSession();
     this.populateGrid(true);
   }
 
   private expandGroupRowsFromSession() {
-    const expandedRows: any[] = this.safeGetFromSession(SessionVariables.ExpandCollapse) ?? [];
+    const expandedRows: any[] =
+      this.safeGetFromSession(SessionVariables.ExpandCollapse) ?? [];
 
     expandedRows.forEach((row: Row) => {
       this.dataGrid.instance.expandRow(row.key);
@@ -1545,21 +1684,24 @@ export class ListPageComponent implements OnInit, OnDestroy {
     return !this.includeArchived && !this.includeActive
       ? ArchiveToggleValue.None
       : this.includeArchived && !this.includeActive
-        ? ArchiveToggleValue.ArchivedOnly
-        : !this.includeArchived && this.includeActive
-          ? ArchiveToggleValue.ActiveOnly
-          : ArchiveToggleValue.ActiveAndArchived;
+      ? ArchiveToggleValue.ArchivedOnly
+      : !this.includeArchived && this.includeActive
+      ? ArchiveToggleValue.ActiveOnly
+      : ArchiveToggleValue.ActiveAndArchived;
   }
 
   private configCurrentListView(
-    refreshGrid: boolean, 
-    useSessionState: boolean = false, 
+    refreshGrid: boolean,
+    useSessionState: boolean = false,
     overrideDefaultListPage = false
   ) {
-
     if (useSessionState) {
-      this.currentListView = this.safeGetFromSession(SessionVariables.CurrentListView);
-      this.unmodifiedOriginalListView = this.safeGetFromSession(SessionVariables.UnmodifiedOriginalCurrentListView);
+      this.currentListView = this.safeGetFromSession(
+        SessionVariables.CurrentListView
+      );
+      this.unmodifiedOriginalListView = this.safeGetFromSession(
+        SessionVariables.UnmodifiedOriginalCurrentListView
+      );
     }
 
     const viewResolutionSequence = [
@@ -1573,10 +1715,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
     ];
 
     if (overrideDefaultListPage) {
-      const overrideView =
-        this.listViews?.coStarListViews?.find(
-          (x) => x.listPageId === this._intitialListPageRequestedId
-        )
+      const overrideView = this.listViews?.coStarListViews?.find(
+        (x) => x.listPageId === this._intitialListPageRequestedId
+      );
       // unshift view to the front of the list sources
       viewResolutionSequence.unshift(
         overrideView,
@@ -1602,11 +1743,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
       this.listViews.sharedListViews,
       this.listViews.hiddenListViews,
     ];
-    
-    const isInListViews = listViewSources.map(viewGroup => viewGroup.some(x => x.id === this.currentListView.id));
-    
+
+    const isInListViews = listViewSources.map((viewGroup) =>
+      viewGroup.some((x) => x.id === this.currentListView.id)
+    );
+
     // the view is no longer available, show error popup and use the default view
-    if (!(isInListViews)) {
+    if (!isInListViews) {
       this.showErrorPopup('This list view is no longer available.');
       if (this.currentListView !== selectedListView) {
         this.isCurrentViewRemoved = true;
@@ -1623,25 +1766,28 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.searchText = viewDataObject.searchText;
     this.dataGrid.instance.searchByText(this.searchText);
 
-
     // even if we have session state, that doesnt mean there will be an entry for the current view, look in the porfolio list instead of returning null prematurely
     // try to get current portfolio from sequence of sources
-    this.currentPortfolio = this.safeGetFromSession(SessionVariables.Portfolio) || this.portfolios.find(x => x.masterGroupId === this.currentListView.masterGroupId) || null
+    this.currentPortfolio =
+      this.safeGetFromSession(SessionVariables.Portfolio) ||
+      this.portfolios.find(
+        (x) => x.masterGroupId === this.currentListView.masterGroupId
+      ) ||
+      null;
 
-
-    const isHiddenListView = this.listViews.hiddenListViews
-      .some(x => x.id === this.currentListView.id);
-    const isMyListView = this.listViews.myListViews
-      .some(x => x.id === this.currentListView.id);
+    const isHiddenListView = this.listViews.hiddenListViews.some(
+      (x) => x.id === this.currentListView.id
+    );
+    const isMyListView = this.listViews.myListViews.some(
+      (x) => x.id === this.currentListView.id
+    );
 
     this.showSave =
       !this.isCoStarListView(this.currentListView) &&
       (isMyListView ||
         ((listView.isSharedWithMe || isHiddenListView) &&
-          (listView.securityType !== SecurityType.RestrictedView &&
-            listView.securityType !== SecurityType.View)
-        )
-      );
+          listView.securityType !== SecurityType.RestrictedView &&
+          listView.securityType !== SecurityType.View));
 
     this.isExpanded = listView.isExpandAllSelected;
 
@@ -1657,14 +1803,14 @@ export class ListPageComponent implements OnInit, OnDestroy {
       listView.archiveToggleValue === ArchiveToggleValue.ActiveAndArchived ||
       listView.archiveToggleValue === ArchiveToggleValue.ArchivedOnly;
 
-    this.archiveToggleHint = listView.archiveToggleValue === ArchiveToggleValue.ActiveAndArchived
-      ? `(Showing both active and ${this.archivedLabel} records)`
-      : listView.archiveToggleValue == ArchiveToggleValue.ActiveOnly
+    this.archiveToggleHint =
+      listView.archiveToggleValue === ArchiveToggleValue.ActiveAndArchived
+        ? `(Showing both active and ${this.archivedLabel} records)`
+        : listView.archiveToggleValue == ArchiveToggleValue.ActiveOnly
         ? `(Showing active records only)`
         : listView.archiveToggleValue == ArchiveToggleValue.ArchivedOnly
-          ? `(Showing ${this.archivedLabel} records only)`
-          : `(Showing neither active nor ${this.archivedLabel} records)`;
-
+        ? `(Showing ${this.archivedLabel} records only)`
+        : `(Showing neither active nor ${this.archivedLabel} records)`;
 
     this.dataGrid.instance.pageSize(viewDataObject.pageSize);
     this.dataGrid.instance.pageIndex(viewDataObject.pageIndex);
@@ -1672,8 +1818,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
     if (refreshGrid) {
       if (this.isCurrentViewRemoved) {
         this.populateGrid(false);
-      }
-      else {
+      } else {
         this.populateGrid(useSessionState);
       }
     }
@@ -1693,7 +1838,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     this.popupInfo.cancelButtonOptions = {
       text: 'Close',
-      onClick: this.closePopup
+      onClick: this.closePopup,
     };
   }
 
@@ -1713,7 +1858,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
   private setUnmodifiedOriginalListView() {
     setTimeout(() => {
       this.unmodifiedOriginalListView = Object.assign({}, this.currentListView);
-      this.unmodifiedOriginalListView.view = JSON.stringify(this.dataGrid.instance.state());
+      this.unmodifiedOriginalListView.view = JSON.stringify(
+        this.dataGrid.instance.state()
+      );
 
       this.saveStateToSession();
     }, 1500);
@@ -1725,68 +1872,90 @@ export class ListPageComponent implements OnInit, OnDestroy {
     let listPageObjectTypeSessions: ListPageObjectTypeSession[] = [];
     if (session !== null) {
       listPageObjectTypeSessions = JSON.parse(session);
-      let index = listPageObjectTypeSessions.findIndex(x => x.objectTypeId === this.objectTypeId);
-      // remove the current list page session if it exists 
-      if (index >= 0)
-        listPageObjectTypeSessions.splice(index, 1); 
+      let index = listPageObjectTypeSessions.findIndex(
+        (x) => x.objectTypeId === this.objectTypeId
+      );
+      // remove the current list page session if it exists
+      if (index >= 0) listPageObjectTypeSessions.splice(index, 1);
     }
 
     //Add the session item back for the current object type
     const state = this.dataGrid.instance.state();
     state.searchText = this.searchText;
     state.filterValue = this.dataGrid.filterValue;
-    this.currentListView.view = JSON.stringify(state)
+    this.currentListView.view = JSON.stringify(state);
 
-    const listPageObjectTypeSession: ListPageObjectTypeSession =
-    {
+    const listPageObjectTypeSession: ListPageObjectTypeSession = {
       objectTypeId: this.objectTypeId,
       currentListView: JSON.stringify(this.currentListView),
       portfolio: JSON.stringify(this.currentPortfolio),
       listPageViewMode: this.listPageViewMode,
-      expandCollapse: JSON.stringify(this.dataGrid.instance.getVisibleRows()
-        .filter(x => x.rowType === 'group' && x.isExpanded)
-        .map(x => ({ key: x.key }))),
+      expandCollapse: JSON.stringify(
+        this.dataGrid.instance
+          .getVisibleRows()
+          .filter((x) => x.rowType === 'group' && x.isExpanded)
+          .map((x) => ({ key: x.key }))
+      ),
       filterFields: JSON.stringify(JSON.stringify(this.filterFields)),
       archiveToggleValue: this.getArchiveToggleValue(),
-      unmodifiedOriginalCurrentListView: JSON.stringify(this.unmodifiedOriginalListView)
+      unmodifiedOriginalCurrentListView: JSON.stringify(
+        this.unmodifiedOriginalListView
+      ),
     };
 
     listPageObjectTypeSessions.push(listPageObjectTypeSession);
 
-    sessionStorage.setItem(this.listPageSessionKey, JSON.stringify(listPageObjectTypeSessions));
+    sessionStorage.setItem(
+      this.listPageSessionKey,
+      JSON.stringify(listPageObjectTypeSessions)
+    );
   }
 
   private safeGetFromSession(getType: SessionVariables) {
-    const listPageSessionValue = sessionStorage.getItem(this.listPageSessionKey);
+    const listPageSessionValue = sessionStorage.getItem(
+      this.listPageSessionKey
+    );
     if (listPageSessionValue === undefined || listPageSessionValue === null) {
       return null;
     }
 
-    const listPageObjectTypeSessions = JSON.parse(listPageSessionValue) as ListPageObjectTypeSession[];
-    const listPageObjectTypeSession = listPageObjectTypeSessions.find(x => x.objectTypeId === this.objectTypeId);
-    if (listPageObjectTypeSession === undefined || listPageObjectTypeSession === null)
+    const listPageObjectTypeSessions = JSON.parse(
+      listPageSessionValue
+    ) as ListPageObjectTypeSession[];
+    const listPageObjectTypeSession = listPageObjectTypeSessions.find(
+      (x) => x.objectTypeId === this.objectTypeId
+    );
+    if (
+      listPageObjectTypeSession === undefined ||
+      listPageObjectTypeSession === null
+    )
       return null;
 
     switch (getType) {
       case SessionVariables.ArchiveToggleValue:
         return listPageObjectTypeSession?.archiveToggleValue;
       case SessionVariables.CurrentListView:
-        return JSON.parse(listPageObjectTypeSession?.currentListView)
+        return JSON.parse(listPageObjectTypeSession?.currentListView);
       case SessionVariables.ExpandCollapse:
         return JSON.parse(listPageObjectTypeSession?.expandCollapse);
       case SessionVariables.FilterFields:
-        return listPageObjectTypeSession?.filterFields
+        return listPageObjectTypeSession?.filterFields;
       case SessionVariables.ListPageViewMode:
         return listPageObjectTypeSession?.listPageViewMode;
       case SessionVariables.Portfolio:
-        if (listPageObjectTypeSession.portfolio === undefined || listPageObjectTypeSession.portfolio === 'null' || listPageObjectTypeSession.portfolio === null) {
-          return null
-        }
-        else {
+        if (
+          listPageObjectTypeSession.portfolio === undefined ||
+          listPageObjectTypeSession.portfolio === 'null' ||
+          listPageObjectTypeSession.portfolio === null
+        ) {
+          return null;
+        } else {
           return JSON.parse(listPageObjectTypeSession.portfolio);
         }
       case SessionVariables.UnmodifiedOriginalCurrentListView:
-        return JSON.parse(listPageObjectTypeSession.unmodifiedOriginalCurrentListView);
+        return JSON.parse(
+          listPageObjectTypeSession.unmodifiedOriginalCurrentListView
+        );
       default:
         return null;
     }
@@ -1800,7 +1969,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
     let allrows: any[] = [];
     dataSource
       ?.store()
-      .load({ filter: filterExpr, sort: loadOptions?.sort, group: loadOptions?.group })
+      .load({
+        filter: filterExpr,
+        sort: loadOptions?.sort,
+        group: loadOptions?.group,
+      })
       .then((result: any) => {
         allrows = result;
       });
@@ -1808,20 +1981,17 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   private getVisibleFieldValuesFromGrid(fieldName: string): string[] {
-
     const result: string[] = [];
     const datagridAllRows = this.getDataGridAllRows();
-    datagridAllRows
-      .forEach((row) => {
-        if (row.hasOwnProperty('items') && Array.isArray(row.items)) {
-          row.items.forEach((item) => {
-            result.push(item[fieldName]);
-          });
-        }
-        else {
-          result.push(row[fieldName]);
-        }
-      });
+    datagridAllRows.forEach((row) => {
+      if (row.hasOwnProperty('items') && Array.isArray(row.items)) {
+        row.items.forEach((item) => {
+          result.push(item[fieldName]);
+        });
+      } else {
+        result.push(row[fieldName]);
+      }
+    });
 
     return result;
   }
@@ -1829,11 +1999,12 @@ export class ListPageComponent implements OnInit, OnDestroy {
   private getFilterFieldsFromFilter(filterValue: string[]): string[] {
     const fieldsInFilter: string[] = [];
 
-    if (filterValue === null)
-      return fieldsInFilter;
+    if (filterValue === null) return fieldsInFilter;
 
-    if ((filterValue?.length === 3 || filterValue?.length === 2) &&
-      !Array.isArray(filterValue[0])) {
+    if (
+      (filterValue?.length === 3 || filterValue?.length === 2) &&
+      !Array.isArray(filterValue[0])
+    ) {
       // Only one item in filter - more efficent than checking in each recursive frame
       fieldsInFilter.push(filterValue[0]);
     } else {
@@ -1842,7 +2013,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
     return fieldsInFilter;
   }
 
-  private recursivelyGetDataFieldsFromFilter(listToFill: string[], filterValue: any[]): string[] {
+  private recursivelyGetDataFieldsFromFilter(
+    listToFill: string[],
+    filterValue: any[]
+  ): string[] {
     // A valid filter will be either an array[2] or array[3] in which case
     // array[0] is not an array, otherwise it is one of these:
     // 1. A nested Filter - Array[Array[2|3],[..],[..]]..
@@ -1858,8 +2032,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
         continue;
       }
 
-      if ((filterValue[x].length === 3 || filterValue[x].length === 2) &&
-        !Array.isArray(filterValue[x][0])) {
+      if (
+        (filterValue[x].length === 3 || filterValue[x].length === 2) &&
+        !Array.isArray(filterValue[x][0])
+      ) {
         listToFill.push(filterValue[x][0]);
         continue;
       }
@@ -1886,7 +2062,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   private areObjectArraysEqual(left: any[], right: any[]) {
-    return JSON.stringify(left) === JSON.stringify(right)
+    return JSON.stringify(left) === JSON.stringify(right);
   }
 
   private doesListViewNeedSaving(listViewId: number) {
@@ -1897,20 +2073,31 @@ export class ListPageComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    if ((this.currentPortfolio?.masterGroupId ?? null) !== (this.unmodifiedOriginalListView?.masterGroupId ?? null) ||
-      this.currentListView.isExpandAllSelected !== this.unmodifiedOriginalListView?.isExpandAllSelected ||
-      this.currentListView.archiveToggleValue !== this.unmodifiedOriginalListView?.archiveToggleValue
+    if (
+      (this.currentPortfolio?.masterGroupId ?? null) !==
+        (this.unmodifiedOriginalListView?.masterGroupId ?? null) ||
+      this.currentListView.isExpandAllSelected !==
+        this.unmodifiedOriginalListView?.isExpandAllSelected ||
+      this.currentListView.archiveToggleValue !==
+        this.unmodifiedOriginalListView?.archiveToggleValue
     ) {
       return true;
     }
 
     const currentViewDataObject = this.dataGrid.instance.state();
-    const unmodifiedOriginalListViewDataObject = JSON.parse(this.unmodifiedOriginalListView.view);
+    const unmodifiedOriginalListViewDataObject = JSON.parse(
+      this.unmodifiedOriginalListView.view
+    );
 
     //Filter arrays
-    if (!this.areObjectArraysEqual(currentViewDataObject.filterValue,
-      unmodifiedOriginalListViewDataObject.filterValue) ||
-      currentViewDataObject.filterText !== unmodifiedOriginalListViewDataObject.filterText) {
+    if (
+      !this.areObjectArraysEqual(
+        currentViewDataObject.filterValue,
+        unmodifiedOriginalListViewDataObject.filterValue
+      ) ||
+      currentViewDataObject.filterText !==
+        unmodifiedOriginalListViewDataObject.filterText
+    ) {
       return true;
     }
 
@@ -1947,7 +2134,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     this.popupInfo.cancelButtonOptions = {
       text: 'Close',
-      onClick: this.closePopup
+      onClick: this.closePopup,
     };
   }
 
@@ -1961,7 +2148,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     this.popupInfo.cancelButtonOptions = {
       text: 'Close',
-      onClick: this.closePopup
+      onClick: this.closePopup,
     };
   }
 
@@ -1982,7 +2169,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  checkExpRevOptions() {    //**** this is for lease payments page - expense and revenue **/
+  checkExpRevOptions() {
+    //**** this is for lease payments page - expense and revenue **/
     this.vendorOrCustomer = '';
     if (this.objectTypeId == ObjectTypeIds.Expense) {
       this.vendorOrCustomer = 'Vendor';
@@ -1992,15 +2180,19 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   getLeaseInfo(leaseId: number) {
-    this.service.getLeaseInfo(leaseId).subscribe(res => {
+    this.service.getLeaseInfo(leaseId).subscribe((res) => {
       if (!res.success) {
-        console.log("LeaseInfo API is not successful");
+        console.log('LeaseInfo API is not successful');
         return;
       }
       if (res.data) {
         this.showHoldPayments = true;
         this.isHoldPayments = res.data.nonPayLease;
-        this.isLeaseArchived = res.data.leaseActive && res.data.leaseActive.trim().toLowerCase() == "archived" ? true : false;
+        this.isLeaseArchived =
+          res.data.leaseActive &&
+          res.data.leaseActive.trim().toLowerCase() == 'archived'
+            ? true
+            : false;
         this.isLeaseLocked = res.data.isLocked;
       }
     });
@@ -2009,11 +2201,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
   setLeaseInfo(isHoldPayments: boolean) {
     this.leaseInfoReq = {
       leaseAbstractID: this.urlOID,
-      nonPayLease: isHoldPayments
-    }
-    this.service.postLeaseInfo(this.leaseInfoReq).subscribe(res => {
+      nonPayLease: isHoldPayments,
+    };
+    this.service.postLeaseInfo(this.leaseInfoReq).subscribe((res) => {
       if (!res.success) {
-        console.log("LeaseInfo API update is not successful");
+        console.log('LeaseInfo API update is not successful');
         return;
       }
     });
@@ -2022,14 +2214,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
   getDateFormat() {
     let obj;
     obj = this.columnsDef.find((ele) => {
-      if (ele.hasOwnProperty("dataField") && ele.dataField == "StartDate") {
+      if (ele.hasOwnProperty('dataField') && ele.dataField == 'StartDate') {
         return ele;
       }
     });
 
-    this.userPrefDateFormat = obj.format ? obj.format : "MM/dd/yyyy";
+    this.userPrefDateFormat = obj.format ? obj.format : 'MM/dd/yyyy';
   }
-
 
   setEditPagesForLeasePayments() {
     let newIsIncomeValue: string = '';
@@ -2046,39 +2237,63 @@ export class ListPageComponent implements OnInit, OnDestroy {
       //Create a copy of the unModifiedEditPages array
       let tempEditPages = JSON.parse(JSON.stringify(this.unModifiedEditPages));
 
-      tempEditPages.forEach(ep => {
-        ep.navigationUrl = this.replaceQueryParamsInLeasePaymentUrl(ep.navigationUrl, null);
-      })
+      tempEditPages.forEach((ep) => {
+        ep.navigationUrl = this.replaceQueryParamsInLeasePaymentUrl(
+          ep.navigationUrl,
+          null
+        );
+      });
 
       this.editPages = tempEditPages;
     }
-
   }
 
   dataGridOnCellPrepared(e) {
-
-    if (this.isGLEvent && e.rowType == 'header' && e.column.command == 'select') {
-      this.headerHtmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
-      this.headerCheckBox = CheckBox.getInstance(this.headerHtmlCellElement.querySelector(".dx-select-checkbox"));
+    if (
+      this.isGLEvent &&
+      e.rowType == 'header' &&
+      e.column.command == 'select'
+    ) {
+      this.headerHtmlCellElement =
+        e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+      this.headerCheckBox = CheckBox.getInstance(
+        this.headerHtmlCellElement.querySelector('.dx-select-checkbox')
+      );
     }
 
-    if (this.isGLEvent && e.rowType === "data") {
-      if (e.data.IsTaxable === 'Yes' && e.column.dataField === 'GLEventName' && e.data.GLEventName.indexOf('(Taxable)') < 0)
-        e.data.GLEventName = e.data.GLEventName.trim() + ' (Taxable)'
+    if (this.isGLEvent && e.rowType === 'data') {
+      if (
+        e.data.IsTaxable === 'Yes' &&
+        e.column.dataField === 'GLEventName' &&
+        e.data.GLEventName.indexOf('(Taxable)') < 0
+      )
+        e.data.GLEventName = e.data.GLEventName.trim() + ' (Taxable)';
 
-      if (e.data.TaxableGLEventID > 0 && e.column.dataField === 'GLEventName' && e.data.GLEventName.indexOf('(Tax)') < 0)
-        e.data.GLEventName = e.data.GLEventName.trim() + ' (Tax)'
+      if (
+        e.data.TaxableGLEventID > 0 &&
+        e.column.dataField === 'GLEventName' &&
+        e.data.GLEventName.indexOf('(Tax)') < 0
+      )
+        e.data.GLEventName = e.data.GLEventName.trim() + ' (Tax)';
 
-
-      if ((e.data.IsActive === 'Deleted' || this.isLeaseArchived || this.isLeaseLocked || !this._showAddButton) && e.column.command === 'select') {
+      if (
+        (e.data.IsActive === 'Deleted' ||
+          this.isLeaseArchived ||
+          this.isLeaseLocked ||
+          !this._showAddButton) &&
+        e.column.command === 'select'
+      ) {
         //In mangospa the td element is in e.cellElement but in CREM it is in an array so we use e.cellElement[0]
-        let htmlCellElement = e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
-        var editor = CheckBox.getInstance(htmlCellElement.querySelector(".dx-select-checkbox"));
-        if (!(!editor)) {
+        let htmlCellElement =
+          e.cellElement.length === undefined ? e.cellElement : e.cellElement[0];
+        var editor = CheckBox.getInstance(
+          htmlCellElement.querySelector('.dx-select-checkbox')
+        );
+        if (!!editor) {
           if (e.data.IsActive === 'Deleted') {
-            editor.option("visible", false);
+            editor.option('visible', false);
           } else {
-            editor.option("disabled", true);
+            editor.option('disabled', true);
           }
         }
 
@@ -2089,80 +2304,110 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   editSelectedCharges() {
     let editChargeUrl: string = `/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLGroup=&IsIncome=&Mode=Edit&paramFinView=Status`;
-    let scheduledCharges = this.dataGrid.selectedRowKeys.filter(srk => srk.IsActive === 'Active');
+    let scheduledCharges = this.dataGrid.selectedRowKeys.filter(
+      (srk) => srk.IsActive === 'Active'
+    );
 
     if (scheduledCharges.length <= 0) {
-      alert("There are not any charges to edit.")
+      alert('There are not any charges to edit.');
       return;
     }
 
     this.isChargeAction = true;
-    let glEventIdList: number[] = scheduledCharges.map(sc => sc.GLEventID);
-    editChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(editChargeUrl, glEventIdList);
+    let glEventIdList: number[] = scheduledCharges.map((sc) => sc.GLEventID);
+    editChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(
+      editChargeUrl,
+      glEventIdList
+    );
     this.navigateToUrl(editChargeUrl);
   }
 
   deleteSelectedCharges() {
     const leaseObjectTypeTypeId: number = this.urlOTTID;
 
-    let allChargesWithIndex = this.dataGrid.selectedRowKeys.every(c => c.IndexRule);
-    let someChargesWithIndex = allChargesWithIndex ? false : this.dataGrid.selectedRowKeys.some(c => c.IndexRule);
+    let allChargesWithIndex = this.dataGrid.selectedRowKeys.every(
+      (c) => c.IndexRule
+    );
+    let someChargesWithIndex = allChargesWithIndex
+      ? false
+      : this.dataGrid.selectedRowKeys.some((c) => c.IndexRule);
 
-    let inProcessOrHistoricalExist: boolean = (this.dataGrid.selectedRowKeys.find(re => re.ProcessingStatus.toLowerCase() == 'in process' ||
-      re.ProcessingStatus.toLowerCase() == 'historical') !== undefined)
-    let deleteMsg: string = inProcessOrHistoricalExist ? "All selected Scheduled charges will be deleted! Historical or In Process Charges cannot be deleted!" :
-      "All selected charges will be deleted! Do you wish to continue?";
+    let inProcessOrHistoricalExist: boolean =
+      this.dataGrid.selectedRowKeys.find(
+        (re) =>
+          re.ProcessingStatus.toLowerCase() == 'in process' ||
+          re.ProcessingStatus.toLowerCase() == 'historical'
+      ) !== undefined;
+    let deleteMsg: string = inProcessOrHistoricalExist
+      ? 'All selected Scheduled charges will be deleted! Historical or In Process Charges cannot be deleted!'
+      : 'All selected charges will be deleted! Do you wish to continue?';
 
     if (confirm(deleteMsg)) {
-      let scheduledCharges = this.dataGrid.selectedRowKeys.filter(srk => srk.IsActive === 'Active');
+      let scheduledCharges = this.dataGrid.selectedRowKeys.filter(
+        (srk) => srk.IsActive === 'Active'
+      );
       if (inProcessOrHistoricalExist || someChargesWithIndex) {
         //Get all scheduled charges with no index rule
-        scheduledCharges = scheduledCharges.filter(sc => (sc.ProcessingStatus.toLowerCase() == 'scheduled' || sc.ProcessingStatus.toLowerCase() == 'estimated') && !sc.IndexRule);
+        scheduledCharges = scheduledCharges.filter(
+          (sc) =>
+            (sc.ProcessingStatus.toLowerCase() == 'scheduled' ||
+              sc.ProcessingStatus.toLowerCase() == 'estimated') &&
+            !sc.IndexRule
+        );
       }
 
       if (allChargesWithIndex) {
-        alert("To delete this charge(s) you must first remove the charge from the charge group.");
+        alert(
+          'To delete this charge(s) you must first remove the charge from the charge group.'
+        );
         return;
       }
 
       if (scheduledCharges.length <= 0) {
-        alert("There are not any scheduled charges to delete.");
+        alert('There are not any scheduled charges to delete.');
         return;
       } else {
         this.isChargeAction = true;
       }
 
-      let glEventIdList: number[] = scheduledCharges.map(sc => sc.GLEventID);
+      let glEventIdList: number[] = scheduledCharges.map((sc) => sc.GLEventID);
 
-      this.service.deleteCharge(leaseObjectTypeTypeId, glEventIdList).subscribe(res => {
-        this.isChargeAction = false;
-        if (res !== null && res.success) {
-          if (res.data !== null)
-            alert(res.data);
-          else
-            if (someChargesWithIndex) {
-              alert("Some charges may not have been deleted. Please review and try again.");
+      this.service.deleteCharge(leaseObjectTypeTypeId, glEventIdList).subscribe(
+        (res) => {
+          this.isChargeAction = false;
+          if (res !== null && res.success) {
+            if (res.data !== null) alert(res.data);
+            else if (someChargesWithIndex) {
+              alert(
+                'Some charges may not have been deleted. Please review and try again.'
+              );
             } else {
-              alert("The charges were deleted.");
+              alert('The charges were deleted.');
             }
 
-          this.populateGrid(false);
-        }
-        else {
-          alert("The charges were not deleted. Please review and try again later.");
-        }
-      },
-        error => {
+            this.populateGrid(false);
+          } else {
+            alert(
+              'The charges were not deleted. Please review and try again later.'
+            );
+          }
+        },
+        (error) => {
           this.isChargeAction = false;
-          alert('An error occurred deleting the charges. Please review and try again later.');
-        });
+          alert(
+            'An error occurred deleting the charges. Please review and try again later.'
+          );
+        }
+      );
     }
-
   }
 
   terminateLeaseCharges() {
     let terminateLeaseChargesUrl: string = `/v06/financials/TerminateLease.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&Mode=Edit&IsIncome=&paramFinView=Status`;
-    terminateLeaseChargesUrl = this.replaceQueryParamsInLeasePaymentUrl(terminateLeaseChargesUrl, null);
+    terminateLeaseChargesUrl = this.replaceQueryParamsInLeasePaymentUrl(
+      terminateLeaseChargesUrl,
+      null
+    );
     this.isChargeAction = true;
     this.navigateToUrl(terminateLeaseChargesUrl);
   }
@@ -2175,50 +2420,58 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   changeDefaultVendorOrCustomer() {
     let changeDefaultVendorOrCustomerUrl: string = `javascript:loadDefaultVendor('/v06/financials/ChangeDefaultVendor.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&Mode=Edit&IsIncome=&paramFinView=Status');`;
-    changeDefaultVendorOrCustomerUrl = this.replaceQueryParamsInLeasePaymentUrl(changeDefaultVendorOrCustomerUrl, null);
+    changeDefaultVendorOrCustomerUrl = this.replaceQueryParamsInLeasePaymentUrl(
+      changeDefaultVendorOrCustomerUrl,
+      null
+    );
     this.navigateToUrl(changeDefaultVendorOrCustomerUrl);
   }
 
   stopLeasePaymentCharge(leaseCharge) {
-    let isTaxable = leaseCharge.IsTaxable === 'Yes'
-    let isTaxCharge = leaseCharge.TaxableGLEventID > 0
+    let isTaxable = leaseCharge.IsTaxable === 'Yes';
+    let isTaxCharge = leaseCharge.TaxableGLEventID > 0;
     let taxStr = '';
     let parentChargeStr = '';
 
     if (isTaxable || isTaxCharge) {
       taxStr = 'Tax';
 
-      if (isTaxable)
-        parentChargeStr = '&IsParentCharge=True'
-      else
-        parentChargeStr = '&IsParentCharge=False'
+      if (isTaxable) parentChargeStr = '&IsParentCharge=True';
+      else parentChargeStr = '&IsParentCharge=False';
     }
 
     this.isChargeAction = true;
     let stopChargeUrl: string = `/v06/financials/Stop${taxStr}Charge.aspx?OID=&OTID=4&GLEID=&OTTID=${this.urlOTTID}&IsIncome=&status=In%20Process${parentChargeStr}`;
-    stopChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(stopChargeUrl, [leaseCharge.GLEventID]);
+    stopChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(stopChargeUrl, [
+      leaseCharge.GLEventID,
+    ]);
     this.navigateToUrl(stopChargeUrl);
   }
 
   editLeasePaymentCharge(leaseCharge) {
     let editChargeUrl: string = `/v06/financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLEID=&GLGroup=&IsIncome=&Mode=Edit`;
-    editChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(editChargeUrl, [leaseCharge.GLEventID]);
+    editChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(editChargeUrl, [
+      leaseCharge.GLEventID,
+    ]);
     this.isChargeAction = true;
     this.navigateToUrl(editChargeUrl);
   }
 
   copyLeasePaymentCharge(leaseCharge) {
-    let copyMsg: string = "Are you sure you want to copy the selected charge?";
+    let copyMsg: string = 'Are you sure you want to copy the selected charge?';
 
     if (confirm(copyMsg)) {
       this.isCopyCharge = true;
-      this.service.copyCharge(leaseCharge.GLEventID).subscribe(res => {
+      this.service.copyCharge(leaseCharge.GLEventID).subscribe((res) => {
         if (res.success) {
           //If copy charge is successful use the GLEventId return to build the string
           let copyChargeUrl: string = `/v06/Financials/EditCharge.aspx?OID=&OTID=4&OTTID=${this.urlOTTID}&GLEID=&GLGroup=&IsIncome=&mode=edit&copy=1`;
-          let newGLEventId: number = res.data //Set to the one returned from the API
-          copyChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(copyChargeUrl, [newGLEventId]);
-          this.navigateToUrl(copyChargeUrl)
+          let newGLEventId: number = res.data; //Set to the one returned from the API
+          copyChargeUrl = this.replaceQueryParamsInLeasePaymentUrl(
+            copyChargeUrl,
+            [newGLEventId]
+          );
+          this.navigateToUrl(copyChargeUrl);
         } else {
           this.isCopyCharge = false;
         }
@@ -2228,37 +2481,49 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   deleteLeasePaymentCharge(leaseCharge: any) {
     const leaseObjectTypeTypeId: number = this.urlOTTID;
-    if (leaseCharge.ProcessingStatus.toLowerCase() === 'in process' || leaseCharge.ProcessingStatus.toLowerCase() === 'historical' || leaseCharge.IsActive === 'Deleted') {
-      alert("This charge can not be deleted.");
+    if (
+      leaseCharge.ProcessingStatus.toLowerCase() === 'in process' ||
+      leaseCharge.ProcessingStatus.toLowerCase() === 'historical' ||
+      leaseCharge.IsActive === 'Deleted'
+    ) {
+      alert('This charge can not be deleted.');
       return;
     }
 
-    let deleteMsg: string = "Are you sure you want to delete this charge?";
+    let deleteMsg: string = 'Are you sure you want to delete this charge?';
 
     if (confirm(deleteMsg)) {
       this.isChargeAction = true;
-      this.service.deleteCharge(leaseObjectTypeTypeId, [leaseCharge.GLEventID]).subscribe(res => {
-        this.isChargeAction = false;
-        if (res !== null && res.success) {
-          if (res.data !== null)
-            alert(res.data);
-          else
-            alert("The charge was deleted.")
+      this.service
+        .deleteCharge(leaseObjectTypeTypeId, [leaseCharge.GLEventID])
+        .subscribe(
+          (res) => {
+            this.isChargeAction = false;
+            if (res !== null && res.success) {
+              if (res.data !== null) alert(res.data);
+              else alert('The charge was deleted.');
 
-          this.populateGrid(false);
-        }
-        else {
-          alert("The charge was not deleted. Please review and try again later.")
-        }
-      },
-        error => {
-          this.isChargeAction = false;
-          alert('An error occurred deleting the charge. Please review and try again later.');
-        });
+              this.populateGrid(false);
+            } else {
+              alert(
+                'The charge was not deleted. Please review and try again later.'
+              );
+            }
+          },
+          (error) => {
+            this.isChargeAction = false;
+            alert(
+              'An error occurred deleting the charge. Please review and try again later.'
+            );
+          }
+        );
     }
   }
 
-  private replaceQueryParamsInLeasePaymentUrl(url: string, gleventIdList: number[]): string {
+  private replaceQueryParamsInLeasePaymentUrl(
+    url: string,
+    gleventIdList: number[]
+  ): string {
     url = url.replace('OID=', `OID=${this.urlOID}`);
     url = url.replace('IsIncome=', `IsIncome=${this.isIncomeValue}`);
 
@@ -2290,165 +2555,204 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.chargesOnLease = false;
     this.showHoldPayments = false;
     try {
-
-      const currentViewInSession = this.safeGetFromSession(SessionVariables.CurrentListView);
-      const viewDataObject = useSessionState && currentViewInSession
-        ? JSON.parse(currentViewInSession.view, this.parseIsoDateStrToDate)
-        : JSON.parse(this.currentListView.view, this.parseIsoDateStrToDate);
+      const currentViewInSession = this.safeGetFromSession(
+        SessionVariables.CurrentListView
+      );
+      const viewDataObject =
+        useSessionState && currentViewInSession
+          ? JSON.parse(currentViewInSession.view, this.parseIsoDateStrToDate)
+          : JSON.parse(this.currentListView.view, this.parseIsoDateStrToDate);
 
       const initViewDataObject = this.originalViewObject;
 
-      this.service.getListPageColumns(this.currentListView.listPageId).subscribe(result => {
-        this.columnsDef = result.data.columnDefinitions;
-        this.columns = [];
+      this.service
+        .getListPageColumns(this.currentListView.listPageId)
+        .subscribe((result) => {
+          this.columnsDef = result.data.columnDefinitions;
+          this.columns = [];
 
-        const listViewColumns = viewDataObject.columns;
-        const initListViewColumns = initViewDataObject.columns;
+          const listViewColumns = viewDataObject.columns;
+          const initListViewColumns = initViewDataObject.columns;
 
+          const filters = this.getFilterFieldsFromFilter(
+            viewDataObject.filterValue
+          );
 
-        const filters = this.getFilterFieldsFromFilter(viewDataObject.filterValue);
+          this.columnsDef.forEach((col: any) => {
+            let listViewColumn;
+            if (listViewColumns) {
+              listViewColumn = listViewColumns.filter(
+                (x: any) => x.dataField === col.dataField
+              )[0];
+            }
 
-        this.columnsDef.forEach((col: any) => {
-          let listViewColumn;
-          if (listViewColumns) {
-            listViewColumn = listViewColumns
-              .filter((x: any) => x.dataField === col.dataField)[0];
-          }
+            let initListViewColumn;
+            if (initListViewColumns) {
+              initListViewColumn = initListViewColumns.filter(
+                (x: any) => x.dataField === col.dataField
+              )[0];
+            }
 
-          let initListViewColumn;
-          if (initListViewColumns) {
-            initListViewColumn = initListViewColumns
-              .filter((x: any) => x.dataField === col.dataField)[0];
-          }
+            let column = {
+              dataField: col.dataField,
+              fieldType: col.fieldType,
+              caption:
+                col.caption === null
+                  ? col.dataField.replace('_', ' ')
+                  : col.caption,
+              visible: listViewColumn ? listViewColumn.visible : false,
+              dataType: col.dataType,
+              visibleIndex: listViewColumn ? listViewColumn.visibleIndex : -1,
+              format: col.format,
+              showInColumnChooser: initListViewColumn
+                ? initListViewColumn.showInColumnChooser
+                : true,
+              allowReordering: initListViewColumn
+                ? initListViewColumn.allowReordering
+                : true,
+              type: initListViewColumn ? initListViewColumn.type : '',
+              urlLink: col.urlLink,
+              useDefaultObjectFields: col.useDefaultObjectFields,
+              width: col.width,
+              fixed: col.fixed,
+              fixedPosition: col.fixedPosition,
+              displayOrder: col.displayOrder,
+              allowSorting: initListViewColumn
+                ? initListViewColumn.allowSorting
+                : true,
+              allowFiltering: initListViewColumn
+                ? initListViewColumn.allowFiltering
+                : true,
+              allowResizing: initListViewColumn
+                ? initListViewColumn.allowResizing
+                : true,
+              allowGrouping: initListViewColumn
+                ? initListViewColumn.allowGrouping
+                : true,
+              isInFilter:
+                filters.filter((x: any) => x === col.dataField).length > 0,
+              allowExporting: col.allowExporting ? col.allowExporting : true,
+            };
 
-          let column = {
-            dataField: col.dataField,
-            fieldType: col.fieldType,
-            caption: col.caption === null
-              ? col.dataField.replace('_', ' ')
-              : col.caption,
-            visible: listViewColumn ? listViewColumn.visible : false,
-            dataType: col.dataType,
-            visibleIndex: listViewColumn ? listViewColumn.visibleIndex : -1,
-            format: col.format,
-            showInColumnChooser: initListViewColumn ? initListViewColumn.showInColumnChooser : true,
-            allowReordering: initListViewColumn ? initListViewColumn.allowReordering : true,
-            type: initListViewColumn ? initListViewColumn.type : '',
-            urlLink: col.urlLink,
-            useDefaultObjectFields: col.useDefaultObjectFields,
-            width: col.width,
-            fixed: col.fixed,
-            fixedPosition: col.fixedPosition,
-            displayOrder: col.displayOrder,
-            allowSorting: initListViewColumn ? initListViewColumn.allowSorting : true,
-            allowFiltering: initListViewColumn ? initListViewColumn.allowFiltering : true,
-            allowResizing: initListViewColumn ? initListViewColumn.allowResizing : true,
-            allowGrouping: initListViewColumn ? initListViewColumn.allowGrouping : true,
-            isInFilter: filters.filter((x: any) => x === col.dataField).length > 0,
-            allowExporting: col.allowExporting ? col.allowExporting : true
+            column = Object.assign(column, listViewColumn);
+
+            // restore date format overwritten by Object.assign
+            // These values are configured in the database and take precedence
+            // over what was last stored in grid view state. If a user changes
+            // a dataType from  string to number we need to pick up on that change
+            column.caption =
+              col.caption === null
+                ? col.dataField.replace('_', ' ')
+                : col.caption;
+            column.urlLink = col.urlLink;
+            column.useDefaultObjectFields = col.useDefaultObjectFields;
+            column.fieldType = col.fieldType;
+            column.dataType = col.dataType;
+            column.format = col.format;
+            column.displayOrder = col.displayOrder;
+            this.columns.push(column);
+          });
+
+          // The state has already been applied before the column order was
+          // overriden by the loop assignment above - need to resort
+          this.columns.sort((n1, n2) => n1.visibleIndex - n2.visibleIndex);
+
+          //This is used for the range date filter
+          UtilitiesService.gridColumns = this.columns;
+
+          this.filterFields = this.columns.slice();
+
+          this.filterFields.sort((a, b) => {
+            return a.displayOrder - b.displayOrder;
+          });
+
+          sessionStorage.setItem(
+            SessionVariables.DisplayOrderFilterFields,
+            JSON.stringify(this.filterFields)
+          );
+
+          this.lastGridDataRequest = {
+            listPageId:
+              this.currentListView.listViewType === ListViewType.CoStar
+                ? this.currentListView.id
+                : this.currentListView.listPageId,
+            userViewId:
+              this.currentListView.listViewType === ListViewType.User
+                ? this.currentListView.id
+                : null,
+            masterGroupId: this.currentPortfolio?.masterGroupId ?? null,
+            gridStateOverride: this.currentListView.view,
+            tempArchiveToggleValue: this.getArchiveToggleValue(),
+            oid: this.urlOID,
           };
 
-          column = Object.assign(column, listViewColumn);
+          this.service
+            .getGridData(this.lastGridDataRequest)
+            .subscribe((res) => {
+              this.gridData = res.data;
 
-          // restore date format overwritten by Object.assign
-          // These values are configured in the database and take precedence
-          // over what was last stored in grid view state. If a user changes
-          // a dataType from  string to number we need to pick up on that change
-          column.caption = col.caption === null
-            ? col.dataField.replace('_', ' ')
-            : col.caption;
-          column.urlLink = col.urlLink;
-          column.useDefaultObjectFields = col.useDefaultObjectFields;
-          column.fieldType = col.fieldType;
-          column.dataType = col.dataType;
-          column.format = col.format;
-          column.displayOrder = col.displayOrder;
-          this.columns.push(column);
+              if (this.isGLEvent) {
+                this.checkExpRevOptions();
+                if (this.unModifiedEditPages || this.editPages) {
+                  this.setEditPagesForLeasePayments();
+                }
+                this.getLeaseInfo(this.urlOID);
+                if (this.gridData.length) {
+                  this.chargesOnLease = true;
+                }
+                this.groupTaxableChargesTogether();
+              }
+
+              setTimeout(() => {
+                //Only visible grid columns and columns in an active filter will show in filter dialog
+                this.filterFields = this.filterFields.filter(
+                  (x: any) =>
+                    x.dataField !== 'CustomAction' &&
+                    (x.visible === true || x.isInFilter === true)
+                );
+                this.filterValue = viewDataObject.filterValue;
+
+                this.includedDataFieldsFromLastGridReload = listViewColumns
+                  .filter((x: { visible: boolean }) => x.visible)
+                  .map((x: { dataField: string }) => x.dataField);
+
+                this.isExpanded
+                  ? this.dataGrid.instance.expandAll()
+                  : this.dataGrid.instance.collapseAll();
+
+                if (useSessionState) {
+                  this.toggleListMap(
+                    this.safeGetFromSession(
+                      SessionVariables.ListPageViewMode
+                    ) as ListPageViewMode,
+                    false
+                  );
+
+                  this.unmodifiedOriginalListView ??
+                    this.setUnmodifiedOriginalListView();
+                } else {
+                  this.setUnmodifiedOriginalListView();
+                }
+              }, 300);
+
+              this.inDisabledUIState = false;
+              this.dataGrid.instance.endCustomLoading();
+              this.isViewChanged = false;
+              this.isInitialLoad = false;
+            });
         });
-
-        // The state has already been applied before the column order was
-        // overriden by the loop assignment above - need to resort
-        this.columns.sort((n1, n2) => n1.visibleIndex - n2.visibleIndex);
-
-        //This is used for the range date filter
-        UtilitiesService.gridColumns = this.columns;
-
-        this.filterFields = this.columns.slice();
-
-        this.filterFields.sort((a, b) => {
-          return a.displayOrder - b.displayOrder;
-        });
-
-        sessionStorage.setItem(SessionVariables.DisplayOrderFilterFields, JSON.stringify(this.filterFields));
-
-        this.lastGridDataRequest = {
-          listPageId: this.currentListView.listViewType === ListViewType.CoStar
-            ? this.currentListView.id
-            : this.currentListView.listPageId,
-          userViewId: this.currentListView.listViewType === ListViewType.User
-            ? this.currentListView.id
-            : null,
-          masterGroupId: this.currentPortfolio?.masterGroupId ?? null,
-          gridStateOverride: this.currentListView.view,
-          tempArchiveToggleValue: this.getArchiveToggleValue(),
-          oid: this.urlOID
-        };
-
-        this.service.getGridData(this.lastGridDataRequest).subscribe(res => {
-          this.gridData = res.data;
-
-          if (this.isGLEvent) {
-            this.checkExpRevOptions();
-            if (this.unModifiedEditPages || this.editPages) {
-              this.setEditPagesForLeasePayments();
-            }
-            this.getLeaseInfo(this.urlOID);
-            if (this.gridData.length) {
-              this.chargesOnLease = true;
-            }
-            this.groupTaxableChargesTogether();
-          }
-
-          setTimeout(() => {
-            //Only visible grid columns and columns in an active filter will show in filter dialog
-            this.filterFields = this.filterFields.filter((x: any) => x.dataField !== 'CustomAction' && (x.visible === true || x.isInFilter === true));
-            this.filterValue = viewDataObject.filterValue;
-
-            this.includedDataFieldsFromLastGridReload = listViewColumns.filter((x: { visible: boolean; }) => x.visible)
-              .map((x: { dataField: string; }) => x.dataField);
-
-            this.isExpanded
-              ? this.dataGrid.instance.expandAll()
-              : this.dataGrid.instance.collapseAll();
-
-            if (useSessionState) {
-
-              this.toggleListMap(this.safeGetFromSession(SessionVariables.ListPageViewMode) as ListPageViewMode, false);
-
-              this.unmodifiedOriginalListView ?? this.setUnmodifiedOriginalListView();
-            }
-            else {
-              this.setUnmodifiedOriginalListView();
-            }
-          }, 300);
-
-          this.inDisabledUIState = false;
-          this.dataGrid.instance.endCustomLoading();
-          this.isViewChanged = false;
-          this.isInitialLoad = false;
-        });
-      });
-    }
-    catch (exception) {
+    } catch (exception) {
       // This is bad but feel better with it here
       console.log(exception);
-      this.enterCriticalGridLoadErrorState("There was an error retrieving the data for this list view.");
+      this.enterCriticalGridLoadErrorState(
+        'There was an error retrieving the data for this list view.'
+      );
     }
   }
 
   private parseIsoDateStrToDate(key, value) {
     var isoDateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?Z$/;
-    if (typeof value === "string" && isoDateFormat.test(value)) {
+    if (typeof value === 'string' && isoDateFormat.test(value)) {
       return new Date(value);
     }
     return value;
@@ -2466,46 +2770,76 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   private groupTaxableChargesTogether() {
-    let taxCharges = this.gridData.filter(gdi => gdi.TaxableGLEventID !== null);
-    let newGridData = this.gridData.filter(gdi => gdi.TaxableGLEventID === null);
-    taxCharges.forEach(tcgdi => {
-      let insertIndex = newGridData.findIndex(ngdi => ngdi.GLEventID === tcgdi.TaxableGLEventID) + 1;
+    let taxCharges = this.gridData.filter(
+      (gdi) => gdi.TaxableGLEventID !== null
+    );
+    let newGridData = this.gridData.filter(
+      (gdi) => gdi.TaxableGLEventID === null
+    );
+    taxCharges.forEach((tcgdi) => {
+      let insertIndex =
+        newGridData.findIndex(
+          (ngdi) => ngdi.GLEventID === tcgdi.TaxableGLEventID
+        ) + 1;
       newGridData.splice(insertIndex, 0, tcgdi);
     });
 
     this.gridData = newGridData;
   }
 
-  private populateListViewMenu(refreshGrid: boolean, useSessionState: boolean, overrideDefaultListPage: boolean = false) {
+  private populateListViewMenu(
+    refreshGrid: boolean,
+    useSessionState: boolean,
+    overrideDefaultListPage: boolean = false
+  ) {
     const request: GetViewDropdownDataRequest = {
       objectTypeId: this.objectTypeId,
       isSuperUser: this._isSuperUser,
     };
 
-    this.service.getListViewSelectorItems(request).subscribe(result => {
+    this.service.getListViewSelectorItems(request).subscribe((result) => {
       this.listViews = result.data;
-      if (this.listViews && Object.keys(this.listViews).length && (Object.values(this.listViews).some(x => x.length))) { }
-      else {
+      if (
+        this.listViews &&
+        Object.keys(this.listViews).length &&
+        Object.values(this.listViews).some((x) => x.length)
+      ) {
+      } else {
         this.dataGrid.instance.endCustomLoading();
-        this.noDataText = "This page could not load due to a missing object.  Please contact support.";
-        console.log(`The response from ListViewSelectorItems API is either Empty or Invalid.`);
+        this.noDataText =
+          'This page could not load due to a missing object.  Please contact support.';
+        console.log(
+          `The response from ListViewSelectorItems API is either Empty or Invalid.`
+        );
         return;
       }
 
-      this.activeListViewCount = this.listViews.coStarListViews.length
-        + this.listViews.myListViews.length
-        + this.listViews.sharedListViews.length;
+      this.activeListViewCount =
+        this.listViews.coStarListViews.length +
+        this.listViews.myListViews.length +
+        this.listViews.sharedListViews.length;
 
       if (this.showPortfolioPicker) {
-        this.service.getPortfolios().subscribe(result => {
-          if (result.data && result.data.portfolios && result.data.portfolios.length) {
+        this.service.getPortfolios().subscribe((result) => {
+          if (
+            result.data &&
+            result.data.portfolios &&
+            result.data.portfolios.length
+          ) {
             this.portfolios = result.data.portfolios;
           }
-          this.configCurrentListView(refreshGrid, useSessionState, overrideDefaultListPage);
+          this.configCurrentListView(
+            refreshGrid,
+            useSessionState,
+            overrideDefaultListPage
+          );
         });
-      }
-      else {
-        this.configCurrentListView(refreshGrid, useSessionState, overrideDefaultListPage);
+      } else {
+        this.configCurrentListView(
+          refreshGrid,
+          useSessionState,
+          overrideDefaultListPage
+        );
       }
     });
   }
@@ -2521,42 +2855,42 @@ export class ListPageComponent implements OnInit, OnDestroy {
       archiveToggleValue: -1,
       isExpandAllSelected: false,
       relationshipDefinitionId: null,
-      masterGroupId: -1
-    }
+      masterGroupId: -1,
+    };
   }
 
   adaAttr(e: any) {
     if (!e || !e.element) return;
     let buttons;
-    if (e.element[0])
-      buttons = e.element[0].querySelectorAll(".dx-selection");
-    else
-      buttons = e.element.querySelectorAll(".dx-selection");
+    if (e.element[0]) buttons = e.element[0].querySelectorAll('.dx-selection');
+    else buttons = e.element.querySelectorAll('.dx-selection');
 
-    buttons.forEach(button => {
-      if (!button || !button.hasAttribute('aria-label') || !button.classList) return;
+    buttons.forEach((button) => {
+      if (!button || !button.hasAttribute('aria-label') || !button.classList)
+        return;
       button.setAttribute('aria-current', 'page');
 
-      this.pagingButtonsObserver = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
+      this.pagingButtonsObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
           if (!button.classList.contains('dx-selection')) {
             button.removeAttribute('aria-current');
           }
         });
       });
-      this.pagingButtonsObserver.observe(button, { attributeFilter: ['class'] });
+      this.pagingButtonsObserver.observe(button, {
+        attributeFilter: ['class'],
+      });
     });
 
     //dx-navigate-button remove tabindex tabbing to disabled button
-    const navigationButtons = e.element.querySelectorAll(".dx-navigate-button");
-    navigationButtons.forEach(button => {
-
+    const navigationButtons = e.element.querySelectorAll('.dx-navigate-button');
+    navigationButtons.forEach((button) => {
       if (button.classList.contains('dx-button-disable')) {
         button.setAttribute('tabindex', -1);
       }
 
-      this.navigationButtonsObserver = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
+      this.navigationButtonsObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
           if (button.classList.contains('dx-button-disable')) {
             button.setAttribute('tabindex', -1);
           } else {
@@ -2565,21 +2899,29 @@ export class ListPageComponent implements OnInit, OnDestroy {
         });
       });
 
-      this.navigationButtonsObserver.observe(button, { attributeFilter: ['class'] });
+      this.navigationButtonsObserver.observe(button, {
+        attributeFilter: ['class'],
+      });
     });
   }
 
   onKeyUpEvent(event) {
     const targetElement = event.target as HTMLElement;
-    if (targetElement.nodeName.toLowerCase() == "input") {
-      targetElement.setAttribute('aria-label', 'Search Filter For - ' + event.target.value + ' applied');
+    if (targetElement.nodeName.toLowerCase() == 'input') {
+      targetElement.setAttribute(
+        'aria-label',
+        'Search Filter For - ' + event.target.value + ' applied'
+      );
     }
   }
 
-
   adaAttrNoDataGrid(e: any) {
     // Select the header row elements
-    const dxGridwithTables = e.component.$element().find('.dx-datagrid-scrollable-simulated.dx-datagrid-content.dx-datagrid-scroll-container');
+    const dxGridwithTables = e.component
+      .$element()
+      .find(
+        '.dx-datagrid-scrollable-simulated.dx-datagrid-content.dx-datagrid-scroll-container'
+      );
 
     // Function to set role attribute
     if (dxGridwithTables && dxGridwithTables.length > 0) {
@@ -2590,5 +2932,4 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
     }
   }
-
 }

@@ -5,7 +5,11 @@ import { SharedModule } from '../../shared/shared.module';
 import { GroupUserModuleRightsComponent } from './group-user-module-rights.component';
 import { GroupUserModuleRightsService } from './group-user-module-rights.service';
 import { ModuleListResolver } from './module-list-resolver.service';
-import { DxDataGridModule, DxLoadPanelModule, DxTabPanelModule } from 'devextreme-angular';
+import {
+  DxDataGridModule,
+  DxLoadPanelModule,
+  DxTabPanelModule,
+} from 'devextreme-angular';
 import { ButtonModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import { UserPreferencesResolver } from '../../shared/resolvers/user-preferences-resolver.service';
@@ -13,9 +17,7 @@ import { UserListResolver } from '../../shared/resolvers/user-list-resolver.serv
 import { GroupListResolver } from '../../shared/resolvers/group-list-resolver.service';
 
 @NgModule({
-  declarations: [
-    GroupUserModuleRightsComponent
-  ],
+  declarations: [GroupUserModuleRightsComponent],
 
   imports: [
     CommonModule,
@@ -31,16 +33,17 @@ import { GroupListResolver } from '../../shared/resolvers/group-list-resolver.se
         path: '',
         data: { pageTitle: 'Group and User Module Rights' },
         component: GroupUserModuleRightsComponent,
-        resolve: { moduleList: ModuleListResolver, userList: UserListResolver, groupList: GroupListResolver, }
-      }
-    ])
+        resolve: {
+          moduleList: ModuleListResolver,
+          userList: UserListResolver,
+          groupList: GroupListResolver,
+        },
+      },
+    ]),
   ],
 
   exports: [RouterModule],
 
-  providers: [
-    DatePipe,
-    GroupUserModuleRightsService
-  ]
+  providers: [DatePipe, GroupUserModuleRightsService],
 })
-export class GroupUserModuleRightsModule { }
+export class GroupUserModuleRightsModule {}

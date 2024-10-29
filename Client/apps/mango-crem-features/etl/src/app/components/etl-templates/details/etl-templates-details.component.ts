@@ -1575,7 +1575,7 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
       width: '600px',
       data: errorMsg,
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.router.navigate(['/crem/admin/etl/templates'], {
           relativeTo: this.route,

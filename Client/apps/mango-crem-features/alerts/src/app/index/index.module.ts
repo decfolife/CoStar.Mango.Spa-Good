@@ -7,13 +7,7 @@ import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.m
 
 @NgModule({
   declarations: [IndexComponent],
-  imports: [
-    CommonModule,
-    IndexRoutingModule,
-    SearchModule,
-    LeaseAlertsModule,
-  ],
-  providers: [
-  ],
+  imports: [CommonModule, IndexRoutingModule, SearchModule, LeaseAlertsModule],
+  providers: [],
 })
 export class IndexModule {}

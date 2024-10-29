@@ -283,8 +283,20 @@ public class Startup
 
         services.AddAuthorization(opts =>
         {
-            opts.AddPolicy("FullAccess", policy => policy.RequireClaim(ClaimType.SecurityLevel, "2"));
-            opts.AddPolicy("SuperUser", policy => policy.RequireClaim(ClaimType.ContactRole, "0", "SuperUser"));
+            opts.AddPolicy("FullAccess", policy => policy.RequireAssertion(context =>
+                context.User.IsAdmin()));
+
+            opts.AddPolicy("AdminUserContact", policy => policy.RequireAssertion(context =>
+                context.User.IsAdminUserContact() ||
+                context.User.IsAdmin()));
+
+            opts.AddPolicy("SuperUserContact", policy => policy.RequireAssertion(context =>
+                context.User.IsSuperUserContact() ||
+                context.User.IsAdmin()));
+
+            opts.AddPolicy("AdminOrSuperUserContact", policy => policy.RequireAssertion(context =>
+                context.User.IsAdminOrSuperUserContact() ||
+                context.User.IsAdmin()));
         });
 
 

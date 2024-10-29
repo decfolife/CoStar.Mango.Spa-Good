@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ModalModule} from '@mango/ui-shared/lib-ui-elements';
+import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UserSettingsComponent } from './user-settings.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';

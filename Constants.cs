@@ -12,6 +12,7 @@ public class Constants
         public const string TrackingId = JwtRegisteredClaimNames.Jti;
         public const string Email = JwtRegisteredClaimNames.Email;
         public const string UserId = "userId";
+        public const string Role = "role";
         public const string ContactId = "contactId";
         public const string ContactRole = "contactRole";
         public const string ClientKey = "clientKey";
@@ -22,6 +23,11 @@ public class Constants
 
         // Indicates whether /login endpoint or /token endpoint was used to generate a JWT token
         public const string IsInternal = "isInternal";
+    }
+
+    public class Role
+    {
+        public const string Admin = "admin";
     }
 
     public class Headers

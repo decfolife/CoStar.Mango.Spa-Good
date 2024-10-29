@@ -3,12 +3,12 @@
 @import './app/emulate-user/emulate-user.component.scss';
 
 /* You can add global styles to this file, and also import other style files */
-.mat-slide-toggle.mat-checked .mat-slide-toggle-bar{
-    background-color: rgba(119, 184, 0, 0.54) !important;
+.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: rgba(119, 184, 0, 0.54) !important;
 }
 
 .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
-    background-color: #017B30 !important;
+  background-color: #017b30 !important;
 }
 
 .cdk-overlay-container {
@@ -17,7 +17,7 @@
 
 .ghost-element-style ngx-skeleton-loader {
   span.loader.progress {
-    background: #EAEAEA !important;
+    background: #eaeaea !important;
     margin-bottom: 16px !important;
   }
   .loader.progress:before {

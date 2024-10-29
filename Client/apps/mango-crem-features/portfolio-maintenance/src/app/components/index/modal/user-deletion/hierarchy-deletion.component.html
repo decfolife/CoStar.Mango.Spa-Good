@@ -1,53 +1,95 @@
-<crem-modal 
-	[modalTitle]="modalObject.modalConfiguration.modalTitle" 
-	[closeIconVisible]="true" 
-	[primaryFooterButtonText]="modalObject.modalConfiguration.modalConfirmationButtonText"
-	[closeOrCancelButtonText]="modalObject.modalConfiguration.modalCancelButtonText" 
-	(primaryButtonAction)="deleteConfirmation()"
-	>
-	<div modalContent>
-		<div class="modal-body-row" *ngIf="!modalObject.hasData && !(modalObject.isPortfolio)">
-			Are you sure you want to delete&nbsp;<span class="modal-body-row__content"><div class="bold-text">{{modalObject.data.companyName}}</div>?</span>
-		</div>
+<crem-modal
+  [modalTitle]="modalObject.modalConfiguration.modalTitle"
+  [closeIconVisible]="true"
+  [primaryFooterButtonText]="
+    modalObject.modalConfiguration.modalConfirmationButtonText
+  "
+  [closeOrCancelButtonText]="
+    modalObject.modalConfiguration.modalCancelButtonText
+  "
+  (primaryButtonAction)="deleteConfirmation()"
+>
+  <div modalContent>
+    <div
+      class="modal-body-row"
+      *ngIf="!modalObject.hasData && !modalObject.isPortfolio"
+    >
+      Are you sure you want to delete&nbsp;<span class="modal-body-row__content"
+        ><div class="bold-text">{{ modalObject.data.companyName }}</div>
+        ?</span
+      >
+    </div>
 
-		<div class="modal-body-column" *ngIf="modalObject.hasData && !(modalObject.isPortfolio)">
-			This hierarchy cannot be deleted, there are currently associated objects. <br>
-			Please review the list of objects and change their hierarcy if you would like to do this. <br>
-			<span class="modal-body-column__content">
-				See associated&nbsp;<a href="{{'/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/noPortfolioAssociatedObjects/' + modalObject.data.masterGroupID + '/' + modalObject.data.companyID + '/PortfolioMaintenanceWithNav.aspx'}}">Objects</a>
-			</span>
-		</div>
+    <div
+      class="modal-body-column"
+      *ngIf="modalObject.hasData && !modalObject.isPortfolio"
+    >
+      This hierarchy cannot be deleted, there are currently associated objects.
+      <br />
+      Please review the list of objects and change their hierarcy if you would
+      like to do this. <br />
+      <span class="modal-body-column__content">
+        See associated&nbsp;<a
+          href="{{
+            '/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/noPortfolioAssociatedObjects/' +
+              modalObject.data.masterGroupID +
+              '/' +
+              modalObject.data.companyID +
+              '/PortfolioMaintenanceWithNav.aspx'
+          }}"
+          >Objects</a
+        >
+      </span>
+    </div>
 
-		<div class="modal-body-column" *ngIf="canDelete && (modalObject.isPortfolio)">
-			Warning. This action cannot be undone. Click confirm if you want to {{modalObject.data.isActive ? 'archive' : 'delete'}} all active records in the portfolio. <br><br>
+    <div class="modal-body-column" *ngIf="canDelete && modalObject.isPortfolio">
+      Warning. This action cannot be undone. Click confirm if you want to
+      {{ modalObject.data.isActive ? 'archive' : 'delete' }} all active records
+      in the portfolio. <br /><br />
 
-			Are you sure you want to {{modalObject.data.isActive ? 'archive' : 'delete'}} this portfolio? <br><br>
+      Are you sure you want to
+      {{ modalObject.data.isActive ? 'archive' : 'delete' }} this portfolio?
+      <br /><br />
 
-			<div class="modal-body-row">
-				<div class="bold-text">Portfolio Name:&nbsp;</div>{{modalObject.data.companyName}} <br>
-			</div>
-			<div class="modal-body-row">
-				<div class="bold-text">Portfolio ID:&nbsp;</div>{{modalObject.data.companyID}}
-			</div>
+      <div class="modal-body-row">
+        <div class="bold-text">Portfolio Name:&nbsp;</div>
+        {{ modalObject.data.companyName }} <br />
+      </div>
+      <div class="modal-body-row">
+        <div class="bold-text">Portfolio ID:&nbsp;</div>
+        {{ modalObject.data.companyID }}
+      </div>
 
-			<div class="hierarchy-modal-content" *ngIf="!modalObject.data.isActive">
-				<dx-check-box class="hierarchy-modal-content__checkbox" [(value)]="checkBoxValue"></dx-check-box> Delete All Contacts and Groups?
-			</div>
+      <div class="hierarchy-modal-content" *ngIf="!modalObject.data.isActive">
+        <dx-check-box
+          class="hierarchy-modal-content__checkbox"
+          [(value)]="checkBoxValue"
+        ></dx-check-box>
+        Delete All Contacts and Groups?
+      </div>
+    </div>
 
-		</div>
-
-		<div class="modal-body-column" *ngIf="(modalObject.errorObject.hasRightsLinked) && (modalObject.isPortfolio)">
-			Error. This action cannot be done. This group is a primary group for: <br>
-			{{modalObject.errorObject.rights}}
-		</div>
-		<div class="modal-body-column" *ngIf="(modalObject.errorObject.isServerError) && (modalObject.isPortfolio)">
-			Error. This action cannot be done. <br>
-			Failed to Archive portfolio.
-		</div>
-		<div class="modal-body-column" *ngIf="(modalObject.errorObject.isNotAuthorized) && (modalObject.isPortfolio)">
-			Error. This action cannot be done. <br>
-			User not authorized to Archive Portfolio.
-		</div>
-
-	</div>
+    <div
+      class="modal-body-column"
+      *ngIf="modalObject.errorObject.hasRightsLinked && modalObject.isPortfolio"
+    >
+      Error. This action cannot be done. This group is a primary group for:
+      <br />
+      {{ modalObject.errorObject.rights }}
+    </div>
+    <div
+      class="modal-body-column"
+      *ngIf="modalObject.errorObject.isServerError && modalObject.isPortfolio"
+    >
+      Error. This action cannot be done. <br />
+      Failed to Archive portfolio.
+    </div>
+    <div
+      class="modal-body-column"
+      *ngIf="modalObject.errorObject.isNotAuthorized && modalObject.isPortfolio"
+    >
+      Error. This action cannot be done. <br />
+      User not authorized to Archive Portfolio.
+    </div>
+  </div>
 </crem-modal>

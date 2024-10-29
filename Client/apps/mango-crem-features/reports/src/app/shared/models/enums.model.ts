@@ -1,4 +1,4 @@
 export enum EntityType {
-    User = 0,
-    Group = 1
-  }
+  User = 0,
+  Group = 1,
+}

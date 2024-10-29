@@ -1,33 +1,66 @@
-<crem-modal *ngIf="contentVisible"
-	modalId="add_project_wizard__add_modal" 
-	modalTitleId="add_project_wizard__create_project" 
-	[modalTitle]="modalTitle" 
-	closeIconVisible="true" 
-	[customFooter]="true" 
-	(closeButtonAction)="close($event)"
+<crem-modal
+  *ngIf="contentVisible"
+  modalId="add_project_wizard__add_modal"
+  modalTitleId="add_project_wizard__create_project"
+  [modalTitle]="modalTitle"
+  closeIconVisible="true"
+  [customFooter]="true"
+  (closeButtonAction)="close($event)"
   className="newModal"
 >
-	<div modalContent class="body-content">
-		<dx-load-panel shadingColor="rgba(255,255,255,0.2)" [visible]="loading" [showIndicator]="true"
-		[showPane]="true" [shading]="true" [closeOnOutsideClick]="false"></dx-load-panel>
-		<mango-form-wizard #FormWizard
-			(loadCondition)="setLoadCondition($event)" 
-			[objectTypeId]="data.objectTypeId"
-			[objectId]="data.objectId"
-			[objectTypeName]="data.objectTypeName"
-			[userId]="data.userId"
-			>
-		</mango-form-wizard>
-	</div>
-	<div modalFooter class="footer-content">
-		<div id="add_project_wizard__modal_buttons" class="footerRightControls">
-			<crem-button [disabled]="loading" type="secondary" id="add_project_wizard__cancel_btn" (click)="close($event)">
-				Cancel</crem-button>
-			<crem-button [disabled]="loading" type="secondary" id="add_project_wizard__save_btn" (click)="save($event)">
-				Save</crem-button>
-			<crem-button [disabled]="loading" type="secondary" id="add_project_wizard__save_and_new_btn" (click)="saveAndNew($event)">
-				Save & New</crem-button>
-			<crem-button [disabled]="loading" type="primary" id="add_project_wizard__launch_btn" (click)="launch($event)"> Launch </crem-button>
-		</div>
-	</div>
+  <div modalContent class="body-content">
+    <dx-load-panel
+      shadingColor="rgba(255,255,255,0.2)"
+      [visible]="loading"
+      [showIndicator]="true"
+      [showPane]="true"
+      [shading]="true"
+      [closeOnOutsideClick]="false"
+    ></dx-load-panel>
+    <mango-form-wizard
+      #FormWizard
+      (loadCondition)="setLoadCondition($event)"
+      [objectTypeId]="data.objectTypeId"
+      [objectId]="data.objectId"
+      [objectTypeName]="data.objectTypeName"
+      [userId]="data.userId"
+    >
+    </mango-form-wizard>
+  </div>
+  <div modalFooter class="footer-content">
+    <div id="add_project_wizard__modal_buttons" class="footerRightControls">
+      <crem-button
+        [disabled]="loading"
+        type="secondary"
+        id="add_project_wizard__cancel_btn"
+        (click)="close($event)"
+      >
+        Cancel</crem-button
+      >
+      <crem-button
+        [disabled]="loading"
+        type="secondary"
+        id="add_project_wizard__save_btn"
+        (click)="save($event)"
+      >
+        Save</crem-button
+      >
+      <crem-button
+        [disabled]="loading"
+        type="secondary"
+        id="add_project_wizard__save_and_new_btn"
+        (click)="saveAndNew()"
+      >
+        Save & New</crem-button
+      >
+      <crem-button
+        [disabled]="loading"
+        type="primary"
+        id="add_project_wizard__launch_btn"
+        (click)="launch($event)"
+      >
+        Launch
+      </crem-button>
+    </div>
+  </div>
 </crem-modal>

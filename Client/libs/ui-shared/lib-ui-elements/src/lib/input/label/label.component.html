@@ -1,6 +1,6 @@
-<label [for]="name">
+<label [for]="name" [title]="label">
   <span>
-    {{label}}
+    {{ label }}
     <ng-container *ngIf="required">
       <sup>*</sup>
     </ng-container>

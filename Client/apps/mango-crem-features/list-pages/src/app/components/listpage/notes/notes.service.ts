@@ -6,13 +6,19 @@ import { Api } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class NotesService extends EndpointService {
-  listpages: string = UtilitiesService.getBaseApiUrl(Api.listpages)
+  listpages: string = UtilitiesService.getBaseApiUrl(Api.listpages);
   getNoteTypes() {
-    return this.callHttpGet(`${this.listpages}listpage/notetypes`, 'getNoteTypes')
+    return this.callHttpGet(
+      `${this.listpages}listpage/notetypes`,
+      'getNoteTypes'
+    );
   }
 
   getNotes(OID: number, OTID: number, CommonNoteTypeID: number) {
-    return this.callHttpGet(`${this.listpages}listpage/notes/${OID}/${OTID}/${CommonNoteTypeID}`, 'getNotes')
+    return this.callHttpGet(
+      `${this.listpages}listpage/notes/${OID}/${OTID}/${CommonNoteTypeID}`,
+      'getNotes'
+    );
   }
 
   createNote(noteData: any, note: Note) {
@@ -21,6 +27,6 @@ export class NotesService extends EndpointService {
       ObjectTypeId: +noteData.OTID,
       CommonNoteTypeId: +note.noteType.id,
       CommonNote: note.text,
-    })
+    });
   }
 }

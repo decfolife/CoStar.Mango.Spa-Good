@@ -37,11 +37,9 @@ h4 {
     }
 
     .ct-required-tag {
-      color: $danger; 
+      color: $danger;
     }
-  
   }
-
 
   .ct-template-transPreview-container {
     width: 100%;
@@ -61,21 +59,19 @@ h4 {
       width: 100%;
       flex-basis: 50%;
     }
-
   }
 
   .ct-transPreviewGrid-container {
     height: 480px;
     width: 100%;
     padding: 20px;
-    background: var(--Info-Lightest, #DCE8F4);
+    background: var(--Info-Lightest, #dce8f4);
 
     #ct-transPreviewGrid-Id {
       border: 1px solid $gray04;
     }
   }
 }
-
 
 ::ng-deep #copyTransactionPopupId {
   .dx-popup-content.dx-popup-content-scrollable {
@@ -84,7 +80,7 @@ h4 {
 
   &.dx-popup-wrapper {
     z-index: 999 !important;
-  } 
+  }
 
   #ct-transPreviewGrid-Id {
     .dx-datagrid td {
@@ -104,7 +100,7 @@ h4 {
 ::ng-deep .ct-check-box {
   crem-check-box {
     label {
-      line-height: 1.3rem ;
+      line-height: 1.3rem;
     }
   }
 }

@@ -11,7 +11,7 @@ import { ArchiveCompanyAndContactComponent } from '../modal/archive-company-and-
 @Component({
   selector: 'mango-object-actions',
   templateUrl: './object-actions.component.html',
-  styleUrls: ['./object-actions.component.scss']
+  styleUrls: ['./object-actions.component.scss'],
 })
 export class ObjectActionsComponent {
   @Input() objectTypeTypeId: number;
@@ -26,9 +26,7 @@ export class ObjectActionsComponent {
   public leaseGridColumns: any[] | null = [];
   public ObjectTypeTypeName: string;
 
-  constructor(
-    private dialog: MatDialog
-  ) { }
+  constructor(private dialog: MatDialog) {}
 
   public openObjectActionArchivePopup() {
     const isLocal = environment.name === 'LOCAL';
@@ -39,35 +37,43 @@ export class ObjectActionsComponent {
       this.hiddenPremise = 0;
       this.objectName = 'Test Name';
     }
-    if (Number(this.objectTypeId) === 2 || Number(this.objectTypeId) === 3 || Number(this.objectTypeId) === 4) {
+    if (
+      Number(this.objectTypeId) === 2 ||
+      Number(this.objectTypeId) === 3 ||
+      Number(this.objectTypeId) === 4
+    ) {
       const dialogRef = this.dialog.open(ArchiveLeaseComponent, {
         disableClose: true,
         height: '780px',
         width: '75%',
         data: {
-          archiveType: (Number(this.objectTypeId) === 3) ? 'Building' : 
-          ((Number(this.objectTypeId) === 2 ) ? 'Premise' : 'Lease'),
+          archiveType:
+            Number(this.objectTypeId) === 3
+              ? 'Building'
+              : Number(this.objectTypeId) === 2
+              ? 'Premise'
+              : 'Lease',
           OID: Number(this.objectId),
           OTTID: Number(this.objectTypeTypeId),
-          hiddenPremise: Number(this.hiddenPremise)
-        }
+          hiddenPremise: Number(this.hiddenPremise),
+        },
       });
-  
-    } else if (Number(this.objectTypeId) === 5 || Number(this.objectTypeId) === 11) {
+    } else if (
+      Number(this.objectTypeId) === 5 ||
+      Number(this.objectTypeId) === 11
+    ) {
       const dialogRef = this.dialog.open(ArchiveCompanyAndContactComponent, {
         disableClose: true,
         width: '400px',
         data: {
-          archiveType: (Number(this.objectTypeId) === 5) ? 'Contact' : 'Company',
+          archiveType: Number(this.objectTypeId) === 5 ? 'Contact' : 'Company',
           OID: Number(this.objectId),
           OTTID: Number(this.objectTypeTypeId),
           hiddenPremise: Number(this.hiddenPremise),
-          objectName: (this.objectName)
-        }
+          objectName: this.objectName,
+        },
       });
-  
     }
-    
   }
 
   public openObjectActionArchiveHidden() {

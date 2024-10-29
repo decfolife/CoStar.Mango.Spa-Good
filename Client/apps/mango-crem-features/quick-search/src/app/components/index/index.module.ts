@@ -4,17 +4,9 @@ import { NgModule } from '@angular/core';
 import { IndexRoutingModule } from './index-routing.module';
 import { IndexComponent } from './index.component';
 
-
-
 @NgModule({
   declarations: [IndexComponent],
-  imports: [
-    CommonModule,
-    IndexRoutingModule,
-
-  ],
-  providers: [
-
-  ],
+  imports: [CommonModule, IndexRoutingModule],
+  providers: [],
 })
 export class IndexModule {}

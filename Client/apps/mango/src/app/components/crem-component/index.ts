@@ -1,2 +1,2 @@
-import {CremComponent} from './crem-component';
-export {CremComponent};
+import { CremComponent } from './crem-component';
+export { CremComponent };

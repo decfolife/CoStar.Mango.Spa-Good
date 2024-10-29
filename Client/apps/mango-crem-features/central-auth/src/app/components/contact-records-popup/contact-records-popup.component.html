@@ -1,43 +1,109 @@
-<dx-popup [height]="600" [width]="800" [showTitle]="false" [dragEnabled]="true" [closeOnOutsideClick]="false" [wrapperAttr]="{ id: 'contacts-modal'}"
-	[showCloseButton]="false" [visible]="(visible$ | async)" [focusStateEnabled]="false">
-	<dxi-toolbar-item widget="dxButton" toolbar="bottom" location="after"
-		[options]="{text: 'Cancel', onClick: onCancelClick, elementAttr: {class: 'button-secondary'}}">
-	</dxi-toolbar-item>
-	<dxi-toolbar-item widget="dxButton" toolbar="bottom" location="after"
-		[options]="{text: 'Submit', onClick: onContactRecordSelected, disabled: !this.selectedContactRecord, elementAttr: {class: 'button-primary'}}">
-	</dxi-toolbar-item>
-	<div *dxTemplate="let data of 'content'">
-		<div class="mb-4 text-center">
-			<h4 class="client-key">{{  (selectedClient$ | async)?.clientKey.toUpperCase() }}</h4>
-		</div>
-		<p class="text-center">
-			Click a row below to log in as that user.  You may also set a Default to always log in as the selected user.  You can update the Default setting by clicking the User Badge and choosing "Switch Contact" from the User Menu once logged in.
-		</p>
-		<div id="contact-list-grid">
-			<dx-data-grid id="gridContainer" [dataSource]="contactRecords$ | async" keyExpr="contactID"
-			 [showBorders]="true" [hoverStateEnabled]="true"
-				[showRowLines]="true" [showColumnLines]="false" (onSelectionChanged)="onSelectionChanged($event)"
-				[selectedRowKeys]="[defaultContactRecordID]" (onCellClick)="onCellClick($event)">
-				<dxi-column dataField="firstName" caption="First Name" alignment="center"></dxi-column>
-				<dxi-column dataField="lastName" caption="Last Name" alignment="center"></dxi-column>
-				<dxi-column dataField="userName" caption="User Name" alignment="center"></dxi-column>
-				<dxi-column dataField="userRoleName" caption="Role" alignment="center"></dxi-column>
-				<dxi-column [width]="100" caption="Default" [fixed]="true" fixedPosition="right"
-					[allowFiltering]="false" [allowSorting]="false" cellTemplate="cellTemplate"
-					cssClass="default-contact-record-column">
-				</dxi-column>
-				<div *dxTemplate="let row of 'cellTemplate'">
-					<div class="dx-field">
-						<div class="dx-field-value">
-							<dx-check-box [name]="row?.data?.contactID"
-								(onValueChanged)="onDefaultCheckboxValueChanged($event, row.data)"
-								[value]="row.data.isDefaultLoginContact">
-							</dx-check-box>
-						</div>
-					</div>
-				</div>
-				<dxo-selection mode="single"></dxo-selection>
-			</dx-data-grid>
-		</div>
-	</div>
+<dx-popup
+  [height]="600"
+  [width]="800"
+  [showTitle]="false"
+  [dragEnabled]="true"
+  [closeOnOutsideClick]="false"
+  [wrapperAttr]="{ id: 'contacts-modal' }"
+  [showCloseButton]="false"
+  [visible]="visible$ | async"
+  [focusStateEnabled]="false"
+>
+  <dxi-toolbar-item
+    widget="dxButton"
+    toolbar="bottom"
+    location="after"
+    [options]="{
+      text: 'Cancel',
+      onClick: onCancelClick,
+      elementAttr: { class: 'button-secondary' }
+    }"
+  >
+  </dxi-toolbar-item>
+  <dxi-toolbar-item
+    widget="dxButton"
+    toolbar="bottom"
+    location="after"
+    [options]="{
+      text: 'Submit',
+      onClick: onContactRecordSelected,
+      disabled: !this.selectedContactRecord,
+      elementAttr: { class: 'button-primary' }
+    }"
+  >
+  </dxi-toolbar-item>
+  <div *dxTemplate="let data of 'content'">
+    <div class="mb-4 text-center">
+      <h4 class="client-key">
+        {{ (selectedClient$ | async)?.clientKey.toUpperCase() }}
+      </h4>
+    </div>
+    <p class="text-center">
+      Click a row below to log in as that user. You may also set a Default to
+      always log in as the selected user. You can update the Default setting by
+      clicking the User Badge and choosing "Switch Contact" from the User Menu
+      once logged in.
+    </p>
+    <div id="contact-list-grid">
+      <dx-data-grid
+        id="gridContainer"
+        [dataSource]="contactRecords$ | async"
+        keyExpr="contactID"
+        [showBorders]="true"
+        [hoverStateEnabled]="true"
+        [showRowLines]="true"
+        [showColumnLines]="false"
+        (onSelectionChanged)="onSelectionChanged($event)"
+        [selectedRowKeys]="[defaultContactRecordID]"
+        (onCellClick)="onCellClick($event)"
+      >
+        <dxi-column
+          dataField="firstName"
+          caption="First Name"
+          alignment="center"
+        ></dxi-column>
+        <dxi-column
+          dataField="lastName"
+          caption="Last Name"
+          alignment="center"
+        ></dxi-column>
+        <dxi-column
+          dataField="userName"
+          caption="User Name"
+          alignment="center"
+        ></dxi-column>
+        <dxi-column
+          dataField="userRoleName"
+          caption="Role"
+          alignment="center"
+        ></dxi-column>
+        <dxi-column
+          [width]="100"
+          caption="Default"
+          [fixed]="true"
+          fixedPosition="right"
+          [allowFiltering]="false"
+          [allowSorting]="false"
+          cellTemplate="cellTemplate"
+          cssClass="default-contact-record-column"
+        >
+        </dxi-column>
+        <div *dxTemplate="let row of 'cellTemplate'">
+          <div class="dx-field">
+            <div class="dx-field-value">
+              <dx-check-box
+                [name]="row?.data?.contactID"
+                (onValueChanged)="
+                  onDefaultCheckboxValueChanged($event, row.data)
+                "
+                [value]="row.data.isDefaultLoginContact"
+              >
+              </dx-check-box>
+            </div>
+          </div>
+        </div>
+        <dxo-selection mode="single"></dxo-selection>
+      </dx-data-grid>
+    </div>
+  </div>
 </dx-popup>

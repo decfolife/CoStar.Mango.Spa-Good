@@ -13,7 +13,6 @@ import { IndexComponent } from './index.component';
     SharedModule.forRoot(),
     SearchModule,
   ],
-  providers: [
-  ],
+  providers: [],
 })
 export class IndexModule {}

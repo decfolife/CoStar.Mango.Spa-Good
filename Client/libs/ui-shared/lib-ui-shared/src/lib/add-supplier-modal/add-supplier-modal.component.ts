@@ -1,45 +1,77 @@
-import { Component, Inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subscription, combineLatest, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { ButtonModule, CremFormsModule, CremToastService, DropdownComponent, DropdownModule, InputComponent, InputLabelComponent, LibUiElementsModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
-import { RENDER_SELECT_SUBGROUP_ID, RENDER_SELECT_TEMPLATE_ID, SUPPLIER_OTID, ToastState } from '@mango/data-models/lib-data-models';
+import {
+  ButtonModule,
+  CremFormsModule,
+  CremToastService,
+  DropdownComponent,
+  DropdownModule,
+  InputComponent,
+  InputLabelComponent,
+  LibUiElementsModule,
+  ModalModule,
+} from '@mango/ui-shared/lib-ui-elements';
+import {
+  RENDER_SELECT_SUBGROUP_ID,
+  RENDER_SELECT_TEMPLATE_ID,
+  SUPPLIER_OTID,
+  ToastState,
+  VALIDATION_ERROR,
+} from '@mango/data-models/lib-data-models';
 import { CommonModule } from '@angular/common';
-import { Toast } from 'ngx-toastr';
 import { DataService } from '@mango/core-shared';
 
 @Component({
   selector: 'crem-add-supplier-modal',
   standalone: true,
-  imports: [CommonModule, ButtonModule, ModalModule, DropdownModule, LibUiElementsModule, InputComponent, InputLabelComponent, ReactiveFormsModule, Toast, FormsModule, CremFormsModule],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    ModalModule,
+    DropdownModule,
+    LibUiElementsModule,
+    InputComponent,
+    InputLabelComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    CremFormsModule,
+  ],
   templateUrl: './add-supplier-modal.component.html',
   styleUrls: ['./add-supplier-modal.component.scss'],
 })
-
-export class AddSupplierModalComponent {
+export class AddSupplierModalComponent implements OnInit, OnDestroy {
   @ViewChild('portfolioDropdown') portfolioDropdown: DropdownComponent;
   @ViewChild('templateDropdown') templateDropdown: DropdownComponent;
   @ViewChild('subGroupDropDropdown') subGroupDropDropdown: DropdownComponent;
 
-  componentName = 'Add-supplier-modal'
+  componentName = 'Add-supplier-modal';
   supplierForm: FormGroup;
   isSubGroupRequired: boolean;
   showToast = false;
   selectedTemplateID: string;
-  saveClicked: boolean;
-  saveNewClicked: boolean;
-  saveLaunchClicked: boolean;
-
-  public portfolioDropdownItem: any[];
-  public templateDropdownItem: any[];
-  private subscriptions = new Subscription();
-  private subs: Subscription[] = [];
-  public subGroupDropdownItem: any[];
+  saveClicked: boolean = false;
+  saveNewClicked: boolean = false;
+  saveLaunchClicked: boolean = false;
+  disableButton: boolean = false;
+  portfolioDropdownItem: any[];
+  templateDropdownItem: any[];
+  subGroupDropdownItem: any[];
   selectedPortfolio: any[];
+  initialSelectedPortfolio: number;
+  private subs: Subscription[] = [];
   private redirectorLinks: any[] = null;
+  private subscriptions = new Subscription();
 
   constructor(
     public dialogRef: MatDialogRef<AddSupplierModalComponent>,
@@ -49,25 +81,33 @@ export class AddSupplierModalComponent {
     private toastService: CremToastService,
     private dataService: DataService,
 
-    @Inject(MAT_DIALOG_DATA) public data: {
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
       objectTypeName: string;
       objectTypeId: number;
-    }) { }
+    }
+  ) {}
 
   ngOnInit(): void {
     this.initializeSupplierForm();
     this.getDropdownData();
-    this.subscriptions.add(this.formWizardService.getClientPreferenceByField("portfolioSubGroupRequired").subscribe(
-      (result) => {
-        const mappedValues = result.data.map(clientSetupFieldValue => clientSetupFieldValue.ClientSetupFieldValue);
-        this.isSubGroupRequired = mappedValues?.some(value => value.includes('1'));
-        this.updateSubGroupListValidators();
-      }
-    ));
+    this.subscriptions.add(
+      this.formWizardService
+        .getClientPreferenceByField('portfolioSubGroupRequired')
+        .subscribe((result) => {
+          const mappedValues = result.data.map(
+            (clientSetupField) => clientSetupField.clientSetupFieldValue
+          );
+          this.isSubGroupRequired = mappedValues?.some((value) =>
+            value.includes('1')
+          );
+          this.updateSubGroupListValidators();
+        })
+    );
 
     if (this.redirectorLinks === null) {
       this.subs.push(
-        this.dataService.getRedirectorLinkList().subscribe(res => {
+        this.dataService.getRedirectorLinkList().subscribe((res) => {
           this.redirectorLinks = res.data;
         })
       );
@@ -79,7 +119,7 @@ export class AddSupplierModalComponent {
       portfolioList: ['', Validators.required],
       supplierName: ['', Validators.required],
       templateList: ['', Validators.required],
-      subGroupList: ['']
+      subGroupList: [''],
     });
   }
 
@@ -97,114 +137,190 @@ export class AddSupplierModalComponent {
 
   getDropdownData() {
     this.subscriptions.add(
-      this.formWizardService.getRenderSelect('', 62).subscribe(
-        (portfolioDropdownItem) => {
+      this.formWizardService
+        .getRenderSelect('', 62)
+        .subscribe((portfolioDropdownItem) => {
           if (portfolioDropdownItem) {
             this.portfolioDropdownItem = portfolioDropdownItem.data;
+            if (this.portfolioDropdownItem.length === 1) {
+              this.initialSelectedPortfolio =
+                this.portfolioDropdownItem[0].companyID;
+            }
           }
-          if (portfolioDropdownItem === null || !portfolioDropdownItem.success) {
-            this.toastService.show('An error occurred please contact the system administrator.', '', ToastState.ERROR, {
-              position: 'bottom right',
-              maxWidth: '350px'
-            });
+          if (!portfolioDropdownItem || !portfolioDropdownItem.success) {
+            this.toastService.show(
+              'An error occurred please contact the system administrator.',
+              '',
+              ToastState.ERROR,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
+            );
           }
-        }
-      )
+        })
     );
   }
 
   onPortFolioValueChanged(e: any) {
-    this.selectedPortfolio = e[0].CompanyID;
-    of(this.selectedPortfolio).pipe(
-      filter(value => !!value),
-      switchMap(value =>
-        combineLatest([
-          this.formWizardService.getRenderSelect(value, RENDER_SELECT_TEMPLATE_ID).pipe(filter(v => !!v)),
-          this.formWizardService.getRenderSelect(value, RENDER_SELECT_SUBGROUP_ID).pipe(filter(v => !!v))
-        ])
-      ),
-      map(([templates, subgroups]) => {
-        this.templateDropdownItem = templates.data;
-        this.subGroupDropdownItem = subgroups.data;
+    this.selectedPortfolio = e[0].companyID;
+    of(this.selectedPortfolio)
+      .pipe(
+        filter((value) => !!value),
+        switchMap((value) =>
+          combineLatest([
+            this.formWizardService
+              .getRenderSelect(value, RENDER_SELECT_TEMPLATE_ID)
+              .pipe(filter((v) => !!v)),
+            this.formWizardService
+              .getRenderSelect(value, RENDER_SELECT_SUBGROUP_ID)
+              .pipe(filter((v) => !!v)),
+          ])
+        ),
+        map(([templates, subgroups]) => {
+          this.templateDropdownItem = templates.data;
+          this.subGroupDropdownItem = subgroups.data;
 
-        if (this.templateDropdownItem && this.templateDropdownItem.length > 0) {
-          this.selectedTemplateID = this.templateDropdownItem[0].ObjectTypeTypeID;
-        }
-      })
-    ).subscribe()
+          if (this.templateDropdownItem) {
+            this.selectedTemplateID =
+              this.templateDropdownItem[0].objectTypeTypeID;
+          }
+        })
+      )
+      .subscribe();
   }
 
-  save(e: any) {
+  setButtonStates(activeButton: string): void {
+    this.saveClicked = activeButton === 'save';
+    this.saveNewClicked = activeButton === 'saveNew';
+    this.saveLaunchClicked = activeButton === 'launch';
+    this.disableButton = true;
+  }
+
+  save() {
     if (this.supplierForm.valid) {
+      this.setButtonStates('save');
       this.saveClicked = true;
       const supplier = this.getSupplierData();
-      this.subscriptions.add(this.formWizardService.addSupplier(supplier).subscribe((result) => {
-        if (result.success) {
-          this.toastService.show('Supplier created successfully.', '', ToastState.SUCCESS, {
-            position: 'bottom right',
-            maxWidth: '350px'
-          });
-          this.dialogRef.close();
-          this.saveClicked = false;
-
-        } else {
-          this.toastService.show('An error has occurred. Please try again.', '', ToastState.ERROR, {
-            position: 'bottom right',
-            maxWidth: '350px'
-          });
-        }
-      }));
+      this.subscriptions.add(
+        this.formWizardService.addSupplier(supplier).subscribe((result) => {
+          if (result.success) {
+            this.toastService.show(
+              'Supplier created successfully.',
+              '',
+              ToastState.SUCCESS,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
+            );
+            this.dialogRef.close();
+            this.saveClicked = false;
+          } else {
+            this.toastService.show(
+              'An error has occurred. Please try again.',
+              '',
+              ToastState.ERROR,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
+            );
+          }
+        })
+      );
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 
-  saveAndNew(e: any) {
+  saveAndNew() {
     if (this.supplierForm.valid) {
+      this.setButtonStates('saveNew');
       this.saveNewClicked = true;
       const supplier = this.getSupplierData();
-      this.subscriptions.add(this.formWizardService.addSupplier(supplier).subscribe((result) => {
-        if (result.success) {
-          this.toastService.show('Supplier created successfully.', '', ToastState.SUCCESS, {
-            position: 'bottom right',
-            maxWidth: '350px'
-          });
-          this.saveNewClicked = false;
-          this.resetPopupSelection();
-        } else {
-          this.toastService.show('An error has occurred. Please try again.', '', ToastState.ERROR, {
-            position: 'bottom right',
-            maxWidth: '350px'
-          });
-        }
-      }));
+      this.subscriptions.add(
+        this.formWizardService.addSupplier(supplier).subscribe((result) => {
+          if (result.success) {
+            this.toastService.show(
+              'Supplier created successfully.',
+              '',
+              ToastState.SUCCESS,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
+            );
+            this.saveNewClicked = false;
+            this.disableButton = false;
+            this.resetPopupSelection();
+          } else {
+            this.toastService.show(
+              'An error has occurred. Please try again.',
+              '',
+              ToastState.ERROR,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
+            );
+          }
+        })
+      );
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 
-  launch(e: any) {
+  launch() {
     if (this.supplierForm.valid) {
+      this.setButtonStates('launch');
       this.saveLaunchClicked = true;
       const supplier = this.getSupplierData();
-      this.subscriptions.add(this.formWizardService.addSupplier(supplier).subscribe((result) => {
-        if (result.success) {
-          this.saveLaunchClicked = false;
-          this.dialogRef.close();
-          const currURL = this.getRedirectorURL(result.data, SUPPLIER_OTID, 301);
-          this.router.navigateByUrl(currURL);
-        } else {
-          this.toastService.show('An error has occurred. Please try again.', '', ToastState.ERROR, {
-            position: 'bottom right',
-            maxWidth: '350px'
-          });
-        }
-      }));
+      this.subscriptions.add(
+        this.formWizardService.addSupplier(supplier).subscribe((result) => {
+          if (result.success) {
+            this.saveLaunchClicked = false;
+            this.dialogRef.close();
+            const currURL = this.getRedirectorURL(
+              result.data,
+              SUPPLIER_OTID,
+              301
+            );
+            this.router.navigateByUrl(currURL);
+          } else {
+            this.toastService.show(
+              'An error has occurred. Please try again.',
+              '',
+              ToastState.ERROR,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
+            );
+          }
+        })
+      );
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 
   getSupplierData() {
-    let supplier = {
+    const supplier = {
       buildingMasterGroupID: this.supplierForm.get('portfolioList').value[0],
       buildingName: this.supplierForm.get('supplierName').value,
       objectTypeTypeID: this.supplierForm.get('templateList').value[0],
-      portfolioSubGroupID: this.supplierForm.get('subGroupList').value[0]
+      portfolioSubGroupID: this.supplierForm.get('subGroupList').value[0],
     };
     return supplier;
   }
@@ -213,7 +329,12 @@ export class AddSupplierModalComponent {
     this.dialogRef.close();
   }
 
-  getId(componentName: string, uniqueName: string, elementType: string, componentType?: string) {
+  getId(
+    componentName: string,
+    uniqueName: string,
+    elementType: string,
+    componentType?: string
+  ) {
     return componentType
       ? `${componentName}-${componentType}-${uniqueName}-${elementType}`
       : `${componentName}-${uniqueName}-${elementType}`;
@@ -226,11 +347,19 @@ export class AddSupplierModalComponent {
     this.supplierForm.reset();
   }
 
-  getRedirectorURL(objectId: number, objectTypeId: number, objectTypeTypeId: number): string {
+  getRedirectorURL(
+    objectId: number,
+    objectTypeId: number,
+    objectTypeTypeId: number
+  ): string {
     let getURL = this.redirectorLinks.find(
-      x => x.objectTypeId === objectTypeId && x.objectTypeTypeId === objectTypeTypeId
+      (x) =>
+        x.objectTypeId === objectTypeId &&
+        x.objectTypeTypeId === objectTypeTypeId
     );
-    getURL = getURL ?? this.redirectorLinks.find(x => x.objectTypeId === objectTypeId);
+    getURL =
+      getURL ??
+      this.redirectorLinks.find((x) => x.objectTypeId === objectTypeId);
     let urlLink = getURL ? getURL.urlLink : 'not found';
     urlLink = urlLink
       .replace(/\[OID\]/, objectId)

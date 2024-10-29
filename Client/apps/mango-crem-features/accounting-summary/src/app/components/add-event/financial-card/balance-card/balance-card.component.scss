@@ -12,18 +12,18 @@
     @include costar(padding, 2);
     @include costar(border-radius, medium);
     @include costar(background-color, primary);
-    &-header{
+    &-header {
       @include costar(color, light);
-      .title{
+      .title {
         border-bottom: 0 !important;
         @include costar(font-size, body);
         @include costar(font-weight, normal);
       }
-      .subtitle{
+      .subtitle {
         @include costar(color, light, $important: true);
       }
     }
-    &-content{
+    &-content {
       flex-grow: 1;
       @include costar(padding, 2);
       @include costar(font-size, small);
@@ -40,7 +40,7 @@
           margin-bottom: 0;
           @include costar(font-weight, bold);
         }
-        .suffix{
+        .suffix {
           margin-bottom: 0;
           @include costar(font-weight, normal);
         }

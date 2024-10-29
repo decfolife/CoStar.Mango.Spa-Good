@@ -1,4 +1,5 @@
-<dx-data-grid #dataFieldGrid
+<dx-data-grid
+  #dataFieldGrid
   [dataSource]="gridData"
   keyExpr="dataFieldID"
   [allowColumnResizing]="true"
@@ -10,79 +11,85 @@
   [height]="'600px'"
   (onSaving)="onDataFieldSaving($event)"
 >
-  <dxo-editing mode="row"
+  <dxo-editing
+    mode="row"
     [allowUpdating]="hasAddRights"
     [(editRowKey)]="editRowKey"
   ></dxo-editing>
 
   <dxo-paging [pageSize]="100"></dxo-paging>
 
-  <dxi-column dataField="dataFieldID"
+  <dxi-column
+    dataField="dataFieldID"
     caption="Field ID"
     [allowEditing]="false"
   ></dxi-column>
 
-  <dxi-column dataField="dataFieldName"
-    caption="Field Name"
-  ></dxi-column>
+  <dxi-column dataField="dataFieldName" caption="Field Name"></dxi-column>
 
-  <dxi-column dataField="categoryName"
+  <dxi-column
+    dataField="categoryName"
     caption="Category"
     [allowEditing]="false"
   ></dxi-column>
 
-  <dxi-column dataField="dataTypeLabel"
+  <dxi-column
+    dataField="dataTypeLabel"
     caption="Data Type"
     [allowEditing]="false"
   ></dxi-column>
 
-  <dxi-column dataField="columnWidth"
-    caption="Field Width"
-  >
-    <dxo-lookup [dataSource]="fieldWidths"
+  <dxi-column dataField="columnWidth" caption="Field Width">
+    <dxo-lookup
+      [dataSource]="fieldWidths"
       valueExpr="key"
       displayExpr="key"
       [allowClearing]="true"
     ></dxo-lookup>
   </dxi-column>
 
-  <dxi-column dataField="defaultFormatForReports"
+  <dxi-column
+    dataField="defaultFormatForReports"
     caption="Data Field Format"
     editCellTemplate="dataFieldFormatEditor"
   ></dxi-column>
 
-  <dxi-column dataField="dataFieldDescription"
+  <dxi-column
+    dataField="dataFieldDescription"
     caption="Data Field Description"
   ></dxi-column>
 
-  <dxi-column dataField="dataFieldAlignment"
-    caption="Alignment"
-  >
-    <dxo-lookup [dataSource]="alignments"
+  <dxi-column dataField="dataFieldAlignment" caption="Alignment">
+    <dxo-lookup
+      [dataSource]="alignments"
       valueExpr="key"
       displayExpr="key"
       [allowClearing]="true"
     ></dxo-lookup>
   </dxi-column>
 
-  <dxi-column dataField="formItemID"
+  <dxi-column
+    dataField="formItemID"
     caption="Linked Form Item ID"
     [allowEditing]="false"
   ></dxi-column>
 
-  <dxi-column dataField="formItemLabel"
+  <dxi-column
+    dataField="formItemLabel"
     caption="Linked Form Item Name"
     [allowEditing]="false"
   ></dxi-column>
 
-  <dxi-column type="buttons"
+  <dxi-column
+    type="buttons"
     [allowEditing]="false"
     cellTemplate="infoButton"
     name="Info"
     width="50"
   ></dxi-column>
 
-  <dxi-column *ngIf="hasAddRights"
+  <dxi-column
+    *ngIf="hasAddRights"
     type="buttons"
     [buttons]="['edit']"
   ></dxi-column>
@@ -91,28 +98,30 @@
     <mango-data-field-format-editor
       [dataTypeId]="cellInfo.data.dataFieldDataType"
       [(value)]="cellInfo.value"
-    	(formatEditorValueChangeEvent)="updateDataFieldFormat($event, cellInfo)"
+      (formatEditorValueChangeEvent)="updateDataFieldFormat($event, cellInfo)"
     ></mango-data-field-format-editor>
   </div>
 
   <div *dxTemplate="let cellInfo of 'infoButton'">
-    <dx-button icon="info"
+    <dx-button
+      icon="info"
       stylingMode="text"
       (onClick)="onInfoButtonClicked(cellInfo.data)"
     ></dx-button>
   </div>
 
-  <dx-load-panel shadingColor="rgba(255,255,255,0.2)"
-  [visible]="showLoading"
-  [showIndicator]="true"
-  [showPane]="true"
-  [shading]="true"
-  [closeOnOutsideClick]="false"
+  <dx-load-panel
+    shadingColor="rgba(255,255,255,0.2)"
+    [visible]="showLoading"
+    [showIndicator]="true"
+    [showPane]="true"
+    [shading]="true"
+    [closeOnOutsideClick]="false"
   ></dx-load-panel>
-  
 </dx-data-grid>
 
-<dx-popup [(visible)]="popupVisible"
+<dx-popup
+  [(visible)]="popupVisible"
   [closeOnOutsideClick]="true"
   title="Data Sets"
   width="500px"
@@ -121,9 +130,7 @@
   <div *dxTemplate="let data of 'content'">
     <dx-scroll-view width="100%" height="100%">
       <div class="p-4">
-        <div *ngFor="let ds of popupDataSets">
-          {{ ds.id }} - {{ ds.name }}
-        </div>
+        <div *ngFor="let ds of popupDataSets">{{ ds.id }} - {{ ds.name }}</div>
       </div>
     </dx-scroll-view>
   </div>

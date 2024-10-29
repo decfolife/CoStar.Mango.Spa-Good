@@ -15,12 +15,12 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
     {
       id: 'ASC842-Quarterly-LeaseCounts',
       name: 'Lease Counts',
+      showFieldChooser: true,
       index: 0,
     },
     {
       id: 'ASC842-Quarterly-AssetBalance',
       name: 'Assets and Liabilities Balances',
-      showFieldChooser: true,
       index: 1,
     },
     {
@@ -95,11 +95,11 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
   }
 
   onSelectedFilter(e: Event, config) {
-    switch (config.id) {
-      case 'LeaseLiabilityMaturityAnalysis':
+    switch (config.name) {
+      case 'Liability Maturity':
         this.setMaturityAnalysis(this.IADCardData.data[6], e['valueKey']);
         break;
-      case 'FutureCommitments':
+      case 'Future Commitments':
         this.setFutureCommitments(this.IADCardData.data[8], e['valueKey']);
         break;
     }
@@ -160,42 +160,49 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       const items = [
         {
           DisclosureClassificiation: disclosureName,
+          LeaseTemplate: item.LeaseTemplate,
           Display: 'Opening Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.OpeningCount,
         },
         {
           DisclosureClassificiation: disclosureName,
-          Display: ' - Lease Added',
+          LeaseTemplate: item.LeaseTemplate,
+          Display: ' - Leases Added',
           PeriodQuarter: item.PeriodQuarter,
           data: item.AddedCount,
         },
         {
           DisclosureClassificiation: disclosureName,
+          LeaseTemplate: item.LeaseTemplate,
           Display: ' - Leases Expired/Cancelled',
           PeriodQuarter: item.PeriodQuarter,
           data: item.EndedCount,
         },
         {
           DisclosureClassificiation: disclosureName,
+          LeaseTemplate: item.LeaseTemplate,
           Display: 'Closing Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ClosingCount,
         },
         {
           DisclosureClassificiation: 'Total',
+          LeaseTemplate: item.LeaseTemplate,
           Display: 'Opening Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.OpeningCount,
         },
         {
           DisclosureClassificiation: 'Total',
-          Display: ' - Lease Added',
+          LeaseTemplate: item.LeaseTemplate,
+          Display: ' - Leases Added',
           PeriodQuarter: item.PeriodQuarter,
           data: item.AddedCount,
         },
         {
           DisclosureClassificiation: 'Total',
+          LeaseTemplate: item.LeaseTemplate,
           Display: ' - Leases Expired/Cancelled',
           PeriodQuarter: item.PeriodQuarter,
           data: item.EndedCount,
@@ -203,6 +210,7 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
         },
         {
           DisclosureClassificiation: 'Total',
+          LeaseTemplate: item.LeaseTemplate,
           Display: 'Closing Lease Count',
           PeriodQuarter: item.PeriodQuarter,
           data: item.ClosingCount,
@@ -313,50 +321,62 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
 
   public setFutureCommitments(data: any, years?: number) {
     this.pivotCardData = [];
-    years = !years ? 6 : years + 1;
+    years = !years ? 5 : years;
     const filteredData = this.filterByPeriodYear(
       data,
       this.reportingYear,
       this.reportingYear + years
     );
 
-    let items: any[];
-
-    filteredData.forEach((item, i) => {
-      let total = item.ScheduledPaymentsReporting;
-      if (i === filteredData.length - 1) {
-        total = item.RemainingPaymentsReporting;
-        items = [
-          {
-            Display: 'Thereafter',
-            DisclosureClassificiation: item.ClassificationName,
-            data: item.RemainingPaymentsReporting,
-          },
-          {
-            Display: 'Thereafter',
-            DisclosureClassificiation: 'Total',
-            data: total,
-          },
-        ];
-      } else {
-        items = [
-          {
-            Display: item.PeriodYear.toString(),
-            DisclosureClassificiation: item.ClassificationName,
-            data: item.ScheduledPaymentsReporting,
-          },
-          {
-            Display: item.PeriodYear.toString(),
-            DisclosureClassificiation: 'Total',
-            data: total,
-          },
-        ];
+    const groupedItems = filteredData.reduce((acc, item) => {
+      if (!acc[item.PeriodYear]) {
+        acc[item.PeriodYear] = [];
       }
-
-      items.forEach((item) => {
-        this.pivotCardData.push(item);
+      acc[item.PeriodYear].push(item);
+      return acc;
+    }, {});
+    
+    for (const year in groupedItems) {
+      groupedItems[year].forEach((item) => {
+        const total = item.ScheduledPaymentsReporting;
+    
+        const baseItems = [
+          {
+            Display: year,
+            DisclosureClassificiation: item.ClassificationName,
+            data: total,
+          },
+          {
+            Display: year,
+            DisclosureClassificiation: 'Total',
+            data: total,
+          },
+        ];
+    
+        this.pivotCardData.push(...baseItems);
       });
+    }
+    
+    const lastYear = Math.max(...Object.keys(groupedItems).map(Number));
+    const lastItems = groupedItems[lastYear];
+    
+    lastItems.forEach(item => {
+      const remainingItems = [
+        {
+          Display: 'Thereafter',
+          DisclosureClassificiation: item.ClassificationName,
+          data: item.RemainingPaymentsReporting,
+        },
+        {
+          Display: 'Thereafter',
+          DisclosureClassificiation: 'Total',
+          data: item.RemainingPaymentsReporting,
+        },
+      ];
+    
+      this.pivotCardData.push(...remainingItems);
     });
+    
 
     if (this.dataSources.length > 0) {
       this.dataSources[7] = new PivotGridDataSource({
@@ -381,12 +401,17 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       const items = [
         {
           DisclosureClassificiation: item.ClassificationName,
-          Display: 'Weighted-average Remaining Lease Term',
-          data: item.WeightedAverageMonthsRemaining,
+          Display: 'Weighted-Average Remaining Years to Accounting Term',
+          data: item.WeightedAverageYearsRemainingToAccountingTerm,
         },
         {
           DisclosureClassificiation: item.ClassificationName,
-          Display: 'Weighted-average Discount Rate',
+          Display: 'Weighted-Average Remaining Years To Expiration',
+          data: item.WeightedAverageYearsRemainingToExpiration,
+        },
+        {
+          DisclosureClassificiation: item.ClassificationName,
+          Display: 'Weighted-Average Discount Rate',
           data: item.WeightedAverageDiscountRate,
         },
         {
@@ -406,12 +431,17 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
         },
         {
           DisclosureClassificiation: 'Total',
-          Display: 'Weighted-average Remaining Lease Term',
-          data: item.WeightedAverageMonthsRemaining,
+          Display: 'Weighted-Average Remaining Years to Accounting Term',
+          data: item.WeightedAverageYearsRemainingToAccountingTerm,
         },
         {
           DisclosureClassificiation: 'Total',
-          Display: 'Weighted-average Discount Rate',
+          Display: 'Weighted-Average Remaining Years To Expiration',
+          data: item.WeightedAverageYearsRemainingToExpiration,
+        },
+        {
+          DisclosureClassificiation: 'Total',
+          Display: 'Weighted-Average Discount Rate',
           data: item.WeightedAverageDiscountRate,
         },
         {
@@ -454,50 +484,60 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
 
   public setMaturityAnalysis(data, years?: number) {
     this.pivotCardData = [];
-    years = !years ? 6 : years + 1;
+    years = !years ? 5: years;
     const filteredData = this.filterByPeriodYear(
       data,
       this.reportingYear,
       this.reportingYear + years
     );
 
-    let items: any[];
-
-    filteredData.forEach((item, i) => {
-      let total: number = item.ScheduledPaymentsReporting;
-
-      if (i === filteredData.length - 1 || i === filteredData.length - 2) {
-        total = item.RemainingPaymentsReporting;
-        items = [
-          {
-            Display: 'Thereafter',
-            DisclosureClassificiation: item.ClassificationName,
-            data: item.RemainingPaymentsReporting,
-          },
-          {
-            Display: 'Thereafter',
-            DisclosureClassificiation: 'Total',
-            data: total,
-          },
-        ];
-      } else {
-        items = [
-          {
-            Display: item.PeriodYear.toString(),
-            DisclosureClassificiation: item.ClassificationName,
-            data: item.ScheduledPaymentsReporting,
-          },
-          {
-            Display: item.PeriodYear.toString(),
-            DisclosureClassificiation: 'Total',
-            data: total,
-          },
-        ];
+    const groupedItems = filteredData.reduce((acc, item) => {
+      if (!acc[item.PeriodYear]) {
+        acc[item.PeriodYear] = [];
       }
-
-      items.forEach((item) => {
-        this.pivotCardData.push(item);
+      acc[item.PeriodYear].push(item);
+      return acc;
+    }, {});
+    
+    for (const year in groupedItems) {
+      groupedItems[year].forEach((item) => {
+        const total = item.ScheduledPaymentsReporting;
+    
+        const baseItems = [
+          {
+            Display: year,
+            DisclosureClassificiation: item.ClassificationName,
+            data: total,
+          },
+          {
+            Display: year,
+            DisclosureClassificiation: 'Total',
+            data: total,
+          },
+        ];
+    
+        this.pivotCardData.push(...baseItems);
       });
+    }
+    
+    const lastYear = Math.max(...Object.keys(groupedItems).map(Number));
+    const lastItems = groupedItems[lastYear];
+    
+    lastItems.forEach(item => {
+      const remainingItems = [
+        {
+          Display: 'Thereafter',
+          DisclosureClassificiation: item.ClassificationName,
+          data: item.RemainingPaymentsReporting,
+        },
+        {
+          Display: 'Thereafter',
+          DisclosureClassificiation: 'Total',
+          data: item.RemainingPaymentsReporting,
+        },
+      ];
+    
+      this.pivotCardData.push(...remainingItems);
     });
 
     if (this.dataSources.length > 0) {
@@ -564,14 +604,28 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
           data: item.ROUAssetsObtainedInExchangeForNewOperatingLiabilities,
         },
         {
-          Display: 'Weighted-Average Remaining Lease Term - Finance Leases',
-          PeriodQuarter: item.PeriodQuarter,
-          data: item.WeightedAverageMonthsRemainingFinance,
+          Display:
+            'Weighted-Average Remaining Years to Accounting Term - Finance Leases',
+          PeriodYear: item.PeriodQuarter,
+          data: item.WeightedAverageRemainingYearsRemainingToAccountingTermFinance,
         },
         {
-          Display: 'Weighted-Average Remaining Lease Term - Operating Leases',
-          PeriodQuarter: item.PeriodQuarter,
-          data: item.WeightedAverageMonthsRemainingOperating,
+          Display:
+            'Weighted-Average Remaining Years to Accounting Term - Operating Leases',
+          PeriodYear: item.PeriodQuarter,
+          data: item.WeightedAverageRemainingYearsRemainingToAccountingTermOperating,
+        },
+        {
+          Display:
+            'Weighted-Average Remaining Years to Expiration - Finance Leases',
+          PeriodYear: item.PeriodQuarter,
+          data: item.WeightedAverageYearsRemainingToExpirationFinance,
+        },
+        {
+          Display:
+            'Weighted-Average Remaining Years to Expiration - Operating Leases',
+          PeriodYear: item.PeriodQuarter,
+          data: item.WeightedAverageYearsRemainingToExpirationOperating,
         },
         {
           Display: 'Weighted-Average Discount Rate - Finance Leases',
@@ -749,9 +803,9 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       if (itemToMerge && typeof itemToMerge === 'object') {
         return { ...item, ...itemToMerge };
       }
-      return item; 
+      return item;
     });
-      return mergedArray;
+    return mergedArray;
   }
 
   public setFieldConfigs() {
@@ -863,7 +917,7 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
   public rowSort(a, b) {
     const rowSortOrderObject = {
       'Opening Lease Count': 1,
-      ' - Lease Added': 2,
+      ' - Leases Added': 2,
       ' - Leases Expired/Cancelled': 3,
       'Closing Lease Count': 4,
     };

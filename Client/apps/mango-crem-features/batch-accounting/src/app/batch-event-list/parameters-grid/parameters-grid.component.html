@@ -4,8 +4,9 @@
   </mat-card-header>
 
   <mat-card-content class="no-padding">
-    <dx-data-grid #AvailableDataGrid
-      [ngClass]="{ 'readOnly': isReadOnly }"
+    <dx-data-grid
+      #AvailableDataGrid
+      [ngClass]="{ readOnly: isReadOnly }"
       [dataSource]="gridData"
       keyExpr="classificationID"
       [showColumnLines]="false"
@@ -23,7 +24,8 @@
     >
       <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 
-      <dxo-editing mode="batch"
+      <dxo-editing
+        mode="batch"
         [allowUpdating]="!isReadOnly"
         [selectTextOnEditStart]="true"
         startEditAction="click"
@@ -31,86 +33,106 @@
 
       <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-      <dxi-column dataField="classificationID"
+      <dxi-column
+        dataField="classificationID"
         caption="Classification Type"
         [fixed]="true"
         [allowEditing]="false"
         cellTemplate="classificationTemplate"
       ></dxi-column>
 
-      <dxi-column dataField="beginValueExpr"
+      <dxi-column
+        dataField="beginValueExpr"
         caption="Accounting Term Begin Date"
         cellTemplate="accountingTermBeginDateTemplate"
-        [allowEditing]="!parameterOverrides?.accountingTermBeginDateOverride &&
-          !beginDateReadOnly"
+        [allowEditing]="
+          !parameterOverrides?.accountingTermBeginDateOverride &&
+          !beginDateReadOnly
+        "
         [editorOptions]="{ dropDownOptions: { maxHeight: '25vh' } }"
       >
         <dxo-lookup
-          [dataSource]="portfolioClassificationConfigurationOptions?.beginDateOptions"
+          [dataSource]="
+            portfolioClassificationConfigurationOptions?.beginDateOptions
+          "
           displayExpr="methodDisplay"
           valueExpr="beginValueExpr"
         ></dxo-lookup>
       </dxi-column>
 
-      <dxi-column dataField="endValueExpr"
+      <dxi-column
+        dataField="endValueExpr"
         caption="Accounting Term End Date"
         cellTemplate="accountingTermEndDateTemplate"
         [allowEditing]="!parameterOverrides?.accountingTermEndDateOverride"
         [editorOptions]="{ dropDownOptions: { maxHeight: '25vh' } }"
       >
         <dxo-lookup
-          [dataSource]="portfolioClassificationConfigurationOptions?.endDateOptions"
+          [dataSource]="
+            portfolioClassificationConfigurationOptions?.endDateOptions
+          "
           displayExpr="methodDisplay"
           valueExpr="endValueExpr"
         ></dxo-lookup>
       </dxi-column>
 
-      <dxi-column dataField="discountRateProfile"
+      <dxi-column
+        dataField="discountRateProfile"
         caption="Discount Rate Profile"
         cellTemplate="discountRateProfileTemplate"
-        [allowEditing]="!parameterOverrides?.annualRateOverride ||
+        [allowEditing]="
+          !parameterOverrides?.annualRateOverride ||
           !parameterOverrides?.annualRateTypeOverride ||
           !parameterOverrides?.paymentTimingOverride ||
-          !discountRateReadOnly"
+          !discountRateReadOnly
+        "
         [editorOptions]="{ dropDownOptions: { maxHeight: '25vh' } }"
       >
-        <dxo-lookup [dataSource]="discountRateOptions"
+        <dxo-lookup
+          [dataSource]="discountRateOptions"
           displayExpr="id"
           valueExpr="id"
         ></dxo-lookup>
       </dxi-column>
 
-      <dxi-column dataField="journalEntryProfileID"
+      <dxi-column
+        dataField="journalEntryProfileID"
         caption="Journal Entry Profile"
         cellTemplate="jeProfileTemplate"
         [editorOptions]="{ dropDownOptions: { maxHeight: '25vh' } }"
       >
         <dxo-lookup
-          [dataSource]="portfolioClassificationConfigurationOptions?.journalEntryProfiles"
+          [dataSource]="
+            portfolioClassificationConfigurationOptions?.journalEntryProfiles
+          "
           displayExpr="profileName"
           valueExpr="profileID"
         ></dxo-lookup>
       </dxi-column>
 
-      <dxi-column dataField="manualAdjustmentOption"
+      <dxi-column
+        dataField="manualAdjustmentOption"
         caption="Manual Asset Adjustment"
         cellTemplate="manualAssetAdjustmentTemplate"
         [allowEditing]="!parameterOverrides?.manualAssetAdjustmentOverride"
         [editorOptions]="{ dropDownOptions: { maxHeight: '25vh' } }"
       >
-        <dxo-lookup [dataSource]="defaultManualAdjustmentOptions"
+        <dxo-lookup
+          [dataSource]="defaultManualAdjustmentOptions"
           displayExpr="id"
           valueExpr="id"
         ></dxo-lookup>
       </dxi-column>
 
-      <dxi-column dataField="commentsOption"
+      <dxi-column
+        dataField="commentsOption"
         caption="Comments"
         cellTemplate="commentsTemplate"
         [allowEditing]="!parameterOverrides?.commentsOverride"
         [editorOptions]="{ dropDownOptions: { maxHeight: '25vh' } }"
       >
-        <dxo-lookup [dataSource]="commentsOptions"
+        <dxo-lookup
+          [dataSource]="commentsOptions"
           displayExpr="id"
           valueExpr="id"
         ></dxo-lookup>
@@ -121,14 +143,25 @@
       </div>
 
       <div *dxTemplate="let data of 'accountingTermBeginDateTemplate'">
-        <div *ngIf="parameterOverrides.accountingTermBeginDateOverride && !isReadOnly"
-          class="warning disabled"
-        >{{ data.text }}</div>
-
-        <div *ngIf="parameterOverrides.accountingTermBeginDateOverride && isReadOnly"
+        <div
+          *ngIf="
+            parameterOverrides.accountingTermBeginDateOverride && !isReadOnly
+          "
           class="warning disabled"
         >
-          {{ parameterOverrides.accountingTermBeginDateOverride | date:baseService.dateFormat }}
+          {{ data.text }}
+        </div>
+
+        <div
+          *ngIf="
+            parameterOverrides.accountingTermBeginDateOverride && isReadOnly
+          "
+          class="warning disabled"
+        >
+          {{
+            parameterOverrides.accountingTermBeginDateOverride
+              | date: baseService.dateFormat
+          }}
         </div>
 
         <div *ngIf="!parameterOverrides.accountingTermBeginDateOverride">
@@ -142,44 +175,75 @@
       -->
 
       <div *dxTemplate="let data of 'discountRateProfileTemplate'">
-        <div *ngIf="parameterOverrides.annualRateOverride != null &&
+        <div
+          *ngIf="
+            parameterOverrides.annualRateOverride != null &&
             parameterOverrides.annualRateTypeOverride &&
             parameterOverrides.paymentTimingOverride &&
-            !isReadOnly"
+            !isReadOnly
+          "
           class="warning disabled"
-        >{{ data.text }}</div>
+        >
+          {{ data.text }}
+        </div>
 
-        <div *ngIf="parameterOverrides.annualRateOverride != null &&
+        <div
+          *ngIf="
+            parameterOverrides.annualRateOverride != null &&
             parameterOverrides.annualRateTypeOverride &&
             parameterOverrides.paymentTimingOverride &&
-            isReadOnly"
+            isReadOnly
+          "
           class="warning disabled"
-        >{{ parameterOverrides.discountRateOverride }}</div>
+        >
+          {{ parameterOverrides.discountRateOverride }}
+        </div>
 
-        <div *ngIf="(discountRateReadOnly || parameterOverrides.annualRateOverride == null) ||
-          !parameterOverrides.annualRateTypeOverride ||
-          !parameterOverrides.paymentTimingOverride"
-        >{{ data.text }}</div>
+        <div
+          *ngIf="
+            discountRateReadOnly ||
+            parameterOverrides.annualRateOverride == null ||
+            !parameterOverrides.annualRateTypeOverride ||
+            !parameterOverrides.paymentTimingOverride
+          "
+        >
+          {{ data.text }}
+        </div>
       </div>
 
       <div *dxTemplate="let data of 'jeProfileTemplate'">
-        <div *ngIf="validateJEProfile({ value: data.data.journalEntryProfileID })"
-        >{{ data.text }}</div>
+        <div
+          *ngIf="validateJEProfile({ value: data.data.journalEntryProfileID })"
+        >
+          {{ data.text }}
+        </div>
 
-        <div *ngIf="!validateJEProfile({ value: data.data.journalEntryProfileID })"
+        <div
+          *ngIf="!validateJEProfile({ value: data.data.journalEntryProfileID })"
           class="error"
-        >{{ data.text }}</div>
+        >
+          {{ data.text }}
+        </div>
       </div>
 
       <div *dxTemplate="let data of 'accountingTermEndDateTemplate'">
-        <div *ngIf="parameterOverrides.accountingTermEndDateOverride && !isReadOnly"
-          class="warning disabled"
-        >{{ data.text }}</div>
-
-        <div *ngIf="parameterOverrides.accountingTermEndDateOverride && isReadOnly"
+        <div
+          *ngIf="
+            parameterOverrides.accountingTermEndDateOverride && !isReadOnly
+          "
           class="warning disabled"
         >
-          {{ parameterOverrides.accountingTermEndDateOverride | date:baseService.dateFormat }}
+          {{ data.text }}
+        </div>
+
+        <div
+          *ngIf="parameterOverrides.accountingTermEndDateOverride && isReadOnly"
+          class="warning disabled"
+        >
+          {{
+            parameterOverrides.accountingTermEndDateOverride
+              | date: baseService.dateFormat
+          }}
         </div>
 
         <div *ngIf="!parameterOverrides.accountingTermEndDateOverride">
@@ -188,13 +252,25 @@
       </div>
 
       <div *dxTemplate="let data of 'manualAssetAdjustmentTemplate'">
-        <div *ngIf="parameterOverrides.manualAssetAdjustmentOverride != null && !isReadOnly"
+        <div
+          *ngIf="
+            parameterOverrides.manualAssetAdjustmentOverride != null &&
+            !isReadOnly
+          "
           class="warning disabled"
-        >{{ data.text }}</div>
+        >
+          {{ data.text }}
+        </div>
 
-        <div *ngIf="parameterOverrides.manualAssetAdjustmentOverride != null && isReadOnly"
+        <div
+          *ngIf="
+            parameterOverrides.manualAssetAdjustmentOverride != null &&
+            isReadOnly
+          "
           class="warning disabled"
-        >{{ parameterOverrides.manualAssetAdjustmentOverride }}</div>
+        >
+          {{ parameterOverrides.manualAssetAdjustmentOverride }}
+        </div>
 
         <div *ngIf="parameterOverrides.manualAssetAdjustmentOverride == null">
           {{ data.text }}
@@ -202,26 +278,29 @@
       </div>
 
       <div *dxTemplate="let data of 'commentsTemplate'">
-        <div *ngIf="parameterOverrides.commentsOverride && !isReadOnly"
+        <div
+          *ngIf="parameterOverrides.commentsOverride && !isReadOnly"
           class="warning disabled"
-        >{{ data.text }}</div>
+        >
+          {{ data.text }}
+        </div>
 
-        <div *ngIf="parameterOverrides.commentsOverride && isReadOnly"
+        <div
+          *ngIf="parameterOverrides.commentsOverride && isReadOnly"
           class="warning disabled"
-        >{{ parameterOverrides.commentsOverride }}</div>
+        >
+          {{ parameterOverrides.commentsOverride }}
+        </div>
 
         <div *ngIf="!parameterOverrides?.commentsOverride">
           {{ data.text }}
         </div>
       </div>
     </dx-data-grid>
-
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="!isReadOnly"
-  id="ba-direct-entry"
->
+<mat-card *ngIf="!isReadOnly" id="ba-direct-entry">
   <mat-card-header>
     <mat-card-title>
       <span class="dbl-right-margin">Direct Entry</span>
@@ -229,38 +308,47 @@
   </mat-card-header>
 
   <mat-card-content>
-    <dx-form #DirectEntryForm
+    <dx-form
+      #DirectEntryForm
       [colCount]="2"
       labelLocation="left"
       [showColonAfterLabel]="false"
       [formData]="parameterOverrides"
       (onFieldDataChanged)="updateValidity()"
     >
-
-      <dxi-item [label]="{ text: 'Accounting Term Begin Date' }"
+      <dxi-item
+        [label]="{ text: 'Accounting Term Begin Date' }"
         dataField="accountingTermBeginDateOverride"
         editorType="dxDateBox"
         [editorOptions]="{
           elementAttr: { id: 'ba-term-begin' },
           invalidDateMessage: 'Value must be a date.',
           displayFormat: baseService.dateFormatter,
-          disabled: !parameterOverrideRequired.accountingTermBeginDateOverride || beginDateReadOnly
+          disabled:
+            !parameterOverrideRequired.accountingTermBeginDateOverride ||
+            beginDateReadOnly
         }"
       >
-        <dxi-validation-rule type="required"
-          *ngIf="parameterOverrideRequired.accountingTermBeginDateOverride &&
-          parametersData.cardMeasureEvent?.remeasureTypeName !== 'Full Termination'"
+        <dxi-validation-rule
+          type="required"
+          *ngIf="
+            parameterOverrideRequired.accountingTermBeginDateOverride &&
+            parametersData.cardMeasureEvent?.remeasureTypeName !==
+              'Full Termination'
+          "
           message="Accounting Term Begin Date Override is Required."
         ></dxi-validation-rule>
 
-        <dxi-validation-rule type="custom"
+        <dxi-validation-rule
+          type="custom"
           [validationCallback]="validateBeginDate"
           [ignoreEmptyValue]="true"
           message="Accounting Term Begin Date must be less than or equal to the End Date."
         ></dxi-validation-rule>
       </dxi-item>
 
-      <dxi-item [label]="{ text: 'Manual Asset Adjustment' }"
+      <dxi-item
+        [label]="{ text: 'Manual Asset Adjustment' }"
         dataField="manualAssetAdjustmentOverride"
         editorType="dxNumberBox"
         [editorOptions]="{
@@ -268,13 +356,15 @@
           disabled: !parameterOverrideRequired.manualAssetAdjustmentOverride
         }"
       >
-        <dxi-validation-rule type="required"
+        <dxi-validation-rule
+          type="required"
           *ngIf="parameterOverrideRequired.manualAssetAdjustmentOverride"
           message="Manual Asset Adjustment Override is Required."
         ></dxi-validation-rule>
       </dxi-item>
 
-      <dxi-item [label]="{ text: 'Accounting Term End Date' }"
+      <dxi-item
+        [label]="{ text: 'Accounting Term End Date' }"
         editorType="dxDateBox"
         [editorOptions]="{
           elementAttr: { id: 'ba-term-end' },
@@ -284,12 +374,14 @@
         }"
         dataField="accountingTermEndDateOverride"
       >
-        <dxi-validation-rule type="required"
+        <dxi-validation-rule
+          type="required"
           *ngIf="parameterOverrideRequired.accountingTermEndDateOverride"
           message="Accounting Term End Date Override is Required."
         ></dxi-validation-rule>
 
-        <dxi-validation-rule type="custom"
+        <dxi-validation-rule
+          type="custom"
           [validationCallback]="validateEndDate"
           [ignoreEmptyValue]="true"
           [reevaluate]="true"
@@ -297,7 +389,8 @@
         ></dxi-validation-rule>
       </dxi-item>
 
-      <dxi-item [label]="{ text: 'Comments' }"
+      <dxi-item
+        [label]="{ text: 'Comments' }"
         dataField="commentsOverride"
         [editorOptions]="{
           elementAttr: { id: 'ba-comments' },
@@ -305,11 +398,13 @@
         }"
       ></dxi-item>
 
-      <dxi-item [label]="{ text: 'Annual Rate' }"
+      <dxi-item
+        [label]="{ text: 'Annual Rate' }"
         [template]="'dropdownTemplate'"
         dataField="discountRateOverride"
       >
-        <dxi-validation-rule type="required"
+        <dxi-validation-rule
+          type="required"
           *ngIf="parameterOverrideRequired.discountRateOverride"
           [validationCallback]="validateDiscountRateOverride"
           message="Annual Rate Override is Required."
@@ -317,36 +412,45 @@
       </dxi-item>
 
       <div *dxTemplate="let data of 'dropdownTemplate'">
-        <dx-drop-down-box [placeholder]="annualRateText"
+        <dx-drop-down-box
+          [placeholder]="annualRateText"
           [elementAttr]="{ id: 'ba-annual-rate' }"
           [value]="parameterOverrides?.discountRateOverride"
           [showClearButton]="true"
           (onValueChanged)="annualRateValueChanged($event)"
-          [disabled]="!parameterOverrideRequired.discountRateOverride || discountRateReadOnly"
+          [disabled]="
+            !parameterOverrideRequired.discountRateOverride ||
+            discountRateReadOnly
+          "
         >
-          <dx-form #AnnualRateForm
+          <dx-form
+            #AnnualRateForm
             class="dbl-padding"
             *dxTemplate="let data of 'content'"
             [formData]="parameterOverrides"
             [showColonAfterLabel]="false"
           >
-            <dxi-item [label]="{ text: 'Annual Rate' }"
+            <dxi-item
+              [label]="{ text: 'Annual Rate' }"
               dataField="annualRateOverride"
               editorType="dxNumberBox"
               [editorOptions]="{ onValueChanged: updateDiscountRate }"
             >
-              <dxi-validation-rule type="required"
+              <dxi-validation-rule
+                type="required"
                 *ngIf="parameterOverrideRequired.discountRateOverride"
                 message="Annual Rate Override is Required."
               ></dxi-validation-rule>
 
-              <dxi-validation-rule type="custom"
+              <dxi-validation-rule
+                type="custom"
                 [validationCallback]="validateRateRange"
                 message="Annual Rate must be between -9999 and 9999, with no more than 14 digits after the decimal."
               ></dxi-validation-rule>
             </dxi-item>
 
-            <dxi-item [label]="{ text : 'Annual Rate Type' }"
+            <dxi-item
+              [label]="{ text: 'Annual Rate Type' }"
               editorType="dxSelectBox"
               [editorOptions]="{
                 items: ['', 'APR', 'APY'],
@@ -354,13 +458,15 @@
               }"
               dataField="annualRateTypeOverride"
             >
-              <dxi-validation-rule type="required"
+              <dxi-validation-rule
+                type="required"
                 *ngIf="parameterOverrideRequired.discountRateOverride"
                 message="Annual Rate Type Override is Required."
               ></dxi-validation-rule>
             </dxi-item>
 
-            <dxi-item [label]="{ text : 'Payment Timing' }"
+            <dxi-item
+              [label]="{ text: 'Payment Timing' }"
               editorType="dxSelectBox"
               [editorOptions]="{
                 items: ['', 'Beginning of Period', 'End of Period'],
@@ -368,16 +474,15 @@
               }"
               dataField="paymentTimingOverride"
             >
-              <dxi-validation-rule type="required"
+              <dxi-validation-rule
+                type="required"
                 *ngIf="parameterOverrideRequired.discountRateOverride"
                 message="Payment Timing Override is Required."
               ></dxi-validation-rule>
             </dxi-item>
-
           </dx-form>
         </dx-drop-down-box>
       </div>
-
     </dx-form>
   </mat-card-content>
 </mat-card>

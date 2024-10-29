@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Api } from '@mango/data-models/lib-data-models';
-import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link';
+import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
 
 @Injectable()
 export class ProjectsDashboardLeftNavService extends EndpointService {
@@ -27,29 +27,29 @@ export class ProjectsDashboardLeftNavService extends EndpointService {
 
   getModuleNavigationLinks(moduleID: number): Observable<SharedLeftNavLink[]> {
     const url = `${this.leftNav}LeftNav/GetModulesNavigationLinks/${moduleID}`;
-    return this.callHttpGet(url, 'GetModulesNavigationLinks')
+    return this.callHttpGet(url, 'GetModulesNavigationLinks');
   }
 
   getModuleNavigationLinksClient(moduleID: number): Observable<any> {
     const url = `${this.leftNav}LeftNav/GetModulesNavigationLinksClient/${moduleID}`;
-    return this.callHttpGet(url, 'GetModulesNavigationLinks')
+    return this.callHttpGet(url, 'GetModulesNavigationLinks');
   }
 
   getModuleNavigationLinksForRenderForm(routeUrl: string): Observable<any> {
-    const queryParams = (routeUrl.split('?') || ['', ''])[1]
-    let encodedUrl = encodeURIComponent(`?${queryParams}`)
+    const queryParams = (routeUrl.split('?') || ['', ''])[1];
+    let encodedUrl = encodeURIComponent(`?${queryParams}`);
     const url = `${this.leftNav}LeftNav/GetRenderFormsNavigationLinks/${encodedUrl}`;
-    return this.callHttpGet(url, 'GetModuleNavigationLinksForRenderForm')
+    return this.callHttpGet(url, 'GetModuleNavigationLinksForRenderForm');
   }
 
   getToolbarModuleLinks(): Observable<any> {
     const url = `${this.leftNav}Navigation/GetSpaNavigationLinks`;
-    return this.callHttpGet(url, 'GetToolbarModuleLinks')
+    return this.callHttpGet(url, 'GetToolbarModuleLinks');
   }
 
   getAdminModulesNavigationLinks(moduleID: number): Observable<any> {
     const url = `${this.leftNav}LeftNav/GetAdminModulesNavigationLinks/${moduleID}`;
-    return this.callHttpGet(url, 'GetAdminModulesNavigationLinks')
+    return this.callHttpGet(url, 'GetAdminModulesNavigationLinks');
   }
 
   getETLModulesNavigationLinks(): Observable<any> {

@@ -13,115 +13,180 @@ $card-dropDown-height: 24px;
   background-color: colors.$bodyBackgroundGray;
 }
 
-#portfolio-filters{
-	z-index: 10;
+#portfolio-filters {
+  z-index: 10;
 }
 
 #portfolio-cards {
-	position: relative;
-	z-index: 9;
+  position: relative;
+  z-index: 9;
 }
 
 #projects-dashboard .project-filters,
 #portfolio-dashboard #portfolio-filters,
 .user-settings-dialog #currencyUOMSettings {
+  width: 100% !important;
+  position: sticky !important;
+  position: -webkit-sticky !important;
+  top: 0;
 
-	width: 100% !important;
-	position: sticky !important;
-	position: -webkit-sticky !important;
-	top: 0;
+  crem-dropdown,
+  crem-hierarchy-dropdown {
+    div.dx-texteditor-container {
+      height: 32px !important;
+      width: 200px;
+      box-sizing: border-box;
+    }
 
-	crem-dropdown, crem-hierarchy-dropdown {
-		div.dx-texteditor-container{
-			height: 32px !important;
-			width: 200px;
-			box-sizing: border-box;
-		}
+    div.dx-placeholder {
+      font-size: 16px !important;
+      font-weight: 400 !important;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      top: 0px !important;
+      color: colors.$color-neutral-dark !important;
+      &::before {
+        padding-top: 5px;
+      }
+    }
 
-		div.dx-placeholder {
-			font-size: 16px !important;
-			font-weight: 400 !important;
-			font-stretch: normal;
-			font-style: normal;
-			line-height: normal;
-			letter-spacing: normal;
-			top: 0px !important;
-			color: colors.$color-neutral-dark !important;
-			&::before {
-				padding-top: 5px;
-			}	
-		}
-
-		crem-button {
-			button.button-primary, button.button-secondary {
-			margin-left: 0px !important;
-			}
-	  }
-	}	
+    crem-button {
+      button.button-primary,
+      button.button-secondary {
+        margin-left: 0px !important;
+      }
+    }
+  }
 }
 
-#projects-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>td,
-#projects-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td:not(.dx-datagrid-headers),
-#portfolio-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>td,
-#portfolio-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td:not(.dx-datagrid-headers),
-.dashboards-dragCardItems crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>td,
-.dashboards-dragCardItems crem-card .dx-datagrid-content .dx-datagrid-table .dx-row>tr>td:not(.dx-datagrid-headers) {
-  font-size: 14px !important
-}
-
-#projects-dashboard mat-card-content.mat-card-content.cremCardContent,
-#portfolio-dashboard mat-card-content.mat-card-content.cremCardContent,
-.dashboards-dragCardItems mat-card-content.mat-card-content.cremCardContent {
-	overflow: auto;
-	display: flex;
-	justify-content: flex-start;
-	flex-direction: column;
-	align-items: center;
-}
-
-#projects-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row > td,
-#portfolio-dashboard crem-card .dx-datagrid-content .dx-datagrid-table .dx-row > td,
-.dashboards-dragCardItems crem-card .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+#projects-dashboard
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td,
+#projects-dashboard
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > tr
+  > td:not(.dx-datagrid-headers),
+#portfolio-dashboard
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td,
+#portfolio-dashboard
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > tr
+  > td:not(.dx-datagrid-headers),
+.dashboards-dragCardItems
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td,
+.dashboards-dragCardItems
+  crem-card
   .dx-datagrid-content
   .dx-datagrid-table
   .dx-row
   > tr
   > td:not(.dx-datagrid-headers) {
-  vertical-align: top;
-  }
-} 
+  font-size: 14px !important;
+}
 
-div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-menu-item {
+#projects-dashboard mat-card-content.mat-card-content.cremCardContent,
+#portfolio-dashboard mat-card-content.mat-card-content.cremCardContent,
+.dashboards-dragCardItems mat-card-content.mat-card-content.cremCardContent {
+  overflow: auto;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+}
+
+#projects-dashboard
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td,
+#portfolio-dashboard
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td,
+.dashboards-dragCardItems
+  crem-card
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td {
+  .dx-datagrid-content
+    .dx-datagrid-table
+    .dx-row
+    > tr
+    > td:not(.dx-datagrid-headers) {
+    vertical-align: top;
+  }
+}
+
+div.mat-mdc-menu-panel.dashboardsMoreOptions
+  div.mat-mdc-menu-content
+  .mat-mdc-menu-item {
   padding: 8px 16px;
   cursor: pointer;
-  line-height: 18px!important;
+  line-height: 18px !important;
   height: auto;
 }
 #projects-dashboard div.mat-mdc-menu-panel.dashboardsMoreOptions,
-#portfolio-dashboard div.mat-mdc-menu-panel.dashboardsMoreOptions,  div.mat-mdc-menu-panel.dashboardsAddMenu,
+#portfolio-dashboard div.mat-mdc-menu-panel.dashboardsMoreOptions,
+div.mat-mdc-menu-panel.dashboardsAddMenu,
 .dashboards-dragCardItems div.mat-mdc-menu-panel.dashboardsMoreOptions {
-	overflow-x: hidden;
+  overflow-x: hidden;
 
-	& div.mat-mdc-menu-content .mat-mdc-menu-item {
-		padding: 8px 16px;
-		cursor: pointer;
-		line-height: 18px !important;
-		height: auto;
-	}
-}  
-
-#projects-dashboard cards div.dx-datagrid-headers div.dx-datagrid-content table tbody,
-#portfolio-dashboard cards div.dx-datagrid-headers div.dx-datagrid-content table tbody,
-.dashboards-dragCardItems  div.dx-datagrid-headers div.dx-datagrid-content table tbody {
-	background-color: colors.$lightGray;
-	color: colors.$costarBlue;
-	font-weight: 700;
+  & div.mat-mdc-menu-content .mat-mdc-menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    line-height: 18px !important;
+    height: auto;
+  }
 }
 
-#projects-dashboard cards
-#portfolio-dashboard cards,
+#projects-dashboard
+  cards
+  div.dx-datagrid-headers
+  div.dx-datagrid-content
+  table
+  tbody,
+#portfolio-dashboard
+  cards
+  div.dx-datagrid-headers
+  div.dx-datagrid-content
+  table
+  tbody,
+.dashboards-dragCardItems
+  div.dx-datagrid-headers
+  div.dx-datagrid-content
+  table
+  tbody {
+  background-color: colors.$lightGray;
+  color: colors.$costarBlue;
+  font-weight: 700;
+}
+
+#projects-dashboard cards #portfolio-dashboard cards,
 .dashboards-dragCardItems {
-	table.dx-datagrid-table {
+  table.dx-datagrid-table {
     tbody {
       tr.dx-row.dx-data-row {
         &:hover {
@@ -174,10 +239,22 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
   }
 }
 
-#projects-dashboard dx-data-grid .dx-header-row > td > .dx-datagrid-text-content,
-#portfolio-dashboard dx-data-grid .dx-header-row > td > .dx-datagrid-text-content,
-.dashboards-dragCardItems dx-data-grid .dx-header-row > td > .dx-datagrid-text-content {
-	text-align: center;
+#projects-dashboard
+  dx-data-grid
+  .dx-header-row
+  > td
+  > .dx-datagrid-text-content,
+#portfolio-dashboard
+  dx-data-grid
+  .dx-header-row
+  > td
+  > .dx-datagrid-text-content,
+.dashboards-dragCardItems
+  dx-data-grid
+  .dx-header-row
+  > td
+  > .dx-datagrid-text-content {
+  text-align: center;
 }
 
 @media only screen and (max-width: 964px) {
@@ -186,7 +263,7 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
   }
 }
 
-#projects-dashboard crem-card, 
+#projects-dashboard crem-card,
 #portfolio-dashboard crem-card,
 .dashboards-dragCardItems crem-card {
   crem-dropdown {
@@ -206,7 +283,7 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
       height: 22px !important;
     }
     div.dx-texteditor-container {
-      height: $card-dropDown-height !important;  //this is the one
+      height: $card-dropDown-height !important; //this is the one
       box-sizing: border-box;
       border: 1px solid colors.$black;
       border-radius: 2px;
@@ -217,7 +294,7 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
       input.dx-texteditor-input {
         height: $card-dropDown-height;
         min-height: $card-dropDown-height;
-        color: colors.$black; 
+        color: colors.$black;
         padding: 0 0 0 8px !important;
         font-size: 14px !important;
         border: none;
@@ -227,13 +304,15 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
   }
 }
 
-#portfolio-dashboard crem-card, .dashboards-dragCardItems crem-card {
-  .mat-mdc-card#building_type_card .cardContent, .mat-mdc-card#lease_expirations_card .cardContent,
-  .mat-mdc-card#stores_by_format_card .cardContent, .mat-mdc-card#ownership_type_card .cardContent,
+#portfolio-dashboard crem-card,
+.dashboards-dragCardItems crem-card {
+  .mat-mdc-card#building_type_card .cardContent,
+  .mat-mdc-card#lease_expirations_card .cardContent,
+  .mat-mdc-card#stores_by_format_card .cardContent,
+  .mat-mdc-card#ownership_type_card .cardContent,
   .mat-mdc-card#annual_expiration_rent_value_card .cardContent,
   .mat-mdc-card#buildings_by_state_card .cardContent,
-  .mat-mdc-card#financials_accounting_links_card .cardContent
-  {
+  .mat-mdc-card#financials_accounting_links_card .cardContent {
     padding: 16px;
     box-sizing: border-box;
     height: 100%;
@@ -243,8 +322,10 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
   }
 }
 
-#projects-dashboard crem-loader, .user-settings-dialog crem-loader,
-#portfolio-dashboard crem-loader, .user-settings-dialog crem-loader {
+#projects-dashboard crem-loader,
+.user-settings-dialog crem-loader,
+#portfolio-dashboard crem-loader,
+.user-settings-dialog crem-loader {
   position: relative;
   left: 50% !important;
   top: 50% !important;
@@ -253,14 +334,17 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
 
 #projects-dashboard #leaseOptions .dx-datagrid-borders > .dx-datagrid-headers,
 #portfolio-dashboard #leaseOptions .dx-datagrid-borders > .dx-datagrid-headers,
-.dashboards-dragCardItems #leaseOptions .dx-datagrid-borders > .dx-datagrid-headers {
-  border: 0 !important
+.dashboards-dragCardItems
+  #leaseOptions
+  .dx-datagrid-borders
+  > .dx-datagrid-headers {
+  border: 0 !important;
 }
 
 #projects-dashboard .filterWrapper input.dx-texteditor-input,
 #portfolio-dashboard .filterWrapper input.dx-texteditor-input {
   height: 32px !important;
-	min-height: 32px !important;
+  min-height: 32px !important;
   padding: 8px 0 9px 3px !important;
   box-sizing: border-box !important;
 }
@@ -273,53 +357,52 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
   }
 
   .loader.progress:before {
-		animation-duration: 3s !important;
-	}
+    animation-duration: 3s !important;
+  }
 }
-
 
 .user-settings-dialog .modalContent {
-	.mat-mdc-tab-header {
-		border-top: 1px solid colors.$color-neutral-dark;
-		border-bottom: 1px solid colors.$color-neutral-dark;
-		position: sticky;
-		position: -webkit-sticky;
-		top: 0;
-		z-index: 10;
- 	}
-
- .mat-mdc-tab-label-container {
-		background-color: colors.$bodyBackgroundDarkGray;
- 	}
-
- 	div.mat-mdc-tab-body-wrapper {
-		padding: 6px 0px 0px 16px;
-	}
-
- 	.mat-mdc-tab-group.mat-primary .mat-ink-bar, .mat-mdc-tab-nav-bar.mat-primary .mat-ink-bar {
-		background-color: colors.$costarDarkOrange;
-		height: 3px;
- 	}
- 	.mat-mdc-tab-label {
-		height: 36px;
-		width: auto !important;
-		min-width: auto !important;
-		padding: 0 16px;
-		color: colors.$black;
-
-		.mat-mdc-tab-label-content {
-			line-height: 17px;
-		}
-  }  
-
- .mat-mdc-tab-label.mat-focus-indicator.mat-mdc-tab-label-active {
-		opacity: 1 !important;
+  .mat-mdc-tab-header {
+    border-top: 1px solid colors.$color-neutral-dark;
+    border-bottom: 1px solid colors.$color-neutral-dark;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 10;
   }
 
+  .mat-mdc-tab-label-container {
+    background-color: colors.$bodyBackgroundDarkGray;
+  }
 
+  div.mat-mdc-tab-body-wrapper {
+    padding: 6px 0px 0px 16px;
+  }
+
+  .mat-mdc-tab-group.mat-primary .mat-ink-bar,
+  .mat-mdc-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: colors.$costarDarkOrange;
+    height: 3px;
+  }
+  .mat-mdc-tab-label {
+    height: 36px;
+    width: auto !important;
+    min-width: auto !important;
+    padding: 0 16px;
+    color: colors.$black;
+
+    .mat-mdc-tab-label-content {
+      line-height: 17px;
+    }
+  }
+
+  .mat-mdc-tab-label.mat-focus-indicator.mat-mdc-tab-label-active {
+    opacity: 1 !important;
+  }
 }
 
-.user-settings-dialog, div.taskApprovalModal {
+.user-settings-dialog,
+div.taskApprovalModal {
   .notes {
     height: 90px;
     box-sizing: border-box;
@@ -328,143 +411,159 @@ div.mat-mdc-menu-panel.dashboardsMoreOptions div.mat-mdc-menu-content .mat-mdc-m
     display: flex;
   }
 }
-#projects-dashboard, .user-settings-dialog,
-#portfolio-dashboard, .user-settings-dialog {
-	crem-dropdown, crem-hierarchy-dropdown {
+#projects-dashboard,
+.user-settings-dialog,
+#portfolio-dashboard,
+.user-settings-dialog {
+  crem-dropdown,
+  crem-hierarchy-dropdown {
+    dx-drop-down-box .dx-dropdowneditor-input-wrapper {
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+    }
 
-		dx-drop-down-box .dx-dropdowneditor-input-wrapper {
-			-webkit-tap-highlight-color: transparent;
-			overflow: hidden;
-			height: 100%;
-			display: flex;
-		}
+    div.dx-texteditor-container {
+      padding-left: 0px !important;
+    }
 
-		div.dx-texteditor-container {
-			padding-left: 0px !important;
-		}
+    .dx-texteditor-container {
+      border-radius: 2px;
+      box-shadow: none;
+      background: #ffffff;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
 
-		.dx-texteditor-container {
-			border-radius: 2px;
-			box-shadow: none;
-			background: #ffffff;
-			display: flex;
-			position: relative;
-			overflow: hidden;
-			width: 100%;
-			height: 100%;
-		}	
+    input.dx-texteditor-input {
+      font: 400 16px;
+      border: none;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
 
-		input.dx-texteditor-input {
-		
-			font: 400 16px;
-			border: none;
-			display: flex;
-			align-items: center;
-			position: relative;
-		}
+    .dx-dropdowneditor-icon,
+    .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+      color: colors.$color-brand-primary;
+      font: 24px/20px DXIcons;
+    }
 
-		.dx-dropdowneditor-icon, .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
-			color: colors.$color-brand-primary;
-			font: 24px/20px DXIcons;
-		}
+    div.dx-texteditor-input-container {
+      height: 100% !important;
+    }
 
-		div.dx-texteditor-input-container {
-			height: 100% !important;
-		}
+    .dx-texteditor-buttons-container {
+      display: flex;
+      width: auto;
+      flex-grow: 0;
+      flex-basis: content;
+      align-items: center;
+    }
 
-		.dx-texteditor-buttons-container {
-			display: flex;
-			width: auto;
-			flex-grow: 0;
-			flex-basis: content;
-			align-items: center;
-		}
+    .dx-dropdowneditor-button {
+      position: relative;
+      float: right;
+      height: 100%;
+      cursor: pointer;
+      width: 34px;
+      min-width: 34px;
+      padding: 1px;
+      border-radius: 4px;
+    }
 
-		.dx-dropdowneditor-button {
-			position: relative;
-			float: right;
-			height: 100%;
-			cursor: pointer;
-			width: 34px;
-			min-width: 34px;
-			padding: 1px;
-			border-radius: 4px;
-		}
+    .dx-dropdowneditor-icon,
+    .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+      color: colors.$color-brand-primary;
+      font: 24px/20px DXIcons;
+    }
 
-		.dx-dropdowneditor-icon, .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
-			color: colors.$color-brand-primary;
-			font: 24px/20px DXIcons;
-		}
+    .dx-fieldset {
+      margin: 0 !important;
+      padding: 0;
+    }
 
-		.dx-fieldset {
-			margin: 0 !important;
-			padding: 0;
-		} 
-		
-		.dx-field-value-static, .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
-			width: -webkit-fit-content;
-			width: -moz-fit-content;
-			width: fit-content;
-			max-width: 320px !important;
-		}
-	}
-	
-		crem-dropdown .dx-dropdowneditor-button.dx-state-active .dx-dropdowneditor-icon,
-		crem-dropdown .dx-button-mode-contained,
-		crem-dropdown .dx-button-mode-contained:hover,
-		crem-dropdown .dx-button-mode-contained:active,
-		crem-dropdown .dx-button-mode-contained:focus,
-		crem-dropdown .dx-button-mode-contained:focus-within,
-		crem-dropdown .dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
-			background-color: transparent !important;
-			border-color: transparent;
-			color: colors.$textGray;
-			opacity: 1;
-		}
+    .dx-field-value-static,
+    .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+      width: -webkit-fit-content;
+      width: -moz-fit-content;
+      width: fit-content;
+      max-width: 320px !important;
+    }
+  }
 
-	.dx-dropdowneditor-icon::before {
-		left: 41%;
-	}
+  crem-dropdown
+    .dx-dropdowneditor-button.dx-state-active
+    .dx-dropdowneditor-icon,
+  crem-dropdown .dx-button-mode-contained,
+  crem-dropdown .dx-button-mode-contained:hover,
+  crem-dropdown .dx-button-mode-contained:active,
+  crem-dropdown .dx-button-mode-contained:focus,
+  crem-dropdown .dx-button-mode-contained:focus-within,
+  crem-dropdown
+    .dx-dropdowneditor.dx-dropdowneditor-active
+    .dx-dropdowneditor-icon {
+    background-color: transparent !important;
+    border-color: transparent;
+    color: colors.$textGray;
+    opacity: 1;
+  }
 
-	crem-tooltip{
-		div.dx-field {
-			font-weight: 400;
-			width: 16px;
-			min-height: 16px;
-			max-height: 16px !important;
-		}
-	}
+  .dx-dropdowneditor-icon::before {
+    left: 41%;
+  }
 
-		.dx-datagrid-filter-row .dx-editor-cell .dx-editor-with-menu .dx-placeholder:before,
-		.dx-datagrid-filter-row .dx-editor-cell .dx-editor-with-menu .dx-texteditor-input {
-			padding-left: 32px !important;
-		}
+  crem-tooltip {
+    div.dx-field {
+      font-weight: 400;
+      width: 16px;
+      min-height: 16px;
+      max-height: 16px !important;
+    }
+  }
 
-	dx-data-grid {
-		height: 100%;
-	}
+  .dx-datagrid-filter-row
+    .dx-editor-cell
+    .dx-editor-with-menu
+    .dx-placeholder:before,
+  .dx-datagrid-filter-row
+    .dx-editor-cell
+    .dx-editor-with-menu
+    .dx-texteditor-input {
+    padding-left: 32px !important;
+  }
 
-  .dx-overlay-wrapper.dx-popup-wrapper.dashboardsFiltersDropDown .dx-overlay-content {
-	min-width: 320px !important;
+  dx-data-grid {
+    height: 100%;
+  }
 
-	.dx-datagrid-content .dx-datagrid-table .dx-row.dx-datagrid-filter-row .dx-command-select {
-		display: none;
-	}
+  .dx-overlay-wrapper.dx-popup-wrapper.dashboardsFiltersDropDown
+    .dx-overlay-content {
+    min-width: 320px !important;
 
-		
-	.dx-datagrid-content .dx-datagrid-table .dx-row .dx-command-select {
-		padding: 0;
-		width: 40px!important;
-		min-width: 40px!important;
-		max-width: 40px!important;
-	}
+    .dx-datagrid-content
+      .dx-datagrid-table
+      .dx-row.dx-datagrid-filter-row
+      .dx-command-select {
+      display: none;
+    }
 
-	
-	dx-data-grid {
-		height: 100%;
-		.dx-datagrid-action.dx-cell-focus-disabled {
-			width: 100% !important;
-		}
-	}
-}
+    .dx-datagrid-content .dx-datagrid-table .dx-row .dx-command-select {
+      padding: 0;
+      width: 40px !important;
+      min-width: 40px !important;
+      max-width: 40px !important;
+    }
+
+    dx-data-grid {
+      height: 100%;
+      .dx-datagrid-action.dx-cell-focus-disabled {
+        width: 100% !important;
+      }
+    }
+  }
 }

@@ -1,55 +1,106 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ContactRecord, Api, CurrencyMapping } from '@mango/data-models/lib-data-models';
+import {
+  ContactRecord,
+  Api,
+  CurrencyMapping,
+  StartPage,
+} from '@mango/data-models/lib-data-models';
 import { Observable } from 'rxjs';
 import { UtilitiesService } from '@mango/core-shared';
+import { ContactPreferences } from 'libs/data-models/lib-data-models/src/lib/models/contact.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  userMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(Api.userMaintenance)
+  userMaintenanceUrl: string = UtilitiesService.getBaseApiUrl(
+    Api.userMaintenance
+  );
 
   currencyMappingTable$: Observable<CurrencyMapping[]>;
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient) {
     this.currencyMappingTable$ = this.getCurrencyMappings();
   }
 
-  getContactRecords(email: string, contactId: number, clientKey: string): Observable<ContactRecord[]> {
+  getContactRecords(
+    email: string,
+    contactId: number,
+    clientKey: string
+  ): Observable<ContactRecord[]> {
     let headers = new HttpHeaders({
-      'UserId': contactId,
-      'ClientKey': clientKey
-    })
+      UserId: contactId,
+      ClientKey: clientKey,
+    });
 
-    return this.http.get<ContactRecord[]>(`${this.userMaintenanceUrl}usermaintenance/getusers/${email}`, { headers: headers })
+    return this.http.get<ContactRecord[]>(
+      `${this.userMaintenanceUrl}usermaintenance/getusers/${email}`,
+      { headers: headers }
+    );
   }
 
-  getContactRecord(contactId: number, clientKey: string): Observable<ContactRecord> {
+  getContactRecord(
+    contactId: number,
+    clientKey: string
+  ): Observable<ContactRecord> {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'UserId': contactId,
-      'ClientKey': clientKey
-    })
+      Accept: 'application/json',
+      UserId: contactId,
+      ClientKey: clientKey,
+    });
 
-    return this.http.get<ContactRecord>(`${this.userMaintenanceUrl}usermaintenance/getuser/${contactId}`, { headers: headers })
+    return this.http.get<ContactRecord>(
+      `${this.userMaintenanceUrl}usermaintenance/getuser/${contactId}`,
+      { headers: headers }
+    );
   }
 
-  hasMultipleContactRecords(email: string, contactId: number, clientKey: string): Observable<boolean> {
+  hasMultipleContactRecords(
+    email: string,
+    contactId: number,
+    clientKey: string
+  ): Observable<boolean> {
     let headers = new HttpHeaders({
-      'UserId': contactId,
-      'ClientKey': clientKey
-    })
+      UserId: contactId,
+      ClientKey: clientKey,
+    });
 
-    return this.http.get<boolean>(`${this.userMaintenanceUrl}usermaintenance/hasmultipleusers/${email}`, { headers: headers })
+    return this.http.get<boolean>(
+      `${this.userMaintenanceUrl}usermaintenance/hasmultipleusers/${email}`,
+      { headers: headers }
+    );
   }
-  
+
   hasSecurityProfiles(): Observable<boolean> {
-    return this.http.get<boolean>(`${this.userMaintenanceUrl}usermaintenance/hassecurityprofiles`)
+    return this.http.get<boolean>(
+      `${this.userMaintenanceUrl}usermaintenance/hassecurityprofiles`
+    );
   }
 
   getCurrencyMappings() {
-    return this.http.get<CurrencyMapping[]>(`${this.userMaintenanceUrl}usermaintenance/getcurrencymappings`)
+    return this.http.get<CurrencyMapping[]>(
+      `${this.userMaintenanceUrl}usermaintenance/getcurrencymappings`
+    );
+  }
+
+  getPossibleUserStartPages() {
+    return this.http.get<any>(
+      `${this.userMaintenanceUrl}usermaintenance/GetPossibleUserStartPages`
+    );
+  }
+
+  getMeasurementUnits() {
+    return this.http.get<any>(
+      `${this.userMaintenanceUrl}usermaintenance/GetMeasurementUnits`
+    );
+  }
+
+  updateUserPreferences(updatedPreferences: ContactPreferences) {
+    return this.http.put(
+      `${this.userMaintenanceUrl}usermaintenance/UpdateUserPreferences`,
+      { preferences: updatedPreferences }
+    );
   }
 }
