@@ -32,10 +32,10 @@
         (click)="logoClicked()"
       />
     </a>
-    <div class="wordmark">{{ productTitle }}</div>
+    <div class="wordmark" id="REMTitle">{{ productTitle }}</div>
   </div>
 
-  <div class="search">
+  <div class="search searchBox">
     <div class="input-container">
       <!-- Search Button -->
       <button
@@ -55,6 +55,7 @@
             #searchInput
             matInput
             class="mqs-input"
+            id="crem-global-search"
             placeholder="Search"
             (click)="$event.stopPropagation()"
             (keyup.enter)="selectedOption($event); $event.preventDefault()"

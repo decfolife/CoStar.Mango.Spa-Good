@@ -1,13 +1,13 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 ::ng-deep header {
-  gap: 10px;
+  @include costar(gap, 2);
   height: 48px;
   display: grid;
   position: relative;
   grid-template-rows: 0;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-areas: "brand search profile";
+  grid-template-areas: 'brand search profile';
   @include costar(background-color, light);
 
   // WCAG 2.0 Skip to Main Content
@@ -30,13 +30,16 @@
       transform: translateX(-50%);
       opacity: 1;
     }
-    &:active, &:focus-within, &:focus-visible {
+    &:active,
+    &:focus-within,
+    &:focus-visible {
       @include costar(box-shadow, primary);
     }
-
   }
 
-  .brand, .search, .profile {
+  .brand,
+  .search,
+  .profile {
     height: 48px;
     flex-grow: 1;
   }
@@ -67,25 +70,23 @@
       border-left: 2px solid map-get($color, color, gray05);
       border-left: 2px solid var(--costar-color-gray05);
       margin-left: 0.65rem; // mimics 10px given the root font size
-      padding-left: 0.60rem;
+      padding-left: 0.6rem;
       height: 32px;
     }
   }
 
   // SEARCH
   .search {
+    display: flex;
     grid-area: search;
-    justify-self: end; // TODO: Remove once fully migrated to MangoSPA, this was added to make it look seamless
+    justify-self: end;
     width: 100%;
-    height: 52px;
-    max-width: 480px;
     padding: 10px 0px;
-    margin: 0 16px; // TODO: Remove once fully migrated to MangoSPA, this was added to make it look seamless
 
     .mat-mdc-form-field {
       font-size: 16px !important;
       font-weight: 400;
-      color: black;
+      @include costar(color, dark);
     }
 
     .input-container {
@@ -96,7 +97,9 @@
       border: 2px solid map-get($color, color, gray05);
       border: 2px solid var(--costar-color-gray05);
       // Activate Focus
-      &:active, &:focus, &:focus-within {
+      &:active,
+      &:focus,
+      &:focus-within {
         border: 2px solid map-get($color, color, primary-light);
         border: 2px solid var(--costar-color-primary-light);
       }
@@ -107,8 +110,10 @@
           height: 32px !important;
           padding-left: 8px !important;
           padding-right: 8px !important;
-          .mdc-notched-outline__trailing, .mdc-notched-outline__notch, .mdc-notched-outline__leading {
-            border: none !important
+          .mdc-notched-outline__trailing,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__leading {
+            border: none !important;
           }
         }
         .mat-mdc-form-field-infix {
@@ -127,11 +132,12 @@
         .mdc-text-field {
           background-color: white !important;
         }
-        .mdc-line-ripple::before, .mdc-line-ripple--active {
+        .mdc-line-ripple::before,
+        .mdc-line-ripple--active {
           border: none !important;
         }
       }
-      .submit{
+      .submit {
         height: 28px;
         width: 8%;
         line-height: 0rem;
@@ -144,14 +150,15 @@
         &:hover {
           @include costar(background-color, gray05);
         }
-        &:active, &:focus, &:focus-within {
+        &:active,
+        &:focus,
+        &:focus-within {
           @include costar(background-color, gray05);
           border-right: 2px solid map-get($color, color, primary-light);
           border-right: 2px solid var(--costar-color-primary-light);
         }
       }
     }
-
   }
 
   // PROFILE & HELP
@@ -161,7 +168,7 @@
     flex-direction: row;
     justify-content: flex-end;
     // Client Logo
-    .client-logo{
+    .client-logo {
       position: relative;
       width: 160px;
       height: 48px;
@@ -201,7 +208,9 @@
         }
       }
       // Activate Focus
-      &:active, &:focus, &:focus-within {
+      &:active,
+      &:focus,
+      &:focus-within {
         .edit {
           opacity: 1;
           @include background-opacity(map-get($color, color, light), 0.9);
@@ -241,13 +250,16 @@
           border: 3px solid var(--costar-color-primary-light);
           text-decoration: none;
         }
-        &:active, &:focus, &:focus-within {
+        &:active,
+        &:focus,
+        &:focus-within {
           @include costar(box-shadow, primary);
         }
       }
     }
-    .resources{
-      .indicator{ // Attach 'Pendo' tooltip to this element
+    .resources {
+      .indicator {
+        // Attach 'Pendo' tooltip to this element
         position: absolute;
         top: 0px;
         left: -15px;
@@ -257,7 +269,7 @@
 
   // TODO: Simplify grid columns and other values once fully migrated to MangoSpa
   // RESPONSIVE DESIGN
-  @include media("<desktop-xl") {
+  @include media('<desktop-xl') {
     grid-template-columns: 1fr 1fr 480px;
     .brand {
       .wordmark {
@@ -265,7 +277,7 @@
       }
     }
   }
-  @include media("<=desktop", "portrait") {
+  @include media('<=desktop', 'portrait') {
     grid-template-columns: 65px 1fr 45px;
     gap: 1.5rem;
     .brand {
@@ -282,8 +294,9 @@
     }
     .search {
       width: 100%;
-      ::ng-deep{
-        mat-form-field { // Hide object type dropdown
+      ::ng-deep {
+        mat-form-field {
+          // Hide object type dropdown
           display: none;
         }
       }
@@ -295,7 +308,7 @@
       }
     }
   }
-  @include media("<=desktop", "landscape") {
+  @include media('<=desktop', 'landscape') {
     grid-template-columns: 145px 1fr 1fr;
     .brand {
       .wordmark {
@@ -306,7 +319,6 @@
       width: 100%;
     }
   }
-
 }
 
 ::ng-deep {
@@ -334,14 +346,16 @@
           @include costar(transition, faster);
           @include costar(background-color, light);
           border: 2px solid transparent;
-          &:active, &:focus, &:focus-within {
+          &:active,
+          &:focus,
+          &:focus-within {
             box-shadow: unset;
             @include costar(background-color, gray05);
             @include costar(border-radius, small);
             border: 2px solid map-get($color, color, primary-light);
             border: 2px solid var(--costar-color-primary-light);
           }
-          &:hover{
+          &:hover {
             box-shadow: unset;
             @include costar(background-color, gray06, $important: true);
           }
@@ -349,7 +363,8 @@
       }
     }
     ul {
-      &.details { // Use details only for options without links
+      &.details {
+        // Use details only for options without links
         @include costar(padding-bottom, 2);
         @include costar(padding-top, 2);
         @include costar(border-bottom, gray03);
@@ -372,38 +387,36 @@
         }
       }
     }
-
   }
 }
 
 ::ng-deep {
-
-  ._pendo-resource-center-badge-container{
+  ._pendo-resource-center-badge-container {
     box-shadow: none !important;
   }
 
   .pendo-resource-center-badge-notification-bubble {
-      position: absolute;
-      border-radius: 100px !important;
-      line-height: 0px !important;
-      height: 9px !important;
-      box-sizing: content-box;
-      background-color: rgb(239, 108, 0);
-      top: 0px !important;
-      right: 26px !important;
-      padding: 4px 7px !important;
-      margin-left: -35px;
-      margin-top: 8px;
+    position: absolute;
+    border-radius: 100px !important;
+    line-height: 0px !important;
+    height: 9px !important;
+    box-sizing: content-box;
+    background-color: rgb(239, 108, 0);
+    top: 0px !important;
+    right: 26px !important;
+    padding: 4px 7px !important;
+    margin-left: -35px;
+    margin-top: 8px;
   }
 
   .pendo-notification-bubble-unread-count {
-      font-weight: 400;
-      font-family: inherit;
-      height: 100%;
-      margin-left: -2px !important;
-      line-height: 9px !important;
-      vertical-align: middle;
-      color: rgb(255, 255, 255);
-      white-space: pre-wrap;
+    font-weight: 400;
+    font-family: inherit;
+    height: 100%;
+    margin-left: -2px !important;
+    line-height: 9px !important;
+    vertical-align: middle;
+    color: rgb(255, 255, 255);
+    white-space: pre-wrap;
   }
 }
