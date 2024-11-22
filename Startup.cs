@@ -44,8 +44,11 @@ public class Startup
         });
 
         services.AddHealthChecks();
-        services.AddHttpContextAccessor();
         AddSwagger(services);
+        services.AddHttpContextAccessor();
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
+
         AddLogging(services);
         AddAppSettings(services);
         AddCache(services, Configuration);
@@ -53,25 +56,16 @@ public class Startup
         AddDataProtection(services);
         AddServices(services);
 
-        services.AddSession(options =>
-        {
-            options.Cookie.Name = "mango.info";
-            options.IdleTimeout = TimeSpan.FromMinutes(Configuration.CookieExpirationInMinutes());
-            options.Cookie.SameSite = Environment.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict;
-            options.Cookie.SecurePolicy = Environment.IsLowerEnvs() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
-            options.Cookie.HttpOnly = true;
-            // cannot be set
-            //options.Cookie.Expiration = TimeSpan.FromMinutes(Configuration.CookieExpirationInMinutes());
-            options.Cookie.IsEssential = true;
-        });
-
         services.AddReverseProxy()
                 .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
                 .AddTransforms(builderContext =>
                 {
                     builderContext.AddRequestTransform(async transformContext =>
-                    {
-                        var emulatedUser = await transformContext.HttpContext.Session.GetAsync<EmulatedUser>(SessionDataKeys.EmulateUserKey);
+                    {          
+                        var cache = transformContext.HttpContext.RequestServices.GetRequiredService<ICacheService>();
+
+                        var key = CacheKeys.EmulatedUser(transformContext.HttpContext.User.ClientKey(), transformContext.HttpContext.User.ContactId());
+                        var emulatedUser = await cache.GetDataAsync<EmulatedUser>(key);
 
                         string accessToken = emulatedUser?.AccessToken ?? transformContext.HttpContext.User.AccessToken();
 
@@ -126,13 +120,12 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration config)
     {
+        app.UseExceptionHandler();
         app.UseForwardedHeaders();
         app.UsePathBase("/api");
 
         if (!env.IsStage() && !env.IsProd())
         {
-            app.UseDeveloperExceptionPage();
-
             var isInK8s = config.IsInKubernetes();
             if (isInK8s)
             {
@@ -182,8 +175,6 @@ public class Startup
         app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
-
-        app.UseSession();
 
         app.UseEndpoints(endpoints =>
         {

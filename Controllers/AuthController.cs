@@ -9,23 +9,26 @@ using MangoSPA.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using System.Text.Json;
 
-namespace Mango.MangoSPA.Server.Controllers;
+namespace MangoSPA.Controllers;
 
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
     readonly IAuthService _authService;
+    readonly ICacheService _cache;
     readonly ILogger<AuthController> _logger;
     readonly IWebHostEnvironment _env;
 
     public AuthController(
         IAuthService authService, 
         ILogger<AuthController> logger,
-        IWebHostEnvironment env)
+        IWebHostEnvironment env,
+        ICacheService cache)
     {
         _authService = authService;
         _logger = logger;
         _env = env;
+        _cache = cache;
     }
 
     /// <summary>
@@ -41,7 +44,10 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<OAuthResponse>> AccessToken([FromBody] AccessTokenRequest request)
     {
         await HttpContext.SignOutAsync();
-        HttpContext.Session.Clear();
+
+        var key = CacheKeys.EmulatedUser(User.ClientKey(), User.ContactId());
+        await _cache.RemoveAsync(key);
+
         _logger.LogInformation("AccessToken request started. Calling Identity API to get access token.");
 
         var tokenResponse = await _authService.OAuthToken(request);
@@ -99,7 +105,9 @@ public class AuthController : ControllerBase
             return BadRequest("Only allowed in LOCAL.");
 
         await HttpContext.SignOutAsync();
-        HttpContext.Session.Clear();
+
+        var key = CacheKeys.EmulatedUser(User.ClientKey(), User.ContactId());
+        await _cache.RemoveAsync(key);
 
         _logger.LogInformation("login request started.");
 
@@ -148,7 +156,9 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
-        HttpContext.Session.Clear();
+
+        var key = CacheKeys.EmulatedUser(User.ClientKey(), User.ContactId());
+        await _cache.RemoveAsync(key);
 
         foreach (var cookie in Request.Cookies.Keys)
             Response.Cookies.Delete(cookie);
@@ -163,15 +173,15 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> EmulateUser([FromBody] EmulateUserRequest request)
     {
-        if (!User.IsSuperUserContact())
-        {
-            _logger.LogError("Only a super user can emulate a user. {ContactId} | {Role}", User.ContactId(), User.ContactRole());
-            return StatusCode(StatusCodes.Status403Forbidden);
-        }
-
         if (_env.IsProd())
         {
             _logger.LogError("Emulate user is not allowed in PROD.");
+            return StatusCode(StatusCodes.Status403Forbidden);
+        }
+
+        if (!User.IsSuperUserContact())
+        {
+            _logger.LogError("Only a super user can emulate a user. {ContactId} | {Role}", User.ContactId(), User.ContactRole());
             return StatusCode(StatusCodes.Status403Forbidden);
         }
 
@@ -179,8 +189,10 @@ public class AuthController : ControllerBase
         if (string.IsNullOrWhiteSpace(accessToken))
             return BadRequest();
 
+        var key = CacheKeys.EmulatedUser(User.ClientKey(), User.ContactId());
         var emulatedUser = new EmulatedUser(request.ContactId, accessToken);
-        await HttpContext.Session.SetAsync(SessionDataKeys.EmulateUserKey, emulatedUser);
+
+        await _cache.SetDataAsync(key, emulatedUser);
 
         return Ok();
     }
@@ -192,10 +204,13 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<EmulateUserResponse>> GetEmulatedUser()
     {
-        var sessionData = await HttpContext.Session.GetAsync<EmulatedUser>(SessionDataKeys.EmulateUserKey);
-        if (sessionData is null) return Ok(new EmulateUserResponse(0, false));
+        var key = CacheKeys.EmulatedUser(User.ClientKey(), User.ContactId());
 
-        return Ok(new EmulateUserResponse(sessionData.ContactId, sessionData.IsEmulatedUser));
+        var emulatedUser = await _cache.GetDataAsync<EmulatedUser>(key);
+        if (emulatedUser is null) 
+            return Ok(new EmulateUserResponse(0, false));
+
+        return Ok(new EmulateUserResponse(emulatedUser.ContactId, emulatedUser.IsEmulatedUser));
     }
 
     [Authorize]
@@ -205,7 +220,9 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> StopEmulatingUser()
     {
-        await HttpContext.Session.RemoveAsync(SessionDataKeys.EmulateUserKey);
+        var key = CacheKeys.EmulatedUser(User.ClientKey(), User.ContactId());
+        await _cache.RemoveAsync(key);
+
         return Ok();
     }
 }

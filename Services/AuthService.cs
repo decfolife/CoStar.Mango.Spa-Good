@@ -20,8 +20,6 @@ public interface IAuthService
     Task<AuthorizeResponse> OAuthAuthorize(string accessToken, string redirectUri);
     Task CreateAuthenticationCookie(string accessToken);
     Task<string> GetAccessTokenForEmulatedUser(EmulateUserRequest request);
-    //Task<LoginResponse> Login(LoginRequest request);
-    //Task<LoginToClientResponse> LoginToClient(LoginToClientRequest request);
 }
 
 public class AuthService : IAuthService
@@ -111,46 +109,4 @@ public class AuthService : IAuthService
 
         return result.AuthToken;
     }
-
-    //public async Task<LoginResponse> Login(LoginRequest request)
-    //{
-    //    var client = _clientFactory.CreateClient("identity-api");
-
-    //    var response = await client.PostAsJsonAsync("auth/login", request);
-    //    if (!response.IsSuccessStatusCode)
-    //    {
-    //        var error = await response.Content.ReadAsStringAsync();
-    //        _logger.LogError("Login request failed. {StatusCode} {Error}", response.IsSuccessStatusCode, error);
-    //        return null;
-    //    }
-
-    //    var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-
-    //    // Do not create auth cookie for client specific login page. Only for general login page.
-    //    if (!string.IsNullOrWhiteSpace(request.ClientKey))
-    //        return result;
-
-    //    await CreateAuthenticationCookie(result.AuthToken);
-
-    //    return result;
-    //}
-
-    //public async Task<LoginToClientResponse> LoginToClient(LoginToClientRequest request)
-    //{
-    //    var client = _clientFactory.CreateClient("identity-api");
-
-    //    var response = await client.PostAsJsonAsync("auth/login/client", request);
-    //    if (!response.IsSuccessStatusCode)
-    //    {
-    //        var error = await response.Content.ReadAsStringAsync();
-    //        _logger.LogError("Login request failed. {StatusCode} {Error}", response.IsSuccessStatusCode, error);
-    //        return null;
-    //    }
-
-    //    var result = await response.Content.ReadFromJsonAsync<LoginToClientResponse>();
-
-    //    await CreateAuthenticationCookie(result.AuthToken);
-
-    //    return result;
-    //}
 }

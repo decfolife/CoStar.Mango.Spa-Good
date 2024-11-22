@@ -41,7 +41,10 @@ public static class ConfigurationExtensions
             {
                 { redisSettings["Connection"], int.Parse(redisSettings["Port"]) }
             },
-            Password = redisSettings["Token"]
+            Password = redisSettings["Token"],
+            SyncTimeout = 5000,
+            AsyncTimeout = 5000,
+            ConnectRetry = 5
         };
     }
 }

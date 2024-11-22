@@ -29,7 +29,7 @@ public interface ICacheService
 
 public class CacheService : ICacheService
 {
-    const string ReachWarning = "Cannot reach the cache.";
+    const string ReachWarning = "Cannot reach the cache. {Message}";
 
     readonly IDistributedCache _cache;
     readonly ILogger<CacheService> _logger;
@@ -48,7 +48,7 @@ public class CacheService : ICacheService
     }
 
     public async Task<T> GetOrCreateAsync<T>(
-        string key, 
+        string key,
         Func<Task<T>> factory,
         bool hasNoExpiration = false,
         TimeSpan? absExpiration = null,
@@ -56,55 +56,39 @@ public class CacheService : ICacheService
     {
         if (!_isCacheEnabled) return default;
 
-        try
+        var cachedData = await _cache.GetStringAsync(key);
+        if (!string.IsNullOrWhiteSpace(cachedData))
+            return JsonSerializer.Deserialize<T>(cachedData);
+
+        var data = await factory();
+
+        var cacheOptions = new DistributedCacheEntryOptions
         {
-            var cachedData = await _cache.GetStringAsync(key);
-            if (!string.IsNullOrWhiteSpace(cachedData))
-                return JsonSerializer.Deserialize<T>(cachedData);
+            // Remove item from cache after duration
+            AbsoluteExpirationRelativeToNow = absExpiration is null && hasNoExpiration ? null : TimeSpan.FromDays(1),
 
-            var data = await factory();
+            // Remove item from cache if unused for the duration
+            SlidingExpiration = slideExpiration
+        };
 
-            var cacheOptions = new DistributedCacheEntryOptions
-            {
-                // Remove item from cache after duration
-                AbsoluteExpirationRelativeToNow = absExpiration is null && hasNoExpiration ? null : TimeSpan.FromDays(1),
+        var settings = new JsonSerializerOptions().UseDefaultSettings();
+        string jsonData = JsonSerializer.Serialize(data, settings);
 
-                // Remove item from cache if unsued for the duration
-                SlidingExpiration = slideExpiration
-            };
+        await _cache.SetStringAsync(key, jsonData, cacheOptions);
 
-            var settings = new JsonSerializerOptions().UseDefaultSettings();
-            string jsonData = JsonSerializer.Serialize(data, settings);
-
-            await _cache.SetStringAsync(key, jsonData, cacheOptions);
-
-            return data;
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-            return default;
-        }
+        return data;
     }
 
     public async Task<T> GetDataAsync<T>(string key)
     {
         if (!_isCacheEnabled) return default;
 
-        try
-        {
-            string data = await _cache.GetStringAsync(key);
-            return string.IsNullOrWhiteSpace(data) ? default : JsonSerializer.Deserialize<T>(data);
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-            return default;
-        }
+        string data = await _cache.GetStringAsync(key);
+        return string.IsNullOrWhiteSpace(data) ? default : JsonSerializer.Deserialize<T>(data);
     }
 
     public async Task SetDataAsync<T>(
-        string key, 
+        string key,
         T data,
         TimeSpan? absExpiration = null,
         bool hasNoExpiration = false,
@@ -112,45 +96,30 @@ public class CacheService : ICacheService
     {
         if (!_isCacheEnabled) return;
 
-        try
+        var options = new DistributedCacheEntryOptions
         {
-            var options = new DistributedCacheEntryOptions
-            {
-                // Remove item from cache after duration
-                AbsoluteExpirationRelativeToNow = absExpiration is null && hasNoExpiration ? null : TimeSpan.FromDays(1),
+            // Remove item from cache after duration
+            AbsoluteExpirationRelativeToNow = absExpiration is null && hasNoExpiration ? null : TimeSpan.FromDays(1),
 
-                // Remove item from cache if unsued for the duration
-                SlidingExpiration = slideExpiration
-            };
+            // Remove item from cache if unsued for the duration
+            SlidingExpiration = slideExpiration
+        };
 
-            string jsonData = JsonSerializer.Serialize(data, _jsonOptions);
+        string jsonData = JsonSerializer.Serialize(data, _jsonOptions);
 
-            await _cache.RemoveAsync(key);
-            await _cache.SetStringAsync(key, jsonData, options);
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-        }
+        await _cache.RemoveAsync(key);
+        await _cache.SetStringAsync(key, jsonData, options);
     }
 
     public async Task<string> GetStringAsync(string key, CancellationToken token = default)
     {
         if (!_isCacheEnabled) return default;
 
-        try
-        {
-            return await _cache.GetStringAsync(key, token: token);
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-            return default;
-        }
+        return await _cache.GetStringAsync(key, token: token);
     }
 
     public async Task SetCacheStringAsync(
-        string key, 
+        string key,
         string data,
         TimeSpan? absExpiration = null,
         bool hasNoExpiration = false,
@@ -158,71 +127,40 @@ public class CacheService : ICacheService
     {
         if (!_isCacheEnabled) return;
 
-
-        try
+        var options = new DistributedCacheEntryOptions
         {
-            var options = new DistributedCacheEntryOptions
-            {
-                // Remove item from cache after duration
-                AbsoluteExpirationRelativeToNow = absExpiration is null && hasNoExpiration ? null : TimeSpan.FromDays(1),
+            // Remove item from cache after duration
+            AbsoluteExpirationRelativeToNow = absExpiration is null && hasNoExpiration ? null : TimeSpan.FromDays(1),
 
-                // Remove item from cache if unsued for the duration
-                SlidingExpiration = slideExpiration
-            };
+            // Remove item from cache if unsued for the duration
+            SlidingExpiration = slideExpiration
+        };
 
-            await _cache.RemoveAsync(key);
-            await _cache.SetStringAsync(key, data, options);
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-        }
+        await _cache.RemoveAsync(key);
+        await _cache.SetStringAsync(key, data, options);
     }
 
     public async Task<byte[]> GetAsync(string key)
     {
         if (!_isCacheEnabled) return default;
 
-        try
-        {
-            var data = await _cache.GetAsync(key);
-            return data;
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-            return default;
-        }
+        var data = await _cache.GetAsync(key);
+        return data;
     }
 
     public async Task SetAsync(string key, byte[] data, DistributedCacheEntryOptions options)
     {
         if (!_isCacheEnabled) return;
 
-        try
-        {
-            await _cache.RemoveAsync(key);
-            await _cache.SetAsync(key, data, options);
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-        }
+        await _cache.RemoveAsync(key);
+        await _cache.SetAsync(key, data, options);
     }
 
     public async Task<bool> RemoveAsync(string key, CancellationToken token = default)
     {
         if (!_isCacheEnabled) return false;
 
-        try
-        {
-            await _cache.RemoveAsync(key, token);
-            return true;
-        }
-        catch (Exception)
-        {
-            _logger.LogWarning(ReachWarning);
-            return false;
-        }
+        await _cache.RemoveAsync(key, token);
+        return true;
     }
 }
