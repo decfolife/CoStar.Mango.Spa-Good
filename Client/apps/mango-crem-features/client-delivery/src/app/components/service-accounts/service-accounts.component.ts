@@ -223,9 +223,11 @@ export class ServiceAccountsComponent implements OnDestroy {
         .pipe(
           switchMap(
             (result) =>
-              (this.latestSyncInfo$ = of(
-                `Sync Data Executed on ${result.lastSyncDate} by ${result.contactFirstName} ${result.contactLastName} `
-              ))
+              (this.latestSyncInfo$ = result
+                ? of(
+                    `Last Synced on ${result.lastSyncDate} by ${result.contactFirstName} ${result.contactLastName}`
+                  )
+                : of(`Sync Data has never been run`))
           )
         )
         .subscribe()

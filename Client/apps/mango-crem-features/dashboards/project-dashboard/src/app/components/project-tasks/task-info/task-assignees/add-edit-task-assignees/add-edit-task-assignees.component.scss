@@ -1,3 +1,4 @@
+@use 'styles' as *;
 fa-icon {
   display: block;
   height: 20px;
@@ -24,5 +25,14 @@ fa-icon {
         transform: scale(0.8);
       }
     }
+  }
+}
+.footerRightControls {
+  display: flex;
+  & > .aet-btn {
+    margin-left: 8px;
+  }
+  .modalFooter {
+    @include costar(border-top, gray05);
   }
 }

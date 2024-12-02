@@ -237,6 +237,24 @@ export abstract class EndpointService {
     );
   }
 
+  protected callHttpDeleteWithBody(
+    url: string,
+    functionName: string,
+    body: any
+  ): Observable<any> {
+    let httpHeaders = this.getHttpHeaders();
+
+    return this.http
+      .delete(url, {
+        headers: httpHeaders,
+        body: body,
+      })
+      .pipe(
+        map((x) => this.toObject(x) as any),
+        catchError(this.handleError(functionName))
+      );
+  }
+
   protected callHttpPostByteArray(
     url: string,
     functionName: string,

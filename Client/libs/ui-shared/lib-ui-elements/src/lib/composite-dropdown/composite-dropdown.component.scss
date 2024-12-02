@@ -1,54 +1,89 @@
-@use 'styles'as *;
+@use 'styles' as *;
 
 .composite-dropdown-container {
-    position: relative;
-    @include costar(margin, 2);
-    @include costar(z-index, dropdown)
+  position: relative;
+  @include costar(z-index, dropdown);
 }
 
 mat-panel-title {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dropdown-panel-title {
+  text-align: center;
 }
 
 .dropdown-title {
-    @include costar(font-size, h4);	
+  @include costar(font-size, h4);
 }
 
 .dropdown-subtitle {
-    @include costar(color, gray03);
-     // @include costar(font-size, h6); // FIXME: font-size h6 is not part of the font sizes http://service2.dev.corp.virtualpremise.com:8091/?path=/docs/documentation-styling-single-properties--docs#font
-    @include costar(font-weight, normal);
+  @include costar(color, gray03);
+  // @include costar(font-size, h6); // FIXME: font-size h6 is not part of the font sizes http://service2.dev.corp.virtualpremise.com:8091/?path=/docs/documentation-styling-single-properties--docs#font
+  @include costar(font-weight, normal);
 }
 
 mat-action-row {
-    align-items: center;
-    justify-content: center;
-    @include costar(padding, 3);
-    @include costar(color, gray01);	
+  align-items: center;
+  justify-content: center;
+  @include costar(padding, 3);
+  @include costar(color, gray01);
 }
 
 mat-panel-description {
-    @include costar(margin-right, 0);
-    @include costar(padding-top, 2);
-    @include costar(color, gray01);	
+  @include costar(margin-right, 0);
+  @include costar(padding-top, 2);
+  @include costar(color, gray01);
 }
 
 mat-expansion-panel {
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-bottom: solid 4px var(--costar-color-gray04) !important;
+  border-left: solid 4px var(--costar-color-light) !important;
+
+  &.status-error {
+    transition: border-bottom 400ms ease-out;
+    border-bottom: solid 4px var(--costar-color-danger) !important;
+  }
+
+  &:hover:not(.mat-expanded) {
+    border-left-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &.mat-expanded {
+    border-left: solid 4px var(--costar-color-gray04) !important;
+    transition: border 400ms ease-out;
+    border-bottom: unset;
+    border-bottom-color: var(--costar-color-light) !important;
+    padding-bottom: unset;
+    padding-left: unset;
+
+    &.status-error {
+      border-left: solid 4px var(--costar-color-danger) !important;
+    }
+  }
 }
 
 mat-expansion-panel-header {
-    height: 60px;
+  height: 60px;
 }
 
 .content-padding {
-    @include costar(padding-bottom, 5);
-    padding-top: 35px;
+  @include costar(padding-bottom, 5);
+  padding-top: 35px;
+}
+
+.dropdown-error {
+  width: 30px;
+  display: flex;
+  flex-grow: unset;
+  flex-basis: unset;
+  padding-top: 1px;
 }

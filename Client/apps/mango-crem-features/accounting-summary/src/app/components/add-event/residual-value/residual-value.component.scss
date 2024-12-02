@@ -23,3 +23,16 @@
 .residual-value-accordion {
   @include costar(margin-top, 4);
 }
+
+.disabled-controls {
+  @include costar(font-size, body);
+  @include costar(color, dark);
+  border: 1px solid #dcdcdc;
+  transition: all 250ms cubic-bezier(0, 0, 0.2, 1);
+  border-radius: 0.25rem;
+  width: 98%;
+  @include costar(background-color, gray07);
+  height: 33px;
+  outline: 0;
+  padding: 0.175rem 0.75rem;
+}

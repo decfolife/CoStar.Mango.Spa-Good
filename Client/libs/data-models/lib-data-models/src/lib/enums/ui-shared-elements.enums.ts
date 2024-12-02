@@ -27,6 +27,7 @@ export enum FormLabelAlignment {
 }
 
 export type CremFormControlStatusType =
+  | 'default'
   | 'success'
   | 'error'
   | 'warning'

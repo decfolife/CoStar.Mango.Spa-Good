@@ -15,7 +15,7 @@ export class SaveTeamTemplateComponent implements OnInit {
   subs: Subscription[] = [];
   templateName: string = '';
   closeButton: boolean = true;
-  saveButtonDisabled: boolean = true;
+  saveButtonDisabled: boolean = false;
 
   constructor(
     private dashboardService: DashboardService,
@@ -28,6 +28,7 @@ export class SaveTeamTemplateComponent implements OnInit {
   ngOnInit(): void {}
 
   saveTeamAsTemplate() {
+    this.saveButtonDisabled = true;
     this.subs.push(
       this.dashboardService
         .saveTeamAsTemplate(this.templateName, this.data.projectId)
@@ -61,9 +62,12 @@ export class SaveTeamTemplateComponent implements OnInit {
               });
               this.dialogRef.close('true');
             }
+            this.saveButtonDisabled = false;
           },
-          (error: any) =>
-            console.log('Error occurred Saving Team as Template ', error),
+          (error: any) => {
+            console.log('Error occurred Saving Team as Template ', error);
+            this.saveButtonDisabled = false;
+          },
           () => {}
         )
     );

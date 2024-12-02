@@ -1,4 +1,4 @@
-<div [class.col-md-6]="!fullWidth" [class.col-md-12]="fullWidth" cdkDrag>
+<div cdkDrag>
   <div cdkDragHandle class="card-drag-handle" [id]="config.id + 'DragDrop'">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +52,7 @@
       </div>
     </ng-template>
 
-    <div class="cardContent scroll-container vertical" fxflexFill>
+    <div class="card-content scroll-container vertical" fxflexFill>
       <dx-pivot-grid
         #PivotGrid
         [allowSortingBySummary]="config.allowSortingBySummary ?? true"

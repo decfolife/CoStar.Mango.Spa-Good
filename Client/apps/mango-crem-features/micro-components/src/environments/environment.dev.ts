@@ -20,8 +20,8 @@ class EnvironmentsCrem {
     header: 'http://service2.dev.corp.virtualpremise.com:8090/Header/api/',
   };
   isRestful: false;
-  CAUrl = 'https://client.dev.crem.aws.dshrp.com/';
-  mangoSpaUrl = 'http://service2.dev.corp.virtualpremise.com:8097/';
+  CAUrl = 'https://login.dev.corp.virtualpremise.com:30443';
+  mangoSpaUrl = 'http://api.dev.corp.virtualpremise.com:30080';
 }
 
 export const environment = new EnvironmentsCrem();

@@ -1,0 +1,64 @@
+<crem-modal
+  [modalTitle]="modalTitle"
+  [primaryFooterButtonText]="'Save'"
+  [closeOrCancelButtonText]="'Cancel'"
+  [closeIconVisible]="true"
+  [closeDialogResult]="addNoteResult"
+  [modalId]="modalId"
+  [primaryFooterButtonEnabledDisabled]="disableSaveBtn"
+  [dragPosition]="dragPosition"
+  (primaryButtonAction)="saveNote()"
+  (dragEndAction)="getDragPosition($event)"
+>
+  <div modalContent id="addTaskNoteModal-content">
+    <div class="div-noteTypeDropdown">
+      <h3
+        id="noteTypeDropdownLabel"
+        class="noteTypeLabel label"
+        [ngClass]="noteTypeDropdownInValid ? 'fieldInvalid' : ''"
+      >
+        Note Type <span class="at-required" aria-label="required">*</span>
+      </h3>
+      <crem-dropdown
+        #NoteTypeDropdown
+        id="noteTypeDropdown"
+        placeholder="Select..."
+        [selectBoxValue]="selectedNoteTypeId"
+        [dataSource]="noteTypesList"
+        [showClearButton]="false"
+        [showColumnHeader]="false"
+        [required]="true"
+        valueExpr="commonNoteTypeID"
+        displayExpr="commonNoteType"
+        [initialSelectedValue]="selectedNoteTypeId"
+        (selectedItems)="onSelectedNoteTypeChanged($event)"
+      >
+      </crem-dropdown>
+    </div>
+    <div>
+      <h3
+        id="noteBodyTextAreaLabel"
+        class="noteBodyLabel label"
+        [ngClass]="noteBodyTextAreaInValid ? 'fieldInvalid' : ''"
+      >
+        Note <span class="at-required" aria-label="required">*</span>
+      </h3>
+      <dx-text-area
+        id="noteTextArea"
+        [value]="commonNoteText"
+        [height]="150"
+        [maxLength]="maxCommonNoteTextLength"
+        [inputAttr]="{
+          'aria-label': 'Add Note Text',
+          id: 'add-note-text-area'
+        }"
+        (onInput)="onInputEvent($event)"
+      >
+        <dx-validator #NoteBodyValidator name="noteBodyValidator">
+          <dxi-validation-rule type="required" message=""></dxi-validation-rule>
+        </dx-validator>
+      </dx-text-area>
+      <p>{{ characterCountText }}</p>
+    </div>
+  </div>
+</crem-modal>

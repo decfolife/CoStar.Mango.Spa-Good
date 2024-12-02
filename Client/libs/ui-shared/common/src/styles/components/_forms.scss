@@ -77,17 +77,26 @@
 
 .control-status {
   &__error {
-    input,
+    input:not(.dx-texteditor-input),
     dx-date-box,
-    dx-drop-down-box .dx-texteditor-container {
-      border-color: var(--costar-color-danger-light) !important;
+    dx-drop-down-box .dx-dropdowneditor-input-wrapper {
+      border-bottom: 3px solid var(--costar-color-danger-light) !important;
+      .dx-texteditor-container {
+        border-bottom: 0 !important;
+      }
+    }
+
+    input {
+      &:focus {
+        box-shadow: unset !important;
+      }
     }
   }
   &__warning {
-    input,
+    input:not(.dx-texteditor-input),
     dx-date-box,
-    dx-drop-down-box .dx-texteditor-container {
-      border-color: var(--costar-color-secondary-light) !important;
+    dx-drop-down-box .dx-dropdowneditor-input-wrapperr {
+      border-bottom: 3px solid var(--costar-color-secondary-light) !important;
     }
   }
 }

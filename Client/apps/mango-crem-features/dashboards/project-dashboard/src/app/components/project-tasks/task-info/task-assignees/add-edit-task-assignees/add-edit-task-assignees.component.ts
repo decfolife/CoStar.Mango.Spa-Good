@@ -1,19 +1,19 @@
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
-  Component,
-  Inject,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ApprovalDetail } from '@mango/data-models/lib-data-models';
-import { DashboardService } from '@project-dashboard/services/dashboard.service';
-import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { faCircleMinus } from '@fortawesome/free-solid-svg-icons';
-import { Observable, Subscription, of } from 'rxjs';
+import { deepCopy } from '@mango/core-shared';
+import { ApprovalDetail } from '@mango/data-models/lib-data-models';
 import { DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
+import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
+import { Observable, Subscription, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
+import { TaskInfoComponent } from '../../task-info.component';
 
 interface AddRemoveContactIdLists {
   addContactIdList: number[];
@@ -25,7 +25,7 @@ interface AddRemoveContactIdLists {
   templateUrl: './add-edit-task-assignees.component.html',
   styleUrls: ['./add-edit-task-assignees.component.scss'],
 })
-export class AddEditTaskAssigneesComponent {
+export class AddEditTaskAssigneesComponent implements OnInit, OnDestroy {
   @ViewChild('AssigneesGrid') assigneesGrid: DxDataGridComponent;
   @ViewChild('AssigneesDropdown') assigneesDropdown: DropdownComponent;
 
@@ -45,10 +45,13 @@ export class AddEditTaskAssigneesComponent {
   private originalTaskAssignees: ApprovalDetail[];
   private projectId: number;
   private taskId: number;
-
+  selectedTaskId: number;
+  disableSaveBtn: boolean = false;
   constructor(
     private dashboardService: DashboardService,
     private dialogService: MangoDialogService,
+    private dialog: MatDialog,
+
     public dialogRef: MatDialogRef<AddEditTaskAssigneesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -58,7 +61,7 @@ export class AddEditTaskAssigneesComponent {
     this.originalTaskAssignees = data.taskAssignees;
     //This is here to create a separate taskAssignees object.  We want to keep the original so that we
     //can compare the original to the modified one to add or remove assignees.
-    this.taskAssignees = JSON.parse(JSON.stringify(data.taskAssignees)); // deep-copy assignees
+    this.taskAssignees = deepCopy(data.taskAssignees); // deep-copy assignees
     this.userDateFormat = data.userDateFormat;
     this.dragPosition = data.dragPosition;
   }
@@ -118,9 +121,43 @@ export class AddEditTaskAssigneesComponent {
     );
   }
 
+  cancelChanges() {
+    const idLists: AddRemoveContactIdLists =
+      this.returnAddAndRemoveContactIdLists(
+        this.originalTaskAssignees,
+        this.taskAssignees
+      );
+    if (
+      idLists.addContactIdList.length > 0 ||
+      idLists.removeContactIdList.length > 0
+    ) {
+      this.dialogService
+        .confirm(
+          'Changes Made!',
+          'Changes you made have not been saved. Would you like to continue editing or leave ?',
+          'Continue',
+          'Leave'
+        )
+        .pipe(
+          switchMap((res) => {
+            if (!res) {
+              this.closeModal();
+              this.data.addEditRef?.close(this.data.reloadTasksGrid);
+            } else {
+              return of();
+            }
+            return of();
+          })
+        )
+        .subscribe();
+    } else {
+      this.closeModal();
+    }
+  }
   saveAssigneesButtonClick() {
+    this.disableSaveBtn = true;
     let alertClosedOnSuccess: Observable<boolean> = of(false);
-    let idLists: AddRemoveContactIdLists =
+    const idLists: AddRemoveContactIdLists =
       this.returnAddAndRemoveContactIdLists(
         this.originalTaskAssignees,
         this.taskAssignees
@@ -139,9 +176,10 @@ export class AddEditTaskAssigneesComponent {
       alertClosedOnSuccess.subscribe((res) => {
         if (!!res && res) {
           this.closeModal();
+          this.data.addEditRef.close();
         }
       });
-
+      this.disableSaveBtn = false;
       return;
     }
 
@@ -169,6 +207,7 @@ export class AddEditTaskAssigneesComponent {
                 'OK'
               );
             }
+            this.disableSaveBtn = false;
             return alertClosedOnSuccess;
           })
         )
@@ -176,6 +215,7 @@ export class AddEditTaskAssigneesComponent {
           if (!!res && res) {
             this.closeModal();
           }
+          this.disableSaveBtn = false;
         })
     );
   }
@@ -240,6 +280,7 @@ export class AddEditTaskAssigneesComponent {
         contactEMailAddress: null,
         contactConsolidatedEmails: null,
         emailOn: null,
+        emailNotifications: null,
         contactActive: null,
         actualStartDate: null,
         hoursToDate: null,
@@ -261,7 +302,7 @@ export class AddEditTaskAssigneesComponent {
         .pipe(
           tap((res) => {
             if (!!res && res.success) {
-              let mergedList = res.data.potentialApprovers.concat(
+              const mergedList = res.data.potentialApprovers.concat(
                 res.data.existingApprovers
               );
               this.assigneesDropdownList = mergedList.sort((a, b) =>
@@ -294,5 +335,19 @@ export class AddEditTaskAssigneesComponent {
       saveSuccessful: this.assigneesSaved,
       newDragPosition: this.dragPosition,
     };
+  }
+
+  adaAttrNoDataGrid(e: any) {
+    const dxGridwithTables = e.component
+      .$element()
+      .find('.dx-datagrid-headers.dx-bordered-top-view');
+    if (dxGridwithTables && dxGridwithTables.length > 0) {
+      for (let i = 0; i < dxGridwithTables.length; i++) {
+        const element = dxGridwithTables[i];
+        if (element) {
+          element.setAttribute('role', 'grid');
+        }
+      }
+    }
   }
 }

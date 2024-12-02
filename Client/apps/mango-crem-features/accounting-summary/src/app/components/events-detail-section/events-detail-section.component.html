@@ -309,7 +309,12 @@
           <div class="actions-icon">
             <crem-icon
               [id]="
-                accountingSummaryService.getId(componentName, 'action', 'icon')
+                accountingSummaryService.getId(
+                  componentName,
+                  'action',
+                  'icon',
+                  data.data.scheduleIndex
+                )
               "
               pack="solid"
               icon="faEllipsisH"

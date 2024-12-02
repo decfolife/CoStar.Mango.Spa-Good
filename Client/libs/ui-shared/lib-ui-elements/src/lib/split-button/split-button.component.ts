@@ -24,7 +24,7 @@ export class SplitButtonComponent {
   @Input() color: 'primary' | 'secondary' | 'warning' | 'danger' = 'primary';
   @Input() btnStyle: 'flat' | 'basic' | 'stroked' = 'flat';
 
-  @Output() mainButtonClick = new EventEmitter<string>();
+  @Output() mainButtonClick = new EventEmitter<boolean>();
   @Output() selectedOption = new EventEmitter<string>();
 
   dropDownOpen = false;
@@ -37,6 +37,10 @@ export class SplitButtonComponent {
   @HostListener('document:click')
   onClickOutside() {
     this.dropDownOpen = false;
+  }
+
+  onMainButtonClick() {
+    this.mainButtonClick.emit(true);
   }
 
   onOptionSelect(event) {

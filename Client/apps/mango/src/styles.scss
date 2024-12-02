@@ -49,6 +49,7 @@ body {
 
 div.costar-site-toolbar-search {
   font-size: 16px;
+
   div.mat-mdc-form-field-infix {
     display: flex !important;
     justify-content: space-between;
@@ -79,6 +80,7 @@ div.costar-site-toolbar-search {
 
 .mqs-search-results {
   margin-top: 80px;
+
   .modalFooter .footerRightControls {
     height: 32px;
   }
@@ -110,6 +112,7 @@ div.costar-site-toolbar-search {
   div.sidenavBottom {
     display: flex;
     flex-direction: column;
+
     .navCollExp {
       display: flex;
       justify-content: flex-end;
@@ -147,6 +150,7 @@ crem-bookmarks.suite-user {
     top: 155px !important;
   }
 }
+
 //**** this is a temp style, will be modified/removed as part of future stories //*****
 // .shared-left-nav {
 //   li.Dashboard, li.Contacts {
@@ -191,6 +195,7 @@ crem-modal.qsr-modal {
   div.qsr-modalContent {
     height: 100%;
   }
+
   .modalFooter {
     border-top: 1px solid #ddd;
   }

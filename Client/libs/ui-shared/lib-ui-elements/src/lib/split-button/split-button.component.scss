@@ -1,52 +1,77 @@
 @use 'styles' as *;
 
-.split-button {
-  position: relative;
-  display: inline-block;
+:host {
+  .split-button {
+    position: relative;
+    display: inline-block;
 
-  &__dropdown {
-    position: absolute;
-    top: 100%;
-    min-width: 150px;
-    width: max-content;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    margin-top: 4px;
-    z-index: 1000;
-    border: 1px solid #e9ecef;
-    @include costar(background-color, light);
+    &__container {
+      display: inline-flex;
+      align-items: stretch;
 
-    &__dropdown-item {
-      padding: 4px 8px;
-      cursor: pointer;
-      color: #211529;
-      font-size: 14px;
+      &__main-button,
+      &__caret-button {
+        cursor: pointer;
+      }
+
+      &__seperator {
+        pointer-events: none;
+      }
     }
 
-    &__dropdown-item:hover {
-      @include costar(background-color, background);
+    &__dropdown {
+      position: absolute;
+      top: 100%;
+      min-width: 150px;
+      width: max-content;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      margin-top: 4px;
+      z-index: 1000;
+      border: 1px solid #e9ecef;
+      @include costar(background-color, light);
+
+      &__left {
+        left: 0;
+      }
+
+      &__right {
+        right: 0;
+      }
+
+      &__dropdown-item {
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        @include costar(color, dark);
+      }
+
+      &__dropdown-item:hover {
+        @include costar(background-color, background);
+      }
     }
   }
-}
 
-.split-button-container {
-  display: inline-flex;
-  align-items: stretch;
-
-  &__main-button {
-    pointer-events: none;
+  ::ng-deep {
+    .split-button__container__main-button > button {
+      border-top-right-radius: 0px;
+      border-bottom-right-radius: 0px;
+      padding-right: 3px;
+      border-right: none !important;
+    }
+    .split-button__container__seperator > button {
+      padding: 0px;
+      border-radius: 0;
+      border-left: none !important;
+      border-right: none !important;
+    }
+    .split-button__container__caret-button > button {
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+      padding-left: 2px !important;
+      border-left: none !important;
+    }
   }
-
-  &__caret-button {
-    padding-left: 1px;
-    cursor: pointer;
-  }
-}
-
-.left {
-  left: 0;
-}
-
-.right {
-  right: 0;
 }

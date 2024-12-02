@@ -1,0 +1,39 @@
+<div
+  class="error-icon"
+  (mouseenter)="isHovered = true"
+  (mouseleave)="isHovered = false"
+  [ngClass]="{
+    'crem-hovered': isHovered
+  }"
+>
+  <crem-icon
+    [icon]="'faExclamationCircle'"
+    [pack]="'solid'"
+    [color]="'danger'"
+    size="lg"
+  ></crem-icon>
+  <dx-tooltip
+    *ngIf="message"
+    [target]="targetElement"
+    showEvent="mouseenter"
+    hideEvent="mouseleave"
+    [hideOnOutsideClick]="false"
+    [wrapperAttr]="{ class: 'error-tooltip-wrapper' }"
+  >
+    <div *dxTemplate="let data = data; of: 'content'">
+      <div class="error-icon__content">
+        <div class="error-icon__icon">
+          <crem-icon
+            [icon]="'faExclamationCircle'"
+            [pack]="'solid'"
+            [color]="'light'"
+            size="lg"
+          ></crem-icon>
+        </div>
+        <div class="error-icon__message">
+          <span [innerHTML]="message"></span>
+        </div>
+      </div>
+    </div>
+  </dx-tooltip>
+</div>

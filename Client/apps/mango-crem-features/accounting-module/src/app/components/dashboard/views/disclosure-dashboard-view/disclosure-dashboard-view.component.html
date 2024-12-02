@@ -11,19 +11,16 @@
     cdkDropListOrientation="vertical"
     (cdkDropListDropped)="cardMove($event)"
   >
-    <div
-      *ngFor="let config of localCardConfig"
-      class="categories-item"
-      cdkDropListOrientation="horizontal"
-      [cdkDropListData]="{ card: card, index: i }"
-      fxLayout="row"
-    >
+    <ng-container *ngFor="let config of localCardConfig">
       <mango-iad-card
+        class="categories-item"
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="{ card: card, index: i }"
+        fxLayout="row"
         [config]="config"
         [dataSource]="pivotDataSources[config.index]"
         (selectedFilter)="onSelectedFilter($event, config)"
       ></mango-iad-card>
-    </div>
+    </ng-container>
   </div>
-  <ng-template> </ng-template
-></ng-template>
+</ng-template>

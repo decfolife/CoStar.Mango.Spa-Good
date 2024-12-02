@@ -39,7 +39,10 @@ export const buildQuickApprovalRequest = (
         userDate: task.date ? task.date.toISOString() : null,
         isApproval: true,
         isProxyApproval: task.isProxy,
-        notes: `RE: ${task.taskName} Approved - ${task.note}`,
+        notes:
+          task.note == ''
+            ? `RE: ${task.taskName} Approved ${task.note}`
+            : `RE: ${task.taskName} Approved - ${task.note}`,
       };
     }),
   };

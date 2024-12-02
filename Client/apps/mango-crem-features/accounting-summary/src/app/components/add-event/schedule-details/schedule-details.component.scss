@@ -26,7 +26,6 @@
   justify-content: start;
 
   & .controls {
-    flex-grow: auto;
     & .controls-container {
       @include flex-row-direction;
       @include costar(margin-right, 3);

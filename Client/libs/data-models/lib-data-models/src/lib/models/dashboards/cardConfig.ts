@@ -49,6 +49,7 @@ export interface ColumnSortingOrder {
  * @property {number|string} [OpeningCount] - The count of items being opened.
  * @property {string} Display - The display text for the card item.
  * @property {number|string} [PeriodYear] - The year or period associated with the data.
+ * @property {number|string} [PeriodQuarter] - The year or period associated with the data.
  * @property {number|string} [dataType] - The type of data (number or string).
  * @property {any} data - The actual data associated with the card item.
  * @export
@@ -63,6 +64,7 @@ export type CardDataItem = {
   OpeningCount?: number | string;
   Display?: string;
   PeriodYear?: number | string;
+  PeriodQuarter?: number | string;
   dataType?: number | string;
   data: any;
   modify?: CardDataItemModify;
@@ -154,6 +156,13 @@ export type CardConfig = {
    */
   sortingOrder?: SortingOrder;
   columnSortingOrder?: ColumnSortingOrder;
+
+  /**
+   * Name of the Column Field to be sorted.
+   *
+   * @type {string}
+   */
+  sortedColumnFieldName?: string;
 
   showFieldChooser?: boolean;
 

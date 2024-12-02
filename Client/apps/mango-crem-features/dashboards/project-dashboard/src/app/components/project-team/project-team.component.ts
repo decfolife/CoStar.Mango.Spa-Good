@@ -69,6 +69,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   searchText: string = '';
   autoExpand: boolean = false;
   count: number = 0;
+  editBtnTitle: string = `Click to edit details or assign tasks.`;
   projectMemberInfo: string = `This team member is either no longer active or has Allow Log On set to No. 
                                 Please consider replacing this team member or updating their User record.`;
   emailNote: string = `By including the unapproved tasks, each user will receive an individual email, 
@@ -76,6 +77,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   includeFilesText: string = `If File Paths is checked, selected file(s) will be included as path to the 
                               application rather than an attachment(s).`;
   currentObject: Observable<CurrentObjectInfo> = null;
+  isComposeEmailOpen: boolean = false;
 
   constructor(
     private dashboardService: DashboardService,
@@ -165,6 +167,9 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
   composeEmail(e) {
+    if (this.isComposeEmailOpen) return;
+    this.isComposeEmailOpen = true;
+
     this.subs.push(
       this.dashboardService
         .getComposeEmailInfo(this.projectId)
@@ -192,6 +197,11 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
               },
               disableClose: true,
             });
+            this.subs.push(
+              dialogRef.afterClosed().subscribe(() => {
+                this.isComposeEmailOpen = false;
+              })
+            );
           } else {
             let message = `Projects Email Info could not be fetched.`;
             this.subs.push(
@@ -366,11 +376,17 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
         )
         .pipe(
           filter((confirmed) => !!confirmed),
+          tap((_) =>
+            this.projectTeamGrid.instance.beginCustomLoading(
+              'Removing Member(s)....'
+            )
+          ),
           switchMap((_) =>
             this.dashboardService.removeTeamMembers(
               this.selectedTeamMembersData
             )
           ),
+          tap((_) => this.projectTeamGrid?.instance.endCustomLoading()),
           switchMap((res) =>
             !!res && !!res.success
               ? (this.dashboardService.successNotify(
@@ -500,7 +516,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
     this.subs.push(
       this.dashboardService.getProjectContactLevel(projectId).subscribe(
         (res: any) => {
-          this.userAccessLevel = res.data;
+          this.userAccessLevel = res.data.userLevel;
         },
         (error: any) =>
           console.log('Error occurred getting User Access Level ', error),

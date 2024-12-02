@@ -8,11 +8,11 @@
   [showCloseButton]="true"
   [hideOnOutsideClick]="false"
   width="500px"
-  applyButtonText="Add"
-  saveButtonText=""
+  saveButtonText="Add"
+  applyButtonText=""
   closeButtonText="Cancel"
   (close)="closeAddFolderPopup()"
-  (apply)="createFolder()"
+  (save)="createFolder()"
   [disableSApplyButton]="createFolderForm.invalid"
 >
   <form
@@ -28,9 +28,9 @@
         [status]="
           folderName.invalid && (folderName.dirty || folderName.touched)
             ? 'error'
-            : null
+            : 'default'
         "
-        errorMessage="This field is required"
+        statusMessage="This field is required"
       >
         <crem-input
           [showHint]="false"
@@ -51,9 +51,9 @@
         [status]="
           description.invalid && (description.dirty || description.touched)
             ? 'error'
-            : null
+            : 'default'
         "
-        errorMessage="This field is required"
+        statusMessage="This field is required"
       >
         <crem-input
           [showHint]="false"

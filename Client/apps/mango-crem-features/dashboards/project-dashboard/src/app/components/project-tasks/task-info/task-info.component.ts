@@ -113,7 +113,7 @@ export class TaskInfoComponent {
         ),
         this.currentUserInfo$,
       ]).subscribe(([accessLevel, contact]: any) => {
-        this.userAccessLevel = accessLevel;
+        this.userAccessLevel = accessLevel.userLevel;
         this.isUserDatesEU = contact.preferences.contactDatesEU;
         this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
       })
@@ -164,7 +164,8 @@ export class TaskInfoComponent {
           width: '1000px',
         });
         this.subs.push(
-          uploadPopup.afterClosed().subscribe((_) => {
+          uploadPopup.afterClosed().subscribe(({ hasChanges }) => {
+            this.taskInfoChanged = this.taskInfoChanged || hasChanges;
             this.taskInfoUIService.selectedFiles$.next([]);
             this.getTaskDetails();
           })
@@ -407,9 +408,11 @@ export class TaskInfoComponent {
 
   isEditDisabled(): boolean {
     switch (this.activeTabIndex) {
-      case 0:
-      case 1:
+      case 0: // details
+      case 1: // assignees
         return this.userAccessLevel !== 1;
+      case 2: // notes
+      case 3: // files
       default:
         return false;
     }

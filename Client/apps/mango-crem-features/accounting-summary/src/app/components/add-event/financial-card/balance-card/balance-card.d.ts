@@ -31,7 +31,6 @@ type DataElement = {
   }>;
   initialSelectedValue?: '';
   precision?: number;
-  currencyName?: string;
 };
 
 type DataElements = DataElement[];
@@ -45,6 +44,7 @@ type DataElements = DataElement[];
  * @property {string} [valueSuffix] - The optional suffix for the value (e.g., currency symbol).
  * @property {string} [valueLink] - The optional link URL associated with the value.
  * @property {'self' | 'blank'} [valueTarget] - The optional target for the value link, specifying how the link should be opened.
+ * @property {boolean} [valueEdit] - The optional identifier to make the value an input.
  * @property {string} [className] - The optional class name for styling the card.
  * @property {string} [id] - The optional unique identifier for the card.
  * @property {DataElement[]} [elements] - The optional array of data elements associated with the card.
@@ -57,8 +57,10 @@ export type BalanceCardType = {
   valueSuffix?: string;
   valueLink?: string;
   valueTarget?: 'self' | 'blank';
+  valueEdit?: boolean;
   className?: string;
   id?: string;
+  precision?: number;
   elements?: DataElements;
 };
 

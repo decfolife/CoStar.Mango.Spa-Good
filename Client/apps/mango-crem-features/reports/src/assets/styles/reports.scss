@@ -419,7 +419,8 @@ div.reports-toolBar-wrapper {
   }
 }
 
-.reports-actions.mat-mdc-menu-panel > .mat-mdc-menu-content {
+.reports-actions.mat-mdc-menu-panel > .mat-mdc-menu-content,
+.dl-actions.mat-mdc-menu-panel > .mat-mdc-menu-content {
   font-size: 14px;
 
   & > ul {

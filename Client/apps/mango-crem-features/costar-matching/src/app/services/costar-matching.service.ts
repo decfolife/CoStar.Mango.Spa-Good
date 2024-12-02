@@ -68,4 +68,9 @@ export class CostarMatchingService extends EndpointService {
     const url = `${this.costarMatchingUrl}addresses/cleanse`;
     return this.callHttpPost(url, 'addresses-cleanse', request);
   }
+
+  updateBuildingAddress(request: any): Observable<any> {
+    const url = `${this.costarMatchingUrl}buildings/updatebuildingaddress`;
+    return this.callHttpPut(url, 'buildings-updatebuildingaddress', request);
+  }
 }

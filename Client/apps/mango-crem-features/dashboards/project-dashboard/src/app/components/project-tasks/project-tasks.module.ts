@@ -57,6 +57,7 @@ import {
   ReorderTaskModal,
   ReorderTasksModalComponent,
 } from './reorder-tasks-modal/reorder-tasks-modal.component';
+import { CremTabAwareGridDirective } from 'libs/ui-shared/lib-ui-elements/src/lib/simple-grid/tab-aware-grid.directive';
 
 @NgModule({
   declarations: [
@@ -113,6 +114,7 @@ import {
     CremQuickApprovalComponent,
     CremSaveTasksTemplateComponent,
     TaskApproveOrRejectComponent,
+    CremTabAwareGridDirective,
   ],
   providers: [TaskInfoUIService, ReorderTaskModal],
   exports: [ProjectTasksComponent],

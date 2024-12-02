@@ -1,15 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import {
   InputComponent,
   DropdownModule,
+  CheckBoxComponent,
 } from '@mango/ui-shared/lib-ui-elements';
-import {
-  DxNumberBoxModule,
-  DxNumberBoxTypes,
-} from 'devextreme-angular/ui/number-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { IconModule } from '@mango/ui-shared/lib-ui-elements';
 import { BalanceCardType, CardsConfiguration } from './balance-card';
+import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
+import { AddEventFormService } from '@accounting-summary/services/add-event-form.service';
+import { Subscription } from 'rxjs';
+import { FormattingService } from '@accounting-summary/services/formatting.service';
 
 @Component({
   selector: 'mango-balance-card',
@@ -22,9 +31,10 @@ import { BalanceCardType, CardsConfiguration } from './balance-card';
     InputComponent,
     DropdownModule,
     DxNumberBoxModule,
+    CheckBoxComponent,
   ],
 })
-export class BalanceCardComponent implements OnInit {
+export class BalanceCardComponent implements OnInit, OnDestroy {
   /**
    * The cards' data
    *
@@ -53,6 +63,13 @@ export class BalanceCardComponent implements OnInit {
   @Output() valueChange = new EventEmitter();
 
   @Output() onBlurChange = new EventEmitter();
+  private subscription = new Subscription();
+
+  constructor(
+    private accountingSummaryService: AccountingSummaryService,
+    private addEventService: AddEventFormService,
+    private formatService: FormattingService
+  ) {}
 
   ngOnInit(): void {
     this.cards.forEach((element) => {
@@ -65,6 +82,10 @@ export class BalanceCardComponent implements OnInit {
       repeat: 'auto-fit',
       maxWidth: 200,
     };
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   valueInputChange(
@@ -103,6 +124,18 @@ export class BalanceCardComponent implements OnInit {
     });
   }
 
+  formatCurrency(precision: number) {
+    return this.formatService.buildCurrencyMask(precision);
+  }
+
+  cardValueToNumber(value: string | number) {
+    if (!isNaN(Number(value))) {
+      return Number(value);
+    } else {
+      return null;
+    }
+  }
+
   addID(cardTitle: string, elementLabel: string, idType: string): string {
     const formattedCardTitle = cardTitle
       ? cardTitle.replace(/\s+/g, '-').toLowerCase()
@@ -138,5 +171,31 @@ export class BalanceCardComponent implements OnInit {
       }
     }
     return `${formattedCardTitle}-card-${formattedElementLabel}${suffix}`;
+  }
+
+  presentValuePreviewExcel() {
+    const filename =
+      this.accountingSummaryService.getFileName('PresentValueTable');
+    let data;
+    this.addEventService.presentValuePayload$.subscribe((value) => {
+      data = value;
+    });
+
+    this.subscription.add(
+      this.accountingSummaryService
+        .exportPresentValuePreviewFile(data)
+        .subscribe((presentValueResponse: any) => {
+          if (!presentValueResponse.data) {
+            this.accountingSummaryService.errorNotify(
+              'Downloading the present value table failed.'
+            );
+          } else {
+            this.accountingSummaryService.downloadExcel(
+              presentValueResponse.data,
+              filename
+            );
+          }
+        })
+    );
   }
 }

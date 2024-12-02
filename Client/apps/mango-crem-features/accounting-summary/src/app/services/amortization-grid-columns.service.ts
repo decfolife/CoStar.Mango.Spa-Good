@@ -498,7 +498,7 @@ export class AmortizationGridColumnsService {
             {
               caption: 'Direct Costs',
               name: 'DirectCosts',
-              dataField: 'directCosts',
+              dataField: 'directCostsTotal',
               usesLocalFormat: 'true',
               usesFunctionalFormat: 'false',
               visible: false,
@@ -650,7 +650,7 @@ export class AmortizationGridColumnsService {
             {
               caption: 'Direct Costs',
               name: 'DirectCosts',
-              dataField: 'directCosts',
+              dataField: 'directCostsTotal',
               usesLocalFormat: 'true',
               usesFunctionalFormat: 'false',
               visible: false,

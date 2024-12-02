@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UtilitiesService } from '@mango/core-shared';
+import { UserService, UtilitiesService } from '@mango/core-shared';
 import {
   OAUTH_CLIENT_KEY_QUERY_PARAM,
   OAUTH_CONTACT_ID_QUERY_PARAM,
@@ -9,10 +9,19 @@ import {
 } from '@mango/data-models/lib-data-models';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
+import { Observable, of, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class MangoNavigationService {
-  constructor(private router: Router, private routerLocation: Location) {}
+  private subscription$ = new Subscription();
+  authorizeUrls: string[] = ['crem/projects/project-tasks'];
+
+  constructor(
+    private router: Router,
+    private routerLocation: Location,
+    private userService: UserService
+  ) {}
 
   handleSpaNavigation(navLink: SharedLeftNavLink, clientKey: string): void {
     if (navLink.spaUrl) {
@@ -38,7 +47,7 @@ export class MangoNavigationService {
     let clientKey = UtilitiesService.getClientKeyFromUrl();
     let caUrl = UtilitiesService.isLocalEnvironment()
       ? environment.CAUrl
-      : `${environment.CAUrl}${clientKey}`;
+      : `${environment.CAUrl}/${clientKey}`;
 
     if (!includeRedirectUri) {
       window.location.href = caUrl;
@@ -121,5 +130,33 @@ export class MangoNavigationService {
 
     document.body.appendChild(f);
     f.submit();
+  }
+
+  checkUserRights(spaUrl: string, queryParamsStr: string): Observable<boolean> {
+    //Check to see if our url is in the authorizeUrls array
+    let foundIndex = this.authorizeUrls.findIndex((au) => spaUrl.indexOf(au));
+    if (foundIndex < 0) {
+      return of(true);
+    }
+
+    let queryParams = queryParamsStr.toLowerCase().split('&');
+    let objType = queryParams
+      .find((qp) => qp.indexOf('otid') >= 0)
+      .split('=')[1];
+    let objId = queryParams.find((qp) => qp.indexOf('oid') >= 0).split('=')[1];
+
+    if (!!objType && !!objId) {
+      return this.userService
+        .getUserRights(Number(objType), Number(objId), 2)
+        .pipe(
+          map((res: any) => {
+            if (!!res && res.success) {
+              return res.data;
+            }
+          })
+        );
+    }
+
+    return of(false);
   }
 }

@@ -1,7 +1,13 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DxDateBoxComponent, DxValidatorComponent } from 'devextreme-angular';
-
+import { CremValidatedComponent } from '../base';
 
 /**
  * Date Picker Input Field: Primarily to be used as part of the DynamicForms component
@@ -16,12 +22,19 @@ import { DxDateBoxComponent, DxValidatorComponent } from 'devextreme-angular';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      multi:true,
-      useExisting: DatePickerComponent
-    }
-  ]
+      multi: true,
+      useExisting: DatePickerComponent,
+    },
+    {
+      provide: CremValidatedComponent,
+      useExisting: DatePickerComponent,
+    },
+  ],
 })
-export class DatePickerComponent implements ControlValueAccessor {
+export class DatePickerComponent
+  extends CremValidatedComponent
+  implements ControlValueAccessor
+{
   @Input() value: string;
   @Input() dateFormat = 'MM/dd/yyyy';
   @Input() invalidDateMessage: string;
@@ -32,20 +45,21 @@ export class DatePickerComponent implements ControlValueAccessor {
   @Input() min: Date;
   @Input() max: Date;
   @Input() disabled: boolean;
-  @Input() placeholderText = "";
+  @Input() placeholderText = '';
   @Input() showDefaultValidationTooltip?: boolean = true;
-  @Input() dataKey:string;
+  @Input() dataKey: string;
   @Output() changeEvent = new EventEmitter();
 
-  @ViewChild("DateBoxValidator", { static: false }) dateBoxValidator: DxValidatorComponent
+  @ViewChild('DateBoxValidator', { static: false })
+  dateBoxValidator: DxValidatorComponent;
   @ViewChild(DxDateBoxComponent) datePickerComponent: DxDateBoxComponent;
 
-  onChange = (value: string) => {}
-  onTouch = () => {}
+  onChange = (value: string) => {};
+  onTouch = () => {};
 
   public onValueChanged(event: any) {
-    this.onChange(event.value)
-    this.onTouch()
+    this.onChange(event.value);
+    this.onTouch();
     this.changeEvent?.emit(event);
   }
 
@@ -55,22 +69,26 @@ export class DatePickerComponent implements ControlValueAccessor {
   }
 
   registerOnChange(fn: any): void {
-      this.onChange = fn
+    this.onChange = fn;
   }
 
   registerOnTouched(fn: any): void {
-      this.onTouch = fn
+    this.onTouch = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {
-      this.disabled = isDisabled
+    this.disabled = isDisabled;
   }
 
   writeValue(value: string): void {
-      this.value = value
+    this.value = value;
   }
 
-  focusDatePicker () {
+  focusDatePicker() {
     this.datePickerComponent.instance.focus();
+  }
+
+  cremSharedComponentValidator() {
+    return this.status === 'error';
   }
 }

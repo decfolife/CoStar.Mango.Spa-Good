@@ -28,6 +28,12 @@ import { MangoAppFacade } from '../../+state/app/app.facade';
 import { BookmarksService } from '../../../../../mango-crem-features/micro-components/src/app/services/bookmarks.service';
 import { GlobalSessionService } from '../../services/global-session.service';
 import { Renderer2 } from '@angular/core';
+import {
+  selectNavigationLinks,
+  selectActiveLink,
+  selectNavLinksFetched,
+} from '../../+state/app/app.selectors';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'mango-crem-component',
@@ -62,9 +68,17 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
 
   bookmarkGroups: BookmarkGroup[] = null;
   public delineator = '»';
+  navigationLinks$: Observable<any[]> = this.store.select(
+    selectNavigationLinks
+  );
+  activeLink$: Observable<string | null> = this.store.select(selectActiveLink);
+  navLinksFetched$: Observable<boolean> = this.store.select(
+    selectNavLinksFetched
+  );
 
   constructor(
     private router: Router,
+    private store: Store,
     private activatedRoute: ActivatedRoute,
     private leftNavService: ProjectsDashboardLeftNavService,
     private headerService: HeaderService,
@@ -77,52 +91,8 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     this.getToolbarModuleLinks();
     this.getDatabaseRestoreInfo();
-    this.loadLeftNavLinks();
+    this.facade.refreshLeftSideNav();
     this.buildBreadCrumbs();
-  }
-
-  loadLeftNavLinks() {
-    this.subs.add(
-      combineLatest([
-        this.facade.showSubLeftNav$,
-        this.facade.moduleId$,
-        this.facade.currentRenderFormDocumentParams$,
-        this.facade.currentSubApp$,
-      ])
-        .pipe(
-          tap(() => (this.navLinksFetched = false)),
-          switchMap(([showSubLeftNav, moduleId, url, currentSubApp]) => {
-            let serviceCall$;
-            if (showSubLeftNav) {
-              serviceCall$ =
-                this.leftNavService.getModuleNavigationLinksForRenderForm(url);
-            } else if (moduleId === 6 && currentSubApp !== MangoSubApps.ADMIN) {
-              serviceCall$ =
-                currentSubApp === MangoSubApps.ETL
-                  ? this.leftNavService.getETLModulesNavigationLinks()
-                  : this.leftNavService.getAdminModulesNavigationLinks(
-                      moduleId
-                    );
-            } else {
-              serviceCall$ =
-                this.leftNavService.getModuleNavigationLinks(moduleId);
-            }
-
-            return serviceCall$.pipe(
-              map((response) => ({ response, moduleId, currentSubApp }))
-            );
-          }),
-          tap(({ response, moduleId, currentSubApp }) => {
-            this.navLinksFetched = !(
-              moduleId === 6 && currentSubApp === MangoSubApps.ADMIN
-            );
-            this.navigationLinks = response.data;
-            this.activeLink =
-              this.crumbActiveLink || this.navigationLinks[0]?.name || null;
-          })
-        )
-        .subscribe()
-    );
   }
 
   ngAfterViewInit(): void {

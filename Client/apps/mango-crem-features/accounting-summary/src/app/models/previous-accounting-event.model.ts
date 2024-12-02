@@ -1,4 +1,4 @@
-export interface previousAccountingEvent {
+export interface PreviousAccountingEvent {
   directCostAmount: number;
   // Key Fields
   leaseRecognitionScheduleID: number;
@@ -59,16 +59,16 @@ export interface previousAccountingEvent {
 
   // Residual Value
   residualValues: {
-    estimatedResidualValue?: number;
-    guaranteedResidualValue?: number; // aka lrs.ResidualValue
-    guaranteedAmtReflectedInPayments?: number;
-    rvGuaranteedBy3rdParty?: number;
-    doesLessorExplicitlyExemptLessee?: boolean;
-    rvGuaranteedByLessee?: number;
-    amountProbableOfBeingOwedByLessee?: number;
-    unguaranteedResidualValue?: number;
-    amtNotReflectedInPVofPayments?: number;
-    pvOfAmtNotReflectedInPayments?: number;
+    doesLessorExplicitlyExemptLessee: boolean;
+    residualValueGuaranteedBy3rdParty: number;
+    residualValue: number;
+    estimatedResidualValue: number;
+    guaranteedAmtReflectedInPayments: number;
+    residualValueGuaranteedByLessee: number;
+    amountProbableOfBeingOwedByLessee: number;
+    unguaranteedResidualValue: number;
+    amtNotReflectedInPVofPayments: number;
+    presentValueOnAmtNotReflectedInPayments: number;
   };
 
   // Financials

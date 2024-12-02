@@ -1,0 +1,221 @@
+<div *ngIf="userHasViewRight">
+  <crem-page-header
+    id="page-header"
+    [tabTitle]="objectType"
+    [pageTitle]="objectName"
+    [showPrimaryButton]="true"
+    [showBookmarkButton]="false"
+    [showSettingsButton]="false"
+    [showListOrMapViewButtons]="false"
+    [customFilters]="true"
+    [customActions]="true"
+    [customSettings]="false"
+  >
+    <div filters class="search-container">
+      <crem-search
+        [showLabel]="false"
+        [placeholder]="'Search notes'"
+        [disabled]="false"
+        [required]="false"
+        [showInfo]="false"
+        [value]=""
+        [debounceTime]="500"
+        [searchOption]="'typing'"
+        (changed)="searchNotes($event)"
+      >
+      </crem-search>
+    </div>
+    <div actions class="actions-container">
+      <crem-button
+        [id]="'page-header-clear'"
+        text="Clear Filters"
+        color="secondary"
+        (buttonClick)="clearFilters()"
+      >
+      </crem-button>
+      <crem-button
+        [id]="'page-header-filter'"
+        text="Filters"
+        color="secondary"
+        icon="faFilter"
+        (buttonClick)="showFilterPopUp($event)"
+      >
+      </crem-button>
+      <div *ngIf="userHasAddRight">
+        <crem-button
+          [text]="'Add'"
+          [color]="'primary'"
+          [disabled]="false"
+          [btnStyle]="'flat'"
+          (buttonClick)="addNote()"
+        ></crem-button>
+      </div>
+    </div>
+  </crem-page-header>
+</div>
+<div class="grid-container" *ngIf="userHasViewRight; else noObjectAccessRight">
+  <dx-data-grid
+    #NotesGrid
+    id="common-notes"
+    keyExpr="commonNoteID"
+    [showColumnLines]="false"
+    [showRowLines]="false"
+    [showBorders]="true"
+    [rowAlternationEnabled]="true"
+    [allowColumnResizing]="true"
+    [allowColumnReordering]="true"
+    [columnResizingMode]="widget"
+    [columnAutoWidth]="false"
+    [wordWrapEnabled]="true"
+    [filterSyncEnabled]="true"
+    [columnMinWidth]="80"
+    [dataSource]="notes"
+    [hoverStateEnabled]="true"
+    [height]="'100%'"
+    [width]="'100%'"
+    [filterValue]="gridFilterValue"
+    (onKeyDown)="onGridCellKeyDown($event)"
+    (onSelectionChanged)="onSelectionChanged($event)"
+  >
+    <dxo-header-filter
+      [visible]="true"
+      [allowSearch]="true"
+    ></dxo-header-filter>
+    <dxo-column-chooser [allowSearch]="true" mode="select"></dxo-column-chooser>
+    <dxo-scrolling mode="virtual"></dxo-scrolling>
+    <dxo-sorting mode="multiple"></dxo-sorting>
+    <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+    <dxo-column-chooser
+      [enabled]="false"
+      [allowSearch]="true"
+      mode="select"
+    ></dxo-column-chooser>
+    <dxo-paging [pageSize]="25"></dxo-paging>
+    <dxo-pager
+      [showPageSizeSelector]="true"
+      [allowedPageSizes]="[25, 50, 100, 200, 500]"
+      [showInfo]="true"
+      [showNavigationButtons]="true"
+      [visible]="true"
+    >
+    </dxo-pager>
+    <dxo-load-panel [enabled]="true"></dxo-load-panel>
+    <dxo-grouping
+      [autoExpandAll]="true"
+      [contextMenuEnabled]="true"
+    ></dxo-grouping>
+    <dxo-summary>
+      <dxi-group-item column="Id" summaryType="count"> </dxi-group-item>
+    </dxo-summary>
+    <dxi-column
+      *ngFor="let column of noteColumns"
+      [dataField]="column.dataField"
+      [caption]="column.caption"
+      [dataType]="column.dataType"
+      [format]="column.format"
+      [width]="column.width"
+      [sortOrder]="column.sortOrder"
+      [alignment]="column.alignment"
+    ></dxi-column>
+    <dxi-column dataField="Actions" caption="Actions" type="buttons" width="65">
+      <dxi-button template="moreMenuTemplate">
+        <div *dxTemplate="let data of 'moreMenuTemplate'">
+          <button
+            class="btn btn-link userOptionsMenuBtn"
+            [matMenuTriggerFor]="MoreMenu"
+            mat-button
+            aria-haspopup="menu"
+            aria-label="More common note options"
+            title="Action menu to delete or edit"
+          >
+            <mat-icon role="none" aria-label="Actions Menu"
+              >more_horiz</mat-icon
+            >
+          </button>
+          <mat-menu #MoreMenu="matMenu">
+            <ul role="group" aria-label="Action items">
+              <li
+                role="none"
+                *ngIf="userHasEditRight"
+                (click)="deleteNote(data.data?.commonNoteID)"
+                (keydown.space)="deleteNote(data.data?.commonNoteID)"
+                (keydown.enter)="deleteNote(data.data?.commonNoteID)"
+                role="menuitem"
+                tabindex="0"
+                mat-menu-item
+              >
+                Delete
+              </li>
+              <li
+                role="none"
+                *ngIf="userHasEditRight"
+                (click)="editNote(data.data?.commonNoteID)"
+                (keydown.space)="editNote(data.data?.commonNoteID)"
+                (keydown.enter)="editNote(data.data?.commonNoteID)"
+                role="menuitem"
+                tabindex="0"
+                mat-menu-item
+              >
+                Edit
+              </li>
+            </ul>
+          </mat-menu>
+        </div>
+      </dxi-button>
+    </dxi-column>
+  </dx-data-grid>
+</div>
+<crem-popup
+  [id]="'filterBuilder'"
+  [visible]="showFilterBuilderPopUp"
+  [title]="'Filter Builder'"
+  [width]="600"
+  [height]="600"
+  [draggable]="true"
+  [resizable]="true"
+  [showFooter]="true"
+  [showCloseButton]="true"
+  [applyButtonText]="'Apply Filter'"
+  [closeButtonText]="'Close'"
+  (apply)="applyFilter($event)"
+  (close)="closeFilter($event)"
+>
+  <div body>
+    <dx-filter-builder [fields]="noteColumns" [(value)]="filter">
+    </dx-filter-builder>
+  </div>
+</crem-popup>
+
+<crem-popup
+  [id]="'deleteCommonNote'"
+  [visible]="isVisibleDeleteCommonNotePopUp"
+  [title]="'Delete Note'"
+  [width]="600"
+  [height]="260"
+  [draggable]="true"
+  [resizable]="true"
+  [showFooter]="true"
+  (onShowClick)="showDeleteCommonNotePopUp($event)"
+  [showCloseButton]="true"
+  [closeButtonText]="'Cancel'"
+  [saveButtonText]="'Confirm'"
+  (close)="closeDeletePopup($event)"
+  (save)="showDeleteCommonNotePopUp($event)"
+>
+  <div body>
+    <div>
+      Do you want to delete the selected note(s) (<strong
+        >ID: {{ commonNoteId }}</strong
+      >)?
+    </div>
+  </div>
+</crem-popup>
+
+<ng-template #noObjectAccessRight>
+  <div class="page-content">
+    <p>401 Unauthorized</p>
+    <p>
+      You do not currently have access to this page, please contact your Admin.
+    </p>
+  </div>
+</ng-template>

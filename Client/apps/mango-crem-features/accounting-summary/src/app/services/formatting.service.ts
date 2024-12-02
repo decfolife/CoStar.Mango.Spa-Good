@@ -194,6 +194,26 @@ export class FormattingService {
     return formatted;
   }
 
+  //This formats DX numberbox module inputs for currency. To use it add the [format] property and provide the required decimal precision variable.
+  //This returns a custom mask that respects decimal precision and the accounting style. This does not return a formatted number string. This only works
+  //with DX Numberbox it will not work with Crem Inputs.
+  buildCurrencyMask(decimalPrecision: number) {
+    let precision = decimalPrecision;
+    let format = ' #,##0';
+    let trailingZeros = '.';
+    for (let i = 0; i < precision; i++) {
+      trailingZeros += '0';
+    }
+    let returnString = '';
+    if (precision > 0) {
+      returnString =
+        format + trailingZeros + ';(' + format + trailingZeros + ')';
+    } else {
+      returnString = format + ';(' + format + ')';
+    }
+    return returnString;
+  }
+
   /**
    * Transforms a localFormat string containing a number back to the corresponding number type.
    * If the number is enclosed in parentheses, it indicates a negative number.

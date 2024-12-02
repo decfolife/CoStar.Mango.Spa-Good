@@ -46,6 +46,7 @@ export class ImportTeamComponent {
   }
 
   importTeamFromTemplate() {
+    this.importButtonDisabled = true;
     this.importTeam();
   }
 
@@ -58,6 +59,16 @@ export class ImportTeamComponent {
       let htmlCellElement = e.cellElement;
       htmlCellElement.setAttribute('id', 'itt-teamId' + e.rowIndex);
     }
+  }
+
+  getAccessLevelDisplayValue(rowData) {
+    return rowData.level == 1
+      ? 'L1'
+      : rowData.level == 2
+      ? 'L2'
+      : rowData.level == 3
+      ? 'L3'
+      : 'N/A';
   }
 
   onSelectionChanged(e: any) {
@@ -97,6 +108,7 @@ export class ImportTeamComponent {
   private importTeam() {
     if (this.data.projectId === undefined || this.data.projectId <= 0) {
       this.dashboardService.displayContactSystemAdminMessage();
+      this.importButtonDisabled = false;
       return;
     }
 
@@ -122,6 +134,7 @@ export class ImportTeamComponent {
               this.dashboardService.errorNotify(res.clientErrorMessage);
             }
           }
+          this.importButtonDisabled = false;
         })
     );
   }

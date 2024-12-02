@@ -111,9 +111,8 @@ export class AccountingHistoryComponent implements OnInit {
 
   getUserInfo() {
     this.subscription.add(
-      this.accountingHistoryService
-        .getUserPreferences()
-        .subscribe((response) => {
+      this.accountingHistoryService.getUserPreferences().subscribe(
+        (response) => {
           if (response.success) {
             this.userPreferences = response.data;
             this.dateFormat = response.data.isDatesEU
@@ -121,12 +120,28 @@ export class AccountingHistoryComponent implements OnInit {
               : 'MM/dd/yyyy hh:mm:ss a';
           } else if (response === null) {
             this.toastService.show(
-              response.clientErrorMessage,
-              'Error',
-              ToastState.ERROR
+              'An error has occurred. Please try again.',
+              '',
+              ToastState.ERROR,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
             );
           }
-        })
+        },
+        (error) => {
+          this.toastService.show(
+            'An error has occurred retrieving user preferences',
+            '',
+            ToastState.ERROR,
+            {
+              position: 'bottom right',
+              maxWidth: '350px',
+            }
+          );
+        }
+      )
     );
   }
 

@@ -95,16 +95,17 @@ export class CentralAuthHttpInterceptor
   // Needs to be an arrow function otherwise injector does not work.
   handleError = (errorResponse: HttpErrorResponse) => {
     const genericErrorObject: CentralAuthHttpError = {
-      message: UNEXPECTED_ERROR_MESSAGE,
       title: 'Error',
+      message: UNEXPECTED_ERROR_MESSAGE,
       errorType: MangoErrorTypes.FATAL,
       errorCode: CentralAuthErrorCodes.InternalError,
       status: errorResponse.status,
       trackingId: null,
       traceId: null,
+      type: errorResponse.error?.type,
     };
 
-    const caHttpError: CentralAuthHttpError = errorResponse.error?.traceId
+    const caHttpError: CentralAuthHttpError = errorResponse.error?.type
       ? errorResponse.error
       : genericErrorObject;
 
@@ -124,7 +125,6 @@ export class CentralAuthHttpInterceptor
       caHttpError.title = 'Unauthorized';
       caHttpError.message = errorResponse.error.message;
       this.facade.logout();
-      this.router.navigate(['/']);
     }
 
     if (caHttpError.errorCode === CentralAuthErrorCodes.ForceLogout) {

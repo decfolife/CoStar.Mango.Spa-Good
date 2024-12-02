@@ -24,11 +24,6 @@
     @include costar(gap, 2);
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 
-    .errorMessage {
-      font-size: 13px;
-      color: $danger;
-    }
-
     // This prevents overlapping and ensures that the first cards
     // are not behind the last cards.
     #financials-amortization-composite-dropdown {
@@ -91,13 +86,12 @@
   }
 }
 
-crem-composite-dropdown {
-  width: 100%;
-}
-
-:host ::ng-deep .annual-rate-input {
-  input {
-    height: 32px;
+:host ::ng-deep {
+  crem-composite-dropdown {
+    width: 100%;
+    .composite-dropdown-container {
+      @include costar(margin, 2);
+    }
   }
 }
 
@@ -170,4 +164,12 @@ crem-composite-dropdown {
     @include costar(border-radius, medium);
     @include costar(background-color, background);
   }
+}
+
+.amortization-profile {
+  height: 36px;
+}
+
+.custom-select-box .dx-texteditor-input {
+  height: 36px;
 }

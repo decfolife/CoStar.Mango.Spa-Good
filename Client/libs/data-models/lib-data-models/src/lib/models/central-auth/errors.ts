@@ -31,6 +31,7 @@ export class CentralAuthHttpError extends MangoError {
     public override message: string,
     public status: number,
     public override errorCode: string,
+    public type: string,
     public trackingId: string,
     public traceId: string
   ) {

@@ -39,5 +39,12 @@
         [message]="''"
       ></dxi-validation-rule>
     </ng-template>
+    <dxi-validation-rule
+      *ngIf="status !== 'default' && statusMessage"
+      type="custom"
+      [validationCallback]="cremSharedComponentValidator"
+      [message]="statusMessage"
+    >
+    </dxi-validation-rule>
   </dx-validator>
 </dx-date-box>

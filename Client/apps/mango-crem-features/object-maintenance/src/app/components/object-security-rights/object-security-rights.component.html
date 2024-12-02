@@ -1,0 +1,105 @@
+<crem-page-header
+  tabTitle="{{ tabTitle }}"
+  [showListOrMapViewButtons]="false"
+  customFilters="true"
+  customActions="true"
+  customSettings="false"
+>
+  <div filters class="search-container">
+    <crem-search
+      [id]="'page-header-search'"
+      [showLabel]="false"
+      [label]="'Please Input search text'"
+      [placeholder]="'Search...'"
+      [required]="false"
+      [disabled]="false"
+      [showInfo]="false"
+      [debounceTime]="500"
+      [searchOption]="'typing'"
+      (changed)="changed($event)"
+    ></crem-search>
+  </div>
+  <div actions class="actions-container">
+    <crem-button
+      [id]="'page-header-clear'"
+      text="Clear Filters"
+      color="secondary"
+      (buttonClick)="clearFilters()"
+    >
+    </crem-button>
+
+    <crem-button
+      [id]="'page-header-filter'"
+      text="Filters"
+      color="secondary"
+      icon="faFilter"
+      (buttonClick)="onShowClick($event)"
+    >
+    </crem-button>
+    <crem-button
+      [id]="'page-header-export'"
+      [color]="'primary'"
+      [text]="sendToExcelClicked ? 'Sending to Excel' : 'Send to Excel'"
+      [ariaLabel]="sendToExcelClicked ? 'Sending to Excel' : 'Send to Excel'"
+      [disabled]="showLoading || sendToExcelClicked"
+      (click)="sendToExcel($event)"
+      [icon]="sendToExcelClicked ? 'faSpinner' : ''"
+      [iconPack]="sendToExcelClicked ? 'solid' : ''"
+      [iconAnimation]="sendToExcelClicked ? 'spin' : ''"
+    ></crem-button>
+  </div>
+</crem-page-header>
+
+<div class="grid" id="object-security-rights-grid">
+  <crem-simple-grid
+    #ObjectSecurityRightsGrid
+    id="object-security-rights-grid-section"
+    [dataSource]="objectSecurityRights"
+    [columns]="objectSecurityRigthsColumns"
+    [paging]="true"
+    [pageSize]="100"
+    [customPageSize]="[50, 100, 200, 500]"
+    [exportFileName]="'Grid_Export'"
+    [filterValue]="gridFilterValue"
+    [showColumnLines]="false"
+  >
+  </crem-simple-grid>
+
+  <dx-load-panel
+    shadingColor="rgba(255,255,255,0.2)"
+    [position]="{ of: '#object-security-rights-grid' }"
+    [visible]="showLoading"
+    [showIndicator]="true"
+    [showPane]="true"
+    [shading]="true"
+    [hideOnOutsideClick]="false"
+  >
+  </dx-load-panel>
+</div>
+
+<crem-popup
+  [id]="'filterBuilder'"
+  [visible]="showFilterBuilderPopUp"
+  [title]="'Filter Builder'"
+  [width]="600"
+  [height]="600"
+  [draggable]="true"
+  [resizable]="true"
+  [showFooter]="true"
+  (close)="close($event)"
+  (onShowClick)="onShowClick($event)"
+  [showCloseButton]="true"
+  [applyButtonText]="'Apply Filter'"
+  [closeButtonText]="'Close'"
+  (apply)="apply($event)"
+  (close)="close($event)"
+>
+  <div body class="grid-container">
+    <dx-filter-builder
+      [fields]="objectSecurityRigthsColumns"
+      [(value)]="filter"
+    >
+    </dx-filter-builder>
+    <div class="dx-clearfix"></div>
+  </div>
+</crem-popup>

@@ -1,0 +1,14 @@
+<div class="error-notification-container">
+  <div class="page-content" *ngIf="errorCode === null">
+    <p>Error Occured</p>
+    <p>An error occurred while processing, please contact your adminstrator.</p>
+  </div>
+
+  <div class="page-content" *ngIf="errorCode === 'Unauthorized'">
+    <p>401 Unauthorized</p>
+    <p>
+      You do not currently have access to this page, please contact your
+      adminstrator.
+    </p>
+  </div>
+</div>

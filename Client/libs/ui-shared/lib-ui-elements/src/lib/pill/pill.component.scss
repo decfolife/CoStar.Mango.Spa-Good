@@ -47,7 +47,7 @@
 }
 
 .basic {
-  @include costar(color, succprimary-lightess);
+  @include costar(color, primary-light);
   @include costar(background-color, light);
   @include costar(border-color, primary-light);
 }

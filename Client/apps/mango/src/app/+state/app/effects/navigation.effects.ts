@@ -6,14 +6,73 @@ import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/mode
 import { MangoAppFacade } from '../app.facade';
 import { combineLatest, of } from 'rxjs';
 import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
+import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
+import { MangoSubApps } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 export class NavigationEffect {
   constructor(
     private actions$: Actions,
     private facade: MangoAppFacade,
-    private mangoNavigationService: MangoNavigationService
+    private mangoNavigationService: MangoNavigationService,
+    private leftNavService: ProjectsDashboardLeftNavService
   ) {}
+
+  loadLeftNavLinks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AppActions.loadLeftNavLinks),
+      switchMap(() => {
+        return combineLatest([
+          this.facade.showSubLeftNav$,
+          this.facade.moduleId$,
+          this.facade.currentRenderFormDocumentParams$,
+          this.facade.currentSubApp$,
+        ]).pipe(
+          tap(() => {
+            // Any synchronous side effects can be handled here
+          }),
+          switchMap(([showSubLeftNav, moduleId, url, currentSubApp]) => {
+            let serviceCall$;
+            if (showSubLeftNav) {
+              serviceCall$ =
+                this.leftNavService.getModuleNavigationLinksForRenderForm(url);
+            } else if (moduleId === 6 && currentSubApp !== MangoSubApps.ADMIN) {
+              serviceCall$ =
+                currentSubApp === MangoSubApps.ETL
+                  ? this.leftNavService.getETLModulesNavigationLinks()
+                  : this.leftNavService.getAdminModulesNavigationLinks(
+                      moduleId
+                    );
+            } else {
+              serviceCall$ =
+                this.leftNavService.getModuleNavigationLinks(moduleId);
+            }
+
+            return serviceCall$.pipe(
+              map((response) => ({
+                response,
+                moduleId,
+                currentSubApp,
+              }))
+            );
+          }),
+          map(({ response, moduleId, currentSubApp }) => {
+            const navLinksFetched = !(
+              moduleId === 6 && currentSubApp === MangoSubApps.ADMIN
+            );
+            const navigationLinks = response.data;
+            const activeLink = navigationLinks[0]?.name || null;
+
+            return AppActions.loadLeftNavLinksSuccess({
+              navigationLinks,
+              activeLink,
+              navLinksFetched,
+            });
+          })
+        );
+      })
+    )
+  );
 
   navigateLeftNavMenu$ = createEffect(
     () =>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { isClassificationTypeName } from '@mango/data-models/lib-data-models';
-import { previousAccountingEvent } from '@accounting-summary/models/previous-accounting-event.model';
+import { PreviousAccountingEvent } from '@accounting-summary/models/previous-accounting-event.model';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { BalanceCardType } from '../components/add-event/financial-card/balance-card/balance-card';
 import { PortfolioSettingsResponse } from '@accounting-summary/models/portfolio-settings-response.modal';
@@ -28,6 +28,7 @@ export class AddEventFormService {
   levelExpense = 0;
   adjustmentGainLoss = 0;
   terminationFee = 0;
+  effectiveRate = 0;
   portfolioSettings: PortfolioSettingsResponse = JSON.parse(
     localStorage.getItem('portfolioSettings') || '{}'
   );
@@ -41,26 +42,38 @@ export class AddEventFormService {
 
   private calculateValuesResponse$ = new Subject<any>();
   public termValues$ = new Subject<any>();
-  private accountingEventData = new BehaviorSubject<any>({});
-  private classificationName = new BehaviorSubject<string>('');
-  private pageMode = new BehaviorSubject<string>('');
-  public financeCards = new BehaviorSubject<any>({});
+  public presentValuePayload$ = new BehaviorSubject<any>({});
+  public presentValueEnabled$ = new BehaviorSubject<boolean>(false);
+  public accountingEventData$ = new BehaviorSubject<any>({});
+  private classificationName$ = new BehaviorSubject<string>('');
+  private pageMode$ = new BehaviorSubject<string>('');
+  public measureEvent$ = new BehaviorSubject<string>('');
+  public financeCards$ = new BehaviorSubject<any>({});
 
   public accountingEventSelector$ = new Subject<any>();
   accountingEventSelectorData$ = this.accountingEventSelector$;
 
   public openingAssetBalance$ = new BehaviorSubject<number>(0);
   public systemAssetAdjustment$ = new BehaviorSubject<number>(0);
-  public manualAssetAdjustment = new BehaviorSubject<number>(0);
-  private manualAssetAdjustmentWasUpdated = false;
-  public compoundFrequency = new BehaviorSubject<number>(
+  public manualAssetAdjustment$ = new BehaviorSubject<number>(0);
+  public manualAssetAdjustmentWasUpdated = new BehaviorSubject<boolean>(false);
+  public compoundFrequency$ = new BehaviorSubject<number>(
     this.portfolioSettings.defaultCompoundFrequencyType
   );
   private compoundFrequencyWasUpdated = false;
-  public paymentTiming = new BehaviorSubject<number>(
+  public paymentTiming$ = new BehaviorSubject<number>(
     this.portfolioSettings.defaultPaymentTimingType
   );
   private paymentTimingWasUpdated = false;
+
+  public isCalculateValuesDisabled = new BehaviorSubject<boolean>(false);
+  public isSaveDisabled = new BehaviorSubject<boolean>(false);
+  public ignoreButtonReset = new BehaviorSubject<boolean>(false);
+  public calculateValuesClicked = new BehaviorSubject<boolean>(false);
+  public DayOneRemeasure$ = new BehaviorSubject<boolean>(false);
+
+  isCalculateValuesDisabled$ = this.isCalculateValuesDisabled.asObservable();
+  isSaveDisabled$ = this.isSaveDisabled.asObservable();
 
   financialFormData$ = this.financialForm$;
   scheduleDetailsFormData$ = this.scheduleDetailsForm$;
@@ -69,25 +82,24 @@ export class AddEventFormService {
   RVFormFormData$ = this.RVForm$;
   commonDropdownsData$ = this.commonDropdowns$;
   calculateValuesResponseData$ = this.calculateValuesResponse$;
-  private decimalPrecision = 2 as number;
+  decimalPrecision$ = new BehaviorSubject<number>(2);
+  private decimalPrecision = 2;
+  overrideOpeningBalance = new BehaviorSubject<number>(0);
 
   constructor(private formatService: FormattingService) {}
 
   setClassification(classification: string) {
-    this.classificationName.next(classification);
+    this.classificationName$.next(classification);
     this.setFinancialBalanceCards();
   }
 
-  setAccountingEventSelector(data: any) {
-    this.accountingEventSelector$.next(data);
-  }
-
-  setPageMode(page: string) {
-    this.pageMode.next(page);
+  setPageMode(page: string, measureEvent: string) {
+    this.pageMode$.next(page);
+    this.measureEvent$.next(measureEvent);
   }
 
   setaccountingEventData(data: any) {
-    this.accountingEventData.next(data);
+    this.accountingEventData$.next(data);
     this.setFinancialBalanceCards();
   }
 
@@ -102,7 +114,6 @@ export class AddEventFormService {
       this.openingAssetBalance = data.openingAssetBalance;
       this.previousAssetBalance = data.previousAssetBalance;
       this.assetAmortization = data.assetAmortization;
-
       this.systemAssetAdjustment = data.systemAssetAdjustment;
       this.presentValue = data.presentValue;
       this.openingLiabilityBalance = data.openingLiabilityBalance;
@@ -111,6 +122,28 @@ export class AddEventFormService {
       this.levelExpense = data.levelExpense;
       this.adjustmentGainLoss = data.adjustmentGainLoss;
       this.terminationFee = data.terminationFee;
+
+      this.accountingEventData$.value.openingAssetBalance =
+        data.openingAssetBalance;
+      this.accountingEventData$.value.previousAssetBalance =
+        data.previousAssetBalance;
+      this.accountingEventData$.value.assetAmortization =
+        data.assetAmortization;
+      this.accountingEventData$.value.systemAssetAdjustment =
+        data.systemAssetAdjustment;
+      this.accountingEventData$.value.presentValue = data.presentValue;
+      this.accountingEventData$.value.openingLiabilityBalance =
+        data.openingLiabilityBalance;
+      this.accountingEventData$.value.previousLiabilityBalance =
+        data.previousLiabilityBalance;
+      this.accountingEventData$.value.liabilityAdjustmentAmount =
+        data.liabilityAdjustmentAmount;
+      this.accountingEventData$.value.levelExpense = data.levelExpense;
+      this.accountingEventData$.value.adjustmentGainLoss =
+        data.adjustmentGainLoss;
+      this.accountingEventData$.value.terminationFee = data.terminationFee;
+      this.calculateValuesClicked.next(true);
+      // this.manualAssetAdjustment$ = this.accountingEventData$.value.manualAssetAdjustment;
     } else {
       this.calculateValuesResponse$.next(null);
       this.openingAssetBalance = 0;
@@ -130,12 +163,12 @@ export class AddEventFormService {
     this.systemAssetAdjustment$.next(this.systemAssetAdjustment);
   }
 
-  setCurrency(name: string, decimalPrecision: number) {
-    if (!this.accountingEventData.value) {
-      this.initializeAccountingEvents();
+  setCurrency(name?: string, decimalPrecision?: number) {
+    if (!this.accountingEventData$.value) {
+      this.initializeAccountingEvents(decimalPrecision, name);
     }
-    this.accountingEventData.value.localCurrency = name;
-    this.accountingEventData.value.localCurrencyDecimalPrecision =
+    this.accountingEventData$.value.localCurrency = name;
+    this.accountingEventData$.value.localCurrencyDecimalPrecision =
       decimalPrecision;
     this.setFinancialBalanceCards();
   }
@@ -158,22 +191,19 @@ export class AddEventFormService {
   }
 
   setEffectiveRate(rate: number) {
-    if (!this.accountingEventData.value) {
-      this.initializeAccountingEvents();
-    }
-    this.accountingEventData.value.effectiveRate = rate;
+    this.effectiveRate = rate;
     this.setFinancialBalanceCards();
   }
 
   setTermValues(ts: string, tp: number, tm: number, td: number, ty: number) {
-    if (!this.accountingEventData.value) {
+    if (!this.accountingEventData$.value) {
       this.initializeAccountingEvents();
     }
-    this.accountingEventData.value.termString = ts;
-    this.accountingEventData.value.termInPeriods = tp;
-    this.accountingEventData.value.termInMonths = tm;
-    this.accountingEventData.value.termInDays = td;
-    this.accountingEventData.value.termInYears = ty;
+    this.accountingEventData$.value.termString = ts;
+    this.accountingEventData$.value.termInPeriods = tp;
+    this.accountingEventData$.value.termInMonths = tm;
+    this.accountingEventData$.value.termInDays = td;
+    this.accountingEventData$.value.termInYears = ty;
     this.setFinancialBalanceCards();
 
     const termsValue = {
@@ -184,6 +214,10 @@ export class AddEventFormService {
       termInYear: ty,
     };
     this.termValues$.next(termsValue);
+  }
+
+  setSaveDisabled(isDisabled: boolean) {
+    this.isSaveDisabled.next(isDisabled);
   }
 
   /**
@@ -198,18 +232,22 @@ export class AddEventFormService {
   }
 
   setCompoundFrequency(frq: number) {
-    this.compoundFrequency.next(frq);
+    this.compoundFrequency$.next(frq);
     this.compoundFrequencyWasUpdated = true;
   }
 
   setPaymentTiming(timing: number) {
-    this.paymentTiming.next(timing);
+    this.paymentTiming$.next(timing);
     this.paymentTimingWasUpdated = true;
   }
 
-  initializeAccountingEvents() {
-    this.accountingEventData.next({
-      localCurrencyDecimalPrecision: 2,
+  initializeAccountingEvents(
+    decimalPrecision?: number,
+    localCurrencyName?: string
+  ) {
+    this.accountingEventData$.next({
+      localCurrencyDecimalPrecision: decimalPrecision ? decimalPrecision : 2,
+      localCurrency: localCurrencyName ? localCurrencyName : '',
       previousAssetBalance: 0,
       openingAssetBalance: 0,
       previousLiabilityBalance: 0,
@@ -222,7 +260,6 @@ export class AddEventFormService {
       effectiveRate: 0,
       openingLiabilityBalance: 0,
       openingBalance: 0,
-      localCurrency: 'USD',
       liabilityAdjustmentAmount: 0,
       adjustmentGainLoss: 0,
       terminationFee: 0,
@@ -233,7 +270,15 @@ export class AddEventFormService {
       straightLineExpense: 0,
       priorROUAssetObtainedAmount: 0,
     });
-    this.manualAssetAdjustment.next(0);
+    this.manualAssetAdjustment$.next(0);
+  }
+
+  formatOpeningBalance(opBalance: number) {
+    if (this.overrideOpeningBalance.value === 1) {
+      return opBalance;
+    } else {
+      return this.formatService.localFormat(opBalance, this.decimalPrecision);
+    }
   }
 
   /**
@@ -248,19 +293,21 @@ export class AddEventFormService {
 
   setFinancialBalanceCards() {
     let portfolioSettings = this.portfolioSettings;
-    let accountingEventData = this.accountingEventData.value;
-    let pageMode = this.pageMode.value;
+    let accountingEventData = this.accountingEventData$
+      .value as PreviousAccountingEvent;
+    let pageMode = this.pageMode$.value;
     let paymentAmountsData = this.paymentAmountsData$.value;
-
-    if (!accountingEventData) {
-      this.financeCards.next([]);
-      return;
+    const measureEvent = this.measureEvent$.value;
+    if (measureEvent === 'Full Termination') {
+      this.presentValueEnabled$.next(false);
     }
+
     this.decimalPrecision =
       accountingEventData.localCurrencyDecimalPrecision ?? 2;
+    this.decimalPrecision$.next(this.decimalPrecision);
     let cards: BalanceCardType[] = [];
 
-    if (isClassificationTypeName(this.classificationName.value)) {
+    if (isClassificationTypeName(this.classificationName$.value)) {
       // todo: Move into an utility class
       // Provision balance cards based on available data
       const balanceCards: { [key: string]: BalanceCardType } = {
@@ -273,10 +320,11 @@ export class AddEventFormService {
                   this.decimalPrecision
                 )
               : this.formatService.localFormat(
-                  accountingEventData.assetAmortization,
+                  accountingEventData.openingAssetBalance ?? 0,
                   this.decimalPrecision
                 ),
           valueSuffix: accountingEventData.localCurrency,
+          precision: this.decimalPrecision,
           className: 'asset-balance',
           elements: [
             {
@@ -295,7 +343,9 @@ export class AddEventFormService {
             {
               label: 'Direct Cost',
               value: this.formatService.localFormat(
-                paymentAmountsData ? paymentAmountsData.directCostAmount : 0,
+                paymentAmountsData
+                  ? paymentAmountsData.directCostAmount ?? 0
+                  : 0,
                 this.decimalPrecision
               ),
             },
@@ -314,24 +364,42 @@ export class AddEventFormService {
             },
             {
               label: 'Manual Adjustment',
-              value: this.formatService.transformLocalFormatToNumber(
-                this.formatService.localFormat(
-                  this.manualAssetAdjustment.value,
-                  this.decimalPrecision
-                )
-              ),
+              value:
+                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
+                  ? this.formatService.transformLocalFormatToNumber(
+                      this.manualAssetAdjustment$.value
+                    )
+                  : this.formatService.transformLocalFormatToNumber(
+                      this.manualAssetAdjustmentWasUpdated.value
+                        ? this.manualAssetAdjustment$.value
+                        : accountingEventData.manualAssetAdjustment ?? 0
+                    ),
               inputType: 'currency',
               precision: this.decimalPrecision,
-              currencyName: accountingEventData.localCurrency,
+              disabled: measureEvent === 'Full Termination',
               formControlName: 'assetBalanceManualAdjustment',
             },
             {
               label: 'Total Adjustment',
-              value: this.formatService.localFormat(
-                accountingEventData.systemAssetAdjustment +
-                  this.manualAssetAdjustment.value,
-                this.decimalPrecision
-              ),
+              value:
+                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
+                  ? this.formatService.localFormat(
+                      this.manualAssetAdjustment$.value +
+                        this.systemAssetAdjustment,
+                      this.decimalPrecision
+                    )
+                  : this.manualAssetAdjustmentWasUpdated.value
+                  ? this.formatService.localFormat(
+                      this.manualAssetAdjustment$.value +
+                        this.systemAssetAdjustment,
+                      this.decimalPrecision
+                    )
+                  : this.formatService.localFormat(
+                      accountingEventData.manualAssetAdjustment ??
+                        0 + accountingEventData.systemAssetAdjustment ??
+                        0,
+                      this.decimalPrecision
+                    ),
             },
           ],
         },
@@ -351,18 +419,10 @@ export class AddEventFormService {
           elements: [
             {
               label: 'Undiscounted Amount',
-              value:
-                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
-                  ? this.formatService.localFormat(
-                      paymentAmountsData
-                        ? paymentAmountsData.undiscountedAmount
-                        : 0,
-                      this.decimalPrecision
-                    )
-                  : this.formatService.localFormat(
-                      accountingEventData.totalAmount,
-                      this.decimalPrecision
-                    ),
+              value: this.formatService.localFormat(
+                paymentAmountsData ? paymentAmountsData.undiscountedAmount : 0,
+                this.decimalPrecision
+              ),
             },
             {
               label: 'Carry Forward',
@@ -403,12 +463,12 @@ export class AddEventFormService {
               value:
                 pageMode === 'Add Event' || pageMode === 'Remeasure Event'
                   ? this.formatService.localFormat(
-                      this.manualAssetAdjustment.value ?? 0,
+                      this.manualAssetAdjustment$.value ?? 0,
                       this.decimalPrecision
                     )
                   : this.formatService.localFormat(
-                      this.manualAssetAdjustmentWasUpdated
-                        ? this.manualAssetAdjustment.value
+                      this.manualAssetAdjustmentWasUpdated.value
+                        ? this.manualAssetAdjustment$.value
                         : accountingEventData.manualAssetAdjustment ?? 0,
                       this.decimalPrecision
                     ),
@@ -420,43 +480,35 @@ export class AddEventFormService {
           value:
             pageMode === 'Add Event' || pageMode === 'Remeasure Event'
               ? this.formatService.localFormat(
-                  this.presentValue,
+                  this.presentValue ?? 0,
                   this.decimalPrecision
                 )
               : this.formatService.localFormat(
-                  accountingEventData.presentValue,
+                  accountingEventData.presentValue ?? 0,
                   this.decimalPrecision
                 ),
           valueSuffix: accountingEventData.localCurrency,
-          //valueLink: pageMode === 'Add Event' ? undefined : '#', // TODO: Waiting for calculation engine update and reeenable after calculation engine is finished
+          valueLink: !this.presentValueEnabled$.value
+            ? undefined
+            : 'presentValuePreviewExcel()',
           elements: [
             {
               label: 'Undiscounted Amount',
-              value:
-                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
-                  ? this.formatService.localFormat(
-                      paymentAmountsData
-                        ? paymentAmountsData.undiscountedAmount
-                        : 0,
-                      this.decimalPrecision
-                    )
-                  : this.formatService.localFormat(
-                      accountingEventData.totalAmount,
-                      this.decimalPrecision
-                    ),
+              value: this.formatService.localFormat(
+                paymentAmountsData
+                  ? paymentAmountsData.undiscountedAmount ?? 0
+                  : 0,
+                this.decimalPrecision
+              ),
             },
             {
               label: 'Effective Rate',
-              value: accountingEventData.effectiveRate
-                ? this.formatService.localFormat(
-                    accountingEventData.effectiveRate,
-                    4
-                  ) + '%'
-                : '0%',
+              value:
+                this.formatService.localFormat(this.effectiveRate, 4) + '%',
             },
             {
               label: 'Term',
-              value: this.accountingEventData.value.termString ?? 0,
+              value: this.accountingEventData$.value.termString ?? 0,
             },
             {
               label: 'Compound Frequency',
@@ -464,16 +516,16 @@ export class AddEventFormService {
               inputType: 'select-box',
               formControlName: 'presentValueCompoundFrequency',
               disabled:
-                pageMode === 'Remeasure Event' ||
+                measureEvent !== 'Initial' ||
                 portfolioSettings.leaseRecognitionCalendarID != 1, // Only enabled when 'Add event' and standard calendar
               initialSelectedValue:
-                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
+                pageMode === 'Add Event'
                   ? this.compoundFrequencyWasUpdated
-                    ? this.compoundFrequency?.value ?? 1
+                    ? this.compoundFrequency$?.value ?? 1
                     : portfolioSettings?.defaultCompoundFrequencyType ?? 1
                   : this.compoundFrequencyWasUpdated
-                  ? this.compoundFrequency?.value ?? 1
-                  : accountingEventData?.compoundFrequency ?? 1,
+                  ? this.compoundFrequency$?.value ?? 1
+                  : accountingEventData?.compoundFrequencyType ?? 1,
               dataSource: [
                 { displayKey: 'Monthly', valueKey: 1 },
                 { displayKey: 'Daily', valueKey: 2 },
@@ -483,14 +535,15 @@ export class AddEventFormService {
               label: 'Payment Timing',
               required: true,
               inputType: 'select-box',
+              disabled: measureEvent === 'Full Termination',
               formControlName: 'presentValuePaymentTiming',
               initialSelectedValue:
-                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
+                pageMode === 'Add Event'
                   ? this.paymentTimingWasUpdated
-                    ? this.paymentTiming?.value ?? 1
+                    ? this.paymentTiming$?.value ?? 1
                     : portfolioSettings?.defaultPaymentTimingType ?? 1
                   : this.paymentTimingWasUpdated
-                  ? this.paymentTiming?.value ?? 1
+                  ? this.paymentTiming$?.value ?? 1
                   : accountingEventData?.paymentInArrears === false
                   ? 1
                   : 2,
@@ -506,11 +559,11 @@ export class AddEventFormService {
           value:
             pageMode === 'Add Event' || pageMode === 'Remeasure Event'
               ? this.formatService.localFormat(
-                  this.openingLiabilityBalance,
+                  this.openingLiabilityBalance ?? 0,
                   this.decimalPrecision
                 )
               : this.formatService.localFormat(
-                  accountingEventData.openingLiabilityBalance,
+                  accountingEventData.openingLiabilityBalance ?? 0,
                   this.decimalPrecision
                 ),
           valueSuffix: accountingEventData.localCurrency,
@@ -520,11 +573,11 @@ export class AddEventFormService {
               value:
                 pageMode === 'Add Event' || pageMode === 'Remeasure Event'
                   ? this.formatService.localFormat(
-                      this.previousLiabilityBalance,
+                      this.previousLiabilityBalance ?? 0,
                       this.decimalPrecision
                     )
                   : this.formatService.localFormat(
-                      accountingEventData.previousLiabilityBalance,
+                      accountingEventData.previousLiabilityBalance ?? 0,
                       this.decimalPrecision
                     ),
             },
@@ -533,11 +586,11 @@ export class AddEventFormService {
               value:
                 pageMode === 'Add Event' || pageMode === 'Remeasure Event'
                   ? this.formatService.localFormat(
-                      this.liabilityAdjustmentAmount,
+                      this.liabilityAdjustmentAmount ?? 0,
                       this.decimalPrecision
                     )
                   : this.formatService.localFormat(
-                      accountingEventData.liabilityAdjustmentAmount,
+                      accountingEventData.liabilityAdjustmentAmount ?? 0,
                       this.decimalPrecision
                     ),
             },
@@ -548,27 +601,35 @@ export class AddEventFormService {
           value:
             pageMode === 'Add Event' || pageMode === 'Remeasure Event'
               ? this.formatService.localFormat(
-                  this.adjustmentGainLoss,
+                  this.manualAssetAdjustment$.value +
+                    this.systemAssetAdjustment -
+                    this.liabilityAdjustmentAmount -
+                    this.terminationFee,
+                  this.decimalPrecision
+                )
+              : this.manualAssetAdjustmentWasUpdated.value
+              ? this.formatService.localFormat(
+                  this.manualAssetAdjustment$.value +
+                    this.systemAssetAdjustment -
+                    this.liabilityAdjustmentAmount -
+                    this.terminationFee,
                   this.decimalPrecision
                 )
               : this.formatService.localFormat(
-                  accountingEventData.adjustmentGainLoss,
+                  accountingEventData.manualAssetAdjustment +
+                    accountingEventData.systemAssetAdjustment -
+                    accountingEventData.liabilityAdjustmentAmount -
+                    accountingEventData.terminationFee,
                   this.decimalPrecision
                 ),
           valueSuffix: accountingEventData.localCurrency,
           elements: [
             {
               label: 'Termination Fee',
-              value:
-                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
-                  ? this.formatService.localFormat(
-                      this.terminationFee,
-                      this.decimalPrecision
-                    )
-                  : this.formatService.localFormat(
-                      accountingEventData.terminationFee,
-                      this.decimalPrecision
-                    ),
+              value: this.formatService.localFormat(
+                paymentAmountsData ? paymentAmountsData.terminationFee : 0,
+                this.decimalPrecision
+              ),
             },
             {
               label: 'Liability Adjustment',
@@ -586,10 +647,21 @@ export class AddEventFormService {
             {
               label: 'Total Asset Adjustment',
               value:
-                pageMode === 'Add Event'
-                  ? this.formatService.localFormat(0, this.decimalPrecision)
+                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
+                  ? this.formatService.localFormat(
+                      this.manualAssetAdjustment$.value +
+                        this.systemAssetAdjustment,
+                      this.decimalPrecision
+                    )
+                  : this.manualAssetAdjustmentWasUpdated.value
+                  ? this.formatService.localFormat(
+                      this.manualAssetAdjustment$.value +
+                        this.systemAssetAdjustment,
+                      this.decimalPrecision
+                    )
                   : this.formatService.localFormat(
-                      accountingEventData.assetAdjustmentAmount,
+                      accountingEventData.manualAssetAdjustment ??
+                        0 + accountingEventData.systemAssetAdjustment,
                       this.decimalPrecision
                     ),
             },
@@ -605,6 +677,7 @@ export class AddEventFormService {
                   this.decimalPrecision
                 ),
           valueSuffix: accountingEventData.localCurrency,
+          precision: this.decimalPrecision,
           elements: [
             {
               label: 'System Adjustment',
@@ -618,16 +691,35 @@ export class AddEventFormService {
             },
             {
               label: 'Manual Adjustment',
-              value: this.formatService.localFormat(0, this.decimalPrecision),
-              inputType: 'number',
+              value: this.formatService.transformLocalFormatToNumber(
+                this.formatService.localFormat(
+                  this.manualAssetAdjustment$.value,
+                  this.decimalPrecision
+                )
+              ),
+              inputType: 'currency',
               formControlName: 'adjustmentManualAdjustment',
             },
             {
               label: 'Total Adjustment',
               value:
-                pageMode === 'Add Event'
-                  ? this.formatService.localFormat(0, this.decimalPrecision)
-                  : this.formatService.localFormat(0, this.decimalPrecision),
+                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
+                  ? this.formatService.localFormat(
+                      this.manualAssetAdjustment$.value +
+                        this.systemAssetAdjustment,
+                      this.decimalPrecision
+                    )
+                  : this.manualAssetAdjustmentWasUpdated.value
+                  ? this.formatService.localFormat(
+                      this.manualAssetAdjustment$.value +
+                        this.systemAssetAdjustment,
+                      this.decimalPrecision
+                    )
+                  : this.formatService.localFormat(
+                      accountingEventData.manualAssetAdjustment ??
+                        0 + accountingEventData.systemAssetAdjustment,
+                      this.decimalPrecision
+                    ),
             },
           ],
         },
@@ -636,14 +728,17 @@ export class AddEventFormService {
           value:
             pageMode === 'Add Event' || pageMode === 'Remeasure Event'
               ? this.formatService.localFormat(
-                  this.assetAmortization,
+                  this.assetAmortization ?? 0,
                   this.decimalPrecision
                 )
               : this.formatService.localFormat(
-                  accountingEventData.assetAmortization,
-                  // Decimal Precision: Where amortizationMethodTypeID is 2 (daily), then use 14 decimal places;
-                  // otherwise assetAmortization is rounded to 0
-                  accountingEventData.amortizationMethodTypeID === 2 ? 14 : 0
+                  accountingEventData.assetAmortization ?? 0,
+                  this.decimalPrecision
+                  // // Decimal Precision: Where amortizationMethodTypeID is 2 (daily), then use 14 decimal places;
+                  // // otherwise assetAmortization is rounded to the local precision
+                  // accountingEventData.amortizationMethodTypeID === 2
+                  //   ? 14
+                  //   : this.decimalPrecision
                 ),
           valueSuffix: accountingEventData.localCurrency,
           className: 'asset-balance',
@@ -689,18 +784,10 @@ export class AddEventFormService {
           elements: [
             {
               label: 'Undiscounted Amount',
-              value:
-                pageMode === 'Add Event' || pageMode === 'Remeasure Event'
-                  ? this.formatService.localFormat(
-                      paymentAmountsData
-                        ? paymentAmountsData.undiscountedAmount
-                        : 0,
-                      this.decimalPrecision
-                    )
-                  : this.formatService.localFormat(
-                      accountingEventData.totalAmount,
-                      this.decimalPrecision
-                    ),
+              value: this.formatService.localFormat(
+                paymentAmountsData ? paymentAmountsData.undiscountedAmount : 0,
+                this.decimalPrecision
+              ),
             },
             {
               label: 'Adjustments',
@@ -747,15 +834,10 @@ export class AddEventFormService {
           elements: [
             {
               label: 'Undiscounted Amount',
-              value:
-                pageMode === 'Add Event'
-                  ? this.formatService.localFormat(0, this.decimalPrecision)
-                  : this.formatService.localFormat(
-                      paymentAmountsData
-                        ? paymentAmountsData.undiscountedAmount
-                        : 0,
-                      this.decimalPrecision
-                    ),
+              value: this.formatService.localFormat(
+                paymentAmountsData ? paymentAmountsData.undiscountedAmount : 0,
+                this.decimalPrecision
+              ),
             },
             {
               label: 'Adjustments',
@@ -793,26 +875,29 @@ export class AddEventFormService {
           cardTitle: 'Opening Balance',
           value:
             pageMode === 'Add Event'
-              ? this.formatService.localFormat(0, this.decimalPrecision)
-              : this.formatService.localFormat(
-                  accountingEventData.openingBalance,
-                  this.decimalPrecision
-                ),
+              ? this.formatOpeningBalance(
+                  this.openingAssetBalance$.value
+                    ? this.openingAssetBalance$.value
+                    : +this.openingAssetBalance
+                )
+              : this.formatOpeningBalance(accountingEventData.openingBalance),
           valueSuffix: accountingEventData.localCurrency,
+          valueEdit: this.overrideOpeningBalance.value === 1,
+          precision: this.decimalPrecision,
           className: 'opening-balance',
           elements: [
             {
               label: 'Override Opening Balance',
-              value: '',
-              inputType: 'number',
-              formControlName: 'openingBalanceOverride',
+              value: this.overrideOpeningBalance.value,
+              inputType: 'check-box',
+              formControlName: 'openingBalanceOverrideCheckbox',
             },
           ],
         },
       };
 
       // Pushing cards according to the classification type
-      switch (this.classificationName.value) {
+      switch (this.classificationName$.value) {
         case 'Operating 840': {
           cards = this.upsertBalanceCard(
             cards,
@@ -897,7 +982,7 @@ export class AddEventFormService {
       }
       // End Switch
     }
-    this.financeCards.next(cards);
+    this.financeCards$.next(cards);
   }
 
   /**
@@ -932,13 +1017,13 @@ export class AddEventFormService {
    * Return a different value depending on the amortizationMethodTypeID
    * todo: move into an utility class
    * @private
-   * @param {previousAccountingEvent} data
+   * @param {PreviousAccountingEvent} data
    * @param {number} decimalPrecision
    * @return {*}  {number}
    * @memberof FinancialCardComponent
    */
   private getNumberOfPeriods(
-    data: previousAccountingEvent,
+    data: PreviousAccountingEvent,
     decimalPrecision: number
   ): number {
     switch (data.amortizationMethodTypeID) {
@@ -1003,9 +1088,8 @@ export class AddEventFormService {
       console.warn('Card not found');
       return;
     }
-
     let decimalPrecision =
-      this.accountingEventData.value.localCurrencyDecimalPrecision ?? 2;
+      this.accountingEventData$.value.localCurrencyDecimalPrecision ?? 2;
     // Modify the corresponding card element
     switch (cards[cardIndex].cardTitle) {
       case 'Asset Balance': {
@@ -1039,11 +1123,11 @@ export class AddEventFormService {
               decimalPrecision
             );
         }
-        this.manualAssetAdjustment.next(Number(e.previousValue));
-        this.manualAssetAdjustmentWasUpdated = true;
+        this.manualAssetAdjustment$.next(Number(e.previousValue));
+        this.manualAssetAdjustmentWasUpdated.next(true);
         cards[cardIndex].elements[totalIndex].value =
           this.formatService.localFormat(
-            this.manualAssetAdjustment.value +
+            this.manualAssetAdjustment$.value +
               this.formatService.transformLocalFormatToNumber(
                 cards[cardIndex].elements[systemAdjustmentIndex].value
               ),
@@ -1063,36 +1147,82 @@ export class AddEventFormService {
           { elementLabel: 'Total Adjustment' },
           cards
         );
+        const openingBalanceCardIndex = this.findCardIndexByTitle(
+          e,
+          cards,
+          'Opening Balance'
+        );
         cards[cardIndex].elements[totalIndex].value =
           this.formatService.localFormat(
-            Number(e.value) +
+            Number(e.previousValue) +
               this.formatService.transformLocalFormatToNumber(
                 cards[cardIndex].elements[systemAdjustmentIndex].value
               ),
             decimalPrecision
           );
+        if (this.overrideOpeningBalance.value != 1) {
+          this.openingAssetBalance = e.previousValue * -1;
+          this.manualAssetAdjustment$.next(e.previousValue);
+          cards[openingBalanceCardIndex].value = this.formatService.localFormat(
+            this.openingAssetBalance,
+            this.decimalPrecision
+          );
+          this.openingAssetBalance$.next(this.openingAssetBalance);
+        }
         break;
       }
       case 'Opening Balance': {
+        const adjustmentsIndex = this.findCardIndexByTitle(
+          e,
+          cards,
+          'Adjustments'
+        );
+        const adjustmentsManualAdjustmentIndex = this.findCardElementIndex(
+          adjustmentsIndex,
+          { elementLabel: 'Manual Adjustment' },
+          cards
+        );
         const overrideOpeningBalanceIndex = this.findCardElementIndex(
           cardIndex,
           { elementLabel: 'Override Opening Balance' },
           cards
         );
-        if (!e.value) {
-          // If the selected value undefined don't override
-          cards[cardIndex].value = this.formatService.localFormat(0, 2);
-        } else {
-          // If value is numeric, override
-          cards[cardIndex].value = this.formatService.localFormat(
-            Number(e.value) +
-              this.formatService.transformLocalFormatToNumber(
-                Number(
-                  cards[cardIndex].elements[overrideOpeningBalanceIndex].value
-                )
-              ),
-            decimalPrecision
+        if (e.elementLabel === 'Override Opening Balance') {
+          this.overrideOpeningBalance.next(
+            this.overrideOpeningBalance.value === 1 ? 0 : 1
           );
+          cards[cardIndex].valueEdit = this.overrideOpeningBalance.value === 1;
+          if (
+            this.overrideOpeningBalance.value != 1 &&
+            adjustmentsIndex != -1
+          ) {
+            this.openingAssetBalance =
+              Number(
+                cards[adjustmentsIndex].elements[
+                  adjustmentsManualAdjustmentIndex
+                ].value
+              ) * -1;
+            cards[cardIndex].value = this.formatOpeningBalance(
+              this.openingAssetBalance
+            );
+            this.openingAssetBalance$.next(this.openingAssetBalance);
+            // cards[cardIndex].value = this.formatService.localFormat(this.openingAssetBalance, this.decimalPrecision);
+          } else if (
+            this.overrideOpeningBalance.value === 1 &&
+            adjustmentsIndex != -1
+          ) {
+            this.openingAssetBalance =
+              this.formatService.transformLocalFormatToNumber(
+                cards[cardIndex].value
+              );
+            cards[cardIndex].value = this.formatOpeningBalance(
+              this.openingAssetBalance
+            );
+            this.openingAssetBalance$.next(this.openingAssetBalance);
+          }
+        } else {
+          this.openingAssetBalance = e.previousValue;
+          this.openingAssetBalance$.next(this.openingAssetBalance);
         }
         break;
       }

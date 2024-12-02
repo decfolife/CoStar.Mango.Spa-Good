@@ -217,8 +217,8 @@ export class ListPageService extends EndpointService {
   }
 
   deleteCharge(objectTypeTypeId, gLEventIdList: number[]) {
-    return this.callHttpPost(
-      `${this.listpages}listpage/Lease/DeleteGLEvents`,
+    return this.callHttpDeleteWithBody(
+      `${this.financials}lease/DeleteGLEvents`,
       'deleteCharge',
       { objectTypeTypeId, gLEventIdList }
     );

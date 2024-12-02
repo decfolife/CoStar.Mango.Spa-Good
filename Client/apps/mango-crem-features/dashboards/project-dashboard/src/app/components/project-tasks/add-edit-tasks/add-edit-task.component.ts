@@ -5,9 +5,14 @@ import {
   EventEmitter,
   Inject,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import {
   AvailableRole,
   ContactRecord,
@@ -26,7 +31,9 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { CardsService } from '@project-dashboard/services/cards.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
-import { Observable, Subscription } from 'rxjs';
+import { EMPTY, Observable, Subscription } from 'rxjs';
+import { AddEditTaskAssigneesComponent } from '../task-info/task-assignees/add-edit-task-assignees/add-edit-task-assignees.component';
+import { filter, switchMap } from 'rxjs/operators';
 import {
   EmailApprovalPreference,
   CalculateDatesPreference,
@@ -47,6 +54,12 @@ export class AddEditTaskComponent implements OnInit {
   private currentUserInfo$: Observable<ContactRecord>;
 
   modalTitle = 'Add Task';
+  // userDateFormat: string;
+
+  dragPosition: any = { x: 0, y: 0 };
+  dateFormat: string = '';
+  userAccessLevel: number;
+  taskInfoData: ProjectTaskInfo = <ProjectTaskInfo>{};
   modalId: string = 'addEditTasksModal';
   closeButton: boolean = true;
   editTask: boolean = false;
@@ -84,6 +97,8 @@ export class AddEditTaskComponent implements OnInit {
   availableRoles: AvailableRole[] = [];
   clientEmailPreference: number = 0;
   reloadProjectsGrid: boolean = false;
+  disableBtn: boolean = false;
+  assignApproverBtnTitle: string = `Make sure changes are applied/saved before leaving to assign approvers.`;
 
   memberInfo: MemberInfo = <MemberInfo>{};
   selectedRoles: MemberInfo['roles'] = [];
@@ -100,6 +115,7 @@ export class AddEditTaskComponent implements OnInit {
   taskNameFieldInvalid = false;
   taskTargetStartDateFieldInvalid = false;
   taskTargetEndDateFieldInvalid = false;
+  dialogPassedInRef: MatDialogRef<AddEditTaskAssigneesComponent>;
 
   onApplyClick = new EventEmitter<number>();
 
@@ -107,6 +123,7 @@ export class AddEditTaskComponent implements OnInit {
     private dashboardService: DashboardService,
     private cardsService: CardsService,
     private dialogService: MangoDialogService,
+    private dialog: MatDialog,
     private facade: MangoAppFacade,
     private cdRef: ChangeDetectorRef,
     public dialogRef: MatDialogRef<AddEditTaskComponent>,
@@ -116,9 +133,10 @@ export class AddEditTaskComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getClientEmailPreference();
-    this.projectId = this.data.projectId;
+    this.dialogPassedInRef = this.data.addEditDialogRef();
     this.editTask = this.data.editTask;
+    if (!this.editTask) this.getClientEmailPreference();
+    this.projectId = this.data.projectId;
     this.addSubTask = this.data.addSubTask;
     this.projectTaskSettings = this.data.projectTaskSettings;
     this.taskIndexOrder = this.data.taskIndexOrder;
@@ -127,6 +145,7 @@ export class AddEditTaskComponent implements OnInit {
     this.taskStep = this.data.taskStep;
     this.taskParentId = this.data.taskParentId;
     this.workFlowOttid = this.data.workFlowOttid;
+    this.userAccessLevel = this.data.userAccessLevel;
 
     if (!this.editTask) {
       this.availableRoles = Object.assign([], this.data.memberInfo.roles);
@@ -138,6 +157,7 @@ export class AddEditTaskComponent implements OnInit {
     this.subs.push(
       this.currentUserInfo$.subscribe((contact) => {
         this.isUserDatesEU = contact.preferences.contactDatesEU;
+        this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
       })
     );
 
@@ -158,7 +178,10 @@ export class AddEditTaskComponent implements OnInit {
     this.taskAssignedRoles = [];
 
     for (let i = 0; i <= this.projectTaskDetails.approvers.length; i++) {
-      this.requiredApproversList.push({ id: i, displayValue: i });
+      const exists = this.requiredApproversList.some((item) => item.id === i);
+      if (!exists) {
+        this.requiredApproversList.push({ id: i, displayValue: i });
+      }
     }
     this.taskRequiredApprovals =
       this.projectTaskDetails.taskInfo.requiredApprovers;
@@ -208,19 +231,88 @@ export class AddEditTaskComponent implements OnInit {
       this.projectTaskDetails.taskInfo.existingPredecessors.map(
         (ea) => ea.projectMilestoneID
       );
+    this.clientEmailPreference = Number(
+      this.projectTaskDetails.taskInfo.useEmailApprovals
+    );
+  }
+
+  openEditAssinees(task, taskApprovers) {
+    const dialogHeight = '800px';
+    const dialogWidth = '500px';
+
+    const dialogRef = this.dialog.open(AddEditTaskAssigneesComponent, {
+      height: dialogHeight,
+      width: dialogWidth,
+      panelClass: 'aea-addOrEditAssginees',
+      data: {
+        taskParentId: this.data.taskParentId,
+        taskStep: this.data.taskStep,
+        taskIndexOrder: this.data.taskIndexOrder,
+        taskSubTasksCount: this.data.taskSubTasksCount,
+        selectedTabIndex: 1,
+        projectId: this.data.projectId,
+        projectCurrentTasks: this.projectCurrentTasks,
+        taskId: task.projectMilestoneID,
+        taskAssignees: taskApprovers,
+        userDateFormat: this.dateFormat,
+        dragPosition: this.dragPosition,
+        reloadTasksGrid: this.reloadProjectsGrid,
+        addEditRef: this.dialogPassedInRef,
+      },
+      disableClose: true,
+    });
+
+    this.subs.push(
+      dialogRef
+        .afterClosed()
+        .pipe(filter((reload) => !!reload))
+        .subscribe((reload) => {
+          if (reload.saveSuccessful) {
+            this.reloadProjectsGrid = true;
+            this.getTaskDetails();
+          }
+        })
+    );
+  }
+
+  addOrEditAssignees(task) {
+    if (this.userAccessLevel && this.userAccessLevel !== 1) {
+      return;
+    }
+    if (task) {
+      this.openEditAssinees(task.taskInfo, task.approvers);
+    } else {
+      this.dialogService.alert(
+        'Get Task Approvers',
+        'There was an issue  getting task info. Please contact the system administrator.',
+        'OK'
+      );
+      return;
+    }
   }
 
   getPredessors() {
     this.availablePredecessors = [];
     this.projectCurrentTasks.forEach((task) => {
       if (this.taskIndexOrder >= task.indexOrder) {
-        let tempPredecessor = <Predecessor>{};
-        tempPredecessor.projectMilestoneID = task.taskId;
-        tempPredecessor.projectMilestoneName = task.taskName;
-        tempPredecessor.projectMilestoneStepFull = task.taskFullStep;
-        tempPredecessor.projectMilestoneStepFullAndName =
-          task.taskFullStep + ' - ' + task.taskName;
-        this.availablePredecessors.push(tempPredecessor);
+        const tempPredecessor: Predecessor = {
+          projectMilestoneID: task.taskId,
+          projectMilestoneName: task.taskName,
+          projectMilestoneStepFull: task.taskFullStep,
+          projectMilestoneStepFullAndName: `${task.taskFullStep} - ${task.taskName}`,
+        };
+
+        const exists = this.availablePredecessors.some(
+          (predecessor) =>
+            predecessor.projectMilestoneID ===
+              tempPredecessor.projectMilestoneID &&
+            predecessor.projectMilestoneStepFull ===
+              tempPredecessor.projectMilestoneStepFull
+        );
+
+        if (!exists) {
+          this.availablePredecessors.push(tempPredecessor);
+        }
       }
     });
   }
@@ -274,6 +366,7 @@ export class AddEditTaskComponent implements OnInit {
 
   validateAndSaveTask(saveOrApply) {
     //validate required fields
+    this.disableBtn = true;
     this.taskNameFieldInvalid = !this.taskNameTextBox.validate();
     this.taskTargetStartDateFieldInvalid =
       !this.targetStartDatePicker.validate();
@@ -289,6 +382,7 @@ export class AddEditTaskComponent implements OnInit {
         'You have left at least one required field empty.\r\n\r\nPlease update and try again.',
         'OK'
       );
+      this.disableBtn = false;
       return;
     } else {
       this.saveTask(saveOrApply);
@@ -309,6 +403,8 @@ export class AddEditTaskComponent implements OnInit {
     this.createOrUpdateProjectTask.parentID = parentIdToSave;
     this.createOrUpdateProjectTask.step = this.addSubTask
       ? 1
+      : this.editTask
+      ? this.taskStep
       : this.taskStep + 1;
     this.createOrUpdateProjectTask.daysToStart = this.taskDaysToStart;
     this.createOrUpdateProjectTask.calc = this.projectTaskSettings
@@ -340,7 +436,9 @@ export class AddEditTaskComponent implements OnInit {
     this.createOrUpdateProjectTask.percentComplete = this.taskPercentCompletion;
     this.createOrUpdateProjectTask.startDate = this.targetStartDate;
     this.createOrUpdateProjectTask.endDate = this.targetEndDate;
-    this.createOrUpdateProjectTask.predecessors = this.taskSelectedPredecessors;
+    this.createOrUpdateProjectTask.predecessors = Array.from(
+      new Set(this.taskSelectedPredecessors)
+    );
     this.createOrUpdateProjectTask.roles = this.taskAssignedRoles;
     this.createOrUpdateProjectTask.approvalExempt = this.taskApprovalExempt;
     this.createOrUpdateProjectTask.requiredApprovers =
@@ -351,6 +449,7 @@ export class AddEditTaskComponent implements OnInit {
         .createOrUpdateTask(this.createOrUpdateProjectTask)
         .subscribe(
           (res: any) => {
+            this.disableBtn = false;
             if (res && res.success) {
               if (saveOrApply == 'save') {
                 this.reloadProjectsGrid = true;
@@ -360,6 +459,8 @@ export class AddEditTaskComponent implements OnInit {
                   this.reloadProjectsGrid = true;
                   this.getTaskDetails();
                 } else {
+                  this.taskId = res.data;
+                  this.getTaskDetails();
                   this.onApplyClick.emit(res.data);
                 }
               }

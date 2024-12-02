@@ -25,6 +25,7 @@ export class AppendTemplateComponent {
   previewVisible = false;
   applyTeamToTaskValue = false;
   previewLabelText: string = null;
+  disableSaveBtn: boolean = false;
   projectTemplates: ProjectTemplate[] = [];
   projectTemplatePreviewGridData: any[] = [];
   subs: Subscription[] = [];
@@ -56,10 +57,17 @@ export class AppendTemplateComponent {
 
   showOrHideViewProjectPreview() {
     this.previewVisible = !this.previewVisible;
-    this.getProjectTemplatePreview();
+    if (this.previewVisible) {
+      this.getProjectTemplatePreview();
+
+      this.dialogRef.updateSize('800px', '800px');
+    } else {
+      this.dialogRef.updateSize('800px', '400px');
+    }
   }
 
   saveAppendTemplate() {
+    this.disableSaveBtn = true;
     this.projectTemplateFieldInvalid = !this.cremDropdown.validate().isValid;
 
     if (this.projectTemplateFieldInvalid) {
@@ -68,6 +76,7 @@ export class AppendTemplateComponent {
         'You have left at least one required field empty.\r\n\r\nPlease update and try again.',
         'OK'
       );
+      this.disableSaveBtn = false;
       return;
     }
 
@@ -97,6 +106,7 @@ export class AppendTemplateComponent {
                 'OK'
               );
             }
+            this.disableSaveBtn = false;
             return alertClosedOnSuccess;
           })
         )
@@ -104,6 +114,7 @@ export class AppendTemplateComponent {
           if (!!res && res) {
             this.closeModal();
           }
+          this.disableSaveBtn = false;
         })
     );
   }

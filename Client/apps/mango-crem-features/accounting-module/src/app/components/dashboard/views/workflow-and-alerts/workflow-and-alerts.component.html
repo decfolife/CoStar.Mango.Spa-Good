@@ -6,45 +6,47 @@
     (cdkDropListDropped)="cardMove($event)"
   >
     <ng-container *ngIf="!cardJSONSchemaLoading">
-      <div
-        *ngFor="let config of cardData"
-        class="categories-item"
-        cdkDropListOrientation="horizontal"
-        [cdkDropListData]="{ card: card, index: i }"
-        fxLayout="row"
-        cdkDrag
-        [class.col-md-6]="!config.cardJSONSchema.fullWidth"
-        [class.col-md-12]="config.cardJSONSchema.fullWidth"
-        [class.cdk-visually-hidden]="!config.cardJSONSchema.visible"
-      >
+      <ng-container *ngFor="let config of cardData">
         <div
-          cdkDragHandle
-          class="card-drag-handle"
-          *ngIf="config && config.cardJSONSchema.visible"
-          id="{{ config.cardPendoId + '--drag_drop' }}"
+          *ngIf="config.cardJSONSchema.visible"
+          class="categories-item"
+          cdkDropListOrientation="horizontal"
+          [cdkDropListData]="{ card: card, index: i }"
+          fxLayout="row"
+          cdkDrag
+          [class.col-md-6]="!config.cardJSONSchema.fullWidth"
+          [class.col-md-12]="config.cardJSONSchema.fullWidth"
+          [class.cdk-visually-hidden]="!config.cardJSONSchema.visible"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="drag_handle"
-            height="24px"
-            viewBox="0 0 24 24"
-            width="24px"
-            fill="#BFBFBF"
+          <div
+            cdkDragHandle
+            class="card-drag-handle"
+            *ngIf="config && config.cardJSONSchema.visible"
+            id="{{ config.cardPendoId + '--drag_drop' }}"
           >
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
-          </svg>
-        </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="drag_handle"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#BFBFBF"
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
+            </svg>
+          </div>
 
-        <mango-accounting-card
-          *ngIf="!cardJSONSchemaLoading && config.cardJSONSchema.visible"
-          [canSaveDefault]="canSaveDefault"
-          [cardData]="config"
-          [dsExportFileName]="exportDataSourceFileName"
-          (cardMove)="cardMove(event)"
-          [pendoId]="config.cardPendoId"
-        ></mango-accounting-card>
-      </div>
+          <mango-accounting-card
+            *ngIf="!cardJSONSchemaLoading && config.cardJSONSchema.visible"
+            [canSaveDefault]="canSaveDefault"
+            [cardData]="config"
+            [dsExportFileName]="exportDataSourceFileName"
+            (cardMove)="cardMove(event)"
+            [pendoId]="config.cardPendoId"
+          ></mango-accounting-card>
+        </div>
+      </ng-container>
     </ng-container>
   </div>
 </div>

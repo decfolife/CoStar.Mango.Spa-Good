@@ -1,14 +1,6 @@
-import { QUICK_APPROVAL_TASK_STATUS } from './../../../models/enums/quick-approval.enums';
+import { CommonModule } from '@angular/common';
 import {
-  adaptResponseToUI,
-  buildQuickApprovalRequest,
-} from './../../adapters/quick-approval-request.adapter';
-import {
-  QuickApprovalRequest,
-  QuickApprovalUI,
-} from './../../../models/interfaces/quick-approval.interface';
-import { QuickApprovalService } from './../../../services/quick-approval.service';
-import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -18,8 +10,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { MangoDialogService } from '@mango/core-shared';
 import {
   DatePickerComponent,
   DatePickerModule,
@@ -27,29 +18,38 @@ import {
   LoaderModule,
   SimpleGridModule,
 } from '@mango/ui-shared/lib-ui-elements';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import {
-  DxDataGridModule,
-  DxTemplateModule,
   DxBulletModule,
-  DxDateBoxModule,
-  DxTextBoxModule,
   DxDataGridComponent,
-  DxValidatorModule,
+  DxDataGridModule,
+  DxDateBoxModule,
+  DxTemplateModule,
+  DxTextBoxModule,
   DxValidatorComponent,
+  DxValidatorModule,
 } from 'devextreme-angular';
 import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import {
   concatMap,
-  debounceTime,
-  distinctUntilChanged,
+  filter,
   first,
   map,
+  shareReplay,
+  switchMap,
   tap,
 } from 'rxjs/operators';
-import { MangoDialogService } from '@mango/core-shared';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { updateGlobalSession } from '@mangoSpa/src/app/+state/app/app.actions';
-
+import { QUICK_APPROVAL_TASK_STATUS } from './../../../models/enums/quick-approval.enums';
+import {
+  QuickApprovalRequest,
+  QuickApprovalUI,
+} from './../../../models/interfaces/quick-approval.interface';
+import { QuickApprovalService } from './../../../services/quick-approval.service';
+import {
+  adaptResponseToUI,
+  buildQuickApprovalRequest,
+} from './../../adapters/quick-approval-request.adapter';
 @Component({
   selector: 'crem-quick-approval',
   standalone: true,
@@ -73,19 +73,24 @@ export class CremQuickApprovalComponent implements OnInit {
   @Input() projectId: string;
   @Input() isNotesFieldRequired: boolean;
   @Input() dateFormat;
-  @Output() pendingTaskApprovalCount = new EventEmitter<number>();
-  @Output() hasChanges = new EventEmitter<boolean>();
+  @Output() hasChanges = new EventEmitter<{
+    enableApply: boolean;
+    enableApprove: boolean;
+    approvalCount: number;
+  }>();
+  @Output() isProcessing = new EventEmitter<boolean>(false);
   @Output() refreshTasksGrid = new EventEmitter();
 
   @ViewChild('DataGrid') dataGrid: DxDataGridComponent;
   @ViewChildren('notesInput') notesInput: QueryList<InputComponent>;
   @ViewChildren('startDatePicker')
   startDatePicker: QueryList<DatePickerComponent>;
+  @ViewChildren('date')
+  approvalDatePicker: QueryList<DatePickerComponent>;
   @ViewChild('emailValidator', { static: false })
   emailValidator: DxValidatorComponent;
   loader$ = new BehaviorSubject(false);
   changes$ = new BehaviorSubject<{ [k: number]: any }>({});
-  changesNoteDate$ = new BehaviorSubject<{ [k: number]: any }>({});
   subs: Subscription[] = [];
   dataSource: QuickApprovalUI[] = [];
   dataLoaded = false;
@@ -95,6 +100,7 @@ export class CremQuickApprovalComponent implements OnInit {
   currentSelectedKeys: any[];
   selectablekeys: any[];
   isSelectAllActive: boolean;
+
   private triggerRefreshGrid$ = new Subject<void>();
   constructor(
     private quickApprovalService: QuickApprovalService,
@@ -104,27 +110,67 @@ export class CremQuickApprovalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader$.next(true);
-    this.triggerRefreshGrid$.subscribe(() => {
-      this.quickApprovalService
-        .getQuickApprovals(this.projectId)
-        .subscribe((res) => {
-          this.requireActualStartDate = res.data.requireActualStartDate;
-          this.loader$.next(false);
-          this.dataLoaded = true;
-          this.dataSource = adaptResponseToUI(res.data.approvals);
-        });
-    });
+    this.initializeRefreshGrid();
+    this.initializeSharedChange();
+    this.triggerRefreshGrid$.next();
+    this.loader$.next(false);
+  }
 
+  private initializeRefreshGrid(): void {
+    this.subs.push(
+      this.triggerRefreshGrid$
+        .pipe(
+          switchMap(() =>
+            this.quickApprovalService.getQuickApprovals(this.projectId)
+          )
+        )
+        .subscribe(
+          (res) => {
+            this.requireActualStartDate = res.data.requireActualStartDate;
+            this.loader$.next(false);
+            this.dataSource = adaptResponseToUI(res.data.approvals);
+            this.dataLoaded = true;
+          },
+          (error) => {
+            console.error('Error loading data:', error);
+          }
+        )
+    );
+  }
+
+  private initializeSharedChange(): void {
+    // Subscription to emit `hasChanges` when there are changes in `changes$`
     this.subs.push(
       this.changes$
         .pipe(
-          map((changeset) => Object.keys(changeset).length > 0),
-          tap((hasChanges) => this.hasChanges.emit(hasChanges))
+          map((changeset) => {
+            let approvalCount = 0;
+            const [enableApply, enableApprove] = Object.keys(changeset).reduce(
+              ([canApply, canApprove], key) => {
+                const patch = changeset[key];
+                const enableApproveTrigger =
+                  'date' in changeset[key] || 'note' in patch;
+                const enableApplyTrigger = 'actualStartDate' in patch;
+
+                canApply = canApply || enableApplyTrigger;
+                canApprove = canApprove || enableApproveTrigger;
+
+                if (enableApproveTrigger) {
+                  approvalCount++;
+                }
+
+                return [canApply, canApprove];
+              },
+              [false, false]
+            );
+
+            return { enableApply, enableApprove, approvalCount };
+          }),
+
+          tap((upd) => this.hasChanges.emit(upd))
         )
         .subscribe()
     );
-
-    this.triggerRefreshGrid$.next();
   }
 
   onEditorPreparing(e): void {
@@ -151,133 +197,178 @@ export class CremQuickApprovalComponent implements OnInit {
   }
 
   async onSelectionChanged(event) {
-    const changeset = this.changes$.getValue();
-    const changedKeys = Object.keys(this.changes$.getValue());
+    this.loader$.next(true);
+    let changes = this.changes$.getValue();
     const gridInstance = this.dataGrid.instance;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const totalVisibleRows = event.component.getVisibleRows().length;
+    const totalSelectedRows = event.selectedRowKeys.length;
+    const allSelected = totalSelectedRows === totalVisibleRows;
+    const allDeselected = totalSelectedRows === 0;
+    const selectableRows = gridInstance
+      .getVisibleRows()
+      .filter((row) => row.data.selectable);
+    const unselectableRowsKeys = gridInstance
+      .getVisibleRows()
+      .filter((row) => !row.data.selectable)
+      .map((row) => row.data.projectMilestoneApprovalID);
+
     gridInstance.beginCustomLoading('Processing...');
     gridInstance.beginUpdate();
-    return new Promise<void>((resolve) => {
+
+    await new Promise<{
+      [k: number]: any;
+    }>((resolve) => {
       setTimeout(() => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const totalVisibleRows = event.component.getVisibleRows().length;
-        const totalSelectedRows = event.selectedRowKeys.length;
-        const allSelected = totalSelectedRows === totalVisibleRows;
-        const allDeselected = totalSelectedRows === 0;
-
-        const selectableRows = gridInstance.getVisibleRows().filter((row) => {
-          return row.data.selectable;
-        });
-
-        const unselectableRowsKeys = gridInstance
-          .getVisibleRows()
-          .filter((row) => !row.data.selectable)
-          .map((row) => row.data.projectMilestoneApprovalID);
-
-        if (allSelected) {
-          selectableRows.forEach((row) => {
-            row.data.note = 'Approved';
-            row.data.date = today;
-            row.data.isRowSelected = true;
-          });
-          let rowElement;
-          unselectableRowsKeys.forEach((key) => {
-            rowElement = this.dataGrid.instance.getRowElement(
-              this.dataGrid.instance.getRowIndexByKey(key)
-            );
-
-            if (rowElement[0].classList.contains('dx-selection')) {
-              rowElement[0].classList.remove('dx-selection');
-            }
-          });
-        } else if (
-          allDeselected &&
-          event.currentDeselectedRowKeys.length !== 1
+        if (
+          (allSelected && event.currentSelectedRowKeys.length !== 1) ||
+          (allDeselected && event.currentDeselectedRowKeys.length !== 1)
         ) {
-          selectableRows.forEach((row) => {
-            row.data.note = '';
-            row.data.date = null;
-            row.data.isRowSelected = false;
-          });
-        } else if (event.currentSelectedRowKeys.length > 0) {
-          event.currentSelectedRowKeys.forEach((key) => {
-            const rowIndex = this.dataSource.findIndex(
-              ({ projectMilestoneApprovalID }) =>
-                projectMilestoneApprovalID === key
-            );
+          if (allSelected) {
+            // if all items are selected
+            selectableRows.forEach((row) => {
+              const { key } = row;
+              let patch = changes[key] || {};
 
-            if (rowIndex > -1) {
-              const rowToUpdate = this.dataSource[rowIndex];
-              this.dataSource[rowIndex] = {
-                ...rowToUpdate,
-                isRowSelected: true,
-                note: 'Approved',
-                date: today,
-                actualStartDate:
-                  changedKeys?.length > 0 &&
-                  changeset?.[key]?.actualStartDate != null
-                    ? changeset[key]?.actualStartDate
-                    : rowToUpdate.actualStartDate, // Modify another date field if needed
-              };
-              if (changedKeys.length > 0 && changeset[key]?.actualStartDate)
-                gridInstance.option('dataSource', this.dataSource);
-            }
-          });
-        } else if (event.currentDeselectedRowKeys.length > 0) {
-          event.currentDeselectedRowKeys.forEach((key) => {
-            const rowIndex = this.dataSource.findIndex(
-              ({ projectMilestoneApprovalID }) =>
-                projectMilestoneApprovalID === key
-            );
+              patch.note = 'Approved';
+              row.data.note = patch.note;
 
-            if (rowIndex > -1) {
-              const rowToUpdate = this.dataSource[rowIndex];
-              this.dataSource[rowIndex] = {
-                ...rowToUpdate,
-                isRowSelected: false,
-                note: '',
-                date: null,
-                actualStartDate:
-                  changedKeys?.length > 0 &&
-                  changeset?.[key]?.actualStartDate != null
-                    ? changeset[key]?.actualStartDate
-                    : rowToUpdate.actualStartDate, // Modify another date field if needed
+              patch.date = today;
+              row.data.date = patch.date;
+
+              changes = {
+                ...changes,
+                [key]: {
+                  ...patch,
+                },
               };
-              if (changedKeys.length > 0 && changeset[key]?.actualStartDate)
-                gridInstance.option('dataSource', this.dataSource);
-            }
-            gridInstance.deselectRows(unselectableRowsKeys);
-          });
+
+              row.data.isRowSelected = true;
+            });
+
+            let rowElement;
+            unselectableRowsKeys.forEach((key) => {
+              rowElement = this.dataGrid.instance.getRowElement(
+                this.dataGrid.instance.getRowIndexByKey(key)
+              );
+
+              if (rowElement[0].classList.contains('dx-selection')) {
+                rowElement[0].classList.remove('dx-selection');
+              }
+            });
+          } else if (allDeselected) {
+            selectableRows.forEach((row) => {
+              const { key } = row;
+              let patch = changes[key] || {};
+
+              if ('note' in patch) {
+                delete patch.note;
+              }
+              if ('date' in patch) {
+                delete patch.date;
+              }
+
+              row.data.note = '';
+              row.data.date = null;
+
+              changes = {
+                ...changes,
+                [key]: {
+                  ...patch,
+                },
+              };
+              row.data.isRowSelected = false;
+            });
+          }
+        } else {
+          if (event.currentSelectedRowKeys.length > 0) {
+            event.currentSelectedRowKeys.forEach((key) => {
+              const row = selectableRows.find((row) => key === row.key);
+              if (row) {
+                row.data.isRowSelected = true;
+
+                const { key } = row;
+                let patch = changes[key] || {};
+
+                patch.note = 'Approved';
+                row.data.note = patch.note;
+                patch.date = today;
+                row.data.date = patch.date;
+
+                changes = {
+                  ...changes,
+                  [key]: {
+                    ...patch,
+                  },
+                };
+              }
+            });
+          } else if (event.currentDeselectedRowKeys.length > 0) {
+            event.currentDeselectedRowKeys.forEach((key) => {
+              const row = selectableRows.find((row) => key === row.key);
+              if (row) {
+                const { key } = row;
+                let patch = changes[key] || {};
+
+                if ('note' in patch) {
+                  delete patch.note;
+                }
+                if ('date' in patch) {
+                  delete patch.date;
+                }
+
+                row.data.note = '';
+                row.data.date = null;
+
+                changes = {
+                  ...changes,
+                  [key]: {
+                    ...patch,
+                  },
+                };
+                row.data.isRowSelected = false;
+              }
+            });
+          }
         }
 
-        this.selectedTasksToApprove = this.dataSource.filter((d) =>
-          event.selectedRowsData.some(
-            (k: QuickApprovalUI) =>
-              k.projectMilestoneApprovalID === d.projectMilestoneApprovalID &&
-              d.approve !== QUICK_APPROVAL_TASK_STATUS.APPROVED &&
-              !d.blockApproval
-          )
-        );
-        this.pendingTaskApprovalCount.emit(
-          this.selectedTasksToApprove.length || 0
-        );
-        resolve();
+        resolve(changes);
       }, 0);
-    }).then((x) => {
-      gridInstance.endCustomLoading();
-      gridInstance.endUpdate();
-    });
+    })
+      .then((changes) => {
+        this.changes$.next(changes);
+        this.loader$.next(false);
+      })
+      .catch((error) => {
+        this.loader$.next(false);
+        console.error('Error processing selection:', error);
+      });
+
+    gridInstance.endCustomLoading();
+    gridInstance.endUpdate();
+
+    this.selectedTasksToApprove = this.dataSource.filter((d) =>
+      event.selectedRowsData.some(
+        (k: QuickApprovalUI) =>
+          k.projectMilestoneApprovalID === d.projectMilestoneApprovalID &&
+          d.approve !== QUICK_APPROVAL_TASK_STATUS.APPROVED &&
+          !d.blockApproval
+      )
+    );
   }
+
   onValueChanged(row, event) {
     const { dataField } = row.column;
+    const { key } = row;
     const today = new Date();
+    const delta = this.changes$.getValue();
 
     switch (dataField) {
       case 'date': {
         const { value, previousValue } = event;
-        const delta = this.changesNoteDate$.getValue();
-        const { key } = row;
+
         const selectedDate = new Date(value);
 
         // Set the time of both dates to the same to only compare the day
@@ -291,10 +382,12 @@ export class CremQuickApprovalComponent implements OnInit {
             'Close'
           );
           event.component.option('value', previousValue);
+          return;
         }
 
-        if (value && dataField) {
-          this.changesNoteDate$.next({
+        if (value != null) {
+          row.data[dataField] = value;
+          this.changes$.next({
             ...delta,
             [key]: {
               ...delta[key],
@@ -307,24 +400,40 @@ export class CremQuickApprovalComponent implements OnInit {
       }
       case 'actualStartDate': {
         const { value, previousValue } = event;
-        const { key } = row;
-        const selectedDate = new Date(value);
-        const delta = this.changes$.getValue();
+        if (!!value) {
+          const selectedDate = new Date(value);
+          // Set the time of both dates to the same to only compare the day
+          today.setHours(0, 0, 0, 0);
+          selectedDate.setHours(0, 0, 0, 0);
 
-        // Set the time of both dates to the same to only compare the day
-        today.setHours(0, 0, 0, 0);
-        selectedDate.setHours(0, 0, 0, 0);
-
-        if (selectedDate > today) {
-          this.dialogService.alert(
-            'Invalid Actual Start Date',
-            'Date must be less than or equal to current date.',
-            'Close'
-          );
-          event.component.option('value', previousValue);
+          if (selectedDate > today) {
+            this.dialogService.alert(
+              'Invalid Actual Start Date',
+              'Date must be less than or equal to current date.',
+              'Close'
+            );
+            event.component.option('value', previousValue);
+            return;
+          }
         }
-
-        if (value && dataField) {
+        // dont update changeset if we are reverting an invalid value to undefined
+        if (previousValue > today && !value) {
+          return;
+        }
+        row.data[dataField] = value;
+        this.changes$.next({
+          ...delta,
+          [key]: {
+            ...delta[key],
+            [dataField]: value,
+          },
+        });
+        break;
+      }
+      case 'note': {
+        const value = event;
+        if (value != null) {
+          row.data[dataField] = value;
           this.changes$.next({
             ...delta,
             [key]: {
@@ -333,136 +442,159 @@ export class CremQuickApprovalComponent implements OnInit {
             },
           });
         }
-        break;
-      }
-      case 'note': {
-        const key = row.key;
-        const value = event;
-        const delta = this.changesNoteDate$.getValue();
-        if (value && dataField) {
-          this.changesNoteDate$.next({
-            ...delta,
-            [key]: {
-              ...delta[key],
-              [dataField]: value,
-            },
-          });
+        if (this.isNotesFieldRequired) {
+          const selectedNote = this.notesInput
+            .toArray()
+            .find((note) => note.dataKey === key);
+          if (selectedNote && !selectedNote.validate()) {
+            selectedNote.state = 'error';
+          } else {
+            selectedNote.state = null;
+          }
         }
         break;
       }
+
       default: {
+        /* empty */
       }
     }
   }
 
   approveTasks(): void {
-    const changeset = this.changes$.getValue();
-    const changedKeys = Object.keys(this.changes$.getValue());
-    const changesetNotes = this.changesNoteDate$.getValue();
-    const changeNoteKeys = Object.keys(this.changesNoteDate$.getValue());
-
-    if (changeNoteKeys.length > 0) {
-      this.selectedTasksToApprove = this.selectedTasksToApprove.map((task) => {
-        const updatedTask = changesetNotes[task.projectMilestoneApprovalID];
-        return updatedTask
-          ? {
-              ...task,
-              note: updatedTask.note ? updatedTask.note : task.note,
-              date: updatedTask.date ? updatedTask.date : task.date,
-            }
-          : task;
-      });
-    }
-
-    if (changedKeys.length > 0) {
-      this.selectedTasksToApprove = this.selectedTasksToApprove.map((task) => {
-        const updatedTask = changeset[task.projectMilestoneApprovalID];
-        return updatedTask
-          ? {
-              ...task,
-              actualStartDate: updatedTask.actualStartDate
-                ? updatedTask.actualStartDate
-                : task.actualStartDate,
-            }
-          : task;
-      });
-    }
-
+    this.loader$.next(true);
     if (this.selectedTasksToApprove.length > 0) {
-      const validationResult = this.selectedTasksToApprove.some((element) => {
+      let validationFailed = false;
+      let focusSet = false;
+
+      this.selectedTasksToApprove.forEach((element) => {
         if (this.requireActualStartDate) {
           const selectedStartDate = this.startDatePicker
             .toArray()
-            .find((startArray) => {
-              return startArray.dataKey === element.projectMilestoneApprovalID;
-            });
-          if (selectedStartDate) {
-            if (!selectedStartDate.validate()) {
+            .find(
+              (startArray) =>
+                startArray.dataKey === element.projectMilestoneApprovalID
+            );
+          if (selectedStartDate && !selectedStartDate.validate()) {
+            validationFailed = true;
+            if (!focusSet) {
               selectedStartDate.focusDatePicker();
-              return true;
+              focusSet = true;
             }
           }
         }
-        const selectedNote = this.notesInput.toArray().find((note) => {
-          return note.dataKey === element.projectMilestoneApprovalID;
-        });
 
-        if (selectedNote) {
-          if (!selectedNote.validate()) {
-            selectedNote.focusInputBox();
-            return true;
+        const approvalStartDate = this.approvalDatePicker
+          .toArray()
+          .find(
+            (approvalArray) =>
+              approvalArray.dataKey === element.projectMilestoneApprovalID
+          );
+        if (approvalStartDate && !approvalStartDate.validate()) {
+          validationFailed = true;
+          if (!focusSet) {
+            approvalStartDate.focusDatePicker();
+            focusSet = true;
           }
+        }
+
+        const selectedNote = this.notesInput
+          .toArray()
+          .find((note) => note.dataKey === element.projectMilestoneApprovalID);
+        if (selectedNote && !selectedNote.validate()) {
+          selectedNote.state = 'error';
+          validationFailed = true;
+          if (!focusSet) {
+            selectedNote.focusInputBox();
+            focusSet = true;
+          }
+        } else {
+          selectedNote.state = null;
         }
       });
 
-      if (validationResult) {
+      if (validationFailed) {
         return;
       }
-    }
 
-    const payload: QuickApprovalRequest = buildQuickApprovalRequest(
-      this.selectedTasksToApprove
-    );
+      const patch = this.changes$.getValue();
+      const keys = Object.keys(patch);
 
-    this.subs.push(
-      this.facade.currentProjectId$
-        .pipe(
-          first(),
-          map((projectId) => ({ ...payload, projectId })),
-          concatMap((data) =>
-            this.quickApprovalService.saveQuickApprovals(data)
+      let updatedRows = [];
+      if (keys.length > 0) {
+        updatedRows = this.selectedTasksToApprove.map((task) => {
+          const key = task.projectMilestoneApprovalID;
+          const delta = patch[key];
+          return delta
+            ? {
+                ...task,
+                note: delta.note ?? task.note,
+                date: delta.date ?? task.date,
+                actualStartDate: delta.actualStartDate ?? task.actualStartDate,
+              }
+            : task;
+        });
+      }
+
+      const payload: QuickApprovalRequest =
+        buildQuickApprovalRequest(updatedRows);
+      this.isProcessing.emit(true);
+      this.dataGrid.instance.beginCustomLoading('Processing...');
+      this.dataGrid.instance.beginUpdate();
+      this.subs.push(
+        this.facade.currentProjectId$
+          .pipe(
+            first(),
+            map((projectId) => ({ ...payload, projectId })),
+            concatMap((data) =>
+              this.quickApprovalService.saveQuickApprovals(data)
+            )
           )
-        )
-        .subscribe(
-          (res) => {
-            if (res) {
+          .subscribe(
+            (res) => {
+              if (res) {
+                this.loader$.next(false);
+                this.isProcessing.emit(false);
+                this.dataGrid.instance.endCustomLoading();
+                this.dataGrid.instance.endUpdate();
+
+                this.changes$.next({});
+                this.triggerRefreshGrid$.next();
+                this.refreshTasksGrid.next();
+                this.facade.refreshLeftSideNav();
+              }
+            },
+            () => {
               this.loader$.next(false);
-              this.pendingTaskApprovalCount.emit(0);
-              this.changes$.next({});
-              this.changesNoteDate$.next({});
-              this.triggerRefreshGrid$.next();
-              this.refreshTasksGrid.next();
-              this.dataGrid.instance.deselectAll();
+              this.isProcessing.emit(false);
+              this.dataGrid.instance.endCustomLoading();
+              this.dataGrid.instance.endUpdate();
+              this.dialogService.alert(
+                'Task Quick Approval',
+                'Cannot complete the Approval, please try again later.',
+                'Close'
+              );
             }
-          },
-          () => {
-            this.loader$.next(false);
-            // TODO: Show some kind of indicator that the request has failed.
-          }
-        )
-    );
+          )
+      );
+    }
   }
 
   saveChanges() {
-    const changedKeys = Object.keys(this.changes$.getValue());
-    if (changedKeys.length > 0) {
+    const patch = this.changes$.getValue();
+    const keys = Object.keys(patch);
+
+    if (keys.length > 0) {
+      this.isProcessing.emit(true);
       this.loader$.next(true);
-      const changeset = this.changes$.getValue();
+      this.dataGrid.instance.beginCustomLoading('Processing...');
+      this.dataGrid.instance.beginUpdate();
 
       const payload: QuickApprovalRequest = {
         isQuickApproval: false,
-        approveRejectTasksRequestList: changedKeys
-          .map((key) => [key, changeset[key]])
+        approveRejectTasksRequestList: keys
+          .map((key) => [key, patch[key]])
+          .filter(([, patch]) => 'actualStartDate' in patch)
           .map(([taskApprovalID, task]) => ({
             taskApprovalID,
             isProxyApproval: false,
@@ -484,14 +616,57 @@ export class CremQuickApprovalComponent implements OnInit {
           .subscribe(
             (res) => {
               if (res) {
-                this.changes$.next({});
+                // update in memory data
+                Object.keys(patch).forEach((key) => {
+                  // for every modified key
+                  this.dataSource
+                    .filter(
+                      (v2) => v2.projectMilestoneApprovalID === parseInt(key)
+                    )
+                    .forEach((row) => {
+                      const rowPatch = patch[key];
+                      const changedProperties = Object.keys(rowPatch);
+
+                      // write applied changes to dataset
+                      changedProperties.forEach((prop) => {
+                        row[prop] = patch[key][prop];
+
+                        if (prop === 'actualStartDate') {
+                          // remove from changeset after commit
+                          // other updates to note and date may still be commited so we do not want to wipe out the entire changeset
+                          delete patch[key][prop];
+                        }
+                      });
+                    });
+                });
+                ////////////////////////////////////////////////////////////////////////////////////
+                // we want to preserve other changes when the apply option is used
+                // the only field that we actualy persist is the actualStartDate when using apply
+                // the actualStartDate is already stored in the grid-state for approval usage
+                // actualStartDate presence is used to drive hiding/showing the 'apply' button
+                ////////////////////////////////////////////////////////////////////////////////////
+                this.changes$.next(patch);
+                ////////////////////////////////////////////////////////////////////////////////////
+                //                                                                                //
+                ////////////////////////////////////////////////////////////////////////////////////
+
                 this.loader$.next(false);
+                this.isProcessing.emit(false);
+                this.dataGrid.instance.endCustomLoading();
+                this.dataGrid.instance.endUpdate();
                 this.refreshTasksGrid.next();
               }
             },
             () => {
               this.loader$.next(false);
-              // TODO: Show some kind of indicator that the request has failed.
+              this.isProcessing.emit(false);
+              this.dataGrid.instance.endCustomLoading();
+              this.dataGrid.instance.endUpdate();
+              this.dialogService.alert(
+                'Task Quick Approval',
+                'Unable to apply changes, please try again later.',
+                'Close'
+              );
             }
           )
       );

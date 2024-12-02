@@ -187,7 +187,7 @@ export class ComposeEmailComponent implements OnInit, OnDestroy {
               return this.emailSendHandler({
                 objectId: projectId,
                 objectName,
-                noteTypeId: this.noteTypeDropdown.selections[0],
+                noteTypeId: this.selectedNoteType.commonNoteTypeID,
                 ToContactIds: this.membersDropdown.selections,
                 body: this.emailMessage,
                 sendUnapprovedTasks: this.unapprovedTasksChecked,

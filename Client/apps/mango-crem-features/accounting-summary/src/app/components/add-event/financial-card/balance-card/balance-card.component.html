@@ -24,20 +24,44 @@
       <!-- Body -->
       <div class="balance-card-content">
         <div class="main-value">
-          <h5 class="value" [id]="addID(card.cardTitle, 'primary', 'value')">
+          <dx-number-box
+            class="value"
+            *ngIf="card.valueEdit"
+            [id]="addID(card.cardTitle, 'primary', 'value')"
+            [name]="openingBalance_value"
+            [(value)]="card.value"
+            [formControlName]="openingBalance"
+            [format]="formatCurrency(card.precision)"
+            [disabled]="item.disabled"
+            (valueChange)="
+              valueInputChange(
+                $event,
+                card.cardTitle,
+                'mainvalue',
+                card.value,
+                true
+              )
+            "
+            (onFocusOut)="
+              onBlurInputChange($event, card.cardTitle, 'mainValue', card.value)
+            "
+          >
+          </dx-number-box>
+          <h5
+            *ngIf="!card.valueEdit"
+            class="value"
+            [id]="addID(card.cardTitle, 'primary', 'value')"
+          >
             <ng-container *ngIf="!card.valueLink; else with_link">
               {{ card.value }}
             </ng-container>
             <ng-template #with_link>
               <a
-                [href]="card.valueLink"
+                (click)="presentValuePreviewExcel()"
                 [target]="card.valueTarget || undefined"
-              >
-                <!-- todo: Pending routerLink -->
-                <crem-icon icon="faExternalLinkAlt" pack="solid"></crem-icon>
-                {{ card.value }}
-              </a>
-            </ng-template>
+                >{{ card.value }}</a
+              ></ng-template
+            >
           </h5>
           <h6
             class="suffix eyebrow"
@@ -106,6 +130,8 @@
                   [name]="item.name"
                   [(value)]="item.value"
                   [formControlName]="item.formControlName"
+                  [disabled]="item.disabled"
+                  [format]="formatCurrency(card.precision)"
                   (onValueChanged)="
                     valueInputChange(
                       $event,
@@ -124,13 +150,6 @@
                     )
                   "
                 >
-                  <dxo-format
-                    type="currency"
-                    [currency]="item.currencyName ?? 'USD'"
-                    [precision]="item.precision"
-                    [accounting]="true"
-                  >
-                  </dxo-format>
                 </dx-number-box>
                 <!-- Select -->
                 <crem-dropdown
@@ -160,6 +179,24 @@
                   [required]="item.required"
                   [showClearButton]="false"
                 ></crem-dropdown>
+                <!-- checkbox -->
+                <crem-check-box
+                  *ngSwitchCase="'check-box'"
+                  [value]="item.value == 1"
+                  [id]="addID(card.cardTitle, item.label, 'checkbox')"
+                  [label]="'Label'"
+                  [disabled]="disabled"
+                  [formControlName]="item.formControlName"
+                  (changeEvent)="
+                    valueInputChange(
+                      $event,
+                      card.cardTitle,
+                      item.label,
+                      item.value
+                    )
+                  "
+                >
+                </crem-check-box>
                 <!-- Text -->
                 <ng-container *ngSwitchDefault>{{ item.value }}</ng-container>
               </ng-container>

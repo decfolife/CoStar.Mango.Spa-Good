@@ -9,6 +9,7 @@ export interface CalculateValues {
   termEnd: string;
   includeFromFirst?: boolean;
   termInPeriods: number;
+  termInYears: number;
   termInDays?: number;
   isIncome: boolean;
   scheduleCurrency: CurrencyDetails;
@@ -24,11 +25,15 @@ export interface CalculateValues {
   isImpaired?: boolean;
   totalAmount?: number;
   directCosts?: number;
+  economicLifeYears: number;
   terminationFee?: number;
   FMV?: number;
-  rouAssetObtainedAmount?: number;
+  test1: boolean;
+  test2: boolean;
+  test5: boolean;
   residualValues: ResidualValues;
   selectedPayments?: any[];
+  pageMode: string;
 }
 
 interface CurrencyDetails {

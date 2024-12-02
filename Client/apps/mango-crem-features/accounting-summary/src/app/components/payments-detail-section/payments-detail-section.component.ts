@@ -1,3 +1,4 @@
+import { HistoricalPayment } from '@accounting-summary/models/interfaces/historical-payments.interfaces';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { PaymentsGridColumnsService } from '@accounting-summary/services/payments-grid-columns.service';
@@ -29,7 +30,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
   componentName = 'payments-grid';
   isGridStateChanged = false;
-  paymentsGridData;
+  paymentsGridData: HistoricalPayment;
   paymentsGridColumns = [];
   paymentsGridHeight: string;
   gridName = 'Payments';
@@ -59,6 +60,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.isAccountingEventEmpty) {
+      this.accountingSummaryService.setGridHeight(this.paymentsDataGrid, 2);
       this.accountingSummaryService.clearGrid(
         this.paymentsDataGrid,
         'No Payment Data'
@@ -111,7 +113,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
           this.paymentsGridColumns =
             this.paymentsGridColumnService.getPaymentGridColumns(
-              this.paymentsGridData,
+              this.eventScheduleData.localCurrency,
               this.dateFormat
             );
           this.getGridPreferences();

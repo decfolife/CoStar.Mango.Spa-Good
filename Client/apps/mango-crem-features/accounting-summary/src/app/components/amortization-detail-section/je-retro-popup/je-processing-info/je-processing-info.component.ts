@@ -3,6 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
@@ -18,7 +21,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
   templateUrl: './je-processing-info.component.html',
   styleUrls: ['./je-processing-info.component.scss'],
 })
-export class JeProcessingInfoComponent {
+export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
   @ViewChild('JournalEntryProcessing')
   journalEntryProcessing: DxDataGridComponent;
   @Input() jeProcessingPopupData: any;
@@ -29,7 +32,6 @@ export class JeProcessingInfoComponent {
   @Input() wfStatusRights: any;
   @Input() displayPeriodTitle: string;
   @Input() isPopupForRetroGridClick = false;
-  @Output() jeActionTaken: EventEmitter<any> = new EventEmitter<any>();
   @Output() setHeight = new EventEmitter<boolean>();
 
   jeProcessingGridColumns = [];
@@ -50,6 +52,7 @@ export class JeProcessingInfoComponent {
   private subscription = new Subscription();
   isLocked = false;
   isArchived = false;
+  isActionButtonDisabled = false;
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -260,6 +263,7 @@ export class JeProcessingInfoComponent {
   }
 
   actionButton() {
+    this.isActionButtonDisabled = true;
     switch (this.changeButtonText) {
       case 'Approve':
         if (
@@ -300,6 +304,7 @@ export class JeProcessingInfoComponent {
         .subscribe((jeProcessResponse: any) => {
           if (jeProcessResponse === null) {
             this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.isActionButtonDisabled = false;
           } else if (jeProcessResponse.success) {
             switch (this.changeButtonText) {
               case 'Approve':
@@ -320,9 +325,13 @@ export class JeProcessingInfoComponent {
                 );
                 break;
             }
-            this.jeActionTaken.emit();
+            this.accountingSummaryService.jeActionTaken$.next(true);
+            this.isActionButtonDisabled = false;
           } else {
-            this.accountingSummaryService.errorNotify('Process Failed');
+            this.accountingSummaryService.errorNotify(
+              'The process failed. If the problem persists, please contact support.'
+            );
+            this.isActionButtonDisabled = false;
           }
         })
     );

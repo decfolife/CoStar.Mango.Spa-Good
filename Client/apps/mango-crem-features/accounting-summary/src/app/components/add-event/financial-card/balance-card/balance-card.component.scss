@@ -39,7 +39,18 @@
         .value {
           margin-bottom: 0;
           @include costar(font-weight, bold);
+          ::ng-deep input {
+            @include costar(font-weight, bold);
+            font-size: large;
+            text-align: center;
+          }
+          a {
+            text-decoration: underline;
+            color: #007bff;
+            cursor: pointer;
+          }
         }
+
         .suffix {
           margin-bottom: 0;
           @include costar(font-weight, normal);

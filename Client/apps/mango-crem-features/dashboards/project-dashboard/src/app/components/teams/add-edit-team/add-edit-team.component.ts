@@ -184,7 +184,8 @@ export class AddEditTeamComponent implements OnInit {
     this.changesMade = true; //here 'this' refers to the column object
   }
 
-  setLevelValue(newData, value: string) {
+  setLevelValue(newData, value) {
+    if (value === 99) return; // 99 == 'N/A'
     newData.level = value;
     this.changesMade = true; //here 'this' refers to the column object
   }

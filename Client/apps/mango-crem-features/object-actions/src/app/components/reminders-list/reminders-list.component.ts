@@ -8,7 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Reminder, UserRoleType } from '@mango/data-models/lib-data-models';
 import { SearchComponent, SearchModule } from '@mango/ui-shared/cosmos';
-import { ButtonModule, DropdownModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  ButtonModule,
+  CremToastService,
+  DropdownModule,
+  PageHeaderComponent,
+} from '@mango/ui-shared/lib-ui-elements';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
 import { exportDataGrid } from 'devextreme/excel_exporter';
@@ -27,6 +32,8 @@ import {
   Output,
 } from '@angular/core';
 import { DeleteReminderComponent } from '../modal/delete-reminder/delete-reminder.component';
+import { ObjectName } from '../../shared/models/interfaces/object-history.interface';
+import { ToastState } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-reminders-list',
@@ -43,6 +50,7 @@ import { DeleteReminderComponent } from '../modal/delete-reminder/delete-reminde
     MatButtonToggleModule,
     MatIconModule,
     MatMenuModule,
+    PageHeaderComponent,
   ],
   providers: [DatePipe, RemindersService],
 })
@@ -62,6 +70,8 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   currentUserRole$: Observable<number>;
 
   USER_ROLES = UserRoleType;
+  object: ObjectName;
+  pageTitle: string;
 
   private subscriptions = new Subscription();
 
@@ -69,7 +79,8 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     private reminderService: RemindersService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private facade: MangoAppFacade
+    private facade: MangoAppFacade,
+    private toastService: CremToastService
   ) {
     this.otid = Number(this.route.snapshot.queryParamMap.get('otid'));
     this.oid = Number(this.route.snapshot.queryParamMap.get('oid'));
@@ -82,6 +93,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     );
     this.loadRemindersData(this.otid, this.oid);
     this.setReminderColumns();
+    this.getObjectName(this.oid, this.otid);
   }
 
   ngOnDestroy(): void {
@@ -372,6 +384,40 @@ export class RemindersListComponent implements OnInit, OnDestroy {
             console.log('Error deleting the reminder: ', error);
           }
         )
+    );
+  }
+
+  public getObjectName(OID: number, OTID: number) {
+    this.subscriptions.add(
+      this.reminderService.getObjectName(OID, OTID).subscribe(
+        (res: any) => {
+          if (res.success) {
+            this.object = res.data;
+            this.pageTitle = this.object[0].objectName;
+          } else {
+            this.toastService.show(
+              'An error has occurred. Please try again.',
+              '',
+              ToastState.ERROR,
+              {
+                position: 'bottom right',
+                maxWidth: '350px',
+              }
+            );
+          }
+        },
+        (error) => {
+          this.toastService.show(
+            'An error has occurred retrieving the property name',
+            '',
+            ToastState.ERROR,
+            {
+              position: 'bottom right',
+              maxWidth: '350px',
+            }
+          );
+        }
+      )
     );
   }
 }

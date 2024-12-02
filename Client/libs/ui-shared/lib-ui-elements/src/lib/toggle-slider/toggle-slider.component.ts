@@ -1,6 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, forwardRef } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  forwardRef,
+} from '@angular/core';
+import {
+  ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 import { Subscription, fromEvent } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 
@@ -20,6 +32,7 @@ import { filter, tap } from 'rxjs/operators';
 })
 export class ToggleSliderComponent implements OnInit, ControlValueAccessor {
   @Input() value: boolean;
+  @Input() labelPosition: 'inside' | 'right' = 'inside';
   @Input() id: string;
   @Input() disabled: boolean;
   @Input() size: 'regular' | 'wide' | 'extra-wide' | 'ultra-wide' = 'regular';

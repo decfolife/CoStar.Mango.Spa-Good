@@ -35,7 +35,8 @@ export class TitleComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  showObjectInfoPopup() {
-    alert('will open object information');
-  }
+  // Temporarily commented out until ready
+  // showObjectInfoPopup() {
+  //   alert('will open object information');
+  // }
 }

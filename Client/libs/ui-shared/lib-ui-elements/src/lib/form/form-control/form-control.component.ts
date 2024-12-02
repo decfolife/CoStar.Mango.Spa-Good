@@ -1,6 +1,12 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  Input,
+} from '@angular/core';
 import { CremFormControlStatusType } from '@mango/data-models/lib-data-models';
+import { CremValidatedComponent } from '../../base';
 
 @Component({
   selector: 'crem-form-control',
@@ -20,9 +26,7 @@ import { CremFormControlStatusType } from '@mango/data-models/lib-data-models';
       [ngStyle]="{
         visibility: !!status
       }"
-    >
-      {{ status == 'error' ? errorMessage : warningMessage }}
-    </div>
+    ></div>
   `,
   host: {
     class: 'crem-form-item-control',
@@ -30,13 +34,19 @@ import { CremFormControlStatusType } from '@mango/data-models/lib-data-models';
     '[class.control-status__warning]': "status === 'warning'",
   },
 })
-export class FormControlComponent {
-  @Input() successMessage?: string;
-  @Input() warningMessage?: string;
-  @Input() errorMessage?: string;
+export class FormControlComponent implements AfterContentInit {
   @Input() validationMessage?: string;
   @Input() hint?: string;
+  @Input() status: CremFormControlStatusType = 'default';
+  @Input() statusMessage: string = undefined;
 
-  // This is a temporary solution for form validation, the full validation will be added in an upcoming story
-  @Input() status: CremFormControlStatusType = '';
+  @ContentChild(CremValidatedComponent)
+  validatorComponent: CremValidatedComponent;
+
+  ngAfterContentInit(): void {
+    if (this.validatorComponent) {
+      this.validatorComponent.status = this.status;
+      this.validatorComponent.statusMessage = this.statusMessage;
+    }
+  }
 }

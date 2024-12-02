@@ -2,92 +2,100 @@
   <div *ngIf="userHasViewRights; else noAccessFlgContent">
     <div *ngIf="buildingInfo">
       <crem-page-header
+        id="page-header"
         pageTitle="CoStar Property Association"
         [showTitleInfo]="false"
       ></crem-page-header>
 
       <div class="page-content">
-        <crem-card
-          id="costar-matching-building-info"
-          title="Building Information"
+        <div class="building-info-container">
+          <crem-card
+            id="costar-matching-building-info"
+            title="Building Information"
+          >
+            <div class="crem-building-info-container">
+              <div class="crem-building-info">
+                <crem-descriptions
+                  [items]="propertyDescriptions"
+                ></crem-descriptions>
+              </div>
+              <div
+                *ngIf="!outsideResearchMarkets"
+                class="button-container"
+                title="{{ verifyAddressTooltip }}"
+              >
+                <crem-button
+                  [id]="'verify-address-button'"
+                  [text]="'Verify Address'"
+                  [btnStyle]="'flat'"
+                  [color]="'primary'"
+                  [size]="'medium'"
+                  [ariaLabel]="'validate-address'"
+                  [disabled]="false"
+                  [className]="''"
+                  [styles]="'width:200px'"
+                  (buttonClick)="verifyAddress()"
+                ></crem-button>
+              </div>
+            </div>
+          </crem-card>
+          <crem-card
+            *ngIf="
+              !outsideResearchMarkets &&
+              (cleanseAddress ||
+                noVerifiedAddressMsg.length > 0 ||
+                matchErrMsg.length > 0)
+            "
+            id="els-address"
+            title="Suggested Address"
+          >
+            <div class="els-content-container">
+              <div
+                class="no-verified-address-msg"
+                *ngIf="noVerifiedAddressMsg.length > 0"
+              >
+                {{ noVerifiedAddressMsg }}
+              </div>
+              <div class="match-err-msg" *ngIf="matchErrMsg.length > 0">
+                {{ matchErrMsg }}
+              </div>
+              <div *ngIf="cleanseAddress" class="els-address-container">
+                <div>{{ elsAddress }}</div>
+                <div class="map-container">
+                  <google-map height="100%" width="100%" [options]="options">
+                    <map-marker [position]="marker?.position"></map-marker>
+                  </google-map>
+                </div>
+                <div *ngIf="cleanseAddress" class="lat-long">
+                  Latitude: {{ cleanseAddress?.latitude }}, Longitude:
+                  {{ cleanseAddress?.longitude }}
+                </div>
+                <div class="button-container" title="{{ useAddressTooltip }}">
+                  <crem-button
+                    [id]="'use-address-button'"
+                    [text]="'Use Address'"
+                    [btnStyle]="'flat'"
+                    [color]="'primary'"
+                    [size]="'medium'"
+                    [ariaLabel]="'validate-address'"
+                    [disabled]="false"
+                    [className]="''"
+                    [styles]="'width:200px'"
+                    (buttonClick)="confirmSaveAddress()"
+                  ></crem-button>
+                </div>
+              </div>
+            </div>
+          </crem-card>
+        </div>
+        <div
+          *ngIf="!outsideResearchMarkets"
+          class="costar-matching-properties-container"
         >
-          <div class="building-info-container">
-            <div class="building-info">
-              <crem-descriptions
-                [items]="propertyDescriptions"
-              ></crem-descriptions>
-            </div>
-            <div class="building-space"></div>
-          </div>
-          <div class="verify-address-container">
-            <div class="verify-address-button-container">
-              <crem-button
-                [id]="'verify-address-button'"
-                [text]="'Verify Address'"
-                [btnStyle]="'flat'"
-                [color]="'primary'"
-                [size]="'medium'"
-                [ariaLabel]="'validate-address'"
-                [disabled]="false"
-                [className]="''"
-                [styles]="'width:200px'"
-                (buttonClick)="verifyAddress()"
-              ></crem-button>
-            </div>
-            <div class="no-matched-msg" *ngIf="showNoMatchedMsg">
-              {{ noMatchedMsg }}
-            </div>
-            <div *ngIf="cleanseAddress" class="cleanse-address-container">
-              <div class="content-container">
-                <div>
-                  <span class="label">Street Address </span>
-                  <span
-                    >{{ cleanseAddress.streetNumber }}
-                    {{ cleanseAddress.streetName }}
-                    {{ cleanseAddress.streetType }}</span
-                  >
-                </div>
-                <div class="address-alignment-container">
-                  <div class="left-column">
-                    <div>
-                      <span class="label">City </span>
-                      <span>{{ cleanseAddress.city }}</span>
-                    </div>
-                    <div>
-                      <span class="label">Zip Code </span>
-                      <span>{{ cleanseAddress.postcode }}</span>
-                    </div>
-                    <div>
-                      <span class="label">Latitude </span>
-                      <span>{{ cleanseAddress.latitude }}</span>
-                    </div>
-                  </div>
-                  <div class="right-column">
-                    <div>
-                      <span class="label">State </span>
-                      <span>{{ cleanseAddress.state }}</span>
-                    </div>
-                    <div>
-                      <span class="label">Country </span>
-                      <span>{{ cleanseAddress.countryCode }}</span>
-                    </div>
-                    <div>
-                      <span class="label">Longitude </span>
-                      <span>{{ cleanseAddress.longitude }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="map-container">
-                <google-map height="100%" width="100%" [options]="options">
-                  <map-marker [position]="marker.position"></map-marker>
-                </google-map>
-              </div>
-            </div>
-          </div>
-        </crem-card>
-        <div class="costar-matching-properties-container">
           <crem-card id="costar-matching-match-property" title="Match Property">
+            <div class="no-match-msg" *ngIf="properties?.length === 0">
+              <p>Unable to match property</p>
+            </div>
             <div class="search-container">
               <crem-search
                 [showLabel]="false"
@@ -97,11 +105,12 @@
                 [showInfo]="false"
                 [value]="buildingInfo.buildingAddress_1"
                 [debounceTime]="500"
+                [searchOption]="'typing'"
                 (changed)="searchCostarProperties($event)"
               >
               </crem-search>
             </div>
-            <div class="grid-container">
+            <div class="grid-container" *ngIf="properties?.length > 0">
               <dx-data-grid
                 #PropertiesGrid
                 id="costar-matching-matched-properties"
@@ -137,25 +146,26 @@
                   alignment="left"
                 ></dxi-column>
               </dx-data-grid>
-            </div>
-            <div
-              class="associatedPropertyInfo"
-              *ngIf="PropertiesGrid.selectedRowKeys.length && userHasAddRights"
-            >
-              <div>Associate Property to</div>
-              <div class="propertyInfo">
-                {{
-                  PropertiesGrid.instance.getSelectedRowsData()[0].coStarAddress
-                }}
-              </div>
-              <div class="confirm">
-                <crem-button
-                  class="confirm-button"
-                  type="primary"
-                  id="costar-matching-confirm-button"
-                  (buttonClick)="saveCostarInfo()"
-                  >Confirm
-                </crem-button>
+              <div
+                class="associated-property-info"
+                *ngIf="PropertiesGrid?.selectedRowKeys?.length > 0"
+              >
+                <div>Associate Property to</div>
+                <div class="propertyInfo">
+                  {{
+                    PropertiesGrid.instance.getSelectedRowsData()[0]
+                      .coStarAddress
+                  }}
+                </div>
+                <div class="confirm">
+                  <crem-button
+                    class="confirm-button"
+                    type="primary"
+                    id="costar-matching-confirm-button"
+                    (buttonClick)="saveCostarInfo()"
+                    >Confirm
+                  </crem-button>
+                </div>
               </div>
             </div>
           </crem-card>
@@ -184,3 +194,25 @@
     </p>
   </div>
 </ng-template>
+
+<crem-popup
+  [id]="'update-address-confirmation'"
+  [visible]="showUseAddressConfirmation"
+  [title]="'Use Address Confirmation'"
+  [saveButtonText]="'Yes'"
+  [closeButtonText]="'No'"
+  height="auto"
+  width="500"
+  [draggable]="'true'"
+  [showCloseButton]="'true'"
+  (close)="closePopup()"
+  (save)="updateBuildingAddress()"
+>
+  <div body>
+    <div>Are you sure you would like to proceed?</div>
+    <div class="note">
+      NOTE: This will update the building address information on your building
+      form.
+    </div>
+  </div>
+</crem-popup>

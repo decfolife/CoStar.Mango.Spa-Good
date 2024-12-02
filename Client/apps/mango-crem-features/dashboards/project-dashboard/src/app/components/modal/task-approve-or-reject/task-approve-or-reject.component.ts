@@ -27,7 +27,7 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { REQUIRE_ACTUAL_START_DATE } from '@project-dashboard/models/constants/approve-reject-constants';
 import { PROJECT_REQUIRE_TASK_NOTES } from '@project-dashboard/models/constants/project-tasks-constants';
 import { combineLatest, Observable, Subscription } from 'rxjs';
-import { concatMap, first, map, tap } from 'rxjs/operators';
+import { concatMap, first, map, tap, filter } from 'rxjs/operators';
 const APPROVE = 'Approve';
 const REJECT = 'Reject';
 
@@ -62,6 +62,12 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
   taskActualStartDate: Date = null;
   taskApprovalDate: Date = null;
   taskApproveRejectForm: FormGroup;
+  displayResendEmailBtn: boolean = false;
+  taskResendEmail: boolean = false;
+  tarNotesStatus: string = 'initialInputDisplay';
+  initialLoad: boolean = true;
+  disableActionBtn: boolean = false;
+  disableResendBtn: boolean = false;
   currentDate: Date;
   subs: Subscription[] = [];
 
@@ -79,11 +85,13 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
     this.dateFormat = this.data.dateFormat;
     this.taskAction = this.data.action;
     this.taskData = this.data.taskData;
+    this.taskResendEmail = this.data.taskResendEmail;
     this.taskActualStartDate = this.data.taskData.ActualStartDate;
     this.isNotesFieldRequired = this.data.notesRequired;
     this.taskApprovalDate = new Date();
     this.headerTaskName = `${this.data.action} Task - ${this.data.taskData.ProjectMilestoneName}`;
     this.getActualDateRequiredFlag();
+    this.getUserSettingAndLogStatus();
 
     this.taskApproveRejectForm = new FormGroup({
       notes: new FormControl('', [Validators.required]),
@@ -107,6 +115,18 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
 
   onApprovalDateChange(e) {
     this.taskApprovalDate = e.value;
+  }
+
+  onNotesChanged(e) {
+    let notesVal = e;
+    this.tarNotesStatus = this.initialLoad
+      ? 'initialInputDisplay'
+      : !this.isNotesFieldRequired
+      ? 'inputValueChanged'
+      : notesVal
+      ? 'inputValueChanged'
+      : 'noFormErrorStatus';
+    this.initialLoad = false;
   }
 
   getObjData(): Observable<ApproveRejectTasks> {
@@ -162,6 +182,7 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
         )
           this.actualStartDatePicker.focusDatePicker();
         else if (this.isNotesFieldRequired && !this.notesInput.validate()) {
+          this.tarNotesStatus = 'noFormErrorStatus';
           this.notesInput.focusTextBox();
         } else {
           this.approveOrRejectTask();
@@ -169,6 +190,7 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
         break;
       case REJECT:
         if (this.isNotesFieldRequired && !this.notesInput.validate()) {
+          this.tarNotesStatus = 'noFormErrorStatus';
           this.notesInput.focusTextBox();
         } else {
           this.approveOrRejectTask();
@@ -178,6 +200,7 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
   }
 
   approveOrRejectTask() {
+    this.disableActionBtn = true;
     this.subs.push(
       this.getObjData()
         .pipe(
@@ -187,6 +210,7 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
         )
         .subscribe((res) => {
           if (res && res.success) {
+            this.facade.refreshLeftSideNav();
             this.reloadProjectsTasksGrid = true;
             this.closeModal();
           } else {
@@ -215,6 +239,57 @@ export class TaskApproveOrRejectComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  getUserSettingAndLogStatus() {
+    this.subs.push(
+      combineLatest([
+        this.dashboardService.getClientPreference('UseEmailApprovals'),
+        this.dashboardService.getApprovalRejectionLogStatus(
+          this.taskData.ProjectMilestoneID
+        ),
+      ])
+        .pipe(
+          filter(
+            ([clientEmailPreference, approvalRejectionLogStatus]) =>
+              !!clientEmailPreference &&
+              !!approvalRejectionLogStatus &&
+              clientEmailPreference.success &&
+              approvalRejectionLogStatus.success
+          ),
+          tap(([clientEmailPreference, approvalRejectionLogStatus]) => {
+            this.displayResendEmailBtn =
+              approvalRejectionLogStatus.data &&
+              clientEmailPreference.data == CLIENT_PREFERENCE.ReceiveEmail &&
+              this.taskResendEmail
+                ? true
+                : false;
+          })
+        )
+        .subscribe()
+    );
+  }
+
+  resendApproval() {
+    this.disableResendBtn = true;
+    this.subs.push(
+      this.dashboardService
+        .resendEmailTaskApproval(
+          this.taskData.ProjectID,
+          this.taskData.ProjectMilestoneID
+        )
+        .pipe(
+          tap((res) => {
+            res && res.success
+              ? this.dashboardService.successNotify('Email(s) Sent.')
+              : ((this.disableResendBtn = false),
+                this.dashboardService.errorNotify(
+                  'Email did not send. Please review and try again.'
+                ));
+          })
+        )
+        .subscribe()
+    );
   }
 
   closeModal() {

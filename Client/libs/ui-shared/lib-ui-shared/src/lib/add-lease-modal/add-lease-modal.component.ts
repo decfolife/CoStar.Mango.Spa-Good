@@ -16,12 +16,14 @@ import {
   ObjectType,
   RequestType,
   ToastState,
+  VALIDATION_ERROR,
 } from '@mango/data-models/lib-data-models';
 import {
   CremToastService,
   DropdownComponent,
   InputComponent,
 } from '@mango/ui-shared/lib-ui-elements';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import DataSource from 'devextreme/data/data_source';
@@ -75,7 +77,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   selectedPremiseType: any = null;
   selectedAccountingType: any;
   selectedParentLease: any;
-  selectedCurrency: any;
+  selectedCurrency: number;
   selectedMeasurement: any;
   leaseType: any;
   beginDate: any;
@@ -116,6 +118,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
     private router: Router,
     private dataService: DataService,
     private toastService: CremToastService,
+    private facade: MangoAppFacade,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       objectTypeName: string;
@@ -150,6 +153,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
     );
     this.getPortfolioDropdownData();
     this.getPremiseName();
+    this.getLeaseName();
     this.getBuildingName();
     this.getAccountingTypes();
     this.getCurrencyTypes();
@@ -158,7 +162,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
 
     if (!this.data.objectTypeName) {
       this.subscriptions.add(
-        this.dashboardService.getObjectTypeNames([4]).subscribe((result) => {
+        this.dashboardService.getObjectTypeNames([3]).subscribe((result) => {
           this.data.objectTypeName = result?.data?.[0]?.objectTypeName;
           this.buildModalTitle();
         })
@@ -286,7 +290,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       tenantName: new FormControl('', [Validators.required]),
       accountingType: new FormControl('', [Validators.required]),
       parentLease: new FormControl(''),
-      currency: new FormControl('', [Validators.required]),
+      currencyTypeList: new FormControl('', [Validators.required]),
       measurement: new FormControl('', [Validators.required]),
       leaseTemplate: new FormControl('', [Validators.required]),
       beginDate: new FormControl(null, [Validators.required]),
@@ -534,7 +538,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       BeginDate: form.get('beginDate').value,
       EndDate: form.get('endDate').value,
       AccountingType: this.selectedAccountingType,
-      ExchangeRateID: this.selectedCurrency,
+      ExchangeRateID: form.get('currencyTypeList').value[0],
       MeasureUnitsID: this.selectedMeasurement,
     };
   }
@@ -547,11 +551,10 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   }
 
   public save(e: any) {
-    if (this.addLeaseFormGroup.valid) {
+    if (this.addLeaseFormGroup.valid && this.datesAreValid()) {
       this.getPremiseId().then((resolve) => {
         const lease = this.getLeaseFromFormData();
         lease.PremiseID = resolve;
-        this.saveClicked = true;
         this.loading = true;
         this.subscriptions.add(
           this.formWizardService.addLease(lease).subscribe((result) => {
@@ -581,11 +584,16 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
           })
         );
       });
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 
   public saveAndNew(e: any) {
-    if (this.addLeaseFormGroup.valid) {
+    if (this.addLeaseFormGroup.valid && this.datesAreValid()) {
       this.saveClicked = true;
       this.getPremiseId().then((resolve) => {
         const lease = this.getLeaseFromFormData();
@@ -619,6 +627,11 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
           })
         );
       });
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 
@@ -645,7 +658,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   }
 
   launch(data: any) {
-    if (this.addLeaseFormGroup.valid) {
+    if (this.addLeaseFormGroup.valid && this.datesAreValid()) {
       this.getPremiseId().then((resolve) => {
         this.saveClicked = true;
         const lease = this.getLeaseFromFormData();
@@ -658,7 +671,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
               const currURL = this.getRedirectorURL(
                 result.data,
                 ObjectType.LEASE,
-                lease.ObjectTypeTypeID
+                this.selectedTemplate
               );
               this.router.navigateByUrl(currURL);
             } else {
@@ -674,6 +687,11 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
             }
           })
         );
+      });
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
       });
     }
   }
@@ -748,5 +766,12 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
         resolve(this.selectedPremise);
       }
     });
+  }
+
+  datesAreValid() {
+    if (Date.parse(this.endDate) < Date.parse(this.beginDate)) {
+      return false;
+    }
+    return true;
   }
 }

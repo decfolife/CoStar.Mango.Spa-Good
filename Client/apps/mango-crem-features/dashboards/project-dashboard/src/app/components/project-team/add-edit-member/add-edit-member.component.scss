@@ -171,3 +171,9 @@
     margin-left: 8px;
   }
 }
+
+::ng-deep .aet-dropDownWrapper.dx-popup-wrapper > .dx-overlay-content {
+  position: absolute;
+  top: 100% !important;
+  transform: none !important;
+}

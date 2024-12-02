@@ -164,55 +164,54 @@ export class Asc842AnnualDisclosuresComponent implements OnInit {
     );
     this.pivotCardData = [];
 
-const groupedItems = filteredData.reduce((acc, item) => {
-  if (!acc[item.PeriodYear]) {
-    acc[item.PeriodYear] = [];
-  }
-  acc[item.PeriodYear].push(item);
-  return acc;
-}, {});
+    const groupedItems = filteredData.reduce((acc, item) => {
+      if (!acc[item.PeriodYear]) {
+        acc[item.PeriodYear] = [];
+      }
+      acc[item.PeriodYear].push(item);
+      return acc;
+    }, {});
 
-for (const year in groupedItems) {
-  groupedItems[year].forEach((item) => {
-    const total = item.ScheduledPaymentsReporting;
+    for (const year in groupedItems) {
+      groupedItems[year].forEach((item) => {
+        const total = item.ScheduledPaymentsReporting;
 
-    const baseItems = [
-      {
-        Display: year,
-        DisclosureClassificiation: item.ClassificationName,
-        data: total,
-      },
-      {
-        Display: year,
-        DisclosureClassificiation: 'Total',
-        data: total,
-      },
-    ];
+        const baseItems = [
+          {
+            Display: year,
+            DisclosureClassificiation: item.ClassificationName,
+            data: total,
+          },
+          {
+            Display: year,
+            DisclosureClassificiation: 'Total',
+            data: total,
+          },
+        ];
 
-    this.pivotCardData.push(...baseItems);
-  });
-}
+        this.pivotCardData.push(...baseItems);
+      });
+    }
 
-const lastYear = Math.max(...Object.keys(groupedItems).map(Number));
-const lastItems = groupedItems[lastYear];
+    const lastYear = Math.max(...Object.keys(groupedItems).map(Number));
+    const lastItems = groupedItems[lastYear];
 
-lastItems.forEach(item => {
-  const remainingItems = [
-    {
-      Display: 'Thereafter',
-      DisclosureClassificiation: item.ClassificationName,
-      data: item.RemainingPaymentsReporting,
-    },
-    {
-      Display: 'Thereafter',
-      DisclosureClassificiation: 'Total',
-      data: item.RemainingPaymentsReporting,
-    },
-  ];
+    lastItems.forEach((item) => {
+      const remainingItems = [
+        {
+          Display: 'Thereafter',
+          DisclosureClassificiation: item.ClassificationName,
+          data: item.RemainingPaymentsReporting,
+        },
+        {
+          Display: 'Thereafter',
+          DisclosureClassificiation: 'Total',
+          data: item.RemainingPaymentsReporting,
+        },
+      ];
 
-  this.pivotCardData.push(...remainingItems);
-});
-
+      this.pivotCardData.push(...remainingItems);
+    });
 
     if (this.dataSources.length > 0) {
       this.dataSources[7] = new PivotGridDataSource({
@@ -321,7 +320,7 @@ lastItems.forEach(item => {
   public setMaturityAnalysis(data, years?: number) {
     // copy/pasted function
     this.pivotCardData = [];
-    years = !years ? 5: years;
+    years = !years ? 5 : years;
     const filteredData = this.filterByPeriodYear(
       data,
       this.reportingYear,
@@ -335,11 +334,11 @@ lastItems.forEach(item => {
       acc[item.PeriodYear].push(item);
       return acc;
     }, {});
-    
+
     for (const year in groupedItems) {
       groupedItems[year].forEach((item) => {
         const total = item.ScheduledPaymentsReporting;
-    
+
         const baseItems = [
           {
             Display: year,
@@ -352,15 +351,15 @@ lastItems.forEach(item => {
             data: total,
           },
         ];
-    
+
         this.pivotCardData.push(...baseItems);
       });
     }
-    
+
     const lastYear = Math.max(...Object.keys(groupedItems).map(Number));
     const lastItems = groupedItems[lastYear];
-    
-    lastItems.forEach(item => {
+
+    lastItems.forEach((item) => {
       const remainingItems = [
         {
           Display: 'Thereafter',
@@ -373,7 +372,7 @@ lastItems.forEach(item => {
           data: item.RemainingPaymentsReporting,
         },
       ];
-    
+
       this.pivotCardData.push(...remainingItems);
     });
 
@@ -709,12 +708,9 @@ lastItems.forEach(item => {
     data.forEach((item) => {
       const total =
         item.FinanceLeaseCostReporting +
-        item.AssetAmortizationReporting +
-        item.LeaseLiabilityInterestReporting +
         item.OperatingLeaseCostReporting +
         item.ShortTermLeaseAndReportingExceptionCostReporting +
         item.VariableLeaseCostReporting +
-        item.VariableLeaseCostOfIndexedPaymentsReporting +
         item.SubleaseIncome;
       const items = [
         {

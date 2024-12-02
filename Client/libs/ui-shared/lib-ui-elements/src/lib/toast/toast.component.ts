@@ -1,33 +1,24 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { ToastState } from '@mango/data-models/lib-data-models';
-import { DxToastModule } from "devextreme-angular";
+import { DxToastModule } from 'devextreme-angular';
 import { IconModule } from '../icon';
 import { CremToastService } from './toast.service';
-
-const BORDER_COLOR_MAP = {
-  [ToastState.INFORMATION]: 'info-toast-border-color',
-  [ToastState.SUCCESS]: 'success-toast-border-color',
-  [ToastState.WARNING]: 'warning-toast-border-color',
-  [ToastState.ERROR]: 'error-toast-border-color'
-}
-
-const ICON_BG_COLOR_MAP = {
-  [ToastState.INFORMATION]: 'info-icon-bgcolor',
-  [ToastState.SUCCESS]: 'success-icon-bgcolor',
-  [ToastState.WARNING]: 'warning-icon-bgcolor',
-  [ToastState.ERROR]: 'error-icon-bgcolor',
-}
-
-const POSITION_MAP = {
-  'top left': { top: '20px', left: '20px' },
-  'top center': { top: '20px', left: '40%' },
-  'top right': { top: '20px', right: '20px' },
-  'bottom left': { bottom: '20px', left: '20px' },
-  'bottom center': { bottom: '20px', left: '40%' },
-  'bottom right': { bottom: '20px', right: '20px' }
-}
+import {
+  BORDER_COLOR_MAP,
+  ICON_BG_COLOR_MAP,
+  POSITION_MAP,
+} from './toast.maps';
 
 /**
  * The toast component is used through the CremToastService, precisely the `.show()` function described in the section below
@@ -39,12 +30,11 @@ const POSITION_MAP = {
   selector: 'crem-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
-  providers: [CremToastService]
+  providers: [CremToastService],
 })
-export class ToastComponent implements OnDestroy, OnInit {
-
+export class ToastComponent implements OnDestroy, OnInit, AfterViewInit {
   /**
-   * 
+   *
    * @type {ToastState}
    * @memberof ToastComponent
    */
@@ -73,22 +63,22 @@ export class ToastComponent implements OnDestroy, OnInit {
 
   /**
    * Maximum visibility duration of the toast before it is automatically dismissed, in milliseconds.
-   * 
+   *
    * @type {number}
    * @memberof ToastComponent
    */
-  @Input() duration = 3000 as number;
+  @Input() duration = 6000 as number;
 
   /**
    * Show/Hide toast body, it will hide the message or contentTemplate.
-   * 
+   *
    * @type {boolean}
    * @memberof ToastComponent
    */
   @Input() showBody = true as boolean;
 
   /**
-   * 
+   *
    * @type {string}
    * @memberof ToastComponent
    */
@@ -100,7 +90,13 @@ export class ToastComponent implements OnDestroy, OnInit {
    * @type {('top left' | 'top center' | 'top right' | 'bottom left' | 'bottom center' | 'bottom right')}
    * @memberof ToastComponent
    */
-  @Input() position?: 'top left' | 'top center' | 'top right' | 'bottom left' | 'bottom center' | 'bottom right' = 'bottom right';
+  @Input() position?:
+    | 'top left'
+    | 'top center'
+    | 'top right'
+    | 'bottom left'
+    | 'bottom center'
+    | 'bottom right' = 'bottom right';
 
   /**
    * When true, closes the toast when clicked on any part of its body
@@ -119,59 +115,130 @@ export class ToastComponent implements OnDestroy, OnInit {
    */
   @Input() visible = true as boolean;
 
-  constructor(private elementRef: ElementRef) { }
+  /**
+   * Remove toast
+   *
+   * @memberof ToastComponent
+   */
+  @Output() onDestroy = new EventEmitter<void>();
 
   /**
-   * @ignore
-  */
-  ngOnInit(): void {
-    this.setupAutoHide()
+   * Listen to change in the height of toast based on content inside
+   *
+   * @memberof ToastComponent
+   */
+
+  @Output() heightChange = new EventEmitter<void>();
+
+  createdAt: number = Date.now();
+  offset = 0;
+  private resizeObserver: ResizeObserver;
+  private destroyTimer: any;
+
+  constructor(public elementRef: ElementRef) {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.heightChange.emit();
+    });
   }
 
   /**
    * @ignore
-  */
-  setupAutoHide() {
-    if (this.duration != -1) {
-      setTimeout(() => this.ngOnDestroy(), this.duration);
+   */
+  ngOnInit(): void {
+    this.setupAutoHide();
+  }
+
+  ngAfterViewInit() {
+    // Start observing the wrapper element for size changes
+    const wrapper =
+      this.elementRef.nativeElement.querySelector('.template-wrapper');
+    if (wrapper) {
+      this.resizeObserver.observe(wrapper);
     }
+  }
+
+  /**
+   * @ignore
+   */
+  setupAutoHide() {
+    if (this.duration !== -1) {
+      this.destroyTimer = setTimeout(() => {
+        this.close();
+      }, this.duration);
+    }
+  }
+
+  updatePosition(newOffset: number) {
+    this.offset = newOffset;
   }
 
   /**
    * @ignore
    */
   close() {
-    this.ngOnDestroy()
+    if (this.destroyTimer) {
+      clearTimeout(this.destroyTimer);
+    }
+    this.onDestroy.emit();
+    this.ngOnDestroy();
   }
 
   /**
    * @ignore
    */
   getToastBorderColor() {
-    return BORDER_COLOR_MAP[this.state]
+    return BORDER_COLOR_MAP[this.state];
   }
 
   /**
    * @ignore
    */
   getIconBgColorClasses() {
-    return ICON_BG_COLOR_MAP[this.state]
+    return ICON_BG_COLOR_MAP[this.state];
   }
 
   /**
    * @ignore
    */
   getWrapperCSS() {
+    const basePosition = POSITION_MAP[this.position];
+    let positionStyle: any = { ...basePosition };
+
+    if (this.position.startsWith('bottom')) {
+      positionStyle.bottom = `${
+        parseInt(positionStyle.bottom) + this.offset
+      }px`;
+    } else {
+      positionStyle.top = `${parseInt(positionStyle.top) + this.offset}px`;
+    }
+
     return {
       maxWidth: this.maxWidth,
-      ...POSITION_MAP[this.position]
-    }
+      ...positionStyle,
+      transition: 'all 0.3s ease',
+    };
+  }
+
+  getOptions() {
+    return {
+      duration: this.duration,
+      showBody: this.showBody,
+      maxWidth: this.maxWidth,
+      position: this.position,
+      closeOnClick: this.closeOnClick,
+      showCloseButton: this.showCloseButton,
+      offset: this.offset,
+    };
   }
 
   /**
-    * @ignore
+   * @ignore
    */
   ngOnDestroy(): void {
-    this.elementRef.nativeElement.remove()
+    if (this.destroyTimer) {
+      clearTimeout(this.destroyTimer);
+    }
+    this.resizeObserver.disconnect();
+    this.elementRef.nativeElement.remove();
   }
 }

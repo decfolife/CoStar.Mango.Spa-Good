@@ -1,6 +1,8 @@
 import { Directive, Input } from '@angular/core';
-import { FormLabelAlignment, RemFormLayout } from '@mango/data-models/lib-data-models';
-
+import {
+  FormLabelAlignment,
+  RemFormLayout,
+} from '@mango/data-models/lib-data-models';
 
 @Directive({
   selector: '[crem-form]',
@@ -12,11 +14,9 @@ import { FormLabelAlignment, RemFormLayout } from '@mango/data-models/lib-data-m
     '[class.crem-form-label-left]': `labelAlignment === 'left'`,
     '[class.crem-form-label-right]': `labelAlignment === 'right'`,
   },
-  standalone: true
+  standalone: true,
 })
 export class CremFormDirective {
-
-  @Input() layout: RemFormLayout = RemFormLayout.HORIZONTAL
-  @Input() labelAlignment: FormLabelAlignment = FormLabelAlignment.RIGHT
-
+  @Input() layout: RemFormLayout = RemFormLayout.HORIZONTAL;
+  @Input() labelAlignment: FormLabelAlignment = FormLabelAlignment.RIGHT;
 }

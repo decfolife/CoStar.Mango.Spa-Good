@@ -1,13 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { Meta, Story, moduleMetadata } from '@storybook/angular';
-import { DxButtonModule, DxDataGridModule, DxDropDownBoxModule, DxFormModule, DxSelectBoxModule, DxTemplateModule, DxTextBoxModule, DxTooltipModule, DxValidationSummaryModule, DxValidatorModule } from 'devextreme-angular';
+import {
+  DxButtonModule,
+  DxDataGridModule,
+  DxDropDownBoxModule,
+  DxFormModule,
+  DxSelectBoxModule,
+  DxTemplateModule,
+  DxTextBoxModule,
+  DxTooltipModule,
+  DxValidationSummaryModule,
+  DxValidatorModule,
+} from 'devextreme-angular';
 import { ButtonModule } from '../button';
 import { IconModule } from '../icon';
 import { DropdownComponent } from './dropdown.component';
 
 interface DropdownComponentStory extends DropdownComponent {
-  text: string
+  text: string;
 }
 
 export default {
@@ -29,14 +40,14 @@ export default {
         MatMenuModule,
         ButtonModule,
         IconModule,
-        DxTooltipModule
+        DxTooltipModule,
       ],
     }),
   ],
 } as Meta<DropdownComponent>;
 
 const Template: Story<DropdownComponent> = (args: DropdownComponentStory) => ({
-  props: args
+  props: args,
 });
 
 /** Minimal configuration */
@@ -54,26 +65,26 @@ Default.args = {
   containerized: true,
   dataSource: [
     {
-      displayKey: "Apples",
-      valueKey: "Apples"
+      displayKey: 'Apples',
+      valueKey: 'Apples',
     },
     {
-      displayKey: "Oranges",
-      valueKey: "Oranges"
+      displayKey: 'Oranges',
+      valueKey: 'Oranges',
     },
     {
-      displayKey: "Lemons",
-      valueKey: "Lemons"
+      displayKey: 'Lemons',
+      valueKey: 'Lemons',
     },
     {
-      displayKey: "Pears",
-      valueKey: "Pears"
+      displayKey: 'Pears',
+      valueKey: 'Pears',
     },
     {
-      displayKey: "Pineapples",
-      valueKey: "Pineapples"
+      displayKey: 'Pineapples',
+      valueKey: 'Pineapples',
     },
-  ]
+  ],
 };
 
 /** This should primarily be used as part of the page header component. */
@@ -81,112 +92,36 @@ export const WithLabel = Template.bind({});
 WithLabel.args = {
   initialSelectedValue: 'Watermelon',
   selectBoxValue: 'Watermelon',
-  label: "Segment is",
-  fieldTemplate: "withLabel",
+  label: 'Segment is',
+  fieldTemplate: 'withLabel',
   placeholder: 'Select Segment',
   allowSearch: true,
   containerized: true,
   useSelectBox: true,
   dataSource: [
     {
-      displayKey: "Watermelon",
-      valueKey: "Watermelon"
+      displayKey: 'Watermelon',
+      valueKey: 'Watermelon',
     },
     {
-      displayKey: "Apples",
-      valueKey: "Apples"
+      displayKey: 'Apples',
+      valueKey: 'Apples',
     },
     {
-      displayKey: "Oranges",
-      valueKey: "Oranges"
+      displayKey: 'Oranges',
+      valueKey: 'Oranges',
     },
     {
-      displayKey: "Lemons",
-      valueKey: "Lemons"
+      displayKey: 'Lemons',
+      valueKey: 'Lemons',
     },
     {
-      displayKey: "Pears",
-      valueKey: "Pears"
+      displayKey: 'Pears',
+      valueKey: 'Pears',
     },
     {
-      displayKey: "Pineapples",
-      valueKey: "Pineapples"
+      displayKey: 'Pineapples',
+      valueKey: 'Pineapples',
     },
-  ]
-};
-
-/** This should primarily be used as part of the page header component. */
-export const WithLabel = Template.bind({});
-WithLabel.args = {
-  initialSelectedValue: 'Watermelon',
-  selectBoxValue: 'Watermelon',
-  label: "Segment is",
-  fieldTemplate: "withLabel",
-  placeholder: 'Select Segment',
-  allowSearch: true,
-  useSelectBox: true,
-  dataSource: [
-    {
-      displayKey: "Watermelon",
-      valueKey: "Watermelon"
-    },
-    {
-      displayKey: "Apples",
-      valueKey: "Apples"
-    },
-    {
-      displayKey: "Oranges",
-      valueKey: "Oranges"
-    },
-    {
-      displayKey: "Lemons",
-      valueKey: "Lemons"
-    },
-    {
-      displayKey: "Pears",
-      valueKey: "Pears"
-    },
-    {
-      displayKey: "Pineapples",
-      valueKey: "Pineapples"
-    },
-  ]
-};
-
-/** This should primarily be used as part of the page header component. */
-export const WithLabel = Template.bind({});
-WithLabel.args = {
-  initialSelectedValue: 'Watermelon',
-  selectBoxValue: 'Watermelon',
-  label: "Segment is",
-  fieldTemplate: "withLabel",
-  placeholder: 'Select Segment',
-  allowSearch: true,
-  useSelectBox: true,
-  dataSource: [
-    {
-      displayKey: "Watermelon",
-      valueKey: "Watermelon"
-    },
-    {
-      displayKey: "Apples",
-      valueKey: "Apples"
-    },
-    {
-      displayKey: "Oranges",
-      valueKey: "Oranges"
-    },
-    {
-      displayKey: "Lemons",
-      valueKey: "Lemons"
-    },
-    {
-      displayKey: "Pears",
-      valueKey: "Pears"
-    },
-    {
-      displayKey: "Pineapples",
-      valueKey: "Pineapples"
-    },
-  ]
+  ],
 };

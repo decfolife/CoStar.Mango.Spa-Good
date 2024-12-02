@@ -5,4 +5,5 @@ export abstract class Environment {
   abstract readonly CAUrl?: string;
   abstract readonly cremBaseUrl?: string;
   abstract readonly baseApiUrl?: string;
+  abstract readonly showPayload: boolean;
 }

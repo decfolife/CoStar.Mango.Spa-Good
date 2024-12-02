@@ -37,15 +37,16 @@
         [ngClass]="{'suite-user':(userAppType === 1)}"
         #appModule
       >
-        <aside class="module-leftNav">
-          <shared-left-nav
-            [navigationLinks]="navigationLinks"
-            [activeLink]="activeLink"
-            (navigateSpa)="handleSpaNavigation($event)"
-            (toActiveLink)="getActiveLink($event)"
-            *ngIf="navLinksFetched"
-          ></shared-left-nav>
-        </aside>
+        <div *ngIf="navLinksFetched$ | async">
+          <aside class="module-leftNav">
+            <shared-left-nav
+              [navigationLinks]="navigationLinks$ | async"
+              [activeLink]="activeLink"
+              (navigateSpa)="handleSpaNavigation($event)"
+              (toActiveLink)="getActiveLink($event)"
+            ></shared-left-nav>
+          </aside>
+        </div>
         <main
           id="main-content"
           class="module-content scroll-container vertical"

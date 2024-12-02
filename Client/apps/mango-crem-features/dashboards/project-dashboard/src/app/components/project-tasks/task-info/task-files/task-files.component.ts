@@ -50,4 +50,18 @@ export class TaskFilesComponent implements OnInit {
       });
     }
   }
+
+  adaAttrNoDataGrid(e: any) {
+    const dxGridwithTables = e.component
+      .$element()
+      .find('.dx-datagrid-headers.dx-bordered-top-view');
+    if (dxGridwithTables && dxGridwithTables.length > 0) {
+      for (let i = 0; i < dxGridwithTables.length; i++) {
+        const element = dxGridwithTables[i];
+        if (element) {
+          element.setAttribute('role', 'grid');
+        }
+      }
+    }
+  }
 }

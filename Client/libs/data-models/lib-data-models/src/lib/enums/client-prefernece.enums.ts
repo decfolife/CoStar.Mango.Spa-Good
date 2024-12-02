@@ -1,3 +1,4 @@
-export enum CLIENT_PREFERENCE{
-    REQUIRED = '1'
+export enum CLIENT_PREFERENCE {
+  REQUIRED = '1',
+  ReceiveEmail = '1',
 }

@@ -36,6 +36,7 @@ export class CopyTransactionComponent implements OnInit, OnChanges {
     newProjectId?: number;
   }> = new EventEmitter();
   @Output() notifyHasChanges: EventEmitter<boolean> = new EventEmitter();
+  @Output() disableCopyEvent: EventEmitter<boolean> = new EventEmitter();
 
   projectName: string = '';
   selectedTemplateName: string;
@@ -97,7 +98,8 @@ export class CopyTransactionComponent implements OnInit, OnChanges {
   resetPopup() {
     this.displayPreview = false;
     this.buttonText = 'Preview';
-    this.notifyHasChanges.emit(false);
+    this.notifyHasChanges.emit(true);
+    //this.disableCopyEvent.emit(false);
   }
 
   onProjectNameChange(value) {
@@ -178,9 +180,11 @@ export class CopyTransactionComponent implements OnInit, OnChanges {
   }
 
   validateAndApplyChanges() {
+    this.disableCopyEvent.emit(true);
     this.projectName = this.projectName.trim();
     !this.projectNameTextBox.validate()
-      ? this.projectNameTextBox.focusTextBox()
+      ? (this.disableCopyEvent.emit(false),
+        this.projectNameTextBox.focusTextBox())
       : this.copyTransaction();
   }
 
@@ -238,6 +242,7 @@ export class CopyTransactionComponent implements OnInit, OnChanges {
       this.dashboardService
         .postCopyProject(copyProject)
         .subscribe((res: any) => {
+          this.disableCopyEvent.emit(false);
           if (res && res.success) {
             this.copySuccessful = true;
             this.copyCompletedEvent.emit({

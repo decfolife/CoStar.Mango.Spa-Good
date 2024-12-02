@@ -6,12 +6,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PageHeaderComponent } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    PageHeaderComponent,
     SharedModule.forRoot(),
     AppRoutingModule,
     FontAwesomeModule,

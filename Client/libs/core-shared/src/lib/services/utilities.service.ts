@@ -69,9 +69,9 @@ export class UtilitiesService {
   // This function should ONLY be used by CA SPA app.
   public static getCABackendBaseApiUrl() {
     if (this.isLocalEnvironment()) {
-      return `${environment.CAUrl}api/`;
+      return `${environment.CAUrl}/api`;
     }
 
-    return `/api/`;
+    return `/api`;
   }
 }

@@ -32,7 +32,7 @@ export class ServiceAccountService {
 
   getServiceAccountInfo(): Observable<ServiceAccountInfo> {
     return this.http.get<ServiceAccountInfo>(
-      `${this.identityUrl}serviceaccount/accountinfo`,
+      `${this.identityUrl}/serviceaccount/accountinfo`,
       { withCredentials: true }
     );
   }

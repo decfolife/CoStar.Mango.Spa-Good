@@ -77,11 +77,7 @@
           class="aet-targetStartDate-label label"
           [ngClass]="taskTargetStartDateFieldInvalid ? 'fieldInvalid' : ''"
         >
-          Target Start Date<span
-            class="aet-required-tag"
-            *ngIf="!projectTaskSettings.calculateDates"
-            >*</span
-          >
+          Target Start Date
         </h4>
         <crem-date-picker
           #TargetStartDatePicker
@@ -92,7 +88,6 @@
           [placeholderText]="'Select Date...'"
           (changeEvent)="onDateChanged($event, 'targetStartDate')"
           [disabled]="projectTaskSettings.calculateDates"
-          [isRequired]="!projectTaskSettings.calculateDates"
           [showDefaultValidationTooltip]="false"
         >
         </crem-date-picker>
@@ -102,11 +97,7 @@
           class="aet-targetEndDate-label label"
           [ngClass]="taskTargetEndDateFieldInvalid ? 'fieldInvalid' : ''"
         >
-          Target End Date<span
-            class="aet-required-tag"
-            *ngIf="!projectTaskSettings.calculateDates"
-            >*</span
-          >
+          Target End Date
         </h4>
         <crem-date-picker
           #TargetEndDatePicker
@@ -117,7 +108,6 @@
           [placeholderText]="'Select Date...'"
           [disabled]="projectTaskSettings.calculateDates"
           (changeEvent)="onDateChanged($event, 'targetEndDate')"
-          [isRequired]="!projectTaskSettings.calculateDates"
           [showDefaultValidationTooltip]="false"
         >
         </crem-date-picker>
@@ -126,44 +116,37 @@
     <div id="aet-daysToStart-duration-container" class="container">
       <div id="aet-daysToStart-container" class="aet-flexItem50">
         <h4 class="aet-daysToStart-label label">Days to Start</h4>
-        <ng-template
-          [ngIf]="projectTaskSettings.calculateDates"
-          [ngIfElse]="NotApplicableSpan"
-        >
-          <crem-number-box
-            [value]="taskDaysToStart"
-            [initialFocus]="null"
-            [inputId]="'aet-taskDaysToStartId'"
-            [numberFormat]="'0,###'"
-            [inputLabel]="'Enter days to start'"
-            [inputPlaceHolder]="'Enter days to start'"
-            [disabled]="projectTaskSettings.autoCalculate"
-            (valueChange)="onNumberValueChanged($event, 'taskDaysToStart')"
-          ></crem-number-box>
-        </ng-template>
+        <crem-number-box
+          [value]="taskDaysToStart"
+          [initialFocus]="null"
+          [inputId]="'aet-taskDaysToStartId'"
+          [numberFormat]="'0,###'"
+          [inputLabel]="'Enter days to start'"
+          [inputPlaceHolder]="'Enter days to start'"
+          [disabled]="
+            projectTaskSettings.autoCalculate &&
+            projectTaskSettings.calculateDates
+          "
+          (valueChange)="onNumberValueChanged($event, 'taskDaysToStart')"
+        ></crem-number-box>
       </div>
       <div id="aet-duration-container" class="aet-flexItem50">
         <h4 class="aet-duration-label label">Duration</h4>
-        <ng-template
-          [ngIf]="projectTaskSettings.calculateDates"
-          [ngIfElse]="NotApplicableSpan"
-        >
-          <crem-number-box
-            [value]="taskDuration"
-            [initialFocus]="null"
-            [inputId]="'aet-taskDurationId'"
-            [numberFormat]="'0,###'"
-            [inputLabel]="'Expected # of days to complete'"
-            [inputPlaceHolder]="'# of days to complete'"
-            [disabled]="
-              projectTaskSettings.autoCalculate &&
-              editTask &&
-              taskSubTasksCount &&
-              taskSubTasksCount >= 1
-            "
-            (valueChange)="onNumberValueChanged($event, 'taskDuration')"
-          ></crem-number-box>
-        </ng-template>
+        <crem-number-box
+          [value]="taskDuration"
+          [initialFocus]="null"
+          [inputId]="'aet-taskDurationId'"
+          [numberFormat]="'0,###'"
+          [inputLabel]="'Expected # of days to complete'"
+          [inputPlaceHolder]="'# of days to complete'"
+          [disabled]="
+            projectTaskSettings.calculateDates &&
+            editTask &&
+            taskSubTasksCount &&
+            taskSubTasksCount >= 1
+          "
+          (valueChange)="onNumberValueChanged($event, 'taskDuration')"
+        ></crem-number-box>
       </div>
     </div>
     <div id="aet-milestone-Wflow-complete-container" class="container">
@@ -235,7 +218,7 @@
           [ngIf]="
             (!addSubTask && !editTask) ||
             (editTask &&
-              taskParentId == 0 &&
+              taskStep !== 1 &&
               (taskSelectedPredecessors === undefined ||
                 taskSelectedPredecessors.length <= 0))
           "
@@ -258,13 +241,7 @@
           [ngIf]="
             projectTaskSettings.calculateDates &&
             projectTaskSettings.autoCalculate &&
-            (!editTask ||
-              (editTask &&
-                ((taskParentId == 0 &&
-                  taskSubTasksCount <= 0 &&
-                  (taskSelectedPredecessors === undefined ||
-                    taskSelectedPredecessors.length <= 0)) ||
-                  taskParentId !== 0)))
+            (!editTask || (editTask && taskSubTasksCount <= 0))
           "
           [ngIfElse]="NotApplicableSpan"
         >
@@ -304,7 +281,7 @@
             class="aet-tooltip-approval-exempt"
             [externalId]="'aet-approval-exemption-tooltipId'"
             [helpTextData]="
-              'Select YES if you want to specify how many approvals are needed in order to complete task if multiple assignees have been added.'
+              'Select Yes if you want to specify how many approvals are needed in order to complete task if multiple assignees have been added.'
             "
           >
           </crem-tooltip>
@@ -329,7 +306,7 @@
             class="aet-tooltip-required-approvals"
             [externalId]="'aet-required-approvals-tooltipId'"
             [helpTextData]="
-              'Select to total number of approvals needed in order to mark the task as Complete.'
+              'Select the number of approvals needed to mark task complete.'
             "
           >
           </crem-tooltip>
@@ -420,25 +397,43 @@
   <div modalFooter class="addEditTaskModal-footerContent">
     <div id="buttonTemplate" class="footerRightControls">
       <crem-button
+        *ngIf="editTask"
+        type="secondary"
+        class="assign-btn"
+        [id]="'aet-closeBtn'"
+        [title]="assignApproverBtnTitle"
+        [ngClass]="{
+          disabledOption: userAccessLevel !== 1
+        }"
+        (click)="addOrEditAssignees(projectTaskDetails)"
+      >
+        Assign Approver
+      </crem-button>
+      <crem-button
         type="secondary"
         class="cancelChanges aet-btn"
+        [id]="'aet-cancelBtn'"
         (click)="closeModal()"
       >
         Cancel
       </crem-button>
       <crem-button
         type="secondary"
-        class="saveChanges aet-btn"
-        (click)="validateAndSaveTask('save')"
-      >
-        Save
-      </crem-button>
-      <crem-button
-        type="primary"
         class="applyChanges aem-btn"
+        [id]="'aet-applyBtn'"
+        [disabled]="disableBtn"
         (click)="validateAndSaveTask('apply')"
       >
         Apply
+      </crem-button>
+      <crem-button
+        type="primary"
+        class="saveChanges aet-btn"
+        [id]="'aet-saveBtn'"
+        [disabled]="disableBtn"
+        (click)="validateAndSaveTask('save')"
+      >
+        Save
       </crem-button>
     </div>
   </div>

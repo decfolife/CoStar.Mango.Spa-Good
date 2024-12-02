@@ -18,7 +18,10 @@ export interface CardConfigObject {
 }
 
 export function rowSort(a?, b?, sortingOrder?: SortingOrder) {
-  if (sortingOrder?.[a.value] > sortingOrder?.[b.value]) return 1;
-  if (sortingOrder?.[b.value] > sortingOrder?.[a.value]) return -1;
-  else return 0;
+  if (sortingOrder) {
+    if (a.value in sortingOrder && !(b.value in sortingOrder)) return 1;
+    if (b.value in sortingOrder && !(a.value in sortingOrder)) return -1;
+    if (sortingOrder[a.value] > sortingOrder[b.value]) return 1;
+    if (sortingOrder[b.value] > sortingOrder[a.value]) return -1;
+  } else return 0;
 }

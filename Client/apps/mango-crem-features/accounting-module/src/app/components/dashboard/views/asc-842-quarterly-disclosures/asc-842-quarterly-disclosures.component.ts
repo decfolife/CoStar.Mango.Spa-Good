@@ -335,11 +335,11 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       acc[item.PeriodYear].push(item);
       return acc;
     }, {});
-    
+
     for (const year in groupedItems) {
       groupedItems[year].forEach((item) => {
         const total = item.ScheduledPaymentsReporting;
-    
+
         const baseItems = [
           {
             Display: year,
@@ -352,15 +352,15 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
             data: total,
           },
         ];
-    
+
         this.pivotCardData.push(...baseItems);
       });
     }
-    
+
     const lastYear = Math.max(...Object.keys(groupedItems).map(Number));
     const lastItems = groupedItems[lastYear];
-    
-    lastItems.forEach(item => {
+
+    lastItems.forEach((item) => {
       const remainingItems = [
         {
           Display: 'Thereafter',
@@ -373,10 +373,9 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
           data: item.RemainingPaymentsReporting,
         },
       ];
-    
+
       this.pivotCardData.push(...remainingItems);
     });
-    
 
     if (this.dataSources.length > 0) {
       this.dataSources[7] = new PivotGridDataSource({
@@ -484,7 +483,7 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
 
   public setMaturityAnalysis(data, years?: number) {
     this.pivotCardData = [];
-    years = !years ? 5: years;
+    years = !years ? 5 : years;
     const filteredData = this.filterByPeriodYear(
       data,
       this.reportingYear,
@@ -498,11 +497,11 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
       acc[item.PeriodYear].push(item);
       return acc;
     }, {});
-    
+
     for (const year in groupedItems) {
       groupedItems[year].forEach((item) => {
         const total = item.ScheduledPaymentsReporting;
-    
+
         const baseItems = [
           {
             Display: year,
@@ -515,15 +514,15 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
             data: total,
           },
         ];
-    
+
         this.pivotCardData.push(...baseItems);
       });
     }
-    
+
     const lastYear = Math.max(...Object.keys(groupedItems).map(Number));
     const lastItems = groupedItems[lastYear];
-    
-    lastItems.forEach(item => {
+
+    lastItems.forEach((item) => {
       const remainingItems = [
         {
           Display: 'Thereafter',
@@ -536,7 +535,7 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
           data: item.RemainingPaymentsReporting,
         },
       ];
-    
+
       this.pivotCardData.push(...remainingItems);
     });
 
@@ -606,25 +605,25 @@ export class Asc842QuarterlyDisclosuresComponent implements OnInit {
         {
           Display:
             'Weighted-Average Remaining Years to Accounting Term - Finance Leases',
-          PeriodYear: item.PeriodQuarter,
+          PeriodQuarter: item.PeriodQuarter,
           data: item.WeightedAverageRemainingYearsRemainingToAccountingTermFinance,
         },
         {
           Display:
             'Weighted-Average Remaining Years to Accounting Term - Operating Leases',
-          PeriodYear: item.PeriodQuarter,
+          PeriodQuarter: item.PeriodQuarter,
           data: item.WeightedAverageRemainingYearsRemainingToAccountingTermOperating,
         },
         {
           Display:
             'Weighted-Average Remaining Years to Expiration - Finance Leases',
-          PeriodYear: item.PeriodQuarter,
+          PeriodQuarter: item.PeriodQuarter,
           data: item.WeightedAverageYearsRemainingToExpirationFinance,
         },
         {
           Display:
             'Weighted-Average Remaining Years to Expiration - Operating Leases',
-          PeriodYear: item.PeriodQuarter,
+          PeriodQuarter: item.PeriodQuarter,
           data: item.WeightedAverageYearsRemainingToExpirationOperating,
         },
         {

@@ -21,6 +21,10 @@ using Microsoft.AspNetCore.DataProtection;
 using MangoSPA.Middleware;
 using static MangoSPA.Constants;
 using MangoSPA.Models;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry;
 
 namespace MangoSPA;
 
@@ -55,6 +59,7 @@ public class Startup
         AddAuth(services, Environment);
         AddDataProtection(services);
         AddServices(services);
+        ConfigureOpenTelemetry(services, Configuration, Environment);
 
         services.AddReverseProxy()
                 .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
@@ -173,6 +178,7 @@ public class Startup
         app.UseMiddleware<SecurityHeadersMiddleware>();
         app.UseRouting();
         app.UseCors();
+        app.UseOpenTelemetryPrometheusScrapingEndpoint();
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -368,6 +374,27 @@ public class Startup
         {
             options.ConfigurationOptions = Configuration.RedisConfigurationOptions();
         });
+    }
+
+    public static IServiceCollection ConfigureOpenTelemetry(IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
+    {
+        services.AddOpenTelemetry()
+            .ConfigureResource(x => x.AddService(config["AppSettings:ApplicationName"]))
+            .WithTracing(tracing =>
+            {
+                tracing.AddAspNetCoreInstrumentation()
+                       .AddHttpClientInstrumentation();
+
+                tracing.AddOtlpExporter();
+            })
+            .WithMetrics(metrics =>
+            {
+                metrics.AddAspNetCoreInstrumentation()
+                       .AddHttpClientInstrumentation()
+                       .AddPrometheusExporter();
+            });
+
+        return services;
     }
 }
 

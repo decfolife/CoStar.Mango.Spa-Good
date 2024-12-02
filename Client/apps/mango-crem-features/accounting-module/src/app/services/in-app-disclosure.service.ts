@@ -7,8 +7,15 @@ import {
   CardConfig,
 } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
+import {
+  catchError,
+  map,
+  switchMap,
+  tap,
+  debounceTime,
+  filter,
+} from 'rxjs/operators';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 
 import { UtilityService } from './utility.service';
@@ -25,6 +32,8 @@ export class InAppDisclosureService extends EndpointService {
   public dateFormat: string;
   private httpOptionsWithParams;
   private httpOptions;
+  private _debounceTime = 300 as number;
+  private _subs$: Subscription[] = [];
 
   /**
    * Dashboard Data
@@ -208,9 +217,10 @@ export class InAppDisclosureService extends EndpointService {
     debug?: boolean
   ): Observable<boolean> {
     this._debug = debug;
-    this._sessionId =
-      `accounting_module_${cardRequest.viewConfiguration.dashboardId}` as string;
     this._isLoading.next(true);
+    this._sessionId = this.getSessionId(
+      cardRequest.viewConfiguration.dashboardId
+    );
 
     if (this._getCardsFromStorage(cardRequest, forceReload)) {
       this._isLoading.next(false);
@@ -222,36 +232,56 @@ export class InAppDisclosureService extends EndpointService {
       if (sessionDashboardView?.expiration >= now)
         this.storageService.deleteData(this._sessionId);
 
-      this._getCards(cardRequest).subscribe(
-        (result) => {
-          this._dashboardViewData.next({
-            IADCardData: result.IADCardData,
-            pivotDataSources: result.pivotDataSources,
-            cardFieldConfigs: result.cardFieldConfigs,
-            decimalPrecision: result.decimalPrecision,
-            localCardConfig: result.localCardConfig,
-          });
-          this._isLoading.next(false);
-
-          this.storageService.saveSyncedSessionData(
-            {
-              IADCardConfigs: result.IADCardConfigs,
+      this._subs$.push(
+        this._getCards(cardRequest).subscribe(
+          (result) => {
+            this._dashboardViewData.next({
+              IADCardData: result.IADCardData,
+              pivotDataSources: result.pivotDataSources,
+              cardFieldConfigs: result.cardFieldConfigs,
               decimalPrecision: result.decimalPrecision,
               localCardConfig: result.localCardConfig,
-              // Metadata
-              cardRequest: cardRequest,
-              expiration:
-                new Date().getTime() +
-                this.localSessionExpirationTime * 60 * 60 * 1000,
-            },
-            this._sessionId
-          );
-        },
-        (error) => this.dashboardService.showToast(error, 'error')
+            });
+            this._isLoading.next(false);
+
+            this.storageService.saveSyncedSessionData(
+              {
+                IADCardConfigs: result.IADCardConfigs,
+                decimalPrecision: result.decimalPrecision,
+                localCardConfig: result.localCardConfig,
+                // Metadata
+                cardRequest: cardRequest,
+                expiration:
+                  new Date().getTime() +
+                  this.localSessionExpirationTime * 60 * 60 * 1000,
+              },
+              this._sessionId
+            );
+          },
+          (error) => this.dashboardService.showToast(error, 'error')
+        )
       );
     }
 
     return this._isLoading.asObservable();
+  }
+
+  private getSessionId(dashboardId: number): string {
+    let sessionIdName = '';
+    this._subs$.push(
+      this.facade.clientKey$
+        .pipe(
+          switchMap(() =>
+            this.facade.clientKey$.pipe(filter((client) => !!client))
+          ),
+          tap((client) => {
+            sessionIdName =
+              `accounting_module_${client}_${dashboardId}` as string;
+          })
+        )
+        .subscribe()
+    );
+    return sessionIdName;
   }
 
   /**
@@ -421,7 +451,11 @@ export class InAppDisclosureService extends EndpointService {
     let decimalPrecision: number;
     let cardFieldConfigs;
 
-    return this.getCurrencyDecimalPrecision(cardRequest.selectedCurrency).pipe(
+    return of(cardRequest).pipe(
+      debounceTime(this._debounceTime),
+      switchMap(() =>
+        this.getCurrencyDecimalPrecision(cardRequest.selectedCurrency)
+      ),
       switchMap((currencyPrecision) => {
         decimalPrecision = currencyPrecision.data.DecimalPrecision;
         return this.getIADCardConfigs(
@@ -477,5 +511,18 @@ export class InAppDisclosureService extends EndpointService {
       this._sessionId + '_card_data'
     ); // todo: this should be part of the same sessionDashboardView
     return { sessionDashboardView, sessionDashboardViewData };
+  }
+
+  /**
+   * Destroys all active subscriptions
+   *
+   * @return {*}
+   * @memberof InAppDisclosureService
+   */
+  public cancelAllRequests() {
+    if (!this._subs$) return;
+
+    this._subs$.forEach((s) => s.unsubscribe());
+    this._subs$ = [];
   }
 }

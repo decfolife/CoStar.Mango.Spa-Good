@@ -1,0 +1,44 @@
+@use 'styles' as *;
+
+.error-icon {
+  &__content {
+    display: flex;
+  }
+
+  &__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 8px;
+  }
+
+  &__message {
+    text-align: start;
+  }
+}
+crem-icon {
+  cursor: pointer;
+}
+
+::ng-deep .error-tooltip-wrapper {
+  .dx-overlay-content {
+    border: none !important;
+    background-color: unset !important;
+  }
+
+  .dx-popup-content {
+    background-color: var(--costar-color-danger);
+    color: var(--costar-color-light) !important;
+    border-radius: 8px;
+    padding: 8px !important;
+
+    .dx-template-wrapper {
+      @include costar(font-size, small);
+    }
+  }
+
+  .dx-popover-arrow::after {
+    background-color: var(--costar-color-danger) !important;
+    border: none !important;
+  }
+}

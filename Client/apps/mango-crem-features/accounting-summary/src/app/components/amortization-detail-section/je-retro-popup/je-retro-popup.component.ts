@@ -3,6 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -16,7 +19,7 @@ import { UserInfoResponse } from '@accounting-summary/models/user-info-response.
   templateUrl: './je-retro-popup.component.html',
   styleUrls: ['./je-retro-popup.component.scss'],
 })
-export class JeRetroPopupComponent {
+export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
   @Input() amortizationGridRowClickEvent: any;
   @Input() eventScheduleData: any;
   @Input() gridColumnsForRetroPopup: any[];
@@ -52,6 +55,20 @@ export class JeRetroPopupComponent {
     private datePipe: DatePipe
   ) {}
 
+  ngOnInit(): void {
+    this.subscription.add(
+      this.accountingSummaryService.jeActionTaken$.subscribe(
+        (jeActionTaken) => {
+          if (jeActionTaken) {
+            this.getJeProcessingPopupData(
+              this.jeProcessingPopupData.leaseRecognitionPeriodID
+            );
+          }
+        }
+      )
+    );
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
@@ -80,12 +97,6 @@ export class JeRetroPopupComponent {
       );
       foundEvent.jeStatus = changes.newRetroEventJeStatus.currentValue;
     }
-  }
-
-  onJeDataSaved() {
-    this.getJeProcessingPopupData(
-      this.jeProcessingPopupData.leaseRecognitionPeriodID
-    );
   }
 
   onRetroAdustmentGridRowClick(event) {

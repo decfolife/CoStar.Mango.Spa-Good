@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
+  CremPopupComponent,
   ButtonModule,
   LibUiElementsModule,
   ModalModule,
@@ -17,6 +18,7 @@ import { CommonModule } from '@angular/common';
     ButtonModule,
     LibUiElementsModule,
     CommonModule,
+    CremPopupComponent,
   ],
   selector: 'mango-delete-historic-schedule',
   templateUrl: './delete-historic-schedule.component.html',
@@ -28,6 +30,7 @@ export class DeleteHistoricScheduleComponent implements OnInit {
   public confirmButtonText: string;
   public title: string;
   public isHistorical: boolean;
+  public isInProcess: boolean;
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -40,6 +43,7 @@ export class DeleteHistoricScheduleComponent implements OnInit {
     this.confirmButtonText = this.data.confirmButtonText;
     this.title = this.data.title;
     this.isHistorical = this.data.isHistorical;
+    this.isInProcess = this.data.isInProcess;
   }
 
   yes() {

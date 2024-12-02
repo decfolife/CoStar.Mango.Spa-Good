@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { ButtonModule, CardModule } from '@mango/ui-shared/lib-ui-elements';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { TaskInfoUIService } from '@project-dashboard/services/task-info-ui.service';
 import { DxListModule } from 'devextreme-angular';
 import { ItemDeletingEvent } from 'devextreme/ui/list';
@@ -31,7 +32,10 @@ export class FilesListComponent implements OnInit, OnDestroy {
 
   subs: Subscription[] = [];
 
-  constructor(private taskInfoUIService: TaskInfoUIService) {}
+  constructor(
+    private taskInfoUIService: TaskInfoUIService,
+    private facade: MangoAppFacade
+  ) {}
 
   ngOnInit(): void {
     this.selectedFiles$ = this.taskInfoUIService.selectedFiles$;
@@ -71,9 +75,12 @@ export class FilesListComponent implements OnInit, OnDestroy {
           map((selectedFiles) =>
             selectedFiles.filter((f) => f.name != event.itemData.name)
           ),
-          tap((updatedFiles) =>
-            this.taskInfoUIService.selectedFiles$.next(updatedFiles)
-          )
+          tap({
+            next: (updatedFiles) => {
+              this.taskInfoUIService.selectedFiles$.next(updatedFiles);
+              this.facade.refreshLeftSideNav();
+            },
+          })
         )
         .subscribe()
     );

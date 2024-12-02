@@ -19,6 +19,7 @@ import { ToastState } from '@mango/data-models/lib-data-models';
 import { ScheduleTransactionsPopupComponent } from './schedule-transactions-popup/schedule-transactions-popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddEditOtherChargeModalComponent } from '../add-edit-other-charge-modal/add-edit-other-charge-modal.component';
+import { SelectedPayments } from '@accounting-summary/models/interfaces/selected-payments.interfaces';
 
 @Component({
   selector: 'mango-payments-grid',
@@ -50,7 +51,7 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
   transactionAmount: number;
   optionCharges: number;
   otherCharges: number;
-  terminationFees: number;
+  terminationFee: number;
   /**
    * paymentAmounts is the aggregation of undiscountedAmount, transactionAmount, transactionAmount
    * and other charges, to facilitate passing multiple values.
@@ -71,13 +72,16 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
   includeFromFirst: boolean;
   fromDate: string;
   toDate: string;
-
+  selectedPayments: SelectedPayments[];
   amortizationProfile: number;
   overrideAmortizationProfile: boolean;
   pageMode: string;
   measureEvent: RemeasureType;
   glAccountIDsCSV: any;
   previousState: any = {};
+  localCurrency: string;
+  localCurrencyDecimalPrecision: number;
+  manualAmortizationProfileName: string;
 
   private commonDropdownsData: any;
   private subscription$ = new Subject<void>();
@@ -95,7 +99,7 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isPaymentsGridLoading = true;
-
+    this.getSelectedPayments();
     combineLatest([
       this.addEventFormService.scheduleDetailsFormData$,
       this.addEventFormService.financialFormData$,
@@ -106,8 +110,8 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
         if (scheduleDetails && financialData) {
           this.processScheduleDetails(scheduleDetails);
           this.processFinancialData(financialData);
-
           this.title = this.generateTitle(financialData.localCurrencyName);
+          this.localCurrency = financialData.localCurrencyName;
           this.reloadPaymentsOnChange();
         }
 
@@ -173,29 +177,30 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
       pageMode,
       measureEvent,
       glAccountIDsCSV,
+      localCurrencyDecimalPrecision,
     } = financialData;
     const {
       chargeType,
       localCurrency,
       amortizationProfile,
       overrideAmortizationProfile,
+      manualAmortizationProfileName,
     } = financialFormData ?? {};
 
     this.isIncome = chargeType !== 'Expense';
     this.scheduleCurrencyID = Array.isArray(localCurrency)
       ? localCurrency[0]
       : localCurrency;
-    this.isEuroDateFormat = useDateEU ?? false;
+    this.isEuroDateFormat = useDateEU === 'dd.MM.yyyy' ? true : false;
     this.pageMode = pageMode;
     this.measureEvent = this.mapStringToRemeasureType(
       measureEvent ?? 'Initial'
     );
-    this.amortizationProfile = Array.isArray(amortizationProfile)
-      ? amortizationProfile[0]
-      : undefined;
+    this.amortizationProfile = amortizationProfile;
     this.overrideAmortizationProfile = overrideAmortizationProfile || false;
     this.glAccountIDsCSV = glAccountIDsCSV;
-
+    this.manualAmortizationProfileName = manualAmortizationProfileName;
+    this.localCurrencyDecimalPrecision = localCurrencyDecimalPrecision;
     if (this.amortizationProfile) {
       this.glAccountIDsCSV = this.glAccountIDsCSV.find(
         (profile) => profile.profileID === this.amortizationProfile
@@ -297,7 +302,10 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
         dateFormat: this.dateFormat,
         eventBeginDate: this.fromDate,
         eventEndDate: this.toDate,
-        leaseRecognitionScheduleID: this.leaseRecognitionScheduleID,
+        leaseRecognitionScheduleID:
+          this.pageMode === 'Remeasure Event'
+            ? this.copiedFromScheduleID
+            : this.leaseRecognitionScheduleID,
         scheduleCurrencyID: this.scheduleCurrencyID,
         commonDropdownsData: this.commonDropdownsData,
       },
@@ -394,45 +402,83 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
 
   onPaymentGridContentReady(event: any) {
     const grid = this.schedulePaymentsGrid?.instance;
-    const dataSource = grid.getDataSource();
+    const dataSource = grid?.getDataSource();
+    if (!grid || !dataSource) return;
 
-    if (!grid && !dataSource) {
-      return;
-    }
+    const data = dataSource.items();
+    const glAccountIDs = this.glAccountIDsCSV?.glAccountIDsCSV || [];
+    const isReasonablyCertainOption =
+      this.glAccountIDsCSV?.isReasonablyCertainOption || false;
+    const isManualAmortizationProfile = this.amortizationProfile < 0;
+
+    // Filter and map selected payments based on the amortization profile
+    const selectedPayments = this.selectedPayments
+      .filter(
+        (item) =>
+          item.classificationID === this.classificationID &&
+          (isManualAmortizationProfile
+            ? item.manualProfileName === this.manualAmortizationProfileName
+            : item.amortizationProfileID === this.amortizationProfile)
+      )
+      .map((item) =>
+        item.selectedGLEventIDList.split(',').map((entry) => {
+          const [glAccountID, accountType] = entry.split('|');
+          return { glAccountID, accountType };
+        })
+      )
+      .reduce((acc, curr) => acc.concat(curr), []);
+
+    const extractedData = selectedPayments.map(
+      ({ glAccountID, accountType }) => ({ glAccountID, accountType })
+    );
     grid.clearSelection();
 
-    const data = dataSource?.items();
-    const glAccountIDs = this.glAccountIDsCSV?.glAccountIDsCSV || [];
-    const glAccountIDsToSelect = data?.filter((item) =>
-      glAccountIDs.includes(item.glAccountID)
+    const glAccountIDsToSelect = data.filter((item) =>
+      extractedData.some(
+        (extracted) =>
+          item.glEventID === +extracted.glAccountID &&
+          item.paymentEventSource === extracted.accountType
+      )
     );
 
-    if (this.pageMode === 'Edit Event' && this.overrideAmortizationProfile) {
-      const glAccountIDsToSelect = data.filter(
-        (item) =>
-          item.leaseRecognitionScheduleEventID !== null || item.isTerminationFee
-      );
-      grid.selectRows(glAccountIDsToSelect, true);
-    } else if (
-      this.pageMode === 'Edit Event' &&
-      !this.overrideAmortizationProfile
-    ) {
-      if (this.amortizationProfile === 0 && glAccountIDs.length === 0) {
-        grid.selectAll();
-      } else {
-        grid.selectRows(glAccountIDsToSelect, true);
-      }
-    } else if (this.measureEvent === 9) {
-      const glAccountIDsToSelect = data.filter(
-        (item) =>
-          item.leaseRecognitionScheduleEventID !== null || item.isTerminationFee
-      );
+    const selectAmortizationDefaultGLAccountIDs = data?.filter(
+      (item) =>
+        glAccountIDs.includes(item.glAccountID) &&
+        item.glAccountID !== 0 &&
+        !(item.paymentEventSource === 'Option' && !item.isReasonablyCertain) &&
+        !(
+          !isReasonablyCertainOption &&
+          item.paymentEventSource === 'Option' &&
+          item.isReasonablyCertain
+        )
+    );
+
+    const isAmortizationProfileIncludeAll =
+      this.amortizationProfile === 0 && glAccountIDs.length === 0;
+
+    const isReasonablyCertain = data?.filter(
+      (item) => item.isReasonablyCertain
+    );
+
+    const isEditOrRemeasure =
+      this.pageMode === 'Edit Event' || this.pageMode === 'Remeasure Event';
+
+    const selectAllPayments = data?.filter(
+      (item) =>
+        !(item.paymentEventSource === 'Option' && !item.isReasonablyCertain)
+    );
+
+    if (isEditOrRemeasure) {
       grid.selectRows(glAccountIDsToSelect, true);
     } else {
-      if (this.amortizationProfile === 0 && glAccountIDs.length === 0) {
-        grid.selectAll();
+      if (isAmortizationProfileIncludeAll) {
+        grid.selectRows(selectAllPayments, true);
       } else {
-        grid.selectRows(glAccountIDsToSelect, true);
+        grid.selectRows(
+          (isManualAmortizationProfile && isReasonablyCertain) ||
+            selectAmortizationDefaultGLAccountIDs,
+          true
+        );
       }
     }
     this.addEventFormService.setPaymentAmountsData(this.paymentAmounts);
@@ -447,6 +493,10 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
     const filteredRows = selectedRows.filter(
       (row) => !row.isDirectCost && !row.isTerminationFee
     );
+
+    this.terminationFee = selectedRows
+      .filter((row) => row.isTerminationFee)
+      .reduce((total, row) => total + (row.targetAmountInPeriod || 0), 0);
 
     this.undiscountedAmount = filteredRows.reduce(
       (total, row) => total + (row.targetAmountInPeriod || 0),
@@ -476,24 +526,25 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
       transactionAmount: this.transactionAmount,
       optionAmount: this.optionCharges,
       otherCharges: this.otherCharges,
+      terminationFee: this.terminationFee,
       selectedPayments: selectedPaymentsArray,
     };
     this.addEventFormService.setPaymentAmountsData(this.paymentAmounts);
     this.subtitle = `Undiscounted Amount: ${this.formattingService.localFormat(
       this.undiscountedAmount,
-      this.scheduelPaymentsGridColumns.localCurrencyDecimalPrecision
+      this.localCurrencyDecimalPrecision
     )}
       | Transaction Amount: ${this.formattingService.localFormat(
         this.transactionAmount,
-        this.scheduelPaymentsGridColumns.localCurrencyDecimalPrecision
+        this.localCurrencyDecimalPrecision
       )}
       | Option Amount: ${this.formattingService.localFormat(
         this.optionCharges,
-        this.scheduelPaymentsGridColumns.localCurrencyDecimalPrecision
+        this.localCurrencyDecimalPrecision
       )}
       | Other Charges: ${this.formattingService.localFormat(
         this.otherCharges,
-        this.scheduelPaymentsGridColumns.localCurrencyDecimalPrecision
+        this.localCurrencyDecimalPrecision
       )}`;
   }
 
@@ -506,11 +557,14 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
     }
 
     if (
-      this.pageMode !== 'Add Event' &&
-      this.measureEvent === 9 &&
-      event.row?.data.isTerminationFee
+      (this.pageMode !== 'Add Event' &&
+        this.measureEvent === 9 &&
+        event?.row?.data?.isTerminationFee) ||
+      event?.row?.data?.paymentEventSource === 'Other'
     ) {
       event.editorOptions.disabled = false;
+    } else if (this.pageMode !== 'Add Event' && this.measureEvent === 9) {
+      event.editorOptions.disabled = true;
     }
 
     const disableSelectAll =
@@ -537,12 +591,13 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
     this.scheduelPaymentsGridColumns =
       this.schedulePaymentsGridColumnsService.getSchedulePaymentColumns(
         this.schedulePaymentsData,
-        this.dateFormat
+        this.dateFormat,
+        this.localCurrency
       );
   }
 
   getSchedulePayments() {
-    if (!!this.classificationID) {
+    if ((this.classificationID ?? -1) >= 0) {
       this.addEditScheduleService
         .getSchedulePayment(
           this.classificationID,
@@ -574,5 +629,22 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
           }, 100);
         });
     }
+  }
+
+  getSelectedPayments() {
+    this.addEditScheduleService
+      .getSelectedPayments()
+      .pipe(takeUntil(this.subscription$))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.selectedPayments = response.data;
+        } else {
+          this.toastService.show(
+            response.clientErrorMessage,
+            'Error',
+            ToastState.ERROR
+          );
+        }
+      });
   }
 }

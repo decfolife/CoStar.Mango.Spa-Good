@@ -106,6 +106,10 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.setLoading({ display }));
   }
 
+  refreshLeftSideNav(): void {
+    this.store.dispatch(AppActions.loadLeftNavLinks());
+  }
+
   loadSubApp(subApp: MangoSubApps): void {
     this.store.dispatch(AppActions.loadSubApp({ subApp }));
   }

@@ -28,11 +28,11 @@ export interface AccountingEvent {
   exceptionOtherReason: string;
   isImpaired: boolean;
   comments: string;
-  test1: boolean;
-  test2: boolean;
-  test3: number;
-  test4: number;
-  test5: boolean;
+  test1: boolean | null;
+  test2: boolean | null;
+  test3: number | null;
+  test4: number | null;
+  test5: boolean | null;
   classificationTestResult: string | null;
   classificationTestResultReason: string | null;
   isClassificationTestResultMatched: boolean | null;
@@ -202,6 +202,7 @@ export interface CalculationSupports {
   scheduleCurrency: Currency;
   functionalCurrency: Currency;
   selectedPayments: SelectedPayment[];
+  pageMode: string;
 }
 
 export interface ControlStatements {
@@ -234,16 +235,16 @@ export interface SelectedPayment {
 }
 
 export interface ResidualValues {
+  doesLessorExplicitlyExemptLessee: boolean;
+  residualValueGuaranteedBy3rdParty: number;
+  residualValue: number;
   estimatedResidualValue: number;
-  guaranteedResidualValue: number;
   guaranteedAmtReflectedInPayments: number;
-  rvGuaranteedBy3rdParty: number;
-  doesLessorExplicitylyExemptLessee: boolean;
-  rvGuaranteedByLessee: number;
+  residualValueGuaranteedByLessee: number;
   amountProbableOfBeingOwedByLessee: number;
   unguaranteedResidualValue: number;
   amtNotReflectedInPVofPayments: number;
-  pVofAmtNotReflectedInPayments: number;
+  presentValueOnAmtNotReflectedInPayments: number;
 }
 
 export interface AccountingEventPayload {

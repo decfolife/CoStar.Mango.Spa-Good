@@ -1,27 +1,38 @@
 <div class="composite-dropdown-container">
   <mat-expansion-panel
-      [expanded]="isOpen"
-      (opened)="this.isOpen = true"
-      (closed)="this.isOpen = false"
-      [id]="Id">
-
-      <mat-expansion-panel-header>
-          <mat-panel-title>
-              <div class="dropdown-title">{{Title}}</div>
-              <div class="dropdown-subtitle" *ngIf="showSubtitle">{{SubTitle}}</div>
-          </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <mat-panel-description>
-        <ng-content>
-
-        
-        </ng-content>
+    [expanded]="isOpen"
+    (opened)="this.isOpen = true"
+    (closed)="this.isOpen = false"
+    [id]="Id"
+    [ngClass]="{
+      'status-error': status === 'error'
+    }"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div class="dropdown-panel-title">
+          <div class="dropdown-title">{{ Title }}</div>
+          <div class="dropdown-subtitle" *ngIf="showSubtitle">
+            {{ SubTitle }}
+          </div>
+        </div>
+      </mat-panel-title>
+      <mat-panel-description class="dropdown-error">
+        <crem-error-tooltip
+          *ngIf="status !== 'default'"
+          [status]="status"
+          [message]="statusMessage"
+        ></crem-error-tooltip>
       </mat-panel-description>
+    </mat-expansion-panel-header>
 
-      <mat-action-row *ngIf="showFooter">
-          {{FooterContent}}
-      </mat-action-row>
+    <mat-panel-description>
+      <ng-content> </ng-content>
+    </mat-panel-description>
+
+    <mat-action-row *ngIf="showFooter">
+      {{ FooterContent }}
+    </mat-action-row>
   </mat-expansion-panel>
   <div class="content-padding"></div>
 </div>

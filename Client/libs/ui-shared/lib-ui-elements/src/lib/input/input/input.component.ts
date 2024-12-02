@@ -4,6 +4,8 @@ import {
   HostBinding,
   Input,
   OnChanges,
+  OnDestroy,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -22,6 +24,11 @@ import {
 } from '@angular/forms';
 
 import { InputState, InputType, LabelPosition } from '../definitions';
+import { IconModule } from '../../icon';
+import { ErrorTooltipComponent } from '../../error-tooltip';
+import { CremValidatedComponent } from '../../base';
+import { Subject } from 'rxjs';
+import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
 
 /**
  * Input: Defined to hold all the common elements, this is the entry point
@@ -32,7 +39,14 @@ import { InputState, InputType, LabelPosition } from '../definitions';
 @Component({
   selector: 'crem-input',
   standalone: true,
-  imports: [CommonModule, InputLabelComponent, InputHintComponent, FormsModule],
+  imports: [
+    CommonModule,
+    InputLabelComponent,
+    InputHintComponent,
+    FormsModule,
+    IconModule,
+    ErrorTooltipComponent,
+  ],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
   providers: [
@@ -41,10 +55,15 @@ import { InputState, InputType, LabelPosition } from '../definitions';
       multi: true,
       useExisting: InputComponent,
     },
+    {
+      provide: CremValidatedComponent,
+      useExisting: InputComponent,
+    },
   ],
 })
 export class InputComponent
-  implements OnChanges, AfterViewInit, ControlValueAccessor
+  extends CremValidatedComponent
+  implements OnInit, OnChanges, AfterViewInit, ControlValueAccessor, OnDestroy
 {
   @Input() state?: InputState;
   @Input() showHint?: boolean;
@@ -76,6 +95,7 @@ export class InputComponent
   @Input() minNumber?: number = Number.NEGATIVE_INFINITY;
   @Input() maxNumber?: number = Number.POSITIVE_INFINITY;
   @Input() disallowNegative?: boolean;
+  @Input() debounceTime: number = 0;
 
   // Hint Component
   @Input() hintText?: string;
@@ -92,6 +112,9 @@ export class InputComponent
   @ViewChild('textarea') textarea: ElementRef<HTMLTextAreaElement>;
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
+  private inputSubject: Subject<string> = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
   /**
    * @ignore
    */
@@ -104,10 +127,28 @@ export class InputComponent
 
   @Output() enterKeyEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.inputSubject
+      .pipe(takeUntil(this.destroy$), debounceTime(this.debounceTime))
+      .subscribe((event) => {
+        this.markAsTouched();
+        const value = this.formatInput(event);
+        this.valueChange.emit(value);
+        this.onChange(value);
+      });
+  }
 
   ngAfterViewInit() {
     this.adjustTextareaHeight();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -235,10 +276,7 @@ export class InputComponent
    * @ignore
    */
   onInputChange(event) {
-    const value = this.formatInput(event);
-    this.markAsTouched();
-    this.valueChange.emit(value);
-    this.onChange(value);
+    this.inputSubject.next(event);
   }
 
   /**

@@ -254,6 +254,11 @@ export class DashboardService extends EndpointService {
     return this.callHttpGet(url, 'gettaskapprovaldetails');
   }
 
+  getApprovalRejectionLogStatus(taskId): Observable<any> {
+    const url = `${this.projects}tasks/getapprovalrejectionlogstatus/${taskId}`;
+    return this.callHttpGet(url, 'getapprovalrejectionlogstatus');
+  }
+
   getClientPreference(clientPreferenceSetting): Observable<any> {
     const url = `${this.projects}projects/GetClientPreference/${clientPreferenceSetting}`;
     return this.callHttpGet(url, 'getClientPreference');
@@ -338,9 +343,27 @@ export class DashboardService extends EndpointService {
     return this.callHttpPost(url, 'approverejecttasks', tasksData);
   }
 
+  resendEmailTaskApproval(projectID, taskID) {
+    const url = `${this.projects}tasks/resendemailtaskapproval`;
+    return this.callHttpPost(url, 'resendemailtaskapproval', {
+      projectID,
+      taskID,
+    });
+  }
+
   getProjectContactLevel(projectId): Observable<any> {
     const url = `${this.projects}projects/getprojectcontactlevel/${projectId}`;
     return this.callHttpGet(url, 'getProjectContactLevel');
+  }
+
+  // TODO: update other usages of getProjectContactLevel to handle more complex data
+  getIsProjectEditable(projectId): Observable<boolean> {
+    const url = `${this.projects}projects/getprojectcontactlevel/${projectId}`;
+    return this.callHttpGet(url, 'getProjectContactLevel').pipe(
+      map((r) => {
+        return r.data.isEditable;
+      })
+    );
   }
 
   saveTeamAsTemplate(teamTemplateName: string, projectId: number) {

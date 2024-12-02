@@ -4,8 +4,59 @@
   @include costar(padding, 4);
 }
 
+:host ::ng-deep {
+  crem-page-header label span {
+    display: contents !important;
+  }
+}
+
+.building-info-container {
+  width: 100% !important;
+  display: flex;
+  flex-direction: row;
+}
+
+.crem-building-info-container {
+  height: 330px;
+}
+
+.els-content-container {
+  height: 330px;
+}
+
+#els-address {
+  @include costar(padding-left, 4);
+  width: 50%;
+}
+
+#costar-matching-building-info {
+  width: 50%;
+}
+
+.els-address-container {
+  @include costar(padding, 4);
+}
+
+.map-container {
+  width: 100%;
+  height: 200px;
+  @include costar(padding-top, 2);
+}
+
+.lat-long {
+  @include costar(padding-top, 1);
+  @include costar(font-size, small);
+}
+
+.button-container {
+  position: absolute;
+  bottom: 20px;
+  right: 2%;
+}
+
 .costar-matching-properties-container {
   @include costar(margin-top, 4);
+  height: 100%;
 }
 
 .search-container {
@@ -18,7 +69,7 @@
   @include costar(padding-right, 4);
 }
 
-.associatedPropertyInfo {
+.associated-property-info {
   @include costar(padding, 4);
   .propertyInfo {
     @include costar(background-color, gray06);
@@ -36,68 +87,25 @@
   display: inline-block;
 }
 
-.building-info-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
-
-.building-info {
-  width: 45%;
-}
-
-.building-space {
-  width: 55%;
-}
-
-.verify-address-container {
-  width: 100%;
+.no-verified-address-msg {
   @include costar(padding, 4);
 }
 
-.verify-address-button-container {
-  padding-left: 100px;
+.no-match-msg {
+  position: absolute;
+  top: 55%;
+  left: 45%;
+
+  @include costar(font-family, body);
+  @include costar(color, gray01);
+  font-weight: 700;
 }
 
-.no-matched-msg {
-  padding-left: 100px;
-  @include costar(padding-top, 4);
-}
-
-.cleanse-address-container {
-  width: 80%;
-  height: 300px;
-  @include costar(padding, 6);
-  display: flex;
-  flex-direction: row;
-}
-
-.content-container {
-  width: 60%;
-}
-
-.address-alignment-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
-
-.left-column {
-  width: 50%;
-}
-
-.right-column {
-  width: 50%;
-}
-
-.map-container {
-  width: 60%;
-}
-
-.label {
-  @include costar(font-weight, bold);
-}
-
-.no-access-content {
+.match-err-msg {
   @include costar(padding, 4);
+  @include costar(color, danger);
+}
+
+.note {
+  @include costar(padding-top, 2);
 }

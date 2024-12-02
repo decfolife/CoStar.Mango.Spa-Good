@@ -7,13 +7,10 @@ import { Description } from '@mango/data-models/lib-data-models';
   selector: 'crem-descriptions',
   imports: [CommonModule],
   templateUrl: './descriptions.component.html',
-  styleUrls: ['./descriptions.component.scss']
+  styleUrls: ['./descriptions.component.scss'],
 })
-export class DescriptionsComponent implements OnInit{
-  @Input() items : Description[]
-  @Input() showBorders = false
-  ngOnInit(): void {
-      console.log(this.items)
-  }
-  
+export class DescriptionsComponent implements OnInit {
+  @Input() items: Description[];
+  @Input() showBorders = false;
+  ngOnInit(): void {}
 }

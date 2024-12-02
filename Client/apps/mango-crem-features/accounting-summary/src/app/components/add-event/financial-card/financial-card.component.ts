@@ -33,14 +33,13 @@ import {
   CremRadioComponent,
   CremRadioGroupComponent,
 } from '@mango/ui-shared/lib-ui-elements';
-import { combineLatest, merge, Observable, Subject, Subscription } from 'rxjs';
+import { combineLatest, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
   takeUntil,
 } from 'rxjs/operators';
-import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { DatePipe } from '@angular/common';
 import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkbox';
 import { CompositeDropdownModule } from 'libs/ui-shared/lib-ui-elements/src/lib/composite-dropdown';
@@ -53,8 +52,7 @@ import {
   DiscountRateProfile,
   ROUAssetMethod,
 } from '@accounting-summary/models/common-dropdowns.model';
-import { previousAccountingEvent } from '@accounting-summary/models/previous-accounting-event.model';
-
+import { PreviousAccountingEvent } from '@accounting-summary/models/previous-accounting-event.model';
 import { BalanceCardComponent } from './balance-card/balance-card.component';
 import {
   BalanceCardType,
@@ -62,6 +60,12 @@ import {
 } from './balance-card/balance-card';
 import { classificationSettingResponse } from '@accounting-summary/models/classification-settings-response.modal';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import {
+  DxDropDownBoxModule,
+  DxNumberBoxModule,
+  DxSelectBoxModule,
+} from 'devextreme-angular';
 
 @Component({
   selector: 'mango-financial-card',
@@ -82,6 +86,9 @@ import { FormattingService } from '@accounting-summary/services/formatting.servi
     CompositeDropdownModule,
     CheckBoxComponent,
     BalanceCardComponent,
+    DxSelectBoxModule,
+    DxDropDownBoxModule,
+    DxNumberBoxModule,
   ],
   templateUrl: './financial-card.component.html',
   styleUrls: ['./financial-card.component.scss'],
@@ -91,15 +98,13 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   amortizationProfileDropDown: DropdownComponent;
   @Input() pageMode: string;
   @Input() classificationId: number;
-  @Input() accountingEventsData: previousAccountingEvent;
+  @Input() accountingEventsData: PreviousAccountingEvent;
   @Input() amortizationProfiles: AmortizationProfile[];
   @Input() classificationSettings: classificationSettingResponse[];
-  @Input() portfolioSettings: PortfolioSettingsResponse;
   @Input() scheduleDetailsData: any;
   @Input() measureEvent: string;
   @Input() currencyList: Currency[];
   @Input() rouAssetMethodsList: ROUAssetMethod[];
-  @Input() userInfo: UserInfoResponse;
 
   functionalCurrencyRateLookup: FunctionalCurrencyRateLookupResponse;
   discountRateOptions: DiscountRateProfile[];
@@ -125,6 +130,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   leaseInformation: LeaseInfoResponse = JSON.parse(
     localStorage.getItem('titleLeaseInfo') || '{}'
   );
+  portfolioSettings: PortfolioSettingsResponse = JSON.parse(
+    localStorage.getItem('portfolioSettings') || '{}'
+  );
 
   masterGroupID: number;
   localCurrency: string;
@@ -140,17 +148,15 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   discountRate: number;
   glAccountIDsCSV: number[];
   firstDirectEntry: boolean;
-  isFirstLoad: boolean = true;
   compoundFrequencyType: number;
   selectedLocalCurrency: number;
   selectedFunctionalCurrency: number;
   currencyRate: number;
-  rouAmountErrors: string = '';
-  rouActionDateErrors: string = '';
   showFunctionalCurrency: boolean;
   isCurrencyDirecEntryDisabled: boolean;
   originalRouAssetMethodsList: ROUAssetMethod[];
   functionalCurrencyRateLookupResultMessage: string;
+  functionalCurrencyRateLookupResult: string;
   isCurrencyDirecEntryAllowed = false;
   dateFormat = 'MM/dd/yyyy';
   manualEntryVisible = false;
@@ -159,6 +165,12 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   functionalCurrencyRateset: string;
   directEntryFunctionalCurrencyRateEnabled: boolean;
   discountRatePlaceHolder = 'Select Discount Rate Profile';
+  isROUAmountDisabled: boolean;
+  ROUAssetAmount: number;
+  amortizationCompositeDropdownValidation: string;
+  currencyCompositeDropdownValidation: string;
+  discountRateCompositeDropdownValidation: string;
+  ROUCompositeDropdownValidation: string;
   cards: BalanceCardType[] = [];
   cardsConfiguration: CardsConfiguration;
   private nullDateString = new Date(null).toDateString();
@@ -169,7 +181,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     public addEventFormService: AddEventFormService,
     private fb: FormBuilder,
     private formatService: FormattingService,
-    public datePipe: DatePipe
+    public datePipe: DatePipe,
+    private facade: MangoAppFacade
   ) {
     // Configuring card formatting
     this.cardsConfiguration = {
@@ -177,8 +190,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       direction: 'column',
     };
     this.initialFinancialForm();
+    this.getUserInfo();
     this.subscription.add(
-      this.addEventFormService.financeCards.subscribe(
+      this.addEventFormService.financeCards$.subscribe(
         (res) => {
           this.cards = res;
         },
@@ -186,6 +200,13 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           this.accountingSummaryService.errorNotify(err);
         }
       )
+    );
+    this.subscription.add(
+      this.addEventFormService.DayOneRemeasure$.subscribe((dayOne) => {
+        if (dayOne) {
+          this.financialForm.get('ROUMethod').setValue(2);
+        }
+      })
     );
   }
 
@@ -210,7 +231,13 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         this.termBegin = new Date(this.scheduleDetailsData?.termBegin);
         this.termInMonths = +this.scheduleDetailsData?.termsInMonth;
         this.termEnd = new Date(this.scheduleDetailsData?.termEnd);
+
+        if (this.functionalCurrency && this.localCurrency && this.termBegin) {
+          this.getFunctionalCurrencyRateLookup();
+        }
+
         this.getDiscountRateOptions();
+
         this.validateROUActionDate();
         //When editing a schedule the ROUAsset action date has to be set to the value saved in the database.  This if statement keeps
         //the value from being overwritten when the page is loading.
@@ -255,8 +282,6 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         );
       }
 
-      this.dateFormat = this.userInfo?.useDateEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
-
       if (!!changes.rouAssetMethodsList) {
         this.originalRouAssetMethodsList = this.rouAssetMethodsList;
 
@@ -276,23 +301,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subtitle = `${this.portfolioSettings?.calendarName} | ${
-      this.portfolioSettings?.amortizationMethodType === 1
-        ? 'Periodic Amortization'
-        : 'Daily Amortization'
-    }`;
-    this.showFunctionalCurrency =
-      this.portfolioSettings?.functionalCurrencyEnabled;
-    this.directEntryFunctionalCurrencyRateEnabled =
-      this.portfolioSettings?.directEntryFunctionalCurrencyRateEnabled;
-    this.functionalCurrencyRateset =
-      this.portfolioSettings?.functionalCurrencyRateset;
-    this.compoundFrequencyType =
-      this.portfolioSettings?.defaultCompoundFrequencyType;
-    this.masterGroupID = this.portfolioSettings.masterGroupID;
-
     this.handleFormValueChanges();
-
+    this.initializePortfolioSettings();
     if (
       this.pageMode === 'Add Event' &&
       this.scheduleDetailsData &&
@@ -307,6 +317,26 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     }
   }
 
+  initializePortfolioSettings() {
+    this.subtitle = `${this.portfolioSettings?.calendarName} | ${
+      this.portfolioSettings?.amortizationMethodType === 1
+        ? 'Periodic Amortization'
+        : 'Daily Amortization'
+    }`;
+    this.showFunctionalCurrency =
+      this.portfolioSettings?.functionalCurrencyEnabled;
+    this.directEntryFunctionalCurrencyRateEnabled =
+      this.portfolioSettings?.directEntryFunctionalCurrencyRateEnabled;
+    this.functionalCurrencyRateset =
+      this.portfolioSettings?.functionalCurrencyRateset;
+    this.compoundFrequencyType =
+      this.portfolioSettings?.defaultCompoundFrequencyType;
+    this.masterGroupID = this.portfolioSettings.masterGroupID;
+    this.compoundFrequencyType =
+      this.portfolioSettings?.defaultCompoundFrequencyType;
+    this.selectedAnnualRateType = this.portfolioSettings.defaultAnnualRateType;
+  }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.formSubscription$.next();
@@ -318,7 +348,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       discountRateProfile: new FormControl({ value: '', disabled: false }, [
         Validators.required,
       ]),
-      discountRate: new FormControl({ value: null, disabled: true }, [
+      discountRate: new FormControl({ value: null, disabled: false }, [
         Validators.required,
       ]),
       annualRateDropdown: new FormControl({ value: '', disabled: false }, [
@@ -343,7 +373,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       ROUMethod: new FormControl({ value: '', disabled: false }, [
         Validators.required,
       ]),
-      ROUAmount: new FormControl({ value: '', disabled: false }, []),
+      ROUAmount: new FormControl({ value: '', disabled: true }, []),
       ROUActionDate: new FormControl({ value: '', disabled: false }, [
         Validators.required,
       ]),
@@ -419,17 +449,14 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           this.functionalCurrency = filteredfunctionalCurrency?.name;
         }
         const isSameCurrency = localCurrency === functionalCurrency;
-        if (this.measureEvent === 'Initial' && this.pageMode === 'Edit Event') {
+        if (this.pageMode === 'Edit Event' && this.measureEvent === 'Initial') {
           this.financialForm.get('functionalCurrency').enable();
         }
 
         if (this.functionalCurrencyRateset === 'Direct Entry') {
           if (this.pageMode === 'Add Event') {
-            this.financialForm
-              .get('currencyRate')
-              .setValue(isSameCurrency ? 1 : 0);
+            this.financialForm.get('currencyRate').setValue(1);
           }
-          this.functionalCurrencyRateLookupResultMessage = 'Direct Entry';
           this.financialForm.get('financialCurrencyDirectEntry').disable();
           this.financialForm.get('financialCurrencyDirectEntry').setValue(true);
           isSameCurrency
@@ -472,7 +499,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           }
         }
         this.setCurrencyDropdownSubTitle();
-        this.getDiscountRateOptions();
+        if (this.termBegin && this.termInMonths && this.localCurrency) {
+          this.getDiscountRateOptions();
+        }
       });
 
     this.financialForm
@@ -481,8 +510,66 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         debounceTime(debounce),
         takeUntil(this.formSubscription$)
       )
-      .subscribe(() => {
+      .subscribe((currencyRate) => {
         this.setCurrencyDropdownSubTitle();
+        const localCurrency =
+          this.financialForm.get('localCurrency')?.value?.[0];
+        const functionalCurrency =
+          this.financialForm.get('functionalCurrency')?.value?.[0];
+        const isSameCurrency = localCurrency === functionalCurrency;
+
+        let functionalCurrencyRate = Number(currencyRate);
+
+        if (functionalCurrencyRate < 0) {
+          functionalCurrencyRate = 0;
+          this.financialForm
+            .get('currencyRate')
+            .setValue(functionalCurrencyRate, { emitEvent: false });
+        }
+
+        if (
+          !isSameCurrency &&
+          functionalCurrencyRate === 0 &&
+          this.showFunctionalCurrency &&
+          (this.classificationId === 2 ||
+            this.classificationId === 3 ||
+            this.classificationId === 4)
+        ) {
+          this.addEditScheduleService.showToast(
+            'Functional Currency is Required',
+            'Functional Currency Rate is required and cannot be zero.'
+          );
+          this.addEventFormService.isCalculateValuesDisabled.next(true);
+          this.addEventFormService.isSaveDisabled.next(true);
+          return;
+        } else {
+          this.addEditScheduleService.clearToastBySummary(
+            'Functional Currency is Required'
+          );
+          this.addEventFormService.isCalculateValuesDisabled.next(false);
+          this.addEventFormService.isSaveDisabled.next(false);
+        }
+
+        // Check if currencyRate has more than 10 decimal places
+        const isValidDecimal = !(
+          currencyRate.toString().split('.')[1]?.length > 10
+        );
+
+        if (!isValidDecimal) {
+          this.addEditScheduleService.showToast(
+            'Functional Currency Rate',
+            'The Functional Currency Rate has greater than 10 decimal places and can cause unexpected failure'
+          );
+          this.addEventFormService.isCalculateValuesDisabled.next(true);
+          this.addEventFormService.isSaveDisabled.next(true);
+          return;
+        } else {
+          this.addEditScheduleService.clearToastBySummary(
+            'Functional Currency Rate'
+          );
+          this.addEventFormService.isCalculateValuesDisabled.next(false);
+          this.addEventFormService.isSaveDisabled.next(false);
+        }
       });
 
     this.financialForm
@@ -492,7 +579,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         takeUntil(this.formSubscription$)
       )
       .subscribe(() => {
-        this.getDiscountRateOptions();
+        if (this.termBegin && this.termInMonths && this.localCurrency) {
+          this.getDiscountRateOptions();
+        }
       });
 
     this.financialForm
@@ -515,8 +604,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         this.setAmortizationSubTitle();
       });
 
-    this.addEventFormService.compoundFrequency
-      .pipe(debounceTime(debounce), takeUntil(this.formSubscription$))
+    this.addEventFormService.compoundFrequency$
+      .pipe(takeUntil(this.formSubscription$))
       .subscribe((compoundFrequency) => {
         this.compoundFrequencyType = compoundFrequency;
         if (this.discountRate && this.annualRateType) {
@@ -539,23 +628,17 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           ? this.getEffectiveRate()
           : this.setDiscountRateSubTitle();
         this.resetFinancialBalanceCards();
-      });
 
-    combineLatest([
-      this.financialForm.get('presentValuePaymentTiming')?.valueChanges,
-      this.financialForm.get('presentValueCompundFrequency')?.valueChanges,
-    ])
-      .pipe(debounceTime(debounce), takeUntil(this.formSubscription$))
-      .subscribe(
-        ([presentValuePaymentTiming, presentValueCompoundFrequency]) => {
-          this.financialForm
-            .get('presentValueCompoundFrequency')
-            .setValue(presentValueCompoundFrequency);
-          this.financialForm
-            .get('presentValuePaymentTiming')
-            .setValue(presentValuePaymentTiming);
+        const annualRate = discountRate === '' ? null : Number(discountRate);
+        if (annualRate === null) {
+          this.addEventFormService.isCalculateValuesDisabled.next(true);
+          this.addEventFormService.isSaveDisabled.next(true);
+          return;
+        } else {
+          this.addEventFormService.isCalculateValuesDisabled.next(false);
+          this.addEventFormService.isSaveDisabled.next(false);
         }
-      );
+      });
 
     combineLatest([
       this.financialForm
@@ -571,7 +654,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       });
 
     this.subscription.add(
-      this.addEventFormService.manualAssetAdjustment
+      this.addEventFormService.manualAssetAdjustment$
         .pipe(takeUntil(this.subscription$), debounceTime(debounce))
         .subscribe(() => {
           if (this.rouMethodIDSelected !== null) {
@@ -632,6 +715,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       financialFormData: this.financialForm.getRawValue(),
       glAccountIDsCSV: this.amortizationProfileList,
       localCurrencyName: this.localCurrency,
+      localCurrencyDecimalPrecision: this.localCurrencyDecimalPrecision,
       pageMode: this.pageMode,
       measureEvent: this.measureEvent,
       leaseRecognitionScheduleID: this.accountingEventsData
@@ -640,37 +724,47 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       copiedFromScheduleID: this.accountingEventsData
         ? this.accountingEventsData.copiedFromScheduleID
         : null,
-      useDateEU: this.userInfo?.useDateEU,
+      useDateEU: this.dateFormat,
       calendarId: this.portfolioSettings?.leaseRecognitionCalendarID,
       effectiveRate: this.effectiveRate,
       leaseRecognitionID: this.leaseInformation.leaseRecognitionID,
     };
     this.addEventFormService.setFinancialFormData(financialFormUpdate);
+    this.financialFormValidation();
+  }
+
+  getUserInfo() {
+    this.facade.contactRecord$.subscribe((contact) => {
+      this.dateFormat = contact.preferences.contactDatesEU
+        ? 'dd.MM.yyyy'
+        : 'MM/dd/yyyy';
+    });
+  }
+
+  formatCurrencyInput() {
+    return this.formatService.buildCurrencyMask(
+      this.localCurrencyDecimalPrecision
+    );
   }
 
   private updateFinancialForm(): void {
     this.financialForm.patchValue({
-      localCurrency: this.accountingEventsData?.localCurrencyID || '',
-      functionalCurrency: this.accountingEventsData?.functionalCurrencyID || '',
-      currencyRate: this.accountingEventsData?.functionalCurrencyRate || '',
-      discountRateProfile:
-        this.accountingEventsData?.discountRateProfileID || '',
-      discountRate: this.accountingEventsData?.discountRate || '',
-      annualRateDropdown: this.accountingEventsData?.discountRateTypeID || '',
+      localCurrency: this.accountingEventsData?.localCurrencyID ?? '',
+      functionalCurrency: this.accountingEventsData?.functionalCurrencyID ?? '',
+      currencyRate: this.accountingEventsData?.functionalCurrencyRate ?? 0,
+      discountRateProfile: this.accountingEventsData?.discountRateProfileID,
+      discountRate: this.accountingEventsData?.discountRate,
+      annualRateDropdown: this.accountingEventsData?.annualRateTypeID,
       modificationImpactScope:
-        this.accountingEventsData?.modificationImpactsScope || '',
-      amortizationProfile:
-        this.accountingEventsData?.amortizationProfileID || '',
-      overrideAmortizationProfile:
-        this.accountingEventsData?.overrideProfile || '',
-      chargeType: this.accountingEventsData
-        ? this.accountingEventsData.isIncome
-          ? 'Income'
-          : 'Expense'
-        : '',
-      ROUMethod: this.accountingEventsData?.rouAssetMethodID || null,
-      ROUAmount: this.accountingEventsData?.rouAssetObtainedAmount || null,
-      ROUActionDate: this.accountingEventsData?.rouAssetObtainedDate || null,
+        this.accountingEventsData?.modificationImpactsScope ?? false,
+      amortizationProfile: this.accountingEventsData?.amortizationProfileID,
+      manualAmortizationProfileName:
+        this.accountingEventsData?.manualProfileName,
+      overrideAmortizationProfile: this.accountingEventsData?.overrideProfile,
+      chargeType: this.accountingEventsData?.isIncome ? 'Income' : 'Expense',
+      ROUMethod: this.accountingEventsData?.rouAssetMethodID,
+      ROUAmount: this.accountingEventsData?.rouAssetObtainedAmount,
+      ROUActionDate: this.accountingEventsData?.rouAssetObtainedDate,
     });
 
     //this has to be set in order to get the dropdown to display the value
@@ -715,7 +809,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     let amount = '';
     if (rouAmount !== null && rouAmount !== undefined && rouAmount !== '') {
       amount = this.formatService.localFormat(
-        Number(rouAmount),
+        this.formatService.transformLocalFormatToNumber(rouAmount),
         this.localCurrencyDecimalPrecision
       );
     }
@@ -728,81 +822,122 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       : amount;
   }
 
-  private formatValueToDecimalPrecision(value: number, decimalPrecision) {
-    let result: string;
+  financialFormValidation() {
+    let isCalculateValid = true;
+    let isSaveValid = true;
 
-    if (isNaN(value) || value === Infinity) {
-      return value;
+    const amortizationProfile = this.financialForm.get(
+      'amortizationProfile'
+    ).value;
+
+    const chargeType = this.financialForm.get('chargeType').value;
+
+    const localCurrency = Array.isArray(
+      this.financialForm.get('localCurrency').value
+    )
+      ? this.financialForm.get('localCurrency').value[0]
+      : this.financialForm.get('localCurrency').value;
+    const functionalCurrency = Array.isArray(
+      this.financialForm.get('functionalCurrency').value
+    )
+      ? this.financialForm.get('functionalCurrency').value[0]
+      : this.financialForm.get('functionalCurrency').value;
+    const currencyRate = this.financialForm.get('currencyRate').value;
+
+    const discountRateProfile = Array.isArray(
+      this.financialForm.get('discountRateProfile').value
+    )
+      ? this.financialForm.get('discountRateProfile').value[0]
+      : this.financialForm.get('discountRateProfile').value;
+    const annualRate = this.financialForm.get('discountRate').value;
+    const annualRateTypeID = Array.isArray(
+      this.financialForm.get('annualRateDropdown').value
+    )
+      ? this.financialForm.get('annualRateDropdown').value[0]
+      : this.financialForm.get('annualRateDropdown').value;
+
+    const ROUMethod = Array.isArray(this.financialForm.get('ROUMethod').value)
+      ? this.financialForm.get('ROUMethod').value[0]
+      : this.financialForm.get('ROUMethod').value;
+    const ROUAmount = this.financialForm.get('ROUAmount').value;
+    const ROUActionDate = this.financialForm.get('ROUActionDate').value;
+
+    if ((!amortizationProfile && amortizationProfile !== 0) || !chargeType) {
+      isSaveValid = false;
+      this.amortizationCompositeDropdownValidation = 'error';
+    } else {
+      this.amortizationCompositeDropdownValidation = 'default';
     }
 
-    result = this.formatService
-      .localFormat(value, decimalPrecision)
-      .replace(/,/g, '');
+    if (
+      (!currencyRate && currencyRate !== 0) ||
+      !functionalCurrency ||
+      !localCurrency
+    ) {
+      isCalculateValid = false;
+      isSaveValid = false;
+      this.currencyCompositeDropdownValidation = 'error';
+    } else {
+      this.currencyCompositeDropdownValidation = 'default';
+    }
 
-    return result;
+    if (
+      (!annualRate && annualRate !== 0) ||
+      (!discountRateProfile && discountRateProfile !== 0) ||
+      !annualRateTypeID
+    ) {
+      isCalculateValid = false;
+      isSaveValid = false;
+      this.discountRateCompositeDropdownValidation = 'error';
+    } else {
+      this.discountRateCompositeDropdownValidation = 'default';
+    }
+
+    if (
+      (!ROUMethod && ROUMethod !== 0) ||
+      (!ROUAmount && ROUAmount !== 0) ||
+      !ROUActionDate
+    ) {
+      isSaveValid = false;
+      this.ROUCompositeDropdownValidation = 'error';
+    } else {
+      this.ROUCompositeDropdownValidation = 'default';
+    }
+    this.addEventFormService.isCalculateValuesDisabled.next(!isCalculateValid);
+    this.addEventFormService.isSaveDisabled.next(!isSaveValid);
   }
 
-  private validateROUActionDate(): boolean {
-    this.rouActionDateErrors = '';
-
-    let rouActionDate = this.financialForm.get('ROUActionDate').value;
-
-    if (rouActionDate === null) {
-      this.rouActionDateErrors = 'The action date is required.';
-    } else {
-      if (
-        this.termBegin.toDateString() === this.nullDateString ||
-        this.termEnd.toDateString() === this.nullDateString
+  private validateROUActionDate() {
+    let isSaveValid = true;
+    const rouActionDate = this.financialForm.get('ROUActionDate').value;
+    if (this.termEnd || this.termBegin) {
+      if (!rouActionDate) {
+        return;
+      } else if (
+        this.measureEvent === 'Initial' &&
+        rouActionDate > this.termEnd
       ) {
-        this.rouActionDateErrors =
-          'The accounting term begin or end date is empty.';
+        this.addEditScheduleService.showToast(
+          'ROU Asset Obtained Action Date',
+          'The action date has to come before the accounting term end date.'
+        );
+        isSaveValid = false;
+      } else if (
+        this.measureEvent !== 'Initial' &&
+        (rouActionDate < this.termBegin || rouActionDate > this.termEnd)
+      ) {
+        this.addEditScheduleService.showToast(
+          'ROU Asset Obtained Action Date',
+          'The action date has to be between the accounting term begin and end dates.'
+        );
+        isSaveValid = false;
       } else {
-        rouActionDate = new Date(rouActionDate);
-
-        if (this.measureEvent === 'Initial' && rouActionDate > this.termEnd) {
-          this.rouActionDateErrors =
-            'The action date has to come before the accounting term end date.';
-        } else if (
-          this.measureEvent !== 'Initial' &&
-          (rouActionDate < this.termBegin || rouActionDate > this.termEnd)
-        ) {
-          this.rouActionDateErrors =
-            'The action date has to be between the accounting term begin and end dates.';
-        }
+        this.addEditScheduleService.clearToastBySummary(
+          'ROU Asset Obtained Action Date'
+        );
       }
     }
-
-    return this.rouActionDateErrors.length <= 0;
-  }
-
-  private validateROUAmount(): boolean {
-    this.rouAmountErrors = '';
-    const rouAmount = this.financialForm.get('ROUAmount').value;
-    //1 is for Direct Entry
-    const isValid =
-      this.rouMethodIDSelected == 1 ||
-      (this.rouMethodIDSelected !== 1 &&
-        rouAmount !== null &&
-        rouAmount !== undefined &&
-        rouAmount !== '');
-
-    if (!isValid) {
-      this.rouAmountErrors = 'The amount field is required';
-    }
-
-    return isValid;
-  }
-
-  onROUAmountInputBlurChange(e, componentName) {
-    if (e !== '') {
-      const rouAmount = this.formatValueToDecimalPrecision(
-        e,
-        this.localCurrencyDecimalPrecision
-      );
-      this.financialForm.get('ROUAmount').setValue(rouAmount);
-    }
-
-    this.validateROUAmount();
+    this.addEventFormService.isSaveDisabled.next(!isSaveValid);
   }
 
   onROUActionDateChange(e) {
@@ -825,25 +960,14 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     );
     this.compoundFrequencyType =
       this.accountingEventsData?.compoundFrequencyType;
-    const manualId = this.accountingEventsData?.amortizationProfileID;
-    if (manualId == -1) {
-      this.amortizationProfileList.push({
-        profileID: -2,
-        profileName: this.accountingEventsData.manualProfileName,
-        isActive: true,
-      });
-      setTimeout(() => {
-        this.financialForm.get('amortizationProfile').setValue(-2);
-      }, 100);
-    } else {
-      this.amortizationInitialSelected =
-        this.accountingEventsData?.amortizationProfileID;
-    }
-    this.financialForm.get('amortizationProfile').disable();
     this.financialForm.get('chargeType').disable();
     this.overrideCheckBoxValue = this.accountingEventsData?.overrideProfile;
+    this.effectiveRate = this.accountingEventsData?.effectiveRate;
 
-    if (this.measureEvent === 'Impairment') {
+    if (
+      this.pageMode === 'Remeasure Event' &&
+      this.measureEvent === 'Impairment'
+    ) {
       this.financialForm.get('modificationImpactScope').setValue(false);
       this.financialForm.get('modificationImpactScope').enable();
     } else if (this.measureEvent === 'Full Termination') {
@@ -852,23 +976,16 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       this.financialForm.get('discountRateProfile').disable();
       this.financialForm.get('discountRate').disable();
       this.financialForm.get('discountRate').setValue(0);
-      this.financialForm
-        .get('annualRateDropdown')
-        .setValue(this.accountingEventsData?.discountRateTypeID);
-      this.financialForm.get('currencyRate').disable();
       this.financialForm.get('overrideAmortizationProfile').disable();
-    } else {
-      this.financialForm.get('modificationImpactScope').setValue(true);
-      this.financialForm.get('modificationImpactScope').enable();
-      this.financialForm.get('discountRateProfile').enable();
     }
 
     if (this.pageMode === 'Edit Event' && this.measureEvent === 'Initial') {
       this.financialForm.get('modificationImpactScope').disable();
     }
-
     this.setServiceValues();
 
+    this.financialForm.get('amortizationProfile').disable();
+    const manualId = this.accountingEventsData?.amortizationProfileID;
     if (manualId == -1) {
       this.amortizationProfileList.push({
         profileID: -2,
@@ -889,14 +1006,11 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   loadDataForAdd() {
-    this.compoundFrequencyType =
-      this.portfolioSettings?.defaultCompoundFrequencyType;
     this.financialForm
       .get('chargeType')
       .setValue(
         this.leaseInformation?.accountingType === 'AR' ? 'Income' : 'Expense'
       );
-    this.selectedAnnualRateType = this.portfolioSettings.defaultAnnualRateType;
     this.financialForm
       .get('localCurrency')
       .setValue(this.leaseInformation?.exchangeRateID);
@@ -913,8 +1027,12 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   setServiceValues() {
-    this.addEventFormService.setaccountingEventData(this.accountingEventsData);
-    this.addEventFormService.setPageMode(this.pageMode);
+    if (!!this.accountingEventsData) {
+      this.addEventFormService.setaccountingEventData(
+        this.accountingEventsData
+      );
+    }
+    this.addEventFormService.setPageMode(this.pageMode, this.measureEvent);
     this.addEventFormService.setClassification(
       this.accountingSummaryService.getClassificationName(this.classificationId)
     );
@@ -929,7 +1047,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     this.financialForm.get('annualRateDropdown').enable();
     this.financialForm
       .get('annualRateDropdown')
-      .setValue(this.accountingEventsData.annualRateTypeID);
+      .setValue(this.portfolioSettings.defaultAnnualRateType);
     this.financialForm.get('discountRate').setValue(0);
   }
 
@@ -953,23 +1071,17 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     const modificationImpactScope = this.financialForm.get(
       'modificationImpactScope'
     ).value;
-    const rate = hasEvent ? event[0].rate : 0;
 
     if (this.pageMode === 'Edit Event' && isDirectEntry) {
-      if (rate > 0) {
-        this.financialForm
-          .get('discountRate')
-          .setValue(this.accountingEventsData.discountRate);
-        this.financialForm
-          .get('annualRateDropdown')
-          .setValue(this.accountingEventsData?.discountRateTypeID);
-        this.financialForm.get('discountRate').enable();
-        this.financialForm.get('annualRateDropdown').enable();
-        return;
-      } else if (rate === 0) {
-        this.resetDiscountRate();
-        return;
-      }
+      this.financialForm
+        .get('discountRate')
+        .setValue(this.accountingEventsData.discountRate);
+      this.financialForm
+        .get('annualRateDropdown')
+        .setValue(this.accountingEventsData?.annualRateTypeID);
+      this.financialForm.get('discountRate').enable();
+      this.financialForm.get('annualRateDropdown').enable();
+      return;
     }
 
     this.financialForm.get('discountRate').disable();
@@ -980,10 +1092,16 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         if (this.measureEvent !== 'Full Termination') {
           this.financialForm.get('discountRate').enable();
           this.financialForm.get('annualRateDropdown').enable();
-          this.financialForm.get('discountRate').setValue(event[0].rate);
+          this.discountRate = modificationImpactScope
+            ? event[0].rate
+            : this.accountingEventsData.discountRate;
+          this.annualRateType = modificationImpactScope
+            ? event[0].annualRateTypeID
+            : this.accountingEventsData?.annualRateTypeID;
+          this.financialForm.get('discountRate').setValue(this.discountRate);
           this.financialForm
             .get('annualRateDropdown')
-            .setValue(event[0].annualRateTypeID);
+            .setValue(this.annualRateType);
           this.effectiveRate = 0;
           this.addEventFormService.setEffectiveRate(this.effectiveRate);
         } else if (this.measureEvent === 'Full Termination') {
@@ -999,7 +1117,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           : this.accountingEventsData.discountRate;
         this.annualRateType = modificationImpactScope
           ? event[0].annualRateTypeID
-          : this.accountingEventsData?.discountRateTypeID;
+          : this.accountingEventsData?.annualRateTypeID;
         this.financialForm.get('discountRate').setValue(this.discountRate);
         this.financialForm
           .get('annualRateDropdown')
@@ -1053,7 +1171,6 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       this.financialForm.get('currencyRate').enable();
       this.functionalCurrencyRateLookupResultMessage = 'Direct Entry';
     } else {
-      this.financialForm.get('currencyRate').disable();
       this.getFunctionalCurrencyRateLookup();
     }
   }
@@ -1068,6 +1185,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
 
   onFunctionalCurrencySelection(event: any) {
     this.functionalCurrency = event[0].name;
+    this.resetFinancialBalanceCards();
   }
 
   noDiscountRateMatch() {
@@ -1075,7 +1193,6 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     this.financialForm
       .get('annualRateDropdown')
       .setValue(this.portfolioSettings?.defaultAnnualRateType);
-    this.financialForm.get('annualRateDropdown').disable();
     this.effectiveRate = 0;
     this.setDiscountRateSubTitle();
     this.financialForm.get('discountRateProfile').reset();
@@ -1099,12 +1216,19 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
             this.accountingEventsData?.discountRateProfileID === 0
               ? 'Direct Entry'
               : this.accountingEventsData?.discountRateProfileName,
-          annualRateTypeID: this.accountingEventsData?.discountRateTypeID,
+          annualRateTypeID: this.accountingEventsData?.annualRateTypeID,
           isActive: true,
           sortOrder: 1,
         },
       ];
       this.selectedDiscountRate = this.discountRateOptions[0].profileID;
+      if (this.discountRateOptions[0].profileName === 'Direct Entry') {
+        this.financialForm.get('discountRate').enable();
+        this.financialForm.get('annualRateDropdown').enable();
+      } else {
+        this.financialForm.get('discountRate').disable();
+        this.financialForm.get('annualRateDropdown').disable();
+      }
       return;
     }
 
@@ -1117,14 +1241,13 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     ) {
       this.discountRatePlaceHolder = 'Input Term';
       this.noDiscountRateMatch();
-      this.financialForm.get('annualRateDropdown').disable();
       if (this.portfolioSettings?.directEntryDiscountRateEnabled) {
         this.discountRateOptions = [
           {
             rate: 0,
             profileID: 0,
             profileName: 'Direct Entry',
-            annualRateTypeID: 1,
+            annualRateTypeID: this.portfolioSettings.defaultAnnualRateType,
             isActive: true,
             sortOrder: 1,
           },
@@ -1141,7 +1264,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           rate: 0,
           profileID: 0,
           profileName: 'Direct Entry',
-          annualRateTypeID: this.accountingEventsData?.discountRateTypeID,
+          annualRateTypeID: this.accountingEventsData?.annualRateTypeID,
           isActive: true,
           sortOrder: 1,
         },
@@ -1177,11 +1300,12 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
                 rate: rate,
                 profileID: 0,
                 profileName: 'Direct Entry',
-                annualRateTypeID: 1,
+                annualRateTypeID: this.portfolioSettings.defaultAnnualRateType,
                 isActive: true,
                 sortOrder: 1,
               });
             }
+            this.selectedDiscountRate = this.discountRateOptions[0].profileID;
 
             if (this.discountRateOptions.length === 0) {
               this.discountRatePlaceHolder =
@@ -1247,20 +1371,31 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         .subscribe((response: any) => {
           if (response && response.success) {
             this.functionalCurrencyRateLookup = response.data;
-            this.functionalCurrencyRateLookupResultMessage =
+
+            this.functionalCurrencyRateLookupResult ===
               response.data.resultMessage;
-            let currencyRate: number;
+            this.portfolioSettings.functionalCurrencyRateset === 'Direct Entry'
+              ? (this.functionalCurrencyRateLookupResultMessage =
+                  'Direct Entry')
+              : (this.functionalCurrencyRateLookupResultMessage =
+                  response.data.resultMessage);
             if (
-              this.functionalCurrencyRateLookup?.functionalRate !== null &&
-              this.functionalCurrencyRateLookup?.functionalRate !== 1
+              this.portfolioSettings.functionalCurrencyRateset !==
+              'Direct Entry'
             ) {
-              currencyRate = this.functionalCurrencyRateLookup.functionalRate;
-            } else {
-              currencyRate =
-                this.localCurrency === this.functionalCurrency ? 1 : 0;
+              let currencyRate: number;
+              if (
+                this.functionalCurrencyRateLookup?.functionalRate !== null &&
+                this.functionalCurrencyRateLookup?.functionalRate !== 1
+              ) {
+                currencyRate = this.functionalCurrencyRateLookup.functionalRate;
+              } else {
+                currencyRate =
+                  this.localCurrency === this.functionalCurrency ? 1 : 0;
+              }
+              this.financialForm.get('currencyRate').setValue(currencyRate);
+              this.financialForm.get('currencyRate').disable();
             }
-            this.financialForm.get('currencyRate').setValue(currencyRate);
-            this.financialForm.get('currencyRate').disable();
           } else {
             this.accountingSummaryService.errorNotify(
               response.clientErrorMessage
@@ -1293,14 +1428,19 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   onAmortizationValueChanged(event: any) {
-    if (!event || !Array.isArray(event) || !event[0]) {
+    this.addEditScheduleService.clearToastBySummary(
+      'Amortization Profile and Classification'
+    );
+    this.addEditScheduleService.clearToastBySummary(
+      'Amortization Profile Is Required'
+    );
+    const profile = event.value;
+    if (!profile) {
       return;
     }
-    this.financialForm.get('overrideAmortizationProfile').reset();
-    const profile = event[0];
-    this.manualEntryVisible = profile.profileName === 'Manual' ? true : false;
+    this.manualEntryVisible = profile === -1 ? true : false;
     const control = this.financialForm.get('overrideAmortizationProfile');
-    profile.profileID < -1
+    profile < -1
       ? (control.setValue(false), control.disable())
       : control.enable();
   }
@@ -1312,69 +1452,58 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   private setROUAmountForROUMethod(rouMethodName: string) {
-    this.financialForm.get('ROUAmount').enable();
-
+    this.addEventFormService.ignoreButtonReset.next(false);
     switch (rouMethodName) {
       case 'Direct Entry': {
         this.financialForm.get('ROUAmount').setValue(null);
+        this.financialForm.get('ROUAmount').enable();
         break;
       }
       case 'Opening Asset Balance': {
         let openingAssetBalValue =
           this.pageMode === 'Add Event' || this.pageMode === 'Remeasure Event'
             ? this.addEventFormService.openingAssetBalance
-            : this.accountingEventsData.assetAmortization;
+            : this.accountingEventsData.openingAssetBalance;
 
-        this.financialForm
-          .get('ROUAmount')
-          .setValue(
-            this.formatValueToDecimalPrecision(
-              openingAssetBalValue,
-              this.localCurrencyDecimalPrecision
-            )
-          );
+        this.financialForm.get('ROUAmount').setValue(openingAssetBalValue);
+        this.addEventFormService.ignoreButtonReset.next(true);
         this.financialForm.get('ROUAmount').disable();
         break;
       }
       case 'System Asset Adjustment': {
         let systemAssetAdjValue =
           this.pageMode === 'Add Event' || this.pageMode === 'Remeasure Event'
-            ? this.addEventFormService.systemAssetAdjustment
+            ? this.addEventFormService.systemAssetAdjustment$.value
             : this.accountingEventsData.systemAssetAdjustment;
 
-        this.financialForm
-          .get('ROUAmount')
-          .setValue(
-            this.formatValueToDecimalPrecision(
-              systemAssetAdjValue,
-              this.localCurrencyDecimalPrecision
-            )
-          );
+        this.financialForm.get('ROUAmount').setValue(systemAssetAdjValue);
+        this.addEventFormService.ignoreButtonReset.next(true);
         this.financialForm.get('ROUAmount').disable();
         break;
       }
       case 'Manual Asset Adjustment': {
-        this.financialForm
-          .get('ROUAmount')
-          .setValue(
-            this.formatValueToDecimalPrecision(
-              this.addEventFormService.manualAssetAdjustment?.value,
-              this.localCurrencyDecimalPrecision
-            )
-          );
+        const value =
+          this.pageMode !== 'Edit Event' ||
+          this.addEventFormService.manualAssetAdjustment$?.value
+            ? this.addEventFormService.manualAssetAdjustment$?.value
+            : this.accountingEventsData.manualAssetAdjustment;
+
+        this.financialForm.get('ROUAmount').setValue(value);
+
         this.financialForm.get('ROUAmount').disable();
         break;
       }
       case 'Total Asset Adjustment': {
-        this.financialForm
-          .get('ROUAmount')
-          .setValue(
-            this.formatValueToDecimalPrecision(
-              this.accountingEventsData?.systemAssetAdjustment +
-                this.addEventFormService.manualAssetAdjustment?.value,
-              this.localCurrencyDecimalPrecision
-            )
-          );
+        const value =
+          this.pageMode !== 'Edit Event' ||
+          this.addEventFormService.manualAssetAdjustment$?.value
+            ? this.addEventFormService.manualAssetAdjustment$?.value +
+              this.addEventFormService.systemAssetAdjustment$?.value
+            : this.accountingEventsData?.systemAssetAdjustment +
+              this.accountingEventsData.manualAssetAdjustment;
+
+        this.financialForm.get('ROUAmount').setValue(value);
+
         this.financialForm.get('ROUAmount').disable();
         break;
       }
@@ -1385,20 +1514,12 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         if (this.pageMode === 'Remeasure Event') {
           this.financialForm
             .get('ROUAmount')
-            .setValue(
-              this.formatValueToDecimalPrecision(
-                this.accountingEventsData?.rouAssetObtainedAmount,
-                this.localCurrencyDecimalPrecision
-              )
-            );
+            .setValue(this.accountingEventsData?.rouAssetObtainedAmount ?? 0);
         } else {
           this.financialForm
             .get('ROUAmount')
             .setValue(
-              this.formatValueToDecimalPrecision(
-                this.accountingEventsData?.priorROUAssetObtainedAmount,
-                this.localCurrencyDecimalPrecision
-              )
+              this.accountingEventsData?.priorROUAssetObtainedAmount ?? 0
             );
         }
         this.financialForm.get('ROUAmount').disable();
@@ -1449,10 +1570,5 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
 
   resetFinancialBalanceCards() {
     this.addEventFormService.setFinancialBalanceCards();
-  }
-
-  runROUAssetValid(): boolean {
-    const isValid = this.validateROUAmount() && this.validateROUActionDate();
-    return isValid;
   }
 }

@@ -43,6 +43,7 @@
     keyExpr="projectMilestoneApprovalID"
     [width]="'100%'"
     [wordWrapEnabled]="true"
+    (onContentReady)="adaAttrNoDataGrid($event)"
   >
     <dxo-load-panel [enabled]="true"> </dxo-load-panel>
 

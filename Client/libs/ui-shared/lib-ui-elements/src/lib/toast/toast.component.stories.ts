@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { APP_INITIALIZER, Injector } from '@angular/core';
 import { ToastState } from '@mango/data-models/lib-data-models';
-import { AngularRenderer, Meta, StoryObj, applicationConfig, moduleMetadata } from '@storybook/angular';
+import {
+  AngularRenderer,
+  Meta,
+  StoryObj,
+  applicationConfig,
+  moduleMetadata,
+} from '@storybook/angular';
 import { DecoratorFunction } from '@storybook/types';
 import { DxToastModule } from 'devextreme-angular';
 import { ButtonModule } from '../button';
@@ -12,7 +18,10 @@ import { CremToastService } from './toast.service';
 let toastService: CremToastService = null;
 
 // This Injector to make CremToastService available in Storybook
-function injectInjectorToProps<TArgs = unknown>(): DecoratorFunction<AngularRenderer, TArgs> {
+function injectInjectorToProps<TArgs = unknown>(): DecoratorFunction<
+  AngularRenderer,
+  TArgs
+> {
   return (storyFn) => {
     const story = storyFn();
     if (!story.applicationConfig) {
@@ -21,7 +30,7 @@ function injectInjectorToProps<TArgs = unknown>(): DecoratorFunction<AngularRend
     story.applicationConfig.providers.push({
       provide: APP_INITIALIZER,
       useFactory: (injector: Injector): void => {
-        toastService = null
+        toastService = null;
         if (!story.props) {
           story.props = { injector };
         }
@@ -63,41 +72,35 @@ export default {
         category: 'Methods',
         defaultValue: {
           summary: null,
-        } 
-      }
+        },
+      },
     },
     visible: {
       table: {
-        disable: true
-      }
+        disable: true,
+      },
     },
     showCloseButton: {
       table: {
-        disable: true
-      }
+        disable: true,
+      },
     },
     showBody: {
       table: {
-        disable: true
-      }
-    }
+        disable: true,
+      },
+    },
   },
   decorators: [
     moduleMetadata({
-      imports: [
-        CommonModule,
-        IconModule,
-        DxToastModule,
-        ButtonModule
-      ],
+      imports: [CommonModule, IconModule, DxToastModule, ButtonModule],
     }),
     applicationConfig({
-      providers: [CremToastService]
+      providers: [CremToastService],
     }),
-    injectInjectorToProps()
+    injectInjectorToProps(),
   ],
 } as Meta<ToastComponent>;
-
 
 type Story = StoryObj<ToastComponent>;
 
@@ -107,7 +110,7 @@ export const Default: Story = {
     messageHeader: 'Lorem lpsum',
     message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     state: ToastState.INFORMATION,
-    duration: 3000,
+    duration: 6000,
     showBody: true,
     maxWidth: '320px',
     position: 'bottom right',
@@ -115,18 +118,19 @@ export const Default: Story = {
   },
   render: (args: ToastComponent, ctx: any) => {
     (args as any).onShowClick = () => {
-      toastService = toastService || ctx.args.injector.get(CremToastService)
+      toastService = toastService || ctx.args.injector.get(CremToastService);
       toastService.show(args.message, args.messageHeader, args.state, {
         duration: args.duration,
         position: args.position,
         showBody: args.showBody,
         showCloseButton: args.showCloseButton,
-        maxWidth: args.maxWidth
-      })
-    }
+        maxWidth: args.maxWidth,
+        maxToasts: 4,
+      });
+    };
     return {
       props: args,
-      template: `<crem-button text='Show Toast' btnStyle='flat' color='primary' (buttonClick)='onShowClick()'></crem-button>`
-    }
-  }
-}
+      template: `<crem-button text='Show Toast' btnStyle='flat' color='primary' (buttonClick)='onShowClick()'></crem-button>`,
+    };
+  },
+};

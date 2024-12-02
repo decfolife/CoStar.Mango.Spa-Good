@@ -56,13 +56,14 @@
           <crem-input
             #NotesInput
             [id]="'tar-notesInputId'"
+            [className]="tarNotesStatus"
             [showHint]="false"
             [showLabel]="false"
             [showInfo]="false"
             [inputType]="'textarea'"
-            [required]="true"
-            [value]="''"
+            [required]="isNotesFieldRequired"
             [name]="''"
+            (valueChange)="onNotesChanged($event)"
             [placeholder]="'Enter Notes...'"
             formControlName="notes"
           >
@@ -73,15 +74,23 @@
   </div>
 
   <div modalFooter class="footerContent">
-    <div id="msgTemplate" class="footerLeftControls">
-      <span *ngIf="isNotesFieldRequired" class="tar-helpText">
-        Notes are required to complete this action.
-      </span>
+    <div class="footerLeftControls">
+      <crem-button
+        *ngIf="displayResendEmailBtn"
+        type="secondary"
+        class="resendApproval tar-btn"
+        [id]="'pt-resendApprovalBtn'"
+        [disabled]="disableResendBtn"
+        (click)="resendApproval()"
+      >
+        Resend Approval
+      </crem-button>
     </div>
     <div id="buttonTemplate" class="footerRightControls">
       <crem-button
         type="secondary"
         class="cancelChanges tar-btn"
+        [id]="'pt-closeBtn'"
         (click)="closeModal()"
       >
         Cancel
@@ -89,6 +98,8 @@
       <crem-button
         type="primary"
         class="applyChanges tar-btn"
+        [id]="'pt-approveRejectBtn'"
+        [disabled]="disableActionBtn"
         (click)="approveOrRejectTaskValidate()"
       >
         {{ taskAction }}

@@ -13,6 +13,7 @@ import { PageHeaderComponent } from './page-header.component';
 import { DropdownModule } from '../dropdown';
 import { InputComponent } from '../input/input/input.component';
 import { Pill } from '@mango/data-models/lib-data-models';
+import { SplitButtonComponent } from '../split-button/split-button.component';
 
 const PORTFOLIO_FILTERS = `
 [
@@ -27,6 +28,7 @@ const PORTFOLIO_FILTERS = `
 const FILTERS_MOCK = `
 <div filters style="display: flex; flex-direction: row;">
   <crem-dropdown style="margin-right: 8px;"
+    [id]="'page-header-dropdown'"
     [placeholder]="'Portfolio'"
     [isSearchable]="true"
     [selectMode]="'single'"
@@ -35,6 +37,7 @@ const FILTERS_MOCK = `
   </crem-dropdown>
 
   <crem-input style="width: 190px;"
+    [id]="'page-header-folder-name'"
     [inputType]="'text'"
     [placeholder]="'Folder name'"
   ></crem-input>
@@ -68,37 +71,45 @@ const ACTIONS_MOCK = `
         ]"
         ></crem-button-group>
         <crem-button
+          [id]="'page-header-alerts'"
           text="Alerts"
           color="secondary"
         ></crem-button>
         <crem-button
+          [id]="'page-header-filters'"
           text="Filters"
           color="secondary"
           icon="faFilter"
           iconSize="xs"
         ></crem-button>
         <crem-button
+          [id]="'page-header-more'"
           text="More"
           color="secondary"
           icon="faCaretDown"
           iconPosition="right"
           (buttonClick)="someFunction()"
         ></crem-button>
-        <crem-button
-          *ngIf="primaryButtonText"
+        <crem-split-button
           [text]="primaryButtonText"
-          color="primary"
-          icon="faPlus"
-        ></crem-button>
+          [icon]="'faCaretDown'"
+          [color]="'primary'"
+          [disabled]="false"
+          [btnStyle]="'flat'"
+          [dropdownPosition]="'left'"
+          [options]="['Option 1', 'Option 2', 'Option 3']"
+        ></crem-split-button>
       </div>
 `;
 
 const SETTINGS_MOCK = `
 <div settings style="display: flex;">
     <crem-button
+        [id]="'page-header-calendar'"
+        [ariaLabel]="'calendar-button'"
         [type]="'secondary'"
         [btnStyle]="'basic'"
-        [icon]="' '"
+        [icon]="'faCalendarDay'"
       >
       </crem-button>
   </div>
@@ -117,6 +128,7 @@ const meta: Meta<PageHeaderComponent> = {
         ButtonGroupComponent,
         DropdownModule,
         InputComponent,
+        SplitButtonComponent,
       ],
     }),
   ],
@@ -232,7 +244,7 @@ type Story = StoryObj<PageHeaderComponent>;
 export const Default: Story = {
   args: {
     tabTitle: 'Lease',
-    pageTitle: 'Building Details Building Details Building Details',
+    pageTitle: '3438 Peachtree Rd. NE, Atlanta',
     primaryButtonText: 'Add',
     showBookmarkButton: true,
     showSettingsButton: true,

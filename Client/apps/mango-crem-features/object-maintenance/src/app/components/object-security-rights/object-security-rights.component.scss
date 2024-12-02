@@ -1,0 +1,62 @@
+@use 'styles' as *;
+
+.grid {
+  height: calc(100% - 80px);
+}
+
+.actions-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.search-container {
+  display: flex;
+  flex-direction: row;
+  margin-right: 20px;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: auto;
+}
+
+::ng-deep #object-security-rights-grid-section {
+  table.dx-datagrid-table {
+    tbody {
+      tr.dx-row.dx-data-row {
+        &:hover {
+          cursor: default;
+
+          td {
+            cursor: default;
+          }
+        }
+      }
+    }
+  }
+
+  .dx-datagrid-group-panel .dx-group-panel-item {
+    @include costar(color, dark);
+    font-weight: 500;
+  }
+
+  .dx-datagrid-header-panel .dx-toolbar {
+    @include costar(margin-bottom, 2);
+    @include costar(margin-top, 2);
+    @include costar(padding-left, 2);
+  }
+
+  a {
+    @include costar(color, primary-light);
+  }
+}
+
+:host ::ng-deep {
+  .dx-datagrid-drag-header {
+    height: auto !important;
+    width: auto !important;
+    white-space: nowrap !important;
+    min-height: 150px !important;
+    max-height: 300px !important;
+    overflow: hidden;
+  }
+}

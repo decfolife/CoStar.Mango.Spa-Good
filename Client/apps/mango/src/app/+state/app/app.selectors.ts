@@ -102,3 +102,23 @@ export const currentProjectId = createSelector(
   getAppState,
   (state: State) => state.currentProjectId
 );
+
+export const navState = createSelector(
+  getAppState,
+  (state: State) => state.nav
+);
+
+export const selectNavigationLinks = createSelector(
+  navState,
+  (nav) => nav.navigationLinks
+);
+
+export const selectActiveLink = createSelector(
+  navState,
+  (nav) => nav.activeLink
+);
+
+export const selectNavLinksFetched = createSelector(
+  navState,
+  (nav) => nav.navLinksFetched
+);

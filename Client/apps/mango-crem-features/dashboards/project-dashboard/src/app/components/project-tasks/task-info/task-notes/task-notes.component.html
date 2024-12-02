@@ -15,7 +15,7 @@
     [width]="'100%'"
     height="565px"
     [wordWrapEnabled]="true"
-    (onContentReady)="onContentReady($event)"
+    (onContentReady)="onContentReady($event); adaAttrNoDataGrid($event)"
   >
     <dxo-scrolling
       [useNative]="false"

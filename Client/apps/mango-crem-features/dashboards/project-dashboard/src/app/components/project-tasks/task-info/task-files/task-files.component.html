@@ -9,8 +9,9 @@
   </section>
 </div>
 
-<div class="task-files-dataGrid-wrapper">
+<section class="task-files-dataGrid-wrapper">
   <dx-data-grid
+    cremTabAwareGrid
     id="task-files-grid"
     [dataSource]="taskFiles"
     [showColumnLines]="false"
@@ -25,6 +26,7 @@
     keyExpr="fileID"
     [width]="'100%'"
     [wordWrapEnabled]="true"
+    (onContentReady)="adaAttrNoDataGrid($event)"
   >
     <dxo-load-panel [enabled]="true"> </dxo-load-panel>
 
@@ -58,5 +60,7 @@
       </div>
       <div class="cem-filesGrid-uploadedBy">{{ fileItem.data.fullName }}</div>
     </div>
+
+    <dxo-scrolling mode="standard"> </dxo-scrolling>
   </dx-data-grid>
-</div>
+</section>

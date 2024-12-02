@@ -22,6 +22,7 @@ import {
   DxSelectBoxComponent,
   DxValidatorComponent,
 } from 'devextreme-angular';
+import { CremValidatedComponent } from '../base';
 
 /**
  *
@@ -41,9 +42,14 @@ import {
       multi: true,
       useExisting: DropdownComponent,
     },
+    {
+      provide: CremValidatedComponent,
+      useExisting: DropdownComponent,
+    },
   ],
 })
 export class DropdownComponent
+  extends CremValidatedComponent
   implements OnInit, OnChanges, AfterViewInit, ControlValueAccessor
 {
   public data: any[];
@@ -245,7 +251,9 @@ export class DropdownComponent
   @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent;
   @ViewChild('dropDownBox', { static: false }) dropDownBox: any;
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef) {
+    super();
+  }
 
   onChange = (value: string) => {};
   onTouched = () => {};
@@ -735,8 +743,8 @@ export class DropdownComponent
             ) {
               if (childElment?.[1]) {
                 const checkboxElement = childElment[0].children[0];
-                const inputTag = checkboxElement.querySelector('input');
-                checkboxElement.setAttribute('aria-label', 'Select All');
+                const inputTag = checkboxElement?.querySelector('input');
+                checkboxElement?.setAttribute('aria-label', 'Select All');
               }
             }
           });
@@ -920,6 +928,10 @@ export class DropdownComponent
     if (!selection || (selection && selection.length === 0)) {
       this.clearSelectBox();
     }
+  }
+
+  cremSharedComponentValidator() {
+    return this.status === 'error';
   }
 }
 @Directive({

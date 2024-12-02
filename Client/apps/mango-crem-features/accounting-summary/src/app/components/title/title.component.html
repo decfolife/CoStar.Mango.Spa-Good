@@ -5,7 +5,9 @@
   >
     Lease: {{ leaseName }}
   </div>
-  <div class="info-icon">
+
+  <!-- Temporarily commented out until ready -->
+  <!-- <div class="info-icon">
     <crem-icon
       [id]="accountingSummaryService.getId(componentName, 'info', 'icon')"
       pack="solid"
@@ -14,7 +16,7 @@
       (click)="showObjectInfoPopup()"
     >
     </crem-icon>
-  </div>
+  </div> -->
   <div
     *ngIf="isLocked"
     [id]="accountingSummaryService.getId(componentName, 'lock', 'click')"

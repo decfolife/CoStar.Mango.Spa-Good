@@ -18,6 +18,7 @@ export class UserService {
     Api.userMaintenance
   );
 
+  projects: string = UtilitiesService.getBaseApiUrl(Api.projects);
   currencyMappingTable$: Observable<CurrencyMapping[]>;
 
   constructor(private http: HttpClient) {
@@ -102,5 +103,15 @@ export class UserService {
       `${this.userMaintenanceUrl}usermaintenance/UpdateUserPreferences`,
       { preferences: updatedPreferences }
     );
+  }
+
+  getUserRights(objectType: number, objectId: number, securityType: number) {
+    const url = `${this.projects}projects/GetUserRights`;
+
+    return this.http.post(url, {
+      objectType,
+      objectId,
+      securityType,
+    });
   }
 }

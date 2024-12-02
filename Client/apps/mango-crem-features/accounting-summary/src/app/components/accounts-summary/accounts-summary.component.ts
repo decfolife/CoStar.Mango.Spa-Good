@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { LeaseInfoResponse } from '../../models/lease-info-response.modal';
 import { Subscription, combineLatest } from 'rxjs';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
+import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
 
 @Component({
   selector: 'mango-accounts-summary',
@@ -46,7 +47,8 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     private ref: ChangeDetectorRef,
     public accountingSummaryService: AccountingSummaryService,
     public router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    public addEditScheduleService: AddEditScheduleService
   ) {}
 
   ngOnInit(): void {
@@ -319,6 +321,17 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
             workflowStatusOptionsResponse.clientErrorMessage
           );
         } else {
+          if (
+            workflowStatusOptionsResponse.clientErrorMessage ===
+            'SetToReviewWorkflowStatus'
+          ) {
+            this.addEditScheduleService.showToast(
+              'Workflow Status',
+              'The prior active lease status has been marked as inactive. Due to this the status has been changed to the active review status.',
+              'info',
+              false
+            );
+          }
           this.workflowStatusInfo = workflowStatusOptionsResponse.data;
           this.wfStatusRights = {
             wfStatusallowJEApproval:

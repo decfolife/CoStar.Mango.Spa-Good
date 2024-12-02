@@ -42,6 +42,14 @@ export class UtilityService {
     const debugObject = [];
 
     localCardConfig.map((cardConfig, i: number) => {
+      // If localCardConfig doesn't exist for the IADCardConfig skip iteration
+      if (!IADCards[i]) {
+        console.error(
+          'There is a configuration mismatch between localCardConfig and IADCardData'
+        );
+        return;
+      }
+
       // iterate per cardData.ts configuration object
       let pivotGrid: PivotGridDataSource;
 
@@ -146,9 +154,16 @@ export class UtilityService {
     const fieldConfigs: Array<any> = [];
 
     IADCardConfig?.map((card, i) => {
+      // If localCardConfig doesn't exist for the IADCardConfig skip iteration
+      if (!localCardConfig[i]) {
+        console.error(
+          'There is a count mismatch between localCardConfig and IADCardConfig'
+        );
+        return;
+      }
+
       // The array corresponds to the order coming from the API in the CardJSONSchema field
       const fieldConfig = JSON.parse(card.CardJSONSchema);
-
       // Get Indexes of JSON Schema and apply methods
       const dataIndex: number = fieldConfig.findIndex(
         (e) => e.area === 'data' || e.dataField === 'data'
@@ -156,70 +171,84 @@ export class UtilityService {
       const rowIndex: number = fieldConfig.findIndex(
         (e) => e.dataField === 'Display' || e.area === 'row'
       );
-      const columnIndex: number = fieldConfig.findIndex(
-        (e) => e.area === 'column'
+      const sortedColumnIndex: number = fieldConfig.findIndex(
+        (e) => e.dataField === localCardConfig[i].sortedColumnFieldName
       );
 
       /**
        * Sorting using sortingMethod
        * @see https://js.devexpress.com/Angular/Documentation/ApiReference/Data_Layer/PivotGridDataSource/Configuration/fields/#sortingMethod
        */
-      fieldConfig[rowIndex].sortingMethod = () =>
-        rowSort(undefined, undefined, card.sortingOrder);
-      fieldConfig[dataIndex].sortingMethod = () =>
-        rowSort(undefined, undefined, card.sortingOrder);
-
+      fieldConfig[rowIndex].sortingMethod = (a, b) =>
+        rowSort(a, b, card.sortingOrder);
+      fieldConfig[dataIndex].sortingMethod = (a, b) =>
+        rowSort(a, b, card.sortingOrder);
+      if (sortedColumnIndex != -1) {
+        fieldConfig[sortedColumnIndex].sortingMethod = (a, b) =>
+          rowSort(a, b, localCardConfig[i].columnSortingOrder);
+      }
       // Format Data
-      if (localCardConfig[i]?.format || card.format) {
+      if (localCardConfig[i]?.format || card.format || decimalPrecision) {
         fieldConfig[dataIndex].format = {
           type: localCardConfig[i]?.format?.type ?? card.format ?? 'fixedPoint',
-          precision: decimalPrecision ?? 2,
+          precision:
+            localCardConfig[i]?.format?.precision ?? decimalPrecision ?? 2,
         };
-      } else if (localCardConfig[i].format === null) {
+      } else if (localCardConfig[i]?.format === null) {
+        // When value is null we delete the key, to prevent false positives
         delete fieldConfig[dataIndex].format;
       }
 
       // Styling
-      if (localCardConfig[i].width || card.width) {
+      if (localCardConfig[i]?.width || card.width) {
         // Checks local cardConfigs, if false use API response
         fieldConfig[rowIndex].width = localCardConfig[i].width ?? card.width;
-      } else if (localCardConfig[i].width === null) {
-        // If local parameter is null, delete the key
+      } else if (localCardConfig[i]?.width === null) {
         delete fieldConfig[rowIndex].width;
       }
 
       // Summary: summaryType
-      if (localCardConfig[i].summaryType || card.summaryType) {
+      if (localCardConfig[i]?.summaryType || card.summaryType) {
         fieldConfig[dataIndex].summaryType =
           localCardConfig[i].summaryType ?? card.summaryType;
-      } else if (localCardConfig[i].summaryType === null) {
+      } else if (localCardConfig[i]?.summaryType === null) {
         delete fieldConfig[dataIndex].summaryType;
       }
 
       // Summary: calculateSummaryValue
       if (
-        localCardConfig[i].calculateSummaryValue ||
+        localCardConfig[i]?.calculateSummaryValue ||
         card.calculateSummaryValue
       ) {
         fieldConfig[dataIndex].calculateSummaryValue =
           localCardConfig[i].calculateSummaryValue ??
           card.calculateSummaryValue;
-      } else if (localCardConfig[i].calculateSummaryValue === null) {
+      } else if (localCardConfig[i]?.calculateSummaryValue === null) {
         delete fieldConfig[dataIndex].calculateSummaryValue;
+      } else {
+        fieldConfig[dataIndex].calculateSummaryValue = (summaryCell) => {
+          if (
+            summaryCell.field('column')?.dataField === 'PeriodYear' ||
+            summaryCell.field('column')?.dataField === 'PeriodQuarter'
+          ) {
+            return summaryCell.value() / 2;
+          } else {
+            return summaryCell.value();
+          }
+        };
       }
 
       // Summary: calculateCustomSummary
       if (
-        localCardConfig[i].calculateCustomSummary ||
+        localCardConfig[i]?.calculateCustomSummary ||
         card.calculateCustomSummary
       ) {
         fieldConfig[dataIndex].calculateCustomSummary =
           localCardConfig[i].calculateCustomSummary ??
           card.calculateCustomSummary;
-      } else if (localCardConfig[i].calculateCustomSummary === null) {
+      } else if (localCardConfig[i]?.calculateCustomSummary === null) {
         delete fieldConfig[dataIndex].calculateCustomSummary;
       }
-
       // Push configuration Field
       fieldConfigs.push(fieldConfig);
     });
@@ -322,8 +351,14 @@ export class UtilityService {
           ) {
             case 'Total': {
               switch (k) {
-                case 'Display':
-                case 'LeaseTemplate':
+                case 'Display': {
+                  transformedObject[k] = v;
+                  break;
+                }
+                case 'LeaseTemplate': {
+                  transformedObject[k] = v;
+                  break;
+                }
                 case 'DisclosureClassification': {
                   transformedObject[k] = v;
                   break;
@@ -343,8 +378,8 @@ export class UtilityService {
 
         if (
           sortingItems &&
-          (value.DisclosureClassification !== 'Total' ||
-            value.LeaseTemplate !== 'Total')
+          value.DisclosureClassification !== 'Total' &&
+          value.LeaseTemplate !== 'Total'
         ) {
           transformedObject['Display'] = sortingItems[i];
         }

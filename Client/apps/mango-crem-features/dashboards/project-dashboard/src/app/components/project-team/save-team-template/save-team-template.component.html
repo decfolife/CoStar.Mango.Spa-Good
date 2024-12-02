@@ -5,7 +5,7 @@
   [primaryFooterButtonText]="'Save'"
   [closeOrCancelButtonText]="'Cancel'"
   [primaryFooterButtonEnabledDisabled]="
-    templateName.trim().length == 0 ? true : false
+    templateName.trim().length == 0 ? true : false || saveButtonDisabled
   "
   (primaryButtonAction)="saveTeamAsTemplate()"
 >

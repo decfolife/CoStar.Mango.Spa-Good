@@ -79,8 +79,9 @@
             [required]="journalEntryProfileRequired"
             value="profileID"
             valueExpr="profileID"
-            [showClearButton]="journalEntryProfileRequired"
+            [showClearButton]="!journalEntryProfileRequired"
             [initialSelectedValue]="selectedjournalEntryProfileID"
+            (selectedItems)="onJournalEntryProfileValueChanged($event)"
             formControlName="journalEntryProfile"
             [containerized]="true"
           ></crem-dropdown>
@@ -221,7 +222,6 @@
                     'checkbox'
                   )
                 "
-                [value]="isTermBeginNot1stDayOfTheMonth"
                 [disabled]="false"
                 formControlName="notFirstDayOfTheMonth"
               >
@@ -240,7 +240,14 @@
               </crem-input-label>
             </div>
           </div>
-          <div class="term-hint" *ngIf="termBeginDate && termEndDate">
+          <div
+            class="term-hint"
+            *ngIf="
+              termBeginDate &&
+              termEndDate &&
+              measureEvent !== 'Full Termination'
+            "
+          >
             <span
               title="Accounting Term (Years, Months, Days)"
               *ngIf="termString"
@@ -257,6 +264,19 @@
             >
             <span title="Accounting Term (Number of Days)"
               >{{ termInDays | number: '1.0-0' }} Days</span
+            >
+          </div>
+
+          <div
+            class="term-hint"
+            *ngIf="
+              termBeginDate &&
+              termEndDate &&
+              measureEvent === 'Full Termination'
+            "
+          >
+            <span title="Accounting Terms">
+              0 Periods | 0.00 Months | 0 Days</span
             >
           </div>
         </div>
@@ -330,8 +350,6 @@
             size="wide"
             checkedLabel="YES"
             uncheckedLabel="NO"
-            [value]="isImpaired"
-            [disabled]="isImpairedDisabled"
             formControlName="isImpaired"
           >
           </crem-toggle-slider>
@@ -352,7 +370,7 @@
             "
             [label]="'Other Reason Explanation'"
             [name]="'details-report-exception-comment-textarea'"
-            [required]="false"
+            [required]="true"
           >
           </crem-input-label>
         </div>
@@ -415,3 +433,25 @@
     </div>
   </form>
 </crem-card>
+
+<crem-popup
+  [id]="accountingSummaryService.getId(componentName, '12-month', 'validation')"
+  [visible]="reportExceptionValidationPopup"
+  [showInfo]="false"
+  [saveButtonText]="'Yes'"
+  [closeButtonText]="'No'"
+  height="auto"
+  width="500"
+  [draggable]="'false'"
+  [resizable]="'true'"
+  [showCloseButton]="'true'"
+  [hideOnOutsideClick]="'true'"
+  [showFooter]="'true'"
+  (close)="closeReportExceptionPopup()"
+  (save)="setScheduleAsException()"
+>
+  <div body>
+    The term is 12 months or less. Do you want to indicate this schedule as an
+    exception?
+  </div>
+</crem-popup>

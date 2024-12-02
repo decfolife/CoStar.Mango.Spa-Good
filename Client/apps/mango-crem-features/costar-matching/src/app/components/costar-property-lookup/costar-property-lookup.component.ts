@@ -6,7 +6,6 @@ import { DxDataGridModule, DxDataGridComponent } from 'devextreme-angular';
 import { CostarMatchingService } from '../../services/costar-matching.service';
 import { ListPageService } from '../../../../../list-pages/src/app/components/listpage/core/services/listpage.service';
 import { GoogleMapsModule } from '@angular/google-maps';
-
 import {
   CoStarProperty,
   ToastState,
@@ -24,6 +23,7 @@ import {
   ToastComponent,
   NoObjectsFoundComponent,
   CremToastService,
+  CremPopupComponent,
 } from '@mango/ui-shared/lib-ui-elements';
 import { map, switchMap } from 'rxjs/operators';
 import { CleanseAddress } from '../../../../../../../libs/data-models/lib-data-models/src';
@@ -41,6 +41,7 @@ import { CleanseAddress } from '../../../../../../../libs/data-models/lib-data-m
     DescriptionsComponent,
     SearchComponent,
     ToastComponent,
+    CremPopupComponent,
   ],
   selector: 'app-costar-property-lookup',
   templateUrl: './costar-property-lookup.component.html',
@@ -61,7 +62,9 @@ export class CostarPropertyLookupComponent {
   subs: Subscription[] = [];
   customSelection = false;
   navPageId: any = '';
-  cleanseAddress: CleanseAddress;
+  cleanseAddress: CleanseAddress | null;
+  cleanseAddress1: string = '';
+  elsAddress: String = '';
   googleMapApiKey: string;
   googleMappingChannel: string;
   options: google.maps.MapOptions = {
@@ -75,9 +78,13 @@ export class CostarPropertyLookupComponent {
     minZoom: 0,
   };
   marker: any;
-  noMatchedMsg =
-    'Unable to verify address. Please verify all parameters have been completed (such as Street Address, City, State, Zip Code, etc.';
-  showNoMatchedMsg: boolean = false;
+  noVerifiedAddressMsg: string = '';
+  matchErrMsg: string = '';
+  useAddressTooltip =
+    'Using this address will override the address entered on the building record';
+  verifyAddressTooltip = 'Verify Address';
+  showUseAddressConfirmation: boolean = false;
+  outsideResearchMarkets: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -88,7 +95,9 @@ export class CostarPropertyLookupComponent {
   ) {}
 
   ngOnInit(): void {
-    this.navPageId = this.route.snapshot.queryParamMap.get('navpageid');
+    this.navPageId = this.route.snapshot.queryParamMap
+      .get('navpageid')
+      ?.split('?')[0];
     this.configGoogleMap();
 
     this.subs.push(
@@ -118,25 +127,14 @@ export class CostarPropertyLookupComponent {
             );
 
             return this.costarMatchingService.getBuildingInfo(this.buildingId);
-          }),
-          switchMap((buildingInfo: BuildingInfo) => {
-            this.buildingInfo = buildingInfo;
-
-            if (this.buildingInfo.costarID) {
-              this.router.navigateByUrl(this.redirectUrl.toString());
-            }
-
-            if (!this.userHasViewRights) return of(buildingInfo);
-
-            this.CompileBuildingInfo();
-
-            return this.costarMatchingService.getMatchedCostarProperty(
-              this.getMatchCostarPropertyRequest()
-            );
           })
         )
-        .subscribe((properties: CoStarProperty[]) => {
-          this.properties = properties;
+        .subscribe((info: BuildingInfo) => {
+          if (info.costarID) {
+            this.router.navigateByUrl(this.redirectUrl.toString());
+          }
+
+          this.displayBuildingInfo(info);
         })
     );
   }
@@ -209,16 +207,91 @@ export class CostarPropertyLookupComponent {
     };
     this.subs.push(
       this.costarMatchingService.verifyAddress(request).subscribe((result) => {
-        if (result?.success) {
-          this.showNoMatchedMsg = false;
+        if (result) {
+          this.matchErrMsg = '';
+          this.noVerifiedAddressMsg = '';
           this.cleanseAddress = result.data;
+          if (!this.cleanseAddress) {
+            this.noVerifiedAddressMsg =
+              'Unable to verify address. Please verify all parameters have been completed (such as Street Address, City, State, Zip Code, etc.)';
+            return;
+          }
+
+          this.cleanseAddress1 = [
+            this.cleanseAddress?.streetNumber,
+            this.cleanseAddress?.streetDirection,
+            this.cleanseAddress?.streetName,
+            this.cleanseAddress?.streetType,
+          ]
+            .filter((x) => x)
+            .join(' ');
+          this.elsAddress = `${this.cleanseAddress1}, ${
+            this.cleanseAddress?.city
+          }, ${
+            this.cleanseAddress?.state
+          } ${this.cleanseAddress?.postcode?.slice(0, 5)}, ${
+            this.cleanseAddress?.countryCode
+          } ${[
+            this.cleanseAddress?.postcode?.substring(0, 5),
+            this.cleanseAddress?.postcode?.substring(5, 9),
+          ]
+            .filter((x) => x)
+            .join('-')}`;
           if (this.cleanseAddress.latitude && this.cleanseAddress.longitude) {
             this.displayGoogleMap();
           }
         } else {
-          this.showNoMatchedMsg = true;
+          this.matchErrMsg = 'Error verifying address. Please try again.';
         }
       })
+    );
+  }
+
+  confirmSaveAddress() {
+    this.showUseAddressConfirmation = true;
+  }
+
+  updateBuildingAddress() {
+    this.showUseAddressConfirmation = false;
+    const request = {
+      buildingID: this.buildingId,
+      BuildingAddress_1: this.cleanseAddress1,
+      BuildingCity: this.cleanseAddress?.city,
+      BuildingState: this.cleanseAddress?.state,
+      BuildingZipCode: [
+        this.cleanseAddress?.postcode?.substring(0, 5),
+        this.cleanseAddress?.postcode?.substring(5, 9),
+      ]
+        .filter((x) => x)
+        .join('-'),
+    };
+    this.subs.push(
+      this.costarMatchingService
+        .updateBuildingAddress(request)
+        .subscribe((result) => {
+          if (result.success) {
+            this.toastService.show(
+              'Property address has been successfully updated',
+              'Update Address',
+              ToastState.SUCCESS,
+              {
+                maxWidth: '500px',
+                duration: 5000,
+                closeOnClick: true,
+              }
+            );
+
+            setTimeout(() => {
+              this.subs.push(
+                this.costarMatchingService
+                  .getBuildingInfo(this.buildingId)
+                  .subscribe((info: BuildingInfo) => {
+                    this.displayBuildingInfo(info);
+                  })
+              );
+            }, 3000);
+          }
+        })
     );
   }
 
@@ -232,6 +305,18 @@ export class CostarPropertyLookupComponent {
       const index = e.component.option('focusedRowIndex');
       e.component.selectRowsByIndexes(index);
     }
+  }
+
+  closePopup() {
+    this.showUseAddressConfirmation = false;
+  }
+
+  private displayBuildingInfo(info: BuildingInfo) {
+    this.buildingInfo = info;
+    this.outsideResearchMarkets =
+      info?.unMatchedComments?.toLowerCase() === 'outside of research markets';
+    this.properties = info.coStarMatchedProperties;
+    this.CompileBuildingInfo();
   }
 
   private configGoogleMap() {
@@ -259,16 +344,22 @@ export class CostarPropertyLookupComponent {
   }
 
   private CompileBuildingInfo() {
-    const address = `${this.buildingInfo?.buildingAddress_1} ${
-      this.buildingInfo?.buildingAddress_2 ?? ''
-    }${this.buildingInfo?.buildingAddress_2 ? ',' : ''} ${
-      this.buildingInfo?.buildingCity
-    }${this.buildingInfo?.buildingCity ? ',' : ''} 
-      ${this.buildingInfo?.buildingState ?? ''}${
-      this.buildingInfo?.buildingState ? ' ' : ''
-    }${this.buildingInfo?.buildingZipCode ?? ''}${
-      this.buildingInfo?.buildingZipCode ? ',' : ''
-    } ${this.buildingInfo?.buildingCountry ?? ''}`;
+    this.propertyDescriptions = [];
+    const address = [
+      this.buildingInfo?.buildingAddress_1,
+      this.buildingInfo?.buildingAddress_2,
+    ]
+      .filter((x) => x)
+      .join(' ');
+    const stateZip = `${this.buildingInfo?.buildingState ?? ''} ${
+      this.buildingInfo?.buildingZipCode ?? ''
+    }`;
+    const addressDisplay = [
+      address,
+      this.buildingInfo?.buildingCity ?? '',
+      stateZip,
+      this.buildingInfo?.buildingCountry ?? '',
+    ].join(', ');
 
     this.propertyDescriptions.push({
       key: 'Building Name',
@@ -279,7 +370,7 @@ export class CostarPropertyLookupComponent {
     });
     this.propertyDescriptions.push({
       key: 'Property Address',
-      value: address,
+      value: addressDisplay,
       hoverText: '',
     });
     this.propertyDescriptions.push({

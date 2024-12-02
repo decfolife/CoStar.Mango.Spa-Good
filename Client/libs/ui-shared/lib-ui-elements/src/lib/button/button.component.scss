@@ -1,4 +1,4 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 button {
   @include costar(font-family, body);
@@ -19,6 +19,7 @@ button {
 
   // Flat Button
   &.btn-flat {
+    height: 36px;
     @include costar(color, light);
     border: none;
     &.btn-primary {
@@ -92,6 +93,7 @@ button {
 
   // Basic Button
   &.btn-basic {
+    height: 36px;
     border: none;
     &.btn-primary {
       @include costar(color, primary);
@@ -152,6 +154,7 @@ button {
 
   // Stroked Button
   &.btn-stroked {
+    height: 36px;
     background-color: transparent;
     &.btn-primary {
       @include costar(color, primary);
@@ -302,7 +305,7 @@ button {
   &.no-text {
     padding: 0.7rem 0.45rem;
     > .icon {
-      margin: 0px;
+      margin: 0 0 0 2px;
     }
   }
 
@@ -322,5 +325,4 @@ button {
       width: 100%;
     }
   }
-
 }

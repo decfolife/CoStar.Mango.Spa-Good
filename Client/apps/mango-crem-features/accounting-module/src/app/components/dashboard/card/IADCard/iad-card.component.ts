@@ -4,6 +4,7 @@ import {
   Input,
   Output,
   ViewChild,
+  HostBinding,
 } from '@angular/core';
 import { Dropdown } from '@mango/data-models/lib-data-models';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
@@ -18,8 +19,12 @@ export class IADCardComponent {
   @Input() dataSource;
   @Input() fieldConfig;
   @Output() selectedFilter = new EventEmitter<Dropdown>();
-
   public fullWidth = true as boolean;
+
+  @HostBinding('class')
+  get hostClasses(): string {
+    return this.fullWidth ? 'col-md-12' : 'col-md-6';
+  }
 
   @ViewChild('PivotGrid') pivotGrid: DxPivotGridComponent;
 

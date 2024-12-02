@@ -76,7 +76,10 @@
   & > .aet-btn {
     margin-left: 8px;
   }
-
+  & > .assign-btn {
+    position: absolute;
+    left: 5px;
+  }
   .modalFooter {
     @include costar(border-top, gray05);
   }
@@ -107,5 +110,11 @@
   .aet-approval-exemption-label,
   .aet-required-approvals-label {
     margin-bottom: 0px;
+  }
+}
+::ng-deep .workFlowStatusDropDown {
+  div.dx-overlay-content div.dx-item-content div.dx-template-wrapper {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

@@ -1,3 +1,5 @@
+import { CoStarProperty } from './costar-property';
+
 export interface BuildingInfo {
   buildingID?: number;
   costarID?: number;
@@ -11,4 +13,5 @@ export interface BuildingInfo {
   buildingCountry?: string;
   countryCode?: string;
   unMatchedComments?: string;
+  coStarMatchedProperties?: CoStarProperty[];
 }

@@ -14,7 +14,6 @@ export interface ProjectTaskSettings {
   projectRequiredTaskNotes: boolean;
 }
 
-
 export interface PostProjectTaskSettings {
   projectID: number;
   startDate: Date;
@@ -24,4 +23,5 @@ export interface PostProjectTaskSettings {
   autoCalculate: boolean;
   shiftTimeline: boolean;
   projectRequiredTaskNotes: boolean;
+  numOfDaysDifference: number;
 }

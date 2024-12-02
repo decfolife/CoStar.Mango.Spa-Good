@@ -125,9 +125,23 @@
         </div>
       </div>
     </div>
+
     <div class="column">
       <div class="control">
-        <crem-input
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-Guaranteed-by-Lessee',
+              'Label'
+            )
+          "
+          label="RV Guaranteed by Lessee"
+          [showInfo]="false"
+        >
+        </crem-input-label>
+        <div
+          class="disabled-controls"
           [id]="
             accountingSummaryService.getId(
               componentName,
@@ -135,44 +149,53 @@
               'Input'
             )
           "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'RV Guaranteed by Lessee'"
-          [inputType]="'text'"
-          [value]="''"
-          [placeholder]="''"
-          [disallowNegative]="true"
-          [disabled]="true"
-          [required]="false"
-          formControlName="rvGuaranteedByLessee"
         >
-        </crem-input>
+          {{ rvGuaranteedByLessee }}
+        </div>
       </div>
 
       <div class="control">
-        <crem-input
+        <crem-input-label
           [id]="
             accountingSummaryService.getId(
               componentName,
-              'Amount-Probable-Being-Owed-by-Lessee',
+              'RV-Guaranteed-by-Lessee',
+              'Label'
+            )
+          "
+          label="Amount Probable of Being Owed by Lessee"
+          [showInfo]="false"
+        >
+        </crem-input-label>
+        <div
+          class="disabled-controls"
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-Guaranteed-by-Lessee',
               'Input'
             )
           "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'Amount Probable of Being Owed by Lessee'"
-          [inputType]="'text'"
-          [value]="''"
-          [placeholder]="''"
-          [disallowNegative]="true"
-          [required]="false"
-          formControlName="amountProbableBeingOwedByLessee"
         >
-        </crem-input>
+          {{ amountProbableBeingOwedByLessee }}
+        </div>
       </div>
 
       <div class="control">
-        <crem-input
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Unguaranteed-Residual-Value',
+              'Label'
+            )
+          "
+          label="Unguaranteed Residual Value"
+          [showInfo]="false"
+        >
+        </crem-input-label>
+        <div
+          class="disabled-controls"
           [id]="
             accountingSummaryService.getId(
               componentName,
@@ -180,21 +203,26 @@
               'Input'
             )
           "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'Unguaranteed Residual Value'"
-          [inputType]="'text'"
-          [value]="''"
-          [placeholder]="''"
-          [disallowNegative]="true"
-          [required]="false"
-          formControlName="unguaranteedResidualValue"
         >
-        </crem-input>
+          {{ unguaranteedResidualValue }}
+        </div>
       </div>
 
       <div class="control">
-        <crem-input
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'Amount-Not-Reflected-PV-Payments',
+              'Label'
+            )
+          "
+          label="Amount Not Reflected in PV of Payments"
+          [showInfo]="false"
+        >
+        </crem-input-label>
+        <div
+          class="disabled-controls"
           [id]="
             accountingSummaryService.getId(
               componentName,
@@ -202,21 +230,26 @@
               'Input'
             )
           "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'Amount Not Reflected in PV of Payments'"
-          [inputType]="'text'"
-          [value]="''"
-          [placeholder]="''"
-          [disallowNegative]="true"
-          [required]="false"
-          formControlName="amountNotReflectedPVPayments"
         >
-        </crem-input>
+          {{ amountNotReflectedPVPayments }}
+        </div>
       </div>
 
       <div class="control">
-        <crem-input
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'PV-Amount-Not-Reflected-in-Payments',
+              'Label'
+            )
+          "
+          label="PV of Amount Not Reflected in Payments"
+          [showInfo]="false"
+        >
+        </crem-input-label>
+        <div
+          class="disabled-controls"
           [id]="
             accountingSummaryService.getId(
               componentName,
@@ -224,17 +257,9 @@
               'Input'
             )
           "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'PV of Amount Not Reflected in Payments'"
-          [inputType]="'text'"
-          [value]="''"
-          [placeholder]="''"
-          [disallowNegative]="true"
-          [required]="false"
-          formControlName="pvAmountNotReflectedInPayments"
         >
-        </crem-input>
+          {{ pvAmountNotReflectedInPayments }}
+        </div>
       </div>
     </div>
   </form>

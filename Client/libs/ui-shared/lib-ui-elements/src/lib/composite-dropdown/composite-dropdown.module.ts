@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { CompositeDropdownComponent } from './composite-dropdown.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { CompositeDropdownComponent } from './composite-dropdown.component';
 
+import { ErrorTooltipComponent } from '../error-tooltip';
 import { IconModule } from '../icon';
 
 @NgModule({
@@ -10,9 +11,9 @@ import { IconModule } from '../icon';
   imports: [
     CommonModule,
     IconModule,
-    MatExpansionModule],
-  exports: [
-    CompositeDropdownComponent
+    MatExpansionModule,
+    ErrorTooltipComponent,
   ],
+  exports: [CompositeDropdownComponent],
 })
 export class CompositeDropdownModule {}

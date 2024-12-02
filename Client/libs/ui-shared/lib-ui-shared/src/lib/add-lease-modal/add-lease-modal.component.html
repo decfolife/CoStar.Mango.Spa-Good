@@ -52,7 +52,6 @@
           <crem-dropdown
             id="buildingId"
             #buildingId
-            dropDownContainerCustomClass="buildingDropDown"
             [dataSource]="buildingsDataSource"
             [allowSearch]="true"
             [showClearButton]="true"
@@ -64,8 +63,8 @@
             hoverText="Select Building"
             (selectedItems)="onBuildingChanged($event)"
             formControlName="building"
-            [isDisabled]="loading"
             required="true"
+            useSelectBox="true"
           >
           </crem-dropdown>
         </crem-form-item>
@@ -140,19 +139,17 @@
         </crem-form-item>
         <crem-form-item class="container">
           <crem-form-label [required]="true">Tenant Legal Name</crem-form-label>
-          <crem-form-control>
-            <crem-input
-              id="tenantName"
-              #TenantName
-              [showHint]="false"
-              [showLabel]="false"
-              [showInfo]="false"
-              [inputType]="'text'"
-              required="true"
-              formControlName="tenantName"
-              placeholder="Tenant Legal Name"
-            ></crem-input>
-          </crem-form-control>
+          <crem-input
+            #tenantName
+            id="tenantName"
+            [showHint]="false"
+            [showLabel]="false"
+            [showInfo]="false"
+            [inputType]="'text'"
+            [required]="true"
+            formControlName="tenantName"
+            placeholder="Tenant Legal Name"
+          ></crem-input>
         </crem-form-item>
         <crem-form-item id="aet-template-container" class="container">
           <crem-form-label [required]="true"
@@ -202,13 +199,13 @@
           <crem-form-label [required]="true">Begin Date</crem-form-label>
           <crem-date-picker
             [value]="null"
-            [dateFormat]="'MM/dd/yyyy'"
             [invalidDateMessage]="'Invalid date'"
             [useMaskBehavior]="false"
             [showClearButton]="true"
             [inputId]="beginDate"
             [disabled]="false"
             formControlName="beginDate"
+            [dateFormat]="dateFormat"
             (onChangeEvent)="onBeginDateChanged($event)"
             required="true"
           ></crem-date-picker>
@@ -217,7 +214,7 @@
           <crem-form-label [required]="true">End Date</crem-form-label>
           <crem-date-picker
             [value]="null"
-            [dateFormat]="'MM/dd/yyyy'"
+            [dateFormat]="dateFormat"
             [invalidDateMessage]="'Invalid date'"
             [useMaskBehavior]="false"
             [showClearButton]="true"
@@ -277,9 +274,8 @@
         <crem-form-item id="aet-currency-container" class="container">
           <crem-form-label [required]="true">Currency Type</crem-form-label>
           <crem-dropdown
-            id="currency"
-            #currency
-            dropDownContainerCustomClass="leaseCurrencyDropDown"
+            #currencyDropdown
+            [id]="currencyDropdown"
             [dataSource]="currencyItems"
             [showClearButton]="true"
             [showColumnHeader]="false"

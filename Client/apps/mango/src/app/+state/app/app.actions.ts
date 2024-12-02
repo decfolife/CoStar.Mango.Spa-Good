@@ -81,6 +81,9 @@ export const HANDLE_CUSTOM_QUERY_PARAMS = '[UI] Handle Custom Query Params';
 export const NO_OP_ACTION = '[UI] No Op Action';
 export const SET_CURRENT_PROJECT_ID = '[Mango App] Set Current Project ID';
 
+export const LOAD_LEFT_NAV_LINKS = '[Nav] Load Left Nav Links';
+export const LOAD_LEFT_NAV_SUCCESS = '[Nav] Load Left Nav Links Success';
+
 export const init = createAction(APP_INIT);
 export const loadCurrentUser = createAction(LOAD_CURRENT_USER);
 export const oauthAuth = createAction(
@@ -109,6 +112,16 @@ export const stopEmulatingUser = createAction(
 export const isEmulatingUser = createAction(IS_EMULATING_USER);
 export const redirectToV06ToFinalizeLogin = createAction(
   REDIRECT_TO_V06_TO_FINALIZE_LOGIN
+);
+
+export const loadLeftNavLinks = createAction(LOAD_LEFT_NAV_LINKS);
+export const loadLeftNavLinksSuccess = createAction(
+  LOAD_LEFT_NAV_SUCCESS,
+  props<{
+    navigationLinks: any[];
+    activeLink: string | null;
+    navLinksFetched: boolean;
+  }>()
 );
 export const handleCustomQueryParams = createAction(HANDLE_CUSTOM_QUERY_PARAMS);
 export const noOpAction = createAction(NO_OP_ACTION);

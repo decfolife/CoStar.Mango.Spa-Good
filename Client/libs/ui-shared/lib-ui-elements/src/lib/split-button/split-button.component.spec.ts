@@ -38,7 +38,7 @@ describe('SplitButtonComponent', () => {
     expect(component.dropDownOpen).toBe(false);
   });
 
-  it('should emit selected option and close dropdown', () => {
+  it('selectedOption should emit selected option and close dropdown', () => {
     const event = { target: { textContent: 'Option 1' } };
     jest.spyOn(component.selectedOption, 'emit');
 
@@ -46,5 +46,13 @@ describe('SplitButtonComponent', () => {
 
     expect(component.dropDownOpen).toBe(false);
     expect(component.selectedOption.emit).toHaveBeenCalledWith('Option 1');
+  });
+
+  it('mainButtonClick should emit true when clicked', () => {
+    jest.spyOn(component.mainButtonClick, 'emit');
+
+    component.onMainButtonClick();
+
+    expect(component.mainButtonClick.emit).toHaveBeenCalledWith(true);
   });
 });

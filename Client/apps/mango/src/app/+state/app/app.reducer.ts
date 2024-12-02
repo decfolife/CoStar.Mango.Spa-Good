@@ -38,6 +38,12 @@ export interface State extends EntityState<MangoAppEntity> {
   adminFlags: AdminFlags;
   redirectorLinks: RedirectorLink[];
   currentProjectId: number | null;
+  nav: NavState;
+}
+export interface NavState {
+  navigationLinks: any[];
+  activeLink: string | null;
+  navLinksFetched: boolean;
 }
 
 export interface MangoPartialState {
@@ -68,6 +74,11 @@ export const initialState: State = appAdapter.getInitialState({
   adminFlags: null,
   redirectorLinks: null,
   currentProjectId: null,
+  nav: {
+    navigationLinks: [],
+    activeLink: null,
+    navLinksFetched: false,
+  },
 });
 
 const appReducer = createReducer(
@@ -78,6 +89,18 @@ const appReducer = createReducer(
     error: null,
     currentSubApp: subApp,
   })),
+  on(
+    AppActions.loadLeftNavLinksSuccess,
+    (state, { navigationLinks, activeLink, navLinksFetched }) => ({
+      ...state,
+      nav: {
+        ...state.nav,
+        navigationLinks,
+        activeLink,
+        navLinksFetched,
+      },
+    })
+  ),
   on(AppActions.setLoading, (state, { display }) => ({
     ...state,
     loaded: !display,

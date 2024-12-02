@@ -15,11 +15,12 @@
     >
       <div body>
         <crem-quick-approval
+          #quickApprovalGrid
           [isNotesFieldRequired]="isNotesFieldRequired"
           [projectId]="projectId"
           [dateFormat]="dateFormat"
           (hasChanges)="handleQuickApprovalHasChanges($event)"
-          (pendingTaskApprovalCount)="setApproveButtonText($event)"
+          (isProcessing)="isQuickApprovalProcessing$.next($event)"
           (refreshTasksGrid)="refreshTasksGrid()"
         ></crem-quick-approval>
       </div>
@@ -35,11 +36,13 @@
           btnStyle="flat"
           color="secondary"
           [text]="'Cancel'"
+          [disabled]="quickApprovalGrid.isProcessing | async"
           (buttonClick)="onQuickApprovalClose()"
           [id]="'close-button'"
         ></crem-button>
         <crem-button
           class="footer__save-button"
+          [disabled]="quickApprovalGrid.isProcessing | async"
           (buttonClick)="onSaveTasksClick()"
           btnStyle="flat"
           color="secondary"
@@ -49,11 +52,11 @@
         ></crem-button>
         <crem-button
           class="footer__approve-button"
+          [disabled]="isApproveButtonDisabled$ | async"
           (buttonClick)="onApproveTasksClick()"
           btnStyle="flat"
           color="primary"
           [text]="approveButtonText"
-          [disabled]="quickApprovalApproveDisabled"
           [id]="'approve-button'"
         ></crem-button>
       </div>
@@ -62,10 +65,10 @@
 
   <div *ngIf="showSaveTasksAsTemplatePopup">
     <crem-popup
-      [id]="'id'"
+      [id]="'saveTasksAsTemplatePopupId'"
       [visible]="showSaveTasksAsTemplatePopup"
-      [title]="'Save As Task Template'"
-      [height]="'190px'"
+      [title]="'Save Tasks as Template'"
+      [height]="'205px'"
       [width]="'600px'"
       [draggable]="true"
       [resizable]="true"
@@ -118,6 +121,11 @@
           class="searchProjectTasks-input"
         ></cs-search>
       </div>
+      <div>
+        <a target="_blank" rel="opener" [href]="externalCremLink"
+          >for legacy page, click me</a
+        >
+      </div>
     </div>
     <div class="controls-right">
       <div class="clearFilters">
@@ -148,8 +156,7 @@
             class="actnBtn-copyTransaction"
             id="pt-copyTransaction"
             (click)="copyTransactionTemplate()"
-            [disabled]="isProxyApproverForOneTask"
-            [hidden]="
+            [disabled]="
               checkUserLevelRequirement(availableActions.COPY_TRANSACTION)
             "
           >
@@ -161,7 +168,7 @@
             class="actnBtn-quickApproval"
             id="pt-quickApproval"
             (click)="openQuickApprovalPopup()"
-            [hidden]="
+            [disabled]="
               checkUserLevelRequirement(availableActions.QUICK_APPROVAL)
             "
           >
@@ -173,7 +180,7 @@
             class="actnBtn-taskDtlSettings"
             id="pt-taskDtlSettings"
             (click)="showTaskDetailSettings()"
-            [hidden]="
+            [disabled]="
               checkUserLevelRequirement(availableActions.TASK_DETAILS_SETTINGS)
             "
           >
@@ -184,8 +191,10 @@
             mat-menu-item
             class="actnBtn-deleteTasks"
             id="pt-deleteTasks"
-            [disabled]="!allSelectedRowKeys.length || userAccessLevel !== 1"
-            [hidden]="checkUserLevelRequirement(availableActions.DELETE_TASKS)"
+            [disabled]="
+              !allSelectedRowKeys.length &&
+              checkUserLevelRequirement(availableActions.DELETE_TASKS)
+            "
             (click)="deleteSelectedTasks()"
           >
             <span>Delete Selected Tasks</span>
@@ -196,8 +205,7 @@
             class="actnBtn-appendTemplate"
             id="pt-appendTemplate"
             (click)="showAppendTemplateDialog()"
-            [disabled]="isProxyApproverForOneTask"
-            [hidden]="
+            [disabled]="
               checkUserLevelRequirement(availableActions.APPEND_TEMPLATE)
             "
           >
@@ -208,8 +216,7 @@
             mat-menu-item
             id="pt-saveTasksAsTemplate"
             (click)="showSaveAsTasksTemplateDialog()"
-            [disabled]="isProxyApproverForOneTask"
-            [hidden]="
+            [disabled]="
               checkUserLevelRequirement(availableActions.SAVE_TASKS_AS_TEMPLATE)
             "
           >
@@ -218,7 +225,9 @@
           <button
             mat-menu-item
             id="pt-reorderTasksBtn"
-            [hidden]="checkUserLevelRequirement(availableActions.REORDER_TASKS)"
+            [disabled]="
+              checkUserLevelRequirement(availableActions.REORDER_TASKS)
+            "
             (click)="openReorderTasks()"
           >
             <span>Reorder Tasks</span>
@@ -318,12 +327,13 @@
           </button>
         </mat-menu>
       </div>
-      <div class="addTaskBtn" *ngIf="!gridData?.length">
+      <div class="addTaskBtn" *ngIf="gridIsEmpty()">
         <crem-button
           btnStyle="flat"
           color="primary"
           text="Add"
           id="pt-addTaskBtn"
+          [hidden]="checkUserLevelRequirement(availableActions.ADD_TASK)"
           (click)="addOrEditTask(0, false, 0, 0, 0)"
         ></crem-button>
       </div>
@@ -348,7 +358,7 @@
       [dataSource]="gridData"
       keyExpr="ProjectMilestoneID"
       parentIdExpr="ProjectMilestoneParentID"
-      [width]="'100%'"
+      [height]="'99%'"
       [hoverStateEnabled]="true"
       [filterSyncEnabled]="true"
       [wordWrapEnabled]="true"
@@ -395,6 +405,8 @@
         [allowSorting]="false"
         [allowReordering]="false"
         [allowResizing]="false"
+        [width]="'auto'"
+        [minWidth]="110"
         cssClass="selectTask"
       >
       </dxi-column>
@@ -409,6 +421,7 @@
         [allowFiltering]="false"
         [allowHiding]="false"
         dataType="string"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="taskStatus"
@@ -420,27 +433,33 @@
         [allowReordering]="false"
         [allowSorting]="false"
         [allowHiding]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneName"
         caption="Task Name"
-        [width]="200"
+        [width]="175"
         [cellTemplate]="'taskNameTemplate'"
         [fixed]="true"
         [allowReordering]="false"
         [allowHiding]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneStartDate"
         caption="Target Start"
         dataType="date"
         [format]="dateFormat"
+        [width]="85"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneEndDate"
         caption="Target Complete"
         dataType="date"
         [format]="dateFormat"
+        [width]="85"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneCompletedDate"
@@ -448,6 +467,7 @@
         dataType="date"
         [format]="dateFormat"
         alignment="center"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneUserCompletedDate"
@@ -455,16 +475,19 @@
         dataType="date"
         [format]="dateFormat"
         alignment="center"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="IsMileMark"
         caption="Milestone"
         alignment="center"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneRequired"
         caption="Required"
         alignment="center"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="Predecessors"
@@ -472,6 +495,7 @@
         datatype="string"
         [calculateCellValue]="calcPredecessorsCellValue"
         [calculateFilterExpression]="calcFilterExpression"
+        [minWidth]="50"
       >
         <dxo-header-filter
           [dataSource]="availablePredecessors"
@@ -481,6 +505,8 @@
         dataField="Roles"
         caption="Roles"
         cssClass="wrapOption-column roleHeaderFilterOption"
+        [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="Approvers"
@@ -490,6 +516,7 @@
         cssClass="pt-taskColumnLink"
         [calculateCellValue]="calcApproversCellValue"
         [calculateFilterExpression]="calcFilterExpression"
+        [minWidth]="50"
       >
         <dxo-header-filter
           [dataSource]="availableApprovers"
@@ -500,29 +527,36 @@
         caption="Note Count"
         alignment="center"
         cssClass="pt-taskColumnLink"
-        [allowFiltering]="false"
+        [allowFiltering]="true"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="FilesCount"
         caption="File Count"
         alignment="center"
         cssClass="pt-taskColumnLink"
-        [allowFiltering]="false"
+        [allowFiltering]="true"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ApprovalStatus"
         caption="Approval"
         [cellTemplate]="'approvalTemplate'"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="RequiredApprovers"
         caption="# of Required Approvers"
         alignment="center"
+        [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ApprovalExempt"
         caption="Approval Exemption"
         alignment="center"
+        [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="UserApprovalStatus"
@@ -530,13 +564,16 @@
         [allowFiltering]="false"
         [allowSorting]="false"
         [width]="122"
+        [visible]="false"
         alignment="center"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneDaysToComplete"
         caption="Duration"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneDescription"
@@ -544,80 +581,106 @@
         caption="Description"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneDaysToStart"
         caption="Days to Start"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="CreatedDate"
         dataType="date"
         [format]="dateFormat"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
-      <dxi-column dataField="IsConcurrent" [visible]="false"></dxi-column>
-      <dxi-column dataField="IsShrinkable" [visible]="false"></dxi-column>
-      <dxi-column dataField="LastModifiedBy" [visible]="false"></dxi-column>
+      <dxi-column
+        dataField="IsConcurrent"
+        [visible]="false"
+        [minWidth]="50"
+      ></dxi-column>
+      <dxi-column
+        dataField="IsShrinkable"
+        [visible]="false"
+        [minWidth]="50"
+      ></dxi-column>
+      <dxi-column
+        dataField="LastModifiedBy"
+        [visible]="false"
+        [minWidth]="50"
+      ></dxi-column>
       <dxi-column
         dataField="LastModifiedDate"
         dataType="date"
         [format]="dateFormat"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="PercentComplete"
         caption="Percentage Complete"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneParentID"
         caption="Parent Task ID"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneStep"
         caption="Step"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="TaskSubTasksCount"
         caption="Sub Tasks"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ProjectMilestoneID"
         caption="Task ID"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="TotalApprovedCount"
         caption="Total Approved"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="TotalApproversCount"
         caption="Total Assignees"
         alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="UseEmailApprovals"
         [allowFiltering]="false"
+        alignment="center"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="WorkflowName"
         caption="Workflow Status"
         [allowFiltering]="false"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="ActualStartDate"
@@ -626,17 +689,22 @@
         dataType="date"
         [format]="dateFormat"
         [visible]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="HoursToDate"
         alignment="center"
         [visible]="false"
+        [showInColumnChooser]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         dataField="Rights"
         [visible]="false"
         [allowFiltering]="false"
         [allowSorting]="false"
+        [showInColumnChooser]="false"
+        [minWidth]="50"
       ></dxi-column>
       <dxi-column
         type="buttons"
@@ -667,17 +735,19 @@
                   mat-mdc-menu-item
                   id="{{ 'ptm-addTask' + task.rowIndex }}"
                   [ngClass]="{
-                    disabledOption:
-                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                    disabledOption: checkUserLevelRequirement(
+                      availableActions.ADD_TASK
+                    )
                   }"
                   (click)="
-                    addOrEditTask(
-                      task.data.IndexOrder,
-                      false,
-                      task.data.ProjectMilestoneID,
-                      task.data.ProjectMilestoneParentID,
-                      task.data.ProjectMilestoneStep
-                    )
+                    !checkUserLevelRequirement(availableActions.ADD_TASK) &&
+                      addOrEditTask(
+                        task.data.IndexOrder,
+                        false,
+                        task.data.ProjectMilestoneID,
+                        task.data.ProjectMilestoneParentID,
+                        task.data.ProjectMilestoneStep
+                      )
                   "
                 >
                   Add Task
@@ -687,16 +757,24 @@
                   id="{{ 'ptm-addSubTask' + task.rowIndex }}"
                   [ngClass]="{
                     disabledOption:
-                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                      checkUserLevelRequirement(
+                        availableActions.ADD_SUB_TASK
+                      ) || task.data.SubTaskLimitReached
                   }"
+                  [title]="
+                    task.data.SubTaskLimitReached ? maxReachedSubTasksTitle : ''
+                  "
                   (click)="
-                    addSubTask(
-                      task.data.IndexOrder,
-                      task.data.ProjectMilestoneID,
-                      task.data.ProjectMilestoneParentID,
-                      task.data.ProjectMilestoneStep,
-                      task.data.TaskSubTasksCount
-                    )
+                    !checkUserLevelRequirement(availableActions.ADD_SUB_TASK) &&
+                      !task.data.SubTaskLimitReached &&
+                      addSubTask(
+                        task.data.IndexOrder,
+                        task.data.SubTaskLimitReached,
+                        task.data.ProjectMilestoneID,
+                        task.data.ProjectMilestoneParentID,
+                        task.data.ProjectMilestoneStep,
+                        task.data.TaskSubTasksCount
+                      )
                   "
                 >
                   Add Sub Task
@@ -705,18 +783,20 @@
                   mat-mdc-menu-item
                   id="{{ 'ptm-editTask' + task.rowIndex }}"
                   [ngClass]="{
-                    disabledOption:
-                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                    disabledOption: checkUserLevelRequirement(
+                      availableActions.EDIT_TASK
+                    )
                   }"
                   (click)="
-                    addOrEditTask(
-                      task.data.IndexOrder,
-                      true,
-                      task.data.ProjectMilestoneID,
-                      task.data.ProjectMilestoneParentID,
-                      task.data.ProjectMilestoneStep,
-                      task.data.TaskSubTasksCount
-                    )
+                    !checkUserLevelRequirement(availableActions.EDIT_TASK) &&
+                      addOrEditTask(
+                        task.data.IndexOrder,
+                        true,
+                        task.data.ProjectMilestoneID,
+                        task.data.ProjectMilestoneParentID,
+                        task.data.ProjectMilestoneStep,
+                        task.data.TaskSubTasksCount
+                      )
                   "
                 >
                   Edit Task
@@ -726,13 +806,10 @@
                   id="{{ 'ptm-removeTask' + task.rowIndex }}"
                   *ngIf="userAccessLevel == 1"
                   [ngClass]="{
-                    disabledOption:
-                      allSelectedRowKeys.length ||
-                      hasSubTasks(task.data.ProjectMilestoneID) ||
-                      task.data.IsProxyUser === 1
+                    disabledOption: !isTaskDeletable(task.data)
                   }"
                   [title]="allSelectedRowKeys.length ? deleteBtnTitle : ''"
-                  (click)="deleteSelectedTasks(task.data.ProjectMilestoneID)"
+                  (click)="deleteSelectedTasks(task.data)"
                 >
                   Delete Task
                 </li>
@@ -740,24 +817,21 @@
                   mat-mdc-menu-item
                   id="{{ 'ptm-assignApprover' + task.rowIndex }}"
                   [ngClass]="{
-                    disabledOption:
-                      userAccessLevel !== 1 || task.data.IsProxyUser === 1
+                    disabledOption: checkUserLevelRequirement(
+                      availableActions.ASSIGN_APPROVERS
+                    )
                   }"
-                  (click)="addOrEditAssignees(task.data)"
+                  (click)="
+                    !checkUserLevelRequirement(
+                      availableActions.ASSIGN_APPROVERS
+                    ) && addOrEditAssignees(task.data)
+                  "
                 >
                   Assign Approver
                 </li>
                 <li
                   [ngClass]="{
-                    disabledOption:
-                      task.data.UserApprovalStatus.trim() ==
-                        taskUserApprovalStatus.NOT_ASSIGNED ||
-                      task.data.UserApprovalStatus.trim() ==
-                        taskUserApprovalStatus.COMPLETED ||
-                      task.data.UserApprovalStatus.trim() ==
-                        taskUserApprovalStatus.APPROVED ||
-                      task.data.ApprovalPredecessors ||
-                      task.data.ApprovalSubTasks
+                    disabledOption: !isTaskApprovable(task.data)
                   }"
                   mat-mdc-menu-item
                   id="{{ 'ptm-approveTask' + task.rowIndex }}"
@@ -772,11 +846,7 @@
                 </li>
                 <li
                   [ngClass]="{
-                    disabledOption:
-                      task.data.UserApprovalStatus.trim() ==
-                        taskUserApprovalStatus.NOT_ASSIGNED ||
-                      task.data.UserApprovalStatus.trim() ==
-                        taskUserApprovalStatus.APPROVE
+                    disabledOption: !isTaskRejectable(task.data)
                   }"
                   mat-mdc-menu-item
                   id="{{ 'ptm-rejectTask' + task.rowIndex }}"
@@ -790,16 +860,32 @@
                   Reject
                 </li>
                 <li
+                  [ngClass]="{
+                    disabledOption: checkUserLevelRequirement(
+                      availableActions.ADD_NOTES
+                    )
+                  }"
                   mat-mdc-menu-item
                   id="{{ 'ptm-addNotes' + task.rowIndex }}"
-                  (click)="openAddNotesPopup(task.data)"
+                  (click)="
+                    !checkUserLevelRequirement(availableActions.ADD_NOTES) &&
+                      openAddNotesPopup(task.data)
+                  "
                 >
                   Add Note(s)
                 </li>
                 <li
+                  [ngClass]="{
+                    disabledOption: checkUserLevelRequirement(
+                      availableActions.UPLOAD_FILES
+                    )
+                  }"
                   mat-mdc-menu-item
                   id="{{ 'ptm-uploadFiles' + task.rowIndex }}"
-                  (click)="openUploadFilesPopup(task)"
+                  (click)="
+                    !checkUserLevelRequirement(availableActions.UPLOAD_FILES) &&
+                      openUploadFilesPopup(task)
+                  "
                 >
                   Upload File(s)
                 </li>
@@ -807,21 +893,9 @@
                   mat-mdc-menu-item
                   id="{{ 'ptm-overrideComDate' + task.rowIndex }}"
                   [ngClass]="{
-                    disabledOption:
-                      (userAccessLevel !== 1 &&
-                        task.data.UserApprovalStatus.trim() ==
-                          taskUserApprovalStatus.NOT_ASSIGNED) ||
-                      (task.data.IsProxyUser === 1 &&
-                        task.data.UserApprovalStatus.trim() ==
-                          taskUserApprovalStatus.NOT_ASSIGNED)
+                    disabledOption: !isTaskCompleteDateModifiable(task.data)
                   }"
-                  (click)="
-                    modifyCompleteDate(
-                      task.data.ProjectMilestoneID,
-                      task.data.IsProxyUser,
-                      task.data.UserApprovalStatus
-                    )
-                  "
+                  (click)="modifyCompleteDate(task.data)"
                 >
                   Modify Complete Date
                 </li>
@@ -913,9 +987,11 @@
           <span
             type="button"
             id="{{ 'pt-assignApproverBtn' + cell.rowIndex }}"
-            (click)="addOrEditAssignees(cell.data)"
+            (click)="
+              !checkUserLevelRequirement(availableActions.ASSIGN_APPROVERS) &&
+                addOrEditAssignees(cell.data)
+            "
             class="pt-notAssignedBtn"
-            [ngClass]="{ disabledOption: userAccessLevel !== 1 }"
           >
             {{ cell.value }}
           </span>
@@ -932,8 +1008,7 @@
         >
           <span
             [ngClass]="{
-              disabledOption:
-                cell.data.ApprovalPredecessors || cell.data.ApprovalSubTasks
+              disabledOption: !isTaskApprovable(cell.data)
             }"
             type="button"
             [title]="
@@ -958,6 +1033,9 @@
             type="button"
             id="{{ 'pt-rejectBtn' + cell.rowIndex }}"
             class="pt-approveRejectBtn"
+            [ngClass]="{
+              disabledOption: !isTaskRejectable(cell.data)
+            }"
             (click)="
               approveOrRejectTask(cell.data, taskUserApprovalStatus.REJECT)
             "
@@ -973,13 +1051,10 @@
             type="button"
             id="{{ 'pt-modifyCompleteBtn' + cell.rowIndex }}"
             class="pt-completeDateBtn"
-            (click)="
-              modifyCompleteDate(
-                cell.data.ProjectMilestoneID,
-                cell.data.IsProxyUser,
-                cell.data.UserApprovalStatus
-              )
-            "
+            [ngClass]="{
+              disabledOption: !isTaskCompleteDateModifiable(cell.data)
+            }"
+            (click)="modifyCompleteDate(cell.data)"
           >
             {{ cell.value }}</span
           >
@@ -1004,15 +1079,15 @@
   [visible]="settingsVisible"
   [title]="taskSettingsTitle"
   [draggable]="'true'"
+  [resizable]="true"
   [height]="800"
-  [width]="520"
+  [width]="1000"
   [showCloseButton]="true"
   [saveButtonText]="'Save'"
   [closeButtonText]="'Cancel'"
   [applyButtonText]="'Apply'"
-  [disableSaveButton]="userAccessLevel !== 1"
-  [disableSApplyButton]="userAccessLevel !== 1"
-  [disableCloseButton]="userAccessLevel !== 1"
+  [disableSaveButton]="userAccessLevel !== 1 || disableTaskSettingsBtns"
+  [disableSApplyButton]="userAccessLevel !== 1 || disableTaskSettingsBtns"
   (apply)="applyOrSaveTaskSettings('apply')"
   (save)="applyOrSaveTaskSettings('save')"
   (close)="taskSettingsOnClose($event)"
@@ -1077,23 +1152,6 @@
             ></crem-toggle-slider>
           </ng-container>
         </div>
-        <div class="pts-toggles__calcBy pts-flexItem30">
-          <ng-container *ngIf="projectTaskSettings.calculateDates">
-            <div class="label">Days Calculated By</div>
-            <crem-toggle-slider
-              [id]="'pts-calcBy'"
-              [size]="'extra-wide'"
-              [value]="projectTaskSettings.calculatedBy"
-              [disabled]="userAccessLevel !== 1"
-              [ariaLabel]="'calculated by'"
-              (selectionChange)="
-                projSettingToggleChanged($event, 'calculatedBy')
-              "
-              checkedLabel="Work"
-              uncheckedLabel="Calendar"
-            ></crem-toggle-slider>
-          </ng-container>
-        </div>
         <div class="pts-toggles__autoCalc pts-flexItem23">
           <ng-container *ngIf="projectTaskSettings.calculateDates">
             <div class="label">Auto Calculate</div>
@@ -1133,6 +1191,27 @@
             ></crem-toggle-slider>
           </ng-container>
         </div>
+        <div class="pts-toggles__calcBy pts-flexItem23"></div>
+      </section>
+      <section class="pts-toggles">
+        <div class="pts-toggles__calcBy pts-flexItem50">
+          <ng-container *ngIf="projectTaskSettings.calculateDates">
+            <div class="label">Calculated By:</div>
+            <crem-toggle-slider
+              [id]="'pts-calcBy'"
+              [size]="'wide'"
+              [value]="projectTaskSettings.calculatedBy"
+              [disabled]="userAccessLevel !== 1"
+              [ariaLabel]="'calculated by'"
+              [labelPosition]="'right'"
+              (selectionChange)="
+                projSettingToggleChanged($event, 'calculatedBy')
+              "
+              checkedLabel="Work Days Only"
+              uncheckedLabel="All Calendar Days"
+            ></crem-toggle-slider>
+          </ng-container>
+        </div>
       </section>
       <section
         class="pts-toggles"
@@ -1161,7 +1240,6 @@
       <!--   ***** Email Prefereces ***** -->
       <div>
         <h4 class="pts-emailPrefLabel">Email Preferences:</h4>
-        <div>Set Conditions for receiving email notifications.</div>
       </div>
       <div>
         <crem-check-box
@@ -1171,23 +1249,28 @@
             'aria-label': 'Select All Email Preferences'
           }"
           [disabled]="userAccessLevel !== 1"
+          [ngClass]="{ disabledOption: userAccessLevel !== 1 }"
           (changeEvent)="selectAllEmailPreferences($event)"
-          ><span class="label">Select All</span>
+          ><span class="label selectAll">Select All</span>
         </crem-check-box>
+      </div>
+      <div class="div-label-text">
+        Set conditions for receiving email notifications.
       </div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.transactionAutoEmail"
           [elementAttr]="{ id: 'pts-autoEmails', 'aria-label': 'Auto Email' }"
           [disabled]="userAccessLevel !== 1"
+          [ngClass]="{ disabledOption: userAccessLevel !== 1 }"
           (changeEvent)="emailOptionChanged($event, 'transactionAutoEmail')"
         >
           <div>
             <span class="label">Auto Emails</span>
             <div class="checkbox-description">
-              When Auto Emails are enabled, team members who have set their
-              email preferences to OFF on the project team setup page will not
-              receive emails.
+              When Auto Emails is enabled, team members who have set their email
+              preferences to OFF on the project team setup page will not receive
+              emails.
             </div>
           </div>
         </crem-check-box>
@@ -1201,6 +1284,16 @@
               ? true
               : false || userAccessLevel !== 1
           "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
+          "
           (changeEvent)="emailOptionChanged($event, 'emailOnFileUpload')"
         >
           <div>
@@ -1211,7 +1304,7 @@
           </div>
         </crem-check-box>
       </div>
-      <div class="label subsection">Notify by Email based on Task Status.</div>
+      <div class="div-label-text">Notify by Email based on Task Status.</div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.emailOnApproval"
@@ -1220,6 +1313,16 @@
             projectEmailPreferences.transactionAutoEmail == false
               ? true
               : false || userAccessLevel !== 1
+          "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
           "
           (changeEvent)="emailOptionChanged($event, 'emailOnApproval')"
         >
@@ -1244,13 +1347,23 @@
               ? true
               : false || userAccessLevel !== 1
           "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
+          "
           (changeEvent)="emailOptionChanged($event, 'emailOnMilestoneApproval')"
         >
           <div>
             <span class="label">Milestone Approval</span>
             <div class="checkbox-description">
               Will send approval emails for tasks designated as milestones, even
-              if the 'On Approval' checkbox is unchecked.
+              if the 'Approval' checkbox is unchecked.
             </div>
           </div>
         </crem-check-box>
@@ -1263,6 +1376,16 @@
             projectEmailPreferences.transactionAutoEmail == false
               ? true
               : false || userAccessLevel !== 1
+          "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
           "
           (changeEvent)="emailOptionChanged($event, 'emailOnCompletion')"
         >
@@ -1286,6 +1409,16 @@
               ? true
               : false || userAccessLevel !== 1
           "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
+          "
           (changeEvent)="
             emailOptionChanged($event, 'emailMilestoneCompletionCCTeam')
           "
@@ -1294,7 +1427,7 @@
             <span class="label">Milestone Completion</span>
             <div class="checkbox-description">
               This will send an email to the team when tasks marked as
-              Milestones are completed.
+              milestones are completed.
             </div>
           </div>
         </crem-check-box>
@@ -1310,6 +1443,16 @@
             projectEmailPreferences.transactionAutoEmail == false
               ? true
               : false || userAccessLevel !== 1
+          "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
           "
           (changeEvent)="emailOptionChanged($event, 'emailFollowSteps')"
         >
@@ -1334,6 +1477,16 @@
               ? true
               : false || userAccessLevel !== 1
           "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
+          "
           (changeEvent)="emailOptionChanged($event, 'emailFollowDependencies')"
         >
           <div>
@@ -1357,6 +1510,16 @@
               ? true
               : false || userAccessLevel !== 1
           "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
+          "
           (changeEvent)="emailOptionChanged($event, 'emailOverdue')"
         >
           <div>
@@ -1377,6 +1540,16 @@
               ? true
               : false || userAccessLevel !== 1
           "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
+          "
           (changeEvent)="emailOptionChanged($event, 'emailOnStart')"
         >
           <div>
@@ -1387,7 +1560,7 @@
           </div>
         </crem-check-box>
       </div>
-      <div class="label subsection">In the Notification Include:</div>
+      <div class="div-label-text">In the Notification Include:</div>
       <div>
         <crem-check-box
           [value]="projectEmailPreferences.emailIncludeMinors"
@@ -1396,6 +1569,16 @@
             projectEmailPreferences.transactionAutoEmail == false
               ? true
               : false || userAccessLevel !== 1
+          "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
           "
           (changeEvent)="emailOptionChanged($event, 'emailIncludeMinors')"
         >
@@ -1417,6 +1600,16 @@
               ? true
               : false || userAccessLevel !== 1
           "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
+          "
           (changeEvent)="emailOptionChanged($event, 'emailCopyTeam')"
         >
           <div>
@@ -1435,6 +1628,16 @@
             projectEmailPreferences.transactionAutoEmail == false
               ? true
               : false || userAccessLevel !== 1
+          "
+          [ngClass]="{
+            disabledOption:
+              !projectEmailPreferences.transactionAutoEmail ||
+              userAccessLevel !== 1
+          }"
+          [title]="
+            !projectEmailPreferences.transactionAutoEmail
+              ? selectAutoEmailTitle
+              : ''
           "
           (changeEvent)="emailOptionChanged($event, 'emailCopyApprover')"
         >
@@ -1457,23 +1660,44 @@
   [id]="'copyTransactionPopupId'"
   [visible]="copyTransactionVisible"
   [title]="'Copy Transaction'"
-  [applyButtonText]="ctApplyButtonText"
   [saveButtonText]="ctSaveButtonText"
   [draggable]="'true'"
   [height]="800"
   [width]="1040"
   [showCloseButton]="true"
-  (apply)="applyOrSaveCopyTransaction('Copy')"
-  (save)="navigateToNewProject(this.newProjectId)"
+  [disableSApplyButton]="disabledCopyTransBtn"
+  [customFooter]="true"
   (close)="applyOrSaveCopyTransaction('Close')"
 >
   <div body>
     <copy-transaction-popup-content
       #copyTransactionComponent
       [projectId]="projectId"
+      (disableCopyEvent)="handleCopyBtnStatus($event)"
       (copyCompletedEvent)="handleCopyCompleted($event)"
       (notifyHasChanges)="handleCopyTransactionFormChanged($event)"
     >
     </copy-transaction-popup-content>
+  </div>
+  <div footer class="quick-approval__custom-footer">
+    <crem-button
+      *ngIf="copyTransBtnVisisble"
+      class="footer__copy-button"
+      (buttonClick)="applyOrSaveCopyTransaction('Copy')"
+      [disabled]="disabledCopyTransBtn"
+      btnStyle="flat"
+      color="primary"
+      [text]="'Copy'"
+      [id]="'copyTrans-copyBtn'"
+    ></crem-button>
+    <crem-button
+      *ngIf="!copyTransBtnVisisble"
+      class="footer__go-button"
+      (buttonClick)="navigateToNewProject(this.newProjectId)"
+      btnStyle="flat"
+      color="primary"
+      [text]="'Go'"
+      [id]="'copyTrans-goBtn'"
+    ></crem-button>
   </div>
 </crem-popup>

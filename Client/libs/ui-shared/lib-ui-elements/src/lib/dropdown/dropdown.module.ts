@@ -1,25 +1,26 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
+import { MatMenuModule } from '@angular/material/menu';
 import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
-import {
-  DropDownButtonDirective,
-  DropdownTemplateDirective,
-  DropdownComponent,
-} from './dropdown.component';
-import { ButtonModule } from '../button';
-import { IconModule } from '../icon';
+import { DxTooltipModule } from 'devextreme-angular';
+import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
-import { DxTemplateModule } from 'devextreme-angular/core';
-import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
-import { DxValidatorModule } from 'devextreme-angular/ui/validator';
-import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
 import { DxFormModule } from 'devextreme-angular/ui/form';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
-import { MatMenuModule} from '@angular/material/menu';
-import { DxTooltipModule } from 'devextreme-angular';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { ButtonModule } from '../button';
+import { ErrorTooltipComponent } from '../error-tooltip';
+import { IconModule } from '../icon';
+import {
+  DropDownButtonDirective,
+  DropdownComponent,
+  DropdownTemplateDirective,
+} from './dropdown.component';
 
 @NgModule({
   imports: [
@@ -37,7 +38,8 @@ import { DxTooltipModule } from 'devextreme-angular';
     MatMenuModule,
     ButtonModule,
     IconModule,
-    DxTooltipModule
+    DxTooltipModule,
+    ErrorTooltipComponent,
   ],
   declarations: [
     DropdownComponent,

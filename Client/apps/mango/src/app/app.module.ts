@@ -57,6 +57,7 @@ import {
   provideNgIdleKeepalive,
 } from '@ng-idle/keepalive';
 import { CurrentProjectIdMonitorService } from './services/current-project-monitor.service';
+import { ErrorNotificationComponent } from './components/error-notification/error-notification.component';
 
 const DEV_MODULES = [];
 
@@ -77,6 +78,7 @@ if (!environment.production) {
     LoadingScreenComponent,
     ValidateComponent,
     IdleTimeoutPopupComponent,
+    ErrorNotificationComponent,
   ],
   imports: [
     BrowserModule,
@@ -191,6 +193,22 @@ export class AppModule {
             } else {
               v06RedirectorUrl = `${redirectorLink}?OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
             }
+
+            //If both are true the url is not correct for the gantt chart
+            if (
+              v06RedirectorUrl.includes(
+                'WebReportWithNav.aspx/project-gantt-chart'
+              ) &&
+              !v06RedirectorUrl.includes(
+                'WebReportWithNav.aspx/project-gantt-chart/'
+              )
+            ) {
+              v06RedirectorUrl = v06RedirectorUrl.replace(
+                'WebReportWithNav.aspx/project-gantt-chart',
+                `WebReportWithNav.aspx/project-gantt-chart/${objectData.objectId}`
+              );
+            }
+
             const newUrl = forceRelogin
               ? `${
                   environment.CAUrl

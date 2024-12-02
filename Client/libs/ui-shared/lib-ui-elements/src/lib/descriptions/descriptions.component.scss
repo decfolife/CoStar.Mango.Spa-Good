@@ -3,8 +3,9 @@
   > div {
     width: 100%;
     display: grid;
-    grid-template-columns: 40% 60%;
+    grid-template-columns: 30% 70%;
     @include costar(gap, 2);
+    @include costar(padding-top, 2);
   }
   @include costar(padding, 4);
 }
@@ -12,7 +13,7 @@
 .desc-title {
   text-align: right;
   @include costar(font-family, body);
-  @include costar(color, gray03); // dimgray is not part of the color map
+  @include costar(color, gray01);
   font-weight: 700;
 }
 

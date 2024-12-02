@@ -1,4 +1,4 @@
-interface ResidualValues {
+export interface ResidualValues {
   doesLessorExplicitlyExemptLessee: boolean;
   residualValueGuaranteedBy3rdParty: number;
   residualValue: number;
@@ -50,6 +50,7 @@ interface CalculationSupports {
   scheduleCurrency: Currency;
   functionalCurrency: Currency;
   selectedPayments: SelectedPayment[];
+  pageMode: string;
 }
 
 export interface CalculateValuesResponse {
@@ -80,7 +81,9 @@ export interface CalculateValuesResponse {
   functional_AssetAmortization: number | null;
   rouAssetObtainedAmount: number | null;
   functionalROUAssetObtainedAmount: number | null;
-
+  classificationTestResult: string | null;
+  classificationTestResultReason: string | null;
+  isClassificationTestResultMatched: boolean | null;
   residualValues: ResidualValues;
   calculationSupports: CalculationSupports;
 }

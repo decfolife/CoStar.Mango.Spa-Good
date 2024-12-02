@@ -244,7 +244,9 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
     (this as any).defaultSetCellValue(newData, value);
   }
 
-  setLevelValue(newData, value: string, currentRowData) {
+  setLevelValue(newData, value, currentRowData) {
+    // user is not allowed to change the level of a team member TO N/A
+    if (value === 99) return; // 99 == 'N/A'
     newData.level = value;
   }
 

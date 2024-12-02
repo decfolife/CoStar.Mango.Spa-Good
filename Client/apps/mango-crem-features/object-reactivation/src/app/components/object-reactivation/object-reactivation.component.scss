@@ -1,0 +1,44 @@
+@use 'styles' as *;
+div.object-reactivation-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  div.object-reactivation-page-title-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    @include costar(padding, 3);
+
+    & > div > {
+      display: flex;
+      align-items: center;
+      .title {
+        @include costar(margin-bottom, 0);
+      }
+    }
+  }
+
+  .object-reactivation-page-data-grid-wrapper {
+    height: calc(100vh - 180px);
+  }
+}
+
+.controls-left {
+  align-items: center;
+  display: flex;
+}
+
+.dropdown-container {
+  @include costar(margin-left, 2);
+  @include costar(margin-right, 3);
+}
+
+:host ::ng-deep .not-clickable {
+  cursor: default !important;
+}
+
+:host ::ng-deep .not-clickable > .dx-template-wrapper > a {
+  cursor: pointer !important;
+}

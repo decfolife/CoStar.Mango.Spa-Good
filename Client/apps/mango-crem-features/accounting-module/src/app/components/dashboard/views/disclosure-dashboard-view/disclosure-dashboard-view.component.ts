@@ -1,5 +1,5 @@
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
-import { Component, OnInit, OnDestroy, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 
@@ -18,9 +18,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './disclosure-dashboard-view.component.html',
   styleUrls: ['./disclosure-dashboard-view.component.scss'],
 })
-export class MangoDisclosureViewComponent
-  implements OnInit, OnDestroy, OnChanges
-{
+export class MangoDisclosureViewComponent implements OnInit, OnDestroy {
   public isLoading = true as boolean;
   public decimalPrecision: number | null;
 
@@ -69,9 +67,6 @@ export class MangoDisclosureViewComponent
       );
       return;
     }
-  }
-
-  ngOnChanges() {
     this.updateCards();
   }
 
@@ -108,6 +103,7 @@ export class MangoDisclosureViewComponent
   }
 
   public refreshCards() {
+    this.inAppDisclosureService.cancelAllRequests();
     this.updateCards(true);
   }
 

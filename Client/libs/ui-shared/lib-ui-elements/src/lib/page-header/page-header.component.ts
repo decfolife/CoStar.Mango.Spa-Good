@@ -7,6 +7,7 @@ import { ButtonGroupComponent } from '../button-group/button-group.component';
 import { DropdownModule } from '../dropdown';
 import { CremPillComponent } from '../pill/pill.component';
 import { StatusPill, ViewType } from '@mango/data-models/lib-data-models';
+import { SplitButtonComponent } from '../split-button/split-button.component';
 
 @Component({
   selector: 'crem-page-header',
@@ -19,6 +20,7 @@ import { StatusPill, ViewType } from '@mango/data-models/lib-data-models';
     ButtonGroupComponent,
     DropdownModule,
     CremPillComponent,
+    SplitButtonComponent,
   ],
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],

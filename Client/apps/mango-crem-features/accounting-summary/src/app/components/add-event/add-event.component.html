@@ -33,8 +33,12 @@
         "
         type="primary"
         [disabled]="isCalculateValuesDisabled"
+        [icon]="isCalculateValuesClicked ? 'faSpinner' : ''"
+        [iconPack]="isCalculateValuesClicked ? 'solid' : ''"
+        [iconAnimation]="isCalculateValuesClicked ? 'spin' : ''"
         (click)="calculateValues()"
-        >Calculate Values
+      >
+        {{ isCalculateValuesClicked ? 'Calculating...' : 'Calculate Values' }}
       </crem-button>
     </div>
 
@@ -69,7 +73,6 @@
     </div>
   </div>
 </div>
-
 <div class="add-events-body">
   <mango-schedule-details
     [commonDropdowns]="commonDropdowns"
@@ -79,7 +82,6 @@
     [classificationSettings]="classificationSettings"
     [accountingEventsData]="accountingEventsData"
     [eventDateOptions]="eventDateOptions"
-    [userInfo]="userInfo"
     (classificationChanged)="onClassificationChanged($event)"
     (scheduleDetailsData)="scheduleDetailsDataChanged($event)"
   >
@@ -104,14 +106,12 @@
     [pageMode]="pageMode"
     [measureEvent]="measureEvent"
     [classificationId]="classificationId"
-    [portfolioSettings]="portfolioSettings"
     [classificationSettings]="classificationSettings"
     [scheduleDetailsData]="scheduleDetailsData"
     [accountingEventsData]="accountingEventsData"
     [amortizationProfiles]="amortizationProfiles"
     [currencyList]="currencyList"
     [rouAssetMethodsList]="rouAssetMethodsList"
-    [userInfo]="userInfo"
   ></mango-financial-card>
 
   <mango-payments-grid
@@ -120,3 +120,68 @@
   </mango-payments-grid>
 </div>
 <p-toast position="bottom-right" preventOpenDuplicates="true"></p-toast>
+
+<crem-popup
+  [id]="
+    accountingSummaryService.getId(
+      componentName,
+      'functional-rate',
+      'validation'
+    )
+  "
+  [visible]="isFunctionalRate1"
+  [showInfo]="false"
+  [saveButtonText]="'Yes'"
+  [closeButtonText]="'No'"
+  height="auto"
+  width="500"
+  [draggable]="'false'"
+  [resizable]="'true'"
+  [showCloseButton]="'true'"
+  [hideOnOutsideClick]="'true'"
+  [showFooter]="'true'"
+  (close)="closeFunctionalRatePopup()"
+  (save)="continueToCalculate()"
+>
+  <div body>
+    <p>
+      Functional Rate is 1, however, the Functional Currency does not equal the
+      Local Currency.
+    </p>
+    <p>Would you like to continue?</p>
+  </div>
+</crem-popup>
+
+<crem-popup
+  [id]="
+    accountingSummaryService.getId(componentName, 'remeasure', 'validation')
+  "
+  [visible]="openDay1DayxRemeasurePopup"
+  [showInfo]="false"
+  [saveButtonText]="'Edit Previous Schedule'"
+  [closeButtonText]="'Dismiss, Change Dates'"
+  height="auto"
+  width="600"
+  [draggable]="'false'"
+  [resizable]="'true'"
+  [showCloseButton]="'true'"
+  [hideOnOutsideClick]="'true'"
+  [showFooter]="'true'"
+  (close)="closeRemeasuringFromDay1Popup()"
+  (save)="editPreviousSchedule()"
+>
+  <div body>
+    <p class="message-title indented-text">
+      Remeasuring from Day 1 of the previous amortization schedule is not
+      allowed when the status is Scheduled.
+    </p>
+    <p class="indented-text">
+      Click <u>Dismiss, change dates</u> to remeasure and input a date that
+      occurs after the first period of the previous schedule.
+    </p>
+    <p class="indented-text">
+      Click <u>Edit previous schedule</u> to cancel this remeasure and load the
+      previous amortization schedule in edit mode.
+    </p>
+  </div>
+</crem-popup>

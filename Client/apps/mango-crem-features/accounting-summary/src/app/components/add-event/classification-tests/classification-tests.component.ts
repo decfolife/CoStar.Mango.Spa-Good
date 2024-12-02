@@ -7,6 +7,7 @@ import {
   DropdownModule,
   IconModule,
   ButtonModule,
+  InputLabelComponent,
 } from '@mango/ui-shared/lib-ui-elements';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
@@ -22,6 +23,7 @@ import { Subscription } from 'rxjs';
 import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AddEventFormService } from '@accounting-summary/services/add-event-form.service';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 
 @Component({
   selector: 'mango-classification-tests',
@@ -36,6 +38,8 @@ import { AddEventFormService } from '@accounting-summary/services/add-event-form
     DropdownModule,
     IconModule,
     ButtonModule,
+    InputLabelComponent,
+    DxNumberBoxModule,
   ],
   providers: [FormattingService],
   templateUrl: './classification-tests.component.html',
@@ -49,7 +53,7 @@ export class ClassificationTestsComponent
   size: string;
   classificationTestForm: FormGroup;
   isfairMarketHasValue: boolean = false;
-  implicitInterestRate: string;
+  implicitInterestRate: number;
   subtitle: string;
   @Input() accountingEventsData: any;
   @Input() classificationId: any;
@@ -74,8 +78,12 @@ export class ClassificationTestsComponent
   economicLifeYears: number = 0.0;
   remainingTermYears: number = 0.0;
   fairMarketValue: number = 0.0;
+  fairMarketValueString = '';
   presentValue: number = 0.0;
+  presentValueString: string = '';
   pVofAmtNotReflectedInPayments: number = 0.0;
+  pVofAmtNotReflectedInPaymentsString: string = '';
+  localCurrencyDecimalPrecision: number = 2;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -86,6 +94,12 @@ export class ClassificationTestsComponent
     public addEventFormService: AddEventFormService
   ) {
     this.initializeClassificationForm();
+    this.subscriptions.push(
+      this.addEventFormService.decimalPrecision$.subscribe((precision) => {
+        this.localCurrencyDecimalPrecision = precision;
+        this.updatePrecision();
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -94,7 +108,7 @@ export class ClassificationTestsComponent
   }
 
   handleFormValueChanges() {
-    const debounce = 300;
+    const debounce = 500;
     this.subscriptions.push(
       this.classificationTestForm.valueChanges
         .pipe(debounceTime(debounce), distinctUntilChanged())
@@ -118,13 +132,60 @@ export class ClassificationTestsComponent
 
     this.subscriptions.push(
       this.classificationTestForm
+        .get('remainingEconomicLife')
+        .valueChanges.pipe(debounceTime(debounce))
+        .subscribe(() => {
+          this.economicLifeChange();
+          const classificationTest3 =
+            this.test3BoolValue === null
+              ? ''
+              : this.test3BoolValue
+              ? 'Yes'
+              : 'No';
+          this.classificationTestForm
+            .get('classificationTest3')
+            .setValue(classificationTest3);
+        })
+    );
+
+    this.subscriptions.push(
+      this.classificationTestForm
         .get('fairMarketValue')
         .valueChanges.pipe(debounceTime(debounce), distinctUntilChanged())
         .subscribe((fairMarketValue) => {
           if (fairMarketValue && fairMarketValue != 0) {
+            const classificationTest4 =
+              this.test4BoolValue === null
+                ? ''
+                : this.test4BoolValue
+                ? 'Yes'
+                : 'No';
+            this.classificationTestForm
+              .get('classificationTest4')
+              .setValue(classificationTest4);
             this.isfairMarketHasValue = true;
           } else {
             this.isfairMarketHasValue = false;
+          }
+
+          const result =
+            (+this.presentValue + +this.pVofAmtNotReflectedInPayments) /
+            +fairMarketValue;
+
+          if (
+            this.presentValue &&
+            this.pVofAmtNotReflectedInPayments &&
+            result > 2
+          ) {
+            this.addEditScheduleService.showToast(
+              'Fair Market Value',
+              `FMV is less than 50% of PV + PV of Amount Not Reflected in Payments.`,
+              'info'
+            );
+          } else {
+            this.addEditScheduleService.clearToastBySummary(
+              'Fair Market Value'
+            );
           }
         })
     );
@@ -133,9 +194,21 @@ export class ClassificationTestsComponent
       this.addEventFormService.calculateValuesResponseData$
         .pipe(debounceTime(debounce))
         .subscribe((calculateValuesResponseData) => {
-          this.implicitInterestRate =
-            calculateValuesResponseData.implicitRate * 100 + '%';
+          this.implicitInterestRate = parseFloat(
+            (calculateValuesResponseData.implicitRate * 100).toFixed(14)
+          );
           this.presentValue = calculateValuesResponseData.presentValue;
+          this.pVofAmtNotReflectedInPayments =
+            calculateValuesResponseData.residualValues.presentValueOnAmtNotReflectedInPayments;
+          this.pvPercent();
+        })
+    );
+
+    this.subscriptions.push(
+      this.addEventFormService.termValues$
+        .pipe(debounceTime(debounce))
+        .subscribe((termValues) => {
+          this.remainingTermYears = termValues.termInYear;
         })
     );
   }
@@ -159,6 +232,9 @@ export class ClassificationTestsComponent
     this.test3 = this.accountingEventsData.test3;
     this.test4 = this.accountingEventsData.test4;
     this.test5 = this.accountingEventsData.test5;
+    this.pVofAmtNotReflectedInPayments =
+      +this.accountingEventsData.residualValues
+        .presentValueOnAmtNotReflectedInPayments;
     this.classificationTestForm
       .get('remainingEconomicLife')
       .setValue(this.accountingEventsData.economicLifeYears);
@@ -167,8 +243,9 @@ export class ClassificationTestsComponent
       .setValue(this.accountingEventsData.fmv);
     this.economicLifeYears = this.accountingEventsData.economicLifeYears;
     this.fairMarketValue = this.accountingEventsData.fmv;
-    this.implicitInterestRate =
-      this.accountingEventsData.implicitRate * 100 + '%';
+    this.implicitInterestRate = parseFloat(
+      (this.accountingEventsData.implicitRate * 100).toFixed(14)
+    );
     this.presentValue =
       this.accountingEventsData.presentValue ?? this.presentValue;
     this.pVofAmtNotReflectedInPayments =
@@ -177,19 +254,40 @@ export class ClassificationTestsComponent
     this.remainingTermYears = this.accountingEventsData.termInYears;
     this.economicLifePercent();
     this.pvPercent();
+    this.fairMarketChange();
   }
 
   initializeClassificationForm() {
     this.classificationTestForm = this.fb.group({
       remainingEconomicLife: new FormControl({ value: null, disabled: false }),
       fairMarketValue: new FormControl({ value: null, disabled: false }),
-      implicitInterestRate: new FormControl({ value: null, disabled: true }),
       classificationTest1: new FormControl({}),
       classificationTest2: new FormControl({}),
       classificationTest3: new FormControl({ value: null, disabled: true }),
       classificationTest4: new FormControl({ value: null, disabled: true }),
       classificationTest5: new FormControl({}),
     });
+  }
+
+  formatCurrency(value: number) {
+    return this.formatService.localFormat(
+      value,
+      this.localCurrencyDecimalPrecision
+    );
+  }
+
+  formatCurrencyInput() {
+    return this.formatService.buildCurrencyMask(
+      this.localCurrencyDecimalPrecision
+    );
+  }
+
+  updatePrecision() {
+    this.presentValueString = this.formatCurrency(this.presentValue);
+    this.pVofAmtNotReflectedInPaymentsString = this.formatCurrency(
+      this.pVofAmtNotReflectedInPayments
+    );
+    this.fairMarketValueString = this.formatCurrency(this.fairMarketValue);
   }
 
   testDropdownChanged(e, dropdownName: string) {
@@ -224,6 +322,7 @@ export class ClassificationTestsComponent
   }
 
   fairMarketChange() {
+    this.fairMarketValueString = this.formatCurrency(this.fairMarketValue);
     this.pvPercent();
     this.getClassificationTestResults();
   }
@@ -273,8 +372,8 @@ export class ClassificationTestsComponent
 
       if (this.fairMarketValue !== 0) {
         result =
-          ((this.presentValue + this.pVofAmtNotReflectedInPayments) /
-            this.fairMarketValue) *
+          ((+this.presentValue + +this.pVofAmtNotReflectedInPayments) /
+            +this.fairMarketValue) *
           100;
       }
     }
@@ -293,22 +392,6 @@ export class ClassificationTestsComponent
     let returnValue = value == null ? 2 : value ? 1 : 0;
 
     return returnValue;
-  }
-
-  getTest3Value() {
-    return this.test3BoolValue === null
-      ? ''
-      : this.test3BoolValue
-      ? 'Yes'
-      : 'No';
-  }
-
-  getTest4Value() {
-    return this.test4BoolValue === null
-      ? ''
-      : this.test4BoolValue
-      ? 'Yes'
-      : 'No';
   }
 
   private setupTestDropdowns() {

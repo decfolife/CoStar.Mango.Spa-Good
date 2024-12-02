@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,7 +22,6 @@ import {
 } from '@list-pages/components/listpage/shared/models';
 import { CurrentObjectService } from '@mango/core-shared';
 import {
-  CLIENT_PREFERENCE,
   ContactRecord,
   CurrentObjectInfo,
   MemberInfo,
@@ -33,8 +38,10 @@ import {
   InputComponent,
 } from '@mango/ui-shared/lib-ui-elements';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { environment } from '@mangoSpa/src/environments/environment.local';
 import { TaskUserApprovalStatus } from '@project-dashboard/models/enums/task-user-approval-enums';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { RequiredNotesFlagService } from '@project-dashboard/services/required-notes-flag.service';
 import { SaveTasksTemplateService } from '@project-dashboard/services/save-tasks-template.service';
 import { ProjectTaskTreeExportUtility } from '@project-dashboard/utilities/project-task-tree-export.utility';
 import { DxTreeListComponent } from 'devextreme-angular';
@@ -43,32 +50,112 @@ import { Column } from 'devextreme/ui/data_grid';
 import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { CremPopupComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/popup';
 import { CremShareViewPopupComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/crem-list-views/crem-share-view-popup/crem-share-view-popup.component';
-import { combineLatest, EMPTY, of, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  EMPTY,
+  of,
+  Subject,
+  Subscription,
+} from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { concatMap, filter, first, map, switchMap, tap } from 'rxjs/operators';
-import { TaskApproveOrRejectComponent } from '../modal/task-approve-or-reject/task-approve-or-reject.component';
+import {
+  filter,
+  first,
+  map,
+  startWith,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 import {
   APPROVE_BUTTON_TEXT,
-  PROJECT_REQUIRE_TASK_NOTES,
   QUICK_APPROVAL_FOOTER_TEXT,
 } from '../../models/constants/project-tasks-constants';
+import { TaskApproveOrRejectComponent } from '../modal/task-approve-or-reject/task-approve-or-reject.component';
 import { AddEditTaskComponent } from './add-edit-tasks/add-edit-task.component';
 import { AppendTemplateComponent } from './append-template/append-template.component';
 import { CopyTransactionComponent } from './copy-transaction/copy-transaction.component';
 import { ModifyCompleteDateComponent } from './modify-complate-date/modify-complete-date.component';
 import { CremQuickApprovalComponent } from './quick-approval/quick-approval.component';
+import { ReorderTaskModal } from './reorder-tasks-modal/reorder-tasks-modal.component';
 import { AddEditTaskAssigneesComponent } from './task-info/task-assignees/add-edit-task-assignees/add-edit-task-assignees.component';
 import { TaskInfoComponent } from './task-info/task-info.component';
 import { AddTaskNoteComponent } from './task-info/task-notes/add-task-note/add-task-note.component';
-import { RequiredNotesFlagService } from '@project-dashboard/services/required-notes-flag.service';
-import { ReorderTaskModal } from './reorder-tasks-modal/reorder-tasks-modal.component';
 
+enum AvailableActions {
+  COPY_TRANSACTION = 'COPY_TRANSACTION',
+  QUICK_APPROVAL = 'QUICK_APPROVAL',
+  TASK_DETAILS_SETTINGS = 'TASK_DETAILS_SETTINGS',
+  DELETE_TASKS = 'DELETE_TASKS',
+  SAVE_TASKS_AS_TEMPLATE = 'SAVE_TASKS_AS_TEMPLATE',
+  APPEND_TEMPLATE = 'APPEND_TEMPLATE',
+  REORDER_TASKS = 'REORDER_TASKS',
+  ASSIGN_APPROVERS = 'ASSIGN_APPROVERS',
+  ADD_SUB_TASK = 'ADD_SUB_TASK',
+  EDIT_TASK = 'EDIT_TASK',
+  ADD_TASK = 'ADD_TASK',
+  APPROVE_TASK = 'APPROVE_TASK',
+  REJECT_TASK_APPROVAL = 'REJECT_TASK_APPROVAL',
+  MODIFY_COMPLETE_DATE = 'MODIFY_COMPLETE_DATE',
+  ADD_NOTES = 'ADD_NOTES',
+  UPLOAD_FILES = 'UPLOAD_FILES',
+}
+type ActionPermissions = {
+  [key in AvailableActions]: any[] | undefined;
+};
+const actionPermissions_ProjectEditable: ActionPermissions = {
+  [AvailableActions.COPY_TRANSACTION]: [1],
+  [AvailableActions.QUICK_APPROVAL]: [1, 2, 3],
+  [AvailableActions.TASK_DETAILS_SETTINGS]: undefined,
+  [AvailableActions.DELETE_TASKS]: [1],
+  [AvailableActions.SAVE_TASKS_AS_TEMPLATE]: [1],
+  [AvailableActions.APPEND_TEMPLATE]: [1],
+  [AvailableActions.REORDER_TASKS]: [1],
+  [AvailableActions.ASSIGN_APPROVERS]: [1],
+  [AvailableActions.ADD_SUB_TASK]: [1],
+  [AvailableActions.EDIT_TASK]: [1],
+  [AvailableActions.ADD_TASK]: [1],
+  [AvailableActions.APPROVE_TASK]: [1, 2, 3],
+  [AvailableActions.REJECT_TASK_APPROVAL]: [1, 2, 3],
+  [AvailableActions.MODIFY_COMPLETE_DATE]: [1],
+  [AvailableActions.ADD_NOTES]: [1, 2, 3, 999],
+  [AvailableActions.UPLOAD_FILES]: [1, 2, 3, 999],
+};
+const actionPermission_ProjectReadOnly: ActionPermissions = {
+  [AvailableActions.COPY_TRANSACTION]: ['SU', 1],
+  [AvailableActions.QUICK_APPROVAL]: [],
+  [AvailableActions.TASK_DETAILS_SETTINGS]: undefined,
+  [AvailableActions.DELETE_TASKS]: [],
+  [AvailableActions.SAVE_TASKS_AS_TEMPLATE]: ['SU', 1],
+  [AvailableActions.APPEND_TEMPLATE]: [],
+  [AvailableActions.REORDER_TASKS]: [],
+  [AvailableActions.ASSIGN_APPROVERS]: [],
+  [AvailableActions.ADD_SUB_TASK]: [],
+  [AvailableActions.EDIT_TASK]: [],
+  [AvailableActions.ADD_TASK]: [],
+  [AvailableActions.APPROVE_TASK]: [],
+  [AvailableActions.REJECT_TASK_APPROVAL]: [],
+  [AvailableActions.MODIFY_COMPLETE_DATE]: [],
+  [AvailableActions.ADD_NOTES]: ['SU', 1],
+  [AvailableActions.UPLOAD_FILES]: [],
+};
+
+// link data-column click to action permissions
+const dataColActionPermissionMap = {
+  ProjectMilestoneName: AvailableActions.EDIT_TASK,
+  Approvers: AvailableActions.ASSIGN_APPROVERS,
+  FilesCount: AvailableActions.UPLOAD_FILES,
+  NotesCount: AvailableActions.ADD_NOTES,
+};
 @Component({
   selector: 'project-tasks',
   templateUrl: './project-tasks.component.html',
   styleUrls: ['./project-tasks.component.scss'],
 })
-export class ProjectTasksComponent implements OnInit, OnDestroy {
+export class ProjectTasksComponent
+  implements OnInit, OnDestroy, AfterContentInit
+{
   @ViewChild('ProjectTasksGrid') projectTasksGrid: DxTreeListComponent;
   @ViewChild('StartDatePicker') startDatePicker: DatePickerComponent;
   @ViewChild('DueDatePicker') dueDatePicker: DatePickerComponent;
@@ -88,7 +175,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   rowId: number = 0;
   isUserDatesEU: boolean = true;
   isOneTaskShrinkable: boolean = false;
-  isProxyApproverForOneTask: boolean = false;
   taskStatusColor: string = '';
   inputViewName: string = '';
   currentListView: ListView = null;
@@ -102,7 +188,8 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   availablePredecessors: any = [];
   predValues: any = [];
   isExpandAll: boolean = false;
-  userAccessLevel: number;
+  userAccessLevel: number = 3;
+  numOfDays: number = null;
   allSelectedRowKeys: number[] = [];
   disableOrEnableRowKeys: number[] = [];
   selectionEvent: boolean = false;
@@ -117,19 +204,33 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     'require approval. Once completed this task will be available for approval.';
   dragPosition: any = { x: 0, y: 0 };
   showQuickApprovalPopup = false;
+  isEditAsgineesModalOpen = false;
   approveButtonText = '';
   saveButtonText = 'Save';
   quickApprovalFooterText = '';
-  quickApprovalApproveDisabled = true;
   quickApprovalSaveDisabled = true;
   showSaveTasksAsTemplatePopup = false;
   disableTasksTemplateSaveButton = true;
   taskUserApprovalStatus;
+  externalCremLink: string;
   workFlowOttid: number;
+  selectedTaskCount$ = new BehaviorSubject<number>(0);
+  isApproveButtonDisabled$ = new BehaviorSubject<boolean>(true);
+  isQuickApprovalProcessing$ = new BehaviorSubject<boolean>(false);
+  private destroy$ = new Subject<void>();
+
+  taskResendEmail: boolean = false;
+  public selectAutoEmailTitle: string =
+    'Must select Auto Email setting in order to enable additional email options';
+  public maxReachedSubTasksTitle: string =
+    'You have reached the max level of sub tasks.';
 
   private originalStartDate: string = '';
   private originalDueDate: string = '';
   private currentUserInfo$: Observable<ContactRecord>;
+  private refreshForApplyClick = false;
+  private lastDatePickerNewValue: any = null;
+  private lastDatePickerChangedName: string = null;
 
   //***for views
   currentListViewName: string;
@@ -146,16 +247,9 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   sessionView: ListView;
   expandedRowKeys: number[];
   isNotesFieldRequired: boolean = true;
+
   // ****/
-  public readonly availableActions = {
-    COPY_TRANSACTION: [1],
-    QUICK_APPROVAL: [1, 2, 3],
-    TASK_DETAILS_SETTINGS: undefined,
-    DELETE_TASKS: [1],
-    SAVE_TASKS_AS_TEMPLATE: [1],
-    APPEND_TEMPLATE: [1],
-    REORDER_TASKS: [1],
-  };
+  public readonly availableActions = AvailableActions;
 
   //** Task Settings related data **/
   projectTaskSettings: ProjectTaskSettings = <ProjectTaskSettings>{};
@@ -173,12 +267,15 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   selectAllEmailPref: boolean = false;
   taskSettingsChangesMade: boolean = false;
   newProjectId?: number = null;
+  disableTaskSettingsBtns: boolean = false;
 
   //**** **/
   //** Copy Transaction related data **/
   copyTransactionVisible: boolean = false;
   ctSaveButtonText: string = null;
   ctApplyButtonText: string = 'Copy';
+  disabledCopyTransBtn: boolean = false;
+  copyTransBtnVisisble: boolean = true;
 
   //**** **/
 
@@ -190,9 +287,11 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   taskDetailsSettingsPopup: CremPopupComponent;
   @ViewChild('copyTransactionComponent')
   copyTransactionComponent: CopyTransactionComponent;
-  @ViewChild(CremQuickApprovalComponent)
+  @ViewChild('quickApprovalGrid')
   quickApprovalComponent!: CremQuickApprovalComponent;
   currentObject: Observable<CurrentObjectInfo> = null;
+  currentUserContactId: number;
+  isProjectEditable: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -208,46 +307,78 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   ) {
     this.saveState = this.saveState.bind(this);
   }
+  ngAfterContentInit(): void {
+    this.initializeBehaviorDisableQuickApprovalButton();
+  }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.taskUserApprovalStatus = TaskUserApprovalStatus;
 
+    this.setLegacyTaskLink();
     this.getMemberInfo();
-    this.subs.push(
-      this.route.queryParams
-        .pipe(
-          filter((params) => !!params && !!params.oid),
-          tap((params) => {
-            this.projectId = parseInt(params.oid);
-            this.workFlowOttid = parseInt(params.ottid)
-              ? parseInt(params.ottid)
-              : 0;
-            this.getProjectContactLevel(this.projectId);
-          })
-        )
-        .subscribe()
-    );
 
-    this.getNotesRequiredFlag();
+    await this.route.queryParams
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((params) => !!params && !!params.oid),
+        tap(async (params) => {
+          this.projectId = parseInt(params.oid);
+          this.workFlowOttid = parseInt(params.ottid)
+            ? parseInt(params.ottid)
+            : 0;
+          this.getNotesRequiredFlag();
+          this.getProjectContactLevel(this.projectId);
+          const isEditable = await this.dashboardService
+            .getIsProjectEditable(params.oid)
+            .toPromise();
 
-    this.sessionView = sessionStorage.getItem('projectTasksSessionView')
-      ? JSON.parse(sessionStorage.getItem('projectTasksSessionView'))
-      : null;
-    this.getListViews();
+          this.isProjectEditable = isEditable;
+        }),
+        first()
+      )
+      .toPromise();
 
     this.currentUserInfo$ = this.facade.contactRecord$;
+
     this.currentObject =
       this.currentObjectService.getCurentObjectNameAndType$();
-    this.subs.push(
-      this.currentUserInfo$.subscribe((contact) => {
-        this.isUserDatesEU = contact.preferences.contactDatesEU;
-        this.isSuperUser =
-          contact.userRoleName.toLowerCase().trim() == 'superuser'
-            ? true
-            : false;
-        this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
-      })
-    );
+
+    await this.currentUserInfo$
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((x) => !!x && x !== null),
+        first(),
+        map((contact) => ({
+          isSuperUser:
+            contact.userRoleName.toLowerCase().trim() == 'superuser'
+              ? true
+              : false,
+          contact,
+        })),
+        tap(({ isSuperUser, contact }) => {
+          this.currentUserContactId = contact.contactID;
+          this.isUserDatesEU = contact.preferences.contactDatesEU;
+          this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
+        })
+      )
+      .toPromise();
+  }
+
+  private initializeBehaviorDisableQuickApprovalButton() {
+    combineLatest([
+      this.isQuickApprovalProcessing$.pipe(startWith(false)),
+      this.selectedTaskCount$.pipe(startWith(0)),
+    ])
+      .pipe(
+        map(
+          ([isProcessing, selectedTaskCount]) =>
+            isProcessing || selectedTaskCount === 0
+        ),
+        tap((v) => {
+          this.isApproveButtonDisabled$.next(v);
+        })
+      )
+      .subscribe();
   }
 
   onTasksSelectionChanged(e) {
@@ -306,6 +437,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
 
   getChildKeys(parentKey) {
     let childKeys: number[] = [];
+
     const getChildren = (key: number) => {
       const children = this.gridData.filter(
         (task) => task.ProjectMilestoneParentID == key
@@ -353,9 +485,13 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.disableCheckboxes(this.allDisabledRowKeys);
   }
 
-  deleteSelectedTasks(taskId?: number) {
+  deleteSelectedTasks(data?) {
+    const taskId = data?.ProjectMilestoneID;
     this.deleteTaskIds = [];
     if (taskId) {
+      if (!this.isTaskDeletable(data)) {
+        return;
+      }
       if (this.allSelectedRowKeys.length || this.hasSubTasks(taskId)) {
         return;
       }
@@ -392,9 +528,14 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
         .confirm('Tasks Deletion', confirmText, 'Confirm', 'Cancel')
         .pipe(
           filter((confirmed) => !!confirmed),
+          tap((_) =>
+            this.projectTasksGrid.instance.beginCustomLoading(
+              'Deleting Task(s)....'
+            )
+          ),
           switchMap((_) => this.dashboardService.deleteTasks(tasksToDelete)),
           tap((res) => {
-            res.success
+            res && res.success
               ? (this.dashboardService.successNotify(
                   'Selected Tasks(s) successfully removed.'
                 ),
@@ -402,6 +543,8 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
               : this.dashboardService.errorNotify(
                   'The task(s) could not be deleted. Please review and try again.'
                 );
+
+            this.projectTasksGrid.instance.endCustomLoading();
           })
         )
         .subscribe()
@@ -409,7 +552,10 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   }
 
   addOrEditAssignees(task) {
-    if (this.userAccessLevel !== 1) {
+    const preventAction = this.checkUserLevelRequirement(
+      this.availableActions.ASSIGN_APPROVERS
+    );
+    if (preventAction) {
       return;
     }
 
@@ -436,6 +582,9 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   }
 
   openEditAssinees(task, taskApprovers) {
+    if (this.isEditAsgineesModalOpen) return;
+    this.isEditAsgineesModalOpen = true;
+
     let dialogHeight = '800px';
     let dialogWidth = '500px';
 
@@ -456,7 +605,12 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.subs.push(
       dialogRef
         .afterClosed()
-        .pipe(filter((reload) => !!reload))
+        .pipe(
+          tap((_) => {
+            this.isEditAsgineesModalOpen = false;
+          }),
+          filter((reload) => !!reload)
+        )
         .subscribe((reload) => {
           if (reload.saveSuccessful) {
             this.getGridData();
@@ -507,15 +661,27 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
         )
     );
   }
-
-  modifyCompleteDate(taskId, isProxyUser, userApprovalStatus) {
-    if (
-      this.userAccessLevel !== 1 &&
-      userApprovalStatus.trim() == this.taskUserApprovalStatus.NOT_ASSIGNED
-    ) {
+  isTaskAssignee(data): boolean {
+    const { ApproverContactID, ApproverProxyContactID } = data;
+    return (
+      [ApproverContactID, ApproverProxyContactID].indexOf(
+        this.currentUserContactId
+      ) > -1
+    );
+  }
+  isTaskAssigned(data) {
+    return (
+      data?.userApprovalStatus?.trim() !==
+      this.taskUserApprovalStatus.NOT_ASSIGNED
+    );
+  }
+  modifyCompleteDate(data) {
+    const allowAction = this.isTaskCompleteDateModifiable(data);
+    if (!allowAction) {
       return;
     }
 
+    const { taskId, isProxyUser } = data;
     let dialogRef = this.dialog.open(ModifyCompleteDateComponent, {
       height: '350px',
       width: '500px',
@@ -553,7 +719,10 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     taskStep?: number,
     taskSubTasksCount?: number
   ) {
-    if (this.userAccessLevel !== 1) {
+    const preventAction = this.checkUserLevelRequirement(
+      this.availableActions.EDIT_TASK
+    );
+    if (preventAction) {
       return;
     }
 
@@ -570,12 +739,16 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
 
   addSubTask(
     taskIndexOrder,
+    taskSubTaskLimitReached: boolean,
     taskId?: number,
     taskParentId?: number,
     taskStep?: number,
     taskSubTasksCount?: number
   ) {
-    if (this.userAccessLevel !== 1) {
+    const preventAction = this.checkUserLevelRequirement(
+      this.availableActions.ADD_SUB_TASK
+    );
+    if (preventAction || taskSubTaskLimitReached) {
       return;
     }
 
@@ -608,7 +781,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
           if (!successful) {
             return;
           }
-
           let dialogRef = this.dialog.open(AddEditTaskComponent, {
             height: '800px',
             width: '500px',
@@ -626,6 +798,8 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
               taskSubTasksCount: taskSubTasksCount,
               taskIndexOrder: taskIndexOrder,
               workFlowOttid: this.workFlowOttid,
+              userAccessLevel: this.userAccessLevel,
+              addEditDialogRef: () => dialogRef,
             },
             disableClose: true,
           });
@@ -633,7 +807,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
           this.subs.push(
             dialogRef.componentInstance.onApplyClick.subscribe(
               (newTaskId: number) => {
-                let gridDataObservable = this.returnGridDataObservable();
+                const gridDataObservable = this.returnGridDataObservable();
 
                 this.subs.push(
                   gridDataObservable
@@ -674,7 +848,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     let dialogRef = this.dialog.open(AddTaskNoteComponent, {
       height: '800px',
       width: '500px',
-      panelClass: 'addTaskNotesModal',
+      panelClass: 'addTaskNoteModal',
       data: { taskId: this.selectedTaskId, dragPosition: this.dragPosition },
       disableClose: true,
     });
@@ -704,6 +878,11 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   }
 
   displayTaskDetail(e) {
+    const permissionDenied = this.checkUserLevelRequirement(
+      dataColActionPermissionMap[e.column.dataField]
+    );
+    if (permissionDenied) return;
+
     if (
       e.rowType == 'data' &&
       (e.column.dataField == 'ProjectMilestoneName' ||
@@ -795,11 +974,11 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     taskStep: number,
     taskIndexOrder: number,
     taskSubTasksCount: number,
-    selectedTabIndex: number = 0
+    selectedTabIndex = 0
   ) {
     this.selectedTaskId = taskId;
     this.getCurrentProjectTasks();
-    let dialogRef = this.dialog.open(TaskInfoComponent, {
+    const dialogRef = this.dialog.open(TaskInfoComponent, {
       height: '800px',
       width: '500px',
       panelClass: 'taskInfoModal',
@@ -900,7 +1079,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   getCurrentProjectTasks() {
     this.projectCurrentTasks = [];
     this.gridData.forEach((projectTask) => {
-      let tempDtls: ProjectTaskDropdownInfo = <ProjectTaskDropdownInfo>{};
+      const tempDtls: ProjectTaskDropdownInfo = <ProjectTaskDropdownInfo>{};
       tempDtls.taskId = projectTask.ProjectMilestoneID;
       tempDtls.taskParentId = projectTask.ProjectMilestoneParentID;
       tempDtls.taskStepNumber = projectTask.ProjectMilestoneStep;
@@ -933,7 +1112,13 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.subs.push(
       this.dashboardService.getProjectContactLevel(projectId).subscribe(
         (res: any) => {
-          this.userAccessLevel = res.data;
+          if (res && res.success) {
+            this.userAccessLevel = res.data.userLevel;
+          }
+          this.sessionView = sessionStorage.getItem('projectTasksSessionView')
+            ? JSON.parse(sessionStorage.getItem('projectTasksSessionView'))
+            : null;
+          this.getListViews();
         },
         (error: any) =>
           console.log('Error occurred getting User Access Level ', error),
@@ -974,7 +1159,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     return this.dashboardService.getGridData(gridDataRequest).pipe(
       map((res: any) => {
         this.isOneTaskShrinkable = false;
-        this.isProxyApproverForOneTask = false;
 
         if (res) {
           this.availablePredecessors = [];
@@ -992,6 +1176,9 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
               ? task.ProjectMilestoneDescription.replace(/<br>/g, '\n')
               : task.ProjectMilestoneDescription;
             task.Predecessors = JSON.parse(task.Predecessors);
+            task.SubTaskLimitReached = this.subTaskLimitReached(
+              task.ProjectMilestoneStepFull
+            );
             if (task.Predecessors?.length) {
               task.Predecessors.forEach((taskPred) => {
                 if (this.predValues.indexOf(taskPred) == -1) {
@@ -1010,9 +1197,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
             if (task.IsShrinkable === 'Yes') {
               this.isOneTaskShrinkable = true;
             }
-            if (task.IsProxyUser === 1) {
-              this.isProxyApproverForOneTask = true;
-            }
           });
           if (this.approversValues.length) {
             this.buildApproversFilterSource();
@@ -1021,13 +1205,21 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
             this.buildPredecessorFilterSource();
           }
           let savedState = sessionStorage.getItem('projectTasksGridState');
+          this.activeViewState = sessionStorage.getItem(
+            'projectTasksGridStateSet'
+          )
+            ? savedState
+            : this.currentListView.view;
           this.activeViewId = this.currentListView.id;
           this.isExpandAll = sessionStorage.getItem('projectTasksGridExpand')
             ? JSON.parse(sessionStorage.getItem('projectTasksGridExpand'))
             : this.currentListView.isExpandAllSelected;
-          this.activeViewState = savedState
-            ? savedState
-            : this.currentListView.view;
+          if (!sessionStorage.getItem('projectTasksGridStateSet')) {
+            sessionStorage.setItem(
+              'projectTasksGridStateSet',
+              JSON.stringify(true)
+            );
+          }
           this.setCurrentState();
 
           return true;
@@ -1036,6 +1228,26 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  private subTaskLimitReached(taskStepFull: string) {
+    if (taskStepFull === null || taskStepFull === undefined) {
+      return false;
+    }
+
+    var splittedTaskStepFull = taskStepFull.split('.');
+    return splittedTaskStepFull.length >= 5;
+  }
+
+  private setLegacyTaskLink(): void {
+    const taskPageParams = this.router.url.split('?')[1];
+
+    this.facade.clientKey$.subscribe((clientKey) => {
+      this.externalCremLink = `${environment.cremBaseUrl.replace(
+        '[CLIENT]',
+        clientKey
+      )}/project/tasks/view.asp?${taskPageParams}`;
+    });
   }
 
   buildApproversFilterSource() {
@@ -1126,7 +1338,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
             this.listViews.myListViews.length +
             this.listViews.sharedListViews.length;
 
-          this.makeProjectTaskViewNull(); //** this will be removed once we establish the projectTasks View */
           if (this.isNewListViewCreated) {
             const newListView = this.listViews.myListViews.find(
               (x) => x.id == new Number(this.newListViewId)
@@ -1166,19 +1377,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
           //this.dialogService.alert('Get Project Tasks Grid Data Error', 'There was an issue with getting Project Tasks. Please contact the system administrator.', 'OK');
         }
       });
-  }
-
-  makeProjectTaskViewNull() {
-    if (this.listViews.coStarListViews.length) {
-      this.listViews.coStarListViews[0].view = null;
-    } else {
-      if (this.listViews.hiddenListViews.length) {
-        let projectTasksListView = this.listViews.hiddenListViews.find(
-          (x) => x.name.toLocaleLowerCase().trim() == 'projecttasks'
-        );
-        projectTasksListView ? (projectTasksListView.view = null) : '';
-      }
-    }
   }
 
   getDefaultView() {
@@ -1255,15 +1453,16 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.searchText = JSON.parse(this.activeViewState)?.searchText
       ? JSON.parse(this.activeViewState).searchText
       : '';
-    this.projectTasksGrid?.instance.state({});
     let parsedState = JSON.parse(this.activeViewState);
     if (parsedState) {
       parsedState.selectedRowKeys = [];
       this.expandedRowKeys = parsedState.expandedRowKeys?.length
         ? parsedState.expandedRowKeys
         : [];
+      this.projectTasksGrid?.instance.state(parsedState);
+    } else {
+      this.projectTasksGrid?.instance.state({});
     }
-    this.projectTasksGrid?.instance.state(parsedState);
     this.projectTasksGrid?.instance.clearSelection();
     this.expandOrCollapseGrid();
   }
@@ -1458,10 +1657,45 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     );
   }
 
+  private refreshProjectTaskSettings() {
+    this.subs.push(
+      this.getProjectTaskSettingsObservable().subscribe(
+        (res) => {
+          if (res) {
+            this.originalStartDate = new Date(
+              this.projectTaskSettings.startDate
+            ).toDateString();
+            this.originalStartDate =
+              this.originalStartDate === 'Invalid Date'
+                ? ''
+                : this.originalStartDate;
+
+            this.originalDueDate = new Date(
+              this.projectTaskSettings.dueDate
+            ).toDateString();
+            this.originalDueDate =
+              this.originalDueDate === 'Invalid Date'
+                ? ''
+                : this.originalDueDate;
+          }
+        },
+        (error: any) => {
+          console.log(
+            'Error occurred getting Projects Client Settings and or Email Preferences',
+            error
+          );
+        },
+        () => {}
+      )
+    );
+  }
+
   showAppendTemplateDialog() {
     let dialogRef = this.dialog.open(AppendTemplateComponent, {
-      height: '800px',
-      width: '2000px',
+      height: '400px',
+      width: '800px',
+      maxHeight: '90vh',
+      maxWidth: '90vw',
       panelClass: 'appendTemplateModal',
       data: { projectId: this.projectId },
       disableClose: true,
@@ -1528,6 +1762,10 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
         this.taskSettingsChangesMade = false;
       }
     }
+
+    if (this.refreshForApplyClick) {
+      this.getGridData();
+    }
   }
 
   onStartOrDueDateChange(e, setting) {
@@ -1544,8 +1782,11 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     datePickerNewValue,
     datePickerChangedName: string
   ) {
+    this.lastDatePickerNewValue = datePickerNewValue;
+    this.lastDatePickerChangedName = datePickerChangedName;
     let showCanNotChangeBothDatesAlert = false;
     let determineDates = false;
+    this.numOfDays = null;
     datePickerNewValue = new Date(datePickerNewValue).toDateString();
 
     if (datePickerChangedName === 'startDate') {
@@ -1557,7 +1798,8 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
       } else {
         if (
           datePickerNewValue !== '' &&
-          datePickerNewValue !== this.originalStartDate
+          datePickerNewValue !== this.originalStartDate &&
+          new Date(datePickerNewValue) > new Date(this.originalStartDate)
         ) {
           determineDates = true;
         }
@@ -1571,7 +1813,8 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
       } else {
         if (
           datePickerNewValue !== '' &&
-          datePickerNewValue !== this.originalDueDate
+          datePickerNewValue !== this.originalDueDate &&
+          new Date(datePickerNewValue) < new Date(this.originalDueDate)
         ) {
           determineDates = true;
         }
@@ -1602,6 +1845,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     let newDate: Date = null;
     let originalDate: Date = null;
     let dateTypeText = null;
+    this.numOfDays = null;
 
     newDate = new Date(datePickerNewValue);
 
@@ -1619,30 +1863,29 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
       dateTypeText = 'start';
     }
 
-    if (
-      this.isOneTaskShrinkable &&
-      this.projectTaskSettings.autoCalculate &&
-      this.projectTaskSettings.shiftTimeline
-    ) {
+    if (this.isOneTaskShrinkable && this.projectTaskSettings.autoCalculate) {
       const dialogCloseEvent = this.dialogService.confirm(
         'Information',
         `Click OK to allow the ${dateTypeText} date to shift.\r\nClick Cancel to lock the ${dateTypeText} date and shrink the project to the max ${this.projectTaskSettings.shrinkableCount} days.`,
         'OK',
-        'Close'
+        'Cancel'
       );
 
       dialogCloseEvent.subscribe((res) => {
-        if (!res) {
-          var numdays: number = this.dateDiffByDays(
+        if (res) {
+          this.numOfDays = null;
+        } else {
+          this.numOfDays = this.dateDiffByDays(
             originalDate,
             newDate,
             this.projectTaskSettings.calculatedBy
           );
-          numdays = numdays < 0 ? Math.abs(numdays) : numdays;
-          if (numdays > this.projectTaskSettings.shrinkableCount) {
+          this.numOfDays =
+            this.numOfDays < 0 ? Math.abs(this.numOfDays) : this.numOfDays;
+          if (this.numOfDays > this.projectTaskSettings.shrinkableCount) {
             this.dialogService.alert(
               'Information',
-              `You entered ${numdays} days but only have ${this.projectTaskSettings.shrinkableCount} days available.`,
+              `You entered ${this.numOfDays} days but only have ${this.projectTaskSettings.shrinkableCount} days available.`,
               'Close'
             );
 
@@ -1695,7 +1938,19 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   projSettingToggleChanged(e, setting) {
     this.taskSettingsChangesMade = true;
     this.projectTaskSettings[setting] = e.checked;
-    // this.determineTogglesInfoText();
+    if (
+      setting === 'autoCalculate' &&
+      e.checked &&
+      this.lastDatePickerNewValue !== null &&
+      this.lastDatePickerChangedName !== null
+    ) {
+      this.checkDateChangeForUserAlert(
+        this.lastDatePickerNewValue,
+        this.lastDatePickerChangedName
+      );
+      this.lastDatePickerNewValue = null;
+      this.lastDatePickerChangedName = null;
+    }
   }
 
   selectAllEmailPreferences(e) {
@@ -1726,8 +1981,10 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   }
 
   applyOrSaveTaskSettings(oper) {
+    this.disableTaskSettingsBtns = true;
     if (!this.projectTaskSettings.startDate) {
       this.startDatePicker.focusDatePicker();
+      this.disableTaskSettingsBtns = false;
       return;
     }
 
@@ -1744,6 +2001,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
       this.projectTaskSettings.shiftTimeline;
     this.postProjectTaskSettings.projectRequiredTaskNotes =
       this.projectTaskSettings.projectRequiredTaskNotes;
+    this.postProjectTaskSettings.numOfDaysDifference = this.numOfDays;
 
     this.postProjectEmailPreferences.projectID = this.projectId;
     this.postProjectEmailPreferences.autoEmail =
@@ -1785,14 +2043,37 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
         ),
       ]).subscribe(
         ([pps, ppep]) => {
+          this.disableTaskSettingsBtns = false;
+          let ppsApiFailed = false;
           if (!pps || !ppep) {
-            this.dialogService.alert(
-              'Information',
-              'Either Project Task Settings or Project Email Preferences API call has failed.',
-              'Close'
-            );
+            let errMsg = '';
+            if (!pps) {
+              ppsApiFailed = true;
+              errMsg = 'Project Task Settings API call has failed.';
+            }
+
+            if (!ppep) {
+              if (ppsApiFailed) {
+                errMsg =
+                  'Project Task Settings and Project Email Preferences API calls has failed.';
+              } else {
+                errMsg = 'Project Email Preferences API call has failed.';
+              }
+            }
+
+            this.dialogService.alert('Information', errMsg, 'Close');
           } else if (pps.success && ppep.success) {
             this.getNotesRequiredFlag();
+            this.taskSettingsChangesMade = false;
+            if (pps.success) {
+              if (pps.data.alertMessage !== null) {
+                this.dialogService
+                  .alert('Information', pps.data.alertMessage, 'Close')
+                  .subscribe(() => this.applyOrSaveRefresh(oper));
+              } else {
+                this.applyOrSaveRefresh(oper);
+              }
+            }
           } else {
             this.dialogService.alert(
               'Information',
@@ -1802,6 +2083,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
           }
         },
         (error: any) => {
+          this.disableTaskSettingsBtns = false;
           console.log(
             'Error occurred Saving Project Task Settings or Project Email Preferences ',
             error
@@ -1810,10 +2092,15 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
         () => {}
       )
     );
+  }
 
-    this.taskSettingsChangesMade = false;
-    if (oper == 'save') {
+  private applyOrSaveRefresh(operation: string) {
+    if (operation === 'apply') {
+      this.refreshForApplyClick = true;
+      this.refreshProjectTaskSettings();
+    } else if (operation === 'save') {
       this.settingsVisible = false;
+      this.getGridData();
     }
   }
 
@@ -1823,6 +2110,7 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
 
   applyOrSaveCopyTransaction(applyOrSave) {
     if (applyOrSave == 'Copy') {
+      this.disabledCopyTransBtn = true;
       this.copyTransactionComponent.validateAndApplyChanges();
     } else {
       this.ctSaveButtonText = null;
@@ -1832,15 +2120,16 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   }
 
   handleCopyTransactionFormChanged(hasChanges: boolean) {
-    this.ctApplyButtonText = hasChanges ? 'Copy' : null;
-    this.ctSaveButtonText = hasChanges ? null : 'Go';
+    this.copyTransBtnVisisble = hasChanges ? true : false;
   }
 
   handleCopyCompleted({ newProjectId }) {
     this.newProjectId = newProjectId;
-    this.ctSaveButtonText = !!newProjectId ? 'Go' : null;
-    this.ctApplyButtonText = !!newProjectId ? null : 'Copy';
-    this.copyTransactionComponent.resetPopup();
+    this.copyTransBtnVisisble = !!newProjectId ? false : true;
+  }
+
+  handleCopyBtnStatus(status: boolean) {
+    this.disabledCopyTransBtn = status;
   }
 
   navigateToNewProject(oid: number) {
@@ -1883,16 +2172,6 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.showQuickApprovalPopup = !this.showQuickApprovalPopup;
   }
 
-  setApproveButtonText(count: number): void {
-    if (count !== 0) {
-      this.approveButtonText = `${APPROVE_BUTTON_TEXT} (${count})`;
-      this.quickApprovalApproveDisabled = false;
-    } else {
-      this.approveButtonText = APPROVE_BUTTON_TEXT;
-      this.quickApprovalApproveDisabled = true;
-    }
-  }
-
   onApproveTasksClick(): void {
     this.quickApprovalComponent.approveTasks();
   }
@@ -1905,8 +2184,25 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     this.quickApprovalComponent.saveChanges();
   }
 
-  handleQuickApprovalHasChanges(hasChanges: boolean) {
-    this.saveButtonText = hasChanges ? 'Apply' : null;
+  handleQuickApprovalHasChanges({
+    enableApply,
+    enableApprove,
+    approvalCount,
+  }: {
+    enableApply: boolean;
+    enableApprove: boolean;
+    approvalCount: number;
+  }) {
+    this.saveButtonText = enableApply ? 'Apply' : null;
+    this.selectedTaskCount$.next(approvalCount);
+
+    if (approvalCount !== 0) {
+      this.approveButtonText = `${APPROVE_BUTTON_TEXT} (${approvalCount})`;
+      this.selectedTaskCount$.next(approvalCount);
+    } else {
+      this.approveButtonText = APPROVE_BUTTON_TEXT;
+      this.selectedTaskCount$.next(approvalCount);
+    }
   }
 
   onQuickApprovalClose(): void {
@@ -1938,40 +2234,31 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
   }
 
   approveOrRejectTask(taskData, action) {
-    if (action != 'Approve' && action != 'Reject') {
-      return;
-    } else if (
-      action == 'Approve' &&
-      (taskData.ApprovalPredecessors ||
-        taskData.ApprovalSubTasks ||
-        taskData.UserApprovalStatus.trim() ==
-          this.taskUserApprovalStatus.APPROVED ||
-        taskData.UserApprovalStatus.trim() ==
-          this.taskUserApprovalStatus.COMPLETED ||
-        taskData.UserApprovalStatus.trim() ==
-          this.taskUserApprovalStatus.NOT_ASSIGNED)
-    ) {
-      return;
-    } else if (
-      action == 'Reject' &&
-      (taskData.UserApprovalStatus.trim() ==
-        this.taskUserApprovalStatus.NOT_ASSIGNED ||
-        taskData.UserApprovalStatus.trim() ==
-          this.taskUserApprovalStatus.APPROVE)
-    ) {
+    const isValidAction = ['Approve', 'Reject'].indexOf(action) > -1;
+    const isActionable =
+      this.isTaskApprovable(taskData) || this.isTaskRejectable(taskData);
+    if (!isValidAction || !isActionable) {
       return;
     }
 
+    this.taskResendEmail =
+      taskData.ApprovalStatus.trim() !==
+        this.taskUserApprovalStatus.COMPLETED &&
+      taskData.UseEmailApprovals == 'Yes'
+        ? true
+        : false;
     let popupHeight = action == 'Approve' ? '340px' : '220px';
     let dialogRef = this.dialog.open(TaskApproveOrRejectComponent, {
       height: popupHeight,
       width: '600px',
+      maxHeight: '500px',
       panelClass: 'taskApprovalOrRejectModal',
       data: {
         taskData: taskData,
         action: action,
         dateFormat: this.dateFormat,
         notesRequired: this.isNotesFieldRequired,
+        taskResendEmail: this.taskResendEmail,
       },
       disableClose: true,
     });
@@ -1999,13 +2286,61 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkUserLevelRequirement(requiredLevels: Array<number>): boolean {
-    if (!requiredLevels) {
-      return false;
-    }
-    return requiredLevels.indexOf(this.userAccessLevel) === -1;
+  gridIsEmpty() {
+    return this.gridData?.length === 0;
+  }
+  isProxyUserAndTaskIsUnassigned({
+    IsProxyUser,
+    UserApprovalStatus,
+  }: {
+    IsProxyUser;
+    UserApprovalStatus;
+  }) {
+    if (this.isSuperUser) return false; // super user is unlimited
+    IsProxyUser === 1 &&
+      UserApprovalStatus.trim() == this.taskUserApprovalStatus.NOT_ASSIGNED;
   }
 
+  /**
+   * Checks if the user's access level meets the specified requirements.
+   *
+   * @param requiredLevels - An array of required user access levels.
+   * @returns A boolean indicating if access should be disabled.
+   *          Returns true if the user's access level does not match any of
+   *          the required levels or if certain conditions such as
+   *          being a superuser are not met.
+   *          When true, it means the access is disabled.
+   */
+  checkUserLevelRequirement(action: AvailableActions): boolean {
+    // when project is editable superuser can implicity perform all action
+    // when project is NOT editable superuser has to be explicity defined to allow an action
+
+    // if the project is editable AND the current user is a super user, all options are available
+    if (this.isProjectEditable && this.isSuperUser) return false;
+
+    // get action permissions mapping based on project editability
+    const requiredLevels = this.isProjectEditable
+      ? actionPermissions_ProjectEditable[action]
+      : actionPermission_ProjectReadOnly[action];
+
+    // there are no requirements for the action
+    if (!requiredLevels) return this.isProjectEditable ? false : true;
+
+    // enable actions for super-user when it is defined
+    if (this.isSuperUser && requiredLevels.indexOf('SU') > -1) return false;
+
+    // check config for required User Access Level
+    const preventAction = requiredLevels.indexOf(this.userAccessLevel) === -1;
+
+    return preventAction;
+  }
+
+  /**
+   * Adjusts accessibility attributes for grid-related elements.
+   *
+   * Specifically, if there is a header checkbox element found in the grid,
+   * this function removes the 'aria-sort' attribute from it.
+   */
   adaAttr() {
     const headerCheckbox = this.projectTasksGrid.instance
       .element()
@@ -2029,7 +2364,70 @@ export class ProjectTasksComponent implements OnInit, OnDestroy {
     }
   }
 
+  isTaskCompleteDateModifiable(data: any) {
+    // if not L1 and the task has no assignee\
+    const notAdminAndTaskIsNotAssigned =
+      this.userAccessLevel !== 1 && !this.isTaskAssigned(data);
+
+    const preventAction =
+      notAdminAndTaskIsNotAssigned ||
+      this.isProxyUserAndTaskIsUnassigned(data) ||
+      this.checkUserLevelRequirement(
+        this.availableActions.MODIFY_COMPLETE_DATE
+      );
+
+    // if the project is editable and the current user is the assignee the complete date is modifiable
+    const isTaskAsignee = this.isProjectEditable && this.isTaskAssignee(data);
+
+    return isTaskAsignee || !preventAction;
+  }
+
+  isTaskDeletable(data: any) {
+    const preventDelete =
+      this.allSelectedRowKeys.length ||
+      this.hasSubTasks(data.ProjectMilestoneID) ||
+      this.checkUserLevelRequirement(this.availableActions.DELETE_TASKS);
+
+    return !preventDelete;
+  }
+
+  isTaskRejectable(data: any) {
+    const statusNotRejectable =
+      [
+        TaskUserApprovalStatus.APPROVE,
+        TaskUserApprovalStatus.NOT_ASSIGNED,
+        TaskUserApprovalStatus.REJECT,
+      ].indexOf(data.UserApprovalStatus.trim()) > -1;
+
+    const preventAction =
+      statusNotRejectable ||
+      this.checkUserLevelRequirement(
+        this.availableActions.REJECT_TASK_APPROVAL
+      );
+
+    return !preventAction;
+  }
+
+  isTaskApprovable(data: any) {
+    const approvableStatus =
+      [
+        TaskUserApprovalStatus.NOT_ASSIGNED,
+        TaskUserApprovalStatus.COMPLETED,
+        TaskUserApprovalStatus.APPROVED,
+      ].indexOf(data.UserApprovalStatus.trim()) === -1;
+
+    const preventAction =
+      !approvableStatus ||
+      // data.ApprovalPredecessors ||
+      data.ApprovalSubTasks ||
+      this.checkUserLevelRequirement(this.availableActions.APPROVE_TASK);
+
+    return !preventAction;
+  }
+
   ngOnDestroy(): void {
     this.subs.forEach((s) => s.unsubscribe());
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

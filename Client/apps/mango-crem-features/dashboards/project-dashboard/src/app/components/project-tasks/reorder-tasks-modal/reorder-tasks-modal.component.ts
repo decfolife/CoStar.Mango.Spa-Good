@@ -58,6 +58,8 @@ export class ReorderTasksModalComponent implements OnInit {
   gridSizing = {
     height: '500',
   };
+  readonly maxTreeDepth = 4;
+
   constructor(
     private dashboardService: DashboardService,
     public dialogRef: MatDialogRef<ReorderTasksModalComponent>,
@@ -173,13 +175,22 @@ export class ReorderTasksModalComponent implements OnInit {
     }
     // If the dragged node is a child of the target node - cancel the drag operation
     let currentNode = toNode;
+
+    // determine the maximum allowed drop depth of the dragged node
+    const maxRelativeDepth = this.getRelativeMaxDepth(fromNode.children);
+    let depth = this.maxTreeDepth - maxRelativeDepth;
+
     while (!!currentNode) {
+      // the node drop is too deep - cancel the drag operation
+      // the node drop has children at a depth the exceeds the maximum allowed drop depth of the
       // recursively check to ensure we arent trying to put a parent node inside a child node
-      if (fromNode.key === currentNode.key) {
+      if (depth === 0 || fromNode.key === currentNode.key) {
         e.cancel = true;
         return;
       }
+
       currentNode = currentNode.parent;
+      depth--;
     }
   }
 
@@ -255,7 +266,7 @@ export class ReorderTasksModalComponent implements OnInit {
       .reduce((acc, item) => [item, ...acc], [])
       .map(
         ({ id, ordinal, path, parentId }): TaskOrderItem => ({
-          parentId,
+          parentId: parentId || 0,
           taskId: id,
           ordinal,
           fullStep: path,
@@ -435,6 +446,19 @@ export class ReorderTasksModalComponent implements OnInit {
     }
 
     return of(true);
+  }
+
+  getRelativeMaxDepth(children: [] | undefined, currentDepth = 0): number {
+    // if there are no children, return the current depth
+    if (children?.length === 0) {
+      return currentDepth;
+    }
+    // Recurse through each child's children and find the maximum depth from them
+    return Math.max(
+      ...children.map((child: { children?: [] }) =>
+        this.getRelativeMaxDepth(child.children, currentDepth + 1)
+      )
+    );
   }
 }
 

@@ -15,6 +15,7 @@
     <div class="import-teams-dataGrid-wrapper">
       <crem-loader *ngIf="!dataRetrieved"></crem-loader>
       <dx-data-grid
+        cremModalAwareGrid
         *ngIf="dataRetrieved"
         class="teams-grid"
         #TeamsGrid
@@ -65,6 +66,7 @@
         <dxi-column
           dataField="modifiedDate"
           dataType="date"
+          alignment="center"
           [format]="cardsService.dateFormat"
         ></dxi-column>
         <dxi-column dataField="modifiedBy"></dxi-column>
@@ -117,14 +119,9 @@
               <dxi-column
                 dataField="level"
                 caption="Access Level"
-                dataType="string"
-                [setCellValue]="setLevelValue"
+                alignment="center"
+                [calculateCellValue]="getAccessLevelDisplayValue"
               >
-                <dxo-lookup
-                  [dataSource]="memberInfo.levels"
-                  valueExpr="level"
-                  displayExpr="level"
-                ></dxo-lookup>
               </dxi-column>
               <dxi-column
                 [visible]="showShareColumn"

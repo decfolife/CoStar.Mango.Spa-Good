@@ -8,6 +8,7 @@ import {
 } from './simple-grid.component';
 import { DxLoadPanelModule, DxTemplateModule } from 'devextreme-angular';
 import { ButtonModule } from '../button';
+import { CremModalAwareGridDirective } from './modal-aware-grid.directive';
 
 @NgModule({
   imports: [
@@ -16,9 +17,17 @@ import { ButtonModule } from '../button';
     DxBulletModule,
     ButtonModule,
     DxTemplateModule,
-    DxLoadPanelModule
+    DxLoadPanelModule,
   ],
-  declarations: [SimpleGridComponent, CustomTemplateDirective],
-  exports: [SimpleGridComponent, CustomTemplateDirective],
+  declarations: [
+    SimpleGridComponent,
+    CustomTemplateDirective,
+    CremModalAwareGridDirective,
+  ],
+  exports: [
+    SimpleGridComponent,
+    CustomTemplateDirective,
+    CremModalAwareGridDirective,
+  ],
 })
 export class SimpleGridModule {}

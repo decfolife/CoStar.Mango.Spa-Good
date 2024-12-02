@@ -173,7 +173,6 @@
                   )
                 "
                 [inputType]="'text'"
-                [value]="getTest3Value()"
                 [placeholder]="''"
                 [required]="false"
                 [disabled]="true"
@@ -192,24 +191,18 @@
           <div class="ct-li-div">
             <label class="classification-tests__form__list__item__label">
               <span class="ct-bold-text">Present Value:</span>
-              PV of lease payments & guaranteed residual values ≥ 90% of assets
-              fair value?<br />
+              PV of lease payments & present value of amount not reflected in
+              payments ≥ 90% of assets fair value?<br />
               <span class="ct-sub-text"
                 >{{
                   this.test4 !== null
                     ? formatService.localFormat(this.test4, 2)
                     : '0.00'
-                }}% [({{ formatService.localFormat(this.presentValue, 2) }}
+                }}% [({{ this.presentValueString }}
                 lease payments +
-                {{
-                  formatService.localFormat(
-                    this.pVofAmtNotReflectedInPayments,
-                    2
-                  )
-                }}
-                guaranteed residual value) /
-                {{ formatService.localFormat(this.fairMarketValue, 2) }} fair
-                market value]</span
+                {{ this.pVofAmtNotReflectedInPaymentsString }}
+                present value of amount not reflected in payments) /
+                {{ this.fairMarketValueString }} fair market value]</span
               >
             </label>
             <div>
@@ -222,7 +215,6 @@
                   )
                 "
                 [inputType]="'text'"
-                [value]="getTest4Value()"
                 [placeholder]="''"
                 [required]="false"
                 [disabled]="true"
@@ -318,7 +310,10 @@
         </li>
 
         <li class="classification-tests__form__list__item side">
-          <crem-input
+          <crem-label class="classification-tests__form__list__item__label">
+            Fair Market Value
+          </crem-label>
+          <dx-number-box
             [id]="
               accountingSummaryService.getId(
                 componentName,
@@ -326,29 +321,38 @@
                 'Input'
               )
             "
-            class="classification-tests__form__list__item__label"
-            [showLabel]="true"
-            [label]="'Fair Market Value'"
-            [labelPosition]="'top'"
-            [inputType]="'number'"
-            [value]="fairMarketValue"
-            [placeholder]="''"
-            [required]="false"
-            [rows]="4"
-            [cols]="30"
-            [disallowNegative]="true"
-            [showHint]="false"
-            (onBlurChange)="fairMarketChange()"
+            class="fair_market-value"
+            [value]=""
             formControlName="fairMarketValue"
+            [format]="formatCurrencyInput()"
+            (onValueChanged)="fairMarketChange()"
+            (onFocusOut)="fairMarketChange()"
           >
-          </crem-input>
+          </dx-number-box>
         </li>
 
         <li
           class="classification-tests__form__list__item side"
           *ngIf="isfairMarketHasValue"
         >
-          <crem-input
+          <crem-input-label
+            [id]="
+              accountingSummaryService.getId(
+                componentName,
+                'Implicit-Interest-Rate',
+                'label'
+              )
+            "
+            label="Implicit Interest Rate"
+            [showInfo]="false"
+          >
+          </crem-input-label>
+          <div
+            class="implicit-rate"
+            *ngIf="
+              implicitInterestRate !== null &&
+              implicitInterestRate !== undefined
+            "
             [id]="
               accountingSummaryService.getId(
                 componentName,
@@ -356,18 +360,9 @@
                 'Input'
               )
             "
-            class="classification-tests__form__list__item__label"
-            [showLabel]="true"
-            [labelPosition]="'top'"
-            [label]="'Implicit Interest Rate'"
-            [inputType]="'text'"
-            [value]="implicitInterestRate"
-            [disallowNegative]="true"
-            disabled="true"
-            [required]="false"
-            formControlName="implicitInterestRate"
           >
-          </crem-input>
+            {{ implicitInterestRate }}%
+          </div>
         </li>
       </ul>
     </fieldset>

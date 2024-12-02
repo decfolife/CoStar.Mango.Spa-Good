@@ -573,6 +573,7 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   updateContact() {
+    this.applySaveButtonDisabled = true;
     this.updateContactData.projectID = this.projectId;
     this.updateContactData.contactID = this.contactId;
     this.updateContactData.contactRole = this.selectedRole;

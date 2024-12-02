@@ -1,14 +1,29 @@
 @use 'styles' as *;
 
 #appendTemplateModal-content {
+  display: flex;
+  flex-direction: column;
   .fieldInvalid {
     color: #d9534f;
   }
 
+  .apt-firstRow-layout {
+    display: flex;
+    gap: 20px;
+    .apt-choose-task-template-group {
+      flex-basis: 60%;
+    }
+  }
+
   .apt-main-modal-layout {
     display: flex;
-    margin-top: 50px;
-    gap: 5%;
+    flex-direction: column;
+    margin-top: 30px;
+    gap: 16px;
+  }
+
+  h4.label {
+    margin-bottom: 4px;
   }
 
   .apt-required {
@@ -19,31 +34,30 @@
     font-size: 14px;
   }
 
-  .apt-left-window-layout {
-    width: 45%;
+  .apt-view-project-preview-button-group {
+    margin-top: 30px;
+    #apt-view-project-preview-button {
+      color: $costarBlue;
 
-    .apt-apply-team-to-task-group {
-      margin-top: 60px;
-    }
-  }
-
-  .apt-right-window-layout {
-    width: 45%;
-
-    .apt-transPreviewGrid-group {
-      height: 480px;
-      margin-top: 20px;
-      width: 100%;
-      padding: 20px;
-      background: var(--Info-Lightest, #dce8f4);
-
-      #apt-transPreviewGrid-id {
-        border: 1px solid $gray04;
+      &.apt-disableBtn {
+        color: $gray03;
+        pointer-events: none;
       }
     }
+  }
 
-    #apt-view-project-preview-button {
-      display: inline-flex;
+  .apt-transPreviewGrid-group {
+    height: 480px;
+    width: 100%;
+    padding: 20px;
+    background: var(--Info-Lightest, #dce8f4);
+
+    #apt-transPreviewGrid-id {
+      border: 1px solid $gray04;
     }
   }
+}
+
+::ng-deep .appendTemplateModal {
+  transition: height 0.5s;
 }

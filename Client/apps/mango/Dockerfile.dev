@@ -1,0 +1,27 @@
+# Stage 1: Compile and Build angular codebase
+# This is a copy of the Dockerfile that uses nginx-spa.dev.conf with the CSP as
+# 'Content-Security-Policy-Report-Only' for lower environments
+FROM public.ecr.aws/docker/library/node:16-alpine as build
+ARG COSTAR_ENVIRONMENT=dev
+WORKDIR /app
+COPY package*.json ./
+COPY decorate-angular-cli.js ./
+RUN npm set strict-ssl false
+RUN npm ci --force
+COPY ./ /app/
+RUN echo "building environment=$COSTAR_ENVIRONMENT"
+RUN npx nx run mango:build --configuration=$COSTAR_ENVIRONMENT
+
+# Stage 2: Serve app with nginx server
+FROM public.ecr.aws/nginx/nginx:alpine as final
+COPY ./config/nginx-spa.dev.conf /etc/nginx/nginx.conf
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=build /app/dist/apps/mango/ /usr/share/nginx/html
+EXPOSE 8000
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+
+RUN touch /var/run/nginx.pid && \
+        chown -R nginx:nginx /var/run/nginx.pid && \
+        chown -R nginx:nginx /var/cache/nginx
+
+USER nginx

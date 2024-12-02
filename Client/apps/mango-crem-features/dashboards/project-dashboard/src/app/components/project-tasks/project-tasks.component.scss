@@ -175,6 +175,37 @@
         cursor: pointer;
         color: $primary-light !important;
       }
+
+      td.selectTask.dx-treelist-cell-expandable {
+        div.dx-treelist-empty-space {
+          width: 11px;
+        }
+
+        div.dx-treelist-empty-space.dx-treelist-expanded,
+        div.dx-treelist-empty-space.dx-treelist-collapsed {
+          width: 11px;
+        }
+      }
+
+      td {
+        line-height: 16px;
+      }
+    }
+  }
+
+  div.dx-scrollable-wrapper {
+    div.dx-scrollable-scrollbar.dx-widget.dx-scrollbar-horizontal.dx-scrollbar-hoverable {
+      height: 20px;
+      div.dx-scrollable-scroll {
+        height: 20px;
+      }
+    }
+
+    div.dx-scrollable-scrollbar.dx-widget.dx-scrollbar-vertical.dx-scrollbar-hoverable {
+      width: 20px;
+      div.dx-scrollable-scroll {
+        width: 20px;
+      }
     }
   }
 
@@ -185,21 +216,41 @@
   }
 }
 
+::ng-deep #saveTasksAsTemplatePopupId {
+  .crem-popup__footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+}
+
 ::ng-deep #projectTasksSettingsPopup {
   &.dx-popup-wrapper {
     z-index: 999 !important;
   }
   .dx-popup-content.dx-popup-content-scrollable {
     padding: 0;
-    height: 84.5% !important;
+    height: calc(100% - 125px) !important;
   }
 
   h4 {
     margin-bottom: 0;
   }
 
+  .div-label-text {
+    padding: 5px 5px;
+    background-color: $gray06;
+    margin-bottom: 16px !important;
+    font-size: 14px;
+  }
+
   .label {
     font-weight: 450;
+
+    &.selectAll {
+      font-size: 15px;
+      text-decoration: underline;
+    }
   }
 
   section {
@@ -219,7 +270,15 @@
     }
   }
 
-  .pts-startAndDueDate,
+  .pts-startAndDueDate {
+    display: flex;
+    gap: 120px;
+
+    .pts-flexItem50 {
+      flex-basis: 35%;
+    }
+  }
+
   .pts-toggles {
     display: flex;
     gap: 10px;
@@ -231,15 +290,11 @@
     .pts-flexItem23 {
       flex-basis: 23%;
     }
-
-    .pts-flexItem30 {
-      flex-basis: 30%;
-    }
   }
 
   .pts-emailPreferences {
     > div {
-      margin-bottom: 16px;
+      margin-bottom: 24px;
     }
     .label {
       padding-left: 8px;
@@ -262,7 +317,9 @@
   }
 }
 
-.disabledOption {
+.disabledOption,
+.disabledOption .label,
+.disabledOption .checkbox-description {
   color: $gray03;
   cursor: -moz-not-allowed !important;
   cursor: -webkit-not-allowed !important;
@@ -306,6 +363,23 @@
 
     &.disabledOption {
       @include costar(color, gray03);
+    }
+  }
+}
+
+::ng-deep {
+  .addEditTaskModal,
+  .taskInfoModal,
+  .addTaskNoteModal {
+    crem-dropdown {
+      .dx-dropdowneditor {
+        .dx-dropdowneditor-icon {
+          &::before {
+            top: 8px;
+          }
+          background-color: transparent !important;
+        }
+      }
     }
   }
 }

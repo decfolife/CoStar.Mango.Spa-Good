@@ -68,7 +68,7 @@ export class AuthService {
     };
 
     return this.http.get<OAuthAuthorizeHTTPResponse>(
-      `${this.identityUrl}oauth/authorize?clientId=mango-spa&responseType=code&redirectUri=${redirectUri}`,
+      `${this.identityUrl}/oauth/authorize?clientId=mango-spa&responseType=code&redirectUri=${redirectUri}`,
       {
         headers: headers,
         withCredentials: true,
@@ -81,7 +81,7 @@ export class AuthService {
     let isClientSpecificLogin = credentials.clientKey ? true : false;
 
     return this.http
-      .post(`${this.identityUrl}auth/login`, credentials, {
+      .post(`${this.identityUrl}/auth/login`, credentials, {
         withCredentials: true,
       })
       .pipe<any>(
@@ -116,7 +116,7 @@ export class AuthService {
     payload: MultiClientLoginHttpRequest
   ): Observable<AuthHTTPResponse> {
     return this.http.post<AuthHTTPResponse>(
-      `${this.identityUrl}auth/login/client`,
+      `${this.identityUrl}/auth/login/client`,
       payload,
       {
         headers: this.header,
@@ -135,7 +135,7 @@ export class AuthService {
       return of(user);
     }
 
-    return this.http.get<UserAuth>(`${this.identityUrl}auth/user`, {
+    return this.http.get<UserAuth>(`${this.identityUrl}/auth/user`, {
       withCredentials: true,
     });
   }
@@ -163,13 +163,13 @@ export class AuthService {
   logout() {
     this.purgeAuth();
     this.http
-      .get(`${this.identityUrl}auth/logout`, { withCredentials: true })
+      .get(`${this.identityUrl}/auth/logout`, { withCredentials: true })
       .subscribe();
   }
 
   requestPasswordReset(request: RequestPasswordResetRequest): Observable<any> {
     return this.http
-      .post<ApiResult<any>>(`${this.identityUrl}password/forgot`, request)
+      .post<ApiResult<any>>(`${this.identityUrl}/password/forgot`, request)
       .pipe(map((x) => x.data));
   }
 
@@ -183,7 +183,7 @@ export class AuthService {
   ): Observable<Password> {
     return this.http
       .get<ApiResult<Password>>(
-        `${this.identityUrl}password/requirements?resetToken=${resetToken}`
+        `${this.identityUrl}/password/requirements?resetToken=${resetToken}`
       )
       .pipe(map((x) => x.data));
   }
@@ -191,7 +191,7 @@ export class AuthService {
   getClientSitesByUser(userEmail: string): Observable<ClientSitesByUser> {
     return this.http
       .get<ApiResult<ClientSitesByUser>>(
-        `${this.identityUrl}user/clientsites/${userEmail}`,
+        `${this.identityUrl}/user/clientsites/${userEmail}`,
         {
           headers: this.header,
           withCredentials: true,
@@ -203,7 +203,7 @@ export class AuthService {
   getRecentSitesForUser(userEmail: string): Observable<RecentUserSites> {
     return this.http
       .get<ApiResult<RecentUserSites>>(
-        `${this.identityUrl}user/recentsites/${userEmail}`,
+        `${this.identityUrl}/user/recentsites/${userEmail}`,
         { withCredentials: true }
       )
       .pipe(map((x) => x.data));
@@ -215,7 +215,7 @@ export class AuthService {
   ): Observable<GetContactRecordHTTPResponse> {
     return this.http
       .get<ApiResult<GetContactRecordHTTPResponse>>(
-        `${this.identityUrl}user/contactrecords/${userEmail}/${clientKey}`,
+        `${this.identityUrl}/user/contactrecords/${userEmail}/${clientKey}`,
         {
           headers: this.header,
           withCredentials: true,

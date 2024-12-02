@@ -9,11 +9,12 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  OnInit,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'mango-amortization-detail-section',
@@ -21,7 +22,7 @@ import { Subscription, combineLatest } from 'rxjs';
   styleUrls: ['./amortization-detail-section.component.scss'],
 })
 export class AmortizationDetailSectionComponent
-  implements OnChanges, OnDestroy
+  implements OnChanges, OnDestroy, OnInit
 {
   @ViewChild('AmortizationDataGrid') amortizationDataGrid: DxDataGridComponent;
   @Input() eventScheduleData: any;
@@ -75,9 +76,26 @@ export class AmortizationDetailSectionComponent
       accountingSummaryService.preferenceSavePendingMessage;
   }
 
+  ngOnInit(): void {
+    this.subscription.add(
+      this.accountingSummaryService.jeActionTaken$.subscribe(
+        (jeActionTaken) => {
+          if (jeActionTaken) {
+            this.amortizationGridSetup(
+              this.eventScheduleData.leaseRecognitionScheduleID
+            );
+          }
+        }
+      )
+    );
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.isAccountingEventEmpty) {
-      this.showDefaultRows();
+      this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(
+        this.amortizationDataGrid,
+        2
+      );
       this.accountingSummaryService.clearGrid(
         this.amortizationDataGrid,
         'No Data'
@@ -106,23 +124,6 @@ export class AmortizationDetailSectionComponent
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-  }
-
-  onJeRetroPopupClosed(eventJeProcessingPopupData) {
-    // Only refresh Amortization grid if JeStatus has changed
-    const match = this.amortizationdetailsGridData.find(
-      (x) =>
-        x.leaseRecognitionPeriodID ===
-        eventJeProcessingPopupData.leaseRecognitionPeriodID
-    );
-    if (match) {
-      if (match.jeStatus !== eventJeProcessingPopupData.jeStatus) {
-        match.jeStatus = eventJeProcessingPopupData.jeStatus;
-        this.amortizationGridSetup(
-          this.eventScheduleData.leaseRecognitionScheduleID
-        );
-      }
-    }
   }
 
   onUpdateRetroEventJeStatus(eventJeProcessingPopupData) {
@@ -213,11 +214,17 @@ export class AmortizationDetailSectionComponent
 
   onGridContentReady() {
     if (!this.contentLoaded) {
-      this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(
-        this.amortizationDataGrid,
-        15
-      );
-      this.amortizationDataGrid.instance.state(this.initialState);
+      if (
+        !!this.amortizationdetailsGridData &&
+        this.amortizationdetailsGridData.length > 0
+      ) {
+        this.amortizationGridHeight =
+          this.accountingSummaryService.setGridHeight(
+            this.amortizationDataGrid,
+            15
+          );
+        this.amortizationDataGrid.instance.state(this.initialState);
+      }
       this.contentLoaded = true;
     }
   }
@@ -466,7 +473,7 @@ export class AmortizationDetailSectionComponent
       columns = [
         'DepreciationExpense',
         'AssetAdjustmentAmount',
-        'LiabilityReductionAmount',
+        'LiabilityReduction',
         'LiabilityAdjustmentAmount',
         'CashAPAmount',
         'StraightLineExpense',
@@ -475,6 +482,9 @@ export class AmortizationDetailSectionComponent
         'AssetAmortization',
         'InterestExpense',
         'LevelExpense',
+        'LeaseLiabilityInterestExpense',
+        'AssetAdjustment',
+        'LiabilityAdjustment',
       ],
       functionalColumns = [
         'FunctionalAssetAdjustmentAmount',

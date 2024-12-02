@@ -1,0 +1,29 @@
+export interface HistoricalPayment {
+  leaseRecognitionScheduleEventID: number;
+  leaseRecognitionScheduleID: number;
+  glEventID: number;
+  paymentEventSource?: string;
+  glAccountName?: string;
+  glEventName?: string;
+  processingStatus?: string;
+  eventBeginDate?: Date;
+  eventEndDate?: Date;
+  isDirectCost: boolean;
+  isReasonablyCertain: boolean;
+  recurringAmount?: number;
+  paymentFrequency?: string;
+  numberOfPayments: number;
+  isProrated: boolean;
+  chargeCurrencyID?: number;
+  chargeCurrency?: string;
+  chargeCurrencyDecimalPrecision?: number;
+  conversionRate?: number;
+  convertDate?: Date;
+  targetAmountInPeriod?: number;
+  scheduleCurrencyID?: number;
+  scheduleCurrency?: string;
+  scheduleCurrencyDecimalPrecision?: number;
+  recognitionCategoryGAAP?: string;
+  recognitionCategoryIFRS?: string;
+  glEventNotes?: string;
+}

@@ -14,6 +14,7 @@ import {
 } from '@mango/ui-shared/lib-ui-elements';
 import { Subscription } from 'rxjs';
 import { TaskCompletionDate } from 'libs/data-models/lib-data-models/src/lib/models/Projects/projectTaskInfo';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 const SAVE = 'save';
 const RESET = 'reset';
@@ -64,6 +65,7 @@ export class ModifyCompleteDateComponent implements OnInit, OnDestroy {
   constructor(
     private dashboardService: DashboardService,
     private dialogService: MangoDialogService,
+    private facade: MangoAppFacade,
     public dialogRef: MatDialogRef<ModifyCompleteDateComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
@@ -131,6 +133,7 @@ export class ModifyCompleteDateComponent implements OnInit, OnDestroy {
         .subscribe((res: any) => {
           if (res && res.success) {
             this.reloadGridData = true;
+            this.facade.refreshLeftSideNav();
             this.isReset == 0
               ? this.closeModal()
               : this.getTaskCompleteDetails();

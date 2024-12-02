@@ -64,6 +64,13 @@
         [message]="''"
       ></dxi-validation-rule>
     </ng-template>
+    <dxi-validation-rule
+      *ngIf="status !== 'default' && statusMessage"
+      type="custom"
+      [validationCallback]="cremSharedComponentValidator"
+      [message]="statusMessage"
+    >
+    </dxi-validation-rule>
   </dx-validator>
 
   <!-- Dropdown's Input -->
@@ -245,6 +252,13 @@
         [message]="''"
       ></dxi-validation-rule>
     </ng-template>
+    <dxi-validation-rule
+      *ngIf="status !== 'default'"
+      type="custom"
+      [validationCallback]="cremSharedComponentValidator"
+      [message]="statusMessage"
+    >
+    </dxi-validation-rule>
   </dx-validator>
 
   <!-- Dropdown's Input -->

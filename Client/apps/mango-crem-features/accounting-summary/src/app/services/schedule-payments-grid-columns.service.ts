@@ -7,7 +7,11 @@ import { FormattingService } from './formatting.service';
 export class SchedulePaymentsGridColumnsService {
   constructor(private formattingService: FormattingService) {}
 
-  getSchedulePaymentColumns(schedulePaymentsData, dateFormat: string) {
+  getSchedulePaymentColumns(
+    schedulePaymentsData,
+    dateFormat: string,
+    localCurrency: string
+  ) {
     const columns = [];
 
     columns.push(
@@ -89,7 +93,7 @@ export class SchedulePaymentsGridColumnsService {
         cellTemplate: 'pointer',
       },
       {
-        caption: `Accounting Event Amount (${schedulePaymentsData[0]?.scheduleCurrency})`,
+        caption: `Accounting Event Amount (${localCurrency})`,
         name: 'TargetAmountInPeriod',
         dataField: 'targetAmountInPeriod',
         headerCellTemplate: 'paymentsGridHeader',

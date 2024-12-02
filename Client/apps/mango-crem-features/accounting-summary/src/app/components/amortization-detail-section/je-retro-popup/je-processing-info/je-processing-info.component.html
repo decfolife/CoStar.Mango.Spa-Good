@@ -151,12 +151,15 @@
           type="primary"
           (click)="actionButton()"
           *ngIf="showActionButton"
-          [disabled]="isButtonDisabled"
+          [disabled]="isButtonDisabled || isActionButtonDisabled"
           (mouseenter)="onMouseEnter()"
           (mouseleave)="onMouseLeave()"
+          [icon]="isActionButtonDisabled ? 'faSpinner' : ''"
+          [iconPack]="isActionButtonDisabled ? 'solid' : ''"
+          [iconAnimation]="isActionButtonDisabled ? 'spin' : ''"
           class="je-primary-button"
         >
-          {{ changeButtonText }}
+          {{ isActionButtonDisabled ? 'Processing...' : changeButtonText }}
         </crem-button>
       </div>
       <dx-tooltip

@@ -1,3 +1,14 @@
+export interface CommonDropdowns {
+  leaseAbstractID: number;
+  classificationTypes?: Classification[];
+  amortizationProfiles?: AmortizationProfile[];
+  journalEntryProfiles?: JournalEntryProfile[];
+  currencies?: Currency[];
+  reportingExceptions?: LookupOption[];
+  prorationFrequencies?: LookupOption[];
+  prorationTypes?: LookupOption[];
+  rouAssetMethods?: ROUAssetMethod[];
+}
 export interface Classification {
   classificationID: number;
   classificationType: string;

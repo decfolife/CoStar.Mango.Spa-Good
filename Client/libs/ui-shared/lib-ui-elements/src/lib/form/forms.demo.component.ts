@@ -106,6 +106,7 @@ export class CremFormsDemoComponent implements OnInit {
   errorsForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required]),
+    dateOfBirth: new FormControl(''),
   });
 
   /**

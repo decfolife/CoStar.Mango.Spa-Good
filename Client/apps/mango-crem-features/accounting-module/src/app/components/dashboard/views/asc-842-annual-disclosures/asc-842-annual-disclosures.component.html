@@ -1,3 +1,9 @@
+<crem-skeleton
+  *ngIf="loading"
+  [instances]="cardData.length"
+  type="card"
+></crem-skeleton>
+
 <div *ngIf="!loading">
   <div
     class="card-containers"
@@ -5,24 +11,16 @@
     cdkDropListOrientation="vertical"
     (cdkDropListDropped)="cardMove($event)"
   >
-    <div
-      *ngFor="let config of cardData"
-      class="categories-item"
-      cdkDropListOrientation="horizontal"
-      [cdkDropListData]="{ card: card, index: i }"
-      fxLayout="row"
-    >
+    <ng-container *ngFor="let config of cardData">
       <mango-iad-card
+        class="categories-item"
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="{ card: card, index: i }"
+        fxLayout="row"
         [config]="config"
         [dataSource]="dataSources[config.index]"
         (selectedFilter)="onSelectedFilter($event, config)"
       ></mango-iad-card>
-    </div>
+    </ng-container>
   </div>
 </div>
-
-<crem-skeleton
-  *ngIf="loading"
-  [instances]="cardData.length"
-  type="card"
-></crem-skeleton>

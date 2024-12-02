@@ -1,25 +1,41 @@
-<div class="toggle-slider" [class]="size" [class.disabled]="disabled">
-  <input
-    [attr.id]="id"
-    role="switch"
-    [class.checked]="value"
-    type="checkbox"
-    [checked]="value"
-    [attr.aria-checked]="value"
-    (change)="onValueChanged($event)"
-    [attr.aria-label]="ariaLabel"
-    [disabled]="disabled"
-  />
-  <span
-    class="toggle-slider__slider"
-    [class]="size"
-    [class.disabled]="disabled"
+<div class="toggle-slider-container">
+  <div class="toggle-slider" [class]="size" [class.disabled]="disabled">
+    <input
+      [attr.id]="id"
+      role="switch"
+      [class.checked]="value"
+      type="checkbox"
+      [checked]="value"
+      [attr.aria-checked]="value"
+      (change)="onValueChanged($event)"
+      [attr.aria-label]="ariaLabel"
+      [disabled]="disabled"
+    />
+    <div
+      class="toggle-slider__slider"
+      [class]="size"
+      [class.disabled]="disabled"
+    >
+      <ng-container *ngIf="labelPosition === 'inside'">
+        <span
+          class="slider-label slider-label-inside slider-label-inside__checked"
+          *ngIf="value"
+        >
+          {{ checkedLabel }}
+        </span>
+        <span
+          class="slider-label slider-label-inside slider-label-inside__unchecked"
+          *ngIf="!value"
+        >
+          {{ uncheckedLabel }}
+        </span>
+      </ng-container>
+    </div>
+  </div>
+  <div
+    class="slider-label slider-label-right"
+    *ngIf="labelPosition === 'right'"
   >
-    <span class="slider-label slider-label__checked" *ngIf="value">
-      {{ checkedLabel }}
-    </span>
-    <span class="slider-label slider-label__unchecked" *ngIf="!value">
-      {{ uncheckedLabel }}
-    </span>
-  </span>
+    {{ value ? checkedLabel : uncheckedLabel }}
+  </div>
 </div>

@@ -6,6 +6,7 @@ import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dial
 import { Observable, Subscription, of } from 'rxjs';
 import { DxValidatorComponent } from 'devextreme-angular';
 import { switchMap } from 'rxjs/operators';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Component({
   selector: 'mango-add-task-note',
@@ -30,10 +31,12 @@ export class AddTaskNoteComponent {
   noteBodyTextAreaInValid = false;
   dragPosition: any;
   addTaskNoteResult: any;
+  disableSaveBtn = false;
   private taskId: number;
 
   constructor(
     private dashboardService: DashboardService,
+    private facade: MangoAppFacade,
     private dialogService: MangoDialogService,
     public dialogRef: MatDialogRef<AddTaskNoteComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -70,6 +73,7 @@ export class AddTaskNoteComponent {
   }
 
   saveNote() {
+    this.disableSaveBtn = true;
     this.noteTypeDropdownInValid = !this.cremDropdown.validate().isValid;
 
     let noteBodyValidationResult = this.noteBodyValidator.instance.validate();
@@ -81,6 +85,7 @@ export class AddTaskNoteComponent {
         'You have left at least one required field empty.\r\n\r\nPlease update and try again.',
         'OK'
       );
+      this.disableSaveBtn = false;
       return;
     }
 
@@ -98,9 +103,9 @@ export class AddTaskNoteComponent {
         .pipe(
           switchMap((saveRes) => {
             let alertClosedOnSuccess: Observable<boolean> = of(false);
-
             if (!!saveRes && saveRes.success && saveRes.data > 0) {
               this.newNoteSaved = true;
+              this.facade.refreshLeftSideNav();
               this.updateAddTaskNoteResult();
               alertClosedOnSuccess = this.dialogService.alert(
                 'Save Note',
@@ -114,6 +119,7 @@ export class AddTaskNoteComponent {
                 'OK'
               );
             }
+            this.disableSaveBtn = false;
             return alertClosedOnSuccess;
           })
         )
@@ -121,6 +127,7 @@ export class AddTaskNoteComponent {
           if (!!res && res) {
             this.closeModal();
           }
+          this.disableSaveBtn = false;
         })
     );
   }

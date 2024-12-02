@@ -1,12 +1,11 @@
 <crem-modal
   [modalTitle]="modalTitle"
-  [primaryFooterButtonText]="'Save'"
-  [closeOrCancelButtonText]="'Cancel'"
   [closeIconVisible]="true"
+  [customFooter]="true"
   [closeDialogResult]="saveTaskAssigneesResult"
   [modalId]="modalId"
+  [primaryFooterButtonEnabledDisabled]="disableSaveBtn"
   [dragPosition]="dragPosition"
-  (primaryButtonAction)="saveAssigneesButtonClick()"
   (dragEndAction)="getDragPosition($event)"
 >
   <div modalContent id="addEditTaskAssigneesModal-content">
@@ -42,7 +41,13 @@
           [disabled]="removeButtonDisabled"
           class="aeta-removeSelected"
         >
-          <fa-icon [icon]="faCircleMinus" class="aeta-removeIcon"></fa-icon>
+          <crem-icon
+            class="result-match-success-icon"
+            pack="crem"
+            size="lg"
+            icon="cremCircleMinus"
+          >
+          </crem-icon>
           <span class="aeta-removeText">Remove</span>
         </crem-button>
       </div>
@@ -51,6 +56,7 @@
     <div class="add-edit-task-assignees-dataGrid-wrapper">
       <dx-data-grid
         #AssigneesGrid
+        cremModalAwareGrid
         id="add-edit-task-assignees-grid"
         [showColumnLines]="false"
         [showRowLines]="false"
@@ -68,6 +74,7 @@
         [wordWrapEnabled]="true"
         noDataText="No Assignees"
         (onSelectionChanged)="gridSelectionChanged($event)"
+        (onContentReady)="adaAttrNoDataGrid($event)"
       >
         <dxo-scrolling mode="virtual"></dxo-scrolling>
 
@@ -118,10 +125,35 @@
             "
             [matMenuTriggerFor]="teamMemberActionsMenu"
           >
-            <fa-icon [icon]="faCircleMinus"></fa-icon>
+            <crem-icon
+              class="result-match-success-icon"
+              pack="crem"
+              size="lg"
+              icon="cremCircleMinus"
+            >
+            </crem-icon>
           </button>
         </div>
       </dx-data-grid>
+    </div>
+  </div>
+  <div modalFooter class="addEditAssigneeTaskModal-footerContent">
+    <div id="buttonTemplate" class="footerRightControls">
+      <crem-button
+        type="secondary"
+        class="cancelChanges aet-btn"
+        (click)="cancelChanges()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        type="primary"
+        class="saveChanges aet-btn"
+        [disabled]="disableSaveBtn"
+        (click)="saveAssigneesButtonClick()"
+      >
+        Save
+      </crem-button>
     </div>
   </div>
 </crem-modal>

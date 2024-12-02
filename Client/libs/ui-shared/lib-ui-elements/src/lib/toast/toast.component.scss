@@ -1,77 +1,78 @@
 @use 'styles' as *;
 @import '@angular/cdk/overlay-prebuilt.css';
 
-  .template-wrapper {
-    z-index: 2;
-    @include costar(padding-top, 3);
-    @include costar(padding-bottom,3);
-    @include costar(padding-left, 5);
-    @include costar(padding-right, 5);    
-    @include costar(color, gray03);
-    @include costar(gap, 4);
-    @include costar(border-radius, big);
-    @include costar(background-color, light);
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-    max-width: 640px;
-    position: fixed;
-    &.info-toast-border-color{   
-      @include costar(border-color, info-dark);
-    }
+.template-wrapper {
+  z-index: 2;
+  @include costar(padding-top, 3);
+  @include costar(padding-bottom, 3);
+  @include costar(padding-left, 5);
+  @include costar(padding-right, 5);
+  @include costar(color, gray03);
+  @include costar(gap, 4);
+  @include costar(border-radius, big);
+  @include costar(background-color, light);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  max-width: 640px;
+  position: fixed;
+  &.info-toast-border-color {
+    @include costar(border-color, info-dark);
+  }
 
-    &.success-toast-border-color{   
-      @include costar(border-color, success);
-    }
+  &.success-toast-border-color {
+    @include costar(border-color, success);
+  }
 
-    &.warning-toast-border-color{   
-      @include costar(border-color, warning);
-    }
+  &.warning-toast-border-color {
+    @include costar(border-color, warning);
+  }
 
-    &.error-toast-border-color{   
-      @include costar(border-color, danger);
+  &.error-toast-border-color {
+    @include costar(border-color, danger);
+  }
+}
+
+.icon-wrapper {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold !important;
+  @include costar(padding, 1);
+  @include costar(border-radius, round);
+
+  &.info-icon-bgcolor {
+    crem-icon {
+      @include costar(color, info-dark);
     }
   }
 
-  .icon-wrapper {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold !important;
-    @include costar(padding, 1);
-    @include costar(border-radius, round);
-
-    &.info-icon-bgcolor{   
-      crem-icon{
-        @include costar(color, info-dark);
-      }
-    }
-
-    &.success-icon-bgcolor{   
-      crem-icon{
-        @include costar(color, success);
-      }
-    }
-
-    &.warning-icon-bgcolor{   
-      crem-icon{
-        @include costar(color, warning);
-      }
-    }
-
-    &.error-icon-bgcolor{   
-      crem-icon{
-        @include costar(color, danger);
-      }
+  &.success-icon-bgcolor {
+    crem-icon {
+      @include costar(color, success);
     }
   }
 
-  .content {  
-    @include costar(border, info-dark);
-    border-left-width:6px;
-    display:flex;
-    @include costar(font-weight, normal);
+  &.warning-icon-bgcolor {
+    crem-icon {
+      @include costar(color, warning);
+    }
   }
+
+  &.error-icon-bgcolor {
+    crem-icon {
+      @include costar(color, danger);
+    }
+  }
+}
+
+.content {
+  @include costar(border, info-dark);
+  border-left-width: 6px;
+  display: flex;
+  @include costar(font-weight, normal);
+}
 
 .message {
   text-align: left;
@@ -110,10 +111,10 @@
 }
 
 .close-button-wrapper {
-  margin-top:-6px;
+  margin-top: -6px;
   crem-icon {
     cursor: pointer;
-  } 
+  }
 
   .close-button {
     @include costar(color, gray03);

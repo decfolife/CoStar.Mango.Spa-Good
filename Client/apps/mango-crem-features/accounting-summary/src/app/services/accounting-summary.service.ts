@@ -20,6 +20,8 @@ export class AccountingSummaryService extends EndpointService {
   private leaseAbstractId: number;
   private navPageId: number;
   titleLeaseInfoSubject: BehaviorSubject<any>;
+  public jeActionTaken$ = new BehaviorSubject<boolean>(false);
+  public newCreatedSchedule = new BehaviorSubject<number>(0);
   preferenceSavePendingMessage = ' - You have unsaved preference changes.';
   isLocked: boolean;
   isArchived: boolean;
@@ -27,7 +29,6 @@ export class AccountingSummaryService extends EndpointService {
   headerRowHeight: number;
   gridHeightPixelCorrection: number;
 
-  private newCreatedSchedule = new Subject<void>();
   selectNewScheduleData$ = this.newCreatedSchedule;
 
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
@@ -243,11 +244,18 @@ export class AccountingSummaryService extends EndpointService {
     );
   }
 
-  exportPresentValueFile(scheduleId: number, fileName: string) {
+  exportPresentValuePreviewFile(pvPayload: any) {
     return this.callHttpPostWithBlobResponse(
-      `${this.apiUrl}AccountingEvents/ExportPresentValueFile`,
-      'exportPresentValueFile',
-      JSON.stringify({ ScheduleId: scheduleId, FileName: fileName })
+      `${this.apiUrl}accountingevents/exportpresentvaluepreviewfile`,
+      'exportpresentvaluepreviewfile',
+      JSON.stringify(pvPayload)
+    );
+  }
+
+  exportPresentValueFile(scheduleId: number) {
+    return this.http.get(
+      `${this.apiUrl}accountingevents/exportpresentvaluefile/${scheduleId}`,
+      { responseType: 'blob' }
     );
   }
 
@@ -418,15 +426,17 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   clearGrid(grid: any, noData: string) {
-    grid.instance.option('columns', []);
-    grid.instance.option('dataSource', []);
-    grid.instance.state(null);
-    grid.instance.option('noDataText', noData);
-    grid.instance.refresh();
+    if (grid?.instance) {
+      grid.instance.option('columns', []);
+      grid.instance.option('dataSource', []);
+      grid.instance.state(null);
+      grid.instance.option('noDataText', noData);
+      grid.instance.refresh();
+    }
   }
 
   setGridHeight(gridName: any, numberOfRows: any): string {
-    const gridHeaderRow: HTMLElement | null = gridName.instance
+    const gridHeaderRow: HTMLElement | null = gridName?.instance
       .element()
       .querySelector('.dx-datagrid-headers');
     if (!gridHeaderRow) {

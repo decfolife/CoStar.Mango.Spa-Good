@@ -20,6 +20,7 @@
         <crem-button
           type="secondary"
           class="clearFilters-btn"
+          [id]="'pt-clearFiltersBtn'"
           (click)="clearAllFilters(); $event.preventDefault()"
         >
           <span>Clear Filters</span>
@@ -33,6 +34,7 @@
       >
         <button
           class="btn btn-default actionsButton"
+          id="pt-actionsBtn"
           [matMenuTriggerFor]="actionsMenu"
           (click)="$event.preventDefault()"
         >
@@ -43,6 +45,7 @@
           <button
             mat-menu-item
             class="actnBtn-removeMembers"
+            id="pt-removeMemBtn"
             *ngIf="userAccessLevel == 1"
             [disabled]="!selectedTeamMembersData.teamMembers.length"
             (click)="removeMembers()"
@@ -52,6 +55,7 @@
           <button
             mat-menu-item
             class="actnBtn-importTeamTemplate"
+            id="pt-importTeamTemplateBtn"
             (click)="importMembers()"
           >
             Import Team Template
@@ -59,6 +63,7 @@
           <button
             mat-menu-item
             class="actnBtn-saveTeamTemplate"
+            id="pt-saveTeamAsTemplateBtn"
             (click)="saveTeamAsTemplate()"
           >
             Save Team as Template
@@ -68,6 +73,7 @@
       <div class="more">
         <button
           class="btn btn-default moreButton"
+          id="pt-moreMenuBtn"
           [matMenuTriggerFor]="moreMenu"
           (click)="$event.preventDefault()"
         >
@@ -78,12 +84,14 @@
             mat-menu-item
             (click)="applyTeamToTasks()"
             class="moreBtn-applyTeamToTasks"
+            id="pt-applyTeamToTasksBtn"
           >
             Apply Team to Tasks
           </button>
           <button
             mat-menu-item
             class="moreBtn-composeEmail"
+            id="pt-composeEmailBtn"
             (click)="composeEmail($event)"
           >
             Compose Email
@@ -92,6 +100,7 @@
             mat-menu-item
             (click)="toggleExpand()"
             class="moreBtn-expCollBtn"
+            id="pt-expandCollapseAllBtn"
           >
             <span>Expand All/Collapse All</span>
           </button>
@@ -107,6 +116,7 @@
           text="Add"
           iconPosition="right"
           icon="faCaretDown"
+          [id]="'pt-addMenuBtn'"
           [matMenuTriggerFor]="addMenu"
           (click)="$event.preventDefault()"
         ></crem-button>
@@ -114,6 +124,7 @@
           <button
             mat-menu-item
             class="addBtn-teamMember"
+            id="pt-addTeamMemberBtn"
             (click)="addOrEditMember('ATM')"
             *ngIf="userAccessLevel == 1"
           >
@@ -122,6 +133,7 @@
           <button
             mat-menu-item
             class="addBtn-temporaryUser"
+            id="pt-addTempUserBtn"
             (click)="addOrEditMember('ATU')"
             *ngIf="userAccessLevel == 1 && addTempUserSetting == 1"
           >
@@ -130,6 +142,7 @@
           <button
             mat-menu-item
             class="addBtn-contact"
+            id="pt-addContactBtn"
             (click)="addOrEditMember('AC')"
           >
             Add Contact
@@ -171,6 +184,7 @@
       ></dxo-header-filter>
       <dxo-sorting mode="multiple"></dxo-sorting>
       <dxo-paging [enabled]="false"></dxo-paging>
+      <dxo-load-panel [enabled]="true"></dxo-load-panel>
 
       <dxo-selection
         selectAllMode="allPages"
@@ -250,6 +264,7 @@
             <button
               aria-label="actions menu"
               class="btn btn-link memberActionsButton rowActionsButton"
+              id="{{ 'pt-moreOptions' + member.rowIndex }}"
               (click)="$event.preventDefault()"
               #memberActionsMenuTrigger="matMenuTrigger"
               [matMenuTriggerFor]="memberActionsMenu"
@@ -263,6 +278,8 @@
               <button
                 mat-menu-item
                 class="ptm-edit"
+                id="{{ 'pt-editOption' + member.rowIndex }}"
+                [title]="editBtnTitle"
                 (keydown)="matMenuButtonKeyDown($event)"
                 *ngIf="
                   member.data.memberType.toLowerCase().trim() !==
@@ -282,6 +299,7 @@
               <button
                 mat-menu-item
                 class="ptm-remove"
+                id="{{ 'pt-removeOption' + member.rowIndex }}"
                 (keydown)="matMenuButtonKeyDown($event)"
                 (click)="removeContactOrMember(member.data)"
                 *ngIf="!member.data.isManager"
@@ -291,6 +309,7 @@
               <button
                 mat-menu-item
                 class="ptm-makeManager"
+                id="{{ 'pt-makeManagerOption' + member.rowIndex }}"
                 (keydown)="matMenuButtonKeyDown($event)"
                 (click)="makeProjectManager(member.data.contactID)"
                 *ngIf="member.data.accessLevel == 1 && !member.data.isManager"
@@ -317,6 +336,7 @@
           *ngIf="!member.data.isActive || !member.data.allowLogOn"
         >
           <crem-tooltip
+            id="{{ 'pt-memberInfoTip' + member.rowIndex }}"
             [externalId]="
               'ptmToolTipId' + member.data.contactID + member.data.teamId
             "

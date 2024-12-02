@@ -1,0 +1,99 @@
+<div class="object-reactivation-page">
+  <div class="object-reactivation-page-title-wrapper">
+    <div class="controls-left">
+      <h2 class="title">{{ pageTitle }}</h2>
+      <!--   <crem-icon size="lg" pack="crem" color="info" icon="cremInfo" (click) = "showReactivationInfo()"  ></crem-icon>  -->
+      <crem-tooltip
+        id="reactivateObjectTooltip"
+        [helpTextDataIsHtml]="true"
+        [helpTextData]="this.toolTipData"
+      ></crem-tooltip>
+
+      <div class="dropdown-container">
+        <crem-dropdown
+          id="reactivation-filter-dropdown"
+          [dataSource]="filteredData"
+          [allowSearch]="false"
+          placeholder="Select One"
+          [initialSelectedValue]="this.selectedFilter?.objectTypeID"
+          [showClearButton]="false"
+          [showColumnHeader]="false"
+          displayExpr="objectType"
+          valueExpr="objectTypeID"
+          (selectedItems)="onFilterChange($event)"
+        ></crem-dropdown>
+      </div>
+      <crem-search
+        [title]="'Search objects'"
+        [showLabel]="false"
+        [placeholder]="'Search objects'"
+        [disabled]="false"
+        [required]="false"
+        [showInfo]="false"
+        [value]=""
+        [debounceTime]="500"
+        [searchOption]="'typing'"
+        (changed)="searchDataGrid($event)"
+      >
+      </crem-search>
+    </div>
+    <div class="controls-right">
+      <div>
+        <crem-button
+          id="btnReactivateObjects"
+          title="Select an item from the list below to reactivate."
+          type="primary"
+          [disabled]="!selectedItemIds?.length"
+          (click)="reactivateSelectedObjects()"
+          >{{ this.reactivateButtonCaption }}</crem-button
+        >
+      </div>
+    </div>
+  </div>
+  <ng-template #ReactivationInfo> </ng-template>
+  <div class="object-reactivation-page-data-grid-wrapper">
+    <!-- #ReactivationListGrid -->
+    <dx-data-grid
+      #ReactivationDataGrid
+      id="object-reactivation-list"
+      [filterSyncEnabled]="true"
+      [dataSource]="reactivationDataList"
+      [rowAlternationEnabled]="true"
+      [showBorders]="true"
+      [hoverStateEnabled]="true"
+      [showRowLines]="true"
+      [showColumnLines]="true"
+      [allowColumnResizing]="true"
+      [columnAutoWidth]="true"
+      [loadPanel]="{ enabled: true }"
+      (onContentReady)="overrideOnContentReady($event)"
+      (onSelectionChanged)="onSelectionChanged($event)"
+    >
+      <dxo-load-panel [enabled]="true"></dxo-load-panel>
+      <dxo-selection mode="multiple"></dxo-selection>
+      <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
+      <dxo-column-chooser [allowSearch]="true"></dxo-column-chooser>
+      <dxo-scrolling columnRenderingMode="virtual"></dxo-scrolling>
+      <dxo-paging [pageSize]="25"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[25, 50, 100, 500]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+        visible="true"
+      ></dxo-pager>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+
+      <dxo-summary>
+        <dxi-group-item
+          summaryType="count"
+          displayFormat="{0}"
+        ></dxi-group-item>
+      </dxo-summary>
+    </dx-data-grid>
+  </div>
+</div>

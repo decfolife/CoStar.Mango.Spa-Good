@@ -1,0 +1,235 @@
+<crem-modal
+  [modalTitle]="modalTitle"
+  [customFooter]="true"
+  [closeIconVisible]="closeButton"
+  [modalId]="modalId"
+>
+  <div modalContent id="addEditDistributionListModal-content">
+    <div class="aedl-distributionListName">
+      <h3 class="label">
+        Distribution List Name
+        <span class="at-required" aria-label="required">*</span>
+      </h3>
+      <div>
+        <crem-input
+          #DistributionListNameTextBox
+          class="aedl-textInput"
+          [state]="'active'"
+          [showHint]="false"
+          [showLabel]="false"
+          [showInfo]="false"
+          [inputType]="'text'"
+          [value]="distributionList.groupName"
+          id="aedl-distributionListNameInputId"
+          [required]="true"
+          [placeholder]="'Distribution List Name'"
+          (valueChange)="distributionListNameChange($event)"
+        ></crem-input>
+      </div>
+    </div>
+    <div id="aedl-members">
+      <h3 class="label">Members</h3>
+      <div id="container">
+        <dx-drop-down-box
+          class="aedl-membersDropDown"
+          placeholder="Start typing to search for additional users."
+          [(opened)]="isDropDownBoxOpened"
+          (onInput)="searchDistributionListMembers($event.event.target.value)"
+          (onEnterKey)="toggleList()"
+          (onClick)="focusOnDropDownInput($event)"
+          (onFocusIn)="focusOnDropDownInput($event)"
+          (onOpened)="focusOnDropDownInput($event)"
+          [acceptCustomValue]="true"
+          [openOnFieldClick]="false"
+          [inputAttr]="{
+            'aria-label': 'Enter Matching Criteria',
+            name: 'selectionCriteria'
+          }"
+        >
+          <dx-list
+            #SelectionMembersList
+            id="aedl-membersList"
+            [dataSource]="filteredMembers"
+            itemTemplate="membersListTemplate"
+            [activeStateEnabled]="false"
+            [elementAttr]="{ 'aria-label': 'List of Members to Select' }"
+            (onItemClick)="onItemClicked($event)"
+            (onItemRendered)="onItemRendered($event)"
+          >
+            <div *dxTemplate="let member of 'membersListTemplate'">
+              <div aria-label="click to add a member to the distributionList">
+                <span class="aedl-addPlusIcon"
+                  ><mat-icon>add_circle</mat-icon></span
+                >
+                <span class="aedl-memberData">
+                  <span class="aedl-memberName">{{ member.Name }}</span>
+                  <span class="aedl-company"> - {{ member.Company }}</span>
+                  <span class="aedl-email"> - {{ member.Email }}</span>
+                </span>
+              </div>
+            </div>
+          </dx-list>
+        </dx-drop-down-box>
+      </div>
+    </div>
+    <div id="aedl-selectedMembers">
+      <div id="aedl-remove-members">
+        <crem-button
+          type="secondary"
+          (click)="removeMembers(); $event.preventDefault()"
+          [disabled]="removeDisabled"
+          class="aedl-removeSelected"
+        >
+          <fa-icon [icon]="faCircleMinus" class="aedl-removeIcon"></fa-icon>
+          <span class="aedl-removeText">Remove</span>
+        </crem-button>
+      </div>
+      <div id="aedl-selectedMembers-container">
+        <div class="aedl-selectedMembers-dataGrid-wrapper">
+          <dx-data-grid
+            class="aedl-selectedMembers-data-grid"
+            id="addDistributionList-grid"
+            #SelectedMembersGrid
+            [showColumnLines]="false"
+            [showRowLines]="false"
+            [showBorders]="false"
+            [rowAlternationEnabled]="true"
+            [allowColumnResizing]="true"
+            [noDataText]="noDataText"
+            columnResizingMode="widget"
+            [allowColumnReordering]="true"
+            [focusedRowEnabled]="true"
+            (onKeyDown)="onKeyDown($event)"
+            [columnAutoWidth]="false"
+            [dataSource]="distributionList.members"
+            keyExpr="contactID"
+            [width]="'100%'"
+            [wordWrapEnabled]="true"
+            (onContentReady)="setAttributes($event)"
+            (onSelectionChanged)="onMemberSelectionChanged($event)"
+          >
+            <dxo-header-filter
+              [visible]="true"
+              [allowSearch]="true"
+            ></dxo-header-filter>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [enabled]="false"></dxo-paging>
+
+            <dxo-selection
+              selectAllMode="allPages"
+              showCheckBoxesMode="always"
+              mode="multiple"
+            >
+            </dxo-selection>
+
+            <dxo-editing
+              mode="cell"
+              [allowUpdating]="true"
+              [allowDeleting]="true"
+              [allowAdding]="false"
+            >
+            </dxo-editing>
+
+            <dxi-column
+              type="selection"
+              [width]="40"
+              [fixed]="true"
+              fixedPosition="left"
+              [allowSorting]="false"
+              [allowReordering]="false"
+              [allowResizing]="false"
+            >
+            </dxi-column>
+            <dxi-column
+              dataField="name"
+              [allowEditing]="false"
+              dataType="string"
+              cellTemplate="distributionListMemberNameTemplate"
+            ></dxi-column>
+            <dxi-column
+              dataField="company"
+              [allowEditing]="false"
+              dataType="string"
+            ></dxi-column>
+            <dxi-column
+              dataField="email"
+              [allowEditing]="false"
+              dataType="string"
+            ></dxi-column>
+            <!-- <dxi-column
+              dataField="phoneNumber"
+              [allowEditing]="false"
+              dataType="string"
+            ></dxi-column> -->
+            <dxi-column
+              caption=""
+              type="buttons"
+              width="40"
+              [fixed]="true"
+              fixedPosition="right"
+              [allowSorting]="false"
+              [allowReordering]="false"
+              [allowResizing]="false"
+            >
+              <dxi-button template="actionsMenuTemplate">
+                <div
+                  *dxTemplate="let member of 'actionsMenuTemplate'"
+                  class="actionsMenuTemplate"
+                >
+                  <button
+                    aria-label="actions menu"
+                    class="btn btn-link distributionListMemberActionsButton"
+                    id="{{ 'memberDelete' + member.rowIndex }}"
+                    *ngIf="!member.data.editMode"
+                    (click)="
+                      removeMember(member.data.contactID);
+                      $event.preventDefault()
+                    "
+                    [matMenuTriggerFor]="distributionListMemberActionsMenu"
+                  >
+                    <fa-icon [icon]="faCircleMinus"></fa-icon>
+                  </button>
+                </div>
+              </dxi-button>
+            </dxi-column>
+            <div
+              *dxTemplate="let member of 'distributionListMemberNameTemplate'"
+              class="dl-distributionListTemplate"
+            >
+              <div class="aedl-memberNameAndInfo">
+                <span class="aedl-memberName"> {{ member.data.name }}</span>
+                <span
+                  class="aedl-info"
+                  *ngIf="!member.data.isActive || !member.data.allowLogOn"
+                >
+                  <crem-tooltip
+                    [externalId]="
+                      'aedlToolTipId' +
+                      member.data.contactId +
+                      member.data.groupId
+                    "
+                    [helpTextData]="memberInfo"
+                  ></crem-tooltip>
+                </span>
+              </div>
+            </div>
+          </dx-data-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div modalFooter class="addEditDistributionListModal-footerContent">
+    <div id="buttonTemplate" class="footerRightControls">
+      <crem-button type="secondary" id="close-btn" (click)="cancelChanges()">
+        Cancel
+      </crem-button>
+      <crem-button
+        [disabled]="saveBtnClicked"
+        type="primary"
+        (click)="saveDistributionList()"
+      >
+        Save
+      </crem-button>
+    </div>
+  </div>
+</crem-modal>

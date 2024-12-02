@@ -4,7 +4,7 @@ export * from './lib/screen-loader';
 export * from './lib/skeleton';
 export * from './lib/button';
 export * from './lib/card';
-export * from './lib/accordion'
+export * from './lib/accordion';
 export * from './lib/chip';
 export * from './lib/dropdown';
 export * from './lib/hero-metric';
@@ -30,6 +30,8 @@ export * from './lib/no-objects-found';
 export * from './lib/toast';
 export * from './lib/tabs';
 export * from './lib/form';
-export * from './lib/input'
-export * from './lib/checkbox'
+export * from './lib/input';
 export * from './lib/popover';
+export * from './lib/checkbox';
+export * from './lib/error-tooltip';
+export * from './lib/base';

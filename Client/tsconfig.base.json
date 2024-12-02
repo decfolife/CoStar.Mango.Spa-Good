@@ -43,6 +43,9 @@
       "@costar-matching/*": [
         "apps/mango-crem-features/costar-matching/src/app/*"
       ],
+      "@object-reactivation/*": [
+        "apps/mango-crem-features/object-reactivation/src/app/*"
+      ],
       "@data-set-dictionary/*": [
         "apps/mango-crem-features/data-set-dictionary/src/app/*"
       ],
@@ -97,6 +100,7 @@
       "@reminders-list/*": [
         "apps/mango-crem-features/object-actions/src/app/*"
       ],
+      "@notes-list/*": ["apps/mango-crem-features/object-actions/src/app/*"],
       "@reports/*": ["apps/mango-crem-features/reports/src/app/*"],
       "@service-accounts/*": [
         "apps/mango-crem-features/client-delivery/src/app/*"

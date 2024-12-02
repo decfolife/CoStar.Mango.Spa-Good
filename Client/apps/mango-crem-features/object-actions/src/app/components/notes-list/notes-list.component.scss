@@ -1,0 +1,23 @@
+@use 'styles' as *;
+
+.grid-container {
+  height: calc(100% - 80px);
+}
+
+.actions-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+button.userOptionsMenuBtn:focus {
+  box-shadow: 0 0 0 0.1rem #779ede;
+}
+
+:host ::ng-deep .not-clickable {
+  cursor: default !important;
+}
+
+:host ::ng-deep .not-clickable > .dx-template-wrapper > a {
+  cursor: pointer !important;
+}

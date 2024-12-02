@@ -15,7 +15,9 @@ import {
 } from 'devextreme-angular';
 
 import { MatDialogRef } from '@angular/material/dialog';
+import { MangoDialogService } from '@mango/core-shared';
 import {
+  FILES_UPLOAD_PARTIAL_SUCCESS_MSG,
   FILES_UPLOAD_SUCCESS_MSG,
   GENERIC_UPLOAD_ERR_MSG,
   PROJECT_TASKS_UPLOAD_EXTENSIONS,
@@ -43,7 +45,16 @@ import {
   SelectionChangedEvent,
 } from 'devextreme/ui/file_manager';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
-import { delay, filter, map, switchMap, take, tap } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  delay,
+  filter,
+  map,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 import { AddFolderPopupComponent } from '../add-folder-popup/add-folder-popup.component';
 import { FilesListComponent } from '../files-list/files-list.component';
 
@@ -90,13 +101,16 @@ export class UploadPopupComponent implements OnInit, OnDestroy {
   };
 
   mainFolder: TaskFileSystemItem;
+  hasChanges = false;
+  url: string;
 
   constructor(
     private taskInfoUIService: TaskInfoUIService,
     private toastService: CremToastService,
     private dashboardService: DashboardService,
     private facade: MangoAppFacade,
-    private dialogRef: MatDialogRef<UploadPopupComponent>
+    private dialogRef: MatDialogRef<UploadPopupComponent>,
+    private mangoDialog: MangoDialogService
   ) {
     this.generateFormData = this.generateFormData.bind(this);
     this.onFileUploadSuccess = this.onFileUploadSuccess.bind(this);
@@ -190,42 +204,53 @@ export class UploadPopupComponent implements OnInit, OnDestroy {
     this.taskInfoUIService.uploadFilesInProgress$.next(true);
     this.subs.push(
       combineLatest([
+        this.taskInfoUIService.projectId$.pipe(take(1)),
         this.taskInfoUIService.selectedFiles$.pipe(take(1)),
         this.taskInfoUIService.selectedFolder$.pipe(take(1)),
         this.taskInfoUIService.taskId$.pipe(take(1)),
       ])
         .pipe(
           filter(
-            ([selectedFiles, selectedFolder, taskId]) =>
+            ([projectId, selectedFiles, selectedFolder, taskId]) =>
               !!selectedFiles && !!selectedFolder && !!taskId
           ),
           map(this.generateFormData),
-          switchMap((formData) =>
-            this.dashboardService.uploadTaskFiles(formData)
-          ),
-          tap(this.onFileUploadSuccess)
+          concatMap((formData) =>
+            this.bubbleClientError(
+              this.dashboardService.uploadTaskFiles(formData)
+            )
+          )
         )
-        .subscribe(() => {}, this.onFileUploadError)
+        .subscribe(this.onFileUploadSuccess, this.onFileUploadError)
     );
   }
 
-  generateFormData([files, folder, taskId]): FormData {
+  generateFormData([projectId, files, folder, taskId]): FormData {
     const formData: FormData = new FormData();
     files.forEach((f) => formData.append('FilesToBeUploaded', f));
-    formData.append('ObjectId', taskId as any);
+    formData.append('ObjectId', taskId);
+    formData.append('projectId', projectId);
     formData.append('ParentFolderId', folder.folderId);
     return formData;
   }
 
-  onFileUploadSuccess(response: any): void {
+  onFileUploadSuccess(result): void {
+    this.hasChanges = true;
+    let toastMessage = FILES_UPLOAD_SUCCESS_MSG;
+    let toastState = ToastState.SUCCESS;
+
+    switch (result.errorCode) {
+      case 'FILE_CONFLICT':
+        toastState = ToastState.WARNING;
+        toastMessage = FILES_UPLOAD_PARTIAL_SUCCESS_MSG;
+        break;
+    }
+
     this.taskInfoUIService.uploadFilesInProgress$.next(false);
-    this.toastService.show(
-      FILES_UPLOAD_SUCCESS_MSG,
-      'Success',
-      ToastState.SUCCESS
-    );
+    this.toastService.show(toastMessage, 'Success', toastState);
     this.taskInfoUIService.selectedFiles$.next([]);
-    this.dialogRef.close();
+    this.dialogRef.close({ hasChanges: this.hasChanges });
+    this.facade.refreshLeftSideNav();
   }
 
   onFileUploadError(err: any): void {
@@ -266,7 +291,7 @@ export class UploadPopupComponent implements OnInit, OnDestroy {
 
   onClose(): void {
     this.taskInfoUIService.selectedFiles$.next([]);
-    this.dialogRef.close();
+    this.dialogRef.close({ hasChange: this.hasChanges });
   }
 
   findTaskRootInTree(
@@ -304,6 +329,54 @@ export class UploadPopupComponent implements OnInit, OnDestroy {
       })
     );
   }
+
+  bubbleClientError(request: Observable<any>): Observable<any> {
+    return request.pipe(
+      filter((result) => this.throwIfErrorCodePresent(result)),
+      catchError((err) => {
+        this.tryShowClientErrorMessage(err);
+        return request;
+      })
+    );
+  }
+
+  throwIfErrorCodePresent(result: any) {
+    if (result.errorCode) {
+      throw {
+        errorCode: result.errorCode,
+        clientErrorMessage: result.clientErrorMessage,
+        data: result.data,
+      };
+    }
+    return true;
+  }
+
+  tryShowClientErrorMessage(err): Observable<any> {
+    if (this.clientErrorFormatter[err.errorCode]) {
+      const message = this.clientErrorFormatter[err.errorCode](err);
+      return this.mangoDialog.alert(err.clientErrorMessage, message, 'OK');
+    }
+  }
+
+  clientErrorFormatter: {
+    [key: string]: (fileName: any) => string;
+  } = {
+    FILE_CONFLICT: (error) =>
+      error.data
+        .filter(({ errorCode }) => errorCode?.length > 0)
+        .map((err) => [
+          err,
+          this.clientErrorFormatter[`FILE_CONFLICT:${err.errorCode}`] ||
+            this.clientErrorFormatter['FILE_CONFLICT:UNKNOWN'],
+        ])
+        .map(([fileName, messageFormatter]) => messageFormatter(fileName))
+        .join('\n'),
+    ['FILE_CONFLICT:FILE_ALREADY_EXISTS']: ({ fileName }) =>
+      `File ${fileName} already exists`,
+    ['FILE_CONFLICT:UNKNOWN']: ({ fileName }) =>
+      `File ${fileName} encountered an unknown error`,
+    UNKNOWN: (err) => `Encountered an unknown error`,
+  };
 
   ngOnDestroy(): void {
     this.subs.forEach((s) => s.unsubscribe());

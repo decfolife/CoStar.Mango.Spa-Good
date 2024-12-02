@@ -21,9 +21,12 @@ export const SUB_LEFT_NEV_PAGES_URLS = [
   '/crem/projects/project-tasks',
   'crem/costar-matching',
   '/crem/reminders',
+  '/crem/notes',
   'crem/object-reactivation',
   'crem/accounting-history',
   'crem/ledgers',
+  '/crem/view-history',
+  '/crem/admin/object-maintenance/objectrights',
 ];
 
 //Constants for Lease Equipment Wizard

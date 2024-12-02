@@ -11,6 +11,7 @@
     grid-template-columns: 1fr;
 
     .input-container {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -101,4 +102,14 @@
     resize: vertical;
     overflow: hidden;
   }
+
+  input {
+    height: 36px;
+  }
+}
+
+.error-icon {
+  position: absolute;
+  top: 6px;
+  right: 10px;
 }

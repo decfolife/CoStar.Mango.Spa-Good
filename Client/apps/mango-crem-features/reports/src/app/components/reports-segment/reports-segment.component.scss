@@ -14,14 +14,6 @@
   cursor: pointer !important;
 }
 
-.not-allowed {
-    cursor: not-allowed !important;
-  }
-  
-  .pointer {
-    cursor: pointer !important;
-  }
-
 .reports-toolBar-wrapper {
   @include costar(border-bottom, gray04);
   display: flex;

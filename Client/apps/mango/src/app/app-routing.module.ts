@@ -23,6 +23,8 @@ import { ValidateComponent } from './components/auth/validate/validate.component
 import { CremComponent } from './components/crem-component';
 import { AuthGuard } from './services/guards/auth.guard';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
+import { ErrorNotificationComponent } from './components/error-notification/error-notification.component';
+import { RightsAuthGuard } from './services/guards/rights-auth.guard';
 
 const routes: Routes = [
   // LOGIN
@@ -68,6 +70,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
+            canActivate: [RightsAuthGuard],
             loadChildren: () =>
               import('@project-dashboard/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -147,6 +150,12 @@ const routes: Routes = [
               currentSubApp: MangoSubApps.PROJECTS_DASHBOARD,
               breadCrumb: { append: false },
             },
+          },
+
+          //Error Notification
+          {
+            path: 'error-notification',
+            component: ErrorNotificationComponent,
           },
         ],
       },
@@ -484,6 +493,18 @@ const routes: Routes = [
             },
           },
           {
+            path: 'distribution-lists',
+            loadChildren: () =>
+              import(
+                '@reports/components/distribution-lists/distribution-lists.module'
+              ).then((mod) => mod.DistributionListsModule),
+            data: {
+              currentSubApp: MangoSubApps.REPORTS,
+              moduleId: 4,
+              breadCrumb: { append: false },
+            },
+          },
+          {
             path: 'data-set-dictionary',
             loadChildren: () =>
               import('@data-set-dictionary/components/index/index.module').then(
@@ -521,6 +542,76 @@ const routes: Routes = [
               import(
                 '@reminders-list/components/reminders-list/reminders-list.component'
               ).then((mod) => mod.RemindersListComponent),
+            data: {
+              moduleId: null,
+              breadCrumb: { append: true },
+            },
+          },
+        ],
+      },
+
+      // Object History
+      {
+        path: 'view-history',
+        data: {
+          moduleId: 1,
+          breadCrumb: {
+            label: 'View History',
+            append: true,
+            activeLink: 'View History',
+          },
+        },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                '@reminders-list/components/object-history/object-history.component'
+              ).then((mod) => mod.ObjectHistoryComponent),
+            data: {
+              moduleId: null,
+              breadCrumb: { append: true },
+            },
+          },
+        ],
+      },
+      // Secutrity rights
+      {
+        path: 'admin/object-maintenance/objectrights',
+        data: {
+          moduleId: 1,
+          breadCrumb: {
+            label: 'Security Rights',
+            append: true,
+            activeLink: 'Security Rights',
+          },
+        },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                '@object-maintenance/components/object-security-rights/object-security-rights.component'
+              ).then((mod) => mod.ObjectSecurityRightsComponent),
+            data: {
+              moduleId: null,
+              breadCrumb: { append: true },
+            },
+          },
+        ],
+      },
+
+      // NOTES
+      {
+        path: 'notes',
+        data: { moduleId: 1, breadCrumb: { label: 'Notes', append: true } },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                '@notes-list/components/notes-list/notes-list.component'
+              ).then((mod) => mod.NotesListComponent),
             data: {
               moduleId: null,
               breadCrumb: { append: true },
@@ -649,6 +740,15 @@ const routes: Routes = [
         loadChildren: () =>
           import('@costar-matching/app.module').then((mod) => mod.AppModule),
       },
+      //Object Reactivation
+      {
+        path: 'object-reactivation',
+        loadChildren: () =>
+          import('@object-reactivation/app.module').then(
+            (mod) => mod.AppModule
+          ),
+      },
+      //Accounting History
       {
         path: 'accounting-history',
         loadChildren: () =>

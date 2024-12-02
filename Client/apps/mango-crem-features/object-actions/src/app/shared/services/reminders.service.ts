@@ -60,4 +60,11 @@ export class RemindersService extends EndpointService {
       'DeleteReminder'
     );
   }
+
+  getObjectName(OID: number, OTID: number) {
+    return this.callHttpGet(
+      `${this.objectActionsUrl}objecthistory/getObjectName?OID=${OID}&OTID=${OTID}`,
+      'GetObjectName'
+    );
+  }
 }

@@ -77,6 +77,7 @@
         [closeOnOutsideClick]="true"
         [Title]="'Amortization Profile'"
         [SubTitle]="amortizationSubTitle"
+        [status]="amortizationCompositeDropdownValidation"
       >
         <div class="form-items">
           <div class="labels">
@@ -95,25 +96,19 @@
             </crem-input-label>
           </div>
           <div class="controls-container">
-            <crem-dropdown
-              #amortizationProfileDropDown
-              [id]="
-                accountingSummaryService.getId(
-                  componentName,
-                  'amortization-profile',
-                  'dropdown'
-                )
-              "
-              [placeholder]="'Select Amortization Profile'"
-              displayExpr="profileName"
-              [required]="true"
+            <dx-select-box
+              [value]="amortizationInitialSelected"
               [dataSource]="amortizationProfileList"
+              displayExpr="profileName"
               valueExpr="profileID"
-              [initialSelectedValue]="amortizationInitialSelected"
-              (selectedItems)="onAmortizationValueChanged($event)"
+              placeholder="Select Amortization Profile"
+              [showClearButton]="false"
+              [required]="true"
+              class="amortization-profile"
+              (onValueChanged)="onAmortizationValueChanged($event)"
               formControlName="amortizationProfile"
-              [containerized]="true"
-            ></crem-dropdown>
+            >
+            </dx-select-box>
           </div>
           <div class="labels">
             <crem-input-label
@@ -220,6 +215,7 @@
         [Title]="'Currency'"
         [SubTitle]="currencySubTitle"
         FooterContent=""
+        [status]="currencyCompositeDropdownValidation"
       >
         <div class="form-items">
           <div class="labels">
@@ -251,7 +247,7 @@
               [dataSource]="currencyList"
               valueExpr="id"
               [required]="true"
-              [showClearButton]="true"
+              [showClearButton]="false"
               [initialSelectedValue]="selectedLocalCurrency"
               (selectedItems)="onLocalCurrencySelection($event)"
               formControlName="localCurrency"
@@ -302,7 +298,7 @@
                 value="id"
                 valueExpr="id"
                 [required]="true"
-                [showClearButton]="true"
+                [showClearButton]="false"
                 [initialSelectedValue]="selectedFunctionalCurrency"
                 (selectedItems)="onFunctionalCurrencySelection($event)"
                 formControlName="functionalCurrency"
@@ -367,7 +363,7 @@
                 [inputType]="'number'"
                 [value]="''"
                 [placeholder]="''"
-                [disallowNegative]="true"
+                [disallowNegative]="false"
                 [disabled]="false"
                 [required]="false"
                 formControlName="currencyRate"
@@ -406,6 +402,7 @@
         [Title]="'Discount Rate'"
         [SubTitle]="discountRateSubTitle"
         FooterContent=""
+        [status]="discountRateCompositeDropdownValidation"
       >
         <div class="form-items">
           <div class="labels">
@@ -438,7 +435,7 @@
               value="profileID"
               valueExpr="profileID"
               [required]="true"
-              [showClearButton]="true"
+              [showClearButton]="false"
               [initialSelectedValue]="selectedDiscountRate"
               (selectedItems)="onDiscountRateChange($event)"
               formControlName="discountRateProfile"
@@ -478,7 +475,7 @@
               [value]="''"
               [placeholder]="''"
               [disallowNegative]="true"
-              [disabled]="false"
+              [disabled]="'false'"
               [required]="true"
               formControlName="discountRate"
               class="annual-rate-input"
@@ -579,6 +576,7 @@
         [Title]="'ROU Assets Obtained'"
         [SubTitle]="ROUAssetsObtainedSubTitle"
         FooterContent=""
+        [status]="ROUCompositeDropdownValidation"
       >
         <div class="form-items">
           <div class="labels">
@@ -592,7 +590,7 @@
               "
               [label]="'Method'"
               [showInfo]="false"
-              [required]="false"
+              [required]="true"
             >
             </crem-input-label>
           </div>
@@ -611,7 +609,7 @@
               displayExpr="name"
               valueExpr="id"
               [required]="true"
-              [showClearButton]="true"
+              [showClearButton]="false"
               (selectedItems)="onROUMethodValueChanged($event)"
               formControlName="ROUMethod"
             ></crem-dropdown>
@@ -627,13 +625,13 @@
               "
               [label]="'Amount'"
               [showInfo]="false"
-              [required]="false"
+              [required]="true"
               [name]="'financials-amount-Input'"
             >
             </crem-input-label>
           </div>
           <div class="controls-container">
-            <crem-input
+            <dx-number-box
               [id]="
                 accountingSummaryService.getId(
                   componentName,
@@ -641,25 +639,11 @@
                   'Input'
                 )
               "
-              [showLabel]="false"
-              [labelPosition]="'top'"
-              [label]="''"
-              [inputType]="'number'"
-              [value]="ROUAssetAmount"
-              [placeholder]="''"
-              [disallowNegative]="false"
-              [required]="false"
-              (onBlurChange)="
-                onROUAmountInputBlurChange($event, 'firstAmountInput')
-              "
+              [format]="formatCurrencyInput()"
+              [disabled]="isROUTAmountDisabled"
               formControlName="ROUAmount"
             >
-            </crem-input>
-            <div
-              class="errorMessage"
-              *ngIf="rouAmountErrors.length"
-              [innerHTML]="rouAmountErrors"
-            ></div>
+            </dx-number-box>
           </div>
           <div class="labels">
             <crem-input-label
@@ -672,6 +656,7 @@
               "
               [label]="'Action Date'"
               [showInfo]="false"
+              [required]="true"
             >
             </crem-input-label>
           </div>
@@ -693,11 +678,6 @@
               formControlName="ROUActionDate"
             >
             </crem-date-picker>
-            <div
-              class="errorMessage"
-              *ngIf="rouActionDateErrors.length"
-              [innerHTML]="rouActionDateErrors"
-            ></div>
           </div>
         </div>
       </crem-composite-dropdown>

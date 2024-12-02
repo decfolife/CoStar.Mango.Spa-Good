@@ -57,14 +57,14 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       id: 3,
       displayValue: 'ASC 842 Quarterly Disclosures',
     },
-    {
-      id: 4,
-      displayValue: 'IFRS 16 Annual Disclosures',
-    },
-    {
-      id: 5,
-      displayValue: 'IFRS 16 Quarterly Disclosures',
-    },
+    // {
+    //   id: 4,
+    //   displayValue: 'IFRS 16 Annual Disclosures',
+    // },
+    // {
+    //   id: 5,
+    //   displayValue: 'IFRS 16 Quarterly Disclosures',
+    // },
   ];
   public accountingYearData: any[] = [];
   public accountingSegmentData: any[] = [];
@@ -326,7 +326,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       case 3:
       case 4: {
         const { dashboardIFRSAnnually } = await import(
-          '@accounting-dashboard/shared/configurations/dashboard-view'
+          '@accounting-dashboard/shared/configurations/dashboard-view.config'
         );
         this.viewConfiguration = dashboardIFRSAnnually;
         this.getSegments(data[0].id, true);
@@ -334,9 +334,10 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       }
       case 5: {
         const { dashboardIFRSQuarterly } = await import(
-          '@accounting-dashboard/shared/configurations/dashboard-view'
+          '@accounting-dashboard/shared/configurations/dashboard-view.config'
         );
         this.viewConfiguration = dashboardIFRSQuarterly;
+        this.getSegments(data[0].id, true);
         break;
       }
     }
@@ -387,12 +388,14 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public onAccountingYearChange(data) {
     if (data.length) {
       this.selectedYear = data[0].value;
+      this.exportingReport = false;
     }
   }
 
   public onAccountingSegmentChange(data) {
     if (data.length) {
       this.selectedSegment = data[0].segmentID;
+      this.exportingReport = false;
     }
   }
 

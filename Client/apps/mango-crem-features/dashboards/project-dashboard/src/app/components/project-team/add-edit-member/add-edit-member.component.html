@@ -255,6 +255,7 @@
             'aria-label': 'Select from Available Roles',
             class: 'aet-role-selectionList'
           }"
+          [dropDownOptions]="{ wrapperAttr: { class: 'aet-dropDownWrapper' } }"
           (onSelectionChanged)="roleSelected($event)"
         >
           <dx-validator name="roleValidator">
@@ -285,6 +286,7 @@
             name: 'levelSelection',
             class: 'aet-level-selectList'
           }"
+          [dropDownOptions]="{ wrapperAttr: { class: 'aet-dropDownWrapper' } }"
           (onSelectionChanged)="levelSelected($event)"
         >
           <div *dxTemplate="let data of 'level'" class="levelTemplate">
@@ -331,6 +333,9 @@
                 'aria-label': 'Select Expiration Type',
                 name: 'expirationType',
                 class: 'aet-expirationType-list'
+              }"
+              [dropDownOptions]="{
+                wrapperAttr: { class: 'aet-dropDownWrapper' }
               }"
               (onSelectionChanged)="expirationTypeSelected($event)"
             >

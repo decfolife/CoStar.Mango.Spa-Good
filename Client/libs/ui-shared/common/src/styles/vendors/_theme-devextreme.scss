@@ -1,5 +1,5 @@
-@use "../abstracts/mixins" as *;
-@use "../abstracts/variables" as *;
+@use '../abstracts/mixins' as *;
+@use '../abstracts/variables' as *;
 
 // Toast/Notifications
 .dx-toast-wrapper {
@@ -33,6 +33,7 @@
       width: 35px;
       height: 35px;
     }
+
     .dx-toast-message {
       display: -webkit-inline-box;
       display: -webkit-inline-flex;
@@ -40,11 +41,11 @@
       display: inline-flex;
       line-height: 16px;
     }
+
     .dx-rtl .dx-toast-icon {
       margin-left: 10px;
       margin-right: 0;
     }
-
   }
 }
 
@@ -60,21 +61,28 @@
 
 dx-data-grid table.dx-datagrid-table {
   tbody {
-    tr.dx-row.dx-data-row, tr.dx-row.dx-data-row.dx-row-alt {
-      &:hover, &.dx-state-hover, &.dx-state-hover.dx-selection, &.dx-selection:hover {
+    tr.dx-row.dx-data-row,
+    tr.dx-row.dx-data-row.dx-row-alt {
+      &:hover,
+      &.dx-state-hover,
+      &.dx-state-hover.dx-selection,
+      &.dx-selection:hover {
         color: #333333;
-        background: #cae3fe ;
+        background: #cae3fe;
         cursor: pointer;
-        td, td:hover {
+
+        td,
+        td:hover {
           color: #333333;
-          background: #e3f3fc ;
+          background: #e3f3fc;
         }
       }
     }
   }
-}  
+}
 
-.dx-widget input, .dx-widget textarea {
+.dx-widget input,
+.dx-widget textarea {
   @include costar(font-family, body);
 }
 
@@ -85,4 +93,73 @@ dx-data-grid table.dx-datagrid-table {
 // Input Text
 .dx-texteditor-input {
   min-height: 30px;
+}
+
+// This is necessary to overwrite all DevExtreme error icons to match Costar design
+
+::ng-deep {
+  .dx-texteditor-input-container {
+    &:hover {
+      .dx-invalid-message-content {
+        visibility: visible;
+      }
+    }
+
+    &::after {
+      background-color: var(--costar-color-danger) !important;
+      width: 20px !important;
+      height: 20px !important;
+      line-height: 20px !important;
+      cursor: pointer !important;
+      pointer-events: unset !important;
+    }
+  }
+
+  .dx-invalid-message-content {
+    background-color: var(--costar-color-danger) !important;
+    font-size: var(--costar-font-size-small) !important;
+    font-weight: 400;
+    right: -30px !important;
+    left: unset !important;
+    top: 30px !important;
+    transform: unset !important;
+    position: absolute !important;
+    border-radius: 8px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    &::before {
+      pointer-events: none;
+      font-weight: 700;
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      text-align: center;
+      line-height: 18px;
+      font-size: var(--costar-font-size-small);
+      margin-right: 4px;
+      background-color: var(--costar-color-light);
+      color: var(--costar-color-danger);
+      content: '!';
+      border-radius: 50%;
+    }
+  }
+
+  .dx-editor-container .dx-texteditor-input-container::after {
+    display: none !important;
+  }
+}
+
+dx-date-box,
+dx-drop-down-box {
+  &:hover {
+    .dx-invalid-message.dx-overlay-wrapper {
+      visibility: visible !important;
+    }
+  }
+
+  &.dx-dropdowneditor-active {
+    .dx-invalid-message.dx-overlay-wrapper {
+      visibility: hidden !important;
+    }
+  }
 }
