@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
+FROM costarrem/crem_aspnet8.0_alpine AS base
 WORKDIR /app
 EXPOSE 8000
 ENV ASPNETCORE_HTTP_PORTS=8000
@@ -16,15 +16,3 @@ RUN dotnet publish "./MangoSPA.csproj" -c Release -o /app/publish
 FROM base AS final
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MangoSPA.dll"]
-
-ARG USERNAME=mangospa-server
-ARG GROUPNAME=mangospa-group
-
-# -g is the GID
-RUN addgroup -g 1000 ${GROUPNAME}
-
-# -u is the UID
-# -D permits to create an user without password
-RUN adduser -u 1000 -G ${GROUPNAME} -D ${USERNAME}
-
-USER ${USERNAME}

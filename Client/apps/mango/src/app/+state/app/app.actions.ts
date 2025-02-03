@@ -15,6 +15,8 @@ import { createAction, props } from '@ngrx/store';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
 
 export const SET_LOADING = '[UI] Set Loading';
+export const SET_CHANGE_LOSS_PREVENTION_IS_ACTIVE =
+  '[UI] Set Change Loss Prevention Active';
 export const APP_INIT = '[Mango App] APP Init';
 export const SETUP_HEADER = '[Mango App] Setup Header';
 export const OAUTH_AUTH = '[Mango App] Start OAuth Auth';
@@ -141,6 +143,11 @@ export const setLoading = createAction(
   props<{ display: boolean }>()
 );
 
+export const setChangeLossPreventionIsActive = createAction(
+  SET_CHANGE_LOSS_PREVENTION_IS_ACTIVE,
+  props<{ active: boolean }>()
+);
+
 export const loadSubApp = createAction(
   LOAD_SUB_APP_ACTION,
   props<{ subApp: MangoSubApps }>()
@@ -204,7 +211,7 @@ export const logoutWhenTimedOut = createAction(SETUP_LOGOUT_WHEN_TIMED_OUT);
 
 export const logout = createAction(
   LOGOUT_ACTION,
-  props<{ logoutV06?: boolean }>()
+  props<{ logoutV06?: boolean; sessionExpired?: boolean }>()
 );
 
 export const clearState = createAction(CLEAR_STATE);

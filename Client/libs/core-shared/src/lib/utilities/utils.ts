@@ -23,3 +23,11 @@ export function flatMap(arr: Array<any>): Array<any> {
 export function deepCopy<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
+
+export function isTruthy(value) {
+  return !!value;
+}
+
+export function convertBoolToString(bool: boolean): string {
+  return bool ? 'True' : 'False';
+}

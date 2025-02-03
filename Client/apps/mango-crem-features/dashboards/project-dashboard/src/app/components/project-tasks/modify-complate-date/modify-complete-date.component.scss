@@ -15,6 +15,11 @@
     font-size: 1.25rem;
     color: var(--costar-color-dark, #000);
   }
+
+  button.btn-close.btn-none.modalCloseButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.1rem $primary-lighter;
+  }
 }
 
 .tmcd-bodyContent {

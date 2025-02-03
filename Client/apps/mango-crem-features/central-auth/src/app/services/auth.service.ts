@@ -98,9 +98,9 @@ export class AuthService {
 
           if (isClientSpecificLogin) this.tempAccessToken = response.authToken;
 
-          if (UtilitiesService.isLocalEnvironment() && !isClientSpecificLogin) {
-            this.jwtService.saveToken(response.authToken);
-          }
+          // if (UtilitiesService.isLocalEnvironment() && !isClientSpecificLogin) {
+          //   this.jwtService.saveToken(response.authToken);
+          // }
 
           const res: LoginResponse = {
             user: user,
@@ -126,14 +126,14 @@ export class AuthService {
   }
 
   getCurrentUser(): Observable<UserAuth> {
-    if (UtilitiesService.isLocalEnvironment()) {
-      const user: UserAuth = this.buildUser();
-      if (!user) {
-        return throwError('No current logged in user exists.');
-      }
+    // if (UtilitiesService.isLocalEnvironment()) {
+    //   const user: UserAuth = this.buildUser();
+    //   if (!user) {
+    //     return throwError('No current logged in user exists.');
+    //   }
 
-      return of(user);
-    }
+    //   return of(user);
+    // }
 
     return this.http.get<UserAuth>(`${this.identityUrl}/auth/user`, {
       withCredentials: true,

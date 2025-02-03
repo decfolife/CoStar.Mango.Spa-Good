@@ -34,7 +34,12 @@
     Save As Default
   </button>
 
-  <button mat-menu-item *ngIf="showSaveAs" [matMenuTriggerFor]="saveAsMenu">
+  <button
+    mat-menu-item
+    *ngIf="showSaveAs"
+    [matMenuTriggerFor]="saveAsMenu"
+    (menuOpened)="focusSavedViewSubMenu()"
+  >
     Save As...
   </button>
 
@@ -96,16 +101,21 @@
   </button>
 </mat-menu>
 
-<mat-menu #saveAsMenu="matMenu" class="save-view-menu">
-  <mat-form-field appearance="outline">
-    <input
-      matInput
-      placeholder="New Saved View"
-      title="Save View as"
-      [formControl]="nameFormControl"
-      (click)="$event.stopPropagation()"
-      (keyup)="$event.stopPropagation()"
-      (keydown.enter)="createNewListView()"
-    />
-  </mat-form-field>
+<mat-menu #saveAsMenu="matMenu" aria-label="Save View As">
+  <crem-input
+    #saveViewName
+    title="Save View As"
+    [formControl]="nameFormControl"
+    (click)="$event.stopPropagation()"
+    (enterKeyEvent)="createNewListView()"
+    [inputType]="'text'"
+    [ariaLabel]="'New Saved View Name'"
+    [label]="'New Saved View Name'"
+    [labelPosition]="'top'"
+    [showHint]="false"
+    [showLabel]="false"
+    [showInfo]="false"
+    [maxLengthField]="50"
+    [required]="true"
+  ></crem-input>
 </mat-menu>

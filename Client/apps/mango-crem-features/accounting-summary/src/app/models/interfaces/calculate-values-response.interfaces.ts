@@ -11,6 +11,17 @@ export interface ResidualValues {
   presentValueOnAmtNotReflectedInPayments: number;
 }
 
+export interface ClassificationTestResults {
+  test1Result: boolean;
+  test2Result: boolean;
+  test3Result: boolean;
+  test4Result: boolean;
+  test5Result: boolean;
+  testResult: string;
+  resultReason: string;
+  isResultMatched: boolean;
+}
+
 interface ControlStatements {
   remeasureTypeID: number;
   isDay1Remeasure: boolean;
@@ -19,13 +30,13 @@ interface ControlStatements {
   isMidPeriodGappedRemeasure: boolean;
   isMidPeriodRemeasure: boolean;
   isRetroAdjustment: boolean;
-  originalFromDate: string | null;
+  originalFromDate: string | '';
   previousEffectiveRate: number;
   previousFunctionalCurrencyRate: number;
   calendarStartDate: string;
   calendarEndDate: string;
   paymentDueOnDayOne: number;
-  firstHalfCash: number | null;
+  firstHalfCash: number | 0;
   frequency: number;
 }
 
@@ -42,10 +53,10 @@ interface SelectedPayment {
 
 interface CalculationSupports {
   leaseAbstractId: number;
-  leaseRecognitionScheduleId: number | null;
-  copiedFromScheduleId: number | null;
-  properPreviousScheduleId: number | null;
-  properPreviousAmortizationPeriod: number | null;
+  leaseRecognitionScheduleId: number | 0;
+  copiedFromScheduleId: number | 0;
+  properPreviousScheduleId: number | 0;
+  properPreviousAmortizationPeriod: number | 0;
   controlStatements: ControlStatements;
   scheduleCurrency: Currency;
   functionalCurrency: Currency;
@@ -57,33 +68,37 @@ export interface CalculateValuesResponse {
   leaseAbstractId: number;
   leaseRecognitionScheduleId: number | null;
   copiedFromScheduleId: number | null;
-  effectiveRate: number | null;
-  presentValue: number | null;
-  implicitRate: number | null;
-  openingLiabilityBalance: number | null;
-  totalPayments: number | null;
-  terminationFee: number | null;
-  functional_TerminationFee: number | null;
-  directCostsTotal: number | null;
-  functional_DirectCostsTotal: number | null;
-  previousLiabilityBalance: number | null;
-  previousAssetBalance: number | null;
-  liabilityAdjustmentAmount: number | null;
-  systemAssetAdjustment: number | null;
-  adjustment: number | null;
-  adjustmentGainLoss: number | null;
-  functional_AdjustmentGainLoss: number | null;
-  openingAssetBalance: number | null;
-  functional_OpeningAssetBalance: number | null;
-  levelExpense: number | null;
-  functional_LevelExpense: number | null;
-  assetAmortization: number | null;
-  functional_AssetAmortization: number | null;
-  rouAssetObtainedAmount: number | null;
-  functionalROUAssetObtainedAmount: number | null;
-  classificationTestResult: string | null;
-  classificationTestResultReason: string | null;
-  isClassificationTestResultMatched: boolean | null;
+  effectiveRate: number | 0;
+  presentValue: number | 0;
+  implicitRate: number | 0;
+  openingLiabilityBalance: number | 0;
+  totalPayments: number | 0;
+  terminationFee: number | 0;
+  functional_TerminationFee: number | 0;
+  directCostsTotal: number | 0;
+  functional_DirectCostsTotal: number | 0;
+  previousLiabilityBalance: number | 0;
+  previousAssetBalance: number | 0;
+  liabilityAdjustmentAmount: number | 0;
+  systemAssetAdjustment: number | 0;
+  adjustment: number | 0;
+  adjustmentGainLoss: number | 0;
+  functional_AdjustmentGainLoss: number | 0;
+  openingAssetBalance: number | 0;
+  functional_OpeningAssetBalance: number | 0;
+  levelExpense: number | 0;
+  functional_LevelExpense: number | 0;
+  assetAmortization: number | 0;
+  functional_AssetAmortization: number | 0;
+  rouAssetObtainedAmount: number | 0;
+  functionalROUAssetObtainedAmount: number | 0;
+  classificationTestResult: string | '';
+  classificationTestResultReason: string | '';
+  isClassificationTestResultMatched: boolean | 0;
+  assetAdjustmentAmount: number | 0;
+  straightLineExpense: number | 0;
+  straightLineExpenseDaily: number | 0;
   residualValues: ResidualValues;
+  classificationTestResults: ClassificationTestResults;
   calculationSupports: CalculationSupports;
 }

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
-  Params,
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
@@ -43,7 +42,7 @@ export class RightsAuthGuard implements CanActivate {
             if (!userHaveRights) {
               this.router.navigate([
                 '/crem/projects/error-notification',
-                { errorCode: 'Unauthorized' },
+                { errorCode: 'Forbidden' },
               ]);
             }
 

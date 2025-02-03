@@ -18,22 +18,22 @@ export class AccountingSettingsService extends EndpointService {
   measureEventsChanged: boolean;
 
   getPortfolioSettings(masterGroupId: number) {
-    const url = `${this.accountingUrl}/AccountManagement/GetPortfolioSettings/${masterGroupId}`;
+    const url = `${this.accountingUrl}AccountManagement/GetPortfolioSettings/${masterGroupId}`;
     return this.callHttpGet(url, 'getPortfolioSettings');
   }
 
   getAccountingCalendars() {
-    const url = `${this.accountingUrl}/AccountManagement/GetAccountingCalendars`;
+    const url = `${this.accountingUrl}AccountManagement/GetAccountingCalendars`;
     return this.callHttpGet(url, 'getAccountingCalendars');
   }
 
   getClassificationTypes() {
-    const url = `${this.accountingUrl}/AccountManagement/GetClassificationTypes`;
+    const url = `${this.accountingUrl}AccountManagement/GetClassificationTypes`;
     return this.callHttpGet(url, 'getClassificationTypes');
   }
 
   savePortfolioSettingsConfiguration(configurations) {
-    const url = `${this.accountingUrl}/AccountManagement/SavePortfolioSettingsConfiguration`;
+    const url = `${this.accountingUrl}AccountManagement/SavePortfolioSettingsConfiguration`;
     return this.callHttpPost(
       url,
       'savePortfolioSettingsConfiguration',
@@ -42,7 +42,7 @@ export class AccountingSettingsService extends EndpointService {
   }
 
   savePortfolioSettings(settings) {
-    const url = `${this.accountingUrl}/AccountManagement/SavePortfolioSettings`;
+    const url = `${this.accountingUrl}AccountManagement/SavePortfolioSettings`;
     return this.callHttpPost(url, 'savePortfolioSettings', settings);
   }
 }

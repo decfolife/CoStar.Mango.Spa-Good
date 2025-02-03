@@ -4,5 +4,4 @@ export const environment = {
   appUrls: {
     discountRateProfiles: 'http://localhost:57539/api',
   },
-  isRestful: true,
 };

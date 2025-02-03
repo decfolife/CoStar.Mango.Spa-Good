@@ -40,6 +40,29 @@
   .teams-dataGrid-wrapper {
     height: calc(100% - 48px);
     font-size: 16px;
+    ::ng-deep {
+      .dx-row.dx-data-row {
+        border: 0;
+    
+        &> td {
+          padding-bottom: 0px;
+          padding-top: 0px;
+          border-top: 0px;
+        }
+      }
+
+      .dx-row.dx-data-row {
+        td {
+          border: 0;
+        }
+      }
+
+      .teams-grid .dx-scrollable-wrapper .dx-datagrid-table {
+        .dx-row.dx-data-row {
+          border: 0;
+        }
+      }
+    }
   }
 
   .controls-right {

@@ -4,7 +4,6 @@ class EnvironmentsCrem {
   appUrls = {
     batchAccounting: null,
   };
-  isRestful = false;
 }
 
 export const environment = new EnvironmentsCrem();

@@ -8,6 +8,7 @@
   <ng-template let-fieldData="fieldData">
     <div class="form__section-item">
       <crem-dropdown
+        [id]="'accounting-criteria-form-segment-portfolio'"
         *ngIf="
           portfolioConfig.section[0].formObjects[0].sectionItems[0] && !loading
         "

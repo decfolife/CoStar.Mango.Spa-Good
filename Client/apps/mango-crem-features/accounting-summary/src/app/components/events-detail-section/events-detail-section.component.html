@@ -1,6 +1,10 @@
 <section class="section-grid">
-  <crem-card [showCustomHeader]="true">
-    <div customHeader class="card-header">
+  <crem-card [showCustomHeader]="true" mangoAccountingAda>
+    <div
+      customHeader
+      class="card-header"
+      [id]="accountingSummaryService.getId(componentName, 'card', 'header')"
+    >
       <div class="card-header">
         <div
           class="card-title"
@@ -246,7 +250,7 @@
 
         <dxo-column-fixing [enabled]="true"> </dxo-column-fixing>
 
-        <dxo-scrolling columnRenderingMode="virtual"> </dxo-scrolling>
+        <dxo-scrolling columnRenderingMode="standard"> </dxo-scrolling>
 
         <dxo-selection mode="single"> </dxo-selection>
 
@@ -256,9 +260,18 @@
           height="500"
           width="400"
         >
+          <dxo-position
+            my="right top"
+            at="right top"
+            [of]="
+              '#' +
+              accountingSummaryService.getId(componentName, 'card', 'header')
+            "
+          ></dxo-position>
           <dxo-search [enabled]="true"> </dxo-search>
 
-          <dxo-selection allowSelectAll="true"> </dxo-selection>
+          <dxo-selection allowSelectAll="true" [recursive]="true">
+          </dxo-selection>
         </dxo-column-chooser>
         <div *dxTemplate="let info of 'accountingEventHeader'">
           <p title="{{ info.column.caption }}" class="header-column-caption">

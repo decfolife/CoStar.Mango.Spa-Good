@@ -11,13 +11,25 @@ export class NotesGridColumnsService {
   getNoteGridColumns() {
     const columns = [
       {
-        caption: 'ID',
-        name: 'CommonNoteID',
-        dataType: 'number',
-        dataField: 'commonNoteID',
-        width: '80px',
+        caption: 'Created By',
+        name: 'CommonNoteCreatorName',
+        dataType: 'string',
+        dataField: 'commonNoteCreatorName',
+        width: '200px',
         alignment: 'left',
         allowFiltering: true,
+        visible: true,
+      },
+      {
+        caption: 'Date Created',
+        name: 'CommonNoteDateCreated',
+        dataType: 'date',
+        dataField: 'commonNoteDateCreated',
+        width: '200px',
+        alignment: 'left',
+        allowFiltering: true,
+        format: 'MM/dd/yyyy',
+        visible: true,
         sortOrder: 'desc',
       },
       {
@@ -29,35 +41,28 @@ export class NotesGridColumnsService {
         width: '150px',
         alignment: 'left',
         allowFiltering: true,
+        visible: true,
       },
       {
         caption: 'Note',
-        name: 'ShortNoteText',
+        name: 'Note',
         dataType: 'string',
-        dataField: 'shortNoteText',
+        dataField: 'note',
         headerFilter: { allowSearch: true },
         width: '400px',
         alignment: 'left',
         allowFiltering: true,
+        visible: true,
       },
       {
-        caption: 'Created By',
-        name: 'CommonNoteCreatorName',
-        dataType: 'string',
-        dataField: 'commonNoteCreatorName',
-        width: '200px',
+        caption: 'ID',
+        name: 'CommonNoteID',
+        dataType: 'number',
+        dataField: 'commonNoteID',
+        width: '80px',
         alignment: 'left',
         allowFiltering: true,
-      },
-      {
-        caption: 'Date Created',
-        name: 'CommonNoteDateCreated',
-        dataType: 'date',
-        dataField: 'commonNoteDateCreated',
-        width: '200px',
-        alignment: 'left',
-        allowFiltering: true,
-        format: 'MM/dd/yyyy hh:mm:ss a',
+        visible: false,
       },
       {
         caption: 'Modified By',
@@ -67,6 +72,7 @@ export class NotesGridColumnsService {
         width: '200px',
         alignment: 'left',
         allowFiltering: true,
+        visible: false,
       },
       {
         caption: 'Modified Date',
@@ -76,7 +82,8 @@ export class NotesGridColumnsService {
         width: '200px',
         alignment: 'left',
         allowFiltering: true,
-        format: 'MM/dd/yyyy hh:mm:ss a',
+        format: 'MM/dd/yyyy',
+        visible: false,
       },
       {
         caption: 'Source Import ID',
@@ -85,12 +92,13 @@ export class NotesGridColumnsService {
         dataField: 'sourceImportID',
         headerFilter: { allowSearch: true },
         allowFiltering: true,
+        visible: false,
       },
     ];
     return columns;
   }
 
-  getFilter(): Condition {
-    return [];
-  }
+  // getFilter(): Condition {
+  //   return [];
+  // }
 }

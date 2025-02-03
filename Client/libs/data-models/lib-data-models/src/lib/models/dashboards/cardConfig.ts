@@ -1,19 +1,44 @@
 import { Dropdown } from '@mango/data-models/lib-data-models';
 
 /**
- * Defines all the configuration needed for a Disclosure Dashboard
+ * Configuration for the Disclosure Dashboard.
+ *
+ * This interface defines the properties required to configure a dashboard view,
+ * including its unique ID, associated Pendo ID, card configurations,
+ * and caching behavior.
  *
  * @export
  * @interface DashboardConfig
  */
 export interface DashboardConfig {
+  /**
+   * Unique identifier for the dashboard.
+   * @type {number}
+   */
   dashboardId: number;
+
+  /**
+   * Identifier for Pendo analytics tracking.
+   * @type {string}
+   */
   pendoId: string;
+
+  /**
+   * Configuration for local dashboard cards.
+   * @type {CardConfig[]}
+   */
   localCardConfig: CardConfig[];
+
+  /**
+   * Determines whether data should be cached.
+   * Defaults to `true` if not specified.
+   * @type {boolean}
+   */
+  cache?: boolean;
 }
 
 export interface CardRequest {
-  viewConfiguration: DashboardConfig;
+  dashboardId: number;
   selectedSegment: number;
   reportingYear: number;
   selectedCurrency?: string;
@@ -34,40 +59,57 @@ export interface SortingOrder {
   [key: string]: number;
 }
 export interface ColumnSortingOrder {
-  [key: string]: number;
+  [key: string]: SortingOrder;
 }
 
 /**
  * Pivot Data Type
  *
- * @typedef {Object} CardDataItem
- * @property {number|string} [AddedCount] - The count of items added.
- * @property {number|string} [closingCount] - The count of items being closed.
- * @property {string|'Total'} [DisclosureClassification] - When 'Total' is passed the data transformation will be handled differently.
- * @property {number|string} [EndedCount] - The count of items that have ended.
- * @property {string} [LeaseTemplate] - The template used for leasing.
- * @property {number|string} [OpeningCount] - The count of items being opened.
- * @property {string} Display - The display text for the card item.
- * @property {number|string} [PeriodYear] - The year or period associated with the data.
- * @property {number|string} [PeriodQuarter] - The year or period associated with the data.
- * @property {number|string} [dataType] - The type of data (number or string).
- * @property {any} data - The actual data associated with the card item.
+ * Represents the data structure for items used in the dashboard cards.
+ *
  * @export
- * @interface FieldConfig
+ * @typedef {Object} CardDataItem
  */
 export type CardDataItem = {
+  /** The count of items added. */
   AddedCount?: number | string;
+
+  /** The count of items being closed. */
   closingCount?: number | string;
+
+  /**
+   * The classification of disclosure.
+   * When 'Total' is passed, data transformation is handled differently.
+   */
   DisclosureClassification?: string | 'Total';
+
+  /** The count of items that have ended. */
   EndedCount?: number | string;
+
+  /** The template used for leasing. */
   LeaseTemplate?: string;
+
+  /** The count of items being opened. */
   OpeningCount?: number | string;
+
+  /** The display text for the card item. */
   Display?: string;
+
+  /** The year or period associated with the data. */
   PeriodYear?: number | string;
+
+  /** The quarter or period associated with the data. */
   PeriodQuarter?: number | string;
+
+  /** The type of data (number or string). */
   dataType?: number | string;
+
+  /** The actual data associated with the card item. */
   data: any;
+
+  /** Optional modifier for the card data item. */
   modify?: CardDataItemModify;
+  ExceptionReason?: string;
 };
 
 export type CardDataItemModify = {
@@ -82,7 +124,7 @@ export type CardDataItemModify = {
 
 /**
  * Represents the configuration for a field in a data set.
- * The key corresponds to the local parameter
+ * The key corresponds to the card configuration schema
  * The value corresponds to the API respond to pair with
  * @example fieldTransform: [
  *   {
@@ -106,7 +148,8 @@ export type CardDataTransformer = CardDataItem & object;
  */
 export type CardConfig = {
   /**
-   * HTML element ID
+   * This is used to identify the card to be saved and as the HTML attribute ID
+   * This value must be unique.
    *
    * @type {string}
    */
@@ -141,6 +184,27 @@ export type CardConfig = {
   width?: number;
 
   /**
+   * Card width.
+   *
+   * @type {boolean}
+   */
+  fullWidth?: boolean;
+
+  /**
+   * Allows to render the grid as a PivotGrid (default) or data grid (aka list page).
+   *
+   * @type {('pivotGrid' | 'dataGrid')}
+   */
+  defaultCardView?: 'pivotGrid' | 'dataGrid';
+
+  /**
+   * Allows to change the card view by adding the menu option in the card's more menu
+   *
+   * @type {boolean}
+   */
+  allowToggleCardView?: boolean;
+
+  /**
    * When needed to combine with another IADCardData, the selected index will be removed
    * and not be used as a separated dashboard card. Please check the `inAppDisclosureService.getIADCardData`
    * to review the response's indexes.
@@ -150,36 +214,60 @@ export type CardConfig = {
   combineWithIndex?: number;
 
   /**
-   * Optional sorting order for the field.
+   * Optional row sorting order.
    *
    * @type {SortingOrder}
    */
   sortingOrder?: SortingOrder;
-  columnSortingOrder?: ColumnSortingOrder;
 
   /**
-   * Name of the Column Field to be sorted.
    *
-   * @type {string}
+   *
+   * @type {SortingOrder}
    */
-  sortedColumnFieldName?: string;
+  columnSortingOrder?: SortingOrder;
 
+  /**
+   * Order of the columns corresponding to the cardJSONSchema's dataField
+   * @example
+   *  sortedColumnFieldName: {
+   *			'LeaseTemplate': {
+   *				Finance: 0,
+   *				Operating: 1,
+   *				Mixed: 2,
+   *			},
+   *			...
+   *	}
+   * @type {(ColumnSortingOrder | string)}
+   */
+  sortedColumnFieldName?: ColumnSortingOrder | string;
+
+  /**
+   * Allows to show/hide the field chooser for both Pivot and Grid Table.
+   *
+   * @type {boolean}
+   */
   showFieldChooser?: boolean;
 
-  /**
-   * Optional sorting method function for the field.
-   *
-   * @type {Function}
-   */
-  sortingMethod?: Function;
+  showMenuToggleFullWidth?: boolean;
+  showMenuSave?: boolean;
+  showMenuReset?: boolean;
 
   /**
-   * Specifies a custom post-processing function for summary values.
-   * When using please set `summaryType` to `custom`
-   * @see https://js.devexpress.com/Angular/Demos/WidgetsGallery/Demo/DataGrid/CustomSummaries/MaterialBlueLight/
-   * @type {Function}
+   * Activates the chart icon to render the data base con the card data.
+   * Note: Chart only visible on PivotGrid mode, see the `defaultCardView` property
+   *
+   * @type {boolean}
    */
-  calculateSummaryValue?: Function;
+  chartActive?: boolean;
+
+  /**
+   * When `cartActive` is true, then you can make it hidden or visible by default.
+   * Note: Chart only visible on PivotGrid mode, see the `defaultCardView` property
+   *
+   * @type {boolean}
+   */
+  chartVisible?: boolean;
 
   /**
    * Specifies how to aggregate data for the total summary item.
@@ -191,11 +279,22 @@ export type CardConfig = {
   summaryType?: 'sum' | 'min' | 'max' | 'avg' | 'count' | 'custom' | null;
 
   /**
-   * Optional function for custom summary calculation.
+   * To display data in the PivotGrid, specify the fields[] array. Each object in it configures a
+   * single pivot grid field. Specify the dataField property to populate the pivot grid field with data.
    *
-   * @type {Function}
+   * @see https://js.devexpress.com/Angular/Documentation/ApiReference/Data_Layer/PivotGridDataSource/Configuration/fields/
+   * @see https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/PivotGrid/Getting_Started_with_PivotGrid/#Configure_Fields_and_Areas
+   * @type {string}
    */
-  calculateCustomSummary?: Function;
+  cardJSONSchema?: Array<any>;
+
+  /**
+   * Stores the dataGrid field configuration. This helps to separate the pivotGrid configuration `cardJSONSchema`
+   * from the dataGrid (or list view) schema.
+   *
+   * @type {Array<object>}
+   */
+  cardJSONSchemaGrid?: Array<object>;
 
   /**
    * How the incoming API data is going to be used on the grid
@@ -247,7 +346,109 @@ export type CardConfig = {
   // Search
   searchLabel?: string;
   searchPlaceholder?: string;
+
+  /**
+   * Data Grids / List view configurations
+   * @see https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/DataGrid/Columns/Overview/
+   *
+   * @type {DataGridParameters}
+   */
+  dataGrid?: DataGridParameters;
+
+  /**
+   * Data Grid, Helps defining the column definition for further control
+   * Otherwise the data will be shown as is.
+   *
+   * @type {dataGridColumnDefinition}
+   */
+  dataGridColumnDefinition?: Partial<dataGridColumnDefinition>[];
+
+  /**
+   * Specifies the columns against which the summary should be calculated.
+   *
+   * When an array of strings is provided, you can selectively determine which columns
+   * the summarization formula will apply to.
+   *
+   * Use in conjunction with 'summaryCellFormula' and/or 'summaryCellConstants' to define
+   * a specific formula for calculating the desired cell or column.
+   *
+   * E.g. ['PeriodYear','DisclosureClassification', 'LeaseTemplate'] or 'PeriodYear'.
+   *
+   * TODO: This process should be automatic when summaryCellName not provided, and added to the lower fieldConfig index
+   *
+   * @type {(string | string[])}
+   */
+  summaryCellName?: string | Array<string>;
+  summaryCellConstants?: Record<string, number>;
+  summaryCellFormula?: string;
+
+  /**
+   * Optional sorting method function for the field.
+   * @deprecated Please avoid using this, as it will not survive parsing once
+   * this object is integrated into the client's database.
+   * @type {Function}
+   */
+  sortingMethod?: Function;
+
+  /**
+   * Specifies a custom post-processing function for summary values.
+   * When using please set `summaryType` to `custom`
+   * @see https://js.devexpress.com/Angular/Demos/WidgetsGallery/Demo/DataGrid/CustomSummaries/MaterialBlueLight/
+   *
+   * @deprecated Please avoid using this, as it will not survive parsing once
+   * this object is integrated into the client's database.
+   * @type {Function}
+   */
+  calculateSummaryValue?: Function;
+
+  /**
+   * Optional function for custom summary calculation.
+   *
+   * @deprecated Please avoid using this, as it will not survive parsing once
+   * this object is integrated into the client's database.
+   * @type {Function}
+   */
+  calculateCustomSummary?: Function;
 };
+
+interface DataGridParameters {
+  /**
+   * @see https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/DataGrid/Columns/Column_Chooser/
+   *
+   * @type {boolean}
+   * @memberof DataGridParameters
+   */
+  columnChooser?: boolean;
+  columnChooserMode?: 'select' | 'dragAndDrop';
+  headerFilterVisible?: boolean;
+  headerFilterAllowSearch?: boolean;
+  sorting?: 'multiple';
+  /**
+   * @see https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/DataGrid/Columns/Column_Fixing/
+   *
+   * @type {boolean}
+   * @memberof DataGridParameters
+   */
+  columnFixing?: boolean;
+  /**
+   * @see https://js.devexpress.com/Angular/Documentation/Guide/UI_Components/DataGrid/Paging/
+   *
+   * @type {number}
+   * @memberof DataGridParameters
+   */
+  pageSize?: number;
+  /**
+   * Pager component
+   * @see https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxDataGrid/Configuration/pager/
+   *
+   * @type {boolean}
+   * @memberof DataGridParameters
+   */
+  showPageSizeSelector?: boolean;
+  allowedPageSizes?: Array<number>;
+  showInfo?: boolean;
+  showNavigationButtons?: boolean;
+}
 
 /**
  * Strings that can be changed or localized in the PivotGrid UI component.
@@ -267,4 +468,24 @@ interface PivotGridTexts {
   sortColumnBySummary?: string;
   sortRowBySummary?: string;
   total?: string;
+}
+
+/**
+ * Data Grid column configuration
+ * todo: implementation pending
+ * @see https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxDataGrid/Configuration/columns/
+ *
+ * @export
+ * @interface dataGridColumnDefinition
+ */
+export interface dataGridColumnDefinition {
+  caption: string;
+  dataField: string;
+  dataType: string;
+  fieldType: number;
+  format: string | null;
+  urlLink: string;
+  visibleIndex: number;
+  useDefaultObjectFields: boolean | null;
+  displayOrder: number;
 }

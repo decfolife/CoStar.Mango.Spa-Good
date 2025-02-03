@@ -26,9 +26,8 @@ import { StorageService } from '@mango/core-shared';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EditRouAssetComponent } from './edit-rou-asset/edit-rou-asset.component';
 import { filter } from 'rxjs/operators';
-import { ToastState } from '@mango/data-models/lib-data-models';
-import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
-import { DeleteHistoricScheduleComponent } from '../accounts-summary/deleteHistoricSchedule/delete-historic-schedule.component';
+import { DeleteHistoricScheduleComponent } from './deleteHistoricSchedule/delete-historic-schedule.component';
+import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
 
 @Component({
   selector: 'mango-events-detail-section',
@@ -72,6 +71,8 @@ export class EventsDetailSectionComponent
   private userInfoLoaded = false;
   private publishedEvent: any;
   private setInitialSelectedRow = false;
+  private gridPreferencesUpdated = false;
+  private previousClassification = null;
   userHasEditLeaseRights = true;
   wfStatusHasEditRights = true;
   userHasLeftNavEditRights = true;
@@ -89,6 +90,7 @@ export class EventsDetailSectionComponent
   showMinRow = false;
   eventsGridData = [];
   rouAssetPriorAmount: number;
+  priorEventBeginDate: Date;
   priorEventEndDate: Date;
   resetBtnHoverText =
     'This will delete any saved preferences, taking you back the CoStar default columns';
@@ -103,7 +105,7 @@ export class EventsDetailSectionComponent
     private activatedRoute: ActivatedRoute,
     private storageService: StorageService,
     private dialog: MatDialog,
-    private toastService: CremToastService
+    private addEditScheduleService: AddEditScheduleService
   ) {
     this.preferenceSavePendingMessage =
       accountingSummaryService.preferenceSavePendingMessage;
@@ -128,7 +130,7 @@ export class EventsDetailSectionComponent
     this.subscription.add(
       this.accountingSummaryService.jeActionTaken$.subscribe(
         (jeActionTaken) => {
-          if (jeActionTaken) {
+          if (jeActionTaken && this.masterScheduleID) {
             this.eventsGridSetup(this.masterScheduleID);
           }
         }
@@ -179,9 +181,7 @@ export class EventsDetailSectionComponent
 
     const gridBoxValue =
       this.storageService.getData('accounting_summary')?.gridBoxValue; // Check if session exists
-    if (gridBoxValue) {
-      this.onValueChanged({ value: gridBoxValue }); // fix: Calling it artificially to compensate for the lifecycle issue
-    }
+    !gridBoxValue ?? this.onValueChanged({ value: gridBoxValue }); // fix: Calling it artificially to compensate for the lifecycle issue
   }
 
   ngOnDestroy() {
@@ -204,7 +204,6 @@ export class EventsDetailSectionComponent
           eventDetailsResponse.data.length != 0 &&
           eventDetailsResponse.success
         ) {
-          this.eventsDataGrid.instance.option('noDataText', '');
           this.classificationId = eventDetailsResponse.data[0].classificationID;
           this.detailsGridData = eventDetailsResponse.data.sort(
             (a, b) => a.scheduleIndex - b.scheduleIndex
@@ -219,11 +218,15 @@ export class EventsDetailSectionComponent
             const getPriorRow = eventDetailsResponse.data.length - 2;
             this.rouAssetPriorAmount =
               eventDetailsResponse.data[getPriorRow].rouAssetObtainedAmount;
+
+            this.priorEventBeginDate =
+              eventDetailsResponse.data[getPriorRow].beginDate;
             this.priorEventEndDate =
               eventDetailsResponse.data[getPriorRow].endDate;
           } else if (eventDetailsResponse.data.length === 1) {
             this.rouAssetPriorAmount =
               eventDetailsResponse.data[0].rouAssetObtainedAmount;
+            this.priorEventBeginDate = eventDetailsResponse.data[0].beginDate;
             this.priorEventEndDate = eventDetailsResponse.data[0].endDate;
           }
 
@@ -318,7 +321,13 @@ export class EventsDetailSectionComponent
                 item.gridName === this.gridName
               );
             });
-
+            if (
+              filteredData.length < 1 ||
+              this.previousClassification !== this.classificationID
+            ) {
+              this.gridPreferencesUpdated = false;
+            }
+            this.previousClassification = this.classificationID;
             this.selectedRowKeys = [
               this.publishedEvent?.leaseRecognitionScheduleID,
             ];
@@ -327,14 +336,17 @@ export class EventsDetailSectionComponent
               state = {};
             }
 
-            state.columns = [];
             state.selectedRowKeys = [
               this.publishedEvent?.leaseRecognitionScheduleID,
             ];
-            filteredData.forEach((item) => {
-              const parsedColumns = JSON.parse(item.columnJson);
-              state.columns.push(...parsedColumns);
-            });
+
+            if (!this.gridPreferencesUpdated) {
+              state.columns = [];
+              filteredData.forEach((item) => {
+                const parsedColumns = JSON.parse(item.columnJson);
+                state.columns.push(...parsedColumns);
+              });
+            }
 
             this.initialState = state;
             this.eventsDataGrid.instance.state(state);
@@ -362,6 +374,7 @@ export class EventsDetailSectionComponent
             this.accountingSummaryService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.eventsDataGrid.instance.state({});
+            this.gridPreferencesUpdated = false;
             this.accountingSummaryService.successNotify(
               'Value Reset Successfully'
             );
@@ -409,6 +422,7 @@ export class EventsDetailSectionComponent
             this.accountingSummaryService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.initialState = newState;
+            this.gridPreferencesUpdated = true;
             this.accountingSummaryService.successNotify(
               response.clientErrorMessage
             );
@@ -605,6 +619,7 @@ export class EventsDetailSectionComponent
         this.router.navigate(['editEvent'], {
           state: {
             data: e.row.data,
+            priorEventBeginDate: new Date(this.priorEventBeginDate),
             priorEventEndDate: new Date(this.priorEventEndDate),
           },
           relativeTo: this.activatedRoute,
@@ -617,14 +632,13 @@ export class EventsDetailSectionComponent
       text: 'Edit ROU Asset',
       icon: 'fa fa-pencil fa-fw blueicon',
       visible:
-        e.row.data.isPublished &&
+        e?.row?.data?.isPublished &&
         this.showEditIcon &&
         e.row.data.measureEvent !== 'Impairment' &&
         (e.row.data.classificationID === 2 ||
           e.row.data.classificationID === 3 ||
           e.row.data.classificationID === 4),
       value: e.row.data.leaseRecognitionScheduleID,
-
       onItemClick: () => {
         const ROUAssetData = {
           portfolioSettings: this.portfolioSettings,
@@ -664,10 +678,11 @@ export class EventsDetailSectionComponent
             .pipe(filter((res) => !!res))
             .subscribe((saveROUAssetObtained) => {
               if (saveROUAssetObtained.success) {
-                this.toastService.show(
-                  'ROU Asset Obtained was saved successfully.',
+                this.addEditScheduleService.showToast(
                   'Save ROU Asset Obtained',
-                  ToastState.SUCCESS
+                  'ROU Asset Obtained saved successfully.',
+                  'success',
+                  false
                 );
                 this.eventsGridSetup(this.masterScheduleID);
                 this.eventScheduleSelectedEvent.emit([e.data, this.gridsState]);
@@ -776,8 +791,8 @@ export class EventsDetailSectionComponent
             closeButtonText: 'No, cancel',
             title:
               e.row.data.jeStatus === 'Historical'
-                ? 'Delete Historic Schedule'
-                : 'Delete Schedule',
+                ? 'Delete Historic Accounting Event'
+                : 'Delete Accounting Event',
           },
           disableClose: true,
         });
@@ -806,71 +821,7 @@ export class EventsDetailSectionComponent
       } else {
         e.items.push(remeasure);
       }
-      e.items.push({
-        text: 'Edit ROU Asset',
-        icon: 'fa fa-pencil fa-fw blueicon',
-        visible:
-          e?.row?.data?.isPublished &&
-          this.showEditIcon &&
-          e.row.data.measureEvent !== 'Impairment' &&
-          (e.row.data.classificationID === 2 ||
-            e.row.data.classificationID === 3 ||
-            e.row.data.classificationID === 4),
-        value: e.row.data.leaseRecognitionScheduleID,
-        onItemClick: () => {
-          const ROUAssetData = {
-            portfolioSettings: this.portfolioSettings,
-            classificationID: e.row.data.classificationID,
-            scheduleId: e.row.data.leaseRecognitionScheduleID,
-            dateFormat: this.dateFormat,
-            rouAssetMethodID: e.row.data.rouAssetMethodID,
-            rouAssetObtainedMethod: e.row.data.rouAssetObtainedMethod,
-            rouAssetObtainedAmount: e.row.data.rouAssetObtainedAmount,
-            rouAssetObtainedDate: e.row.data.rouAssetObtainedDate,
-            beginDate: e.row.data.beginDate,
-            endDate: e.row.data.endDate,
-            measureEvent: e.row.data.measureEvent,
-            openingAssetBalance: e.row.data.openingAssetBalance,
-            systemAssetAdjustment: e.row.data.systemAssetAdjustment,
-            manualAssetAdjustment: e.row.data.manualAssetAdjustment,
-            assetAdjustmentAmount: e.row.data.adjustmentAmount,
-            rouAssetPriorAmount: this.rouAssetPriorAmount,
-          };
-
-          const dialogRef: MatDialogRef<any, any> = this.dialog.open(
-            EditRouAssetComponent,
-            {
-              disableClose: true,
-              height: 'auto',
-              width: '700px',
-              maxWidth: '1100px',
-              data: {
-                eventRoutAssetData: ROUAssetData,
-              },
-            }
-          );
-
-          this.subscription.add(
-            dialogRef
-              .afterClosed()
-              .pipe(filter((res) => !!res))
-              .subscribe((saveROUAssetObtained) => {
-                if (saveROUAssetObtained.success) {
-                  this.toastService.show(
-                    'ROU Asset Obtained was saved successfully.',
-                    'Save ROU Asset Obtained',
-                    ToastState.SUCCESS
-                  );
-                  this.eventsGridSetup(this.masterScheduleID);
-                  this.eventScheduleSelectedEvent.emit([
-                    e.data,
-                    this.gridsState,
-                  ]);
-                }
-              })
-          );
-        },
-      });
+      e.items.push(editRouAsset);
 
       if (
         this.userHasDeleteAccountingSchedulesModuleRight ||
@@ -897,6 +848,7 @@ export class EventsDetailSectionComponent
       state: {
         data: rowData,
         measureEvent: measureEvent,
+        priorEventBeginDate: new Date(rowData.beginDate),
         priorEventEndDate: new Date(this.priorEventEndDate),
       },
       queryParams: queryParams,
@@ -978,9 +930,6 @@ export class EventsDetailSectionComponent
   private setLeaseSessionStore(clear?: boolean) {
     if (clear) {
       this.storageService.deleteData('accounting_summary');
-      if (this.isAccountingEventEmpty) {
-        this.eventsDataGrid.instance.option('noDataText', '');
-      }
       return;
     }
     this.storageService.saveSyncedSessionData(
@@ -1015,8 +964,17 @@ export class EventsDetailSectionComponent
             this.gridDataSource = response.data.filter(
               (eventItem) => eventItem.isPublished
             );
+
+            // Check if masterScheduleID exists in session storage. If it does, load the session data; otherwise, load data from accountingEventsDropdown.
+            const doesMasterScheduleExistInSession = this.gridDataSource.some(
+              (item) => item.masterScheduleID === sessionLease?.gridBoxValue
+            );
+
             // leaseAbstractID was found from the sessionStorage
-            if (sessionLease?.leaseAbstractID === leaseAbstractID) {
+            if (
+              sessionLease?.leaseAbstractID === leaseAbstractID &&
+              doesMasterScheduleExistInSession
+            ) {
               const dataSource = response.data.filter(
                 // Load the data source that has the right gridBoxValue
                 (eventItem) =>
@@ -1054,6 +1012,10 @@ export class EventsDetailSectionComponent
             );
           } else if (response.data.length === 0) {
             this.isAccountingEventEmpty = true;
+            this.eventsDataGrid.instance.option(
+              'noDataText',
+              'No Accounting Events, Click Add to Add a New Event.'
+            );
             this.emitDataChanged();
           }
         })
@@ -1090,22 +1052,19 @@ export class EventsDetailSectionComponent
                 this.emitDataChanged();
               }
             }
-            this.accountingSummaryService.successNotify(
-              'Schedule deleted. ' +
-                e.row.data.leaseRecognitionScheduleID +
-                '|' +
-                e.row.data.jeStatus +
-                ' deleted'
+            this.addEditScheduleService.showToast(
+              'Delete Accounting Event',
+              'Accounting event deleted successfully.',
+              'success',
+              false
             );
             this.getEventsDropDownData();
           } else {
-            this.accountingSummaryService.errorNotify(
-              'Schedule deletion has failed. ' +
-                data.statusCode.message +
-                ' ' +
-                e.row.data.leaseRecognitionScheduleID +
-                '|' +
-                e.row.data.jeStatus
+            this.addEditScheduleService.showToast(
+              'Delete Accounting Event',
+              'An error occurred while deleting the accounting event.',
+              'error',
+              false
             );
           }
           this.eventsDataGrid.instance.endCustomLoading();

@@ -15,6 +15,7 @@
         <crem-button
           type="secondary"
           [id]="etlService.getId(componentName, 'import-data', 'button')"
+          (click)="importData(); $event.preventDefault()"
         >
           <span id="importData">Import Data</span>
         </crem-button>

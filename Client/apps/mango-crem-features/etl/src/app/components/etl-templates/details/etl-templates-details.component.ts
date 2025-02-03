@@ -1497,6 +1497,10 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
       name: 'Imports',
       id: 1,
       category: null,
+      categoryHasFlyOutMenu: false,
+      categoryLinkUrl: null,
+      categorySpaUrl: null,
+      categorySpaQueryParameters: '',
       sortOrder: 1,
       linkUrl: '',
       moduleID: 6,
@@ -1507,12 +1511,17 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
       spaUrl: '/crem/admin/etl/imports',
       spaQueryParameters: '',
       isCommon: false,
+      subChildLevelNavLinks: null,
     };
 
     const customLeftNav1: SharedLeftNavLink = {
       name: 'Details',
       id: 2,
       category: 'Templates',
+      categoryHasFlyOutMenu: false,
+      categoryLinkUrl: null,
+      categorySpaUrl: null,
+      categorySpaQueryParameters: '',
       sortOrder: 2,
       linkUrl: '',
       moduleID: 6,
@@ -1523,11 +1532,16 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
       spaUrl: '/crem/admin/etl/templates/details/' + this.templateId,
       spaQueryParameters: '',
       isCommon: false,
+      subChildLevelNavLinks: null,
     };
     const customLeftNav2: SharedLeftNavLink = {
       name: 'View History',
       id: 3,
       category: 'Templates',
+      categoryHasFlyOutMenu: false,
+      categoryLinkUrl: null,
+      categorySpaUrl: null,
+      categorySpaQueryParameters: '',
       sortOrder: 3,
       linkUrl: '',
       moduleID: 6,
@@ -1538,6 +1552,7 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
       spaUrl: '/crem/admin/etl/templates/history/' + this.templateId,
       spaQueryParameters: '',
       isCommon: false,
+      subChildLevelNavLinks: null,
     };
 
     return [customLeftNav, customLeftNav1, customLeftNav2];

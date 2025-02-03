@@ -1,7 +1,6 @@
 @use 'styles' as *;
 
 :host::ng-deep {
-
   mat-card {
     @include costar(box-shadow, none);
     @include costar(border, gray04);
@@ -55,138 +54,138 @@
   .customHeader {
     display: flex;
     justify-content: space-around;
-    align-items: center; 
+    align-items: center;
   }
 
-  .customHeader>div:first-child {
+  .customHeader > div:first-child {
+    display: flex;
     margin-right: 8px;
+    @include costar(gap, 3);
   }
-
 }
 
 // todo: remove/fix this 'crem-card' redundant selector,
 // The below code will not work work unless manually imported
 crem-card {
   .mat-mdc-card.cremCard {
-      display: flex;
-      flex-direction: column;
-      min-width: 100%;
-      width: 100%;
-      min-height: 254px;
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    width: 100%;
+    min-height: 254px;
 
-      .mat-card-header.mat-card-header {
-        padding: 0px !important;
-        @include costar(border-bottom, gray04);
-        @include costar(color, gray01);
-        justify-content: space-between !important;
-        align-items: center;
+    .mat-card-header.mat-card-header {
+      padding: 0px !important;
+      @include costar(border-bottom, gray04);
+      @include costar(color, gray01);
+      justify-content: space-between !important;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: 0;
+      height: 40px !important;
+      max-height: 40px !important;
+
+      .mat-card-header-text {
+        margin: 0px !important;
+      }
+
+      .mat-card-title {
+        margin: 8px !important;
+      }
+    }
+
+    crem-icon {
+      @include costar(color, gray03);
+    }
+
+    .mat-card-title.cremCardTitle {
+      .crem-card-title {
         font-size: 18px;
         font-weight: 400;
         letter-spacing: 0;
-        height: 40px !important;
-        max-height: 40px !important;
-
-        .mat-card-header-text {
-          margin: 0px !important;
-        }
-
-        .mat-card-title {
-          margin: 8px !important;
-        }
-      }
-
-      crem-icon {
-        @include costar(color, gray03);
-      }
-
-      .mat-card-title.cremCardTitle {
-        .crem-card-title {
-          font-size: 18px;
-          font-weight: 400;
-          letter-spacing: 0;
-          line-height: 22px;
-        }
+        line-height: 22px;
       }
     }
-
-    .mat-card-content.mat-card-content.cremCardContent {
-      max-height: 280px !important;
-      min-height: 280px !important;
-      overflow: auto;
-      display: flex;
-      justify-content: flex-start;
-      flex-direction: column;
-      align-items: center;
-    }
   }
 
-  mat-card mat-card-header div.cardHeader div.mat-card-header-text{
+  .mat-card-content.mat-card-content.cremCardContent {
+    max-height: 280px !important;
+    min-height: 280px !important;
+    overflow: auto;
     display: flex;
-  }
-
-  .card__content--padding {
-    @include costar(padding, 3, $important: true);
-  }
-  
-  .card__content--no--padding {
-    @include costar(padding, 0, $important: true);
-  }
-
-  .mat-mdc-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
-    display: block;
-    align-items: center;
-    font-family: Helvetica, sans-serif;
-    padding: 0px !important;
-    font-size: 14px;
-    justify-content: center;
-  }
-
-  div.cardContent {
-    margin: -8px -16px !important;
-  }
-
-  crem-card {
-    margin: 10px;
-  }
-
-  div.class {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .card-title {
-    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
     align-items: center;
   }
+}
 
-  .card-layout {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-  }
+mat-card mat-card-header div.cardHeader div.mat-card-header-text {
+  display: flex;
+}
 
-  .counter {
-    margin-right: 8px;
-    padding: 4px 8px 5px 8px;
-    font-size: 14px;
-    border-radius: 6px;
-    @include costar(color, light);
-    @include costar(background-color, gray01);
-    @include costar(font-weight, normal);
-    align-content: center;
-    +h2 {
-      padding-top: 3px;
-    }
-  }
+.card__content--padding {
+  @include costar(padding, 3, $important: true);
+}
 
-  .customHeader {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+.card__content--no--padding {
+  @include costar(padding, 0, $important: true);
+}
+
+.mat-mdc-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
+  display: block;
+  align-items: center;
+  font-family: Helvetica, sans-serif;
+  padding: 0px !important;
+  font-size: 14px;
+  justify-content: center;
+}
+
+div.cardContent {
+  margin: -8px -16px !important;
+}
+
+crem-card {
+  margin: 10px;
+}
+
+div.class {
+  display: flex;
+  flex-direction: row;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+}
+
+.card-layout {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.counter {
+  margin-right: 8px;
+  padding: 4px 8px 5px 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  @include costar(color, light);
+  @include costar(background-color, gray01);
+  @include costar(font-weight, normal);
+  align-content: center;
+  + h2 {
+    padding-top: 3px;
   }
+}
+
+.customHeader {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
 ::ng-deep {
-
   // Allows to style the more button when using the #customDropdownMenu content projection
   button.moreOptionsBtn {
     display: flex;
@@ -197,7 +196,7 @@ crem-card {
   }
 
   .customHeader {
-    margin-right: 27px
+    margin-right: 27px;
   }
 
   .cdk-drag.categories-item {
@@ -222,7 +221,9 @@ dx-select-box.dx-show-invalid-badge.dx-selectbox.dx-textbox.dx-texteditor.dx-dro
   margin-right: 16px;
 }
 
-crem-card .mat-mdc-card#projects_by_type_card .mat-card-content.mat-card-content.cremCardContent {
+crem-card
+  .mat-mdc-card#projects_by_type_card
+  .mat-card-content.mat-card-content.cremCardContent {
   display: flex;
   align-items: stretch;
   padding: 0px !important;
@@ -257,7 +258,9 @@ crem-card .mat-card-header .mat-card-header-text {
   margin: 0 !important;
 }
 
-crem-card .mat-mdc-card.cremCard .mat-card-content.mat-card-content.cremCardContent {
+crem-card
+  .mat-mdc-card.cremCard
+  .mat-card-content.mat-card-content.cremCardContent {
   display: block;
   align-items: center;
   padding: 0px !important;

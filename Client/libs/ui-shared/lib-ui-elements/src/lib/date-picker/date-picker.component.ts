@@ -42,6 +42,7 @@ export class DatePickerComponent
   @Input() showClearButton = false;
   @Input() isRequired = false;
   @Input() inputId: string;
+  @Input() inputWrapperClass?: string = 'dateBoxPopupWrapperClass';
   @Input() min: Date;
   @Input() max: Date;
   @Input() disabled: boolean;
@@ -54,6 +55,7 @@ export class DatePickerComponent
   dateBoxValidator: DxValidatorComponent;
   @ViewChild(DxDateBoxComponent) datePickerComponent: DxDateBoxComponent;
 
+  isCalendarOpen: boolean = false;
   onChange = (value: string) => {};
   onTouch = () => {};
 
@@ -61,6 +63,26 @@ export class DatePickerComponent
     this.onChange(event.value);
     this.onTouch();
     this.changeEvent?.emit(event);
+  }
+
+  onKeyDown(e: any) {
+    if (this.isCalendarOpen) {
+      if (e.event.key === 'Enter') {
+        e.component.close(); //** Clicking on Escape closed the Calander by Default */
+      }
+    } else {
+      if (e.event.key === 'ArrowDown' || e.event.key === 'Enter') {
+        e.component.open();
+      }
+    }
+  }
+
+  onCalendarOpened() {
+    this.isCalendarOpen = true;
+  }
+
+  onCalendarClosed() {
+    this.isCalendarOpen = false;
   }
 
   public validate(): boolean {

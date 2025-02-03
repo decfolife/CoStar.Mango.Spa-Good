@@ -5,6 +5,7 @@ import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
 import { Observable } from 'rxjs';
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { AddBuildingRequest } from 'libs/data-models/lib-data-models/src/lib/models/building.interface';
 
 @Injectable()
 export class FormWizardService extends EndpointService {
@@ -76,7 +77,7 @@ export class FormWizardService extends EndpointService {
     return this.callHttpPost(url, 'AddTransaction', param);
   }
 
-  public addBuilding(building: any): Observable<any> {
+  public addBuilding(building: AddBuildingRequest): Observable<any> {
     let url = `${this.formWizardUrl}FormWizards/AddBuilding`;
     let param = building;
 

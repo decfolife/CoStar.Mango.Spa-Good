@@ -6,9 +6,7 @@ import { Subscription, timer } from 'rxjs';
 
 import { UserSettingsComponent } from '../modal/user-settings/user-settings.component';
 import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
-import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
-import { Asc842QuarterlyDisclosuresComponent } from '../views/asc-842-quarterly-disclosures/asc-842-quarterly-disclosures.component';
-import { MangoDisclosureViewComponent } from '../views/disclosure-dashboard-view/disclosure-dashboard-view.component';
+import { MangoDisclosureViewComponent } from '../view/disclosure-dashboard-view.component';
 import { switchMap, tap } from 'rxjs/operators';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
 import {
@@ -44,28 +42,7 @@ export interface AccountingViewData {
 })
 export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public featureFlagEnabled = false as boolean;
-  public accountingViewData: AccountingViewData[] = [
-    {
-      id: 1,
-      displayValue: 'Workflow and Alerts',
-    },
-    {
-      id: 2,
-      displayValue: 'ASC 842 Annual Disclosures',
-    },
-    {
-      id: 3,
-      displayValue: 'ASC 842 Quarterly Disclosures',
-    },
-    // {
-    //   id: 4,
-    //   displayValue: 'IFRS 16 Annual Disclosures',
-    // },
-    // {
-    //   id: 5,
-    //   displayValue: 'IFRS 16 Quarterly Disclosures',
-    // },
-  ];
+  public accountingViewData: AccountingViewData[] = [];
   public accountingYearData: any[] = [];
   public accountingSegmentData: any[] = [];
   public selectedSegment: number;
@@ -75,7 +52,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   public loading = true as boolean;
   public criteriaSet: number;
   public workflowAlertsCriteriaSet: number;
-  subs: Subscription[] = [];
+  _subs$: Subscription[] = [];
   public hasSegmentDeleteRight: boolean;
   public hasSegmentsAddRight: boolean;
   public hasSegmentsViewRight: boolean;
@@ -97,12 +74,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   // creates a menu for each segment with the right data, e.g. permissions or rights
   bySegmentMoreMenuOptions: byItemMoreMenuOptions;
 
-  @ViewChild(Asc842AnnualDisclosuresComponent) asc842AnnualDisclosuresComponent;
-  @ViewChild(Asc842QuarterlyDisclosuresComponent)
-  Asc842QuarterlyDisclosuresComponent;
   @ViewChild(WorkflowAndAlertsComponent) workflowAndAlertsComponent;
 
   viewConfiguration: DashboardConfig;
+  @ViewChild(MangoDisclosureViewComponent) MangoDisclosureASCAnnually;
+  @ViewChild(MangoDisclosureViewComponent) MangoDisclosureASCQuarterly;
   @ViewChild(MangoDisclosureViewComponent) MangoDisclosureIFRSAnnually;
   @ViewChild(MangoDisclosureViewComponent) MangoDisclosureIFRSQuarterly;
 
@@ -212,11 +188,46 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.selectedYear = new Date().getFullYear();
     this.featureFlagEnabled = true;
-    this.subs.push(
-      // todo: this sequence of subscriptions needs to be inside a pipe or a forkjoin
+
+    this._subs$.push(
+      this.inAppDisclosureService
+        .getAccountingClassifications()
+        .subscribe((r) => {
+          const disclosureOptions = [
+            // TODO: This data structure should fully come prepared from the API
+            {
+              condition: true,
+              data: [{ id: 1, displayValue: 'Workflow and Alerts' }],
+            },
+            {
+              condition: r.data.isASCActive,
+              data: [
+                { id: 2, displayValue: 'ASC 842 Annual Disclosures' },
+                { id: 3, displayValue: 'ASC 842 Quarterly Disclosures' },
+              ],
+            },
+            {
+              condition: r.data.isIFRSActive,
+              data: [
+                { id: 4, displayValue: 'IFRS 16 Annual Disclosures' },
+                { id: 5, displayValue: 'IFRS 16 Quarterly Disclosures' },
+              ],
+            },
+          ];
+          disclosureOptions.forEach((e) => {
+            if (e.condition) {
+              this.accountingViewData.push(...e.data);
+            }
+          });
+          this.loading = false;
+        })
+    );
+
+    this._subs$.push(
       this.inAppDisclosureService
         .getAccountingCriteriaSets()
         .subscribe((result) => {
+          // TODO: Avoid direct subscriptions in nested callbacks, unify subscriptions with forkJoin or combineLatest for related streams
           this.criteriaSet = result.data[0].CriteriaSetID;
 
           if (result.data.length <= 1) {
@@ -252,10 +263,10 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
               this.appliedSegment = this.selectedSegment;
               this.loading = false;
             });
-          this.subs.push(observableItem);
+          this._subs$.push(observableItem);
         })
     );
-    this.subs.push(
+    this._subs$.push(
       this.reportsService.getSegmentsRights(0, 2).subscribe((result) => {
         if (result.data) {
           this.hasSegmentDeleteRight = result.data.securityTypeID >= 5;
@@ -265,7 +276,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.subs.push(
+    this._subs$.push(
       this.facade.contactRecord$.subscribe((record) => {
         const selectedCurrencyID = record.preferences?.contactCurrency;
         this.userService.currencyMappingTable$.subscribe(
@@ -284,7 +295,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
       .SetDefault(segmentID, criteriaSetID)
       .subscribe(
         (result) => {
-          if (result.data != -1) {
+          if (result.data !== -1) {
             this.getSegments(this.selectedView, false); //refresh
           } else {
             console.error('Failed setting the default segment', result.data);
@@ -293,7 +304,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         (error) => console.error(error)
       );
 
-    this.subs.push(setDefault$);
+    this._subs$.push(setDefault$);
   }
 
   prepareSegmentDropdown(data: any): any {
@@ -314,75 +325,70 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
     });
     visibleToMeIndex &&
       dropdownData.unshift(dropdownData.splice(visibleToMeIndex, 1)[0]); // Move default 'Visible to Me' to index 0, if visibleToMeIndex exists
+
     return dropdownData;
   }
 
   async onAccountingViewChange(data: DropdownSelection[]) {
     this.exportingReport = false;
-    switch (data[0].id) {
-      default:
-      case 1:
-      case 2:
-      case 3:
-      case 4: {
-        const { dashboardIFRSAnnually } = await import(
-          '@accounting-dashboard/shared/configurations/dashboard-view.config'
-        );
-        this.viewConfiguration = dashboardIFRSAnnually;
-        this.getSegments(data[0].id, true);
-        break;
-      }
-      case 5: {
-        const { dashboardIFRSQuarterly } = await import(
-          '@accounting-dashboard/shared/configurations/dashboard-view.config'
-        );
-        this.viewConfiguration = dashboardIFRSQuarterly;
-        this.getSegments(data[0].id, true);
-        break;
-      }
-    }
+    this.getSegments(data[0].id, true);
   }
 
   public getSegments(view: number, refresh: boolean) {
     this.accountingSegmentData = [];
 
-    this.inAppDisclosureService
-      .getAccountingCriteriaSets()
-      .pipe(
-        switchMap((r) => {
-          switch (view) {
-            case 1: // Workflow and Alerts
-              this.criteriaSet = r.data[1].CriteriaSetID;
-              break;
-            default: // ASC 842 Annual Disclosures
-              this.criteriaSet = r.data[0].CriteriaSetID;
-              break;
-          }
-          return this.inAppDisclosureService.getSegments(
-            this.criteriaSet,
-            false
-          );
-        }),
-        tap((r) => {
-          this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
-          this.bySegmentMoreMenuOptions = ModuleDropdownUtil.prepareMoreMenu(
-            this.accountingSegmentData,
-            this.itemMenuInnerOptions
-          );
-          if (refresh && !this.isSegmentEdited) {
-            this.selectedSegment =
-              this.accountingSegmentData.find((s) => s.default === 1)
-                ?.segmentID || this.accountingSegmentData[0].segmentID;
-            this.appliedSegment = this.selectedSegment;
-          }
-          if (this.isSegmentEdited) {
-            this.selectedSegment = this.editingSegment;
-          }
-          this.selectedView = view;
-          this.loading = false;
-        })
-      )
-      .subscribe();
+    this._subs$.push(
+      this.inAppDisclosureService
+        .getAccountingCriteriaSets()
+        .pipe(
+          switchMap((r) => {
+            switch (view) {
+              case 1: {
+                // Workflow and Alerts
+                this.criteriaSet = r.data[1].CriteriaSetID;
+                break;
+              }
+              default: {
+                // Accounting Disclosure Reports
+                this.criteriaSet = r.data[0].CriteriaSetID;
+                break;
+              }
+            }
+            return this.inAppDisclosureService.getSegments(
+              this.criteriaSet,
+              false
+            );
+          }),
+          tap((r) => {
+            this.accountingSegmentData = this.prepareSegmentDropdown(r.data);
+            this.bySegmentMoreMenuOptions = ModuleDropdownUtil.prepareMoreMenu(
+              this.accountingSegmentData,
+              this.itemMenuInnerOptions
+            );
+            switch (true) {
+              case refresh && !this.isSegmentEdited: {
+                this.selectedSegment =
+                  this.accountingSegmentData.find((s) => s.default === 1)
+                    ?.segmentID || this.accountingSegmentData[0].segmentID;
+                this.appliedSegment = this.selectedSegment;
+                break;
+              }
+              case this.isSegmentEdited: {
+                this.selectedSegment = this.editingSegment;
+                break;
+              }
+              default: {
+                this.selectedSegment =
+                  this.accountingSegmentData?.find((s) => s.default === 1)
+                    ?.segmentID || this.accountingSegmentData?.[0].segmentID;
+                break;
+              }
+            }
+            this.selectedView = view;
+          })
+        )
+        .subscribe()
+    );
   }
 
   public onAccountingYearChange(data) {
@@ -401,6 +407,7 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
 
   public apply() {
     this.exportingReport = false;
+    this.appliedSegment = this.selectedSegment;
     switch (this.selectedView) {
       default:
       case 1: {
@@ -408,11 +415,11 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         break;
       }
       case 2: {
-        this.asc842AnnualDisclosuresComponent.refreshCardData();
+        this.MangoDisclosureASCAnnually.refreshCards();
         break;
       }
       case 3: {
-        this.Asc842QuarterlyDisclosuresComponent.refreshCardData();
+        this.MangoDisclosureASCQuarterly.refreshCards();
         break;
       }
       case 4: {
@@ -424,13 +431,12 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    this.appliedSegment = this.selectedSegment;
   }
 
   public export() {
     this.exportingReport = true;
     this.toastService.show(
-      'Report will be emailed to you shortly.',
+      'A link to the report will be emailed to you shortly.',
       undefined,
       ToastState.SUCCESS,
       {
@@ -615,6 +621,19 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach((s) => s.unsubscribe());
+    this.cancelAllRequests();
+  }
+
+  /**
+   * Destroys all active subscriptions
+   *
+   * @return {*}
+   * @memberof DashboardWrapperComponent
+   */
+  public cancelAllRequests(): void {
+    if (!this._subs$) return;
+
+    this._subs$.forEach((s) => s.unsubscribe());
+    this._subs$ = [];
   }
 }

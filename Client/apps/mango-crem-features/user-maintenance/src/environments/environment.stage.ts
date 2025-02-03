@@ -8,7 +8,6 @@ class EnvironmentsCrem {
     reports: '/v06/WebServices/Mango/Reports/Reports.asmx/',
     objectActions: '',
   };
-  isRestful: false;
 }
 
 export const environment = new EnvironmentsCrem();

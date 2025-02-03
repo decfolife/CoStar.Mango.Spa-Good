@@ -5,13 +5,14 @@ crem-icon {
 }
 
 .first-row-div {
-  margin: 0px 5px 5px 0px;
+  margin: 4px 5px 5px 0px;
 }
 
 .second-row-div,
 .third-row-div {
-  margin-left: 10px;
-  margin-bottom: 15px;
+  @include costar(margin-bottom, 4);
+  @include costar(margin-left, 3);
+  @include costar(padding-top, 1);
 }
 
 .second-row-div > dx-scroll-view,
@@ -22,7 +23,7 @@ crem-icon {
 
 .status-pill {
   @include costar(background-color, primary-light);
-  padding: 2px 12px 5px 12px;
+  padding: 5px 12px 6px 12px;
   @include costar(font-weight, medium);
   @include costar(color, light);
 }
@@ -70,4 +71,7 @@ crem-icon {
 
 .wfs-history-btn {
   padding-top: 6px;
+}
+.popup-body {
+  @include costar(padding-top, 4);
 }

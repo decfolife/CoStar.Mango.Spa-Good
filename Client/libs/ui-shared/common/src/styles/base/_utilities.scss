@@ -1,5 +1,5 @@
-@use "../abstracts/variables" as *;
-@use "../abstracts/aliases" as *;
+@use '../abstracts/variables' as *;
+@use '../abstracts/aliases' as *;
 
 // ==========================================================================
 // UTILITY CLASSES
@@ -16,11 +16,21 @@
 @include costar-class-generator(header);
 @include costar-class-generator(font-size);
 @include costar-class-generator(font-style);
-.font-weight-light {@include costar(font-weight, light, $important: true);}
-.font-weight-normal {@include costar(font-weight, normal, $important: true);}
-.font-weight-medium {@include costar(font-weight, medium, $important: true);}
-.font-weight-bold {@include costar(font-weight, bold, $important: true);}
-.font-weight-bolder {@include costar(font-weight, bolder, $important: true);}
+.font-weight-light {
+  @include costar(font-weight, light, $important: true);
+}
+.font-weight-normal {
+  @include costar(font-weight, normal, $important: true);
+}
+.font-weight-medium {
+  @include costar(font-weight, medium, $important: true);
+}
+.font-weight-bold {
+  @include costar(font-weight, bold, $important: true);
+}
+.font-weight-bolder {
+  @include costar(font-weight, bolder, $important: true);
+}
 
 //------------------------------------------------
 //--- BUTTONS
@@ -90,7 +100,7 @@
   -ms-flex-direction: row-reverse !important;
   flex-direction: row-reverse !important;
 }
-.flex-column{
+.flex-column {
   -webkit-box-orient: vertical !important;
   -webkit-box-direction: normal !important;
   -ms-flex-direction: column !important;
@@ -126,8 +136,13 @@
 //------------------------------------------------
 //--- BORDER
 //------------------------------------------------
-.border-none { border: 0 !important; }
-.border { border-width: $border-width !important; border-style: solid !important; }
+.border-none {
+  border: 0 !important;
+}
+.border {
+  border-width: $border-width !important;
+  border-style: solid !important;
+}
 @include costar-class-generator(border-color);
 @include costar-class-generator(border-radius);
 
@@ -139,35 +154,55 @@
 // Accessible and Invisible scroll bar, activates on hover/tab
 .scroll-container {
   mask-image: linear-gradient(to top, transparent, transparent),
-              linear-gradient(to left, transparent 10px, black 10px); // 10px is enough to cover the scrollbar-thumb
+    linear-gradient(to left, transparent 10px, black 10px); // 10px is enough to cover the scrollbar-thumb
   mask-size: 100% 20000px;
   mask-position: left bottom;
   -webkit-mask-image: linear-gradient(to top, transparent, transparent),
-                      linear-gradient(to left, transparent 10px, black 10px);
+    linear-gradient(to left, transparent 10px, black 10px);
   -webkit-mask-size: 100% 20000px;
   -webkit-mask-position: left bottom;
   @include costar(transition, fast);
 
   &.vertical {
-    @include costar-scrollbar($thumb-color: map-get($color, color, gray03), $orientation: vertical);
+    @include costar-scrollbar(
+      $thumb-color: map-get($color, color, gray03),
+      $orientation: vertical
+    );
     &:focus-within,
     &:hover {
       -webkit-mask-image: linear-gradient(to top, transparent, black),
-                          linear-gradient(to left, transparent 10px, black 10px);
+        linear-gradient(to left, transparent 10px, black 10px);
       -webkit-mask-image: linear-gradient(to top, transparent, black),
-                          linear-gradient(to left, transparent 10x, black 10px);
+        linear-gradient(to left, transparent 10x, black 10px);
       -webkit-mask-position: left top;
     }
   }
-  &.horizontal { // TODO: Needs testing
-    @include costar-scrollbar($thumb-color: map-get($color, color, gray03), $orientation: horizontal);
+  &.horizontal {
+    // TODO: Needs testing
+    @include costar-scrollbar(
+      $thumb-color: map-get($color, color, gray03),
+      $orientation: horizontal
+    );
     &:focus-within,
     &:hover {
       -webkit-mask-image: linear-gradient(to top, transparent, black),
-                          linear-gradient(to left, transparent 10px, black 10px);
+        linear-gradient(to left, transparent 10px, black 10px);
       -webkit-mask-image: linear-gradient(to top, transparent, black),
-                          linear-gradient(to left, transparent 10x, black 10px);
+        linear-gradient(to left, transparent 10x, black 10px);
       -webkit-mask-position: left top;
     }
   }
+}
+
+// It hides text, yet allows it to remain visible for screen readers.
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

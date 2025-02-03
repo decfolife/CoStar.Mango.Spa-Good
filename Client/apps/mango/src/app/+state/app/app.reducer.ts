@@ -38,6 +38,7 @@ export interface State extends EntityState<MangoAppEntity> {
   adminFlags: AdminFlags;
   redirectorLinks: RedirectorLink[];
   currentProjectId: number | null;
+  isChangeLossPreventionActive: boolean;
   nav: NavState;
 }
 export interface NavState {
@@ -74,6 +75,7 @@ export const initialState: State = appAdapter.getInitialState({
   adminFlags: null,
   redirectorLinks: null,
   currentProjectId: null,
+  isChangeLossPreventionActive: false,
   nav: {
     navigationLinks: [],
     activeLink: null,
@@ -104,6 +106,11 @@ const appReducer = createReducer(
   on(AppActions.setLoading, (state, { display }) => ({
     ...state,
     loaded: !display,
+    error: null,
+  })),
+  on(AppActions.setChangeLossPreventionIsActive, (state, { active }) => ({
+    ...state,
+    isChangeLossPreventionActive: active,
     error: null,
   })),
   on(AppActions.setAuthenticatedUser, (state, { user }) => ({

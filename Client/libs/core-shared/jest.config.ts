@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'core-shared',
   preset: '../../jest.preset.js',
@@ -20,8 +19,5 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
 };

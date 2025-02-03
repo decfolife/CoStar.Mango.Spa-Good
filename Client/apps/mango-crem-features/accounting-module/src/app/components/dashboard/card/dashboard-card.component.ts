@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable rxjs-angular/prefer-composition */
-
 import {
   Component,
   EventEmitter,
@@ -11,18 +8,19 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
-import notify from 'devextreme/ui/notify';
-
 import { environment } from '../../../../../../../mango/src/environments/environment.local';
-import { SimpleGridComponent } from '@mango/ui-shared/lib-ui-elements';
+import {
+  SimpleGridComponent,
+  CremToastService,
+} from '@mango/ui-shared/lib-ui-elements';
 import { CremPivotTableComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/crem-pivot-table/crem-pivot-table.component';
-
 import { NgStateObject } from '../../../shared/models/app-state.model';
 import { DataService } from '../../../services/data.service';
 import { DashboardService } from '../../../services/dashboard.service';
 import { ColumnLimitComponent } from '../modal/column-limit/column-limit.component';
 import { ColumnArray } from '../../../shared/models/dashboard-model';
 import DataSource from 'devextreme/data/data_source';
+import { ToastState } from '@mango/data-models/lib-data-models';
 
 interface ISummationTypeConfig {
   showSummationTypeConfig: boolean;
@@ -61,6 +59,7 @@ export class DashboardCardComponent implements OnInit {
   @Input() dsExportFileName: string;
   @Input() canSaveDefault = false;
   @Input() pendoId: string;
+  @Input() selectedSegmentId: number;
   @Output() cardMove: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('CremPivotTable')
@@ -74,7 +73,8 @@ export class DashboardCardComponent implements OnInit {
   constructor(
     private dataService: DataService,
     private dialog: MatDialog,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private toastService: CremToastService
   ) {
     this.summationTypeConfig = {
       showSummationTypeConfig: false,
@@ -90,7 +90,6 @@ export class DashboardCardComponent implements OnInit {
       this.cardData.cardSource === 'mangodashboard'
         ? this.cardData.id
         : this.cardData.mangoDashboardCardId;
-
     this.dataService.cardNeedUpdate$.subscribe((item) => {
       if (item.key === this.config.apiEndPoint || item.key === 'everything') {
         this.needUpdate = item.needUpdate;
@@ -105,6 +104,10 @@ export class DashboardCardComponent implements OnInit {
 
     this.chartVisible = this.config.enableChart ?? true;
     this.exportDataSourceFileName = this.dsExportFileName + this.config.title;
+
+    this.config.showMenuToggleFullWidth =
+      this.config.showMenuToggleFullWidth || true;
+    this.config.fullWidth = this.config.fullWidth || true;
   }
 
   public async setCardData(updateObj) {
@@ -271,45 +274,38 @@ export class DashboardCardComponent implements OnInit {
     this.exportData = new DataSource({
       key: this.config.dataGridKeyExpr,
       load: () => this.config.pivotDataSource.store,
-      // onChanged: _ => this.exportNotification('success'),
-      // onLoadError: _ => this.exportNotification('error'),
+      onChanged: (_) => this.exportNotification('success'),
+      onLoadError: (_) => this.exportNotification('error'),
     });
     setTimeout(() => {
       this.simpleGrid.exportGrid();
     }, 100);
   }
 
-  exportNotification(type: 'success' | 'error', message?: string) {
+  exportNotification(type: 'success' | 'error') {
     switch (type) {
       case 'success': {
-        notify({
-          message: message ?? 'Report will be exported shortly.',
-          type: 'success',
-          displayTime: 95000,
-          position: {
-            my: 'bottom right',
-            at: 'bottom right',
-            offset: '-16 -16',
-          },
-          maxWidth: '500px',
-          closeOnClick: false,
-        });
+        this.toastService.show(
+          'Report exported successfully.',
+          '',
+          ToastState.SUCCESS,
+          {
+            position: 'bottom right',
+            maxWidth: '350px',
+          }
+        );
         break;
       }
       case 'error': {
-        notify({
-          message:
-            message ?? 'Error encountered during export. Please try again.',
-          type: 'error',
-          displayTime: 5000,
-          position: {
-            my: 'bottom right',
-            at: 'bottom right',
-            offset: '-16 -16',
-          },
-          maxWidth: '500px',
-          closeOnClick: true,
-        });
+        this.toastService.show(
+          'Error encountered during export. Please try again.',
+          '',
+          ToastState.ERROR,
+          {
+            position: 'bottom right',
+            maxWidth: '350px',
+          }
+        );
         break;
       }
     }
@@ -381,6 +377,7 @@ export class DashboardCardComponent implements OnInit {
       this.dataService.updateColumnData(this.config.apiEndPoint, {
         dataSourceKey: this.config.apiEndPoint,
         columns: fields,
+        segmentID: this.selectedSegmentId,
       });
     } else if (!this.currentFields) {
       this.isFirstLoad = false;

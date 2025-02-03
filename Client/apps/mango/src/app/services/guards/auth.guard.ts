@@ -56,6 +56,7 @@ export class AuthGuard implements CanActivate {
             }
           }),
           catchError((error) => {
+            // There was probably NO existing session for the user and we received a 401. Therefore, we need to login
             this.facade.logout(true);
             return of(false);
           })

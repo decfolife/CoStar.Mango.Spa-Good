@@ -258,6 +258,10 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
     });
   }
 
+  importData() {
+    this.router.navigate(['/v06/Admin/ClientSetup/ImportData.aspx']);
+  }
+
   editTemplate(e) {
     this.router.navigate(
       ['/crem/admin/etl/templates/details', e.data.templateId],

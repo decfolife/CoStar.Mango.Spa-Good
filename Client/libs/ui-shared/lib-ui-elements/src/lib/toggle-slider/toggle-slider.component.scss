@@ -65,8 +65,8 @@
   transition: 0.4s;
 
   &.disabled {
-    @include costar(background-color, gray05);
-    cursor: unset;
+    @include costar(background-color, gray04);
+    cursor: not-allowed;
   }
 
   &:before {

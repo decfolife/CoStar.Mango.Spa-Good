@@ -63,7 +63,7 @@
         caret-color: var(--costar-color-dark);
       }
       .item-secondary {
-        @include costar(color, gray03);
+        @include costar(color, gray02);
       }
       dx-text-box {
         // Don't align center or end when 'allowSearch' is true
@@ -182,7 +182,7 @@
   }
 
   &-secondary {
-    @include costar(color, gray03);
+    @include costar(color, gray02);
   }
 
   &-name {

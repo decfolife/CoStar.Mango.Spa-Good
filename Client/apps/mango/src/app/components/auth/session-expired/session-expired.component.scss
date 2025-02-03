@@ -1,0 +1,30 @@
+#company-logo {
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+    height: 100px;
+    text-align: center;
+
+    #title {
+      font-size: 20px;
+      letter-spacing: 0.6px;
+      margin-bottom: 40px;
+    }
+
+    #btn-wrapper {
+      margin-top: 20px;
+    }
+  }
+}

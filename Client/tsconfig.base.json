@@ -14,6 +14,7 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "allowSyntheticDefaultImports": true, // Needed for LogRocket
     "baseUrl": ".",
     // "composite": true,
     "types": ["jest", "node"],
@@ -62,6 +63,21 @@
       "@mango/core-shared/lib-core-shared": ["libs/core-shared/src/index.ts"],
       "@mango/data-models/lib-data-models": [
         "libs/data-models/lib-data-models/src/index.ts"
+      ],
+      "@mango/data-models/constants": [
+        "libs/data-models/lib-data-models/src/lib/constants/index.ts"
+      ],
+      "@mango/data-models/mocks": [
+        "libs/data-models/lib-data-models/src/lib/mocks/index.ts"
+      ],
+      "@mango/data-models/models": [
+        "libs/data-models/lib-data-models/src/lib/models/index.ts"
+      ],
+      "@mango/data-models/enums": [
+        "libs/data-models/lib-data-models/src/lib/enums/index.ts"
+      ],
+      "@mango/data-models/types": [
+        "libs/data-models/lib-data-models/src/lib/types/index.ts"
       ],
       "@mango/forms-shared": ["libs/forms-shared/src/index.ts"],
       "@mango/mango-nx-plugin": ["libs/mango-nx-plugin/src/index.ts"],

@@ -69,7 +69,7 @@ export interface AccountingEvent {
   previousAssetBalance: number;
   systemAssetAdjustment: number;
   manualAssetAdjustment: number;
-  adjustmentAmount: number;
+  adjustment: number;
   levelExpense: number;
   functionalLevelExpense: number;
   directCosts: number;
@@ -85,8 +85,8 @@ export interface AccountingEvent {
   terminationFee: number;
   functionalTerminationFee: number | null;
   // assetAdjustmentAmount: number;
-  // straightLineExpense: number;
-  // straightLineExpenseDaily: number;
+  straightLineExpense: number;
+  straightLineExpenseDaily: number;
   assetAmortization: number;
   functionalAssetAmortization: number;
 }
@@ -104,7 +104,7 @@ export interface ProperPreviousAmortizationPeriod {
   month: number;
   displayPeriod: string;
   cashApAmount: number;
-  adjustmentAmount: number | null;
+  adjustment: number | null;
   amortizationScheduleKey: number | null;
   deferredLeaseExpense: number | null;
   deferredLeaseExpenseBalance: number | null;

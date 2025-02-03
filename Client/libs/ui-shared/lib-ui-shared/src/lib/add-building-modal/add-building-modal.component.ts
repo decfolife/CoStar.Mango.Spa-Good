@@ -1,3 +1,4 @@
+import { AddBuildingRequest } from '@mango/data-models/lib-data-models';
 import {
   AfterViewInit,
   Component,
@@ -25,6 +26,7 @@ import {
   ToastState,
   ObjectType,
   RequestType,
+  VALIDATION_ERROR,
 } from '@mango/data-models/lib-data-models';
 import { DataService } from '@mango/core-shared';
 
@@ -257,8 +259,9 @@ export class AddBuildingModalComponent
     });
   }
 
-  private getBuildingFromFormData() {
+  private getBuildingFromFormData(): AddBuildingRequest {
     const form = this.addBuildingFormGroup;
+
     return {
       buildingAddress: form.get('buildingAddress').value,
       buildingCity: form.get('buildingCity').value,
@@ -270,7 +273,9 @@ export class AddBuildingModalComponent
         : form.get('buildingState').value,
       buildingZipCode: form.get('buildingZipCode').value,
       objectTypeTypeID: form.get('selectedTemplate').value,
-      portfolioSubGroupID: form.get('selectedSubGroup').value,
+      portfolioSubGroupID: form.get('selectedSubGroup').value
+        ? form.get('selectedSubGroup').value
+        : null,
       tenantID: form.get('selectedHierarchy').value
         ? Number(form.get('selectedHierarchy').value)
         : null,
@@ -308,6 +313,11 @@ export class AddBuildingModalComponent
           }
         })
       );
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 
@@ -342,6 +352,11 @@ export class AddBuildingModalComponent
           }
         })
       );
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 
@@ -382,6 +397,11 @@ export class AddBuildingModalComponent
           }
         })
       );
+    } else {
+      this.toastService.show(VALIDATION_ERROR, '', ToastState.ERROR, {
+        position: 'bottom right',
+        maxWidth: '350px',
+      });
     }
   }
 

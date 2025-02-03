@@ -217,6 +217,15 @@ export class AddEditTeamComponent implements OnInit {
         },
       };
     }
+
+    if (e.dataField === 'role') {
+      e.editorOptions.onOpened = (args: any) => {
+        const overlayWrapper = document.querySelector('.dx-overlay-wrapper');
+        if (overlayWrapper) {
+          overlayWrapper.classList.add('aetRoleCustomClass');
+        }
+      };
+    }
   }
 
   emailtoggle(member, e) {

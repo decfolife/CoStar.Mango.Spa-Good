@@ -13,6 +13,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DataService } from '@mango/core-shared';
 import {
+  LEASE_WIZARD_OTID,
   ObjectType,
   RequestType,
   ToastState,
@@ -76,18 +77,21 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   selectedPremise: any = null;
   selectedPremiseType: any = null;
   selectedAccountingType: any;
+  selectedLeaseType: any;
   selectedParentLease: any;
   selectedCurrency: number;
+  selectedCurrencyIndex: number = 0;
   selectedMeasurement: any;
-  leaseType: any;
-  beginDate: any;
-  endDate: any;
+  selectedMeasurementIndex: number = 0;
+  leaseType: any = null;
+  beginDate: any = null;
+  endDate: any = null;
   public premiseObjectName: string = '';
   public leaseObjectName: string = '';
   public buildingObjectName: string;
   public addNewPremise: boolean = false;
   public newPremiseName: string = '';
-  public addSubLeaseWizard: string;
+  public addSubLeaseWizard: boolean;
   addLeaseFormGroup: FormGroup;
   saveClicked: boolean;
   private redirectorLinks: any[] = null;
@@ -135,8 +139,8 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       if (response?.data?.isDatesEU === true) {
         this.dateFormat = 'dd.MM.yyyy';
       }
-      this.selectedMeasurement = response?.data?.unitOfMeasureId;
-      this.selectedCurrency = response?.data?.currencyId;
+      this.selectedMeasurementIndex = response?.data?.unitOfMeasureId;
+      this.selectedCurrencyIndex = response?.data?.currencyId;
     });
 
     // this.facade.contactRecord$.subscribe((contact) => {
@@ -162,10 +166,12 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
 
     if (!this.data.objectTypeName) {
       this.subscriptions.add(
-        this.dashboardService.getObjectTypeNames([3]).subscribe((result) => {
-          this.data.objectTypeName = result?.data?.[0]?.objectTypeName;
-          this.buildModalTitle();
-        })
+        this.dashboardService
+          .getObjectTypeNames([LEASE_WIZARD_OTID])
+          .subscribe((result) => {
+            this.data.objectTypeName = result?.data?.[0]?.objectTypeName;
+            this.buildModalTitle();
+          })
       );
     } else {
       this.buildModalTitle();
@@ -244,7 +250,6 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
             .toPromise();
 
           if (!result.success) {
-            console.log(result.clientErrorMessage);
             this.toastService.show(
               'An error has occurred. Please try again.',
               'Error',
@@ -293,8 +298,8 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       currencyTypeList: new FormControl('', [Validators.required]),
       measurement: new FormControl('', [Validators.required]),
       leaseTemplate: new FormControl('', [Validators.required]),
-      beginDate: new FormControl(null, [Validators.required]),
-      endDate: new FormControl(null, [Validators.required]),
+      beginDate: new FormControl(null),
+      endDate: new FormControl(null),
     });
   }
 
@@ -319,6 +324,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       .getRenderSelect('', RENDER_SELECT_LEASE_TYPES_ID)
       .subscribe((result) => {
         this.leaseTypeItems = result.data;
+        this.selectedLeaseType = result.data[0].leaseTypeID;
       });
   }
 
@@ -326,7 +332,16 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
     this.formWizardService
       .getRenderSelect(0, RENDER_SELECT_ACCOUNTING_TYPE_ID)
       .subscribe((result) => {
-        this.accountingTypeItems = result.data;
+        let filteredData = result.data.filter(
+          (item) =>
+            item !== null &&
+            item !== undefined &&
+            item !== '' &&
+            item.accountType !== null &&
+            /\S/g.test(item.accountType)
+        );
+        this.accountingTypeItems = filteredData;
+        this.selectedAccountingType = filteredData[0].accountType;
       });
   }
 
@@ -335,6 +350,9 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       .getRenderSelect(0, RENDER_SELECT_CURRENCY_ID)
       .subscribe((result) => {
         this.currencyItems = result.data;
+        if (this.selectedCurrencyIndex == 0 && result?.data?.length > 0)
+          this.selectedCurrencyIndex = result.data[0].exchangeRateID;
+        this.selectedCurrency = this.selectedCurrencyIndex;
       });
   }
 
@@ -343,6 +361,9 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       .getRenderSelect(0, RENDER_SELECT_MEASUREMENT_ID)
       .subscribe((result) => {
         this.measurementUnitItems = result.data;
+        if (this.selectedMeasurementIndex == 0 && result?.data?.length > 0)
+          this.selectedMeasurementIndex = result.data[0].measureUnitsID;
+        this.selectedMeasurement = this.selectedMeasurementIndex;
       });
   }
 
@@ -359,12 +380,12 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
     this.selectedPremise = e[0].premiseID;
     if (e[0].premiseID == 0) {
       this.addNewPremise = true;
-      this.addLeaseFormGroup
-        .get('newPremiseName')
-        .setValidators([Validators.required]);
       this.getPremiseTypes();
     } else {
       this.addLeaseFormGroup.get('newPremiseName').setValidators(null);
+      this.addLeaseFormGroup.get('newPremiseName').updateValueAndValidity();
+      this.addLeaseFormGroup.get('premiseType').setValidators(null);
+      this.addLeaseFormGroup.get('premiseType').updateValueAndValidity();
     }
   }
 
@@ -411,20 +432,21 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
         .subscribe((result) => {
           this.premiseDropdownItems = result.data;
           this.premiseDropdownItems.unshift({
-            PremiseID: 0,
-            PremiseSuite: '[add new]',
+            premiseID: 0,
+            premiseName: 'Add New',
           });
           this.getLeaseTemplates();
         });
     }
+    this.loadParentLeases();
   }
 
   onBeginDateChanged(e: any) {
-    this.beginDate = e;
+    this.beginDate = e.value;
   }
 
   onEndDateChanged(e: any) {
-    this.endDate = e;
+    this.endDate = e.value;
   }
 
   onAccountingTypeChanged(e: any) {
@@ -440,7 +462,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
     if (
       (this.selectedAccountingType === 'AR' ||
         this.selectedAccountingType == 'IC') &&
-      this.selectedBuilding !== '' &&
+      this.selectedBuilding &&
       this.OTID != 3
     ) {
       //DisplayNewItems($("#selParentLeaseID")[0], $('#selBuildingID').val(), '112', '', '', 0, 0, 1, 'Not Applicable');
@@ -449,9 +471,10 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
         .subscribe((result) => {
           this.parentLeaseItems = result.data;
           this.parentLeaseItems.unshift({
-            LeaseAbstractID: 0,
-            LeaseName: '[not applicable]',
+            leaseAbstractID: 0,
+            leaseName: 'Not Applicable',
           });
+          this.selectedParentLease = this.parentLeaseItems[0].leaseAbstractID;
         });
     } else if (
       this.OTID == 3 &&
@@ -463,17 +486,19 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
         .subscribe((result) => {
           this.parentLeaseItems = result.data;
           this.parentLeaseItems.unshift({
-            LeaseAbstractID: 0,
-            LeaseName: '[not applicable]',
+            leaseAbstractID: 0,
+            leaseName: 'Not Applicable',
           });
+          this.selectedParentLease = this.parentLeaseItems[0].leaseAbstractID;
         });
     } else {
       this.formWizardService.getRenderSelect(-1, 112).subscribe((result) => {
         this.parentLeaseItems = result.data;
         this.parentLeaseItems.unshift({
-          LeaseAbstractID: 0,
-          LeaseName: '[not applicable]',
+          leaseAbstractID: 0,
+          leaseName: 'Not Applicable',
         });
+        this.selectedParentLease = this.parentLeaseItems[0].leaseAbstractID;
       });
     }
   }
@@ -499,6 +524,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       this.selectedMeasurement = null;
     } else {
       this.selectedMeasurement = e[0].measureUnitsID;
+      this.portfolioDropdown.selectBox.instance.focus();
     }
   }
 
@@ -532,14 +558,14 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
     return {
       PremiseID: form.get('premise').value,
       TenantName: form.get('tenantName').value,
-      LeaseTypeID: form.get('leaseType').value,
+      LeaseTypeID: form.get('leaseType').value[0],
       ObjectTypeTypeID: this.selectedTemplate,
       ParentLeaseAbstractID: this.selectedParentLease,
-      BeginDate: form.get('beginDate').value,
-      EndDate: form.get('endDate').value,
+      BeginDate: this.beginDate,
+      EndDate: this.endDate,
       AccountingType: this.selectedAccountingType,
       ExchangeRateID: form.get('currencyTypeList').value[0],
-      MeasureUnitsID: this.selectedMeasurement,
+      MeasureUnitID: this.selectedMeasurement,
     };
   }
 

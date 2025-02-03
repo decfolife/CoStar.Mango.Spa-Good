@@ -1,0 +1,17 @@
+@use 'styles' as *;
+
+:host ::ng-deep .modalFooter {
+  .edit-rout-asset-footer {
+    display: inline-block;
+    flex-direction: row-reverse;
+
+    crem-button {
+      @include costar(padding, 1);
+    }
+  }
+}
+
+crem-button {
+  display: inline-block;
+  @include costar(margin-left, 2);
+}

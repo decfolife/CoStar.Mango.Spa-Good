@@ -18,6 +18,8 @@ public class Constants
         public const string ClientKey = "clientKey";
         public const string SecurityLevel = "securityLevel";
         public const string IsAutoProvisioned = "isAutoProvisioned";
+        public const string HasMultipleSites = "hasMultipleSites";
+        public const string IsServiceAccount = "isServiceAccount";
         public const string AccessToken = "token";
         //public const string SessionId = "sessionId";
 

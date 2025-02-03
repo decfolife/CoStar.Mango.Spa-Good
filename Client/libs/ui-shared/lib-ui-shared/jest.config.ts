@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'ui-shared-lib-ui-shared',
   preset: '../../../jest.preset.js',
@@ -21,5 +20,5 @@ export default {
     ],
   },
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  coverageReporters: ['text', 'text-summary']
+  coverageReporters: ['text', 'text-summary'],
 };

@@ -1,0 +1,151 @@
+<crem-modal
+  modalId="add_premise_modal"
+  modalTitleId="add_premise_modal_Title"
+  modalTitle="Add {{ premiseObjectName }}"
+  closeIconVisible="true"
+  [customFooter]="true"
+>
+  <div modalContent class="body-content">
+    <div modalContent id="addpremiseModal-content">
+      <form
+        crem-form
+        id="new-premise-form"
+        layout="vertical"
+        [formGroup]="addPremiseFormGroup"
+        class="add-Premise-form"
+      >
+        <crem-form-item id="aet-Portfolio-container" class="container">
+          <crem-form-label [required]="true">Portfolio</crem-form-label>
+          <crem-dropdown
+            id="premisePortfolioId"
+            #premisePortfolioId
+            dropDownContainerCustomClass="premisePortfolioDropDown"
+            [dataSource]="portfolioDropdownItem"
+            [showClearButton]="true"
+            [customRequireValidation]="false"
+            [showColumnHeader]="false"
+            displayExpr="companyName"
+            valueExpr="companyID"
+            [useSelectBox]="true"
+            required="true"
+            hoverText="Select Portfolio"
+            (selectedItems)="onPortFolioValueChanged($event)"
+            [isDisabled]="loading"
+            [showDefaultValidationTooltip]="true"
+            formControlName="portfolio"
+          >
+          </crem-dropdown>
+        </crem-form-item>
+        <crem-form-item id="aet-building-container" class="container">
+          <crem-form-label [required]="true">{{
+            buildingObjectName
+          }}</crem-form-label>
+          <crem-dropdown
+            id="buildingId"
+            #buildingId
+            [dataSource]="buildingsDataSource"
+            [allowSearch]="true"
+            [showClearButton]="true"
+            [showColumnHeader]="false"
+            [customRequireValidation]="false"
+            displayExpr="buildingName"
+            valueExpr="buildingID"
+            [useSelectBox]="true"
+            hoverText="Select Building"
+            (selectedItems)="onBuildingChanged($event)"
+            formControlName="building"
+            required="true"
+            useSelectBox="true"
+          >
+          </crem-dropdown>
+        </crem-form-item>
+        <crem-form-item class="container">
+          <crem-form-label [required]="true">{{
+            premiseObjectName
+          }}</crem-form-label>
+          <crem-input
+            id="newPremiseName"
+            #newPremiseName
+            [showHint]="false"
+            [showLabel]="false"
+            [showInfo]="false"
+            [inputType]="'text'"
+            required="true"
+            formControlName="premiseName"
+            placeholder="Enter New {{ premiseObjectName }} Name"
+          ></crem-input>
+        </crem-form-item>
+        <crem-form-item class="container">
+          <crem-form-label [required]="true"
+            >{{ premiseObjectName }} Type</crem-form-label
+          >
+          <crem-dropdown
+            id="premiseTypeId"
+            #premiseTypeId
+            dropDownContainerCustomClass="premiseTypeDropDown"
+            [dataSource]="premiseTypesDropdownItems"
+            [showClearButton]="true"
+            [showColumnHeader]="false"
+            displayExpr="objectTypeTypeName"
+            valueExpr="objectTypeTypeID"
+            [useSelectBox]="true"
+            hoverText="Select {{ premiseObjectName }} Type"
+            (selectedItems)="onPremiseTypeChanged($event)"
+            [isDisabled]="loading"
+            required="true"
+            formControlName="premiseType"
+          >
+          </crem-dropdown>
+        </crem-form-item>
+      </form>
+    </div>
+  </div>
+  <div modalFooter class="addPremiseFooter">
+    <crem-button
+      type="secondary"
+      id="add_premise_modal__cancel_btn"
+      (click)="close()"
+    >
+      Cancel</crem-button
+    >
+    <crem-button
+      type="secondary"
+      id="add_premise_modal__save_btn"
+      (click)="save($event)"
+      [disabled]="saveClicked"
+      [icon]="saveClicked ? 'faSpinner' : ''"
+      [iconPack]="saveClicked ? 'solid' : ''"
+      [iconAnimation]="saveClicked ? 'spin' : ''"
+    >
+      <span>
+        {{ saveClicked ? 'Saving' : 'Save' }}
+      </span></crem-button
+    >
+    <crem-button
+      type="secondary"
+      id="add_premise_modal__saveNew_btn"
+      (click)="saveAndNew($event)"
+      [disabled]="saveClicked"
+      [icon]="saveClicked ? 'faSpinner' : ''"
+      [iconPack]="saveClicked ? 'solid' : ''"
+      [iconAnimation]="saveClicked ? 'spin' : ''"
+    >
+      <span>
+        {{ saveClicked ? 'Saving' : 'Save New' }}
+      </span></crem-button
+    >
+    <crem-button
+      type="primary"
+      id="add_premise_modal__launch_btn"
+      (click)="launch($event)"
+      [disabled]="saveClicked"
+      [icon]="saveClicked ? 'faSpinner' : ''"
+      [iconPack]="saveClicked ? 'solid' : ''"
+      [iconAnimation]="saveClicked ? 'spin' : ''"
+    >
+      <span>
+        {{ saveClicked ? 'Saving' : 'Launch' }}
+      </span></crem-button
+    >
+  </div>
+</crem-modal>

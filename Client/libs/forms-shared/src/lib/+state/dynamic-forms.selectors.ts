@@ -4,9 +4,10 @@ import {
   DynamicFormsState,
   dynamicFormsAdapter,
 } from './dynamic-forms.reducer';
+import { ApiResponse } from '@forms/model/api-response';
 
-
-export const selectDynamicFormsState = createFeatureSelector<DynamicFormsState>(APP_FEATURE_KEY);
+export const selectDynamicFormsState =
+  createFeatureSelector<DynamicFormsState>(APP_FEATURE_KEY);
 
 const { selectAll } = dynamicFormsAdapter.getSelectors();
 
@@ -22,10 +23,19 @@ export const selectError = createSelector(
   selectDynamicFormsState,
   (state) => state.error
 );
+
 export const selectDynamicForm = createSelector(
   selectDynamicFormsState,
   (state) => state.dynamicForm
 );
+
+export const selectDynamicFormApiResponse = createSelector(
+  selectDynamicFormsState,
+  (state) => ({
+    dynamicFormApiResponse: state.dynamicFormApiResponse as ApiResponse,
+  })
+);
+
 export const selectFormActions = createSelector(
   selectDynamicFormsState,
   (state) => state.formActions
@@ -50,10 +60,23 @@ export const selectFormFields = createSelector(
   selectDynamicFormsState,
   (state) => state.formFields
 );
-export const selectWidgets = createSelector(
+
+export const selectWidgetsApiResponses = createSelector(
   selectDynamicFormsState,
-  (state) => state.formItemWidgets
+  (state) => state.formItemWidgetsApiResponses
 );
+
+// export const selectWidgetsApiResponse = createSelector(
+//   selectDynamicFormsState,
+//   (state) => ({
+//     formItemWidgetsApiResponses: state.formItemWidgetsApiResponses
+//   })
+// );
+// export const selectWidgets = createSelector(
+//   selectDynamicFormsState,
+//   (state) => state.formItemWidgets
+// );
+
 export const selectControlTypes = createSelector(
   selectDynamicFormsState,
   (state) => state.formItemControlTypes
@@ -94,36 +117,67 @@ export const selectRenderFormDropdowns = createSelector(
   selectDynamicFormsState,
   (state) => state.renderFormDropdowns
 );
+export const selectParentLink = createSelector(
+  selectDynamicFormsState,
+  (state) => state.objectParentLinker
+);
 
+/**
+ * Custom Selectors
+ */
+export const selectRenderFormResponse = createSelector(
+  selectDynamicFormsState,
+  (state) => ({
+    selectRenderFormResponse: state.saveRenderFormResponse as ApiResponse,
+  })
+);
 
-
- /**
-  * Custom Selectors
-*/
 export const selectFormSectionsSorted = createSelector(
   selectFormSections,
   (formSections) => {
     if (formSections) {
-      const sortedSections = [...formSections].sort((a, b) => a.formSectionSortOrder - b.formSectionSortOrder);
+      const sortedSections = [...formSections].sort(
+        (a, b) => a.formSectionSortOrder - b.formSectionSortOrder
+      );
       return sortedSections;
     } else {
       return [];
     }
   }
 );
-export const selectAvailableFormFieldsBySectionId = (sectionId: number) => createSelector(
-  selectAvailableFieldsInSection, (formAvailableFieldsInSection) => (formAvailableFieldsInSection && formAvailableFieldsInSection[sectionId]) || []);
+export const selectAvailableFormFieldsBySectionId = (sectionId: number) =>
+  createSelector(
+    selectAvailableFieldsInSection,
+    (formAvailableFieldsInSection) =>
+      (formAvailableFieldsInSection &&
+        formAvailableFieldsInSection[sectionId]) ||
+      []
+  );
 
-export const selectFormFieldsBySectionId = (sectionId: number) => createSelector(
-  selectFormFields,
-  (formFields) => (formFields !== undefined && formFields !== null ? formFields[sectionId] : null)
-);
-export const selectWidgetByWidgetId = (widgetId: number) => createSelector(
-  selectWidgets,
-  (widgets) => (widgets ? widgets.find(widget => widget.widgetID === widgetId) : null)
-);
-export const selectDatabaseColumnsByTableName = (tableName: string) => createSelector(
-  selectFormItemDatabaseColumns, (formItemDatabaseColumns) => (formItemDatabaseColumns && formItemDatabaseColumns[tableName]) || []);
+export const selectFormFieldsBySectionId = (sectionId: number) =>
+  createSelector(selectFormFields, (formFields) =>
+    formFields !== undefined && formFields !== null
+      ? formFields[sectionId]
+      : null
+  );
 
-export const selectRenderFormDropdownValuesByFormItemId = (formItemId: number) => createSelector(
-  selectRenderFormDropdowns, (renderFormDropdowns) => (renderFormDropdowns && renderFormDropdowns[formItemId]) || []);
+export const selectFormItemWidgetsApiResponseByWidgetId = (widgetId: number) =>
+  createSelector(selectWidgetsApiResponses, (responses) =>
+    responses !== undefined && responses !== null ? responses[widgetId] : null
+  );
+
+export const selectDatabaseColumnsByTableName = (tableName: string) =>
+  createSelector(
+    selectFormItemDatabaseColumns,
+    (formItemDatabaseColumns) =>
+      (formItemDatabaseColumns && formItemDatabaseColumns[tableName]) || []
+  );
+
+export const selectRenderFormDropdownValuesByFormItemId = (
+  formItemId: number
+) =>
+  createSelector(
+    selectRenderFormDropdowns,
+    (renderFormDropdowns) =>
+      (renderFormDropdowns && renderFormDropdowns[formItemId]) || []
+  );

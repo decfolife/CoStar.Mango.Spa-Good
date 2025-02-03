@@ -121,6 +121,11 @@
                 [showClearButton]="true"
                 [showColumnHeader]="false"
                 [required]="configKey[data.dataField].required"
+                [sort]="
+                  configKey[data.dataField].sort ??
+                  configKey[data.dataField].displayExpr ??
+                  'value'
+                "
                 [displayExpr]="configKey[data.dataField].displayExpr || 'value'"
                 [valueExpr]="configKey[data.dataField].valueExpr || 'value'"
                 [isVisible]="!configKey[data.dataField].hidden"
@@ -165,6 +170,11 @@
                 [showClearButton]="true"
                 [showColumnHeader]="true"
                 [required]="configKey[data.dataField].required"
+                [sort]="
+                  configKey[data.dataField].sort ??
+                  configKey[data.dataField].displayExpr ??
+                  'value'
+                "
                 [displayExpr]="configKey[data.dataField].displayExpr || 'value'"
                 [valueExpr]="configKey[data.dataField].valueExpr || 'value'"
                 [isVisible]="!configKey[data.dataField].hidden"

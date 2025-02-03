@@ -127,7 +127,7 @@
       >
     </crem-button>
 
-    <app-more-menu
+    <mango-more-menu
       class="more-menu"
       [buttonbDisabled]="!moreButtonEnabled || inDisabledUIState"
       [showMoreMenu]="showMoreMenu"
@@ -153,7 +153,7 @@
       (exportExcel)="exportExcel()"
       (resetListView)="resetListView()"
       (showDynamicSQL)="showDynamicSQL()"
-    ></app-more-menu>
+    ></mango-more-menu>
 
     <app-add-new-menu
       *ngIf="
@@ -181,7 +181,7 @@
           ? 'add_contact_listpage'
           : 'add_project_wizard_listpage'
       "
-      [disabled]="inDisabledUIState"
+      [disabled]="!_userHasAddRights || inDisabledUIState"
       *ngIf="
         (objectTypeId === 1 && editPages?.length === 1) ||
         (objectTypeId === 5 && showAddButton)

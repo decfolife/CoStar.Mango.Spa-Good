@@ -1,0 +1,17 @@
+@use 'styles' as *;
+:host::ng-deep {
+  .modalFooter {
+    .addPremiseFooter {
+      display: flex;
+
+      crem-button {
+        padding: 8px;
+      }
+    }
+  }
+}
+
+.add-premise-form {
+  display: flex;
+  flex-direction: column;
+}

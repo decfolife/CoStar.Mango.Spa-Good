@@ -1,7 +1,6 @@
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { Component, Input, SimpleChanges, ViewChild } from '@angular/core';
-import { environment } from '@mangoSpa/src/environments/environment.local';
 import { DxPopupComponent } from 'devextreme-angular/ui/popup';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import ScrollView from 'devextreme/ui/scroll_view';
@@ -129,6 +128,14 @@ export class WorkflowHistoryPopupComponent {
       (svc) => svc.scrollHeight() === svc.clientHeight()
     );
     svComponentsArray.forEach((svc) => svc.option('height', 'fit-content'));
+
+    //Fix DevExtreme Popup ADA issues
+    const popUpContent = document.querySelectorAll(
+      '.dx-overlay-content.dx-popup-draggable'
+    );
+    popUpContent.forEach((element) => {
+      element.setAttribute('aria-label', 'Workflow Change History');
+    });
   }
 
   toggleFullscreen(event) {

@@ -26,24 +26,17 @@ export class NotesService extends EndpointService {
     return this.callHttpGet(url, 'getNotesPageRight');
   }
 
-  hasNotesPageRight(navPageId: number): Observable<any> {
-    const url = `${this.objectActionsUrl}objectactions/getnavpagerights/${navPageId}`;
-    return this.callHttpGet(url, 'getNotesPageRight');
-  }
-
-  getMaxObjectRight(objectId: number, objectTypeId: number): Observable<any> {
-    const url = `${this.objectActionsUrl}objectactions/getusermaxobjectright/${objectId}/${objectTypeId}`;
-    return this.callHttpGet(url, 'getMaxObjectRight');
-  }
-
   getObjectNotes(
     objectId: number,
     objectTypeId: number,
-    NoteTypeId?: number
+    objectTypeTypeId: number,
+    parentObjectId?: number,
+    parentObjectTypeId?: number
   ): Observable<any> {
-    const url = NoteTypeId
-      ? `${this.objectActionsUrl}objectcommonnote/notes/${objectId}/${objectTypeId}/${NoteTypeId}`
-      : `${this.objectActionsUrl}objectcommonnote/notes/${objectId}/${objectTypeId}`;
+    const url =
+      parentObjectId > 0
+        ? `${this.objectActionsUrl}objectcommonnote/notes?ObjectId=${objectId}&ObjectTypeId=${objectTypeId}&ObjectTypeTypeId=${objectTypeTypeId}&ParentObjectId=${parentObjectId}&ParentObjectTypeId=${parentObjectTypeId}`
+        : `${this.objectActionsUrl}objectcommonnote/notes?ObjectId=${objectId}&ObjectTypeId=${objectTypeId}&ObjectTypeTypeId=${objectTypeTypeId}`;
     return this.callHttpGet(url, 'getNotesList');
   }
 
@@ -54,14 +47,6 @@ export class NotesService extends EndpointService {
   ): Observable<any> {
     const url = `${this.objectActionsUrl}objectcommonnote/deletenote/${commonNoteId}/${objectId}/${objectTypeId}`;
     return this.callHttpDelete(url, 'deleteCommonNotebyId');
-  }
-  getNotebyId(
-    commonNoteId: number,
-    objectId: number,
-    objectTypeId: number
-  ): Observable<any> {
-    const url = `${this.objectActionsUrl}objectcommonnote/getnote/${commonNoteId}/${objectId}/${objectTypeId}`;
-    return this.callHttpGet(url, 'getCommonNotebyId');
   }
 
   saveNote(

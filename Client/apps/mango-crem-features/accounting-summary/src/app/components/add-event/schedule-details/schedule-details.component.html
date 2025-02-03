@@ -1,7 +1,6 @@
 <crem-card
   [id]="accountingSummaryService.getId(componentName, 'section', 'card')"
   [title]="title"
-  [subtitle]="subtitle"
 >
   <form [formGroup]="scheduleDetailsForm" class="details-container">
     <div class="details-section-controls">
@@ -143,7 +142,6 @@
                 [invalidDateMessage]="'Invalid date'"
                 [showClearButton]="false"
                 [isRequired]="true"
-                [disabled]="isTermBeginDateEnabled"
                 (changeEvent)="onTermBeginDateChange($event)"
                 formControlName="accountingEventBeginDate"
               >
@@ -203,7 +201,6 @@
                 [invalidDateMessage]="'Invalid date'"
                 [showClearButton]="false"
                 [isRequired]="true"
-                [disabled]="isTermEndDateEnabled"
                 formControlName="accountingEventEndDate"
                 (changeEvent)="onTermEndDateChange($event)"
               >
@@ -222,8 +219,10 @@
                     'checkbox'
                   )
                 "
-                [disabled]="false"
                 formControlName="notFirstDayOfTheMonth"
+                [elementAttr]="{
+                  'aria-label': 'Include charges from the first of the month'
+                }"
               >
               </crem-check-box>
               <crem-input-label
@@ -235,7 +234,7 @@
                   )
                 "
                 [label]="'Include charges from the first of the month?'"
-                for="details-include-charges-checkbox"
+                [name]="'details-include-charges-checkbox'"
               >
               </crem-input-label>
             </div>
@@ -259,9 +258,9 @@
             >
               {{ termInPeriods }} Periods |</span
             >
-            <span title="Accounting Term (Number of Months)"
-              >{{ termInMonths }} Months |</span
-            >
+            <span title="Accounting Term (Number of Months)">
+              {{ termInMonths | number: '1.2-2' }} Months |
+            </span>
             <span title="Accounting Term (Number of Days)"
               >{{ termInDays | number: '1.0-0' }} Days</span
             >
@@ -322,7 +321,14 @@
         </div>
       </div>
 
-      <div class="controls">
+      <div
+        class="controls"
+        *ngIf="
+          !addEventFormService.operatingClassifications.includes(
+            selectedClassificationID
+          )
+        "
+      >
         <div class="labels">
           <crem-input-label
             [id]="

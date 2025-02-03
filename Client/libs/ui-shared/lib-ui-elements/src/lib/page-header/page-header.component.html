@@ -17,7 +17,20 @@
     </div>
   </div>
   <div *ngIf="(statusPill | json) !== '{}'" class="page-header__status-pill">
-    <crem-pill [text]="statusPill.text" [type]="statusPill.type"></crem-pill>
+    <crem-pill
+      [text]="statusPill.text"
+      [type]="statusPill.type"
+      [titleOnHover]="statusPill.titleOnHover ? statusPill.titleOnHover : ''"
+    ></crem-pill>
+  </div>
+  <div class="page-header__bookmark" *ngIf="showBookmarkButton">
+    <crem-icon
+      icon="faStar"
+      library="fontAwesome"
+      [pack]="isBookmarked ? 'solid' : 'regular'"
+      [color]="isBookmarked ? 'warning' : 'dark'"
+      (click)="toggleBookmark()"
+    ></crem-icon>
   </div>
   <div class="page-header__actions">
     <div class="actions__custom" *ngIf="customActions">

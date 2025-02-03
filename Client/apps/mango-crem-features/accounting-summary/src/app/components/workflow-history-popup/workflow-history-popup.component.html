@@ -106,7 +106,7 @@
     <p>No Data</p>
   </div>
 
-  <div *dxTemplate="let data of 'dataTemplate'">
+  <div *dxTemplate="let data of 'dataTemplate'" class="popup-body">
     <dx-scroll-view #PopupMainScrollView height="100%" width="100%">
       <p-timeline [value]="historyEvents" align="left">
         <ng-template pTemplate="content" let-event>

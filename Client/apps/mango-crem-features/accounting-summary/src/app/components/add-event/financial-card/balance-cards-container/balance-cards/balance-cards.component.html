@@ -1,0 +1,40 @@
+<article class="balance-card">
+  <div class="balance-card-header">
+    <h3
+      class="balance-card-title"
+      [attr.id]="generateId(title, 'card-header-label')"
+    >
+      {{ title }}
+    </h3>
+  </div>
+
+  <section class="balance-card-header-details">
+    <h4
+      class="primary-amount"
+      [attr.id]="generateId(title, 'card-primary-value')"
+    >
+      <ng-container *ngIf="customHeader; else showAmount">
+        <ng-content select=".custom-content"></ng-content>
+      </ng-container>
+
+      <ng-template #showAmount>
+        {{ amount }}
+      </ng-template>
+    </h4>
+
+    <h5
+      class="primary-currency eyebrow"
+      [attr.id]="generateId(title, 'primary-currency')"
+    >
+      {{ currency }}
+    </h5>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="balance-card-body">
+    <section class="balance-card-details">
+      <ng-content></ng-content>
+    </section>
+  </section>
+</article>

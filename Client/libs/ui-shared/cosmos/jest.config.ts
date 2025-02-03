@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'ui-shared-cosmos',
   preset: '../../../jest.preset.js',

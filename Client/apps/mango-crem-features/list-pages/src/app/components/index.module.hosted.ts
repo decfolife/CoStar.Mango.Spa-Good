@@ -66,6 +66,7 @@ import { SearchModule } from '@mango/ui-shared/cosmos';
 import {
   ButtonModule,
   DropdownModule,
+  InputComponent,
   ModalModule,
 } from '@mango/ui-shared/lib-ui-elements';
 import { AddFormWizardModule } from '@micro-components/form-wizard/modal/add-form-wizard/add-form-wizard.module';
@@ -138,6 +139,7 @@ import { PaymentDetailsPopupComponent } from './listpage/payment-details/payment
     ButtonModule,
     TaskApprovalModule,
     DropdownModule,
+    InputComponent,
   ],
   providers: [
     {

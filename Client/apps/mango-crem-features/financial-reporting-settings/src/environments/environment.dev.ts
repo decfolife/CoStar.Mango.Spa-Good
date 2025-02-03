@@ -4,5 +4,4 @@ export const environment = {
   appUrls: {
     reports: '/v06/WebServices/Mango/Reports/Reports.asmx/',
   },
-  isRestful: false,
 };

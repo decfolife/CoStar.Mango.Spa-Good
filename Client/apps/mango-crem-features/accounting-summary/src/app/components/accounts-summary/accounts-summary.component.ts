@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountingSummaryService } from '../../services/accounting-summary.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LeaseInfoResponse } from '../../models/lease-info-response.modal';
@@ -44,7 +44,6 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   accountingEventSelector: any;
 
   constructor(
-    private ref: ChangeDetectorRef,
     public accountingSummaryService: AccountingSummaryService,
     public router: Router,
     private activatedRoute: ActivatedRoute,
@@ -328,9 +327,10 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
             this.addEditScheduleService.showToast(
               'Workflow Status',
               'The prior active lease status has been marked as inactive. Due to this the status has been changed to the active review status.',
-              'info',
-              false
+              'info'
             );
+          } else {
+            this.addEditScheduleService.clearToastBySummary('Workflow Status');
           }
           this.workflowStatusInfo = workflowStatusOptionsResponse.data;
           this.wfStatusRights = {

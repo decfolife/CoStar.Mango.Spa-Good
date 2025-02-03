@@ -6,5 +6,4 @@ export const environment = {
       '/v06/WebServices/Mango/DataSetDictionary/DataSetDictionary.asmx/',
     reports: '/v06/WebServices/Mango/Reports/Reports.asmx/',
   },
-  isRestful: false,
 };

@@ -12,16 +12,11 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AccountingSummaryService } from './services/accounting-summary.service';
 import { createCustomElement } from '@angular/elements';
-import { BalanceCardsComponent } from './components/add-event/financial-card/balance-cards/balance-cards.component';
 import { StorageService } from '@mango/core-shared';
-import { DeleteHistoricScheduleComponent } from './components/accounts-summary/delete-historic-schedule/delete-historic-schedule.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    BalanceCardsComponent,
-    DeleteHistoricScheduleComponent,
-  ],
+  declarations: [AppComponent],
 
   imports: [
     CommonModule,

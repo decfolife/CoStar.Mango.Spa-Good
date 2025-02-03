@@ -1,11 +1,13 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ContentChild,
   Directive,
   ElementRef,
   EventEmitter,
   Input,
+  NgZone,
   OnChanges,
   OnInit,
   Output,
@@ -14,7 +16,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Dropdown } from '@mango/data-models/lib-data-models';
 import {
   DxDataGridComponent,
   DxDropDownBoxComponent,
@@ -117,6 +118,16 @@ export class DropdownComponent
    */
   @Input() public valueExpr?: string = 'valueKey';
   @Input() keyExpr?: string = null;
+
+  /**
+   * Allows sorting dropdowns
+   * @see https://js.devexpress.com/Angular/Documentation/ApiReference/Data_Layer/DataSource/Configuration/#sort
+   *
+   * @type {Array<string>}
+   * @memberof DropdownComponent
+   */
+  @Input() sort: string;
+
   /**
    * (DevExtreme) Specifies the name of the data source item field whose value is displayed by the widget.s
    *
@@ -241,6 +252,12 @@ export class DropdownComponent
    */
   @Input() searchExpr?: string | Array<string>;
 
+  @Input() labelledby?: string;
+  @Input() readOnlyStyle: 'input' | 'text-only' = 'input';
+
+  // exsting usages of dropdown may rely on sourcing selectedDisplay from the valueExpr. setting this to false this allows the provided displayExpr to be used to drive the selectedDisplay
+  @Input() useImplictValueExpr: boolean = true;
+
   isTooltipVisible = false;
   isdisplayExprTooltipVisible = false;
   displayExprTooltipText = '';
@@ -251,7 +268,11 @@ export class DropdownComponent
   @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent;
   @ViewChild('dropDownBox', { static: false }) dropDownBox: any;
 
-  constructor(private elementRef: ElementRef) {
+  constructor(
+    private elementRef: ElementRef,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
+  ) {
     super();
   }
 
@@ -260,6 +281,10 @@ export class DropdownComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const { previousValue, currentValue } = changes.dataSource || {};
+
+    if (this.sort)
+      this.dataSource = this.sortByParameter(this.dataSource, this.sort);
+
     if (
       previousValue !== currentValue &&
       currentValue &&
@@ -267,6 +292,14 @@ export class DropdownComponent
     ) {
       this.initializeDropdown();
     }
+  }
+
+  sortByParameter(array: any[], parameter: string): any[] {
+    return array.sort((a, b) => {
+      const paramA = a[parameter]?.toLowerCase() || '';
+      const paramB = b[parameter]?.toLowerCase() || '';
+      return paramA.localeCompare(paramB);
+    });
   }
 
   ngAfterViewInit() {
@@ -466,24 +499,36 @@ export class DropdownComponent
   }
 
   getSelectedRowsData($event) {
-    setTimeout(() => {
+    this.ngZone.run(() => {
       const selections = $event.selectedRowsData;
       if (!selections) {
         return;
-      } else {
-        this.selectedDisplay = selections.map((data) => data?.[this.valueExpr]);
-        if (this.selectMode == 'single' && this.selectedDisplay.length) {
-          this.isDropDownBoxOpened = false;
-        }
       }
+      this.selectedDisplay = selections.map(
+        (data) => data?.[this.resolveSelectedDisplaySource()]
+      );
+      if (this.selectMode == 'single' && this.selectedDisplay.length) {
+        this.isDropDownBoxOpened = false;
+      }
+
       this.gridDropdownValueChanged.emit(true);
       this.selectedItems.emit(selections);
+
+      this.cdr.detectChanges(); // Manually trigger change detection
     });
   }
 
+  /**
+   * @see https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxSelectBox/Methods/#clear
+   *
+   * @memberof DropdownComponent
+   */
   clearSelectBox() {
     this.selectedDisplay = [];
-    this.selectBox?.instance ? this.selectBox.instance.reset() : null;
+
+    if (this.selectBox?.instance) {
+      this.selectBox.instance.clear();
+    }
   }
 
   clearDropdown() {
@@ -505,7 +550,8 @@ export class DropdownComponent
     if (this.selectMode == 'single') {
       (this.dataSource?._items || this.dataSource || []).forEach((data) => {
         if (data?.[this.valueExpr] === value) {
-          this.selectedDisplay = [data?.[this.valueExpr]];
+          this.selectedDisplay = [data?.[this.resolveSelectedDisplaySource()]];
+
           this.selections = [data?.[this.keyExpr || this.valueExpr]];
         }
       });
@@ -516,7 +562,10 @@ export class DropdownComponent
             value.includes(data?.[this.valueExpr]?.toString()) ||
             value.includes(data?.[this.valueExpr])
           ) {
-            this.selectedDisplay.push(data?.[this.valueExpr]);
+            this.selectedDisplay.push(
+              data?.[this.resolveSelectedDisplaySource()]
+            );
+
             if (!this.useArrayOfKeys) {
               this.selections.push(data);
             }
@@ -538,6 +587,10 @@ export class DropdownComponent
     }
     this.onChange(value);
     this.onTouched();
+  }
+
+  private resolveSelectedDisplaySource() {
+    return this.useImplictValueExpr ? this.valueExpr : this.displayExpr;
   }
 
   focusDropdown() {
@@ -829,6 +882,22 @@ export class DropdownComponent
     this.selectBoxOpenFlag = true;
   }
 
+  onContentReady(event: any): void {
+    const ariaId = this.id;
+    const listItemsElement = event.component
+      .content()
+      .querySelector('.dx-list-items');
+
+    if (listItemsElement)
+      // Add ID to dropdown overlay
+      listItemsElement.id = ariaId;
+
+    if (!this.id)
+      console.warn(
+        'The dropdown is missing an ID required for proper functionality.'
+      );
+  }
+
   onSelectBoxClosed(event) {
     this.selectBoxOpenFlag = false;
   }
@@ -885,17 +954,33 @@ export class DropdownComponent
   }
 
   /**
-   * This reselects the previous value of the 'withLabel' select.
+   * This re-selects the previous value of the 'withLabel' select.
    *
    * @param e
    * @memberof DropdownComponent
    */
-  onValueChangedWithLabel(e: any, item: any): void {
+  onValueChangedWithLabel(e: any, item: any, inputRef?: any): void {
     if (!e.value && e.previousValue) {
       this.selectBox.instance.option(
         this.getWithLabelKey(item),
         this.getWithLabelValue(item)
       );
+    }
+
+    if (!inputRef) return;
+    // Update input's aria-expanded value
+    const inputElement = inputRef.instance.element().querySelector('input');
+    const ariaExpanded = Boolean(inputElement.getAttribute('aria-expanded'));
+    inputElement.setAttribute('aria-expanded', !ariaExpanded);
+  }
+
+  onContentReadyWithLabel(e: any, inputRef: any): void {
+    const inputElement = inputRef.instance.element().querySelector('input');
+    // Add aria-expanded to input
+    if (inputElement) {
+      const ariaExpanded = Boolean(inputElement.getAttribute('aria-expanded'));
+      inputElement.setAttribute('aria-expanded', !ariaExpanded);
+      inputElement.setAttribute('role', 'combobox');
     }
   }
 
@@ -932,6 +1017,21 @@ export class DropdownComponent
 
   cremSharedComponentValidator() {
     return this.status === 'error';
+  }
+
+  formatReadOnlySelection() {
+    if (this.selectedDisplay?.length > 0) {
+      return this.selectedDisplay
+        .map((key) => {
+          const item = this.dataSource.find(
+            (item) => item[this.keyExpr || this.valueExpr] === key
+          );
+          return item ? item[this.displayExpr] : '';
+        })
+        .filter(Boolean)
+        .join(', ');
+    }
+    return '';
   }
 }
 @Directive({

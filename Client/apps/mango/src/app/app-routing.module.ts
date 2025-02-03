@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import {
   ActivatedRoute,
   ExtraOptions,
+  GuardsCheckEnd,
+  GuardsCheckStart,
   NavigationCancel,
   NavigationEnd,
   NavigationError,
@@ -12,6 +14,7 @@ import {
   Routes,
 } from '@angular/router';
 import {
+  AppRoutingTitle,
   MangoSubApps,
   RenderFormHeaderData,
 } from '@mango/data-models/lib-data-models';
@@ -25,6 +28,7 @@ import { AuthGuard } from './services/guards/auth.guard';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 import { ErrorNotificationComponent } from './components/error-notification/error-notification.component';
 import { RightsAuthGuard } from './services/guards/rights-auth.guard';
+import { SessionExpiredComponent } from './components/auth/session-expired/session-expired.component';
 
 const routes: Routes = [
   // LOGIN
@@ -51,6 +55,7 @@ const routes: Routes = [
   {
     path: 'crem',
     component: CremComponent,
+
     canActivate: [AuthGuard],
     data: { breadCrumb: { label: null, append: false } },
     children: [
@@ -87,6 +92,7 @@ const routes: Routes = [
           },
           {
             path: 'tasks',
+            title: AppRoutingTitle + 'Tasks List',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -95,11 +101,16 @@ const routes: Routes = [
               moduleId: 2,
               objectTypeId: 9,
               currentSubApp: MangoSubApps.LIST_PAGES,
-              breadCrumb: { label: 'Tasks', append: true, activeLink: 'Tasks' },
+              breadCrumb: {
+                label: 'Tasks',
+                append: true,
+                activeLink: 'Tasks',
+              },
             },
           },
           {
             path: 'projects',
+            title: AppRoutingTitle + 'Project List',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -477,7 +488,11 @@ const routes: Routes = [
         path: 'reports',
         data: {
           moduleId: 4,
-          breadCrumb: { label: 'Reports', append: true, activeLink: 'Reports' },
+          breadCrumb: {
+            label: 'Reports',
+            append: true,
+            activeLink: 'Reports',
+          },
         },
         children: [
           {
@@ -534,7 +549,10 @@ const routes: Routes = [
       // REMINDERS
       {
         path: 'reminders',
-        data: { moduleId: 1, breadCrumb: { label: 'Reminders', append: true } },
+        data: {
+          moduleId: 1,
+          breadCrumb: { label: 'Reminders', append: true },
+        },
         children: [
           {
             path: '',
@@ -604,6 +622,7 @@ const routes: Routes = [
       // NOTES
       {
         path: 'notes',
+        title: AppRoutingTitle + 'Object Notes',
         data: { moduleId: 1, breadCrumb: { label: 'Notes', append: true } },
         children: [
           {
@@ -703,8 +722,8 @@ const routes: Routes = [
           {
             path: 'forms-maintenance',
             loadChildren: () =>
-              import('@forms/mango-forms/mango-forms.module').then(
-                (mod) => mod.MangoFormsModule
+              import('@forms/index/index.module').then(
+                (mod) => mod.IndexModule
               ),
             data: {
               currentSubApp: MangoSubApps.FORMS_MAINTENANCE,
@@ -729,9 +748,7 @@ const routes: Routes = [
       {
         path: 'forms',
         loadChildren: () =>
-          import('@forms/mango-forms/mango-forms.module').then(
-            (mod) => mod.MangoFormsModule
-          ),
+          import('@forms/index/index.module').then((mod) => mod.IndexModule),
       },
 
       //Costar Matching
@@ -740,6 +757,7 @@ const routes: Routes = [
         loadChildren: () =>
           import('@costar-matching/app.module').then((mod) => mod.AppModule),
       },
+
       //Object Reactivation
       {
         path: 'object-reactivation',
@@ -747,12 +765,6 @@ const routes: Routes = [
           import('@object-reactivation/app.module').then(
             (mod) => mod.AppModule
           ),
-      },
-      //Accounting History
-      {
-        path: 'accounting-history',
-        loadChildren: () =>
-          import('@accounting-history/app.module').then((mod) => mod.AppModule),
       },
 
       // Auto-generated components below
@@ -762,6 +774,12 @@ const routes: Routes = [
 
   // Redirect to Login
   { path: '', redirectTo: 'crem', pathMatch: 'full' },
+
+  // 401 - SESSION EXPIRED
+  {
+    path: 'auth/session-expired',
+    component: SessionExpiredComponent,
+  },
 
   // 404
   {
@@ -832,12 +850,17 @@ export class AppRoutingModule {
       this.raiseRenderFormShowPropertyHeader();
       this.facade.setLoading(true);
     }
-    if (e instanceof NavigationEnd) {
-      this.appService.scrollTop(0, 0);
+    if (
+      e instanceof NavigationEnd ||
+      e instanceof NavigationCancel ||
+      e instanceof NavigationError
+    ) {
+      if (e instanceof NavigationEnd) {
+        this.appService.scrollTop(0, 0);
+      }
+
       this.facade.setLoading(false);
-    }
-    if (e instanceof NavigationCancel || e instanceof NavigationError) {
-      this.facade.setLoading(false);
+      this.facade.setChangeLossPreventIsActive(false);
     }
   }
 }

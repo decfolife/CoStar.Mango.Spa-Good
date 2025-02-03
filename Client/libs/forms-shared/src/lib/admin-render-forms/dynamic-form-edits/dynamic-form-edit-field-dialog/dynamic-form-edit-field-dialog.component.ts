@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { DynamicFormsFacade } from '@forms/+state/dynamic-forms.facade';
-import { DropdownValue, FormItemTypes, IFields } from '@forms/model/dynamic-forms.interface';
-import { DevExpressModule } from 'libs/ui-shared/lib-external-libraries/src/lib/3rdParty/dev-express.module';
 import {
-  ButtonModule,
-  ModalModule,
-} from '@mango/ui-shared/lib-ui-elements';
+  DropdownValue,
+  FormItemTypes,
+  IFields,
+} from '@forms/model/dynamic-forms.interface';
+import { DevExpressModule } from 'libs/ui-shared/lib-external-libraries/src/lib/3rdParty/dev-express.module';
+import { ButtonModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
 import { Observable, Subscription, of } from 'rxjs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
 import { LibUiSharedModule } from '@mango/ui-shared/lib-ui-shared';
 import { MatCardModule } from '@angular/material/card';
-import { filter, tap } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -23,7 +23,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     CommonModule,
     MatTabsModule,
     DevExpressModule,
-    DynamicFormEditFieldDialogComponent,
     ButtonModule,
     ModalModule,
     MatSlideToggleModule,
@@ -39,12 +38,13 @@ export class DynamicFormEditFieldDialogComponent implements OnInit, OnDestroy {
   dynamicForm: any;
   prefix = 'dynamic-form-edit-field-';
   creatingDropdown = false;
-	dropdownValues : DropdownValue[];
-	sortOrders : string[];
+  dropdownValues: DropdownValue[];
+  sortOrders: string[];
 
   selectControlTypes$ = this.dynamicFormsFacade.selectControlTypes$;
   selectDataTypes$ = this.dynamicFormsFacade.selectDataTypes$;
-  selectFormItemDatabaseTables$ = this.dynamicFormsFacade.selectFormItemDatabaseTables$;
+  selectFormItemDatabaseTables$ =
+    this.dynamicFormsFacade.selectFormItemDatabaseTables$;
   selectFormItemDatabaseColumns$: Observable<any>;
   selectFormItemDropdowns$ = this.dynamicFormsFacade.selectFormItemDropdowns$;
 
@@ -82,7 +82,6 @@ export class DynamicFormEditFieldDialogComponent implements OnInit, OnDestroy {
   }
 
   controlTypeChanged(e) {
-    console.log('here ', e)
     this.subs.add(
       this.selectControlTypes$
         .pipe(filter((items) => items !== null && items !== undefined))
@@ -90,8 +89,10 @@ export class DynamicFormEditFieldDialogComponent implements OnInit, OnDestroy {
           const selectedFormItemType: FormItemTypes = controlType.find(
             (item) => item.formItemTypeID === e.value
           );
-          this.field.formItemType.formItemTypeID = selectedFormItemType.formItemTypeID;
-          this.field.formItemType.formItemType = selectedFormItemType.formItemType;
+          this.field.formItemType.formItemTypeID =
+            selectedFormItemType.formItemTypeID;
+          this.field.formItemType.formItemType =
+            selectedFormItemType.formItemType;
         })
     );
   }
@@ -101,7 +102,9 @@ export class DynamicFormEditFieldDialogComponent implements OnInit, OnDestroy {
   }
 
   loadFormItemDatabaseColumnsByTableName(): void {
-    this.dynamicFormsFacade.loadFormItemDatabaseColumnsByTableName(this.field.sourcetable);
+    this.dynamicFormsFacade.loadFormItemDatabaseColumnsByTableName(
+      this.field.sourcetable
+    );
 
     this.subs.add(
       this.dynamicFormsFacade
@@ -118,7 +121,9 @@ export class DynamicFormEditFieldDialogComponent implements OnInit, OnDestroy {
       this.selectFormItemDropdowns$
         .pipe(filter((items) => items !== null && items !== undefined))
         .subscribe((dropdownItems) => {
-          const selectedItem = dropdownItems.find(  (item) => item.dropdownID === e.value );
+          const selectedItem = dropdownItems.find(
+            (item) => item.dropdownID === e.value
+          );
           this.dropdownValues = selectedItem.dropdownValues;
         })
     );
@@ -135,13 +140,9 @@ export class DynamicFormEditFieldDialogComponent implements OnInit, OnDestroy {
     return value === 1;
   }
 
-  onReorder(e) {
-   
-  }
+  onReorder(e) {}
 
-  addDropdownValue(){
-
-  }
+  addDropdownValue() {}
 
   public closeDialog() {
     this.dialogRef.close('');

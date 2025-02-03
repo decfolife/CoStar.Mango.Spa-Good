@@ -96,25 +96,46 @@ export class DashboardService extends DataService {
    *
    *
    * @param {string} message
-   * @param {ToastState} type
+   * @param {string} type
+   * @param {string} [title]
+   * @param {number} [duration]
+   * @param {string} [maxWidth]
    * @memberof DashboardService
    */
-  public showToast(message: string, type: string) {
+  public showToast(
+    message: string,
+    type: string,
+    title?: string,
+    duration?: number,
+    maxWidth?: string
+  ) {
     if (isToastState(!type)) {
       console.error('An error occurred: ', message);
     }
 
     switch (type) {
+      case ToastState.SUCCESS: {
+        this.toastService.show(
+          message ?? `Operation succeeded.`,
+          title ?? 'Success',
+          ToastState.SUCCESS,
+          {
+            maxWidth: maxWidth ?? '360px',
+            duration: duration ?? 180000,
+          }
+        );
+        break;
+      }
       default:
       case ToastState.ERROR: {
         console.error('An error occurred: ', message);
         this.toastService.show(
-          `An error occurred, please try again.`,
-          'Error',
+          message ?? `An error occurred, please try again.`,
+          title ?? 'Error',
           ToastState.ERROR,
           {
-            maxWidth: '360px',
-            duration: 180000,
+            maxWidth: maxWidth ?? '360px',
+            duration: duration ?? 180000,
           }
         );
         break;

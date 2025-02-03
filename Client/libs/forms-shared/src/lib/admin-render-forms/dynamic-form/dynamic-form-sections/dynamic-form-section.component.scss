@@ -1,29 +1,23 @@
+mat-card.mat-mdc-card {
+  border: 1px solid #bfbfbf;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  padding: 0px !important;
+  margin-bottom: 24px;
 
-mat-card.mat-mdc-card
-{
-    border: 1px solid #BFBFBF;
-    border-radius: 2px !important;
-    box-shadow: none !important;
-    padding: 0px !important;
-    margin-bottom: 24px;
-
-    mat-card-content.mat-card-content {
-        padding-top: 24px;
-        padding: 16px;
-
-        mat-form-field {
-          width: 100%;
-        }
-      }
+  mat-card-content.mat-card-content {
+    padding-top: 24px;
+    padding: 16px;
+  }
 }
 
-mat-card.mat-mdc-card mat-card-header.mat-card-header{
-    padding: 16px;
-    box-sizing: border-box;
-    border-bottom: 1px solid #BFBFBF;
-    color: #000000;
-    justify-content: space-between;
-    align-items: center;
+mat-card.mat-mdc-card mat-card-header.mat-mdc-card-header {
+  padding: 16px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #bfbfbf;
+  color: #000000;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .controls-right,
@@ -34,6 +28,7 @@ mat-card.mat-mdc-card mat-card-header.mat-card-header{
 
 .controls-right {
   margin-left: 20px;
+
   .more,
   .actions,
   .saveForm {
@@ -41,7 +36,7 @@ mat-card.mat-mdc-card mat-card-header.mat-card-header{
   }
 }
 
-::ng-deep .mat-mdc-menu-panel.existing-fields-menu  {
+::ng-deep .mat-mdc-menu-panel.existing-fields-menu {
   max-width: 800px;
 }
 
@@ -52,4 +47,115 @@ ngx-skeleton-loader[id^='skelDropdown'] {
 
 .red-border {
   border: 1px solid red;
+}
+
+::ng-deep .widget-container {
+  display: flex;
+}
+
+::ng-deep .widget-container > * {
+  height: 400px;
+  width: 50%;
+  padding: 10px;
+}
+
+.field-container {
+  display: flex;
+  align-items: center;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.text-area {
+  flex: 2;
+  height: 50px;
+}
+
+.label {
+  width: 150px;
+  margin-right: 40px;
+  word-wrap: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.field-content {
+  flex: 1;
+}
+
+.add-fields-btn {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+}
+
+crem-input,
+crem-dropdown,
+crem-date-picker {
+  width: 96%;
+  display: inline-flex;
+}
+
+.launch-form-item {
+  display: flex;
+}
+
+.form-field-tooltip {
+  position: relative;
+  top: 5px;
+  left: 5px;
+}
+
+::ng-deep .dx-list-item {
+  align-items: center;
+  border-top: none;
+  cursor: default;
+}
+
+::ng-deep .dx-list-item.dx-state-focused {
+  background-color: transparent !important;
+  color: #000000 !important;
+}
+
+::ng-deep .dx-list-item.dx-state-active {
+  background-color: transparent !important;
+  color: #000000 !important;
+}
+
+fa-icon {
+  margin-left: 5px;
+}
+
+#gotoPage:hover {
+  cursor: pointer;
+}
+
+::ng-deep .df-viewModeDate-display {
+  dx-date-box.date-box {
+    opacity: 1;
+
+    .dx-texteditor-buttons-container {
+      display: none;
+    }
+  }
+
+  .dx-texteditor.dx-editor-outlined {
+    border: none;
+  }
+}
+
+::ng-deep .df-sectionLabelMenu {
+  div {
+    margin: 8px;
+  }
+}
+
+.googleMap-container {
+  ::ng-deep google-map div.map-container {
+    width: 700px !important;
+    height: 400px !important;
+  }
 }

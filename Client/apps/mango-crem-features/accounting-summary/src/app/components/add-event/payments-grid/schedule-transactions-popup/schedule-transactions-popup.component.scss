@@ -1,4 +1,5 @@
 @use 'styles' as *;
+@use 'colors' as colors;
 
 @mixin flex-column-direction {
   display: flex;
@@ -42,12 +43,13 @@
 
   .data {
     justify-content: end;
-    font-weight: 500;
     flex-basis: 50%;
+    @include costar(font-weight, medium);
   }
 
   .glevent-note-row {
     @include flex-column-direction;
+    @include costar(padding-bottom, 2);
 
     .glevent-note-lable {
       @include costar(padding-top, 1);
@@ -67,11 +69,6 @@
 ::ng-deep #schedule-transactions-grid-section {
   td:has(div.dx-state-disabled) {
     pointer-events: none;
-
-    .dx-checkbox-icon {
-      opacity: 1 !important;
-      background-color: var(--costar-color-gray06);
-    }
   }
 
   .header-column-caption {
@@ -86,5 +83,28 @@
     td {
       cursor: default;
     }
+  }
+
+  .dx-checkbox-icon {
+    opacity: 1 !important;
+    background-color: var(--costar-color-gray06);
+  }
+
+  .dx-header-row {
+    background-color: colors.$costarDarkBlue !important;
+    color: colors.$white;
+  }
+
+  .dx-header-row td {
+    @include costar(padding-top, 1);
+    @include costar(padding-bottom, 1);
+  }
+
+  .dx-header-row p {
+    font-size: 12px;
+  }
+
+  .dx-sort-up {
+    padding-top: 6px;
   }
 }

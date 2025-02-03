@@ -15,11 +15,17 @@ import * as dayjs from 'dayjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AddFormWizardComponent } from '@micro-components/form-wizard/modal/add-form-wizard/add-form-wizard.component';
 import { AddBuildingModalComponent } from '../add-building-modal/add-building-modal.component';
-import { AddEquipmentModalComponent } from '@mango/ui-shared/lib-ui-shared';
-import { EQUIPMENT_WIZARD_OTID } from '@mango/data-models/lib-data-models';
 import { AddSupplierModalComponent } from '@mango/ui-shared/lib-ui-shared';
-import { SUPPLIER_WIZARD_OTID } from '@mango/data-models/lib-data-models';
+import {
+  BUILDING_WIZARD_OTID,
+  LEASE_WIZARD_OTID,
+  PREMISE_WIZARD_OTID,
+  SUPPLIER_WIZARD_OTID,
+} from '@mango/data-models/lib-data-models';
+import { AddEquipmentModalComponent } from '../add-equipment-modal/add-equipment-modal.component';
+import { EQUIPMENT_WIZARD_OTID } from '@mango/data-models/lib-data-models';
 import { AddLeaseModalComponent } from '../add-lease-modal/add-lease-modal.component';
+import { AddPremiseModalComponent } from '../add-premise-modal/add-premise-modal.component';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -161,38 +167,51 @@ export class DashboardFiltersComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public btnAddBuildingNewClick(addObject) {
-    if (addObject.moduleId == 3) {
-      const dialogRef = this.dialog.open(AddBuildingModalComponent, {
-        disableClose: true,
-        height: '81%',
-        width: '75%',
-        maxWidth: '1100px',
-        data: {
-          objectTypeId: this.objectTypeId,
-          userId: this.userId,
-        },
-      });
+    switch (addObject.moduleId) {
+      case PREMISE_WIZARD_OTID:
+        const dialogRef = this.dialog.open(AddPremiseModalComponent, {
+          disableClose: true,
+          height: '45%',
+          width: '35%',
+          maxWidth: '1100px',
+          data: {
+            objectTypeId: this.objectTypeId,
+            userId: this.userId,
+          },
+        });
 
-      dialogRef.afterClosed();
-    }
+        dialogRef.afterClosed();
+        break;
+      case BUILDING_WIZARD_OTID:
+        const dialogBldgRef = this.dialog.open(AddBuildingModalComponent, {
+          disableClose: true,
+          height: '81%',
+          width: '75%',
+          maxWidth: '1100px',
+          data: {
+            objectTypeId: this.objectTypeId,
+            userId: this.userId,
+          },
+        });
 
-    if (addObject.moduleId == 4) {
-      let dialogRef = this.dialog.open(AddLeaseModalComponent, {
-        disableClose: true,
-        height: '81%',
-        width: '75%',
-        maxWidth: '1100px',
-        data: {
-          objectTypeId: this.objectTypeId,
-          objectTypeName: addObject.moduleDesc,
-          userId: this.userId,
-        },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-        }
-      });
+        dialogBldgRef.afterClosed();
+        break;
+      case LEASE_WIZARD_OTID:
+        let dialogLeaseRef = this.dialog.open(AddLeaseModalComponent, {
+          disableClose: true,
+          height: '80%',
+          width: '75%',
+          maxWidth: '1100px',
+          data: {
+            objectTypeId: this.objectTypeId,
+            objectTypeName: addObject.moduleDesc,
+            userId: this.userId,
+          },
+        });
+        dialogLeaseRef.afterClosed();
+        break;
+      default:
+        break;
     }
   }
 

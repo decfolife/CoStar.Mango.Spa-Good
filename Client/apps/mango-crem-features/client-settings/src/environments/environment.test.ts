@@ -7,7 +7,6 @@ class EnvironmentsCrem {
     bookmarks: '/v06/WebServices/Mango/Bookmarks/Bookmarks.asmx/',
     dashboards: '',
   };
-  isRestful: false;
 }
 
 export const environment = new EnvironmentsCrem();

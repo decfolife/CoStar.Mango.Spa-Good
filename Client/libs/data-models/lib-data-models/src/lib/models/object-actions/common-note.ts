@@ -12,10 +12,13 @@ export interface CommonNote {
   lastModifiedDate?: Date;
   sourceImportID?: string;
   emailRecipients?: string;
+  canEdit: boolean;
 }
 
 export interface ObjectNotes {
   objectName: string;
   objectType: string;
+  canView: boolean;
+  canAdd: boolean;
   notes: CommonNote[];
 }

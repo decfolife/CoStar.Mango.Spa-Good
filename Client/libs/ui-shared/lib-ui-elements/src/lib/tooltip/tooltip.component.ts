@@ -1,4 +1,11 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 
 @Component({
   selector: 'crem-tooltip',
@@ -9,6 +16,9 @@ import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } fr
 export class TooltipComponent implements OnInit {
   // Upon component consumption, the below data object will be your only required Input, structured by the data types popover and history interfaces above
   tooltipId: string;
+  tooltipTriggerId: string;
+  tooltipPopoverTarget: string;
+
   @Input() helpTextData: string;
   @Input() externalId: string;
   @Input() helpTextDataIsHtml: boolean = false;
@@ -22,21 +32,30 @@ export class TooltipComponent implements OnInit {
 
   ngOnInit() {
     this.tooltipId = this.externalId + 'Tooltip';
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'Tab') {
-        // code to hide help text
-        this.withAnimationOptionsVisible = false;
-      }
-    });
+    this.tooltipTriggerId = 't' + this.externalId + 'Tooltip' + 'Trigger';
+    this.tooltipPopoverTarget = '#' + this.tooltipTriggerId;
   }
 
   getHelpText() {
     this.withAnimationOptionsVisible = !this.withAnimationOptionsVisible;
   }
 
+  onKeyDownEvent(e: KeyboardEvent) {
+    if (e.key == 'Enter' || e.key == ' ' || e.key === 'Tab') {
+      this.withAnimationOptionsVisible = false;
+    }
+  }
+
+  onHiddenEvent() {
+    const tooltipIcon = document.getElementById(
+      this.tooltipTriggerId
+    ).firstChild;
+    (tooltipIcon as HTMLElement).focus();
+  }
+
   // This method insures the screen reader reads the helptext
   onShownHandler() {
-    if(!!this.helpText){
+    if (!!this.helpText) {
       this.helpText.nativeElement.focus();
     }
   }

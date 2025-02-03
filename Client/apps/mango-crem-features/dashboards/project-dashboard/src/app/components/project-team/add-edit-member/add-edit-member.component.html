@@ -398,6 +398,7 @@
         </div>
         <div class="assignedTasks-container">
           <dx-data-grid
+            class="aet-assignTasksGrid"
             [showColumnLines]="false"
             [showRowLines]="false"
             [showBorders]="false"
@@ -433,6 +434,16 @@
               [text]="searchText"
               [visible]="false"
             ></dxo-search-panel>
+
+            <dxi-column
+              [width]="0"
+              [fixed]="true"
+              fixedPosition="left"
+              [allowSorting]="false"
+              [allowReordering]="false"
+              [allowResizing]="false"
+            >
+            </dxi-column>
 
             <dxi-column
               type="selection"

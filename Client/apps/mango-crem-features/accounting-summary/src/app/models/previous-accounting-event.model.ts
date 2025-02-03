@@ -113,7 +113,7 @@ export interface PreviousAccountingEvent {
   previousAssetBalance?: number;
   systemAssetAdjustment?: number;
   manualAssetAdjustment?: number;
-  adjustmentAmount?: number; // aka lrs.Adjustment
+  adjustment?: number; // aka lrs.Adjustment
 
   // Card - Level Expense
   // Carry Forward

@@ -14,7 +14,7 @@ export class DropdownsService extends EndpointService {
   classificationConfiguration = [];
 
   getPortfolioClassificationConfigurationOptions(masterGroupId: Number) {
-    const url = `${this.accountingUrl}/AccountManagement/GetPortfolioClassificationConfigurationOptions/${masterGroupId}`;
+    const url = `${this.accountingUrl}AccountManagement/GetPortfolioClassificationConfigurationOptions/${masterGroupId}`;
     return this.callHttpGet(
       url,
       'getPortfolioClassificationConfigurationOptions'
@@ -22,7 +22,7 @@ export class DropdownsService extends EndpointService {
   }
 
   getPortfolioClassificationConfiguration(masterGroupId: Number) {
-    const url = `${this.accountingUrl}/AccountManagement/GetPortfolioClassificationConfiguration/${masterGroupId}`;
+    const url = `${this.accountingUrl}AccountManagement/GetPortfolioClassificationConfiguration/${masterGroupId}`;
     return this.callHttpGet(url, 'getPortfolioClassificationConfiguration');
   }
 }

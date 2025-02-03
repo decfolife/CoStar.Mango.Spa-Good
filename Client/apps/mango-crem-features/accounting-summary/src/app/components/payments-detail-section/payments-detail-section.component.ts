@@ -40,8 +40,11 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   transactionPopupVisible = false;
   transactionPopupData: any;
   historicalTransactionData: any;
+  showHistoricalTransaction = false;
   initialState = {};
   private subscription = new Subscription();
+  private gridPreferencesUpdated = false;
+  private previousClassification = null;
   contentLoaded = false;
   showMaxRow = true;
   showDefaultRow = false;
@@ -59,14 +62,6 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.isAccountingEventEmpty) {
-      this.accountingSummaryService.setGridHeight(this.paymentsDataGrid, 2);
-      this.accountingSummaryService.clearGrid(
-        this.paymentsDataGrid,
-        'No Payment Data'
-      );
-      return;
-    }
     if (
       this.eventScheduleData &&
       this.gridState &&
@@ -90,7 +85,15 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   onRowClick(event: any) {
-    this.getTransactionPopupData(event.data.leaseRecognitionScheduleEventID);
+    this.historicalTransactionData = {
+      showScheduleTransaction: this.showHistoricalTransaction,
+      historicalCharges: event.data,
+      isEuroDateFormat: this.isEuroDateFormat,
+      isHistoricalCharge: true,
+      fromDate: this.eventScheduleData.beginDate,
+      toDate: this.eventScheduleData.endDate,
+      includeFromFirst: this.eventScheduleData.includeFromFirst,
+    };
   }
 
   private paymentsGridSetup(scheduleEventId: number) {
@@ -104,7 +107,6 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
           this.paymentsDataGrid.instance.state(null);
           this.accountingSummaryService.displayContactSystemAdminMessage();
         } else if (paymentDetailsResponse.success) {
-          this.paymentsDataGrid.instance.option('noDataText', '');
           this.paymentsGridData = paymentDetailsResponse.data;
           this.isEuroDateFormat = this.userInfo?.useDateEU;
           if (this.isEuroDateFormat) {
@@ -117,6 +119,30 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
               this.dateFormat
             );
           this.getGridPreferences();
+
+          const totalAmount = this.eventScheduleData.totalAmount;
+          const terminationFee = this.eventScheduleData.terminationFee;
+          const directCosts = this.eventScheduleData.directCosts;
+          const paymentsData = paymentDetailsResponse.data.length;
+
+          if (
+            paymentsData === 0 &&
+            !totalAmount &&
+            !terminationFee &&
+            !directCosts
+          ) {
+            this.paymentsDataGrid.instance.option('noDataText', 'No Payments');
+            this.paymentsGridHeight = '65px';
+          } else if (
+            paymentsData === 0 &&
+            (totalAmount || terminationFee || directCosts)
+          ) {
+            this.paymentsDataGrid.instance.option(
+              'noDataText',
+              'Missing Payment Data'
+            );
+            this.paymentsGridHeight = '65px';
+          }
         } else if (!paymentDetailsResponse.success) {
           this.accountingSummaryService.errorNotify(
             paymentDetailsResponse.clientErrorMessage
@@ -127,28 +153,44 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   }
 
   getGridPreferences() {
-    let state = JSON.parse(sessionStorage.getItem('paymentsGridStateKey'));
-    // Filter the data
-    const filteredData = this.gridState.filter((item) => {
-      return (
-        item.classificationID === this.classificationID &&
-        item.gridName === this.gridName
-      );
-    });
+    this.subscription.add(
+      this.accountingSummaryService
+        .getGridPreferences()
+        .subscribe((response) => {
+          if (response === null) {
+            this.accountingSummaryService.displayContactSystemAdminMessage();
+          } else if (response.success) {
+            this.gridState = response.data;
+            let state = JSON.parse(
+              sessionStorage.getItem('paymentsGridStateKey')
+            );
+            // Filter the data
+            const filteredData = this.gridState.filter((item) => {
+              return (
+                item.classificationID === this.classificationID &&
+                item.gridName === this.gridName
+              );
+            });
 
-    if (state === null) {
-      state = {};
-    }
+            if (state === null) {
+              state = {};
+            }
 
-    state.columns = [];
-    filteredData.forEach((item) => {
-      const parsedColumns = JSON.parse(item.columnJson);
-      state.columns.push(...parsedColumns);
-    });
+            state.columns = [];
+            filteredData.forEach((item) => {
+              const parsedColumns = JSON.parse(item.columnJson);
+              state.columns.push(...parsedColumns);
+            });
 
-    this.initialState = state;
-    sessionStorage.setItem('paymentsGridStateKey', JSON.stringify(state));
-    this.contentLoaded = false;
+            this.initialState = state;
+            sessionStorage.setItem(
+              'paymentsGridStateKey',
+              JSON.stringify(state)
+            );
+            this.contentLoaded = false;
+          }
+        })
+    );
   }
 
   onGridContentReady() {
@@ -173,6 +215,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
             this.accountingSummaryService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.paymentsDataGrid.instance.state({});
+            this.gridPreferencesUpdated = false;
             this.accountingSummaryService.successNotify(
               'Value Reset Successfully'
             );
@@ -220,6 +263,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
             this.accountingSummaryService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.initialState = newState;
+            this.gridPreferencesUpdated = true;
             this.accountingSummaryService.successNotify(
               response.clientErrorMessage
             );
@@ -249,31 +293,6 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
   showColumnChooser() {
     this.paymentsDataGrid.instance.showColumnChooser();
-  }
-
-  private getTransactionPopupData(scheduleEventId: number) {
-    const historicalTransactionDetails =
-      this.accountingSummaryService.getPaymentPopupData(scheduleEventId);
-
-    this.subscription.add(
-      historicalTransactionDetails.subscribe((res) => {
-        const historicalTransactionDetailsResponse = res;
-
-        if (historicalTransactionDetailsResponse === null) {
-          this.accountingSummaryService.displayContactSystemAdminMessage();
-        } else if (!historicalTransactionDetailsResponse.success) {
-          this.accountingSummaryService.errorNotify(
-            historicalTransactionDetailsResponse.clientErrorMessage
-          );
-        } else {
-          this.transactionPopupData = historicalTransactionDetailsResponse.data;
-          this.isEuroDateFormat = this.userInfo?.useDateEU;
-          if (this.isEuroDateFormat) {
-            this.dateFormat = 'dd.MM.yyyy';
-          }
-        }
-      })
-    );
   }
 
   sendToExcel() {

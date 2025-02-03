@@ -34,8 +34,14 @@
           Export Datasource
         </button>
 
-        <button mat-menu-item (click)="toggleCardWidth()">
-          Toggle Full Width
+        <button
+          *ngIf="config.showMenuToggleFullWidth"
+          mat-menu-item
+          (click)="toggleCardWidth()"
+        >
+          {{
+            config?.fullWidth ? 'Switch to Half Width' : 'Switch to Full Width'
+          }}
         </button>
 
         <button mat-menu-item (click)="showColumnChooser()">

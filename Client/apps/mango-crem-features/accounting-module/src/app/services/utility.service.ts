@@ -5,7 +5,10 @@ import {
   CardDataItem,
   CardDataItemModify,
 } from '@mango/data-models/lib-data-models';
-import { rowSort } from '@accounting-dashboard/shared/models/card-config.model';
+import {
+  rowSort,
+  GridType,
+} from '@accounting-dashboard/shared/models/card-config.model';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 
 @Injectable({
@@ -14,7 +17,16 @@ import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 export class UtilityService {
   private _debug = false as boolean;
 
-  findObjectByID(cardConfigs, id: string) {
+  /**
+   * Finds an element in an array of objects by ID and returns its index.
+   * Used to locate a card given an {id} and a list of card configurations.
+   *
+   * @param {CardConfig[]} cardConfigs
+   * @param {string} id
+   * @return {number}
+   * @memberof UtilityService
+   */
+  findObjectByID(cardConfigs: CardConfig[], id: string): number {
     return cardConfigs.findIndex((item) => item.id === id);
   }
 
@@ -22,21 +34,25 @@ export class UtilityService {
    * It builds the DevExtreme's PivotGridDataSource object
    *
    * @param {Array<any>} IADCardData
-   * @param {Array<any>} localCardConfig
+   * @param {CardConfig[]} localCardConfig
    * @param {number} reportingYear
    * @param {Array<any>} cardFieldConfigs
-   * @return {*}  {Array<PivotGridDataSource>}
+   * @return {*}  {{ pivotDataSources: Array<PivotGridDataSource>; gridDataSources: Array<any> }}
    * @memberof InAppDisclosureService
    */
-  public buildPivotDataSources(
+  public buildDataSources(
     IADCardData: Array<any>,
-    localCardConfig: Array<any>,
+    localCardConfig: CardConfig[],
     reportingYear: number,
-    cardFieldConfigs: Array<any>,
+    cardFieldConfigs: CardConfig[],
     debug?: boolean
-  ): Array<PivotGridDataSource> {
+  ): {
+    pivotDataSources: Array<PivotGridDataSource>;
+    gridDataSources: Array<any>;
+  } {
     this._debug = debug;
-    const pivotDataSources = [];
+    const pivotDataSources: Array<PivotGridDataSource> = [];
+    const gridDataSources: Array<any> = [];
     const skipIndex: Array<number> = []; // Keep track of indexes to skip if they has been merged with other IADCardData
     const IADCards = [...IADCardData];
     const debugObject = [];
@@ -52,14 +68,24 @@ export class UtilityService {
 
       // iterate per cardData.ts configuration object
       let pivotGrid: PivotGridDataSource;
+      let dataGrid: any;
 
       if (cardConfig.combineWithIndex && cardConfig.combineWithIndex !== 0) {
+        // 1) Merge Cards
         const mergedCards = this.mergeArraysOfObjects(
           IADCards[i],
           IADCards[cardConfig.combineWithIndex],
           cardConfig.mergeBy
         );
+        // 2) Set Pivot Grid
         pivotGrid = this.setPivotGrid(
+          mergedCards,
+          cardFieldConfigs[i],
+          cardConfig,
+          reportingYear
+        );
+        // 3) Set Data Grid
+        dataGrid = this.setDataGrid(
           mergedCards,
           cardFieldConfigs[i],
           cardConfig,
@@ -75,9 +101,18 @@ export class UtilityService {
           cardConfigsI: cardFieldConfigs[i],
           mergedCards: mergedCards,
           pivotGrid: pivotGrid,
+          dataGrid: dataGrid,
         });
       } else {
+        // 1) Set Pivot Grid
         pivotGrid = this.setPivotGrid(
+          IADCards[i],
+          cardFieldConfigs[i],
+          cardConfig,
+          reportingYear
+        );
+        // 2) Set Data Grid
+        dataGrid = this.setDataGrid(
           IADCards[i],
           cardFieldConfigs[i],
           cardConfig,
@@ -90,14 +125,78 @@ export class UtilityService {
           IADCardsI: IADCards[i],
           cardConfigsI: cardFieldConfigs[i],
           pivotGrid: pivotGrid,
+          dataGrid: dataGrid,
         });
       }
-      pivotDataSources.push(pivotGrid); // Add new Pivot Grid to DataSources
+      // 1) Build the Pivot and Data Grid
+      pivotDataSources.push(pivotGrid);
+      gridDataSources.push(dataGrid);
     });
 
     this._debug && console.debug('debugObject', debugObject);
 
-    return pivotDataSources;
+    return { pivotDataSources, gridDataSources };
+  }
+
+  /**
+   *
+   *
+   * @param {Array<any>} IADCardData
+   * @param {*} fieldConfig
+   * @param {CardConfig} cardConfig
+   * @param {number} [reportingYear]
+   * @param {number} [paramEnd]
+   * @return {*}
+   * @memberof UtilityService
+   */
+  setDataGrid(
+    IADCardData: Array<any>,
+    fieldConfig: any,
+    cardConfig: CardConfig,
+    reportingYear?: number,
+    paramEnd?: number
+  ) {
+    const dataGrid: Partial<CardDataItem>[] = this.mapFieldsDataGrid(
+      IADCardData,
+      cardConfig,
+      reportingYear,
+      paramEnd
+    );
+    return this.removeBlankAttributes(dataGrid);
+  }
+
+  /**
+   * Data Grid Field Configuration
+   *
+   * @param {Array<any>} IADCardData
+   * @param {CardConfig} cardConfig
+   * @param {number} [paramStart]
+   * @param {number} [paramEnd]
+   * @return {*}
+   * @memberof UtilityService
+   */
+  mapFieldsDataGrid(
+    IADCardData: Array<any>,
+    cardConfig: CardConfig,
+    paramStart?: number,
+    paramEnd?: number
+  ) {
+    // Pre-filter IADCardData
+    if (paramStart && cardConfig.filterInitialValue) {
+      const endPeriod = !paramEnd
+        ? Number(cardConfig.filterInitialValue.valueKey)
+        : paramEnd;
+      IADCardData = this.filterByKey(
+        IADCardData,
+        paramStart,
+        paramStart + endPeriod
+      );
+    }
+
+    // Transform cardData according to fieldTransform.modify object
+    IADCardData = this.modifyCardData(IADCardData, cardConfig);
+
+    return IADCardData;
   }
 
   /**
@@ -117,7 +216,7 @@ export class UtilityService {
     reportingYear?: number,
     paramEnd?: number
   ): PivotGridDataSource {
-    const pivotCardDataStore: Partial<CardDataItem>[] = this.mapFields(
+    const pivotCardDataStore: Partial<CardDataItem>[] = this.mapFieldsPivotGrid(
       IADCardData,
       cardConfig,
       reportingYear,
@@ -162,35 +261,63 @@ export class UtilityService {
         return;
       }
 
-      // The array corresponds to the order coming from the API in the CardJSONSchema field
-      const fieldConfig = JSON.parse(card.CardJSONSchema);
+      // The PivotGrid Field configuration using the CardJSONSchema
+      let fieldConfig: Array<any>;
+      if (localCardConfig[i].cardJSONSchema) {
+        fieldConfig = localCardConfig[i].cardJSONSchema; // Get Field Config from local client
+      } else {
+        fieldConfig = JSON.parse(card.CardJSONSchema); // Get Field Config from Mango_dashboards global conf
+      }
+
       // Get Indexes of JSON Schema and apply methods
       const dataIndex: number = fieldConfig.findIndex(
         (e) => e.area === 'data' || e.dataField === 'data'
       );
       const rowIndex: number = fieldConfig.findIndex(
-        (e) => e.dataField === 'Display' || e.area === 'row'
-      );
-      const sortedColumnIndex: number = fieldConfig.findIndex(
-        (e) => e.dataField === localCardConfig[i].sortedColumnFieldName
+        (e) => e.area === 'row' || e.dataField === 'Display'
       );
 
       /**
        * Sorting using sortingMethod
        * @see https://js.devexpress.com/Angular/Documentation/ApiReference/Data_Layer/PivotGridDataSource/Configuration/fields/#sortingMethod
        */
+      // Sorting Rows
       fieldConfig[rowIndex].sortingMethod = (a, b) =>
-        rowSort(a, b, card.sortingOrder);
+        rowSort(a, b, localCardConfig[i].sortingOrder);
       fieldConfig[dataIndex].sortingMethod = (a, b) =>
-        rowSort(a, b, card.sortingOrder);
-      if (sortedColumnIndex != -1) {
-        fieldConfig[sortedColumnIndex].sortingMethod = (a, b) =>
-          rowSort(a, b, localCardConfig[i].columnSortingOrder);
+        rowSort(a, b, localCardConfig[i].sortingOrder);
+
+      // Sorting Columns
+      if (typeof localCardConfig[i].sortedColumnFieldName === 'object') {
+        // When sortedColumnFieldName is a list
+        for (const columnName in localCardConfig[i]
+          .sortedColumnFieldName as any) {
+          const columnIndex: number = fieldConfig.findIndex(
+            (e) => e.dataField === columnName
+          );
+          if (columnIndex != -1) {
+            const sortingOrder =
+              localCardConfig[i].sortedColumnFieldName[columnName];
+            fieldConfig[columnIndex].sortingMethod = (a, b) =>
+              rowSort(a, b, sortingOrder);
+          }
+        }
+      } else {
+        // When sortedColumnFieldName is a string
+        const columnIndex: number = fieldConfig.findIndex(
+          (e) => e.dataField === localCardConfig[i].sortedColumnFieldName
+        );
+        if (columnIndex != -1) {
+          const sortingOrder = localCardConfig[i].columnSortingOrder;
+          fieldConfig[columnIndex].sortingMethod = (a, b) =>
+            rowSort(a, b, sortingOrder);
+        }
       }
+
       // Format Data
-      if (localCardConfig[i]?.format || card.format || decimalPrecision) {
+      if (localCardConfig[i]?.format || decimalPrecision) {
         fieldConfig[dataIndex].format = {
-          type: localCardConfig[i]?.format?.type ?? card.format ?? 'fixedPoint',
+          type: localCardConfig[i]?.format?.type ?? 'fixedPoint',
           precision:
             localCardConfig[i]?.format?.precision ?? decimalPrecision ?? 2,
         };
@@ -200,52 +327,80 @@ export class UtilityService {
       }
 
       // Styling
-      if (localCardConfig[i]?.width || card.width) {
+      if (localCardConfig[i]?.width) {
         // Checks local cardConfigs, if false use API response
-        fieldConfig[rowIndex].width = localCardConfig[i].width ?? card.width;
+        fieldConfig[rowIndex].width = localCardConfig[i].width;
       } else if (localCardConfig[i]?.width === null) {
         delete fieldConfig[rowIndex].width;
       }
 
       // Summary: summaryType
-      if (localCardConfig[i]?.summaryType || card.summaryType) {
-        fieldConfig[dataIndex].summaryType =
-          localCardConfig[i].summaryType ?? card.summaryType;
+      if (localCardConfig[i]?.summaryType) {
+        fieldConfig[dataIndex].summaryType = localCardConfig[i].summaryType;
       } else if (localCardConfig[i]?.summaryType === null) {
         delete fieldConfig[dataIndex].summaryType;
       }
 
       // Summary: calculateSummaryValue
-      if (
-        localCardConfig[i]?.calculateSummaryValue ||
-        card.calculateSummaryValue
-      ) {
-        fieldConfig[dataIndex].calculateSummaryValue =
-          localCardConfig[i].calculateSummaryValue ??
-          card.calculateSummaryValue;
-      } else if (localCardConfig[i]?.calculateSummaryValue === null) {
-        delete fieldConfig[dataIndex].calculateSummaryValue;
-      } else {
-        fieldConfig[dataIndex].calculateSummaryValue = (summaryCell) => {
-          if (
-            summaryCell.field('column')?.dataField === 'PeriodYear' ||
-            summaryCell.field('column')?.dataField === 'PeriodQuarter'
-          ) {
-            return summaryCell.value() / 2;
-          } else {
-            return summaryCell.value();
-          }
-        };
+      switch (true) {
+        case !!localCardConfig[i].summaryCellName &&
+          !localCardConfig[i].summaryCellFormula: {
+          // IF summaryCellName exists but summaryCellFormula not
+          fieldConfig[dataIndex].calculateSummaryValue = (summaryCell) => {
+            if (
+              summaryCell.field('column')?.dataField ===
+                localCardConfig[i].summaryCellName ||
+              localCardConfig[i].summaryCellName.includes(
+                summaryCell.field('column')?.dataField
+              )
+            )
+              return summaryCell.value() / 2;
+            else return summaryCell.value();
+          };
+          break;
+        }
+        case !!localCardConfig[i].summaryCellName &&
+          !!localCardConfig[i].summaryCellFormula: {
+          // Use formula in a specific summaryCell
+          fieldConfig[dataIndex].calculateSummaryValue = (summaryCell) => {
+            if (
+              summaryCell.field('column')?.dataField ===
+                localCardConfig[i].summaryCellName ||
+              localCardConfig[i].summaryCellName.includes(
+                summaryCell.field('column')?.dataField
+              )
+            )
+              return this.parseFormula(localCardConfig[i].summaryCellFormula, {
+                x: summaryCell.value(),
+                ...localCardConfig[i].summaryCellConstants,
+              });
+            else return summaryCell.value();
+          };
+          break;
+        }
+        case localCardConfig[i]?.calculateSummaryValue === null: {
+          // Delete/overwrite if calculateSummaryValue is null
+          delete fieldConfig[dataIndex].calculateSummaryValue;
+          break;
+        }
+        case typeof localCardConfig[i]?.calculateSummaryValue === 'function': {
+          // @deprecated, when passing the function directly
+          fieldConfig[dataIndex].calculateSummaryValue =
+            localCardConfig[i].calculateSummaryValue;
+          break;
+        }
+        default: {
+          // Just use the value
+          fieldConfig[dataIndex].calculateSummaryValue = (summaryCell) =>
+            summaryCell.value();
+          break;
+        }
       }
 
       // Summary: calculateCustomSummary
-      if (
-        localCardConfig[i]?.calculateCustomSummary ||
-        card.calculateCustomSummary
-      ) {
+      if (localCardConfig[i]?.calculateCustomSummary) {
         fieldConfig[dataIndex].calculateCustomSummary =
-          localCardConfig[i].calculateCustomSummary ??
-          card.calculateCustomSummary;
+          localCardConfig[i].calculateCustomSummary;
       } else if (localCardConfig[i]?.calculateCustomSummary === null) {
         delete fieldConfig[dataIndex].calculateCustomSummary;
       }
@@ -278,7 +433,9 @@ export class UtilityService {
     const hashMap = new Map( // Create a hashMap from data2 with composite keys (DueByYear and LeaseTemplate)
       data2.map((item) => [
         `${mergeBy ?? item.DueByYear}-${
-          mergeBySecondary ?? item.LeaseTemplate
+          mergeBySecondary ??
+          item.LeaseTemplate ??
+          item.DisclosureClassification
         }`,
         item,
       ])
@@ -287,7 +444,7 @@ export class UtilityService {
     const mergedArray = data1.map((item) => {
       // Merge data1 with data2 based on the composite key
       const key = `${mergeBy ?? item.PeriodYear}-${
-        mergeBySecondary ?? item.LeaseTemplate
+        mergeBySecondary ?? item.LeaseTemplate ?? item.DisclosureClassification
       }`;
       const itemToMerge = hashMap.get(key);
       if (itemToMerge && typeof itemToMerge === 'object') {
@@ -310,16 +467,29 @@ export class UtilityService {
    * @return {*}
    * @memberof InAppDisclosureService
    */
-  mapFields(
+  mapFieldsPivotGrid(
     IADCardData: Array<any>,
     cardConfig: CardConfig,
     paramStart?: number,
     paramEnd?: number
   ) {
     const transformedStore: any = [];
-    const sortingItems = Object.entries(cardConfig?.sortingOrder).map(
-      ([key]) => key
-    );
+    let sortingItems = [];
+
+    // Row Ordering
+    if (cardConfig?.sortingOrder) {
+      sortingItems = Object.entries(cardConfig.sortingOrder).map(
+        ([key]) => key
+      );
+    } else {
+      // Create sortOrder based on fieldTransform configuration if sortingOrder doesn't exists
+      sortingItems = Object.entries(
+        this.createSortOrder(
+          cardConfig.fieldTransform,
+          cardConfig.cardJSONSchema[0].dataField // Use first element of the cardJSONSchema
+        )
+      ).map(([key]) => key);
+    }
 
     if (!cardConfig?.fieldTransform) return IADCardData; // Nothing to transform, return IADCardData as is
 
@@ -346,21 +516,27 @@ export class UtilityService {
         const transformedObject: Partial<CardDataItem> = {};
 
         Object.entries(value).forEach(([k, v]) => {
-          switch (
-            value.LeaseTemplate // Depending on the 'LeaseTemplate' data will be mapped differently
-          ) {
-            case 'Total': {
-              switch (k) {
-                case 'Display': {
+          switch (true) {
+            case value.LeaseTemplate === 'Total' ||
+              value.DisclosureClassification === 'Total': {
+              switch (true) {
+                case k === 'Display': {
                   transformedObject[k] = v;
                   break;
                 }
-                case 'LeaseTemplate': {
+                case k === 'LeaseTemplate': {
                   transformedObject[k] = v;
+                  if (value.DisclosureClassification === 'Total')
+                    // For the sub-columns of pivot grids
+                    transformedObject['LeaseTemplate'] = e['LeaseTemplate'];
                   break;
                 }
-                case 'DisclosureClassification': {
+                case k === 'DisclosureClassification': {
                   transformedObject[k] = v;
+                  if (value.DisclosureClassification === 'Total')
+                    // For the sub-columns of pivot grids
+                    transformedObject['LeaseTemplate'] =
+                      e['DisclosureClassification'];
                   break;
                 }
                 default:
@@ -378,14 +554,16 @@ export class UtilityService {
 
         if (
           sortingItems &&
-          value.DisclosureClassification !== 'Total' &&
-          value.LeaseTemplate !== 'Total'
+          value.LeaseTemplate !== 'Total' &&
+          value.DisclosureClassification !== 'Total'
         ) {
           transformedObject['Display'] = sortingItems[i];
         }
 
         builtEntries.push(transformedObject);
       });
+
+      this._debug && console.debug('builtEntries', builtEntries);
 
       transformedStore.push(...builtEntries);
     });
@@ -452,6 +630,17 @@ export class UtilityService {
     return builtEntries;
   }
 
+  /**
+   * Modifies the IADCardData while being transformed.
+   *
+   * @private
+   * @param {Array<any>} IADCardData
+   * @param {CardDataItemModify} modify
+   * @param {number} targetIndex
+   * @param {*} IADIndex
+   * @return {*}
+   * @memberof UtilityService
+   */
   private _findPreviousMatchingRow(
     IADCardData: Array<any>,
     modify: CardDataItemModify,
@@ -483,5 +672,178 @@ export class UtilityService {
     key = 'PeriodYear' as string
   ): any {
     return data.filter((item) => item[key] >= start && item[key] <= end);
+  }
+
+  /**
+   * When cardConfig.sortingOrder is not present generate a sorting order
+   * based on fieldTransform options.
+   *
+   * @param {Array<any>} arr
+   * @param {string} customKey
+   * @return {*}  {{[key: string]: number}}
+   * @memberof UtilityService
+   */
+  createSortOrder(
+    arr: Array<any>,
+    customKey: string
+  ): { [key: string]: number } {
+    const result = {};
+    arr.forEach((item, i) => {
+      result[item.Display ?? customKey] = i;
+    });
+    return result;
+  }
+
+  /**
+   * Parses and evaluates custom formulas as a string.
+   *
+   * @example const formula = '(x / 2) + 2';
+   *			  const variables = { x: 10 };
+   *
+   *			  const result = this.evaluateFormula(formula, variables);
+   *				console.log(result); // Outputs: 7
+   *
+   * @param {string} formula
+   * @param {Record<string, number>} variables
+   * @return {*}  {(number | boolean)}
+   * @memberof UtilityService
+   */
+  parseFormula(
+    formula: string,
+    variables: Record<string, number>
+  ): number | boolean {
+    if (isNaN(variables.x)) return 0;
+
+    try {
+      // Create a dynamic function with variables in scope
+      const variableKeys = Object.keys(variables);
+      const variableValues = Object.values(variables);
+
+      const dynamicFunction = new Function(
+        ...variableKeys,
+        `return ${formula};`
+      ); // Generate a function that evaluates the formula
+
+      return dynamicFunction(...variableValues); // Execute the function with the passed variable values
+    } catch (error) {
+      console.error('Error evaluating formula:', error); // throw new Error('Invalid formula or variables');
+      return variables.x; // Just use the default and first variable to keep the cell showing
+    }
+  }
+
+  /**
+   * Build/Reconstruct Field Configuration from the pivot or grid data source,
+   * this is used to be saved in the database.
+   *
+   * @param {*} dataSources
+   * @param {GridType} [gridType]
+   * @return {*}
+   * @memberof UtilityService
+   */
+  buildConfigFields(dataSources, gridType?: GridType) {
+    const fields = [];
+    const fieldsToSave = [];
+
+    switch (gridType) {
+      case 'dataGrid': {
+        break;
+      }
+      default:
+      case 'pivotGrid': {
+        const columns = dataSources.getAreaFields('column', false);
+        const rows = dataSources.getAreaFields('row', false);
+        const data = dataSources.getAreaFields('data', false);
+        const filters = dataSources.getAreaFields('filter', false);
+
+        columns.forEach((column) => {
+          if (column.dataField && !fields.includes(column.dataField)) {
+            const field = JSON.parse(JSON.stringify(column));
+
+            delete field['groupInterval'];
+            delete field['caption'];
+            delete field['groupIndex'];
+            delete field['groupName'];
+
+            fields.push(field.dataField);
+            fieldsToSave.push(field);
+          }
+        });
+
+        rows.forEach((row) => {
+          if (row.dataField && !fields.includes(row.dataField)) {
+            const field = JSON.parse(JSON.stringify(row));
+
+            delete field['groupInterval'];
+            delete field['caption'];
+            delete field['groupIndex'];
+            delete field['groupName'];
+
+            fields.push(field.dataField);
+            fieldsToSave.push(field);
+          }
+        });
+
+        data.forEach((e) => {
+          if (e.dataField && !fields.includes(e.dataField)) {
+            const field = JSON.parse(JSON.stringify(e));
+
+            delete field['groupInterval'];
+            delete field['caption'];
+            delete field['groupIndex'];
+            delete field['groupName'];
+
+            fields.push(field.dataField);
+            fieldsToSave.push(field);
+          }
+        });
+
+        filters.forEach((filter) => {
+          if (filter.dataField && !fields.includes(filter.dataField)) {
+            const field = JSON.parse(JSON.stringify(filter));
+
+            delete field['groupInterval'];
+            delete field['caption'];
+            delete field['groupIndex'];
+            delete field['groupName'];
+
+            fields.push(field.dataField);
+            fieldsToSave.push(field);
+          }
+        });
+
+        break;
+      }
+    }
+
+    return fieldsToSave;
+  }
+
+  /**
+   * Removes invalid empty keys
+   *
+   * @template T
+   * @param {T[]} arr
+   * @return {*}  {T[]}
+   * @memberof UtilityService
+   */
+  removeBlankAttributes<T extends Record<string, any>>(arr: T[]): T[] {
+    return arr.map((obj) => {
+      const hasBlankKeys = Object.keys(obj).some(
+        (key) => key === '' || key === null || key === undefined
+      );
+
+      if (!hasBlankKeys) {
+        return obj;
+      }
+
+      const filteredObj = Object.entries(obj)
+        .filter(([key, _]) => key !== '' && key !== null && key !== undefined)
+        .reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {} as Record<string, any>);
+
+      return filteredObj as T;
+    });
   }
 }

@@ -55,6 +55,12 @@ export class AppendTemplateComponent {
     }
   }
 
+  onKeyDownEvent(e) {
+    if (e.key == 'Enter' && !this.projectTemplateSelectedCheck()) {
+      this.showOrHideViewProjectPreview();
+    }
+  }
+
   showOrHideViewProjectPreview() {
     this.previewVisible = !this.previewVisible;
     if (this.previewVisible) {

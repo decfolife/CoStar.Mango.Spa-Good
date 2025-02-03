@@ -46,6 +46,8 @@
 
         <div class="apt-view-project-preview-button-group">
           <span
+            (keydown)="onKeyDownEvent($event)"
+            [tabindex]="projectTemplateSelectedCheck() ? -1 : 0"
             type="button"
             id="apt-view-project-preview-button"
             [ngClass]="{ 'apt-disableBtn': projectTemplateSelectedCheck() }"

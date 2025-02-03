@@ -46,13 +46,6 @@ const FILTERS_MOCK = `
 
 const ACTIONS_MOCK = `
  <div actions style="display: flex; gap: 8px;">
-        <crem-icon
-        style="margin-top: 6px;"
-          *ngIf="showBookmarkButton"
-          [icon]="'faStar'"
-          [color]="'dark'"
-          pack="regular"
-        ></crem-icon>
         <crem-button-group
           [stylingMode]="'outlined'"
           [items]="[
@@ -244,7 +237,8 @@ type Story = StoryObj<PageHeaderComponent>;
 export const Default: Story = {
   args: {
     tabTitle: 'Lease',
-    pageTitle: '3438 Peachtree Rd. NE, Atlanta',
+    pageTitle:
+      '3438 Peachtree Rd. NE, Atlanta, 3438 Peachtree Rd. NE, Atlanta, 3438 Peachtree Rd. NE, Atlanta',
     primaryButtonText: 'Add',
     showBookmarkButton: true,
     showSettingsButton: true,
@@ -255,6 +249,7 @@ export const Default: Story = {
     statusPill: {
       text: 'Archived',
       type: Pill.DANGER_FILLED,
+      titleOnHover: 'some text on hover',
     },
   },
   render: (args: PageHeaderComponent) => ({

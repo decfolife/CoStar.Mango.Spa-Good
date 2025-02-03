@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'mango-crem-features-client-settings',
   preset: '../../../jest.preset.js',
@@ -21,8 +20,5 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
 };

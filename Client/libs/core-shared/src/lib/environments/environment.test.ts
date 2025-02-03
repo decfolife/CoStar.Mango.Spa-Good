@@ -12,7 +12,6 @@
 //     dashboards: 'http://service2.test.corp.virtualpremise.com:8094/dashboards/api/',
 //     authorize: 'http://service2.test.corp.virtualpremise.com:8094/authentication/api/authenticate',
 //   };
-//   isRestful = true;
 // }
 
 // export const environment = new EnvironmentsCrem();

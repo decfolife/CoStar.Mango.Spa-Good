@@ -33,12 +33,12 @@
         "
         type="primary"
         [disabled]="isCalculateValuesDisabled"
-        [icon]="isCalculateValuesClicked ? 'faSpinner' : ''"
-        [iconPack]="isCalculateValuesClicked ? 'solid' : ''"
-        [iconAnimation]="isCalculateValuesClicked ? 'spin' : ''"
+        [icon]="calculateValuesLoading ? 'faSpinner' : ''"
+        [iconPack]="calculateValuesLoading ? 'solid' : ''"
+        [iconAnimation]="calculateValuesLoading ? 'spin' : ''"
         (click)="calculateValues()"
       >
-        {{ isCalculateValuesClicked ? 'Calculating...' : 'Calculate Values' }}
+        {{ calculateValuesLoading ? 'Calculating...' : 'Calculate Values' }}
       </crem-button>
     </div>
 
@@ -73,7 +73,14 @@
     </div>
   </div>
 </div>
-<div class="add-events-body">
+<dx-load-panel
+  [(visible)]="
+    calculateValuesLoading || isApplyClicked || isSaveAndCloseClicked
+  "
+  shadingColor="rgba(0, 0, 0, 0.6)"
+  [position]="{ of: '#addEventsBody' }"
+></dx-load-panel>
+<div id="addEventsBody" class="add-events-body">
   <mango-schedule-details
     [commonDropdowns]="commonDropdowns"
     [eventsGridData]="eventsGridData"
@@ -88,6 +95,11 @@
   </mango-schedule-details>
 
   <mango-classification-tests
+    *ngIf="
+      classificationId !== undefined &&
+      classificationId !== 4 &&
+      classificationId !== 5
+    "
     [accountingEventsData]="accountingEventsData"
     [classificationId]="classificationId"
     [pageMode]="pageMode"
@@ -119,7 +131,11 @@
   >
   </mango-payments-grid>
 </div>
-<p-toast position="bottom-right" preventOpenDuplicates="true"></p-toast>
+<p-toast
+  position="bottom-right"
+  preventOpenDuplicates="true"
+  mangoAccountingAda
+></p-toast>
 
 <crem-popup
   [id]="

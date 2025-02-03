@@ -1,4 +1,4 @@
-@use 'libs/ui-shared/common/src/styles' as *;
+@use 'styles' as *;
 
 .body-content {
   padding: 0 24px;
@@ -50,7 +50,30 @@ mango-criteria-form-report {
   width: 100%;
 }
 
+:host ::ng-deep {
+  .to_from_date_wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  crem-dropdown#criteriaReportsegmentID_dropdown {
+    .dx-placeholder {
+      @include costar(color, gray02);
+    }
+  }
+}
+
 ::ng-deep {
+  dx-form {
+    div.dx-template-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: unset !important; //todo: this overwrites the simple-grid and my-devextreme stylesheet
+    }
+  }
+
   .footer-content {
     crem-button {
       button {

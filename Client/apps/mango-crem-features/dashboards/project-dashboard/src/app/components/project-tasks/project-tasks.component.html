@@ -122,7 +122,11 @@
         ></cs-search>
       </div>
       <div>
-        <a target="_blank" rel="opener" [href]="externalCremLink"
+        <a
+          target="_blank"
+          rel="opener"
+          [href]="externalCremLink"
+          class="pt-legacyLink"
           >for legacy page, click me</a
         >
       </div>
@@ -191,10 +195,8 @@
             mat-menu-item
             class="actnBtn-deleteTasks"
             id="pt-deleteTasks"
-            [disabled]="
-              !allSelectedRowKeys.length &&
-              checkUserLevelRequirement(availableActions.DELETE_TASKS)
-            "
+            [disabled]="!allSelectedRowKeys.length"
+            [hidden]="userAccessLevel !== 1"
             (click)="deleteSelectedTasks()"
           >
             <span>Delete Selected Tasks</span>
@@ -217,6 +219,7 @@
             id="pt-saveTasksAsTemplate"
             (click)="showSaveAsTasksTemplateDialog()"
             [disabled]="
+              noDataText == 'No Data' ||
               checkUserLevelRequirement(availableActions.SAVE_TASKS_AS_TEMPLATE)
             "
           >
@@ -260,16 +263,23 @@
             <span>Save As Default</span>
           </button>
 
-          <button mat-menu-item [matMenuTriggerFor]="saveAsMenu">
+          <button
+            mat-menu-item
+            [matMenuTriggerFor]="saveAsMenu"
+            (menuOpened)="focusSavedViewSubMenu()"
+          >
             Save As...
           </button>
           <mat-menu
+            aria-label="View Name"
             #saveAsMenu="matMenu"
-            class="save-view-menu"
             id="pt-saveUserView"
           >
             <crem-input
               #InputViewTextBox
+              [ariaLabel]="'View Name'"
+              [label]="'View Name'"
+              [labelPosition]="'top'"
               [state]="'active'"
               id="pt-saveUserViewInput"
               [showHint]="false"
@@ -277,7 +287,6 @@
               [showInfo]="false"
               [inputType]="'text'"
               [(value)]="inputViewName"
-              [placeholder]="'Enter view name'"
               [maxLengthField]="50"
               [required]="true"
               (click)="$event.stopPropagation()"
@@ -357,13 +366,16 @@
       [columnAutoWidth]="false"
       [dataSource]="gridData"
       keyExpr="ProjectMilestoneID"
-      parentIdExpr="ProjectMilestoneParentID"
+      parentIdExpr="DisplayParentID"
       [height]="'99%'"
       [hoverStateEnabled]="true"
       [filterSyncEnabled]="true"
       [wordWrapEnabled]="true"
       (onCellPrepared)="onCellPrepared($event)"
       (onCellClick)="displayTaskDetail($event)"
+      (onKeyDown)="onKeyDown($event)"
+      [focusedRowEnabled]="true"
+      (onFocusedRowChanged)="onFocusedRowChanged($event)"
       [(selectedRowKeys)]="allSelectedRowKeys"
       (onSelectionChanged)="onTasksSelectionChanged($event)"
       (onContentReady)="
@@ -472,8 +484,7 @@
       <dxi-column
         dataField="ProjectMilestoneUserCompletedDate"
         caption="Modified Complete"
-        dataType="date"
-        [format]="dateFormat"
+        [cellTemplate]="'modifyUserCompleteDateTemplate'"
         alignment="center"
         [minWidth]="50"
       ></dxi-column>
@@ -941,9 +952,12 @@
       >
         <ng-container *ngFor="let assignee of cell.data.Approvers; index as i">
           <span class="pt-initialsContainer" *ngIf="i < 3"
-            ><span [title]="assignee.FullName" class="pt-assineeIntials">{{
-              assignee.Initials
-            }}</span>
+            ><span
+              [attr.aria-label]="assignee.FullName"
+              [title]="assignee.FullName"
+              class="pt-assineeIntials"
+              >{{ assignee.Initials }}</span
+            >
             <span
               class="pt-approvalStatus appovedColor"
               [title]="assignee.ApprovalStatus"
@@ -981,7 +995,11 @@
         [id]="'pt-userApprovalStatusId' + cell.rowIndex"
       >
         <div
-          *ngIf="cell.value.trim() == taskUserApprovalStatus.NOT_ASSIGNED"
+          *ngIf="
+            cell.value.trim() == taskUserApprovalStatus.NOT_ASSIGNED &&
+            userAccessLevel == 1 &&
+            isProjectEditable
+          "
           class="pt-userApprovalStatusBtns-container"
         >
           <span
@@ -995,6 +1013,17 @@
           >
             {{ cell.value }}
           </span>
+        </div>
+        <div
+          class="disabledOption"
+          *ngIf="
+            (cell.value.trim() == taskUserApprovalStatus.NOT_ASSIGNED &&
+              userAccessLevel != 1) ||
+            (cell.value.trim() == taskUserApprovalStatus.NOT_ASSIGNED &&
+              !isProjectEditable)
+          "
+        >
+          {{ cell.value }}
         </div>
         <div *ngIf="cell.value.trim() == taskUserApprovalStatus.APPROVED">
           {{ cell.value }}
@@ -1060,6 +1089,26 @@
           >
         </div>
       </div>
+      <div
+        *dxTemplate="let cell of 'modifyUserCompleteDateTemplate'"
+        id="{{ 'pt-modifyCompleteDateTemplateId' + cell.rowIndex }}"
+      >
+        <div
+          *ngIf="isTaskCompleteDateModifiable(cell.data)"
+          class="pt-userApprovalStatusBtns-container"
+        >
+          <span
+            type="button"
+            id="{{ 'pt-modifyCompleteDateTemplateBtn' + cell.rowIndex }}"
+            class="pt-completeDateBtn"
+          >
+            {{ cell.value | date: dateFormat }}
+          </span>
+        </div>
+        <div *ngIf="!isTaskCompleteDateModifiable(cell.data)">
+          {{ cell.value | date: dateFormat }}
+        </div>
+      </div>
     </dx-tree-list>
 
     <crem-share-view-popup
@@ -1111,6 +1160,7 @@
             [dateFormat]="dateFormat"
             [showClearButton]="'true'"
             [inputId]="'pts-startDate'"
+            [inputWrapperClass]="'pts-startDateWrapper'"
             [isRequired]="'true'"
             [placeholderText]="'Select Date...'"
             [showDefaultValidationTooltip]="false"
@@ -1127,6 +1177,7 @@
             [dateFormat]="dateFormat"
             [showClearButton]="'true'"
             [inputId]="'pts-dueDate'"
+            [inputWrapperClass]="'pts-dueDateWrapper'"
             [disabled]="userAccessLevel !== 1"
             [placeholderText]="'Select Date...'"
             (changeEvent)="onStartOrDueDateChange($event, 'dueDate')"
@@ -1251,6 +1302,7 @@
           [disabled]="userAccessLevel !== 1"
           [ngClass]="{ disabledOption: userAccessLevel !== 1 }"
           (changeEvent)="selectAllEmailPreferences($event)"
+          (enterKeyEvent)="onEnterSelectAll($event)"
           ><span class="label selectAll">Select All</span>
         </crem-check-box>
       </div>
@@ -1662,8 +1714,9 @@
   [title]="'Copy Transaction'"
   [saveButtonText]="ctSaveButtonText"
   [draggable]="'true'"
-  [height]="800"
-  [width]="1040"
+  [height]="'auto'"
+  [width]="'50%'"
+  [resizable]="true"
   [showCloseButton]="true"
   [disableSApplyButton]="disabledCopyTransBtn"
   [customFooter]="true"

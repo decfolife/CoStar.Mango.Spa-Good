@@ -3,8 +3,8 @@ export interface IDynamicForm {
   formId: number;
   formName: string;
   formTypeName: string;
-  // objectId: number;
-  objectTypeID: number;
+  //objectId: number;
+  objectTypeId: number;
   objectType: string;
   lastModifiedDate: Date;
   formActive: boolean;
@@ -28,6 +28,7 @@ export class ISection {
 
 export class IFields {
   formItemID: number;
+  formItemName: string;
   formID: number;
   formSectionID: number;
   formItemLabel: string;
@@ -109,60 +110,58 @@ export class IFields {
 }
 
 export class IFieldDetails {
-  formID: number;
-  objectTypeID: number;
+  //formID: number;
+  //objectTypeID: number;
   formSectionID: number;
   formItemDefaultLabel: string;
   formItemID: number;
-  formItemLocalLabel: string;
+  //formItemLocalLabel: string;
   formItemLabel: string;
-  formItemSectionID: number;
+  //formItemSectionID: number;
   columnNum: number;
   formItemSortOrder: number;
   formItemMandatory: string;
   formItemMandatoryStep: number;
   formItemViewOnly: string;
-  formItemTabIndex: number;
-  formItemTop: number;
-  formItemLeft: number;
-  formItemLabelPlacement: string;
-  formItemLabelWidth: number;
-  formItemLabelColor: string;
-  formItemLabelWeight: string;
-  formItemLabelAlign: string;
+  //formItemTabIndex: number;
+  //formItemTop: number;
+  //formItemLeft: number;
+  //formItemLabelPlacement: string;
+  //formItemLabelWidth: number;
+  //formItemLabelColor: string;
+  //formItemLabelWeight: string;
+  //formItemLabelAlign: string;
   formItemLabelPrefix: string;
   formItemLabelSuffix: string;
   formItemDisplayLabel: string;
-  formItemFieldWidth: number;
-  formItemFieldColor: string;
-  formItemFieldWeight: string;
-  formItemFieldAlign: string;
-  formItemFieldHeight: number;
-  formItemFieldSpan: number;
-  formItemFieldSpanCSS: string;
-  formItemTotalWidth: number;
-  formItemTotalHeight: number;
-  formItemViewPrefix: string;
-  formItemViewSuffix: string;
-  formItemEditPrefix: string;
-  formItemEditSuffix: string;
-  containerCSS: string;
-  dataTypeLabel: string;
-  isParent: boolean;
-  isChild: boolean;
-  triggerWorkflowChange: string;
-  formItemDictionaryText: string;
-  formItemJavaScript: string;
-  parentID: number;
-  isAuditable: boolean;
-  vpDictionaryFormItemDesc: string;
+  //formItemFieldWidth: number;
+  //formItemFieldColor: string;
+  //formItemFieldWeight: string;
+  //formItemFieldAlign: string;
+  //formItemFieldHeight: number;
+  //formItemFieldSpan: number;
+  //formItemFieldSpanCSS: string;
+  //formItemTotalWidth: number;
+  //formItemTotalHeight: number;
+  //formItemViewPrefix: string;
+  //formItemViewSuffix: string;
+  //formItemEditPrefix: string;
+  //formItemEditSuffix: string;
+  //containerCSS: string;
+  //dataTypeLabel: string;
+  //isParent: boolean;
+  //isChild: boolean;
+  //triggerWorkflowChange: string;
+  //formItemDictionaryText: string;
+  //formItemJavaScript: string;
+  //parentID: number;
+  //isAuditable: boolean;
+  //vpDictionaryFormItemDesc: string;
 }
-
 
 export class FormItemTypes {
   formItemTypeID: number;
   formItemType: string;
- 
 }
 
 export class FormItemDataTypes {
@@ -204,11 +203,11 @@ export class BasicSelect {
   display: string;
 }
 
-export class FormItemsDropdownValuesDto {
-  ObjectId: number;
-  ObjectTypeId: number;
-  FormItemId: number;
-  FormItemDropdownSource: string;
+export class ObjectParentLinker {
+  formId: number;
+  objectId: number;
+  objectTypeTypeId: number;
+  labelText: string;
 }
 
 export class Widget {
@@ -321,4 +320,18 @@ export class ColumnFields {
   dataTypeFormatString: string;
   dataFieldDescription: string;
   dataFieldConstant: string;
+}
+
+export class SaveRenderFormDto {
+  formItemId: string;
+  oldValue: string;
+  newValue: string;
+  type: string;
+}
+
+export class SaveRenderFormCommand {
+  formId: number;
+  objectId: number;
+  objectTypeId: number;
+  formItems: SaveRenderFormDto[];
 }

@@ -126,7 +126,18 @@
       </div>
     </div>
     <div class="glevent-note-row">
-      <div class="glevent-note-lable">Notes:</div>
+      <crem-input-label
+        [id]="
+          accountingSummaryService.getId(
+            componentName,
+            'glevent-notes',
+            'label'
+          )
+        "
+        [label]="'Notes:'"
+        [name]="'schedule-transactions-glevent-notes-input'"
+      >
+      </crem-input-label>
       <crem-input
         [id]="
           accountingSummaryService.getId(
@@ -135,13 +146,10 @@
             'input'
           )
         "
-        [showLabel]="false"
         [inputType]="'textarea'"
         [rows]="2"
         [disabled]="true"
         [value]="glEventNotes"
-        aria-label="GLEvent Notes"
-        role="textbox"
       >
       </crem-input>
     </div>

@@ -13,7 +13,6 @@ class EnvironmentsCrem {
     objectActions: '/v06/WebServices/Mango/ObjectActions/ObjectActions.asmx/',
     header: 'http://service2.test.corp.virtualpremise.com:8090/Header/api/',
   };
-  isRestful: false;
 }
 
 export const environment = new EnvironmentsCrem();

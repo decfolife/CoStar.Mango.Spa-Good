@@ -1,3 +1,5 @@
+@use 'styles' as *;
+@use 'colors' as colors;
 .pointer {
   cursor: pointer;
   text-overflow: ellipsis;
@@ -8,4 +10,37 @@
   box-shadow: none;
   text-decoration: underline;
   color: #1e3a6f;
+}
+
+:host ::ng-deep #retrospective_adjustment-info-popup-grid {
+  overflow-y: hidden;
+  .dx-header-row {
+    background-color: colors.$costarDarkBlue !important;
+    color: colors.$white;
+    font-weight: bold !important;
+  }
+}
+
+:host
+  ::ng-deep
+  .grid-custom-style
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td,
+:host
+  ::ng-deep
+  .grid-custom-style
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > tr
+  > td {
+  font-size: 12px !important;
+  border-bottom-width: 1px !important;
+}
+
+.send-to-excel {
+  float: right;
+  @include costar(margin, 1);
 }

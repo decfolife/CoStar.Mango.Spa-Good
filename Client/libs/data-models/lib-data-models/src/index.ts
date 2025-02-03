@@ -44,6 +44,7 @@ export { ServiceAccountHistory } from './lib/models/service-account/service-acco
 export { RenderFormHeaderData } from './lib/models/renderForm/renderFormHeaderData';
 export { CoStarProperty } from './lib/models/costar-matching/costar-property';
 export { BuildingInfo } from './lib/models/costar-matching/building-info';
+export { AddBuildingRequest } from './lib/models/building.interface';
 export { CommonNote } from './lib/models/object-actions/common-note';
 export { ObjectNotes } from './lib/models/object-actions/common-note';
 export { CleanseAddress } from './lib/models/costar-matching/cleanse-address';
@@ -101,7 +102,7 @@ export * from './lib/models/ui-components/button-group';
 export * from './lib/models/ui-components/field-history';
 export * from './lib/models/ui-components/toast.model';
 export * from './lib/mocks';
-export * from './lib/enums/client-prefernece.enums';
+export * from './lib/enums/client-preference.enums';
 export * from './lib/models/dashboards/header.interface';
 export * from './lib/models/reminder-recepient.interface';
 export * from './lib/models/reminders-filtered-recepient.interface';

@@ -22,6 +22,7 @@ export class AccountingSummaryService extends EndpointService {
   titleLeaseInfoSubject: BehaviorSubject<any>;
   public jeActionTaken$ = new BehaviorSubject<boolean>(false);
   public newCreatedSchedule = new BehaviorSubject<number>(0);
+  public lastApprovedOrExportedDate$ = new BehaviorSubject<Date | null>(null);
   preferenceSavePendingMessage = ' - You have unsaved preference changes.';
   isLocked: boolean;
   isArchived: boolean;
@@ -29,17 +30,11 @@ export class AccountingSummaryService extends EndpointService {
   headerRowHeight: number;
   gridHeightPixelCorrection: number;
 
-  selectNewScheduleData$ = this.newCreatedSchedule;
-
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
     this.apiUrl = UtilitiesService.getBaseApiUrl(Api.accountingSummary);
     const storedTitle = JSON.parse(localStorage.getItem('titleLeaseInfo'));
     this.titleLeaseInfoSubject = new BehaviorSubject<any>(storedTitle || {});
-  }
-
-  selectNewSchedule(data) {
-    this.newCreatedSchedule.next(data);
   }
 
   setLeaseAbstractId(leaseId: number) {
@@ -198,7 +193,7 @@ export class AccountingSummaryService extends EndpointService {
 
   getJeProcessingPopupData(leaseRecognitionPeriodID: number) {
     return this.callHttpGet(
-      `${this.apiUrl}AmortizationPeriods/getjournalentryprocessing/period/${leaseRecognitionPeriodID}`,
+      `${this.apiUrl}AmortizationPeriods/getJournalEntryProcessing/period/${leaseRecognitionPeriodID}`,
       'getJeProcessingPopupData'
     );
   }

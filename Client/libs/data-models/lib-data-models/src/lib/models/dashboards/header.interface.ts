@@ -6,5 +6,9 @@ export interface Module {
 
 export interface NavLinksByCategory {
   category: string;
+  categoryHasFlyOutMenu: boolean;
+  categoryLinkUrl: string;
+  categorySpaUrl: string;
+  categorySpaQueryParameters?: string;
   children: SharedLeftNavLink[];
 }

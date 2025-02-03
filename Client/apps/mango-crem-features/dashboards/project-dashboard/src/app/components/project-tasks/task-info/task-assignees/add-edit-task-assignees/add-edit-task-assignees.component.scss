@@ -26,6 +26,10 @@ fa-icon {
       }
     }
   }
+
+  .teamMemberActionsButton:focus {
+    border: 3px solid $primary-lighter;
+  }
 }
 .footerRightControls {
   display: flex;
@@ -34,5 +38,15 @@ fa-icon {
   }
   .modalFooter {
     @include costar(border-top, gray05);
+  }
+}
+
+::ng-deep {
+  #add-edit-task-assignees-grid {
+    .dx-row.dx-header-row {
+      td.aeta-remove {
+        display: none;
+      }
+    }
   }
 }

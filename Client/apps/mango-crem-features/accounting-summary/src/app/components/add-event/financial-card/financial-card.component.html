@@ -1,7 +1,6 @@
 <crem-card
   [id]="accountingSummaryService.getId(componentName, 'section', 'card')"
   [title]="title"
-  [subtitle]="subtitle"
 >
   <form [formGroup]="financialForm" class="financial-card-container">
     <div class="composite-dropdowns-container amortization">
@@ -28,6 +27,7 @@
           [required]="true"
           formControlName="manualAmortizationProfileName"
           placeholder="Enter a name please . . ."
+          (keydown.enter)="saveAmortizationProfileName()"
         ></crem-input>
 
         <div class="manual-entry__btn-container">
@@ -97,6 +97,13 @@
           </div>
           <div class="controls-container">
             <dx-select-box
+              [id]="
+                accountingSummaryService.getId(
+                  componentName,
+                  'amortization-profile',
+                  'dropdown'
+                )
+              "
               [value]="amortizationInitialSelected"
               [dataSource]="amortizationProfileList"
               displayExpr="profileName"
@@ -108,6 +115,11 @@
               (onValueChanged)="onAmortizationValueChanged($event)"
               formControlName="amortizationProfile"
             >
+              <dxo-drop-down-options
+                container="#financials-amortization-profile-dropdown"
+                [hideOnParentScroll]="false"
+              >
+              </dxo-drop-down-options>
             </dx-select-box>
           </div>
           <div class="labels">
@@ -135,7 +147,6 @@
                 )
               "
               [name]="'chargeType'"
-              [disabled]="false"
               formControlName="chargeType"
             >
               <crem-radio-field
@@ -178,6 +189,10 @@
                 )
               "
               [value]="false"
+              [elementAttr]="{
+                'aria-label':
+                  'Check box to override the accounts assigned to the amortization profile in the grid below.'
+              }"
               formControlName="overrideAmortizationProfile"
             >
             </crem-check-box>
@@ -191,7 +206,6 @@
               "
               label="Check box to override the accounts assigned to the amortization profile in the grid below."
               [showInfo]="false"
-              [name]="'financials-amortization-override-check-box'"
             >
             </crem-input-label>
           </div>
@@ -319,9 +333,10 @@
                     'checkbox'
                   )
                 "
-                [value]="isCurrencyDirecEntryAllowed"
-                [disabled]="isCurrencyDirecEntryDisabled"
-                (changeEvent)="onCurrencyDirecEntryChange($event)"
+                (changeEvent)="onCurrencyDirectEntryChange($event)"
+                [elementAttr]="{
+                  'aria-label': 'Direct Entry'
+                }"
                 formControlName="financialCurrencyDirectEntry"
               >
               </crem-check-box>
@@ -335,7 +350,6 @@
                 "
                 [label]="'Direct Entry'"
                 [showInfo]="false"
-                [name]="'financials-direct-entry-checkbox'"
               >
               </crem-input-label>
             </div>
@@ -364,7 +378,6 @@
                 [value]="''"
                 [placeholder]="''"
                 [disallowNegative]="false"
-                [disabled]="false"
                 [required]="false"
                 formControlName="currencyRate"
               >
@@ -474,8 +487,7 @@
               [inputType]="'number'"
               [value]="''"
               [placeholder]="''"
-              [disallowNegative]="true"
-              [disabled]="'false'"
+              [disallowNegative]="false"
               [required]="true"
               formControlName="discountRate"
               class="annual-rate-input"
@@ -489,7 +501,7 @@
                   'dropdown'
                 )
               "
-              [placeholder]="''"
+              [placeholder]="'Annual Rate Type'"
               [dataSource]="[
                 { displayKey: 'APR', valueKey: 1 },
                 { displayKey: 'APY', valueKey: 2 }
@@ -508,7 +520,7 @@
                   'hint-text'
                 )
               "
-              >Effective Rate: {{ effectiveRate | number: '1.4-4' }}</span
+              >Effective Rate: {{ formatEffectiveRate() }}</span
             >
           </div>
           <div
@@ -527,7 +539,7 @@
                     'label'
                   )
                 "
-                [label]="'Modification Impact Scope'"
+                [label]="'Modification Impacts Scope'"
                 [showInfo]="false"
                 [name]="'financials-modification-impact-scope-toggle'"
               >
@@ -626,7 +638,6 @@
               [label]="'Amount'"
               [showInfo]="false"
               [required]="true"
-              [name]="'financials-amount-Input'"
             >
             </crem-input-label>
           </div>
@@ -640,7 +651,7 @@
                 )
               "
               [format]="formatCurrencyInput()"
-              [disabled]="isROUTAmountDisabled"
+              [inputAttr]="{ 'aria-label': 'ROU Amount' }"
               formControlName="ROUAmount"
             >
             </dx-number-box>
@@ -685,16 +696,6 @@
   </form>
 
   <div class="financial-balance-cards">
-    <mango-balance-card
-      *ngIf="cards && cards.length > 0; else not_found"
-      [cards]="cards"
-      [configuration]="cardsConfiguration"
-      [useOnBlurChangeForInputs]="true"
-      (valueChange)="updateFinancialBalanceCards($event)"
-      (onBlurChange)="updateFinancialBalanceCards($event)"
-    ></mango-balance-card>
-    <ng-template #not_found
-      ><div class="color-gray03">No cards Available</div></ng-template
-    >
+    <mango-balance-cards-container></mango-balance-cards-container>
   </div>
 </crem-card>

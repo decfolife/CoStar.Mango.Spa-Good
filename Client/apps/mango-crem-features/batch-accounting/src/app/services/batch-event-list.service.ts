@@ -17,7 +17,7 @@ export class BatchEventListService extends EndpointService {
   public userRights = 0; // 0 No Rights, 1 View Rights, 2 Add Rights
 
   getWorkflowStatuses() {
-    const url = `${this.batchAccountingUrl}/BatchEventList/GetWorkflowStatuses`;
+    const url = `${this.batchAccountingUrl}BatchEventList/GetWorkflowStatuses`;
     return this.callHttpGet(url, 'getWorkflowStatuses');
   }
 
@@ -42,7 +42,7 @@ export class BatchEventListService extends EndpointService {
   }
 
   queueBatch(clientBatch: AccountingBatch) {
-    const url = `${this.batchAccountingUrl}/BatchConfirmation/QueueBatch`;
+    const url = `${this.batchAccountingUrl}BatchConfirmation/QueueBatch`;
     return this.callHttpPost(url, 'queueBatch', clientBatch);
   }
 }

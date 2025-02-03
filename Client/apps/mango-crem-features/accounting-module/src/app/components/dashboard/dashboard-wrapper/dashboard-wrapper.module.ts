@@ -10,10 +10,8 @@ import {
   SkeletonModule,
 } from '@mango/ui-shared/lib-ui-elements';
 
-import { MangoDisclosureViewComponent } from '../views/disclosure-dashboard-view/disclosure-dashboard-view.component';
+import { MangoDisclosureViewComponent } from '../view/disclosure-dashboard-view.component';
 
-import { Asc842AnnualDisclosuresComponent } from '../views/asc-842-annual-disclosures/asc-842-annual-disclosures.component';
-import { Asc842QuarterlyDisclosuresComponent } from '../views/asc-842-quarterly-disclosures/asc-842-quarterly-disclosures.component';
 import { WorkflowAndAlertsComponent } from '../views/workflow-and-alerts/workflow-and-alerts.component';
 import { InAppDisclosureService } from '@accounting-dashboard/services/in-app-disclosure.service';
 import { CremPivotTableModule } from 'libs/ui-shared/lib-ui-elements/src/lib/crem-pivot-table/crem-pivot-table.module';
@@ -22,15 +20,15 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
-import { IADCardComponent } from '../card/IADCard/iad-card.component';
+import { IADCardComponent } from '../IADCard/iad-card.component';
+import { DxChartModule, DxDataGridModule } from 'devextreme-angular';
 
 @NgModule({
   declarations: [
     DashboardWrapperComponent,
     MangoDisclosureViewComponent,
-    Asc842AnnualDisclosuresComponent,
-    Asc842QuarterlyDisclosuresComponent,
     WorkflowAndAlertsComponent,
     IADCardComponent,
   ],
@@ -38,10 +36,13 @@ import { IADCardComponent } from '../card/IADCard/iad-card.component';
     CommonModule,
     DashboardModule,
     DropdownModule,
+    DxChartModule,
     DxPivotGridModule,
+    DxDataGridModule,
     ButtonModule,
     CardModule,
     DragDropModule,
+    MatSlideToggleModule,
     MatMenuModule,
     MatIconModule,
     MatButtonModule,

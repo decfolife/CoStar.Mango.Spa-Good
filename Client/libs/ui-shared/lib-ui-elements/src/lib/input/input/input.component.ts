@@ -95,7 +95,8 @@ export class InputComponent
   @Input() minNumber?: number = Number.NEGATIVE_INFINITY;
   @Input() maxNumber?: number = Number.POSITIVE_INFINITY;
   @Input() disallowNegative?: boolean;
-  @Input() debounceTime: number = 0;
+  @Input() debounceTime = 0;
+  @Input() ariaLabel?: string;
 
   // Hint Component
   @Input() hintText?: string;

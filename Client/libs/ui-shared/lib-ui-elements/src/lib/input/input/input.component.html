@@ -1,5 +1,10 @@
-<crem-input-label *ngIf="showLabel" [label]="label" [name]="name" [required]="required"
-  [showInfo]="showInfo"></crem-input-label>
+<crem-input-label
+  *ngIf="showLabel"
+  [label]="label"
+  [name]="name"
+  [required]="required"
+  [showInfo]="showInfo"
+></crem-input-label>
 
 <div class="input-container">
   <div class="error-icon">
@@ -13,6 +18,7 @@
     #input
     *ngIf="inputType === 'text'"
     type="text"
+    [ariaLabel]="ariaLabel"
     [ngClass]="getCssClasses()"
     [class]="className"
     [id]="id"
@@ -32,6 +38,7 @@
   <input
     *ngIf="inputType === 'number'"
     type="number"
+    [ariaLabel]="ariaLabel"
     [ngClass]="getCssClasses()"
     [class]="className"
     [id]="id"
@@ -51,6 +58,7 @@
   <input
     *ngIf="inputType === 'password'"
     type="password"
+    [ariaLabel]="ariaLabel"
     [ngClass]="getCssClasses()"
     [class]="className"
     [id]="id"
@@ -69,6 +77,7 @@
     #textarea
     (input)="adjustTextareaHeight(); onInputChange($event)"
     *ngIf="inputType === 'textarea'"
+    [ariaLabel]="ariaLabel"
     [ngClass]="getCssClasses()"
     [class]="className"
     [id]="id"

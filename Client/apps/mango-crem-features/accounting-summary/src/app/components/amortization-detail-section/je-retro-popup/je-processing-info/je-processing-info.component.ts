@@ -32,7 +32,6 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
   @Input() wfStatusRights: any;
   @Input() displayPeriodTitle: string;
   @Input() isPopupForRetroGridClick = false;
-  @Output() setHeight = new EventEmitter<boolean>();
 
   jeProcessingGridColumns = [];
   showJournalEntries = false;
@@ -42,8 +41,6 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
   displayNoDataText = 'Loading Data...';
   showActionButton = false;
   changeButtonText = '';
-  calloutText = '';
-  calloutClass = '';
   isButtonDisabled = false;
   isTooltipVisible = false;
   disableBtnReason = '';
@@ -75,11 +72,6 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     this.populateFields();
     this.jeProcessingInfoGridSetup();
-    this.getDebitCreditTotal();
-  }
-
-  notifyHeight(isMaxHeight: boolean): void {
-    this.setHeight.emit(isMaxHeight);
   }
 
   onExporting(event) {
@@ -116,11 +108,9 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   populateFields() {
-    this.toggleCallout(false);
     this.displayNoDataText = 'Loading Data...';
 
     if (!this.eventScheduleData.isPublished) {
-      this.notifyHeight(false);
       this.showJournalEntries = false;
       this.showActionButton = false;
 
@@ -149,19 +139,15 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
       this.showNoJeProfileSelected = true;
       this.showActionButton = false;
       this.showJournalEntries = false;
-      this.notifyHeight(false);
       return;
     }
 
     switch (this.jeProcessingPopupData.jeStatus) {
       case 'Scheduled':
         if (!this.showNoJeProfileSelected) {
-          this.toggleCallout(true);
-          this.calloutText = 'Journal Entry Preview:';
           this.changeButtonText = 'Approve';
           this.showJournalEntries = true;
           this.showActionButton = true;
-          this.notifyHeight(true);
 
           if (!this.isLocked && !this.isArchived) {
             this.isButtonDisabled = false;
@@ -179,6 +165,13 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
               this.isButtonDisabled = true;
               this.disableBtnReason =
                 'This accounting event is a reporting exception, which is excluded from journal entry processing.';
+            } else if (
+              !this.jeProcessingPopupData.journalEntries[0]?.isBalanced
+            ) {
+              this.showActionButton = true;
+              this.isButtonDisabled = true;
+              this.disableBtnReason =
+                'Unbalanced Journal Entries cannot be approved here.';
             }
           }
 
@@ -186,7 +179,6 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
             this.jeProcessingPopupData.journalEntries === null ||
             this.jeProcessingPopupData.journalEntries.length === 0
           ) {
-            this.notifyHeight(false);
             this.showJournalEntries = false;
           }
         }
@@ -194,7 +186,6 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
 
       case 'Approved':
         this.changeButtonText = 'Unapprove';
-        this.notifyHeight(true);
         this.showJournalEntries = true;
         this.showActionButton = true;
 
@@ -210,7 +201,6 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
           this.jeProcessingPopupData.journalEntries === null ||
           this.jeProcessingPopupData.journalEntries.length === 0
         ) {
-          this.notifyHeight(false);
           this.showJournalEntries = false;
         }
 
@@ -218,7 +208,6 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
 
       case 'Exported':
         this.changeButtonText = 'Unexport';
-        this.notifyHeight(true);
         this.showJournalEntries = true;
         this.showActionButton = true;
 
@@ -235,31 +224,10 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
           this.jeProcessingPopupData.journalEntries === null ||
           this.jeProcessingPopupData.journalEntries.length === 0
         ) {
-          this.notifyHeight(false);
           this.showJournalEntries = false;
         }
         break;
     }
-  }
-
-  getDebitCreditTotal(): { debit: number; credit: number } {
-    const journalEntries = this.jeProcessingPopupData.journalEntries || [];
-    return journalEntries.reduce(
-      (accumulator, entry) => {
-        if (entry.debitCredit === 'C') {
-          accumulator.credit += entry.amount;
-        } else if (entry.debitCredit === 'D') {
-          accumulator.debit += entry.amount;
-        }
-        return accumulator;
-      },
-      { debit: 0, credit: 0 }
-    );
-  }
-
-  toggleCallout(show: boolean) {
-    this.calloutClass = show ? 'calloutPanel' : '';
-    this.calloutText = show ? 'Journal Entry Preview' : '';
   }
 
   actionButton() {
@@ -351,6 +319,13 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
     this.isTooltipVisible = false;
   }
 
+  setTabsHeight() {
+    let element = document.getElementById('jeProcessingTab');
+    let height = element.offsetHeight;
+    console.log('Element is null: ', element == null ? 'true' : 'false');
+    console.log('height: ' + height);
+  }
+
   exportToExcelFileName(): string {
     const dateTimeStamp = new Date().toLocaleString('en-US', {
       year: 'numeric',
@@ -366,5 +341,42 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
     );
     const fileName = `Period_${formattedDisplayPeriodTitle}_Journal Entry_${dateTimeStamp}.xlsx`;
     return fileName;
+  }
+
+  localFormat = (value: number) =>
+    this.formattingService.localFormat(
+      +value,
+      this.eventScheduleData.localCurrencyDecimalPrecision
+    );
+
+  customSummaryCalculation(options) {
+    if (options.summaryProcess === 'start') {
+      options.totalValue = 0;
+      options.debits = 0;
+      options.credits = 0;
+    } else if (options.summaryProcess === 'calculate') {
+      // Check for the debits and credits based on row data
+      if (options.value.debitCredit === 'D') {
+        options.debits += options.value.amount; // Add to debits
+      } else if (options.value.debitCredit === 'C') {
+        options.credits += options.value.amount; // Add to credits
+      }
+
+      // Depending on the summary name, perform the appropriate calculations
+      switch (options.name) {
+        case 'sumOfDebits':
+          // Assign the accumulated debits to the total value
+          options.totalValue = options.debits;
+          break;
+        case 'sumOfCredits':
+          // Assign the accumulated credits to the total value
+          options.totalValue = options.credits;
+          break;
+        case 'sumOfVariance':
+          // Calculate the variance as the difference between debits and credits
+          options.totalValue = options.debits - options.credits;
+          break;
+      }
+    }
   }
 }

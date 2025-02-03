@@ -3,3 +3,22 @@
     color: #d9534f;
   }
 }
+
+.footerContent.note {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .footerLeftControls {
+    display: flex;
+    align-items: center;
+  }
+
+  .footerRightControls {
+    display: flex;
+    align-items: center;
+    crem-button {
+      padding: 8px 0px 8px 8px;
+    }
+  }
+}

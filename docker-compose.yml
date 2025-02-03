@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+    
   # mango-spa:
   #   image: ${DOCKER_REGISTRY-}mango-spa
   #   container_name: mango-spa
@@ -27,6 +28,16 @@ services:
   #   ports:
   #     - 8085:8000
   #   restart: "no"
+
+  web:
+    image: nginx:latest
+    container_name: mango-app
+    ports:
+      - 4200:8000
+    volumes:
+      - ./Client/config/nginx-spa.conf:/etc/nginx/nginx.conf:ro
+      - ./Client/dist/apps/mango:/usr/share/nginx/html
+    restart: always
 
   redis:
     image: redis:6.2-alpine

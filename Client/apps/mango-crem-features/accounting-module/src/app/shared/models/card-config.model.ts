@@ -17,6 +17,8 @@ export interface CardConfigObject {
   visible: boolean;
 }
 
+export type GridType = 'pivotGrid' | 'dataGrid';
+
 export function rowSort(a?, b?, sortingOrder?: SortingOrder) {
   if (sortingOrder) {
     if (a.value in sortingOrder && !(b.value in sortingOrder)) return 1;

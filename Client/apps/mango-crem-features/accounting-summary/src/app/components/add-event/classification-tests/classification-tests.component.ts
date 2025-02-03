@@ -1,4 +1,11 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AccordionModule,
@@ -24,6 +31,8 @@ import { AddEditScheduleService } from '@accounting-summary/services/add-edit-sc
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AddEventFormService } from '@accounting-summary/services/add-event-form.service';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { PreviousAccountingEvent } from '@accounting-summary/models/previous-accounting-event.model';
+import { accountingTerms } from '@accounting-summary/models/interfaces/balance-card-interfaces';
 
 @Component({
   selector: 'mango-classification-tests',
@@ -54,9 +63,9 @@ export class ClassificationTestsComponent
   classificationTestForm: FormGroup;
   isfairMarketHasValue: boolean = false;
   implicitInterestRate: number;
-  subtitle: string;
-  @Input() accountingEventsData: any;
-  @Input() classificationId: any;
+  title = 'Classification Tests | Test Result: Tests Incomplete';
+  @Input() accountingEventsData: PreviousAccountingEvent;
+  @Input() classificationId: number;
   @Input() pageMode;
 
   test1: boolean;
@@ -72,8 +81,8 @@ export class ClassificationTestsComponent
 
   isResultsIncomplete: boolean = true;
   isClassificationMatched: boolean = null;
-  classificationResult: string = null;
-  classificationResultReason: string = null;
+  classificationResult = 'Incomplete Test';
+  classificationResultReason = 'Incomplete Test 1, 2, 3, 4, 5.';
 
   economicLifeYears: number = 0.0;
   remainingTermYears: number = 0.0;
@@ -84,6 +93,9 @@ export class ClassificationTestsComponent
   pVofAmtNotReflectedInPayments: number = 0.0;
   pVofAmtNotReflectedInPaymentsString: string = '';
   localCurrencyDecimalPrecision: number = 2;
+  classificationTest3: string;
+  classificationTest4: string;
+
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -95,10 +107,12 @@ export class ClassificationTestsComponent
   ) {
     this.initializeClassificationForm();
     this.subscriptions.push(
-      this.addEventFormService.decimalPrecision$.subscribe((precision) => {
-        this.localCurrencyDecimalPrecision = precision;
-        this.updatePrecision();
-      })
+      this.addEventFormService.localCurrencyDecimalPrecision$.subscribe(
+        (precision) => {
+          this.localCurrencyDecimalPrecision = precision;
+          this.updatePrecision();
+        }
+      )
     );
   }
 
@@ -108,7 +122,7 @@ export class ClassificationTestsComponent
   }
 
   handleFormValueChanges() {
-    const debounce = 500;
+    const debounce = 300;
     this.subscriptions.push(
       this.classificationTestForm.valueChanges
         .pipe(debounceTime(debounce), distinctUntilChanged())
@@ -200,14 +214,36 @@ export class ClassificationTestsComponent
           this.presentValue = calculateValuesResponseData.presentValue;
           this.pVofAmtNotReflectedInPayments =
             calculateValuesResponseData.residualValues.presentValueOnAmtNotReflectedInPayments;
+          this.classificationTest3 =
+            calculateValuesResponseData.classificationTestResults
+              .test3Result === null
+              ? ''
+              : calculateValuesResponseData.classificationTestResults
+                  .test3Result
+              ? 'Yes'
+              : 'No';
+          this.classificationTest4 =
+            calculateValuesResponseData.classificationTestResults
+              .test4Result === null
+              ? ''
+              : calculateValuesResponseData.classificationTestResults
+                  .test4Result
+              ? 'Yes'
+              : 'No';
+          this.classificationResult =
+            calculateValuesResponseData.classificationTestResults.testResult;
+          this.classificationResultReason =
+            calculateValuesResponseData.classificationTestResults.resultReason;
+          this.isClassificationMatched =
+            calculateValuesResponseData.classificationTestResults.isResultMatched;
           this.pvPercent();
         })
     );
 
     this.subscriptions.push(
-      this.addEventFormService.termValues$
+      this.addEventFormService.accountingTerms$
         .pipe(debounceTime(debounce))
-        .subscribe((termValues) => {
+        .subscribe((termValues: accountingTerms) => {
           this.remainingTermYears = termValues.termInYear;
         })
     );
@@ -217,21 +253,61 @@ export class ClassificationTestsComponent
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  ngOnChanges(): void {
-    if (this.accountingEventsData && this.classificationId) {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      this.accountingEventsData &&
+      (this.classificationId || this.classificationId === 0)
+    ) {
       if (this.pageMode === 'Edit Event') {
         this.loadSavedData();
       }
       this.getClassificationTestResults();
     }
+
+    if (changes.classificationId) {
+      [0, 1].includes(this.classificationId)
+        ? (this.classificationResultReason = 'Incomplete Test 1, 2, 3, 4.')
+        : (this.classificationResultReason = 'Incomplete Test 1, 2, 3, 4, 5.');
+    }
   }
 
   loadSavedData() {
+    this.classificationTestForm
+      .get('classificationTest1')
+      .setValue(
+        this.accountingEventsData.test1 === null
+          ? 3
+          : this.accountingEventsData.test1
+          ? 1
+          : 2
+      );
+
+    this.classificationTestForm
+      .get('classificationTest2')
+      .setValue(
+        this.accountingEventsData.test2 === null
+          ? 3
+          : this.accountingEventsData.test2
+          ? 1
+          : 2
+      );
+
+    this.classificationTestForm
+      .get('classificationTest5')
+      .setValue(
+        this.accountingEventsData.test5 === null
+          ? 3
+          : this.accountingEventsData.test5
+          ? 1
+          : 2
+      );
+
     this.test1 = this.accountingEventsData.test1;
     this.test2 = this.accountingEventsData.test2;
     this.test3 = this.accountingEventsData.test3;
     this.test4 = this.accountingEventsData.test4;
     this.test5 = this.accountingEventsData.test5;
+
     this.pVofAmtNotReflectedInPayments =
       +this.accountingEventsData.residualValues
         .presentValueOnAmtNotReflectedInPayments;
@@ -249,9 +325,17 @@ export class ClassificationTestsComponent
     this.presentValue =
       this.accountingEventsData.presentValue ?? this.presentValue;
     this.pVofAmtNotReflectedInPayments =
-      this.accountingEventsData.pVofAmtNotReflectedInPayments ??
+      this.accountingEventsData.residualValues
+        .presentValueOnAmtNotReflectedInPayments ??
       this.pVofAmtNotReflectedInPayments;
     this.remainingTermYears = this.accountingEventsData.termInYears;
+    this.classificationResult =
+      this.accountingEventsData.classificationTestResult;
+    this.classificationResultReason =
+      this.accountingEventsData.classificationTestResultReason;
+    this.isClassificationMatched =
+      this.accountingEventsData.isClassificationTestResultMatched;
+    this.title = `Classification Tests | Test Result: ${this.classificationResult}`;
     this.economicLifePercent();
     this.pvPercent();
     this.fairMarketChange();
@@ -261,11 +345,11 @@ export class ClassificationTestsComponent
     this.classificationTestForm = this.fb.group({
       remainingEconomicLife: new FormControl({ value: null, disabled: false }),
       fairMarketValue: new FormControl({ value: null, disabled: false }),
-      classificationTest1: new FormControl({}),
-      classificationTest2: new FormControl({}),
+      classificationTest1: new FormControl({ value: 3, disabled: false }),
+      classificationTest2: new FormControl({ value: 3, disabled: false }),
       classificationTest3: new FormControl({ value: null, disabled: true }),
       classificationTest4: new FormControl({ value: null, disabled: true }),
-      classificationTest5: new FormControl({}),
+      classificationTest5: new FormControl({ value: 3, disabled: false }),
     });
   }
 
@@ -291,7 +375,7 @@ export class ClassificationTestsComponent
   }
 
   testDropdownChanged(e, dropdownName: string) {
-    let newValue = e[0].tValue === 0 ? false : e[0].tValue === 1 ? true : null;
+    let newValue = e[0].tValue === 2 ? false : e[0].tValue === 1 ? true : null;
 
     switch (dropdownName) {
       case 'test1': {
@@ -389,16 +473,16 @@ export class ClassificationTestsComponent
   }
 
   getTestDropdownValue(value) {
-    let returnValue = value == null ? 2 : value ? 1 : 0;
+    let returnValue = value == null ? 3 : value ? 1 : 3;
 
     return returnValue;
   }
 
   private setupTestDropdowns() {
     let testDropdownValues = [
-      { tValue: 2, tDisplay: '-' },
+      { tValue: 3, tDisplay: '-' },
+      { tValue: 2, tDisplay: 'No' },
       { tValue: 1, tDisplay: 'Yes' },
-      { tValue: 0, tDisplay: 'No' },
     ];
 
     this.testDropdownValues = Object.assign([], testDropdownValues);
@@ -427,13 +511,13 @@ export class ClassificationTestsComponent
             if (res === null) {
               this.accountingSummaryService.displayContactSystemAdminMessage();
             } else if (res.success) {
-              this.isResultsIncomplete = res?.data?.result
+              this.isResultsIncomplete = res?.data?.testResult
                 ?.toLowerCase()
                 .includes('incomplete');
-              this.isClassificationMatched = res.data.isClassificationMatched;
-              this.classificationResult = res.data.result;
+              this.isClassificationMatched = res.data.isResultMatched;
+              this.classificationResult = res.data.testResult;
               this.classificationResultReason = res.data.resultReason;
-              this.subtitle = `Test Result: ${this.classificationResult}`;
+              this.title = `Classification Tests | Test Result: ${this.classificationResult}`;
             } else {
               this.accountingSummaryService.errorNotify(res.clientErrorMessage);
             }

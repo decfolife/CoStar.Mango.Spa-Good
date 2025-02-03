@@ -3,7 +3,6 @@ import { Action, createReducer, on } from '@ngrx/store';
 import * as dynamicFormsActions from './dynamic-forms.actions';
 import { DynamicFormEntity } from '../model/dynamic-forms-list.model';
 import {
-  BasicSelect,
   Dropdowns,
   FormItemDataTypes,
   FormItemDatabaseTables,
@@ -11,22 +10,28 @@ import {
   FormItemTypes,
   IDynamicForm,
   IFields,
+  ISection,
+  ObjectParentLinker,
   RenderFormDropdowns,
   Widget,
 } from '../model/dynamic-forms.interface';
+import { ApiResponse } from '@forms/model/api-response';
 
 export const APP_FEATURE_KEY = 'dynamicForms';
 
 export interface DynamicFormsState extends EntityState<DynamicFormEntity> {
   isLoading: boolean; // all effects use this currently - break it out into individual isLoadings.*
   loaded: boolean; // has the forms list been loaded
-  error?: string | any; // last known error (if any)]
   isRenderForm: boolean;
 
+  error?: string | any; // last known error (if any)]
+
+  dynamicFormApiResponse: ApiResponse;
   dynamicForm?: IDynamicForm;
+
   formActions?: any;
-  formAvailableSections?: any;
-  formSections?: any;
+  formAvailableSections?: ISection[];
+  formSections?: ISection[];
 
   formAvailableFields?: IFields[];
   formAvailableFieldsInSection?: { [sectionId: number]: IFields[] };
@@ -34,16 +39,22 @@ export interface DynamicFormsState extends EntityState<DynamicFormEntity> {
 
   formItemControlTypes?: FormItemTypes[];
   formItemDataTypes?: FormItemDataTypes[];
-  formItemWidgets?: Widget[];
+
+  formItemWidgetsApiResponses?: { [widgetId: number]: ApiResponse };
+
   formItemDatabaseTables?: FormItemDatabaseTables[];
   formItemDatabaseColumns?: {
     [tableName: string]: FormItemSourceColumnbySourceTable[];
   };
+
   formItemDropdowns?: Dropdowns[];
   renderFormData: any;
   objectID: number;
   formName: string;
   renderFormDropdowns?: RenderFormDropdowns[];
+  objectParentLinker?: ObjectParentLinker;
+
+  saveRenderFormResponse: ApiResponse;
 }
 
 export interface DyanmicFormsPartialState {
@@ -52,7 +63,6 @@ export interface DyanmicFormsPartialState {
 
 export const dynamicFormsAdapter: EntityAdapter<DynamicFormEntity> =
   createEntityAdapter<DynamicFormEntity>();
-
 
 export const initialState: DynamicFormsState =
   dynamicFormsAdapter.getInitialState({
@@ -77,7 +87,11 @@ export const initialState: DynamicFormsState =
     formItemDropdowns: null,
     renderFormData: null,
     formName: null,
-    renderFormDropdowns: null
+    renderFormDropdowns: null,
+    dynamicFormApiResponse: null,
+    objectParentLinker: null,
+    formItemWidgetsApiResponses: null,
+    saveRenderFormResponse: null,
   });
 
 const reducer = createReducer(
@@ -105,27 +119,25 @@ const reducer = createReducer(
     formItemDropdowns: null,
     renderFormData: null,
     formName: null,
-    renderFormDropdowns: null
+    renderFormDropdowns: null,
+    dynamicFormApiResponse: null,
+    objectParentLinker: null,
+    formItemWidgetsApiResponses: null,
+    saveRenderFormResponse: null,
   })),
   // MISC
-  on(
-    dynamicFormsActions.setObjectId,
-    (state, { objectId }) => {
-      return { 
-        ...state,
-        objectID: objectId
-      };
-    }
-  ),
-  on(
-    dynamicFormsActions.setisRenderForm,
-    (state, { isRenderForm }) => {
-      return { 
-        ...state,
-        isRenderForm: isRenderForm
-      };
-    }
-  ),
+  on(dynamicFormsActions.setObjectId, (state, { objectId }) => {
+    return {
+      ...state,
+      objectID: objectId,
+    };
+  }),
+  on(dynamicFormsActions.setisRenderForm, (state, { isRenderForm }) => {
+    return {
+      ...state,
+      isRenderForm: isRenderForm,
+    };
+  }),
   // Form List
   on(dynamicFormsActions.initForms, (state) => ({
     ...state,
@@ -150,18 +162,40 @@ const reducer = createReducer(
       loaded: false,
     })
   ),
-  // Form
+  // Form Load
   on(dynamicFormsActions.dynamicFormLoad, (state) => ({
     ...state,
     isLoading: true,
   })),
-  on(dynamicFormsActions.dynamicFormLoadSuccess, (state, { dynamicForm }) => ({
-    ...state,
-    error: null,
-    dynamicForm: dynamicForm,
-    isLoading: false,
-    loaded: true,
-  })),
+  // on(dynamicFormsActions.dynamicFormLoadSuccess, (state, { dynamicForm }) => ({
+  //   ...state,
+  //   error: null,
+  //   dynamicForm: dynamicForm,
+  //   isLoading: false,
+  //   loaded: true,
+  // })),
+  on(
+    dynamicFormsActions.dynamicFormLoadSuccessWithStatus,
+    (state, { apiResponse }) => ({
+      ...state,
+      error: null,
+      dynamicForm: apiResponse?.data,
+      dynamicFormApiResponse: apiResponse,
+      isLoading: false,
+      loaded: true,
+    })
+  ),
+  on(
+    dynamicFormsActions.dynamicFormLoadSuccessWithStatus,
+    (state, { apiResponse }) => ({
+      ...state,
+      error: null,
+      dynamicForm: apiResponse?.data,
+      dynamicFormApiResponse: apiResponse,
+      isLoading: false,
+      loaded: true,
+    })
+  ),
   on(
     dynamicFormsActions.dynamicFormLoadFailure,
     (state, { error }): DynamicFormsState => ({
@@ -171,7 +205,7 @@ const reducer = createReducer(
       loaded: false,
     })
   ),
-  
+
   // Form Actions
   on(dynamicFormsActions.dynamicFormLoadActions, (state) => ({
     ...state,
@@ -182,7 +216,7 @@ const reducer = createReducer(
     (state, { formActions }) => ({
       ...state,
       error: null,
-      formActions,
+      formActions: formActions,
       isLoading: false,
       loaded: true,
     })
@@ -230,7 +264,7 @@ const reducer = createReducer(
     (state, { formSections }) => ({
       ...state,
       error: null,
-      formSections,
+      formSections: formSections,
       isLoading: false,
       loaded: true,
     })
@@ -245,10 +279,13 @@ const reducer = createReducer(
     })
   ),
 
-  on(dynamicFormsActions.addSectionToForm, (state, { section }) => {
-    const sections = [...(state.formSections || []), section];
-
-    return { ...state, formSections: sections };
+  on(dynamicFormsActions.addAvailableSectionToForm, (state, { section }) => {
+    // Create a new sections object with the new section added
+    const updatedSections = {
+      ...state.formSections,
+      [section.formSectionID]: section,
+    };
+    return { ...state, formSections: updatedSections };
   }),
   on(
     dynamicFormsActions.removeSectionFromAvailableSections,
@@ -299,6 +336,7 @@ const reducer = createReducer(
     dynamicFormsActions.addAvailableFieldToSection,
     (state, { sectionId, field }) => {
       const updatedFormFields = { ...state.formFields };
+      console.log('sectionId', sectionId);
       updatedFormFields[sectionId] = [...updatedFormFields[sectionId], field];
       return { ...state, formFields: updatedFormFields };
     }
@@ -339,25 +377,53 @@ const reducer = createReducer(
     isLoading: false,
     loaded: false,
   })),
-  on(
-    dynamicFormsActions.updateFormFieldBySectionId,
-    (state, { sectionId, field }) => {
-      const updatedFormFields = { ...state.formFields };
-      if (updatedFormFields[sectionId]) {
-        const existingFieldIndex = updatedFormFields[sectionId].findIndex(
-          (item) => item.formItemID === field.formItemID
-        );
-        if (existingFieldIndex !== -1) {
-          updatedFormFields[sectionId][existingFieldIndex] = field;
-        }
-        // else {
-        //   // If the field doesn't exist, add it to the array
-        //   updatedFormFields[sectionId].push(field);
-        // }
-      }
-      return { ...state, formFields: updatedFormFields };
-    }
-  ),
+  // on(
+  //   dynamicFormsActions.dynamicFormLoadAllFieldsSuccess,
+  //   (state, { formSections, formFields }) => {
+  //     const updatedFormFields = { ...state.formFields };
+
+  //     formSections.forEach(formSection => {
+  //       const fieldsInSection = formFields.filter(
+  //         item => item.formItemSectionDetail.formSectionID === formSection.formSectionID
+  //       );
+  //       updatedFormFields[formSection.formSectionID] = fieldsInSection;
+  //     });
+
+  //     return {
+  //       ...state,
+  //       formFields: updatedFormFields,
+  //       error: null,
+  //       isLoading: false,
+  //       loaded: true,
+  //     };
+  //   }
+  // ),
+  // on(dynamicFormsActions.dynamicFormLoadAllFieldsFailure, (state, { error }) => ({
+  //   ...state,
+  //   error,
+  //   isLoading: false,
+  //   loaded: false,
+  // })),
+
+  // on(
+  //   dynamicFormsActions.updateFormFieldBySectionId,
+  //   (state, { sectionId, field }) => {
+  //     const updatedFormFields = { ...state.formFields };
+  //     if (updatedFormFields[sectionId]) {
+  //       const existingFieldIndex = updatedFormFields[sectionId].findIndex(
+  //         (item) => item.formItemID === field.formItemID
+  //       );
+  //       if (existingFieldIndex !== -1) {
+  //         updatedFormFields[sectionId][existingFieldIndex] = field;
+  //       }
+  //       // else {
+  //       //   // If the field doesn't exist, add it to the array
+  //       //   updatedFormFields[sectionId].push(field);
+  //       // }
+  //     }
+  //     return { ...state, formFields: updatedFormFields };
+  //   }
+  // ),
   //Form Item Control Types
   on(dynamicFormsActions.dynamicFormLoadFormItemControlTypes, (state) => ({
     ...state,
@@ -408,10 +474,17 @@ const reducer = createReducer(
     isLoading: true,
   })),
   on(
-    dynamicFormsActions.dynamicFormLoadWidgetByWidgetIdSuccess,
-    (state, { widget }) => {
-      const widgets = [...(state.formItemWidgets || []), widget];
-      return { ...state, formItemWidgets: widgets, isLoading: false };
+    dynamicFormsActions.dynamicFormLoadWidgetByWidgetIdSuccessWithStatus,
+    (state, { widgetId, apiResponse }) => {
+      const updatedResponses = {
+        ...state.formItemWidgetsApiResponses,
+        [widgetId]: apiResponse,
+      };
+      return {
+        ...state,
+        formItemWidgetsApiResponses: updatedResponses,
+        error: null,
+      };
     }
   ),
   on(
@@ -445,10 +518,13 @@ const reducer = createReducer(
     })
   ),
   //Form Item Database Columns for Tables
-  on(dynamicFormsActions.dynamicFormLoadDatabaseColumnsByTableName, (state) => ({
-    ...state,
-    isLoading: true,
-  })),
+  on(
+    dynamicFormsActions.dynamicFormLoadDatabaseColumnsByTableName,
+    (state) => ({
+      ...state,
+      isLoading: true,
+    })
+  ),
   on(
     dynamicFormsActions.dynamicFormLoadDatabaseColumnsByTableNameSuccess,
     (state, { tableName, formItemDatabaseColumns }) => ({
@@ -462,14 +538,17 @@ const reducer = createReducer(
       loaded: true,
     })
   ),
-  on(dynamicFormsActions.dynamicFormLoadDatabaseColumnsByTableNameFailure, (state, { error }) => ({
-    ...state,
-    error,
-    isLoading: false,
-    loaded: false,
-  })),
-   //Form Item Dropdowns
-   on(dynamicFormsActions.dynamicFormLoadFormItemDropdowns, (state) => ({
+  on(
+    dynamicFormsActions.dynamicFormLoadDatabaseColumnsByTableNameFailure,
+    (state, { error }) => ({
+      ...state,
+      error,
+      isLoading: false,
+      loaded: false,
+    })
+  ),
+  //Form Item Dropdowns
+  on(dynamicFormsActions.dynamicFormLoadFormItemDropdowns, (state) => ({
     ...state,
     isLoading: true,
   })),
@@ -491,7 +570,7 @@ const reducer = createReducer(
     })
   ),
   // Render Form
-   on(dynamicFormsActions.dynamicFormLoadRenderForm, (state) => ({
+  on(dynamicFormsActions.dynamicFormLoadRenderForm, (state) => ({
     ...state,
     isLoading: true,
   })),
@@ -514,27 +593,49 @@ const reducer = createReducer(
   ),
   // Form Name
   on(dynamicFormsActions.dynamicFormLoadFormName, (state) => ({
-   ...state,
-   isLoading: true,
- })),
- on(
-   dynamicFormsActions.dynamicFormLoadFormNameSuccess,
-   (state, { formName }) => ({
-     ...state,
-     error: null,
-     formName,
-     isLoading: false,
-   })
- ),
- on(
-   dynamicFormsActions.dynamicFormLoadFormNameFailure,
-   (state, { error }) => ({
-     ...state,
-     error,
-     isLoading: false,
-   })
- ),
- // Render Form Dropdowns
+    ...state,
+    isLoading: true,
+  })),
+  on(
+    dynamicFormsActions.dynamicFormLoadFormNameSuccess,
+    (state, { formName }) => ({
+      ...state,
+      error: null,
+      formName,
+      isLoading: false,
+    })
+  ),
+  on(
+    dynamicFormsActions.dynamicFormLoadFormNameFailure,
+    (state, { error }) => ({
+      ...state,
+      error,
+      isLoading: false,
+    })
+  ),
+  // Parent Link
+  on(dynamicFormsActions.renderFormLoadLoadParentLink, (state) => ({
+    ...state,
+    isLoading: true,
+  })),
+  on(
+    dynamicFormsActions.renderFormLoadLoadParentLinkSuccess,
+    (state, { objectParentLinker }) => ({
+      ...state,
+      error: null,
+      objectParentLinker,
+      isLoading: false,
+    })
+  ),
+  on(
+    dynamicFormsActions.renderFormLoadLoadParentLinkFailure,
+    (state, { error }) => ({
+      ...state,
+      error,
+      isLoading: false,
+    })
+  ),
+  // Render Form Dropdowns
   on(dynamicFormsActions.renderFormLoadFormItemDropdowns, (state) => ({
     ...state,
     isLoading: true,
@@ -556,7 +657,28 @@ const reducer = createReducer(
       isLoading: false,
     })
   ),
-  
+
+  // Save Render Form
+  on(dynamicFormsActions.saveRenderForm, (state) => ({
+    ...state,
+    isLoading: true,
+  })),
+  on(dynamicFormsActions.saveRenderFormSuccess, (state, { apiResponse }) => ({
+    ...state,
+    error: null,
+    saveRenderFormResponse: apiResponse,
+    isLoading: false,
+    loaded: true,
+  })),
+  on(
+    dynamicFormsActions.saveRenderFormFailure,
+    (state, { error }): DynamicFormsState => ({
+      ...state,
+      error,
+      isLoading: false,
+      loaded: false,
+    })
+  )
 );
 
 export function dynamicFormsReducer(

@@ -1,0 +1,89 @@
+@use 'styles' as *;
+
+.card-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+}
+
+.card-drag-handle {
+  cursor: move;
+  position: absolute;
+  top: 24px !important; // todo: Only this card's drag handle is misaligned compared to the other dashboards.
+  right: 24px !important;
+  z-index: 10;
+
+  svg.drag_handle {
+    overflow: hidden;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+:host:has(> .col-md-6) {
+  width: 50%;
+}
+
+crem-icon {
+  &.chart-toggle {
+    @include costar(color, gray03);
+    &.chart-toggle-visible {
+      @include costar(color, primary-light);
+    }
+  }
+}
+
+:host ::ng-deep {
+  crem-card {
+    .mat-card-header-text {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+    }
+  }
+
+  dx-chart {
+    @include costar(margin-bottom, 2);
+  }
+
+  .dx-pivotgrid {
+    .dx-area-column-cell {
+      .dx-pivotgrid-horizontal-headers {
+        td > span {
+          @include costar(color, primary-light, $important: true);
+          font-weight: 600;
+        }
+      }
+    }
+
+    .dx-area-row-cell {
+      .dx-pivotgrid-vertical-headers {
+        td > span {
+          @include costar(color, primary-light, $important: true);
+          font-weight: 600;
+        }
+      }
+    }
+
+    // Style Totals
+    // Table Main Data/Body
+    .total,
+    .dx-total {
+      @include costar(background-color, background);
+    }
+    &#AssetBalanceCardGrid {
+      // Apply last row styling only to Asset Balance Grid/Table
+      .dx-bottom-row {
+        table tbody tr:last-child {
+          @include costar(background-color, background);
+        }
+      }
+    }
+  }
+  dx-data-grid {
+    .dx-datagrid-header-panel {
+      display: none;
+    }
+  }
+}

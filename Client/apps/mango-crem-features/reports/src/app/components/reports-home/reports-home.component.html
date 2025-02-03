@@ -11,6 +11,7 @@
       </div>
       <div class="favStarBtn">
         <button
+          id="rpts-favButton"
           class="btn btn-default star"
           (click)="toggleShowFavorites(); $event.preventDefault()"
         >
@@ -57,6 +58,7 @@
       </div>
       <div class="more">
         <button
+          id="rpts-moreMenuButton"
           class="btn btn-default moreButton"
           [matMenuTriggerFor]="moreMenu"
           (click)="$event.preventDefault()"
@@ -64,16 +66,23 @@
           More <mat-icon aria-label="More Menu">arrow_drop_down</mat-icon>
         </button>
         <mat-menu #moreMenu="matMenu" class="moreMatMenu">
-          <button mat-menu-item (click)="toggleExpanded()">
+          <button mat-menu-item (click)="toggleExpanded()" id="rpts-MM-expBtn">
             <span *ngIf="isExpanded">Collapse All</span
             ><span *ngIf="!isExpanded">Expand All</span>
           </button>
-          <button mat-menu-item (click)="resetGrid()">Reset</button>
-          <button mat-menu-item (click)="showColumnChooser()">
+          <button mat-menu-item (click)="resetGrid()" id="rpts-MM-resetBtn">
+            Reset
+          </button>
+          <button
+            mat-menu-item
+            (click)="showColumnChooser()"
+            id="rpts-moreMenu-colChooserBtn"
+          >
             Column Chooser
           </button>
           <button
             mat-menu-item
+            id="rpts-MM-manageTagsBtn"
             *ngIf="rptTagAdminRight"
             (click)="launchManageTagsModal(); $event.preventDefault()"
           >
@@ -81,6 +90,7 @@
           </button>
           <button
             mat-menu-item
+            id="rpts-MM-launchTemplateBtn"
             *ngIf="offlineContentRight"
             (click)="
               launchUploadOfflineTemplateModal(); $event.preventDefault()
@@ -92,6 +102,7 @@
       </div>
       <div class="createReport">
         <crem-button
+          id="rpts-createRptBtn"
           type="primary"
           *ngIf="createReportAdminRight"
           (click)="createReport(); $event.preventDefault()"
@@ -107,6 +118,7 @@
     <dx-data-grid
       *ngIf="dataRetrieved"
       #ReportsDataGrid
+      id="rpts-reportsDataGrid"
       [showColumnLines]="false"
       [showRowLines]="false"
       [showBorders]="false"
@@ -218,6 +230,7 @@
         <dxi-button template="moreMenuTemplate">
           <div *dxTemplate="let data of 'moreMenuTemplate'">
             <button
+              id="rpts-actionsMenuButton"
               aria-label="more menu"
               class="btn btn-link"
               (click)="$event.preventDefault()"
@@ -229,6 +242,7 @@
               <ul role="menu">
                 <li
                   mat-menu-item
+                  id="rpts-AM-runRptBtn"
                   (keydown.space)="runReport(data)"
                   (keydown.enter)="runReport(data)"
                   (click)="runReport(data)"
@@ -237,6 +251,7 @@
                 </li>
                 <li
                   mat-menu-item
+                  id="rpts-AM-editRptBtn"
                   (keydown.space)="editReport(data)"
                   (keydown.enter)="editReport(data)"
                   (click)="editReport(data)"
@@ -249,6 +264,7 @@
                 </li>
                 <li
                   mat-menu-item
+                  id="rpts-AM-shareRptBtn"
                   (keydown.space)="shareReport(data)"
                   (keydown.enter)="shareReport(data)"
                   (click)="shareReport(data)"
@@ -261,6 +277,7 @@
                 </li>
                 <li
                   mat-menu-item
+                  id="rpts-AM-schedRptBtn"
                   (keydown.space)="scheduleReport(data)"
                   (keydown.enter)="scheduleReport(data)"
                   (click)="scheduleReport(data)"
@@ -273,6 +290,7 @@
                 </li>
                 <li
                   mat-menu-item
+                  id="rpts-AM-assignRptBtn"
                   (keydown.space)="assignReportTags(data)"
                   (keydown.enter)="assignReportTags(data)"
                   (click)="assignReportTags(data)"
@@ -282,6 +300,7 @@
                 </li>
                 <li
                   mat-menu-item
+                  id="rpts-AM-viewHistoryBtn"
                   (keydown.space)="viewReportHistory(data)"
                   (keydown.enter)="viewReportHistory(data)"
                   (click)="viewReportHistory(data)"
@@ -291,6 +310,7 @@
                 </li>
                 <li
                   mat-menu-item
+                  id="rpts-AM-deleteRptBtn"
                   (keydown.space)="deleteReport(data)"
                   (keydown.enter)="deleteReport(data)"
                   (click)="deleteReport(data)"
@@ -306,6 +326,8 @@
 
       <div *dxTemplate="let rpt of 'favoriteTemplate'">
         <div
+          id="{{ 'rpts-unFavBtn' + rpt.rowIndex }}"
+          class="rpts-favBtns"
           tabindex="0"
           *ngIf="!rpt.data.isFavorite"
           (click)="favoriteReport(rpt)"
@@ -316,6 +338,8 @@
           <crem-icon icon="faStar" pack="regular"></crem-icon>
         </div>
         <div
+          id="{{ 'rpts-favBtn' + rpt.rowIndex }}"
+          class="rpts-favBtns"
           tabindex="0"
           *ngIf="rpt.data.isFavorite"
           (click)="unFavoriteReport(rpt)"

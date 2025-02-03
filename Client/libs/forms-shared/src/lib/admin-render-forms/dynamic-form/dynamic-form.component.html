@@ -2,86 +2,255 @@
   <crem-loader></crem-loader>
 </div>
 
-<div id="divTop"></div>
-<form (ngSubmit)="onSubmit()" [formGroup]="form">
-  <div id="dynamic-forms-container">
-    <div *ngIf="!isLoading" class="dynamic-forms-controls-wrapper">
-      <div class="controls-left">
-        <div *ngIf="isRenderForm">
-          <ng-container [ngSwitch]="form.get('objectType').value.toUpperCase()">
-            <h5 *ngSwitchCase="'LEASE'">Lease Abstract</h5>
-            <h5 *ngSwitchCase="'BUILDING'">Building Details</h5>
-            <h5 *ngSwitchCase="'CONTACT'">Contact Details</h5>
-            <h5 *ngSwitchDefault>Default Content</h5>
-          </ng-container>
-        </div>
-        <h5 *ngIf="!isRenderForm">Form - {{ form.get('formName').value }} ({{ form.get('objectType').value }})</h5>
+<div *ngIf="errorLoading">
+  <div class="center" style="margin-top: 20px">
+    <h2>Cannot load form</h2>
+    <section>
+      <div class="well">
+        <h3>{{ userMessage }}</h3>
       </div>
-      <div class="controls-right">
-        <crem-button type="secondary" *ngIf="!isRenderForm" [matMenuTriggerFor]="AddSectionMenu">Add Section</crem-button>
-        <mat-menu #AddSectionMenu="matMenu">
-          <button mat-menu-item [matMenuTriggerFor]="ExistingSectionMenu"> Existing Section </button>
-          <button mat-menu-item [matMenuTriggerFor]="NewSectionMenu">  New Section </button>
-        </mat-menu>
-        <mat-menu #NewSectionMenu="matMenu">
-          <button mat-menu-item (click)="createNewSection(1)">1 Column</button>
-          <button mat-menu-item (click)="createNewSection(2)">2 Columns</button>
-          <button mat-menu-item (click)="createNewSection(0)">Widget</button>
-        </mat-menu>
-        <mat-menu class="existing-section-menu" #ExistingSectionMenu="matMenu" (click)="$event.stopPropagation()">
-          <form (click)="$event.stopPropagation()">
-            <cs-search class="df-search" #SearchBox [placeholder]="'Search...'" (changed)="searchAvailableSectionsDataGrid($event)"></cs-search>
-            <dx-data-grid #availableSectionsGrid id="availableSectionsContainer"
-              [dataSource]="selectAvailableFormSections$ | async" [showColumnLines]="false" [showRowLines]="true"
-              [showBorders]="true" [rowAlternationEnabled]="true" keyExpr="formSectionID">
-              <dxo-load-panel [enabled]="true"></dxo-load-panel>
-              <dxo-selection [selectAllMode]="'true'" [showCheckBoxesMode]="'false'" mode="multiple"></dxo-selection>
-              <!-- <dxo-scrolling mode="virtual"></dxo-scrolling> -->
-              <dxi-column caption="Section Name" dataField="formSectionName" [alignment]="'left'"></dxi-column>
-            </dx-data-grid>
-            <crem-button type="primary" (click)="addSections()">Add Sections</crem-button>
-          </form>
-        </mat-menu>
-        <div class="actions">
-          <crem-button *ngIf="!isRenderForm" type="secondary" ariaLabel="Dynamic Form Settings" icon="faCog" (click)="$event.preventDefault()"></crem-button>
-        </div>
-        <div class="designModeForm" *ngIf="isRenderForm && !editMode">
-          <crem-button type="secondary" (click)="designModeClicked(); $event.preventDefault()">
-            <span>Design Mode</span>
-          </crem-button>
-        </div>
-        <div class="more">
-          <crem-button *ngIf="!editMode" type="secondary" (click)="close(); $event.preventDefault()">
-            <span>Close</span>
-          </crem-button>
-          <crem-button *ngIf="editMode" type="secondary" (click)="cancel(); $event.preventDefault()">
-            <span>Cancel</span>
-          </crem-button>
-        </div>
-        <div class="editForm" *ngIf="isRenderForm && !editMode">
-          <crem-button type="primary" (click)="editClicked(); $event.preventDefault()">
-            <span>Edit</span>
-          </crem-button>
-        </div>
-        <div class="saveForm" *ngIf="editMode || (!isRenderForm && !editMode)">
-          <crem-button type="primary" [disabled]="!form.valid || form.pristine" (click)="saveForm(); $event.preventDefault()">
-            <span>Save</span>
-          </crem-button>
-        </div>
-      </div>
-    </div>
-
-    <div class="dynamic-form-content">
-      <div class="row" *ngIf="selectFormSections$ | async as sections">
-        <div *ngFor="let section of sections" class="col-md-12">
-          <mango-dynamic-form-section [section]="section" [form]="form" [editMode]="editMode"> </mango-dynamic-form-section>
-        </div>
-      </div>
-    </div>
+    </section>
   </div>
-</form>
+</div>
 
-<crem-button *ngIf="!isLoading" class="scroll-to-top-button" type="primary"
-  (click)="scrollToTop(); $event.preventDefault()">
-  <span>Scroll to Top</span>
-</crem-button>
+<div *ngIf="!errorLoading">
+  <div id="scroll-to-top-div"></div>
+  <form [formGroup]="form">
+    <div id="dynamic-forms-container">
+      <div *ngIf="!isLoading" class="page-header">
+        <crem-page-header
+          [tabTitle]="getTabTitle()"
+          [pageTitle]="getPageTitle()"
+          [showListOrMapViewButtons]="false"
+          [showSettingsButton]="!isRenderForm"
+          [customActions]="true"
+          [customFilters]="false"
+          [statusPill]="statusPillInfo"
+        >
+          <div actions class="page-header__actions">
+            <a
+              class="legacy-page-link"
+              target="_blank"
+              [href]="externalCremLink"
+              rel="noopener"
+              >for legacy page, click me</a
+            >
+            <crem-button
+              *ngIf="
+                isRenderForm &&
+                form.get('objectType').value.toLowerCase().trim() == 'lease'
+              "
+              [id]="'dynamic-forms-alerts-btn'"
+              [text]="'Alerts (2)'"
+              [btnStyle]="'stroked'"
+              [color]="'danger'"
+            ></crem-button>
+            <crem-button
+              *ngIf="isRenderForm && false"
+              [id]="'dynamic-forms-design-btn'"
+              [text]="'Design Mode'"
+              [btnStyle]="'flat'"
+              [color]="'secondary'"
+              (click)="designModeClicked(); $event.preventDefault()"
+              [class]="'df-design-mode'"
+            >
+            </crem-button>
+            <crem-button
+              *ngIf="!isRenderForm"
+              [id]="'dynamic-forms-add-section-btn'"
+              [type]="'secondary'"
+              [matMenuTriggerFor]="AddSectionMenu"
+              >Add Section</crem-button
+            >
+            <mat-menu #AddSectionMenu="matMenu">
+              <button mat-menu-item [matMenuTriggerFor]="ExistingSectionMenu">
+                Existing Section
+              </button>
+              <button mat-menu-item [matMenuTriggerFor]="NewSectionMenu">
+                New Section
+              </button>
+            </mat-menu>
+            <mat-menu #NewSectionMenu="matMenu">
+              <button mat-menu-item (click)="createNewSection(1)">
+                1 Column
+              </button>
+              <button mat-menu-item (click)="createNewSection(2)">
+                2 Columns
+              </button>
+              <button mat-menu-item (click)="createNewSection(0)">
+                Widget
+              </button>
+            </mat-menu>
+            <mat-menu
+              class="existing-section-menu"
+              #ExistingSectionMenu="matMenu"
+              (click)="$event.stopPropagation()"
+            >
+              <form (click)="$event.stopPropagation()">
+                <cs-search
+                  class="df-search"
+                  #SearchBox
+                  [placeholder]="'Search...'"
+                  (changed)="searchAvailableSectionsDataGrid($event)"
+                ></cs-search>
+                <dx-data-grid
+                  #availableSectionsGrid
+                  id="availableSectionsContainer"
+                  [dataSource]="selectAvailableFormSections$ | async"
+                  [showColumnLines]="false"
+                  [showRowLines]="true"
+                  [showBorders]="true"
+                  [rowAlternationEnabled]="true"
+                  keyExpr="formSectionID"
+                >
+                  <dxo-load-panel [enabled]="true"></dxo-load-panel>
+                  <dxo-selection
+                    [selectAllMode]="'true'"
+                    [showCheckBoxesMode]="'false'"
+                    mode="multiple"
+                  ></dxo-selection>
+                  <dxi-column
+                    caption="Section Name"
+                    dataField="formSectionName"
+                    [alignment]="'left'"
+                  ></dxi-column>
+                </dx-data-grid>
+                <crem-button type="primary" (click)="addSections()"
+                  >Add Sections</crem-button
+                >
+              </form>
+            </mat-menu>
+            <div class="dfActions">
+              <crem-button
+                [type]="'secondary'"
+                class="df-actionsButton"
+                id="df-actionsBtn"
+                [matMenuTriggerFor]="dfActionsMenu"
+                (click)="$event.preventDefault()"
+              >
+                <span class="df-actionsBtn-text">Actions</span>
+                <mat-icon
+                  aria-label="Dynamic Forms Actions Menu"
+                  class="df-actionsBtn-arrow"
+                  >arrow_drop_down</mat-icon
+                >
+              </crem-button>
+              <mat-menu #dfActionsMenu="matMenu" class="df-actionsMenu">
+                <ng-container
+                  *ngFor="
+                    let action of dropdownFormActions$ | async;
+                    let i = index
+                  "
+                >
+                  <button
+                    type="button"
+                    mat-menu-item
+                    class="df-actionsMenuBtn"
+                    id="pt-copyTransaction"
+                    (click)="performFormAction(action)"
+                  >
+                    <span>{{ action.formActionLabel }}</span>
+                  </button>
+                </ng-container>
+              </mat-menu>
+            </div>
+
+            <!-- RenderForm buttons -->
+            <span *ngFor="let actionButton of buttonFormActions$ | async">
+              <crem-button
+                *ngIf="isRenderForm"
+                [id]="actionButton.id"
+                [text]="actionButton.text"
+                [btnStyle]="'flat'"
+                [color]="actionButton.color"
+                (click)="onActionButtonClick(actionButton.text)"
+              ></crem-button>
+            </span>
+            <!-- End RenderForm buttons -->
+
+            <!-- Design mode buttons -->
+            <crem-button
+              *ngIf="!isRenderForm && editMode"
+              [id]="'dynamic-forms-cancel-btn'"
+              [text]="'Cancel'"
+              [btnStyle]="'flat'"
+              [color]="'secondary'"
+              (click)="toggleEditViewMode(); $event.preventDefault()"
+            ></crem-button>
+            <crem-button
+              *ngIf="!isRenderForm && editMode"
+              [id]="'dynamic-forms-apply-btn'"
+              [text]="'Apply'"
+              [btnStyle]="'flat'"
+              [color]="'secondary'"
+            ></crem-button>
+            <crem-button
+              *ngIf="!isRenderForm && !editMode"
+              [id]="'dynamic-forms-edit-btn'"
+              [text]="'Edit'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              (click)="toggleEditViewMode(); $event.preventDefault()"
+            ></crem-button>
+            <crem-button
+              *ngIf="!isRenderForm && editMode"
+              [id]="'dynamic-forms-save-btn'"
+              [text]="'Save'"
+              [btnStyle]="'flat'"
+              [color]="'primary'"
+              [disabled]="!form.dirty"
+              (click)="saveForm(); $event.preventDefault()"
+            ></crem-button>
+            <!-- End Design mode buttons -->
+          </div>
+        </crem-page-header>
+      </div>
+      <span class="df-anchor-ref-spacer-heading" id="{{ getFormId() }}"></span>
+      <div class="dynamic-form-content" #dynamicFormContent>
+        <div class="row">
+          <div
+            *ngFor="
+              let section of sectionsVisible;
+              let i = index;
+              trackBy: trackBySection
+            "
+            class="col-md-12"
+          >
+            <span
+              class="df-anchor-ref-spacer-heading"
+              id="{{ getFormSectionId(section) }}"
+            ></span>
+            <mango-dynamic-form-section
+              [section]="section"
+              [form]="form"
+              [formGroupName]="'section' + section.formSectionID"
+              [editMode]="editMode"
+              [isRenderForm]="isRenderForm"
+              [hasParentObjectLinker]="hasParentObjectLinker"
+              [isSuperUser]="isSuperUser"
+              [canLoadMap]="canLoadMap"
+              (hasParentObjectLinkerChange)="
+                handleHasParentObjectLinkerChange($event)
+              "
+            >
+            </mango-dynamic-form-section>
+            <div
+              appAmIVisible
+              (elementVisible)="getMoreSections($event, section.id)"
+              [isTargetElement]="section.id == sectionsVisible.length"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <crem-button
+    *ngIf="!isLoading"
+    class="scroll-to-top-button"
+    type="primary"
+    (click)="scrollToTop(); $event.preventDefault()"
+  >
+    <span>Scroll to Top</span>
+  </crem-button>
+</div>

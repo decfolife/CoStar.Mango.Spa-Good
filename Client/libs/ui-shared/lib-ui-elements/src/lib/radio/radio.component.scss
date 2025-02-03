@@ -1,15 +1,15 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 $color2: $primary-light;
 
 .crem-radio {
   margin: 0.5rem;
 
-  input[type="radio"] {
+  input[type='radio'] {
     position: absolute;
     opacity: 0;
 
-    +.crem-radio-label {
+    + .crem-radio-label {
       cursor: pointer;
       &:before {
         content: '';
@@ -28,14 +28,14 @@ $color2: $primary-light;
       }
 
       &.disabled {
-        color: $gray;
-        cursor: default;
+        @include costar(color, gray03);
+        cursor: not-allowed;
       }
-      margin-bottom: 0  !important;
+      margin-bottom: 0 !important;
     }
 
     &:checked {
-      +.crem-radio-label {
+      + .crem-radio-label {
         &:before {
           background-color: $primary-light;
           box-shadow: inset 0 0 0 4px $background;
@@ -44,7 +44,7 @@ $color2: $primary-light;
     }
 
     &:focus {
-      +.crem-radio-label {
+      + .crem-radio-label {
         &:before {
           outline: none;
           border-color: $primary-light;
@@ -53,16 +53,16 @@ $color2: $primary-light;
     }
 
     &:disabled {
-      +.crem-radio-label {
+      + .crem-radio-label {
         &:before {
           box-shadow: inset 0 0 0 4px $background;
           border-color: darken($background, 25%);
-          cursor: default;
+          cursor: not-allowed;
         }
       }
     }
 
-    +.crem-radio-label {
+    + .crem-radio-label {
       &:empty {
         &:before {
           margin-right: 0;

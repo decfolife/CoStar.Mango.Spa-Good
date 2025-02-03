@@ -38,3 +38,11 @@ dx-drop-down-box {
     @include costar(padding-left, 2);
   }
 }
+
+:host ::ng-deep {
+  #workflow-component-statuses-dropdown {
+    .custom-with-label {
+      padding-top: 1px;
+    }
+  }
+}

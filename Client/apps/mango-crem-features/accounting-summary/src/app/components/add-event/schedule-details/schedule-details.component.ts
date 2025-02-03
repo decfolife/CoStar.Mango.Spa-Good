@@ -52,8 +52,6 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
   selectedClassificationID: number;
   selectedjournalEntryProfileID: number;
   journalEntryProfileRequired: boolean;
-  isTermEndDateEnabled: boolean;
-  isTermBeginDateEnabled: boolean;
   termEndDate: Date;
   termBeginDate: Date;
   selectedBeginDateID: number;
@@ -88,6 +86,9 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
   compoundFrequency: number;
   selectedExceptionReason = 'string';
   dayOneDate: Date;
+  lastApprovedOrExportedDate: Date;
+  isRetro: boolean;
+  classificationName: string;
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -156,7 +157,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
       );
 
       if (this.router.url.includes('addEvent')) {
-        this.subtitle = 'Add Event: Initial';
+        this.title = 'Accounting Event Details | Add Event: Initial';
         this.scheduleDetailsForm.controls[
           'accountingEventBeginDate'
         ]?.disable();
@@ -170,7 +171,9 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   loadScheduleDataforEdit() {
-    this.subtitle = 'Edit Event: ' + this.accountingEventsData?.measureEvent;
+    this.title =
+      'Accounting Event Details | Edit Event: ' +
+      this.accountingEventsData?.measureEvent;
     this.scheduleDetailsForm.controls['classificationId']?.disable();
     this.selectedClassificationID = this.accountingEventsData?.classificationID;
     this.selectedjournalEntryProfileID =
@@ -196,7 +199,14 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   loadScheduleDataforRemeasure() {
-    this.subtitle = 'Measure Event: ' + this.measureEvent;
+    this.title =
+      'Accounting Event Details |' +
+      ` ${'Measure Event: '}  ${this.measureEvent} 
+    ${
+      this.isRetro && this.measureEvent !== 'Initial'
+        ? ' | Retrospective Adjustment'
+        : ''
+    }`;
     this.scheduleDetailsForm.controls['classificationId']?.disable();
     this.selectedClassificationID = this.accountingEventsData?.classificationID;
     this.selectedExceptionId = this.accountingEventsData.exceptionReason ?? 0;
@@ -233,7 +243,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
 
     this.initialscheduleForm();
     this.handleFormValueChanges();
-    this.subtitle = 'Add Event: Initial';
+    this.title = 'Accounting Event Details | Add Event: Initial';
   }
 
   initialscheduleForm() {
@@ -272,6 +282,29 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
           accountingEventEndDate
         );
 
+        const lastApprovedOrExportedDate =
+          this.addEditScheduleService.isValidDate(
+            this.lastApprovedOrExportedDate
+          );
+        if (lastApprovedOrExportedDate) {
+          const formattedLastApprovedOrExportedDate =
+            this.addEditScheduleService.toShortDateString(
+              this.lastApprovedOrExportedDate
+            );
+          termBeginDate <= formattedLastApprovedOrExportedDate
+            ? (this.isRetro = true)
+            : (this.isRetro = false);
+        }
+        this.title =
+          'Accounting Event Details |' +
+          ` ${
+            this.pageMode === 'Edit Event' ? 'Edit Event | ' : 'Measure Event: '
+          }  ${this.measureEvent} ${
+            this.isRetro && this.measureEvent !== 'Initial'
+              ? ' | Retrospective Adjustment'
+              : ''
+          }`;
+
         if (termBeginDate && termEndDate) {
           if (termBeginDate > termEndDate) {
             this.setTermCalculationToDefault();
@@ -285,6 +318,12 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(debounceTime(debounce), takeUntil(this.formSubscription$))
       .subscribe((compoundFrequency) => {
         this.compoundFrequency = compoundFrequency;
+      });
+
+    this.accountingSummaryService.lastApprovedOrExportedDate$
+      .pipe(debounceTime(debounce), takeUntil(this.formSubscription$))
+      .subscribe((isRetro) => {
+        isRetro ? (this.lastApprovedOrExportedDate = new Date(isRetro)) : null;
       });
 
     this.scheduleDetailsForm.valueChanges
@@ -314,17 +353,10 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
       .subscribe((classificationValue) => {
         this.selectedClassificationID = classificationValue[0];
         this.classificationChanged.emit(classificationValue[0]);
-      });
-
-    this.scheduleDetailsForm
-      .get('journalEntryProfile')
-      ?.valueChanges.pipe(
-        debounceTime(debounce),
-        distinctUntilChanged(),
-        takeUntil(this.formSubscription$)
-      )
-      .subscribe((jounalProfileValue) => {
-        this.selectedjournalEntryProfileID = jounalProfileValue;
+        this.addEventFormService.classificationID$.next(+classificationValue);
+        if (classificationValue[0] === 0 || classificationValue[0] === 5) {
+          this.scheduleDetailsForm.get('isImpaired').setValue(false);
+        }
       });
   }
 
@@ -348,12 +380,19 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
         this.eventsGridData?.endDate
       );
 
+    const priorEventBeginDate = this.addEditScheduleService.toShortDateString(
+      this.router.lastSuccessfulNavigation?.extras.state?.priorEventBeginDate
+    );
+
     const priorEventEndDate = this.addEditScheduleService.toShortDateString(
       this.router.lastSuccessfulNavigation?.extras.state?.priorEventEndDate
     );
 
-    const classificationID =
-      this.scheduleDetailsForm.get('classificationId').value[0];
+    const classificationID = Array.isArray(
+      this.scheduleDetailsForm.get('classificationId').value
+    )
+      ? this.scheduleDetailsForm.get('classificationId').value[0]
+      : this.scheduleDetailsForm.get('classificationId').value;
     const calendarMinDate = new Date(this.portfolioSettings.calendarMinDate);
     const calendarMaxDate = new Date(this.portfolioSettings.calendarMaxDate);
     const journalEntryProfile = this.scheduleDetailsForm.get(
@@ -367,7 +406,27 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
     const firstDayOfTheMonth = termBeginDate?.getDate() === 1;
 
     if (
-      !classificationID ||
+      this.isRetro &&
+      (classificationID === 0 || classificationID === 5) &&
+      this.measureEvent !== 'Initial'
+    ) {
+      this.addEventFormService.isOperatingRetrospectiveAdjustment$.next(true);
+      this.addEditScheduleService.showToast(
+        'Retroactive Adjustment is not allowed',
+        `You are attempting to do a retroactive adjustment on an ${this.classificationName} which is not allowed.`
+      );
+      isCalculateValid = true;
+      isSaveValid = false;
+    } else {
+      this.addEditScheduleService.clearToastBySummary(
+        'Retroactive Adjustment is not allowed'
+      );
+      this.addEditScheduleService.clearToastBySummary('Unsupported Action');
+      this.addEventFormService.isOperatingRetrospectiveAdjustment$.next(false);
+    }
+
+    if (
+      (!classificationID && classificationID !== 0) ||
       !termBegin ||
       !termEnd ||
       (this.showReportExceptionComment &&
@@ -377,7 +436,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
       isSaveValid = false;
     }
 
-    if (classificationID && classificationID?.length !== 0) {
+    if (classificationID && classificationID !== 0) {
       if (!termBeginDate || !termEndDate) {
         return;
       } else {
@@ -389,7 +448,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
           termEndDate > calendarMaxDate
         ) {
           isCalculateValid = false;
-          isSaveValid = false; //
+          isSaveValid = false;
           this.addEditScheduleService.showToast(
             'Accounting Term Begin Or End',
             `Saving is disabled because an error was thrown: The Period From or Period To is either outside the calendar range, or not properly configured for Calendar: ${this.portfolioSettings.leaseRecognitionCalendarID}`
@@ -453,26 +512,27 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
         .setValue(new Date(new Date(termBegin).setDate(1)));
     }
 
-    if (termBegin < accountingEventBeginDate) {
+    if (termBegin < priorEventBeginDate && this.measureEvent !== 'Initial') {
       isCalculateValid = false;
       isSaveValid = false;
       this.addEditScheduleService.showToast(
         'Term Begin Date',
-        `Remeasurements cannot start before the min future adjustment date of ${accountingEventBeginDate}`
+        `Remeasurements cannot start before the min future adjustment date of ${priorEventBeginDate}`
       );
     } else {
       this.addEditScheduleService.clearToastBySummary('Term Begin Date');
     }
 
     // Set the button states based on validations
-    this.addEventFormService.isCalculateValuesDisabled.next(!isCalculateValid);
-    this.addEventFormService.isSaveDisabled.next(!isSaveValid);
+    this.addEventFormService.isCalculateValuesDisabled$.next(!isCalculateValid);
+    this.addEventFormService.isSaveDisabled$.next(!isSaveValid);
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.formSubscription$.next();
     this.formSubscription$.complete();
+    // this.accountingSummaryService.isRetro$.next(null);
   }
 
   emitScheduleDetailsData() {
@@ -499,6 +559,8 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
 
   onClassificationValueChanged(event: any) {
     if (event) {
+      this.addEditScheduleService.clearAllToastMessages();
+      this.classificationName = event[0].classificationType;
       this.isTermBeginDirectEntry = true;
       this.isTermEnDirectEntry = true;
       this.journalEntryProfileList =
@@ -555,7 +617,10 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
             .setValue(this.accountingEventsData?.beginDate);
         } else {
           this.selectedBeginDateID =
-            this.defaultClassificationFilterByMeasureEvent.beginDateFormItemID;
+            this.accountingEventsData?.fromDateFormItemID;
+          this.scheduleDetailsForm
+            .get('accountingEventBeginDate')
+            .setValue(this.accountingEventsData?.beginDate);
         }
 
         if (selectedEndDateID === 2 || selectedEndDateID !== 1) {
@@ -564,8 +629,10 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
             .get('accountingEventEndDate')
             .setValue(this.accountingEventsData?.endDate);
         } else {
-          this.selectedEndDateID =
-            this.defaultClassificationFilterByMeasureEvent.endDateFormItemID;
+          this.selectedEndDateID = this.accountingEventsData.toDateFormItemID;
+          this.scheduleDetailsForm
+            .get('accountingEventEndDate')
+            .setValue(this.accountingEventsData?.endDate);
         }
       }
 
@@ -808,16 +875,33 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
     this.termInYear = 0;
   }
 
-  updateServiceTermValues() {
-    this.measureEvent === 'Full Termination'
-      ? this.addEventFormService.setTermValues('', 0, 0, 0, 0)
-      : this.addEventFormService.setTermValues(
-          this.termString,
-          this.termInPeriods,
-          this.termInMonths,
-          this.termInDays,
-          this.termInYear
-        );
+  updateAccountingTerms() {
+    let accountingTerms: {
+      termString: string;
+      termInPeriods: number;
+      termInMonths: number;
+      termInDays: number;
+      termInYear: number;
+    };
+
+    accountingTerms =
+      this.measureEvent === 'Full Termination'
+        ? {
+            termString: '',
+            termInPeriods: 0,
+            termInMonths: 0,
+            termInDays: 0,
+            termInYear: 0,
+          }
+        : {
+            termString: this.termString,
+            termInPeriods: this.termInPeriods,
+            termInMonths: this.termInMonths,
+            termInDays: this.termInDays,
+            termInYear: this.termInYear,
+          };
+
+    this.addEventFormService.accountingTerms$.next(accountingTerms);
   }
 
   private getEventsDateOptions(termBeginDate: string, termEndDate: string) {
@@ -831,7 +915,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
             this.termCalculations = response.data;
             this.termString = response.data.termString;
             this.termInPeriods = response.data.termInPeriods;
-            this.termInMonths = response.data.termInMonths.toFixed(2);
+            this.termInMonths = response.data.termInMonths;
             this.termInDays = response.data.termInDays;
             this.termInYear = response.data.termInYears;
 
@@ -840,15 +924,15 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
                 'Accounting Terms',
                 'The accounting term cannot be more than 100 years.'
               );
-              this.addEventFormService.isCalculateValuesDisabled.next(true);
-              this.addEventFormService.isSaveDisabled.next(true);
+              this.addEventFormService.isCalculateValuesDisabled$.next(true);
+              this.addEventFormService.isSaveDisabled$.next(true);
               this.setTermCalculationToDefault();
             } else {
               this.addEditScheduleService.clearToastBySummary(
                 'Accounting Terms'
               );
-              this.addEventFormService.isCalculateValuesDisabled.next(false);
-              this.addEventFormService.isSaveDisabled.next(false);
+              this.addEventFormService.isCalculateValuesDisabled$.next(false);
+              this.addEventFormService.isSaveDisabled$.next(false);
             }
 
             if (
@@ -861,7 +945,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
             }
 
             this.emitScheduleDetailsData();
-            this.updateServiceTermValues();
+            this.updateAccountingTerms();
           } else {
             this.addEditScheduleService.showToast(
               'Accounting Term Begin Or End',

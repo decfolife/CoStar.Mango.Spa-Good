@@ -92,6 +92,9 @@ LoadingStatus.args = {
   iconAnimation: 'spin',
 };
 
+// TODO: Fix ADA issue, discernible text not present
+// Use the .sr-only class or a similar approach to make the content accessible to screen readers
+// while keeping it visually hidden in the UI.
 export const CloseButton = Template.bind({});
 CloseButton.args = {
   id: 'button3',

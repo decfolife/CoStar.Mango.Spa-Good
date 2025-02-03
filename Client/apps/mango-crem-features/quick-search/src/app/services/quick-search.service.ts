@@ -19,7 +19,7 @@ export class QuickSearchService extends EndpointService {
     searchString: string,
     moduleId: number
   ): Observable<any> {
-    const url = `${this.quickSearchUrl}/quicksearch/getquicksearchresults/${searchString}/${moduleId}`;
+    const url = `${this.quickSearchUrl}quicksearch/getquicksearchresults/${searchString}/${moduleId}`;
     return this.callHttpGet(url, 'getquicksearchresults');
   }
 

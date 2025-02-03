@@ -23,7 +23,7 @@ export interface AmortizationProfile {
   profileID: number;
   profileName: string;
   isActive: boolean;
-  isReasonablyCertainOption: boolean;
+  includeReasonablyCertainOptions: boolean;
   glAccountIDsCSV?: string;
   comments?: string;
 }

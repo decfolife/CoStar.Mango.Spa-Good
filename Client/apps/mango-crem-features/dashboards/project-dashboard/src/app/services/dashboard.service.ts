@@ -208,7 +208,7 @@ export class DashboardService extends EndpointService {
   }
 
   getProjectTemplateTaskList(templateId): Observable<any> {
-    const url = `${this.projects}/projecttemplates/getprojecttemplatetasklist/${templateId}`;
+    const url = `${this.projects}projecttemplates/getprojecttemplatetasklist/${templateId}`;
     return this.callHttpGet(url, 'getprojecttemplatetasklist');
   }
 
@@ -523,14 +523,14 @@ export class DashboardService extends EndpointService {
     objectId: number
   ): Observable<GetFoldersHttpResponse> {
     return this.callHttpGet(
-      `${this.projects}/filemanagement/getfolders?relativePath=/vpdocuments%2F${clientKey}%2F1_${objectId}%2F&objectTypeId=1&objectId=${objectId}`,
+      `${this.projects}filemanagement/getfolders?relativePath=/vpdocuments%2F${clientKey}%2F1_${objectId}%2F&objectTypeId=1&objectId=${objectId}`,
       'createTaskFolder'
     );
   }
 
   createTaskFolder(request: CreateFolderHTTPRequest): Observable<any> {
     return this.callHttpPost(
-      `${this.projects}/filemanagement/createfolder`,
+      `${this.projects}filemanagement/createfolder`,
       'createTaskFolder',
       request
     );

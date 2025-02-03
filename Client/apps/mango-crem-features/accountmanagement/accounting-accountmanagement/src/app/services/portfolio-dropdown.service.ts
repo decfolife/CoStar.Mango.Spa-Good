@@ -17,7 +17,7 @@ export class PortfolioDropdownService extends EndpointService {
   public portfolios: Portfolio[];
 
   getPortfolios() {
-    const url = `${this.accounting}/Base/GetPortfolios`;
+    const url = `${this.accounting}Base/GetPortfolios`;
     return this.callHttpGet(url, 'getPortfolios');
   }
 }

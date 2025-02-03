@@ -1,5 +1,40 @@
+@use 'styles' as *;
+@use 'colors' as colors;
+
 .content-container,
 .no-data-container {
   text-align: center;
   padding: 15%;
+}
+
+:host ::ng-deep #je-payment-info-popup-grid {
+  .dx-header-row {
+    background-color: colors.$costarDarkBlue !important;
+    color: colors.$white;
+    font-weight: bold !important;
+  }
+}
+
+:host
+  ::ng-deep
+  .grid-custom-style
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > td,
+:host
+  ::ng-deep
+  .grid-custom-style
+  .dx-datagrid-content
+  .dx-datagrid-table
+  .dx-row
+  > tr
+  > td {
+  font-size: 12px !important;
+  border-bottom-width: 1px !important;
+}
+
+.send-to-excel {
+  float: right;
+  @include costar(margin, 1);
 }

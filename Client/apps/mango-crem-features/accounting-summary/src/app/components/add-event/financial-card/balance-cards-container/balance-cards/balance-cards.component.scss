@@ -1,0 +1,78 @@
+@use 'styles' as *;
+
+.balance-card {
+  display: flex;
+  flex-direction: column;
+  @include costar(border-radius, medium);
+  @include costar(background-color, primary);
+}
+
+.balance-card-header {
+  border-bottom: 0 !important;
+  @include costar(font-size, body);
+  @include costar(color, light);
+  padding: 8px 8px 0 8px;
+  @include costar(font-weight, normal, $important: true);
+}
+
+.balance-card-body {
+  margin: 0px 8px 8px 8px;
+  background-color: white;
+  @include costar(border-radius, medium);
+  min-height: 215px;
+}
+
+.balance-card-title {
+  border-bottom: 0 !important;
+  @include costar(font-size, body);
+  @include costar(font-weight, normal);
+}
+
+.balance-card-header-details {
+  text-align: center;
+  @include costar(padding, 6);
+  @include costar(font-size, body);
+  @include costar(font-weight, normal);
+  @include costar(background-color, light);
+  border-top-right-radius: 0.2rem;
+  border-top-left-radius: 0.2rem;
+  margin: 0px 8px 0px 8px;
+  max-height: 92px;
+}
+
+.primary-amount {
+  margin-bottom: 2px;
+  font-size: 1.25rem;
+  max-height: 24px;
+  @include costar(font-weight, bold);
+
+  ::ng-deep input {
+    @include costar(font-weight, bold);
+    font-size: large;
+    text-align: center;
+    padding: 0px;
+  }
+
+  ::ng-deep dx-number-box {
+    margin-top: -3px;
+    margin-bottom: 5px;
+    height: 30px;
+  }
+}
+
+.primary-currency {
+  margin-bottom: 0;
+  @include costar(font-weight, normal);
+}
+
+.divider {
+  @include costar(border-top, gray05);
+  margin: 0 8px 0 8px;
+}
+
+.balance-card-details {
+  @include costar(font-size, small);
+  @include costar(background-color, light);
+  @include costar(color, gray03);
+  @include costar(padding, 2);
+}

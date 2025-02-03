@@ -36,9 +36,8 @@ export class ProjectsDashboardLeftNavService extends EndpointService {
   }
 
   getModuleNavigationLinksForRenderForm(routeUrl: string): Observable<any> {
-    const queryParams = (routeUrl.split('?') || ['', ''])[1];
-    let encodedUrl = encodeURIComponent(`?${queryParams}`);
-    const url = `${this.leftNav}LeftNav/GetRenderFormsNavigationLinks/${encodedUrl}`;
+    let encodedUrl = encodeURIComponent(`${routeUrl}`);
+    const url = `${this.leftNav}LeftNav/GetRenderFormsNavigationLinks/?routeUrl=${encodedUrl}`;
     return this.callHttpGet(url, 'GetModuleNavigationLinksForRenderForm');
   }
 

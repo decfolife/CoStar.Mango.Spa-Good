@@ -53,10 +53,12 @@ export class AmortizationDetailSectionComponent
   selectedRowValue = 0;
   popupVisible = false;
   amortizationGridRowClickEvent: any;
-  retroAdustmentGridRowClickEvent: any;
+  retroAdjustmentGridRowClickEvent: any;
   gridColumnsForRetroPopup: any;
   retroEventJeStatus = '';
   private subscription = new Subscription();
+  private gridPreferencesUpdated = false;
+  private previousClassification = null;
   contentLoaded = false;
   showMaxRow = true;
   showDefaultRow = false;
@@ -91,17 +93,6 @@ export class AmortizationDetailSectionComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.isAccountingEventEmpty) {
-      this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(
-        this.amortizationDataGrid,
-        2
-      );
-      this.accountingSummaryService.clearGrid(
-        this.amortizationDataGrid,
-        'No Data'
-      );
-      return;
-    }
     if (
       this.eventScheduleData &&
       this.gridState &&
@@ -130,8 +121,8 @@ export class AmortizationDetailSectionComponent
     this.retroEventJeStatus = eventJeProcessingPopupData.jeStatus;
   }
 
-  onRetroAdustmentGridRowClick(event) {
-    this.retroAdustmentGridRowClickEvent = event;
+  onRetroAdjustmentGridRowClick(event) {
+    this.retroAdjustmentGridRowClickEvent = event;
   }
 
   onGridOptionChanged(event) {
@@ -157,7 +148,6 @@ export class AmortizationDetailSectionComponent
     this.subscription.add(
       amortizationDetails.subscribe((amortizationDetailsResponse) => {
         if (amortizationDetailsResponse.success) {
-          this.amortizationDataGrid.instance.option('noDataText', '');
           this.amortizationdetailsGridData = amortizationDetailsResponse.data;
           this.selectedRowKey = [
             this.amortizationdetailsGridData[0]?.scheduleIndex,
@@ -172,6 +162,32 @@ export class AmortizationDetailSectionComponent
             this.classificationID,
             this.eventScheduleData
           );
+
+          //Get Last Approved or Exported Date for Retro and Emit the data to service
+          const filteredAmortizationData =
+            this.amortizationdetailsGridData.filter(
+              (item) =>
+                item.jeStatus === 'Approved' || item.jeStatus === 'Exported'
+            );
+
+          const lastApprovedOrExportedRow =
+            filteredAmortizationData[filteredAmortizationData.length - 1];
+          const lastApprovedOrExportedDate =
+            lastApprovedOrExportedRow?.periodEnd
+              ? (function () {
+                  const date = new Date(lastApprovedOrExportedRow.periodEnd);
+                  date.setDate(date.getDate() + 1); // Adding 1 day
+                  date.setHours(0, 0, 0, 0);
+                  return date;
+                })()
+              : null;
+
+          this.accountingSummaryService.lastApprovedOrExportedDate$.next(
+            lastApprovedOrExportedDate
+              ? new Date(lastApprovedOrExportedDate)
+              : null
+          );
+
           this.getGridPreferences();
         } else if (!amortizationDetailsResponse.success) {
           this.accountingSummaryService.errorNotify(
@@ -187,29 +203,44 @@ export class AmortizationDetailSectionComponent
   }
 
   getGridPreferences() {
-    let state = JSON.parse(sessionStorage.getItem('amortizationGridStateKey'));
-    // Filter the data
-    const filteredData = this.gridState.filter((item) => {
-      return (
-        item.classificationID === this.classificationID &&
-        item.gridName === this.gridName
-      );
-    });
+    this.subscription.add(
+      this.accountingSummaryService
+        .getGridPreferences()
+        .subscribe((response) => {
+          if (response === null) {
+            this.accountingSummaryService.displayContactSystemAdminMessage();
+          } else if (response.success) {
+            this.gridState = response.data;
+            let state = JSON.parse(
+              sessionStorage.getItem('amortizationGridStateKey')
+            );
+            // Filter the data
+            const filteredData = this.gridState.filter((item) => {
+              return (
+                item.classificationID === this.classificationID &&
+                item.gridName === this.gridName
+              );
+            });
 
-    if (state === null) {
-      state = {};
-    }
+            if (state === null) {
+              state = {};
+            }
 
-    state.columns = [];
-    filteredData.forEach((item) => {
-      const parsedColumns = JSON.parse(item.columnJson);
-      state.columns.push(...parsedColumns);
-    });
+            state.columns = [];
+            filteredData.forEach((item) => {
+              const parsedColumns = JSON.parse(item.columnJson);
+              state.columns.push(...parsedColumns);
+            });
 
-    this.initialState = state;
-    this.amortizationDataGrid.instance.state(state);
-    sessionStorage.setItem('amortizationGridStateKey', JSON.stringify(state));
-    this.contentLoaded = false;
+            this.initialState = state;
+            sessionStorage.setItem(
+              'amortizationGridStateKey',
+              JSON.stringify(state)
+            );
+            this.contentLoaded = false;
+          }
+        })
+    );
   }
 
   onGridContentReady() {
@@ -238,6 +269,7 @@ export class AmortizationDetailSectionComponent
             this.accountingSummaryService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.amortizationDataGrid.instance.state({});
+            this.gridPreferencesUpdated = false;
             this.accountingSummaryService.successNotify(
               'Value Reset Successfully'
             );
@@ -304,6 +336,7 @@ export class AmortizationDetailSectionComponent
             this.accountingSummaryService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.initialState = newState;
+            this.gridPreferencesUpdated = true;
             this.accountingSummaryService.successNotify(
               response.clientErrorMessage
             );
@@ -412,7 +445,6 @@ export class AmortizationDetailSectionComponent
           ) {
             subCol.format = this.dateFormat;
           }
-
           if (
             subCol.name === 'AssetAdjustment' ||
             subCol.name === 'FunctionalAssetAdjustmentAmount' ||
@@ -587,10 +619,14 @@ export class AmortizationDetailSectionComponent
   }
 
   showDefaultRows() {
-    this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(
-      this.amortizationDataGrid,
-      15
-    );
+    let amortizationHeaderID =
+      '#' +
+      this.accountingSummaryService.getId(this.componentName, 'card', 'header');
+    this.amortizationGridHeight = (
+      window.innerHeight -
+      document.querySelector(amortizationHeaderID).getBoundingClientRect()
+        .bottom
+    ).toString();
     this.showMaxRow = true;
     this.showDefaultRow = false;
     this.showMinRow = false;
@@ -599,8 +635,10 @@ export class AmortizationDetailSectionComponent
   showMinRows() {
     this.amortizationGridHeight = this.accountingSummaryService.setGridHeight(
       this.amortizationDataGrid,
-      11
+      15
     );
+    this.amortizationGridHeight =
+      parseInt(this.amortizationGridHeight) - 5 + 'px';
     this.showMaxRow = false;
     this.showDefaultRow = true;
     this.showMinRow = false;

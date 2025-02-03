@@ -1,6 +1,10 @@
 <section class="section-grid">
-  <crem-card [showCustomHeader]="true" fxFlexFill>
-    <div customHeader class="card-header">
+  <crem-card [showCustomHeader]="true" mangoAccountingAda>
+    <div
+      customHeader
+      class="card-header"
+      [id]="accountingSummaryService.getId(componentName, 'card', 'header')"
+    >
       <div
         class="card-title"
         [id]="accountingSummaryService.getId(componentName, 'card', 'title')"
@@ -139,7 +143,6 @@
         [dataSource]="paymentsGridData"
         keyExpr="leaseRecognitionScheduleEventID"
         width="100%"
-        noDataText="No historical charge data"
         [columnMinWidth]="25"
         [columns]="paymentsGridColumns"
         [showColumnLines]="true"
@@ -166,7 +169,7 @@
         >
         </dxo-state-storing>
 
-        <dxo-scrolling columnRenderingMode="virtual"> </dxo-scrolling>
+        <dxo-scrolling columnRenderingMode="standard"> </dxo-scrolling>
 
         <dxo-selection mode="single"> </dxo-selection>
 
@@ -176,9 +179,18 @@
           height="500"
           width="400"
         >
+          <dxo-position
+            my="right top"
+            at="right top"
+            [of]="
+              '#' +
+              accountingSummaryService.getId(componentName, 'card', 'header')
+            "
+          ></dxo-position>
           <dxo-search [enabled]="true"> </dxo-search>
 
-          <dxo-selection allowSelectAll="true"> </dxo-selection>
+          <dxo-selection allowSelectAll="true" recursive="true">
+          </dxo-selection>
         </dxo-column-chooser>
 
         <div *dxTemplate="let info of 'amortizationHeader'">
@@ -195,10 +207,7 @@
   </crem-card>
 </section>
 
-<mango-transaction-popup
-  [(transactionPopupVisible)]="transactionPopupVisible"
-  [transactionPopupData]="transactionPopupData"
-  [eventScheduleData]="eventScheduleData"
-  [userInfo]="userInfo"
+<mango-schedule-transactions-popup
+  [scheduledPaymentGridData]="historicalTransactionData"
 >
-</mango-transaction-popup>
+</mango-schedule-transactions-popup>

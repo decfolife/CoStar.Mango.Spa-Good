@@ -39,12 +39,12 @@ export class BaseService extends EndpointService {
   };
 
   getUserRights() {
-    const url = `${this.batchAccountingUrl}/Base/GetUserRights`;
+    const url = `${this.batchAccountingUrl}Base/GetUserRights`;
     return this.callHttpGet(url, 'getUserRights');
   }
 
   getPortfolios() {
-    const url = `${this.batchAccountingUrl}/Base/GetPortfolios`;
+    const url = `${this.batchAccountingUrl}Base/GetPortfolios`;
     return this.callHttpGet(url, 'getPortfolios');
   }
 }

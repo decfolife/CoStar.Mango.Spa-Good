@@ -9,7 +9,7 @@ import {
 import { ButtonModule, ModalModule } from '@mango/ui-shared/lib-ui-elements';
 import { ContactRecord } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import { Observable, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import {
   DxValidationGroupComponent,
@@ -17,6 +17,8 @@ import {
 } from 'devextreme-angular/ui/validation-group';
 import { DxNumberBoxModule } from 'devextreme-angular';
 import { DatePickerModule } from '../../../../../lib-ui-elements/src/lib/date-picker/date-picker.module';
+import { SettingsService } from '@mango/core-shared/lib-core-shared';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'mango-date-calculator',
@@ -66,7 +68,8 @@ export class DateCalculatorComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<DateCalculatorComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private facade: MangoAppFacade
+    private facade: MangoAppFacade,
+    private settingsService: SettingsService
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +81,21 @@ export class DateCalculatorComponent implements OnInit, OnDestroy {
         this.isUserDatesEU = contact.preferences.contactDatesEU;
       })
     );
+
+    this.subscriptions.add(
+      combineLatest([this.facade.authenticatedUser$, this.facade.clientKey$])
+        .pipe(
+          switchMap(([userAuth, clientKey]) =>
+            this.settingsService.getClientSettingsForUser(
+              clientKey,
+              userAuth.contactId
+            )
+          )
+        )
+        .subscribe((x) => {
+          this.includeInputDate = !x.uncheckIncludeInputDate;
+        })
+    );
   }
 
   ngOnDestroy(): void {
@@ -88,24 +106,24 @@ export class DateCalculatorComponent implements OnInit, OnDestroy {
     const validationResult = this.inputGroup.instance.validate();
 
     if (validationResult.isValid) {
-      const date = new Date(this.inputDate);
-
-      date.setFullYear(date.getFullYear() + this.years);
-      date.setMonth(date.getMonth() + this.months);
-
-      if (this.includeInputDate) {
-        if (this.days <= 0) {
-          date.setDate(date.getDate() + this.days + 1);
-        } else {
-          date.setDate(date.getDate() + this.days - 1);
-        }
-      } else {
-        date.setDate(date.getDate() + this.days);
-      }
-
-      this.outputDate = date;
-      this.dayOfWeek = this.weekday[this.outputDate.getDay()];
+      this.processDate();
     }
+  }
+
+  public processDate() {
+    const date = new Date(this.inputDate);
+
+    date.setFullYear(date.getFullYear() + this.years);
+    date.setMonth(date.getMonth() + this.months);
+
+    if (this.includeInputDate) {
+      date.setDate(date.getDate() + this.days - 1);
+    } else {
+      date.setDate(date.getDate() + this.days);
+    }
+
+    this.outputDate = date;
+    this.dayOfWeek = this.weekday[this.outputDate.getDay()];
   }
 
   public daysDifference(a: number, b: number) {

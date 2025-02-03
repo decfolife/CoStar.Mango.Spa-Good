@@ -36,6 +36,7 @@ export class DataSetGridComponent implements OnInit {
   filterBuilderVisible = false;
   isFinReportingEnabled = false;
   showLoading = false;
+  userHasRights: boolean = true;
 
   editRowKey: number | null = null;
 
@@ -46,6 +47,9 @@ export class DataSetGridComponent implements OnInit {
   ngOnInit(): void {
     this.service.getReportingIntervalSettings().subscribe((res) => {
       if (!res.succeeded) {
+        if (res.message === 'Forbidden') {
+          this.userHasRights = false;
+        }
         return;
       }
 

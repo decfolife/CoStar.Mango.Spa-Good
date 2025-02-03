@@ -1,6 +1,15 @@
 <ul class="tabs-nav">
-  <li class="tab-item__link" *ngFor="let tab of tabs" (click)="selectTab(tab)" [class.active]="tab.active" [class.disabled]="tab.disabled" [attr.id]="tab.id || null">
-    <a>{{tab.title}}</a>
+  <li
+    tabindex="0"
+    class="tab-item__link"
+    *ngFor="let tab of tabs"
+    (click)="selectTab(tab)"
+    (keydown)="onKeyDownEvent($event, tab)"
+    [class.active]="tab.active"
+    [class.disabled]="tab.disabled"
+    [attr.id]="tab.id || null"
+  >
+    <a>{{ tab.title }}</a>
   </li>
 </ul>
 <ng-content></ng-content>

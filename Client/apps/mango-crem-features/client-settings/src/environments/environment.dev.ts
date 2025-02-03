@@ -12,7 +12,6 @@ class EnvironmentsCrem {
     quickSearch: '',
     userMaintenance: '',
   };
-  isRestful: false;
 }
 
 export const environment = new EnvironmentsCrem();

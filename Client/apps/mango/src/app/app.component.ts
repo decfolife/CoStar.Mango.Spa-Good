@@ -11,10 +11,14 @@ import { SettingsService } from '@mango/core-shared/lib-core-shared';
 import { environment } from '../environments/environment.local';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { PendoService } from '../app/services/pendo.service';
-import { CookieService } from 'libs/core-shared/src/lib/services';
+import {
+  CookieService,
+  UtilitiesService,
+} from 'libs/core-shared/src/lib/services';
 import { MatDialog } from '@angular/material/dialog';
 import { Idle } from '@ng-idle/core';
-import { CurrentProjectIdMonitorService } from './services/current-project-monitor.service';
+import { convertBoolToString } from 'libs/core-shared/src/lib/utilities/utils';
+import LogRocket from 'logrocket';
 
 @Component({
   selector: 'mango-root',
@@ -46,10 +50,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.setupLogRocket();
     this.facade.init();
     this.facade.loadRedirectorLinks();
     this.setupIdle();
-    this.setPendo();
+    this.setupPendo();
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 
   setupIdle() {
@@ -117,74 +126,155 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
-  }
-
-  setPendo() {
+  setupPendo() {
     this.subscriptions.push(
       combineLatest([
         this.facade.clientKey$,
         this.facade.contactRecord$,
         this.facade.adminFlags$,
+        this.facade.authenticatedUser$,
       ])
         .pipe(
           filter(
-            ([clientkey, contactRecord, adminFlags]) =>
-              !!clientkey && !!contactRecord && !!adminFlags
+            ([clientkey, contactRecord, adminFlags, authenticatedUser]) =>
+              !!clientkey &&
+              !!contactRecord &&
+              !!adminFlags &&
+              !!authenticatedUser
           ),
-          switchMap(([clientkey, contactRecord, adminFlags]) =>
-            combineLatest([
-              of(clientkey),
-              of(contactRecord),
-              of(adminFlags),
-              this.settingsService.getClientPendoSettings(
-                clientkey,
-                contactRecord.contactID
-              ),
-            ])
+          switchMap(
+            ([clientkey, contactRecord, adminFlags, authenticatedUser]) =>
+              combineLatest([
+                of(clientkey),
+                of(contactRecord),
+                of(adminFlags),
+                of(authenticatedUser),
+                this.settingsService.getClientPendoSettings(
+                  clientkey,
+                  contactRecord.contactID
+                ),
+              ])
           ),
-          tap(([clientkey, contactRecord, adminFlags, response]) => {
-            this.pendoService.initialize(
-              {
-                id: contactRecord.email,
-                full_name:
-                  contactRecord.firstName + ' ' + contactRecord.lastName,
-                user_id: contactRecord.userName,
-                email: contactRecord.email,
-                start_page: response.contactStartPage,
-                contact_dates_eu_format:
-                  contactRecord.preferences?.contactDatesEU.toString(),
-                role: contactRecord.userRoleName,
-                INTERNAL_USER: contactRecord.userRole == 0 ? '1' : '0',
-                contactDepartment: response.contactDepartment,
-              },
-              {
-                id: clientkey + '_' + environment.name,
-                environment: environment.name,
-                financialReportingEnabled:
-                  response.financialReportingEnabled.toString(),
-                financialReportingDeadline:
-                  response.financialReportingDeadline.toString(),
-                billingDba: response.billingDBA,
-                includeCostarBillingCounts:
-                  response.includeCostarBillingCounts.toString(),
-                isRedirectorActive: adminFlags.isRedirectorActive.toString(),
-                useNRTDatasets: adminFlags.useNRTDataSets.toString(),
-                useSegmentsFeature: adminFlags.useSegmentsFeature.toString(),
-                name: clientkey + '_' + environment.name,
-                betaProgramParticipant: response.betaProgramParticipant,
-                databaseServer: adminFlags.databaseServer,
-                lastCurrencyUpdate: adminFlags.lastCurrencyUpdate,
-                useBatchReporting: adminFlags.useBatchReporting.toString(),
-                useAutoLoadReminders:
-                  adminFlags.useAutoLoadReminders.toString(),
-                useCentralAuthentication:
-                  adminFlags.useCentralAuthentication.toString(),
-                isEnlist: adminFlags.isEnlist.toString(),
-                isCachedClient: adminFlags.isCachedClient.toString(),
-              }
-            );
+          tap(
+            ([
+              clientkey,
+              contactRecord,
+              adminFlags,
+              authenticatedUser,
+              response,
+            ]) => {
+              this.pendoService.initialize(
+                {
+                  id: authenticatedUser.isRemUser
+                    ? contactRecord.email.toLocaleLowerCase()
+                    : `${authenticatedUser.clientKey.toLocaleUpperCase()}_${
+                        authenticatedUser.contactId
+                      }_${environment.name.toLocaleUpperCase()}`,
+                  full_name:
+                    contactRecord.firstName + ' ' + contactRecord.lastName,
+                  user_id: contactRecord.userName,
+                  email: contactRecord.email.toLocaleLowerCase(),
+                  start_page: response.contactStartPage,
+                  contact_dates_eu_format:
+                    contactRecord.preferences?.contactDatesEU.toString(),
+                  role: contactRecord.userRoleName.split(/(?=[A-Z])/).join(' '),
+                  isRemUser: authenticatedUser.isRemUser,
+                  contactDepartment: response.contactDepartment,
+                  signup_date: contactRecord.dateCreated,
+                  centralAuthSecurityLevel: (() => {
+                    if (authenticatedUser.securityLevel === 0)
+                      return 'CoStar Employee L0';
+                    if (authenticatedUser.securityLevel === 1)
+                      return 'CoStar Employee L1';
+                    if (authenticatedUser.securityLevel === 2)
+                      return 'CoStar Employee L2';
+                    if (authenticatedUser.securityLevel === 3)
+                      return 'CoStar Employee L3';
+                    return 'Customer';
+                  })(),
+                  isRequiredSsoUser: contactRecord.requireSSO,
+                  centralAuthUserId: authenticatedUser.userId,
+                  isAutoProvisioned: authenticatedUser.isAutoProvisioned,
+                  hasMultipleSites: authenticatedUser.hasMultipleSites,
+                  isServiceAccount: authenticatedUser.isServiceAccount,
+                },
+                {
+                  id:
+                    clientkey.toLocaleUpperCase() +
+                    '_' +
+                    environment.name.toLocaleUpperCase(),
+                  environment: environment.name,
+                  financialReportingEnabled: convertBoolToString(
+                    response.financialReportingEnabled
+                  ),
+                  financialReportingDeadline:
+                    response.financialReportingDeadline.toString(),
+                  billingDba: response.billingDBA,
+                  includeCostarBillingCounts: convertBoolToString(
+                    response.includeCostarBillingCounts
+                  ),
+                  isRedirectorActive: convertBoolToString(
+                    adminFlags.isRedirectorActive
+                  ),
+                  useNRTDatasets: convertBoolToString(
+                    adminFlags.useNRTDataSets
+                  ),
+                  useSegmentsFeature: convertBoolToString(
+                    adminFlags.useSegmentsFeature
+                  ),
+                  name:
+                    environment.name.toLocaleUpperCase() === 'PROD'
+                      ? clientkey.toLocaleUpperCase()
+                      : clientkey.toLocaleUpperCase() +
+                        '_' +
+                        environment.name.toLocaleUpperCase(),
+                  betaProgramParticipant:
+                    response.betaProgramParticipant === 'true',
+                  databaseServer: adminFlags.databaseServer,
+                  lastCurrencyUpdate: adminFlags.lastCurrencyUpdate,
+                  useBatchReporting: convertBoolToString(
+                    adminFlags.useBatchReporting
+                  ),
+                  useAutoLoadReminders: convertBoolToString(
+                    adminFlags.useAutoLoadReminders
+                  ),
+                  useCentralAuthentication: convertBoolToString(
+                    adminFlags.useCentralAuthentication
+                  ),
+                  isEnlist: convertBoolToString(adminFlags.isEnlist),
+                  isCachedClient: convertBoolToString(
+                    adminFlags.isCachedClient
+                  ),
+                }
+              );
+            }
+          )
+        )
+        .subscribe()
+    );
+  }
+
+  setupLogRocket() {
+    if (!UtilitiesService.isUpperEnvironments()) return;
+
+    LogRocket.init(environment.logRocketAppId);
+
+    this.subscriptions.push(
+      combineLatest([
+        this.facade.authenticatedUser$,
+        this.facade.contactRecord$,
+      ])
+        .pipe(
+          filter(
+            ([authenticatedUser, contactRecord]) =>
+              !!authenticatedUser && !!contactRecord
+          ),
+          tap(([authenticatedUser, contactRecord]) => {
+            LogRocket.identify(contactRecord.contactID.toString(), {
+              name: `${contactRecord.firstName} ${contactRecord.lastName}`,
+              email: authenticatedUser.email,
+              clientSite: authenticatedUser.clientKey,
+            });
           })
         )
         .subscribe()

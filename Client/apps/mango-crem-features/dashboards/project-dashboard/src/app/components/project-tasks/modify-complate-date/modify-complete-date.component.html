@@ -114,7 +114,10 @@
   <div modalFooter class="footerContent">
     <div class="footerLeftControls">{{ errorMsg }}</div>
     <div id="buttonTemplate" class="footerRightControls">
-      <div class="reason-required-text" *ngIf="isNotesFieldRequired">
+      <div
+        class="reason-required-text"
+        *ngIf="isNotesFieldRequired && !errorMsg"
+      >
         Reason required to complete this action.
       </div>
       <crem-button

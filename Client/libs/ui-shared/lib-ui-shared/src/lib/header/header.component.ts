@@ -121,7 +121,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ]).pipe(
       map(
         ([isEmulatedUser, contact]) =>
-          !isEmulatedUser && contact.userRole === 0 && !environment.production
+          !isEmulatedUser &&
+          contact.userRole === 0 &&
+          environment.name !== 'PROD'
       )
     );
 

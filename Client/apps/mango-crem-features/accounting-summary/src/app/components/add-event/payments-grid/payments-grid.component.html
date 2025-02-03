@@ -2,7 +2,6 @@
   [id]="accountingSummaryService.getId(componentName, 'section', 'card')"
   [showCustomHeader]="true"
   [title]="title"
-  [subtitle]="subtitle"
 >
   <div customHeader class="card-header">
     <crem-button
@@ -19,7 +18,7 @@
       [color]="'primary'"
       [size]="'medium'"
       [ariaLabel]="'Add Other Charges'"
-      [disabled]="isPaymentsGridLoading"
+      [disabled]="isAddOtherChargesDisabled"
       (buttonClick)="addOtherCharges()"
     >
     </crem-button>
@@ -29,7 +28,7 @@
       #schedulePaymentsGrid
       [id]="accountingSummaryService.getId(componentName, 'grid', 'section')"
       [dataSource]="schedulePaymentsData"
-      [columns]="scheduelPaymentsGridColumns"
+      [columns]="schedulePaymentsGridColumns"
       [showColumnLines]="true"
       [allowColumnReordering]="true"
       [allowColumnResizing]="true"
@@ -42,7 +41,7 @@
       class="custom-data-grid"
       [loadPanel]="{ enabled: true }"
       (onRowClick)="onRowClick($event)"
-      (onContentReady)="onPaymentGridContentReady($event)"
+      (onContentReady)="onPaymentGridContentReady()"
       (onEditorPreparing)="onEditorPreparing($event)"
       (onSelectionChanged)="onSelectionChange($event)"
     >
@@ -71,6 +70,5 @@
 
 <mango-schedule-transactions-popup
   [scheduledPaymentGridData]="scheduledPaymentGridData"
-  [schedulePayments]="schedulePayments"
 >
 </mango-schedule-transactions-popup>

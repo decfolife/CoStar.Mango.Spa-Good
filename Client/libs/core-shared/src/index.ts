@@ -23,3 +23,4 @@ export * from './lib/utilities/utils';
 export * from './lib/utilities/tree-list-helpers';
 export * from './lib/pipes';
 export { Guid } from './lib/guid';
+export * from './lib/prevent-change-loss.guard';

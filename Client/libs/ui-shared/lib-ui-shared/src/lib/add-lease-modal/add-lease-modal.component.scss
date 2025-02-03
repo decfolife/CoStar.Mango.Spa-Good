@@ -15,12 +15,34 @@
     padding: 8px 0 4px;
   }
 
-  #aet-leaseInfo-container {
+  .spanItems {
+    width: 50%;
+    justify-content: space-between;
     display: flex;
-    gap: 8px;
-    .leaseInfo {
-      flex-basis: 50%;
-    }
+    margin: 8px 0 0 0;
+    flex-direction: row !important;
+  }
+  .spanItems.spanRight {
+    float: right;
+  }
+  .spanItems.spanLeft {
+    float: left;
+  }
+  .spanItems.spanRight crem-form-label {
+    width: 27%;
+    padding-left: 10px;
+  }
+  .spanItems.spanLeft crem-form-label {
+    width: 27%;
+  }
+  .spanItems.spanRight crem-date-picker,
+  .spanItems.spanRight crem-dropdown {
+    width: 71%;
+  }
+  .spanItems.spanLeft crem-date-picker,
+  .spanItems.spanLeft crem-dropdown {
+    width: 72%;
+    padding-right: 10px;
   }
 }
 

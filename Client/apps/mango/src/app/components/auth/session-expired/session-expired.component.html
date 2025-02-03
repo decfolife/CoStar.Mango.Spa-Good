@@ -1,0 +1,25 @@
+<div id="company-logo">
+  <img alt="Costar logo" src="costar-logo.png" />
+</div>
+
+<div class="container">
+  <div class="content">
+    <p id="title">Uh oh! It looks like your session has expired.</p>
+
+    <p>
+      For your security, sessions automatically end after a period of time. To
+      continue, please log back in using the button below. If you need any
+      assistance, feel free to contact our support team.
+    </p>
+
+    <div id="btn-wrapper">
+      <crem-button
+        (buttonClick)="redirectToCA()"
+        color="primary"
+        [id]="'login-btn'"
+      >
+        Log Back In
+      </crem-button>
+    </div>
+  </div>
+</div>

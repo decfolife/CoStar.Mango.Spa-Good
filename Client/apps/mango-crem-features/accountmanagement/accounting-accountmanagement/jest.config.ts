@@ -1,12 +1,12 @@
-/* eslint-disable */
 export default {
-  displayName:
-    'mango-crem-features-accountmanagement-accounting-accountmanagement',
+  displayName: 'accounting-accountmanagement',
   preset: '../../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+  testPathIgnorePatterns: ['src/environments/'],
+  coveragePathIgnorePatterns: ['src/environments/'],
   globals: {},
-  coverageDirectory:
-    '../../../../coverage/apps/mango-crem-features/accountmanagement/accounting-accountmanagement',
+  coverageDirectory: '../../../../coverage/apps/components/',
+  coverageReporters: ['html', 'lcov'],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',
@@ -22,8 +22,5 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
-  transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
 };

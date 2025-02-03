@@ -1,11 +1,5 @@
 <crem-accordion
-  *ngIf="
-    classificationId !== 4 &&
-    classificationId !== 5 &&
-    classificationId !== undefined
-  "
-  [title]="'Classification Tests'"
-  [subTitle]="subtitle"
+  [title]="title"
   [contentPadding]="true"
   [id]="accountingSummaryService.getId(componentName, 'section', 'accordion')"
   class="classification-tests"
@@ -15,7 +9,7 @@
     *ngIf="this.classificationId !== null"
     class="classification-tests__form"
   >
-    <fieldset class="classification-tests__form__controls">
+    <div class="classification-tests__form__controls">
       <ng-container
         *ngIf="this.classificationId === 0 || this.classificationId === 1"
       >
@@ -64,7 +58,6 @@
               </div>
             </div>
           </li>
-
           <ng-container *ngTemplateOutlet="testResults"></ng-container>
         </ol>
       </ng-container>
@@ -147,7 +140,10 @@
           [id]="accountingSummaryService.getId(componentName, 'test', '3')"
         >
           <div class="ct-li-div">
-            <label class="classification-tests__form__list__item__label">
+            <label
+              class="classification-tests__form__list__item__label"
+              for="classification-tests-common-test3-input"
+            >
               <span class="ct-bold-text">Lease Term:</span>
               Is the term 75% or greater of the leased asset remaining economic
               life? <br />
@@ -175,8 +171,8 @@
                 [inputType]="'text'"
                 [placeholder]="''"
                 [required]="false"
-                [disabled]="true"
                 formControlName="classificationTest3"
+                [value]="classificationTest3"
               >
               </crem-input>
             </div>
@@ -189,7 +185,10 @@
           [id]="accountingSummaryService.getId(componentName, 'test', '4')"
         >
           <div class="ct-li-div">
-            <label class="classification-tests__form__list__item__label">
+            <label
+              class="classification-tests__form__list__item__label"
+              for="classification-tests-common-test4-input"
+            >
               <span class="ct-bold-text">Present Value:</span>
               PV of lease payments & present value of amount not reflected in
               payments ≥ 90% of assets fair value?<br />
@@ -198,9 +197,19 @@
                   this.test4 !== null
                     ? formatService.localFormat(this.test4, 2)
                     : '0.00'
-                }}% [({{ this.presentValueString }}
+                }}% [({{
+                  formatService.localFormat(
+                    this.presentValue,
+                    localCurrencyDecimalPrecision
+                  )
+                }}
                 lease payments +
-                {{ this.pVofAmtNotReflectedInPaymentsString }}
+                {{
+                  formatService.localFormat(
+                    this.pVofAmtNotReflectedInPayments,
+                    localCurrencyDecimalPrecision
+                  )
+                }}
                 present value of amount not reflected in payments) /
                 {{ this.fairMarketValueString }} fair market value]</span
               >
@@ -217,8 +226,8 @@
                 [inputType]="'text'"
                 [placeholder]="''"
                 [required]="false"
-                [disabled]="true"
                 formControlName="classificationTest4"
+                [value]="classificationTest4"
               >
               </crem-input>
             </div>
@@ -277,11 +286,25 @@
           >
         </div>
       </ng-template>
-    </fieldset>
+    </div>
 
-    <fieldset class="classification-tests__form__controls">
+    <div class="classification-tests__form__controls">
       <ul class="classification-tests__form__list--unordered">
         <li class="classification-tests__form__list__item side">
+          <crem-input-label
+            [id]="
+              accountingSummaryService.getId(
+                componentName,
+                'remaining-economic-life',
+                'label'
+              )
+            "
+            class="classification-tests__form__list__item__label"
+            label="Remaining Economic Life"
+            [showInfo]="false"
+            name="classification-tests-Remaining-Economic-Life-Input"
+          >
+          </crem-input-label>
           <crem-input
             [id]="
               accountingSummaryService.getId(
@@ -291,9 +314,6 @@
               )
             "
             class="classification-tests__form__list__item__label"
-            [showLabel]="true"
-            [label]="'Remaining Economic Life'"
-            [labelPosition]="'top'"
             [inputType]="'number'"
             [value]="economicLifeYears"
             [placeholder]="'In Years'"
@@ -310,9 +330,19 @@
         </li>
 
         <li class="classification-tests__form__list__item side">
-          <crem-label class="classification-tests__form__list__item__label">
-            Fair Market Value
-          </crem-label>
+          <crem-input-label
+            [id]="
+              accountingSummaryService.getId(
+                componentName,
+                'fair-market-value',
+                'label'
+              )
+            "
+            class="classification-tests__form__list__item__label"
+            label="Fair Market Value"
+            [showInfo]="false"
+          >
+          </crem-input-label>
           <dx-number-box
             [id]="
               accountingSummaryService.getId(
@@ -327,6 +357,7 @@
             [format]="formatCurrencyInput()"
             (onValueChanged)="fairMarketChange()"
             (onFocusOut)="fairMarketChange()"
+            [inputAttr]="{ 'aria-label': 'Fair Market Value' }"
           >
           </dx-number-box>
         </li>
@@ -365,6 +396,6 @@
           </div>
         </li>
       </ul>
-    </fieldset>
+    </div>
   </form>
 </crem-accordion>

@@ -1,45 +1,153 @@
 # MangoSPA
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.0.
+**MangoSPA** is a modern single-page application built with Angular and managed using Nx Workspace. This project streamlines development with robust features, including Husky for Git hooks and Docker Compose for mimicking production environments.
 
-## Development server
+## Table of Contents
+- [MangoSPA](#mangospa)
+	- [Table of Contents](#table-of-contents)
+	- [Getting Started](#getting-started)
+	- [Development](#development)
+		- [Development Server](#development-server)
+		- [Code Scaffolding](#code-scaffolding)
+	- [Building the Application](#building-the-application)
+	- [Testing with Docker Compose](#testing-with-docker-compose)
+		- [Rebuilding Containers](#rebuilding-containers)
+	- [Scripts Overview](#scripts-overview)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## Getting Started
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+From the `Client/` folder:
+1. **Install dependencies**:  
+   ```bash
+   npm i -f
+   ```
+2. **Prepare local automations**:  
+   ```bash
+   npm prepare
+   ```
+3. **Start the application**:  
+   ```bash
+   npx nx run mango:serve
+   ```
+4. Navigate to the app in your browser:  
+   [http://localhost:4200/](http://localhost:4200/)
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Development
 
-## Docker Testing
+### Development Server
+To start a development server:
+```bash
+npx nx run mango:serve
+```
+- The app will automatically reload when source files change.
+- To disable live reloading:
+  ```bash
+  npx nx run mango:serve --live-reload=false
+  ```
 
-To build Mango SPA (using ng build) from your local CLI and having the application served by Docker to mimic a production environment while maintaining speed for testing, follow these steps:
+### Code Scaffolding
+Generate new components, directives, pipes, or other Angular artifacts using:
+```bash
+ng generate <artifact> <name>
+```
+For example, to generate a component:
+```bash
+ng generate component component-name
+```
 
-1) Build the client by running ng build from your local CLI.
-2) Execute docker-compose -f docker-compose.local.build.yml up -d to serve the application using Docker.
-3) Perform another build on your host computer locally by running ng build to test any changes.
+---
 
-### Additional Commands
+## Building the Application
 
--  Rebuild a specific container:
-`$ docker-compose -f docker-compose.local.build.yml up --build web`
-Replace 'web' with the name of the service as described in the docker-compose file.
+Build the project with:
+```bash
+ng build
+```
+- The build artifacts will be stored in the `dist/` directory.
+- For a production build:
+  ```bash
+  ng build --prod
+  ```
 
-- Rebuild all the images/services:
-`$ docker-compose -f docker-compose.local.build.yml up --build`
-Feel free to adapt these commands based on your specific configuration and requirements.
+---
 
-## Running unit tests
+## Testing with Docker Compose
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+To test the application in a production-like environment using Docker Compose:
 
-## Running end-to-end tests
+1. **Build the application locally from the `Client/` folder**:  
+   ```bash
+   ng build
+   ```
+2. **Serve the application with Docker Compose from the root directory**:  
+   ```bash
+   docker-compose up -d
+   ```
+3. **Rebuild locally for  from the `Client/` folder**:  
+   After making changes, rebuild using:
+   ```bash
+   ng build
+   ```
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### Rebuilding Containers
+- To rebuild a specific container:  
+  ```bash
+  docker-compose up --build <service-name>
+  ```
+  Replace `<service-name>` with the service name from `docker-compose.yml`.
+  
+- To rebuild all containers:  
+  ```bash
+  docker-compose up --build
+  ```
 
-## Further help
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## Scripts Overview
+
+The `package.json` includes scripts for various development and build tasks. Here are a few key commands:
+
+- **Start the app**:  
+  ```bash
+  npm run start
+  ```
+- **Clean dependencies and artifacts**:  
+  ```bash
+  npm run clean
+  ```
+- **Run lint checks**:  
+  ```bash
+  npm run lint
+  ```
+- **Run unit tests for Mango**:  
+  ```bash
+  npm run test:mango
+	```
+	Attach the watch flag to rerun test on change detection.
+  ```
+	Attach the watch flag to rerun test on change detection.
+  ```bash
+  npm run test:mango:watch
+  ```
+- **Run unit tests for MangoSPA's Projects/Features**:  
+  ```bash
+  npm run test:features
+  ```
+	Attach the watch flag to rerun test on change detection.
+  ```bash
+  npm run test:features:watch
+  ```
+- **Generate dependency graph**:  
+  ```bash
+  npm run dep-graph
+  ```
+- **Build for production**:  
+  ```bash
+  npm run build:prod:mango
+  ```
+
+For the full list, see the `scripts` section in `package.json`.

@@ -1,0 +1,48 @@
+<crem-popup
+  id="deleteHistoricScheduleModalId"
+  [visible]="true"
+  [title]="title"
+  [height]="'auto'"
+  [resizable]="false"
+  [customFooter]="true"
+  [showCloseButton]="false"
+>
+  <div body class="account-modal-content">
+    <div *ngIf="isHistorical">
+      <p>
+        This accounting event is Historical and journal entries have potentially
+        been sent to your general ledger.<br />
+        Deleting this accounting event will not create a reversal entry for any
+        periods that have been processed to date. <br />
+      </p>
+    </div>
+    <div *ngIf="isInProcess">
+      <p>
+        This accounting event id <b><u>In Process</u></b> and journal entries
+        have potentially been sent to your general ledger.<br />
+        Deleting this accounting event will not create a reversal entry for any
+        periods that have been processed to date.<br />
+      </p>
+    </div>
+    <div>
+      <span> Are you sure you want to delete this accounting event? </span>
+    </div>
+  </div>
+  <div footer>
+    <crem-button
+      [id]="accountingSummaryService.getId(componentName, 'yes', 'button')"
+      type="primary"
+      color="danger"
+      (click)="yes()"
+    >
+      Yes, delete
+    </crem-button>
+    <crem-button
+      [id]="accountingSummaryService.getId(componentName, 'cancel', 'button')"
+      type="secondary"
+      (click)="close()"
+    >
+      No, cancel
+    </crem-button>
+  </div>
+</crem-popup>

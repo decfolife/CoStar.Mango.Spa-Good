@@ -3,11 +3,9 @@ import { CommonModule } from '@angular/common';
 import { InputLabelComponent } from '../input';
 import { ButtonModule } from '../button';
 import { IconModule } from '../icon';
-import { ButtonGroupComponent } from '../button-group/button-group.component';
 import { DropdownModule } from '../dropdown';
 import { CremPillComponent } from '../pill/pill.component';
 import { StatusPill, ViewType } from '@mango/data-models/lib-data-models';
-import { SplitButtonComponent } from '../split-button/split-button.component';
 
 @Component({
   selector: 'crem-page-header',
@@ -17,10 +15,8 @@ import { SplitButtonComponent } from '../split-button/split-button.component';
     InputLabelComponent,
     ButtonModule,
     IconModule,
-    ButtonGroupComponent,
     DropdownModule,
     CremPillComponent,
-    SplitButtonComponent,
   ],
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
@@ -40,9 +36,16 @@ export class PageHeaderComponent {
   @Output() search = new EventEmitter<string>();
   @Output() bookmark = new EventEmitter<Event>();
   @Output() settings = new EventEmitter<Event>();
+  @Output() bookmarked = new EventEmitter<boolean>();
   @Output() listOrMapView = new EventEmitter<ViewType>();
 
   listView = true;
+  isBookmarked = false;
+
+  toggleBookmark() {
+    this.isBookmarked = !this.isBookmarked;
+    this.bookmarked.emit(this.isBookmarked);
+  }
 
   showListOrMapView(viewType: ViewType) {
     this.listView = !this.listView;

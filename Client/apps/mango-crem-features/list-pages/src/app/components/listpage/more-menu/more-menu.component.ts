@@ -4,21 +4,24 @@ import {
   Output,
   EventEmitter,
   ViewChild,
+  ElementRef,
+  OnInit,
 } from '@angular/core';
 import { UntypedFormControl, Validators } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { InputComponent } from '@mango/ui-shared/lib-ui-elements';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-more-menu',
+  selector: 'mango-more-menu',
   templateUrl: './more-menu.component.html',
   styleUrls: ['./more-menu.component.scss'],
 })
-export class MoreMenuComponent {
+export class MoreMenuComponent implements OnInit {
   @Input() showMoreMenu: boolean;
   @Input() showColumnChooser: boolean;
   @Input() isExpanded: boolean;
@@ -47,6 +50,8 @@ export class MoreMenuComponent {
   @Output() showDynamicSQL = new EventEmitter(null);
 
   @ViewChild('listMenuTrigger') listMenuTrigger: MatMenuTrigger;
+
+  @ViewChild('saveViewName') saveViewNameInput: InputComponent;
 
   public isRemUser$: Observable<boolean> = of(false);
 
@@ -86,5 +91,9 @@ export class MoreMenuComponent {
 
   toggleShowActive(includeActive: any) {
     this.toggleActive.emit(includeActive.checked);
+  }
+
+  focusSavedViewSubMenu() {
+    this.saveViewNameInput.focusInputBox();
   }
 }

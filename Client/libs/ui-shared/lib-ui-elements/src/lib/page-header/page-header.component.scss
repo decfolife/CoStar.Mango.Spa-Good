@@ -1,20 +1,28 @@
 @use 'styles' as *;
 
 .page-header {
-  @include costar(background-color, light);
-  padding: 20px;
+  @include costar(background-color, background);
+  padding: 5px;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
     rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 
-  &__body,
+  &__body {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-width: 0;
+    gap: 10px;
+  }
+
   &__actions {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin-left: auto; // This pushes everything after it to the right
   }
 
   &__settings {
@@ -30,23 +38,39 @@
   }
 
   &__status-pill {
-    margin-top: 7px;
+    margin-top: 6px;
+    margin-left: 10px;
+  }
+
+  &__bookmark {
+    margin-top: 6px;
+    margin-left: 10px;
   }
 }
 
 .body {
   &__tab-title {
-    @include costar(font-size, h3, $important: true);
-    // @include costar(font-weight, 'normal', $important: true);
+    @include costar(font-size, h4, $important: true);
+    @include costar(color, dark);
     font-weight: 500;
-    color: #6f6f6f;
     margin-right: 10px;
+    flex-shrink: 0;
   }
 
   &__page-title {
-    @include costar(font-size, h2, $important: true);
-    // @include costar(font-weight, 'normal', $important: true);
-    font-weight: 500;
+    @include costar(font-size, h4, $important: true);
+    @include costar(color, dark);
+    font-weight: 300;
+    display: inline-flex;
+    width: auto;
+    flex-shrink: 1;
+    overflow: hidden;
+
+    ::ng-deep crem-input-label {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   &__filters {
@@ -71,10 +95,11 @@
 }
 
 ::ng-deep .body__page-title > crem-input-label > label > span {
+  display: block;
   white-space: nowrap;
-  width: 10em;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
 }
 
 ::ng-deep

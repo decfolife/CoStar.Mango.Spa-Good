@@ -2,35 +2,59 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EndpointService } from '@mango/core-shared/lib-core-shared';
-import { FormItemsDropdownValuesDto } from '@forms/model/dynamic-forms.interface';
+import { SaveRenderFormCommand } from '@forms/model/dynamic-forms.interface';
 import { ApiResponse } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
 import { Api } from '@mango/data-models/lib-data-models';
+import { CopyLease } from '@forms/model/copyLease';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DynamicFormsService extends EndpointService {
   formWizardUrl: string = UtilitiesService.getBaseApiUrl(Api.formWizard);
+  projectUrl: string = UtilitiesService.getBaseApiUrl(Api.projects);
 
   getItems(): Observable<any> {
     const url = `${this.formWizardUrl}AdminForms/GetAdminFormsList`;
     return this.callHttpGet(url, 'GetAdminFormsList');
   }
 
-  getForm(formId: number): Observable<any> {
-    const url = `${this.formWizardUrl}AdminForms/GetAdminFormByFormId/${formId}`;
-    return this.callHttpGet(url, 'GetAdminFormByFormId');
+  getForm(formId: number, objectId: number): Observable<any> {
+    const url = `${this.formWizardUrl}AdminForms/GetForm/${formId}/${objectId}`;
+    return this.callHttpGet(url, 'GetForm');
   }
 
-  getFormActions(): Observable<any> {
+  getFormActions(
+    formId: number,
+    objectId: number,
+    objectTypeId: number,
+    objectTypeTypeId: number,
+    isEditMode: boolean
+  ): Observable<any> {
     const url = `${this.formWizardUrl}AdminForms/GetFormActions`;
-    return this.callHttpGet(url, 'GetFormActions');
+    return this.callHttpPost(url, 'GetFormActions', {
+      formId,
+      objectId,
+      objectTypeId,
+      objectTypeTypeId,
+      isEditMode,
+    });
   }
 
   getFormSections(formId: number): Observable<any> {
     const url = `${this.formWizardUrl}AdminForms/GetFormSections/${formId}`;
     return this.callHttpGet(url, 'GetFormSections');
+  }
+
+  getLockingInfo(objectId: number, objectTypeId: number): Observable<any> {
+    const url = `${this.formWizardUrl}AdminForms/GetLockingInfo/${objectId}/${objectTypeId}`;
+    return this.callHttpGet(url, 'getLockingInfo');
+  }
+
+  getImageData(filePath: string): Observable<any> {
+    const url = `${this.formWizardUrl}RenderForms/GetImageData?fileurl=${filePath}`;
+    return this.callHttpGet(url, 'GetImageData');
   }
 
   getAvailableFormSections(formId: number): Observable<any> {
@@ -45,6 +69,15 @@ export class DynamicFormsService extends EndpointService {
   ): Observable<any> {
     const url = `${this.formWizardUrl}AdminForms/GetFormFields/${formId}/${sectionId}/${objectTypeId}`;
     return this.callHttpGet(url, 'GetFormFields');
+  }
+
+  getFormFieldsForAllSections(
+    formId: number,
+    objectTypeId: number,
+    formSections: []
+  ): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}AdminForms/GetFormFieldsForAllSections/${formId}/${objectTypeId}`;
+    return this.callHttpPost(url, 'GetFormFieldsForAllSections', formSections);
   }
 
   getAvailableFormFields(
@@ -107,13 +140,90 @@ export class DynamicFormsService extends EndpointService {
   }
 
   getRenderFormFormItemDropdowns(
-    formItemsDropdownValues: FormItemsDropdownValuesDto[]
+    formId: number,
+    objectId: number,
+    objectTypeId: number
   ): Observable<ApiResponse> {
-    const url = `${this.formWizardUrl}RenderForms/GetFormItemDropdownValues`;
+    const url = `${this.formWizardUrl}RenderForms/GetFormItemDropdownValues/${formId}/${objectId}/${objectTypeId}`;
+    return this.callHttpGet(url, 'GetFormItemDropdownValues');
+  }
+
+  getParentLink(objectId: number, objectTypeId: number): Observable<any> {
+    const url = `${this.formWizardUrl}RenderForms/GetParentLink/${objectId}/${objectTypeId}`;
+    return this.callHttpGet(url, 'GetParentLink');
+  }
+
+  getBuildings(hidePremise) {
+    const url = `${this.formWizardUrl}RenderForms/getbuildings?hidePremise=${hidePremise}`;
+    return this.callHttpGet(url, 'GetBuildings');
+  }
+
+  getBuildingPremises(buildingId) {
+    const url = `${this.formWizardUrl}RenderForms/getbuildingpremises/${buildingId}`;
+    return this.callHttpGet(url, 'GetBuildingPremises');
+  }
+
+  copyLease(copyLease: CopyLease) {
+    const url = `${this.formWizardUrl}RenderForms/copylease`;
+    return this.callHttpPost(url, 'copyLease', copyLease);
+  }
+
+  saveRenderForm(
+    saveRenderFormCommand: SaveRenderFormCommand
+  ): Observable<any> {
+    const url = `${this.formWizardUrl}RenderForms/save`;
+    return this.callHttpPost(url, 'RenderFormsSave', saveRenderFormCommand);
+  }
+
+  getCountries(): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/GetCountries`;
+    return this.callHttpGet(url, 'getCountries');
+  }
+
+  getStates(country: string): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/GetStates?country=${country}`;
+    return this.callHttpGet(url, 'getStates');
+  }
+
+  getBuildingsForActions(
+    country: string,
+    state: string
+  ): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/GetBuildings?country=${country}&state=${state}`;
+    return this.callHttpGet(url, 'getBuildingsForActions');
+  }
+
+  getPremises(buildingId: number): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/GetPremises/${buildingId}`;
+    return this.callHttpGet(url, 'getPremises');
+  }
+
+  getLeases(buildingId: number, premiseId: number): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/GetLeases/${buildingId}/${premiseId}`;
+    return this.callHttpGet(url, 'getLeases');
+  }
+
+  getAssociateBuildingToProject(projectId: number): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/AssociateBuildingToProject/${projectId}`;
+    return this.callHttpGet(url, 'getAssociateBuildingToProject');
+  }
+
+  setAssociateBuildingToProject(buildingInfo: number): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/AssociateBuildingToProject/`;
     return this.callHttpPost(
       url,
-      'getFormItemDropdownValues',
-      formItemsDropdownValues
+      'setAssociateBuildingToProject',
+      buildingInfo
     );
+  }
+
+  getAssociateLeaseToProject(projectId: number): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/AssociateLeaseToProject/${projectId}`;
+    return this.callHttpGet(url, 'getAssociateLeaseToProject');
+  }
+
+  setAssociateLeaseToProject(leaseInfo: number): Observable<ApiResponse> {
+    const url = `${this.projectUrl}projects/AssociateLeaseToProject`;
+    return this.callHttpPost(url, 'setAssociateLeaseToProject', leaseInfo);
   }
 }

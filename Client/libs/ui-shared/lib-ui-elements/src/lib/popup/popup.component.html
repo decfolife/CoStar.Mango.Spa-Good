@@ -11,6 +11,7 @@
     [resizeEnabled]="resizable"
     [dragEnabled]="draggable"
     [hideOnOutsideClick]="hideOnOutsideClick"
+    (onContentReady)="onContentReady($event)"
   >
     <div *dxTemplate="let data of 'title'">
       <div class="crem-popup__title">

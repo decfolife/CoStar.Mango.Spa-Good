@@ -42,6 +42,7 @@ export interface ContactRecord {
   IsUser?: boolean;
   userAppType?: number;
   preferences?: ContactPreferences;
+  dateCreated?: Date;
 }
 
 export interface ContactPreferences {

@@ -7,6 +7,7 @@ import {
   Team,
   TeamKeys,
   TeamMember,
+  ToastState,
 } from '@mango/data-models/lib-data-models';
 import { SearchComponent } from '@mango/ui-shared/cosmos';
 import { CardsService } from '@project-dashboard/services/cards.service';
@@ -35,6 +36,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 
 @Component({
   selector: 'teams',
@@ -80,6 +82,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
     private exportToExcelService: ExportDevexDatagridService,
     private dialogService: MangoDialogService,
     private dialog: MatDialog,
+    private toastService: CremToastService,
     private cardsService: CardsService
   ) {
     this.subs.push(
@@ -184,21 +187,25 @@ export class TeamsComponent implements OnInit, OnDestroy {
           switchMap((_) =>
             this.dashboardService.deleteTeams(this.teamsTobeRemoved)
           ),
-          switchMap((res) => {
-            if (res.success && !singleTeam) {
-              this.selectedTeamIds = [];
-              this.selectedTeams = [];
+          tap((res) => {
+            if (res && res.success) {
+              if (!singleTeam) {
+                this.selectedTeamIds = [];
+                this.selectedTeams = [];
+              }
+              this.subs.push(this.getTeamsData().subscribe());
+              this.toastService.show(
+                'Selected Team(s) successfully removed.',
+                'Success',
+                ToastState.SUCCESS
+              );
+            } else {
+              this.toastService.show(
+                'The teams(s) could not be deleted. Please review and try again',
+                'Error',
+                ToastState.ERROR
+              );
             }
-            return res.success
-              ? (this.dashboardService.successNotify(
-                  'Selected Team(s) successfully removed.'
-                ),
-                this.getTeamsData())
-              : of(
-                  this.dashboardService.errorNotify(
-                    'The teams(s) could not be deleted. Please review and try again.'
-                  )
-                );
           })
         )
         .subscribe()
@@ -241,18 +248,22 @@ export class TeamsComponent implements OnInit, OnDestroy {
             switchMap((_) =>
               this.dashboardService.deleteTeamMembers(this.selectedMemberIds)
             ),
-            switchMap((res) =>
-              !!res.success
-                ? (this.dashboardService.successNotify(
-                    'Selected Member(s) successfully removed.'
-                  ),
-                  this.getTeamsData())
-                : this.dialogService.alert(
-                    'Team Member Removal',
-                    'Selected Member(s) could not be deleted. Please review and try again later.',
-                    'OK'
-                  )
-            )
+            tap((res) => {
+              if (res && res.success) {
+                this.subs.push(this.getTeamsData().subscribe());
+                this.toastService.show(
+                  'Selected Member(s) successfully removed.',
+                  'Success',
+                  ToastState.SUCCESS
+                );
+              } else {
+                this.dialogService.alert(
+                  'Team Member Removal',
+                  'Selected Member(s) could not be deleted. Please review and try again later.',
+                  'OK'
+                );
+              }
+            })
           )
           .subscribe()
       );

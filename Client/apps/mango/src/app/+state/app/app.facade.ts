@@ -22,6 +22,7 @@ export class MangoAppFacade {
   currentSubApp$: Observable<MangoSubApps>;
   authenticatedUser$: Observable<UserAuth>;
   contactRecord$: Observable<ContactRecord>;
+  dateFormatPreference$: Observable<string>;
   clientKey$: Observable<string>;
   clientInfo$: Observable<Client>;
   userHasMultipleContactRecords$: Observable<boolean>;
@@ -74,6 +75,9 @@ export class MangoAppFacade {
     this.currentProjectId$ = this.store.pipe(
       select(AppSelectors.currentProjectId)
     );
+    this.dateFormatPreference$ = this.store.pipe(
+      select(AppSelectors.dateFormatPreference)
+    );
   }
 
   init() {
@@ -104,6 +108,10 @@ export class MangoAppFacade {
 
   setLoading(display: boolean): void {
     this.store.dispatch(AppActions.setLoading({ display }));
+  }
+
+  setChangeLossPreventIsActive(active: boolean): void {
+    this.store.dispatch(AppActions.setChangeLossPreventionIsActive({ active }));
   }
 
   refreshLeftSideNav(): void {
@@ -191,8 +199,13 @@ export class MangoAppFacade {
     );
   }
 
-  logout(logoutV06: boolean = false): void {
-    this.store.dispatch(AppActions.logout({ logoutV06: logoutV06 }));
+  logout(logoutV06: boolean = false, sessionExpired: boolean = false): void {
+    this.store.dispatch(
+      AppActions.logout({
+        logoutV06: logoutV06,
+        sessionExpired: sessionExpired,
+      })
+    );
   }
 
   clearState() {

@@ -11,17 +11,17 @@ export class BatchParametersService extends EndpointService {
   batchAccounting: string = UtilitiesService.getBaseApiUrl(Api.batchAccounting);
 
   getRemeasureTypes() {
-    const url = `${this.batchAccounting}/BatchParameters/GetRemeasureTypes`;
+    const url = `${this.batchAccounting}BatchParameters/GetRemeasureTypes`;
     return this.callHttpGet(url, 'getRemeasureTypes');
   }
 
   getPortfolioClassificationConfiguration(masterGroupId: number) {
-    const url = `${this.batchAccounting}/GetPortfolioClassificationConfiguration/${masterGroupId}`;
+    const url = `${this.batchAccounting}GetPortfolioClassificationConfiguration/${masterGroupId}`;
     return this.callHttpGet(url, 'getPortfolioClassificationConfiguration');
   }
 
   getPortfolioClassificationConfigurationOptions(masterGroupId: number) {
-    const url = `${this.batchAccounting}/GetPortfolioClassificationConfigurationOptions/${masterGroupId}`;
+    const url = `${this.batchAccounting}GetPortfolioClassificationConfigurationOptions/${masterGroupId}`;
     return this.callHttpGet(
       url,
       'getPortfolioClassificationConfigurationOptions'
@@ -29,7 +29,7 @@ export class BatchParametersService extends EndpointService {
   }
 
   getPortfolioSettings(masterGroupId: number) {
-    const url = `${this.batchAccounting}/GetPortfolioSettings/${masterGroupId}`;
+    const url = `${this.batchAccounting}GetPortfolioSettings/${masterGroupId}`;
     return this.callHttpGet(url, 'getPortfolioSettings');
   }
 }

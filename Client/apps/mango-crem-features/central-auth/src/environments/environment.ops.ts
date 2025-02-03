@@ -1,7 +1,6 @@
 class EnvironmentsCrem {
   production = false;
   name = 'OPS';
-  isRestful: true;
   cremBaseUrl = 'https://[CLIENT].ops.corp.virtualpremise.com/';
   CAUrl = 'https://login.ops.corp.virtualpremise.com:30443';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`

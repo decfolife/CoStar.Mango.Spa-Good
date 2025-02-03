@@ -9,6 +9,10 @@ export interface SharedLeftNavLink {
   id?: number;
   name: string;
   category: string;
+  categoryHasFlyOutMenu: boolean;
+  categoryLinkUrl: string;
+  categorySpaUrl: string;
+  categorySpaQueryParameters?: string;
   sortOrder: number;
   linkUrl: string;
   moduleID: number;
@@ -19,4 +23,5 @@ export interface SharedLeftNavLink {
   spaUrl: string;
   spaQueryParameters?: string;
   isCommon?: boolean;
+  subChildLevelNavLinks: SharedLeftNavLink[];
 }

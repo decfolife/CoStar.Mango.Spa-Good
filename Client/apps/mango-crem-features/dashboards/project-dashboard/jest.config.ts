@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'mango-crem-features-dashboards-project-dashboard',
   preset: '../../../../jest.preset.js',

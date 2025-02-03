@@ -4,5 +4,4 @@ export const environment = {
   appUrls: {
     replaceMe: 'http://localhost:57539/api/replaceMe/',
   },
-  isRestful: true,
 };

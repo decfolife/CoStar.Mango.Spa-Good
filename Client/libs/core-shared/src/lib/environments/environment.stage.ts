@@ -12,7 +12,6 @@
 //     dashboards: '',
 //     authorize:''
 //   };
-//   isRestful = true;
 // }
 
 // export const environment = new EnvironmentsCrem();

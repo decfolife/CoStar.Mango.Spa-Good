@@ -6,12 +6,14 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { NavLinksByCategory } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
 import { Observable } from 'rxjs';
 
 @Component({
+  standalone: false,
   selector: 'shared-left-nav',
   templateUrl: 'shared-left-nav.component.html',
   styleUrls: ['shared-left-nav.component.scss'],
@@ -29,6 +31,12 @@ export class SharedLeftNavComponent implements OnChanges {
   regularLeftNavItems: NavLinksByCategory[] = [];
   commonLeftNavItems: NavLinksByCategory[] = [];
   expandNav = true;
+  flyOutMenuEntered: boolean = false;
+  flyOutMenuOpened: boolean = false;
+  flyOutEntered: boolean = false;
+  currentFlyOutMenuTrigger: MatMenuTrigger = null;
+  currentFlyOutMenuCategory: string = null;
+  spaceCharacter = '&nbsp;';
 
   constructor(private facade: MangoAppFacade) {}
 
@@ -73,6 +81,10 @@ export class SharedLeftNavComponent implements OnChanges {
       if (!currentNavLink.category) {
         acc.push({
           category: currentNavLink.category,
+          categoryHasFlyOutMenu: currentNavLink.categoryHasFlyOutMenu,
+          categoryLinkUrl: currentNavLink.categoryLinkUrl,
+          categorySpaUrl: currentNavLink.categorySpaUrl,
+          categorySpaQueryParameters: currentNavLink.categorySpaQueryParameters,
           children: [currentNavLink],
         });
       } else {
@@ -83,6 +95,11 @@ export class SharedLeftNavComponent implements OnChanges {
           ? existingNavLinkItem.children.push(currentNavLink)
           : acc.push({
               category: currentNavLink.category,
+              categoryHasFlyOutMenu: currentNavLink.categoryHasFlyOutMenu,
+              categoryLinkUrl: currentNavLink.categoryLinkUrl,
+              categorySpaUrl: currentNavLink.categorySpaUrl,
+              categorySpaQueryParameters:
+                currentNavLink.categorySpaQueryParameters,
               children: [currentNavLink],
             });
       }
@@ -111,7 +128,15 @@ export class SharedLeftNavComponent implements OnChanges {
   }
 
   onNavLinkClick(navLink: SharedLeftNavLink) {
-    this.activeLink = navLink.name;
+    if (
+      !navLink.hasOwnProperty('dynamicName') &&
+      navLink.hasOwnProperty('categoryHasFlyOutMenu') &&
+      navLink.categoryHasFlyOutMenu
+    ) {
+      this.activeLink = navLink.category;
+    } else {
+      this.activeLink = navLink.dynamicName;
+    }
     this.toActiveLink.emit(this.activeLink);
     this.navigateSpa.emit(navLink);
   }
@@ -127,5 +152,47 @@ export class SharedLeftNavComponent implements OnChanges {
 
     e._element.nativeElement.children[1].removeAttribute('tabindex');
     e._element.nativeElement.children[3].removeAttribute('tabindex');
+  }
+
+  openFlyOutMenu(menuTrigger: MatMenuTrigger, categoryName: string) {
+    if (
+      this.currentFlyOutMenuCategory !== null &&
+      this.currentFlyOutMenuCategory !== categoryName
+    ) {
+      this.flyOutEntered = false;
+      this.flyOutMenuOpened = false;
+      this.currentFlyOutMenuTrigger.closeMenu();
+    }
+
+    this.currentFlyOutMenuCategory = categoryName;
+    this.currentFlyOutMenuTrigger = menuTrigger;
+    this.flyOutEntered = true;
+    this.flyOutMenuOpened = true;
+    this.flyOutMenuEntered = false;
+    menuTrigger.openMenu();
+  }
+
+  closeFlyOutMenu(menuTrigger: MatMenuTrigger) {
+    this.flyOutEntered = false;
+    setTimeout(() => {
+      if (!this.flyOutMenuEntered && !this.flyOutEntered) {
+        menuTrigger.closeMenu();
+        this.currentFlyOutMenuTrigger = null;
+        this.currentFlyOutMenuCategory = null;
+      }
+    }, 200);
+  }
+
+  flyOutMenuLeave() {
+    this.flyOutMenuEntered = false;
+    this.closeFlyOutMenu(this.currentFlyOutMenuTrigger);
+  }
+
+  hasSubChildLevelMenuItems(leftNavLink: SharedLeftNavLink) {
+    return leftNavLink.subChildLevelNavLinks !== null;
+  }
+
+  hasSubChildLevelMenuItems2(subNavLink: SharedLeftNavLink) {
+    return subNavLink.subChildLevelNavLinks !== null;
   }
 }

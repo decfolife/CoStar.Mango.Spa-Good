@@ -144,6 +144,10 @@ export class AddEditScheduleService extends EndpointService {
 
   getSchedulePayment(
     classificationID: number,
+    amortizationProfileId: number,
+    IsOverrideProfile: boolean,
+    includeReasonablyCertainOptions: boolean,
+    gLAccountIds: string,
     isIncome: boolean,
     scheduleCurrencyID: number,
     leaseRecognitionScheduleID: number,
@@ -159,6 +163,10 @@ export class AddEditScheduleService extends EndpointService {
       JSON.stringify({
         leaseAbstractID: this.leaseAbstractId,
         classificationID,
+        amortizationProfileId,
+        IsOverrideProfile,
+        includeReasonablyCertainOptions,
+        gLAccountIds,
         isIncome,
         scheduleCurrencyID,
         leaseRecognitionScheduleID,
@@ -245,13 +253,6 @@ export class AddEditScheduleService extends EndpointService {
     );
   }
 
-  getSelectedPayments() {
-    return this.callHttpGet(
-      `${this.apiUrl}Payments/GetSelectedPayments/Lease/${this.leaseAbstractId}`,
-      'getSelectedPayments'
-    );
-  }
-
   /**
    * Returns the Classification Name from the corresponding enum given a ClassificationID
    *
@@ -269,6 +270,13 @@ export class AddEditScheduleService extends EndpointService {
       }
     }
     return undefined;
+  }
+
+  isValidDate(date: any): boolean {
+    if (date instanceof Date) {
+      return !isNaN(date.getTime());
+    }
+    return !isNaN(Date.parse(date));
   }
 
   toShortDateString(dateInput: Date): string | null {

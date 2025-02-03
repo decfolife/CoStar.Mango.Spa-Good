@@ -64,4 +64,12 @@ export class CremPopupComponent {
   onApplyClick(): void {
     this.apply.emit(true);
   }
+
+  onContentReady(event): void {
+    //Fix the accessibility issue of DevExtreme Popup by ensuring that ARIA dialog and alertdialog elements have an accessible name.
+    const popUpContent = document.querySelectorAll('.dx-overlay-content');
+    popUpContent.forEach((element) => {
+      element.setAttribute('aria-label', this.title ?? 'CREM Popup');
+    });
+  }
 }

@@ -15,6 +15,9 @@ import {
   AccordionModule,
   ModalModule,
   CremPopupComponent,
+  CremTabsComponent,
+  CremTabItemComponent,
+  CremPopoverComponent,
 } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
 import {
@@ -26,6 +29,7 @@ import {
   DxSelectBoxModule,
   DxTemplateModule,
   DxTabPanelModule,
+  DxLoadPanelModule,
 } from 'devextreme-angular';
 import { IndexRoutingModule } from './index-routing.module';
 import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
@@ -34,7 +38,6 @@ import { AddEventComponent } from '../add-event/add-event.component';
 import { EventsDetailSectionComponent } from '../events-detail-section/events-detail-section.component';
 import { AmortizationDetailSectionComponent } from '../amortization-detail-section/amortization-detail-section.component';
 import { PaymentsDetailSectionComponent } from '@accounting-summary/components/payments-detail-section/payments-detail-section.component';
-import { TransactionPopupComponent } from '../payments-detail-section/transaction-popup/transaction-popup.component';
 import { JeProcessingInfoComponent } from '../amortization-detail-section/je-retro-popup/je-processing-info/je-processing-info.component';
 import { JePaymentInfoComponent } from '../amortization-detail-section/je-retro-popup/je-payment-info/je-payment-info.component';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -56,11 +59,12 @@ import { FinancialCardComponent } from '../add-event/financial-card/financial-ca
 import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkbox';
 import { PaymentsGridComponent } from '../add-event/payments-grid/payments-grid.component';
 import { ScheduleTransactionsPopupComponent } from '../add-event/payments-grid/schedule-transactions-popup/schedule-transactions-popup.component';
-import { AddEditOtherChargeModalComponent } from '../add-event/add-edit-other-charge-modal/add-edit-other-charge-modal.component';
+import { AddEditOtherChargeModalComponent } from '../add-event/payments-grid/add-edit-other-charge-modal/add-edit-other-charge-modal.component';
 import { EditRouAssetComponent } from '../events-detail-section/edit-rou-asset/edit-rou-asset.component';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
+import { AccountingAdaDirective } from '@accounting-summary/shared/directives/accounting-ada.directive';
 
 @NgModule({
   declarations: [
@@ -70,7 +74,6 @@ import { AddEditScheduleService } from '@accounting-summary/services/add-edit-sc
     AddEventComponent,
     EventsDetailSectionComponent,
     PaymentsDetailSectionComponent,
-    TransactionPopupComponent,
     WorkflowDropdownComponent,
     AmortizationDetailSectionComponent,
     JeRetroPopupComponent,
@@ -102,6 +105,7 @@ import { AddEditScheduleService } from '@accounting-summary/services/add-edit-sc
     FormsModule,
     DxTabPanelModule,
     DxTemplateModule,
+    DxLoadPanelModule,
     TimelineModule,
     InputLabelComponent,
     DatePickerModule,
@@ -120,6 +124,10 @@ import { AddEditScheduleService } from '@accounting-summary/services/add-edit-sc
     ModalModule,
     ToastModule,
     CremPopupComponent,
+    CremTabsComponent,
+    CremTabItemComponent,
+    CremPopoverComponent,
+    AccountingAdaDirective,
   ],
 
   providers: [

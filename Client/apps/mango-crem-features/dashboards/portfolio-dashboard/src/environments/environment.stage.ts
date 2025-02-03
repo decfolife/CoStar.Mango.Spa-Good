@@ -14,7 +14,6 @@ class EnvironmentsCrem {
       '/v06/WebServices/Mango/UserMaintenance/UserMaintenance.asmx/',
     formWizard: '/v06/WebServices/Mango/FormsEngine/FormsEngine.asmx/',
   };
-  isRestful: false;
 }
 
 export const environment = new EnvironmentsCrem();

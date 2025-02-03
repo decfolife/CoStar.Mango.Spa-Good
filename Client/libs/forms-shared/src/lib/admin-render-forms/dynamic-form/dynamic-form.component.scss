@@ -1,44 +1,21 @@
+@use 'styles' as *;
+
 #dynamic-forms-container {
   height: 100%;
-  overflow: hidden;
-  
-  .dynamic-forms-controls-wrapper {
-    width: 100% !important;
-    border-bottom: 1px solid #c5c5c5;
+  display: flex;
+  flex-direction: column;
+  .page-header {
+    position: sticky;
     top: 0;
-    padding: 8px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .title {
-      font-size: 20px;
-      font-weight: 500;
-      margin: 0;
-    }
-
-    & > div {
+    z-index: 1;
+    border-bottom: 1px solid #c5c5c5;
+    &__actions {
       display: flex;
-      align-items: center;
-      z-index: 500;
+      gap: 7px;
 
-      &.controls-right {
-        margin-left: 20px;
-        .more,
-        .actions,
-        .editForm,
-        .designModeForm,
-        .saveForm {
-          margin-left: 8px;
-        }
+      .legacy-page-link {
+        margin-top: 6px;
       }
-      &.controls-left {
-        margin: 0px;
-        h5 {
-          margin: 0px;
-        }
-      }
-      
     }
   }
 
@@ -50,7 +27,7 @@
     overflow-y: auto;
 
     .mat-mdc-card {
-      border: 1px solid #BFBFBF;
+      border: 1px solid #bfbfbf;
       border-radius: 2px !important;
       box-shadow: none !important;
       margin-bottom: 24px !important;
@@ -76,7 +53,6 @@
   }
 }
 
-
 .scroll-to-top-button {
   position: fixed;
   bottom: 20px;
@@ -85,19 +61,56 @@
   cursor: pointer;
 }
 
-::ng-deep fa-icon{
+:host ::ng-deep fa-icon {
   cursor: pointer;
 }
-::ng-deep cs-search.df-search .mat-mdc-form-field {
+
+:host ::ng-deep cs-search.df-search .mat-mdc-form-field {
   width: 800px;
 }
 
-::ng-deep .mat-mdc-menu-panel.existing-section-menu {
+:host ::ng-deep .mat-mdc-menu-panel.existing-section-menu {
   max-width: 800px;
 }
 
 .drag-handle {
   cursor: move;
   display: inline-block;
-  margin-right: 10px; /* Adjust as needed */
+  margin-right: 10px;
+}
+
+.df-design-mode {
+  display: none;
+}
+
+#df-actionsBtn {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: $color-black;
+  padding: 0;
+
+  .df-actionsMenuBtn {
+    height: 32px;
+  }
+
+  .df-actionsBtn-text {
+    transform: translateY(4px);
+  }
+}
+
+::ng-deep .mat-mdc-menu-panel.df-actionsMenu {
+  .mat-mdc-menu-item {
+    padding: 8px 16px;
+    height: 34px;
+    min-height: 34px;
+    display: flex;
+    line-height: 34px;
+  }
+}
+
+.df-anchor-ref-spacer-heading {
+  top: -60px;
+  position: relative;
+  height: 0;
 }

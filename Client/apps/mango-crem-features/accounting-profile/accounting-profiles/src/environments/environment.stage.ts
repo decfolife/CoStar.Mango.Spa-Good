@@ -5,5 +5,4 @@ export const environment = {
     discountRateProfiles:
       'http://service2.stage.corp.virtualpremise.com:8090/accountingprofiles/api',
   },
-  isRestful: false,
 };

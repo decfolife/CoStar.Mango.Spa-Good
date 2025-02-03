@@ -7,10 +7,20 @@ import { EditPage } from '../shared/models/edit-page';
 import { MatDialog } from '@angular/material/dialog';
 import { AddBuildingModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-building-modal/add-building-modal.component';
 import { AddSupplierModalComponent } from '@mango/ui-shared/lib-ui-shared';
-import { SUPPLIER_WIZARD_OTID } from '@mango/data-models/lib-data-models';
+import {
+  SUPPLIER_WIZARD_OTID,
+  PREMISE_WIZARD_OTID,
+  BUILDING_WIZARD_OTID,
+  LEASE_WIZARD_OTID,
+  ToastState,
+} from '@mango/data-models/lib-data-models';
 import { AddEquipmentModalComponent } from '@mango/ui-shared/lib-ui-shared';
 import { EQUIPMENT_WIZARD_OTID } from '@mango/data-models/lib-data-models';
 import { AddLeaseModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-lease-modal/add-lease-modal.component';
+import { AddPremiseModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-premise-modal/add-premise-modal.component';
+import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { map } from 'rxjs/operators';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -48,7 +58,9 @@ export class AddNewMenuComponent implements OnInit {
     private sanitizer: DomSanitizer,
     public service: ListPageService,
     private route: ActivatedRoute,
+    private dashboardService: DashboardService,
     private dialog: MatDialog,
+    private toastService: CremToastService,
     private router: Router
   ) {}
 
@@ -139,22 +151,60 @@ export class AddNewMenuComponent implements OnInit {
   //** Premise/Store (OTID = 2)
   //** Financials (OTID = 182)
   getModuleRights() {
-    const objectIds = '3,4,174,175'; //calls module rights api for these ObjectTypeId's
-    this.service.getUserModuleRights(objectIds).subscribe(
-      (res: any) => {
-        this.addButtonObjects = res.data.filter((v) => v.hasAddRights);
-      },
-      (error: any) =>
-        console.log('Error occurred getting addMenu items: ', error)
-    );
+    let objectIds = '3,4,174,175'; //calls module rights api for these ObjectTypeId's
+    this.dashboardService
+      .getClientPreference('HidePremise')
+      .pipe(
+        map((resp) => {
+          if (resp.success) {
+            if (resp.data == 0) {
+              objectIds = '3,4,2,174,175';
+            }
+          }
+        })
+      )
+      .subscribe(
+        () => {
+          this.service.getUserModuleRights(objectIds).subscribe(
+            (res: any) => {
+              this.addButtonObjects = res.data.filter((v) => v.hasAddRights);
+            },
+            (error: any) =>
+              this.toastService.show(
+                'Error occurred getting addMenu items: ' + error,
+                '',
+                ToastState.ERROR,
+                {
+                  position: 'bottom right',
+                  maxWidth: '350px',
+                }
+              )
+          );
+        },
+        (error: any) =>
+          this.toastService.show(
+            'Error occurred getting client preferences of premise visibility: ' +
+              error,
+            '',
+            ToastState.ERROR,
+            {
+              position: 'bottom right',
+              maxWidth: '350px',
+            }
+          ),
+        () => {}
+      );
   }
 
   getNavigationLink(objectTypeId: number) {
-    if (objectTypeId == 3) {
+    if (objectTypeId == PREMISE_WIZARD_OTID) {
+      this.showAddPremisePopup();
+    }
+    if (objectTypeId == BUILDING_WIZARD_OTID) {
       this.showAddBuildingPopup();
     }
 
-    if (objectTypeId == 4) {
+    if (objectTypeId == LEASE_WIZARD_OTID) {
       this.showAddLeasePopup();
     }
 
@@ -195,6 +245,22 @@ export class AddNewMenuComponent implements OnInit {
     dialogRef.afterClosed();
   }
 
+  showAddPremisePopup() {
+    let dialogRef = this.dialog.open(AddPremiseModalComponent, {
+      disableClose: true,
+      height: '420px',
+      width: '700px',
+      maxWidth: '1100px',
+      data: {
+        objectTypeId: this.objectTypeId,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.reLoadGrid.emit(true);
+    });
+  }
+
   showAddBuildingPopup() {
     let dialogRef = this.dialog.open(AddBuildingModalComponent, {
       disableClose: true,
@@ -215,7 +281,7 @@ export class AddNewMenuComponent implements OnInit {
   showAddLeasePopup() {
     let dialogRef = this.dialog.open(AddLeaseModalComponent, {
       disableClose: true,
-      height: '81%',
+      height: '80%',
       width: '75%',
       maxWidth: '1100px',
       data: {

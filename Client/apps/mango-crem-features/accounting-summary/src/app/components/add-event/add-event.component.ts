@@ -9,9 +9,9 @@ import {
   OnInit,
   ChangeDetectorRef,
 } from '@angular/core';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Subject, Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { PreviousAccountingEvent } from '@accounting-summary/models/previous-accounting-event.model';
 import { debounceTime } from 'rxjs/operators';
 import { AddEventFormService } from '@accounting-summary/services/add-event-form.service';
@@ -28,12 +28,12 @@ import {
   CalculationSupports,
   ProperPreviousAmortizationPeriod,
 } from '@accounting-summary/models/interfaces/save-accounting-event.interfaces';
-import { CremToastService } from 'libs/ui-shared/lib-ui-elements/src/lib/toast';
 import {
   CalculateValuesResponse,
   ResidualValues,
 } from '@accounting-summary/models/interfaces/calculate-values-response.interfaces';
 import { environment } from '@mangoSpa/src/environments/environment.local';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 @Component({
   selector: 'mango-add-event',
   templateUrl: './add-event.component.html',
@@ -63,6 +63,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
   classificationData: any;
   RVData: any;
   financialData: any;
+  balanceCardFormData: any;
   paymentsData: any;
   termsValue: any;
   compoundFrequency: number;
@@ -77,18 +78,20 @@ export class AddEventComponent implements OnDestroy, OnInit {
   functionalCurrency: any;
   calculateValuesResponseData: CalculateValuesResponse;
   isSaveAndCloseClicked: boolean;
-  isCalculateValuesClicked: boolean;
+  calculateValuesLoading: boolean;
   isApplyClicked: boolean;
   isApplyDisabled = true;
-  debounceTime = 500;
+  debounceTime = 300;
   private subscription$ = new Subscription();
-  isSaveButtonEnabled: boolean;
+  isCalculateClicked: boolean;
   isFunctionalRate1: boolean;
   calculateWithFunctionalRate1: boolean;
   showPayload: boolean;
   apiValidationErrorMessage: string;
   openDay1DayxRemeasurePopup = false;
-  @ViewChild('accordion') accordion: any;
+  lastApprovedOrExportedDate: string;
+  dateFormat = 'MM/dd/yyyy';
+  effectiveRate: number;
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -97,22 +100,20 @@ export class AddEventComponent implements OnDestroy, OnInit {
     private router: Router,
     private addEventFormService: AddEventFormService,
     public addEditScheduleService: AddEditScheduleService,
-    public cdRef: ChangeDetectorRef
+    public cdRef: ChangeDetectorRef,
+    private facade: MangoAppFacade,
+    private datePipe: DatePipe
   ) {
     this.getCommonDropDowns();
     this.getClassificationSettings();
     this.getEventDateOptions();
+    this.getUserInfo();
   }
 
   ngOnDestroy(): void {
     this.subscription$.unsubscribe();
     this.addEventFormService.setCalculateValueResponse(null);
-    this.addEventFormService.setCompoundFrequency(
-      this.portfolioSettings.defaultCompoundFrequencyType
-    );
-    this.addEventFormService.setPaymentTiming(
-      this.portfolioSettings.defaultPaymentTimingType
-    );
+    this.addEventFormService.classificationFormData$.next(null);
   }
 
   ngOnInit() {
@@ -124,12 +125,20 @@ export class AddEventComponent implements OnDestroy, OnInit {
     this.getCalculateValueData();
     this.populateChargeDateRangeOptions();
     this.initializeRouteData();
-    this.addEventFormService.overrideOpeningBalance.next(0);
-    if (this.pageMode === 'Edit Event') {
-      this.addEventFormService.presentValueEnabled$.next(true);
-    } else {
-      this.addEventFormService.presentValueEnabled$.next(false);
-    }
+    this.addEventFormService.overrideOpeningBalance$.next(0);
+    this.addEventFormService.presentValuePayload$.next({});
+    this.addEventFormService.pageMode$.next(this.pageMode);
+    this.addEventFormService.measureEvent$.next(this.measureEvent);
+
+    this.subscription$.add(
+      this.accountingSummaryService.lastApprovedOrExportedDate$
+        .pipe(debounceTime(this.debounceTime))
+        .subscribe((isRetro) => {
+          const isRetroDate = new Date(isRetro.setDate(isRetro.getDate() - 1));
+          this.lastApprovedOrExportedDate =
+            this.addEditScheduleService.toShortDateString(isRetroDate);
+        })
+    );
   }
 
   initializeRouteData() {
@@ -213,6 +222,14 @@ export class AddEventComponent implements OnDestroy, OnInit {
     );
   }
 
+  getUserInfo() {
+    this.facade.contactRecord$.subscribe((contact) => {
+      this.dateFormat = contact.preferences.contactDatesEU
+        ? 'dd.MM.yyyy'
+        : 'MM/dd/yyyy';
+    });
+  }
+
   getCalculateValueData() {
     this.subscription$.add(
       this.addEventFormService.calculateValuesResponseData$
@@ -237,13 +254,13 @@ export class AddEventComponent implements OnDestroy, OnInit {
         this.addEventFormService.classificationFormData$,
         this.addEventFormService.RVFormFormData$,
         this.addEventFormService.financialFormData$,
-        this.addEventFormService.paymentAmountsData$,
-        this.addEventFormService.termValues$,
-        this.addEventFormService.compoundFrequency$,
+        this.addEventFormService.balanceCardForm$,
+        this.addEventFormService.paymentGridData$,
+        this.addEventFormService.accountingTerms$,
         this.addEventFormService.paymentTiming$,
-        this.addEventFormService.manualAssetAdjustment$,
         this.addEventFormService.isCalculateValuesDisabled$,
         this.addEventFormService.isSaveDisabled$,
+        this.addEventFormService.effectiveRate$,
       ])
         .pipe(debounceTime(this.debounceTime))
         .subscribe(
@@ -252,55 +269,43 @@ export class AddEventComponent implements OnDestroy, OnInit {
             classificationData,
             RVData,
             financialData,
+            balanceCardForm,
             paymentsData,
             termValues,
-            compoundFrequency,
             paymentTiming,
-            manualAssetAdjustment,
             isCalculateValuesDisabled,
-            isSaveDisabled,
+            SaveInvalid,
+            effectiveRate,
           ]) => {
             this.scheduleDetails = scheduleDetails;
             this.classificationData = classificationData;
             this.RVData = RVData;
             this.financialData = financialData;
+            this.balanceCardFormData = balanceCardForm;
             this.paymentsData = paymentsData;
             this.termsValue = termValues;
-            this.compoundFrequency = compoundFrequency;
             this.paymentTiming = paymentTiming;
-            this.manualAssetAdjustment = manualAssetAdjustment;
+            this.effectiveRate = effectiveRate;
             if (
               this.addEventFormService.ignoreButtonReset.value &&
               this.addEventFormService.calculateValuesClicked.value
             ) {
               this.isCalculateValuesDisabled = true;
-              this.isSaveButtonEnabled = true;
+              this.isCalculateClicked = true;
               this.isSaveDisabled = false;
               this.addEventFormService.ignoreButtonReset.next(false);
               this.addEventFormService.calculateValuesClicked.next(false);
             } else {
               this.isCalculateValuesDisabled = isCalculateValuesDisabled;
-              this.isSaveButtonEnabled = isSaveDisabled;
               this.isSaveDisabled = true;
               this.isApplyDisabled = true;
+              this.isCalculateClicked = SaveInvalid;
               this.addEventFormService.calculateValuesClicked.next(false);
             }
-            let initCurrency = this.getCurrencyDetails(
-              this.financialData.financialFormData.localCurrency
-            );
-            if (
-              initCurrency &&
-              this.addEventFormService.accountingEventData$.value
-                .localCurrency != initCurrency.name
-            ) {
-              this.addEventFormService.setCurrency(
-                initCurrency.name,
-                initCurrency.decimalPrecision
-              );
-              if (this.pageMode === 'Edit Event') {
-                let initialValues = this.buildCalculateValuePayload();
-                this.buildPresentValueExportPayload(initialValues);
-              }
+            if (this.pageMode === 'Edit Event') {
+              const initialValues = this.buildCalculateValuePayload();
+              this.buildPresentValueExportPayload(initialValues);
+              this.addEventFormService.presentValueEnabled$.next(true);
             }
           }
         )
@@ -341,7 +346,8 @@ export class AddEventComponent implements OnDestroy, OnInit {
     } else {
       const addEditSchedulePayload = this.buildCalculateValuePayload();
       this.buildPresentValueExportPayload(addEditSchedulePayload);
-      this.isCalculateValuesClicked = true;
+      this.addEventFormService.presentValueEnabled$.next(true);
+      this.calculateValuesLoading = true;
       this.subscription$.add(
         this.addEditScheduleService
           .calculateValues(addEditSchedulePayload)
@@ -354,23 +360,32 @@ export class AddEventComponent implements OnDestroy, OnInit {
                 false
               );
               this.isCalculateValuesDisabled = true;
-              this.isCalculateValuesClicked = false;
+              this.calculateValuesLoading = false;
             } else if (response.success) {
               this.addEventFormService.setCalculateValueResponse(response.data);
+              this.addEventFormService.presentValueEnabled$.next(true);
               this.isCalculateValuesDisabled = true;
-              this.isCalculateValuesClicked = false;
-              if (this.isSaveButtonEnabled) {
+              this.calculateValuesLoading = false;
+              if (
+                this.addEventFormService.isOperatingRetrospectiveAdjustment$
+                  .value
+              ) {
                 this.isSaveDisabled = true;
-                this.isApplyDisabled = true;
-              } else if (!this.isSaveButtonEnabled) {
-                this.isSaveDisabled = false;
-                this.isApplyDisabled = false;
+                this.isCalculateValuesDisabled = false;
+              } else {
+                if (this.isCalculateClicked) {
+                  this.isSaveDisabled = true;
+                  this.isApplyDisabled = true;
+                } else if (!this.isCalculateClicked) {
+                  this.isSaveDisabled = false;
+                  this.isApplyDisabled = false;
+                }
               }
             } else {
               this.apiValidationErrorMessage = response.clientErrorMessage;
               this.showApiValidationErrorMessage();
               this.isCalculateValuesDisabled = false;
-              this.isCalculateValuesClicked = false;
+              this.calculateValuesLoading = false;
             }
           })
       );
@@ -390,9 +405,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       );
     } else if (
       this.apiValidationErrorMessage ===
-        'Day1DayXRemeasureOnUnsupportedClassificationsError' ||
-      this.apiValidationErrorMessage ===
-        'Day1DayXRemeasureWhilePriorOneInScheduleJEStatusError'
+      'Day1DayXRemeasureWhilePriorOneInScheduleJEStatusError'
     ) {
       this.openDay1DayxRemeasurePopup = true;
     } else if (this.apiValidationErrorMessage === 'Day1FullTerminationError') {
@@ -401,6 +414,36 @@ export class AddEventComponent implements OnDestroy, OnInit {
         'Full termination is not supported on Day 1 of the initial schedule.',
         'error',
         false
+      );
+    } else if (
+      this.apiValidationErrorMessage ===
+        'Day1DayXRemeasureOnUnsupportedClassificationsError' &&
+      this.lastApprovedOrExportedDate
+    ) {
+      this.addEditScheduleService.showToast(
+        'Unsupported Action',
+        `In order to proceed with the ${
+          this.measureEvent
+        } measure event, you must remeasure after: ${this.datePipe.transform(
+          this.lastApprovedOrExportedDate,
+          this.dateFormat
+        )}`,
+        'error'
+      );
+    } else if (
+      this.apiValidationErrorMessage ===
+        'Day1DayXRemeasureOnUnsupportedClassificationsError' &&
+      !this.lastApprovedOrExportedDate
+    ) {
+      this.addEditScheduleService.showToast(
+        'Unsupported Action',
+        `In order to proceed with the ${
+          this.measureEvent
+        } measure event, you must remeasure after: ${this.datePipe.transform(
+          this.accountingEventsData.beginDate,
+          this.dateFormat
+        )}`,
+        'error'
       );
     } else if (
       this.apiValidationErrorMessage ===
@@ -430,6 +473,15 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.addEditScheduleService.showToast(
         'Negative Opening Balance',
         'Amortization schedules cannot be created with a negative opening balance. If you are creating a Tenant Improvement Allowance scenario, then input the adjustment as a positive value and change the charge type from expense to income.',
+        'error',
+        false
+      );
+    } else if (
+      this.apiValidationErrorMessage?.includes('Attempted to divide by zero.')
+    ) {
+      this.addEditScheduleService.showToast(
+        'Error occurred while calculating',
+        'Either Total Amount, Total Adjustment Amount, Beginning Asset Balance, or Liability Adjustment, must have a value before processing a schedule.',
         'error',
         false
       );
@@ -468,7 +520,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
     ) {
       this.addEditScheduleService.showToast(
         'Error occurred while saving',
-        'Total Amount, Total Adjustment Amount, Beginning Asset Balance, or Liability Adjustment must have a value before saving a schedule.',
+        'Either Total Amount, Total Adjustment Amount, Beginning Asset Balance, or Liability Adjustment must have a value before saving a schedule.',
         'error',
         false
       );
@@ -491,7 +543,6 @@ export class AddEventComponent implements OnDestroy, OnInit {
           this.isApplyDisabled = false;
         } else if (response.success) {
           this.createdScheduleID = response.data;
-          this.addEventFormService.manualAssetAdjustmentWasUpdated.next(false);
           if (this.pageMode === 'Add Event') {
             this.accountingSummaryService.newCreatedSchedule.next(
               this.createdScheduleID
@@ -563,7 +614,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
           } else {
             this.addEditScheduleService.showToast(
               'Record Saved',
-              'Schedule saved successfully',
+              'Accounting event saved successfully',
               'success',
               false
             );
@@ -696,6 +747,18 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.isFunctionalRate1 = true;
       return this.calculateWithFunctionalRate1;
     }
+
+    if (functionalCurrencyRate === 0) {
+      this.addEditScheduleService.showToast(
+        'Functional Currency is Required',
+        'Functional Currency Rate is required and cannot be zero.'
+      );
+      return;
+    } else {
+      this.addEditScheduleService.clearToastBySummary(
+        'Functional Currency is Required'
+      );
+    }
     return true;
   }
 
@@ -764,34 +827,49 @@ export class AddEventComponent implements OnDestroy, OnInit {
         exceptionOtherReason: scheduleDetails.reportingExceptionReason ?? '',
         isImpaired: scheduleDetails.isImpaired || false,
         comments: scheduleDetails.detailsSectionComments || '',
-        test1:
-          classificationData?.classificationTest1?.[0] === 1
+        test1: Array.isArray(classificationData?.classificationTest1)
+          ? classificationData?.classificationTest1[0] === 1
             ? true
-            : classificationData?.classificationTest1?.[0] === 0
+            : classificationData?.classificationTest1[0] === 2
             ? false
-            : null,
-        test2:
-          classificationData?.classificationTest2?.[0] === 1
+            : null
+          : classificationData?.classificationTest1 === 1
+          ? true
+          : classificationData?.classificationTest1 === 2
+          ? false
+          : null,
+        test2: Array.isArray(classificationData?.classificationTest2)
+          ? classificationData?.classificationTest2[0] === 1
             ? true
-            : classificationData?.classificationTest2?.[0] === 0
+            : classificationData?.classificationTest2[0] === 2
             ? false
-            : null,
-        test3: classificationData?.classificationTest3?.[0] || 0.0,
-        test4: classificationData?.classificationTest4?.[0] || 0.0,
-        test5:
-          classificationData?.classificationTest5?.[0] === 1
+            : null
+          : classificationData?.classificationTest2 === 1
+          ? true
+          : classificationData?.classificationTest2 === 2
+          ? false
+          : null,
+        test3: this.classificationData?.test3 ?? null,
+        test4: this.classificationData?.test4 ?? null,
+        test5: Array.isArray(classificationData?.classificationTest5)
+          ? classificationData?.classificationTest5[0] === 1
             ? true
-            : classificationData?.classificationTest5?.[0] === 0
+            : classificationData?.classificationTest5[0] === 2
             ? false
-            : null,
+            : null
+          : classificationData?.classificationTest5 === 1
+          ? true
+          : classificationData?.classificationTest5 === 2
+          ? false
+          : null,
         classificationTestResult:
           this.classificationData?.classificationTestResult ?? null,
         classificationTestResultReason:
           this.classificationData?.classificationTestResultReason ?? null,
         isClassificationTestResultMatched:
-          this.classificationData.isClassificationTestResultMatched ?? null,
+          this.classificationData?.isClassificationTestResultMatched ?? null,
         economicLifeYears: +classificationData?.remainingEconomicLife || null,
-        fmv: classificationData?.fairMarketValue || null,
+        fmv: classificationData?.fairMarketValue ?? null,
         implicitRate:
           this.calculateValuesResponseData.implicitRate != null
             ? +this.calculateValuesResponseData.implicitRate.toFixed(14)
@@ -812,7 +890,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
         annualRateTypeID: Array.isArray(financialData?.annualRateDropdown)
           ? financialData?.annualRateDropdown[0]
           : financialData?.annualRateDropdown,
-        effectiveRate: Number(this.financialData.effectiveRate) ?? 0,
+        effectiveRate: +this.effectiveRate,
         modificationImpactsScope: financialData?.modificationImpactScope,
         localCurrencyID: this.scheduleCurrency.exchangeRateID,
         localCurrency: this.scheduleCurrency.targetCurrency,
@@ -847,15 +925,17 @@ export class AddEventComponent implements OnDestroy, OnInit {
         functionalOpeningAssetBalance:
           this.calculateValuesResponseData.functional_OpeningAssetBalance ??
           0.0,
-        openingBalance:
-          this.calculateValuesResponseData.openingAssetBalance ?? 0.0,
-        overrideOpeningBalance: false,
+        openingBalance: this.balanceCardFormData.overrideOpeningBalance
+          ? this.balanceCardFormData.openingBalanceInput
+          : this.calculateValuesResponseData.openingAssetBalance ?? 0.0,
+        overrideOpeningBalance: this.balanceCardFormData.overrideOpeningBalance,
         previousAssetBalance:
           this.calculateValuesResponseData.previousAssetBalance ?? 0.0,
         systemAssetAdjustment:
           this.calculateValuesResponseData.systemAssetAdjustment ?? 0.0,
-        manualAssetAdjustment: this.manualAssetAdjustment ?? 0.0,
-        adjustmentAmount: this.calculateValuesResponseData.adjustment ?? 0.0,
+        manualAssetAdjustment:
+          this.balanceCardFormData.manualAssetAdjustment ?? 0.0,
+        adjustment: this.calculateValuesResponseData.adjustment ?? 0.0,
         levelExpense: this.calculateValuesResponseData.levelExpense ?? 0.0,
         functionalLevelExpense:
           this.calculateValuesResponseData.functional_LevelExpense ?? 0.0,
@@ -863,8 +943,19 @@ export class AddEventComponent implements OnDestroy, OnInit {
         functionalDirectCosts:
           this.calculateValuesResponseData.functional_DirectCostsTotal ?? 0.0,
         presentValue: this.calculateValuesResponseData.presentValue ?? 0.0,
-        compoundFrequencyType: this.compoundFrequency,
-        paymentInArrears: this.paymentTiming === 2,
+        compoundFrequencyType: Array.isArray(
+          this.balanceCardFormData.compoundFrequency
+        )
+          ? this.balanceCardFormData.compoundFrequency[0]
+          : this.balanceCardFormData.compoundFrequency,
+
+        paymentInArrears: Array.isArray(this.balanceCardFormData.paymentTiming)
+          ? this.balanceCardFormData.paymentTiming[0] === 2
+            ? true
+            : false
+          : this.balanceCardFormData.paymentTiming === 2
+          ? true
+          : false,
         openingLiabilityBalance:
           this.calculateValuesResponseData.openingLiabilityBalance ?? 0.0,
         previousLiabilityBalance:
@@ -880,10 +971,10 @@ export class AddEventComponent implements OnDestroy, OnInit {
           this.calculateValuesResponseData.functional_TerminationFee ?? 0.0,
         // assetAdjustmentAmount:
         // this.calculateValuesResponseData.assetAdjustmentAmount ?? 0.0,
-        // straightLineExpense:
-        // this.calculateValuesResponseData.straightLineExpense ?? 0.0,
-        // straightLineExpenseDaily:
-        // this.calculateValuesResponseData.straightLineExpenseDaily ?? 0.0,
+        straightLineExpense:
+          this.calculateValuesResponseData.straightLineExpense ?? 0.0,
+        straightLineExpenseDaily:
+          this.calculateValuesResponseData.straightLineExpenseDaily ?? 0.0,
         assetAmortization:
           this.calculateValuesResponseData.assetAmortization ?? 0.0,
         functionalAssetAmortization:
@@ -944,50 +1035,89 @@ export class AddEventComponent implements OnDestroy, OnInit {
 
       functionalCurrencyRate:
         +this.financialData.financialFormData.currencyRate,
-      manualAssetAdjustment: this.manualAssetAdjustment ?? 0,
+      manualAssetAdjustment:
+        this.balanceCardFormData.manualAssetAdjustment ?? 0,
       discountRate: +this.financialData.financialFormData.discountRate,
-      compoundFrequencyTypeId: this.compoundFrequency,
-      paymentInArrears: this.paymentTiming === 2,
+      compoundFrequencyTypeId: Array.isArray(
+        this.balanceCardFormData.compoundFrequency
+      )
+        ? this.balanceCardFormData.compoundFrequency[0]
+        : this.balanceCardFormData.compoundFrequency,
+      paymentInArrears: Array.isArray(this.balanceCardFormData.paymentTiming)
+        ? this.balanceCardFormData.paymentTiming[0] === 2
+          ? true
+          : false
+        : this.balanceCardFormData.paymentTiming === 2
+        ? true
+        : false,
       annualRateTypeId: Array.isArray(
         this.financialData.financialFormData.annualRateDropdown
       )
         ? this.financialData.financialFormData.annualRateDropdown[0]
         : this.financialData.financialFormData.annualRateDropdown,
-      effectiveRate: +this.financialData.effectiveRate,
+      effectiveRate: +this.effectiveRate,
       amortizationMethodTypeId: this.portfolioSettings.amortizationMethodType,
       isImpaired: this.scheduleDetails?.isImpaired ?? false,
-      totalAmount: +this.paymentsData?.undiscountedAmount || 0,
+      totalAmount: this.paymentsData?.undiscountedAmount ?? 0,
       directCosts: this.paymentsData?.directCostAmount ?? 0,
       terminationFee: this.paymentsData?.terminationFee ?? 0,
       economicLifeYears:
         +this.classificationData?.classificationFormData
-          ?.remainingEconomicLife || 0,
-      FMV:
-        +this.classificationData?.classificationFormData?.fairMarketValue || 0,
-      test1:
-        this.classificationData?.classificationFormData
-          ?.classificationTest1?.[0] === 1
+          ?.remainingEconomicLife || null,
+      fmv:
+        +this.classificationData?.classificationFormData?.fairMarketValue ||
+        null,
+      test1: Array.isArray(
+        this.classificationData?.classificationFormData?.classificationTest1
+      )
+        ? this.classificationData?.classificationFormData
+            .classificationTest1[0] === 1
           ? true
           : this.classificationData?.classificationFormData
-              ?.classificationTest1?.[0] === 0
+              .classificationTest1[0] === 2
           ? false
-          : null,
-      test2:
-        this.classificationData?.classificationFormData
-          ?.classificationTest2?.[0] === 1
+          : null
+        : this.classificationData?.classificationFormData
+            ?.classificationTest1 === 1
+        ? true
+        : this.classificationData?.classificationFormData
+            ?.classificationTest1 === 2
+        ? false
+        : null,
+      test2: Array.isArray(
+        this.classificationData?.classificationFormData?.classificationTest2
+      )
+        ? this.classificationData?.classificationFormData
+            .classificationTest2[0] === 1
           ? true
           : this.classificationData?.classificationFormData
-              ?.classificationTest2?.[0] === 0
+              .classificationTest2[0] === 2
           ? false
-          : null,
-      test5:
-        this.classificationData?.classificationFormData
-          ?.classificationTest5?.[0] === 1
+          : null
+        : this.classificationData?.classificationFormData
+            ?.classificationTest2 === 1
+        ? true
+        : this.classificationData?.classificationFormData
+            ?.classificationTest2 === 2
+        ? false
+        : null,
+      test5: Array.isArray(
+        this.classificationData?.classificationFormData?.classificationTest5
+      )
+        ? this.classificationData?.classificationFormData
+            .classificationTest5[0] === 1
           ? true
           : this.classificationData?.classificationFormData
-              ?.classificationTest5?.[0] === 0
+              .classificationTest5[0] === 2
           ? false
-          : null,
+          : null
+        : this.classificationData?.classificationFormData
+            ?.classificationTest5 === 1
+        ? true
+        : this.classificationData?.classificationFormData
+            ?.classificationTest5 === 2
+        ? false
+        : null,
       residualValues: {
         doesLessorExplicitlyExemptLessee:
           this.RVData.lessorExplicitlyExemptsLessee || false,
@@ -1026,7 +1156,6 @@ export class AddEventComponent implements OnDestroy, OnInit {
       scheduleCurrency: values.scheduleCurrency,
       selectedPayments: values.selectedPayments,
     });
-    this.addEventFormService.presentValueEnabled$.next(true);
   }
 
   private getCommonDropDowns() {
@@ -1111,20 +1240,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
             this.accountingEventsData = response.data;
             this.accountingEventsData.priorROUAssetObtainedAmount =
               this.eventsGridData.priorROUAssetObtainedAmount ?? 0;
-            this.pageMode === 'Add Event'
-              ? this.addEventFormService.setCompoundFrequency(
-                  this.portfolioSettings.defaultCompoundFrequencyType
-                )
-              : this.addEventFormService.setCompoundFrequency(
-                  this.accountingEventsData.compoundFrequencyType
-                );
-            this.pageMode === 'Add Event'
-              ? this.addEventFormService.setPaymentTiming(
-                  this.portfolioSettings.defaultPaymentTimingType
-                )
-              : this.addEventFormService.setPaymentTiming(
-                  this.accountingEventsData.paymentInArrears === true ? 2 : 1
-                );
+            this.addEventFormService.accountingEventData$.next(response.data);
           } else {
             this.accountingSummaryService.errorNotify(
               response.clientErrorMessage
@@ -1154,9 +1270,6 @@ export class AddEventComponent implements OnDestroy, OnInit {
 
   onClassificationChanged(classificationId: number) {
     this.classificationId = classificationId;
-    if (this.accordion) {
-      this.accordion.isOpen = false;
-    }
   }
 
   scheduleDetailsDataChanged(data: any) {

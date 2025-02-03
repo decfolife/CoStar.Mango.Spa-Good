@@ -1,6 +1,10 @@
 <section class="section-grid">
-  <crem-card [showCustomHeader]="true" [customDropdownMenu]="true">
-    <div customHeader class="card-header">
+  <crem-card [showCustomHeader]="true" mangoAccountingAda>
+    <div
+      customHeader
+      class="card-header"
+      [id]="accountingSummaryService.getId(componentName, 'card', 'header')"
+    >
       <div class="card-header">
         <div class="card-header">
           <div
@@ -176,7 +180,6 @@
         [rowAlternationEnabled]="true"
         [summary]="summaryFields"
         [height]="amortizationGridHeight"
-        noDataText="No Data"
         width="100%"
         (onOptionChanged)="onGridOptionChanged($event)"
         (onRowClick)="onGridRowClick($event)"
@@ -193,18 +196,27 @@
         >
         </dxo-state-storing>
 
-        <dxo-scrolling columnRenderingMode="virtual"> </dxo-scrolling>
+        <dxo-scrolling columnRenderingMode="standard"> </dxo-scrolling>
         <dxo-selection mode="single"> </dxo-selection>
 
         <dxo-column-chooser
           [enabled]="true"
           mode="select"
-          height="500"
+          [height]="400"
           width="400"
         >
+          <dxo-position
+            my="right top"
+            at="right top"
+            [of]="
+              '#' +
+              accountingSummaryService.getId(componentName, 'card', 'header')
+            "
+          ></dxo-position>
           <dxo-search [enabled]="true"> </dxo-search>
 
-          <dxo-selection allowSelectAll="true"> </dxo-selection>
+          <dxo-selection allowSelectAll="true" recursive="true">
+          </dxo-selection>
         </dxo-column-chooser>
 
         <div *dxTemplate="let info of 'amortizationHeader'">
@@ -230,12 +242,12 @@
     [classificationType]="classificationType"
     [amortizationProfileName]="amortizationProfileName"
     [newRetroEventJeStatus]="retroEventJeStatus"
-    (retroAdustmentGridRowClickEvent)="onRetroAdustmentGridRowClick($event)"
+    (retroAdjustmentGridRowClickEvent)="onRetroAdjustmentGridRowClick($event)"
   ></mango-je-retro-popup>
 
   <!-- This is for the retro adjustments grid.  This is called from the mango-je-retro-popup for the amortization grid.  -->
   <mango-je-retro-popup
-    [amortizationGridRowClickEvent]="retroAdustmentGridRowClickEvent"
+    [amortizationGridRowClickEvent]="retroAdjustmentGridRowClickEvent"
     [eventScheduleData]="eventScheduleData"
     [gridColumnsForRetroPopup]="gridColumnsForRetroPopup"
     [rightsInfo]="rightsInfo"

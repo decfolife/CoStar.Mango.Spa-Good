@@ -164,6 +164,13 @@
     @include costar(border-radius, medium);
     @include costar(background-color, background);
   }
+
+  mango-balance-cards-container {
+    display: flex;
+    @include costar(padding, 2);
+    @include costar(border-radius, medium);
+    @include costar(background-color, background);
+  }
 }
 
 .amortization-profile {

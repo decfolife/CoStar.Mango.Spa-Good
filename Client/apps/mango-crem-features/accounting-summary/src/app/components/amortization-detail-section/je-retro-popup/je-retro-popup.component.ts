@@ -1,5 +1,4 @@
 import {
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -31,19 +30,17 @@ export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
   @Input() isPopupForRetroGridClick = false;
   @Input() newRetroEventJeStatus = '';
   @Output() jeRetroPopupClosedEvent: EventEmitter<any> = new EventEmitter();
-  @Output() retroAdustmentGridRowClickEvent: EventEmitter<any> =
+  @Output() retroAdjustmentGridRowClickEvent: EventEmitter<any> =
     new EventEmitter();
 
+  activeTabIndex = 0;
   dateFormat = 'MM/dd/yyyy';
   displayPeriodTitle: string;
   showRetroScheduleTab = false;
   jeRetroPopupVisible = false;
   jeProcessingPopupData: any;
-  jePopupTile: string;
+  jePopupTitle: string;
   jePaymentPopupData: any;
-  maxHeight = '70%';
-  minHeight = '50%';
-  popupHeight = '';
   componentName = 'amortization-period-popup';
   retrospectiveAdjustmentPopupData: any;
   tabs: any[] = null;
@@ -51,7 +48,6 @@ export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
-    private changeDetector: ChangeDetectorRef,
     private datePipe: DatePipe
   ) {}
 
@@ -59,9 +55,9 @@ export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
     this.subscription.add(
       this.accountingSummaryService.jeActionTaken$.subscribe(
         (jeActionTaken) => {
-          if (jeActionTaken) {
+          if (jeActionTaken && this.jeProcessingPopupData) {
             this.getJeProcessingPopupData(
-              this.jeProcessingPopupData.leaseRecognitionPeriodID
+              this.jeProcessingPopupData?.leaseRecognitionPeriodID
             );
           }
         }
@@ -99,32 +95,27 @@ export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  onRetroAdustmentGridRowClick(event) {
-    this.retroAdustmentGridRowClickEvent.emit(event);
+  onRetroAdjustmentGridRowClick(event) {
+    this.retroAdjustmentGridRowClickEvent.emit(event);
   }
 
-  onTabChanged(event: any) {
-    if (event.name === 'selectedIndex' && event.value !== undefined) {
-      const selectedTab = this.tabs[event.value];
-      this.popupHeight = this.maxHeight;
-    }
-  }
-
-  setPopupHeight(isMaxHeight: boolean): void {
-    this.popupHeight = isMaxHeight ? this.maxHeight : this.minHeight;
-    this.changeDetector.detectChanges();
+  onTabChange(e) {
+    this.activeTabIndex = e;
   }
 
   setupJeRetroPopup(event: any) {
     const { leaseRecognitionPeriodID, displayPeriod, periodStart, periodEnd } =
       event.data;
     this.showRetroScheduleTab =
-      !!this.eventScheduleData.retroScheduleID &&
+      this.eventScheduleData.retroScheduleID &&
       event.data.scheduleIndex === this.eventScheduleData.scheduleIndex &&
       event.data.isImpactedByRetro &&
-      (!!this.eventScheduleData.adjustmentAmount ||
-        !!this.eventScheduleData.functional_AssetAdjustmentAmount ||
-        !!this.eventScheduleData.liabilityAdjustmentAmount);
+      (this.eventScheduleData.adjustment ||
+        this.eventScheduleData.adjustment === 0 ||
+        this.eventScheduleData.functional_AssetAdjustmentAmount ||
+        this.eventScheduleData.functional_AssetAdjustmentAmount === 0 ||
+        this.eventScheduleData.liabilityAdjustmentAmount ||
+        this.eventScheduleData.liabilityAdjustmentAmount === 0);
 
     this.tabs = [{ title: 'Journal Entry', template: 'jeProcessingData' }];
     this.getJeProcessingPopupData(leaseRecognitionPeriodID);
@@ -149,20 +140,26 @@ export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
 
     this.jeRetroPopupVisible = true;
     const formattedStart = this.datePipe.transform(
-      displayPeriod === 'Beginning Balance'
-        ? periodStart
-        : new Date(periodStart),
+      periodStart,
       this.dateFormat
     );
-    const formattedEnd =
-      displayPeriod === 'Beginning Balance'
-        ? ''
-        : this.datePipe.transform(periodEnd, this.dateFormat);
-    this.jePopupTile = `Period: ${displayPeriod} (${formattedStart}${
-      formattedEnd ? ' - ' + formattedEnd : ''
-    })`;
+    const formattedEnd = this.datePipe.transform(periodEnd, this.dateFormat);
+    displayPeriod === 'Beginning Balance'
+      ? (this.jePopupTitle = `Period: ${displayPeriod}`)
+      : (this.jePopupTitle = `Period: ${displayPeriod} (${formattedStart}${
+          formattedEnd ? ' - ' + formattedEnd : ''
+        })`);
 
     this.displayPeriodTitle = displayPeriod;
+  }
+
+  closePopup() {
+    this.jeRetroPopupVisible = !this.jeRetroPopupVisible;
+    const copyOfJeProcessingPopupData = JSON.parse(
+      JSON.stringify(this.jeProcessingPopupData)
+    );
+    this.jeRetroPopupClosedEvent.emit(copyOfJeProcessingPopupData);
+    this.jeProcessingPopupData = null;
   }
 
   onJeRetroPopupHidden() {

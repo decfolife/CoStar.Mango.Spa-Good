@@ -45,43 +45,156 @@
 
           <ng-container *ngIf="linkObj.category !== null">
             <li>
-              <mat-expansion-panel
-                [expanded]="!(isSubleftnav$ | async)"
-                class="leftnavPanel"
-                [attr.aria-expanded]="expanded"
-                [attr.aria-label]="'Toggle section navigation'"
+              <ng-container
+                *ngIf="!linkObj.categoryHasFlyOutMenu; else flyoutMenuTemplate"
               >
-                <mat-expansion-panel-header>
-                  <mat-panel-title> {{ linkObj.category }} </mat-panel-title>
-                </mat-expansion-panel-header>
-                <ul>
-                  <li
-                    class="listItem"
-                    *ngFor="let link of linkObj.children"
-                    [ngClass]="
-                      activeLink === link.name
-                        ? link.name + ' active'
-                        : link.name
-                    "
-                  >
-                    <a
-                      [id]="
-                        'left-nav__' +
-                        link?.moduleID +
-                        '-' +
-                        link?.dynamicName?.toLowerCase()?.replace(' ', '-')
+                <mat-expansion-panel
+                  [expanded]="!(isSubleftnav$ | async)"
+                  class="leftnavPanel"
+                  [attr.aria-expanded]="expanded"
+                  [attr.aria-label]="'Toggle section navigation'"
+                >
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      {{ linkObj.category }}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <ul>
+                    <li
+                      class="listItem"
+                      *ngFor="let link of linkObj.children"
+                      [ngClass]="
+                        activeLink === link.name
+                          ? link.name + ' active'
+                          : link.name
                       "
-                      [ngClass]="activeLink === link.name ? 'selected' : ''"
-                      (click)="onNavLinkClick(link)"
-                      [tabindex]="0"
                     >
-                      <span>{{ link.dynamicName }}</span>
-                    </a>
-                  </li>
-                </ul>
-              </mat-expansion-panel>
+                      <a
+                        [id]="
+                          'left-nav__' +
+                          link?.moduleID +
+                          '-' +
+                          link?.dynamicName?.toLowerCase()?.replace(' ', '-')
+                        "
+                        [ngClass]="activeLink === link.name ? 'selected' : ''"
+                        (click)="onNavLinkClick(link)"
+                        [tabindex]="0"
+                      >
+                        <span>{{ link.dynamicName }}</span>
+                      </a>
+                    </li>
+                  </ul>
+                </mat-expansion-panel>
+              </ng-container>
             </li>
           </ng-container>
+
+          <ng-template #flyoutMenuTemplate>
+            <div
+              [matMenuTriggerFor]="appMenu"
+              #trigger="matMenuTrigger"
+              (mouseenter)="openFlyOutMenu(trigger, linkObj.category)"
+              (mouseleave)="closeFlyOutMenu(trigger)"
+            >
+              <button
+                class="flyout_anchor"
+                (click)="$event.preventDefault(); onNavLinkClick(linkObj)"
+                mat-menu-item
+              >
+                <div>{{ linkObj.category }}</div>
+                <div style="margin-left: auto">
+                  <mat-icon>keyboard_arrow_right</mat-icon>
+                </div>
+              </button>
+            </div>
+            <mat-menu
+              class="expand-right"
+              hasBackdrop="false"
+              #appMenu="matMenu"
+              xPosition="after"
+            >
+              <span
+                *ngFor="let link of linkObj.children"
+                (mouseenter)="flyOutMenuEntered = true"
+                (mouseleave)="flyOutMenuLeave()"
+              >
+                <li
+                  class="listItem"
+                  [ngClass]="
+                    activeLink === link.name ? link.name + ' active' : link.name
+                  "
+                >
+                  <a
+                    mat-menu-item
+                    [id]="
+                      'left-nav__' +
+                      link?.moduleID +
+                      '-' +
+                      link?.dynamicName?.toLowerCase()?.replace(' ', '-')
+                    "
+                    [ngClass]="activeLink === link.name ? 'selected' : ''"
+                    (click)="onNavLinkClick(link)"
+                    class="flyout-navitem"
+                    [tabindex]="0"
+                  >
+                    {{ link.dynamicName }}
+                  </a>
+                </li>
+                <span *ngIf="hasSubChildLevelMenuItems(link)">
+                  <ng-container
+                    *ngTemplateOutlet="
+                      subChildLevelMenuItemsTemplate;
+                      context: { $implicit: link.subChildLevelNavLinks }
+                    "
+                  >
+                  </ng-container>
+                </span>
+              </span>
+            </mat-menu>
+          </ng-template>
+
+          <!-- This is the begining of the template that recursively goes down the nested subchildlinks and displays them.  The template is called in the flyout template above -->
+          <ng-template #subChildLevelMenuItemsTemplate let-subChildLinks>
+            <span *ngFor="let subChildLink of subChildLinks">
+              <li
+                class="listItem"
+                [ngClass]="
+                  activeLink === subChildLink.name
+                    ? subChildLink.name + ' active'
+                    : subChildLink.name
+                "
+              >
+                <a
+                  mat-menu-item
+                  [id]="
+                    'left-nav__' +
+                    subChildLink?.moduleID +
+                    '-' +
+                    subChildLink?.dynamicName?.toLowerCase()?.replace(' ', '-')
+                  "
+                  [ngClass]="activeLink === subChildLink.name ? 'selected' : ''"
+                  (click)="onNavLinkClick(subChildLink)"
+                  class="flyout-navitem"
+                  [tabindex]="0"
+                  [innerHTML]="
+                    spaceCharacter.repeat(subChildLink.subChildLevel * 4) +
+                    subChildLink.dynamicName
+                  "
+                >
+                </a>
+              </li>
+              <span *ngIf="hasSubChildLevelMenuItems2(subChildLink)">
+                <ng-container
+                  *ngTemplateOutlet="
+                    subChildLevelMenuItemsTemplate;
+                    context: { $implicit: subChildLink.subChildLevelNavLinks }
+                  "
+                >
+                </ng-container>
+              </span>
+            </span>
+          </ng-template>
+          <!-- This is the end of the sublinks template -->
         </ng-container>
       </ul>
 

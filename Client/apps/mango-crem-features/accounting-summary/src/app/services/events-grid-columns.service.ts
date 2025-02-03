@@ -121,8 +121,10 @@ export class EventsGridColumnsService {
         usesFunctionalFormat: 'false',
         calculateCellValue: (rowData) =>
           (Math.round(rowData.termInYears * 10000) / 10000).toFixed(2),
-      },
-      {
+      }
+    );
+    if (classificationId !== 0 && classificationId !== 5) {
+      columns.push({
         caption: 'Payment Timing',
         dataField: 'paymentTiming',
         headerCellTemplate: 'accountingEventHeader',
@@ -131,18 +133,18 @@ export class EventsGridColumnsService {
         appendsCurrency: 'false',
         usesLocalFormat: 'false',
         usesFunctionalFormat: 'false',
-      },
-      {
-        caption: 'Compound Frequency',
-        dataField: 'compoundFrequencyType',
-        headerCellTemplate: 'accountingEventHeader',
-        cellTemplate: 'pointer',
-        visible: false,
-        appendsCurrency: 'false',
-        usesLocalFormat: 'false',
-        usesFunctionalFormat: 'false',
-      }
-    );
+      });
+    }
+    columns.push({
+      caption: 'Compound Frequency',
+      dataField: 'compoundFrequencyType',
+      headerCellTemplate: 'accountingEventHeader',
+      cellTemplate: 'pointer',
+      visible: false,
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
+    });
 
     // leaseRecognitionCalendarID = 1 means that it is a standard calendar
     if (portfolioSettings?.leaseRecognitionCalendarID != 1) {
@@ -188,7 +190,7 @@ export class EventsGridColumnsService {
     const operatingColumns = [
         {
           caption: 'Adjustment',
-          dataField: 'adjustmentAmount',
+          dataField: 'adjustment',
           headerCellTemplate: 'accountingEventHeader',
           cellTemplate: 'pointer',
           appendsCurrency: 'false',
@@ -234,6 +236,17 @@ export class EventsGridColumnsService {
           usesFunctionalFormat: 'false',
         },
         {
+          caption: 'Effective Rate',
+          dataField: 'effectiveRate',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: (value) => value.toFixed(4),
+        },
+        {
           caption: 'Present Value (' + currencyInfo.localCurrency + ')',
           dataField: 'presentValue',
           headerCellTemplate: 'accountingEventHeader',
@@ -241,6 +254,21 @@ export class EventsGridColumnsService {
           appendsCurrency: 'true',
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
+          format: (value) =>
+            this.formattingService.localFormat(
+              +value,
+              currencyInfo.localCurrencyDecimalPrecision
+            ),
+        },
+        {
+          caption: 'Termination Fee',
+          dataField: 'terminationFee',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          appendsCurrency: 'true',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
           format: (value) =>
             this.formattingService.localFormat(
               +value,
@@ -270,6 +298,17 @@ export class EventsGridColumnsService {
           usesFunctionalFormat: 'false',
         },
         {
+          caption: 'Effective Rate',
+          dataField: 'effectiveRate',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: (value) => value.toFixed(4),
+        },
+        {
           caption: 'Present Value (' + currencyInfo.localCurrency + ')',
           dataField: 'presentValue',
           headerCellTemplate: 'accountingEventHeader',
@@ -288,6 +327,17 @@ export class EventsGridColumnsService {
     switch (classificationId) {
       case 0: // Operating 840
         columns.push({
+          caption: 'Effective Rate',
+          dataField: 'effectiveRate',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: (value) => value.toFixed(4),
+        });
+        columns.push({
           caption: 'Present Value (' + currencyInfo.localCurrency + ')',
           dataField: 'presentValue',
           headerCellTemplate: 'accountingEventHeader',
@@ -295,6 +345,21 @@ export class EventsGridColumnsService {
           appendsCurrency: 'true',
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
+          format: (value) =>
+            this.formattingService.localFormat(
+              +value,
+              currencyInfo.localCurrencyDecimalPrecision
+            ),
+        });
+        columns.push({
+          caption: 'Termination Fee',
+          dataField: 'terminationFee',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          appendsCurrency: 'true',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
           format: (value) =>
             this.formattingService.localFormat(
               +value,
@@ -405,6 +470,17 @@ export class EventsGridColumnsService {
           }
         });
         columns.push({
+          caption: 'Effective Rate',
+          dataField: 'effectiveRate',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: (value) => value.toFixed(4),
+        });
+        columns.push({
           caption: 'Present Value (' + currencyInfo.localCurrency + ')',
           dataField: 'presentValue',
           headerCellTemplate: 'accountingEventHeader',
@@ -412,6 +488,22 @@ export class EventsGridColumnsService {
           appendsCurrency: 'true',
           usesLocalFormat: 'true',
           usesFunctionalFormat: 'false',
+          format: (value) =>
+            this.formattingService.localFormat(
+              +value,
+              currencyInfo.localCurrencyDecimalPrecision
+            ),
+        });
+
+        columns.push({
+          caption: 'Termination Fee',
+          dataField: 'terminationFee',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          appendsCurrency: 'true',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          visible: false,
           format: (value) =>
             this.formattingService.localFormat(
               +value,
@@ -564,16 +656,18 @@ export class EventsGridColumnsService {
       calculateCellValue: (rowData) =>
         rowData.isIncome ? 'Income' : 'Expense',
     });
-    columns.push({
-      caption: 'Impaired',
-      dataField: 'isImpaired',
-      headerCellTemplate: 'accountingEventHeader',
-      cellTemplate: 'pointer',
-      appendsCurrency: 'false',
-      usesLocalFormat: 'false',
-      usesFunctionalFormat: 'false',
-      calculateCellValue: (rowData) => (rowData.isImpaired ? 'Yes' : 'No'),
-    });
+    if (classificationId !== 0 && classificationId !== 5) {
+      columns.push({
+        caption: 'Impaired',
+        dataField: 'isImpaired',
+        headerCellTemplate: 'accountingEventHeader',
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        calculateCellValue: (rowData) => (rowData.isImpaired ? 'Yes' : 'No'),
+      });
+    }
     columns.push({
       caption: 'Comments',
       dataField: 'comments',
@@ -647,6 +741,21 @@ export class EventsGridColumnsService {
         ),
     });
     columns.push({
+      caption: 'Termination Fee',
+      dataField: 'terminationFee',
+      headerCellTemplate: 'accountingEventHeader',
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'true',
+      usesFunctionalFormat: 'false',
+      visible: false,
+      format: (value) =>
+        this.formattingService.localFormat(
+          +value,
+          currencyInfo.localCurrencyDecimalPrecision
+        ),
+    });
+    columns.push({
       caption: 'Beginning Asset Balance (' + currencyInfo.localCurrency + ')',
       dataField: 'openingAssetBalance',
       headerCellTemplate: 'accountingEventHeader',
@@ -690,6 +799,21 @@ export class EventsGridColumnsService {
         this.formattingService.functionalFormat(
           +value,
           currencyInfo.functionalCurrencyDecimalPrecision
+        ),
+    });
+    columns.push({
+      caption: 'Termination Fee',
+      dataField: 'terminationFee',
+      headerCellTemplate: 'accountingEventHeader',
+      cellTemplate: 'pointer',
+      appendsCurrency: 'true',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'true',
+      visible: false,
+      format: (value) =>
+        this.formattingService.localFormat(
+          +value,
+          currencyInfo.localCurrencyDecimalPrecision
         ),
     });
     columns.push({

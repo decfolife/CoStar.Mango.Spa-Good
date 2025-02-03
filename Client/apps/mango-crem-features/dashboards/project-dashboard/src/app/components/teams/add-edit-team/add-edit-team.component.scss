@@ -65,3 +65,28 @@ h3.label {
     color: lightgray;
   }
 }
+
+.emailToggle,
+.sharedToggle {
+  display: flex;
+  justify-content: center;
+}
+
+::ng-deep .dialogServiceComponent {
+  height: 244px !important;
+}
+
+::ng-deep div.dx-overlay-wrapper {
+  &.aetRoleCustomClass {
+    .dx-overlay-content {
+      min-width: 200px;
+      .dx-popup-content {
+        min-height: 24vh !important;
+        height: 24vh !important;
+        .dx-scrollable-wrapper {
+          max-height: 24vh;
+        }
+      }
+    }
+  }
+}

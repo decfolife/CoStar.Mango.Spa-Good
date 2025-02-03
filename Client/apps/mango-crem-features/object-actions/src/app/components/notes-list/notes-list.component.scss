@@ -1,7 +1,23 @@
 @use 'styles' as *;
 
+.note-list-container {
+  width: 100%;
+  height: 100%;
+}
+
 .grid-container {
-  height: calc(100% - 80px);
+  height: calc(100% - 48px);
+}
+
+.page-content {
+  @include costar(padding, 4);
+}
+
+.moreHidespan {
+  /*  color: #727ef0;  */
+  cursor: pointer !important;
+  font-size: 12px;
+  text-decoration: underline;
 }
 
 .actions-container {
@@ -10,14 +26,82 @@
   gap: 8px;
 }
 
+div.actionsMenuTemplate {
+  transform: translateY(10px);
+}
+
+::ng-deep .highLightSearchedText {
+  background-color: #ffff00;
+}
+
+.querySearchDivEle {
+  align-items: normal;
+}
 button.userOptionsMenuBtn:focus {
   box-shadow: 0 0 0 0.1rem #779ede;
 }
 
-:host ::ng-deep .not-clickable {
-  cursor: default !important;
+button.btn.btn-default.moreButton {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: $color-black;
+  height: 36px !important;
+
+  mat-icon {
+    transform: translateY(2px);
+  }
+
+  &:focus {
+    outline: 2px solid $color-black;
+    @include costar(box-shadow, gray04);
+  }
 }
 
-:host ::ng-deep .not-clickable > .dx-template-wrapper > a {
-  cursor: pointer !important;
+::ng-deep .dx-datagrid-column-chooser {
+  &.dx-overlay-wrapper {
+    .dx-treeview-expander-icon-stub {
+      display: none;
+    }
+
+    .dx-overlay-content div.dx-popup-content {
+      padding: 0px !important;
+    }
+  }
+}
+
+:host ::ng-deep {
+  .dx-sort-index-icon {
+    visibility: hidden !important;
+  }
+
+  .not-clickable {
+    cursor: default !important;
+  }
+
+  .not-clickable > .dx-template-wrapper > a {
+    cursor: pointer !important;
+  }
+
+  table.dx-datagrid-table {
+    tbody {
+      tr.dx-row.dx-data-row {
+        &:hover {
+          cursor: default;
+        }
+        &.dx-row-alt {
+          &:hover {
+            cursor: default;
+            td {
+              cursor: default;
+            }
+          }
+        }
+      }
+    }
+  }
+  .dx-datagrid-nowrap,
+  .dx-datagrid-nowrap .dx-header-row > td > .dx-datagrid-text-content {
+    white-space: pre-wrap;
+  }
 }

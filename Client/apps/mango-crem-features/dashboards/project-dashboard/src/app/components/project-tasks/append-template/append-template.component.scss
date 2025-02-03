@@ -60,4 +60,12 @@
 
 ::ng-deep .appendTemplateModal {
   transition: height 0.5s;
+
+  .modalCloseButton,
+  #apt-view-project-preview-button {
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.1rem $primary-lighter;
+    }
+  }
 }

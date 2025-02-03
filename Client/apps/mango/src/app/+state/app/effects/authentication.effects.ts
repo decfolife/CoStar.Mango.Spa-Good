@@ -7,6 +7,7 @@ import {
   parseBool,
 } from '@mango/core-shared/lib-core-shared';
 import {
+  ContactRecord,
   OAuthTokenHTTPResponse,
   UserAuth,
 } from '@mango/data-models/lib-data-models';
@@ -17,6 +18,7 @@ import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import * as AppActions from '../app.actions';
 import { MangoAppFacade } from '../app.facade';
 import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
+import { Idle } from '@ng-idle/core';
 
 @Injectable()
 export class AuthenticationEffects {
@@ -26,7 +28,8 @@ export class AuthenticationEffects {
     private jwtService: JwtService,
     private navigationService: MangoNavigationService,
     private router: Router,
-    private facade: MangoAppFacade
+    private facade: MangoAppFacade,
+    private idle: Idle
   ) {}
 
   loadCurrentUser$ = createEffect(() =>
@@ -101,6 +104,7 @@ export class AuthenticationEffects {
             isAutoProvisioned: parseBool(decodedToken.isAutoProvisioned),
             isServiceAccount: parseBool(decodedToken.isServiceAccount),
             isRemUser: parseInt(decodedToken.securityLevel) > -1,
+            securityLevel: parseInt(decodedToken.securityLevel),
           };
 
           if (UtilitiesService.isLocalEnvironment()) {
@@ -116,11 +120,21 @@ export class AuthenticationEffects {
 
           this.facade.setAuthenticatedUser(user);
 
-          return combineLatest([of(action.redirectionUrl)]);
+          return combineLatest([
+            of(action.redirectionUrl),
+            this.facade.contactRecord$,
+          ]);
         }
       ),
-      switchMap(([redirectUrl]: [string]) => {
-        let url = redirectUrl ? decodeURIComponent(redirectUrl) : '/';
+      filter(([redirectUrl, contactRecord]) => !!contactRecord),
+      switchMap(([redirectUrl, contactRecord]: [string, ContactRecord]) => {
+        let startPage =
+          contactRecord.preferences.contactStartPage == null
+            ? '/'
+            : contactRecord.preferences.contactStartPage.split('|')[1];
+
+        let url = redirectUrl ? decodeURIComponent(redirectUrl) : startPage;
+
         this.router.navigateByUrl(url);
 
         return of(AppActions.init());
@@ -132,12 +146,24 @@ export class AuthenticationEffects {
     () =>
       this.actions$.pipe(
         ofType(AppActions.LOGOUT_ACTION),
-        tap((action: { logoutV06: boolean }) => {
+        tap((action: { logoutV06: boolean; sessionExpired: boolean }) => {
+          this.idle.clearInterrupts();
+          this.idle.stop();
           this.authService.logout();
           this.facade.clearState();
 
           if (UtilitiesService.isLocalEnvironment()) {
-            window.location.href = environment.CAUrl;
+            if (action.sessionExpired) {
+              this.router.navigate(['/auth/session-expired']);
+              return;
+            }
+
+            this.navigationService.redirectToCentralAuth(true);
+            return;
+          }
+
+          if (action.sessionExpired) {
+            this.router.navigate(['/auth/session-expired']);
             return;
           }
 

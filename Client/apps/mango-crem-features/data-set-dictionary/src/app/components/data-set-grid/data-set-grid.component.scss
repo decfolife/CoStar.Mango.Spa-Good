@@ -1,4 +1,9 @@
+@use 'styles' as *;
 @import '../../../../../../mango/src/assets/styles/colors.scss';
+
+.page-content {
+  @include costar(padding, 4);
+}
 
 ::ng-deep {
   dx-data-grid {

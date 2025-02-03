@@ -1,4 +1,15 @@
-<div>
+<div class="auto-height">
+  <div class="clearfix">
+    <crem-button
+      [id]="
+        accountingSummaryService.getId(componentName, 'sendToExcel', 'button')
+      "
+      type="secondary"
+      (click)="onExporting($event)"
+      class="je-primary-button send-to-excel"
+      >Send to Excel</crem-button
+    >
+  </div>
   <dx-data-grid
     #RetrospectiveAdjustment
     [id]="accountingSummaryService.getId(componentName, 'popup', 'grid')"
@@ -16,16 +27,16 @@
     [columnAutoWidth]="false"
     (onCellClick)="onRetroAmortizationCellClick($event)"
     (onExporting)="onExporting($event)"
+    height="445px"
     [loadPanel]="{
       enabled: true,
       shading: true,
       visible: true,
       shadingColor: 'rgba(0, 0, 0, 0.4)'
     }"
+    class="grid-custom-style"
   >
     <dxo-scrolling mode="virtual"> </dxo-scrolling>
-
-    <dxo-export [enabled]="true"></dxo-export>
 
     <div *dxTemplate="let info of 'amortizationHeader'">
       <p title="{{ info.column.caption }}" class="header-column-caption">
@@ -46,6 +57,7 @@
           href="#"
           (click)="$event.preventDefault()"
           class="link-class"
+          [attr.aria-label]="cell.text ? null : 'No Data'"
           >{{ cell.text }}</a
         >
       </div>

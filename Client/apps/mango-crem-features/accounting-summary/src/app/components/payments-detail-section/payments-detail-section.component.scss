@@ -1,10 +1,11 @@
+@use 'colors' as colors;
 .grid-header {
   text-align: center;
 }
 
 .dx-header-row {
-  background-color: rgb(36, 90, 136) !important;
-  color: rgb(232, 230, 227);
+  background-color: colors.$costarDarkBlue !important;
+  color: colors.$white;
   font-weight: 100;
 }
 

@@ -1,0 +1,636 @@
+<form [formGroup]="balanceCardForm" class="balance-cards">
+  <!-- Opening Balance Card -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.openingBalance"
+    [title]="'Opening Balance'"
+    [currency]="localCurrency"
+    [customHeader]="openingBalanceCustomHeader"
+  >
+    <div class="custom-content">
+      <span *ngIf="!showOpeningBalanceInput">{{
+        localFormat(balanceCardsModel.openingBalance)
+      }}</span>
+      <span *ngIf="showOpeningBalanceInput">
+        <dx-number-box
+          [id]="generateCardId('Opening Balance', 'opening-balance-input')"
+          formControlName="openingBalanceInput"
+          [format]="formatCurrencyInput()"
+          [inputAttr]="{ 'aria-label': 'Opening Balance' }"
+        >
+        </dx-number-box>
+      </span>
+    </div>
+
+    <ul class="balance-card-details-row">
+      <li
+        [id]="
+          generateCardId('Opening Balance', 'override-opening-balance-label')
+        "
+        class="balance-card-label"
+      >
+        Override Opening Balance
+      </li>
+      <li>
+        <crem-check-box
+          [id]="
+            generateCardId('Opening Balance', 'override-opening-balance-value')
+          "
+          class="balance-card-value"
+          [value]="false"
+          [disabled]="false"
+          [elementAttr]="{ 'aria-label': 'Override Opening Balance' }"
+          formControlName="overrideOpeningBalance"
+        ></crem-check-box>
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Asset Balance Card -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.assetBalance"
+    [title]="'Asset Balance'"
+    [amount]="localFormat(balanceCardsModel.openingAssetBalance)"
+    [currency]="localCurrency"
+    [customHeader]="false"
+  >
+    <ul
+      class="balance-card-details-row"
+      *ngIf="balanceCardsModel.measureEvent !== 'Initial'"
+    >
+      <li
+        [id]="generateCardId('Asset Balance', 'previous-balance-label')"
+        class="balance-card-label"
+      >
+        Previous Balance
+      </li>
+      <li
+        [id]="generateCardId('Asset Balance', 'previous-balance-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.previousAssetBalance) }}
+      </li>
+    </ul>
+
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Asset Balance', 'direct-cost-label')"
+        class="balance-card-label"
+      >
+        Direct Cost
+      </li>
+      <li
+        [id]="generateCardId('Asset Balance', 'direct-cost-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.directCost) }}
+      </li>
+    </ul>
+
+    <ul class="balance-card-details-row">
+      <li class="balance-card-label">System Adjustment</li>
+      <li class="balance-card-value">
+        {{ localFormat(balanceCardsModel.systemAssetAdjustment) }}
+      </li>
+    </ul>
+
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Asset Balance', 'manual-adjustment-label')"
+        class="balance-card-label"
+      >
+        Manual Adjustment
+      </li>
+      <li class="balance-card-value">
+        <dx-number-box
+          [id]="generateCardId('Asset Balance', 'manual-adjustment-input')"
+          [format]="formatCurrencyInput()"
+          formControlName="manualAssetAdjustment"
+          [inputAttr]="{ 'aria-label': 'Manual Adjustment' }"
+        >
+        </dx-number-box>
+      </li>
+    </ul>
+
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Asset Balance', 'total-adjustment-label')"
+        class="balance-card-label"
+      >
+        Total Adjustment
+      </li>
+      <li
+        [id]="generateCardId('Asset Balance', 'total-adjustment-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(getTotalAssetAdjustment()) }}
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Level Expense Card  -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.levelExpense"
+    [title]="'Level Expense'"
+    [amount]="localFormat(balanceCardsModel.levelExpense)"
+    [currency]="localCurrency"
+    [customHeader]="false"
+  >
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Level Expense', 'undiscounted-amount-label')"
+        class="balance-card-label"
+      >
+        Undiscounted Amount
+      </li>
+      <li
+        [id]="generateCardId('Level Expense', 'undiscounted-amount-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.undiscountedAmount) }}
+      </li>
+    </ul>
+    <ul
+      class="balance-card-details-row"
+      *ngIf="balanceCardsModel.measureEvent !== 'Initial'"
+    >
+      <li
+        [id]="generateCardId('Level Expense', 'carry-forward-label')"
+        class="balance-card-label"
+      >
+        Carry Forward
+      </li>
+      <li
+        [id]="generateCardId('Level Expense', 'carry-forward-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(getCarryForward()) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Level Expense', 'direct-cost-label')"
+        class="balance-card-label"
+      >
+        Direct Cost
+      </li>
+      <li
+        [id]="generateCardId('Level Expense', 'direct-cost-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.directCost) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Level Expense', 'number-of-days-label')"
+        class="balance-card-label"
+      >
+        Number of Days
+      </li>
+      <li
+        [id]="generateCardId('Level Expense', 'number-of-days-value')"
+        class="balance-card-value"
+      >
+        {{ balanceCardsModel.termInDays }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Level Expense', 'manual-adjustment-label')"
+        class="balance-card-label"
+      >
+        Manual Adjustment
+      </li>
+      <li
+        [id]="generateCardId('Level Expense', 'manual-adjustment-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.manualAssetAdjustment) }}
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Adjustments Card -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.adjustments"
+    [title]="'Total Adjustments'"
+    [amount]="localFormat(balanceCardsModel.totalAdjustment)"
+    [currency]="localCurrency"
+    [customHeader]="false"
+  >
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Total Adjustments', 'system-adjustment-label')"
+        class="balance-card-label"
+      >
+        System Adjustment
+      </li>
+      <li
+        [id]="generateCardId('Total Adjustments', 'system-adjustment-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.systemAssetAdjustment) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Total Adjustments', 'manual-adjustment-label')"
+        class="balance-card-label"
+      >
+        Manual Adjustment
+      </li>
+      <li
+        [id]="generateCardId('Total Adjustments', 'manual-adjustment-value')"
+        class="balance-card-value"
+      >
+        <dx-number-box
+          [id]="
+            generateCardId('Asset Balance', 'manual-adjustment-operating-input')
+          "
+          formControlName="manualAssetAdjustment"
+          [format]="formatCurrencyInput()"
+          [inputAttr]="{ 'aria-label': 'Manual Adjustment' }"
+        >
+        </dx-number-box>
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Asset Amortization Card -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.assetAmortization"
+    [title]="'Asset Amortization'"
+    [amount]="localFormat(balanceCardsModel.assetAmortization)"
+    [currency]="localCurrency"
+    [customHeader]="false"
+  >
+    <ul class="balance-card-details-row">
+      <li
+        [id]="
+          generateCardId('Asset Amortization', 'opening-asset-balance-label')
+        "
+        class="balance-card-label"
+      >
+        Opening Asset Balance
+      </li>
+      <li
+        [id]="
+          generateCardId('Asset Amortization', 'opening-asset-balance-value')
+        "
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.openingAssetBalance) }}
+      </li>
+    </ul>
+
+    <ul
+      class="balance-card-details-row"
+      *ngIf="balanceCardsModel.amortizationMethodTypeID === 2"
+    >
+      <li
+        [id]="generateCardId('Asset Amortization', 'number-of-days-label')"
+        class="balance-card-label"
+      >
+        Number of Days
+      </li>
+      <li
+        [id]="generateCardId('Asset Amortization', 'number-of-days-value')"
+        class="balance-card-value"
+      >
+        {{ balanceCardsModel.termInDays }}
+      </li>
+    </ul>
+
+    <ul
+      class="balance-card-details-row"
+      *ngIf="balanceCardsModel.amortizationMethodTypeID === 1"
+    >
+      <li
+        [id]="generateCardId('Asset Amortization', 'number-of-periods-label')"
+        class="balance-card-label"
+      >
+        Number of Periods
+      </li>
+      <li
+        [id]="generateCardId('Asset Amortization', 'number-of-periods-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.termInPeriods, 2) }}
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Straight Line Card -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.straightLineExpense"
+    [title]="
+      balanceCardsModel.classificationID === 0
+        ? 'Straight Line Expense'
+        : 'Straight Line Income'
+    "
+    [amount]="
+      balanceCardsModel.amortizationMethodTypeID === 1
+        ? localFormat(balanceCardsModel.straightLineExpense)
+        : localFormat(balanceCardsModel.straightLineExpenseDaily)
+    "
+    [currency]="localCurrency"
+    [customHeader]="false"
+  >
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Straight Line', 'undiscounted-amount-label')"
+        class="balance-card-label"
+      >
+        Undiscounted Amount
+      </li>
+      <li
+        [id]="
+          generateCardId('Straight Line Expense', 'undiscounted-amount-value')
+        "
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.undiscountedAmount) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Straight Line Expense', 'adjustments-label')"
+        class="balance-card-label"
+      >
+        Adjustments
+      </li>
+      <li
+        [id]="generateCardId('Straight Line Expense', 'adjustments-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(getTotalAssetAdjustment()) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Straight Line Expense', 'option-charges-label')"
+        class="balance-card-label"
+      >
+        Option Charges
+      </li>
+      <li
+        [id]="generateCardId('Straight Line Expense', 'option-charges-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.optionCharges) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="
+          generateCardId(
+            'Straight Line',
+            balanceCardsModel.amortizationMethodTypeID === 1
+              ? 'number-of-periods-label'
+              : 'number-of-days-label'
+          )
+        "
+        class="balance-card-label"
+      >
+        {{
+          balanceCardsModel.amortizationMethodTypeID === 1
+            ? 'Number of Periods'
+            : 'Number of Days'
+        }}
+      </li>
+      <li
+        [id]="
+          generateCardId(
+            'Straight Line',
+            balanceCardsModel.amortizationMethodTypeID === 1
+              ? 'number-of-periods-value'
+              : 'number-of-days-value'
+          )
+        "
+        class="balance-card-value"
+      >
+        {{
+          balanceCardsModel.amortizationMethodTypeID === 1
+            ? balanceCardsModel.termInPeriods
+            : balanceCardsModel.termInDays
+        }}
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Present Value Card -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.presentValue"
+    [title]="'Present Value'"
+    [currency]="localCurrency"
+    [amount]="localFormat(balanceCardsModel.presentValue)"
+    [customHeader]="showPresentValueLink"
+  >
+    <div class="custom-content">
+      <a (click)="presentValuePreviewExcel()" class="present-value-link">{{
+        localFormat(balanceCardsModel.presentValue)
+      }}</a>
+    </div>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Present Value', 'undiscounted-amount-label')"
+        class="balance-card-label"
+      >
+        Undiscounted Amount
+      </li>
+      <li
+        [id]="generateCardId('Present Value', 'undiscounted-amount-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.undiscountedAmount) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Present Value', 'effective-rate-label')"
+        class="balance-card-label"
+      >
+        Effective Rate
+      </li>
+      <li
+        [id]="generateCardId('Present Value', 'effective-rate-value')"
+        class="balance-card-value"
+      >
+        {{ formatEffectiveRate() + '%' }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Present Value', 'term-label')"
+        class="balance-card-label"
+      >
+        Term
+      </li>
+      <li
+        [id]="generateCardId('Present Value', 'term-value')"
+        class="balance-card-value"
+      >
+        {{ balanceCardsModel.termString }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Present Value', 'compound-frequency-label')"
+        class="balance-card-label"
+      >
+        Compound Frequency
+        <span class="color-danger">*</span>
+      </li>
+      <li
+        [id]="generateCardId('Present Value', 'compound-frequency-value')"
+        class="balance-card-value"
+      >
+        <crem-dropdown
+          [id]="generateCardId('Present Value', 'compound-frequency-dropdown')"
+          [dataSource]="[
+            { displayKey: 'Monthly', valueKey: 1 },
+            { displayKey: 'Daily', valueKey: 2 }
+          ]"
+          valueExpr="valueKey"
+          displayExpr="displayKey"
+          [required]="true"
+          [showClearButton]="false"
+          formControlName="compoundFrequency"
+          [containerized]="true"
+          [placeholder]="'Compound Frequency'"
+        ></crem-dropdown>
+      </li>
+    </ul>
+    <ul
+      class="balance-card-details-row"
+      *ngIf="
+        !addEventFormService.operatingClassifications.includes(
+          balanceCardsModel.classificationID
+        )
+      "
+    >
+      <li
+        [id]="generateCardId('Present Value', 'payment-timing-label')"
+        class="balance-card-label"
+      >
+        Payment Timing
+        <span class="color-danger">*</span>
+      </li>
+      <li
+        [id]="generateCardId('Present Value', 'payment-timing-value')"
+        class="balance-card-value"
+      >
+        <crem-dropdown
+          [id]="generateCardId('Present Value', 'payment-timing-dropdown')"
+          [dataSource]="[
+            { displayKey: 'Beginning of Period', valueKey: 1 },
+            { displayKey: 'End of Period', valueKey: 2 }
+          ]"
+          valueExpr="valueKey"
+          displayExpr="displayKey"
+          [required]="true"
+          [showClearButton]="false"
+          formControlName="paymentTiming"
+          [containerized]="true"
+          [placeholder]="'Payment Timing'"
+        >
+        </crem-dropdown>
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Liability Balance Card -->
+  <mango-balance-cards
+    *ngIf="cardsEnabled.liabilityBalance"
+    [title]="'Liability Balance'"
+    [amount]="localFormat(balanceCardsModel.openingLiabilityBalance)"
+    [currency]="localCurrency"
+    [customHeader]="false"
+  >
+    <ul
+      class="balance-card-details-row"
+      *ngIf="balanceCardsModel.measureEvent !== 'Initial'"
+    >
+      <li
+        [id]="generateCardId('Liability Balance', 'previous-liability-label')"
+        class="balance-card-label"
+      >
+        Previous Liability
+      </li>
+      <li
+        [id]="generateCardId('Liability Balance', 'previous-liability-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.previousLiabilityBalance) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Liability Balance', 'liability-adjustment-label')"
+        class="balance-card-label"
+      >
+        Liability Adjustment
+      </li>
+      <li
+        [id]="generateCardId('Liability Balance', 'liability-adjustment-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.liabilityAdjustmentAmount) }}
+      </li>
+    </ul>
+  </mango-balance-cards>
+
+  <!-- Gain / Loss Card -->
+  <mango-balance-cards
+    *ngIf="
+      cardsEnabled.gainLoss && balanceCardsModel.measureEvent !== 'Initial'
+    "
+    [title]="'Gain Loss'"
+    [amount]="localFormat(getGainLoss())"
+    [currency]="localCurrency"
+    [customHeader]="false"
+  >
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Gain Loss', 'termination-fee-label')"
+        class="balance-card-label"
+      >
+        Termination Fee
+      </li>
+      <li
+        [id]="generateCardId('Gain Loss', 'termination-fee-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.terminationFee) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Gain Loss', 'liability-adjustment-label')"
+        class="balance-card-label"
+      >
+        Liability Adjustment
+      </li>
+      <li
+        [id]="generateCardId('Gain Loss', 'liability-adjustment-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(balanceCardsModel.liabilityAdjustmentAmount) }}
+      </li>
+    </ul>
+    <ul class="balance-card-details-row">
+      <li
+        [id]="generateCardId('Gain Loss', 'total-asset-adjustment-label')"
+        class="balance-card-label"
+      >
+        Total Asset Adjustment
+      </li>
+      <li
+        [id]="generateCardId('Gain Loss', 'total-asset-adjustment-value')"
+        class="balance-card-value"
+      >
+        {{ localFormat(getTotalAssetAdjustment()) }}
+      </li>
+    </ul>
+  </mango-balance-cards>
+</form>

@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'ui-shared-lib-external-libraries',
   preset: '../../../jest.preset.js',

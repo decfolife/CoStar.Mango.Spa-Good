@@ -6,11 +6,13 @@ import {
   FormItemDatabaseTables,
   FormItemSourceColumnbySourceTable,
   FormItemTypes,
-  FormItemsDropdownValuesDto,
   IFields,
+  ISection,
+  ObjectParentLinker,
   RenderFormDropdowns,
-  Widget,
+  SaveRenderFormCommand,
 } from '@forms/model/dynamic-forms.interface';
+import { ApiResponse } from '@forms/model/api-response';
 
 export const FORMSLIST_LOAD_SUCCESS = '[FormsList] Load Success';
 export const FORMSLIST_LOAD_FAILURE = '[FormsList] Load Failure';
@@ -42,6 +44,8 @@ export const LOAD_AVAILABLE_FIELDS_FAILURE =
 export const LOAD_FIELDS = '[DynamicForm] Load Fields';
 export const LOAD_FIELDS_SUCCESS = '[DynamicForm] Load Fields Success';
 export const LOAD_FIELDS_FAILURE = '[DynamicForm] Load Fields Failure';
+export const LOAD_ALL_FIELDS_SUCCESS = '[DynamicForm] Load All Fields Success';
+export const LOAD_ALL_FIELDS_FAILURE = '[DynamicForm] Load All Fields Failure';
 
 export const clearDynamicFormsState = createAction(
   '[DynamicForm] Clear Dynamic Form State'
@@ -64,11 +68,12 @@ export const formListloadFailure = createAction(
 // Dynamic Form
 export const dynamicFormLoad = createAction(
   DYNAMIC_FORM_LOAD,
-  props<{ formId: number }>()
+  props<{ formId: number; objectId: number }>()
 );
-export const dynamicFormLoadSuccess = createAction(
+//export const dynamicFormLoadSuccess = createAction( DYNAMIC_FORM_LOAD_SUCCESS, props<{ dynamicForm: DynamicFormEntity }>() );
+export const dynamicFormLoadSuccessWithStatus = createAction(
   DYNAMIC_FORM_LOAD_SUCCESS,
-  props<{ dynamicForm: DynamicFormEntity }>()
+  props<{ apiResponse: ApiResponse }>()
 );
 export const dynamicFormLoadFailure = createAction(
   DYNAMIC_FORM_LOAD_FAILURE,
@@ -79,7 +84,16 @@ export const setObjectId = createAction(
   props<{ objectId: number }>()
 );
 // Dynamic Form Actions
-export const dynamicFormLoadActions = createAction(LOAD_ACTIONS);
+export const dynamicFormLoadActions = createAction(
+  LOAD_ACTIONS,
+  props<{
+    formId: number;
+    objectId: number;
+    objectTypeId: number;
+    objectTypeTypeId: number;
+    isEditMode: boolean;
+  }>()
+);
 export const dynamicFormLoadActionLoadSuccess = createAction(
   LOAD_ACTIONS_SUCCESS,
   props<{ formActions: any }>()
@@ -90,7 +104,8 @@ export const dynamicFormLoadActionLoadFailure = createAction(
 );
 //Dynamic Form Available Sections
 export const dynamicFormLoadAvailableSections = createAction(
-  LOAD_AVAILABLE_SECTIONS
+  LOAD_AVAILABLE_SECTIONS,
+  props<{ formId: number; objectTypeId: number }>()
 );
 export const dynamicFormLoadAvailableSectionsSuccess = createAction(
   LOAD_AVAILABLE_SECTIONS_SUCCESS,
@@ -101,7 +116,10 @@ export const dynamicFormLoadAvailableSectionsFailure = createAction(
   props<{ error: Error }>()
 );
 //Dynamic Form Sections (on form)
-export const dynamicFormLoadSections = createAction(LOAD_SECTIONS);
+export const dynamicFormLoadSections = createAction(
+  LOAD_SECTIONS,
+  props<{ formId: number }>()
+);
 export const dynamicFormLoadSectionsSuccess = createAction(
   LOAD_SECTIONS_SUCCESS,
   props<{ formSections: any }>()
@@ -111,9 +129,9 @@ export const dynamicFormLoadSectionsFailure = createAction(
   props<{ error: Error }>()
 );
 
-export const addSectionToForm = createAction(
-  '[DynamicForm] Add Section to Form',
-  props<{ section: any }>()
+export const addAvailableSectionToForm = createAction(
+  '[DynamicForm] Add Available Section to Form',
+  props<{ section: ISection }>()
 );
 export const removeSectionFromAvailableSections = createAction(
   '[DynamicForm] Remove Section from Available Sections',
@@ -169,6 +187,15 @@ export const dynamicFormLoadFieldsFailure = createAction(
   LOAD_FIELDS_FAILURE,
   props<{ sectionId: number; error: any }>()
 );
+
+export const dynamicFormLoadAllFieldsSuccess = createAction(
+  LOAD_ALL_FIELDS_SUCCESS,
+  props<{ formFields: IFields[]; formSections: any }>()
+);
+export const dynamicFormLoadAllFieldsFailure = createAction(
+  LOAD_ALL_FIELDS_FAILURE,
+  props<{ error: any }>()
+);
 export const updateFormFieldBySectionId = createAction(
   '[DynamicForm] Field Updated',
   props<{ sectionId: number; field: IFields }>()
@@ -201,14 +228,15 @@ export const dynamicFormLoadFormItemDataTypesFailure = createAction(
 );
 
 //Dynamic Form Item Widget
+export const dynamicFormLoadWidgetByWidgetIdSuccessWithStatus = createAction(
+  '[DynamicForm] Load Form Widget By Widget Id Success',
+  props<{ widgetId: number; apiResponse: ApiResponse }>()
+);
 export const dynamicFormLoadWidgetByWidgetId = createAction(
   '[DynamicForm] Load Form Widget By Widget Id',
   props<{ widgetId: number }>()
 );
-export const dynamicFormLoadWidgetByWidgetIdSuccess = createAction(
-  '[DynamicForm] Load Form Widget By Widget Id Success',
-  props<{ widget: Widget }>()
-);
+//export const dynamicFormLoadWidgetByWidgetIdSuccess = createAction('[DynamicForm] Load Form Widget By Widget Id Success', props<{ widget: Widget }>());
 export const dynamicFormLoadWidgetByWidgetIdFailure = createAction(
   '[DynamicForm] Load Form Widget By Widget Id Failure',
   props<{ error: any }>()
@@ -287,7 +315,7 @@ export const dynamicFormLoadFormNameFailure = createAction(
 //Render Form Item Dropdowns
 export const renderFormLoadFormItemDropdowns = createAction(
   '[RenderForm] Load Render Form Item Dropdowns',
-  props<{ data: FormItemsDropdownValuesDto[] }>()
+  props<{ formId: number; objectId: number; objectTypeId: number }>()
 );
 export const renderFormLoadFormItemDropdownsSuccess = createAction(
   '[RenderForm] Load Render Form Item Dropdowns Success',
@@ -295,5 +323,33 @@ export const renderFormLoadFormItemDropdownsSuccess = createAction(
 );
 export const renderFormLoadFormItemDropdownsFailure = createAction(
   '[RenderForm] Load Render Form Item Dropdowns Failure',
+  props<{ error: Error }>()
+);
+
+//Dynamic Form Parent Link (on form)
+export const renderFormLoadLoadParentLink = createAction(
+  '[RenderForm] Load ParentLink',
+  props<{ objectId: number; objectTypeId: number }>()
+);
+export const renderFormLoadLoadParentLinkSuccess = createAction(
+  '[RenderForm] Load ParentLink Success',
+  props<{ objectParentLinker: ObjectParentLinker }>()
+);
+export const renderFormLoadLoadParentLinkFailure = createAction(
+  '[RenderForm] Load ParentLink Failure',
+  props<{ error: Error }>()
+);
+
+//Save Render Form
+export const saveRenderForm = createAction(
+  '[SaveRenderForm] Save Render Form',
+  props<{ saveRenderFormCommand: SaveRenderFormCommand }>()
+);
+export const saveRenderFormSuccess = createAction(
+  '[SaveRenderForm] Save Render Form Success',
+  props<{ apiResponse: ApiResponse }>()
+);
+export const saveRenderFormFailure = createAction(
+  '[SaveRenderForm] Save Render Form Failure',
   props<{ error: Error }>()
 );

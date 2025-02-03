@@ -9,28 +9,37 @@ import { EndpointService } from './endpoint.service';
 import { UtilitiesService } from '@mango/core-shared';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class UserInfoService extends EndpointService {
-    userServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.user)
+  userServiceUrl: string = UtilitiesService.getBaseApiUrl(Api.user);
 
-    constructor(protected http: HttpClient, protected facade: MangoAppFacade) {
-        super(http, facade)
-    }
+  constructor(protected http: HttpClient, protected facade: MangoAppFacade) {
+    super(http, facade);
+  }
 
-    getUserLoginInfo(): Observable<any> {
-        let url: string = `${this.userServiceUrl}/UserService/GetUserLoginInformation`;
-        return this.callHttpGet(url, 'getUserLoginInfo');
-    }
+  getUserLoginInfo(): Observable<any> {
+    let url: string = `${this.userServiceUrl}UserService/GetUserLoginInformation`;
+    return this.callHttpGet(url, 'getUserLoginInfo');
+  }
 
-    getGlobalSession(): Observable<any> {
-        return this.callHttpGet(`${this.userServiceUrl}/session`, 'getGlobalSession');
-    }
+  getGlobalSession(): Observable<any> {
+    return this.callHttpGet(
+      `${this.userServiceUrl}session`,
+      'getGlobalSession'
+    );
+  }
 
-    updateGlobalSession(session: V06GlobalSession): Observable<any> {
-        return this.facade.globalSession$.pipe(
-            filter(globalSession => !!globalSession),
-            switchMap(globalSession => this.callHttpPost(`${this.userServiceUrl}session`, 'updateGlobalSession', session || globalSession))
+  updateGlobalSession(session: V06GlobalSession): Observable<any> {
+    return this.facade.globalSession$.pipe(
+      filter((globalSession) => !!globalSession),
+      switchMap((globalSession) =>
+        this.callHttpPost(
+          `${this.userServiceUrl}session`,
+          'updateGlobalSession',
+          session || globalSession
         )
-    }
+      )
+    );
+  }
 }

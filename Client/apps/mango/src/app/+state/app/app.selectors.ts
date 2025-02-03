@@ -8,10 +8,10 @@ export const currentSubApp = createSelector(
   (state: State) => state.currentSubApp
 );
 
-export const loaded = createSelector(
-  getAppState,
-  (state: State) => state.loaded
-);
+export const loaded = createSelector(getAppState, (state: State) => {
+  // when change loss prevention is active we need to toggle the loading overalay
+  return state.isChangeLossPreventionActive || state.loaded;
+});
 
 export const authenticatedUser = createSelector(
   getAppState,
@@ -61,6 +61,14 @@ export const clientInfo = createSelector(
 export const contactRecord = createSelector(
   getAppState,
   (state: State) => state.contactRecord
+);
+
+export const dateFormatPreference = createSelector(
+  getAppState,
+  (state: State) =>
+    state?.contactRecord?.preferences?.contactDatesEU
+      ? 'dd.MM.yyyy'
+      : 'MM/dd/yyyy'
 );
 
 export const userHasMultipleContactRecords = createSelector(

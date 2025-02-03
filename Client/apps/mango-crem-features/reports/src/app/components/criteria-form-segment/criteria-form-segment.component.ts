@@ -319,6 +319,7 @@ export class CriteriaFormSegmentComponent {
             }
             itemObject = {
               // Portfolio Field *********************************
+              sort: displayName,
               dataField: isDependent
                 ? item.criteriaID
                 : item.criteriaSourceFieldName,
@@ -353,29 +354,28 @@ export class CriteriaFormSegmentComponent {
             if (!selectedIndex && noDefaultValues) {
               selectedIndex = item.values?.[0];
             }
-            if (item.criteriaDesc === 'Calendar')
-              itemObject = {
-                // Calendar Field *********************************
-                dataField: isDependent
-                  ? item.criteriaID
-                  : item.criteriaSourceFieldName,
-                fieldType: 'dropdown',
-                caption: item.criteriaDesc,
-                required: true,
-                displayExpr: displayName,
-                valueExpr: valueKey,
-                dataSource: item.values,
-                selectMode: 'single',
-                hoverText:
-                  'Select the ' + item.criteriaDesc + ' of the project',
-                disabled: false,
-                delimeter: item.criteriaDelimeter,
-                value: selectedIndex ? [selectedIndex] : [],
-                data: {
-                  criteriaID: item.criteriaID,
-                },
-                criteriaDataType: item.criteriaDataType,
-              };
+
+            itemObject = {
+              dataField: isDependent
+                ? item.criteriaID
+                : item.criteriaSourceFieldName,
+              fieldType: 'dropdown',
+              caption: item.criteriaDesc,
+              required: true,
+              displayExpr: displayName,
+              valueExpr: valueKey,
+              dataSource: item.values,
+              selectMode: 'single',
+              hoverText: 'Select the ' + item.criteriaDesc + ' of the project',
+              disabled: false,
+              delimeter: item.criteriaDelimeter,
+              value: selectedIndex ? [selectedIndex] : [],
+              data: {
+                criteriaID: item.criteriaID,
+              },
+              criteriaDataType: item.criteriaDataType,
+            };
+
             if (this.defaultValues?.[item.criteriaID]) {
               this.defaultValues[item.criteriaID] = [];
             }

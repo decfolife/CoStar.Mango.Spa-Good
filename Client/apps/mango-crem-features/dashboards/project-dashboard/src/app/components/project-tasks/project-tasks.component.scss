@@ -162,6 +162,10 @@
   .wrapOption-column {
     white-space: nowrap;
   }
+
+  .pt-legacyLink {
+    color: $primary-light;
+  }
 }
 
 ::ng-deep .projectTasks-dataGrid-wrapper {
@@ -381,5 +385,12 @@
         }
       }
     }
+  }
+}
+
+::ng-deep div.dx-overlay-wrapper.dx-popup-wrapper {
+  &.pts-startDateWrapper,
+  &.pts-dueDateWrapper {
+    z-index: 999 !important;
   }
 }

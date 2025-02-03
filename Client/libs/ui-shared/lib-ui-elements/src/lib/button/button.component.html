@@ -1,6 +1,6 @@
 <button
   type="button"
-  [id]="id"
+  [attr.id]="id"
   [ngClass]="getCssClasses()"
   [class]="className"
   [style]="styles"
@@ -10,7 +10,6 @@
   [attr.aria-haspopup]="ariaHasPopUp"
   [attr.aria-expanded]="ariaExpanded"
 >
-
   <ng-container *ngIf="icon">
     <crem-icon
       class="icon"
@@ -38,10 +37,9 @@
         textProp.childElementCount === 0
       "
     >
-      {{text}}
+      {{ text }}
     </ng-container>
   </span>
 
   <span class="tag"></span>
-
 </button>

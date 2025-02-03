@@ -258,6 +258,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   public urlOTTID: number;
   public noDataText: string = 'No Data';
 
+  private _userHasAddRights = false;
   private _intitialListPageRequestedId: number = 0;
   private _isSuperUser = true;
   private _canEditNotes = true;
@@ -507,7 +508,6 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.urlOTTID = parseInt(upperCaseParams['OTTID'] || '0');
 
     //Set the objectTypeId from the value passed in the route instead of from the service if overrideInputSettings is true
-    //and if the isRestful flag is true
     if (this.overrideInputSettings) {
       this.activatedroute.data.subscribe((routeData) => {
         this.objectTypeId = routeData.objectTypeId;
@@ -528,11 +528,8 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     this.service.getListPageProperties().subscribe((res: ApiResponse) => {
       if (this.overrideInputSettings === true) {
-        //if the isRestful flag is false then we need to set the objectTypeId
-        // isRestful should always be true
-        // if (!environment.isRestful) {
-        //   this.objectTypeId = res.data.objectTypeId;
-        // }
+        // this.objectTypeId = res.data.objectTypeId;
+
         this._intitialListPageRequestedId = res.data.listPage ?? 0;
         this._isSuperUser = res.data.isSuperUser;
         this._canEditNotes = res.data.canEditNotes;
@@ -593,6 +590,14 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
       this.populateListViewMenu(true, true);
     });
+
+    this.service
+      .getUserModuleRights(ObjectType.CONTACT.toString())
+      .subscribe((u) => {
+        this._userHasAddRights = u.data.filter((r: any) => r.hasAddRights)[0][
+          'hasAddRights'
+        ];
+      });
   }
 
   loadGoogleMapsAPIScript() {
@@ -1619,6 +1624,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
         data: {
           objectTypeId: this.objectTypeId,
           userId: this.userId,
+          objectId: objectId,
         },
       });
     } else if (objectId === ObjectType.CONTACT) {
@@ -1641,7 +1647,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   public btnAddCompany() {
     let dialogRef = this.dialog.open(AddCompanyModalComponent, {
       disableClose: true,
-      height: '390px',
+      height: '420px',
       width: '700px',
       maxWidth: '1100px',
       data: {

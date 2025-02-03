@@ -20,12 +20,14 @@
         <span
           class="slider-label slider-label-inside slider-label-inside__checked"
           *ngIf="value"
+          [attr.aria-disabled]="disabled"
         >
           {{ checkedLabel }}
         </span>
         <span
           class="slider-label slider-label-inside slider-label-inside__unchecked"
           *ngIf="!value"
+          [attr.aria-disabled]="disabled"
         >
           {{ uncheckedLabel }}
         </span>

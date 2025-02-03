@@ -22,7 +22,7 @@ export class RetrospectiveAdjustmentInfoComponent {
   @Input() gridColumnsForRetroPopup: any[];
   @Input() classificationType: string;
   @Input() amortizationProfileName: string;
-  @Output() retroAdustmentGridRowClickEvent: EventEmitter<any> =
+  @Output() retroAdjustmentGridRowClickEvent: EventEmitter<any> =
     new EventEmitter();
 
   componentName = 'retrospective_adjustment-info';
@@ -71,7 +71,7 @@ export class RetrospectiveAdjustmentInfoComponent {
 
   onRetroAmortizationCellClick(event) {
     if (event.column.name === 'JEStatus' && event.displayValue !== null) {
-      this.retroAdustmentGridRowClickEvent.emit(event);
+      this.retroAdjustmentGridRowClickEvent.emit(event);
     }
   }
 

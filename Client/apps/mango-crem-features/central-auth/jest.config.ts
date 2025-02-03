@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'mango-crem-features-central-auth',
   preset: '../../../jest.preset.js',

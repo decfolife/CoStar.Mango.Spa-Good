@@ -20,6 +20,8 @@ import {
 import { switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
+import { ToastState } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-add-note',
@@ -53,11 +55,13 @@ export class AddNoteComponent implements OnInit, OnDestroy {
   characterCountText: string;
   maxCommonNoteTextLength = 7000;
   newNoteSaved = false;
+  noteDeleted = false;
   noteTypeDropdownInValid = false;
   noteBodyTextAreaInValid = false;
   dragPosition: any;
   addNoteResult: any;
   disableSaveBtn = false;
+  isInEditMode = false;
   private noteId: number;
   private objectId: number;
   private objectTypeId: number;
@@ -68,6 +72,7 @@ export class AddNoteComponent implements OnInit, OnDestroy {
     private dashboardService: DashboardService,
     private dialogService: MangoDialogService,
     public dialogRef: MatDialogRef<AddNoteComponent>,
+    private toastService: CremToastService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.noteId = data.noteId;
@@ -83,6 +88,9 @@ export class AddNoteComponent implements OnInit, OnDestroy {
     this.updateAddNoteResult();
     this.getCommonNoteTypes();
     this.setCharacterCountText();
+    if (this.noteId > 0) {
+      this.isInEditMode = true;
+    }
   }
 
   ngOnDestroy() {
@@ -105,7 +113,7 @@ export class AddNoteComponent implements OnInit, OnDestroy {
         .subscribe((result) => {
           this.data.objectTypeName = result?.data?.[0]?.objectTypeName;
           if (this.noteId > 0) {
-            this.modalTitle = `Update ${result?.data?.[0]?.objectTypeName} Note (${this.noteId})`;
+            this.modalTitle = `Edit ${result?.data?.[0]?.objectTypeName} Note (${this.noteId})`;
           } else {
             this.modalTitle = `Add ${result?.data?.[0]?.objectTypeName} Note`;
           }
@@ -129,11 +137,6 @@ export class AddNoteComponent implements OnInit, OnDestroy {
     this.noteBodyTextAreaInValid = !noteBodyValidationResult.isValid;
 
     if (this.noteTypeDropdownInValid || this.noteBodyTextAreaInValid) {
-      this.dialogService.alert(
-        'Validation Error(s)',
-        'You have left at least one required field empty.\r\n\r\nPlease update and try again.',
-        'OK'
-      );
       this.disableSaveBtn = false;
       return;
     }
@@ -154,16 +157,27 @@ export class AddNoteComponent implements OnInit, OnDestroy {
             if (!!saveRes && saveRes.success && saveRes.data > 0) {
               this.newNoteSaved = true;
               this.updateAddNoteResult();
-              alertClosedOnSuccess = this.dialogService.alert(
-                'Save Note',
-                'The note was saved successfully.',
-                'OK'
+
+              alertClosedOnSuccess = of(true);
+              this.toastService.show(
+                'Note saved successfully.',
+                undefined,
+                ToastState.SUCCESS,
+                {
+                  maxWidth: '360px',
+                  duration: 3000,
+                }
               );
             } else {
-              this.dialogService.alert(
-                'Save Note Error',
-                'There was an issue with saving the note. Please contact the system administrator.',
-                'OK'
+              alertClosedOnSuccess = of(false);
+              this.toastService.show(
+                'Oops, something went wrong saving your note. Please try again.',
+                'Error',
+                ToastState.ERROR,
+                {
+                  maxWidth: '360px',
+                  duration: 8000,
+                }
               );
             }
             this.disableSaveBtn = false;
@@ -191,6 +205,7 @@ export class AddNoteComponent implements OnInit, OnDestroy {
   private updateAddNoteResult() {
     this.addNoteResult = {
       saveSuccessful: this.newNoteSaved,
+      deleteSuccessful: this.noteDeleted,
       newDragPosition: this.dragPosition,
     };
   }
@@ -215,6 +230,29 @@ export class AddNoteComponent implements OnInit, OnDestroy {
           );
         }
       })
+    );
+  }
+
+  public deleteNote(e) {
+    this.subs.push(
+      this.notesService
+        .deleteNotebyId(this.noteId, this.objectId, this.objectTypeId)
+        .subscribe((res) => {
+          if (!!res && res.success) {
+            this.noteDeleted = true;
+            this.updateAddNoteResult();
+            this.toastService.show(
+              'To view the archived note, go to View History.',
+              'Note successfully deleted',
+              ToastState.SUCCESS,
+              {
+                maxWidth: '360px',
+                duration: 3000,
+              }
+            );
+            this.closeModal();
+          }
+        })
     );
   }
 }

@@ -161,16 +161,16 @@ export class DataService extends EndpointService {
     if (newField) {
       this.columnStore.update(key, fields[0]);
       if (key === 'Leases') {
-        this.updateLeaseData(this.segmentID, false);
+        this.updateLeaseData(data.segmentID, false);
       } else if (key === 'Periods') {
         this.updatePeriodsData(
-          this.calendar,
+          data.segmentID,
           this.portfolios,
           this.years,
           false
         );
       } else if (key === 'Alerts') {
-        this.updateAlertsData(this.calendar, this.portfolios, false);
+        this.updateAlertsData(data.segmentID, this.portfolios, false);
       }
     } else {
       this._cardNeedUpdate.next({ key, needUpdate: false });

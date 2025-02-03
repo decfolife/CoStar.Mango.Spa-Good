@@ -62,12 +62,12 @@ export class CentralAuthHttpInterceptor
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (UtilitiesService.isLocalEnvironment()) {
-      let token = this.jwtService.getToken();
-      const headers = this.generateRequestHeaders(token);
-      const request = req.clone({ setHeaders: headers });
-      return next.handle(request).pipe(catchError(this.handleError));
-    }
+    // if (UtilitiesService.isLocalEnvironment()) {
+    //   let token = this.jwtService.getToken();
+    //   const headers = this.generateRequestHeaders(token);
+    //   const request = req.clone({ setHeaders: headers });
+    //   return next.handle(request).pipe(catchError(this.handleError));
+    // }
 
     return this.facade.user$.pipe(
       take(1),

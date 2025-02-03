@@ -122,3 +122,17 @@ export const Disabled: Story = {
       `,
   }),
 };
+
+export const SuccessWithTitleOnHover: Story = {
+  args: {
+    text: 'Success Pill',
+    type: 'success',
+    titleOnHover: 'some title on hover',
+  },
+  render: (args: CremPillComponent) => ({
+    props: args,
+    template: `
+      <crem-pill ${argsToTemplate(args)} ><crem-pill>
+      `,
+  }),
+};

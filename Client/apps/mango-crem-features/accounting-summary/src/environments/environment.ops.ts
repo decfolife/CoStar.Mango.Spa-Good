@@ -14,8 +14,6 @@ class EnvironmentsCrem {
     header: '',
     identity: '',
   };
-
-  isRestful = false;
 }
 
 export const environment = new EnvironmentsCrem();

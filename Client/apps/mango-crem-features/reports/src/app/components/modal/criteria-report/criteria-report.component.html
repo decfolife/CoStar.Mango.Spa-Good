@@ -20,6 +20,7 @@
     <crem-vertical-stepper display="1" *ngIf="!loading && showSegment">
       <crem-dynamic-form
         #SegmentForm
+        class="w-100"
         [config]="segmentConfig"
         (changeEvent)="onChange($event)"
         idPrefix="segmentForm"
@@ -34,7 +35,6 @@
               [placeholder]="fieldData.placeHolder || 'Select...'"
               [showClearButton]="true"
               [showColumnHeader]="false"
-              [required]="fieldData.required"
               [displayExpr]="fieldData.displayExpr || 'value'"
               [valueExpr]="fieldData.valueExpr || 'value'"
               [isVisible]="!fieldData.hidden"

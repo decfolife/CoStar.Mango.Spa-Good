@@ -4,3 +4,13 @@
     gap: 1em;
   }
 }
+
+::ng-deep {
+  #idle-timeout-popup {
+    .dx-overlay-content {
+      .dx-popup-content-scrollable {
+        height: unset !important;
+      }
+    }
+  }
+}

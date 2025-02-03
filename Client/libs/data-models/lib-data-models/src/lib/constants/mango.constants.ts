@@ -1,5 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
+export const AppRoutingTitle = 'CoStar Real Estate Manager - ';
+
 export const RUNNING_IN_MANGO_SPA = new InjectionToken<boolean>(
   'RUNNING_IN_MANGO_SPA',
   {
@@ -16,6 +18,7 @@ export const BREADCUMBS_LENGTH = 5;
 export const SUB_LEFT_NEV_PAGES_URLS = [
   'render-form',
   '/crem/portfolio/expenses',
+  '/crem/portfolio/revenues',
   '/crem/accounting/summary',
   '/crem/projects/project-team',
   '/crem/projects/project-tasks',
@@ -43,6 +46,13 @@ export const PORTFOLIO_DROPDOWN_ERROR =
 export const CURRENCY_DROPDOWN_ERROR =
   'An error occurred while getting currency data please contact the system administrator.';
 export const VALIDATION_ERROR = 'Please fill out the required fields.';
+
+//Constant for Add Premise
+export const PREMISE_WIZARD_OTID = 2;
+//Constant for Add Building
+export const BUILDING_WIZARD_OTID = 3;
+//Constant for Add Lease
+export const LEASE_WIZARD_OTID = 4;
 
 //Constants for Add Supplier
 export const RENDER_SELECT_TEMPLATE_ID = 132;

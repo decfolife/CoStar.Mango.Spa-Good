@@ -1,0 +1,234 @@
+<div cdkDrag>
+  <div cdkDragHandle class="card-drag-handle" [id]="config.id + 'DragDrop'">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="drag_handle"
+      height="24px"
+      viewBox="0 0 24 24"
+      width="24px"
+      fill="#BFBFBF"
+    >
+      <path d="M0 0h24v24H0z" fill="none" />
+      <path d="M24 9H4v2h24V9zM4 15h24v-2H4v2z" />
+    </svg>
+  </div>
+
+  <crem-card
+    [id]="config.id + 'Card'"
+    [title]="config.name"
+    [showFilterClearButton]="false"
+    [pendoTitleId]="config.id + 'Title'"
+    [customDropdownMenu]="true"
+    [filterData]="config.filterData"
+    [filterInitialValue]="config.filterInitialValue"
+    (selectedFilter)="emitSelection($event)"
+    fxFlexFill
+  >
+    <ng-template #customDropdownMenu>
+      <div class="card-header--right">
+        <!-- Pivot Chart Toggle -->
+        <ng-container [ngSwitch]="config.defaultCardView">
+          <ng-container *ngSwitchCase="'pivotGrid'">
+            <crem-icon
+              *ngIf="config.chartVisible"
+              [id]="config.id + '--chart-button'"
+              class="chart-toggle"
+              [ngClass]="{ 'chart-toggle-visible': config.chartVisible }"
+              icon="faChartBar"
+              pack="solid"
+              (click)="toggleChartButton()"
+              [attr.title]="config.chartVisible ? 'Hide Chart' : 'Show Chart'"
+              size="xl"
+            ></crem-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="'dataGrid'">
+            <crem-icon
+              *ngIf="config.chartVisible"
+              [id]="config.id + '--chart-button'"
+              class="chart-toggle"
+              [ngClass]="{
+                'chart-toggle-visible': config.chartVisible,
+                'color-gray04': config.chartActive
+              }"
+              icon="faChartBar"
+              pack="solid"
+              [attr.title]="'Chart not available on List View'"
+              size="xl"
+            ></crem-icon>
+          </ng-container>
+        </ng-container>
+        <!-- End Pivot Chart Toggle -->
+
+        <!-- Ellipsis -->
+        <button
+          [id]="config.id + 'MoreOption'"
+          class="btn btn-default btn-sm moreOptionsBtn"
+          [matMenuTriggerFor]="cardMenu"
+          (click)="$event.preventDefault()"
+          [attr.aria-label]="'More Options'"
+        >
+          <mat-icon [attr.aria-label]="'More Options'">more_horiz</mat-icon>
+        </button>
+
+        <mat-menu #cardMenu="matMenu">
+          <button
+            *ngIf="config.showMenuToggleFullWidth"
+            mat-menu-item
+            (click)="toggleCardWidth()"
+          >
+            {{
+              config?.fullWidth
+                ? 'Switch to Half Width'
+                : 'Switch to Full Width'
+            }}
+          </button>
+
+          <button
+            mat-menu-item
+            *ngIf="config.showFieldChooser || config.dataGrid?.columnChooser"
+            (click)="showColumnChooser()"
+          >
+            {{
+              config?.defaultCardView === 'pivotGrid'
+                ? 'Field Chooser'
+                : 'Column Chooser'
+            }}
+          </button>
+
+          <button
+            mat-menu-item
+            *ngIf="config.allowToggleCardView"
+            (click)="toggleCardView()"
+          >
+            {{
+              config?.defaultCardView === 'pivotGrid'
+                ? 'Change to List View'
+                : 'Change to Pivot View'
+            }}
+          </button>
+
+          <!-- <button mat-menu-item>
+						<mat-slide-toggle
+							[checked]="config.showRowTotals"
+							(change)="toggleGrandTotal('row')"
+							[disabled]="config.defaultCardView === 'dataGrid'"
+						>
+							Show Row Grand Total
+						</mat-slide-toggle>
+					</button>
+
+					<button mat-menu-item>
+						<mat-slide-toggle
+							[checked]="config.showColumnGrandTotals"
+							(change)="toggleGrandTotal('column')"
+							[disabled]="config.defaultCardView === 'dataGrid'"
+						>
+							Show Column Grand Total
+						</mat-slide-toggle>
+					</button> -->
+
+          <button
+            mat-menu-item
+            *ngIf="config.showMenuReset ?? true"
+            (click)="emitReset()"
+          >
+            Reset
+          </button>
+
+          <button
+            mat-menu-item
+            *ngIf="config.showMenuSave ?? true"
+            (click)="emitSave()"
+          >
+            Save
+          </button>
+
+          <!-- [disabled]="config.defaultCardView === 'dataGrid'"
+					[attr.title]="
+						config.defaultCardView === 'dataGrid' ?
+							'Save is not available in list view.'
+							: 'Save card configuration'" -->
+        </mat-menu>
+        <!-- End Ellipsis -->
+      </div>
+    </ng-template>
+
+    <div class="card-content scroll-container vertical" fxflexFill>
+      <ng-container *ngIf="config.defaultCardView === 'pivotGrid'">
+        <dx-chart
+          #PivotChart
+          [id]="config.id + '--chart'"
+          *ngIf="config.chartActive && config.chartVisible"
+          resolveLabelOverlapping="none"
+        >
+          <dxo-size [height]="200"></dxo-size>
+          <dxo-adaptive-layout [width]="450"></dxo-adaptive-layout>
+          <dxo-common-series-settings type="bar"></dxo-common-series-settings>
+          <dxo-tooltip
+            [enabled]="true"
+            [customizeTooltip]="customizeChartTooltip"
+          ></dxo-tooltip>
+        </dx-chart>
+      </ng-container>
+
+      <dx-pivot-grid
+        #PivotGrid
+        *ngIf="
+          !config.defaultCardView || config.defaultCardView === 'pivotGrid'
+        "
+        [allowSortingBySummary]="config.allowSortingBySummary ?? true"
+        [allowFiltering]="config.allowFiltering ?? true"
+        [showBorders]="config.showBorders ?? true"
+        [showRowGrandTotals]="config.showRowGrandTotals ?? false"
+        [showColumnGrandTotals]="config.showColumnGrandTotals ?? false"
+        [showRowTotals]="config.showRowTotals ?? false"
+        [showColumnTotals]="config.showColumnTotals ?? false"
+        [dataSource]="pivotDataSources"
+        (onCellPrepared)="onCellPrepared($event)"
+        [texts]="config.texts"
+      >
+        <dxo-field-chooser [enabled]="true"></dxo-field-chooser>
+        <dxo-texts total="Total"></dxo-texts>
+      </dx-pivot-grid>
+
+      <dx-data-grid
+        #DataGrid
+        *ngIf="config.defaultCardView === 'dataGrid'"
+        [dataSource]="gridDataSources"
+        [showBorders]="config.showBorders ?? true"
+        [customizeColumns]="dataGridCustomizeColumns.bind(this)"
+      >
+        <dxo-column-chooser
+          [enabled]="config.dataGrid?.columnChooser ?? false"
+          [mode]="config.dataGrid?.columnChooserMode ?? 'select'"
+        ></dxo-column-chooser>
+
+        <dxo-header-filter
+          [visible]="config.dataGrid?.headerFilterVisible ?? true"
+          [allowSearch]="config.dataGrid?.headerFilterAllowSearch ?? true"
+        ></dxo-header-filter>
+
+        <dxo-sorting
+          [mode]="config.dataGrid?.sorting ?? 'multiple'"
+        ></dxo-sorting>
+
+        <dxo-column-fixing
+          [enabled]="config.dataGrid?.columnFixing ?? true"
+        ></dxo-column-fixing>
+
+        <dxo-paging [pageSize]="config.dataGrid?.pageSize ?? 100"></dxo-paging>
+
+        <dxo-pager
+          [showPageSizeSelector]="config.dataGrid?.showPageSizeSelector ?? true"
+          [allowedPageSizes]="
+            config.dataGrid?.allowedPageSizes ?? [25, 50, 100, 500]
+          "
+          [showInfo]="config.dataGrid?.showInfo ?? false"
+          [showNavigationButtons]="
+            config.dataGrid?.showNavigationButtons ?? true
+          "
+        ></dxo-pager>
+      </dx-data-grid>
+    </div>
+  </crem-card>
+</div>

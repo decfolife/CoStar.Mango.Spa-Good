@@ -1,9 +1,9 @@
 <crem-modal
+  id="note-modal"
   [modalTitle]="modalTitle"
-  [primaryFooterButtonText]="'Save'"
-  [closeOrCancelButtonText]="'Cancel'"
   [closeIconVisible]="true"
   [closeDialogResult]="addNoteResult"
+  [customFooter]="true"
   [modalId]="modalId"
   [primaryFooterButtonEnabledDisabled]="disableSaveBtn"
   [dragPosition]="dragPosition"
@@ -46,7 +46,7 @@
       <dx-text-area
         id="noteTextArea"
         [value]="commonNoteText"
-        [height]="150"
+        [height]="382"
         [maxLength]="maxCommonNoteTextLength"
         [inputAttr]="{
           'aria-label': 'Add Note Text',
@@ -55,10 +55,33 @@
         (onInput)="onInputEvent($event)"
       >
         <dx-validator #NoteBodyValidator name="noteBodyValidator">
-          <dxi-validation-rule type="required" message=""></dxi-validation-rule>
+          <dxi-validation-rule
+            type="required"
+            message="Note required"
+          ></dxi-validation-rule>
         </dx-validator>
       </dx-text-area>
       <p>{{ characterCountText }}</p>
+    </div>
+  </div>
+  <div modalFooter class="footerContent note">
+    <div class="footerLeftControls">
+      <crem-button
+        *ngIf="isInEditMode"
+        type="secondary"
+        id="footerDelete"
+        (click)="deleteNote($event)"
+      >
+        Delete
+      </crem-button>
+    </div>
+    <div class="footerRightControls">
+      <crem-button type="secondary" id="footerCancel" (click)="closeModal()">
+        Cancel
+      </crem-button>
+      <crem-button type="primary" id="footerSave" (click)="saveNote()">
+        Save
+      </crem-button>
     </div>
   </div>
 </crem-modal>

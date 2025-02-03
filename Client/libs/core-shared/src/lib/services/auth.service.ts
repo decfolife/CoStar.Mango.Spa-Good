@@ -86,6 +86,7 @@ export class AuthService {
         isAutoProvisioned: parseBool(decodedToken.isAutoProvisioned),
         isServiceAccount: parseBool(decodedToken.isServiceAccount),
         isRemUser: parseInt(decodedToken.securityLevel) > -1,
+        securityLevel: parseInt(decodedToken.securityLevel),
       };
 
       return of(user);
@@ -161,7 +162,7 @@ export class AuthService {
   }
 
   changePassword(request: UpdatePasswordRequest) {
-    let url = `${this.authenticationUrl}/password/change`;
+    let url = `${this.authenticationUrl}password/change`;
     return this.http.post(url, request).pipe(
       catchError((error) => {
         return throwError(error);

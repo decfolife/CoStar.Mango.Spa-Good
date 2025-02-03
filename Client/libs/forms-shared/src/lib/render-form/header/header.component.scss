@@ -1,0 +1,243 @@
+@use 'styles' as *;
+.object-wrapper1 {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: white;
+  .object-banner1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    border-bottom: 1px solid #bfbfbf;
+    width: 100%;
+
+    .object-close {
+      display: flex;
+      height: 100%;
+      width: 50px;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid #bfbfbf;
+      cursor: pointer;
+      color: #808080;
+
+      fa-icon {
+        font-size: 24px;
+      }
+    }
+
+    .object-file-comments-notifications {
+      display: flex;
+      flex-direction: column;
+      width: 48px;
+      height: 100%;
+      padding: 0.5rem 1rem;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: space-between;
+      border-left: 1px solid #bfbfbf;
+      cursor: pointer;
+      color: #bfbfbf;
+    }
+
+    .dot {
+      height: 4px;
+      width: 4px;
+      background-color: #000000;
+      border-radius: 50%;
+      display: inline-block;
+      margin: 3px 5px;
+    }
+
+    .object-image {
+      width: 150px;
+      height: 100%;
+      background-image: url('/assets/images/phipps.jpg');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+    }
+    &.hero {
+      height: 125px;
+    }
+  }
+
+  .object-group {
+    width: 100%;
+    display: flex;
+    padding: 10px;
+
+    .title-and-subtitle {
+      flex-grow: 1;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .title {
+      font-size: 22px;
+      color: #033871;
+      // white-space: nowrap;
+    }
+
+    .reviews {
+      justify-content: center;
+      .images {
+        display: flex;
+        flex-direction: column;
+        text-align: right;
+        justify-content: right;
+        .logos {
+          display: flex;
+          flex-direction: row;
+          flex-grow: 1;
+          justify-content: right;
+          img {
+            max-height: 100%;
+            max-width: 48px;
+          }
+        }
+        .stars {
+          margin: 0px 10px 10px 14px;
+          img {
+            max-width: 75px;
+          }
+        }
+      }
+    }
+  }
+}
+
+::ng-deep #renderFormHeader crem-metric {
+  // font-family: $font-family-brand;
+  mat-card.mat-mdc-card.costar-hero-metric-card {
+    border: 0;
+    display: inline-block;
+    margin-bottom: 0;
+    margin-right: 30px;
+    min-width: max-content;
+    height: 80px;
+  }
+
+  mat-card.mat-mdc-card {
+    // border: $stdBorder;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    padding: 0px !important;
+  }
+
+  mat-card-header.mat-mdc-card-header {
+    border-bottom: 0px;
+    padding: 0px;
+    height: 16px;
+
+    div.mat-mdc-card-header-text {
+      margin: 0px;
+      display: flex;
+      flex-direction: column;
+      text-transform: capitalize !important;
+      font-size: 14px !important;
+
+      mat-card-title {
+        font-size: 16px;
+        line-height: 16px;
+        color: gray;
+        font-weight: 400;
+        text-transform: capitalize !important;
+        margin: 0px 16px 0 0 !important;
+      }
+    }
+  }
+
+  mat-card-content.mat-mdc-card-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0px;
+    margin: 0;
+    background: white;
+
+    .hero-value {
+      color: black;
+      font-size: 32px;
+      line-height: 32px;
+      margin: 8px 0px;
+    }
+
+    .sidekick-value-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-content: center;
+      // margin-left: $dblPadding;
+    }
+
+    .sidekick-value {
+      display: flex;
+      border-radius: 2px;
+      font-size: $font-size-14;
+      @include costar(font-family, body);
+      text-align: center;
+      padding: 0 4px;
+      margin: 0px;
+      &.green {
+        @include costar(border, success, $important: true);
+        background: transparent !important;
+        @include costar(color, success, $important: true);
+      }
+      &.red {
+        @include costar(border, danger, $important: true);
+        background: transparent !important;
+        @include costar(color, danger, $important: true);
+      }
+      &.gray {
+        @include costar(border, gray03, $important: true);
+        background: transparent !important;
+        @include costar(color, gray03, $important: true);
+      }
+    }
+  }
+
+  crem-icon {
+    position: relative;
+    left: 2px;
+  }
+
+  mat-card-footer {
+    margin: 0px;
+    height: 14px;
+
+    mat-card-subtitle {
+      color: gray;
+      display: inline-block;
+      font-size: 14px;
+      line-height: 14px;
+      font-weight: 400;
+      margin: 0 !important;
+      text-transform: capitalize;
+    }
+  }
+
+  .iconWrapper.dx-field-value-static {
+    padding: 0px;
+    width: 20px;
+    position: relative;
+    right: -7px;
+    top: -4px;
+  }
+}
+
+div.bounds {
+  width: 100%;
+  height: 112px;
+  display: flex;
+  // flex-direction: column;
+  justify-content: center;
+  overflow: auto hidden;
+  background: white;
+  margin: 0px;
+  scrollbar-width: thin;
+}

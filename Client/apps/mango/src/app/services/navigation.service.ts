@@ -24,6 +24,39 @@ export class MangoNavigationService {
   ) {}
 
   handleSpaNavigation(navLink: SharedLeftNavLink, clientKey: string): void {
+    //when navLink is the link for a category we need to navigate to the category url
+    if (
+      !navLink.hasOwnProperty('dynamicName') &&
+      navLink.hasOwnProperty('categoryHasFlyOutMenu') &&
+      navLink.categoryHasFlyOutMenu
+    ) {
+      if (navLink.categorySpaUrl) {
+        this.router.navigateByUrl(
+          `${navLink.categorySpaUrl}${
+            navLink.categorySpaQueryParameters
+              ? `?${navLink.categorySpaQueryParameters}`
+              : ``
+          }`
+        );
+      } else {
+        const redirectionUrl = `${environment.cremBaseUrl.replace(
+          '[CLIENT]',
+          clientKey
+        )}${navLink.categoryLinkUrl.startsWith('/') ? '' : '/'}${
+          navLink.categoryLinkUrl
+        }`;
+        this.navigateToUrl(redirectionUrl);
+      }
+
+      return;
+    }
+
+    // when the linkUrl is an anchor link we need to scroll to the anchor.
+    if (navLink.linkUrl.startsWith('#')) {
+      this.scrollToAnchor(navLink.linkUrl);
+      return;
+    }
+
     if (navLink.spaUrl) {
       this.router.navigateByUrl(
         `${navLink.spaUrl}${
@@ -34,7 +67,7 @@ export class MangoNavigationService {
       const redirectionUrl = `${environment.cremBaseUrl.replace(
         '[CLIENT]',
         clientKey
-      )}/${navLink.linkUrl}`;
+      )}${navLink.linkUrl.startsWith('/') ? '' : '/'}${navLink.linkUrl}`;
       this.navigateToUrl(redirectionUrl);
     }
   }
@@ -49,25 +82,25 @@ export class MangoNavigationService {
       ? environment.CAUrl
       : `${environment.CAUrl}/${clientKey}`;
 
-    if (!includeRedirectUri) {
-      window.location.href = caUrl;
-      return;
-    }
-
     const urlParts = this.routerLocation.path().split('?');
     const extraParamsIndex = urlParts.findIndex(
       (urlPart) =>
         urlPart.includes(OAUTH_CLIENT_KEY_QUERY_PARAM) ||
         urlPart.includes(OAUTH_CONTACT_ID_QUERY_PARAM)
     );
+
     const redirectUri = urlParts
       .filter((urlPart, index) => index !== extraParamsIndex)
       .join('?');
-    const url = `${caUrl}?${
+
+    let url = `${caUrl}?${
       extraParamsIndex !== -1 ? `${urlParts[extraParamsIndex]}&` : ''
-    }${OAUTH_REDIRECT_QUERY_PARAM}=${`${
-      window.location.origin
-    }/auth/validate?redirect_uri=${encodeURIComponent(redirectUri)}`}`;
+    }${OAUTH_REDIRECT_QUERY_PARAM}=${`${window.location.origin}/auth/validate`}`;
+
+    if (includeRedirectUri) {
+      url += `?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    }
+
     window.location.href = url;
   }
 
@@ -139,6 +172,10 @@ export class MangoNavigationService {
       return of(true);
     }
 
+    if (!queryParamsStr.toLowerCase().includes('otid')) {
+      return of(true);
+    }
+
     let queryParams = queryParamsStr.toLowerCase().split('&');
     let objType = queryParams
       .find((qp) => qp.indexOf('otid') >= 0)
@@ -158,5 +195,12 @@ export class MangoNavigationService {
     }
 
     return of(false);
+  }
+
+  // scroll to the anchor element ID
+  scrollToAnchor(elementId: string) {
+    document
+      .getElementById(elementId.replace('#', ''))
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }

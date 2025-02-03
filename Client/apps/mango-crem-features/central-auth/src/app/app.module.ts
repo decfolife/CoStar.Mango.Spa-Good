@@ -60,20 +60,20 @@ if (!environment.production) {
       {
         path: '',
         component: LoginComponent,
-        title: 'CoStar Real Estate Manger Secure Login',
+        title: 'CoStar Real Estate Manager Secure Login',
       },
       {
         path: 'customer-selection',
         component: CustomerSelectionPageComponent,
         canActivate: [AuthGuard],
-        title: 'Customer Selection - CoStar Real Estate Manger Secure Login',
+        title: 'Customer Selection - CoStar Real Estate Manager Secure Login',
       },
       {
         path: 'service-account-configuration',
         component: ServiceAccountConfigurationComponent,
         canActivate: [AuthGuard],
         title:
-          'Service Account Configuration - CoStar Real Estate Manger Secure Login',
+          'Service Account Configuration - CoStar Real Estate Manager Secure Login',
       },
       {
         path: 'reset-password',
@@ -81,7 +81,7 @@ if (!environment.production) {
           import('./components/reset-password/reset-password.module').then(
             (mod) => mod.ResetPasswordModule
           ),
-        title: 'Reset Password - CoStar Real Estate Manger Secure Login',
+        title: 'Reset Password - CoStar Real Estate Manager Secure Login',
       },
       {
         path: 'password-reset-request',
@@ -89,12 +89,12 @@ if (!environment.production) {
           import(
             './components/password-reset-request/password-reset-request.module'
           ).then((mod) => mod.PasswordResetRequestModule),
-        title: 'Reset Password - CoStar Real Estate Manger Secure Login',
+        title: 'Reset Password - CoStar Real Estate Manager Secure Login',
       },
       {
         path: ':clientKey',
         component: LoginComponent,
-        title: 'CoStar Real Estate Manger Secure Login',
+        title: 'CoStar Real Estate Manager Secure Login',
       },
       { path: '', redirectTo: '', pathMatch: 'full' },
       { path: '**', redirectTo: '', pathMatch: 'full' },

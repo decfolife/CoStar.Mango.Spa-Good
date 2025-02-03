@@ -8,6 +8,7 @@ export enum RequestType {
   CONTACT_GROUP_LIST = 37,
   CONTACT_COMPANY_LIST = 93,
   BUILDINGS_LIST = 130,
+  PREMISE_TYPE_ID = 23,
 }
 
 export enum ObjectTypeTypeID {

@@ -1,5 +1,5 @@
 <div *ngIf="jeProcessingPopupData">
-  <div>
+  <div id="jeProcessingTab">
     <div id="section-one">
       <div class="container">
         <div class="clearfix">
@@ -87,130 +87,170 @@
     <div class="no-je-profile-selected" *ngIf="showNoJeProfileSelected">
       No Journal Entry Profile Selected
     </div>
-    <div
-      id="section-two"
-      [ngClass]="calloutClass"
-      *ngIf="showJournalEntries || showActionButton"
-    >
-      <div class="custom-col metric-label">
-        <strong>Debits: </strong
-        >{{
-          formattingService.localFormat(
-            getDebitCreditTotal().debit,
-            eventScheduleData.localCurrencyDecimalPrecision
-          )
-        }}
-      </div>
-      <div class="custom-col metric-label">
-        <strong>Credits: </strong
-        >{{
-          formattingService.localFormat(
-            getDebitCreditTotal().credit,
-            eventScheduleData.localCurrencyDecimalPrecision
-          )
-        }}
-      </div>
-      <div class="custom-col metric-label">
-        <strong>Variance: </strong
-        >{{
-          formattingService.localFormat(
-            getDebitCreditTotal().debit - getDebitCreditTotal().credit,
-            eventScheduleData.localCurrencyDecimalPrecision
-          )
-        }}
-      </div>
 
-      <div class="custom-col metric-label">
-        <strong>Balanced: </strong>
-        <crem-icon
-          *ngIf="
-            jeProcessingPopupData?.journalEntries !== undefined &&
-            jeProcessingPopupData?.journalEntries !== null &&
-            jeProcessingPopupData.journalEntries[0]?.isBalanced
-          "
-          class="fa-md balanced-icon"
-          icon="faCheckCircle"
-        ></crem-icon>
-        <crem-icon
-          *ngIf="
-            eventScheduleData.isReportingException !== true &&
-            jeProcessingPopupData?.journalEntries !== undefined &&
-            jeProcessingPopupData?.journalEntries !== null &&
-            !jeProcessingPopupData.journalEntries[0]?.isBalanced
-          "
-          class="fa-md not-balanced-icon"
-          icon="faTimesCircle"
-        ></crem-icon>
-      </div>
-
-      <div class="custom-col metric-label">{{ calloutText }}</div>
-
-      <div class="custom-col metric-label">
+    <div id="section-three" *ngIf="showJournalEntries">
+      <div class="clearfix">
         <crem-button
-          [id]="actionsButtonId"
-          type="primary"
-          (click)="actionButton()"
-          *ngIf="showActionButton"
-          [disabled]="isButtonDisabled || isActionButtonDisabled"
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'sendToExcel',
+              'button'
+            )
+          "
+          type="secondary"
+          (click)="onExporting($event)"
           (mouseenter)="onMouseEnter()"
           (mouseleave)="onMouseLeave()"
-          [icon]="isActionButtonDisabled ? 'faSpinner' : ''"
-          [iconPack]="isActionButtonDisabled ? 'solid' : ''"
-          [iconAnimation]="isActionButtonDisabled ? 'spin' : ''"
-          class="je-primary-button"
+          class="je-primary-button send-to-excel"
+          >Send to Excel</crem-button
         >
-          {{ isActionButtonDisabled ? 'Processing...' : changeButtonText }}
-        </crem-button>
       </div>
-      <dx-tooltip
-        [id]="
-          accountingSummaryService.getId(componentName, 'actions', 'tooltip')
-        "
-        [target]="'#' + actionsButtonId"
-        [visible]="isTooltipVisible"
-      >
-        <div *dxTemplate="let data of 'content'">
-          {{ disableBtnReason }}
-        </div>
-      </dx-tooltip>
+      <div class="clearfix">
+        <dx-data-grid
+          #JournalEntryProcessing
+          [id]="accountingSummaryService.getId(componentName, 'popup', 'grid')"
+          width="100%"
+          [dataSource]="jeProcessingPopupData.journalEntries"
+          [columns]="jeProcessingGridColumns"
+          [rowAlternationEnabled]="true"
+          [columnResizingMode]="'widget'"
+          [showColumnLines]="true"
+          [showRowLines]="true"
+          [showBorders]="true"
+          [allowColumnResizing]="true"
+          [wordWrapEnabled]="false"
+          [columnMinWidth]="15"
+          [columnAutoWidth]="false"
+          (onExporting)="onExporting($event)"
+          [loadPanel]="{
+            enabled: true,
+            shading: true,
+            visible: true,
+            shadingColor: 'rgba(0, 0, 0, 0.4)'
+          }"
+          height="280px"
+          class="grid-custom-style"
+        >
+          <dxo-scrolling mode="virtual"> </dxo-scrolling>
+
+          <dxo-summary [calculateCustomSummary]="customSummaryCalculation">
+            <dxi-total-item
+              alignment="right"
+              name="Debits"
+              summaryType="custom"
+              showInColumn="currency"
+              displayFormat="Debits:"
+            >
+            </dxi-total-item>
+
+            <dxi-total-item
+              alignment="right"
+              name="Credits"
+              summaryType="custom"
+              showInColumn="currency"
+              displayFormat="Credits:"
+            >
+            </dxi-total-item>
+
+            <dxi-total-item
+              alignment="right"
+              name="Variance"
+              summaryType="custom"
+              showInColumn="jeType"
+              displayFormat="Variance:"
+            >
+            </dxi-total-item>
+
+            <dxi-total-item
+              alignment="right"
+              name="sumOfDebits"
+              summaryType="custom"
+              showInColumn="amount"
+              [displayFormat]="localFormat"
+            >
+            </dxi-total-item>
+
+            <dxi-total-item
+              alignment="right"
+              name="sumOfCredits"
+              summaryType="custom"
+              showInColumn="amount"
+              [displayFormat]="localFormat"
+            >
+            </dxi-total-item>
+
+            <dxi-total-item
+              alignment="right"
+              name="sumOfVariance"
+              summaryType="custom"
+              showInColumn="sourceAlias"
+              [displayFormat]="localFormat"
+            >
+            </dxi-total-item>
+          </dxo-summary>
+          <div *dxTemplate="let info of 'amortizationHeader'">
+            <p title="{{ info.column.caption }}" class="header-column-caption">
+              {{ info.column.caption }}
+            </p>
+          </div>
+
+          <div *dxTemplate="let cell of 'pointer'">
+            <div class="pointer" title="{{ cell.text }}">{{ cell.text }}</div>
+          </div>
+        </dx-data-grid>
+      </div>
     </div>
-    <div id="section-three" *ngIf="showJournalEntries">
-      <dx-data-grid
-        #JournalEntryProcessing
-        [id]="accountingSummaryService.getId(componentName, 'popup', 'grid')"
-        width="100%"
-        [dataSource]="jeProcessingPopupData.journalEntries"
-        [columns]="jeProcessingGridColumns"
-        [rowAlternationEnabled]="true"
-        [columnResizingMode]="'widget'"
-        [showColumnLines]="true"
-        [showRowLines]="true"
-        [showBorders]="true"
-        [allowColumnResizing]="true"
-        [wordWrapEnabled]="false"
-        [columnMinWidth]="15"
-        [columnAutoWidth]="false"
-        (onExporting)="onExporting($event)"
-        [loadPanel]="{
-          enabled: true,
-          shading: true,
-          visible: true,
-          shadingColor: 'rgba(0, 0, 0, 0.4)'
-        }"
+  </div>
+  <div class="je-footer">
+    <div class="metric-label footer-item">
+      <crem-button
+        [id]="actionsButtonId"
+        type="primary"
+        (click)="actionButton()"
+        *ngIf="showActionButton"
+        [disabled]="isButtonDisabled || isActionButtonDisabled"
+        (mouseenter)="onMouseEnter()"
+        (mouseleave)="onMouseLeave()"
+        [icon]="isActionButtonDisabled ? 'faSpinner' : ''"
+        [iconPack]="isActionButtonDisabled ? 'solid' : ''"
+        [iconAnimation]="isActionButtonDisabled ? 'spin' : ''"
+        class="je-primary-button"
       >
-        <dxo-scrolling mode="virtual"> </dxo-scrolling>
-        <dxo-export [enabled]="true"></dxo-export>
+        {{ isActionButtonDisabled ? 'Processing...' : changeButtonText }}
+      </crem-button>
+    </div>
+    <dx-tooltip
+      [id]="accountingSummaryService.getId(componentName, 'actions', 'tooltip')"
+      [target]="'#' + actionsButtonId"
+      [visible]="isTooltipVisible"
+    >
+      <div *dxTemplate="let data of 'content'">
+        {{ disableBtnReason }}
+      </div>
+    </dx-tooltip>
 
-        <div *dxTemplate="let info of 'amortizationHeader'">
-          <p title="{{ info.column.caption }}" class="header-column-caption">
-            {{ info.column.caption }}
-          </p>
-        </div>
-
-        <div *dxTemplate="let cell of 'pointer'">
-          <div class="pointer" title="{{ cell.text }}">{{ cell.text }}</div>
-        </div>
-      </dx-data-grid>
+    <div class="metric-label footer-item balance-info">
+      <crem-icon
+        *ngIf="
+          jeProcessingPopupData?.journalEntries !== undefined &&
+          jeProcessingPopupData?.journalEntries !== null &&
+          jeProcessingPopupData.journalEntries[0]?.isBalanced
+        "
+        class="fa-md balanced-icon"
+        icon="faCheckCircle"
+      ></crem-icon>
+      <crem-icon
+        *ngIf="
+          eventScheduleData.isReportingException !== true &&
+          jeProcessingPopupData?.journalEntries !== undefined &&
+          jeProcessingPopupData?.journalEntries !== null &&
+          !jeProcessingPopupData.journalEntries[0]?.isBalanced
+        "
+        class="fa-md not-balanced-icon"
+        icon="faTimesCircle"
+      ></crem-icon>
+      <strong>Balanced</strong>
     </div>
   </div>
 </div>

@@ -41,8 +41,7 @@ export class AppComponent {
   }
 
   onOutletLoaded(webComponent: any) {
-    // console.log("AppComponent Router Outlet Activated");
-    // console.log("WebComponent Loaded:", webComponent);
+    //
   }
 }
 

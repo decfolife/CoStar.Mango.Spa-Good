@@ -1,8 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LibDataModelsModule } from '@mango/data-models/lib-data-models';
-import { DxCheckBoxComponent, DxCheckBoxModule, DxValidatorModule } from 'devextreme-angular';
+import {
+  DxCheckBoxComponent,
+  DxCheckBoxModule,
+  DxValidatorModule,
+} from 'devextreme-angular';
 
 @Component({
   selector: 'crem-check-box',
@@ -13,30 +24,30 @@ import { DxCheckBoxComponent, DxCheckBoxModule, DxValidatorModule } from 'devext
     CommonModule,
     LibDataModelsModule,
     DxCheckBoxModule,
-    DxValidatorModule
+    DxValidatorModule,
   ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      multi:true,
-      useExisting: CheckBoxComponent
-    }
-  ]
+      multi: true,
+      useExisting: CheckBoxComponent,
+    },
+  ],
 })
-
 export class CheckBoxComponent implements ControlValueAccessor, AfterViewInit {
-
   @Input() value = false;
   @Input() elementAttr: string;
   @Input() disabled = false;
   @Output() changeEvent = new EventEmitter();
-  @ViewChild(DxCheckBoxComponent, { static: false }) checkBox: DxCheckBoxComponent;
+  @Output() enterKeyEvent = new EventEmitter();
+  @ViewChild(DxCheckBoxComponent, { static: false })
+  checkBox: DxCheckBoxComponent;
 
-  onChange: (value: any) => void = () => { }
-  onTouched: () => void = () => { }
+  onChange: (value: any) => void = () => {};
+  onTouched: () => void = () => {};
 
   /**
-   * 
+   *
    * @ignore
    */
   ngAfterViewInit() {
@@ -46,55 +57,55 @@ export class CheckBoxComponent implements ControlValueAccessor, AfterViewInit {
   }
 
   /**
-   * 
+   *
    * @ignore
    */
   onValueChanged(event) {
     this.changeEvent?.emit(event);
-    this.onChange(this.value)
-    this.onTouched()
+    this.onChange(this.value);
+    this.onTouched();
   }
 
   /**
-   * 
+   *
    * @ignore
    */
   onEnterKey() {
     this.value = !this.value;
-    this.onChange(this.value)
-    this.onTouched()
+    this.enterKeyEvent?.emit(this.value);
+    this.onChange(this.value);
+    this.onTouched();
   }
 
   /**
-   * 
+   *
    * @ignore
    */
   registerOnChange(fn: any): void {
-    this.onChange = fn
+    this.onChange = fn;
   }
 
   /**
-   * 
+   *
    * @ignore
    */
   registerOnTouched(fn: any): void {
-    this.onTouched = fn
+    this.onTouched = fn;
   }
 
   /**
-   * 
+   *
    * @ignore
    */
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled
+    this.disabled = isDisabled;
   }
 
   /**
-   * 
+   *
    * @ignore
    */
   writeValue(value: boolean): void {
-    this.value = value || false
+    this.value = value || false;
   }
-
 }

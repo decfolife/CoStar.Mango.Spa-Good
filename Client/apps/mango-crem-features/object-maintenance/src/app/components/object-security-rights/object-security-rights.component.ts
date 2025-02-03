@@ -56,6 +56,7 @@ export class ObjectSecurityRightsComponent implements OnInit, OnDestroy {
   showLoading: boolean = true;
   sendToExcelClicked = false;
   tabTitle: string;
+  pageTitle: string;
   gridFilterValue: Condition;
   showFilterBuilderPopUp: boolean;
   searchText: string = '';
@@ -76,7 +77,7 @@ export class ObjectSecurityRightsComponent implements OnInit, OnDestroy {
         const queryParams = this.toLowerParams(this.route.snapshot.queryParams);
         this.objectId = Number(queryParams['oid']);
         this.objectTypeId = Number(queryParams['otid']);
-        this.getTabTitle(this.objectId, this.objectTypeId);
+        this.getTitle(this.objectId, this.objectTypeId);
       })
     );
     this.getobjectSecurityRight(this.objectId, this.objectTypeId);
@@ -98,15 +99,13 @@ export class ObjectSecurityRightsComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  getTabTitle(objectID, objectTypeID) {
+  getTitle(objectID, objectTypeID) {
     this.objectSecurityRightsService
       .getObjectName(objectID, objectTypeID)
       .subscribe((objNameresponse) => {
         if (objNameresponse.success) {
-          this.tabTitle =
-            objNameresponse.data[0].objectType +
-            ' - ' +
-            objNameresponse.data[0].objectName;
+          this.tabTitle = objNameresponse.data[0].objectType;
+          this.pageTitle = objNameresponse.data[0].objectName;
         }
       });
   }
@@ -162,7 +161,9 @@ export class ObjectSecurityRightsComponent implements OnInit, OnDestroy {
       minute: '2-digit',
       second: '2-digit',
     });
-    const fileName = 'Security Rights_' + `${this.tabTitle}_${dateTimeStamp}`;
+    const fileName =
+      'Security Rights_' +
+      `${this.tabTitle}_${this.pageTitle}_${dateTimeStamp}`;
     return fileName;
   }
 

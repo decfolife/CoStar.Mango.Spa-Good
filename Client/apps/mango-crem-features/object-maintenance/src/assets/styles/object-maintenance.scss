@@ -71,7 +71,6 @@ dx-data-grid.drop-down-box__grid {
 
 input.search__input.mat-mdc-input-element {
   margin-top: 0px !important;
-  margin-right: 28px;
 }
 
 .dx-datagrid
@@ -223,7 +222,6 @@ div.object-maintenance-page {
 
 .object-maintenance-search > mat-form-field {
   &.mat-mdc-form-field {
-    line-height: 21px;
     &.mat-form-field-appearance-outline {
       div.mat-form-field-wrapper {
         margin: $stdPadding 0 $dblPadding 0;
@@ -241,7 +239,7 @@ div.object-maintenance-page {
 }
 
 svg#brand-search {
-  padding-top: 6px;
+  padding-top: 2px;
 }
 
 .mat-form-field-suffix {

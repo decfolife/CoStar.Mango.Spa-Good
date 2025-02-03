@@ -85,6 +85,27 @@
           mode="multiple"
         ></dxo-selection>
 
+        <dxi-column
+          [width]="0"
+          [fixed]="true"
+          fixedPosition="left"
+          [allowSorting]="false"
+          [allowReordering]="false"
+          [allowResizing]="false"
+        >
+        </dxi-column>
+
+        <dxi-column
+          type="selection"
+          [width]="40"
+          [fixed]="true"
+          fixedPosition="left"
+          [allowSorting]="false"
+          [allowReordering]="false"
+          [allowResizing]="false"
+        >
+        </dxi-column>
+
         <dxi-column dataField="contactName" caption="Assignee"></dxi-column>
         <dxi-column dataField="approvalStatus" caption="Progress"></dxi-column>
         <dxi-column

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { Dropdown } from '@mango/data-models/lib-data-models';
+import { Dropdown, ToastState } from '@mango/data-models/lib-data-models';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { HeroMetricsContainerComponent } from '@mango/ui-shared/lib-ui-shared';
 
@@ -11,6 +11,9 @@ import { UserSettingsComponent } from '../modal/user-settings/user-settings.comp
 import { CardsComponent } from '../cards/cards.component';
 import { UserSelectedFilters } from '../../models';
 import { Subscription } from 'rxjs';
+import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { map } from 'rxjs/operators';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 
 declare var parent;
 
@@ -58,6 +61,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   constructor(
     private portfolioDashboardService: PortfolioDashboardService,
     private portfolioDataService: PortfolioDataService,
+    private dashboardService: DashboardService,
+    private toastService: CremToastService,
     public dialog: MatDialog
   ) {}
 
@@ -143,35 +148,65 @@ export class IndexComponent implements OnInit, OnDestroy {
     //** Equipment Lease (OTID = 174)
     //** Premise/Store (OTID = 2)
     //** Financials (OTID = 182)
-    const objectIds = [3, 4, 174, 175, 182];
-
-    this.showFinanceCard = false;
-    this.portfolioObjects = [];
-
-    this.subs.push(
-      this.portfolioDashboardService.getUserModuleRights(objectIds).subscribe(
-        (res: any) => {
-          if (res.success) {
-            //Set showFinanceCard value
-            const financeCardRightsArray = res.data.filter(
-              (r) => r.moduleId === 182
-            );
-            this.showFinanceCard =
-              financeCardRightsArray[0].hasAddRights !== null;
-            this.showEnterBill = this.showFinanceCard;
-
-            //The portfolioObjects should be set to the rest of the values in the array
-            this.portfolioObjects = res.data.filter((r) => r.moduleId !== 182);
-            this.checkAddPrivilege();
+    let objectIds = [3, 4, 174, 175, 182];
+    this.dashboardService
+      .getClientPreference('HidePremise')
+      .pipe(
+        map((resp) => {
+          if (resp.success) {
+            if (resp.data == 0) {
+              objectIds = [3, 4, 2, 174, 175, 182];
+            }
           }
+        })
+      )
+      .subscribe(
+        () => {
+          this.showFinanceCard = false;
+          this.portfolioObjects = [];
+          this.subs.push(
+            this.portfolioDashboardService
+              .getUserModuleRights(objectIds)
+              .subscribe(
+                (res: any) => {
+                  if (res.success) {
+                    //Set showFinanceCard value
+                    const financeCardRightsArray = res.data.filter(
+                      (r) => r.moduleId === 182
+                    );
+                    if (
+                      financeCardRightsArray &&
+                      financeCardRightsArray.length > 0
+                    ) {
+                      this.showFinanceCard =
+                        financeCardRightsArray[0].hasAddRights !== null;
+                    }
+                    this.showEnterBill = this.showFinanceCard;
+
+                    //The portfolioObjects should be set to the rest of the values in the array
+                    this.portfolioObjects = res.data.filter(
+                      (r) => r.moduleId !== 182
+                    );
+                    this.checkAddPrivilege();
+                  }
+                },
+                (error: any) =>
+                  this.displayMessage(
+                    'Error occurred getting Portfolio User Module rights:' +
+                      error,
+                    true
+                  )
+              )
+          );
         },
         (error: any) =>
-          console.log(
-            'Error occurred getting Portfolio User Module rights: ',
-            error
-          )
-      )
-    );
+          this.displayMessage(
+            'Error occurred getting client preferences of premise visibility: ' +
+              error,
+            true
+          ),
+        () => {}
+      );
   }
 
   checkAddPrivilege() {
@@ -241,19 +276,32 @@ export class IndexComponent implements OnInit, OnDestroy {
                     }
                   },
                   (error: any) =>
-                    console.log(
-                      'Error occurred getting User Filters Data: ',
-                      error
+                    this.displayMessage(
+                      'Error occurred getting User Filters Data:' + error,
+                      true
                     )
                 )
             );
           },
           (error: any) =>
-            console.log(
-              'Error occurred getting Portfolio Dashboards Schema data: ',
-              error
+            this.displayMessage(
+              'Error occurred getting Portfolio Dashboards Schema data:' +
+                error,
+              true
             )
         )
+    );
+  }
+
+  displayMessage(message: string, isError: boolean) {
+    this.toastService.show(
+      message,
+      '',
+      isError ? ToastState.ERROR : ToastState.SUCCESS,
+      {
+        position: 'bottom right',
+        maxWidth: '350px',
+      }
     );
   }
 

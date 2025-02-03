@@ -28,17 +28,17 @@ import { AddEditScheduleService } from '@accounting-summary/services/add-edit-sc
     CommonModule,
     AccordionModule,
     InputComponent,
-    InputLabelComponent,
     ToggleSliderComponent,
     FormsModule,
     ReactiveFormsModule,
+    InputLabelComponent,
   ],
   templateUrl: './residual-value.component.html',
   styleUrls: ['./residual-value.component.scss'],
 })
 export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
   componentName = 'residual-value';
-  estimatedSubText: string;
+  title: string;
   isDisabled = true;
   residualValueForm: FormGroup;
   showResidualValue = false;
@@ -51,6 +51,7 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
   amountNotReflectedPVPayments: string;
   pvAmountNotReflectedInPayments: string;
   localCurrencyDecimalPrecision: number;
+  classificationID: number;
   private subscription: Subscription[] = [];
 
   @Input() pageMode;
@@ -65,23 +66,43 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
   ) {
     this.InitializeRVForm();
     this.subscription.push(
-      addEventFormService.decimalPrecision$.subscribe((precision) => {
-        if (precision != this.localCurrencyDecimalPrecision) {
-          this.localCurrencyDecimalPrecision = precision;
-          this.updateDecimalprecision();
+      addEventFormService.localCurrencyDecimalPrecision$.subscribe(
+        (precision) => {
+          if (
+            precision != this.localCurrencyDecimalPrecision &&
+            this.pageMode === 'Add Event'
+          ) {
+            this.localCurrencyDecimalPrecision = precision;
+            this.updateDecimalprecision();
+          }
         }
-      })
+      )
     );
   }
 
   ngOnChanges(): void {
-    if (this.accountingEventsData !== undefined) {
+    if (this.accountingEventsData && this.pageMode === 'Edit Event') {
       this.loadSavedData();
     }
   }
 
   ngOnInit(): void {
     this.handleRVFormChanges();
+    this.subscription.push(
+      this.addEventFormService.classificationID$.subscribe(
+        (classificationID) => {
+          this.classificationID = classificationID;
+          if (this.pageMode !== 'Edit Event') {
+            this.residualValueForm.reset({
+              estimatedResidualValue: 0,
+              guaranteedAmountReflected: 0,
+              rvGuaranteed: 0,
+              lessorExplicitlyExemptsLessee: false,
+            });
+          }
+        }
+      )
+    );
   }
 
   ngOnDestroy() {
@@ -98,7 +119,7 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
       ],
       rvGuaranteed: [{ value: this.formatCurrency(0), disabled: false }],
       rvGuaranteedBy3rdParty: [
-        { value: this.formatCurrency(0), disabled: false },
+        { value: this.formatCurrency(0), disabled: true },
       ],
       lessorExplicitlyExemptsLessee: [{ value: false, disabled: false }],
     });
@@ -113,10 +134,12 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
 
   handleRVFormChanges() {
     const debounce = 300;
-    this.estimatedSubText =
-      'Estimated: ' +
-      this.residualValueForm.get('estimatedResidualValue').value;
-    this.residualValueForm.get('lessorExplicitlyExemptsLessee').disable();
+    this.title =
+      'Residual Value | Estimated: ' +
+      this.formattingService.localFormat(
+        this.residualValueForm.get('estimatedResidualValue').value,
+        this.localCurrencyDecimalPrecision
+      );
 
     this.subscription.push(
       this.residualValueForm
@@ -127,13 +150,13 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
             this.residualValueForm.get('estimatedResidualValue')?.value,
             this.accountingEventsData?.localCurrencyDecimalPrecision ?? 2
           );
-          this.estimatedSubText = 'Estimated: ' + estimatedResidualValue;
+          this.title = 'Residual Value | Estimated: ' + estimatedResidualValue;
         })
     );
 
     this.subscription.push(
       this.residualValueForm
-        .get('rvGuaranteedBy3rdParty')
+        .get('lessorExplicitlyExemptsLessee')
         .valueChanges.pipe(debounceTime(debounce))
         .subscribe(() => {
           this.lessorExplicitlyExemptsLessee();
@@ -141,11 +164,9 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
     );
 
     this.subscription.push(
-      this.addEventFormService.paymentAmountsData$.subscribe(
-        (paymentAmountsData) => {
-          this.totalAmount = +paymentAmountsData?.undiscountedAmount || 0;
-        }
-      )
+      this.addEventFormService.paymentGridData$.subscribe((paymentAmounts) => {
+        this.totalAmount = +paymentAmounts?.undiscountedAmount || 0;
+      })
     );
 
     this.subscription.push(
@@ -309,85 +330,91 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
         'Guaranteed Amount Reflected in Payments'
       );
     }
-    this.addEventFormService.isCalculateValuesDisabled.next(!isValid);
-    this.addEventFormService.isSaveDisabled.next(!isValid);
+    this.addEventFormService.isCalculateValuesDisabled$.next(!isValid);
+    this.addEventFormService.isSaveDisabled$.next(!isValid);
   }
 
   loadSavedData() {
-    if (this.pageMode !== 'Add Event' && this.accountingEventsData) {
-      this.estimatedSubText =
-        'Estimated: ' +
-        this.formattingService.localFormat(
-          this.accountingEventsData?.residualValues?.estimatedResidualValue,
-          this.accountingEventsData?.localCurrencyDecimalPrecision
-        );
-      this.residualValueForm
-        .get('estimatedResidualValue')
-        .setValue(
-          (
-            this.accountingEventsData.residualValues?.estimatedResidualValue ??
-            0
-          ).toFixed(this.accountingEventsData.localCurrencyDecimalPrecision)
-        );
-      this.residualValueForm
-        .get('guaranteedAmountReflected')
-        .setValue(
-          (
-            this.accountingEventsData.residualValues
-              ?.guaranteedAmtReflectedInPayments ?? 0
-          ).toFixed(this.accountingEventsData.localCurrencyDecimalPrecision)
-        );
-      this.residualValueForm
-        .get('rvGuaranteed')
-        .setValue(
-          (
-            this.accountingEventsData.residualValues?.residualValue ?? 0
-          ).toFixed(this.accountingEventsData.localCurrencyDecimalPrecision)
-        );
-      this.residualValueForm
-        .get('rvGuaranteedBy3rdParty')
-        .setValue(
-          (
-            this.accountingEventsData.residualValues
-              ?.residualValueGuaranteedBy3rdParty ?? 0
-          ).toFixed(this.accountingEventsData.localCurrencyDecimalPrecision)
-        );
-      this.rvGuaranteedByLessee = this.formattingService.localFormat(
+    this.title =
+      'Residual Value | Estimated: ' +
+      this.formattingService.localFormat(
+        this.accountingEventsData?.residualValues?.estimatedResidualValue,
+        this.accountingEventsData?.localCurrencyDecimalPrecision
+      );
+    this.residualValueForm
+      .get('estimatedResidualValue')
+      .setValue(
+        (
+          this.accountingEventsData.residualValues?.estimatedResidualValue ?? 0
+        ).toFixed(this.accountingEventsData.localCurrencyDecimalPrecision)
+      );
+    this.residualValueForm
+      .get('guaranteedAmountReflected')
+      .setValue(
+        (
+          this.accountingEventsData.residualValues
+            ?.guaranteedAmtReflectedInPayments ?? 0
+        ).toFixed(this.accountingEventsData.localCurrencyDecimalPrecision)
+      );
+    this.residualValueForm
+      .get('rvGuaranteed')
+      .setValue(
+        (this.accountingEventsData.residualValues?.residualValue ?? 0).toFixed(
+          this.accountingEventsData.localCurrencyDecimalPrecision
+        )
+      );
+    this.residualValueForm
+      .get('rvGuaranteedBy3rdParty')
+      .setValue(
+        (
+          this.accountingEventsData.residualValues
+            ?.residualValueGuaranteedBy3rdParty ?? 0
+        ).toFixed(this.accountingEventsData.localCurrencyDecimalPrecision)
+      );
+
+    this.residualValueForm
+      .get('lessorExplicitlyExemptsLessee')
+      .setValue(
         this.accountingEventsData.residualValues
-          ?.residualValueGuaranteedByLessee ?? 0,
-        this.accountingEventsData.localCurrencyDecimalPrecision
+          .doesLessorExplicitlyExemptLessee
       );
-      this.amountProbableBeingOwedByLessee = this.formattingService.localFormat(
-        this.accountingEventsData.residualValues
-          ?.amountProbableOfBeingOwedByLessee ?? 0,
-        this.accountingEventsData.localCurrencyDecimalPrecision
-      );
-      this.unguaranteedResidualValue = this.formattingService.localFormat(
-        this.accountingEventsData.residualValues?.unguaranteedResidualValue ??
-          0,
-        this.accountingEventsData.localCurrencyDecimalPrecision
-      );
-      this.amountNotReflectedPVPayments = this.formattingService.localFormat(
-        this.accountingEventsData.residualValues
-          ?.amtNotReflectedInPVofPayments ?? 0,
-        this.accountingEventsData.localCurrencyDecimalPrecision
-      );
-      this.pvAmountNotReflectedInPayments = this.formattingService.localFormat(
-        this.accountingEventsData.residualValues
-          ?.presentValueOnAmtNotReflectedInPayments ?? 0,
-        this.accountingEventsData.localCurrencyDecimalPrecision
-      );
-    }
+    this.lessorExplicitlyExemptsLessee();
+
+    this.rvGuaranteedByLessee = this.formattingService.localFormat(
+      this.accountingEventsData.residualValues
+        ?.residualValueGuaranteedByLessee ?? 0,
+      this.accountingEventsData.localCurrencyDecimalPrecision
+    );
+    this.amountProbableBeingOwedByLessee = this.formattingService.localFormat(
+      this.accountingEventsData.residualValues
+        ?.amountProbableOfBeingOwedByLessee ?? 0,
+      this.accountingEventsData.localCurrencyDecimalPrecision
+    );
+    this.unguaranteedResidualValue = this.formattingService.localFormat(
+      this.accountingEventsData.residualValues?.unguaranteedResidualValue ?? 0,
+      this.accountingEventsData.localCurrencyDecimalPrecision
+    );
+    this.amountNotReflectedPVPayments = this.formattingService.localFormat(
+      this.accountingEventsData.residualValues?.amtNotReflectedInPVofPayments ??
+        0,
+      this.accountingEventsData.localCurrencyDecimalPrecision
+    );
+    this.pvAmountNotReflectedInPayments = this.formattingService.localFormat(
+      this.accountingEventsData.residualValues
+        ?.presentValueOnAmtNotReflectedInPayments ?? 0,
+      this.accountingEventsData.localCurrencyDecimalPrecision
+    );
   }
 
   lessorExplicitlyExemptsLessee() {
-    const rvGuaranteedBy3rdParty = this.residualValueForm.get(
-      'rvGuaranteedBy3rdParty'
+    const lessorExplicitlyExemptsLessee = +this.residualValueForm.get(
+      'lessorExplicitlyExemptsLessee'
     ).value;
-    if (rvGuaranteedBy3rdParty > 0) {
-      this.residualValueForm.get('lessorExplicitlyExemptsLessee').enable();
+    if (lessorExplicitlyExemptsLessee) {
+      this.residualValueForm.get('rvGuaranteedBy3rdParty').enable();
     } else {
-      this.residualValueForm.get('lessorExplicitlyExemptsLessee').disable();
+      this.residualValueForm.get('rvGuaranteedBy3rdParty').setValue(0);
+      this.residualValueForm.get('rvGuaranteedBy3rdParty').disable();
     }
   }
 }

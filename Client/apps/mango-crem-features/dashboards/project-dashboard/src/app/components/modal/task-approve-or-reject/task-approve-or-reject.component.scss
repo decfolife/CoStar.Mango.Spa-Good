@@ -26,4 +26,11 @@
       flex-basis: 50%;
     }
   }
+
+  #tar-actualStartDateId,
+  #tar-approvalDateId {
+    dx-date-box div.dx-overlay.dx-invalid-message-auto div.dx-overlay-content {
+      display: none;
+    }
+  }
 }

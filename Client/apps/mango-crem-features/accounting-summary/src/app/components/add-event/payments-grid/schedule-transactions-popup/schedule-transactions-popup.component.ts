@@ -12,12 +12,11 @@ import { TransactionPopupGridColumnsService } from '@accounting-summary/services
 import { CommonModule } from '@angular/common';
 import {
   CremPopupComponent,
-  CremToastService,
   InputComponent,
+  InputLabelComponent,
 } from '@mango/ui-shared/lib-ui-elements';
 import { SchedulePayment } from '@accounting-summary/models/schedule-payment-model';
 import { Subject } from 'rxjs';
-import { ToastState } from '@mango/data-models/lib-data-models';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { DevExtremeModule, DxDataGridComponent } from 'devextreme-angular';
 import { ScheduleTransaction } from '@accounting-summary/models/interfaces/schedule-transaction.interfaces';
@@ -26,7 +25,13 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'mango-schedule-transactions-popup',
   standalone: true,
-  imports: [CommonModule, CremPopupComponent, DevExtremeModule, InputComponent],
+  imports: [
+    CommonModule,
+    CremPopupComponent,
+    DevExtremeModule,
+    InputComponent,
+    InputLabelComponent,
+  ],
   templateUrl: './schedule-transactions-popup.component.html',
   styleUrls: ['./schedule-transactions-popup.component.scss'],
 })
@@ -53,6 +58,7 @@ export class ScheduleTransactionsPopupComponent
   toDate: Date;
   includeFromFirst: boolean;
   glEventNotes: string;
+  leaseRecognitionScheduleEventID: number;
 
   baseAmountFormatter = (value: number) =>
     this.formattingService.localFormat(
@@ -67,7 +73,6 @@ export class ScheduleTransactionsPopupComponent
 
   constructor(
     private addEditScheduleService: AddEditScheduleService,
-    private toastService: CremToastService,
     public formattingService: FormattingService,
     public accountingSummaryService: AccountingSummaryService,
     public transactionPopupGridColumnsService: TransactionPopupGridColumnsService
@@ -80,6 +85,7 @@ export class ScheduleTransactionsPopupComponent
 
   closePopup() {
     this.showScheduleTransaction = !this.showScheduleTransaction;
+    this.scheduleTransactionData.transactions = null;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -87,6 +93,9 @@ export class ScheduleTransactionsPopupComponent
       changes['scheduledPaymentGridData'] &&
       !changes['scheduledPaymentGridData'].firstChange
     ) {
+      this.leaseRecognitionScheduleEventID =
+        this.scheduledPaymentGridData?.historicalCharges
+          ?.leaseRecognitionScheduleEventID ?? 0;
       this.isEuroDateFormat = this.scheduledPaymentGridData.isEuroDateFormat;
       this.fromDate = this.scheduledPaymentGridData.fromDate
         ? new Date(this.scheduledPaymentGridData.fromDate)
@@ -99,20 +108,22 @@ export class ScheduleTransactionsPopupComponent
         ? new Date(this.fromDate.setDate(1)).setHours(0, 0, 0, 0)
         : this.fromDate;
 
-      if (this.fromDate && this.toDate) {
+      if (
+        this.fromDate &&
+        this.toDate &&
+        !this.scheduledPaymentGridData.isHistoricalCharge
+      ) {
         this.showScheduleTransaction = true;
-      }
-    }
-
-    if (
-      changes['schedulePayments'] &&
-      !changes['schedulePayments'].firstChange
-    ) {
-      this.glEventID = this.schedulePayments.glEventID;
-      this.paymentEventSource = this.schedulePayments.paymentEventSource;
-      this.targetCurrencyId = this.schedulePayments.scheduleCurrencyID;
-      if (this.schedulePayments && this.schedulePayments !== null) {
+        this.glEventID =
+          this.scheduledPaymentGridData.schedulePayments.glEventID;
+        this.paymentEventSource =
+          this.scheduledPaymentGridData.schedulePayments.paymentEventSource;
+        this.targetCurrencyId =
+          this.scheduledPaymentGridData.schedulePayments.scheduleCurrencyID;
         this.getScheduleTransaction();
+      } else if (this.scheduledPaymentGridData.isHistoricalCharge) {
+        this.getHistoricalTransactions();
+        this.showScheduleTransaction = true;
       }
     }
   }
@@ -155,6 +166,29 @@ export class ScheduleTransactionsPopupComponent
     }
   }
 
+  customSummaryCalculation(options) {
+    if (options.summaryProcess === 'start') {
+      options.totalValue = 0;
+    } else if (options.summaryProcess === 'calculate') {
+      switch (options.name) {
+        case 'targetAmountCount':
+          if (options.value.targetAmount !== 0) {
+            options.totalValue += 1;
+          }
+          break;
+        case 'baseAmountCount':
+          options.totalValue += 1;
+          break;
+        case 'baseAmountTotal':
+          options.totalValue += options.value.baseAmount;
+          break;
+        case 'targetAmountTotal':
+          options.totalValue += options.value.targetAmount;
+          break;
+      }
+    }
+  }
+
   getScheduleTransaction() {
     this.addEditScheduleService
       .getScheduleTransactions(
@@ -181,35 +215,45 @@ export class ScheduleTransactionsPopupComponent
               this.dateFormat
             );
         } else {
-          this.toastService.show(
-            response.clientErrorMessage,
+          this.addEditScheduleService.showToast(
             'Error',
-            ToastState.ERROR
+            response.clientErrorMessage,
+            'error',
+            false
           );
         }
       });
   }
 
-  customSummaryCalculation(options) {
-    if (options.summaryProcess === 'start') {
-      options.totalValue = 0;
-    } else if (options.summaryProcess === 'calculate') {
-      switch (options.name) {
-        case 'targetAmountCount':
-          if (options.value.targetAmount !== 0) {
-            options.totalValue += 1;
+  getHistoricalTransactions() {
+    this.accountingSummaryService
+      .getPaymentPopupData(this.leaseRecognitionScheduleEventID)
+      .pipe(takeUntil(this.subscription$))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.scheduleTransactionData = response.data;
+
+          for (const transaction of this.scheduleTransactionData.transactions) {
+            const dueByDate = new Date(transaction.dueBy);
+            if (dueByDate < this.fromDate || dueByDate > this.toDate) {
+              transaction.targetAmount = 0;
+            }
           }
-          break;
-        case 'baseAmountCount':
-          options.totalValue += 1;
-          break;
-        case 'baseAmountTotal':
-          options.totalValue += options.value.baseAmount;
-          break;
-        case 'targetAmountTotal':
-          options.totalValue += options.value.targetAmount;
-          break;
-      }
-    }
+          this.glEventNotes = response.data.glEventNotes;
+          this.dateFormat = this.isEuroDateFormat ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
+          this.scheduleTransactionColumns =
+            this.transactionPopupGridColumnsService.getTransactionPopupGridColumns(
+              this.scheduleTransactionData,
+              this.dateFormat
+            );
+        } else {
+          this.addEditScheduleService.showToast(
+            'Error',
+            response.clientErrorMessage,
+            'error',
+            false
+          );
+        }
+      });
   }
 }

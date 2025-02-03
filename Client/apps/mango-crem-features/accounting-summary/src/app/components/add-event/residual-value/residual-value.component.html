@@ -1,7 +1,6 @@
 <crem-accordion
   [id]="accountingSummaryService.getId(componentName, 'section', 'accordion')"
-  [title]="'Residual Value '"
-  [subTitle]="estimatedSubText"
+  [title]="title"
   [contentPadding]="true"
   class="residual-value-accordion"
   [isOpen]="isAccordionOpen"
@@ -9,6 +8,19 @@
   <form class="residual-value-container" [formGroup]="residualValueForm">
     <div class="column">
       <div class="control">
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'estimated-residual-value',
+              'label'
+            )
+          "
+          label="Estimated Residual Value"
+          [showInfo]="false"
+          name="residual-value-Estimated-Residual-Value-Input"
+        >
+        </crem-input-label>
         <crem-input
           [id]="
             accountingSummaryService.getId(
@@ -17,20 +29,29 @@
               'Input'
             )
           "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'Estimated Residual Value'"
           [inputType]="'number'"
           [value]="''"
           [placeholder]="''"
           [disallowNegative]="true"
-          [disabled]="false"
           [required]="false"
           formControlName="estimatedResidualValue"
         >
         </crem-input>
       </div>
       <div class="control">
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'guaranteed-amount',
+              'label'
+            )
+          "
+          label="Guaranteed Amount Reflected in Payments"
+          [showInfo]="false"
+          name="residual-value-Guaranteed-Amount-Input"
+        >
+        </crem-input-label>
         <crem-input
           [id]="
             accountingSummaryService.getId(
@@ -39,62 +60,12 @@
               'Input'
             )
           "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'Guaranteed Amount Reflected in Payments'"
           [inputType]="'number'"
           [value]="''"
           [placeholder]="''"
           [disallowNegative]="true"
-          [disabled]="false"
           [required]="false"
           formControlName="guaranteedAmountReflected"
-        >
-        </crem-input>
-      </div>
-
-      <div class="control">
-        <crem-input
-          [id]="
-            accountingSummaryService.getId(
-              componentName,
-              'RV-Guaranteed',
-              'Input'
-            )
-          "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'RV Guaranteed'"
-          [inputType]="'number'"
-          [value]="''"
-          [placeholder]="''"
-          [disallowNegative]="true"
-          [disabled]="false"
-          [required]="false"
-          formControlName="rvGuaranteed"
-        >
-        </crem-input>
-      </div>
-
-      <div class="control">
-        <crem-input
-          [id]="
-            accountingSummaryService.getId(
-              componentName,
-              'RV-Guaranteed-by-3rd-Party',
-              'Input'
-            )
-          "
-          [showLabel]="true"
-          [labelPosition]="'top'"
-          [label]="'RV Guaranteed by 3rd Party'"
-          [inputType]="'number'"
-          [value]="''"
-          [placeholder]="''"
-          [disallowNegative]="true"
-          [disabled]="false"
-          [required]="false"
-          formControlName="rvGuaranteedBy3rdParty"
         >
         </crem-input>
       </div>
@@ -104,17 +75,58 @@
           [id]="
             accountingSummaryService.getId(
               componentName,
-              'Lessor-Explicitly-Exempts-Lessee',
+              'RV-guaranteed',
+              'label'
+            )
+          "
+          label="Residual Value Guaranteed"
+          [showInfo]="false"
+          name="residual-value-RV-Guaranteed-Input"
+        >
+        </crem-input-label>
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-Guaranteed',
+              'Input'
+            )
+          "
+          [inputType]="'number'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [required]="false"
+          formControlName="rvGuaranteed"
+        >
+        </crem-input>
+      </div>
+
+      <div class="control">
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'lessor-explicitly-exempts-lessee',
               'label'
             )
           "
           [label]="'Lessor Explicitly Exempts Lessee'"
           [showInfo]="false"
+          name="residual-value-lessor-explicitly-exempts-lessee-toggle"
         >
+          >
         </crem-input-label>
 
         <div class="lessor-explicitly-exempts-lessee">
           <crem-toggle-slider
+            [id]="
+              accountingSummaryService.getId(
+                componentName,
+                'lessor-explicitly-exempts-lessee',
+                'toggle'
+              )
+            "
             size="wide"
             checkedLabel="YES"
             uncheckedLabel="NO"
@@ -123,6 +135,38 @@
           >
           </crem-toggle-slider>
         </div>
+      </div>
+
+      <div class="control">
+        <crem-input-label
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-guaranteed-by-3rd-party',
+              'label'
+            )
+          "
+          label="Residual Value Guaranteed by 3rd Party"
+          [showInfo]="false"
+          name="residual-value-RV-Guaranteed-by-3rd-Party-Input"
+        >
+        </crem-input-label>
+        <crem-input
+          [id]="
+            accountingSummaryService.getId(
+              componentName,
+              'RV-Guaranteed-by-3rd-Party',
+              'Input'
+            )
+          "
+          [inputType]="'number'"
+          [value]="''"
+          [placeholder]="''"
+          [disallowNegative]="true"
+          [required]="false"
+          formControlName="rvGuaranteedBy3rdParty"
+        >
+        </crem-input>
       </div>
     </div>
 
@@ -136,7 +180,7 @@
               'Label'
             )
           "
-          label="RV Guaranteed by Lessee"
+          label="Residual Value Guaranteed by Lessee"
           [showInfo]="false"
         >
         </crem-input-label>
@@ -217,7 +261,7 @@
               'Label'
             )
           "
-          label="Amount Not Reflected in PV of Payments"
+          label="Amount Not Reflected in Present Value of Payments"
           [showInfo]="false"
         >
         </crem-input-label>
@@ -244,7 +288,7 @@
               'Label'
             )
           "
-          label="PV of Amount Not Reflected in Payments"
+          label="Present Value of Amount Not Reflected in Payments"
           [showInfo]="false"
         >
         </crem-input-label>

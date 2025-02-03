@@ -19,12 +19,12 @@ export class BaseService extends EndpointService {
   public userRights = 0; // 0 No Rights, 1 View Rights, 2 Add Rights
 
   getUserRights() {
-    const url = `${this.accountingUrl}/Base/GetUserRights`;
+    const url = `${this.accountingUrl}Base/GetUserRights`;
     return this.callHttpGet(url, 'getUserRights');
   }
 
   HasUserModuleRight(): Observable<boolean> {
-    const url = `${this.accountingUrl}/base/GetUserModuleRights`;
+    const url = `${this.accountingUrl}base/GetUserModuleRights`;
     return this.callHttpGet(url, 'getUserModuleRights').pipe(
       map((result) =>
         result.data.find(

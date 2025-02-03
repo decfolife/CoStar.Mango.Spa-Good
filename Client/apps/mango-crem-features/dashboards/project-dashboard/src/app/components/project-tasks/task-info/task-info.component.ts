@@ -65,6 +65,7 @@ export class TaskInfoComponent {
   showEditTask: boolean = false;
   selectedTabIndex = 0;
   userAccessLevel = 999;
+  isProjectEditable: boolean = false;
   //This is used to execute the function that adjusts the height of the textarea boxes
   notesTabClickedSubject: Subject<any> = new Subject();
   private taskInfoOverlayWrapper: any = null;
@@ -114,6 +115,7 @@ export class TaskInfoComponent {
         this.currentUserInfo$,
       ]).subscribe(([accessLevel, contact]: any) => {
         this.userAccessLevel = accessLevel.userLevel;
+        this.isProjectEditable = accessLevel.isEditable;
         this.isUserDatesEU = contact.preferences.contactDatesEU;
         this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
       })
@@ -409,10 +411,17 @@ export class TaskInfoComponent {
   isEditDisabled(): boolean {
     switch (this.activeTabIndex) {
       case 0: // details
+        return this.userAccessLevel !== 1 || !this.isProjectEditable;
+
       case 1: // assignees
-        return this.userAccessLevel !== 1;
+        return this.userAccessLevel !== 1 || !this.isProjectEditable;
+
       case 2: // notes
+        return false;
+
       case 3: // files
+        return !this.isProjectEditable;
+
       default:
         return false;
     }

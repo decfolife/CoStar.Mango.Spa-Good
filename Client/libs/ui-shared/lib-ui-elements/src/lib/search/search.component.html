@@ -1,20 +1,54 @@
 <div class="search-container">
   <div *ngIf="showLabel">
-    <crem-input-label [id]="search-label-id" [label]="label" [name]="''" [required]="required"
-      [showInfo]="showInfo"></crem-input-label>
+    <crem-input-label
+      id="search-label-id"
+      [label]="label"
+      [name]="''"
+      [required]="required"
+      [showInfo]="showInfo"
+    ></crem-input-label>
   </div>
   <div class="search-input-container">
-    <button title="search-button" class="search-button" [disabled]="disabled" [attr.aria-label]="'search-button'"
-      (click)="searchByMagnifyingGlass()">
-      <crem-icon color="primary" icon="faSearch" size="1x" pack="solid"></crem-icon>
+    <button
+      id="search-button"
+      title="search-button"
+      class="search-button"
+      [disabled]="disabled"
+      [attr.aria-label]="'search-button'"
+      (click)="searchByMagnifyingGlass()"
+    >
+      <crem-icon
+        color="primary"
+        icon="faSearch"
+        size="1x"
+        pack="solid"
+      ></crem-icon>
     </button>
 
-    <crem-input [showHint]="false" [showLabel]="false" [showInfo]="false" [disabled]="disabled" [inputType]= "'text'"
-      [value]="value" [placeholder]="placeholder" [required]="required" [attr.aria-label]="value" (valueChange)="outputSearchText($event)"></crem-input>
+    <crem-input
+      id="search-text"
+      [showHint]="false"
+      [showLabel]="false"
+      [showInfo]="false"
+      [disabled]="disabled"
+      [inputType]="'text'"
+      [value]="value"
+      [placeholder]="placeholder"
+      [required]="required"
+      [attr.aria-label]="value"
+      (valueChange)="outputSearchText($event)"
+    >
+    </crem-input>
 
-    <div [ngStyle]="{visibility: !!value ? 'visible' : 'hidden'}">
-      <crem-icon icon="cremXMark" pack="crem" btnStyle="basic" size="1x" [attr.aria-label]="'clear-search'"
-        (click)="handleClear()"></crem-icon>
+    <div [ngStyle]="{ visibility: !!value ? 'visible' : 'hidden' }">
+      <crem-icon
+        icon="cremXMark"
+        pack="crem"
+        btnStyle="basic"
+        size="1x"
+        [attr.aria-label]="'clear-search'"
+        (click)="handleClear()"
+      ></crem-icon>
     </div>
   </div>
 </div>

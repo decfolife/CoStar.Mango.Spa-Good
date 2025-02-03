@@ -3,9 +3,6 @@
 .body-content {
   padding: 0 24px;
   font-size: 14px !important;
-  .width-100-percent {
-    width: 100%;
-  }
 }
 
 .modalContent {
@@ -64,6 +61,15 @@ crem-text-box {
 .disabled {
   color: lightGray;
 }
+
+:host ::ng-deep {
+  .to_from_date_wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
 ::ng-deep {
   mango-create-segment {
     .footer-content {

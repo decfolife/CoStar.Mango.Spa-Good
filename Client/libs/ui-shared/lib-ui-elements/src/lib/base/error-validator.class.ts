@@ -6,4 +6,5 @@ import { CremSharedComponent } from './base-shared-component';
 export abstract class CremValidatedComponent extends CremSharedComponent {
   @Input() status: CremFormControlStatusType = 'default';
   @Input() statusMessage: string = undefined;
+  @Input() isRequired: boolean;
 }

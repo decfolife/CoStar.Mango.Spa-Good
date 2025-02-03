@@ -16,16 +16,19 @@ import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { ButtonModule } from '../button';
 import { ErrorTooltipComponent } from '../error-tooltip';
 import { IconModule } from '../icon';
+import { InputLabelComponent } from '../input/label';
 import {
   DropDownButtonDirective,
   DropdownComponent,
   DropdownTemplateDirective,
 } from './dropdown.component';
+import { CremPipesModule } from 'libs/core-shared/src/lib/pipes/pipes.module';
 
 @NgModule({
   imports: [
     CommonModule,
     LibDataModelsModule,
+    CremPipesModule,
     DxDropDownBoxModule,
     DxTextBoxModule,
     DxButtonModule,
@@ -40,6 +43,7 @@ import {
     IconModule,
     DxTooltipModule,
     ErrorTooltipComponent,
+    InputLabelComponent,
   ],
   declarations: [
     DropdownComponent,

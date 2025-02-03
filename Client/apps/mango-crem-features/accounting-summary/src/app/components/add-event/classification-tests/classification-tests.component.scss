@@ -1,6 +1,7 @@
 @use 'styles' as *;
 
 .classification-tests__form {
+  @include costar(padding-top, 3);
   display: flex;
   flex-direction: row;
   &__controls {
@@ -92,6 +93,7 @@
   }
 
   .results-reason-text-div {
+    @include costar(padding-bottom, 4);
     float: right;
   }
 

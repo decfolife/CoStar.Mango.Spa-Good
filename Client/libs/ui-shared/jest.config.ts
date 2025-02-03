@@ -1,18 +1,18 @@
-/* eslint-disable */
 export default {
   displayName: 'ui-shared',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/test-setup.ts'],
   globals: {},
   reporters: [
-    "default",
+    'default',
     [
-      "../../node_modules/jest-html-reporter",
+      '../../node_modules/jest-html-reporter',
       {
-        "outputPath": "./dist/storybook/ui-shared-storybook-host/test-report/index.html",
-        "pageTitle": "Test Report: ui-shared",
-      }
-    ]
+        outputPath:
+          './dist/storybook/ui-shared-storybook-host/test-report/index.html',
+        pageTitle: 'Test Report: ui-shared',
+      },
+    ],
   ],
   coverageDirectory: '../../../coverage/libs/ui-shared',
   coverageThreshold: {
@@ -38,5 +38,5 @@ export default {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
-  coverageReporters: ['text', 'text-summary']
+  coverageReporters: ['text', 'text-summary'],
 };

@@ -1,7 +1,6 @@
-@use "styles" as *;
+@use 'styles' as *;
 
 ::ng-deep {
-
   mango-date-calculator .cremModal.newModal {
     .modalContent {
       height: 250px !important;
@@ -12,14 +11,16 @@
     }
 
     .modalFooter {
-      padding: 10px 10px !important;
+      padding: 5px 5px !important;
+      min-width: max-content;
+      white-space: nowrap;
 
       .footerRightControls {
         display: flex;
       }
     }
 
-    div>div.dayOfWeek {
+    div > div.dayOfWeek {
       padding-left: 0 !important;
 
       h2 {
@@ -42,13 +43,16 @@
   }
 
   .dx-form-group {
-    .dx-box-flex{
+    .dx-box-flex {
       gap: 5px;
-      .dx-first-row.dx-field-item{
+      .dx-first-row.dx-field-item {
         padding-inline-start: 0px;
         padding-inline-end: 0px;
       }
     }
   }
 
+  .mat-mdc-dialog-container .mat-mdc-dialog-surface {
+    min-width: fit-content;
+  }
 }

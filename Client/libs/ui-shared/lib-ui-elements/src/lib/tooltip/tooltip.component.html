@@ -1,6 +1,6 @@
 <div [id]="tooltipId" class="dx-field">
   <div class="iconWrapper dx-field-value-static">
-    <div [attr.id]="'t' + tooltipId + 'Trigger'" [id]="tooltipId + 'Trigger'">
+    <div [id]="tooltipTriggerId">
       <crem-icon
         transform="scale(.8)"
         fill="#808080"
@@ -15,12 +15,13 @@
       ></crem-icon>
     </div>
     <dx-popover
-      [target]="'#' + 't' +  tooltipId + 'Trigger'"
+      [target]="tooltipPopoverTarget"
       position="top"
       [width]="400"
       [(visible)]="withAnimationOptionsVisible"
       role="dialog"
       (onShown)="onShownHandler()"
+      (onHidden)="onHiddenEvent()"
     >
       <dxo-animation>
         <dxo-show
@@ -30,13 +31,34 @@
         ></dxo-show>
         <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
       </dxo-animation>
-      <div id="popoverWrapper">
-        <div #helpText id="helpText" tabindex="0" *ngIf="helpTextData && !helpTextDataIsHtml" >{{ helpTextData }}</div>
-        <div #helpText id="helpText" tabindex="0" *ngIf="helpTextData&& helpTextDataIsHtml" [innerHTML]="helpTextData"></div>
-        <div #helpText id="helpText" tabindex="0" *ngIf="helpTextData === null || helpTextData === undefined">
+      <div
+        id="popoverWrapper"
+        (keydown)="$event.preventDefault(); onKeyDownEvent($event)"
+      >
+        <div
+          #helpText
+          id="helpText"
+          tabindex="0"
+          *ngIf="helpTextData && !helpTextDataIsHtml"
+        >
+          {{ helpTextData }}
+        </div>
+        <div
+          #helpText
+          id="helpText"
+          tabindex="0"
+          *ngIf="helpTextData && helpTextDataIsHtml"
+          [innerHTML]="helpTextData"
+        ></div>
+        <div
+          #helpText
+          id="helpText"
+          tabindex="0"
+          *ngIf="helpTextData === null || helpTextData === undefined"
+        >
           <p>No help text available.</p>
         </div>
       </div>
     </dx-popover>
   </div>
-</div> 
+</div>

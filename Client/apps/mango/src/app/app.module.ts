@@ -46,6 +46,7 @@ import { MangoNavigationService } from './services/navigation.service';
 import { CustomSerializer } from './utils/custom-route-serializer';
 import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 import { ValidateComponent } from './components/auth/validate/validate.component';
+import { SessionExpiredComponent } from './components/auth/session-expired/session-expired.component';
 import { contactRecord } from './+state/app/app.selectors';
 import { EmulateUserEffects } from './+state/app/effects/emulate-user.effects';
 import { IdleEffects } from './+state/app/effects/idle.effects';
@@ -77,6 +78,7 @@ if (!environment.production) {
     AppComponent,
     LoadingScreenComponent,
     ValidateComponent,
+    SessionExpiredComponent,
     IdleTimeoutPopupComponent,
     ErrorNotificationComponent,
   ],

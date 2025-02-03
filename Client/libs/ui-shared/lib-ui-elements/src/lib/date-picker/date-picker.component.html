@@ -9,6 +9,9 @@
   }"
   [invalidDateMessage]="invalidDateMessage || 'Value must be a date'"
   (onValueChanged)="onValueChanged($event)"
+  (onKeyDown)="onKeyDown($event)"
+  (onOpened)="onCalendarOpened()"
+  (onClosed)="onCalendarClosed()"
   [showClearButton]="showClearButton"
   [useMaskBehavior]="useMaskBehavior"
   [placeholder]="placeholderText"
@@ -16,7 +19,9 @@
   [max]="max"
   [disabled]="disabled"
 >
-  <dxo-drop-down-options [wrapperAttr]="{ id: 'dateBoxPopupWrapper' }">
+  <dxo-drop-down-options
+    [wrapperAttr]="{ id: 'dateBoxPopupWrapper', class: inputWrapperClass }"
+  >
   </dxo-drop-down-options>
   <dx-validator #DateBoxValidator>
     <ng-container

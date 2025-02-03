@@ -2,11 +2,15 @@
 using MangoSPA.Models;
 using System.Security.Claims;
 using static MangoSPA.Constants;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace MangoSPA.Extensions;
 
 public static class ClaimExtensions
 {
+    public static bool IsAuthenticated(this ClaimsPrincipal principal)
+        => principal?.Identity?.IsAuthenticated ?? false;
+
     public static string Email(this ClaimsPrincipal principal)
     {
         var email = principal.Claims?
@@ -52,6 +56,12 @@ public static class ClaimExtensions
 
     public static bool IsAutoProvisioned(this ClaimsPrincipal principal)
         => bool.TryParse(principal.FindFirst(ClaimType.IsAutoProvisioned)?.Value, out bool result) && result;
+
+    public static bool IsServiceAccount(this ClaimsPrincipal principal)
+        => bool.TryParse(principal.FindFirst(ClaimType.IsServiceAccount)?.Value, out bool result) && result;
+
+    public static bool HasMultipleSites(this ClaimsPrincipal principal)
+        => bool.TryParse(principal.FindFirst(ClaimType.HasMultipleSites)?.Value, out bool result) && result;
 
     public static string AccessToken(this ClaimsPrincipal principal)
         => principal.FindFirst(ClaimType.AccessToken)?.Value ?? string.Empty;
@@ -112,11 +122,14 @@ public static class ClaimExtensions
             UserId = principal.UserId(),
             Email = principal.Email(),
             Role = principal.Role(),
+            SecurityLevel = principal.SecurityLevel(),
             ClientKey = principal.ClientKey(),
             ContactId = principal.ContactId(),
             ContactRole = principal.ContactRole(),
             IsAutoProvisioned = principal.IsAutoProvisioned(),
-            IsRemUser = principal.SecurityLevel() > -1
+            IsRemUser = principal.SecurityLevel() > -1,
+            HasMultipleSites = principal.HasMultipleSites(),
+            IsServiceAccount = principal.IsServiceAccount()
         };
     }
 

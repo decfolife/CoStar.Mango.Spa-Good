@@ -16,27 +16,27 @@ export class DiscountRateService extends EndpointService {
   isEuroDateFormat = false;
 
   getDiscountRateProfiles(masterGroupID: number) {
-    const url = `${this.discountRateProfilesUrl}/DiscountRateProfiles/GetDiscountRateProfiles/${masterGroupID}`;
+    const url = `${this.discountRateProfilesUrl}DiscountRateProfiles/GetDiscountRateProfiles/${masterGroupID}`;
     return this.callHttpGet(url, 'getDiscountRateProfiles');
   }
 
   getDiscountRateProfile(masterGroupId: number, discountRateProfileId: number) {
-    const url = `${this.discountRateProfilesUrl}/DiscountRateProfiles/GetDiscountRateProfile/${masterGroupId}/${discountRateProfileId}`;
+    const url = `${this.discountRateProfilesUrl}DiscountRateProfiles/GetDiscountRateProfile/${masterGroupId}/${discountRateProfileId}`;
     return this.callHttpGet(url, 'getDiscountRateProfile');
   }
 
   getCountries() {
-    const url = `${this.discountRateProfilesUrl}/DiscountRateProfiles/GetCountries`;
+    const url = `${this.discountRateProfilesUrl}DiscountRateProfiles/GetCountries`;
     return this.callHttpGet(url, 'getCountries');
   }
 
   getCurrencies() {
-    const url = `${this.discountRateProfilesUrl}/DiscountRateProfiles/GetCurrencies`;
+    const url = `${this.discountRateProfilesUrl}DiscountRateProfiles/GetCurrencies`;
     return this.callHttpGet(url, 'getCurrencies');
   }
 
   archiveDiscountRateProfile(discountRateProfileId: number) {
-    const url = `${this.discountRateProfilesUrl}/DiscountRateProfiles/ArchiveDiscountRateProfile`;
+    const url = `${this.discountRateProfilesUrl}DiscountRateProfiles/ArchiveDiscountRateProfile`;
     return this.callHttpPost(
       url,
       'archiveDiscountRateProfile',
@@ -45,7 +45,7 @@ export class DiscountRateService extends EndpointService {
   }
 
   saveDiscountRateProfile(discountRateProfile: DiscountRateProfile) {
-    const url = `${this.discountRateProfilesUrl}/DiscountRateProfiles/SaveDiscountRateProfile`;
+    const url = `${this.discountRateProfilesUrl}DiscountRateProfiles/SaveDiscountRateProfile`;
     return this.callHttpPost(
       url,
       'saveDiscountRateProfile',
@@ -54,7 +54,7 @@ export class DiscountRateService extends EndpointService {
   }
 
   getAssociatedAmortizationSchedules(discountRateProfileId: number) {
-    const url = `${this.discountRateProfilesUrl}/DiscountRateProfiles/GetAssociatedAmortizationSchedules/${discountRateProfileId}`;
+    const url = `${this.discountRateProfilesUrl}DiscountRateProfiles/GetAssociatedAmortizationSchedules/${discountRateProfileId}`;
     return this.callHttpGet(url, 'getAssociatedAmortizationSchedules');
   }
 }

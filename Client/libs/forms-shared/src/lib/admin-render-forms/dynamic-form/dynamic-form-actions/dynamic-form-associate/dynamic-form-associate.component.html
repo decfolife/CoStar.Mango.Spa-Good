@@ -1,0 +1,207 @@
+<crem-modal
+  modalId="associate_modal"
+  modalTitleId="associate_modal_modalTitleId"
+  modalTitle="Associate to Project: Step 1 of 1"
+  closeIconVisible="true"
+  [customFooter]="true"
+>
+  <div modalContent class="body-content">
+    <form
+      crem-form
+      layout="vertical"
+      [formGroup]="associateForm"
+      class="add-associate-form"
+    >
+      <crem-form-item
+        [id]="getId(componentName, 'BuildingCountry', 'form-item')"
+      >
+        <crem-form-label
+          [id]="getId(componentName, 'BuildingCountry', 'label')"
+          [required]="true"
+          >Building Country
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-dropdown
+            #countryDropdown
+            [id]="getId(componentName, 'BuildingCountry', 'dropdown')"
+            [dataSource]="countryDropdownItem"
+            [showClearButton]="true"
+            required="true"
+            [customRequireValidation]="false"
+            [showColumnHeader]="false"
+            [allowSearch]="true"
+            hoverText="Select Country"
+            (selectedItems)="onCountryValueChange($event)"
+            formControlName="countryList"
+            [containerized]="false"
+            [displayExpr]="'value'"
+            [valueExpr]="'name'"
+            [initialSelectedValue]="selectedCountry"
+          >
+          </crem-dropdown>
+        </crem-form-control>
+      </crem-form-item>
+
+      <crem-form-item [id]="getId(componentName, 'BuildingState', 'form-item')">
+        <crem-form-label
+          [id]="getId(componentName, 'BuildingState', 'label')"
+          [required]="true"
+          >Building State/Prov
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-dropdown
+            #stateDropdown
+            [id]="getId(componentName, 'BuildingState', 'dropdown')"
+            [dataSource]="stateDropdownItem"
+            [showClearButton]="true"
+            required="true"
+            [customRequireValidation]="false"
+            [showColumnHeader]="false"
+            [allowSearch]="true"
+            hoverText="Select State"
+            (selectedItems)="onStateValueChange($event)"
+            formControlName="stateList"
+            [containerized]="false"
+            [displayExpr]="'value'"
+            [valueExpr]="'name'"
+            [initialSelectedValue]="selectedState"
+          >
+          </crem-dropdown>
+        </crem-form-control>
+      </crem-form-item>
+
+      <crem-form-item [id]="getId(componentName, 'Building', 'form-item')">
+        <crem-form-label
+          [id]="getId(componentName, 'Building', 'label')"
+          [required]="true"
+          >Building:
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-dropdown
+            #buildingDropdown
+            [id]="getId(componentName, 'Building', 'dropdown')"
+            [dataSource]="buildingDropdownItem"
+            [showClearButton]="true"
+            required="true"
+            [customRequireValidation]="false"
+            [showColumnHeader]="false"
+            [allowSearch]="true"
+            hoverText="Select Building"
+            (selectedItems)="onBuildingValueChange($event)"
+            formControlName="buildingList"
+            [containerized]="false"
+            [displayExpr]="'buildingName'"
+            [valueExpr]="'buildingID'"
+            [initialSelectedValue]="selectedBuildingID"
+          >
+          </crem-dropdown>
+        </crem-form-control>
+      </crem-form-item>
+
+      <crem-form-item
+        *ngIf="associateType == 'lease' && !hidePremise"
+        [id]="getId(componentName, 'Premise', 'form-item')"
+      >
+        <crem-form-label
+          [id]="getId(componentName, 'Premise', 'label')"
+          [required]="true"
+          >Premise
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-dropdown
+            #premiseDropdown
+            [id]="getId(componentName, 'Premise', 'dropdown')"
+            [dataSource]="premiseDropdownItem"
+            [showClearButton]="true"
+            required="true"
+            [customRequireValidation]="false"
+            [showColumnHeader]="false"
+            [allowSearch]="true"
+            hoverText="Select Premise"
+            (selectedItems)="onPremiseValueChange($event)"
+            formControlName="premiseList"
+            [containerized]="false"
+            [displayExpr]="'premiseDescText'"
+            [valueExpr]="'premiseID'"
+            [initialSelectedValue]="selectedPremiseID"
+          >
+          </crem-dropdown>
+        </crem-form-control>
+      </crem-form-item>
+
+      <crem-form-item
+        *ngIf="associateType == 'lease'"
+        [id]="getId(componentName, 'Lease', 'form-item')"
+      >
+        <crem-form-label
+          [id]="getId(componentName, 'Lease', 'label')"
+          [required]="true"
+          >Lease
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-dropdown
+            #leaseDropdown
+            [id]="getId(componentName, 'Lease', 'dropdown')"
+            [dataSource]="leaseDropdownItem"
+            [showClearButton]="true"
+            required="true"
+            [customRequireValidation]="false"
+            [showColumnHeader]="false"
+            [allowSearch]="true"
+            hoverText="Select Lease"
+            (selectedItems)="onLeaseValueChange($event)"
+            formControlName="leaseList"
+            [containerized]="false"
+            [displayExpr]="'leaseName'"
+            [valueExpr]="'leaseAbstractID'"
+            [initialSelectedValue]="selectedLeaseID"
+          >
+          </crem-dropdown>
+        </crem-form-control>
+      </crem-form-item>
+
+      <crem-form-item
+        [id]="getId(componentName, 'RemoveAssociation', 'form-item')"
+      >
+        <crem-form-label
+          [id]="getId(componentName, 'RemoveAssociation', 'label')"
+          [required]="false"
+          >Remove Association
+        </crem-form-label>
+
+        <crem-form-control>
+          <crem-check-box
+            #removeAssociation
+            [id]="getId(componentName, 'RemoveAssociation', 'checkbox')"
+            (changeEvent)="removeAssociationChanged($event)"
+          >
+          </crem-check-box>
+        </crem-form-control>
+      </crem-form-item>
+    </form>
+  </div>
+
+  <div modalFooter class="addAssociateFooter">
+    <crem-button [id]="'cancel-associate-id'" type="secondary" (click)="close()"
+      >Cancel
+    </crem-button>
+
+    <crem-button
+      [id]="'save-associate-id'"
+      type="primary"
+      (click)="save()"
+      [icon]="saveClicked ? 'faSpinner' : ''"
+      [iconPack]="saveClicked ? 'solid' : ''"
+      [iconAnimation]="saveClicked ? 'spin' : ''"
+    >
+      <span>
+        {{ saveClicked ? 'Saving' : 'Save' }}
+      </span>
+    </crem-button>
+  </div>
+</crem-modal>

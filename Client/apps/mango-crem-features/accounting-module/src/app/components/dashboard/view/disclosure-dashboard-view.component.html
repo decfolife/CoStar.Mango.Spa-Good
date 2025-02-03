@@ -1,0 +1,29 @@
+<crem-skeleton
+  *ngIf="isLoading; else showCards"
+  [instances]="_skeletonInstances"
+  type="card"
+></crem-skeleton>
+
+<ng-template #showCards>
+  <div
+    class="card-containers"
+    cdkDropList
+    cdkDropListOrientation="vertical"
+    (cdkDropListDropped)="cardMove($event)"
+  >
+    <ng-container *ngFor="let config of localCardConfig; index as i">
+      <mango-iad-card
+        class="categories-item"
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="{ card: card, index: i }"
+        fxLayout="row"
+        [config]="config"
+        [pivotDataSources]="pivotDataSources[config.index]"
+        [gridDataSources]="gridDataSources[config.index]"
+        (selectedFilter)="onSelectedFilter($event, config)"
+        (saveCard)="saveCard($event)"
+        (resetCard)="resetCard($event)"
+      ></mango-iad-card>
+    </ng-container>
+  </div>
+</ng-template>

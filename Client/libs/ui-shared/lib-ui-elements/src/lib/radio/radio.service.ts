@@ -1,21 +1,25 @@
-import { Injectable } from "@angular/core";
-import { ReplaySubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()
 export class CremRadioService {
-  selected$ = new ReplaySubject<any>(1)
-  disabled$ = new ReplaySubject<boolean>(1)
-  name$ = new ReplaySubject<string>(1)
+  private _selected$ = new BehaviorSubject<any>(null);
+  private _disabled$ = new BehaviorSubject<boolean>(false);
+  private _name$ = new BehaviorSubject<string>(null);
+
+  selected$: Observable<any> = this._selected$.asObservable();
+  disabled$: Observable<boolean> = this._disabled$.asObservable();
+  name$: Observable<string> = this._name$.asObservable();
 
   select(value: any): void {
-    this.selected$.next(value)
+    this._selected$.next(value);
   }
 
   setDisabled(value: boolean): void {
-    this.disabled$.next(value)
+    this._disabled$.next(value);
   }
 
   setName(name: string): void {
-    this.name$.next(name)
+    this._name$.next(name);
   }
 }

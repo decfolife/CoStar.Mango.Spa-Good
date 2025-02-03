@@ -78,15 +78,21 @@ export class UserPreferencesComponent implements OnInit {
           : c.preferences.contactStartPage.split('|')[1];
     });
     this.userService.currencyMappingTable$.subscribe((cmt) => {
-      this.currencyMappings = cmt;
+      this.currencyMappings = cmt.sort((a, b) =>
+        a.currencyName.localeCompare(b.currencyName)
+      );
     });
     this.userService
       .getPossibleUserStartPages()
       .subscribe((startPages: StartPage[]) => {
-        this.possibleStartPages = startPages;
+        this.possibleStartPages = startPages.sort((a, b) =>
+          a.pageName.localeCompare(b.pageName)
+        );
       });
     this.userService.getMeasurementUnits().subscribe((measurementunits) => {
-      this.measurements = measurementunits;
+      this.measurements = measurementunits.sort((a, b) =>
+        a.measureUnitType.localeCompare(b.measureUnitType)
+      );
     });
     this.facade.clientKey$.subscribe((k) => (this.clientKey = k));
     this.createForm();

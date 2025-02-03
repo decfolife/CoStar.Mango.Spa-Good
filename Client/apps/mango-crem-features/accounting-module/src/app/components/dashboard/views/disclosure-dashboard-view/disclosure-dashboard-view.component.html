@@ -1,6 +1,6 @@
 <crem-skeleton
   *ngIf="isLoading; else showCards"
-  [instances]="skeletonInstances"
+  [instances]="_skeletonInstances"
   type="card"
 ></crem-skeleton>
 
@@ -18,8 +18,11 @@
         [cdkDropListData]="{ card: card, index: i }"
         fxLayout="row"
         [config]="config"
-        [dataSource]="pivotDataSources[config.index]"
+        [pivotDataSources]="pivotDataSources[config.index]"
+        [gridDataSources]="gridDataSources[config.index]"
         (selectedFilter)="onSelectedFilter($event, config)"
+        (saveCard)="saveCard($event)"
+        (resetCard)="resetCard($event)"
       ></mango-iad-card>
     </ng-container>
   </div>

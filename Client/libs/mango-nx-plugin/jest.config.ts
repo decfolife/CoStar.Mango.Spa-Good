@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'mango-nx-plugin',
   preset: '../../jest.preset.js',

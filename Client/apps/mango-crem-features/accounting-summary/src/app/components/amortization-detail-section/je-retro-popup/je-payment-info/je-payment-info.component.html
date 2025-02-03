@@ -2,6 +2,17 @@
   *ngIf="jePaymentPopupData.length !== 0; else noDataContent"
   [ngClass]="{ 'popup-container': jePaymentPopupData }"
 >
+  <div class="clearfix">
+    <crem-button
+      [id]="
+        accountingSummaryService.getId(componentName, 'sendToExcel', 'button')
+      "
+      type="secondary"
+      (click)="onExporting($event)"
+      class="je-primary-button send-to-excel"
+      >Send to Excel</crem-button
+    >
+  </div>
   <dx-data-grid
     #JePayment
     [id]="accountingSummaryService.getId(componentName, 'popup', 'grid')"
@@ -17,13 +28,14 @@
     [wordWrapEnabled]="false"
     [columnMinWidth]="15"
     [columnAutoWidth]="false"
-    (onExporting)="onExporting($event)"
     [loadPanel]="{
       enabled: true,
       shading: true,
       visible: true,
       shadingColor: 'rgba(0, 0, 0, 0.4)'
     }"
+    height="445px"
+    class="grid-custom-style"
   >
     <dxo-summary [calculateCustomSummary]="customSummaryCalculation">
       <dxi-total-item
@@ -100,8 +112,6 @@
     </dxo-summary>
 
     <dxo-scrolling mode="virtual"> </dxo-scrolling>
-
-    <dxo-export [enabled]="true"></dxo-export>
 
     <dxo-sorting mode="none"> </dxo-sorting>
 

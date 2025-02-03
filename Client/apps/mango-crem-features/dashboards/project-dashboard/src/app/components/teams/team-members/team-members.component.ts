@@ -14,16 +14,18 @@ import {
   TeamKeys,
   TeamMemUpdate,
   TeamMember,
+  ToastState,
 } from '@mango/data-models/lib-data-models';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import CheckBox from 'devextreme/ui/check_box';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { Subscription, of } from 'rxjs';
 import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatMenuTrigger } from '@angular/material/menu';
 import dxSelectBox from 'devextreme/ui/select_box';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 
 @Component({
   selector: 'team-members',
@@ -64,7 +66,7 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private dashboardService: DashboardService,
-    public toastr: ToastrService,
+    private toastService: CremToastService,
     private dialogService: MangoDialogService
   ) {}
 
@@ -107,6 +109,15 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
           });
           return newData;
         },
+      };
+    }
+
+    if (e.dataField === 'role') {
+      e.editorOptions.onOpened = (args: any) => {
+        const overlayWrapper = document.querySelector('.dx-overlay-wrapper');
+        if (overlayWrapper) {
+          overlayWrapper.classList.add('aetRoleCustomClass');
+        }
       };
     }
   }
@@ -186,29 +197,22 @@ export class TeamMembersComponent implements OnInit, OnDestroy, OnChanges {
             switchMap((_) =>
               this.dashboardService.deleteTeamMembers(this.memberIds)
             ),
-            switchMap((res) => {
-              if (res.success) {
+            tap((res) => {
+              if (res && res.success) {
                 this.memberIds = [];
                 this.getLatestTeamsDataEvent.emit();
+                this.toastService.show(
+                  'Selected Member(s) successfully removed.',
+                  'Success',
+                  ToastState.SUCCESS
+                );
+              } else {
+                this.dialogService.alert(
+                  'Removal unsuccessful!',
+                  'Team Member could not be deleted. Please review and try again later.',
+                  'OK'
+                );
               }
-              return res.success
-                ? of(
-                    this.toastr.info(
-                      'Selected Member(s) successfully removed.',
-                      '',
-                      {
-                        positionClass: 'toast-bottom-right',
-                        timeOut: 3000,
-                        closeButton: false,
-                        progressBar: false,
-                      }
-                    )
-                  )
-                : this.dialogService.alert(
-                    'Removal unsuccessful!',
-                    'Team Member could not be deleted. Please review and try again later.',
-                    'OK'
-                  );
             })
           )
           .subscribe()

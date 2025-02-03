@@ -18,19 +18,19 @@ export class BaseService extends EndpointService {
   );
 
   getUserRights() {
-    const url = `${this.discountRateProfilesUrl}/Base/GetUserRights`;
+    const url = `${this.discountRateProfilesUrl}Base/GetUserRights`;
 
     return this.callHttpGet(url, 'getUserRights');
   }
 
   getPortfolioSettings(masterGroupID: number) {
-    const url = `${this.discountRateProfilesUrl}/Base/GetPortfolioSettings/${masterGroupID}`;
+    const url = `${this.discountRateProfilesUrl}Base/GetPortfolioSettings/${masterGroupID}`;
 
     return this.callHttpGet(url, 'getPortfolioSettings');
   }
 
   HasUserModuleRight(): Observable<boolean> {
-    const url = `${this.discountRateProfilesUrl}/base/GetUserModuleRights`;
+    const url = `${this.discountRateProfilesUrl}base/GetUserModuleRights`;
     return this.callHttpGet(url, 'getUserModuleRights').pipe(
       map((result) =>
         result.data.find(

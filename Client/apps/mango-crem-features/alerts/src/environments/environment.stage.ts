@@ -13,5 +13,4 @@ export const environment = {
       '/v06/WebServices/Mango/UserMaintenance/UserMaintenance.asmx/',
     authenticate: '',
   },
-  isRestful: false,
 };

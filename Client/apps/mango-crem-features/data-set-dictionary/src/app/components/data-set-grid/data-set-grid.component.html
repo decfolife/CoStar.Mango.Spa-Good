@@ -1,4 +1,5 @@
 <dx-data-grid
+  *ngIf="userHasRights; else noAccessRight"
   #dataSetGrid
   [dataSource]="gridData"
   keyExpr="id"
@@ -89,3 +90,12 @@
     [closeOnOutsideClick]="false"
   ></dx-load-panel>
 </dx-data-grid>
+
+<ng-template id="forbidden-access-msg" #noAccessRight>
+  <div class="page-content">
+    <h3>403 Forbidden</h3>
+    <p>
+      You do not currently have access to this page, please contact your Admin.
+    </p>
+  </div>
+</ng-template>

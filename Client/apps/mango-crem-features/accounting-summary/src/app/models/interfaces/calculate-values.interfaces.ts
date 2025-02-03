@@ -27,7 +27,7 @@ export interface CalculateValues {
   directCosts?: number;
   economicLifeYears: number;
   terminationFee?: number;
-  FMV?: number;
+  fmv?: number;
   test1: boolean;
   test2: boolean;
   test5: boolean;

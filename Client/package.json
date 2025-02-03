@@ -13,6 +13,8 @@
     "e2e": "ng e2e",
     "test:mango": "nx test",
     "test:mango:watch": "nx test --watch",
+    "test:features": "npx jest --config=jest.features.config.ts --testPathPattern=apps/mango-crem-features/.*/.*",
+    "test:features:watch": "npx jest --watch --config=jest.features.config.ts --testPathPattern=apps/mango-crem-features/.*/.*",
     "test:ui-shared": "nx test ui-shared",
     "test:ui-shared:watch": "nx test --watch ui-shared",
     "test:central-auth": "ng test mango-crem-features-central-auth",
@@ -111,6 +113,7 @@
     "jwt-decode": "^3.1.2",
     "lint-staged": "^15.2.10",
     "lodash": "^4.17.21",
+    "logrocket": "^9.0.1",
     "ngx-date-fns": "^10.0.1",
     "ngx-skeleton-loader": "^7.0.0",
     "ngx-toastr": "^17.0.2",
@@ -126,6 +129,7 @@
     "subsink": "^1.0.2",
     "tslib": "^2.0.0",
     "webpack": "^5.75.0",
+    "zod": "^3.23.8",
     "zone.js": "0.13.3"
   },
   "devDependencies": {

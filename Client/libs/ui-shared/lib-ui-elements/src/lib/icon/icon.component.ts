@@ -7,7 +7,10 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FaIconComponent, AnimationProp } from '@fortawesome/angular-fontawesome';
+import {
+  FaIconComponent,
+  AnimationProp,
+} from '@fortawesome/angular-fontawesome';
 import {
   config,
   IconStyle,
@@ -38,7 +41,8 @@ import { environment } from '../../../../../../apps/mango/src/environments/envir
   styleUrls: ['./icon.component.scss'],
 })
 export class IconComponent implements OnChanges, OnInit {
-  @ViewChild('faIconHost', {static: false, read: ViewContainerRef}) iconContainer: ViewContainerRef;
+  @ViewChild('faIconHost', { static: false, read: ViewContainerRef })
+  iconContainer: ViewContainerRef;
 
   /**
    * Provide the name of the FontAwesome icon E.g. 'faStar'
@@ -142,62 +146,86 @@ export class IconComponent implements OnChanges, OnInit {
   iconCat: string;
   iconArray: string[];
 
-  constructor(){
-    /** @deprecated */
-    this.iconPath = "/v06/content/assets/icons/";
-    if (environment["isRestful"]) {
-      this.iconPath = "../assets/images/icons/";
-    }
+  constructor() {
+    this.iconPath = '../assets/images/icons/';
   }
 
-  ngOnInit(){
+  ngOnInit() {
     /** @deprecated */
     // CSS Class, todo: check if being used
     this.iconClass = [`icon-${this.icon}`, `icon-${this.icon}-dims`];
     if (this.icon !== null && this.icon !== undefined) {
-      this.iconArray = this.icon.includes('-') ? this.icon.split('-') : [this.icon];
+      this.iconArray = this.icon.includes('-')
+        ? this.icon.split('-')
+        : [this.icon];
       this.iconCat = this.iconPath + this.iconArray[0];
     }
   }
 
-  ngOnChanges(){
+  ngOnChanges() {
     if (this.library === undefined) {
       this.library = 'fontAwesome';
     }
-    if (this.pack === undefined){
+    if (this.pack === undefined) {
       this.pack = 'solid';
     }
-    if (this.library === 'fontAwesome' && this.pack !== undefined && (this.icon !== null && this.icon !== undefined)) {
+    if (
+      this.library === 'fontAwesome' &&
+      this.pack !== undefined &&
+      this.icon !== null &&
+      this.icon !== undefined
+    ) {
       this.getIcon();
     }
   }
 
-  getIcon(){
-    switch(true) {
-      case (this.library === 'fontAwesome' && this.pack === 'crem'):
+  getIcon() {
+    switch (true) {
+      case this.library === 'fontAwesome' && this.pack === 'crem':
         import('./definitions/cremIcons')
-        .then( icon => {
-          this.faIcon = icon[this.icon as keyof typeof icon] as IconDefinition;
-          this.createIcon(this.faIcon);
-        }).catch( () => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
-      break;
+          .then((icon) => {
+            this.faIcon = icon[
+              this.icon as keyof typeof icon
+            ] as IconDefinition;
+            this.createIcon(this.faIcon);
+          })
+          .catch(() => {
+            console.log(
+              `Icon ${this.icon} was not found in package ${this.pack}`
+            );
+          });
+        break;
 
-      case (this.library === 'fontAwesome' && this.pack === 'solid'):
+      case this.library === 'fontAwesome' && this.pack === 'solid':
       default:
         import('@fortawesome/free-solid-svg-icons')
-        .then( icon => {
-          this.faIcon = icon[this.icon as keyof typeof icon] as IconDefinition;
-          this.createIcon(this.faIcon);
-        }).catch( () => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
-      break;
+          .then((icon) => {
+            this.faIcon = icon[
+              this.icon as keyof typeof icon
+            ] as IconDefinition;
+            this.createIcon(this.faIcon);
+          })
+          .catch(() => {
+            console.log(
+              `Icon ${this.icon} was not found in package ${this.pack}`
+            );
+          });
+        break;
 
-      case (this.library === 'fontAwesome' && this.pack === 'regular'):
+      case this.library === 'fontAwesome' && this.pack === 'regular':
         import('@fortawesome/free-regular-svg-icons')
-        .then( icon => {
-          this.faIcon = icon[this.icon as keyof typeof icon] as IconDefinition;
-          this.createIcon(this.faIcon);
-        }).catch( () => { console.log(`Icon ${this.icon} was not found in package ${this.pack}`)});
-      break;
+          .then((icon) => {
+            this.faIcon = icon[
+              this.icon as keyof typeof icon
+            ] as IconDefinition;
+            this.createIcon(this.faIcon);
+          })
+          .catch(() => {
+            console.log(
+              `Icon ${this.icon} was not found in package ${this.pack}`
+            );
+          });
+        break;
     }
   }
 
@@ -217,14 +245,13 @@ export class IconComponent implements OnChanges, OnInit {
   public getCssClasses() {
     return {
       // Color
-      'icon-primary':   this.color === 'primary',
+      'icon-primary': this.color === 'primary',
       'icon-secondary': this.color === 'secondary',
-      'icon-light':     this.color === 'light',
-      'icon-dark':      this.color === 'dark',
-      'icon-warning':   this.color === 'warning',
-      'icon-danger':    this.color === 'danger',
-      'icon-info':      this.color === 'info',
-    }
+      'icon-light': this.color === 'light',
+      'icon-dark': this.color === 'dark',
+      'icon-warning': this.color === 'warning',
+      'icon-danger': this.color === 'danger',
+      'icon-info': this.color === 'info',
+    };
   }
-
 }

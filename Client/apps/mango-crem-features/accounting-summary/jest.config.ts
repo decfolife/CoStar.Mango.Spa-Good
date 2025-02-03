@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'mango-crem-features-accounting-summary',
   preset: '../../../jest.preset.js',

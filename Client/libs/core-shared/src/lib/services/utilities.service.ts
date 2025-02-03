@@ -51,6 +51,14 @@ export class UtilitiesService {
     return false;
   }
 
+  public static isUpperEnvironments() {
+    if (environment.name === 'STAGE' || environment.name === 'PROD') {
+      return true;
+    }
+
+    return false;
+  }
+
   // Get the base url for all the APIs
   // When running locally, this is the environment.baseApiUrl
   // Otherwise, all API calls route through the MangoSPA backend server (BFF)

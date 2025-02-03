@@ -25,3 +25,19 @@
     @include costar(color, success);
   }
 }
+
+::ng-deep {
+  crem-dynamic-form {
+    // Fixes the crem-dropdown being cut off within the modal
+    position: relative;
+    // Fix for "System Export Batch ID" field, if ID changes this will break
+    crem-dropdown {
+      &#criteriaReport__ExportSystemBatchNumber_dropdown {
+        .dx-overlay-wrapper.dx-popup-wrapper.dynamicFormDropDown
+          .dx-overlay-content {
+          max-height: 170px !important;
+        }
+      }
+    }
+  }
+}

@@ -177,3 +177,11 @@
   top: 100% !important;
   transform: none !important;
 }
+
+::ng-deep {
+  #addEditMemberModal-content {
+    div.dx-overlay-content.dx-invalid-message-content {
+      display: none;
+    }
+  }
+}

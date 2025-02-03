@@ -149,6 +149,7 @@
     </mango-events-detail-section>
 
     <mango-payments-detail-section
+      *ngIf="!isAccountingEventEmpty"
       [classificationID]="classificationID"
       [eventScheduleData]="eventSchedule"
       [gridState]="gridState"
@@ -160,6 +161,7 @@
     </mango-payments-detail-section>
 
     <mango-amortization-detail-section
+      *ngIf="!isAccountingEventEmpty"
       [classificationID]="classificationID"
       [eventScheduleData]="eventSchedule"
       [gridState]="gridState"
@@ -174,4 +176,8 @@
   </div>
 </div>
 
-<p-toast position="bottom-right" preventOpenDuplicates="true"></p-toast>
+<p-toast
+  position="bottom-right"
+  preventOpenDuplicates="true"
+  mangoAccountingAda
+></p-toast>

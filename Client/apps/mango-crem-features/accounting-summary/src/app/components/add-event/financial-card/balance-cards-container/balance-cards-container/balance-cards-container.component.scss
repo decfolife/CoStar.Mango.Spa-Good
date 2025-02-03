@@ -1,0 +1,49 @@
+@use 'styles' as *;
+
+.balance-cards {
+  display: grid;
+  position: relative;
+  @include costar(gap, 3);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  width: 100%;
+}
+
+ul.balance-card-details-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 10px;
+
+  list-style-type: none;
+  @include costar(gap, 2);
+
+  li.balance-card-label {
+    line-height: 1rem;
+    @include costar(color, gray03);
+  }
+
+  li.balance-card-value {
+    @include costar(color, gray01);
+    font-weight: 500;
+  }
+
+  ::ng-deep li.balance-card-value crem-dropdown dx-drop-down-box {
+    width: 180px;
+  }
+
+  ::ng-deep #present-value-card-compound-frequency-dropdown .dx-overlay-content,
+  ::ng-deep #present-value-card-payment-timing-dropdown .dx-overlay-content {
+    min-width: 185px !important;
+  }
+}
+
+.present-value-link {
+  @include costar(color, primary-light);
+  text-decoration: underline;
+  cursor: pointer;
+  &:hover {
+    text-decoration: none;
+  }
+}

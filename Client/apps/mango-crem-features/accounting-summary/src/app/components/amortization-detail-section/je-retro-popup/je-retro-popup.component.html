@@ -1,57 +1,57 @@
-<dx-popup
+<crem-popup
   *ngIf="jeProcessingPopupData"
   [id]="accountingSummaryService.getId(componentName, 'detail', 'section')"
-  [(visible)]="jeRetroPopupVisible"
-  (onHidden)="onJeRetroPopupHidden()"
-  width="70%"
-  [height]="popupHeight"
-  [resizeEnabled]="true"
-  [wrapperAttr]="{ class: 'accounting-summary-style-container' }"
-  [title]="jePopupTile"
-  [resizeEnabled]="false"
+  width="80%"
+  height="auto"
+  [visible]="jeRetroPopupVisible"
+  [resizeEnabled]="'true'"
+  [title]="jePopupTitle"
+  [showFooter]="false"
+  (close)="closePopup()"
 >
-  <dx-tab-panel
-    [id]="accountingSummaryService.getId(componentName, 'tabs', 'section')"
-    [dataSource]="tabs"
-    [selectedIndex]="0"
-    height="98%"
-    tabsPosition="left"
-    (onOptionChanged)="onTabChanged($event)"
-  >
-    <div
-      class="jeProcessingInfoClass"
-      *dxTemplate="let PeriodPopup of 'jeProcessingData'"
+  <div body>
+    <crem-tabs
+      [id]="accountingSummaryService.getId(componentName, 'tabs', 'section')"
+      [selectedTabIndex]="activeTabIndex"
+      (selectedTabChange)="onTabChange($event)"
     >
-      <mango-je-processing-info
-        [jeProcessingPopupData]="jeProcessingPopupData"
-        [rightsInfo]="rightsInfo"
-        [userInfo]="userInfo"
-        [wfStatusRights]="wfStatusRights"
-        [eventScheduleData]="eventScheduleData"
-        [displayPeriodTitle]="displayPeriodTitle"
-        [isPopupForRetroGridClick]="isPopupForRetroGridClick"
-        (setHeight)="setPopupHeight($event)"
-      ></mango-je-processing-info>
-    </div>
-    <div *dxTemplate="let PeriodPopup of 'paymentDetailData'">
-      <mango-je-payment-info
-        [jePaymentPopupData]="jePaymentPopupData"
-        [userInfo]="userInfo"
-        [displayPeriodTitle]="displayPeriodTitle"
-      >
-      </mango-je-payment-info>
-    </div>
-
-    <div *dxTemplate="let PeriodPopup of 'retrospectiveAdjustmentData'">
-      <!-- Retrospective Adjustment tab component -->
-      <mango-retrospective-adjustment-info
+      <crem-tab-item title="Journal Entry" id="journalEntryTab">
+        <div class="jeProcessingInfoClass">
+          <mango-je-processing-info
+            [jeProcessingPopupData]="jeProcessingPopupData"
+            [rightsInfo]="rightsInfo"
+            [userInfo]="userInfo"
+            [wfStatusRights]="wfStatusRights"
+            [eventScheduleData]="eventScheduleData"
+            [displayPeriodTitle]="displayPeriodTitle"
+            [isPopupForRetroGridClick]="isPopupForRetroGridClick"
+          ></mango-je-processing-info>
+        </div>
+      </crem-tab-item>
+      <crem-tab-item title="Payment Detail" id="paymentDetailTab">
+        <mango-je-payment-info
+          [jePaymentPopupData]="jePaymentPopupData"
+          [userInfo]="userInfo"
+          [displayPeriodTitle]="displayPeriodTitle"
+        >
+        </mango-je-payment-info>
+      </crem-tab-item>
+      <crem-tab-item
         *ngIf="showRetroScheduleTab"
-        [retrospectiveAdjustmentPopupData]="retrospectiveAdjustmentPopupData"
-        [gridColumnsForRetroPopup]="gridColumnsForRetroPopup"
-        [classificationType]="classificationType"
-        [amortizationProfileName]="amortizationProfileName"
-        (retroAdustmentGridRowClickEvent)="onRetroAdustmentGridRowClick($event)"
-      ></mango-retrospective-adjustment-info>
-    </div>
-  </dx-tab-panel>
-</dx-popup>
+        title="Retrospective Adjustment"
+        id="retrospectiveTab"
+      >
+        <mango-retrospective-adjustment-info
+          *ngIf="!!retrospectiveAdjustmentPopupData"
+          [retrospectiveAdjustmentPopupData]="retrospectiveAdjustmentPopupData"
+          [gridColumnsForRetroPopup]="gridColumnsForRetroPopup"
+          [classificationType]="classificationType"
+          [amortizationProfileName]="amortizationProfileName"
+          (retroAdjustmentGridRowClickEvent)="
+            onRetroAdjustmentGridRowClick($event)
+          "
+        ></mango-retrospective-adjustment-info>
+      </crem-tab-item>
+    </crem-tabs>
+  </div>
+</crem-popup>

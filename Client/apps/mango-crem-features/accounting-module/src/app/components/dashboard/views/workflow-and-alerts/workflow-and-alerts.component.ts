@@ -14,16 +14,10 @@ import { Location } from '@angular/common';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { CremPivotTableComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/crem-pivot-table/crem-pivot-table.component';
-import {
-  DropdownComponent,
-  SimpleGridComponent,
-} from '@mango/ui-shared/lib-ui-elements';
+import { SimpleGridComponent } from '@mango/ui-shared/lib-ui-elements';
 import { environment } from '../../../../../../../../mango/src/environments/environment.local';
 
-import {
-  ColumnArray,
-  DropdownValue,
-} from '../../../../shared/models/dashboard-model';
+import { ColumnArray } from '../../../../shared/models/dashboard-model';
 import { DashboardService } from '../../../../services/dashboard.service';
 import { DataService } from '../../../../services/data.service';
 import { NgStateObject } from '../../../../shared/models/app-state.model';
@@ -71,6 +65,7 @@ export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
   public canSaveDefault = false;
   public cardDataLoadCondition: any = {};
   public allCardDataLoaded = false;
+  public segmentID: number;
 
   public cardConfigs: any = {
     22: {
@@ -176,11 +171,13 @@ export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
                 card.cardJSONSchema.dataGridKeyExpr = 0;
                 card.cardPendoId =
                   this.cardConfigs?.[card.mangoDashboardCardId]?.['cardId'];
+                this.segmentID = this.selectedSegment;
               } else {
                 card.cardJSONSchema.id = 'cardId' + card.id;
                 card.sortOrder = this.cardConfigs?.[card.id]?.['sortOrder'];
                 card.cardJSONSchema.dataGridKeyExpr = 0;
                 card.cardPendoId = this.cardConfigs?.[card.id]?.['cardId'];
+                this.segmentID = this.selectedSegment;
               }
 
               card.cardJSONSchema.exportFileName =

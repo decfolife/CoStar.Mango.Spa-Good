@@ -25,7 +25,7 @@ export class BookmarksComponent {
     if (objectTypeId === 7) {
       null;
     } else {
-      this.router.navigate(['crem/forms/render-form'], {
+      this.router.navigate(['v06/Forms/RenderForm.aspx'], {
         queryParams: {
           fid: 312,
           oid: bm.objectID,

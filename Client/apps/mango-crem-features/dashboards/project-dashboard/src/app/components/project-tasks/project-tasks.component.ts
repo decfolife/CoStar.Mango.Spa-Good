@@ -100,6 +100,10 @@ enum AvailableActions {
   MODIFY_COMPLETE_DATE = 'MODIFY_COMPLETE_DATE',
   ADD_NOTES = 'ADD_NOTES',
   UPLOAD_FILES = 'UPLOAD_FILES',
+  TASK_DETAILS_PAGE = 'TASK_DETAILS_PAGE',
+  ASSIGNEES_PAGE = 'ASSIGNEES_PAGE',
+  ADD_NOTES_PAGE = 'ADD_NOTES_PAGE',
+  UPLOAD_FILES_PAGE = 'UPLOAD_FILES_PAGE',
 }
 type ActionPermissions = {
   [key in AvailableActions]: any[] | undefined;
@@ -119,8 +123,12 @@ const actionPermissions_ProjectEditable: ActionPermissions = {
   [AvailableActions.APPROVE_TASK]: [1, 2, 3],
   [AvailableActions.REJECT_TASK_APPROVAL]: [1, 2, 3],
   [AvailableActions.MODIFY_COMPLETE_DATE]: [1],
-  [AvailableActions.ADD_NOTES]: [1, 2, 3, 999],
+  [AvailableActions.ADD_NOTES]: ['SU', 1, 2, 3, 999],
   [AvailableActions.UPLOAD_FILES]: [1, 2, 3, 999],
+  [AvailableActions.TASK_DETAILS_PAGE]: ['SU', 1, 2, 3],
+  [AvailableActions.ASSIGNEES_PAGE]: ['SU', 1, 2, 3],
+  [AvailableActions.ADD_NOTES_PAGE]: ['SU', 1, 2, 3],
+  [AvailableActions.UPLOAD_FILES_PAGE]: ['SU', 1, 2, 3],
 };
 const actionPermission_ProjectReadOnly: ActionPermissions = {
   [AvailableActions.COPY_TRANSACTION]: ['SU', 1],
@@ -137,16 +145,28 @@ const actionPermission_ProjectReadOnly: ActionPermissions = {
   [AvailableActions.APPROVE_TASK]: [],
   [AvailableActions.REJECT_TASK_APPROVAL]: [],
   [AvailableActions.MODIFY_COMPLETE_DATE]: [],
-  [AvailableActions.ADD_NOTES]: ['SU', 1],
+  [AvailableActions.ADD_NOTES]: ['SU', 1, 2, 3],
   [AvailableActions.UPLOAD_FILES]: [],
+  [AvailableActions.TASK_DETAILS_PAGE]: ['SU', 1, 2, 3],
+  [AvailableActions.ASSIGNEES_PAGE]: ['SU', 1, 2, 3],
+  [AvailableActions.ADD_NOTES_PAGE]: ['SU', 1, 2, 3],
+  [AvailableActions.UPLOAD_FILES_PAGE]: ['SU', 1, 2, 3],
+};
+
+const columnFunctionsDataFields = {
+  PROJECTMILESTONEUSERCOMPLETEDDATE: 'ProjectMilestoneUserCompletedDate',
+  PROJECTMILESTONENAME: 'ProjectMilestoneName',
+  APPROVERS: 'Approvers',
+  FILESCOUNT: 'FilesCount',
+  NOTESCOUNT: 'NotesCount',
 };
 
 // link data-column click to action permissions
 const dataColActionPermissionMap = {
-  ProjectMilestoneName: AvailableActions.EDIT_TASK,
-  Approvers: AvailableActions.ASSIGN_APPROVERS,
-  FilesCount: AvailableActions.UPLOAD_FILES,
-  NotesCount: AvailableActions.ADD_NOTES,
+  ProjectMilestoneName: AvailableActions.TASK_DETAILS_PAGE,
+  Approvers: AvailableActions.ASSIGNEES_PAGE,
+  FilesCount: AvailableActions.UPLOAD_FILES_PAGE,
+  NotesCount: AvailableActions.ADD_NOTES_PAGE,
 };
 @Component({
   selector: 'project-tasks',
@@ -231,6 +251,8 @@ export class ProjectTasksComponent
   private refreshForApplyClick = false;
   private lastDatePickerNewValue: any = null;
   private lastDatePickerChangedName: string = null;
+  focusedRowKey: any;
+  focusedRowData: any;
 
   //***for views
   currentListViewName: string;
@@ -306,9 +328,25 @@ export class ProjectTasksComponent
     private reorderTasksModal: ReorderTaskModal
   ) {
     this.saveState = this.saveState.bind(this);
+
+    this.currentUserInfo$ = this.facade.contactRecord$;
+    this.subs.push(
+      this.currentUserInfo$.subscribe((contact) => {
+        this.currentUserContactId = contact.contactID;
+        this.isUserDatesEU = contact.preferences.contactDatesEU;
+        this.isSuperUser =
+          contact.userRoleName.toLowerCase().trim() == 'superuser'
+            ? true
+            : false;
+        this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
+      })
+    );
   }
+
   ngAfterContentInit(): void {
     this.initializeBehaviorDisableQuickApprovalButton();
+    this.currentObject =
+      this.currentObjectService.getCurentObjectNameAndType$();
   }
 
   async ngOnInit() {
@@ -328,38 +366,8 @@ export class ProjectTasksComponent
             : 0;
           this.getNotesRequiredFlag();
           this.getProjectContactLevel(this.projectId);
-          const isEditable = await this.dashboardService
-            .getIsProjectEditable(params.oid)
-            .toPromise();
-
-          this.isProjectEditable = isEditable;
         }),
         first()
-      )
-      .toPromise();
-
-    this.currentUserInfo$ = this.facade.contactRecord$;
-
-    this.currentObject =
-      this.currentObjectService.getCurentObjectNameAndType$();
-
-    await this.currentUserInfo$
-      .pipe(
-        takeUntil(this.destroy$),
-        filter((x) => !!x && x !== null),
-        first(),
-        map((contact) => ({
-          isSuperUser:
-            contact.userRoleName.toLowerCase().trim() == 'superuser'
-              ? true
-              : false,
-          contact,
-        })),
-        tap(({ isSuperUser, contact }) => {
-          this.currentUserContactId = contact.contactID;
-          this.isUserDatesEU = contact.preferences.contactDatesEU;
-          this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
-        })
       )
       .toPromise();
   }
@@ -681,7 +689,6 @@ export class ProjectTasksComponent
       return;
     }
 
-    const { taskId, isProxyUser } = data;
     let dialogRef = this.dialog.open(ModifyCompleteDateComponent, {
       height: '350px',
       width: '500px',
@@ -690,9 +697,9 @@ export class ProjectTasksComponent
       panelClass: 'modifyCompleteDateModal',
       data: {
         projectId: this.projectId,
-        taskId: taskId,
+        taskId: data.ProjectMilestoneID,
         isCompleteDate: 1,
-        isProxyUser: isProxyUser,
+        isProxyUser: data.IsProxyUser,
         dateFormat: this.dateFormat,
         notesRequired: this.isNotesFieldRequired,
       },
@@ -877,37 +884,81 @@ export class ProjectTasksComponent
     );
   }
 
+  onFocusedRowChanged(event: any) {
+    if (event.rowIndex !== -1) {
+      this.focusedRowKey = event.component.option('focusedRowKey');
+      this.focusedRowData = event.row.data;
+    }
+  }
+
+  onKeyDown(e) {
+    if (e.event.key === ' ' || e.event.key == 'Enter') {
+      const gridInstance = this.projectTasksGrid.instance;
+      const focusedColumnIndex = gridInstance.option('focusedColumnIndex');
+      const focusedRowIndex = gridInstance.option('focusedRowIndex');
+      if (focusedColumnIndex == undefined || focusedRowIndex == -1) {
+        return;
+      } else {
+        const datafield =
+          gridInstance.getVisibleColumns()[focusedColumnIndex]?.dataField;
+        if (Object.values(columnFunctionsDataFields).includes(datafield)) {
+          e.event.preventDefault();
+          this.processColumnFunction(datafield, this.focusedRowData);
+        } else {
+          const focusedRowElement = gridInstance.getRowElement(
+            gridInstance.getRowIndexByKey(this.focusedRowKey)
+          );
+          const checkboxElement = focusedRowElement[0].querySelector(
+            '.dx-select-checkbox'
+          );
+          if (checkboxElement?.classList.contains('dx-state-disabled')) {
+            e.event.preventDefault();
+          }
+        }
+      }
+    }
+  }
+
   displayTaskDetail(e) {
+    if (e.rowIndex == -1 || e.rowType !== 'data') {
+      return;
+    }
+
+    const datafield = e.column.dataField;
+    const data = e.data;
+    if (Object.values(columnFunctionsDataFields).includes(datafield)) {
+      e.event.preventDefault();
+      this.processColumnFunction(datafield, data);
+    }
+  }
+
+  processColumnFunction(datafield, data) {
+    if (datafield == 'ProjectMilestoneUserCompletedDate') {
+      this.modifyCompleteDate(data);
+      return;
+    }
+
     const permissionDenied = this.checkUserLevelRequirement(
-      dataColActionPermissionMap[e.column.dataField]
+      dataColActionPermissionMap[datafield]
     );
     if (permissionDenied) return;
 
-    if (
-      e.rowType == 'data' &&
-      (e.column.dataField == 'ProjectMilestoneName' ||
-        e.column.dataField == 'Approvers' ||
-        e.column.dataField == 'FilesCount' ||
-        e.column.dataField == 'NotesCount')
-    ) {
-      let colName = e.column.dataField;
-      const selectedTabIndex =
-        colName == 'ProjectMilestoneName'
-          ? 0
-          : colName == 'Approvers'
-          ? 1
-          : colName == 'FilesCount'
-          ? 3
-          : 2;
-      this.showTaskInfoModal(
-        e.data.ProjectMilestoneID,
-        e.data.ProjectMilestoneParentID,
-        e.data.ProjectMilestoneStep,
-        e.data.IndexOrder,
-        e.data.TaskSubTasksCount,
-        selectedTabIndex
-      );
-    }
+    const selectedTabIndex =
+      datafield == 'ProjectMilestoneName'
+        ? 0
+        : datafield == 'Approvers'
+        ? 1
+        : datafield == 'FilesCount'
+        ? 3
+        : 2;
+    this.showTaskInfoModal(
+      data.ProjectMilestoneID,
+      data.ProjectMilestoneParentID,
+      data.ProjectMilestoneStep,
+      data.IndexOrder,
+      data.TaskSubTasksCount,
+      selectedTabIndex
+    );
   }
 
   searchDataGrid(searchText) {
@@ -937,7 +988,10 @@ export class ProjectTasksComponent
       htmlCellElement.setAttribute('id', 'ptm-taskId' + e.rowIndex);
     }
 
-    if (this.userAccessLevel !== 1 && e.column.name == 'selection') {
+    if (
+      (this.userAccessLevel !== 1 || !this.isProjectEditable) &&
+      e.column.name == 'selection'
+    ) {
       if (e.rowType == 'header') {
         this.disableHeaderCheckbox(e);
       } else {
@@ -1047,6 +1101,13 @@ export class ProjectTasksComponent
 
   showColumnChooser() {
     this.projectTasksGrid.instance.showColumnChooser();
+
+    const clear = document.querySelectorAll('span.dx-icon.dx-icon-clear');
+    clear.forEach((element) => {
+      if (element.innerHTML == '') element.className = 'none';
+      element.innerHTML =
+        "<button class='dx-icon dx-icon-clear' style='border: none; background-color: transparent;'></button>";
+    });
   }
 
   moreMenuClosed() {
@@ -1114,6 +1175,7 @@ export class ProjectTasksComponent
         (res: any) => {
           if (res && res.success) {
             this.userAccessLevel = res.data.userLevel;
+            this.isProjectEditable = res.data.isEditable;
           }
           this.sessionView = sessionStorage.getItem('projectTasksSessionView')
             ? JSON.parse(sessionStorage.getItem('projectTasksSessionView'))
@@ -1136,6 +1198,13 @@ export class ProjectTasksComponent
             `${objectType}_${objectName}`
           )
         )
+    );
+  }
+
+  private isParentExistsInTasks(parentId: number): boolean {
+    return (
+      this.gridData.findIndex((item) => item.ProjectMilestoneID === parentId) >=
+      0
     );
   }
 
@@ -1170,6 +1239,11 @@ export class ProjectTasksComponent
           this.noDataText = this.gridData.length ? '' : 'No Data';
           this.dataRetrieved = true;
           this.gridData.forEach((task) => {
+            task.DisplayParentID = this.isParentExistsInTasks(
+              task.ProjectMilestoneParentID
+            )
+              ? task.ProjectMilestoneParentID
+              : 0;
             task.Approvers = JSON.parse(task.Approvers);
             task.TaskStatus = JSON.parse(task.TaskStatus);
             task.ProjectMilestoneDescription = task.ProjectMilestoneDescription
@@ -1959,10 +2033,18 @@ export class ProjectTasksComponent
     }
     this.taskSettingsChangesMade = true;
     this.selectAllEmailPref = e.value;
+    this.processAllEmailPreferences();
+  }
 
+  onEnterSelectAll(e) {
+    this.selectAllEmailPref = e;
+    this.processAllEmailPreferences();
+  }
+
+  processAllEmailPreferences() {
     for (let setting in this.projectEmailPreferences) {
       if (setting !== 'transactionName' && setting !== 'emailOnInitiation') {
-        this.projectEmailPreferences[setting] = e.value;
+        this.projectEmailPreferences[setting] = this.selectAllEmailPref;
       }
     }
   }
@@ -2234,9 +2316,15 @@ export class ProjectTasksComponent
   }
 
   approveOrRejectTask(taskData, action) {
-    const isValidAction = ['Approve', 'Reject'].indexOf(action) > -1;
+    const isValidAction =
+      [TaskUserApprovalStatus.APPROVE, TaskUserApprovalStatus.REJECT].indexOf(
+        action
+      ) > -1;
     const isActionable =
-      this.isTaskApprovable(taskData) || this.isTaskRejectable(taskData);
+      (this.isTaskApprovable(taskData) &&
+        action == TaskUserApprovalStatus.APPROVE) ||
+      (this.isTaskRejectable(taskData) &&
+        action == TaskUserApprovalStatus.REJECT);
     if (!isValidAction || !isActionable) {
       return;
     }
@@ -2418,7 +2506,7 @@ export class ProjectTasksComponent
 
     const preventAction =
       !approvableStatus ||
-      // data.ApprovalPredecessors ||
+      data.ApprovalPredecessors ||
       data.ApprovalSubTasks ||
       this.checkUserLevelRequirement(this.availableActions.APPROVE_TASK);
 
@@ -2429,5 +2517,9 @@ export class ProjectTasksComponent
     this.subs.forEach((s) => s.unsubscribe());
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  focusSavedViewSubMenu() {
+    this.inputViewTextBox.focusInputBox();
   }
 }
