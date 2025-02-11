@@ -144,10 +144,13 @@ export class BalanceCardsContainerComponent implements OnInit, OnDestroy {
         this.addEventFormService.totalAdjustment$.next(
           this.balanceCardsModel.totalAdjustment
         );
+        //don't change this when you look at it and say wtf. dev extreme believes there is such a thing as negative 0 and our currency formatting breaks without this check for 0
         this.balanceCardsModel.openingBalance = this.balanceCardsModel
           .overrideOpeningBalance
           ? this.balanceCardsModel.openingBalance
-          : this.balanceCardsModel.totalAdjustment * -1;
+          : this.balanceCardsModel.totalAdjustment !== 0
+          ? this.balanceCardsModel.totalAdjustment * -1
+          : 0;
       });
 
     this.balanceCardForm
@@ -167,7 +170,9 @@ export class BalanceCardsContainerComponent implements OnInit, OnDestroy {
             .setValue(this.balanceCardsModel.openingBalance);
         } else {
           this.balanceCardsModel.openingBalance =
-            this.balanceCardsModel.totalAdjustment * -1;
+            this.balanceCardsModel.totalAdjustment !== 0
+              ? this.balanceCardsModel.totalAdjustment * -1
+              : 0;
         }
       });
 
@@ -399,7 +404,7 @@ export class BalanceCardsContainerComponent implements OnInit, OnDestroy {
       .exportPresentValuePreviewFile(data)
       .pipe(takeUntil(this.subscription$))
       .subscribe((presentValueResponse: any) => {
-        if (!presentValueResponse.data) {
+        if (!presentValueResponse?.data) {
           this.accountingSummaryService.errorNotify(
             'Downloading the present value table failed.'
           );

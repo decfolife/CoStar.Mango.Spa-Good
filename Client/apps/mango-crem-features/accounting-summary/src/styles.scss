@@ -456,9 +456,9 @@
   }
 }
 
-.dx-menu-base .dx-menu-item.dx-state-disabled {
+.dx-menu-base .dx-menu-item.dx-menu-item-has-icon {
   opacity: 0.5;
-  padding-bottom: 4px;
+  cursor: copy;
 }
 
 // Change Events grid action menu cursor icon of clickable items.

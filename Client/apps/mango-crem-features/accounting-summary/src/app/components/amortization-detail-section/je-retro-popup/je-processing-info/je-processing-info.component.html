@@ -230,7 +230,13 @@
       </div>
     </dx-tooltip>
 
-    <div class="metric-label footer-item balance-info">
+    <div
+      class="metric-label footer-item balance-info"
+      *ngIf="
+        jeProcessingPopupData.journalEntryProfileName &&
+        !eventScheduleData.isReportingException
+      "
+    >
       <crem-icon
         *ngIf="
           jeProcessingPopupData?.journalEntries !== undefined &&

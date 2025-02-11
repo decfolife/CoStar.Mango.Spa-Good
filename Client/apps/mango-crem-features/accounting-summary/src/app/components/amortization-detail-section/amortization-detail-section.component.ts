@@ -66,6 +66,7 @@ export class AmortizationDetailSectionComponent
   resetBtnHoverText =
     'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText = 'This will clear all pending changes in the grid';
+  showPaymentTabOnPeriodPopup: boolean;
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -123,6 +124,7 @@ export class AmortizationDetailSectionComponent
 
   onRetroAdjustmentGridRowClick(event) {
     this.retroAdjustmentGridRowClickEvent = event;
+    this.showPaymentTabOnPeriodPopup = false;
   }
 
   onGridOptionChanged(event) {
@@ -233,6 +235,7 @@ export class AmortizationDetailSectionComponent
             });
 
             this.initialState = state;
+            this.amortizationDataGrid.instance.state(this.initialState);
             sessionStorage.setItem(
               'amortizationGridStateKey',
               JSON.stringify(state)

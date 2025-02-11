@@ -1,5 +1,8 @@
 <div
-  *ngIf="jePaymentPopupData.length !== 0; else noDataContent"
+  *ngIf="
+    jePaymentPopupData && jePaymentPopupData.length !== 0;
+    else noDataContent
+  "
   [ngClass]="{ 'popup-container': jePaymentPopupData }"
 >
   <div class="clearfix">

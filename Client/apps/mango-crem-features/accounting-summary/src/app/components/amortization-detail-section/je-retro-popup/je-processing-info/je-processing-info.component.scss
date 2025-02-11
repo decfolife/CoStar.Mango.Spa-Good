@@ -167,6 +167,14 @@
   opacity: 1;
 }
 
+:host ::ng-deep #je-processing-info-retro-popup-grid {
+  .dx-header-row {
+    background-color: colors.$costarDarkBlue !important;
+    color: colors.$white;
+    font-weight: bold !important;
+  }
+}
+
 :host ::ng-deep #je-processing-info-popup-grid {
   .dx-header-row {
     background-color: colors.$costarDarkBlue !important;

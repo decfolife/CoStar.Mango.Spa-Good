@@ -467,8 +467,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
             this.getFunctionalCurrencyRateLookup();
           }
           isSameCurrency
-            ? this.financialForm.get('financialCurrencyDirectEntry').enable()
-            : this.financialForm.get('financialCurrencyDirectEntry').disable();
+            ? this.financialForm.get('financialCurrencyDirectEntry').disable()
+            : this.financialForm.get('financialCurrencyDirectEntry').enable();
         } else if (
           this.functionalCurrencyRateset !== 'Direct Entry' &&
           !this.directEntryFunctionalCurrencyRateEnabled
@@ -524,7 +524,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
             this.classificationId === 4)
         ) {
           this.addEditScheduleService.showToast(
-            'Functional Currency is Required',
+            'Functional Currency Rate is Required',
             'Functional Currency Rate is required and cannot be zero.'
           );
           this.addEventFormService.isCalculateValuesDisabled$.next(true);
@@ -532,7 +532,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           return;
         } else {
           this.addEditScheduleService.clearToastBySummary(
-            'Functional Currency is Required'
+            'Functional Currency Rate is Required'
           );
           this.addEventFormService.isCalculateValuesDisabled$.next(false);
           this.addEventFormService.isSaveDisabled$.next(false);
@@ -974,7 +974,10 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       this.updateRouAssetMethodAndAmountForClassificationConfiguration();
       this.financialForm.get('ROUActionDate').setValue(this.termBegin);
     }
-    this.rouMethodIDSelected = this.accountingEventsData?.rouAssetMethodID;
+    if (this.pageMode === 'Edit Event') {
+      this.rouMethodIDSelected = this.accountingEventsData?.rouAssetMethodID;
+    }
+
     this.updateROUAssetsObtainedSubTitle(
       this.financialForm.get('ROUAmount').value,
       this.financialForm.get('ROUActionDate').value
@@ -1476,7 +1479,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         const systemAssetAdjValue =
           this.pageMode === 'Add Event' ||
           this.pageMode === 'Remeasure Event' ||
-          this.addEventFormService.openingAssetBalance$.value
+          this.addEventFormService.systemAssetAdjustment$.value
             ? this.addEventFormService.systemAssetAdjustment$.value
             : this.accountingEventsData.systemAssetAdjustment;
 

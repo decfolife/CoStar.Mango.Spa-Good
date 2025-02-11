@@ -36,7 +36,7 @@ import { AddEditScheduleService } from '@accounting-summary/services/add-edit-sc
   templateUrl: './residual-value.component.html',
   styleUrls: ['./residual-value.component.scss'],
 })
-export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
+export class ResidualValueComponent implements OnInit, OnDestroy {
   componentName = 'residual-value';
   title: string;
   isDisabled = true;
@@ -80,12 +80,6 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  ngOnChanges(): void {
-    if (this.accountingEventsData && this.pageMode === 'Edit Event') {
-      this.loadSavedData();
-    }
-  }
-
   ngOnInit(): void {
     this.handleRVFormChanges();
     this.subscription.push(
@@ -103,6 +97,10 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
         }
       )
     );
+
+    if (this.pageMode === 'Edit Event' && this.accountingEventsData) {
+      this.loadSavedData();
+    }
   }
 
   ngOnDestroy() {
@@ -134,12 +132,6 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
 
   handleRVFormChanges() {
     const debounce = 300;
-    this.title =
-      'Residual Value | Estimated: ' +
-      this.formattingService.localFormat(
-        this.residualValueForm.get('estimatedResidualValue').value,
-        this.localCurrencyDecimalPrecision
-      );
 
     this.subscription.push(
       this.residualValueForm
@@ -148,7 +140,7 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
         .subscribe(() => {
           const estimatedResidualValue = this.formattingService.localFormat(
             this.residualValueForm.get('estimatedResidualValue')?.value,
-            this.accountingEventsData?.localCurrencyDecimalPrecision ?? 2
+            this.localCurrencyDecimalPrecision
           );
           this.title = 'Residual Value | Estimated: ' + estimatedResidualValue;
         })
@@ -174,7 +166,7 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
         .pipe(debounceTime(debounce))
         .subscribe(() => {
           const RVFormData = this.residualValueForm.getRawValue();
-          this.addEventFormService.setRVFormData(RVFormData);
+          this.addEventFormService.RVForm$.next(RVFormData);
 
           this.residualValueValidation();
         })
@@ -404,6 +396,7 @@ export class ResidualValueComponent implements OnInit, OnChanges, OnDestroy {
         ?.presentValueOnAmtNotReflectedInPayments ?? 0,
       this.accountingEventsData.localCurrencyDecimalPrecision
     );
+    this.totalAmount = this.accountingEventsData.totalAmount;
   }
 
   lessorExplicitlyExemptsLessee() {

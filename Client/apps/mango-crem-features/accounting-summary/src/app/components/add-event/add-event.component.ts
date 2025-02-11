@@ -134,7 +134,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.accountingSummaryService.lastApprovedOrExportedDate$
         .pipe(debounceTime(this.debounceTime))
         .subscribe((isRetro) => {
-          const isRetroDate = new Date(isRetro.setDate(isRetro.getDate() - 1));
+          const isRetroDate = new Date(isRetro?.setDate(isRetro.getDate() - 1));
           this.lastApprovedOrExportedDate =
             this.addEditScheduleService.toShortDateString(isRetroDate);
         })
@@ -750,13 +750,13 @@ export class AddEventComponent implements OnDestroy, OnInit {
 
     if (functionalCurrencyRate === 0) {
       this.addEditScheduleService.showToast(
-        'Functional Currency is Required',
+        'Functional Currency Rate is Required',
         'Functional Currency Rate is required and cannot be zero.'
       );
       return;
     } else {
       this.addEditScheduleService.clearToastBySummary(
-        'Functional Currency is Required'
+        'Functional Currency Rate is Required'
       );
     }
     return true;
@@ -1134,6 +1134,17 @@ export class AddEventComponent implements OnDestroy, OnInit {
   }
 
   buildPresentValueExportPayload(values: any) {
+    const amortizationProfileID =
+      this.financialData?.financialFormData?.amortizationProfile;
+    const selectedAmortizationProfile = this.amortizationProfiles?.find(
+      (item) => item.profileID === amortizationProfileID
+    );
+
+    const amortizationProfileName =
+      amortizationProfileID < 0
+        ? this.financialData?.financialFormData?.manualAmortizationProfileName
+        : selectedAmortizationProfile?.profileName;
+
     this.addEventFormService.presentValuePayload$.next({
       leaseAbstractId: values.leaseAbstractId,
       classificationId: values.classificationId,
@@ -1146,8 +1157,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       isFirstMonthOverwrite: values.includeFromFirst,
       compoundFrequencyTypeId: values.compoundFrequencyTypeId,
       paymentInArrears: values.paymentInArrears,
-      amortizationProfileName:
-        this.financialData.financialFormData.manualAmortizationProfileName,
+      amortizationProfileName: amortizationProfileName,
       annualRateTypeId: values.annualRateTypeId,
       discountRate: values.discountRate,
       amountProbableOfBeingOwedByLessee:

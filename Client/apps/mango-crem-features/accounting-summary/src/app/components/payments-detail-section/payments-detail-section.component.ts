@@ -52,6 +52,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
   resetBtnHoverText =
     'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText = 'This will clear all pending changes in the grid';
+  overrideAmortizationProfile = '';
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -77,6 +78,9 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
     ) {
       this.isGridStateChanged = false;
       this.paymentsGridSetup(this.eventScheduleData.leaseRecognitionScheduleID);
+      this.overrideAmortizationProfile = this.eventScheduleData.overrideProfile
+        ? ' | Amortization Profile Overridden'
+        : '';
     }
   }
 
@@ -183,6 +187,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
             });
 
             this.initialState = state;
+            this.paymentsDataGrid.instance.state(this.initialState);
             sessionStorage.setItem(
               'paymentsGridStateKey',
               JSON.stringify(state)

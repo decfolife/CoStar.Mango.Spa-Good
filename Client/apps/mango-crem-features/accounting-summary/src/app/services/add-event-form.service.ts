@@ -15,7 +15,7 @@ export class AddEventFormService {
   private scheduleDetailsForm$ = new Subject<any>();
   private financialForm$ = new Subject<any>();
   private classificationForm$ = new BehaviorSubject<any>({});
-  private RVForm$ = new BehaviorSubject<any>({});
+  public RVForm$ = new BehaviorSubject<any>({});
   public paymentGridData$ = new BehaviorSubject<any>({});
   public balanceCardForm$ = new Subject<any>();
   private commonDropdowns$ = new BehaviorSubject<any>({});

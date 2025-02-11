@@ -382,7 +382,8 @@
             class="implicit-rate"
             *ngIf="
               implicitInterestRate !== null &&
-              implicitInterestRate !== undefined
+              implicitInterestRate !== undefined &&
+              !implicitRateWarningMessage
             "
             [id]="
               accountingSummaryService.getId(
@@ -393,6 +394,30 @@
             "
           >
             {{ implicitInterestRate }}%
+          </div>
+
+          <div
+            *ngIf="
+              implicitRateWarningMessage &&
+              implicitInterestRate !== null &&
+              implicitInterestRate !== undefined
+            "
+            class="implicit-rate-warning-message"
+          >
+            <crem-icon
+              [id]="
+                accountingSummaryService.getId(
+                  componentName,
+                  'implicit-rate-warning-message',
+                  'icon'
+                )
+              "
+              pack="solid"
+              size="sm"
+              icon="faTriangleExclamation"
+            >
+            </crem-icon>
+            {{ implicitRateWarningMessage }}
           </div>
         </li>
       </ul>

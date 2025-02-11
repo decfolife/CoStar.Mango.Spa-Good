@@ -1,12 +1,11 @@
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import {
+  AfterViewInit,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
-  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -21,7 +20,9 @@ import { DxDataGridComponent } from 'devextreme-angular';
   templateUrl: './je-processing-info.component.html',
   styleUrls: ['./je-processing-info.component.scss'],
 })
-export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
+export class JeProcessingInfoComponent
+  implements OnChanges, OnInit, OnDestroy, AfterViewInit
+{
   @ViewChild('JournalEntryProcessing')
   journalEntryProcessing: DxDataGridComponent;
   @Input() jeProcessingPopupData: any;
@@ -82,6 +83,13 @@ export class JeProcessingInfoComponent implements OnChanges, OnInit, OnDestroy {
       fileName,
       'Sheet'
     );
+  }
+
+  ngAfterViewInit() {
+    const findTitle = document.getElementsByTagName('crem-tab-item');
+    Array.from(findTitle).forEach((element: HTMLElement) => {
+      element.removeAttribute('title');
+    });
   }
 
   private jeProcessingInfoGridSetup() {

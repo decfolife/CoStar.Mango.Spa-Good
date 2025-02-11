@@ -29,6 +29,7 @@ export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
   @Input() amortizationProfileName: string;
   @Input() isPopupForRetroGridClick = false;
   @Input() newRetroEventJeStatus = '';
+  @Input() showPaymentTabOnPeriodPopup = true;
   @Output() jeRetroPopupClosedEvent: EventEmitter<any> = new EventEmitter();
   @Output() retroAdjustmentGridRowClickEvent: EventEmitter<any> =
     new EventEmitter();
@@ -160,6 +161,7 @@ export class JeRetroPopupComponent implements OnInit, OnChanges, OnDestroy {
     );
     this.jeRetroPopupClosedEvent.emit(copyOfJeProcessingPopupData);
     this.jeProcessingPopupData = null;
+    this.activeTabIndex = 0;
   }
 
   onJeRetroPopupHidden() {

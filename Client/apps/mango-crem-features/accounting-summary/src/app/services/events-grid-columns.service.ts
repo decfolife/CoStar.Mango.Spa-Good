@@ -123,6 +123,19 @@ export class EventsGridColumnsService {
           (Math.round(rowData.termInYears * 10000) / 10000).toFixed(2),
       }
     );
+    if (classificationId !== 4 && classificationId !== 5) {
+      columns.push({
+        caption: 'Remaining Economic Life',
+        dataField: 'economicLifeYears',
+        headerCellTemplate: 'accountingEventHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) => value.toFixed(2),
+      });
+    }
     if (classificationId !== 0 && classificationId !== 5) {
       columns.push({
         caption: 'Payment Timing',
@@ -236,6 +249,17 @@ export class EventsGridColumnsService {
           usesFunctionalFormat: 'false',
         },
         {
+          caption: 'Implicit Interest Rate',
+          dataField: 'implicitRate',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: (value) => (value * 100).toFixed(4) + '%',
+        },
+        {
           caption: 'Effective Rate',
           dataField: 'effectiveRate',
           headerCellTemplate: 'accountingEventHeader',
@@ -261,6 +285,35 @@ export class EventsGridColumnsService {
             ),
         },
         {
+          caption: 'Fair Market Value',
+          dataField: 'fmv',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: (value) =>
+            this.formattingService.localFormat(
+              +value,
+              currencyInfo.localCurrencyDecimalPrecision
+            ),
+        },
+        {
+          caption: 'Direct Costs (' + currencyInfo.localCurrency + ')',
+          dataField: 'directCosts',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          appendsCurrency: 'true',
+          usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          format: (value) =>
+            this.formattingService.localFormat(
+              +value,
+              currencyInfo.localCurrencyDecimalPrecision
+            ),
+        },
+        {
           caption: 'Termination Fee',
           dataField: 'terminationFee',
           headerCellTemplate: 'accountingEventHeader',
@@ -274,16 +327,6 @@ export class EventsGridColumnsService {
               +value,
               currencyInfo.localCurrencyDecimalPrecision
             ),
-        },
-        {
-          caption: 'FMV',
-          dataField: 'fmv',
-          headerCellTemplate: 'accountingEventHeader',
-          cellTemplate: 'pointer',
-          appendsCurrency: 'false',
-          usesLocalFormat: 'false',
-          usesFunctionalFormat: 'false',
-          format: (value) => this.formattingService.fmvFormat(+value),
         },
       ],
       typeColumns = [
@@ -324,8 +367,48 @@ export class EventsGridColumnsService {
         },
       ];
 
+    if (classificationId !== 4 && classificationId !== 5) {
+      typeColumns.push({
+        caption: 'Fair Market Value',
+        dataField: 'fmv',
+        headerCellTemplate: 'accountingEventHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      typeColumns.splice(1, 0, {
+        caption: 'Implicit Interest Rate',
+        dataField: 'implicitRate',
+        headerCellTemplate: 'accountingEventHeader',
+        cellTemplate: 'pointer',
+        visible: false,
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) => (value * 100).toFixed(4) + '%',
+      });
+    }
+
     switch (classificationId) {
       case 0: // Operating 840
+        columns.push({
+          caption: 'Implicit Interest Rate',
+          dataField: 'implicitRate',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          format: (value) => (value * 100).toFixed(4) + '%',
+        });
         columns.push({
           caption: 'Effective Rate',
           dataField: 'effectiveRate',
@@ -344,6 +427,21 @@ export class EventsGridColumnsService {
           cellTemplate: 'clickable',
           appendsCurrency: 'true',
           usesLocalFormat: 'true',
+          usesFunctionalFormat: 'false',
+          format: (value) =>
+            this.formattingService.localFormat(
+              +value,
+              currencyInfo.localCurrencyDecimalPrecision
+            ),
+        });
+        columns.push({
+          caption: 'Fair Market Value',
+          dataField: 'fmv',
+          headerCellTemplate: 'accountingEventHeader',
+          cellTemplate: 'pointer',
+          visible: false,
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
           usesFunctionalFormat: 'false',
           format: (value) =>
             this.formattingService.localFormat(
@@ -494,7 +592,6 @@ export class EventsGridColumnsService {
               currencyInfo.localCurrencyDecimalPrecision
             ),
         });
-
         columns.push({
           caption: 'Termination Fee',
           dataField: 'terminationFee',
@@ -594,7 +691,69 @@ export class EventsGridColumnsService {
 
     if (classificationId !== 4 && classificationId !== 5) {
       columns.push({
-        caption: 'Classification Test Result ',
+        caption: 'Test 1',
+        dataField: 'test1',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        calculateCellValue: (rowData) =>
+          rowData.test1 ? 'Yes' : rowData.test1 === null ? '' : 'No',
+      });
+      columns.push({
+        caption: 'Test 2',
+        dataField: 'test2',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        calculateCellValue: (rowData) =>
+          rowData.test2 ? 'Yes' : rowData.test2 === null ? '' : 'No',
+      });
+      columns.push({
+        caption: 'Test 3',
+        dataField: 'test3',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) => `${value.toFixed(2)}%`,
+      });
+      columns.push({
+        caption: 'Test 4',
+        dataField: 'test4',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) => `${value.toFixed(2)}%`,
+      });
+
+      if (classificationId !== 0 && classificationId !== 1) {
+        columns.push({
+          caption: 'Test 5',
+          dataField: 'test5',
+          headerCellTemplate: 'accountingEventHeader',
+          visible: false,
+          cellTemplate: 'pointer',
+          appendsCurrency: 'false',
+          usesLocalFormat: 'false',
+          usesFunctionalFormat: 'false',
+          calculateCellValue: (rowData) =>
+            rowData.test5 ? 'Yes' : rowData.test5 === null ? '' : 'No',
+        });
+      }
+
+      columns.push({
+        caption: 'Classification Test Result',
         dataField: 'classificationTestResult',
         headerCellTemplate: 'accountingEventHeader',
         visible: false,
@@ -634,6 +793,155 @@ export class EventsGridColumnsService {
         },
       });
     }
+    if (classificationId !== 0 && classificationId !== 5) {
+      columns.push({
+        caption: 'Estimated Residual Value',
+        dataField: 'estimatedResidualValue',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Guaranteed Amount Reflected in Payments',
+        dataField: 'guaranteedAmtReflectedInPayments',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Residual Value Guaranteed',
+        dataField: 'residualValue',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Lessor Explicitly Exempts Lessee',
+        dataField: 'doesLessorExplicitlyExemptLessee',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        calculateCellValue: (rowData) =>
+          rowData.doesLessorExplicitlyExemptLessee ? 'Yes' : 'No',
+      });
+      columns.push({
+        caption: 'Residual Value Guaranteed by 3rd Party',
+        dataField: 'residualValueGuaranteedBy3rdParty',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Residual Value Guaranteed by Lessee',
+        dataField: 'residualValueGuaranteedByLessee',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Amount Probable of Being Owed by Lessee',
+        dataField: 'amountProbableOfBeingOwedByLessee',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Unguaranteed Residual Value',
+        dataField: 'unguaranteedResidualValue',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Amount Not Reflected in Present Value of Payments',
+        dataField: 'amtNotReflectedInPVofPayments',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+      columns.push({
+        caption: 'Present Value of Amount Not Reflected in Payments',
+        dataField: 'presentValueOnAmtNotReflectedInPayments',
+        headerCellTemplate: 'accountingEventHeader',
+        visible: false,
+        cellTemplate: 'pointer',
+        appendsCurrency: 'false',
+        usesLocalFormat: 'false',
+        usesFunctionalFormat: 'false',
+        format: (value) =>
+          this.formattingService.localFormat(
+            +value,
+            currencyInfo.localCurrencyDecimalPrecision
+          ),
+      });
+    }
     columns.push({
       caption: 'Reporting Exception',
       dataField: 'isReportingException',
@@ -646,6 +954,16 @@ export class EventsGridColumnsService {
         rowData.isReportingException ? 'Yes' : 'No',
     });
     columns.push({
+      caption: 'Exception Reason',
+      dataField: 'exceptionReason',
+      headerCellTemplate: 'accountingEventHeader',
+      cellTemplate: 'pointer',
+      visible: false,
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
+    });
+    columns.push({
       caption: 'Charge Type',
       dataField: 'isIncome',
       headerCellTemplate: 'accountingEventHeader',
@@ -655,6 +973,18 @@ export class EventsGridColumnsService {
       usesFunctionalFormat: 'false',
       calculateCellValue: (rowData) =>
         rowData.isIncome ? 'Income' : 'Expense',
+    });
+    columns.push({
+      caption: 'Include Charges Due on First (Yes/No)',
+      dataField: 'includeFromFirst',
+      headerCellTemplate: 'accountingEventHeader',
+      cellTemplate: 'pointer',
+      visible: false,
+      appendsCurrency: 'false',
+      usesLocalFormat: 'false',
+      usesFunctionalFormat: 'false',
+      calculateCellValue: (rowData) =>
+        rowData.includeFromFirst ? 'Yes' : 'No',
     });
     if (classificationId !== 0 && classificationId !== 5) {
       columns.push({

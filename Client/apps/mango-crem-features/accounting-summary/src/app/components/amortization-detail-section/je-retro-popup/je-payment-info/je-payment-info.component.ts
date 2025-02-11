@@ -61,10 +61,10 @@ export class JePaymentInfoComponent {
     this.jePaymentGridColumns =
       this.jePaymentGridColumnsService.getJePaymentGridColumns(this.dateFormat);
 
-    const showDirectCost = this.jePaymentPopupData.some(
+    const showDirectCost = this.jePaymentPopupData?.some(
       (item) => item.directCosts !== 0
     );
-    const showTerminationFee = this.jePaymentPopupData.some(
+    const showTerminationFee = this.jePaymentPopupData?.some(
       (item) => item.terminationFees !== 0
     );
 

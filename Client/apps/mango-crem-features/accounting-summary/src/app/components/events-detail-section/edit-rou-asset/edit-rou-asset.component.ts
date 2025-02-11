@@ -109,7 +109,13 @@ export class EditRouAssetComponent implements OnInit, OnDestroy {
     this.editROUAssetForm.valueChanges
       .pipe(takeUntil(this.formSubscription$))
       .subscribe((formChanges) => {
-        if (this.editROUAssetForm.valid && this.isObtainedDateValid) {
+        const ROUAssetAmount =
+          this.editROUAssetForm.get('ROUAssetAmount').value;
+        if (
+          this.editROUAssetForm.valid &&
+          this.isObtainedDateValid &&
+          (ROUAssetAmount || ROUAssetAmount === 0)
+        ) {
           this.isSaveDisabled = false;
         } else if (this.isObtainedDateValid) {
           this.isSaveDisabled = true;
@@ -176,31 +182,31 @@ export class EditRouAssetComponent implements OnInit, OnDestroy {
         methodTypeID = 2; //Opening Asset Balance
         this.editROUAssetForm
           .get('ROUAssetAmount')
-          .setValue(this.eventRoutAssetData.openingAssetBalance);
+          .setValue(this.eventRoutAssetData.openingAssetBalance ?? 0);
         break;
       case 3:
         methodTypeID = 3; //System Asset Adjustment
         this.editROUAssetForm
           .get('ROUAssetAmount')
-          .setValue(this.eventRoutAssetData.systemAssetAdjustment);
+          .setValue(this.eventRoutAssetData.systemAssetAdjustment ?? 0);
         break;
       case 4:
         methodTypeID = 4; //Manual Asset Adjustment
         this.editROUAssetForm
           .get('ROUAssetAmount')
-          .setValue(this.eventRoutAssetData.manualAssetAdjustment);
+          .setValue(this.eventRoutAssetData.manualAssetAdjustment ?? 0);
         break;
       case 5:
         methodTypeID = 5; //Total Asset Adjustment
         this.editROUAssetForm
           .get('ROUAssetAmount')
-          .setValue(this.eventRoutAssetData.assetAdjustmentAmount);
+          .setValue(this.eventRoutAssetData.adjustment ?? 0);
         break;
       case 6:
         methodTypeID = 6; //Prior Value
         this.editROUAssetForm
           .get('ROUAssetAmount')
-          .setValue(this.eventRoutAssetData.rouAssetPriorAmount);
+          .setValue(this.eventRoutAssetData.rouAssetPriorAmount ?? 0);
         break;
       case 7:
         methodTypeID = 7; //Zero

@@ -95,6 +95,14 @@
   }
 }
 
+:host ::ng-deep {
+  #financials-amortization-profile-dropdown {
+    .dx-overlay-content {
+      max-height: 265px !important;
+    }
+  }
+}
+
 .radio-group {
   @include costar(padding-top, 2);
 }

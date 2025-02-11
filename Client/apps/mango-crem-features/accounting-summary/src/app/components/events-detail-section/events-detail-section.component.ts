@@ -28,7 +28,7 @@ import { EditRouAssetComponent } from './edit-rou-asset/edit-rou-asset.component
 import { filter } from 'rxjs/operators';
 import { DeleteHistoricScheduleComponent } from './deleteHistoricSchedule/delete-historic-schedule.component';
 import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
-
+import { Clipboard } from '@angular/cdk/clipboard';
 @Component({
   selector: 'mango-events-detail-section',
   templateUrl: './events-detail-section.component.html',
@@ -95,6 +95,7 @@ export class EventsDetailSectionComponent
   resetBtnHoverText =
     'This will delete any saved preferences, taking you back the CoStar default columns';
   clearBtnHoverText = 'This will clear all pending changes in the grid';
+  queryParamObj = {};
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -105,7 +106,8 @@ export class EventsDetailSectionComponent
     private activatedRoute: ActivatedRoute,
     private storageService: StorageService,
     private dialog: MatDialog,
-    private addEditScheduleService: AddEditScheduleService
+    private addEditScheduleService: AddEditScheduleService,
+    private clipboard: Clipboard
   ) {
     this.preferenceSavePendingMessage =
       accountingSummaryService.preferenceSavePendingMessage;
@@ -113,6 +115,7 @@ export class EventsDetailSectionComponent
 
   ngOnInit(): void {
     this.getEventsDropDownData();
+    this.getQueryParams();
 
     this.subscription.add(
       this.accountingSummaryService.newCreatedSchedule.subscribe(
@@ -186,6 +189,17 @@ export class EventsDetailSectionComponent
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  getQueryParams() {
+    const queryString = window.location.search;
+    if (queryString !== '') {
+      const queryParamArray = queryString.substring(1).split('&');
+      queryParamArray.forEach((qp) => {
+        const nameValue = qp.split('=');
+        this.queryParamObj[nameValue[0]] = nameValue[1];
+      });
+    }
   }
 
   eventsGridSetup(masterScheduleId: number) {
@@ -605,7 +619,6 @@ export class EventsDetailSectionComponent
     }
     const edit = {
       text: 'Edit',
-      icon: 'fa fa-pencil fa-fw blueicon',
       visible:
         e?.row?.data?.isPublished &&
         this.showEditIcon &&
@@ -614,7 +627,10 @@ export class EventsDetailSectionComponent
 
       onItemClick: () => {
         const queryParams = {
+          otid: this.queryParamObj['otid'],
+          oid: this.queryParamObj['oid'],
           eventId: e.row.data.leaseRecognitionScheduleID,
+          navpageid: this.queryParamObj['navpageid'],
         };
         this.router.navigate(['editEvent'], {
           state: {
@@ -630,7 +646,6 @@ export class EventsDetailSectionComponent
 
     const editRouAsset = {
       text: 'Edit ROU Asset',
-      icon: 'fa fa-pencil fa-fw blueicon',
       visible:
         e?.row?.data?.isPublished &&
         this.showEditIcon &&
@@ -655,7 +670,7 @@ export class EventsDetailSectionComponent
           openingAssetBalance: e.row.data.openingAssetBalance,
           systemAssetAdjustment: e.row.data.systemAssetAdjustment,
           manualAssetAdjustment: e.row.data.manualAssetAdjustment,
-          assetAdjustmentAmount: e.row.data.adjustmentAmount,
+          adjustment: e.row.data.adjustment,
           rouAssetPriorAmount: this.rouAssetPriorAmount,
         };
 
@@ -694,7 +709,6 @@ export class EventsDetailSectionComponent
 
     const remeasure = {
       text: 'Remeasure',
-      icon: 'fa fa-wrench fa-fw blueicon',
       beginGroup: true,
       visible: e.row.data.isPublished && this.showEditIcon,
       items: [
@@ -775,7 +789,6 @@ export class EventsDetailSectionComponent
 
     const deleteSchedule = {
       text: 'Delete',
-      icon: 'fa fa-trash-o fa-fw redicon',
       value: e.row.data.leaseRecognitionScheduleID + '|' + e.row.data.jeStatus,
       beginGroup: true,
       visible: e.row.data.isPublished && this.showEditIcon,
@@ -806,9 +819,13 @@ export class EventsDetailSectionComponent
 
     const scheduleId = {
       text: 'Event ID: ' + e.row.data.leaseRecognitionScheduleID,
-      disabled: true,
+      disabled: false,
       selectable: true,
       beginGroup: true,
+      icon: 'faCopy',
+      onItemClick: () => {
+        this.clipboard.copy(e.row.data.leaseRecognitionScheduleID);
+      },
     };
 
     if (this.showEditIcon) {
@@ -840,10 +857,13 @@ export class EventsDetailSectionComponent
     rowData
   ) {
     const queryParams = {
+      otid: this.queryParamObj['otid'],
+      oid: this.queryParamObj['oid'],
       remeasureTypeId: remeasureTypeId,
-      eventId: rowData.leaseRecognitionScheduleID,
+      eventId: rowData?.leaseRecognitionScheduleID,
+      navpageid: this.queryParamObj['navpageid'],
     };
-    this.router.navigate(['remeasureEvent'], {
+    this.router?.navigate(['remeasureEvent'], {
       relativeTo: this.activatedRoute,
       state: {
         data: rowData,

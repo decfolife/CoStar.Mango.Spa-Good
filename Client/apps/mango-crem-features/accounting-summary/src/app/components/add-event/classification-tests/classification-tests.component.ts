@@ -63,6 +63,8 @@ export class ClassificationTestsComponent
   classificationTestForm: FormGroup;
   isfairMarketHasValue: boolean = false;
   implicitInterestRate: number;
+  implicitRateWarningCode: string;
+  implicitRateWarningMessage: string;
   title = 'Classification Tests | Test Result: Tests Incomplete';
   @Input() accountingEventsData: PreviousAccountingEvent;
   @Input() classificationId: number;
@@ -119,6 +121,9 @@ export class ClassificationTestsComponent
   ngOnInit(): void {
     this.handleFormValueChanges();
     this.setupTestDropdowns();
+    if (this.pageMode === 'Edit Event' && this.accountingEventsData) {
+      this.loadSavedData();
+    }
   }
 
   handleFormValueChanges() {
@@ -189,6 +194,7 @@ export class ClassificationTestsComponent
           if (
             this.presentValue &&
             this.pVofAmtNotReflectedInPayments &&
+            fairMarketValue &&
             result > 2
           ) {
             this.addEditScheduleService.showToast(
@@ -236,7 +242,25 @@ export class ClassificationTestsComponent
             calculateValuesResponseData.classificationTestResults.resultReason;
           this.isClassificationMatched =
             calculateValuesResponseData.classificationTestResults.isResultMatched;
+          this.title = `Classification Tests | Test Result: ${this.classificationResult}`;
           this.pvPercent();
+          this.implicitRateWarningCode =
+            calculateValuesResponseData.implicitRateWarningCode;
+          if (
+            this.implicitRateWarningCode ===
+            'ImplicitRateExceedsPositiveThreshold'
+          ) {
+            this.implicitRateWarningMessage =
+              'Implicit rate could not be found because it would exceed the 200% threshold allowed.';
+          } else if (
+            this.implicitRateWarningCode ===
+            'ImplicitRateExceedsNegativeThreshold'
+          ) {
+            this.implicitRateWarningMessage =
+              'Implicit rate could not be found because it would exceed the -200% threshold allowed.';
+          } else {
+            this.implicitRateWarningMessage = '';
+          }
         })
     );
 
@@ -244,7 +268,9 @@ export class ClassificationTestsComponent
       this.addEventFormService.accountingTerms$
         .pipe(debounceTime(debounce))
         .subscribe((termValues: accountingTerms) => {
-          this.remainingTermYears = termValues.termInYear;
+          if (termValues.termInYear) {
+            this.remainingTermYears = termValues.termInYear;
+          }
         })
     );
   }
@@ -254,16 +280,6 @@ export class ClassificationTestsComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (
-      this.accountingEventsData &&
-      (this.classificationId || this.classificationId === 0)
-    ) {
-      if (this.pageMode === 'Edit Event') {
-        this.loadSavedData();
-      }
-      this.getClassificationTestResults();
-    }
-
     if (changes.classificationId) {
       [0, 1].includes(this.classificationId)
         ? (this.classificationResultReason = 'Incomplete Test 1, 2, 3, 4.')
@@ -319,9 +335,10 @@ export class ClassificationTestsComponent
       .setValue(this.accountingEventsData.fmv);
     this.economicLifeYears = this.accountingEventsData.economicLifeYears;
     this.fairMarketValue = this.accountingEventsData.fmv;
-    this.implicitInterestRate = parseFloat(
-      (this.accountingEventsData.implicitRate * 100).toFixed(14)
-    );
+    this.implicitInterestRate =
+      this.accountingEventsData.implicitRate !== null
+        ? parseFloat((this.accountingEventsData.implicitRate * 100).toFixed(14))
+        : null;
     this.presentValue =
       this.accountingEventsData.presentValue ?? this.presentValue;
     this.pVofAmtNotReflectedInPayments =

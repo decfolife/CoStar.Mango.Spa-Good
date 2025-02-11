@@ -324,6 +324,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
             workflowStatusOptionsResponse.clientErrorMessage ===
             'SetToReviewWorkflowStatus'
           ) {
+            this.getWorkflowHistoryInfo();
             this.addEditScheduleService.showToast(
               'Workflow Status',
               'The prior active lease status has been marked as inactive. Due to this the status has been changed to the active review status.',

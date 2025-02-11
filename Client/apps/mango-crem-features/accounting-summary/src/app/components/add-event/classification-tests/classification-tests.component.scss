@@ -118,4 +118,13 @@
     @include costar(color, dark);
     @include costar(font-size, body);
   }
+
+  .implicit-rate-warning-message {
+    display: flex;
+    flex-direction: row;
+    @include costar(color, secondary-dark);
+    crem-icon {
+      @include costar(padding-right, 2);
+    }
+  }
 }

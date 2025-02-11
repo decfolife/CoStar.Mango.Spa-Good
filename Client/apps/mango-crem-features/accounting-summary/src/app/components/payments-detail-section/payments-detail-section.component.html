@@ -12,6 +12,7 @@
         Payments
         <span *ngIf="!isAccountingEventEmpty">
           | {{ classificationType }} | {{ amortizationProfileName }}
+          {{ overrideAmortizationProfile }}
         </span>
         <!-- {{isGridStateChanged ? preferenceSavePendingMessage : ''}} Removing this text for now as per discussion witn PO's-->
       </div>

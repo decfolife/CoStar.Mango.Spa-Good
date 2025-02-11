@@ -15,7 +15,12 @@
       [selectedTabIndex]="activeTabIndex"
       (selectedTabChange)="onTabChange($event)"
     >
-      <crem-tab-item title="Journal Entry" id="journalEntryTab">
+      <crem-tab-item
+        title="Journal Entry"
+        [id]="
+          accountingSummaryService.getId(componentName, 'journal-entry', 'tab')
+        "
+      >
         <div class="jeProcessingInfoClass">
           <mango-je-processing-info
             [jeProcessingPopupData]="jeProcessingPopupData"
@@ -28,7 +33,13 @@
           ></mango-je-processing-info>
         </div>
       </crem-tab-item>
-      <crem-tab-item title="Payment Detail" id="paymentDetailTab">
+      <crem-tab-item
+        *ngIf="showPaymentTabOnPeriodPopup"
+        title="Payment Detail"
+        [id]="
+          accountingSummaryService.getId(componentName, 'payment-detail', 'tab')
+        "
+      >
         <mango-je-payment-info
           [jePaymentPopupData]="jePaymentPopupData"
           [userInfo]="userInfo"
@@ -39,7 +50,9 @@
       <crem-tab-item
         *ngIf="showRetroScheduleTab"
         title="Retrospective Adjustment"
-        id="retrospectiveTab"
+        [id]="
+          accountingSummaryService.getId(componentName, 'retrospective', 'tab')
+        "
       >
         <mango-retrospective-adjustment-info
           *ngIf="!!retrospectiveAdjustmentPopupData"
