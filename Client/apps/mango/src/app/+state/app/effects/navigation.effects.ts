@@ -33,7 +33,10 @@ export class NavigationEffect {
       filter(([user]) => !!user),
       switchMap(([_, showSubLeftNav, moduleId, url, currentSubApp]) => {
         let serviceCall$;
-        if (showSubLeftNav) {
+
+        if ((!showSubLeftNav) && (!(!!moduleId))) {
+          serviceCall$ = of(null);
+        } else if (showSubLeftNav) {
           serviceCall$ =
             this.leftNavService.getModuleNavigationLinksForRenderForm(url);
         } else if (moduleId === 6 && currentSubApp !== MangoSubApps.ADMIN) {
@@ -42,7 +45,7 @@ export class NavigationEffect {
               ? this.leftNavService.getETLModulesNavigationLinks()
               : this.leftNavService.getAdminModulesNavigationLinks(moduleId);
         } else {
-          serviceCall$ = this.leftNavService.getModuleNavigationLinks(moduleId);
+            serviceCall$ = this.leftNavService.getModuleNavigationLinks(moduleId);
         }
 
         return serviceCall$.pipe(
@@ -54,10 +57,8 @@ export class NavigationEffect {
         );
       }),
       map(({ response, moduleId, currentSubApp }) => {
-        const navLinksFetched = !(
-          moduleId === 6 && currentSubApp === MangoSubApps.ADMIN
-        );
-        const navigationLinks = response.data;
+        const navLinksFetched = (!(moduleId === 6 && currentSubApp === MangoSubApps.ADMIN)) && response !== null;
+        const navigationLinks = !!response ? response.data: [];
         const activeLink = navigationLinks[0]?.name || null;
 
         return AppActions.loadLeftNavLinksSuccess({

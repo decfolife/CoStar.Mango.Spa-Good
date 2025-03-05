@@ -105,7 +105,41 @@ export type CardDataItem = {
   dataType?: number | string;
 
   /** The actual data associated with the card item. */
-  data: any;
+  data?: any;
+
+  /**
+   * Defines custom row calculations when data is not present.
+   * This allows you to specify the columns or rows for custom calculations.
+   * If `dataCalculation` is provided, it will be used to compute values dynamically.
+   *
+   * @example
+   * // Example of fieldTransform array with custom calculations
+   * fieldTransform: [
+   *   ...
+   *   {
+   *     LeaseTemplate: 'LeaseTemplate',
+   *     Display: 'Sublease Income',
+   *     PeriodYear: 'PeriodYear',
+   *     data: 'SubleaseIncome',
+   *   },
+   *   {
+   *     LeaseTemplate: 'LeaseTemplate',
+   *     Display: 'Sublease Income',
+   *     PeriodYear: 'PeriodYear',
+   *     data: 'LeaseLiabilityInterestReporting',
+   *   },
+   *   {
+   *     LeaseTemplate: 'LeaseTemplate',
+   *     Display: 'Sublease Income',
+   *     PeriodYear: 'PeriodYear',
+   *     dataCalculation: '${SubleaseIncome} + ${LeaseLiabilityInterestReporting}', // Custom calculation
+   *   },
+   * ]
+   *
+   * @type {string | number}
+   * The calculation expression as a string or a numerical value directly.
+   */
+  dataCalculation?: string | number;
 
   /** Optional modifier for the card data item. */
   modify?: CardDataItemModify;
@@ -311,7 +345,19 @@ export type CardConfig = {
   showRowTotals?: boolean;
   showColumnTotals?: boolean;
 
-  mergeBy?: string;
+  /**
+   * Defines the fields used to merge arrays based on the 'combineWithIndex' property.
+   * In the Record, the key represents the current array field, and the value represents
+   * the corresponding 'combineWithIndex' field name.
+   *
+   * @example
+   * mergeBy: [
+   *   { 'PeriodYear': 'PeriodQuarter' }, // 'PeriodYear' corresponds to the current array field, and 'PeriodQuarter' corresponds to the 'combineWithIndex' field.
+   * ],
+   *
+   * @type {Array<Record<string, string>>}
+   */
+  mergeBy?: Array<Record<string, string>>;
 
   /**
    * Strings that can be changed or localized in the PivotGrid UI component.

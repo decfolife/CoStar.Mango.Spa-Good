@@ -114,18 +114,23 @@ const IFRSAnnualLeaseCost = z.object({
   LowValueLeaseCostReporting: z.number(),
   OtherExceptionCostReporting: z.number(),
 });
-const IFRSAnnualLeaseCostArraySchema = z.array(IFRSAnnualLeaseCost).optional();
+const IFRSAnnualLeaseCostSPOneArraySchema = z
+  .array(IFRSAnnualLeaseCost)
+  .optional();
 
 // Exceptions Cost
-const IFRSAnnualReportingExceptionsCost = z.object({
+const IFRSAnnualReportingLeaseCostSPTwo = z.object({
   VariableLeaseCostReporting: z.number(),
   VariableLeaseCostOfIndexedPaymentsReporting: z.number(),
   SubleaseIncome: z.number(),
   DueByYear: z.number(),
+  PeriodQuarter: z.string(),
+  PeriodYear: z.number(),
+  PeriodYearMonth: z.number(),
   LeaseTemplate: z.string(),
 });
-const IFRSAnnualReportingExceptionsCostArraySchema = z
-  .array(IFRSAnnualReportingExceptionsCost)
+const IFRSAnnualLeaseCostSPTwoArraySchema = z
+  .array(IFRSAnnualReportingLeaseCostSPTwo)
   .optional();
 
 // Other Information
@@ -185,9 +190,9 @@ const IFRSAnnualDisclosuresDashboard = z.object({
   data: z.tuple([
     IFRSAnnualLeaseCountsArraySchema,
     IFRSAnnualAssetBalanceArraySchema,
-    IFRSAnnualLeaseCostArraySchema,
-    IFRSAnnualReportingExceptionsCostArraySchema,
-    z.array(z.unknown()), // It merges later with LeaseCost, it can be empty
+    IFRSAnnualLeaseCostSPOneArraySchema,
+    IFRSAnnualLeaseCostSPTwoArraySchema, // It merges later with LeaseCost, it can be empty
+    z.array(z.unknown()), // Reporting Exceptions Cost is missing
     IFRSAnnualOtherInformationArraySchema,
     IFRSAnnualLiabilityMaturityArraySchema,
     IFRSAnnualReconciliationOfLeaseLiabilitiesArraySchema,

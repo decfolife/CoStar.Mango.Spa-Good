@@ -11,9 +11,11 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { DxDataGridModule } from 'devextreme-angular';
 import { MatMenuModule } from '@angular/material/menu';
+import { ShareReportComponent } from './modals/share-report/share-report.component';
+import { ModalModule } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
-  declarations: [ReportsHomeComponent],
+  declarations: [ReportsHomeComponent, ShareReportComponent],
   imports: [
     CommonModule,
     SearchModule,
@@ -24,6 +26,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatMenuModule,
     LoaderModule,
     IconModule,
+    ModalModule,
   ],
   exports: [ReportsHomeComponent],
 })

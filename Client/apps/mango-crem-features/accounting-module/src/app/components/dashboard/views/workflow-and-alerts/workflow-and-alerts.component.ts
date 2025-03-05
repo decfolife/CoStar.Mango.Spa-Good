@@ -46,6 +46,7 @@ export class WorkflowAndAlertsComponent implements OnInit, OnDestroy {
 
   @Input() selectedSegment: number;
   @Input() selectedYear: number;
+  @Input() cardContainerId: string;
 
   public pageTitle = 'Accounting Dashboard';
   public dropdownField: any;

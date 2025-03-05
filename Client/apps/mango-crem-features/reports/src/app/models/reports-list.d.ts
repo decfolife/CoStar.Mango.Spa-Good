@@ -1,3 +1,5 @@
+import { SecurityType } from '@mango/data-models/lib-data-models';
+
 export interface ReportsList {
   id: number;
   category: string;
@@ -25,4 +27,16 @@ export interface ReportsList {
 export interface Tag {
   reportTagID: number;
   reportTag: string;
+}
+
+export interface ReportUsersGroups {
+  id: number;
+  name: string;
+  rights: SecurityType;
+  type: string;
+}
+
+export interface DeleteReportUsersGroups {
+  userGroupId: number;
+  type: string;
 }

@@ -180,8 +180,11 @@ export class AppModule {
                 x.objectTypeId === objectData.objectTypeId &&
                 x.objectTypeTypeId === objectData.objectTypeTypeId
             );
-            //urlLink = found ? found.urlLink : 'not found';
-            let urlLink: any = found ? found.basePageUrl : 'not found';
+            let urlLink = '';
+            if (found && url.includes('pgMode=Edit')) {
+              urlLink = url;
+            } else urlLink = found ? found.basePageUrl : 'not found';
+
             const redirectorLink = urlLink;
             const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
               redirectorLink.includes(subUrl)
@@ -189,11 +192,14 @@ export class AppModule {
 
             let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey);
             let v06RedirectorUrl = '';
-
-            if (redirectorLink.includes('?')) {
-              v06RedirectorUrl = `${redirectorLink}&OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
+            if (redirectorLink.includes('pgMode=Edit')) {
+              v06RedirectorUrl = redirectorLink;
             } else {
-              v06RedirectorUrl = `${redirectorLink}?OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
+              if (redirectorLink.includes('?')) {
+                v06RedirectorUrl = `${redirectorLink}&OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
+              } else {
+                v06RedirectorUrl = `${redirectorLink}?OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
+              }
             }
 
             //If both are true the url is not correct for the gantt chart

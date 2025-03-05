@@ -1,0 +1,82 @@
+<crem-modal
+  modalTitle="Share Report"
+  [closeIconVisible]="true"
+  closeOrCancelButtonText="Close"
+>
+  <div modalContent class="modal-content-wrapper">
+    <crem-loader *ngIf="!dataRetrieved"></crem-loader>
+    <dx-data-grid
+      id="shareReportGrid"
+      *ngIf="dataRetrieved"
+      [dataSource]="reportUsersGroups"
+      keyExpr="id"
+      (onRowUpdating)="onRowUpdating($event)"
+      (onInitNewRow)="onInitNewRow($event)"
+      (onRowRemoving)="onRowRemoving($event)"
+      (onRowInserted)="onRowInserted($event)"
+      (onEditorPreparing)="onEditorPreparing($event)"
+      (onRowInserting)="onRowInserting($event)"
+      (onContentReady)="onGridContentReady($event)"
+    >
+      <dxo-editing
+        #editConfig
+        mode="row"
+        [allowUpdating]="true"
+        [allowDeleting]="true"
+        [allowAdding]="true"
+        [confirmDelete]="false"
+      ></dxo-editing>
+
+      <dxo-toolbar>
+        <dxi-item location="after">
+          <div *dxTemplate>
+            <crem-button
+              id="addRowBtn"
+              text="Add New"
+              type="primary"
+              (buttonClick)="addRow()"
+            ></crem-button>
+          </div>
+        </dxi-item>
+      </dxo-toolbar>
+
+      <dxi-column
+        [allowEditing]="addingNewRow"
+        dataField="type"
+        [setCellValue]="setShareNameOptions"
+      >
+        <dxi-validation-rule type="required"></dxi-validation-rule>
+        <dxo-lookup
+          [dataSource]="shareType"
+          displayExpr="type"
+          valueExpr="type"
+        ></dxo-lookup>
+      </dxi-column>
+
+      <dxi-column
+        caption="Name"
+        [allowEditing]="addingNewRow"
+        [width]="'40%'"
+        dataField="id"
+      >
+        <dxi-validation-rule type="required"></dxi-validation-rule>
+        <dxo-lookup
+          [dataSource]="getFilteredIds"
+          displayExpr="name"
+          valueExpr="id"
+        >
+        </dxo-lookup>
+      </dxi-column>
+
+      <dxi-column dataField="rights" [calculateDisplayValue]="rightsDisplay">
+        <dxi-validation-rule type="required"></dxi-validation-rule>
+        <dxo-lookup
+          [dataSource]="securityTypeOptions"
+          displayExpr="name"
+          valueExpr="value"
+        >
+        </dxo-lookup>
+      </dxi-column>
+    </dx-data-grid>
+  </div>
+</crem-modal>

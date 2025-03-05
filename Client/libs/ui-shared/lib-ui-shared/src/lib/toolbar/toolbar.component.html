@@ -1,25 +1,41 @@
-<div class="crem-toolbar__wrapper" [class.costar-unified-top-menu]="!isCostarStyle"
-  [class.costar-unified-second-menu]="isCostarStyle" [class.costar-top-menu]="!isCostarStyle"
-  [class.costar-second-menu]="isCostarStyle">
+<div
+  class="crem-toolbar__wrapper"
+  [class.costar-unified-top-menu]="!isCostarStyle"
+  [class.costar-unified-second-menu]="isCostarStyle"
+  [class.costar-top-menu]="!isCostarStyle"
+  [class.costar-second-menu]="isCostarStyle"
+>
   <ul class="crem-toolbar__modules crem-toolbar__nav">
     <li class="nav-item" *ngFor="let link of moduleLinks">
-      <a [id]="'toolbar__' + link?.moduleID" class="nav-link" [routerLink]="[link.spaurl || link.moduleHome]"
-        [routerLinkActive]="['active']">
-        <span>{{link.moduleDisplayName}}</span>
+      <a
+        [id]="'toolbar__' + link?.moduleID"
+        class="nav-link"
+        [routerLink]="[link.spaurl || link.moduleHome]"
+        [routerLinkActive]="['active']"
+      >
+        <span>{{ link.moduleDisplayName }}</span>
       </a>
     </li>
   </ul>
 
   <div class="crem-toolbar__environment">
-    <crem-env-info-chip *ngIf="popoverContent" id="cremChip" [chipStyle]=" {
+    <crem-env-info-chip
+      *ngIf="popoverContent"
+      id="cremChip"
+      [chipStyle]=" {
       type: 'secondary',
       color: 'costar',
-    }" [chipContent]="chipContent" [popoverContent]="popoverContent"></crem-env-info-chip>
+    }"
+      [chipContent]="chipContent"
+      [popoverContent]="popoverContent"
+    ></crem-env-info-chip>
   </div>
 
   <ul class="crem-toolbar__bookmarks crem-toolbar__nav">
     <li class="nav-item">
-      <a class="nav-link clickable" (click)="raiseToggleBookmarkDrawerEvent()">Bookmarks</a>
+      <a class="nav-link clickable" (click)="raiseToggleBookmarkDrawerEvent()"
+        >Bookmarks</a
+      >
     </li>
   </ul>
 </div>

@@ -814,7 +814,7 @@ export class AmortizationGridColumnsService {
         columns: [
           {
             caption: 'Adjustments',
-            name: 'AdjustmentAmountOperating13',
+            name: 'AdjustmentAmountOperating',
             dataField: 'adjustmentAmount',
             usesLocalFormat: 'true',
             usesFunctionalFormat: 'false',

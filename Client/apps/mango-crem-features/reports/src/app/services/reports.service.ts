@@ -5,6 +5,7 @@ import { environment } from '../../../../../mango/src/environments/environment.l
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Api } from '@mango/data-models/lib-data-models';
+import { DeleteReportUsersGroups, ReportUsersGroups } from '@reports/models';
 
 @Injectable()
 export class ReportsService extends EndpointService {
@@ -167,6 +168,36 @@ export class ReportsService extends EndpointService {
   public getUserPreferences(): Observable<any> {
     const url = `${this.dashboardsUrl}Dashboards/GetUserPreferences`;
     return this.callHttpGet(url, 'GetUserPreferences', {});
+  }
+
+  public getReportUsersGroups(reportId: number): Observable<any> {
+    const url = `${this.reportsUrl}reports/reportusersgroups/${reportId}`;
+    return this.callHttpGet(url, 'getReportUsersGroups', {});
+  }
+
+  public updateReportUsersGroups(
+    reportId: number,
+    reportUsersGroups: ReportUsersGroups
+  ): Observable<any> {
+    const url = `${this.reportsUrl}reports/reportusersgroups/${reportId}`;
+    return this.callHttpPut(url, 'updateReportUsersGroups', reportUsersGroups);
+  }
+
+  public getReportUsersShareOptions(type: string): Observable<any> {
+    const url = `${this.reportsUrl}reports/reportusersgroups/shareoptions/${type}`;
+    return this.callHttpGet(url, 'updateReportUsersGroups', {});
+  }
+
+  public deleteReportUsersShare(
+    reportId: number,
+    deleteReportUser: DeleteReportUsersGroups
+  ): Observable<any> {
+    const url = `${this.reportsUrl}reports/reportusersgroups/${reportId}`;
+    return this.callHttpDeleteWithBody(
+      url,
+      'deleteReportUsersShare',
+      deleteReportUser
+    );
   }
 
   public setUserDateFormat(isDatesEU: boolean) {

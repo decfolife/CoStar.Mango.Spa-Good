@@ -247,6 +247,11 @@ export const dashboardASCAnnually: DashboardConfig = {
         },
       ],
       combineWithIndex: 3,
+      mergeBy: [
+        {
+          PeriodYearMonth: 'PeriodYearMonth',
+        },
+      ],
       sortingOrder: {
         'Finance Lease Cost': 0,
         ' - Amortization of right-of-use Assets': 1,
@@ -1148,7 +1153,7 @@ export const dashboardASCQuarterly: DashboardConfig = {
       sortingOrder: {
         'Weighted-Average Remaining Years to Accounting Term': 0,
         'Weighted-Average Remaining Years to Expiration': 1,
-        'Weighted-Average Incremental Borrowing Rate': 2,
+        'Weighted-Average Discount Rate': 2,
         'Total Undiscounted Lease Liability': 3,
         'Imputed Interest': 4,
         'Total Discounted Lease Liability': 5,
@@ -1532,17 +1537,18 @@ export const dashboardIFRSAnnually: DashboardConfig = {
     },
     {
       index: 2,
-      name: 'Lease Costs',
+      name: 'Lease Cost',
       id: 'IFRS16-Annual-Lease-Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
       width: 200,
       summaryCellName: 'PeriodYear',
-      showRowGrandTotals: true,
-      texts: {
-        grandTotal: 'Total Lease Cost',
-      },
       combineWithIndex: 3,
+      mergeBy: [
+        {
+          PeriodYearMonth: 'PeriodYearMonth',
+        },
+      ],
       sortingOrder: {
         'Finance Lease Cost': 0,
         '- Depreciation of right-of-use Assets': 1,
@@ -1641,6 +1647,21 @@ export const dashboardIFRSAnnually: DashboardConfig = {
           data: 'SubleaseIncome',
         },
         {
+          LeaseTemplate: 'LeaseTemplate',
+          Display: 'Total Lease Cost',
+          PeriodYear: 'PeriodYear',
+          dataCalculation:
+            '${DepreciationOfROUAssets} + ' +
+            '${LeaseLiabilityInterestReporting} + ' +
+            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
+            '${LowValueLeaseReportingExceptionCostReporting} + ' +
+            '${OtherReportingExceptionCostReporting} + ' +
+            '${VariableLeaseCostReporting} + ' +
+            '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
+            '${SubleaseIncome}',
+        },
+        // Totals
+        {
           LeaseTemplate: 'Total',
           Display: 'Finance Lease Cost',
           PeriodYear: 'PeriodYear',
@@ -1693,6 +1714,20 @@ export const dashboardIFRSAnnually: DashboardConfig = {
           Display: 'Sublease Income',
           PeriodYear: 'PeriodYear',
           data: 'SubleaseIncome',
+        },
+        {
+          LeaseTemplate: 'Total',
+          Display: 'Total Lease Cost',
+          PeriodYear: 'PeriodYear',
+          dataCalculation:
+            '${DepreciationOfROUAssets} + ' +
+            '${LeaseLiabilityInterestReporting} + ' +
+            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
+            '${LowValueLeaseReportingExceptionCostReporting} + ' +
+            '${OtherReportingExceptionCostReporting} + ' +
+            '${VariableLeaseCostReporting} + ' +
+            '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
+            '${SubleaseIncome}',
         },
       ],
     },
@@ -2369,7 +2404,7 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
     },
     {
       index: 2,
-      name: 'Lease Costs',
+      name: 'Lease Cost',
       id: 'IFRS16-Quarterly-Lease-Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
@@ -2377,11 +2412,11 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       chartVisible: false,
       width: 200,
       summaryCellName: 'PeriodQuarter',
-      showRowGrandTotals: true,
-      texts: {
-        grandTotal: 'Total Lease Cost',
-      },
       combineWithIndex: 3,
+      mergeBy: [
+        { PeriodYearMonth: 'PeriodYearMonth' },
+        { PeriodQuarter: 'PeriodQuarter' },
+      ],
       sortingOrder: {
         'Finance Lease Cost': 0,
         '- Depreciation of right-of-use Assets': 1,
@@ -2479,6 +2514,20 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           data: 'SubleaseIncome',
         },
         {
+          LeaseTemplate: 'LeaseTemplate',
+          Display: 'Total Lease Cost',
+          PeriodQuarter: 'PeriodQuarter',
+          dataCalculation:
+            '${DepreciationOfROUAssets} + ' +
+            '${LeaseLiabilityInterestReporting} + ' +
+            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
+            '${LowValueLeaseReportingExceptionCostReporting} + ' +
+            '${OtherReportingExceptionCostReporting} + ' +
+            '${VariableLeaseCostReporting} + ' +
+            '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
+            '${SubleaseIncome}',
+        },
+        {
           LeaseTemplate: 'Total',
           Display: 'Finance Lease Cost',
           PeriodQuarter: 'PeriodQuarter',
@@ -2531,6 +2580,20 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           Display: 'Sublease Income',
           PeriodQuarter: 'PeriodQuarter',
           data: 'SubleaseIncome',
+        },
+        {
+          LeaseTemplate: 'Total',
+          Display: 'Total Lease Cost',
+          PeriodQuarter: 'PeriodQuarter',
+          dataCalculation:
+            '${DepreciationOfROUAssets} + ' +
+            '${LeaseLiabilityInterestReporting} + ' +
+            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
+            '${LowValueLeaseReportingExceptionCostReporting} + ' +
+            '${OtherReportingExceptionCostReporting} + ' +
+            '${VariableLeaseCostReporting} + ' +
+            '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
+            '${SubleaseIncome}',
         },
       ],
     },

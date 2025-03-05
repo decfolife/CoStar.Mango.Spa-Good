@@ -129,6 +129,7 @@ const routes: Routes = [
 
           {
             path: 'teams',
+            canActivate: [RightsAuthGuard],
             loadChildren: () =>
               import('@project-dashboard/components/teams/teams.module').then(
                 (mod) => mod.TeamsModule
@@ -374,6 +375,7 @@ const routes: Routes = [
           },
           {
             path: 'summary',
+            canActivate: [RightsAuthGuard],
             loadChildren: () =>
               import('@accounting-summary/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -549,6 +551,7 @@ const routes: Routes = [
       // REMINDERS
       {
         path: 'reminders',
+        canActivate: [RightsAuthGuard],
         data: {
           moduleId: 1,
           breadCrumb: { label: 'Reminders', append: true },
@@ -571,6 +574,7 @@ const routes: Routes = [
       // Object History
       {
         path: 'view-history',
+        canActivate: [RightsAuthGuard],
         data: {
           moduleId: 1,
           breadCrumb: {
@@ -596,6 +600,7 @@ const routes: Routes = [
       // Secutrity rights
       {
         path: 'admin/object-maintenance/objectrights',
+        canActivate: [RightsAuthGuard],
         data: {
           moduleId: 1,
           breadCrumb: {
@@ -767,7 +772,16 @@ const routes: Routes = [
           ),
       },
 
-      // Auto-generated components below
+      //Error Notification
+      {
+        path: 'error-notification',
+        component: ErrorNotificationComponent,
+        data: {
+          moduleId: null
+        },
+  },
+
+          // Auto-generated components below
       // @!micro-component-generator: don't delete this line
     ],
   },

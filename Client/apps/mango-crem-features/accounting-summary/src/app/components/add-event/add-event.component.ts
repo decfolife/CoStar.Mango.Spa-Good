@@ -740,9 +740,8 @@ export class AddEventComponent implements OnDestroy, OnInit {
     if (
       !isSameCurrency &&
       functionalCurrencyRate === 1 &&
-      ((showFunctionalCurrency && this.classificationId === 2) ||
-        this.classificationId === 3 ||
-        this.classificationId === 4)
+      showFunctionalCurrency &&
+      [2, 3, 4].includes(this.classificationId)
     ) {
       this.isFunctionalRate1 = true;
       return this.calculateWithFunctionalRate1;

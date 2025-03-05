@@ -265,15 +265,16 @@ export class CriteriaFormSegmentComponent {
         if (item.criteriaControlType === 'LISTBOX') {
           let valueKey = item.criteriaSourceFieldName;
           let displayName = item.criteriaSourceDisplayFieldName;
-          if (item.values?.length) {
-            if (
-              valueKey.toUpperCase() in item.values?.[0] ||
-              (item.values?.[1] && valueKey.toUpperCase() in item.values?.[1])
-            ) {
-              valueKey = valueKey.toUpperCase();
-              displayName = displayName.toUpperCase();
-            }
+
+          if (
+            (item.values?.length &&
+              valueKey.toUpperCase() in item?.values?.[0]) ||
+            (item?.values?.[1] && valueKey.toUpperCase() in item?.values?.[1])
+          ) {
+            valueKey = valueKey.toUpperCase();
+            displayName = displayName.toUpperCase();
           }
+
           if (isDependent) {
             this.dependentDropdownKey[item.criteriaID] = valueKey;
             this.dropdownKey[item.criteriaID] = valueKey;
@@ -283,6 +284,8 @@ export class CriteriaFormSegmentComponent {
 
           if (item.criteriaAllowMultiSelect) {
             //multi select dropdown
+            // This block apparently helps populate the default selection of multi-selects.
+            // Entropy-ridden code wears down a coder’s soul, unraveling their spirit line by line, as fading control takes its toll. Then he asks, who wrote this which suck a wrenched soul?
             let defaultValueArray = [];
             if (this.defaultValues?.[item.criteriaID]) {
               if (Array.isArray(this.defaultValues?.[item.criteriaID])) {
@@ -293,12 +296,36 @@ export class CriteriaFormSegmentComponent {
                 ].split(item.criteriaDelimeter ? item.criteriaDelimeter : ',');
               }
             } else if (noDefaultValues && !isDependent) {
-              item.values.forEach((x) => {
-                defaultValueArray.push('' + x[valueKey]);
-              });
+              switch (valueKey) {
+                case 'SYSTEMLEASESTATUS': {
+                  defaultValueArray?.push('' + item.values[0][valueKey]); // The 'Active' option is selected
+                  break;
+                }
+                case 'HIERARCHY1ID':
+                case 'HIERARCHY2ID':
+                case 'HIERARCHY3ID':
+                case 'HIERARCHY4ID':
+                case 'HIERARCHY5ID':
+                case 'LEASETEMPLATE':
+                case 'COUNTRY':
+                case 'STATENAME':
+                case 'ACCOUNTINGTYPE':
+                case 'LEASESTATUS':
+                case 'ACCOUNTINGWORKFLOWSTATUS':
+                case 'JOURNALENTRYPROFILEID':
+                case 'AMORTIZATIONPROFILEID':
+                case 'LEASEALLOCATIONDISPLAYSTRING2': {
+                  //Don't populate default values
+                  break;
+                }
+                default: {
+                  item.values.forEach((x) => {
+                    defaultValueArray.push('' + x[valueKey]);
+                  });
+                  break;
+                }
+              }
             }
-            // if(!isDependent && item.criteriaDesc === "Portfolio")
-            //   item.values.forEach((x) => defaultValueArray.push('' + x[valueKey]));
 
             if (defaultValueArray[0] === '') {
               if (defaultValueArray?.[1] === '') {
@@ -317,6 +344,7 @@ export class CriteriaFormSegmentComponent {
                 }
               }
             }
+
             itemObject = {
               // Portfolio Field *********************************
               sort: displayName,

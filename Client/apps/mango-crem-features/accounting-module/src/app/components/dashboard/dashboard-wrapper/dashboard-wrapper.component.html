@@ -5,7 +5,10 @@
 <div *ngIf="featureFlagEnabled">
   <div class="dashboard-toolbar-wrapper">
     <div class="controls-left">
-      <div class="dashboard-toolbar__item">
+      <div
+        class="dashboard-toolbar__item"
+        id="AccountingDashboardHeaderViewSelector"
+      >
         <ng-container *ngIf="!loading">
           <crem-dropdown
             [id]="'AccountingViewDropdown-' + getViewName(selectedView, true)"
@@ -31,7 +34,7 @@
         <crem-dropdown
           *ngIf="selectedView !== 1"
           [isDisabled]="loading"
-          id="AccountingYearDropdown"
+          [id]="'AccountingDashboardHeaderYearSelector'"
           dropDownContainerCustomClass="accountingYearDropDown"
           [dataSource]="accountingYearData"
           [placeholder]="loading ? 'Loading...' : 'Select Year'"
@@ -52,7 +55,7 @@
       <div class="dashboard-toolbar__item">
         <crem-dropdown
           [isDisabled]="loading"
-          id="AccountingSegmentDropdown"
+          [id]="'AccountingDashboardHeaderSegmentsSelector'"
           dropDownContainerCustomClass="accountingSegmentDropDown"
           [dataSource]="accountingSegmentData"
           [placeholder]="loading ? 'Loading...' : 'Select Segment'"
@@ -76,7 +79,7 @@
       </div>
 
       <crem-button
-        id="AccountingButtonApply"
+        [id]="'AccountingDashboardHeaderApplyButton'"
         [disabled]="loading"
         type="secondary"
         (buttonClick)="apply($event)"
@@ -88,14 +91,14 @@
       <div
         *ngIf="selectedView !== 1"
         class="currency-label"
-        id="AccountingDashboardCurrencyLabel"
+        id="AccountingDashboardHeaderReportingCurrency"
       >
         Reporting Currency in
         <strong class="currency-iso">{{ selectedCurrency }}</strong>
       </div>
       <crem-button
         *ngIf="selectedView !== 1"
-        id="AccountingButtonExport"
+        [id]="'AccountingDashboardHeaderSendToExcelButton'"
         [disabled]="loading || exportingReport"
         type="secondary"
         (buttonClick)="export()"
@@ -113,7 +116,7 @@
         {{ exportingReport ? 'Sending to Excel' : 'Send to Excel' }}
       </crem-button>
       <crem-button
-        id="AccountingButtonDashboardSettings"
+        [id]="'AccountingButtonDashboardSettings'"
         type="secondary"
         ariaLabel="Dashboard Settings"
         icon="faCog"
@@ -131,6 +134,7 @@
           *ngIf="selectedView === 1"
           [selectedSegment]="selectedSegment"
           [reportingYear]="selectedYear"
+          [cardContainerId]="'AccountingDashboardWorkflowAndAlertsView'"
         ></workflow-and-alerts>
 
         <asc-842-annual-disclosures *ngIf="selectedView === 2">
@@ -139,6 +143,7 @@
             [selectedSegment]="selectedSegment"
             [reportingYear]="selectedYear"
             [selectedCurrency]="selectedCurrency"
+            [cardContainerId]="'AccountingDashboardASC842AnnualView'"
           ></mango-disclosure-dashboard-view>
         </asc-842-annual-disclosures>
 
@@ -148,6 +153,7 @@
             [selectedSegment]="selectedSegment"
             [reportingYear]="selectedYear"
             [selectedCurrency]="selectedCurrency"
+            [cardContainerId]="'AccountingDashboardASC842QuarterlyView'"
           ></mango-disclosure-dashboard-view>
         </asc-842-quarterly-disclosures>
 
@@ -157,6 +163,7 @@
             [selectedSegment]="selectedSegment"
             [reportingYear]="selectedYear"
             [selectedCurrency]="selectedCurrency"
+            [cardContainerId]="'AccountingDashboardIFRS16AnnualView'"
           ></mango-disclosure-dashboard-view>
         </ifrs-16-annual-disclosures>
 
@@ -166,6 +173,7 @@
             [selectedSegment]="selectedSegment"
             [reportingYear]="selectedYear"
             [selectedCurrency]="selectedCurrency"
+            [cardContainerId]="'AccountingDashboardIFRS16QuarterlyView'"
           ></mango-disclosure-dashboard-view>
         </ifrs-16-quarterly-disclosures>
       </div>

@@ -23,7 +23,7 @@
   @include flex-row-direction;
   @include costar(padding-bottom, 2);
   width: 100%;
-  justify-content: start;
+  justify-content: flex-start;
 
   & .controls {
     & .controls-container {

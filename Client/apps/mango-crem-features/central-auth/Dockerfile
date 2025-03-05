@@ -1,6 +1,7 @@
 # Stage 1: Compile and Build angular codebase
 FROM public.ecr.aws/docker/library/node:16.19-alpine as build
 ARG COSTAR_ENVIRONMENT=dev 
+ARG DEVEXTREME_KEY
 WORKDIR /app
 COPY package*.json ./
 COPY decorate-angular-cli.js ./
@@ -8,7 +9,9 @@ RUN npm set strict-ssl false
 RUN npm install --force
 COPY ./ /app/
 #RUN npm run test:central-auth
-RUN echo "building environment COSTAR_ENVIRONMENT=$COSTAR_ENVIRONMENT"
+RUN echo "building environment=$COSTAR_ENVIRONMENT" && \
+        mkdir -p ./apps/mango-crem-features/central-auth/src/license && \
+        echo "export const licenseKey = '$DEVEXTREME_KEY'" > ./apps/mango-crem-features/central-auth/src/license/devextreme-license.js
 RUN npm run build:$COSTAR_ENVIRONMENT:microcomponent-central-auth
 
 # Stage 2: Serve app with nginx server

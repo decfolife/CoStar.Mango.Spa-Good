@@ -398,6 +398,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
 
   handleFormValueChanges() {
     const debounce = 300;
+    const classificationsFor840s = [0, 1, 5];
     combineLatest([
       this.financialForm.get('localCurrency')?.valueChanges,
       this.financialForm.get('functionalCurrency')?.valueChanges,
@@ -416,8 +417,14 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       )
       .subscribe(([localCurrencyValue, functionalCurrencyValue]) => {
         const localCurrency = localCurrencyValue[0] ?? localCurrencyValue;
-        const functionalCurrency =
+        let functionalCurrency =
           functionalCurrencyValue[0] ?? functionalCurrencyValue;
+        if (
+          classificationsFor840s.includes(this.classificationId) ||
+          !this.showFunctionalCurrency
+        ) {
+          functionalCurrency = localCurrency;
+        }
         if (this.currencyList) {
           const filteredCurrency = this.currencyList.find(
             (currencyList) => currencyList.id === localCurrency
@@ -1185,6 +1192,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     this.financialForm
       .get('annualRateDropdown')
       .setValue(this.portfolioSettings?.defaultAnnualRateType);
+    this.financialForm.get('discountRate').disable();
+    this.financialForm.get('annualRateDropdown').disable();
     this.effectiveRate = 0;
     this.setDiscountRateSubTitle();
     this.financialForm.get('discountRateProfile').reset();
@@ -1297,7 +1306,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
                 sortOrder: 1,
               });
             }
-            this.selectedDiscountRate = this.discountRateOptions[0].profileID;
+            this.selectedDiscountRate = this.discountRateOptions[0]?.profileID;
 
             if (this.discountRateOptions.length === 0) {
               this.discountRatePlaceHolder =

@@ -60,17 +60,17 @@ export class ReportsSegmentComponent implements OnInit {
   }
 
   public onCellClicked(item): void {
-    if (item.data.activeRecordsVisibleToMe === true) return;
+    if (item?.data?.activeRecordsVisibleToMe === true) return;
 
-    if (item.column === undefined) return;
+    if (item?.column === undefined) return;
 
-    if (item.column.caption !== 'Actions' && item !== undefined) {
+    if (item?.column?.caption !== 'Actions' && item !== undefined) {
       this.edit(item);
     }
   }
 
   onCellPrepared(item: any): void {
-    if (item.data.activeRecordsVisibleToMe === true) {
+    if (item?.data?.activeRecordsVisibleToMe === true) {
       item.cellElement.title =
         'This segment is automatically generated and includes all records accessible to you.';
     }

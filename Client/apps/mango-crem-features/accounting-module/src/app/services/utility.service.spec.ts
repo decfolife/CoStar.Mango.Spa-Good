@@ -26,22 +26,31 @@ describe('UtilityService - mergeArrayOfObjects', () => {
   it('should merge arrays using PeriodYear to DueByYear', () => {
     const result = service.mergeArraysOfObjects(
       mergeArrayData1,
-      mergeArrayData2
+      mergeArrayData2,
+      localCardConfig.localCardConfig[2].mergeBy
     );
 
-    expect(result.length).toBe(2);
+    expect(result.length).toBe(33);
 
     expect(result).toEqual(mergeArraysResult);
   });
 
   it('should handle empty arrays', () => {
     expect(service.mergeArraysOfObjects([], [])).toEqual([]);
-    expect(service.mergeArraysOfObjects(mergeArrayData1, [])).toEqual(
-      mergeArrayData1
-    );
-    expect(service.mergeArraysOfObjects([], mergeArrayData2)).toEqual(
-      mergeArrayData2
-    );
+    expect(
+      service.mergeArraysOfObjects(
+        mergeArrayData1,
+        [],
+        localCardConfig.localCardConfig[2].mergeBy
+      )
+    ).toEqual(mergeArrayData1);
+    expect(
+      service.mergeArraysOfObjects(
+        [],
+        mergeArrayData2,
+        localCardConfig.localCardConfig[2].mergeBy
+      )
+    ).toEqual(mergeArrayData2);
   });
 
   /**
@@ -54,7 +63,7 @@ describe('UtilityService - mergeArrayOfObjects', () => {
       paramStart
     );
 
-    expect(result.length).toBe(96);
+    expect(result.length).toBe(72);
 
     expect(result).toStrictEqual(testResults.leaseCostMap);
   });

@@ -108,7 +108,8 @@ export class IADCardComponent implements OnInit, AfterViewInit {
         e.cell.rowPath[e.cell.rowPath.length - 1] ===
           'Total Undiscounted Lease Liability' ||
         e.cell.rowPath[e.cell.rowPath.length - 1] ===
-          'Total Discounted Lease Liability'
+          'Total Discounted Lease Liability' ||
+        e.cell.rowPath[e.cell.rowPath.length - 1] === 'Total Lease Cost'
       ) {
         e.cellElement.classList.add('total');
       }
@@ -118,7 +119,8 @@ export class IADCardComponent implements OnInit, AfterViewInit {
     }
     if (
       e.cell.text === 'Total Undiscounted Lease Liability' ||
-      e.cell.text === 'Total Discounted Lease Liability'
+      e.cell.text === 'Total Discounted Lease Liability' ||
+      e.cell.text === 'Total Lease Cost'
     ) {
       // todo: specific selector of cell text should be dynamically defined in the localCardConfig
       e.cellElement.classList.add('total');

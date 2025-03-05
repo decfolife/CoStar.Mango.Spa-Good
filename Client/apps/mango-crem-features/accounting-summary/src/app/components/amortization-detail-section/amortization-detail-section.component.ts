@@ -520,6 +520,7 @@ export class AmortizationDetailSectionComponent
         'LeaseLiabilityInterestExpense',
         'AssetAdjustment',
         'LiabilityAdjustment',
+        'AdjustmentAmountOperating',
       ],
       functionalColumns = [
         'FunctionalAssetAdjustmentAmount',

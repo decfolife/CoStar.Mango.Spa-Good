@@ -62,6 +62,8 @@ export class CostarPropertyLookupComponent {
   subs: Subscription[] = [];
   customSelection = false;
   navPageId: any = '';
+  objectTypeId: any = '';
+  objectTypeTypeId: any = '';
   cleanseAddress: CleanseAddress | null;
   cleanseAddress1: string = '';
   elsAddress: String = '';
@@ -98,6 +100,13 @@ export class CostarPropertyLookupComponent {
     this.navPageId = this.route.snapshot.queryParamMap
       .get('navpageid')
       ?.split('?')[0];
+    this.objectTypeId = this.route.snapshot.queryParamMap
+      .get('otid')
+      ?.split('?')[0];
+    this.objectTypeTypeId = this.route.snapshot.queryParamMap
+      .get('ottid')
+      ?.split('?')[0];
+
     this.configGoogleMap();
 
     this.subs.push(
@@ -131,6 +140,7 @@ export class CostarPropertyLookupComponent {
         )
         .subscribe((info: BuildingInfo) => {
           if (info.costarID) {
+            this.redirectUrl = `/v06/CostarIntegration/CostarIntegration.aspx?OTID=${this.objectTypeId}&OID=${this.buildingId}&OTTID=${this.objectTypeTypeId}&CostarID=${info.costarID}&navpageid=${this.navPageId}`;
             this.router.navigateByUrl(this.redirectUrl.toString());
           }
 
@@ -186,7 +196,9 @@ export class CostarPropertyLookupComponent {
               }
             );
             setTimeout(() => {
-              this.router.navigateByUrl(this.redirectUrl.toString());
+              const v06url = `/v06/CostarIntegration/CostarIntegration.aspx?OTID=${this.objectTypeId}&OID=${this.buildingId}&OTTID=${this.objectTypeTypeId}&CostarID=${selectedBuilding.coStarID}&navpageid=${this.navPageId}`;
+              //this.router.navigateByUrl(this.redirectUrl.toString());
+              this.router.navigateByUrl(v06url);
             }, 3000);
           }
         })

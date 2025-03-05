@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { evaluate } from 'mathjs';
 
 import {
   CardConfig,
@@ -412,46 +413,97 @@ export class UtilityService {
   }
 
   /**
-   * Merge two arrays using dueYear and PeriodYear, if mergeBy is provided, it will be used instead
+   * Merges two arrays of objects based on specified fields. By default, it uses 'DueYear' and 'PeriodYear'
+   * as merge keys. If `mergeBy` is provided, it will be used instead. Additionally, it includes 'LeaseTemplate'
+   * and 'DisclosureClassification' in the composite key if they exist in both `data1` and `data2`.
    *
-   * @param {{ [key: string]: any }[]} data1
-   * @param {{ [key: string]: any }[]} data2
-   * @param {string} [mergeBy]
-   * @return {*}  {Array<object>}
+   * @param {{ [key: string]: any }[]} data1 - The current cardData index (matching localCardConfig index)
+   * 																					 containing the combineWithIndex field.
+   * @param {{ [key: string]: any }[]} data2 - The combineWithIndex result, which is cardData[combineWithIndex],
+   *                                           allowing data1 to merge with data2.
+   * @param {Array<Record<string, string>>} [mergeBy] - Fields used for merging, where each Record maps
+   *                                                   a field in `data1` to a corresponding field in `data2`.
+   * @return {Array<object>} - The merged array of objects.
    * @memberof UtilityService
    */
   mergeArraysOfObjects(
     data1: { [key: string]: any }[],
     data2: { [key: string]: any }[],
-    mergeBy?: string,
-    mergeBySecondary?: string
+    mergeBy?: Array<Record<string, string>>
   ): Array<object> {
     if (data1.length === 0 && data2.length === 0) return [];
     if (data1.length === 0) return data2;
     if (data2.length === 0) return data1;
 
-    const hashMap = new Map( // Create a hashMap from data2 with composite keys (DueByYear and LeaseTemplate)
-      data2.map((item) => [
-        `${mergeBy ?? item.DueByYear}-${
-          mergeBySecondary ??
-          item.LeaseTemplate ??
-          item.DisclosureClassification
-        }`,
-        item,
-      ])
-    );
+    // Fallback merge logic if no `mergeBy` is provided
+    const defaultMergeBy: Array<Record<string, string>> = [
+      { DueYear: 'PeriodYear' },
+    ];
+    const mergeFields = mergeBy || defaultMergeBy;
 
-    const mergedArray = data1.map((item) => {
-      // Merge data1 with data2 based on the composite key
-      const key = `${mergeBy ?? item.PeriodYear}-${
-        mergeBySecondary ?? item.LeaseTemplate ?? item.DisclosureClassification
-      }`;
-      const itemToMerge = hashMap.get(key);
+    // Check if both `data1` and `data2` contain `LeaseTemplate` and `DisclosureClassification`
+    const hasLeaseTemplate =
+      data1.some((item) => 'LeaseTemplate' in item) &&
+      data2.some((item) => 'LeaseTemplate' in item);
+    const hasDisclosureClassification =
+      data1.some((item) => 'DisclosureClassification' in item) &&
+      data2.some((item) => 'DisclosureClassification' in item);
+
+    // Create a Map from data2 using a composite key based on `mergeFields` and optional keys
+    const hashMap = new Map<string, { [key: string]: any }>(
+      data2.map((item2) => {
+        const compositeKey = [
+          ...mergeFields.map((field) => {
+            const [key1, key2] = Object.entries(field)[0]; // Get the mapping key
+            return item2[key2] ?? key2; // Use value from data2 or fallback to key2
+          }),
+          hasLeaseTemplate ? item2['LeaseTemplate'] : undefined,
+          hasDisclosureClassification
+            ? item2['DisclosureClassification']
+            : undefined,
+        ]
+          .filter((key) => key !== undefined) // Remove undefined keys
+          .join('-'); // Create a unique composite key
+
+        // this._debug && console.debug('compositeKey',compositeKey)
+        return [compositeKey, item2];
+      })
+    );
+    // Track which items from data2 we've already used
+    const usedItems = new Set<string>();
+
+    // Merge data1 with data2 based on composite keys
+    const mergedArray = data1.map((item1) => {
+      const compositeKey = [
+        ...mergeFields.map((field) => {
+          const [key1, key2] = Object.entries(field)[0];
+          return item1[key1] ?? key1; // Use value from data1 or fallback to key1
+        }),
+        hasLeaseTemplate ? item1['LeaseTemplate'] : undefined,
+        hasDisclosureClassification
+          ? item1['DisclosureClassification']
+          : undefined,
+      ]
+        .filter((key) => key !== undefined) // Remove undefined keys
+        .join('-'); // Create a unique composite key
+
+      const itemToMerge = hashMap.get(compositeKey);
       if (itemToMerge && typeof itemToMerge === 'object') {
-        return { ...item, ...itemToMerge };
+        // this._debug && console.debug(compositeKey,{ ...item1, ...itemToMerge })
+        usedItems.add(compositeKey);
+        return { ...item1, ...itemToMerge };
       }
-      return item;
+
+      return item1;
     });
+
+    // Add remaining items from data2 that weren't merged
+    for (const [key, item] of hashMap.entries()) {
+      if (!usedItems.has(key)) {
+        mergedArray.push(item);
+      }
+    }
+    // this._debug && console.debug({hasLeaseTemplate, hasDisclosureClassification,data1,data2,mergeBy,mergedArray})
 
     return mergedArray;
   }
@@ -539,10 +591,20 @@ export class UtilityService {
                       e['DisclosureClassification'];
                   break;
                 }
+                case k === 'dataCalculation': {
+                  // Perform custom calculation on the Total column
+                  transformedObject['data'] = this.interpolateAndEvaluate(e, v);
+                  break;
+                }
                 default:
                   transformedObject[k] = e[v];
                   break;
               }
+              break;
+            }
+            case k === 'dataCalculation': {
+              // Perform custom calculations on the row using dataCalculation field, and save the result in the data object.
+              transformedObject['data'] = this.interpolateAndEvaluate(e, v);
               break;
             }
             default: {
@@ -816,6 +878,25 @@ export class UtilityService {
     }
 
     return fieldsToSave;
+  }
+
+  /**
+   * Replaces placeholders in the given expression string with corresponding values from the provided object.
+   * If a placeholder key is not found in the object, it is replaced with 0.
+   * The resulting expression is then evaluated as a mathematical expression.
+   *
+   * @param {Object} e - The object containing key-value pairs for interpolation.
+   * @param {string} v - The expression string with placeholders in the format "${key}".
+   * @returns {number} - The result of the evaluated mathematical expression.
+   *
+   * @example
+   * const e = { a: 10, b: 5 };
+   * const v = "${a} + ${b} + ${c}";
+   * console.log(interpolateAndEvaluate(e, v)); // Output: 15 (since c is missing, it defaults to 0)
+   */
+  interpolateAndEvaluate(e: Record<string, any>, v: string) {
+    const expression = v.replace(/\${(.*?)}/g, (_, key) => e[key] ?? 0);
+    return evaluate(expression);
   }
 
   /**

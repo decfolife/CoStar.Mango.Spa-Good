@@ -694,12 +694,16 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
             if (result.success) {
               this.saveClicked = false;
               this.dialogRef.close();
-              const currURL = this.getRedirectorURL(
+              let currURL = this.getRedirectorURL(
                 result.data,
                 ObjectType.LEASE,
                 this.selectedTemplate
               );
-              this.router.navigateByUrl(currURL);
+              let pgEditUrl = currURL.replace(
+                currURL,
+                currURL + '&pgMode=Edit'
+              );
+              this.router.navigateByUrl(pgEditUrl);
             } else {
               this.toastService.show(
                 'An error has occurred. Please try again.',

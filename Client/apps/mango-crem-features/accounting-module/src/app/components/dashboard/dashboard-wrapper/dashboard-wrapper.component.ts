@@ -206,13 +206,13 @@ export class DashboardWrapperComponent implements OnInit, OnDestroy {
                 { id: 3, displayValue: 'ASC 842 Quarterly Disclosures' },
               ],
             },
-            {
-              condition: r.data.isIFRSActive,
-              data: [
-                { id: 4, displayValue: 'IFRS 16 Annual Disclosures' },
-                { id: 5, displayValue: 'IFRS 16 Quarterly Disclosures' },
-              ],
-            },
+            // {
+            //   condition: r.data.isIFRSActive,
+            //   data: [
+            //     { id: 4, displayValue: 'IFRS 16 Annual Disclosures' },
+            //     { id: 5, displayValue: 'IFRS 16 Quarterly Disclosures' },
+            //   ],
+            // },
           ];
           disclosureOptions.forEach((e) => {
             if (e.condition) {

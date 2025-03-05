@@ -1,0 +1,13 @@
+#addRowBtn {
+  opacity: unset;
+}
+
+::ng-deep {
+  #shareReportGrid {
+    .dx-datagrid-content .dx-datagrid-table .dx-row {
+      #actionsColumnHeader {
+        text-align: left !important; // DevExtreme adds an inline HTML text-align style that needs to be overridden
+      }
+    }
+  }
+}

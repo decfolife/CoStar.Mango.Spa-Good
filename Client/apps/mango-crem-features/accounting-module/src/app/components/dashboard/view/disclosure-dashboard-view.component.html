@@ -10,6 +10,7 @@
     cdkDropList
     cdkDropListOrientation="vertical"
     (cdkDropListDropped)="cardMove($event)"
+    [id]="cardContainerId"
   >
     <ng-container *ngFor="let config of localCardConfig; index as i">
       <mango-iad-card

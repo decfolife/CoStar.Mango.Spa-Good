@@ -30,6 +30,7 @@ export class MangoDisclosureViewComponent implements OnInit, OnDestroy {
   @Input() selectedCurrency: string;
   @Input() selectedSegment: number;
   @Input() reportingYear: number;
+  @Input() cardContainerId: string;
 
   /**
    * cardFieldConfigs is the API field configuration used to setup rows, columns and data.

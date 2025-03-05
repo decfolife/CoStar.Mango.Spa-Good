@@ -4,6 +4,11 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment.local';
 
+import config from 'devextreme/core/config'; 
+import { licenseKey } from './license/devextreme-license.js'; 
+ 
+config({ licenseKey });
+
 if (environment.production) {
   enableProdMode();
 }

@@ -7,11 +7,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { SearchComponent } from '@mango/ui-shared/cosmos';
 import { CriteriaReportComponent } from '../modal/criteria-report/criteria-report.component';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
+import { ShareReportComponent } from './modals/share-report/share-report.component';
 
 // Magic to access objects declared outside Angular
 declare var launchManageTags;
 declare var launchUploadFileWizard;
-declare var launchShareReport;
 declare var launchAssignTags;
 
 @Component({
@@ -384,7 +384,13 @@ export class ReportsHomeComponent implements OnInit, OnDestroy {
       reportrights = 4;
     }
 
-    launchShareReport(reportId, reportrights);
+    let dialogRef = this.dialog.open(ShareReportComponent, {
+      width: '40vw',
+      height: '65vh',
+      data: {
+        reportId: reportId,
+      },
+    });
   }
 
   scheduleReport(e) {

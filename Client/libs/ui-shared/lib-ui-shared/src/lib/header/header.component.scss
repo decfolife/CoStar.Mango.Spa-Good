@@ -271,7 +271,7 @@
   // TODO: Simplify grid columns and other values once fully migrated to MangoSpa
   // RESPONSIVE DESIGN
   @include media('<desktop-xl') {
-    grid-template-columns: 1fr 1fr 480px;
+    grid-template-columns: repeat(3, 1fr);
     .brand {
       .wordmark {
         display: none;
