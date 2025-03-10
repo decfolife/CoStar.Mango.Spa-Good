@@ -19,7 +19,6 @@ button {
 
   // Flat Button
   &.btn-flat {
-    height: 36px;
     @include costar(color, light);
     border: none;
     &.btn-primary {
@@ -93,7 +92,6 @@ button {
 
   // Basic Button
   &.btn-basic {
-    height: 36px;
     border: none;
     &.btn-primary {
       @include costar(color, primary);
@@ -154,7 +152,6 @@ button {
 
   // Stroked Button
   &.btn-stroked {
-    height: 36px;
     background-color: transparent;
     &.btn-primary {
       @include costar(color, primary);
