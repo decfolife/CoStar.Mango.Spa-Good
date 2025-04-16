@@ -53,7 +53,6 @@ const routes: Routes = [
     path: '',
     title: 'Project Dashboard',
     component: IndexComponent,
-    title: AppRoutingTitle + 'Project Dashboard',
     data: {
       breadCrumb: {
         label: 'Dashboard',

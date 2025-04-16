@@ -133,7 +133,7 @@ const booleanStringMap = {
     DynamicFormFieldDocSecPageComponent,
     ReactiveFormsModule,
     LibUiElementsModule,
-    ScreenLoaderModule,
+    LoaderModule,
     SearchModule,
     ButtonModule,
     MatIconModule,
@@ -628,10 +628,6 @@ export class DynamicFormSectionComponent
     this.dynamicFormContainer.markAsChanged();
   }
 
-  markAsChanged() {
-    this.hasChanges = true;
-    this.dynamicFormContainer.markAsChanged();
-  }
   /**
    * Calls to bring back the available fields in the section (add fields button)
    */

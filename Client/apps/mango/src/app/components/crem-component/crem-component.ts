@@ -75,7 +75,6 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   crumbActiveLink: string = null;
   querySearchParams: SearchParams;
   private subs: Subscription = new Subscription();
-  public searchResultsDialogRef: MatDialogRef<any> | null = null;
 
   /**
    * When `_useSearchModal` is true, search results will open in a modal; otherwise, they will be displayed on a page.
