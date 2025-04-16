@@ -1,6 +1,7 @@
 export * from './client-preference.enums';
 export * from './mango.enums';
 export * from './object-types.enum';
+export * from './object-type-types.enum';
 export * from './render-select-request-types.enum';
 export * from './security-types.enum';
 export * from './task-info';

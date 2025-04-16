@@ -875,7 +875,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
           this.isChargeAction = false;
           if (!res.data) {
             this.modalIsOpen = false;
-            console.log('GLEventInfo - no data fetched');
+            console.warn('GLEventInfo - no data fetched');
             return;
           }
           if (res.data) {
@@ -898,7 +898,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
         },
         (error) => {
           this.isChargeAction = false;
-          console.log('Error fetching GLEvent Info data');
+          console.warn('Error fetching GLEvent Info data');
         }
       );
   }
@@ -1122,7 +1122,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
     if (cellNav.fieldType === FieldType.PopupWindow) {
       this.saveStateToSession();
-      document.location.href = cellNav.urlLink;
+      this.router.navigateByUrl(cellNav.urlLink);
 
       return;
     }
@@ -1175,7 +1175,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
       }
 
       this.saveStateToSession();
-      window.location.href = cellNav.urlLink;
+      this.router.navigateByUrl(cellNav.urlLink);
     });
   }
 
@@ -1615,41 +1615,54 @@ export class ListPageComponent implements OnInit, OnDestroy {
   }
 
   public btnAddItemNewClick(objectId) {
-    if (objectId === ObjectType.PROJECT) {
-      let dialogRef = this.dialog.open(AddFormWizardComponent, {
-        disableClose: true,
-        height: '81%',
-        width: '75%',
-        maxWidth: '1100px',
-        data: {
-          objectTypeId: this.objectTypeId,
-          userId: this.userId,
-          objectId: objectId,
-        },
-      });
-    } else if (objectId === ObjectType.CONTACT) {
-      let dialogRef = this.dialog.open(AddContactModalComponent, {
-        disableClose: true,
-        height: '440px',
-        width: '700px',
-        maxWidth: '1100px',
-        data: {
-          objectTypeId: this.objectTypeId,
-          userId: this.userId,
-        },
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        this.populateGrid(true);
-      });
+    switch (objectId) {
+      // Add Project Modal
+      case ObjectType.PROJECT: {
+        const dialogRef = this.dialog.open(AddFormWizardComponent, {
+          disableClose: true,
+          height: '80vh',
+          width: '70vw',
+          minWidth: '320px',
+          maxWidth: '1100px',
+          minHeight: '420px',
+          data: {
+            objectTypeId: this.objectTypeId,
+            userId: this.userId,
+            objectId: objectId,
+          },
+        });
+        break;
+      }
+      // Add Contact Modal
+      case ObjectType.CONTACT: {
+        const dialogRef = this.dialog.open(AddContactModalComponent, {
+          disableClose: true,
+          height: '50vh',
+          width: '70vw',
+          minWidth: '320px',
+          maxWidth: '1100px',
+          minHeight: '420px',
+          data: {
+            objectTypeId: this.objectTypeId,
+            userId: this.userId,
+          },
+        });
+        dialogRef.afterClosed().subscribe(() => {
+          this.populateGrid(true);
+        });
+        break;
+      }
     }
   }
 
   public btnAddCompany() {
-    let dialogRef = this.dialog.open(AddCompanyModalComponent, {
+    const dialogRef = this.dialog.open(AddCompanyModalComponent, {
       disableClose: true,
-      height: '420px',
-      width: '700px',
+      height: '40vh',
+      width: '70vw',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
       data: {
         objectTypeId: this.objectTypeId,
         userId: this.userId,
@@ -2421,7 +2434,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
   changeVendorOrCustomer() {
     let changeUrl = `/v06/financials/ChangeVendor.aspx?OID=${this.urlOID}&OTID=4&OTTID=${this.urlOTTID}&Mode=Edit&IsIncome=${this.isIncomeValue}&paramFinView=Status`;
     this.isChargeAction = true;
-    document.location.href = changeUrl;
+    this.router.navigateByUrl(changeUrl);
   }
 
   changeDefaultVendorOrCustomer() {
@@ -2543,7 +2556,7 @@ export class ListPageComponent implements OnInit, OnDestroy {
 
   private navigateToUrl(url) {
     this.navigateToEditPage();
-    document.location.href = url;
+    this.router.navigateByUrl(url);
   }
 
   private ensureJavaScript(htmlLink: string) {

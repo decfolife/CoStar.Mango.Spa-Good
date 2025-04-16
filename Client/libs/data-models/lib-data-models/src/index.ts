@@ -58,6 +58,7 @@ export { StartPage } from './lib/models/start-page.interface';
 export { SharedLeftNavLink } from './lib/models/link.interface';
 export * from './lib/enums/mango.enums';
 export * from './lib/enums/object-types.enum';
+export * from './lib/enums/object-type-types.enum';
 export * from './lib/enums/render-select-request-types.enum';
 export * from './lib/enums/security-types.enum';
 export * from './lib/enums/ui-shared-elements.enums';

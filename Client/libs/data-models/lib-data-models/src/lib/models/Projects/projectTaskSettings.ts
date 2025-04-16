@@ -14,6 +14,7 @@ export interface ProjectTaskSettings {
   projectRequiredTaskNotes: boolean;
 }
 
+
 export interface PostProjectTaskSettings {
   projectID: number;
   startDate: Date;

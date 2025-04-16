@@ -25,9 +25,17 @@ div.object-reactivation-page {
   }
 }
 
+.right-menu-section {
+  display: flex;
+  height: 38px;
+  margin: 0;
+  gap: 8px;
+}
+
 .controls-left {
   align-items: center;
   display: flex;
+  height: 38px;
 }
 
 .dropdown-container {

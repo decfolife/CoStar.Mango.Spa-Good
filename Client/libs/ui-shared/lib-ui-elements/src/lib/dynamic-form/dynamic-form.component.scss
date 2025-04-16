@@ -217,9 +217,9 @@
 
 .section {
   &--border {
-    border-bottom: 1px solid black;
     padding-bottom: 8px;
     margin-bottom: 16px;
+    @include costar(border-bottom, gray05);
   }
 
   &--bottom_border {

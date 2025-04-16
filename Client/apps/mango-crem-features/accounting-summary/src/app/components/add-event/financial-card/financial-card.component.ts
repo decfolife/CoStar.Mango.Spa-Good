@@ -1,5 +1,6 @@
 import {
   Component,
+  ElementRef,
   Input,
   OnChanges,
   OnDestroy,
@@ -131,7 +132,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   termInMonths: number;
   selectedBeginDateID = 1;
   selectedAnnualRateType: number;
-  selectedDiscountRate: number;
+  selectedDiscountRateProfile: number;
   annualRateType: number;
   discountRate: number;
   glAccountIDsCSV: number[];
@@ -150,7 +151,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   overrideCheckBoxValue = false;
   functionalCurrencyRateset: string;
   directEntryFunctionalCurrencyRateEnabled: boolean;
-  discountRatePlaceHolder = 'Select Discount Rate Profile';
+  discountRateProfilePlaceHolder = 'Select Discount Rate Profile';
   isROUAmountDisabled: boolean;
   ROUAssetAmount: number;
   amortizationCompositeDropdownValidation: string;
@@ -167,7 +168,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     private fb: FormBuilder,
     private formatService: FormattingService,
     public datePipe: DatePipe,
-    private facade: MangoAppFacade
+    private facade: MangoAppFacade,
+    private el: ElementRef
   ) {
     this.initialFinancialForm();
     this.getUserInfo();
@@ -181,104 +183,101 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (
-      this.accountingEventsData !== undefined ||
-      this.pageMode !== undefined ||
-      (this.currencyList !== undefined && this.measureEvent !== undefined)
-    ) {
-      if (changes.classificationId) {
-        this.setCurrencyDropdownSubTitle();
-        this.updateRouAssetMethodAndAmountForClassificationConfiguration();
-      }
+    if (changes.classificationId) {
+      this.setCurrencyDropdownSubTitle();
+      this.updateRouAssetMethodAndAmountForClassificationConfiguration();
+      setTimeout(() => {
+        this.assignIdsToCompositeDropdownHeaders();
+      }, 300);
+    }
 
-      if (changes.scheduleDetailsData) {
-        this.termBegin = this.scheduleDetailsData?.termBegin
-          ? new Date(this.scheduleDetailsData?.termBegin)
-          : null;
-        this.termEnd = this.scheduleDetailsData?.termEnd
-          ? new Date(this.scheduleDetailsData?.termEnd)
-          : null;
-        this.termInMonths = +this.scheduleDetailsData?.termsInMonth;
-
-        if (
-          this.termBegin &&
-          this.functionalCurrencyRateset !== 'Direct Entry' &&
-          this.localCurrency !== this.functionalCurrency
-        ) {
-          this.getFunctionalCurrencyRateLookup();
-        }
-
-        this.getDiscountRateOptions();
-
-        this.validateROUActionDate();
-        //When editing a schedule the ROUAsset action date has to be set to the value saved in the database.  This if statement keeps
-        //the value from being overwritten when the page is loading.
-        let prevValueTermBegin =
-          changes.scheduleDetailsData.previousValue?.termBegin !== null
-            ? changes.scheduleDetailsData.previousValue?.termBegin.toDateString()
-            : '';
-        let curValueTermBegin =
-          changes.scheduleDetailsData.currentValue?.termBegin !== null
-            ? changes.scheduleDetailsData.currentValue?.termBegin.toDateString()
-            : '';
-
-        if (
-          (changes.scheduleDetailsData.previousValue !== undefined &&
-            prevValueTermBegin !== curValueTermBegin) ||
-          this.pageMode !== 'Edit Event'
-        ) {
-          if (this.termBegin?.toDateString() !== this.nullDateString) {
-            this.financialForm.get('ROUActionDate').setValue(this.termBegin);
-          } else {
-            this.financialForm.get('ROUActionDate').reset();
-          }
-        }
-      }
+    if (changes.scheduleDetailsData) {
+      this.termBegin = this.scheduleDetailsData?.termBegin
+        ? new Date(this.scheduleDetailsData?.termBegin)
+        : null;
+      this.termEnd = this.scheduleDetailsData?.termEnd
+        ? new Date(this.scheduleDetailsData?.termEnd)
+        : null;
+      this.termInMonths = +this.scheduleDetailsData?.termsInMonth;
 
       if (
-        this.termBegin?.toDateString() === this.nullDateString &&
-        this.accountingEventsData?.fromDateOptionID === 9 &&
-        this.termEnd?.toDateString() === this.nullDateString &&
-        this.accountingEventsData?.toDateOptionID === 13
+        this.termBegin &&
+        this.functionalCurrencyRateset !== 'Direct Entry' &&
+        this.localCurrency !== this.functionalCurrency
       ) {
-        //The payments grid need to load in order to fill the term begin and end date when "Earliest Payment Begin Date and
-        //Max Payment End Date are selected". We have to call this function in order to execute the function to populate the
-        //payments grid. The local currency and charge type are not set yet in the form so we will set it here to get the
-        //charges in the payments grid.
-        this.executeFinancialFormValueChanges();
+        this.getFunctionalCurrencyRateLookup();
       }
 
-      if (changes.amortizationProfiles) {
-        this.amortizationProfileList = this.amortizationProfiles?.filter(
-          (ProfileName) => ProfileName.isActive
-        );
+      this.getDiscountRateOptions();
+
+      this.validateROUActionDate();
+      //When editing a schedule the ROUAsset action date has to be set to the value saved in the database.  This if statement keeps
+      //the value from being overwritten when the page is loading.
+      let prevValueTermBegin =
+        changes.scheduleDetailsData.previousValue?.termBegin !== null
+          ? changes.scheduleDetailsData.previousValue?.termBegin.toDateString()
+          : '';
+      let curValueTermBegin =
+        changes.scheduleDetailsData.currentValue?.termBegin !== null
+          ? changes.scheduleDetailsData.currentValue?.termBegin.toDateString()
+          : '';
+
+      if (
+        (changes.scheduleDetailsData.previousValue !== undefined &&
+          prevValueTermBegin !== curValueTermBegin) ||
+        this.pageMode !== 'Edit Event'
+      ) {
+        if (this.termBegin?.toDateString() !== this.nullDateString) {
+          this.financialForm.get('ROUActionDate').setValue(this.termBegin);
+        } else {
+          this.financialForm.get('ROUActionDate').reset();
+        }
       }
+    }
 
-      if (changes.rouAssetMethodsList) {
-        this.originalRouAssetMethodsList = this.rouAssetMethodsList;
+    if (
+      this.termBegin?.toDateString() === this.nullDateString &&
+      this.accountingEventsData?.fromDateOptionID === 9 &&
+      this.termEnd?.toDateString() === this.nullDateString &&
+      this.accountingEventsData?.toDateOptionID === 13
+    ) {
+      //The payments grid need to load in order to fill the term begin and end date when "Earliest Payment Begin Date and
+      //Max Payment End Date are selected". We have to call this function in order to execute the function to populate the
+      //payments grid. The local currency and charge type are not set yet in the form so we will set it here to get the
+      //charges in the payments grid.
+      this.executeFinancialFormValueChanges();
+    }
 
-        if (this.originalRouAssetMethodsList) {
-          if (this.measureEvent === 'Initial') {
-            this.rouAssetMethodsList = this.originalRouAssetMethodsList.filter(
-              (ram) => !ram.isInitialExempt
-            );
-          } else if (this.measureEvent === 'Impairment') {
-            let impairmentIds = [1, 7];
-            this.rouAssetMethodsList = this.originalRouAssetMethodsList.filter(
-              (ram) => impairmentIds.includes(ram.id)
-            );
-            if (!!this.masterGroupID) {
-              this.rouMethodIDSelected =
-                this.returnRouAssetMethodFromClassificationConfiguration();
-              this.financialForm
-                .get('ROUMethod')
-                .setValue(this.rouMethodIDSelected);
-            }
-          } else {
-            this.rouAssetMethodsList = JSON.parse(
-              JSON.stringify(this.originalRouAssetMethodsList)
-            );
+    if (changes.amortizationProfiles) {
+      this.amortizationProfileList = this.amortizationProfiles?.filter(
+        (ProfileName) => ProfileName.isActive
+      );
+    }
+
+    if (changes.rouAssetMethodsList) {
+      this.originalRouAssetMethodsList = this.rouAssetMethodsList;
+
+      if (this.originalRouAssetMethodsList) {
+        if (this.measureEvent === 'Initial') {
+          this.rouAssetMethodsList = this.originalRouAssetMethodsList.filter(
+            (ram) => !ram.isInitialExempt
+          );
+        } else if (this.measureEvent === 'Impairment') {
+          let impairmentIds = [1, 7];
+          this.rouAssetMethodsList = this.originalRouAssetMethodsList.filter(
+            (ram) => impairmentIds.includes(ram.id)
+          );
+          if (!!this.masterGroupID) {
+            this.rouMethodIDSelected =
+              this.returnRouAssetMethodFromClassificationConfiguration();
+            this.financialForm
+              .get('ROUMethod')
+              .setValue(this.rouMethodIDSelected);
           }
+        } else {
+          this.rouAssetMethodsList = JSON.parse(
+            JSON.stringify(this.originalRouAssetMethodsList)
+          );
         }
       }
     }
@@ -453,9 +452,12 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           }
           this.financialForm.get('financialCurrencyDirectEntry').disable();
           this.financialForm.get('financialCurrencyDirectEntry').setValue(true);
-          isSameCurrency
-            ? this.financialForm.get('currencyRate').disable()
-            : this.financialForm.get('currencyRate').enable();
+          if (isSameCurrency) {
+            this.financialForm.get('currencyRate').setValue(1);
+            this.financialForm.get('currencyRate').disable();
+          } else {
+            this.financialForm.get('currencyRate').enable();
+          }
         } else if (
           this.functionalCurrencyRateset !== 'Direct Entry' &&
           this.directEntryFunctionalCurrencyRateEnabled
@@ -995,7 +997,10 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     this.overrideCheckBoxValue = this.accountingEventsData?.overrideProfile;
     this.effectiveRate = this.accountingEventsData?.effectiveRate;
 
-    if (this.measureEvent === 'Impairment') {
+    if (
+      this.pageMode === 'Remeasure Event' &&
+      this.measureEvent === 'Impairment'
+    ) {
       this.financialForm.get('modificationImpactScope').setValue(false);
       this.financialForm.get('modificationImpactScope').enable();
     } else if (this.measureEvent === 'Full Termination') {
@@ -1071,6 +1076,10 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       'modificationImpactScope'
     ).value;
 
+    if (hasEvent) {
+      this.discountRateProfilePlaceHolder = event[0].profileName;
+    }
+
     if (this.pageMode === 'Edit Event' && isDirectEntry) {
       this.financialForm
         .get('discountRate')
@@ -1123,6 +1132,35 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           .setValue(this.annualRateType);
       }
     }
+  }
+
+  assignIdsToCompositeDropdownHeaders() {
+    const compositeDropdowns = this.el.nativeElement?.querySelectorAll(
+      '#financials-amortization-composite-dropdown, #financials-currency-composite-dropdown, #financials-discount-rate-composite-dropdown, #financials-ROU-assets-obtained-composite-dropdown'
+    );
+
+    compositeDropdowns?.forEach((compositeDropdown: HTMLElement) => {
+      const dropdownId = compositeDropdown?.id;
+
+      let dropdownType: string;
+      if (dropdownId.includes('amortization')) {
+        dropdownType = 'amortization';
+      } else if (dropdownId.includes('currency')) {
+        dropdownType = 'currency';
+      } else if (dropdownId.includes('discount-rate')) {
+        dropdownType = 'discount-rate';
+      } else if (dropdownId.includes('ROU-assets-obtained')) {
+        dropdownType = 'ROU-assets-obtained';
+      }
+
+      const compositeDropdownHeader = compositeDropdown?.querySelectorAll(
+        'mat-expansion-panel-header'
+      );
+      compositeDropdownHeader?.forEach((header) => {
+        const headerID = `${dropdownType}-composite-dropdown-header`;
+        header.id = headerID;
+      });
+    });
   }
 
   setCurrencyDropdownSubTitle() {
@@ -1222,7 +1260,12 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           sortOrder: 1,
         },
       ];
-      this.selectedDiscountRate = this.discountRateOptions[0].profileID;
+      (this.discountRateProfilePlaceHolder =
+        this.accountingEventsData?.discountRateProfileID === 0
+          ? 'Direct Entry'
+          : this.accountingEventsData?.discountRateProfileName),
+        (this.selectedDiscountRateProfile =
+          this.discountRateOptions[0].profileID);
       if (this.discountRateOptions[0].profileName === 'Direct Entry') {
         this.financialForm.get('discountRate').enable();
         this.financialForm.get('annualRateDropdown').enable();
@@ -1240,7 +1283,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       (!accountingTermBegin || !accountingTermEnd || this.termInMonths < 0) &&
       this.measureEvent !== 'Full Termination'
     ) {
-      this.discountRatePlaceHolder = 'Input Term';
+      this.discountRateOptions = [];
+      this.discountRateProfilePlaceHolder = 'Input Term';
       this.noDiscountRateMatch();
       if (this.portfolioSettings?.directEntryDiscountRateEnabled) {
         this.discountRateOptions = [
@@ -1253,8 +1297,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
             sortOrder: 1,
           },
         ];
-        this.discountRatePlaceHolder = 'Input Term Or Choose Direct Entry';
-        this.noDiscountRateMatch();
+        this.discountRateProfilePlaceHolder =
+          'Input Term Or Choose Direct Entry';
+        this.selectedDiscountRateProfile = undefined;
       }
       return;
     }
@@ -1270,7 +1315,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           sortOrder: 1,
         },
       ];
-      this.selectedDiscountRate = this.discountRateOptions[0].profileID;
+      this.selectedDiscountRateProfile = this.discountRateOptions[0].profileID;
       return;
     }
 
@@ -1306,10 +1351,11 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
                 sortOrder: 1,
               });
             }
-            this.selectedDiscountRate = this.discountRateOptions[0]?.profileID;
+            this.selectedDiscountRateProfile =
+              this.discountRateOptions[0]?.profileID;
 
             if (this.discountRateOptions.length === 0) {
-              this.discountRatePlaceHolder =
+              this.discountRateProfilePlaceHolder =
                 'No matching discount rate profiles';
               this.noDiscountRateMatch();
             } else if (this.pageMode === 'Edit Event') {
@@ -1321,9 +1367,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
                 );
                 if (savedDiscountProfileIds.length > 0) {
                   let savedProfileId = savedDiscountProfileIds[0].profileID;
-                  this.selectedDiscountRate = savedProfileId;
+                  this.selectedDiscountRateProfile = savedProfileId;
                 } else {
-                  this.selectedDiscountRate =
+                  this.selectedDiscountRateProfile =
                     this.discountRateOptions[0].profileID;
                 }
               }

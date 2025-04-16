@@ -14,7 +14,17 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ScreenLoaderModule } from '@mango/ui-shared/lib-ui-elements';
+import {
+  IconModule,
+  ButtonModule,
+  CardModule,
+  CremPopupComponent,
+  DropdownModule,
+  InputComponent,
+  SearchComponent,
+  ScreenLoaderModule,
+} from '@mango/ui-shared/lib-ui-elements';
+import { SplitButtonComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/split-button/split-button.component';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 import {
   DevExtremeModule,
@@ -33,14 +43,14 @@ import {
   DxTextAreaModule,
   DxTreeViewModule,
 } from 'devextreme-angular';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
 import { BatchEventListComponent } from '../batch-event-list/batch-event-list.component';
 import { ParametersCardComponent } from '../batch-event-list/parameters-card/parameters-card.component';
 import { ParametersGridComponent } from '../batch-event-list/parameters-grid/parameters-grid.component';
 import { BatchLogsComponent } from '../batch-logs/batch-logs.component';
 import { ROUTES } from './index.routes';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ToastMessageService } from '@batch-accounting/services/toast-message.service';
 
 @NgModule({
   declarations: [
@@ -51,6 +61,8 @@ import { ROUTES } from './index.routes';
   ],
 
   imports: [
+    IconModule,
+    ButtonModule,
     CommonModule,
     DevExtremeModule,
     DxChartModule,
@@ -67,9 +79,9 @@ import { ROUTES } from './index.routes';
     DxTabsModule,
     DxTextAreaModule,
     DxTreeViewModule,
-    FontAwesomeModule,
     FormsModule,
     HttpClientModule,
+    InputComponent,
     MatCardModule,
     MatFormFieldModule,
     MatIconModule,
@@ -82,7 +94,15 @@ import { ROUTES } from './index.routes';
     MatTabsModule,
     ScreenLoaderModule,
     RouterModule.forChild(ROUTES),
+    ButtonModule,
+    DropdownModule,
+    SearchComponent,
+    InputComponent,
+    CremPopupComponent,
+    SplitButtonComponent,
+    ToastModule,
+    CardModule,
   ],
-  providers: [ExportDevexDatagridService],
+  providers: [ExportDevexDatagridService, MessageService, ToastMessageService],
 })
 export class IndexModule {}

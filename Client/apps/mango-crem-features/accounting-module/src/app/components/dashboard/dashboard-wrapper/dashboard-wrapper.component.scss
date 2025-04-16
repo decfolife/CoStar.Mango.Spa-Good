@@ -153,3 +153,21 @@ button.btn.btn-default.moreButton {
     transform: translateY(2px);
   }
 }
+
+::ng-deep {
+  .dx-template-wrapper {
+    overflow: hidden !important;
+  }
+
+  div.accounting3Popover {
+    padding: 16px !important;
+  }
+
+  #accountingToolbarEnable3 {
+    padding-right: 16px !important;
+  }
+
+  #accountingToolbarEnable3 crem-button {
+    opacity: 1 !important;
+  }
+}

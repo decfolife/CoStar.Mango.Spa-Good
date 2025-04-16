@@ -112,13 +112,6 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
   }
 
   addOrEditMember(operation, member?) {
-    let height;
-    if (operation == 'AC') {
-      height = '500px';
-    } else {
-      height = '800px';
-    }
-
     let emailAddressList = this.projectTeam
       .filter(
         (pt) =>
@@ -127,9 +120,12 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
       )
       .map((t) => t.email);
 
-    let dialogRef = this.dialog.open(AddEditMemberComponent, {
-      height: height,
-      width: '500px',
+    const dialogRef = this.dialog.open(AddEditMemberComponent, {
+      width: '60vw',
+      minWidth: '420px',
+      maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
       panelClass: 'addEditMemberModal',
       data: {
         memberInfo: this.memberInfo,
@@ -186,11 +182,12 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
               height: '700px',
               panelClass: 'composeEmailModal',
               data: {
-                projectId: this.projectId,
+                objectId: this.projectId,
                 contacts: this.projectsEmailInfo.contacts,
                 noteTypes: this.projectsEmailInfo.noteTypes,
                 fileItems: this.projectsEmailInfo.fileItems,
                 defaultNoteType: this.defaultNoteType,
+                inclUnappdTsksSel: true,
                 emailNote: this.emailNote,
                 includeFileInfo: this.includeFilesText,
                 emailSendHandler: this.sendEmail.bind(this),

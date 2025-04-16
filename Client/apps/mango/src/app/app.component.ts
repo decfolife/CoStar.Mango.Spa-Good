@@ -17,6 +17,7 @@ import {
 } from 'libs/core-shared/src/lib/services';
 import { MatDialog } from '@angular/material/dialog';
 import { Idle } from '@ng-idle/core';
+import { CurrentProjectIdMonitorService } from './services/current-project-monitor.service';
 import { convertBoolToString } from 'libs/core-shared/src/lib/utilities/utils';
 import LogRocket from 'logrocket';
 
@@ -38,6 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private settingsService: SettingsService,
     private pendoService: PendoService,
+    private currentProjectIdMonitorService: CurrentProjectIdMonitorService, //*** we need this, please do not remove this line */
     private idle: Idle
   ) {
     this.subs.add(
@@ -52,6 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setupLogRocket();
     this.facade.init();
+    this.facade.loadRedirectorMappings();
     this.facade.loadRedirectorLinks();
     this.setupIdle();
     this.setupPendo();
@@ -127,6 +130,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   setupPendo() {
+    if (UtilitiesService.isLocalEnvironment()) return;
+
     this.subscriptions.push(
       combineLatest([
         this.facade.clientKey$,
@@ -149,10 +154,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 of(contactRecord),
                 of(adminFlags),
                 of(authenticatedUser),
-                this.settingsService.getClientPendoSettings(
-                  clientkey,
-                  contactRecord.contactID
-                ),
+                this.settingsService.getClientPendoSettings(),
               ])
           ),
           tap(

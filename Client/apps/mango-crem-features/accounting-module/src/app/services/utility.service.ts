@@ -356,7 +356,15 @@ export class UtilityService {
               )
             )
               return summaryCell.value() / 2;
-            else return summaryCell.value();
+            else {
+              if (summaryCell.value()) {
+                return summaryCell.value();
+              } else {
+                return parseFloat('00').toFixed(
+                  fieldConfig[dataIndex].format.precision
+                );
+              }
+            }
           };
           break;
         }

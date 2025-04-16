@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PortfolioMaintenanceService } from './portfolio-maintenance.service';
 import { DxTreeListComponent } from 'devextreme-angular';
 import 'regenerator-runtime/runtime';
@@ -52,6 +52,7 @@ export class PortfolioMaintenanceComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private service: PortfolioMaintenanceService,
     private dialog: MatDialog
   ) {
@@ -778,7 +779,7 @@ export class PortfolioMaintenanceComponent implements OnInit {
       //   break;
       // }
     }
-    window.location.href = route;
+    this.router.navigateByUrl(route);
     return false;
   }
 

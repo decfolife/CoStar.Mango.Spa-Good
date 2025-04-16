@@ -23,7 +23,8 @@ export class FormWizardService extends EndpointService {
     p2 = '0',
     p3 = '0',
     page = 1,
-    pageSize = 25
+    pageSize = 25,
+    isDynamicPopup = false
   ): Observable<ApiResponse> {
     let url = `${this.formWizardUrl}renderSelects`;
     let param = {
@@ -35,6 +36,7 @@ export class FormWizardService extends EndpointService {
       LookupSQL: lookupSql,
       page: page,
       pageSize: pageSize,
+      isDynamicPopup: isDynamicPopup,
     };
 
     return this.callHttpGet(url, 'RenderSelects', param);
@@ -105,10 +107,10 @@ export class FormWizardService extends EndpointService {
     return this.callHttpGet(url, 'GetManagers', param);
   }
 
-  public getClientPreferenceByField(Field: string): Observable<any> {
+  public getClientPreferenceByField(field: string): Observable<any> {
     let url = `${this.formWizardUrl}FormWizards/GetClientPreferenceByField`;
     return this.callHttpGet(url, 'FormWizards/GetClientPreferenceByField', {
-      Pref: Field,
+      Pref: field,
     });
   }
 

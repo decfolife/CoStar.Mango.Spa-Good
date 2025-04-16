@@ -47,6 +47,10 @@ export const LOAD_FIELDS_FAILURE = '[DynamicForm] Load Fields Failure';
 export const LOAD_ALL_FIELDS_SUCCESS = '[DynamicForm] Load All Fields Success';
 export const LOAD_ALL_FIELDS_FAILURE = '[DynamicForm] Load All Fields Failure';
 
+export const clearSaveFormState = createAction(
+  '[DynamicForm] Clear Save Form State'
+);
+
 export const clearDynamicFormsState = createAction(
   '[DynamicForm] Clear Dynamic Form State'
 );
@@ -118,7 +122,7 @@ export const dynamicFormLoadAvailableSectionsFailure = createAction(
 //Dynamic Form Sections (on form)
 export const dynamicFormLoadSections = createAction(
   LOAD_SECTIONS,
-  props<{ formId: number }>()
+  props<{ formId: number; groupId: number }>()
 );
 export const dynamicFormLoadSectionsSuccess = createAction(
   LOAD_SECTIONS_SUCCESS,
@@ -288,7 +292,13 @@ export const dynamicFormLoadFormItemDropdownsFailure = createAction(
 //Render form
 export const dynamicFormLoadRenderForm = createAction(
   '[DynamicForm] Load Render Form',
-  props<{ formId: number; objectId: number; objectTypeId: number }>()
+  props<{
+    formId: number;
+    objectId: number;
+    objectTypeId: number;
+    parentObjectId: number;
+    parentObjectTypeId: number;
+  }>()
 );
 export const dynamicFormLoadRenderFormSuccess = createAction(
   '[DynamicForm] Load Render Form Success',
@@ -315,7 +325,13 @@ export const dynamicFormLoadFormNameFailure = createAction(
 //Render Form Item Dropdowns
 export const renderFormLoadFormItemDropdowns = createAction(
   '[RenderForm] Load Render Form Item Dropdowns',
-  props<{ formId: number; objectId: number; objectTypeId: number }>()
+  props<{
+    formId: number;
+    objectId: number;
+    objectTypeId: number;
+    parentObjectId: number;
+    parentObjectTypeId: number;
+  }>()
 );
 export const renderFormLoadFormItemDropdownsSuccess = createAction(
   '[RenderForm] Load Render Form Item Dropdowns Success',

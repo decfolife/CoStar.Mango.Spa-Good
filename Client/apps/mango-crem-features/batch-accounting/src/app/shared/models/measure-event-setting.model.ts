@@ -17,6 +17,8 @@ export class MeasureEventSetting {
   manualAssetAdjustment: string;
   comments: string;
   nextWorkflowStatus: string;
+  rouAssetObtainedMethodName: string;
+  rouAssetObtainedDateOptions: string;
 
   constructor(
     id: number,
@@ -30,7 +32,9 @@ export class MeasureEventSetting {
     functionalRate: string,
     manualAssetAdjustment: string,
     comments: string,
-    nextWorkflowStatus: string
+    nextWorkflowStatus: string,
+    rouAssetObtainedMethodName: string,
+    rouAssetObtainedDateOptions: string
   ) {
     this.id = id;
 
@@ -45,5 +49,7 @@ export class MeasureEventSetting {
     this.manualAssetAdjustment = manualAssetAdjustment;
     this.comments = comments;
     this.nextWorkflowStatus = nextWorkflowStatus;
+    this.rouAssetObtainedMethodName = rouAssetObtainedMethodName;
+    this.rouAssetObtainedDateOptions = rouAssetObtainedDateOptions;
   }
 }

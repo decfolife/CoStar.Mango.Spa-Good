@@ -50,7 +50,7 @@ import { Subscription } from 'rxjs';
   ],
 })
 export class AddPremiseModalComponent implements OnInit, OnDestroy {
-  public loading = false;
+  public loading = true;
   public modalTitle: string;
   public dynName: string;
   dateFormat = '';
@@ -246,6 +246,7 @@ export class AddPremiseModalComponent implements OnInit, OnDestroy {
         .subscribe((result) => {
           this.premiseObjectName = result.data[0].objectTypeTypeName;
           this.premiseTypesDropdownItems = result.data;
+          this.loading = false; // This prevents from seeing the change of title while the PREMISE TYPE ID is being resolved
         })
     );
   }

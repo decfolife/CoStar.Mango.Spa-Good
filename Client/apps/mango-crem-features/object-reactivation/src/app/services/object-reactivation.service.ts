@@ -19,26 +19,24 @@ export class ObjectReactivationService extends EndpointService {
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
-  // http://localhost:60101/api/objectreactivation/filterdata
-  //http://api.dev.corp.virtualpremise.com:30443/objectactions/api/objectactions/test
 
   public getFilterData(): Observable<ReactivationObjectType[]> {
     const url = `${this.objectReactivationUrl}objectreactivation/filterdata`;
     return this.callHttpGet(url, 'filterdata', null).pipe(map((x) => x));
   }
-  //http://localhost:60101/api/objectreactivation/clientpreferences
+
   public getClientPreferences(): Observable<ReactivationClientPreferences> {
     const url = `${this.objectReactivationUrl}objectreactivation/clientpreferences`;
     return this.callHttpGet(url, 'clientpreferences').pipe(map((x) => x));
   }
-  //http://localhost:60101/api/objectreactivation/reactivationlist
+
   public getReactivationList(request: any): Observable<any[]> {
     const url = `${this.objectReactivationUrl}objectreactivation/reactivationlist`;
     return this.callHttpGet(url, 'objectreactivationlist', request).pipe(
       map((x) => x.data)
     );
   }
-  //http://localhost:60101/api/objectreactivation/updatereactivationlist
+
   public updateReactivationListRecords(request: any): Observable<any> {
     const url = `${this.objectReactivationUrl}objectreactivation/updatereactivationlist`;
     return this.callHttpPost(url, 'updatereactivationlist', request);

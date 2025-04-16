@@ -442,14 +442,14 @@
                   'dropdown'
                 )
               "
-              [placeholder]="discountRatePlaceHolder"
+              [placeholder]="discountRateProfilePlaceHolder"
               displayExpr="profileName"
               [dataSource]="discountRateOptions"
               value="profileID"
               valueExpr="profileID"
               [required]="true"
               [showClearButton]="false"
-              [initialSelectedValue]="selectedDiscountRate"
+              [initialSelectedValue]="selectedDiscountRateProfile"
               (selectedItems)="onDiscountRateChange($event)"
               formControlName="discountRateProfile"
               [containerized]="true"

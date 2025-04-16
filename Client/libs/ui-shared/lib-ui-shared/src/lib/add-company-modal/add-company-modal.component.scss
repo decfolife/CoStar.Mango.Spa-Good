@@ -1,13 +1,4 @@
-@use "styles" as *;
-
-:host ::ng-deep .modalFooter {
-  .addCompanyFooter{
-    display: flex;
-    crem-button {
-      padding: 4px;
-    }
-  }
-}
+@use 'styles' as *;
 
 .add-company-form {
   display: flex;
@@ -24,13 +15,13 @@
   font-weight: bold;
 }
 
-
-
-
-
-
-
-
-
-
-
+:host ::ng-deep {
+  .crem-form {
+    @include costar(gap, 2);
+  }
+  crem-form-control {
+    .crem-form-item-status:empty {
+      display: none;
+    }
+  }
+}

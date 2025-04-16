@@ -5,6 +5,7 @@ import { AdminLandingPageComponent } from './admin-landing-page.component';
 const routes: Routes = [
   {
     path: '',
+    title: 'Admin Page',
     component: AdminLandingPageComponent,
   },
 ];

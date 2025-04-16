@@ -64,61 +64,58 @@
         </crem-form-control>
       </crem-form-item>
 
-      <div class="form-group-two-columns">
-        <div class="two-columns-row">
-          <crem-form-item>
-            <crem-form-label
-              [id]="getId(componentName, 'template', 'label')"
-              [required]="true"
-              >Template
-            </crem-form-label>
-            <crem-form-control>
-              <crem-dropdown
-                #templateDropdown
-                [id]="getId(componentName, 'template', 'dropdown')"
-                [dataSource]="templateDropdownItem"
-                [showClearButton]="true"
-                [showColumnHeader]="false"
-                displayExpr="objectTypeTypeName"
-                value="objectTypeTypeID"
-                valueExpr="objectTypeTypeID"
-                required="true"
-                [allowSearch]="true"
-                hoverText="Select Template"
-                [initialSelectedValue]="selectedTemplateID"
-                formControlName="templateList"
-                [containerized]="false"
-              >
-              </crem-dropdown>
-            </crem-form-control>
-          </crem-form-item>
-        </div>
-        <div class="two-columns-row">
-          <crem-form-item>
-            <crem-form-label
-              [id]="getId(componentName, 'sub-group', 'label')"
+      <div class="layout-container">
+        <crem-form-item>
+          <crem-form-label
+            [id]="getId(componentName, 'template', 'label')"
+            [required]="true"
+            >Template
+          </crem-form-label>
+          <crem-form-control>
+            <crem-dropdown
+              #templateDropdown
+              [id]="getId(componentName, 'template', 'dropdown')"
+              [dataSource]="templateDropdownItem"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="objectTypeTypeName"
+              value="objectTypeTypeID"
+              valueExpr="objectTypeTypeID"
+              required="true"
+              [allowSearch]="true"
+              hoverText="Select Template"
+              [initialSelectedValue]="selectedTemplateID"
+              formControlName="templateList"
+              [containerized]="false"
+            >
+            </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
+
+        <crem-form-item>
+          <crem-form-label
+            [id]="getId(componentName, 'sub-group', 'label')"
+            [required]="isSubGroupRequired"
+            >Sub-Group:
+          </crem-form-label>
+          <crem-form-control>
+            <crem-dropdown
+              #subGroupDropDropdown
+              [id]="getId(componentName, 'sub-group', 'dropdown')"
+              [dataSource]="subGroupDropdownItem"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="companyName"
+              valueExpr="companyID"
+              [allowSearch]="true"
               [required]="isSubGroupRequired"
-              >Sub-Group:
-            </crem-form-label>
-            <crem-form-control>
-              <crem-dropdown
-                #subGroupDropDropdown
-                [id]="getId(componentName, 'sub-group', 'dropdown')"
-                [dataSource]="subGroupDropdownItem"
-                [showClearButton]="true"
-                [showColumnHeader]="false"
-                displayExpr="companyName"
-                valueExpr="companyID"
-                [allowSearch]="true"
-                [required]="isSubGroupRequired"
-                hoverText="Select Sub Group"
-                formControlName="subGroupList"
-                [containerized]="false"
-              >
-              </crem-dropdown>
-            </crem-form-control>
-          </crem-form-item>
-        </div>
+              hoverText="Select Sub Group"
+              formControlName="subGroupList"
+              [containerized]="false"
+            >
+            </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
       </div>
     </form>
   </div>

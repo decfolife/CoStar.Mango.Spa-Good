@@ -37,8 +37,6 @@ import { filter, tap } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
-import { DxSelectBoxComponent } from 'devextreme-angular';
-import CustomStore from 'devextreme/data/custom_store';
 
 @Component({
   selector: 'crem-add-contact-modal-component',

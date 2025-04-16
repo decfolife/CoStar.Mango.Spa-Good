@@ -11,6 +11,9 @@ using static MangoSPA.Constants;
 using System.Net.Http.Headers;
 using UAParser;
 using MangoSPA.Extensions;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace MangoSPA.Services;
 
@@ -19,6 +22,7 @@ public interface IAuthService
     Task<AccessTokenResponse> OAuthToken(AccessTokenRequest request);
     Task<AuthorizeResponse> OAuthAuthorize(string accessToken, string redirectUri);
     Task CreateAuthenticationCookie(string accessToken);
+    void CreateCSRFTokenCookie();
     Task<string> GetAccessTokenForEmulatedUser(EmulateUserRequest request);
 }
 
@@ -26,15 +30,24 @@ public class AuthService : IAuthService
 {
     readonly IHttpClientFactory _clientFactory;
     readonly IHttpContextAccessor _httpContextAccessor;
+    readonly IAntiforgery _forgeryService;
+    readonly IWebHostEnvironment _env;
+    readonly IConfiguration _config;
     readonly ILogger<AuthService> _logger;
 
     public AuthService(
         IHttpClientFactory clientFactory,
         IHttpContextAccessor httpContextAccessor,
+        IAntiforgery forgeryService,
+        IWebHostEnvironment env,
+        IConfiguration config,
         ILogger<AuthService> logger)
     {
         _clientFactory = clientFactory;
         _httpContextAccessor = httpContextAccessor;
+        _forgeryService = forgeryService;
+        _env = env;
+        _config = config;
         _logger = logger;
     }
 
@@ -90,6 +103,30 @@ public class AuthService : IAuthService
         authProps.Items.Add("browser", c.UA.Family);
 
         await _httpContextAccessor.HttpContext.SignInAsync(userPrincipal, authProps);
+    }
+
+    /// <summary>
+    /// Creates 2 cookies.
+    ///   - Creates and sets the XSRF token in a http-only cookie.
+    ///   - Creates a XSRF request token and writes it to a non-http cookie for the client app to use.
+    /// </summary>
+    public void CreateCSRFTokenCookie()
+    {
+        // Creates and sets the cookie token in a cookie
+        // Cookie name will be like ".AspNetCore.Antiforgery.pG4SaGh5yDI"
+        var tokens = _forgeryService.GetAndStoreTokens(_httpContextAccessor.HttpContext);
+
+        // Set another cookie for a request token
+        // Angular includes xsrf protection that reads a cookie named XSRF-TOKEN by default.
+        _httpContextAccessor.HttpContext.Response.Cookies.Append("XSRF-TOKEN",
+            tokens.RequestToken!,
+            new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = true,
+                SameSite = _env.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict,
+                //Expires = DateTime.UtcNow.AddMinutes(_config.CookieExpirationInMinutes())
+            });
     }
 
     public async Task<string> GetAccessTokenForEmulatedUser(EmulateUserRequest request)

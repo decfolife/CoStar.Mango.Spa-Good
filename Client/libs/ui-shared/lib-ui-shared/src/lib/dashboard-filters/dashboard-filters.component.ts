@@ -153,9 +153,11 @@ export class DashboardFiltersComponent implements OnInit, OnChanges, OnDestroy {
   btnAddItemNewClick() {
     const dialogRef = this.dialog.open(AddFormWizardComponent, {
       disableClose: true,
-      height: '81%',
-      width: '75%',
+      height: '70vh',
+      width: '70vw',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
       data: {
         objectTypeId: this.objectTypeId?.length && this.objectTypeId[0],
         objectTypeName: this.objectTypeName,
@@ -166,14 +168,23 @@ export class DashboardFiltersComponent implements OnInit, OnChanges, OnDestroy {
     dialogRef.afterClosed();
   }
 
+  /**
+   * This method is for pretty much every 'Add' modal
+   *
+   * @param {*} addObject
+   * @memberof DashboardFiltersComponent
+   */
   public btnAddBuildingNewClick(addObject) {
     switch (addObject.moduleId) {
-      case PREMISE_WIZARD_OTID:
+      // Add Store
+      case PREMISE_WIZARD_OTID: {
         const dialogRef = this.dialog.open(AddPremiseModalComponent, {
           disableClose: true,
-          height: '45%',
-          width: '35%',
+          width: '45vw',
+          minWidth: '320px',
           maxWidth: '1100px',
+          minHeight: '420px',
+          maxHeight: '90vh',
           data: {
             objectTypeId: this.objectTypeId,
             userId: this.userId,
@@ -182,12 +193,16 @@ export class DashboardFiltersComponent implements OnInit, OnChanges, OnDestroy {
 
         dialogRef.afterClosed();
         break;
-      case BUILDING_WIZARD_OTID:
+      }
+      // Add Building
+      case BUILDING_WIZARD_OTID: {
         const dialogBldgRef = this.dialog.open(AddBuildingModalComponent, {
           disableClose: true,
-          height: '81%',
-          width: '75%',
+          width: '70vw',
+          minWidth: '320px',
           maxWidth: '1100px',
+          minHeight: '420px',
+          maxHeight: '90vh',
           data: {
             objectTypeId: this.objectTypeId,
             userId: this.userId,
@@ -196,12 +211,16 @@ export class DashboardFiltersComponent implements OnInit, OnChanges, OnDestroy {
 
         dialogBldgRef.afterClosed();
         break;
-      case LEASE_WIZARD_OTID:
+      }
+      // Add Lease
+      case LEASE_WIZARD_OTID: {
         let dialogLeaseRef = this.dialog.open(AddLeaseModalComponent, {
           disableClose: true,
-          height: '80%',
-          width: '75%',
+          width: '70vw',
+          minWidth: '320px',
           maxWidth: '1100px',
+          minHeight: '420px',
+          maxHeight: '90vh',
           data: {
             objectTypeId: this.objectTypeId,
             objectTypeName: addObject.moduleDesc,
@@ -210,18 +229,22 @@ export class DashboardFiltersComponent implements OnInit, OnChanges, OnDestroy {
         });
         dialogLeaseRef.afterClosed();
         break;
+      }
       default:
         break;
     }
   }
 
+  // Add Supplier Modal
   btnAddSupplierNewClick(addObject: any) {
     if (addObject.moduleId === SUPPLIER_WIZARD_OTID) {
       const dialogRef = this.dialog.open(AddSupplierModalComponent, {
         disableClose: false,
-        height: '390px',
-        width: '700px',
+        width: '45vw',
+        minWidth: '320px',
         maxWidth: '1100px',
+        minHeight: '320px',
+        maxHeight: '90vh',
         data: {
           objectTypeId: this.objectTypeId,
           userId: this.userId,
@@ -231,13 +254,16 @@ export class DashboardFiltersComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  // Add Equipment Lease
   public btnAddEquipmentNewClick(addObject) {
     if (addObject.moduleId == EQUIPMENT_WIZARD_OTID) {
       const dialogRef = this.dialog.open(AddEquipmentModalComponent, {
         disableClose: true,
-        height: '600px',
-        width: '700px',
+        width: '70vw',
+        minWidth: '320px',
         maxWidth: '1100px',
+        minHeight: '420px',
+        maxHeight: '90vh',
         data: {
           objectTypeId: this.objectTypeId,
           userId: this.userId,

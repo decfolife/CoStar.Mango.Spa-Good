@@ -1,3 +1,6 @@
+@use 'styles' as *;
+@use 'colors' as colors;
+
 :host ::ng-deep .readOnly tr.dx-row.dx-data-row:hover {
   background-color: transparent;
   cursor: default;
@@ -35,4 +38,52 @@
 
 :host ::ng-deep .dx-field-item-label.dx-field-item-label-location-left {
   min-width: 196px;
+}
+
+dx-form {
+  display: flex;
+  padding: 12px;
+  overflow: visible;
+  width: 100%;
+}
+
+.dx-widget {
+  width: 100%;
+}
+
+:host ::ng-deep #ba-direct-entry-card {
+  .dx-layout-manager.dx-widget {
+    width: 100% !important;
+  }
+
+  mat-card {
+    min-height: 210px;
+  }
+}
+
+:host ::ng-deep #ba-classification-parameters-card {
+  mat-card {
+    min-height: 150px;
+  }
+}
+
+::ng-deep #ba-parameters-grid {
+  padding: 12px;
+  .dx-header-row {
+    background-color: colors.$costarDarkBlue !important;
+    border: 1px solid colors.$costarDarkBlue;
+    @include costar(color, light);
+    font-weight: 500;
+  }
+
+  .dx-gridbase-container > .dx-datagrid-rowsview.dx-scrollable {
+    border: 1px solid #ddd;
+    border-top: 0px;
+  }
+}
+
+:host ::ng-deep {
+  mat-card-content {
+    overflow: visible !important; // Allows the 'DevExtreme validation message' to overflow outside the 'crem-card'
+  }
 }

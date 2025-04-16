@@ -15,6 +15,7 @@ import {
   PendoClientInfo,
 } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
+import { RedirectorMapping } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -28,9 +29,7 @@ export class SettingsService {
   };
 
   identityUrl: string = UtilitiesService.getCABackendBaseApiUrl();
-  authenticationUrl: string = UtilitiesService.getBaseApiUrl(
-    Api.authentication
-  );
+  authenticationUrl: string = UtilitiesService.getBaseApiUrl(Api.authentication);
   settingsUrl: string = UtilitiesService.getBaseApiUrl(Api.settings);
 
   constructor(private _http: HttpClient) {}
@@ -52,12 +51,9 @@ export class SettingsService {
     return of();
   }
 
-  getClientPendoSettings(
-    clientKey: string,
-    contactId: number
-  ): Observable<PendoClientInfo> {
+  getClientPendoSettings(): Observable<PendoClientInfo> {
     return this._http.get<PendoClientInfo>(
-      `${this.settingsUrl}settings/${clientKey}/pendouser/${contactId}`
+      `${this.settingsUrl}settings/pendouser`
     );
   }
 
@@ -74,24 +70,27 @@ export class SettingsService {
       .pipe(map((response) => (response.d || {}).Result));
   }
 
-  getAdminFlags(clientKey: string): Observable<AdminFlags> {
+  getAdminFlags(): Observable<AdminFlags> {
     return this._http.get<AdminFlags>(
-      `${this.settingsUrl}settings/${clientKey}`
+      `${this.settingsUrl}settings/client`
     );
   }
 
-  getRedirectorLinks(clientKey: string): Observable<RedirectorLink[]> {
+  getRedirectorLinks(): Observable<RedirectorLink[]> {
     return this._http.get<RedirectorLink[]>(
-      `${this.settingsUrl}settings/redirectorLinks/${clientKey}`
+      `${this.settingsUrl}settings/redirectorLinks`
     );
   }
 
-  getClientSettingsForUser(
-    clientKey: string,
-    contactId: number
-  ): Observable<Client> {
+  getRedirectorMappings(): Observable<RedirectorMapping[]> {
+    return this._http.get<RedirectorMapping[]>(
+      `${this.settingsUrl}settings/redirectorMappings`
+    );
+  }
+
+  getClientSettingsForUser(): Observable<Client> {
     return this._http.get<Client>(
-      `${this.settingsUrl}settings/${clientKey}/user/${contactId}`
+      `${this.settingsUrl}settings/user`
     );
   }
 }

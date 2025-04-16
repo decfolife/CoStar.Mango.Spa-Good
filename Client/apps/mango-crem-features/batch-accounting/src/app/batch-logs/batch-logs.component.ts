@@ -1,36 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable rxjs-angular/prefer-composition */
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { faPlus, faDownload } from '@fortawesome/free-solid-svg-icons';
-
 import notify from 'devextreme/ui/notify';
 import { DxDataGridComponent, DxPopupComponent } from 'devextreme-angular';
 import 'regenerator-runtime/runtime';
 import { Buffer, ValueType, Workbook, Worksheet } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { format } from 'date-fns';
-
-import { environment } from '@mangoSpa/src/environments/environment.local';
-
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { ToastMessageService } from '@batch-accounting/services/toast-message.service';
+import { CLIENT_ERROR_MESSAGE } from '@batch-accounting/shared/models/batch-accounting-constants';
 import { BaseService } from '../services/base.service';
 import { BatchLogsService } from '../services/batch-logs.service';
 import { AccountingBatch } from '../shared/models';
 import { BatchEventListService } from '../services/batch-event-list.service';
+import { Subscription } from 'rxjs';
 
 const REFRESH_INTERVAL = 60000; // 60 seconds
-
-type HeartbeatData = {
-  startedAt: Date;
-  lastHeartbeat: Date;
-};
 
 @Component({
   selector: 'mango-ba-batch-logs',
   templateUrl: './batch-logs.component.html',
   styleUrls: ['./batch-logs.component.scss'],
 })
-export class BatchLogsComponent implements AfterViewInit, OnInit {
+export class BatchLogsComponent implements AfterViewInit, OnInit, OnDestroy {
   filterBuilderVisible = false;
   showClearFilters = false;
   cancelModalVisible = false;
@@ -42,15 +42,6 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
 
   @ViewChild('LastNotePopup')
   lastNotePopup: DxPopupComponent | undefined;
-
-  get isSuperUser(): boolean {
-    if (environment.name === 'LOCAL') {
-      return true;
-    }
-
-    return this.isSuperUserElement?.innerText === 'true';
-  }
-
   searchText: string | null = null;
   title: string | null = null;
 
@@ -60,41 +51,47 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
   actionItemsCache: any[] = [];
   actionDisabledCache: any[] = [];
 
-  heartbeatData: HeartbeatData[] = [];
-  heartbeatDataLoading = false;
-
-  faPlus = faPlus;
-  faDownload = faDownload;
-
-  private isSuperUserElement: HTMLDivElement;
+  isSuperUser = false;
   private intervalId: number;
   private hoveredRowBatchId: number;
   private listViews: any[];
+  private ignoreFilterCountUpdate: boolean = false;
+  private subscription = new Subscription();
+  public useEuroDate: boolean = false;
+  public dateFormat: string = 'MM/dd/yyyy';
+  public dateFormatWithTime = 'MM/dd/yyyy HH:mm';
+  contactFullName: string;
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private batchEventService: BatchEventListService,
     public baseService: BaseService,
-    public service: BatchLogsService
+    public service: BatchLogsService,
+    public toast: ToastMessageService,
+    private mangoAppFacade: MangoAppFacade
   ) {}
 
   ngOnInit() {
-    this.baseService.getUserRights().subscribe((result) => {
-      this.service.userRights = Number(result.data);
-    });
+    this.subscription.add(
+      this.baseService.getUserRights().subscribe((result) => {
+        if (result.success) {
+          this.service.userRights = Number(result.data);
+        } else {
+          this.toast.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
+    this.subscription.add(
+      this.mangoAppFacade.contactRecord$.subscribe((cr) => {
+        this.useEuroDate = cr.preferences?.contactDatesEU;
+        this.contactFullName = `${cr.firstName} ${cr.lastName}`;
+      })
+    );
 
-    this.isSuperUserElement = document.getElementById(
-      'IsSuperUser'
-    ) as HTMLDivElement;
-
-    const isEuroElement = document.getElementById('IsEuroDateFormat');
-    const isEuroDateFormat = isEuroElement?.innerHTML.toLowerCase() === 'true';
-
-    if (isEuroDateFormat) {
-      this.baseService.dateFormat = 'dd.MM.yyyy';
-      this.baseService.dateFormatWithTime = 'dd.MM.yyyy HH:mm';
-      this.baseService.dateFormatter.type = 'dd.MM.yyyy';
+    if (this.useEuroDate) {
+      this.dateFormat = 'dd.MM.yyyy';
+      this.dateFormatWithTime = 'dd.MM.yyyy HH:mm';
     }
 
     this.columns = [
@@ -125,7 +122,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         alignment: null,
         visible: false,
         dataType: 'date',
-        format: this.baseService.dateFormatWithTime,
+        format: this.dateFormat,
       },
       {
         dataField: 'lastModifiedBy',
@@ -140,7 +137,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         alignment: null,
         visible: false,
         dataType: 'date',
-        format: this.baseService.dateFormatWithTime,
+        format: this.dateFormatWithTime,
       },
       {
         dataField: 'batchStatus',
@@ -154,7 +151,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         alignment: null,
         visible: true,
         dataType: 'date',
-        format: this.baseService.dateFormatWithTime,
+        format: this.dateFormatWithTime,
       },
       {
         dataField: 'validationEnded',
@@ -162,7 +159,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         alignment: null,
         visible: true,
         dataType: 'date',
-        format: this.baseService.dateFormatWithTime,
+        format: this.dateFormatWithTime,
       },
       {
         dataField: 'isAutoProcess',
@@ -177,7 +174,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         alignment: null,
         visible: true,
         dataType: 'date',
-        format: this.baseService.dateFormatWithTime,
+        format: this.dateFormatWithTime,
       },
       {
         dataField: 'processEnded',
@@ -185,7 +182,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
         alignment: null,
         visible: true,
         dataType: 'date',
-        format: this.baseService.dateFormatWithTime,
+        format: this.dateFormatWithTime,
       },
       {
         dataField: 'leaseCount',
@@ -235,14 +232,22 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
   ngAfterViewInit() {
     this.populateBatchLogsAndParameters();
 
-    this.batchEventService.getListViews().subscribe((res) => {
-      this.listViews = [
-        ...res.data.coStarListViews,
-        ...res.data.hiddenListViews,
-        ...res.data.myListViews,
-        ...res.data.sharedListViews,
-      ];
-    });
+    this.subscription.add(
+      this.batchEventService.getListViews().subscribe((res) => {
+        if (res.success) {
+          this.listViews = [
+            ...res.data.coStarListViews,
+            ...res.data.hiddenListViews,
+            ...res.data.myListViews,
+            ...res.data.sharedListViews,
+          ];
+        } else {
+          this.toast.showError(
+            'This page failed to load because views could not be fetched. Please contact support'
+          );
+        }
+      })
+    );
 
     this.intervalId = window.setInterval(() => {
       this.populateBatchLogsAndParameters();
@@ -252,45 +257,66 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
   populateBatchLogsAndParameters(): void {
     this.dataGrid?.instance.beginCustomLoading('Loading...');
 
-    if (this.isSuperUser) {
-      this.heartbeatDataLoading = true;
-
-      this.service.getHeartbeat().subscribe((res) => {
-        const servers: HeartbeatData[] = [];
-        this.heartbeatDataLoading = false;
-
-        if (!Array.isArray(res.data) || res?.data.length === 0) {
+    this.subscription.add(
+      this.service.getBatchLogsAndParameters().subscribe((result) => {
+        if (!result || result?.clientErrorMessage) {
+          this.dataGrid?.instance.endCustomLoading();
+          this.toast.showError(CLIENT_ERROR_MESSAGE);
           return;
         }
 
-        res.data.forEach((item) => {
-          const start = new Date(JSON.parse(item.data).StartedAt);
-          const beat = new Date(item.lastHeartbeat);
-
-          start.setMinutes(start.getMinutes() + -1 * start.getTimezoneOffset());
-          beat.setMinutes(beat.getMinutes() + -1 * beat.getTimezoneOffset());
-
-          servers.push({ startedAt: start, lastHeartbeat: beat });
+        result.data.forEach((item: any) => {
+          item.leaseCount = item.listOfLeaseIDs.split(',').length;
+          item.batchCount = item.listOfScheduleIDs.split(',').length;
         });
 
-        this.heartbeatData = servers.slice();
-      });
-    }
-
-    this.service.getBatchLogsAndParameters().subscribe((result) => {
-      if (!result || result?.clientErrorMessage) {
+        this.updateBatchLogData(result.data);
+        this.batchLogs = result.data;
         this.dataGrid?.instance.endCustomLoading();
+      })
+    );
+  }
 
-        return;
-      }
-
-      result.data.forEach((item: any) => {
-        item.leaseCount = item.listOfLeaseIDs.split(',').length;
-        item.batchCount = item.listOfScheduleIDs.split(',').length;
+  updateBatchLogData(data: any) {
+    data.forEach((element) => {
+      element.classificationParameters.forEach((param) => {
+        if (param.accountingTermBeginDate === 'Direct Entry') {
+          param.accountingTermBeginDate = this.getFormattedDate(
+            param.termBeginDirectEntry
+          );
+        }
+        if (param.accountingTermEndDate === 'Direct Entry') {
+          param.accountingTermEndDate = this.getFormattedDate(
+            param.termEndDirectEntry
+          );
+        }
+        if (param.discountRateProfile === 'Direct Entry') {
+          param.discountRateProfile = `${param.annualRate}% ${param.annualRateType}`;
+        }
+        if (param.manualAssetAdjustment === 'Direct Entry') {
+          param.manualAssetAdjustment = param.manualAdjustmentDirectEntry;
+        }
+        if (param.comments === 'Direct Entry') {
+          param.comments = param.commentsDirectEntry;
+        }
+        if (
+          ['Operating', 'Capital (FAS 13)', 'Operating (Lessor)'].includes(
+            param.classificationType
+          )
+        ) {
+          param.rouAssetMethod = 'Not Applicable';
+          param.rouAssetObtainedDate = 'Not Applicable';
+        } else if (
+          !!param.rouAssetDateOption &&
+          param.rouAssetDateOption != 'Direct Entry'
+        ) {
+          param.rouAssetObtainedDate = param.rouAssetDateOption;
+        } else if (!!param.rouAssetObtainedDate) {
+          param.rouAssetObtainedDate = this.getFormattedDate(
+            param.rouAssetObtainedDate
+          );
+        }
       });
-
-      this.batchLogs = result.data;
-      this.dataGrid?.instance.endCustomLoading();
     });
   }
 
@@ -401,7 +427,8 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
   }
 
   searchDataGrid(data: any) {
-    this.dataGrid?.instance.searchByText(data.value);
+    this.ignoreFilterCountUpdate = true;
+    this.dataGrid?.instance.searchByText(data);
   }
 
   showFilterBuilder() {
@@ -409,29 +436,29 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
   }
 
   calculateAppliedFilterCount() {
+    if (this.ignoreFilterCountUpdate) {
+      this.ignoreFilterCountUpdate = false;
+      return this.appliedFilterCount;
+    }
     const filters = this.dataGrid?.instance.getCombinedFilter(true);
-
-    let filterArrays = [];
-    const filterProperties: any = [];
-
     if (!filters) {
       this.appliedFilterCount = 0;
       return;
     }
 
-    const hasSearchText = this.searchText !== null && this.searchText !== '';
+    let filterArrays = [];
+    filterArrays = filters.filter((itm: any) => Array.isArray(itm));
+    const filterProperties: any = [];
 
-    filterArrays = hasSearchText
-      ? filters[2].filter((itm: any) => Array.isArray(itm))
-      : filters.filter((itm: any) => Array.isArray(itm));
-
+    let hasSearchText = this.searchText !== null && this.searchText !== '';
     if (filterArrays.length === 0) {
       filterProperties.push(filters[0]);
     }
+    filterArrays = hasSearchText ? filterArrays[1] : filterArrays;
 
-    filterArrays.forEach((itm: any[][]) => {
-      if (!filterProperties.includes(itm[0][0])) {
-        filterProperties.push(itm[0][0]);
+    filterArrays.forEach((itm: any) => {
+      if (!filterProperties.includes(itm) && Array.isArray(itm)) {
+        filterProperties.push(itm);
       }
     });
 
@@ -475,6 +502,7 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
 
     this.showClearFilters = false;
     this.searchText = null;
+    this.calculateAppliedFilterCount();
   }
 
   cancelModalToggle() {
@@ -493,58 +521,36 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
     this.actionDisabledCache[this.hoveredRowBatchId] = true;
     this.cancelModalVisible = false;
 
-    this.service.cancelBatch(this.hoveredRowBatchId).subscribe((result) => {
-      this.populateBatchLogsAndParameters();
-      this.dataGrid.instance.refresh();
+    this.subscription.add(
+      this.service.cancelBatch(this.hoveredRowBatchId).subscribe((result) => {
+        if (result.success) {
+          this.populateBatchLogsAndParameters();
+          this.dataGrid.instance.refresh();
 
-      const message = result.data.isCancelled
-        ? 'Batch Successfully Cancelled.'
-        : `Batch failed to cancel for the following reason: ${result.clientErrorMessage}`;
+          const message = result.data.isCancelled
+            ? 'Batch Successfully Cancelled.'
+            : `Batch failed to cancel for the following reason: ${result.clientErrorMessage}`;
 
-      const type = result.data.isCancelled ? 'success' : 'error';
+          const type = result.data.isCancelled ? 'success' : 'error';
 
-      notify({
-        message,
-        type,
-        displayTime: 5000,
-        position: {
-          at: 'bottom right',
-          my: 'bottom right',
-          offset: '-16 -16',
-        },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
-      this.actionDisabledCache[this.hoveredRowBatchId] = false;
-    });
-  }
-
-  onDetailContentReady(batchLog: any) {
-    batchLog.data.classificationParameters.forEach((param: any) => {
-      const tbDirect = param.termBeginDirectEntry
-        ? this.getFormattedDate(param.termBeginDirectEntry)
-        : null;
-      const teDirect = param.termEndDirectEntry
-        ? this.getFormattedDate(param.termEndDirectEntry)
-        : null;
-
-      let discountRate = null;
-      if (param.discountRateProfile === 'Direct Entry') {
-        discountRate = `${param.annualRate}% ${param.annualRateType}`;
-      }
-
-      param.accountingTermBeginDate = tbDirect ?? param.accountingTermBeginDate;
-      param.accountingTermEndDate = teDirect ?? param.accountingTermEndDate;
-      param.manualAssetAdjustment =
-        param.manualAssetAdjustment === 'Direct Entry'
-          ? param.manualAdjustmentDirectEntry
-          : param.manualAssetAdjustment;
-      param.discountRateProfile = discountRate ?? param.discountRateProfile;
-      param.comments =
-        param.commentsDirectEntry.length > 0
-          ? param.commentsDirectEntry
-          : param.comments;
-    });
+          notify({
+            message,
+            type,
+            displayTime: 5000,
+            position: {
+              at: 'bottom right',
+              my: 'bottom right',
+              offset: '-16 -16',
+            },
+            maxWidth: '400px',
+            closeOnClick: true,
+          });
+          this.actionDisabledCache[this.hoveredRowBatchId] = false;
+        } else {
+          this.toast.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
   }
 
   cellHoverChanged(event: any) {
@@ -563,77 +569,109 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
       closeOnClick: false,
     });
 
-    this.service.reverseBatch(data.id).subscribe((isSuccess) => {
-      const message = isSuccess
-        ? 'Batch successfully reversed.'
-        : 'Batch failed to reverse.';
+    this.subscription.add(
+      this.service.reverseBatch(data.id).subscribe((isSuccess) => {
+        if (isSuccess.success) {
+          const message = isSuccess
+            ? 'Batch successfully reversed.'
+            : 'Batch failed to reverse.';
 
-      notify({
-        message,
-        type: isSuccess ? 'success' : 'error',
-        displayTime: 3000,
-        position: { at: 'bottom right', my: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
+          notify({
+            message,
+            type: isSuccess ? 'success' : 'error',
+            displayTime: 3000,
+            position: {
+              at: 'bottom right',
+              my: 'bottom right',
+              offset: '-16 -16',
+            },
+            maxWidth: '400px',
+            closeOnClick: true,
+          });
 
-      if (isSuccess) {
-        this.populateBatchLogsAndParameters();
-      }
+          if (isSuccess) {
+            this.populateBatchLogsAndParameters();
+          }
 
-      this.actionDisabledCache[data.id] = false;
-    });
+          this.actionDisabledCache[data.id] = false;
+        } else {
+          this.toast.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
   }
 
   private queueForProcessing(data: any) {
     this.actionDisabledCache[data.id] = true;
 
-    this.service.queueForProcessing(data.id).subscribe((isSuccess) => {
-      const message = isSuccess
-        ? 'Batch successfully queued for processing.'
-        : 'Batch failed to queue for processing.';
+    this.subscription.add(
+      this.service.queueForProcessing(data.id).subscribe((isSuccess) => {
+        if (isSuccess.success) {
+          const message = isSuccess
+            ? 'Batch successfully queued for processing.'
+            : 'Batch failed to queue for processing.';
 
-      notify({
-        message,
-        type: isSuccess ? 'success' : 'error',
-        displayTime: 3000,
-        position: { at: 'bottom right', my: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
+          notify({
+            message,
+            type: isSuccess ? 'success' : 'error',
+            displayTime: 3000,
+            position: {
+              at: 'bottom right',
+              my: 'bottom right',
+              offset: '-16 -16',
+            },
+            maxWidth: '400px',
+            closeOnClick: true,
+          });
 
-      if (isSuccess) {
-        this.populateBatchLogsAndParameters();
-      }
+          if (isSuccess) {
+            this.populateBatchLogsAndParameters();
+          }
 
-      this.actionDisabledCache[data.id] = false;
-    });
+          this.actionDisabledCache[data.id] = false;
+        } else {
+          this.toast.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
   }
 
   private exportExcel(data: any) {
+    const fileName = `Batch ${data.id} Results - ${data.portfolio} - ${
+      this.contactFullName
+    } - ${this.baseService.getTimeStamp().toLocaleString()}.xlsx`;
+
     this.actionDisabledCache[data.id] = true;
 
-    this.service.getBatchById(data.id).subscribe((res) => {
-      const myData = Object.assign({}, data);
+    this.subscription.add(
+      this.service.getBatchById(data.id).subscribe((res) => {
+        if (res.success) {
+          const myData = Object.assign({}, data);
 
-      myData.isAutoProcess = res.data.isAutoProcess;
-      myData.accountingBatchEvents = res.data.accountingBatchEvents ?? [];
+          myData.isAutoProcess = res.data.isAutoProcess;
+          myData.accountingBatchEvents = res.data.accountingBatchEvents ?? [];
 
-      const workbook = new Workbook();
-      const batchInfoWs = workbook.addWorksheet('Batch Info');
-      const batchEventResultsWs = workbook.addWorksheet('Batch Event Results');
+          const workbook = new Workbook();
+          const batchInfoWs = workbook.addWorksheet('Batch Info');
+          const batchEventResultsWs = workbook.addWorksheet(
+            'Batch Event Results'
+          );
 
-      this.buildBatchInfoWorksheet(batchInfoWs, myData);
-      this.buildBatchEventResultsWorksheet(batchEventResultsWs, myData);
+          this.buildBatchInfoWorksheet(batchInfoWs, myData);
+          this.buildBatchEventResultsWorksheet(batchEventResultsWs, myData);
 
-      workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
-        saveAs(
-          new Blob([buffer], { type: 'application/octet-stream' }),
-          'Batch Accounting Downloaded Results.xlsx'
-        );
-        this.actionDisabledCache[data.id] = false;
-      });
-    });
+          workbook.xlsx.writeBuffer().then((buffer: Buffer) => {
+            saveAs(
+              new Blob([buffer], { type: 'application/octet-stream' }),
+              fileName
+            );
+            this.actionDisabledCache[data.id] = false;
+          });
+        } else {
+          this.toast.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
   }
 
   private buildBatchInfoWorksheet(ws: Worksheet, data: any) {
@@ -850,8 +888,12 @@ export class BatchLogsComponent implements AfterViewInit, OnInit {
   private getFormattedDate(dateString: string) {
     const date = new Date(dateString);
 
-    return this.baseService.dateFormat.includes('.')
+    return this.dateFormat.includes('.')
       ? `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
       : `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

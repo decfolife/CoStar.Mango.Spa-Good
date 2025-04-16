@@ -10,7 +10,13 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +26,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import {
   ButtonModule,
+  CremToastService,
   DropdownModule,
   LibUiElementsModule,
   LoaderModule,
@@ -42,6 +49,7 @@ import {
 } from 'rxjs';
 import {
   catchError,
+  debounceTime,
   filter,
   finalize,
   map,
@@ -52,7 +60,13 @@ import {
 
 import { DynamicFormsFacade } from '@forms/+state/dynamic-forms.facade';
 import { AmIVisibleDirective } from '@forms/am-ivisible.directive';
-import { ISection } from '@forms/model/dynamic-forms.interface';
+import {
+  AllowedObjectTypes,
+  ISection,
+  RenderFormItemDetails,
+  SaveRenderFormCommand,
+  SaveRenderFormDto,
+} from '@forms/model/dynamic-forms.interface';
 import { DynamicFormsService } from '@forms/services/dynamic-forms.service';
 import {
   IChangeLossPreventedComponent,
@@ -60,8 +74,12 @@ import {
 } from '@mango/core-shared';
 import {
   BreadCrumb,
+  ComposeEmailCommand,
   ContactRecord,
+  EmailNoteType,
+  ObjectType,
   Pill,
+  ProjectsEmailInfo,
   RenderFormHeaderData,
   StatusPill,
   ToastState,
@@ -71,6 +89,17 @@ import { environment } from '@mangoSpa/src/environments/environment.local';
 import { DynamicFormSectionComponent } from './dynamic-form-sections/dynamic-form-section.component';
 import { ListPageService } from '@list-pages/components/listpage/core/services/listpage.service';
 import { CopyLeaseComponent } from '@forms/modals/copy-lease/copy-lease.component';
+import { HttpResponse } from '@angular/common/http';
+import { GlobalSessionService } from '@mangoSpa/src/app/services/global-session.service';
+import { DynamicFormAssociateComponent } from './dynamic-form-actions/dynamic-form-associate/dynamic-form-associate.component';
+import { ComposeEmailComponent } from '@mango/ui-shared/lib-ui-shared';
+import { DashboardService } from '@project-dashboard/services/dashboard.service';
+import { DynamicFormAddBookmarkComponent } from './dynamic-form-actions/dynamic-form-add-bookmark/dynamic-form-add-bookmark.component';
+import { Title } from '@angular/platform-browser';
+import { ArchiveCompanyAndContactComponent } from './dynamic-form-actions/archive/archive-company-and-contact/archive-company-and-contact.component';
+import { DynamicFormLeaseVerificationComponent } from './dynamic-form-actions/dynamic-form-lease-verification/dynamic-form-lease-verification.component';
+import { ArchiveLeaseComponent } from './dynamic-form-actions/archive/archive-lease/archive-lease.component';
+import { FilesService } from '../../../../../../apps/mango-crem-features/object-actions/src/app/shared/services/files.service';
 
 @Component({
   selector: 'mango-dynamic-form',
@@ -119,6 +148,7 @@ export class DynamicFormComponent
 
   // State flags
   isLoading = false;
+  isActionLoading = false;
   errorLoading = false;
   isRenderForm = false;
   editMode = false;
@@ -126,6 +156,7 @@ export class DynamicFormComponent
   isAddingSection = false;
   isToastVisible = false;
   hasChanges = false;
+  reload: boolean = false;
 
   // Form data
   userMessage = '';
@@ -133,6 +164,9 @@ export class DynamicFormComponent
   objectId: number;
   objectTypeId: number;
   objectTypeTypeId: number;
+  groupId: number;
+  parentObjectId: number;
+  parentObjectTypeId: number;
   sectionIdToBeAdded = 0;
   toastMessageHeader = '';
   toastState: ToastState;
@@ -140,6 +174,16 @@ export class DynamicFormComponent
 
   private currentUserInfo$: Observable<ContactRecord>;
   isSuperUser: boolean = false;
+  tabTitle: string;
+  pageTitle: string;
+  objectName: string = '';
+  displayString: string;
+
+  allFormItemsKeys: RenderFormItemDetails[] = [];
+  changedFormItemKeys: SaveRenderFormDto[] = [];
+  invalidControls: any[];
+  invalidNotify: string =
+    'There are fields that are either required or incorrectly formatted. Please update and try again. \n\n';
 
   readonly selectFormActions$ = this.dynamicFormsFacade.selectedFormActions$;
   readonly selectAvailableFormSections$ =
@@ -152,9 +196,18 @@ export class DynamicFormComponent
 
   public googleMapAPIKey: any;
   public googleMappingChannel: any;
+  public tempMapLoadFlag: boolean = false;
   public canLoadMap: boolean = false;
 
   public formTitle: string = '';
+  hidePremise: boolean = false;
+
+  public defaultNoteType: EmailNoteType = <EmailNoteType>{};
+  isComposeEmailOpen: boolean = false;
+  formsEmailInfo: ProjectsEmailInfo = <ProjectsEmailInfo>{};
+  includeFilesText: string = `If File Paths is checked, selected file(s) will be included as path 
+  to the application rather than an attachment(s)`;
+  allowedObjectTypes = Object.values(AllowedObjectTypes);
 
   constructor(
     private location: Location,
@@ -167,11 +220,17 @@ export class DynamicFormComponent
     private dialog: MatDialog,
     private listpageService: ListPageService,
     private renderer2: Renderer2,
-    private dynamicFormsService: DynamicFormsService
+    private dynamicFormsService: DynamicFormsService,
+    private dashboardService: DashboardService,
+    private toastService: CremToastService,
+    private titleService: Title,
+    private fileService: FilesService
   ) {}
 
   tryPreventChangeLoss(): Observable<boolean> {
-    return this.handleChangeLossPrevention();
+    return this.changedFormItemKeys.length
+      ? this.handleChangeLossPrevention()
+      : of(true);
   }
 
   ngOnInit(): void {
@@ -189,7 +248,148 @@ export class DynamicFormComponent
       })
     );
 
+    this.fileService
+      .getObjectName(this.objectId, this.objectTypeId)
+      .subscribe((res) => {
+        if (res.success) {
+          this.objectName = res.data[0].objectType.trim() + ': ';
+          this.displayString = res.data[0].displayString;
+          if (this.displayString)
+            this.displayString = this.displayString.replace(
+              /<\/?[^>]+(>|$)/g,
+              ''
+            );
+        }
+      });
+
     this.configGoogleMapKey();
+
+    this.subs.add(
+      this.dashboardService.getClientPreference('HidePremise').subscribe(
+        (res: any) => {
+          if (res && res.success && res.data) {
+            this.hidePremise = res.data == '1' ? true : false;
+          } else {
+            this.notifyErrorMessage(
+              'There was an issue loading details. Please review and try again.'
+            );
+          }
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error loading details. Please review and try again.'
+          );
+        }
+      )
+    );
+
+    this.form.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap((changes) => {
+          if (!this.editMode) {
+            this.form.markAsPristine();
+            this.form.markAsUntouched();
+          } else {
+            this.findChangedControl(this.form, changes);
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  findChangedControl(formGroup: FormGroup, changes: any) {
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key);
+      if (control instanceof FormGroup) {
+        this.findChangedControl(control, changes[key]); // Recursive call for nested form groups
+      } else if (control instanceof FormControl) {
+        if (control.dirty) {
+          this.getChangedFormItems(key, control.value);
+          control.markAsPristine(); //prevent changes from being detected while others controls are being updated
+        }
+      }
+    });
+  }
+
+  private transformDataForSaveApi(
+    formItemData: any,
+    value: any,
+    clauseDetailField: string,
+    changeClauseValue: boolean = true
+  ) {
+    ///convert the form item answer to a string for saving
+    if (
+      ['4'].some((typeId) => formItemData.formItemTypeId === typeId) &&
+      typeof value === 'boolean'
+    ) {
+      let returnValue = value ? 'Yes' : 'No';
+      return returnValue;
+    }
+
+    if (
+      ['10'].some((typeId) => formItemData.formItemTypeId === typeId) &&
+      changeClauseValue
+    ) {
+      //If formItemTypeId is 10 and clauseDetail is null, the description field needs to be updated
+      clauseDetailField = clauseDetailField ?? 'ClauseText';
+      let returnValue = formItemData.hasOwnProperty('newValue')
+        ? formItemData.newValue
+        : JSON.parse(JSON.stringify(formItemData.oldValue));
+
+      returnValue[clauseDetailField] =
+        clauseDetailField === 'Date' ? value.toLocaleString('en-US') : value;
+
+      //Use this to keep track of the clause items that are changed
+      formItemData.oldValue['ClauseChanged'] = true;
+
+      return returnValue;
+    }
+
+    return value;
+  }
+
+  getChangedFormItems(key, value) {
+    let clauseDetailField: any = null;
+    let keyStr = key.toString();
+
+    if (keyStr.includes('_')) {
+      let keyStrParts = keyStr.split('_');
+      key = keyStrParts[0];
+      clauseDetailField = keyStrParts[1];
+    }
+
+    let item: any = this.changedFormItemKeys.find(
+      (formItem) => formItem.formItemId == key
+    );
+    if (item) {
+      item.newValue = this.transformDataForSaveApi(
+        item,
+        value,
+        clauseDetailField
+      );
+    } else {
+      let formItem = this.allFormItemsKeys.find(
+        (formItem) => formItem.formItemId == key
+      );
+      let changedItem = {
+        formItemId: formItem.formItemId,
+        formItemTypeId: formItem.formItemTypeId,
+        oldValue: this.transformDataForSaveApi(
+          formItem,
+          formItem.oldValue,
+          clauseDetailField,
+          false
+        ),
+        newValue: this.transformDataForSaveApi(
+          formItem,
+          value,
+          clauseDetailField
+        ),
+        type: formItem.type,
+      };
+      this.changedFormItemKeys.push(changedItem);
+    }
   }
 
   private initializeForm(): void {
@@ -254,6 +454,20 @@ export class DynamicFormComponent
       this.removeEndingQueryString(params['ottid'])
     );
     this.formId = Number(this.removeEndingQueryString(params['fid']));
+    this.groupId =
+      params['ffsgid'] === undefined
+        ? 0
+        : Number(this.removeEndingQueryString(params['ffsgid']));
+
+    this.parentObjectId =
+      params['poid'] === undefined
+        ? 0
+        : Number(this.removeEndingQueryString(params['poid']));
+
+    this.parentObjectTypeId =
+      params['potid'] === undefined
+        ? 0
+        : Number(this.removeEndingQueryString(params['potid']));
   }
 
   private removeEndingQueryString(value: string) {
@@ -267,7 +481,7 @@ export class DynamicFormComponent
 
   private load(): void {
     if (!this.formId) return;
-
+    this.allFormItemsKeys = [];
     this.dynamicFormsFacade.loadDynamicForm(this.formId, this.objectId);
     this.handleDynamicFormResponse();
   }
@@ -285,7 +499,11 @@ export class DynamicFormComponent
             return this.handleSuccess(dynamicFormApiResponse.data);
           }),
           catchError((error) => this.handleLoadError(error)),
-          finalize(() => (this.isLoading = false))
+          finalize(() => {
+            this.isLoading = false;
+            this.form.markAsPristine();
+            this.form.markAsUntouched();
+          })
         )
         .subscribe()
     );
@@ -336,13 +554,14 @@ export class DynamicFormComponent
   }
 
   showPropertyHeaderAndUpdateBreadcrumbName(): void {
-    const firstBreadCrumb = this.populateFirstBreadCrumb();
     const formNameSubject = new BehaviorSubject<string | null>(null);
 
     const selectFormNameSubscription = this.dynamicFormsFacade.selectFormName$
       .pipe(filter((formData) => formData !== null))
       .subscribe((formName) => {
         formNameSubject.next(formName);
+        this.tabTitle = this.getTabTitle();
+        this.pageTitle = this.getPageTitle();
         const renderFormHeaderData = new RenderFormHeaderData(true, {
           formName,
           objectTypeId: this.objectTypeId,
@@ -354,84 +573,111 @@ export class DynamicFormComponent
         );
       });
 
-    const combinedSubscription = combineLatest([
-      formNameSubject,
-      this.mangoAppFacade.breadcrumbs$.pipe(take(1)),
-    ]).subscribe(([formName, breadCrumbs]: [string | null, BreadCrumb[]]) => {
-      if (breadCrumbs?.length && formName) {
-        this.updateBreadcrumbs(breadCrumbs, firstBreadCrumb, formName);
-      }
-    });
+    // const combinedSubscription = combineLatest([
+    //   formNameSubject,
+    //   this.mangoAppFacade.breadcrumbs$.pipe(take(1)),
+    // ]).subscribe(([formName, breadCrumbs]: [string | null, BreadCrumb[]]) => {
+    //   if (breadCrumbs?.length && formName) {
+    //     //this.updateBreadcrumbs(breadCrumbs, formName);
+    //   }
+    // });
 
     this.subs.add(selectFormNameSubscription);
-    this.subs.add(combinedSubscription);
+    //this.subs.add(combinedSubscription);
   }
 
-  private updateBreadcrumbs(
-    breadCrumbs: BreadCrumb[],
-    firstBreadCrumb: BreadCrumb,
-    formName: string
-  ): void {
-    const updatedBreadcrumbs: BreadCrumb[] = [];
-    let firstAdded = false;
+  private updateBreadcrumbs(breadCrumbs: BreadCrumb[], formName: string): void {
+    let updatedBreadcrumbs = breadCrumbs.map((crumb) =>
+      crumb.url === '/crem/forms/render-form'
+        ? { ...crumb, label: formName }
+        : crumb
+    );
 
-    for (const breadcrumb of breadCrumbs) {
-      if (!firstAdded) {
-        updatedBreadcrumbs.push(firstBreadCrumb);
-        firstAdded = true;
-      }
-      if (breadcrumb.url === '/crem/forms/render-form') {
-        updatedBreadcrumbs.push({
-          ...breadcrumb,
-          label: formName,
-          activeLink: firstBreadCrumb.activeLink,
-        });
-      }
+    if (breadCrumbs.length === 1) {
+      const initialBreadCrumbs = this.populateInitialBreadCrumbs();
+      updatedBreadcrumbs.unshift(...initialBreadCrumbs);
     }
 
     this.mangoAppFacade.setBreadcrumbs(updatedBreadcrumbs);
+    GlobalSessionService.setBreadcrumbsCookieProperty(updatedBreadcrumbs);
   }
 
-  populateFirstBreadCrumb(): BreadCrumb {
-    const breadcrumbMap: { [key: number]: BreadCrumb } = {
-      1: this.createDefaultBreadCrumb(
-        'Projects',
-        this.router.serializeUrl(
-          this.router.createUrlTree(['crem', 'projects', 'projects'])
+  // If the user manually navigates to the render form page,
+  // they will only have the one render form breadcrumb.
+  // This function builds the breadcrumb hierarchy for the render form page
+  populateInitialBreadCrumbs(): BreadCrumb[] {
+    const breadcrumbMap: { [key: number]: BreadCrumb[] } = {
+      1: [
+        this.createDefaultBreadCrumb(
+          'Projects',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'projects'])
+          ),
+          'Projects'
         ),
-        'Tasks'
-      ),
-      3: this.createDefaultBreadCrumb(
-        'Buildings',
-        this.router.serializeUrl(
-          this.router.createUrlTree(['crem', 'portfolio', 'buildings'])
+        this.createDefaultBreadCrumb(
+          'Tasks',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'projects', 'tasks'])
+          ),
+          'Tasks'
         ),
-        'Building'
-      ),
-      4: this.createDefaultBreadCrumb(
-        'Leases',
-        this.router.serializeUrl(
-          this.router.createUrlTree(['crem', 'portfolio', 'leases'])
+      ],
+      3: [
+        this.createDefaultBreadCrumb(
+          'Portfolio',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'portfolio'])
+          ),
+          'Portfolio'
         ),
-        'Abstract'
-      ),
-      5: this.createDefaultBreadCrumb(
-        'Contacts',
-        this.router.serializeUrl(
-          this.router.createUrlTree(['crem', 'contacts', 'contacts-list'])
+        this.createDefaultBreadCrumb(
+          'Buildings',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'portfolio', 'buildings'])
+          ),
+          'Building'
         ),
-        'Contacts'
-      ),
+      ],
+      4: [
+        this.createDefaultBreadCrumb(
+          'Portfolio',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'portfolio'])
+          ),
+          'Portfolio'
+        ),
+        this.createDefaultBreadCrumb(
+          'Leases',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'portfolio', 'leases'])
+          ),
+          'Abstract'
+        ),
+      ],
+      5: [
+        this.createDefaultBreadCrumb(
+          'Contacts',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'contacts'])
+          ),
+          'Contacts'
+        ),
+        this.createDefaultBreadCrumb(
+          'Contacts',
+          this.router.serializeUrl(
+            this.router.createUrlTree(['crem', 'contacts', 'contacts-list'])
+          ),
+          'Contacts'
+        ),
+      ],
     };
 
     return (
-      breadcrumbMap[this.objectTypeId] ||
-      this.createDefaultBreadCrumb('', '', '')
+      breadcrumbMap[this.objectTypeId] || [
+        this.createDefaultBreadCrumb('', '', ''),
+      ]
     );
-  }
-
-  toggleEditViewMode() {
-    this.editMode = !this.editMode;
   }
 
   private createDefaultBreadCrumb(
@@ -440,6 +686,10 @@ export class DynamicFormComponent
     activeLink: string
   ): BreadCrumb {
     return { label, url, activeLink };
+  }
+
+  toggleEditViewMode() {
+    this.editMode = !this.editMode;
   }
 
   getMoreSections(visible: boolean, sectionId: number): void {
@@ -490,7 +740,7 @@ export class DynamicFormComponent
 
   getTabTitle(): string {
     if (!this.isRenderForm) {
-      const objectType = this.form.get('objectType')?.value?.toUpperCase();
+      const objectType = this.form?.get('objectType').value?.toUpperCase();
       const titleMap: { [key: string]: string } = {
         LEASE: 'Lease Abstract',
         BUILDING: 'Building Details',
@@ -498,14 +748,16 @@ export class DynamicFormComponent
       };
       return titleMap[objectType] || 'Default Content';
     }
-    return this.form.get('objectType')?.value || '';
+
+    return this.objectName;
   }
 
   getPageTitle(): string {
     let pageTitle = '';
     this.selectFormName$.pipe(take(1)).subscribe((res) => (pageTitle = res));
     this.formTitle = pageTitle;
-    return pageTitle;
+    this.titleService.setTitle(pageTitle);
+    return this.displayString ? this.displayString : pageTitle;
   }
 
   getStatus(): StatusPill {
@@ -519,10 +771,12 @@ export class DynamicFormComponent
             if (!res.data.leaseActive) {
               statusPill.text = 'Archived';
               statusPill.type = Pill.BASIC;
+              statusPill.displayLockIcon = true;
             } else if (res.data.isLocked) {
               statusPill.text = 'Locked';
               statusPill.type = Pill.BASIC;
               statusPill.titleOnHover = res.data.lockedReason;
+              statusPill.displayLockIcon = true;
             }
           }
         })
@@ -543,6 +797,8 @@ export class DynamicFormComponent
     switch (buttonLabel.toLowerCase()) {
       case 'edit': {
         this.editMode = true;
+        this.changedFormItemKeys = [];
+        this.hasChanges = false;
         this.dynamicFormsFacade.loadFormActions(
           this.formId,
           this.objectId,
@@ -552,9 +808,21 @@ export class DynamicFormComponent
         );
         break;
       }
-      case 'save':
+      case 'compose email': {
+        this.openEmailTemplate();
+        break;
+      }
+      case 'save': {
+        this.validateAndSaveForm('save');
+        break;
+      }
+      case 'apply': {
+        this.validateAndSaveForm('apply');
+        break;
+      }
       case 'cancel': {
         this.editMode = false;
+        this.cancelExistingChanges();
         this.dynamicFormsFacade.loadFormActions(
           this.formId,
           this.objectId,
@@ -569,6 +837,256 @@ export class DynamicFormComponent
       }
     }
   }
+
+  private removeClauseChangedField(value: any) {
+    if (!!value && value.hasOwnProperty('ClauseChanged')) {
+      delete value.ClauseChanged;
+    }
+
+    return value;
+  }
+
+  validateAndSaveForm(oper: string) {
+    if (!this.form.valid) {
+      this.invalidControls = [];
+      this.getAllInvalidControls(this.form);
+      let invalidFormItemLabels = this.invalidNotify;
+      this.invalidControls.forEach((invControl) => {
+        let controlName = invControl.name;
+        let clauseDetailField: string = '';
+
+        if (controlName.includes('_')) {
+          let controlNameParts = controlName.split('_');
+          controlName = controlNameParts[0];
+          clauseDetailField = ' ' + controlNameParts[1];
+        }
+
+        const obj = this.allFormItemsKeys.find(
+          (item) => item.formItemId == controlName
+        );
+        invalidFormItemLabels += obj.labelName + clauseDetailField + '\n';
+      });
+      this.dialogService.alert(
+        'Invalid Form Items',
+        invalidFormItemLabels,
+        'OK'
+      );
+      return;
+    } else if (!this.changedFormItemKeys.length) {
+      this.editMode = false;
+      this.dynamicFormsFacade.loadFormActions(
+        this.formId,
+        this.objectId,
+        this.objectTypeId,
+        this.objectTypeTypeId,
+        this.editMode
+      );
+      return;
+    }
+
+    let itemsToSave = JSON.parse(JSON.stringify(this.changedFormItemKeys));
+    let saveFormData: SaveRenderFormCommand = {
+      isNew: false,
+      formId: this.formId,
+      objectId: this.objectId,
+      objectTypeId: this.objectTypeId,
+      objectTypeTypeId: null,
+      relatedObjectId: null,
+      relatedObjectTypeId: null,
+      relationshipDefinitionId: null,
+      formItems: [],
+    };
+
+    itemsToSave.forEach((changedControl) => {
+      let item: SaveRenderFormDto = {
+        formItemId: changedControl.formItemId,
+        oldValue:
+          Array.isArray(changedControl.oldValue) ||
+          typeof changedControl.oldValue === 'boolean'
+            ? changedControl.oldValue.toString()
+            : typeof changedControl.oldValue === 'object'
+            ? JSON.stringify(
+                this.removeClauseChangedField(changedControl.oldValue)
+              )
+            : changedControl.oldValue,
+        newValue:
+          Array.isArray(changedControl.newValue) ||
+          typeof changedControl.newValue === 'boolean'
+            ? changedControl.newValue.toString()
+            : typeof changedControl.newValue === 'object'
+            ? JSON.stringify(changedControl.newValue)
+            : changedControl.newValue,
+        type: changedControl.type,
+      };
+      saveFormData.formItems.push(item);
+    });
+
+    saveFormData.formItems = saveFormData.formItems.filter(
+      (item) => item.oldValue !== item.newValue
+    );
+    if (!saveFormData.formItems.length) {
+      this.changedFormItemKeys = [];
+      this.hasChanges = false;
+      this.editMode = oper == 'save' ? false : true;
+      !this.editMode &&
+        this.dynamicFormsFacade.loadFormActions(
+          this.formId,
+          this.objectId,
+          this.objectTypeId,
+          this.objectTypeTypeId,
+          this.editMode
+        );
+      return;
+    }
+
+    this.dynamicFormsFacade.saveRenderForm(saveFormData);
+    this.handleSaveResponse(oper);
+  }
+
+  handleSaveResponse(oper) {
+    let saveSubscription = this.dynamicFormsFacade.saveRenderFormResponse$
+      .pipe(
+        filter((response) => !!response.saveRenderFormResponse),
+        map((response) => {
+          saveSubscription.unsubscribe();
+          if (
+            response.saveRenderFormResponse &&
+            response.saveRenderFormResponse.success
+          ) {
+            this.changedFormItemKeys = [];
+            this.hasChanges = false;
+            this.dynamicFormsFacade.clearDynamicFormsState();
+            this.editMode = oper == 'save' ? false : true;
+            this.reloadTheForm();
+          } else {
+            this.toastService.show(
+              'The Form could not be saved. Please review and try again',
+              'Error',
+              ToastState.ERROR
+            );
+            this.dynamicFormsFacade.clearSaveFormState();
+          }
+        }),
+        catchError((error) => {
+          this.toastService.show(
+            'Error Saving the Form. Please review and try again',
+            'Error',
+            ToastState.ERROR
+          );
+          this.dynamicFormsFacade.clearSaveFormState();
+          return of(null);
+        })
+      )
+      .subscribe(() => {
+        saveSubscription?.unsubscribe();
+      });
+  }
+
+  getAllInvalidControls(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key);
+      if (control instanceof FormGroup) {
+        this.getAllInvalidControls(control);
+      } else if (control instanceof FormControl) {
+        if (control.invalid) {
+          this.invalidControls.push({ control: control, name: key });
+        }
+      }
+    });
+  }
+
+  reloadTheForm() {
+    this.configGoogleMapKey();
+    this.sectionsVisible = [];
+    this.reloadComponent();
+    this.setupInitialState();
+    this.canLoadMap = false;
+    this.canLoadMap = this.tempMapLoadFlag;
+  }
+
+  reloadComponent() {
+    this.reload = true;
+    setTimeout(() => (this.reload = false), 0);
+  }
+
+  cancelExistingChanges() {
+    if (this.changedFormItemKeys.length) {
+      this.changedFormItemKeys.forEach((formItem) => {
+        let control = this.getControl(this.form, formItem.formItemId);
+        control?.patchValue(formItem.oldValue);
+        control?.markAsPristine();
+      });
+      this.form.markAsPristine();
+      this.form.markAsUntouched();
+    }
+    this.changedFormItemKeys = [];
+    this.hasChanges = false;
+  }
+
+  getControl(form: FormGroup, key: string): AbstractControl | null {
+    if (form.contains(key)) {
+      return form.get(key);
+    }
+    for (const controlName in form.controls) {
+      const control = form.get(controlName);
+      if (control instanceof FormGroup) {
+        const foundControl = this.getControl(control, key);
+        if (foundControl) {
+          return foundControl;
+        }
+      }
+    }
+    return null;
+  }
+
+  openEmailTemplate() {
+    if (this.isComposeEmailOpen) return;
+    this.isComposeEmailOpen = true;
+
+    this.subs.add(
+      this.dynamicFormsService
+        .getComposeEmailInfo(this.objectId, this.objectTypeId)
+        .subscribe((res: any) => {
+          if (res && res.success) {
+            this.formsEmailInfo = res.data;
+            let obj = this.formsEmailInfo.noteTypes.find(
+              (noteType) =>
+                noteType.commonNoteType.toLocaleLowerCase().trim() == 'email'
+            );
+            this.defaultNoteType = obj ? obj : this.defaultNoteType;
+            let dialogRef = this.dialog.open(ComposeEmailComponent, {
+              width: '520px',
+              height: '700px',
+              panelClass: 'composeEmailModal',
+              data: {
+                objectId: this.objectId,
+                contacts: this.formsEmailInfo.contacts,
+                noteTypes: this.formsEmailInfo.noteTypes,
+                fileItems: this.formsEmailInfo.fileItems,
+                defaultNoteType: this.defaultNoteType,
+                includeFileInfo: this.includeFilesText,
+                emailSendHandler: this.sendEmail.bind(this),
+              },
+              disableClose: true,
+            });
+            this.subs.add(
+              dialogRef.afterClosed().subscribe(() => {
+                this.isComposeEmailOpen = false;
+              })
+            );
+          } else {
+            let message = `Forms Email Info could not be fetched.`;
+            this.subs.add(
+              this.dialogService
+                .alert('Error getting Forms Email Info', message, 'OK')
+                .subscribe()
+            );
+          }
+        })
+    );
+  }
+
+  sendEmail(data: ComposeEmailCommand) {}
 
   private loadMoreSections(sections: any[]): void {
     const currentLength = this.sectionsVisible.length;
@@ -607,7 +1125,7 @@ export class DynamicFormComponent
   }
 
   private loadFormData(formData: any): void {
-    this.dynamicFormsFacade.loadFormSections(this.formId);
+    this.dynamicFormsFacade.loadFormSections(this.formId, this.groupId);
     this.handleFormSectionsLoad();
     this.dynamicFormsFacade.loadFormActions(
       this.formId,
@@ -643,7 +1161,9 @@ export class DynamicFormComponent
     this.dynamicFormsFacade.loadRenderForm(
       formData.formId,
       this.objectId,
-      formData.objectTypeId
+      formData.objectTypeId,
+      this.parentObjectId,
+      this.parentObjectTypeId
     );
     this.dynamicFormsFacade.setisRenderForm(this.isRenderForm);
     this.showPropertyHeaderAndUpdateBreadcrumbName();
@@ -703,7 +1223,10 @@ export class DynamicFormComponent
   private handleFormSectionsLoad(): void {
     this.subs.add(
       this.selectFormSections$
-        .pipe(filter((sections) => sections !== null))
+        .pipe(
+          filter((sections) => sections !== null),
+          take(1)
+        )
         .subscribe((sections) => {
           if (this.isRenderForm) {
             this.handleRenderFormSections(sections);
@@ -787,6 +1310,7 @@ export class DynamicFormComponent
         this.listpageService.getGoogleMappingChannel(),
       ])
         .pipe(
+          take(1),
           filter(([gmk, gmc]) => !!gmk && !!gmc),
           tap(([gmk, gmc]) => {
             this.googleMapAPIKey = gmk.data.googleMapAPIKey;
@@ -805,21 +1329,122 @@ export class DynamicFormComponent
     s.src = googleUrl;
     s.async = true;
     this.renderer2.appendChild(document.body, s);
-    this.canLoadMap = true;
+    this.tempMapLoadFlag = true;
+    this.canLoadMap = this.tempMapLoadFlag;
   }
 
-  performFormAction(action: any) {
-    //This code will be refactored to add more functions
-    if (action.formActionLabel.toLowerCase().trim() == 'copy') {
-      if (this.objectTypeId == 4) {
-        this.copyLease();
-      } else {
-        return;
-      }
+  performFormAction(formAction: any) {
+    const action: string = formAction.formActionLabel.toLowerCase().trim();
+
+    if (action === 'copy' && this.objectTypeId == ObjectType.LEASE) {
+      this.copyLease();
+    } else if (action === 'print to pdf') {
+      this.download();
+    } else if (action.startsWith('associate')) {
+      this.performAssociatePopup(action);
+    } else if (action === 'archive' || action === 'archive (new)') {
+      this.archive();
+    } else if (action === 'change status') {
+      this.openLeaseVerificationModal();
     }
   }
 
-  copyLease() {
+  addBookmark() {
+    let dialogRef = this.dialog.open(DynamicFormAddBookmarkComponent, {
+      height: '350px',
+      width: '500px',
+      panelClass: 'df-add-book-mark-component',
+      data: {
+        formId: this.formId,
+        objectId: this.objectId,
+        objectTypeId: this.objectTypeId,
+        objectTypeTypeId: this.objectTypeTypeId,
+        objectName: this.formTitle,
+      },
+    });
+    dialogRef.afterClosed();
+  }
+
+  showAssociatePopup(type: string) {
+    let dialogRef = this.dialog.open(DynamicFormAssociateComponent, {
+      disableClose: true,
+      height:
+        type === 'lease' ? (this.hidePremise ? '540px' : '640px') : '480px',
+      width: '700px',
+      panelClass: 'df-associate-component',
+      data: {
+        objectId: this.objectId,
+        objectTypeId: this.objectTypeId,
+        associateType: type,
+        hidePremise: this.hidePremise,
+      },
+    });
+    dialogRef.afterClosed();
+  }
+
+  performAssociatePopup(action: string) {
+    this.subs.add(
+      this.dashboardService
+        .getObjectTypeNames([
+          ObjectType.PREMISE,
+          ObjectType.BUILDING,
+          ObjectType.LEASE,
+        ])
+        .subscribe(
+          (res: any) => {
+            if (res && res.success && res.data) {
+              let leaseName = res.data.find(
+                (t) => t.objectTypeId === ObjectType.LEASE
+              ).objectTypeName;
+
+              let buildingName = res.data.find(
+                (t) => t.objectTypeId === ObjectType.BUILDING
+              ).objectTypeName;
+
+              let premiseName = res.data.find(
+                (t) => t.objectTypeId === ObjectType.PREMISE
+              ).objectTypeName;
+
+              if (action === 'associate ' + leaseName.toLowerCase().trim()) {
+                this.showAssociatePopup('lease');
+              } else if (
+                action ===
+                'associate ' + buildingName.toLowerCase().trim()
+              ) {
+                this.showAssociatePopup('building');
+              } else if (
+                action ===
+                'associate ' + premiseName.toLowerCase().trim()
+              ) {
+                this.showAssociatePopup('premise');
+              }
+            } else {
+              this.notifyErrorMessage(
+                'There was an issue loading details. Please review and try again.'
+              );
+            }
+          },
+          (error: any) => {
+            this.notifyErrorMessage(
+              'There was an error loading details. Please review and try again.'
+            );
+            console.log(
+              'Error occurred while loading ObjectTypeNames: ',
+              error
+            );
+          }
+        )
+    );
+  }
+
+  private notifyErrorMessage(errorMessage: string) {
+    this.toastService.show(errorMessage, 'Error', ToastState.ERROR, {
+      position: 'bottom right',
+      maxWidth: '350px',
+    });
+  }
+
+  copyLease(): void {
     this.dialog.open(CopyLeaseComponent, {
       height: '400px',
       width: '800px',
@@ -827,10 +1452,131 @@ export class DynamicFormComponent
       data: {
         lease: this.formTitle,
         leaseId: this.objectId,
+        hidePremise: this.hidePremise,
       },
       disableClose: true,
     });
   }
+
+  archive(): void {
+    let sub: Subscription;
+
+    if (
+      this.objectTypeId === ObjectType.CONTACT ||
+      this.objectTypeId === ObjectType.COMPANY
+    ) {
+      sub = combineLatest([this.dynamicFormsFacade.selectFormName$])
+        .pipe(
+          filter(([formName]) => !!formName),
+          tap(([formName]) => {
+            this.dialog.open(ArchiveCompanyAndContactComponent, {
+              disableClose: true,
+              width: '400px',
+              data: {
+                archiveType:
+                  this.objectTypeId === ObjectType.CONTACT
+                    ? 'Contact'
+                    : 'Company',
+                OID: this.objectId,
+                OTTID: this.objectTypeTypeId,
+                objectName: formName,
+              },
+            });
+          })
+        )
+        .subscribe();
+    } else if (
+      this.objectTypeId === ObjectType.LEASE ||
+      this.objectTypeId === ObjectType.BUILDING ||
+      this.objectTypeId === ObjectType.PREMISE
+    ) {
+      this.dialog.open(ArchiveLeaseComponent, {
+        disableClose: true,
+        height: '780px',
+        width: '75%',
+        data: {
+          archiveType:
+            Number(this.objectTypeId) === ObjectType.BUILDING
+              ? 'Building'
+              : Number(this.objectTypeId) === ObjectType.PREMISE
+              ? 'Premise'
+              : 'Lease',
+          OID: this.objectId,
+          OTTID: this.objectTypeTypeId,
+          hiddenPremise: this.hidePremise ? 1 : 0,
+        },
+      });
+    }
+
+    this.subs.add(sub);
+  }
+
+  openLeaseVerificationModal() {
+    const dialogRef = this.dialog.open(DynamicFormLeaseVerificationComponent, {
+      minWidth: '45vw',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      data: {
+        formId: this.formId,
+        objectId: this.objectId,
+        objectTypeId: this.objectTypeId,
+        objectTypeTypeId: this.objectTypeTypeId,
+        parentObjectId: this.parentObjectId,
+        parentObjectTypeId: this.parentObjectTypeId,
+      },
+    });
+    dialogRef.afterClosed().subscribe((results) => {
+      if (results) {
+        // Reload the form when the Lease Verification Status is updated.
+        this.dynamicFormsFacade.clearDynamicFormsState();
+        this.reloadTheForm();
+      } else {
+        return;
+      }
+    });
+  }
+
+  download(): void {
+    this.isActionLoading = true;
+
+    try {
+      this.dynamicFormsService
+        .download(this.formId, this.objectId, this.objectTypeId)
+        .subscribe((response) => {
+          const defaultFileName: string = `${this.formId}-${this.objectId}-${this.objectTypeId}.pdf`;
+          const filename =
+            this.getFilenameFromResponse(response) || defaultFileName;
+
+          this.isActionLoading = false;
+          this.downloadFile(filename, response);
+        });
+    } catch (error) {
+      this.isActionLoading = false;
+      this.toastMessageHeader = 'Error Printing To PDF.';
+      this.toastState = ToastState.ERROR;
+      this.showToast();
+    }
+  }
+
+  private getFilenameFromResponse(response: any): string | null {
+    const contentDisposition = response.headers.get('Content-Disposition');
+    if (!contentDisposition) return null;
+
+    const match = contentDisposition.match(/filename="([^"]+)"/);
+    return match ? match[1] : null;
+  }
+
+  private downloadFile = (fileName: string, data: HttpResponse<Blob>) => {
+    const downloadedFile = new Blob([data.body], { type: data.body.type });
+    const a = document.createElement('a');
+    a.setAttribute('style', 'display:none;');
+    document.body.appendChild(a);
+    a.download = fileName;
+    a.href = URL.createObjectURL(downloadedFile);
+    a.target = '_blank';
+    a.click();
+    document.body.removeChild(a);
+  };
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();

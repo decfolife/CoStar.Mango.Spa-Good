@@ -53,7 +53,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   public contentVisible = true;
   public enableStateTextBox: boolean = false;
   private newLeaseSaved = false;
-  public loading = false;
+  public loading = true;
   public modalTitle: string;
   public dynName: string;
   buildingsDataSource: any;
@@ -171,10 +171,12 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
           .subscribe((result) => {
             this.data.objectTypeName = result?.data?.[0]?.objectTypeName;
             this.buildModalTitle();
+            this.loading = false; // Makes sure doesn't show blank spaces while loading modal information
           })
       );
     } else {
       this.buildModalTitle();
+      this.loading = false;
     }
 
     const hidePremiseCall =
@@ -529,7 +531,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   }
 
   public buildModalTitle() {
-    this.modalTitle = 'Create ' + this.data.objectTypeName;
+    this.modalTitle = 'Add ' + this.data.objectTypeName;
     this.dynName = this.data.objectTypeName;
   }
 
@@ -581,7 +583,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
       this.getPremiseId().then((resolve) => {
         const lease = this.getLeaseFromFormData();
         lease.PremiseID = resolve;
-        this.loading = true;
+        this.saveClicked = true;
         this.subscriptions.add(
           this.formWizardService.addLease(lease).subscribe((result) => {
             if (result.success) {

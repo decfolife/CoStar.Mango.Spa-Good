@@ -76,9 +76,16 @@ export class CurrentObjectService extends EndpointService {
         ).pipe(
           // Map the response data and update the cache
           map(({ data }) => {
-            this.cache.set(cacheKey, data);
-            this.cacheSubject.next(data);
-            return data;
+            const fullData = {
+              oid: parseInt(oid),
+              otid: parseInt(otid),
+              objectName: data.objectName,
+              objectType: data.objectType,
+            };
+
+            this.cache.set(cacheKey, fullData);
+            this.cacheSubject.next(fullData);
+            return fullData;
           }),
           // Handle errors and provide fallback data
           catchError(() => {

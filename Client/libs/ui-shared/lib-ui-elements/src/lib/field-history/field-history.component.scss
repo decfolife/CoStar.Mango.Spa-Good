@@ -1,5 +1,20 @@
 @use 'styles' as *;
 
+:host {
+  cursor: pointer;
+}
+
+.tooltipAppPopover {
+  max-height: 400px;
+
+  #field-history-tabPanel {
+    position: relative;
+    .tabs-nav {
+      position: sticky;
+    }
+  }
+}
+
 :host ::ng-deep .dx-field__icon--info {
   &:focus-visible {
     outline: none;
@@ -8,6 +23,7 @@
 }
 
 .popoverTitle {
+  @include costar(font-size, h3);
   @include costar(margin, 1);
 }
 
@@ -17,6 +33,25 @@
   }
 }
 
-::ng-deep .field-history-popover .dx-popup-content {
-  padding: 0;
+::ng-deep .field-history-popover {
+  .dx-popup-content {
+    padding: 0;
+  }
+
+  .dx-popup-content.dx-popup-content-scrollable {
+    overflow: hidden;
+  }
+  crem-tab-item div.tab-content {
+    height: 260px;
+  }
+
+  #helpTextTab .tab-content {
+    overflow-y: auto;
+  }
+
+  #HistoryTab dx-data-grid {
+    .dx-datagrid-rowsview.dx-scrollable {
+      height: 200px !important;
+    }
+  }
 }

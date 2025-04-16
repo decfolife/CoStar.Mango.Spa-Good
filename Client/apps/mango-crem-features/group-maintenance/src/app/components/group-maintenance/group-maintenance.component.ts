@@ -4,7 +4,7 @@ import {
   faFolderOpen,
   faEllipsisH,
 } from '@fortawesome/free-solid-svg-icons';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { GroupMaintenanceService } from './group-maintenance.service';
 import 'regenerator-runtime/runtime';
@@ -40,7 +40,8 @@ export class GroupMaintenanceComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private service: GroupMaintenanceService
+    private service: GroupMaintenanceService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -443,13 +444,15 @@ export class GroupMaintenanceComponent implements OnInit {
         break;
       }
     }
-    window.location.href = route;
+    this.router.navigateByUrl(route);
     return false;
   }
 
   public assignAdminLinks(companyId) {
     // route
-    window.location.href = `/v06/Admin/SecurityMaintenance/UserGroupLinks.aspx?GroupID=${companyId.toString()}`;
+    this.router.navigateByUrl(
+      `/v06/Admin/SecurityMaintenance/UserGroupLinks.aspx?GroupId=${companyId}`
+    );
     return false;
   }
 

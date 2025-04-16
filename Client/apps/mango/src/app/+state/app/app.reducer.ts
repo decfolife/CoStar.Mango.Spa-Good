@@ -9,10 +9,10 @@ import {
   MangoSubApps,
   UserAuth,
   UserInfo,
-  V06GlobalSession,
 } from '@mango/data-models/lib-data-models';
 import * as AppActions from './app.actions';
 import { MangoAppEntity } from './app.models';
+import { RedirectorMapping } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
 
 export const APP_FEATURE_KEY = 'mango';
 
@@ -34,9 +34,10 @@ export interface State extends EntityState<MangoAppEntity> {
   moduleId: number;
   showSubLeftNav: boolean;
   currentRenderFormDocumentParams: string;
-  globalSession: V06GlobalSession;
+  //globalSession: V06GlobalSession;
   adminFlags: AdminFlags;
   redirectorLinks: RedirectorLink[];
+  redirectorMappings: RedirectorMapping[];
   currentProjectId: number | null;
   isChangeLossPreventionActive: boolean;
   nav: NavState;
@@ -71,9 +72,10 @@ export const initialState: State = appAdapter.getInitialState({
   moduleId: null,
   showSubLeftNav: false,
   currentRenderFormDocumentParams: null,
-  globalSession: {},
+  //globalSession: {},
   adminFlags: null,
   redirectorLinks: null,
+  redirectorMappings: null,
   currentProjectId: null,
   isChangeLossPreventionActive: false,
   nav: {
@@ -208,11 +210,11 @@ const appReducer = createReducer(
     error: null,
     currentRenderFormDocumentParams: params,
   })),
-  on(AppActions.getGlobalSessionSuccess, (state, { session }) => ({
-    ...state,
-    error: null,
-    globalSession: session.data,
-  })),
+  // on(AppActions.getGlobalSessionSuccess, (state, { session }) => ({
+  //   ...state,
+  //   error: null,
+  //   globalSession: session.data,
+  // })),
   on(AppActions.setAdminFlagsSuccess, (state, { flags }) => ({
     ...state,
     adminFlags: flags,
@@ -221,6 +223,11 @@ const appReducer = createReducer(
     ...state,
     error: null,
     redirectorLinks: redirectorLinks,
+  })),
+  on(AppActions.loadRedirectorMappingsSuccess, (state, { redirectorMappings }) => ({
+    ...state,
+    error: null,
+    redirectorMappings: redirectorMappings,
   })),
   on(AppActions.setCurrentProjectId, (state, { projectId }) => ({
     ...state,

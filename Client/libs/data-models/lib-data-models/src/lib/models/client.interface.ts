@@ -13,4 +13,5 @@ export interface Client {
   passwordMinLength: number;
   imageBaseUrl: string;
   uncheckIncludeInputDate: boolean;
+  isLeaseVerificationCommentsRequired: boolean;
 }

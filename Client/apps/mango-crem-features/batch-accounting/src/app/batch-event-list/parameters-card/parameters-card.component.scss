@@ -1,0 +1,40 @@
+@use 'styles' as *;
+
+.batch-parameters-card {
+  display: flex;
+  @include costar(padding, 3);
+  overflow: visible;
+}
+
+.dx-form {
+  width: 100%;
+}
+
+:host ::ng-deep #ba-parameters-card mat-card {
+  min-height: 130px;
+}
+
+.dx-invalid-message.dx-overlay {
+  color: black !important;
+}
+
+:host ::ng-deep {
+  mat-card-content {
+    overflow: visible !important; // Allows the 'DevExtreme validation message' to overflow outside the 'crem-card'
+  }
+}
+
+:host ::ng-deep {
+  .dx-invalid-message-content {
+    left: 0px;
+    top: 0px;
+    transform: translate(0px, 34px);
+    transition: all;
+  }
+
+  .dx-state-disabled .dx-widget,
+  .dx-state-disabled.dx-widget {
+    opacity: 1 !important;
+    background-color: #eee !important;
+  }
+}

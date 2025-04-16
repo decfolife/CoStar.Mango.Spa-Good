@@ -2,7 +2,10 @@
   <div class="crem-container">
     <ng-container *ngIf="(userAppType$ | async) as userAppType">
       <div class="crem-header">
-        <mango-header (quickSearchEvent)="quickSearch($event)"></mango-header>
+        <mango-header
+          (quickSearchEvent)="quickSearch($event)"
+          [querySearchParams]="querySearchParams"
+        ></mango-header>
         <costar-header *ngIf="userAppType === 1"></costar-header>
 
         <mango-toolbar
@@ -42,7 +45,7 @@
             <shared-left-nav
               [navigationLinks]="navigationLinks$ | async"
               [activeLink]="activeLink"
-              (navigateSpa)="handleSpaNavigation($event)"
+              (navigateSpa)="navigateLeftNavMenu($event)"
               (toActiveLink)="getActiveLink($event)"
             ></shared-left-nav>
           </aside>

@@ -1,0 +1,122 @@
+<crem-modal
+  [modalTitle]="sectionName"
+  [closeIconVisible]="true"
+  [closeOrCancelButtonText]="'Cancel'"
+  [customFooter]="true"
+>
+  <div modalContent class="body-content">
+    <div modalContent id="dynamicModal-content">
+      <div *ngFor="let d of popupData">
+        <form
+          crem-form
+          id="new-dynamic-form"
+          layout="vertical"
+          [formGroup]="dynamicForm"
+          class="add-dynamic-form"
+        >
+          <crem-form-item>
+            <div class="form-items">
+              <div class="dynamicLabel">
+                <crem-form-label>
+                  {{
+                    d.formItemSectionDetail.formItemLabel + ' : '
+                  }}</crem-form-label
+                ><span
+                  *ngIf="
+                    d.formItemSectionDetail.formItemMandatory.toLowerCase() ===
+                    'yes'
+                  "
+                  class="color-danger"
+                  >*</span
+                >
+              </div>
+              <div
+                class="dynamicInput"
+                *ngIf="d.formItemType.formItemTypeID === 1"
+              >
+                <crem-dropdown
+                  *ngIf="!isDropdownValuesLoading"
+                  [dataSource]="dropdownData[d.formItemID]"
+                  [displayExpr]="'display'"
+                  [valueExpr]="'value'"
+                  [containerized]="false"
+                  [readOnlyStyle]="'text-only'"
+                  formControlName="d.formItemFriendlyName"
+                  [showClearButton]="false"
+                  (selectedItems)="
+                    onDropdownValueChanged(
+                      $event,
+                      d.formItemSectionDetail.formItemJavaScript,
+                      d
+                    )
+                  "
+                  [initialSelectedValue]="
+                    dropdownData[d.formItemID].length > 0
+                      ? dropdownData[d.formItemID][0].value
+                      : ''
+                  "
+                ></crem-dropdown>
+              </div>
+              <div
+                class="dynamicInput"
+                *ngIf="d.formItemType.formItemTypeID === 2"
+              >
+                <crem-input
+                  id="d.formItemFriendlyName"
+                  [showHint]="false"
+                  [showLabel]="false"
+                  [showInfo]="false"
+                  [inputType]="'text'"
+                  required="true"
+                  formControlName="d.formItemFriendlyName"
+                  [(value)]="textInputList[d.formItemID]"
+                  (valueChange)="onNewInput($event, d)"
+                ></crem-input>
+              </div>
+              <div
+                class="dynamicInput"
+                *ngIf="d.formItemType.formItemTypeID === 3"
+              >
+                <crem-input
+                  id="d.formItemFriendlyName"
+                  [inputType]="'textarea'"
+                  [formControlName]="d.formItemFriendlyName"
+                  (valueChange)="onNewInput($event, d)"
+                ></crem-input>
+              </div>
+            </div>
+          </crem-form-item>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div modalFooter class="footerContent">
+    <div class="footerLeftControls cl-userMsg"></div>
+    <div id="buttonTemplate" class="footerRightControls">
+      <crem-button
+        type="secondary"
+        id="cl-cancelBtnId"
+        class="cl-cancelChanges cl-btn"
+        (click)="closeModal()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        type="secondary"
+        id="cl-saveNewBtnId"
+        class="cl-copyLease cl-btn"
+        (click)="save($event)"
+      >
+        Save & New
+      </crem-button>
+      <crem-button
+        type="primary"
+        id="cl-saveBtnId"
+        class="cl-copyLease cl-btn"
+        (click)="save($event)"
+      >
+        Save
+      </crem-button>
+    </div>
+  </div>
+</crem-modal>

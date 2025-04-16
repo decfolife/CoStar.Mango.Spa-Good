@@ -1,0 +1,52 @@
+<div *ngIf="isAddBookmarkLoading" class="df-add-bookmark-loader">
+  <crem-loader></crem-loader>
+</div>
+
+<crem-modal
+  modalId="add_bookmark_modal"
+  modalTitleId="add_bookmark_modalTitleId"
+  [modalTitle]="modalTitle"
+  closeIconVisible="true"
+  [customFooter]="true"
+  *ngIf="!isAddBookmarkLoading"
+  class="add-bookmark"
+>
+  <div modalContent class="body-content">
+    <crem-input-label
+      [id]="getId(componentName, 'AddBookmark', 'label')"
+      showInfo="false"
+      required="true"
+    >
+      Name of Bookmark <span class="error">*</span>
+    </crem-input-label>
+
+    <crem-input
+      [id]="getId(componentName, 'AddBookmark', 'input')"
+      [inputType]="'text'"
+      [value]="objectName"
+      [required]="true"
+      (valueChange)="onBookmarkNameChange($event)"
+    ></crem-input>
+  </div>
+
+  <div modalFooter class="addBookmarkFooter">
+    <crem-button
+      [id]="'cancel-add-bookmark-id'"
+      type="secondary"
+      (click)="close()"
+    >
+      Cancel
+    </crem-button>
+
+    <crem-button
+      [id]="'save-add-bookmark-id'"
+      type="primary"
+      (click)="save()"
+      [disabled]="disableSaveButton"
+    >
+      <span>
+        {{ saveClicked ? 'Saving' : 'Save' }}
+      </span>
+    </crem-button>
+  </div>
+</crem-modal>

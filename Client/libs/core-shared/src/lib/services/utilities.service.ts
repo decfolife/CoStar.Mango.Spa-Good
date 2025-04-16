@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 
@@ -81,5 +81,63 @@ export class UtilitiesService {
     }
 
     return `/api`;
+  }
+
+  public static isV06Page(url: string): boolean {
+    return url.includes('.asp') ? true : false;
+  }
+
+  public static isValidUrl(url: string) {
+    let resultUrl: URL;
+
+    try {
+      resultUrl = new URL(url);
+    } catch (_) {
+      return false;
+    }
+
+    return resultUrl.protocol === 'http:' || resultUrl.protocol === 'https:';
+  }
+
+  public static enumToObjectArray(definition: any): any {
+    return Object.keys(definition)
+      .filter((f) => isNaN(Number(f)))
+      .map(
+        (x) =>
+          <{}>{
+            name: x,
+            value: definition[x],
+          }
+      );
+  }
+
+  public static paramsToQueryString(params: { [key: string]: any }): string {
+    let httpParams = new HttpParams();
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        httpParams = httpParams.set(key, params[key]);
+      }
+    }
+    return `?${httpParams.toString()}`;
+  }
+
+  public static queryStringToParams(queryString: string) {
+    if (!queryString) return null;
+
+    var split = queryString?.split('?');
+    if (split?.length === 1) {
+      queryString = split[0].toString();
+    } else {
+      queryString = split[1].toString()
+    }
+
+    const params = {};
+    const searchParams = new URLSearchParams(queryString);
+
+    searchParams.forEach((value, key) => {
+      params[key.toLowerCase()] = value;
+    });
+
+    return params;
   }
 }

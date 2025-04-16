@@ -53,7 +53,6 @@
     @include costar(font-size, h4, $important: true);
     @include costar(color, dark);
     font-weight: 500;
-    margin-right: 10px;
     flex-shrink: 0;
   }
 

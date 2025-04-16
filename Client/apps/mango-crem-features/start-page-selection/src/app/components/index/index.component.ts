@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserSelectedPageData } from '../../models/userSelectedPageData';
 import { StartPageService } from '../../services/data.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'start-page-selection',
@@ -11,7 +12,7 @@ export class IndexComponent implements OnInit {
   public startPagesList: any;
   public modulesList: any;
 
-  constructor(private starPageSvc: StartPageService) {}
+  constructor(private starPageSvc: StartPageService, private router: Router) {}
 
   ngOnInit() {
     this.getStartPagesList();
@@ -61,7 +62,7 @@ export class IndexComponent implements OnInit {
             selectedItem.moduleID
           );
           const urlTransitionPage = '../../..' + selectedItem.pagePath;
-          document.location.href = urlTransitionPage;
+          this.router.navigateByUrl(urlTransitionPage);
         } else {
           console.log(
             'Failed to save user selected start page',

@@ -10,7 +10,7 @@ import {
   LibUiElementsModule,
 } from '@mango/ui-shared/lib-ui-elements';
 import { RouterModule } from '@angular/router';
-import { searchResultsModule } from 'apps/mango-crem-features/quick-search/src/app/components/modal/search-results/search-results.module';
+import { searchResultsModule } from 'apps/mango-crem-features/quick-search/src/app/components/modal/search-results.module';
 import { HeaderModule } from 'libs/ui-shared/lib-ui-shared/src/lib/header';
 import { ToolbarComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/toolbar';
 import { SharedLeftNavModule } from 'libs/ui-shared/lib-ui-shared/src/lib/shared-left-nav';

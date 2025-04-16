@@ -23,7 +23,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { LoaderModule } from '@mango/ui-shared/lib-ui-elements';
 import { IADCardComponent } from '../IADCard/iad-card.component';
-import { DxChartModule, DxDataGridModule } from 'devextreme-angular';
+import {
+  DxChartModule,
+  DxDataGridModule,
+  DxPopoverModule,
+  DxToolbarModule,
+} from 'devextreme-angular';
 
 @NgModule({
   declarations: [
@@ -39,6 +44,8 @@ import { DxChartModule, DxDataGridModule } from 'devextreme-angular';
     DxChartModule,
     DxPivotGridModule,
     DxDataGridModule,
+    DxPopoverModule,
+    DxToolbarModule,
     ButtonModule,
     CardModule,
     DragDropModule,

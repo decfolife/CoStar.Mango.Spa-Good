@@ -1,9 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {
-  Metric,
-  RenderFormHeaderData,
-} from '@mango/data-models/lib-data-models';
-import { LibUiElementsModule } from '@mango/ui-shared/lib-ui-elements';
+import { Metric, RenderFormHeaderData } from '@mango/data-models/lib-data-models';
+import { LibUiElementsModule} from '@mango/ui-shared/lib-ui-elements';
 import { MatIconModule } from '@angular/material/icon';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCog, faClose } from '@fortawesome/free-solid-svg-icons';
@@ -13,16 +10,14 @@ import { Location } from '@angular/common';
 @Component({
   selector: 'mango-render-form-header',
   standalone: true,
-  imports: [
-    BrowserModule,
+  imports: [BrowserModule ,
     LibUiElementsModule,
     FontAwesomeModule,
-    MatIconModule,
-  ],
+    MatIconModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
+  styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent{
   schemaMetrics: Metric[] = [
     {
       id: '1',
@@ -32,11 +27,11 @@ export class HeaderComponent {
       tooltipData: 'Tooltip Data 1',
       sidekick: {
         metricValue: '0',
-        direction: 'neutral',
+        direction: 'neutral'
       },
       isActive: true,
       elementId: 1,
-      elementTypeId: 1,
+      elementTypeId: 1
     },
     {
       id: '2',
@@ -47,11 +42,11 @@ export class HeaderComponent {
       sidekick: {
         metricValue: '912',
         direction: 'down',
-        symbol: 'negative',
+        symbol: 'negative'
       },
       isActive: true,
       elementId: 2,
-      elementTypeId: 2,
+      elementTypeId: 2
     },
     {
       id: '3',
@@ -62,11 +57,11 @@ export class HeaderComponent {
       sidekick: {
         metricValue: '122',
         direction: 'up',
-        symbol: 'positive',
+        symbol: 'positive'
       },
       isActive: true,
       elementId: 3,
-      elementTypeId: 3,
+      elementTypeId: 3
     },
     {
       id: '4',
@@ -77,11 +72,11 @@ export class HeaderComponent {
       sidekick: {
         metricValue: '75',
         direction: 'up',
-        symbol: 'positive',
+        symbol: 'positive'
       },
       isActive: true,
       elementId: 4,
-      elementTypeId: 4,
+      elementTypeId: 4
     },
     {
       id: '5',
@@ -92,11 +87,11 @@ export class HeaderComponent {
       sidekick: {
         metricValue: '6',
         direction: 'down',
-        symbol: 'negative',
+        symbol: 'negative'
       },
       isActive: true,
       elementId: 5,
-      elementTypeId: 5,
+      elementTypeId: 5
     },
     {
       id: '6',
@@ -107,14 +102,16 @@ export class HeaderComponent {
       sidekick: {
         metricValue: '4',
         direction: 'down',
-        symbol: 'negative',
+        symbol: 'negative'
       },
       isActive: true,
       elementId: 6,
-      elementTypeId: 6,
+      elementTypeId: 6
     },
   ];
-  constructor(private location: Location) {}
+  constructor(
+    private location: Location
+  ) {}
 
   @Input() data!: RenderFormHeaderData;
   faCog = faCog;
@@ -123,10 +120,11 @@ export class HeaderComponent {
 
   close() {
     this.showLoader = true;
-
+    
     this.goBack();
   }
   goBack() {
     this.location.back();
   }
 }
+

@@ -1,11 +1,16 @@
 <div
   #modalHost
-  [ngClass]="'cremModal ' + className"
+  [ngClass]="{
+		'cremModal': true,
+		'has-footer': primaryFooterButtonText || closeOrCancelButtonText || customFooter,
+	}"
+  [class]="className"
   [id]="modalId"
   role="dialog"
   [attr.aria-labelledby]="modalTitleId"
-  aria-modal="true"
+  [attr.aria-modal]="true"
 >
+  <!-- Header -->
   <div
     class="modalHeader"
     cdkDrag
@@ -14,13 +19,8 @@
     (cdkDragEnded)="dragEndEvent($event)"
     cdkDragHandle
   >
-    <ng-content *ngIf="customHeader" select="'[modalHeader]'"></ng-content>
-    <ng-container *ngIf="!customHeader">
-      <h2 [id]="modalTitleId" class="modal-title">{{ modalTitle }}</h2>
-      <crem-tooltip
-        *ngIf="showTooltip"
-        [helpTextData]="tooltipText"
-      ></crem-tooltip>
+    <ng-container *ngIf="loading?.show && loading.headerLoading">
+      <crem-skeleton type="header"></crem-skeleton>
       <button
         *ngIf="closeIconVisible"
         (click)="closeDialog()"
@@ -31,15 +31,87 @@
         <mat-icon class="closeIcon">close</mat-icon>
       </button>
     </ng-container>
+
+    <ng-container *ngIf="!loading?.show">
+      <!-- Custom Header -->
+      <ng-content *ngIf="customHeader" select="'[modalHeader]'"></ng-content>
+
+      <!-- Default Header -->
+      <ng-container *ngIf="!customHeader">
+        <h2 [id]="modalTitleId" class="modal-title">{{ modalTitle }}</h2>
+        <crem-tooltip
+          *ngIf="showTooltip"
+          [helpTextData]="tooltipText"
+        ></crem-tooltip>
+        <button
+          *ngIf="closeIconVisible"
+          (click)="closeDialog()"
+          class="btn-close btn-none modalCloseButton"
+          color="secondary"
+          aria-label="Close"
+        >
+          <mat-icon class="closeIcon">close</mat-icon>
+        </button>
+      </ng-container>
+    </ng-container>
+
+    <!-- Loading Indicator -->
   </div>
-  <div class="modalContent">
-    <ng-content select="'[modalContent]'"></ng-content>
+
+  <!-- Main Content -->
+  <div
+    class="modalContent"
+    [ngClass]="{
+		 'scroll-container': scrollbar === 'auto-hide',
+		 'vertical':  scrollbar === 'auto-hide',
+		}"
+  >
+    <!-- Main Content -->
+    <ng-content *ngIf="!loading?.show" select="'[modalContent]'"></ng-content>
+
+    <!-- Main Content: Loading Indicator -->
+    <ng-container *ngIf="loading?.show">
+      <ng-container [ngSwitch]="loading.type">
+        <ng-container *ngSwitchCase="'form'">
+          <crem-skeleton
+            type="form"
+            [instances]="loading.instances"
+          ></crem-skeleton>
+        </ng-container>
+
+        <dx-load-panel
+          [shading]="true"
+          [showPane]="true"
+          [showIndicator]="true"
+          *ngSwitchCase="'spinner'"
+          [visible]="loading?.show"
+          [closeOnOutsideClick]="false"
+        ></dx-load-panel>
+      </ng-container>
+    </ng-container>
   </div>
+
+  <!-- Footer -->
   <div
     class="modalFooter"
     *ngIf="primaryFooterButtonText || closeOrCancelButtonText || customFooter"
   >
-    <ng-content *ngIf="customFooter" select="'[modalFooter]'"></ng-content>
+    <!-- Custom Footer -->
+    <ng-container *ngIf="customFooter">
+      <!-- Footer with separated controls -->
+      <ng-container *ngIf="hasCustomControls; else simpleCustom">
+        <ng-content select="[footerLeftControls]"></ng-content>
+        <ng-content select="[footerRightControls]"></ng-content>
+      </ng-container>
+    </ng-container>
+
+    <!-- Simple Footer -->
+    <ng-template #simpleCustom>
+      <ng-content select="[modalFooter]"></ng-content>
+    </ng-template>
+
+    <!-- Default Footer -->
+    <div *ngIf="!customFooter" class="footerLeftControls"></div>
     <div
       *ngIf="!customFooter"
       id="'buttonTemplate'"

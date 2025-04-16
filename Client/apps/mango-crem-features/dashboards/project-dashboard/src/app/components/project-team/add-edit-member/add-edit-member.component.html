@@ -493,11 +493,16 @@
     </dx-validation-group>
   </div>
   <div modalFooter class="addEditTeamModal-footerContent">
-    <div class="footerLeftControls" *ngIf="operation !== Operations.AC">
+    <div
+      footerLeftControls
+      *ngIf="operation !== Operations.AC"
+      class="font-size-small"
+    >
       Assigning a user to a Completed Task may potentially reverse the
       Completion of the task.
     </div>
-    <div id="buttonTemplate" class="footerRightControls">
+
+    <div footerRightControls id="buttonTemplate">
       <crem-button
         type="secondary"
         class="cancelChanges aem-btn"

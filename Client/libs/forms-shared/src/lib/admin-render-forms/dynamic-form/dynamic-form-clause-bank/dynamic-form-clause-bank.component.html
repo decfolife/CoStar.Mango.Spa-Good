@@ -1,0 +1,147 @@
+<div *ngIf="isClauseBankLoading" class="df-clause-bank-loader">
+  <crem-loader></crem-loader>
+</div>
+
+<crem-modal
+  modalId="clause_bank_modal"
+  modalTitleId="clause_bank_modalTitleId"
+  [modalTitle]="modalTitle"
+  closeIconVisible="true"
+  [customFooter]="true"
+  (resizeAction)="onPopupResize()"
+  *ngIf="!isClauseBankLoading"
+  class="df-clause-bank"
+  [showInfo]="'true'"
+>
+  <div modalContent class="body-content">
+    <div class="df-classtype-row">
+      <crem-form-label [required]="true" class="df-classtype-label">
+        Clause Type
+      </crem-form-label>
+      <crem-dropdown
+        #clauseTypesDropdown
+        [dataSource]="clauseTypes"
+        [showClearButton]="true"
+        required="true"
+        [customRequireValidation]="false"
+        [showColumnHeader]="false"
+        [allowSearch]="true"
+        hoverText="Select Clause Type"
+        (selectedItems)="onClauseTypeChanged($event)"
+        [containerized]="false"
+        [displayExpr]="'clauseType'"
+        [valueExpr]="'clauseTypeID'"
+        [initialSelectedValue]="clauseTypeId"
+        class="df-classtype-dropdown"
+      >
+      </crem-dropdown>
+      <crem-button
+        [id]="'dddNewClauseButtonId'"
+        [text]="'+ Add new clause'"
+        [btnStyle]="'flat'"
+        [color]="'secondary'"
+        [size]="'medium'"
+        [iconPosition]="right"
+        [noWrap]="false"
+        (buttonClick)="addButtonClick($event)"
+        class="df-add-new-clause"
+      ></crem-button>
+    </div>
+    <div id="df-clauseBankGrid-container">
+      <dx-data-grid
+        class="clause-bank-grid"
+        #ClauseBankGrid
+        [showColumnLines]="false"
+        [showRowLines]="false"
+        [showBorders]="false"
+        [rowAlternationEnabled]="true"
+        [allowColumnResizing]="true"
+        columnResizingMode="widget"
+        [columnAutoWidth]="true"
+        [dataSource]="clauseBanks"
+        keyExpr="clauseBankID"
+        [width]="'100%'"
+        [hoverStateEnabled]="true"
+        [filterSyncEnabled]="true"
+        [wordWrapEnabled]="true"
+        [repaintChangesOnly]="true"
+        [renderAsync]="true"
+        [columnAutoWidth]="true"
+        [showScrollbar]="false"
+        (onSelectionChanged)="onSelectionChanged($event)"
+        (onRowClick)="onRowClick($event)"
+        (onCellClick)="onCellClick($event)"
+        (onRowInserting)="onRowInserting($event)"
+        (onRowUpdating)="onRowUpdating($event)"
+        (onRowRemoving)="onRowRemoving($event)"
+        (onEditorPreparing)="onEditorPreparing($event)"
+        (onCellPrepared)="onCellPrepared($event)"
+      >
+        <dxo-editing
+          mode="row"
+          [confirmDelete]="false"
+          [allowUpdating]="true"
+          [allowDeleting]="true"
+          [useIcons]="true"
+        ></dxo-editing>
+
+        <dxo-header-filter
+          [visible]="true"
+          [headerFilter.search.enabled]="true"
+        ></dxo-header-filter>
+        <dxo-load-panel [enabled]="true"></dxo-load-panel>
+        <dxo-selection
+          mode="single"
+          showCheckBoxesMode="none"
+          enableThreeStateBehavior="false"
+        ></dxo-selection>
+
+        <dxi-column
+          type="selection"
+          [width]="40"
+          [fixed]="true"
+          fixedPosition="left"
+          [allowSorting]="false"
+          [allowReordering]="false"
+          [allowResizing]="false"
+          enableThreeStateBehavior="false"
+          showCheckBoxesMode="always"
+        >
+        </dxi-column>
+        <dxi-column
+          dataField="clauseName"
+          caption="Clause Name"
+          sortOrder="asc"
+          width="150px"
+          [fixed]="true"
+        ></dxi-column>
+        <dxi-column dataField="clause" cssClass="df-cbClause"></dxi-column>
+        <dxi-column type="buttons" caption="Actions">
+          <dxi-button name="edit"></dxi-button>
+          <dxi-button name="delete"></dxi-button>
+          <dxi-button name="cancel" hint="Reset"></dxi-button>
+        </dxi-column>
+      </dx-data-grid>
+    </div>
+  </div>
+
+  <div modalFooter>
+    <crem-button
+      [id]="'cancel-clause-bank-id'"
+      type="secondary"
+      (click)="close()"
+    >
+      Cancel
+    </crem-button>
+
+    <crem-button
+      [id]="'save-clause-bank-id'"
+      type="primary"
+      (click)="onPasteSelected()"
+      [disabled]="!enablePasteSelected"
+      title="Click on row to select"
+    >
+      Paste Selected
+    </crem-button>
+  </div>
+</crem-modal>

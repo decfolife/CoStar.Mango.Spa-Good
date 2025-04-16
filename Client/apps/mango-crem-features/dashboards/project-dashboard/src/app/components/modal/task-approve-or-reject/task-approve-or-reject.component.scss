@@ -7,10 +7,6 @@
     justify-content: space-between;
     div#buttonTemplate.footerRightControls {
       display: flex;
-
-      crem-button {
-        margin-left: 8px;
-      }
     }
   }
 
@@ -31,6 +27,13 @@
   #tar-approvalDateId {
     dx-date-box div.dx-overlay.dx-invalid-message-auto div.dx-overlay-content {
       display: none;
+    }
+  }
+
+  .tar-notesInput {
+    .input-container {
+      height: unset !important;
+      max-height: 250px;
     }
   }
 }

@@ -1,0 +1,43 @@
+@use 'styles' as *;
+
+:host ::ng-deep .workflow-status-label label {
+  @include costar(margin-top, 3);
+}
+
+:host ::ng-deep #lease-verification-workflow-status-comments-textarea {
+  min-height: 70px;
+}
+
+:host ::ng-deep #lease-verification-modal {
+  .modalContent {
+    padding: 0px;
+    min-height: 27vh;
+  }
+}
+
+.required-fields-container {
+  @include costar(background-color, info-lightest);
+  margin-top: 40px;
+  @include costar(padding-top, 2);
+  padding: 20px;
+}
+
+.form-section {
+  padding: 20px;
+}
+
+.message {
+  @include costar(color, gray03);
+}
+
+.lease-verification-required-fields {
+  padding: 4px;
+}
+
+.form-section-name {
+  @include costar(color, gray03);
+}
+
+.form-item-label {
+  padding-left: 12px;
+}

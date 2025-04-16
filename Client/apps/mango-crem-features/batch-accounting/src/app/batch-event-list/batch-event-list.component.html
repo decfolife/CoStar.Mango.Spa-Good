@@ -14,35 +14,41 @@
 
       <div class="list-page-controls-wrapper">
         <div class="controls-left">
-          <dx-select-box
-            class="batch-event__dropdown"
+          <crem-dropdown
+            id="ba-events-portfolio-dropdown"
             [dataSource]="portfolios"
-            [(value)]="selectedPortfolio"
-            (onSelectionChanged)="onPortfolioChange()"
-            [showClearButton]="true"
             valueExpr="masterGroupID"
             displayExpr="portfolioName"
             placeholder="Portfolio"
-            [elementAttr]="{ id: 'ba-select-portfolio' }"
-          ></dx-select-box>
-
-          <dx-select-box
-            class="batch-event__dropdown"
-            [dataSource]="workflowStatuses"
-            [elementAttr]="{ id: 'ba-select-workflow-status' }"
+            required="true"
             [showClearButton]="true"
-            [(value)]="selectedViewWorkflowStatus"
+            (selectedItems)="onPortfolioChange($event)"
+            [containerized]="true"
+            [useSelectBox]="true"
+            [allowSearch]="true"
+          >
+          </crem-dropdown>
+
+          <crem-dropdown
+            id="ba-events-workflow-status-dropdown"
+            [dataSource]="workflowStatuses"
+            valueExpr="workflowStatusID"
             displayExpr="workflowStatus"
             placeholder="Workflow Status"
-            (onSelectionChanged)="onWorkflowChanged()"
-          ></dx-select-box>
+            required="true"
+            [showClearButton]="true"
+            (selectedItems)="onWorkflowChanged($event)"
+            [containerized]="true"
+            [useSelectBox]="true"
+          >
+          </crem-dropdown>
 
           <div class="dx-field">
             <div class="dx-field-value">
               <dx-drop-down-box
                 class="list-view-dropdown"
                 [dataSource]="listViewDisplayDataSource"
-                [elementAttr]="{ id: 'ba-select-list-view' }"
+                [elementAttr]="{ id: 'ba-events-list-view-dropdown' }"
                 [showClearButton]="true"
                 [(value)]="selectedView"
                 [(opened)]="isListViewDropdownOpened"
@@ -72,10 +78,10 @@
             *ngIf="gridDataFiltered !== null && gridColumns !== null"
             class="d-flex"
           >
-            <button
-              class="btn btn-primary-outline"
-              id="ba-filters"
-              (click)="filterBuilderVisible = true"
+            <crem-button
+              type="secondary"
+              id="ba-events-filters-button"
+              (buttonClick)="filterBuilderVisible = true"
             >
               Filters
               <div
@@ -94,30 +100,35 @@
               >
                 Clear {{ availableAppliedFilterCount }} Filters
               </div>
-            </button>
+            </crem-button>
 
-            <dx-text-box
-              class="search-box"
-              [elementAttr]="{ id: 'ba-search' }"
+            <crem-search
+              id="ba-events-search-input"
               [(value)]="availableSearchText"
-              mode="search"
-              placeholder="Search..."
-              [showClearButton]="true"
-              valueChangeEvent="keyup"
-              (onValueChanged)="availableSearchDataGrid($event)"
-            ></dx-text-box>
+              [placeholder]="'Search...'"
+              [debounceTime]="500"
+              [searchOption]="'typing'"
+              (changed)="availableSearchDataGrid($event)"
+            >
+            </crem-search>
 
-            <button
-              class="btn btn-primary-outline"
-              id="ba-menu-more"
+            <crem-button
+              id="ba-events-more-menu-button"
+              color="secondary"
               [matMenuTriggerFor]="moreMenu"
             >
               More
-              <fa-icon [icon]="faCaretDown"></fa-icon>
-            </button>
+              <crem-icon
+                id="ba-log-download-icon"
+                icon="faCaretDown"
+                pack="solid"
+                size="sm"
+              ></crem-icon>
+            </crem-button>
 
             <mat-menu #moreMenu="matMenu">
               <button
+                id="ba-events-show-query-button"
                 mat-menu-item
                 *ngIf="isSuperUser"
                 (click)="showDynamicSQL()"
@@ -125,30 +136,40 @@
                 Show Query
               </button>
 
-              <button mat-menu-item (click)="displayColumnChooser()">
+              <button
+                id="ba-events-column-chooser-button"
+                mat-menu-item
+                (click)="displayColumnChooser()"
+              >
                 Column Chooser
               </button>
 
-              <button mat-menu-item (click)="exportDataGrid()">Export</button>
+              <button
+                id="ba-events-send-to-excel-button"
+                mat-menu-item
+                (click)="exportDataGrid()"
+              >
+                Send to Excel
+              </button>
             </mat-menu>
           </div>
 
-          <button
-            class="btn btn-default"
-            id="ba-cancel"
-            (click)="router.navigateByUrl('/')"
+          <crem-button
+            id="ba-events-cancel-button"
+            text="Cancel"
+            color="secondary"
+            (buttonClick)="onCancel()"
           >
-            Cancel
-          </button>
+          </crem-button>
 
-          <button
-            class="btn btn-primary"
-            id="ba-next-1"
-            (click)="parametersStep(RemeasureStepper)"
+          <crem-button
+            id="ba-events-next-button"
+            text="Next"
+            [color]="'primary'"
             [disabled]="!availableDataGrid?.selectedRowKeys?.length"
+            (buttonClick)="parametersStep(RemeasureStepper)"
           >
-            Next
-          </button>
+          </crem-button>
         </div>
       </div>
 
@@ -163,10 +184,11 @@
           [showIndicator]="true"
           [showPane]="true"
           [shading]="true"
-          [closeOnOutsideClick]="false"
+          [hideOnOutsideClick]="false"
         ></dx-load-panel>
 
         <dx-data-grid
+          id="ba-event-page-grid"
           *ngIf="
             readyForGrid && gridDataFiltered !== null && gridColumns !== null
           "
@@ -181,7 +203,7 @@
           [allowColumnReordering]="true"
           [columnAutoWidth]="true"
           [filterSyncEnabled]="true"
-          (onContentReady)="onGridContentReady()"
+          (onContentReady)="onGridContentReady($event)"
           (onSelectionChanged)="onGridSelectionChanged($event)"
           [wordWrapEnabled]="true"
         >
@@ -193,7 +215,9 @@
 
           <dxo-paging [pageSize]="25"></dxo-paging>
 
-          <dxo-header-filter [visible]="true"></dxo-header-filter>
+          <dxo-header-filter [visible]="true">
+            <dxo-search [enabled]="true"> </dxo-search>
+          </dxo-header-filter>
 
           <dxo-grouping
             #expand
@@ -212,6 +236,7 @@
             selectAllMode="allPages"
             showCheckBoxesMode="onClick"
             mode="multiple"
+            showCheckBoxesMode="always"
           ></dxo-selection>
 
           <dxo-filter-builder-popup
@@ -220,14 +245,16 @@
             [(visible)]="filterBuilderVisible"
           ></dxo-filter-builder-popup>
 
-          <dxo-filter-builder
-            [fields]="sortedFilterFields"
-          ></dxo-filter-builder>
+          <dxo-filter-builder [fields]="sortedFilterFields">
+          </dxo-filter-builder>
 
           <dxo-column-chooser
             [enabled]="false"
-            [allowSearch]="true"
-          ></dxo-column-chooser>
+            [search]="{ enabled: true }"
+            height="500"
+            width="400"
+          >
+          </dxo-column-chooser>
 
           <dxi-column
             *ngFor="let column of gridColumns"
@@ -284,35 +311,31 @@
       >
         <div *dxTemplate="let data of 'content'">
           <dx-scroll-view height="100%" width="100%" direction="both">
-            <pre id="dynamic-sql" class="overflow-unset">{{
+            <pre id="ba-events-show-query-dynamic-sql" class="overflow-unset">{{
               formattedSql
             }}</pre>
           </dx-scroll-view>
         </div>
 
-        <dxi-toolbar-item
-          location="after"
-          toolbar="bottom"
-          widget="dxButton"
-          [options]="{
-            elementAttr: { class: 'sql-button' },
-            text: 'Copy to Clipboard',
-            onClick: copyToClipboard,
-            stylingMode: 'outlined'
-          }"
-        ></dxi-toolbar-item>
+        <dxi-toolbar-item location="after" toolbar="bottom">
+          <crem-button
+            id="ba-events-show-query-copy-to-clipboard-button"
+            text="Copy to Clipboard"
+            color="primary"
+            (buttonClick)="copyToClipboard()"
+          >
+          </crem-button>
+        </dxi-toolbar-item>
 
-        <dxi-toolbar-item
-          location="after"
-          toolbar="bottom"
-          widget="dxButton"
-          [options]="{
-            elementAttr: { class: 'sql-button' },
-            text: 'Close',
-            onClick: closeSqlPopup,
-            stylingMode: 'outlined'
-          }"
-        ></dxi-toolbar-item>
+        <dxi-toolbar-item location="after" toolbar="bottom">
+          <crem-button
+            id="ba-events-show-query-cancel-button"
+            text="Close"
+            color="secondary"
+            (buttonClick)="closeSqlPopup()"
+          >
+          </crem-button>
+        </dxi-toolbar-item>
       </dx-popup>
     </div>
   </mat-step>
@@ -332,24 +355,27 @@
           <div class="controls-left"></div>
 
           <div class="controls-right">
-            <div class="chip costar secondary" id="ba-selected-1">
+            <div
+              class="chip costar secondary"
+              id="ba-parameters-selected-record-label"
+            >
               {{ selectedCount }} Selected Record{{
                 selectedCount === 1 ? '' : 's'
               }}
             </div>
 
-            <button
-              class="btn btn-default"
-              id="ba-prev-1"
-              (click)="logStep(RemeasureStepper)"
+            <crem-button
+              color="secondary"
+              id="ba-parameters-previous-button"
+              (buttonClick)="logStep(RemeasureStepper)"
             >
               Previous
-            </button>
+            </crem-button>
 
-            <button
-              class="btn btn-primary"
-              id="ba-next-2"
-              (click)="confirmationStep(RemeasureStepper)"
+            <crem-button
+              type="primary"
+              id="ba-parameters-next-button"
+              (buttonClick)="confirmationStep(RemeasureStepper)"
               [disabled]="
                 !parametersCard?.isValid ||
                 !parametersGrid?.isValid ||
@@ -357,12 +383,12 @@
               "
             >
               Next
-            </button>
+            </crem-button>
           </div>
         </div>
 
         <div class="dynamic-form-content">
-          <div class="row">
+          <div class="row form-row">
             <div class="col-md-12">
               <mango-parameters-card
                 #ParametersCard
@@ -396,55 +422,35 @@
           <div class="controls-left"></div>
 
           <div class="controls-right">
-            <div class="chip costar secondary" id="ba-selected-2">
+            <div
+              class="chip costar secondary"
+              id="ba-confirmation-selected-record-label"
+            >
               {{ selectedCount }} Selected Record{{
                 selectedCount === 1 ? '' : 's'
               }}
             </div>
 
-            <button
-              class="btn btn-default"
-              id="ba-prev-2"
+            <crem-button
+              id="ba-confirmation-previous-button"
+              color="secondary"
               [disabled]="batchQueueing"
               (click)="parametersStep(RemeasureStepper)"
+              >Previous</crem-button
             >
-              Previous
-            </button>
 
-            <div class="btn-group">
-              <button
-                type="button"
-                id="ba-queue-for-val"
-                class="btn btn-primary d-flex ml-4 border-top-left-small border-bottom-left-small"
-                [disabled]="batchQueueing"
-                (click)="queueBatch(false)"
-              >
-                Queue for validation
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-primary dropdown-toggle dropdown-toggle-split ml-0 border-top-right-small border-bottom-right-small"
-                [disabled]="batchQueueing"
-                [matMenuTriggerFor]="dropdownMenuOne"
-              >
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
-
-              <mat-menu
-                #dropdownMenuOne="matMenu"
-                class="remeasure_validation matMenuSize"
-              >
-                <button
-                  mat-menu-item
-                  id="ba-queue-for-val-proc"
-                  (click)="queueBatch(true)"
-                  [disabled]="batchQueueing"
-                >
-                  Queue for validation and process
-                </button>
-              </mat-menu>
-            </div>
+            <crem-split-button
+              id="ba-confirmation-queue-split-button"
+              [text]="'Queue for validation'"
+              [icon]="'faCaretDown'"
+              [color]="'primary'"
+              [btnStyle]="'flat'"
+              [dropdownPosition]="'right'"
+              [disabled]="batchQueueing"
+              [options]="options"
+              (mainButtonClick)="queueBatch(false)"
+              (selectedOption)="queueBatch(true)"
+            ></crem-split-button>
           </div>
         </div>
 
@@ -473,3 +479,5 @@
     </ng-container>
   </mat-step>
 </mat-horizontal-stepper>
+
+<p-toast position="bottom-right" preventOpenDuplicates="true"> </p-toast>

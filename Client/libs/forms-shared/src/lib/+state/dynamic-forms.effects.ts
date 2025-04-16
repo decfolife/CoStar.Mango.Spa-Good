@@ -7,6 +7,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  take,
   tap,
   withLatestFrom,
 } from 'rxjs/operators';
@@ -96,16 +97,18 @@ export class DynamicFormsEffects {
     this.actions$.pipe(
       ofType(DynamicFormsActions.dynamicFormLoadSections),
       switchMap((action) => {
-        return this.dynamicFormsService.getFormSections(action.formId).pipe(
-          map((result) =>
-            DynamicFormsActions.dynamicFormLoadSectionsSuccess({
-              formSections: result.data,
-            })
-          ),
-          catchError((error) =>
-            of(DynamicFormsActions.dynamicFormLoadSectionsFailure({ error }))
-          )
-        );
+        return this.dynamicFormsService
+          .getFormSections(action.formId, action.groupId)
+          .pipe(
+            map((result) =>
+              DynamicFormsActions.dynamicFormLoadSectionsSuccess({
+                formSections: result.data,
+              })
+            ),
+            catchError((error) =>
+              of(DynamicFormsActions.dynamicFormLoadSectionsFailure({ error }))
+            )
+          );
       })
     )
   );
@@ -165,6 +168,7 @@ export class DynamicFormsEffects {
         this.dynamicFormsService
           .getFormFields(action.formId, action.sectionId, action.objectTypeId)
           .pipe(
+            take(1),
             filter((formData) => formData !== undefined),
             map((result) =>
               DynamicFormsActions.dynamicFormLoadFieldsSuccess({
@@ -285,6 +289,7 @@ export class DynamicFormsEffects {
         this.dynamicFormsService
           .getFormItemWidgetByWidgetId(action.widgetId, objectId)
           .pipe(
+            take(1),
             map((result) => {
               return DynamicFormsActions.dynamicFormLoadWidgetByWidgetIdSuccessWithStatus(
                 { widgetId: action.widgetId, apiResponse: result }
@@ -457,31 +462,42 @@ export class DynamicFormsEffects {
   loadRenderFormFormItemDropdowns$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DynamicFormsActions.dynamicFormLoadRenderForm),
-      mergeMap((action: { formId; objectId; objectTypeId }) =>
-        of(action).pipe(
-          mergeMap(() =>
-            this.dynamicFormsService
-              .getRenderFormFormItemDropdowns(
-                action.formId,
-                action.objectId,
-                action.objectTypeId
-              )
-              .pipe(
-                map((result) =>
-                  DynamicFormsActions.renderFormLoadFormItemDropdownsSuccess({
-                    renderFormDropdowns: result.data,
-                  })
-                ),
-                catchError((error) =>
-                  of(
-                    DynamicFormsActions.renderFormLoadFormItemDropdownsFailure({
-                      error,
+      mergeMap(
+        (action: {
+          formId;
+          objectId;
+          objectTypeId;
+          parentObjectId;
+          parentObjectTypeId;
+        }) =>
+          of(action).pipe(
+            mergeMap(() =>
+              this.dynamicFormsService
+                .getRenderFormFormItemDropdowns(
+                  action.formId,
+                  action.objectId,
+                  action.objectTypeId,
+                  action.parentObjectId,
+                  action.parentObjectTypeId
+                )
+                .pipe(
+                  map((result) =>
+                    DynamicFormsActions.renderFormLoadFormItemDropdownsSuccess({
+                      renderFormDropdowns: result.data,
                     })
+                  ),
+                  catchError((error) =>
+                    of(
+                      DynamicFormsActions.renderFormLoadFormItemDropdownsFailure(
+                        {
+                          error,
+                        }
+                      )
+                    )
                   )
                 )
-              )
+            )
           )
-        )
       )
     )
   );

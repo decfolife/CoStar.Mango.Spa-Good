@@ -14,15 +14,19 @@ import { MangoAppFacade } from '../../+state/app/app.facade';
 })
 export class RightsAuthGuard implements CanActivate {
   private subscriptions: Subscription[] = [];
-  private routesObjectTypeIds: any[] = []
+  private routesObjectTypeIds: any[] = [];
 
   constructor(
     private navigationService: MangoNavigationService,
     private router: Router,
     private facade: MangoAppFacade
   ) {
-      //Teams Template ObjectTypeId 161
-      this.routesObjectTypeIds.push({ route: "/crem/projects/teams", objectTypeId: 161, objectId: 0})
+    //Teams Template ObjectTypeId 161
+    this.routesObjectTypeIds.push({
+      route: '/crem/projects/teams',
+      objectTypeId: 161,
+      objectId: 0,
+    });
   }
 
   ngOnDestroy() {
@@ -35,19 +39,21 @@ export class RightsAuthGuard implements CanActivate {
     activatedRouteSnapshot: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ) {
-      const urlParts = routerStateSnapshot.url.split('?');
-      if (urlParts.length === 1) {
-        let foundRoute = this.routesObjectTypeIds.find(roi => urlParts[0].toLowerCase().startsWith(roi.route));
-        if (foundRoute !== undefined) {
-          urlParts.push(`otid=${foundRoute.objectTypeId}&oid=${foundRoute.objectId}`)
-        }
-        else
-        {
-          return of(true);
-        }
-      } else if(urlParts.length !== 2) {
+    const urlParts = routerStateSnapshot.url.split('?');
+    if (urlParts.length === 1) {
+      let foundRoute = this.routesObjectTypeIds.find((roi) =>
+        urlParts[0].toLowerCase().startsWith(roi.route)
+      );
+      if (foundRoute !== undefined) {
+        urlParts.push(
+          `otid=${foundRoute.objectTypeId}&oid=${foundRoute.objectId}`
+        );
+      } else {
         return of(true);
       }
+    } else if (urlParts.length !== 2) {
+      return of(true);
+    }
 
       this.subscriptions.push(
         this.navigationService
@@ -62,13 +68,13 @@ export class RightsAuthGuard implements CanActivate {
                 ]);
               }
 
-              return of(userHaveRights);
-            },
-            (err) => {
-              console.log(err);
-              this.router.navigate(['/crem/error-notification']);
-            }
-          )
-      );
+            return of(userHaveRights);
+          },
+          (err) => {
+            console.log(err);
+            this.router.navigate(['/crem/error-notification']);
+          }
+        )
+    );
   }
 }

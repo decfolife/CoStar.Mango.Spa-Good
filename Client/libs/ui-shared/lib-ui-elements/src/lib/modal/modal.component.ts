@@ -1,18 +1,33 @@
 import {
   AfterViewInit,
+  AfterContentInit,
   Component,
+  ContentChild,
   ElementRef,
   EventEmitter,
   HostListener,
   Inject,
   Input,
   OnDestroy,
+  OnInit,
   Optional,
   Output,
-  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+interface LoadingIndicator {
+  show: boolean;
+  type?: 'form' | 'spinner';
+  instances?: number;
+  /**
+   * While 'show' is true the skeleton indicator will be shown as well for the modal title
+   *
+   * @type {boolean}
+   * @memberof LoadingIndicator
+   */
+  headerLoading?: boolean;
+}
 
 /**
  * Modal
@@ -27,7 +42,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./modal.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class ModalComponent implements AfterViewInit, OnDestroy {
+export class ModalComponent
+  implements AfterViewInit, AfterContentInit, OnDestroy, OnInit
+{
   @Input() modalTitle: string;
   @Input() modalTitleId: string;
   @Input() closeIconVisible: boolean;
@@ -42,10 +59,32 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
   @Input() closeDialogResult: any = '';
   @Input() className?: string = '';
   @Input() dragPosition: any = { x: 0, y: 0 };
+  /**
+   * Delegates the loading indicators to the modal for better consistency across modals
+   * while using the shared library.
+   *
+   * @type {LoadingIndicator}
+   * @memberof ModalComponent
+   */
+  @Input() loading?: LoadingIndicator = { show: null };
+  /**
+   * Personalizes scroll bars to use the common lib one
+   *
+   * @type {'auto'}
+   * @memberof ModalComponent
+   */
+  @Input() scrollbar?: 'auto-hide';
   @Output() primaryButtonAction = new EventEmitter<any>();
   @Output() closeButtonAction = new EventEmitter<any>();
   @Output() dragEndAction = new EventEmitter<any>();
   @Output() resizeAction = new EventEmitter<any>();
+
+  @ContentChild('footerLeftControls', { static: false })
+  footerLeftControls!: ElementRef;
+  @ContentChild('footerRightControls', { static: false })
+  footerRightControls!: ElementRef;
+
+  hasCustomControls = false as boolean;
 
   private resizeObserver: ResizeObserver;
 
@@ -55,8 +94,17 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
     private elementRef: ElementRef
   ) {}
 
+  ngOnInit(): void {
+    this.loading.type = this.loading.type ?? 'spinner'; // Default loading indicator
+  }
+
   ngAfterViewInit() {
     this.initModalResizeBehavior();
+  }
+
+  ngAfterContentInit() {
+    this.hasCustomControls =
+      !!this.footerLeftControls || !!this.footerRightControls;
   }
 
   private initModalResizeBehavior() {
@@ -98,6 +146,7 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
       height: event.target.innerHeight,
     });
   }
+
   ngOnDestroy() {
     // Disconnect the observer to avoid memory leaks
     if (this.resizeObserver) {

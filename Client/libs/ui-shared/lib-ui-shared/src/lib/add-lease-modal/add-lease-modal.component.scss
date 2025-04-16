@@ -1,4 +1,3 @@
-@use 'apps/mango/src/assets/styles/colors.scss' as colors;
 @use 'styles' as *;
 
 #addLeaseModal-content {
@@ -7,42 +6,8 @@
     margin-top: 2px;
 
     .required-tag {
-      color: $danger;
+      @include costar(color, danger);
     }
-  }
-
-  .container {
-    padding: 8px 0 4px;
-  }
-
-  .spanItems {
-    width: 50%;
-    justify-content: space-between;
-    display: flex;
-    margin: 8px 0 0 0;
-    flex-direction: row !important;
-  }
-  .spanItems.spanRight {
-    float: right;
-  }
-  .spanItems.spanLeft {
-    float: left;
-  }
-  .spanItems.spanRight crem-form-label {
-    width: 27%;
-    padding-left: 10px;
-  }
-  .spanItems.spanLeft crem-form-label {
-    width: 27%;
-  }
-  .spanItems.spanRight crem-date-picker,
-  .spanItems.spanRight crem-dropdown {
-    width: 71%;
-  }
-  .spanItems.spanLeft crem-date-picker,
-  .spanItems.spanLeft crem-dropdown {
-    width: 72%;
-    padding-right: 10px;
   }
 }
 
@@ -54,19 +19,13 @@
   }
 }
 
-::ng-deep {
-  .modalFooter {
-    .addLeaseFooter {
-      display: flex;
-
-      crem-button {
-        padding: 8px;
-      }
+:host ::ng-deep {
+  .crem-form {
+    @include costar(gap, 2);
+  }
+  crem-form-control {
+    .crem-form-item-status:empty {
+      display: none;
     }
   }
-}
-
-#new-lease-form {
-  width: 100%;
-  display: unset;
 }

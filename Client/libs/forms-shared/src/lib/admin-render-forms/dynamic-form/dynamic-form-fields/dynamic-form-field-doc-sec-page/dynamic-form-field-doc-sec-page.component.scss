@@ -1,9 +1,114 @@
 .doc-sec-page {
-    mat-form-field.mat-mdc-form-field {
-        width: 33.333%;
+  mat-form-field.mat-mdc-form-field {
+    width: 33.333%;
 
-        div.mat-form-field-wrapper {
-            margin-top: 0px;
-        }
+    div.mat-form-field-wrapper {
+      margin-top: 0px;
     }
+  }
+
+  .section-clause-description {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+
+    div.clause-text-label-field {
+      ::ng-deep {
+        crem-input-label > label {
+          padding-top: 8px;
+          padding-bottom: unset;
+        }
+      }
+    }
+
+    div.clause-bank-icon,
+    div.clause-bank-icon > span > svg {
+      width: 22px;
+      height: 25px;
+      cursor: pointer;
+    }
+    .clause-text-label-field {
+      width: 100%;
+    }
+  }
+
+  div.section-clause-details-label-field {
+    display: flex;
+    column-gap: 10px;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+
+    div.clause-details-label-field {
+      display: flex;
+      align-items: flex-start;
+      ::ng-deep {
+        crem-input-label.detail-label > label > span {
+          font-weight: 500;
+        }
+
+        crem-input {
+          .input-container {
+            height: 30px;
+          }
+        }
+
+        input,
+        dx-date-box {
+          height: 26px;
+
+          input.dx-texteditor-input {
+            min-height: 26px;
+            padding-top: 0;
+          }
+        }
+        input {
+          padding: 2px;
+          font-size: small;
+        }
+      }
+    }
+
+    &.df-clauseEditMode {
+      div.clause-details-label-field {
+        &.df-clauseDocument {
+          flex: 2 1 170px;
+        }
+        &.df-clauseSection {
+          flex: 1.2 1 120px;
+        }
+        &.df-clausePage {
+          flex: 1 1 120px;
+        }
+        &.df-clauseDate {
+          flex: 0 0 160px;
+        }
+      }
+    }
+  }
+
+  .df-clauseEleGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    div.section-clause-description {
+      ::ng-deep {
+        crem-input div.input-container {
+          padding-top: 8px;
+          height: unset;
+        }
+      }
+    }
+  }
+}
+
+.df-clauseDocLabel {
+  min-width: 80px;
+}
+.df-clauseSecLabel {
+  min-width: 64px;
+}
+.df-clausePageLabel,
+.df-clauseDateLabel {
+  min-width: 46px;
 }

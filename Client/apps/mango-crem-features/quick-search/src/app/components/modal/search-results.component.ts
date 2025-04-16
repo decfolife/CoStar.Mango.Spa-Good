@@ -2,13 +2,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { quickSearchResults } from '../../../models/interfaces/quick-search-results.interface';
-import { QuickSearchService } from '../../../services/quick-search.service';
+import { quickSearchResults } from '../../models/interfaces/quick-search-results.interface';
+import { QuickSearchService } from '../../services/quick-search.service';
+import {
+  CremToastService,
+  SelectedTab,
+} from '@mango/ui-shared/lib-ui-elements';
 import {
   ApiResponse,
   RedirectorLinks,
   RedirectorLink,
-} from '../../../models/interfaces/quick-search-results.interface';
+} from '../../models/interfaces/quick-search-results.interface';
+import { ToastState } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-quick-search-results',
@@ -22,19 +27,22 @@ export class searchResultsComponent implements OnInit {
   modalId = 'quickSearch';
   modalTitle = 'Quick Search Results';
   searchResults: quickSearchResults[];
-  searchRestultsRetrieved = false;
+  private _skeletonInstances = 1;
+  loading = true as boolean;
   selectedPanel = '';
   redirectorLinks: RedirectorLink[];
+  selectedTab: SelectedTab;
 
   constructor(
     public dialogRef: MatDialogRef<searchResultsComponent>,
     private router: Router,
     private quickSearchService: QuickSearchService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private _toaster: CremToastService
   ) {}
 
   ngOnInit(): void {
-    this.searchRestultsRetrieved = false;
+    this.loading = true;
     this.getSearchResultsData(this.data.searchString, this.data.searchObjectId);
     this.quickSearchService
       .getRedirectorLinkList()
@@ -57,8 +65,8 @@ export class searchResultsComponent implements OnInit {
       .getQuickSearchResults(searchString, objectId)
       .subscribe(
         (res: any) => {
-          this.searchRestultsRetrieved = true;
           if (res.success) {
+            this.loading = false;
             if (res.data.listOfSearchResults.length) {
               this.searchResults = res.data.listOfSearchResults.filter(
                 (object) => object.results.length
@@ -67,32 +75,33 @@ export class searchResultsComponent implements OnInit {
           }
         },
         (error: any) => {
-          this.searchRestultsRetrieved = true;
-          console.log(
-            'Error occurred while getting Quick Search Results: ',
-            error
+          const message = 'Error occurred while getting Quick Search Results ';
+          console.error('An error occurred: ', message, error);
+          this._toaster.show(
+            message ?? `An error occurred, please try again.`,
+            'Error',
+            ToastState.ERROR,
+            {
+              maxWidth: '360px',
+              duration: 180000,
+            }
           );
         }
       );
   }
 
-  onTitleClick(event: any) {
-    this.selectedPanel = event.itemData.title;
-  }
-
-  onItemRendered(event: any) {
-    this.selectedPanel = event.itemData.title;
-  }
-
   onRowClick(event: any) {
-    let res = this.searchResults.filter((searchResult) => {
-      if (searchResult.objectTypeType === this.selectedPanel) return true;
+    const res = this.searchResults.filter((searchResult) => {
+      if (searchResult.objectTypeType === this.selectedTab.title) return true;
     });
 
-    let otid = parseInt(res[0].objectTypeId);
-    this.dialogRef.close();
+    const otid = parseInt(res[0].objectTypeId);
     this.router.navigate(['/v06/Forms/RenderForm.aspx'], {
       queryParams: { oid: event.data.OID, otid: otid, ottid: event.data.OTID },
     });
+  }
+
+  onSelectedTabChange(e: SelectedTab) {
+    this.selectedTab = e;
   }
 }

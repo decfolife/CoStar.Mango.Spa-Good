@@ -114,3 +114,13 @@
   position: relative;
   height: 0;
 }
+
+::ng-deep .df-editModeOn div.dynamic-form-content .field-content .ng-invalid {
+  @include costar(border, danger);
+  @include costar(border-radius, medium);
+
+  & * {
+    box-shadow: none;
+    border: none;
+  }
+}

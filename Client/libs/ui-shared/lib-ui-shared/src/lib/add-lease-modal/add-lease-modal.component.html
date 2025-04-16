@@ -1,19 +1,15 @@
-<dx-load-panel
-  shadingColor="rgba(255,255,255)"
-  [visible]="loading"
-  *ngIf="loading"
-  [showIndicator]="true"
-  [showPane]="true"
-  [shading]="true"
-  [closeOnOutsideClick]="false"
-></dx-load-panel>
-
 <crem-modal
   modalId="add_lease_modal__add_modal"
   modalTitleId="add_lease_modal"
   [modalTitle]="modalTitle"
   closeIconVisible="true"
   [customFooter]="true"
+  [loading]="{
+		type: 'form',
+		instances: 5,
+		show: loading,
+		headerLoading: true,
+	}"
 >
   <div modalContent class="body-content">
     <div modalContent id="addLeaseModal-content">
@@ -23,9 +19,10 @@
         layout="vertical"
         [formGroup]="addLeaseFormGroup"
       >
-        <crem-form-item id="aet-Portfolio-container" class="container">
+        <crem-form-item id="aet-Portfolio-container">
           <crem-form-label [required]="true">Portfolio</crem-form-label>
           <crem-dropdown
+            [autoSelect]="true"
             id="leasePortfolioId"
             #leasePortfolioId
             dropDownContainerCustomClass="leasePortfolioDropDown"
@@ -45,7 +42,8 @@
           >
           </crem-dropdown>
         </crem-form-item>
-        <crem-form-item id="aet-building-container" class="container">
+
+        <crem-form-item id="aet-building-container">
           <crem-form-label [required]="true">
             {{ buildingObjectName }}
           </crem-form-label>
@@ -69,11 +67,7 @@
           </crem-dropdown>
         </crem-form-item>
 
-        <crem-form-item
-          id="aet-template-container"
-          class="container"
-          *ngIf="!hidePremise"
-        >
+        <crem-form-item id="aet-template-container" *ngIf="!hidePremise">
           <crem-form-label [required]="true">
             {{ premiseObjectName }}
           </crem-form-label>
@@ -95,6 +89,7 @@
           >
           </crem-dropdown>
         </crem-form-item>
+
         <crem-form-item *ngIf="addNewPremise">
           <crem-form-label [required]="true"
             >{{ premiseObjectName }} Name</crem-form-label
@@ -111,11 +106,8 @@
             placeholder="Enter New {{ premiseObjectName }}"
           ></crem-input>
         </crem-form-item>
-        <crem-form-item
-          id="aet-template-container"
-          class="container"
-          *ngIf="addNewPremise"
-        >
+
+        <crem-form-item id="aet-template-container" *ngIf="addNewPremise">
           <crem-form-label [required]="true"
             >{{ premiseObjectName }} Type</crem-form-label
           >
@@ -137,7 +129,8 @@
           >
           </crem-dropdown>
         </crem-form-item>
-        <crem-form-item class="container">
+
+        <crem-form-item>
           <crem-form-label [required]="true">Tenant Legal Name</crem-form-label>
           <crem-input
             #tenantName
@@ -148,155 +141,184 @@
             [inputType]="'text'"
             [required]="true"
             formControlName="tenantName"
-            placeholder="Tenant Legal Name"
+            placeholder="Enter tenant legal name"
           ></crem-input>
         </crem-form-item>
-        <crem-form-item id="aet-template-container" class="spanItems spanLeft">
-          <crem-form-label [required]="true"
-            >{{ leaseObjectName }} Type</crem-form-label
+
+        <div class="layout-container pt-2">
+          <!-- Lease Type -->
+          <crem-form-item
+            id="aet-template-container"
+            class="crem-form-item-horizontal"
           >
-          <crem-dropdown
-            id="leaseTypeId"
-            #leaseTypeId
-            dropDownContainerCustomClass="leaseTypeDropDown"
-            [dataSource]="leaseTypeItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="leaseType"
-            valueExpr="leaseTypeID"
-            hoverText="Select {{ leaseObjectName }} Type"
-            (selectedItems)="onLeaseTypeChanged($event)"
-            [isDisabled]="loading"
-            formControlName="leaseType"
-            required="true"
-            [initialSelectedValue]="selectedLeaseType"
+            <crem-form-label [required]="true"
+              >{{ leaseObjectName }} Type</crem-form-label
+            >
+            <crem-dropdown
+              id="leaseTypeId"
+              #leaseTypeId
+              dropDownContainerCustomClass="leaseTypeDropDown"
+              [dataSource]="leaseTypeItems"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="leaseType"
+              valueExpr="leaseTypeID"
+              hoverText="Select {{ leaseObjectName }} Type"
+              (selectedItems)="onLeaseTypeChanged($event)"
+              [isDisabled]="loading"
+              formControlName="leaseType"
+              required="true"
+              [initialSelectedValue]="selectedLeaseType"
+            >
+            </crem-dropdown>
+          </crem-form-item>
+
+          <crem-form-item
+            id="aet-template-container"
+            class="crem-form-item-horizontal"
           >
-          </crem-dropdown>
-        </crem-form-item>
-        <crem-form-item id="aet-template-container" class="spanItems spanRight">
-          <crem-form-label [required]="true"
-            >{{ leaseObjectName }} Template</crem-form-label
+            <crem-form-label [required]="true"
+              >{{ leaseObjectName }} Template</crem-form-label
+            >
+            <crem-dropdown
+              id="leaseTemplateId"
+              #leaseTemplateId
+              dropDownContainerCustomClass="leaseTemplateDropDown"
+              [dataSource]="leaseTemplateItems"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="objectTypeTypeName"
+              valueExpr="objectTypeTypeID"
+              [useSelectBox]="true"
+              hoverText="Select {{ leaseObjectName }} Template"
+              (selectedItems)="onLeaseTemplateChanged($event)"
+              [isDisabled]="loading"
+              formControlName="leaseTemplate"
+              required="true"
+            >
+            </crem-dropdown>
+          </crem-form-item>
+        </div>
+
+        <div class="layout-container pt-2">
+          <crem-form-item
+            id="aet-begindate-container"
+            class="crem-form-item-horizontal"
           >
-          <crem-dropdown
-            id="leaseTemplateId"
-            #leaseTemplateId
-            dropDownContainerCustomClass="leaseTemplateDropDown"
-            [dataSource]="leaseTemplateItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="objectTypeTypeName"
-            valueExpr="objectTypeTypeID"
-            [useSelectBox]="true"
-            hoverText="Select {{ leaseObjectName }} Template"
-            (selectedItems)="onLeaseTemplateChanged($event)"
-            [isDisabled]="loading"
-            formControlName="leaseTemplate"
-            required="true"
+            <crem-form-label>Begin Date</crem-form-label>
+            <crem-date-picker
+              [value]="null"
+              [invalidDateMessage]="'Invalid date'"
+              [useMaskBehavior]="false"
+              [showClearButton]="true"
+              [inputId]="beginDate"
+              [disabled]="false"
+              formControlName="beginDate"
+              [dateFormat]="dateFormat"
+              (changeEvent)="onBeginDateChanged($event)"
+              required="false"
+            ></crem-date-picker>
+          </crem-form-item>
+
+          <crem-form-item
+            id="aet-enddate-container"
+            class="crem-form-item-horizontal"
           >
-          </crem-dropdown>
-        </crem-form-item>
-        <crem-form-item id="aet-begindate-container" class="spanItems spanLeft">
-          <crem-form-label>Begin Date</crem-form-label>
-          <crem-date-picker
-            [value]="null"
-            [invalidDateMessage]="'Invalid date'"
-            [useMaskBehavior]="false"
-            [showClearButton]="true"
-            [inputId]="beginDate"
-            [disabled]="false"
-            formControlName="beginDate"
-            [dateFormat]="dateFormat"
-            (changeEvent)="onBeginDateChanged($event)"
-            required="false"
-          ></crem-date-picker>
-        </crem-form-item>
-        <crem-form-item id="aet-enddate-container" class="spanItems spanRight">
-          <crem-form-label>End Date</crem-form-label>
-          <crem-date-picker
-            [value]="null"
-            [dateFormat]="dateFormat"
-            [invalidDateMessage]="'Invalid date'"
-            [useMaskBehavior]="false"
-            [showClearButton]="true"
-            [inputId]="endDate"
-            [disabled]="false"
-            formControlName="endDate"
-            (changeEvent)="onEndDateChanged($event)"
-            required="false"
-          ></crem-date-picker>
-        </crem-form-item>
-        <crem-form-item id="aet-currency-container" class="spanItems spanLeft">
-          <crem-form-label [required]="true">Currency Type</crem-form-label>
-          <crem-dropdown
-            #currencyDropdown
-            [id]="currencyDropdown"
-            [dataSource]="currencyItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="targetCurrencyDesc"
-            valueExpr="exchangeRateID"
-            [allowSearch]="true"
-            [initialSelectedValue]="selectedCurrency"
-            (selectedItems)="onCurrencyTypeChanged($event)"
-            hoverText="Select Currency Type"
-            formControlName="currencyTypeList"
-            [containerized]="false"
-            required="true"
+            <crem-form-label>End Date</crem-form-label>
+            <crem-date-picker
+              [value]="null"
+              [dateFormat]="dateFormat"
+              [invalidDateMessage]="'Invalid date'"
+              [useMaskBehavior]="false"
+              [showClearButton]="true"
+              [inputId]="endDate"
+              [disabled]="false"
+              formControlName="endDate"
+              (changeEvent)="onEndDateChanged($event)"
+              required="false"
+            ></crem-date-picker>
+          </crem-form-item>
+        </div>
+
+        <div class="layout-container pt-2">
+          <crem-form-item
+            id="aet-currency-container"
+            class="crem-form-item-horizontal"
           >
-          </crem-dropdown>
-        </crem-form-item>
-        <crem-form-item
-          id="aet-measurement-container"
-          class="spanItems spanRight"
-        >
-          <crem-form-label [required]="true">Unit of Measure</crem-form-label>
-          <crem-dropdown
-            id="measurement"
-            #measurement
-            [dataSource]="measurementUnitItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="measureArea"
-            valueExpr="measureUnitsID"
-            [allowSearch]="true"
-            [initialSelectedValue]="selectedMeasurement"
-            (selectedItems)="onMeasurementTypeChanged($event)"
-            hoverText="Select Units of Measure"
-            [isDisabled]="loading"
-            [containerized]="false"
-            formControlName="measurement"
-            required="true"
+            <crem-form-label [required]="true">Currency Type</crem-form-label>
+            <crem-dropdown
+              #currencyDropdown
+              [id]="currencyDropdown"
+              [dataSource]="currencyItems"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="targetCurrencyDesc"
+              valueExpr="exchangeRateID"
+              [allowSearch]="true"
+              [initialSelectedValue]="selectedCurrency"
+              (selectedItems)="onCurrencyTypeChanged($event)"
+              hoverText="Select Currency Type"
+              formControlName="currencyTypeList"
+              [containerized]="false"
+              required="true"
+            >
+            </crem-dropdown>
+          </crem-form-item>
+
+          <crem-form-item
+            id="aet-measurement-container"
+            class="crem-form-item-horizontal"
           >
-          </crem-dropdown>
-        </crem-form-item>
-        <crem-form-item
-          id="aet-accountingtype-container"
-          class="spanItems spanLeft"
-        >
-          <crem-form-label [required]="true">Accounting Type</crem-form-label>
-          <crem-dropdown
-            id="accountingType"
-            #accountingType
-            dropDownContainerCustomClass="leaseAccountingTypeItemsDropDown"
-            [dataSource]="accountingTypeItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="accountType"
-            valueExpr="accountType"
-            hoverText="Select Accounting Type"
-            (selectedItems)="onAccountingTypeChanged($event)"
-            [isDisabled]="loading"
-            formControlName="accountingType"
-            required="true"
-            [initialSelectedValue]="selectedAccountingType"
+            <crem-form-label [required]="true">Unit of Measure</crem-form-label>
+            <crem-dropdown
+              id="measurement"
+              #measurement
+              [dataSource]="measurementUnitItems"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="measureArea"
+              valueExpr="measureUnitsID"
+              [allowSearch]="true"
+              [initialSelectedValue]="selectedMeasurement"
+              (selectedItems)="onMeasurementTypeChanged($event)"
+              hoverText="Select Units of Measure"
+              [isDisabled]="loading"
+              [containerized]="false"
+              formControlName="measurement"
+              required="true"
+            >
+            </crem-dropdown>
+          </crem-form-item>
+        </div>
+
+        <div class="layout-container pt-2">
+          <crem-form-item
+            id="aet-accountingtype-container"
+            class="crem-form-item-horizontal"
           >
-          </crem-dropdown>
-        </crem-form-item>
-        <crem-form-item
-          id="aet-leaseInfo-container"
-          *ngIf="addSubLeaseWizard"
-          class="container"
-        >
+            <crem-form-label [required]="true">Accounting Type</crem-form-label>
+            <crem-dropdown
+              id="accountingType"
+              #accountingType
+              dropDownContainerCustomClass="leaseAccountingTypeItemsDropDown"
+              [dataSource]="accountingTypeItems"
+              [showClearButton]="true"
+              [showColumnHeader]="false"
+              displayExpr="accountType"
+              valueExpr="accountType"
+              hoverText="Select Accounting Type"
+              (selectedItems)="onAccountingTypeChanged($event)"
+              [isDisabled]="loading"
+              formControlName="accountingType"
+              required="true"
+              [initialSelectedValue]="selectedAccountingType"
+            >
+            </crem-dropdown>
+          </crem-form-item>
+          <div></div>
+        </div>
+
+        <crem-form-item id="aet-leaseInfo-container" *ngIf="addSubLeaseWizard">
           <crem-form-label *ngIf="addSubLeaseWizard"
             >Parent {{ leaseObjectName }}</crem-form-label
           >
@@ -354,7 +376,7 @@
       [iconAnimation]="saveClicked ? 'spin' : ''"
     >
       <span>
-        {{ saveClicked ? 'Saving' : 'Save and New' }}
+        {{ saveClicked ? 'Saving' : 'Save & New' }}
       </span></crem-button
     >
 

@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
-    "sourceMap": true,
+    "sourceMap": false,
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
@@ -127,8 +127,12 @@
       "@user-maintenance/*": [
         "apps/mango-crem-features/user-maintenance/src/app/*"
       ],
-      "@ledgers/*": ["apps/mango-crem-features/ledgers/src/app/*"],
       "@etl/*": ["apps/mango-crem-features/etl/src/app/*"],
+      "@ledgers/*": ["apps/mango-crem-features/ledgers/src/app/*"],
+      "@files-list/*": ["apps/mango-crem-features/object-actions/src/app/*"],
+      "@benchmarking-files/*": [
+        "apps/mango-crem-features/benchmarking-files/src/app/*"
+      ],
       "cldr": ["node_modules/cldrjs/dist/cldr"],
       "cldr/*": ["node_modules/cldrjs/dist/cldr/*"],
       "exceljs": ["node_modules/exceljs/dist/exceljs.bare.min"],

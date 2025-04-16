@@ -57,14 +57,14 @@ export class EtlImportsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subs.add(this.getUserPreferences().subscribe());
-    this.subs.add(
-      this.leftNavService
-        .getETLModulesNavigationLinks()
-        .pipe()
-        .subscribe((response) => {
-          this.setCustomLeftNav(response.data);
-        })
-    );
+    // this.subs.add(
+    //   this.leftNavService
+    //     .getETLModulesNavigationLinks()
+    //     .pipe()
+    //     .subscribe((response) => {
+    //       this.setCustomLeftNav(response.data);
+    //     })
+    // );
 
     this.subs.add(
       this.etlService.getETLImports().subscribe((result) => {

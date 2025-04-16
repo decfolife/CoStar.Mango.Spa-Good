@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace MangoSPA.Middleware;
 
@@ -11,7 +11,7 @@ public class SecurityHeadersMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context)
+    public async Task InvokeAsync(HttpContext context)
     {
         context.Response.Headers.TryAdd("X-Frame-Options", "SAMEORIGIN");
         context.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");

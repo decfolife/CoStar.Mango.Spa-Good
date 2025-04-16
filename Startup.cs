@@ -24,7 +24,9 @@ using MangoSPA.Models;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
-using OpenTelemetry;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Antiforgery;
+using Prometheus;
 
 namespace MangoSPA;
 
@@ -57,26 +59,12 @@ public class Startup
         AddAppSettings(services);
         AddCache(services, Configuration);
         AddAuth(services, Environment);
+        AddAddAntiforgery(services, Environment);
         AddDataProtection(services);
         AddServices(services);
         ConfigureOpenTelemetry(services, Configuration, Environment);
 
-        services.AddReverseProxy()
-                .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
-                .AddTransforms(builderContext =>
-                {
-                    builderContext.AddRequestTransform(async transformContext =>
-                    {          
-                        var cache = transformContext.HttpContext.RequestServices.GetRequiredService<ICacheService>();
-
-                        var key = CacheKeys.EmulatedUser(transformContext.HttpContext.User.ClientKey(), transformContext.HttpContext.User.ContactId());
-                        var emulatedUser = await cache.GetDataAsync<EmulatedUser>(key);
-
-                        string accessToken = emulatedUser?.AccessToken ?? transformContext.HttpContext.User.AccessToken();
-
-                        transformContext.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    });             
-                });
+        AddYarp(services);
 
         // Needed if we want to serve mangoSPA using .NET web server.
         // Setup where the compiled version of our spa application will be, when in production. 
@@ -113,7 +101,11 @@ public class Startup
             });
         });
 
-        services.AddControllers();
+        //services.AddControllers();
+
+        // Antiforgery validation for controllers
+        services.AddControllersWithViews(options =>
+            options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
         services.Configure<ForwardedHeadersOptions>(options =>
         {
@@ -178,15 +170,32 @@ public class Startup
         app.UseMiddleware<SecurityHeadersMiddleware>();
         app.UseRouting();
         app.UseCors();
+
         app.UseOpenTelemetryPrometheusScrapingEndpoint();
+        app.UseHttpMetrics();
+
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseAntiforgery();
 
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
             endpoints.MapHealthChecks("/health");
-            endpoints.MapReverseProxy();
+            endpoints.MapMetrics();
+            endpoints.MapReverseProxy(proxy =>
+            {
+                //proxy.UseAntiforgery();
+
+                // Using this instead of UseAntiforgery().
+                // Our custom middleware returns problem details and the correct status code 400 bad request
+                // Instead of 502 bad gateway
+                proxy.UseMiddleware<YarpExceptionHandler>();
+
+                proxy.UseSessionAffinity();
+                proxy.UseLoadBalancing();
+                proxy.UsePassiveHealthChecks();
+            });
         });
 
         app.UseSerilogRequestLogging();
@@ -329,6 +338,46 @@ public class Startup
 
         //    };
         //});
+    }
+
+    public void AddYarp(IServiceCollection services)
+    {
+        services.AddReverseProxy()
+            .LoadFromConfig(Configuration.GetSection("ReverseProxy"))
+            .AddTransforms(builderContext =>
+            {
+                builderContext.AddRequestTransform(async transformContext =>
+                {
+                    // Antiforgery validation
+                    var isGetRequest = transformContext.ProxyRequest.Method.Method.Equals(System.Net.Http.HttpMethod.Get.Method, StringComparison.OrdinalIgnoreCase);
+                    if (!isGetRequest)
+                    {
+                        var antiforgery = transformContext.HttpContext.RequestServices.GetRequiredService<IAntiforgery>();
+                        await antiforgery.ValidateRequestAsync(transformContext.HttpContext);
+                    }
+
+                    var cache = transformContext.HttpContext.RequestServices.GetRequiredService<ICacheService>();
+
+                    var key = CacheKeys.EmulatedUser(transformContext.HttpContext.User.ClientKey(), transformContext.HttpContext.User.ContactId());
+                    var emulatedUser = await cache.GetDataAsync<EmulatedUser>(key);
+
+                    string accessToken = emulatedUser?.AccessToken ?? transformContext.HttpContext.User.AccessToken();
+
+                    transformContext.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                });
+            });
+    }
+
+    public void AddAddAntiforgery(IServiceCollection services, IWebHostEnvironment env)
+    {
+        services.AddAntiforgery(options =>
+        {
+            options.HeaderName = "X-XSRF-TOKEN";
+            options.Cookie.SameSite = env.IsLocal() ? SameSiteMode.None : SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = env.IsLowerEnvs() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+            options.Cookie.HttpOnly = true;
+            //options.Cookie.Expiration = TimeSpan.FromMinutes(Configuration.CookieExpirationInMinutes()); // doesnt work
+        });
     }
 
     public void AddServices(IServiceCollection services)

@@ -1,22 +1,3 @@
-@use 'apps/mango/src/assets/styles/colors.scss' as colors;
-
-.body-content {
-  padding: 0 24px;
-  font-size: 14px !important;
-}
-
-.modalContent {
-  overflow-y: auto !important;
-}
-
-.footerRightControls {
-  display: flex;
-  margin-left: auto;
-  align-items: center;
-  crem-button {
-    padding: 8px 0px 8px 8px;
-  }
-}
 ::ng-deep {
   mango-add-form-wizard {
     .footer-content {

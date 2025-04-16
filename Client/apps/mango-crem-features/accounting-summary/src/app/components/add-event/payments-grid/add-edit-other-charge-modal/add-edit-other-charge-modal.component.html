@@ -372,12 +372,14 @@
 
   <div modalFooter class="footer-content">
     <div
+      footerLeftControls
       class="errorMessage footerLeftControls"
       *ngIf="otherChargeErrors.length"
       [innerHTML]="otherChargeErrors"
     ></div>
 
     <div
+      footerRightControls
       [id]="accountingSummaryService.getId(componentName, 'footer', 'buttons')"
       class="footerRightControls"
     >

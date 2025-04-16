@@ -1,111 +1,124 @@
-import { Injectable } from "@angular/core";
-import { UtilitiesService } from "@mango/core-shared";
-import { SharedInfo } from "@mango/data-models/lib-data-models";
+import { Injectable } from '@angular/core';
+import { UtilitiesService } from '@mango/core-shared';
+import { SharedInfo } from '@mango/data-models/lib-data-models';
 
 @Injectable()
 /**
  * Provides a wrapper for accessing cookies that are accessible via JS.
  */
 export class CookieService {
-    public static readonly SHARED_INFO_COOKIE = '.SharedInfo';
-    public static readonly EXPIRES_PROPERTY = 'expires';
+  public static readonly SHARED_INFO_COOKIE = '.SharedInfo';
+  public static readonly EXPIRES_PROPERTY = 'expires';
 
-    public static get(name: string): string {
-        const cookies = document.cookie.split(';').map(item => item.trim())
+  public static get(name: string): string {
+    const cookies = document.cookie.split(';').map((item) => item.trim());
 
-        for (let i = 0; i < cookies.length; i++) {
-            const [key, value] = cookies[i].split('=');
-            if (key === name) {
-                return decodeURIComponent(value);
-            }
-        }
-
-        return '';
+    for (let i = 0; i < cookies.length; i++) {
+      const [key, value] = cookies[i].split('=');
+      if (key === name) {
+        return decodeURIComponent(value);
+      }
     }
 
-    public static getCookie<T>(name: string): T {
-        let data = this.get(name);
-        if (!data) return null
+    return '';
+  }
 
-        return <T>JSON.parse(data)
-    }
+  public static getCookie<T>(name: string): T {
+    let data = this.get(name);
+    if (!data) return null;
 
-    public static getSpecificValue(propertyName: string): string {
-        const data = document.cookie.split(";").find((item) => item.includes(propertyName))
-        if (!data) return null
+    return <T>JSON.parse(data);
+  }
 
-        return data.split('=')[1]
-    }
+  public static getSpecificValue(propertyName: string): string {
+    const data = document.cookie
+      .split(';')
+      .find((item) => item.includes(propertyName));
+    if (!data) return null;
 
-    public static set(name: string, value: string, expireHours: number, path: string = '') {
-        let d: Date = new Date();
-        let seconds = expireHours * 3600;
-        d.setTime(d.getTime() + seconds * 1000);
+    return data.split('=')[1];
+  }
 
-        let expires: string = `expires=${d.toUTCString()}`;
-        let cpath: string = path ? `path=${path}` : '';
+  public static set(
+    name: string,
+    value: string,
+    expireHours: number,
+    path: string = ''
+  ) {
+    let d: Date = new Date();
+    let seconds = expireHours * 3600;
+    d.setTime(d.getTime() + seconds * 1000);
 
-        const isLocal = UtilitiesService.isLocalEnvironment()
-        let sameSite: string = isLocal ? 'SameSite=None' : 'SameSite=Strict'
+    let expires: string = `expires=${d.toUTCString()}`;
+    let cpath: string = path ? `path=${path}` : '';
 
-        document.cookie = `${name}=${value}; ${expires};${cpath};${sameSite};Secure`;
-    }
+    const isLocal = UtilitiesService.isLocalEnvironment();
+    let sameSite: string = isLocal ? 'SameSite=None' : 'SameSite=Strict';
 
-    public static delete(name: string) {
-        this.set(name, '', -1);
-    }
+    document.cookie = `${name}=${value}; ${expires};${cpath};${sameSite};Secure`;
+  }
 
-    // Shared info cookie used by both SPA and V06 to share non-sensitive data
-    public static getSharedInfoCookie(clientKey: string): SharedInfo {
-        const cookieName = `${clientKey}${CookieService.SHARED_INFO_COOKIE}`;
+  public static delete(name: string) {
+    this.set(name, '', -1);
+  }
 
-        let data = this.get(cookieName);
-        if (!data) return null
+  // Shared info cookie used by both SPA and V06 to share non-sensitive data
+  public static getSharedInfoCookie(clientKey: string): SharedInfo {
+    const cookieName = `${clientKey}${CookieService.SHARED_INFO_COOKIE}`;
 
-        return JSON.parse(data)
-    }
+    let data = this.get(cookieName);
+    if (!data) return null;
 
-    public static setSharedInfoCookie(clientKey: string, sharedInfo: SharedInfo, expireHours: number = 8) {
-        const cookieName = `${clientKey}${CookieService.SHARED_INFO_COOKIE}`;
+    return JSON.parse(data);
+  }
 
-        let d: Date = new Date();
-        let seconds = expireHours * 3600;
-        d.setTime(d.getTime() + seconds * 1000);
+  public static setSharedInfoCookie(
+    clientKey: string,
+    sharedInfo: SharedInfo,
+    expireHours: number = 8
+  ) {
+    const cookieName = `${clientKey}${CookieService.SHARED_INFO_COOKIE}`;
 
-        let expires: string = d.toUTCString()
-        let domain: string = `.${window.location.hostname.split('.').splice(2).join('.')}`
-        const data = encodeURIComponent(JSON.stringify(sharedInfo))
+    let d: Date = new Date();
+    let seconds = expireHours * 3600;
+    d.setTime(d.getTime() + seconds * 1000);
 
-        const isLocal = UtilitiesService.isLocalEnvironment()
-        let sameSite: string = isLocal ? 'SameSite=None' : 'SameSite=Strict'
+    let expires: string = d.toUTCString();
+    let domain: string = `.${window.location.hostname
+      .split('.')
+      .splice(2)
+      .join('.')}`;
+    const data = encodeURIComponent(JSON.stringify(sharedInfo));
 
-        document.cookie = `${cookieName}=${data}; domain=${domain}; expires=${expires};path=/;${sameSite};Secure`;
-    }
+    const isLocal = UtilitiesService.isLocalEnvironment();
+    let sameSite: string = isLocal ? 'SameSite=None' : 'SameSite=Strict';
 
-    // Shared info cookie used by both SPA and V06
-    public static isV06Idle(): boolean {
-        let clientKey = UtilitiesService.getClientKeyFromUrl()
-        let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
+    document.cookie = `${cookieName}=${data}; domain=${domain}; expires=${expires};path=/;${sameSite};Secure`;
+  }
 
-        if (!sharedInfo) return true;
+  public static isV06Idle(): boolean {
+    let clientKey = UtilitiesService.getClientKeyFromUrl();
+    let sharedInfo = CookieService.getSharedInfoCookie(clientKey);
 
-        return sharedInfo.V06Idle
-    }
+    if (!sharedInfo) return true;
 
-    public static setMangoIdleCookieProperty(isMangoIdle: boolean): void {
-        let clientKey = UtilitiesService.getClientKeyFromUrl()
-        
-        let sharedInfo = CookieService.getSharedInfoCookie(clientKey)
-        if (!sharedInfo) return
+    return sharedInfo.V06Idle;
+  }
 
-        //if (sharedInfo.mangoIdle === isMangoIdle) return
+  public static setMangoIdleCookieProperty(isMangoIdle: boolean): void {
+    let clientKey = UtilitiesService.getClientKeyFromUrl();
 
-        sharedInfo.MangoIdle = isMangoIdle
+    let sharedInfo = CookieService.getSharedInfoCookie(clientKey);
+    if (!sharedInfo) return;
 
-        // Always default this value to true. V06 is responsible for updating this value
-        sharedInfo.V06Idle = true
+    //if (sharedInfo.mangoIdle === isMangoIdle) return
 
-        CookieService.setSharedInfoCookie(clientKey, sharedInfo)
-    }
-    // Shared info cookie used by both SPA and V06
+    sharedInfo.MangoIdle = isMangoIdle;
+
+    // Always default this value to true. V06 is responsible for updating this value
+    sharedInfo.V06Idle = true;
+
+    CookieService.setSharedInfoCookie(clientKey, sharedInfo);
+  }
+  // Shared info cookie used by both SPA and V06
 }

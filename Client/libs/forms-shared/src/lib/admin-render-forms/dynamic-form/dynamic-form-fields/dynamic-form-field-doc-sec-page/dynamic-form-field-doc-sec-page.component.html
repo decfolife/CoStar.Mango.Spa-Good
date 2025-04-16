@@ -1,5 +1,171 @@
 <div class="doc-sec-page">
-	<dx-text-box placeholder="Document"></dx-text-box>
-	<dx-text-box placeholder="Section"></dx-text-box>
-	<dx-text-box placeholder="Page"></dx-text-box>
+  <div [formGroup]="formGroup" class="df-clauseEleGroup">
+    <div
+      class="section-clause-description"
+      [ngClass]="{ 'add-bottom-margin': isEditMode }"
+    >
+      <div class="clause-text-label-field">
+        <crem-input
+          *ngIf="isEditMode"
+          [inputType]="'textarea'"
+          [maxLengthField]="7000"
+          [allowScrolling]="true"
+          [formControlName]="fieldData?.dataField"
+        >
+        </crem-input>
+        <crem-input-label
+          *ngIf="isViewMode"
+          [label]="fieldData?.name?.formItemAnswer"
+        >
+        </crem-input-label>
+      </div>
+
+      <div class="clause-bank-icon">
+        <span
+          [id]="fieldData?.dataField + 'ClauseBankPopupIcon'"
+          title="Click to show the clause bank popup"
+          aria-label="Click to view help text and history"
+          role="img"
+          (click)="
+            openClasueBankPopup(
+              fieldData?.dataField,
+              fieldData?.name?.clauseTypeID
+            )
+          "
+          (keydown.enter)="
+            openClasueBankPopup(
+              fieldData?.dataField,
+              fieldData?.name?.clauseTypeID
+            )
+          "
+          (keydown.space)="
+            openClasueBankPopup(
+              fieldData?.dataField,
+              fieldData?.name?.clauseTypeID
+            );
+            $event.preventDefault()
+          "
+        >
+          <svg *ngIf="showClauseBank">
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M4.83577 16.8709C5.76389 15.6526 6.56816 16.2142 7.69141 16.9998C7.71686 17.0168 7.74232 17.0355 7.86618 17.1203C8.24456 17.3833 8.64329 17.0321 9.02337 16.6961C9.19135 16.5485 9.35593 16.4026 9.5307 16.2906L9.7937 16.7046C9.65287 16.7945 9.50186 16.9286 9.34745 17.0643C8.82654 
+						17.5241 8.28189 18.006 7.58621 17.5241L7.40975 17.402C6.51216 16.7742 5.86909 16.3245 5.22602 17.1695L4.83577 16.8709ZM15.3726 0.536176C15.1215 0.816141 14.9807 1.0995 14.9247 1.38795C14.8636 1.70694 14.906 2.0412 15.0197 2.39243L15.1334 2.74196H3.04059V18.7254H3.0389C3.0389 19.3074 3.16276 19.7333 3.41897 19.9878C3.66839 20.2356 
+						4.06713 20.3323 4.62537 20.2695L4.65421 20.2678H16.8726V2.18543L16.8743 2.17355C16.9048 1.47957 16.7487 1.07066 16.4704 0.84329C16.2108 0.629498 15.824 0.551447 15.3726 0.536176ZM2.50611 2.74196H0L0.0101806 2.46539C0.0305417 1.90376 0.144225 1.39983 0.390255 0.982424C0.643072 0.553144 1.03163 0.220579 1.59835 0.0169676L1.68828 
+						0H15.8935L15.8494 0.0441158C16.2193 0.100109 16.5468 0.215489 16.8098 0.42928C17.2153 0.760148 17.4444 1.30311 17.4071 2.18373V18.062H19.304C19.511 18.062 19.3397 18.0637 19.4008 18.062C19.679 18.0603 19.8046 18.0603 19.92 18.2096C20.0099 18.325 20.0048 18.4285 19.9946 18.6152C19.9912 18.6762 19.9878 18.7526 19.9878 18.8697C19.9878 
+						19.8097 19.6638 20.3458 19.1157 20.6241C18.6321 20.8701 17.989 20.8888 17.2527 20.8006H4.66609C3.94666 20.8769 3.41049 20.7259 3.04399 20.3645C2.68258 20.0048 2.50781 19.4534 2.50781 18.7237H2.50611V2.74196ZM14.4004 1.28784C14.4496 1.03163 14.548 0.78051 14.7041 0.534479H1.73239C1.32008 0.693975 1.03502 0.940005 0.850077 1.25391C0.690581 
+						1.52369 0.600653 1.84607 0.561628 2.20748H14.4191C14.3546 1.89698 14.3427 1.58986 14.4004 1.28784ZM17.4088 18.5982V20.2831C18.0077 20.3475 18.5184 20.3306 18.8748 20.149C19.2379 19.9641 19.4534 19.5755 19.4534 18.8697C19.4534 18.7679 19.4584 18.6694 19.4618 18.5897C19.4652 18.5286 19.5297 18.5761 19.4975 18.5354C19.4534 18.4777 19.4992 
+						18.5931 19.4024 18.5948C19.2803 18.5948 19.4381 18.5965 19.3023 18.5965H17.4088V18.5982ZM5.03259 5.41775C4.88497 5.41775 4.7662 5.29898 4.7662 5.15136C4.7662 5.00375 4.88667 4.88497 5.03259 4.88497H12.7461C12.8937 4.88497 13.0125 5.00375 13.0125 5.15136C13.0125 5.29898 12.892 5.41775 12.7461 5.41775H5.03259ZM5.03259 8.15293C4.88497 8.15293 
+						4.7645 8.03416 4.7645 7.88654C4.7645 7.73892 4.88497 7.62015 5.03259 7.62015H14.4954C14.643 7.62015 14.7635 7.73892 14.7635 7.88654C14.7635 8.03416 14.643 8.15293 14.4954 8.15293H5.03259ZM5.03259 10.8898C4.88497 10.8898 4.7662 10.771 4.7662 10.6234C4.7662 10.4758 4.88667 10.357 5.03259 10.357H12.595C12.7427 10.357 12.8614 10.4775 12.8614 
+						10.6234C12.8614 10.771 12.7427 10.8898 12.595 10.8898H5.03259ZM5.03259 13.6267C4.88497 13.6267 4.7662 13.5062 4.7662 13.3586C4.7662 13.211 4.88497 13.0905 5.03259 13.0905H8.94701C9.09463 13.0905 9.21341 13.211 9.21341 13.3586C9.21341 13.5062 9.09463 13.6267 8.94701 13.6267H5.03259ZM13.5249 12.9938C13.6318 12.9887 13.7149 13.026 13.7997 
+						13.0803C13.9066 13.1499 14.0271 13.2822 14.1781 13.3671C14.3885 13.4858 14.7788 13.3213 14.9773 13.6182C15.0927 13.7913 15.0978 13.9253 15.108 14.0594C15.1164 14.2036 15.1419 14.3359 15.2912 14.5311C15.5355 14.8551 15.5864 15.0706 15.4609 15.2946C15.3743 15.449 15.1928 15.5338 15.1521 15.6289C15.0638 15.8342 15.1606 15.9903 15.0401 
+						16.2312C14.9552 16.3975 14.8246 16.5078 14.6515 16.5638C14.5056 16.6113 14.3563 16.5417 14.2392 16.5926C14.0339 16.6791 13.8812 16.8794 13.7166 16.932C13.6538 16.9523 13.5894 16.9608 13.5266 16.9608C13.4638 16.9608 13.3993 16.9523 13.3365 16.932C13.1719 16.8811 13.0209 16.6791 12.8139 16.5926C12.6969 16.5434 12.5492 16.6113 12.4016 
+						16.5638C12.2285 16.5078 12.0962 16.3975 12.0131 16.2312C11.8926 15.9903 11.9893 15.8359 11.9011 15.6289C11.8587 15.5304 11.6788 15.4456 11.5923 15.2946C11.465 15.0706 11.5159 14.8551 11.7619 14.5311C11.9096 14.3359 11.935 14.2019 11.9452 14.0594C11.9537 13.9253 11.9605 13.7896 12.0758 13.6182C12.2744 13.3213 12.6646 13.4875 12.875 
+						13.3671C13.0243 13.2822 13.1465 13.1465 13.2534 13.0803C13.3348 13.026 13.418 12.9904 13.5249 12.9938ZM13.5249 13.7896C14.1815 13.7896 14.7126 14.3207 14.7126 14.9773C14.7126 15.6339 14.1815 16.165 13.5249 16.165C12.8682 16.165 12.3371 15.6339 12.3371 14.9773C12.3371 14.3207 12.8682 13.7896 13.5249 13.7896Z"
+              fill="#393939"
+            />
+          </svg>
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="section-clause-details-label-field"
+      [ngClass]="{ 'df-clauseEditMode': isEditMode }"
+    >
+      <div
+        *ngIf="showDocView || showDocEdit"
+        class="clause-details-label-field df-clauseDocument"
+      >
+        <crem-input-label
+          class="detail-label df-clauseDocLabel"
+          [label]="'Document:'"
+          [required]="docFieldRequired"
+        ></crem-input-label>
+        <crem-input
+          class="df-clauseDocValue"
+          *ngIf="showDocEdit"
+          [inputType]="'text'"
+          [maxLengthField]="100"
+          [formControlName]="fieldData?.dataField + '_Document'"
+        >
+        </crem-input>
+        <crem-input-label
+          *ngIf="showDocView"
+          [label]="fieldData?.name?.sourceDocument"
+        ></crem-input-label>
+      </div>
+
+      <div
+        *ngIf="showSecView || showSecEdit"
+        class="clause-details-label-field df-clauseSection"
+      >
+        <crem-input-label
+          class="detail-label df-clauseSecLabel"
+          [label]="'Section:'"
+          [required]="secFieldRequired"
+        ></crem-input-label>
+        <crem-input
+          class="df-clauseSecValue"
+          *ngIf="showSecEdit"
+          [inputType]="'text'"
+          [maxLengthField]="50"
+          [formControlName]="fieldData?.dataField + '_Section'"
+        >
+        </crem-input>
+        <crem-input-label
+          *ngIf="showSecView"
+          [label]="fieldData?.name?.sourceSection"
+        ></crem-input-label>
+      </div>
+
+      <div
+        *ngIf="showPageView || showPageEdit"
+        class="clause-details-label-field df-clausePage"
+      >
+        <crem-input-label
+          class="detail-label df-clausePageLabel"
+          [label]="'Page:'"
+          [required]="pageFieldRequired"
+        ></crem-input-label>
+        <crem-input
+          class="df-clausePageValue"
+          *ngIf="showPageEdit"
+          [inputType]="'text'"
+          [maxLengthField]="50"
+          [formControlName]="fieldData?.dataField + '_Page'"
+        >
+        </crem-input>
+        <crem-input-label
+          *ngIf="showPageView"
+          [label]="fieldData?.name?.sourcePage"
+        ></crem-input-label>
+      </div>
+
+      <div
+        *ngIf="showDateView || showDateEdit"
+        class="clause-details-label-field df-clauseDate"
+      >
+        <crem-input-label
+          class="detail-label df-clauseDateLabel"
+          [label]="'Date:'"
+          [required]="dateFieldRequired"
+        ></crem-input-label>
+        <crem-date-picker
+          class="df-clauseDateValue"
+          *ngIf="showDateEdit"
+          use-dynamic-form-field-config
+          [dateFormat]="dateFormat"
+          [useMaskBehavior]="false"
+          [formControlName]="fieldData?.dataField + '_Date'"
+        >
+        </crem-date-picker>
+        <crem-input-label
+          *ngIf="showDateView"
+          [label]="fieldData?.name?.sourceDateView"
+        ></crem-input-label>
+      </div>
+    </div>
+  </div>
 </div>

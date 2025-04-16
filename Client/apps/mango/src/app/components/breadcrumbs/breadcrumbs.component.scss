@@ -6,8 +6,10 @@
   @include costar(border-bottom, gray04);
 
   .mango-breadcrumbs {
+    white-space: nowrap;
+
     .breadcrumb {
-      display: inline;
+      display: inline-block;
       font-size: 8pt;
       text-decoration: underline;
       cursor: pointer;

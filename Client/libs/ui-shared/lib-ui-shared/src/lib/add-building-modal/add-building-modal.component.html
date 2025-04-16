@@ -1,19 +1,15 @@
-<dx-load-panel
-  shadingColor="rgba(255,255,255)"
-  [visible]="loading"
-  *ngIf="loading"
-  [showIndicator]="true"
-  [showPane]="true"
-  [shading]="true"
-  [closeOnOutsideClick]="false"
-></dx-load-panel>
-
 <crem-modal
   modalId="add_building_modal__add_modal"
   modalTitleId="add_building_modal__create_center"
   [modalTitle]="modalTitle"
   closeIconVisible="true"
   [customFooter]="true"
+  [loading]="{
+		type: 'form',
+		instances: 6,
+		show: loading,
+		headerLoading: true,
+	}"
 >
   <div modalContent class="body-content">
     <div modalContent id="addBuildingModal-content">
@@ -23,28 +19,11 @@
         layout="vertical"
         [formGroup]="addBuildingFormGroup"
       >
-        <crem-form-item id="aet-buildingName-container">
-          <crem-form-label [required]="true"
-            >{{ dynName }} Name</crem-form-label
-          >
-          <crem-form-control>
-            <crem-input
-              #BuildingName
-              id="buildingName"
-              [showHint]="false"
-              [showLabel]="false"
-              [showInfo]="false"
-              [inputType]="'text'"
-              [required]="true"
-              formControlName="buildingName"
-              placeholder="Enter Building name"
-            ></crem-input>
-          </crem-form-control>
-        </crem-form-item>
         <crem-form-item id="aet-Portfolio-container">
           <crem-form-label [required]="true">Portfolio</crem-form-label>
           <crem-form-control>
             <crem-dropdown
+              [autoSelect]="true"
               id="buildingPortfolioId"
               #buildingPortfolioId
               dropDownContainerCustomClass="buildingPortfolioDropDown"
@@ -63,6 +42,25 @@
               formControlName="selectedPortfolio"
             >
             </crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
+
+        <crem-form-item id="aet-buildingName-container">
+          <crem-form-label [required]="true"
+            >{{ dynName }} Name</crem-form-label
+          >
+          <crem-form-control>
+            <crem-input
+              #BuildingName
+              id="buildingName"
+              [showHint]="false"
+              [showLabel]="false"
+              [showInfo]="false"
+              [inputType]="'text'"
+              [required]="true"
+              formControlName="buildingName"
+              placeholder="Enter name"
+            ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
@@ -106,6 +104,7 @@
               hoverText="Select Hierarchy"
               [isDisabled]="loading"
               formControlName="selectedHierarchy"
+              [containerized]="false"
             >
             </crem-dropdown>
           </crem-form-control>
@@ -128,6 +127,7 @@
               [initialSelectedValue]="'United States'"
               [selectBoxValue]="'United States'"
               formControlName="selectedCountry"
+              [containerized]="false"
             >
             </crem-dropdown>
           </crem-form-control>
@@ -144,12 +144,12 @@
               [inputType]="'text'"
               [required]="false"
               formControlName="buildingAddress"
-              placeholder="Enter Building Address"
+              placeholder="Enter address"
             ></crem-input>
           </crem-form-control>
         </crem-form-item>
 
-        <div id="aet-buildingInfo-container" class="container">
+        <div id="aet-buildingInfo-container">
           <div class="buildingInfo">
             <crem-form-item>
               <crem-form-label>City</crem-form-label>
@@ -161,7 +161,7 @@
                   [showInfo]="false"
                   [inputType]="'text'"
                   formControlName="buildingCity"
-                  placeholder="Enter City"
+                  placeholder="Enter city"
                 ></crem-input>
               </crem-form-control>
             </crem-form-item>
@@ -183,6 +183,7 @@
                   [useSelectBox]="true"
                   hoverText="Select State"
                   formControlName="buildingState"
+                  [containerized]="false"
                 >
                 </crem-dropdown>
 
@@ -212,7 +213,7 @@
                   [maxLengthField]="10"
                   [inputType]="'text'"
                   formControlName="buildingZipCode"
-                  placeholder="Enter Building Zip Code"
+                  placeholder="Enter zip code"
                 ></crem-input>
               </crem-form-control>
             </crem-form-item>
@@ -237,6 +238,7 @@
               [useSelectBox]="true"
               hoverText="Select Sub Group"
               formControlName="selectedSubGroup"
+              [containerized]="false"
             >
             </crem-dropdown>
           </crem-form-control>
@@ -278,7 +280,7 @@
       [iconAnimation]="saveClicked ? 'spin' : ''"
     >
       <span>
-        {{ saveNewClicked ? 'Saving' : 'Save and New' }}
+        {{ saveNewClicked ? 'Saving' : 'Save & New' }}
       </span></crem-button
     >
 

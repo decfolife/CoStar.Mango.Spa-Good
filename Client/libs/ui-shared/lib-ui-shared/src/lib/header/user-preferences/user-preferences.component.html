@@ -1,5 +1,4 @@
 <crem-modal
-  className="newModal"
   modalTitle="User Preferences"
   modalTitleId="userPreferences"
   modalId="userPreferences"
@@ -9,204 +8,197 @@
 >
   <div modalContent class="body-content">
     <form
-      [hidden]="disablePasswordChange"
+      *ngIf="isPasswordEnabled"
       crem-form
       id="updatePasswordForm"
       [formGroup]="updatePasswordForm"
+      layout="vertical"
     >
       <div class="section-header">
         <span class="section-title">Change Password</span>
         <hr />
       </div>
-      <div class="section">
-        <div class="col1">
-          <crem-form-item>
-            <crem-form-control>
-              <crem-input
-                id="userPreferencesCurrentPassword"
-                label="Current Password"
-                showLabel="true"
-                inputType="text"
-                placeholder="Enter current password"
-                formControlName="currentPassword"
-              ></crem-input>
-            </crem-form-control>
-          </crem-form-item>
-        </div>
+
+      <div class="layout-container">
+        <crem-form-item>
+          <crem-form-label [required]="true">
+            Current Password
+          </crem-form-label>
+          <crem-form-control>
+            <crem-input
+              id="userPreferencesCurrentPassword"
+              showLabel="true"
+              inputType="password"
+              placeholder="Enter current password"
+              formControlName="currentPassword"
+            ></crem-input>
+          </crem-form-control>
+        </crem-form-item>
+        <div></div>
       </div>
-      <div class="section">
-        <div class="col1">
-          <crem-form-item>
-            <crem-form-control>
-              <crem-input
-                id="userPreferencesNewPassword"
-                label="New Password"
-                showLabel="true"
-                inputType="text"
-                placeholder="Enter new password"
-                formControlName="password"
-              ></crem-input>
-            </crem-form-control>
-          </crem-form-item>
-        </div>
-        <div class="col2">
-          <crem-form-item>
-            <crem-form-control>
-              <crem-input
-                id="userPreferencesConfirmPassword"
-                label="Confirm Password"
-                showLabel="true"
-                inputType="text"
-                placeholder="Confirm Password"
-                formControlName="confirmPassword"
-              ></crem-input>
-            </crem-form-control>
-          </crem-form-item>
-        </div>
+
+      <div class="layout-container">
+        <crem-form-item>
+          <crem-form-label [required]="true"> New Password </crem-form-label>
+          <crem-form-control>
+            <crem-input
+              id="userPreferencesNewPassword"
+              showLabel="true"
+              inputType="password"
+              placeholder="Enter new password"
+              formControlName="password"
+            ></crem-input>
+          </crem-form-control>
+        </crem-form-item>
+
+        <crem-form-item>
+          <crem-form-label [required]="true">
+            Confirm Password
+          </crem-form-label>
+          <crem-form-control>
+            <crem-input
+              id="userPreferencesConfirmPassword"
+              showLabel="true"
+              inputType="password"
+              placeholder="Confirm Password"
+              formControlName="confirmPassword"
+            ></crem-input>
+          </crem-form-control>
+        </crem-form-item>
       </div>
     </form>
-    <form crem-form id="userPreferencesForm" [formGroup]="userPreferencesForm">
+
+    <form
+      crem-form
+      id="userPreferencesForm"
+      [formGroup]="userPreferencesForm"
+      layout="vertical"
+    >
       <div class="section-header">
         <span class="section-title">Preferences</span>
         <hr />
       </div>
-      <div class="section">
-        <div class="col1">
-          <div class="dropdown-section">
-            <crem-form-item>
-              <span>Date Style </span><span class="required">*</span>
-              <crem-form-control formControlName="dateStyle">
-                <crem-dropdown
-                  id="userPreferencesDateStyle"
-                  [dataSource]="dateTypes"
-                  [initialSelectedValue]="
-                    userPreferences.contactDatesEU ? 1 : 0
-                  "
-                  [containerized]="false"
-                  displayExpr="display"
-                  valueExpr="value"
-                  (selectedItems)="dateStyleChanged($event)"
-                ></crem-dropdown>
-              </crem-form-control>
-            </crem-form-item>
-          </div>
-        </div>
-        <div class="col2">
-          <div class="dropdown-section">
-            <crem-form-item>
-              <span>Measurement </span><span class="required">*</span>
-              <crem-form-control>
-                <crem-dropdown
-                  id="userPreferencesDefaultMeasurement"
-                  [dataSource]="measurements"
-                  [initialSelectedValue]="userPreferences.contactMeasurements"
-                  [searchMode]="'contains'"
-                  [searchExpr]="'measureUnitType'"
-                  [allowSearch]="true"
-                  [containerized]="false"
-                  displayExpr="measureUnitType"
-                  valueExpr="measureUnitsID"
-                  formControlName="measurement"
-                ></crem-dropdown>
-              </crem-form-control>
-            </crem-form-item>
-          </div>
-        </div>
+
+      <div class="layout-container">
+        <crem-form-item>
+          <crem-form-label [required]="true"> Date Style </crem-form-label>
+          <crem-form-control formControlName="dateStyle">
+            <crem-dropdown
+              id="userPreferencesDateStyle"
+              [dataSource]="dateTypes"
+              [initialSelectedValue]="userPreferences.contactDatesEU ? 1 : 0"
+              [containerized]="false"
+              displayExpr="display"
+              valueExpr="value"
+              (selectedItems)="dateStyleChanged($event)"
+            ></crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
+
+        <crem-form-item>
+          <crem-form-label [required]="true"> Measurement </crem-form-label>
+          <crem-form-control>
+            <crem-dropdown
+              id="userPreferencesDefaultMeasurement"
+              [dataSource]="measurements"
+              [initialSelectedValue]="userPreferences.contactMeasurements"
+              [searchMode]="'contains'"
+              [searchExpr]="'measureUnitType'"
+              [allowSearch]="true"
+              [containerized]="false"
+              displayExpr="measureUnitType"
+              valueExpr="measureUnitsID"
+              formControlName="measurement"
+            ></crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
       </div>
-      <div class="section">
-        <div class="col1">
-          <div class="dropdown-section">
-            <crem-form-item>
-              <span>Currency </span><span class="required">*</span>
-              <crem-form-control>
-                <crem-dropdown
-                  id="userPreferencesDefaultCurrency"
-                  [dataSource]="currencyMappings"
-                  [initialSelectedValue]="userPreferences.contactCurrency"
-                  [searchMode]="'contains'"
-                  [searchExpr]="'currencyName'"
-                  [allowSearch]="true"
-                  [containerized]="false"
-                  displayExpr="currencyName"
-                  valueExpr="currencyID"
-                  formControlName="currency"
-                ></crem-dropdown>
-              </crem-form-control>
-            </crem-form-item>
-          </div>
-        </div>
-        <div class="col2">
-          <div class="dropdown-section">
-            <crem-form-item>
-              <span>Start Page </span><span class="required">*</span>
-              <crem-form-control>
-                <crem-dropdown
-                  id="userPreferencesDefaultStartPage"
-                  [dataSource]="possibleStartPages"
-                  [initialSelectedValue]="initialStartPageValue"
-                  [searchMode]="'contains'"
-                  [searchExpr]="'pageName'"
-                  [allowSearch]="true"
-                  [containerized]="false"
-                  displayExpr="pageName"
-                  valueExpr="pagePath"
-                  formControlName="startPage"
-                ></crem-dropdown>
-              </crem-form-control>
-            </crem-form-item>
-          </div>
-        </div>
+
+      <div class="layout-container">
+        <crem-form-item>
+          <crem-form-label [required]="true"> Currency </crem-form-label>
+          <crem-form-control>
+            <crem-dropdown
+              id="userPreferencesDefaultCurrency"
+              [dataSource]="currencyMappings"
+              [initialSelectedValue]="userPreferences.contactCurrency"
+              [searchMode]="'contains'"
+              [searchExpr]="'currencyName'"
+              [allowSearch]="true"
+              [containerized]="false"
+              displayExpr="currencyName"
+              valueExpr="currencyID"
+              formControlName="currency"
+            ></crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
+
+        <crem-form-item>
+          <crem-form-label [required]="true"> Start Page </crem-form-label>
+          <crem-form-control>
+            <crem-dropdown
+              id="userPreferencesDefaultStartPage"
+              [dataSource]="possibleStartPages"
+              [initialSelectedValue]="initialStartPageValue"
+              [searchMode]="'contains'"
+              [searchExpr]="'pageName'"
+              [allowSearch]="true"
+              [containerized]="false"
+              displayExpr="pageName"
+              valueExpr="pagePath"
+              formControlName="startPage"
+            ></crem-dropdown>
+          </crem-form-control>
+        </crem-form-item>
       </div>
-      <div class="section">
-        <div class="col1">
-          <div class="toggle-section">
-            <crem-form-item>
-              <p>Consolidate Project Emails</p>
-              <crem-form-control>
-                <crem-toggle-slider
-                  id="userPreferencesConsolidateEmails"
-                  [value]="userPreferences.contactConsolidatedEmails"
-                  checkedLabel="YES"
-                  uncheckedLabel="NO"
-                  size="wide"
-                  formControlName="consolidateProjectEmails"
-                  ariaLabel="Consolidate Project Emails"
-                ></crem-toggle-slider>
-              </crem-form-control>
-            </crem-form-item>
-          </div>
+
+      <div class="layout-container">
+        <div class="toggle-section">
+          <crem-form-item>
+            <p>Consolidate Project Emails</p>
+            <crem-form-control>
+              <crem-toggle-slider
+                id="userPreferencesConsolidateEmails"
+                [value]="userPreferences.contactConsolidatedEmails"
+                checkedLabel="YES"
+                uncheckedLabel="NO"
+                size="wide"
+                formControlName="consolidateProjectEmails"
+                ariaLabel="Consolidate Project Emails"
+              ></crem-toggle-slider>
+            </crem-form-control>
+          </crem-form-item>
         </div>
-        <div class="col2">
-          <div class="text-section">
-            <p>Email Subscriptions</p>
-            <span>Click here to manage </span
-            ><a
-              id="userPreferencesEmailSubscriptions"
-              href="https://lp.costarmanager.com/contact-signup"
-              >Email Subscriptions</a
-            ><crem-icon icon="faArrowUpRightFromSquare"></crem-icon>
-          </div>
+
+        <div class="text-section">
+          <p>Email Subscriptions</p>
+          <span>Click here to manage </span>
+          <a
+            id="userPreferencesEmailSubscriptions"
+            href="https://lp.costarmanager.com/contact-signup"
+          >
+            Email Subscriptions
+            <crem-icon icon="faArrowUpRightFromSquare"></crem-icon>
+          </a>
         </div>
       </div>
     </form>
   </div>
 
-  <div modalFooter class="footer-content">
-    <div id="ButtonTemplate" class="footerRightControls">
-      <crem-button
-        type="secondary"
-        id="userPreferencesCancel"
-        (click)="closeModal()"
-      >
-        Cancel
-      </crem-button>
-      <crem-button
-        type="primary"
-        id="userPreferencesSave"
-        (click)="savePreferences()"
-      >
-        Save
-      </crem-button>
-    </div>
+  <div modalFooter class="footer-content" id="ButtonTemplate">
+    <crem-button
+      type="secondary"
+      id="userPreferencesCancel"
+      (click)="closeModal()"
+    >
+      Cancel
+    </crem-button>
+    <crem-button
+      type="primary"
+      id="userPreferencesSave"
+      (click)="savePreferences()"
+    >
+      Save
+    </crem-button>
   </div>
 </crem-modal>

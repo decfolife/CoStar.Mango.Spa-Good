@@ -169,78 +169,73 @@
       </div>
     </crem-vertical-stepper>
   </div>
-  <div modalFooter class="footer-content">
-    <div id="'ButtonTemplate'" class="footerRightControls">
+  <div modalFooter class="footer-content" id="'ButtonTemplate'">
+    <crem-button
+      [id]="idPrefix + 'CancelButton'"
+      type="secondary"
+      (click)="cancelDialog($event)"
+    >
+      Cancel
+    </crem-button>
+    <ng-container *ngIf="!data.archived">
       <crem-button
-        [id]="idPrefix + 'CancelButton'"
+        *ngIf="
+          !(data.redirectData?.source === 'runreport') &&
+          data.openReportAction === 'edit'
+        "
         type="secondary"
-        (click)="cancelDialog($event)"
-      >
-        Cancel
-      </crem-button>
-      <ng-container *ngIf="!data.archived">
-        <crem-button
-          *ngIf="
-            !(data.redirectData?.source === 'runreport') &&
-            data.openReportAction === 'edit'
-          "
-          type="secondary"
-          [id]="idPrefix + 'SaveAsbutton'"
-          [attr.title]="
-            !hasEditRight
-              ? 'You have View rights for segments. Ask your administrator to grant you Add rights to create a segment.'
-              : ''
-          "
-          [disabled]="data.archived || !hasEditRight"
-          (click)="!(data.archived || !hasEditRight) && saveAsClicked($event)"
-        >
-          Save As
-        </crem-button>
-        <crem-button
-          *ngIf="
-            !(data.redirectData?.source === 'runreport') &&
-            !(data.openReportAction === 'edit')
-          "
-          type="secondary"
-          [id]="idPrefix + 'SaveAndNewbutton'"
-          [disabled]="data.archived || !hasEditRight"
-          (click)="
-            !(data.archived || !hasEditRight) && saveSegment($event, true)
-          "
-        >
-          Save & New
-        </crem-button>
-        <crem-button
-          [id]="idPrefix + 'SaveButton'"
-          type="primary"
-          [attr.title]="
-            !hasObjectEditRight
-              ? 'You have View rights to this segment. Ask your administrator to grant you additional rights to edit this segment.'
-              : ''
-          "
-          [disabled]="data.archived || !hasObjectEditRight"
-          (click)="
-            !(data.archived || !hasObjectEditRight) &&
-              saveSegment($event, false)
-          "
-        >
-          Save
-        </crem-button>
-      </ng-container>
-      <crem-button
-        *ngIf="data.archived"
-        [id]="idPrefix + 'UnarchiveButton'"
+        [id]="idPrefix + 'SaveAsbutton'"
         [attr.title]="
-          !hasObjectDeleteRight
-            ? 'You do not have the necessary rights to unarchive a segment.'
+          !hasEditRight
+            ? 'You have View rights for segments. Ask your administrator to grant you Add rights to create a segment.'
             : ''
         "
-        type="primary"
-        [disabled]="!hasObjectDeleteRight"
-        (click)="hasObjectDeleteRight && unarchiveSegment($event)"
+        [disabled]="data.archived || !hasEditRight"
+        (click)="!(data.archived || !hasEditRight) && saveAsClicked($event)"
       >
-        Unarchive
+        Save As
       </crem-button>
-    </div>
+      <crem-button
+        *ngIf="
+          !(data.redirectData?.source === 'runreport') &&
+          !(data.openReportAction === 'edit')
+        "
+        type="secondary"
+        [id]="idPrefix + 'SaveAndNewbutton'"
+        [disabled]="data.archived || !hasEditRight"
+        (click)="!(data.archived || !hasEditRight) && saveSegment($event, true)"
+      >
+        Save & New
+      </crem-button>
+      <crem-button
+        [id]="idPrefix + 'SaveButton'"
+        type="primary"
+        [attr.title]="
+          !hasObjectEditRight
+            ? 'You have View rights to this segment. Ask your administrator to grant you additional rights to edit this segment.'
+            : ''
+        "
+        [disabled]="data.archived || !hasObjectEditRight"
+        (click)="
+          !(data.archived || !hasObjectEditRight) && saveSegment($event, false)
+        "
+      >
+        Save
+      </crem-button>
+    </ng-container>
+    <crem-button
+      *ngIf="data.archived"
+      [id]="idPrefix + 'UnarchiveButton'"
+      [attr.title]="
+        !hasObjectDeleteRight
+          ? 'You do not have the necessary rights to unarchive a segment.'
+          : ''
+      "
+      type="primary"
+      [disabled]="!hasObjectDeleteRight"
+      (click)="hasObjectDeleteRight && unarchiveSegment($event)"
+    >
+      Unarchive
+    </crem-button>
   </div>
 </crem-modal>

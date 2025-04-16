@@ -88,18 +88,18 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.subs.add(
-      this.leftNavService
-        .getETLModulesNavigationLinks()
-        .pipe()
-        .subscribe((result) => {
-          if (result.success) {
-            this.setCustomLeftNav(result.data);
-          } else {
-            this.handleError(result.errorMessage);
-          }
-        })
-    );
+    // this.subs.add(
+    //   this.leftNavService
+    //     .getETLModulesNavigationLinks()
+    //     .pipe()
+    //     .subscribe((result) => {
+    //       if (result.success) {
+    //         this.setCustomLeftNav(result.data);
+    //       } else {
+    //         this.handleError(result.errorMessage);
+    //       }
+    //     })
+    // );
 
     this.subs.add(
       this.etlService.getHasEditRights().subscribe((result) => {

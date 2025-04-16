@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable rxjs-angular/prefer-composition */
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 import { DxDataGridComponent, DxFormComponent } from 'devextreme-angular';
 import { BaseService } from '../../services/base.service';
@@ -13,7 +13,10 @@ import {
   ParameterOverrides,
   ParametersData,
 } from '../../shared/models';
-
+import { Subscription } from 'rxjs';
+import { ToastMessageService } from '@batch-accounting/services/toast-message.service';
+import { CLIENT_ERROR_MESSAGE } from '@batch-accounting/shared/models/batch-accounting-constants';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 interface IDropdownOptions {
   id: string;
 }
@@ -23,16 +26,17 @@ interface IDropdownOptions {
   templateUrl: './parameters-grid.component.html',
   styleUrls: ['./parameters-grid.component.scss'],
 })
-export class ParametersGridComponent implements OnInit {
+export class ParametersGridComponent implements OnInit, OnDestroy {
   discountRateOptions: IDropdownOptions[];
   functionalRateOptions: IDropdownOptions[];
   defaultManualAdjustmentOptions: IDropdownOptions[];
+  rouAssetObtainedDateOptions: IDropdownOptions[];
   commentsOptions: IDropdownOptions[];
-
   beginDateReadOnly = false;
   discountRateReadOnly = false;
-
+  showROUAssetObtainedColumns = false;
   private _isValid = false;
+  dateFormat = 'MM/dd/yyyy';
   get isValid() {
     return this._isValid;
   }
@@ -44,6 +48,7 @@ export class ParametersGridComponent implements OnInit {
 
   measureEventType: MeasureEvent;
   parameterOverrides: ParameterOverrides;
+  private subscriptions: Subscription[] = [];
 
   parameterOverrideRequired = {
     accountingTermBeginDateOverride: false,
@@ -54,9 +59,11 @@ export class ParametersGridComponent implements OnInit {
     annualRateTypeOverride: false,
     manualAssetAdjustmentOverride: false,
     paymentTimingOverride: false,
+    rouAssetObtainedMethodOverride: false,
+    rouAssetObtainedDateOverride: false,
   };
 
-  private remeasureParameters: MeasureEventSetting[];
+  remeasureParameters: MeasureEventSetting[];
 
   @Input()
   isReadOnly = false;
@@ -89,7 +96,9 @@ export class ParametersGridComponent implements OnInit {
 
   constructor(
     public batchParametersService: BatchParametersService,
-    public baseService: BaseService
+    public baseService: BaseService,
+    public toastMessage: ToastMessageService,
+    private mangoAppFacade: MangoAppFacade
   ) {
     this.parameterOverrides = {
       accountingTermBeginDateOverride: null,
@@ -100,7 +109,13 @@ export class ParametersGridComponent implements OnInit {
       discountRateOverride: null,
       manualAssetAdjustmentOverride: null,
       paymentTimingOverride: null,
+      rouAssetObtainedMethodOverride: null,
+      rouAssetObtainedDateOverride: null,
     };
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((subs) => subs.unsubscribe);
   }
 
   ngOnInit(): void {
@@ -111,8 +126,19 @@ export class ParametersGridComponent implements OnInit {
       this.parameterOverrides = this.parametersData?.gridOverrides;
       this.remeasureParameters = this.parametersData?.gridData;
     }
-
     this.setDefaultGridEditorOptions();
+    this.showROUAssetColumn();
+    this.getUserDatePreferences();
+  }
+
+  getUserDatePreferences() {
+    this.subscriptions.push(
+      this.mangoAppFacade.contactRecord$.subscribe((contact) => {
+        this.dateFormat = contact.preferences.contactDatesEU
+          ? 'dd.MM.yyyy'
+          : 'MM/dd/yyyy';
+      })
+    );
   }
 
   getClassificationName(classificationId: number): string {
@@ -121,6 +147,34 @@ export class ParametersGridComponent implements OnInit {
     );
 
     return classification?.classificationType;
+  }
+
+  showROUAssetColumn() {
+    const filteredClassificationID = this.classificationTypes.map(
+      (item) => item.classificationID
+    );
+
+    const operating840Classifications = filteredClassificationID.some(
+      (id) => id === 0 || id === 1 || id === 5
+    );
+    const operating842Classifications = filteredClassificationID.some(
+      (id) => id === 2 || id === 3 || id === 4
+    );
+
+    if (operating840Classifications && operating842Classifications) {
+      this.showROUAssetObtainedColumns = true;
+      return;
+    }
+
+    if (operating842Classifications) {
+      this.showROUAssetObtainedColumns = true;
+      return;
+    }
+
+    if (operating840Classifications) {
+      this.showROUAssetObtainedColumns = false;
+      return;
+    }
   }
 
   onToolbarPreparing(e): void {
@@ -142,8 +196,8 @@ export class ParametersGridComponent implements OnInit {
 
       //This is needed when a user clicks the previous button on the confirmation screen so that
       //the correct values are loaded in the Classification Parameters dropdowns
-      if (this.parametersData.cardMeasureEvent.remeasureTypeName) {
-        this.checkFullTermination(this.parametersData.cardMeasureEvent);
+      if (this.parametersData?.cardMeasureEvent?.remeasureTypeName) {
+        this.checkFullTermination(this.parametersData?.cardMeasureEvent);
       }
 
       return;
@@ -252,6 +306,42 @@ export class ParametersGridComponent implements OnInit {
           },
           ...filtered,
         ];
+        break;
+      }
+
+      case 'rouAssetObtainedMethodName': {
+        let filterRouAssetObtainedMethods;
+
+        evt.row.data.remeasureTypeID === 6
+          ? (filterRouAssetObtainedMethods =
+              this.portfolioClassificationConfigurationOptions?.rouAssetMethods.filter(
+                (rouAssetID) => rouAssetID.id === 1 || rouAssetID.id === 7
+              ))
+          : (filterRouAssetObtainedMethods =
+              this.portfolioClassificationConfigurationOptions
+                ?.rouAssetMethods);
+
+        evt.editorOptions.dataSource = filterRouAssetObtainedMethods;
+        if ([0, 1, 5].includes(evt.row.data.classificationID)) {
+          evt.editorOptions.disabled = true;
+          evt.editorOptions.dataSource = [{ id: 'Not Applicable' }];
+          evt.editorOptions.value = 'Not Applicable';
+          evt.row.data.rouAssetDateOption = 'Not Applicable';
+        } else {
+          evt.editorOptions.disabled = false;
+        }
+        break;
+      }
+      case 'defaultRouAssetObtainedDateOption': {
+        if ([0, 1, 5].includes(evt.row.data.classificationID)) {
+          evt.editorOptions.disabled = true;
+          evt.editorOptions.dataSource = [{ id: 'Not Applicable' }];
+          evt.editorOptions.value = 'Not Applicable';
+          evt.row.data.rouAssetObtainedMethodName = 'Not Applicable';
+        } else {
+          evt.editorOptions.dataSource = this.rouAssetObtainedDateOptions;
+          evt.editorOptions.disabled = false;
+        }
         break;
       }
     }
@@ -433,10 +523,54 @@ export class ParametersGridComponent implements OnInit {
         return data.manualAdjustmentOption === 'Direct Entry';
       });
 
+    this.parameterOverrideRequired.rouAssetObtainedMethodOverride =
+      dataItems.some((data) => {
+        return data.rouAssetObtainedMethodName === 'Direct Entry';
+      });
+
+    this.parameterOverrideRequired.rouAssetObtainedDateOverride =
+      dataItems.some((data) => {
+        return data.defaultRouAssetObtainedDateOption === 'Direct Entry';
+      });
+
     this.updateValidity();
   };
 
   // ***
+
+  setRouAssetMethodName() {
+    this.portfolioClassificationConfiguration.forEach((element) => {
+      element.defaultRouAssetObtainedDateOption = 'Accounting Event Start Date';
+
+      switch (element.rouAssetMethodID) {
+        case 1:
+          element.rouAssetObtainedMethodName = 'Direct Entry';
+          break;
+        case 2:
+          element.rouAssetObtainedMethodName = 'Opening Asset Balance';
+          break;
+        case 3:
+          element.rouAssetObtainedMethodName = 'System Asset Adjustment';
+          break;
+        case 4:
+          element.rouAssetObtainedMethodName = 'Manual Asset Adjustment';
+          break;
+        case 5:
+          element.rouAssetObtainedMethodName = 'Total Asset Adjustment';
+          break;
+        case 6:
+          element.rouAssetObtainedMethodName = 'Prior Value';
+          break;
+        case 7:
+          element.rouAssetObtainedMethodName = 'Zero';
+          break;
+
+        default:
+          element.rouAssetObtainedMethodName = null;
+          break;
+      }
+    });
+  }
 
   private filterDiscountRateOptions() {
     if (!this.portfolioSettings?.discountRateMatching) {
@@ -472,11 +606,60 @@ export class ParametersGridComponent implements OnInit {
       { id: 'No Adjustment' },
     ];
 
-    this.commentsOptions = [
+    this.rouAssetObtainedDateOptions = [
+      { id: 'Accounting Event Start Date' },
       { id: 'Direct Entry' },
+    ];
+
+    this.commentsOptions = [
       { id: 'Prior Comments' },
+      { id: 'Direct Entry' },
       { id: 'Measured Batch [#] by [User] on [Date]' },
     ];
+  }
+
+  onCellPrepared(event) {
+    if (event.rowType === 'data') {
+      switch (event.column.dataField) {
+        case 'defaultRouAssetObtainedDateOption': {
+          if ([0, 1, 5].includes(event.row.data.classificationID)) {
+            event.column.editorOptions.disabled = true;
+            event.column.lookup.dataSource = [{ id: 'Not Applicable' }];
+            event.text = 'Not Applicable';
+            event.value = 'Not Applicable';
+            event.data.defaultRouAssetObtainedDateOption = 'Not Applicable';
+          } else {
+            event.column.lookup.dataSource = this.rouAssetObtainedDateOptions;
+          }
+          break;
+        }
+        case 'rouAssetObtainedMethodName': {
+          if ([0, 1, 5].includes(event.row.data.classificationID)) {
+            event.column.editorOptions.disabled = true;
+            event.column.lookup.dataSource = [{ id: 'Not Applicable' }];
+            event.text = 'Not Applicable';
+            event.value = 'Not Applicable';
+            event.data.rouAssetObtainedMethodName = 'Not Applicable';
+          } else {
+            event.column.lookup.dataSource = [
+              ...new Set(
+                this.portfolioClassificationConfiguration
+                  .filter((con) => {
+                    return (
+                      con.classificationID === event.row.data.classificationID
+                    );
+                  })
+                  .map((itm) => itm.rouAssetObtainedMethodName)
+              ),
+            ];
+            event.text = event.row.data.rouAssetObtainedMethodName;
+            event.data.rouAssetObtainedMethodName =
+              event.row.data.rouAssetObtainedMethodName;
+          }
+          break;
+        }
+      }
+    }
   }
 
   private populatePortfolioClassificationConfigurationOptions(): void {
@@ -484,26 +667,31 @@ export class ParametersGridComponent implements OnInit {
       return;
     }
 
-    this.batchParametersService
-      .getPortfolioClassificationConfigurationOptions(this.masterGroupID)
-      .subscribe((result) => {
-        this.portfolioClassificationConfigurationOptions = result.data;
+    this.subscriptions.push(
+      this.batchParametersService
+        .getPortfolioClassificationConfigurationOptions(this.masterGroupID)
+        .subscribe((result) => {
+          if (result?.success) {
+            this.portfolioClassificationConfigurationOptions = result.data;
+            this.portfolioClassificationConfigurationOptions?.journalEntryProfiles?.unshift(
+              {
+                profileName: 'Select a Profile...',
+                profileID: -1,
+                leaseRecognitionType: null,
+              },
+              {
+                profileName: 'Prior Value',
+                profileID: null,
+                leaseRecognitionType: null,
+              }
+            );
 
-        this.portfolioClassificationConfigurationOptions?.journalEntryProfiles?.unshift(
-          {
-            profileName: 'Select a Profile...',
-            profileID: -1,
-            leaseRecognitionType: null,
-          },
-          {
-            profileName: 'Prior Value',
-            profileID: null,
-            leaseRecognitionType: null,
+            this.setMeasurementSettingsByMeasureEvent(this.measureEventType);
+          } else {
+            this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
           }
-        );
-
-        this.setMeasurementSettingsByMeasureEvent(this.measureEventType);
-      });
+        })
+    );
   }
 
   private populatePortfolioSettingsAndPortfolioClassificationConfiguration(): void {
@@ -511,42 +699,79 @@ export class ParametersGridComponent implements OnInit {
       return;
     }
 
-    this.batchParametersService
-      .getPortfolioSettings(this.masterGroupID)
-      .subscribe((result) => {
-        this.portfolioSettings = result?.data.item1;
+    this.subscriptions.push(
+      this.batchParametersService
+        .getPortfolioSettings(this.masterGroupID)
+        .subscribe((result) => {
+          if (result?.success) {
+            this.portfolioSettings = result?.data?.item1;
+            if (this.portfolioSettings?.defaultAnnualRateType) {
+              this.parameterOverrides.annualRateTypeOverride = [
+                '',
+                'APR',
+                'APY',
+              ][this.portfolioSettings?.defaultAnnualRateType];
+            }
 
-        if (this.portfolioSettings?.defaultAnnualRateType) {
-          this.parameterOverrides.annualRateTypeOverride = ['', 'APR', 'APY'][
-            this.portfolioSettings.defaultAnnualRateType
-          ];
-        }
+            if (this.portfolioSettings?.defaultPaymentTimingType) {
+              this.parameterOverrides.paymentTimingOverride = [
+                '',
+                'End of Period',
+                'Beginning of Period',
+              ][this.portfolioSettings?.defaultPaymentTimingType];
+            }
 
-        this.populatePortfolioClassificationConfiguration();
-      });
+            this.populatePortfolioClassificationConfiguration();
+          } else {
+            this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+          }
+        })
+    );
   }
 
   private populatePortfolioClassificationConfiguration(): void {
-    this.batchParametersService
-      .getPortfolioClassificationConfiguration(this.masterGroupID)
-      .subscribe((result) => {
-        let discountRateProfile = 'Prior Discount Rate';
+    this.subscriptions.push(
+      this.batchParametersService
+        .getPortfolioClassificationConfiguration(this.masterGroupID)
+        .subscribe((result) => {
+          if (result?.success) {
+            let discountRateProfile = 'Prior Discount Rate';
+            if (this.portfolioSettings?.directEntryDiscountRateEnabled) {
+              discountRateProfile = 'Direct Entry';
+            }
 
-        if (this.portfolioSettings?.directEntryDiscountRateEnabled) {
-          discountRateProfile = 'Direct Entry';
-        }
+            if (this.portfolioSettings?.discountRateMatching) {
+              discountRateProfile = 'Use Best Match';
+            }
 
-        if (this.portfolioSettings?.discountRateMatching) {
-          discountRateProfile = 'Use Best Match';
-        }
+            this.portfolioClassificationConfiguration = result?.data.map(
+              (item) => {
+                item.discountRateProfile = discountRateProfile;
+                return item;
+              }
+            );
+            this.setRouAssetMethodName();
+            this.setMeasurementSettingsByMeasureEvent(this.measureEventType);
+          } else {
+            this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+          }
+        })
+    );
+  }
 
-        this.portfolioClassificationConfiguration = result?.data.map((item) => {
-          item.discountRateProfile = discountRateProfile;
+  itemTemplate(data: any) {
+    switch (data) {
+      case 'APR':
+      case 'APY':
+        return `<div id="annual-rate-type-${data
+          .replace(/\s+/g, '-')
+          .toLowerCase()}">${data}</div>`;
 
-          return item;
-        });
-
-        this.setMeasurementSettingsByMeasureEvent(this.measureEventType);
-      });
+      case 'Beginning of Period':
+      case 'End of Period':
+        return `<div id="payment-timing-${data
+          .replace(/\s+/g, '-')
+          .toLowerCase()}">${data}</div>`;
+    }
   }
 }

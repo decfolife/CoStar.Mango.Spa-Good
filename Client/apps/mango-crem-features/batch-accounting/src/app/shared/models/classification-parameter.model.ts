@@ -20,6 +20,12 @@ export class ClassificationParameters {
   manualAdjustmentOption: string;
   manualAdjustmentDirectEntry: number | null;
 
+  rouAssetMethodID: number;
+  rouAssetObtainedAmount: number | null;
+
+  rouAssetDateOption: string;
+  rouAssetObtainedDate: Date | null;
+
   commentsOption: string;
   commentsDirectEntry: string;
 
@@ -39,6 +45,10 @@ export class ClassificationParameters {
     journalEntryProfileOption: string,
     manualAdjustmentOption: string,
     manualAdjustmentDirectEntry: number,
+    rouAssetMethodID: number,
+    rouAssetObtainedAmount: number,
+    rouAssetDateOption: string,
+    rouAssetObtainedDate: Date,
     commentsOption: string,
     commentsDirectEntry: string
   ) {
@@ -66,7 +76,11 @@ export class ClassificationParameters {
     this.journalEntryProfileOption = journalEntryProfileOption;
     this.manualAdjustmentOption = manualAdjustmentOption;
     this.manualAdjustmentDirectEntry = manualAdjustmentDirectEntry;
-    this.commentsOption = commentsOption;
+    this.rouAssetMethodID = rouAssetMethodID;
+    this.rouAssetObtainedAmount = rouAssetObtainedAmount;
+    (this.rouAssetDateOption = rouAssetDateOption),
+      (this.rouAssetObtainedDate = rouAssetObtainedDate),
+      (this.commentsOption = commentsOption);
     this.commentsDirectEntry = commentsDirectEntry ?? '';
   }
 

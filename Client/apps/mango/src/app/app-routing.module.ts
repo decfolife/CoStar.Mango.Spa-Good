@@ -14,7 +14,6 @@ import {
   Routes,
 } from '@angular/router';
 import {
-  AppRoutingTitle,
   MangoSubApps,
   RenderFormHeaderData,
 } from '@mango/data-models/lib-data-models';
@@ -30,7 +29,7 @@ import { ErrorNotificationComponent } from './components/error-notification/erro
 import { RightsAuthGuard } from './services/guards/rights-auth.guard';
 import { SessionExpiredComponent } from './components/auth/session-expired/session-expired.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   // LOGIN
   {
     path: 'auth/validate',
@@ -62,6 +61,15 @@ const routes: Routes = [
       // Redirect to initial App after logging in
       { path: '', redirectTo: 'projects', pathMatch: 'full' },
 
+      // SEARCH PAGE
+      {
+        path: 'search',
+        loadChildren: () =>
+          import('@quick-search/components/index/index.module').then(
+            (mod) => mod.IndexModule
+          ),
+      },
+
       {
         path: 'projects',
         data: {
@@ -92,7 +100,7 @@ const routes: Routes = [
           },
           {
             path: 'tasks',
-            title: AppRoutingTitle + 'Tasks List',
+            title: 'Tasks List',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -110,7 +118,7 @@ const routes: Routes = [
           },
           {
             path: 'projects',
-            title: AppRoutingTitle + 'Project List',
+            title: 'Project List',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -225,6 +233,7 @@ const routes: Routes = [
           },
           {
             path: 'buildings',
+            title: 'Buildings',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -242,6 +251,7 @@ const routes: Routes = [
           },
           {
             path: 'leases',
+            title: 'Leases',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -259,6 +269,7 @@ const routes: Routes = [
           },
           {
             path: 'revenues',
+            title: 'Revenues',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -276,6 +287,7 @@ const routes: Routes = [
           },
           {
             path: 'expenses',
+            title: 'Expenses',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -301,6 +313,18 @@ const routes: Routes = [
               breadCrumb: { append: false },
             },
           },
+          {
+            path: 'benchmarkingfiles',
+            loadChildren: () =>
+              import('@benchmarking-files/app.module').then(
+                (mod) => mod.AppModule
+              ),
+            data: {
+              moduleId: 1,
+              currentSubApp: MangoSubApps.BENCHMARKING_FILES,
+              breadCrumb: { append: true },
+            },
+          },
         ],
       },
 
@@ -317,6 +341,7 @@ const routes: Routes = [
         children: [
           {
             path: 'ledgers',
+            title: 'Accounting Ledgers',
             loadChildren: () =>
               import('@ledgers/app.module').then((mod) => mod.AppModule),
             data: {
@@ -327,6 +352,7 @@ const routes: Routes = [
           },
           {
             path: 'events',
+            title: 'Accounting Events',
             loadChildren: () =>
               import(
                 '@accounting-dashboard/components/listpage/accounting-listpage/accounting-listpage.module'
@@ -340,6 +366,7 @@ const routes: Routes = [
           // Alerts
           {
             path: 'lease-alerts',
+            title: 'Lease Alerts',
             loadChildren: () =>
               import('@lease-alerts/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -351,6 +378,7 @@ const routes: Routes = [
           },
           {
             path: 'alerts-rules',
+            title: 'Accounting Alerts',
             loadChildren: () =>
               import('@alerts-rules/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -363,6 +391,7 @@ const routes: Routes = [
           },
           {
             path: 'batch-accounting',
+            title: 'Batch Accounting',
             loadChildren: () =>
               import('@batch-accounting/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -375,6 +404,7 @@ const routes: Routes = [
           },
           {
             path: 'summary',
+            title: 'Accounting Summary',
             canActivate: [RightsAuthGuard],
             loadChildren: () =>
               import('@accounting-summary/components/index/index.module').then(
@@ -388,6 +418,7 @@ const routes: Routes = [
           },
           {
             path: 'accounting-history',
+            title: 'Accounting History',
             loadChildren: () =>
               import('@accounting-history/app.module').then(
                 (mod) => mod.AppModule
@@ -405,6 +436,7 @@ const routes: Routes = [
           // Accounting Settings
           {
             path: 'settings',
+            title: 'Accounting Settings',
             loadChildren: () =>
               import(
                 '@accounting-accountmanagement/components/index/index.module'
@@ -417,6 +449,7 @@ const routes: Routes = [
           },
           {
             path: 'discountrateprofiles',
+            title: 'Discount Rate Profiles',
             loadChildren: () =>
               import('@accounting-profile/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -450,6 +483,7 @@ const routes: Routes = [
           { path: '', redirectTo: 'companies-list', pathMatch: 'full' },
           {
             path: 'companies-list',
+            title: 'Companies',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -467,6 +501,7 @@ const routes: Routes = [
           },
           {
             path: 'contacts-list',
+            title: 'Contacts',
             loadChildren: () =>
               import('@list-pages/components/index.module.hosted').then(
                 (mod) => mod.IndexModule
@@ -511,6 +546,7 @@ const routes: Routes = [
           },
           {
             path: 'distribution-lists',
+            title: 'Distribution List',
             loadChildren: () =>
               import(
                 '@reports/components/distribution-lists/distribution-lists.module'
@@ -523,6 +559,7 @@ const routes: Routes = [
           },
           {
             path: 'data-set-dictionary',
+            title: 'Data Set Dictionary',
             loadChildren: () =>
               import('@data-set-dictionary/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -535,6 +572,7 @@ const routes: Routes = [
           },
           {
             path: 'financial-reporting-settings',
+            title: 'Financial Reporting',
             loadChildren: () =>
               import(
                 '@financial-reporting-settings/components/index/index.module'
@@ -559,6 +597,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
+            title: 'Reminders',
             loadComponent: () =>
               import(
                 '@reminders-list/components/reminders-list/reminders-list.component'
@@ -586,6 +625,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
+            title: 'Object History',
             loadComponent: () =>
               import(
                 '@reminders-list/components/object-history/object-history.component'
@@ -597,9 +637,10 @@ const routes: Routes = [
           },
         ],
       },
-      // Secutrity rights
+      // Security Rights
       {
         path: 'admin/object-maintenance/objectrights',
+        title: 'Security Rights',
         canActivate: [RightsAuthGuard],
         data: {
           moduleId: 1,
@@ -612,6 +653,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
+            title: 'Object Security Rights',
             loadComponent: () =>
               import(
                 '@object-maintenance/components/object-security-rights/object-security-rights.component'
@@ -627,7 +669,7 @@ const routes: Routes = [
       // NOTES
       {
         path: 'notes',
-        title: AppRoutingTitle + 'Object Notes',
+        title: 'Object Notes',
         data: { moduleId: 1, breadCrumb: { label: 'Notes', append: true } },
         children: [
           {
@@ -636,6 +678,25 @@ const routes: Routes = [
               import(
                 '@notes-list/components/notes-list/notes-list.component'
               ).then((mod) => mod.NotesListComponent),
+            data: {
+              moduleId: null,
+              breadCrumb: { append: true },
+            },
+          },
+        ],
+      },
+      // Files
+      {
+        path: 'files',
+        title: 'Files',
+        data: { moduleId: 1, breadCrumb: { label: 'Files', append: true } },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                '@files-list/components/files-list/files-list.component'
+              ).then((mod) => mod.FilesListComponent),
             data: {
               moduleId: null,
               breadCrumb: { append: true },
@@ -666,6 +727,7 @@ const routes: Routes = [
           },
           {
             path: 'user-maintenance',
+            title: 'User Maintenance',
             loadChildren: () =>
               import('@user-maintenance/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -678,6 +740,7 @@ const routes: Routes = [
           },
           {
             path: 'service-accounts',
+            title: 'Service Accounts',
             loadChildren: () =>
               import('@service-accounts/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -690,6 +753,7 @@ const routes: Routes = [
           },
           {
             path: 'group-maintenance',
+            title: 'Group Maintenance',
             loadChildren: () =>
               import('@group-maintenance/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -702,6 +766,7 @@ const routes: Routes = [
           },
           {
             path: 'object-maintenance',
+            title: 'Object Maintenance',
             loadChildren: () =>
               import('@object-maintenance/components/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -714,6 +779,7 @@ const routes: Routes = [
           },
           {
             path: 'portfolio-maintenance',
+            title: 'Portfolio Maintenance',
             loadChildren: () =>
               import(
                 '@portfolio-maintenance/components/index/index.module'
@@ -726,6 +792,7 @@ const routes: Routes = [
           },
           {
             path: 'forms-maintenance',
+            title: 'Forms Maintenance',
             loadChildren: () =>
               import('@forms/index/index.module').then(
                 (mod) => mod.IndexModule
@@ -738,6 +805,7 @@ const routes: Routes = [
           },
           {
             path: 'etl',
+            title: 'ETL',
             loadChildren: () =>
               import('@etl/app.module').then((mod) => mod.AppModule),
             data: {
@@ -759,6 +827,7 @@ const routes: Routes = [
       //Costar Matching
       {
         path: 'costar-matching',
+        title: 'Costar Matching',
         loadChildren: () =>
           import('@costar-matching/app.module').then((mod) => mod.AppModule),
       },
@@ -766,6 +835,7 @@ const routes: Routes = [
       //Object Reactivation
       {
         path: 'object-reactivation',
+        title: 'Object Reactivation',
         loadChildren: () =>
           import('@object-reactivation/app.module').then(
             (mod) => mod.AppModule
@@ -775,13 +845,14 @@ const routes: Routes = [
       //Error Notification
       {
         path: 'error-notification',
+        title: 'Error Notification',
         component: ErrorNotificationComponent,
         data: {
-          moduleId: null
+          moduleId: null,
         },
-  },
+      },
 
-          // Auto-generated components below
+      // Auto-generated components below
       // @!micro-component-generator: don't delete this line
     ],
   },
@@ -792,12 +863,14 @@ const routes: Routes = [
   // 401 - SESSION EXPIRED
   {
     path: 'auth/session-expired',
+    title: 'Session Expired',
     component: SessionExpiredComponent,
   },
 
   // 404
   {
     path: '**',
+    title: 'Page Not Found',
     component: CremComponent,
     children: [
       {

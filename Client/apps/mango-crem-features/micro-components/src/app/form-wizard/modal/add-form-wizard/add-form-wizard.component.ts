@@ -180,7 +180,7 @@ export class AddFormWizardComponent implements OnInit {
   }
 
   public buildModalTitle() {
-    this.modalTitle = 'Create ' + this.data.objectTypeName;
+    this.modalTitle = 'Add ' + this.data.objectTypeName;
   }
 
   public setLoadCondition(loadCondition) {

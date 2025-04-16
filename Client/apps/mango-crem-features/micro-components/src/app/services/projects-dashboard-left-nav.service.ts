@@ -51,8 +51,8 @@ export class ProjectsDashboardLeftNavService extends EndpointService {
     return this.callHttpGet(url, 'GetAdminModulesNavigationLinks');
   }
 
-  getETLModulesNavigationLinks(): Observable<any> {
-    const url = `${this.leftNav}LeftNav/GetETLModulesNavigationLinks`;
-    return this.callHttpGet(url, 'GetETLModulesNavigationLinks');
-  }
+  // getETLModulesNavigationLinks(): Observable<any> {
+  //   const url = `${this.leftNav}LeftNav/GetETLModulesNavigationLinks`;
+  //   return this.callHttpGet(url, 'GetETLModulesNavigationLinks');
+  // }
 }

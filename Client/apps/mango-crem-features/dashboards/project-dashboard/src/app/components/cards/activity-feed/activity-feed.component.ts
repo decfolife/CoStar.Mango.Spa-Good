@@ -14,6 +14,7 @@ import { DashboardService } from '../../../services/dashboard.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Subscription } from 'rxjs';
 import { ExportDevexDatagridService } from '@mango/core-shared';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'activity-feed-card',
@@ -33,7 +34,8 @@ export class ActivityFeedComponent implements OnInit, OnDestroy {
   constructor(
     private cardsService: CardsService,
     private exportToExcelService: ExportDevexDatagridService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -67,9 +69,9 @@ export class ActivityFeedComponent implements OnInit, OnDestroy {
   getDescriptionCellLink(cell: any) {
     const taskIdUrl =
       cell.data.taskID > 0 ? `&ROTID=9&ROID=${cell.data.taskID}` : '';
-    const urlLink = `/v06/Common/Notes/NotesList.aspx?OTID=1&OID=${cell.data.transactionID}${taskIdUrl}`;
+    const urlLink = `/v06/Common/Notes/NotesList.aspx?OTID=1&OID=${cell.data.transactionID}&OTTID=${cell.data.objectTypeTypeId}${taskIdUrl}`;
 
-    return urlLink;
+    this.router.navigateByUrl(urlLink);
   }
 
   downloadfile(fileInformation: any): boolean {

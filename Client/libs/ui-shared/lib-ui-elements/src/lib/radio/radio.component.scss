@@ -34,7 +34,8 @@ $color2: $primary-light;
       margin-bottom: 0 !important;
     }
 
-    &:checked {
+    &:checked,
+    &[aria-checked='true'] {
       + .crem-radio-label {
         &:before {
           background-color: $primary-light;

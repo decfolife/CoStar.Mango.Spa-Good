@@ -31,6 +31,7 @@ describe('UtilityService - mergeArrayOfObjects', () => {
     );
 
     expect(result.length).toBe(33);
+    // console.log(result)
 
     expect(result).toEqual(mergeArraysResult);
   });

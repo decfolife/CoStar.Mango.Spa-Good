@@ -5,6 +5,7 @@ import {
   HttpHeaders,
   HttpInterceptor,
   HttpRequest,
+  HttpXsrfTokenExtractor,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
@@ -17,7 +18,11 @@ import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 
 @Injectable()
 export class HttpAuthInterceptor implements HttpInterceptor {
-  constructor(private facade: MangoAppFacade, private jwtService: JwtService) {}
+  constructor(
+    private facade: MangoAppFacade,
+    private jwtService: JwtService,
+    private xsrfTokenExtractor: HttpXsrfTokenExtractor
+  ) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -55,6 +60,11 @@ export class HttpAuthInterceptor implements HttpInterceptor {
     }
 
     accessToken ? (headers['Authorization'] = `Bearer ${accessToken}`) : null;
+
+    const xsrfToken = this.xsrfTokenExtractor.getToken();
+    if (xsrfToken) {
+      headers['X-XSRF-TOKEN'] = xsrfToken;
+    }
 
     return headers;
   }

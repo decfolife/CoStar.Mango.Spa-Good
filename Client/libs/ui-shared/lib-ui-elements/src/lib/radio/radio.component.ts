@@ -82,6 +82,7 @@ export class CremRadioComponent
 
   onChange: (value: any) => void = () => {};
   onTouched: () => void = () => {};
+  checked: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -100,6 +101,9 @@ export class CremRadioComponent
       }),
       this.radioService.disabled$.subscribe((disabled) => {
         this.disabled = disabled;
+      }),
+      this.radioService.selected$.subscribe((selectedVal) => {
+        this.checked = selectedVal == this.value ? true : false;
       }),
       this.setupClickListener().subscribe()
     );

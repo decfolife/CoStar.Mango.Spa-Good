@@ -48,7 +48,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         return true;
     }
 
-    static ProblemException ToProblemException(Exception ex)
+    public static ProblemException ToProblemException(Exception ex)
     {
         var pe = new ProblemException(
             Type: ex.GetType().Name,
@@ -66,4 +66,9 @@ public class GlobalExceptionHandler : IExceptionHandler
     }
 }
 
-record ProblemException(string Type, string Source, string Message, List<string> Stack, ProblemException InnerException);
+public record ProblemException(
+    string Type, 
+    string Source, 
+    string Message, 
+    List<string> Stack, 
+    ProblemException InnerException);

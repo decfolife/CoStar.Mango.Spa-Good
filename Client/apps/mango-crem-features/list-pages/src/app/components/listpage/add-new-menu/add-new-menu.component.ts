@@ -33,7 +33,7 @@ export class AddNewMenuComponent implements OnInit {
   navigationPages: EditPage[] = [];
   objectTypeId: string;
   addButtonObjects: any = [];
-  isChargeAction: boolean = false;
+  isChargeAction = false as boolean;
 
   @Input() enabled: boolean;
   @Input() isGLEvent: boolean;
@@ -220,9 +220,11 @@ export class AddNewMenuComponent implements OnInit {
   showAddSupplierPopup(): void {
     const dialogRef = this.dialog.open(AddSupplierModalComponent, {
       disableClose: true,
-      height: '390px',
-      width: '700px',
+      width: '60vw',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
       data: {
         objectTypeId: this.objectTypeId,
       },
@@ -231,11 +233,12 @@ export class AddNewMenuComponent implements OnInit {
   }
 
   showAddEquipmentPopup() {
-    let dialogRef = this.dialog.open(AddEquipmentModalComponent, {
+    const dialogRef = this.dialog.open(AddEquipmentModalComponent, {
       disableClose: true,
-      height: '600px',
-      width: '700px',
+      width: '60vw',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
       data: {
         objectTypeId: this.objectTypeId,
         userId: 2,
@@ -245,12 +248,16 @@ export class AddNewMenuComponent implements OnInit {
     dialogRef.afterClosed();
   }
 
+  // Add Store
   showAddPremisePopup() {
-    let dialogRef = this.dialog.open(AddPremiseModalComponent, {
+    // todo: this code seems to be a duplication of the Portfolio Dashboard options for retaildemo
+    const dialogRef = this.dialog.open(AddPremiseModalComponent, {
       disableClose: true,
-      height: '420px',
-      width: '700px',
+      width: '45vw',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
       data: {
         objectTypeId: this.objectTypeId,
       },
@@ -262,11 +269,13 @@ export class AddNewMenuComponent implements OnInit {
   }
 
   showAddBuildingPopup() {
-    let dialogRef = this.dialog.open(AddBuildingModalComponent, {
+    const dialogRef = this.dialog.open(AddBuildingModalComponent, {
       disableClose: true,
-      height: '81%',
-      width: '75%',
+      width: '75vw',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
       data: {
         objectTypeId: this.objectTypeId,
         userId: 2,
@@ -279,11 +288,13 @@ export class AddNewMenuComponent implements OnInit {
   }
 
   showAddLeasePopup() {
-    let dialogRef = this.dialog.open(AddLeaseModalComponent, {
+    const dialogRef = this.dialog.open(AddLeaseModalComponent, {
       disableClose: true,
-      height: '80%',
-      width: '75%',
+      width: '70vw',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
       data: {
         objectTypeId: this.objectTypeId,
         userId: 2,

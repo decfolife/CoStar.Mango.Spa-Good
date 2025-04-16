@@ -114,7 +114,7 @@
                       etlService.getId(componentName, 'template-type', 'input')
                     "
                     [dataSource]="templateTypes"
-                    valueExpr="id"
+                    valueExpr="templateTypeId"
                     displayExpr="name"
                     formControlName="templateTypeId"
                   >
@@ -200,16 +200,12 @@
             <div class="form-field">
               <crem-form-item>
                 <crem-form-label>Parent Object</crem-form-label>
-                <crem-form-control
-                  *ngIf="templateForm.get('templateTypeId').value !== 3"
-                >
+                <crem-form-control *ngIf="!hasMultipleParentObjects">
                   <label [id]="'parent-object-data'">{{
                     templateForm.get('parentObjectText').value
                   }}</label>
                 </crem-form-control>
-                <crem-form-control
-                  *ngIf="templateForm.get('templateTypeId').value === 3"
-                >
+                <crem-form-control *ngIf="hasMultipleParentObjects">
                   <dx-select-box
                     [id]="
                       etlService.getId(
@@ -300,7 +296,7 @@
                 </crem-form-control>
               </crem-form-item>
             </div>
-            <div class="form-field">
+            <div class="form-field" [hidden]="!isReadOnlyVisible">
               <crem-form-item>
                 <crem-form-label>Read Only</crem-form-label>
                 <crem-form-control>

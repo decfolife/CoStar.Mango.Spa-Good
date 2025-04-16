@@ -11,6 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ArchiveActionService } from '@micro-components/object-actions/services/archive-action.service';
 import { SharedService } from '@micro-components/object-actions/services/shared.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'mango-archive-action',
@@ -64,6 +65,7 @@ export class ArchiveLeaseComponent implements OnInit {
     public dialogRef: MatDialogRef<ArchiveLeaseComponent>,
     public service: ArchiveActionService,
     public sharedService: SharedService,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       archiveType: string;
@@ -91,7 +93,7 @@ export class ArchiveLeaseComponent implements OnInit {
     this.dialogRef.close(data);
     if (this.archivedSuccess) {
       const url = window.location.href;
-      window.location.href = url.replace('&pgMode=Edit', '');
+      this.router.navigateByUrl(url.replace('&pgMode=Edit', ''));
     }
   }
 
@@ -259,7 +261,7 @@ export class ArchiveLeaseComponent implements OnInit {
     this.dialogRef.close('');
     if (this.archivedSuccess) {
       const url = window.location.href;
-      window.location.href = url.replace('&pgMode=Edit', '');
+      this.router.navigateByUrl(url.replace('&pgMode=Edit', ''));
     }
   }
 

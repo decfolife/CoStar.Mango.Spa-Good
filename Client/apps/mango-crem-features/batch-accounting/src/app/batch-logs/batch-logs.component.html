@@ -1,55 +1,27 @@
 <div class="list-page">
   <div class="list-page-controls-wrapper">
     <div id="ba-search" class="controls-left">
-      <h5 class="dbl-right-margin">
+      <h5 class="dbl-right-margin nowrap">
         {{ title }}
-        <i
-          class="dx-icon-info"
-          *ngIf="isSuperUser"
-          [mat-menu-trigger-for]="heartbeat"
-        ></i>
-
-        <mat-menu #heartbeat="matMenu">
-          <div *ngIf="heartbeatDataLoading" class="mt-1 mb-1 ml-2 mr-2">
-            Loading...
-          </div>
-
-          <div
-            *ngIf="!heartbeatDataLoading && heartbeatData.length === 0"
-            class="mt-1 mb-1 ml-2 mr-2"
-          >
-            Error loading heartbeat data.
-          </div>
-
-          <div
-            *ngFor="let server of heartbeatData; let i = index"
-            class="mt-1 mb-1 ml-2 mr-2"
-          >
-            Server {{ i + 1 }}:<br />
-            &nbsp; Started:
-            {{ server.startedAt | date: baseService.dateFormatWithTime }}<br />
-            &nbsp; Heartbeat:
-            {{ server.lastHeartbeat | date: baseService.dateFormatWithTime }}
-          </div>
-        </mat-menu>
       </h5>
 
-      <dx-text-box
-        class="batch-log__search"
+      <crem-search
+        id="ba-log-search-input"
         [(value)]="searchText"
-        mode="search"
-        placeholder="Search..."
-        [showClearButton]="true"
-        valueChangeEvent="keyup"
-        (onValueChanged)="searchDataGrid($event)"
-      ></dx-text-box>
+        [placeholder]="'Search...'"
+        [debounceTime]="500"
+        [searchOption]="'typing'"
+        (changed)="searchDataGrid($event)"
+      >
+      </crem-search>
     </div>
 
     <div class="controls-right">
-      <button
-        id="ba-filters"
-        class="btn btn-default"
-        (click)="showFilterBuilder()"
+      <crem-button
+        [id]="'ba-log-filters-button'"
+        [color]="'secondary'"
+        [size]="'medium'"
+        (buttonClick)="showFilterBuilder()"
       >
         Filters
         <div
@@ -68,29 +40,28 @@
         >
           Clear {{ appliedFilterCount }} Filters
         </div>
-      </button>
-
-      <button
-        id="ba-columns"
-        class="btn btn-default"
+      </crem-button>
+      <crem-button
+        [id]="'ba-log-columns-button'"
+        [color]="'secondary'"
         (click)="showColumnChooser()"
       >
         Columns
-      </button>
-
-      <button
+      </crem-button>
+      <crem-button
         *ngIf="service.userRights === 2"
-        id="ba-add"
-        class="btn btn-primary"
+        [id]="'ba-log-add-button'"
+        [color]="'primary'"
         (click)="addNewBatch()"
       >
-        <fa-icon [icon]="faPlus"></fa-icon> Add
-      </button>
+        Add
+      </crem-button>
     </div>
   </div>
 
   <div class="list-page-data-grid-wrapper">
     <dx-data-grid
+      id="ba-log-grid"
       class="list-page-data-grid"
       #DataGrid
       [dataSource]="batchLogs"
@@ -110,19 +81,17 @@
       [columnMinWidth]="10"
       [wordWrapEnabled]="true"
     >
-      <dxo-header-filter
-        [visible]="true"
-        [allowSearch]="true"
-      ></dxo-header-filter>
+      <dxo-header-filter [visible]="true">
+        <dxo-search [enabled]="true"> </dxo-search>
+      </dxo-header-filter>
 
       <dxo-sorting mode="multiple"></dxo-sorting>
 
       <dxo-column-fixing [enabled]="true"></dxo-column-fixing>
 
-      <dxo-column-chooser
-        [allowSearch]="true"
-        mode="select"
-      ></dxo-column-chooser>
+      <dxo-column-chooser mode="dragAndDrop" height="500" width="400">
+        <dxo-search [enabled]="true"> </dxo-search>
+      </dxo-column-chooser>
 
       <dxo-paging [pageSize]="100"></dxo-paging>
 
@@ -162,6 +131,16 @@
           ></dxo-format>
         </dxi-column>
       </ng-container>
+      <dxi-column
+        cssClass="fixed-right"
+        [showInColumnChooser]="false"
+        [fixed]="true"
+        fixedPosition="right"
+        width="100"
+        cellTemplate="downloadTemplate"
+        alignment="center"
+      >
+      </dxi-column>
 
       <div *dxTemplate="let cell of 'batchStatusTemplate'">
         <dx-drop-down-button
@@ -179,20 +158,6 @@
           {{ cell.text }}
         </ng-template>
       </div>
-
-      <dxi-column type="buttons" width="60" [showInColumnChooser]="false">
-        <dxi-button template="moreMenuTemplate">
-          <div *dxTemplate="let data of 'moreMenuTemplate'">
-            <div
-              class="batch-log__fa-icon"
-              *ngIf="menuButtonVisible('download', data.data)"
-              (click)="actionMenuCallback('download', data.data)"
-            >
-              <fa-icon [icon]="faDownload" title="Download Results"></fa-icon>
-            </div>
-          </div>
-        </dxi-button>
-      </dxi-column>
 
       <dxo-master-detail
         [enabled]="true"
@@ -235,6 +200,13 @@
             dataType="string"
           ></dxi-column>
 
+          <dxi-column dataField="rouAssetMethod" dataType="string"></dxi-column>
+
+          <dxi-column
+            dataField="rouAssetObtainedDate"
+            dataType="string"
+          ></dxi-column>
+
           <dxi-column
             dataField="discountRateProfile"
             dataType="string"
@@ -250,7 +222,15 @@
       </div>
 
       <div *dxTemplate="let data of 'downloadTemplate'">
-        <fa-icon [icon]="faDownload"></fa-icon>
+        <crem-icon
+          id="ba-log-download-icon"
+          icon="faDownload"
+          pack="solid"
+          color="primary"
+          size="lg"
+          [visible]="menuButtonVisible('download', data.data)"
+          (click)="actionMenuCallback('download', data.data)"
+        ></crem-icon>
       </div>
     </dx-data-grid>
   </div>
@@ -262,7 +242,7 @@
   [showTitle]="true"
   title="Confirm Batch Cancellation"
   [dragEnabled]="true"
-  [closeOnOutsideClick]="false"
+  [hideOnOutsideClick]="false"
   [(visible)]="cancelModalVisible"
 >
   <div *dxTemplate="let data of 'content'" class="popup-no-padding">
@@ -282,3 +262,10 @@
     <button class="btn btn-primary" (click)="cancelBatch()">Confirm</button>
   </dxi-toolbar-item>
 </dx-popup>
+
+<p-toast
+  position="bottom-right"
+  preventOpenDuplicates="true"
+  [baseZIndex]="3000"
+>
+</p-toast>

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'regenerator-runtime/runtime';
 import * as ExcelJS from 'exceljs';
@@ -37,6 +37,7 @@ export class UserMaintenanceComponent implements OnInit {
   @ViewChild('DataGrid') dataGrid: DxDataGridComponent;
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private datepipe: DatePipe,
     private dialog: MatDialog,
     private sharedService: SharedService,
@@ -190,57 +191,64 @@ export class UserMaintenanceComponent implements OnInit {
 
   public addUser() {
     // route
-    window.location.href =
-      '/v06/Admin/Users/UserAdministrationPage.aspx?ContactID=undefined';
+    this.router.navigateByUrl(
+      '/v06/Admin/Users/UserAdministrationPage.aspx?ContactID=undefined'
+    );
   }
 
   public view(userId) {
     // route
-    window.location.href =
+    this.router.navigateByUrl(
       '/v06/Forms/RenderForm.aspx?FID=' +
-      this.userFormId.toString() +
-      '&pgMode=view&OID=' +
-      userId.toString() +
-      '&OTID=5&OTTID=500&ROID=undefined&ROTID=undefined&RDID=undefined&POID=undefined&POTID=undefined&ParentFID=undefined';
+        this.userFormId.toString() +
+        '&pgMode=view&OID=' +
+        userId.toString() +
+        '&OTID=5&OTTID=500&ROID=undefined&ROTID=undefined&RDID=undefined&POID=undefined&POTID=undefined&ParentFID=undefined'
+    );
   }
 
   public edit(userId) {
     // route
-    window.location.href =
+    this.router.navigateByUrl(
       '/v06/Admin/Users/UserAdministrationPage.aspx?ContactID=' +
-      userId.toString();
+        userId.toString()
+    );
   }
 
   public assignObjectRights(userId) {
     // route
-    window.location.href =
+    this.router.navigateByUrl(
       '/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/assignUserRights/5/' +
-      userId.toString() +
-      '/UserMaintenanceWithNav.aspx';
+        userId.toString() +
+        '/UserMaintenanceWithNav.aspx'
+    );
     return false;
   }
 
   public assignGroups(userId) {
     // route
-    window.location.href =
+    this.router.navigateByUrl(
       '/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/assignGroups/5/' +
-      userId.toString() +
-      '/UserMaintenanceWithNav.aspx';
+        userId.toString() +
+        '/UserMaintenanceWithNav.aspx'
+    );
     return false;
   }
 
   public assignModules(userId) {
     // route
-    window.location.href =
+    this.router.navigateByUrl(
       '/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/assignModules/5/' +
-      userId.toString() +
-      '/UserMaintenanceWithNav.aspx';
+        userId.toString() +
+        '/UserMaintenanceWithNav.aspx'
+    );
     return false;
   }
 
   public assignAdminLinks(userId) {
-    window.location.href =
-      '/v06/admin/Users/UserAdminLinksNew.aspx?ContactID=' + userId.toString();
+    this.router.navigateByUrl(
+      '/v06/admin/Users/UserAdminLinksNew.aspx?ContactID=' + userId.toString()
+    );
   }
 
   public deleteUser(data) {

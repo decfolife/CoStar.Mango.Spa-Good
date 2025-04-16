@@ -137,10 +137,10 @@ export class RecentActivitiesComponent implements OnInit {
 
   getDescriptionCellLink(cell: any) {
     const taskIdUrl =
-      cell.data.taskID > 0 ? `&ROTID=9&ROID=${cell.data.taskId}` : '';
-    const urlLink = `/v06/Common/Notes/NotesList.aspx?OTID=1&OID=${cell.data.transactionId}${taskIdUrl}`;
+      cell.data.taskId > 0 ? `&ROTID=9&ROID=${cell.data.taskId}` : '';
+    const urlLink = `/v06/Common/Notes/NotesList.aspx?OTID=1&OID=${cell.data.transactionId}&OTTID=${cell.data.objectTypeTypeId}${taskIdUrl}`;
 
-    return urlLink;
+    this.router.navigateByUrl(urlLink);
   }
 
   downloadfile(fileInformation: any): boolean {

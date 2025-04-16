@@ -27,40 +27,42 @@
     >
     </mango-form-wizard>
   </div>
-  <div modalFooter class="footer-content">
-    <div id="add_project_wizard__modal_buttons" class="footerRightControls">
-      <crem-button
-        [disabled]="loading"
-        type="secondary"
-        id="add_project_wizard__cancel_btn"
-        (click)="close($event)"
-      >
-        Cancel</crem-button
-      >
-      <crem-button
-        [disabled]="loading"
-        type="secondary"
-        id="add_project_wizard__save_btn"
-        (click)="save($event)"
-      >
-        Save</crem-button
-      >
-      <crem-button
-        [disabled]="loading"
-        type="secondary"
-        id="add_project_wizard__save_and_new_btn"
-        (click)="saveAndNew()"
-      >
-        Save & New</crem-button
-      >
-      <crem-button
-        [disabled]="loading"
-        type="primary"
-        id="add_project_wizard__launch_btn"
-        (click)="launch($event)"
-      >
-        Launch
-      </crem-button>
-    </div>
+  <div
+    modalFooter
+    class="footer-content"
+    id="add_project_wizard__modal_buttons"
+  >
+    <crem-button
+      [disabled]="loading"
+      type="secondary"
+      id="add_project_wizard__cancel_btn"
+      (click)="close($event)"
+    >
+      Cancel</crem-button
+    >
+    <crem-button
+      [disabled]="loading"
+      type="secondary"
+      id="add_project_wizard__save_btn"
+      (click)="save($event)"
+    >
+      Save</crem-button
+    >
+    <crem-button
+      [disabled]="loading"
+      type="secondary"
+      id="add_project_wizard__save_and_new_btn"
+      (click)="saveAndNew()"
+    >
+      Save & New</crem-button
+    >
+    <crem-button
+      [disabled]="loading"
+      type="primary"
+      id="add_project_wizard__launch_btn"
+      (click)="launch($event)"
+    >
+      Launch
+    </crem-button>
   </div>
 </crem-modal>

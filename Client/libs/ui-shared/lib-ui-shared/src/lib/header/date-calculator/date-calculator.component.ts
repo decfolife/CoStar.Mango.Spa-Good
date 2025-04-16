@@ -85,11 +85,8 @@ export class DateCalculatorComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       combineLatest([this.facade.authenticatedUser$, this.facade.clientKey$])
         .pipe(
-          switchMap(([userAuth, clientKey]) =>
-            this.settingsService.getClientSettingsForUser(
-              clientKey,
-              userAuth.contactId
-            )
+          switchMap(([_]) =>
+            this.settingsService.getClientSettingsForUser()
           )
         )
         .subscribe((x) => {

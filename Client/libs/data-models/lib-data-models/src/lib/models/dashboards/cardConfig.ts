@@ -464,7 +464,7 @@ interface DataGridParameters {
    * @type {boolean}
    * @memberof DataGridParameters
    */
-  columnChooser?: boolean;
+  columnChooser?: boolean; // FIXME: This is affecting PivotGrid as well, should only apply to dataGrids
   columnChooserMode?: 'select' | 'dragAndDrop';
   headerFilterVisible?: boolean;
   headerFilterAllowSearch?: boolean;

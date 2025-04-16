@@ -8,7 +8,7 @@ describe('AddEditDistributionListComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddEditDistributionListComponent],
+      declarations: [AddEditDistributionListComponent]
     });
     fixture = TestBed.createComponent(AddEditDistributionListComponent);
     component = fixture.componentInstance;

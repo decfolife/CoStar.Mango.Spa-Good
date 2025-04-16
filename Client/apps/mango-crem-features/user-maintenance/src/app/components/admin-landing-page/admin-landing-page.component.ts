@@ -61,7 +61,7 @@ export class AdminLandingPageComponent
   }
 
   cardClicked(navLink: SharedLeftNavLink) {
-    this.facade.navigateLeftNevMenu(navLink);
+    this.facade.navigateLeftNavMenu(navLink);
   }
 
   public archiveBuilding(event) {

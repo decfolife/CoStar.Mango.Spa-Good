@@ -3,16 +3,15 @@ import {
   BreadCrumb,
   Client,
   ContactRecord,
-  GlobalSessionHttpObject,
   MangoSubApps,
   OAuthTokenHTTPResponse,
   RedirectorLink,
   UserAuth,
   UserInfo,
-  V06GlobalSession,
 } from '@mango/data-models/lib-data-models';
 import { createAction, props } from '@ngrx/store';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
+import { RedirectorMapping } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
 
 export const SET_LOADING = '[UI] Set Loading';
 export const SET_CHANGE_LOSS_PREVENTION_IS_ACTIVE =
@@ -73,6 +72,9 @@ export const SET_ADMIN_FLAGS_SUCCESS = '[Mango App] Get Settings Flags Success';
 export const LOAD_REDIRECTOR_LINKS = '[Mango App] Load Redirector Links';
 export const LOAD_REDIRECTOR_LINKS_SUCCESS =
   '[Mango App] Load Redirector Links Success';
+export const LOAD_REDIRECTOR_MAPPINGS = '[Mango App] Load Redirector Mappings';
+export const LOAD_REDIRECTOR_MAPPINGS_SUCCESS =
+  '[Mango App] Load Redirector Mappings Success';
 export const UPDATE_GLOBAL_SESSION = '[Mango App] Update Global Session';
 export const UPDATE_GLOBAL_SESSION_SUCCESS =
   '[Mango App] Update Global Session Success';
@@ -238,11 +240,11 @@ export const navigateLeftNavMenu = createAction(
 
 export const navigateHome = createAction(NAVIGATE_HOME);
 
-export const getGlobalSession = createAction(GET_GLOBAL_SESSION);
-export const getGlobalSessionSuccess = createAction(
-  GET_GLOBAL_SESSION_SUCCESS,
-  props<{ session: GlobalSessionHttpObject }>()
-);
+// export const getGlobalSession = createAction(GET_GLOBAL_SESSION);
+// export const getGlobalSessionSuccess = createAction(
+//   GET_GLOBAL_SESSION_SUCCESS,
+//   props<{ session: GlobalSessionHttpObject }>()
+// );
 
 export const setAdminFlags = createAction(SET_ADMIN_FLAGS);
 export const setAdminFlagsSuccess = createAction(
@@ -254,14 +256,19 @@ export const loadRedirectorLinksSuccess = createAction(
   LOAD_REDIRECTOR_LINKS_SUCCESS,
   props<{ redirectorLinks: RedirectorLink[] }>()
 );
+export const loadRedirectorMappings = createAction(LOAD_REDIRECTOR_MAPPINGS);
+export const loadRedirectorMappingsSuccess = createAction(
+  LOAD_REDIRECTOR_MAPPINGS_SUCCESS,
+  props<{ redirectorMappings: RedirectorMapping[] }>()
+);
 
-export const updateGlobalSession = createAction(
-  UPDATE_GLOBAL_SESSION,
-  props<{ session: V06GlobalSession }>()
-);
-export const updateGlobalSessionSuccess = createAction(
-  UPDATE_GLOBAL_SESSION_SUCCESS
-);
+// export const updateGlobalSession = createAction(
+//   UPDATE_GLOBAL_SESSION,
+//   props<{ session: V06GlobalSession }>()
+// );
+// export const updateGlobalSessionSuccess = createAction(
+//   UPDATE_GLOBAL_SESSION_SUCCESS
+// );
 
 export const populateBreadcrumbsFromSession = createAction(
   POPULATE_BREADCRUMBS_FROM_SESSION

@@ -1,94 +1,44 @@
 @use 'styles' as *;
 
-::ng-deep {
-  mango-user-preferences {
-    display: flex;
-    width: 920px;
-    height: 745px;
-    .cremModal.newModal {
-      width: 920px;
-      height: 740px;
+:host ::ng-deep {
+  .section-title {
+    font-size: 14px;
+    font-weight: 500;
+    hr {
+      @include costar(margin-top, 0);
+    }
+  }
 
-      .section-header {
-        padding: 10px 0px 0px 0px;
-
-        .section-title {
-          font-size: 16px;
-          font-weight: bold;
-        }
+  .text-section {
+    p {
+      margin-bottom: 4px;
+    }
+    span {
+      font-size: 14px;
+      margin-bottom: 4px;
+      @include costar(color, gray03);
+    }
+    a {
+      @include costar(color, primary-light);
+    }
+    crem-icon {
+      span {
+        @include costar(color, primary-light);
       }
-      .section {
+    }
+  }
+
+  .toggle-section {
+    .crem-form-item {
+      p {
+        margin-bottom: 4px;
+      }
+      display: block;
+      crem-toggle-slider {
         display: flex;
-        height: 90px;
-
-        .dropdown-section {
-          .crem-form-item {
-            display: block;
-            .required {
-              @include costar(color, danger);
-            }
-            span {
-              margin-bottom: 4px;
-            }
-            crem-dropdown {
-              width: 432.5px;
-              display: flex;
-            }
-          }
-        }
-
-        .toggle-section {
-          .crem-form-item {
-            p {
-              margin-bottom: 4px;
-            }
-            display: block;
-            crem-toggle-slider {
-              display: flex;
-              height: 22px;
-              .slider-label {
-                font-size: 11px;
-              }
-            }
-          }
-        }
-
-        .text-section {
-          p {
-            margin-bottom: 4px;
-          }
-          span {
-            margin-bottom: 4px;
-            font-size: 14px;
-            color: $gray03;
-          }
-          a {
-            font-size: 14px;
-            @include costar(color, primary-light);
-          }
-          crem-icon {
-            span {
-              @include costar(color, primary-light);
-            }
-          }
-        }
-
-        .col1 {
-          width: 432.5px;
-          .crem-form-item {
-            justify-content: flex-start;
-          }
-        }
-        .col2 {
-          width: 432.5px;
-          margin-left: 15px;
-          .crem-form-item {
-            justify-content: flex-start;
-          }
-        }
-
-        crem-input {
-          width: 432.5px;
+        height: 22px;
+        .slider-label {
+          font-size: 11px;
         }
       }
     }

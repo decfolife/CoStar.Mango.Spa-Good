@@ -153,7 +153,7 @@ export class IFieldDetails {
   //isChild: boolean;
   //triggerWorkflowChange: string;
   //formItemDictionaryText: string;
-  //formItemJavaScript: string;
+  formItemJavaScript: string;
   //parentID: number;
   //isAuditable: boolean;
   //vpDictionaryFormItemDesc: string;
@@ -208,6 +208,10 @@ export class ObjectParentLinker {
   objectId: number;
   objectTypeTypeId: number;
   labelText: string;
+  premiseFormId: number;
+  premiseObjectId: number;
+  premiseObjectTypeTypeId: number;
+  premiseLabelText: string;
 }
 
 export class Widget {
@@ -330,8 +334,43 @@ export class SaveRenderFormDto {
 }
 
 export class SaveRenderFormCommand {
+  isNew: boolean = false;
   formId: number;
   objectId: number;
   objectTypeId: number;
+  objectTypeTypeId: number;
+  relatedObjectId: number;
+  relatedObjectTypeId: number;
+  relationshipDefinitionId: number;
   formItems: SaveRenderFormDto[];
+}
+
+export enum AllowedObjectTypes {
+  PROJECT = 1,
+  BUILDING = 3,
+  LEASE = 4,
+  REPORT = 7,
+}
+
+export class RenderFormItemDetails {
+  formItemId: string;
+  formItemTypeId: string;
+  oldValue: string;
+  type: string;
+  labelName: string;
+  section: string;
+}
+
+export interface WorkFlowStatus {
+  wfsID: number;
+  wfsStep: number;
+  wfsName: string;
+}
+
+export interface UpdateLeaseVerificationStatusRequest {
+  objectID: number;
+  objectTypeID: number;
+  status: number;
+  oldStatus: number;
+  comments: string;
 }

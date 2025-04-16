@@ -35,6 +35,7 @@ export class ComposeEmailComponent implements OnInit, OnDestroy {
   secondaryBtnText = 'Cancel';
   primaryBtnText = 'Send';
   modalId = 'composeEmailModalId';
+  objectId: number;
   isDropDownBoxOpened = false;
   filteredMembers: string[] = [];
   contacts: EmailContact[] = [];
@@ -52,6 +53,7 @@ export class ComposeEmailComponent implements OnInit, OnDestroy {
   emailSendHandler: (data: ComposeEmailCommand) => Observable<any>;
   includeFileInfo: string;
   subs: Subscription[] = [];
+  inclUnappdTsksSel: boolean = false;
 
   fileIconList = [
     // array of icon class list based on type
@@ -82,10 +84,14 @@ export class ComposeEmailComponent implements OnInit, OnDestroy {
   }
 
   setInitialState(): void {
+    this.objectId = this.data.objectId;
     this.noteTypes = this.data.noteTypes;
     this.contacts = this.data.contacts;
     this.fileItems = this.data.fileItems;
     this.selectedNoteType = this.data.defaultNoteType;
+    this.inclUnappdTsksSel = this.data.inclUnappdTsksSel
+      ? this.data.inclUnappdTsksSel
+      : false;
     this.emailSendHandler = this.data.emailSendHandler;
     this.includeFileInfo = this.data.includeFileInfo;
     this.emailNote = this.data.emailNote ? this.data.emailNote : '';
@@ -178,14 +184,13 @@ export class ComposeEmailComponent implements OnInit, OnDestroy {
       return;
     } else {
       this.subs.push(
-        combineLatest([
-          this.currentObject.getCurentObjectNameAndType$().pipe(first()),
-          this.facade.currentProjectId$.pipe(first()),
-        ])
+        this.currentObject
+          .getCurentObjectNameAndType$()
+          .pipe(first())
           .pipe(
-            concatMap(([{ objectName }, projectId]) => {
+            concatMap(({ objectName }) => {
               return this.emailSendHandler({
-                objectId: projectId,
+                objectId: this.objectId,
                 objectName,
                 noteTypeId: this.selectedNoteType.commonNoteTypeID,
                 ToContactIds: this.membersDropdown.selections,

@@ -1,0 +1,51 @@
+@use 'styles' as *;
+
+.navigateTo {
+  background-color: lightblue;
+}
+
+h2 {
+  color: #1e3a6f;
+  font-size: 20px;
+  font-weight: normal;
+  margin: 20px 0 0;
+}
+
+dx-data-grid.qsr-objectData {
+  border-bottom: 1px solid #9f9f9f;
+}
+
+.qsr-search-results-grid {
+  .dx-datagrid-headers + .dx-datagrid-rowsview {
+    border-top: none;
+  }
+}
+
+:host ::ng-deep {
+  // Forces all element on the DevExtreme's grid results to be left aligned
+  .dx-datagrid [role='gridcell'],
+  .dx-datagrid [role='columnheader'] {
+    text-align: left !important;
+  }
+  // Forces header to always aligned to the left with filter to the right for specific columns
+  tr > td[aria-label='Column System  Project  ID'], /* Project Grid */
+  tr > td[aria-label='Column System  Building  ID'], /* Building Grid */
+  tr > td[aria-label='Column System  Company  ID'], /* Company Grid */
+  tr > td[aria-label='Column System  Lease  ID'], /* Lease Grid */
+  tr > td[aria-label='Column Contact VPContact ID'], /* Contact Grid */
+  tr > td[aria-label='Column Building  ID'] /* Supplier Grid */ {
+    display: flex;
+    .dx-datagrid-text-content {
+      order: 0;
+    }
+    .dx-column-indicators {
+      order: 1;
+    }
+  }
+  .cremModal .modalContent {
+    padding: 0px !important;
+    .tab-content {
+      padding: 0px !important;
+    }
+  }
+}

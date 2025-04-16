@@ -39,8 +39,8 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   public cardsDisplay: any[] = [];
   public currencyData: any;
   public uomData: any;
-  public currUomRetrieved: boolean = false;
-  public cardOrderChanged: boolean = false;
+  public currUomRetrieved = false as boolean;
+  public cardOrderChanged = false as boolean;
   selectedUnitOfMeasure: string;
   selectedCurrency: string;
   userId: number;

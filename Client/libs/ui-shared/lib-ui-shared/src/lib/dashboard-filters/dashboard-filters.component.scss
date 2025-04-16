@@ -1,10 +1,12 @@
+@use 'styles' as *;
+
 .filterAndUsercontrols {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background: #F5F5F5;
-  border-bottom: 1px solid #c2c2c2;
+  @include costar(background-color, background);
+  @include costar(border-bottom, gray04);
   padding: 0 16px 8px;
   box-sizing: border-box;
   font-size: 14px;
@@ -25,11 +27,8 @@ crem-button {
 
 .actionButtons {
   display: Flex;
+  @include costar(gap, 2);
   align-items: flex-start;
-  margin-left: 8px;
-  crem-button {
-    margin-left: 8px;
-  }
 }
 
 .filterElement {
@@ -41,27 +40,26 @@ crem-button {
   margin-top: 8px;
 }
 
+crem-dropdown,
+crem-hierarchy-dropdown {
+  margin-right: 8px;
 
-crem-dropdown, crem-hierarchy-dropdown {
-margin-right: 8px;
-
-.dx-fieldset {
-  margin: 0 !important;
-  padding: 0;
-}  
+  .dx-fieldset {
+    margin: 0 !important;
+    padding: 0;
+  }
 }
 
 button.mat-mdc-menu-item {
-width: 100%;
+  width: 100%;
 }
 
 div.mat-mdc-menu-panel div.mat-mdc-menu-content {
-font-size: 14px;
+  font-size: 14px;
 }
 
 :host::ng-deep {
-.dx-show-clear-button .dx-icon-clear {
-  color: #666666;
+  .dx-show-clear-button .dx-icon-clear {
+    color: #666666;
+  }
 }
-}
-

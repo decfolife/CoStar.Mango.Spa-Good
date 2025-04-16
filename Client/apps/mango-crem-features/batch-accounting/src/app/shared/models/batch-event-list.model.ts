@@ -47,4 +47,6 @@ export interface ParameterOverrides {
   annualRateTypeOverride: string | null;
   manualAssetAdjustmentOverride: string | null;
   paymentTimingOverride: string | null;
+  rouAssetObtainedMethodOverride: number | null;
+  rouAssetObtainedDateOverride: Date | null;
 }

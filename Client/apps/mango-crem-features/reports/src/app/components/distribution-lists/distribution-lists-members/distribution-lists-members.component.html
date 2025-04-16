@@ -1,82 +1,57 @@
 <div class="distribution-lists-members-container">
-  <div class="distribution-lists-members-dataGrid-wrapper">
-    <dx-data-grid
-      class="distribution-lists-members-grid"
-      #DistributionListsMembersGrid
-      [showColumnLines]="false"
-      [showRowLines]="false"
-      [showBorders]="false"
-      [rowAlternationEnabled]="true"
-      [allowColumnResizing]="true"
-      columnResizingMode="widget"
-      [allowColumnReordering]="true"
-      [columnAutoWidth]="false"
-      [dataSource]="members"
-      [focusedRowEnabled]="true"
-      keyExpr="memberID"
-      [width]="'100%'"
-      [hoverStateEnabled]="true"
-      [filterSyncEnabled]="true"
-      [wordWrapEnabled]="true"
-      (onCellPrepared)="gridOnCellPrepared($event)"
-      (onContentReady)="setAttributes($event)"
-      (onKeyDown)="onKeyDown($event)"
-      (onSelectionChanged)="onSelectionChanged($event)"
-    >
-      <dxo-header-filter
-        [visible]="true"
-        [allowSearch]="true"
-      ></dxo-header-filter>
-      <dxo-sorting mode="multiple"></dxo-sorting>
-      <dxo-paging [enabled]="false"></dxo-paging>
+	<div class="distribution-lists-members-dataGrid-wrapper"> 
+		<dx-data-grid class="distribution-lists-members-grid"
+			#DistributionListsMembersGrid
+			[showColumnLines]="false"
+			[showRowLines]="false"
+			[showBorders]="false"
+			[rowAlternationEnabled]="true"
+			[allowColumnResizing]="true"
+			columnResizingMode="widget"
+			[allowColumnReordering]="true"
+			[columnAutoWidth]="false"
+			[dataSource]="members"
+			[focusedRowEnabled]="true"
+			keyExpr="memberID"
+			[width]="'100%'"
+			[hoverStateEnabled]="true"
+			[filterSyncEnabled]="true"
+			[wordWrapEnabled]="true"
+			(onCellPrepared)="gridOnCellPrepared($event)"
+			(onContentReady)="setAttributes($event)"
+			(onKeyDown)="onKeyDown($event)"
+			(onSelectionChanged)="onSelectionChanged($event)"
+		>
+			<dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+			<dxo-sorting mode="multiple"></dxo-sorting>
+			<dxo-paging [enabled]="false"></dxo-paging>
 
-      <dxo-selection
-        class="selectMember"
-        selectAllMode="allPages"
-        showCheckBoxesMode="always"
-        mode="multiple"
-      >
-      </dxo-selection>
+			<dxo-selection 
+		   	class="selectMember"
+				selectAllMode="allPages"
+				showCheckBoxesMode="always"
+				mode="multiple">
+			</dxo-selection>
 
-      <dxo-editing
-        mode="row"
-        [allowUpdating]="true"
-        [allowDeleting]="true"
-        [allowAdding]="false"
-      >
-      </dxo-editing>
+			<dxo-editing
+				mode="row"
+				[allowUpdating]="true"
+				[allowDeleting]="true"
+				[allowAdding]="false"
+			>
+			</dxo-editing>
 
-      <dxo-search-panel
-        [text]="searchText"
-        [visible]="false"
-      ></dxo-search-panel>
+			<dxo-search-panel
+    		[text]="searchText"
+				[visible]="false"
+  		></dxo-search-panel>
 
-      <dxi-column
-        type="selection"
-        [width]="40"
-        [fixed]="true"
-        fixedPosition="left"
-        [allowSorting]="false"
-        [allowReordering]="false"
-        [allowResizing]="false"
-      >
-      </dxi-column>
-      <dxi-column
-        dataField="name"
-        [allowEditing]="false"
-        dataType="string"
-        cellTemplate="memberNameTemplate"
-      ></dxi-column>
-      <dxi-column
-        dataField="company"
-        [allowEditing]="false"
-        dataType="string"
-      ></dxi-column>
-      <dxi-column
-        dataField="email"
-        [allowEditing]="false"
-        dataType="string"
-      ></dxi-column>
+			<dxi-column type="selection" [width]="40" [fixed]="true" fixedPosition="left" [allowSorting]="false"
+				[allowReordering]="false" [allowResizing]="false">
+			</dxi-column>
+			<dxi-column dataField="name" [allowEditing]="false" dataType="string" cellTemplate="memberNameTemplate"></dxi-column>
+			<dxi-column dataField="company" [allowEditing]="false" dataType="string"></dxi-column>
+			<dxi-column dataField="email" [allowEditing]="false" dataType="string"></dxi-column>
       <dxi-column
         type="buttons"
         width="110"
@@ -86,60 +61,33 @@
         [allowReordering]="false"
         [allowResizing]="false"
       >
-        <dxi-button template="actionsMenuTemplate">
+				<dxi-button template="actionsMenuTemplate">
           <div
             *dxTemplate="let member of 'actionsMenuTemplate'"
             class="actionsMenuTemplate"
           >
-            <button
-              aria-label="actions menu"
-              class="btn btn-link distributionListMemberActionsButton rowActionsButton"
-              [hidden]="
-                !userModuleAddRights || rights.toLowerCase().trim() == 'view'
-              "
-              *ngIf="!member.data.editMode"
-              id="{{ 'memberActionButton' + member.rowIndex }}"
-              (click)="$event.preventDefault()"
-              #distributionListMemberActionsMenuTrigger="matMenuTrigger"
-              [matMenuTriggerFor]="distributionListMemberActionsMenu"
-            >
-              <mat-icon aria-label="Actions Menu">more_vert</mat-icon>
-            </button>
-            <mat-menu
-              #distributionListMemberActionsMenu="matMenu"
-              class="distributionListMemberActionsMenu"
-            >
-              <button
-                mat-menu-item
-                (keydown)="matMenuButtonKeyDown($event)"
+              <button id="{{ 'memberActionButton' + member.rowIndex }}" *ngIf="rights.toLowerCase().trim() == 'edit' || rights.toLowerCase().trim() == 'delete'"
                 (click)="removeDistributionListsMember(member.data)"
-                class="tmam-remove"
+                class="btn btn-link tmam-remove"
               >
                 Remove
               </button>
-            </mat-menu>
-          </div>
-        </dxi-button>
-      </dxi-column>
-      <div
-        *dxTemplate="let member of 'memberNameTemplate'"
-        class="dl-distributionListTemplate"
-      >
-        <div class="mtm-memberNameAndInfo">
-          <span class="mtm-memberName"> {{ member.data.name }}</span>
-          <span
-            class="mtm-info"
-            *ngIf="!member.data.isActive || !member.data.allowLogOn"
-          >
-            <crem-tooltip
-              [externalId]="
-                'mtmToolTipId' + member.data.contactId + member.data.teamId
-              "
-              [helpTextData]="teamMemberInfo"
-            ></crem-tooltip>
-          </span>
-        </div>
-      </div>
-    </dx-data-grid>
-  </div>
+					</div>
+				</dxi-button>		    	
+			</dxi-column>
+			<div *dxTemplate="let member of 'memberNameTemplate'" class="dl-distributionListTemplate" >
+				<div class="mtm-memberNameAndInfo">
+					<span class="mtm-memberName"> {{member.data.name}}</span>
+					<span class="mtm-info" *ngIf="!member.data.isActive || !member.data.allowLogOn">
+						<crem-tooltip
+							[externalId]="'mtmToolTipId' + member.data.contactId + member.data.teamId"
+							[helpTextData]="teamMemberInfo"
+						></crem-tooltip>
+					</span>	
+				</div>
+			</div>
+
+		</dx-data-grid>
+	</div>
+
 </div>

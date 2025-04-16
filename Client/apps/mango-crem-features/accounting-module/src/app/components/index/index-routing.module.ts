@@ -7,6 +7,7 @@ import { DashboardWrapperComponent } from '../dashboard/dashboard-wrapper/dashbo
 const routes: Routes = [
   {
     path: 'accountingevents',
+    title: 'Accounting Events',
     component: AccountingListpageComponent,
     data: {
       breadCrumb: { label: 'Events', append: true, activeLink: 'Events' },
@@ -15,6 +16,7 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardWrapperComponent,
+    // title: 'Accounting Dashboard',
     data: {
       breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' },
     },

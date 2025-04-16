@@ -15,7 +15,7 @@
           <li
             *ngFor="let financeLink of card.gridData.dataSource.financialLinks"
           >
-            <a [href]="returnFinancialsUrlLink(financeLink.linkUrl)">{{
+            <a [routerLink]="[returnFinancialsUrlLink(financeLink.linkUrl)]">{{
               financeLink.name
             }}</a>
           </li>
@@ -29,9 +29,13 @@
               let accountingLink of card.gridData.dataSource.accountingLinks
             "
           >
-            <a href="../../../{{ accountingLink.linkUrl }}">{{
-              accountingLink.name
-            }}</a>
+            <a
+              [routerLinkWithHref]="[
+                '../../../',
+                '{{ accountingLink.linkUrl }}'
+              ]"
+              >{{ accountingLink.name }}</a
+            >
           </li>
         </ul>
       </div>

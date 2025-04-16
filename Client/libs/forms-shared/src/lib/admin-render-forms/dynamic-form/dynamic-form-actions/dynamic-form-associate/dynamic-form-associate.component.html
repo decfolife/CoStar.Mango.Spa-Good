@@ -1,9 +1,14 @@
+<div *ngIf="isAssociateLoading" class="df-associate-loader">
+  <crem-loader></crem-loader>
+</div>
+
 <crem-modal
   modalId="associate_modal"
   modalTitleId="associate_modal_modalTitleId"
-  modalTitle="Associate to Project: Step 1 of 1"
+  [modalTitle]="modalTitle"
   closeIconVisible="true"
   [customFooter]="true"
+  *ngIf="!isAssociateLoading"
 >
   <div modalContent class="body-content">
     <form
@@ -33,7 +38,6 @@
             [allowSearch]="true"
             hoverText="Select Country"
             (selectedItems)="onCountryValueChange($event)"
-            formControlName="countryList"
             [containerized]="false"
             [displayExpr]="'value'"
             [valueExpr]="'name'"
@@ -47,7 +51,7 @@
         <crem-form-label
           [id]="getId(componentName, 'BuildingState', 'label')"
           [required]="true"
-          >Building State/Prov
+          >State/Prov
         </crem-form-label>
 
         <crem-form-control>
@@ -62,7 +66,6 @@
             [allowSearch]="true"
             hoverText="Select State"
             (selectedItems)="onStateValueChange($event)"
-            formControlName="stateList"
             [containerized]="false"
             [displayExpr]="'value'"
             [valueExpr]="'name'"
@@ -91,7 +94,6 @@
             [allowSearch]="true"
             hoverText="Select Building"
             (selectedItems)="onBuildingValueChange($event)"
-            formControlName="buildingList"
             [containerized]="false"
             [displayExpr]="'buildingName'"
             [valueExpr]="'buildingID'"
@@ -123,7 +125,6 @@
             [allowSearch]="true"
             hoverText="Select Premise"
             (selectedItems)="onPremiseValueChange($event)"
-            formControlName="premiseList"
             [containerized]="false"
             [displayExpr]="'premiseDescText'"
             [valueExpr]="'premiseID'"
@@ -155,7 +156,6 @@
             [allowSearch]="true"
             hoverText="Select Lease"
             (selectedItems)="onLeaseValueChange($event)"
-            formControlName="leaseList"
             [containerized]="false"
             [displayExpr]="'leaseName'"
             [valueExpr]="'leaseAbstractID'"
@@ -168,18 +168,13 @@
       <crem-form-item
         [id]="getId(componentName, 'RemoveAssociation', 'form-item')"
       >
-        <crem-form-label
-          [id]="getId(componentName, 'RemoveAssociation', 'label')"
-          [required]="false"
-          >Remove Association
-        </crem-form-label>
-
         <crem-form-control>
           <crem-check-box
-            #removeAssociation
+            #removeAssociationCheckbox
             [id]="getId(componentName, 'RemoveAssociation', 'checkbox')"
             (changeEvent)="removeAssociationChanged($event)"
           >
+            Remove Association
           </crem-check-box>
         </crem-form-control>
       </crem-form-item>
@@ -187,8 +182,12 @@
   </div>
 
   <div modalFooter class="addAssociateFooter">
-    <crem-button [id]="'cancel-associate-id'" type="secondary" (click)="close()"
-      >Cancel
+    <crem-button
+      [id]="'cancel-associate-id'"
+      type="secondary"
+      (click)="close()"
+    >
+      Cancel
     </crem-button>
 
     <crem-button
@@ -198,6 +197,7 @@
       [icon]="saveClicked ? 'faSpinner' : ''"
       [iconPack]="saveClicked ? 'solid' : ''"
       [iconAnimation]="saveClicked ? 'spin' : ''"
+      [disabled]="disableSaveButton"
     >
       <span>
         {{ saveClicked ? 'Saving' : 'Save' }}

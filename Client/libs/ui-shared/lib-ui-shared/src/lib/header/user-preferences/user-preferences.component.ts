@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
   UntypedFormBuilder,
@@ -21,12 +22,14 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { passwordMatchValidator } from '../../../../../../../apps/mango-crem-features/central-auth/src/app/components/reset-password/password-validator';
 import { StartPage, ToastState } from '@mango/data-models/lib-data-models';
 import { catchError } from 'rxjs/operators';
+
 @Component({
   selector: 'mango-user-preferences',
   standalone: true,
   templateUrl: './user-preferences.component.html',
   styleUrls: ['./user-preferences.component.scss'],
   imports: [
+    CommonModule,
     ModalModule,
     ButtonModule,
     DropdownModule,
@@ -61,15 +64,15 @@ export class UserPreferencesComponent implements OnInit {
   public currencyMappings;
   public possibleStartPages;
   public userPreferences;
-  public disablePasswordChange = false;
+  public isPasswordEnabled = false;
   //temporary workaround since shared component display not working
   public dateStyleValue;
   public initialStartPageValue;
 
   ngOnInit(): void {
-    //combine
     this.facade.contactRecord$.subscribe((c) => {
-      this.disablePasswordChange = !c.allowLogOn && c.requireSSO;
+      // For reference, 'requireSSO' is 'Allow Normal Login' parameter on V06
+      this.isPasswordEnabled = !c.requireSSO;
       this.userPreferences = c.preferences;
       this.contactInfo = c;
       this.initialStartPageValue =
@@ -101,7 +104,7 @@ export class UserPreferencesComponent implements OnInit {
   savePreferences(): void {
     let showingError = false;
     if (
-      (!this.disablePasswordChange &&
+      (this.isPasswordEnabled &&
         this.checkPasswordFormChanges() &&
         !this.checkPasswordFormFilled()) ||
       !this.checkPreferencesFormFilled()
@@ -115,7 +118,7 @@ export class UserPreferencesComponent implements OnInit {
       showingError = true;
       return;
     } else if (
-      !this.disablePasswordChange &&
+      this.isPasswordEnabled &&
       this.checkPasswordFormChanges() &&
       this.checkPasswordFormFilled() &&
       !this.updatePasswordForm.valid
@@ -131,7 +134,7 @@ export class UserPreferencesComponent implements OnInit {
     }
 
     if (
-      !this.disablePasswordChange &&
+      this.isPasswordEnabled &&
       this.updatePasswordForm.valid &&
       this.checkPasswordFormChanges() &&
       this.checkPasswordFormFilled()
@@ -183,6 +186,7 @@ export class UserPreferencesComponent implements OnInit {
           ? this.userPreferencesForm.value.measurement[0]
           : this.userPreferencesForm.value.measurement,
         contactStartPage: String(startPageModule) + '|' + startPageValue,
+        contactRequireSSO: !this.isPasswordEnabled, // Same as 'c.requireSSO', which is why it is reverted to the opposite value of contactExcludedSSO.
       })
       .subscribe(() => {
         if (!showingError) {

@@ -12,6 +12,8 @@ export const dashboardASCAnnually: DashboardConfig = {
       defaultCardView: 'pivotGrid', // When allowToggleCardView is true, choose the default Grid type
       chartActive: false,
       chartVisible: false,
+      showMenuSave: false,
+      showMenuReset: false,
       format: {
         type: 'fixedPoint',
         precision: 0,
@@ -135,6 +137,8 @@ export const dashboardASCAnnually: DashboardConfig = {
       summaryCellName: 'PeriodYear',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       sortingOrder: {
         'ROU Asset Balance': 0,
         'Short Term Liability Balance': 1,
@@ -225,10 +229,25 @@ export const dashboardASCAnnually: DashboardConfig = {
       name: 'Lease Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
-      showRowGrandTotals: true,
-      texts: {
-        grandTotal: 'Total Lease Cost',
+      combineWithIndex: 3,
+      mergeBy: [
+        {
+          PeriodYearMonth: 'PeriodYearMonth',
+        },
+      ],
+      sortingOrder: {
+        'Finance Lease Cost': 0,
+        ' - Amortization of right-of-use Assets': 1,
+        ' - Interest on Lease Liabilities': 2,
+        'Operating Lease Cost': 3,
+        'Short-term Lease & Reporting Exceptions Cost': 4,
+        'Variable Lease Cost': 5,
+        'Variable Cost of Indexed Payments': 6,
+        'Sublease Income': 7,
+        'Total Lease Cost': 10,
       },
       cardJSONSchema: [
         {
@@ -246,23 +265,6 @@ export const dashboardASCAnnually: DashboardConfig = {
           summaryType: 'sum',
         },
       ],
-      combineWithIndex: 3,
-      mergeBy: [
-        {
-          PeriodYearMonth: 'PeriodYearMonth',
-        },
-      ],
-      sortingOrder: {
-        'Finance Lease Cost': 0,
-        ' - Amortization of right-of-use Assets': 1,
-        ' - Interest on Lease Liabilities': 2,
-        'Operating Lease Cost': 3,
-        'Short-term Lease & Reporting Exceptions Cost': 4,
-        'Variable Lease Cost': 5,
-        'Variable Cost of Indexed Payments': 6,
-        'Sublease Income': 7,
-      },
-      sortedColumnFieldName: 'LeaseTemplate',
       fieldTransform: [
         {
           Display: 'Finance Lease Cost',
@@ -304,6 +306,18 @@ export const dashboardASCAnnually: DashboardConfig = {
           PeriodYear: 'PeriodYear',
           data: 'SubleaseIncome',
         },
+        {
+          Display: 'Total Lease Cost',
+          PeriodYear: 'PeriodYear',
+          dataCalculation:
+            '${AssetAmortizationReporting} + ' +
+            '${LeaseLiabilityInterestReporting} + ' +
+            '${OperatingLeaseCostReporting} + ' +
+            '${ShortTermLeaseAndReportingExceptionCostReporting} + ' +
+            '${VariableLeaseCostReporting} + ' +
+            '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
+            '${SubleaseIncome}',
+        },
       ],
     },
     {
@@ -312,6 +326,8 @@ export const dashboardASCAnnually: DashboardConfig = {
       name: 'Reporting Exceptions Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       sortingOrder: {
         'ST Lease & Reporting Exceptions Cost - Cash Basis': 0,
@@ -352,6 +368,8 @@ export const dashboardASCAnnually: DashboardConfig = {
       name: 'Other Information',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       cardJSONSchema: [
         {
@@ -445,6 +463,8 @@ export const dashboardASCAnnually: DashboardConfig = {
       name: 'Liability Maturity',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       filterData: [
         { displayKey: '5 years', valueKey: 6 },
         { displayKey: '10 years', valueKey: 11 },
@@ -513,6 +533,8 @@ export const dashboardASCAnnually: DashboardConfig = {
       name: 'Reconciliation of Lease Liabilities',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       sortingOrder: {
         'Weighted-Average Remaining Years to Accounting Term': 0,
@@ -586,6 +608,8 @@ export const dashboardASCAnnually: DashboardConfig = {
       name: 'Future Commitments',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       sortingOrder: {},
       filterData: [
@@ -652,7 +676,9 @@ export const dashboardASCQuarterly: DashboardConfig = {
       id: 'ASC-Quarterly-Lease-Counts',
       name: 'Lease Counts',
       allowToggleCardView: false, // Allows to change between PivotGrid and DataGrid
-      defaultCardView: 'pivotGrid', // When allowToggleCardView is true, choose the default Grid type
+      defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false, // When allowToggleCardView is true, choose the default Grid type
       chartActive: false,
       chartVisible: false,
       format: {
@@ -772,6 +798,8 @@ export const dashboardASCQuarterly: DashboardConfig = {
       name: 'Assets and Liabilities Balances',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       summaryCellName: 'PeriodQuarter',
       sortingOrder: {
@@ -864,12 +892,15 @@ export const dashboardASCQuarterly: DashboardConfig = {
       name: 'Lease Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
-      showRowGrandTotals: true,
-      texts: {
-        grandTotal: 'Total Lease Cost',
-      },
       combineWithIndex: 3,
+      mergeBy: [
+        { PeriodYearMonth: 'PeriodYearMonth' },
+        { PeriodQuarter: 'PeriodQuarter' },
+      ],
+      summaryCellName: 'PeriodYearMonth',
       sortingOrder: {
         'Finance Lease Cost': 0,
         ' - Amortization of right-of-use Assets': 1,
@@ -879,6 +910,7 @@ export const dashboardASCQuarterly: DashboardConfig = {
         'Variable Lease Cost': 5,
         'Variable Cost of Indexed Payments': 6,
         'Sublease Income': 7,
+        'Total Lease Cost': 10,
       },
       sortedColumnFieldName: 'LeaseTemplate',
       cardJSONSchema: [
@@ -938,6 +970,18 @@ export const dashboardASCQuarterly: DashboardConfig = {
           PeriodQuarter: 'PeriodQuarter',
           data: 'SubleaseIncome',
         },
+        {
+          Display: 'Total Lease Cost',
+          PeriodQuarter: 'PeriodQuarter',
+          dataCalculation:
+            '${AssetAmortizationReporting} + ' +
+            '${LeaseLiabilityInterestReporting} + ' +
+            '${OperatingLeaseCostReporting} + ' +
+            '${ShortTermLeaseAndReportingExceptionCostReporting} + ' +
+            '${VariableLeaseCostReporting} + ' +
+            '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
+            '${SubleaseIncome}',
+        },
       ],
     },
     {
@@ -946,6 +990,8 @@ export const dashboardASCQuarterly: DashboardConfig = {
       name: 'Reporting Exceptions Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       sortingOrder: {
         'ST Lease & Reporting Exceptions Cost - Cash Basis': 0,
@@ -986,6 +1032,8 @@ export const dashboardASCQuarterly: DashboardConfig = {
       name: 'Other Information',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       cardJSONSchema: [
         {
@@ -1079,6 +1127,8 @@ export const dashboardASCQuarterly: DashboardConfig = {
       name: 'Liability Maturity',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       filterData: [
         { displayKey: '5 years', valueKey: 6 },
         { displayKey: '10 years', valueKey: 11 },
@@ -1149,6 +1199,8 @@ export const dashboardASCQuarterly: DashboardConfig = {
       name: 'Reconciliation of Lease Liabilities',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       sortingOrder: {
         'Weighted-Average Remaining Years to Accounting Term': 0,
@@ -1222,6 +1274,8 @@ export const dashboardASCQuarterly: DashboardConfig = {
       name: 'Future Commitments',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       sortingOrder: {},
       filterData: [
@@ -1288,7 +1342,9 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       id: 'IFRS16-Annual-Lease-Counts',
       name: 'Lease Counts',
       allowToggleCardView: false, // Allows to change between PivotGrid and DataGrid
-      defaultCardView: 'pivotGrid', // When allowToggleCardView is true, choose the default Grid type
+      defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false, // When allowToggleCardView is true, choose the default Grid type
       chartActive: false,
       chartVisible: false,
       sortingOrder: {
@@ -1389,6 +1445,8 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       name: 'Assets and Liabilities Balances',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       summaryCellName: 'PeriodYear',
       sortingOrder: {
@@ -1541,6 +1599,8 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       id: 'IFRS16-Annual-Lease-Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       width: 200,
       summaryCellName: 'PeriodYear',
       combineWithIndex: 3,
@@ -1614,19 +1674,19 @@ export const dashboardIFRSAnnually: DashboardConfig = {
           LeaseTemplate: 'LeaseTemplate',
           Display: 'Reporting Exceptions Cost Short-Term Leases',
           PeriodYear: 'PeriodYear',
-          data: 'ShortTermLeaseReportingExceptionCostReporting',
+          data: 'ShortTermLeaseCostReporting',
         },
         {
           LeaseTemplate: 'LeaseTemplate',
           Display: 'Reporting Exceptions Cost Low-Value Leases',
           PeriodYear: 'PeriodYear',
-          data: 'LowValueLeaseReportingExceptionCostReporting',
+          data: 'LowValueLeaseCostReporting',
         },
         {
           LeaseTemplate: 'LeaseTemplate',
           Display: 'Other Reporting Exceptions',
           PeriodYear: 'PeriodYear',
-          data: 'OtherReportingExceptionCostReporting',
+          data: 'OtherExceptionCostReporting',
         },
         {
           LeaseTemplate: 'LeaseTemplate',
@@ -1653,9 +1713,9 @@ export const dashboardIFRSAnnually: DashboardConfig = {
           dataCalculation:
             '${DepreciationOfROUAssets} + ' +
             '${LeaseLiabilityInterestReporting} + ' +
-            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
-            '${LowValueLeaseReportingExceptionCostReporting} + ' +
-            '${OtherReportingExceptionCostReporting} + ' +
+            '${ShortTermLeaseCostReporting} + ' +
+            '${LowValueLeaseCostReporting} + ' +
+            '${OtherExceptionCostReporting} + ' +
             '${VariableLeaseCostReporting} + ' +
             '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
             '${SubleaseIncome}',
@@ -1683,19 +1743,19 @@ export const dashboardIFRSAnnually: DashboardConfig = {
           LeaseTemplate: 'Total',
           Display: 'Reporting Exceptions Cost Short-Term Leases',
           PeriodYear: 'PeriodYear',
-          data: 'ShortTermLeaseReportingExceptionCostReporting',
+          data: 'ShortTermLeaseCostReporting',
         },
         {
           LeaseTemplate: 'Total',
           Display: 'Reporting Exceptions Cost Low-Value Leases',
           PeriodYear: 'PeriodYear',
-          data: 'LowValueLeaseReportingExceptionCostReporting',
+          data: 'LowValueLeaseCostReporting',
         },
         {
           LeaseTemplate: 'Total',
           Display: 'Other Reporting Exceptions',
           PeriodYear: 'PeriodYear',
-          data: 'OtherReportingExceptionCostReporting',
+          data: 'OtherExceptionCostReporting',
         },
         {
           LeaseTemplate: 'Total',
@@ -1722,9 +1782,9 @@ export const dashboardIFRSAnnually: DashboardConfig = {
           dataCalculation:
             '${DepreciationOfROUAssets} + ' +
             '${LeaseLiabilityInterestReporting} + ' +
-            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
-            '${LowValueLeaseReportingExceptionCostReporting} + ' +
-            '${OtherReportingExceptionCostReporting} + ' +
+            '${ShortTermLeaseCostReporting} + ' +
+            '${LowValueLeaseCostReporting} + ' +
+            '${OtherExceptionCostReporting} + ' +
             '${VariableLeaseCostReporting} + ' +
             '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
             '${SubleaseIncome}',
@@ -1736,6 +1796,8 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       name: 'Reporting Exceptions Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       id: 'IFRS16-Annual-Reporting-Exceptions-Cost',
       width: 200,
       summaryCellName: 'PeriodYear',
@@ -1789,6 +1851,8 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       name: 'Other Information',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       id: 'IFRS16-Annual-Other-Information',
       width: 200,
       summaryCellName: 'PeriodYear',
@@ -1808,7 +1872,7 @@ export const dashboardIFRSAnnually: DashboardConfig = {
         'Real Estate Lease': 3,
         'Equipment Lease': 4,
         'Office Equipment Lease': 5,
-        Total: 10,
+        Total: 10, // Relying on a LeaseTemplate with name "Total"
       },
       cardJSONSchema: [
         {
@@ -1875,50 +1939,6 @@ export const dashboardIFRSAnnually: DashboardConfig = {
           PeriodYear: 'PeriodYear',
           data: 'WeightedAverageIncrementalBorrowingRate',
         },
-        // Totals
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Cash Flows - Total',
-          PeriodYear: 'PeriodYear',
-          data: 'CashFlowsTotalReporting',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Cash Flows - Interest',
-          PeriodYear: 'PeriodYear',
-          data: 'CashFlowsInterestReporting',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Cash Flows - Principal Repayment',
-          PeriodYear: 'PeriodYear',
-          data: 'CashFlowsPrincipalRepaymentReporting',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display:
-            'Right-of-use Assets Obtained In Exchange For New Finance Liabilities',
-          PeriodYear: 'PeriodYear',
-          data: 'ROUAssetsObtainedInExchangeForNewFinanceLiabilities',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Weighted-Average Remaining Years to Accounting Term',
-          PeriodYear: 'PeriodYear',
-          data: 'WeightedAverageYearsRemainingToAccountingTermFinance',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Weighted-Average Remaining Years to Expiration',
-          PeriodYear: 'PeriodYear',
-          data: 'WeightedAverageYearsRemainingToExpirationFinance',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Weighted-Average Incremental Borrowing Rate',
-          PeriodYear: 'PeriodYear',
-          data: 'WeightedAverageIncrementalBorrowingRate',
-        },
       ],
     },
     {
@@ -1926,6 +1946,8 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       name: 'Liability Maturity',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       id: 'IFRS16-Annual-Liability-Maturity',
       filterData: [
         { displayKey: '5 years', valueKey: 6 },
@@ -1999,6 +2021,8 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       name: 'Reconciliation of Lease Liabilities',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       id: 'IFRS16-Annual-Reconciliation-of-Lease-Liabilities',
       width: 200,
       sortingOrder: {
@@ -2076,6 +2100,8 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       name: 'Future Commitments',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       id: 'IFRS16-Annual-Future-Commitments',
       width: 200,
       sortingOrder: {},
@@ -2153,7 +2179,9 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       name: 'Lease Counts',
       summaryCellName: 'PeriodQuarter',
       allowToggleCardView: false, // Allows to change between PivotGrid and DataGrid
-      defaultCardView: 'pivotGrid', // When allowToggleCardView is true, choose the default Grid type
+      defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false, // When allowToggleCardView is true, choose the default Grid type
       chartActive: false,
       chartVisible: false,
       format: {
@@ -2245,10 +2273,6 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           data: 'ClosingCount',
         },
       ],
-      dataGrid: {
-        columnChooser: true,
-        columnChooserMode: 'dragAndDrop',
-      },
     },
     {
       index: 1,
@@ -2256,6 +2280,8 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       name: 'Assets and Liabilities Balances',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       chartActive: false,
       chartVisible: false,
       width: 200,
@@ -2408,6 +2434,8 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       id: 'IFRS16-Quarterly-Lease-Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       chartActive: false,
       chartVisible: false,
       width: 200,
@@ -2481,19 +2509,19 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           LeaseTemplate: 'LeaseTemplate',
           Display: 'Reporting Exceptions Cost Short-Term Leases',
           PeriodQuarter: 'PeriodQuarter',
-          data: 'ShortTermLeaseReportingExceptionCostReporting',
+          data: 'ShortTermLeaseCostReporting',
         },
         {
           LeaseTemplate: 'LeaseTemplate',
           Display: 'Reporting Exceptions Cost Low-Value Leases',
           PeriodQuarter: 'PeriodQuarter',
-          data: 'LowValueLeaseReportingExceptionCostReporting',
+          data: 'LowValueLeaseCostReporting',
         },
         {
           LeaseTemplate: 'LeaseTemplate',
           Display: 'Other Reporting Exceptions',
           PeriodQuarter: 'PeriodQuarter',
-          data: 'OtherReportingExceptionCostReporting',
+          data: 'OtherExceptionCostReporting',
         },
         {
           LeaseTemplate: 'LeaseTemplate',
@@ -2513,6 +2541,7 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           PeriodQuarter: 'PeriodQuarter',
           data: 'SubleaseIncome',
         },
+        // Totals
         {
           LeaseTemplate: 'LeaseTemplate',
           Display: 'Total Lease Cost',
@@ -2520,9 +2549,9 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           dataCalculation:
             '${DepreciationOfROUAssets} + ' +
             '${LeaseLiabilityInterestReporting} + ' +
-            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
-            '${LowValueLeaseReportingExceptionCostReporting} + ' +
-            '${OtherReportingExceptionCostReporting} + ' +
+            '${ShortTermLeaseCostReporting} + ' +
+            '${LowValueLeaseCostReporting} + ' +
+            '${OtherExceptionCostReporting} + ' +
             '${VariableLeaseCostReporting} + ' +
             '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
             '${SubleaseIncome}',
@@ -2549,19 +2578,19 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           LeaseTemplate: 'Total',
           Display: 'Reporting Exceptions Cost Short-Term Leases',
           PeriodQuarter: 'PeriodQuarter',
-          data: 'ShortTermLeaseReportingExceptionCostReporting',
+          data: 'ShortTermLeaseCostReporting',
         },
         {
           LeaseTemplate: 'Total',
           Display: 'Reporting Exceptions Cost Low-Value Leases',
           PeriodQuarter: 'PeriodQuarter',
-          data: 'LowValueLeaseReportingExceptionCostReporting',
+          data: 'LowValueLeaseCostReporting',
         },
         {
           LeaseTemplate: 'Total',
           Display: 'Other Reporting Exceptions',
           PeriodQuarter: 'PeriodQuarter',
-          data: 'OtherReportingExceptionCostReporting',
+          data: 'OtherExceptionCostReporting',
         },
         {
           LeaseTemplate: 'Total',
@@ -2588,9 +2617,9 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           dataCalculation:
             '${DepreciationOfROUAssets} + ' +
             '${LeaseLiabilityInterestReporting} + ' +
-            '${ShortTermLeaseReportingExceptionCostReporting} + ' +
-            '${LowValueLeaseReportingExceptionCostReporting} + ' +
-            '${OtherReportingExceptionCostReporting} + ' +
+            '${ShortTermLeaseCostReporting} + ' +
+            '${LowValueLeaseCostReporting} + ' +
+            '${OtherExceptionCostReporting} + ' +
             '${VariableLeaseCostReporting} + ' +
             '${VariableLeaseCostOfIndexedPaymentsReporting} + ' +
             '${SubleaseIncome}',
@@ -2602,6 +2631,8 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       name: 'Reporting Exceptions Cost',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       chartActive: false,
       chartVisible: false,
       id: 'IFRS16-Quarterly-Reporting-Exceptions-Cost',
@@ -2657,6 +2688,8 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       name: 'Other Information',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       chartActive: false,
       chartVisible: false,
       id: 'IFRS16-Quarterly-Other-Information',
@@ -2677,7 +2710,7 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
         'Real Estate Lease': 1,
         'Equipment Lease': 2,
         'Office Equipment Lease': 3,
-        Total: 4,
+        Total: 4, // Relying on a LeaseTemplate with name "Total"
       },
       cardJSONSchema: [
         {
@@ -2744,50 +2777,6 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
           PeriodQuarter: 'PeriodQuarter',
           data: 'WeightedAverageIncrementalBorrowingRate',
         },
-        // Totals
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Cash Flows - Total',
-          PeriodQuarter: 'PeriodQuarter',
-          data: 'CashFlowsTotalReporting',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Cash Flows - Interest',
-          PeriodQuarter: 'PeriodQuarter',
-          data: 'CashFlowsInterestReporting',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Cash Flows - Principal Repayment',
-          PeriodQuarter: 'PeriodQuarter',
-          data: 'CashFlowsPrincipalRepaymentReporting',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display:
-            'Right-of-use Assets Obtained In Exchange For New Finance Liabilities',
-          PeriodQuarter: 'PeriodQuarter',
-          data: 'ROUAssetsObtainedInExchangeForNewFinanceLiabilities',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Weighted-Average Remaining Years to Accounting Term',
-          PeriodQuarter: 'PeriodQuarter',
-          data: 'WeightedAverageYearsRemainingToAccountingTermFinance',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Weighted-Average Remaining Years to Expiration',
-          PeriodQuarter: 'PeriodQuarter',
-          data: 'WeightedAverageYearsRemainingToExpirationFinance',
-        },
-        {
-          LeaseTemplate: 'Total',
-          Display: 'Weighted-Average Incremental Borrowing Rate',
-          PeriodQuarter: 'PeriodQuarter',
-          data: 'WeightedAverageIncrementalBorrowingRate',
-        },
       ],
     },
     {
@@ -2795,6 +2784,8 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       name: 'Liability Maturity',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       chartActive: false,
       chartVisible: false,
       id: 'IFRS16-Quarterly-Liability-Maturity',
@@ -2870,6 +2861,8 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       name: 'Reconciliation of Lease Liabilities',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       chartActive: false,
       chartVisible: false,
       id: 'IFRS16-Quarterly-Reconciliation-of-Lease-Liabilities',
@@ -2948,6 +2941,8 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       name: 'Future Commitments',
       allowToggleCardView: false,
       defaultCardView: 'pivotGrid',
+      showMenuSave: false,
+      showMenuReset: false,
       chartActive: false,
       chartVisible: false,
       id: 'IFRS16-Quarterly-Future-Commitments',

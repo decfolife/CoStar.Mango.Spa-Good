@@ -9,6 +9,7 @@ import * as fromApp from '../+state/dynamic-forms.reducer';
 import { DynamicFormsEffects } from '../+state/dynamic-forms.effects';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 
+
 const DEV_MODULES = [];
 
 if (!environment.production) {
@@ -32,7 +33,7 @@ if (!environment.production) {
       fromApp.dynamicFormsReducer
     ),
     EffectsModule.forFeature([DynamicFormsEffects]),
-    ...DEV_MODULES,
+    ...DEV_MODULES
   ],
 })
 export class IndexModule {}

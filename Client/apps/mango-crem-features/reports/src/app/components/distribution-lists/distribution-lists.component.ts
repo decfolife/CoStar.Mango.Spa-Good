@@ -1,51 +1,35 @@
-import {
-  Component,
-  Inject,
-  LOCALE_ID,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { Component, Inject, LOCALE_ID, numberAttribute, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DxDataGridComponent } from "devextreme-angular";
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SearchComponent } from '@mango/ui-shared/cosmos';
 import { BehaviorSubject, Observable, of, Subject, Subscription } from 'rxjs';
 import { MangoDialogService } from 'libs/core-shared/src/lib/services/mango-dialog.service';
 import { DistributionListsService } from './distribution-lists.service';
 import { SharedService } from '@reports/shared/services/shared.service';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  switchMap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 import dxCheckBox, { InitializedEvent } from 'devextreme/ui/check_box';
 import { trigger } from 'devextreme/events';
-import DataGrid from 'devextreme/ui/data_grid';
+import DataGrid from "devextreme/ui/data_grid";
 import { formatDate } from '@angular/common';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver-es';
 import { Buffer } from 'exceljs';
-import {
-  DistributionList,
-  DistributionListKeys,
-} from '@mango/data-models/lib-data-models';
+import { DistributionList, DistributionListKeys } from '@mango/data-models/lib-data-models';
 import { AddEditDistributionListComponent } from './add-edit-distribution-list/add-edit-distribution-list.component';
 
 @Component({
   selector: 'mango-distribution-lists',
   templateUrl: './distribution-lists.component.html',
-  styleUrls: ['./distribution-lists.component.scss'],
+  styleUrls: ['./distribution-lists.component.scss']
 })
 export class DistributionListsComponent {
-  @ViewChild('DistributionListDataGrid')
-  distributionListDataGrid: DxDataGridComponent;
+
+  @ViewChild("DistributionListDataGrid") distributionListDataGrid: DxDataGridComponent;
   @ViewChild('SearchBox') searchBox: SearchComponent;
 
   isExpanded: boolean = false;
   dataRetrieved: boolean = false;
-  searchText: string = '';
+  searchText: string = "";
   selectAllCheckBox: dxCheckBox;
   selectedDistLists: any[] = [];
   selectedDistListIds: number[] = [];
@@ -59,48 +43,46 @@ export class DistributionListsComponent {
   expandedRows: number[] = [];
   collapsedRows: number[] = [];
   distributionListTobeRemoved: number[] = [];
-  distributionListsData: DistributionList[] = [];
+  distributionListsData: DistributionList [] = []; 
   private localID: string;
   private subs: Subscription[] = [];
   activeFilterCount$ = new BehaviorSubject<number>(0);
 
-  constructor(
-    private distributionListsService: DistributionListsService,
+
+  constructor(private distributionListsService: DistributionListsService,
     private dialogService: MangoDialogService,
     private sharedService: SharedService,
     private dialog: MatDialog,
-    @Inject(LOCALE_ID) localID: string
-  ) {
-    this.localID = localID;
+    @Inject( LOCALE_ID ) localID: string ) {
+      this.localID = localID;
 
-    this.subs.push(
-      this.searchTextSubject
-        .pipe(debounceTime(500), distinctUntilChanged())
-        .subscribe((value) => {
-          this.searchDataGrid(value);
-        })
-    );
+      this.subs.push(
+        this.searchTextSubject
+          .pipe(debounceTime(500), distinctUntilChanged())
+          .subscribe((value) => {
+            this.searchDataGrid(value);
+          })
+      );
   }
 
   ngOnInit() {
     this.getUserPreferences();
-    this.getModuleRights();
     this.getDistributionListsData();
   }
 
-  toggleExpanded() {
-    this.isExpanded = !this.isExpanded;
+  toggleExpanded () {
+		this.isExpanded = !this.isExpanded;
     this.expandedRows = [];
     this.collapsedRows = [];
-  }
+	}
 
   searchDataGrid(data) {
     this.searchText = data;
-    this.distributionListDataGrid.instance.searchByText(data);
-  }
+		this.distributionListDataGrid.instance.searchByText(data);
+	}
 
   clearAllFilters(event) {
-    this.distributionListDataGrid.instance.clearFilter();
+    this.distributionListDataGrid.instance.clearFilter()
     this.distributionListDataGrid.instance.searchByText(this.searchText);
     this.activeFilterCount$.next(0);
     event.preventDefault();
@@ -115,8 +97,7 @@ export class DistributionListsComponent {
   }
 
   private getFiltersCount(): number {
-    const src =
-      this.distributionListDataGrid?.instance?.state()?.filterValue || [];
+    const src = this.distributionListDataGrid?.instance?.state()?.filterValue || [];
 
     if (src.indexOf('=') === 1) {
       // single filter against a string column
@@ -130,10 +111,8 @@ export class DistributionListsComponent {
     return o.length;
   }
 
-  addEditDistributionList(
-    tFunc: string,
-    editDistributionListData?: DistributionList
-  ) {
+
+  addEditDistributionList(tFunc: string, editDistributionListData?: DistributionList) {
     let distList = <DistributionList>{};
     let distListNames = [];
     if (tFunc == 'edit') {
@@ -141,12 +120,12 @@ export class DistributionListsComponent {
       let tempDistributionLists = this.distributionListsData.filter(
         (tempDistList) => tempDistList.groupID != distList.groupID
       );
-      distListNames = tempDistributionLists.map((distList) =>
+        distListNames = tempDistributionLists.map((distList) =>
         distList.groupName.toLowerCase().trim()
       );
     } else {
-      distListNames = this.distributionListsData.map((distList) =>
-        distList.groupName.toLowerCase().trim()
+        distListNames = this.distributionListsData.map((distList) =>
+          distList.groupName.toLowerCase().trim()
       );
     }
 
@@ -165,15 +144,14 @@ export class DistributionListsComponent {
     this.subs.push(
       dialogRef
         .afterClosed()
-        .pipe(filter((res) => !!res))
+        .pipe(
+          filter((res) => !!res),
+        )
         .subscribe(() => this.getDistributionListsData())
     );
   }
 
-  deleteDistributionLists(
-    removeDistributionList?: DistributionList,
-    singleDistributionList?: boolean
-  ) {
+  deleteDistributionLists(removeDistributionList?: DistributionList, singleDistributionList?: boolean) {
     this.distributionListTobeRemoved = [];
     let confirmText =
       'You are about to delete the following distribution list(s). Do you want to continue ?\n\n';
@@ -189,15 +167,12 @@ export class DistributionListsComponent {
 
     this.subs.push(
       this.dialogService
-        .confirm('DistributionLists Deletion', confirmText, 'Confirm', 'Cancel')
+        .confirm('Distribution Lists Deletion', confirmText, 'Confirm', 'Cancel')
         .pipe(
           filter((confirmed) => !!confirmed),
-          switchMap((_) =>
-            this.distributionListsService.deleteDistributionLists(
-              this.distributionListTobeRemoved
-            )
-          )
-        )
+          switchMap((_) => 
+            this.distributionListsService.deleteDistributionLists(this.distributionListTobeRemoved)
+          ))
         .subscribe((res) => {
           if (res.success && !singleDistributionList) {
             this.selectedDistListIds = [];
@@ -219,23 +194,30 @@ export class DistributionListsComponent {
 
   removeMembers() {
     let removingAllDistributionListMembers = false;
+    let confirmText = `Do you want to remove the selected members from their distribution list?\n\n`
     this.selectedMembersData.forEach((selectedDistributionList) => {
       const index = this.distributionListsData.findIndex(
         (distList) => distList.groupID == selectedDistributionList.groupID
       );
-      if (
-        this.distributionListsData[index].members.length ==
-        selectedDistributionList.memberIds.length
-      ) {
+
+      if (this.distributionListsData[index].members.length == selectedDistributionList.memberIds.length) {
         removingAllDistributionListMembers = true;
+      } else {
+        if (selectedDistributionList.memberIds.length > 0) {
+          selectedDistributionList.memberIds.forEach(memId => {
+            const memberObj = this.distributionListsData[index].members.find(member => member.memberID === memId);
+            confirmText += memberObj.name + '\n';
+          })
+        }
       }
     });
+
     if (removingAllDistributionListMembers) {
       this.subs.push(
         this.dialogService
           .alert(
             'Remove All Distribution List Members!',
-            `Distribution List Member Removal can not be done. You have selected all members for one or more distribution lists.  At least one member must be assigned to a distribution list.`,
+            `Distribution list member removal can not be done. You have selected all members for one or more distribution lists.  At least one member must be assigned to a distribution list.`,
             'OK'
           )
           .subscribe()
@@ -245,27 +227,25 @@ export class DistributionListsComponent {
         this.dialogService
           .confirm(
             'Remove Members',
-            `Do you want to remove the Selected Members from their distribution lists?`,
+            confirmText,
             'Confirm',
             'Cancel'
           )
           .pipe(
             filter((confirmed) => !!confirmed),
             switchMap((_) =>
-              this.distributionListsService.deleteMembers(
-                this.selectedMemberIds
-              )
+              this.distributionListsService.deleteMembers(this.selectedMemberIds)
             )
           )
           .subscribe((res) =>
             !!res.success
               ? (this.distributionListsService.successNotify(
-                  'Selected Member(s) successfully removed.'
+                  'Selected member(s) successfully removed.'
                 ),
                 this.getDistributionListsData())
               : this.dialogService.alert(
                   'Distribution List Member Removal',
-                  'Selected Member(s) could not be deleted. Please review and try again later.',
+                  'Selected member(s) could not be deleted. Please review and try again later.',
                   'OK'
                 )
           )
@@ -361,14 +341,8 @@ export class DistributionListsComponent {
       ];
 
       distributionListColumns.forEach((columnName, currentColumnIndex) => {
-        let distListDataValue =
-          columnName === 'modifiedDate' || columnName === 'createdDate'
-            ? formatDate(
-                distListData[columnName],
-                this.distributionListsService.dateFormat,
-                this.localID
-              )
-            : distListData[columnName];
+        let distListDataValue = columnName === 'modifiedDate' || columnName === 'createdDate' ? 
+          formatDate(distListData[columnName], this.distributionListsService.dateFormat, this.localID) : distListData[columnName]; 
         Object.assign(row.getCell(currentColumnIndex + 1), {
           value: distListDataValue,
         });
@@ -381,7 +355,11 @@ export class DistributionListsComponent {
         font: { bold: true },
       });
       let memberCaptions = [];
-      memberCaptions = ['Name', 'Company', 'Email'];
+        memberCaptions = [
+          'Name',
+          'Company',
+          'Email',
+        ];
       worksheet.mergeCells(
         row.number,
         1,
@@ -407,7 +385,11 @@ export class DistributionListsComponent {
       row.hidden = true;
 
       let memberColumns = [];
-      memberColumns = ['name', 'company', 'email'];
+        memberColumns = [
+          'name',
+          'company',
+          'email',
+        ];
       this.distributionListsData
         .filter((distList) => distList.groupID === distListData.groupID)[0]
         .members.forEach((member, index) => {
@@ -472,39 +454,38 @@ export class DistributionListsComponent {
   onContentReady(e) {
     let rowsToChange: number[] = this.expandedRows;
 
-    if (this.isExpanded) {
+    if(this.isExpanded) {
       rowsToChange = this.collapsedRows;
     }
 
-    for (var i = 0; i < rowsToChange.length; i++) {
-      if (this.isExpanded) {
+    for (var i = 0; i < rowsToChange.length; i++){
+      if(this.isExpanded) {
         e.component.collapseRow(rowsToChange[i]);
       } else {
         e.component.expandRow(rowsToChange[i]);
       }
-    }
+    }  
   }
 
   onRowExpandAndCollapseClick(e, eventType) {
-    let addRow: number[] = this.expandedRows;
+    let addRow: number[] = this.expandedRows; 
     let deleteRow: number[] = this.collapsedRows;
 
-    if (eventType === 'collapsing') {
+    if (eventType === 'collapsing') {  
       addRow = this.collapsedRows;
       deleteRow = this.expandedRows;
-    }
+    }  
 
-    addRow.push(e.key);
-    const foundIndex = deleteRow.findIndex((em) => em === e.key);
+    addRow.push(e.key);  
+    const foundIndex = deleteRow.findIndex(em => em === e.key);
 
-    if (foundIndex >= 0) deleteRow.splice(foundIndex, 1);
+    if (foundIndex >= 0)
+      deleteRow.splice(foundIndex, 1);
   }
 
   gridOnCellPrepared(e) {
     if (e.column.command == 'select') {
-      if (!this.userModuleAddRights) {
-        this.hideCheckBoxes(e);
-      } else if (e.rowType !== 'header' && !e.data.canDelete) {
+      if (e.rowType !== 'header' && !e.data.canDelete) {
         this.hideCheckBoxes(e);
       }
     }
@@ -562,7 +543,11 @@ export class DistributionListsComponent {
         let strFound = false;
         //Fields to search in the details datasource in order to keep the master record from disappearing when a match
         //is found in the detail grid but not the master grid
-        const propertyNameList = ['name', 'company', 'email'];
+        const propertyNameList = [
+          'name',
+          'company',
+          'email',
+        ];
 
         for (var i = 0; i < rowData.members.length; i++) {
           let tm = rowData.members[i];
@@ -599,48 +584,25 @@ export class DistributionListsComponent {
     this.selectedMembersData = [];
     this.selectedMemberIds = [];
 
-    this.subs.push(
-      this.distributionListsService
-        .getDistributionListWithMembers()
-        .subscribe((res: any) => {
-          if (res && res.success) {
-            this.distributionListsData = res.data;
-            this.dataRetrieved = true;
-          } else {
-            console.log('ERROR');
-            this.distributionListsService.errorNotify(
-              'There was an issue with getting the distribution list. Please contact the system administrator.'
-            );
-          }
-        })
-    );
+    this.subs.push(this.distributionListsService.getDistributionListWithMembers().subscribe(
+      (res: any) => {
+        if (res && res.success) {
+          this.distributionListsData = res.data;
+          this.dataRetrieved = true;
+        }
+        else {
+          console.log("ERROR");
+          this.distributionListsService.errorNotify("There was an issue with getting the distribution list. Please contact the system administrator.");
+        }
+      }
+    ));
   }
 
   private getUserPreferences() {
-    this.subs.push(
-      this.sharedService
-        .getUserPreferences()
-        .pipe(
-          filter((res) => !!res && !!res.success),
-          map((res) =>
-            this.distributionListsService.setUserDateFormat(res.data.isDatesEU)
-          )
-        )
-        .subscribe()
-    );
+    this.subs.push(this.sharedService.getUserPreferences().pipe(
+      filter((res) => !!res && !!res.success),
+      map((res) => this.distributionListsService.setUserDateFormat(res.data.isDatesEU))
+    ).subscribe());
   }
 
-  private getModuleRights() {
-    const objectType = 161;
-    const securityType = 3;
-    this.subs.push(
-      this.distributionListsService
-        .getModuleRights(objectType, securityType)
-        .subscribe((res: any) => {
-          if (res.success) {
-            this.userModuleAddRights = res.data;
-          }
-        })
-    );
   }
-}

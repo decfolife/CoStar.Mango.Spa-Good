@@ -595,16 +595,6 @@ body {
   .at-required {
     color: $color-brand-red;
   }
-  .modalFooter {
-    border-top: 1px solid colors.$stdBorderColor;
-    .footerRightControls {
-      display: flex;
-      crem-button {
-        margin-left: 8px;
-        margin-right: 0;
-      }
-    }
-  }
   .dx-texteditor.dx-editor-outlined,
   #aet-selectedMembers {
     border: 1px solid colors.$stdBorderColor;

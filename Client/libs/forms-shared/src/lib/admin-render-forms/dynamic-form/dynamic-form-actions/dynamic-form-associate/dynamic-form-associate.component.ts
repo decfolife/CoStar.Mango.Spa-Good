@@ -1,19 +1,17 @@
-import { CommonModule, DatePipe } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { DataService } from '@mango/core-shared';
-import { FormWizardService } from '@micro-components/services/form-wizard.service';
-import { Subscription, combineLatest, of } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { MangoDialogService } from '@mango/core-shared';
+import { Subscription, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import {
   ButtonModule,
   CremFormsModule,
@@ -28,7 +26,6 @@ import {
 import { DynamicFormsService } from '@forms/services/dynamic-forms.service';
 import { ToastState } from '@mango/data-models/lib-data-models';
 import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkbox';
-import { DashboardService } from '@project-dashboard/services/dashboard.service';
 
 @Component({
   selector: 'mango-dynamic-form-associate',
@@ -58,13 +55,15 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<DynamicFormAssociateComponent>,
     private dynamicFormsService: DynamicFormsService,
-    private dashboardService: DashboardService,
     private toastService: CremToastService,
+    private dialogService: MangoDialogService,
+    private cd: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       objectId: number;
       associateType: string;
       objectTypeId: number;
+      hidePremise: boolean;
     }
   ) {}
 
@@ -73,13 +72,7 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   saveClicked: boolean = false;
   componentName: string = 'Lease';
-  associateForm: any;
-
-  countryList: any;
-  stateList: any;
-  buildingList: any;
-  premiseList: any;
-  leaseList: any;
+  associateForm: any = new FormGroup({});
 
   public countryDropdownItem: any = [];
   public stateDropdownItem: any = [];
@@ -97,147 +90,209 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   associatedData: any;
   associateBuildingInfo: any;
   associateLeaseInfo: any;
+  modalTitle: string;
+  disableSaveButton: boolean = true;
+  isAssociateLoading: boolean = true;
+  changesMade: boolean = false;
 
   onCountryValueChange(e: any) {
-    this.selectedCountry = e[0].name;
-    this.getStatesData(this.selectedCountry);
+    if (e.length != 0 && e[0].name) {
+      this.selectedCountry = e[0].name;
+      this.getStatesData(this.selectedCountry);
+    } else {
+      this.selectedCountry = '';
+      this.stateDropdownItem = [];
+    }
+    this.changesMade = true;
+    this.EnableSaveButton();
   }
 
   onStateValueChange(e: any) {
-    this.selectedState = e[0].name;
-    this.getBuildings(this.selectedCountry, this.selectedState);
+    if (e.length != 0 && e[0].name) {
+      this.selectedState = e[0].name;
+      this.getBuildings(this.selectedCountry, this.selectedState);
+    } else {
+      this.selectedState = '';
+      this.buildingDropdownItem = [];
+    }
+    this.changesMade = true;
+    this.EnableSaveButton();
+    this.cd.detectChanges();
   }
 
   onBuildingValueChange(e: any) {
-    this.selectedBuildingID = e[0].buildingID;
-    this.getPremiseData(this.selectedBuildingID);
+    if (e.length != 0) {
+      this.selectedBuildingID = e[0].buildingID;
+      if (this.hidePremise) {
+        this.getLeasesData(this.selectedBuildingID, 0);
+      } else {
+        this.getPremiseData(this.selectedBuildingID);
+      }
+    } else {
+      this.selectedBuildingID = 0;
+      if (this.hidePremise) {
+        this.leaseDropdownItem = [];
+      } else {
+        this.premiseDropdownItem = [];
+      }
+    }
+    this.changesMade = true;
+    this.EnableSaveButton();
+    this.cd.detectChanges();
   }
 
   onPremiseValueChange(e: any) {
-    this.selectedPremiseID = e[0].premiseID;
-    this.getLeasesData(this.selectedBuildingID, this.selectedPremiseID);
+    if (e.length != 0) {
+      this.selectedPremiseID = e[0].premiseID;
+      this.getLeasesData(this.selectedBuildingID, this.selectedPremiseID);
+    } else {
+      this.selectedPremiseID = 0;
+      this.leaseDropdownItem = [];
+    }
+    this.changesMade = true;
+    this.EnableSaveButton();
+    this.cd.detectChanges();
   }
 
   onLeaseValueChange(e: any) {
-    this.selectedLeaseID = e[0].leaseAbstractID;
+    if (e.length != 0) {
+      this.selectedLeaseID = e[0].leaseAbstractID;
+    } else {
+      this.selectedLeaseID = 0;
+    }
+    this.changesMade = true;
+    this.EnableSaveButton();
+    this.cd.detectChanges();
+  }
+
+  EnableSaveButton() {
+    this.disableSaveButton =
+      this.selectedCountry === '' ||
+      this.selectedState === '' ||
+      this.selectedBuildingID === 0 ||
+      (this.associateType === 'lease' &&
+        !this.hidePremise &&
+        this.selectedPremiseID === 0) ||
+      (this.associateType === 'lease' && this.selectedLeaseID === 0);
   }
 
   getCountryData() {
     this.subscriptions.add(
-      this.dynamicFormsService
-        .getCountries()
-        .subscribe((countryDropdownItem) => {
-          if (countryDropdownItem) {
-            this.countryDropdownItem = countryDropdownItem.data.map((o) => {
-              return { name: o, value: o };
+      this.dynamicFormsService.getCountries().subscribe(
+        (res) => {
+          if (res && res.success) {
+            this.countryDropdownItem = res.data.map((t) => {
+              return { name: t, value: t };
             });
-          }
-          if (countryDropdownItem === null || !countryDropdownItem.success) {
-            this.toastService.show(
-              'COUNTRY_DROPDOWN_ERROR',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+          } else {
+            this.countryDropdownItem = [];
+            this.notifyErrorMessage(
+              'There was an issue loading details. Please review and try again.'
             );
           }
-        })
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error loading details. Please review and try again.'
+          );
+          console.log('Error occurred while loading Countries: ', error);
+        }
+      )
     );
   }
 
   getStatesData(country: string) {
+    if (!country) return;
     this.subscriptions.add(
-      this.dynamicFormsService
-        .getStates(country)
-        .subscribe((stateDropdownItem) => {
-          if (stateDropdownItem) {
-            this.stateDropdownItem = stateDropdownItem.data.map((o) => {
-              return { name: o, value: o };
+      this.dynamicFormsService.getStates(country).subscribe(
+        (res) => {
+          if (res && res.success) {
+            this.stateDropdownItem = res.data.map((t) => {
+              return { name: t, value: t };
             });
-          }
-          if (stateDropdownItem === null || !stateDropdownItem.success) {
-            this.toastService.show(
-              'STATE_DROPDOWN_ERROR',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+          } else {
+            this.stateDropdownItem = [];
+            this.notifyErrorMessage(
+              'There was an issue loading details. Please review and try again.'
             );
           }
-        })
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error loading details. Please review and try again.'
+          );
+          console.log('Error occurred while loading States: ', error);
+        }
+      )
     );
   }
 
   getBuildings(country: string, state: string) {
     this.subscriptions.add(
-      this.dynamicFormsService
-        .getBuildingsForActions(country, state)
-        .subscribe((buildingDropdownItem) => {
-          if (buildingDropdownItem) {
-            this.buildingDropdownItem = buildingDropdownItem.data;
-          }
-          if (buildingDropdownItem === null || !buildingDropdownItem.success) {
-            this.toastService.show(
-              'BUILDING_DROPDOWN_ERROR',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+      this.dynamicFormsService.getBuildingsForActions(country, state).subscribe(
+        (res) => {
+          if (res && res.success) {
+            this.buildingDropdownItem = res.data;
+          } else {
+            this.buildingDropdownItem = [];
+            this.notifyErrorMessage(
+              'There was an issue loading details. Please review and try again.'
             );
           }
-        })
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error loading details. Please review and try again.'
+          );
+          console.log('Error occurred while loading Buildings: ', error);
+        }
+      )
     );
   }
 
   getPremiseData(buildingId: number) {
     this.subscriptions.add(
-      this.dynamicFormsService
-        .getPremises(buildingId)
-        .subscribe((premiseDropdownItem) => {
-          if (premiseDropdownItem) {
-            this.premiseDropdownItem = premiseDropdownItem.data;
-          }
-          if (premiseDropdownItem === null || !premiseDropdownItem.success) {
-            this.toastService.show(
-              'PREMISE_DROPDOWN_ERROR',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+      this.dynamicFormsService.getPremises(buildingId).subscribe(
+        (res) => {
+          if (res && res.success) {
+            this.premiseDropdownItem = res.data;
+          } else {
+            this.premiseDropdownItem = [];
+            this.notifyErrorMessage(
+              'There was an issue loading details. Please review and try again.'
             );
           }
-        })
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error loading details. Please review and try again.'
+          );
+          console.log('Error occurred while loading Premises: ', error);
+        }
+      )
     );
   }
 
   getLeasesData(buildingId: number, premiseId) {
     this.subscriptions.add(
-      this.dynamicFormsService
-        .getLeases(buildingId, premiseId)
-        .subscribe((leaseDropdownItem) => {
-          if (leaseDropdownItem) {
-            this.leaseDropdownItem = leaseDropdownItem.data;
-          }
-          if (leaseDropdownItem === null || !leaseDropdownItem.success) {
-            this.toastService.show(
-              'LEASE_DROPDOWN_ERROR',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+      this.dynamicFormsService.getLeases(buildingId, premiseId).subscribe(
+        (res) => {
+          if (res && res.success) {
+            this.leaseDropdownItem = res.data;
+          } else {
+            this.leaseDropdownItem = [];
+            this.notifyErrorMessage(
+              'There was an issue loading details. Please review and try again.'
             );
           }
-        })
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error loading details. Please review and try again.'
+          );
+          console.log('Error occurred while loading Leases: ', error);
+        }
+      )
     );
   }
 
@@ -245,26 +300,28 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.dynamicFormsService
         .getAssociateBuildingToProject(projectId)
-        .subscribe((associateBuildingData) => {
-          if (associateBuildingData) {
-            this.associatedData = associateBuildingData.data;
-            this.populateAssociatedInfo();
-          }
-          if (
-            associateBuildingData === null ||
-            !associateBuildingData.success
-          ) {
-            this.toastService.show(
-              'GET_ASSOCIATE_BUILDING_DATA',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+        .subscribe(
+          (res) => {
+            if (res && res.success) {
+              this.associatedData = res.data;
+              this.populateAssociatedInfo();
+              this.isAssociateLoading = false;
+            } else {
+              this.notifyErrorMessage(
+                'There was an issue loading details. Please review and try again.'
+              );
+            }
+          },
+          (error: any) => {
+            this.notifyErrorMessage(
+              'There was an error loading details. Please review and try again.'
+            );
+            console.log(
+              'Error occurred while loading Building Association: ',
+              error
             );
           }
-        })
+        )
     );
   }
 
@@ -272,64 +329,102 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.dynamicFormsService
         .setAssociateBuildingToProject(buildingInfo)
-        .subscribe((resp) => {
-          if (resp === null || !resp.success) {
-            this.toastService.show(
-              'SET_ASSOCIATE_BUILDING_INFO',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+        .subscribe(
+          (res) => {
+            if (res && res.success) {
+              this.notifySuccessMessage();
+              this.dialogRef.close();
+            } else {
+              this.notifyErrorMessage(
+                'There was an issue saving details. Please review and try again.'
+              );
+            }
+          },
+          (error: any) => {
+            this.notifyErrorMessage(
+              'There was an error saving details. Please review and try again.'
+            );
+            console.log(
+              'Error occurred while saving Building Association: ',
+              error
             );
           }
-        })
+        )
     );
   }
 
   getAssociateLeaseToProject(projectId: number) {
     this.subscriptions.add(
-      this.dynamicFormsService
-        .getAssociateLeaseToProject(projectId)
-        .subscribe((associateLeaseData) => {
-          if (associateLeaseData) {
-            this.associatedData = associateLeaseData.data;
+      this.dynamicFormsService.getAssociateLeaseToProject(projectId).subscribe(
+        (res) => {
+          if (res && res.success) {
+            this.associatedData = res.data;
             this.populateAssociatedInfo();
-          }
-          if (associateLeaseData === null || !associateLeaseData.success) {
-            this.toastService.show(
-              'GET_ASSOCIATE_LEASE_DATA',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+            this.isAssociateLoading = false;
+          } else {
+            this.notifyErrorMessage(
+              'There was an issue loading details. Please review and try again.'
             );
           }
-        })
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error loading details. Please review and try again.'
+          );
+          console.log(
+            'Error occurred while loading Lease Association: ',
+            error
+          );
+        }
+      )
     );
   }
 
   setAssociateLeaseToProject(leaseInfo: any) {
     this.subscriptions.add(
-      this.dynamicFormsService
-        .setAssociateLeaseToProject(leaseInfo)
-        .subscribe((resp) => {
-          if (resp === null || !resp.success) {
-            this.toastService.show(
-              'SET_ASSOCIATE_LEASE_INFO',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+      this.dynamicFormsService.setAssociateLeaseToProject(leaseInfo).subscribe(
+        (res) => {
+          if (res && res.success) {
+            this.notifySuccessMessage();
+            this.dialogRef.close();
+          } else {
+            this.notifyErrorMessage(
+              'There was an issue saving details. Please review and try again.'
             );
           }
-        })
+        },
+        (error: any) => {
+          this.notifyErrorMessage(
+            'There was an error saving details. Please review and try again.'
+          );
+          console.log('Error occurred while saving Lease Association: ', error);
+        }
+      )
     );
+  }
+
+  private notifySuccessMessage() {
+    let successMessage: string;
+    if (this.associateType === 'lease') {
+      successMessage = this.removeAssociation
+        ? 'Lease was successfully unassociated.'
+        : 'The lease has been associated.';
+    } else if (this.associateType === 'building') {
+      successMessage = this.removeAssociation
+        ? 'Building was successfully unassociated.'
+        : 'The building has been associated.';
+    }
+    this.toastService.show(successMessage, 'Success', ToastState.SUCCESS, {
+      position: 'bottom right',
+      maxWidth: '500px',
+    });
+  }
+
+  private notifyErrorMessage(errorMessage: string) {
+    this.toastService.show(errorMessage, 'Error', ToastState.ERROR, {
+      position: 'bottom right',
+      maxWidth: '350px',
+    });
   }
 
   save() {
@@ -353,7 +448,26 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.dialogRef.close();
+    if (this.changesMade) {
+      this.dialogService
+        .confirm(
+          'Changes Made!',
+          'Changes you made have not been saved. Would you like to continue editing or leave ?',
+          'Continue',
+          'Leave'
+        )
+        .pipe(
+          switchMap((res) => {
+            if (!res) {
+              this.dialogRef.close('');
+            }
+            return of();
+          })
+        )
+        .subscribe();
+    } else {
+      this.dialogRef.close('');
+    }
   }
 
   getId(
@@ -372,28 +486,19 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getHidePremise();
     this.associateType = this.data.associateType;
+    this.hidePremise = this.data.hidePremise;
 
     if (this.associateType === 'lease') {
+      this.modalTitle = 'Associate Lease';
+      this.componentName = 'Lease';
       this.getAssociateLeaseToProject(this.data.objectId);
     } else if (this.associateType === 'building') {
+      this.modalTitle = 'Associate Building';
+      this.componentName = 'Building';
       this.getAssociateBuildingToProject(this.data.objectId);
     }
-  }
-
-  getHidePremise() {
-    this.subscriptions.add(
-      this.dashboardService
-        .getClientPreference('HidePremise')
-        .pipe(
-          tap((res) => {
-            this.hidePremise =
-              res && res.success ? (res.data == '1' ? true : false) : false;
-          })
-        )
-        .subscribe()
-    );
+    this.changesMade = false;
   }
 
   populateAssociatedInfo() {
@@ -434,9 +539,16 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   }
 
   removeAssociationChanged(e) {
-    if (!e.event) {
-      return;
-    }
     this.removeAssociation = e.value;
+    this.countryDropdown.isDisabled = this.removeAssociation;
+    this.stateDropdown.isDisabled = this.removeAssociation;
+    this.buildingDropdown.isDisabled = this.removeAssociation;
+    
+    if (this.associateType === 'lease') {
+      if (!this.hidePremise) {
+        this.premiseDropdown.isDisabled = this.removeAssociation;
+      }
+      this.leaseDropdown.isDisabled = this.removeAssociation;
+    }
   }
 }

@@ -25,6 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { SharedLeftNavLink } from '@mango/data-models/lib-data-models';
 import { TemplateTypes } from '@etl/model/template-types';
+import { TemplateType } from '@etl/model/template-type-dto';
 import {
   FormArray,
   FormControl,
@@ -100,14 +101,16 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
   gridData: any;
   parentLookups: { dataColumn: string }[] = [];
   parentObjects: { dataColumn: string }[] = [];
-  templateTypes: { id: number; name: string }[] = [];
+  templateTypes: any;
   objectTypeTemplates: { id: number; name: string }[] = [];
   selectedTemplateType: number;
   hasTypeError: boolean;
   userMessage = '';
   isUpdateOnlyVisible = false;
+  isReadOnlyVisible = false;
   isIncludedColumnVisible: boolean = false;
   selectAllChecked = true;
+  hasMultipleParentObjects = false;
 
   dataSource: any;
   initialData: any;
@@ -171,6 +174,7 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
               this.subs.add(objectTypeSub);
               this.loadObjectTypeTemplate();
               this.checkUpdateOnlyVisibility();
+              this.checkReadOnlyVisibility();
             } else {
               this.isFormIdRequired = true;
               this.loadFormDetails();
@@ -206,6 +210,7 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
     this.isKeyFieldLoading = false;
     this.isIncludedColumnVisible = true;
     this.isUpdateOnlyVisible = true;
+    this.isReadOnlyVisible = true;
     this.subscribeToAllFormControls();
   }
 
@@ -242,6 +247,7 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
     this.subs.add(this.onImportTemplateTypeChange().subscribe());
     this.subs.add(this.onFormSelectionChange().subscribe());
     this.subs.add(this.onParentObjectChange().subscribe());
+    this.subs.add(this.onObjectTypeTemplateChange().subscribe());
   }
 
   // Subscribe to all form controls
@@ -304,6 +310,40 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Listen to any Object Type Template Change.
+  onObjectTypeTemplateChange(): Observable<any> {
+    return this.templateForm.get('objectTypeTypeId').valueChanges.pipe(
+      filter(
+        (data) =>
+          !!data &&
+          !this.isFirstLoad &&
+          this.templateDetails.templateTypeId === TemplateTypes.DocumentMapping
+      ),
+      debounceTime(500),
+      tap((objectTemplateType) => {
+        //There must be a way of doing this without resorting to a switch...
+        let parentObjectName: string = '';
+        switch (objectTemplateType) {
+          case 1:
+            parentObjectName = 'Project';
+            break;
+          case 2:
+            parentObjectName = 'Store';
+            break;
+          case 3:
+            parentObjectName = 'Building';
+            break;
+          case 4:
+            parentObjectName = 'Lease';
+            break;
+        }
+        this.templateForm.get('parentObjectText').setValue(parentObjectName);
+
+        this.getParentLookupValues();
+      })
+    );
+  }
+
   // Listen to any Parent Lookup dropdown Changes
   onParentLookupValueChange(): Observable<any> {
     return this.templateForm.get('parentLookupValue').valueChanges.pipe(
@@ -342,6 +382,13 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
     return this.templateForm.get('templateTypeId').valueChanges.pipe(
       filter((_) => !this.isFirstLoad && !this.isResettingForm),
       tap((templateTypeId) => {
+        if (
+          templateTypeId === TemplateTypes.DocumentMapping ||
+          templateTypeId === TemplateTypes.Notes
+        )
+          this.hasMultipleParentObjects = true;
+        else this.hasMultipleParentObjects = false;
+
         this.setByTemplateType(templateTypeId);
         this.setFormIdValidators(templateTypeId);
       })
@@ -426,7 +473,7 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  // For Notes only
+  // For Notes only and DocumentImport
   // Listen to if the parent object dropdown changes
   onParentObjectChange(): Observable<any> {
     return this.templateForm.get('parentObjectTypeId').valueChanges.pipe(
@@ -467,7 +514,11 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
               // TODO: show error to user
               console.error('message to user that invalid form');
             } else {
-              if (this.templateDetails.templateTypeId !== TemplateTypes.Notes) {
+              if (
+                this.templateDetails.templateTypeId !== TemplateTypes.Notes &&
+                this.templateDetails.templateTypeId !==
+                  TemplateTypes.DocumentMapping
+              ) {
                 this.parentLookups = result.data.lookupData;
                 this.templateForm
                   .get('parentObjectText')
@@ -488,6 +539,7 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
                   }
                 }
               } else {
+                this.hasMultipleParentObjects = true;
                 this.parentObjects = result.data.lookupData;
                 this.getParentLookupValues();
               }
@@ -558,7 +610,15 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
   }
 
   loadImportTemplateTypes() {
-    this.templateTypes = TemplateTypes.getAll();
+    this.subs.add(
+      this.etlService.getETLTemplateTypes().subscribe((result) => {
+        if (result.success) {
+          this.templateTypes = result.data;
+        } else {
+          this.handleError(result.errorMessage);
+        }
+      })
+    );
   }
 
   loadKeyField() {
@@ -639,7 +699,8 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
         if (
           !data.updateOnly &&
           this.templateDetails.parentLookupValue === 'SourceImportID' &&
-          this.gridData.some((item) => item.required === 'Parent Key Field')
+          this.gridData.some((item) => item.required === 'Parent Key Field') &&
+          this.templateDetails.templateTypeId !== TemplateTypes.DocumentMapping
         ) {
           // Remove existing "Parent Key Field"
           this.gridData = this.gridData.filter(
@@ -1170,6 +1231,39 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
           }
         });
         break;
+      case TemplateTypes.DocumentMapping:
+        this.forms.push({ formID: 0, formName: 'None' });
+        this.templateForm.get('formId').setValue(0);
+        this.templateForm.get('formId').disable();
+        this.isUpdateOnlyVisible = false;
+        this.isReadOnlyVisible = false;
+        this.etlService.getObject(197).subscribe((result) => {
+          if (result.success) {
+            this.dataRetrieved = false;
+            this.templateDetails.objectType = result.data.objectType;
+            this.templateTypes.push({ formID: 0, formName: 'None' });
+            this.loadObjectTypeTemplate();
+            this.templateDetails.keyField = 'none';
+            this.templateForm.get('objectTypeId').setValue(197);
+            this.loadKeyField();
+            this.templateForm.get('keyField').setValue('SourceImportID');
+            this.loadParentDetails();
+            this.templateForm.get('parentObjectTypeId').setValue(3);
+            this.templateForm
+              .get('keyFieldDisplayName')
+              .setValue('SourceImportID');
+            this.templateForm
+              .get('parentLookupValue')
+              .setValue('SourceImportID');
+            this.templateForm.get('parentLookupValue').enable();
+            this.isIncludedColumnVisible = false;
+            this.loadGrid();
+            this.isResettingForm = false;
+          } else {
+            this.handleError(result.errorMessage);
+          }
+        });
+        break;
       default:
         console.error('Unknown template type');
         break;
@@ -1333,9 +1427,9 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
       case TemplateTypes.APHistory:
       case TemplateTypes.PortfolioAllocations:
       case TemplateTypes.LeaseAllocations:
+      case TemplateTypes.DocumentMapping:
         setTimeout(() => setDefault(-1, 'None'));
         break;
-
       default:
         objectTypeTypeIdControl.disable();
         break;
@@ -1424,10 +1518,19 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
       TemplateTypes.Notes,
       TemplateTypes.ExchangeRates,
       TemplateTypes.LeaseAllocations,
+      TemplateTypes.DocumentMapping,
     ];
 
     if (!excludedTypes.includes(this.templateDetails.templateTypeId)) {
       this.isUpdateOnlyVisible = true;
+    }
+  }
+
+  checkReadOnlyVisibility(): void {
+    const excludedTypes = [TemplateTypes.DocumentMapping];
+
+    if (!excludedTypes.includes(this.templateDetails.templateTypeId)) {
+      this.isReadOnlyVisible = true;
     }
   }
 
@@ -1462,6 +1565,34 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
   }
 
   getParentLookupValues() {
+    if (this.templateDetails.templateTypeId === TemplateTypes.DocumentMapping) {
+      const parentObjectTypeId =
+        this.templateForm.get('parentObjectTypeId').value;
+      let parentDataColumnn: string = '';
+      switch (parentObjectTypeId) {
+        case 3:
+          parentDataColumnn = 'BuildingID';
+          break;
+        case 4:
+          parentDataColumnn = 'LeaseAbstractID';
+          break;
+        case 2:
+          parentDataColumnn = 'StoreID';
+          break;
+        case 1:
+          parentDataColumnn = 'TransactionID';
+          break;
+      }
+
+      this.parentLookups = [
+        { dataColumn: 'SourceImportID' },
+        { dataColumn: parentDataColumnn },
+      ];
+
+      this.templateForm.get('parentLookupValue').setValue('SourceImportID');
+
+      return;
+    }
     this.etlService
       .getParentLookupValues(this.templateDetails.parentObjectTypeId)
       .subscribe((result) => {

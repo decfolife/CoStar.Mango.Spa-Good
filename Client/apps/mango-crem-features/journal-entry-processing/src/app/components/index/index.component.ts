@@ -28,7 +28,8 @@ export class IndexComponent implements OnInit {
     });
 
     // TOBE removed once url is configured in left nav
-    window.location.href = window.location.href + '/journal-entries-to-approve';
+    //window.location.href = window.location.href + '/journal-entries-to-approve';
+    this.router.navigate(['/journal-entries-to-approve']);
   }
 
   checkRouterEvent(routerEvent: Event): void {

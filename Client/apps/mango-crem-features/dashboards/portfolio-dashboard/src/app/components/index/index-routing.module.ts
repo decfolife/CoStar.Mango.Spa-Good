@@ -5,6 +5,7 @@ import { IndexComponent } from './index.component';
 const routes: Routes = [
   {
     path: '',
+    title: 'Portfolio Dashboard',
     component: IndexComponent,
     data: {
       breadCrumb: { label: 'Dashboard', append: true, activeLink: 'Dashboard' },

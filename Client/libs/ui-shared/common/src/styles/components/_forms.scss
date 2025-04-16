@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as *;
+
 .crem-form {
   display: flex;
 
@@ -24,7 +26,6 @@
     flex-direction: column;
 
     crem-form-label {
-      width: 25%;
       padding-right: 10px;
     }
   }
@@ -98,5 +99,30 @@
     dx-drop-down-box .dx-dropdowneditor-input-wrapperr {
       border-bottom: 3px solid var(--costar-color-secondary-light) !important;
     }
+  }
+}
+
+/* Simple Responsive Grid for Forms */
+.layout-container {
+  /* Use layout-container without cols for auto-fit and allow full responsiveness w/o breaking points */
+  display: grid;
+  @include costar(gap, 2);
+  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+  &.cols-2 {
+    grid-template-columns: repeat(2, minmax(min(10rem, 100%), 1fr));
+  }
+  &.cols-3 {
+    grid-template-columns: repeat(3, minmax(min(10rem, 100%), 1fr));
+  }
+  &.cols-4 {
+    grid-template-columns: repeat(3, minmax(min(10rem, 100%), 1fr));
+  }
+}
+
+/* Inline Input Fields Utility Class */
+crem-form-item {
+  &.crem-form-item-horizontal {
+    display: grid !important;
+    grid-template-columns: 0.4fr 1fr;
   }
 }

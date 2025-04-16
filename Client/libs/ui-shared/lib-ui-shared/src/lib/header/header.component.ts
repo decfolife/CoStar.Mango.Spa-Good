@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -32,6 +33,7 @@ import { EmulateUserPopupComponent } from './emulate-user-popup/emulate-user-pop
 import { DateCalculatorComponent } from './date-calculator/date-calculator.component';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { UserPreferencesComponent } from './user-preferences/user-preferences.component';
+import { SearchParams } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-header',
@@ -39,6 +41,7 @@ import { UserPreferencesComponent } from './user-preferences/user-preferences.co
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  @Input() querySearchParams: SearchParams;
   @Output() quickSearchEvent = new EventEmitter<any>();
 
   productTitle = 'Real Estate Manager';
@@ -75,6 +78,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.setObservables();
     this.getSearchModules();
 
+    // Set's the default value if search query string exists
+    if (this.querySearchParams?.flikeclause) {
+      this.myControl.setValue(this.querySearchParams.flikeclause);
+    }
+
     this.subs.push(
       this.dataService.getRedirectorLinkList().subscribe((res) => {
         this.redirectorLinks = res.data;
@@ -92,9 +100,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
           )
         )
         .subscribe(
-          (res) => (this.filteredOptions = res),
+          (res) => {
+            this.filteredOptions = res;
+          },
           (error) =>
-            console.log(
+            console.error(
               'Error occurred while subscribing to typeahead data: ',
               error
             )
@@ -109,11 +119,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.hasMultipleProfiles$ = this.facade.userHasMultipleProfiles$;
     this.contactRecord$ = this.facade.contactRecord$;
     this.isEmulatedUser$ = this.facade.isEmulatedUser$;
-    this.facade.clientKey$.subscribe(
-      (clientKey) =>
-        (this.currentProfile =
-          CookieService.getSharedInfoCookie(clientKey).ProfileName)
-    );
+    this.facade.clientKey$.subscribe((clientKey) => {
+      this.currentProfile =
+        CookieService.getSharedInfoCookie(clientKey)?.ProfileName ??
+        this.currentProfile;
+    });
 
     this.showEmulateUserOption$ = combineLatest([
       this.isEmulatedUser$,
@@ -254,19 +264,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
         searchStr: searchString,
         searchObjId: this.searchObjectId,
       });
-    } else {
-      console.log(
-        'The search input is empty - enter a search criteria(a string)'
-      );
     }
   }
 
   showEmulateUser() {
     this.dialog.open(EmulateUserPopupComponent, {
-      width: '800px',
-      height: '528px',
-      panelClass: 'emulate-user-dialog',
       disableClose: true,
+      minWidth: '320px',
+      maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
+      panelClass: 'emulate-user-dialog',
     });
   }
 
@@ -283,8 +291,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(DateCalculatorComponent, {
       hasBackdrop: false,
-      height: '440px',
-      width: '300px',
+      width: '20vw',
+      minWidth: '320px',
+      maxWidth: '1100px',
+      minHeight: '440px',
+      maxHeight: '90vh',
     });
 
     this.subs.push(
@@ -303,8 +314,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     let dialogRef = this.dialog.open(UserPreferencesComponent, {
       hasBackdrop: true,
-      height: '750px',
-      width: '920px',
+      width: '45vw',
+      minWidth: '320px',
+      maxWidth: '1100px',
+      minHeight: '440px',
+      maxHeight: '90vh',
       data: { contactRecord: this.contactRecord$ },
     });
 
@@ -323,7 +337,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         ObjectType.CONTACT,
         this.ContactObjectTypeTypeId
       );
-      document.location.href = currURL;
+      this.router.navigateByUrl(currURL);
     });
   }
 

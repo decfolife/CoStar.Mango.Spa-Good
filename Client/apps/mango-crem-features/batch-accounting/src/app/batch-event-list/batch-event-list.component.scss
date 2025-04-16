@@ -1,3 +1,5 @@
+@use 'styles' as *;
+
 .batch-event {
   &__dropdown {
     margin-right: 8px;
@@ -38,6 +40,7 @@ div.chip {
   min-width: 16px;
   padding: 4px 8px;
   text-align: center;
+  margin-right: 10px;
 
   &.secondary {
     background: rgb(255, 255, 255);
@@ -50,12 +53,12 @@ div.chip {
 }
 
 .no-portfolio-selected {
-  align-items: center;
-  color: #b1b3b0;
+  @include costar(color, gray03);
   display: flex;
-  font-size: 28px;
-  height: 100%;
+  align-items: center;
   justify-content: center;
+  @include costar(font-size, font-size-h2);
+  height: 100%;
 }
 
 :host {
@@ -78,6 +81,10 @@ div.chip {
 
     .dx-toolbar-item {
       padding: 7px 8px 0 0 !important;
+    }
+
+    .search-container {
+      max-height: 32px;
     }
   }
 }
@@ -106,4 +113,60 @@ div.chip {
   .matMenuSize {
     min-height: 0px;
   }
+}
+
+.controls-right * {
+  @include costar(margin-left, 2);
+}
+
+.controls-left > *:not(:first-child) {
+  @include costar(margin-left, 2);
+  align-items: unset;
+}
+
+:host ::ng-deep {
+  .controls-right input {
+    max-height: 30px;
+    padding-bottom: 0px !important;
+    background-color: transparent;
+    padding-top: 6px !important;
+  }
+  .search-input-container {
+    max-height: 32px;
+  }
+}
+
+:host ::ng-deep {
+  #ba-menu-more {
+    width: 80px !important;
+  }
+}
+
+div.list-page div.list-page-controls-wrapper > div {
+  align-items: unset;
+}
+
+.dx-texteditor.dx-editor-outlined {
+  border-radius: 0.15rem;
+  border-color: #c8c8c8;
+}
+
+.list-view-dropdown {
+  margin-top: 2px;
+}
+
+#ba-event-page-grid .dx-datagrid-header-panel {
+  display: none;
+}
+
+crem-button {
+  opacity: unset !important;
+}
+
+#dynamic-sql {
+  @include costar(padding, 5);
+}
+
+.form-row {
+  width: 100%;
 }

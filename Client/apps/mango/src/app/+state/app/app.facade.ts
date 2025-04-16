@@ -8,13 +8,13 @@ import {
   RedirectorLink,
   UserAuth,
   UserInfo,
-  V06GlobalSession,
 } from '@mango/data-models/lib-data-models';
 import { Store, select } from '@ngrx/store';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
 import * as AppActions from './app.actions';
 import * as AppSelectors from './app.selectors';
 import { Observable } from 'rxjs';
+import { RedirectorMapping } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
 
 @Injectable()
 export class MangoAppFacade {
@@ -31,13 +31,14 @@ export class MangoAppFacade {
   isEmulatedUser$: Observable<boolean>;
   isEmulateUserInitiatedFromV06$: Observable<boolean>;
   breadcrumbs$: Observable<BreadCrumb[]>;
-  globalSession$: Observable<V06GlobalSession>;
+  //globalSession$: Observable<V06GlobalSession>;
   moduleId$: Observable<number>;
   showSubLeftNav$: Observable<boolean>;
   currentRenderFormDocumentParams$: Observable<string>;
   v06Auth$: Observable<any>;
   adminFlags$: Observable<AdminFlags>;
   redirectorLinks$: Observable<RedirectorLink[]>;
+  redirectorMappings$: Observable<RedirectorMapping[]>;
   currentProjectId$: Observable<number>;
 
   constructor(private store: Store) {
@@ -61,7 +62,7 @@ export class MangoAppFacade {
       select(AppSelectors.isEmulateUserInitiatedFromV06)
     );
     this.breadcrumbs$ = this.store.pipe(select(AppSelectors.breadcrumbs));
-    this.globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
+    //this.globalSession$ = this.store.pipe(select(AppSelectors.globalSession));
     this.moduleId$ = this.store.pipe(select(AppSelectors.moduleId));
     this.showSubLeftNav$ = this.store.pipe(select(AppSelectors.showSubLeftNav));
     this.currentRenderFormDocumentParams$ = this.store.pipe(
@@ -71,6 +72,9 @@ export class MangoAppFacade {
     this.adminFlags$ = this.store.pipe(select(AppSelectors.adminFlags));
     this.redirectorLinks$ = this.store.pipe(
       select(AppSelectors.redirectorLinks)
+    );
+    this.redirectorMappings$ = this.store.pipe(
+      select(AppSelectors.redirectorMappings)
     );
     this.currentProjectId$ = this.store.pipe(
       select(AppSelectors.currentProjectId)
@@ -189,6 +193,10 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.loadRedirectorLinks());
   }
 
+  loadRedirectorMappings(): void {
+    this.store.dispatch(AppActions.loadRedirectorMappings());
+  }
+
   showSubLeftNav(showSubLeftNav: boolean): void {
     this.store.dispatch(AppActions.setShowSubLetNav({ show: showSubLeftNav }));
   }
@@ -212,17 +220,17 @@ export class MangoAppFacade {
     this.store.dispatch(AppActions.clearState());
   }
 
-  navigateLeftNevMenu(navLink: SharedLeftNavLink): void {
+  navigateLeftNavMenu(navLink: SharedLeftNavLink): void {
     this.store.dispatch(AppActions.navigateLeftNavMenu({ navLink }));
   }
 
-  getGlobalSesssoin(): void {
-    this.store.dispatch(AppActions.getGlobalSession());
-  }
+  // getGlobalSesssoin(): void {
+  //   this.store.dispatch(AppActions.getGlobalSession());
+  // }
 
-  updateGlobalSession(session?: V06GlobalSession): void {
-    this.store.dispatch(AppActions.updateGlobalSession({ session }));
-  }
+  // updateGlobalSession(session?: V06GlobalSession): void {
+  //   this.store.dispatch(AppActions.updateGlobalSession({ session }));
+  // }
 
   goToExternalURL(url?: string): void {
     this.store.dispatch(AppActions.goToExternalURL({ url }));

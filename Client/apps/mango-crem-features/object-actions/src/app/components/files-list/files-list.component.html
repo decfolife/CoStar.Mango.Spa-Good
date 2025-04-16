@@ -1,0 +1,60 @@
+<crem-page-header
+  id="page-header"
+  [tabTitle]="objectType"
+  [pageTitle]="objectName"
+  [customFilters]="true"
+  [customActions]="true"
+  [showBookmarkButton]="false"
+  [showSettingsButton]="false"
+  [showListOrMapViewButtons]="false"
+  [customSettings]="false"
+>
+  <div actions class="actions-container">
+    <crem-button
+      [id]="'page-header-clear'"
+      text="Export To Excel"
+      color="secondary"
+      (buttonClick)="clearFilters()"
+    ></crem-button>
+    <crem-button
+      [id]="'page-header-clear'"
+      text="Compose Email"
+      color="secondary"
+      (buttonClick)="clearFilters()"
+    ></crem-button>
+  </div>
+</crem-page-header>
+<dx-file-manager
+  id="fileManager"
+  rootFolderName="{{ rootFolderName }}"
+  [fileSystemProvider]="fileItems"
+  (onFileUploading)="onFileUploading($event)"
+  (onSelectionChanged)="fileManager_onSelectionChanged($event)"
+  (onDirectoryCreating)="onDirectoryCreating($event)"
+  (onCurrentDirectoryChanged)="onDirectoryChanged($event)"
+  (onItemDeleting)="onItemDeleting($event)"
+  (onItemRenaming)="onItemRenaming($event)"
+  (onItemMoving)="onItemMoving($event)"
+>
+  <dxo-item-view>
+    <dxo-details>
+      <dxi-column dataField="thumbnail"></dxi-column>
+      <dxi-column caption="Name" dataField="name"></dxi-column>
+      <dxi-column caption="Identifier" dataField="identifier"></dxi-column>
+      <dxi-column caption="Description" dataField="description"></dxi-column>
+      <dxi-column caption="Created By" dataField="createdBy"></dxi-column>
+      <dxi-column caption="Upload Date" dataField="dateModified"></dxi-column>
+      <dxi-column caption="Size" dataField="size"></dxi-column>
+    </dxo-details>
+  </dxo-item-view>
+  <dxo-permissions
+    [create]="true"
+    [copy]="false"
+    [move]="true"
+    [delete]="true"
+    [rename]="true"
+    [upload]="true"
+    [download]="true"
+  >
+  </dxo-permissions>
+</dx-file-manager>

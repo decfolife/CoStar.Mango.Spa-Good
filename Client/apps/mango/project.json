@@ -115,7 +115,7 @@
             "scripts": true,
             "styles": {
               "minify": true,
-              "inlineCritical": false
+              "inlineCritical": true
             }
           },
           "outputHashing": "none",
@@ -145,11 +145,20 @@
           ]
         },
         "test": {
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": true
+            },
+            "fonts": false
+          },
           "outputHashing": "none",
           "namedChunks": false,
           "extractLicenses": true,
           "sourceMap": true,
           "vendorChunk": false,
+          "buildOptimizer": true,
           "fileReplacements": [
             {
               "replace": "apps/mango/src/environments/environment.local.ts",
@@ -212,7 +221,7 @@
             },
             "fonts": false
           },
-          "outputHashing": "none",
+          "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
@@ -246,7 +255,7 @@
             },
             "fonts": false
           },
-          "outputHashing": "none",
+          "outputHashing": "all",
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,

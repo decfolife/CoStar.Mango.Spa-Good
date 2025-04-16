@@ -1,0 +1,52 @@
+@use 'styles' as *;
+
+:host {
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  position: relative;
+  height: calc(100vh - 117px);
+  @include costar(background-color, light);
+
+  ::ng-deep {
+    // Forces all element on the DevExtreme's grid results to be left aligned
+    .dx-datagrid [role='gridcell'],
+    .dx-datagrid [role='columnheader'] {
+      text-align: left !important;
+    }
+    // Forces header to always aligned to the left with filter to the right for specific columns
+    tr > td[aria-label='Column System  Project  ID'], /* Project Grid */
+    tr > td[aria-label='Column System  Building  ID'], /* Building Grid */
+    tr > td[aria-label='Column System  Company  ID'], /* Company Grid */
+    tr > td[aria-label='Column System  Lease  ID'], /* Lease Grid */
+    tr > td[aria-label='Column Contact VPContact ID'], /* Contact Grid */
+    tr > td[aria-label='Column Building  ID'] /* Supplier Grid */ {
+      display: flex;
+      .dx-datagrid-text-content {
+        order: 0;
+      }
+      .dx-column-indicators {
+        order: 1;
+      }
+    }
+
+    .tab-content {
+      // Removes crem-tab's padding
+      padding: 0px !important;
+    }
+    section {
+      height: 100%;
+    }
+    .dx-gridbase-container {
+      height: calc(100vh - 116px - 41px);
+    }
+    // Skeleton full height modification
+    crem-skeleton {
+      .skeleton-table-pag {
+        bottom: 0;
+        width: 100%;
+        position: absolute;
+      }
+    }
+  }
+}

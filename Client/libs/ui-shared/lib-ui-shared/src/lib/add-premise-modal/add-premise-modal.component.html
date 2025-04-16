@@ -4,6 +4,12 @@
   modalTitle="Add {{ premiseObjectName }}"
   closeIconVisible="true"
   [customFooter]="true"
+  [loading]="{
+		type: 'form',
+		instances: 3,
+		show: loading,
+		headerLoading: true,
+	}"
 >
   <div modalContent class="body-content">
     <div modalContent id="addpremiseModal-content">
@@ -14,9 +20,10 @@
         [formGroup]="addPremiseFormGroup"
         class="add-Premise-form"
       >
-        <crem-form-item id="aet-Portfolio-container" class="container">
+        <crem-form-item id="aet-Portfolio-container">
           <crem-form-label [required]="true">Portfolio</crem-form-label>
           <crem-dropdown
+            [autoSelect]="true"
             id="premisePortfolioId"
             #premisePortfolioId
             dropDownContainerCustomClass="premisePortfolioDropDown"
@@ -36,7 +43,7 @@
           >
           </crem-dropdown>
         </crem-form-item>
-        <crem-form-item id="aet-building-container" class="container">
+        <crem-form-item id="aet-building-container">
           <crem-form-label [required]="true">{{
             buildingObjectName
           }}</crem-form-label>
@@ -59,10 +66,8 @@
           >
           </crem-dropdown>
         </crem-form-item>
-        <crem-form-item class="container">
-          <crem-form-label [required]="true">{{
-            premiseObjectName
-          }}</crem-form-label>
+        <crem-form-item>
+          <crem-form-label [required]="true"> Store Name </crem-form-label>
           <crem-input
             id="newPremiseName"
             #newPremiseName
@@ -72,13 +77,13 @@
             [inputType]="'text'"
             required="true"
             formControlName="premiseName"
-            placeholder="Enter New {{ premiseObjectName }} Name"
+            placeholder="Enter name"
           ></crem-input>
         </crem-form-item>
-        <crem-form-item class="container">
-          <crem-form-label [required]="true"
-            >{{ premiseObjectName }} Type</crem-form-label
-          >
+
+        <crem-form-item>
+          <crem-form-label [required]="true"> Template </crem-form-label>
+
           <crem-dropdown
             id="premiseTypeId"
             #premiseTypeId
@@ -89,25 +94,26 @@
             displayExpr="objectTypeTypeName"
             valueExpr="objectTypeTypeID"
             [useSelectBox]="true"
-            hoverText="Select {{ premiseObjectName }} Type"
+            hoverText="Select Template"
             (selectedItems)="onPremiseTypeChanged($event)"
             [isDisabled]="loading"
             required="true"
             formControlName="premiseType"
-          >
-          </crem-dropdown>
+          ></crem-dropdown>
         </crem-form-item>
       </form>
     </div>
   </div>
+
   <div modalFooter class="addPremiseFooter">
     <crem-button
       type="secondary"
       id="add_premise_modal__cancel_btn"
       (click)="close()"
     >
-      Cancel</crem-button
-    >
+      Cancel
+    </crem-button>
+
     <crem-button
       type="secondary"
       id="add_premise_modal__save_btn"
@@ -119,8 +125,9 @@
     >
       <span>
         {{ saveClicked ? 'Saving' : 'Save' }}
-      </span></crem-button
-    >
+      </span>
+    </crem-button>
+
     <crem-button
       type="secondary"
       id="add_premise_modal__saveNew_btn"
@@ -131,9 +138,10 @@
       [iconAnimation]="saveClicked ? 'spin' : ''"
     >
       <span>
-        {{ saveClicked ? 'Saving' : 'Save New' }}
-      </span></crem-button
-    >
+        {{ saveClicked ? 'Saving' : 'Save & New' }}
+      </span>
+    </crem-button>
+
     <crem-button
       type="primary"
       id="add_premise_modal__launch_btn"
@@ -145,7 +153,7 @@
     >
       <span>
         {{ saveClicked ? 'Saving' : 'Launch' }}
-      </span></crem-button
-    >
+      </span>
+    </crem-button>
   </div>
 </crem-modal>

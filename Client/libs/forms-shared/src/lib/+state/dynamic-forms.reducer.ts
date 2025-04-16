@@ -54,7 +54,7 @@ export interface DynamicFormsState extends EntityState<DynamicFormEntity> {
   renderFormDropdowns?: RenderFormDropdowns[];
   objectParentLinker?: ObjectParentLinker;
 
-  saveRenderFormResponse: ApiResponse;
+  saveRenderFormResponse: ApiResponse | string;
 }
 
 export interface DyanmicFormsPartialState {
@@ -125,6 +125,10 @@ const reducer = createReducer(
     formItemWidgetsApiResponses: null,
     saveRenderFormResponse: null,
   })),
+  on(dynamicFormsActions.clearSaveFormState, (state) => ({
+    ...state,
+    saveRenderFormResponse: null,
+  })),
   // MISC
   on(dynamicFormsActions.setObjectId, (state, { objectId }) => {
     return {
@@ -174,17 +178,6 @@ const reducer = createReducer(
   //   isLoading: false,
   //   loaded: true,
   // })),
-  on(
-    dynamicFormsActions.dynamicFormLoadSuccessWithStatus,
-    (state, { apiResponse }) => ({
-      ...state,
-      error: null,
-      dynamicForm: apiResponse?.data,
-      dynamicFormApiResponse: apiResponse,
-      isLoading: false,
-      loaded: true,
-    })
-  ),
   on(
     dynamicFormsActions.dynamicFormLoadSuccessWithStatus,
     (state, { apiResponse }) => ({
@@ -666,7 +659,7 @@ const reducer = createReducer(
   on(dynamicFormsActions.saveRenderFormSuccess, (state, { apiResponse }) => ({
     ...state,
     error: null,
-    saveRenderFormResponse: apiResponse,
+    saveRenderFormResponse: apiResponse ? apiResponse : 'unsuccessful',
     isLoading: false,
     loaded: true,
   })),

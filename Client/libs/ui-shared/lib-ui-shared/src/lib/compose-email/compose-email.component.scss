@@ -1,14 +1,21 @@
-@use "styles" as *;
+@use 'styles' as *;
 
-.cem-noteType, .cem-to-members, .cem-body , .cem-include {
+.cem-noteType,
+.cem-to-members,
+.cem-body,
+.cem-include {
   margin-bottom: 16px;
 
-  .cem-include-options-filePaths, .cem-include-options-unapprovedTasks {
+  .cem-include-options-filePaths,
+  .cem-include-options-unapprovedTasks {
     margin-right: 16px;
   }
 }
 
-.cem-noteType-label,  .cem-toMembers-label, .cem-body-label , .cem-include-label {
+.cem-noteType-label,
+.cem-toMembers-label,
+.cem-body-label,
+.cem-include-label {
   margin-bottom: 4px;
 }
 
@@ -17,7 +24,7 @@
 }
 
 .cem-filesGrid-container {
-  border: 1px solid #C8C8C8;
+  border: 1px solid #c8c8c8;
   border-radius: 2px;
 
   .cem-filesGrid-uploadedBy {
@@ -27,6 +34,7 @@
 
 .cem-footerContent {
   display: flex;
+  justify-content: flex-end !important;
   .cem-footerleftControls {
     font-size: small;
     font-style: italic;
@@ -34,49 +42,54 @@
 
   .cem-footerRightControls {
     display: flex;
-  
-    & > .cem-btn {
-      margin-left: 8px;
-    }
   }
 }
 
 //**** Compose Email Modal CSS *******// <<<=== These styles can be applied from a global file or from here using ng-deep
 ::ng-deep #composeEmailModalId {
-	.dx-checkbox-icon {
+  .dx-checkbox-icon {
     width: 18px;
     height: 18px;
     border-radius: 2px;
     border: 1px solid #3c3c3c;
-	}
+  }
 
-	.dx-texteditor.dx-editor-outlined.dx-state-focused, button:focus, .dx-state-focused .dx-checkbox-icon {
-		outline: none;
-		box-shadow: 0 0 0 0.1rem $primary-light;
-	}
+  .dx-texteditor.dx-editor-outlined.dx-state-focused,
+  button:focus,
+  .dx-state-focused .dx-checkbox-icon {
+    outline: none;
+    box-shadow: 0 0 0 0.1rem $primary-light;
+  }
 
-	.dx-texteditor.dx-editor-outlined {
-    border: 1px solid $gray04; 
+  .dx-texteditor.dx-editor-outlined {
+    border: 1px solid $gray04;
     border-radius: 2px;
-	}
+  }
 
-	.dx-checkbox-text {
+  .dx-checkbox-text {
     font-weight: 500;
   }
 
-	dx-data-grid .dx-datagrid-content .dx-datagrid-table .dx-row > td {
-		vertical-align: middle;
-		border-bottom: 1px solid $gray04;
-	}
+  dx-data-grid .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+    vertical-align: middle;
+    border-bottom: 1px solid $gray04;
+  }
 
-	.fieldInvalid {
-		.label {
-			color: $danger;
-		}
-		#emailNoteTypeId, #cem-toMembersId {
-			dx-drop-down-box .dx-texteditor-container {
-				border: 1px solid $danger;
-			}
-		}
-	}
+  .fieldInvalid {
+    .label {
+      color: $danger;
+    }
+    #emailNoteTypeId,
+    #cem-toMembersId {
+      dx-drop-down-box
+        .dx-dropdowneditor-input-wrapper
+        .dx-texteditor-container {
+        border: 1px solid $danger;
+      }
+    }
+  }
+
+  div.dx-overlay div.dx-overlay-content.dx-invalid-message-content {
+    display: none;
+  }
 }

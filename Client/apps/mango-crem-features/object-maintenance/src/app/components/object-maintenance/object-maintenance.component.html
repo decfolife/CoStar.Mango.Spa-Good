@@ -120,9 +120,7 @@
           <div *dxTemplate="let group of 'moreMenuTemplate'">
             <a
               *ngIf="group.data.canEdit"
-              href="/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/assignRights/{{
-                this.currentObjectTypeId
-              }}/{{ group.data.objectId }}/ObjectMaintenance.aspx"
+              (click)="navigateToSecurityMaintenance(group)"
             >
               Edit
             </a>

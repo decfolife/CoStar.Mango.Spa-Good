@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'regenerator-runtime/runtime';
 import * as ExcelJS from 'exceljs';
@@ -41,6 +41,7 @@ export class ObjectMaintenanceComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private service: ObjectMaintenanceService
   ) {
     const loadingSub = this.service.isLoading$.subscribe((isLoadingVal) => {
@@ -104,7 +105,7 @@ export class ObjectMaintenanceComponent implements OnInit, OnDestroy {
         '/' +
         item.data.objectId +
         '/ObjectMaintenance.aspx';
-      window.location.href = route;
+      this.router.navigateByUrl(route);
     }
   }
 
@@ -313,5 +314,15 @@ export class ObjectMaintenanceComponent implements OnInit, OnDestroy {
       iconClearElement.setAttribute('role', 'button');
       iconClearElement.setAttribute('aria-label', 'Clear Search Filter');
     }
+  }
+
+  navigateToSecurityMaintenance(group: any) {
+    this.router.navigateByUrl(
+      '/v06/Admin/SecurityMaintenance/SecurityMaintenance.aspx#/assignRights/' +
+        this.currentObjectTypeId +
+        '/' +
+        group.data.objectId +
+        '/ObjectMaintenance.aspx'
+    );
   }
 }

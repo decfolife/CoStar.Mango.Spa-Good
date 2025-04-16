@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 import { UserService, UtilitiesService } from '@mango/core-shared';
 import {
   OAUTH_CLIENT_KEY_QUERY_PARAM,
@@ -9,12 +9,12 @@ import {
 } from '@mango/data-models/lib-data-models';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
-import { Observable, of, Subscription } from 'rxjs';
+import { RedirectorMapping } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable()
 export class MangoNavigationService {
-  private subscription$ = new Subscription();
   authorizeUrls: string[] = ['crem/projects/project-tasks'];
 
   constructor(
@@ -23,53 +23,123 @@ export class MangoNavigationService {
     private userService: UserService
   ) {}
 
-  handleSpaNavigation(navLink: SharedLeftNavLink, clientKey: string): void {
-    //when navLink is the link for a category we need to navigate to the category url
-    if (
-      !navLink.hasOwnProperty('dynamicName') &&
-      navLink.hasOwnProperty('categoryHasFlyOutMenu') &&
-      navLink.categoryHasFlyOutMenu
-    ) {
-      if (navLink.categorySpaUrl) {
-        this.router.navigateByUrl(
-          `${navLink.categorySpaUrl}${
-            navLink.categorySpaQueryParameters
-              ? `?${navLink.categorySpaQueryParameters}`
-              : ``
-          }`
-        );
-      } else {
-        const redirectionUrl = `${environment.cremBaseUrl.replace(
-          '[CLIENT]',
-          clientKey
-        )}${navLink.categoryLinkUrl.startsWith('/') ? '' : '/'}${
-          navLink.categoryLinkUrl
-        }`;
-        this.navigateToUrl(redirectionUrl);
+  /**
+   * Handles routing for SPA only.
+   * Query params can either be provided separately OR as part of the path parameter
+   *
+   * e.g. Path only: '/projects/dashboard'
+   *
+   * e.g. Full url: 'https://blank.app.test.corp.virtualpremise.com:30443/crem/projects'
+   *
+   * @param {string} path - Full url OR path to navigate to.
+   * @param {Params} queryParams - optional query params.
+   */
+  navigateTo(path: string, queryParams?: Params) {
+    let isUrl = UtilitiesService.isValidUrl(path);
+    if (isUrl) {
+      if (queryParams) {
+        const params = new URLSearchParams(queryParams as any).toString();
+        path += `?${params}`;
       }
 
+      this.router.navigateByUrl(path);
       return;
     }
 
-    // when the linkUrl is an anchor link we need to scroll to the anchor.
-    if (navLink.linkUrl.startsWith('#')) {
+    this.router.navigate([path], { queryParams: queryParams });
+  }
+
+  /**
+   * Handles routing for V06 - ASPX and Classic ASP pages.
+   * Query params can either be provided separately OR as part of the path parameter
+   *
+   * e.g. Path only: '/financials/EditCharge.aspx'
+   *
+   * e.g. Full url: 'https://blank.app.test.corp.virtualpremise.com:30443/v06/Forms/RenderForm.aspx?oid=859&otid=3&ottid=300'
+   *
+   * @param {string} path - Full url OR path to navigate to.
+   * @param {Params} queryParams - optional query params.
+   */
+  navigateToV06(path: string, queryParams?: Params): void {
+    let isUrl = UtilitiesService.isValidUrl(path);
+    let clientKey = UtilitiesService.getClientKeyFromUrl();
+
+    let v06Url = isUrl
+      ? path
+      : `${environment.cremBaseUrl.replace('[CLIENT]', clientKey)}`;
+
+    if (!isUrl) {
+      v06Url += v06Url.includes('/v06/') ? `/${path}` : `/v06/${path}`;
+    }
+
+    if (queryParams) {
+      const params = new URLSearchParams(queryParams as any).toString();
+      v06Url += `?${params}`;
+    }
+
+    if (path.includes('.aspx')) {
+      window.location.href = v06Url;
+      return;
+    }
+
+    // Must be a classic asp page
+    this.navigateToClassicAspUrl(v06Url);
+  }
+
+  navigateToExternalUrl(url: string) {
+    window.location.href = url;
+  }
+
+  handleLeftNavNavigation(
+    navLink: SharedLeftNavLink, 
+    clientKey: string,
+    redirectorMappings: RedirectorMapping[]): void {
+
+    let isCategory = !navLink.hasOwnProperty('dynamicName') &&
+      navLink.hasOwnProperty('categoryHasFlyOutMenu') &&
+      navLink.categoryHasFlyOutMenu;
+
+    // When the linkUrl is an anchor link we need to scroll to the anchor.
+    if (!isCategory && navLink.linkUrl.startsWith('#')) {
       this.scrollToAnchor(navLink.linkUrl);
       return;
     }
 
-    if (navLink.spaUrl) {
-      this.router.navigateByUrl(
-        `${navLink.spaUrl}${
-          navLink.spaQueryParameters ? `?${navLink.spaQueryParameters}` : ``
-        }`
-      );
-    } else {
-      const redirectionUrl = `${environment.cremBaseUrl.replace(
-        '[CLIENT]',
-        clientKey
-      )}${navLink.linkUrl.startsWith('/') ? '' : '/'}${navLink.linkUrl}`;
-      this.navigateToUrl(redirectionUrl);
+    // When navLink is the link for a category we need to navigate to the category url
+    let redirectionUrl = isCategory ? navLink.categoryLinkUrl : navLink.linkUrl;
+    redirectionUrl = `${redirectionUrl.startsWith('/') ? '' : '/'}${redirectionUrl}`;
+
+    // if redirectionUrl contains a slash at the end, trim it!
+    if (redirectionUrl.endsWith('/')) {
+      redirectionUrl = redirectionUrl.slice(0, -1);
     }
+
+    let redirectorMap: RedirectorMapping = null;
+    
+    // Compare just page name (ignore params)
+    let redirectorMaps = redirectorMappings.filter((x) =>
+      x.cremUrl.split('?')[0].toLowerCase() === redirectionUrl.split('?')[0].toLowerCase()
+    );
+    
+    if (redirectorMaps.length === 1) {
+      redirectorMap = redirectorMaps[0];
+    } else if (redirectorMaps.length > 1) {
+      // If there are duplicate pages, 
+      // Need to compare with the query param since it can be a page like /ListPage.aspx/?ObjectTypeId=4
+      redirectorMap = redirectorMaps.find((x) =>
+        x.cremUrl.toLowerCase() === redirectionUrl.toLowerCase()
+      );
+    }
+
+    if (redirectorMap && redirectorMap.spaUrl && redirectorMap.isActive) {
+      let queryString = `?${redirectionUrl?.split('?')[1] ?? ''}`;
+      let params = UtilitiesService.queryStringToParams(queryString);
+      this.navigateTo(redirectorMap.spaUrl, params);
+      return;
+    }
+   
+    let v06BaseUrl = environment.cremBaseUrl.replace('[CLIENT]', clientKey);
+    this.navigateToV06(`${v06BaseUrl}${redirectionUrl}`);   
   }
 
   navigateHome(): void {
@@ -144,7 +214,7 @@ export class MangoNavigationService {
   }
 
   // This is used because v06 needs a referer header when opening a classic asp page
-  navigateToUrl(url) {
+  navigateToClassicAspUrl(url: string) {
     const f = document.createElement('FORM') as HTMLFormElement;
     f.action = url;
 
@@ -197,7 +267,7 @@ export class MangoNavigationService {
     return of(false);
   }
 
-  // scroll to the anchor element ID
+  // Scroll to the anchor element ID
   scrollToAnchor(elementId: string) {
     document
       .getElementById(elementId.replace('#', ''))

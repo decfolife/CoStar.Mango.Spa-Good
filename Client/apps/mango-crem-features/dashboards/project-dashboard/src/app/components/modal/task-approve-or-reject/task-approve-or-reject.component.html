@@ -55,6 +55,7 @@
         <crem-form-control>
           <crem-input
             #NotesInput
+            class="tar-notesInput"
             [id]="'tar-notesInputId'"
             [className]="tarNotesStatus"
             [showHint]="false"
@@ -74,7 +75,7 @@
   </div>
 
   <div modalFooter class="footerContent">
-    <div class="footerLeftControls">
+    <div footerLeftControls class="footerLeftControls">
       <crem-button
         *ngIf="displayResendEmailBtn"
         type="secondary"
@@ -86,7 +87,7 @@
         Resend Approval
       </crem-button>
     </div>
-    <div id="buttonTemplate" class="footerRightControls">
+    <div footerRightControls id="buttonTemplate" class="footerRightControls">
       <crem-button
         type="secondary"
         class="cancelChanges tar-btn"

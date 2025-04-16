@@ -89,6 +89,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   public currencyDropdownItem: any = [];
   selectedCurrency: number;
   selectedPortfolio: any;
+  initialSelectedPortfolio: number;
   selectedSupplier: any;
   private redirectorLinks: any[] = null;
 
@@ -156,6 +157,10 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
         .subscribe((portfolioDropdownItem) => {
           if (portfolioDropdownItem) {
             this.portfolioDropdownItem = portfolioDropdownItem.data;
+            if (this.portfolioDropdownItem.length === 1) {
+              this.initialSelectedPortfolio =
+                this.portfolioDropdownItem[0].companyID;
+            }
           }
           if (
             portfolioDropdownItem === null ||

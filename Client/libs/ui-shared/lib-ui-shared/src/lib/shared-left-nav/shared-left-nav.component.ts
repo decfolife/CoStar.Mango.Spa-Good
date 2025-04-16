@@ -36,7 +36,6 @@ export class SharedLeftNavComponent implements OnChanges {
   flyOutEntered: boolean = false;
   currentFlyOutMenuTrigger: MatMenuTrigger = null;
   currentFlyOutMenuCategory: string = null;
-  spaceCharacter = '&nbsp;';
 
   constructor(private facade: MangoAppFacade) {}
 
@@ -127,6 +126,15 @@ export class SharedLeftNavComponent implements OnChanges {
     this.expandNav = !this.expandNav;
   }
 
+  onCategoryNavLinkClick(e: any, navLink: SharedLeftNavLink, ) {
+    if (navLink.categoryLinkUrl === null) {
+      e.stopPropagation();
+    } 
+    else {
+      this.onNavLinkClick(navLink);
+    }
+  }
+
   onNavLinkClick(navLink: SharedLeftNavLink) {
     if (
       !navLink.hasOwnProperty('dynamicName') &&
@@ -134,9 +142,12 @@ export class SharedLeftNavComponent implements OnChanges {
       navLink.categoryHasFlyOutMenu
     ) {
       this.activeLink = navLink.category;
+    } else if (navLink.name) {
+      this.activeLink = navLink.name;
     } else {
       this.activeLink = navLink.dynamicName;
     }
+  
     this.toActiveLink.emit(this.activeLink);
     this.navigateSpa.emit(navLink);
   }

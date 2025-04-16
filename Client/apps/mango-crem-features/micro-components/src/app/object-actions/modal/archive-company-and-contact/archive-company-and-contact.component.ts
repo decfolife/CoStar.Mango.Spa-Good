@@ -4,6 +4,7 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ArchiveActionService } from '@micro-components/object-actions/services/archive-action.service';
 
 import notify from 'devextreme/ui/notify';
@@ -24,6 +25,7 @@ export class ArchiveCompanyAndContactComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ArchiveCompanyAndContactComponent>,
     public service: ArchiveActionService,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       archiveType: string;
@@ -100,7 +102,7 @@ export class ArchiveCompanyAndContactComponent implements OnInit {
           this.showMessage();
           this.close();
           const url = window.location.href;
-          window.location.href = url.replace('&pgMode=Edit', '');
+          this.router.navigateByUrl(url.replace('&pgMode=Edit', ''));
         }
       });
     } else if (this.data.archiveType === 'Company') {
@@ -109,7 +111,7 @@ export class ArchiveCompanyAndContactComponent implements OnInit {
           this.showMessage();
           this.close();
           const url = window.location.href;
-          window.location.href = url.replace('&pgMode=Edit', '');
+          this.router.navigateByUrl(url.replace('&pgMode=Edit', ''));
         }
       });
     }

@@ -1,14 +1,4 @@
-@use "styles" as *;
-
-:host ::ng-deep .modalFooter {
-    .addEquipmentFooter {
-      display: flex;
-
-      crem-button {
-        padding: 4px;
-      }
-    }
-}
+@use 'styles' as *;
 
 .add-equipment-form {
   display: flex;
@@ -19,14 +9,6 @@
   display: flex;
   flex-direction: column;
   column-gap: 10px;
-}
-
-.form-group-two-columns {
-  display: flex;
-  flex-direction: row;
-  column-gap: 10px;
-  width: 100%;
-  box-sizing: border-box; /* Ensure padding and border are included in width */
 }
 
 .add-equipment-form crem-input-label {
@@ -45,6 +27,17 @@
         flex-direction: row;
         width: 150px;
       }
+    }
+  }
+}
+
+:host ::ng-deep {
+  .crem-form {
+    @include costar(gap, 2);
+  }
+  crem-form-control {
+    .crem-form-item-status:empty {
+      display: none;
     }
   }
 }

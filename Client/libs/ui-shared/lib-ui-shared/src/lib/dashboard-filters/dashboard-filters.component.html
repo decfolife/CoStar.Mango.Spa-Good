@@ -20,7 +20,7 @@
       ></crem-hierarchy-dropdown>
 
       <crem-dropdown
-        *ngIf="filter.placeHolderText != 'Hierarchy'"
+        *ngIf="filter.placeHolderText !== 'Hierarchy'"
         [id]="filter.id"
         dropDownContainerCustomClass="dashboardsFiltersDropDown"
         [showColumnHeader]="filter.showColumnHeaders"
@@ -49,25 +49,25 @@
   <div class="actionButtons">
     <crem-button
       type="primary"
-      *ngIf="showAddButton == true && !addObjects && dashboardId !== 1"
+      *ngIf="showAddButton === true && !addObjects && dashboardId !== 1"
       (click)="btnAddItemClick(); $event.preventDefault()"
-      ><span>Add</span></crem-button
+      >Add</crem-button
     >
 
     <crem-button
       type="primary"
       id="add_project_wizard_dashboard"
-      *ngIf="dashboardId === 1 && !addObjects && showAddButton == true"
+      *ngIf="dashboardId === 1 && !addObjects && showAddButton === true"
       (click)="btnAddItemNewClick(); $event.preventDefault()"
-      ><span>Add</span></crem-button
+      >Add</crem-button
     >
 
     <crem-button
       type="primary"
-      *ngIf="showAddButton == true && addObjects && dashboardId !== 1"
+      *ngIf="showAddButton === true && addObjects && dashboardId !== 1"
       [matMenuTriggerFor]="addMenu"
       (click)="$event.preventDefault()"
-      ><span>Add</span></crem-button
+      >Add</crem-button
     >
 
     <mat-menu #addMenu="matMenu" class="dashboardsAddMenu">

@@ -1,0 +1,74 @@
+@use 'apps/mango/src/assets/styles/colors.scss' as colors;
+
+.body-content {
+  padding: 0 24px;
+  font-size: 14px !important;
+}
+
+.lease-datagrid {
+  height: 350px;
+}
+
+.building-master-details {
+  height: 460px;
+}
+
+.modalContent {
+  // overflow-y: hidden !important;;
+  overflow-y: auto !important;
+}
+
+.grid {
+  &__icons {
+    fa-icon {
+      color: colors.$iconGray;
+    }
+
+    &--warning {
+      padding-right: 0px;
+    }
+  }
+
+  &__text {
+    font-size: 14px;
+    margin: 8px 0px;
+
+    &--error {
+      font-size: 14px;
+      margin: 8px 0px;
+      color: #de0000;
+    }
+
+    &--error-black {
+      color: colors.$black;
+    }
+
+    &--success {
+      font-size: 14px;
+      margin: 8px 0px;
+      color: colors.$color-brand-green;
+    }
+
+    &--warning {
+      padding: 8px 0px 0px 0px;
+      font-weight: 600;
+      display: flex;
+      flex-direction: row;
+      font-size: 14px;
+      color: colors.$black;
+    }
+  }
+
+  &__reason-warning {
+    color: colors.$black;
+  }
+}
+
+.footerRightControls {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  crem-button {
+    padding: 8px 0px 8px 8px;
+  }
+}

@@ -60,8 +60,15 @@ export class DynamicFormsFacade {
   selectRenderFormResponse$ = this.store.select(
     fromDynamicForms.selectRenderFormResponse
   );
+  saveRenderFormResponse$ = this.store.select(
+    fromDynamicForms.saveRenderFormResponse
+  );
 
   constructor(private store: Store) {}
+
+  clearSaveFormState() {
+    this.store.dispatch(dynamicFormsActions.clearSaveFormState());
+  }
 
   clearDynamicFormsState() {
     this.store.dispatch(dynamicFormsActions.clearDynamicFormsState());
@@ -85,9 +92,9 @@ export class DynamicFormsFacade {
     this.store.dispatch(dynamicFormsActions.setisRenderForm({ isRenderForm }));
   }
 
-  loadFormSections(formId: number): void {
+  loadFormSections(formId: number, groupId: number): void {
     this.store.dispatch(
-      dynamicFormsActions.dynamicFormLoadSections({ formId })
+      dynamicFormsActions.dynamicFormLoadSections({ formId, groupId })
     );
   }
 
@@ -175,12 +182,20 @@ export class DynamicFormsFacade {
     this.store.dispatch(dynamicFormsActions.dynamicFormLoadFormItemDropdowns());
   }
 
-  loadRenderForm(formId: number, objectId: number, objectTypeId: number): void {
+  loadRenderForm(
+    formId: number,
+    objectId: number,
+    objectTypeId: number,
+    parentObjectId: number,
+    parentObjectTypeId: number
+  ): void {
     this.store.dispatch(
       dynamicFormsActions.dynamicFormLoadRenderForm({
         formId,
         objectId,
         objectTypeId,
+        parentObjectId,
+        parentObjectTypeId,
       })
     );
   }
@@ -188,13 +203,17 @@ export class DynamicFormsFacade {
   loadRenderFormFormItemDropdowns(
     formId: number,
     objectId: number,
-    objectTypeId: number
+    objectTypeId: number,
+    parentObjectId: number,
+    parentObjectTypeId: number
   ): void {
     this.store.dispatch(
       dynamicFormsActions.renderFormLoadFormItemDropdowns({
         formId,
         objectId,
         objectTypeId,
+        parentObjectId,
+        parentObjectTypeId,
       })
     );
   }

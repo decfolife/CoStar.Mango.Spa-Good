@@ -6,6 +6,7 @@ import { CardDetails, userSettings } from '../../models';
 import { MatDialog } from '@angular/material/dialog';
 import { PortfolioDashboardService } from '../../services/portfolio-dashboard.service';
 import { PortfolioDataService } from '../../services/portfolio-data.service';
+import { Router } from '@angular/router';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -21,7 +22,8 @@ export class CardsComponent implements OnInit, OnDestroy {
 
   constructor(
     private portfolioDashboardService: PortfolioDashboardService,
-    private portfolioDataService: PortfolioDataService
+    private portfolioDataService: PortfolioDataService,
+    private router: Router
   ) {}
 
   subs: Subscription[] = [];
@@ -71,7 +73,7 @@ export class CardsComponent implements OnInit, OnDestroy {
       e.data.objectTypeID,
       e.data.objectTypeTypeID
     );
-    document.location.href = urlLink;
+    this.router.navigateByUrl(urlLink);
   }
 
   public getCards() {

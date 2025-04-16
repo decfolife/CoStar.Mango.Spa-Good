@@ -7,50 +7,51 @@ import { AppRoutingTitle } from '@mango/data-models/lib-data-models';
 const routes: Routes = [
   {
     path: 'recent-activities',
+    title: 'Recent Activities',
     loadChildren: () =>
       import('../recent-activities/recent-activities.module').then(
         (mod) => mod.RecentActivitiesModule
       ),
-    title: AppRoutingTitle + 'Recent Activities',
     data: {
       breadCrumb: { append: false },
     },
   },
   {
     path: 'teams',
+    title: 'Team Templates',
     loadChildren: () =>
       import('../teams/teams-routing.module').then(
         (mod) => mod.TeamsRoutingModule
       ),
-    title: AppRoutingTitle + 'Team Templates',
     data: {
       breadCrumb: { append: false },
     },
   },
   {
     path: 'project-team',
+    title: 'Teams',
     loadChildren: () =>
       import('../project-team/project-team-routing.module').then(
         (mod) => mod.ProjectTeamRoutingModule
       ),
-    title: AppRoutingTitle + 'Teams',
     data: {
       breadCrumb: { label: 'Project-Team', append: false },
     },
   },
   {
     path: 'project-tasks',
+    title: 'Tasks Page',
     loadChildren: () =>
       import('../project-tasks/project-tasks-routing.module').then(
         (mod) => mod.ProjectTasksRoutingModule
       ),
-    title: AppRoutingTitle + 'Tasks Page',
     data: {
       breadCrumb: { label: 'Project-Tasks', append: false },
     },
   },
   {
     path: '',
+    title: 'Project Dashboard',
     component: IndexComponent,
     title: AppRoutingTitle + 'Project Dashboard',
     data: {

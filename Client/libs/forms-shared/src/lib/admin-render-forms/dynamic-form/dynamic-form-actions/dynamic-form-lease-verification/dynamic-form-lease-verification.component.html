@@ -1,0 +1,97 @@
+<crem-modal
+  modalId="lease-verification-modal"
+  modalTitleId="lease-verification-modal-title"
+  [modalTitle]="'Change Verification Status'"
+  closeIconVisible="true"
+  [customFooter]="true"
+  class="add-bookmark"
+>
+  <div modalContent class="body-content">
+    <div class="form-section">
+      <crem-input-label
+        [id]="getId(componentName, 'workflow-status', 'label')"
+        [showInfo]="false"
+        required="true"
+        label="Status"
+      >
+      </crem-input-label>
+
+      <crem-dropdown
+        [id]="getId(componentName, 'workflow-status', 'dropdown')"
+        placeholder="Select status..."
+        selectMode="single"
+        [required]="true"
+        [showClearButton]="false"
+        [dataSource]="workFlowStatus"
+        [initialSelectedValue]="oldStatus"
+        displayExpr="wfsName"
+        valueExpr="wfsID"
+        (selectedItems)="onSelectedStatus($event)"
+        [containerized]="false"
+      >
+      </crem-dropdown>
+
+      <crem-input-hint
+        text='To change the Status, select a status and then click the "Change Status" button'
+        type="read-only"
+      >
+      </crem-input-hint>
+      <crem-input-label
+        [id]="getId(componentName, 'workflow-status-comments', 'label')"
+        [showInfo]="false"
+        [required]="isLeaseVerificationCommentsRequired"
+        label="Comments"
+        class="workflow-status-label"
+      >
+      </crem-input-label>
+      <crem-input
+        [id]="getId(componentName, 'workflow-status-comments', 'textarea')"
+        [inputType]="'textarea'"
+        [value]="''"
+        [name]="''"
+        [placeholder]="'Comments'"
+        [required]="isLeaseVerificationCommentsRequired"
+        [allowScrolling]="true"
+        [rows]="3"
+        (valueChange)="onCommentsValueChange($event)"
+      ></crem-input>
+    </div>
+    <div
+      *ngIf="
+        leaseVerificationFormData && leaseVerificationFormData.length !== 0
+      "
+      class="required-fields-container"
+    >
+      <h4>Alert: Required Field(s)</h4>
+      <p class="message">
+        This fields below are required for the status you have selected. The
+        status will not be changed.
+      </p>
+
+      <ng-container *ngFor="let row of leaseVerificationFormData">
+        <div class="lease-verification-required-fields">
+          <div class="form-section-name">
+            {{ row.formSectionName }}
+          </div>
+          <div class="form-item-label">
+            {{ row.formItemLabel }}
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div modalFooter class="addBookmarkFooter">
+    <crem-button
+      [id]="getId(componentName, 'workflow-status-comments', 'label')"
+      type="primary"
+      [disabled]="isUpdateButtonDisabled"
+      [icon]="isUpdateButtonClicked ? 'faSpinner' : ''"
+      [iconPack]="isUpdateButtonClicked ? 'solid' : ''"
+      [iconAnimation]="isUpdateButtonClicked ? 'spin' : ''"
+      (buttonClick)="updateStatus()"
+    >
+      {{ isUpdateButtonClicked ? 'Saving...' : 'Change Status' }}
+    </crem-button>
+  </div>
+</crem-modal>

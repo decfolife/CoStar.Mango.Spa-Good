@@ -218,6 +218,11 @@
       display: none;
     }
   }
+
+  td.pt-userApprovalStatus div div span:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.1rem $primary-lighter;
+  }
 }
 
 ::ng-deep #saveTasksAsTemplatePopupId {

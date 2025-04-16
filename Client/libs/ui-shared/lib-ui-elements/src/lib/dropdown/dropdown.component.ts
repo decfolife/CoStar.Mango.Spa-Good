@@ -151,6 +151,13 @@ export class DropdownComponent
   @Input() public showRedBorder?: boolean = false;
   @Input() public customRequireValidation?: boolean = false;
   /**
+   * Auto Selects if the dropdown it has only one value
+   *
+   * @type {boolean}
+   * @memberof DropdownComponent
+   */
+  @Input() public autoSelect?: boolean = false;
+  /**
    * Specifies whether data items should be grouped.
    *
    * @type {boolean}
@@ -547,7 +554,15 @@ export class DropdownComponent
   }
 
   setDropdownvalue(value: any) {
+    // When auto-selects is true and dataSource is one, automatically select the element
+    const autoSelect = this.dataSource?.length === 1 && this.autoSelect;
+
     if (this.selectMode == 'single') {
+      if (autoSelect) {
+        this.selectBoxValue =
+          this.dataSource[0]?.[this.valueExpr || this.keyExpr];
+      }
+
       (this.dataSource?._items || this.dataSource || []).forEach((data) => {
         if (data?.[this.valueExpr] === value) {
           this.selectedDisplay = [data?.[this.resolveSelectedDisplaySource()]];
@@ -556,6 +571,11 @@ export class DropdownComponent
         }
       });
     } else if (this.selectMode == 'multiple') {
+      if (autoSelect) {
+        this.selectedDisplay =
+          this.dataSource[0]?.[this.valueExpr || this.keyExpr];
+      }
+
       if (value) {
         (this.dataSource?._items || this.dataSource || []).forEach((data) => {
           if (

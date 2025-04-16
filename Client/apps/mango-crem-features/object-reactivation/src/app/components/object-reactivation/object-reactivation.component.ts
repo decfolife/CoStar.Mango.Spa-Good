@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ObjectReactivationService } from './../../services/object-reactivation.service';
-import { of, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import {
   ReactivationListRequest,
   ReactivationObjectType,
@@ -25,7 +25,10 @@ import {
   CremToastService,
 } from '@mango/ui-shared/lib-ui-elements';
 import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
-import { ToastState } from '../../../../../../../libs/data-models/lib-data-models/src';
+import {
+  ContactRecord,
+  ToastState,
+} from '../../../../../../../libs/data-models/lib-data-models/src';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { Router } from '@angular/router';
@@ -57,7 +60,7 @@ export class ObjectReactivationComponent {
   @ViewChild(DropdownComponent) cremDropdownComponent: DropdownComponent;
   externalCremLink: string;
   public pageTitle = 'Reactivate Objects';
-  objectTypeId: number = 3;
+  objectTypeId: number = 4;
   selectedItemIds: any = [];
   subs: Subscription[] = [];
   reactivationDataList: any[];
@@ -67,6 +70,11 @@ export class ObjectReactivationComponent {
   public selectedFilter?: ReactivationObjectType;
   toolTipData: any;
   reactivateButtonCaption: string;
+  reactivateButtonTitle: string =
+    'Select an item from the list below to reactivate.';
+  isUserDatesEU: boolean = false;
+  hasFiltersSelected: boolean = false;
+  currentUserInfo$: Observable<ContactRecord>;
 
   constructor(
     private objectReactivationService: ObjectReactivationService,
@@ -83,6 +91,13 @@ export class ObjectReactivationComponent {
         clientKey
       )}/v06/Admin/AdminHome2.aspx`;
     });
+    this.currentUserInfo$ = this.facade.contactRecord$;
+
+    this.subs.push(
+      this.currentUserInfo$.subscribe((contact) => {
+        this.isUserDatesEU = contact.preferences?.contactDatesEU;
+      })
+    );
     this.subs.push(
       this.objectReactivationService
         .getFilterData()
@@ -92,10 +107,17 @@ export class ObjectReactivationComponent {
               return of(false);
             }
             if (res.success) {
+              let setReportNameCaption = res.data;
+              setReportNameCaption = setReportNameCaption.map((val) => {
+                //console.log(val.objectTypeID);
+                if (val.objectTypeID == 7) val.objectType = `Ad Hoc Reports`;
+                return val;
+              });
+
               const filterItems = res.data;
               filterItems.sort((a, b) => {
-                const typeNameA = a.objectType.toUpperCase();
-                const typeNameB = b.objectType.toUpperCase();
+                const typeNameA = this.removeSpaces(a.objectType).toUpperCase();
+                const typeNameB = this.removeSpaces(b.objectType).toUpperCase();
                 if (typeNameA < typeNameB) {
                   return -1;
                 }
@@ -109,8 +131,6 @@ export class ObjectReactivationComponent {
               this.selectedFilter = this.filteredData.find(
                 (item) => item.objectTypeID === this.objectTypeId
               );
-              //console.log(this.filteredData);
-              //console.log(this.selectedFilter);
             }
             return this.objectReactivationService.getClientPreferences();
           }),
@@ -125,6 +145,15 @@ export class ObjectReactivationComponent {
                 ? this.clientPreferences.clientSetupFieldValue
                 : 0;
               this.getToopTipData();
+
+              const filteredOutIsPremiseHidden = this.filteredData.filter(
+                (obj) => {
+                  if (!(this.IsPremiseHidden === 1 && obj.objectTypeID == 2)) {
+                    return obj;
+                  }
+                }
+              );
+              this.filteredData = filteredOutIsPremiseHidden;
             }
 
             const req: ReactivationListRequest = {
@@ -137,10 +166,22 @@ export class ObjectReactivationComponent {
           })
         )
         .subscribe((cpRes: any) => {
+          if (
+            this.objectTypeId == 3 ||
+            this.objectTypeId == 4 ||
+            this.objectTypeId == 5 ||
+            this.objectTypeId == 7 ||
+            this.objectTypeId == 11
+          ) {
+            cpRes = this.getReactivationDateFormatedData(cpRes);
+          }
           this.reactivationDataList = cpRes;
-          //console.log(this.reactivationDataList);
         })
     );
+  }
+
+  private removeSpaces(text: string): string {
+    return text.replace(/\s/g, '');
   }
 
   onFilterChange(e: any[]): void {
@@ -168,10 +209,55 @@ export class ObjectReactivationComponent {
       this.objectReactivationService
         .getReactivationList(req)
         .subscribe((reactivationdata: any) => {
+          if (
+            req.ObjectTypeId == 3 ||
+            req.ObjectTypeId == 4 ||
+            req.ObjectTypeId == 5 ||
+            req.ObjectTypeId == 7 ||
+            req.ObjectTypeId == 11
+          ) {
+            reactivationdata =
+              this.getReactivationDateFormatedData(reactivationdata);
+          }
           this.reactivationDataList = reactivationdata;
         })
     );
   }
+
+  private getReactivationDateFormatedData(reactivationdata: any): any {
+    reactivationdata = reactivationdata.map((val) => {
+      for (var keys in val) {
+        if (keys.includes('Archived Date')) {
+          if (val['Archived Date']) {
+            val[keys] = this.getUserPreferedDateFormat(val['Archived Date']);
+          }
+        }
+        if (keys.includes('Expiration Date')) {
+          if (val['Expiration Date']) {
+            val[keys] = this.getUserPreferedDateFormat(val['Expiration Date']);
+          }
+        }
+      }
+      return val;
+    });
+    return reactivationdata;
+  }
+
+  private getUserPreferedDateFormat(curDateVal: any): string {
+    let curDate = new Date(curDateVal);
+    let curDtString = '';
+    let month = '' + (curDate.getMonth() + 1);
+    let day = '' + curDate.getDate();
+    let year = '' + curDate.getFullYear();
+
+    if (this.isUserDatesEU) {
+      curDtString = [day, month, year].join('.');
+    } else {
+      curDtString = [month, day, year].join('/');
+    }
+    return curDtString;
+  }
+
   private getToopTipData() {
     //this.selectedFilter?.objectTypeID
     this.toolTipData = `Reactivating a Building will only reactivate that Building.</br>`;
@@ -209,13 +295,16 @@ export class ObjectReactivationComponent {
   }
 
   overrideOnContentReady(e) {
-    if (this.selectedFilter?.objectTypeID === 3) {
-      this.reactivationDataGrid.instance.columnOption(
-        'BuildingMasterGroupID',
-        'visible',
-        false
-      );
-    }
+    /*  if (
+      this.selectedFilter?.objectTypeID === 3 ||
+      this.selectedFilter?.objectTypeID === 4
+    ) { */
+    this.reactivationDataGrid.instance.columnOption(
+      'BuildingMasterGroupID',
+      'visible',
+      false
+    );
+    // }
   }
 
   searchDataGrid(searchText: string): void {
@@ -257,22 +346,18 @@ export class ObjectReactivationComponent {
             .updateReactivationListRecords(reqlist)
             .subscribe((res: any) => {
               if (res.success) {
-                //alert('updated successfully');
-                const msgString =
+                /* const msgString =
                   this.selectedItemIds.length > 1
                     ? 'Objects successfully reactivated.'
-                    : 'Object successfully reactivated.';
-                const successMessage = `${this.selectedItemIds.length} ${this.selectedFilter?.objectType} ${msgString}`;
-                this.toastService.show(
-                  successMessage,
-                  'Reactivation Objects',
-                  ToastState.SUCCESS,
-                  {
-                    maxWidth: '500px',
-                    duration: 5000,
-                    closeOnClick: true,
-                  }
-                );
+                    : 'Object successfully reactivated.'; 
+                    */
+                //const successMessage = `${this.selectedItemIds.length} ${this.selectedFilter?.objectType} ${msgString}`;
+                const successMessage = `Object(s) reactivated successfully.`;
+                this.toastService.show(successMessage, '', ToastState.SUCCESS, {
+                  maxWidth: '500px',
+                  duration: 5000,
+                  closeOnClick: true,
+                });
 
                 const req: ReactivationListRequest = {
                   IsPremiseHidden: this.IsPremiseHidden,
@@ -299,6 +384,21 @@ export class ObjectReactivationComponent {
     }
   }
 
+  clearFilters(evt: MouseEvent) {
+    evt.stopPropagation();
+    this.reactivationDataGrid.instance.clearFilter();
+  }
+
+  handleFilterValuePropertyChange(e) {
+    if (e.name === 'filterValue') {
+      if (e.value) {
+        this.hasFiltersSelected = true;
+      } else {
+        this.hasFiltersSelected = false;
+      }
+    }
+  }
+
   resetSelectedObjects() {
     this.reactivationDataGrid.instance.clearSelection();
   }
@@ -310,8 +410,10 @@ export class ObjectReactivationComponent {
     const objTxt = this.selectedItemIds?.length <= 1 ? `Object` : `Objects`;
     if (this.selectedItemIds?.length == 0) {
       this.reactivateButtonCaption = ` Reactivate `;
+      this.reactivateButtonTitle = `Select an item from the list below to reactivate.`;
     } else {
       this.reactivateButtonCaption = ` Reactivate ${this.selectedItemIds?.length} ${objTxt} `;
+      this.reactivateButtonTitle = `Click to reactivate the selected object(s).`;
     }
   }
 }

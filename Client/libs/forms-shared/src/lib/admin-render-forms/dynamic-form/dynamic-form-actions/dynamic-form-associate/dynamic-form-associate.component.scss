@@ -48,3 +48,15 @@
     }
   }
 }
+
+::ng-deep .df-associate-component {
+  .modalContent {
+    overflow-x: hidden !important;
+  }
+
+  .df-associate-loader {
+    margin: auto;
+    position: relative;
+    top: 48%;
+  }
+}

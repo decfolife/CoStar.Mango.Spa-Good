@@ -1,13 +1,83 @@
+@use 'styles' as *;
+
 mat-card.mat-mdc-card {
-  border: 1px solid #bfbfbf;
-  border-radius: 2px !important;
   box-shadow: none !important;
   padding: 0px !important;
   margin-bottom: 24px;
+  @include costar(border, gray04);
+  @include costar(border-radius, medium);
 
   mat-card-content.mat-card-content {
     padding-top: 24px;
     padding: 16px;
+  }
+}
+
+:host ::ng-deep {
+  mat-card {
+    .btn-expand {
+      padding: 0px;
+      width: 32px;
+      height: 32px;
+    }
+
+    mat-card-content {
+      @include costar(padding-top, 4);
+
+      &.collapsed {
+        &:last-child {
+          padding-top: 0px !important;
+          padding-bottom: 0px !important;
+        }
+      }
+
+      &:has(mango-dynamic-form-widget) {
+        // Styling for when widget (grid) is present
+        margin: 0px !important;
+        padding: 0px !important;
+
+        .df-formSection-field {
+          margin: 0px !important;
+          padding: 0px !important;
+          &:has(.df-formSection-labelContainer) {
+            // In the rare case where the form fields are being rendered inside mango-dynamic-form-widget
+            margin: 2px 0 !important;
+            padding: 4px 1% !important;
+          }
+        }
+
+        .dx-item.dx-list-item {
+          // FIXME: Currently set at 99% for formSection but is affecting the widget (grid)
+          width: 100% !important;
+          &:has(.field-container) {
+            @include costar(padding, 2);
+            padding-left: 18px !important;
+            padding-right: 18px !important;
+
+            &:first-child {
+              padding-top: 18px !important;
+            }
+          }
+        }
+
+        // FIXME: These styles should be part of the `mango-dynamic-form-widget`
+        .controls-right {
+          // Override controls to have the contextualized style
+          height: unset !important; // Button size
+        }
+
+        mango-dynamic-form-widget > div > div {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+
+    dx-form {
+      .field-content {
+        @include costar(font-weight, bold);
+      }
+    }
   }
 }
 
@@ -73,8 +143,14 @@ ngx-skeleton-loader[id^='skelDropdown'] {
   height: 50px;
 }
 
-.label {
+::ng-deep .text-area-label {
+  white-space: pre-wrap;
+}
+
+.df-formSection-labelContainer {
+  display: flex;
   width: 150px;
+  height: 30px;
   margin-right: 40px;
   word-wrap: normal;
   white-space: nowrap;
@@ -103,6 +179,16 @@ crem-date-picker {
   display: flex;
 }
 
+.clause-section-item {
+  //Keep the label at the top but also centered
+  align-items: flex-start;
+  ::ng-deep {
+    crem-input-label.clause-section-item-label > label {
+      padding-top: calc(0.175rem + 5px);
+    }
+  }
+}
+
 .form-field-tooltip {
   position: relative;
   top: 5px;
@@ -113,6 +199,22 @@ crem-date-picker {
   align-items: center;
   border-top: none;
   cursor: default;
+  .df-infoHistoryData,
+  .df-infoHistoryData crem-field-history,
+  div.iconWrapper,
+  div.dx-field {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    span {
+      transform: translate(-8px, -4px);
+      display: inline-block;
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
 }
 
 ::ng-deep .dx-list-item.dx-state-focused {
@@ -158,4 +260,143 @@ fa-icon {
     width: 700px !important;
     height: 400px !important;
   }
+}
+
+.df-formSection-fieldLabel.df-superLabel {
+  color: $color-secondary;
+  &:hover {
+    color: $primary-light;
+    text-decoration: underline;
+    cursor: pointer !important;
+  }
+}
+
+svg {
+  padding: 5px 3px 0 0;
+  float: left;
+  width: 14pt;
+  height: 16pt;
+}
+
+svg#LeaseVerification {
+  path:nth-oftype(1) {
+    fill: #414141;
+  }
+  path:nth-of-type(2) {
+    fill: #ec4a08;
+  }
+  path:nth-of-type(3) {
+    fill: white;
+  }
+}
+
+svg#AccountingWorkflow {
+  path:nth-of-type(1) {
+    fill: #414141;
+  }
+  path:nth-of-type(2) {
+    fill: #4f9c20;
+  }
+}
+
+div.links {
+  padding: 0 0 0 24px;
+  height: 54px;
+  margin-bottom: -14px;
+}
+
+img.links {
+  margin-right: 10px;
+}
+
+span.links {
+  vertical-align: top;
+}
+
+mango-dynamic-form-widget {
+  width: 100%;
+}
+::ng-deep .dx-item.dx-list-item.dx-state-active,
+::ng-deep .dx-item.dx-list-item.dx-state-focused {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+::ng-deep .df-section {
+  .df-sectionContent {
+    .dx-form
+      .dx-layout-manager
+      .dx-box-flex
+      .dx-item
+      .dx-item-content.dx-box-item-content {
+      width: 99%;
+      & .dx-item.dx-box-item {
+        width: 99%;
+      }
+    }
+  }
+
+  .df-formSection-columnList .dx-list-items .dx-item.dx-list-item {
+    width: 99%;
+
+    .df-formSection-field {
+      text-wrap: wrap;
+      margin: 2px 0;
+      padding: 4px 1%;
+      .df-formSection-labelContainer {
+        width: 42%;
+        margin-right: 2%;
+        white-space: normal;
+        text-wrap: wrap;
+        height: auto;
+      }
+      .df-formSection-fieldContent {
+        width: 56%;
+      }
+
+      crem-input-label label span {
+        cursor: pointer;
+        white-space: normal;
+        text-wrap: wrap;
+        line-height: normal;
+      }
+
+      &.df-clauseSection .df-formSection-labelContainer {
+        min-width: 150px;
+        width: 150px;
+        margin-right: 4px;
+      }
+    }
+  }
+
+  // Makes sure the border radius round works for the material
+  .mat-mdc-icon-button .mat-mdc-button-ripple {
+    @include costar(border-radius, round);
+  }
+}
+
+// Mat-menu Styles
+::ng-deep {
+  .mat-mdc-card-title:hover {
+    cursor: pointer;
+  }
+
+  /* Don't show as a link to make it look consistent to the rest of the mat-menu dropdowns */
+  .cdk-overlay-container .df-sectionLabelMenu {
+    a {
+      @include costar(color, gray01, $important: true);
+    }
+    a:hover {
+      text-decoration: unset !important;
+    }
+    .mat-ripple {
+      // FIXME: this is being override somewhere adding to the ripple effect a margin all around
+      margin: 0px !important;
+    }
+  }
+}
+
+.df-clauseElements {
+  width: calc(100% - 150px);
 }

@@ -24,6 +24,7 @@ import {
   LeaseAlertToggleDTO,
   SelectedColumns,
 } from '../shared/models';
+import { Router } from '@angular/router';
 
 type RedirectorLink = {
   basePageUrl: string;
@@ -419,7 +420,7 @@ export class AlertsGridComponent implements OnInit {
     },
   };
 
-  constructor(private alertsService: AlertsService) {}
+  constructor(private alertsService: AlertsService, private router: Router) {}
 
   ngOnInit(): void {
     if (this.isPopupView) {
@@ -492,7 +493,7 @@ export class AlertsGridComponent implements OnInit {
       .replace('[OTID]', `${LEASE_OTID}`)
       .replace('[OTTID]', evt.data.objectTypeTypeID);
 
-    document.location.href = url;
+    this.router.navigateByUrl(url);
   }
 
   toggleAlert(leaseAlert: LeaseAlert, dismissReason?, isButtonClick = false) {

@@ -372,10 +372,9 @@
       [filterSyncEnabled]="true"
       [wordWrapEnabled]="true"
       (onCellPrepared)="onCellPrepared($event)"
-      (onCellClick)="displayTaskDetail($event)"
+      (onCellClick)="onCellClick($event)"
       (onKeyDown)="onKeyDown($event)"
       [focusedRowEnabled]="true"
-      (onFocusedRowChanged)="onFocusedRowChanged($event)"
       [(selectedRowKeys)]="allSelectedRowKeys"
       (onSelectionChanged)="onTasksSelectionChanged($event)"
       (onContentReady)="
@@ -576,6 +575,7 @@
         [allowSorting]="false"
         [width]="122"
         [visible]="false"
+        cssClass="pt-userApprovalStatus"
         alignment="center"
         [minWidth]="50"
       ></dxi-column>
@@ -993,6 +993,7 @@
       <div
         *dxTemplate="let cell of 'userApprovalStatusTemplate'"
         [id]="'pt-userApprovalStatusId' + cell.rowIndex"
+        class="pt-userApprovalStatusTemplate"
       >
         <div
           *ngIf="
@@ -1003,6 +1004,7 @@
           class="pt-userApprovalStatusBtns-container"
         >
           <span
+            tabindex="0"
             type="button"
             id="{{ 'pt-assignApproverBtn' + cell.rowIndex }}"
             (click)="
@@ -1039,6 +1041,7 @@
             [ngClass]="{
               disabledOption: !isTaskApprovable(cell.data)
             }"
+            [tabindex]="isTaskApprovable(cell.data) ? 0 : -1"
             type="button"
             [title]="
               getApprovalBtnTitleText(
@@ -1047,7 +1050,7 @@
               )
             "
             id="{{ 'pt-approveBtn' + cell.rowIndex }}"
-            class="pt-approveRejectBtn"
+            class="pt-approveRejectBtn pt-approveBtn"
             (click)="
               approveOrRejectTask(cell.data, taskUserApprovalStatus.APPROVE)
             "
@@ -1061,10 +1064,11 @@
           <span
             type="button"
             id="{{ 'pt-rejectBtn' + cell.rowIndex }}"
-            class="pt-approveRejectBtn"
+            class="pt-approveRejectBtn pt-rejectBtn"
             [ngClass]="{
               disabledOption: !isTaskRejectable(cell.data)
             }"
+            [tabindex]="isTaskRejectable(cell.data) ? 0 : -1"
             (click)="
               approveOrRejectTask(cell.data, taskUserApprovalStatus.REJECT)
             "
@@ -1083,6 +1087,7 @@
             [ngClass]="{
               disabledOption: !isTaskCompleteDateModifiable(cell.data)
             }"
+            [tabindex]="isTaskCompleteDateModifiable(cell.data) ? 0 : -1"
             (click)="modifyCompleteDate(cell.data)"
           >
             {{ cell.value }}</span
@@ -1207,7 +1212,7 @@
           <ng-container *ngIf="projectTaskSettings.calculateDates">
             <div class="label">Auto Calculate</div>
             <crem-toggle-slider
-              [id]="'pts-calculateDate'"
+              [id]="'pts-autoCalculateDate'"
               [size]="'wide'"
               [value]="projectTaskSettings.autoCalculate"
               [disabled]="userAccessLevel !== 1"

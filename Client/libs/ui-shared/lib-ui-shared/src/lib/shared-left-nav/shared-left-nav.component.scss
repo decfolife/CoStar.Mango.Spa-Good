@@ -54,24 +54,41 @@ $disable-underline: true;
 
 ::ng-deep {
   .ng-trigger-transformMenu.mat-menu-after.expand-right {
-    min-width: 250px;
+    min-width: 300px;
     position: absolute !important;
     top: -47px !important;
     left: 221px !important;
+
     .flyout-navitem {
       @include nav-item-style;
     }
+
+    .flyout-scroll {
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
   }
+
   #sidebar-nav > ul.navList > li {
     button {
       padding-right: 0 !important;
+
+      &.default-cursor-nav-link {
+        cursor: default;
+      }
 
       & > .mat-mdc-menu-item-text {
         width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        .div-arrow-right-icon {
+          margin-left: auto;
+        }
       }
+
       & > span > div > mat-icon {
         margin-right: 9px !important;
         color: var(--mat-expansion-header-indicator-color);

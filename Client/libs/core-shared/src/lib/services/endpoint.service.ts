@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Observable, of } from 'rxjs';
@@ -266,5 +266,12 @@ export abstract class EndpointService {
       map((x) => this.byteArrayFromResponse(x) as any),
       catchError(this.handleError(functionName))
     );
+  }
+
+  protected downloadFile(url: string): Observable<HttpResponse<Blob>> {
+    return this.http.get<Blob>(url, {
+      observe: 'response',
+      responseType: 'blob' as 'json',
+    });
   }
 }

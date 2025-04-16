@@ -3,28 +3,107 @@
 <div [class]="direction ? 'd-flex flex-' + direction : ''">
   <ng-container *ngFor="let i of instancesList">
     <ng-container [ngSwitch]="type">
-
+      <!-- Card -->
       <div class="skeleton-card" *ngSwitchCase="'card'">
         <ngx-skeleton-loader
           count="1"
-          [theme]="{height: '56px', width: '100%'}"
+          [theme]="{ height: '56px', width: '100%' }"
           ariaLabel="Loading..."
         ></ngx-skeleton-loader>
         <ngx-skeleton-loader
           count="5"
-          [theme]="{height: '32px', width: '100%'}"
+          [theme]="{ height: '32px', width: '100%' }"
           ariaLabel="Loading..."
         ></ngx-skeleton-loader>
       </div>
 
+      <!-- Metric -->
       <div class="skeleton-metric" *ngSwitchCase="'metric'">
-        <ngx-skeleton-loader [theme]="{height: '80px', width: '168px'}"></ngx-skeleton-loader>
+        <ngx-skeleton-loader
+          [theme]="{ height: '80px', width: '168px' }"
+        ></ngx-skeleton-loader>
       </div>
 
+      <!-- Form -->
+      <div class="skeleton-form" *ngSwitchCase="'form'">
+        <ngx-skeleton-loader
+          [theme]="{ height: '24px', width: '60%' }"
+        ></ngx-skeleton-loader>
+        <ngx-skeleton-loader
+          [theme]="{ height: '32px', width: '100%' }"
+        ></ngx-skeleton-loader>
+      </div>
+
+      <!-- Header -->
+      <div class="skeleton-header" *ngSwitchCase="'header'">
+        <ngx-skeleton-loader
+          [theme]="{ height: '24px', width: '70%' }"
+        ></ngx-skeleton-loader>
+      </div>
+
+      <!-- Table -->
+      <div class="skeleton-table" *ngSwitchCase="'table'">
+        <!-- Table Header Skeleton -->
+        <div class="skeleton-table-header">
+          <ngx-skeleton-loader
+            count="1"
+            [theme]="{ height: '34px', width: '100%' }"
+            ariaLabel="Loading table header..."
+          ></ngx-skeleton-loader>
+        </div>
+
+        <!-- Table Body Skeleton -->
+        <div class="skeleton-table-body">
+          <ng-container *ngFor="let row of rows">
+            <div class="skeleton-row" [class.zebra]="row % 2 === 0">
+              <ngx-skeleton-loader
+                [theme]="{ height: '34px', width: '100%' }"
+              ></ngx-skeleton-loader>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Pagination Skeleton -->
+        <div class="skeleton-table-pag">
+          <div class="skeleton-table-pag-num">
+            <ngx-skeleton-loader
+              count="1"
+              [theme]="{ height: '32px', width: '36px' }"
+            ></ngx-skeleton-loader>
+            <ngx-skeleton-loader
+              count="1"
+              [theme]="{ height: '32px', width: '36px' }"
+            ></ngx-skeleton-loader>
+            <ngx-skeleton-loader
+              count="1"
+              [theme]="{ height: '32px', width: '36px' }"
+            ></ngx-skeleton-loader>
+            <ngx-skeleton-loader
+              count="1"
+              [theme]="{ height: '32px', width: '36px' }"
+            ></ngx-skeleton-loader>
+          </div>
+          <div class="skeleton-table-pag-nav">
+            <ngx-skeleton-loader
+              count="1"
+              [theme]="{ height: '32px', width: '36px' }"
+            ></ngx-skeleton-loader>
+            <ngx-skeleton-loader
+              count="1"
+              [theme]="{ height: '32px', width: '36px' }"
+            ></ngx-skeleton-loader>
+            <ngx-skeleton-loader
+              count="1"
+              [theme]="{ height: '32px', width: '36px' }"
+            ></ngx-skeleton-loader>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Skeleton Type Provided -->
       <div *ngSwitchDefault>
         <small>Please provide a type of skeleton, e.g. 'card'</small>
       </div>
-
     </ng-container>
   </ng-container>
 </div>

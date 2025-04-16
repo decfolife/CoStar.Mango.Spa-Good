@@ -5,12 +5,13 @@ export interface ProjectsEmailInfo {
 }
 
 export interface EmailContact {
-  contactFullName: string; 
+  contactFullName: string;
   contactEmailAddress: string;
+  contactId: number;
 }
 
 export interface EmailFileItem {
-  value: string; 
+  value: string;
   text: string;
   createdBy: string;
   uploadedOn: Date;
@@ -19,7 +20,7 @@ export interface EmailFileItem {
 }
 
 export interface EmailNoteType {
-  commonNoteTypeID: number; 
+  commonNoteTypeID: number;
   commonNoteType: string;
   commonNoteTypeDisplay: number;
-} 
+}

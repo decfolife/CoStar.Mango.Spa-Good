@@ -328,7 +328,7 @@ export class AddEditDistributionListComponent {
       this.dialogService
         .confirm(
           'Changes Made!',
-          'Changes you made have not been saved. Would you like to continue editing or leave ?',
+          'Changes you made have not been saved. Would you like to continue editing or leave?',
           'Continue',
           'Leave'
         )

@@ -16,19 +16,19 @@ export class LogiReportsLandingPageComponent {
     if (report?.length === 1) {
       switch (report[0]) {
         case 'exchange-rate-sets':
-          window.location.href = '/Reports/exchange-rate-sets';
+          this.router.navigate(['/Reports/exchange-rate-sets']);
           break;
         case 'group-user-blocked-admin-links':
-          window.location.href = '/Reports/group-user-blocked-admin-links';
+          this.router.navigate(['/Reports/group-user-blocked-admin-links']);
           break;
         case 'group-user-history':
-          window.location.href = '/Reports/group-user-history';
+          this.router.navigate(['/Reports/group-user-history']);
           break;
         case 'group-user-module-rights':
-          window.location.href = '/Reports/group-user-module-rights';
+          this.router.navigate(['/Reports/group-user-module-rights']);
           break;
         case 'group-user-navigation-rights':
-          window.location.href = '/Reports/group-user-navigation-rights';
+          this.router.navigate(['/Reports/group-user-navigation-rights']);
           break;
         default:
       }

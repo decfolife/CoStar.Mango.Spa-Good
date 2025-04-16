@@ -1,7 +1,7 @@
 <header>
   <a
     class="skip-to-main"
-    aria-label="Skip to Main Content"
+    [attr.aria-label]="'Skip to Main Content'"
     [routerLink]="[]"
     fragment="main-content"
     >Skip to Main Content</a
@@ -12,23 +12,23 @@
       (click)="goToHomePage()"
       tabindex="0"
       title="Go to home page"
-      aria-label="Go to home page"
+      [attr.aria-label]="'Go to home page'"
       role="link"
     >
       <img
         class="glyph"
         runat="server"
         src="/assets/images/logos/CoStar.svg"
-        role="presentation"
-        alt="Costar Real Estate Manager Logo"
+        [attr.role]="'presentation'"
+        [attr.alt]="'Costar Real Estate Manager Logo'"
         (click)="logoClicked()"
       />
       <img
         class="glyph phone"
         runat="server"
         src="/assets/images/logos/landmark.svg"
-        role="presentation"
-        alt="Costar Real Estate Manager Glyph Icon"
+        [attr.role]="'presentation'"
+        [attr.alt]="'Costar Real Estate Manager Glyph Icon'"
         (click)="logoClicked()"
       />
     </a>
@@ -43,6 +43,7 @@
         class="submit btn-none"
         (click)="search(); $event.stopPropagation()"
         aria-label="Submit search"
+        title="Submit Search"
       >
         <crem-icon icon="faMagnifyingGlass" size="xs"></crem-icon>
       </button>
@@ -62,7 +63,7 @@
             [matAutocomplete]="auto"
             [formControl]="myControl"
             role="searchbox"
-            aria-label="search"
+            aria-label="Search"
           />
           <mat-autocomplete #auto="matAutocomplete" class="mqs-autoComplete">
             <mat-option

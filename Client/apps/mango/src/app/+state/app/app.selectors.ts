@@ -33,6 +33,11 @@ export const redirectorLinks = createSelector(
   (state: State) => state.redirectorLinks
 );
 
+export const redirectorMappings = createSelector(
+  getAppState,
+  (state: State) => state.redirectorMappings
+);
+
 export const userInfo = createSelector(
   getAppState,
   (state: State) => state.userInfo
@@ -86,10 +91,10 @@ export const client = createSelector(
   (state: State) => state.client
 );
 
-export const globalSession = createSelector(
-  getAppState,
-  (state: State) => state.globalSession
-);
+// export const globalSession = createSelector(
+//   getAppState,
+//   (state: State) => state.globalSession
+// );
 
 export const moduleId = createSelector(
   getAppState,

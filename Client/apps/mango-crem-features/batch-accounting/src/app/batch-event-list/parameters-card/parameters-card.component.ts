@@ -152,4 +152,21 @@ export class ParametersCardComponent implements OnInit {
       );
     }
   }
+
+  itemTemplate(data: any) {
+    let uniqueId: string;
+    switch (true) {
+      case !!data.workflowStatus:
+        uniqueId = `work-flow-status-${data.workflowStatus
+          .replace(/\s+/g, '-')
+          .toLowerCase()}`;
+        return `<div id="${uniqueId}">${data.workflowStatus}</div>`;
+
+      case !!data.remeasureTypeName:
+        uniqueId = `measure-event-${data.remeasureTypeName
+          .replace(/\s+/g, '-')
+          .toLowerCase()}`;
+        return `<div id="${uniqueId}">${data.remeasureTypeName}</div>`;
+    }
+  }
 }

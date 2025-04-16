@@ -10,7 +10,7 @@
   <div modalContent class="body-content">
     <div>Copy: {{ leaseName }}</div>
     <div class="cl-buildings">
-      <div class="cl-buildings-label flex30">Buildings:</div>
+      <div class="cl-buildings-label flex30">{{ buildingObjectTypeName }}:</div>
       <crem-dropdown
         class="flex70"
         id="df-copyLease-buildingList"
@@ -30,7 +30,7 @@
       class="cl-building-premises"
       [ngClass]="{ 'cl-hidePremise': hidePremise }"
     >
-      <div class="cl-premises-label flex30">Premises:</div>
+      <div class="cl-premises-label flex30">{{ premiseObjectTypeName }}:</div>
       <crem-dropdown
         class="flex70"
         id="df-copyLease-buildingPremisesList"
@@ -49,8 +49,10 @@
     <crem-loader class="cl-loader" *ngIf="loadingIndicator"></crem-loader>
   </div>
   <div modalFooter class="footerContent">
-    <div class="footerLeftControls cl-userMsg">{{ userMsg }}</div>
-    <div id="buttonTemplate" class="footerRightControls">
+    <div footerLeftControls class="footerLeftControls cl-userMsg">
+      {{ userMsg }}
+    </div>
+    <div footerRightControls id="buttonTemplate" class="footerRightControls">
       <crem-button
         type="secondary"
         id="cl-cancelBtnId"

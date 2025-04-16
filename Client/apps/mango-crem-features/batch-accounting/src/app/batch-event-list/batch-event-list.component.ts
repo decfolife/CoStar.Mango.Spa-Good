@@ -1,15 +1,19 @@
 /* eslint-disable rxjs-angular/prefer-composition */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ChangeDetectorRef,
+  OnDestroy,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 
 import { DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
 import DataGrid from 'devextreme/ui/data_grid';
-import notify from 'devextreme/ui/notify';
 import { format } from 'sql-formatter';
-
 import { environment } from '@mangoSpa/src/environments/environment.local';
 
 import { BaseService } from '../services/base.service';
@@ -33,7 +37,10 @@ import {
   WorkflowSettings,
   WorkflowStatus,
 } from '../shared/models';
-import { RemeasureType } from '@mango/data-models/lib-data-models';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { ToastMessageService } from '@batch-accounting/services/toast-message.service';
+import { Subscription } from 'rxjs';
+import { CLIENT_ERROR_MESSAGE } from '@batch-accounting/shared/models/batch-accounting-constants';
 
 (DataGrid as any).registerModule('columnChooserSorting', {
   extenders: {
@@ -62,7 +69,7 @@ const MAX_SCHEDULE_LIMIT = 10000;
   templateUrl: './batch-event-list.component.html',
   styleUrls: ['./batch-event-list.component.scss'],
 })
-export class BatchEventListComponent implements OnInit {
+export class BatchEventListComponent implements OnInit, OnDestroy {
   selectedPortfolio: number | null = null;
   availableAppliedFilterCount = 0;
   currentStep = 0;
@@ -114,9 +121,15 @@ export class BatchEventListComponent implements OnInit {
   private includedDataFieldsFromLastGridReload: any[];
   private gridState: any | null = null;
   private lastListPageId = 0;
-  private isSuperUserElement: HTMLDivElement;
+  private options = ['Queue for validation and process'];
+  isSuperUser = false;
+  selectedPortfolioName: string;
+  selectedWorkflowStatusName: string;
+  selectedViewName: string;
 
   faCaretDown = faCaretDown;
+  private subscriptions: Subscription[] = [];
+  ignoreFilterCount = false;
 
   @ViewChild('AvailableDataGrid', { static: false })
   availableDataGrid: DxDataGridComponent;
@@ -129,14 +142,6 @@ export class BatchEventListComponent implements OnInit {
 
   @ViewChild('ParametersCard')
   parametersCard: ParametersCardComponent;
-
-  get isSuperUser(): boolean {
-    if (environment.name === 'LOCAL') {
-      return true;
-    }
-
-    return this.isSuperUserElement?.innerText === 'true';
-  }
 
   get selectedCount(): number {
     if (!this.availableDataGrid || !this.availableDataGrid.selectedRowKeys) {
@@ -159,71 +164,108 @@ export class BatchEventListComponent implements OnInit {
 
   constructor(
     public baseService: BaseService,
+    public toastMessage: ToastMessageService,
     public batchEventListService: BatchEventListService,
     private batchParametersService: BatchParametersService,
     private exportToExcelService: ExportDevexDatagridService,
     public router: Router,
-    public cdRef: ChangeDetectorRef
+    public cdRef: ChangeDetectorRef,
+    private mangoAppFacade: MangoAppFacade
   ) {
     this.resetParametersData();
   }
 
   ngOnInit(): void {
+    this.getUserInfo();
     this.populatePortfolios();
     this.populateWorkflowStatuses();
     this.populateListViews();
     this.populateMeasureEvents();
-
     this.gridData = [];
+  }
 
-    this.isSuperUserElement = document.getElementById(
-      'IsSuperUser'
-    ) as HTMLDivElement;
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  getUserInfo() {
+    this.subscriptions.push(
+      this.mangoAppFacade.contactRecord$.subscribe((contact) => {
+        this.isSuperUser = contact.userRoleName === 'SuperUser' ? true : false;
+      })
+    );
   }
 
   populateMeasureEvents(): void {
-    this.batchParametersService.getRemeasureTypes().subscribe((result) => {
-      this.parametersData.measureEvents = result.data;
-    });
+    this.subscriptions.push(
+      this.batchParametersService.getRemeasureTypes().subscribe((result) => {
+        if (result?.success) {
+          this.parametersData.measureEvents = result.data;
+        } else {
+          this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
   }
 
   populatePortfolios(): void {
-    this.baseService.getPortfolios().subscribe((result) => {
-      this.portfolios = result.data;
-      this.portfoliosLoaded = true;
-      this.updateShowLoaderValue();
-    });
+    this.subscriptions.push(
+      this.baseService.getPortfolios().subscribe((result) => {
+        if (result?.success) {
+          this.portfolios = result.data;
+          this.portfoliosLoaded = true;
+          this.updateShowLoaderValue();
+        } else {
+          this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
   }
 
   populateWorkflowStatuses(): void {
-    this.batchEventListService.getWorkflowStatuses().subscribe((result) => {
-      // The parameters card will handle its own sorting/filtering
-      this.parametersData.workflowStatuses = result?.item1;
+    this.subscriptions.push(
+      this.batchEventListService.getWorkflowStatuses().subscribe((result) => {
+        if (result?.success) {
+          // The parameters card will handle its own sorting/filtering
+          this.parametersData.workflowStatuses = result?.data?.item1;
+          this.workflowStatuses = result?.data.item1
+            .filter((workflow) => workflow.allowScheduleEdit)
+            .sort((a, b) => a.statusOrder - b.statusOrder);
 
-      this.workflowStatuses = result?.data.item1
-        .filter((workflow) => workflow.allowScheduleEdit)
-        .sort((a, b) => a.statusOrder - b.statusOrder);
-
-      this.workflowSettings = result?.data.item2;
-      this.parametersData.workflowSettings = this.workflowSettings;
-      this.workflowStatusesLoaded = true;
-      this.updateShowLoaderValue();
-    });
+          this.workflowSettings = result?.data.item2;
+          this.parametersData.workflowSettings = this.workflowSettings;
+          this.workflowStatusesLoaded = true;
+          this.updateShowLoaderValue();
+        } else {
+          this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+        }
+      })
+    );
   }
 
   populateListViews(): void {
-    this.batchEventListService.getListViews().subscribe((result) => {
-      if (!result) {
-        this.listViewsLoaded = true;
-        this.updateShowLoaderValue();
-        return;
-      }
+    this.subscriptions.push(
+      this.batchEventListService.getListViews().subscribe((result) => {
+        if (!result) {
+          this.listViewsLoaded = true;
+          this.updateShowLoaderValue();
+          this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+          return;
+        }
 
-      const { coStarListViews, hiddenListViews, myListViews, sharedListViews } =
-        result.data;
+        const {
+          coStarListViews,
+          hiddenListViews,
+          myListViews,
+          sharedListViews,
+        } = result.data;
 
-      [coStarListViews, hiddenListViews, myListViews, sharedListViews].forEach(
-        (list) => {
+        [
+          coStarListViews,
+          hiddenListViews,
+          myListViews,
+          sharedListViews,
+        ].forEach((list) => {
           list.forEach((item) => {
             if (item.id === item.listPageId) {
               item.id = `${item.listViewType}.${item.id}.0`;
@@ -231,53 +273,53 @@ export class BatchEventListComponent implements OnInit {
 
             item.id = `${item.listViewType}.${item.id}.${item.listPageId}`;
           });
-        }
-      );
+        });
 
-      this.cleanDateFilters([
-        ...coStarListViews,
-        ...hiddenListViews,
-        ...myListViews,
-        ...sharedListViews,
-      ]);
+        this.cleanDateFilters([
+          ...coStarListViews,
+          ...hiddenListViews,
+          ...myListViews,
+          ...sharedListViews,
+        ]);
 
-      this.listViewDataSource = [
-        {
-          expanded: false,
-          id: 11111111,
-          name: 'CoStar List Views',
-          items: coStarListViews,
-        },
-        {
-          expanded: false,
-          id: 22222222,
-          name: 'My List Views',
-          items: myListViews,
-        },
-        {
-          expanded: false,
-          id: 33333333,
-          name: 'Shared With Me',
-          items: sharedListViews,
-        },
-        {
-          expanded: false,
-          id: 44444444,
-          name: 'Hidden List Views',
-          items: hiddenListViews,
-        },
-      ];
+        this.listViewDataSource = [
+          {
+            expanded: false,
+            id: 11111111,
+            name: 'CoStar List Views',
+            items: coStarListViews,
+          },
+          {
+            expanded: false,
+            id: 22222222,
+            name: 'My List Views',
+            items: myListViews,
+          },
+          {
+            expanded: false,
+            id: 33333333,
+            name: 'Shared With Me',
+            items: sharedListViews,
+          },
+          {
+            expanded: false,
+            id: 44444444,
+            name: 'Hidden List Views',
+            items: hiddenListViews,
+          },
+        ];
 
-      this.listViewDisplayDataSource = [
-        ...coStarListViews,
-        ...hiddenListViews,
-        ...myListViews,
-        ...sharedListViews,
-      ];
+        this.listViewDisplayDataSource = [
+          ...coStarListViews,
+          ...hiddenListViews,
+          ...myListViews,
+          ...sharedListViews,
+        ];
 
-      this.listViewsLoaded = true;
-      this.updateShowLoaderValue();
-    });
+        this.listViewsLoaded = true;
+        this.updateShowLoaderValue();
+      })
+    );
   }
 
   copyToClipboard() {
@@ -291,17 +333,14 @@ export class BatchEventListComponent implements OnInit {
     document.execCommand('copy');
     document.body.removeChild(el);
 
-    notify({
-      message: 'Copied to clipboard!',
-      type: 'info',
-      displayTime: 3000,
-      position: { at: 'bottom right', my: 'bottom right', offset: '-16 -16' },
-      maxWidth: '400px',
-      closeOnClick: true,
-    });
+    this.toastMessage.showToast(
+      'success',
+      'Copy to Clipboard',
+      'Query successfully copied to the clipboard.'
+    );
   }
 
-  closeSqlPopup = () => {
+  closeSqlPopup() {
     this.sqlPopupVisible = false;
   };
 
@@ -320,35 +359,27 @@ export class BatchEventListComponent implements OnInit {
         this.selectedViewWorkflowStatus.workflowStatus,
     };
 
-    this.batchEventListService
-      .getDynamicSQL(getGridDataRequest)
-      .subscribe((res) => {
-        if (!res?.success) {
-          notify({
-            message:
-              'An error occurred while generating the sql for this view. Please see the error logs for futher details.',
-            type: 'error',
-            displayTime: 3000,
-            position: {
-              at: 'bottom right',
-              my: 'bottom right',
-              offset: '-16 -16',
-            },
-            maxWidth: '400px',
-            closeOnClick: true,
-          });
-          return;
-        }
+    this.subscriptions.push(
+      this.batchEventListService
+        .getDynamicSQL(getGridDataRequest)
+        .subscribe((res) => {
+          if (!res?.success) {
+            this.toastMessage.showError(
+              'An error occurred while generating the sql for this view. Please see the error logs for further details.'
+            );
+            return;
+          }
 
-        const leftRegEx = new RegExp('\\[\\s', 'g');
-        const rightRegEx = new RegExp('\\s\\]', 'g');
+          const leftRegEx = new RegExp('\\[\\s', 'g');
+          const rightRegEx = new RegExp('\\s\\]', 'g');
 
-        this.formattedSql = format(res.data)
-          .replace(leftRegEx, '[')
-          .replace(rightRegEx, ']');
+          this.formattedSql = format(res.data)
+            .replace(leftRegEx, '[')
+            .replace(rightRegEx, ']');
 
-        this.sqlPopupVisible = true;
-      });
+          this.sqlPopupVisible = true;
+        })
+    );
   }
 
   onGridSelectionChanged(rowData: any) {
@@ -375,20 +406,21 @@ export class BatchEventListComponent implements OnInit {
     if (this.availableDataGrid?.instance) {
       this.exportToExcelService.exportToExcel(
         this.availableDataGrid.instance,
-        'Available_Data'
+        `AccountingEventListData - ${this.baseService
+          .getTimeStamp()
+          .toLocaleString()}_${environment.name}`
       );
     }
   }
 
   availableSearchDataGrid(event): void {
-    const searchText = event.value;
-
+    const searchText = event;
     this.availableDataGrid?.instance.searchByText(searchText);
+    this.ignoreFilterCount = true;
   }
 
-  onGridContentReady(): void {
+  onGridContentReady(e: any): void {
     this.visibleColumns = this.availableDataGrid?.instance.getVisibleColumns();
-
     this.availableDataGrid?.instance.columnOption(
       this.visibleColumns?.[2]?.dataField,
       'minWidth',
@@ -400,9 +432,9 @@ export class BatchEventListComponent implements OnInit {
       'minWidth',
       '200px'
     );
-
-    this.updateFilterCount();
-
+    if (!this.ignoreFilterCount) {
+      this.updateFilterCount();
+    }
     const hasColumns =
       this.availableDataGrid?.instance.getVisibleColumns()?.length > 0;
 
@@ -410,6 +442,8 @@ export class BatchEventListComponent implements OnInit {
       this.availableDataGrid.filterValue = this.viewData?.filterValue;
       this.userFilterApplied = true;
     }
+    this.ignoreFilterCount = false;
+    this.updateAriaAttributes();
   }
 
   availableClearGridFilters(e): void {
@@ -423,11 +457,15 @@ export class BatchEventListComponent implements OnInit {
     this.showClearFilters = !this.showClearFilters;
   }
 
-  onPortfolioChange(): void {
+  onPortfolioChange(event: any): void {
+    this.selectedPortfolio = event[0]?.masterGroupID;
+    this.selectedPortfolioName = event[0]?.portfolioName ?? '';
     this.reloadGrid();
   }
 
-  onWorkflowChanged(): void {
+  onWorkflowChanged(event: any): void {
+    this.selectedViewWorkflowStatus = event[0];
+    this.selectedWorkflowStatusName = event[0]?.workflowStatus ?? '';
     this.reloadGrid();
   }
 
@@ -461,6 +499,7 @@ export class BatchEventListComponent implements OnInit {
   }
 
   onListViewValueChanged(e: any): void {
+    this.selectedViewName = e.value.name ?? '';
     if (e.value) {
       return;
     }
@@ -481,6 +520,9 @@ export class BatchEventListComponent implements OnInit {
   }
 
   parametersStep(stepper): void {
+    if (stepper.selectedIndex == 2) {
+      stepper.selected.completed = false;
+    }
     this.currentStep = 1;
 
     if (stepper.selectedIndex !== 0) {
@@ -497,18 +539,8 @@ export class BatchEventListComponent implements OnInit {
 
     if (this.showLimitReachedMessage) {
       const message =
-        'For performance reasons, your batch has been limited to ' +
-        'the first ten thousand schedules selected.';
-
-      notify({
-        message,
-        type: 'info',
-        displayTime: 5000,
-        position: { at: 'bottom right', my: 'bottom right', offset: '-16 -16' },
-        maxWidth: '400px',
-        closeOnClick: true,
-      });
-
+        'For performance reasons, your batch has been limited to the first ten thousand schedules selected.';
+      this.toastMessage.showInfo(message);
       this.showLimitReachedMessage = false;
     }
 
@@ -529,6 +561,10 @@ export class BatchEventListComponent implements OnInit {
         );
       }, 100);
     }
+  }
+
+  onCancel() {
+    window?.history?.back();
   }
 
   confirmationStep(stepper): void {
@@ -655,9 +691,28 @@ export class BatchEventListComponent implements OnInit {
     this.parametersData.gridData.forEach((row) => {
       const grid = this.parametersData.grid;
       const overrides = grid.parameterOverrides;
-      const manualAssetAdjustment = +(
-        overrides.manualAssetAdjustmentOverride ?? 0
-      );
+
+      const isFullTermination = row.remeasureTypeID === 9;
+
+      const accountingTermBeginDate =
+        row.beginDateOptionID === 2
+          ? isFullTermination
+            ? overrides.accountingTermEndDateOverride
+            : overrides.accountingTermBeginDateOverride
+          : null;
+
+      const accountingTermEndDate =
+        row.endDateOptionID === 2
+          ? overrides.accountingTermEndDateOverride
+          : null;
+
+      const annualRate =
+        row.discountRateProfile === 'Direct Entry'
+          ? overrides.annualRateOverride
+          : 0;
+
+      //Check if it is Operating, Operating Lessor or capital
+      const isAsc840 = [0, 1, 5].includes(row.classificationID);
 
       const paymentTiming = overrides.paymentTimingOverride
         ? overrides.paymentTimingOverride
@@ -667,66 +722,91 @@ export class BatchEventListComponent implements OnInit {
           : 2
         : null;
 
-      const discountRateProfile = overrides.annualRateOverride
-        ? 'Direct Entry'
-        : row.discountRateProfile;
-
       const jeProfileId =
         grid.portfolioClassificationConfigurationOptions.journalEntryProfiles.find(
           (x) => x.profileName === row.journalEntryOption
         )?.profileID ?? 0;
+
+      const manualAssetAdjustment =
+        row.manualAdjustmentOption === 'Direct Entry'
+          ? +overrides.manualAssetAdjustmentOverride
+          : 0;
+
+      const rouAssetMethodID =
+        grid.portfolioClassificationConfigurationOptions.rouAssetMethods.find(
+          (id) => id.name === row.rouAssetObtainedMethodName && !isAsc840
+        )?.id ?? null;
+
+      const rouAssetAmount = isAsc840
+        ? null
+        : rouAssetMethodID === 1
+        ? overrides.rouAssetObtainedMethodOverride
+        : null;
+
+      const rouAssetDate = isAsc840
+        ? null
+        : row.defaultRouAssetObtainedDateOption === 'Direct Entry'
+        ? overrides.rouAssetObtainedDateOverride
+        : null;
+
+      const rouAssetDateMethod = isAsc840
+        ? 'Not Applicable'
+        : row.defaultRouAssetObtainedDateOption;
+
+      const commentsDirectEntry =
+        row.commentsOption === 'Direct Entry' ? overrides.commentsOverride : '';
 
       classifications.push(
         new ClassificationParameters(
           row.classificationID,
           row.beginDateOptionID,
           row.beginDateFormItemID,
-          overrides.accountingTermBeginDateOverride,
+          accountingTermBeginDate,
           row.endDateOptionID,
           row.endDateFormItemID,
-          overrides.accountingTermEndDateOverride,
-          discountRateProfile,
-          +overrides.annualRateOverride,
+          accountingTermEndDate,
+          row.discountRateProfile,
+          +annualRate,
           overrides.annualRateTypeOverride === 'APR' ? 1 : 2,
           paymentTiming,
           jeProfileId,
           row.journalEntryOption,
           row.manualAdjustmentOption,
           manualAssetAdjustment,
+          rouAssetMethodID,
+          rouAssetAmount,
+          rouAssetDateMethod,
+          rouAssetDate,
           row.commentsOption,
-          overrides.commentsOverride
+          commentsDirectEntry
         )
       );
     });
 
     clientBatch.batchParameter.classificationParameters = classifications;
 
-    this.batchEventListService
-      .queueBatch(clientBatch)
-      .subscribe((isSuccess) => {
-        const message = isSuccess
-          ? 'Batch successfully queued.'
-          : 'Batch failed to create.';
+    this.subscriptions.push(
+      this.batchEventListService
+        .queueBatch(clientBatch)
+        .subscribe((isSuccess) => {
+          const message = isSuccess
+            ? 'Batch successfully queued.'
+            : 'Batch failed to create.';
 
-        notify({
-          message,
-          type: isSuccess ? 'success' : 'error',
-          displayTime: 3000,
-          position: {
-            at: 'bottom right',
-            my: 'bottom right',
-            offset: '-16 -16',
-          },
-          maxWidth: '400px',
-          closeOnClick: true,
-        });
+          this.toastMessage.showToast(
+            isSuccess ? 'success' : 'error',
+            isSuccess ? 'Success' : 'Error',
+            message
+          );
+          this.batchQueueing = false;
 
-        this.batchQueueing = false;
-
-        if (isSuccess) {
-          this.router.navigate(['batchlogs'], { queryParamsHandling: 'merge' });
-        }
-      });
+          if (isSuccess) {
+            this.router.navigate(['crem/accounting/batch-accounting'], {
+              queryParamsHandling: 'merge',
+            });
+          }
+        })
+    );
   }
 
   directEntryIsValid(): boolean {
@@ -883,8 +963,8 @@ export class BatchEventListComponent implements OnInit {
 
   private setGridValues() {
     this.parametersData.grid = this.parametersGrid;
-    this.parametersData.gridData = this.parametersGrid.gridData;
-    this.parametersData.gridOverrides = this.parametersGrid.parameterOverrides;
+    this.parametersData.gridData = this.parametersGrid?.gridData;
+    this.parametersData.gridOverrides = this.parametersGrid?.parameterOverrides;
     this.parametersData.gridLoaded = true;
   }
 
@@ -898,27 +978,32 @@ export class BatchEventListComponent implements OnInit {
         this.selectedViewWorkflowStatus.workflowStatus,
     };
 
-    this.batchEventListService
-      .getGridData(getGridDataRequest)
-      .subscribe((result) => {
-        this.gridData = result.data;
-        this.gridState = null;
+    this.subscriptions.push(
+      this.batchEventListService
+        .getGridData(getGridDataRequest)
+        .subscribe((result) => {
+          if (result?.success) {
+            this.gridData = result.data;
+            this.gridState = null;
 
-        this.filterGridData();
+            this.filterGridData();
+            this.includedDataFieldsFromLastGridReload = this.gridData?.length
+              ? this.getObjectsValuesFrom(this.gridData[0])
+              : [];
 
-        this.includedDataFieldsFromLastGridReload = this.gridData?.length
-          ? this.getObjectsValuesFrom(this.gridData[0])
-          : [];
+            const view = JSON.parse(this.selectedView.view);
+            const pageSize = view.pageSize;
 
-        const view = JSON.parse(this.selectedView.view);
-        const pageSize = view.pageSize;
+            setTimeout(() => {
+              this.availableDataGrid?.instance?.pageSize(pageSize);
+            }, 10);
 
-        setTimeout(() => {
-          this.availableDataGrid.instance.pageSize(pageSize);
-        }, 10);
-
-        this.loading = false;
-      });
+            this.loading = false;
+          } else {
+            this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+          }
+        })
+    );
   }
 
   private getGridColumns(
@@ -933,53 +1018,64 @@ export class BatchEventListComponent implements OnInit {
     this.viewData = JSON.parse(view);
     this.lastListPageId = listPageId;
 
-    this.batchEventListService
-      .getColumnDefinitionList(listPageId)
-      .subscribe((result) => {
-        this.columnsDef = result.data.columnDefinitions;
-        this.gridColumns = [];
+    this.subscriptions.push(
+      this.batchEventListService
+        .getColumnDefinitionList(listPageId)
+        .subscribe((result) => {
+          if (result?.success) {
+            this.columnsDef = result.data.columnDefinitions;
+            this.gridColumns = [];
 
-        const viewColumns = this.viewData.columns;
+            const viewColumns = this.viewData.columns;
 
-        this.columnsDef.forEach((col: any) => {
-          const viewColumn = viewColumns.filter(
-            (x: any) =>
-              x.dataField?.replace(' ', '') === col.dataField?.replace(' ', '')
-          )[0];
+            this.columnsDef.forEach((col: any) => {
+              const viewColumn = viewColumns.filter(
+                (x: any) =>
+                  x.dataField?.replace(' ', '') ===
+                  col.dataField?.replace(' ', '')
+              )[0];
 
-          let column: any = {
-            dataField: col.dataField,
+              let column: any = {
+                dataField: col.dataField,
 
-            visible: viewColumn ? viewColumn.visible : false,
+                visible: viewColumn ? viewColumn.visible : false,
 
-            visibleIndex: viewColumn ? viewColumn.visibleIndex : -1,
+                visibleIndex: viewColumn ? viewColumn.visibleIndex : -1,
 
-            showInColumnChooser: true,
-          };
+                showInColumnChooser: true,
+              };
 
-          column = Object.assign(column, viewColumn);
+              column = Object.assign(column, viewColumn);
 
-          column.caption = col.caption ?? col.dataField?.replace('_', ' ');
-          column.useDefaultObjectFields = col.useDefaultObjectFields;
-          column.fieldType = col.fieldType;
-          column.dataType = col.dataType ?? 'string';
-          column.format = col.format;
+              column.caption = col.caption ?? col.dataField?.replace('_', ' ');
+              column.useDefaultObjectFields = col.useDefaultObjectFields;
+              column.fieldType = col.fieldType;
+              column.dataType = col.dataType ?? 'string';
+              column.format = col.format;
 
-          this.gridColumns.push(column);
-        });
+              this.gridColumns.push(column);
+            });
 
-        // The state has already been applied before the column order was
-        // overriden by the loop assignment above - need to re-sort.
-        this.gridColumns.sort((n1, n2) => n1.visibleIndex - n2.visibleIndex);
+            // The state has already been applied before the column order was
+            // overriden by the loop assignment above - need to re-sort.
+            this.gridColumns.sort(
+              (n1, n2) => n1.visibleIndex - n2.visibleIndex
+            );
 
-        this.sortedFilterFields = this.gridColumns.slice().sort((a, b) => {
-          return a.caption.toLowerCase().localeCompare(b.caption.toLowerCase());
-        });
+            this.sortedFilterFields = this.gridColumns.slice().sort((a, b) => {
+              return a.caption
+                .toLowerCase()
+                .localeCompare(b.caption.toLowerCase());
+            });
 
-        // This internally enforces 'columns' (filters) to respect the current
-        // view settings.
-        this.cdRef.detectChanges();
-      });
+            // This internally enforces 'columns' (filters) to respect the current
+            // view settings.
+            this.cdRef.detectChanges();
+          } else {
+            this.toastMessage.showError(CLIENT_ERROR_MESSAGE);
+          }
+        })
+    );
   }
 
   private doesLeftArrayIncludeRight(source: string[], mustInclude: string[]) {
@@ -1109,5 +1205,14 @@ export class BatchEventListComponent implements OnInit {
 
     this.selectedClassificationTypes = classificationTypes;
     this.classificationTypes = classificationTypes;
+  }
+
+  updateAriaAttributes() {
+    const rows = document.querySelectorAll('.dx-checkbox-icon');
+    rows.forEach((item) => {
+      const isChecked = item.classList.contains('dx-checkbox-checked');
+      const ariaLabel = isChecked ? 'Selected' : 'Not selected';
+      item.setAttribute('aria-label', ariaLabel);
+    });
   }
 }

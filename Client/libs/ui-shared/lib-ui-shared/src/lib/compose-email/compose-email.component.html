@@ -85,7 +85,10 @@
             [elementAttr]="{ class: 'filePathsCheckbox' }"
           ></dx-check-box>
         </span>
-        <span class="cem-include-options-unapprovedTasks">
+        <span
+          class="cem-include-options-unapprovedTasks"
+          *ngIf="inclUnappdTsksSel"
+        >
           <dx-check-box
             class="cem-unapprovedTasks-checkbox"
             aria-label="Include Unapproved Tasks"
@@ -151,13 +154,18 @@
   </div>
   <div modalFooter class="cem-footerContent">
     <div
+      footerLeftControls
       id="buttonTemplate"
       class="cem-footerleftControls"
       *ngIf="unapprovedTasksChecked"
     >
       {{ emailNote }}
     </div>
-    <div id="buttonTemplate" class="cem-footerRightControls">
+    <div
+      footerRightControls
+      id="buttonTemplate"
+      class="cem-footerRightControls"
+    >
       <crem-button
         type="secondary"
         class="cem-footer-cancelBtn cem-btn"

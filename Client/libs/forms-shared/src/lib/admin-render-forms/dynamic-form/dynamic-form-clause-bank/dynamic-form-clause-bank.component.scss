@@ -1,0 +1,66 @@
+@use 'styles' as *;
+
+::ng-deep .df-clause-bank-component {
+  .df-clause-bank-loader {
+    margin: auto;
+    position: relative;
+    top: 48%;
+  }
+}
+
+.df-clause-bank crem-input-label {
+  font-weight: bold;
+}
+
+.df-error {
+  color: red;
+}
+
+.df-classtype-row {
+  display: flex;
+  margin-bottom: 10px;
+  margin-right: 0;
+  align-items: center;
+}
+
+.df-classtype-label {
+  margin-left: 20px;
+  white-space: nowrap;
+}
+
+.df-classtype-dropdown {
+  margin-left: 10px;
+}
+
+.df-add-new-clause {
+  font-weight: bold;
+  margin-left: 150px;
+  white-space: nowrap;
+  position: absolute;
+  right: 20px;
+}
+
+::ng-deep {
+  #df-clauseBankGrid-container .clause-bank-grid {
+    height: 300px;
+    .dx-scrollable-content {
+      width: inherit;
+    }
+    overflow: hidden;
+    td {
+      border-left: none;
+      border-right: none;
+      &.df-cbClause {
+        white-space: pre;
+        text-wrap: wrap;
+        word-wrap: break-word;
+      }
+    }
+  }
+
+  #clause_bank_modal {
+    .modalContent {
+      overflow-y: hidden;
+    }
+  }
+}

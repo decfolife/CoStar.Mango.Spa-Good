@@ -1,14 +1,17 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  QueryList,
   SimpleChanges,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -28,6 +31,7 @@ import {
   IFieldDetails,
   IFields,
   ISection,
+  RenderFormItemDetails,
 } from '@forms/model/dynamic-forms.interface';
 import { UseDynamicFormFieldConfigDirective } from '@forms/pipes/use-dynamic-form-field-config.pipe';
 import { DynamicFormsService } from '@forms/services/dynamic-forms.service';
@@ -45,13 +49,14 @@ import {
   CremRadioGroupComponent,
   DatePickerModule,
   DropdownModule,
+  FieldHistoryComponent,
   IconModule,
   InputComponent,
   InputLabelComponent,
   LibUiElementsModule,
   LoaderModule,
   ModalModule,
-  ScreenLoaderModule,
+  SkeletonModule,
 } from '@mango/ui-shared/lib-ui-elements';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { environment } from '@mangoSpa/src/environments/environment.local';
@@ -86,7 +91,22 @@ import {
   ParseFormItemParametersPipe,
   transform as parseFormItemParametersPipeTransform,
 } from '../pipes/parse-form-item-parameters';
-import { isTruthy } from '@mango/core-shared';
+import { isTruthy, MangoDialogService } from '@mango/core-shared';
+import { isNumeric } from 'rxjs/util/isNumeric';
+import { DomSanitizer } from '@angular/platform-browser';
+import {
+  FieldHistoryDataSource,
+  ObjectType,
+  ObjectTypeType,
+} from '@mango/data-models/lib-data-models';
+import { FormWizardService } from '@micro-components/services/form-wizard.service';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 
 export class tempList {
   columnNum: number;
@@ -129,8 +149,10 @@ const booleanStringMap = {
     DevExpressModule,
     DxListModule,
     InputComponent,
+    SkeletonModule,
     DynamicFormEditFieldDialogComponent,
     InputLabelComponent,
+    FieldHistoryComponent,
     DatePickerModule,
     IconModule,
     CremRadioGroupComponent,
@@ -140,12 +162,43 @@ const booleanStringMap = {
     ParseFormItemParametersPipe,
     GoogleMapsModule,
   ],
+  animations: [
+    trigger('expandCollapse', [
+      state(
+        'collapsed',
+        style({ height: '0px', overflow: 'hidden', opacity: 0 })
+      ),
+      state('expanded', style({ height: '*', opacity: 1 })),
+      transition('collapsed <=> expanded', animate('300ms ease-in-out')),
+    ]),
+  ],
 })
 export class DynamicFormSectionComponent
   implements OnInit, OnDestroy, OnChanges
 {
   @ViewChild('availableFieldsGrid') availableFieldsGrid: DxDataGridComponent;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  @ViewChildren('SectionMenuItem') menuItemsElements: QueryList<ElementRef>;
+  @ViewChild('sectionTitle') sectionTitle: ElementRef;
+
+  /**
+   * Interact with Dynamic Form Widget (data grid)
+   *
+   * @type {ElementRef<>}
+   * @memberof DynamicFormSectionComponent
+   */
+  @ViewChild(DynamicFormWidgetComponent)
+  dynamicFormWidget: DynamicFormWidgetComponent;
+
+  /**
+   * This is used with Dynamic Form widget to show the download button on the card's header
+   *
+   * @private
+   * @memberof DynamicFormSectionComponent
+   */
+  private canShowDownload = false as boolean;
+
+  private currentSecMenuFocusIndex = 0;
   private subs: Subscription = new Subscription();
   private destroy$ = new Subject<void>();
 
@@ -153,9 +206,11 @@ export class DynamicFormSectionComponent
   @Input() form!: FormGroup;
   @Input() editMode: boolean;
   @Input() isRenderForm: boolean;
-  @Input() hasParentObjectLinker: boolean = false;
-  @Input() isSuperUser: boolean = false;
-  @Input() canLoadMap: boolean = false;
+  @Input() hidePremise: boolean;
+  @Input() hasParentObjectLinker = false as boolean;
+  @Input() isSuperUser = false as boolean;
+  @Input() canLoadMap = false as boolean;
+  @Input() allFormItemsKeys: RenderFormItemDetails[];
   @Output() hasParentObjectLinkerChange: EventEmitter<boolean> =
     new EventEmitter<boolean>();
 
@@ -172,6 +227,23 @@ export class DynamicFormSectionComponent
   objectTypeTypeId: number;
 
   isLoading: boolean;
+
+  /**
+   * Controls how many instances of the skeleton to show per card
+   *
+   * @private
+   * @type {number}
+   * @memberof DynamicFormSectionComponent
+   */
+  private _skeletonInstances: number;
+
+  /**
+   * Controls the card expansion state
+   *
+   * @memberof DynamicFormSectionComponent
+   */
+  isExpanded = true as boolean;
+  private canExpand: boolean;
   showLoader: boolean;
   hasChanges: boolean;
 
@@ -187,15 +259,20 @@ export class DynamicFormSectionComponent
   selectRenderFormData: any;
   validationErrors: any;
   showParentLinker = false;
-  sectionLabelMenuEntered: boolean = false;
-  sectionLabelMenuOpened: boolean = false;
-  sectionLabelEntered: boolean = false;
+  showSectionHeader = true;
+  sectionLabelMenuEntered = false as boolean;
+  sectionLabelMenuOpened = false as boolean;
+  sectionLabelEntered = false as boolean;
   externalCremLink: string;
-  clientKey: string = '';
+  clientKey = '' as string;
+  sectionEditUrl = '' as string;
+  formItemDetailsUrl = '' as string;
 
   selectRenderParentLink$ = this.dynamicFormsFacade.selectRenderParentLink$;
   dateFormatPreference$ = this.mangoFacade.dateFormatPreference$;
+  private dateFormatPreferenceValue: string;
   isTruthy = isTruthy;
+
   //*********** Google Maps ***************/
 
   mapOptions: google.maps.MapOptions = {
@@ -203,16 +280,31 @@ export class DynamicFormSectionComponent
     zoomControl: true,
     scrollwheel: false,
     disableDoubleClickZoom: false,
+    zoom: 15,
     maxZoom: 20,
     minZoom: 0,
   };
   zoom = 4;
   loadMapFlag$: Observable<boolean>;
-  marker: Marker;
-  advMarker: any;
+  markers: Marker[];
+  advMarkers: any;
   objectTypeText = '';
   //*** end Google maps */
 
+  dfHelpTextToggle = false as boolean;
+
+  //*****************field-history*******************
+
+  controlInfoHistData: FieldHistoryDataSource = {
+    helpTextPage: '',
+    helpTextSubject: '',
+    helpTextName: 'Help Text',
+    helpTextText: '',
+    helpTextImage: '',
+    helpTextHistory: [],
+  };
+
+  //*************************************************
   constructor(
     private dynamicFormsFacade: DynamicFormsFacade,
     private mangoFacade: MangoAppFacade,
@@ -222,11 +314,16 @@ export class DynamicFormSectionComponent
     private router: Router,
     private listpageService: ListPageService,
     private dynamicFormContainer: DynamicFormComponent,
-    private dynamicFormsService: DynamicFormsService
+    private dynamicFormsService: DynamicFormsService,
+    private sanitized: DomSanitizer,
+    private dialogService: MangoDialogService,
+    private formWizardService: FormWizardService
   ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
+    this._skeletonInstances = 3; // TODO: Dynamically calculate the shape of the skeleton, instead of being hard-coded
+
     this.form.addControl(this.formGroupName, this.childForm);
 
     this.subs.add(
@@ -248,6 +345,12 @@ export class DynamicFormSectionComponent
     );
 
     this.subs.add(
+      this.dateFormatPreference$.subscribe((dfpValue) => {
+        this.dateFormatPreferenceValue = dfpValue;
+      })
+    );
+
+    this.subs.add(
       this.mangoFacade.clientKey$.subscribe((clientKey) => {
         this.clientKey = clientKey;
       })
@@ -255,17 +358,26 @@ export class DynamicFormSectionComponent
 
     this.loadSectionFormFields();
     this.loadAvailableSectionFields();
+    this.sectionEditUrl = this.getSectionEditUrl(this.section?.formSectionID);
+    this.formItemDetailsUrl = this.getFormItemDetailsUrl(
+      this.section?.formSectionID
+    );
 
-    if (this.formId == 28 && this.section.formSectionID == 484) {
-      this.getMapMarkers();
-    }
+    if (this.objectTypeId == ObjectType.PREMISE) this.hidePremise = true;
   }
 
   loadSectionFormFields(): void {
+    this.showSectionHeader = this.section.formSectionDisplayHeading;
+    if (!this.showSectionHeader) {
+      // Always expands if is missing card title
+      this.isExpanded = true;
+    }
+
     this.subs.add(
       this.dynamicFormsFacade.selectedDynamicForm$
         .pipe(
           filter((dynamicForm) => dynamicForm !== null),
+          take(1),
           switchMap((dynamicForm) => {
             this.dynamicFormsFacade.loadFields(
               dynamicForm.formId,
@@ -276,9 +388,13 @@ export class DynamicFormSectionComponent
             return combineLatest([
               this.dynamicFormsFacade
                 .selectFormFieldsBySectionId(this.section.formSectionID)
-                .pipe(filter((fields) => !!fields)),
+                .pipe(
+                  filter((fields) => !!fields),
+                  take(1)
+                ),
               this.dynamicFormsFacade.selectRenderFormData$.pipe(
                 filter((renderFormData) => !!renderFormData),
+                take(1),
                 concatMap((renderFormData) =>
                   this.transformDataForUi(renderFormData)
                 )
@@ -290,6 +406,7 @@ export class DynamicFormSectionComponent
           next: ([fields, renderFormData]) => {
             if (this.isRenderForm) {
               this.selectRenderFormData = renderFormData;
+
               this.processFormFields(fields);
               this.setupRenderFormDropdownsSubscription();
               this.filterRenderFormData();
@@ -299,21 +416,102 @@ export class DynamicFormSectionComponent
         })
     );
   }
+
   processFormFields(data: any[]): void {
     if (data && data.length > 0) {
       this.tempList = [];
       this.sectionFields$ = of(data); // Convert array to observable
 
+      if (this.section.formSectionColumns > 4)
+        this.section.formSectionColumns = 4;
+
+      const outlier = data.filter(
+        (field) =>
+          field.formItemSectionDetail.columnNum >
+          this.section.formSectionColumns
+      );
+
       for (let i = 1; i <= this.section.formSectionColumns; i++) {
-        const fieldsInColumn = data.filter(
+        let fieldsInColumn = data.filter(
           (field) => field.formItemSectionDetail.columnNum === i
         );
-        this.tempList.push({ columnNum: i, listOfFields: fieldsInColumn });
+
+        if (outlier.length && i == 1)
+          fieldsInColumn = fieldsInColumn.concat(outlier);
+
+        fieldsInColumn = this.addAdditionalInfoToFields(fieldsInColumn);
+
+        if (fieldsInColumn.length)
+          this.tempList.push({ columnNum: i, listOfFields: fieldsInColumn });
       }
 
       this.sectionFields$ = of(data);
     }
     this.isLoading = false;
+  }
+
+  private addAdditionalInfoToFields(fieldsArray: any[]): any[] {
+    //Created a function just in case we need to add more fields
+    const modifiedFieldsArray = [];
+    fieldsArray.map((f) => {
+      const newField = JSON.parse(JSON.stringify(f));
+      newField['dataTypeID'] = null;
+      newField['formItemAnswer'] = null;
+      newField['formItemAnswerViewMode'] = null;
+      newField['formItemName'] = null;
+      newField['formItemViewOnly'] = null;
+      newField['sourceURL'] = null;
+      newField['formItemFieldWidth'] = null;
+      newField['formItemFieldHeight'] = null;
+      newField['formItemParameters'] = null;
+      newField['numDecimals'] = null;
+      newField['sourceDocument'] = null;
+      newField['sourcePage'] = null;
+      newField['sourceSection'] = null;
+      newField['sourceDate'] = null;
+      newField['formItemSectionID'] = null;
+
+      const formItemData = this.getMatchingItem(f.formItemID);
+      if (!!formItemData) {
+        newField.dataTypeID = formItemData.dataTypeID;
+        newField.formItemAnswer = formItemData.formItemAnswer;
+        newField.sourceURL = formItemData.sourceURL;
+        newField.formItemName = formItemData.formItemName;
+        newField.formItemViewOnly = formItemData.formItemViewOnly === 'True';
+        newField.formItemFieldWidth = formItemData.formItemFieldWidth;
+        newField.formItemFieldHeight = formItemData.formItemFieldHeight;
+        newField.formItemParameters = formItemData.formItemParameters;
+        newField.numDecimals = formItemData.numDecimals;
+        newField.helpText = formItemData.helpText;
+        newField.sourceDocument = formItemData.sourceDocument;
+        newField.sourcePage = formItemData.sourcePage;
+        newField.sourceSection = formItemData.sourceSection;
+        newField.sourceDate = formItemData.sourceDate;
+        newField.formItemSectionID = formItemData.formItemSectionID;
+
+        /// format date field for view labels
+        if (
+          ['2', '9'].some((typeId) => formItemData.formItemTypeID === typeId) &&
+          formItemData.dataTypeID === '7'
+        ) {
+          if (
+            (!this.editMode ||
+              formItemData.formItemViewOnly.toLowerCase === 'true') &&
+            !!formItemData.formItemAnswer
+          ) {
+            newField.formItemAnswerViewMode = formatDate(
+              formItemData.formItemAnswer,
+              this.dateFormatPreferenceValue,
+              'en-US'
+            );
+          }
+        }
+      }
+
+      modifiedFieldsArray.push(newField);
+    });
+
+    return modifiedFieldsArray;
   }
 
   filterRenderFormData(): void {
@@ -348,17 +546,6 @@ export class DynamicFormSectionComponent
               acc: { [key: string]: { value: string; display: string }[] },
               item: any
             ) => {
-              if (
-                item.formItemTypeID == 1 &&
-                item.formItemParameters &&
-                item.formItemParameters.trim().length > 0
-              ) {
-                const values = item.formItemParameters.split('|');
-                acc[item.formItemID] = values.map((val) => ({
-                  value: val,
-                  display: val,
-                }));
-              }
               return acc;
             },
             {}
@@ -370,11 +557,56 @@ export class DynamicFormSectionComponent
     );
   }
 
+  private createOldClauseObject(formItemData: any): any {
+    const oldClauseValue = {
+      ClauseTypeId: formItemData.clauseTypeID,
+      ClauseText: formItemData.formItemAnswer,
+      Document: formItemData.sourceDocument,
+      Section: formItemData.sourceSection,
+      Page: formItemData.sourcePage,
+      ClauseDate: formItemData.sourceDate,
+    };
+
+    return oldClauseValue;
+  }
+
   updateChildFormAddRenderFormData(): void {
     this.childForm = this.fcs.toFormGroup(
       this.selectRenderFormData,
       this.editMode
     );
+
+    this.selectRenderFormData.forEach((formItem) => {
+      const item = {
+        formItemId: formItem.formItemID,
+        formItemTypeId: formItem.formItemTypeID,
+        oldValue:
+          formItem.formItemTypeID === '10'
+            ? this.createOldClauseObject(formItem)
+            : formItem.formItemAnswer,
+        type: formItem.formItemName.includes('Dynamic')
+          ? 'Dynamic'
+          : formItem.formItemName.includes('Existing')
+          ? 'Existing'
+          : formItem.formItemName.includes('Clause')
+          ? 'Clause'
+          : 'Dynamic',
+        labelName: formItem.formItemLabel,
+      };
+
+      const copiedObject = JSON.parse(JSON.stringify(item));
+      this.allFormItemsKeys.push(copiedObject);
+      if (
+        formItem.formItemAnswer
+          ?.toString()
+          .includes('/v06/mapping/GoogleMapsWidgetV3.aspx') ||
+        formItem.sourceURL
+          ?.toString()
+          .includes('/v06/mapping/GoogleMapsWidgetV3.aspx')
+      ) {
+        this.getMapMarkers();
+      }
+    });
     this.form.setControl(this.formGroupName, this.childForm);
 
     // Store the initial data for later comparison
@@ -389,6 +621,11 @@ export class DynamicFormSectionComponent
         })
       )
       .subscribe();
+  }
+
+  markAsChanged() {
+    this.hasChanges = true;
+    this.dynamicFormContainer.markAsChanged();
   }
 
   markAsChanged() {
@@ -494,29 +731,6 @@ export class DynamicFormSectionComponent
   }
 
   // ******************************************************** UI FUNCTIONS BELOW ********************************************************
-  getDataTypeID(dataField: string): number {
-    const matchingItem = this.getMatchingItem(dataField);
-    return matchingItem ? matchingItem.dataTypeID : null;
-  }
-
-  getEmailAddress(dataField: string): string {
-    return this.getFormItemAnswer(dataField);
-  }
-
-  getFormItemAnswer(dataField: string): string {
-    const matchingItem = this.getMatchingItem(dataField);
-    return matchingItem ? matchingItem.formItemAnswer : null;
-  }
-
-  getImageUrl(dataField: string): string {
-    return this.getFormItemAnswer(dataField);
-  }
-
-  getFormItemName(dataField: string): number {
-    const matchingItem = this.getMatchingItem(dataField);
-    return matchingItem ? matchingItem.formItemName : null;
-  }
-
   isWidgetObjectLinker(dataField: any): boolean {
     if (
       typeof this.selectRenderFormData === 'undefined' ||
@@ -546,17 +760,47 @@ export class DynamicFormSectionComponent
     return false;
   }
 
-  goToPage() {
+  goToPage(OTID: number) {
     this.showLoader = true;
     this.subs.add(
       this.selectRenderParentLink$.subscribe((data) => {
         if (data) {
-          const queryParams = {
-            FID: data.formId,
-            OID: data.objectId,
-            OTID: 3,
-            OTTID: data.objectTypeTypeId,
-          };
+          let queryParams: any;
+          if (OTID == ObjectType.PREMISE) {
+            queryParams = {
+              fid: data?.premiseFormId,
+              oid: data?.premiseObjectId,
+              otid: OTID,
+              ottid: data?.premiseObjectTypeTypeId,
+            };
+          } else if (this.objectTypeTypeId == ObjectTypeType.Equipment_Lease) {
+            queryParams = {
+              fid: data?.premiseFormId,
+              oid: data?.objectId,
+              otid: ObjectType.BUILDING,
+              ottid: data?.objectTypeTypeId,
+            };
+          } else if (this.objectTypeTypeId == ObjectTypeType.Lease) {
+            queryParams = {
+              fid: data?.formId,
+              oid: data?.objectId,
+              otid: ObjectType.BUILDING,
+              ottid: data?.objectTypeTypeId,
+            };
+          } else if (
+            this.objectTypeTypeId == ObjectTypeType.Building ||
+            this.objectTypeTypeId == ObjectTypeType.Premise
+          ) {
+            queryParams = {
+              fid: data?.formId,
+              oid: data?.objectId,
+              otid: ObjectType.BUILDING,
+              ottid: data?.objectTypeTypeId,
+            };
+          } else {
+            return;
+          }
+
           this.router.navigate(['/crem/forms/render-form'], { queryParams });
         }
       })
@@ -572,6 +816,23 @@ export class DynamicFormSectionComponent
         this.loadMapFlag$ = of(this.canLoadMap);
       }, 2000);
     }
+  }
+
+  onCanShowDownload(e) {
+    if (e) {
+      // canShowDownload calculates if the Download Button should be shown or not
+      this.canShowDownload = !!this.sectionTitle?.nativeElement?.innerText && e;
+    }
+  }
+
+  /**
+   * Access the method on dynamic-form-widgets to download file
+   * if downloading available
+   *
+   * @memberof DynamicFormSectionComponent
+   */
+  onWidgetDownloadFile(e) {
+    this.dynamicFormWidget.exportExcel();
   }
 
   toggleFormControls() {
@@ -635,17 +896,60 @@ export class DynamicFormSectionComponent
       formItemLabelPrefix: '',
       formItemLabelSuffix: '',
       formItemDisplayLabel: '',
+      formItemJavaScript: '',
     };
   }
-  // get isValid() {
-  //   return this.form.controls[this.question.key].valid;
-  // }
+
+  onSectionEnterKey(e) {
+    if (!this.sectionLabelEntered) {
+      this.openSectionLabelMenu();
+    } else {
+      this.closeSectionLabelMenu();
+    }
+  }
+
+  handleKeyboardEventsSection(e) {
+    if (this.trigger.menuOpen) {
+      if (e.key === 'ArrowDown') {
+        this.currentSecMenuFocusIndex = Math.min(
+          this.currentSecMenuFocusIndex + 1,
+          this.menuItemsElements.length - 1
+        );
+        this.menuItemsElements
+          .toArray()
+          [this.currentSecMenuFocusIndex].nativeElement.focus();
+      } else if (e.key === 'ArrowUp') {
+        this.currentSecMenuFocusIndex = Math.max(
+          this.currentSecMenuFocusIndex - 1,
+          0
+        );
+        this.menuItemsElements
+          .toArray()
+          [this.currentSecMenuFocusIndex].nativeElement.focus();
+      } else if (
+        e.key === 'Tab' &&
+        e.shiftKey &&
+        this.currentSecMenuFocusIndex === 0
+      ) {
+        this.trigger.closeMenu();
+        this.sectionTitle.nativeElement.focus();
+      }
+    }
+  }
+
+  onSectionMenuClosed() {
+    this.sectionLabelEntered = false;
+  }
 
   openSectionLabelMenu() {
     this.sectionLabelEntered = true;
     this.sectionLabelMenuOpened = true;
     this.sectionLabelMenuEntered = false;
     this.trigger.openMenu();
+    this.currentSecMenuFocusIndex = 0;
+    setTimeout(() => {
+      this.menuItemsElements.first.nativeElement.focus();
+    }, 0);
   }
 
   closeSectionLabelMenu() {
@@ -683,7 +987,7 @@ export class DynamicFormSectionComponent
       concatMap(async (dataItem: any) => {
         const result = { ...dataItem };
         /// images
-        if (['7'].some((typeId) => result.formItemTypeID === typeId)) {
+        if (['7', '17'].some((typeId) => result.formItemTypeID === typeId)) {
           // convert form item answer (file-path) into an emedded image uri
           if (isTruthy(result.formItemAnswer)) {
             result.formItemAnswer = await this.createEmbeddedImage(
@@ -698,9 +1002,29 @@ export class DynamicFormSectionComponent
             renderFormData
           );
         }
+        ///convert form item answer to a boolean
+        if (['4'].some((typeId) => result.formItemTypeID === typeId)) {
+          result.formItemAnswer = result.formItemAnswer === 'true';
+        }
         /// parse multi-select values into array of values
         if (['13', '18'].some((typeId) => result.formItemTypeID === typeId)) {
           result.formItemAnswer = result.formItemAnswer?.split('|') ?? [];
+        }
+        /// format the decimals for Int(3), Numeric(5), Money(6), Percent(206) datatypes
+        if (
+          ['3', '5', '6', '206'].some(
+            (dataTypeId) => result.dataTypeID === dataTypeId
+          )
+        ) {
+          if (
+            isTruthy(result.numDecimals) &&
+            isTruthy(result.formItemAnswer) &&
+            isNumeric(result.formItemAnswer)
+          ) {
+            result.formItemAnswer = Number(result.formItemAnswer).toFixed(
+              result.numDecimals
+            );
+          }
         }
 
         return result;
@@ -717,9 +1041,9 @@ export class DynamicFormSectionComponent
    * @returns {Observable<string>}
    */
   private createEmbeddedImage(uri: any): Observable<string> {
-    return this.dynamicFormsService
-      .getImageData(uri)
-      .pipe(map(({ data }) => data));
+    return this.dynamicFormsService.getImageData(uri).pipe(
+      map((response) => response?.data || '') // Return an empty string if response is null/undefined
+    );
   }
 
   /**
@@ -759,6 +1083,7 @@ export class DynamicFormSectionComponent
   }
 
   getMapMarkers() {
+    this.advMarkers = [];
     const request: MapDataRequest = {
       objectTypeId: +this.objectTypeId,
       objectIds: this.objectId.toString(),
@@ -772,24 +1097,28 @@ export class DynamicFormSectionComponent
         res.data.mapMarkers &&
         res.data.mapMarkers.length
       ) {
-        this.marker = res.data.mapMarkers[0];
+        this.markers = res.data.mapMarkers;
         this.loadMap();
       }
     });
   }
 
   loadMap() {
-    const labelList = this.marker.goToUrl.split('Go to');
-    this.objectTypeText = labelList[1].replace('</a>', '').replace(' ', '');
+    this.markers.forEach((marker) => {
+      const labelList = marker.goToUrl.split('Go to');
+      this.objectTypeText = labelList[1].replace('</a>', '').replace(' ', '');
 
-    this.advMarker = {
-      position: {
-        lat: Number(this.marker.latitude),
-        lng: Number(this.marker.longitude),
-      },
-      title: this.marker.name,
-      info: this.getMarkerContent(this.marker, true),
-    };
+      const advMarker = {
+        position: {
+          lat: Number(marker.latitude),
+          lng: Number(marker.longitude),
+        },
+        title: marker.name,
+        info: this.getMarkerContent(marker, true),
+      };
+
+      this.advMarkers.push(advMarker);
+    });
   }
 
   getMarkerContent(marker: Marker, isOnMap: boolean): string {
@@ -799,26 +1128,42 @@ export class DynamicFormSectionComponent
     content += marker.address2 ? `<br>${marker.address2}` : '';
     content += marker.country ? `<br>${marker.country}` : '';
     content += marker.redirectorUrl
-      ? `<br><a href="${marker.redirectorUrl}">${this.objectTypeText}</a>`
+      ? `<br><a [routerLink]="[${marker.redirectorUrl}]">${this.objectTypeText}</a>`
       : '';
 
     return content;
+  }
+
+  private sanitizedHtmlMap = new Map<string, any>();
+  private processedItems = new Set<string>();
+  transform(value: string | null, key: string) {
+    if (!value) return null;
+
+    const strValue = value.toString().toLowerCase();
+    if (
+      !strValue.includes('img src') &&
+      !strValue.includes('a target') &&
+      !strValue.includes('a href')
+    ) {
+      return value;
+    }
+
+    if (this.processedItems.has(key)) {
+      return this.sanitizedHtmlMap.get(key);
+    }
+
+    // Sanitize and store
+    const sanitizedValue = this.sanitized.bypassSecurityTrustHtml(value);
+    this.sanitizedHtmlMap.set(key, sanitizedValue);
+    this.processedItems.add(key);
+
+    return sanitizedValue;
   }
 
   // leaving this here till we know more about section groups
   getFormSectionGroupId(sectionGroup) {
     // this format is driven by the API
     return `dynamic-form_section_group_${sectionGroup.sectionGroupId}`;
-  }
-
-  getImageHeight(dataField) {
-    const matchingItem = this.getMatchingItem(dataField);
-    return matchingItem ? matchingItem.formItemFieldHeight : 300;
-  }
-
-  getImageWidth(dataField) {
-    const matchingItem = this.getMatchingItem(dataField);
-    return matchingItem ? matchingItem?.formItemFieldWidth : 400;
   }
 
   getMatchingItem(dataField) {
@@ -833,5 +1178,106 @@ export class DynamicFormSectionComponent
     );
 
     return matchingItem ? matchingItem : null;
+  }
+
+  onKeyDownonLabel(e: any, formItemID: number) {
+    if (e.key == 'Enter') {
+      this.openLabelLink(formItemID);
+    }
+  }
+
+  openLabelLink(formItemID: number) {
+    if (!this.isSuperUser) return;
+
+    const url = `/Forms/admin/formitemAE.asp?fFormItemID=${formItemID}`;
+    window.open(url, '_blank');
+  }
+
+  onContentReady() {
+    const card = document.getElementById('Lease_ParentLink');
+    const widget = document.getElementById('Widget_Lease_ParentLink');
+
+    if (widget) {
+      if (widget.getElementsByClassName('dx-datagrid-nodata'))
+        widget.parentElement.remove();
+
+      if (!card.getElementsByClassName('dx-item dx-list-item').length)
+        card.remove();
+    }
+  }
+
+  onDecimalValueChanged(e, numDecimals: number, formItemId: any) {
+    if (!isTruthy(e)) return;
+
+    if (!isTruthy(numDecimals)) {
+      numDecimals = 0;
+    }
+
+    const parts = e.split('.');
+    if (parts.length == 1) return;
+
+    if (parts.length == 2 && parts[1].length > numDecimals) {
+      this.subs.add(
+        this.dialogService
+          .alert(
+            'Invalid Form Items',
+            `Please enter a number with up to ${numDecimals} decimal places. Please try again.`,
+            'OK'
+          )
+          .subscribe((res) => {
+            if (res) {
+              this.getFormItem(formItemId.toString())?.setValue('');
+            }
+          })
+      );
+    }
+  }
+
+  getFormItem(itemId: string) {
+    if (this.form.contains(itemId)) {
+      return this.form.get(itemId);
+    }
+    for (const itemName in this.form.controls) {
+      const item = this.form.get(itemName);
+      if (item instanceof FormGroup) {
+        if (item.contains(itemId)) {
+          return item.get(itemId);
+        }
+      }
+    }
+    return null;
+  }
+
+  getInitialHepTextInfo(controlData) {
+    this.controlInfoHistData.helpTextSubject =
+      controlData.name?.formItemSectionDetail?.formItemLabel;
+    this.controlInfoHistData.helpTextText = controlData?.name?.helpText;
+  }
+
+  toggleExpand() {
+    this.isExpanded = !this.isExpanded;
+  }
+
+  getFieldHistoryData(controlData) {
+    this.controlInfoHistData.helpTextHistory = [];
+    this.subs.add(
+      this.dynamicFormsService
+        .getChangeHistory(
+          controlData.name.formItemSectionDetail.formItemID,
+          this.objectId,
+          this.objectTypeId
+        )
+        .pipe(
+          take(1),
+          tap((res) => {
+            if (res && res.success) {
+              this.controlInfoHistData.helpTextHistory = res.data.length
+                ? res.data
+                : [];
+            }
+          })
+        )
+        .subscribe()
+    );
   }
 }

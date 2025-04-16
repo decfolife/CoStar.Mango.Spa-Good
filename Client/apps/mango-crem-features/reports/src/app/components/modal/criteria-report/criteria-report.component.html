@@ -108,22 +108,20 @@
       ></mango-criteria-form-report>
     </crem-vertical-stepper>
   </div>
-  <div modalFooter class="footer-content">
-    <div id="'ButtonTemplate'" class="footerRightControls">
-      <crem-button
-        type="secondary"
-        [id]="idPrefix + 'CancelButton'"
-        (click)="closeDialog($event)"
-      >
-        Cancel
-      </crem-button>
-      <crem-button
-        [id]="idPrefix + 'RunButton'"
-        type="primary"
-        (click)="runReport($event)"
-      >
-        Run
-      </crem-button>
-    </div>
+  <div modalFooter class="footer-content" id="'ButtonTemplate'">
+    <crem-button
+      type="secondary"
+      [id]="idPrefix + 'CancelButton'"
+      (click)="closeDialog($event)"
+    >
+      Cancel
+    </crem-button>
+    <crem-button
+      [id]="idPrefix + 'RunButton'"
+      type="primary"
+      (click)="runReport($event)"
+    >
+      Run
+    </crem-button>
   </div>
 </crem-modal>

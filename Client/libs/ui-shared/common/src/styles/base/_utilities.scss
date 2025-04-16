@@ -158,6 +158,7 @@
   @include costar(transition, fast);
 
   &.vertical {
+    overflow-y: auto;
     @include costar-scrollbar(
       $thumb-color: map-get($color, color, gray03),
       $orientation: vertical

@@ -93,8 +93,8 @@ export class PortfolioActivityFeedComponent implements OnInit, OnDestroy {
   }
 
   getDescriptionCellLink(cell: any) {
-    const urlLink = `/v06/Common/Notes/NotesList.aspx?OTID=${cell.data.objectTypeID}&OID=${cell.data.objectId}`;
-    return urlLink;
+    const urlLink = `/v06/Common/Notes/NotesList.aspx?OTID=${cell.data.objectTypeID}&OID=${cell.data.objectId}&OTTID=${cell.data.objectTypeTypeID}`;
+    this.router.navigateByUrl(urlLink);
   }
 
   downloadfile(fileInformation: any): boolean {

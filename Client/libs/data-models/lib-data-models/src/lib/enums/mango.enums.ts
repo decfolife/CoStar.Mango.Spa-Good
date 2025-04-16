@@ -24,6 +24,7 @@ export enum MangoSubApps {
   FORMS_MAINTENANCE = 'FORMS_MAINTENANCE',
   COSTAR_MATCHING = 'COSTAR_MATCHING',
   LEDGERS_EXPORT_HISTORY = 'LEDGERS EXPORT HISTORY',
+  BENCHMARKING_FILES = 'BENCHMARKING FILES',
   ETL = 'ETL',
 }
 
@@ -58,4 +59,5 @@ export enum Api {
   coStarMatch = 'coStarMatch',
   etl = 'etl',
   settings = 'settings',
+  fileManager = 'fileManager',
 }

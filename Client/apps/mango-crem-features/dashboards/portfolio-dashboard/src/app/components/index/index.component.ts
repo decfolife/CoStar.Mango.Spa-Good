@@ -50,7 +50,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   userId = 2;
   exchangeRateId = 13;
   unitOfMeasureId = 1;
-  isDateEU: boolean = false;
+  isDateEU = false as boolean;
   subs: Subscription[] = [];
   @ViewChild(CardsComponent)
   cardsComponent: CardsComponent;
@@ -88,7 +88,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           }
         },
         (error: any) => {
-          console.log('Error occurred getting User Preferences Data: ', error);
+          console.warn('Error occurred getting User Preferences Data: ', error);
           this.getStoragePreferences();
         },
         () => {
@@ -365,6 +365,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(UserSettingsComponent, {
       width: '600px',
       height: '570px',
+      minWidth: '320px',
+      minHeight: '420px',
       panelClass: 'user-settings-dialog',
       data: {
         filters: this.filterDetails,

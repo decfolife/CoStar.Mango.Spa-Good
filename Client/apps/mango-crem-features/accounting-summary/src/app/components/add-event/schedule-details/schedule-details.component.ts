@@ -307,10 +307,15 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
 
         if (termBeginDate && termEndDate) {
           if (termBeginDate > termEndDate) {
-            this.setTermCalculationToDefault();
+            this.resetAccountingTerms();
+            this.emitAccountingTerms();
           } else {
             this.getEventsDateOptions(termBeginDate, termEndDate);
           }
+        } else {
+          this.resetAccountingTerms();
+          this.emitAccountingTerms();
+          this.emitScheduleDetailsData();
         }
       });
 
@@ -776,7 +781,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
   setTermBeginDate(event: any) {
     if (event.length === 0) {
       this.termBeginDate = null;
-      this.setTermCalculationToDefault();
+      this.resetAccountingTerms();
     } else {
       this.termBeginDateObj = event[0];
       if (event[0].optionDate) {
@@ -808,13 +813,12 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
         ]?.disable();
       }
     }
-    this.emitScheduleDetailsData();
   }
 
   setTermEndDate(event: any) {
     if (event.length === 0) {
       this.termEndDate = null;
-      this.setTermCalculationToDefault();
+      this.resetAccountingTerms();
     } else {
       this.termEndDateObj = event[0];
       if (event[0].optionDate) {
@@ -838,7 +842,6 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
         this.scheduleDetailsForm.controls['accountingEventEndDate']?.disable();
       }
     }
-    this.emitScheduleDetailsData();
   }
 
   onTermBeginDateChange(event: any) {
@@ -854,7 +857,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
       this.scheduleDetailsForm.controls[
         'accountingEventBeginDateDropdown'
       ]?.disable();
-      this.setTermCalculationToDefault();
+      this.resetAccountingTerms();
     }
   }
 
@@ -867,7 +870,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
       new Date(this.termBeginDate).getDate() > 1;
   }
 
-  setTermCalculationToDefault() {
+  resetAccountingTerms() {
     this.termString = '';
     this.termInPeriods = 0;
     this.termInMonths = 0;
@@ -875,7 +878,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
     this.termInYear = 0;
   }
 
-  updateAccountingTerms() {
+  emitAccountingTerms() {
     let accountingTerms: {
       termString: string;
       termInPeriods: number;
@@ -926,7 +929,7 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
               );
               this.addEventFormService.isCalculateValuesDisabled$.next(true);
               this.addEventFormService.isSaveDisabled$.next(true);
-              this.setTermCalculationToDefault();
+              this.resetAccountingTerms();
             } else {
               this.addEditScheduleService.clearToastBySummary(
                 'Accounting Terms'
@@ -943,15 +946,14 @@ export class ScheduleDetailsComponent implements OnInit, OnChanges, OnDestroy {
             ) {
               this.reportExceptionValidationPopup = true;
             }
-
+            this.emitAccountingTerms();
             this.emitScheduleDetailsData();
-            this.updateAccountingTerms();
           } else {
             this.addEditScheduleService.showToast(
               'Accounting Term Begin Or End',
               `Saving is disabled because an error was thrown: The Period From or Period To is either outside the calendar range, or not properly configured for Calendar: ${this.portfolioSettings.leaseRecognitionCalendarID}`
             );
-            this.setTermCalculationToDefault();
+            this.resetAccountingTerms();
           }
         })
     );

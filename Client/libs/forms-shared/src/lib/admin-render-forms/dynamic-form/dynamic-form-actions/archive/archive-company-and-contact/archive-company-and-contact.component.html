@@ -1,0 +1,34 @@
+<crem-modal
+  [modalTitle]="modalTitle"
+  closeIconVisible="true"
+  [customFooter]="true"
+  modalId="archive_company_contact_modal"
+  modalTitleId="archive_company_contact_modal_title"
+>
+  <div modalContent class="body-content">
+    <crem-loader class="cl-loader" *ngIf="loading"></crem-loader>
+    <div *ngIf="!loading">
+      Are you sure that you want to archive
+      <span class="object-name">{{ objectName }}</span>
+      ?
+    </div>
+  </div>
+  <div modalFooter class="footer-content">
+    <div id="'buttonTemplate'" class="footerRightControls">
+      <crem-button
+        id="close-btn"
+        type="secondary"
+        (click)="close()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        [disabled]="loading"
+        type="primary"
+        (click)="archive()"
+      >
+        Archive
+      </crem-button>
+    </div>
+  </div>
+</crem-modal>

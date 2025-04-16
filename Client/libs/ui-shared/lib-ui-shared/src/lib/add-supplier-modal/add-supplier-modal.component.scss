@@ -1,49 +1,12 @@
-@use "styles" as *;
+@use 'styles' as *;
 
-:host ::ng-deep .modalFooter {
-  .addSupplierFooter {
-    display: flex;
-    crem-button {
-      padding: 4px;
-    }
+:host ::ng-deep {
+  .crem-form {
+    @include costar(gap, 2);
   }
-}
-
-.add-supplier-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  column-gap: 10px;
-}
-
-.form-group-two-columns {
-  display: flex;
-  flex-direction: row;
-  column-gap: 10px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.add-supplier-form crem-input-label {
-  font-weight: bold;
-}
-
-.two-columns-row {
-  flex-basis: 50%;
-}
-
-:host ::ng-deep .two-columns-row {
-  crem-form-item {
-    crem-form-label {
-      label {
-        display: flex;
-        flex-direction: row;
-        width: 150px;
-      }
+  crem-form-control {
+    .crem-form-item-status:empty {
+      display: none;
     }
   }
 }

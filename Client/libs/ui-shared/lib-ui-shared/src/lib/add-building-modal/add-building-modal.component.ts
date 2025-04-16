@@ -238,7 +238,7 @@ export class AddBuildingModalComponent
   }
 
   buildModalTitle() {
-    this.modalTitle = 'Create ' + this.data.objectTypeName;
+    this.modalTitle = 'Add ' + this.data.objectTypeName;
     this.dynName = this.data.objectTypeName;
   }
 

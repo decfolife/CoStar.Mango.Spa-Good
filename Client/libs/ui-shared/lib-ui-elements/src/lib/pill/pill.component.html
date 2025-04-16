@@ -12,5 +12,12 @@
   }"
   [title]="titleOnHover"
 >
+  <crem-icon
+    *ngIf="displayLockIcon"
+    [id]="'lockedIcon'"
+    pack="solid"
+    icon="faLock"
+  >
+  </crem-icon>
   {{ text }}
 </div>

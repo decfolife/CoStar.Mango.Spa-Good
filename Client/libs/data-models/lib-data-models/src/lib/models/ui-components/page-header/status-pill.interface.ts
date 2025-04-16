@@ -4,4 +4,5 @@ export interface StatusPill {
   text: string;
   type: Pill;
   titleOnHover?: string;
+  displayLockIcon?: boolean;
 }

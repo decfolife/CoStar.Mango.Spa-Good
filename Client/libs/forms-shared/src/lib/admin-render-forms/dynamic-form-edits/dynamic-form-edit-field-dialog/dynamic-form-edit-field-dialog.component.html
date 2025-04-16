@@ -1,226 +1,346 @@
 <!-- <p>Form Item State: <br/> {{field  | json }}</p> -->
 
-<crem-modal [modalTitle]="'Edit Field - ' + field.formItemSectionDetail.formItemLabel + ' (' + field.formItemID + ')'"
-    [closeIconVisible]="true" 
-    [modalTitleId]="prefix + 'title'" 
-    [customFooter]="true"
-    (primaryButtonAction)="closeDialog()">
-    <div modalContent>
-        <mat-tab-group  disableRipple="true"  class="configuration-tab">
-            <mat-tab label="Configuration" class="configuration-tab">
-                <div class="row">
-                    <div class="col-md-6 dbl-bottom-margin dbl-top-margin">
-                        <mat-card>
-                            <mat-card-header>
-                                <mat-card-title>Field Details</mat-card-title>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <dx-form [(formData)]="field" [colCount]="1" labelLocation="left"
-                                    [showColonAfterLabel]="false">
-                                    <dxi-item dataField="formItemID" [label]="{ text : 'ID' }"
-                                        [editorOptions]="{ disabled: true}" editorType="dxTextBox">
-                                    </dxi-item>
-                                    <dxi-item dataField="formItemSectionDetail.formItemLabel"
-                                        [label]="{ text : 'Label' }" [editorOptions]="{ disabled: false}"
-                                        editorType="dxTextBox">
-                                    </dxi-item>
-                                    <dxi-item name="Object-Type">
-                                        <dxo-label text="Object Type"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-text-box [value]="dynamicForm.objectType"
-                                                [disabled]="true"></dx-text-box>
-                                        </div>
-                                    </dxi-item>
-                                    <dxi-item [dataField]="field.formItemType.formItemType">
-                                        <dxo-label text="Control Type"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box [dataSource]="selectControlTypes$ | async"
-                                                [(value)]="field.formItemTypeID" [searchEnabled]="true"
-                                                valueExpr="formItemTypeID" displayExpr="formItemType"
-                                                (onValueChanged)="controlTypeChanged($event)">
-                                            </dx-select-box>
-                                        </div>
-                                    </dxi-item>
-                                    <dxi-item name="Data-Type">
-                                        <dxo-label text="Data Type"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box [dataSource]="selectDataTypes$ | async"
-                                                [(value)]="field.dataTypeID" [searchEnabled]="true"
-                                                valueExpr="dataTypeID" displayExpr="dataTypeLabel">
-                                            </dx-select-box>
-                                        </div>
-                                    </dxi-item>
-                                    <dxi-item name="Required">
-                                        <dxo-label text="Required"></dxo-label>
-                                        <div *dxTemplate>
-                                            <mat-slide-toggle
-                                                [checked]="convertToBooleanFromYesNo(field.formItemSectionDetail.formItemMandatory)"
-                                                (change)="field.formItemSectionDetail.formItemMandatory = $event.checked ? 'yes' : 'no'">
-                                            </mat-slide-toggle>
-                                        </div>
-                                    </dxi-item>
-                                    <dxi-item dataField="formItemDescription" [label]="{ text : 'Description' }"
-                                        [editorOptions]="{ disabled: false }" editorType="dxTextArea">
-                                    </dxi-item>
-                                    <dxi-item dataField="helpText" [label]="{ text : 'Help Text' }"
-                                        [editorOptions]="{ disabled: false }" editorType="dxTextArea">
-                                    </dxi-item>
-                                    <dxi-item name="Existing">
-                                        <dxo-label text="Existing Database Column"></dxo-label>
-                                        <div *dxTemplate>
-                                            <mat-slide-toggle [checked]="convertToBooleanFromNumber(field.existing)"
-                                                (change)="field.existing = $event.checked ? 1 : 0">
-                                            </mat-slide-toggle>
-                                        </div>
-                                    </dxi-item>
+<crem-modal
+  [modalTitle]="
+    'Edit Field - ' +
+    field.formItemSectionDetail.formItemLabel +
+    ' (' +
+    field.formItemID +
+    ')'
+  "
+  [closeIconVisible]="true"
+  [modalTitleId]="prefix + 'title'"
+  [customFooter]="true"
+  (primaryButtonAction)="closeDialog()"
+>
+  <div modalContent>
+    <mat-tab-group disableRipple="true" class="configuration-tab">
+      <mat-tab label="Configuration" class="configuration-tab">
+        <div class="row">
+          <div class="col-md-6 dbl-bottom-margin dbl-top-margin">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>Field Details</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <dx-form
+                  [(formData)]="field"
+                  [colCount]="1"
+                  labelLocation="left"
+                  [showColonAfterLabel]="false"
+                >
+                  <dxi-item
+                    dataField="formItemID"
+                    [label]="{ text: 'ID' }"
+                    [editorOptions]="{ disabled: true }"
+                    editorType="dxTextBox"
+                  >
+                  </dxi-item>
+                  <dxi-item
+                    dataField="formItemSectionDetail.formItemLabel"
+                    [label]="{ text: 'Label' }"
+                    [editorOptions]="{ disabled: false }"
+                    editorType="dxTextBox"
+                  >
+                  </dxi-item>
+                  <dxi-item name="Object-Type">
+                    <dxo-label text="Object Type"></dxo-label>
+                    <div *dxTemplate>
+                      <dx-text-box
+                        [value]="dynamicForm.objectType"
+                        [disabled]="true"
+                      ></dx-text-box>
+                    </div>
+                  </dxi-item>
+                  <dxi-item [dataField]="field.formItemType.formItemType">
+                    <dxo-label text="Control Type"></dxo-label>
+                    <div *dxTemplate>
+                      <dx-select-box
+                        [dataSource]="selectControlTypes$ | async"
+                        [(value)]="field.formItemTypeID"
+                        [searchEnabled]="true"
+                        valueExpr="formItemTypeID"
+                        displayExpr="formItemType"
+                        (onValueChanged)="controlTypeChanged($event)"
+                      >
+                      </dx-select-box>
+                    </div>
+                  </dxi-item>
+                  <dxi-item name="Data-Type">
+                    <dxo-label text="Data Type"></dxo-label>
+                    <div *dxTemplate>
+                      <dx-select-box
+                        [dataSource]="selectDataTypes$ | async"
+                        [(value)]="field.dataTypeID"
+                        [searchEnabled]="true"
+                        valueExpr="dataTypeID"
+                        displayExpr="dataTypeLabel"
+                      >
+                      </dx-select-box>
+                    </div>
+                  </dxi-item>
+                  <dxi-item name="Required">
+                    <dxo-label text="Required"></dxo-label>
+                    <div *dxTemplate>
+                      <mat-slide-toggle
+                        [checked]="
+                          convertToBooleanFromYesNo(
+                            field.formItemSectionDetail.formItemMandatory
+                          )
+                        "
+                        (change)="
+                          field.formItemSectionDetail.formItemMandatory =
+                            $event.checked ? 'yes' : 'no'
+                        "
+                      >
+                      </mat-slide-toggle>
+                    </div>
+                  </dxi-item>
+                  <dxi-item
+                    dataField="formItemDescription"
+                    [label]="{ text: 'Description' }"
+                    [editorOptions]="{ disabled: false }"
+                    editorType="dxTextArea"
+                  >
+                  </dxi-item>
+                  <dxi-item
+                    dataField="helpText"
+                    [label]="{ text: 'Help Text' }"
+                    [editorOptions]="{ disabled: false }"
+                    editorType="dxTextArea"
+                  >
+                  </dxi-item>
+                  <dxi-item name="Existing">
+                    <dxo-label text="Existing Database Column"></dxo-label>
+                    <div *dxTemplate>
+                      <mat-slide-toggle
+                        [checked]="convertToBooleanFromNumber(field.existing)"
+                        (change)="field.existing = $event.checked ? 1 : 0"
+                      >
+                      </mat-slide-toggle>
+                    </div>
+                  </dxi-item>
 
-                                    <dxi-item name="Database-Table" [visible]="field.existing">
-                                        <dxo-label text="Database Table"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box [dataSource]="selectFormItemDatabaseTables$ | async"
-                                                [(value)]="field.sourcetable" [searchEnabled]="true" valueExpr="name"
-                                                displayExpr="name2"
-                                                (onValueChanged)="databaseTableDropdownChanged($event)">
-                                            </dx-select-box>
-                                        </div>
-                                    </dxi-item>
-                                    <dxi-item name="Database-Column" [visible]="field.existing">
-                                        <dxo-label text="Database Column"></dxo-label>
-                                        <div *dxTemplate>
-                                            <dx-select-box [dataSource]="selectFormItemDatabaseColumns$ | async"
-                                                [(value)]="field.sourceColumn" [searchEnabled]="true"
-                                                valueExpr="name" displayExpr="name2">
-                                            </dx-select-box>
-                                        </div>
-                                    </dxi-item>
-                                </dx-form>
-                            </mat-card-content>
-                        </mat-card>
+                  <dxi-item name="Database-Table" [visible]="field.existing">
+                    <dxo-label text="Database Table"></dxo-label>
+                    <div *dxTemplate>
+                      <dx-select-box
+                        [dataSource]="selectFormItemDatabaseTables$ | async"
+                        [(value)]="field.sourcetable"
+                        [searchEnabled]="true"
+                        valueExpr="name"
+                        displayExpr="name2"
+                        (onValueChanged)="databaseTableDropdownChanged($event)"
+                      >
+                      </dx-select-box>
                     </div>
-                    <div class="col-md-6 dbl-bottom-margin dbl-top-margin">
-                        <mat-card>
-                            <mat-card-header>
-                                <mat-card-title>Control Type / Data Type Configuration</mat-card-title>
-                            </mat-card-header>
-                            <mat-card-content>
-                                <div class="control-type-config" *ngIf="field.formItemType.formItemType == 'List Box'">
-                                    <div class="dropdown-controls">
-                                        <div class="controls-left">
-                                            <dx-select-box [items]="selectFormItemDropdowns$ | async" placeholder="Choose Dropdown"
-                                                valueExpr="dropdownID" displayExpr="dropdownName" [searchEnabled]="true"
-                                                (onValueChanged)="controlTypeDataTypeConfigurationDropdownChanged($event)"
-                                                [(value)]="field.dropdownID"
-                                                style="min-width: 150px;">
-                                            </dx-select-box>
-                                            <button *ngIf="!creatingDropdown" class="btn btn-link"
-                                                (click)="createNewDropdown()">Create Dropdown</button>
-                                            <dx-text-box *ngIf="creatingDropdown" placeholder="New Dropdown" >
-                                                <crem-button name="cancel" location="after" ></crem-button>
-                                                <crem-button name="save" location="after" ></crem-button>
-                                            </dx-text-box>
-                                        </div>
-                                        <div class="controls-right">
-                                            <crem-button type="primary" text="Add Value" btnStyle="flat" (click)="addDropdownValue()">Add Value</crem-button>
-                                        </div>
-                                    </div>
-                                    <div class="values-grid-container">
-                                        <dx-data-grid #dropdownValueGrid
-                                            id="dropdownValueContainer"
-                                            [dataSource]="dropdownValues"
-                                            [showColumnLines]="false"
-                                            [showRowLines]="true"
-                                            [showBorders]="true"
-                                            [rowAlternationEnabled]="true" >	
-                                            <dxo-editing 
-                                                 mode="row"
-                                                 [allowUpdating]="true"
-                                                 [allowDeleting]="true"
-                                                 [useIcons]="true">
-                                            </dxo-editing>	
-                                            <dxo-row-dragging
-                                                [allowReordering]="true"
-                                                [onReorder]="onReorder"
-                                                [showDragIcons]="true"
-                                            ></dxo-row-dragging>	
-                                            <dxo-header-filter [visible]="true"></dxo-header-filter>   
-                                            <dxo-scrolling mode="virtual"></dxo-scrolling>
-                                            <dxo-sorting mode="none"></dxo-sorting>
-                                            <dxi-column caption="Display" dataField="dropdownDisplay"></dxi-column>
-                                            <dxi-column caption="Value" dataField="dropdownValue"></dxi-column>
-                                            <dxi-column caption="Active" dataField="dropdownActive"  [width]="96"></dxi-column>	
-                                            <dxi-column type="buttons" [width]="80">
-                                                <crem-button name="edit"  ></crem-button>
-                                                <crem-button name="delete"  ></crem-button>											        
-                                            </dxi-column>					    
-                                        </dx-data-grid>
-                                    </div>
-                                    <dx-form 
-											[(formData)]="field"
-											colCount="1"
-											labelLocation="left"
-											[showColonAfterLabel]="false">
-											<dxi-item 
-												dataField="dropdownSortOrder"
-												[label]="{ text : 'Sort Order' }"
-												[editorOptions]="{ items: sortOrders, disabled: false }"
-												editorType="dxSelectBox">			
-											</dxi-item>
-											<dxi-item 
-												[label]="{ text : 'Allow Clear' }"				
-												template="slideToggleTemplate">								
-											</dxi-item>
-											<dxi-item 
-												[label]="{ text : 'Multi-select' }"				
-												template="slideToggleTemplate">								
-											</dxi-item>
-											<dxi-item 
-												dataField="hasDefaultValue"
-												[label]="{ text : 'Has Default Value' }"
-												[editorOptions]="{ disabled: false }"
-												template="slideToggleTemplate"
-												>			
-											</dxi-item>	
-											<div *dxTemplate="let data of 'slideToggleTemplate'">
-											    <mat-slide-toggle [name]="data.dataField" ></mat-slide-toggle>
-											</div>
-								    </dx-form>
-                                </div>
-                                <div class="control-type-config" *ngIf="field.formItemType.formItemType == 'Clause'">
-                                    <dx-form 
-                                        colCount="1"
-                                        labelLocation="left"
-                                        [showColonAfterLabel]="false">
-                                        <dxi-item 
-                                            [label]="{ text : 'Use Doc / Sec / Page' }"				
-                                            template="slideToggleTemplate">								
-                                        </dxi-item>
-                                        <dxi-item 
-                                            [label]="{ text : 'Clause Bank' }"				
-                                            template="slideToggleTemplate">								
-                                        </dxi-item>
-                                        <div *dxTemplate="let data of 'slideToggleTemplate'">
-                                            <mat-slide-toggle ></mat-slide-toggle>
-                                        </div>
-                                    </dx-form>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>
+                  </dxi-item>
+                  <dxi-item name="Database-Column" [visible]="field.existing">
+                    <dxo-label text="Database Column"></dxo-label>
+                    <div *dxTemplate>
+                      <dx-select-box
+                        [dataSource]="selectFormItemDatabaseColumns$ | async"
+                        [(value)]="field.sourceColumn"
+                        [searchEnabled]="true"
+                        valueExpr="name"
+                        displayExpr="name2"
+                      >
+                      </dx-select-box>
                     </div>
+                  </dxi-item>
+                </dx-form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="col-md-6 dbl-bottom-margin dbl-top-margin">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title
+                  >Control Type / Data Type Configuration</mat-card-title
+                >
+              </mat-card-header>
+              <mat-card-content>
+                <div
+                  class="control-type-config"
+                  *ngIf="field.formItemType.formItemType == 'List Box'"
+                >
+                  <div class="dropdown-controls">
+                    <div class="controls-left">
+                      <dx-select-box
+                        [items]="selectFormItemDropdowns$ | async"
+                        placeholder="Choose Dropdown"
+                        valueExpr="dropdownID"
+                        displayExpr="dropdownName"
+                        [searchEnabled]="true"
+                        (onValueChanged)="
+                          controlTypeDataTypeConfigurationDropdownChanged(
+                            $event
+                          )
+                        "
+                        [(value)]="field.dropdownID"
+                        style="min-width: 150px"
+                      >
+                      </dx-select-box>
+                      <button
+                        *ngIf="!creatingDropdown"
+                        class="btn btn-link"
+                        (click)="createNewDropdown()"
+                      >
+                        Create Dropdown
+                      </button>
+                      <dx-text-box
+                        *ngIf="creatingDropdown"
+                        placeholder="New Dropdown"
+                      >
+                        <crem-button
+                          name="cancel"
+                          location="after"
+                        ></crem-button>
+                        <crem-button name="save" location="after"></crem-button>
+                      </dx-text-box>
+                    </div>
+                    <div class="controls-right">
+                      <crem-button
+                        type="primary"
+                        text="Add Value"
+                        btnStyle="flat"
+                        (click)="addDropdownValue()"
+                        >Add Value</crem-button
+                      >
+                    </div>
+                  </div>
+                  <div class="values-grid-container">
+                    <dx-data-grid
+                      #dropdownValueGrid
+                      id="dropdownValueContainer"
+                      [dataSource]="dropdownValues"
+                      [showColumnLines]="false"
+                      [showRowLines]="true"
+                      [showBorders]="true"
+                      [rowAlternationEnabled]="true"
+                    >
+                      <dxo-editing
+                        mode="row"
+                        [allowUpdating]="true"
+                        [allowDeleting]="true"
+                        [useIcons]="true"
+                      >
+                      </dxo-editing>
+                      <dxo-row-dragging
+                        [allowReordering]="true"
+                        [onReorder]="onReorder"
+                        [showDragIcons]="true"
+                      ></dxo-row-dragging>
+                      <dxo-header-filter [visible]="true"></dxo-header-filter>
+                      <dxo-scrolling mode="virtual"></dxo-scrolling>
+                      <dxo-sorting mode="none"></dxo-sorting>
+                      <dxi-column
+                        caption="Display"
+                        dataField="dropdownDisplay"
+                      ></dxi-column>
+                      <dxi-column
+                        caption="Value"
+                        dataField="dropdownValue"
+                      ></dxi-column>
+                      <dxi-column
+                        caption="Active"
+                        dataField="dropdownActive"
+                        [width]="96"
+                      ></dxi-column>
+                      <dxi-column type="buttons" [width]="80">
+                        <crem-button name="edit"></crem-button>
+                        <crem-button name="delete"></crem-button>
+                      </dxi-column>
+                    </dx-data-grid>
+                  </div>
+                  <dx-form
+                    [(formData)]="field"
+                    colCount="1"
+                    labelLocation="left"
+                    [showColonAfterLabel]="false"
+                  >
+                    <dxi-item
+                      dataField="dropdownSortOrder"
+                      [label]="{ text: 'Sort Order' }"
+                      [editorOptions]="{ items: sortOrders, disabled: false }"
+                      editorType="dxSelectBox"
+                    >
+                    </dxi-item>
+                    <dxi-item
+                      [label]="{ text: 'Allow Clear' }"
+                      template="slideToggleTemplate"
+                    >
+                    </dxi-item>
+                    <dxi-item
+                      [label]="{ text: 'Multi-select' }"
+                      template="slideToggleTemplate"
+                    >
+                    </dxi-item>
+                    <dxi-item
+                      dataField="hasDefaultValue"
+                      [label]="{ text: 'Has Default Value' }"
+                      [editorOptions]="{ disabled: false }"
+                      template="slideToggleTemplate"
+                    >
+                    </dxi-item>
+                    <div *dxTemplate="let data of 'slideToggleTemplate'">
+                      <mat-slide-toggle
+                        [name]="data.dataField"
+                      ></mat-slide-toggle>
+                    </div>
+                  </dx-form>
                 </div>
-            </mat-tab>
-            <mat-tab label="Styling" class="styling-tab">
-
-            </mat-tab>
-            <mat-tab label="Usage" class="usage-tab">
-
-            </mat-tab>
-        </mat-tab-group>
-    </div>
-    <div modalFooter class="footer-content">
-        <div id="buttonTemplate" class="footerRightControls">
-            <crem-button type="secondary" [id]="prefix + 'remove-button'" (click)="closeDialog()">Remove</crem-button>
-            <crem-button type="secondary" [id]="prefix + 'cancel-button'" (click)="closeDialog()">Cancel</crem-button>
-            <crem-button type="primary" [id]="prefix + 'save-button'" (click)="save($event)">Save</crem-button>
+                <div
+                  class="control-type-config"
+                  *ngIf="field.formItemType.formItemType == 'Clause'"
+                >
+                  <dx-form
+                    colCount="1"
+                    labelLocation="left"
+                    [showColonAfterLabel]="false"
+                  >
+                    <dxi-item
+                      [label]="{ text: 'Use Doc / Sec / Page' }"
+                      template="slideToggleTemplate"
+                    >
+                    </dxi-item>
+                    <dxi-item
+                      [label]="{ text: 'Clause Bank' }"
+                      template="slideToggleTemplate"
+                    >
+                    </dxi-item>
+                    <div *dxTemplate="let data of 'slideToggleTemplate'">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </dx-form>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
         </div>
-    </div>
+      </mat-tab>
+      <mat-tab label="Styling" class="styling-tab"> </mat-tab>
+      <mat-tab label="Usage" class="usage-tab"> </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div modalFooter class="footer-content" id="buttonTemplate">
+    <crem-button
+      type="secondary"
+      [id]="prefix + 'remove-button'"
+      (click)="closeDialog()"
+      >Remove</crem-button
+    >
+    <crem-button
+      type="secondary"
+      [id]="prefix + 'cancel-button'"
+      (click)="closeDialog()"
+      >Cancel</crem-button
+    >
+    <crem-button
+      type="primary"
+      [id]="prefix + 'save-button'"
+      (click)="save($event)"
+      >Save</crem-button
+    >
+  </div>
 </crem-modal>

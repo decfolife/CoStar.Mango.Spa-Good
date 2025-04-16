@@ -27,10 +27,25 @@ function getParameters(formItemId: string, datasource: any[]): string | null {
   return matchingItem ? matchingItem.formItemParameters : null;
 }
 
+export function clauseTransform(formItemParameters: string) {
+  if (!formItemParameters) {
+    return null;
+  }
+
+  // Parse parameters
+  return formItemParameters.split('|').map((param) => {
+    const splitParam = param.split('=')
+    const fieldName = splitParam[0];
+    const fieldVisible = splitParam[1];
+    return { fieldName, fieldVisible };
+  });
+}
+
 @Pipe({
   name: 'parseformItemParameters',
   standalone: true,
 })
 export class ParseFormItemParametersPipe implements PipeTransform {
   transform = transform;
+  clauseTransform = clauseTransform;
 }

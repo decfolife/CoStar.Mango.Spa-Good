@@ -51,4 +51,5 @@ export interface ContactPreferences {
   contactCurrency: number;
   contactMeasurements: number;
   contactStartPage: string;
+  contactRequireSSO?: boolean;
 }

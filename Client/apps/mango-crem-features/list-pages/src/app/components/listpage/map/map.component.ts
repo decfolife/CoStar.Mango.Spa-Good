@@ -226,7 +226,7 @@ export class MapComponent implements OnInit {
     content += marker.address2 ? `<br>${marker.address2}` : '';
     content += marker.country ? `<br>${marker.country}` : '';
     content += marker.redirectorUrl
-      ? `<br><a href="${marker.redirectorUrl}">${this.objectTypeText}</a>`
+      ? `<br><a [routerLink]="[${marker.redirectorUrl}]">${this.objectTypeText}</a>`
       : '';
 
     return content;

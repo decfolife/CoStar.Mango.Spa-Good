@@ -1,9 +1,14 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatPasswordStrengthModule } from '@angular-material-extensions/password-strength';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
-import { NavigationStart, Router, RouterEvent } from '@angular/router';
+import {
+  NavigationStart,
+  Router,
+  RouterEvent,
+  TitleStrategy,
+} from '@angular/router';
 import {
   AuthService,
   HeaderService,
@@ -11,6 +16,7 @@ import {
   NotificationService,
   StorageService,
   UserService,
+  UtilitiesService,
 } from '@mango/core-shared';
 import {
   CREM_FORCE_RELOGIN_URLS,
@@ -44,21 +50,19 @@ import { CremModule } from './components/crem-component/crem.module';
 import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
 import { MangoNavigationService } from './services/navigation.service';
 import { CustomSerializer } from './utils/custom-route-serializer';
-import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
+//import { GlobalSessionEffects } from './+state/app/effects/global-session.effects';
 import { ValidateComponent } from './components/auth/validate/validate.component';
 import { SessionExpiredComponent } from './components/auth/session-expired/session-expired.component';
 import { contactRecord } from './+state/app/app.selectors';
 import { EmulateUserEffects } from './+state/app/effects/emulate-user.effects';
 import { IdleEffects } from './+state/app/effects/idle.effects';
 import { IdleTimeoutPopupComponent } from './components/idle-timeout-popup/idle-timeout-popup.component';
-import { RedirectorObjectData } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
+import { RedirectorMapping, RedirectorObjectData } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
 import { CremPopupComponent } from '@mango/ui-shared/lib-ui-elements';
-import {
-  NgIdleKeepaliveModule,
-  provideNgIdleKeepalive,
-} from '@ng-idle/keepalive';
+import { NgIdleKeepaliveModule } from '@ng-idle/keepalive';
 import { CurrentProjectIdMonitorService } from './services/current-project-monitor.service';
 import { ErrorNotificationComponent } from './components/error-notification/error-notification.component';
+import { TemplatePageTitleStrategy } from './services/title-strategy.service';
 
 const DEV_MODULES = [];
 
@@ -101,7 +105,7 @@ if (!environment.production) {
       AuthenticationEffects,
       InitSetupEffects,
       NavigationEffect,
-      GlobalSessionEffects,
+      //GlobalSessionEffects,
       EmulateUserEffects,
       IdleEffects,
     ]),
@@ -142,6 +146,8 @@ if (!environment.production) {
     HeaderService,
     MangoNavigationService,
     CurrentProjectIdMonitorService,
+    Title,
+    { provide: TitleStrategy, useClass: TemplatePageTitleStrategy },
   ],
   bootstrap: [AppComponent],
 })
@@ -149,8 +155,7 @@ export class AppModule {
   constructor(
     private router: Router,
     private facade: MangoAppFacade,
-    private mangoNavitationService: MangoNavigationService,
-    private projectIdMonitor: CurrentProjectIdMonitorService
+    private navigationService: MangoNavigationService
   ) {
     this.router.events
       .pipe(
@@ -164,90 +169,126 @@ export class AppModule {
             this.facade.clientKey$,
             this.facade.contactRecord$,
             this.facade.redirectorLinks$,
+            this.facade.redirectorMappings$,
           ])
         ),
-        filter(([url, clientKey]) => !!url && !!clientKey && !!contactRecord),
-        map(([url, clientKey, contactRecord, redirectorLinks]) => {
+        filter(([url, clientKey, contactRecord, _, redirectorMappings]) => !!url && !!clientKey && !!contactRecord && !!redirectorMappings),
+        map(([url, clientKey, _, redirectorLinks, redirectorMappings]) => {
+          const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
+            url.includes(subUrl)
+          );
+
+          url = decodeURIComponent(url);
+          let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey);
+
           if (
             redirectorLinks &&
             (url.includes('RenderForm') || url.includes('View.asp'))
           ) {
-            const objectData: RedirectorObjectData =
-              this.getObjectDataFromUrl(url);
+            const objectData: RedirectorObjectData = this.getObjectDataFromUrl(url);
+            let objectParamsQueryString = `oid=${objectData.objectId}&otid=${objectData.objectTypeId}&ottid=${objectData.objectTypeTypeId}`;
 
-            let found = redirectorLinks.find(
-              (x) =>
+            let found = redirectorLinks.find((x) =>
                 x.objectTypeId === objectData.objectTypeId &&
                 x.objectTypeTypeId === objectData.objectTypeTypeId
             );
-            let urlLink = '';
+
+            let redirectorLink = '';
             if (found && url.includes('pgMode=Edit')) {
-              urlLink = url;
-            } else urlLink = found ? found.basePageUrl : 'not found';
+              redirectorLink = url;
+            } else {
+              redirectorLink = found ? found.basePageUrl : url;
+            }
 
-            const redirectorLink = urlLink;
-            const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
-              redirectorLink.includes(subUrl)
-            );
-
-            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey);
             let v06RedirectorUrl = '';
+
             if (redirectorLink.includes('pgMode=Edit')) {
               v06RedirectorUrl = redirectorLink;
             } else {
-              if (redirectorLink.includes('?')) {
-                v06RedirectorUrl = `${redirectorLink}&OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
-              } else {
-                v06RedirectorUrl = `${redirectorLink}?OID=${objectData.objectId}&OTID=${objectData.objectTypeId}&OTTID=${objectData.objectTypeTypeId}`;
-              }
+              v06RedirectorUrl = redirectorLink.includes('?')
+                ? `${redirectorLink}&${objectParamsQueryString}`
+                : `${redirectorLink}?${objectParamsQueryString}`;
             }
 
-            //If both are true the url is not correct for the gantt chart
-            if (
-              v06RedirectorUrl.includes(
-                'WebReportWithNav.aspx/project-gantt-chart'
-              ) &&
-              !v06RedirectorUrl.includes(
-                'WebReportWithNav.aspx/project-gantt-chart/'
-              )
-            ) {
-              v06RedirectorUrl = v06RedirectorUrl.replace(
-                'WebReportWithNav.aspx/project-gantt-chart',
-                `WebReportWithNav.aspx/project-gantt-chart/${objectData.objectId}`
-              );
+            v06RedirectorUrl = this.validateGantChartUrl(v06RedirectorUrl, objectData);
+
+            if (forceRelogin) {
+              const caUrl = `${environment.CAUrl}?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${
+                encodeURIComponent(v06RedirectorUrl)}`;
+              this.navigationService.navigateToExternalUrl(caUrl);
+              return;
             }
 
-            const newUrl = forceRelogin
-              ? `${
-                  environment.CAUrl
-                }?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(
-                  v06RedirectorUrl
-                )}`
-              : `${v06Url}${v06RedirectorUrl}`;
-
-            if (newUrl.includes('.asp')) {
-              this.mangoNavitationService.navigateToUrl(newUrl);
-            } else {
-              window.location.href = newUrl;
-            }
-          } else {
-            const forceRelogin = CREM_FORCE_RELOGIN_URLS.some((subUrl) =>
-              url.includes(subUrl)
+            let redirectorMap = redirectorMappings.find((x) =>
+              x.cremUrl.toLowerCase() === v06RedirectorUrl.split('?')[0].toLowerCase()
             );
-            let v06Url = environment.cremBaseUrl.replace('[CLIENT]', clientKey);
-            const newUrl = forceRelogin
-              ? `${
-                  environment.CAUrl
-                }?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${encodeURIComponent(
-                  url
-                )}`
-              : `${v06Url}${url}`;
 
-            window.location.href = newUrl;
+            if (redirectorMap && redirectorMap.spaUrl && redirectorMap.isActive) {
+              let queryString = `?${v06RedirectorUrl?.split('?')[1] ?? ''}`;
+              let params = UtilitiesService.queryStringToParams(queryString);
+              this.navigationService.navigateTo(redirectorMap.spaUrl, params);
+              return;
+            }
+
+            this.navigationService.navigateToV06(`${v06Url}${v06RedirectorUrl}`);
+            return;
+          } 
+
+          if (forceRelogin) {           
+            const caUrl = `${environment.CAUrl}?${OAUTH_REDIRECT_QUERY_PARAM}=${v06Url}/v06/login.aspx?ReturnUrl=${
+              encodeURIComponent(url)}`
+            this.navigationService.navigateToExternalUrl(caUrl);
+            return;
           }
+
+          let redirectorMap: RedirectorMapping = null;
+
+          // Compare just page name (ignore params)
+          let redirectorMaps = redirectorMappings.filter((x) =>
+            x.cremUrl.split('?')[0].toLowerCase() === url.split('?')[0].toLowerCase()
+          );
+
+          if (redirectorMaps.length === 1) {
+            redirectorMap = redirectorMaps[0];
+          } else if (redirectorMaps.length > 1) {
+            // If there are duplicate pages, 
+            // Need to compare with the query param since it can be a page like /ListPage.aspx/?ObjectTypeId=4
+            redirectorMap = redirectorMaps.find((x) =>
+              x.cremUrl.toLowerCase() === url.toLowerCase()
+            );
+          }
+
+          if (redirectorMap && redirectorMap.spaUrl && redirectorMap.isActive) {
+            let queryString = `?${url?.split('?')[1] ?? ''}`;
+            let params = UtilitiesService.queryStringToParams(queryString);
+            this.navigationService.navigateTo(redirectorMap.spaUrl, params);
+            return;
+          }
+
+          this.navigationService.navigateToV06(`${v06Url}${url}`);
         })
       )
       .subscribe();
+  }
+
+  // Validates and correct the gant chart url
+  validateGantChartUrl(v06RedirectorUrl: string, objectData: RedirectorObjectData): string {
+    //If both are true the url is not correct for the gantt chart
+    if (
+      v06RedirectorUrl.includes(
+        'WebReportWithNav.aspx/project-gantt-chart'
+      ) &&
+      !v06RedirectorUrl.includes(
+        'WebReportWithNav.aspx/project-gantt-chart/'
+      )
+    ) {
+      v06RedirectorUrl = v06RedirectorUrl.replace(
+        'WebReportWithNav.aspx/project-gantt-chart',
+        `WebReportWithNav.aspx/project-gantt-chart/${objectData.objectId}`
+      );
+    }
+
+    return v06RedirectorUrl;
   }
 
   getObjectDataFromUrl(url: string): RedirectorObjectData {
@@ -256,6 +297,7 @@ export class AppModule {
       objectTypeId: 0,
       objectTypeTypeId: 0,
     };
+
     let splitUrl = url.split('?');
     if (splitUrl.length > 0) {
       const params = splitUrl[1].split('&');
@@ -272,6 +314,7 @@ export class AppModule {
         }
       });
     }
+    
     return objectData;
   }
 }

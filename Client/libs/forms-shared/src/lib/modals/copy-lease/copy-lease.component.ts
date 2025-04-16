@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Building, CopyLease, Premise } from '@forms/model/copyLease';
 import { DynamicFormsService } from '@forms/services/dynamic-forms.service';
 import { faL } from '@fortawesome/free-solid-svg-icons';
-import { ToastState } from '@mango/data-models/lib-data-models';
+import { ObjectType, ToastState } from '@mango/data-models/lib-data-models';
 import {
   ButtonModule,
   CremToastService,
@@ -48,6 +48,8 @@ export class CopyLeaseComponent {
   selectedPremiseId: number;
   hidePremise: boolean = true;
   loadingIndicator: boolean = true;
+  buildingObjectTypeName: string = 'Building';
+  premiseObjectTypeName: string = 'Premise';
 
   subs: Subscription[] = [];
 
@@ -62,20 +64,11 @@ export class CopyLeaseComponent {
   ngOnInit() {
     this.leaseName = this.data.lease;
     this.leaseId = this.data.leaseId;
+    this.hidePremise = this.data.hidePremise;
     this.copyBtnTitle = this.bldgReqTitle;
 
-    this.subs.push(
-      this.dashboardService
-        .getClientPreference('HidePremise')
-        .pipe(
-          tap((res) => {
-            this.hidePremise =
-              res && res.success ? (res.data == '1' ? true : false) : false;
-            this.getBuildingsData();
-          })
-        )
-        .subscribe()
-    );
+    this.getObjectTypeNames();
+    this.getBuildingsData();
   }
 
   onBuildingSelectionChanged(e) {
@@ -135,6 +128,21 @@ export class CopyLeaseComponent {
           );
         }
       })
+    );
+  }
+
+  getObjectTypeNames() {
+    this.subs.push(
+      this.dashboardService
+        .getObjectTypeNames([ObjectType.BUILDING, ObjectType.PREMISE])
+        .subscribe((result) => {
+          this.buildingObjectTypeName = result?.data?.find(
+            (x) => x.objectTypeId === ObjectType.BUILDING
+          )?.objectTypeName;
+          this.premiseObjectTypeName = result?.data?.find(
+            (x) => x.objectTypeId === ObjectType.PREMISE
+          )?.objectTypeName;
+        })
     );
   }
 

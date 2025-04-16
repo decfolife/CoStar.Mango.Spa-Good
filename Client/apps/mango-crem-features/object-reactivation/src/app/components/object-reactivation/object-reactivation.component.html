@@ -38,10 +38,17 @@
       </crem-search>
     </div>
     <div class="controls-right">
-      <div>
+      <div class="right-menu-section">
+        <crem-button
+          id="btnClearFilters"
+          type="secondary"
+          [disabled]="!hasFiltersSelected"
+          (click)="clearFilters($event)"
+          >Clear Filters</crem-button
+        >
         <crem-button
           id="btnReactivateObjects"
-          title="Select an item from the list below to reactivate."
+          [title]="reactivateButtonTitle"
           type="primary"
           [disabled]="!selectedItemIds?.length"
           (click)="reactivateSelectedObjects()"
@@ -68,6 +75,7 @@
       [loadPanel]="{ enabled: true }"
       (onContentReady)="overrideOnContentReady($event)"
       (onSelectionChanged)="onSelectionChanged($event)"
+      (onOptionChanged)="handleFilterValuePropertyChange($event)"
     >
       <dxo-load-panel [enabled]="true"></dxo-load-panel>
       <dxo-selection mode="multiple"></dxo-selection>

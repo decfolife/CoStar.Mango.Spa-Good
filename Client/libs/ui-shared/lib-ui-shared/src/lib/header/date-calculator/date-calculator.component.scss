@@ -2,24 +2,6 @@
 
 ::ng-deep {
   mango-date-calculator .cremModal.newModal {
-    .modalContent {
-      height: 250px !important;
-    }
-
-    .modalHeader {
-      padding: 8px 16px !important;
-    }
-
-    .modalFooter {
-      padding: 5px 5px !important;
-      min-width: max-content;
-      white-space: nowrap;
-
-      .footerRightControls {
-        display: flex;
-      }
-    }
-
     div > div.dayOfWeek {
       padding-left: 0 !important;
 

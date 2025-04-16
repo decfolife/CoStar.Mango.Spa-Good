@@ -1,3 +1,4 @@
+@use 'styles' as *;
 @import '../../assets/styles/colors.scss';
 @import '../../assets/styles/var.scss';
 
@@ -57,16 +58,18 @@
       }
     }
   }
-}
 
-::ng-deep {
-  dx-data-grid {
-    .dx-header-row > td > .dx-datagrid-text-content {
-      display: inline-block;
-      text-align: left;
-      vertical-align: top;
-      white-space: normal;
-    }
+  .controls-right button {
+    @include costar(margin-right, 2);
+  }
+
+  .controls-left div {
+    white-space: nowrap !important;
+    width: auto !important;
+  }
+
+  h5 {
+    white-space: nowrap;
   }
 
   .dx-popup-wrapper {
@@ -75,5 +78,50 @@
         padding: 0 !important;
       }
     }
+
+    .controls-left input {
+      max-height: 30px;
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
+    }
+
+    .search-input-container {
+      max-height: 32px;
+    }
+  }
+
+  .dx-datagrid .dx-datagrid-content-fixed .fixed-right {
+    border-left: 2px solid #ddd !important;
+  }
+
+  crem-icon {
+    cursor: pointer !important;
+  }
+
+  dx-data-grid {
+    .dx-row.dx-data-row > td {
+      cursor: default !important;
+    }
+
+    .dx-header-row > td > .dx-datagrid-text-content {
+      display: inline-block;
+      text-align: left;
+      vertical-align: top;
+      white-space: normal;
+    }
+  }
+}
+
+:host ::ng-deep {
+  .controls-right input {
+    max-height: 30px;
+    padding-bottom: 0px !important;
+  }
+  .search-input-container {
+    max-height: 32px;
+  }
+  input {
+    background-color: transparent;
+    padding-top: 2px !important;
   }
 }

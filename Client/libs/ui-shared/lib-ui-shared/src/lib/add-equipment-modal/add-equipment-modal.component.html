@@ -34,6 +34,7 @@
             hoverText="Select Portfolio"
             (selectedItems)="onPortfolioValueChange($event)"
             formControlName="portfolioList"
+            [initialSelectedValue]="initialSelectedPortfolio"
             [containerized]="false"
           >
           </crem-dropdown>
@@ -116,54 +117,50 @@
         </crem-form-control>
       </crem-form-item>
 
-      <div class="form-group-two-columns">
-        <div class="two-columns-row">
-          <crem-form-item [id]="getId(componentName, 'beginDate', 'form-item')">
-            <crem-form-label
-              [id]="getId(componentName, 'beginDate', 'label')"
-              [required]="true"
-              >Begin Date
-            </crem-form-label>
-            <crem-form-control>
-              <crem-date-picker
-                #beginDatePicker
-                tabindex="0"
-                [dateFormat]="dateFormat"
-                [showClearButton]="'true'"
-                [inputId]="'beginDate'"
-                [isRequired]="'true'"
-                [placeholderText]="'Select Date...'"
-                [showDefaultValidationTooltip]="false"
-                formControlName="beginDate"
-              >
-              </crem-date-picker>
-            </crem-form-control>
-          </crem-form-item>
-        </div>
+      <div class="layout-container">
+        <crem-form-item [id]="getId(componentName, 'beginDate', 'form-item')">
+          <crem-form-label
+            [id]="getId(componentName, 'beginDate', 'label')"
+            [required]="true"
+            >Begin Date
+          </crem-form-label>
+          <crem-form-control>
+            <crem-date-picker
+              #beginDatePicker
+              tabindex="0"
+              [dateFormat]="dateFormat"
+              [showClearButton]="'true'"
+              [inputId]="'beginDate'"
+              [isRequired]="'true'"
+              [placeholderText]="'Select Date...'"
+              [showDefaultValidationTooltip]="false"
+              formControlName="beginDate"
+            >
+            </crem-date-picker>
+          </crem-form-control>
+        </crem-form-item>
 
-        <div class="two-columns-row">
-          <crem-form-item [id]="getId(componentName, 'endDate', 'form-item')">
-            <crem-form-label
-              [id]="getId(componentName, 'endDate', 'label')"
-              [required]="true"
-              >End Date
-            </crem-form-label>
-            <crem-form-control>
-              <crem-date-picker
-                #endDatePicker
-                tabindex="0"
-                [dateFormat]="dateFormat"
-                [showClearButton]="'true'"
-                [inputId]="'endDate'"
-                [isRequired]="'true'"
-                [placeholderText]="'Select Date...'"
-                [showDefaultValidationTooltip]="false"
-                formControlName="endDate"
-              >
-              </crem-date-picker>
-            </crem-form-control>
-          </crem-form-item>
-        </div>
+        <crem-form-item [id]="getId(componentName, 'endDate', 'form-item')">
+          <crem-form-label
+            [id]="getId(componentName, 'endDate', 'label')"
+            [required]="true"
+            >End Date
+          </crem-form-label>
+          <crem-form-control>
+            <crem-date-picker
+              #endDatePicker
+              tabindex="0"
+              [dateFormat]="dateFormat"
+              [showClearButton]="'true'"
+              [inputId]="'endDate'"
+              [isRequired]="'true'"
+              [placeholderText]="'Select Date...'"
+              [showDefaultValidationTooltip]="false"
+              formControlName="endDate"
+            >
+            </crem-date-picker>
+          </crem-form-control>
+        </crem-form-item>
       </div>
 
       <crem-form-item [id]="getId(componentName, 'currencytype', 'form-item')">

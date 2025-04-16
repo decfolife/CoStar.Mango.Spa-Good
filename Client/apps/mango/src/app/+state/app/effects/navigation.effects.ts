@@ -8,6 +8,7 @@ import { combineLatest, of } from 'rxjs';
 import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
 import { ProjectsDashboardLeftNavService } from '@micro-components/services/projects-dashboard-left-nav.service';
 import { MangoSubApps } from '@mango/data-models/lib-data-models';
+import { RedirectorMapping } from 'libs/data-models/lib-data-models/src/lib/models/redirector-links.interface';
 
 @Injectable()
 export class NavigationEffect {
@@ -42,10 +43,10 @@ export class NavigationEffect {
         } else if (moduleId === 6 && currentSubApp !== MangoSubApps.ADMIN) {
           serviceCall$ =
             currentSubApp === MangoSubApps.ETL
-              ? this.leftNavService.getETLModulesNavigationLinks()
+              ? this.leftNavService.getModuleNavigationLinks(moduleId)
               : this.leftNavService.getAdminModulesNavigationLinks(moduleId);
         } else {
-            serviceCall$ = this.leftNavService.getModuleNavigationLinks(moduleId);
+          serviceCall$ = this.leftNavService.getModuleNavigationLinks(moduleId);
         }
 
         return serviceCall$.pipe(
@@ -75,14 +76,18 @@ export class NavigationEffect {
       this.actions$.pipe(
         ofType(AppActions.NAVIGATE_LEFT_NAV_MENU),
         switchMap((action) =>
-          combineLatest([of(action), this.facade.clientKey$])
+          combineLatest([
+            of(action), 
+            this.facade.clientKey$,
+            this.facade.redirectorMappings$])
         ),
         map(
-          ([{ navLink }, clientKey]: [
+          ([{ navLink }, clientKey, redirectorMappings]: [
             { navLink: SharedLeftNavLink },
-            string
+            string,
+            RedirectorMapping[]
           ]) =>
-            this.mangoNavigationService.handleSpaNavigation(navLink, clientKey)
+            this.mangoNavigationService.handleLeftNavNavigation(navLink, clientKey, redirectorMappings)
         )
       ),
     { dispatch: false }

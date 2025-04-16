@@ -181,3 +181,10 @@ export const selectRenderFormDropdownValuesByFormItemId = (
     (renderFormDropdowns) =>
       (renderFormDropdowns && renderFormDropdowns[formItemId]) || []
   );
+
+export const saveRenderFormResponse = createSelector(
+  selectDynamicFormsState,
+  (state) => ({
+    saveRenderFormResponse: state.saveRenderFormResponse as ApiResponse,
+  })
+);

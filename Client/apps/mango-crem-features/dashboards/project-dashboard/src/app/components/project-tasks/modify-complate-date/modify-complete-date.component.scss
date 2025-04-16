@@ -75,10 +75,6 @@
     font-style: italic;
   }
 
-  & > .tmcd-btn {
-    margin-left: 8px;
-  }
-
   .modalFooter {
     @include costar(border-top, gray05);
   }
@@ -92,6 +88,11 @@
 
     .tmcd-reasonInputComponent {
       width: 350px;
+
+      .input-container {
+        height: unset;
+        max-height: 250px;
+      }
     }
   }
 

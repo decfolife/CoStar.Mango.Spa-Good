@@ -6,6 +6,7 @@ import { EtlLogComponent } from './components/etl-log/etl-log.component';
 import { EtlStatusComponent } from './components/etl-status/etl-status.component';
 import { EtlTemplatesDetailsComponent } from './components/etl-templates/details/etl-templates-details.component';
 import { EtlTemplatesHistoryComponent } from './components/etl-templates/history/etl-templates-history.component';
+import { EtlDocumentImportComponent } from './components/etl-document-import/etl-document-import.component';
 import { AdminEtlComponent } from './components/admin-etl.component';
 import { MangoSubApps } from '@mango/data-models/lib-data-models';
 
@@ -17,6 +18,18 @@ const routes: Routes = [
     data: {
       moduleId: 6,
       breadCrumb: { label: 'Imports', append: true, activeLink: 'Imports' },
+    },
+  },
+  {
+    path: 'documents',
+    component: EtlDocumentImportComponent,
+    data: {
+      moduleId: 6,
+      breadCrumb: {
+        label: 'Document Import',
+        append: true,
+        activeLink: 'Document Import',
+      },
     },
   },
   {

@@ -96,6 +96,8 @@ export class AuthenticationEffects {
             action.response.accessToken
           );
 
+          this.authService.getCurrentUser().subscribe();
+
           const user: UserAuth = {
             userId: parseInt(decodedToken.userId),
             email: decodedToken.email,

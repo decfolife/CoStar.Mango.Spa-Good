@@ -6,6 +6,7 @@ const routes: Routes = [
   {
     path: '',
     component: AccountingListpageComponent,
+    title: 'Accounting Events',
     data: {
       breadCrumb: {
         label: 'Events',

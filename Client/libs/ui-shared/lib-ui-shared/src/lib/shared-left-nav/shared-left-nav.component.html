@@ -98,11 +98,14 @@
             >
               <button
                 class="flyout_anchor"
-                (click)="$event.preventDefault(); onNavLinkClick(linkObj)"
+                [ngClass]="linkObj.categoryLinkUrl === null
+                  ? 'default-cursor-nav-link' 
+                  : '' "
+                (click)="$event.preventDefault(); onCategoryNavLinkClick($event, linkObj)"
                 mat-menu-item
               >
                 <div>{{ linkObj.category }}</div>
-                <div style="margin-left: auto">
+                <div class="div-arrow-right-icon">
                   <mat-icon>keyboard_arrow_right</mat-icon>
                 </div>
               </button>
@@ -113,43 +116,47 @@
               #appMenu="matMenu"
               xPosition="after"
             >
-              <span
-                *ngFor="let link of linkObj.children"
+              <div
+                class="flyout-scroll"
                 (mouseenter)="flyOutMenuEntered = true"
                 (mouseleave)="flyOutMenuLeave()"
               >
-                <li
-                  class="listItem"
-                  [ngClass]="
-                    activeLink === link.name ? link.name + ' active' : link.name
-                  "
-                >
-                  <a
-                    mat-menu-item
-                    [id]="
-                      'left-nav__' +
-                      link?.moduleID +
-                      '-' +
-                      link?.dynamicName?.toLowerCase()?.replace(' ', '-')
-                    "
-                    [ngClass]="activeLink === link.name ? 'selected' : ''"
-                    (click)="onNavLinkClick(link)"
-                    class="flyout-navitem"
-                    [tabindex]="0"
-                  >
-                    {{ link.dynamicName }}
-                  </a>
-                </li>
-                <span *ngIf="hasSubChildLevelMenuItems(link)">
-                  <ng-container
-                    *ngTemplateOutlet="
-                      subChildLevelMenuItemsTemplate;
-                      context: { $implicit: link.subChildLevelNavLinks }
+                <span *ngFor="let link of linkObj.children">
+                  <li
+                    class="listItem"
+                    [ngClass]="
+                      activeLink === link.name
+                        ? link.name + ' active'
+                        : link.name
                     "
                   >
-                  </ng-container>
+                    <a
+                      mat-menu-item
+                      [id]="
+                        'left-nav__' +
+                        link?.moduleID +
+                        '-' +
+                        link?.dynamicName?.toLowerCase()?.replace(' ', '-')
+                      "
+                      [ngClass]="activeLink === link.name ? 'selected' : ''"
+                      (click)="onNavLinkClick(link)"
+                      class="flyout-navitem"
+                      [tabindex]="0"
+                    >
+                      {{ link.dynamicName }}
+                    </a>
+                  </li>
+                  <span *ngIf="hasSubChildLevelMenuItems(link)">
+                    <ng-container
+                      *ngTemplateOutlet="
+                        subChildLevelMenuItemsTemplate;
+                        context: { $implicit: link.subChildLevelNavLinks }
+                      "
+                    >
+                    </ng-container>
+                  </span>
                 </span>
-              </span>
+              </div>
             </mat-menu>
           </ng-template>
 
@@ -173,13 +180,16 @@
                     subChildLink?.dynamicName?.toLowerCase()?.replace(' ', '-')
                   "
                   [ngClass]="activeLink === subChildLink.name ? 'selected' : ''"
+                  [ngStyle]="{
+                    color: subChildLink.subChildLevel > 0 ? '#162f5a' : '#000',
+                    'font-size':
+                      subChildLink.subChildLevel > 0 ? '13px' : '14px',
+                    'padding-left': (1 + subChildLink.subChildLevel) * 16 + 'px'
+                  }"
                   (click)="onNavLinkClick(subChildLink)"
                   class="flyout-navitem"
                   [tabindex]="0"
-                  [innerHTML]="
-                    spaceCharacter.repeat(subChildLink.subChildLevel * 4) +
-                    subChildLink.dynamicName
-                  "
+                  [innerHTML]="subChildLink.dynamicName"
                 >
                 </a>
               </li>

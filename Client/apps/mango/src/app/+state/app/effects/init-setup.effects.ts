@@ -57,7 +57,7 @@ export class InitSetupEffects {
       ofType(AppActions.SET_ADMIN_FLAGS),
       switchMap((_) => this.facade.clientKey$),
       filter((clientKey) => !!clientKey),
-      switchMap((clientKey) => this.settingsService.getAdminFlags(clientKey)),
+      switchMap((_) => this.settingsService.getAdminFlags()),
       filter((flags) => !!flags),
       map((flags) => AppActions.setAdminFlagsSuccess({ flags }))
     )
@@ -68,12 +68,27 @@ export class InitSetupEffects {
       ofType(AppActions.LOAD_REDIRECTOR_LINKS),
       switchMap((_) => this.facade.clientKey$),
       filter((clientKey) => !!clientKey),
-      switchMap((clientKey) =>
-        this.settingsService.getRedirectorLinks(clientKey)
+      switchMap((_) =>
+        this.settingsService.getRedirectorLinks()
       ),
       filter((links) => !!links),
       map((links) =>
         AppActions.loadRedirectorLinksSuccess({ redirectorLinks: links })
+      )
+    )
+  );
+
+  loadRedirectorMappings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AppActions.LOAD_REDIRECTOR_MAPPINGS),
+      switchMap((_) => this.facade.clientKey$),
+      filter((clientKey) => !!clientKey),
+      switchMap((_) =>
+        this.settingsService.getRedirectorMappings()
+      ),
+      filter((mappings) => !!mappings),
+      map((mappings) =>
+        AppActions.loadRedirectorMappingsSuccess({ redirectorMappings: mappings })
       )
     )
   );
@@ -149,8 +164,8 @@ export class InitSetupEffects {
         combineLatest([this.facade.authenticatedUser$, this.facade.clientKey$])
       ),
       filter(([user, clientKey]) => !!user && !!clientKey),
-      switchMap(([user, clientKey]) =>
-        this.settingsService.getClientSettingsForUser(clientKey, user.contactId)
+      switchMap(([_]) =>
+        this.settingsService.getClientSettingsForUser()
       ),
       filter((clientSettings) => !!clientSettings),
       map((clientSettings) =>

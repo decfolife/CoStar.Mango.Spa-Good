@@ -33,9 +33,6 @@ fa-icon {
 }
 .footerRightControls {
   display: flex;
-  & > .aet-btn {
-    margin-left: 8px;
-  }
   .modalFooter {
     @include costar(border-top, gray05);
   }

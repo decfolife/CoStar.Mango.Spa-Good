@@ -1,19 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
-import { environment } from 'apps/mango/src/environments/environment.local';
-import { ApiResponse } from '@mango/data-models/lib-data-models';
+import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
 import { Observable } from 'rxjs';
-import { EndpointService } from '@mango/core-shared';
+import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Injectable()
 export class ArchiveActionService extends EndpointService {
+  objectActionsUrl: string = UtilitiesService.getBaseApiUrl(Api.objectActions);
+
   constructor(protected http: HttpClient, @Optional() facade: MangoAppFacade) {
     super(http, facade);
   }
 
   public checkSystemUser(contactID: number): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/CheckSystemUser`;
+    let url = `${this.objectActionsUrl}objectActions/CheckSystemUser`;
     const param = {
       ContactId: contactID,
     };
@@ -24,7 +25,7 @@ export class ArchiveActionService extends EndpointService {
   public GetCompanyVendorsCustomers(
     companyID: number
   ): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/CompanyVendorsCustomers`;
+    let url = `${this.objectActionsUrl}objectActions/CompanyVendorsCustomers`;
     const param = {
       CompanyID: companyID,
     };
@@ -32,17 +33,17 @@ export class ArchiveActionService extends EndpointService {
   }
 
   public archiveContact(contactID: number): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/ArchiveContact?contactID=${contactID}`;
+    let url = `${this.objectActionsUrl}objectActions/ArchiveContact?contactID=${contactID}`;
     return this.callHttpPost(url, 'ArchiveContact' + contactID, {});
   }
 
   public archiveCompany(companyID: number): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/ArchiveCompany?companyID=${companyID}`;
+    let url = `${this.objectActionsUrl}objectActions/ArchiveCompany?companyID=${companyID}`;
     return this.callHttpPost(url, 'ArchiveCopmany' + companyID, {});
   }
 
   public getContactName(contactID: number): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/ContactName`;
+    let url = `${this.objectActionsUrl}objectActions/ContactName`;
     const param = {
       ContactId: contactID,
     };
@@ -55,7 +56,7 @@ export class ArchiveActionService extends EndpointService {
     listType,
     isPremiseHidden = 0
   ): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/GetBuildingsPremiseLeaseAssociations`;
+    let url = `${this.objectActionsUrl}objectActions/GetBuildingsPremiseLeaseAssociations`;
     let param = {
       LeaseAbstractId: leaseAbstractId,
       ListType: listType,
@@ -71,7 +72,7 @@ export class ArchiveActionService extends EndpointService {
     listType,
     isPremiseHidden = 0
   ): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/GetBuildingPremiseArchiveData`;
+    let url = `${this.objectActionsUrl}objectActions/GetBuildingPremiseArchiveData`;
     let param = {
       BuildingId: buildingId,
       PremiseId: premiseId,
@@ -88,7 +89,7 @@ export class ArchiveActionService extends EndpointService {
     leaseId,
     isPremiseHidden
   ): Observable<ApiResponse> {
-    let url = `${environment.appUrls.objectActions}objectActions/ArchiveBuildingPremiseLease`;
+    let url = `${this.objectActionsUrl}objectActions/ArchiveBuildingPremiseLease`;
     let param = {
       BuildingId: buildingId,
       PremiseId: premiseId,

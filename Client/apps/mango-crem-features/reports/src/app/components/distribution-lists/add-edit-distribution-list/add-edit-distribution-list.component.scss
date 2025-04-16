@@ -69,8 +69,10 @@ h3.label {
   }
 }
 
+
+
 ::ng-deep {
-  #addEditDistributionListModal {
+  #addEditDistributionListModal  {
     color: colors.$black;
     .aedl-textInput .mat-mdc-form-field {
       width: 100%;
@@ -193,3 +195,8 @@ h3.label {
     }
   }
 }
+
+
+
+
+

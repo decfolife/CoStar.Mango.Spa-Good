@@ -2,11 +2,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EndpointService } from '@mango/core-shared/lib-core-shared';
-import { SaveRenderFormCommand } from '@forms/model/dynamic-forms.interface';
+import {
+  SaveRenderFormCommand,
+  UpdateLeaseVerificationStatusRequest,
+} from '@forms/model/dynamic-forms.interface';
 import { ApiResponse } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
 import { Api } from '@mango/data-models/lib-data-models';
 import { CopyLease } from '@forms/model/copyLease';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +46,8 @@ export class DynamicFormsService extends EndpointService {
     });
   }
 
-  getFormSections(formId: number): Observable<any> {
-    const url = `${this.formWizardUrl}AdminForms/GetFormSections/${formId}`;
+  getFormSections(formId: number, groupId: number): Observable<any> {
+    const url = `${this.formWizardUrl}AdminForms/GetFormSections/${formId}/${groupId}`;
     return this.callHttpGet(url, 'GetFormSections');
   }
 
@@ -142,9 +146,11 @@ export class DynamicFormsService extends EndpointService {
   getRenderFormFormItemDropdowns(
     formId: number,
     objectId: number,
-    objectTypeId: number
+    objectTypeId: number,
+    parentObjectId: number,
+    parentObjectTypeId: number
   ): Observable<ApiResponse> {
-    const url = `${this.formWizardUrl}RenderForms/GetFormItemDropdownValues/${formId}/${objectId}/${objectTypeId}`;
+    const url = `${this.formWizardUrl}RenderForms/GetFormItemDropdownValues/${formId}/${objectId}/${objectTypeId}/${parentObjectId}/${parentObjectTypeId}`;
     return this.callHttpGet(url, 'GetFormItemDropdownValues');
   }
 
@@ -161,6 +167,15 @@ export class DynamicFormsService extends EndpointService {
   getBuildingPremises(buildingId) {
     const url = `${this.formWizardUrl}RenderForms/getbuildingpremises/${buildingId}`;
     return this.callHttpGet(url, 'GetBuildingPremises');
+  }
+
+  getChangeHistory(
+    controlId: number,
+    objectId: number,
+    objectTypeId: number
+  ): Observable<any> {
+    const url = `${this.formWizardUrl}RenderForms/getchangehistory/${controlId}/${objectId}/${objectTypeId}`;
+    return this.callHttpGet(url, 'GetChangeHistory');
   }
 
   copyLease(copyLease: CopyLease) {
@@ -189,8 +204,11 @@ export class DynamicFormsService extends EndpointService {
     country: string,
     state: string
   ): Observable<ApiResponse> {
-    const url = `${this.projectUrl}projects/GetBuildings?country=${country}&state=${state}`;
-    return this.callHttpGet(url, 'getBuildingsForActions');
+    const url = `${this.projectUrl}projects/GetBuildings`;
+    return this.callHttpPost(url, 'getBuildingsForActions', {
+      country: country,
+      state: state,
+    });
   }
 
   getPremises(buildingId: number): Observable<ApiResponse> {
@@ -208,7 +226,7 @@ export class DynamicFormsService extends EndpointService {
     return this.callHttpGet(url, 'getAssociateBuildingToProject');
   }
 
-  setAssociateBuildingToProject(buildingInfo: number): Observable<ApiResponse> {
+  setAssociateBuildingToProject(buildingInfo: any): Observable<ApiResponse> {
     const url = `${this.projectUrl}projects/AssociateBuildingToProject/`;
     return this.callHttpPost(
       url,
@@ -222,8 +240,88 @@ export class DynamicFormsService extends EndpointService {
     return this.callHttpGet(url, 'getAssociateLeaseToProject');
   }
 
-  setAssociateLeaseToProject(leaseInfo: number): Observable<ApiResponse> {
+  getComposeEmailInfo(objectId: number, ObjectTypeId: number) {
+    const url = `${this.formWizardUrl}RenderForms/getcomposeemailinfo/${objectId}/${ObjectTypeId}`;
+    return this.callHttpGet(url, 'getcomposeemailinfo');
+  }
+
+  setAssociateLeaseToProject(leaseInfo: any): Observable<ApiResponse> {
     const url = `${this.projectUrl}projects/AssociateLeaseToProject`;
     return this.callHttpPost(url, 'setAssociateLeaseToProject', leaseInfo);
+  }
+
+  addBookmark(bookmarkInfo: any): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/AddBookmark`;
+    return this.callHttpPost(url, 'addBookmark', bookmarkInfo);
+  }
+
+  download(
+    formId: number,
+    objectId: number,
+    objectTypeId: number
+  ): Observable<any> {
+    const url = `${this.formWizardUrl}adminForms/download?formId=${formId}&objectId=${objectId}&objectTypeId=${objectTypeId}`;
+    return this.http.get(url, {
+      observe: 'response',
+      responseType: 'blob',
+    });
+  }
+
+  getClauseTypes(): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/GetClauseTypes`;
+    return this.callHttpGet(url, 'getClauseTypes');
+  }
+
+  getClauseBanks(clauseTypeId: number): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/GetClauseBanks/${clauseTypeId}`;
+    return this.callHttpGet(url, 'getClauseBanks');
+  }
+
+  saveClauseBank(clauseBankInfo: any): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/SaveClauseBank`;
+    return this.callHttpPost(url, 'saveClauseBank', clauseBankInfo);
+  }
+
+  deleteClauseBank(clauseBankId: number): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/DeleteClauseBank/${clauseBankId}`;
+    return this.callHttpPost(url, 'deleteClauseBank', null);
+  }
+
+  downloadDocument(filename: string): Observable<HttpResponse<Blob>> {
+    const url = `${this.formWizardUrl}FormWizards/download/${filename}`;
+    return this.downloadFile(url);
+  }
+
+  getLeaseVerificationStatuses(
+    objectId: number,
+    ObjectTypeId: number,
+    objectTypeTypeId: number
+  ) {
+    const url = `${this.formWizardUrl}RenderForms/GetLeaseVerificationStatuses/${objectId}/${ObjectTypeId}/${objectTypeTypeId}`;
+    return this.callHttpGet(url, 'getLeaseVerificationStatuses');
+  }
+
+  validateLeaseVerificationStatusRequiredFields(
+    formId: number,
+    objectId: number,
+    ObjectTypeId: number,
+    objectTypeTypeId: number
+  ) {
+    const url = `${this.formWizardUrl}RenderForms/ValidateLeaseVerificationStatusRequiredFields/${formId}/${objectId}/${ObjectTypeId}/${objectTypeTypeId}`;
+    return this.callHttpGet(
+      url,
+      'validateLeaseVerificationStatusRequiredFields'
+    );
+  }
+
+  updateLeaseVerificationStatus(
+    leaseVerificationStatus: UpdateLeaseVerificationStatusRequest
+  ): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/UpdateLeaseVerificationStatus`;
+    return this.callHttpPut(
+      url,
+      'updateLeaseVerificationStatus',
+      leaseVerificationStatus
+    );
   }
 }

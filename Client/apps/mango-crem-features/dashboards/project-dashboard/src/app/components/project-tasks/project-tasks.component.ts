@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   faCircleCheck,
   faCircleXmark,
@@ -60,6 +60,7 @@ import {
 } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import {
+  debounceTime,
   filter,
   first,
   map,
@@ -159,6 +160,7 @@ const columnFunctionsDataFields = {
   APPROVERS: 'Approvers',
   FILESCOUNT: 'FilesCount',
   NOTESCOUNT: 'NotesCount',
+  USERAPPROVALSTATUS: 'UserApprovalStatus',
 };
 
 // link data-column click to action permissions
@@ -253,6 +255,8 @@ export class ProjectTasksComponent
   private lastDatePickerChangedName: string = null;
   focusedRowKey: any;
   focusedRowData: any;
+  canOpenPopup: boolean = true;
+  private enterOrSpaceKeyPress$ = new Subject<void>();
 
   //***for views
   currentListViewName: string;
@@ -341,6 +345,10 @@ export class ProjectTasksComponent
         this.dateFormat = this.isUserDatesEU ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
       })
     );
+
+    this.enterOrSpaceKeyPress$.pipe(debounceTime(500)).subscribe(() => {
+      this.canOpenPopup = true;
+    });
   }
 
   ngAfterContentInit(): void {
@@ -690,8 +698,8 @@ export class ProjectTasksComponent
     }
 
     let dialogRef = this.dialog.open(ModifyCompleteDateComponent, {
-      height: '350px',
-      width: '500px',
+      minHeight: '350px',
+      width: '550px',
       maxWidth: '800px',
       maxHeight: '600px',
       panelClass: 'modifyCompleteDateModal',
@@ -884,13 +892,6 @@ export class ProjectTasksComponent
     );
   }
 
-  onFocusedRowChanged(event: any) {
-    if (event.rowIndex !== -1) {
-      this.focusedRowKey = event.component.option('focusedRowKey');
-      this.focusedRowData = event.row.data;
-    }
-  }
-
   onKeyDown(e) {
     if (e.event.key === ' ' || e.event.key == 'Enter') {
       const gridInstance = this.projectTasksGrid.instance;
@@ -899,11 +900,23 @@ export class ProjectTasksComponent
       if (focusedColumnIndex == undefined || focusedRowIndex == -1) {
         return;
       } else {
+        this.focusedRowKey = gridInstance.option('focusedRowKey');
+        this.focusedRowData = gridInstance.getNodeByKey(
+          this.focusedRowKey
+        )?.data;
         const datafield =
           gridInstance.getVisibleColumns()[focusedColumnIndex]?.dataField;
         if (Object.values(columnFunctionsDataFields).includes(datafield)) {
           e.event.preventDefault();
-          this.processColumnFunction(datafield, this.focusedRowData);
+          this.enterOrSpaceKeyPress$.next();
+          if (this.canOpenPopup) {
+            this.canOpenPopup = false;
+            this.processColumnFunction(
+              datafield,
+              this.focusedRowData,
+              e.event.target
+            );
+          }
         } else {
           const focusedRowElement = gridInstance.getRowElement(
             gridInstance.getRowIndexByKey(this.focusedRowKey)
@@ -919,22 +932,50 @@ export class ProjectTasksComponent
     }
   }
 
-  displayTaskDetail(e) {
+  onCellClick(e) {
     if (e.rowIndex == -1 || e.rowType !== 'data') {
       return;
     }
 
     const datafield = e.column.dataField;
     const data = e.data;
-    if (Object.values(columnFunctionsDataFields).includes(datafield)) {
+    if (
+      Object.values(columnFunctionsDataFields).includes(datafield) &&
+      datafield !== columnFunctionsDataFields.USERAPPROVALSTATUS
+    ) {
       e.event.preventDefault();
       this.processColumnFunction(datafield, data);
     }
   }
 
-  processColumnFunction(datafield, data) {
-    if (datafield == 'ProjectMilestoneUserCompletedDate') {
+  processColumnFunction(datafield, data, eventTarget?: any) {
+    if (
+      datafield == columnFunctionsDataFields.PROJECTMILESTONEUSERCOMPLETEDDATE
+    ) {
       this.modifyCompleteDate(data);
+      return;
+    }
+
+    if (datafield == columnFunctionsDataFields.USERAPPROVALSTATUS) {
+      if (data.UserApprovalStatus == this.taskUserApprovalStatus.NOT_ASSIGNED) {
+        this.addOrEditAssignees(data);
+      } else if (
+        data.UserApprovalStatus == this.taskUserApprovalStatus.COMPLETED
+      ) {
+        this.modifyCompleteDate(data);
+      } else if (
+        data.UserApprovalStatus == this.taskUserApprovalStatus.APPROVE ||
+        data.UserApprovalStatus == this.taskUserApprovalStatus.REJECT
+      ) {
+        this.approveOrRejectTask(data, data.UserApprovalStatus);
+      } else if (
+        data.UserApprovalStatus == this.taskUserApprovalStatus.APPROVE_REJECT
+      ) {
+        let action = eventTarget.classList.contains('pt-approveBtn')
+          ? this.taskUserApprovalStatus.APPROVE
+          : this.taskUserApprovalStatus.REJECT;
+        this.approveOrRejectTask(data, action);
+      }
       return;
     }
 
@@ -2225,7 +2266,7 @@ export class ProjectTasksComponent
       });
 
       const newUrl = this.router.serializeUrl(urlTree);
-      window.location.href = newUrl; // This will reload the whole page
+      this.router.navigateByUrl(newUrl); // This will reload the whole page
     });
   }
 
@@ -2335,11 +2376,11 @@ export class ProjectTasksComponent
       taskData.UseEmailApprovals == 'Yes'
         ? true
         : false;
-    let popupHeight = action == 'Approve' ? '340px' : '220px';
+    let popupHeight = action == 'Approve' ? '380px' : '260px';
     let dialogRef = this.dialog.open(TaskApproveOrRejectComponent, {
       height: popupHeight,
       width: '600px',
-      maxHeight: '500px',
+      maxHeight: '600px',
       panelClass: 'taskApprovalOrRejectModal',
       data: {
         taskData: taskData,

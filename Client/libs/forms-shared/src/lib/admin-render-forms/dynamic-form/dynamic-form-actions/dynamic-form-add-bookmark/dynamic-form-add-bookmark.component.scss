@@ -1,0 +1,31 @@
+@use 'styles' as *;
+
+:host ::ng-deep .modalFooter {
+  .addBookmarkFooter {
+    display: flex;
+
+    crem-button {
+      padding: 4px;
+    }
+  }
+}
+
+::ng-deep .df-add-book-mark-component {
+  .modalContent {
+    overflow-x: hidden !important;
+  }
+
+  .df-add-book-mark-loader {
+    margin: auto;
+    position: relative;
+    top: 48%;
+  }
+}
+
+.add-bookmark crem-input-label {
+  font-weight: bold;
+}
+
+.error {
+  color: red;
+}

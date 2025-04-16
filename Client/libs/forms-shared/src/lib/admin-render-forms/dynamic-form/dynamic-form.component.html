@@ -1,6 +1,8 @@
-<div *ngIf="isLoading">
-  <crem-loader></crem-loader>
-</div>
+<crem-skeleton
+  *ngIf="isLoading || isActionLoading"
+  [instances]="_skeletonInstances"
+  type="card"
+></crem-skeleton>
 
 <div *ngIf="errorLoading">
   <div class="center" style="margin-top: 20px">
@@ -13,14 +15,14 @@
   </div>
 </div>
 
-<div *ngIf="!errorLoading">
+<div *ngIf="!errorLoading && !reload" id="df-formContainer-formContainer">
   <div id="scroll-to-top-div"></div>
-  <form [formGroup]="form">
+  <form [formGroup]="form" [ngClass]="{ 'df-editModeOn': editMode }">
     <div id="dynamic-forms-container">
       <div *ngIf="!isLoading" class="page-header">
         <crem-page-header
-          [tabTitle]="getTabTitle()"
-          [pageTitle]="getPageTitle()"
+          [tabTitle]="tabTitle"
+          [pageTitle]="pageTitle"
           [showListOrMapViewButtons]="false"
           [showSettingsButton]="!isRenderForm"
           [customActions]="true"
@@ -38,7 +40,7 @@
             <crem-button
               *ngIf="
                 isRenderForm &&
-                form.get('objectType').value.toLowerCase().trim() == 'lease'
+                form.get('objectType').value.toLowerCase().trim() === 'lease'
               "
               [id]="'dynamic-forms-alerts-btn'"
               [text]="'Alerts (2)'"
@@ -159,6 +161,7 @@
             <span *ngFor="let actionButton of buttonFormActions$ | async">
               <crem-button
                 *ngIf="isRenderForm"
+                class="df-headerActionsButton"
                 [id]="actionButton.id"
                 [text]="actionButton.text"
                 [btnStyle]="'flat'"
@@ -202,6 +205,15 @@
               (click)="saveForm(); $event.preventDefault()"
             ></crem-button>
             <!-- End Design mode buttons -->
+            <crem-icon
+              *ngIf="allowedObjectTypes.includes(objectTypeId)"
+              [icon]="'faBookmark'"
+              [pack]="'solid'"
+              (click)="addBookmark(); $event.preventDefault()"
+              [color]="'primary'"
+              [title]="'Click to create bookmark.'"
+            >
+            </crem-icon>
           </div>
         </crem-page-header>
       </div>
@@ -226,18 +238,19 @@
               [formGroupName]="'section' + section.formSectionID"
               [editMode]="editMode"
               [isRenderForm]="isRenderForm"
+              [hidePremise]="hidePremise"
               [hasParentObjectLinker]="hasParentObjectLinker"
               [isSuperUser]="isSuperUser"
               [canLoadMap]="canLoadMap"
+              [allFormItemsKeys]="allFormItemsKeys"
               (hasParentObjectLinkerChange)="
                 handleHasParentObjectLinkerChange($event)
               "
-            >
-            </mango-dynamic-form-section>
+            ></mango-dynamic-form-section>
             <div
               appAmIVisible
               (elementVisible)="getMoreSections($event, section.id)"
-              [isTargetElement]="section.id == sectionsVisible.length"
+              [isTargetElement]="section.id === sectionsVisible.length"
             ></div>
           </div>
         </div>

@@ -1,66 +1,67 @@
 @use 'styles' as *;
 @use 'colors';
 ::ng-deep {
-  .mat-mdc-menu-panel {
-    &.distributionListsActionsMenu,
-    &.distributionListsMatMenu {
-      min-height: unset;
-      .mat-mdc-menu-content {
-        padding: 0 !important;
-      }
-      .mat-mdc-menu-item {
-        padding: 8px 16px;
-        height: 34px;
-        min-height: 34px;
-        display: flex;
-        line-height: 34px;
-      }
-    }
+	.mat-mdc-menu-panel {
+		&.distributionListsActionsMenu,
+		&.distributionListsMatMenu {
+			min-height: unset;
+			.mat-mdc-menu-content {
+				padding: 0 !important;
+			}
+			.mat-mdc-menu-item {
+				padding: 8px 16px;
+				height: 34px;
+				min-height: 34px;
+				display: flex;
+				line-height: 34px;
+			}
+		}
 
-    &.distributionListActionsMenu,
-    &.distributionListMemberActionsMenu {
-      min-height: unset;
-      & .mat-mdc-menu-content {
-        padding: 0;
-      }
-    }
-  }
+		&.distributionListActionsMenu,
+		&.distributionListMemberActionsMenu {
+			min-height: unset;
+			& .mat-mdc-menu-content {
+				padding: 0;
+			}
+		}
+	}
 
-  .mat-mdc-menu-panel.distributionListActionsMenu,
-  .mat-mdc-menu-panel.distributionListMemberActionsMenu {
-    .mat-mdc-menu-content > button {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      padding: 8px 16px;
-      line-height: 18px;
-      min-height: unset;
-      height: 34px;
-      width: 100%;
-      border: none;
-      background-color: $white;
+	.mat-mdc-menu-panel.distributionListActionsMenu,
+	.mat-mdc-menu-panel.distributionListMemberActionsMenu {
+		.mat-mdc-menu-content > button {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			padding: 8px 16px;
+			line-height: 18px;
+			min-height: unset;
+			height: 34px;
+			width: 100%;
+			border: none;
+			background-color: $white;
 
-      &:hover {
-        background-color: #cae3fe;
-      }
+			&:hover {
+				background-color: #cae3fe;
+			}
 
-      &:focus {
-        border: 2px solid $costarLightBlue;
-        background-color: $white;
-      }
-    }
-  }
+			&:focus {
+				border: 2px solid $costarLightBlue;
+				background-color: $white;
+			}
+		}
+	}
 }
+
 
 .distribution-lists-container {
   height: 100%;
   overflow: hidden;
+		
+	td.dx-pointer-events-none {
+		border-left: 0;
+	}
 
-  td.dx-pointer-events-none {
-    border-left: 0;
-  }
-
-  .dl-toolBar-wrapper {
+	.dl-toolBar-wrapper {
     width: 100% !important;
     border-bottom: 1px solid #c5c5c5;
     position: sticky !important;
@@ -84,14 +85,14 @@
     .controls-right {
       margin-left: 20px;
     }
-  }
+	}
 
-  .searchDistributionLists,
+	.searchDistributionLists,
   .addDistributionLists {
     margin-left: 8px;
   }
 
-  .dl-dataGrid-wrapper {
+	.dl-dataGrid-wrapper {
     height: calc(100% - 48px);
     font-size: 16px;
   }
@@ -115,106 +116,139 @@
       }
     }
 
-    .dx-data-grid td.dx-command-edit {
-      height: 34px !important;
-    }
+		.dx-data-grid td.dx-command-edit {
+			height: 34px !important;
+		}
 
-    crem-loader {
-      position: relative;
-      top: 40%;
-      left: 45%;
-    }
+		crem-loader {
+			position: relative;
+			top: 40%;
+			left: 45%;
+		}
+	
+		.badge {
+			background-color: $primary-light;
+			height: 16px;
+			width: 18px;
+			color: white;
+			border-radius: 50%;
+			margin-left: 2px;
+			align-self: center;
+		}
+	}
 
-    .badge {
-      background-color: $primary-light;
-      height: 16px;
-      width: 18px;
-      color: white;
-      border-radius: 50%;
-      margin-left: 2px;
-      align-self: center;
-    }
-  }
+	::ng-deep {
+		button.mat-menu-trigger.btn-link:focus,
+		button.actionsButton:focus,
+		button.moreButton:focus,
+		button.addButton:focus,
+		button.rowActionsButton:focus .mat-icon,
+		button.crem-list-view-button:focus,
+		cs-search mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused,
+		.clearFilters button.btn-secondary:focus,
+		.mat-form-field.mat-focused {
+			outline: none;
+			box-shadow: 0 0 0 0.1rem colors.$primary;
+		}
 
-  ::ng-deep {
-    button.mat-menu-trigger.btn-link:focus,
-    button.actionsButton:focus,
-    button.moreButton:focus,
-    button.addButton:focus,
-    button.rowActionsButton:focus .mat-icon,
-    button.crem-list-view-button:focus,
-    cs-search
-      mat-form-field
-      .mat-mdc-text-field-wrapper.mdc-text-field--focused,
-    .clearFilters button.btn-secondary:focus,
-    .mat-form-field.mat-focused {
-      outline: none;
-      box-shadow: 0 0 0 0.1rem colors.$primary;
-    }
+		cs-search mat-form-field .mat-mdc-text-field-wrapper.mdc-text-field--focused {
+			border: none;
+		}
 
-    cs-search
-      mat-form-field
-      .mat-mdc-text-field-wrapper.mdc-text-field--focused {
-      border: none;
-    }
-
-    td.dx-cell-focus-disabled.dx-master-detail-cell {
-      background-color: colors.$lightGray;
-    }
-  }
+		td.dx-cell-focus-disabled.dx-master-detail-cell {
+			background-color: colors.$lightGray;
+		}
+	}
 }
 
 ::ng-deep {
-  .distribution-lists-container .distributionList-grid,
-  #aedl-selectedMembers-container #addDistributionList-grid {
-    td {
-      text-align: center;
-      vertical-align: middle !important;
-      padding: 3px 7px !important;
-      min-height: 47.33px;
-      height: 47.33px;
-      border-left: none !important;
-      border-right: none;
+	.distribution-lists-container .distributionList-grid,
+	#aedl-selectedMembers-container #addDistributionList-grid {
+		td {
+			text-align: center;
+			vertical-align: middle !important;
+			padding: 3px 7px !important;
+			min-height: 47.33px;
+			height: 47.33px;
+			border-left: none !important;
+			border-right: none;
+	
+			&.wrapOption-column {
+				white-space: nowrap;
+			}
+		}
 
-      &.wrapOption-column {
-        white-space: nowrap;
-      }
-    }
+		table.dx-datagrid-table {
+			tbody {
+				tr.dx-row.dx-data-row {
+					&:hover {
+						cursor: default;
+					}
+					&.dx-row-alt {
+						&:hover {
+							cursor: default;
+							td {
+								cursor: default;
+								background: #c2daf4 !important;
+							}
+						}
 
-    tr.dx-edit-row td,
-    tr.dx-edit-row:hover td {
-      background-color: colors.$costarMediumBlue !important;
-    }
-    td.dx-command-edit {
-      div.actionsMenuTemplate {
-        transform: translateY(20%);
-      }
-    }
+						&.dx-state-hover,
+						&.dx-state-hover.dx-selection {
+						  td:hover {
+							background: #c2daf4 !important;
+							}
+						}
+					}
 
-    tr.dx-row {
-      &.dx-data-row,
-      &.dx-group-row {
-        td {
-          padding: 3px 7px;
-          border-bottom: 1px solid lightgray;
-        }
-        border-bottom: 1px solid lightgray;
-        line-height: 12px;
-      }
-    }
+					&.dx-state-hover,
+					&.dx-state-hover.dx-selection {
+					  td:hover {
+						background: #c2daf4 !important;
+					  }
+					}
+				}
+			}
+		}
 
-    .dx-row.dx-data-row {
-      line-height: 12px !important; //decreases the height of the data row on the grid
-    }
+		tr.dx-edit-row td,
+		tr.dx-edit-row:hover td {
+			background-color: colors.$costarMediumBlue !important;
+		}
+		td.dx-command-edit {
+			div.actionsMenuTemplate {
+				transform: translateY(20%);
 
-    .dx-datagrid-nodata {
-      font-weight: bold;
-    }
-
-    .dx-checkbox-icon {
-      border: 1px solid colors.$darkGray;
-    }
-  }
+				.btn.btn-link.tam-edit.right-pad {
+					padding-right: 15px;
+				}
+			}
+		}	
+	
+		tr.dx-row {
+			&.dx-data-row,
+			&.dx-group-row {
+				td {
+					padding: 3px 7px;
+					border-bottom: 1px solid lightgray;
+				}
+				border-bottom: 1px solid lightgray;
+				line-height: 12px;
+			}
+		}
+	
+		.dx-row.dx-data-row {
+			line-height: 12px !important; //decreases the height of the data row on the grid
+		}
+	
+		.dx-datagrid-nodata {
+			font-weight: bold;
+		}
+	
+		.dx-checkbox-icon {
+			border: 1px solid colors.$darkGray;
+		}
+	}
 }
 
 ::ng-deep {
@@ -264,43 +298,45 @@
     }
   }
 
-  .distribution-lists-members-container {
-    .distribution-lists-members-dataGrid-wrapper {
-      padding: 4px 24px;
-      tr.dx-header-row {
-        background-color: white;
-        border: 1px solid colors.$darkBorderGray;
-        td {
-          border-bottom: none;
-        }
-      }
-    }
-  }
+	.distribution-lists-members-container {
+		.distribution-lists-members-dataGrid-wrapper {
+			padding: 4px 24px;
+			tr.dx-header-row {
+				background-color: white;
+				border: 1px solid colors.$darkBorderGray;
+				td {
+					border-bottom: none;
+				}
+			}
+		}
+	}
 
-  #aedl-membersList {
-    height: 200px;
-    .dx-list-item {
-      border-top: none;
-      color: black;
-      .dx-list-item-content {
-        padding: 4px;
-      }
-    }
-    .aedl-itemDisabled {
-      pointer-events: none;
-      color: colors.$darkGray;
-      cursor: default;
-      mat-icon {
-        color: lightgray;
-      }
-    }
-    fa-icon {
-      margin-right: 8px;
-      transform: translateY(2px);
-    }
-
-    .aedl-addPlusIcon mat-icon.mat-icon {
-      transform: scale(0.8) translateY(9px);
-    }
-  }
+	#aedl-membersList {
+		height: 200px;
+		.dx-list-item {
+			border-top: none;
+			color: black;
+			.dx-list-item-content {
+				padding: 4px;
+			}
+		}
+		.aedl-itemDisabled {
+			pointer-events: none;
+			color: colors.$darkGray;
+			cursor: default;
+			mat-icon {
+				color: lightgray;
+			}
+		}
+		fa-icon {
+			margin-right: 8px;
+			transform: translateY(2px);
+		}
+	
+		.aedl-addPlusIcon mat-icon.mat-icon {
+			transform: scale(0.8) translateY(9px);
+		}
+	}
+	
 }
+

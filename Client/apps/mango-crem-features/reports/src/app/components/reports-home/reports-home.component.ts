@@ -8,6 +8,7 @@ import { SearchComponent } from '@mango/ui-shared/cosmos';
 import { CriteriaReportComponent } from '../modal/criteria-report/criteria-report.component';
 import { LargeModal } from '@mangoSpa/src/assets/enum/modal.model';
 import { ShareReportComponent } from './modals/share-report/share-report.component';
+import { Router } from '@angular/router';
 
 // Magic to access objects declared outside Angular
 declare var launchManageTags;
@@ -51,7 +52,8 @@ export class ReportsHomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private reportsService: ReportsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnDestroy() {
@@ -313,8 +315,9 @@ export class ReportsHomeComponent implements OnInit, OnDestroy {
 
   public createReport() {
     // route
-    window.location.href =
-      '/v06/reporting/AdHocReporting/AdHocCreateEditReport.aspx?OTID=7';
+    this.router.navigateByUrl(
+      '/v06/reporting/AdHocReporting/AdHocCreateEditReport.aspx?OTID=7'
+    );
   }
 
   tagSelected(selectedTags) {
@@ -369,7 +372,9 @@ export class ReportsHomeComponent implements OnInit, OnDestroy {
 
   editReport(e) {
     let reportId = e.data.id;
-    window.location.href = `/v06/Reporting/AdhocReporting/AdHocCreateEditReport.aspx?ReportID=${reportId}&hasRDL=true`;
+    this.router.navigateByUrl(
+      `/v06/Reporting/AdhocReporting/AdHocCreateEditReport.aspx?ReportID=${reportId}&hasRDL=true`
+    );
   }
 
   shareReport(e) {
@@ -395,7 +400,9 @@ export class ReportsHomeComponent implements OnInit, OnDestroy {
 
   scheduleReport(e) {
     let reportId = e.data.id;
-    window.location.href = `/v06/Reporting/Popup/ScheduleReportSinglePage.aspx?OID=${reportId}&OTID=7`;
+    this.router.navigateByUrl(
+      `/v06/Reporting/Popup/ScheduleReportSinglePage.aspx?OID=${reportId}&OTID=7`
+    );
   }
 
   assignReportTags(e) {
@@ -407,7 +414,9 @@ export class ReportsHomeComponent implements OnInit, OnDestroy {
 
   viewReportHistory(e) {
     let reportId = e.data.id;
-    window.location.href = `/v06/Reporting/AdhocReporting/AdHocReportHistory.aspx?ReportID=${reportId}&hasRDL=false`;
+    this.router.navigateByUrl(
+      `/v06/Reporting/AdhocReporting/AdHocReportHistory.aspx?ReportID=${reportId}&hasRDL=false`
+    );
   }
 
   deleteReport(e) {

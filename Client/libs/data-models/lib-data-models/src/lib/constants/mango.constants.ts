@@ -25,6 +25,7 @@ export const SUB_LEFT_NEV_PAGES_URLS = [
   'crem/costar-matching',
   '/crem/reminders',
   '/crem/notes',
+  '/crem/files',
   'crem/object-reactivation',
   'crem/accounting-history',
   'crem/ledgers',
@@ -80,3 +81,5 @@ export enum CONTACT_WIZARD_MESSAGES {
   CONTACT_WIZARD_SAVE_SUCCESS = 'Contact created successfully.',
   CONTACT_WIZARD_ERROR_MSG = 'An error has occurred. Please try again.',
 }
+
+export const AppTitle = 'CoStar Real Estate Manager';

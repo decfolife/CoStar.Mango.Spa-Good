@@ -1283,7 +1283,11 @@ export class AddEventComponent implements OnDestroy, OnInit {
 
   scheduleDetailsDataChanged(data: any) {
     this.scheduleDetailsData = data;
-    if (data.isDayOne && this.pageMode == 'Remeasure Event') {
+    if (
+      data.isDayOne &&
+      this.pageMode == 'Remeasure Event' &&
+      this.measureEvent !== 'Impairment'
+    ) {
       this.addEventFormService.DayOneRemeasure$.next(true);
     } else {
       this.addEventFormService.DayOneRemeasure$.next(false);

@@ -1,6 +1,8 @@
 @use 'styles' as *;
 
 :host ::ng-deep {
+  width: 100%;
+
   // Card Skeleton
   .skeleton-card {
     display: flex;
@@ -23,4 +25,106 @@
   }
 
   // Metric Skeleton
+
+  // Form Skeleton
+  .skeleton-form {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    @include costar(margin-bottom, 4);
+    @include costar(background-color, light);
+    ngx-skeleton-loader {
+      .skeleton-loader {
+        @include costar(margin-bottom, 0);
+        @include costar(background-color, background);
+      }
+    }
+    &:last-child {
+      @include costar(margin-bottom, 2);
+    }
+  }
+
+  // Header
+  .skeleton-header {
+    height: 18px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    @include costar(margin-bottom, 0);
+    ngx-skeleton-loader {
+      @include costar(margin-bottom, 0);
+      .skeleton-loader {
+        @include costar(margin-bottom, 0);
+        @include costar(background-color, background);
+      }
+    }
+  }
+
+  // Table
+  .skeleton-table {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    @include costar(background-color, light);
+
+    &-header {
+      width: 100%;
+      ngx-skeleton-loader {
+        width: 100%;
+        .skeleton-loader {
+          border-radius: 0px;
+          @include costar(margin-bottom, 0);
+          @include costar(background-color, gray04);
+        }
+      }
+    }
+
+    &-body {
+      display: flex;
+      flex-direction: column;
+
+      .skeleton-row {
+        display: flex;
+        justify-content: space-between;
+        ngx-skeleton-loader {
+          width: 100%;
+          height: 34px; // Adjust `ngx-skeleton-loader` HTML to have the same value here
+          .skeleton-loader {
+            @include costar(margin-bottom, 0);
+            @include costar(background-color, light);
+          }
+        }
+
+        &.zebra {
+          ngx-skeleton-loader {
+            width: 100%;
+            height: 32px; // Adjust `ngx-skeleton-loader` HTML to have the same value here
+            .skeleton-loader {
+              @include costar(margin-bottom, 0);
+              @include costar(background-color, gray06);
+            }
+          }
+        }
+      }
+    }
+
+    &-pag {
+      display: flex;
+      @include costar(padding, 3);
+      @include costar(padding-top, 4);
+      justify-content: space-between;
+      @include costar(border-top, gray06);
+      &-num {
+        display: flex;
+        @include costar(gap, 3);
+        justify-content: flex-start;
+      }
+      &-nav {
+        display: flex;
+        @include costar(gap, 3);
+        justify-content: flex-end;
+      }
+    }
+  }
 }

@@ -4,7 +4,6 @@ import {
   UtilitiesService,
 } from '@mango/core-shared/lib-core-shared';
 import { Api } from '@mango/data-models/lib-data-models';
-import { environment } from '@mangoSpa/src/environments/environment.local';
 
 @Injectable({ providedIn: 'root' })
 export class BaseService extends EndpointService {
@@ -37,6 +36,17 @@ export class BaseService extends EndpointService {
     }
     return `${isoDateParts[Year]}.${isoDateParts[Day]}.${isoDateParts[Month]}`;
   };
+
+  getTimeStamp() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}${minutes}${seconds}`;
+  }
 
   getUserRights() {
     const url = `${this.batchAccountingUrl}Base/GetUserRights`;

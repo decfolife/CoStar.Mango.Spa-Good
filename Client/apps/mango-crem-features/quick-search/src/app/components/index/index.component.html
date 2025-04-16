@@ -1,2 +1,59 @@
-<div>Quick Search microcomponent works</div>
->
+<crem-skeleton
+  *ngIf="loading"
+  [instances]="_skeletonInstances"
+  type="table"
+></crem-skeleton>
+
+<ng-container *ngIf="!loading">
+  <crem-tabs
+    *ngIf="searchResults.length > 0"
+    [id]="'search-results-page'"
+    [selectedTabIndex]="selectedTab?.index"
+    (selectedTab)="onSelectedTabChange($event)"
+  >
+    <ng-container *ngFor="let object of searchResults; index as i">
+      <crem-tab-item
+        [title]="object.objectTypeType"
+        [id]="'tab' + i"
+        [height]="'100%'"
+      >
+        <section>
+          <!-- Grid Results -->
+          <dx-data-grid
+            #DataGrid
+            [dataSource]="object.results"
+            [showColumnLines]="false"
+            [showRowLines]="false"
+            [showBorders]="false"
+            [rowAlternationEnabled]="true"
+            [allowColumnResizing]="true"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [columnMinWidth]="10"
+            [wordWrapEnabled]="true"
+            (onContentReady)="contentReady($event)"
+            (onRowClick)="onRowClick($event)"
+          >
+            <dxo-header-filter
+              [visible]="true"
+              [allowSearch]="true"
+            ></dxo-header-filter>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [pageSize]="100"></dxo-paging>
+            <dxo-pager
+              [showPageSizeSelector]="true"
+              [visible]="true"
+              [allowedPageSizes]="[50, 100, 200, 500]"
+              [showInfo]="true"
+              [showNavigationButtons]="true"
+            >
+            </dxo-pager>
+          </dx-data-grid>
+        </section>
+      </crem-tab-item>
+      <!-- End Of Grid -->
+    </ng-container>
+  </crem-tabs>
+
+  <crem-empty-state *ngIf="searchResults.length === 0"></crem-empty-state>
+</ng-container>

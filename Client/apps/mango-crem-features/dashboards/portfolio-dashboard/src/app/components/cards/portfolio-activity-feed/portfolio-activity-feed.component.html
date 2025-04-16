@@ -67,7 +67,7 @@
       </dxi-column>
       <div *dxTemplate="let cell of 'descriptionCellTemplate'">
         <a
-          [href]="getDescriptionCellLink(cell)"
+          (click)="getDescriptionCellLink(cell)"
           *ngIf="isActivityNoteAdded(cell)"
           >{{ cell.value }}</a
         >

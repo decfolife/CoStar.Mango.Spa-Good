@@ -37,6 +37,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
+    [IgnoreAntiforgeryToken]
     [HttpPost("~/oauth/token")] //api/oauth/token  
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -93,6 +94,7 @@ public class AuthController : ControllerBase
     /// <param name="env"></param>
     /// <returns></returns>
     [ApiExplorerSettings(IgnoreApi = true)]
+    [IgnoreAntiforgeryToken]
     [HttpPost("login")] //auth/login  
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -112,6 +114,8 @@ public class AuthController : ControllerBase
         _logger.LogInformation("login request started.");
 
         await _authService.CreateAuthenticationCookie(accessToken);
+
+        _authService.CreateCSRFTokenCookie();
 
         // Mimic V06 creating the shared info cookie
         HttpContext.Response.Cookies.Append(
@@ -144,6 +148,9 @@ public class AuthController : ControllerBase
         _logger.LogInformation("Fetching current logged-in user {Email}.", User.Email());
 
         var user = User.ToAuthenticatedUser();
+
+        // Create/Refresh CSRF token in case its gone but the user is still logged in since csrf token is session based.
+        _authService.CreateCSRFTokenCookie();
 
         _logger.LogInformation("Successfully fetched current logged-in user {Email}.", User.Email());
 

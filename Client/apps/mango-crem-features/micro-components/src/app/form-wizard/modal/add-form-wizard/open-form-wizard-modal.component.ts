@@ -37,11 +37,12 @@ export class OpenFormWizardModalComponent implements OnInit {
   }
 
   public openModal() {
-    let dialogRef = this.dialog.open(AddFormWizardComponent, {
+    const dialogRef = this.dialog.open(AddFormWizardComponent, {
       disableClose: true,
-      height: '81%',
-      width: '75%',
+      minWidth: '320px',
       maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
       data: {
         objectTypeId: Number(this.objectTypeId),
         objectId: Number(this.objectId),
@@ -50,9 +51,6 @@ export class OpenFormWizardModalComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-      }
-    });
+    dialogRef.afterClosed();
   }
 }

@@ -1,15 +1,22 @@
 export interface RedirectorLink {
-    objectTypeId : number
-    objectTypeTypeId : number
-    listPageFieldType : number 
-    basePageUrl : string
-    urlLink : string
+    objectTypeId: number
+    objectTypeTypeId: number
+    listPageFieldType: number 
+    basePageUrl: string
+    urlLink: string
+}
+
+export interface RedirectorMapping {
+    id: number
+    cremUrl: string
+    spaUrl?: string 
+    isActive?: boolean
 }
 
 export interface RedirectorObjectData {
-    objectId : number
-    objectTypeId : number
-    objectTypeTypeId : number
+    objectId: number
+    objectTypeId: number
+    objectTypeTypeId: number
 }
 
 
