@@ -253,8 +253,9 @@ export class AppModule {
           } else if (redirectorMaps.length > 1) {
             // If there are duplicate pages, 
             // Need to compare with the query param since it can be a page like /ListPage.aspx/?ObjectTypeId=4
+            // Only the first query param matters
             redirectorMap = redirectorMaps.find((x) =>
-              x.cremUrl.toLowerCase() === url.toLowerCase()
+              x.cremUrl.split('&')[0].toLowerCase() === url.split('&')[0].toLowerCase()
             );
           }
 

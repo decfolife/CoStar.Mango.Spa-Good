@@ -126,8 +126,9 @@ export class MangoNavigationService {
     } else if (redirectorMaps.length > 1) {
       // If there are duplicate pages, 
       // Need to compare with the query param since it can be a page like /ListPage.aspx/?ObjectTypeId=4
-      redirectorMap = redirectorMaps.find((x) =>
-        x.cremUrl.toLowerCase() === redirectionUrl.toLowerCase()
+      // Only the first query param matters
+      redirectorMap = redirectorMaps.find(
+        (x) => x.cremUrl.split('&')[0].toLowerCase() === redirectionUrl.split('&')[0].toLowerCase()
       );
     }
 
