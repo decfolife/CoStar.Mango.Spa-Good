@@ -219,9 +219,23 @@ export class AppModule {
               return;
             }
 
-            let redirectorMap = redirectorMappings.find((x) =>
-              x.cremUrl.toLowerCase() === v06RedirectorUrl.split('?')[0].toLowerCase()
+            let redirectorMap: RedirectorMapping = null;
+            
+            // Compare just page name (ignore params)
+            let redirectorMaps = redirectorMappings.filter((x) =>
+              x.cremUrl.split('?')[0].toLowerCase() === v06RedirectorUrl.split('?')[0].toLowerCase()
             );
+
+            if (redirectorMaps.length === 1) {
+              redirectorMap = redirectorMaps[0];
+            } else if (redirectorMaps.length > 1) {
+              // If there are duplicate pages, 
+              // Need to compare with the query param since it can be a page like /ListPage.aspx/?ObjectTypeId=4
+              // Only the first query param matters
+              redirectorMap = redirectorMaps.find((x) =>
+                x.cremUrl.split('&')[0].toLowerCase() === v06RedirectorUrl.split('&')[0].toLowerCase()
+              );
+            }
 
             if (redirectorMap && redirectorMap.spaUrl && redirectorMap.isActive) {
               let queryString = `?${v06RedirectorUrl?.split('?')[1] ?? ''}`;
