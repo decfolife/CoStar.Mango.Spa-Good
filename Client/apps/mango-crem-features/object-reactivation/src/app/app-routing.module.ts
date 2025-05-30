@@ -8,6 +8,10 @@ const routes: Routes = [
       import(
         './components/object-reactivation/object-reactivation.component'
       ).then((mod) => mod.ObjectReactivationComponent),
+    data: {
+      pageTitle: 'Reactivation',
+      breadCrumb: { append: true, label: 'Reactivation' },
+    },
   },
   { path: '', redirectTo: 'object-reactivation', pathMatch: 'full' },
   { path: '**', redirectTo: '', pathMatch: 'full' },
