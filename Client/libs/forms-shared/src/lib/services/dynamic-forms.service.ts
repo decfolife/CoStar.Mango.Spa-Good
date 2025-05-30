@@ -24,9 +24,27 @@ export class DynamicFormsService extends EndpointService {
     return this.callHttpGet(url, 'GetAdminFormsList');
   }
 
-  getForm(formId: number, objectId: number): Observable<any> {
-    const url = `${this.formWizardUrl}AdminForms/GetForm/${formId}/${objectId}`;
-    return this.callHttpGet(url, 'GetForm');
+  getForm(
+    formId: number,
+    objectId: number,
+    objectTypeId: number,
+    objectTypeTypeId: number = null,
+    relationshipDefinitionId: number = null,
+    parentObjectId: number = null,
+    relatedObjectId: number = null,
+    relatedObjectTypeId: number = null
+  ): Observable<any> {
+    return this.callHttpGet(
+      `${this.formWizardUrl}AdminForms/GetForm/${formId}/${objectId}/${objectTypeId}`,
+      'getForm',
+      {
+        objectTypeTypeId,
+        relationshipDefinitionId,
+        parentObjectId,
+        relatedObjectId,
+        relatedObjectTypeId,
+      }
+    );
   }
 
   getFormActions(

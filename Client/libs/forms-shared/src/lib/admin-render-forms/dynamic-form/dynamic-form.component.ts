@@ -165,8 +165,11 @@ export class DynamicFormComponent
   objectTypeId: number;
   objectTypeTypeId: number;
   groupId: number;
+  relationshipDefinitionId: number;
   parentObjectId: number;
   parentObjectTypeId: number;
+  relatedObjectId: number;
+  relatedObjectTypeId: number;
   sectionIdToBeAdded = 0;
   toastMessageHeader = '';
   toastState: ToastState;
@@ -455,19 +458,34 @@ export class DynamicFormComponent
     );
     this.formId = Number(this.removeEndingQueryString(params['fid']));
     this.groupId =
-      params['ffsgid'] === undefined
+      params['ffsgid'] === undefined || params['ffsgid'] === 'undefined'
         ? 0
         : Number(this.removeEndingQueryString(params['ffsgid']));
 
+    this.relationshipDefinitionId =
+      params['rdid'] === undefined || params['rdid'] === 'undefined'
+        ? 0
+        : Number(this.removeEndingQueryString(params['rdid']));
+
     this.parentObjectId =
-      params['poid'] === undefined
+      params['poid'] === undefined || params['poid'] === 'undefined'
         ? 0
         : Number(this.removeEndingQueryString(params['poid']));
 
     this.parentObjectTypeId =
-      params['potid'] === undefined
+      params['potid'] === undefined || params['potid'] === 'undefined'
         ? 0
         : Number(this.removeEndingQueryString(params['potid']));
+
+    this.relatedObjectId =
+      params['roid'] === undefined || params['roid'] === 'undefined'
+        ? 0
+        : Number(this.removeEndingQueryString(params['roid']));
+
+    this.relatedObjectTypeId =
+      params['rotid'] === undefined || params['rotid'] === 'undefined'
+        ? 0
+        : Number(this.removeEndingQueryString(params['rotid']));
   }
 
   private removeEndingQueryString(value: string) {
@@ -482,7 +500,16 @@ export class DynamicFormComponent
   private load(): void {
     if (!this.formId) return;
     this.allFormItemsKeys = [];
-    this.dynamicFormsFacade.loadDynamicForm(this.formId, this.objectId);
+    this.dynamicFormsFacade.loadDynamicForm(
+      this.formId,
+      this.objectId,
+      this.objectTypeId,
+      this.objectTypeTypeId,
+      this.relationshipDefinitionId,
+      this.parentObjectId,
+      this.relatedObjectId,
+      this.relatedObjectTypeId
+    );
     this.handleDynamicFormResponse();
   }
 

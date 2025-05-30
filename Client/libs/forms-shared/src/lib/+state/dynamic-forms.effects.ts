@@ -43,9 +43,28 @@ export class DynamicFormsEffects {
   loadForm$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DynamicFormsActions.dynamicFormLoad),
-      switchMap((action: { formId: number; objectId: number }) => {
+      switchMap(
+        (action: {
+          formId: number;
+          objectId: number;
+          objectTypeId: number;
+          objectTypeTypeId: number;
+          relationshipDefinitionId: number;
+          parentObjectId: number;
+          relatedObjectId: number;
+          relatedObjectTypeId: number;
+        }) => {
         return this.dynamicFormsService
-          .getForm(action.formId, action.objectId)
+            .getForm(
+              action.formId,
+              action.objectId,
+              action.objectTypeId,
+              action.objectTypeTypeId,
+              action.relationshipDefinitionId,
+              action.parentObjectId,
+              action.relatedObjectId,
+              action.relatedObjectTypeId
+            )
           .pipe(
             map((result) =>
               DynamicFormsActions.dynamicFormLoadSuccessWithStatus({
@@ -61,7 +80,7 @@ export class DynamicFormsEffects {
               )
             )
           );
-      })
+        })
     )
   );
 

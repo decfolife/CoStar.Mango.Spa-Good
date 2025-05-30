@@ -78,9 +78,27 @@ export class DynamicFormsFacade {
     this.store.dispatch(dynamicFormsActions.initForms());
   }
 
-  loadDynamicForm(formId: number, objectId: number): void {
+  loadDynamicForm(
+    formId: number,
+    objectId: number,
+    objectTypeId: number,
+    objectTypeTypeId: number,
+    relationshipDefinitionId: number,
+    parentObjectId: number,
+    relatedObjectId: number,
+    relatedObjectTypeId: number
+  ): void {
     this.store.dispatch(
-      dynamicFormsActions.dynamicFormLoad({ formId, objectId })
+      dynamicFormsActions.dynamicFormLoad({
+        formId,
+        objectId,
+        objectTypeId,
+        objectTypeTypeId,
+        relationshipDefinitionId,
+        parentObjectId,
+        relatedObjectId,
+        relatedObjectTypeId,
+      })
     );
   }
 

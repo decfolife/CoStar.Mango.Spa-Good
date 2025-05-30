@@ -72,7 +72,16 @@ export const formListloadFailure = createAction(
 // Dynamic Form
 export const dynamicFormLoad = createAction(
   DYNAMIC_FORM_LOAD,
-  props<{ formId: number; objectId: number }>()
+  props<{
+    formId: number;
+    objectId: number;
+    objectTypeId: number;
+    objectTypeTypeId: number;
+    relationshipDefinitionId: number;
+    parentObjectId: number;
+    relatedObjectId: number;
+    relatedObjectTypeId: number;
+  }>()
 );
 //export const dynamicFormLoadSuccess = createAction( DYNAMIC_FORM_LOAD_SUCCESS, props<{ dynamicForm: DynamicFormEntity }>() );
 export const dynamicFormLoadSuccessWithStatus = createAction(
