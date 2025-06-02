@@ -752,6 +752,19 @@ export const routes: Routes = [
             },
           },
           {
+            path: 'object-reactivation',
+            title: 'Object Reactivation',
+            loadChildren: () =>
+              import('@object-reactivation/app.module').then(
+                (mod) => mod.AppModule
+              ),
+            data: {
+              currentSubApp: MangoSubApps.OBJECT_REACTIVATION,
+              moduleId: 6,
+              breadCrumb: { append: false },
+            },
+          },
+          {
             path: 'group-maintenance',
             title: 'Group Maintenance',
             loadChildren: () =>
@@ -831,17 +844,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('@costar-matching/app.module').then((mod) => mod.AppModule),
       },
-
-      //Object Reactivation
-      {
-        path: 'object-reactivation',
-        title: 'Object Reactivation',
-        loadChildren: () =>
-          import('@object-reactivation/app.module').then(
-            (mod) => mod.AppModule
-          ),
-      },
-
       //Error Notification
       {
         path: 'error-notification',
