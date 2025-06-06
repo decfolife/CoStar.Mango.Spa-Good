@@ -1,0 +1,23 @@
+export enum ETLDocumentImportStatus {
+  NOTSTARTED = 0,
+  SFTPFILEUPLOADING = 1,
+  FILESUPLOADED = 2,
+  FILESEXTRACTED = 3,
+  FILESVALIDATED = 4,
+  TEMPLATEVALIDATED = 5,
+  PROCESSING = 6,
+  PROCESSCOMPLETED = 7,
+}
+
+export enum ETLDocImportLongProcess {
+  UPLOADFILES = 0,
+  MAPTOOBJECTS = 1,
+}
+
+export enum ETLDocumentImportStep {
+  FILEUPLOADEXTRACT = 0,
+  FILEVALIDATION = 1,
+  TEMPLATEVALIDATION = 2,
+  EXECUTE = 3,
+}
+
