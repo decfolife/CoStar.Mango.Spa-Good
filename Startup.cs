@@ -391,7 +391,7 @@ public class Startup
         services.AddScoped<IRequestService>(provider =>
         {
             var httpContext = provider.GetRequiredService<IHttpContextAccessor>();
-            var trackingId = httpContext.GetHeaderValue<Guid>(Headers.TrackingId, Guid.NewGuid());
+            var trackingId = httpContext.GetHeaderValue(Headers.TrackingId, Guid.NewGuid());
             httpContext.SetHeaderValue(Headers.TrackingId, trackingId.ToString());
 
             return new RequestService(trackingId);
