@@ -217,11 +217,6 @@ export class ETLService extends EndpointService {
     return this.http.post(url, 'getFilesFromSftp');
   }
 
-  validateFiles(): Observable<any> {
-    const url = `${this.etlServiceUrl}etldocumentmigration/validateFiles`;
-    return this.http.post(url, 'validateFiles');
-  }
-
   getValidateResults(): Observable<any> {
     const url = `${this.etlServiceUrl}etldocumentmigration/getvalidateresults`;
     return this.callHttpGetWithErrorMessage(url, 'getValidateResults');

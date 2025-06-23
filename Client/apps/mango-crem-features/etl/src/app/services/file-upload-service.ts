@@ -13,7 +13,7 @@ import {
 })
 export class FileUploadService {
   @Output() public onUploadFinished = new EventEmitter();
-  documentsImportStatus = false;
+  longProcessCompleted = false;
   isDocumentImportFailed = false;
   uploadStatus = '';
   uploadProgress = 0;
@@ -128,9 +128,22 @@ export class FileUploadService {
           takeWhile((response: { success: boolean; data: any }) => {
             milliseconds = 0.5 * 60 * 1000;
             switch (processName) {
-              case ETLDocImportLongProcess.UPLOADFILES:
+              case ETLDocImportLongProcess.UPLOADEXTRACTFILES:
                 return (
-                  response.data.StatusId !== ETLDocumentImportStatus.FILESEXTRACTED
+                  response.data.StatusId !==
+                  ETLDocumentImportStatus.FILESEXTRACTED &&                   
+                  response.data.StatusId !==
+                  ETLDocumentImportStatus.FILESVALIDATED
+                );
+              case ETLDocImportLongProcess.VALIDATEFILES:
+                return (
+                  response.data.StatusId !==
+                  ETLDocumentImportStatus.FILESVALIDATED
+                );
+              case ETLDocImportLongProcess.VALIDTEMPLATE:
+                return (
+                  response.data.StatusId !==
+                  ETLDocumentImportStatus.TEMPLATEVALIDATED
                 );
               case ETLDocImportLongProcess.MAPTOOBJECTS:
                 return (
@@ -145,9 +158,22 @@ export class FileUploadService {
           next: (response) => {
             let processCompleted = false;
             switch (processName) {
-              case ETLDocImportLongProcess.UPLOADFILES:
+              case ETLDocImportLongProcess.UPLOADEXTRACTFILES:
                 processCompleted =
-                  response.data.StatusId === ETLDocumentImportStatus.FILESEXTRACTED;
+                  response.data.StatusId ===
+                  ETLDocumentImportStatus.FILESEXTRACTED ||
+                  response.data.StatusId ===
+                  ETLDocumentImportStatus.FILESVALIDATED;
+                break;
+              case ETLDocImportLongProcess.VALIDATEFILES:
+                processCompleted =
+                  response.data.StatusId ===
+                  ETLDocumentImportStatus.FILESVALIDATED;
+                break;
+              case ETLDocImportLongProcess.VALIDTEMPLATE:
+                processCompleted =
+                  response.data.StatusId ===
+                  ETLDocumentImportStatus.TEMPLATEVALIDATED;
                 break;
               case ETLDocImportLongProcess.MAPTOOBJECTS:
                 processCompleted =
@@ -156,7 +182,7 @@ export class FileUploadService {
                 break;
             }
             if (processCompleted) {
-              this.documentsImportStatus = true;
+              this.longProcessCompleted = true;
               this.stopSignal.next();
               this.stopSignal.complete();
               return resolve(response.data.StatusId);

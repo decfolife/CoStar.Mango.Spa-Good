@@ -1,5 +1,5 @@
 <div *ngIf="canAccessDocumentImportPage; else noAccessRightContent">
-  <crem-card id="document-import">
+  <crem-card id="document-import" title="Document Import">
     <mat-horizontal-stepper
       linear
       #DocumentImportStepper
@@ -23,19 +23,24 @@
                 >
                 OR <span class="label-normal"></span
                 ><span class="label-small-gray">
-                  import file(s) from sFTP site. Preferably, the files should be compressed files.</span
+                  import file(s) from sFTP site. Preferably, the files should be
+                  compressed files.</span
                 >
               </div>
               <div class="drag-drop-zone">
                 <div class="drag-drop-zone-content">
                   <div class="button-label">
-                    <div class="label-small-gray hover-container" (mouseenter)="showAllFormats()" (mouseleave)="hideAllFormats()">
+                    <div
+                      class="label-small-gray hover-container"
+                      (mouseenter)="showAllFormats()"
+                      (mouseleave)="hideAllFormats()"
+                    >
                       Supported Formats: ai, .avi, .bmp, .cdb, .csv, ...
-                        <div class="hover-div" *ngIf="showAllFormatsDiv">{{allowedExtensions}}</div>
+                      <div class="hover-div" *ngIf="showAllFormatsDiv">
+                        {{ allowedExtensions }}
+                      </div>
                     </div>
-                    <div class="label-small-gray">
-                      Maximum file size: 4 GB.
-                    </div>
+                    <div class="label-small-gray">Maximum file size: 4 GB.</div>
                   </div>
                   <div>
                     <div
@@ -49,9 +54,7 @@
                         [disabled]="isFTP"
                         focusStateEnabled="false"
                         [elementAttr]="{ id: 'SelectFilesdnd' }"
-                        (onValueChanged)="
-                          handleSelectFileValueChanged($event)
-                        "
+                        (onValueChanged)="handleSelectFileValueChanged($event)"
                         uploadMode="useForm"
                       ></dx-file-uploader>
                     </div>
@@ -92,15 +95,15 @@
             <div class="step-content">
               <div class="load-file-header">Loading File(s)...</div>
               <div>
-                  <div class="label-warning" *ngIf="!isFTP">
-                    Please stay on this page or open a new tab to keep working.
-                  </div>
-                  <div class="label-warning" *ngIf="!isFTP">
-                    If you leave, the connection for importing will be lost.
-                  </div>
-                    <div class="label-normal" *ngIf="isFTP">
-                    Please check back again later.
-                  </div>
+                <div class="label-warning" *ngIf="!isFTP">
+                  Please stay on this page or open a new tab to keep working.
+                </div>
+                <div class="label-warning" *ngIf="!isFTP">
+                  If you leave, the connection for importing will be lost.
+                </div>
+                <div class="label-normal" *ngIf="isFTP">
+                  Please check back again later.
+                </div>
                 <div class="label-warning">{{ uploadStatus }}</div>
               </div>
             </div>
@@ -112,7 +115,7 @@
               text="Next"
               [color]="'primary'"
               [disabled]="!fileSelected"
-              (buttonClick)="moveToValidateFilesStep(DocumentImportStepper)"
+              (buttonClick)="moveToValidateFilesStep()"
             >
             </crem-button>
           </div>
@@ -129,9 +132,10 @@
         </ng-template>
         <div class="step-wrapper">
           <files-validation-results
-              id="files-validation-results"
-              [fileValidationCompleted] = "fileValidationCompleted"
-              [filesValidationResults] = "filesValidationResults">
+            id="files-validation-results"
+            [fileValidationCompleted]="fileValidationCompleted"
+            [filesValidationResults]="filesValidationResults"
+          >
           </files-validation-results>
           <div *ngIf="fileValidationCompleted" class="btn-container">
             <crem-button
@@ -177,16 +181,18 @@
         </ng-template>
         <div class="step-wrapper">
           <template-validation-results
-              id="template-validation-results"
-              [templateValidating] = "templateValidating"
-              [templateValidationCompleted] = "templateValidationCompleted"
-              [templateValidationResults] = "templateValidationResults"
-              (templateSelected)="templateSelected($event)"
-              (templateValidated)="setTemplateValid($event)"
-              (reValidateTemplate)="reValidateTemplate($event)">
+            id="template-validation-results"
+            [templateValidating]="templateValidating"
+            [templateValidationCompleted]="templateValidationCompleted"
+            [templateValidationResults]="templateValidationResults"
+            (templateSelected)="templateSelected($event)"
+            (templateValidated)="setTemplateValid($event)"
+            (reValidateTemplate)="reValidateTemplate($event)"
+          >
           </template-validation-results>
           <div class="btn-container">
-            <crem-button
+            <crem-button 
+              *ngIf="!templateValidating"
               class="btn"
               id="etl-mapping-cancel-btn"
               text="Cancel Process"
@@ -196,8 +202,8 @@
             >
             </crem-button>
             <crem-button
+              *ngIf="!templateValidationCompleted && !templateValidating"
               class="btn"
-              *ngIf="!templateValidationCompleted"
               id="etl-mapping-next-btn"
               text="Next"
               [color]="'primary'"
@@ -206,7 +212,6 @@
             >
             </crem-button>
             <crem-button
-              class="btn"
               *ngIf="templateValidationCompleted"
               class="btn"
               id="etl-mapping-download-btn"
@@ -218,8 +223,8 @@
             >
             </crem-button>
             <crem-button
-              class="btn"
               *ngIf="templateValidationCompleted"
+              class="btn"
               id="etl-next-2"
               text="Proceed with Valid Records"
               [color]="'primary'"
@@ -231,7 +236,7 @@
               (buttonClick)="moveToExecuteStep(DocumentImportStepper)"
             >
             </crem-button>
-          </div>            
+          </div>
         </div>
       </mat-step>
       <mat-step
@@ -249,10 +254,7 @@
             [comparisonResults]="comparisonResults"
           >
           </map-to-objects>
-          <div
-            *ngIf="!executing && !executingCompleted"
-            class="btn-container"
-          >
+          <div *ngIf="!executing && !executingCompleted" class="btn-container">
             <crem-button
               class="btn"
               id="etl-download-validation-cancel-btn"

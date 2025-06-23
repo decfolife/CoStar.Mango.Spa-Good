@@ -4,14 +4,18 @@ export enum ETLDocumentImportStatus {
   FILESUPLOADED = 2,
   FILESEXTRACTED = 3,
   FILESVALIDATED = 4,
-  TEMPLATEVALIDATED = 5,
-  PROCESSING = 6,
-  PROCESSCOMPLETED = 7,
+  TemplateFileUploaded = 5,
+  TEMPLATEVALIDATED = 6,
+  TEMPLATEREADYTOPROCESS = 7,
+  PROCESSING = 8,
+  PROCESSCOMPLETED = 9,
 }
 
 export enum ETLDocImportLongProcess {
-  UPLOADFILES = 0,
-  MAPTOOBJECTS = 1,
+  UPLOADEXTRACTFILES = 0,
+  VALIDATEFILES = 1,
+  VALIDTEMPLATE = 2,
+  MAPTOOBJECTS = 3,
 }
 
 export enum ETLDocumentImportStep {
@@ -20,4 +24,3 @@ export enum ETLDocumentImportStep {
   TEMPLATEVALIDATION = 2,
   EXECUTE = 3,
 }
-

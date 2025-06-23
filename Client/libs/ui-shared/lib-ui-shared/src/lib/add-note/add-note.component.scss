@@ -1,3 +1,6 @@
+@use 'styles' as *;
+@use 'colors';
+
 #addTaskNoteModal-content {
   .fieldInvalid {
     color: #d9534f;
@@ -21,4 +24,12 @@
       padding: 8px 0px 8px 8px;
     }
   }
+}
+
+.at-required {
+  color: $color-brand-red;
+}
+
+.note-body-container {
+  @include costar(padding-top, 5);
 }
